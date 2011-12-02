@@ -1,6 +1,9 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     access_denied_url: /login
+    enable_authenticator_manager: true
+    encoders:
+        App\Security\User: plaintext
     providers:
         api_user_provider:
             id: App\Security\ApiUserProvider
@@ -9,12 +12,10 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
             lazy: true
             provider: api_user_provider
-            guard:
-                authenticators:
-                    - App\Security\UserAuthenticator
+            custom_authenticators:
+                - App\Security\UserAuthenticator
             logout:
                 path: app_logout
                 target: /

@@ -8,8 +8,8 @@ use LogicException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class SecurityController extends PageSiteController
 {
@@ -49,14 +49,13 @@ class SecurityController extends PageSiteController
      *     path="/demo"
      * )
      */
-    public function demo(Request $request, UserAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler): Response
+    public function demo(Request $request,  UserAuthenticatorInterface $authenticatorInterface, UserAuthenticator $authenticator): Response
     {
         $demoUser = new User(999, 'demo', sha1($_ENV['DEMO_PASSWORD']), ['ROLE_USER']);
-        return $guardHandler->authenticateUserAndHandleSuccess(
+        return $authenticatorInterface->authenticateUser(
             $demoUser,
-            $request,
             $authenticator,
-            'main'
+            $request
         );
     }
 
