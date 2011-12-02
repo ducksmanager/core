@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
 import {mapState, mapActions} from "pinia";
 import medalMixin from "../mixins/medalMixin";
@@ -25,6 +24,7 @@ import Ago from "../components/Ago";
 import Event from "../components/Event";
 import { users } from "../stores/users";
 import { coa } from "../stores/coa";
+import {ongoingRequests} from "../stores/ongoing-requests";
 
 export default {
   name: "RecentEvents",
@@ -36,63 +36,63 @@ export default {
   mixins: [l10nMixin, medalMixin],
 
   data: () => ({
-    events: null,
-    isLoaded: false
+    isLoaded: false,
+    hasFreshEvents: false
   }),
 
   computed: {
     ...mapState(coa, ["publicationNames"]),
-    ...mapState(users, ["stats", "points"]),
+    ...mapState(users, ["stats", "points", "events"]),
+    ...mapState(ongoingRequests, ["numberOfOngoingAjaxCalls"]),
+
+    eventUserIds() {
+      return this.events && this.events
+        .reduce(
+          (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
+          []
+        )
+        .filter(userId => !!userId)
+    }
+  },
+
+  watch: {
+    async numberOfOngoingAjaxCalls(newValue) {
+      const vm = this
+      if (newValue === 0) {
+        setTimeout(async () => {
+          if (!vm.hasFreshEvents && vm.numberOfOngoingAjaxCalls === 0) { // Still no ongoing call after 1 second
+            await this.fetchEventsAndAssociatedData(true)
+            this.hasFreshEvents = true
+          }
+        }, 1000)
+      }
+    }
   },
 
   async mounted() {
-    this.events = ((await axios.get("/events")).data || []).map(event => {
-      if (event.exampleIssue) {
-        const [publicationCode, issueNumber] = event.exampleIssue.split(/\/(?=[^/]+$)/);
-        event = { ...event, publicationCode, issueNumber };
-      }
-      if (event.users) {
-        event = { ...event, users: event.users.split(",").map(userId => parseInt(userId)) };
-      }
-      if (event.userId) {
-        event.userId = parseInt(event.userId);
-      }
-      if (event.edges) {
-        event.edges = JSON.parse(event.edges);
-      }
-
-      return {
-        ...event,
-        numberOfIssues: event.numberOfIssues && parseInt(event.numberOfIssues),
-        timestamp: parseInt(event.timestamp)
-      };
-    }).sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) => Math.sign(timestamp2 - timestamp1))
-      .filter((_, index) => index < 50);
-
-    await this.fetchPublicationNames(
-      this.events
-        .filter(({publicationCode}) => publicationCode)
-        .map(({publicationCode}) => publicationCode)
-        .concat(
-          this.events.filter(({edges}) => edges)
-            .reduce((acc, {edges}) => ([...acc, ...edges.map(({publicationCode}) => publicationCode)]), [])
-        )
-    )
-
-    await this.fetchStats(this.events
-      .reduce((acc, event) =>
-          [...acc, event.userId || null, ...(event.users || [])]
-        , []
-      )
-      .filter(userId => !!userId)
-    )
-
+    await this.fetchEventsAndAssociatedData(false)
     this.isLoaded = true
   },
 
   methods: {
     ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions(users, ["fetchStats"])
+    ...mapActions(users, ["fetchEvents", "fetchStats"]),
+
+    async fetchEventsAndAssociatedData(clearCacheEntry) {
+      this.hasFreshEvents = await this.fetchEvents(clearCacheEntry)
+
+      await this.fetchPublicationNames(
+        this.events
+          .filter(({publicationCode}) => publicationCode)
+          .map(({publicationCode}) => publicationCode)
+          .concat(
+            this.events.filter(({edges}) => edges)
+              .reduce((acc, {edges}) => ([...acc, ...edges.map(({publicationCode}) => publicationCode)]), [])
+          )
+      )
+
+      await this.fetchStats(this.eventUserIds, clearCacheEntry)
+    }
   },
 }
 </script>

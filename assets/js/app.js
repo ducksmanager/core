@@ -11,11 +11,31 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../css/app.scss';
 import { createPinia, PiniaVuePlugin } from "pinia";
+import axios from "axios";
+import {ongoingRequests} from "./stores/ongoing-requests";
 
 const store = createPinia()
 
 Vue.use(PiniaVuePlugin)
 Vue.use(BackendDataPlugin)
+
+axios.interceptors.request.use(config => {
+  if (ongoingRequests().numberOfOngoingAjaxCalls === null) {
+    ongoingRequests().numberOfOngoingAjaxCalls = 1
+  } else {
+    ongoingRequests().numberOfOngoingAjaxCalls++;
+  }
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
+axios.interceptors.response.use(response => {
+  ongoingRequests().numberOfOngoingAjaxCalls--;
+  return response;
+}, error => {
+  ongoingRequests().numberOfOngoingAjaxCalls--;
+  return Promise.reject(error);
+});
 
 new Vue({
   i18n,

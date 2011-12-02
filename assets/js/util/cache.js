@@ -25,9 +25,14 @@ const appCache = setupCache({
   }
 });
 
-const userCountCache = setupCache({
+const userCache = setupCache({
   maxAge: inAnHour - now,
-  store: localforage
+  store: localforage,
+  invalidate: async (config, request) => {
+    if (request.clearCacheEntry) {
+      await config.store.removeItem(config.uuid)
+    }
+  }
 });
 
 const coaCache = setupCache({
@@ -52,6 +57,6 @@ localforage.keys((error, keys) => {
 
 export {
   appCache,
-  userCountCache,
+  userCache,
   coaCache
 };
