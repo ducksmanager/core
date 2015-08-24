@@ -61,6 +61,7 @@ remote/auth.php
 remote/cron_inducks.sh
 remote/import_inducks.php
 remote/sql.php
+locales
 Database.class.php
 Inducks.class.php
 Util.class.php
