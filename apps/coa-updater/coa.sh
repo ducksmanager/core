@@ -29,7 +29,7 @@ mkdir -p ${CONFIG_ROOT} && mv /tmp/${CONFIG_FILE} ${CONFIG_ROOT}
 
 # Config file copy - end
 
-apt-get install -y python-software-properties
+apt-get install -y git python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/10.0/debian wheezy main'
 
@@ -51,7 +51,7 @@ mysql --user=root --password=${DB_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS `d
 # Web directory install incl. Git sparse checkout
 
 cd ${WEB_DIRECTORY_ROOT}
-mkdir ${DM_SUBDIR} && cd ${DM_SUBDIR}
+mkdir -p ${DM_SUBDIR} && cd ${DM_SUBDIR}
 
 git init
 git remote add origin ${GIT_REPO}
@@ -69,14 +69,14 @@ EOM
 
 git pull origin master
 
-mkdir ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv
+mkdir -p ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv
 mv /tmp/${DB_CONF_FILE} ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 sed -i "s/my_password/${DB_PASSWORD}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 sed -i "s/my_ip/${LOCAL_IP}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 
 # Web directory install incl. Git sparse checkout - end
 
-mkdir ${WEB_DIRECTORY_ROOT}/archive
+mkdir -p ${WEB_DIRECTORY_ROOT}/archive
 
 # Run Inducks cron
 
