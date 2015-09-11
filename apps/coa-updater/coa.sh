@@ -7,7 +7,7 @@ CONFIG_ROOT=/home/coa
 CONFIG_FILE=coa.properties
 
 ISV_SUBDIR=inducks/isv
-DM_SUBDIR=DucksManager
+DM_SUBDIR=html/DucksManager
 
 WEB_DIRECTORY_ROOT=/var/www
 
@@ -84,3 +84,10 @@ mkdir -p ${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}
 sh -x ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/remote/cron_inducks.sh "${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}"
 
 # Run Inducks cron - end
+
+echo "Import done, starting services..."
+
+service apache2 start
+service mysql start
+
+echo "Services started, machine is ready."
