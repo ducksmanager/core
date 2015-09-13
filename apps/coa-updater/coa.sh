@@ -28,7 +28,7 @@ EOM
 
 # Config file copy and load
 
-mkdir -p ${CONFIG_ROOT} && mv ${TEMP_DIR}/${CONFIG_FILE} ${CONFIG_ROOT}
+mkdir -p ${CONFIG_ROOT} && cp ${TEMP_DIR}/${CONFIG_FILE} ${CONFIG_ROOT}
 . ${CONFIG_ROOT}/${CONFIG_FILE}
 
 # Config file copy - end
@@ -74,7 +74,7 @@ EOM
 git pull origin master
 
 mkdir -p ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv
-mv ${TEMP_DIR}/${DB_CONF_FILE} ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
+cp ${TEMP_DIR}/${DB_CONF_FILE} ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 sed -i "s/my_password/${DB_PASSWORD}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 sed -i "s/my_ip/${LOCAL_IP}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 
