@@ -80,18 +80,14 @@ sed -i "s/my_ip/${LOCAL_IP}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CON
 
 # Web directory install incl. Git sparse checkout - end
 
-mkdir -p ${WEB_DIRECTORY_ROOT}/archive
-
-# Run Inducks cron
-
-mkdir -p ${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}
-sh -x ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/remote/cron_inducks.sh "${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}"
-
-# Run Inducks cron - end
-
 echo "Import done, starting services..."
 
 service apache2 start
 service mysql start
 
 echo "Services started, machine is ready."
+
+echo "Populating Inducks database for the first time"
+mkdir -p ${WEB_DIRECTORY_ROOT}/archive
+mkdir -p ${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}
+sh -x ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/remote/cron_inducks.sh "${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}"
