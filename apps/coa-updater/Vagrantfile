@@ -74,7 +74,7 @@ Vagrant.configure(2) do |config|
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
-  config.vm.provision "file", source: "coa.properties", destination: "/tmp/coa.properties"
-  config.vm.provision "file", source: "Database.priv.class.php", destination: "/tmp/Database.priv.class.php"
+  config.vm.provision "file", source: "coa.properties", destination: "/tmp/coa-box/coa.properties"
+  config.vm.provision "file", source: "Database.priv.class.php", destination: "/tmp/coa-box/Database.priv.class.php"
   config.vm.provision "shell", path: "coa.sh", args: "-x"
 end
