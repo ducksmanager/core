@@ -38,7 +38,7 @@ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/10.0/debian wheezy main'
 
 apt-get update
-apt-get -y install apache2 php5 php5-mysqlnd
+apt-get -y install apache2 php5 php5-mysqlnd p7zip p7zip-full
 
 # MariaDB install
 
@@ -47,8 +47,8 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password_again passwo
 
 apt-get -y install mariadb-client mariadb-server
 
-mysql --user=root --password=${DB_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS `coa` /*!40100 DEFAULT CHARACTER SET utf8 */;'
-mysql --user=root --password=${DB_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS `db301759616` /*!40100 DEFAULT CHARACTER SET utf8 */;'
+mysql --user=root -e 'CREATE DATABASE IF NOT EXISTS `coa` /*!40100 DEFAULT CHARACTER SET utf8 */;'
+mysql --user=root -e 'CREATE DATABASE IF NOT EXISTS `db301759616` /*!40100 DEFAULT CHARACTER SET utf8 */;'
 
 # MariaDB install - end
 
@@ -87,7 +87,6 @@ service mysql start
 
 echo "Services started, machine is ready."
 
-echo "Populating Inducks database for the first time"
 mkdir -p ${WEB_DIRECTORY_ROOT}/archive
-mkdir -p ${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}
-sh -x ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/remote/cron_inducks.sh "${WEB_DIRECTORY_ROOT}/${ISV_SUBDIR}"
+
+echo "Populating Inducks database for the first time"
