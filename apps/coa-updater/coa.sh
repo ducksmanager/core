@@ -11,7 +11,7 @@ CONFIG_FILE=coa.properties
 
 TEMP_DIR=/tmp/coa-box
 ISV_SUBDIR=inducks/isv
-DM_SUBDIR=html/DucksManager
+DM_SUBDIR=DucksManager
 
 WEB_DIRECTORY_ROOT=/var/www
 
@@ -78,7 +78,10 @@ cp ${TEMP_DIR}/${DB_CONF_FILE} ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CON
 sed -i "s/my_password/${DB_PASSWORD}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 sed -i "s/my_ip/${LOCAL_IP}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CONF_FILE}
 
-# Web directory install incl. Git sparse checkout - end
+# Web directory setup including Git sparse checkout - end
+
+# No password-based authentication
+sed -i "s/--user=root --password=[^ ]\+/--user=root/g" ${DM_SUBDIR}/remote/cron_inducks.sh
 
 echo "Import done, starting services..."
 
