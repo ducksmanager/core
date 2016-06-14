@@ -33,7 +33,8 @@ mkdir -p ${CONFIG_ROOT} && cp ${TEMP_DIR}/${CONFIG_FILE} ${CONFIG_ROOT}
 
 # Config file copy - end
 
-apt-get install -y git python-software-properties
+apt-get update
+apt-get install -y git python-software-properties software-properties-common
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/10.0/debian wheezy main'
 
@@ -47,8 +48,17 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password_again passwo
 
 apt-get -y install mariadb-client mariadb-server
 
+service mysql stop
+
+mysqld_safe --skip-grant-tables &
+mysql --user=root mysql -e "update user set password=PASSWORD(\"${DB_PASSWORD}\") where User='root';flush privileges;"
+service mysql stop
+
+service mysql start
+
 mysql --user=root -e 'CREATE DATABASE IF NOT EXISTS `coa` /*!40100 DEFAULT CHARACTER SET utf8 */;'
 mysql --user=root -e 'CREATE DATABASE IF NOT EXISTS `db301759616` /*!40100 DEFAULT CHARACTER SET utf8 */;'
+
 
 # MariaDB install - end
 
@@ -80,13 +90,9 @@ sed -i "s/my_ip/${LOCAL_IP}/g" ${WEB_DIRECTORY_ROOT}/${DM_SUBDIR}/_priv/${DB_CON
 
 # Web directory setup including Git sparse checkout - end
 
-# No password-based authentication
-sed -i "s/--user=root --password=[^ ]\+/--user=root/g" ${DM_SUBDIR}/remote/cron_inducks.sh
-
 echo "Import done, starting services..."
 
 service apache2 start
-service mysql start
 
 echo "Services started, machine is ready."
 

@@ -2,7 +2,7 @@
 set -x
 
 WEB_DIRECTORY_ROOT=/var/www
-DM_SUBDIR=html/DucksManager
+DM_SUBDIR=DucksManager
 ISV_SUBDIR=inducks/isv
 
 # Run Inducks cron
