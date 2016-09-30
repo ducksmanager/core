@@ -50,6 +50,7 @@ apt-get -y install mariadb-client mariadb-server
 
 service mysql stop
 
+sed -i "s/max_allowed_packet.*/max_allowed_packet      = 128M/g" /etc/mysql/my.cnf # Increase mysqldump import memory capacities
 mysqld_safe --skip-grant-tables &
 mysql --user=root mysql -e "update user set password=PASSWORD(\"${DB_PASSWORD}\") where User='root';flush privileges;"
 service mysql stop
