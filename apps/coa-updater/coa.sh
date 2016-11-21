@@ -17,7 +17,6 @@ WEB_DIRECTORY_ROOT=/var/www
 
 BASH_RC_FILE=~/.bashrc
 DB_CONF_FILE=Database.priv.class.php
-APACHE_CONF_FILE=/etc/apache2/apache2.conf
 SPARSE_CHECKOUT_CONF_FILE=.git/info/sparse-checkout
 
 /bin/cat <<EOM >${BASH_RC_FILE}
