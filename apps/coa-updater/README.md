@@ -1,44 +1,25 @@
-# mariadb-server-setup-helper
-A simple way to setup MariaDB databases talking to each other.
+# coa-box-docker
+A simple way to setup and provision a COA database.
 
-### Customization
-
-* Add instructions to the `Dockerfile` if desired.
-* Edit `container.properties` if desired. By default it only contains the root password of the database that is to be created.
+Forked from [bperel/mariadb-server-setup-helper](https://github.com/bperel/mariadb-server-setup-helper)
 
 ### Image creation
 
 ```bash
-bash util/docker-create-image.sh <image_name>
+bash util/docker-create-image.sh coa-box
 ```
-
-Where 
-* `<image_name>` is the desired name of the local image to build from the Dockerfile, for example `mariadb-server`.
 
 ### Container creation
 
-```bash
-bash util/docker-create-container.sh <image_name> <container_name> <host_port> <network_name>
-```
+For instance:
 
-Where
-* `<image_name>` is the name of the local image previously built, for example `mariadb-server`.
-* `<container_name>` is the desired name of the container, for example `mariadb-server-box-1`.
-* `<host_port>` is the desired host port to bind to MySQL.
-* `<network_name>` is the name of the network name. If two containers have the same network name they can talk to each other
+```bash
+bash util/docker-create-container.sh coa-box coa-box-1 44000 dm_network
+```
 
 ### Provisionning
 
-The scripts in `./scripts` on the host are always synced with the container's `/home/scripts` scripts.
- 
-Don't forget to set the "+x" permission before executing scripts.
-
 ```bash
-$ echo -e '#!/bin/bash\n\necho Hi' > scripts/myscript.sh
-$ chmod a+x scripts/myscript.sh
-$ docker exec -it <container_name> /bin/bash -c "/home/scripts/myscript.sh"
-Hi
+chmod a+x scripts/coa-provision.sh
+docker exec -it coa-box-1 /bin/bash -c "/home/scripts/coa-provision.sh"
 ```
-
-where
-* `<container_name>` is the name of the container.
