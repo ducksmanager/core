@@ -3,13 +3,13 @@ A simple way to setup MariaDB databases talking to each other.
 
 ### Customization
 
-* Add instruction to the `Dockerfile` if desired.
-* Edit `container.properties` if desired. It contains the root password of the database that is to be created.
+* Add instructions to the `Dockerfile` if desired.
+* Edit `container.properties` if desired. By default it only contains the root password of the database that is to be created.
 
 ### Image creation
 
 ```bash
-bash docker-create-image.sh <image_name>
+bash util/docker-create-image.sh <image_name>
 ```
 
 Where 
@@ -18,7 +18,7 @@ Where
 ### Container creation
 
 ```bash
-bash docker-create-container.sh <image_name> <container_name> <host_port> <network_name>
+bash util/docker-create-container.sh <image_name> <container_name> <host_port> <network_name>
 ```
 
 Where
@@ -29,15 +29,16 @@ Where
 
 ### Provisionning
 
-The scripts in ./scripts on the host are always synced with the container's /home/scripts/ scripts.
+The scripts in `./scripts` on the host are always synced with the container's `/home/scripts` scripts.
  
 Don't forget to set the "+x" permission before executing scripts.
 
 ```bash
-$ echo -e "#!/bin/bash\n\necho 'Hi'" > scripts/myscript.sh
+$ echo -e '#!/bin/bash\n\necho Hi' > scripts/myscript.sh
+$ chmod a+x scripts/myscript.sh
 $ docker exec -it <container_name> /bin/bash -c "/home/scripts/myscript.sh"
 Hi
 ```
 
-Where
+where
 * `<container_name>` is the name of the container.
