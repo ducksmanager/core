@@ -42,3 +42,7 @@ Hi
 
 where
 * `<container_name>` is the name of the container.
+
+### Running a query stored in a file
+```bash
+docker exec -it <container_name> /bin/bash -c "/home/scripts/run-query.sh" "/home/scripts/query.sql"
