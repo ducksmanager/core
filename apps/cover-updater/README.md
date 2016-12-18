@@ -1,48 +1,34 @@
-# mariadb-server-setup-helper
-A simple way to setup MariaDB databases talking to each other.
+# duck-cover-id
+Storing Inducks cover info in a MariaDB database and processing them through Pastec
 
-### Customization
+Forked from [bperel/mariadb-server-setup-helper](https://github.com/bperel/mariadb-server-setup-helper)
 
-* Add instructions to the `Dockerfile` if desired.
-* Edit `container.properties` if desired. By default it only contains the root password of the database that is to be created.
+### Requirements
+
+* A running [coa-box](https://github.com/bperel/coa-box-docker) Docker container
+* A running [pastec](https://github.com/Visu4link/pastec) Docker container
 
 ### Image creation
 
 ```bash
-bash util/docker-create-image.sh <image_name>
+bash util/docker-create-image.sh duck-cover-id
 ```
-
-Where 
-* `<image_name>` is the desired name of the local image to build from the Dockerfile, for example `mariadb-server`.
 
 ### Container creation
 
+For instance:
+
 ```bash
-bash util/docker-create-container.sh <image_name> <container_name> <host_port> <network_name>
+bash util/docker-create-container.sh duck-cover-id duck-cover-id-box-1 44008 dm_network
 ```
 
-Where
-* `<image_name>` is the name of the local image previously built, for example `mariadb-server`.
-* `<container_name>` is the desired name of the container, for example `mariadb-server-box-1`.
-* `<host_port>` is the desired host port to bind to MySQL.
-* `<network_name>` is the name of the network name. If two containers have the same network name they can talk to each other
+### DB creation
+```bash
+docker exec -it duck-cover-id-box-1 /bin/bash -c "bash -c \". /home/container.properties && mysql -uroot -p$DB_PASSWORD < /home/scripts/ddl.sql\""
+```
 
 ### Provisionning
 
-The scripts in `./scripts` on the host are always synced with the container's `/home/scripts` scripts.
- 
-Don't forget to set the "+x" permission before executing scripts.
-
 ```bash
-$ echo -e '#!/bin/bash\n\necho Hi' > scripts/myscript.sh
-$ chmod a+x scripts/myscript.sh
-$ docker exec -it <container_name> /bin/bash -c "/home/scripts/myscript.sh"
-Hi
+
 ```
-
-where
-* `<container_name>` is the name of the container.
-
-### Running a query stored in a file
-```bash
-docker exec -it <container_name> /bin/bash -c "/home/scripts/run-query.sh" "/home/scripts/query.sql"
