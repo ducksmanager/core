@@ -3,12 +3,39 @@
 . /home/container.properties
 
 usage(){
-  echo "Usage: $0 [--help | [--images-per-group=<Number of images processed in a row>]|50 [--limit=<Number of images to process>]|1000000"
+  echo "Usage: $0 [--help | [--threads=<Number of threads>]|2 [--images-per-group=<Number of images processed in a row>]|30 [--limit=<Number of images to process>]|1000000"
   exit 1
+}
+
+processCovers() {
+    local thread_id=$1
+    local offset=$((${thread_id}*${IMAGES_PER_GROUP}))
+
+    echo "[Thread $thread_id] Fetching ${IMAGES_PER_GROUP} covers, cover id offset ${processed_covers}"
+
+    SHM_FILE=${SHM_DIR}/coversqls-${thread_id}
+    RESULTS_FILE=${DIR}/results-${thread_id}.txt
+
+    rm -f ${SHM_FILE} && touch ${SHM_FILE}
+
+    coverquery=$(getCoverQuery ${IMAGES_PER_GROUP} ${offset})
+    mysql -uroot -p${DB_PASSWORD} cover_info -se "$coverquery" > ${RESULTS_FILE}
+
+    if [ ${RESULTS_FILE} ]; then
+        while read id fullurl; do
+            processImage ${id} ${fullurl} &
+        done < ${RESULTS_FILE}
+        wait
+
+        mysql -uroot -p${DB_PASSWORD} cover_info -e "$(< ${SHM_FILE})"
+    else
+        echo "File is empty, no more covers"
+    fi
 }
 
 getCoverQuery() {
     local images_per_group=$1
+    local offset=$2
     echo "\
     SELECT \
         id,\
@@ -22,7 +49,8 @@ getCoverQuery() {
         from covers \
         left join cover_imports on covers.id = cover_imports.coverid \
         where cover_imports.coverid IS NULL \
-        limit $images_per_group"
+        limit $images_per_group \
+        offset $offset"
 }
 
 getCoverLogInsertSuccessQuery() {
@@ -93,18 +121,23 @@ processImage() {
     echo -e ${log}
 }
 
-SHM_FILE=/dev/shm/coversqls
-LIMIT=200000
+SHM_DIR=/dev/shm
+LIMIT=30
 IMAGES_PER_GROUP=5
+THREADS=2
 
 while :
 do
     case $1 in
-        --images-per-group)
+        --threads=*)
+            THREADS=${1#*=}
+            shift
+            ;;
+        --images-per-group=*)
             IMAGES_PER_GROUP=${1#*=}
             shift
             ;;
-        --limit)
+        --limit=*)
             LIMIT=${1#*=}
             shift
             ;;
@@ -133,22 +166,14 @@ DOWNLOAD_DIR_TMP=${DIR}/download_tmp
 mkdir -p ${DOWNLOAD_DIR_TMP}
 chmod a+w ${DOWNLOAD_DIR_TMP}
 
-for ((a=0; a < LIMIT; a+=${IMAGES_PER_GROUP})); do
-    rm -f ${SHM_FILE} && touch ${SHM_FILE}
+processed_covers=0
 
-    echo "Fetching ${IMAGES_PER_GROUP} covers, cover id offset ${a}"
-    coverquery=$(getCoverQuery ${IMAGES_PER_GROUP})
-    coverimportlogqueries=""
-    coverimporterrorlogqueries=""
-
-    mysql -uroot -p$DB_PASSWORD cover_info -se "$coverquery" > ${DIR}/results.txt
-
-    while read id fullurl; do
-        processImage ${id} ${fullurl} &
-    done < ${DIR}/results.txt
-
+while [ ${processed_covers} -lt ${LIMIT} ]; do
+    for ((thread_id=0; thread_id < THREADS; thread_id++)); do
+        processCovers ${thread_id} &
+    done
     wait
-
-    mysql -uroot -p$DB_PASSWORD cover_info -e "$(< ${SHM_FILE})"
-
+    processed_covers=$(($processed_covers + $THREADS * $IMAGES_PER_GROUP))
 done
+
+echo "Done with $THREADS threads and $IMAGES_PER_GROUP images per group"
