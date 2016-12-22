@@ -2,8 +2,16 @@
 
 . /home/container.properties
 
+LIMIT_DEFAULT=1000000
+IMAGES_PER_GROUP_DEFAULT=2
+THREADS_DEFAULT=5
+
+LIMIT=${LIMIT_DEFAULT}
+IMAGES_PER_GROUP=${IMAGES_PER_GROUP_DEFAULT}
+THREADS=${THREADS_DEFAULT}
+
 usage(){
-  echo "Usage: $0 [--help | [--threads=<Number of threads>]|2 [--images-per-group=<Number of images processed in a row>]|30 [--limit=<Number of images to process>]|1000000"
+  echo "Usage: $0 [--help | [--threads=<Number of threads>]|$THREADS_DEFAULT [--images-per-group=<Number of images processed in a row>]|$IMAGES_PER_GROUP_DEFAULT [--limit=<Number of images to process>]|$LIMIT_DEFAULT"
   exit 1
 }
 
@@ -122,9 +130,6 @@ processImage() {
 }
 
 SHM_DIR=/dev/shm
-LIMIT=30
-IMAGES_PER_GROUP=5
-THREADS=2
 
 while :
 do
