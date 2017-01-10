@@ -31,7 +31,7 @@ processCovers() {
 
     if [ ${RESULTS_FILE} ]; then
         while read id fullurl; do
-            processImage ${id} ${fullurl} &
+            processImage ${id} ${fullurl} ${thread_id} &
         done < ${RESULTS_FILE}
         wait
 
@@ -44,33 +44,19 @@ processCovers() {
 getCoverQuery() {
     local images_per_group=$1
     local offset=$2
-    echo "\
-    SELECT \
-        id,\
-        concat(\
-            'http://outducks.org/', \
-            sitecode,
-            '/',
-            case sitecode when 'webusers' then 'webusers/' else '' end, \
-            url\
-        ) as fullurl \
-        from covers \
-        left join cover_imports on covers.id = cover_imports.coverid \
-        where cover_imports.coverid IS NULL \
-        limit $images_per_group \
-        offset $offset"
+    echo `cat ${DIR}/sql/get-imported-covers.sql | sed "s/_IMAGES_PER_GROUP_/$images_per_group/" | sed "s/_COVER_OFFSET_/$offset/"`
 }
 
 getCoverLogInsertSuccessQuery() {
     local id=$1
     local datetime=$(date +'%F %T')
-    echo "insert into cover_imports(coverid,imported) values ('$id','$datetime');"
+    echo `cat ${DIR}/sql/log-cover-import-success.sql | sed "s/_COVERID_/$id/" | sed "s/_IMPORT_DATE_/$datetime/"`
 }
 
 getCoverLogInsertErrorQuery() {
     local id=$1
     local error=$2
-    echo "insert into cover_imports(coverid,import_error) values ('$id','$error');"
+    echo `cat ${DIR}/sql/log-cover-import-error.sql | sed "s/_COVERID_/$id/" | sed "s/_ERROR_MESSAGE_/$error/"`
 }
 
 downloadPicture() {
@@ -89,13 +75,15 @@ downloadPicture() {
 }
 
 addQueryToSqlList() {
-    str=$1
+    SHM_FILE=${SHM_DIR}/coversqls-$1
+    str=$2
     echo -n "$str" >>${SHM_FILE};
 }
 
 processImage() {
     local id=$1
     local fullurl=$2
+    local thread_id=$3
 
     output=${DOWNLOAD_DIR_TMP}/cover_${id}.jpg
     fullurl=$(echo ${fullurl}|tr -d '\r'|tr -d '\n')
@@ -103,14 +91,14 @@ processImage() {
     log="\nid: $id, fullurl: $fullurl, fullurlHr: $fullurlHr\n"
 
     if downloadPicture ${fullurlHr} ${output}; then
-        log=${log}"Downloaded ${fullurlHr}\n"
+        log=${log}"Downloaded HR version ${fullurlHr}\n"
     else
         log=${log}"Failed to download HR version ${fullurlHr}\n"
         if downloadPicture ${fullurl} ${output}; then
             log=${log}"Downloaded ${fullurl}\n"
         else
             log=${log}"Failed to download ${fullurl}\n"
-            addQueryToSqlList "$(getCoverLogInsertErrorQuery ${id} "Failed to download")"
+            addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} "Failed to download")"
             rm -f ${output}
             echo -e ${log}
             return
@@ -120,10 +108,10 @@ processImage() {
     PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${output} http://${PASTEC_CONTAINER_NAME}:4212/index/images/${id})
     if [[ ${PASTEC_OUTPUT} == *"IMAGE_ADDED"* ]]; then
         log=${log}"Imported\n"
-        addQueryToSqlList "$(getCoverLogInsertSuccessQuery ${id})"
+        addQueryToSqlList ${thread_id} "$(getCoverLogInsertSuccessQuery ${id})"
     else
         log=${log}"Failed to import : $PASTEC_OUTPUT\n"
-        addQueryToSqlList "$(getCoverLogInsertErrorQuery ${id} ${PASTEC_OUTPUT})"
+        addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} ${PASTEC_OUTPUT})"
     fi
     rm -f ${output}
     echo -e ${log}
