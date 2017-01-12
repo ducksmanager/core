@@ -29,7 +29,7 @@ processCovers() {
     coverquery=$(getCoverQuery ${IMAGES_PER_GROUP} ${offset})
     mysql -uroot -p${DB_PASSWORD} cover_info -se "$coverquery" > ${RESULTS_FILE}
 
-    if [ ${RESULTS_FILE} ]; then
+    if [ -s ${RESULTS_FILE} ]; then
         while read id fullurl; do
             processImage ${id} ${fullurl} ${thread_id} &
         done < ${RESULTS_FILE}
@@ -37,7 +37,7 @@ processCovers() {
 
         mysql -uroot -p${DB_PASSWORD} cover_info -e "$(< ${SHM_FILE})"
     else
-        echo "File is empty, no more covers"
+        echo "[Thread $thread_id] File is empty, no more covers"
     fi
 }
 
@@ -88,16 +88,16 @@ processImage() {
     output=${DOWNLOAD_DIR_TMP}/cover_${id}.jpg
     fullurl=$(echo ${fullurl}|tr -d '\r'|tr -d '\n')
     fullurlHr="https://coa.inducks.org/hr.php?image="${fullurl}
-    log="\nid: $id, fullurl: $fullurl, fullurlHr: $fullurlHr\n"
+    log="\n[Thread $thread_id] id: $id, fullurl: $fullurl, fullurlHr: $fullurlHr\n"
 
     if downloadPicture ${fullurlHr} ${output}; then
-        log=${log}"Downloaded HR version ${fullurlHr}\n"
+        log=${log}"[Thread $thread_id] Downloaded HR version ${fullurlHr}\n"
     else
-        log=${log}"Failed to download HR version ${fullurlHr}\n"
+        log=${log}"[Thread $thread_id] Failed to download HR version ${fullurlHr}\n"
         if downloadPicture ${fullurl} ${output}; then
-            log=${log}"Downloaded ${fullurl}\n"
+            log=${log}"[Thread $thread_id] Downloaded ${fullurl}\n"
         else
-            log=${log}"Failed to download ${fullurl}\n"
+            log=${log}"[Thread $thread_id] Failed to download ${fullurl}\n"
             addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} "Failed to download")"
             rm -f ${output}
             echo -e ${log}
@@ -107,10 +107,10 @@ processImage() {
 
     PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${output} http://${PASTEC_CONTAINER_NAME}:4212/index/images/${id})
     if [[ ${PASTEC_OUTPUT} == *"IMAGE_ADDED"* ]]; then
-        log=${log}"Imported\n"
+        log=${log}"[Thread $thread_id] Imported\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertSuccessQuery ${id})"
     else
-        log=${log}"Failed to import : $PASTEC_OUTPUT\n"
+        log=${log}"[Thread $thread_id] Failed to import : $PASTEC_OUTPUT\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} ${PASTEC_OUTPUT})"
     fi
     rm -f ${output}
@@ -160,13 +160,23 @@ mkdir -p ${DOWNLOAD_DIR_TMP}
 chmod a+w ${DOWNLOAD_DIR_TMP}
 
 processed_covers=0
+no_more_covers=false
 
-while [ ${processed_covers} -lt ${LIMIT} ]; do
+while [ ${processed_covers} -lt ${LIMIT} ] && [ ${no_more_covers} = "false" ] ; do
     for ((thread_id=0; thread_id < THREADS; thread_id++)); do
         processCovers ${thread_id} &
     done
     wait
-    processed_covers=$(($processed_covers + $THREADS * $IMAGES_PER_GROUP))
+
+    for ((thread_id=0; thread_id < THREADS; thread_id++)); do
+        RESULTS_FILE=${DIR}/results-${thread_id}.txt
+        if [ -s ${RESULTS_FILE} ]; then
+            processed_covers=$(($processed_covers + $IMAGES_PER_GROUP))
+        else
+            no_more_covers=true
+        fi
+    done
+
 done
 
-echo "Done with $THREADS threads and $IMAGES_PER_GROUP images per group"
+echo "Processed $processed_covers covers with $THREADS threads and $IMAGES_PER_GROUP images per group"
