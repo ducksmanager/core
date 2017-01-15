@@ -11,7 +11,12 @@ mkdir -p ${isv_path}
 cd ${inducks_path}
 
 wget http://coa.inducks.org/inducks/isv.7z && 7zr x isv.7z && rm isv.7z
-for f in ${isv_path}/*.isv; do iconv -f utf-8 -t utf-8 -c "$f" > "$f.clean" && mv -f "$f.clean" "$f"; done # Ignore lines with invalid UTF-8 characters
+
+# Ignore lines with invalid UTF-8 characters
+for f in ${isv_path}/*.isv; do
+     iconv -f utf-8 -t utf-8 -c "$f" > "$f.clean" \
+  && mv -f "$f.clean" "$f"
+done
 mv ${isv_path}/createtables.sql ${inducks_path}
 
 cp ${inducks_path}/createtables.sql ${inducks_path}/createtables_clean.sql
@@ -21,6 +26,4 @@ perl -0777 -i -pe 's%(# End of file)$%ALTER TABLE inducks_entry ADD FULLTEXT IND
 
 mysql --user=root --password=${DB_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS `coa` /*!40100 DEFAULT CHARACTER SET utf8 */;'
 
-set +x
-echo "mysql -v --user=root --password=xxxxxxxx --default_character_set utf8 coa --local_infile=1 < ${inducks_path}/createtables_clean.sql" 1>&2
-mysql -v --user=root --password=${DB_PASSWORD} --default_character_set utf8 coa --local_infile=1 < ${inducks_path}/createtables_clean.sql
+mysql --user=root --password=${DB_PASSWORD} -v --default_character_set utf8 coa --local_infile=1 < ${inducks_path}/createtables_clean.sql
