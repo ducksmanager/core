@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS dm_stats;
+CREATE DATABASE dm_stats;

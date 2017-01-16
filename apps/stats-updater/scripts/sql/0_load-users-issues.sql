@@ -1,0 +1,9 @@
+LOAD DATA LOW_PRIORITY LOCAL INFILE 'export/numeros_simple.csv'
+REPLACE
+INTO TABLE dm_stats.numeros_simple
+CHARACTER SET utf8mb4
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(ID_Utilisateur, Publicationcode, Numero);
+
+SHOW WARNINGS;
