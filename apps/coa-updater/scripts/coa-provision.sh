@@ -24,6 +24,13 @@ cp ${inducks_path}/createtables.sql ${inducks_path}/createtables_clean.sql
 perl -0777 -i -pe 's%(CREATE TABLE (?:IF NOT EXISTS )?induckspriv[^;]+;)|([^\n]*induckspriv[^\n]*)%%gms' ${inducks_path}/createtables_clean.sql # Remove mentions of inducks_priv* tables
 perl -0777 -i -pe 's%(# End of file)$%ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);\n\n\1%gms' ${inducks_path}/createtables_clean.sql # Add full text index on entry titles
 
+perl -0777 -i -pe 's%KEY pk0%CONSTRAINT `PRIMARY` PRIMARY KEY%gms' ${inducks_path}/createtables_clean.sql # Replace "pk0" indexes with actual primary keys
+for i in $(seq 0 5);
+do
+  perl -0777 -i -pe 's%(CREATE TABLE ((?:(?!_temp).)+?)_temp(?:(?!KEY fk'${i}')[^;])+?)KEY (fk)('${i}')%$1KEY $3_$2$4%gms' ${inducks_path}/createtables_clean.sql # Prefix foreign key names with table names
+done
+
+
 mysql --user=root --password=${DB_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS `coa` /*!40100 DEFAULT CHARACTER SET utf8 */;'
 
 mysql --user=root --password=${DB_PASSWORD} -v --default_character_set utf8 coa --local_infile=1 < ${inducks_path}/createtables_clean.sql
