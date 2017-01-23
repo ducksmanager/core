@@ -30,6 +30,7 @@ do
   perl -0777 -i -pe 's%(CREATE TABLE ((?:(?!_temp).)+?)_temp(?:(?!KEY fk'${i}')[^;])+?)KEY (fk)('${i}')%$1KEY $3_$2$4%gms' ${inducks_path}/createtables_clean.sql # Prefix foreign key names with table names
 done
 
+perl -0777 -i -pe 's%(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));%$1$2$4 fulltext_$3 $5;%gs' ${inducks_path}/createtables_clean.sql # Prefix fulltext indexes with table name
 
 mysql --user=root --password=${DB_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS `coa` /*!40100 DEFAULT CHARACTER SET utf8 */;'
 
