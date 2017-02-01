@@ -33,5 +33,14 @@ done
 perl -0777 -i -pe 's%(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));%$1$2$4 fulltext_$3 $5;%gs' ${inducks_path}/createtables_clean.sql # Prefix fulltext indexes with table name
 
 mysql --user=root --password=${DB_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS `coa` /*!40100 DEFAULT CHARACTER SET utf8 */;'
-
 mysql --user=root --password=${DB_PASSWORD} -v --default_character_set utf8 coa --local_infile=1 < ${inducks_path}/createtables_clean.sql
+
+
+mysql --user=root --password=${DB_PASSWORD} information_schema -Nse "SELECT c.TABLE_NAME, c.COLUMN_NAME FROM columns c INNER JOIN statistics s ON s.TABLE_NAME = c.TABLE_NAME AND s.COLUMN_NAME = c.COLUMN_NAME WHERE c.TABLE_SCHEMA = 'coa' AND c.DATA_TYPE='text'" | \
+while read table_name column_name; do
+  echo "Converting $table_name.$column_name from text to varchar..."
+  get_column_max_length_query="select max(length($column_name)) from $table_name"
+  max_length=`mysql -uroot -pchangeme coa -Nse "$get_column_max_length_query"`
+  mysql --user=root --password=${DB_PASSWORD} coa -e "ALTER TABLE $table_name MODIFY COLUMN $column_name varchar($max_length)"
+  echo "Converted $table_name.$column_name from text to varchar($max_length)"
+done
