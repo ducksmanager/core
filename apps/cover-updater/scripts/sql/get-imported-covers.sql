@@ -1,7 +1,7 @@
 SELECT 
   id,
   concat(
-    'http://outducks.org/',
+    'https://outducks.org/',
     sitecode,
     '/',
     case sitecode when 'webusers' then 'webusers/' else '' end,
