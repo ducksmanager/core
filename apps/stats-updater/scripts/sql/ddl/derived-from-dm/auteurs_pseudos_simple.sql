@@ -1,5 +1,5 @@
-USE dm_stats;
-CREATE TABLE dm_stats.auteurs_pseudos_simple
+USE dm_stats_new;
+CREATE TABLE dm_stats_new.auteurs_pseudos_simple
 (
   ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   ID_User INT(11) NOT NULL,
@@ -7,4 +7,4 @@ CREATE TABLE dm_stats.auteurs_pseudos_simple
   Notation TINYINT(1)
 );
 CREATE INDEX index_auteur_inducks ON auteurs_pseudos_simple (NomAuteurAbrege);
-CREATE UNIQUE INDEX auteurs_pseudos_simple_ID_User_NomAuteurAbrege_uindex ON dm_stats.auteurs_pseudos_simple (ID_User, NomAuteurAbrege);
+CREATE UNIQUE INDEX auteurs_pseudos_simple_ID_User_NomAuteurAbrege_uindex ON dm_stats_new.auteurs_pseudos_simple (ID_User, NomAuteurAbrege);

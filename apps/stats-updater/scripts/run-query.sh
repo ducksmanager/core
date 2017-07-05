@@ -2,4 +2,4 @@
 
 . /home/container.properties
 
-mysql -uroot -p$DB_PASSWORD < $1
+mysql -v -uroot -p$DB_PASSWORD < $1

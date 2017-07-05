@@ -4,7 +4,7 @@
 
 sql_dir=/home/scripts/sql/
 
-# Create local database dm_stats
+# Create local database dm_stats_new
 mysql -v --user=root --password=${DB_PASSWORD} < ${sql_dir}ddl/create-db.sql
 mysql -v --user=root --password=${DB_PASSWORD} < ${sql_dir}ddl/derived-from-dm/auteurs_pseudos_simple.sql
 mysql -v --user=root --password=${DB_PASSWORD} < ${sql_dir}ddl/derived-from-dm/numeros_simple.sql

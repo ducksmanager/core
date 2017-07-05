@@ -5,5 +5,5 @@ select distinct sv.storycode, i.publicationcode, i.issuenumber
     inner join coa.inducks_issue i on e.issuecode = i.issuecode
   where sj.personcode in (
     select distinct a_p.NomAuteurAbrege
-    from dm_stats.auteurs_pseudos_simple a_p
+    from dm_stats_new.auteurs_pseudos_simple a_p
   );

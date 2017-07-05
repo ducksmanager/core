@@ -1,2 +1,2 @@
-DROP DATABASE IF EXISTS dm_stats;
-CREATE DATABASE dm_stats;
+DROP DATABASE IF EXISTS dm_stats_new;
+CREATE DATABASE dm_stats_new;
