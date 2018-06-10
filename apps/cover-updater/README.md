@@ -1,41 +1,24 @@
 # duck-cover-id
-Storing Inducks cover info in a MariaDB database and processing them through Pastec
-
-Forked from [bperel/mariadb-server-setup-helper](https://github.com/bperel/mariadb-server-setup-helper)
+Store cover info from a COA database and process them through Pastec.
 
 ### Requirements
 
-* A running [coa-box](https://github.com/bperel/coa-box-docker) Docker container
-* A running [pastec](https://github.com/Visu4link/pastec) Docker container running on the same network as the coa-box : `docker run --restart always -d --net=dm_network --name pastec pastec`
+* Make the scripts executable first: `chmod -R +x scripts`
+* An accessible COA database (see [schema](https://github.com/bperel/dm-server/blob/master/sql/schema-coa.sql))
+* A running [pastec](https://github.com/Visu4link/pastec) instance : `docker run --restart always -d --name pastec bperel/pastec-ubuntu-1704-timestamps`
 
-### Image creation
+### Execution
+
+The COA database and Pastec need to be accessible to make the importation and the processing of the covers work. In the following examples we suppose that both are on a Docker network named `dmserver_cover-id-network`.
+
+When created, the container runs the following steps :
+* Import the covers from a COA database and store them into a Covers database (takes a few minutes)
+* Process the covers (takes ~ 0.1 second per cover).
 
 ```bash
-bash util/docker-create-image.sh duck-cover-id
-```
-
-### Container creation
-
-For instance:
-
-```bash
-bash util/docker-create-container.sh duck-cover-id duck-cover-id-box-1 44008 dm_network
-```
-
-### DB creation
-```bash
-chmod a+x -R scripts/*
-docker exec -it duck-cover-id-box-1 /bin/bash -c "bash /home/scripts/run-query.sh \"/home/scripts/sql/ddl.sql"\"
-```
-
-### Provisionning
-
-Import the covers list from COA (takes a few minutes):
-```bash
-docker exec -it duck-cover-id-box-1 /bin/bash -c "/home/scripts/import-covers.sh"
-```
-
-Make Pastec process the covers (takes ~ 0.1 second per cover) :
-```bash
-docker exec -it duck-cover-id-box-1 /bin/bash -c "/home/scripts/process-covers.sh"
+docker run -it --rm \
+           --network dmserver_cover-id-network \
+           --env-file .env \
+           bperel/duck-cover-id-updater \
+           bash -c /home/scripts/import-covers.sh
 ```

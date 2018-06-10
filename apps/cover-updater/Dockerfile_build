@@ -1,5 +1,0 @@
-FROM mariadb:10.1
-MAINTAINER Bruno Perel
-
-RUN bash -c "sed -i \"s%max_allowed_packet.*%max_allowed_packet      = 128M%g\" /etc/mysql/my.cnf" && \
-    bash -c "sed -i \"s%#bind-address=0.0.0.0%bind-address=0.0.0.0%g\" /etc/mysql/my.cnf"

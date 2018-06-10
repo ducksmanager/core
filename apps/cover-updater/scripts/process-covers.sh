@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-. /home/container.properties
-
 LIMIT_DEFAULT=1000000
 IMAGES_PER_GROUP_DEFAULT=2
 THREADS_DEFAULT=5
@@ -22,12 +20,12 @@ processCovers() {
     echo "[Thread $thread_id] Fetching ${IMAGES_PER_GROUP} covers, cover id offset ${processed_covers}"
 
     SHM_FILE=${SHM_DIR}/coversqls-${thread_id}
-    RESULTS_FILE=${DIR}/results-${thread_id}.txt
+    RESULTS_FILE=${DOWNLOAD_DIR_TMP}/results-${thread_id}.txt
 
     rm -f ${SHM_FILE} && touch ${SHM_FILE}
 
     coverquery=$(getCoverQuery ${IMAGES_PER_GROUP} ${offset})
-    mysql -uroot -p${DB_PASSWORD} cover_info -se "$coverquery" > ${RESULTS_FILE}
+    mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -se "$coverquery" > ${RESULTS_FILE}
 
     if [ -s ${RESULTS_FILE} ]; then
         while read id fullurl; do
@@ -35,7 +33,7 @@ processCovers() {
         done < ${RESULTS_FILE}
         wait
 
-        mysql -uroot -p${DB_PASSWORD} cover_info -e "$(< ${SHM_FILE})"
+        mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -e "$(< ${SHM_FILE})"
     else
         echo "[Thread $thread_id] File is empty, no more covers"
     fi
@@ -105,7 +103,7 @@ processImage() {
         fi
     fi
 
-    PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${output} http://${PASTEC_CONTAINER_NAME}:4212/index/images/${id})
+    PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${output} http://${PASTEC_HOST}:${PASTEC_PORT}/index/images/${id})
     if [[ ${PASTEC_OUTPUT} == *"IMAGE_ADDED"* ]]; then
         log=${log}"[Thread $thread_id] Imported\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertSuccessQuery ${id})"
@@ -154,7 +152,7 @@ do
 done
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-DOWNLOAD_DIR_TMP=${DIR}/download_tmp
+DOWNLOAD_DIR_TMP=/tmp/download_tmp
 
 mkdir -p ${DOWNLOAD_DIR_TMP}
 chmod a+w ${DOWNLOAD_DIR_TMP}
@@ -169,7 +167,7 @@ while [ ${processed_covers} -lt ${LIMIT} ] && [ ${no_more_covers} = "false" ] ; 
     wait
 
     for ((thread_id=0; thread_id < THREADS; thread_id++)); do
-        RESULTS_FILE=${DIR}/results-${thread_id}.txt
+        RESULTS_FILE=${DOWNLOAD_DIR_TMP}/results-${thread_id}.txt
         if [ -s ${RESULTS_FILE} ]; then
             processed_covers=$(($processed_covers + $IMAGES_PER_GROUP))
         else
