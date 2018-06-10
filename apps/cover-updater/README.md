@@ -20,5 +20,5 @@ docker run -it --rm \
            --network dmserver_cover-id-network \
            --env-file .env \
            bperel/duck-cover-id-updater \
-           bash -c /home/scripts/import-covers.sh
+           bash -c "bash -c /home/scripts/import-covers.sh && bash -c /home/scripts/process-covers.sh"
 ```
