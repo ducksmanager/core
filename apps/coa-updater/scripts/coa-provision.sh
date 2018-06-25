@@ -5,9 +5,6 @@ if ! mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} -e ";" 
     exit 1
 fi
 
-echo "OK"
-exit 0
-
 inducks_path=/home/inducks
 isv_path=$inducks_path/isv
 
