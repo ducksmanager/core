@@ -1,4 +1,4 @@
-LOAD DATA LOW_PRIORITY LOCAL INFILE 'export/numeros_simple.csv'
+LOAD DATA LOW_PRIORITY LOCAL INFILE 'export_dir/numeros_simple.csv'
 REPLACE
 INTO TABLE numeros_simple
 CHARACTER SET utf8mb4

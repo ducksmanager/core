@@ -1,4 +1,4 @@
-LOAD DATA LOW_PRIORITY LOCAL INFILE 'export/auteurs_pseudos_simple.csv'
+LOAD DATA LOW_PRIORITY LOCAL INFILE 'export_dir/auteurs_pseudos_simple.csv'
 REPLACE
 INTO TABLE auteurs_pseudos_simple
 CHARACTER SET utf8mb4
