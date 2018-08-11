@@ -16,7 +16,7 @@ envvars=(\
 )
 
 for envvar in "${envvars[@]}"; do
-  [ -z "$envvar" ] && echo "$envvar is empty, aborting" && exit 1
+  [ -z "${!envvar}" ] && echo "$envvar is empty, aborting" && exit 1
 done
 
 find ${sh_dir}/sql -name '*.sql' | while read -r file; do
