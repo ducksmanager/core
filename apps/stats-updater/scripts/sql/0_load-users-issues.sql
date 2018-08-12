@@ -1,9 +1,8 @@
-LOAD DATA LOW_PRIORITY LOCAL INFILE 'export_dir/numeros_simple.csv'
-REPLACE
+LOAD DATA LOW_PRIORITY LOCAL INFILE 'csv_results/dm-users-issues.csv'
+IGNORE
 INTO TABLE numeros_simple
 CHARACTER SET utf8mb4
-FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n'
-IGNORE 1 LINES
+FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n'
 (ID_Utilisateur, Publicationcode, Numero);
 
 -- Cleanup issues belonging to users who don't monitor authors

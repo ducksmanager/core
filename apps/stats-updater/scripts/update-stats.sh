@@ -2,16 +2,17 @@
 
 sh_dir=/home/scripts
 export_dir=${sh_dir}/export
-coa_results_dir=${sh_dir}/coa_results
+csv_results=${sh_dir}/csv_results
 
 envvars=(\
+  MYSQL_DM_HOST \
+  MYSQL_DM_DATABASE \
   MYSQL_DM_STATS_HOST \
   MYSQL_DM_STATS_DATABASE \
   MYSQL_COA_HOST \
   MYSQL_COA_DATABASE \
   MYSQL_PASSWORD \
-  DUCKSMANAGER_SECURITY_PASSWORD \
-  coa_results_dir \
+  csv_results \
   export_dir \
 )
 
