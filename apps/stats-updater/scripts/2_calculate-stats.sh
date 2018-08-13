@@ -20,7 +20,6 @@ head ${csv_results}/dm-users-authors.csv
 mysql -v -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_STATS_HOST} ${MYSQL_DM_STATS_DATABASE}_new < 0_load-users-authors.sql
 mysql -v -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_STATS_HOST} ${MYSQL_DM_STATS_DATABASE}_new < 0_load-users-issues.sql
 
-exit 0
 # Import DM data to the ${MYSQL_DM_STATS_DATABASE}_new DB on the COA server
 mysql -v -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_COA_HOST} ${MYSQL_DM_STATS_DATABASE}_new < 0_load-users-authors.sql
 
