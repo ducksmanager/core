@@ -13,8 +13,6 @@ mysql -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_HOST} -s ${MYSQL_DM_DATABASE} < 0
 mysql -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_HOST} -s ${MYSQL_DM_DATABASE} < 0_dm-get-users-authors.sql \
   > ${csv_results}/dm-users-authors.csv 2>&1
 
-head ${csv_results}/dm-users-authors.csv
-
 
 # Import DM data to the local ${MYSQL_DM_STATS_DATABASE}_new DB
 mysql -v -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_STATS_HOST} ${MYSQL_DM_STATS_DATABASE}_new < 0_load-users-authors.sql
