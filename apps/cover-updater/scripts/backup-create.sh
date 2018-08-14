@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
+pastec_local_backup_dir=$1
+remote_backup_config=$2 # For instance user@192.168.0.2:/home/user/workspace/mybackup
 
-pastec_download_dir=/tmp/
-backup_date=`date +%Y-%m-%d`
-pastec_backupfile=${pastec_backupfile}
+container_name=`docker-compose ps -q pastec`
+container_home=/pastec/build
+backup_file_name=pastec-index-last.dat
+backup_file_name_compressed=pastec-index-`date +%Y-%m-%d`.dat.7z
 
-curl -X POST -d '{"type":"WRITE", "index_path":"docker_index_'${backup_date}'.dat"}' \
-     http://${PASTEC_HOST}:${PASTEC_PORT}/index/io && \
-docker cp ${PASTEC_HOST}:${PASTEC_CONTAINER_HOME}docker_index_${backup_date}.dat \
-          ${pastec_download_dir} && \
+docker-compose exec -T pastec curl -X POST -d '{"type":"WRITE", "index_path":"'${backup_file_name}'"}' http://127.0.0.1:4212/index/io
+docker cp ${container_name}:${container_home}/${backup_file_name} \
+          ${pastec_local_backup_dir}/${backup_file_name} && \
 \
-7z a -m0=lzma2 ${pastec_backupfile}.7z \
-               ${pastec_backupfile} && \
-scp ${pastec_backupfile}.7z \
-    ${BACKUP_SERVER_CONNECTION_STRING} && \
-rm ${pastec_backupfile}*
+7z a -m0=lzma2 ${pastec_local_backup_dir}/${backup_file_name_compressed} \
+               ${pastec_local_backup_dir}/${backup_file_name} && \
+scp ${pastec_local_backup_dir}/${backup_file_name_compressed} \
+    ${remote_backup_config}
