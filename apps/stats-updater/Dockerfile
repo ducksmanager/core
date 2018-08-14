@@ -1,8 +1,7 @@
-FROM debian:jessie
+FROM alpine
 MAINTAINER Bruno Perel
 
-RUN apt-get update && \
-    apt-get install -y mariadb-client wget
+RUN apk add mariadb-client bash
 
 COPY scripts /home/scripts
 

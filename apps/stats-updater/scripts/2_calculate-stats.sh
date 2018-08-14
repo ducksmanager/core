@@ -1,8 +1,5 @@
 #!/bin/sh
 
-export_dir=/home/scripts/export
-
-mkdir -p ${export_dir}
 mkdir -p ${csv_results}
 
 cd /home/scripts/sql
@@ -34,5 +31,5 @@ mysql -v -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_STATS_HOST} ${MYSQL_DM_STATS_D
 mysql -v -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_STATS_HOST} ${MYSQL_DM_STATS_DATABASE}_new < 4_dm_stats-store-authors-stories.sql
 
 
-# Calculate the statistics locally
+# Calculate the statistics
 mysql -v -uroot -p${MYSQL_PASSWORD} -h ${MYSQL_DM_STATS_HOST} ${MYSQL_DM_STATS_DATABASE}_new < 5_calculate-stats.sql
