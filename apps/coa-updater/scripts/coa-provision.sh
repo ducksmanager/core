@@ -25,7 +25,14 @@ mv ${isv_path}/createtables.sql ${inducks_path}
 cp ${inducks_path}/createtables.sql ${inducks_path}/createtables_clean.sql
 
 perl -0777 -i -pe 's%(CREATE TABLE (?:IF NOT EXISTS )?induckspriv[^;]+;)|([^\n]*induckspriv[^\n]*)%%gms' ${inducks_path}/createtables_clean.sql # Remove mentions of inducks_priv* tables
-perl -0777 -i -pe 's%(# End of file)$%ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);\n\n\1%gms' ${inducks_path}/createtables_clean.sql # Add full text index on entry titles
+
+perl -0777 -i -pe 's%# End of file%%gms' ${inducks_path}/createtables_clean.sql # Remove end-of-file comment
+
+cat << EOF >> ${inducks_path}/createtables_clean.sql
+ALTER TABLE inducks_entryurl ADD id INT AUTO_INCREMENT NOT NULL, ADD PRIMARY KEY (id);
+
+ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title); # Add full text index on entry titles
+EOF
 
 perl -0777 -i -pe 's%KEY pk0%CONSTRAINT `PRIMARY` PRIMARY KEY%gms' ${inducks_path}/createtables_clean.sql # Replace "pk0" indexes with actual primary keys
 for i in $(seq 0 5);
