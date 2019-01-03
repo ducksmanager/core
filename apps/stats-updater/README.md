@@ -2,7 +2,7 @@
 
 Daily stats calculation for DucksManager
 
-### Provisinning
+### Provisioning
 
 Provisioning is executed when the container starts.
 
