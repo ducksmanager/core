@@ -1,4 +1,4 @@
-# coa-box-docker
+# coa-updater
 A simple way to setup and provision a COA database.
 
 ### Provisinning
