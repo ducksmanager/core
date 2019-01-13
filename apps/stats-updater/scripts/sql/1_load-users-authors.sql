@@ -1,6 +1,6 @@
-LOAD DATA LOW_PRIORITY LOCAL INFILE 'csv_results/dm-users-authors.csv'
+LOAD DATA LOW_PRIORITY LOCAL INFILE 'csv_results_dir/dm-users-authors.csv'
 IGNORE
-INTO TABLE auteurs_pseudos_simple
+INTO TABLE auteurs_pseudos
 CHARACTER SET utf8mb4
 FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '\"' ESCAPED BY '\"' LINES TERMINATED BY '\n'
 (ID_User, NomAuteurAbrege, Notation);

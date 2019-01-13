@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sh_dir=/home/scripts
-csv_results=${sh_dir}/csv_results
+csv_results_dir=${sh_dir}/csv_results
 
 envvars=(\
   MYSQL_DM_HOST \
@@ -11,7 +11,7 @@ envvars=(\
   MYSQL_COA_HOST \
   MYSQL_COA_DATABASE \
   MYSQL_PASSWORD \
-  csv_results \
+  csv_results_dir \
 )
 
 for envvar in "${envvars[@]}"; do

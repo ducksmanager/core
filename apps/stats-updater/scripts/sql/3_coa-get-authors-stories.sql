@@ -5,7 +5,7 @@ select distinct sj.personcode, sv.storycode
     and sv.kind='n'
     and sj.personcode in (
       select distinct a_p.NomAuteurAbrege
-      from MYSQL_DM_STATS_DATABASE_new.auteurs_pseudos_simple a_p
+      from MYSQL_DM_STATS_DATABASE_new.auteurs_pseudos a_p
     )
     and exists (
       select 1

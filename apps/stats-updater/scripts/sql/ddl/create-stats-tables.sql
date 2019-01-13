@@ -44,6 +44,6 @@ CREATE TABLE utilisateurs_publications_suggerees
     issuenumber VARCHAR(12) NOT NULL,
     Score INT(11) NOT NULL,
     CONSTRAINT `PRIMARY` PRIMARY KEY (ID_User, publicationcode, issuenumber),
-    CONSTRAINT utilisateurs_publications_suggerees_pseudos_fk FOREIGN KEY (ID_User) REFERENCES auteurs_pseudos_simple (ID_User)
+    CONSTRAINT utilisateurs_publications_suggerees_pseudos_fk FOREIGN KEY (ID_User) REFERENCES auteurs_pseudos (ID_User)
 );
 CREATE INDEX user ON utilisateurs_publications_suggerees (ID_User);

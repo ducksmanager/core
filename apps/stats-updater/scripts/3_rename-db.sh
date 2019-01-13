@@ -6,7 +6,7 @@ echo "DROP DATABASE IF EXISTS ${MYSQL_DM_STATS_DATABASE}_old;CREATE DATABASE ${M
 sql_dir=/home/scripts/sql/
 tables=(\
   auteurs_histoires \
-  auteurs_pseudos_simple \
+  auteurs_pseudos \
   histoires_publications \
   numeros_simple \
   utilisateurs_histoires_manquantes \
