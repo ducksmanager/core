@@ -67,7 +67,6 @@ downloadPicture() {
             return 0
         fi
     else
-        echo "Failed"
         return -1
     fi
 }

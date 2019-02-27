@@ -2,7 +2,7 @@ FROM debian:jessie
 MAINTAINER Bruno Perel
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget curl mariadb-client && \
+    apt-get install -y --no-install-recommends wget curl mariadb-client ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 COPY scripts /home/scripts
