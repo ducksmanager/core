@@ -85,7 +85,7 @@ processImage() {
 
     output=${DOWNLOAD_DIR_TMP}/cover_${id}.jpg
     fullurl=$(echo ${fullurl}|tr -d '\r'|tr -d '\n')
-    fullurlHr="https://coa.inducks.org/hr.php?image="${fullurl}
+    fullurlHr="https://inducks.org/hr.php?normalsize=1&image="${fullurl}
     log="\n[Thread $thread_id] id: $id, fullurl: $fullurl, fullurlHr: $fullurlHr\n"
 
     if downloadPicture ${fullurlHr} ${output}; then
@@ -169,7 +169,8 @@ while [ ${processed_covers} -lt ${LIMIT} ] && [ ${no_more_covers} = "false" ] ; 
     for ((thread_id=0; thread_id < THREADS; thread_id++)); do
         RESULTS_FILE=${DOWNLOAD_DIR_TMP}/results-${thread_id}.txt
         if [ -s ${RESULTS_FILE} ]; then
-            processed_covers=$(($processed_covers + $IMAGES_PER_GROUP))
+            new_processed_covers=`grep -o 'Downloaded' ${SHM_DIR}/coversqls-$thread_id  | wc -l`
+            processed_covers=$(($processed_covers + $new_processed_covers))
         else
             no_more_covers=true
         fi
