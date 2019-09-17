@@ -43,6 +43,7 @@ CREATE TABLE utilisateurs_publications_manquantes
 );
 CREATE INDEX issue ON utilisateurs_publications_manquantes (ID_User, publicationcode, issuenumber);
 CREATE INDEX user_stories ON utilisateurs_publications_manquantes (ID_User, personcode, storycode);
+CREATE INDEX suggested ON utilisateurs_publications_manquantes (ID_User, publicationcode, issuenumber, oldestdate);
 
 CREATE TABLE utilisateurs_publications_suggerees
 (
