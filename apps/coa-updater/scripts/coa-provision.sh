@@ -13,7 +13,7 @@ mkdir -p ${isv_path}
 
 cd ${inducks_path}
 
-wget http://coa.inducks.org/inducks/isv.7z && 7zr x isv.7z && rm isv.7z
+wget http://coa.inducks.org/inducks/isv.tgz && tar zxvf isv.tgz && rm isv.tgz
 
 # Ignore lines with invalid UTF-8 characters
 for f in ${isv_path}/*.isv; do
