@@ -1,0 +1,45 @@
+{
+  "name": "edgecreator-nuxt",
+  "version": "1.0.0",
+  "description": "My brilliant Nuxt.js project",
+  "author": "Bruno Perel",
+  "private": true,
+  "scripts": {
+    "dev": "env $(cat .env | xargs) nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@minogin/vue-drag-resize-rotate": "^1.0.5",
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.1.3",
+    "bootstrap-vue": "^2.0.0",
+    "cookie-universal-nuxt": "^2.1.4",
+    "image-size": "^0.8.3",
+    "interact.js": "^1.2.8",
+    "nuxt": "^2.0.0",
+    "nuxt-svg-loader": "^1.2.0",
+    "raw-body": "^2.4.1",
+    "request": "^2.88.2",
+    "xmldom": "^0.3.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.1.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "babel-jest": "^24.1.0",
+    "jest": "^24.1.0",
+    "vue-jest": "^4.0.0-0"
+  }
+}
