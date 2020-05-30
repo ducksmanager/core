@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   props: {
@@ -46,7 +46,8 @@ export default {
       })
       this.options = optionsClone
       this.onOptionsSet()
-    }
+    },
+    ...mapMutations('currentStep', ['setStepNumber'])
   },
   mounted() {
     const vm = this

@@ -10,7 +10,7 @@
         </div>
       </b-col>
       <b-col>
-        <button @click="exportLogo">Export</button>
+        <b-button @click="exportLogo">Export</b-button>
       </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
@@ -31,8 +31,8 @@
             :class="step.component"
           >
             <component
-              :is="step.component"
-              v-if="$options.components[step.component]"
+              :is="`${step.component}Render`"
+              v-if="$options.components[`${step.component}Render`]"
               :step-number="stepNumber"
               :svg-group="step.svgGroupElement"
               :db-options="step.dbOptions"
@@ -53,40 +53,73 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <b-card no-body>
-          <b-tabs pills card vertical>
+          <b-tabs v-model="currentStepNumber" pills card vertical>
             <b-tab
               v-for="(step, stepNumber) in steps"
               :key="stepNumber"
-              :title="step.component.replace('Render', '')"
-              :active="currentStepNumber === stepNumber"
-              @click="currentStepNumber = stepNumber"
-              ><b-card-text v-if="step.component === 'RectangleFunction'">
-                <input
-                  type="color"
-                  name="Couleur"
-                  :value="
-                    currentStepOptions.fill === 'transparent'
-                      ? currentStepOptions.stroke
-                      : currentStepOptions.fill
-                  "
-                  @change="
-                    $root.$emit(
-                      'set-option',
-                      currentStepOptions.fill === 'transparent'
-                        ? 'stroke'
-                        : 'fill',
-                      $event.currentTarget.value
-                    )
-                  "
-                />
-                <b-form-checkbox
-                  :checked="currentStepOptions.fill !== 'transparent'"
-                  @change="toggleFillStroke"
-                >
-                  Filled
-                </b-form-checkbox>
-              </b-card-text></b-tab
-            >
+              :title="step.component"
+              ><b-card-text v-if="step.component === 'Remplir'">
+                <b-row>
+                  <b-col sm="2">
+                    <label for="color">Color:</label>
+                  </b-col>
+                  <b-col sm="3">
+                    <b-form-input
+                      id="color"
+                      size="sm"
+                      type="color"
+                      :value="currentStepOptions.fill"
+                      @change="
+                        $root.$emit(
+                          'set-option',
+                          'fill',
+                          $event.currentTarget.value
+                        )
+                      "
+                    ></b-form-input>
+                  </b-col>
+                </b-row> </b-card-text
+              ><b-card-text v-if="step.component === 'Rectangle'">
+                <b-row>
+                  <b-col sm="2">
+                    <label for="color">Color:</label>
+                  </b-col>
+                  <b-col sm="3">
+                    <b-form-input
+                      id="color"
+                      size="sm"
+                      type="color"
+                      :value="
+                        currentStepOptions.fill === 'transparent'
+                          ? currentStepOptions.stroke
+                          : currentStepOptions.fill
+                      "
+                      @change="
+                        $root.$emit(
+                          'set-option',
+                          currentStepOptions.fill === 'transparent'
+                            ? 'stroke'
+                            : 'fill',
+                          $event.currentTarget.value
+                        )
+                      "
+                    ></b-form-input>
+                  </b-col>
+                </b-row>
+                <b-row>
+                  <b-col sm="2">
+                    <label for="filled">Filled</label>
+                  </b-col>
+                  <b-col sm="3">
+                    <b-form-checkbox
+                      id="filled"
+                      :checked="currentStepOptions.fill !== 'transparent'"
+                      @change="toggleFillStroke"
+                    >
+                    </b-form-checkbox>
+                  </b-col>
+                </b-row> </b-card-text
+            ></b-tab>
           </b-tabs>
         </b-card>
       </b-col>
@@ -98,13 +131,15 @@ import { mapMutations, mapState } from 'vuex'
 import Vue from 'vue'
 import RectangleRender from '~/components/RectangleRender'
 import ImageRender from '~/components/ImageRender'
+import RemplirRender from '~/components/RemplirRender'
 
 const parser = require('xmldom').DOMParser
 
 export default {
   components: {
     RectangleRender,
-    ImageRender
+    ImageRender,
+    RemplirRender
   },
   data() {
     return {
@@ -171,7 +206,7 @@ export default {
               steps
                 .filter((step) => step.ordre !== -1)
                 .map((step) => ({
-                  component: `${step.nomFonction}Render`,
+                  component: `${step.nomFonction}`,
                   dbOptions: step.options
                 }))
             )

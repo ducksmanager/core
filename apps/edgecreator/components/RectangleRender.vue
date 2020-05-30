@@ -10,7 +10,6 @@ import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 const interact = require('interact.js')
 
 export default {
-  name: 'RectangleFunction',
   mixins: [stepOptionsMixin],
 
   methods: {
@@ -41,8 +40,7 @@ export default {
         width: parseFloat(rect.getAttribute('width')),
         height: parseFloat(rect.getAttribute('height')),
         fill: rect.getAttribute('fill'),
-        stroke: rect.getAttribute('stroke'),
-        filled: rect.getAttribute('filled')
+        stroke: rect.getAttribute('stroke')
       }
     },
     getOptionsFromDb() {
@@ -57,8 +55,7 @@ export default {
           this.dbOptions.Pos_y_fin - this.dbOptions.Pos_y_debut
         ),
         fill: filled ? `#${this.dbOptions.Couleur}` : '',
-        stroke: filled ? '' : `#${this.dbOptions.Couleur}`,
-        filled
+        stroke: filled ? '' : `#${this.dbOptions.Couleur}`
       }
     }
   }
