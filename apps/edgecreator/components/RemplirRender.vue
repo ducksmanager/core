@@ -1,0 +1,56 @@
+<template>
+  <rect
+    ref="rect"
+    v-bind="options"
+    x="0"
+    y="0"
+    :width="width"
+    :height="height"
+    @click="setStepNumber(stepNumber)"
+  >
+    <metadata>{{ options }}</metadata>
+  </rect>
+</template>
+
+<script>
+import stepOptionsMixin from '@/mixins/stepOptionsMixin'
+
+export default {
+  mixins: [stepOptionsMixin],
+
+  data() {
+    return {
+      image: { base64: null, width: null, height: null }
+    }
+  },
+
+  methods: {
+    onOptionsSet() {},
+    getOptionsFromSvgGroup() {
+      const rect = this.svgGroup.childNodes.find(
+        (node) => node.nodeName === 'rect'
+      )
+      return {
+        fill: rect.getAttribute('fill')
+      }
+    },
+    getOptionsFromDb() {
+      if (parseFloat(this.dbOptions.Pos_x) !== 0) {
+        console.error(
+          `Etape ${this.stepNumber}: Pos_x !== 0, this is not supported`
+        )
+      }
+      if (parseFloat(this.dbOptions.Pos_y) !== 0) {
+        console.error(
+          `Etape ${this.stepNumber}: Pos_y !== 0, this is not supported`
+        )
+      }
+      return {
+        fill: `#${this.dbOptions.Couleur}`
+      }
+    }
+  }
+}
+</script>
+
+<style scoped></style>
