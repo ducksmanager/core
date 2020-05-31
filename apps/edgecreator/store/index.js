@@ -1,6 +1,7 @@
 export const state = () => ({
   edge: null,
   steps: [],
+  galleryItems: [],
   zoom: 1.5,
   width: 15,
   height: 200
@@ -19,5 +20,8 @@ export const mutations = {
   setDimensions(state, { width, height }) {
     state.width = parseInt(width)
     state.height = parseInt(height)
+  },
+  setGalleryItems(state, galleryItems) {
+    state.galleryItems = galleryItems
   }
 }

@@ -36,7 +36,7 @@
               :step-number="stepNumber"
               :svg-group="step.svgGroupElement"
               :db-options="step.dbOptions"
-              @update="test"
+              @update="loadCurrentStepOptions"
             ></component>
           </g>
           <rect
@@ -59,71 +59,81 @@
               :key="stepNumber"
               :title="step.component"
               ><b-card-text v-if="step.component === 'Remplir'">
-                <b-row>
-                  <b-col sm="2">
-                    <label for="color">Color:</label>
-                  </b-col>
-                  <b-col sm="3">
-                    <b-form-input
-                      id="color"
-                      size="sm"
-                      type="color"
-                      :value="currentStepOptions.fill"
-                      @change="
-                        $root.$emit(
-                          'set-option',
-                          'fill',
-                          $event.currentTarget.value
-                        )
-                      "
-                    ></b-form-input>
-                  </b-col>
-                </b-row> </b-card-text
-              ><b-card-text v-if="step.component === 'Rectangle'">
-                <b-row>
-                  <b-col sm="2">
-                    <label for="color">Color:</label>
-                  </b-col>
-                  <b-col sm="3">
-                    <b-form-input
-                      id="color"
-                      size="sm"
-                      type="color"
-                      :value="
+                <form-row id="fill-color" label="Color">
+                  <b-form-input
+                    id="fill-color"
+                    size="sm"
+                    type="color"
+                    :value="currentStepOptions.fill"
+                    @change="$root.$emit('set-option', 'fill', $event)"
+                  ></b-form-input></form-row></b-card-text
+              ><b-card-text v-if="step.component === 'Image'">
+                <form-row id="image-src" label="Image">
+                  <b-form-input
+                    v-if="currentStepOptions['xlink:href']"
+                    id="image-src"
+                    size="sm"
+                    type="text"
+                    readonly
+                    :value="
+                      currentStepOptions['xlink:href'].match(/\/([^\/]+)$/)[1]
+                    "
+                  ></b-form-input>
+                </form-row>
+                <Gallery
+                  :selected-image="currentStepOptions['xlink:href']"
+                  @image-click="
+                    ({ image }) => {
+                      clickedImage = image
+                    }
+                  "
+                />
+              </b-card-text>
+              <b-card-text v-if="step.component === 'Rectangle'">
+                <form-row id="rectangle-color" label="Color">
+                  <b-form-input
+                    id="rectangle-color"
+                    size="sm"
+                    type="color"
+                    :value="
+                      currentStepOptions.fill === 'transparent'
+                        ? currentStepOptions.stroke
+                        : currentStepOptions.fill
+                    "
+                    @change="
+                      $root.$emit(
+                        'set-option',
                         currentStepOptions.fill === 'transparent'
-                          ? currentStepOptions.stroke
-                          : currentStepOptions.fill
-                      "
-                      @change="
-                        $root.$emit(
-                          'set-option',
-                          currentStepOptions.fill === 'transparent'
-                            ? 'stroke'
-                            : 'fill',
-                          $event.currentTarget.value
-                        )
-                      "
-                    ></b-form-input>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col sm="2">
-                    <label for="filled">Filled</label>
-                  </b-col>
-                  <b-col sm="3">
-                    <b-form-checkbox
-                      id="filled"
-                      :checked="currentStepOptions.fill !== 'transparent'"
-                      @change="toggleFillStroke"
-                    >
-                    </b-form-checkbox>
-                  </b-col>
-                </b-row> </b-card-text
+                          ? 'stroke'
+                          : 'fill',
+                        $event
+                      )
+                    "
+                  ></b-form-input>
+                </form-row>
+                <form-row id="is-filled" label="Filled">
+                  <b-form-checkbox
+                    id="is-filled"
+                    :checked="currentStepOptions.fill !== 'transparent'"
+                    @change="toggleFillStroke"
+                  >
+                  </b-form-checkbox>
+                </form-row> </b-card-text
             ></b-tab>
           </b-tabs>
         </b-card>
       </b-col>
     </b-row>
+    <b-modal
+      v-if="loaded"
+      id="image-modal"
+      scrollable
+      ok-title="Select"
+      :title="clickedImage"
+      @ok="$root.$emit('set-option', 'xlink:href', getElementUrl(clickedImage))"
+    >
+      <img :alt="clickedImage" :src="getElementUrl(clickedImage)" />
+    </b-modal>
   </b-container>
 </template>
 <script>
@@ -132,6 +142,8 @@ import Vue from 'vue'
 import RectangleRender from '~/components/RectangleRender'
 import ImageRender from '~/components/ImageRender'
 import RemplirRender from '~/components/RemplirRender'
+import Gallery from '~/components/Gallery'
+import FormRow from '~/components/FormRow'
 
 const parser = require('xmldom').DOMParser
 
@@ -139,13 +151,16 @@ export default {
   components: {
     RectangleRender,
     ImageRender,
-    RemplirRender
+    RemplirRender,
+    Gallery,
+    FormRow
   },
   data() {
     return {
       loaded: false,
       borderWidth: 2,
-      currentStepOptions: {}
+      currentStepOptions: {},
+      clickedImage: null
     }
   },
   computed: {
@@ -172,6 +187,10 @@ export default {
     const edges = await this.$axios.$get('/api/edgecreator/v2/model')
     const edge = edges.find((edge) => edge.id === parseInt(vm.$route.params.id))
     this.setEdge(edge)
+
+    this.setGalleryItems(
+      await vm.$axios.$get(`/fs/browseElements/${edge.pays}/${edge.magazine}`)
+    )
 
     this.$axios
       .$get(`/${vm.edge.numero}.svg`)
@@ -214,8 +233,11 @@ export default {
       })
   },
   methods: {
-    test(options) {
+    loadCurrentStepOptions(options) {
       this.currentStepOptions = options
+    },
+    getElementUrl(elementFileName) {
+      return `http://localhost:8000/edges/${this.edge.country}/elements/${elementFileName}`
     },
     exportLogo() {
       const vm = this
@@ -236,7 +258,7 @@ export default {
         this.$root.$emit('set-option', 'stroke', 'transparent')
       }
     },
-    ...mapMutations(['setSteps', 'setDimensions', 'setEdge'])
+    ...mapMutations(['setSteps', 'setDimensions', 'setEdge', 'setGalleryItems'])
   }
 }
 </script>
@@ -246,5 +268,66 @@ export default {
 }
 svg {
   float: right;
+}
+
+svg g:hover {
+  animation: glowFilter 2s infinite;
+}
+
+.tab-pane.card-body {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.row.gallery {
+  height: 100px;
+}
+
+.row.gallery > div {
+  height: 100%;
+}
+
+.row.gallery > div > img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.row.gallery > div > img.selected {
+  outline: 2px solid #3b8070;
+}
+.img-thumbnail {
+  background: transparent;
+}
+.img-thumbnail:hover {
+  background: black;
+}
+
+@keyframes glowFilter {
+  0% {
+    -webkit-filter: drop-shadow(-0.75px 0px 6px black);
+    filter: drop-shadow(-0.75px 0px 6px black);
+    stroke: black;
+  }
+  25% {
+    -webkit-filter: drop-shadow(-0.75px 0px 6px grey);
+    filter: drop-shadow(-0.75px 0px 6px grey);
+    stroke: grey;
+  }
+  50% {
+    -webkit-filter: drop-shadow(-0.75px 0px 6px white);
+    filter: drop-shadow(-0.75px 0px 6px white);
+    stroke: white;
+  }
+  75% {
+    -webkit-filter: drop-shadow(-0.75px 0px 6px grey);
+    filter: drop-shadow(-0.75px 0px 6px grey);
+    stroke: grey;
+  }
+  100% {
+    -webkit-filter: drop-shadow(-0.75px 0px 6px black);
+    filter: drop-shadow(-0.75px 0px 6px black);
+    stroke: black;
+  }
 }
 </style>

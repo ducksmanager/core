@@ -10,7 +10,6 @@ import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 const interact = require('interact.js')
 
 export default {
-  name: 'ImageFunction',
   mixins: [stepOptionsMixin],
 
   data() {
@@ -30,7 +29,7 @@ export default {
   async mounted() {
     if (this.dbOptions) {
       this.image = await this.$axios.$get(
-        `/base64?${this.edge.country}/elements/${this.dbOptions.Source}`
+        `/base64?${this.edge.country}/elements/${this.options.src}`
       )
     }
   },
@@ -62,12 +61,15 @@ export default {
         y: parseFloat(image.getAttribute('y')),
         width: parseFloat(image.getAttribute('width')),
         height: parseFloat(image.getAttribute('height')),
+        src: parseFloat(image.getAttribute('src')),
         'xlink:href': image.getAttribute('xlink:href')
       }
     },
     getOptionsFromDb() {
       if (!this.image.dimensions || !this.image.base64) {
-        return {}
+        return {
+          src: this.dbOptions.Source
+        }
       }
       const embeddedImageHeight =
         this.width *
@@ -82,7 +84,8 @@ export default {
         ),
         width: parseFloat(this.dbOptions.Compression_x) * this.width,
         height: parseFloat(this.dbOptions.Compression_y) * embeddedImageHeight,
-        'xlink:href': this.image.base64
+        src: this.dbOptions.Source,
+        'xlink:href': this.image.url
       }
     }
   }
