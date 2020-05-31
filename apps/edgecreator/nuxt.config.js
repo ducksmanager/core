@@ -85,6 +85,10 @@ export default {
     {
       path: '/base64',
       handler: '~/api/base64.js'
+    },
+    {
+      path: '/fs/browseElements',
+      handler: '~/api/fs.js'
     }
   ]
 }
