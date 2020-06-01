@@ -20,7 +20,9 @@ export default {
 
   data() {
     return {
-      image: { base64: null, width: null, height: null }
+      options: {
+        fill: '#ff0000'
+      }
     }
   },
 

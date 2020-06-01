@@ -2,7 +2,7 @@ const request = require('request').defaults({ encoding: null })
 const sizeOf = require('image-size')
 
 export default function(req, res) {
-  const url = `http://localhost:8000/edges/${req.url.replace(/^\/\?/, '')}`
+  const url = `${process.env.EDGES_URL}/${req.url.replace(/^\/\?/, '')}`
   request.get(url, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       const buffer = Buffer.from(body)

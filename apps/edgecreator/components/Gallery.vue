@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     getElementUrl(elementFileName) {
-      return `http://localhost:8000/edges/${this.edge.country}/elements/${elementFileName}`
+      return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
     }
   }
 }
