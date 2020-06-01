@@ -45,15 +45,17 @@ export default {
         Vue.set(optionsClone, propKey, options[propKey])
       })
       this.options = optionsClone
-      this.onOptionsSet()
     },
     ...mapMutations('currentStep', ['setStepNumber'])
   },
   mounted() {
     const vm = this
-    this.copyOptions(
-      this.svgGroup ? this.getOptionsFromSvgGroup() : this.getOptionsFromDb()
-    )
+    if (this.svgGroup) {
+      this.copyOptions(this.getOptionsFromSvgGroup())
+    } else if (this.dbOptions) {
+      this.copyOptions(this.getOptionsFromDb())
+    }
+    this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
       if (vm.currentStepNumber === vm.stepNumber) {
         Vue.set(vm.options, optionName, optionValue)

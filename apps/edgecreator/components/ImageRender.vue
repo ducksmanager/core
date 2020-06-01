@@ -14,7 +14,14 @@ export default {
 
   data() {
     return {
-      image: { base64: null, width: null, height: null }
+      image: { base64: null, width: null, height: null },
+      options: {
+        x: 5,
+        y: 5,
+        width: 15,
+        height: 15,
+        src: null
+      }
     }
   },
 

@@ -14,6 +14,9 @@ export const mutations = {
   setSteps(state, steps) {
     state.steps = steps
   },
+  addStep(state, step) {
+    state.steps.push(step)
+  },
   setZoom(state, zoom) {
     state.zoom = zoom
   },

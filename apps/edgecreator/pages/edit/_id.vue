@@ -28,7 +28,10 @@
           <g
             v-for="(step, stepNumber) in steps"
             :key="stepNumber"
-            :class="step.component"
+            :class="{
+              [step.component]: true,
+              hovered: hoveredStep === stepNumber
+            }"
           >
             <component
               :is="`${step.component}Render`"
@@ -53,12 +56,17 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <b-card no-body>
-          <b-tabs v-model="currentStepNumber" pills card vertical>
-            <b-tab
-              v-for="(step, stepNumber) in steps"
-              :key="stepNumber"
-              :title="step.component"
-              ><b-card-text v-if="step.component === 'Remplir'">
+          <b-tabs v-model="currentStepNumber" lazy pills card vertical>
+            <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
+              <template v-slot:title>
+                <div
+                  @mouseover="hoveredStep = stepNumber"
+                  @mouseleave="hoveredStep = null"
+                >
+                  {{ step.component }}
+                </div>
+              </template>
+              <b-card-text v-if="step.component === 'Remplir'">
                 <form-row id="fill-color" label="Color">
                   <b-form-input
                     id="fill-color"
@@ -81,7 +89,11 @@
                   ></b-form-input>
                 </form-row>
                 <Gallery
-                  :selected-image="currentStepOptions['xlink:href']"
+                  :selected-image="
+                    currentStepOptions['xlink:href']
+                      ? currentStepOptions['xlink:href'].match(/\/([^\/]+)$/)[1]
+                      : null
+                  "
                   @image-click="
                     ({ image }) => {
                       clickedImage = image
@@ -120,6 +132,23 @@
                   </b-form-checkbox>
                 </form-row> </b-card-text
             ></b-tab>
+            <b-tab key="99" title="Add step"
+              ><b-card-text
+                ><b-dropdown text="Select a step type"
+                  ><b-dropdown-item
+                    v-for="render in supportedRenders"
+                    :key="render.component"
+                    @click="
+                      addStep({
+                        component: render.component,
+                        svgGroupElement: null
+                      })
+                    "
+                    >{{ render.description }}</b-dropdown-item
+                  ></b-dropdown
+                ></b-card-text
+              ></b-tab
+            >
           </b-tabs>
         </b-card>
       </b-col>
@@ -160,7 +189,25 @@ export default {
       loaded: false,
       borderWidth: 2,
       currentStepOptions: {},
-      clickedImage: null
+      clickedImage: null,
+      hoveredStep: null,
+      supportedRenders: [
+        {
+          label: 'Rectangle',
+          component: 'Rectangle',
+          description: 'Draw a rectangle'
+        },
+        {
+          label: 'Image',
+          component: 'Image',
+          description: 'Insert an image'
+        },
+        {
+          label: 'Fill',
+          component: 'Remplir',
+          description: 'Fill the edge with a color'
+        }
+      ]
     }
   },
   computed: {
@@ -237,7 +284,7 @@ export default {
       this.currentStepOptions = options
     },
     getElementUrl(elementFileName) {
-      return `http://localhost:8000/edges/${this.edge.country}/elements/${elementFileName}`
+      return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
     },
     exportLogo() {
       const vm = this
@@ -258,7 +305,13 @@ export default {
         this.$root.$emit('set-option', 'stroke', 'transparent')
       }
     },
-    ...mapMutations(['setSteps', 'setDimensions', 'setEdge', 'setGalleryItems'])
+    ...mapMutations([
+      'setSteps',
+      'addStep',
+      'setDimensions',
+      'setEdge',
+      'setGalleryItems'
+    ])
   }
 }
 </script>
@@ -270,7 +323,8 @@ svg {
   float: right;
 }
 
-svg g:hover {
+svg g:hover,
+svg g.hovered {
   animation: glowFilter 2s infinite;
 }
 

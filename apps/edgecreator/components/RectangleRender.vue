@@ -12,6 +12,19 @@ const interact = require('interact.js')
 export default {
   mixins: [stepOptionsMixin],
 
+  data() {
+    return {
+      options: {
+        x: 5,
+        y: 5,
+        width: 15,
+        height: 15,
+        fill: '#ff0000',
+        stroke: null
+      }
+    }
+  },
+
   methods: {
     onOptionsSet() {
       const vm = this
