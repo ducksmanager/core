@@ -1,7 +1,7 @@
 <template>
   <b-container id="wrapper" fluid>
-    <b-row>
-      <b-col>
+    <b-row align="center">
+      <b-col class="text-left">
         <div>
           <label style="display: inline-block;width: 200px"
             >Zoom : {{ zoom }}
@@ -12,47 +12,83 @@
       <b-col>
         <b-button @click="exportLogo">Export</b-button>
       </b-col>
-    </b-row>
-    <b-row align-v="center" align-h="center">
-      <b-col>
-        <svg
-          v-if="loaded"
-          ref="edge"
-          :viewBox="`0 0 ${width} ${height}`"
-          :width="zoom * width"
-          :height="zoom * height"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          preserveAspectRatio="none"
+      <b-col class="text-right">
+        <b-form-checkbox
+          v-model="showPreviousEdge"
+          :disabled="!edgesBefore.length"
+          >Show previous edge</b-form-checkbox
         >
-          <g
-            v-for="(step, stepNumber) in steps"
-            :key="stepNumber"
-            :class="{
-              [step.component]: true,
-              hovered: hoveredStep === stepNumber
-            }"
-          >
-            <component
-              :is="`${step.component}Render`"
-              v-if="$options.components[`${step.component}Render`]"
-              :step-number="stepNumber"
-              :svg-group="step.svgGroupElement"
-              :db-options="step.dbOptions"
-              @update="loadCurrentStepOptions"
-            ></component>
-          </g>
-          <rect
-            id="border"
-            :x="borderWidth / 2"
-            :y="borderWidth / 2"
-            :width="width - borderWidth"
-            :height="height - borderWidth"
-            fill="none"
-            stroke="black"
-            :stroke-width="borderWidth"
-          />
-        </svg>
+        <b-form-checkbox v-model="showNextEdge" :disabled="!edgesAfter.length"
+          >Show next edge</b-form-checkbox
+        >
+      </b-col>
+    </b-row>
+    <b-row v-if="loaded" align-v="start" align-h="center">
+      <b-col class="text-right">
+        <table class="edges">
+          <tr>
+            <td>
+              <published-edge
+                v-if="showPreviousEdge && edgesBefore.length"
+                :issue-number="edgesBefore[edgesBefore.length - 1].issuenumber"
+              />
+            </td>
+            <td>
+              <svg
+                ref="edge"
+                :viewBox="`0 0 ${width} ${height}`"
+                :width="zoom * width"
+                :height="zoom * height"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                preserveAspectRatio="none"
+              >
+                <g
+                  v-for="(step, stepNumber) in steps"
+                  :key="stepNumber"
+                  :class="{
+                    [step.component]: true,
+                    hovered: hoveredStep === stepNumber
+                  }"
+                >
+                  <component
+                    :is="`${step.component}Render`"
+                    v-if="$options.components[`${step.component}Render`]"
+                    :step-number="stepNumber"
+                    :svg-group="step.svgGroupElement"
+                    :db-options="step.dbOptions"
+                    @update="loadCurrentStepOptions"
+                  ></component>
+                </g>
+                <rect
+                  id="border"
+                  :x="borderWidth / 2"
+                  :y="borderWidth / 2"
+                  :width="width - borderWidth"
+                  :height="height - borderWidth"
+                  fill="none"
+                  stroke="black"
+                  :stroke-width="borderWidth"
+                />
+              </svg>
+            </td>
+            <td>
+              <published-edge
+                v-if="showNextEdge && edgesAfter.length"
+                :issue-number="edgesAfter[0].issuenumber"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td v-if="showPreviousEdge && edgesBefore.length">
+              {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
+            </td>
+            <td>{{ edge.numero }}<br />&#11088;</td>
+            <td v-if="showNextEdge && edgesAfter.length">
+              {{ edgesAfter[0].issuenumber }}
+            </td>
+          </tr>
+        </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <b-card no-body>
@@ -166,13 +202,14 @@
   </b-container>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState, mapActions } from 'vuex'
 import Vue from 'vue'
-import RectangleRender from '~/components/RectangleRender'
-import ImageRender from '~/components/ImageRender'
-import RemplirRender from '~/components/RemplirRender'
+import RectangleRender from '~/components/renders/RectangleRender'
+import ImageRender from '~/components/renders/ImageRender'
+import RemplirRender from '~/components/renders/RemplirRender'
 import Gallery from '~/components/Gallery'
 import FormRow from '~/components/FormRow'
+import PublishedEdge from '~/components/PublishedEdge'
 
 const parser = require('xmldom').DOMParser
 
@@ -182,7 +219,8 @@ export default {
     ImageRender,
     RemplirRender,
     Gallery,
-    FormRow
+    FormRow,
+    PublishedEdge
   },
   data() {
     return {
@@ -191,6 +229,8 @@ export default {
       currentStepOptions: {},
       clickedImage: null,
       hoveredStep: null,
+      showPreviousEdge: true,
+      showNextEdge: true,
       supportedRenders: [
         {
           label: 'Rectangle',
@@ -227,17 +267,20 @@ export default {
         this.$store.commit('currentStep/setStepNumber', value)
       }
     },
-    ...mapState(['steps', 'width', 'height', 'edge'])
+    ...mapState([
+      'steps',
+      'width',
+      'height',
+      'edge',
+      'edgesBefore',
+      'edgesAfter'
+    ])
   },
   async mounted() {
     const vm = this
     const edges = await this.$axios.$get('/api/edgecreator/v2/model')
     const edge = edges.find((edge) => edge.id === parseInt(vm.$route.params.id))
     this.setEdge(edge)
-
-    this.setGalleryItems(
-      await vm.$axios.$get(`/fs/browseElements/${edge.pays}/${edge.magazine}`)
-    )
 
     this.$axios
       .$get(`/${vm.edge.numero}.svg`)
@@ -278,6 +321,9 @@ export default {
             )
           })
       })
+
+    this.loadGalleryItems()
+    this.loadSurroundingEdges()
   },
   methods: {
     loadCurrentStepOptions(options) {
@@ -285,6 +331,9 @@ export default {
     },
     getElementUrl(elementFileName) {
       return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
+    },
+    getEdgeUrl(issueNumber) {
+      return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${issueNumber}.png`
     },
     exportLogo() {
       const vm = this
@@ -305,13 +354,22 @@ export default {
         this.$root.$emit('set-option', 'stroke', 'transparent')
       }
     },
+    test(e) {
+      e.target.height = e.target.naturalHeight * this.zoom
+    },
+    z(e) {
+      console.log(arguments)
+    },
     ...mapMutations([
       'setSteps',
       'addStep',
       'setDimensions',
       'setEdge',
+      'setEdgesBefore',
+      'setEdgesAfter',
       'setGalleryItems'
-    ])
+    ]),
+    ...mapActions(['loadSurroundingEdges', 'loadGalleryItems'])
   }
 }
 </script>
@@ -383,5 +441,13 @@ svg g.hovered {
     filter: drop-shadow(-0.75px 0px 6px black);
     stroke: black;
   }
+}
+table.edges {
+  float: right;
+}
+
+table.edges tr td {
+  text-align: center;
+  vertical-align: top;
 }
 </style>

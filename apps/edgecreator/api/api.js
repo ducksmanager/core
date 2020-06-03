@@ -1,12 +1,14 @@
 import axios from 'axios'
 
 export default async function(req, res) {
+  const { BACKEND_URL, EDGECREATOR_USER, EDGECREATOR_PASS } = process.env
+  const auth = {
+    username: EDGECREATOR_USER,
+    password: EDGECREATOR_PASS
+  }
   const response = await axios
-    .get(`${process.env.BACKEND_URL}${req.url}`, {
-      auth: {
-        username: process.env.EDGECREATOR_USER,
-        password: process.env.EDGECREATOR_PASS
-      },
+    .get(`${BACKEND_URL}${req.url}`, {
+      auth,
       headers: {
         ...req.headers,
         'x-dm-version': '1.0.0'
