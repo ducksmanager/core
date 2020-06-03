@@ -7,7 +7,7 @@
 <script>
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 
-const interact = require('interact.js')
+const interact = require('../../node_modules/interact.js/interact')
 
 export default {
   mixins: [stepOptionsMixin],

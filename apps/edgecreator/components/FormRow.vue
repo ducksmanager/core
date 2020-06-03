@@ -3,7 +3,7 @@
     <b-col sm="2">
       <label :for="id">{{ label }}</label>
     </b-col>
-    <b-col sm="3">
+    <b-col sm="6" md="5">
       <slot />
     </b-col>
   </b-row>
