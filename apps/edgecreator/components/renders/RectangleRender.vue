@@ -20,7 +20,7 @@ export default {
         width: 15,
         height: 15,
         fill: '#ff0000',
-        stroke: null
+        stroke: 'transparent'
       }
     }
   },
@@ -67,8 +67,8 @@ export default {
         height: parseFloat(
           this.dbOptions.Pos_y_fin - this.dbOptions.Pos_y_debut
         ),
-        fill: filled ? `#${this.dbOptions.Couleur}` : '',
-        stroke: filled ? '' : `#${this.dbOptions.Couleur}`
+        fill: filled ? `#${this.dbOptions.Couleur}` : 'transparent',
+        stroke: filled ? 'transparent' : `#${this.dbOptions.Couleur}`
       }
     }
   }

@@ -63,10 +63,10 @@
                 </g>
                 <rect
                   id="border"
-                  :x="borderWidth / 2"
-                  :y="borderWidth / 2"
-                  :width="width - borderWidth"
-                  :height="height - borderWidth"
+                  :x="borderWidth / 4"
+                  :y="borderWidth / 4"
+                  :width="width - borderWidth / 2"
+                  :height="height - borderWidth / 2"
                   fill="none"
                   stroke="black"
                   :stroke-width="borderWidth"
@@ -104,79 +104,47 @@
                 </div>
               </template>
               <b-card-text v-if="step.component === 'TexteMyFonts'">
-                <form-row id="text-string" label="Text">
-                  <b-form-input
-                    id="text-string"
-                    size="sm"
-                    type="text"
-                    :value="currentStepOptions.text"
-                    @change="$root.$emit('set-option', 'text', $event)"
-                  ></b-form-input>
-                </form-row>
-                <form-row id="text-font" label="Font">
-                  <b-form-input
-                    id="text-font"
-                    size="sm"
-                    type="text"
-                    :value="currentStepOptions.font"
-                    @change="$root.$emit('set-option', 'font', $event)"
-                  ></b-form-input>
-                </form-row>
-                <form-row id="background-color" label="Background color">
-                  <b-form-input
-                    id="background-color"
-                    size="sm"
-                    type="color"
-                    :value="`#${currentStepOptions.bgColor}`"
-                    @change="
-                      $root.$emit(
-                        'set-option',
-                        'bgColor',
-                        $event.replace('#', '')
-                      )
-                    "
-                  ></b-form-input>
-                </form-row>
-                <form-row id="text-color" label="Text color">
-                  <b-form-input
-                    id="text-color"
-                    size="sm"
-                    type="color"
-                    :value="`#${currentStepOptions.fgColor}`"
-                    @change="
-                      $root.$emit(
-                        'set-option',
-                        'fgColor',
-                        $event.replace('#', '')
-                      )
-                    "
-                  ></b-form-input>
-                </form-row>
+                <form-input-row
+                  option-name="text"
+                  label="Text"
+                  type="text"
+                  :options="currentStepOptions"
+                />
+                <form-input-row
+                  option-name="font"
+                  label="Font"
+                  type="text"
+                  :options="currentStepOptions"
+                />
+                <form-input-row
+                  option-name="bgColor"
+                  label="Background color"
+                  type="color"
+                  :options="currentStepOptions"
+                />
+                <form-input-row
+                  option-name="fgColor"
+                  label="Text color"
+                  type="color"
+                  :options="currentStepOptions"
+                />
               </b-card-text>
               <b-card-text v-if="step.component === 'Remplir'">
-                <form-row id="fill-color" label="Color">
-                  <b-form-input
-                    id="fill-color"
-                    size="sm"
-                    type="color"
-                    :value="currentStepOptions.fill"
-                    @change="$root.$emit('set-option', 'fill', $event)"
-                  ></b-form-input>
-                </form-row>
+                <form-input-row
+                  option-name="fill"
+                  label="Color"
+                  type="color"
+                  :options="currentStepOptions"
+                />
               </b-card-text>
               <b-card-text v-if="step.component === 'Image'">
-                <form-row id="image-src" label="Image">
-                  <b-form-input
-                    v-if="currentStepOptions['xlink:href']"
-                    id="image-src"
-                    size="sm"
-                    type="text"
-                    readonly
-                    :value="
-                      currentStepOptions['xlink:href'].match(/\/([^\/]+)$/)[1]
-                    "
-                  ></b-form-input>
-                </form-row>
+                <form-input-row
+                  option-name="xlink:href"
+                  label="Image"
+                  type="text"
+                  readonly
+                  :options="currentStepOptions"
+                />
                 <Gallery
                   :selected-image="
                     currentStepOptions['xlink:href']
@@ -191,36 +159,30 @@
                 />
               </b-card-text>
               <b-card-text v-if="step.component === 'Rectangle'">
-                <form-row id="rectangle-color" label="Color">
-                  <b-form-input
-                    id="rectangle-color"
-                    size="sm"
-                    type="color"
-                    :value="
-                      currentStepOptions.fill === 'transparent'
-                        ? currentStepOptions.stroke
-                        : currentStepOptions.fill
-                    "
+                <form-input-row
+                  v-for="optionName in ['fill', 'stroke']"
+                  :key="optionName"
+                  :option-name="optionName"
+                  :label="`Color (${optionName})`"
+                  type="color"
+                  :options="currentStepOptions"
+                  :disabled="currentStepOptions[optionName] === 'transparent'"
+                  ><input
+                    :id="`${optionName}-transparent`"
+                    type="checkbox"
+                    :checked="currentStepOptions[optionName] === 'transparent'"
                     @change="
                       $root.$emit(
                         'set-option',
-                        currentStepOptions.fill === 'transparent'
-                          ? 'stroke'
-                          : 'fill',
-                        $event
+                        optionName,
+                        $event.currentTarget.checked ? 'transparent' : '#000000'
                       )
                     "
-                  ></b-form-input>
-                </form-row>
-                <form-row id="is-filled" label="Filled">
-                  <b-form-checkbox
-                    id="is-filled"
-                    :checked="currentStepOptions.fill !== 'transparent'"
-                    @change="toggleFillStroke"
-                  >
-                  </b-form-checkbox>
-                </form-row> </b-card-text
-            ></b-tab>
+                  />
+                  <label :for="`${optionName}-transparent`">Transparent</label>
+                </form-input-row>
+              </b-card-text></b-tab
+            >
             <b-tab key="99" title="Add step"
               ><b-card-text
                 ><b-dropdown text="Select a step type"
@@ -262,7 +224,7 @@ import ImageRender from '~/components/renders/ImageRender'
 import RemplirRender from '~/components/renders/RemplirRender'
 import TexteMyFontsRender from '~/components/renders/TexteMyFontsRender'
 import Gallery from '~/components/Gallery'
-import FormRow from '~/components/FormRow'
+import FormInputRow from '~/components/FormInputRow'
 import PublishedEdge from '~/components/PublishedEdge'
 
 const parser = require('xmldom').DOMParser
@@ -274,7 +236,7 @@ export default {
     RemplirRender,
     TexteMyFontsRender,
     Gallery,
-    FormRow,
+    FormInputRow,
     PublishedEdge
   },
   data() {
@@ -408,21 +370,6 @@ export default {
         })
       })
     },
-    toggleFillStroke() {
-      if (this.currentStepOptions.fill !== 'transparent') {
-        this.$root.$emit('set-option', 'stroke', this.currentStepOptions.fill)
-        this.$root.$emit('set-option', 'fill', 'transparent')
-      } else {
-        this.$root.$emit('set-option', 'fill', this.currentStepOptions.stroke)
-        this.$root.$emit('set-option', 'stroke', 'transparent')
-      }
-    },
-    test(e) {
-      e.target.height = e.target.naturalHeight * this.zoom
-    },
-    z(e) {
-      console.log(arguments)
-    },
     ...mapMutations([
       'setSteps',
       'addStep',
@@ -439,9 +386,6 @@ export default {
 <style>
 .draggable {
   cursor: move;
-}
-svg {
-  float: right;
 }
 
 svg g:hover,
