@@ -75,20 +75,24 @@ export default {
   serverMiddleware: [
     json({ limit: '10mb' }),
     {
-      path: '/api/export',
-      handler: '~/api/exportEdge.js'
-    },
-    {
       path: '/api',
       handler: '~/api/api.js'
     },
     {
-      path: '/base64',
-      handler: '~/api/base64.js'
+      path: '/fs/base64',
+      handler: '~/api/fs/base64.js'
     },
     {
       path: '/fs/browseElements',
-      handler: '~/api/fs.js'
+      handler: '~/api/fs/browseElements.js'
+    },
+    {
+      path: '/fs/export',
+      handler: '~/api/fs/exportEdge.js'
+    },
+    {
+      path: '/fs/text',
+      handler: '~/api/fs/text.js'
     }
   ]
 }

@@ -10,6 +10,7 @@
         </div>
       </b-col>
       <b-col>
+        <b-button to="/">Home</b-button>
         <b-button @click="exportLogo">Export</b-button>
       </b-col>
       <b-col class="text-right">
@@ -102,6 +103,56 @@
                   {{ step.component }}
                 </div>
               </template>
+              <b-card-text v-if="step.component === 'TexteMyFonts'">
+                <form-row id="text-string" label="Text">
+                  <b-form-input
+                    id="text-string"
+                    size="sm"
+                    type="text"
+                    :value="currentStepOptions.text"
+                    @change="$root.$emit('set-option', 'text', $event)"
+                  ></b-form-input>
+                </form-row>
+                <form-row id="text-font" label="Font">
+                  <b-form-input
+                    id="text-font"
+                    size="sm"
+                    type="text"
+                    :value="currentStepOptions.font"
+                    @change="$root.$emit('set-option', 'font', $event)"
+                  ></b-form-input>
+                </form-row>
+                <form-row id="background-color" label="Background color">
+                  <b-form-input
+                    id="background-color"
+                    size="sm"
+                    type="color"
+                    :value="`#${currentStepOptions.bgColor}`"
+                    @change="
+                      $root.$emit(
+                        'set-option',
+                        'bgColor',
+                        $event.replace('#', '')
+                      )
+                    "
+                  ></b-form-input>
+                </form-row>
+                <form-row id="text-color" label="Text color">
+                  <b-form-input
+                    id="text-color"
+                    size="sm"
+                    type="color"
+                    :value="`#${currentStepOptions.fgColor}`"
+                    @change="
+                      $root.$emit(
+                        'set-option',
+                        'fgColor',
+                        $event.replace('#', '')
+                      )
+                    "
+                  ></b-form-input>
+                </form-row>
+              </b-card-text>
               <b-card-text v-if="step.component === 'Remplir'">
                 <form-row id="fill-color" label="Color">
                   <b-form-input
@@ -110,8 +161,10 @@
                     type="color"
                     :value="currentStepOptions.fill"
                     @change="$root.$emit('set-option', 'fill', $event)"
-                  ></b-form-input></form-row></b-card-text
-              ><b-card-text v-if="step.component === 'Image'">
+                  ></b-form-input>
+                </form-row>
+              </b-card-text>
+              <b-card-text v-if="step.component === 'Image'">
                 <form-row id="image-src" label="Image">
                   <b-form-input
                     v-if="currentStepOptions['xlink:href']"
@@ -207,6 +260,7 @@ import Vue from 'vue'
 import RectangleRender from '~/components/renders/RectangleRender'
 import ImageRender from '~/components/renders/ImageRender'
 import RemplirRender from '~/components/renders/RemplirRender'
+import TexteMyFontsRender from '~/components/renders/TexteMyFontsRender'
 import Gallery from '~/components/Gallery'
 import FormRow from '~/components/FormRow'
 import PublishedEdge from '~/components/PublishedEdge'
@@ -218,6 +272,7 @@ export default {
     RectangleRender,
     ImageRender,
     RemplirRender,
+    TexteMyFontsRender,
     Gallery,
     FormRow,
     PublishedEdge
@@ -246,6 +301,11 @@ export default {
           label: 'Fill',
           component: 'Remplir',
           description: 'Fill the edge with a color'
+        },
+        {
+          label: 'Text',
+          component: 'TexteMyFontsRender',
+          description: 'Insert a text'
         }
       ]
     }
@@ -280,6 +340,9 @@ export default {
     const vm = this
     const edges = await this.$axios.$get('/api/edgecreator/v2/model')
     const edge = edges.find((edge) => edge.id === parseInt(vm.$route.params.id))
+    if (!edge) {
+      return
+    }
     this.setEdge(edge)
 
     this.$axios
@@ -339,7 +402,7 @@ export default {
       const vm = this
       this.zoom = 1.5
       Vue.nextTick().then(() => {
-        vm.$axios.$put('/api/export', {
+        vm.$axios.$put('/fs/export', {
           issueNumber: vm.edge.numero,
           content: vm.$refs.edge.outerHTML
         })
@@ -447,7 +510,12 @@ table.edges {
 }
 
 table.edges tr td {
+  padding: 0;
   text-align: center;
   vertical-align: top;
+}
+
+table.edges tr:last-child td {
+  outline: 1px solid grey;
 }
 </style>
