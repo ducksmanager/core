@@ -36,7 +36,7 @@ export default {
   async mounted() {
     if (this.dbOptions) {
       this.image = await this.$axios.$get(
-        `/base64?${this.edge.country}/elements/${this.options.src}`
+        `/fs/base64?${this.edge.country}/elements/${this.options.src}`
       )
     }
   },
@@ -68,7 +68,7 @@ export default {
         y: parseFloat(image.getAttribute('y')),
         width: parseFloat(image.getAttribute('width')),
         height: parseFloat(image.getAttribute('height')),
-        src: parseFloat(image.getAttribute('src')),
+        src: image.getAttribute('src'),
         'xlink:href': image.getAttribute('xlink:href')
       }
     },
@@ -83,6 +83,7 @@ export default {
         (this.image.dimensions.height / this.image.dimensions.width)
       const fromBottom = this.dbOptions.Position === 'bas'
       return {
+        ...this.options,
         x: parseFloat(this.dbOptions.Decalage_x),
         y: parseFloat(
           fromBottom
@@ -91,7 +92,6 @@ export default {
         ),
         width: parseFloat(this.dbOptions.Compression_x) * this.width,
         height: parseFloat(this.dbOptions.Compression_y) * embeddedImageHeight,
-        src: this.dbOptions.Source,
         'xlink:href': this.image.url
       }
     }

@@ -1,25 +1,41 @@
 import axios from 'axios'
 
-export default async function(req, res) {
-  const { BACKEND_URL, EDGECREATOR_USER, EDGECREATOR_PASS } = process.env
-  const auth = {
-    username: EDGECREATOR_USER,
-    password: EDGECREATOR_PASS
-  }
-  const response = await axios
-    .get(`${BACKEND_URL}${req.url}`, {
-      auth,
+export const addAxiosInterceptor = () => {
+  axios.interceptors.request.use(function(config) {
+    return {
+      ...config,
+      auth: {
+        username: process.env.EDGECREATOR_USER,
+        password: process.env.EDGECREATOR_PASS
+      },
       headers: {
-        ...req.headers,
+        ...config.headers,
         'x-dm-version': '1.0.0'
       }
+    }
+  })
+}
+
+addAxiosInterceptor()
+
+export default async function(req, res) {
+  const response = await axios
+    .request({
+      method: req.method,
+      url: `${process.env.BACKEND_URL}${req.url}`,
+      data: req.body,
+      headers: req.headers
     })
     .catch((e) => {
       // eslint-disable-next-line no-console
       console.error(e)
       res.statusCode = e.response.status
       res.end()
+      throw e
     })
-  res.writeHeader(200, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify(response.data))
+
+  if (response) {
+    res.writeHeader(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify(response.data))
+  }
 }
