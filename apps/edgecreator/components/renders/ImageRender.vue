@@ -33,16 +33,15 @@ export default {
     }
   },
 
-  async mounted() {
-    if (this.dbOptions) {
-      this.image = await this.$axios.$get(
-        `/fs/base64?${this.edge.country}/elements/${this.options.src}`
-      )
-    }
-  },
-
   methods: {
-    onOptionsSet() {
+    async onOptionsSet() {
+      if (this.dbOptions) {
+        this.image = await this.$axios.$get(
+          `/fs/base64?${this.edge.country}/elements/${this.options.src}`
+        )
+        this.copyOptions(await this.getOptionsFromDb())
+      }
+
       const vm = this
       interact(this.$refs.image)
         .draggable({
@@ -72,27 +71,27 @@ export default {
         'xlink:href': image.getAttribute('xlink:href')
       }
     },
-    getOptionsFromDb() {
-      if (!this.image.dimensions || !this.image.base64) {
+    async getOptionsFromDb() {
+      const vm = this
+      if (!vm.image.dimensions || !vm.image.base64) {
         return {
-          src: this.dbOptions.Source
+          src: vm.dbOptions.Source
         }
       }
       const embeddedImageHeight =
-        this.width *
-        (this.image.dimensions.height / this.image.dimensions.width)
-      const fromBottom = this.dbOptions.Position === 'bas'
+        vm.width * (vm.image.dimensions.height / vm.image.dimensions.width)
+      const fromBottom = vm.dbOptions.Position === 'bas'
       return {
-        ...this.options,
-        x: parseFloat(this.dbOptions.Decalage_x),
+        ...vm.options,
+        x: parseFloat(vm.dbOptions.Decalage_x),
         y: parseFloat(
           fromBottom
-            ? this.height - embeddedImageHeight - this.dbOptions.Decalage_y
-            : this.dbOptions.Decalage_y
+            ? vm.height - embeddedImageHeight - vm.dbOptions.Decalage_y
+            : vm.dbOptions.Decalage_y
         ),
-        width: parseFloat(this.dbOptions.Compression_x) * this.width,
-        height: parseFloat(this.dbOptions.Compression_y) * embeddedImageHeight,
-        'xlink:href': this.image.url
+        width: parseFloat(vm.dbOptions.Compression_x) * vm.width,
+        height: parseFloat(vm.dbOptions.Compression_y) * embeddedImageHeight,
+        'xlink:href': vm.image.url
       }
     }
   }
