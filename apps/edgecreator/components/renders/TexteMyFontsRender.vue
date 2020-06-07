@@ -53,9 +53,10 @@ export default {
       deep: true,
       immediate: true,
       handler(newValue, oldValue) {
-        console.log('options changed')
-        if (oldValue && newValue.text !== oldValue.text) {
-          console.log('text changed')
+        if (
+          (!oldValue && newValue.text) ||
+          (oldValue && oldValue.text !== newValue.text)
+        ) {
           this.refreshPreview()
         }
       }
@@ -113,14 +114,14 @@ export default {
       }
     },
     getOptionsFromDb() {
-      if (!this.image.dimensions || !this.image.base64) {
-        return {
-          fgColor: this.dbOptions.Couleur_texte,
-          bgColor: this.dbOptions.Couleur_fond,
-          font: this.dbOptions.URL.replace(/\./g, '/'),
-          text: this.dbOptions.Chaine,
-          internalWidth: this.dbOptions.Largeur
-        }
+      return {
+        fgColor: this.dbOptions.Couleur_texte,
+        bgColor: this.dbOptions.Couleur_fond,
+        font: this.dbOptions.URL.replace(/\./g, '/'),
+        text: this.dbOptions.Chaine,
+        internalWidth: parseFloat(this.dbOptions.Largeur),
+        rotation: 360 - parseFloat(this.dbOptions.Rotation),
+        isHalfHeight: this.dbOptions.Demi_hauteur === 'Oui'
       }
     },
     async refreshPreview() {
@@ -169,8 +170,6 @@ export default {
             y,
             width,
             height,
-            rotation: 360 - parseFloat(vm.dbOptions.Rotation),
-            isHalfHeight: vm.dbOptions.Demi_hauteur === 'Oui',
             'xlink:href': vm.imageUrl
           })
         }
