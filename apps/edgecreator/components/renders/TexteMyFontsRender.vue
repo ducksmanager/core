@@ -1,17 +1,16 @@
 <template>
-  <g>
-    <image
-      ref="image"
-      v-bind="options"
-      :transform="
-        `rotate(${options.rotation}, ${options.x +
-          options.width / 2}, ${options.y + options.height / 2})`
-      "
-      @click="setStepNumber(stepNumber)"
-    >
-      <metadata>{{ options }}</metadata>
-    </image>
-  </g>
+  <image
+    v-if="options.x"
+    ref="image"
+    v-bind="options"
+    :transform="
+      `rotate(${options.rotation}, ${options.x +
+        options.width / 2}, ${options.y + options.height / 2})`
+    "
+    @click="setStepNumber(stepNumber)"
+  >
+    <metadata>{{ options }}</metadata>
+  </image>
 </template>
 
 <script>
@@ -96,7 +95,7 @@ export default {
         })
     },
     getOptionsFromSvgGroup() {
-      const image = this.svgGroup.childNodes.find(
+      const image = Object.values(this.svgGroup.childNodes).find(
         (node) => node.nodeName === 'image'
       )
       return {
@@ -104,9 +103,9 @@ export default {
         y: parseFloat(image.getAttribute('y')),
         width: parseFloat(image.getAttribute('width')),
         height: parseFloat(image.getAttribute('height')),
-        fgColor: image.getAttribute('color'),
+        fgColor: image.getAttribute('fgColor'),
         bgColor: image.getAttribute('bgColor'),
-        font: image.getAttribute('fontUrl'),
+        font: image.getAttribute('font'),
         text: image.getAttribute('text'),
         rotation: image.getAttribute('rotation'),
         internalWidth: parseFloat(image.getAttribute('internalWidth')),
