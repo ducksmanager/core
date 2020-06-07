@@ -8,9 +8,12 @@
         :id="optionName"
         size="sm"
         :type="type"
+        :min="min"
+        :max="max"
+        :range="range"
         :value="userValue"
         :disabled="disabled"
-        @change="onChangeValue"
+        v-on="{ [isTextImageParameter ? 'change' : 'input']: onChangeValue }"
       ></b-form-input>
       <slot />
     </b-col>
@@ -25,7 +28,10 @@ export default {
     type: { type: String, required: true },
     value: { type: String, default: null },
     disabled: { type: Boolean, default: false },
-    options: { type: Object, required: true }
+    options: { type: Object, required: true },
+    min: { type: Number, default: null },
+    max: { type: Number, default: null },
+    range: { type: Number, default: null }
   },
   computed: {
     userValue() {
@@ -37,6 +43,14 @@ export default {
         return value.match(/\/([^/]+)$/)[1]
       }
       return value
+    },
+    isTextImageParameter() {
+      return (
+        this.options.text &&
+        ['fgColor', 'bgColor', 'internalWidth', 'text', 'font'].includes(
+          this.optionName
+        )
+      )
     }
   },
   methods: {

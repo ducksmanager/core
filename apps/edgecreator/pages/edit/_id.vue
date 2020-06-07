@@ -11,7 +11,7 @@
       </b-col>
       <b-col>
         <b-button to="/">Home</b-button>
-        <b-button v-if="loaded" @click="exportSvg">Export</b-button>
+        <b-button :disabled="!loaded" @click="exportSvg">Export</b-button>
       </b-col>
       <b-col class="text-right">
         <b-form-checkbox
@@ -126,6 +126,15 @@
                   option-name="fgColor"
                   label="Text color"
                   type="color"
+                  :options="currentStepOptions"
+                />
+                <form-input-row
+                  option-name="rotation"
+                  :label="`Rotation : ${currentStepOptions.rotation}°`"
+                  type="range"
+                  :min="0"
+                  :max="360"
+                  :step="1"
                   :options="currentStepOptions"
                 />
               </b-card-text>
@@ -313,8 +322,8 @@ export default {
         const doc = new DOMParser().parseFromString(data, 'image/svg+xml')
         const svgElement = doc.getElementsByTagName('svg')[0]
         vm.setDimensions({
-          width: svgElement.getAttribute('width'),
-          height: svgElement.getAttribute('height')
+          width: svgElement.getAttribute('width') / 1.5,
+          height: svgElement.getAttribute('height') / 1.5
         })
 
         vm.loaded = true
