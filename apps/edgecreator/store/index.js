@@ -23,8 +23,8 @@ export const mutations = {
     state.zoom = zoom
   },
   setDimensions(state, { width, height }) {
-    state.width = parseInt(width)
-    state.height = parseInt(height)
+    state.width = parseFloat(width)
+    state.height = parseFloat(height)
   },
   setEdgesBefore(state, { edges: edgesBefore }) {
     state.edgesBefore = edgesBefore

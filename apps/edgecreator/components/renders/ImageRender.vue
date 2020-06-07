@@ -60,7 +60,7 @@ export default {
         })
     },
     getOptionsFromSvgGroup() {
-      const image = this.svgGroup.childNodes.find(
+      const image = Object.values(this.svgGroup.childNodes).find(
         (node) => node.nodeName === 'image'
       )
       return {

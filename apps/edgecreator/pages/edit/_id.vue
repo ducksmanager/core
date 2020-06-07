@@ -227,7 +227,7 @@ import Gallery from '~/components/Gallery'
 import FormInputRow from '~/components/FormInputRow'
 import PublishedEdge from '~/components/PublishedEdge'
 
-const parser = require('xmldom').DOMParser
+const DOMParser = require('xmldom').DOMParser
 
 export default {
   components: {
@@ -310,7 +310,7 @@ export default {
     this.$axios
       .$get(`/${vm.edge.numero}.svg`)
       .then((data) => {
-        const doc = parser.parseFromString(data, 'image/svg+xml')
+        const doc = new DOMParser().parseFromString(data, 'image/svg+xml')
         const svgElement = doc.getElementsByTagName('svg')[0]
         vm.setDimensions({
           width: svgElement.getAttribute('width'),
@@ -319,10 +319,12 @@ export default {
 
         vm.loaded = true
         vm.setSteps(
-          doc.getElementsByTagName('g').map((group) => ({
-            component: group.getAttribute('class'),
-            svgGroupElement: group
-          }))
+          Object.values(svgElement.childNodes)
+            .filter((group) => group.nodeName === 'g')
+            .map((group) => ({
+              component: group.getAttribute('class'),
+              svgGroupElement: group
+            }))
         )
       })
       .catch(() => {

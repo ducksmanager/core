@@ -29,7 +29,7 @@ export default {
   methods: {
     onOptionsSet() {},
     getOptionsFromSvgGroup() {
-      const rect = this.svgGroup.childNodes.find(
+      const rect = Object.values(this.svgGroup.childNodes).find(
         (node) => node.nodeName === 'rect'
       )
       return {
