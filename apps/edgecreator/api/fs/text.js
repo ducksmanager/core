@@ -20,13 +20,16 @@ export default function(req, res) {
     .catch(({ response }) => {
       if (response.status === 404) {
         console.log(`Found no existing text, generating text image...`)
-        generateImage(req, response.data, req.headers.imageWidth).then(
-          ({ data }) => {
+        generateImage(req, response.data, req.headers.imageWidth)
+          .then(({ data }) => {
             console.log(`Text image generated: id=${data.imageId}`)
             res.writeHeader(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ imageId: data.imageId }))
-          }
-        )
+          })
+          .catch(({ response }) => {
+            res.statusCode = response.status
+            res.end()
+          })
       } else {
         res.statusCode = response.status
         res.end()
