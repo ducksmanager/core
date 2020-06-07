@@ -36,15 +36,15 @@ export default {
         fill: rect.getAttribute('fill')
       }
     },
-    getOptionsFromDb() {
+    async getOptionsFromDb() {
       if (parseFloat(this.dbOptions.Pos_x) !== 0) {
         console.error(
-          `Etape ${this.stepNumber}: Pos_x !== 0, this is not supported`
+          `Step ${this.stepNumber}: Pos_x !== 0, this is not supported`
         )
       }
       if (parseFloat(this.dbOptions.Pos_y) !== 0) {
         console.error(
-          `Etape ${this.stepNumber}: Pos_y !== 0, this is not supported`
+          `Step ${this.stepNumber}: Pos_y !== 0, this is not supported`
         )
       }
       return {

@@ -48,39 +48,31 @@ export default {
       if (newValue) {
         this.copyOptions(this.getOptionsFromDb())
       }
-    },
-    options: {
-      deep: true,
-      immediate: true,
-      handler(newValue, oldValue) {
-        if (
-          (!oldValue && newValue.text) ||
-          (oldValue && oldValue.text !== newValue.text)
-        ) {
-          this.refreshPreview()
-        }
-      }
     }
   },
 
-  mounted() {
-    const vm = this
-    this.$root.$on('set-option', (optionName) => {
-      switch (optionName) {
-        case 'fgColor':
-        case 'bgColor':
-        case 'internalWidth':
-        case 'text':
-        case 'font':
-          vm.refreshPreview()
-      }
-    })
-  },
-
   methods: {
-    onOptionsSet() {
+    async onOptionsSet() {
       const vm = this
-      interact(this.$refs.image)
+
+      vm.$root.$on('set-option', (optionName) => {
+        if (vm.currentStepNumber === vm.stepNumber) {
+          switch (optionName) {
+            case 'fgColor':
+            case 'bgColor':
+            case 'internalWidth':
+            case 'text':
+            case 'font':
+              vm.refreshPreview()
+          }
+        }
+      })
+      await vm.refreshPreview()
+      if (vm.dbOptions) {
+        vm.copyOptions(await vm.getOptionsFromDb())
+      }
+
+      interact(vm.$refs.image)
         .draggable({
           onmove: (event) => {
             vm.options.x += event.dx / vm.zoom
@@ -108,22 +100,57 @@ export default {
         bgColor: image.getAttribute('bgColor'),
         font: image.getAttribute('font'),
         text: image.getAttribute('text'),
-        rotation: image.getAttribute('rotation'),
+        rotation: parseFloat(image.getAttribute('rotation')),
         internalWidth: parseFloat(image.getAttribute('internalWidth')),
         'xlink:href': image.getAttribute('xlink:href')
       }
     },
-    getOptionsFromDb() {
+    async getOptionsFromDb() {
+      const vm = this
+      if (this.imageUrl) {
+        const textImage = new Image()
+        textImage.src = vm.imageUrl
+        await new Promise(function(resolve) {
+          const interval = setInterval(function() {
+            if (textImage.width) {
+              clearInterval(interval)
+              resolve()
+            }
+          }, 10)
+        })
+
+        const embeddedImageHeight =
+          vm.width * (textImage.height / textImage.width)
+        const measureFromBottom = vm.dbOptions.Mesure_depuis_haut === 'Non'
+
+        const width = parseFloat(vm.dbOptions.Compression_x) * vm.width
+        const height =
+          parseFloat(vm.dbOptions.Compression_y) * embeddedImageHeight
+
+        const x = parseFloat(vm.dbOptions.Pos_x)
+        const y =
+          parseFloat(vm.dbOptions.Pos_y) - (measureFromBottom ? height : 0)
+
+        return {
+          ...vm.options,
+          x,
+          y,
+          width,
+          height,
+          'xlink:href': vm.imageUrl
+        }
+      }
       return {
-        fgColor: this.dbOptions.Couleur_texte,
-        bgColor: this.dbOptions.Couleur_fond,
-        font: this.dbOptions.URL.replace(/\./g, '/'),
-        text: this.dbOptions.Chaine,
-        internalWidth: parseFloat(this.dbOptions.Largeur),
-        rotation: 360 - parseFloat(this.dbOptions.Rotation),
-        isHalfHeight: this.dbOptions.Demi_hauteur === 'Oui'
+        fgColor: vm.dbOptions.Couleur_texte,
+        bgColor: vm.dbOptions.Couleur_fond,
+        font: vm.dbOptions.URL.replace(/\./g, '/'),
+        text: vm.dbOptions.Chaine,
+        internalWidth: parseFloat(vm.dbOptions.Largeur),
+        rotation: 360 - parseFloat(vm.dbOptions.Rotation),
+        isHalfHeight: vm.dbOptions.Demi_hauteur === 'Oui'
       }
     },
+
     async refreshPreview() {
       const vm = this
       const { fgColor, bgColor, internalWidth, text, font } = vm.options
@@ -145,35 +172,10 @@ export default {
         }
       )
 
-      if (vm.dbOptions) {
-        const textImage = new Image()
-        textImage.src = vm.imageUrl
-        textImage.onload = function() {
-          console.log(
-            `${vm.width} * (${textImage.height} / ${textImage.width})= ` +
-              vm.width * (textImage.height / textImage.width)
-          )
-          const embeddedImageHeight =
-            vm.width * (textImage.height / textImage.width)
-          const measureFromBottom = vm.dbOptions.Mesure_depuis_haut === 'Non'
-          const width = parseFloat(vm.dbOptions.Compression_x) * vm.width
-          const height =
-            parseFloat(vm.dbOptions.Compression_y) * embeddedImageHeight
-
-          const x = parseFloat(vm.dbOptions.Pos_x)
-          const y =
-            parseFloat(vm.dbOptions.Pos_y) - (measureFromBottom ? height : 0)
-
-          vm.copyOptions({
-            ...vm.options,
-            x,
-            y,
-            width,
-            height,
-            'xlink:href': vm.imageUrl
-          })
-        }
-      }
+      vm.copyOptions({
+        ...vm.options,
+        'xlink:href': vm.imageUrl
+      })
     }
   }
 }

@@ -48,12 +48,12 @@ export default {
     },
     ...mapMutations('currentStep', ['setStepNumber'])
   },
-  mounted() {
+  async mounted() {
     const vm = this
     if (this.svgGroup) {
       this.copyOptions(this.getOptionsFromSvgGroup())
     } else if (this.dbOptions) {
-      this.copyOptions(this.getOptionsFromDb())
+      this.copyOptions(await this.getOptionsFromDb())
     }
     this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {

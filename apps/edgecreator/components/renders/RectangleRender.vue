@@ -56,7 +56,7 @@ export default {
         stroke: rect.getAttribute('stroke')
       }
     },
-    getOptionsFromDb() {
+    async getOptionsFromDb() {
       const filled = this.dbOptions.Rempli === 'Oui'
       return {
         x: parseFloat(this.dbOptions.Pos_x_debut),

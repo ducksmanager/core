@@ -20,6 +20,7 @@ module.exports = {
   // add your custom rules here
   rules: {
     "no-console": "off",
-    "import/named": "off"
+    "import/named": "off",
+    "require-await": "off"
   }
 }
