@@ -65,10 +65,10 @@
                 </g>
                 <rect
                   id="border"
-                  :x="borderWidth / 4"
-                  :y="borderWidth / 4"
-                  :width="width - borderWidth / 2"
-                  :height="height - borderWidth / 2"
+                  :x="borderWidth / 2"
+                  :y="borderWidth / 2"
+                  :width="width - borderWidth"
+                  :height="height - borderWidth"
                   fill="none"
                   stroke="black"
                   :stroke-width="borderWidth"
@@ -99,10 +99,14 @@
                   @mouseover="hoveredStep = stepNumber"
                   @mouseleave="hoveredStep = null"
                 >
-                  {{ step.component }}
+                  {{
+                    supportedRenders.find(
+                      (render) => render.component === step.component
+                    ).label
+                  }}
                 </div>
               </template>
-              <b-card-text v-if="step.component === 'TexteMyFonts'">
+              <b-card-text v-if="step.component === 'Text'">
                 <form-input-row
                   option-name="text"
                   label="Text"
@@ -137,7 +141,7 @@
                   :options="currentStepOptions"
                 />
               </b-card-text>
-              <b-card-text v-if="step.component === 'Remplir'">
+              <b-card-text v-if="step.component === 'Fill'">
                 <form-input-row
                   option-name="fill"
                   label="Color"
@@ -190,7 +194,7 @@
                   <label :for="`${optionName}-transparent`">Transparent</label>
                 </form-input-row>
               </b-card-text>
-              <b-card-text v-if="step.component === 'ArcCercle'"
+              <b-card-text v-if="step.component === 'ArcCircle'"
                 ><form-input-row
                   v-for="optionName in ['fill', 'stroke']"
                   :key="optionName"
@@ -251,10 +255,10 @@
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex'
 import RectangleRender from '~/components/renders/RectangleRender'
-import ArcCercleRender from '~/components/renders/ArcCercleRender'
+import ArcCircleRender from '~/components/renders/ArcCircleRender'
 import ImageRender from '~/components/renders/ImageRender'
-import RemplirRender from '~/components/renders/RemplirRender'
-import TexteMyFontsRender from '~/components/renders/TexteMyFontsRender'
+import FillRender from '~/components/renders/FillRender'
+import TextRender from '~/components/renders/TextRender'
 import Gallery from '~/components/Gallery'
 import FormInputRow from '~/components/FormInputRow'
 import PublishedEdge from '~/components/PublishedEdge'
@@ -264,10 +268,10 @@ const DOMParser = require('xmldom').DOMParser
 export default {
   components: {
     RectangleRender,
-    ArcCercleRender,
+    ArcCircleRender,
     ImageRender,
-    RemplirRender,
-    TexteMyFontsRender,
+    FillRender,
+    TextRender,
     Gallery,
     FormInputRow,
     PublishedEdge
@@ -276,7 +280,7 @@ export default {
     return {
       error: null,
       loaded: false,
-      borderWidth: 2,
+      borderWidth: 1.5,
       currentStepOptions: {},
       clickedImage: null,
       hoveredStep: null,
@@ -284,28 +288,33 @@ export default {
       showNextEdge: true,
       supportedRenders: [
         {
-          label: 'Rectangle',
           component: 'Rectangle',
+          label: 'Rectangle',
+          originalName: 'Rectangle',
           description: 'Draw a rectangle'
         },
         {
-          label: 'Circle arc',
-          component: 'ArcCercle',
+          component: 'ArcCircle',
+          label: 'Arc circle',
+          originalName: 'Arc_cercle',
           description: 'Draw a circle arc'
         },
         {
-          label: 'Image',
           component: 'Image',
+          label: 'Image',
+          originalName: 'Image',
           description: 'Insert an image'
         },
         {
+          component: 'Fill',
           label: 'Fill',
-          component: 'Remplir',
+          originalName: 'Remplir',
           description: 'Fill the edge with a color'
         },
         {
+          component: 'Text',
           label: 'Text',
-          component: 'TexteMyFontsRender',
+          originalName: 'TexteMyFonts',
           description: 'Insert a text'
         }
       ]
@@ -400,9 +409,9 @@ export default {
               steps
                 .filter((step) => step.ordre !== -1)
                 .map((step) => ({
-                  component: `${step.nomFonction.replace(/(_[a-z])/g, (group) =>
-                    group.toUpperCase().replace('_', '')
-                  )}`,
+                  component: vm.supportedRenders.find(
+                    (component) => component.originalName === step.nomFonction
+                  ).component,
                   dbOptions: step.options
                 }))
             )
@@ -426,7 +435,7 @@ export default {
         .$put('/fs/export', {
           country: vm.edge.country,
           magazine: vm.edge.magazine,
-          issuenumber: vm.edge.numero,
+          issuenumber: vm.edge.issuenumber,
           content: vm.$refs.edge.outerHTML
         })
         .then(() => {
