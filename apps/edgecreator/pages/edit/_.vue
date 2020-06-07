@@ -1,5 +1,8 @@
 <template>
-  <b-container id="wrapper" fluid>
+  <b-container v-if="error" id="wrapper" fluid>
+    {{ error }}
+  </b-container>
+  <b-container v-else-if="edge" id="wrapper" fluid>
     <b-row align="center">
       <b-col class="text-left">
         <div>
@@ -24,14 +27,13 @@
         >
       </b-col>
     </b-row>
-    <b-row v-if="loaded" align-v="start" align-h="center">
+    <b-row v-if="loaded" align-v="stretch" align-h="center" class="flex-grow-1">
       <b-col class="text-right">
         <table class="edges">
           <tr>
-            <td>
+            <td v-if="showPreviousEdge && edgesBefore.length">
               <published-edge
-                v-if="showPreviousEdge && edgesBefore.length"
-                :issue-number="edgesBefore[edgesBefore.length - 1].issuenumber"
+                :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber"
               />
             </td>
             <td>
@@ -73,18 +75,15 @@
                 />
               </svg>
             </td>
-            <td>
-              <published-edge
-                v-if="showNextEdge && edgesAfter.length"
-                :issue-number="edgesAfter[0].issuenumber"
-              />
+            <td v-if="showNextEdge && edgesAfter.length">
+              <published-edge :issuenumber="edgesAfter[0].issuenumber" />
             </td>
           </tr>
           <tr>
             <td v-if="showPreviousEdge && edgesBefore.length">
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </td>
-            <td>{{ edge.numero }}<br />&#11088;</td>
+            <td>{{ edge.issuenumber }}<br />&#11088;</td>
             <td v-if="showNextEdge && edgesAfter.length">
               {{ edgesAfter[0].issuenumber }}
             </td>
@@ -92,7 +91,7 @@
         </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
-        <b-card no-body>
+        <b-card id="edit-card" no-body>
           <b-tabs v-model="currentStepNumber" lazy pills card vertical>
             <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
               <template v-slot:title>
@@ -227,7 +226,6 @@
 </template>
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex'
-import Vue from 'vue'
 import RectangleRender from '~/components/renders/RectangleRender'
 import ImageRender from '~/components/renders/ImageRender'
 import RemplirRender from '~/components/renders/RemplirRender'
@@ -250,6 +248,7 @@ export default {
   },
   data() {
     return {
+      error: null,
       loaded: false,
       borderWidth: 2,
       currentStepOptions: {},
@@ -307,17 +306,27 @@ export default {
       'edgesAfter'
     ])
   },
+  watch: {
+    edge(newValue) {
+      if (newValue && newValue.id) {
+        this.loadGalleryItems()
+        this.loadSurroundingEdges()
+      }
+    }
+  },
   async mounted() {
     const vm = this
-    const edges = await this.$axios.$get('/api/edgecreator/v2/model')
-    const edge = edges.find((edge) => edge.id === parseInt(vm.$route.params.id))
-    if (!edge) {
+    const [country, magazine, issuenumber] = vm.$route.params.pathMatch.split(
+      '/'
+    )
+    if ([country, magazine, issuenumber].includes(undefined)) {
+      this.error = 'Invalid URL'
       return
     }
-    this.setEdge(edge)
+    this.setEdge({ country, magazine, issuenumber })
 
-    this.$axios
-      .$get(`/${vm.edge.numero}.svg`)
+    await this.$axios
+      .$get(this.getEdgeUrl(vm.edge.issuenumber, 'svg'))
       .then((data) => {
         const doc = new DOMParser().parseFromString(data, 'image/svg+xml')
         const svgElement = doc.getElementsByTagName('svg')[0]
@@ -336,16 +345,25 @@ export default {
             }))
         )
       })
-      .catch(() => {
+      .catch(async () => {
+        const edge = await this.$axios.$get(
+          `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
+        )
+        if (!edge) {
+          return
+        }
+        vm.setEdge(edge)
         vm.$axios
           .$get(`/api/edgecreator/v2/model/${vm.edge.id}/steps`)
           .then((steps) => {
             vm.loaded = true
-            const dimensions = steps.find((step) => step.ordre === -1).options
-            vm.setDimensions({
-              width: dimensions.Dimension_x,
-              height: dimensions.Dimension_y
-            })
+            const dimensions = steps.find((step) => step.ordre === -1)
+            if (dimensions) {
+              vm.setDimensions({
+                width: dimensions.options.Dimension_x,
+                height: dimensions.options.Dimension_y
+              })
+            }
 
             vm.setSteps(
               steps
@@ -357,9 +375,6 @@ export default {
             )
           })
       })
-
-    this.loadGalleryItems()
-    this.loadSurroundingEdges()
   },
   methods: {
     loadCurrentStepOptions(options) {
@@ -368,24 +383,24 @@ export default {
     getElementUrl(elementFileName) {
       return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
     },
-    getEdgeUrl(issueNumber) {
-      return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${issueNumber}.png`
+    getEdgeUrl(issuenumber, extension = 'png') {
+      return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${issuenumber}.${extension}`
     },
     exportSvg() {
       const vm = this
       this.zoom = 1.5
-      Vue.nextTick().then(() => {
-        vm.$axios
-          .$put('/fs/export', {
-            issueNumber: vm.edge.numero,
-            content: vm.$refs.edge.outerHTML
+      vm.$axios
+        .$put('/fs/export', {
+          country: vm.edge.country,
+          magazine: vm.edge.magazine,
+          issuenumber: vm.edge.numero,
+          content: vm.$refs.edge.outerHTML
+        })
+        .then(() => {
+          vm.$bvToast.toast('Export done', {
+            toaster: 'b-toaster-top-center'
           })
-          .then(() => {
-            vm.$bvToast.toast('Export done', {
-              toaster: 'b-toaster-top-center'
-            })
-          })
-      })
+        })
     },
     ...mapMutations([
       'setSteps',
@@ -401,6 +416,16 @@ export default {
 }
 </script>
 <style>
+#wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+#edit-card,
+#edit-card .tabs {
+  height: 100%;
+}
+
 .draggable {
   cursor: move;
 }

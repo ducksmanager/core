@@ -1,7 +1,7 @@
 <template
   ><b-img
     :height="(naturalHeight * zoom) / 1.5"
-    :src="getEdgeUrl(issueNumber)"
+    :src="getEdgeUrl(issuenumber)"
     @load="naturalHeight = $event.currentTarget.naturalHeight"
 /></template>
 
@@ -10,7 +10,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'PublishedEdge',
   props: {
-    issueNumber: { type: String, required: true }
+    issuenumber: { type: String, required: true }
   },
   data() {
     return {
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     getEdgeUrl() {
-      return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${this.issueNumber}.png`
+      return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${this.issuenumber}.png`
     }
   }
 }
