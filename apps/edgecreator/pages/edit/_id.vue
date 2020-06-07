@@ -11,7 +11,7 @@
       </b-col>
       <b-col>
         <b-button to="/">Home</b-button>
-        <b-button @click="exportLogo">Export</b-button>
+        <b-button v-if="loaded" @click="exportSvg">Export</b-button>
       </b-col>
       <b-col class="text-right">
         <b-form-checkbox
@@ -362,14 +362,20 @@ export default {
     getEdgeUrl(issueNumber) {
       return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${issueNumber}.png`
     },
-    exportLogo() {
+    exportSvg() {
       const vm = this
       this.zoom = 1.5
       Vue.nextTick().then(() => {
-        vm.$axios.$put('/fs/export', {
-          issueNumber: vm.edge.numero,
-          content: vm.$refs.edge.outerHTML
-        })
+        vm.$axios
+          .$put('/fs/export', {
+            issueNumber: vm.edge.numero,
+            content: vm.$refs.edge.outerHTML
+          })
+          .then(() => {
+            vm.$bvToast.toast('Export done', {
+              toaster: 'b-toaster-top-center'
+            })
+          })
       })
     },
     ...mapMutations([
