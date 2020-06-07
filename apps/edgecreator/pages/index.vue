@@ -9,7 +9,7 @@
           :key="i"
           class="col-md-4 text-center"
         >
-          <b-link :to="`edit/${edge.id}`">
+          <b-link :to="`edit/${edge.pays}/${edge.magazine}/${edge.numero}`">
             <b-card-text
               >{{ edge.pays }}/{{ edge.magazine }}
               {{ edge.numero }}</b-card-text
@@ -36,7 +36,6 @@ export default {
         vm.edges = data
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error(e)
       })
   },

@@ -11,7 +11,11 @@ export const state = () => ({
 
 export const mutations = {
   setEdge(state, edge) {
-    state.edge = { ...edge, country: edge.pays }
+    state.edge = {
+      ...edge,
+      country: edge.pays || edge.country,
+      issuenumber: edge.issuenumber || edge.numero
+    }
   },
   setSteps(state, steps) {
     state.steps = steps

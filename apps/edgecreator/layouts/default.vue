@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <nuxt />
-  </div>
+  <nuxt />
 </template>
 
 <style>
@@ -15,6 +13,13 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+}
+
+body,
+#__nuxt,
+#__layout,
+#wrapper {
+  height: 100vh;
 }
 
 *,

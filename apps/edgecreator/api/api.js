@@ -27,7 +27,6 @@ export default async function(req, res) {
       headers: req.headers
     })
     .catch((e) => {
-      // eslint-disable-next-line no-console
       console.error(e)
       res.statusCode = e.response.status
       res.end()
