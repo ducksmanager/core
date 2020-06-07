@@ -189,9 +189,33 @@
                   />
                   <label :for="`${optionName}-transparent`">Transparent</label>
                 </form-input-row>
-              </b-card-text></b-tab
+              </b-card-text>
+              <b-card-text v-if="step.component === 'ArcCercle'"
+                ><form-input-row
+                  v-for="optionName in ['fill', 'stroke']"
+                  :key="optionName"
+                  :option-name="optionName"
+                  :label="`Color (${optionName})`"
+                  type="color"
+                  :options="currentStepOptions"
+                  :disabled="currentStepOptions[optionName] === 'transparent'"
+                  ><input
+                    :id="`${optionName}-transparent`"
+                    type="checkbox"
+                    :checked="currentStepOptions[optionName] === 'transparent'"
+                    @change="
+                      $root.$emit(
+                        'set-option',
+                        optionName,
+                        $event.currentTarget.checked ? 'transparent' : '#000000'
+                      )
+                    "
+                  />
+                  <label :for="`${optionName}-transparent`">Transparent</label>
+                </form-input-row></b-card-text
+              ></b-tab
             >
-            <b-tab key="99" title="Add step"
+            <b-tab key="99" title="Add step" title-item-class="font-weight-bold"
               ><b-card-text
                 ><b-dropdown text="Select a step type"
                   ><b-dropdown-item
@@ -227,6 +251,7 @@
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex'
 import RectangleRender from '~/components/renders/RectangleRender'
+import ArcCercleRender from '~/components/renders/ArcCercleRender'
 import ImageRender from '~/components/renders/ImageRender'
 import RemplirRender from '~/components/renders/RemplirRender'
 import TexteMyFontsRender from '~/components/renders/TexteMyFontsRender'
@@ -239,6 +264,7 @@ const DOMParser = require('xmldom').DOMParser
 export default {
   components: {
     RectangleRender,
+    ArcCercleRender,
     ImageRender,
     RemplirRender,
     TexteMyFontsRender,
@@ -261,6 +287,11 @@ export default {
           label: 'Rectangle',
           component: 'Rectangle',
           description: 'Draw a rectangle'
+        },
+        {
+          label: 'Circle arc',
+          component: 'ArcCercle',
+          description: 'Draw a circle arc'
         },
         {
           label: 'Image',
@@ -369,7 +400,9 @@ export default {
               steps
                 .filter((step) => step.ordre !== -1)
                 .map((step) => ({
-                  component: `${step.nomFonction}`,
+                  component: `${step.nomFonction.replace(/(_[a-z])/g, (group) =>
+                    group.toUpperCase().replace('_', '')
+                  )}`,
                   dbOptions: step.options
                 }))
             )
