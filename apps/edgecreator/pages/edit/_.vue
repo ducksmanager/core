@@ -440,30 +440,6 @@ svg g.hovered {
   height: 100%;
 }
 
-.row.gallery {
-  height: 100px;
-}
-
-.row.gallery > div {
-  height: 100%;
-}
-
-.row.gallery > div > img {
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-}
-
-.row.gallery > div > img.selected {
-  outline: 2px solid #3b8070;
-}
-.img-thumbnail {
-  background: transparent;
-}
-.img-thumbnail:hover {
-  background: black;
-}
-
 @keyframes glowFilter {
   0% {
     -webkit-filter: drop-shadow(-0.75px 0px 6px black);
