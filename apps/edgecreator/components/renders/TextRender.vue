@@ -16,7 +16,7 @@
 <script>
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 
-const interact = require('../../node_modules/interact.js/interact')
+const interact = require('interactjs')
 
 export default {
   mixins: [stepOptionsMixin],
@@ -44,10 +44,50 @@ export default {
   },
 
   watch: {
-    image(newValue) {
-      if (newValue) {
-        this.copyOptions(this.getOptionsFromDb())
+    image: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          const vm = this
+          this.copyOptions(this.getOptionsFromDb())
+          this.waitUntil(
+            () => vm.$refs.image,
+            () => {
+              interact(vm.$refs.image)
+                .draggable({
+                  onmove: (event) => {
+                    vm.options.x += event.dx / vm.zoom
+                    vm.options.y += event.dy / vm.zoom
+                  }
+                })
+                .resizable({
+                  edges: { right: true, bottom: true }
+                })
+                .on('resizemove', (event) => {
+                  vm.options.width = event.rect.width / vm.zoom
+                  vm.options.height = event.rect.height / vm.zoom
+                })
+            },
+            2000,
+            100
+          )
+        }
       }
+    },
+    'options.fgColor'() {
+      this.refreshPreview()
+    },
+    'options.bgColor'() {
+      this.refreshPreview()
+    },
+    'options.internalWidth'() {
+      this.refreshPreview()
+    },
+    'options.text'() {
+      this.refreshPreview()
+    },
+    'options.font'() {
+      this.refreshPreview()
     }
   },
 
@@ -55,37 +95,10 @@ export default {
     async onOptionsSet() {
       const vm = this
 
-      vm.$root.$on('set-option', (optionName) => {
-        if (vm.currentStepNumber === vm.stepNumber) {
-          switch (optionName) {
-            case 'fgColor':
-            case 'bgColor':
-            case 'internalWidth':
-            case 'text':
-            case 'font':
-              vm.refreshPreview()
-          }
-        }
-      })
       await vm.refreshPreview()
       if (vm.dbOptions) {
         vm.copyOptions(await vm.getOptionsFromDb())
       }
-
-      interact(vm.$refs.image)
-        .draggable({
-          onmove: (event) => {
-            vm.options.x += event.dx / vm.zoom
-            vm.options.y += event.dy / vm.zoom
-          }
-        })
-        .resizable({
-          edges: { right: true, bottom: true }
-        })
-        .on('resizemove', (event) => {
-          vm.options.width = event.rect.width / vm.zoom
-          vm.options.height = event.rect.height / vm.zoom
-        })
     },
     getOptionsFromSvgGroup() {
       const image = Object.values(this.svgGroup.childNodes).find(
@@ -176,6 +189,18 @@ export default {
         ...vm.options,
         'xlink:href': vm.imageUrl
       })
+    },
+    waitUntil(condition, okCallback, timeout, loopEvery) {
+      let iterations = 0
+      const interval = setInterval(() => {
+        if (condition()) {
+          okCallback()
+          clearInterval(interval)
+        }
+        if (++iterations > timeout / loopEvery) {
+          clearInterval(interval)
+        }
+      }, loopEvery)
     }
   }
 }

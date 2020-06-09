@@ -30,9 +30,9 @@ export default {
     options: {
       deep: true,
       immediate: true,
-      handler(newValue) {
+      handler(newValue, oldValue) {
         if (this.currentStepNumber === this.stepNumber) {
-          this.$emit('update', newValue)
+          this.$emit('update', newValue, oldValue)
         }
       }
     }
@@ -58,7 +58,7 @@ export default {
     this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
       if (vm.currentStepNumber === vm.stepNumber) {
-        Vue.set(vm.options, optionName, optionValue)
+        vm.options[optionName] = optionValue
       }
     })
   }

@@ -468,10 +468,6 @@ export default {
   height: 100%;
 }
 
-.draggable {
-  cursor: move;
-}
-
 svg g:hover,
 svg g.hovered {
   animation: glowFilter 2s infinite;
