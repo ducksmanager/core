@@ -21,7 +21,7 @@
     "bootstrap-vue": "^2.0.0",
     "cookie-universal-nuxt": "^2.1.4",
     "image-size": "^0.8.3",
-    "interact.js": "^1.2.8",
+    "interactjs": "^1.9.19",
     "nuxt": "^2.0.0",
     "nuxt-svg-loader": "^1.2.0",
     "raw-body": "^2.4.1",
