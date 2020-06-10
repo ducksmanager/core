@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       textImage: null,
+      textImageOptions: {},
       image: { base64: null, width: null, height: null },
       options: {
         x: 5,
@@ -166,6 +167,10 @@ export default {
 
     async refreshPreview() {
       const vm = this
+      if (JSON.stringify(vm.textImageOptions) === JSON.stringify(vm.options)) {
+        return
+      }
+      vm.textImageOptions = vm.options
       const { fgColor, bgColor, internalWidth, text, font } = vm.options
       vm.textImage = await vm.$axios.$get(
         `/fs/text/${[
