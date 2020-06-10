@@ -17,8 +17,6 @@
 <script>
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 
-const interact = require('interactjs')
-
 export default {
   mixins: [stepOptionsMixin],
 
@@ -58,20 +56,7 @@ export default {
           this.waitUntil(
             () => vm.$refs.image,
             () => {
-              interact(vm.$refs.image)
-                .draggable({
-                  onmove: (event) => {
-                    vm.options.x += event.dx / vm.zoom
-                    vm.options.y += event.dy / vm.zoom
-                  }
-                })
-                .resizable({
-                  edges: { right: true, bottom: true }
-                })
-                .on('resizemove', (event) => {
-                  vm.options.width = event.rect.width / vm.zoom
-                  vm.options.height = event.rect.height / vm.zoom
-                })
+              vm.enableDragResize(vm.$refs.image)
             },
             2000,
             100

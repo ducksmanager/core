@@ -1,13 +1,11 @@
 <template>
-  <ellipse ref="rect" v-bind="options" @click="setStepNumber(stepNumber)">
+  <ellipse ref="ellipse" v-bind="options" @click="setStepNumber(stepNumber)">
     <metadata>{{ options }}</metadata>
   </ellipse>
 </template>
 
 <script>
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
-
-const interact = require('interactjs')
 
 export default {
   mixins: [stepOptionsMixin],
@@ -27,21 +25,7 @@ export default {
 
   methods: {
     onOptionsSet() {
-      const vm = this
-      interact(this.$refs.rect)
-        .draggable({
-          onmove: (event) => {
-            vm.options.cx += event.dx / vm.zoom
-            vm.options.cy += event.dy / vm.zoom
-          }
-        })
-        .resizable({
-          edges: { right: true, bottom: true }
-        })
-        .on('resizemove', (event) => {
-          vm.options.rx = event.rect.width / 2 / vm.zoom
-          vm.options.ry = event.rect.height / 2 / vm.zoom
-        })
+      this.enableDragResize(this.$refs.ellipse, 'cx', 'cy', 'rx', 'ry')
     },
     async getOptionsFromDb() {
       const filled = this.dbOptions.Rempli === 'Oui'
