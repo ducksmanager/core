@@ -1,5 +1,10 @@
 <template>
-  <image ref="image" v-bind="options" @click="setStepNumber(stepNumber)">
+  <image
+    ref="image"
+    v-bind="options"
+    :xlink:href="image.url"
+    @click="setStepNumber(stepNumber)"
+  >
     <metadata>{{ options }}</metadata>
   </image>
 </template>
@@ -58,19 +63,6 @@ export default {
           vm.options.height = event.rect.height / vm.zoom
         })
     },
-    getOptionsFromSvgGroup() {
-      const image = Object.values(this.svgGroup.childNodes).find(
-        (node) => node.nodeName === 'image'
-      )
-      return {
-        x: parseFloat(image.getAttribute('x')),
-        y: parseFloat(image.getAttribute('y')),
-        width: parseFloat(image.getAttribute('width')),
-        height: parseFloat(image.getAttribute('height')),
-        src: image.getAttribute('src'),
-        'xlink:href': image.getAttribute('xlink:href')
-      }
-    },
     async getOptionsFromDb() {
       const vm = this
       if (!vm.image.dimensions || !vm.image.base64) {
@@ -90,8 +82,7 @@ export default {
             : vm.dbOptions.Decalage_y
         ),
         width: parseFloat(vm.dbOptions.Compression_x) * vm.width,
-        height: parseFloat(vm.dbOptions.Compression_y) * embeddedImageHeight,
-        'xlink:href': vm.image.url
+        height: parseFloat(vm.dbOptions.Compression_y) * embeddedImageHeight
       }
     }
   }

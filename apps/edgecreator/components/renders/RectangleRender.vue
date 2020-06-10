@@ -43,19 +43,6 @@ export default {
           vm.options.height = event.rect.height / vm.zoom
         })
     },
-    getOptionsFromSvgGroup() {
-      const rect = Object.values(this.svgGroup.childNodes).find(
-        (node) => node.nodeName === 'rect'
-      )
-      return {
-        x: parseFloat(rect.getAttribute('x')),
-        y: parseFloat(rect.getAttribute('y')),
-        width: parseFloat(rect.getAttribute('width')),
-        height: parseFloat(rect.getAttribute('height')),
-        fill: rect.getAttribute('fill'),
-        stroke: rect.getAttribute('stroke')
-      }
-    },
     async getOptionsFromDb() {
       const filled = this.dbOptions.Rempli === 'Oui'
       return {

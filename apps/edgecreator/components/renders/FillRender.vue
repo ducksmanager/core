@@ -28,14 +28,6 @@ export default {
 
   methods: {
     onOptionsSet() {},
-    getOptionsFromSvgGroup() {
-      const rect = Object.values(this.svgGroup.childNodes).find(
-        (node) => node.nodeName === 'rect'
-      )
-      return {
-        fill: rect.getAttribute('fill')
-      }
-    },
     async getOptionsFromDb() {
       if (parseFloat(this.dbOptions.Pos_x) !== 0) {
         console.error(

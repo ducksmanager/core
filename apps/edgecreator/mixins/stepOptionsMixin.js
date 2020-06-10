@@ -16,7 +16,15 @@ export default {
     ...mapState(['zoom', 'width', 'height', 'edge']),
     ...mapState('currentStep', {
       currentStepNumber: 'stepNumber'
-    })
+    }),
+    svgMetadata() {
+      return (
+        this.svgGroup &&
+        JSON.parse(
+          this.svgGroup.getElementsByTagName('metadata')[0].textContent
+        )
+      )
+    }
   },
   watch: {
     currentStepNumber: {
@@ -50,8 +58,8 @@ export default {
   },
   async mounted() {
     const vm = this
-    if (this.svgGroup) {
-      this.copyOptions(this.getOptionsFromSvgGroup())
+    if (this.svgMetadata) {
+      this.copyOptions(this.svgMetadata)
     } else if (this.dbOptions) {
       this.copyOptions(await this.getOptionsFromDb())
     }

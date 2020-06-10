@@ -43,19 +43,6 @@ export default {
           vm.options.ry = event.rect.height / 2 / vm.zoom
         })
     },
-    getOptionsFromSvgGroup() {
-      const ellipse = Object.values(this.svgGroup.childNodes).find(
-        (node) => node.nodeName === 'ellipse'
-      )
-      return {
-        cx: parseFloat(ellipse.getAttribute('cx')),
-        cy: parseFloat(ellipse.getAttribute('cy')),
-        rx: parseFloat(ellipse.getAttribute('rx')),
-        ry: parseFloat(ellipse.getAttribute('ry')),
-        fill: ellipse.getAttribute('fill'),
-        stroke: ellipse.getAttribute('stroke')
-      }
-    },
     async getOptionsFromDb() {
       const filled = this.dbOptions.Rempli === 'Oui'
 
