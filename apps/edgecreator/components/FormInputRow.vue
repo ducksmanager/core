@@ -36,7 +36,7 @@ export default {
   computed: {
     userValue() {
       const value = this.options[this.optionName]
-      if (this.optionName.toLowerCase().includes('color')) {
+      if (this.isTextColor) {
         return `#${value}`
       }
       if (this.optionName === 'xlink:href') {
@@ -51,11 +51,17 @@ export default {
           this.optionName
         )
       )
+    },
+    isTextColor() {
+      return (
+        this.isTextImageParameter &&
+        this.optionName.toLowerCase().includes('color')
+      )
     }
   },
   methods: {
     onChangeValue(value) {
-      if (this.optionName.toLowerCase().includes('color')) {
+      if (this.isTextColor) {
         value = value.replace('#', '')
       }
       this.$root.$emit('set-option', this.optionName, value)

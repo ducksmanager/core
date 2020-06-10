@@ -164,7 +164,9 @@
                   "
                 />
               </b-card-text>
-              <b-card-text v-if="step.component === 'Rectangle'">
+              <b-card-text
+                v-if="['Rectangle', 'ArcCircle'].includes(step.component)"
+              >
                 <form-color-input-row
                   v-for="optionName in ['fill', 'stroke']"
                   :key="optionName"
@@ -173,14 +175,28 @@
                   can-be-transparent
                 />
               </b-card-text>
-              <b-card-text v-if="step.component === 'ArcCircle'">
+              <b-card-text v-if="step.component === 'Gradient'">
                 <form-color-input-row
-                  v-for="optionName in ['fill', 'stroke']"
+                  v-for="optionName in ['colorStart', 'colorEnd']"
                   :key="optionName"
                   :options="currentStepOptions"
                   :option-name="optionName"
-                  can-be-transparent
-                /> </b-card-text
+                />
+
+                <b-row>
+                  <b-col sm="2">
+                    <label for="direction">Direction</label>
+                  </b-col>
+                  <b-col sm="6" md="5">
+                    <b-form-select
+                      id="direction"
+                      :value="currentStepOptions.direction"
+                      :options="['Vertical', 'Horizontal']"
+                      @input="$root.$emit('set-option', 'direction', $event)"
+                    >
+                    </b-form-select>
+                  </b-col>
+                </b-row> </b-card-text
             ></b-tab>
             <b-tab key="99" title="Add step" title-item-class="font-weight-bold"
               ><b-card-text
@@ -227,6 +243,7 @@ import ArcCircleRender from '~/components/renders/ArcCircleRender'
 import ImageRender from '~/components/renders/ImageRender'
 import FillRender from '~/components/renders/FillRender'
 import TextRender from '~/components/renders/TextRender'
+import GradientRender from '~/components/renders/GradientRender'
 
 const DOMParser = require('xmldom').DOMParser
 
@@ -241,7 +258,8 @@ export default {
     ArcCircleRender,
     ImageRender,
     FillRender,
-    TextRender
+    TextRender,
+    GradientRender
   },
   data() {
     return {
@@ -283,6 +301,12 @@ export default {
           label: 'Text',
           originalName: 'TexteMyFonts',
           description: 'Insert a text'
+        },
+        {
+          component: 'Gradient',
+          label: 'Gradient',
+          originalName: 'Degrade',
+          description: 'Insert a rectangle with a gradient'
         }
       ]
     }
