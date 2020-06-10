@@ -3,6 +3,7 @@
     v-if="options.x"
     ref="image"
     v-bind="options"
+    :xlink:href="imageUrl"
     :transform="
       `rotate(${options.rotation}, ${options.x +
         options.width / 2}, ${options.y + options.height / 2})`
@@ -31,7 +32,8 @@ export default {
         y: 5,
         width: 15,
         height: 15,
-        src: null
+        src: null,
+        rotation: 0
       }
     }
   },
@@ -50,7 +52,9 @@ export default {
       handler(newValue) {
         if (newValue) {
           const vm = this
-          this.copyOptions(this.getOptionsFromDb())
+          if (vm.dbOptions) {
+            this.copyOptions(this.getOptionsFromDb())
+          }
           this.waitUntil(
             () => vm.$refs.image,
             () => {
@@ -101,24 +105,6 @@ export default {
         vm.copyOptions(await vm.getOptionsFromDb())
       }
     },
-    getOptionsFromSvgGroup() {
-      const image = Object.values(this.svgGroup.childNodes).find(
-        (node) => node.nodeName === 'image'
-      )
-      return {
-        x: parseFloat(image.getAttribute('x')),
-        y: parseFloat(image.getAttribute('y')),
-        width: parseFloat(image.getAttribute('width')),
-        height: parseFloat(image.getAttribute('height')),
-        fgColor: image.getAttribute('fgColor'),
-        bgColor: image.getAttribute('bgColor'),
-        font: image.getAttribute('font'),
-        text: image.getAttribute('text'),
-        rotation: parseFloat(image.getAttribute('rotation')),
-        internalWidth: parseFloat(image.getAttribute('internalWidth')),
-        'xlink:href': image.getAttribute('xlink:href')
-      }
-    },
     async getOptionsFromDb() {
       const vm = this
       if (this.imageUrl) {
@@ -150,8 +136,7 @@ export default {
           x,
           y,
           width,
-          height,
-          'xlink:href': vm.imageUrl
+          height
         }
       }
       return {
@@ -170,7 +155,7 @@ export default {
       if (JSON.stringify(vm.textImageOptions) === JSON.stringify(vm.options)) {
         return
       }
-      vm.textImageOptions = vm.options
+      vm.textImageOptions = { ...vm.options }
       const { fgColor, bgColor, internalWidth, text, font } = vm.options
       vm.textImage = await vm.$axios.$get(
         `/fs/text/${[
@@ -189,11 +174,6 @@ export default {
           }
         }
       )
-
-      vm.copyOptions({
-        ...vm.options,
-        'xlink:href': vm.imageUrl
-      })
     },
     waitUntil(condition, okCallback, timeout, loopEvery) {
       let iterations = 0
