@@ -119,17 +119,13 @@
                   type="text"
                   :options="currentStepOptions"
                 />
-                <form-input-row
+                <form-color-input-row
+                  :options="currentStepOptions"
                   option-name="bgColor"
-                  label="Background color"
-                  type="color"
-                  :options="currentStepOptions"
                 />
-                <form-input-row
-                  option-name="fgColor"
-                  label="Text color"
-                  type="color"
+                <form-color-input-row
                   :options="currentStepOptions"
+                  option-name="fgColor"
                 />
                 <form-input-row
                   option-name="rotation"
@@ -142,11 +138,9 @@
                 />
               </b-card-text>
               <b-card-text v-if="step.component === 'Fill'">
-                <form-input-row
-                  option-name="fill"
-                  label="Color"
-                  type="color"
+                <form-color-input-row
                   :options="currentStepOptions"
+                  option-name="fill"
                 />
               </b-card-text>
               <b-card-text v-if="step.component === 'Image'">
@@ -171,54 +165,23 @@
                 />
               </b-card-text>
               <b-card-text v-if="step.component === 'Rectangle'">
-                <form-input-row
+                <form-color-input-row
                   v-for="optionName in ['fill', 'stroke']"
                   :key="optionName"
-                  :option-name="optionName"
-                  :label="`Color (${optionName})`"
-                  type="color"
                   :options="currentStepOptions"
-                  :disabled="currentStepOptions[optionName] === 'transparent'"
-                  ><input
-                    :id="`${optionName}-transparent`"
-                    type="checkbox"
-                    :checked="currentStepOptions[optionName] === 'transparent'"
-                    @change="
-                      $root.$emit(
-                        'set-option',
-                        optionName,
-                        $event.currentTarget.checked ? 'transparent' : '#000000'
-                      )
-                    "
-                  />
-                  <label :for="`${optionName}-transparent`">Transparent</label>
-                </form-input-row>
+                  :option-name="optionName"
+                  can-be-transparent
+                />
               </b-card-text>
-              <b-card-text v-if="step.component === 'ArcCircle'"
-                ><form-input-row
+              <b-card-text v-if="step.component === 'ArcCircle'">
+                <form-color-input-row
                   v-for="optionName in ['fill', 'stroke']"
                   :key="optionName"
-                  :option-name="optionName"
-                  :label="`Color (${optionName})`"
-                  type="color"
                   :options="currentStepOptions"
-                  :disabled="currentStepOptions[optionName] === 'transparent'"
-                  ><input
-                    :id="`${optionName}-transparent`"
-                    type="checkbox"
-                    :checked="currentStepOptions[optionName] === 'transparent'"
-                    @change="
-                      $root.$emit(
-                        'set-option',
-                        optionName,
-                        $event.currentTarget.checked ? 'transparent' : '#000000'
-                      )
-                    "
-                  />
-                  <label :for="`${optionName}-transparent`">Transparent</label>
-                </form-input-row></b-card-text
-              ></b-tab
-            >
+                  :option-name="optionName"
+                  can-be-transparent
+                /> </b-card-text
+            ></b-tab>
             <b-tab key="99" title="Add step" title-item-class="font-weight-bold"
               ><b-card-text
                 ><b-dropdown text="Select a step type"
@@ -253,28 +216,32 @@
   </b-container>
 </template>
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
+import Gallery from '~/components/Gallery'
+import FormInputRow from '~/components/FormInputRow'
+import FormColorInputRow from '~/components/FormColorInputRow'
+import PublishedEdge from '~/components/PublishedEdge'
+
 import RectangleRender from '~/components/renders/RectangleRender'
 import ArcCircleRender from '~/components/renders/ArcCircleRender'
 import ImageRender from '~/components/renders/ImageRender'
 import FillRender from '~/components/renders/FillRender'
 import TextRender from '~/components/renders/TextRender'
-import Gallery from '~/components/Gallery'
-import FormInputRow from '~/components/FormInputRow'
-import PublishedEdge from '~/components/PublishedEdge'
 
 const DOMParser = require('xmldom').DOMParser
 
 export default {
   components: {
+    Gallery,
+    FormColorInputRow,
+    FormInputRow,
+    PublishedEdge,
+
     RectangleRender,
     ArcCircleRender,
     ImageRender,
     FillRender,
-    TextRender,
-    Gallery,
-    FormInputRow,
-    PublishedEdge
+    TextRender
   },
   data() {
     return {
