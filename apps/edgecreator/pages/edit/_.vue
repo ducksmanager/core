@@ -283,6 +283,12 @@ export default {
           description: 'Draw a rectangle'
         },
         {
+          component: 'Gradient',
+          label: 'Gradient',
+          originalName: 'Degrade',
+          description: 'Draw a rectangle with a gradient'
+        },
+        {
           component: 'ArcCircle',
           label: 'Arc circle',
           originalName: 'Arc_cercle',
@@ -305,12 +311,6 @@ export default {
           label: 'Text',
           originalName: 'TexteMyFonts',
           description: 'Insert a text'
-        },
-        {
-          component: 'Gradient',
-          label: 'Gradient',
-          originalName: 'Degrade',
-          description: 'Insert a rectangle with a gradient'
         }
       ]
     }
@@ -466,6 +466,7 @@ export default {
 #wrapper {
   display: flex;
   flex-direction: column;
+  user-select: none;
 }
 
 #edit-card,
