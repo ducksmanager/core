@@ -83,18 +83,15 @@ export default {
 
   methods: {
     async onOptionsSet() {
-      const vm = this
-
-      await vm.refreshPreview()
-      if (vm.dbOptions) {
-        vm.copyOptions(await vm.getOptionsFromDb())
+      await this.refreshPreview()
+      if (this.dbOptions) {
+        this.copyOptions(await this.getOptionsFromDb())
       }
     },
     async getOptionsFromDb() {
-      const vm = this
       if (this.imageUrl) {
         const textImage = new Image()
-        textImage.src = vm.imageUrl
+        textImage.src = this.imageUrl
         await new Promise(function(resolve) {
           const interval = setInterval(function() {
             if (textImage.width) {
@@ -105,19 +102,19 @@ export default {
         })
 
         const embeddedImageHeight =
-          vm.width * (textImage.height / textImage.width)
-        const measureFromBottom = vm.dbOptions.Mesure_depuis_haut === 'Non'
+          this.width * (textImage.height / textImage.width)
+        const measureFromBottom = this.dbOptions.Mesure_depuis_haut === 'Non'
 
-        const width = parseFloat(vm.dbOptions.Compression_x) * vm.width
+        const width = parseFloat(this.dbOptions.Compression_x) * this.width
         const height =
-          parseFloat(vm.dbOptions.Compression_y) * embeddedImageHeight
+          parseFloat(this.dbOptions.Compression_y) * embeddedImageHeight
 
-        const x = parseFloat(vm.dbOptions.Pos_x)
+        const x = parseFloat(this.dbOptions.Pos_x)
         const y =
-          parseFloat(vm.dbOptions.Pos_y) - (measureFromBottom ? height : 0)
+          parseFloat(this.dbOptions.Pos_y) - (measureFromBottom ? height : 0)
 
         return {
-          ...vm.options,
+          ...this.options,
           x,
           y,
           width,
@@ -125,24 +122,25 @@ export default {
         }
       }
       return {
-        fgColor: vm.dbOptions.Couleur_texte,
-        bgColor: vm.dbOptions.Couleur_fond,
-        font: vm.dbOptions.URL.replace(/\./g, '/'),
-        text: vm.dbOptions.Chaine,
-        internalWidth: parseFloat(vm.dbOptions.Largeur),
-        rotation: 360 - parseFloat(vm.dbOptions.Rotation),
-        isHalfHeight: vm.dbOptions.Demi_hauteur === 'Oui'
+        fgColor: this.dbOptions.Couleur_texte,
+        bgColor: this.dbOptions.Couleur_fond,
+        font: this.dbOptions.URL.replace(/\./g, '/'),
+        text: this.dbOptions.Chaine,
+        internalWidth: parseFloat(this.dbOptions.Largeur),
+        rotation: 360 - parseFloat(this.dbOptions.Rotation),
+        isHalfHeight: this.dbOptions.Demi_hauteur === 'Oui'
       }
     },
 
     async refreshPreview() {
-      const vm = this
-      if (JSON.stringify(vm.textImageOptions) === JSON.stringify(vm.options)) {
+      if (
+        JSON.stringify(this.textImageOptions) === JSON.stringify(this.options)
+      ) {
         return
       }
-      vm.textImageOptions = { ...vm.options }
-      const { fgColor, bgColor, internalWidth, text, font } = vm.options
-      vm.textImage = await vm.$axios.$get(
+      this.textImageOptions = { ...this.options }
+      const { fgColor, bgColor, internalWidth, text, font } = this.options
+      this.textImage = await this.$axios.$get(
         `/fs/text/${[
           fgColor,
           bgColor,
@@ -154,7 +152,7 @@ export default {
         ].join('/')}`,
         {
           headers: {
-            imageWidth: vm.edge.width,
+            imageWidth: this.edge.width,
             'Content-Type': 'application/json'
           }
         }
