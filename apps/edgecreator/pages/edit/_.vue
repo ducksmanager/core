@@ -4,7 +4,7 @@
   </b-container>
   <b-container v-else-if="edge" id="wrapper" fluid>
     <b-row align="center">
-      <b-col class="text-left">
+      <b-col class="text-left col-sm-4">
         <div>
           <label style="display: inline-block;width: 200px"
             >Zoom : {{ zoom }}
@@ -12,11 +12,18 @@
           </label>
         </div>
       </b-col>
-      <b-col>
+      <b-col align-self="center" class="col-sm-4">
         <b-button to="/">Home</b-button>
         <b-button :disabled="!loaded" @click="exportSvg">Export</b-button>
       </b-col>
-      <b-col class="text-right">
+      <b-col align-self="center" class="text-right col-sm-2">
+        <b-form-checkbox
+          v-model="showIssueNumbers"
+          :disabled="!edgesBefore.length && !edgesAfter.length"
+          >Show issue numbers</b-form-checkbox
+        >
+      </b-col>
+      <b-col class="text-right col-sm-2">
         <b-form-checkbox
           v-model="showPreviousEdge"
           :disabled="!edgesBefore.length"
@@ -27,7 +34,7 @@
         >
       </b-col>
     </b-row>
-    <b-row v-if="loaded" align-v="stretch" align-h="center" class="flex-grow-1">
+    <b-row v-if="loaded" class="flex-grow-1">
       <b-col class="text-right">
         <table class="edges">
           <tr>
@@ -79,14 +86,14 @@
               <published-edge :issuenumber="edgesAfter[0].issuenumber" />
             </td>
           </tr>
-          <tr>
-            <td v-if="showPreviousEdge && edgesBefore.length">
+          <tr v-if="showIssueNumbers">
+            <th v-if="showPreviousEdge && edgesBefore.length">
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
-            </td>
-            <td>{{ edge.issuenumber }}<br />&#11088;</td>
-            <td v-if="showNextEdge && edgesAfter.length">
+            </th>
+            <th>{{ edge.issuenumber }}<br />&#11088;</th>
+            <th v-if="showNextEdge && edgesAfter.length">
               {{ edgesAfter[0].issuenumber }}
-            </td>
+            </th>
           </tr>
         </table>
       </b-col>
@@ -265,6 +272,7 @@ export default {
       currentStepOptions: {},
       clickedImage: null,
       hoveredStep: null,
+      showIssueNumbers: true,
       showPreviousEdge: true,
       showNextEdge: true,
       supportedRenders: [
@@ -506,13 +514,18 @@ table.edges {
   float: right;
 }
 
-table.edges tr td {
+table.edges tr td,
+table.edges tr th {
   padding: 0;
   text-align: center;
-  vertical-align: top;
 }
 
-table.edges tr:last-child td {
+table.edges tr td {
+  vertical-align: bottom;
+}
+
+table.edges tr th {
+  vertical-align: top;
   outline: 1px solid grey;
 }
 </style>
