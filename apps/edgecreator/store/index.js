@@ -11,11 +11,7 @@ export const state = () => ({
 
 export const mutations = {
   setEdge(state, edge) {
-    state.edge = {
-      ...edge,
-      country: edge.pays || edge.country,
-      issuenumber: edge.issuenumber || edge.numero
-    }
+    state.edge = edge
   },
   setSteps(state, steps) {
     state.steps = steps
@@ -45,16 +41,16 @@ export const actions = {
   async loadGalleryItems({ state, commit }) {
     commit('setGalleryItems', {
       items: await this.$axios.$get(
-        `/fs/browseElements/${state.edge.pays}/${state.edge.magazine}`
+        `/fs/browseElements/${state.edge.country}/${state.edge.magazine}`
       )
     })
   },
   async loadSurroundingEdges({ state, commit }) {
     const publicationIssues = await this.$axios.$get(
-      `/api/coa/list/issues/${state.edge.pays}/${state.edge.magazine}`
+      `/api/coa/list/issues/${state.edge.country}/${state.edge.magazine}`
     )
     const currentIssueIndex = publicationIssues.findIndex(
-      (issue) => issue === state.edge.numero
+      (issue) => issue === state.edge.issuenumber
     )
     const issuesBefore = publicationIssues.filter(
       (unused, index) =>
@@ -68,7 +64,7 @@ export const actions = {
     if (issuesBefore.length) {
       commit('setEdgesBefore', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.edge.pays}/${
+          `/api/edges/${state.edge.country}/${
             state.edge.magazine
           }/${issuesBefore.join(',')}`
         )
@@ -78,7 +74,7 @@ export const actions = {
     if (issuesAfter.length) {
       commit('setEdgesAfter', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.edge.pays}/${
+          `/api/edges/${state.edge.country}/${
             state.edge.magazine
           }/${issuesAfter.join(',')}`
         )
