@@ -199,7 +199,12 @@
                     >
                     </b-form-select>
                   </b-col>
-                </b-row> </b-card-text
+                </b-row>
+              </b-card-text>
+              <b-card-text v-if="step.component === 'Polygon'">
+                <form-color-input-row
+                  :options="currentStepOptions"
+                  option-name="fill"/></b-card-text
             ></b-tab>
             <b-tab key="99" title="Add step" title-item-class="font-weight-bold"
               ><b-card-text
@@ -242,6 +247,7 @@ import FormColorInputRow from '~/components/FormColorInputRow'
 import PublishedEdge from '~/components/PublishedEdge'
 
 import RectangleRender from '~/components/renders/RectangleRender'
+import PolygonRender from '~/components/renders/PolygonRender'
 import ArcCircleRender from '~/components/renders/ArcCircleRender'
 import ImageRender from '~/components/renders/ImageRender'
 import FillRender from '~/components/renders/FillRender'
@@ -258,6 +264,7 @@ export default {
     PublishedEdge,
 
     RectangleRender,
+    PolygonRender,
     ArcCircleRender,
     ImageRender,
     FillRender,
@@ -287,6 +294,12 @@ export default {
           label: 'Gradient',
           originalName: 'Degrade',
           description: 'Draw a rectangle with a gradient'
+        },
+        {
+          component: 'Polygon',
+          label: 'Polygon',
+          originalName: 'Polygone',
+          description: 'Draw a polygon'
         },
         {
           component: 'ArcCircle',

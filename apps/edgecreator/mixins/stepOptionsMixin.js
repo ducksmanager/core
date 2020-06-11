@@ -55,28 +55,28 @@ export default {
       })
       this.options = optionsClone
     },
-    enableDragResize(
-      image,
-      xAttribute = 'x',
-      yAttribute = 'y',
-      widthAttribute = 'width',
-      heightAttribute = 'height'
-    ) {
+    enableDragResize(image, { onmove = null, onresizemove = null } = {}) {
       const vm = this
       interact(image)
         .draggable({
-          onmove: (event) => {
-            vm.options[xAttribute] += event.dx / vm.zoom
-            vm.options[yAttribute] += event.dy / vm.zoom
-          }
+          onmove:
+            onmove ||
+            (({ dx, dy }) => {
+              vm.options.x += dx / vm.zoom
+              vm.options.y += dy / vm.zoom
+            })
         })
         .resizable({
           edges: { right: true, bottom: true }
         })
-        .on('resizemove', (event) => {
-          vm.options[widthAttribute] = event.rect.width / vm.zoom
-          vm.options[heightAttribute] = event.rect.height / vm.zoom
-        })
+        .on(
+          'resizemove',
+          onresizemove ||
+            (({ rect }) => {
+              vm.options.width = rect.width / vm.zoom
+              vm.options.height = rect.height / vm.zoom
+            })
+        )
     },
     ...mapMutations('currentStep', ['setStepNumber'])
   },
