@@ -145,18 +145,14 @@
               </b-card-text>
               <b-card-text v-if="step.component === 'Image'">
                 <form-input-row
-                  option-name="xlink:href"
+                  option-name="src"
                   label="Image"
                   type="text"
                   readonly
                   :options="currentStepOptions"
                 />
                 <Gallery
-                  :selected-image="
-                    currentStepOptions['xlink:href']
-                      ? currentStepOptions['xlink:href'].match(/\/([^\/]+)$/)[1]
-                      : null
-                  "
+                  :selected-image="currentStepOptions['src']"
                   @image-click="
                     ({ image }) => {
                       clickedImage = image
@@ -225,7 +221,7 @@
       scrollable
       ok-title="Select"
       :title="clickedImage"
-      @ok="$root.$emit('set-option', 'xlink:href', getElementUrl(clickedImage))"
+      @ok="$root.$emit('set-option', 'src', clickedImage)"
     >
       <img :alt="clickedImage" :src="getElementUrl(clickedImage)" />
     </b-modal>
@@ -338,10 +334,13 @@ export default {
     ])
   },
   watch: {
-    edge(newValue) {
-      if (newValue && newValue.id) {
-        this.loadGalleryItems()
-        this.loadSurroundingEdges()
+    edge: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.loadGalleryItems()
+          this.loadSurroundingEdges()
+        }
       }
     }
   },
@@ -383,7 +382,12 @@ export default {
         if (!edge) {
           return
         }
-        vm.setEdge(edge)
+        vm.setEdge({
+          id: edge.id,
+          country: edge.pays,
+          magazine: edge.magazine,
+          issuenumber: edge.numero
+        })
         vm.$axios
           .$get(`/api/edgecreator/v2/model/${vm.edge.id}/steps`)
           .then((steps) => {

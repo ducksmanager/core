@@ -9,10 +9,12 @@
           :key="i"
           class="col-md-4 text-center"
         >
-          <b-link :to="`edit/${edge.pays}/${edge.magazine}/${edge.numero}`">
+          <b-link
+            :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`"
+          >
             <b-card-text
-              >{{ edge.pays }}/{{ edge.magazine }}
-              {{ edge.numero }}</b-card-text
+              >{{ edge.country }}/{{ edge.magazine }}
+              {{ edge.issuenumber }}</b-card-text
             >
           </b-link>
         </b-card>
@@ -33,7 +35,11 @@ export default {
     this.$axios
       .$get('/api/edgecreator/v2/model')
       .then((data) => {
-        vm.edges = data
+        vm.edges = data.map((edge) => ({
+          country: edge.pays,
+          magazine: edge.magazine,
+          issuenumber: edge.numero
+        }))
       })
       .catch((e) => {
         console.error(e)

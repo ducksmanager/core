@@ -2,7 +2,7 @@
   <image
     ref="image"
     v-bind="options"
-    :xlink:href="image.url"
+    :xlink:href="image.base64"
     @click="setStepNumber(stepNumber)"
   >
     <metadata>{{ options }}</metadata>
@@ -29,24 +29,28 @@ export default {
   },
 
   watch: {
-    image(newValue) {
-      if (newValue) {
-        this.copyOptions(this.getOptionsFromDb())
+    async 'options.src'() {
+      await this.retrieveImage()
+    },
+    async image(newValue) {
+      if (newValue && this.dbOptions) {
+        this.copyOptions(await this.getOptionsFromDb())
       }
     }
   },
 
   methods: {
-    async onOptionsSet() {
-      if (this.dbOptions) {
-        this.image = await this.$axios.$get(
-          `/fs/base64?${this.edge.country}/elements/${this.options.src}`
-        )
-        this.copyOptions(await this.getOptionsFromDb())
-      }
+    async retrieveImage() {
+      this.image = await this.$axios.$get(
+        `/fs/base64?${this.edge.country}/elements/${this.options.src}`
+      )
+    },
 
+    async onOptionsSet() {
+      await this.retrieveImage()
       this.enableDragResize(this.$refs.image)
     },
+
     async getOptionsFromDb() {
       const vm = this
       if (!vm.image.dimensions || !vm.image.base64) {
