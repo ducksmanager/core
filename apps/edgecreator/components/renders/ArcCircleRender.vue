@@ -25,7 +25,17 @@ export default {
 
   methods: {
     onOptionsSet() {
-      this.enableDragResize(this.$refs.ellipse, 'cx', 'cy', 'rx', 'ry')
+      const vm = this
+      this.enableDragResize(this.$refs.ellipse, {
+        onmove: ({ dx, dy }) => {
+          vm.options.cx += dx / vm.zoom
+          vm.options.cy += dy / vm.zoom
+        },
+        onresizemove: ({ rect }) => {
+          vm.options.rx = rect.width / 2 / vm.zoom
+          vm.options.ry = rect.height / 2 / vm.zoom
+        }
+      })
     },
     async getOptionsFromDb() {
       const filled = this.dbOptions.Rempli === 'Oui'
