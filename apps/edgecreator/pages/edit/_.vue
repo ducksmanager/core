@@ -426,18 +426,20 @@ export default {
     exportSvg() {
       const vm = this
       this.zoom = 1.5
-      vm.$axios
-        .$put('/fs/export', {
-          country: vm.edge.country,
-          magazine: vm.edge.magazine,
-          issuenumber: vm.edge.issuenumber,
-          content: vm.$refs.edge.outerHTML
-        })
-        .then(() => {
-          vm.$bvToast.toast('Export done', {
-            toaster: 'b-toaster-top-center'
+      vm.$nextTick().then(() => {
+        vm.$axios
+          .$put('/fs/export', {
+            country: vm.edge.country,
+            magazine: vm.edge.magazine,
+            issuenumber: vm.edge.issuenumber,
+            content: vm.$refs.edge.outerHTML
           })
-        })
+          .then(() => {
+            vm.$bvToast.toast('Export done', {
+              toaster: 'b-toaster-top-center'
+            })
+          })
+      })
     },
     ...mapMutations([
       'setSteps',
