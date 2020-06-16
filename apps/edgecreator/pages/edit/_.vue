@@ -156,8 +156,11 @@
                   label="Image"
                   type="text"
                   readonly
+                  list-id="src-list"
                   :options="currentStepOptions"
-                />
+                >
+                  <b-form-datalist id="src-list" :options="galleryItems" />
+                </form-input-row>
                 <Gallery
                   :selected-image="currentStepOptions['src']"
                   @image-click="
@@ -351,7 +354,8 @@ export default {
       'height',
       'edge',
       'edgesBefore',
-      'edgesAfter'
+      'edgesAfter',
+      'galleryItems'
     ])
   },
   watch: {
