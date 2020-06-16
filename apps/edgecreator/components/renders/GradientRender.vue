@@ -18,12 +18,7 @@
         />
       </linearGradient>
     </defs>
-    <rect
-      ref="rect"
-      v-bind="options"
-      fill="url(#gradient)"
-      @click="setStepNumber(stepNumber)"
-    >
+    <rect ref="rect" v-bind="options" fill="url(#gradient)">
       <metadata>{{ options }}</metadata>
     </rect>
   </g>

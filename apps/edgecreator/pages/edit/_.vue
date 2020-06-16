@@ -60,14 +60,8 @@
                     [step.component]: true,
                     hovered: hoveredStep === stepNumber
                   }"
+                  @mousedown="setStepNumber(stepNumber)"
                 >
-                  <metadata>
-                    {{
-                      $options.components[`${step.component}Render`]
-                        ? 'has render'
-                        : 'no render'
-                    }}
-                  </metadata>
                   <component
                     :is="`${step.component}Render`"
                     v-if="$options.components[`${step.component}Render`]"
@@ -278,15 +272,8 @@ export default {
           })
       })
     },
-    ...mapMutations([
-      'setSteps',
-      'addStep',
-      'setDimensions',
-      'setEdge',
-      'setEdgesBefore',
-      'setEdgesAfter',
-      'setGalleryItems'
-    ]),
+    ...mapMutations(['setSteps', 'setDimensions', 'setEdge']),
+    ...mapMutations('currentStep', ['setStepNumber']),
     ...mapActions(['loadSurroundingEdges', 'loadGalleryItems'])
   }
 }

@@ -3,7 +3,6 @@
     ref="polygon"
     :points="options.points.join(' ')"
     :style="{ fill: options.fill }"
-    @click="setStepNumber(stepNumber)"
   >
     <metadata>{{ options }}</metadata>
   </polygon>

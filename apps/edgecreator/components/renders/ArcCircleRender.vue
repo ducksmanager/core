@@ -1,5 +1,5 @@
 <template>
-  <ellipse ref="ellipse" v-bind="options" @click="setStepNumber(stepNumber)">
+  <ellipse ref="ellipse" v-bind="options">
     <metadata>{{ options }}</metadata>
   </ellipse>
 </template>
