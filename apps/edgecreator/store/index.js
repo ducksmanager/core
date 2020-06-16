@@ -54,11 +54,15 @@ export const actions = {
     )
     const issuesBefore = publicationIssues.filter(
       (unused, index) =>
-        index >= currentIssueIndex - 10 && index < currentIssueIndex
+        currentIssueIndex !== -1 &&
+        index >= currentIssueIndex - 10 &&
+        index < currentIssueIndex
     )
     const issuesAfter = publicationIssues.filter(
       (unused, index) =>
-        index > currentIssueIndex && index <= currentIssueIndex + 10
+        currentIssueIndex !== -1 &&
+        index > currentIssueIndex &&
+        index <= currentIssueIndex + 10
     )
 
     if (issuesBefore.length) {
