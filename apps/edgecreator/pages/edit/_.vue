@@ -61,13 +61,19 @@
                     hovered: hoveredStep === stepNumber
                   }"
                 >
+                  <metadata>
+                    {{
+                      $options.components[`${step.component}Render`]
+                        ? 'has render'
+                        : 'no render'
+                    }}
+                  </metadata>
                   <component
                     :is="`${step.component}Render`"
                     v-if="$options.components[`${step.component}Render`]"
                     :step-number="stepNumber"
                     :svg-group="step.svgGroupElement"
                     :db-options="step.dbOptions"
-                    @update="loadCurrentStepOptions"
                   ></component>
                 </g>
                 <rect
@@ -98,148 +104,12 @@
         </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
-        <b-card id="edit-card" no-body>
-          <b-tabs v-model="currentStepNumber" lazy pills card vertical>
-            <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
-              <template v-slot:title>
-                <div
-                  @mouseover="hoveredStep = stepNumber"
-                  @mouseleave="hoveredStep = null"
-                >
-                  {{
-                    supportedRenders.find(
-                      (render) => render.component === step.component
-                    ).label
-                  }}
-                </div>
-              </template>
-              <b-card-text v-if="step.component === 'Text'">
-                <form-input-row
-                  option-name="text"
-                  label="Text"
-                  type="text"
-                  :options="currentStepOptions"
-                />
-                <form-input-row
-                  option-name="font"
-                  label="Font"
-                  type="text"
-                  :options="currentStepOptions"
-                />
-                <form-color-input-row
-                  :options="currentStepOptions"
-                  option-name="bgColor"
-                />
-                <form-color-input-row
-                  :options="currentStepOptions"
-                  option-name="fgColor"
-                />
-                <form-input-row
-                  option-name="rotation"
-                  :label="`Rotation : ${currentStepOptions.rotation}°`"
-                  type="range"
-                  :min="0"
-                  :max="360"
-                  :step="1"
-                  :options="currentStepOptions"
-                />
-              </b-card-text>
-              <b-card-text v-if="step.component === 'Fill'">
-                <form-color-input-row
-                  :options="currentStepOptions"
-                  option-name="fill"
-                />
-              </b-card-text>
-              <b-card-text v-if="step.component === 'Image'">
-                <form-input-row
-                  option-name="src"
-                  label="Image"
-                  type="text"
-                  readonly
-                  list-id="src-list"
-                  :options="currentStepOptions"
-                >
-                  <b-form-datalist id="src-list" :options="galleryItems" />
-                </form-input-row>
-                <Gallery
-                  :selected-image="currentStepOptions['src']"
-                  @image-click="
-                    ({ image }) => {
-                      clickedImage = image
-                    }
-                  "
-                />
-              </b-card-text>
-              <b-card-text
-                v-if="['Rectangle', 'ArcCircle'].includes(step.component)"
-              >
-                <form-color-input-row
-                  v-for="optionName in ['fill', 'stroke']"
-                  :key="optionName"
-                  :options="currentStepOptions"
-                  :option-name="optionName"
-                  can-be-transparent
-                />
-              </b-card-text>
-              <b-card-text v-if="step.component === 'Gradient'">
-                <form-color-input-row
-                  v-for="optionName in ['colorStart', 'colorEnd']"
-                  :key="optionName"
-                  :options="currentStepOptions"
-                  :option-name="optionName"
-                />
-
-                <b-row>
-                  <b-col sm="2">
-                    <label for="direction">Direction</label>
-                  </b-col>
-                  <b-col sm="6" md="5">
-                    <b-form-select
-                      id="direction"
-                      :value="currentStepOptions.direction"
-                      :options="['Vertical', 'Horizontal']"
-                      @input="$root.$emit('set-option', 'direction', $event)"
-                    >
-                    </b-form-select>
-                  </b-col>
-                </b-row>
-              </b-card-text>
-              <b-card-text v-if="step.component === 'Polygon'">
-                <form-color-input-row
-                  :options="currentStepOptions"
-                  option-name="fill"/></b-card-text
-            ></b-tab>
-            <b-tab key="99" title="Add step" title-item-class="font-weight-bold"
-              ><b-card-text
-                ><b-dropdown text="Select a step type"
-                  ><b-dropdown-item
-                    v-for="render in supportedRenders"
-                    :key="render.component"
-                    @click="
-                      addStep({
-                        component: render.component,
-                        svgGroupElement: null
-                      })
-                    "
-                    >{{ render.description }}</b-dropdown-item
-                  ></b-dropdown
-                ></b-card-text
-              ></b-tab
-            >
-          </b-tabs>
-        </b-card>
+        <ModelEdit
+          :hovered-step="hoveredStep"
+          @hover-step="hoveredStep = $event"
+        />
       </b-col>
     </b-row>
-    <b-modal
-      v-if="loaded"
-      id="image-modal"
-      scrollable
-      ok-title="Select"
-      :title="clickedImage"
-      @ok="$root.$emit('set-option', 'src', clickedImage)"
-    >
-      <img :alt="clickedImage" :src="getElementUrl(clickedImage)" />
-    </b-modal>
   </b-container>
 </template>
 <script>
@@ -249,6 +119,7 @@ import FormInputRow from '~/components/FormInputRow'
 import FormColorInputRow from '~/components/FormColorInputRow'
 import PublishedEdge from '~/components/PublishedEdge'
 
+import ModelEdit from '~/components/ModelEdit'
 import RectangleRender from '~/components/renders/RectangleRender'
 import PolygonRender from '~/components/renders/PolygonRender'
 import ArcCircleRender from '~/components/renders/ArcCircleRender'
@@ -265,6 +136,7 @@ export default {
     FormColorInputRow,
     FormInputRow,
     PublishedEdge,
+    ModelEdit,
 
     RectangleRender,
     PolygonRender,
@@ -279,56 +151,10 @@ export default {
       error: null,
       loaded: false,
       borderWidth: 1.5,
-      currentStepOptions: {},
-      clickedImage: null,
       hoveredStep: null,
       showIssueNumbers: true,
       showPreviousEdge: true,
-      showNextEdge: true,
-      supportedRenders: [
-        {
-          component: 'Rectangle',
-          label: 'Rectangle',
-          originalName: 'Rectangle',
-          description: 'Draw a rectangle'
-        },
-        {
-          component: 'Gradient',
-          label: 'Gradient',
-          originalName: 'Degrade',
-          description: 'Draw a rectangle with a gradient'
-        },
-        {
-          component: 'Polygon',
-          label: 'Polygon',
-          originalName: 'Polygone',
-          description: 'Draw a polygon'
-        },
-        {
-          component: 'ArcCircle',
-          label: 'Arc circle',
-          originalName: 'Arc_cercle',
-          description: 'Draw a circle arc'
-        },
-        {
-          component: 'Image',
-          label: 'Image',
-          originalName: 'Image',
-          description: 'Insert an image'
-        },
-        {
-          component: 'Fill',
-          label: 'Fill',
-          originalName: 'Remplir',
-          description: 'Fill the edge with a color'
-        },
-        {
-          component: 'Text',
-          label: 'Text',
-          originalName: 'TexteMyFonts',
-          description: 'Insert a text'
-        }
-      ]
+      showNextEdge: true
     }
   },
   computed: {
@@ -340,23 +166,15 @@ export default {
         this.$store.commit('setZoom', value)
       }
     },
-    currentStepNumber: {
-      get() {
-        return this.$store.state.currentStep.stepNumber
-      },
-      set(value) {
-        this.$store.commit('currentStep/setStepNumber', value)
-      }
-    },
     ...mapState([
       'steps',
       'width',
       'height',
       'edge',
       'edgesBefore',
-      'edgesAfter',
-      'galleryItems'
-    ])
+      'edgesAfter'
+    ]),
+    ...mapState('renders', ['supportedRenders'])
   },
   watch: {
     edge: {
@@ -439,12 +257,6 @@ export default {
       })
   },
   methods: {
-    loadCurrentStepOptions(options) {
-      this.currentStepOptions = options
-    },
-    getElementUrl(elementFileName) {
-      return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
-    },
     getEdgeUrl(issuenumber, extension = 'png') {
       return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${issuenumber}.${extension}`
     },
@@ -486,19 +298,9 @@ export default {
   user-select: none;
 }
 
-#edit-card,
-#edit-card .tabs {
-  height: 100%;
-}
-
 svg g:hover,
 svg g.hovered {
   animation: glowFilter 2s infinite;
-}
-
-.tab-pane.card-body {
-  overflow-y: auto;
-  height: 100%;
 }
 
 @keyframes glowFilter {
