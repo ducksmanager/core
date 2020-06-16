@@ -8,13 +8,13 @@
       `rotate(${options.rotation}, ${options.x +
         options.width / 2}, ${options.y + options.height / 2})`
     "
-    @click="setStepNumber(stepNumber)"
   >
     <metadata>{{ options }}</metadata>
   </image>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 
 export default {
@@ -41,7 +41,8 @@ export default {
       return this.textImage
         ? `${process.env.EDGES_URL}/images_myfonts/${this.textImage.imageId}.png`
         : ''
-    }
+    },
+    ...mapState(['edge'])
   },
 
   watch: {

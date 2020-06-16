@@ -1,13 +1,5 @@
 <template>
-  <rect
-    ref="rect"
-    v-bind="options"
-    x="0"
-    y="0"
-    :width="width"
-    :height="height"
-    @click="setStepNumber(stepNumber)"
-  >
+  <rect ref="rect" v-bind="options" x="0" y="0" :width="width" :height="height">
     <metadata>{{ options }}</metadata>
   </rect>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <rect ref="rect" v-bind="options" @click="setStepNumber(stepNumber)">
+  <rect ref="rect" v-bind="options">
     <metadata>{{ options }}</metadata>
   </rect>
 </template>

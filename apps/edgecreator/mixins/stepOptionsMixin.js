@@ -14,7 +14,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['zoom', 'width', 'height', 'edge']),
+    ...mapState(['zoom', 'width', 'height']),
     ...mapState('currentStep', {
       currentStepNumber: 'stepNumber'
     }),
@@ -32,13 +32,7 @@ export default {
       immediate: true,
       handler(newValue) {
         if (newValue === this.stepNumber) {
-          const { options } = this
-          Object.keys(this.options).forEach((optionKey) => {
-            this.setCurrentStepOption({
-              key: optionKey,
-              value: options[optionKey]
-            })
-          })
+          this.setCurrentStepOptions(this.options)
         }
       }
     },
@@ -47,17 +41,20 @@ export default {
       immediate: true,
       handler(newValue) {
         if (this.currentStepNumber === this.stepNumber) {
-          Object.keys(newValue).forEach((optionKey) => {
-            this.setCurrentStepOption({
-              key: optionKey,
-              value: newValue[optionKey]
-            })
-          })
+          this.setCurrentStepOptions(newValue)
         }
       }
     }
   },
   methods: {
+    setCurrentStepOptions(options) {
+      Object.keys(options).forEach((optionKey) => {
+        this.setCurrentStepOption({
+          key: optionKey,
+          value: options[optionKey]
+        })
+      })
+    },
     copyOptions(options) {
       const optionsKeys = Object.keys(options)
       const optionsClone = {}
@@ -89,7 +86,6 @@ export default {
             })
         )
     },
-    ...mapMutations('currentStep', ['setStepNumber']),
     ...mapMutations('currentStep', { setCurrentStepOption: 'setStepOption' })
   },
   async mounted() {

@@ -1,15 +1,12 @@
 <template>
-  <image
-    ref="image"
-    v-bind="options"
-    :xlink:href="image.base64"
-    @click="setStepNumber(stepNumber)"
-  >
+  <image ref="image" v-bind="options" :xlink:href="image.base64">
     <metadata>{{ options }}</metadata>
   </image>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 
 export default {
@@ -26,6 +23,10 @@ export default {
         src: null
       }
     }
+  },
+
+  computed: {
+    ...mapState(['edge'])
   },
 
   watch: {
