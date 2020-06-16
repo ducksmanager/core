@@ -32,16 +32,27 @@ export default {
       immediate: true,
       handler(newValue) {
         if (newValue === this.stepNumber) {
-          this.$emit('update', this.options)
+          const { options } = this
+          Object.keys(this.options).forEach((optionKey) => {
+            this.setCurrentStepOption({
+              key: optionKey,
+              value: options[optionKey]
+            })
+          })
         }
       }
     },
     options: {
       deep: true,
       immediate: true,
-      handler(newValue, oldValue) {
+      handler(newValue) {
         if (this.currentStepNumber === this.stepNumber) {
-          this.$emit('update', newValue, oldValue)
+          Object.keys(newValue).forEach((optionKey) => {
+            this.setCurrentStepOption({
+              key: optionKey,
+              value: newValue[optionKey]
+            })
+          })
         }
       }
     }
@@ -78,7 +89,8 @@ export default {
             })
         )
     },
-    ...mapMutations('currentStep', ['setStepNumber'])
+    ...mapMutations('currentStep', ['setStepNumber']),
+    ...mapMutations('currentStep', { setCurrentStepOption: 'setStepOption' })
   },
   async mounted() {
     const vm = this
