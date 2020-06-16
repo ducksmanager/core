@@ -172,9 +172,9 @@ export default {
   methods: {
     getElementUrl(elementFileName) {
       return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
-    }
-  },
-  ...mapMutations(['addStep'])
+    },
+    ...mapMutations(['addStep'])
+  }
 }
 </script>
 <style>

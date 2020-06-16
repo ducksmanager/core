@@ -17,9 +17,7 @@
         <b-button :disabled="!loaded" @click="exportSvg">Export</b-button>
       </b-col>
       <b-col align-self="center" class="text-right col-sm-2">
-        <b-form-checkbox
-          v-model="showIssueNumbers"
-          :disabled="!edgesBefore.length && !edgesAfter.length"
+        <b-form-checkbox v-model="showIssueNumbers" :disabled="!loaded"
           >Show issue numbers</b-form-checkbox
         >
       </b-col>
@@ -217,6 +215,7 @@ export default {
           `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
         )
         if (!edge) {
+          vm.loaded = true
           return
         }
         vm.setEdge({
