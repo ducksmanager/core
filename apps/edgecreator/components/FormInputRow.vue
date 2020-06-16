@@ -7,13 +7,19 @@
       <b-form-input
         :id="optionName"
         size="sm"
+        autocomplete="off"
         :type="type"
         :min="min"
         :max="max"
         :range="range"
         :value="userValue"
         :disabled="disabled"
-        v-on="{ [isTextImageParameter ? 'change' : 'input']: onChangeValue }"
+        :list="listId"
+        v-on="{
+          [isTextImageOption || isImageSrcOption
+            ? 'change'
+            : 'input']: onChangeValue
+        }"
       ></b-form-input>
       <slot />
     </b-col>
@@ -31,7 +37,8 @@ export default {
     options: { type: Object, required: true },
     min: { type: Number, default: null },
     max: { type: Number, default: null },
-    range: { type: Number, default: null }
+    range: { type: Number, default: null },
+    listId: { type: String, default: null }
   },
   computed: {
     userValue() {
@@ -44,7 +51,7 @@ export default {
       }
       return value
     },
-    isTextImageParameter() {
+    isTextImageOption() {
       return (
         this.options.text &&
         ['fgColor', 'bgColor', 'internalWidth', 'text', 'font'].includes(
@@ -52,9 +59,12 @@ export default {
         )
       )
     },
+    isImageSrcOption() {
+      return !!this.options.src
+    },
     isTextColor() {
       return (
-        this.isTextImageParameter &&
+        this.isTextImageOption &&
         this.optionName.toLowerCase().includes('color')
       )
     }
