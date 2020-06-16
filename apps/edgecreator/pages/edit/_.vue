@@ -3,34 +3,65 @@
     {{ error }}
   </b-container>
   <b-container v-else-if="edge" id="wrapper" fluid>
-    <b-row align="center">
+    <b-row align="center" class="p-2">
       <b-col class="text-left col-sm-4">
-        <div>
-          <label style="display: inline-block;width: 200px"
-            >Zoom : {{ zoom }}
-            <input v-model="zoom" type="range" min="1" max="8" step="0.5" />
-          </label>
-        </div>
+        <b-button v-b-toggle.sidebar>Toggle Sidebar</b-button>
+        <b-sidebar id="sidebar" v-model="showSidebar" title="Options" shadow>
+          <b-container class="px-3 py-2">
+            <b-row align-items="center">
+              <b-col cols="6">
+                Zoom
+              </b-col>
+              <b-col cols="2">{{ zoom }} </b-col>
+              <b-col cols="4">
+                <input
+                  v-model="zoom"
+                  type="range"
+                  min="1"
+                  max="8"
+                  step="0.5"
+                  style="width: 100%"
+              /></b-col>
+            </b-row>
+            <b-row>
+              <b-col
+                ><label for="showIssueNumbers">Show issue numbers</label></b-col
+              >
+              <b-col>
+                <b-checkbox
+                  id="showIssueNumbers"
+                  v-model="showIssueNumbers"
+                  :disabled="!loaded"
+              /></b-col>
+            </b-row>
+            <b-row>
+              <b-col
+                ><label for="showPreviousEdge">Show previous edge</label></b-col
+              >
+              <b-col>
+                <b-checkbox
+                  id="showPreviousEdge"
+                  v-model="showPreviousEdge"
+                  :disabled="!edgesBefore.length"
+              /></b-col>
+            </b-row>
+            <b-row>
+              <b-col><label for="showNextEdge">Show next edge</label></b-col>
+              <b-col>
+                <b-checkbox
+                  id="showNextEdge"
+                  v-model="showNextEdge"
+                  :disabled="!edgesAfter.length"
+              /></b-col> </b-row
+          ></b-container>
+        </b-sidebar>
       </b-col>
       <b-col align-self="center" class="col-sm-4">
         <b-button to="/">Home</b-button>
         <b-button :disabled="!loaded" @click="exportSvg">Export</b-button>
       </b-col>
-      <b-col align-self="center" class="text-right col-sm-2">
-        <b-form-checkbox v-model="showIssueNumbers" :disabled="!loaded"
-          >Show issue numbers</b-form-checkbox
-        >
-      </b-col>
-      <b-col class="text-right col-sm-2">
-        <b-form-checkbox
-          v-model="showPreviousEdge"
-          :disabled="!edgesBefore.length"
-          >Show previous edge</b-form-checkbox
-        >
-        <b-form-checkbox v-model="showNextEdge" :disabled="!edgesAfter.length"
-          >Show next edge</b-form-checkbox
-        >
-      </b-col>
+      <b-col align-self="center" class="text-right col-sm-2"> </b-col>
+      <b-col class="text-right col-sm-2"> </b-col>
     </b-row>
     <b-row v-if="loaded" class="flex-grow-1">
       <b-col class="text-right">
@@ -144,6 +175,7 @@ export default {
       loaded: false,
       borderWidth: 1.5,
       hoveredStep: null,
+      showSidebar: true,
       showIssueNumbers: true,
       showPreviousEdge: true,
       showNextEdge: true
