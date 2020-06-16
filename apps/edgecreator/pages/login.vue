@@ -55,7 +55,7 @@ export default {
             { name: 'dm-user', value: vm.username },
             { name: 'dm-pass', value: password }
           ])
-          vm.$router.push('dashboard')
+          vm.$router.push('/')
         })
         .catch((e) => {
           vm.$bvToast.toast(e.message, {
