@@ -30,11 +30,11 @@ export default {
     selectedImage: { type: String, default: null }
   },
   computed: {
-    ...mapState(['edge', 'galleryItems'])
+    ...mapState(['country', 'galleryItems'])
   },
   methods: {
     getElementUrl(elementFileName) {
-      return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
+      return `${process.env.EDGES_URL}/${this.country}/elements/${elementFileName}`
     }
   }
 }

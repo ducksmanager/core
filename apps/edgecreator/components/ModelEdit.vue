@@ -165,13 +165,13 @@ export default {
         this.$store.commit('currentStep/setStepNumber', value)
       }
     },
-    ...mapState(['galleryItems', 'edge', 'steps']),
+    ...mapState(['galleryItems', 'country', 'steps']),
     ...mapState('currentStep', { currentStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders'])
   },
   methods: {
     getElementUrl(elementFileName) {
-      return `${process.env.EDGES_URL}/${this.edge.country}/elements/${elementFileName}`
+      return `${process.env.EDGES_URL}/${this.country}/elements/${elementFileName}`
     },
     ...mapMutations(['addStep'])
   }

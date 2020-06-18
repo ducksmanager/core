@@ -26,7 +26,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['edge'])
+    ...mapState(['country'])
   },
 
   watch: {
@@ -43,7 +43,7 @@ export default {
   methods: {
     async retrieveImage() {
       this.image = await this.$axios.$get(
-        `/fs/base64?${this.edge.country}/elements/${this.options.src}`
+        `/fs/base64?${this.country}/elements/${this.options.src}`
       )
     },
 

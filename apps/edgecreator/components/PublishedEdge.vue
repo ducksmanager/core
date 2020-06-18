@@ -18,11 +18,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['edge', 'zoom'])
+    ...mapState(['country', 'magazine', 'zoom'])
   },
   methods: {
     getEdgeUrl() {
-      return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${this.issuenumber}.png`
+      return `${process.env.EDGES_URL}/${this.country}/gen/${this.magazine}.${this.issuenumber}.png`
     }
   }
 }

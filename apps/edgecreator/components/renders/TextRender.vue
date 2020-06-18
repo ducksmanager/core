@@ -42,7 +42,7 @@ export default {
         ? `${process.env.EDGES_URL}/images_myfonts/${this.textImage.imageId}.png`
         : ''
     },
-    ...mapState(['edge'])
+    ...mapState(['width'])
   },
 
   watch: {
@@ -153,7 +153,7 @@ export default {
         ].join('/')}`,
         {
           headers: {
-            imageWidth: this.edge.width,
+            imageWidth: this.width,
             'Content-Type': 'application/json'
           }
         }
