@@ -1,5 +1,8 @@
 export const state = () => ({
-  edge: null,
+  country: null,
+  magazine: null,
+  issuenumber: null,
+
   steps: [],
   galleryItems: [],
   zoom: 1.5,
@@ -10,8 +13,14 @@ export const state = () => ({
 })
 
 export const mutations = {
-  setEdge(state, edge) {
-    state.edge = edge
+  setCountry(state, country) {
+    state.country = country
+  },
+  setMagazine(state, magazine) {
+    state.magazine = magazine
+  },
+  setIssuenumber(state, issuenumber) {
+    state.issuenumber = issuenumber
   },
   setSteps(state, steps) {
     state.steps = steps
@@ -41,16 +50,16 @@ export const actions = {
   async loadGalleryItems({ state, commit }) {
     commit('setGalleryItems', {
       items: await this.$axios.$get(
-        `/fs/browseElements/${state.edge.country}/${state.edge.magazine}`
+        `/fs/browseElements/${state.country}/${state.magazine}`
       )
     })
   },
   async loadSurroundingEdges({ state, commit }) {
     const publicationIssues = await this.$axios.$get(
-      `/api/coa/list/issues/${state.edge.country}/${state.edge.magazine}`
+      `/api/coa/list/issues/${state.country}/${state.magazine}`
     )
     const currentIssueIndex = publicationIssues.findIndex(
-      (issue) => issue === state.edge.issuenumber
+      (issue) => issue === state.issuenumber
     )
     const issuesBefore = publicationIssues.filter(
       (unused, index) =>
@@ -68,9 +77,9 @@ export const actions = {
     if (issuesBefore.length) {
       commit('setEdgesBefore', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.edge.country}/${
-            state.edge.magazine
-          }/${issuesBefore.join(',')}`
+          `/api/edges/${state.country}/${state.magazine}/${issuesBefore.join(
+            ','
+          )}`
         )
       })
     }
@@ -78,9 +87,9 @@ export const actions = {
     if (issuesAfter.length) {
       commit('setEdgesAfter', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.edge.country}/${
-            state.edge.magazine
-          }/${issuesAfter.join(',')}`
+          `/api/edges/${state.country}/${state.magazine}/${issuesAfter.join(
+            ','
+          )}`
         )
       })
     }

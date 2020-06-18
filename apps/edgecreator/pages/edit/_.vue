@@ -2,10 +2,10 @@
   <b-container v-if="error" id="wrapper" fluid>
     {{ error }}
   </b-container>
-  <b-container v-else-if="edge" id="wrapper" fluid>
-    <b-row align="center" class="p-2">
-      <b-col class="text-left col-sm-4">
-        <b-button v-b-toggle.sidebar>Toggle Sidebar</b-button>
+  <b-container v-else-if="steps.length" id="wrapper" fluid>
+    <b-row align="center" class="pt-2">
+      <b-col class="text-left">
+        <b-button v-b-toggle.sidebar>Toggle Options</b-button>
         <b-sidebar id="sidebar" v-model="showSidebar" title="Options" shadow>
           <b-container class="px-3 py-2">
             <b-row align-items="center">
@@ -60,10 +60,16 @@
         <b-button to="/">Home</b-button>
         <b-button :disabled="!loaded" @click="exportSvg">Export</b-button>
       </b-col>
-      <b-col align-self="center" class="text-right col-sm-2"> </b-col>
-      <b-col class="text-right col-sm-2"> </b-col>
+      <b-col />
     </b-row>
-    <b-row v-if="loaded" class="flex-grow-1">
+    <b-row align="center" class="p-2" style="border-bottom: 1px solid grey">
+      <b-col align-self="center">
+        <img :src="flagImageUrl" :alt="country" />&nbsp;{{ magazine }}&nbsp;{{
+          issuenumber
+        }}
+      </b-col>
+    </b-row>
+    <b-row v-if="loaded" class="flex-grow-1 pt-2">
       <b-col class="text-right">
         <table class="edges">
           <tr>
@@ -73,43 +79,7 @@
               />
             </td>
             <td>
-              <svg
-                ref="edge"
-                :viewBox="`0 0 ${width} ${height}`"
-                :width="zoom * width"
-                :height="zoom * height"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                preserveAspectRatio="none"
-              >
-                <g
-                  v-for="(step, stepNumber) in steps"
-                  :key="stepNumber"
-                  :class="{
-                    [step.component]: true,
-                    hovered: hoveredStep === stepNumber
-                  }"
-                  @mousedown="setStepNumber(stepNumber)"
-                >
-                  <component
-                    :is="`${step.component}Render`"
-                    v-if="$options.components[`${step.component}Render`]"
-                    :step-number="stepNumber"
-                    :svg-group="step.svgGroupElement"
-                    :db-options="step.dbOptions"
-                  ></component>
-                </g>
-                <rect
-                  id="border"
-                  :x="borderWidth / 2"
-                  :y="borderWidth / 2"
-                  :width="width - borderWidth"
-                  :height="height - borderWidth"
-                  fill="none"
-                  stroke="black"
-                  :stroke-width="borderWidth"
-                />
-              </svg>
+              <edge-canvas :hovered-step="hoveredStep" />
             </td>
             <td v-if="showNextEdge && edgesAfter.length">
               <published-edge :issuenumber="edgesAfter[0].issuenumber" />
@@ -119,7 +89,7 @@
             <th v-if="showPreviousEdge && edgesBefore.length">
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </th>
-            <th>{{ edge.issuenumber }}<br />&#11088;</th>
+            <th>{{ issuenumber }}<br />&#11088;</th>
             <th v-if="showNextEdge && edgesAfter.length">
               {{ edgesAfter[0].issuenumber }}
             </th>
@@ -137,43 +107,23 @@
 </template>
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
-import Gallery from '~/components/Gallery'
-import FormInputRow from '~/components/FormInputRow'
-import FormColorInputRow from '~/components/FormColorInputRow'
+import EdgeCanvas from '~/components/EdgeCanvas'
 import PublishedEdge from '~/components/PublishedEdge'
 
 import ModelEdit from '~/components/ModelEdit'
-import RectangleRender from '~/components/renders/RectangleRender'
-import PolygonRender from '~/components/renders/PolygonRender'
-import ArcCircleRender from '~/components/renders/ArcCircleRender'
-import ImageRender from '~/components/renders/ImageRender'
-import FillRender from '~/components/renders/FillRender'
-import TextRender from '~/components/renders/TextRender'
-import GradientRender from '~/components/renders/GradientRender'
 
 const DOMParser = require('xmldom').DOMParser
 
 export default {
   components: {
-    Gallery,
-    FormColorInputRow,
-    FormInputRow,
+    EdgeCanvas,
     PublishedEdge,
-    ModelEdit,
-
-    RectangleRender,
-    PolygonRender,
-    ArcCircleRender,
-    ImageRender,
-    FillRender,
-    TextRender,
-    GradientRender
+    ModelEdit
   },
   data() {
     return {
       error: null,
       loaded: false,
-      borderWidth: 1.5,
       hoveredStep: null,
       showSidebar: true,
       showIssueNumbers: true,
@@ -190,24 +140,24 @@ export default {
         this.$store.commit('setZoom', value)
       }
     },
+    flagImageUrl() {
+      return `${process.env.DM_URL}/images/flags/${this.country}.png`
+    },
     ...mapState([
       'steps',
-      'width',
-      'height',
-      'edge',
+      'country',
+      'magazine',
+      'issuenumber',
       'edgesBefore',
       'edgesAfter'
     ]),
     ...mapState('renders', ['supportedRenders'])
   },
   watch: {
-    edge: {
-      immediate: true,
-      handler(newValue) {
-        if (newValue) {
-          this.loadGalleryItems()
-          this.loadSurroundingEdges()
-        }
+    steps(newValue) {
+      if (newValue) {
+        this.loadGalleryItems()
+        this.loadSurroundingEdges()
       }
     }
   },
@@ -220,10 +170,12 @@ export default {
       this.error = 'Invalid URL'
       return
     }
-    this.setEdge({ country, magazine, issuenumber })
+    this.setCountry(country)
+    this.setMagazine(magazine)
+    this.setIssuenumber(issuenumber)
 
     await this.$axios
-      .$get(this.getEdgeUrl(vm.edge.issuenumber, 'svg'))
+      .$get(this.getEdgeUrl(vm.issuenumber, 'svg'))
       .then((data) => {
         const doc = new DOMParser().parseFromString(data, 'image/svg+xml')
         const svgElement = doc.getElementsByTagName('svg')[0]
@@ -250,12 +202,6 @@ export default {
           vm.loaded = true
           return
         }
-        vm.setEdge({
-          id: edge.id,
-          country: edge.pays,
-          magazine: edge.magazine,
-          issuenumber: edge.numero
-        })
         vm.$axios
           .$get(`/api/edgecreator/v2/model/${vm.edge.id}/steps`)
           .then((steps) => {
@@ -283,7 +229,7 @@ export default {
   },
   methods: {
     getEdgeUrl(issuenumber, extension = 'png') {
-      return `${process.env.EDGES_URL}/${this.edge.country}/gen/${this.edge.magazine}.${issuenumber}.${extension}`
+      return `${process.env.EDGES_URL}/${this.country}/gen/${this.magazine}.${issuenumber}.${extension}`
     },
     exportSvg() {
       const vm = this
@@ -291,9 +237,9 @@ export default {
       vm.$nextTick().then(() => {
         vm.$axios
           .$put('/fs/export', {
-            country: vm.edge.country,
-            magazine: vm.edge.magazine,
-            issuenumber: vm.edge.issuenumber,
+            country: vm.country,
+            magazine: vm.magazine,
+            issuenumber: vm.issuenumber,
             content: vm.$refs.edge.outerHTML
           })
           .then(() => {
@@ -303,8 +249,14 @@ export default {
           })
       })
     },
-    ...mapMutations(['setSteps', 'setDimensions', 'setEdge']),
-    ...mapMutations('currentStep', ['setStepNumber']),
+    ...mapMutations([
+      'setSteps',
+      'setDimensions',
+      'setCountry',
+      'setMagazine',
+      'setIssuenumber',
+      'setIssuenumberMax'
+    ]),
     ...mapActions(['loadSurroundingEdges', 'loadGalleryItems'])
   }
 }
