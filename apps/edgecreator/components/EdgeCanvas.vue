@@ -1,6 +1,6 @@
 <template>
   <svg
-    ref="edge"
+    :id="edgeCanvasId"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
     :height="zoom * height"
@@ -74,7 +74,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['zoom', 'width', 'height']),
+    edgeCanvasId() {
+      return `edge-canvas-${this.issuenumber}`
+    },
     hoveredStep: {
       get() {
         return this.$store.state.editingStep.hoveredStep
@@ -82,7 +84,8 @@ export default {
       set(value) {
         this.$store.commit('editingStep/setHoveredStep', value)
       }
-    }
+    },
+    ...mapState(['zoom', 'width', 'height'])
   },
   methods: {
     ...mapMutations('editingStep', {

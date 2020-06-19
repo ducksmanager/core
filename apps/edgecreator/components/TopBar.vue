@@ -190,6 +190,9 @@ export default {
     ])
   },
   methods: {
+    getEdgeCanvasRefId(issuenumber) {
+      return `edge-canvas-${issuenumber}`
+    },
     exportSvg() {
       const vm = this
       this.zoom = 1.5
@@ -200,9 +203,9 @@ export default {
               country: vm.country,
               magazine: vm.magazine,
               issuenumber,
-              content:
-                vm.$refs[vm.getEdgeCanvasRefId(issuenumber)][0].$refs.edge
-                  .outerHTML
+              content: document.getElementById(
+                vm.getEdgeCanvasRefId(issuenumber)
+              ).outerHTML
             })
             .then(() => {
               vm.$bvToast.toast('Export done', {
