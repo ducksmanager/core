@@ -3,75 +3,8 @@
     {{ error }}
   </b-container>
   <b-container v-else-if="steps.length" id="wrapper" fluid>
-    <b-row align="center" class="pt-2">
-      <b-col class="text-left">
-        <b-button v-b-toggle.sidebar>Toggle Options</b-button>
-        <b-sidebar id="sidebar" v-model="showSidebar" title="Options" shadow>
-          <b-container class="px-3 py-2">
-            <b-row align-items="center">
-              <b-col cols="6">
-                Zoom
-              </b-col>
-              <b-col cols="2">{{ zoom }} </b-col>
-              <b-col cols="4">
-                <input
-                  v-model="zoom"
-                  type="range"
-                  min="1"
-                  max="8"
-                  step="0.5"
-                  style="width: 100%"
-              /></b-col>
-            </b-row>
-            <b-row>
-              <b-col
-                ><label for="showIssueNumbers">Show issue numbers</label></b-col
-              >
-              <b-col>
-                <b-checkbox
-                  id="showIssueNumbers"
-                  v-model="showIssueNumbers"
-                  :disabled="!loaded"
-              /></b-col>
-            </b-row>
-            <b-row>
-              <b-col
-                ><label for="showPreviousEdge">Show previous edge</label></b-col
-              >
-              <b-col>
-                <b-checkbox
-                  id="showPreviousEdge"
-                  v-model="showPreviousEdge"
-                  :disabled="!edgesBefore.length"
-              /></b-col>
-            </b-row>
-            <b-row>
-              <b-col><label for="showNextEdge">Show next edge</label></b-col>
-              <b-col>
-                <b-checkbox
-                  id="showNextEdge"
-                  v-model="showNextEdge"
-                  :disabled="!edgesAfter.length"
-              /></b-col> </b-row
-          ></b-container>
-        </b-sidebar>
-      </b-col>
-      <b-col align-self="center" class="col-sm-4">
-        <b-button to="/">Home</b-button>
-        <b-button :disabled="!loaded" @click="exportSvg">Export</b-button>
-      </b-col>
-      <b-col />
-    </b-row>
-    <b-row align="center" class="p-2" style="border-bottom: 1px solid grey">
-      <b-col align-self="center">
-        <img :src="flagImageUrl" :alt="country" />&nbsp;{{ magazine }}&nbsp;{{
-          issuenumberMin
-        }}<span v-if="issuenumberMin !== issuenumberMax">
-          to {{ issuenumberMax }}</span
-        >
-      </b-col>
-    </b-row>
-    <b-row v-if="loaded" class="flex-grow-1 pt-2">
+    <top-bar />
+    <b-row class="flex-grow-1 pt-2">
       <b-col class="text-right">
         <table class="edges">
           <tr>
@@ -112,15 +45,17 @@
 </template>
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
+
+import TopBar from '~/components/TopBar'
 import EdgeCanvas from '~/components/EdgeCanvas'
 import PublishedEdge from '~/components/PublishedEdge'
-
 import ModelEdit from '~/components/ModelEdit'
 
 const DOMParser = require('xmldom').DOMParser
 
 export default {
   components: {
+    TopBar,
     EdgeCanvas,
     PublishedEdge,
     ModelEdit
@@ -128,14 +63,7 @@ export default {
   data() {
     return {
       error: null,
-      loaded: false,
-      issuenumberMin: null,
-      issuenumberMax: null,
-      steps: [],
-      showSidebar: true,
-      showIssueNumbers: true,
-      showPreviousEdge: true,
-      showNextEdge: true
+      steps: []
     }
   },
   computed: {
@@ -147,9 +75,6 @@ export default {
         this.$store.commit('setZoom', value)
       }
     },
-    flagImageUrl() {
-      return `${process.env.DM_URL}/images/flags/${this.country}.png`
-    },
     ...mapState([
       'country',
       'magazine',
@@ -157,13 +82,11 @@ export default {
       'edgesBefore',
       'edgesAfter'
     ]),
-    ...mapState('renders', ['supportedRenders'])
+    ...mapState('renders', ['supportedRenders']),
+    ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge'])
   },
   watch: {
-    issuenumberMin(newValue) {
-      this.setEditIssuenumber(newValue)
-    },
-    steps(newValue) {
+    issuenumbers(newValue) {
       if (newValue) {
         this.loadGalleryItems()
         this.loadSurroundingEdges()
@@ -185,10 +108,9 @@ export default {
     }
     this.setCountry(country)
     this.setMagazine(magazine)
+    this.setEditIssuenumber(issuenumberMin)
 
-    this.issuenumberMin = issuenumberMin
     if (issuenumberMax === undefined) {
-      this.issuenumberMax = null
       this.setIssuenumbers([issuenumberMin])
     } else {
       this.setIssuenumbers([issuenumberMin, issuenumberMax])
@@ -204,7 +126,6 @@ export default {
           height: svgElement.getAttribute('height') / 1.5
         })
 
-        vm.loaded = true
         vm.steps = Object.values(svgElement.childNodes)
           .filter((group) => group.nodeName === 'g')
           .map((group) => ({
@@ -217,30 +138,28 @@ export default {
           `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
         )
         if (!edge) {
-          vm.loaded = true
           return
         }
-        vm.$axios
-          .$get(`/api/edgecreator/v2/model/${edge.id}/steps`)
-          .then((steps) => {
-            vm.loaded = true
-            const dimensions = steps.find((step) => step.ordre === -1)
-            if (dimensions) {
-              vm.setDimensions({
-                width: dimensions.options.Dimension_x,
-                height: dimensions.options.Dimension_y
-              })
-            }
+        const steps = await vm.$axios.$get(
+          `/api/edgecreator/v2/model/${edge.id}/steps`
+        )
 
-            vm.steps = steps
-              .filter((step) => step.ordre !== -1)
-              .map((step) => ({
-                component: vm.supportedRenders.find(
-                  (component) => component.originalName === step.nomFonction
-                ).component,
-                dbOptions: step.options
-              }))
+        const dimensions = steps.find((step) => step.ordre === -1)
+        if (dimensions) {
+          vm.setDimensions({
+            width: dimensions.options.Dimension_x,
+            height: dimensions.options.Dimension_y
           })
+        }
+
+        vm.steps = steps
+          .filter((step) => step.ordre !== -1)
+          .map((step) => ({
+            component: vm.supportedRenders.find(
+              (component) => component.originalName === step.nomFonction
+            ).component,
+            dbOptions: step.options
+          }))
       })
   },
   methods: {
@@ -249,28 +168,6 @@ export default {
     },
     getEdgeCanvasRefId(issuenumber) {
       return `edge-canvas-${issuenumber}`
-    },
-    exportSvg() {
-      const vm = this
-      this.zoom = 1.5
-      vm.$nextTick().then(() => {
-        vm.issuenumbers.forEach((issuenumber) => {
-          vm.$axios
-            .$put('/fs/export', {
-              country: vm.country,
-              magazine: vm.magazine,
-              issuenumber,
-              content:
-                vm.$refs[vm.getEdgeCanvasRefId(issuenumber)][0].$refs.edge
-                  .outerHTML
-            })
-            .then(() => {
-              vm.$bvToast.toast('Export done', {
-                toaster: 'b-toaster-top-center'
-              })
-            })
-        })
-      })
     },
     ...mapMutations([
       'setDimensions',
