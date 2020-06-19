@@ -65,8 +65,10 @@
     <b-row align="center" class="p-2" style="border-bottom: 1px solid grey">
       <b-col align-self="center">
         <img :src="flagImageUrl" :alt="country" />&nbsp;{{ magazine }}&nbsp;{{
-          issuenumber
-        }}
+          issuenumberMin
+        }}<span v-if="issuenumberMin !== issuenumberMax">
+          to {{ issuenumberMax }}</span
+        >
       </b-col>
     </b-row>
     <b-row v-if="loaded" class="flex-grow-1 pt-2">
@@ -78,8 +80,12 @@
                 :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber"
               />
             </td>
-            <td>
-              <edge-canvas :hovered-step="hoveredStep" />
+            <td v-for="issuenumber in issuenumbers" :key="issuenumber">
+              <edge-canvas
+                :ref="getEdgeCanvasRefId(issuenumber)"
+                :issuenumber="issuenumber"
+                :steps="steps"
+              />
             </td>
             <td v-if="showNextEdge && edgesAfter.length">
               <published-edge :issuenumber="edgesAfter[0].issuenumber" />
@@ -89,7 +95,9 @@
             <th v-if="showPreviousEdge && edgesBefore.length">
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </th>
-            <th>{{ issuenumber }}<br />&#11088;</th>
+            <th v-for="issuenumber in issuenumbers" :key="issuenumber">
+              {{ issuenumber }}<br />&#11088;
+            </th>
             <th v-if="showNextEdge && edgesAfter.length">
               {{ edgesAfter[0].issuenumber }}
             </th>
@@ -97,10 +105,7 @@
         </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
-        <ModelEdit
-          :hovered-step="hoveredStep"
-          @hover-step="hoveredStep = $event"
-        />
+        <ModelEdit :steps="steps" />
       </b-col>
     </b-row>
   </b-container>
@@ -124,7 +129,9 @@ export default {
     return {
       error: null,
       loaded: false,
-      hoveredStep: null,
+      issuenumberMin: null,
+      issuenumberMax: null,
+      steps: [],
       showSidebar: true,
       showIssueNumbers: true,
       showPreviousEdge: true,
@@ -144,16 +151,18 @@ export default {
       return `${process.env.DM_URL}/images/flags/${this.country}.png`
     },
     ...mapState([
-      'steps',
       'country',
       'magazine',
-      'issuenumber',
+      'issuenumbers',
       'edgesBefore',
       'edgesAfter'
     ]),
     ...mapState('renders', ['supportedRenders'])
   },
   watch: {
+    issuenumberMin(newValue) {
+      this.setEditIssuenumber(newValue)
+    },
     steps(newValue) {
       if (newValue) {
         this.loadGalleryItems()
@@ -163,19 +172,30 @@ export default {
   },
   async mounted() {
     const vm = this
-    const [country, magazine, issuenumber] = vm.$route.params.pathMatch.split(
-      '/'
-    )
-    if ([country, magazine, issuenumber].includes(undefined)) {
+    const [
+      country,
+      magazine,
+      issuenumberMin,
+      ,
+      issuenumberMax
+    ] = vm.$route.params.pathMatch.split('/')
+    if ([country, magazine, issuenumberMin].includes(undefined)) {
       this.error = 'Invalid URL'
       return
     }
     this.setCountry(country)
     this.setMagazine(magazine)
-    this.setIssuenumber(issuenumber)
+
+    this.issuenumberMin = issuenumberMin
+    if (issuenumberMax === undefined) {
+      this.issuenumberMax = null
+      this.setIssuenumbers([issuenumberMin])
+    } else {
+      this.setIssuenumbers([issuenumberMin, issuenumberMax])
+    }
 
     await this.$axios
-      .$get(this.getEdgeUrl(vm.issuenumber, 'svg'))
+      .$get(this.getEdgeUrl(issuenumberMin, 'svg'))
       .then((data) => {
         const doc = new DOMParser().parseFromString(data, 'image/svg+xml')
         const svgElement = doc.getElementsByTagName('svg')[0]
@@ -185,25 +205,23 @@ export default {
         })
 
         vm.loaded = true
-        vm.setSteps(
-          Object.values(svgElement.childNodes)
-            .filter((group) => group.nodeName === 'g')
-            .map((group) => ({
-              component: group.getAttribute('class'),
-              svgGroupElement: group
-            }))
-        )
+        vm.steps = Object.values(svgElement.childNodes)
+          .filter((group) => group.nodeName === 'g')
+          .map((group) => ({
+            component: group.getAttribute('class'),
+            svgGroupElement: group
+          }))
       })
       .catch(async () => {
         const edge = await this.$axios.$get(
-          `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
+          `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
         )
         if (!edge) {
           vm.loaded = true
           return
         }
         vm.$axios
-          .$get(`/api/edgecreator/v2/model/${vm.edge.id}/steps`)
+          .$get(`/api/edgecreator/v2/model/${edge.id}/steps`)
           .then((steps) => {
             vm.loaded = true
             const dimensions = steps.find((step) => step.ordre === -1)
@@ -214,16 +232,14 @@ export default {
               })
             }
 
-            vm.setSteps(
-              steps
-                .filter((step) => step.ordre !== -1)
-                .map((step) => ({
-                  component: vm.supportedRenders.find(
-                    (component) => component.originalName === step.nomFonction
-                  ).component,
-                  dbOptions: step.options
-                }))
-            )
+            vm.steps = steps
+              .filter((step) => step.ordre !== -1)
+              .map((step) => ({
+                component: vm.supportedRenders.find(
+                  (component) => component.originalName === step.nomFonction
+                ).component,
+                dbOptions: step.options
+              }))
           })
       })
   },
@@ -231,32 +247,38 @@ export default {
     getEdgeUrl(issuenumber, extension = 'png') {
       return `${process.env.EDGES_URL}/${this.country}/gen/${this.magazine}.${issuenumber}.${extension}`
     },
+    getEdgeCanvasRefId(issuenumber) {
+      return `edge-canvas-${issuenumber}`
+    },
     exportSvg() {
       const vm = this
       this.zoom = 1.5
       vm.$nextTick().then(() => {
-        vm.$axios
-          .$put('/fs/export', {
-            country: vm.country,
-            magazine: vm.magazine,
-            issuenumber: vm.issuenumber,
-            content: vm.$refs.edge.outerHTML
-          })
-          .then(() => {
-            vm.$bvToast.toast('Export done', {
-              toaster: 'b-toaster-top-center'
+        vm.issuenumbers.forEach((issuenumber) => {
+          vm.$axios
+            .$put('/fs/export', {
+              country: vm.country,
+              magazine: vm.magazine,
+              issuenumber,
+              content:
+                vm.$refs[vm.getEdgeCanvasRefId(issuenumber)][0].$refs.edge
+                  .outerHTML
             })
-          })
+            .then(() => {
+              vm.$bvToast.toast('Export done', {
+                toaster: 'b-toaster-top-center'
+              })
+            })
+        })
       })
     },
     ...mapMutations([
-      'setSteps',
       'setDimensions',
       'setCountry',
       'setMagazine',
-      'setIssuenumber',
-      'setIssuenumberMax'
+      'setIssuenumbers'
     ]),
+    ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
     ...mapActions(['loadSurroundingEdges', 'loadGalleryItems'])
   }
 }
@@ -266,39 +288,6 @@ export default {
   display: flex;
   flex-direction: column;
   user-select: none;
-}
-
-svg g:hover,
-svg g.hovered {
-  animation: glowFilter 2s infinite;
-}
-
-@keyframes glowFilter {
-  0% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px black);
-    filter: drop-shadow(-0.75px 0px 6px black);
-    stroke: black;
-  }
-  25% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px grey);
-    filter: drop-shadow(-0.75px 0px 6px grey);
-    stroke: grey;
-  }
-  50% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px white);
-    filter: drop-shadow(-0.75px 0px 6px white);
-    stroke: white;
-  }
-  75% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px grey);
-    filter: drop-shadow(-0.75px 0px 6px grey);
-    stroke: grey;
-  }
-  100% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px black);
-    filter: drop-shadow(-0.75px 0px 6px black);
-    stroke: black;
-  }
 }
 table.edges {
   float: right;

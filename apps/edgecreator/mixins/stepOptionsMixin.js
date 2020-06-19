@@ -4,6 +4,7 @@ const interact = require('interactjs')
 
 export default {
   props: {
+    issuenumber: { type: String },
     stepNumber: { type: Number },
     svgGroup: { type: Object },
     dbOptions: { type: Object }
@@ -15,8 +16,10 @@ export default {
   },
   computed: {
     ...mapState(['zoom', 'width', 'height']),
-    ...mapState('currentStep', {
-      currentStepNumber: 'stepNumber'
+    ...mapState('editingStep', {
+      currentIssuenumber: 'issuenumber',
+      currentStepNumber: 'stepNumber',
+      currentStepOptions: 'stepOptions'
     }),
     svgMetadata() {
       return (
@@ -30,30 +33,48 @@ export default {
   watch: {
     currentStepNumber: {
       immediate: true,
-      handler(newValue) {
-        if (newValue === this.stepNumber) {
-          this.setCurrentStepOptions(this.options)
+      handler(newStepNumber) {
+        if (this.isEditingCurrentStep(newStepNumber, this.currentIssuenumber)) {
+          this.setStepOptions(this.options)
+        }
+      }
+    },
+    currentIssuenumber: {
+      immediate: true,
+      handler(newIssuenumber) {
+        if (this.isEditingCurrentStep(this.currentStepNumber, newIssuenumber)) {
+          this.setStepOptions(this.options)
         }
       }
     },
     options: {
       deep: true,
       immediate: true,
-      handler(newValue) {
-        if (this.currentStepNumber === this.stepNumber) {
-          this.setCurrentStepOptions(newValue)
+      handler(newOptions) {
+        if (
+          this.isEditingCurrentStep(
+            this.currentStepNumber,
+            this.currentIssuenumber
+          )
+        ) {
+          this.setStepOptions(newOptions)
         }
       }
     }
   },
   methods: {
-    setCurrentStepOptions(options) {
+    isEditingCurrentStep(currentStepNumber, currentIssuenumber) {
+      return (
+        currentStepNumber === this.stepNumber &&
+        currentIssuenumber === this.issuenumber
+      )
+    },
+    setStepOptions(options) {
+      const newOptions = {}
       Object.keys(options).forEach((optionKey) => {
-        this.setCurrentStepOption({
-          key: optionKey,
-          value: options[optionKey]
-        })
+        Vue.set(newOptions, optionKey, options[optionKey])
       })
+      this.setCurrentStepOptions(newOptions)
     },
     copyOptions(options) {
       const optionsKeys = Object.keys(options)
@@ -86,7 +107,7 @@ export default {
             })
         )
     },
-    ...mapMutations('currentStep', { setCurrentStepOption: 'setStepOption' })
+    ...mapMutations('editingStep', { setCurrentStepOptions: 'setStepOptions' })
   },
   async mounted() {
     const vm = this
@@ -97,7 +118,9 @@ export default {
     }
     this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
-      if (vm.currentStepNumber === vm.stepNumber) {
+      if (
+        vm.isEditingCurrentStep(vm.currentStepNumber, vm.currentIssuenumber)
+      ) {
         vm.options[optionName] = optionValue
       }
     })

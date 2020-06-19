@@ -15,11 +15,17 @@
         [step.component]: true,
         hovered: hoveredStep === stepNumber
       }"
-      @mousedown="setStepNumber(stepNumber)"
+      @mousedown="
+        setEditingIssuenumber(issuenumber)
+        setEditingStepNumber(stepNumber)
+      "
+      @mouseover="hoveredStep = stepNumber"
+      @mouseout="hoveredStep = null"
     >
       <component
         :is="`${step.component}Render`"
         v-if="$options.components[`${step.component}Render`]"
+        :issuenumber="issuenumber"
         :step-number="stepNumber"
         :svg-group="step.svgGroupElement"
         :db-options="step.dbOptions"
@@ -59,7 +65,8 @@ export default {
     GradientRender
   },
   props: {
-    hoveredStep: { type: Number, default: null }
+    issuenumber: { type: String, required: true },
+    steps: { type: Array, required: true }
   },
   data() {
     return {
@@ -67,12 +74,28 @@ export default {
     }
   },
   computed: {
-    ...mapState(['zoom', 'steps', 'width', 'height'])
+    ...mapState(['zoom', 'width', 'height']),
+    hoveredStep: {
+      get() {
+        return this.$store.state.editingStep.hoveredStep
+      },
+      set(value) {
+        this.$store.commit('editingStep/setHoveredStep', value)
+      }
+    }
   },
   methods: {
-    ...mapMutations('currentStep', ['setStepNumber'])
+    ...mapMutations('editingStep', {
+      setEditingStepNumber: 'setStepNumber',
+      setEditingIssuenumber: 'setIssuenumber'
+    })
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+svg g:hover,
+svg g.hovered {
+  animation: glowFilter 2s infinite;
+}
+</style>
