@@ -14,11 +14,7 @@
               />
             </td>
             <td v-for="issuenumber in issuenumbers" :key="issuenumber">
-              <edge-canvas
-                :ref="getEdgeCanvasRefId(issuenumber)"
-                :issuenumber="issuenumber"
-                :steps="steps"
-              />
+              <edge-canvas :issuenumber="issuenumber" :steps="steps" />
             </td>
             <td v-if="showNextEdge && edgesAfter.length">
               <published-edge :issuenumber="edgesAfter[0].issuenumber" />
@@ -163,9 +159,6 @@ export default {
   methods: {
     getEdgeUrl(issuenumber, extension = 'png') {
       return `${process.env.EDGES_URL}/${this.country}/gen/${this.magazine}.${issuenumber}.${extension}`
-    },
-    getEdgeCanvasRefId(issuenumber) {
-      return `edge-canvas-${issuenumber}`
     },
     ...mapMutations(['setDimensions', 'setCountry', 'setMagazine']),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
