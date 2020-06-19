@@ -1,6 +1,6 @@
 <template>
   <image
-    v-if="options.x"
+    v-if="options.x !== undefined"
     ref="image"
     v-bind="options"
     :xlink:href="imageUrl"
