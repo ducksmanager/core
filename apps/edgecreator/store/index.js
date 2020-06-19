@@ -43,6 +43,29 @@ export const mutations = {
 }
 
 export const actions = {
+  setIssuenumbersFromMinMax({ state, commit }, { min, max }) {
+    if (max === undefined) {
+      commit('setIssuenumbers', [min])
+    } else {
+      const firstIssueIndex = state.publicationIssues.findIndex(
+        (issue) => issue === min
+      )
+      const lastIssueIndex = state.publicationIssues.findIndex(
+        (issue) => issue === max
+      )
+      if (lastIssueIndex === -1) {
+        commit('setIssuenumbers', [min])
+      } else {
+        commit(
+          'setIssuenumbers',
+          state.publicationIssues.filter(
+            (unused, index) =>
+              index >= firstIssueIndex && index <= lastIssueIndex
+          )
+        )
+      }
+    }
+  },
   async loadGalleryItems({ state, commit }) {
     commit('setGalleryItems', {
       items: await this.$axios.$get(
@@ -50,23 +73,25 @@ export const actions = {
       )
     })
   },
-  async loadSurroundingEdges({ state, commit }) {
-    const publicationIssues = await this.$axios.$get(
+  async loadPublicationIssues({ state }) {
+    state.publicationIssues = await this.$axios.$get(
       `/api/coa/list/issues/${state.country}/${state.magazine}`
     )
-    const firstIssueIndex = publicationIssues.findIndex(
+  },
+  async loadSurroundingEdges({ state, commit }) {
+    const firstIssueIndex = state.publicationIssues.findIndex(
       (issue) => issue === state.issuenumbers[0]
     )
-    const lastIssueIndex = publicationIssues.findIndex(
+    const lastIssueIndex = state.publicationIssues.findIndex(
       (issue) => issue === state.issuenumbers[state.issuenumbers.length - 1]
     )
-    const issuesBefore = publicationIssues.filter(
+    const issuesBefore = state.publicationIssues.filter(
       (unused, index) =>
         firstIssueIndex !== -1 &&
         index >= firstIssueIndex - 10 &&
         index < firstIssueIndex
     )
-    const issuesAfter = publicationIssues.filter(
+    const issuesAfter = state.publicationIssues.filter(
       (unused, index) =>
         lastIssueIndex !== -1 &&
         index > lastIssueIndex &&

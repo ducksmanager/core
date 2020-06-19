@@ -86,7 +86,7 @@ export default {
     ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge'])
   },
   watch: {
-    issuenumbers(newValue) {
+    async issuenumbers(newValue) {
       if (newValue) {
         this.loadGalleryItems()
         this.loadSurroundingEdges()
@@ -110,11 +110,9 @@ export default {
     this.setMagazine(magazine)
     this.setEditIssuenumber(issuenumberMin)
 
-    if (issuenumberMax === undefined) {
-      this.setIssuenumbers([issuenumberMin])
-    } else {
-      this.setIssuenumbers([issuenumberMin, issuenumberMax])
-    }
+    await this.loadPublicationIssues()
+
+    this.setIssuenumbersFromMinMax({ min: issuenumberMin, max: issuenumberMax })
 
     await this.$axios
       .$get(this.getEdgeUrl(issuenumberMin, 'svg'))
@@ -169,14 +167,14 @@ export default {
     getEdgeCanvasRefId(issuenumber) {
       return `edge-canvas-${issuenumber}`
     },
-    ...mapMutations([
-      'setDimensions',
-      'setCountry',
-      'setMagazine',
-      'setIssuenumbers'
-    ]),
+    ...mapMutations(['setDimensions', 'setCountry', 'setMagazine']),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
-    ...mapActions(['loadSurroundingEdges', 'loadGalleryItems'])
+    ...mapActions([
+      'setIssuenumbersFromMinMax',
+      'loadPublicationIssues',
+      'loadSurroundingEdges',
+      'loadGalleryItems'
+    ])
   }
 }
 </script>
