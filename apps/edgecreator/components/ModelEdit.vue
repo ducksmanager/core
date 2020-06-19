@@ -1,12 +1,12 @@
 <template>
   <b-card id="edit-card" no-body>
-    <b-tabs v-model="currentStepNumber" lazy pills card vertical>
+    <b-tabs v-model="editingStepNumber" lazy pills card vertical>
       <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
         <template v-slot:title>
           <div
-            :class="{ 'hovered-step': hoveredStep === stepNumber }"
-            @mouseover="hoveredStep = stepNumber"
-            @mouseout="hoveredStep = null"
+            :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
+            @mouseover="hoveredStepNumber = stepNumber"
+            @mouseout="hoveredStepNumber = null"
           >
             {{
               supportedRenders.find(
@@ -20,35 +20,35 @@
             option-name="text"
             label="Text"
             type="text"
-            :options="currentStepOptions"
+            :options="editingStepOptions"
           />
           <form-input-row
             option-name="font"
             label="Font"
             type="text"
-            :options="currentStepOptions"
+            :options="editingStepOptions"
           />
           <form-color-input-row
-            :options="currentStepOptions"
+            :options="editingStepOptions"
             option-name="bgColor"
           />
           <form-color-input-row
-            :options="currentStepOptions"
+            :options="editingStepOptions"
             option-name="fgColor"
           />
           <form-input-row
             option-name="rotation"
-            :label="`Rotation : ${currentStepOptions.rotation}°`"
+            :label="`Rotation : ${editingStepOptions.rotation}°`"
             type="range"
             :min="0"
             :max="360"
             :step="1"
-            :options="currentStepOptions"
+            :options="editingStepOptions"
           />
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
           <form-color-input-row
-            :options="currentStepOptions"
+            :options="editingStepOptions"
             option-name="fill"
           />
         </b-card-text>
@@ -59,12 +59,12 @@
             type="text"
             readonly
             list-id="src-list"
-            :options="currentStepOptions"
+            :options="editingStepOptions"
           >
             <b-form-datalist id="src-list" :options="galleryItems" />
           </form-input-row>
           <Gallery
-            :selected-image="currentStepOptions['src']"
+            :selected-image="editingStepOptions['src']"
             @image-click="
               ({ image }) => {
                 clickedImage = image
@@ -76,7 +76,7 @@
           <form-color-input-row
             v-for="optionName in ['fill', 'stroke']"
             :key="optionName"
-            :options="currentStepOptions"
+            :options="editingStepOptions"
             :option-name="optionName"
             can-be-transparent
           />
@@ -85,7 +85,7 @@
           <form-color-input-row
             v-for="optionName in ['colorStart', 'colorEnd']"
             :key="optionName"
-            :options="currentStepOptions"
+            :options="editingStepOptions"
             :option-name="optionName"
           />
 
@@ -96,7 +96,7 @@
             <b-col sm="6" md="5">
               <b-form-select
                 id="direction"
-                :value="currentStepOptions.direction"
+                :value="editingStepOptions.direction"
                 :options="['Vertical', 'Horizontal']"
                 @input="$root.$emit('set-option', 'direction', $event)"
               >
@@ -106,7 +106,7 @@
         </b-card-text>
         <b-card-text v-if="step.component === 'Polygon'">
           <form-color-input-row
-            :options="currentStepOptions"
+            :options="editingStepOptions"
             option-name="fill"
           />
         </b-card-text>
@@ -158,15 +158,15 @@ export default {
     }
   },
   computed: {
-    hoveredStep: {
+    hoveredStepNumber: {
       get() {
-        return this.$store.state.editingStep.hoveredStep
+        return this.$store.state.hoveredStep.stepNumber
       },
       set(value) {
-        this.$store.commit('editingStep/setHoveredStep', value)
+        this.$store.commit('hoveredStep/setStepNumber', value)
       }
     },
-    currentStepNumber: {
+    editingStepNumber: {
       get() {
         return this.$store.state.editingStep.stepNumber
       },
@@ -175,7 +175,7 @@ export default {
       }
     },
     ...mapState(['galleryItems', 'country']),
-    ...mapState('editingStep', { currentStepOptions: 'stepOptions' }),
+    ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders'])
   },
   methods: {

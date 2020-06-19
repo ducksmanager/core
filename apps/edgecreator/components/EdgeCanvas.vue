@@ -13,14 +13,22 @@
       :key="stepNumber"
       :class="{
         [step.component]: true,
-        hovered: hoveredStep === stepNumber
+        hovered:
+          hoveredStepNumber === stepNumber &&
+          [issuenumber, null].includes(hoveredIssuenumber)
       }"
       @mousedown="
-        setEditingIssuenumber(issuenumber)
-        setEditingStepNumber(stepNumber)
+        editingIssuenumber = issuenumber
+        editingStepNumber = stepNumber
       "
-      @mouseover="hoveredStep = stepNumber"
-      @mouseout="hoveredStep = null"
+      @mouseover="
+        hoveredStepNumber = stepNumber
+        hoveredIssuenumber = issuenumber
+      "
+      @mouseout="
+        hoveredStepNumber = null
+        hoveredIssuenumber = null
+      "
     >
       <component
         :is="`${step.component}Render`"
@@ -44,7 +52,7 @@
   </svg>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 import RectangleRender from '~/components/renders/RectangleRender'
 import PolygonRender from '~/components/renders/PolygonRender'
 import ArcCircleRender from '~/components/renders/ArcCircleRender'
@@ -77,21 +85,39 @@ export default {
     edgeCanvasId() {
       return `edge-canvas-${this.issuenumber}`
     },
-    hoveredStep: {
+    hoveredStepNumber: {
       get() {
-        return this.$store.state.editingStep.hoveredStep
+        return this.$store.state.hoveredStep.stepNumber
       },
       set(value) {
-        this.$store.commit('editingStep/setHoveredStep', value)
+        this.$store.commit('hoveredStep/setStepNumber', value)
+      }
+    },
+    hoveredIssuenumber: {
+      get() {
+        return this.$store.state.hoveredStep.issuenumber
+      },
+      set(value) {
+        this.$store.commit('hoveredStep/setIssuenumber', value)
+      }
+    },
+    editingStepNumber: {
+      get() {
+        return this.$store.state.editingStep.stepNumber
+      },
+      set(value) {
+        this.$store.commit('editingStep/setStepNumber', value)
+      }
+    },
+    editingIssuenumber: {
+      get() {
+        return this.$store.state.editingStep.issuenumber
+      },
+      set(value) {
+        this.$store.commit('editingStep/setIssuenumber', value)
       }
     },
     ...mapState(['zoom', 'width', 'height'])
-  },
-  methods: {
-    ...mapMutations('editingStep', {
-      setEditingStepNumber: 'setStepNumber',
-      setEditingIssuenumber: 'setIssuenumber'
-    })
   }
 }
 </script>

@@ -17,9 +17,9 @@ export default {
   computed: {
     ...mapState(['zoom', 'width', 'height']),
     ...mapState('editingStep', {
-      currentIssuenumber: 'issuenumber',
-      currentStepNumber: 'stepNumber',
-      currentStepOptions: 'stepOptions'
+      editingIssuenumber: 'issuenumber',
+      editingStepNumber: 'stepNumber',
+      editingStepOptions: 'stepOptions'
     }),
     svgMetadata() {
       return (
@@ -31,18 +31,18 @@ export default {
     }
   },
   watch: {
-    currentStepNumber: {
+    editingStepNumber: {
       immediate: true,
       handler(newStepNumber) {
-        if (this.isEditingCurrentStep(newStepNumber, this.currentIssuenumber)) {
+        if (this.isEditingCurrentStep(newStepNumber, this.editingIssuenumber)) {
           this.setStepOptions(this.options)
         }
       }
     },
-    currentIssuenumber: {
+    editingIssuenumber: {
       immediate: true,
       handler(newIssuenumber) {
-        if (this.isEditingCurrentStep(this.currentStepNumber, newIssuenumber)) {
+        if (this.isEditingCurrentStep(this.editingStepNumber, newIssuenumber)) {
           this.setStepOptions(this.options)
         }
       }
@@ -53,8 +53,8 @@ export default {
       handler(newOptions) {
         if (
           this.isEditingCurrentStep(
-            this.currentStepNumber,
-            this.currentIssuenumber
+            this.editingStepNumber,
+            this.editingIssuenumber
           )
         ) {
           this.setStepOptions(newOptions)
@@ -63,10 +63,10 @@ export default {
     }
   },
   methods: {
-    isEditingCurrentStep(currentStepNumber, currentIssuenumber) {
+    isEditingCurrentStep(editingStepNumber, editingIssuenumber) {
       return (
-        currentStepNumber === this.stepNumber &&
-        currentIssuenumber === this.issuenumber
+        editingStepNumber === this.stepNumber &&
+        editingIssuenumber === this.issuenumber
       )
     },
     setStepOptions(options) {
@@ -119,7 +119,7 @@ export default {
     this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
       if (
-        vm.isEditingCurrentStep(vm.currentStepNumber, vm.currentIssuenumber)
+        vm.isEditingCurrentStep(vm.editingStepNumber, vm.editingIssuenumber)
       ) {
         vm.options[optionName] = optionValue
       }
