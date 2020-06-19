@@ -4,8 +4,9 @@
       <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
         <template v-slot:title>
           <div
-            @mouseover="$emit('hover-step', stepNumber)"
-            @mouseleave="$emit('hover-step', null)"
+            :class="{ 'hovered-step': hoveredStep === stepNumber }"
+            @mouseover="hoveredStep = stepNumber"
+            @mouseout="hoveredStep = null"
           >
             {{
               supportedRenders.find(
@@ -149,7 +150,7 @@ export default {
   name: 'ModelEdit',
   components: { FormColorInputRow, FormInputRow, Gallery },
   props: {
-    hoveredStep: { type: Number, default: null }
+    steps: { type: Array, required: true }
   },
   data() {
     return {
@@ -157,16 +158,24 @@ export default {
     }
   },
   computed: {
-    currentStepNumber: {
+    hoveredStep: {
       get() {
-        return this.$store.state.currentStep.stepNumber
+        return this.$store.state.editingStep.hoveredStep
       },
       set(value) {
-        this.$store.commit('currentStep/setStepNumber', value)
+        this.$store.commit('editingStep/setHoveredStep', value)
       }
     },
-    ...mapState(['galleryItems', 'country', 'steps']),
-    ...mapState('currentStep', { currentStepOptions: 'stepOptions' }),
+    currentStepNumber: {
+      get() {
+        return this.$store.state.editingStep.stepNumber
+      },
+      set(value) {
+        this.$store.commit('editingStep/setStepNumber', value)
+      }
+    },
+    ...mapState(['galleryItems', 'country']),
+    ...mapState('editingStep', { currentStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders'])
   },
   methods: {
@@ -181,6 +190,10 @@ export default {
 #edit-card,
 #edit-card .tabs {
   height: 100%;
+}
+
+.hovered-step {
+  animation: glowFilter 2s infinite;
 }
 
 .tab-pane.card-body {

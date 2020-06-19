@@ -1,9 +1,8 @@
 export const state = () => ({
   country: null,
   magazine: null,
-  issuenumber: null,
+  issuenumbers: [],
 
-  steps: [],
   galleryItems: [],
   zoom: 1.5,
   width: 15,
@@ -19,11 +18,8 @@ export const mutations = {
   setMagazine(state, magazine) {
     state.magazine = magazine
   },
-  setIssuenumber(state, issuenumber) {
-    state.issuenumber = issuenumber
-  },
-  setSteps(state, steps) {
-    state.steps = steps
+  setIssuenumbers(state, issuenumbers) {
+    state.issuenumbers = issuenumbers
   },
   addStep(state, step) {
     state.steps.push(step)
@@ -58,20 +54,23 @@ export const actions = {
     const publicationIssues = await this.$axios.$get(
       `/api/coa/list/issues/${state.country}/${state.magazine}`
     )
-    const currentIssueIndex = publicationIssues.findIndex(
-      (issue) => issue === state.issuenumber
+    const firstIssueIndex = publicationIssues.findIndex(
+      (issue) => issue === state.issuenumbers[0]
+    )
+    const lastIssueIndex = publicationIssues.findIndex(
+      (issue) => issue === state.issuenumbers[state.issuenumbers.length - 1]
     )
     const issuesBefore = publicationIssues.filter(
       (unused, index) =>
-        currentIssueIndex !== -1 &&
-        index >= currentIssueIndex - 10 &&
-        index < currentIssueIndex
+        firstIssueIndex !== -1 &&
+        index >= firstIssueIndex - 10 &&
+        index < firstIssueIndex
     )
     const issuesAfter = publicationIssues.filter(
       (unused, index) =>
-        currentIssueIndex !== -1 &&
-        index > currentIssueIndex &&
-        index <= currentIssueIndex + 10
+        lastIssueIndex !== -1 &&
+        index > lastIssueIndex &&
+        index <= lastIssueIndex + 10
     )
 
     if (issuesBefore.length) {
