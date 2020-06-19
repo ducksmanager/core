@@ -11,6 +11,7 @@
     >
       <b-img-lazy
         v-b-modal.image-modal
+        v-b-tooltip.hover
         thumbnail
         class="fit"
         :src="getElementUrl(image)"
