@@ -67,10 +67,16 @@ export const actions = {
     }
   },
   async loadGalleryItems({ state, commit }) {
+    const numericSortCollator = new Intl.Collator(undefined, {
+      numeric: true,
+      sensitivity: 'base'
+    })
+    const items = await this.$axios.$get(
+      `/fs/browseElements/${state.country}/${state.magazine}`
+    )
+
     commit('setGalleryItems', {
-      items: await this.$axios.$get(
-        `/fs/browseElements/${state.country}/${state.magazine}`
-      )
+      items: items.sort(numericSortCollator.compare)
     })
   },
   async loadPublicationIssues({ state }) {
