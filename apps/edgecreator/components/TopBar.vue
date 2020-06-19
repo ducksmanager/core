@@ -58,6 +58,49 @@
     <b-row align="center" class="p-2">
       <b-col align-self="center">
         <b-button
+          v-b-tooltip.hover
+          v-b-toggle.collapse-dimensions
+          title="Change dimensions"
+          pill
+          size="sm"
+          variant="outline-primary"
+          ><b-icon-arrows-angle-expand
+        /></b-button>
+        <b-collapse id="collapse-dimensions" class="mt-2">
+          <b-card class="mb-2" style="max-width: 12rem">
+            <b-row>
+              <b-col sm="6">
+                <label for="width">Width</label>
+              </b-col>
+              <b-col sm="6">
+                <b-form-input
+                  id="width"
+                  :value="width"
+                  size="sm"
+                  autocomplete="off"
+                  type="number"
+                  @input="setDimensions({ width: $event, height })"
+                ></b-form-input>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col sm="6">
+                <label for="height">Height</label>
+              </b-col>
+              <b-col sm="6">
+                <b-form-input
+                  id="width"
+                  :value="height"
+                  size="sm"
+                  autocomplete="off"
+                  type="number"
+                  @input="setDimensions({ width, height: $event })"
+                ></b-form-input>
+              </b-col>
+            </b-row>
+          </b-card>
+        </b-collapse>
+        <b-button
           id="export"
           v-b-tooltip.hover
           title="Export"
@@ -81,14 +124,19 @@
   </b-container>
 </template>
 <script>
-import { mapState } from 'vuex'
-import { BIconArchiveFill, BIconHouse } from 'bootstrap-vue'
+import { mapState, mapMutations } from 'vuex'
+import {
+  BIconArchiveFill,
+  BIconArrowsAngleExpand,
+  BIconHouse
+} from 'bootstrap-vue'
 
 export default {
   name: 'TopBar',
   components: {
     BIconHouse,
-    BIconArchiveFill
+    BIconArchiveFill,
+    BIconArrowsAngleExpand
   },
   data() {
     return {
@@ -132,6 +180,8 @@ export default {
       return `${process.env.DM_URL}/images/flags/${this.country}.png`
     },
     ...mapState([
+      'width',
+      'height',
       'country',
       'magazine',
       'issuenumbers',
@@ -161,7 +211,8 @@ export default {
             })
         })
       })
-    }
+    },
+    ...mapMutations(['setDimensions'])
   }
 }
 </script>
