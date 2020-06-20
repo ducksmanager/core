@@ -34,7 +34,17 @@
         </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
-        <ModelEdit :steps="steps" />
+        <model-edit
+          :steps="steps"
+          @add-step="
+            (component) => {
+              steps.push({
+                component: component,
+                svgGroupElement: null
+              })
+            }
+          "
+        />
       </b-col>
     </b-row>
   </b-container>

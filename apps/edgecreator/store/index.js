@@ -21,9 +21,6 @@ export const mutations = {
   setIssuenumbers(state, issuenumbers) {
     state.issuenumbers = issuenumbers
   },
-  addStep(state, step) {
-    state.steps.push(step)
-  },
   setZoom(state, zoom) {
     state.zoom = zoom
   },
