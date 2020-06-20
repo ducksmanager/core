@@ -101,11 +101,20 @@
           </b-card>
         </b-collapse>
         <b-button
-          id="export"
+          v-b-tooltip.hover
+          title="Lock"
+          pill
+          :variant="locked ? 'primary' : 'outline-primary'"
+          :disabled="issuenumbers.length === 1"
+          size="sm"
+          @click="locked = !locked"
+          ><b-icon-lock v-if="locked"/><b-icon-unlock v-else
+        /></b-button>
+        <b-button
           v-b-tooltip.hover
           title="Export"
           pill
-          variant="success"
+          variant="outline-success"
           size="sm"
           @click="exportSvg"
           ><b-icon-archive-fill
@@ -128,7 +137,9 @@ import { mapState, mapMutations } from 'vuex'
 import {
   BIconArchiveFill,
   BIconArrowsAngleExpand,
-  BIconHouse
+  BIconHouse,
+  BIconLock,
+  BIconUnlock
 } from 'bootstrap-vue'
 
 export default {
@@ -136,7 +147,9 @@ export default {
   components: {
     BIconHouse,
     BIconArchiveFill,
-    BIconArrowsAngleExpand
+    BIconArrowsAngleExpand,
+    BIconLock,
+    BIconUnlock
   },
   data() {
     return {
@@ -144,6 +157,14 @@ export default {
     }
   },
   computed: {
+    locked: {
+      get() {
+        return this.$store.state.ui.locked
+      },
+      set(value) {
+        this.$store.commit('ui/setLocked', value)
+      }
+    },
     zoom: {
       get() {
         return this.$store.state.zoom

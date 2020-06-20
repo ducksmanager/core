@@ -16,6 +16,7 @@ export default {
   },
   computed: {
     ...mapState(['zoom', 'width', 'height']),
+    ...mapState('ui', ['locked']),
     ...mapState('editingStep', {
       editingIssuenumber: 'issuenumber',
       editingStepNumber: 'stepNumber',
@@ -28,6 +29,13 @@ export default {
           this.svgGroup.getElementsByTagName('metadata')[0].textContent
         )
       )
+    },
+    shouldApplyLockedOption() {
+      return (
+        this.locked &&
+        this.editingStepNumber === this.stepNumber &&
+        this.editingIssuenumber !== this.issuenumber
+      )
     }
   },
   watch: {
@@ -36,6 +44,32 @@ export default {
       handler(newStepNumber) {
         if (this.isEditingCurrentStep(newStepNumber, this.editingIssuenumber)) {
           this.setStepOptions(this.options)
+        }
+      }
+    },
+    editingStepOptions: {
+      deep: true,
+      handler(newEditingStepOptions, oldEditingStepOptions) {
+        if (this.shouldApplyLockedOption) {
+          const diffEditingStepOptions = Object.keys(newEditingStepOptions)
+            .filter(
+              (optionName) =>
+                newEditingStepOptions[optionName] !==
+                oldEditingStepOptions[optionName]
+            )
+            .reduce((obj, key) => {
+              obj[key] = newEditingStepOptions[key]
+              return obj
+            }, {})
+          console.log(
+            `Applying locked option changes : ${JSON.stringify(
+              diffEditingStepOptions
+            )}`
+          )
+          this.copyOptions({
+            ...this.options,
+            ...diffEditingStepOptions
+          })
         }
       }
     },
@@ -74,13 +108,13 @@ export default {
       Object.keys(options).forEach((optionKey) => {
         Vue.set(newOptions, optionKey, options[optionKey])
       })
-      this.setCurrentStepOptions(newOptions)
+      this.setEditingStepOptions(newOptions)
     },
     copyOptions(options) {
       const optionsKeys = Object.keys(options)
       const optionsClone = {}
-      optionsKeys.forEach((propKey) => {
-        Vue.set(optionsClone, propKey, options[propKey])
+      optionsKeys.forEach((optionName) => {
+        Vue.set(optionsClone, optionName, options[optionName])
       })
       this.options = optionsClone
     },
@@ -107,7 +141,7 @@ export default {
             })
         )
     },
-    ...mapMutations('editingStep', { setCurrentStepOptions: 'setStepOptions' })
+    ...mapMutations('editingStep', { setEditingStepOptions: 'setStepOptions' })
   },
   async mounted() {
     const vm = this
@@ -119,7 +153,8 @@ export default {
     this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
       if (
-        vm.isEditingCurrentStep(vm.editingStepNumber, vm.editingIssuenumber)
+        vm.isEditingCurrentStep(vm.editingStepNumber, vm.editingIssuenumber) ||
+        vm.locked
       ) {
         vm.options[optionName] = optionValue
       }

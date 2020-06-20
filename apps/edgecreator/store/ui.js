@@ -1,7 +1,8 @@
 export const state = () => ({
   showIssueNumbers: true,
   showPreviousEdge: true,
-  showNextEdge: true
+  showNextEdge: true,
+  locked: false
 })
 
 export const mutations = {
@@ -13,5 +14,8 @@ export const mutations = {
   },
   setShowNextEdge(state, showNextEdge) {
     state.showNextEdge = showNextEdge
+  },
+  setLocked(state, locked) {
+    state.locked = locked
   }
 }

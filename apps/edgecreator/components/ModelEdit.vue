@@ -117,12 +117,7 @@
             <b-dropdown-item
               v-for="render in supportedRenders"
               :key="render.component"
-              @click="
-                addStep({
-                  component: render.component,
-                  svgGroupElement: null
-                })
-              "
+              @click="$emit('add-step', render.component)"
               >{{ render.description }}
             </b-dropdown-item>
           </b-dropdown>
@@ -141,7 +136,7 @@
   </b-card>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import FormColorInputRow from '~/components/FormColorInputRow'
 import FormInputRow from '~/components/FormInputRow'
 import Gallery from '~/components/Gallery'
@@ -181,8 +176,7 @@ export default {
   methods: {
     getElementUrl(elementFileName) {
       return `${process.env.EDGES_URL}/${this.country}/elements/${elementFileName}`
-    },
-    ...mapMutations(['addStep'])
+    }
   }
 }
 </script>
