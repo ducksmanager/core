@@ -1,7 +1,7 @@
 export const state = () => ({
   issuenumber: null,
   stepNumber: null,
-  stepOptions: {}
+  stepOptions: {},
 })
 
 export const mutations = {
@@ -13,5 +13,5 @@ export const mutations = {
   },
   setStepOptions(state, stepOptions) {
     state.stepOptions = stepOptions
-  }
+  },
 }

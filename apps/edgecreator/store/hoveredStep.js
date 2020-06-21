@@ -1,6 +1,6 @@
 export const state = () => ({
   issuenumber: null,
-  stepNumber: null
+  stepNumber: null,
 })
 
 export const mutations = {
@@ -9,5 +9,5 @@ export const mutations = {
   },
   setStepNumber(state, stepNumber) {
     state.stepNumber = stepNumber
-  }
+  },
 }

@@ -33,37 +33,34 @@ export default {
   data() {
     return {
       username: null,
-      password: null
+      password: null,
     }
   },
   methods: {
     login() {
-      const password = crypto
-        .createHash('sha1')
-        .update(this.password)
-        .digest('hex')
+      const password = crypto.createHash('sha1').update(this.password).digest('hex')
       const vm = this
       this.$axios
         .$get('/api/edgecreator/v2/model', {
           headers: {
             'x-dm-user': this.username,
-            'x-dm-pass': password
-          }
+            'x-dm-pass': password,
+          },
         })
         .then(() => {
           vm.$cookies.setAll([
             { name: 'dm-user', value: vm.username },
-            { name: 'dm-pass', value: password }
+            { name: 'dm-pass', value: password },
           ])
           vm.$router.push('/')
         })
         .catch((e) => {
           vm.$bvToast.toast(e.message, {
             title: 'Error',
-            autoHideDelay: 3000
+            autoHideDelay: 3000,
           })
         })
-    }
-  }
+    },
+  },
 }
 </script>

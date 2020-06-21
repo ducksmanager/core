@@ -10,21 +10,21 @@ import { mapState } from 'vuex'
 export default {
   name: 'PublishedEdge',
   props: {
-    issuenumber: { type: String, required: true }
+    issuenumber: { type: String, required: true },
   },
   data() {
     return {
-      naturalHeight: 0
+      naturalHeight: 0,
     }
   },
   computed: {
-    ...mapState(['country', 'magazine', 'zoom'])
+    ...mapState(['country', 'magazine', 'zoom']),
   },
   methods: {
     getEdgeUrl() {
       return `${process.env.EDGES_URL}/${this.country}/gen/${this.magazine}.${this.issuenumber}.png`
-    }
-  }
+    },
+  },
 }
 </script>
 

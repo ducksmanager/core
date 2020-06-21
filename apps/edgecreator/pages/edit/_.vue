@@ -9,9 +9,7 @@
         <table class="edges">
           <tr>
             <td v-if="showPreviousEdge && edgesBefore.length">
-              <published-edge
-                :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber"
-              />
+              <published-edge :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber" />
             </td>
             <td v-for="issuenumber in issuenumbers" :key="issuenumber">
               <edge-canvas :issuenumber="issuenumber" :steps="steps" />
@@ -40,7 +38,7 @@
             (component) => {
               steps.push({
                 component: component,
-                svgGroupElement: null
+                svgGroupElement: null,
               })
             }
           "
@@ -64,12 +62,12 @@ export default {
     TopBar,
     EdgeCanvas,
     PublishedEdge,
-    ModelEdit
+    ModelEdit,
   },
   data() {
     return {
       error: null,
-      steps: []
+      steps: [],
     }
   },
   computed: {
@@ -79,17 +77,11 @@ export default {
       },
       set(value) {
         this.$store.commit('setZoom', value)
-      }
+      },
     },
-    ...mapState([
-      'country',
-      'magazine',
-      'issuenumbers',
-      'edgesBefore',
-      'edgesAfter'
-    ]),
+    ...mapState(['country', 'magazine', 'issuenumbers', 'edgesBefore', 'edgesAfter']),
     ...mapState('renders', ['supportedRenders']),
-    ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge'])
+    ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge']),
   },
   watch: {
     async issuenumbers(newValue) {
@@ -97,17 +89,13 @@ export default {
         this.loadGalleryItems()
         this.loadSurroundingEdges()
       }
-    }
+    },
   },
   async mounted() {
     const vm = this
-    const [
-      country,
-      magazine,
-      issuenumberMin,
-      ,
-      issuenumberMax
-    ] = vm.$route.params.pathMatch.split('/')
+    const [country, magazine, issuenumberMin, , issuenumberMax] = vm.$route.params.pathMatch.split(
+      '/'
+    )
     if ([country, magazine, issuenumberMin].includes(undefined)) {
       this.error = 'Invalid URL'
       return
@@ -127,14 +115,14 @@ export default {
         const svgElement = doc.getElementsByTagName('svg')[0]
         vm.setDimensions({
           width: svgElement.getAttribute('width') / 1.5,
-          height: svgElement.getAttribute('height') / 1.5
+          height: svgElement.getAttribute('height') / 1.5,
         })
 
         vm.steps = Object.values(svgElement.childNodes)
           .filter((group) => group.nodeName === 'g')
           .map((group) => ({
             component: group.getAttribute('class'),
-            svgGroupElement: group
+            svgGroupElement: group,
           }))
       })
       .catch(async () => {
@@ -144,15 +132,13 @@ export default {
         if (!edge) {
           return
         }
-        const steps = await vm.$axios.$get(
-          `/api/edgecreator/v2/model/${edge.id}/steps`
-        )
+        const steps = await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)
 
         const dimensions = steps.find((step) => step.ordre === -1)
         if (dimensions) {
           vm.setDimensions({
             width: dimensions.options.Dimension_x,
-            height: dimensions.options.Dimension_y
+            height: dimensions.options.Dimension_y,
           })
         }
 
@@ -162,13 +148,16 @@ export default {
             component: vm.supportedRenders.find(
               (component) => component.originalName === step.nomFonction
             ).component,
-            dbOptions: step.options
+            dbOptions: step.options,
           }))
       })
   },
   methods: {
     getEdgeUrl(issuenumber, extension = 'png') {
-      return `${process.env.EDGES_URL}/${this.country}/gen/${this.magazine}.${issuenumber}.${extension}`
+      return (
+        `${process.env.EDGES_URL}/${this.country}/gen/` +
+        `${this.magazine}.${issuenumber}.${extension}`
+      )
     },
     ...mapMutations(['setDimensions', 'setCountry', 'setMagazine']),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
@@ -176,9 +165,9 @@ export default {
       'setIssuenumbersFromMinMax',
       'loadPublicationIssues',
       'loadSurroundingEdges',
-      'loadGalleryItems'
-    ])
-  }
+      'loadGalleryItems',
+    ]),
+  },
 }
 </script>
 <style>

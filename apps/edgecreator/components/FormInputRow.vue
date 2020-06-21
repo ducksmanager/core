@@ -16,9 +16,7 @@
         :disabled="disabled"
         :list="listId"
         v-on="{
-          [isTextImageOption || isImageSrcOption
-            ? 'change'
-            : 'input']: onChangeValue
+          [isTextImageOption || isImageSrcOption ? 'change' : 'input']: onChangeValue,
         }"
       ></b-form-input>
       <slot />
@@ -38,7 +36,7 @@ export default {
     min: { type: Number, default: null },
     max: { type: Number, default: null },
     range: { type: Number, default: null },
-    listId: { type: String, default: null }
+    listId: { type: String, default: null },
   },
   computed: {
     userValue() {
@@ -54,20 +52,15 @@ export default {
     isTextImageOption() {
       return (
         this.options.text &&
-        ['fgColor', 'bgColor', 'internalWidth', 'text', 'font'].includes(
-          this.optionName
-        )
+        ['fgColor', 'bgColor', 'internalWidth', 'text', 'font'].includes(this.optionName)
       )
     },
     isImageSrcOption() {
       return !!this.options.src
     },
     isTextColor() {
-      return (
-        this.isTextImageOption &&
-        this.optionName.toLowerCase().includes('color')
-      )
-    }
+      return this.isTextImageOption && this.optionName.toLowerCase().includes('color')
+    },
   },
   methods: {
     onChangeValue(value) {
@@ -75,8 +68,8 @@ export default {
         value = value.replace('#', '')
       }
       this.$root.$emit('set-option', this.optionName, value)
-    }
-  }
+    },
+  },
 }
 </script>
 

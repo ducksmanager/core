@@ -7,11 +7,11 @@ export default {
     issuenumber: { type: String },
     stepNumber: { type: Number },
     svgGroup: { type: Object },
-    dbOptions: { type: Object }
+    dbOptions: { type: Object },
   },
   data() {
     return {
-      options: {}
+      options: {},
     }
   },
   computed: {
@@ -20,14 +20,11 @@ export default {
     ...mapState('editingStep', {
       editingIssuenumber: 'issuenumber',
       editingStepNumber: 'stepNumber',
-      editingStepOptions: 'stepOptions'
+      editingStepOptions: 'stepOptions',
     }),
     svgMetadata() {
       return (
-        this.svgGroup &&
-        JSON.parse(
-          this.svgGroup.getElementsByTagName('metadata')[0].textContent
-        )
+        this.svgGroup && JSON.parse(this.svgGroup.getElementsByTagName('metadata')[0].textContent)
       )
     },
     shouldApplyLockedOption() {
@@ -36,7 +33,7 @@ export default {
         this.editingStepNumber === this.stepNumber &&
         this.editingIssuenumber !== this.issuenumber
       )
-    }
+    },
   },
   watch: {
     editingStepNumber: {
@@ -45,7 +42,7 @@ export default {
         if (this.isEditingCurrentStep(newStepNumber, this.editingIssuenumber)) {
           this.setStepOptions(this.options)
         }
-      }
+      },
     },
     editingStepOptions: {
       deep: true,
@@ -54,24 +51,23 @@ export default {
           const diffEditingStepOptions = Object.keys(newEditingStepOptions)
             .filter(
               (optionName) =>
-                newEditingStepOptions[optionName] !==
-                oldEditingStepOptions[optionName]
+                newEditingStepOptions[optionName] !== oldEditingStepOptions[optionName]
             )
             .reduce((obj, key) => {
               obj[key] = newEditingStepOptions[key]
               return obj
             }, {})
           console.log(
-            `Applying locked option changes : ${JSON.stringify(
+            `Issuenumber ${this.issuenumber} : Applying locked option changes : ${JSON.stringify(
               diffEditingStepOptions
             )}`
           )
           this.copyOptions({
             ...this.options,
-            ...diffEditingStepOptions
+            ...diffEditingStepOptions,
           })
         }
-      }
+      },
     },
     editingIssuenumber: {
       immediate: true,
@@ -79,29 +75,21 @@ export default {
         if (this.isEditingCurrentStep(this.editingStepNumber, newIssuenumber)) {
           this.setStepOptions(this.options)
         }
-      }
+      },
     },
     options: {
       deep: true,
       immediate: true,
       handler(newOptions) {
-        if (
-          this.isEditingCurrentStep(
-            this.editingStepNumber,
-            this.editingIssuenumber
-          )
-        ) {
+        if (this.isEditingCurrentStep(this.editingStepNumber, this.editingIssuenumber)) {
           this.setStepOptions(newOptions)
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     isEditingCurrentStep(editingStepNumber, editingIssuenumber) {
-      return (
-        editingStepNumber === this.stepNumber &&
-        editingIssuenumber === this.issuenumber
-      )
+      return editingStepNumber === this.stepNumber && editingIssuenumber === this.issuenumber
     },
     setStepOptions(options) {
       const newOptions = {}
@@ -127,10 +115,10 @@ export default {
             (({ dx, dy }) => {
               vm.options.x += dx / vm.zoom
               vm.options.y += dy / vm.zoom
-            })
+            }),
         })
         .resizable({
-          edges: { right: true, bottom: true }
+          edges: { right: true, bottom: true },
         })
         .on(
           'resizemove',
@@ -141,7 +129,7 @@ export default {
             })
         )
     },
-    ...mapMutations('editingStep', { setEditingStepOptions: 'setStepOptions' })
+    ...mapMutations('editingStep', { setEditingStepOptions: 'setStepOptions' }),
   },
   async mounted() {
     const vm = this
@@ -152,12 +140,9 @@ export default {
     }
     this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
-      if (
-        vm.isEditingCurrentStep(vm.editingStepNumber, vm.editingIssuenumber) ||
-        vm.locked
-      ) {
+      if (vm.isEditingCurrentStep(vm.editingStepNumber, vm.editingIssuenumber) || vm.locked) {
         vm.options[optionName] = optionValue
       }
     })
-  }
+  },
 }

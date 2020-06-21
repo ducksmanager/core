@@ -1,30 +1,30 @@
 import axios from 'axios'
 
 export const addAxiosInterceptor = () => {
-  axios.interceptors.request.use(function(config) {
+  axios.interceptors.request.use(function (config) {
     return {
       ...config,
       auth: {
         username: process.env.EDGECREATOR_USER,
-        password: process.env.EDGECREATOR_PASS
+        password: process.env.EDGECREATOR_PASS,
       },
       headers: {
         ...config.headers,
-        'x-dm-version': '1.0.0'
-      }
+        'x-dm-version': '1.0.0',
+      },
     }
   })
 }
 
 addAxiosInterceptor()
 
-export default async function(req, res) {
+export default async function (req, res) {
   const response = await axios
     .request({
       method: req.method,
       url: `${process.env.BACKEND_URL}${req.url}`,
       data: req.body,
-      headers: req.headers
+      headers: req.headers,
     })
     .catch((e) => {
       console.error(e)

@@ -18,8 +18,8 @@ export default {
         width: 15,
         height: 15,
         fill: '#ff0000',
-        stroke: 'transparent'
-      }
+        stroke: 'transparent',
+      },
     }
   },
 
@@ -32,17 +32,13 @@ export default {
       return {
         x: parseFloat(this.dbOptions.Pos_x_debut),
         y: parseFloat(this.dbOptions.Pos_y_debut),
-        width: parseFloat(
-          this.dbOptions.Pos_x_fin - this.dbOptions.Pos_x_debut
-        ),
-        height: parseFloat(
-          this.dbOptions.Pos_y_fin - this.dbOptions.Pos_y_debut
-        ),
+        width: parseFloat(this.dbOptions.Pos_x_fin - this.dbOptions.Pos_x_debut),
+        height: parseFloat(this.dbOptions.Pos_y_fin - this.dbOptions.Pos_y_debut),
         fill: filled ? `#${this.dbOptions.Couleur}` : 'transparent',
-        stroke: filled ? 'transparent' : `#${this.dbOptions.Couleur}`
+        stroke: filled ? 'transparent' : `#${this.dbOptions.Couleur}`,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

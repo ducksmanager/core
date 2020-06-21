@@ -5,7 +5,7 @@
       :key="image"
       sm="2"
       :class="{
-        selected: image === selectedImage
+        selected: image === selectedImage,
       }"
       @click="$emit('image-click', { image })"
     >
@@ -28,16 +28,16 @@ import { mapState } from 'vuex'
 export default {
   name: 'Gallery',
   props: {
-    selectedImage: { type: String, default: null }
+    selectedImage: { type: String, default: null },
   },
   computed: {
-    ...mapState(['country', 'galleryItems'])
+    ...mapState(['country', 'galleryItems']),
   },
   methods: {
     getElementUrl(elementFileName) {
       return `${process.env.EDGES_URL}/${this.country}/elements/${elementFileName}`
-    }
-  }
+    },
+  },
 }
 </script>
 
