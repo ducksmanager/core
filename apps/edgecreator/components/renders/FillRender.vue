@@ -13,8 +13,8 @@ export default {
   data() {
     return {
       options: {
-        fill: '#ff0000'
-      }
+        fill: '#ff0000',
+      },
     }
   },
 
@@ -22,20 +22,16 @@ export default {
     onOptionsSet() {},
     async getOptionsFromDb() {
       if (parseFloat(this.dbOptions.Pos_x) !== 0) {
-        console.error(
-          `Step ${this.stepNumber}: Pos_x !== 0, this is not supported`
-        )
+        console.error(`Step ${this.stepNumber}: Pos_x !== 0, this is not supported`)
       }
       if (parseFloat(this.dbOptions.Pos_y) !== 0) {
-        console.error(
-          `Step ${this.stepNumber}: Pos_y !== 0, this is not supported`
-        )
+        console.error(`Step ${this.stepNumber}: Pos_y !== 0, this is not supported`)
       }
       return {
-        fill: `#${this.dbOptions.Couleur}`
+        fill: `#${this.dbOptions.Couleur}`,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

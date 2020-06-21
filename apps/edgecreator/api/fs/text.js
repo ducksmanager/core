@@ -7,10 +7,10 @@ const fontHashes = {}
 
 addAxiosInterceptor()
 
-export default function(req, res) {
+export default function (req, res) {
   axios
     .get(`${process.env.BACKEND_URL}/edgecreator/myfontspreview${req.url}`, {
-      headers: req.headers
+      headers: req.headers,
     })
     .then(({ data }) => {
       console.log(`Found an existing text : id=${data.result.id}`)
@@ -48,10 +48,10 @@ const generateImage = (req, parameters, imageWidth) => {
         `${process.env.BACKEND_URL}/edgecreator/v2/myfontspreview`,
         {
           ...parameters,
-          precision: imageWidth / 2
+          precision: imageWidth / 2,
         },
         {
-          headers: req.headers
+          headers: req.headers,
         }
       )
     })
@@ -62,11 +62,11 @@ const generateImage = (req, parameters, imageWidth) => {
           rbe: 'fixed',
           rt: parameters.texte,
           fg: parameters.color,
-          bg: parameters.colorbg
+          bg: parameters.colorbg,
         }).toString()}`,
         {
           imageId: data.previewid,
-          outputPath: `${fontImageDirPath + data.previewid}.png`
+          outputPath: `${fontImageDirPath + data.previewid}.png`,
         }
       )
     })
@@ -77,7 +77,7 @@ const downloadAndWrite = (fileUrl, data) => {
 
   return axios
     .get(fileUrl, {
-      responseType: 'stream'
+      responseType: 'stream',
     })
     .then((response) => {
       return new Promise((resolve, reject) => {

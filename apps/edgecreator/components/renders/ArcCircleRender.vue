@@ -18,8 +18,8 @@ export default {
         rx: 10,
         ry: 20,
         fill: '#bb0000',
-        stroke: 'transparent'
-      }
+        stroke: 'transparent',
+      },
     }
   },
 
@@ -34,7 +34,7 @@ export default {
         onresizemove: ({ rect }) => {
           vm.options.rx = rect.width / 2 / vm.zoom
           vm.options.ry = rect.height / 2 / vm.zoom
-        }
+        },
       })
     },
     async getOptionsFromDb() {
@@ -46,10 +46,10 @@ export default {
         rx: parseFloat(this.dbOptions.Largeur) / 2,
         ry: parseFloat(this.dbOptions.Hauteur) / 2,
         fill: filled ? `#${this.dbOptions.Couleur}` : 'transparent',
-        stroke: filled ? 'transparent' : `#${this.dbOptions.Couleur}`
+        stroke: filled ? 'transparent' : `#${this.dbOptions.Couleur}`,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

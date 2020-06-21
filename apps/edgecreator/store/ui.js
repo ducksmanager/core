@@ -2,7 +2,7 @@ export const state = () => ({
   showIssueNumbers: true,
   showPreviousEdge: true,
   showNextEdge: true,
-  locked: false
+  locked: false,
 })
 
 export const mutations = {
@@ -17,5 +17,5 @@ export const mutations = {
   },
   setLocked(state, locked) {
     state.locked = locked
-  }
+  },
 }

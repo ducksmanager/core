@@ -4,18 +4,9 @@
 
     <b-container>
       <b-card-group deck columns>
-        <b-card
-          v-for="(edge, i) in edges"
-          :key="i"
-          class="col-md-4 text-center"
-        >
-          <b-link
-            :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`"
-          >
-            <b-card-text
-              >{{ edge.country }}/{{ edge.magazine }}
-              {{ edge.issuenumber }}</b-card-text
-            >
+        <b-card v-for="(edge, i) in edges" :key="i" class="col-md-4 text-center">
+          <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
+            <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
           </b-link>
         </b-card>
       </b-card-group>
@@ -27,7 +18,7 @@
 export default {
   data() {
     return {
-      edges: []
+      edges: [],
     }
   },
   mounted() {
@@ -38,14 +29,14 @@ export default {
         vm.edges = data.map((edge) => ({
           country: edge.pays,
           magazine: edge.magazine,
-          issuenumber: edge.numero
+          issuenumber: edge.numero,
         }))
       })
       .catch((e) => {
         console.error(e)
       })
   },
-  middleware: 'authenticated'
+  middleware: 'authenticated',
 }
 </script>
 <style scoped lang="css">

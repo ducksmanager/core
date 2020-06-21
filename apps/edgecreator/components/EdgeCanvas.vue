@@ -14,8 +14,7 @@
       :class="{
         [step.component]: true,
         hovered:
-          hoveredStepNumber === stepNumber &&
-          [issuenumber, null].includes(hoveredIssuenumber)
+          hoveredStepNumber === stepNumber && [issuenumber, null].includes(hoveredIssuenumber),
       }"
       @mousedown="
         editingIssuenumber = issuenumber
@@ -70,15 +69,15 @@ export default {
     ImageRender,
     FillRender,
     TextRender,
-    GradientRender
+    GradientRender,
   },
   props: {
     issuenumber: { type: String, required: true },
-    steps: { type: Array, required: true }
+    steps: { type: Array, required: true },
   },
   data() {
     return {
-      borderWidth: 1.5
+      borderWidth: 1.5,
     }
   },
   computed: {
@@ -91,7 +90,7 @@ export default {
       },
       set(value) {
         this.$store.commit('hoveredStep/setStepNumber', value)
-      }
+      },
     },
     hoveredIssuenumber: {
       get() {
@@ -99,7 +98,7 @@ export default {
       },
       set(value) {
         this.$store.commit('hoveredStep/setIssuenumber', value)
-      }
+      },
     },
     editingStepNumber: {
       get() {
@@ -107,7 +106,7 @@ export default {
       },
       set(value) {
         this.$store.commit('editingStep/setStepNumber', value)
-      }
+      },
     },
     editingIssuenumber: {
       get() {
@@ -115,10 +114,10 @@ export default {
       },
       set(value) {
         this.$store.commit('editingStep/setIssuenumber', value)
-      }
+      },
     },
-    ...mapState(['zoom', 'width', 'height'])
-  }
+    ...mapState(['zoom', 'width', 'height']),
+  },
 }
 </script>
 

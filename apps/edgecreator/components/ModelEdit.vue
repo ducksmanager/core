@@ -8,11 +8,7 @@
             @mouseover="hoveredStepNumber = stepNumber"
             @mouseout="hoveredStepNumber = null"
           >
-            {{
-              supportedRenders.find(
-                (render) => render.component === step.component
-              ).label
-            }}
+            {{ supportedRenders.find((render) => render.component === step.component).label }}
           </div>
         </template>
         <b-card-text v-if="step.component === 'Text'">
@@ -28,14 +24,8 @@
             type="text"
             :options="editingStepOptions"
           />
-          <form-color-input-row
-            :options="editingStepOptions"
-            option-name="bgColor"
-          />
-          <form-color-input-row
-            :options="editingStepOptions"
-            option-name="fgColor"
-          />
+          <form-color-input-row :options="editingStepOptions" option-name="bgColor" />
+          <form-color-input-row :options="editingStepOptions" option-name="fgColor" />
           <form-input-row
             option-name="rotation"
             :label="`Rotation : ${editingStepOptions.rotation}°`"
@@ -47,10 +37,7 @@
           />
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
-          <form-color-input-row
-            :options="editingStepOptions"
-            option-name="fill"
-          />
+          <form-color-input-row :options="editingStepOptions" option-name="fill" />
         </b-card-text>
         <b-card-text v-if="step.component === 'Image'">
           <form-input-row
@@ -105,10 +92,7 @@
           </b-row>
         </b-card-text>
         <b-card-text v-if="step.component === 'Polygon'">
-          <form-color-input-row
-            :options="editingStepOptions"
-            option-name="fill"
-          />
+          <form-color-input-row :options="editingStepOptions" option-name="fill" />
         </b-card-text>
       </b-tab>
       <b-tab key="99" title="Add step" title-item-class="font-weight-bold">
@@ -145,11 +129,11 @@ export default {
   name: 'ModelEdit',
   components: { FormColorInputRow, FormInputRow, Gallery },
   props: {
-    steps: { type: Array, required: true }
+    steps: { type: Array, required: true },
   },
   data() {
     return {
-      clickedImage: null
+      clickedImage: null,
     }
   },
   computed: {
@@ -159,7 +143,7 @@ export default {
       },
       set(value) {
         this.$store.commit('hoveredStep/setStepNumber', value)
-      }
+      },
     },
     editingStepNumber: {
       get() {
@@ -167,17 +151,17 @@ export default {
       },
       set(value) {
         this.$store.commit('editingStep/setStepNumber', value)
-      }
+      },
     },
     ...mapState(['galleryItems', 'country']),
     ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
-    ...mapState('renders', ['supportedRenders'])
+    ...mapState('renders', ['supportedRenders']),
   },
   methods: {
     getElementUrl(elementFileName) {
       return `${process.env.EDGES_URL}/${this.country}/elements/${elementFileName}`
-    }
-  }
+    },
+  },
 }
 </script>
 <style>

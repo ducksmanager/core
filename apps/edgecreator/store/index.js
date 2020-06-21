@@ -8,7 +8,7 @@ export const state = () => ({
   width: 15,
   height: 200,
   edgesBefore: [],
-  edgesAfter: []
+  edgesAfter: [],
 })
 
 export const mutations = {
@@ -36,7 +36,7 @@ export const mutations = {
   },
   setGalleryItems(state, { items: galleryItems }) {
     state.galleryItems = galleryItems
-  }
+  },
 }
 
 export const actions = {
@@ -44,20 +44,15 @@ export const actions = {
     if (max === undefined) {
       commit('setIssuenumbers', [min])
     } else {
-      const firstIssueIndex = state.publicationIssues.findIndex(
-        (issue) => issue === min
-      )
-      const lastIssueIndex = state.publicationIssues.findIndex(
-        (issue) => issue === max
-      )
+      const firstIssueIndex = state.publicationIssues.findIndex((issue) => issue === min)
+      const lastIssueIndex = state.publicationIssues.findIndex((issue) => issue === max)
       if (lastIssueIndex === -1) {
         commit('setIssuenumbers', [min])
       } else {
         commit(
           'setIssuenumbers',
           state.publicationIssues.filter(
-            (unused, index) =>
-              index >= firstIssueIndex && index <= lastIssueIndex
+            (unused, index) => index >= firstIssueIndex && index <= lastIssueIndex
           )
         )
       }
@@ -66,14 +61,12 @@ export const actions = {
   async loadGalleryItems({ state, commit }) {
     const numericSortCollator = new Intl.Collator(undefined, {
       numeric: true,
-      sensitivity: 'base'
+      sensitivity: 'base',
     })
-    const items = await this.$axios.$get(
-      `/fs/browseElements/${state.country}/${state.magazine}`
-    )
+    const items = await this.$axios.$get(`/fs/browseElements/${state.country}/${state.magazine}`)
 
     commit('setGalleryItems', {
-      items: items.sort(numericSortCollator.compare)
+      items: items.sort(numericSortCollator.compare),
     })
   },
   async loadPublicationIssues({ state }) {
@@ -90,35 +83,27 @@ export const actions = {
     )
     const issuesBefore = state.publicationIssues.filter(
       (unused, index) =>
-        firstIssueIndex !== -1 &&
-        index >= firstIssueIndex - 10 &&
-        index < firstIssueIndex
+        firstIssueIndex !== -1 && index >= firstIssueIndex - 10 && index < firstIssueIndex
     )
     const issuesAfter = state.publicationIssues.filter(
       (unused, index) =>
-        lastIssueIndex !== -1 &&
-        index > lastIssueIndex &&
-        index <= lastIssueIndex + 10
+        lastIssueIndex !== -1 && index > lastIssueIndex && index <= lastIssueIndex + 10
     )
 
     if (issuesBefore.length) {
       commit('setEdgesBefore', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.country}/${state.magazine}/${issuesBefore.join(
-            ','
-          )}`
-        )
+          `/api/edges/${state.country}/${state.magazine}/${issuesBefore.join(',')}`
+        ),
       })
     }
 
     if (issuesAfter.length) {
       commit('setEdgesAfter', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.country}/${state.magazine}/${issuesAfter.join(
-            ','
-          )}`
-        )
+          `/api/edges/${state.country}/${state.magazine}/${issuesAfter.join(',')}`
+        ),
       })
     }
-  }
+  },
 }

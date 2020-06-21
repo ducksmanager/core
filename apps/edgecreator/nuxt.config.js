@@ -13,10 +13,10 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: process.env.npm_package_description || ''
-      }
+        content: process.env.npm_package_description || '',
+      },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
   /*
    ** Customize the progress-bar color
@@ -35,7 +35,7 @@ export default {
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
   ],
   /*
    ** Nuxt.js modules
@@ -50,7 +50,7 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     // Doc: https://github.com/microcipcip/cookie-universal
-    'cookie-universal-nuxt'
+    'cookie-universal-nuxt',
   ],
   /*
    ** Axios module configuration
@@ -59,7 +59,7 @@ export default {
   axios: {
     proxy: true,
     credentials: true,
-    proxyHeaders: true
+    proxyHeaders: true,
   },
   /*
    ** Build configuration
@@ -69,30 +69,30 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) {},
   },
 
   serverMiddleware: [
     json({ limit: '10mb' }),
     {
       path: '/api',
-      handler: '~/api/api.js'
+      handler: '~/api/api.js',
     },
     {
       path: '/fs/base64',
-      handler: '~/api/fs/base64.js'
+      handler: '~/api/fs/base64.js',
     },
     {
       path: '/fs/browseElements',
-      handler: '~/api/fs/browseElements.js'
+      handler: '~/api/fs/browseElements.js',
     },
     {
       path: '/fs/export',
-      handler: '~/api/fs/exportEdge.js'
+      handler: '~/api/fs/exportEdge.js',
     },
     {
       path: '/fs/text',
-      handler: '~/api/fs/text.js'
-    }
-  ]
+      handler: '~/api/fs/text.js',
+    },
+  ],
 }
