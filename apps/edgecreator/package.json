@@ -13,7 +13,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@minogin/vue-drag-resize-rotate": "^1.0.5",
     "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/dotenv": "^1.4.0",
     "body-parser": "^1.19.0",
@@ -23,7 +22,7 @@
     "cookie-universal-nuxt": "^2.1.4",
     "image-size": "^0.8.3",
     "interactjs": "^1.9.19",
-    "nuxt": "^2.13.0",
+    "nuxt": "^2.13.1",
     "nuxt-svg-loader": "^1.2.0",
     "raw-body": "^2.4.1",
     "request": "^2.88.2",
@@ -35,7 +34,7 @@
     "@vue/test-utils": "^1.0.0-beta.27",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",
-    "eslint": "^7.3.0",
+    "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.1.4",
