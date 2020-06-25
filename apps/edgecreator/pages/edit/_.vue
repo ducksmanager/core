@@ -168,6 +168,7 @@ export default {
       'loadGalleryItems',
     ]),
   },
+  middleware: 'authenticated',
 }
 </script>
 <style>
