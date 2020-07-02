@@ -7,16 +7,15 @@ export default function (req, res) {
     res.end()
   }
   fs.readdir(`${process.env.EDGES_PATH}/${country}/elements`, (err, items) => {
-    if (err) {
-      res.statusCode = 500
-      res.end()
-    }
-
     res.writeHeader(200, { 'Content-Type': 'application/json' })
-    res.end(
-      JSON.stringify(
-        items.filter((item) => new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item))
+    if (err) {
+      res.end(JSON.stringify([]))
+    } else {
+      res.end(
+        JSON.stringify(
+          items.filter((item) => new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item))
+        )
       )
-    )
+    }
   })
 }

@@ -1,7 +1,7 @@
 {
   "name": "edgecreator-nuxt",
   "version": "1.0.0",
-  "description": "My brilliant Nuxt.js project",
+  "description": "EdgeCreator",
   "author": "Bruno Perel",
   "private": true,
   "scripts": {
