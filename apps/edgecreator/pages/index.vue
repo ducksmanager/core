@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Dashboard</h1>
+    <h1>{{ $t('dashboard') }}</h1>
 
     <b-container>
       <b-card-group deck columns>

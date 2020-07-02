@@ -43,6 +43,23 @@ export default {
   modules: [
     // Doc: https://github.com/Developmint/nuxt-svg-loader#readme
     'nuxt-svg-loader',
+    // Doc: https://nuxt-community.github.io/nuxt-i18n/
+    [
+      'nuxt-i18n',
+      {
+        lazy: true,
+        langDir: 'locales/',
+        defaultLocale: 'fr',
+        locales: [
+          {
+            code: 'fr',
+            name: 'Français',
+            iso: 'fr-FR',
+            file: 'fr-FR.json',
+          },
+        ],
+      },
+    ],
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
     // Doc: https://axios.nuxtjs.org/usage
@@ -61,6 +78,7 @@ export default {
     credentials: true,
     proxyHeaders: true,
   },
+
   /*
    ** Build configuration
    */
