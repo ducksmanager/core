@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1>{{ $t('dashboard') }}</h1>
+    <h1>{{ $t('header.dashboard') }}</h1>
+
+    <h3>{{ $t('header.ongoing_edges') }}</h3>
 
     <b-container>
       <b-card-group deck columns>
@@ -10,6 +12,11 @@
           </b-link>
         </b-card>
       </b-card-group>
+    </b-container>
+
+    <h3>{{ $t('header.send_photos') }}</h3>
+    <b-container align="center">
+      <b-button to="/upload">{{ $t('button.send_photos') }}</b-button>
     </b-container>
   </div>
 </template>
