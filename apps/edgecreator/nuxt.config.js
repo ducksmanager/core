@@ -112,5 +112,9 @@ export default {
       path: '/fs/text',
       handler: '~/api/fs/text.js',
     },
+    {
+      path: '/fs/upload',
+      handler: '~/api/fs/upload.js',
+    },
   ],
 }

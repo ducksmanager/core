@@ -11,6 +11,7 @@ export const addAxiosInterceptor = () => {
       headers: {
         ...config.headers,
         'x-dm-version': '1.0.0',
+        'Content-Type': 'application/json',
       },
     }
   })

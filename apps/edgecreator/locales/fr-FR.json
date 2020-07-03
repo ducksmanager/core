@@ -1,6 +1,14 @@
 {
-  "dashboard": "Tableau de bord",
+  "button.send_photos": "Envoyer des photos de tranche",
+  "error.daily_upload_limit_reached": "You have reached your daily upload limit",
+  "error.element_is_used_elsewhere": "This element may be used in other models",
+  "error.invalid_file_type": "Invalid file type: {mimetype}, should be one of {allowedMimeTypes}",
+  "error.photo_already_sent": "You have already sent this photo",
+  "header.dashboard": "Tableau de bord",
+  "header.ongoing_edges": "Tranches en cours d'édition",
+  "header.send_photos": "Envoi de photos",
   "login": "Se connecter",
   "password": "Mot de passe",
+  "upload.restrictions": "Images jusqu'à 3 Mo",
   "username": "Nom d'utilisateur"
 }
