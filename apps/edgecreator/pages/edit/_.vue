@@ -2,7 +2,7 @@
   <b-container v-if="error" id="wrapper" fluid>
     {{ error }}
   </b-container>
-  <b-container v-else-if="steps.length" id="wrapper" fluid>
+  <b-container v-else-if="width && height" id="wrapper" fluid>
     <top-bar />
     <b-row class="flex-grow-1 pt-2">
       <b-col class="text-right">
@@ -79,7 +79,15 @@ export default {
         this.$store.commit('setZoom', value)
       },
     },
-    ...mapState(['country', 'magazine', 'issuenumbers', 'edgesBefore', 'edgesAfter']),
+    ...mapState([
+      'width',
+      'height',
+      'country',
+      'magazine',
+      'issuenumbers',
+      'edgesBefore',
+      'edgesAfter',
+    ]),
     ...mapState('renders', ['supportedRenders']),
     ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge']),
   },
