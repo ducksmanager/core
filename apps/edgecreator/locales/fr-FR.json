@@ -6,6 +6,8 @@
   "error.photo_already_sent": "You have already sent this photo",
   "header.dashboard": "Tableau de bord",
   "header.ongoing_edges": "Tranches en cours d'édition",
+  "header.ongoing_by_other_user_edges": "Tranches en cours d'édition par un autre utilisateur",
+  "header.pending_edges": "Tranches en attente d'édition",
   "header.send_photos": "Envoi de photos",
   "login": "Se connecter",
   "password": "Mot de passe",
