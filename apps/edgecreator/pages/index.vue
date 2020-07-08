@@ -6,10 +6,44 @@
 
     <b-container>
       <b-card-group deck columns>
-        <b-card v-for="(edge, i) in edges" :key="i" class="col-md-4 text-center">
+        <b-card
+          v-for="(edge, i) in edges.filter((edge) => edge.type === 'ongoing')"
+          :key="i"
+          class="col-md-4 text-center"
+        >
           <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
             <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
           </b-link>
+        </b-card>
+      </b-card-group>
+    </b-container>
+
+    <h3>{{ $t('header.pending_edges') }}</h3>
+
+    <b-container>
+      <b-card-group deck columns>
+        <b-card
+          v-for="(edge, i) in edges.filter((edge) => edge.type === 'pending')"
+          :key="i"
+          class="col-md-4 text-center"
+        >
+          <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
+            <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
+          </b-link>
+        </b-card>
+      </b-card-group>
+    </b-container>
+
+    <h3>{{ $t('header.ongoing_by_other_user_edges') }}</h3>
+
+    <b-container>
+      <b-card-group deck columns>
+        <b-card
+          v-for="(edge, i) in edges.filter((edge) => edge.type === 'ongoing_by_other_user')"
+          :key="i"
+          class="col-md-4 text-center"
+        >
+          <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
         </b-card>
       </b-card-group>
     </b-container>
@@ -33,15 +67,43 @@ export default {
     this.$axios
       .$get('/api/edgecreator/v2/model')
       .then((data) => {
-        vm.edges = data.map((edge) => ({
-          country: edge.pays,
-          magazine: edge.magazine,
-          issuenumber: edge.numero,
-        }))
+        data.forEach((edge) => {
+          vm.addEdge(edge, 'ongoing')
+        })
       })
       .catch((e) => {
         console.error(e)
       })
+    this.$axios
+      .$get('/api/edgecreator/v2/model/editedbyother/all')
+      .then((data) => {
+        data.forEach((edge) => {
+          vm.addEdge(edge, 'ongoing_by_other_user')
+        })
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+    this.$axios
+      .$get('/api/edgecreator/v2/model/unassigned/all')
+      .then((data) => {
+        data.forEach((edge) => {
+          vm.addEdge(edge, 'pending')
+        })
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+  },
+  methods: {
+    addEdge(edge, type) {
+      this.edges.push({
+        type,
+        country: edge.pays,
+        magazine: edge.magazine,
+        issuenumber: edge.numero,
+      })
+    },
   },
   middleware: 'authenticated',
 }
