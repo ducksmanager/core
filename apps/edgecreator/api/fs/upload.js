@@ -154,6 +154,9 @@ export default async function (req, res) {
         { headers: userCredentials }
       )
     }
+  } else {
+    res.writeHead(400, { Connection: 'close', 'Content-Type': 'application/text' })
+    res.end('Only POST is allowed')
   }
 }
 
