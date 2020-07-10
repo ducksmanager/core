@@ -1,7 +1,9 @@
 {
   "button.send_photos": "Envoyer des photos de tranche",
+  "error.browser_not_supported": "Votre navigateur n'est pas supporté.",
   "error.daily_upload_limit_reached": "You have reached your daily upload limit",
   "error.element_is_used_elsewhere": "This element may be used in other models",
+  "error.filetype_should_be_jpg": "Veuillez choisir un fichier JPG ou JPEG.",
   "error.invalid_file_type": "Invalid file type: {mimetype}, should be one of {allowedMimeTypes}",
   "error.photo_already_sent": "You have already sent this photo",
   "header.dashboard": "Tableau de bord",
@@ -11,6 +13,16 @@
   "header.send_photos": "Envoi de photos",
   "login": "Se connecter",
   "password": "Mot de passe",
+  "select.country": "Veuillez sélectionner un pays",
+  "select.issue": "Veuillez sélectionner un numéro",
+  "select.publication": "Veuillez sélectionner un magazine",
+  "upload.add_edge": "Add",
+  "upload.browse": "cliquez ici pour parcourir",
+  "upload.delete_edge": "Supprimer",
+  "upload.drag": "Déplacez un fichier ici ou",
+  "upload.description": "Pour chaque tranche sur la photo, sélectionnez la partie de la photo correspondant à la tranche, remplissez les informations sur la tranche ci-dessous puis cliquez sur \"Ajouter\". Lorsque vous avez indiqué toutes tranches de la photo, cliquez sur \"Envoyer les images des tranches\".",
   "upload.restrictions": "Images jusqu'à 3 Mo",
+  "upload.send": "Envoyer les images des tranches",
+  "upload.sent": "Envoyé !",
   "username": "Nom d'utilisateur"
 }
