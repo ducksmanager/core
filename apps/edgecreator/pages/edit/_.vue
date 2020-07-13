@@ -58,6 +58,7 @@ import ModelEdit from '~/components/ModelEdit'
 const DOMParser = require('xmldom').DOMParser
 
 export default {
+  name: 'Edit',
   components: {
     TopBar,
     EdgeCanvas,
