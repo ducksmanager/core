@@ -27,29 +27,8 @@
       <b-jumbotron>
         {{ $t('upload.description') }}
       </b-jumbotron>
-      <b-select v-model="currentCrop.country" :options="countries" @input="loadPublications" />
-      <b-select
-        v-show="currentCrop.country"
-        v-model="currentCrop.publicationcode"
-        :options="publications[currentCrop.country]"
-        @input="loadIssues"
-      />
-      <b-select
-        v-show="currentCrop.country && currentCrop.publicationcode"
-        v-model="currentCrop.issuenumber"
-        :options="issues[currentCrop.publicationcode]"
-      />
-      <b-button
-        :disabled="
-          !(
-            currentCrop.country &&
-            currentCrop.publicationcode &&
-            ![null, undefined].includes(currentCrop.issuenumber)
-          )
-        "
-        @click="addCrop"
-        >{{ $t('upload.add_edge') }}</b-button
-      >
+      <issue-select @change="currentCrop = $event" />
+      <b-button :disabled="!currentCrop" @click="addCrop">{{ $t('upload.add_edge') }}</b-button>
       <b-container>
         <b-card-group deck columns>
           <b-card v-for="(crop, i) in crops" :key="i" no-body class="edge-card overflow-hidden">
@@ -57,7 +36,7 @@
               <b-col md="6" class="edge-crop" :style="{ backgroundImage: `url('${crop.url}')` }" />
               <b-col md="6" class="align-items-center d-flex justify-content-center">
                 <b-card-body :title="crop.id">
-                  <b-card-text> {{ crop.publicationcode }} {{ crop.issuenumber }} </b-card-text>
+                  <b-card-text> {{ crop.publicationCode }} {{ crop.issueNumber }} </b-card-text>
                 </b-card-body>
               </b-col>
             </b-row>
@@ -82,24 +61,16 @@
 
 <script>
 import Vue from 'vue'
+import IssueSelect from '../components/IssueSelect'
 
 export default {
+  components: { IssueSelect },
   data: () => ({
-    countries: null,
-    currentCrop: {
-      country: null,
-      publicationcode: null,
-      issuenumber: null,
-    },
+    currentCrop: null,
     crops: [],
     disableSend: false,
-    issues: {},
-    publications: {},
     uploadedImageData: null,
   }),
-  mounted() {
-    this.loadCountries()
-  },
   methods: {
     addCrop() {
       this.crops.push({
@@ -107,11 +78,7 @@ export default {
         data: this.$refs.cropper.getData(),
         url: this.$refs.cropper.getCroppedCanvas().toDataURL('image/jpeg'),
       })
-      this.currentCrop = {
-        country: null,
-        publicationcode: null,
-        issuenumber: null,
-      }
+      this.currentCrop = null
     },
     async uploadAll() {
       this.disableSend = true
@@ -126,39 +93,6 @@ export default {
         Vue.set(crop, 'sent', true)
       }
       window.location.replace('/')
-    },
-    async loadCountries() {
-      if (!this.countries) {
-        this.countries = {
-          null: this.$t('select.country'),
-          ...(await this.$axios.$get(`/api/coa/list/countries/${this.$i18n.locale}`)),
-        }
-      }
-    },
-    async loadPublications() {
-      const country = this.currentCrop.country
-      if (!this.publications[country]) {
-        const publications = {
-          null: this.$t('select.publication'),
-          ...(await this.$axios.$get(`/api/coa/list/publications/${country}`)),
-        }
-        Vue.set(this.publications, country, publications)
-      }
-      this.currentCrop.publicationcode = null
-      this.currentCrop.issuenumber = null
-    },
-    async loadIssues() {
-      const publicationCode = this.currentCrop.publicationcode
-      if (publicationCode) {
-        if (!this.issues[publicationCode]) {
-          let issues = Object.values(
-            await this.$axios.$get(`/api/coa/list/issues/${publicationCode}`)
-          )
-          issues = [{ value: null, text: this.$t('select.issue') }].concat(issues)
-          Vue.set(this.issues, publicationCode, issues)
-        }
-        this.currentCrop.issuenumber = null
-      }
     },
     read(files) {
       return new Promise((resolve, reject) => {

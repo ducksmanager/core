@@ -1,4 +1,5 @@
 {
+  "button.create_or_update": "Créer ou modifier une tranche",
   "button.send_photos": "Envoyer des photos de tranche",
   "error.browser_not_supported": "Votre navigateur n'est pas supporté.",
   "error.daily_upload_limit_reached": "You have reached your daily upload limit",
@@ -10,9 +11,10 @@
   "header.ongoing_edges": "Tranches en cours d'édition",
   "header.ongoing_by_other_user_edges": "Tranches en cours d'édition par un autre utilisateur",
   "header.pending_edges": "Tranches en attente d'édition",
-  "header.send_photos": "Envoi de photos",
+  "no_edges_in_category": "Pas de tranches dans cette catégorie",
   "login": "Se connecter",
   "password": "Mot de passe",
+  "prompt.select_issue": "Sélectionnez le numéro dont vous voulez créer la tranche.",
   "select.country": "Veuillez sélectionner un pays",
   "select.issue": "Veuillez sélectionner un numéro",
   "select.publication": "Veuillez sélectionner un magazine",
