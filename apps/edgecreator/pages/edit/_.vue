@@ -139,9 +139,10 @@ export default {
           `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
         )
         if (!edge) {
+          vm.steps = []
           return
         }
-        const steps = await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)
+        const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
 
         const dimensions = steps.find((step) => step.ordre === -1)
         if (dimensions) {
@@ -162,7 +163,7 @@ export default {
       })
   },
   methods: {
-    getEdgeUrl(issuenumber, extension = 'png') {
+    getEdgeUrl(issuenumber, extension) {
       return (
         `${process.env.EDGES_URL}/${this.country}/gen/` +
         `${this.magazine}.${issuenumber}.${extension}`

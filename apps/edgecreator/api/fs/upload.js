@@ -35,11 +35,11 @@ export default async function (req, res) {
         fields[fieldname] = val
       })
       .on('file', async function (fieldname, file, filename, encoding, mimetype) {
-        isEdgePhoto = fields.photo
-        isMultipleEdgePhoto = fields.multiple
+        isEdgePhoto = fields.photo === 'true'
+        isMultipleEdgePhoto = fields.multiple === 'true'
         allowedMimeTypes = isEdgePhoto ? ['image/jpg', 'image/jpeg'] : ['image/png']
 
-        const targetFilename = getTargetFilename(filename)
+        const targetFilename = getTargetFilename(filename, isMultipleEdgePhoto)
         try {
           await validateUpload(mimetype, targetFilename, file)
           saveFile(targetFilename, file)
@@ -53,24 +53,26 @@ export default async function (req, res) {
       })
     req.pipe(busboy)
 
-    const getTargetFilename = (filename) => {
+    const getTargetFilename = (filename, isMultipleEdgePhoto) => {
       filename = filename
         .normalize('NFD')
         .replace(/[\u0300-\u036F]/g, '')
         .replace('.', '_')
-      const edge = fields.edge
 
       if (isMultipleEdgePhoto) {
         return getNextAvailableFile(`${edgesPath}/tranches_multiples/photo.multiple`, 'jpg')
-      } else if (isEdgePhoto) {
-        return getNextAvailableFile(
-          `${edgesPath}/${edge.country}/photos/${edge.magazine}.${edge.issuenumber}.photo`,
-          'jpg'
-        )
       } else {
-        return `${edgesPath}/${edge.country}/elements/${
-          filename.contains(edge.magazine) ? filename : `${edge.magazine}.${filename}`
-        }`
+        const edge = JSON.parse(fields.edge)
+        if (isEdgePhoto) {
+          return getNextAvailableFile(
+            `${edgesPath}/${edge.country}/photos/${edge.magazine}.${edge.issuenumber}.photo`,
+            'jpg'
+          )
+        } else {
+          return `${edgesPath}/${edge.country}/elements/${
+            filename.contains(edge.magazine) ? filename : `${edge.magazine}.${filename}`
+          }`
+        }
       }
     }
 
@@ -144,6 +146,7 @@ export default async function (req, res) {
     }
 
     const saveFile = (filename, file) => {
+      fs.mkdirSync(require('path').dirname(filename), { recursive: true })
       file.pipe(fs.createWriteStream(filename))
     }
 

@@ -20,6 +20,7 @@ export default {
     withProgress: { type: Boolean, default: true },
     photo: { type: Boolean, default: false },
     multiple: { type: Boolean, default: false },
+    edge: { type: Object, default: null },
   },
   data() {
     return {
@@ -40,6 +41,7 @@ export default {
       meta: {
         photo: this.photo,
         multiple: this.multiple,
+        edge: JSON.stringify(this.edge),
         locale,
       },
       restrictions: {
@@ -55,7 +57,6 @@ export default {
         inline: true,
         target: '.DashboardContainer',
         replaceTargetContent: true,
-        showProgressDetails: true,
         note: this.$t('upload.restrictions'),
         height: 470,
         browserBackButtonClose: true,

@@ -97,12 +97,29 @@
         /></b-button>
         <b-button
           v-b-tooltip.hover
+          title="Edge photo"
+          pill
+          variant="outline-primary"
+          :disabled="issuenumbers.length > 1"
+          size="sm"
+          @click="showPhotoModal = !showPhotoModal"
+          ><b-icon-camera /><b-modal ok-only :visible="showPhotoModal"
+            ><upload
+              photo
+              :edge="{
+                country,
+                magazine,
+                issuenumber: issuenumbers[0],
+              }" /></b-modal
+        ></b-button>
+        <b-button
+          v-b-tooltip.hover
           title="Export"
           pill
           variant="outline-success"
           size="sm"
           @click="exportSvg"
-          ><b-icon-archive-fill
+          ><b-icon-archive
         /></b-button>
       </b-col>
     </b-row>
@@ -119,25 +136,30 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import {
-  BIconArchiveFill,
+  BIconArchive,
   BIconArrowsAngleExpand,
+  BIconCamera,
   BIconHouse,
   BIconLock,
   BIconUnlock,
 } from 'bootstrap-vue'
+import Upload from '~/components/Upload'
 
 export default {
   name: 'TopBar',
   components: {
-    BIconHouse,
-    BIconArchiveFill,
+    Upload,
+    BIconArchive,
     BIconArrowsAngleExpand,
+    BIconCamera,
+    BIconHouse,
     BIconLock,
     BIconUnlock,
   },
   data() {
     return {
       showSidebar: true,
+      showPhotoModal: false,
     }
   },
   computed: {
