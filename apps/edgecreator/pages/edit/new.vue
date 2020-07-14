@@ -1,5 +1,12 @@
 <template>
-  <b-modal ok-only :ok-disabled="!issue" title="Création de tranche" visible @ok="startEditing()">
+  <b-modal
+    ok-only
+    :ok-disabled="!issue"
+    title="Création de tranche"
+    visible
+    @close="toDashboard"
+    @ok="startEditing"
+  >
     {{ $t('prompt.select_issue') }}
     <issue-select @change="issue = $event" />
   </b-modal>
@@ -14,6 +21,9 @@ export default {
     }
   },
   methods: {
+    toDashboard() {
+      window.location.replace(`/`)
+    },
     startEditing() {
       window.location.replace(`/edit/${this.issue.publicationCode}/${this.issue.issueNumber}`)
     },
