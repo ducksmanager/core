@@ -1,7 +1,9 @@
 <template>
-  <image ref="image" v-bind="options" :xlink:href="image.base64">
-    <metadata>{{ options }}</metadata>
-  </image>
+  <svg>
+    <image ref="image" v-bind="options" :xlink:href="image.base64" preserveAspectRatio="none">
+      <metadata>{{ options }}</metadata>
+    </image>
+  </svg>
 </template>
 
 <script>

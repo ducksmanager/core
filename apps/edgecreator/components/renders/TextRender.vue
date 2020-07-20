@@ -1,15 +1,18 @@
 <template>
-  <image
-    v-if="options.x !== undefined"
-    ref="image"
-    v-bind="options"
-    :xlink:href="imageUrl"
-    :transform="`rotate(${options.rotation}, ${options.x + options.width / 2}, ${
-      options.y + options.height / 2
-    })`"
-  >
-    <metadata>{{ options }}</metadata>
-  </image>
+  <svg>
+    <image
+      v-if="options.x !== undefined"
+      ref="image"
+      preserveAspectRatio
+      v-bind="options"
+      :xlink:href="imageUrl"
+      :transform="`rotate(${options.rotation}, ${options.x + options.width / 2}, ${
+        options.y + options.height / 2
+      })`"
+    >
+      <metadata>{{ options }}</metadata>
+    </image>
+  </svg>
 </template>
 
 <script>
