@@ -64,14 +64,14 @@ export default {
       const fromBottom = vm.dbOptions.Position === 'bas'
       return {
         ...vm.options,
-        x: parseFloat(vm.dbOptions.Decalage_x),
+        x: parseFloat(vm.dbOptions.Decalage_x || 0),
         y: parseFloat(
           fromBottom
-            ? vm.height - embeddedImageHeight - vm.dbOptions.Decalage_y
-            : vm.dbOptions.Decalage_y
+            ? vm.height - embeddedImageHeight - (vm.dbOptions.Decalage_y || 0)
+            : vm.dbOptions.Decalage_y || 0
         ),
-        width: parseFloat(vm.dbOptions.Compression_x) * vm.width,
-        height: parseFloat(vm.dbOptions.Compression_y) * embeddedImageHeight,
+        width: parseFloat(vm.dbOptions.Compression_x || 1) * vm.width,
+        height: parseFloat(vm.dbOptions.Compression_y || 1) * embeddedImageHeight,
       }
     },
   },
