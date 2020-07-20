@@ -128,9 +128,6 @@ import Gallery from '~/components/Gallery'
 export default {
   name: 'ModelEdit',
   components: { FormColorInputRow, FormInputRow, Gallery },
-  props: {
-    steps: { type: Array, required: true },
-  },
   data() {
     return {
       clickedImage: null,
@@ -153,7 +150,7 @@ export default {
         this.$store.commit('editingStep/setStepNumber', value)
       },
     },
-    ...mapState(['galleryItems', 'country']),
+    ...mapState(['galleryItems', 'country', 'steps']),
     ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders']),
   },

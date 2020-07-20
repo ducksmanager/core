@@ -8,6 +8,9 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
   >
+    <metadata v-for="photoUrl in photoUrls[issuenumber] || []" :key="photoUrl" type="photo">
+      {{ photoUrl }}
+    </metadata>
     <g
       v-for="(step, stepNumber) in steps"
       :key="stepNumber"
@@ -73,7 +76,6 @@ export default {
   },
   props: {
     issuenumber: { type: String, required: true },
-    steps: { type: Array, required: true },
   },
   data() {
     return {
@@ -116,7 +118,7 @@ export default {
         this.$store.commit('editingStep/setIssuenumber', value)
       },
     },
-    ...mapState(['zoom', 'width', 'height']),
+    ...mapState(['zoom', 'width', 'height', 'steps', 'photoUrls']),
   },
 }
 </script>

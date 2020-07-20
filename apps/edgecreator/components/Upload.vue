@@ -6,12 +6,13 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 require('@uppy/core/dist/style.css')
 require('@uppy/dashboard/dist/style.css')
 
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
-const ProgressBar = require('@uppy/status-bar')
 const XhrUpload = require('@uppy/xhr-upload')
 
 export default {
@@ -69,21 +70,26 @@ export default {
           return new Error(this.$t(error, placeholders))
         },
       })
-      .use(ProgressBar, { target: '.UppyDragDrop-Progress' })
       .run()
-    uppy.on('core:upload-progress', (data) => {
-      vm.$emit('core:upload-progress', data)
+    uppy.on('upload-progress', (data) => {
+      vm.$emit('upload-progress', data)
       this.bytesUploaded = data.bytesUploaded
     })
-    uppy.on('core:upload-success', (fileId, payload) => {
-      const data = { fileId, data: payload }
-      vm.$emit('core:upload-success', data)
-      this.images.push(data)
+    uppy.on('upload-success', (fileId, payload) => {
+      vm.$emit('upload-success')
+      if (vm.photo) {
+        if (!vm.multiple) {
+          vm.addPhotoUrl({ issuenumber: vm.edge.issuenumber, filename: payload.body.filename })
+        }
+      }
     })
-    uppy.on('core:success', (fileCount) => {
-      vm.$emit('core:success', fileCount)
+    uppy.on('success', (fileCount) => {
+      vm.$emit('success', fileCount)
       this.showProgress = false
     })
+  },
+  methods: {
+    ...mapMutations(['addPhotoUrl']),
   },
 }
 </script>
