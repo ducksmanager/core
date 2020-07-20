@@ -53,10 +53,7 @@ export default {
               (optionName) =>
                 newEditingStepOptions[optionName] !== oldEditingStepOptions[optionName]
             )
-            .reduce((obj, key) => {
-              obj[key] = newEditingStepOptions[key]
-              return obj
-            }, {})
+            .reduce((obj, key) => ({ ...obj, [key]: newEditingStepOptions[key] }), {})
           console.log(
             `Issuenumber ${this.issuenumber} : Applying locked option changes : ${JSON.stringify(
               diffEditingStepOptions
