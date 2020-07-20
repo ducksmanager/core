@@ -12,7 +12,7 @@
               <published-edge :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber" />
             </td>
             <td v-for="issuenumber in issuenumbers" :key="issuenumber">
-              <edge-canvas :issuenumber="issuenumber" :steps="steps" />
+              <edge-canvas :issuenumber="issuenumber" />
             </td>
             <td v-if="showNextEdge && edgesAfter.length">
               <published-edge :issuenumber="edgesAfter[0].issuenumber" />
@@ -33,10 +33,9 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <model-edit
-          :steps="steps"
           @add-step="
             (component) => {
-              steps.push({
+              addStep({
                 component: component,
                 svgGroupElement: null,
               })
@@ -68,7 +67,6 @@ export default {
   data() {
     return {
       error: null,
-      steps: [],
     }
   },
   computed: {
@@ -127,19 +125,21 @@ export default {
           height: svgElement.getAttribute('height') / 1.5,
         })
 
-        vm.steps = Object.values(svgElement.childNodes)
-          .filter((group) => group.nodeName === 'g')
-          .map((group) => ({
-            component: group.getAttribute('class'),
-            svgGroupElement: group,
-          }))
+        vm.setSteps(
+          Object.values(svgElement.childNodes)
+            .filter((group) => group.nodeName === 'g')
+            .map((group) => ({
+              component: group.getAttribute('class'),
+              svgGroupElement: group,
+            }))
+        )
       })
       .catch(async () => {
         const edge = await this.$axios.$get(
           `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
         )
         if (!edge) {
-          vm.steps = []
+          vm.setSteps([])
           return
         }
         const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
@@ -152,14 +152,16 @@ export default {
           })
         }
 
-        vm.steps = steps
-          .filter((step) => step.ordre !== -1)
-          .map((step) => ({
-            component: vm.supportedRenders.find(
-              (component) => component.originalName === step.nomFonction
-            ).component,
-            dbOptions: step.options,
-          }))
+        vm.setSteps(
+          steps
+            .filter((step) => step.ordre !== -1)
+            .map((step) => ({
+              component: vm.supportedRenders.find(
+                (component) => component.originalName === step.nomFonction
+              ).component,
+              dbOptions: step.options,
+            }))
+        )
       })
   },
   methods: {
@@ -169,7 +171,7 @@ export default {
         `${this.magazine}.${issuenumber}.${extension}`
       )
     },
-    ...mapMutations(['setDimensions', 'setCountry', 'setMagazine']),
+    ...mapMutations(['setDimensions', 'setCountry', 'setMagazine', 'setSteps']),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
     ...mapActions([
       'setIssuenumbersFromMinMax',

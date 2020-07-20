@@ -45,7 +45,11 @@ export default async function (req, res) {
           saveFile(targetFilename, file)
           await storePhotoHash(targetFilename)
           res.writeHead(200, { Connection: 'close' })
-          res.end()
+          res.end(
+            JSON.stringify({
+              filename: targetFilename.replace(process.env.EDGES_PATH, process.env.EDGES_URL),
+            })
+          )
         } catch (e) {
           res.writeHead(400, { Connection: 'close', 'Content-Type': 'application/json' })
           res.end(e.message)

@@ -1,14 +1,20 @@
+import Vue from 'vue'
+
 export const state = () => ({
   country: null,
   magazine: null,
   issuenumbers: [],
+  steps: [],
+  photoUrls: {},
 
-  galleryItems: [],
   zoom: 1.5,
   width: 15,
   height: 200,
+
   edgesBefore: [],
   edgesAfter: [],
+
+  galleryItems: [],
 })
 
 export const mutations = {
@@ -23,6 +29,15 @@ export const mutations = {
   },
   setZoom(state, zoom) {
     state.zoom = zoom
+  },
+  setSteps(state, steps) {
+    state.steps = steps
+  },
+  addStep(state, step) {
+    Vue.set(state.steps, state.steps.length - 1, step)
+  },
+  addPhotoUrl(state, { issuenumber, filename }) {
+    Vue.set(state.photoUrls, issuenumber, (state.photoUrls[issuenumber] || []).concat(filename))
   },
   setDimensions(state, { width, height }) {
     state.width = parseFloat(width)

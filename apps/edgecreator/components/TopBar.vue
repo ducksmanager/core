@@ -31,6 +31,12 @@
               <b-col><label for="showNextEdge">Show next edge</label></b-col>
               <b-col>
                 <b-checkbox id="showNextEdge" v-model="showNextEdge" :disabled="!edgesAfter.length"
+              /></b-col>
+            </b-row>
+            <b-row>
+              <b-col><label for="showEdgePhoto">Show edge photo</label></b-col>
+              <b-col>
+                <b-checkbox id="showEdgePhoto" v-model="showEdgePhoto" :disabled="!photoUrl"
               /></b-col> </b-row
           ></b-container>
         </b-sidebar>
@@ -103,7 +109,7 @@
           :disabled="issuenumbers.length > 1"
           size="sm"
           @click="showPhotoModal = !showPhotoModal"
-          ><b-icon-camera /><b-modal ok-only :visible="showPhotoModal"
+          ><b-icon-camera /><b-modal v-model="showPhotoModal" ok-only
             ><upload
               photo
               :edge="{
@@ -203,6 +209,14 @@ export default {
         this.$store.commit('ui/setShowNextEdge', value)
       },
     },
+    showEdgePhoto: {
+      get() {
+        return this.$store.state.ui.showEdgePhoto
+      },
+      set(value) {
+        this.$store.commit('ui/setShowEdgePhoto', value)
+      },
+    },
     flagImageUrl() {
       return `${process.env.DM_URL}/images/flags/${this.country}.png`
     },
@@ -214,6 +228,7 @@ export default {
       'issuenumbers',
       'edgesBefore',
       'edgesAfter',
+      'photoUrl',
     ]),
   },
   methods: {
@@ -224,19 +239,16 @@ export default {
       const vm = this
       this.zoom = 1.5
       vm.$nextTick().then(() => {
-        vm.issuenumbers.forEach((issuenumber) => {
-          vm.$axios
-            .$put('/fs/export', {
-              country: vm.country,
-              magazine: vm.magazine,
-              issuenumber,
-              content: document.getElementById(vm.getEdgeCanvasRefId(issuenumber)).outerHTML,
-            })
-            .then(() => {
-              vm.$bvToast.toast('Export done', {
-                toaster: 'b-toaster-top-center',
-              })
-            })
+        vm.issuenumbers.forEach(async (issuenumber) => {
+          await vm.$axios.$put('/fs/export', {
+            country: vm.country,
+            magazine: vm.magazine,
+            issuenumber,
+            content: document.getElementById(vm.getEdgeCanvasRefId(issuenumber)).outerHTML,
+          })
+          vm.$bvToast.toast('Export done', {
+            toaster: 'b-toaster-top-center',
+          })
         })
       })
     },
