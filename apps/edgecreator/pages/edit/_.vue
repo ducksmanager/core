@@ -13,7 +13,14 @@
             </td>
             <template v-for="issuenumber in issuenumbers">
               <td :key="issuenumber">
-                <edge-canvas :issuenumber="issuenumber" />
+                <edge-canvas
+                  :issuenumber="issuenumber"
+                  :width="width"
+                  :height="height"
+                  :steps="steps"
+                  :photo-urls="photoUrls[issuenumber]"
+                  :contributors="contributors"
+                />
               </td>
               <td v-if="showEdgePhotos && hasPhotoUrl(issuenumber)" :key="issuenumber">
                 <img :src="photoUrls[issuenumber][0]" :style="{ height: `${zoom * height}px` }" />
@@ -92,12 +99,14 @@ export default {
       'zoom',
       'width',
       'height',
+      'steps',
       'country',
       'magazine',
       'issuenumbers',
       'edgesBefore',
       'edgesAfter',
       'photoUrls',
+      'contributors',
     ]),
     ...mapState('renders', ['supportedRenders']),
     ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge', 'showEdgePhotos']),

@@ -17,8 +17,13 @@
       v-show="currentCountryCode && currentPublicationCode"
       v-model="currentIssueNumber"
       :options="issues[currentPublicationCode]"
+      @change="$emit('change', null)"
+    />
+    <dimensions
+      v-if="withDimensions && currentIssueNumber !== null"
       @change="
         $emit('change', {
+          ...$event,
           countryCode: currentCountryCode,
           publicationCode: currentPublicationCode,
           issueNumber: currentIssueNumber,
@@ -29,8 +34,13 @@
 </template>
 <script>
 import Vue from 'vue'
+import Dimensions from '@/components/Dimensions'
 
 export default {
+  components: { Dimensions },
+  props: {
+    withDimensions: { type: Boolean, default: false },
+  },
   data: () => ({
     currentCountryCode: null,
     currentPublicationCode: null,

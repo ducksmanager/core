@@ -27,7 +27,7 @@
       <b-jumbotron>
         {{ $t('upload.description') }}
       </b-jumbotron>
-      <issue-select @change="currentCrop = $event" />
+      <issue-select :key="crops.length" with-dimensions @change="currentCrop = $event" />
       <b-button :disabled="!currentCrop" @click="addCrop">{{ $t('upload.add_edge') }}</b-button>
       <b-container>
         <b-card-group deck columns>
@@ -36,7 +36,19 @@
               <b-col md="6" class="edge-crop" :style="{ backgroundImage: `url('${crop.url}')` }" />
               <b-col md="6" class="align-items-center d-flex justify-content-center">
                 <b-card-body :title="crop.id">
-                  <b-card-text> {{ crop.publicationCode }} {{ crop.issueNumber }} </b-card-text>
+                  <b-card-text>
+                    {{ crop.publicationCode }} {{ crop.issueNumber }} <br />
+                    {{ crop.width }} x {{ crop.height }} mm</b-card-text
+                  >
+                  <edge-canvas
+                    v-if="crop.filename"
+                    :issuenumber="crop.issueNumber"
+                    :width="crop.width"
+                    :height="crop.height"
+                    :steps="[]"
+                    :photo-urls="crop.filename"
+                    :contributors="{ photographers: [$cookies.get('dm-user')] }"
+                  />
                 </b-card-body>
               </b-col>
             </b-row>
@@ -61,10 +73,11 @@
 
 <script>
 import Vue from 'vue'
-import IssueSelect from '../components/IssueSelect'
+import IssueSelect from '~/components/IssueSelect'
+import EdgeCanvas from '@/components/EdgeCanvas'
 
 export default {
-  components: { IssueSelect },
+  components: { IssueSelect, EdgeCanvas },
   data: () => ({
     currentCrop: null,
     crops: [],
@@ -83,16 +96,18 @@ export default {
     async uploadAll() {
       this.disableSend = true
       for (const crop of this.crops) {
-        const [country, magazine] = crop.publicationcode.split('/')
-        await this.$axios.$post('/fs/upload-base64', {
-          country,
-          magazine,
-          issuenumber: crop.issuenumber,
-          data: crop.url,
-        })
+        const [country, magazine] = crop.publicationCode.split('/')
+        crop.filename = (
+          await this.$axios.$post('/fs/upload-base64', {
+            country,
+            magazine,
+            issuenumber: crop.issueNumber,
+            data: crop.url,
+          })
+        ).filename
         Vue.set(crop, 'sent', true)
       }
-      window.location.replace('/')
+      // window.location.replace('/')
     },
     read(files) {
       return new Promise((resolve, reject) => {
