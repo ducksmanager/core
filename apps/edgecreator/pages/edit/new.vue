@@ -12,7 +12,7 @@
   </b-modal>
 </template>
 <script>
-import IssueSelect from '../../components/IssueSelect'
+import IssueSelect from '~/components/IssueSelect'
 export default {
   components: { IssueSelect },
   data() {

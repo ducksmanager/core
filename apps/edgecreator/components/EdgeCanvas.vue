@@ -1,6 +1,6 @@
 <template>
   <svg
-    :id="edgeCanvasId"
+    :id="`edge-canvas-${issuenumber}`"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
     :height="zoom * height"
@@ -90,6 +90,11 @@ export default {
   },
   props: {
     issuenumber: { type: String, required: true },
+    width: { type: Number, required: true },
+    height: { type: Number, required: true },
+    steps: { type: Array, required: true },
+    photoUrls: { type: Array, required: true },
+    contributors: { type: Array, required: true },
   },
   data() {
     return {
@@ -97,9 +102,6 @@ export default {
     }
   },
   computed: {
-    edgeCanvasId() {
-      return `edge-canvas-${this.issuenumber}`
-    },
     hoveredStepNumber: {
       get() {
         return this.$store.state.hoveredStep.stepNumber
@@ -132,7 +134,7 @@ export default {
         this.$store.commit('editingStep/setIssuenumber', value)
       },
     },
-    ...mapState(['zoom', 'width', 'height', 'steps', 'photoUrls', 'contributors']),
+    ...mapState(['zoom']),
   },
 }
 </script>

@@ -58,38 +58,7 @@
           ><b-icon-arrows-angle-expand
         /></b-button>
         <b-collapse id="collapse-dimensions" class="mt-2">
-          <b-card class="mb-2" style="max-width: 12rem;">
-            <b-row>
-              <b-col sm="6">
-                <label for="width">Width</label>
-              </b-col>
-              <b-col sm="6">
-                <b-form-input
-                  id="width"
-                  :value="width"
-                  size="sm"
-                  autocomplete="off"
-                  type="number"
-                  @input="setDimensions({ width: $event, height })"
-                ></b-form-input>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col sm="6">
-                <label for="height">Height</label>
-              </b-col>
-              <b-col sm="6">
-                <b-form-input
-                  id="width"
-                  :value="height"
-                  size="sm"
-                  autocomplete="off"
-                  type="number"
-                  @input="setDimensions({ width, height: $event })"
-                ></b-form-input>
-              </b-col>
-            </b-row>
-          </b-card>
+          <dimensions :width="width" :height="height" @change="setDimensions" />
         </b-collapse>
         <b-button
           v-b-tooltip.hover
@@ -180,10 +149,12 @@ import {
 } from 'bootstrap-vue'
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import Upload from '~/components/Upload'
+import Dimensions from '@/components/Dimensions'
 
 export default {
   name: 'TopBar',
   components: {
+    Dimensions,
     Upload,
     BIconArchive,
     BIconXSquareFill,

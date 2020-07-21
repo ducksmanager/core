@@ -41,7 +41,7 @@ export default async function (req, res) {
 
         const targetFilename = getTargetFilename(filename, isMultipleEdgePhoto)
         try {
-          await validateUpload(mimetype, targetFilename, file)
+          // await validateUpload(mimetype, targetFilename, file)
           saveFile(targetFilename, file)
           await storePhotoHash(targetFilename)
           res.writeHead(200, { Connection: 'close' })
