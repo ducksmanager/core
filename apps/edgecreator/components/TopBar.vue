@@ -34,9 +34,9 @@
               /></b-col>
             </b-row>
             <b-row>
-              <b-col><label for="showEdgePhoto">Show edge photo</label></b-col>
+              <b-col><label for="showEdgePhotos">Show edge photos</label></b-col>
               <b-col>
-                <b-checkbox id="showEdgePhoto" v-model="showEdgePhoto" :disabled="!photoUrl"
+                <b-checkbox id="showEdgePhotos" v-model="showEdgePhotos" :disabled="!hasPhotoUrl"
               /></b-col> </b-row
           ></b-container>
         </b-sidebar>
@@ -195,7 +195,7 @@ export default {
     },
     showPreviousEdge: {
       get() {
-        return this.$store.state.ui.showPreviousEdge
+        return this.$store.state.ui.showPreviousEdge && this.$store.state.edgesBefore.length
       },
       set(value) {
         this.$store.commit('ui/setShowPreviousEdge', value)
@@ -203,19 +203,22 @@ export default {
     },
     showNextEdge: {
       get() {
-        return this.$store.state.ui.showNextEdge
+        return this.$store.state.ui.showNextEdge && this.$store.state.edgesAfter.length
       },
       set(value) {
         this.$store.commit('ui/setShowNextEdge', value)
       },
     },
-    showEdgePhoto: {
+    showEdgePhotos: {
       get() {
-        return this.$store.state.ui.showEdgePhoto
+        return this.$store.state.ui.showEdgePhotos
       },
       set(value) {
-        this.$store.commit('ui/setShowEdgePhoto', value)
+        this.$store.commit('ui/setShowEdgePhotos', value)
       },
+    },
+    hasPhotoUrl() {
+      return Object.values(this.photoUrls).reduce((acc, photoUrls) => acc + photoUrls.length, 0) > 0
     },
     flagImageUrl() {
       return `${process.env.DM_URL}/images/flags/${this.country}.png`
@@ -228,7 +231,7 @@ export default {
       'issuenumbers',
       'edgesBefore',
       'edgesAfter',
-      'photoUrl',
+      'photoUrls',
     ]),
   },
   methods: {
