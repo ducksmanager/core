@@ -44,7 +44,7 @@
           @add-step="
             (component) => {
               addStep({
-                component: component,
+                component,
                 svgGroupElement: null,
               })
             }
@@ -132,31 +132,12 @@ export default {
       .then((data) => {
         const doc = new DOMParser().parseFromString(data, 'image/svg+xml')
         const svgElement = doc.getElementsByTagName('svg')[0]
-        vm.setDimensions({
-          width: svgElement.getAttribute('width') / 1.5,
-          height: svgElement.getAttribute('height') / 1.5,
-        })
+        const svgChildNodes = Object.values(svgElement.childNodes)
 
-        const childNodes = Object.values(svgElement.childNodes)
-        vm.setSteps(
-          childNodes
-            .filter((node) => node.nodeName === 'g')
-            .map((group) => ({
-              component: group.getAttribute('class'),
-              svgGroupElement: group,
-            }))
-        )
-
-        childNodes
-          .filter(
-            (node) =>
-              node.nodeName === 'metadata' &&
-              node.attributes.getNamedItem('type').nodeValue === 'photo'
-          )
-          .map((metadataPhoto) => metadataPhoto.textContent.trim())
-          .forEach((photoUrl) => {
-            vm.addPhotoUrl({ issuenumber: issuenumberMin, filename: photoUrl })
-          })
+        vm.setDimensionsFromSvg(svgElement)
+        vm.setStepsFromSvg(svgChildNodes)
+        vm.setPhotoUrlsFromSvg(svgChildNodes)
+        vm.setContributorsFromSvg(svgChildNodes)
       })
       .catch(async () => {
         const edge = await this.$axios.$get(
@@ -168,27 +149,76 @@ export default {
         }
         const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
 
-        const dimensions = steps.find((step) => step.ordre === -1)
-        if (dimensions) {
-          vm.setDimensions({
-            width: dimensions.options.Dimension_x,
-            height: dimensions.options.Dimension_y,
-          })
-        }
-
-        vm.setSteps(
-          steps
-            .filter((step) => step.ordre !== -1)
-            .map((step) => ({
-              component: vm.supportedRenders.find(
-                (component) => component.originalName === step.nomFonction
-              ).component,
-              dbOptions: step.options,
-            }))
-        )
+        vm.setDimensionsFromApi(steps)
+        vm.setStepsFromApi(steps)
       })
   },
   methods: {
+    getFromSvgMetadata(svgChildNodes, metadataType) {
+      return svgChildNodes
+        .filter(
+          (node) =>
+            node.nodeName === 'metadata' &&
+            node.attributes.getNamedItem('type').nodeValue === metadataType
+        )
+        .map((metadataNode) => metadataNode.textContent.trim())
+    },
+    setDimensionsFromSvg(svgElement) {
+      this.setDimensions({
+        width: svgElement.getAttribute('width') / 1.5,
+        height: svgElement.getAttribute('height') / 1.5,
+      })
+    },
+    setStepsFromSvg(svgChildNodes) {
+      this.setSteps(
+        svgChildNodes
+          .filter((node) => node.nodeName === 'g')
+          .map((group) => ({
+            component: group.getAttribute('class'),
+            svgGroupElement: group,
+          }))
+      )
+    },
+    setPhotoUrlsFromSvg(svgChildNodes) {
+      const vm = this
+      vm.getFromSvgMetadata(svgChildNodes, 'photo').forEach((photoUrl) => {
+        vm.addPhotoUrl({ issuenumber: vm.issuenumbers[0], filename: photoUrl })
+      })
+    },
+    setContributorsFromSvg(svgChildNodes) {
+      const vm = this
+      const contributionTypes = ['photographer', 'designer']
+      contributionTypes.forEach((contributionType) => {
+        vm.getFromSvgMetadata(svgChildNodes, `contributor-${contributionType}`).forEach(
+          (username) => {
+            vm.addContributor({ contributionType: `${contributionType}s`, user: { username } })
+          }
+        )
+      })
+    },
+
+    setDimensionsFromApi(stepData) {
+      const dimensions = stepData.find((step) => step.ordre === -1)
+      if (dimensions) {
+        this.setDimensions({
+          width: dimensions.options.Dimension_x,
+          height: dimensions.options.Dimension_y,
+        })
+      }
+    },
+    setStepsFromApi(stepData) {
+      const vm = this
+      this.setSteps(
+        stepData
+          .filter((step) => step.ordre !== -1)
+          .map((step) => ({
+            component: vm.supportedRenders.find(
+              (component) => component.originalName === step.nomFonction
+            ).component,
+            dbOptions: step.options,
+          }))
+      )
+    },
     getEdgeUrl(issuenumber, extension) {
       return (
         `${process.env.EDGES_URL}/${this.country}/gen/` +
@@ -198,7 +228,14 @@ export default {
     hasPhotoUrl(issuenumber) {
       return (this.photoUrls[issuenumber] || []).length
     },
-    ...mapMutations(['setDimensions', 'setCountry', 'setMagazine', 'setSteps', 'addPhotoUrl']),
+    ...mapMutations([
+      'setDimensions',
+      'setCountry',
+      'setMagazine',
+      'setSteps',
+      'addPhotoUrl',
+      'addContributor',
+    ]),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
     ...mapActions([
       'setIssuenumbersFromMinMax',
