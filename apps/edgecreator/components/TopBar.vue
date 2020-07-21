@@ -124,9 +124,37 @@
           pill
           variant="outline-success"
           size="sm"
-          @click="exportSvg"
-          ><b-icon-archive
-        /></b-button>
+          @click="showExportModal = !showExportModal"
+          ><b-icon-archive /><b-modal
+            v-model="showExportModal"
+            title="Export"
+            ok-only
+            ok-title="Export"
+            @ok="exportSvg"
+          >
+            <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
+              <h2>{{ $t('export.' + contributionType) }}</h2>
+              <vue-bootstrap-typeahead
+                :ref="`${contributionType}-typeahead`"
+                :data="allUsers.filter((user) => !contributors[contributionType].includes(user))"
+                :serializer="(u) => u.username"
+                :placeholder="$t('export.typeahead.placeholder')"
+                :min-matching-chars="0"
+                @hit="
+                  addContributor({ contributionType: contributionType, user: $event })
+                  $refs[`${contributionType}-typeahead`][0].inputValue = ''
+                "
+              />
+              <ul>
+                <li v-for="(user, i) in contributors[contributionType]" :key="user.username">
+                  {{ user.username }}
+                  <b-icon-x-square-fill
+                    style="cursor: pointer;"
+                    @click="removeContributor({ contributionType: contributionType, index: i })"
+                  />
+                </li>
+              </ul></div></b-modal
+        ></b-button>
       </b-col>
     </b-row>
     <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey;">
@@ -140,15 +168,17 @@
   </b-container>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import {
   BIconArchive,
   BIconArrowsAngleExpand,
   BIconCamera,
   BIconHouse,
   BIconLock,
+  BIconXSquareFill,
   BIconUnlock,
 } from 'bootstrap-vue'
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import Upload from '~/components/Upload'
 
 export default {
@@ -156,16 +186,20 @@ export default {
   components: {
     Upload,
     BIconArchive,
+    BIconXSquareFill,
     BIconArrowsAngleExpand,
     BIconCamera,
     BIconHouse,
     BIconLock,
     BIconUnlock,
+    VueBootstrapTypeahead,
   },
   data() {
     return {
       showSidebar: true,
       showPhotoModal: false,
+      showExportModal: false,
+      users: [],
     }
   },
   computed: {
@@ -232,12 +266,18 @@ export default {
       'edgesBefore',
       'edgesAfter',
       'photoUrls',
+      'contributors',
     ]),
+    ...mapState('user', ['allUsers']),
+  },
+  watch: {
+    async showExportModal(newValue) {
+      if (newValue) {
+        this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
+      }
+    },
   },
   methods: {
-    getEdgeCanvasRefId(issuenumber) {
-      return `edge-canvas-${issuenumber}`
-    },
     exportSvg() {
       const vm = this
       this.zoom = 1.5
@@ -247,7 +287,7 @@ export default {
             country: vm.country,
             magazine: vm.magazine,
             issuenumber,
-            content: document.getElementById(vm.getEdgeCanvasRefId(issuenumber)).outerHTML,
+            content: document.getElementById(`edge-canvas-${issuenumber}`).outerHTML,
           })
           vm.$bvToast.toast('Export done', {
             toaster: 'b-toaster-top-center',
@@ -255,9 +295,8 @@ export default {
         })
       })
     },
-    ...mapMutations(['setDimensions']),
+    ...mapMutations(['setDimensions', 'addContributor', 'removeContributor']),
+    ...mapMutations('user', ['setAllUsers']),
   },
 }
 </script>
-
-<style scoped></style>

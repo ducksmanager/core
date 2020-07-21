@@ -6,6 +6,10 @@ export const state = () => ({
   issuenumbers: [],
   steps: [],
   photoUrls: {},
+  contributors: {
+    designers: [],
+    photographers: [],
+  },
 
   zoom: 1.5,
   width: 15,
@@ -38,6 +42,12 @@ export const mutations = {
   },
   addPhotoUrl(state, { issuenumber, filename }) {
     Vue.set(state.photoUrls, issuenumber, (state.photoUrls[issuenumber] || []).concat(filename))
+  },
+  addContributor(state, { contributionType, user }) {
+    Vue.set(state.contributors[contributionType], state.contributors[contributionType].length, user)
+  },
+  removeContributor(state, { contributionType, index }) {
+    state.contributors[contributionType].splice(index, 1)
   },
   setDimensions(state, { width, height }) {
     state.width = parseFloat(width)

@@ -11,6 +11,20 @@
     <metadata v-for="photoUrl in photoUrls[issuenumber] || []" :key="photoUrl" type="photo">
       {{ photoUrl }}
     </metadata>
+    <metadata
+      v-for="photographer in contributors.photographers"
+      :key="photographer"
+      type="contributor-photographer"
+    >
+      {{ photographer.username }}
+    </metadata>
+    <metadata
+      v-for="designer in contributors.designers"
+      :key="designer"
+      type="contributor-designer"
+    >
+      {{ designer.username }}
+    </metadata>
     <g
       v-for="(step, stepNumber) in steps"
       :key="stepNumber"
@@ -118,7 +132,7 @@ export default {
         this.$store.commit('editingStep/setIssuenumber', value)
       },
     },
-    ...mapState(['zoom', 'width', 'height', 'steps', 'photoUrls']),
+    ...mapState(['zoom', 'width', 'height', 'steps', 'photoUrls', 'contributors']),
   },
 }
 </script>
