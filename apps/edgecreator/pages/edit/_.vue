@@ -4,16 +4,21 @@
   </b-container>
   <b-container v-else-if="width && height" id="wrapper" fluid>
     <top-bar />
-    <b-row class="flex-grow-1 pt-2">
+    <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right">
         <table class="edges">
           <tr>
             <td v-if="showPreviousEdge && edgesBefore.length">
               <published-edge :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber" />
             </td>
-            <td v-for="issuenumber in issuenumbers" :key="issuenumber">
-              <edge-canvas :issuenumber="issuenumber" />
-            </td>
+            <template v-for="issuenumber in issuenumbers">
+              <td :key="issuenumber">
+                <edge-canvas :issuenumber="issuenumber" />
+              </td>
+              <td v-if="showEdgePhotos && hasPhotoUrl(issuenumber)" :key="issuenumber">
+                <img :src="photoUrls[issuenumber][0]" :style="{ height: `${zoom * height}px` }" />
+              </td>
+            </template>
             <td v-if="showNextEdge && edgesAfter.length">
               <published-edge :issuenumber="edgesAfter[0].issuenumber" />
             </td>
@@ -22,9 +27,12 @@
             <th v-if="showPreviousEdge && edgesBefore.length">
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </th>
-            <th v-for="issuenumber in issuenumbers" :key="issuenumber">
-              {{ issuenumber }}<br />&#11088;
-            </th>
+            <template v-for="issuenumber in issuenumbers">
+              <th :key="issuenumber">{{ issuenumber }}<br />&#11088;</th>
+              <th v-if="showEdgePhotos && hasPhotoUrl(issuenumber)" :key="issuenumber">
+                <b-icon-camera />
+              </th>
+            </template>
             <th v-if="showNextEdge && edgesAfter.length">
               {{ edgesAfter[0].issuenumber }}
             </th>
@@ -49,6 +57,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
 
+import { BIconCamera } from 'bootstrap-vue'
 import TopBar from '~/components/TopBar'
 import EdgeCanvas from '~/components/EdgeCanvas'
 import PublishedEdge from '~/components/PublishedEdge'
@@ -63,6 +72,7 @@ export default {
     EdgeCanvas,
     PublishedEdge,
     ModelEdit,
+    BIconCamera,
   },
   data() {
     return {
@@ -79,6 +89,7 @@ export default {
       },
     },
     ...mapState([
+      'zoom',
       'width',
       'height',
       'country',
@@ -86,9 +97,10 @@ export default {
       'issuenumbers',
       'edgesBefore',
       'edgesAfter',
+      'photoUrls',
     ]),
     ...mapState('renders', ['supportedRenders']),
-    ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge']),
+    ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge', 'showEdgePhotos']),
   },
   watch: {
     async issuenumbers(newValue) {
@@ -125,14 +137,26 @@ export default {
           height: svgElement.getAttribute('height') / 1.5,
         })
 
+        const childNodes = Object.values(svgElement.childNodes)
         vm.setSteps(
-          Object.values(svgElement.childNodes)
-            .filter((group) => group.nodeName === 'g')
+          childNodes
+            .filter((node) => node.nodeName === 'g')
             .map((group) => ({
               component: group.getAttribute('class'),
               svgGroupElement: group,
             }))
         )
+
+        childNodes
+          .filter(
+            (node) =>
+              node.nodeName === 'metadata' &&
+              node.attributes.getNamedItem('type').nodeValue === 'photo'
+          )
+          .map((metadataPhoto) => metadataPhoto.textContent.trim())
+          .forEach((photoUrl) => {
+            vm.addPhotoUrl({ issuenumber: issuenumberMin, filename: photoUrl })
+          })
       })
       .catch(async () => {
         const edge = await this.$axios.$get(
@@ -171,7 +195,10 @@ export default {
         `${this.magazine}.${issuenumber}.${extension}`
       )
     },
-    ...mapMutations(['setDimensions', 'setCountry', 'setMagazine', 'setSteps']),
+    hasPhotoUrl(issuenumber) {
+      return (this.photoUrls[issuenumber] || []).length
+    },
+    ...mapMutations(['setDimensions', 'setCountry', 'setMagazine', 'setSteps', 'addPhotoUrl']),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
     ...mapActions([
       'setIssuenumbersFromMinMax',
