@@ -65,10 +65,10 @@
 import { mapActions, mapMutations, mapState } from 'vuex'
 
 import { BIconCamera } from 'bootstrap-vue'
-import TopBar from '~/components/TopBar'
-import EdgeCanvas from '~/components/EdgeCanvas'
-import PublishedEdge from '~/components/PublishedEdge'
-import ModelEdit from '~/components/ModelEdit'
+import TopBar from '@/components/TopBar'
+import EdgeCanvas from '@/components/EdgeCanvas'
+import PublishedEdge from '@/components/PublishedEdge'
+import ModelEdit from '@/components/ModelEdit'
 
 const DOMParser = require('xmldom').DOMParser
 

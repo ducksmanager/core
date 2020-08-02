@@ -121,9 +121,9 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import FormColorInputRow from '~/components/FormColorInputRow'
-import FormInputRow from '~/components/FormInputRow'
-import Gallery from '~/components/Gallery'
+import FormColorInputRow from '@/components/FormColorInputRow'
+import FormInputRow from '@/components/FormInputRow'
+import Gallery from '@/components/Gallery'
 
 export default {
   name: 'ModelEdit',

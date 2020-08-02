@@ -16,7 +16,7 @@
           </b-link>
         </b-card>
       </b-card-group>
-      <div v-else>{{ $t('no_edges_in_category') }}</div>
+      <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
     </b-container>
 
     <h3>{{ $t('header.pending_edges') }}</h3>
@@ -28,10 +28,12 @@
           :key="i"
           class="col-md-4 text-center"
         >
-          <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
+          <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
+            <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
+          </b-link>
         </b-card>
       </b-card-group>
-      <div v-else>{{ $t('no_edges_in_category') }}</div>
+      <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
     </b-container>
 
     <h3>{{ $t('header.ongoing_by_other_user_edges') }}</h3>
@@ -46,8 +48,10 @@
           <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
         </b-card>
       </b-card-group>
-      <div v-else>{{ $t('no_edges_in_category') }}</div>
+      <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
     </b-container>
+
+    <hr />
 
     <b-container align="center" style="margin-bottom: 20px;">
       <b-button to="/upload">{{ $t('button.send_photos') }}</b-button>

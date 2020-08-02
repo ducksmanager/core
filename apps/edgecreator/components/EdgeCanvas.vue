@@ -69,13 +69,13 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import RectangleRender from '~/components/renders/RectangleRender'
-import PolygonRender from '~/components/renders/PolygonRender'
-import ArcCircleRender from '~/components/renders/ArcCircleRender'
-import ImageRender from '~/components/renders/ImageRender'
-import FillRender from '~/components/renders/FillRender'
-import TextRender from '~/components/renders/TextRender'
-import GradientRender from '~/components/renders/GradientRender'
+import RectangleRender from '@/components/renders/RectangleRender'
+import PolygonRender from '@/components/renders/PolygonRender'
+import ArcCircleRender from '@/components/renders/ArcCircleRender'
+import ImageRender from '@/components/renders/ImageRender'
+import FillRender from '@/components/renders/FillRender'
+import TextRender from '@/components/renders/TextRender'
+import GradientRender from '@/components/renders/GradientRender'
 
 export default {
   name: 'EdgeCanvas',
