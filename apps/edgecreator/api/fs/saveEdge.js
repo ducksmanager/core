@@ -1,13 +1,32 @@
 const fs = require('fs')
+const svg2img = require('svg2img')
 
 export default function (req, res) {
-  const { country, magazine, issuenumber, content } = req.body
-  const fileName = `${req.body.export ? '' : '_'}${magazine}.${issuenumber}.svg`
-  const path = `${process.env.EDGES_PATH}/${country}/gen/${fileName}`
+  const { runExport, country, magazine, issuenumber, content } = req.body
+  const fileName = `${runExport ? '' : '_'}${magazine}.${issuenumber}.svg`
+  const svgPath = `${process.env.EDGES_PATH}/${country}/gen/${fileName}`
 
-  fs.mkdirSync(require('path').dirname(path), { recursive: true })
-  fs.writeFile(path, content, function () {
-    res.writeHeader(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ path }))
+  fs.mkdirSync(require('path').dirname(svgPath), { recursive: true })
+  fs.writeFile(svgPath, content, function () {
+    let paths = { svgPath }
+    if (runExport) {
+      const pngPath = svgPath.replace('.svg', '.png')
+      svg2img(content, (error, buffer) => {
+        fs.writeFile(pngPath, buffer, function () {
+          paths = { ...paths, pngPath }
+
+          if (error) {
+            res.writeHeader(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error }))
+          } else {
+            res.writeHeader(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(paths))
+          }
+        })
+      })
+    } else {
+      res.writeHeader(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(paths))
+    }
   })
 }

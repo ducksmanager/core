@@ -269,27 +269,27 @@ export default {
     ...mapState('user', ['allUsers']),
   },
   methods: {
-    save(andExport) {
+    save(runExport) {
       const vm = this
       this.zoom = 1.5
-      if (andExport) {
+      if (runExport) {
         this.exportPending = true
       } else {
         this.savePending = true
       }
       vm.$nextTick().then(() => {
         vm.issuenumbers.forEach(async (issuenumber) => {
-          const response = await vm.$axios.$put(`/fs/save/${andExport ? 'export' : ''}`, {
-            export: andExport,
+          const response = await vm.$axios.$put('/fs/save', {
+            runExport,
             country: vm.country,
             magazine: vm.magazine,
             issuenumber,
             content: document.getElementById(`edge-canvas-${issuenumber}`).outerHTML,
           })
-          const isSuccess = response && response.path
+          const isSuccess = response && response.svgPath
           window.setTimeout(() => {
             vm.exportPending = vm.savePending = null
-            if (andExport) {
+            if (runExport) {
               vm.exportResult = isSuccess ? 'success' : 'error'
             } else {
               vm.saveResult = isSuccess ? 'success' : 'error'
