@@ -29,7 +29,11 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/axios', { src: '~/plugins/vue-cropper', ssr: false }],
+  plugins: [
+    '~/plugins/axios',
+    { src: '~/plugins/vue-cropper', ssr: false },
+    { src: '~/plugins/vue-bootstrap-typeahead', ssr: false },
+  ],
   /*
    ** Nuxt.js dev-modules
    */

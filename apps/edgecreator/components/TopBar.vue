@@ -147,7 +147,6 @@ import {
   BIconXSquareFill,
   BIconUnlock,
 } from 'bootstrap-vue'
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import Upload from '~/components/Upload'
 import Dimensions from '@/components/Dimensions'
 
@@ -163,7 +162,6 @@ export default {
     BIconHouse,
     BIconLock,
     BIconUnlock,
-    VueBootstrapTypeahead,
   },
   data() {
     return {
