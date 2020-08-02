@@ -13,14 +13,14 @@
     </metadata>
     <metadata
       v-for="photographer in contributors.photographers"
-      :key="photographer"
+      :key="photographer.username"
       type="contributor-photographer"
     >
       {{ photographer.username }}
     </metadata>
     <metadata
       v-for="designer in contributors.designers"
-      :key="designer"
+      :key="designer.username"
       type="contributor-designer"
     >
       {{ designer.username }}
@@ -94,7 +94,7 @@ export default {
     height: { type: Number, required: true },
     steps: { type: Array, required: true },
     photoUrls: { type: Array, required: true },
-    contributors: { type: Array, required: true },
+    contributors: { type: Object, required: true },
   },
   data() {
     return {

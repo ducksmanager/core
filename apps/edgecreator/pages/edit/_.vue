@@ -164,6 +164,8 @@ export default {
 
         vm.setDimensionsFromApi(steps)
         vm.setStepsFromApi(steps)
+        await vm.setPhotoUrlsFromApi(edge.id, issuenumberMin)
+        await vm.setContributorsFromApi(edge.id)
       })
   },
   methods: {
@@ -231,6 +233,23 @@ export default {
             dbOptions: step.options,
           }))
       )
+    },
+    async setPhotoUrlsFromApi(edgeId, issuenumber) {
+      const photo = await this.$axios.$get(`/api/edgecreator/model/v2/${edgeId}/photo/main`)
+      if (photo) {
+        this.addPhotoUrl({ issuenumber, filename: photo.nomfichier })
+      }
+    },
+    async setContributorsFromApi(edgeId) {
+      const vm = this
+      const contributors = await vm.$axios.$get(`/api/edgecreator/contributors/${edgeId}`)
+      contributors.forEach((contributor) => {
+        vm.addContributor({
+          contributionType:
+            contributor.contribution === 'photographe' ? 'photographers' : 'designers',
+          user: vm.allUsers.find((user) => user.id === contributor.idUtilisateur),
+        })
+      })
     },
     getEdgeUrl(issuenumber, extension) {
       return (
