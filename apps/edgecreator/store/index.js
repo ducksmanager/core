@@ -4,7 +4,7 @@ export const state = () => ({
   country: null,
   magazine: null,
   issuenumbers: [],
-  steps: [],
+  steps: null,
   photoUrls: {},
   contributors: {
     designers: [],
