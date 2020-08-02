@@ -264,6 +264,7 @@ export default {
       'setDimensions',
       'setCountry',
       'setMagazine',
+      'addStep',
       'setSteps',
       'addPhotoUrl',
       'addContributor',
