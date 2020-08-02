@@ -239,13 +239,6 @@ export default {
     ]),
     ...mapState('user', ['allUsers']),
   },
-  watch: {
-    async showExportModal(newValue) {
-      if (newValue) {
-        this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
-      }
-    },
-  },
   methods: {
     exportSvg() {
       const vm = this
@@ -265,7 +258,6 @@ export default {
       })
     },
     ...mapMutations(['setDimensions', 'addContributor', 'removeContributor']),
-    ...mapMutations('user', ['setAllUsers']),
   },
 }
 </script>

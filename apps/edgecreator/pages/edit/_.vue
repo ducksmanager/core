@@ -81,6 +81,9 @@ export default {
     ModelEdit,
     BIconCamera,
   },
+  async fetch() {
+    this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
+  },
   data() {
     return {
       error: null,
@@ -110,6 +113,7 @@ export default {
     ]),
     ...mapState('renders', ['supportedRenders']),
     ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge', 'showEdgePhotos']),
+    ...mapState('user', ['allUsers']),
   },
   watch: {
     async issuenumbers(newValue) {
@@ -252,6 +256,7 @@ export default {
       'loadSurroundingEdges',
       'loadGalleryItems',
     ]),
+    ...mapMutations('user', ['setAllUsers']),
   },
   middleware: 'authenticated',
 }
