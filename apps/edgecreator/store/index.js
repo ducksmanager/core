@@ -40,6 +40,9 @@ export const mutations = {
   addStep(state, step) {
     Vue.set(state.steps, state.steps.length, step)
   },
+  removeStep(state, stepNumber) {
+    state.steps.splice(stepNumber, 1)
+  },
   addPhotoUrl(state, { issuenumber, filename }) {
     Vue.set(state.photoUrls, issuenumber, (state.photoUrls[issuenumber] || []).concat(filename))
   },

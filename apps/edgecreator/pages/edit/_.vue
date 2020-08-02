@@ -48,13 +48,12 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <model-edit
+          @remove-step="removeStep($event)"
           @add-step="
-            (component) => {
-              addStep({
-                component,
-                svgGroupElement: null,
-              })
-            }
+            addStep({
+              component: $event,
+              svgGroupElement: null,
+            })
           "
         />
       </b-col>
@@ -265,6 +264,7 @@ export default {
       'setCountry',
       'setMagazine',
       'addStep',
+      'removeStep',
       'setSteps',
       'addPhotoUrl',
       'addContributor',
