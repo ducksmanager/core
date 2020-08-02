@@ -8,7 +8,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
   >
-    <metadata v-for="photoUrl in photoUrls[issuenumber] || []" :key="photoUrl" type="photo">
+    <metadata v-for="photoUrl in photoUrls || []" :key="photoUrl" type="photo">
       {{ photoUrl }}
     </metadata>
     <metadata

@@ -109,8 +109,8 @@ export default {
       handler: '~/api/fs/browseElements.js',
     },
     {
-      path: '/fs/export',
-      handler: '~/api/fs/exportEdge.js',
+      path: '/fs/save',
+      handler: '~/api/fs/saveEdge.js',
     },
     {
       path: '/fs/text',
