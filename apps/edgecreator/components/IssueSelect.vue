@@ -17,7 +17,13 @@
       v-show="currentCountryCode && currentPublicationCode"
       v-model="currentIssueNumber"
       :options="issues[currentPublicationCode]"
-      @change="$emit('change', null)"
+      @change="
+        $emit('change', {
+          countryCode: currentCountryCode,
+          publicationCode: currentPublicationCode,
+          issueNumber: currentIssueNumber,
+        })
+      "
     />
     <dimensions
       v-if="withDimensions && currentIssueNumber !== null"
