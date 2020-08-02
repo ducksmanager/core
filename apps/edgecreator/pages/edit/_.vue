@@ -2,7 +2,7 @@
   <b-container v-if="error" id="wrapper" fluid>
     {{ error }}
   </b-container>
-  <b-container v-else-if="width && height" id="wrapper" fluid>
+  <b-container v-else-if="steps && width && height" id="wrapper" fluid>
     <top-bar />
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right">
@@ -73,7 +73,6 @@ import ModelEdit from '@/components/ModelEdit'
 const DOMParser = require('xmldom').DOMParser
 
 export default {
-  name: 'Edit',
   components: {
     TopBar,
     EdgeCanvas,
@@ -118,8 +117,8 @@ export default {
   watch: {
     async issuenumbers(newValue) {
       if (newValue) {
-        this.loadGalleryItems()
-        this.loadSurroundingEdges()
+        await this.loadGalleryItems()
+        await this.loadSurroundingEdges()
       }
     },
   },
@@ -162,10 +161,11 @@ export default {
         }
         const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
 
-        vm.setDimensionsFromApi(steps)
-        vm.setStepsFromApi(steps)
         await vm.setPhotoUrlsFromApi(edge.id, issuenumberMin)
         await vm.setContributorsFromApi(edge.id)
+
+        vm.setDimensionsFromApi(steps)
+        vm.setStepsFromApi(steps)
       })
   },
   methods: {
