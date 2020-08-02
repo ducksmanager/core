@@ -3,13 +3,14 @@
     <b-tabs v-model="editingStepNumber" lazy pills card vertical>
       <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
         <template v-slot:title>
-          <div
+          <span
             :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
             @mouseover="hoveredStepNumber = stepNumber"
             @mouseout="hoveredStepNumber = null"
           >
             {{ supportedRenders.find((render) => render.component === step.component).label }}
-          </div>
+          </span>
+          <b-icon-x-square-fill class="remove" @click="$emit('remove-step', stepNumber)" />
         </template>
         <b-card-text v-if="step.component === 'Text'">
           <form-input-row
@@ -124,10 +125,11 @@ import { mapState } from 'vuex'
 import FormColorInputRow from '@/components/FormColorInputRow'
 import FormInputRow from '@/components/FormInputRow'
 import Gallery from '@/components/Gallery'
+import { BIconXSquareFill } from 'bootstrap-vue'
 
 export default {
   name: 'ModelEdit',
-  components: { FormColorInputRow, FormInputRow, Gallery },
+  components: { FormColorInputRow, FormInputRow, Gallery, BIconXSquareFill },
   data() {
     return {
       clickedImage: null,
@@ -165,6 +167,13 @@ export default {
 #edit-card,
 #edit-card .tabs {
   height: 100%;
+}
+
+#edit-card .tabs ul li .remove {
+  float: right;
+  margin-top: 5px;
+  margin-left: 10px;
+  height: 15px;
 }
 
 .hovered-step {
