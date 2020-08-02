@@ -87,19 +87,38 @@
                 issuenumber: issuenumbers[0],
               }" /></b-modal
         ></b-button>
+        <b-spinner v-if="savePending" v-b-tooltip.hover variant="primary" />
+        <b-button v-else-if="saveResult === 'success'" pill variant="outline-primary" size="sm">
+          <b-icon-check />
+        </b-button>
+        <b-button v-else-if="saveResult === 'error'" pill variant="outline-danger" size="sm">
+          <b-icon-x />
+        </b-button>
+        <b-button v-else title="Save" pill variant="outline-primary" size="sm" @click="save(false)"
+          ><b-icon-archive
+        /></b-button>
+
+        <b-spinner v-if="exportPending" v-b-tooltip.hover variant="success" />
+        <b-button v-else-if="exportResult === 'success'" pill variant="outline-success" size="sm">
+          <b-icon-check />
+        </b-button>
+        <b-button v-else-if="exportResult === 'error'" pill variant="outline-danger" size="sm">
+          <b-icon-x />
+        </b-button>
         <b-button
+          v-else
           v-b-tooltip.hover
           title="Export"
           pill
           variant="outline-success"
           size="sm"
           @click="showExportModal = !showExportModal"
-          ><b-icon-archive /><b-modal
+          ><b-icon-cloud-arrow-up-fill /><b-modal
             v-model="showExportModal"
             title="Export"
             ok-only
             ok-title="Export"
-            @ok="exportSvg"
+            @ok="save(true)"
           >
             <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
               <h2>{{ $t('export.' + contributionType) }}</h2>
@@ -145,7 +164,10 @@ import {
   BIconHouse,
   BIconLock,
   BIconXSquareFill,
+  BIconX,
+  BIconCheck,
   BIconUnlock,
+  BIconCloudArrowUpFill,
 } from 'bootstrap-vue'
 import Upload from '@/components/Upload'
 import Dimensions from '@/components/Dimensions'
@@ -156,11 +178,14 @@ export default {
     Dimensions,
     Upload,
     BIconArchive,
+    BIconCloudArrowUpFill,
     BIconXSquareFill,
+    BIconX,
     BIconArrowsAngleExpand,
     BIconCamera,
     BIconHouse,
     BIconLock,
+    BIconCheck,
     BIconUnlock,
   },
   data() {
@@ -169,6 +194,10 @@ export default {
       showPhotoModal: false,
       showExportModal: false,
       users: [],
+      savePending: false,
+      saveResult: null,
+      exportPending: false,
+      exportResult: false,
     }
   },
   computed: {
@@ -240,20 +269,35 @@ export default {
     ...mapState('user', ['allUsers']),
   },
   methods: {
-    exportSvg() {
+    save(andExport) {
       const vm = this
       this.zoom = 1.5
+      if (andExport) {
+        this.exportPending = true
+      } else {
+        this.savePending = true
+      }
       vm.$nextTick().then(() => {
         vm.issuenumbers.forEach(async (issuenumber) => {
-          await vm.$axios.$put('/fs/export', {
+          const response = await vm.$axios.$put(`/fs/save/${andExport ? 'export' : ''}`, {
+            export: andExport,
             country: vm.country,
             magazine: vm.magazine,
             issuenumber,
             content: document.getElementById(`edge-canvas-${issuenumber}`).outerHTML,
           })
-          vm.$bvToast.toast('Export done', {
-            toaster: 'b-toaster-top-center',
-          })
+          const isSuccess = response && response.path
+          window.setTimeout(() => {
+            vm.exportPending = vm.savePending = null
+            if (andExport) {
+              vm.exportResult = isSuccess ? 'success' : 'error'
+            } else {
+              vm.saveResult = isSuccess ? 'success' : 'error'
+            }
+            window.setTimeout(() => {
+              vm.exportResult = vm.saveResult = null
+            }, 2000)
+          }, 1000)
         })
       })
     },
@@ -261,3 +305,10 @@ export default {
   },
 }
 </script>
+<style scoped>
+.spinner-border {
+  width: 30px;
+  height: 30px;
+  margin-bottom: -5px;
+}
+</style>

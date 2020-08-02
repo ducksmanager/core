@@ -253,7 +253,7 @@ export default {
     getEdgeUrl(issuenumber, extension) {
       return (
         `${process.env.EDGES_URL}/${this.country}/gen/` +
-        `${this.magazine}.${issuenumber}.${extension}`
+        `_${this.magazine}.${issuenumber}.${extension}`
       )
     },
     hasPhotoUrl(issuenumber) {
