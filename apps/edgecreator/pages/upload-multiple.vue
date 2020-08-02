@@ -27,7 +27,11 @@
       <b-jumbotron>
         {{ $t('upload.description') }}
       </b-jumbotron>
-      <issue-select :key="crops.length" with-dimensions @change="currentCrop = $event" />
+      <issue-select
+        :key="crops.length"
+        with-dimensions
+        @change="currentCrop = $event && $event.width ? $event : null"
+      />
       <b-button :disabled="!currentCrop" @click="addCrop">{{ $t('upload.add_edge') }}</b-button>
       <b-container>
         <b-card-group deck columns>

@@ -8,7 +8,7 @@
     @ok="startEditing"
   >
     {{ $t('prompt.select_issue') }}
-    <issue-select @change="issue = $event" />
+    <issue-select @change="issue = $event && $event.issueNumber ? $event : null" />
   </b-modal>
 </template>
 <script>
