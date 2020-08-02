@@ -22,7 +22,7 @@
   </form-input-row>
 </template>
 <script>
-import FormInputRow from '~/components/FormInputRow'
+import FormInputRow from '@/components/FormInputRow'
 
 export default {
   components: { FormInputRow },

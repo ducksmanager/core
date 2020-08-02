@@ -73,8 +73,8 @@
 
 <script>
 import Vue from 'vue'
-import IssueSelect from '~/components/IssueSelect'
 import EdgeCanvas from '@/components/EdgeCanvas'
+import IssueSelect from '@/components/IssueSelect'
 
 export default {
   components: { IssueSelect, EdgeCanvas },

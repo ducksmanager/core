@@ -147,7 +147,7 @@ import {
   BIconXSquareFill,
   BIconUnlock,
 } from 'bootstrap-vue'
-import Upload from '~/components/Upload'
+import Upload from '@/components/Upload'
 import Dimensions from '@/components/Dimensions'
 
 export default {

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Upload from '~/components/Upload'
+import Upload from '@/components/Upload'
 
 export default {
   components: {
