@@ -141,21 +141,21 @@ export default {
     await this.$axios
       .$get(this.getEdgeUrl(issuenumberMin, 'svg'))
       .then((data) => {
-        const doc = new DOMParser().parseFromString(data, 'image/svg+xml')
-        const svgElement = doc.getElementsByTagName('svg')[0]
-        const svgChildNodes = Object.values(svgElement.childNodes)
-
-        vm.setDimensionsFromSvg(svgElement)
-        vm.setStepsFromSvg(svgChildNodes)
-        vm.setPhotoUrlsFromSvg(svgChildNodes)
-        vm.setContributorsFromSvg(svgChildNodes)
+        vm.loadSvg(data)
       })
       .catch(async () => {
         const edge = await this.$axios.$get(
           `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
         )
         if (!edge) {
-          vm.setSteps([])
+          await this.$axios
+            .$get(this.getEdgeUrl(issuenumberMin, 'svg', true))
+            .then((data) => {
+              vm.loadSvg(data)
+            })
+            .catch(async () => {
+              vm.setSteps([])
+            })
           return
         }
         const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
@@ -168,6 +168,16 @@ export default {
       })
   },
   methods: {
+    loadSvg(svgString) {
+      const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml')
+      const svgElement = doc.getElementsByTagName('svg')[0]
+      const svgChildNodes = Object.values(svgElement.childNodes)
+
+      this.setDimensionsFromSvg(svgElement)
+      this.setStepsFromSvg(svgChildNodes)
+      this.setPhotoUrlsFromSvg(svgChildNodes)
+      this.setContributorsFromSvg(svgChildNodes)
+    },
     getFromSvgMetadata(svgChildNodes, metadataType) {
       return svgChildNodes
         .filter(
@@ -250,10 +260,10 @@ export default {
         })
       })
     },
-    getEdgeUrl(issuenumber, extension) {
+    getEdgeUrl(issuenumber, extension, publishedVersion = false) {
       return (
         `${process.env.EDGES_URL}/${this.country}/gen/` +
-        `_${this.magazine}.${issuenumber}.${extension}`
+        `${publishedVersion ? '' : '_'}${this.magazine}.${issuenumber}.${extension}`
       )
     },
     hasPhotoUrl(issuenumber) {
