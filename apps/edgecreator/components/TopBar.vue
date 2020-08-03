@@ -269,6 +269,17 @@ export default {
     ...mapState('user', ['allUsers']),
   },
   methods: {
+    removeVueMarkup(element) {
+      Object.values(element.attributes || {})
+        .filter((attribute) => attribute.name.startsWith('data-v-'))
+        .forEach((vDataAttribute) => {
+          element.removeAttribute(vDataAttribute.name)
+        })
+      Object.values(element.childNodes).forEach((childNode) => {
+        this.removeVueMarkup(childNode)
+      })
+      return element
+    },
     save(runExport) {
       const vm = this
       this.zoom = 1.5
@@ -279,12 +290,15 @@ export default {
       }
       vm.$nextTick().then(() => {
         vm.issuenumbers.forEach(async (issuenumber) => {
+          const cleanSvg = vm.removeVueMarkup(
+            document.getElementById(`edge-canvas-${issuenumber}`).cloneNode(true)
+          )
           const response = await vm.$axios.$put('/fs/save', {
             runExport,
             country: vm.country,
             magazine: vm.magazine,
             issuenumber,
-            content: document.getElementById(`edge-canvas-${issuenumber}`).outerHTML,
+            content: cleanSvg.outerHTML,
           })
           const isSuccess = response && response.svgPath
           window.setTimeout(() => {
