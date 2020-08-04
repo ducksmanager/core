@@ -19,6 +19,8 @@ export const state = () => ({
   edgesAfter: [],
 
   galleryItems: [],
+
+  stepColors: {},
 })
 
 export const mutations = {
@@ -64,6 +66,17 @@ export const mutations = {
   },
   setGalleryItems(state, { items: galleryItems }) {
     state.galleryItems = galleryItems
+  },
+  setStepColors(state, { stepNumber, colors }) {
+    Vue.set(state.stepColors, stepNumber, colors)
+  },
+}
+
+export const getters = {
+  colors: (state) => {
+    return Object.values(state.stepColors).reduce((acc, colors) => {
+      return [...new Set(acc.concat(colors))].sort()
+    }, [])
   },
 }
 

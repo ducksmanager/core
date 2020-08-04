@@ -1,14 +1,15 @@
 <template>
   <form-input-row
+    type="color"
     :option-name="optionName"
     :label="`Color${optionName === 'Color' ? '' : ` (${optionName})`}`"
-    type="color"
+    :class="{ 'color-row': true, 'transparent-selected': options[optionName] === 'transparent' }"
     :options="options"
     :disabled="options[optionName] === 'transparent'"
     ><input
-      v-if="canBeTransparent"
       :id="`${optionName}-transparent`"
       :checked="options[optionName] === 'transparent'"
+      style="display: none;"
       type="checkbox"
       @change="
         $root.$emit(
@@ -18,11 +19,30 @@
         )
       "
     />
-    <label v-if="canBeTransparent" :for="`${optionName}-transparent`">Transparent</label>
+    <label v-if="canBeTransparent" class="transparent" :for="`${optionName}-transparent`"
+      ><img :id="`${optionName}-transparent`" src="/transparent.png"
+    /></label>
+
+    <template v-if="options[optionName] !== 'transparent'" v-slot:suffix>
+      <b-badge :id="`${optionName}-popover-colors`">Frequent</b-badge>
+      <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
+        <ul>
+          <li v-for="color in frequentColorsWithoutCurrent" :key="color">
+            <span
+              class="frequent-color"
+              :style="{ background: color }"
+              @click="$root.$emit('set-option', optionName, color)"
+              >&nbsp;</span
+            >
+          </li>
+        </ul>
+      </b-popover>
+    </template>
   </form-input-row>
 </template>
 <script>
 import FormInputRow from '@/components/FormInputRow'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { FormInputRow },
@@ -47,8 +67,48 @@ export default {
     }
     return {
       originalColor,
+      isTransparent: originalColor === 'transparent',
     }
+  },
+  computed: {
+    frequentColorsWithoutCurrent() {
+      return this.colors.filter((color) => color !== this.options[this.optionName])
+    },
+    ...mapGetters(['colors']),
   },
 }
 </script>
-<style></style>
+<style>
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+input[type='color'] {
+  display: inline-block;
+  width: 40px;
+  border: 0;
+  background: none !important;
+}
+
+label.transparent img {
+  position: absolute;
+  top: 0;
+}
+
+.color-row.transparent-selected label.transparent img,
+.color-row:not(.transparent-selected) input[type='color'] {
+  border: 1px dashed black;
+}
+.badge {
+  cursor: pointer;
+}
+.frequent-color {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 15px;
+}
+</style>
