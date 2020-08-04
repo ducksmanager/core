@@ -5,9 +5,9 @@
     <h3>{{ $t('header.ongoing_edges') }}</h3>
 
     <b-container>
-      <b-card-group v-if="getEdgesByType('ongoing').length" deck columns>
+      <b-card-group v-if="getEdgesByStatus('ongoing').length" deck columns>
         <b-card
-          v-for="(edge, i) in getEdgesByType('ongoing')"
+          v-for="(edge, i) in getEdgesByStatus('ongoing')"
           :key="i"
           class="col-md-4 text-center"
         >
@@ -22,9 +22,9 @@
     <h3>{{ $t('header.pending_edges') }}</h3>
 
     <b-container>
-      <b-card-group v-if="getEdgesByType('pending').length" deck columns>
+      <b-card-group v-if="getEdgesByStatus('pending').length" deck columns>
         <b-card
-          v-for="(edge, i) in getEdgesByType('pending')"
+          v-for="(edge, i) in getEdgesByStatus('pending')"
           :key="i"
           class="col-md-4 text-center"
         >
@@ -39,9 +39,9 @@
     <h3>{{ $t('header.ongoing_by_other_user_edges') }}</h3>
 
     <b-container>
-      <b-card-group v-if="getEdgesByType('ongoing_by_other_user').length" deck columns>
+      <b-card-group v-if="getEdgesByStatus('ongoing_by_other_user').length" deck columns>
         <b-card
-          v-for="(edge, i) in getEdgesByType('ongoing_by_other_user')"
+          v-for="(edge, i) in getEdgesByStatus('ongoing_by_other_user')"
           :key="i"
           class="col-md-4 text-center"
         >
@@ -64,7 +64,10 @@
 </template>
 
 <script>
+import svgUtilsMixin from '@/mixins/svgUtilsMixin'
+
 export default {
+  mixins: [svgUtilsMixin],
   data() {
     return {
       edges: [],
@@ -72,48 +75,71 @@ export default {
   },
   mounted() {
     const vm = this
-    this.$axios
-      .$get('/api/edgecreator/v2/model')
-      .then((data) => {
-        data.forEach((edge) => {
-          vm.addEdge(edge, 'ongoing')
+    const apiCalls = [
+      { status: 'ongoing', url: '/api/edgecreator/v2/model' },
+      { status: 'ongoing_by_other_user', url: '/api/edgecreator/v2/model/editedbyother/all' },
+      { status: 'pending', url: '/api/edgecreator/v2/model/unassigned/all' },
+    ]
+    apiCalls.forEach(({ status, url }) => {
+      vm.$axios
+        .$get(url)
+        .then((data) => {
+          data.forEach((edge) => {
+            vm.addEdgeFromApi(edge, status)
+          })
         })
-      })
-      .catch((e) => {
-        console.error(e)
-      })
-    this.$axios
-      .$get('/api/edgecreator/v2/model/editedbyother/all')
-      .then((data) => {
-        data.forEach((edge) => {
-          vm.addEdge(edge, 'ongoing_by_other_user')
+        .catch((e) => {
+          console.error(e)
         })
+    })
+
+    this.$axios.$get('/fs/browseWipEdges').then((edges) => {
+      edges.forEach(async (fileName) => {
+        const [, country, magazine, issuenumber] = fileName.match(
+          /\/([^/]+)\/gen\/_([^.]+)\.(.+).svg$/
+        )
+        if ([country, magazine, issuenumber].includes(undefined)) {
+          console.error('Invalid SVG file name : ' + fileName)
+          return
+        }
+        const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
+        const edgeDesigners = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
+
+        vm.addEdgeFromSvg({ country, magazine, issuenumber }, edgeDesigners)
       })
-      .catch((e) => {
-        console.error(e)
-      })
-    this.$axios
-      .$get('/api/edgecreator/v2/model/unassigned/all')
-      .then((data) => {
-        data.forEach((edge) => {
-          vm.addEdge(edge, 'pending')
-        })
-      })
-      .catch((e) => {
-        console.error(e)
-      })
+    })
   },
   methods: {
-    addEdge(edge, type) {
-      this.edges.push({
-        type,
-        country: edge.pays,
-        magazine: edge.magazine,
-        issuenumber: edge.numero,
-      })
+    addEdgeFromApi(edge, status) {
+      this.addEdge(
+        {
+          country: edge.pays,
+          magazine: edge.magazine,
+          issuenumber: edge.numero,
+        },
+        status
+      )
     },
-    getEdgesByType(type) {
-      return this.edges.filter((edge) => edge.type === type)
+    addEdgeFromSvg(edge, edgeDesigners) {
+      this.addEdge(
+        edge,
+        edgeDesigners.length
+          ? edgeDesigners.includes(this.$cookies.get('dm-user'))
+            ? 'ongoing'
+            : 'ongoing_by_other_user'
+          : 'pending'
+      )
+    },
+    addEdge(edge, status) {
+      this.edges = [
+        ...new Set(this.edges).add({
+          status,
+          ...edge,
+        }),
+      ]
+    },
+    getEdgesByStatus(status) {
+      return this.edges.filter((edge) => edge.status === status)
     },
   },
   middleware: 'authenticated',

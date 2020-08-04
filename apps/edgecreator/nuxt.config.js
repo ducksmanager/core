@@ -109,6 +109,10 @@ export default {
       handler: '~/api/fs/browseElements.js',
     },
     {
+      path: '/fs/browseWipEdges',
+      handler: '~/api/fs/browseWipEdges.js',
+    },
+    {
       path: '/fs/save',
       handler: '~/api/fs/saveEdge.js',
     },

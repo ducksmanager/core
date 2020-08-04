@@ -68,8 +68,7 @@ import TopBar from '@/components/TopBar'
 import EdgeCanvas from '@/components/EdgeCanvas'
 import PublishedEdge from '@/components/PublishedEdge'
 import ModelEdit from '@/components/ModelEdit'
-
-const DOMParser = require('xmldom').DOMParser
+import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 
 export default {
   components: {
@@ -79,6 +78,7 @@ export default {
     ModelEdit,
     BIconCamera,
   },
+  mixins: [svgUtilsMixin],
   async fetch() {
     this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
   },
@@ -138,26 +138,11 @@ export default {
 
     this.setIssuenumbersFromMinMax({ min: issuenumberMin, max: issuenumberMax })
 
-    await this.$axios
-      .$get(this.getEdgeUrl(issuenumberMin, 'svg'))
-      .then((data) => {
-        vm.loadSvg(data)
-      })
-      .catch(async () => {
-        const edge = await this.$axios.$get(
-          `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
-        )
-        if (!edge) {
-          await this.$axios
-            .$get(this.getEdgeUrl(issuenumberMin, 'svg', true))
-            .then((data) => {
-              vm.loadSvg(data)
-            })
-            .catch(async () => {
-              vm.setSteps([])
-            })
-          return
-        }
+    this.loadSvg(this.country, this.magazine, issuenumberMin).catch(async () => {
+      const edge = await this.$axios.$get(
+        `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
+      )
+      if (edge) {
         const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
 
         await vm.setPhotoUrlsFromApi(edge.id, issuenumberMin)
@@ -165,27 +150,26 @@ export default {
 
         vm.setDimensionsFromApi(steps)
         vm.setStepsFromApi(steps)
-      })
+      } else {
+        this.loadSvg(this.country, this.magazine, issuenumberMin, true).catch(async () => {
+          vm.setSteps([])
+        })
+      }
+    })
   },
   methods: {
-    loadSvg(svgString) {
-      const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml')
-      const svgElement = doc.getElementsByTagName('svg')[0]
-      const svgChildNodes = Object.values(svgElement.childNodes)
+    async loadSvg(country, magazine, issuenumber, publishedVersion = false) {
+      const { svgElement, svgChildNodes } = await this.loadSvgFromString(
+        country,
+        magazine,
+        issuenumber,
+        publishedVersion
+      )
 
       this.setDimensionsFromSvg(svgElement)
       this.setStepsFromSvg(svgChildNodes)
       this.setPhotoUrlsFromSvg(svgChildNodes)
       this.setContributorsFromSvg(svgChildNodes)
-    },
-    getFromSvgMetadata(svgChildNodes, metadataType) {
-      return svgChildNodes
-        .filter(
-          (node) =>
-            node.nodeName === 'metadata' &&
-            node.attributes.getNamedItem('type').nodeValue === metadataType
-        )
-        .map((metadataNode) => metadataNode.textContent.trim())
     },
     setDimensionsFromSvg(svgElement) {
       this.setDimensions({
@@ -205,7 +189,7 @@ export default {
     },
     setPhotoUrlsFromSvg(svgChildNodes) {
       const vm = this
-      vm.getFromSvgMetadata(svgChildNodes, 'photo').forEach((photoUrl) => {
+      vm.getSvgMetadata(svgChildNodes, 'photo').forEach((photoUrl) => {
         vm.addPhotoUrl({ issuenumber: vm.issuenumbers[0], filename: photoUrl })
       })
     },
@@ -213,11 +197,9 @@ export default {
       const vm = this
       const contributionTypes = ['photographer', 'designer']
       contributionTypes.forEach((contributionType) => {
-        vm.getFromSvgMetadata(svgChildNodes, `contributor-${contributionType}`).forEach(
-          (username) => {
-            vm.addContributor({ contributionType: `${contributionType}s`, user: { username } })
-          }
-        )
+        vm.getSvgMetadata(svgChildNodes, `contributor-${contributionType}`).forEach((username) => {
+          vm.addContributor({ contributionType: `${contributionType}s`, user: { username } })
+        })
       })
     },
 
@@ -259,12 +241,6 @@ export default {
           user: vm.allUsers.find((user) => user.id === contributor.idUtilisateur),
         })
       })
-    },
-    getEdgeUrl(issuenumber, extension, publishedVersion = false) {
-      return (
-        `${process.env.EDGES_URL}/${this.country}/gen/` +
-        `${publishedVersion ? '' : '_'}${this.magazine}.${issuenumber}.${extension}`
-      )
     },
     hasPhotoUrl(issuenumber) {
       return (this.photoUrls[issuenumber] || []).length
