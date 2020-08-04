@@ -34,6 +34,14 @@ export default {
         this.editingIssuenumber !== this.issuenumber
       )
     },
+    colors() {
+      return Object.keys(this.options)
+        .filter(
+          (optionName) =>
+            this.isColorOption(optionName) && this.options[optionName] !== 'transparent'
+        )
+        .map((optionName) => this.options[optionName])
+    },
   },
   watch: {
     editingStepNumber: {
@@ -83,8 +91,17 @@ export default {
         }
       },
     },
+    colors: {
+      immediate: true,
+      handler(newColors) {
+        this.setStepColors({ stepNumber: this.stepNumber, colors: newColors })
+      },
+    },
   },
   methods: {
+    isColorOption(optionName) {
+      return optionName.toLowerCase().includes('color') || ['fill', 'stroke'].includes(optionName)
+    },
     isEditingCurrentStep(editingStepNumber, editingIssuenumber) {
       return editingStepNumber === this.stepNumber && editingIssuenumber === this.issuenumber
     },
@@ -127,6 +144,7 @@ export default {
         )
     },
     ...mapMutations('editingStep', { setEditingStepOptions: 'setStepOptions' }),
+    ...mapMutations(['setStepColors']),
   },
   async mounted() {
     const vm = this

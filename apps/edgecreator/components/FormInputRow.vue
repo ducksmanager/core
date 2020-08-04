@@ -21,6 +21,9 @@
       ></b-form-input>
       <slot />
     </b-col>
+    <b-col sm="4" md="5">
+      <slot name="suffix" />
+    </b-col>
   </b-row>
 </template>
 
