@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 require('@uppy/core/dist/style.css')
 require('@uppy/dashboard/dist/style.css')
@@ -28,7 +28,6 @@ export default {
       images: [],
       bytesUploaded: 0,
       bytesTotal: 0,
-      showProgress: false,
     }
   },
   mounted() {
@@ -73,9 +72,10 @@ export default {
       .run()
     uppy.on('upload-progress', (data) => {
       vm.$emit('upload-progress', data)
-      this.bytesUploaded = data.bytesUploaded
+      vm.bytesUploaded = data.bytesUploaded
     })
     uppy.on('upload-success', (fileId, payload) => {
+      vm.loadGalleryItems({ itemType: vm.photo ? 'photos' : 'elements' })
       vm.$emit('upload-success')
       if (vm.photo) {
         if (!vm.multiple) {
@@ -83,13 +83,10 @@ export default {
         }
       }
     })
-    uppy.on('success', (fileCount) => {
-      vm.$emit('success', fileCount)
-      this.showProgress = false
-    })
   },
   methods: {
     ...mapMutations(['addPhotoUrl']),
+    ...mapActions(['loadGalleryItems']),
   },
 }
 </script>

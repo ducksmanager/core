@@ -80,6 +80,11 @@ export const getters = {
   },
 }
 
+const numericSortCollator = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: 'base',
+})
+
 export const actions = {
   setIssuenumbersFromMinMax({ state, commit }, { min, max }) {
     if (max === undefined) {
@@ -99,15 +104,14 @@ export const actions = {
       }
     }
   },
-  async loadGalleryItems({ state, commit }) {
-    const numericSortCollator = new Intl.Collator(undefined, {
-      numeric: true,
-      sensitivity: 'base',
-    })
-    const items = await this.$axios.$get(`/fs/browseElements/${state.country}/${state.magazine}`)
+  async loadGalleryItems({ state, commit }, { itemType }) {
+    const url =
+      itemType === 'elements'
+        ? `/fs/browseElements/${state.country}/${state.magazine}`
+        : `/fs/browsePhotos/${state.country}/${state.magazine}/${state.issuenumbers[0]}`
 
     commit('setGalleryItems', {
-      items: items.sort(numericSortCollator.compare),
+      items: (await this.$axios.$get(url)).sort(numericSortCollator.compare),
     })
   },
   async loadPublicationIssues({ state }) {
