@@ -116,7 +116,8 @@ export default {
   watch: {
     async issuenumbers(newValue) {
       if (newValue) {
-        await this.loadGalleryItems({ itemType: 'elements' })
+        await this.loadItems({ itemType: 'elements' })
+        await this.loadItems({ itemType: 'photos' })
         await this.loadSurroundingEdges()
       }
     },
@@ -260,7 +261,7 @@ export default {
       'setIssuenumbersFromMinMax',
       'loadPublicationIssues',
       'loadSurroundingEdges',
-      'loadGalleryItems',
+      'loadItems',
     ]),
     ...mapMutations('user', ['setAllUsers']),
   },

@@ -1,13 +1,23 @@
 <template>
   <div>
+    <b-modal
+      v-model="showChooseImageModal"
+      :title="clickedImage"
+      scrollable
+      ok-title="Choose"
+      @ok="chooseImage"
+    >
+      <img :alt="clickedImage" :src="getImageUrl(clickedImage)" />
+    </b-modal>
     <b-modal v-model="showUploadModal" ok-only
       ><upload
+        :photo="imageType === 'photos'"
         :edge="{
           country,
           magazine,
         }"
     /></b-modal>
-    <b-alert v-if="!galleryItems.length" show variant="warning"
+    <b-alert v-if="!publicationElements.length" show variant="warning"
       >No items.
       <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">Upload new</a>
     </b-alert>
@@ -15,20 +25,22 @@
       <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">Upload new</a>
       <b-row ref="gallery" class="gallery">
         <b-col
-          v-for="image in galleryItems"
+          v-for="image in items"
           :key="image"
           sm="2"
           :class="{
-            selected: image === selectedImage,
+            selected: selected.includes(image),
           }"
-          @click="$emit('image-click', { image })"
+          @click="
+            clickedImage = image
+            showChooseImageModal = true
+          "
         >
           <b-img-lazy
-            v-b-modal.image-modal
             v-b-tooltip.hover
             thumbnail
             class="fit"
-            :src="getElementUrl(image)"
+            :src="getImageUrl(image)"
             :alt="image"
             :title="image"
           ></b-img-lazy>
@@ -39,7 +51,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import Upload from '@/components/Upload'
 
 export default {
@@ -48,18 +60,47 @@ export default {
     Upload,
   },
   props: {
-    selectedImage: { type: String, default: null },
+    imageType: { type: String, required: true },
   },
   data: () => ({
+    clickedImage: null,
     showUploadModal: false,
+    showChooseImageModal: false,
   }),
   computed: {
-    ...mapState(['country', 'magazine', 'galleryItems']),
+    ...mapState([
+      'country',
+      'magazine',
+      'issuenumbers',
+      'publicationElements',
+      'publicationPhotos',
+      'photoUrls',
+    ]),
+    ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
+    items() {
+      return this.imageType === 'elements' ? this.publicationElements : this.publicationPhotos
+    },
+    selected() {
+      return this.imageType === 'elements'
+        ? [this.editingStepOptions.src]
+        : this.photoUrls[this.issuenumbers[0]] || []
+    },
   },
   methods: {
-    getElementUrl(elementFileName) {
-      return `${process.env.EDGES_URL}/${this.country}/elements/${elementFileName}`
+    getImageUrl(elementFileName) {
+      return `${process.env.EDGES_URL}/${this.country}/${
+        this.imageType === 'elements' ? this.imageType : 'photos'
+      }/${elementFileName}`
     },
+    chooseImage() {
+      if (this.imageType === 'elements') {
+        this.$root.$emit('set-option', 'src', this.clickedImage)
+      } else if (!(this.photoUrls[this.issuenumbers[0]] || []).includes(this.clickedImage)) {
+        this.addPhotoUrl({ issuenumber: this.issuenumbers[0], filename: this.clickedImage })
+      }
+      this.clickedImage = null
+    },
+    ...mapMutations(['addPhotoUrl']),
   },
 }
 </script>
