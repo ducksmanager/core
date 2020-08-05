@@ -78,14 +78,8 @@
           :disabled="issuenumbers.length > 1"
           size="sm"
           @click="showPhotoModal = !showPhotoModal"
-          ><b-icon-camera /><b-modal v-model="showPhotoModal" ok-only
-            ><upload
-              photo
-              :edge="{
-                country,
-                magazine,
-                issuenumber: issuenumbers[0],
-              }" /></b-modal
+          ><b-icon-camera /><b-modal v-model="showPhotoModal" ok-only>
+            <Gallery image-type="photos" /> </b-modal
         ></b-button>
         <b-spinner v-if="savePending" v-b-tooltip.hover variant="primary" />
         <b-button v-else-if="saveResult === 'success'" pill variant="outline-primary" size="sm">
@@ -169,14 +163,14 @@ import {
   BIconUnlock,
   BIconCloudArrowUpFill,
 } from 'bootstrap-vue'
-import Upload from '@/components/Upload'
 import Dimensions from '@/components/Dimensions'
+import Gallery from '@/components/Gallery'
 
 export default {
   name: 'TopBar',
   components: {
+    Gallery,
     Dimensions,
-    Upload,
     BIconArchive,
     BIconCloudArrowUpFill,
     BIconXSquareFill,
@@ -192,6 +186,7 @@ export default {
     return {
       showSidebar: true,
       showPhotoModal: false,
+      showUploadPhotoModal: false,
       showExportModal: false,
       users: [],
       savePending: false,
@@ -315,7 +310,7 @@ export default {
         })
       })
     },
-    ...mapMutations(['setDimensions', 'addContributor', 'removeContributor']),
+    ...mapMutations(['setDimensions', 'addContributor', 'removeContributor', 'addPhotoUrl']),
   },
 }
 </script>

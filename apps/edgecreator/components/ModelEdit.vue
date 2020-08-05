@@ -49,16 +49,9 @@
             list-id="src-list"
             :options="editingStepOptions"
           >
-            <b-form-datalist id="src-list" :options="galleryItems" />
+            <b-form-datalist id="src-list" :options="publicationElements" />
           </form-input-row>
-          <Gallery
-            :selected-image="editingStepOptions['src']"
-            @image-click="
-              ({ image }) => {
-                clickedImage = image
-              }
-            "
-          />
+          <Gallery image-type="elements" />
         </b-card-text>
         <b-card-text v-if="['Rectangle', 'ArcCircle'].includes(step.component)">
           <form-color-input-row
@@ -109,15 +102,6 @@
         </b-card-text>
       </b-tab>
     </b-tabs>
-    <b-modal
-      id="image-modal"
-      scrollable
-      ok-title="Select"
-      :title="clickedImage"
-      @ok="$root.$emit('set-option', 'src', clickedImage)"
-    >
-      <img :alt="clickedImage" :src="getElementUrl(clickedImage)" />
-    </b-modal>
   </b-card>
 </template>
 <script>
@@ -130,11 +114,6 @@ import { BIconXSquareFill } from 'bootstrap-vue'
 export default {
   name: 'ModelEdit',
   components: { FormColorInputRow, FormInputRow, Gallery, BIconXSquareFill },
-  data() {
-    return {
-      clickedImage: null,
-    }
-  },
   computed: {
     hoveredStepNumber: {
       get() {
@@ -152,7 +131,7 @@ export default {
         this.$store.commit('editingStep/setStepNumber', value)
       },
     },
-    ...mapState(['galleryItems', 'country', 'steps']),
+    ...mapState(['publicationElements', 'country', 'steps']),
     ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders']),
   },

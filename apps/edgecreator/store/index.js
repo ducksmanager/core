@@ -18,7 +18,8 @@ export const state = () => ({
   edgesBefore: [],
   edgesAfter: [],
 
-  galleryItems: [],
+  publicationElements: [],
+  publicationPhotos: [],
 
   stepColors: {},
 })
@@ -64,8 +65,11 @@ export const mutations = {
   setEdgesAfter(state, { edges: edgesAfter }) {
     state.edgesAfter = edgesAfter
   },
-  setGalleryItems(state, { items: galleryItems }) {
-    state.galleryItems = galleryItems
+  setPublicationElements(state, { items: publicationElements }) {
+    state.publicationElements = publicationElements
+  },
+  setPublicationPhotos(state, { items: publicationPhotos }) {
+    state.publicationPhotos = publicationPhotos
   },
   setStepColors(state, { stepNumber, colors }) {
     Vue.set(state.stepColors, stepNumber, colors)
@@ -104,14 +108,11 @@ export const actions = {
       }
     }
   },
-  async loadGalleryItems({ state, commit }, { itemType }) {
-    const url =
-      itemType === 'elements'
-        ? `/fs/browseElements/${state.country}/${state.magazine}`
-        : `/fs/browsePhotos/${state.country}/${state.magazine}/${state.issuenumbers[0]}`
-
-    commit('setGalleryItems', {
-      items: (await this.$axios.$get(url)).sort(numericSortCollator.compare),
+  async loadItems({ state, commit }, { itemType }) {
+    commit(itemType === 'elements' ? 'setPublicationElements' : 'setPublicationPhotos', {
+      items: (
+        await this.$axios.$get(`/fs/browse/${itemType}/${state.country}/${state.magazine}`)
+      ).sort(numericSortCollator.compare),
     })
   },
   async loadPublicationIssues({ state }) {

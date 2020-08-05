@@ -24,7 +24,7 @@
     /></label>
 
     <template v-if="options[optionName] !== 'transparent'" v-slot:suffix>
-      <b-badge :id="`${optionName}-popover-colors`">Frequent</b-badge>
+      <b-badge :id="`${optionName}-popover-colors`">Re-use</b-badge>
       <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
         <ul>
           <li v-for="color in frequentColorsWithoutCurrent" :key="color">

@@ -105,8 +105,8 @@ export default {
       handler: '~/api/fs/base64.js',
     },
     {
-      path: '/fs/browseElements',
-      handler: '~/api/fs/browseElements.js',
+      path: '/fs/browse',
+      handler: '~/api/fs/browse.js',
     },
     {
       path: '/fs/browseWipEdges',
