@@ -1,9 +1,9 @@
 <template>
   <b-row>
-    <b-col sm="2">
+    <b-col sm="3">
       <label :for="optionName">{{ label }}</label>
     </b-col>
-    <b-col sm="6" md="5">
+    <b-col sm="9">
       <b-form-input
         :id="optionName"
         size="sm"
@@ -20,8 +20,6 @@
         }"
       ></b-form-input>
       <slot />
-    </b-col>
-    <b-col sm="4" md="5">
       <slot name="suffix" />
     </b-col>
   </b-row>

@@ -90,6 +90,11 @@ input[type='color'] {
   background: none !important;
 }
 
+label.transparent {
+  width: 40px;
+  margin-right: 20px;
+}
+
 label.transparent img {
   position: absolute;
   top: 0;
@@ -101,6 +106,8 @@ label.transparent img {
 }
 .badge {
   cursor: pointer;
+  padding: 8px;
+  vertical-align: top;
 }
 .frequent-color {
   display: inline-block;
