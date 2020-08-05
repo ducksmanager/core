@@ -116,7 +116,7 @@ export default {
   watch: {
     async issuenumbers(newValue) {
       if (newValue) {
-        await this.loadGalleryItems()
+        await this.loadGalleryItems({ itemType: 'elements' })
         await this.loadSurroundingEdges()
       }
     },

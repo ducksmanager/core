@@ -41,7 +41,7 @@ export default async function (req, res) {
 
         const targetFilename = getTargetFilename(filename, isMultipleEdgePhoto)
         try {
-          // await validateUpload(mimetype, targetFilename, file)
+          await validateUpload(mimetype, targetFilename, file)
           saveFile(targetFilename, file)
           await storePhotoHash(targetFilename)
           res.writeHead(200, { Connection: 'close' })
@@ -58,10 +58,7 @@ export default async function (req, res) {
     req.pipe(busboy)
 
     const getTargetFilename = (filename, isMultipleEdgePhoto) => {
-      filename = filename
-        .normalize('NFD')
-        .replace(/[\u0300-\u036F]/g, '')
-        .replace('.', '_')
+      filename = filename.normalize('NFD').replace(/[\u0300-\u036F]/g, '')
 
       if (isMultipleEdgePhoto) {
         return getNextAvailableFile(`${edgesPath}/tranches_multiples/photo.multiple`, 'jpg')
@@ -74,7 +71,7 @@ export default async function (req, res) {
           )
         } else {
           return `${edgesPath}/${edge.country}/elements/${
-            filename.contains(edge.magazine) ? filename : `${edge.magazine}.${filename}`
+            filename.includes(edge.magazine) ? filename : `${edge.magazine}.${filename}`
           }`
         }
       }
