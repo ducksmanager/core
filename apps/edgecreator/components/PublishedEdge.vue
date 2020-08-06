@@ -18,7 +18,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(['country', 'magazine', 'zoom']),
+    ...mapState(['country', 'magazine']),
+    ...mapState('ui', ['zoom']),
   },
   methods: {
     getEdgeUrl() {

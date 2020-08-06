@@ -95,14 +95,13 @@ export default {
   computed: {
     zoom: {
       get() {
-        return this.$store.state.zoom
+        return this.$store.state.ui.zoom
       },
       set(value) {
-        this.$store.commit('setZoom', value)
+        this.$store.commit('ui/setZoom', value)
       },
     },
     ...mapState([
-      'zoom',
       'width',
       'height',
       'steps',
@@ -113,10 +112,16 @@ export default {
       'edgesAfter',
       'photoUrls',
       'contributors',
-      'colorPickerOption',
     ]),
     ...mapState('renders', ['supportedRenders']),
-    ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge', 'showEdgePhotos']),
+    ...mapState('ui', [
+      'zoom',
+      'showIssueNumbers',
+      'showPreviousEdge',
+      'showNextEdge',
+      'showEdgePhotos',
+      'colorPickerOption',
+    ]),
     ...mapState('user', ['allUsers']),
   },
   watch: {

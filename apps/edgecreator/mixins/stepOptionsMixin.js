@@ -15,8 +15,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(['zoom', 'width', 'height']),
-    ...mapState('ui', ['locked']),
+    ...mapState(['width', 'height']),
+    ...mapState('ui', ['zoom', 'locked']),
     ...mapState('editingStep', {
       editingIssuenumber: 'issuenumber',
       editingStepNumber: 'stepNumber',
