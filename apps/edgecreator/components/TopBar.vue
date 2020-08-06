@@ -206,10 +206,10 @@ export default {
     },
     zoom: {
       get() {
-        return this.$store.state.zoom
+        return this.$store.state.ui.zoom
       },
       set(value) {
-        this.$store.commit('setZoom', value)
+        this.$store.commit('ui/setZoom', value)
       },
     },
     showIssueNumbers: {

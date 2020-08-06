@@ -88,10 +88,10 @@ export default {
   computed: {
     colorPickerOption: {
       get() {
-        return this.$store.state.colorPickerOption
+        return this.$store.state.ui.colorPickerOption
       },
       set(value) {
-        this.$store.commit('setColorPickerOption', value)
+        this.$store.commit('ui/setColorPickerOption', value)
       },
     },
     frequentColorsWithoutCurrent() {

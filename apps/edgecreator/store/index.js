@@ -11,11 +11,8 @@ export const state = () => ({
     photographers: [],
   },
 
-  zoom: 1.5,
   width: 15,
   height: 200,
-
-  colorPickerOption: null,
 
   edgesBefore: [],
   edgesAfter: [],
@@ -36,14 +33,8 @@ export const mutations = {
   setIssuenumbers(state, issuenumbers) {
     state.issuenumbers = issuenumbers
   },
-  setZoom(state, zoom) {
-    state.zoom = zoom
-  },
   setSteps(state, steps) {
     state.steps = steps
-  },
-  setColorPickerOption(state, colorPickerOption) {
-    state.colorPickerOption = colorPickerOption
   },
   addStep(state, step) {
     Vue.set(state.steps, state.steps.length, step)

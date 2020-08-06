@@ -134,7 +134,7 @@ export default {
         this.$store.commit('editingStep/setIssuenumber', value)
       },
     },
-    ...mapState(['zoom']),
+    ...mapState('ui', ['zoom']),
   },
 }
 </script>
