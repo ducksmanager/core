@@ -17,7 +17,7 @@
           magazine,
         }"
     /></b-modal>
-    <b-alert v-if="!publicationElements.length" show variant="warning"
+    <b-alert v-if="!items.length" show variant="warning"
       >No items.
       <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">Upload new</a>
     </b-alert>
@@ -116,6 +116,7 @@ export default {
 }
 
 .row.gallery > div > img {
+  cursor: pointer;
   object-fit: contain;
   width: 100%;
   height: 100%;
