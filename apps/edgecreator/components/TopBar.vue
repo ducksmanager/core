@@ -245,7 +245,7 @@ export default {
       },
     },
     hasPhotoUrl() {
-      return Object.values(this.photoUrls).reduce((acc, photoUrls) => acc + photoUrls.length, 0) > 0
+      return Object.keys(this.photoUrls)
     },
     flagImageUrl() {
       return `${process.env.DM_URL}/images/flags/${this.country}.png`
@@ -310,7 +310,7 @@ export default {
         })
       })
     },
-    ...mapMutations(['setDimensions', 'addContributor', 'removeContributor', 'addPhotoUrl']),
+    ...mapMutations(['setDimensions', 'addContributor', 'removeContributor', 'setPhotoUrl']),
   },
 }
 </script>

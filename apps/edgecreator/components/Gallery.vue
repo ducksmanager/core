@@ -29,7 +29,7 @@
           :key="image"
           sm="2"
           :class="{
-            selected: selected.includes(image),
+            selected: selected === image,
           }"
           @click="
             clickedImage = image
@@ -82,8 +82,8 @@ export default {
     },
     selected() {
       return this.imageType === 'elements'
-        ? [this.editingStepOptions.src]
-        : this.photoUrls[this.issuenumbers[0]] || []
+        ? this.editingStepOptions.src
+        : this.photoUrls[this.issuenumbers[0]]
     },
   },
   methods: {
@@ -96,11 +96,11 @@ export default {
       if (this.imageType === 'elements') {
         this.$root.$emit('set-option', 'src', this.clickedImage)
       } else if (!(this.photoUrls[this.issuenumbers[0]] || []).includes(this.clickedImage)) {
-        this.addPhotoUrl({ issuenumber: this.issuenumbers[0], filename: this.clickedImage })
+        this.setPhotoUrl({ issuenumber: this.issuenumbers[0], filename: this.clickedImage })
       }
       this.clickedImage = null
     },
-    ...mapMutations(['addPhotoUrl']),
+    ...mapMutations(['setPhotoUrl']),
   },
 }
 </script>

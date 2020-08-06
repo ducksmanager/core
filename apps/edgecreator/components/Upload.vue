@@ -79,13 +79,13 @@ export default {
       vm.$emit('upload-success')
       if (vm.photo) {
         if (!vm.multiple) {
-          vm.addPhotoUrl({ issuenumber: vm.edge.issuenumber, filename: payload.body.filename })
+          vm.setPhotoUrl({ issuenumber: vm.edge.issuenumber, filename: payload.body.filename })
         }
       }
     })
   },
   methods: {
-    ...mapMutations(['addPhotoUrl']),
+    ...mapMutations(['setPhotoUrl']),
     ...mapActions(['loadItems']),
   },
 }

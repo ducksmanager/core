@@ -8,7 +8,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
   >
-    <metadata v-for="photoUrl in photoUrls || []" :key="photoUrl" type="photo">
+    <metadata v-if="photoUrl" type="photo">
       {{ photoUrl }}
     </metadata>
     <metadata
@@ -93,7 +93,7 @@ export default {
     width: { type: Number, required: true },
     height: { type: Number, required: true },
     steps: { type: Array, required: true },
-    photoUrls: { type: Array, required: true },
+    photoUrl: { type: String, default: null },
     contributors: { type: Object, required: true },
   },
   data() {
