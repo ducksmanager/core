@@ -25,7 +25,9 @@
               <td v-if="showEdgePhotos && hasPhotoUrl(issuenumber)" :key="issuenumber">
                 <img
                   :src="getImageUrl('photos', photoUrls[issuenumber][0])"
+                  :class="{ picker: !!colorPickerOption }"
                   :style="{ height: `${zoom * height}px` }"
+                  @click="setColorFromPhoto"
                 />
               </td>
             </template>
@@ -111,6 +113,7 @@ export default {
       'edgesAfter',
       'photoUrls',
       'contributors',
+      'colorPickerOption',
     ]),
     ...mapState('renders', ['supportedRenders']),
     ...mapState('ui', ['showIssueNumbers', 'showPreviousEdge', 'showNextEdge', 'showEdgePhotos']),
@@ -254,6 +257,16 @@ export default {
     hasPhotoUrl(issuenumber) {
       return (this.photoUrls[issuenumber] || []).length
     },
+    setColorFromPhoto({ target: imgElement, offsetX, offsetY }) {
+      const canvas = document.createElement('canvas')
+      const context = canvas.getContext('2d')
+      canvas.width = imgElement.width
+      canvas.height = imgElement.height
+      context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height)
+      const color = context.getImageData(offsetX, offsetY, 1, 1).data
+      this.$root.$emit('set-option', this.colorPickerOption, this.rgbToHex(...color))
+    },
+    rgbToHex: (r, g, b) => '#' + ((r << 16) | (g << 8) | b).toString(16),
     ...mapMutations([
       'setDimensions',
       'setCountry',
@@ -281,6 +294,9 @@ export default {
   display: flex;
   flex-direction: column;
   user-select: none;
+}
+.picker {
+  cursor: crosshair;
 }
 table.edges {
   float: right;

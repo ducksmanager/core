@@ -24,19 +24,36 @@
     /></label>
 
     <template v-if="options[optionName] !== 'transparent'" v-slot:suffix>
-      <b-badge :id="`${optionName}-popover-colors`">Re-use</b-badge>
-      <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
-        <ul>
-          <li v-for="color in frequentColorsWithoutCurrent" :key="color">
-            <span
-              class="frequent-color"
-              :style="{ background: color }"
-              @click="$root.$emit('set-option', optionName, color)"
-              >&nbsp;</span
-            >
-          </li>
-        </ul>
-      </b-popover>
+      <template>
+        <b-button :id="`${optionName}-popover-colors`" pill size="sm" variant="outline-primary"
+          >Re-use</b-button
+        >
+        <b-popover
+          :target="`${optionName}-popover-colors`"
+          triggers="hover focus"
+          placement="bottom"
+        >
+          <div v-if="!frequentColorsWithoutCurrent.length">No other color</div>
+          <ul v-else>
+            <li v-for="color in frequentColorsWithoutCurrent" :key="color">
+              <span
+                class="frequent-color"
+                :style="{ background: color }"
+                @click="$root.$emit('set-option', optionName, color)"
+                >&nbsp;</span
+              >
+            </li>
+          </ul>
+        </b-popover>
+      </template>
+      <b-button
+        pill
+        size="sm"
+        class="clickable"
+        :variant="colorPickerOption === optionName ? 'primary' : 'outline-primary'"
+        @click="colorPickerOption = colorPickerOption ? null : optionName"
+        >From photo</b-button
+      >
     </template>
   </form-input-row>
 </template>
@@ -71,6 +88,14 @@ export default {
     }
   },
   computed: {
+    colorPickerOption: {
+      get() {
+        return this.$store.state.colorPickerOption
+      },
+      set(value) {
+        this.$store.commit('setColorPickerOption', value)
+      },
+    },
     frequentColorsWithoutCurrent() {
       return this.colors.filter((color) => color !== this.options[this.optionName])
     },
@@ -104,10 +129,12 @@ label.transparent img {
 .color-row:not(.transparent-selected) input[type='color'] {
   border: 1px dashed black;
 }
-.badge {
-  cursor: pointer;
-  padding: 8px;
+.btn {
+  font-size: smaller;
   vertical-align: top;
+}
+.btn:not(.clickable) {
+  cursor: default !important;
 }
 .frequent-color {
   display: inline-block;
