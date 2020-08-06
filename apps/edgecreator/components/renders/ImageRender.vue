@@ -34,6 +34,7 @@ export default {
   watch: {
     async 'options.src'() {
       await this.retrieveImage()
+      this.enableDragResize(this.$refs.image)
     },
     async image(newValue) {
       if (newValue && this.dbOptions) {
