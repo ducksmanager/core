@@ -23,7 +23,10 @@
                 />
               </td>
               <td v-if="showEdgePhotos && hasPhotoUrl(issuenumber)" :key="issuenumber">
-                <img :src="photoUrls[issuenumber][0]" :style="{ height: `${zoom * height}px` }" />
+                <img
+                  :src="getImageUrl('photos', photoUrls[issuenumber][0])"
+                  :style="{ height: `${zoom * height}px` }"
+                />
               </td>
             </template>
             <td v-if="showNextEdge && edgesAfter.length">
@@ -159,6 +162,11 @@ export default {
     })
   },
   methods: {
+    getImageUrl(fileType, fileName) {
+      return `${process.env.EDGES_URL}/${this.country}/${
+        fileType === 'elements' ? fileType : 'photos'
+      }/${fileName}`
+    },
     async loadSvg(country, magazine, issuenumber, publishedVersion = false) {
       const { svgElement, svgChildNodes } = await this.loadSvgFromString(
         country,
