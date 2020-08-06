@@ -41,9 +41,11 @@
 <script>
 import Vue from 'vue'
 import Dimensions from '@/components/Dimensions'
+import currentEdgesMixin from '@/mixins/currentEdgesMixin'
 
 export default {
   components: { Dimensions },
+  mixins: [currentEdgesMixin],
   props: {
     withDimensions: { type: Boolean, default: false },
   },
@@ -85,7 +87,18 @@ export default {
         if (!this.issues[publicationCode]) {
           let issues = Object.values(
             await this.$axios.$get(`/api/coa/list/issues/${publicationCode}`)
-          )
+          ).map((issuenumber) => {
+            const status = this.getEdgeStatus({
+              country: this.currentCountryCode,
+              magazine: this.currentPublicationCode.split('/')[1],
+              issuenumber,
+            })
+            return {
+              value: issuenumber,
+              text: issuenumber + (status === 'none' ? '' : ` (${status})`),
+              disabled: status !== 'none',
+            }
+          })
           issues = [{ value: null, text: this.$t('select.issue') }].concat(issues)
           Vue.set(this.issues, publicationCode, issues)
         }
