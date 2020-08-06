@@ -18,13 +18,13 @@
                   :width="width"
                   :height="height"
                   :steps="steps"
-                  :photo-urls="photoUrls[issuenumber]"
+                  :photo-url="photoUrls[issuenumber]"
                   :contributors="contributors"
                 />
               </td>
-              <td v-if="showEdgePhotos && hasPhotoUrl(issuenumber)" :key="issuenumber">
+              <td v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
                 <img
-                  :src="getImageUrl('photos', photoUrls[issuenumber][0])"
+                  :src="getImageUrl('photos', photoUrls[issuenumber])"
                   :class="{ picker: !!colorPickerOption }"
                   :style="{ height: `${zoom * height}px` }"
                   @click="setColorFromPhoto"
@@ -41,7 +41,7 @@
             </th>
             <template v-for="issuenumber in issuenumbers">
               <th :key="issuenumber">{{ issuenumber }}<br />&#11088;</th>
-              <th v-if="showEdgePhotos && hasPhotoUrl(issuenumber)" :key="issuenumber">
+              <th v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
                 <b-icon-camera />
               </th>
             </template>
@@ -202,7 +202,7 @@ export default {
     setPhotoUrlsFromSvg(svgChildNodes) {
       const vm = this
       vm.getSvgMetadata(svgChildNodes, 'photo').forEach((photoUrl) => {
-        vm.addPhotoUrl({ issuenumber: vm.issuenumbers[0], filename: photoUrl })
+        vm.setPhotoUrl({ issuenumber: vm.issuenumbers[0], filename: photoUrl })
       })
     },
     setContributorsFromSvg(svgChildNodes) {
@@ -240,7 +240,7 @@ export default {
     async setPhotoUrlsFromApi(edgeId, issuenumber) {
       const photo = await this.$axios.$get(`/api/edgecreator/model/v2/${edgeId}/photo/main`)
       if (photo) {
-        this.addPhotoUrl({ issuenumber, filename: photo.nomfichier })
+        this.setPhotoUrl({ issuenumber, filename: photo.nomfichier })
       }
     },
     async setContributorsFromApi(edgeId) {
@@ -253,9 +253,6 @@ export default {
           user: vm.allUsers.find((user) => user.id === contributor.idUtilisateur),
         })
       })
-    },
-    hasPhotoUrl(issuenumber) {
-      return (this.photoUrls[issuenumber] || []).length
     },
     setColorFromPhoto({ target: imgElement, offsetX, offsetY }) {
       const canvas = document.createElement('canvas')
@@ -274,7 +271,7 @@ export default {
       'addStep',
       'removeStep',
       'setSteps',
-      'addPhotoUrl',
+      'setPhotoUrl',
       'addContributor',
     ]),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
