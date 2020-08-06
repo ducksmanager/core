@@ -24,32 +24,30 @@
     /></label>
 
     <template v-if="options[optionName] !== 'transparent'" v-slot:suffix>
-      <template>
-        <b-button :id="`${optionName}-popover-colors`" pill size="sm" variant="outline-primary"
-          >Re-use</b-button
-        >
-        <b-popover
-          :target="`${optionName}-popover-colors`"
-          triggers="hover focus"
-          placement="bottom"
-        >
-          <div v-if="!frequentColorsWithoutCurrent.length">No other color</div>
-          <ul v-else>
-            <li v-for="color in frequentColorsWithoutCurrent" :key="color">
-              <span
-                class="frequent-color"
-                :style="{ background: color }"
-                @click="$root.$emit('set-option', optionName, color)"
-                >&nbsp;</span
-              >
-            </li>
-          </ul>
-        </b-popover>
-      </template>
+      <b-button
+        :id="`${optionName}-popover-colors`"
+        class="no-pointer"
+        pill
+        size="sm"
+        variant="outline-primary"
+        >Re-use</b-button
+      >
+      <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
+        <div v-if="!frequentColorsWithoutCurrent.length">No other color</div>
+        <ul v-else>
+          <li v-for="color in frequentColorsWithoutCurrent" :key="color">
+            <span
+              class="frequent-color"
+              :style="{ background: color }"
+              @click="$root.$emit('set-option', optionName, color)"
+              >&nbsp;</span
+            >
+          </li>
+        </ul>
+      </b-popover>
       <b-button
         pill
         size="sm"
-        class="clickable"
         :variant="colorPickerOption === optionName ? 'primary' : 'outline-primary'"
         @click="colorPickerOption = colorPickerOption ? null : optionName"
         >From photo</b-button
@@ -133,7 +131,7 @@ label.transparent img {
   font-size: smaller;
   vertical-align: top;
 }
-.btn:not(.clickable) {
+.btn.no-pointer {
   cursor: default !important;
 }
 .frequent-color {
