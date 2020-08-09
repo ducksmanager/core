@@ -10,15 +10,39 @@
           >
             {{ supportedRenders.find((render) => render.component === step.component).label }}
           </span>
-          <b-icon-x-square-fill @click="$emit('remove-step', stepNumber)" />
-          <b-icon-arrow-down-square-fill
-            :class="{ invisible: stepNumber === steps.length - 1 }"
-            @click="$emit('swap-steps', [stepNumber, stepNumber + 1])"
-          />
-          <b-icon-arrow-up-square-fill
-            :class="{ invisible: stepNumber === 0 }"
-            @click="$emit('swap-steps', [stepNumber - 1, stepNumber])"
-          />
+          <div class="action-icons">
+            <b-icon-arrow-up-square-fill
+              v-b-tooltip.hover
+              title="Move up"
+              :class="{ invisible: stepNumber === 0 }"
+              @click="$emit('swap-steps', [stepNumber - 1, stepNumber])"
+            />
+            <b-icon-arrow-down-square-fill
+              v-b-tooltip.hover
+              title="Move down"
+              :class="{ invisible: stepNumber === steps.length - 1 }"
+              @click="$emit('swap-steps', [stepNumber, stepNumber + 1])"
+            />
+            <b-icon-square-fill
+              stacked
+              scale="0.7"
+              :style="{ marginTop: '4px' }"
+              @click="$emit('duplicate-step', stepNumber)"
+            ></b-icon-square-fill>
+            <b-icon-square-fill
+              v-b-tooltip.hover
+              title="Duplicate"
+              stacked
+              scale="0.7"
+              :style="{ marginLeft: '-16px', marginTop: '-4px' }"
+              @click="$emit('duplicate-step', stepNumber)"
+            ></b-icon-square-fill>
+            <b-icon-x-square-fill
+              v-b-tooltip.hover
+              title="Delete"
+              @click="$emit('remove-step', stepNumber)"
+            />
+          </div>
         </template>
         <b-card-text v-if="step.component === 'Text'">
           <form-input-row
@@ -117,7 +141,12 @@ import { mapState } from 'vuex'
 import FormColorInputRow from '@/components/FormColorInputRow'
 import FormInputRow from '@/components/FormInputRow'
 import Gallery from '@/components/Gallery'
-import { BIconArrowDownSquareFill, BIconArrowUpSquareFill, BIconXSquareFill } from 'bootstrap-vue'
+import {
+  BIconArrowDownSquareFill,
+  BIconArrowUpSquareFill,
+  BIconSquareFill,
+  BIconXSquareFill,
+} from 'bootstrap-vue'
 
 export default {
   name: 'ModelEdit',
@@ -128,6 +157,7 @@ export default {
     BIconXSquareFill,
     BIconArrowUpSquareFill,
     BIconArrowDownSquareFill,
+    BIconSquareFill,
   },
   computed: {
     hoveredStepNumber: {
@@ -158,17 +188,21 @@ export default {
   height: 100%;
 }
 
+#edit-card .tabs ul li .action-icons {
+  float: right;
+}
+
 #edit-card .tabs ul li .b-icon.invisible {
   visibility: hidden;
 }
 
 #edit-card .tabs ul li .b-icon {
-  float: right;
-  margin-top: 5px;
   height: 15px;
+  font-size: initial !important;
+  vertical-align: middle;
 }
 
-#edit-card .tabs ul li .b-icon:last-of-type {
+#edit-card .tabs ul li .b-icon:first-of-type {
   margin-left: 5px;
 }
 

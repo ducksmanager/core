@@ -54,6 +54,7 @@
       <b-col sm="10" md="8" lg="6">
         <model-edit
           @swap-steps="swapSteps($event)"
+          @duplicate-step="duplicateStep($event)"
           @remove-step="removeStep($event)"
           @add-step="
             addStep({
@@ -277,6 +278,7 @@ export default {
       'addStep',
       'removeStep',
       'swapSteps',
+      'duplicateStep',
       'setSteps',
       'setPhotoUrl',
       'addContributor',
