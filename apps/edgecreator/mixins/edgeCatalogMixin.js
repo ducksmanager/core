@@ -1,12 +1,14 @@
 import { mapMutations, mapState } from 'vuex'
+import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 
 export default {
   computed: {
-    ...mapState('currentEdges', ['edges']),
+    ...mapState('edgeCatalog', ['currentEdges', 'publishedEdges']),
   },
+  mixins: [svgUtilsMixin],
   methods: {
     addEdgeFromApi(edge, status) {
-      this.addEdge(
+      this.addCurrentEdge(
         {
           country: edge.pays,
           magazine: edge.magazine,
@@ -16,7 +18,7 @@ export default {
       )
     },
     addEdgeFromSvg(edge, edgeDesigners) {
-      this.addEdge(
+      this.addCurrentEdge(
         edge,
         edgeDesigners.length
           ? edgeDesigners.includes(this.$cookies.get('dm-user'))
@@ -25,31 +27,35 @@ export default {
           : 'pending'
       )
     },
-    addEdge(edge, status) {
-      this.setEdges([
-        ...new Set(this.edges).add({
+    addCurrentEdge(edge, status) {
+      this.setCurrentEdges([
+        ...new Set(this.currentEdges).add({
           status,
           ...edge,
         }),
       ])
     },
     getEdgesByStatus(status) {
-      return (this.edges || []).filter((edge) => edge.status === status)
+      return (this.currentEdges || []).filter((edge) => edge.status === status)
     },
     getEdgeStatus(edge) {
+      const isPublished = (this.publishedEdges[`${edge.country}/${edge.magazine}`] || []).some(
+        (publishedEdge) => publishedEdge.issuenumber === edge.issuenumber
+      )
+
       return (
-        this.edges.find(
+        this.currentEdges.find(
           (currentEdge) =>
             currentEdge.country === edge.country &&
             currentEdge.magazine === edge.magazine &&
             currentEdge.issuenumber === edge.issuenumber
-        ) || { status: 'none' }
+        ) || { status: isPublished ? 'published' : 'none' }
       ).status
     },
-    ...mapMutations('currentEdges', ['setEdges']),
+    ...mapMutations('edgeCatalog', ['setCurrentEdges']),
   },
   mounted() {
-    if (this.edges !== null) {
+    if (this.currentEdges !== null) {
       return
     }
     const vm = this
@@ -71,8 +77,8 @@ export default {
         })
     })
 
-    this.$axios.$get('/fs/browseWipEdges').then((edges) => {
-      edges.forEach(async (fileName) => {
+    this.$axios.$get('/fs/browseCurrentEdges').then((currentEdges) => {
+      currentEdges.forEach(async (fileName) => {
         const [, country, magazine, issuenumber] = fileName.match(
           /\/([^/]+)\/gen\/_([^.]+)\.(.+).svg$/
         )

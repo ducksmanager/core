@@ -110,7 +110,7 @@ export default {
     },
     {
       path: '/fs/browseWipEdges',
-      handler: '~/api/fs/browseWipEdges.js',
+      handler: '~/api/fs/browseCurrentEdges.js',
     },
     {
       path: '/fs/save',
