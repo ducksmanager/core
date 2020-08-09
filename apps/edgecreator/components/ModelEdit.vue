@@ -1,7 +1,7 @@
 <template>
   <b-card id="edit-card" no-body>
     <b-tabs v-model="editingStepNumber" lazy pills card vertical>
-      <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
+      <b-tab v-for="(step, stepNumber) in steps" :key="JSON.stringify(step)">
         <template v-slot:title>
           <span
             :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
@@ -10,7 +10,15 @@
           >
             {{ supportedRenders.find((render) => render.component === step.component).label }}
           </span>
-          <b-icon-x-square-fill class="remove" @click="$emit('remove-step', stepNumber)" />
+          <b-icon-x-square-fill @click="$emit('remove-step', stepNumber)" />
+          <b-icon-arrow-down-square-fill
+            :class="{ invisible: stepNumber === steps.length - 1 }"
+            @click="$emit('swap-steps', [stepNumber, stepNumber + 1])"
+          />
+          <b-icon-arrow-up-square-fill
+            :class="{ invisible: stepNumber === 0 }"
+            @click="$emit('swap-steps', [stepNumber - 1, stepNumber])"
+          />
         </template>
         <b-card-text v-if="step.component === 'Text'">
           <form-input-row
@@ -109,11 +117,18 @@ import { mapState } from 'vuex'
 import FormColorInputRow from '@/components/FormColorInputRow'
 import FormInputRow from '@/components/FormInputRow'
 import Gallery from '@/components/Gallery'
-import { BIconXSquareFill } from 'bootstrap-vue'
+import { BIconArrowDownSquareFill, BIconArrowUpSquareFill, BIconXSquareFill } from 'bootstrap-vue'
 
 export default {
   name: 'ModelEdit',
-  components: { FormColorInputRow, FormInputRow, Gallery, BIconXSquareFill },
+  components: {
+    FormColorInputRow,
+    FormInputRow,
+    Gallery,
+    BIconXSquareFill,
+    BIconArrowUpSquareFill,
+    BIconArrowDownSquareFill,
+  },
   computed: {
     hoveredStepNumber: {
       get() {
@@ -135,11 +150,6 @@ export default {
     ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders']),
   },
-  methods: {
-    getElementUrl(elementFileName) {
-      return `${process.env.EDGES_URL}/${this.country}/elements/${elementFileName}`
-    },
-  },
 }
 </script>
 <style>
@@ -148,11 +158,18 @@ export default {
   height: 100%;
 }
 
-#edit-card .tabs ul li .remove {
+#edit-card .tabs ul li .b-icon.invisible {
+  visibility: hidden;
+}
+
+#edit-card .tabs ul li .b-icon {
   float: right;
   margin-top: 5px;
-  margin-left: 10px;
   height: 15px;
+}
+
+#edit-card .tabs ul li .b-icon:last-of-type {
+  margin-left: 5px;
 }
 
 .hovered-step {
