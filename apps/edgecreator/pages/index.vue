@@ -65,7 +65,7 @@
 
 <script>
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
-import currentEdgesMixin from '@/mixins/currentEdgesMixin'
+import currentEdgesMixin from '@/mixins/edgeCatalogMixin'
 
 export default {
   mixins: [currentEdgesMixin, svgUtilsMixin],

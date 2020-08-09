@@ -41,7 +41,8 @@
 <script>
 import Vue from 'vue'
 import Dimensions from '@/components/Dimensions'
-import currentEdgesMixin from '@/mixins/currentEdgesMixin'
+import currentEdgesMixin from '@/mixins/edgeCatalogMixin'
+import { mapMutations } from 'vuex'
 
 export default {
   components: { Dimensions },
@@ -85,12 +86,14 @@ export default {
       const publicationCode = this.currentPublicationCode
       if (publicationCode) {
         if (!this.issues[publicationCode]) {
+          const publishedEdges = await this.$axios.$get(`/api/edges/${publicationCode}`)
+          this.setPublishedEdges({ publicationCode, publishedEdges })
           let issues = Object.values(
             await this.$axios.$get(`/api/coa/list/issues/${publicationCode}`)
           ).map((issuenumber) => {
             const status = this.getEdgeStatus({
               country: this.currentCountryCode,
-              magazine: this.currentPublicationCode.split('/')[1],
+              magazine: publicationCode.split('/')[1],
               issuenumber,
             })
             return {
@@ -105,6 +108,7 @@ export default {
         this.currentIssueNumber = null
       }
     },
+    ...mapMutations('edgeCatalog', ['setPublishedEdges']),
   },
 }
 </script>
