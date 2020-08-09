@@ -42,6 +42,9 @@ export const mutations = {
   removeStep(state, stepNumber) {
     state.steps.splice(stepNumber, 1)
   },
+  duplicateStep(state, stepNumber) {
+    state.steps.splice(stepNumber, 0, state.steps[stepNumber])
+  },
   swapSteps(state, stepNumbers) {
     const stepsToSwap = [state.steps[stepNumbers[0]], state.steps[stepNumbers[1]]]
     state.steps.splice(stepNumbers[0], 2, stepsToSwap[1], stepsToSwap[0])
