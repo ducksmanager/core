@@ -48,6 +48,7 @@
       <b-button
         pill
         size="sm"
+        :disabled="!hasPhotoUrl"
         :variant="colorPickerOption === optionName ? 'primary' : 'outline-primary'"
         @click="colorPickerOption = colorPickerOption ? null : optionName"
         >From photo</b-button
@@ -57,7 +58,7 @@
 </template>
 <script>
 import FormInputRow from '@/components/FormInputRow'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: { FormInputRow },
@@ -86,6 +87,9 @@ export default {
     }
   },
   computed: {
+    hasPhotoUrl() {
+      return Object.keys(this.photoUrls).length
+    },
     colorPickerOption: {
       get() {
         return this.$store.state.ui.colorPickerOption
@@ -98,6 +102,7 @@ export default {
       return this.colors.filter((color) => color !== this.options[this.optionName])
     },
     ...mapGetters(['colors']),
+    ...mapState(['photoUrls']),
   },
 }
 </script>
