@@ -245,7 +245,7 @@ export default {
       },
     },
     hasPhotoUrl() {
-      return Object.keys(this.photoUrls)
+      return Object.keys(this.photoUrls).length
     },
     flagImageUrl() {
       return `${process.env.DM_URL}/images/flags/${this.country}.png`
