@@ -1,7 +1,7 @@
 <template>
   <b-card id="edit-card" no-body>
     <b-tabs v-model="editingStepNumber" lazy pills card vertical>
-      <b-tab v-for="(step, stepNumber) in steps" :key="stepToString(step)">
+      <b-tab v-for="(step, stepNumber) in steps" :key="stepToString(stepNumber, step)">
         <template v-slot:title>
           <span
             :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
@@ -15,19 +15,13 @@
               v-b-tooltip.hover
               title="Move up"
               :class="{ invisible: stepNumber === 0 }"
-              @click="$emit('swap-steps', [stepNumber - 1, stepNumber])"
-            />
-            <b-icon-arrow-down-square-fill
-              v-b-tooltip.hover
-              title="Move down"
-              :class="{ invisible: stepNumber === steps.length - 1 }"
-              @click="$emit('swap-steps', [stepNumber, stepNumber + 1])"
+              @click="swapSteps([stepNumber - 1, stepNumber])"
             />
             <b-icon-square
               stacked
               scale="0.7"
               :style="{ marginTop: '4px' }"
-              @click="$emit('duplicate-step', stepNumber)"
+              @click="duplicateStep(stepNumber)"
             ></b-icon-square>
             <b-icon-square-fill
               v-b-tooltip.hover
@@ -35,12 +29,18 @@
               stacked
               scale="0.7"
               :style="{ marginLeft: '-16px', marginTop: '-4px' }"
-              @click="$emit('duplicate-step', stepNumber)"
+              @click="duplicateStep(stepNumber)"
             ></b-icon-square-fill>
             <b-icon-x-square-fill
               v-b-tooltip.hover
               title="Delete"
-              @click="$emit('remove-step', stepNumber)"
+              @click="removeStep(stepNumber)"
+            />
+            <b-icon-arrow-down-square-fill
+              v-b-tooltip.hover
+              title="Move down"
+              :class="{ invisible: stepNumber === steps.length - 1 }"
+              @click="swapSteps([stepNumber, stepNumber + 1])"
             />
           </div>
         </template>
@@ -127,7 +127,12 @@
             <b-dropdown-item
               v-for="render in supportedRenders"
               :key="render.component"
-              @click="$emit('add-step', render.component)"
+              @click="
+                addStep({
+                  component: render.component,
+                  svgGroupElement: null,
+                })
+              "
               >{{ render.description }}
             </b-dropdown-item>
           </b-dropdown>
@@ -137,7 +142,7 @@
   </b-card>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import FormColorInputRow from '@/components/FormColorInputRow'
 import FormInputRow from '@/components/FormInputRow'
 import Gallery from '@/components/Gallery'
@@ -161,6 +166,9 @@ export default {
     BIconSquare,
     BIconSquareFill,
   },
+  props: {
+    steps: { type: Array, required: true },
+  },
   computed: {
     hoveredStepNumber: {
       get() {
@@ -178,15 +186,18 @@ export default {
         this.$store.commit('editingStep/setStepNumber', value)
       },
     },
-    ...mapState(['publicationElements', 'country', 'steps']),
+    ...mapState(['publicationElements', 'country']),
     ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders']),
   },
 
   methods: {
-    stepToString(step) {
-      return step.svgGroupElement ? step.svgGroupElement.toString() : JSON.stringify(step.dbOptions)
+    stepToString(stepnumber, step) {
+      return `${stepnumber}-${
+        step.svgGroupElement ? step.svgGroupElement.toString() : JSON.stringify(step.dbOptions)
+      }`
     },
+    ...mapMutations(['addStep', 'removeStep', 'swapSteps', 'duplicateStep']),
   },
 }
 </script>

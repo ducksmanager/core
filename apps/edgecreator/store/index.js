@@ -4,7 +4,7 @@ export const state = () => ({
   country: null,
   magazine: null,
   issuenumbers: [],
-  steps: null,
+  steps: {},
   photoUrls: {},
   contributors: {
     designers: [],
@@ -33,21 +33,30 @@ export const mutations = {
   setIssuenumbers(state, issuenumbers) {
     state.issuenumbers = issuenumbers
   },
-  setSteps(state, steps) {
-    state.steps = steps
+  setSteps(state, { issuenumber, steps }) {
+    Vue.set(state.steps, issuenumber, steps)
   },
   addStep(state, step) {
-    Vue.set(state.steps, state.steps.length, step)
+    Object.keys(state.steps).forEach((issuenumber) => {
+      Vue.set(state.steps[issuenumber], state.steps[issuenumber].length, step)
+    })
   },
   removeStep(state, stepNumber) {
-    state.steps.splice(stepNumber, 1)
+    Object.keys(state.steps).forEach((issuenumber) => {
+      state.steps[issuenumber].splice(stepNumber, 1)
+    })
   },
   duplicateStep(state, stepNumber) {
-    state.steps.splice(stepNumber, 0, state.steps[stepNumber])
+    Object.keys(state.steps).forEach((issuenumber) => {
+      state.steps[issuenumber].splice(stepNumber, 0, state.steps[issuenumber][stepNumber])
+    })
   },
   swapSteps(state, stepNumbers) {
-    const stepsToSwap = [state.steps[stepNumbers[0]], state.steps[stepNumbers[1]]]
-    state.steps.splice(stepNumbers[0], 2, stepsToSwap[1], stepsToSwap[0])
+    Object.keys(state.steps).forEach((issuenumber) => {
+      const steps = state.steps[issuenumber]
+      const stepsToSwap = [steps[stepNumbers[0]], steps[stepNumbers[1]]]
+      state.steps[issuenumber].splice(stepNumbers[0], 2, stepsToSwap[1], stepsToSwap[0])
+    })
   },
   setPhotoUrl(state, { issuenumber, filename }) {
     Vue.set(state.photoUrls, issuenumber, filename)
