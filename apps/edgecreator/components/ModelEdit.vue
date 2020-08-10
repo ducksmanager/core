@@ -1,7 +1,7 @@
 <template>
   <b-card id="edit-card" no-body>
     <b-tabs v-model="editingStepNumber" lazy pills card vertical>
-      <b-tab v-for="(step, stepNumber) in steps" :key="JSON.stringify(step)">
+      <b-tab v-for="(step, stepNumber) in steps" :key="stepToString(step)">
         <template v-slot:title>
           <span
             :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
@@ -23,12 +23,12 @@
               :class="{ invisible: stepNumber === steps.length - 1 }"
               @click="$emit('swap-steps', [stepNumber, stepNumber + 1])"
             />
-            <b-icon-square-fill
+            <b-icon-square
               stacked
               scale="0.7"
               :style="{ marginTop: '4px' }"
               @click="$emit('duplicate-step', stepNumber)"
-            ></b-icon-square-fill>
+            ></b-icon-square>
             <b-icon-square-fill
               v-b-tooltip.hover
               title="Duplicate"
@@ -144,6 +144,7 @@ import Gallery from '@/components/Gallery'
 import {
   BIconArrowDownSquareFill,
   BIconArrowUpSquareFill,
+  BIconSquare,
   BIconSquareFill,
   BIconXSquareFill,
 } from 'bootstrap-vue'
@@ -157,6 +158,7 @@ export default {
     BIconXSquareFill,
     BIconArrowUpSquareFill,
     BIconArrowDownSquareFill,
+    BIconSquare,
     BIconSquareFill,
   },
   computed: {
@@ -179,6 +181,12 @@ export default {
     ...mapState(['publicationElements', 'country', 'steps']),
     ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders']),
+  },
+
+  methods: {
+    stepToString(step) {
+      return step.svgGroupElement ? step.svgGroupElement.toString() : JSON.stringify(step.dbOptions)
+    },
   },
 }
 </script>
