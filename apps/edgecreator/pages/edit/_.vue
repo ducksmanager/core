@@ -2,7 +2,7 @@
   <b-container v-if="error" id="wrapper" fluid>
     {{ error }}
   </b-container>
-  <b-container v-else-if="steps && width && height" id="wrapper" fluid>
+  <b-container v-else-if="Object.keys(steps).length && width && height" id="wrapper" fluid>
     <top-bar />
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right">
@@ -11,13 +11,13 @@
             <td v-if="showPreviousEdge && edgesBefore.length">
               <published-edge :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber" />
             </td>
-            <template v-for="issuenumber in issuenumbers">
+            <template v-for="(issueSteps, issuenumber) in steps">
               <td :key="issuenumber">
                 <edge-canvas
                   :issuenumber="issuenumber"
                   :width="width"
                   :height="height"
-                  :steps="steps"
+                  :steps="issueSteps"
                   :photo-url="photoUrls[issuenumber]"
                   :contributors="contributors"
                 />
@@ -40,7 +40,10 @@
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </th>
             <template v-for="issuenumber in issuenumbers">
-              <th :key="issuenumber">{{ issuenumber }}<br />&#11088;</th>
+              <th :key="issuenumber">
+                <div>{{ issuenumber }}</div>
+                <span v-if="editingIssuenumber === issuenumber || locked"><b-icon-pencil /></span>
+              </th>
               <th v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
                 <b-icon-camera />
               </th>
@@ -52,17 +55,7 @@
         </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
-        <model-edit
-          @swap-steps="swapSteps($event)"
-          @duplicate-step="duplicateStep($event)"
-          @remove-step="removeStep($event)"
-          @add-step="
-            addStep({
-              component: $event,
-              svgGroupElement: null,
-            })
-          "
-        />
+        <model-edit :steps="steps[editingIssuenumber]" />
       </b-col>
     </b-row>
   </b-container>
@@ -70,7 +63,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
 
-import { BIconCamera } from 'bootstrap-vue'
+import { BIconCamera, BIconPencil } from 'bootstrap-vue'
 import TopBar from '@/components/TopBar'
 import EdgeCanvas from '@/components/EdgeCanvas'
 import PublishedEdge from '@/components/PublishedEdge'
@@ -83,6 +76,7 @@ export default {
     EdgeCanvas,
     PublishedEdge,
     ModelEdit,
+    BIconPencil,
     BIconCamera,
   },
   mixins: [svgUtilsMixin],
@@ -115,9 +109,11 @@ export default {
       'photoUrls',
       'contributors',
     ]),
+    ...mapState('editingStep', { editingIssuenumber: 'issuenumber' }),
     ...mapState('renders', ['supportedRenders']),
     ...mapState('ui', [
       'zoom',
+      'locked',
       'showIssueNumbers',
       'showPreviousEdge',
       'showNextEdge',
@@ -152,23 +148,25 @@ export default {
 
     this.setIssuenumbersFromMinMax({ min: issuenumberMin, max: issuenumberMax })
 
-    this.loadSvg(this.country, this.magazine, issuenumberMin).catch(async () => {
-      const edge = await this.$axios.$get(
-        `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumberMin}`
-      )
-      if (edge) {
-        const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
+    vm.issuenumbers.forEach((issuenumber, idx) => {
+      this.loadSvg(this.country, this.magazine, issuenumber).catch(async () => {
+        const edge = await this.$axios.$get(
+          `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
+        )
+        if (edge) {
+          const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
 
-        await vm.setPhotoUrlsFromApi(edge.id, issuenumberMin)
-        await vm.setContributorsFromApi(edge.id)
+          await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
+          await vm.setContributorsFromApi(edge.id)
 
-        vm.setDimensionsFromApi(steps)
-        vm.setStepsFromApi(steps)
-      } else {
-        this.loadSvg(this.country, this.magazine, issuenumberMin, true).catch(async () => {
-          vm.setSteps([])
-        })
-      }
+          vm.setDimensionsFromApi(steps)
+          vm.setStepsFromApi(issuenumber, steps)
+        } else {
+          this.loadSvg(this.country, this.magazine, issuenumber, true).catch(async () => {
+            vm.setStepsFromApi(issuenumber, idx === 0 ? [] : vm.steps[vm.issuenumbers[idx - 1]])
+          })
+        }
+      })
     })
   },
   methods: {
@@ -186,8 +184,8 @@ export default {
       )
 
       this.setDimensionsFromSvg(svgElement)
-      this.setStepsFromSvg(svgChildNodes)
-      this.setPhotoUrlsFromSvg(svgChildNodes)
+      this.setStepsFromSvg(issuenumber, svgChildNodes)
+      this.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
       this.setContributorsFromSvg(svgChildNodes)
     },
     setDimensionsFromSvg(svgElement) {
@@ -196,20 +194,21 @@ export default {
         height: svgElement.getAttribute('height') / 1.5,
       })
     },
-    setStepsFromSvg(svgChildNodes) {
-      this.setSteps(
-        svgChildNodes
+    setStepsFromSvg(issuenumber, svgChildNodes) {
+      this.setSteps({
+        issuenumber,
+        steps: svgChildNodes
           .filter((node) => node.nodeName === 'g')
           .map((group) => ({
             component: group.getAttribute('class'),
             svgGroupElement: group,
-          }))
-      )
+          })),
+      })
     },
-    setPhotoUrlsFromSvg(svgChildNodes) {
+    setPhotoUrlsFromSvg(issuenumber, svgChildNodes) {
       const vm = this
       vm.getSvgMetadata(svgChildNodes, 'photo').forEach((photoUrl) => {
-        vm.setPhotoUrl({ issuenumber: vm.issuenumbers[0], filename: photoUrl })
+        vm.setPhotoUrl({ issuenumber, filename: photoUrl })
       })
     },
     setContributorsFromSvg(svgChildNodes) {
@@ -231,20 +230,21 @@ export default {
         })
       }
     },
-    setStepsFromApi(stepData) {
+    setStepsFromApi(issuenumber, stepData) {
       const vm = this
-      this.setSteps(
-        stepData
+      this.setSteps({
+        issuenumber,
+        steps: stepData
           .filter((step) => step.ordre !== -1)
           .map((step) => ({
             component: vm.supportedRenders.find(
               (component) => component.originalName === step.nomFonction
             ).component,
             dbOptions: step.options,
-          }))
-      )
+          })),
+      })
     },
-    async setPhotoUrlsFromApi(edgeId, issuenumber) {
+    async setPhotoUrlsFromApi(issuenumber, edgeId) {
       const photo = await this.$axios.$get(`/api/edgecreator/model/v2/${edgeId}/photo/main`)
       if (photo) {
         this.setPhotoUrl({ issuenumber, filename: photo.nomfichier })
@@ -275,10 +275,6 @@ export default {
       'setDimensions',
       'setCountry',
       'setMagazine',
-      'addStep',
-      'removeStep',
-      'swapSteps',
-      'duplicateStep',
       'setSteps',
       'setPhotoUrl',
       'addContributor',
