@@ -36,19 +36,24 @@
             </td>
           </tr>
           <tr v-if="showIssueNumbers">
-            <th v-if="showPreviousEdge && edgesBefore.length">
+            <th v-if="showPreviousEdge && edgesBefore.length" class="surrounding-edge">
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </th>
             <template v-for="issuenumber in issuenumbers">
               <th :key="issuenumber">
-                <div>{{ issuenumber }}</div>
+                <div
+                  :class="{ clickable: editingIssuenumber !== issuenumber && !locked }"
+                  @click="setEditIssuenumber(issuenumber)"
+                >
+                  {{ issuenumber }}
+                </div>
                 <span v-if="editingIssuenumber === issuenumber || locked"><b-icon-pencil /></span>
               </th>
               <th v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
                 <b-icon-camera />
               </th>
             </template>
-            <th v-if="showNextEdge && edgesAfter.length">
+            <th v-if="showNextEdge && edgesAfter.length" class="surrounding-edge">
               {{ edgesAfter[0].issuenumber }}
             </th>
           </tr>
@@ -300,13 +305,17 @@ export default {
 .picker {
   cursor: crosshair;
 }
+.clickable {
+  cursor: pointer;
+}
+
 table.edges {
   float: right;
 }
 
 table.edges tr td,
 table.edges tr th {
-  padding: 0;
+  padding: 1px 2px;
   text-align: center;
 }
 
@@ -317,5 +326,9 @@ table.edges tr td {
 table.edges tr th {
   vertical-align: top;
   outline: 1px solid grey;
+}
+
+table.edges tr th.surrounding-edge {
+  font-weight: normal;
 }
 </style>
