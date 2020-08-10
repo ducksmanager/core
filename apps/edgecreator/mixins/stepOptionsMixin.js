@@ -155,7 +155,10 @@ export default {
     }
     this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
-      if (vm.isEditingCurrentStep(vm.editingStepNumber, vm.editingIssuenumber) || vm.locked) {
+      if (
+        (vm.editingIssuenumber === vm.issuenumber || vm.locked) &&
+        vm.editingStepNumber === vm.stepNumber
+      ) {
         vm.options[optionName] = optionValue
       }
     })

@@ -153,8 +153,14 @@ export default {
 
     this.setIssuenumbersFromMinMax({ min: issuenumberMin, max: issuenumberMax })
 
-    vm.issuenumbers.forEach((issuenumber, idx) => {
-      this.loadSvg(this.country, this.magazine, issuenumber).catch(async () => {
+    for (let idx = 0; idx < vm.issuenumbers.length; idx++) {
+      if (!Object.prototype.hasOwnProperty.call(vm.issuenumbers, idx)) {
+        continue
+      }
+      const issuenumber = vm.issuenumbers[idx]
+      try {
+        await this.loadSvg(this.country, this.magazine, issuenumber)
+      } catch {
         const edge = await this.$axios.$get(
           `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
         )
@@ -167,12 +173,14 @@ export default {
           vm.setDimensionsFromApi(steps)
           vm.setStepsFromApi(issuenumber, steps)
         } else {
-          this.loadSvg(this.country, this.magazine, issuenumber, true).catch(async () => {
+          try {
+            await this.loadSvg(this.country, this.magazine, issuenumber, true)
+          } catch {
             vm.setStepsFromApi(issuenumber, idx === 0 ? [] : vm.steps[vm.issuenumbers[idx - 1]])
-          })
+          }
         }
-      })
-    })
+      }
+    }
   },
   methods: {
     getImageUrl(fileType, fileName) {
