@@ -60,12 +60,19 @@
         </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
-        <model-edit :steps="steps[editingIssuenumber]" />
+        <model-edit
+          :steps="steps[editingIssuenumber]"
+          @add-step="addStep($event)"
+          @remove-step="removeStep($event)"
+          @duplicate-step="duplicateStep($event)"
+          @swap-steps="swapSteps($event)"
+        />
       </b-col>
     </b-row>
   </b-container>
 </template>
 <script>
+import Vue from 'vue'
 import { mapActions, mapMutations, mapState } from 'vuex'
 
 import { BIconCamera, BIconPencil } from 'bootstrap-vue'
@@ -74,6 +81,7 @@ import EdgeCanvas from '@/components/EdgeCanvas'
 import PublishedEdge from '@/components/PublishedEdge'
 import ModelEdit from '@/components/ModelEdit'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
+import legacyDbMixin from '@/mixins/legacyDbMixin'
 
 export default {
   components: {
@@ -84,13 +92,14 @@ export default {
     BIconPencil,
     BIconCamera,
   },
-  mixins: [svgUtilsMixin],
+  mixins: [svgUtilsMixin, legacyDbMixin],
   async fetch() {
     this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
   },
   data() {
     return {
       error: null,
+      steps: {},
     }
   },
   computed: {
@@ -105,7 +114,6 @@ export default {
     ...mapState([
       'width',
       'height',
-      'steps',
       'country',
       'magazine',
       'issuenumbers',
@@ -176,7 +184,7 @@ export default {
           try {
             await this.loadSvg(this.country, this.magazine, issuenumber, true)
           } catch {
-            vm.setStepsFromApi(issuenumber, idx === 0 ? [] : vm.steps[vm.issuenumbers[idx - 1]])
+            Vue.set(vm.steps, issuenumber, { ...vm.steps[vm.issuenumbers[idx - 1]] })
           }
         }
       }
@@ -187,6 +195,36 @@ export default {
       return `${process.env.EDGES_URL}/${this.country}/${
         fileType === 'elements' ? fileType : 'photos'
       }/${fileName}`
+    },
+    addStep(component) {
+      const vm = this
+      Object.keys(vm.steps).forEach((issuenumber) => {
+        Vue.set(vm.steps[issuenumber], vm.steps[issuenumber].length, { component })
+      })
+    },
+    removeStep(stepNumber) {
+      const vm = this
+      Object.keys(vm.steps).forEach((issuenumber) => {
+        vm.steps[issuenumber].splice(stepNumber, 1)
+      })
+    },
+    duplicateStep(stepNumber) {
+      const vm = this
+      Object.keys(vm.steps).forEach((issuenumber) => {
+        const existingStep = vm.steps[issuenumber][stepNumber]
+        vm.steps[issuenumber].splice(stepNumber, 0, {
+          component: existingStep.component,
+          options: { ...existingStep.options },
+        })
+      })
+    },
+    swapSteps(stepNumbers) {
+      const vm = this
+      Object.keys(vm.steps).forEach((issuenumber) => {
+        const steps = vm.steps[issuenumber]
+        const stepsToSwap = [steps[stepNumbers[0]], steps[stepNumbers[1]]]
+        vm.steps[issuenumber].splice(stepNumbers[0], 2, stepsToSwap[1], stepsToSwap[0])
+      })
     },
     async loadSvg(country, magazine, issuenumber, publishedVersion = false) {
       const { svgElement, svgChildNodes } = await this.loadSvgFromString(
@@ -208,15 +246,16 @@ export default {
       })
     },
     setStepsFromSvg(issuenumber, svgChildNodes) {
-      this.setSteps({
+      Vue.set(
+        this.steps,
         issuenumber,
-        steps: svgChildNodes
+        svgChildNodes
           .filter((node) => node.nodeName === 'g')
           .map((group) => ({
             component: group.getAttribute('class'),
-            svgGroupElement: group,
-          })),
-      })
+            options: JSON.parse(group.getElementsByTagName('metadata')[0].textContent),
+          }))
+      )
     },
     setPhotoUrlsFromSvg(issuenumber, svgChildNodes) {
       const vm = this
@@ -245,17 +284,21 @@ export default {
     },
     setStepsFromApi(issuenumber, stepData) {
       const vm = this
-      this.setSteps({
+      Vue.set(
+        this.steps,
         issuenumber,
-        steps: stepData
+        stepData
           .filter((step) => step.ordre !== -1)
-          .map((step) => ({
-            component: vm.supportedRenders.find(
+          .map(async (step) => {
+            const component = vm.supportedRenders.find(
               (component) => component.originalName === step.nomFonction
-            ).component,
-            dbOptions: step.options,
-          })),
-      })
+            )
+            return {
+              component,
+              options: await vm.getOptionsFromDb(component, step.options),
+            }
+          })
+      )
     },
     async setPhotoUrlsFromApi(issuenumber, edgeId) {
       const photo = await this.$axios.$get(`/api/edgecreator/model/v2/${edgeId}/photo/main`)

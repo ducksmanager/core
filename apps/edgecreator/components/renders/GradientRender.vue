@@ -38,20 +38,8 @@ export default {
     }
   },
 
-  methods: {
-    onOptionsSet() {
-      this.enableDragResize(this.$refs.rect)
-    },
-    async getOptionsFromDb() {
-      return {
-        x: parseFloat(this.dbOptions.Pos_x_debut),
-        y: parseFloat(this.dbOptions.Pos_y_debut),
-        width: parseFloat(this.dbOptions.Pos_x_fin - this.dbOptions.Pos_x_debut),
-        height: parseFloat(this.dbOptions.Pos_y_fin - this.dbOptions.Pos_y_debut),
-        fill: `#${this.dbOptions.Couleur}`,
-        direction: this.dbOptions.Sens,
-      }
-    },
+  mounted() {
+    this.enableDragResize(this.$refs.rect)
   },
 }
 </script>

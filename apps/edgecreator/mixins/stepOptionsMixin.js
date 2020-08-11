@@ -6,14 +6,8 @@ export default {
   props: {
     issuenumber: { type: String },
     stepNumber: { type: Number },
-    svgGroup: { type: Object },
-    dbOptions: { type: Object },
   },
-  data() {
-    return {
-      options: {},
-    }
-  },
+
   computed: {
     ...mapState(['width', 'height']),
     ...mapState('ui', ['zoom', 'locked']),
@@ -22,11 +16,6 @@ export default {
       editingStepNumber: 'stepNumber',
       editingStepOptions: 'stepOptions',
     }),
-    svgMetadata() {
-      return (
-        this.svgGroup && JSON.parse(this.svgGroup.getElementsByTagName('metadata')[0].textContent)
-      )
-    },
     shouldApplyLockedOption() {
       return (
         this.locked &&
@@ -148,12 +137,6 @@ export default {
   },
   async mounted() {
     const vm = this
-    if (this.svgMetadata) {
-      this.copyOptions(this.svgMetadata)
-    } else if (this.dbOptions) {
-      this.copyOptions(await this.getOptionsFromDb())
-    }
-    this.onOptionsSet()
     this.$root.$on('set-option', (optionName, optionValue) => {
       if (
         (vm.editingIssuenumber === vm.issuenumber || vm.locked) &&

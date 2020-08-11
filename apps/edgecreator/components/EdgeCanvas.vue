@@ -51,8 +51,7 @@
         v-if="$options.components[`${step.component}Render`]"
         :issuenumber="issuenumber"
         :step-number="stepNumber"
-        :svg-group="step.svgGroupElement"
-        :db-options="step.dbOptions"
+        :options="step.options"
       ></component>
     </g>
     <rect
