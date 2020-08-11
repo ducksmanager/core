@@ -15,13 +15,13 @@
               v-b-tooltip.hover
               title="Move up"
               :class="{ invisible: stepNumber === 0 }"
-              @click="swapSteps([stepNumber - 1, stepNumber])"
+              @click="$emit('swap-steps', [stepNumber - 1, stepNumber])"
             />
             <b-icon-square
               stacked
               scale="0.7"
               :style="{ marginTop: '4px' }"
-              @click="duplicateStep(stepNumber)"
+              @click="$emit('duplicate-step', stepNumber)"
             ></b-icon-square>
             <b-icon-square-fill
               v-b-tooltip.hover
@@ -29,18 +29,18 @@
               stacked
               scale="0.7"
               :style="{ marginLeft: '-16px', marginTop: '-4px' }"
-              @click="duplicateStep(stepNumber)"
+              @click="$emit('duplicate-step', stepNumber)"
             ></b-icon-square-fill>
             <b-icon-x-square-fill
               v-b-tooltip.hover
               title="Delete"
-              @click="removeStep(stepNumber)"
+              @click="$emit('remove-step', stepNumber)"
             />
             <b-icon-arrow-down-square-fill
               v-b-tooltip.hover
               title="Move down"
               :class="{ invisible: stepNumber === steps.length - 1 }"
-              @click="swapSteps([stepNumber, stepNumber + 1])"
+              @click="$emit('swap-steps', [stepNumber, stepNumber + 1])"
             />
           </div>
         </template>
@@ -127,12 +127,7 @@
             <b-dropdown-item
               v-for="render in supportedRenders"
               :key="render.component"
-              @click="
-                addStep({
-                  component: render.component,
-                  svgGroupElement: null,
-                })
-              "
+              @click="$emit('add-step', render.component)"
               >{{ render.description }}
             </b-dropdown-item>
           </b-dropdown>
@@ -142,7 +137,8 @@
   </b-card>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
+
 import FormColorInputRow from '@/components/FormColorInputRow'
 import FormInputRow from '@/components/FormInputRow'
 import Gallery from '@/components/Gallery'
@@ -197,7 +193,6 @@ export default {
         step.svgGroupElement ? step.svgGroupElement.toString() : JSON.stringify(step.dbOptions)
       }`
     },
-    ...mapMutations(['addStep', 'removeStep', 'swapSteps', 'duplicateStep']),
   },
 }
 </script>

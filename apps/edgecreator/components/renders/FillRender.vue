@@ -17,21 +17,6 @@ export default {
       },
     }
   },
-
-  methods: {
-    onOptionsSet() {},
-    async getOptionsFromDb() {
-      if (parseFloat(this.dbOptions.Pos_x) !== 0) {
-        console.error(`Step ${this.stepNumber}: Pos_x !== 0, this is not supported`)
-      }
-      if (parseFloat(this.dbOptions.Pos_y) !== 0) {
-        console.error(`Step ${this.stepNumber}: Pos_y !== 0, this is not supported`)
-      }
-      return {
-        fill: `#${this.dbOptions.Couleur}`,
-      }
-    },
-  },
 }
 </script>
 

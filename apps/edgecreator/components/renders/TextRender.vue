@@ -54,14 +54,17 @@ export default {
   },
 
   watch: {
+    imageUrl: {
+      immediate: true,
+      async handler(newValue) {
+        this.image = await this.$axios.$get(this.imageUrl)
+      },
+    },
     image: {
       immediate: true,
       handler(newValue) {
         if (newValue) {
           const vm = this
-          if (vm.dbOptions) {
-            this.copyOptions(this.getOptionsFromDb())
-          }
           this.waitUntil(
             () => vm.$refs.image,
             () => {
@@ -90,54 +93,11 @@ export default {
     },
   },
 
+  async mounted() {
+    await this.refreshPreview()
+  },
+
   methods: {
-    async onOptionsSet() {
-      await this.refreshPreview()
-      if (this.dbOptions) {
-        this.copyOptions(await this.getOptionsFromDb())
-      }
-    },
-    async getOptionsFromDb() {
-      if (this.imageUrl) {
-        const textImage = new Image()
-        textImage.src = this.imageUrl
-        await new Promise(function (resolve) {
-          const interval = setInterval(function () {
-            if (textImage.width) {
-              clearInterval(interval)
-              resolve()
-            }
-          }, 10)
-        })
-
-        const embeddedImageHeight = this.width * (textImage.height / textImage.width)
-        const measureFromBottom = this.dbOptions.Mesure_depuis_haut === 'Non'
-
-        const width = parseFloat(this.dbOptions.Compression_x) * this.width
-        const height = parseFloat(this.dbOptions.Compression_y) * embeddedImageHeight
-
-        const x = parseFloat(this.dbOptions.Pos_x)
-        const y = parseFloat(this.dbOptions.Pos_y) - (measureFromBottom ? height : 0)
-
-        return {
-          ...this.options,
-          x,
-          y,
-          width,
-          height,
-        }
-      }
-      return {
-        fgColor: this.dbOptions.Couleur_texte,
-        bgColor: this.dbOptions.Couleur_fond,
-        font: this.dbOptions.URL.replace(/\./g, '/'),
-        text: this.dbOptions.Chaine,
-        internalWidth: parseFloat(this.dbOptions.Largeur),
-        rotation: 360 - parseFloat(this.dbOptions.Rotation),
-        isHalfHeight: this.dbOptions.Demi_hauteur === 'Oui',
-      }
-    },
-
     async refreshPreview() {
       if (JSON.stringify(this.textImageOptions) === JSON.stringify(this.options)) {
         return
