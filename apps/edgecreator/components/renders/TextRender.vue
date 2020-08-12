@@ -57,7 +57,11 @@ export default {
     imageUrl: {
       immediate: true,
       async handler(newValue) {
-        this.image = await this.$axios.$get(this.imageUrl)
+        try {
+          this.image = await this.$axios.$get(newValue)
+        } catch (e) {
+          console.error(`Text image details could not be retrieved : ${newValue}`)
+        }
       },
     },
     image: {
@@ -104,15 +108,19 @@ export default {
       }
       this.textImageOptions = { ...this.options }
       const { fgColor, bgColor, internalWidth, text, font } = this.options
-      this.textImage = await this.$axios.$get(
-        `/fs/text/${[fgColor, bgColor, internalWidth, 'font', font, 'text', text].join('/')}`,
-        {
+      const url = `/fs/text/${[fgColor, bgColor, internalWidth, 'font', font, 'text', text].join(
+        '/'
+      )}`
+      try {
+        this.textImage = await this.$axios.$get(url, {
           headers: {
             imageWidth: this.width,
             'Content-Type': 'application/json',
           },
-        }
-      )
+        })
+      } catch (e) {
+        console.error(`Text image could not be retrieved : ${url}`)
+      }
     },
     waitUntil(condition, okCallback, timeout, loopEvery) {
       let iterations = 0
