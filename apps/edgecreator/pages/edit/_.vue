@@ -121,7 +121,10 @@ export default {
       'photoUrls',
       'contributors',
     ]),
-    ...mapState('editingStep', { editingIssuenumber: 'issuenumber' }),
+    ...mapState('editingStep', {
+      editingIssuenumber: 'issuenumber',
+      editingStepNumber: 'stepNumber',
+    }),
     ...mapState('renders', ['supportedRenders']),
     ...mapState('ui', [
       'zoom',

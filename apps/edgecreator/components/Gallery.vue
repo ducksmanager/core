@@ -76,13 +76,12 @@ export default {
       'publicationPhotos',
       'photoUrls',
     ]),
-    ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     items() {
       return this.imageType === 'elements' ? this.publicationElements : this.publicationPhotos
     },
     selected() {
       return this.imageType === 'elements'
-        ? this.editingStepOptions.src
+        ? null // this.editingStepOptions.src
         : this.photoUrls[this.issuenumbers[0]]
     },
   },

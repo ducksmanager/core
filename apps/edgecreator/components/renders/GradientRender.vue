@@ -24,9 +24,10 @@ import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 export default {
   mixins: [stepOptionsMixin],
 
-  data() {
-    return {
-      options: {
+  props: {
+    options: {
+      type: Object,
+      default: () => ({
         x: 3,
         y: 3,
         width: 10,
@@ -34,8 +35,8 @@ export default {
         colorStart: '#D01721',
         colorEnd: '#0000FF',
         direction: 'Vertical',
-      },
-    }
+      }),
+    },
   },
 
   mounted() {

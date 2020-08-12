@@ -22,12 +22,10 @@ import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 export default {
   mixins: [stepOptionsMixin],
 
-  data() {
-    return {
-      textImage: null,
-      textImageOptions: {},
-      image: { base64: null, width: null, height: null },
-      options: {
+  props: {
+    options: {
+      type: Object,
+      default: () => ({
         x: 5,
         y: 5,
         width: 15,
@@ -40,7 +38,15 @@ export default {
         text: 'Le journal de mickey',
         internalWidth: 700,
         isHalfHeight: true,
-      },
+      }),
+    },
+  },
+
+  data() {
+    return {
+      textImage: null,
+      textImageOptions: {},
+      image: { base64: null, width: null, height: null },
     }
   },
 

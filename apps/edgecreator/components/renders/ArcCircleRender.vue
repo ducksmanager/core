@@ -28,12 +28,12 @@ export default {
     const vm = this
     this.enableDragResize(this.$refs.ellipse, {
       onmove: ({ dx, dy }) => {
-        vm.options.cx += dx / vm.zoom
-        vm.options.cy += dy / vm.zoom
+        vm.$root.$emit('set-option', 'cx', vm.options.cx + dx / vm.zoom)
+        vm.$root.$emit('set-option', 'cy', vm.options.cy + dy / vm.zoom)
       },
       onresizemove: ({ rect }) => {
-        vm.options.rx = rect.width / 2 / vm.zoom
-        vm.options.ry = rect.height / 2 / vm.zoom
+        vm.$root.$emit('set-option', 'rx', rect.width / 2 / vm.zoom)
+        vm.$root.$emit('set-option', 'ry', rect.height / 2 / vm.zoom)
       },
     })
   },
