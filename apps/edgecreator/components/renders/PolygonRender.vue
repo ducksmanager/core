@@ -10,9 +10,10 @@ import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 export default {
   mixins: [stepOptionsMixin],
 
-  data() {
-    return {
-      options: {
+  props: {
+    options: {
+      type: Object,
+      default: () => ({
         points: [
           [1, 5],
           [4, 25],
@@ -20,15 +21,19 @@ export default {
           [14, 12],
         ],
         fill: '#000000',
-      },
-    }
+      }),
+    },
   },
 
   mounted() {
     const vm = this
     this.enableDragResize(this.$refs.polygon, {
       onmove: ({ dy, dx }) => {
-        vm.options.points = vm.options.points.map(([x, y]) => [x + dx / vm.zoom, y + dy / vm.zoom])
+        vm.$root.$emit(
+          'set-option',
+          'points',
+          vm.options.points.map(([x, y]) => [x + dx / vm.zoom, y + dy / vm.zoom])
+        )
       },
       onresizemove: ({ dy, dx }) => {
         const heightMaxGrowth = dy / vm.zoom
@@ -41,10 +46,14 @@ export default {
         const maxY = Math.max(...points.map(([, y]) => y))
         const currentWidth = maxX - minX
         const currentHeight = maxY - minY
-        vm.options.points = points.map(([x, y]) => [
-          x + widthMaxGrowth * ((x - minX) / currentWidth),
-          y + heightMaxGrowth * ((y - minY) / currentHeight),
-        ])
+        vm.$root.$emit(
+          'set-option',
+          'points',
+          points.map(([x, y]) => [
+            x + widthMaxGrowth * ((x - minX) / currentWidth),
+            y + heightMaxGrowth * ((y - minY) / currentHeight),
+          ])
+        )
       },
     })
   },

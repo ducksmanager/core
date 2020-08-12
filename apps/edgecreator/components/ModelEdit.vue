@@ -45,32 +45,22 @@
           </div>
         </template>
         <b-card-text v-if="step.component === 'Text'">
-          <form-input-row
-            option-name="text"
-            label="Text"
-            type="text"
-            :options="editingStepOptions"
-          />
-          <form-input-row
-            option-name="font"
-            label="Font"
-            type="text"
-            :options="editingStepOptions"
-          />
-          <form-color-input-row :options="editingStepOptions" option-name="bgColor" />
-          <form-color-input-row :options="editingStepOptions" option-name="fgColor" />
+          <form-input-row option-name="text" label="Text" type="text" :options="step.options" />
+          <form-input-row option-name="font" label="Font" type="text" :options="step.options" />
+          <form-color-input-row :options="step.options" option-name="bgColor" />
+          <form-color-input-row :options="step.options" option-name="fgColor" />
           <form-input-row
             option-name="rotation"
-            :label="`Rotation : ${editingStepOptions.rotation}°`"
+            :label="`Rotation : ${step.options.rotation}°`"
             type="range"
             :min="0"
             :max="360"
             :step="1"
-            :options="editingStepOptions"
+            :options="step.options"
           />
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
-          <form-color-input-row :options="editingStepOptions" option-name="fill" />
+          <form-color-input-row :options="step.options" option-name="fill" />
         </b-card-text>
         <b-card-text v-if="step.component === 'Image'">
           <form-input-row
@@ -79,7 +69,7 @@
             type="text"
             readonly
             list-id="src-list"
-            :options="editingStepOptions"
+            :options="step.options"
           >
             <b-form-datalist id="src-list" :options="publicationElements" />
           </form-input-row>
@@ -89,7 +79,7 @@
           <form-color-input-row
             v-for="optionName in ['fill', 'stroke']"
             :key="optionName"
-            :options="editingStepOptions"
+            :options="step.options"
             :option-name="optionName"
             can-be-transparent
           />
@@ -98,7 +88,7 @@
           <form-color-input-row
             v-for="optionName in ['colorStart', 'colorEnd']"
             :key="optionName"
-            :options="editingStepOptions"
+            :options="step.options"
             :option-name="optionName"
           />
 
@@ -109,7 +99,7 @@
             <b-col sm="6" md="5">
               <b-form-select
                 id="direction"
-                :value="editingStepOptions.direction"
+                :value="step.options.direction"
                 :options="['Vertical', 'Horizontal']"
                 @input="$root.$emit('set-option', 'direction', $event)"
               >
@@ -118,7 +108,7 @@
           </b-row>
         </b-card-text>
         <b-card-text v-if="step.component === 'Polygon'">
-          <form-color-input-row :options="editingStepOptions" option-name="fill" />
+          <form-color-input-row :options="step.options" option-name="fill" />
         </b-card-text>
       </b-tab>
       <b-tab key="99" title="Add step" title-item-class="font-weight-bold">
@@ -183,7 +173,6 @@ export default {
       },
     },
     ...mapState(['publicationElements', 'country']),
-    ...mapState('editingStep', { editingStepOptions: 'stepOptions' }),
     ...mapState('renders', ['supportedRenders']),
   },
 

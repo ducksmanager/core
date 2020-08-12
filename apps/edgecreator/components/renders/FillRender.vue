@@ -10,12 +10,13 @@ import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 export default {
   mixins: [stepOptionsMixin],
 
-  data() {
-    return {
-      options: {
+  props: {
+    options: {
+      type: Object,
+      default: () => ({
         fill: '#ff0000',
-      },
-    }
+      }),
+    },
   },
 }
 </script>
