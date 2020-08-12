@@ -93,7 +93,7 @@ export default {
     },
     chooseImage() {
       if (this.imageType === 'elements') {
-        this.$root.$emit('set-option', 'src', this.clickedImage)
+        this.$root.$emit('set-options', { src: this.clickedImage })
       } else if (!(this.photoUrls[this.issuenumbers[0]] || []).includes(this.clickedImage)) {
         this.setPhotoUrl({ issuenumber: this.issuenumbers[0], filename: this.clickedImage })
       }

@@ -29,11 +29,9 @@ export default {
     const vm = this
     this.enableDragResize(this.$refs.polygon, {
       onmove: ({ dy, dx }) => {
-        vm.$root.$emit(
-          'set-option',
-          'points',
-          vm.options.points.map(([x, y]) => [x + dx / vm.zoom, y + dy / vm.zoom])
-        )
+        vm.$root.$emit('set-options', {
+          points: vm.options.points.map(([x, y]) => [x + dx / vm.zoom, y + dy / vm.zoom]),
+        })
       },
       onresizemove: ({ dy, dx }) => {
         const heightMaxGrowth = dy / vm.zoom
@@ -46,14 +44,12 @@ export default {
         const maxY = Math.max(...points.map(([, y]) => y))
         const currentWidth = maxX - minX
         const currentHeight = maxY - minY
-        vm.$root.$emit(
-          'set-option',
-          'points',
-          points.map(([x, y]) => [
+        vm.$root.$emit('set-options', {
+          points: points.map(([x, y]) => [
             x + widthMaxGrowth * ((x - minX) / currentWidth),
             y + heightMaxGrowth * ((y - minY) / currentHeight),
-          ])
-        )
+          ]),
+        })
       },
     })
   },

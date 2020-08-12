@@ -68,7 +68,7 @@ export default {
       if (this.isTextColor) {
         value = value.replace('#', '')
       }
-      this.$root.$emit('set-option', this.optionName, value)
+      this.$root.$emit('set-options', { [this.optionName]: value })
     },
   },
 }

@@ -11,13 +11,7 @@
       :checked="options[optionName] === 'transparent'"
       style="display: none;"
       type="checkbox"
-      @change="
-        $root.$emit(
-          'set-option',
-          optionName,
-          $event.currentTarget.checked ? 'transparent' : originalColor
-        )
-      "
+      @change="change($event.currentTarget.checked ? 'transparent' : originalColor)"
     />
     <label v-if="canBeTransparent" class="transparent" :for="`${optionName}-transparent`"
       ><img :id="`${optionName}-transparent`" src="/transparent.png"
@@ -36,10 +30,7 @@
         <div v-if="!frequentColorsWithoutCurrent.length">No other color</div>
         <ul v-else>
           <li v-for="color in frequentColorsWithoutCurrent" :key="color">
-            <span
-              class="frequent-color"
-              :style="{ background: color }"
-              @click="$root.$emit('set-option', optionName, color)"
+            <span class="frequent-color" :style="{ background: color }" @click="change(color)"
               >&nbsp;</span
             >
           </li>
@@ -103,6 +94,11 @@ export default {
     },
     ...mapGetters(['colors']),
     ...mapState(['photoUrls']),
+  },
+  methods: {
+    change(value) {
+      this.$root.$emit('set-options', { [this.optionName]: value })
+    },
   },
 }
 </script>
