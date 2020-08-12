@@ -39,8 +39,14 @@ export default {
 
   watch: {
     async 'options.src'() {
-      this.image = await this.$axios.$get(`/fs/base64?${this.country}/elements/${this.options.src}`)
-      this.enableDragResize(this.$refs.image)
+      try {
+        this.image = await this.$axios.$get(
+          `/fs/base64?${this.country}/elements/${this.options.src}`
+        )
+        this.enableDragResize(this.$refs.image)
+      } catch (e) {
+        console.error(`Image could not be retrieved : ${this.options.src}`)
+      }
     },
   },
   async mounted() {

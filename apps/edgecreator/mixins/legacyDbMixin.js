@@ -36,9 +36,18 @@ export default {
           }
         }
         case 'Image': {
-          const image = await this.$axios.$get(
-            `/fs/base64?${this.country}/elements/${dbOptions.Source}`
-          )
+          let image
+          try {
+            image = await this.$axios.$get(
+              `/fs/base64?${this.country}/elements/${dbOptions.Source}`
+            )
+          } catch (e) {
+            console.error(`Image could not be retrieved : ${dbOptions.Source}`)
+            return {
+              src: dbOptions.Source,
+            }
+          }
+
           const embeddedImageHeight =
             this.width * (image.dimensions.height / image.dimensions.width)
           const fromBottom = dbOptions.Position === 'bas'
