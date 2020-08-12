@@ -101,7 +101,7 @@
                 id="direction"
                 :value="step.options.direction"
                 :options="['Vertical', 'Horizontal']"
-                @input="$root.$emit('set-option', 'direction', $event)"
+                @input="$root.$emit('set-options', { direction: $event })"
               >
               </b-form-select>
             </b-col>

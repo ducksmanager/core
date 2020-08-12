@@ -38,8 +38,10 @@ export default {
           onmove:
             onmove ||
             (({ dx, dy }) => {
-              vm.$root.$emit('set-option', 'x', vm.options.x + dx / vm.zoom)
-              vm.$root.$emit('set-option', 'y', vm.options.y + dy / vm.zoom)
+              vm.$root.$emit('set-options', {
+                x: vm.options.x + dx / vm.zoom,
+                y: vm.options.y + dy / vm.zoom,
+              })
             }),
         })
         .resizable({
@@ -49,8 +51,10 @@ export default {
           'resizemove',
           onresizemove ||
             (({ rect }) => {
-              vm.$root.$emit('set-option', 'width', rect.width / vm.zoom)
-              vm.$root.$emit('set-option', 'height', rect.height / vm.zoom)
+              vm.$root.$emit('set-options', {
+                width: rect.width / vm.zoom,
+                height: rect.height / vm.zoom,
+              })
             })
         )
     },

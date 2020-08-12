@@ -6,11 +6,17 @@ export default {
   }),
   mounted() {
     const vm = this
-    this.$root.$on('set-option', (optionName, optionValue) => {
+    this.$root.$on('set-options', (changes) => {
       Object.keys(vm.steps)
         .filter((issuenumber) => issuenumber === vm.editingIssuenumber || vm.locked)
         .forEach((issuenumber) => {
-          Vue.set(vm.steps[issuenumber][vm.editingStepNumber].options, optionName, optionValue)
+          Object.keys(changes).forEach((optionName) => {
+            Vue.set(
+              vm.steps[issuenumber][vm.editingStepNumber].options,
+              optionName,
+              changes[optionName]
+            )
+          })
         })
     })
   },
