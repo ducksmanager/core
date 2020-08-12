@@ -2,7 +2,7 @@ export default {
   methods: {
     async getOptionsFromDb(targetComponent, dbOptions) {
       switch (targetComponent) {
-        case 'ArcCircleRender': {
+        case 'ArcCircle': {
           const filled = dbOptions.Rempli === 'Oui'
 
           return {
@@ -14,7 +14,7 @@ export default {
             stroke: filled ? 'transparent' : `#${dbOptions.Couleur}`,
           }
         }
-        case 'FillRender': {
+        case 'Fill': {
           if (parseFloat(dbOptions.Pos_x) !== 0) {
             console.error(`Step ${this.stepNumber}: Pos_x !== 0, this is not supported`)
           }
@@ -25,7 +25,7 @@ export default {
             fill: `#${dbOptions.Couleur}`,
           }
         }
-        case 'GradientRender': {
+        case 'Gradient': {
           return {
             x: parseFloat(dbOptions.Pos_x_debut),
             y: parseFloat(dbOptions.Pos_y_debut),
@@ -35,7 +35,7 @@ export default {
             direction: dbOptions.Sens,
           }
         }
-        case 'ImageRender': {
+        case 'Image': {
           const image = await this.$axios.$get(
             `/fs/base64?${this.country}/elements/${dbOptions.Source}`
           )
@@ -54,13 +54,13 @@ export default {
             height: parseFloat(dbOptions.Compression_y || 1) * embeddedImageHeight,
           }
         }
-        case 'PolygonRender': {
+        case 'Polygon': {
           return {
             points: dbOptions.X.map((x, i) => [x, dbOptions.Y[i]]),
             fill: `#${dbOptions.Couleur}`,
           }
         }
-        case 'RectangleRender': {
+        case 'Rectangle': {
           const filled = dbOptions.Rempli === 'Oui'
           return {
             x: parseFloat(dbOptions.Pos_x_debut),
@@ -71,7 +71,7 @@ export default {
             stroke: filled ? 'transparent' : `#${dbOptions.Couleur}`,
           }
         }
-        case 'TextRender': {
+        case 'Text': {
           return {
             fgColor: dbOptions.Couleur_texte,
             bgColor: dbOptions.Couleur_fond,
