@@ -19,7 +19,7 @@
                   :height="height"
                   :steps="issueSteps"
                   :photo-url="photoUrls[issuenumber]"
-                  :contributors="contributors"
+                  :contributors="contributors[issuenumber] || {}"
                 />
               </td>
               <td v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
@@ -180,7 +180,7 @@ export default {
             await vm.setStepsFromApi(issuenumber, steps)
 
             await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
-            await vm.setContributorsFromApi(edge.id)
+            await vm.setContributorsFromApi(issuenumber, edge.id)
 
             vm.setDimensionsFromApi(steps)
           } else {
@@ -213,7 +213,7 @@ export default {
       this.setDimensionsFromSvg(svgElement)
       this.setStepsFromSvg(issuenumber, svgChildNodes)
       this.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
-      this.setContributorsFromSvg(svgChildNodes)
+      this.setContributorsFromSvg(issuenumber, svgChildNodes)
     },
     setDimensionsFromSvg(svgElement) {
       this.setDimensions({
@@ -238,12 +238,16 @@ export default {
         vm.setPhotoUrl({ issuenumber, filename: photoUrl })
       })
     },
-    setContributorsFromSvg(svgChildNodes) {
+    setContributorsFromSvg(issuenumber, svgChildNodes) {
       const vm = this
       const contributionTypes = ['photographer', 'designer']
       contributionTypes.forEach((contributionType) => {
         vm.getSvgMetadata(svgChildNodes, `contributor-${contributionType}`).forEach((username) => {
-          vm.addContributor({ contributionType: `${contributionType}s`, user: { username } })
+          vm.addContributor({
+            issuenumber,
+            contributionType: `${contributionType}s`,
+            user: { username },
+          })
         })
       })
     },
@@ -283,11 +287,12 @@ export default {
         this.setPhotoUrl({ issuenumber, filename: photo.nomfichier })
       }
     },
-    async setContributorsFromApi(edgeId) {
+    async setContributorsFromApi(issuenumber, edgeId) {
       const vm = this
       const contributors = await vm.$axios.$get(`/api/edgecreator/contributors/${edgeId}`)
       contributors.forEach((contributor) => {
         vm.addContributor({
+          issuenumber,
           contributionType:
             contributor.contribution === 'photographe' ? 'photographers' : 'designers',
           user: vm.allUsers.find((user) => user.id === contributor.idUtilisateur),

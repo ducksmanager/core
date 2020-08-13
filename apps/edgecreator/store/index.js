@@ -5,10 +5,7 @@ export const state = () => ({
   magazine: null,
   issuenumbers: [],
   photoUrls: {},
-  contributors: {
-    designers: [],
-    photographers: [],
-  },
+  contributors: {},
 
   width: 15,
   height: 200,
@@ -35,11 +32,24 @@ export const mutations = {
   setPhotoUrl(state, { issuenumber, filename }) {
     Vue.set(state.photoUrls, issuenumber, filename)
   },
-  addContributor(state, { contributionType, user }) {
-    Vue.set(state.contributors[contributionType], state.contributors[contributionType].length, user)
+  addContributor(state, { issuenumber, contributionType, user }) {
+    let contributors = state.contributors[issuenumber]
+    if (!contributors) {
+      contributors = {
+        designers: [],
+        photographers: [],
+      }
+    }
+    contributors[contributionType].push(user)
+    Vue.set(state.contributors, issuenumber, contributors)
   },
-  removeContributor(state, { contributionType, index }) {
-    state.contributors[contributionType].splice(index, 1)
+  removeContributor(state, { contributionType, userToRemove }) {
+    state.contributors.forEach((issueContributors) => {
+      const index = issueContributors[contributionType].findIndex((user) => {
+        return user === userToRemove
+      })
+      issueContributors[contributionType].splice(index, 1)
+    })
   },
   setDimensions(state, { width, height }) {
     state.width = parseFloat(width)
