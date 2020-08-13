@@ -3,13 +3,16 @@
     type="color"
     :option-name="optionName"
     :label="`Color${optionName === 'Color' ? '' : ` (${optionName})`}`"
-    :class="{ 'color-row': true, 'transparent-selected': options[optionName] === 'transparent' }"
+    :class="{
+      'color-row': true,
+      'can-be-transparent': canBeTransparent,
+      'transparent-selected': isTransparent,
+    }"
     :options="options"
-    :disabled="options[optionName] === 'transparent'"
+    :disabled="isTransparent"
     ><input
       :id="`${optionName}-transparent`"
-      :checked="options[optionName] === 'transparent'"
-      style="display: none;"
+      :checked="isTransparent"
       type="checkbox"
       @change="change($event.currentTarget.checked ? 'transparent' : originalColor)"
     />
@@ -17,7 +20,7 @@
       ><img :id="`${optionName}-transparent`" src="/transparent.png"
     /></label>
 
-    <template v-if="options[optionName] !== 'transparent'" v-slot:suffix>
+    <template v-if="!isTransparent" v-slot:suffix>
       <b-button
         :id="`${optionName}-popover-colors`"
         class="no-pointer"
@@ -74,10 +77,12 @@ export default {
     }
     return {
       originalColor,
-      isTransparent: originalColor === 'transparent',
     }
   },
   computed: {
+    isTransparent() {
+      return this.options[this.optionName] === 'transparent'
+    },
     hasPhotoUrl() {
       return Object.keys(this.photoUrls).length
     },
@@ -113,6 +118,9 @@ input[type='color'] {
   border: 0;
   background: none !important;
 }
+input[type='checkbox'][id$='-transparent'] {
+  display: none;
+}
 
 label.transparent {
   width: 40px;
@@ -124,8 +132,8 @@ label.transparent img {
   top: 0;
 }
 
-.color-row.transparent-selected label.transparent img,
-.color-row:not(.transparent-selected) input[type='color'] {
+.color-row.can-be-transparent.transparent-selected label.transparent img,
+.color-row.can-be-transparent:not(.transparent-selected) input[type='color'] {
   border: 1px dashed black;
 }
 .btn {
