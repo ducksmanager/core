@@ -82,8 +82,8 @@ export default {
         }
         case 'Text': {
           return {
-            fgColor: dbOptions.Couleur_texte,
-            bgColor: dbOptions.Couleur_fond,
+            fgColor: `#${dbOptions.Couleur_texte}`,
+            bgColor: `#${dbOptions.Couleur_fond}`,
             font: dbOptions.URL.replace(/\./g, '/'),
             text: dbOptions.Chaine,
             internalWidth: parseFloat(dbOptions.Largeur),

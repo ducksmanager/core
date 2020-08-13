@@ -42,9 +42,6 @@ export default {
   computed: {
     userValue() {
       const value = this.options[this.optionName]
-      if (this.isTextColor) {
-        return `#${value}`
-      }
       if (this.optionName === 'xlink:href') {
         return value.match(/\/([^/]+)$/)[1]
       }
@@ -59,15 +56,9 @@ export default {
     isImageSrcOption() {
       return !!this.options.src
     },
-    isTextColor() {
-      return this.isTextImageOption && this.optionName.toLowerCase().includes('color')
-    },
   },
   methods: {
     onChangeValue(value) {
-      if (this.isTextColor) {
-        value = value.replace('#', '')
-      }
       this.$root.$emit('set-options', { [this.optionName]: value })
     },
   },
