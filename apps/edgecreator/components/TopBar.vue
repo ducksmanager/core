@@ -118,21 +118,21 @@
               <h2>{{ $t('export.' + contributionType) }}</h2>
               <vue-bootstrap-typeahead
                 :ref="`${contributionType}-typeahead`"
-                :data="allUsers.filter((user) => !contributors[contributionType].includes(user))"
+                :data="allUsers.filter((user) => !isContributor(user, contributionType))"
                 :serializer="(u) => u.username"
                 :placeholder="$t('export.typeahead.placeholder')"
                 :min-matching-chars="0"
                 @hit="
-                  addContributor({ contributionType: contributionType, user: $event })
+                  addContributorAllIssues($event, contributionType)
                   $refs[`${contributionType}-typeahead`][0].inputValue = ''
                 "
               />
               <ul>
-                <li v-for="(user, i) in contributors[contributionType]" :key="user.username">
+                <li v-for="user in getContributors(contributionType)" :key="user.username">
                   {{ user.username }}
                   <b-icon-x-square-fill
                     style="cursor: pointer;"
-                    @click="removeContributor({ contributionType: contributionType, index: i })"
+                    @click="removeContributor({ contributionType: contributionType, userToRemove })"
                   />
                 </li>
               </ul></div></b-modal
@@ -264,6 +264,22 @@ export default {
     ...mapState('user', ['allUsers']),
   },
   methods: {
+    getContributors(contributionType) {
+      const vm = this
+      return this.allUsers.filter((user) => vm.isContributor(user, contributionType))
+    },
+    isContributor(user, contributionType) {
+      const vm = this
+      return Object.keys(this.contributors).reduce((acc, issueNumber) => {
+        return acc || vm.contributors[issueNumber][contributionType].includes(user)
+      }, false)
+    },
+    addContributorAllIssues(user, contributionType) {
+      const vm = this
+      this.issuenumbers.forEach((issuenumber) => {
+        vm.addContributor({ issuenumber, contributionType, user })
+      })
+    },
     removeVueMarkup(element) {
       Object.values(element.attributes || {})
         .filter((attribute) => attribute.name.startsWith('data-v-'))
