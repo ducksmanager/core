@@ -114,9 +114,15 @@ export default {
       }
       this.textImageOptions = { ...this.options }
       const { fgColor, bgColor, internalWidth, text, font } = this.options
-      const url = `/fs/text/${[fgColor, bgColor, internalWidth, 'font', font, 'text', text].join(
-        '/'
-      )}`
+      const url = `/fs/text/${[
+        fgColor.replace('#', ''),
+        bgColor.replace('#', ''),
+        internalWidth,
+        'font',
+        font,
+        'text',
+        text,
+      ].join('/')}`
       try {
         this.textImage = await this.$axios.$get(url, {
           headers: {
