@@ -77,21 +77,26 @@ const numericSortCollator = new Intl.Collator(undefined, {
 
 export const actions = {
   setIssuenumbersFromMinMax({ state, commit }, { min, max }) {
+    const firstIssueIndex = state.publicationIssues.findIndex((issue) => issue === min)
+    if (firstIssueIndex === -1) {
+      throw new Error(`Issue ${min} doesn't exist`)
+    }
     if (max === undefined) {
       commit('setIssuenumbers', [min])
     } else {
-      const firstIssueIndex = state.publicationIssues.findIndex((issue) => issue === min)
-      const lastIssueIndex = state.publicationIssues.findIndex((issue) => issue === max)
+      let lastIssueIndex = state.publicationIssues.findIndex((issue) => issue === max)
       if (lastIssueIndex === -1) {
-        commit('setIssuenumbers', [min])
-      } else {
-        commit(
-          'setIssuenumbers',
-          state.publicationIssues.filter(
-            (unused, index) => index >= firstIssueIndex && index <= lastIssueIndex
-          )
+        ;[lastIssueIndex] = Object.keys(state.publicationIssues).slice(-1)
+        console.warn(
+          `Issue ${max} doesn't exist, falling back to ${state.publicationIssues[lastIssueIndex]}`
         )
       }
+      commit(
+        'setIssuenumbers',
+        state.publicationIssues.filter(
+          (unused, index) => index >= firstIssueIndex && index <= lastIssueIndex
+        )
+      )
     }
   },
   async loadItems({ state, commit }, { itemType }) {
