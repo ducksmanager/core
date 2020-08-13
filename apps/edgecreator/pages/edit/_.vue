@@ -1,7 +1,7 @@
 <template>
-  <b-container v-if="error" id="wrapper" fluid>
+  <b-alert v-if="error" align="center" variant="danger" show>
     {{ error }}
-  </b-container>
+  </b-alert>
   <b-container v-else-if="Object.keys(steps).length && width && height" id="wrapper" fluid>
     <top-bar />
     <b-row class="flex-grow-1 pt-2" align-h="end">
@@ -161,35 +161,39 @@ export default {
 
     await this.loadPublicationIssues()
 
-    this.setIssuenumbersFromMinMax({ min: issuenumberMin, max: issuenumberMax })
+    try {
+      this.setIssuenumbersFromMinMax({ min: issuenumberMin, max: issuenumberMax })
 
-    for (let idx = 0; idx < vm.issuenumbers.length; idx++) {
-      if (!Object.prototype.hasOwnProperty.call(vm.issuenumbers, idx)) {
-        continue
-      }
-      const issuenumber = vm.issuenumbers[idx]
-      try {
-        await this.loadSvg(this.country, this.magazine, issuenumber)
-      } catch {
-        const edge = await this.$axios.$get(
-          `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
-        )
-        if (edge) {
-          const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
+      for (let idx = 0; idx < vm.issuenumbers.length; idx++) {
+        if (!Object.prototype.hasOwnProperty.call(vm.issuenumbers, idx)) {
+          continue
+        }
+        const issuenumber = vm.issuenumbers[idx]
+        try {
+          await this.loadSvg(this.country, this.magazine, issuenumber)
+        } catch {
+          const edge = await this.$axios.$get(
+            `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
+          )
+          if (edge) {
+            const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
+            await vm.setStepsFromApi(issuenumber, steps)
 
-          await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
-          await vm.setContributorsFromApi(edge.id)
+            await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
+            await vm.setContributorsFromApi(edge.id)
 
-          vm.setDimensionsFromApi(steps)
-          await vm.setStepsFromApi(issuenumber, steps)
-        } else {
-          try {
-            await this.loadSvg(this.country, this.magazine, issuenumber, true)
-          } catch {
-            vm.copySteps(issuenumber, vm.issuenumbers[idx - 1])
+            vm.setDimensionsFromApi(steps)
+          } else {
+            try {
+              await this.loadSvg(this.country, this.magazine, issuenumber, true)
+            } catch {
+              vm.copySteps(issuenumber, vm.issuenumbers[idx - 1])
+            }
           }
         }
       }
+    } catch (e) {
+      vm.error = e
     }
   },
   methods: {
@@ -338,16 +342,17 @@ table.edges {
 
 table.edges tr td,
 table.edges tr th {
-  padding: 1px 2px;
   text-align: center;
 }
 
 table.edges tr td {
+  padding: 0;
   vertical-align: bottom;
 }
 
 table.edges tr th {
   vertical-align: top;
+  padding: 1px 2px;
   outline: 1px solid grey;
 }
 

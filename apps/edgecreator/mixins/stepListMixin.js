@@ -22,7 +22,19 @@ export default {
   },
 
   methods: {
+    checkSameComponentsAsPreviousIssue(issuenumber, issueSteps) {
+      const previousIssuenumber = Object.keys(this.steps)[Object.keys(this.steps).length - 1]
+      const previousIssueSteps = this.steps[previousIssuenumber]
+      const getComponents = (steps) => steps.map(({ component }) => component).join('+')
+      if (previousIssueSteps && getComponents(previousIssueSteps) !== getComponents(issueSteps)) {
+        throw new Error(
+          `Issue numbers ${previousIssuenumber} and ${issuenumber} don't have the same components` +
+            `: ${getComponents(previousIssueSteps)} vs ${getComponents(issueSteps)}`
+        )
+      }
+    },
     setSteps(issuenumber, issueSteps) {
+      this.checkSameComponentsAsPreviousIssue(issuenumber, issueSteps)
       Vue.set(this.steps, issuenumber, issueSteps)
     },
     copySteps(issuenumber, otherIssuenumber) {
