@@ -1,6 +1,6 @@
 export const state = () => ({
   issuenumber: null,
-  stepNumber: null,
+  stepNumber: 0,
 })
 
 export const mutations = {
