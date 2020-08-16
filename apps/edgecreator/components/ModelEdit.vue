@@ -178,9 +178,7 @@ export default {
 
   methods: {
     stepToString(stepnumber, step) {
-      return `${stepnumber}-${
-        step.svgGroupElement ? step.svgGroupElement.toString() : JSON.stringify(step.dbOptions)
-      }`
+      return `${stepnumber}-${JSON.stringify(step.options)}`
     },
   },
 }

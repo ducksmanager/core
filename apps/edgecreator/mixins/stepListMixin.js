@@ -10,6 +10,9 @@ export default {
       Object.keys(vm.steps)
         .filter((issuenumber) => issuenumber === vm.editingIssuenumber || vm.locked)
         .forEach((issuenumber) => {
+          if (!vm.steps[issuenumber][vm.editingStepNumber].options) {
+            Vue.set(vm.steps[issuenumber][vm.editingStepNumber], 'options', {})
+          }
           Object.keys(changes).forEach((optionName) => {
             Vue.set(
               vm.steps[issuenumber][vm.editingStepNumber].options,

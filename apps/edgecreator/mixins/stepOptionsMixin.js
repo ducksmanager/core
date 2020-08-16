@@ -11,7 +11,7 @@ export default {
     ...mapState(['width', 'height']),
     ...mapState('ui', ['zoom']),
     colors() {
-      return Object.keys(this.options)
+      return Object.keys(this.options || {})
         .filter(
           (optionName) =>
             this.isColorOption(optionName) && this.options[optionName] !== 'transparent'
@@ -59,5 +59,8 @@ export default {
         )
     },
     ...mapMutations(['setStepColors']),
+  },
+  mounted() {
+    this.$root.$emit('set-options', this.options)
   },
 }
