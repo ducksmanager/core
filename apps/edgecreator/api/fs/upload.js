@@ -63,15 +63,15 @@ export default async function (req, res) {
       if (isMultipleEdgePhoto) {
         return getNextAvailableFile(`${edgesPath}/tranches_multiples/photo.multiple`, 'jpg')
       } else {
-        const edge = JSON.parse(fields.edge)
+        const { country, issuenumber, magazine } = JSON.parse(fields.edge)
         if (isEdgePhoto) {
           return getNextAvailableFile(
-            `${edgesPath}/${edge.country}/photos/${edge.magazine}.${edge.issuenumber}.photo`,
+            `${edgesPath}/${country}/photos/${magazine}.${issuenumber}.photo`,
             'jpg'
           )
         } else {
-          return `${edgesPath}/${edge.country}/elements/${
-            filename.includes(edge.magazine) ? filename : `${edge.magazine}.${filename}`
+          return `${edgesPath}/${country}/elements/${
+            filename.includes(magazine) ? filename : `${magazine}.${filename}`
           }`
         }
       }

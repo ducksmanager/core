@@ -48,15 +48,6 @@
     </b-row>
     <b-row align="center" class="p-2">
       <b-col align-self="center">
-        <b-button
-          v-b-tooltip.hover
-          v-b-toggle.collapse-dimensions
-          title="Change dimensions"
-          pill
-          size="sm"
-          variant="outline-primary"
-          ><b-icon-arrows-angle-expand
-        /></b-button>
         <b-collapse id="collapse-dimensions" class="mt-2">
           <dimensions :width="width" :height="height" @change="setDimensions" />
         </b-collapse>
@@ -81,6 +72,15 @@
           ><b-icon-camera /><b-modal v-model="showPhotoModal" ok-only>
             <Gallery image-type="photos" /> </b-modal
         ></b-button>
+        <b-button
+          v-b-tooltip.hover
+          v-b-toggle.collapse-dimensions
+          title="Change dimensions"
+          pill
+          size="sm"
+          variant="outline-primary"
+          ><b-icon-arrows-angle-expand
+        /></b-button>
         <b-spinner v-if="savePending" v-b-tooltip.hover variant="primary" />
         <b-button v-else-if="saveResult === 'success'" pill variant="outline-primary" size="sm">
           <b-icon-check />
