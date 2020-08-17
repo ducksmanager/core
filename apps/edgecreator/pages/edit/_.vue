@@ -225,10 +225,12 @@ export default {
       this.setSteps(
         issuenumber,
         svgChildNodes
-          .filter((node) => node.nodeName === 'g')
+          .filter(({ nodeName }) => nodeName === 'g')
           .map((group) => ({
             component: group.getAttribute('class'),
-            options: JSON.parse(group.getElementsByTagName('metadata')[0].textContent),
+            options: JSON.parse(
+              (group.getElementsByTagName('metadata')[0] || { textContent: '{}' }).textContent
+            ),
           }))
       )
     },
@@ -290,12 +292,11 @@ export default {
     async setContributorsFromApi(issuenumber, edgeId) {
       const vm = this
       const contributors = await vm.$axios.$get(`/api/edgecreator/contributors/${edgeId}`)
-      contributors.forEach((contributor) => {
+      contributors.forEach(({ contribution, idUtilisateur }) => {
         vm.addContributor({
           issuenumber,
-          contributionType:
-            contributor.contribution === 'photographe' ? 'photographers' : 'designers',
-          user: vm.allUsers.find((user) => user.id === contributor.idUtilisateur),
+          contributionType: contribution === 'photographe' ? 'photographers' : 'designers',
+          user: vm.allUsers.find((user) => user.id === idUtilisateur),
         })
       })
     },

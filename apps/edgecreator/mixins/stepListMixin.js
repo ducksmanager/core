@@ -7,17 +7,20 @@ export default {
   mounted() {
     const vm = this
     this.$root.$on('set-options', (changes) => {
+      const { issuenumber, stepNumber, ...optionChanges } = { ...changes }
+      const targetIssueNumber = issuenumber !== undefined ? issuenumber : vm.editingIssuenumber
+      const targetStepNumber = stepNumber !== undefined ? stepNumber : vm.editingStepNumber
       Object.keys(vm.steps)
-        .filter((issuenumber) => issuenumber === vm.editingIssuenumber || vm.locked)
+        .filter((issuenumber) => issuenumber === targetIssueNumber || vm.locked)
         .forEach((issuenumber) => {
-          if (!vm.steps[issuenumber][vm.editingStepNumber].options) {
-            Vue.set(vm.steps[issuenumber][vm.editingStepNumber], 'options', {})
+          if (!vm.steps[issuenumber][targetStepNumber].options) {
+            Vue.set(vm.steps[issuenumber][targetStepNumber], 'options', {})
           }
-          Object.keys(changes).forEach((optionName) => {
+          Object.keys(optionChanges).forEach((optionName) => {
             Vue.set(
-              vm.steps[issuenumber][vm.editingStepNumber].options,
+              vm.steps[issuenumber][targetStepNumber].options,
               optionName,
-              changes[optionName]
+              optionChanges[optionName]
             )
           })
         })
