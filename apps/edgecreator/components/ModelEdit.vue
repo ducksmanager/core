@@ -1,7 +1,7 @@
 <template>
   <b-card id="edit-card" no-body>
     <b-tabs v-model="editingStepNumber" lazy pills card vertical>
-      <b-tab v-for="(step, stepNumber) in steps" :key="stepToString(stepNumber, step)">
+      <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
         <template v-slot:title>
           <span
             :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
@@ -174,12 +174,6 @@ export default {
     },
     ...mapState(['publicationElements', 'country']),
     ...mapState('renders', ['supportedRenders']),
-  },
-
-  methods: {
-    stepToString(stepnumber, step) {
-      return `${stepnumber}-${JSON.stringify(step.options)}`
-    },
   },
 }
 </script>

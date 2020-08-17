@@ -61,6 +61,7 @@ export default {
     ...mapMutations(['setStepColors']),
   },
   mounted() {
-    this.$root.$emit('set-options', this.options)
+    const { issuenumber, stepNumber } = this
+    this.$root.$emit('set-options', { ...this.options, issuenumber, stepNumber })
   },
 }
