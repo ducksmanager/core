@@ -15,6 +15,7 @@
         :edge="{
           country,
           magazine,
+          issuenumber: issuenumbers[0],
         }"
     /></b-modal>
     <b-alert v-if="!items.length" show variant="warning"
