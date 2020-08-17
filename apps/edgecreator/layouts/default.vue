@@ -60,29 +60,24 @@ body,
 
 @keyframes glowFilter {
   0% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px black);
+    filter: drop-shadow(-0.75px 0px 6px transparent);
+    stroke: transparent;
+  }
+  25% {
     filter: drop-shadow(-0.75px 0px 6px black);
     stroke: black;
   }
-  25% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px grey);
-    filter: drop-shadow(-0.75px 0px 6px grey);
-    stroke: grey;
-  }
   50% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px white);
     filter: drop-shadow(-0.75px 0px 6px white);
     stroke: white;
   }
   75% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px grey);
-    filter: drop-shadow(-0.75px 0px 6px grey);
-    stroke: grey;
-  }
-  100% {
-    -webkit-filter: drop-shadow(-0.75px 0px 6px black);
     filter: drop-shadow(-0.75px 0px 6px black);
     stroke: black;
+  }
+  100% {
+    filter: drop-shadow(-0.75px 0px 6px transparent);
+    stroke: transparent;
   }
 }
 </style>
