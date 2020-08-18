@@ -260,7 +260,7 @@ export default {
     },
 
     setDimensionsFromApi(stepData) {
-      const dimensions = stepData.find((step) => step.ordre === -1)
+      const dimensions = stepData.find(({ ordre: originalStepNumber }) => originalStepNumber === -1)
       if (dimensions) {
         this.setDimensions({
           width: dimensions.options.Dimension_x,
@@ -274,12 +274,12 @@ export default {
         issuenumber,
         await Promise.all(
           stepData
-            .filter((step) => step.ordre !== -1)
-            .map(async (step) => {
+            .filter(({ ordre: originalStepNumber }) => originalStepNumber !== -1)
+            .map(async ({ nomFonction: originalComponentName, options: originalOptions }) => {
               const { component } = vm.supportedRenders.find(
-                (component) => component.originalName === step.nomFonction
+                (component) => component.originalName === originalComponentName
               )
-              const options = await vm.getOptionsFromDb(component, step.options)
+              const options = await vm.getOptionsFromDb(component, originalOptions)
               return Promise.resolve({
                 component,
                 options,
@@ -314,7 +314,7 @@ export default {
       const color = context.getImageData(offsetX, offsetY, 1, 1).data
       this.$root.$emit('set-options', { [this.colorPickerOption]: this.rgbToHex(...color) })
     },
-    rgbToHex: (r, g, b) => '#' + ((r << 16) | (g << 8) | b).toString(16),
+    rgbToHex: (r, g, b) => `#${((r << 16) | (g << 8) | b).toString(16)}`,
     ...mapMutations([
       'setDimensions',
       'setCountry',

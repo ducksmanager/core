@@ -115,7 +115,7 @@
             @ok="save(true)"
           >
             <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
-              <h2>{{ $t('export.' + contributionType) }}</h2>
+              <h2>{{ $t(`export.${contributionType}`) }}</h2>
               <vue-bootstrap-typeahead
                 :ref="`${contributionType}-typeahead`"
                 :data="allUsers.filter((user) => !isContributor(user, contributionType))"
@@ -132,7 +132,12 @@
                   {{ user.username }}
                   <b-icon-x-square-fill
                     style="cursor: pointer;"
-                    @click="removeContributor({ contributionType: contributionType, userToRemove })"
+                    @click="
+                      removeContributor({
+                        contributionType: contributionType,
+                        userToRemove: user,
+                      })
+                    "
                   />
                 </li>
               </ul></div></b-modal
