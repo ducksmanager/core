@@ -1,3 +1,4 @@
+<!--suppress RequiredAttributes -->
 <template>
   <ellipse ref="ellipse" v-bind="options">
     <metadata>{{ options }}</metadata>

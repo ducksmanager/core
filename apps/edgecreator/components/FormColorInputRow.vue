@@ -17,7 +17,7 @@
       @change="change($event.currentTarget.checked ? 'transparent' : originalColor)"
     />
     <label v-if="canBeTransparent" class="transparent" :for="`${optionName}-transparent`"
-      ><img :id="`${optionName}-transparent`" src="/transparent.png"
+      ><img :id="`${optionName}-transparent`" alt="transp" src="/transparent.png"
     /></label>
 
     <template v-if="!isTransparent" v-slot:suffix>

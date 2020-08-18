@@ -1,3 +1,4 @@
+<!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
   <svg>
     <image
