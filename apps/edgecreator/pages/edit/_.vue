@@ -24,6 +24,7 @@
               </td>
               <td v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
                 <img
+                  :alt="photoUrls[issuenumber]"
                   :src="getImageUrl('photos', photoUrls[issuenumber])"
                   :class="{ picker: !!colorPickerOption }"
                   :style="{ height: `${zoom * height}px` }"
@@ -187,7 +188,11 @@ export default {
             try {
               await this.loadSvg(this.country, this.magazine, issuenumber, true)
             } catch {
-              vm.copySteps(issuenumber, vm.issuenumbers[idx - 1])
+              if (vm.issuenumbers[idx - 1]) {
+                vm.copySteps(issuenumber, vm.issuenumbers[idx - 1])
+              } else {
+                vm.setSteps(issuenumber, [])
+              }
             }
           }
         }

@@ -1,3 +1,4 @@
+<!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
   <svg>
     <image ref="image" v-bind="options" :xlink:href="image.base64" preserveAspectRatio="none">

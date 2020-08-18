@@ -1,3 +1,4 @@
+<!--suppress XmlUnusedNamespaceDeclaration -->
 <template>
   <svg
     :id="`edge-canvas-${issuenumber}`"
