@@ -98,7 +98,7 @@ export default {
             })
             return {
               value: issuenumber,
-              text: issuenumber + (status === 'none' ? '' : ` (${status})`),
+              text: `${issuenumber}${status === 'none' ? '' : ` (${status})`}`,
               disabled: status !== 'none',
             }
           })

@@ -7,12 +7,12 @@ export default {
   },
   mixins: [svgUtilsMixin],
   methods: {
-    addEdgeFromApi(edge, status) {
+    addEdgeFromApi({ pays: country, magazine, numero: issuenumber }, status) {
       this.addCurrentEdge(
         {
-          country: edge.pays,
-          magazine: edge.magazine,
-          issuenumber: edge.numero,
+          country,
+          magazine,
+          issuenumber,
         },
         status
       )
@@ -36,19 +36,19 @@ export default {
       ])
     },
     getEdgesByStatus(status) {
-      return (this.currentEdges || []).filter((edge) => edge.status === status)
+      return (this.currentEdges || []).filter(({ status: edgeStatus }) => edgeStatus === status)
     },
-    getEdgeStatus(edge) {
-      const isPublished = (this.publishedEdges[`${edge.country}/${edge.magazine}`] || []).some(
-        (publishedEdge) => publishedEdge.issuenumber === edge.issuenumber
+    getEdgeStatus({ country, issuenumber, magazine }) {
+      const isPublished = (this.publishedEdges[`${country}/${magazine}`] || []).some(
+        (publishedEdge) => publishedEdge.issuenumber === issuenumber
       )
 
       return (
         this.currentEdges.find(
           (currentEdge) =>
-            currentEdge.country === edge.country &&
-            currentEdge.magazine === edge.magazine &&
-            currentEdge.issuenumber === edge.issuenumber
+            currentEdge.country === country &&
+            currentEdge.magazine === magazine &&
+            currentEdge.issuenumber === issuenumber
         ) || { status: isPublished ? 'published' : 'none' }
       ).status
     },
@@ -83,7 +83,7 @@ export default {
           /\/([^/]+)\/gen\/_([^.]+)\.(.+).svg$/
         )
         if ([country, magazine, issuenumber].includes(undefined)) {
-          console.error('Invalid SVG file name : ' + fileName)
+          console.error(`Invalid SVG file name : ${fileName}`)
           return
         }
         const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)

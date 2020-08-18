@@ -44,11 +44,13 @@ export const mutations = {
     Vue.set(state.contributors, issuenumber, contributors)
   },
   removeContributor(state, { contributionType, userToRemove }) {
-    state.contributors.forEach((issueContributors) => {
+    Object.keys(state.contributors).forEach((issuenumber) => {
+      const issueContributors = state.contributors[issuenumber]
       const index = issueContributors[contributionType].findIndex((user) => {
         return user === userToRemove
       })
       issueContributors[contributionType].splice(index, 1)
+      Vue.set(state.contributors, issuenumber, issueContributors)
     })
   },
   setDimensions(state, { width, height }) {
