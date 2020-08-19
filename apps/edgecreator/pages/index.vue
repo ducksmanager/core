@@ -64,11 +64,10 @@
 </template>
 
 <script>
-import svgUtilsMixin from '@/mixins/svgUtilsMixin'
-import currentEdgesMixin from '@/mixins/edgeCatalogMixin'
+import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
 
 export default {
-  mixins: [currentEdgesMixin, svgUtilsMixin],
+  mixins: [edgeCatalogMixin],
   middleware: 'authenticated',
 }
 </script>

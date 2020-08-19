@@ -30,6 +30,8 @@
       <issue-select
         :key="crops.length"
         with-dimensions
+        disable-ongoing-or-published
+        :disable-not-ongoing-nor-published="false"
         @change="currentCrop = $event && $event.width ? $event : null"
       />
       <b-button :disabled="!currentCrop" @click="addCrop">{{ $t('upload.add_edge') }}</b-button>

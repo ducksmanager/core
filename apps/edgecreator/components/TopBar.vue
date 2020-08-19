@@ -79,8 +79,27 @@
           pill
           size="sm"
           variant="outline-primary"
-          ><b-icon-arrows-angle-expand
-        /></b-button>
+          ><b-icon-arrows-angle-expand /></b-button
+        >&nbsp;<b-button
+          v-b-tooltip.hover
+          title="Clone from another model"
+          pill
+          size="sm"
+          variant="outline-primary"
+          @click="showCloneModal = !showCloneModal"
+          ><b-icon-custom-duplicate /><b-modal
+            v-model="showCloneModal"
+            title="Clone from another model"
+            ok-only
+            ok-title="Clone"
+            :ok-disabled="!modelToClone"
+            @ok="clone()"
+            ><issue-select
+              :disable-ongoing-or-published="false"
+              disable-not-ongoing-nor-published
+              @change="modelToClone = $event" /></b-modal
+        ></b-button>
+
         <b-spinner v-if="savePending" v-b-tooltip.hover variant="primary" />
         <b-button v-else-if="saveResult === 'success'" pill variant="outline-primary" size="sm">
           <b-icon-check />
@@ -88,7 +107,14 @@
         <b-button v-else-if="saveResult === 'error'" pill variant="outline-danger" size="sm">
           <b-icon-x />
         </b-button>
-        <b-button v-else title="Save" pill variant="outline-primary" size="sm" @click="save(false)"
+        <b-button
+          v-else
+          v-b-tooltip.hover
+          title="Save"
+          pill
+          variant="outline-primary"
+          size="sm"
+          @click="save(false)"
           ><b-icon-archive
         /></b-button>
 
@@ -170,10 +196,13 @@ import {
 } from 'bootstrap-vue'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
+import BIconCustomDuplicate from '@/components/BIconCustomDuplicate'
+import IssueSelect from '@/components/IssueSelect'
 
 export default {
   name: 'TopBar',
   components: {
+    IssueSelect,
     Gallery,
     Dimensions,
     BIconArchive,
@@ -186,12 +215,17 @@ export default {
     BIconLock,
     BIconCheck,
     BIconUnlock,
+    BIconCustomDuplicate,
   },
   data() {
     return {
       showSidebar: true,
       showPhotoModal: false,
       showUploadPhotoModal: false,
+
+      showCloneModal: false,
+      modelToClone: null,
+
       showExportModal: false,
       users: [],
       savePending: false,
@@ -288,13 +322,19 @@ export default {
     removeVueMarkup(element) {
       Object.values(element.attributes || {})
         .filter((attribute) => attribute.name.startsWith('data-v-'))
-        .forEach((vDataAttribute) => {
-          element.removeAttribute(vDataAttribute.name)
+        .forEach(({ name: attributeName }) => {
+          element.removeAttribute(attributeName)
         })
       Object.values(element.childNodes).forEach((childNode) => {
         this.removeVueMarkup(childNode)
       })
       return element
+    },
+    async clone() {
+      const { publicationCode, issueNumber } = this.modelToClone
+      for (const targetIssuenumber of this.issuenumbers) {
+        this.$emit('overwrite-model', { publicationCode, issueNumber, targetIssuenumber })
+      }
     },
     save(runExport) {
       const vm = this
@@ -335,10 +375,9 @@ export default {
   },
 }
 </script>
-<style scoped>
-.spinner-border {
-  width: 30px;
-  height: 30px;
-  margin-bottom: -5px;
+<style>
+.b-icon {
+  vertical-align: middle !important;
+  height: 15px;
 }
 </style>

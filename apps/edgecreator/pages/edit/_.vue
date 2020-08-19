@@ -3,7 +3,7 @@
     {{ error }}
   </b-alert>
   <b-container v-else-if="Object.keys(steps).length && width && height" id="wrapper" fluid>
-    <top-bar />
+    <top-bar @overwrite-model="overwriteModel($event)" />
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right">
         <table class="edges">
@@ -81,8 +81,8 @@ import EdgeCanvas from '@/components/EdgeCanvas'
 import PublishedEdge from '@/components/PublishedEdge'
 import ModelEdit from '@/components/ModelEdit'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
-import legacyDbMixin from '@/mixins/legacyDbMixin'
 import stepListMixin from '@/mixins/stepListMixin'
+import modelLoadMixin from '@/mixins/modelLoadMixin'
 
 export default {
   components: {
@@ -93,7 +93,7 @@ export default {
     BIconPencil,
     BIconCamera,
   },
-  mixins: [svgUtilsMixin, legacyDbMixin, stepListMixin],
+  mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin],
   async fetch() {
     this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
   },
@@ -171,29 +171,12 @@ export default {
         }
         const issuenumber = vm.issuenumbers[idx]
         try {
-          await this.loadSvg(this.country, this.magazine, issuenumber)
+          await vm.loadModel(country, magazine, issuenumber, issuenumber)
         } catch {
-          const edge = await this.$axios.$get(
-            `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
-          )
-          if (edge) {
-            const steps = (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
-            await vm.setStepsFromApi(issuenumber, steps)
-
-            await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
-            await vm.setContributorsFromApi(issuenumber, edge.id)
-
-            vm.setDimensionsFromApi(steps)
+          if (vm.issuenumbers[idx - 1]) {
+            vm.copySteps(issuenumber, vm.issuenumbers[idx - 1])
           } else {
-            try {
-              await this.loadSvg(this.country, this.magazine, issuenumber, true)
-            } catch {
-              if (vm.issuenumbers[idx - 1]) {
-                vm.copySteps(issuenumber, vm.issuenumbers[idx - 1])
-              } else {
-                vm.setSteps(issuenumber, [])
-              }
-            }
+            vm.setSteps(issuenumber, [])
           }
         }
       }
@@ -202,108 +185,13 @@ export default {
     }
   },
   methods: {
+    async overwriteModel({ publicationCode, issueNumber, targetIssuenumber }) {
+      await this.loadModel(...publicationCode.split('/'), issueNumber, targetIssuenumber)
+    },
     getImageUrl(fileType, fileName) {
       return `${process.env.EDGES_URL}/${this.country}/${
         fileType === 'elements' ? fileType : 'photos'
       }/${fileName}`
-    },
-    async loadSvg(country, magazine, issuenumber, publishedVersion = false) {
-      const { svgElement, svgChildNodes } = await this.loadSvgFromString(
-        country,
-        magazine,
-        issuenumber,
-        publishedVersion
-      )
-
-      this.setDimensionsFromSvg(svgElement)
-      this.setStepsFromSvg(issuenumber, svgChildNodes)
-      this.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
-      this.setContributorsFromSvg(issuenumber, svgChildNodes)
-    },
-    setDimensionsFromSvg(svgElement) {
-      this.setDimensions({
-        width: svgElement.getAttribute('width') / 1.5,
-        height: svgElement.getAttribute('height') / 1.5,
-      })
-    },
-    setStepsFromSvg(issuenumber, svgChildNodes) {
-      this.setSteps(
-        issuenumber,
-        svgChildNodes
-          .filter(({ nodeName }) => nodeName === 'g')
-          .map((group) => ({
-            component: group.getAttribute('class'),
-            options: JSON.parse(
-              (group.getElementsByTagName('metadata')[0] || { textContent: '{}' }).textContent
-            ),
-          }))
-      )
-    },
-    setPhotoUrlsFromSvg(issuenumber, svgChildNodes) {
-      const vm = this
-      vm.getSvgMetadata(svgChildNodes, 'photo').forEach((photoUrl) => {
-        vm.setPhotoUrl({ issuenumber, filename: photoUrl })
-      })
-    },
-    setContributorsFromSvg(issuenumber, svgChildNodes) {
-      const vm = this
-      const contributionTypes = ['photographer', 'designer']
-      contributionTypes.forEach((contributionType) => {
-        vm.getSvgMetadata(svgChildNodes, `contributor-${contributionType}`).forEach((username) => {
-          vm.addContributor({
-            issuenumber,
-            contributionType: `${contributionType}s`,
-            user: { username },
-          })
-        })
-      })
-    },
-
-    setDimensionsFromApi(stepData) {
-      const dimensions = stepData.find(({ ordre: originalStepNumber }) => originalStepNumber === -1)
-      if (dimensions) {
-        this.setDimensions({
-          width: dimensions.options.Dimension_x,
-          height: dimensions.options.Dimension_y,
-        })
-      }
-    },
-    async setStepsFromApi(issuenumber, stepData) {
-      const vm = this
-      this.setSteps(
-        issuenumber,
-        await Promise.all(
-          stepData
-            .filter(({ ordre: originalStepNumber }) => originalStepNumber !== -1)
-            .map(async ({ nomFonction: originalComponentName, options: originalOptions }) => {
-              const { component } = vm.supportedRenders.find(
-                (component) => component.originalName === originalComponentName
-              )
-              const options = await vm.getOptionsFromDb(component, originalOptions)
-              return Promise.resolve({
-                component,
-                options,
-              })
-            })
-        )
-      )
-    },
-    async setPhotoUrlsFromApi(issuenumber, edgeId) {
-      const photo = await this.$axios.$get(`/api/edgecreator/model/v2/${edgeId}/photo/main`)
-      if (photo) {
-        this.setPhotoUrl({ issuenumber, filename: photo.nomfichier })
-      }
-    },
-    async setContributorsFromApi(issuenumber, edgeId) {
-      const vm = this
-      const contributors = await vm.$axios.$get(`/api/edgecreator/contributors/${edgeId}`)
-      contributors.forEach(({ contribution, idUtilisateur }) => {
-        vm.addContributor({
-          issuenumber,
-          contributionType: contribution === 'photographe' ? 'photographers' : 'designers',
-          user: vm.allUsers.find((user) => user.id === idUtilisateur),
-        })
-      })
     },
     setColorFromPhoto({ target: imgElement, offsetX, offsetY }) {
       const canvas = document.createElement('canvas')
