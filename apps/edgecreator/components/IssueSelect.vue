@@ -41,14 +41,16 @@
 <script>
 import Vue from 'vue'
 import Dimensions from '@/components/Dimensions'
-import currentEdgesMixin from '@/mixins/edgeCatalogMixin'
+import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
 import { mapMutations } from 'vuex'
 
 export default {
   components: { Dimensions },
-  mixins: [currentEdgesMixin],
+  mixins: [edgeCatalogMixin],
   props: {
     withDimensions: { type: Boolean, default: false },
+    disableOngoingOrPublished: { type: Boolean, required: true },
+    disableNotOngoingNorPublished: { type: Boolean, required: true },
   },
   data: () => ({
     currentCountryCode: null,
@@ -99,7 +101,9 @@ export default {
             return {
               value: issuenumber,
               text: `${issuenumber}${status === 'none' ? '' : ` (${status})`}`,
-              disabled: status !== 'none',
+              disabled:
+                (this.disableOngoingOrPublished && status !== 'none') ||
+                (this.disableNotOngoingNorPublished && status === 'none'),
             }
           })
           issues = [{ value: null, text: this.$t('select.issue') }].concat(issues)
