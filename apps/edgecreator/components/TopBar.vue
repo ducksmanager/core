@@ -100,7 +100,9 @@
               @change="modelToClone = $event" /></b-modal
         ></b-button>
 
-        <b-spinner v-if="savePending" v-b-tooltip.hover variant="primary" />
+        <div v-if="saveProgress" class="progress-wrapper">
+          <b-progress v-b-tooltip.hover :value="saveProgress" :max="100" variant="primary" />
+        </div>
         <b-button v-else-if="saveResult === 'success'" pill variant="outline-primary" size="sm">
           <b-icon-check />
         </b-button>
@@ -118,7 +120,9 @@
           ><b-icon-archive
         /></b-button>
 
-        <b-spinner v-if="exportPending" v-b-tooltip.hover variant="success" />
+        <div v-if="exportProgress" class="progress-wrapper">
+          <b-progress v-b-tooltip.hover :value="exportProgress" :max="100" variant="success" />
+        </div>
         <b-button v-else-if="exportResult === 'success'" pill variant="outline-success" size="sm">
           <b-icon-check />
         </b-button>
@@ -228,9 +232,9 @@ export default {
 
       showExportModal: false,
       users: [],
-      savePending: false,
+      saveProgress: 0,
       saveResult: null,
-      exportPending: false,
+      exportProgress: 0,
       exportResult: false,
     }
   },
@@ -302,6 +306,32 @@ export default {
     ]),
     ...mapState('user', ['allUsers']),
   },
+  watch: {
+    saveProgress(newValue) {
+      const vm = this
+      if (newValue === 100) {
+        window.setTimeout(() => {
+          vm.saveProgress = 0
+          vm.saveResult = 'success'
+          window.setTimeout(() => {
+            vm.saveResult = null
+          }, 2000)
+        }, 1000)
+      }
+    },
+    exportProgress(newValue) {
+      const vm = this
+      if (newValue === 100) {
+        window.setTimeout(() => {
+          vm.exportProgress = 0
+          vm.exportResult = 'success'
+          window.setTimeout(() => {
+            vm.exportResult = null
+          }, 2000)
+        }, 1000)
+      }
+    },
+  },
   methods: {
     getContributors(contributionType) {
       const vm = this
@@ -339,11 +369,6 @@ export default {
     save(runExport) {
       const vm = this
       this.zoom = 1.5
-      if (runExport) {
-        this.exportPending = true
-      } else {
-        this.savePending = true
-      }
       vm.$nextTick().then(() => {
         vm.issuenumbers.forEach(async (issuenumber) => {
           const cleanSvg = vm.removeVueMarkup(
@@ -354,20 +379,23 @@ export default {
             country: vm.country,
             magazine: vm.magazine,
             issuenumber,
+            ...vm.contributors[issuenumber],
             content: cleanSvg.outerHTML,
           })
           const isSuccess = response && response.svgPath
-          window.setTimeout(() => {
-            vm.exportPending = vm.savePending = null
+          if (isSuccess) {
             if (runExport) {
-              vm.exportResult = isSuccess ? 'success' : 'error'
+              vm.exportProgress = parseInt(vm.exportProgress + 100 / vm.issuenumbers.length)
             } else {
-              vm.saveResult = isSuccess ? 'success' : 'error'
+              vm.saveProgress = parseInt(vm.saveProgress + 100 / vm.issuenumbers.length)
             }
-            window.setTimeout(() => {
-              vm.exportResult = vm.saveResult = null
-            }, 2000)
-          }, 1000)
+          } else if (runExport) {
+            vm.exportProgress = 0
+            vm.exportResult = 'error'
+          } else {
+            vm.saveProgress = 0
+            vm.saveResult = 'error'
+          }
         })
       })
     },
@@ -379,5 +407,10 @@ export default {
 .b-icon {
   vertical-align: middle !important;
   height: 15px;
+}
+.progress-wrapper {
+  display: inline-block;
+  vertical-align: middle;
+  width: 2rem;
 }
 </style>
