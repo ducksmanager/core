@@ -7,6 +7,7 @@ export default {
   computed: {
     ...mapState(['country', 'magazine', 'issuenumbers']),
     ...mapState('renders', ['supportedRenders']),
+    ...mapState('user', ['allUsers']),
   },
   mixins: [legacyDbMixin, svgUtilsMixin, stepListMixin],
   methods: {
@@ -82,7 +83,7 @@ export default {
           vm.addContributor({
             issuenumber,
             contributionType: `${contributionType}s`,
-            user: { username },
+            user: vm.allUsers.find((user) => user.username === username),
           })
         })
       })

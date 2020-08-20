@@ -100,78 +100,8 @@
               @change="modelToClone = $event" /></b-modal
         ></b-button>
 
-        <div v-if="saveProgress" class="progress-wrapper">
-          <b-progress v-b-tooltip.hover :value="saveProgress" :max="100" variant="primary" />
-        </div>
-        <b-button v-else-if="saveResult === 'success'" pill variant="outline-primary" size="sm">
-          <b-icon-check />
-        </b-button>
-        <b-button v-else-if="saveResult === 'error'" pill variant="outline-danger" size="sm">
-          <b-icon-x />
-        </b-button>
-        <b-button
-          v-else
-          v-b-tooltip.hover
-          title="Save"
-          pill
-          variant="outline-primary"
-          size="sm"
-          @click="save(false)"
-          ><b-icon-archive
-        /></b-button>
-
-        <div v-if="exportProgress" class="progress-wrapper">
-          <b-progress v-b-tooltip.hover :value="exportProgress" :max="100" variant="success" />
-        </div>
-        <b-button v-else-if="exportResult === 'success'" pill variant="outline-success" size="sm">
-          <b-icon-check />
-        </b-button>
-        <b-button v-else-if="exportResult === 'error'" pill variant="outline-danger" size="sm">
-          <b-icon-x />
-        </b-button>
-        <b-button
-          v-else
-          v-b-tooltip.hover
-          title="Export"
-          pill
-          variant="outline-success"
-          size="sm"
-          @click="showExportModal = !showExportModal"
-          ><b-icon-cloud-arrow-up-fill /><b-modal
-            v-model="showExportModal"
-            title="Export"
-            ok-only
-            ok-title="Export"
-            @ok="save(true)"
-          >
-            <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
-              <h2>{{ $t(`export.${contributionType}`) }}</h2>
-              <vue-bootstrap-typeahead
-                :ref="`${contributionType}-typeahead`"
-                :data="allUsers.filter((user) => !isContributor(user, contributionType))"
-                :serializer="(u) => u.username"
-                :placeholder="$t('export.typeahead.placeholder')"
-                :min-matching-chars="0"
-                @hit="
-                  addContributorAllIssues($event, contributionType)
-                  $refs[`${contributionType}-typeahead`][0].inputValue = ''
-                "
-              />
-              <ul>
-                <li v-for="user in getContributors(contributionType)" :key="user.username">
-                  {{ user.username }}
-                  <b-icon-x-square-fill
-                    style="cursor: pointer;"
-                    @click="
-                      removeContributor({
-                        contributionType: contributionType,
-                        userToRemove: user,
-                      })
-                    "
-                  />
-                </li>
-              </ul></div></b-modal
-        ></b-button>
+        <save-button />
+        <save-button with-export />
       </b-col>
     </b-row>
     <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey;">
@@ -187,37 +117,29 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import {
-  BIconArchive,
   BIconArrowsAngleExpand,
   BIconCamera,
   BIconHouse,
   BIconLock,
-  BIconXSquareFill,
-  BIconX,
-  BIconCheck,
   BIconUnlock,
-  BIconCloudArrowUpFill,
 } from 'bootstrap-vue'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
 import BIconCustomDuplicate from '@/components/BIconCustomDuplicate'
 import IssueSelect from '@/components/IssueSelect'
+import SaveButton from '@/components/SaveModelButton'
 
 export default {
   name: 'TopBar',
   components: {
+    SaveButton,
     IssueSelect,
     Gallery,
     Dimensions,
-    BIconArchive,
-    BIconCloudArrowUpFill,
-    BIconXSquareFill,
-    BIconX,
     BIconArrowsAngleExpand,
     BIconCamera,
     BIconHouse,
     BIconLock,
-    BIconCheck,
     BIconUnlock,
     BIconCustomDuplicate,
   },
@@ -229,13 +151,6 @@ export default {
 
       showCloneModal: false,
       modelToClone: null,
-
-      showExportModal: false,
-      users: [],
-      saveProgress: 0,
-      saveResult: null,
-      exportProgress: 0,
-      exportResult: false,
     }
   },
   computed: {
@@ -302,104 +217,16 @@ export default {
       'edgesBefore',
       'edgesAfter',
       'photoUrls',
-      'contributors',
     ]),
-    ...mapState('user', ['allUsers']),
-  },
-  watch: {
-    saveProgress(newValue) {
-      const vm = this
-      if (newValue === 100) {
-        window.setTimeout(() => {
-          vm.saveProgress = 0
-          vm.saveResult = 'success'
-          window.setTimeout(() => {
-            vm.saveResult = null
-          }, 2000)
-        }, 1000)
-      }
-    },
-    exportProgress(newValue) {
-      const vm = this
-      if (newValue === 100) {
-        window.setTimeout(() => {
-          vm.exportProgress = 0
-          vm.exportResult = 'success'
-          window.setTimeout(() => {
-            vm.exportResult = null
-          }, 2000)
-        }, 1000)
-      }
-    },
   },
   methods: {
-    getContributors(contributionType) {
-      const vm = this
-      return this.allUsers.filter((user) => vm.isContributor(user, contributionType))
-    },
-    isContributor(user, contributionType) {
-      const vm = this
-      return Object.keys(this.contributors).reduce((acc, issueNumber) => {
-        return acc || vm.contributors[issueNumber][contributionType].includes(user)
-      }, false)
-    },
-    addContributorAllIssues(user, contributionType) {
-      const vm = this
-      this.issuenumbers.forEach((issuenumber) => {
-        vm.addContributor({ issuenumber, contributionType, user })
-      })
-    },
-    removeVueMarkup(element) {
-      Object.values(element.attributes || {})
-        .filter((attribute) => attribute.name.startsWith('data-v-'))
-        .forEach(({ name: attributeName }) => {
-          element.removeAttribute(attributeName)
-        })
-      Object.values(element.childNodes).forEach((childNode) => {
-        this.removeVueMarkup(childNode)
-      })
-      return element
-    },
     async clone() {
       const { publicationCode, issueNumber } = this.modelToClone
       for (const targetIssuenumber of this.issuenumbers) {
         this.$emit('overwrite-model', { publicationCode, issueNumber, targetIssuenumber })
       }
     },
-    save(runExport) {
-      const vm = this
-      this.zoom = 1.5
-      vm.$nextTick().then(() => {
-        vm.issuenumbers.forEach(async (issuenumber) => {
-          const cleanSvg = vm.removeVueMarkup(
-            document.getElementById(`edge-canvas-${issuenumber}`).cloneNode(true)
-          )
-          const response = await vm.$axios.$put('/fs/save', {
-            runExport,
-            country: vm.country,
-            magazine: vm.magazine,
-            issuenumber,
-            ...vm.contributors[issuenumber],
-            content: cleanSvg.outerHTML,
-          })
-          const isSuccess = response && response.svgPath
-          if (isSuccess) {
-            if (runExport) {
-              vm.exportProgress = parseInt(vm.exportProgress + 100 / vm.issuenumbers.length)
-            } else {
-              vm.saveProgress = parseInt(vm.saveProgress + 100 / vm.issuenumbers.length)
-            }
-          } else if (runExport) {
-            vm.exportProgress = 0
-            vm.exportResult = 'error'
-          } else {
-            vm.saveProgress = 0
-            vm.saveResult = 'error'
-          }
-        })
-      })
-    },
-    ...mapMutations(['setDimensions', 'addContributor', 'removeContributor', 'setPhotoUrl']),
+    ...mapMutations(['setDimensions', 'setPhotoUrl']),
   },
 }
 </script>
@@ -407,10 +234,5 @@ export default {
 .b-icon {
   vertical-align: middle !important;
   height: 15px;
-}
-.progress-wrapper {
-  display: inline-block;
-  vertical-align: middle;
-  width: 2rem;
 }
 </style>
