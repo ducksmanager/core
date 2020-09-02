@@ -232,7 +232,11 @@ export default {
 </script>
 <style>
 .b-icon {
-  vertical-align: middle !important;
+  vertical-align: sub !important;
   height: 15px;
+}
+.b-icon.bi-square,
+.b-icon.bi-square-fill {
+  vertical-align: middle !important;
 }
 </style>
