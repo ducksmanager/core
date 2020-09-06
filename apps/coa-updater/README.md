@@ -1,7 +1,7 @@
 # coa-updater
-A simple way to setup and provision a COA database.
+A simple way to set up and provision a COA database.
 
-### Provisinning
+### Provisioning
 
 Provisioning is executed when the container starts.
 
