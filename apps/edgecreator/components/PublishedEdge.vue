@@ -1,9 +1,10 @@
-<template
-  ><b-img
+<template>
+  <b-img
     :height="(naturalHeight * zoom) / 1.5"
     :src="getEdgeUrl(issuenumber)"
     @load="naturalHeight = $event.currentTarget.naturalHeight"
-/></template>
+  />
+</template>
 
 <script>
 import { mapState } from 'vuex'

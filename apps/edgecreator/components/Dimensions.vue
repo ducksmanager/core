@@ -1,5 +1,5 @@
 <template>
-  <b-card class="mb-2" style="max-width: 16rem;">
+  <b-card class="mb-2" style="max-width: 16rem">
     <b-row v-for="dimension in ['width', 'height']" :key="dimension">
       <b-col sm="4">
         <label :for="dimension">{{ dimension }}:</label>

@@ -38,7 +38,7 @@
             <li v-for="user in getContributors(contributionType)" :key="user.username">
               {{ user.username }}
               <b-icon-x-square-fill
-                style="cursor: pointer;"
+                style="cursor: pointer"
                 @click="
                   removeContributor({
                     contributionType,

@@ -38,7 +38,7 @@
       <b-container>
         <b-card-group deck columns>
           <b-card v-for="(crop, i) in crops" :key="i" no-body class="edge-card overflow-hidden">
-            <b-row no-gutters style="height: 280px;">
+            <b-row no-gutters style="height: 280px">
               <b-col md="6" class="edge-crop" :style="{ backgroundImage: `url('${crop.url}')` }" />
               <b-col md="6" class="align-items-center d-flex justify-content-center">
                 <b-card-body :title="crop.id">
@@ -67,7 +67,7 @@
       </b-container>
       <b-button
         v-if="crops.length"
-        style="width: 100%;"
+        style="width: 100%"
         variant="success"
         :disabled="disableSend"
         @click="uploadAll"
