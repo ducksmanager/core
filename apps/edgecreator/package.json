@@ -6,8 +6,10 @@
   "private": true,
   "scripts": {
     "dev": "env $(cat .env | xargs) nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
+    "build": "env $(cat .env | xargs) nuxt build",
+    "build:prod": "env $(cat .env.prod | xargs) nuxt build",
+    "start": "env $(cat .env | xargs) nuxt start",
+    "start:prod": "env $(cat .env.prod | xargs) nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "jest"
