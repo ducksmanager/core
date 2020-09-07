@@ -53,7 +53,7 @@
 
     <hr />
 
-    <b-container align="center" style="margin-bottom: 20px;">
+    <b-container align="center" style="margin-bottom: 20px">
       <b-button to="/upload">{{ $t('button.send_photos') }}</b-button>
     </b-container>
 

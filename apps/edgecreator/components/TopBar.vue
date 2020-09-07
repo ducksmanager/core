@@ -6,12 +6,10 @@
         <b-sidebar id="sidebar" v-model="showSidebar" title="Options" shadow>
           <b-container class="px-3 py-2">
             <b-row align-items="center">
-              <b-col cols="6">
-                Zoom
-              </b-col>
+              <b-col cols="6"> Zoom </b-col>
               <b-col cols="2">{{ zoom }} </b-col>
               <b-col cols="4">
-                <input v-model="zoom" type="range" min="1" max="8" step="0.5" style="width: 100%;"
+                <input v-model="zoom" type="range" min="1" max="8" step="0.5" style="width: 100%"
               /></b-col>
             </b-row>
             <b-row>
@@ -104,7 +102,7 @@
         <save-button with-export />
       </b-col>
     </b-row>
-    <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey;">
+    <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey">
       <b-col align-self="center">
         <img :src="flagImageUrl" :alt="country" />&nbsp;{{ magazine }}&nbsp;{{ issuenumbers[0]
         }}<span v-if="issuenumbers.length > 1">
