@@ -13,6 +13,16 @@ usage(){
   exit 1
 }
 
+deleteNonIndexedCovers() {
+  coversInDbButNotInIndex=$(comm -23 \
+    <(mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} -BN ${MYSQL_COVER_INFO_DATABASE} -e "select coverid from cover_imports" | sed 's/[^0-9]//g' | sort) \
+    <(curl -X GET http://${PASTEC_HOST}:${PASTEC_PORT}/index/imageIds | head | jq '.image_ids' | grep -Po '[\d]+' | sort))
+
+  nonIndexedCoversQuery=$(getDeleteNonIndexedCoversQuery $(echo "${coversInDbButNotInIndex}" | sed 's/ /,/g'))
+
+  mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -e "$nonIndexedCoversQuery"
+}
+
 processCovers() {
     local thread_id=$1
     local offset=$((${thread_id}*${IMAGES_PER_GROUP}))
@@ -37,6 +47,11 @@ processCovers() {
     else
         echo "[Thread $thread_id] File is empty, no more covers"
     fi
+}
+
+getDeleteNonIndexedCoversQuery() {
+    local coversInDbButNotInIndex=$1
+    echo `cat ${DIR}/sql/delete-non-indexed-covers.sql | sed "s/_NON_INDEXED_COVER_IDS_/$coversInDbButNotInIndex/"`
 }
 
 getCoverQuery() {
@@ -158,6 +173,8 @@ chmod a+w ${DOWNLOAD_DIR_TMP}
 
 processed_covers=0
 no_more_covers=false
+
+deleteNonIndexedCovers
 
 while [ ${processed_covers} -lt ${LIMIT} ] && [ ${no_more_covers} = "false" ] ; do
     for ((thread_id=0; thread_id < THREADS; thread_id++)); do
