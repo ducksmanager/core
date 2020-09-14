@@ -1,1 +1,0 @@
-DELETE FROM cover_imports where coverid in (_NON_INDEXED_COVER_IDS_);

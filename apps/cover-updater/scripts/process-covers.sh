@@ -18,8 +18,7 @@ deleteNonIndexedCovers() {
     <(mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} -BN ${MYSQL_COVER_INFO_DATABASE} -e "select coverid from cover_imports" | sed 's/[^0-9]//g' | sort) \
     <(curl -X GET http://${PASTEC_HOST}:${PASTEC_PORT}/index/imageIds | head | jq '.image_ids' | grep -Po '[\d]+' | sort))
 
-  nonIndexedCoversQuery=$(getDeleteNonIndexedCoversQuery $(echo "${coversInDbButNotInIndex}" | sed 's/ /,/g'))
-
+  nonIndexedCoversQuery="DELETE FROM cover_imports where coverid in ("$(echo "${coversInDbButNotInIndex}" | tr '\n' ',')"-1);"
   mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -e "$nonIndexedCoversQuery"
 }
 
@@ -47,11 +46,6 @@ processCovers() {
     else
         echo "[Thread $thread_id] File is empty, no more covers"
     fi
-}
-
-getDeleteNonIndexedCoversQuery() {
-    local coversInDbButNotInIndex=$1
-    echo `cat ${DIR}/sql/delete-non-indexed-covers.sql | sed "s/_NON_INDEXED_COVER_IDS_/$coversInDbButNotInIndex/"`
 }
 
 getCoverQuery() {
