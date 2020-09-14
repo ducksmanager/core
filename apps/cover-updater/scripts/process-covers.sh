@@ -19,8 +19,12 @@ deleteNonIndexedCovers() {
       "select coverid from cover_imports where import_error is null" | sed 's/[^0-9]//g' | sort) \
     <(curl -X GET http://${PASTEC_HOST}:${PASTEC_PORT}/index/imageIds | head | jq '.image_ids' | grep -Po '[\d]+' | sort))
 
-  nonIndexedCoversQuery="DELETE FROM cover_imports where coverid in ("$(echo "${coversInDbButNotInIndex}" | tr '\n' ',')"-1);"
-  mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -e "$nonIndexedCoversQuery"
+  # Delete referenced covers that are not in the index, by chunks of 20
+  echo "$coversInDbButNotInIndex" | tr ' ' '\n' |paste -sd',,,,,,,,,,,,,,,,,,,,\n' | while read -r chunk; do
+    nonIndexedCoversQuery="DELETE FROM cover_imports where coverid in ($chunk);"
+    mysql -uroot -p${MYSQL_COVER_INFO_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -e "$nonIndexedCoversQuery"
+  done
+
 }
 
 processCovers() {
