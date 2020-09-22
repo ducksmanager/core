@@ -93,6 +93,8 @@
             :ok-disabled="!modelToClone"
             @ok="clone()"
             ><issue-select
+              :country-code="country"
+              :publication-code="`${country}/${magazine}`"
               :disable-ongoing-or-published="false"
               disable-not-ongoing-nor-published
               @change="modelToClone = $event" /></b-modal

@@ -48,6 +48,8 @@ export default {
   components: { Dimensions },
   mixins: [edgeCatalogMixin],
   props: {
+    countryCode: { type: String, default: null },
+    publicationCode: { type: String, default: null },
     withDimensions: { type: Boolean, default: false },
     disableOngoingOrPublished: { type: Boolean, required: true },
     disableNotOngoingNorPublished: { type: Boolean, required: true },
@@ -61,6 +63,12 @@ export default {
     publications: {},
   }),
   mounted() {
+    if (this.countryCode) {
+      this.currentCountryCode = this.countryCode
+    }
+    if (this.publicationCode) {
+      this.currentPublicationCode = this.publicationCode
+    }
     this.loadCountries()
   },
   methods: {
