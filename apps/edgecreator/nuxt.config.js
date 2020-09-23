@@ -1,7 +1,6 @@
 import { json } from 'body-parser'
 
 export default {
-  mode: 'universal',
   /*
    ** Headers of the page
    */
