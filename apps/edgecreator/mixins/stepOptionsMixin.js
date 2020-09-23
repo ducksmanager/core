@@ -39,8 +39,8 @@ export default {
             onmove ||
             (({ dx, dy }) => {
               vm.$root.$emit('set-options', {
-                x: vm.options.x + dx / vm.zoom,
-                y: vm.options.y + dy / vm.zoom,
+                x: vm.options.x + dx / vm.zoom / 2,
+                y: vm.options.y + dy / vm.zoom / 2,
               })
             }),
         })
