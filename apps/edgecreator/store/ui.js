@@ -3,7 +3,7 @@ export const state = () => ({
   showIssueNumbers: true,
   showPreviousEdge: true,
   showNextEdge: true,
-  showEdgePhotos: false,
+  showEdgePhotos: true,
   locked: false,
   colorPickerOption: null,
 })
