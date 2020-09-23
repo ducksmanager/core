@@ -1,11 +1,17 @@
 <template>
   <div v-if="progress" class="progress-wrapper">
-    <b-progress v-b-tooltip.hover :value="progress" :max="100" :variant="variant" />
+    <b-progress v-b-tooltip.hover animated :value="progress" :max="100" :variant="variant" />
   </div>
-  <b-button v-else-if="result === 'success'" pill :variant="`outline-${variant}`" size="sm">
+  <b-button
+    v-else-if="result === 'success'"
+    disabled
+    pill
+    :variant="`outline-${variant}`"
+    size="sm"
+  >
     <b-icon-check />
   </b-button>
-  <b-button v-else-if="result === 'error'" pill variant="outline-danger" size="sm">
+  <b-button v-else-if="result === 'error'" disabled pill variant="outline-danger" size="sm">
     <b-icon-x />
   </b-button>
   <b-button
@@ -92,7 +98,7 @@ export default {
     isExport() {
       return this.withExport
     },
-    ...mapState(['contributors', 'issuenumbers']),
+    ...mapState(['contributors', 'country', 'magazine', 'issuenumbers']),
     ...mapState('user', ['allUsers']),
   },
   watch: {
