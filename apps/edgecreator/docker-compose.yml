@@ -1,0 +1,23 @@
+version: '2'
+services:
+  web:
+    container_name: edgecreator-v3
+    build:
+      context: .
+    volumes:
+      - '../edges:/home/edges'
+    ports:
+      - 3000:3000
+    networks:
+      dm-server_front-network:
+        aliases:
+          - edgecreator-v3
+      workspace_global-front-network:
+        aliases:
+          - edgecreator-v3
+
+networks:
+  workspace_global-front-network:
+    external: true
+  dm-server_front-network:
+    external: true
