@@ -1,0 +1,193 @@
+<template>
+  <div v-if="issuesPerCell && countryNames && publicationNames">
+    <table class="collectable">
+      <tr v-for="line in lines">
+        <td/>
+        <td v-for="subrange in numbersPerRow">
+          {{ (line - 1) * numbersPerRow + subrange }}
+        </td>
+        <td v-if="line === 1" :rowspan="lines" class="total_ligne">
+          Total
+        </td>
+      </tr>
+      <template v-for="(_, publicationCode) in publicationNames">
+        <tr v-for="line in lines">
+          <td v-if="line === 1" :rowspan="lines+1" class="libelle_ligne">
+            <img :alt="publicationCode.split('/')[0]" :src="`images/flags/${publicationCode.split('/')[0]}.png`"/>
+            <br/>
+            {{ publicationCode.split('/')[1] }}
+            <br/>
+          </td>
+          <td v-for="subrange in numbersPerRow">
+          <span class="letter" v-for="letter in issuesPerCell[publicationCode][(line-1)*numbersPerRow+subrange]">{{
+              letter
+            }}</span>
+          </td>
+          <td v-if="line === 1" class="total_ligne" :rowspan="lines+1">{{ totalPerPublication[publicationCode] }}</td>
+        </tr>
+        <tr>
+          <td :colspan="numbersPerRow" v-if="issuesPerCell[publicationCode]['non-numeric'].length">Autres :
+            {{ issuesPerCell[publicationCode]['non-numeric'].join(', ') }}
+          </td>
+        </tr>
+      </template>
+    </table>
+    <table class="legendes">
+      <tr>
+        <td class="legende_numeros">
+          <table>
+            <tr>
+              <td align="center" colspan="2">
+                <u>Numéros</u>
+              </td>
+            </tr>
+            <tr v-for="(_, i) in Math.floor(letterToNumber(maxLetter) / 6)">
+              <td v-for="(_, group) in letterToNumber(maxLetter)" v-if="Math.floor(group / 6) === i">
+                {{ numberToLetter(group) }} : {{ group * 100 + 1 }}-&gt;{{ (group + 1) * 100 }}
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class="legende_magazines">
+          <table>
+            <tr>
+              <td align="center" colspan="4">
+                <u>Publications</u>
+              </td>
+            </tr>
+            <tr v-for="(publicationName, publicationCode) in publicationNames">
+              <td>
+                <img :alt="publicationCode.split('/')[0]" :src="`images/flags/${publicationCode.split('/')[0]}.png`" />
+                {{ publicationCode.split('/')[1] }}
+              </td>
+              <td>{{ publicationName }}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</template>
+
+<script>
+import collectionMixin from "../mixins/collectionMixin";
+
+const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/
+
+export default {
+  mixins: [collectionMixin],
+  data() {
+    const lines = 2
+    return {
+      lines,
+      numbersPerRow: 100 / lines,
+      issuesPerCell: null
+    }
+  },
+  watch: {
+    collection(newCollectionValue) {
+      const vm = this
+      const addIssueToCell = (acc, publicationCode, issueNumber, isDoubleIssueStart, isDoubleIssueEnd) => {
+        let mod, number
+        if (Number.isNaN(issueNumber % 100)) {
+          mod = 'non-numeric'
+          number = issueNumber
+        } else {
+          mod = issueNumber % 100
+          number = (issueNumber - mod) / 100
+        }
+        if (!acc[publicationCode]) {
+          acc[publicationCode] = {
+            'non-numeric': []
+          }
+        }
+        if (!acc[publicationCode][mod]) {
+          acc[publicationCode][mod] = []
+        }
+
+        acc[publicationCode][mod].push([
+          isDoubleIssueEnd ? '<' : '',
+          typeof number === 'string' ? number : vm.numberToLetter(number),
+          isDoubleIssueStart ? '>' : ''
+        ].join(''))
+      }
+      this.issuesPerCell = newCollectionValue.reduce((acc, issue) => {
+        const publicationCode = `${issue.country}/${issue.magazine}`
+        const issueNumber = issue.issueNumber;
+        const doubleNumberMatch = issueNumber.match(doubleNumberRegex)
+        if (doubleNumberMatch && parseInt(doubleNumberMatch[2]) === parseInt(doubleNumberMatch[1]) + 1) {
+          const [, part1, issue1, issue2] = doubleNumberMatch
+          addIssueToCell(acc, publicationCode, `${part1}${issue1}`, true)
+          addIssueToCell(acc, publicationCode, `${part1}${issue2}`, false, true)
+        } else {
+          addIssueToCell(acc, publicationCode, issueNumber)
+        }
+        return acc
+      }, {});
+    }
+  },
+  computed: {
+    maxLetter() {
+      return !this.issuesPerCell ? null : this.numberToLetter([
+            ...new Set(JSON.stringify(this.issuesPerCell)
+                .match(/(?<=")[a-zA-Z]+(?=")/g))
+          ]
+              .map(this.letterToNumber)
+              .sort((a, b) => b - a)[0]
+      )
+    },
+  },
+  methods: {
+    numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : ("A".charCodeAt() - 26)) + number),
+    letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt()
+  }
+}
+</script>
+
+<style>
+table {
+  color: black;
+  font: 11px/15px verdana, arial, sans-serif;
+}
+
+table.collectable, table.legendes {
+  width: 90%;
+}
+
+td.legende_numeros, td.legende_magazines, td.achats {
+  vertical-align: top;
+  border-left: 1px solid gray;
+  padding: 8px;
+}
+
+table.collectable {
+  border: solid 1px black;
+  border-collapse: collapse;
+}
+
+table.collectable tr {
+  height: 15px;
+}
+
+table.collectable tr:empty {
+  height: 0;
+}
+
+table.collectable tr td {
+  text-align: left;
+  border: solid 1px black;
+  vertical-align: top;
+  min-width: 25px;
+  max-width: 25px;
+  word-wrap: break-word;
+}
+
+table.collectable tr td.libelle_ligne,
+table.collectable tr td.total_ligne {
+  text-align: center;
+  vertical-align: middle;
+  max-width: none;
+  white-space: nowrap;
+}
+
+</style>

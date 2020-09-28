@@ -1,0 +1,42 @@
+version: '2.4'
+services:
+  web:
+    container_name: ducksmanager-web
+    image: "nginx:1.15"
+    ports:
+      - "8000:80"
+    depends_on:
+      - php
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+      - ../dm:/var/www/html-legacy
+    restart: always
+    networks:
+      - dm-server_front-network
+      - dm-network
+
+  php:
+    container_name: ducksmanager-php
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    restart: always
+    volumes:
+      - .:/var/www/html
+      - ../dm:/var/www/html-legacy
+      - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
+      - dm_sessions:/tmp
+    networks:
+      - dm-network
+      - dm-server_front-network
+    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
+
+networks:
+  dm-network:
+    driver: bridge
+  dm-server_front-network:
+    external: true
+
+volumes:
+  dm_sessions:
