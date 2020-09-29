@@ -1,5 +1,5 @@
 <template>
-  <div v-if="issuesPerCell && countryNames && publicationNames">
+  <div v-if="ready">
     <table class="collectable">
       <tr v-for="line in lines">
         <td/>
@@ -7,7 +7,7 @@
           {{ (line - 1) * numbersPerRow + subrange }}
         </td>
         <td v-if="line === 1" :rowspan="lines" class="total_ligne">
-          Total
+          {{ l10n.TOTAL }}
         </td>
       </tr>
       <template v-for="(_, publicationCode) in publicationNames">
@@ -38,7 +38,7 @@
           <table>
             <tr>
               <td align="center" colspan="2">
-                <u>Numéros</u>
+                <u>{{ l10n.NUMEROS[0].toUpperCase() + l10n.NUMEROS.substring(1, l10n.NUMEROS.length).toLowerCase() }}</u>
               </td>
             </tr>
             <tr v-for="(_, i) in Math.floor(letterToNumber(maxLetter) / 6)">
@@ -52,7 +52,7 @@
           <table>
             <tr>
               <td align="center" colspan="4">
-                <u>Publications</u>
+                <u>{{ l10n.PUBLICATIONS }}</u>
               </td>
             </tr>
             <tr v-for="(publicationName, publicationCode) in publicationNames">
@@ -67,6 +67,7 @@
       </tr>
     </table>
   </div>
+  <div v-else>{{ l10n.CHARGEMENT }}</div>
 </template>
 
 <script>
@@ -127,6 +128,9 @@ export default {
     }
   },
   computed: {
+    ready() {
+      return this.issuesPerCell && this.countryNames && this.publicationNames
+    },
     maxLetter() {
       return !this.issuesPerCell ? null : this.numberToLetter([
             ...new Set(JSON.stringify(this.issuesPerCell)

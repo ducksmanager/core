@@ -7,6 +7,10 @@
     {% endblock %}
 </head>
 <body>
+    <script type="text/javascript">
+        window.locale = "{{ app.request.locale }}"
+        window.l10nUrl = "{{ asset('build/messages.'~app.request.locale~'.yaml') }}"
+    </script>
     <div>{% block content %}{% endblock %}</div>
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}

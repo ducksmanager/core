@@ -1,0 +1,535 @@
+A: à
+A_VENDRE: A vendre
+A_VENDRE_TITRE: Vente
+ACCROCHE: Le site Internet de référence des collectionneurs de bandes dessinées Disney
+ACCUEIL: Accueil
+ACHAT: Achat
+ACHAT_ASSOCIER_DATE_ACHAT: Associer avec une date d\'achat
+ACHAT_CONSERVER_DATE_ACHAT: Conserver la date d\'achat
+ACHAT_DATE_ACHAT: Date d\'achat
+ACHAT_DATE_ACHAT_EXISTE: Cette date d\'achat existe déjà! Veuillez la date d\'achat ou sa description.
+ACHAT_DESASSOCIER_DATE_ACHAT: Désassocier de la date d\'achat
+ACHAT_DESCRIPTION: Description
+ACHAT_NOUVELLE_DATE_ACHAT: Nouvelle date d\'achat...
+ACHAT_SPECIFIEZ_DATE: Spécifiez une date !
+ACHAT_VENTE_NUMEROS: Achat/Vente de numéros
+ACHATS: Achats
+ACHATS_COURT: Achats
+ACHATS_NUMEROS_NOUVELLES_ACQUISITIONS: Nouvelles acquisitions pour le mois
+ACHATS_NUMEROS_SANS_DATE: Numéros sans dates d\'achat
+ACHATS_NUMEROS_TAILLE: Taille la collection pour le mois
+ACHETE_LE: Acheté le
+ACQUISITION: acquisition
+ACQUISITION_EXISTANTE: Acquisition existante !
+ACQUISITIONS: acquisitions
+ACTIVER_PARTAGE: Activer le partage de ma collection
+ADRESSE: Adresse
+ADRESSE_EMAIL: Adresse e-mail
+AFFICHER_AIDE: Afficher l\'aide
+AFFICHER_NOUVELLES_ACQUISITIONS: Afficher les nouvelles acquisitions
+AFFICHER_NUMEROS_POSSEDES: Afficher les numéros possédés
+AFFICHER_NUMEROS_MANQUANTS: Afficher les numéros manquants
+AFFICHER_POSSESSIONS_TOTALES: Afficher les possessions totales
+AFFICHER_POURCENTAGES: Afficher en pourcentages
+AFFICHER_VALEURS_REELLES: Afficher en valeurs réelles
+AFFICHER_VIDEO: Afficher la vidéo d\'explication pour la sélection des numéros
+AGRANDIR_COLLECTION: Agrandir ma collection
+AJOUTER: Ajouter
+AJOUTER_BOUQUINERIE: Ajouter la bouquinerie
+AJOUTER_MAGAZINE: Ajouter un magazine
+AJOUTER_NUMEROS_INDUCKS: Ajouter dans DucksManager les numéros qui en sont absents
+ANALYSE_LISTE: Analyse de la liste...
+ANNULER: Annuler
+ATTENTION_EMAIL_VIDE_ACHAT: Afin de pouvoir contacter les utilisateurs qui proposent des numéros à la vente, veuillez renseigner votre e-mail sur la page 
+ATTENTION_VENTE_SANS_EMAIL: Attention ! Votre collection contient des numéros à vendre mais vous n\'avez pas indiqué votre adresse e-mail dans la page 
+AU: au
+AUCUNE_ACQUISITION: Aucune acquisition enregistrée
+AUCUNE_DATE_ACQUISITION: Vous n\'avez entré aucune date d\'acquisition pour le moment
+AUCUNE_NOTE: Aucune note
+AUCUN_NUMERO_INDUCKS: DucksManager n\'a trouvé aucun numéro dans votre compte Inducks !
+AUCUN_AUTEUR_NOTE_1: Aucun auteur noté.
+AUCUN_AUTEUR_NOTE_2_REDIRECTION: Rendez vous sur la page %s pour noter vos auteurs préférés.
+AUCUN_AUTEUR_NOTE_2_MEME_PAGE: Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez.
+AUCUN_AUTEUR_NOTE_3: Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.
+AUCUN_NUMERO_POSSEDE_1: Vous ne possédez aucun numéro ! Cliquez 
+AUCUN_NUMERO_POSSEDE_2: pour en ajouter à votre collection !
+AUCUN_NUMERO_PROPOSE: Pour l\'instant, vous possédez tous les numéros proposés à la vente par les autres utilisateurs.
+AUCUN_NUMERO_REPERTORIE: Aucun numéro n\'est répertorié pour 
+AUCUN_AUTEUR_SURVEILLE: Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.
+AUCUNE_SUGGESTION: Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné.
+AUTEUR_DEJA_DANS_LISTE: Cet auteur est déjà dans votre liste !
+AUTEUR: Auteur
+AUTEURS: Auteurs
+AUTEURS_COURT: Statistiques sur les auteurs
+AUTEURS_FAVORIS_TEXTE: Trouvez quels magazines acheter en fonction des auteurs que vous aimez
+AUTEURS_FAVORIS_INTRO_1: Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous
+AUTEURS_FAVORIS_INTRO_2: suggérer des numéros en fonction de vos préférences.
+AUTEURS_NON_NOTES: Vous n\'avez pas encore noté vos auteurs favoris. Passez à l\'onglet "Préférences d\'auteurs pour le faire.
+AUTRES: Autres
+AVEC_ACQUISITION: avec la date d\'acquisition
+AVEC_ETAT: avec l\'état
+AVERTISSEMENT: Avertissement
+BETA: Beta
+BIBLIOTHEQUE: Visionnez votre collection comme si vous étiez devant!
+BIBLIOTHEQUE_CONTRIBUTEURS: Une liste de ceux qui ont participé à la création de la bibliothèque!
+BIBLIOTHEQUE_CONTRIBUTEURS_COURT: Contributeurs
+BIBLIOTHEQUE_COURT: Ma bibliothèque
+BIBLIOTHEQUE_DE: Bibliothèque de 
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE: "Dernières tranches de votre collection ajoutées :"
+BIBLIOTHEQUE_NOUVELLE_TRANCHE: "%u nouvelle tranche (%s) a été conçue depuis votre dernière visite.<br />Accédez à <a target=\"_blank\" href=\"?action=bibliotheque\">votre bibliothèque</a> pour la voir."
+BIBLIOTHEQUE_NOUVELLES_TRANCHES: "%u nouvelles tranches (%s) ont été conçues depuis votre dernière visite.<br />Accédez à <a target=\"_blank\" href=\"?action=bibliotheque\">votre bibliothèque</a> pour les voir."
+BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU: Accédez à <a target="_blank" href="?action=bibliotheque">votre bibliothèque</a> pour la voir.
+BIBLIOTHEQUE_NOUVELLE_TRANCHE_TITRE: Depuis votre dernière visite, %u nouvelle tranche appartenant à votre collection a été conçue pour la bibliothèque DucksManager
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU: Accédez à <a target="_blank" href="?action=bibliotheque">votre bibliothèque</a> pour les voir.
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE: Depuis votre dernière visite, %u nouvelles tranches appartenant à votre collection a été conçue pour la bibliothèque DucksManager
+BIBLIOTHEQUE_OPTIONS: Définissez les options d\'affichage de votre bibliothèque
+BIBLIOTHEQUE_OPTIONS_COURT: Options de la bibliothèque
+BIBLIOTHEQUE_PARTICIPER: Aidez-nous à afficher de belles bibliothèques pour tous les utilisateurs !
+BIBLIOTHEQUE_PARTICIPER_COURT: Participer au projet !
+BIBLIOTHEQUE_PRIVEE: La bibliothèque de cet utilisateur est privée.
+BIBLIOTHEQUE_PROPOSITION_PARTAGE: Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !
+BIBLIOTHEQUE_SAUVEGARDER_IMAGE: Sauvegarder l\'image de cette bibliothèque
+BIENVENUE: Bienvenue sur DucksManager !
+BOITE_SELECTIONNEE: Boite sélectionnée
+BON: Bon
+CACHER_VIDEO: Ne pas afficher la vidéo
+CACHER_AIDE: Cacher l\'aide
+CALCUL: Calcul
+CALCUL_EN_COURS: en cours...
+CALCUL_TERMINE: Calcul terminé. La page va se recharger...
+CALCULS_PAS_ENCORE_FAITS: Les calculs n\'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !
+CHAMP_OBLIGATOIRE_1: Le champ 
+CHAMP_OBLIGATOIRE_2:  est obligatoire
+CHARGEMENT: Chargement...
+CHARGEMENT_BIBLIOTHEQUE_TERMINE: 
+CLASSIQUE_ABREGE_DESCRIPTION: Cet affichage permet de consulter le nombre de numéros possédés pour un magazine.
+CLASSIQUE_ABREGE_MOINS_1: Pas vraiment une liste
+CLASSIQUE_ABREGE_MOINS_2: Impossible d\'ajouter des numéros manuellement
+CLASSIQUE_ABREGE_PLUS_1: Très succint
+CLASSIQUE_DESCRIPTION: Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez.
+CLASSIQUE_MOINS_1: Facile à lire, cette liste devient vite illisible lorsqu\'il s\'agit d\'ajouter des numéros.
+CLASSIQUE_MOINS_2: Difficultés pour ajouter un numéro manuellement sans perturber l\'ordre
+CLASSIQUE_MOINS_3: Avouez que cette liste manque de style ;-)
+CLASSIQUE_NOM: la liste classique
+CLASSIQUE_PLUS_1: Ce type de liste est plus adapté pour les collections de moins de 500 numéros.
+CLIQUEZ_ICI: Cliquez ici
+CLIQUEZ_SUR_MAGAZINE_POUR_EDITER: Cliquez sur l\'un de vos magazines pour éditer sa liste !
+COA_KO_1: La base de données des publications Disney n\'est pas accessible pour des raisons indépendantes de notre volonté.
+COA_KO_2: Vous pourrez utiliser DucksManager à nouveau lorsque la connexion sera rétablie.
+COLLECTABLE_DEMO: pour visionner notre vidéo d\'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !
+COLLECTABLE_DESCRIPTION: Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d\'entraînement !
+COLLECTABLE_MOINS_1: Petit temps d\'adaptation nécessaire pour la recherche de numéros dans la table
+COLLECTABLE_MOINS_2: Quelques problèmes lorsque l\'on possède de nombreux numéros avec la même unité (par exemple 100, 200 et 400). Dans ce cas la case correspondante est élargie.
+COLLECTABLE_NOM: CollecTable
+COLLECTABLE_PLUS_1: Adaptée pour les collections de taille importante (plus de 200 numéros).
+COLLECTABLE_PLUS_2: Les doublons peuvent être représentés
+COLLECTABLE_PLUS_3: La date d\'achat peut être représentée
+COLLECTION: Collection
+COLLECTION_DE: Collection DucksManager de 
+COLLECTION_VIDE_1: Votre collection est vide.
+COLLECTION_CLIQUER_GERER_COLLECTION: Cliquez sur %s pour ajouter un numéro dans votre liste.
+COLLECTION_CLIQUER_NOUVEAU_MAGAZINE: Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.
+COMMENT_S_IDENTIFIER: Cliquez sur "Ouvrir ma collection", dans le menu, pour vous identifier.
+COMMENTAIRES_BOUQUINERIE: Commentaires
+COMMENTAIRES_BOUQUINERIE_EXEMPLE: Ambiance, exemples de prix,...
+COLLECTION_INDUCKS: Collection Inducks
+COLLECTION_INDUCKS_POSSEDEE: Vous possédez une collection Inducks ?
+COMPTE_SUPPRIME_DECONNECTE: Votre compte a également été supprimé. Vous avez été déconnecté(e).
+CONFIRMATION_ENVOI_MESSAGE: Un e-mail a été envoyé à 
+CONFIRMER: Confirmer ?
+CONNEXION: Connexion
+CONNEXION_COMPTE: Connexion à mon compte DucksManager
+CONNEXION_INDUCKS: Connexion à Inducks...
+CONTACT_UTILISATEURS: Contacter d\'autres utilisateurs de DucksManager
+CONTINUER_OUI_NON: Continuer ?
+CREER: Créer
+DANS: dans
+DATE: Date
+DATE_INVALIDE: Date invalide !
+DATE_QUESTION: A quelle date avez-vous effectué l\'achat ? (JJ/MM/AAAA)
+DATES_EXISTANTES: Dates existantes
+DE: de
+DEBUG_DESCRIPTION: Liste "debug", principalement destinée aux développeurs.
+DEBUG_MOINS_1: Difficultés pour repérer une série continue de numéros
+DEBUG_MOINS_2: Difficultés pour ajouter un numéro sans perturber l\'ordre
+DEBUG_MOINS_3: Prend une ligne par numéro
+DEBUG_MOINS_4: Pas joli !
+DEBUG_PLUS_1: Pratique pour debugger les listes corrompues
+DECONNEXION: Déconnexion
+DECONNEXION_OK: Vous avez été déconnecté(e).
+DECOUVRIR_COUVERTURE: Cliquez sur la tranche pour découvrir sa couverture
+DEMO_MENU: Une petite démo ?
+DEPLACER_APRES: Déplacer après
+DEPLACER_AVANT: Déplacer avant
+DETAILS_HISTOIRE: Détails de l\'histoire
+DETAILS_MAINTENANCE_1: Le site sera à nouveau opérationnel 
+DETAILS_MAINTENANCE_2:  si tout se passe comme prévu !
+DETAILS_MEDAILLE_CREATEUR: Vous avez %d points Concepteur de tranches, obtenez-en %d de plus pour recevoir le badge %s !
+DETAILS_MEDAILLE_CREATEUR_MAX: Vous avez %d points Concepteur de tranches
+DETAILS_MEDAILLE_DUCKHUNTER: Vous avez signalé %d bouquineries, signalez-en %d de plus pour reevoir le badge %s!
+DETAILS_MEDAILLE_DUCKHUNTER_MAX: Vous avez signalé %d bouquineries
+DETAILS_MEDAILLE_PHOTOGRAPHE: Vous avez %d points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez %d points de plus pour recevoir le badge %s !
+DETAILS_MEDAILLE_PHOTOGRAPHE_MAX: Vous avez %d points Photographe de tranches
+DMSPIRAL_DESCRIPTION: Liste en spirale, particulièrement utile pour les magazines avec peu de numéros. Elle permet de bien repérer les suites de numéros.
+DMSPIRAL_MOINS_1: Prend beaucoup d\'espace pour les magazines à fréquence élevée (Journal de Mickey,...)
+DMSPIRAL_MOINS_2: Parfois laborieux pour repérer un numéro ou l\'ajouter
+DMSPIRAL_MOINS_3: Ce mode de liste est actuellement en développement
+DMSPIRAL_PLUS_1: Assez esthétique
+DMSPIRAL_PLUS_2: Peut prendre en compte l\'état du numéro (Mauvais état, bon état,...)
+DMSPIRAL_PLUS_3: Reconaissance rapide des séries de numéros et des numéros manquants
+DU: du
+EMAIL_ACHAT_VENTE_2: Vous pouvez répondre directement à cet e-mail pour lui proposer un prix et un moyen de lui transmettre vos numéros.
+EMAIL_ACHAT_VENTE_3: Bonne vente, et à bientôt sur DucksManager !
+EMAIL_ACHAT_VENTE_TITRE: Un utilisateur est intéressé par vos numéros en vente sur DucksManager
+EMAIL_ENVOYE: Un e-mail vient d\'être envoyé au webmaster.
+EMAIL_ENVOYE_BOUQUINERIE: Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.
+EMAIL_REINIT_MOT_DE_PASSE_1: Vous recevez cet e-mail à la suite de votre demande de réinitialisation de mot de passe sur DucksManager.
+EMAIL_REINIT_MOT_DE_PASSE_2: "Votre mot de passe temporaire est :"
+EMAIL_REINIT_MOT_DE_PASSE_3: A bientôt sur DucksManager !
+EMAIL_REINIT_MOT_DE_PASSE_TITRE: Reinitialisation de mot de passe DucksManager
+EMAIL_SIGNATURE: L\'équipe DucksManager
+EN_MAINTENANCE: En maintenance
+ENREGISTRER_CHANGEMENTS: Enregistrer les changements
+ENVOI_EMAIL_ECHEC: Erreur lors de l\'envoi de l\'e-mail. Merci de contacter le webmaster.
+ENVOYER: Envoyer
+ENVOYER_PHOTO_DE_TRANCHE: Envoyer une photo de tranche
+ENVOYER_PHOTOS_DE_TRANCHE: Envoyer des photos de tranches
+ENVOYER_MESSAGE_A: Envoyer un message à 
+ERREUR_CAPTCHA: Le code que vous avez entré est invalide. Merci de réessayer.
+ERREUR_CONNEXION_INDUCKS: Erreur de connexion à Inducks!
+ERREUR_EXECUTION_REQUETE: Erreur lors de l\'éxécution de la requete !
+ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: La fusion de deux listes ne peut se faire que si elles sont du meme type!
+ERREUR_LECTURE_NUMEROS: Erreur lors de la lecture de la liste de numéros
+ERREUR_RAWDATA_INVALIDE: Erreur lors de l\'analyse de la collection. Sélectionnez tout le texte de la page Inducks !
+ERREUR_TECHNIQUE: Une erreur technique est survenue. Merci de prévenir le webmaster pour qu\'elle soit résolue le plus tôt possible !
+ERREUR_TYPE_LISTE_INVALIDE: "Erreur : type de liste invalide"
+EST_EN_MAINTENANCE: DucksManager est en maintenance ...
+ET: et
+ETAT: Etat
+ETAT_BON: En bon état
+ETAT_CONSERVER_ETAT_ACTUEL: Conserver l\'état actuel
+ETAT_INDEFINI: En état indéfini
+ETAT_MANQUANTS: Manquants
+ETAT_MARQUER_BON_ETAT: Marquer comme en bon état
+ETAT_MARQUER_ETAT_MOYEN: Marquer comme en état moyen
+ETAT_MARQUER_MAUVAIS_ETAT: Marquer comme en mauvais état
+ETAT_MARQUER_NON_POSSEDE: Marquer comme non-possédé(s)
+ETAT_MARQUER_POSSEDE: Marquer comme possédé(s)
+ETAT_MAUVAIS: En mauvais état
+ETAT_MOYEN: En moyen état
+ETATS_MAGAZINES: Part des états des magazines dans la collection
+ETATS_NUMEROS: Etats des numéros
+ETATS_NUMEROS_COURT: Etats des numéros
+EXCELLENT: Excellent
+EXCLUSIF_DUCKSMANAGER: Exclusif DucksManager
+EXPLICATION_GRAPH_ACHATS_1: Ce graphique vous permet de retracer l\'évolution de votre collection dans le temps.
+EXPLICATION_GRAPH_ACHATS_2: A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?
+EXPLICATION_GRAPH_ACHATS_3: Quand avez-vous acheté le plus de magazines dans le passé ?
+EXPLICATION_GRAPH_ACHATS_4: Afin de retracer l\'évolution de votre collection, renseignez les dates d\'achat de vos numéros dans la page %s, puis revenez ici ! Si une date d\'achat n\'a pas été indiquée pour un numéro, sa date d\'ajout dans la collection est utilisée
+EXPLICATION_NOTATION_AUTEURS1: DucksManager se base sur les
+EXPLICATION_NOTATION_AUTEURS2: notes que vous attribuez à vos auteurs préférés
+EXPLICATION_NOTATION_AUTEURS3: pour vous proposer des magazines susceptibles de vous intéresser.
+EXPLICATION_ORDRE_MAGAZINES: Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page %s.
+EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE: Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page %s.
+EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE: Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page %s.
+EXTRAIRE: Extraire
+FERMER: Fermer
+FUSIONNER_LES_DEUX: Fusionner les deux
+FUSIONNER_TOUT: Fusionner tout
+GENERAL: Général
+GERER_COLLECTION: Gérer ma collection
+GESTION_COLLECTION: Gestion de ma collection
+GESTION_COMPTE: Gestion de votre compte DucksManager
+GESTION_COMPTE_COURT: Mon compte
+GESTION_NUMEROS: Gestion des numéros de votre collecton
+GESTION_NUMEROS_COURT: Mes numéros
+GRATUIT_AUCUNE_LIMITE: DucksManager est gratuit et sans limite d\'utilisation.
+HISTOIRE_INEDITE: histoire inédite
+HISTOIRES_INEDITES: histoires inédites
+HISTOIRES_NON_POSSEDEES: Histoires non possédées
+HISTOIRES_POSSEDEES: Histoires possédées
+ICI: ici
+IDENTIFIANTS_INCORRECTS: Identifiants incorrects !
+IDENTIFICATION_OBLIGATOIRE: Vous devez être connecté(e) pour accéder à cette page.
+IE_INF_A_9_NON_SUPPORTE: Désolé, Internet Explorer n\'est pas supporté qu\'à partir de la version 9 pour cette fonctionnalité
+IMPORT_INDUCKS_DESACTIVE: L\'import de collection Inducks est actuellement désactivé.
+IMPORTER: Importer
+IMPORTER_INDUCKS: Importer ma collection Inducks
+IMPORTER_INDUCKS_AUCUN_NUMERO: Aucun numéro trouvé dans la liste.
+IMPORTER_INDUCKS_DESCRIPTION_1: DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.
+IMPORTER_INDUCKS_DESCRIPTION_2: Si vous possédez déjà une collection Inducks, vous pouvez <b>l\'importer sur DucksManager en quelques clics.</b>
+IMPORTER_INDUCKS_DESCRIPTION_3: Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez "%s" dans le menu.
+IMPORTER_INDUCKS_ETAT: Choisissez un état par défaut pour les nouveaux numéros
+IMPORTER_INDUCKS_ETAT_INVALIDE: Veuillez définir un état pour les nouveaux numéros.
+IMPORTER_INDUCKS_INSTRUCTIONS_1: Cette page vous permet d\'importer votre collection Inducks dans DucksManager.
+IMPORTER_INDUCKS_INSTRUCTIONS_2: "Pour cela, suivez les étapes suivantes : "
+IMPORTER_INDUCKS_INSTRUCTIONS_3: Sur l\'écran de gauche, connectez-vous, si ce n\'est déjà fait, sur Inducks.
+IMPORTER_INDUCKS_INSTRUCTIONS_4: "Une fois connecté, vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>."
+IMPORTER_INDUCKS_INSTRUCTIONS_5: Sélectionnez toute la liste, puis copiez-la.
+IMPORTER_INDUCKS_INSTRUCTIONS_6: Collez ce texte dans la partie droite de la page.
+IMPORTER_INDUCKS_INSTRUCTIONS_7: Cliquez sur le bouton "Importer" en bas de la page.
+IMPORTER_INDUCKS_NUMEROS_A_IMPORTER: numéros peuvent être importés.
+IMPORTER_INDUCKS_NUMEROS_EXISTANTS: numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.
+IMPORTER_INDUCKS_NUMEROS_IMPORTES: numéros ont été importés.
+IMPORTER_INDUCKS_NUMEROS_NON_IMPORTES: numéros n\'ont pas été importés car vous les possédez déjà dans votre collection.
+IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES: numéros ne peuvent pas être importés car ils n\'existent plus sur Inducks.
+IMPORTER_INDUCKS_TEXTE_INVALIDE: Le texte entré est invalide, avez-vous inclus la ligne <pre>country^entrycode^collectiontype^comment</pre> dans la partie droite de la page ?
+IMPRIMER_COLLECTION: Imprimer ma collection
+IMPRESSION_COLLECTION: Impression de la collection
+IMPRESSION_COLLECTION_PRESENTATION_LISTES: "DucksManager propose l'impression de votre liste sous deux formats différents :"
+IMPRESSION_COLLECTION_AVEC: Imprimer ma collection avec 
+IMPRIMER_AIDE_TITRE: Bienvenue dans l\'assistant d\'impression de collection !
+IMPRIMER_AIDE_1: Sur cette page, vous pourrez choisir la manière avec laquelle organiser votre liste de numéros avant de l\'imprimer.
+IMPRIMER_AIDE_2: Faites un clic gauche sur une boite pour en changer les paramètres d\'affichage
+IMPRIMER_AIDE_3: Vous souhaitez modifier le positionnement des boites entre elles ? Utilisez le haut de la boite comme poigné et placez-la au-dessus ou en-dessous d\'un magazine
+IMPRIMER_AIDE_4: Vos préférences de positionnement seront automatiquement enregistrées.
+IMPRIMER_AIDE_5: Lorsque tout sera prêt, vous pourrez cliquer sur le bouton "Imprimer", situé en haut à gauche de cette page.
+INDEFINI: Indéfini
+INDEX_AIDE: Index de l\'aide
+INFO_AJOUT_NUMEROS_1: Cliquez sur les numéros que vous souhaitez ajouter à votre collection, 
+INFO_AJOUT_NUMEROS_2_DESKTOP: puis faites un clic droit pour indiquer son état et validez.
+INFO_AJOUT_NUMEROS_2_MOBILE: puis faites un appui long pour indiquer son état et validez.
+INITIALISATION: Initialisation
+INSCRIPTION: Inscription
+INSCRIVEZ_VOUS: Cliquez ici pour vous inscrire !
+INSTRUCTIONS_IMPORT_INDUCKS_TITRE: Importation de collection Inducks
+INSTRUCTIONS_IMPORT_INDUCKS_1: Connectez-vous à votre compte Inducks ci-contre.
+INSTRUCTIONS_IMPORT_INDUCKS_2: Dans le menu qui apparait, cliquez sur "Données brutes".
+INSTRUCTIONS_IMPORT_INDUCKS_3: Sélectionnez l\'intégralité de la page Inducks qui apparait.
+INSTRUCTIONS_IMPORT_INDUCKS_4: Utilisez Ctrl+C ou Pomme+C pour copiez ce texte.
+INSTRUCTIONS_IMPORT_INDUCKS_5: Cliquez à l\'intérieur de la zone de texte ci-dessous, puis utilisez Ctrl+V ou Pomme+V pour y coller le texte.
+INTRO_ACHAT_VENTE: Cette page vous permet de contacter d\'autres utilisateurs de DucksManager qui souhaitent vendre certains numéros de leur collection.
+INTRO_BOUQUINERIES: Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney.
+INTRO_CONTRIBUTEURS_BIBLIOTHEQUE: "La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de : "
+INTRO_NOUVELLE_BOUQUINERIE: Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.
+INVITATION_ENVOI_PHOTOS_TRANCHES: Envoyez des photos de tranches de magazines et gagnez jusqu\'à %s points par tranche !
+L10N_INTROUVABLE: Traduction introuvable pour 
+LE_WEBMASTER: Le webmaster.
+LEGENDE_NUMEROS: Légende des numéros
+LES: Les
+LICENCE_INDUCKS1: Ce site se base en partie sur les données du site Inducks.
+LICENCE_INDUCKS2: Cliquez ici pour lire la licence Inducks.
+LICENCE_INDUCKS3: "Toutes les images de personnages et / ou produits Disney: © The Walt Disney Company."
+LISTE_AUTEURS_INTRO: "Vous suivez les auteurs suivants : "
+LISTE_BOUQUINERIES: Liste des bouquineries
+LISTE_MAGAZINES: Liste des magazines
+LISTES_IDENTIQUES: Vos collections Inducks et DucksManager sont identiques. Aucune action n\'est requise.
+MAGAZINES: magazines
+MAINTENANCE: Maintenance
+MAUVAIS: Mauvais
+MAX_AUTEURS_SURVEILLES_ATTEINT: Vous avez atteint le nombre maximal d\'auteurs surveillés. Supprimiez des auteurs existants pour en surveiller d\'autres.
+MEDAILLE_1: bronze
+MEDAILLE_2: argent
+MEDAILLE_3: or
+MERCI_COMPREHENSION: Merci de votre compréhension.
+MERCI_CONTRIBUTION: Merci pour votre contribution !
+MINUTES: minute(s)
+MISE_A_JOUR: Mise à jour...
+MODIFICATIONS_OK: Vos modifications ont été prises en compte.
+MONTRER_MAGAZINES_PAYS: Montrer les magazines de 
+MOT_DE_PASSE: Mot de passe
+MOT_DE_PASSE_6_CHAR: Mot de passe (au moins 6 caractères)
+MOT_DE_PASSE_6_CHAR_ERREUR: Le mot de passe doit comporter au moins 6 caractères !
+MOT_DE_PASSE_ACTUEL: Mot de passe actuel
+MOT_DE_PASSE_ACTUEL_INCORRECT: Le mot de passe actuel renseigné est incorrect.
+MOT_DE_PASSE_CHANGE: Le mot de passe a été changé.
+MOT_DE_PASSE_CHANGEMENT: Changement de mot de passe
+MOT_DE_PASSE_CONF: Mot de passe (confirmation)
+MOT_DE_PASSE_NOUVEAU: Nouveau mot de passe
+MOT_DE_PASSE_NOUVEAU_CONFIRMATION: Nouveau mot de passe (confirmation)
+MOT_DE_PASSE_OUBLIE: Mot de passe oublié ?
+MOT_DE_PASSE_OUBLIE_EMAIL_ENVOYE: Un e-mail vous a été envoyé à l\'adresse que vous avez indiquée
+MOT_DE_PASSE_OUBLIE_ERREUR_ENVOI_EMAIL: Echec lors de l\'envoi de l\'e-mail
+MOT_DE_PASSE_OUBLIE_ERREUR_TOKEN: Le lien de mise à jour de mot de passe est invalide ou expiré, merci d\'indiquer votre e-mail à nouveau dans la page %s.
+MOT_DE_PASSE_OUBLIE_ERREUR_VIDE: Vous n\'avez pas rempli le champ "E-mail".
+MOT_DE_PASSE_OUBLIE_ERREUR_EMAIL_INCONNU: Cet e-mail ne correspond à aucun compte DucksManager.
+MOT_DE_PASSE_OUBLIE_EXPLICATION: "Un mot de passe temporaire va vous être envoyé à l'adresse e-mail que vous indiquerez ci-dessous :"
+MOT_DE_PASSE_OUBLIE_OK: Si l\'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient d\'y être envoyé. Si l\'e-mail ne vous parvient pas d\'ici quelques minutes, pensez à vérifier le dossier "Spam".
+MOTS_DE_PASSE_DIFFERENTS: Les deux mots de passe ne correspondent pas !
+MOYEN: Moyen
+NEWS_A_AJOUTE_BOUQUINERIE: a ajouté la bouquinerie
+NEWS_A_AJOUTE: a ajouté
+NEWS_A_SA_COLLECTION: à sa collection
+NEWS_AUTRE_NUMERO: autre numéro
+NEWS_AUTRE_TRANCHE: autre tranche
+NEWS_AUTRES_NUMEROS: autres numéros
+NEWS_AUTRES_TRANCHES: autres tranches
+NEWS_IL_Y_A_PREFIXE: il y a
+NEWS_IL_Y_A_SUFFIXE: 
+NEWS_A_COMMENCE_COLLECTION: a commencé sa collection sur DucksManager. Bienvenue !
+NEWS_A_CREE_TRANCHE: a créé la tranche 
+NEWS_A_OBTENU_MEDAILLE: a obtenu la médaille <b>%s niveau %d</b>
+NEWS_ONT_CREE_TRANCHE: ont créé la tranche 
+NEWS_ONT_CREE_TRANCHE_2: pour la bibliothèque DucksManager
+NEWS_TEMPS_HEURE: heure
+NEWS_TEMPS_JOUR: jour
+NEWS_TEMPS_MINUTE: minute
+NEWS_TEMPS_SECONDE: seconde
+NEWS_TITRE: Récemment sur DucksManager...
+NIVEAU: niveau
+NOM_BOUQUINERIE: Nom de la bouquinerie
+NOM_UTILISATEUR: Nom d\'utilisateur
+NON: Non
+NOUVEAU: Nouveau!
+NOUVEAU_MAGAZINE: Nouveau magazine
+NOUVEL_ACHAT: Nouvel achat
+NOUVELLE_ACQUISITION_SAUVEGARDER: Sauvegarder la nouvelle acquisition
+NOUVELLE_COLLECTION: Inscription
+NUMERO: numéro
+NUMERO_CONTIENT: contient
+NUMERO_SELECTIONNE: numéro sélectionné
+NUMEROS: numéros
+NUMEROS_SELECTIONNES: numéros sélectionnés
+NUMEROS_A_AJOUTER: numéro(s) apparai(ssen)t uniquement dans la collection Inducks
+NUMEROS_A_SUPPRIMER: numéro(s) apparai(ssen)t uniquement dans la collection DucksManager
+NUMEROS_COMMUNS: numéro(s) sont commun(s) aux deux collections
+NUMEROS_MANQUANTS: Numéros manquants
+NUMEROS_POSSEDES: Numéros possédés
+NUMEROS_REFERENCES: Numéros référencés non-possédés
+NUMEROS_SELECTIONNES_ENREGISTRES: numéros sélectionnés seront enregistrés dans votre collection
+NUMEROS_SUPPRIMES: Les numéros de votre collection ont été supprimés
+OK: OK
+OPERATION_IMPOSSIBLE_MODE_DEMO: Cette opération est impossible en mode démo.
+OPERATION_IRREVERSIBLE: Attention ! Cette opération est irréversible !
+OPERATIONS_EXECUTEES: Les opérations ont été exécutées avec succès.
+OPTIONS: Options
+ORDRE_MAGAZINES: Ordre des magazines
+ORDRE_MAGAZINES_REINITIALISER: Réinitialiser l\'ordre des magazines
+OUI: Oui
+OUVRIR_COLLECTION: Connexion
+PARAMETRES: Paramètres
+PARAMETRES_LISTE: Paramètres de liste
+PAYS: pays
+PAYS_PUBLICATION: Pays de publication
+PERMISSION_NON_ACCORDEE: Permission non accordée
+PHRASE_MAINTENANCE_INDUCKS1: Le site Internet
+PHRASE_MAINTENANCE_INDUCKS2: sur lequel se base DucksManager, semble être en maintenance
+PHRASE_MAINTENANCE_INDUCKS3: Certaines pages de DucksManager peuvent ne pas fonctionner correctement.
+POINTS: Points
+POSSESSIONS: Possessions
+POSSESSIONS_COURT: Mes possessions
+POSSESSION_HISTOIRES_AUTEURS: Possession des histoires d\'auteurs
+POSSESSION_MAGAZINES_INTRO: Vous possédez
+POSSESSION_MAGAZINES_2: Votre collection est composée de
+POSSESSION_MAGAZINES_3: magazines différents issus de
+POSSESSION_NUMEROS: Possession des numéros
+POURCENTAGE_COLLECTION_VISIBLE: "% de la collection est visible dans la bibliothèque."
+PRESENTATION: Présentation
+PRESENTATION1: DucksManager est un site Web vous permettant de gérer votre liste de magazines Disney en toute simplicité.
+PRESENTATION2: De la gestion de votre collection à leur impression en tant que liste, en passant par des statistiques complètes, toutes les fonctions que vous attendiez d\'un gestionnaire de collection sont là !
+PRESENTATION_BIBLIOTHEQUE_1: La bibliothèque de DucksManager présente votre collection de magazines Disney dans des étagères élégantes.
+PRESENTATION_BIBLIOTHEQUE_2: Parce que votre bibliothèque est unique, DucksManager vous propose de choisir entre différents types de bois pour le cadre de la bibliothèque et ses égères.
+PRESENTATION_BIBLIOTHEQUE_3: ...Et pour que l\'immersion soit complète, vous pouvez dans la plupart des cas voir la couverture et quelques extraits de chacun de vos numéros!
+PRESENTATION_BIBLIOTHEQUE_TITRE: Votre bibliothèque, comme si vous étiez devant !
+PRESENTATION_BOUQUINERIE1: Vous connaissez une bouquinerie sympa ? Faites-en profiter d\'autres collectionneurs !
+PRESENTATION_DEMO_TITRE: Bienvenue dans le mode démo !
+PRESENTATION_DEMO: Prenez le temps de découvrir les fonctionnalités de DucksManager.<br /><br />Vous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.<br />Si vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien "Déconnexion" dans le menu à gauche de cette page.<br />Prochaine remise à zéro dans 
+PRESENTATION_GENERALE: Une gestion de collection complète, des statistiques personnalisées, un éventail d\'outils pour agrandir votre collection, et bien d\'autres choses...
+PRESENTATION_GERER_1: Notre outil de sélection de numéros  permet de référencer votre collection de magazines Disney en toute simplicité.
+PRESENTATION_GERER_2: Envie de mémoriser les moindres détails de votre collection ? Avec DucksManager un clic droit suffit !
+PRESENTATION_GERER_3: Vous pourrez ainsi spécifier l\'état de conservation de vos revues, leurs dates d\'acquisition, ou encore les proposer à la vente auprès des autres utilisateurs de DucksManager.
+PRESENTATION_GERER_TITRE: Sélectionnez en quelques clics les numéros que vous possédez !
+PRESENTATION_STATS_1: Mises à jour quotidiennement pour prendre en compte tous vos changements, les statistiques de DucksManager vous informent sur les numéros que vous possédez, et vous précisent combien en acquérir pour compléter des séries.
+PRESENTATION_STATS_2: Si vous avez spécifié l\'état de vos revues, un graphique les résumera.
+PRESENTATION_STATS_3: Vous aimez un scénariste ou un dessinateur en particulier ? DucksManager génère pour vous un histogramme résumant la proportion des histoires que vous possédez de cet auteur.
+PRESENTATION_STATS_TITRE: Des statistiques complètes et tous les outils pour agrandir votre collection !
+PRESENTATION_WHATTHEDUCK_1: Gardez votre collection en poche où que vous soyez, et ajoutez des numéros à votre collection simplement en photographiant leur couverture avec  
+PRESENTATION_WHATTHEDUCK_2: ", l'application mobile de DucksManager !"
+PRESENTATION_WHATTHEDUCK_3: Disponible gratuitement sur les téléphones et tablettes Android.
+PRESENTATION_WHATTHEDUCK_LONGUE: Saviez-vous que DucksManager propose une application Android officielle nommée What The Duck ? Avec What The Duck, photographiez la couverture d\'un magazine et l\'application l\'ajoutera à votre collection ! A télécharger gratuitement sur téléphones et tablettes Android.
+PRESENTATION_WHATTHEDUCK_TITRE: Votre collection Disney en poche, où que vous soyez
+PRIX_HONNETES: Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.
+PROBLEME_BD: Problème avec la base de données !
+PROPOSE_LES_NUMEROS: "propose les numéros suivants en vente :"
+PROPOSER_BOUQUINERIE: Proposer une bouquinerie
+PUB_WHATTHEDUCK_1: Nouveau ! Photographiez vos numéros pour les ajouter à votre collection avec 
+PUB_WHATTHEDUCK_2: ", l'application mobile de DucksManager !"
+PUB_WHATTHEDUCK_3: Disponible gratuitement sur les téléphones et tablettes Android.
+PUB_WHATTHEDUCK_LONGUE: Saviez-vous que DucksManager propose une application Android officielle nommée What The Duck ? Avec What The Duck, photographiez la couverture d\'un magazine et l\'application l\'ajoutera à votre collection ! A télécharger gratuitement sur téléphones et tablettes Android.
+PUBLICATION: Publication
+PUBLICATIONS: Publications
+PUBLICATIONS_COURT: Ma collection de magazines
+QUESTION_EXECUTER_OPS_INDUCKS: Quelles opérations souhaitez-vous exécuter ?
+QUESTION_IMPORTER_INDUCKS: Voulez-vous les importer ?
+QUESTION_SUPPRIMER_MAGAZINE: "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront également supprimés de votre collection dans ce cas :"
+RECHERCHE_MAGAZINE_AUCUN_RESULTAT: Aucun résultat.
+RECHERCHE_MAGAZINE_HISTOIRE_NON_POSSEDEE: Vous ne possédez pas cette histoire.
+RECHERCHE_MAGAZINE_RESULTATS_NOMBREUX_1: Le nombre de résultats est > 10.
+RECHERCHE_MAGAZINE_RESULTATS_NOMBREUX_2: Précisez votre recherche.
+RECHERCHE_MAGAZINE_SELECTIONNEZ_UNE_HISTOIRE: Sélectionnez un titre d\'histoire dans la liste.
+RECHERCHER_BIBLIOTHEQUE: "Rechercher une histoire dans la bibliothèque :"
+RECHERCHER_BOUQUINERIES: Trouver des bouquineries
+RECHERCHER_GENERAL: Rechercher une histoire
+RECHERCHER_INTRO: "... ou recherchez un magazine à partir d'une histoire qui le contient :"
+REFERENCES: référencés
+REJOIGNEZ_NOUS: Rejoignez la communauté sur
+REMERCIEMENT_LOGO: Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.
+REMPLIR_INFOS_NOUVEAU_MAGAZINE: Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros.
+REMPLIR_PAYS_ET_MAGAZINE: Vous devez remplir les champs correspondant au pays et au nom du magazine\n pour lequel vous souhaitez ajouter des numéros !
+RESULTAT_NUMEROS_INDUCKS: DucksManager a trouvé les numéros suivants sur votre compte Inducks.
+SALUTATION: Bonjour %s,
+SANS_TITRE: Sans titre
+SELECTIONNER_DATE_ACHAT: Vous devez selectionner une date d\'achat !
+SELECTIONNER_MAGAZINE: Veuillez sélectionner un magazine !
+SELECTIONNER_NUMEROS_A_MARQUER: Sélectionnez d\'abord les numéros à marquer !
+SELECTIONNER_PAYS: Sélectionnez un pays
+SELECTIONNER_TEXTURE: Selectionnez une texture
+SIGNALE_PAR: Signalé par 
+SOUS_TEXTURE: Sous-texture
+SOUS_TEXTURE_ETAGERE: Sous-texture de l\'étagère
+STATISTIQUES_COLLECTION: Statistiques de ma collection
+STATISTIQUES_QUOTIDIENNES: Les statistiques sont mises à jour quotidiennement.
+SUCCES: Succès!
+SUGGESTIONS_ACHATS: Suggestions d\'achats
+SUGGESTIONS_ACHATS_NOUVEAUTE: Since your last visit, %d issue has been released with new stories from your favorite authors!
+SUGGESTIONS_ACHATS_NOUVEAUTES: Since your last visit, %d issues have been released with new stories from your favorite authors!
+SUGGESTIONS_ACHATS_QUOTIDIENNES: Les suggestions d\'achat sont mises à jour quotidiennement.
+SUGGESTIONS_PUBLICATIONS_DESACTIVE: Les suggestions d\'achat sont actuellement désactivées.
+SUPPRESSION_ACQUISITION_CONFIRMATION: Confirmez-vous la suppression de cette acquisition ?\nLes numéros correspondant à cette date d\'acquisition seront conservés.
+SUPPRIMER: Supprimer
+SUPPRIMER_ACQUISITION: Supprimer cette acquisition
+SUPPRIMER_COMPTE: Supprimer mon compte DucksManager
+SUPPRIMER_NUMEROS_NON_INDUCKS: Supprimer de DucksManager les numéros qui n\'apparaissent pas dans la collection Inducks
+SUR: sur
+TAILLE_TRANCHES: Taille des tranches
+TAILLE_REELLE: Taille réelle
+TERMINE: Terminé.
+TEXTURE: Texture
+TEXTURE_ETAGERE: Texture de l\'étagère
+TEXTURE__BOIS: Bois
+TITRE: "DucksManager : Gestion de collection de bandes dessinées Disney"
+TITRE_MEDAILLE_CREATEUR: Concepteur de tranches
+TITRE_MEDAILLE_PHOTOGRAPHE: Photographe de tranches
+TITRE_MEDAILLE_DUCKHUNTER: Duckhunter
+TITRE_PAGE_ACCUEIL: Bienvenue !
+TITRE_PAGE_AGRANDIR: Agrandir ma collection
+TITRE_PAGE_BIBLIOTHEQUE: Bibliotheque DucksManager
+TITRE_PAGE_BOUQUINERIES: Trouver des bouquineries
+TITRE_PAGE_GERER: Gestion de ma collection
+TITRE_PAGE_INDUCKS: Connexion au compte Inducks
+TITRE_PAGE_OPEN: Connexion
+TITRE_PAGE_PRINT_NOW: Impression de liste
+TITRE_PAGE_STATISTIQUES: Statistiques de ma collection
+TOTAL: Total
+TOUS_MAGAZINES: Tous magazines
+TOUS_PAYS: Tous les pays
+TRANCHE_NON_DISPONIBLE1: Cette tranche n\'est pas visible car nous n\'en possédons pas de photographie...
+TRANCHE_NON_DISPONIBLE2: Vous pouvez photographier cette tranche ?
+TRANCHE_NON_DISPONIBLE3: Envoyez-nous une photo et gagnez
+TRAVAUX_SECTION: Cette section est en travaux !
+TYPE_LISTE: Type de liste
+TYPE_LISTE_GLOBAL: Type de liste global
+UN_VISITEUR_ANONYME: un visiteur anonyme
+UTILISATEUR_INEXISTANT: Ce nom d\'utilisateur n\'existe pas.
+UTILISATEUR_INVALIDE: Le nom d\'utilisateur est invalide. Choisissez un nom d\'utilisateur d\'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.
+UTILISATEUR_EXISTANT: Ce nom d\'utilisateur est déjà utilisé !
+UTILISATEUR_VALIDE: Utilisateur valide
+UTILISATEURS_INSCRITS: utilisateurs sont inscrits<br />sur DucksManager
+VALIDER: Valider
+VENTE_CONSERVER_VOLONTE_VENTE: Conserver la volonté de vente
+VENTE_MARQUER_A_VENDRE: Marquer comme "A vendre"
+VENTE_MARQUER_PAS_A_VENDRE: Enlever la mention "A vendre"
+VIDER_LISTE: Vider ma liste de numéros
+VILLE: Ville
+VOIR: Voir
+VOIR_BIBLIOTHEQUE: Voir la bibliothèque

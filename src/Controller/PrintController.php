@@ -9,9 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class PrintController extends AbstractController
 {
     /**
-     * @Route(
+     * @Route({
+     *     "en": "/print/{type}",
+     *     "fr": "/impression/{type}"
+     * },
      *     methods={"GET"},
-     *     path="/print/{type}",
      *     requirements={"type"="^(?P<print_type_regex>classic|collectable|test)$"}
      * )
      */

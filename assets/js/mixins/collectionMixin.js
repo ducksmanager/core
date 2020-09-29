@@ -1,9 +1,10 @@
 import axios from "axios";
+import l10nMixin from "./l10nMixin";
 
 export default {
+    mixins: [l10nMixin],
     data() {
         return {
-            locale: 'fr',
             collection: null,
             countryNames: null,
             publicationNames: null
@@ -20,7 +21,7 @@ export default {
     async mounted() {
         const vm = this
         this.collection = (await axios.get("/collection")).data
-        this.countryNames = (await axios.get(`/api/coa/coa/list/countries/${this.locale}`)).data
+        this.countryNames = (await axios.get(`/api/coa/coa/list/countries/${window.locale}`)).data
 
         const userPublications = [...new Set(this.collection.map(issue => `${issue.country}/${issue.magazine}`))]
         const chunkSize = 10

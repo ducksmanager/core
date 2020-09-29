@@ -3,6 +3,7 @@
         "@symfony/webpack-encore": "^0.30.0",
         "axios": "^0.20.0",
         "core-js": "^3.0.0",
+        "js-yaml": "^3.14.0",
         "regenerator-runtime": "^0.13.2",
         "vue": "^2.6.12",
         "vue-loader": "^15.9.3",
