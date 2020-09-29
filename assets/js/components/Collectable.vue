@@ -13,7 +13,7 @@
       <template v-for="(_, publicationCode) in publicationNames">
         <tr v-for="line in lines">
           <td v-if="line === 1" :rowspan="lines+1" class="libelle_ligne">
-            <img :alt="publicationCode.split('/')[0]" :src="`images/flags/${publicationCode.split('/')[0]}.png`"/>
+            <img :alt="publicationCode.split('/')[0]" :src="`${imagePath}/flags/${publicationCode.split('/')[0]}.png`"/>
             <br/>
             {{ publicationCode.split('/')[1] }}
             <br/>
@@ -57,7 +57,7 @@
             </tr>
             <tr v-for="(publicationName, publicationCode) in publicationNames">
               <td>
-                <img :alt="publicationCode.split('/')[0]" :src="`images/flags/${publicationCode.split('/')[0]}.png`" />
+                <img :alt="publicationCode.split('/')[0]" :src="`${imagePath}/flags/${publicationCode.split('/')[0]}.png`" />
                 {{ publicationCode.split('/')[1] }}
               </td>
               <td>{{ publicationName }}</td>
@@ -128,6 +128,7 @@ export default {
     }
   },
   computed: {
+    imagePath: () => window.imagePath,
     ready() {
       return this.issuesPerCell && this.countryNames && this.publicationNames
     },
