@@ -1,12 +1,12 @@
 version: '2.4'
 services:
-  web:
+  front:
     container_name: ducksmanager-web
     image: "nginx:1.15"
     ports:
-      - "8000:80"
+      - "8001:80"
     depends_on:
-      - php
+      - gateway
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - .:/var/www/html
@@ -16,7 +16,7 @@ services:
       - dm-server_front-network
       - dm-network
 
-  php:
+  gateway:
     container_name: ducksmanager-php
     build:
       context: .

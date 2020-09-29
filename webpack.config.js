@@ -9,9 +9,14 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 Encore
     // directory where compiled assets will be stored
     .setOutputPath('public/build/')
-     .copyFiles({
-         from: './assets/translations',
-     })
+    .copyFiles({
+        from: './assets/translations',
+        to: 'translations/[path][name].[ext]',
+    })
+    .copyFiles({
+        from: './assets/images',
+        to: 'images/[path][name].[ext]',
+    })
 
     // public path used by the web server to access the output path
     .setPublicPath('/build')
@@ -31,7 +36,7 @@ Encore
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 
-    .enableVueLoader()
+    .enableVueLoader(() => {}, { runtimeCompilerBuild: false })
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

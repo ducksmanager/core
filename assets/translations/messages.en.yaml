@@ -145,7 +145,7 @@ DATE_INVALIDE: Invalid date !
 DATE_QUESTION: At what date did you do your purchase ? (DD/MM/YYYY)
 DATES_EXISTANTES: Existing purchase dates
 DE: from
-DEBUG_DESCRIPTION: "Debug" list, mainly made for developers.
+DEBUG_DESCRIPTION: "\"Debug\" list, mainly made for developers."
 DEBUG_MOINS_1: Hard to consider a series of issues
 DEBUG_MOINS_2: Hard to add an issue without disturbing the issues order
 DEBUG_MOINS_3: Takes one line per issue
@@ -411,7 +411,7 @@ POSSESSION_MAGAZINES_INTRO: You have got
 POSSESSION_MAGAZINES_2: Your collection is made out of
 POSSESSION_MAGAZINES_3: different magazines from
 POSSESSION_NUMEROS: Issues possession
-POURCENTAGE_COLLECTION_VISIBLE: % of the collection can be viewed in the bookcase.
+POURCENTAGE_COLLECTION_VISIBLE: "% of the collection can be viewed in the bookcase."
 PRESENTATION: Presentation
 PRESENTATION1: DucksManager is a website allowing you to manage your collection of Disney magazines.
 PRESENTATION2: From your collection management to its printing as a list, including complete statistics, all the functions you were waiting from a collection manager are here !
@@ -432,7 +432,7 @@ PRESENTATION_STATS_2: If you specified the conditions of your issues, a graph wi
 PRESENTATION_STATS_3: You like a script-writer or a drawer in particular ? DucksManager generates bar chart containing the proportion of stories from this author that you\'ve got in your collection.
 PRESENTATION_STATS_TITRE: Complete statistics and all the tools to grow up your collection!
 PRESENTATION_WHATTHEDUCK_1: Keep your Disney collection with you at all times and add magazines to your collection by simply take a photo of them using  
-PRESENTATION_WHATTHEDUCK_2: , DucksManager\'s mobile app !
+PRESENTATION_WHATTHEDUCK_2: ", DucksManager's mobile app !"
 PRESENTATION_WHATTHEDUCK_3: Available for free on Google Play.
 PRESENTATION_WHATTHEDUCK_LONGUE: Did you know that DucksManager developed its official Android app called What The Duck? With What The Duck, take a picture of the cover of a magazine and the app will add it to your collection! Download it for free on your Android phone or tablet.
 PRESENTATION_WHATTHEDUCK_TITRE: Your Disney collection in your pocket
@@ -441,7 +441,7 @@ PROBLEME_BD: Problem when connecting to the database!
 PROPOSE_LES_NUMEROS: "wants to sell the following issues :"
 PROPOSER_BOUQUINERIE: Propose a second-hand bookshop
 PUB_WHATTHEDUCK_1: New ! Take a picture of Disney issues to add them to your collection using 
-PUB_WHATTHEDUCK_2: , DucksManager\'s mobile app !
+PUB_WHATTHEDUCK_2: ", DucksManager's mobile app !"
 PUB_WHATTHEDUCK_3: Available for free on Google Play.
 PUB_WHATTHEDUCK_LONGUE: Did you know that DucksManager developed its official Android app called What The Duck? With What The Duck, take a picture of the cover of a magazine and the app will add it to your collection! Download it for free on your Android phone or tablet.
 PUBLICATION: Publication

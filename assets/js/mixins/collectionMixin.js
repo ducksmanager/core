@@ -5,6 +5,7 @@ export default {
     mixins: [l10nMixin],
     data() {
         return {
+            username: window.username,
             collection: null,
             countryNames: null,
             publicationNames: null

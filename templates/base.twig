@@ -9,7 +9,9 @@
 <body>
     <script type="text/javascript">
         window.locale = "{{ app.request.locale }}"
-        window.l10nUrl = "{{ asset('build/messages.'~app.request.locale~'.yaml') }}"
+        window.l10nUrl = "{{ asset('build/translations/messages.'~app.request.locale~'.yaml') }}"
+        window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
+        window.username = "{{ app.request.cookies.get('dm-user') }}"
     </script>
     <div>{% block content %}{% endblock %}</div>
     {% block javascripts %}

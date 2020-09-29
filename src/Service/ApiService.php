@@ -44,7 +44,7 @@ class ApiService
         if (!$doNotChunk && isset(self::CHUNKABLE_URLS[$url])) {
             return self::callWithChunks($url, $role, $parameters, $method);
         }
-        $fullUrl = "http://api$url" . ($method === 'GET' ? '/'.implode('/', $parameters) : '');
+        $fullUrl = "http://api$url" . ($method === 'GET' && !empty($parameters) ? '/'.implode('/', $parameters) : '');
         $response = $this->client->request(
             $method,
             $fullUrl, [
