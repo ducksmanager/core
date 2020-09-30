@@ -13,7 +13,10 @@
         window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
         window.username = "{{ app.request.cookies.get('dm-user') }}"
     </script>
-    <div>{% block content %}{% endblock %}</div>
+
+    <div id="app" {% for key, value in vueProps %}{{ key }}="{{ value }}"{% endfor %}>
+        {% block content %}{% endblock %}
+    </div>
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}

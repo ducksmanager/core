@@ -130,7 +130,7 @@ export default {
   computed: {
     imagePath: () => window.imagePath,
     ready() {
-      return this.issuesPerCell && this.countryNames && this.publicationNames
+      return this.issuesPerCell && this.countryNames && this.publicationNames && this.l10n
     },
     maxLetter() {
       return !this.issuesPerCell ? null : this.numberToLetter([

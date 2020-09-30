@@ -3,19 +3,17 @@ import Vue from "vue";
 import Print from "./components/Print"
 
 new Vue({
-    data() {
-        return {
-            printType: null
-        }
-    },
     render(createElement) {
+        const vm = this
+        let vueProps = {}
+        Object.keys(this.$el.attributes).forEach(key => {
+            const { name, value } = vm.$el.attributes[key]
+            vueProps[name] = value
+        })
         return createElement(Print, {
-            props: {
-                printType: this.printType
-            }
+            props: vueProps
         })
     },
-    beforeMount() {
-        this.printType = this.$el.attributes['data-print-style'].value;
+    created() {
     }
-}).$mount('#app-print')
+}).$mount('#app')
