@@ -67,7 +67,7 @@
       </tr>
     </table>
   </div>
-  <div v-else>{{ l10n.CHARGEMENT }}</div>
+  <div v-else-if="l10n">{{ l10n.CHARGEMENT }}</div>
 </template>
 
 <script>
