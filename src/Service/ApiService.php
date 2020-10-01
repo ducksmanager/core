@@ -48,7 +48,7 @@ class ApiService
         $response = $this->client->request(
             $method,
             $fullUrl, [
-                'auth_basic' => [$role, $_ENV['ROLE_PASSWORD_' . strtoupper('DUCKSMANAGER')]],
+                'auth_basic' => [$role, $_ENV['ROLE_PASSWORD_' . strtoupper($role)]],
                 'headers' => [
                     'Content-Type: application/x-www-form-urlencoded',
                     'Cache-Control: no-cache',
@@ -69,6 +69,14 @@ class ApiService
 
         $this->logger->info("Call to service $method $url failed, Response code = {$response->getStatusCode()}, response buffer = {$response->getContent()}");
         return null;
+    }
+
+    public function runQuery(string $query, array $parameters, string $db) {
+        return $this->call('/rawsql', 'rawsql', [
+            'query' => trim($query),
+            'parameters' => $parameters,
+            'db' => $db
+        ], 'POST' );
     }
 
     private function callWithChunks($url, $role, array $parameters, $method = 'GET')
