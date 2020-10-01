@@ -1,8 +1,9 @@
 import axios from "axios";
 import l10nMixin from "./l10nMixin";
+import coaMixin from "./coaMixin";
 
 export default {
-    mixins: [l10nMixin],
+    mixins: [coaMixin, l10nMixin],
     data() {
         return {
             username: window.username,
@@ -20,25 +21,10 @@ export default {
         },
     },
     async mounted() {
-        const vm = this
         this.collection = (await axios.get("/collection")).data
-        this.countryNames = (await axios.get(`/api/coa/coa/list/countries/${window.locale}`)).data
-
-        const userPublications = [...new Set(this.collection.map(issue => `${issue.country}/${issue.magazine}`))]
-        const chunkSize = 10
-        const publicationNamesRequests = (await Promise.all(
-                await Array.from({length: Math.ceil(userPublications.length / chunkSize)}, (v, i) =>
-                    userPublications.slice(i * chunkSize, i * chunkSize + chunkSize)
-                ).reduce(async (acc, codeChunk) =>
-                        (await acc).concat(await axios.get(`/api/coa/coa/list/publications/${codeChunk.join(',')}`)),
-                    Promise.resolve([])
-                )
-            )
+        this.countryNames = await this.getCountryNames()
+        this.publicationNames = await this.getPublicationNames(
+            [...new Set(this.collection.map(issue => `${issue.country}/${issue.magazine}`))]
         )
-        const publicationNames = publicationNamesRequests.reduce((acc, result) => ({...acc, ...result.data}), {})
-        vm.publicationNames = {}
-        Object.keys(publicationNames).sort().forEach(function(key) {
-            vm.$set(vm.publicationNames, key, publicationNames[key]);
-        });
     }
 }
