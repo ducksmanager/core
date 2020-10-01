@@ -7,8 +7,8 @@
         <td>{{ l10n.COLLECTION_DE }} {{ username }}</td>
       </tr>
     </table>
-    <Collectable v-if="printType === 'collectable'"/>
-    <Classic v-else-if="printType === 'classic'"/>
+    <Collectable v-if="type === 'collectable'"/>
+    <Classic v-else-if="type === 'classic'"/>
   </div>
 </template>
 
@@ -21,7 +21,7 @@ import userMixin from "../mixins/userMixin";
 export default {
   name: "Print",
   props: {
-    printType: String
+    type: String
   },
   computed: {
     imagePath: () => window.imagePath

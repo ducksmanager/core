@@ -1,19 +1,25 @@
 import '../css/app.css';
 import Vue from "vue";
-import Print from "./components/Print"
+import App from "./components/App"
 
 new Vue({
     render(createElement) {
         const vm = this
-        let vueProps = {}
+        let props = {}, component = null
         Object.keys(this.$el.attributes).forEach(key => {
             const { name, value } = vm.$el.attributes[key]
-            vueProps[name] = value
+            if (name === 'component') {
+                component = value
+            }
+            else {
+                props[name] = value
+            }
         })
-        return createElement(Print, {
-            props: vueProps
+        return createElement(App, {
+            attrs: {
+                props,
+                component
+            }
         })
-    },
-    created() {
     }
 }).$mount('#app')

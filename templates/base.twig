@@ -14,9 +14,13 @@
         window.username = "{{ app.request.cookies.get('dm-user') }}"
     </script>
 
-    <div id="app" {% for key, value in vueProps %}{{ key }}="{{ value }}"{% endfor %}>
-        {% block content %}{% endblock %}
-    </div>
+    {% if vueProps is not defined %}
+        <div id="app">
+    {% else %}
+        <div id="app" {% for key, value in vueProps %}{{ key }}="{{ value }}"{% endfor %}>
+    {% endif %}
+            {% block content %}{% endblock %}
+        </div>
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}

@@ -19,6 +19,6 @@ class PrintController extends AbstractController
      */
     public function print(string $type): Response
     {
-        return $this->render("bare.twig", ['vueProps' => ['print-type' => $type]]);
+        return $this->render("bare.twig", ['vueProps' => ['component' => 'Print'] + compact('type')]);
     }
 }
