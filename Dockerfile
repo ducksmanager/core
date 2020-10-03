@@ -1,9 +1,12 @@
 FROM php:7.4-fpm
 MAINTAINER Bruno Perel
 
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+
 RUN apt-get update \
  && apt-get install -y \
       git wget unzip \
+      nodejs \
       libpng-dev libfreetype6-dev libmcrypt-dev libjpeg-dev libpng-dev libicu-dev \
  && apt-get clean
 
