@@ -5,6 +5,7 @@
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
+    {% block title %}{% endblock %}
 </head>
 <body>
     <script type="text/javascript">
@@ -14,13 +15,8 @@
         window.username = "{{ app.request.cookies.get('dm-user') }}"
     </script>
 
-    {% if vueProps is not defined %}
-        <div id="app">
-    {% else %}
-        <div id="app" {% for key, value in vueProps %}{{ key }}="{{ value }}"{% endfor %}>
-    {% endif %}
-            {% block content %}{% endblock %}
-        </div>
+    <div id="app" {% for key, value in (vueProps ?? {}) %}{{ key }}="{{ value }}"{% endfor %}></div>
+    {% block content %}{% endblock %}
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
