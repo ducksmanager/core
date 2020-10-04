@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,8 +18,11 @@ class PrintController extends AbstractController
      *     requirements={"type"="^(?P<print_type_regex>classic|collectable|test)$"}
      * )
      */
-    public function print(string $type): Response
+    public function print(UserService $userService, string $type): Response
     {
-        return $this->render("bare.twig", ['vueProps' => ['component' => 'Print'] + compact('type')]);
+        return $this->render("bare.twig", [
+            'username' => $userService->getCurrentUsername(),
+            'vueProps' => ['component' => 'Print'] + compact('type')
+        ]);
     }
 }

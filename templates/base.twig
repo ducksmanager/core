@@ -12,7 +12,7 @@
         window.locale = "{{ app.request.locale }}"
         window.l10nUrl = "{{ asset('build/translations/messages.'~app.request.locale~'.yaml') }}"
         window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
-        window.username = "{{ app.request.cookies.get('dm-user') }}"
+        window.username = "{{ username ?? '' }}"
     </script>
 
     <div id="app" {% for key, value in (vueProps ?? {}) %}{{ key }}="{{ value }}"{% endfor %}></div>

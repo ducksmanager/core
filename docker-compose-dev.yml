@@ -24,6 +24,7 @@ services:
     volumes:
       - .:/var/www/html
       - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
+      - dm_sessions:/tmp/sessions
     networks:
       - dm-network
       - dm-server_front-network
@@ -37,3 +38,4 @@ networks:
 
 volumes:
   dm_sessions:
+    external: true
