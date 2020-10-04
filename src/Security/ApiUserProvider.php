@@ -17,17 +17,12 @@ class ApiUserProvider implements UserProviderInterface
 
     public function loadUserByUsername(string $username)
     {
-        $roles = $this->apiService->call('/collection/privileges', 'ducksmanager');
-        if (is_array($roles)) {
-            $internalRoles = [];
-            foreach($roles as $role => $privilege) {
-                $internalRoles[] = "ROLE_".strtoupper("${role}_$privilege");
-            }
-            return (new User($username, $internalRoles));
+        $apiUser = $this->apiService->call("/ducksmanager/user/$username", 'ducksmanager');
+        if ($apiUser) {
+            return new User($apiUser['id'], $apiUser['username'], $apiUser['password'], []);
         }
-        else {
-            throw new UsernameNotFoundException("Username not found : $username");
-        }
+
+        throw new UsernameNotFoundException("Username not found : $username");
     }
 
     public function refreshUser(UserInterface $user)

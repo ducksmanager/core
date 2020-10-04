@@ -2,7 +2,8 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     access_denied_url: /login
     providers:
-        users_in_memory: { memory: null }
+        api_user_provider:
+            id: App\Security\ApiUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -10,7 +11,13 @@ security:
         main:
             anonymous: true
             lazy: true
-            provider: users_in_memory
+            provider: api_user_provider
+            guard:
+                authenticators:
+                    - App\Security\UserAuthenticator
+            logout:
+                path: app_logout
+                target: /
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

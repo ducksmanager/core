@@ -66,6 +66,9 @@ class ApiService
             if (empty($response->getContent()) || $response->getContent() === 'OK') {
                 return true;
             }
+            if ($response->getContent() === 'KO') {
+                return false;
+            }
             return $response->toArray();
         }
 

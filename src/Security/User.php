@@ -1,39 +1,45 @@
 <?php
 namespace App\Security;
 
-use App\Service\ApiService;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class User implements UserInterface
 {
+    private int $id;
     private string $username;
+    private string $password;
     private array $roles;
 
-    public function __construct(string $username, array $roles)
+    public function __construct(int $id, string $username, string $password, array $roles)
     {
+        $this->id = $id;
         $this->username = $username;
+        $this->password = $password;
         $this->roles = $roles;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function getPassword()
+    {
+        return $this->password ?? null;
+    }
 
     public function getRoles()
     {
         return $this->roles;
     }
 
-    public function getPassword()
-    {
-        return null;
-    }
-
     public function getSalt()
     {
-    }
-
-    public function getUsername()
-    {
-        return $this->username;
     }
 
     public function eraseCredentials()

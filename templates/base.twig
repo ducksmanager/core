@@ -5,16 +5,17 @@
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
-    {% block title %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
     <script type="text/javascript">
         window.locale = "{{ app.request.locale }}"
         window.l10nUrl = "{{ asset('build/translations/messages.'~app.request.locale~'.yaml') }}"
         window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
-        window.username = "{{ username ?? '' }}"
+        window.username = "{{ app.user ? app.user.username : '' }}"
     </script>
 
+    {% block menu %}{% endblock %}
     <div id="app" {% for key, value in (vueProps ?? {}) %}{{ key }}="{{ value }}"{% endfor %}></div>
     {% block content %}{% endblock %}
     {% block javascripts %}

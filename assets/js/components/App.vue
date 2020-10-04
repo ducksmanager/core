@@ -5,6 +5,7 @@
 <script>
 import Print from "./Print";
 import EdgeProgress from "./EdgeProgress";
+import Site from "./Site";
 
 export default {
   name: "App.vue",
@@ -17,7 +18,8 @@ export default {
   },
   components: {
     Print,
-    EdgeProgress
+    EdgeProgress,
+    Site
   }
 }
 </script>
