@@ -11,6 +11,7 @@ const RADIUS = 42
 export default {
     data() {
         return {
+            userPoints: null,
             radius: RADIUS,
             circumference: Math.PI * RADIUS * 2,
         }

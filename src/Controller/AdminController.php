@@ -42,7 +42,7 @@ class AdminController extends AbstractController
         ORDER BY cpt DESC, Pays, Magazine, Numero
         LIMIT 20";
 
-        return new JsonResponse($apiService->runQuery($mostWantedQuery, [], 'dm'));
+        return new JsonResponse($apiService->runQuery($mostWantedQuery, 'dm', []));
     }
 
     /**
@@ -54,6 +54,6 @@ class AdminController extends AbstractController
     public function getPublishedEdgesData(ApiService $apiService): Response
     {
         $publishedEdgesQuery = "SELECT publicationcode, issuenumber FROM tranches_pretes";
-        return new JsonResponse($apiService->runQuery($publishedEdgesQuery, [], 'dm'));
+        return new JsonResponse($apiService->runQuery($publishedEdgesQuery, 'dm', []));
     }
 }

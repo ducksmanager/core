@@ -76,7 +76,7 @@ class ApiService
         return null;
     }
 
-    public function runQuery(string $query, array $parameters, string $db) {
+    public function runQuery(string $query, string $db, array $parameters = []) {
         return $this->call('/rawsql', 'rawsql', [
             'query' => trim($query),
             'parameters' => $parameters,

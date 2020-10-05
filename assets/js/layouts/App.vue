@@ -1,5 +1,8 @@
 <template>
-  <component :is="component" v-bind="props" />
+  <component
+    :is="component"
+    v-bind="props"
+  />
 </template>
 
 <script>
@@ -8,18 +11,18 @@ import EdgeProgress from "./EdgeProgress";
 import Site from "./Site";
 
 export default {
-  name: "App.vue",
+  name: "App",
+  components: {
+    Print,
+    EdgeProgress,
+    Site
+  },
   data() {
     const {component, props} = this.$attrs
     return {
       component,
       props,
     }
-  },
-  components: {
-    Print,
-    EdgeProgress,
-    Site
   }
 }
 </script>

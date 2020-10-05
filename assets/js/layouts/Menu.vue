@@ -1,45 +1,59 @@
 <template>
-  <div id="menu" v-if="l10n">
-    Menu
+  <div
+    v-if="l10n"
+    id="menu"
+  >
     <div id="medailles_et_login">
       <div id="medailles">
-        <template v-for="level in userPoints">
+        <span
+          v-for="level in userPoints"
+          :key="level"
+        >
           <div class="overlay">
             <div
-                class="title"
-                :title="$t(`DETAILS_MEDAILLE_${level.contribution.toUpperCase()}_MAX`, [
-                    level.userPoints,
-                    level.pointsDiffNextLevel,
-                    $t(`MEDAILLE_${level.levelReached+1}`)
-                  ])"></div>
-            <svg v-if="level.levelReached < 3" width="100" height="100" viewport="0 0 0 0" version="1.1"
-                 xmlns="http://www.w3.org/2000/svg">
+              class="title"
+              :title="$t(`DETAILS_MEDAILLE_${level.contribution.toUpperCase()}_MAX`, [
+                level.userPoints,
+                level.pointsDiffNextLevel,
+                $t(`MEDAILLE_${level.levelReached+1}`)
+              ])"
+            />
+            <svg
+              v-if="level.levelReached < 3"
+              width="100"
+              height="100"
+              viewport="0 0 0 0"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <circle
-                  :r="radius"
-                  cx="50"
-                  cy="50"
-                  fill="transparent"
-                  :stroke-dasharray="circumference"
-                  stroke-dashoffset="0"></circle>
+                :r="radius"
+                cx="50"
+                cy="50"
+                fill="transparent"
+                :stroke-dasharray="circumference"
+                stroke-dashoffset="0"
+              />
               <circle
-                  transform="rotate(270,0,0)"
-                  :class="{bar: true, [medalColors[level.levelReached]]: true}"
-                  cx="-50"
-                  cy="50"
-                  :r="radius"
-                  fill="transparent"
-                  :stroke-dasharray="circumference"
-                  :style="`stroke-dashoffset: ${level.levelProgressPercentage}px`"></circle>
+                transform="rotate(270,0,0)"
+                :class="{bar: true, [medalColors[level.levelReached]]: true}"
+                cx="-50"
+                cy="50"
+                :r="radius"
+                fill="transparent"
+                :stroke-dasharray="circumference"
+                :style="`stroke-dashoffset: ${level.levelProgressPercentage}px`"
+              />
             </svg>
           </div>
-          <img class="medaille" :src="`images/medailles/${level.contribution}_${level.levelReached}_${locale}.png`"/>
-        </template>
+          <img
+            class="medaille"
+            :src="`images/medailles/${level.contribution}_${level.levelReached}_${locale}.png`"
+          >
+        </span>
       </div>
     </div>
-    <div id="recemment">
-      <h4>{{ l10n.NEWS_TITRE }}</h4>
-      <div id="evenements">{{ l10n.CHARGEMENT }}</div>
-    </div>
+    <RecentEvents />
   </div>
 </template>
 
@@ -47,19 +61,23 @@
 import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
 import medalsMixin from "../mixins/medalsMixin";
+import RecentEvents from "./RecentEvents";
 
 export default {
   name: "Menu",
 
+  components: {
+    RecentEvents
+  },
+
   mixins: [l10nMixin, medalsMixin],
 
   data: () => ({
-    userPoints: null,
     medalColors: ['bronze', 'argent', 'or']
   }),
 
-  mounted() {
-    axios.post("/api/collection/collection/lastvisit")
+  async mounted() {
+    await axios.post('/api/collection/collection/lastvisit')
   }
 }
 </script>

@@ -64,6 +64,14 @@ Encore
         config.corejs = 3;
     })
 
+    .enableEslintLoader(options => {
+        delete options.parser;
+    })
+    .configureLoaderRule('eslint', loader => {
+        loader.test = /\.(jsx?|vue)$/;
+    })
+
+
     // enables Sass/SCSS support
     //.enableSassLoader()
 

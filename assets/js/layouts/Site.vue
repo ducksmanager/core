@@ -2,7 +2,10 @@
   <div v-if="l10n">
     <Menu />
     <Banner />
-    <component :is="page" v-bind="$attrs" />
+    <component
+      :is="page"
+      v-bind="$attrs"
+    />
     <Footer />
   </div>
 </template>
@@ -16,19 +19,19 @@ import Login from "./Login";
 import Banner from "./Banner";
 
 export default {
-  name: "Site",
-  data() {
-    return this.$attrs;
-  },
-  computed: {
-    imagePath: () => window.imagePath
-  },
-  mixins: [l10nMixin, userMixin],
+  name: "Site", 
   components: {
     Menu,
     Banner,
     Login,
     Footer
+  },
+  mixins: [l10nMixin, userMixin],
+  data() {
+    return this.$attrs;
+  },
+  computed: {
+    imagePath: () => window.imagePath
   }
 }
 </script>

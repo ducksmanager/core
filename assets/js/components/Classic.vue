@@ -1,19 +1,27 @@
 <template>
   <div v-if="collection && countryNames && publicationNames">
-    <div v-for="country in countryCodes">
-      <div class="country">{{ countryNames[country] }}</div>
-      <div v-for="publicationCode in publicationCodesOfCountry(country)">
-        <u>{{publicationNames[publicationCode] || publicationCode}}</u>
+    <div
+      v-for="country in countryCodes"
+      :key="country"
+    >
+      <div class="country">
+        {{ countryNames[country] }}
+      </div>
+      <div
+        v-for="publicationCode in publicationCodesOfCountry(country)"
+        :key="publicationCode"
+      >
+        <u>{{ publicationNames[publicationCode] || publicationCode }}</u>
         {{ issuesOfPublicationCode(publicationCode) }}
-        <br />
+        <br>
       </div>
     </div>
   </div>
 </template>
 <script>
-  import collectionMixin from "../mixins/collectionMixin";
+import collectionMixin from "../mixins/collectionMixin";
 
-  export default {
+export default {
     mixins: [collectionMixin],
     computed: {
       countryCodes() {

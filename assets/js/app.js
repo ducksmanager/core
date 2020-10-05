@@ -1,6 +1,6 @@
 import '../css/app.css';
 import Vue from "vue";
-import App from "./components/App"
+import App from "./layouts/App"
 
 new Vue({
     render(createElement) {

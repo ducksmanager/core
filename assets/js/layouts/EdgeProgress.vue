@@ -1,45 +1,66 @@
 <template>
   <div v-if="ready">
-    <div v-for="mostWantedIssue in mostWanted">
+    <div
+      v-for="mostWantedIssue in mostWanted"
+      :key="mostWantedIssue"
+    >
       <div>
         <u>{{ mostWantedIssue.cpt }} utilisateurs possèdent le numéro :</u>
       </div>&nbsp;
-      <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`"/>
+      <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`">
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{ mostWantedIssue.Numero }}
     </div>
     <div v-if="publishedEdges && inducksIssueNumbers">
-      <div v-for="(issuenumbers, publicationCode) in publishedEdges" class="publication">
+      <div
+        v-for="(issuenumbers, publicationCode) in publishedEdges"
+        :key="publicationCode"
+        class="publication"
+      >
         <span>
-            (<img :src="`${imagePath}/flags/${publicationCode.split('/')[0]}.png`"/> {{
+          (<img :src="`${imagePath}/flags/${publicationCode.split('/')[0]}.png`"> {{
             publicationCode.split('/')[1]
           }})
           {{ publicationNames[publicationCode] }}
         </span>
         <div v-if="inducksIssueNumbers[publicationCode]">
-          <template v-for="inducksIssueNumber in inducksIssueNumbers[publicationCode]">
-            <span v-if="!issuenumbers.includes(inducksIssueNumber)" class="num bordered"
-                  :title="inducksIssueNumber">&nbsp;</span>
-            <span v-else-if="!show" class="num bordered dispo"
-                  :title="inducksIssueNumber"
-                  @click="open(publicationCode, inducksIssueNumber)">&nbsp;</span>
-            <img v-else :src="getEdgeUrl(publicationCode, inducksIssueNumber)"/>
-          </template>
+          <span
+            v-for="inducksIssueNumber in inducksIssueNumbers[publicationCode]"
+            :key="inducksIssueNumber"
+          >
+            <span
+              v-if="!issuenumbers.includes(inducksIssueNumber)"
+              class="num bordered"
+              :title="inducksIssueNumber"
+            >&nbsp;</span>
+            <span
+              v-else-if="!show"
+              class="num bordered dispo"
+              :title="inducksIssueNumber"
+              @click="open(publicationCode, inducksIssueNumber)"
+            >&nbsp;</span>
+            <img
+              v-else
+              :src="getEdgeUrl(publicationCode, inducksIssueNumber)"
+            >
+          </span>
         </div>
         <div v-else>
           Certaines tranches de cette publication sont prêtes mais la publication n'existe plus sur Inducks :
           {{ issuenumbers.join(', ') }}
         </div>
       </div>
-      <br/><br/>
+      <br><br>
       <b>{{
-          Object.keys(publishedEdges).reduce((acc, publicationCode) => acc + publishedEdges[publicationCode].length, 0)
-        }} tranches prêtes.</b><br/>
-      <br/><br/>
-      <u>Légende : </u><br/>
-      <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette tranche !<br/>
-      <span class="num dispo">&nbsp;</span> Cette tranche est prête.<br/>
+        Object.keys(publishedEdges).reduce((acc, publicationCode) => acc + publishedEdges[publicationCode].length, 0)
+      }} tranches prêtes.</b><br>
+      <br><br>
+      <u>Légende : </u><br>
+      <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette tranche !<br>
+      <span class="num dispo">&nbsp;</span> Cette tranche est prête.<br>
     </div>
-    <div v-else>{{ l10n.CHARGEMENT }}</div>
+    <div v-else>
+      {{ l10n.CHARGEMENT }}
+    </div>
   </div>
 </template>
 
@@ -66,15 +87,6 @@ export default {
     },
     imagePath: () => window.imagePath,
   },
-  methods: {
-    getEdgeUrl(publicationCode, issueNumber) {
-      const {country, magazine} = publicationCode.split('/')
-      return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`
-    },
-    open(publicationCode, issueNumber) {
-      window.open(this.getEdgeUrl(publicationCode, issueNumber), '_blank')
-    }
-  },
   async mounted() {
     this.mostWanted = (await axios.get("/admin/edges/wanted/data")).data.map(mostWantedIssue => ({
       ...mostWantedIssue,
@@ -92,6 +104,15 @@ export default {
       ])
     ])
     this.inducksIssueNumbers = await this.getIssueNumbers(Object.keys(this.publishedEdges))
+  },
+  methods: {
+    getEdgeUrl(publicationCode, issueNumber) {
+      const {country, magazine} = publicationCode.split('/')
+      return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`
+    },
+    open(publicationCode, issueNumber) {
+      window.open(this.getEdgeUrl(publicationCode, issueNumber), '_blank')
+    }
   }
 }
 </script>
