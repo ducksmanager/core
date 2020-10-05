@@ -52,6 +52,19 @@
           >
         </span>
       </div>
+      <div id="login">
+        <div
+          v-if="username"
+          id="texte_connecte"
+        >
+          <img
+            id="light"
+            alt="O"
+            :src="`${imagePath}/vert.png`"
+          >&nbsp;
+          <span>{{ username }}</span>
+        </div>
+      </div>
     </div>
     <RecentEvents />
   </div>
@@ -75,6 +88,11 @@ export default {
   data: () => ({
     medalColors: ['bronze', 'argent', 'or']
   }),
+
+  computed: {
+    username: () => window.username,
+    imagePath: () => window.imagePath
+  },
 
   async mounted() {
     await axios.post('/api/collection/collection/lastvisit')
