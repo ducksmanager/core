@@ -210,50 +210,50 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
 table {
   color: black;
   font: 11px/15px verdana, arial, sans-serif;
+
+  &.collectable, &.legendes {
+    width: 90%;
+  }
 }
 
-table.collectable, table.legendes {
-  width: 90%;
-}
-
-td.legende_numeros, td.legende_magazines, td.achats {
-  vertical-align: top;
-  border-left: 1px solid gray;
-  padding: 8px;
+td {
+  &.legende_numeros, &.legende_magazines, &.achats {
+    vertical-align: top;
+    border-left: 1px solid gray;
+    padding: 8px;
+  }
 }
 
 table.collectable {
   border: solid 1px black;
   border-collapse: collapse;
-}
 
-table.collectable tr {
-  height: 15px;
-}
+  tr {
+    height: 15px;
 
-table.collectable tr:empty {
-  height: 0;
-}
+    &:empty {
+      height: 0;
+    }
 
-table.collectable tr td {
-  text-align: left;
-  border: solid 1px black;
-  vertical-align: top;
-  min-width: 25px;
-  max-width: 25px;
-  word-wrap: break-word;
-}
+    td {
+      text-align: left;
+      border: solid 1px black;
+      vertical-align: top;
+      min-width: 25px;
+      max-width: 25px;
+      word-wrap: break-word;
 
-table.collectable tr td.libelle_ligne,
-table.collectable tr td.total_ligne {
-  text-align: center;
-  vertical-align: middle;
-  max-width: none;
-  white-space: nowrap;
+      &.libelle_ligne, &.total_ligne {
+        text-align: center;
+        vertical-align: middle;
+        max-width: none;
+        white-space: nowrap;
+      }
+    }
+  }
 }
-
 </style>

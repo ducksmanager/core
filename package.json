@@ -1,13 +1,15 @@
 {
     "devDependencies": {
-        "@symfony/webpack-encore": "^0.30.0",
+        "@symfony/webpack-encore": "^0.31.0",
         "axios": "^0.20.0",
         "core-js": "^3.0.0",
         "eslint": "^7.10.0",
-        "eslint-loader": "^4.0.2",
+        "eslint-loader": "^3.0.4",
         "eslint-plugin-vue": "^7.0.1",
         "js-yaml": "^3.14.0",
         "regenerator-runtime": "^0.13.2",
+        "sass": "^1.26.11",
+        "sass-loader": "^9.0.3",
         "timeago.js": "^4.0.2",
         "vue": "^2.6.12",
         "vue-loader": "^15.9.3",

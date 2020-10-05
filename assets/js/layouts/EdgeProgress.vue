@@ -117,7 +117,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .publication {
   margin-top: 20px;
 }
@@ -125,9 +125,10 @@ export default {
 .num {
   width: 4px;
   cursor: default;
+  background-color: red;
 }
 
-.num, #num_courant {
+#num_courant {
   background-color: red;
 }
 
@@ -150,9 +151,9 @@ export default {
   width: 10%;
   border: 1px solid black;
   text-align: center;
-}
 
-#num_courant.init {
-  background-color: white !important;
+  &.init {
+    background-color: white !important;
+  }
 }
 </style>

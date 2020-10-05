@@ -8,7 +8,7 @@
       <span v-if="events && publicationNames">
         <div
           v-for="event in events"
-          :key="event"
+          :key="JSON.stringify(event)"
           :class="{evenement: true, [`evenement_${event.type}`]: true}"
         >
           <User
@@ -74,7 +74,7 @@ export default {
   async mounted() {
     this.events = (await axios.get('/events')).data.map(event => {
       if (event.Numero_Exemple) {
-        const [ publicationcode, issuenumber ] = event.Numero_Exemple.split(/\/(?=[^/]+$)/)
+        const [publicationcode, issuenumber] = event.Numero_Exemple.split(/\/(?=[^/]+$)/)
         event = {...event, publicationcode, issuenumber}
       }
 
@@ -94,26 +94,26 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #recemment {
   position: absolute;
   top: 450px;
   padding: 5px 5px 20px 5px;
   border-top: 1px solid #23282e;
-}
 
-#recemment h4 {
-  margin-left: 15px;
-  margin-top: 0;
-  white-space: nowrap;
-}
+  h4 {
+    margin-left: 15px;
+    margin-top: 0;
+    white-space: nowrap;
+  }
 
-#recemment #evenements div.evenement {
-  margin-top: 12px;
-}
+  #evenements div.evenement {
+    margin-top: 12px;
 
-#recemment #evenements div.evenement .date {
-  color: grey;
-  float: right;
+    .date {
+      color: grey;
+      float: right;
+    }
+  }
 }
 </style>

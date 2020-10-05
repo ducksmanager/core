@@ -19,7 +19,7 @@ import Login from "./Login";
 import Banner from "./Banner";
 
 export default {
-  name: "Site", 
+  name: "Site",
   components: {
     Menu,
     Banner,
@@ -36,19 +36,24 @@ export default {
 }
 </script>
 
-<style scoped>
-  #logo {
-    height: 100px;
-  }
-  div table {
-    width: 90%;
-    font-size: 15px
-  }
-  table tr td:nth-child(1) {
+<style scoped lang="scss">
+#logo {
+  height: 100px;
+}
+
+div table {
+  width: 90%;
+  font-size: 15px;
+}
+
+table tr td {
+  &:nth-child(1) {
     text-align: left;
-    width:1%;
+    width: 1%;
   }
-  table tr td:nth-child(2) {
+
+  &:nth-child(2) {
     text-align: center;
   }
+}
 </style>
