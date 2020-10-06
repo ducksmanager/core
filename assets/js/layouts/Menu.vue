@@ -7,7 +7,7 @@
       <div id="medailles">
         <span
           v-for="level in userPoints"
-          :key="level"
+          :key="level.contribution"
         >
           <div class="overlay">
             <div

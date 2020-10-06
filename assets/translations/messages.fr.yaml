@@ -524,7 +524,7 @@ UTILISATEUR_INEXISTANT: Ce nom d\'utilisateur n\'existe pas.
 UTILISATEUR_INVALIDE: Le nom d\'utilisateur est invalide. Choisissez un nom d\'utilisateur d\'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.
 UTILISATEUR_EXISTANT: Ce nom d\'utilisateur est déjà utilisé !
 UTILISATEUR_VALIDE: Utilisateur valide
-UTILISATEURS_INSCRITS: utilisateurs sont inscrits<br />sur DucksManager
+UTILISATEURS_INSCRITS: '%d utilisateurs sont inscrits<br />sur DucksManager'
 VALIDER: Valider
 VENTE_CONSERVER_VOLONTE_VENTE: Conserver la volonté de vente
 VENTE_MARQUER_A_VENDRE: Marquer comme "A vendre"

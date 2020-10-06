@@ -2,10 +2,12 @@
   <div v-if="l10n">
     <Menu />
     <Banner />
-    <component
-      :is="page"
-      v-bind="$attrs"
-    />
+    <div id="logo_zone2">
+      <component
+        :is="page"
+        v-bind="attrsWithoutId"
+      />
+    </div>
     <Footer />
   </div>
 </template>
@@ -17,12 +19,14 @@ import Menu from "./Menu";
 import Footer from "./Footer";
 import Login from "./Login";
 import Banner from "./Banner";
+import Content from "./Content";
 
 export default {
   name: "Site",
   components: {
     Menu,
     Banner,
+    Content,
     Login,
     Footer
   },
@@ -31,29 +35,25 @@ export default {
     return this.$attrs;
   },
   computed: {
-    imagePath: () => window.imagePath
+    attrsWithoutId() {
+      const vm = this
+      return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'id')
+          .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey] }), {})
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-#logo {
-  height: 100px;
+#logo_zone2 {
+  padding-left:5px;
+  vertical-align: top;
 }
 
-div table {
-  width: 90%;
-  font-size: 15px;
-}
-
-table tr td {
-  &:nth-child(1) {
-    text-align: left;
-    width: 1%;
-  }
-
-  &:nth-child(2) {
-    text-align: center;
+@media (max-width: 767px) {
+  #logo_zone2 {
+    background: none;
+    margin-top: 40px;
   }
 }
 </style>

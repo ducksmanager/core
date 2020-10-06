@@ -20,10 +20,9 @@ export default {
             let translation = this.l10n[key]
             while (true) {
                 if ((match = /%\w/.exec(translation)) != null) {
-                    const replacement = parameters[parameterIndex] || '';
+                    const replacement = parameters[parameterIndex++] || '';
                     translation = translation.substring(0, match.index) + replacement + translation.substring(match.index + match[0].length);
-                }
-                break;
+                } else break;
             }
             return translation
         }
