@@ -50,12 +50,12 @@
 </template>
 
 <script>
-import coaMixin from "../mixins/coaMixin";
 import axios from "axios";
 import * as timeago from "timeago.js";
 import l10nMixin from "../mixins/l10nMixin";
 import User from "../components/User";
 import Issue from "../components/Issue";
+import {mapActions, mapState} from "vuex";
 
 export default {
   name: "RecentEvents",
@@ -64,12 +64,15 @@ export default {
     User,
     Issue
   },
-  mixins: [l10nMixin, coaMixin],
+  mixins: [l10nMixin],
 
   data: () => ({
     events: null,
-    publicationNames: null
   }),
+
+  computed: {
+    ...mapState("coa", ["publicationNames"]),
+  },
 
   async mounted() {
     this.events = (await axios.get('/events')).data.map(event => {
@@ -85,12 +88,17 @@ export default {
         ID_Utilisateur: parseInt(event.ID_Utilisateur)
       }
     }).sort((a, b) => a.timestamp < b.timestamp)
-    this.publicationNames = await this.getPublicationNames(
+
+    this.publicationNames = await this.fetchPublicationNames(
         [...new Set(this.events
             .filter(event => event.publicationcode)
             .map(event => event.publicationcode))]
     )
-  }
+  },
+
+  methods: {
+    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"])
+  },
 }
 </script>
 

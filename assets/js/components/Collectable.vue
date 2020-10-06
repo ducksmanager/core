@@ -133,6 +133,7 @@
 
 <script>
 import collectionMixin from "../mixins/collectionMixin";
+import {mapActions} from "vuex";
 
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/
 
@@ -203,7 +204,12 @@ export default {
       }, {});
     }
   },
+  mounted() {
+    this.fetchCountryNames()
+  },
+
   methods: {
+    ...mapActions("coa", ["fetchCountryNames"]),
     numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : ("A".charCodeAt() - 26)) + number),
     letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt()
   }

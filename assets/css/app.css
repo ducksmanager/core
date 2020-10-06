@@ -1,20 +1,10 @@
 html, body {
-    height:100%;
     margin:0;
+    height:100%;
     font:11px verdana,arial,sans-serif;
     line-height:15px;
-    background-color: rgb(61, 75, 95) !important;
-    color: white;
-}
 
-a {
-    border-bottom: 1px dotted #ffffff;
 }
-
-a, a:hover, a:focus {
-     color: inherit;
-     text-decoration: inherit;
- }
 
 @media (min-width: 767px) {
     .mobile-only {

@@ -45,6 +45,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+* {
+  color: white;
+  background-color: rgb(61, 75, 95) !important;
+}
+
 #logo_zone2 {
   padding-left:5px;
   vertical-align: top;

@@ -24,7 +24,7 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: column;
-  background-color: rgb(200, 137, 100);
+  background-color: rgb(200, 137, 100) !important;
   height: 180px;
 
   a {

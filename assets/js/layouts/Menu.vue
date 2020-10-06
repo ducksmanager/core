@@ -3,8 +3,8 @@
     v-if="l10n"
     id="menu"
   >
-    <div id="medailles_et_login">
-      <div id="medailles">
+    <div id="medals_and_login">
+      <div id="medals">
         <span
           v-for="level in userPoints"
           :key="level.contribution"
@@ -47,20 +47,26 @@
             </svg>
           </div>
           <img
-            class="medaille"
-            :src="`images/medailles/${level.contribution}_${level.levelReached}_${locale}.png`"
+            class="medal"
+            :src="`${imagePath}/medals/${level.contribution}_${level.levelReached}_${locale}.png`"
           >
         </span>
       </div>
       <div id="login">
+        <a
+          id="logo_small"
+          :href="username ? '/?action=gerer' : '/'"
+        >
+          <img :src="`${imagePath}/logo_name.jpg`">
+        </a>
+
         <div
           v-if="username"
-          id="texte_connecte"
+          id="login_status"
         >
           <img
-            id="light"
             alt="O"
-            :src="`${imagePath}/vert.png`"
+            :src="`${imagePath}/green.png`"
           >&nbsp;
           <span>{{ username }}</span>
         </div>
@@ -105,7 +111,6 @@ export default {
 
 <style scoped lang="scss">
 #menu {
-  font-family: verdana, sans-serif;
   font-size: 12px;
   font-weight: 200;
   background-color: #2e353d;
@@ -125,16 +130,16 @@ export default {
   }
 }
 
-#medailles_et_login {
+#medals_and_login {
   vertical-align: bottom;
   text-align: center;
   background-color: #2e353d;
   padding: 5px 5px 5px 3px;
 
-  #medailles {
+  #medals {
     white-space: nowrap;
 
-    .medaille {
+    .medal {
       height: 120px;
       margin-left: 5px;
     }
@@ -199,22 +204,22 @@ export default {
       text-align: center;
     }
 
-    #medailles, #recemment {
+    #medals, #recemment {
       display: none;
     }
   }
 
-  #medailles_et_login #login {
+  #medals_and_login #login {
     margin-right: 35px;
     text-align: right;
 
-    .logo_petit {
+    #logo_small {
       float: left;
       margin-top: 5px;
     }
   }
 
-  #texte_connecte {
+  #login_status {
     display: inline-block;
     max-width: 145px;
     overflow-x: hidden;
@@ -252,14 +257,14 @@ export default {
     }
   }
 
-  #medailles_et_login {
+  #medals_and_login {
     height: 170px;
 
     #login {
       margin-top: 10px;
       margin-bottom: 10px;
 
-      #logo_petit {
+      #logo_small {
         display: none;
       }
     }

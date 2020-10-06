@@ -1,0 +1,70 @@
+import axios from "axios";
+
+const URL_PREFIX_COUNTRIES = `/api/coa/coa/list/countries/${window.locale}`
+const URL_PREFIX_PUBLICATIONS = '/api/coa/coa/list/publications/'
+const URL_PREFIX_ISSUES = '/api/coa/coa/list/issues/'
+
+export default {
+    namespaced: true,
+    state: () => ({
+        countryNames: null,
+        publicationNames: null,
+        issueNumbers: null
+    }),
+
+    mutations: {
+        setCountryNames(state, countryNames) {
+            state.countryNames = countryNames
+        },
+        setPublicationNames(state, publicationNames) {
+            state.publicationNames = Object.keys(publicationNames)
+                .sort()
+                .reduce((acc, publicationCode) => ({
+                    ...acc,
+                    [publicationCode]: publicationNames[publicationCode]
+                }), {})
+        },
+        setIssueNumbers(state, issueNumbers) {
+            state.issueNumbers = issueNumbers
+        },
+    },
+
+    actions: {
+        fetchCountryNames({ commit }) {
+            axios.get(URL_PREFIX_COUNTRIES)
+                .then(({ data }) => commit("setCountryNames", data))
+        },
+        fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) =>
+            commit("setPublicationNames", {
+                ...(state.publicationCodes || {}),
+                ...await dispatch('getChunkedRequests', {
+                    url: URL_PREFIX_PUBLICATIONS,
+                    parametersToChunk: publicationCodes,
+                    chunkSize: 10
+                }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
+            }),
+
+        fetchIssueNumbers: async ({ state, commit, dispatch }, publicationCodes) =>
+            commit("setIssueNumbers", {
+                ...(state.issueNumbers || {}),
+                ...await dispatch('getChunkedRequests', {
+                    url: URL_PREFIX_ISSUES,
+                    parametersToChunk: publicationCodes,
+                    chunkSize: 1
+                }).then(data => data.reduce((acc, result) => ({
+                    ...acc,
+                    [result.config.url.replace(URL_PREFIX_ISSUES, '')]: result.data.map(issueNumber => issueNumber.replace(/ /g, ''))
+                }), {}))
+            }),
+
+        getChunkedRequests: async (_, {url, parametersToChunk, chunkSize}) =>
+            await Promise.all(
+                await Array.from({length: Math.ceil(parametersToChunk.length / chunkSize)}, (v, i) =>
+                    parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+                ).reduce(async (acc, codeChunk) =>
+                        (await acc).concat(await axios.get(`${url}${codeChunk.join(',')}`)),
+                    Promise.resolve([])
+                )
+            )
+    }
+}

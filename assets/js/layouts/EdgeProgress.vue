@@ -67,23 +67,23 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import axios from "axios";
-import coaMixin from "../mixins/coaMixin";
+import {mapActions, mapState} from "vuex";
 
 export default {
   name: "EdgeProgress",
-  mixins: [coaMixin, l10nMixin],
+  mixins: [l10nMixin],
   data() {
     return {
       show: false,
       mostWanted: null,
-      publicationNames: null,
       publishedEdges: null,
-      inducksIssueNumbers: null,
     }
   },
   computed: {
+    ...mapState("coa", ["publicationNames"]),
+    ...mapState("coa", {"inducksIssueNumbers": "issueNumbers"}),
     ready() {
-      return this.publicationNames
+      return this.publicationNames && true
     },
     imagePath: () => window.imagePath,
   },
@@ -93,21 +93,25 @@ export default {
       country: mostWantedIssue.publicationcode.split('/')[0],
       magazine: mostWantedIssue.publicationcode.split('/')[1],
     }))
+
     this.publishedEdges = (await axios.get("/admin/edges/published/data")).data.reduce((acc, value) => ({
       ...acc,
       [value.publicationcode]: [...acc[value.publicationcode] || [], value.issuenumber]
     }), {})
-    this.publicationNames = await this.getPublicationNames([
+
+    await this.fetchPublicationNames([
       ...new Set([
         ...this.mostWanted.map(mostWantedIssue => mostWantedIssue.publicationcode),
         ...Object.keys(this.publishedEdges)
       ])
     ])
-    this.inducksIssueNumbers = await this.getIssueNumbers(Object.keys(this.publishedEdges))
+
+    await this.fetchIssueNumbers(Object.keys(this.publishedEdges))
   },
   methods: {
+    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
     getEdgeUrl(publicationCode, issueNumber) {
-      const {country, magazine} = publicationCode.split('/')
+      const [country, magazine] = publicationCode.split('/')
       return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`
     },
     open(publicationCode, issueNumber) {

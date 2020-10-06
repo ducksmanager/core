@@ -113,6 +113,10 @@ export default {
 </script>
 
 <style lang="scss">
+#menu-content {
+  height: 0
+}
+
 ul, li {
   list-style: none;
   padding: 0;

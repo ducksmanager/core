@@ -522,7 +522,7 @@ UTILISATEUR_INEXISTANT: This username doesn\'t exist.
 UTILISATEUR_INVALIDE: Invalid username. Choose a username with at least 3 characters and containing only letters, digits and dashes.
 UTILISATEUR_EXISTANT: This username is already in use!
 UTILISATEUR_VALIDE: Valid username
-UTILISATEURS_INSCRITS: %d users have signed up<br />on DucksManager
+UTILISATEURS_INSCRITS: "%d users have signed up<br />on DucksManager"
 VALIDER: Submit
 VENTE_CONSERVER_VOLONTE_VENTE: Do not change the "for sale" state
 VENTE_MARQUER_A_VENDRE: Mark as "For sale"
