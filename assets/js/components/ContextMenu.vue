@@ -116,13 +116,14 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import VueContext from "vue-context";
+import conditionMixin from "../mixins/conditionMixin";
 
 export default {
   name: "ContextMenu",
   components: {
     VueContext
   },
-  mixins: [l10nMixin],
+  mixins: [l10nMixin, conditionMixin],
   props: {
     publicationCode: {
       type: String, required: true
@@ -168,10 +169,11 @@ export default {
 
   methods: {
     async updateSelectedIssues() {
+      const vm = this
       this.$emit('update-issues', {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,
-        condition: this.condition,
+        condition: vm.conditions[this.condition],
         istosell: this.isToSell,
         purchaseId: this.purchaseId
       })

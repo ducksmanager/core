@@ -126,13 +126,14 @@ import {mapActions, mapState} from "vuex";
 import ContextMenu from "./ContextMenu";
 import 'vue-context/src/sass/vue-context.scss';
 import axios from "axios";
+import conditionMixin from "../mixins/conditionMixin";
 
 export default {
   name: "IssueList",
   components: {
     ContextMenu
   },
-  mixins: [l10nMixin],
+  mixins: [l10nMixin, conditionMixin],
   props: {
     publicationcode: {
       type: String,
@@ -205,25 +206,14 @@ export default {
     },
     async loadIssues() {
       const vm = this
-      const userIssues = (await axios.get('/api/collection/collection/issues')).data.filter(issue =>
+      const userIssues = (await axios.get('/api/collection/issues')).data.filter(issue =>
           `${issue.country}/${issue.magazine}` === vm.publicationcode)
-          .map(issue => {
-            switch (issue.condition) {
-              case 'bon':
-                issue.condition = 'good';
-                break;
-              case 'moyen':
-                issue.condition = 'notsogood';
-                break;
-              case 'mauvais':
-                issue.condition = 'bad';
-                break;
-              default:
-                issue.condition = 'possessed';
-            }
-            return issue
-          })
-      this.issues = (await axios.get(`/api/coa/coa/list/issues/${this.publicationcode}`)).data
+          .map(issue => ({
+                ...issue,
+                condition: Object.keys(vm.conditions).find(condition => vm.conditions[condition] === issue.condition) || 'possessed'
+              })
+          )
+      this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
           .map(issueNumber => ({
             issueNumber,
             ...(userIssues.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
@@ -233,22 +223,22 @@ export default {
       const vm = this
       this.loadingCover = issueNumber
       console.log('TODO load cover')
-      // this.coverUrl = (await axios.get(`/api/coa/coa/cover/${this.publicationcode}/${issueNumber}`)).data
+      // this.coverUrl = (await axios.get(`/api/coa/cover/${this.publicationcode}/${issueNumber}`)).data
       setTimeout(function () {
         vm.loadingCover = null
       }, 1000)
     },
     async loadPurchases() {
-      this.purchases = (await axios.get('/api/collection/collection/purchases')).data
+      this.purchases = (await axios.get('/api/collection/purchases')).data
           .sort(({date: purchaseDate1}, {date: purchaseDate2}) =>
               purchaseDate1 < purchaseDate2 ? 1 : (purchaseDate1 > purchaseDate2 ? -1 : 0))
     },
     async updateIssues(data) {
-      await axios.post('/api/collection/collection/issues', data)
+      await axios.post('/api/collection/issues', data)
       await this.loadIssues()
     },
     async createPurchase({date, description}) {
-      await axios.post('/api/collection/collection/purchases', {
+      await axios.post('/api/collection/purchases', {
         date,
         description,
       })

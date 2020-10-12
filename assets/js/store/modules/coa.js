@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const URL_PREFIX_COUNTRIES = `/api/coa/coa/list/countries/${window.locale}`
-const URL_PREFIX_PUBLICATIONS = '/api/coa/coa/list/publications/'
-const URL_PREFIX_ISSUES = '/api/coa/coa/list/issues/'
+const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/${window.locale}`
+const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/'
+const URL_PREFIX_ISSUES = '/api/coa/list/issues/'
 
 export default {
     namespaced: true,
@@ -36,7 +36,7 @@ export default {
         },
         fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) =>
             commit("setPublicationNames", {
-                ...(state.publicationCodes || {}),
+                ...(state.publicationNames || {}),
                 ...await dispatch('getChunkedRequests', {
                     url: URL_PREFIX_PUBLICATIONS,
                     parametersToChunk: publicationCodes,

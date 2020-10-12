@@ -105,7 +105,7 @@ export default {
   },
 
   async mounted() {
-    await axios.post('/api/collection/collection/lastvisit')
+    await axios.post('/api/collection/lastvisit')
   }
 }
 </script>

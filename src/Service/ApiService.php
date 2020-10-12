@@ -34,6 +34,7 @@ class ApiService
      * @param array $parameters
      * @param string $method
      * @param bool $doNotChunk
+     * @param array $userCredentials
      * @return array|bool|null
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
