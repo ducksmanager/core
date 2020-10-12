@@ -1,19 +1,14 @@
-import axios from "axios";
-import {safeLoad} from "js-yaml";
+import {mapActions, mapState} from "vuex";
 
 export default {
-    data() {
-        return {
-            l10n: null,
-            locale: null
-        }
-    },
+    computed: mapState("l10n", ["l10n"]),
+
     async mounted() {
-        this.locale = window.locale
-        this.l10n = safeLoad((await axios.get(window.l10nUrl)).data)
+        await this.loadL10n()
     },
 
     methods: {
+        ...mapActions("l10n", ["loadL10n"]),
         $t(key, parameters = []) {
             let match
             let parameterIndex = 0

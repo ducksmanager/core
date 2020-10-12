@@ -100,7 +100,8 @@ export default {
 
   computed: {
     username: () => window.username,
-    imagePath: () => window.imagePath
+    imagePath: () => window.imagePath,
+    locale: () => window.locale
   },
 
   async mounted() {

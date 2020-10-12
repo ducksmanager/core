@@ -20,6 +20,7 @@ import Footer from "./Footer";
 import Login from "./Login";
 import Banner from "./Banner";
 import Content from "./Content";
+import IssueList from "../components/IssueList";
 
 export default {
   name: "Site",
@@ -27,6 +28,7 @@ export default {
     Menu,
     Banner,
     Content,
+    IssueList,
     Login,
     Footer
   },
@@ -51,8 +53,9 @@ export default {
 }
 
 #logo_zone2 {
-  padding-left:5px;
+  padding: 45px 20px 20px 20px;
   vertical-align: top;
+  min-height: 500px;
 }
 
 @media (max-width: 767px) {

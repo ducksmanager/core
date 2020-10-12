@@ -87,9 +87,9 @@ export default {
         ago: timeago.format(parseInt(event.timestamp) * 1000),
         ID_Utilisateur: parseInt(event.ID_Utilisateur)
       }
-    }).sort((a, b) => a.timestamp < b.timestamp)
+    }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => timestamp1 < timestamp2)
 
-    this.publicationNames = await this.fetchPublicationNames(
+    await this.fetchPublicationNames(
         [...new Set(this.events
             .filter(event => event.publicationcode)
             .map(event => event.publicationcode))]
