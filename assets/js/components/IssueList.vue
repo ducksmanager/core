@@ -1,10 +1,6 @@
 <template>
   <div v-if="l10n && publicationName && issues && purchases">
-    <img
-      class="flag"
-      :alt="country"
-      :src="`${imagePath}/flags/${country}.png`"
-    >
+    <Country :country="country" />
     <span class="publication-title">{{ publicationName }}</span>
     <div class="issue-filter">
       <table>
@@ -35,6 +31,15 @@
       class="issue-list"
       @contextmenu.prevent="$refs.contextMenu.$refs.menu.open"
     >
+      <b-alert
+        show
+        variant="info"
+        style="margin-bottom: 0"
+      >
+        {{ l10n.INFO_AJOUT_NUMEROS_1 }}
+        <span v-if="isTouchScreen">{{ l10n.INFO_AJOUT_NUMEROS_2_MOBILE }}</span>
+        <span v-else>{{ l10n.INFO_AJOUT_NUMEROS_2_DESKTOP }}</span>
+      </b-alert>
       <div
         v-for="({issueNumber, title, condition, purchaseId, isToSell}, i) in filteredIssues"
         :key="issueNumber"
@@ -128,10 +133,12 @@ import 'vue-context/src/sass/vue-context.scss';
 import axios from "axios";
 import conditionMixin from "../mixins/conditionMixin";
 import collectionMixin from "../mixins/collectionMixin";
+import Country from "./Country";
 
 export default {
   name: "IssueList",
   components: {
+    Country,
     ContextMenu
   },
   mixins: [l10nMixin, collectionMixin, conditionMixin],
@@ -168,6 +175,8 @@ export default {
       return this.publicationNames && this.publicationNames[this.publicationcode]
     },
     imagePath: () => window.imagePath,
+
+    isTouchScreen: () => window.matchMedia("(pointer: coarse)").matches,
     filteredIssues() {
       const vm = this
       return this.issues && this.issues.filter(issue =>
@@ -175,38 +184,47 @@ export default {
           (vm.filter.missing && !issue.condition)
       )
     }
-  },
+  }
+  ,
   watch: {
     preselectedIndexEnd() {
       this.preselected = this.getPreselected()
-    },
-    async userIssues(newValue) {
-      if (newValue) {
-        const vm = this
+    }
+    ,
+    userIssues: {
+      immediate: true,
+      async handler(newValue) {
+        if (newValue) {
+          const vm = this
 
-        const userIssuesForPublication = newValue.filter(issue =>
-            `${issue.country}/${issue.magazine}` === vm.publicationcode)
-            .map(issue => ({
-                  ...issue,
-                  condition: Object.keys(vm.conditions).find(condition => vm.conditions[condition] === issue.condition) || 'possessed'
-                })
-            )
+          const userIssuesForPublication = newValue.filter(issue =>
+              `${issue.country}/${issue.magazine}` === vm.publicationcode)
+              .map(issue => ({
+                    ...issue,
+                    condition: Object.keys(vm.conditions).find(condition => vm.conditions[condition] === issue.condition) || 'possessed'
+                  })
+              )
 
-        this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
-            .map(issueNumber => ({
-              issueNumber,
-              ...(userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
-            }))
+          this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
+              .map(issueNumber => ({
+                issueNumber,
+                ...(userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
+              }))
+        }
       }
     }
-  },
+  }
+  ,
   async mounted() {
     await this.loadPurchases()
     await this.fetchPublicationNames([this.publicationcode])
-  },
+  }
+  ,
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames"]),
-    ...mapActions("collection", ["loadCollection"]),
+    ...
+        mapActions("coa", ["fetchPublicationNames"]),
+    ...
+        mapActions("collection", ["loadCollection"]),
     getPreselected() {
       const vm = this
       if ([this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)) {
@@ -217,7 +235,8 @@ export default {
           .filter((issueNumber, i) =>
               i >= vm.preselectedIndexStart && i <= vm.preselectedIndexEnd
           )
-    },
+    }
+    ,
     updateSelected() {
       const vm = this
       this.selected = this.issues
@@ -225,7 +244,8 @@ export default {
           .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber))
       this.preselectedIndexStart = this.preselectedIndexEnd = null
       this.preselected = []
-    },
+    }
+    ,
     async loadCover(issueNumber) {
       const vm = this
       this.loadingCover = issueNumber
@@ -234,16 +254,19 @@ export default {
       setTimeout(function () {
         vm.loadingCover = null
       }, 1000)
-    },
+    }
+    ,
     async loadPurchases() {
       this.purchases = (await axios.get('/api/collection/purchases')).data
           .sort(({date: purchaseDate1}, {date: purchaseDate2}) =>
               purchaseDate1 < purchaseDate2 ? 1 : (purchaseDate1 > purchaseDate2 ? -1 : 0))
-    },
+    }
+    ,
     async updateIssues(data) {
       await axios.post('/api/collection/issues', data)
       await this.loadCollection(true)
-    },
+    }
+    ,
     async createPurchase({date, description}) {
       await axios.post('/api/collection/purchases', {
         date,
@@ -251,7 +274,8 @@ export default {
       })
       await this.loadPurchases()
     }
-  },
+  }
+  ,
 }
 </script>
 

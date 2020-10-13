@@ -15,6 +15,13 @@ export default {
     },
 
     getters: {
+        total: state => state.collection && state.collection.length,
+
+        totalPerCountry: state => state.collection && state.collection.reduce((acc, issue) => ({
+            ...acc,
+            [issue.country]: (acc[issue.country] || 0) + 1
+        }), {}),
+
         totalPerPublication: state => state.collection && state.collection.reduce((acc, issue) => {
             const publicationCode = `${issue.country}/${issue.magazine}`
             return ({...acc, [publicationCode]: (acc[publicationCode] || 0) + 1});

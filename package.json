@@ -2,6 +2,8 @@
     "devDependencies": {
         "@symfony/webpack-encore": "^0.31.0",
         "axios": "^0.20.0",
+        "bootstrap": "^4.5.0",
+        "bootstrap-vue": "^2.17.0",
         "core-js": "^3.0.0",
         "eslint": "^7.10.0",
         "eslint-loader": "^3.0.4",

@@ -20,7 +20,7 @@ import Footer from "./Footer";
 import Login from "./Login";
 import Banner from "./Banner";
 import Content from "./Content";
-import IssueList from "../components/IssueList";
+import Manage from "./Manage";
 
 export default {
   name: "Site",
@@ -28,7 +28,7 @@ export default {
     Menu,
     Banner,
     Content,
-    IssueList,
+    Manage,
     Login,
     Footer
   },
@@ -40,7 +40,7 @@ export default {
     attrsWithoutId() {
       const vm = this
       return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'id')
-          .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey] }), {})
+          .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
     }
   }
 }

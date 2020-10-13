@@ -2,7 +2,7 @@
   <ul
     v-if="l10n"
     id="menu-content"
-    class="menu-content collapse"
+    class="menu-content collapse show"
   >
     <MenuItemGroup
       path="collection"

@@ -1,9 +1,11 @@
 import Vue from "vue";
 import App from "./layouts/App"
-
-import '../css/app.css';
+import {BootstrapVue, IconsPlugin} from 'bootstrap-vue'
 import store from "./store"
 
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import '../css/app.scss';
 
 new Vue({
     store,
@@ -27,3 +29,6 @@ new Vue({
         })
     }
 }).$mount('#app')
+
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)

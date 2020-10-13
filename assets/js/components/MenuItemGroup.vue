@@ -9,7 +9,7 @@
     </li>
     <ul
       :id="path"
-      class="sub-menu collapse in"
+      class="sub-menu collapse in show"
     >
       <slot name="items" />
     </ul>
