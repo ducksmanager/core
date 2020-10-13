@@ -11,35 +11,41 @@ const RADIUS = 42
 export default {
     data() {
         return {
-            userPoints: null,
             radius: RADIUS,
             circumference: Math.PI * RADIUS * 2,
         }
     },
+    methods: {
+        async getUserStats(userIds) {
+            const vm = this
+            const url = `/stats/user/${userIds.join(',')}`
 
-    async mounted() {
-        const vm = this
-        this.userPoints = (await axios.get("/collection/points")).data.map(pointDetailsForLevel => {
-            const { contribution, points_total: userPoints } = pointDetailsForLevel
-            const level = MEDAL_LEVELS[contribution];
-            const maxThresholdReached = Object.values(level).filter(minimumPoints => userPoints >= minimumPoints).pop()
-            const levelReached = parseInt(Object.keys(level).find(key => level[key] === maxThresholdReached))
+            const results = (await axios.get(url)).data
 
-            let pointsDiffNextLevel, levelProgressPercentage
-            if (levelReached < 3) {
-                const currentLevelThreshold = levelReached === 0 ? 0 : level[levelReached]
-                const nextLevelThreshold = level[levelReached+1]
-                pointsDiffNextLevel = nextLevelThreshold - userPoints
-                const levelProgress = (userPoints - currentLevelThreshold) / (nextLevelThreshold - currentLevelThreshold) || .01
-                levelProgressPercentage = (1 - levelProgress) * vm.circumference
-            }
-            return {
-                contribution,
-                userPoints,
-                levelReached,
-                pointsDiffNextLevel: pointsDiffNextLevel || null,
-                levelProgressPercentage: levelProgressPercentage || null
-            }
-        })
+            results.points = results.points.map(({ contribution, points_total: userPoints, ID_User: userId }) => {
+                const level = MEDAL_LEVELS[contribution];
+                const maxThresholdReached = Object.values(level).filter(minimumPoints => userPoints >= minimumPoints).pop()
+                const levelReached = parseInt(Object.keys(level).find(key => level[key] === maxThresholdReached))
+
+                let pointsDiffNextLevel, levelProgressPercentage
+                if (levelReached < 3) {
+                    const currentLevelThreshold = levelReached === 0 ? 0 : level[levelReached]
+                    const nextLevelThreshold = level[levelReached+1]
+                    pointsDiffNextLevel = nextLevelThreshold - userPoints
+                    const levelProgress = (userPoints - currentLevelThreshold) / (nextLevelThreshold - currentLevelThreshold) || .01
+                    levelProgressPercentage = (1 - levelProgress) * vm.circumference
+                }
+                return {
+                    userId: parseInt(userId),
+                    contribution,
+                    userPoints,
+                    levelReached,
+                    pointsDiffNextLevel: pointsDiffNextLevel || null,
+                    levelProgressPercentage: levelProgressPercentage || null
+                }
+            })
+
+            return results
+        }
     }
 }

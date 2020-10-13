@@ -1,56 +1,15 @@
 <template>
   <div
-    v-if="l10n"
+    v-if="l10n && userStats"
     id="menu"
   >
     <div id="medals_and_login">
       <div id="medals">
-        <span
-          v-for="level in userPoints"
+        <Medal
+          v-for="level in userStats.points"
           :key="level.contribution"
-        >
-          <div class="overlay">
-            <div
-              class="title"
-              :title="$t(`DETAILS_MEDAILLE_${level.contribution.toUpperCase()}_MAX`, [
-                level.userPoints,
-                level.pointsDiffNextLevel,
-                $t(`MEDAILLE_${level.levelReached+1}`)
-              ])"
-            />
-            <svg
-              v-if="level.levelReached < 3"
-              width="100"
-              height="100"
-              viewport="0 0 0 0"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                :r="radius"
-                cx="50"
-                cy="50"
-                fill="transparent"
-                :stroke-dasharray="circumference"
-                stroke-dashoffset="0"
-              />
-              <circle
-                transform="rotate(270,0,0)"
-                :class="{bar: true, [medalColors[level.levelReached]]: true}"
-                cx="-50"
-                cy="50"
-                :r="radius"
-                fill="transparent"
-                :stroke-dasharray="circumference"
-                :style="`stroke-dashoffset: ${level.levelProgressPercentage}px`"
-              />
-            </svg>
-          </div>
-          <img
-            class="medal"
-            :src="`${imagePath}/medals/${level.contribution}_${level.levelReached}_${locale}.png`"
-          >
-        </span>
+          :level="level"
+        />
       </div>
       <div id="login">
         <a
@@ -83,11 +42,13 @@ import l10nMixin from "../mixins/l10nMixin";
 import medalsMixin from "../mixins/medalsMixin";
 import RecentEvents from "./RecentEvents";
 import Navigation from "./Navigation";
+import Medal from "./Medal";
 
 export default {
   name: "Menu",
 
   components: {
+    Medal,
     RecentEvents,
     Navigation
   },
@@ -95,10 +56,11 @@ export default {
   mixins: [l10nMixin, medalsMixin],
 
   data: () => ({
-    medalColors: ['bronze', 'argent', 'or']
+    userStats: null
   }),
 
   computed: {
+    userId: () => window.userId,
     username: () => window.username,
     imagePath: () => window.imagePath,
     locale: () => window.locale
@@ -106,6 +68,7 @@ export default {
 
   async mounted() {
     await axios.post('/api/collection/lastvisit')
+    this.userStats = await this.getUserStats([this.userId])
   }
 }
 </script>
@@ -139,44 +102,6 @@ export default {
 
   #medals {
     white-space: nowrap;
-
-    .medal {
-      height: 120px;
-      margin-left: 5px;
-    }
-
-    .overlay {
-      position: absolute;
-      display: inline-block;
-      margin-left: 1px;
-      margin-top: 2px;
-
-      .title {
-        position: absolute;
-        width: 100px;
-        height: 120px;
-      }
-
-      svg circle {
-        stroke-dashoffset: 0;
-        stroke: #2e353d;
-        stroke-width: 5px;
-
-        &.bar {
-          &.bronze {
-            stroke: #B87333;
-          }
-
-          &.argent {
-            stroke: silver;
-          }
-
-          &.or {
-            stroke: #e6ac00;
-          }
-        }
-      }
-    }
   }
 
   #login {

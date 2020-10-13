@@ -5,15 +5,17 @@
   >
     <h4>{{ l10n.NEWS_TITRE }}</h4>
     <div id="evenements">
-      <span v-if="events && publicationNames">
+      <span v-if="events && userStats && publicationNames">
         <div
           v-for="event in events"
           :key="JSON.stringify(event)"
           :class="{evenement: true, [`evenement_${event.type}`]: true}"
         >
           <User
-            v-if="event.ID_Utilisateur"
-            :id="event.ID_Utilisateur"
+            v-if="event.userId"
+            :id="event.userId"
+            :stats="userStats.stats.find(({ID: userId}) => userId === event.userId)"
+            :points="userStats.points.filter(({userId: currentUserId}) => event.userId === currentUserId)"
           />
           <template v-if="event.type === 'signup'">
             {{ l10n.NEWS_A_COMMENCE_COLLECTION }}
@@ -57,6 +59,8 @@ import l10nMixin from "../mixins/l10nMixin";
 import User from "../components/User";
 import Issue from "../components/Issue";
 import {mapActions, mapState} from "vuex";
+import collectionMixin from "../mixins/collectionMixin";
+import medalsMixin from "../mixins/medalsMixin";
 
 export default {
   name: "RecentEvents",
@@ -65,10 +69,11 @@ export default {
     User,
     Issue
   },
-  mixins: [l10nMixin],
+  mixins: [l10nMixin, collectionMixin, medalsMixin],
 
   data: () => ({
     events: null,
+    userStats: null
   }),
 
   computed: {
@@ -86,15 +91,17 @@ export default {
         ...event,
         cpt: event.cpt && parseInt(event.cpt),
         ago: timeago.format(parseInt(event.timestamp) * 1000),
-        ID_Utilisateur: parseInt(event.ID_Utilisateur)
+        userId: parseInt(event.ID_Utilisateur)
       }
     }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => timestamp1 < timestamp2)
 
     await this.fetchPublicationNames(
         [...new Set(this.events
-            .filter(event => event.publicationcode)
-            .map(event => event.publicationcode))]
+            .filter(({publicationcode}) => publicationcode)
+            .map(({publicationcode}) => publicationcode))]
     )
+
+    this.userStats = await this.getUserStats(this.events.map(({userId}) => userId))
   },
 
   methods: {

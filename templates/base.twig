@@ -13,6 +13,7 @@
         window.locale = "{{ app.request.locale }}"
         window.l10nUrl = "{{ asset('build/translations/messages.'~app.request.locale~'.yaml') }}"
         window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
+        window.userId = "{{ app.user ? app.user.id : '' }}"
         window.username = "{{ app.user ? app.user.username : '' }}"
     </script>
 
