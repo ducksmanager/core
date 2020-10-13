@@ -127,13 +127,14 @@ import ContextMenu from "./ContextMenu";
 import 'vue-context/src/sass/vue-context.scss';
 import axios from "axios";
 import conditionMixin from "../mixins/conditionMixin";
+import collectionMixin from "../mixins/collectionMixin";
 
 export default {
   name: "IssueList",
   components: {
     ContextMenu
   },
-  mixins: [l10nMixin, conditionMixin],
+  mixins: [l10nMixin, collectionMixin, conditionMixin],
   props: {
     publicationcode: {
       type: String,
@@ -158,6 +159,8 @@ export default {
   computed: {
     ...mapState("l10n", ["locale"]),
     ...mapState("coa", ["publicationNames"]),
+    ...mapState("collection", {userIssues: "collection"}),
+
     country() {
       return this.publicationcode.split('/')[0]
     },
@@ -167,7 +170,7 @@ export default {
     imagePath: () => window.imagePath,
     filteredIssues() {
       const vm = this
-      return this.issues.filter(issue =>
+      return this.issues && this.issues.filter(issue =>
           (vm.filter.possessed && issue.condition) ||
           (vm.filter.missing && !issue.condition)
       )
@@ -176,15 +179,34 @@ export default {
   watch: {
     preselectedIndexEnd() {
       this.preselected = this.getPreselected()
+    },
+    async userIssues(newValue) {
+      if (newValue) {
+        const vm = this
+
+        const userIssuesForPublication = newValue.filter(issue =>
+            `${issue.country}/${issue.magazine}` === vm.publicationcode)
+            .map(issue => ({
+                  ...issue,
+                  condition: Object.keys(vm.conditions).find(condition => vm.conditions[condition] === issue.condition) || 'possessed'
+                })
+            )
+
+        this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
+            .map(issueNumber => ({
+              issueNumber,
+              ...(userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
+            }))
+      }
     }
   },
   async mounted() {
-    await this.loadIssues()
     await this.loadPurchases()
     await this.fetchPublicationNames([this.publicationcode])
   },
   methods: {
     ...mapActions("coa", ["fetchPublicationNames"]),
+    ...mapActions("collection", ["loadCollection"]),
     getPreselected() {
       const vm = this
       if ([this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)) {
@@ -204,21 +226,6 @@ export default {
       this.preselectedIndexStart = this.preselectedIndexEnd = null
       this.preselected = []
     },
-    async loadIssues() {
-      const vm = this
-      const userIssues = (await axios.get('/api/collection/issues')).data.filter(issue =>
-          `${issue.country}/${issue.magazine}` === vm.publicationcode)
-          .map(issue => ({
-                ...issue,
-                condition: Object.keys(vm.conditions).find(condition => vm.conditions[condition] === issue.condition) || 'possessed'
-              })
-          )
-      this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
-          .map(issueNumber => ({
-            issueNumber,
-            ...(userIssues.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
-          }))
-    },
     async loadCover(issueNumber) {
       const vm = this
       this.loadingCover = issueNumber
@@ -235,7 +242,7 @@ export default {
     },
     async updateIssues(data) {
       await axios.post('/api/collection/issues', data)
-      await this.loadIssues()
+      await this.loadCollection(true)
     },
     async createPurchase({date, description}) {
       await axios.post('/api/collection/purchases', {

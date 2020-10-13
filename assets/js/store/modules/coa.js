@@ -9,7 +9,8 @@ export default {
     state: () => ({
         countryNames: null,
         publicationNames: null,
-        issueNumbers: null
+        issueNumbers: null,
+        isLoadingCountryNames: false
     }),
 
     mutations: {
@@ -30,9 +31,12 @@ export default {
     },
 
     actions: {
-        fetchCountryNames({ commit }) {
-            axios.get(URL_PREFIX_COUNTRIES)
-                .then(({ data }) => commit("setCountryNames", data))
+        fetchCountryNames: async ({ state, commit }) => {
+            if (!state.isLoadingCountryNames && !state.countryNames) {
+                state.isLoadingCountryNames = true
+                commit("setCountryNames", (await axios.get(URL_PREFIX_COUNTRIES)).data)
+                state.isLoadingCountryNames = false
+            }
         },
         fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) =>
             commit("setPublicationNames", {

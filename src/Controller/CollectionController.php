@@ -24,17 +24,6 @@ class CollectionController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/collection"
-     * )
-     */
-    public function retrieve(CollectionService $collectionService): JsonResponse
-    {
-        return new JsonResponse($collectionService->retrieveUserCollection());
-    }
-
-    /**
-     * @Route(
-     *     methods={"GET"},
      *     path="/collection/show/{publicationCode}",
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
      * )
