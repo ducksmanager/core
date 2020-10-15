@@ -1,10 +1,15 @@
 <template>
   <div
-    v-if="l10n && userStats"
+    v-if="l10n"
     id="menu"
   >
-    <div id="medals_and_login">
-      <div id="medals">
+    <div
+      id="medals_and_login"
+    >
+      <div
+        v-if="userStats"
+        id="medals"
+      >
         <Medal
           v-for="level in userStats.points"
           :key="level.contribution"
@@ -67,8 +72,10 @@ export default {
   },
 
   async mounted() {
-    await axios.post('/api/collection/lastvisit')
-    this.userStats = await this.getUserStats([this.userId])
+    if (this.userId) {
+      await axios.post('/api/collection/lastvisit')
+      this.userStats = await this.getUserStats([this.userId])
+    }
   }
 }
 </script>

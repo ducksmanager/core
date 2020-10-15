@@ -86,7 +86,7 @@
       v-if="!username"
       path="demo"
     >
-      {{ l10n.DEMO_MENU }}>
+      {{ l10n.DEMO_MENU }}
     </MenuItem>
   </ul>
 </template>

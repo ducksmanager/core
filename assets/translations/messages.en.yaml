@@ -263,7 +263,7 @@ IMPORTER_INDUCKS_ETAT_INVALIDE: Please specify a default condition for the issue
 IMPORTER_INDUCKS_INSTRUCTIONS_1: This page allows you to import your Inducks collection into DucksManager.
 IMPORTER_INDUCKS_INSTRUCTIONS_2: "To do so, follow the next steps :"
 IMPORTER_INDUCKS_INSTRUCTIONS_3: In the left section hereunder, log in your Inducks account.
-IMPORTER_INDUCKS_INSTRUCTIONS_4: "Once logged in, you will reach a page containing your collection as a list starting  with: <pre>country^entrycode^collectiontype^comment</pre>."
+IMPORTER_INDUCKS_INSTRUCTIONS_4: "Once logged in, you will reach a page containing your collection as a list starting  with: <pre>country^entrycode^collectiontype^comment</pre>"
 IMPORTER_INDUCKS_INSTRUCTIONS_5: Select the list in its entirety, and copy it.
 IMPORTER_INDUCKS_INSTRUCTIONS_6: Paste this text in the section on the right side of the page.
 IMPORTER_INDUCKS_INSTRUCTIONS_7: Click on the "Import" button at the bottom of the page.

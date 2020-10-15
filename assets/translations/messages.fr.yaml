@@ -265,7 +265,7 @@ IMPORTER_INDUCKS_ETAT_INVALIDE: Veuillez définir un état pour les nouveaux num
 IMPORTER_INDUCKS_INSTRUCTIONS_1: Cette page vous permet d'importer votre collection Inducks dans DucksManager.
 IMPORTER_INDUCKS_INSTRUCTIONS_2: "Pour cela, suivez les étapes suivantes : "
 IMPORTER_INDUCKS_INSTRUCTIONS_3: Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks.
-IMPORTER_INDUCKS_INSTRUCTIONS_4: "Une fois connecté, vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>."
+IMPORTER_INDUCKS_INSTRUCTIONS_4: "Une fois connecté, vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>"
 IMPORTER_INDUCKS_INSTRUCTIONS_5: Sélectionnez toute la liste, puis copiez-la.
 IMPORTER_INDUCKS_INSTRUCTIONS_6: Collez ce texte dans la partie droite de la page.
 IMPORTER_INDUCKS_INSTRUCTIONS_7: Cliquez sur le bouton "Importer" en bas de la page.

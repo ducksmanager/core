@@ -4,19 +4,21 @@
     :href="`/collection/show/${publicationcode}#${issuenumber}`"
   >
     <span v-if="issueInCollection">{{ issueInCollection.condition }}</span>
-    <img
-      :alt="countrycode"
-      :src="`${imagePath}/flags/${countrycode}.png`"
-    > {{ publicationname }} {{ issuenumber }}
+    <Publication
+      :publicationcode="publicationcode"
+      :publicationname="publicationname"
+    /> {{ issuenumber }}
   </a>
 </template>
 
 <script>
 import collectionMixin from "../mixins/collectionMixin";
 import {mapState} from "vuex";
+import Publication from "./Publication";
 
 export default {
   name: "Issue",
+  components: {Publication},
   mixins: [collectionMixin],
   props: {
     publicationcode: {type: String, required: true},
@@ -27,9 +29,6 @@ export default {
   computed: {
     ...mapState("collection", ["collection"]),
     imagePath: () => window.imagePath,
-    countrycode() {
-      return this.publicationcode.split('/')[0]
-    },
 
     issueInCollection() {
       return this.findInCollection(this.publicationcode, this.issuenumber)

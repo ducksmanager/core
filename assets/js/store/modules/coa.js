@@ -38,31 +38,37 @@ export default {
                 state.isLoadingCountryNames = false
             }
         },
-        fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) =>
-            publicationCodes.some(publicationCode =>
+        fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) => {
+            const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
                 !Object.keys(state.publicationNames || {}).includes(publicationCode)
-            )
-            && commit("setPublicationNames", {
-                ...(state.publicationNames || {}),
-                ...await dispatch('getChunkedRequests', {
-                    url: URL_PREFIX_PUBLICATIONS,
-                    parametersToChunk: [...new Set(publicationCodes)],
-                    chunkSize: 10
-                }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
-            }),
+            ))]
+            return newPublicationCodes.length
+                && commit("setPublicationNames", {
+                    ...(state.publicationNames || {}),
+                    ...await dispatch('getChunkedRequests', {
+                        url: URL_PREFIX_PUBLICATIONS,
+                        parametersToChunk: newPublicationCodes,
+                        chunkSize: 10
+                    }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
+                });
+        },
 
-        fetchIssueNumbers: async ({ state, commit, dispatch }, publicationCodes) =>
-            commit("setIssueNumbers", {
+        fetchIssueNumbers: async ({ state, commit, dispatch }, publicationCodes) => {
+            const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
+                !Object.keys(state.issueNumbers || {}).includes(publicationCode)
+            ))]
+            return newPublicationCodes.length && commit("setIssueNumbers", {
                 ...(state.issueNumbers || {}),
                 ...await dispatch('getChunkedRequests', {
                     url: URL_PREFIX_ISSUES,
-                    parametersToChunk: publicationCodes,
+                    parametersToChunk: newPublicationCodes,
                     chunkSize: 1
                 }).then(data => data.reduce((acc, result) => ({
                     ...acc,
                     [result.config.url.replace(URL_PREFIX_ISSUES, '')]: result.data.map(issueNumber => issueNumber.replace(/ /g, ''))
                 }), {}))
-            }),
+            });
+        },
 
         getChunkedRequests: async (_, {url, parametersToChunk, chunkSize}) =>
             await Promise.all(
