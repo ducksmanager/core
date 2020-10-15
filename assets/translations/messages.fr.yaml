@@ -116,6 +116,7 @@ CLIQUEZ_ICI: Cliquez ici
 CLIQUEZ_SUR_MAGAZINE_POUR_EDITER: Cliquez sur l'un de vos magazines pour éditer sa liste !
 COA_KO_1: La base de données des publications Disney n'est pas accessible pour des raisons indépendantes de notre volonté.
 COA_KO_2: Vous pourrez utiliser DucksManager à nouveau lorsque la connexion sera rétablie.
+CODE_HISTOIRE: code histoire
 COLLECTABLE_DEMO: pour visionner notre vidéo d'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !
 COLLECTABLE_DESCRIPTION: Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !
 COLLECTABLE_MOINS_1: Petit temps d'adaptation nécessaire pour la recherche de numéros dans la table
@@ -500,6 +501,7 @@ TEXTURE: Texture
 TEXTURE_ETAGERE: Texture de l'étagère
 TEXTURE__BOIS: Bois
 TITRE: "DucksManager : Gestion de collection de bandes dessinées Disney"
+TITRE_HISTOIRE: titre d'histoire
 TITRE_MEDAILLE_CREATEUR: Concepteur de tranches
 TITRE_MEDAILLE_PHOTOGRAPHE: Photographe de tranches
 TITRE_MEDAILLE_DUCKHUNTER: Duckhunter

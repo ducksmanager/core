@@ -112,6 +112,7 @@ CLIQUEZ_ICI: Click here
 CLIQUEZ_SUR_MAGAZINE_POUR_EDITER: Click on one of the publications to edit its list!
 COA_KO_1: The Disney publications database is currently unavailable.
 COA_KO_2: You will be able to use your DucksManager account as soon as the connection is alive again.
+CODE_HISTOIRE: story code
 COLLECTABLE_DEMO: to view our 1min30 video explaining how CollecTable works !
 COLLECTABLE_DESCRIPTION: A <b>CollecTable list</b>, more digest but requiring a bit of training !
 COLLECTABLE_MOINS_1: Needs a little bit of time to understand how it works (A few minutes should really be enough though)
@@ -498,6 +499,7 @@ TEXTURE: Texture
 TEXTURE_ETAGERE: Shelf texture
 TEXTURE__BOIS: Wood
 TITRE: "DucksManager : Your Disney comics collection manager"
+TITRE_HISTOIRE: story title
 TITRE_MEDAILLE_CREATEUR: Edge designer
 TITRE_MEDAILLE_PHOTOGRAPHE: Edge photographer
 TITRE_MEDAILLE_DUCKHUNTER: Duckhunter
