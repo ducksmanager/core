@@ -460,8 +460,9 @@ RECHERCHE_MAGAZINE_RESULTATS_NOMBREUX_2: Précisez votre recherche.
 RECHERCHE_MAGAZINE_SELECTIONNEZ_UNE_HISTOIRE: Sélectionnez un titre d'histoire dans la liste.
 RECHERCHER_BIBLIOTHEQUE: "Rechercher une histoire dans la bibliothèque :"
 RECHERCHER_BOUQUINERIES: Trouver des bouquineries
-RECHERCHER_GENERAL: Rechercher une histoire
+RECHERCHER_HISTOIRE: Rechercher une histoire
 RECHERCHER_INTRO: "... ou recherchez un magazine à partir d'une histoire qui le contient :"
+RECHERCHER_PUBLICATIONS: Rechercher les publications d'une histoire à partir d'un code histoire
 REFERENCES: référencés
 REJOIGNEZ_NOUS: Rejoignez la communauté sur
 REMERCIEMENT_LOGO: Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.

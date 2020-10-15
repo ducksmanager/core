@@ -96,9 +96,9 @@ export default {
     }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => timestamp1 < timestamp2)
 
     await this.fetchPublicationNames(
-        [...new Set(this.events
+        this.events
             .filter(({publicationcode}) => publicationcode)
-            .map(({publicationcode}) => publicationcode))]
+            .map(({publicationcode}) => publicationcode)
     )
 
     this.userStats = await this.getUserStats(this.events.map(({userId}) => userId))

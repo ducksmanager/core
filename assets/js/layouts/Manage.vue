@@ -50,6 +50,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
+    <IssueSearch />
     <IssueList :publicationcode="publicationcode" />
   </div>
 </template>
@@ -60,10 +61,12 @@ import l10nMixin from "../mixins/l10nMixin";
 import collectionMixin from "../mixins/collectionMixin";
 import {mapGetters} from "vuex";
 import Country from "../components/Country";
+import IssueSearch from "../components/IssueSearch";
 
 export default {
   name: "Manage",
   components: {
+    IssueSearch,
     Country,
     IssueList
   },
@@ -93,7 +96,7 @@ export default {
       const vm = this
       return this.publicationsPerCountry && this.publicationsPerCountry[country]
           .sort((a, b) =>
-              vm.publicationNames[a] < vm.publicationNames[b] ? - 1 : (vm.publicationNames[a] > vm.publicationNames[b] ? 1 : 0)
+              vm.publicationNames[a] < vm.publicationNames[b] ? -1 : (vm.publicationNames[a] > vm.publicationNames[b] ? 1 : 0)
           )
     }
   }
@@ -104,6 +107,7 @@ export default {
 .navbar {
   border-radius: 4px;
   margin: 20px 0;
+
   .navbar-nav {
     flex-wrap: wrap;
   }

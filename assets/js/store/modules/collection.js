@@ -36,7 +36,7 @@ export default {
                 state.isLoadingCollection = false
                 dispatch("coa/fetchCountryNames", null, { root: true })
                 dispatch("coa/fetchPublicationNames",
-                    [...new Set(state.collection.map(issue => `${issue.country}/${issue.magazine}`))], { root: true }
+                    state.collection.map(issue => `${issue.country}/${issue.magazine}`), { root: true }
                 )
             }
         },

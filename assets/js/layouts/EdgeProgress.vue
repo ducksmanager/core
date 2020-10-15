@@ -100,10 +100,8 @@ export default {
     }), {})
 
     await this.fetchPublicationNames([
-      ...new Set([
         ...this.mostWanted.map(mostWantedIssue => mostWantedIssue.publicationcode),
         ...Object.keys(this.publishedEdges)
-      ])
     ])
 
     await this.fetchIssueNumbers(Object.keys(this.publishedEdges))

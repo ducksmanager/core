@@ -39,11 +39,14 @@ export default {
             }
         },
         fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) =>
-            commit("setPublicationNames", {
+            publicationCodes.some(publicationCode =>
+                !Object.keys(state.publicationNames || {}).includes(publicationCode)
+            )
+            && commit("setPublicationNames", {
                 ...(state.publicationNames || {}),
                 ...await dispatch('getChunkedRequests', {
                     url: URL_PREFIX_PUBLICATIONS,
-                    parametersToChunk: publicationCodes,
+                    parametersToChunk: [...new Set(publicationCodes)],
                     chunkSize: 10
                 }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
             }),

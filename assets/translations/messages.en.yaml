@@ -458,8 +458,9 @@ RECHERCHE_MAGAZINE_RESULTATS_NOMBREUX_2: Please provide more precise keywords.
 RECHERCHE_MAGAZINE_SELECTIONNEZ_UNE_HISTOIRE: Choose a story in the list.
 RECHERCHER_BIBLIOTHEQUE: "Find a story in the bookcase :"
 RECHERCHER_BOUQUINERIES: Find second-hand bookshops
-RECHERCHER_GENERAL: Find a story
+RECHERCHER_HISTOIRE: Find a story
 RECHERCHER_INTRO: "... or find an issue by searching for a story that's inside of it :"
+RECHERCHER_PUBLICATIONS: Find the publications of a story by story code
 REFERENCES: referenced
 REJOIGNEZ_NOUS: Join the community on
 REMERCIEMENT_LOGO: The DucksManager and WhatTheDuck logos are drawn by enigm.
