@@ -125,6 +125,10 @@ datalist {
 
   option {
     cursor: pointer;
+
+    a {
+      border: 0;
+    }
   }
 }
 </style>

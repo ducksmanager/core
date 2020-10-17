@@ -13,11 +13,26 @@
       sticky
     >
       <b-navbar-brand href="#">
-        {{ l10n.LISTE_MAGAZINES }}
+        {{ l10n.RECHERCHER_HISTOIRE }}
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse" />
+      <b-navbar-nav>
+        <IssueSearch />
+      </b-navbar-nav>
+    </b-navbar>
+    <b-navbar
+      id="publication-list"
+      toggleable="lg"
+      type="dark"
+      variant="dark"
+      sticky
+    >
+      <b-navbar-brand href="#">
+        {{ l10n.LISTE_MAGAZINES }}
+      </b-navbar-brand>
+      <b-navbar-toggle target="nav-publications" />
       <b-collapse
-        id="nav-collapse"
+        id="nav-publications"
         is-nav
       >
         <b-navbar-nav>
@@ -50,7 +65,6 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <IssueSearch />
     <IssueList :publicationcode="publicationcode" />
   </div>
 </template>
@@ -104,6 +118,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#publication-list {
+  top: 38px;
+  margin-top: 30px;
+  z-index: 1;
+}
 .navbar {
   border-radius: 4px;
   margin: 20px 0;
