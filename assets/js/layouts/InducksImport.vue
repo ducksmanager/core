@@ -20,11 +20,11 @@
           <li>{{ l10n.IMPORTER_INDUCKS_INSTRUCTIONS_7 }}</li>
         </ol>
       </b-alert>
-      <b-row>
-        <b-col sm="5">
+      <b-row class="justify-content-center">
+        <b-col sm="6">
           <iframe src="https://inducks.org/collection.php?rawOutput=1" />
         </b-col>
-        <b-col sm="5">
+        <b-col sm="6">
           <b-form-group>
             <b-textarea
               id="inducks-collection"
@@ -277,9 +277,17 @@ export default {
     width: 100%;
   }
 
+  iframe {
+    border: 0;
+  }
+
   pre {
     padding: 2px;
     display: inline;
+  }
+
+  li {
+    cursor: initial;
   }
 }
 </style>

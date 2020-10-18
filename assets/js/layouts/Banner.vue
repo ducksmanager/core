@@ -1,6 +1,6 @@
 <template>
   <div id="logo_zone1">
-    <a :href="username ? '/?action=gerer' : '/'">
+    <a :href="username ? '/collection/show' : '/'">
       <img
         :src="`${imagePath}/logo_small.png`"
         alt="DucksManager"

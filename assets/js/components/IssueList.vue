@@ -46,16 +46,16 @@
         :class="{
           issue: true,
           [`issue-${condition ? 'possessed' : 'missing'}`]: true,
-          highlighted: highlighted.includes(issueNumber),
+          highlighted: highlighted === issueNumber,
           preselected: preselected.includes(issueNumber),
           selected: selected.includes(issueNumber)
         }"
         :title="`${l10n.NUMERO_COURT}${issueNumber}`"
         @mousedown.left="preselectedIndexStart = preselectedIndexEnd = i"
         @mouseup.left="updateSelected"
-        @mouseover="preselectedIndexStart === null ? highlighted.push(issueNumber) : preselectedIndexEnd = i"
+        @mouseover="preselectedIndexStart === null ? highlighted = issueNumber : preselectedIndexEnd = i"
         @mouseout="
-          highlighted = highlighted.filter(current => current !== issueNumber)
+          highlighted = null
         "
       >
         <a :name="issueNumber" />
@@ -156,7 +156,7 @@ export default {
     coverUrl: null,
     issues: null,
     purchases: null,
-    highlighted: [],
+    highlighted: null,
     selected: [],
     preselected: [],
     preselectedIndexStart: null,

@@ -1,6 +1,6 @@
 <template>
   <li :class="{'non-empty': true, 'no-icon': !icon, active }">
-    <a :href="`?action=${path}`">
+    <a :href="getLink(path)">
       <i :class="{[icon]: true}" />
       <slot />
     </a>
@@ -17,6 +17,10 @@ export default {
 
   computed: {
     active() { return window.location.pathname.split('/').includes(this.path) }
+  },
+
+  methods: {
+    getLink: path => path.indexOf('/') === 0 ? path : `/?action=${path}`
   }
 }
 </script>

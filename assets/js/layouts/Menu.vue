@@ -19,7 +19,7 @@
       <div id="login">
         <a
           id="logo_small"
-          :href="username ? '/?action=gerer' : '/'"
+          :href="username ? '/collecion/show' : '/'"
         >
           <img :src="`${imagePath}/logo_name.jpg`">
         </a>

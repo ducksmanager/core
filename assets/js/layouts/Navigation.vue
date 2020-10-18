@@ -20,7 +20,7 @@
             {{ l10n.BIBLIOTHEQUE_COURT }}
           </MenuItem>
           <MenuItem
-            path="gerer"
+            path="/collection/show"
             icon="glyphicon glyphicon-list-alt"
           >
             {{ l10n.GERER_COLLECTION }}
@@ -38,7 +38,7 @@
             {{ l10n.AGRANDIR_COLLECTION }}
           </MenuItem>
           <MenuItem
-            path="importer_inducks"
+            path="/inducks/import"
             icon="glyphicon custom-inducks"
           >
             {{ l10n.COLLECTION_INDUCKS }}
@@ -78,7 +78,7 @@
     </MenuItem>
     <MenuItem
       v-if="!username"
-      path="inducks"
+      path="/inducks/import"
     >
       {{ l10n.COLLECTION_INDUCKS_POSSEDEE }}
     </MenuItem>

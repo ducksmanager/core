@@ -32,8 +32,8 @@ class InducksImportController extends AbstractController
         return $this->render("collection.twig", [
             'username' => $userService->getCurrentUsername(),
             'vueProps' => [
-                'component' => 'InducksImport',
-                'page' => 'Manage'
+                'component' => 'Site',
+                'page' => 'InducksImport'
             ]
         ]);
     }
