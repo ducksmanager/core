@@ -173,7 +173,7 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "vuex";
-import Accordion from "./Accordion";
+import Accordion from "../components/Accordion";
 import Publication from "../components/Publication";
 import collectionMixin from "../mixins/collectionMixin";
 import Issue from "../components/Issue";
