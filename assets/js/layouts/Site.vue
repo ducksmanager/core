@@ -21,6 +21,7 @@ import Login from "./Login";
 import Banner from "./Banner";
 import Manage from "./Manage";
 import InducksImport from "./InducksImport";
+import Stats from "./Stats";
 
 export default {
   name: "Site",
@@ -28,6 +29,7 @@ export default {
     Menu,
     Banner,
     Manage,
+    Stats,
     InducksImport,
     Login,
     Footer
