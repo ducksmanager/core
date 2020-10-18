@@ -121,6 +121,7 @@ export default {
     overflow-y: hidden;
     position: fixed;
     width: 100%;
+    height: 38px;
     margin-bottom: 10px;
     opacity: 0.9;
     outline: 2px solid grey;

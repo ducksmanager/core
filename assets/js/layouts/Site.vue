@@ -57,13 +57,13 @@ export default {
 #logo_zone2 {
   padding: 45px 20px 20px 20px;
   vertical-align: top;
-  min-height: 500px;
+  min-height: calc(100vh - 105px);
 }
 
 @media (max-width: 767px) {
   #logo_zone2 {
     background: none;
-    margin-top: 40px;
+    min-height: calc(100vh - 125px);
   }
 }
 </style>
