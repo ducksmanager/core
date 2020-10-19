@@ -3,7 +3,7 @@ import {mapActions, mapGetters, mapState} from "vuex";
 export default {
     computed: {
         ...mapState("coa", ["countryNames", "publicationNames"]),
-        ...mapState("collection", ["collection"]),
+        ...mapState("collection", ["collection", "purchases"]),
         ...mapGetters("collection", ["totalPerPublication"])
     },
     methods: {

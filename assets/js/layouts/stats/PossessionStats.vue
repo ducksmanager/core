@@ -15,6 +15,7 @@ export default {
       required: true
     }
   },
+emits: ['change-dimension'],
 
   data: () => ({
     orientation: 'vertical'
@@ -35,9 +36,8 @@ export default {
       }
       const vm = this
       let possessedIssues = Object.values(this.totalPerPublication);
-      let missingIssues = Object.keys(this.issueCounts)
-          .filter(publicationCode => vm.labels.includes(publicationCode))
-          .map(publicationCode => vm.issueCounts[publicationCode]);
+      let missingIssues = Object.keys(this.totalPerPublication)
+          .map(publicationCode => vm.issueCounts[publicationCode] - this.totalPerPublication[publicationCode]);
       if (this.unit === 'percentage') {
         possessedIssues = possessedIssues.map((possessedCount, key) =>
             Math.round(possessedCount * (100 / (possessedCount + missingIssues[key]))))
@@ -61,7 +61,14 @@ export default {
         }
       }
     },
-    values(newValue) {
+    labels: {
+      immediate: true,
+      async handler(newValue) {
+        this.$emit('change-dimension', this.orientation === 'vertical' ? 'height' : 'width', 100 + 30 * newValue.length)
+        this.$emit('change-dimension', this.orientation === 'vertical' ? 'width' : 'height', 500)
+      }
+    },
+    values: function (newValue) {
       if (newValue) {
         const vm = this
         const {NUMEROS_REFERENCES, POSSESSION_NUMEROS, NUMEROS_POSSEDES} = this.l10n;
@@ -69,13 +76,13 @@ export default {
           datasets: [
             {
               data: this.values[0],
-              backgroundColor: 'orange',
+              backgroundColor: 'green',
               label: NUMEROS_POSSEDES,
               legend: NUMEROS_POSSEDES
             },
             {
               data: this.values[1],
-              backgroundColor: 'green',
+              backgroundColor: 'orange',
               label: NUMEROS_REFERENCES,
               legend: NUMEROS_REFERENCES
             }
@@ -119,7 +126,7 @@ export default {
                 }
                 return `${vm.publicationNames[publicationcode] || '?'} (${vm.countryNames[publicationcode.split('/')[0]]})`;
               },
-              label: (tooltipItems, data) => `${data.datasets[tooltipItems.datasetIndex].legend} : ${tooltipItems[vm.orientation === 'vertical' ? 'xLabel' : 'yLabel']}${vm.unit === 'percentage' ? '%' : ''}`
+              label: (tooltipItems, {datasets}) => `${datasets[tooltipItems.datasetIndex].legend} : ${tooltipItems[vm.orientation === 'vertical' ? 'xLabel' : 'yLabel']}${vm.unit === 'percentage' ? '%' : ''}`
             }
           }
         })

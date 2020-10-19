@@ -11,7 +11,10 @@ export default {
     state: () => ({
         countryNames: null,
         publicationNames: null,
+        personNames: null,
         issueNumbers: null,
+        issueDetails: null,
+        isLoadingCountryNames: false,
         issueCounts: null,
     }),
 
@@ -21,15 +24,13 @@ export default {
         },
         setPublicationNames(state, publicationNames) {
             state.publicationNames = Object.keys(publicationNames)
-                .sort()
                 .reduce((acc, publicationCode) => ({
                     ...acc,
                     [publicationCode]: publicationNames[publicationCode]
                 }), {})
         },
         setPersonNames(state, personNames) {
-            state.publicationNames = Object.keys(personNames)
-                .sort()
+            state.personNames = Object.keys(personNames)
                 .reduce((acc, personCode) => ({
                     ...acc,
                     [personCode]: personNames[personCode]
@@ -102,6 +103,10 @@ export default {
                 const issueCounts = (await axios.get(URL_ISSUE_COUNTS)).data;
                 commit("setIssueCounts", issueCounts)
             }
+        },
+
+        fetchIssueDetails: async ({ state, commit }, { publicationCode, issueNumber }) => {
+
         },
 
         getChunkedRequests: async (_, {url, parametersToChunk, chunkSize}) =>

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\ApiService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +27,7 @@ class ApiController extends AbstractController
 
     /**
      * @Route(
-     *     methods={"GET", "POST"},
+     *     methods={"GET", "POST", "DELETE"},
      *     path="/api/collection/{path}",
      *     requirements={"path"="^.+$"}
      * )
@@ -38,7 +39,8 @@ class ApiController extends AbstractController
             'dm-pass' => $this->getUser()->getPassword(),
         ];
         try {
-            return new JsonResponse($apiService->call("/collection/$path", 'ducksmanager', json_decode($request->getContent(), true), $request->getMethod(), false, $userCredentials));
+            $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
+            return new JsonResponse($apiService->call("/collection/$path", 'ducksmanager', $data, $request->getMethod(), false, $userCredentials));
         }
         catch(ClientException $clientException) {
             return new Response('', $clientException->getCode());

@@ -5,12 +5,27 @@ export default {
     state: () => ({
         username: window.username,
         collection: null,
+        purchases: null,
+        watchedAuthors: null,
+
         isLoadingCollection: false,
+        isLoadingPurchases: false,
+        isLoadingWatchedAuthors: false,
     }),
 
     mutations: {
         setCollection(state, collection) {
-            state.collection = collection
+            state.collection = collection.map(issue => ({
+                ...issue,
+                publicationCode: `${issue.country}/${issue.magazine}`
+            }))
+        },
+        setPurchases(state, purchases) {
+            state.purchases = purchases.sort(({date: purchaseDate1}, {date: purchaseDate2}) =>
+                Math.sign(purchaseDate2 - purchaseDate1))
+        },
+        setWatchedAuthors(state, watchedAuthors) {
+            state.watchedAuthors = watchedAuthors
         }
     },
 
@@ -29,16 +44,26 @@ export default {
     },
 
     actions: {
-        loadCollection: async ({ state, commit, dispatch }, afterUpdate = false) => {
+        loadCollection: async ({state, commit}, afterUpdate = false) => {
             if (afterUpdate || (!state.isLoadingCollection && !state.collection)) {
                 state.isLoadingCollection = true
                 commit("setCollection", (await axios.get("/api/collection/issues")).data)
                 state.isLoadingCollection = false
-                dispatch("coa/fetchCountryNames", null, { root: true })
-                dispatch("coa/fetchPublicationNames",
-                    state.collection.map(issue => `${issue.country}/${issue.magazine}`), { root: true }
-                )
             }
         },
+        loadPurchases: async ({state, commit}, afterUpdate = false) => {
+            if (afterUpdate || (!state.isLoadingPurchases && !state.purchases)) {
+                state.isLoadingPurchases = true
+                commit("setPurchases", (await axios.get("/api/collection/purchases")).data)
+                state.isLoadingPurchases = false
+            }
+        },
+        loadWatchedAuthors: async ({state, commit}, afterUpdate = false) => {
+            if (afterUpdate || (!state.isLoadingWatchedAuthors && !state.watchedAuthors)) {
+                state.isLoadingWatchedAuthors = true
+                commit("setWatchedAuthors", (await axios.get("/api/collection/authors/watched")).data)
+                state.isLoadingWatchedAuthors = false
+            }
+        }
     }
 }
