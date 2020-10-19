@@ -9,50 +9,40 @@
       icon="glyphicon-home"
     >
       <template #text>
+        <b-icon-house-fill />
         {{ l10n.COLLECTION }}
       </template>
       <template #items>
         <template v-if="username">
-          <MenuItem
-            path="bibliotheque"
-            icon="glyphicon glyphicon-book"
-          >
+          <MenuItem path="bibliotheque">
+            <b-icon-book-half />
             {{ l10n.BIBLIOTHEQUE_COURT }}
           </MenuItem>
-          <MenuItem
-            path="/collection/show"
-            icon="glyphicon glyphicon-list-alt"
-          >
+          <MenuItem path="/collection/show">
+            <b-icon-list />
             {{ l10n.GERER_COLLECTION }}
           </MenuItem>
-          <MenuItem
-            path="stats"
-            icon="glyphicon glyphicon-tasks"
-          >
+          <MenuItem path="stats">
+            <b-icon-graph-up />
             {{ l10n.STATISTIQUES_COLLECTION }}
           </MenuItem>
-          <MenuItem
-            path="agrandir"
-            icon="glyphicon glyphicon-fire"
-          >
+          <MenuItem path="agrandir">
+            <b-icon-capslock-fill />
             {{ l10n.AGRANDIR_COLLECTION }}
           </MenuItem>
-          <MenuItem
-            path="/inducks/import"
-            icon="glyphicon custom-inducks"
-          >
+          <MenuItem path="/inducks/import">
+            <div
+              class="b-custom"
+              :style="{backgroundImage: `url(${imagePath}/icons/inducks.png)`}"
+            />
             {{ l10n.COLLECTION_INDUCKS }}
           </MenuItem>
-          <MenuItem
-            path="print"
-            icon="glyphicon glyphicon-print"
-          >
+          <MenuItem path="print">
+            <b-icon-printer-fill />
             {{ l10n.IMPRIMER_COLLECTION }}
           </MenuItem>
-          <MenuItem
-            path="logout"
-            icon="glyphicon glyphicon-log-out"
-          >
+          <MenuItem path="logout">
+            <b-icon-x-square-fill />
             {{ l10n.DECONNEXION }}
           </MenuItem>
         </template>
@@ -107,7 +97,8 @@ export default {
   mixins: [l10nMixin],
 
   computed: {
-    username: () => window.username
+    username: () => window.username,
+    imagePath: () => window.imagePath,
   },
 }
 </script>
@@ -160,8 +151,8 @@ li {
 
   a {
     display: block;
-    text-decoration: none;
-    color: #e1ffff;
+    text-decoration: none !important;
+    color: inherit !important;
     border-bottom: 0;
 
     i {
@@ -188,6 +179,15 @@ li {
   &.empty {
     cursor: default;
   }
+}
+
+.b-custom {
+  display: inline-block;
+  background-repeat: no-repeat;
+  height: 12px;
+  background-size: 12px;
+  width: 12px;
+  background-position: bottom;
 }
 
 @media (max-width: 767px) {

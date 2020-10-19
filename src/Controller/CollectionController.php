@@ -28,10 +28,11 @@ class CollectionController extends AbstractController
      *     "fr": "/collection/afficher/{publicationCode}"
      * },
      *     methods={"GET"},
-     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"},
+     *     defaults={"publicationCode"=null})
      * )
      */
-    public function display(UserService $userService, TranslatorInterface $translator, string $publicationCode): Response
+    public function display(UserService $userService, TranslatorInterface $translator, ?string $publicationCode): Response
     {
         return $this->render("bare.twig", [
             'title' => $translator->trans('COLLECTION'),

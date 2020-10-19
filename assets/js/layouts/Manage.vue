@@ -65,7 +65,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <IssueList :publicationcode="publicationcode" />
+    <IssueList :publicationcode="publicationcode || mostPossessedPublication" />
   </div>
 </template>
 
@@ -102,6 +102,11 @@ export default {
                 publicationCode.split('/')[0] === country
             )
           }), {})
+    },
+
+    mostPossessedPublication() {
+      const vm = this
+      return this.totalPerPublication && Object.keys(this.totalPerPublication).reduce((acc, publicationCode) => vm.totalPerPublication[acc] > vm.totalPerPublication[publicationCode] ? acc : publicationCode);
     }
   },
 
