@@ -34,7 +34,8 @@ class StatsController extends AbstractController
             'title' => $translator->trans('STATISTIQUES_COLLECTION'),
             'username' => $userService->getCurrentUsername(),
             'vueProps' => [
-                'component' => 'Stats',
+                'component' => 'Site',
+                'page' => 'Stats',
                 'tab' => $type
             ]
         ]);

@@ -41,15 +41,15 @@
             v-else
             :unit="unitTypeCurrent"
             :watched-authors-story-count="watchedAuthorsStoryCount"
+            :style="{width, height}"
+            @change-dimension="changeDimension"
           />
           {{ l10n.STATISTIQUES_QUOTIDIENNES }}
           <hr>
           {{ l10n.AUTEURS_FAVORIS_INTRO_1 }}
           <a href="?action=agrandir&onglet=suggestions_achat">{{ l10n.AUTEURS_FAVORIS_INTRO_2 }}</a>
           <AuthorList
-            :style="{width, height}"
             :watched-authors="watchedAuthors"
-            @change-dimension="changeDimension"
           />
         </div>
       </div>
