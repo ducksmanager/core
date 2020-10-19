@@ -17,7 +17,7 @@ export default {
 
     actions: {
         loadL10n: async ({state, commit}) => {
-            if (!state.isLoading) {
+            if (!state.isLoading && !state.l10n) {
                 state.isLoading = true
                 const yamlL10n= (await axios.get(window.l10nUrl)).data
                 state.isLoading = false
