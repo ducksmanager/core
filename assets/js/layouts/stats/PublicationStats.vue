@@ -46,7 +46,6 @@ export default {
     },
 
     values() {
-      const vm = this
       return Object.values(this.totalPerPublicationGroupSmallCounts)
           .sort((count1, count2) => Math.sign(count1 - count2))
     },

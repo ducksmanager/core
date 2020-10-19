@@ -8,7 +8,7 @@
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body>
+<body class="{{ bodyClass ?? '' }}">
     <script type="text/javascript">
         window.locale = "{{ app.request.locale }}"
         window.l10nUrl = "{{ asset('build/translations/messages.'~app.request.locale~'.yaml') }}"

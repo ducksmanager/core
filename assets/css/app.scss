@@ -3,8 +3,8 @@ html, body {
     height:100%;
     font:11px verdana,arial,sans-serif;
     line-height:15px;
-
 }
+
 
 @media (min-width: 767px) {
     .mobile-only {
@@ -12,6 +12,10 @@ html, body {
     }
 
     body {
-        padding: 0 0 0 320px !important;
+        padding: 0 0 0 320px;
+
+        &.no-padding {
+            padding: 0;
+        }
     }
 }

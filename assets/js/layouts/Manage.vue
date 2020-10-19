@@ -73,7 +73,7 @@
 import IssueList from "../components/IssueList";
 import l10nMixin from "../mixins/l10nMixin";
 import collectionMixin from "../mixins/collectionMixin";
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import Country from "../components/Country";
 import IssueSearch from "../components/IssueSearch";
 
@@ -98,14 +98,27 @@ export default {
       return this.totalPerCountry && this.publicationNames && Object.keys(this.totalPerCountry)
           .reduce((acc, country) => ({
             ...acc,
-            [country]: Object.keys(vm.totalPerPublication).filter(publicationName =>
-                publicationName.split('/')[0] === country
+            [country]: Object.keys(vm.totalPerPublication).filter(publicationCode =>
+                publicationCode.split('/')[0] === country
             )
           }), {})
     }
   },
 
+  watch: {
+    async totalPerPublication(newValue) {
+      if (newValue) {
+        await this.fetchPublicationNames(Object.keys(newValue))
+      }
+    }
+  },
+
+  async mounted(){
+    await this.fetchCountryNames()
+  },
+
   methods: {
+    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
     getSortedPublications(country) {
       const vm = this
       return this.publicationsPerCountry && this.publicationsPerCountry[country]
