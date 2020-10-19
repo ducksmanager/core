@@ -3,7 +3,7 @@
     <table>
       <tr>
         <td>
-          <a href="/?action=gerer"><img
+          <a href="/collection/show"><img
             id="logo"
             alt="logo"
             :src="`${imagePath}/logo_small.png`"
@@ -12,14 +12,14 @@
         <td>{{ l10n.COLLECTION_DE }} {{ username }}</td>
       </tr>
     </table>
-    <Collectable v-if="type === 'collectable'" />
-    <Classic v-else-if="type === 'classic'" />
+    <Collectable v-if="currentType === 'collectable'" />
+    <Classic v-else-if="currentType === 'classic'" />
   </div>
 </template>
 
 <script>
-import Collectable from "../components/Collectable";
-import Classic from "../components/Classic";
+import Collectable from "../layouts/print/Collectable";
+import Classic from "../layouts/print/Classic";
 import l10nMixin from "../mixins/l10nMixin";
 import userMixin from "../mixins/userMixin";
 
@@ -31,7 +31,7 @@ export default {
   },
   mixins: [l10nMixin, userMixin],
   props: {
-    type: {type: String, required: true}
+    currentType: {type: String, required: true}
   },
   computed: {
     imagePath: () => window.imagePath
@@ -40,9 +40,6 @@ export default {
 </script>
 
 <style lang="scss">
-body {
-  padding: 0;
-}
 #logo {
   height: 100px;
 }

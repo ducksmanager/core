@@ -132,13 +132,14 @@
 </template>
 
 <script>
-import collectionMixin from "../mixins/collectionMixin";
+import collectionMixin from "../../mixins/collectionMixin";
+import l10nMixin from "../../mixins/l10nMixin";
 import {mapActions} from "vuex";
 
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/
 
 export default {
-  mixins: [collectionMixin],
+  mixins: [collectionMixin, l10nMixin],
   data() {
     const lines = 2
     return {
@@ -202,14 +203,19 @@ export default {
         }
         return acc
       }, {});
+    },
+    totalPerPublication(newValue) {
+      this.fetchPublicationNames(Object.keys(newValue))
     }
   },
-  mounted() {
-    this.fetchCountryNames()
+  async mounted() {
+    await this.fetchCountryNames()
+    await this.loadPurchases()
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames"]),
+    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
+    ...mapActions("collection", ["loadPurchases"]),
     numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : ("A".charCodeAt() - 26)) + number),
     letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt()
   }
