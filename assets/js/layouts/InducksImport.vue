@@ -77,7 +77,7 @@
         </div>
       </b-alert>
       <b-alert
-        v-if="(issuesNotReferenced && issuesNotReferenced.length) || (issuesAlreadyInCollection && issuesAlreadyInCollection.length)"
+        v-if="issuesNotReferenced && issuesNotReferenced.length || issuesAlreadyInCollection && issuesAlreadyInCollection.length"
         show
         variant="warning"
       >
@@ -232,10 +232,10 @@ export default {
         this.issuesImportable = [...new Set(this.issuesImportable)]
       }
     },
-    issuesToImport(newValue) {
+    async issuesToImport(newValue) {
       const publicationCodes = newValue.reduce((acc, {publicationCode}) => [...acc, publicationCode], [])
-      this.fetchPublicationNames(publicationCodes)
-      this.fetchIssueNumbers(publicationCodes)
+      await this.fetchPublicationNames(publicationCodes)
+      await this.fetchIssueNumbers(publicationCodes)
     }
   },
 

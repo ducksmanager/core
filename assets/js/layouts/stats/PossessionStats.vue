@@ -135,7 +135,7 @@ emits: ['change-dimension'],
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueCounts"])
+    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames", "fetchIssueCounts"])
   }
 }
 </script>

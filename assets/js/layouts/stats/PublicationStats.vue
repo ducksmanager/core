@@ -11,6 +11,7 @@ export default {
 
   computed: {
     ...mapState("collection", ["collection"]),
+    ...mapState("coa", ["publicationNames"]),
     ...mapGetters("collection", ["totalPerPublication"]),
     smallCountPublications() {
       if (!this.totalPerPublication || !this.l10n) {
@@ -38,11 +39,11 @@ export default {
       const vm = this
       return this.publicationNames && Object.keys(this.totalPerPublicationGroupSmallCounts)
           .sort(this.sortByCount)
-          .reduce((acc, publicationCode) => ([
+          .reduce((acc, publicationCode) => [
             ...acc,
             vm.publicationNames[publicationCode]
             || `${this.l10n.AUTRES} (${this.smallCountPublications.length} ${this.l10n.PUBLICATIONS.toLowerCase()})`
-          ]), [])
+          ], [])
     },
 
     values() {
@@ -59,10 +60,14 @@ export default {
   },
 
   watch: {
-    totalPerPublicationGroupSmallCounts(newValue) {
-      if (newValue) {
-        this.fetchPublicationNames(Object.keys(this.totalPerPublicationGroupSmallCounts).filter(publicationCode =>
-            publicationCode !== 'null'))
+    totalPerPublicationGroupSmallCounts: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.fetchPublicationNames(Object.keys(this.totalPerPublicationGroupSmallCounts)
+            .filter(publicationCode => publicationCode !== 'null')
+          )
+        }
       }
     },
     labels() {

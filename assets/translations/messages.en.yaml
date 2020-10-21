@@ -457,16 +457,16 @@ RECHERCHE_MAGAZINE_HISTOIRE_NON_POSSEDEE: You don\'t own this story.
 RECHERCHE_MAGAZINE_RESULTATS_NOMBREUX_1: There are more than 10 matches.
 RECHERCHE_MAGAZINE_RESULTATS_NOMBREUX_2: Please provide more precise keywords.
 RECHERCHE_MAGAZINE_SELECTIONNEZ_UNE_HISTOIRE: Choose a story in the list.
-RECHERCHER_BIBLIOTHEQUE: "Find a story in the bookcase :"
+RECHERCHER_BIBLIOTHEQUE: "Story search"
 RECHERCHER_BOUQUINERIES: Find second-hand bookshops
-RECHERCHER_HISTOIRE: Find a story
+RECHERCHER_HISTOIRE: Story search
 RECHERCHER_INTRO: "... or find an issue by searching for a story that's inside of it :"
 RECHERCHER_PUBLICATIONS: Find the publications of a story by story code
 REFERENCES: referenced
 REJOIGNEZ_NOUS: Join the community on
 REMERCIEMENT_LOGO: The DucksManager and WhatTheDuck logos are drawn by enigm.
-REMPLIR_INFOS_NOUVEAU_MAGAZINE: Fill in the following fields in order for DucksManager to determine the new magazine for which ou wish to add some issues.
-REMPLIR_PAYS_ET_MAGAZINE: You must fill the fields corresponding to the country and the magazine\n for which you want to add some issues
+REMPLIR_INFOS_NOUVEAU_MAGAZINE: Indicate the publication that you wish to add some issues to.
+REMPLIR_PAYS_ET_MAGAZINE: You must fill the fields corresponding to the country and the magazine\n that you want to add issues to
 RESULTAT_NUMEROS_INDUCKS: DucksManager found the following issues on your Inducks account.
 SALUTATION: Hi %s,
 SANS_TITRE: No title
@@ -486,6 +486,7 @@ SUGGESTIONS_ACHATS_NOUVEAUTE: Depuis votre dernière visite, %d magazine avec de
 SUGGESTIONS_ACHATS_NOUVEAUTES: Depuis votre dernière visite, %d magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !
 SUGGESTIONS_ACHATS_QUOTIDIENNES: The suggestions are updated every day.
 SUGGESTIONS_PUBLICATIONS_DESACTIVE: The author suggestions are currently disabled.
+SUGGESTIONS_SEE_ALL: See all the suggestions for my collection
 SUPPRESSION_ACQUISITION_CONFIRMATION: Do you confirm the removal of this purchase ?\nThe issues corresponding to this purchase will not be removed from your collection.
 SUPPRIMER: Remove
 SUPPRIMER_ACQUISITION: Remove this purchase

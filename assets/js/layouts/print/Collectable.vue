@@ -216,7 +216,7 @@ export default {
   methods: {
     ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
     ...mapActions("collection", ["loadPurchases"]),
-    numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : ("A".charCodeAt() - 26)) + number),
+    numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : "A".charCodeAt() - 26) + number),
     letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt()
   }
 }

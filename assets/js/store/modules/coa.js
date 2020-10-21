@@ -11,6 +11,7 @@ export default {
     state: () => ({
         countryNames: null,
         publicationNames: null,
+        publicationNamesFullCountries: [],
         personNames: null,
         issueNumbers: null,
         issueDetails: null,
@@ -28,6 +29,9 @@ export default {
                     ...acc,
                     [publicationCode]: publicationNames[publicationCode]
                 }), {})
+        },
+        setPublicationNamesFullCountries(state, publicationNamesFullCountries) {
+            state.publicationNamesFullCountries = publicationNamesFullCountries
         },
         setPersonNames(state, personNames) {
             state.personNames = Object.keys(personNames)
@@ -65,6 +69,21 @@ export default {
                         chunkSize: 10
                     }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
                 });
+        },
+        fetchPublicationNamesFromCountry: async ({ state, commit, dispatch }, countryCode) => {
+            if (state.publicationNamesFullCountries.includes(countryCode)) {
+                return
+            }
+            return axios.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({data}) => {
+                commit("setPublicationNames", {
+                    ...(state.publicationNames || {}),
+                    ...data
+                })
+                commit("setPublicationNamesFullCountries", [
+                    ...state.publicationNamesFullCountries,
+                    countryCode
+                ])
+            })
         },
         fetchPersonNames: async ({ state, commit, dispatch }, personCodes) => {
             const newPersonNames = [...new Set(personCodes.filter(personCode =>

@@ -15,7 +15,7 @@
           />
         </div>
         <div @click="deleteAuthor(author)">
-          <a href="javascript:void(0)">{{ l10n.SUPPRIMER }}</a>
+          <a href="javascript:void 0">{{ l10n.SUPPRIMER }}</a>
         </div>
       </li>
     </ul>
