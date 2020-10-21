@@ -9,6 +9,7 @@
       {{ l10n.AUCUN_NUMERO_POSSEDE_2 }}
     </b-alert>
     <PublicationStats v-if="tab === 'publications'" />
+    <ConditionStats v-else-if="tab === 'conditions'" />
     <div v-else-if="tab === 'possessions' || tab === 'authors'">
       <b-button-group>
         <b-button
@@ -101,10 +102,12 @@ import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "vuex";
 import axios from "axios";
 import AuthorList from "../components/AuthorList";
+import ConditionStats from "./stats/ConditionStats";
 
 export default {
   name: "Stats",
   components: {
+    ConditionStats,
     PublicationStats,
     PossessionStats,
     PurchaseStats,
@@ -160,26 +163,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#logo_zone1 {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background-color: rgb(200, 137, 100) !important;
-  height: 180px;
-
-  a {
-    position: absolute;
-    border-bottom: none;
-
-    &:hover {
-      border-bottom: 0 !important;
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  #logo_zone1 {
-    display: none;
-  }
-}
 </style>
