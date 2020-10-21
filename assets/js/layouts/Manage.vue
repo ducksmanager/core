@@ -7,60 +7,55 @@
     {{ l10n.RECHERCHER_INTRO }}
     <IssueSearch />
   </div>
-  <div v-else-if="total > 0 && countryNames">
-    <div>
-      {{ l10n.POSSESSION_MAGAZINES_INTRO }} {{ total }} {{ l10n.NUMEROS }}.<br>
-      {{ l10n.POSSESSION_MAGAZINES_2 }} {{ Object.keys(totalPerPublication).length }} {{ l10n.POSSESSION_MAGAZINES_3 }}
-      {{ Object.keys(totalPerCountry).length }} {{ l10n.PAYS }}.
-      <br>{{ l10n.CLIQUEZ_SUR_MAGAZINE_POUR_EDITER }}<br><br>
-    </div>
-    <IssueSearch />
-    <b-navbar
-      id="publication-list"
-      toggleable="lg"
-      type="dark"
-      variant="dark"
-      sticky
-    >
-      <b-navbar-brand href="#">
-        {{ l10n.LISTE_MAGAZINES }}
-      </b-navbar-brand>
-      <b-navbar-toggle target="nav-publications" />
-      <b-collapse
-        id="nav-publications"
-        is-nav
+  <div v-else>
+    <Menu
+      :title="l10n.GERER_COLLECTION"
+      :root-path="'/collection'"
+      :items="[
+        {path: '/show', text: l10n.GESTION_NUMEROS_COURT},
+        {path: '/account', text: l10n.GESTION_COMPTE_COURT}
+      ]"
+    />
+    <div v-if="total > 0 && countryNames">
+      <Accordion
+        v-if="suggestionsNumber"
+        id="suggestions"
+        accordion-group-id="suggestions"
       >
-        <b-navbar-nav>
-          <b-nav-item-dropdown
-            v-for="country in Object.keys(totalPerCountry)"
-            :key="country"
-            :text="country"
-          >
-            <template #button-content>
-              <Country
-                :country="country"
-                :country-name="countryNames[country]"
-              >
-                <template #default="props">
-                  {{ props.countryName }}
-                </template>
-              </Country>
-            </template>
-            <b-dropdown-item
-              v-for="publicationCode in getSortedPublications(country)"
-              :key="publicationCode"
-              :href="`/collection/show/${publicationCode}`"
-            >
-              {{ publicationNames[publicationCode] }}
-            </b-dropdown-item>
-          </b-nav-item-dropdown>
-          <b-nav-item href="/collection/show/new">
-            {{ l10n.NOUVEAU_MAGAZINE }}
-          </b-nav-item>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-    <IssueList :publicationcode="publicationcode || mostPossessedPublication" />
+        <template #header>
+          {{
+            suggestionsNumber === 1 ? l10n.SUGGESTIONS_ACHATS_NOUVEAUTE : $t('SUGGESTIONS_ACHATS_NOUVEAUTES', suggestionsNumber)
+          }}
+        </template>
+        <template #content>
+          <SuggestionList
+            countrycode="ALL"
+            since-last-visit
+            @has-suggestions-data="e => {suggestionsNumber = e}"
+          />
+        </template>
+        <template #footer>
+          <div><a href="/expand">{{ l10n.SUGGESTIONS_SEE_ALL }}</a></div>
+        </template>
+      </Accordion>
+      <div>
+        {{ l10n.POSSESSION_MAGAZINES_INTRO }} {{ total }} {{ l10n.NUMEROS }}.<br>
+        {{ l10n.POSSESSION_MAGAZINES_2 }} {{ Object.keys(totalPerPublication).length }} {{
+          l10n.POSSESSION_MAGAZINES_3
+        }}
+        {{ Object.keys(totalPerCountry).length }} {{ l10n.PAYS }}.
+        <br>{{ l10n.CLIQUEZ_SUR_MAGAZINE_POUR_EDITER }}<br><br>
+      </div>
+      <PublicationList />
+      <IssueList :publicationcode="publicationcode || mostPossessedPublication" />
+    </div>
+    <div v-else-if="total === 0">
+      {{ l10n.COLLECTION_VIDE_1 }}
+      <br>
+      {{ l10n.COLLECTION_CLIQUER_NOUVEAU_MAGAZINE }}
+      <br>
+      <br>
+    </div>
   </div>
 </template>
 
@@ -68,21 +63,24 @@
 import IssueList from "../components/IssueList";
 import l10nMixin from "../mixins/l10nMixin";
 import collectionMixin from "../mixins/collectionMixin";
-import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters, mapState} from "vuex";
 import Country from "../components/Country";
 import IssueSearch from "../components/IssueSearch";
 import PublicationSelect from "../components/PublicationSelect";
 import SuggestionList from "./SuggestionList";
 import Accordion from "../components/Accordion";
+import PublicationList from "../components/PublicationList";
+import Menu from "./Menu";
 
 export default {
   name: "Manage",
   components: {
+    Menu,
+    PublicationList,
     Accordion,
     SuggestionList,
     PublicationSelect,
     IssueSearch,
-    Country,
     IssueList
   },
   mixins: [l10nMixin, collectionMixin],
@@ -92,18 +90,12 @@ export default {
       required: true
     }
   },
+  data: () => ({
+    suggestionsNumber: 0
+  }),
   computed: {
+    ...mapState("coa", ["countryNames", "publicationNames"]),
     ...mapGetters("collection", ["total", "totalPerCountry", "totalPerPublication"]),
-    publicationsPerCountry() {
-      const vm = this
-      return this.totalPerCountry && this.publicationNames && Object.keys(this.totalPerCountry)
-          .reduce((acc, country) => ({
-            ...acc,
-            [country]: Object.keys(vm.totalPerPublication).filter(publicationCode =>
-                publicationCode.split('/')[0] === country
-            )
-          }), {})
-    },
 
     mostPossessedPublication() {
       const vm = this
@@ -111,25 +103,12 @@ export default {
     }
   },
 
-  watch: {
-    async totalPerPublication(newValue) {
-      if (newValue) {
-        await this.fetchPublicationNames(Object.keys(newValue))
-      }
-    }
-  },
-
-  async mounted(){
+  async mounted() {
     await this.fetchCountryNames()
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
-    getSortedPublications(country) {
-      const vm = this
-      return this.publicationsPerCountry && this.publicationsPerCountry[country]
-        .sort((a, b) => Math.sign(vm.publicationNames[a] - vm.publicationNames[b]))
-    }
+    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"])
   }
 }
 </script>
@@ -137,13 +116,11 @@ export default {
 <style scoped lang="scss">
 #publication-list {
   top: 38px;
-  margin-top: 30px;
+  margin-bottom: 20px;
   z-index: 1;
 }
-.navbar {
-  border-radius: 4px;
-  margin: 20px 0;
 
+.navbar {
   .navbar-nav {
     flex-wrap: wrap;
 

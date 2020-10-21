@@ -5,7 +5,7 @@
     variant="dark"
     sticky
   >
-    <b-navbar-brand href="#">
+    <b-navbar-brand v-if="withTitle">
       {{ l10n.RECHERCHER_HISTOIRE }}
     </b-navbar-brand>
     <b-navbar-toggle target="nav-collapse" />
@@ -63,6 +63,13 @@ export default {
   name: "IssueSearch",
   components: {Issue},
   mixins: [l10nMixin, collectionMixin],
+
+  props: {
+    withTitle: {
+      type: Boolean,
+      default: true
+    }
+  },
   emits: ['scroll-to-issue'],
 
   data: () => ({
@@ -124,25 +131,38 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.navbar-nav {
-  flex-wrap: wrap;
+.navbar {
+  .navbar-brand {
+    min-width: 120px;
+  }
 
-  .dropdown.search-type {
-    position: absolute;
-    width: 120px;
+  .navbar-nav {
+    flex-wrap: wrap;
 
-    ~ .form-control, ~ datalist {
-      padding-left: 135px;
-    }
+    .dropdown.search-type {
+      position: absolute;
+      width: 120px;
 
-    ~ datalist {
-      display: block;
+      ~ .form-control {
+        padding-left: 135px;
+      }
 
-      option {
-        cursor: pointer;
+      ~ datalist {
+        display: block;
+        position: absolute;
+        background: darkgray;
+        width: 300px;
+        top: 35px;
+        padding-left: 0;
 
-        a {
-          border: 0;
+        option {
+          cursor: pointer;
+          margin: 10px;
+          overflow-x: hidden;
+
+          a {
+            border: 0;
+          }
         }
       }
     }

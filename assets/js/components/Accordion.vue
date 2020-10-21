@@ -28,6 +28,7 @@
           <slot name="content" />
         </b-card-text>
       </b-card-body>
+      <b-card-footer><slot name="footer" /></b-card-footer>
     </b-collapse>
   </b-card>
 </template>
