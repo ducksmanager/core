@@ -1,6 +1,6 @@
 <template>
   <div v-if="l10n">
-    <Menu />
+    <LeftPanel />
     <Banner />
     <div id="logo_zone2">
       <component
@@ -15,7 +15,7 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import userMixin from "../mixins/userMixin";
-import Menu from "./Menu";
+import LeftPanel from "./LeftPanel";
 import Footer from "./Footer";
 import Login from "./Login";
 import Banner from "./Banner";
@@ -26,7 +26,7 @@ import Stats from "./Stats";
 export default {
   name: "Site",
   components: {
-    Menu,
+    LeftPanel,
     Banner,
     Manage,
     Stats,

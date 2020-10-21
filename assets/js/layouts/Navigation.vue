@@ -4,7 +4,7 @@
     id="menu-content"
     class="menu-content collapse show"
   >
-    <MenuItemGroup
+    <NavigationItemGroup
       path="collection"
       icon="glyphicon-home"
     >
@@ -14,84 +14,84 @@
       </template>
       <template #items>
         <template v-if="username">
-          <MenuItem path="bibliotheque">
+          <NavigationItem path="bibliotheque">
             <b-icon-book-half />
             {{ l10n.BIBLIOTHEQUE_COURT }}
-          </MenuItem>
-          <MenuItem path="/collection/show">
+          </NavigationItem>
+          <NavigationItem path="/collection/show">
             <b-icon-list />
             {{ l10n.GERER_COLLECTION }}
-          </MenuItem>
-          <MenuItem path="stats">
+          </NavigationItem>
+          <NavigationItem path="/stats/publications">
             <b-icon-graph-up />
             {{ l10n.STATISTIQUES_COLLECTION }}
-          </MenuItem>
-          <MenuItem path="agrandir">
+          </NavigationItem>
+          <NavigationItem path="agrandir">
             <b-icon-capslock-fill />
             {{ l10n.AGRANDIR_COLLECTION }}
-          </MenuItem>
-          <MenuItem path="/inducks/import">
+          </NavigationItem>
+          <NavigationItem path="/inducks/import">
             <div
               class="b-custom"
               :style="{backgroundImage: `url(${imagePath}/icons/inducks.png)`}"
             />
             {{ l10n.COLLECTION_INDUCKS }}
-          </MenuItem>
-          <MenuItem path="print">
+          </NavigationItem>
+          <NavigationItem path="print">
             <b-icon-printer-fill />
             {{ l10n.IMPRIMER_COLLECTION }}
-          </MenuItem>
-          <MenuItem path="logout">
+          </NavigationItem>
+          <NavigationItem path="logout">
             <b-icon-x-square-fill />
             {{ l10n.DECONNEXION }}
-          </MenuItem>
+          </NavigationItem>
         </template>
         <template v-else>
-          <MenuItem
+          <NavigationItem
             path="new"
             icon="glyphicon glyphicon-certificate"
           >
             {{ l10n.NOUVELLE_COLLECTION }}
-          </MenuItem>
-          <MenuItem
+          </NavigationItem>
+          <NavigationItem
             path="open"
             icon="glyphicon glyphicon-folder-open"
           >
             {{ l10n.OUVRIR_COLLECTION }}
-          </MenuItem>
+          </NavigationItem>
         </template>
       </template>
-    </MenuItemGroup>
+    </NavigationItemGroup>
     <li class="empty" />
-    <MenuItem path="bouquineries">
+    <NavigationItem path="bouquineries">
       {{ l10n.RECHERCHER_BOUQUINERIES }}
-    </MenuItem>
-    <MenuItem
+    </NavigationItem>
+    <NavigationItem
       v-if="!username"
       path="/inducks/import"
     >
       {{ l10n.COLLECTION_INDUCKS_POSSEDEE }}
-    </MenuItem>
-    <MenuItem
+    </NavigationItem>
+    <NavigationItem
       v-if="!username"
       path="demo"
     >
       {{ l10n.DEMO_MENU }}
-    </MenuItem>
+    </NavigationItem>
   </ul>
 </template>
 
 <script>
-import MenuItemGroup from "../components/MenuItemGroup";
-import MenuItem from "../components/MenuItem";
+import NavigationItemGroup from "../components/NavigationItemGroup";
+import NavigationItem from "../components/NavigationItem";
 import l10nMixin from "../mixins/l10nMixin";
 
 export default {
   name: "Navigation",
 
   components: {
-    MenuItemGroup,
-    MenuItem
+    NavigationItemGroup,
+    NavigationItem
   },
 
   mixins: [l10nMixin],

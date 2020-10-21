@@ -1,30 +1,45 @@
 <template>
-  <li :class="{'non-empty': true, 'no-icon': !icon, active }">
-    <a :href="getLink(path)">
-      <i :class="{[icon]: true}" />
-      <slot />
-    </a>
-  </li>
+  <b-nav-item
+    :href="active ? '#' : rootPath+path"
+    :active="active"
+  >
+    {{ text }}
+  </b-nav-item>
 </template>
-
 <script>
 export default {
   name: "MenuItem",
+
   props: {
-    path: {type: String, required: true},
-    icon: {type: String, default: null}
+    rootPath: {
+      type: String,
+      default: '/'
+    },
+    path: {
+      type: String,
+      required: true
+    },
+    text: {
+      type: String,
+      required: true
+    }
   },
 
   computed: {
-    active() { return window.location.pathname.split('/').includes(this.path) }
+    active() {
+      return !(this.rootPath + this.path).split('/')
+        .find(pathPart =>
+          !window.location.pathname.split('/').includes(pathPart)
+        )
+    }
   },
-
-  methods: {
-    getLink: path => path.indexOf('/') === 0 ? path : `/?action=${path}`
-  }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+a.nav-link {
+  &.active {
+    color: black !important;
+  }
+}
 </style>

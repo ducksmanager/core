@@ -1,5 +1,17 @@
 <template>
   <div v-if="collection && l10n">
+    <Menu
+      :title="l10n.STATISTIQUES_COLLECTION"
+      :root-path="'/stats'"
+      :default-path="'/publications'"
+      :items="[
+        {path: '/publications', text: l10n.PUBLICATIONS},
+        {path: '/possessions', text: l10n.POSSESSIONS},
+        {path: '/conditions', text: l10n.ETATS_NUMEROS},
+        {path: '/purchases', text: l10n.ACHATS},
+        {path: '/authors', text: l10n.AUTEURS}
+      ]"
+    />
     <b-alert
       v-if="!collection.length"
       variant="info"
@@ -103,10 +115,12 @@ import {mapActions, mapState} from "vuex";
 import axios from "axios";
 import AuthorList from "../components/AuthorList";
 import ConditionStats from "./stats/ConditionStats";
+import Menu from "./Menu";
 
 export default {
   name: "Stats",
   components: {
+    Menu,
     ConditionStats,
     PublicationStats,
     PossessionStats,
