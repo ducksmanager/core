@@ -28,7 +28,7 @@ class CollectionController extends AbstractController
      *     "fr": "/collection/afficher/{publicationCode}"
      * },
      *     methods={"GET"},
-     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"},
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)|new$"},
      *     defaults={"publicationCode"=null})
      * )
      */

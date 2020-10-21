@@ -1,6 +1,14 @@
 <template>
-  <div v-if="total && countryNames">
-    <div id="intro">
+  <div v-if="publicationcode === 'new'">
+    {{ l10n.REMPLIR_INFOS_NOUVEAU_MAGAZINE }}
+    <PublicationSelect />
+    <br>
+    <br>
+    {{ l10n.RECHERCHER_INTRO }}
+    <IssueSearch />
+  </div>
+  <div v-else-if="total > 0 && countryNames">
+    <div>
       {{ l10n.POSSESSION_MAGAZINES_INTRO }} {{ total }} {{ l10n.NUMEROS }}.<br>
       {{ l10n.POSSESSION_MAGAZINES_2 }} {{ Object.keys(totalPerPublication).length }} {{ l10n.POSSESSION_MAGAZINES_3 }}
       {{ Object.keys(totalPerCountry).length }} {{ l10n.PAYS }}.
@@ -46,7 +54,7 @@
               {{ publicationNames[publicationCode] }}
             </b-dropdown-item>
           </b-nav-item-dropdown>
-          <b-nav-item href="#">
+          <b-nav-item href="/collection/show/new">
             {{ l10n.NOUVEAU_MAGAZINE }}
           </b-nav-item>
         </b-navbar-nav>
@@ -63,10 +71,16 @@ import collectionMixin from "../mixins/collectionMixin";
 import {mapActions, mapGetters} from "vuex";
 import Country from "../components/Country";
 import IssueSearch from "../components/IssueSearch";
+import PublicationSelect from "../components/PublicationSelect";
+import SuggestionList from "./SuggestionList";
+import Accordion from "../components/Accordion";
 
 export default {
   name: "Manage",
   components: {
+    Accordion,
+    SuggestionList,
+    PublicationSelect,
     IssueSearch,
     Country,
     IssueList
@@ -114,9 +128,7 @@ export default {
     getSortedPublications(country) {
       const vm = this
       return this.publicationsPerCountry && this.publicationsPerCountry[country]
-          .sort((a, b) =>
-              vm.publicationNames[a] < vm.publicationNames[b] ? -1 : (vm.publicationNames[a] > vm.publicationNames[b] ? 1 : 0)
-          )
+        .sort((a, b) => Math.sign(vm.publicationNames[a] - vm.publicationNames[b]))
     }
   }
 }
@@ -134,6 +146,11 @@ export default {
 
   .navbar-nav {
     flex-wrap: wrap;
+
+    .navbar-nav {
+      max-height: 200px;
+      overflow-y: auto;
+    }
   }
 
   a {
