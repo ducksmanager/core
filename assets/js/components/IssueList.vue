@@ -32,6 +32,7 @@
       @contextmenu.prevent="$refs.contextMenu.$refs.menu.open"
     >
       <b-alert
+        v-once
         show
         variant="info"
         style="margin-bottom: 0"
@@ -46,17 +47,13 @@
         :class="{
           issue: true,
           [`issue-${condition ? 'possessed' : 'missing'}`]: true,
-          highlighted: highlighted === issueNumber,
           preselected: preselected.includes(issueNumber),
           selected: selected.includes(issueNumber)
         }"
         :title="`${l10n.NUMERO_COURT}${issueNumber}`"
         @mousedown.left="preselectedIndexStart = preselectedIndexEnd = i"
         @mouseup.left="updateSelected"
-        @mouseover="preselectedIndexStart === null ? highlighted = issueNumber : preselectedIndexEnd = i"
-        @mouseout="
-          highlighted = null
-        "
+        @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : i"
       >
         <a :name="issueNumber" />
         <img
@@ -82,14 +79,17 @@
           </div>
           <div
             v-if="condition"
+            v-once
             :class="{
               'issue-details': true,
-              [`issue-condition-${condition}`]: true
+              'issue-condition': true
             }"
+            :style="{backgroundColor: conditions.find(({value}) => value === condition).color}"
             :title="l10n[`ETAT_${condition}`]"
           />
           <div
             v-if="purchaseId && purchases.find(({id}) => id === purchaseId)"
+            v-once
             class="issue-details issue-date"
           >
             <img
@@ -100,6 +100,7 @@
           </div>
           <div
             v-else
+            v-once
             class="issue-details"
           />
           <div class="issue-details">
@@ -155,8 +156,6 @@ export default {
     },
     coverUrl: null,
     issues: null,
-    purchases: null,
-    highlighted: null,
     selected: [],
     preselected: [],
     preselectedIndexStart: null,
@@ -180,17 +179,15 @@ export default {
     filteredIssues() {
       const vm = this
       return this.issues && this.issues.filter(issue =>
-          (vm.filter.possessed && issue.condition) ||
-          (vm.filter.missing && !issue.condition)
+        vm.filter.possessed && issue.condition ||
+        vm.filter.missing && !issue.condition
       )
     }
-  }
-  ,
+  },
   watch: {
     preselectedIndexEnd() {
       this.preselected = this.getPreselected()
-    }
-    ,
+    },
     userIssues: {
       immediate: true,
       async handler(newValue) {
@@ -198,54 +195,48 @@ export default {
           const vm = this
 
           const userIssuesForPublication = newValue.filter(issue =>
-              `${issue.country}/${issue.magazine}` === vm.publicationcode)
-              .map(issue => ({
-                    ...issue,
-                    condition: Object.keys(vm.conditions).find(condition => vm.conditions[condition] === issue.condition) || 'possessed'
-                  })
-              )
+            `${issue.country}/${issue.magazine}` === vm.publicationcode)
+            .map(issue => ({
+                ...issue,
+                condition: (vm.conditions.find(({dbValue}) => dbValue === issue.condition) || {value: 'possessed'}).value
+              })
+            )
 
           this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
-              .map(issueNumber => ({
-                issueNumber,
-                ...(userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
-              }))
+            .map(issueNumber => ({
+              issueNumber,
+              ...(userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
+            }))
         }
       }
     }
-  }
-  ,
+  },
   async mounted() {
     await this.loadPurchases()
     await this.fetchPublicationNames([this.publicationcode])
-  }
-  ,
+  },
   methods: {
-    ...
-        mapActions("coa", ["fetchPublicationNames"]),
-    ...
-        mapActions("collection", ["loadCollection"]),
+    ...mapActions("coa", ["fetchPublicationNames"]),
+    ...mapActions("collection", ["loadCollection", "loadPurchases"]),
     getPreselected() {
       const vm = this
       if ([this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)) {
         return this.preselected
       }
       return this.issues
-          .map(({issueNumber}) => issueNumber)
-          .filter((issueNumber, i) =>
-              i >= vm.preselectedIndexStart && i <= vm.preselectedIndexEnd
-          )
-    }
-    ,
+        .map(({issueNumber}) => issueNumber)
+        .filter((issueNumber, i) =>
+          i >= vm.preselectedIndexStart && i <= vm.preselectedIndexEnd
+        )
+    },
     updateSelected() {
       const vm = this
       this.selected = this.issues
-          .map(({issueNumber}) => issueNumber)
-          .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber))
+        .map(({issueNumber}) => issueNumber)
+        .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber))
       this.preselectedIndexStart = this.preselectedIndexEnd = null
       this.preselected = []
-    }
-    ,
+    },
     async loadCover(issueNumber) {
       const vm = this
       this.loadingCover = issueNumber
@@ -254,19 +245,11 @@ export default {
       setTimeout(function () {
         vm.loadingCover = null
       }, 1000)
-    }
-    ,
-    async loadPurchases() {
-      this.purchases = (await axios.get('/api/collection/purchases')).data
-          .sort(({date: purchaseDate1}, {date: purchaseDate2}) =>
-              purchaseDate1 < purchaseDate2 ? 1 : (purchaseDate1 > purchaseDate2 ? -1 : 0))
-    }
-    ,
+    },
     async updateIssues(data) {
       await axios.post('/api/collection/issues', data)
       await this.loadCollection(true)
-    }
-    ,
+    },
     async createPurchase({date, description}) {
       await axios.post('/api/collection/purchases', {
         date,
@@ -275,7 +258,6 @@ export default {
       await this.loadPurchases()
     }
   }
-  ,
 }
 </script>
 
@@ -315,11 +297,6 @@ export default {
       -moz-opacity: 0.7;
     }
 
-    &.highlighted {
-      opacity: 0.5;
-      filter: alpha(opacity=50);
-    }
-
     &.preselected {
       opacity: 0.7;
       filter: alpha(opacity=70);
@@ -351,24 +328,8 @@ export default {
         height: 14px;
         margin-right: 5px;
 
-        &.issue-condition-bad {
+        &.issue-condition {
           border-radius: 50%;
-          background-color: red;
-        }
-
-        &.issue-condition-notsogood {
-          border-radius: 50%;
-          background-color: orange;
-        }
-
-        &.issue-condition-good {
-          border-radius: 50%;
-          background-color: #2CA77B;
-        }
-
-        &.issue-condition-undefined {
-          border-radius: 50%;
-          background-color: #808080;
         }
       }
     }
