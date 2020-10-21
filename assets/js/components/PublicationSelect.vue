@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="l10n">
     <b-select
       v-model="currentCountryCode"
       :options="countryNames"
@@ -8,12 +8,11 @@
     <b-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
-      :options="publicationNames[currentCountryCode]"
+      :options="publicationNamesForCurrentCountry"
     />
     <b-btn
-      variant="default"
-      :disabled="currentPublicationCode"
-      @click="$emit('input', currentPublicationCode)"
+      :disabled="!currentPublicationCode"
+      :href="`/collection/show/${currentPublicationCode}`"
     >
       {{ l10n.OK }}
     </b-btn>
@@ -22,9 +21,12 @@
 
 <script>
 import {mapActions, mapState} from "vuex";
+import l10nMixin from "../mixins/l10nMixin";
 
 export default {
   name: "PublicationSelect",
+
+  mixins: [l10nMixin],
   emits: ['input'],
 
   data: () => ({
@@ -33,7 +35,19 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["countryNames", "publicationNames"])
+    ...mapState("coa", ["countryNames", "publicationNames", "publicationNamesFullCountries"]),
+    publicationNamesForCurrentCountry() {
+      const vm = this
+      return this.publicationNamesFullCountries.includes(this.currentCountryCode)
+        ? Object.keys(this.publicationNames)
+          .filter(publicationCode =>
+            new RegExp(`^${vm.currentCountryCode}/`).test(publicationCode)
+          ).reduce((acc, publicationCode) => ({
+            ...acc,
+            [publicationCode]: vm.publicationNames[publicationCode]
+          }), {})
+        : []
+    }
   },
 
   mounted() {
@@ -41,7 +55,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNamesFromCountry"])
+    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNamesFromCountry"]),
   }
 }
 </script>
