@@ -6,20 +6,7 @@
       {{ Object.keys(totalPerCountry).length }} {{ l10n.PAYS }}.
       <br>{{ l10n.CLIQUEZ_SUR_MAGAZINE_POUR_EDITER }}<br><br>
     </div>
-    <b-navbar
-      toggleable="lg"
-      type="dark"
-      variant="dark"
-      sticky
-    >
-      <b-navbar-brand href="#">
-        {{ l10n.RECHERCHER_HISTOIRE }}
-      </b-navbar-brand>
-      <b-navbar-toggle target="nav-collapse" />
-      <b-navbar-nav>
-        <IssueSearch />
-      </b-navbar-nav>
-    </b-navbar>
+    <IssueSearch />
     <b-navbar
       id="publication-list"
       toggleable="lg"

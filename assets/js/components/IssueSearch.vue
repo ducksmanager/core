@@ -1,43 +1,56 @@
 <template>
-  <span v-if="l10n">
-    <b-dropdown
-      class="search-type"
-      :text="l10n[searchContexts[searchContext]]"
-    >
-      <b-dropdown-item
-        v-for="(l10nKey, alternativeSearchContext) in searchContextsWithoutCurrent"
-        :key="alternativeSearchContext"
-        @click="searchContext=alternativeSearchContext;search = ''"
-      >{{ l10n[l10nKey] }}</b-dropdown-item>
-    </b-dropdown>
-    <b-form-input
-      v-model="search"
-      list="search"
-      :placeholder="searchContext === 'story' ? l10n.RECHERCHER_HISTOIRE : l10n.RECHERCHER_PUBLICATIONS"
-    />
-    <datalist
-      v-if="searchResults.results"
-      id="search"
-    >
-      <option v-if="!searchResults.results.length">
-        {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
-      </option> 
-      <option
-        v-for="searchResult in searchResults.results"
-        :key="searchResult.code"
-        @click="selectSearchResult(searchResult)"
+  <b-navbar
+    toggleable="lg"
+    type="dark"
+    variant="dark"
+    sticky
+  >
+    <b-navbar-brand href="#">
+      {{ l10n.RECHERCHER_HISTOIRE }}
+    </b-navbar-brand>
+    <b-navbar-toggle target="nav-collapse" />
+    <b-navbar-nav>
+      <b-dropdown
+        class="search-type"
+        :text="l10n[searchContexts[searchContext]]"
       >
-        <span v-if="!isSearchByCode(search)">{{ searchResult.title }}</span>
-        <Issue
-          v-else-if="publicationNames && publicationNames[searchResult.publicationcode]"
-          :publicationcode="searchResult.publicationcode"
-          :publicationname="publicationNames[searchResult.publicationcode]"
-          :issuenumber="searchResult.issuenumber"
-          clickable
-        />
-      </option>
-    </datalist>
-  </span>
+        <b-dropdown-item
+          v-for="(l10nKey, alternativeSearchContext) in searchContextsWithoutCurrent"
+          :key="alternativeSearchContext"
+          @click="searchContext=alternativeSearchContext;search = ''"
+        >
+          {{ l10n[l10nKey] }}
+        </b-dropdown-item>
+      </b-dropdown>
+      <b-form-input
+        v-model="search"
+        list="search"
+        :placeholder="searchContext === 'story' ? l10n.RECHERCHER_HISTOIRE : l10n.RECHERCHER_PUBLICATIONS"
+      />
+      <datalist
+        v-if="searchResults.results"
+        id="search"
+      >
+        <option v-if="!searchResults.results.length">
+          {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
+        </option>
+        <option
+          v-for="searchResult in searchResults.results"
+          :key="searchResult.code"
+          @click="selectSearchResult(searchResult)"
+        >
+          <span v-if="!isSearchByCode(search)">{{ searchResult.title }}</span>
+          <Issue
+            v-else-if="publicationNames && publicationNames[searchResult.publicationcode]"
+            :publicationcode="searchResult.publicationcode"
+            :publicationname="publicationNames[searchResult.publicationcode]"
+            :issuenumber="searchResult.issuenumber"
+            clickable
+          />
+        </option>
+      </datalist>
+    </b-navbar-nav>
+  </b-navbar>
 </template>
 <script>
 import axios from "axios";
@@ -81,7 +94,7 @@ export default {
         if (this.isSearchByCode()) {
           this.searchResults = (await axios.get(`/api/coa/list/issues/withStoryVersionCode/${newValue.replace(/^code=/, '')}`)).data
           this.searchResults.results = this.searchResults.results.sort((issue1, issue2) =>
-              !!vm.isInCollection(issue1) > !!vm.isInCollection(issue2) ? -1 : (!!vm.isInCollection(issue1) < !!vm.isInCollection(issue2) ? 1 : 0))
+            !!vm.isInCollection(issue1) > !!vm.isInCollection(issue2) ? -1 : (!!vm.isInCollection(issue1) < !!vm.isInCollection(issue2) ? 1 : 0))
           await this.fetchPublicationNames(this.searchResults.results.map(({publicationcode}) => publicationcode))
         } else {
           this.searchResults = (await axios.post('/api/coa/stories/search', {keywords: newValue})).data
@@ -111,23 +124,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.dropdown.search-type {
-  position: absolute;
-  width: 120px;
+.navbar-nav {
+  flex-wrap: wrap;
 
-  + .form-control {
-    padding-left: 135px;
-  }
-}
+  .dropdown.search-type {
+    position: absolute;
+    width: 120px;
 
-datalist {
-  display: block;
+    ~ .form-control, ~ datalist {
+      padding-left: 135px;
+    }
 
-  option {
-    cursor: pointer;
+    ~ datalist {
+      display: block;
 
-    a {
-      border: 0;
+      option {
+        cursor: pointer;
+
+        a {
+          border: 0;
+        }
+      }
     }
   }
 }
