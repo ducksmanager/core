@@ -47,7 +47,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator
     {
         $credentials = [
             'username' => $request->request->get('username'),
-            'password' => $request->request->get('password'),
+            'password' => sha1($request->request->get('password')),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
@@ -86,12 +86,13 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator
 //            }
 //            return (new User($username, $internalRoles));
 //        }
+        $this->logger->info('Credentials : '.print_r($credentials, true));
         $roles = $this->apiService->call('/collection/privileges', 'ducksmanager', [], 'GET', false, [
             'dm-user' => $credentials['username'],
-            'dm-pass' => sha1($credentials['password'])
+            'dm-pass' => $credentials['password']
         ]);
 
-        return count($roles) > 0;
+        return is_array($roles);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
