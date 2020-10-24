@@ -173,7 +173,7 @@ export default {
       this.$emit('update-issues', {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,
-        condition: vm.conditions[this.condition],
+        condition: vm.conditions.find(({value}) => value === vm.condition).dbValue,
         istosell: this.isToSell,
         purchaseId: this.purchaseId
       })
