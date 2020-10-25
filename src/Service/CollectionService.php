@@ -29,7 +29,7 @@ class CollectionService
             return [];
         }
 
-        return $this->apiService->runQuery(
+        $results = $this->apiService->runQuery(
             '
             select type_contribution.contribution, ids_users.ID_User, ifnull(contributions_utilisateur.points_total, 0) as points_total
             from (' . implode(' union ', array_map(function ($medalType) {
@@ -48,6 +48,12 @@ class CollectionService
                 ON type_contribution.contribution = contributions_utilisateur.contribution
                AND ids_users.ID_User = contributions_utilisateur.ID_user', 'dm', $userIds
         );
+
+        return array_map(function(array $result) {
+            $result['points_total'] = intval($result['points_total']);
+            $result['ID_User'] = intval($result['ID_User']);
+            return $result;
+        }, $results);
     }
 
 }

@@ -8,8 +8,11 @@ export default {
     purchases: null,
     watchedAuthors: null,
     suggestions: null,
+
     bookcase: null,
+    bookcaseTextures: null,
     bookcaseOrder: null,
+    popularIssuesInCollection: null,
 
     isLoadingCollection: false,
     isLoadingPurchases: false,
@@ -37,8 +40,14 @@ export default {
     setBookcase(state, bookcase) {
       state.bookcase = bookcase
     },
+    setBookcaseTextures(state, bookcaseTextures) {
+      state.bookcaseTextures = bookcaseTextures
+    },
     setBookcaseOrder(state, bookcaseOrder) {
       state.bookcaseOrder = bookcaseOrder
+    },
+    setPopularIssuesInCollection(state, popularIssuesInCollection) {
+      state.popularIssuesInCollection = popularIssuesInCollection
     }
   },
 
@@ -55,7 +64,25 @@ export default {
       return {...acc, [publicationCode]: (acc[publicationCode] || 0) + 1};
     }, {}),
 
-    hasSuggestions: state => state.suggestions && state.suggestions.issues && Object.key(state.suggestions.issues).length
+    hasSuggestions: state => state.suggestions && state.suggestions.issues && Object.key(state.suggestions.issues).length,
+
+    popularIssuesInCollectionWithoutEdge: state => state.popularIssuesInCollection && state.bookcase &&
+      state.bookcase
+        .filter(({EdgeID}) => !EdgeID)
+        .map((issue) => {
+          const {Pays: countryCode, Magazine: magazineCode, Numero: issueNumber} = issue
+          const publicationCode = `${countryCode}/${magazineCode}`;
+          const issueCode = `${publicationCode} ${issueNumber}`;
+          return {
+            ...issue,
+            publicationCode,
+            issueCode,
+            popularity: state.popularIssuesInCollection[issueCode] || 0
+          };
+        })
+        .sort(({popularity: popularity1}, {popularity: popularity2}) => popularity2 - popularity1)
+        .filter(({popularity}) => popularity > 0)
+        .filter((_, index) => index < 10)
   },
 
   actions: {
@@ -96,9 +123,22 @@ export default {
         commit("setBookcase", (await axios.get("/api/collection/bookcase")).data)
       }
     },
+    loadBookcaseTextures: async ({state, commit}) => {
+      if (!state.bookcaseTextures) {
+        commit("setBookcaseTextures", (await axios.get("/api/collection/bookcase/textures")).data)
+      }
+    },
     loadBookcaseOrder: async ({state, commit}) => {
       if (!state.bookcaseOrder) {
         commit("setBookcaseOrder", (await axios.get("/api/collection/bookcase/sort")).data)
+      }
+    },
+    loadPopularIssuesInCollection: async ({state, commit}) => {
+      if (!state.popularIssuesInCollection) {
+        commit("setPopularIssuesInCollection", (await axios.get("/api/collection/popular")).data.reduce((acc, issue) => ({
+          ...acc,
+          [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]: issue.popularity
+        }), {}))
       }
     },
   }

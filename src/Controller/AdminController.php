@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminController extends AbstractController
 {
@@ -16,9 +17,12 @@ class AdminController extends AbstractController
      *     path="/admin/edges/progress"
      * )
      */
-    public function showEdgeProgress(): Response
+    public function showEdgeProgress(TranslatorInterface $translator): Response
     {
-        return $this->render("bare.twig", ['vueProps' => ['component' => 'EdgeProgress']]);
+        return $this->render("bare.twig", ['vueProps' => [
+            'component' => 'EdgeProgress',
+            'title' => $translator->trans('')
+        ]]);
     }
 
     /**

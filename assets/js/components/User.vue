@@ -11,16 +11,17 @@
     >
       <h4>{{ username }}</h4>
       <Medal
-        v-for="level in points"
-        :key="level.contribution"
-        :level="level"
+        v-for="(numberOfPoints, contribution) in points"
+        :key="contribution"
+        :contribution="contribution"
+        :user-level-points="numberOfPoints"
         small
       />
       <div class="clearfix" />
       <div>
-        5 {{ l10n.NUMEROS }}<br>
-        1 {{ l10n.MAGAZINES }}<br>
-        1 {{ l10n.PAYS }}
+        {{ stats.numberOfIssues }} {{ l10n.NUMEROS }}<br>
+        {{ stats.numberOfPublications }} {{ l10n.MAGAZINES }}<br>
+        {{ stats.numberOfCountries }} {{ l10n.PAYS }}
       </div>
       <div
         v-if="bookcaseShared"
@@ -43,7 +44,7 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import Medal from "../layouts/Medal";
+import Medal from "./Medal";
 
 export default {
   name: "User",
@@ -53,7 +54,8 @@ export default {
   mixins: [l10nMixin],
   props: {
     id: {type: Number, required: true},
-    points: {type: Array, required: true}
+    points: {type: Object, required: true},
+    stats: {type: Object, required: true}
   },
 
   data: () => ({

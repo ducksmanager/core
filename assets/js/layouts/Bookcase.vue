@@ -1,25 +1,70 @@
 <template>
   <div v-if="l10n">
-    <div v-if="isSharedBookcase">
+    <div v-if="!isSharedBookcase">
       <!--      Added edges-->
     </div>
-    {{ 1 }}{{ l10n.POURCENTAGE_COLLECTION_VISIBLE }}
+    <div v-if="percentVisible !== null">
+      {{ percentVisible }}{{ l10n.POURCENTAGE_COLLECTION_VISIBLE }}
+    </div>
     <div v-if="loading">
       {{ l10n.CHARGEMENT }}
     </div>
     <div v-else>
       <div v-if="!isSharedBookcase">
-        <!--        Edge photo suggestion-->
-        <div class="issue-title">
-          <span class="nowrap">
-            <img class="flag">&nbsp;
-          </span>
-          <span class="publication_name" />
-          <span class="issuenumber" />
+        <div v-if="popularIssuesInCollectionWithoutEdge && popularIssuesInCollectionWithoutEdge.length && userPoints">
+          {{ $t('INVITATION_ENVOI_PHOTOS_TRANCHES', [popularIssuesInCollectionWithoutEdge[0].popularity]) }}
+          <div>
+            <b-carousel
+              controls
+              indicators
+              img-width="1024"
+              img-height="480"
+            >
+              <b-carousel-slide
+                v-for="popularIssueWithoutEdge in popularIssuesInCollectionWithoutEdge"
+                :key="popularIssueWithoutEdge.issueCode"
+              >
+                <Issue
+                  :publicationcode="popularIssueWithoutEdge.publicationCode"
+                  :publicationname="publicationNames[popularIssueWithoutEdge.publicationCode]"
+                  :issuenumber="popularIssueWithoutEdge.Numero"
+                  hide-condition
+                />
+                <MedalProgress
+                  contribution="Photographe"
+                  :user-level-points="userPoints.Photographe"
+                  :extra-points="popularIssueWithoutEdge.popularity"
+                />
+                <div>
+                  <b-btn
+                    variant="info"
+                    href="https://edgecreator.ducksmanager.net"
+                    target="_blank"
+                  >
+                    {{ l10n.ENVOYER_PHOTOS_DE_TRANCHE }}
+                  </b-btn>
+                </div>
+              </b-carousel-slide>
+            </b-carousel>
+          </div>
         </div>
-        <!--        Edge photo suggestion-->
-        <IssueSearch />
-        <div id="bookcase" />
+        <IssueSearch style="float: right" />
+      </div>
+      <div
+        id="bookcase"
+        :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
+      >
+        <Edge
+          v-for="(edge, edgeIndex) in sortedBookcase"
+          :key="getEdgeKey(edge)"
+          :publication-code="`${edge.Pays}/${edge.Magazine}`"
+          :issue-number="edge.Numero"
+          :issue-number-reference="edge.NumeroReference"
+          :existing="!!edge.EdgeID"
+          :sprite-path="edgesUsingSprites[edge.EdgeID] || null"
+          :load="currentEdgeIndex >= edgeIndex"
+          @loaded="currentEdgeIndex++"
+        />
       </div>
     </div>
   </div>
@@ -30,25 +75,74 @@ import l10nMixin from "../mixins/l10nMixin";
 import IssueSearch from "../components/IssueSearch";
 import {mapActions, mapGetters, mapState} from "vuex";
 import collectionMixin from "../mixins/collectionMixin";
+import Edge from "../components/Edge";
+import MedalProgress from "../components/MedalProgress";
+import Issue from "../components/Issue";
+import * as axios from "axios";
+import medalMixin from "../mixins/medalMixin";
 
 export default {
   name: "Bookcase",
-  components: {IssueSearch},
+  components: {MedalProgress, Issue, Edge, IssueSearch},
   mixins: [l10nMixin, collectionMixin],
 
   data: () => ({
-    loading: true,
     isSharedBookcase: false,
-    edgesUsingSprites: null
+    edgesUsingSprites: [],
+    currentEdgeIndex: 0,
   }),
 
   computed: {
-    ...mapState("collection", ["bookcase", "bookcaseOrder"]),
-    ...mapGetters("collection", ["totalPerPublication"]),
-    ...mapState("coa", ["publicationNames", "issueNumbers"])
+    ...mapState("collection", ["bookcase", "bookcaseTextures", "bookcaseOrder", "popularIssuesInCollection"]),
+    ...mapGetters("collection", ["totalPerPublication", "popularIssuesInCollectionWithoutEdge"]),
+    ...mapState("coa", ["publicationNames", "issueNumbers"]),
+    ...mapState("users", ["points"]),
+
+    userId: () => window.userId,
+    imagePath: () => window.imagePath,
+
+    loading() {
+      return !(this.sortedBookcase && this.bookcaseTextures && this.edgesUsingSprites)
+    },
+
+    userPoints() {
+      return this.points && this.points[this.userId]
+    },
+
+    percentVisible() {
+      return this.bookcase && parseInt(100 * this.bookcase.filter(({EdgeID}) => EdgeID).length / this.bookcase.length)
+    },
+
+    sortedBookcase() {
+      const vm = this
+      return this.bookcase && this.bookcaseOrder && this.issueNumbers && ([...this.bookcase]).sort((
+        {Pays: countryCode1, Magazine: magazineCode1, Numero: issueNumber1},
+        {Pays: countryCode2, Magazine: magazineCode2, Numero: issueNumber2}
+      ) => {
+        const publicationCode1 = `${countryCode1}/${magazineCode1}`;
+        const publicationCode2 = `${countryCode2}/${magazineCode2}`;
+        const publicationOrderSign = Math.sign(
+          vm.bookcaseOrder.indexOf(publicationCode1)
+          - vm.bookcaseOrder.indexOf(publicationCode2)
+        )
+        return publicationOrderSign || (!vm.issueNumbers[publicationCode1] && -1) || Math.sign(
+          vm.issueNumbers[publicationCode1].indexOf(issueNumber1)
+          - vm.issueNumbers[publicationCode1].indexOf(issueNumber2)
+        )
+      })
+    }
   },
 
   watch: {
+    bookcaseTextures(newValue) {
+      if (newValue) {
+        const {bookshelf: bookshelfTexture} = newValue
+        const bookshelfTextureUrl = `${imagePath}/textures/${bookshelfTexture}.jpg`
+        const style = document.createElement('style');
+        style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
+        document.head.append(style);
+      }
+    },
     totalPerPublication: {
       immediate: true,
       async handler(newValue) {
@@ -61,9 +155,6 @@ export default {
           ))
         }
       }
-    },
-    issueNumbers(newValue) {
-
     },
     bookcase(newValue) {
       const usedSprites = newValue
@@ -84,7 +175,7 @@ export default {
         .sort(({size: aSize}, {size: bSize}) => Math.sign(aSize - bSize))
         .reduce((acc, {name, version, edges}) => {
           edges.forEach(edgeId => {
-            acc[edgeId] = {name, version}
+            acc[edgeId] = `v${version}/${name}`
           })
           return acc
         }, {})
@@ -93,18 +184,25 @@ export default {
 
   async mounted() {
     await this.loadBookcase()
-    await this.loadBookcaseOrder()
+    await this.loadBookcaseTextures()
 
+    await this.loadBookcaseOrder()
+    await this.loadPopularIssuesInCollection()
+
+    await this.fetchStats([this.userId])
   },
 
   methods: {
-    ...mapActions("collection", ["loadBookcase", "loadBookcaseOrder"]),
-    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"])
+    ...mapActions("collection", ["loadBookcase", "loadBookcaseTextures", "loadBookcaseOrder", "loadPopularIssuesInCollection"]),
+    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
+    ...mapActions("users", ["fetchStats"]),
+
+    getEdgeKey: edge => `${edge.Pays}/${edge.Magazine} ${edge.Numero}`
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #bookcase {
   height: 100%;
   overflow: hidden;
@@ -112,5 +210,25 @@ export default {
   padding: 10px 5px 10px 15px;
   background: transparent repeat left top;
   clear: both;
+}
+
+.carousel {
+  width: 300px;
+  margin: 15px 0 0;
+  
+  .carousel-caption {
+    position: initial;
+  }
+
+  ol.carousel-indicators {
+    li {
+      width: 5px;
+      height: 5px;
+      border: 5px solid white;
+      border-radius: 8px;
+      padding: 0;
+      background: white;
+    }
+  }
 }
 </style>

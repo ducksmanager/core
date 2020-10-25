@@ -1,16 +1,17 @@
 <template>
-  <span :class="{ wrapper: true, small }">
+  <span :class="{ wrapper: true, small, 'x-small': xSmall }">
     <div class="overlay">
       <div
+        v-if="!small && !xSmall"
         class="title"
-        :title="$t(`DETAILS_MEDAILLE_${level.contribution.toUpperCase()}_MAX`, [
-          level.userPoints,
-          level.pointsDiffNextLevel,
-          $t(`MEDAILLE_${level.levelReached+1}`)
+        :title="$t(`DETAILS_MEDAILLE_${contribution.toUpperCase()}`, [
+          userLevelPoints,
+          pointsDiffNextLevel,
+          $t(`MEDAILLE_${level+1}`)
         ])"
       />
       <svg
-        v-if="!small && level.levelReached < 3"
+        v-if="!small && !xSmall && level < 3"
         width="100"
         height="100"
         viewport="0 0 0 0"
@@ -27,43 +28,41 @@
         />
         <circle
           transform="rotate(270,0,0)"
-          :class="{bar: true, [medalColors[level.levelReached]]: true}"
+          :class="{bar: true, [medalColors[level]]: true}"
           cx="-50"
           cy="50"
           :r="radius"
           fill="transparent"
           :stroke-dasharray="circumference"
-          :style="`stroke-dashoffset: ${level.levelProgressPercentage}px`"
+          :style="`stroke-dashoffset: ${levelProgressPercentage}px`"
         />
       </svg>
     </div>
 
     <img
       class="medal"
-      :src="`${imagePath}/medals/${level.contribution}_${level.levelReached}_${locale}.png`"
+      :src="`${imagePath}/medals/${contribution}_${level}_${xSmall ? 'fond' : locale}.png`"
     >
     <b v-if="small">
-      {{ l10n[`TITRE_MEDAILLE_${level.contribution.toUpperCase()}`] }}
-      <br>{{ l10n.NIVEAU }}{{ level.levelReached }}
+      {{ l10n[`TITRE_MEDAILLE_${contribution.toUpperCase()}`] }}
+      <br>{{ l10n.NIVEAU }}{{ level }}
     </b>
   </span>
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import medalsMixin from "../mixins/medalsMixin";
+import medalMixin from "../mixins/medalMixin";
+import {mapState} from "vuex";
 
 export default {
   name: 'Medal',
-  mixins: [l10nMixin, medalsMixin],
+  mixins: [l10nMixin, medalMixin],
   props: {
-    level: {
-      type: Object,
-      required: true
-    },
-    small: {
-      type: Boolean,
-      default: false
-    }
+    small: {type: Boolean, default: false},
+    xSmall: {type: Boolean, default: false},
+    nextLevel: {type: Boolean, default: false},
+    userLevelPoints: {type: Number, required: true},
+    contribution: {type: String, required: true},
   },
 
   data: () => ({
@@ -72,12 +71,27 @@ export default {
 
   computed: {
     locale: () => window.locale,
-    imagePath: () => window.imagePath
+    imagePath: () => window.imagePath,
+
+    level() {
+      return this.nextLevel && this.currentLevel !== null ? this.currentLevel + 1 : this.currentLevel
+    }
   }
 }
 </script>
 <style scoped lang="scss">
 .wrapper {
+  &.left {
+    position: absolute;
+    left: 35px;
+    top: 35px;
+  }
+
+  &.right {
+    position: absolute;
+    right: 35px;
+    top: 35px;
+  }
   .medal {
     height: 120px;
     margin-left: 5px;
@@ -124,6 +138,12 @@ export default {
 
     .medal {
       height: 70px;
+    }
+  }
+
+  &.x-small {
+    .medal {
+      height: 40px;
     }
   }
 }

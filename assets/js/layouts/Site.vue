@@ -22,6 +22,7 @@ import Banner from "./Banner";
 import Manage from "./Manage";
 import InducksImport from "./InducksImport";
 import Stats from "./Stats";
+import Bookcase from "./Bookcase";
 
 export default {
   name: "Site",
@@ -29,6 +30,7 @@ export default {
     LeftPanel,
     Banner,
     Manage,
+    Bookcase,
     Stats,
     InducksImport,
     Login,

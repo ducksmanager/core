@@ -3,17 +3,16 @@
     v-if="l10n"
     id="menu"
   >
-    <div
-      id="medals_and_login"
-    >
+    <div id="medals_and_login">
       <div
-        v-if="userStats"
+        v-if="userPoints"
         id="medals"
       >
         <Medal
-          v-for="level in userStats.points"
-          :key="level.contribution"
-          :level="level"
+          v-for="(numberOfPoints, contribution) in userPoints"
+          :key="contribution"
+          :contribution="contribution"
+          :user-level-points="numberOfPoints"
         />
       </div>
       <div id="login">
@@ -44,10 +43,10 @@
 <script>
 import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
-import medalsMixin from "../mixins/medalsMixin";
 import RecentEvents from "./RecentEvents";
 import Navigation from "./Navigation";
 import Medal from "../components/Medal";
+import {mapActions, mapState} from "vuex";
 
 export default {
   name: "LeftPanel",
@@ -58,24 +57,30 @@ export default {
     Navigation
   },
 
-  mixins: [l10nMixin, medalsMixin],
-
-  data: () => ({
-    userStats: null
-  }),
+  mixins: [l10nMixin],
 
   computed: {
+    ...mapState("users", ["points"]),
+
     userId: () => window.userId,
     username: () => window.username,
     imagePath: () => window.imagePath,
-    locale: () => window.locale
+    locale: () => window.locale,
+
+    userPoints() {
+      return this.points && this.points[this.userId]
+    }
   },
 
   async mounted() {
     if (this.userId) {
       await axios.post('/api/collection/lastvisit')
-      this.userStats = await this.getUserStats([this.userId])
+      await this.fetchStats([this.userId])
     }
+  },
+
+  methods: {
+    ...mapActions(["users", ["fetchStats"]])
   }
 }
 </script>

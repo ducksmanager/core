@@ -14,7 +14,7 @@
       </template>
       <template #items>
         <template v-if="username">
-          <NavigationItem path="bibliotheque">
+          <NavigationItem path="/bookcase">
             <b-icon-book-half />
             {{ l10n.BIBLIOTHEQUE_COURT }}
           </NavigationItem>
@@ -41,7 +41,7 @@
             <b-icon-printer-fill />
             {{ l10n.IMPRIMER_COLLECTION }}
           </NavigationItem>
-          <NavigationItem path="logout">
+          <NavigationItem path="/logout">
             <b-icon-x-square-fill />
             {{ l10n.DECONNEXION }}
           </NavigationItem>

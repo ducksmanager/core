@@ -3,7 +3,7 @@
     :class="{ clickable }"
     :href="`/collection/show/${publicationcode}#${issuenumber}`"
   >
-    <span v-if="issueInCollection">{{ issueInCollection.condition }}</span>
+    <span v-if="issueInCollection && !hideCondition">{{ issueInCollection.condition }}</span>
     <Publication
       :publicationcode="publicationcode"
       :publicationname="publicationname"
@@ -24,7 +24,8 @@ export default {
     publicationcode: {type: String, required: true},
     publicationname: {type: String, required: true},
     issuenumber: {type: String, required: true},
-    clickable: { type: Boolean, default: false }
+    clickable: { type: Boolean, default: false },
+    hideCondition: { type: Boolean, default: false }
   },
   computed: {
     ...mapState("collection", ["collection"]),
@@ -39,6 +40,7 @@ export default {
 
 <style scoped lang="scss">
   a {
+    color: lightgrey;
     pointer-events: none;
 
     &.clickable {
