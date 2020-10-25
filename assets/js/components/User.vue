@@ -27,14 +27,14 @@
         v-if="bookcaseShared"
         class="bookcase-link"
       >
-        <img :src="`${imagePath}/bibliotheque.png`">&nbsp;
+        <img :src="`${imagePath}/bookcase.png`">&nbsp;
         <b-button
           size="xs"
           variant="outline-secondary"
         >
           <a
             target="_blank"
-            :href="`/?action=bibliotheque&user=${username}`"
+            :href="`/bookcase/${username}`"
           >{{ l10n.VOIR_BIBLIOTHEQUE }}</a>
         </b-button>
       </div>

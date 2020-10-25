@@ -1,15 +1,15 @@
 <template>
   <div
     v-if="l10n"
-    id="recemment"
+    id="recently"
   >
     <h4>{{ l10n.NEWS_TITRE }}</h4>
-    <div id="evenements">
+    <div id="events">
       <span v-if="events && publicationNames">
         <div
           v-for="event in events"
           :key="JSON.stringify(event)"
-          :class="{evenement: true, [`evenement_${event.type}`]: true}"
+          :class="{event: true, [`event_${event.type}`]: true}"
         >
           <User
             v-if="event.userId && stats[event.userId]"
@@ -112,7 +112,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#recemment {
+#recently {
   position: absolute;
   top: 450px;
   padding: 5px 5px 20px 5px;
@@ -124,13 +124,19 @@ export default {
     white-space: nowrap;
   }
 
-  #evenements div.evenement {
+  #events div.event {
     margin-top: 12px;
 
     .date {
       color: grey;
       float: right;
     }
+  }
+}
+
+@media (max-width: 767px) {
+  #recently {
+    display: none
   }
 }
 </style>

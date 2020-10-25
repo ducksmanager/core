@@ -13,7 +13,7 @@
           class="exclusive"
         >{{ l10n.EXCLUSIF_DUCKSMANAGER }}</span>
         <span v-html="l10n[type.description]" />
-        <ul>
+        <ul class="details">
           <li
             v-for="detail in type.details"
             :key="detail"
@@ -74,7 +74,7 @@ export default {
 ul {
   margin-top: 30px;
 
-  &.caract {
+  &.details {
     li {
       margin-top: 14px;
     }

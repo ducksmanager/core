@@ -76,18 +76,18 @@ class EventService
     public function retrieveNewMedals(): array
     {
         return $this->apiService->runQuery(
-            implode(' UNION ', array_map(function ($type_medaille) {
-                return implode(' UNION ', array_map(function ($niveau) use ($type_medaille) {
-                    $limite = self::MEDAL_LEVELS[$type_medaille][$niveau];
-                    $type_medaille = strtolower($type_medaille);
+            implode(' UNION ', array_map(function (string $medalType) {
+                return implode(' UNION ', array_map(function ($niveau) use ($medalType) {
+                    $limite = self::MEDAL_LEVELS[$medalType][$niveau];
+                    $medalType = strtolower($medalType);
                     return "
                         select 'medal' as type, ID_User, contribution, $niveau as niveau, UNIX_TIMESTAMP(date) - 60 AS timestamp
                         from users_contributions
-                        where contribution = '$type_medaille'
+                        where contribution = '$medalType'
                           and points_total >= $limite and points_total - points_new < $limite
                           and date > DATE_ADD(NOW(), INTERVAL -1 MONTH)
                     ";
-                }, array_keys(self::MEDAL_LEVELS[$type_medaille])));
+                }, array_keys(self::MEDAL_LEVELS[$medalType])));
             }, array_keys(self::MEDAL_LEVELS))),
             "dm");
     }

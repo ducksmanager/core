@@ -34,7 +34,7 @@
             >&nbsp;</span>
             <span
               v-else-if="!show"
-              class="num bordered dispo"
+              class="num bordered available"
               :title="inducksIssueNumber"
               @click="open(publicationCode, inducksIssueNumber)"
             >&nbsp;</span>
@@ -56,7 +56,7 @@
       <br><br>
       <u>Légende : </u><br>
       <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette tranche !<br>
-      <span class="num dispo">&nbsp;</span> Cette tranche est prête.<br>
+      <span class="num available">&nbsp;</span> Cette tranche est prête.<br>
     </div>
     <div v-else>
       {{ l10n.CHARGEMENT }}
@@ -134,11 +134,11 @@ export default {
   background-color: red;
 }
 
-.dispo {
+.available {
   background-color: green !important;
 }
 
-.num.dispo {
+.num.available {
   cursor: pointer;
 }
 

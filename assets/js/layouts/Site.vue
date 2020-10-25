@@ -23,6 +23,7 @@ import Manage from "./Manage";
 import InducksImport from "./InducksImport";
 import Stats from "./Stats";
 import Bookcase from "./Bookcase";
+import Expand from "./Expand";
 
 export default {
   name: "Site",
@@ -31,6 +32,7 @@ export default {
     Banner,
     Manage,
     Bookcase,
+    Expand,
     Stats,
     InducksImport,
     Login,

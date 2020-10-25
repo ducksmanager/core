@@ -69,9 +69,9 @@
         </tr>
       </template>
     </table>
-    <table class="legendes">
+    <table class="legends">
       <tr>
-        <td class="legende_numeros">
+        <td class="issue-legend">
           <table>
             <tr>
               <td
@@ -98,7 +98,7 @@
             </tr>
           </table>
         </td>
-        <td class="legende_magazines">
+        <td class="publication-legend">
           <table>
             <tr>
               <td
@@ -227,13 +227,13 @@ table {
   color: black;
   font: 11px/15px verdana, arial, sans-serif;
 
-  &.collectable, &.legendes {
+  &.collectable, &.legends {
     width: 90%;
   }
 }
 
 td {
-  &.legende_numeros, &.legende_magazines, &.achats {
+  &.issue-legend, &.publication-legend {
     vertical-align: top;
     border-left: 1px solid gray;
     padding: 8px;

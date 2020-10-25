@@ -17,11 +17,10 @@ class AdminController extends AbstractController
      *     path="/admin/edges/progress"
      * )
      */
-    public function showEdgeProgress(TranslatorInterface $translator): Response
+    public function showEdgeProgress(): Response
     {
         return $this->render("bare.twig", ['vueProps' => [
-            'component' => 'EdgeProgress',
-            'title' => $translator->trans('')
+            'component' => 'EdgeProgress'
         ]]);
     }
 

@@ -74,7 +74,7 @@
         <div>{{ l10n.EXPLICATION_GRAPH_ACHATS_3 }}</div>
         <div v-html="$t('EXPLICATION_GRAPH_ACHATS_4', [`<a href='/collection/show'>${l10n.GERER_COLLECTION}</a>`]) " />
         <div v-if="purchases && !purchases.length">
-          <a href="/?action=gerer">
+          <a href="/collection/show">
             <img
               style="height: 300px"
               alt="demo"

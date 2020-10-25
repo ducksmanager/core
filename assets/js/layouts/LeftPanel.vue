@@ -18,7 +18,7 @@
       <div id="login">
         <a
           id="logo_small"
-          :href="username ? '/collecion/show' : '/'"
+          :href="username ? '/collection/show' : '/'"
         >
           <img :src="`${imagePath}/logo_name.jpg`">
         </a>
@@ -143,7 +143,7 @@ export default {
       text-align: center;
     }
 
-    #medals, #recemment {
+    #medals {
       display: none;
     }
   }

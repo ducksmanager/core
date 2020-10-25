@@ -26,7 +26,7 @@
             <b-icon-graph-up />
             {{ l10n.STATISTIQUES_COLLECTION }}
           </NavigationItem>
-          <NavigationItem path="agrandir">
+          <NavigationItem path="/expand">
             <b-icon-capslock-fill />
             {{ l10n.AGRANDIR_COLLECTION }}
           </NavigationItem>
@@ -37,7 +37,7 @@
             />
             {{ l10n.COLLECTION_INDUCKS }}
           </NavigationItem>
-          <NavigationItem path="print">
+          <NavigationItem path="/print">
             <b-icon-printer-fill />
             {{ l10n.IMPRIMER_COLLECTION }}
           </NavigationItem>
@@ -54,7 +54,7 @@
             {{ l10n.NOUVELLE_COLLECTION }}
           </NavigationItem>
           <NavigationItem
-            path="open"
+            path="/login"
             icon="glyphicon glyphicon-folder-open"
           >
             {{ l10n.OUVRIR_COLLECTION }}
