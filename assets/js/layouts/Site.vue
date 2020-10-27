@@ -24,21 +24,28 @@ import InducksImport from "./InducksImport";
 import Stats from "./Stats";
 import Bookcase from "./Bookcase";
 import Expand from "./Expand";
+import Bookstores from "./Bookstores";
+import PrintPresentation from "./PrintPresentation";
 
 export default {
   name: "Site",
   components: {
-    LeftPanel,
     Banner,
-    Manage,
     Bookcase,
+    Bookstores,
     Expand,
-    Stats,
+    Footer,
     InducksImport,
+    LeftPanel,
     Login,
-    Footer
+    Manage,
+    PrintPresentation,
+    Stats,
   },
   mixins: [l10nMixin, userMixin],
+  props: {
+    page: { type: String, required: true }
+  },
   data() {
     return this.$attrs;
   },
