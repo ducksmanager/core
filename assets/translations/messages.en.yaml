@@ -338,9 +338,9 @@ MOT_DE_PASSE_NOUVEAU: New password
 MOT_DE_PASSE_NOUVEAU_CONFIRMATION: New password (confirmation)
 MOT_DE_PASSE_OUBLIE: Password lost ?
 MOT_DE_PASSE_OUBLIE_EMAIL_ENVOYE: An email has been sent at the email address that you have indicated
+MOT_DE_PASSE_OUBLIE_ERREUR_EMAIL: This email doesn\'t match any DucksManager account.
 MOT_DE_PASSE_OUBLIE_ERREUR_ENVOI_EMAIL: Failed to send the email
-MOT_DE_PASSE_OUBLIE_ERREUR_VIDE: The field "Email" should not be empty.
-MOT_DE_PASSE_OUBLIE_ERREUR_EMAIL_INCONNU: This email doesn\'t match any DucksManager account.
+MOT_DE_PASSE_OUBLIE_ERREUR_VIDE: The field "Email" is not valid, does it correspond to an email registered on DucksManager?
 MOT_DE_PASSE_OUBLIE_ERREUR_TOKEN: The password reset link is invalid or has expired, please type in your e-mail address again on the %s page.
 MOT_DE_PASSE_OUBLIE_EXPLICATION: Fill in your e-mail address to reset your password.
 MOT_DE_PASSE_OUBLIE_OK: If the typed e-mail address corresponds to a DucksManager account, we just sent there a link allowing you to reset your password. If the e-mail does not reach you within a few minutes, please check your "Spam" folder.
@@ -470,6 +470,7 @@ REMPLIR_PAYS_ET_MAGAZINE: You must fill the fields corresponding to the country 
 RESULTAT_NUMEROS_INDUCKS: DucksManager found the following issues on your Inducks account.
 SALUTATION: Hi %s,
 SANS_TITRE: No title
+SCORE: Score
 SELECTIONNER_DATE_ACHAT: You must select a purchase date!
 SELECTIONNER_MAGAZINE: Please select a magazine
 SELECTIONNER_NUMEROS_A_MARQUER: Select first the issues!

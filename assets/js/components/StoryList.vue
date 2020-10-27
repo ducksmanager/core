@@ -27,21 +27,25 @@ export default {
 
   props: {
     stories: {
-      type: Array,
+      type: Object,
       required: true
     },
     authors: {
-      type: Array,
+      type: Object,
       required: true
     },
     storyDetails: {
-      type: Array,
+      type: Object,
       required: true
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+ul {
+  li {
+    font-size: 12px;
+  }
+}
 </style>

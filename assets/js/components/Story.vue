@@ -1,9 +1,10 @@
 <template>
   <span v-if="l10n">
-    {{ title || comment || '' }}
+    {{ title || l10n.SANS_TITRE }}
+    {{ comment }}
     <a
       target="_blank"
-      :href="`https://coa.inducks.org/story.php?c=${urlEncodedCode}`"
+      :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
     >
       {{ l10n.DETAILS_HISTOIRE }}
     </a>
@@ -33,8 +34,8 @@ export default {
   },
 
   computed: {
-    urlEncodedCode() {
-      return this.code && encodeURIComponent(this.code)
+    urlEncodedStorycode() {
+      return this.storycode && encodeURIComponent(this.storycode)
     }
   }
 }

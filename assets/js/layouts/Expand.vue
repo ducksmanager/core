@@ -7,12 +7,15 @@
       <br><br>
       {{ l10n.SUGGESTIONS_ACHATS_QUOTIDIENNES }}
     </b-alert>
-    <div v-if="watchedAuthors.length && watchedAuthorsWithNotation.length">
+    <div v-if="!watchedAuthors">
+      {{ l10n.CHARGEMENT }}
+    </div>
+    <div v-else-if="watchedAuthors.length && watchedAuthorsWithNotation.length">
       {{ l10n.MONTRER_MAGAZINES_PAYS }}
       <b-select
-        v-if="countryNames"
+        v-if="countryNamesWithAllCountriesOption"
         v-model="countryCode"
-        :options="countryNames"
+        :options="countryNamesWithAllCountriesOption"
       />
       <SuggestionList
         :countrycode="countryCode"
@@ -52,13 +55,20 @@ export default {
   mixins: [collectionMixin, l10nMixin],
 
   data: () => ({
-    countryCode: null
+    countryCode: "ALL"
   }),
 
   computed: {
     ...mapState("collection", ["watchedAuthors", "suggestions"]),
     ...mapState("coa", ["countryNames"]),
     ...mapGetters("collection", ["hasSuggestions"]),
+
+    countryNamesWithAllCountriesOption() {
+      return this.l10n && this.countryNames && {
+        ALL: this.l10n.TOUS_PAYS,
+        ...this.countryNames
+      }
+    },
 
     imagePath: () => window.imagePath,
 
@@ -87,7 +97,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  select {
-    width: 300px;
-  }
+select {
+  width: 300px;
+}
 </style>

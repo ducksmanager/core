@@ -64,7 +64,7 @@ export default {
       return {...acc, [publicationCode]: (acc[publicationCode] || 0) + 1};
     }, {}),
 
-    hasSuggestions: state => state.suggestions && state.suggestions.issues && Object.key(state.suggestions.issues).length,
+    hasSuggestions: state => state.suggestions && state.suggestions.issues && Object.keys(state.suggestions.issues).length,
 
     popularIssuesInCollectionWithoutEdge: state => state.popularIssuesInCollection && state.bookcase &&
       state.bookcase

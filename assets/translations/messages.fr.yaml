@@ -340,9 +340,9 @@ MOT_DE_PASSE_NOUVEAU: Nouveau mot de passe
 MOT_DE_PASSE_NOUVEAU_CONFIRMATION: Nouveau mot de passe (confirmation)
 MOT_DE_PASSE_OUBLIE: Mot de passe oublié ?
 MOT_DE_PASSE_OUBLIE_EMAIL_ENVOYE: Un e-mail vous a été envoyé à l'adresse que vous avez indiquée
+MOT_DE_PASSE_OUBLIE_ERREUR: Le champ "E-mail" est invalide, correspond-il à un email enregistré sur DucksManager ?
 MOT_DE_PASSE_OUBLIE_ERREUR_ENVOI_EMAIL: Echec lors de l'envoi de l'e-mail
 MOT_DE_PASSE_OUBLIE_ERREUR_TOKEN: Le lien de mise à jour de mot de passe est invalide ou expiré, merci d'indiquer votre e-mail à nouveau dans la page %s.
-MOT_DE_PASSE_OUBLIE_ERREUR_VIDE: Vous n'avez pas rempli le champ "E-mail".
 MOT_DE_PASSE_OUBLIE_ERREUR_EMAIL_INCONNU: Cet e-mail ne correspond à aucun compte DucksManager.
 MOT_DE_PASSE_OUBLIE_EXPLICATION: "Un mot de passe temporaire va vous être envoyé à l'adresse e-mail que vous indiquerez ci-dessous :"
 MOT_DE_PASSE_OUBLIE_OK: Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier "Spam".
@@ -472,6 +472,7 @@ REMPLIR_PAYS_ET_MAGAZINE: Vous devez remplir les champs correspondant au pays et
 RESULTAT_NUMEROS_INDUCKS: DucksManager a trouvé les numéros suivants sur votre compte Inducks.
 SALUTATION: Bonjour %s,
 SANS_TITRE: Sans titre
+SCORE: Score
 SELECTIONNER_DATE_ACHAT: Vous devez selectionner une date d'achat !
 SELECTIONNER_MAGAZINE: Veuillez sélectionner un magazine !
 SELECTIONNER_NUMEROS_A_MARQUER: Sélectionnez d'abord les numéros à marquer !

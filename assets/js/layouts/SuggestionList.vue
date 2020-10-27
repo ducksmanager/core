@@ -1,32 +1,35 @@
 <template>
   <div v-if="l10n">
-    <div v-if="!hasSuggestion">
+    <div v-if="!hasSuggestions">
       {{ l10n.AUCUNE_SUGGESTION }}
     </div>
-    <template
-      v-for="{publicationcode, issuenumber, score, stories, storyDetails} in suggestions.issues"
+    <div
+      v-for="{publicationcode, issuenumber, score, stories} in suggestions.issues"
       v-else
+      :key="`${publicationcode} ${issuenumber}`"
     >
-      <div
-        :key="`${publicationcode} ${issuenumber}`"
-        :class="{suggestions: true, 'since-last-visit': true}"
-      >
+      <div :class="{suggestions: true, 'since-last-visit': sinceLastVisit}">
         <span
           :class="{issue: true, [`importance-${getImportance(score)}`]: true}"
-        ><Issue
-          :publicationcode="publicationcode"
-          :publicationname="suggestions.publicationTitles[publicationcode]"
-          :issuenumber="issuenumber"
-        /></span>
+          :title="`${l10n.SCORE} : ${score}`"
+        ><b-icon-cash
+           v-for="i in 4-getImportance(score)"
+           :key="i"
+         />
+          <Issue
+            :publicationcode="publicationcode"
+            :publicationname="suggestions.publicationTitles[publicationcode]"
+            :issuenumber="issuenumber"
+          /></span>
         {{ l10n.NUMERO_CONTIENT }}
       </div>
       <StoryList
         :key="`${publicationcode} ${issuenumber}-stories`"
         :authors="suggestions.authors"
         :stories="stories"
-        :story-details="storyDetails"
+        :story-details="suggestions.storyDetails"
       />
-    </template>
+    </div>
   </div>
 </template>
 <script>
@@ -61,11 +64,17 @@ export default {
     ...mapGetters("collection", ["hasSuggestions"]),
   },
 
-  async mounted() {
-    await this.loadSuggestions({
-      countryCode: this.countrycode,
-      sinceLastVisit: this.sinceLastVisit,
-    })
+  watch: {
+    countrycode: {
+      immediate: true,
+      async handler(newValue) {
+        console.log("countrycode : " + newValue)
+        await this.loadSuggestions({
+          countryCode: newValue,
+          sinceLastVisit: this.sinceLastVisit,
+        })
+      }
+    }
   },
 
   methods: {
@@ -90,15 +99,15 @@ select {
     margin: 20px 0 10px 0;
 
     &.importance-1 {
-      font-size: xx-large;
-    }
-
-    &.importance-2 {
       font-size: x-large;
     }
 
-    &.importance-3 {
+    &.importance-2 {
       font-size: large;
+    }
+
+    .bi {
+      margin: 0 4px;
     }
   }
 
