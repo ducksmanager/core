@@ -19,86 +19,91 @@ export default {
         issueCounts: null,
     }),
 
-    mutations: {
-        setCountryNames(state, countryNames) {
-            state.countryNames = countryNames
-        },
-        setPublicationNames(state, publicationNames) {
-            state.publicationNames = Object.keys(publicationNames)
-                .reduce((acc, publicationCode) => ({
-                    ...acc,
-                    [publicationCode]: publicationNames[publicationCode]
-                }), {})
-        },
-        setPublicationNamesFullCountries(state, publicationNamesFullCountries) {
-            state.publicationNamesFullCountries = publicationNamesFullCountries
-        },
-        setPersonNames(state, personNames) {
-            state.personNames = Object.keys(personNames)
-                .reduce((acc, personCode) => ({
-                    ...acc,
-                    [personCode]: personNames[personCode]
-                }), {})
-        },
-        setIssueNumbers(state, issueNumbers) {
-            state.issueNumbers = issueNumbers
-        },
-        setIssueCounts(state, issueCounts) {
-            state.issueCounts = issueCounts
-        },
+  mutations: {
+    setCountryNames(state, countryNames) {
+      state.countryNames = countryNames
     },
+    setPublicationNames(state, publicationNames) {
+      state.publicationNames = {
+        ...(state.publicationNames || {}),
+        ...Object.keys(publicationNames)
+          .reduce((acc, publicationCode) => ({
+            ...acc,
+            [publicationCode]: publicationNames[publicationCode]
+          }), {})
+      }
+    },
+    setPublicationNamesFullCountries(state, publicationNamesFullCountries) {
+      state.publicationNamesFullCountries = publicationNamesFullCountries
+    },
+    setPersonNames(state, personNames) {
+      state.personNames = Object.keys(personNames)
+        .reduce((acc, personCode) => ({
+          ...acc,
+          [personCode]: personNames[personCode]
+        }), {})
+    },
+    setIssueNumbers(state, issueNumbers) {
+      state.issueNumbers = issueNumbers
+    },
+    setIssueUrls(state, {issueCode, issueUrls}) {
+      state.issueUrls[issueCode] = issueUrls
+    },
+    setIssueCounts(state, issueCounts) {
+      state.issueCounts = issueCounts
+    },
+  },
 
-    actions: {
-        fetchCountryNames: async ({ state, commit }) => {
-            if (!state.isLoadingCountryNames && !state.countryNames) {
-                state.isLoadingCountryNames = true
-                commit("setCountryNames", (await axios.get(URL_PREFIX_COUNTRIES)).data)
-                state.isLoadingCountryNames = false
-            }
-        },
-        fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) => {
-            const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
-                !Object.keys(state.publicationNames || {}).includes(publicationCode)
-            ))]
-            return newPublicationCodes.length
-                && commit("setPublicationNames", {
-                    ...(state.publicationNames || {}),
-                    ...await dispatch('getChunkedRequests', {
-                        url: URL_PREFIX_PUBLICATIONS,
-                        parametersToChunk: newPublicationCodes,
-                        chunkSize: 10
-                    }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
-                });
-        },
-        fetchPublicationNamesFromCountry: async ({ state, commit, dispatch }, countryCode) => {
-            if (state.publicationNamesFullCountries.includes(countryCode)) {
-                return
-            }
-            return axios.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({data}) => {
-                commit("setPublicationNames", {
-                    ...(state.publicationNames || {}),
-                    ...data
-                })
-                commit("setPublicationNamesFullCountries", [
-                    ...state.publicationNamesFullCountries,
-                    countryCode
-                ])
-            })
-        },
-        fetchPersonNames: async ({ state, commit, dispatch }, personCodes) => {
-            const newPersonNames = [...new Set(personCodes.filter(personCode =>
-                !Object.keys(state.personNames || {}).includes(personCode)
-            ))]
-            return newPersonNames.length
-                && commit("setPersonNames", {
-                    ...(state.personNames || {}),
-                    ...await dispatch('getChunkedRequests', {
-                        url: URL_PREFIX_AUTHORS,
-                        parametersToChunk: newPersonNames,
-                        chunkSize: 10
-                    }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
-                });
-        },
+  actions: {
+    fetchCountryNames: async ({state, commit}) => {
+      if (!state.isLoadingCountryNames && !state.countryNames) {
+        state.isLoadingCountryNames = true
+        commit("setCountryNames", (await axios.get(URL_PREFIX_COUNTRIES)).data)
+        state.isLoadingCountryNames = false
+      }
+    },
+    fetchPublicationNames: async ({state, commit, dispatch}, publicationCodes) => {
+      const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
+        !Object.keys(state.publicationNames || {}).includes(publicationCode)
+      ))]
+      return newPublicationCodes.length
+        && commit("setPublicationNames",
+          await dispatch('getChunkedRequests', {
+            url: URL_PREFIX_PUBLICATIONS,
+            parametersToChunk: newPublicationCodes,
+            chunkSize: 10
+          }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
+        );
+    },
+    fetchPublicationNamesFromCountry: async ({state, commit, dispatch}, countryCode) => {
+      if (state.publicationNamesFullCountries.includes(countryCode)) {
+        return
+      }
+      return axios.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({data}) => {
+        commit("setPublicationNames", {
+          ...(state.publicationNames || {}),
+          ...data
+        })
+        commit("setPublicationNamesFullCountries", [
+          ...state.publicationNamesFullCountries,
+          countryCode
+        ])
+      })
+    },
+    fetchPersonNames: async ({state, commit, dispatch}, personCodes) => {
+      const newPersonNames = [...new Set(personCodes.filter(personCode =>
+        !Object.keys(state.personNames || {}).includes(personCode)
+      ))]
+      return newPersonNames.length
+        && commit("setPersonNames", {
+          ...(state.personNames || {}),
+          ...await dispatch('getChunkedRequests', {
+            url: URL_PREFIX_AUTHORS,
+            parametersToChunk: newPersonNames,
+            chunkSize: 10
+          }).then(data => data.reduce((acc, result) => ({...acc, ...result.data}), {}))
+        });
+    },
 
         fetchIssueNumbers: async ({ state, commit, dispatch }, publicationCodes) => {
             const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>

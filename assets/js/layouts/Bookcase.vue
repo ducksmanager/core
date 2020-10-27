@@ -11,17 +11,17 @@
     </div>
     <div v-else>
       <div v-if="!isSharedBookcase">
-        <div v-if="popularIssuesInCollectionWithoutEdge && popularIssuesInCollectionWithoutEdge.length && userPoints">
-          {{ $t('INVITATION_ENVOI_PHOTOS_TRANCHES', [popularIssuesInCollectionWithoutEdge[0].popularity]) }}
+        <div
+          v-if="mostPopularIssuesInCollectionWithoutEdge && mostPopularIssuesInCollectionWithoutEdge.length && userPoints"
+        >
+          {{ $t('INVITATION_ENVOI_PHOTOS_TRANCHES', [mostPopularIssuesInCollectionWithoutEdge[0].popularity]) }}
           <div>
             <b-carousel
               controls
               indicators
-              img-width="1024"
-              img-height="480"
             >
               <b-carousel-slide
-                v-for="popularIssueWithoutEdge in popularIssuesInCollectionWithoutEdge"
+                v-for="popularIssueWithoutEdge in mostPopularIssuesInCollectionWithoutEdge"
                 :key="popularIssueWithoutEdge.issueCode"
               >
                 <Issue
@@ -57,11 +57,12 @@
         <Edge
           v-for="(edge, edgeIndex) in sortedBookcase"
           :key="getEdgeKey(edge)"
-          :publication-code="`${edge.Pays}/${edge.Magazine}`"
-          :issue-number="edge.Numero"
-          :issue-number-reference="edge.NumeroReference"
-          :existing="!!edge.EdgeID"
-          :sprite-path="edgesUsingSprites[edge.EdgeID] || null"
+          :publication-code="edge.publicationCode"
+          :issue-number="edge.issueNumber"
+          :issue-number-reference="edge.issueNumberReference"
+          :popularity="edge.popularity"
+          :existing="!!edge.edgeId"
+          :sprite-path="edgesUsingSprites[edge.edgeId] || null"
           :load="currentEdgeIndex >= edgeIndex"
           @loaded="currentEdgeIndex++"
         />
@@ -73,7 +74,7 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import IssueSearch from "../components/IssueSearch";
-import {mapActions, mapGetters, mapState} from "vuex";
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import collectionMixin from "../mixins/collectionMixin";
 import Edge from "../components/Edge";
 import MedalProgress from "../components/MedalProgress";
@@ -86,16 +87,21 @@ export default {
   components: {MedalProgress, Issue, Edge, IssueSearch},
   mixins: [l10nMixin, collectionMixin],
 
+  props: {
+    bookcaseUsername: { type: String, required: true }
+  },
+
   data: () => ({
-    isSharedBookcase: false,
     edgesUsingSprites: [],
     currentEdgeIndex: 0,
   }),
 
   computed: {
-    ...mapState("collection", ["bookcase", "bookcaseTextures", "bookcaseOrder", "popularIssuesInCollection"]),
+    ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder"]),
     ...mapGetters("collection", ["totalPerPublication", "popularIssuesInCollectionWithoutEdge"]),
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
+    ...mapGetters("bookcase", ["isSharedBookcase"]),
+    ...mapGetters("bookcase", {"bookcase": "bookcaseWithPopularities"}),
     ...mapState("users", ["points"]),
 
     userId: () => window.userId,
@@ -110,14 +116,21 @@ export default {
     },
 
     percentVisible() {
-      return this.bookcase && parseInt(100 * this.bookcase.filter(({EdgeID}) => EdgeID).length / this.bookcase.length)
+      return this.bookcase && parseInt(100 * this.bookcase.filter(({edgeId}) => edgeId).length / this.bookcase.length)
+    },
+
+    mostPopularIssuesInCollectionWithoutEdge() {
+      const popularIssuesInCollectionWithoutEdge = this.popularIssuesInCollectionWithoutEdge
+      return popularIssuesInCollectionWithoutEdge && popularIssuesInCollectionWithoutEdge
+        .sort(({popularity: popularity1}, {popularity: popularity2}) => popularity2 - popularity1)
+        .filter((_, index) => index < 10)
     },
 
     sortedBookcase() {
       const vm = this
       return this.bookcase && this.bookcaseOrder && this.issueNumbers && ([...this.bookcase]).sort((
-        {Pays: countryCode1, Magazine: magazineCode1, Numero: issueNumber1},
-        {Pays: countryCode2, Magazine: magazineCode2, Numero: issueNumber2}
+        {countryCode: countryCode1, magazineCode: magazineCode1, issueNumber: issueNumber1},
+        {countryCode: countryCode2, magazineCode: magazineCode2, issueNumber: issueNumber2}
       ) => {
         const publicationCode1 = `${countryCode1}/${magazineCode1}`;
         const publicationCode2 = `${countryCode2}/${magazineCode2}`;
@@ -158,14 +171,14 @@ export default {
     },
     bookcase(newValue) {
       const usedSprites = newValue
-        .filter(({Sprites}) => Sprites)
-        .reduce((acc, {EdgeID, Sprites}) => {
-          JSON.parse(`[${Sprites}]`).forEach((sprite) => {
+        .filter(({sprites}) => sprites)
+        .reduce((acc, {edgeId, sprites}) => {
+          JSON.parse(`[${sprites}]`).forEach((sprite) => {
             const {name} = sprite
             if (!acc[name]) {
               acc[name] = {edges: [], ...sprite}
             }
-            acc[name].edges.push(EdgeID)
+            acc[name].edges.push(edgeId)
           })
           return acc
         }, {})
@@ -183,6 +196,7 @@ export default {
   },
 
   async mounted() {
+    this.setBookcaseUsername(this.bookcaseUsername)
     await this.loadBookcase()
     await this.loadBookcaseTextures()
 
@@ -193,11 +207,13 @@ export default {
   },
 
   methods: {
-    ...mapActions("collection", ["loadBookcase", "loadBookcaseTextures", "loadBookcaseOrder", "loadPopularIssuesInCollection"]),
+    ...mapMutations("bookcase", ["setBookcaseUsername"]),
+    ...mapActions("bookcase", ["loadBookcase", "loadBookcaseTextures", "loadBookcaseOrder"]),
+    ...mapActions("collection", ["loadPopularIssuesInCollection"]),
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
     ...mapActions("users", ["fetchStats"]),
 
-    getEdgeKey: edge => `${edge.Pays}/${edge.Magazine} ${edge.Numero}`
+    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`
   }
 }
 </script>
@@ -215,7 +231,7 @@ export default {
 .carousel {
   width: 300px;
   margin: 15px 0 0;
-  
+
   .carousel-caption {
     position: initial;
   }

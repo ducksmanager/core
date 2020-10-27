@@ -8,11 +8,7 @@
       placement="top"
       triggers="hover focus manual"
     >
-      <template #title><Issue
-        :publicationcode="publicationcode"
-        :issuenumber="issueNumber"
-        :publicationname="publicationName"
-      /></template>
+      <template #title><slot name="title" /></template>
       <div>
         {{ l10n.DECOUVRIR_COUVERTURE }}.
         <div
@@ -20,24 +16,14 @@
           class="has-no-edge"
         >
           {{ l10n.TRANCHE_NON_DISPONIBLE1 }}<br>
-          <div v-if="!isBookcaseShare">
+          <div v-if="!isSharedBookcase">
             {{ l10n.TRANCHE_NON_DISPONIBLE2 }}<br>
             <div class="progress-wrapper">
-              <MedalProgress :current-level="currentLevel" />
-              <div>
-                <b-progress-bar
-                  class="progress-current"
-                  :style="{width: `${medalProgressCurrentPercentage}%`}"
-                />
-                <b-progress-bar
-                  class="progress-extra"
-                  striped
-                  variant="success"
-                  :style="{width: `${medalProgressExtraPercentage}%`}"
-                >
-                  {{ extraPoints }}
-                </b-progress-bar>
-              </div>
+              <MedalProgress
+                contribution="Photographe"
+                :user-level-points="points"
+                :extra-points="extraPoints"
+              />
             </div>
             <div class="progress-info">
               {{ l10n.TRANCHE_NON_DISPONIBLE3 }}
@@ -62,21 +48,14 @@
 import Issue from "./Issue";
 import l10nMixin from "../mixins/l10nMixin";
 import MedalProgress from "./MedalProgress";
+import {mapGetters, mapState} from "vuex";
 
 export default {
   name: "IssueEdgePopover",
-  components: {MedalProgress, Issue},
+  components: {MedalProgress},
   mixins: [l10nMixin],
   props: {
-    publicationcode: {
-      type: String,
-      required: true
-    },
-    publicationName: {
-      type: String,
-      required: true
-    },
-    issueNumber: {
+    id: {
       type: String,
       required: true
     },
@@ -84,62 +63,34 @@ export default {
       type: Boolean,
       required: true
     },
-    isBookcaseShare: {
-      type: Boolean,
-      required: true
-    },
-    userPoints: {
-      type: Number,
-      default: null
-    },
-    currentLevelPoints: {
-      type: Number,
-      default: null
-    },
-    currentLevel: {
-      type: Number,
-      default: 0
-    },
-    currentLevelThreshold: {
-      type: Number,
-      default: null
-    },
     extraPoints: {
       type: Number,
       default: null
     }
   },
 
+  data: () => ({
+    contribution: 'Photographe'
+  }),
+
   computed: {
-    medalProgressCurrentPercentage() {
-      return 100 * (this.userPoints - this.currentLevelPoints) / (this.currentLevelThreshold - this.currentLevelPoints)
+    ...mapGetters("bookcase", ["isSharedBookcase"]),
+    ...mapState("users", ["allUserPoints"]),
+
+    points() {
+      return this.allUserPoints && this.allUserPoints[this.userId][this.contribution]
     },
-    medalProgressExtraPercentage() {
-      return this.currentLevelThreshold ? (100 * (this.extraPoints / this.currentLevelThreshold - this.currentLevelPoints)) : 0
-    },
-    id() {
-      return `${this.publicationcode} ${this.issueNumber}`
-    }
+
+    userId: () => window.userId
   }
 }
 </script>
 
 <style scoped lang="scss">
-
+span {
+  display: inline-block;
+}
 .has-no-edge {
   margin-top: 25px;
-}
-
-.progress-current {
-  background-color: lightgreen !important;
-}
-
-.progress-extra {
-  color: rgb(40,40,40) !important;
-  background-image: linear-gradient(135deg, #268026 25%, transparent 25%, transparent 50%, #268026 50%, #268026 75%, transparent 75%, transparent);
-  text-shadow: 1px 1px 2px lightgrey;
-  white-space: nowrap;
-  overflow-x: visible;
-  animation-direction: reverse;
 }
 </style>

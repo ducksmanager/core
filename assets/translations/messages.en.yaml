@@ -41,7 +41,7 @@ AJOUTER_NUMEROS_INDUCKS: Add into the DucksManager collection the missing issues
 ANALYSE_LISTE: Analyzing the list...
 ANNULER: Cancel
 ATTENTION_EMAIL_VIDE_ACHAT: In order to contact the users who want to sell of their collection,you must fill your email address on the page 
-ATTENTION_VENTE_SANS_EMAIL: Warning ! Your collection contains some issues that you want to sell, but you haven\'t specified any email address to which potential buyers can contact you. You can specify one on the page 
+ATTENTION_VENTE_SANS_EMAIL: Warning! Your collection contains some issues that you want to sell, but you haven\'t specified any email address to which potential buyers can contact you. You can specify one on the page 
 AU: to
 AUCUNE_ACQUISITION: No saved purchase
 AUCUNE_DATE_ACQUISITION: You haven\'t added any purchase date for the moment
@@ -83,9 +83,9 @@ BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE: Since your last visit, %u new book edges 
 BIBLIOTHEQUE_OPTIONS: Allows you to set up options for the display of your bookcase
 BIBLIOTHEQUE_OPTIONS_COURT: Bookcase options
 BIBLIOTHEQUE_PRIVEE: This user\'s bookcase is private.
-BIBLIOTHEQUE_PROPOSITION_PARTAGE: Proud of your collection ? Show your bookcase to your friends !
+BIBLIOTHEQUE_PROPOSITION_PARTAGE: Proud of your collection? Show your bookcase to your friends!
 BIBLIOTHEQUE_SAUVEGARDER_IMAGE: Save a picture of this library
-BIENVENUE: Welcome to DucksManager !
+BIENVENUE: Welcome to DucksManager!
 BOITE_SELECTIONNEE: Selected box
 BON: Good
 CACHER_VIDEO: Hide the video
@@ -93,7 +93,7 @@ CACHER_AIDE: Hide help panel
 CALCUL: Calculation
 CALCUL_EN_COURS: Calculating...
 CALCUL_TERMINE: Calculations done... The page is going to reload...
-CALCULS_PAS_ENCORE_FAITS: The calculations have not been done yet. The stats are generated every day, come back tomorrow !
+CALCULS_PAS_ENCORE_FAITS: The calculations have not been done yet. The stats are generated every day, come back tomorrow!
 CHAMP_OBLIGATOIRE_1: The field 
 CHAMP_OBLIGATOIRE_2:  is mandatory
 CHARGEMENT: Loading...
@@ -105,7 +105,7 @@ CLASSIQUE_ABREGE_PLUS_1: Very short
 CLASSIQUE_DESCRIPTION: A <b>standard list</b>, listing for each publication the issues you possess.
 CLASSIQUE_MOINS_1: Easy to read but not practical when it comes to adding new issues in it.
 CLASSIQUE_MOINS_2: Hard to add an issue manually without disturbing the list order
-CLASSIQUE_MOINS_3: Don\'t tell me that you find this list stylish ! ;-)
+CLASSIQUE_MOINS_3: Don\'t tell me that you find this list stylish! ;-)
 CLASSIQUE_NOM: the classic list
 CLASSIQUE_PLUS_1: More adapted for collections with less than 500 issues.
 CLIQUEZ_ICI: Click here
@@ -113,8 +113,8 @@ CLIQUEZ_SUR_MAGAZINE_POUR_EDITER: Click on one of the publications to edit its l
 COA_KO_1: The Disney publications database is currently unavailable.
 COA_KO_2: You will be able to use your DucksManager account as soon as the connection is alive again.
 CODE_HISTOIRE: story code
-COLLECTABLE_DEMO: to view our 1min30 video explaining how CollecTable works !
-COLLECTABLE_DESCRIPTION: A <b>CollecTable list</b>, more digest but requiring a bit of training !
+COLLECTABLE_DEMO: to view our 1min30 video explaining how CollecTable works!
+COLLECTABLE_DESCRIPTION: A <b>CollecTable list</b>, more digest but requiring a bit of training!
 COLLECTABLE_MOINS_1: Needs a little bit of time to understand how it works (A few minutes should really be enough though)
 COLLECTABLE_MOINS_2: Some problems when you\'ve got a lot of issues with the same unit numbers (for instance 100,200,300). In this case the cell is enlarged.
 COLLECTABLE_NOM: CollecTable
@@ -133,34 +133,34 @@ COLLECTION_INDUCKS: Inducks collection
 COLLECTION_INDUCKS_POSSEDEE: Already have an Inducks collection?
 COMPTE_SUPPRIME_DECONNECTE: Your account has also been deleted. You are now logged out.
 CONFIRMATION_ENVOI_MESSAGE: An e-mail has been sent to 
-CONFIRMER: Do you confirm ?
+CONFIRMER: Do you confirm?
 CONNEXION: Log in
 CONNEXION_COMPTE: Log into my DucksManager account
 CONNEXION_INDUCKS: Logging in on Inducks...
 CONTACT_UTILISATEURS: Contact other DucksManager users
-CONTINUER_OUI_NON: Do you want to continue ?
+CONTINUER_OUI_NON: Do you want to continue?
 CREER: Create
 DANS: in
 DATE: Date
-DATE_INVALIDE: Invalid date !
-DATE_QUESTION: At what date did you do your purchase ? (DD/MM/YYYY)
+DATE_INVALIDE: Invalid date!
+DATE_QUESTION: At what date did you do your purchase? (DD/MM/YYYY)
 DATES_EXISTANTES: Existing purchase dates
 DE: from
 DEBUG_DESCRIPTION: "\"Debug\" list, mainly made for developers."
 DEBUG_MOINS_1: Hard to consider a series of issues
 DEBUG_MOINS_2: Hard to add an issue without disturbing the issues order
 DEBUG_MOINS_3: Takes one line per issue
-DEBUG_MOINS_4: Ugly !
+DEBUG_MOINS_4: Ugly!
 DEBUG_PLUS_1: Useful for debugging corrupted lists
 DECONNEXION: Log out
 DECONNEXION_OK: You are now logged out.
 DECOUVRIR_COUVERTURE: Click on the edge to see its cover
-DEMO_MENU: Want to try a demo ?
+DEMO_MENU: Want to try a demo?
 DEPLACER_APRES: Move after
 DEPLACER_AVANT: Move before
 DETAILS_HISTOIRE: Story details
 DETAILS_MAINTENANCE_1: The website will be available again 
-DETAILS_MAINTENANCE_2:  if everything works fine !
+DETAILS_MAINTENANCE_2:  if everything works fine!
 DETAILS_MEDAILLE_CREATEUR: You have %d Edge designer points, get %d more to receive the %s badge!
 DETAILS_MEDAILLE_CREATEUR_MAX: You have %d Edge designer points
 DETAILS_MEDAILLE_DUCKHUNTER: You have pinned %d second-hand bookshops, pin %d more to receive the %s badge!
@@ -176,13 +176,13 @@ DMSPIRAL_PLUS_2: Can take into account the issues conditions (Bad condition, goo
 DMSPIRAL_PLUS_3: Easy viewing of issues series or missing issues
 DU: from
 EMAIL_ACHAT_VENTE_2: You can answer directly to this e-mail to propose him or her a price and discuss about a way to send these issues.
-EMAIL_ACHAT_VENTE_3: Happy selling, and see you soon on DucksManager !
+EMAIL_ACHAT_VENTE_3: Happy selling, and see you soon on DucksManager!
 EMAIL_ACHAT_VENTE_TITRE: A user is interested by some items of your DucksManager collection
 EMAIL_ENVOYE: An e-mail has been sent to the webmaster.
 EMAIL_ENVOYE_BOUQUINERIE: If your second-hand bookshop is valid, it should be available soon on DucksManager.
 EMAIL_REINIT_MOT_DE_PASSE_1: You receive this e-mail following your password reset request on DucksManager.
 EMAIL_REINIT_MOT_DE_PASSE_2: "Your temporary password is :"
-EMAIL_REINIT_MOT_DE_PASSE_3: See you soon on DucksManager !
+EMAIL_REINIT_MOT_DE_PASSE_3: See you soon on DucksManager!
 EMAIL_REINIT_MOT_DE_PASSE_TITRE: DucksManager password reset
 EMAIL_SIGNATURE: The DucksManager team
 EN_MAINTENANCE: In maintenance
@@ -194,7 +194,7 @@ ENVOYER_PHOTOS_DE_TRANCHE: Send edge photos
 ENVOYER_MESSAGE_A: Send a message to 
 ERREUR_CAPTCHA: The code you have typed is invalid. Please try again.
 ERREUR_CONNEXION_INDUCKS: Error while connecting to Inducks!
-ERREUR_EXECUTION_REQUETE: Error while submitting the query !
+ERREUR_EXECUTION_REQUETE: Error while submitting the query!
 ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: Merging two lists is only possible if they are of the same type!
 ERREUR_LECTURE_NUMEROS: Error while reading the issues list
 ERREUR_RAWDATA_INVALIDE: Error while analyzing the Inducks collection.. Please select all the content text of the Inducks page.
@@ -282,7 +282,7 @@ IMPRIMER_AIDE_1: On this page, you can choose how to print the issues of your co
 IMPRIMER_AIDE_2: Right-click on a box to change its display type.
 IMPRIMER_AIDE_3: Every magazine of your collection is initially represented in a box, but you can drag and drop the boxes to merge their contents.
 IMPRIMER_AIDE_4: Your display preferences are automatically saved.
-IMPRIMER_AIDE_5: Everything\'s ready ? Click on "Print"!
+IMPRIMER_AIDE_5: Everything's ready? Click on "Print"!
 INDEFINI: Undefined
 INDEX_AIDE: Help index
 INFO_AJOUT_NUMEROS_1: Click on the issues that you want to add to your collection, 
@@ -290,7 +290,7 @@ INFO_AJOUT_NUMEROS_2_DESKTOP: then right-click on the list to indicate its condi
 INFO_AJOUT_NUMEROS_2_MOBILE: then make a long tap on the list to indicate its condition and validate.
 INITIALISATION: Initialization
 INSCRIPTION: Sign up
-INSCRIVEZ_VOUS: Click here to sign up !
+INSCRIVEZ_VOUS: Click here to sign up!
 INSTRUCTIONS_IMPORT_INDUCKS_TITRE: Importing your Inducks collection
 INSTRUCTIONS_IMPORT_INDUCKS_1: Login to your Inducks account on the opposite figure.
 INSTRUCTIONS_IMPORT_INDUCKS_2: In the menu which appears, click on "Données brutes" (or "Raw data", depending on the display language).
@@ -321,7 +321,7 @@ MEDAILLE_1: bronze
 MEDAILLE_2: silver
 MEDAILLE_3: gold
 MERCI_COMPREHENSION: Thank you for your understanding.
-MERCI_CONTRIBUTION: Thanks for your contribution !
+MERCI_CONTRIBUTION: Thanks for your contribution!
 MINUTES: minute(s)
 MISE_A_JOUR: Updating...
 MODIFICATIONS_OK: Your changes have been applied.
@@ -336,7 +336,7 @@ MOT_DE_PASSE_CHANGEMENT: Password change
 MOT_DE_PASSE_CONF: Password (confirmation)
 MOT_DE_PASSE_NOUVEAU: New password
 MOT_DE_PASSE_NOUVEAU_CONFIRMATION: New password (confirmation)
-MOT_DE_PASSE_OUBLIE: Password lost ?
+MOT_DE_PASSE_OUBLIE: Password lost?
 MOT_DE_PASSE_OUBLIE_EMAIL_ENVOYE: An email has been sent at the email address that you have indicated
 MOT_DE_PASSE_OUBLIE_ERREUR_EMAIL: This email doesn\'t match any DucksManager account.
 MOT_DE_PASSE_OUBLIE_ERREUR_ENVOI_EMAIL: Failed to send the email
@@ -348,7 +348,7 @@ MOTS_DE_PASSE_DIFFERENTS: The two passwords are different!
 MOYEN: Not so good
 NEWS_A_AJOUTE_BOUQUINERIE: has reviewed the second-hand bookshop
 NEWS_A_AJOUTE: has added
-NEWS_A_COMMENCE_COLLECTION: has started a collection on DucksManager. Welcome !
+NEWS_A_COMMENCE_COLLECTION: has started a collection on DucksManager. Welcome!
 NEWS_A_CREE_TRANCHE: has created the edge of issue 
 NEWS_A_OBTENU_MEDAILLE: received the <b>%s level %d</b> medal
 NEWS_A_SA_COLLECTION: to his/her collection
@@ -390,7 +390,7 @@ NUMEROS_SELECTIONNES_ENREGISTRES: selected issues will be added to your collecti
 NUMEROS_SUPPRIMES: The issues of your collection have been deleted
 OK: OK
 OPERATION_IMPOSSIBLE_MODE_DEMO: Sorry, this operation cannot be processed in the demo mode.
-OPERATION_IRREVERSIBLE: Warning ! This operation is irreversible.
+OPERATION_IRREVERSIBLE: Warning! This operation is irreversible.
 OPERATIONS_EXECUTEES: The operations have been successfully executed.
 OPTIONS: Settings
 ORDRE_MAGAZINES: Order of the publications in the bookcase
@@ -416,25 +416,25 @@ POSSESSION_NUMEROS: Issues possession
 POURCENTAGE_COLLECTION_VISIBLE: "% of the collection can be viewed in the bookcase."
 PRESENTATION: Presentation
 PRESENTATION1: DucksManager is a website allowing you to manage your collection of Disney magazines.
-PRESENTATION2: From your collection management to its printing as a list, including complete statistics, all the functions you were waiting from a collection manager are here !
+PRESENTATION2: From your collection management to its printing as a list, including complete statistics, all the functions you were waiting from a collection manager are here!
 PRESENTATION_BIBLIOTHEQUE_1: DucksManager\'s bookcase presents your comics collection on elegant shelves.
 PRESENTATION_BIBLIOTHEQUE_2: Since your bookcase is unique, DucksManager allows you to choose among different types of wood, for the bookcase and for its shelves.
-PRESENTATION_BIBLIOTHEQUE_3: ...And in order the immersion to be total, you are able to view the cover and some excerpts of nearly every issue of yours !!
-PRESENTATION_BIBLIOTHEQUE_TITRE: Your bookcase, like if you\'re in front of it !
-PRESENTATION_BOUQUINERIE1: You have visited in a cool second-hand bookshop ? Let the other visitors know!
-PRESENTATION_DEMO_TITRE: Welcome in the demo mode !
+PRESENTATION_BIBLIOTHEQUE_3: ...And in order the immersion to be total, you are able to view the cover and some excerpts of nearly every issue of yours!!
+PRESENTATION_BIBLIOTHEQUE_TITRE: Your bookcase, like if you\'re in front of it!
+PRESENTATION_BOUQUINERIE1: You have visited in a cool second-hand bookshop? Let the other visitors know!
+PRESENTATION_DEMO_TITRE: Welcome in the demo mode!
 PRESENTATION_DEMO: Take the time to discover how DucksManager will change the way you manage your Disney comic books collection.<br /><br />You can add or remove issues from the demo collection, but remember that every hour all the user-generated data will be removed.<br />If you want to log out of the demo mode in order to sign up or to login to your real collection, use the link in the left menu.<br />Next account reset in 
 PRESENTATION_GENERALE: A complete collection management, customized statistics, a large range of tools to grow up your collection, and much more...
 PRESENTATION_GERER_1: Our selection tool allows you to index your whole Disney issues collection in a matter of minutes.
-PRESENTATION_GERER_2: Want DucksManager to remember the most precise details of your collection ? A right click will be enough!
+PRESENTATION_GERER_2: Want DucksManager to remember the most precise details of your collection? A right click will be enough!
 PRESENTATION_GERER_3: You will be able to select the condition of your books, along with their purchase date, or even propose to sell them to the other DucksManager users.
 PRESENTATION_GERER_TITRE: Add issues to your collection in a few clicks!
 PRESENTATION_STATS_1: Updated everyday to take into account your collection changes, the DucksManager statistics inform you about the issues you have got, and tell you how much you need to get to complete your issues series.
 PRESENTATION_STATS_2: If you specified the conditions of your issues, a graph will sum them up.
-PRESENTATION_STATS_3: You like a script-writer or a drawer in particular ? DucksManager generates bar chart containing the proportion of stories from this author that you\'ve got in your collection.
+PRESENTATION_STATS_3: You like a script-writer or a drawer in particular? DucksManager generates bar chart containing the proportion of stories from this author that you\'ve got in your collection.
 PRESENTATION_STATS_TITRE: Complete statistics and all the tools to grow up your collection!
 PRESENTATION_WHATTHEDUCK_1: Keep your Disney collection with you at all times and add magazines to your collection by simply take a photo of them using  
-PRESENTATION_WHATTHEDUCK_2: ", DucksManager's mobile app !"
+PRESENTATION_WHATTHEDUCK_2: ", DucksManager's mobile app!"
 PRESENTATION_WHATTHEDUCK_3: Available for free on Google Play.
 PRESENTATION_WHATTHEDUCK_LONGUE: Did you know that DucksManager developed its official Android app called What The Duck? With What The Duck, take a picture of the cover of a magazine and the app will add it to your collection! Download it for free on your Android phone or tablet.
 PRESENTATION_WHATTHEDUCK_TITRE: Your Disney collection in your pocket
@@ -442,16 +442,16 @@ PRIX_HONNETES: We are counting on your honnesty concerning the prices you mentio
 PROBLEME_BD: Problem when connecting to the database!
 PROPOSE_LES_NUMEROS: "wants to sell the following issues :"
 PROPOSER_BOUQUINERIE: Propose a second-hand bookshop
-PUB_WHATTHEDUCK_1: New ! Take a picture of Disney issues to add them to your collection using 
-PUB_WHATTHEDUCK_2: ", DucksManager's mobile app !"
+PUB_WHATTHEDUCK_1: New! Take a picture of Disney issues to add them to your collection using 
+PUB_WHATTHEDUCK_2: ", DucksManager's mobile app!"
 PUB_WHATTHEDUCK_3: Available for free on Google Play.
 PUB_WHATTHEDUCK_LONGUE: Did you know that DucksManager developed its official Android app called What The Duck? With What The Duck, take a picture of the cover of a magazine and the app will add it to your collection! Download it for free on your Android phone or tablet.
 PUBLICATION: Publication
 PUBLICATIONS: Publications
 PUBLICATIONS_COURT: My issue collection
-QUESTION_EXECUTER_OPS_INDUCKS: Do you wish to execute these operations ?
+QUESTION_EXECUTER_OPS_INDUCKS: Do you wish to execute these operations?
 QUESTION_IMPORTER_INDUCKS: Do you wish to import them?
-QUESTION_SUPPRIMER_MAGAZINE: "Would you like this magazine to be removed from your collection ? In this case, the following issues will also be removed from your collection :"
+QUESTION_SUPPRIMER_MAGAZINE: "Would you like this magazine to be removed from your collection? In this case, the following issues will also be removed from your collection :"
 RECHERCHE_MAGAZINE_AUCUN_RESULTAT: No result.
 RECHERCHE_MAGAZINE_HISTOIRE_NON_POSSEDEE: You don\'t own this story.
 RECHERCHE_MAGAZINE_RESULTATS_NOMBREUX_1: There are more than 10 matches.
@@ -483,12 +483,12 @@ STATISTIQUES_COLLECTION: Statistics
 STATISTIQUES_QUOTIDIENNES: The statistics are updated every day.
 SUCCES: Success!
 SUGGESTIONS_ACHATS: Purchase suggestor
-SUGGESTIONS_ACHATS_NOUVEAUTE: Depuis votre dernière visite, %d magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !
-SUGGESTIONS_ACHATS_NOUVEAUTES: Depuis votre dernière visite, %d magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !
+SUGGESTIONS_ACHATS_NOUVEAUTE: Depuis votre dernière visite, %d magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti!
+SUGGESTIONS_ACHATS_NOUVEAUTES: Depuis votre dernière visite, %d magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis!
 SUGGESTIONS_ACHATS_QUOTIDIENNES: The suggestions are updated every day.
 SUGGESTIONS_PUBLICATIONS_DESACTIVE: The author suggestions are currently disabled.
 SUGGESTIONS_SEE_ALL: See all the suggestions for my collection
-SUPPRESSION_ACQUISITION_CONFIRMATION: Do you confirm the removal of this purchase ?\nThe issues corresponding to this purchase will not be removed from your collection.
+SUPPRESSION_ACQUISITION_CONFIRMATION: Do you confirm the removal of this purchase?\nThe issues corresponding to this purchase will not be removed from your collection.
 SUPPRIMER: Remove
 SUPPRIMER_ACQUISITION: Remove this purchase
 SUPPRIMER_COMPTE: Delete my DucksManager account
@@ -505,7 +505,7 @@ TITRE_HISTOIRE: story title
 TITRE_MEDAILLE_CREATEUR: Edge designer
 TITRE_MEDAILLE_PHOTOGRAPHE: Edge photographer
 TITRE_MEDAILLE_DUCKHUNTER: Duckhunter
-TITRE_PAGE_ACCUEIL: Welcome !
+TITRE_PAGE_ACCUEIL: Welcome!
 TITRE_PAGE_AGRANDIR: Expand your collection
 TITRE_PAGE_BIBLIOTHEQUE: The DucksManager bookcase
 TITRE_PAGE_BOUQUINERIES: Second-hand bookshops
@@ -517,10 +517,10 @@ TITRE_PAGE_STATISTIQUES: Statistics
 TOTAL: Total
 TOUS_MAGAZINES: All issues
 TOUS_PAYS: All countries
-TRANCHE_NON_DISPONIBLE1: This edge is not viewable as we don\'t have any photography of it...
-TRANCHE_NON_DISPONIBLE2: You can photograph this edge ?
+TRANCHE_NON_DISPONIBLE1: This edge is not viewable as we don't have any photography of it...
+TRANCHE_NON_DISPONIBLE2: You can photograph this edge?
 TRANCHE_NON_DISPONIBLE3: Send it to us and earn
-TRAVAUX_SECTION: This page is under (re)construction !
+TRAVAUX_SECTION: This page is under (re)construction!
 TYPE_LISTE: List type
 TYPE_LISTE_GLOBAL: Global list type
 UN_VISITEUR_ANONYME: an anonymous visitor

@@ -1,35 +1,51 @@
 <template>
-  <div
-    :id="id"
-    ref="edge"
-    :class="{edge: true, [spriteClass]: true}"
-    :style="load && imageLoaded ? {
-      backgroundImage:`url(${src})`,
-      backgroundSize: `${width}px ${height}px`,
-      width: `${width}px`,
-      height: `${height}px`,
-    } : {}"
+  <IssueEdgePopover
+    :id="`${id}-popover`"
+    :has-edge="existing"
+    :extra-points="popularity"
   >
-    <img
-      v-if="load && !imageLoaded"
-      class="temp-image"
-      :src="src"
-      @click="loadCover"
-      @load="onImageLoad"
-      @error="onImageError"
+    <template #title>
+      <Issue
+        :publicationcode="publicationCode"
+        :issuenumber="issueNumber"
+        :publicationname="publicationNames[publicationCode]"
+      />
+    </template>
+    <div
+      :id="id"
+      ref="edge"
+      :class="{edge: true, [spriteClass]: true}"
+      :style="load && imageLoaded ? {
+        backgroundImage:`url(${src})`,
+        backgroundSize: `${width}px ${height}px`,
+        width: `${width}px`,
+        height: `${height}px`,
+      } : {}"
     >
-  </div>
+      <img
+        v-if="load && !imageLoaded"
+        class="temp-image"
+        :src="src"
+        @click="loadCover"
+        @load="onImageLoad"
+        @error="onImageError"
+      >
+    </div>
+  </IssueEdgePopover>
 </template>
 
 <script>
 import {mapMutations, mapState} from "vuex";
 import * as axios from "axios";
+import IssueEdgePopover from "./IssueEdgePopover";
+import Issue from "./Issue";
 
 const EDGES_ROOT = 'https://edges.ducksmanager.net/edges/'
 const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
 
 export default {
   name: "Edge",
+  components: {Issue, IssueEdgePopover},
   props: {
     publicationCode: {
       type: String,
@@ -39,11 +55,15 @@ export default {
       type: String,
       required: true
     },
-    spritePath: {
+    issueNumberReference: {
       type: String,
       default: null
     },
-    issueNumberReference: {
+    popularity: {
+      type: Number,
+      required: true
+    },
+    spritePath: {
       type: String,
       default: null
     },
@@ -61,7 +81,6 @@ export default {
   data: () => ({
     imageLoaded: false,
     ignoreSprite: false,
-    id: null,
     countryCode: null,
     magazineCode: null,
     width: null,
@@ -70,6 +89,11 @@ export default {
 
   computed: {
     ...mapState("bookcase", ["loadedSprites"]),
+    ...mapState("coa", ["publicationNames"]),
+
+    id() {
+      return `${this.publicationCode} ${this.issueNumber}`
+    },
 
     src() {
       return this.spritePath && !this.ignoreSprite
@@ -82,17 +106,7 @@ export default {
     }
   },
 
-  watch: {
-    issueNumber: {
-      immediate: true,
-      handler(newValue) {
-        // console.log("value="+newValue)
-      }
-    }
-  },
-
   mounted() {
-    this.id = `${this.publicationCode}/${this.issueNumber}`
     const [ countryCode, magazineCode ] = this.publicationCode.split('/')
     this.countryCode = countryCode
     this.magazineCode = magazineCode

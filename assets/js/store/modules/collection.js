@@ -9,9 +9,6 @@ export default {
     watchedAuthors: null,
     suggestions: null,
 
-    bookcase: null,
-    bookcaseTextures: null,
-    bookcaseOrder: null,
     popularIssuesInCollection: null,
 
     isLoadingCollection: false,
@@ -37,15 +34,6 @@ export default {
     setSuggestions(state, suggestions) {
       state.suggestions = suggestions
     },
-    setBookcase(state, bookcase) {
-      state.bookcase = bookcase
-    },
-    setBookcaseTextures(state, bookcaseTextures) {
-      state.bookcaseTextures = bookcaseTextures
-    },
-    setBookcaseOrder(state, bookcaseOrder) {
-      state.bookcaseOrder = bookcaseOrder
-    },
     setPopularIssuesInCollection(state, popularIssuesInCollection) {
       state.popularIssuesInCollection = popularIssuesInCollection
     }
@@ -66,23 +54,9 @@ export default {
 
     hasSuggestions: state => state.suggestions && state.suggestions.issues && Object.keys(state.suggestions.issues).length,
 
-    popularIssuesInCollectionWithoutEdge: state => state.popularIssuesInCollection && state.bookcase &&
-      state.bookcase
-        .filter(({EdgeID}) => !EdgeID)
-        .map((issue) => {
-          const {Pays: countryCode, Magazine: magazineCode, Numero: issueNumber} = issue
-          const publicationCode = `${countryCode}/${magazineCode}`;
-          const issueCode = `${publicationCode} ${issueNumber}`;
-          return {
-            ...issue,
-            publicationCode,
-            issueCode,
-            popularity: state.popularIssuesInCollection[issueCode] || 0
-          };
-        })
+    popularIssuesInCollectionWithoutEdge: (state, getters, rootState, rootGetters) => rootGetters['bookcase/bookcaseWithPopularities'] && rootGetters['bookcase/bookcaseWithPopularities']
+        .filter(({edgeId, popularity}) => !edgeId && popularity > 0)
         .sort(({popularity: popularity1}, {popularity: popularity2}) => popularity2 - popularity1)
-        .filter(({popularity}) => popularity > 0)
-        .filter((_, index) => index < 10)
   },
 
   actions: {
@@ -108,7 +82,7 @@ export default {
       }
     },
     loadSuggestions: async ({state, commit}, {countryCode, sinceLastVisit}) => {
-      if (!state.isLoadingSuggestions && !state.suggestions) {
+      if (!state.isLoadingSuggestions) {
         state.isLoadingSuggestions = true
         commit("setSuggestions", (await axios.get(`/api/collection/stats/suggestedissues/${[
           countryCode || 'ALL',
@@ -116,21 +90,6 @@ export default {
           sinceLastVisit ? 100 : 20
         ].join('/')}`)).data)
         state.isLoadingSuggestions = false
-      }
-    },
-    loadBookcase: async ({state, commit}) => {
-      if (!state.bookcase) {
-        commit("setBookcase", (await axios.get("/api/collection/bookcase")).data)
-      }
-    },
-    loadBookcaseTextures: async ({state, commit}) => {
-      if (!state.bookcaseTextures) {
-        commit("setBookcaseTextures", (await axios.get("/api/collection/bookcase/textures")).data)
-      }
-    },
-    loadBookcaseOrder: async ({state, commit}) => {
-      if (!state.bookcaseOrder) {
-        commit("setBookcaseOrder", (await axios.get("/api/collection/bookcase/sort")).data)
       }
     },
     loadPopularIssuesInCollection: async ({state, commit}) => {
