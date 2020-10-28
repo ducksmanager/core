@@ -3,6 +3,9 @@
     <LeftPanel />
     <Banner />
     <div id="logo_zone2">
+      <h2 v-if="title">
+        {{ title }}
+      </h2>
       <component
         :is="page"
         v-bind="attrsWithoutId"
@@ -27,6 +30,8 @@ import Expand from "./Expand";
 import Bookstores from "./Bookstores";
 import PrintPresentation from "./PrintPresentation";
 import Welcome from "./Welcome";
+import Forgot from "./Forgot";
+import Signup from "./Signup";
 
 export default {
   name: "Site",
@@ -36,17 +41,20 @@ export default {
     Bookstores,
     Expand,
     Footer,
+    Forgot,
     InducksImport,
     LeftPanel,
     Login,
     Manage,
     PrintPresentation,
+    Signup,
     Stats,
     Welcome,
   },
   mixins: [l10nMixin, userMixin],
   props: {
-    page: { type: String, required: true }
+    page: { type: String, required: true },
+    title: { type: String, default: null },
   },
   data() {
     return this.$attrs;

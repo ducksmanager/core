@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
+use App\Service\UserService;
 use LogicException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityController extends AbstractController
+class SecurityController extends PageSiteController
 {
     /**
      * @Route({
@@ -18,11 +18,11 @@ class SecurityController extends AbstractController
      *     name="app_login"
      * )
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, UserService $userService): Response
     {
-//         if ($this->getUser()) {
-//             return $this->redirect('/');
-//         }
+        if (!empty($userService->getCurrentUserId())) {
+            return $this->redirectToRoute('app_collection_display');
+        }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -31,10 +31,10 @@ class SecurityController extends AbstractController
 
         return $this->render('security/login.twig', [
             'vueProps' => [
-                'component' => 'Site',
-                'page' => 'Login',
-                'last-username' => $lastUsername,
-            ] + compact('error')
+                    'component' => 'Site',
+                    'page' => 'Login',
+                    'last-username' => $lastUsername,
+                ] + compact('error')
         ]);
     }
 

@@ -1,33 +1,35 @@
 <template>
-  <form method="post">
-    <div
+  <form
+    v-if="l10n"
+    method="post"
+  >
+    <b-alert
       v-if="error"
-      class="alert alert-danger"
+      show
+      variant="danger"
     >
       {{ error }}
-    </div>
+    </b-alert>
 
     <h1 class="h3 mb-3 font-weight-normal">
-      Please sign in
+      {{ l10n.CONNEXION }}
     </h1>
-    <label for="inputUsername">Username</label>
-    <input
-      id="inputUsername"
-      type="text"
-      :value="lastUsername"
+    <b-form-input
+      id="username"
       name="username"
-      class="form-control"
+      type="text"
       required
       autofocus
-    >
-    <label for="inputPassword">Password</label>
-    <input
-      id="inputPassword"
-      type="password"
+      :value="lastUsername"
+      :placeholder="l10n.NOM_UTILISATEUR"
+    />
+    <b-form-input
+      id="password"
       name="password"
-      class="form-control"
+      type="password"
       required
-    >
+      :placeholder="l10n.MOT_DE_PASSE"
+    />
 
     <input
       type="hidden"
@@ -35,18 +37,25 @@
       :value="csrfToken"
     >
 
-    <button
-      class="btn btn-lg btn-primary"
+    <b-btn
+      variant="primary"
+      size="xl"
       type="submit"
     >
-      Sign in
-    </button>
+      {{ l10n.CONNEXION }}
+    </b-btn>
+    <div>
+      <a href="/forgot">{{ l10n.MOT_DE_PASSE_OUBLIE }}</a>
+    </div>
   </form>
 </template>
 
 <script>
+import l10nMixin from "../mixins/l10nMixin";
+
 export default {
   name: "Login",
+  mixins: [l10nMixin],
   props: {
     error: {type: String, default: null},
     lastUsername: {type: String, default: null}

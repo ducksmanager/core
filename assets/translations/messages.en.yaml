@@ -196,6 +196,7 @@ ERREUR_CAPTCHA: The code you have typed is invalid. Please try again.
 ERREUR_CONNEXION_INDUCKS: Error while connecting to Inducks!
 ERREUR_EXECUTION_REQUETE: Error while submitting the query!
 ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: Merging two lists is only possible if they are of the same type!
+ERREUR_GENERIQUE: An error occurred.
 ERREUR_LECTURE_NUMEROS: Error while reading the issues list
 ERREUR_RAWDATA_INVALIDE: Error while analyzing the Inducks collection.. Please select all the content text of the Inducks page.
 ERREUR_TECHNIQUE: A technical error has occurred. Please send a message to the webmaster so that it gets solved as soon as possible!
@@ -338,9 +339,9 @@ MOT_DE_PASSE_NOUVEAU: New password
 MOT_DE_PASSE_NOUVEAU_CONFIRMATION: New password (confirmation)
 MOT_DE_PASSE_OUBLIE: Password lost?
 MOT_DE_PASSE_OUBLIE_EMAIL_ENVOYE: An email has been sent at the email address that you have indicated
+MOT_DE_PASSE_OUBLIE_ERREUR: The field "Email" is not valid, does it correspond to an email registered on DucksManager?
 MOT_DE_PASSE_OUBLIE_ERREUR_EMAIL: This email doesn\'t match any DucksManager account.
 MOT_DE_PASSE_OUBLIE_ERREUR_ENVOI_EMAIL: Failed to send the email
-MOT_DE_PASSE_OUBLIE_ERREUR_VIDE: The field "Email" is not valid, does it correspond to an email registered on DucksManager?
 MOT_DE_PASSE_OUBLIE_ERREUR_TOKEN: The password reset link is invalid or has expired, please type in your e-mail address again on the %s page.
 MOT_DE_PASSE_OUBLIE_EXPLICATION: Fill in your e-mail address to reset your password.
 MOT_DE_PASSE_OUBLIE_OK: If the typed e-mail address corresponds to a DucksManager account, we just sent there a link allowing you to reset your password. If the e-mail does not reach you within a few minutes, please check your "Spam" folder.

@@ -16,14 +16,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class StatsController extends AbstractController
 {
     /**
-     * @return User|UserInterface|object|null
-     */
-    protected function getUser()
-    {
-        return parent::getUser();
-    }
-
-    /**
      * @Route(
      *     methods={"GET"},
      *     path="/stats/user/count"
@@ -50,25 +42,6 @@ class StatsController extends AbstractController
         return new JsonResponse([
             'points' => $collectionService->retrieveUserPoints($userIds),
             'stats' => $collectionService->retrieveUserQuickStats($userIds)
-        ]);
-    }
-
-    /**
-     * @Route(
-     *     methods={"GET", "POST"},
-     *     path="/stats/{type}"
-     * )
-     */
-    public function showPublicationStats(UserService $userService, TranslatorInterface $translator, string $type): Response
-    {
-        return $this->render("bare.twig", [
-            'title' => $translator->trans('STATISTIQUES_COLLECTION'),
-            'username' => $userService->getCurrentUsername(),
-            'vueProps' => [
-                'component' => 'Site',
-                'page' => 'Stats',
-                'tab' => $type
-            ]
         ]);
     }
 }

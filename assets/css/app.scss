@@ -10,9 +10,15 @@ a {
   border-bottom: 1px dotted #ffffff;
 
   &:hover, &:focus {
+    color: lightgrey;
+    text-decoration: none;
     outline: 0;
-    border-bottom: 1px dashed #ffffff !important;
+    border-bottom: 1px dashed #ffffff;
   }
+}
+
+input.form-control {
+  margin: 4px 0;
 }
 
 

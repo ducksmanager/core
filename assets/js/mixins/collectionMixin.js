@@ -1,6 +1,10 @@
 import {mapActions, mapGetters, mapState} from "vuex";
+import userMixin from "./userMixin";
 
 export default {
+
+    mixins: [userMixin],
+
     computed: {
         ...mapState("collection", ["collection", "purchases"]),
         ...mapGetters("collection", ["totalPerPublication"])
@@ -12,6 +16,8 @@ export default {
         }
     },
     async mounted() {
-        await this.loadCollection()
+        if (this.username) {
+            await this.loadCollection()
+        }
     }
 }

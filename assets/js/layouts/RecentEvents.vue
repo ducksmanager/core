@@ -69,7 +69,7 @@ export default {
     User,
     Issue
   },
-  mixins: [l10nMixin, collectionMixin, medalMixin],
+  mixins: [l10nMixin, medalMixin],
 
   data: () => ({
     events: null

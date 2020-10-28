@@ -12,23 +12,6 @@ class PrintController extends AbstractController
 {
     /**
      * @Route({
-     *     "en": "/print",
-     *     "fr": "/impression"
-     * },
-     *     methods={"GET"}
-     * )
-     */
-    public function printPresentation(UserService $userService, TranslatorInterface $translator): Response
-    {
-        return $this->render("bare.twig", [
-            'title' => $translator->trans('IMPRESSION_COLLECTION'),
-            'component' => 'Site',
-            'page' => 'PrintPresentation',
-            'username' => $userService->getCurrentUsername()
-        ]);
-    }
-    /**
-     * @Route({
      *     "en": "/print/{currentType}",
      *     "fr": "/impression/{currentType}"
      * },

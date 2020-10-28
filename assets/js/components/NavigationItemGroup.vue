@@ -79,7 +79,7 @@ li {
     display: block;
     text-decoration: none !important;
     color: inherit !important;
-    border-bottom: 0;
+    border-bottom: 0 !important;
 
     i {
       padding-left: 10px;

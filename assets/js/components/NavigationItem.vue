@@ -30,6 +30,10 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+a {
+  &:hover {
+    border: 0 !important;
+  }
+}
 </style>

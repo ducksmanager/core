@@ -200,6 +200,7 @@ ERREUR_CAPTCHA: Le code que vous avez entré est invalide. Merci de réessayer.
 ERREUR_CONNEXION_INDUCKS: Erreur de connexion à Inducks!
 ERREUR_EXECUTION_REQUETE: Erreur lors de l'éxécution de la requete !
 ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: La fusion de deux listes ne peut se faire que si elles sont du meme type!
+ERREUR_GENERIQUE: Une erreur s'est produite.
 ERREUR_LECTURE_NUMEROS: Erreur lors de la lecture de la liste de numéros
 ERREUR_RAWDATA_INVALIDE: Erreur lors de l'analyse de la collection. Sélectionnez tout le texte de la page Inducks !
 ERREUR_TECHNIQUE: Une erreur technique est survenue. Merci de prévenir le webmaster pour qu'elle soit résolue le plus tôt possible !

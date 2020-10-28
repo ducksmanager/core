@@ -22,7 +22,8 @@
   </div>
   <b-alert
     v-else-if="l10n"
-    variant="show"
+    show
+    variant="warn"
   >
     {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
     {{ l10n.AUCUN_AUTEUR_NOTE_2_MEME_PAGE }}

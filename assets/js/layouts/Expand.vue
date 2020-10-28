@@ -1,6 +1,9 @@
 <template>
   <div v-if="collection && l10n">
-    <b-alert variant="info">
+    <b-alert
+      variant="info"
+      show
+    >
       {{ l10n.EXPLICATION_NOTATION_AUTEURS1 }}
       <a href="/stats/authors">{{ l10n.EXPLICATION_NOTATION_AUTEURS2 }}</a>
       {{ l10n.EXPLICATION_NOTATION_AUTEURS3 }}

@@ -53,6 +53,8 @@ class CollectionController extends AbstractController
      */
     public function retrievePoints(CollectionService $collectionService): JsonResponse
     {
-        return new JsonResponse($collectionService->retrieveUserPoints([$this->getUser()->getId()]));
+        return new JsonResponse($collectionService->retrieveUserPoints(
+            [$this->getUser()->getId()]
+        ));
     }
 }

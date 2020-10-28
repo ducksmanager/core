@@ -48,7 +48,7 @@
         </template>
         <template v-else>
           <NavigationItem
-            path="new"
+            path="/signup"
             icon="glyphicon glyphicon-certificate"
           >
             {{ l10n.NOUVELLE_COLLECTION }}

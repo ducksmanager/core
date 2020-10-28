@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -73,7 +74,12 @@ class ApiService
             return $response->toArray();
         }
 
-        $this->logger->info("Call to service $method $url failed, Response code = {$response->getStatusCode()}, response buffer = {$response->getContent()}");
+        try {
+            $this->logger->info("Call to service $method $url failed, Response code = {$response->getStatusCode()}, response buffer = {$response->getContent()}");
+        }
+        catch(Exception $e) {
+            $this->logger->error($e->getMessage());
+        }
         return null;
     }
 
