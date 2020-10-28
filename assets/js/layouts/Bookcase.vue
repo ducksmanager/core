@@ -27,7 +27,7 @@
                 <Issue
                   :publicationcode="popularIssueWithoutEdge.publicationCode"
                   :publicationname="publicationNames[popularIssueWithoutEdge.publicationCode]"
-                  :issuenumber="popularIssueWithoutEdge.Numero"
+                  :issuenumber="popularIssueWithoutEdge.issueNumber"
                   hide-condition
                 />
                 <MedalProgress

@@ -19,7 +19,7 @@
     </script>
 
     {% block menu %}{% endblock %}
-    <div id="app" {% for key, value in (vueProps ?? {}) %}{{ key }}="{{ value }}"{% endfor %}></div>
+    <div id="app" {% for key, value in (vueProps ?? {}) %} {{ key }}="{{ value }}"{% endfor %}></div>
     {% block content %}{% endblock %}
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}

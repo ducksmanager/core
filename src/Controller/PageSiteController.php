@@ -28,11 +28,11 @@ class PageSiteController extends AbstractController
         return $this->render("bare.twig", [
             'title' => $title,
             'vueProps' => [
-                    'title' => $title,
-                    'component' => 'Site',
-                    'page' => $page,
-                    'username' => $this->userService->getCurrentUsername()
-                ] + $vueProps
+                'title' => $title,
+                'component' => 'Site',
+                'page' => $page,
+                'username' => $this->getUser()->getUsername()
+            ] + $vueProps
         ]);
     }
 
@@ -45,12 +45,12 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showBookcasePage(UserService $userService, TranslatorInterface $translator, ?string $username = null): Response
+    public function showBookcasePage(TranslatorInterface $translator, ?string $username = null): Response
     {
         return $this->renderSitePage(
             $translator->trans('BIBLIOTHEQUE_COURT'),
             'Bookcase', [
-                'bookcase-username' => $username ?? $userService->getCurrentUsername(),
+                'bookcase-username' => $username ?? $this->getUser()->getUsername(),
             ]
         );
     }

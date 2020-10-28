@@ -14,7 +14,7 @@
     <div
       :id="id"
       ref="edge"
-      :class="{edge: true, [spriteClass]: true}"
+      :class="{edge: true, visible: imageLoaded || spriteLoaded, [spriteClass]: true}"
       :style="load && imageLoaded ? {
         backgroundImage:`url(${src})`,
         backgroundSize: `${width}px ${height}px`,
@@ -80,6 +80,7 @@ export default {
 
   data: () => ({
     imageLoaded: false,
+    spriteLoaded: false,
     ignoreSprite: false,
     countryCode: null,
     magazineCode: null,
@@ -102,7 +103,7 @@ export default {
     },
 
     spriteClass() {
-      return this.id && this.spritePath ? `edges-${this.id.replaceAll('/', '-')}` : ''
+      return this.id && this.spritePath ? `edges-${this.publicationCode.replaceAll('/', '-')}-${this.issueNumber}` : ''
     }
   },
 
@@ -141,13 +142,14 @@ export default {
 
     loadEdgeFromSprite() {
       if (this.loadedSprites[this.spritePath].indexOf(`.${this.spriteClass} {`) === -1) {
-        vm.ignoreSprite = true
+        this.ignoreSprite = true
         return
       }
       const vm = this
       let retries = 0
       const checkWidthInterval = setInterval(() => {
         if (vm.$refs.edge.clientWidth > 0) {
+          vm.spriteLoaded = true
           vm.$emit('loaded', [this.id])
           clearInterval(checkWidthInterval)
         }
@@ -180,7 +182,12 @@ export default {
 .edge {
   position: relative;
   display: inline-block;
+  visibility: hidden;
   background-color: white;
+
+  &.visible {
+    visibility: visible;
+  }
 
   &:not(.visible-book)::after {
     position: absolute;
