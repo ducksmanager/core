@@ -26,6 +26,7 @@ import Bookcase from "./Bookcase";
 import Expand from "./Expand";
 import Bookstores from "./Bookstores";
 import PrintPresentation from "./PrintPresentation";
+import Welcome from "./Welcome";
 
 export default {
   name: "Site",
@@ -41,6 +42,7 @@ export default {
     Manage,
     PrintPresentation,
     Stats,
+    Welcome,
   },
   mixins: [l10nMixin, userMixin],
   props: {

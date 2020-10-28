@@ -27,7 +27,7 @@
         v-if="bookcaseShared"
         class="bookcase-link"
       >
-        <img :src="`${imagePath}/bookcase.png`">&nbsp;
+        <img :src="`${imagePath}/icons/bookcase.png`">&nbsp;
         <b-button
           size="xs"
           variant="outline-secondary"

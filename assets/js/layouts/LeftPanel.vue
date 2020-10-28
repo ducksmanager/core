@@ -29,7 +29,7 @@
         >
           <img
             alt="O"
-            :src="`${imagePath}/green.png`"
+            :src="`${imagePath}/icons/green.png`"
           >&nbsp;
           <span>{{ username }}</span>
         </div>

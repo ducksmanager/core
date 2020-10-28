@@ -1,21 +1,31 @@
 html, body {
-    margin:0;
-    height:100%;
-    font:11px verdana,arial,sans-serif;
-    line-height:15px;
+  margin: 0;
+  height: 100%;
+  font: 11px verdana, arial, sans-serif;
+  line-height: 15px;
+}
+
+a {
+  color: lightgrey;
+  border-bottom: 1px dotted #ffffff;
+
+  &:hover, &:focus {
+    outline: 0;
+    border-bottom: 1px dashed #ffffff !important;
+  }
 }
 
 
 @media (min-width: 767px) {
-    .mobile-only {
-        display: none;
-    }
+  .mobile-only {
+    display: none;
+  }
 
-    body {
-        padding: 0 0 0 320px;
+  body {
+    padding: 0 0 0 320px;
 
-        &.no-padding {
-            padding: 0;
-        }
+    &.no-padding {
+      padding: 0;
     }
+  }
 }
