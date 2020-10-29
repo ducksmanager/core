@@ -1,7 +1,7 @@
 <template>
   <span v-if="l10n">
     {{ title || l10n.SANS_TITRE }}
-    {{ comment }}
+    <small>{{ comment }}</small>
     <a
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"

@@ -9,7 +9,7 @@
         <Story
           :storycode="storyCode"
           :title="storyDetails[storyCode].title"
-          :comment="storyDetails[storyCode].comment"
+          :comment="storyDetails[storyCode].storycomment"
         />
       </li>
     </template>
