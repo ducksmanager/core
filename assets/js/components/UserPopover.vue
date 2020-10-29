@@ -6,17 +6,20 @@
     >{{ username }}</span>
     <b-popover
       :target="`user-${id}`"
+      placement="top"
       triggers="hover"
       :delay="0"
     >
       <h4>{{ username }}</h4>
-      <Medal
-        v-for="(numberOfPoints, contribution) in points"
-        :key="contribution"
-        :contribution="contribution"
-        :user-level-points="numberOfPoints"
-        small
-      />
+      <div class="d-flex">
+        <Medal
+          v-for="(numberOfPoints, contribution) in points"
+          :key="contribution"
+          :contribution="contribution"
+          :user-level-points="numberOfPoints"
+          small
+        />
+      </div>
       <div class="clearfix" />
       <div>
         {{ stats.numberOfIssues }} {{ l10n.NUMEROS }}<br>
@@ -31,11 +34,10 @@
         <b-button
           size="xs"
           variant="outline-secondary"
+          target="_blank"
+          :href="`/bookcase/${username}`"
         >
-          <a
-            target="_blank"
-            :href="`/bookcase/${username}`"
-          >{{ l10n.VOIR_BIBLIOTHEQUE }}</a>
+          {{ l10n.VOIR_BIBLIOTHEQUE }}
         </b-button>
       </div>
     </b-popover>
@@ -47,7 +49,7 @@ import l10nMixin from "../mixins/l10nMixin";
 import Medal from "./Medal";
 
 export default {
-  name: "User",
+  name: "UserPopover",
   components: {
     Medal
   },
@@ -86,7 +88,7 @@ export default {
     height: 32px;
   }
 
-  a {
+  a:hover {
     border: none;
   }
 }

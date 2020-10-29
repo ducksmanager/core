@@ -34,10 +34,10 @@ export default {
           }
         }), {}))
       commit('setStats', data.stats.map((
-        {country_number: numberOfCountries, publication_number: numberOfPublications, issue_number: numberofIssues, ID: userId}) => ({
-          numberOfCountries, numberOfPublications, numberofIssues, userId
+        {country_number: numberOfCountries, publication_number: numberOfPublications, issue_number: numberOfIssues, ID: userId}) => ({
+          numberOfCountries, numberOfPublications, numberOfIssues, userId
         })
-      ).reduce((acc, data) => ({...acc, [userId]: data}), {}))
+      ).reduce((acc, data) => ({...acc, [data.userId]: data}), {}))
     }
   }
 }

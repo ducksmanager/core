@@ -11,7 +11,7 @@
           :key="JSON.stringify(event)"
           :class="{event: true, [`event_${event.type}`]: true}"
         >
-          <User
+          <UserPopover
             v-if="event.userId && stats[event.userId]"
             :id="event.userId"
             :stats="stats[event.userId]"
@@ -56,17 +56,16 @@
 import axios from "axios";
 import * as timeago from "timeago.js";
 import l10nMixin from "../mixins/l10nMixin";
-import User from "../components/User";
+import UserPopover from "../components/UserPopover";
 import Issue from "../components/Issue";
 import {mapActions, mapState} from "vuex";
-import collectionMixin from "../mixins/collectionMixin";
 import medalMixin from "../mixins/medalMixin";
 
 export default {
   name: "RecentEvents",
 
   components: {
-    User,
+    UserPopover,
     Issue
   },
   mixins: [l10nMixin, medalMixin],
