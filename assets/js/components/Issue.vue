@@ -42,9 +42,11 @@ export default {
   a {
     color: lightgrey;
     pointer-events: none;
+    border-bottom: none;
 
     &.clickable {
       pointer-events: initial;
+      border-bottom: initial;
     }
   }
 </style>

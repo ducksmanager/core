@@ -6,6 +6,7 @@
     <b-popover
       :target="id"
       placement="top"
+      :delay="0"
       triggers="hover focus manual"
     >
       <template #title><slot name="title" /></template>
@@ -18,7 +19,7 @@
           {{ l10n.TRANCHE_NON_DISPONIBLE1 }}<br>
           <div v-if="!isSharedBookcase">
             {{ l10n.TRANCHE_NON_DISPONIBLE2 }}<br>
-            <div class="progress-wrapper">
+            <div class="medal-progress-wrapper">
               <MedalProgress
                 contribution="Photographe"
                 :user-level-points="points"
@@ -92,5 +93,22 @@ span {
 }
 .has-no-edge {
   margin-top: 25px;
+
+  .medal-progress-wrapper {
+    position: relative;
+    margin: 20px 0;
+
+    ::v-deep .wrapper {
+      &.left, &.right {
+        top: -15px;
+      }
+      &.left {
+        left: -10px;
+      }
+      &.right {
+        right: -5px;
+      }
+    }
+  }
 }
 </style>

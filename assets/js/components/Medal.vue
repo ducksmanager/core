@@ -81,16 +81,17 @@ export default {
 </script>
 <style scoped lang="scss">
 .wrapper {
-  &.left {
+  &.left, &.right {
     position: absolute;
-    left: 35px;
     top: 35px;
+  }
+  &.left {
+    left: 35px;
   }
 
   &.right {
-    position: absolute;
     right: 35px;
-    top: 35px;
+
   }
   .medal {
     height: 120px;

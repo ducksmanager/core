@@ -142,6 +142,7 @@ export default {
     .dropdown.search-type {
       position: absolute;
       width: 120px;
+      margin: 4px 0;
 
       ~ .form-control {
         padding-left: 135px;
