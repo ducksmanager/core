@@ -80,7 +80,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["users", ["fetchStats"]])
+    ...mapActions("users", ["fetchStats"])
   }
 }
 </script>

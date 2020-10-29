@@ -106,7 +106,7 @@ export default {
 
   methods: {
     ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions(["users", ["fetchStats"]])
+    ...mapActions("users", ["fetchStats"])
   },
 }
 </script>
