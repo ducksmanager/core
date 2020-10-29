@@ -21,7 +21,10 @@
       {{ l10n.AUCUN_NUMERO_POSSEDE_2 }}
     </b-alert>
     <PublicationStats v-if="tab === 'publications'" />
-    <ConditionStats v-else-if="tab === 'conditions'" />
+    <ConditionStats
+      v-else-if="tab === 'conditions'"
+      :style="{width: '500px'}"
+    />
     <div v-else-if="tab === 'possessions' || tab === 'authors'">
       <b-button-group>
         <b-button
@@ -95,8 +98,15 @@
           </b-button>
         </b-button-group>
         <PurchaseStats
+          v-show="purchaseTypeCurrent === 'new'"
           :style="{width, height}"
-          :unit="purchaseTypeCurrent"
+          unit="new"
+          @change-dimension="changeDimension"
+        />
+        <PurchaseStats
+          v-show="purchaseTypeCurrent === 'total'"
+          :style="{width, height}"
+          unit="total"
           @change-dimension="changeDimension"
         />
       </div>
@@ -148,7 +158,6 @@ export default {
   computed: {
     ...mapState("collection", ["purchases", "watchedAuthors"]),
     imagePath: () => window.imagePath,
-    username: () => window.username,
     locale: () => window.locale
   },
 
@@ -177,4 +186,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep canvas {
+  background-color: white;
+}
+
+::v-deep .btn {
+  &:focus {
+    box-shadow: none !important;
+  }
+}
 </style>

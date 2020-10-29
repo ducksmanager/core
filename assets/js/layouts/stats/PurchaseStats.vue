@@ -23,18 +23,19 @@ export default {
 
   computed: {
     ...mapState("collection", ["collection", "purchases"]),
+    ...mapState("coa", ["publicationNames"]),
     ...mapGetters("collection", ["totalPerPublication"]),
 
     labels() {
       return this.collectionWithDates && [...new Set(
-          this.collectionWithDates.map(({date}) => date)
-      )].sort((a, b) => a < b || a === null ? -1 : 1)
+        this.collectionWithDates.map(({date}) => date)
+      )].sort(this.compareDates)
     },
     collectionWithDates() {
       const vm = this
       return this.collection && this.purchasesById && this.collection.map(issue => ({
         ...issue,
-        date: vm.getIssueDate(issue)
+        date: vm.getIssueMonth(issue)
       }))
     },
     ready() {
@@ -68,28 +69,28 @@ export default {
         if (newValue) {
           const vm = this
           const dateAssoc = vm.labels
-              .reduce((dates, date) => ({
-                ...dates,
-                [date]: 0
-              }), {})
+            .reduce((dates, date) => ({
+              ...dates,
+              [date]: 0
+            }), {})
 
           let accDate = vm.labels.reduce((acc, value) => ({...acc, [value]: 0}), {})
           const values = this.collectionWithDates
-              .sort(({date: dateA}, {date: dateB}) => dateA < dateB || dateA === null ? -1 : 1)
-              .reduce((acc, {date, publicationCode}) => {
-                if (!acc[publicationCode]) {
-                  acc[publicationCode] = {...dateAssoc}
-                }
-                acc[publicationCode][date]++
-                accDate[date]++
-                return acc
-              }, {})
+            .sort(({date: dateA}, {date: dateB}) => vm.compareDates(dateA, dateB))
+            .reduce((acc, {date, publicationCode}) => {
+              if (!acc[publicationCode]) {
+                acc[publicationCode] = {...dateAssoc}
+              }
+              acc[publicationCode][date]++
+              accDate[date]++
+              return acc
+            }, {})
 
           const maxPerDate = Object.keys(accDate).reduce((acc, date) => Math.max(acc, accDate[date]), 0)
 
           this.$emit('change-dimension', 'height', Math.min(
-              document.body.offsetHeight,
-              Math.max(300, maxPerDate / 4)
+            document.body.offsetHeight,
+            Math.max(300, maxPerDate / 4)
           ));
 
           this.$emit('change-dimension', 'width', 250 + 30 * vm.labels.length)
@@ -97,11 +98,11 @@ export default {
           const datasets = Object.keys(values).map(publicationCode => {
             let data = values[publicationCode];
             if (vm.unit === 'total') {
-              data = Object.keys(data).reduce((acc, currentDate) => ({
+              data = vm.labels.reduce((acc, currentDate) => ({
                 ...acc,
-                [currentDate]: Object.keys(data)
-                    .filter(date => date <= currentDate)
-                    .reduce((sum, date) => sum + data[date], 0)
+                [currentDate]: vm.labels
+                  .filter((_, idx) => idx <= vm.labels.indexOf(currentDate))
+                  .reduce((sum, date) => sum + data[date], 0)
               }), {})
             }
             return {
@@ -148,20 +149,22 @@ export default {
               callbacks: {
                 beforeTitle: ([tooltipItem]) => {
                   return (tooltipItem.label !== '?'
-                    ? `${vm.unit === 'total'
-                      ? vm.l10n.ACHATS_NUMEROS_TAILLE
-                      : vm.l10n.ACHATS_NUMEROS_NOUVELLES_ACQUISITIONS} ${tooltipItem.label}`
-                    : vm.l10n.ACHATS_NUMEROS_SANS_DATE
+                      ? `${vm.unit === 'total'
+                        ? vm.l10n.ACHATS_NUMEROS_TAILLE
+                        : vm.l10n.ACHATS_NUMEROS_NOUVELLES_ACQUISITIONS} ${tooltipItem.label}`
+                      : vm.l10n.ACHATS_NUMEROS_SANS_DATE
                   ) + "\n";
                 },
                 title: (tooltipItem, {datasets}) => datasets[tooltipItem[0].datasetIndex].label,
-                label: tooltipItem => tooltipItem.yLabel,
-                footer: tooltipItem => [
-                  vm.l10n.TOUS_MAGAZINES,
-                  vm.unit === 'total'
-                  // ? get_total_until_now(tooltipItem[0].xLabel, totauxDates)
-                  // : totauxDates[tooltipItem[0].xLabel]
-                ].join('\n')
+                label: (tooltipItem) => tooltipItem.yLabel,
+                footer: ([tooltipItem], {datasets}) => {
+                  console.log(tooltipItem)
+                  console.log(datasets)
+                  return [
+                    vm.l10n.TOUS_MAGAZINES,
+                    datasets.reduce((acc, dataset) => acc + dataset.data[tooltipItem.index], 0)
+                  ].join('\n');
+                }
               }
             }
           })
@@ -178,13 +181,22 @@ export default {
     ...mapActions("coa", ["fetchPublicationNames"]),
     ...mapActions("collection", ["loadPurchases"]),
 
+    compareDates: (a, b) => Math.sign(
+      new Date(a === '?' ? '0001-01-01' : a)
+      - new Date(b === '?' ? '0001-01-01' : b)
+    ),
+
     randomColor: () => `rgb(${[Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].join(',')})`,
 
-    getIssueDate(issue) {
-      return issue.purchaseId
+    getIssueMonth(issue) {
+      return this.getMonthFromDate(
+        issue.purchaseId
           ? (this.purchasesById[issue.purchaseId] || {date: '?'}).date
-          : (issue.creationDate && new Date(issue.creationDate) ? issue.creationDate : null)
-    }
+          : (issue.creationDate && new Date(issue.creationDate) ? this.getMonthFromDate(issue.creationDate) : '?')
+      )
+    },
+
+    getMonthFromDate: date => date.match(/^\?|([^-]+-[^-]+)/)[0]
   }
 }
 </script>

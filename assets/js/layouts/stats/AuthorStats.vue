@@ -94,11 +94,6 @@ export default {
           },
           responsive: true,
           maintainAspectRatio: false,
-          legend: {
-            labels: {
-              fontColor: '#fff'
-            }
-          },
           scales: {
             xAxes: [{
               stacked: true,

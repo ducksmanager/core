@@ -15,7 +15,7 @@ export default {
       required: true
     }
   },
-emits: ['change-dimension'],
+  emits: ['change-dimension'],
 
   data: () => ({
     orientation: 'vertical'
@@ -23,7 +23,7 @@ emits: ['change-dimension'],
 
   computed: {
     ...mapState("collection", ["collection"]),
-    ...mapState("coa", ["issueCounts"]),
+    ...mapState("coa", ["countryNames", "issueCounts", "publicationNames"]),
     ...mapGetters("collection", ["totalPerPublication"]),
 
     labels() {
@@ -37,10 +37,10 @@ emits: ['change-dimension'],
       const vm = this
       let possessedIssues = Object.values(this.totalPerPublication);
       let missingIssues = Object.keys(this.totalPerPublication)
-          .map(publicationCode => vm.issueCounts[publicationCode] - this.totalPerPublication[publicationCode]);
+        .map(publicationCode => vm.issueCounts[publicationCode] - this.totalPerPublication[publicationCode]);
       if (this.unit === 'percentage') {
         possessedIssues = possessedIssues.map((possessedCount, key) =>
-            Math.round(possessedCount * (100 / (possessedCount + missingIssues[key]))))
+          Math.round(possessedCount * (100 / (possessedCount + missingIssues[key]))))
         missingIssues = possessedIssues.map(possessedCount => 100 - possessedCount)
       }
       return [
@@ -96,16 +96,12 @@ emits: ['change-dimension'],
           },
           responsive: true,
           maintainAspectRatio: false,
-          legend: {
-            labels: {
-              fontColor: '#fff'
-            }
-          },
           scales: {
             xAxes: [{
               stacked: true,
               ticks: {
-                stepSize: 1
+                stepSize: 1,
+                callback: value => vm.unit === 'percentage' ? `${value}%` : value
               }
             }],
             yAxes: [{
@@ -119,8 +115,8 @@ emits: ['change-dimension'],
             axis: this.orientation === 'vertical' ? 'y' : 'x',
             intersect: false,
             callbacks: {
-              title: tooltipItems => {
-                const publicationcode = tooltipItems[0][vm.orientation === 'vertical' ? 'yLabel' : 'xLabel'];
+              title: ([tooltipItem]) => {
+                const publicationcode = tooltipItem[vm.orientation === 'vertical' ? 'yLabel' : 'xLabel'];
                 if (!vm.publicationNames[publicationcode]) {
                   vm.publicationNames[publicationcode] = '?';
                 }
@@ -141,5 +137,4 @@ emits: ['change-dimension'],
 </script>
 
 <style scoped>
-
 </style>
