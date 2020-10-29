@@ -76,7 +76,7 @@ export default {
 
   computed: {
     ...mapGetters("bookcase", ["isSharedBookcase"]),
-    ...mapState("users", ["allUserPoints"]),
+    ...mapState("users", {allUserPoints: "points"}),
 
     points() {
       return this.allUserPoints && this.allUserPoints[this.userId][this.contribution]

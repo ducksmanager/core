@@ -45,7 +45,7 @@
     >
     <b v-if="small">
       {{ l10n[`TITRE_MEDAILLE_${contribution.toUpperCase()}`] }}
-      <br>{{ l10n.NIVEAU }}{{ level }}
+      <br>{{ l10n.NIVEAU }} {{ level }}
     </b>
   </span>
 </template>
