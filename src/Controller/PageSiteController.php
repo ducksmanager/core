@@ -136,7 +136,7 @@ class PageSiteController extends AbstractController
     public function showStatsPage(TranslatorInterface $translator, string $type): Response
     {
         return $this->renderSitePage(
-            $translator->trans('STATISTIQUES_COLLECTION'),
+            '',
             'Stats', [
                 'tab' => $type
             ]

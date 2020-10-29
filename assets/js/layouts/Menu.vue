@@ -3,7 +3,10 @@
     <h3>
       {{ title }}
     </h3>
-    <b-nav tabs>
+    <b-nav
+      v-if="items.length"
+      tabs
+    >
       <MenuItem
         v-for="item in items"
         :key="JSON.stringify(item)"

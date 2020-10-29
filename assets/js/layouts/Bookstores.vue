@@ -1,6 +1,5 @@
 <template>
   <div v-if="l10n">
-    <h2>{{ l10n.LISTE_BOUQUINERIES }}</h2>
     {{ l10n.INTRO_BOUQUINERIES }}
     <br><br>
     <div id="map">

@@ -72,11 +72,11 @@ export default {
 
 <style lang="scss" scoped>
 ul {
-  margin-top: 30px;
+  margin: 20px 0;
 
   &.details {
     li {
-      margin-top: 14px;
+      margin-top: 10px;
     }
   }
 
