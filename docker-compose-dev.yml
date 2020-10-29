@@ -28,7 +28,7 @@ services:
     networks:
       - dm-network
       - dm-server_front-network
-    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
+    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm --force-stderr'
 
 networks:
   dm-network:
