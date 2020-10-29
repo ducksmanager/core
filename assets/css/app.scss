@@ -9,6 +9,10 @@ a {
   color: lightgrey;
   border-bottom: 1px dotted #ffffff;
 
+  &[href='#'] {
+    border-bottom: none;
+  }
+
   &:hover, &:focus {
     color: lightgrey;
     text-decoration: none;
@@ -17,10 +21,15 @@ a {
   }
 }
 
+.alert {
+  a {
+    color: initial;
+  }
+}
+
 input.form-control {
   margin: 4px 0;
 }
-
 
 @media (min-width: 767px) {
   .mobile-only {

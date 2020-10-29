@@ -27,10 +27,7 @@
         list="search"
         :placeholder="searchContext === 'story' ? l10n.RECHERCHER_HISTOIRE : l10n.RECHERCHER_PUBLICATIONS"
       />
-      <datalist
-        v-if="searchResults.results"
-        id="search"
-      >
+      <datalist v-if="searchResults.results">
         <option v-if="!searchResults.results.length">
           {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
         </option>
@@ -39,7 +36,9 @@
           :key="searchResult.code"
           @click="selectSearchResult(searchResult)"
         >
-          <span v-if="!isSearchByCode(search)">{{ searchResult.title }}</span>
+          <template v-if="!isSearchByCode(search)">
+            {{ searchResult.title }}
+          </template>
           <Issue
             v-else-if="publicationNames && publicationNames[searchResult.publicationcode]"
             :publicationcode="searchResult.publicationcode"
@@ -137,12 +136,21 @@ export default {
   }
 
   .navbar-nav {
+    position: relative;
     flex-wrap: wrap;
 
     .dropdown.search-type {
       position: absolute;
       width: 120px;
       margin: 4px 0;
+
+      .dropdown-menu {
+        position: absolute;
+        width: 100%;
+        margin-top: 0;
+        padding: 0;
+        text-align: center;
+      }
 
       ~ .form-control {
         padding-left: 135px;
@@ -152,13 +160,14 @@ export default {
         display: block;
         position: absolute;
         background: darkgray;
-        width: 300px;
-        top: 35px;
+        width: 100%;
+        top: 30px;
         padding-left: 0;
 
         option {
           cursor: pointer;
-          margin: 10px;
+          padding: 5px;
+          border-bottom: 1px solid #888;
           overflow-x: hidden;
 
           a {

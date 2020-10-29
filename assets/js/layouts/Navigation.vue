@@ -105,7 +105,96 @@ export default {
 
 <style lang="scss" scoped>
 #menu-content {
-  height: 0
+  height: 0;
+  padding: 0;
+}
+
+.b-custom {
+  display: inline-block;
+  background-repeat: no-repeat;
+  height: 12px;
+  background-size: 12px;
+  width: 12px;
+  background-position: bottom;
+}
+
+::v-deep ul, li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  line-height: 25px;
+  cursor: pointer;
+
+  .sub-menu li {
+    background-color: #181c20;
+    border: none;
+    line-height: 28px;
+    border-bottom: 1px solid #23282e;
+    padding-left: 10px;
+    margin-left: 0;
+
+    &:hover {
+      background-color: #020203;
+    }
+
+    &.active,
+    &.active a {
+      color: #c88964;
+    }
+  }
+
+  &.active {
+    border-left: 3px solid #c88964;
+    background-color: #4f5b69;
+  }
+}
+
+::v-deep li {
+  .sub-menu li:hover {
+    background-color: #020203;
+  }
+
+  &.empty {
+    height: 10px;
+  }
+
+  a {
+    display: block;
+    text-decoration: none !important;
+    color: inherit !important;
+    border-bottom: 0 !important;
+
+    i {
+      padding-left: 10px;
+      width: 15px;
+      padding-right: 5px;
+    }
+  }
+
+  &.no-icon a i {
+    padding-left: 5px;
+  }
+
+  &.non-empty:hover {
+    border-left: 3px solid rgb(200, 137, 100);
+    background-color: #4f5b69;
+    -webkit-transition: all 0.1s ease;
+    -moz-transition: all 0.1s ease;
+    -o-transition: all 0.1s ease;
+    -ms-transition: all 0.1s ease;
+    transition: all 0.1s ease;
+  }
+
+  &.empty {
+    cursor: default;
+  }
+}
+
+
+@media (max-width: 767px) {
+  ::v-deep li.empty {
+    display: none;
+  }
 }
 
 </style>
