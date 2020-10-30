@@ -10,7 +10,7 @@ a {
   border-bottom: 1px dotted #ffffff;
 
   &[href='#'] {
-    border-bottom: none;
+    border-bottom: none !important;
   }
 
   &:hover, &:focus {

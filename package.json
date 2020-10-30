@@ -11,6 +11,7 @@
         "eslint-plugin-vue": "^7.1.0",
         "js-yaml": "^3.14.0",
         "mapbox-gl": "^1.12.0",
+        "page-flip": "^2.0.0",
         "popper.js": "^1.16.0",
         "regenerator-runtime": "^0.13.2",
         "sass": "^1.27.1",
