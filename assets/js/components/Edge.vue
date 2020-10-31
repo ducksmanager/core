@@ -14,19 +14,19 @@
     <div
       :id="id"
       ref="edge"
-      :class="{edge: true, visible: imageLoaded || spriteLoaded, [spriteClass]: true}"
+      :class="{edge: true, visible: !invisible && (imageLoaded || spriteLoaded), [spriteClass]: true}"
       :style="load && imageLoaded ? {
         backgroundImage:`url(${src})`,
         backgroundSize: `${width}px ${height}px`,
         width: `${width}px`,
         height: `${height}px`,
       } : {}"
+      @click="$emit('open-book')"
     >
       <img
         v-if="load && !imageLoaded"
         class="temp-image"
         :src="src"
-        @click="loadCover"
         @load="onImageLoad"
         @error="onImageError"
       >
@@ -74,9 +74,13 @@ export default {
     load: {
       type: Boolean,
       required: true
+    },
+    invisible: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['loaded'],
+  emits: ['loaded', 'open-book'],
 
   data: () => ({
     imageLoaded: false,

@@ -497,6 +497,7 @@ SUPPRIMER_ACQUISITION: Supprimer cette acquisition
 SUPPRIMER_COMPTE: Supprimer mon compte DucksManager
 SUPPRIMER_NUMEROS_NON_INDUCKS: Supprimer de DucksManager les numéros qui n'apparaissent pas dans la collection Inducks
 SUR: sur
+TABLE_DES_MATIERES: Table des matières
 TAILLE_TRANCHES: Taille des tranches
 TAILLE_REELLE: Taille réelle
 TERMINE: Terminé.

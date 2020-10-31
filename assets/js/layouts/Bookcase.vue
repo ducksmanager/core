@@ -50,6 +50,12 @@
         </div>
         <IssueSearch style="float: right" />
       </div>
+      <Book
+        v-if="currentEdgeOpened"
+        :publication-code="currentEdgeOpened.publicationCode"
+        :issue-number="currentEdgeOpened.issueNumber"
+        @close-book="currentEdgeOpened = null"
+      />
       <div
         id="bookcase"
         :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
@@ -57,6 +63,7 @@
         <Edge
           v-for="(edge, edgeIndex) in sortedBookcase"
           :key="getEdgeKey(edge)"
+          :invisible="currentEdgeOpened === edge"
           :publication-code="edge.publicationCode"
           :issue-number="edge.issueNumber"
           :issue-number-reference="edge.issueNumberReference"
@@ -65,6 +72,7 @@
           :sprite-path="edgesUsingSprites[edge.edgeId] || null"
           :load="currentEdgeIndex >= edgeIndex"
           @loaded="currentEdgeIndex++"
+          @open-book="currentEdgeOpened = edge"
         />
       </div>
     </div>
@@ -81,10 +89,11 @@ import MedalProgress from "../components/MedalProgress";
 import Issue from "../components/Issue";
 import * as axios from "axios";
 import medalMixin from "../mixins/medalMixin";
+import Book from "../components/Book";
 
 export default {
   name: "Bookcase",
-  components: {MedalProgress, Issue, Edge, IssueSearch},
+  components: {Book, MedalProgress, Issue, Edge, IssueSearch},
   mixins: [l10nMixin, collectionMixin],
 
   props: {
@@ -94,6 +103,8 @@ export default {
   data: () => ({
     edgesUsingSprites: [],
     currentEdgeIndex: 0,
+    currentEdgeOpened: null,
+    bookStartPosition: null
   }),
 
   computed: {
@@ -213,7 +224,11 @@ export default {
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
     ...mapActions("users", ["fetchStats"]),
 
-    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`
+    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
+
+    openBook(e) {
+      this.bookStartPosition = {left: e.edgeLeft, top: e.edgeTop}
+    }
   }
 }
 </script>

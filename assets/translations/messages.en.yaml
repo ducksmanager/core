@@ -495,6 +495,7 @@ SUPPRIMER_ACQUISITION: Remove this purchase
 SUPPRIMER_COMPTE: Delete my DucksManager account
 SUPPRIMER_NUMEROS_NON_INDUCKS: Remove from DucksManager the issues which don\'t appear in the Inducks collection
 SUR: of
+TABLE_DES_MATIERES: Table of contents
 TAILLE_TRANCHES: Size of the edges
 TAILLE_REELLE: Real size
 TERMINE: Done.
