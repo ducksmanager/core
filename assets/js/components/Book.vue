@@ -2,6 +2,7 @@
   <div
     v-if="l10n"
     class="fixed-container"
+    @click.self="closeBook()"
   >
     <img
       :src="edgeUrl"
@@ -10,7 +11,7 @@
     <img
       v-if="pages && pages.length"
       :src="cloudinaryBaseUrl + pages[0].url"
-      @load="({target}) => { coverWidth = coverHeight / (target.naturalHeight/target.naturalWidth) }"
+      @load="({target}) => { coverRatio = target.naturalHeight/target.naturalWidth }"
     >
 
     <div
@@ -99,8 +100,8 @@ export default {
     cloudinaryBaseUrl: 'https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/',
 
     edgeWidth: null,
-    coverWidth: null,
     coverHeight: null,
+    coverRatio: null,
 
     rotationInterval: null,
     rotation: 0,
@@ -114,6 +115,10 @@ export default {
 
     edgeUrl() {
       return `${EDGES_BASE_URL}${this.publicationCode.replace('/', '/gen/')}.${this.issueNumber}.png`
+    },
+
+    coverWidth() {
+      return this.coverRatio && this.coverHeight / this.coverRatio
     },
 
     orientation() {

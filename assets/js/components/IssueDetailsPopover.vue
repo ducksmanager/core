@@ -1,48 +1,47 @@
 <template>
-  <span>
+  <span v-if="l10n">
     <span :id="id">
       <slot />
     </span>
     <b-popover
       :target="id"
       :placement="placement"
-      triggers="hover focus manual"
+      triggers="hover focus"
+      @show="loadIssueUrls"
     >
       <template #title>
         <Issue
           :publicationcode="publicationCode"
           :issuenumber="issueNumber"
           :publicationname="publicationNames[publicationCode]"
+          hide-condition
         />
       </template>
-      <div class="d-flex flex-row">
-        <img
-          style="width: 80px; max-width: 80px"
-          :alt="issueNumber"
-          src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-          class="cover"
-        >
-        <div class="flex-grow-1">
-          <label>Publication date</label>
-          <div>Unknown</div>
-        </div>
-      </div>
-      <b-table-simple><b-tbody>
-        <b-tr><b-th>Stories</b-th><b-td><ul><li>Story 1</li><li>Story 2</li></ul></b-td></b-tr>
-      </b-tbody></b-table-simple>
+      <div
+        v-if="isCoverLoading"
+        class="flex-grow-1"
+      >{{ l10n.CHARGEMENT }}</div>
+      <img
+        v-else-if="coverUrl"
+        :alt="issueNumber"
+        :src="coverUrl"
+        class="cover"
+      >
     </b-popover>
   </span>
 </template>
 
 <script>
 import Issue from "./Issue";
-import {mapState} from "vuex";
+import {mapActions, mapState} from "vuex";
+import l10nMixin from "../mixins/l10nMixin";
 
 export default {
   name: "IssueDetailsPopover",
   components: {
     Issue
   },
+  mixins: [l10nMixin],
   props: {
     publicationCode: {
       type: String,
@@ -57,21 +56,55 @@ export default {
       required: true
     }
   },
+
+  data: () => ({
+    cloudinaryBaseUrl: 'https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/',
+    isCoverLoading: true
+  }),
+
   computed: {
-    ...mapState("coa", ["publicationNames"]),
+    ...mapState("coa", ["publicationNames", "issueUrls"]),
+
     id() {
       return `issue-details-${this.publicationCode}-${this.issueNumber}`
+    },
+
+    issueCode() {
+      return `${this.publicationCode} ${this.issueNumber}`
+    },
+
+    coverUrl() {
+      const cover = this.issueUrls && this.issueUrls[this.issueCode].find(({position}) => !/^p/.test(position))
+      return cover ? this.cloudinaryBaseUrl + cover.url : null
     }
   },
-  beforeUpdate() {
-    console.log('popover beforeUpdate')
+
+  methods: {
+    ...mapActions("coa", ["fetchIssueUrls"]),
+
+    async loadIssueUrls() {
+      this.isCoverLoading = true
+      await this.fetchIssueUrls({
+        publicationCode: this.publicationCode,
+        issueNumber: this.issueNumber
+      });
+      this.isCoverLoading = false
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.cover {
-  float: left;
+.popover  {
+  width: 150px;
+
+  ::v-deep .popover-body {
+    padding: 0;
+
+    .cover {
+      width: 100%;
+    }
+  }
 }
 label {
   font-weight: bold;

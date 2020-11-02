@@ -41,6 +41,12 @@
         <span v-if="isTouchScreen">{{ l10n.INFO_AJOUT_NUMEROS_2_MOBILE }}</span>
         <span v-else>{{ l10n.INFO_AJOUT_NUMEROS_2_DESKTOP }}</span>
       </b-alert>
+      <Book
+        v-if="currentIssueOpened"
+        :publication-code="currentIssueOpened.publicationcode"
+        :issue-number="currentIssueOpened.issueNumber"
+        @close-book="currentIssueOpened = null"
+      />
       <div
         v-for="({issueNumber, title, condition, purchaseId, isToSell}, i) in filteredIssues"
         :key="issueNumber"
@@ -51,18 +57,28 @@
           selected: selected.includes(issueNumber)
         }"
         :title="`${l10n.NUMERO_COURT}${issueNumber}`"
-        @mousedown.left="preselectedIndexStart = preselectedIndexEnd = i"
-        @mouseup.left="updateSelected"
+        @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = i"
+        @mouseup.self.left="updateSelected"
         @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : i"
       >
         <a :name="issueNumber" />
-        <img
-          class="preview"
-          :src="`${imagePath}/icons/${loadingCover === issueNumber ? 'loading.gif' : 'view.png'}`"
-          :alt="l10n.VOIR"
-          @click.stop="loadCover(issueNumber)"
+        <IssueDetailsPopover
+          v-once
+          :publication-code="publicationcode"
+          :issue-number="issueNumber"
+          placement="right"
         >
-        <span class="issue-text">
+          <img
+            class="preview"
+            :src="`${imagePath}/icons/view.png`"
+            :alt="l10n.VOIR"
+            @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
+          >
+        </IssueDetailsPopover>
+        <span
+          v-once
+          class="issue-text"
+        >
           {{ l10n.NUMERO_COURT }}{{ issueNumber }}
           <span class="issue-title">{{ title }}</span>
         </span>
@@ -135,12 +151,16 @@ import axios from "axios";
 import conditionMixin from "../mixins/conditionMixin";
 import collectionMixin from "../mixins/collectionMixin";
 import Country from "./Country";
+import IssueDetailsPopover from "./IssueDetailsPopover";
+import Book from "./Book";
 
 export default {
   name: "IssueList",
   components: {
+    Book,
     Country,
-    ContextMenu
+    ContextMenu,
+    IssueDetailsPopover
   },
   mixins: [l10nMixin, collectionMixin, conditionMixin],
   props: {
@@ -160,7 +180,7 @@ export default {
     preselected: [],
     preselectedIndexStart: null,
     preselectedIndexEnd: null,
-    loadingCover: null
+    currentIssueOpened: null
   }),
   computed: {
     ...mapState("l10n", ["locale"]),
@@ -236,15 +256,6 @@ export default {
         .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber))
       this.preselectedIndexStart = this.preselectedIndexEnd = null
       this.preselected = []
-    },
-    async loadCover(issueNumber) {
-      const vm = this
-      this.loadingCover = issueNumber
-      console.log('TODO load cover')
-      // this.coverUrl = (await axios.get(`/api/coa/cover/${this.publicationcode}/${issueNumber}`)).data
-      setTimeout(function () {
-        vm.loadingCover = null
-      }, 1000)
     },
     async updateIssues(data) {
       await axios.post('/api/collection/issues', data)
