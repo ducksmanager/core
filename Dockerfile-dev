@@ -4,6 +4,7 @@ MAINTAINER Bruno Perel
 RUN apt-get update \
  && apt-get install -y \
       git wget unzip \
+      net-tools inetutils-ping inetutils-telnet \
       libpng-dev libfreetype6-dev libmcrypt-dev libjpeg-dev libpng-dev libicu-dev \
  && apt-get clean
 
