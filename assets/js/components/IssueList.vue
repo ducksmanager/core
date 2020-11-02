@@ -101,7 +101,7 @@
               'issue-condition': true
             }"
             :style="{backgroundColor: conditions.find(({value}) => value === condition).color}"
-            :title="l10n[`ETAT_${condition}`]"
+            :title="l10n[`ETAT_${conditions.find(({value}) => value === condition).dbValue.toUpperCase()}`]"
           />
           <div
             v-if="purchaseId && purchases.find(({id}) => id === purchaseId)"
