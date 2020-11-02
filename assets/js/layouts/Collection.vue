@@ -6,7 +6,8 @@
       :default-path="'/show'"
       :items="[
         {path: '/show', text: l10n.GESTION_NUMEROS_COURT},
-        {path: '/account', text: l10n.GESTION_COMPTE_COURT}
+        {path: '/account', text: l10n.GESTION_COMPTE_COURT},
+        {path: '/subscriptions', text: l10n.GESTION_ABONNEMENTS_COURT}
       ]"
     />
     <component
@@ -19,15 +20,17 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import Menu from "./Menu";
-import Account from "./Account";
-import Manage from "./Manage";
+import Account from "./collection/Account";
+import Manage from "./collection/Manage";
+import Subscriptions from "./collection/Subscriptions";
 
 export default {
   name: "Collection",
   components: {
     Account,
     Manage,
-    Menu
+    Menu,
+    Subscriptions
   },
   mixins: [l10nMixin],
   props: {

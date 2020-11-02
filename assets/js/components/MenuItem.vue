@@ -3,7 +3,7 @@
     :href="active ? '#' : rootPath+path"
     :active="active"
   >
-    {{ text }}
+    <span v-html="text" />
   </b-nav-item>
 </template>
 <script>

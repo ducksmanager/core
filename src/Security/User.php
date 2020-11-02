@@ -49,6 +49,8 @@ class User implements UserInterface
     public function setPassword(string $password)
     {
         $this->password = $password;
+        @session_start();
+        $_SESSION['pass'] = $password;
         return $this;
     }
 }

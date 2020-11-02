@@ -74,9 +74,9 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
+import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
-import Errorable from "../components/Errorable";
+import Errorable from "../../components/Errorable";
 import {mapMutations} from "vuex";
 
 export default {

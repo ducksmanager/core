@@ -3,14 +3,19 @@
     <b-select
       v-model="currentCountryCode"
       :options="countryNames"
+      required
       @input="fetchPublicationNamesFromCountry(currentCountryCode)"
     />
     <b-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
+      name="publicationCode"
+      required
       :options="publicationNamesForCurrentCountry"
+      @input="$emit('input', currentPublicationCode)"
     />
     <b-btn
+      v-if="!noButton"
       :disabled="!currentPublicationCode"
       :href="`/collection/show/${currentPublicationCode}`"
     >
@@ -27,6 +32,13 @@ export default {
   name: "PublicationSelect",
 
   mixins: [l10nMixin],
+
+  props: {
+    noButton: {
+      type: Boolean,
+      default: false
+    }
+  },
   emits: ['input'],
 
   data: () => ({

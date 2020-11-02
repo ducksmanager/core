@@ -6,7 +6,6 @@ use App\Entity\Account;
 use App\Security\User;
 use App\Service\ApiService;
 use App\Service\UserService;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -179,15 +178,38 @@ class PageSiteController extends AbstractController
 
     /**
      * @Route({
+     *     "en": "/collection/show/{publicationCode}",
+     *     "fr": "/collection/afficher/{publicationCode}"
+     * },
+     *     methods={"GET"},
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)|new$"},
+     *     defaults={"publicationCode"=null})
+     * )
+     */
+    public function showCollection(UserService $userService, TranslatorInterface $translator, ?string $publicationCode): Response
+    {
+        return $this->render("bare.twig", [
+            'title' => $translator->trans('COLLECTION'),
+            'username' => $userService->getCurrentUsername(),
+            'vueProps' => [
+                'component' => 'Site',
+                'page' => 'Collection',
+                'tab' => 'Manage',
+                'publicationcode' => $publicationCode
+            ]
+        ]);
+    }
+
+    /**
+     * @Route({
      *     "en": "/collection/account",
      *     "fr": "/collection/compte"
      * },
      *     methods={"GET", "POST"}
      * )
      */
-    public function showAccountPage(Request $request, ValidatorInterface $validator, TranslatorInterface $translator, ApiService $apiService, LoggerInterface $logger): Response
+    public function showAccountPage(Request $request, ValidatorInterface $validator, ApiService $apiService): Response
     {
-        $logger->info('Content : ' . print_r($request->request->all(), true));
         $success = null;
         $errors = [];
         if (!empty($request->getMethod() === 'POST')) {
@@ -212,6 +234,36 @@ class PageSiteController extends AbstractController
             (is_null($success) ? [] : compact('success')) + ['tab' => 'account', 'errors' => json_encode($errors)]
         );
     }
+
+    /**
+     * @Route({
+     *     "en": "/collection/subscriptions",
+     *     "fr": "/collection/abonnements"
+     * },
+     *     methods={"GET", "POST"}
+     * )
+     */
+    public function showSubscriptions(Request $request, ApiService $apiService): Response
+    {
+        $success = null;
+        $errors = [];
+        if (!empty($request->getMethod() === 'POST')) {
+            $apiResponse = $apiService->call('/collection/subscriptions', 'ducksmanager', [
+                'startDate' => $request->request->get('startDate'),
+                'endDate' => $request->request->get('endDate'),
+                'publicationCode' => $request->request->get('publicationCode'),
+            ], 'PUT');
+            $success = !is_null($apiResponse);
+        }
+
+        return $this->renderSitePage(
+            '',
+            'Collection',
+            (is_null($success) ? [] : compact('success'))
+            + ['tab' => 'subscriptions', 'errors' => json_encode($errors)]
+        );
+    }
+
 
     /**
      * @Route({

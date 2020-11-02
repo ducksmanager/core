@@ -52,21 +52,19 @@
 </template>
 
 <script>
-import IssueList from "../components/IssueList";
-import l10nMixin from "../mixins/l10nMixin";
-import collectionMixin from "../mixins/collectionMixin";
+import IssueList from "../../components/IssueList";
+import l10nMixin from "../../mixins/l10nMixin";
+import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapGetters, mapState} from "vuex";
-import IssueSearch from "../components/IssueSearch";
-import PublicationSelect from "../components/PublicationSelect";
-import SuggestionList from "./SuggestionList";
-import Accordion from "../components/Accordion";
-import PublicationList from "../components/PublicationList";
-import Menu from "./Menu";
+import IssueSearch from "../../components/IssueSearch";
+import PublicationSelect from "../../components/PublicationSelect";
+import SuggestionList from "../SuggestionList";
+import Accordion from "../../components/Accordion";
+import PublicationList from "../../components/PublicationList";
 
 export default {
   name: "Manage",
   components: {
-    Menu,
     PublicationList,
     Accordion,
     SuggestionList,

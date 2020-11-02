@@ -1,6 +1,10 @@
 A: at
 A_VENDRE: For sale
 A_VENDRE_TITRE: Sale
+ABONNEMENT_AJOUTER: Add a subscription
+ABONNEMENT_AUCUN: No subscription
+ABONNEMENT_EXPLICATION: Indicate the publications that you have a subscription for. DucksManager will automatically add them to your collection when new issues are released.
+ABONNEMENT_TITRE: My subscriptions
 ACCROCHE: The reference website for Disney comic book collectors
 ACCUEIL: Home
 ACHAT: Purchase
