@@ -191,7 +191,6 @@ class PageSiteController extends AbstractController
         $success = null;
         $errors = [];
         if (!empty($request->getMethod() === 'POST')) {
-            $user = $apiService->call('/collection/user', 'ducksmanager');
             $account = Account::createFromRequest($request, $this->getUser());
 
             $errorResult = $validator->validate($account);
@@ -208,9 +207,9 @@ class PageSiteController extends AbstractController
         }
 
         return $this->renderSitePage(
-            $translator->trans('GESTION_COMPTE'),
-            'Account',
-            (is_null($success) ? [] : compact('success')) + ['errors' => json_encode($errors)]
+            '',
+            'Collection',
+            (is_null($success) ? [] : compact('success')) + ['tab' => 'account', 'errors' => json_encode($errors)]
         );
     }
 

@@ -39,7 +39,8 @@ class CollectionController extends AbstractController
             'username' => $userService->getCurrentUsername(),
             'vueProps' => [
                 'component' => 'Site',
-                'page' => 'Manage',
+                'page' => 'Collection',
+                'tab' => 'Manage',
                 'publicationcode' => $publicationCode
             ]
         ]);

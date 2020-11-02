@@ -8,14 +8,6 @@
     <IssueSearch />
   </div>
   <div v-else>
-    <Menu
-      :title="l10n.GERER_COLLECTION"
-      :root-path="'/collection'"
-      :items="[
-        {path: '/show', text: l10n.GESTION_NUMEROS_COURT},
-        {path: '/account', text: l10n.GESTION_COMPTE_COURT}
-      ]"
-    />
     <div v-if="total > 0 && countryNames">
       <Accordion
         v-if="suggestionsNumber"
@@ -64,7 +56,6 @@ import IssueList from "../components/IssueList";
 import l10nMixin from "../mixins/l10nMixin";
 import collectionMixin from "../mixins/collectionMixin";
 import {mapActions, mapGetters, mapState} from "vuex";
-import Country from "../components/Country";
 import IssueSearch from "../components/IssueSearch";
 import PublicationSelect from "../components/PublicationSelect";
 import SuggestionList from "./SuggestionList";

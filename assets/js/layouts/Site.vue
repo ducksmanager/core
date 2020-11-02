@@ -22,7 +22,6 @@ import LeftPanel from "./LeftPanel";
 import Footer from "./Footer";
 import Login from "./Login";
 import Banner from "./Banner";
-import Manage from "./Manage";
 import InducksImport from "./InducksImport";
 import Stats from "./Stats";
 import Bookcase from "./Bookcase";
@@ -32,22 +31,21 @@ import PrintPresentation from "./PrintPresentation";
 import Welcome from "./Welcome";
 import Forgot from "./Forgot";
 import Signup from "./Signup";
-import Account from "./Account";
+import Collection from "./Collection";
 
 export default {
   name: "Site",
   components: {
-    Account,
     Banner,
     Bookcase,
     Bookstores,
+    Collection,
     Expand,
     Footer,
     Forgot,
     InducksImport,
     LeftPanel,
     Login,
-    Manage,
     PrintPresentation,
     Signup,
     Stats,
