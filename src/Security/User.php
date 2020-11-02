@@ -45,4 +45,10 @@ class User implements UserInterface
     public function eraseCredentials()
     {
     }
+
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
+        return $this;
+    }
 }

@@ -3,10 +3,11 @@ namespace App\Security;
 
 use App\Service\ApiService;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-class ApiUserProvider implements UserProviderInterface
+class ApiUserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
     private ApiService $apiService;
 
@@ -33,5 +34,10 @@ class ApiUserProvider implements UserProviderInterface
     public function supportsClass(string $class)
     {
         return User::class === $class;
+    }
+
+    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    {
+        $user->setPassword($newEncodedPassword);
     }
 }

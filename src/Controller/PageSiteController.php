@@ -2,16 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
 use App\Security\User;
 use App\Service\ApiService;
-use App\Service\CollectionService;
 use App\Service\UserService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PageSiteController extends AbstractController
@@ -23,16 +25,25 @@ class PageSiteController extends AbstractController
         $this->userService = $userService;
     }
 
+    /**
+     * @return User|UserInterface|object|null
+     */
+    protected function getUser()
+    {
+        return parent::getUser();
+    }
+
+
     protected function renderSitePage(string $title, string $page, array $vueProps = []): Response
     {
         return $this->render("bare.twig", [
             'title' => $title,
             'vueProps' => [
-                'title' => $title,
-                'component' => 'Site',
-                'page' => $page,
-                'username' => $this->getUser()->getUsername()
-            ] + $vueProps
+                    'title' => $title,
+                    'component' => 'Site',
+                    'page' => $page,
+                    'username' => $this->getUser()->getUsername()
+                ] + $vueProps
         ]);
     }
 
@@ -133,7 +144,7 @@ class PageSiteController extends AbstractController
      *     path="/stats/{type}"
      * )
      */
-    public function showStatsPage(TranslatorInterface $translator, string $type): Response
+    public function showStatsPage(string $type): Response
     {
         return $this->renderSitePage(
             '',
@@ -163,6 +174,43 @@ class PageSiteController extends AbstractController
         return $this->renderSitePage(
             $translator->trans('MOT_DE_PASSE_OUBLIE'),
             'Forgot', is_null($success) ? [] : compact('success')
+        );
+    }
+
+    /**
+     * @Route({
+     *     "en": "/collection/account",
+     *     "fr": "/collection/compte"
+     * },
+     *     methods={"GET", "POST"}
+     * )
+     */
+    public function showAccountPage(Request $request, ValidatorInterface $validator, TranslatorInterface $translator, ApiService $apiService, LoggerInterface $logger): Response
+    {
+        $logger->info('Content : ' . print_r($request->request->all(), true));
+        $success = null;
+        $errors = [];
+        if (!empty($request->getMethod() === 'POST')) {
+            $user = $apiService->call('/collection/user', 'ducksmanager');
+            $account = Account::createFromRequest($request, $this->getUser());
+
+            $errorResult = $validator->validate($account);
+            if (!empty($errorResult->count())) {
+                /** @var ConstraintViolation $error */
+                foreach ($errorResult as $error) {
+                    $errors[$error->getPropertyPath()] = $error->getMessage();
+                }
+            } else {
+                $this->getUser()->setPassword($account->getUpToDatePassword());
+                $apiResponse = $apiService->call('/ducksmanager/user/'.$this->getUser()->getUsername(), 'ducksmanager', $account->toArray(), 'POST');
+                $success = !is_null($apiResponse);
+            }
+        }
+
+        return $this->renderSitePage(
+            $translator->trans('GESTION_COMPTE'),
+            'Account',
+            (is_null($success) ? [] : compact('success')) + ['errors' => json_encode($errors)]
         );
     }
 

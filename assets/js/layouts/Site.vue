@@ -32,10 +32,12 @@ import PrintPresentation from "./PrintPresentation";
 import Welcome from "./Welcome";
 import Forgot from "./Forgot";
 import Signup from "./Signup";
+import Account from "./Account";
 
 export default {
   name: "Site",
   components: {
+    Account,
     Banner,
     Bookcase,
     Bookstores,
