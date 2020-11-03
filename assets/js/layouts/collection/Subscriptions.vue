@@ -42,12 +42,12 @@
           sm="4"
           md="2"
         >
-          <!--          <b-btn-->
-          <!--            size="sm"-->
-          <!--            @click="subscriptions.splice(index, 1)"-->
-          <!--          >-->
-          <!--            {{ l10n.SUPPRIMER }}-->
-          <!--          </b-btn>-->
+          <b-btn
+            size="sm"
+            @click="deleteSubscription(subscription.id)"
+          >
+            {{ l10n.SUPPRIMER }}
+          </b-btn>
         </b-col>
       </b-row>
       <br>
@@ -127,12 +127,21 @@ export default {
   },
 
   async mounted() {
-    this.subscriptions = (await axios.get(`/api/collection/subscriptions`)).data
+    await this.loadSubscriptions()
     await this.fetchPublicationNames(this.subscriptions.map(({publicationCode}) => publicationCode))
   },
   methods: {
     ...mapActions("collection", ["fetchSubscriptions"]),
     ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
+
+    async loadSubscriptions() {
+      this.subscriptions = (await axios.get(`/api/collection/subscriptions`)).data
+    },
+
+    async deleteSubscription(id) {
+      (await axios.delete(`/api/collection/subscriptions/${id}`)).data
+      await this.loadSubscriptions()
+    }
   }
 }
 </script>

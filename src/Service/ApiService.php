@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -80,7 +81,7 @@ class ApiService
         catch(Exception $e) {
             $this->logger->error($e->getMessage());
         }
-        return null;
+        throw new ClientException($response);
     }
 
     public function runQuery(string $query, string $db, array $parameters = []) {
