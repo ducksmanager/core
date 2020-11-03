@@ -21,30 +21,47 @@
       <div
         id="book"
         class="flip-book"
+        @click.self="closeBook()"
       >
         <b-card
           v-if="showTableOfContents"
           no-body
           class="table-of-contents"
         >
-          <h3>{{ l10n.TABLE_DES_MATIERES }}</h3>
+          <template #header>
+            <Issue
+              :publicationcode="publicationCode"
+              :publicationname="publicationNames[publicationCode]"
+              :issuenumber="issueNumber"
+            />
+            <h3>{{ l10n.TABLE_DES_MATIERES }}</h3>
+          </template>
           <b-tabs
-            v-model="currentPage"
+            :value="pages.findIndex(page => page.storycode === pagesWithUrl[currentPage].storycode)"
             pills
             card
             vertical
-            nav-wrapper-class="w-100"
+            @input="currentPage = pagesWithUrl.findIndex(page => page.storycode === pages[$event].storycode)"
           >
-            >
             <b-tab
-              v-for="{position} in pages"
+              v-for="{storycode, kind, url, title, position} in pages"
               :key="`slide-${position}`"
-              :title="`Page ${position}`"
-            />
+              :title-item-class="!!url ? 'has-image':''"
+            >
+              <template #title>
+                <Story
+                  no-link
+                  :kind="kind"
+                  :title="title"
+                  :storycode="storycode"
+                  :dark="!!url"
+                />
+              </template>
+            </b-tab>
           </b-tabs>
         </b-card>
         <div
-          v-for="({position, url}, index) in pages"
+          v-for="({position, url}, index) in pagesWithUrl"
           :key="`page-${position}`"
           class="page"
         >
@@ -76,12 +93,14 @@
 import {PageFlip} from 'page-flip';
 import {mapActions, mapState} from "vuex";
 import l10nMixin from "../mixins/l10nMixin";
+import Story from "./Story";
+import Issue from "./Issue";
 
 const EDGES_BASE_URL = 'https://edges.ducksmanager.net/edges/';
 
 export default {
   name: "Book",
-
+  components: {Issue, Story},
   mixins: [l10nMixin],
 
   props: {
@@ -111,7 +130,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["issueUrls"]),
+    ...mapState("coa", ["publicationNames", "issueDetails"]),
 
     edgeUrl() {
       return `${EDGES_BASE_URL}${this.publicationCode.replace('/', '/gen/')}.${this.issueNumber}.png`
@@ -129,7 +148,11 @@ export default {
     },
 
     pages() {
-      return this.issueUrls && this.issueUrls[`${this.publicationCode} ${this.issueNumber}`]
+      return this.issueDetails && this.issueDetails[`${this.publicationCode} ${this.issueNumber}`]
+    },
+
+    pagesWithUrl() {
+      return this.pages && this.pages.filter(({url}) => !!url)
     },
 
     isReadyToOpen() {
@@ -239,8 +262,8 @@ export default {
   align-items: center;
   justify-content: center;
   top: 0;
-  left: 325px;
-  width: calc(100% - 325px);
+  left: 0;
+  width: 100%;
   height: 100%;
   z-index: 2000;
 
@@ -253,15 +276,25 @@ export default {
     transform: translateX(100%);
     top: 0;
     right: 0;
-    width: 210px;
+    width: auto;
+    max-width: 400px;
     height: 100%;
-    overflow-y: auto;
+    overflow: auto;
+    background-color: #eee;
     color: black;
     white-space: nowrap;
 
-    h3 {
-      margin: 6px;
+    .card-header {
       text-align: center;
+
+      ::v-deep a {
+        color: #666;
+      }
+
+      h3 {
+        margin: 6px 6px 0 6px;
+        text-align: center;
+      }
     }
 
     .col-auto {
@@ -270,6 +303,12 @@ export default {
 
     ::v-deep .tab-content {
       display: none;
+    }
+
+    ::v-deep :not(.has-image) {
+      a {
+        cursor: default;
+      }
     }
   }
 
@@ -289,9 +328,7 @@ export default {
   }
 
   .page {
-    //background-color: hsl(35, 55, 98);
     color: hsl(35, 35, 35);
-    //border: solid 1px hsl(35, 20, 70);
 
     overflow: hidden;
 
@@ -338,27 +375,11 @@ export default {
 
     &.hard { // for hard page
       background-color: hsl(35, 50, 90);
-      //border: solid 1px hsl(35, 20, 50);
     }
 
     &.page-cover {
       background-color: hsl(35, 45, 80);
       color: hsl(35, 35, 35);
-      //border: solid 1px hsl(35, 20, 50);
-
-      h2 {
-        text-align: center;
-        padding-top: 50%;
-        font-size: 210%;
-      }
-
-      &.page-cover-top {
-        //box-shadow: inset 0 0 30px 0 rgba(36, 10, 3, 0.5), -2px 0 5px 2px rgba(0, 0, 0, 0.4);
-      }
-
-      &.page-cover-bottom {
-        //box-shadow: inset 0 0 30px 0 rgba(36, 10, 3, 0.5), 10px 0 8px 0 rgba(0, 0, 0, 0.4);
-      }
     }
   }
 }

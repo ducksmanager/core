@@ -1,8 +1,17 @@
 <template>
-  <span v-if="l10n">
+  <span
+    v-if="l10n"
+    :class="{dark}"
+  >
+    <b-badge
+      v-if="kind"
+      size="xl"
+      :class="{[`kind-${kind}`]: true}"
+    >{{ l10n[`HISTOIRE_TYPE_${kind.toUpperCase()}`] || l10n.HISTOIRE_TYPE_AUTRE }}</b-badge>
     {{ title || l10n.SANS_TITRE }}
     <small>{{ comment }}</small>
     <a
+      v-if="!noLink"
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
     >
@@ -23,6 +32,10 @@ export default {
       type: String,
       required: true
     },
+    kind: {
+      type: String,
+      default: null
+    },
     title: {
       type: String,
       default: null
@@ -30,6 +43,14 @@ export default {
     comment: {
       type: String,
       default: null
+    },
+    noLink: {
+      type: Boolean,
+      default: false
+    },
+    dark: {
+      type: Boolean,
+      default: false
     },
   },
 
@@ -41,6 +62,25 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+span {
+}
 
+.badge {
+  font-size: 90%;
+  width: 75px;
+  color: black;
+
+  &.kind-c {
+    background: #ffcc33;
+  }
+
+  &.kind-n {
+    background: #cbdced;
+  }
+}
+
+.dark {
+  color: black;
+}
 </style>

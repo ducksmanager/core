@@ -63,7 +63,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames", "issueUrls"]),
+    ...mapState("coa", ["publicationNames", "issueDetails"]),
 
     id() {
       return `issue-details-${this.publicationCode}-${this.issueNumber}`
@@ -74,7 +74,7 @@ export default {
     },
 
     coverUrl() {
-      const cover = this.issueUrls && this.issueUrls[this.issueCode].find(({position}) => !/^p/.test(position))
+      const cover = this.issueDetails && this.issueDetails[this.issueCode].find(({position}) => !/^p/.test(position))
       return cover ? this.cloudinaryBaseUrl + cover.url : null
     }
   },

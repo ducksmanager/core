@@ -5,7 +5,7 @@ const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/${window.locale}`
 const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/'
 const URL_PREFIX_ISSUES = '/api/coa/list/issues/'
 const URL_PREFIX_AUTHORS = '/api/coa/authorsfullnames/'
-const URL_PREFIX_URLS = '/api/coa/list/urls/'
+const URL_PREFIX_URLS = '/api/coa/list/details/'
 const URL_ISSUE_COUNTS = '/api/coa/list/issues/count'
 
 export default {
@@ -16,8 +16,7 @@ export default {
     publicationNamesFullCountries: [],
     personNames: null,
     issueNumbers: null,
-    issueUrls: {},
-    issueDetails: null,
+    issueDetails: {},
     isLoadingCountryNames: false,
     issueCounts: null,
   }),
@@ -49,8 +48,8 @@ export default {
     setIssueNumbers(state, issueNumbers) {
       state.issueNumbers = issueNumbers
     },
-    setIssueUrls(state, {issueCode, issueUrls}) {
-      Vue.set(state.issueUrls, issueCode, issueUrls)
+    setIssueDetails(state, {issueCode, issueDetails}) {
+      Vue.set(state.issueDetails, issueCode, issueDetails)
     },
     setIssueCounts(state, issueCounts) {
       state.issueCounts = issueCounts
@@ -134,10 +133,10 @@ export default {
 
     fetchIssueUrls: async ({state, commit}, {publicationCode, issueNumber}) => {
       const issueCode = `${publicationCode} ${issueNumber}`
-      if (!state.issueUrls[issueCode]) {
-        commit("setIssueUrls", {
+      if (!state.issueDetails[issueCode]) {
+        commit("setIssueDetails", {
           issueCode,
-          issueUrls: (await axios.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data
+          issueDetails: (await axios.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data
         })
       }
     },

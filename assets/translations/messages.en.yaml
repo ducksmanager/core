@@ -249,6 +249,17 @@ GESTION_NUMEROS: Management of your collection issues
 GESTION_NUMEROS_COURT: My issues
 GRATUIT_AUCUNE_LIMITE: DucksManager is free and has no use limits.
 HISTOIRE_INEDITE: new story
+HISTOIRE_TYPE_A: article
+HISTOIRE_TYPE_AUTRE: other
+HISTOIRE_TYPE_C: cover
+HISTOIRE_TYPE_F: centerfold
+HISTOIRE_TYPE_G: game
+HISTOIRE_TYPE_I: illustration
+HISTOIRE_TYPE_K: strip
+HISTOIRE_TYPE_L: painting
+HISTOIRE_TYPE_N: story
+HISTOIRE_TYPE_P: painting
+HISTOIRE_TYPE_T: text
 HISTOIRES_INEDITES: new stories
 HISTOIRES_NON_POSSEDEES: Non-possessed stories
 HISTOIRES_POSSEDEES: Possessed stories

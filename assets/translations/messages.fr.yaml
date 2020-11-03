@@ -251,6 +251,17 @@ GESTION_NUMEROS: Gestion des numéros de votre collecton
 GESTION_NUMEROS_COURT: Mes numéros
 GRATUIT_AUCUNE_LIMITE: DucksManager est gratuit et sans limite d'utilisation.
 HISTOIRE_INEDITE: histoire inédite
+HISTOIRE_TYPE_A: article
+HISTOIRE_TYPE_AUTRE: autre
+HISTOIRE_TYPE_C: couverture
+HISTOIRE_TYPE_F: détachable
+HISTOIRE_TYPE_G: jeu
+HISTOIRE_TYPE_I: illustration
+HISTOIRE_TYPE_K: strip
+HISTOIRE_TYPE_L: peinture
+HISTOIRE_TYPE_N: histoire
+HISTOIRE_TYPE_P: peinture
+HISTOIRE_TYPE_T: texte
 HISTOIRES_INEDITES: histoires inédites
 HISTOIRES_NON_POSSEDEES: Histoires non possédées
 HISTOIRES_POSSEDEES: Histoires possédées
