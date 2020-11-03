@@ -7,7 +7,7 @@
       :target="id"
       placement="right"
       triggers="hover"
-      :delay="0"
+      :delay="500"
       @show="loadIssueUrls"
     >
       <template #title>

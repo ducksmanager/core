@@ -66,21 +66,20 @@
         >
           <div
             v-if="index === 0"
-            class="edge"
+            :class="{edge: true, closed: opening || opened }"
             :style="{
               backgroundImage: `url(${edgeUrl})`,
-              width: `${edgeWidth}px`,
-              transform: `rotate3d(0, 1, 0, ${rotation}deg)`}"
+              width: `${edgeWidth}px`
+            }"
           />
           <div :class="{'page-content': true, 'first-page': index === 0}">
             <div
-              class="page-image"
+              :class="{'page-image': true, opened: opening || opened}"
               :style="{
                 backgroundImage: `url(${cloudinaryBaseUrl + url})`,
-                marginLeft: index === 0 && rotation > -90 ? `${edgeWidth}px` : '0',
-                transform : index === 0 ? `rotate3d(0, 1, 0, ${rotation + 90}deg)` : 'none',
-                transformOrigin: 'left'
+                marginLeft: opening || opened ? '0' : `${edgeWidth}px`,
               }"
+              @transitionend="onEndOpenCloseTransition()"
             />
           </div>
         </div>
@@ -121,8 +120,11 @@ export default {
     coverHeight: null,
     coverRatio: null,
 
-    rotationInterval: null,
-    rotation: 0,
+    opening: false,
+    opened: false,
+    closing: false,
+    closed: false,
+
     book: null,
     currentPage: 0,
     currentState: null,
@@ -163,7 +165,7 @@ export default {
     },
 
     showTableOfContents() {
-      return this.currentPage > 0 || this.rotation === -90
+      return this.currentPage > 0 || this.opened
     }
   },
 
@@ -198,7 +200,9 @@ export default {
               vm.currentState = data
             })
 
-          this.rotationInterval = setInterval(this.transformEdgeIntoCover, 5)
+          setTimeout(() => {
+            vm.opening = true
+          }, 1)
         }
       }
     },
@@ -231,37 +235,29 @@ export default {
         issueNumber: this.issueNumber
       });
     },
-
-    transformEdgeIntoCover() {
-      if (this.rotation > -90) {
-        this.rotation-=2
-      } else {
-        clearInterval(this.rotationInterval)
-        this.rotationInterval = null
+    
+    onEndOpenCloseTransition() {
+      if (this.opening) {
+        this.opening = false
+        this.opened = true
       }
-    },
-
-    transformCoverIntoEdge() {
-      if (this.rotation < 0) {
-        this.rotation+=2
-      } else {
-        clearInterval(this.rotationInterval)
-        this.rotationInterval = null
+      if (this.closing) {
+        this.closing = false
+        this.closed = true
         this.$emit('close-book')
       }
     },
 
     closeBook() {
-      if (this.rotationInterval !== null) {
-        return
-      }
       const vm = this
       if (this.currentPage === 0) {
-        vm.rotationInterval = setInterval(this.transformCoverIntoEdge, 5)
+        vm.opened = false
+        vm.closing = true
       }
       else {
         this.book.on('flip', () => {
-          vm.rotationInterval = setInterval(this.transformCoverIntoEdge, 5)
+          vm.opened = false
+          vm.closing = true
         })
         this.book.flip(0)
       }
@@ -282,6 +278,14 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 2000;
+
+  .closed {
+    transform: rotate3d(0, 1, 0, -90deg) !important;
+  }
+
+  .opened {
+    transform: rotate3d(0, 1, 0, 0deg) !important;
+  }
 
   img {
     display: none
@@ -338,7 +342,10 @@ export default {
     position: absolute;
     background-size: cover;
     background-repeat: no-repeat;
+    transform: rotate3d(0, 1, 0, 0deg);
     transform-origin: right;
+    transition-timing-function: linear;
+    transition: all 1s linear;
     height: 100%;
     z-index: 0;
   }
@@ -369,6 +376,9 @@ export default {
 
         .page-image {
           background-size: cover;
+          transform: rotate3d(0, 1, 0, -90deg);
+          transform-origin: left;
+          transition: all 1s linear;
         }
       }
     }

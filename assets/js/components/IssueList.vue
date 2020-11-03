@@ -137,7 +137,7 @@
         </div>
       </div>
       <ContextMenu
-        v-if="purchases"
+        v-if="purchases && currentIssueOpened === null"
         ref="contextMenu"
         :publication-code="publicationcode"
         :selected-issues="selected"
