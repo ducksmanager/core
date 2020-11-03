@@ -18,6 +18,7 @@ export default {
     isLoadingSuggestions: false,
 
     user: null,
+    previousVisit: null,
   }),
 
   mutations: {
@@ -45,6 +46,9 @@ export default {
     },
     setUser(state, user) {
       state.user = user
+    },
+    setPreviousVisit(state, previousVisit) {
+      state.previousVisit = previousVisit
     }
   },
 
@@ -113,7 +117,7 @@ export default {
       if (!state.lastPublishedEdgesForCurrentUser) {
         commit("setLastPublishedEdgesForCurrentUser", (await axios.get("/api/collection/edges/lastPublished")).data.map(edge => ({
           ...edge,
-          timestamp: parseInt(edge.dateajout.timestamp)
+          timestamp: Date.parse(edge.creationDate)
         })))
       }
     },
