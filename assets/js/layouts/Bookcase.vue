@@ -67,6 +67,7 @@
           :publication-code="edge.publicationCode"
           :issue-number="edge.issueNumber"
           :issue-number-reference="edge.issueNumberReference"
+          :creation-date="edge.creationDate"
           :popularity="edge.popularity"
           :existing="!!edge.edgeId"
           :sprite-path="edgesUsingSprites[edge.edgeId] || null"
@@ -87,8 +88,6 @@ import collectionMixin from "../mixins/collectionMixin";
 import Edge from "../components/Edge";
 import MedalProgress from "../components/MedalProgress";
 import Issue from "../components/Issue";
-import * as axios from "axios";
-import medalMixin from "../mixins/medalMixin";
 import Book from "../components/Book";
 
 export default {

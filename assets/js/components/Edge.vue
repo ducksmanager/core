@@ -59,6 +59,10 @@ export default {
       type: String,
       default: null
     },
+    creationDate: {
+      type: String,
+      default: null
+    },
     popularity: {
       type: Number,
       required: true
@@ -103,7 +107,7 @@ export default {
     src() {
       return this.spritePath && !this.ignoreSprite
         ? `${SPRITES_ROOT}${this.spritePath}.png`
-        : `${EDGES_ROOT}${this.countryCode}/gen/${this.magazineCode}.${this.issueNumberReference || this.issueNumber}.png`;
+        : `${EDGES_ROOT}${this.countryCode}/gen/${this.magazineCode}.${this.issueNumberReference || this.issueNumber}.png?${new Date(this.creationDate).getTime()}`;
     },
 
     spriteClass() {
@@ -172,9 +176,6 @@ export default {
         this.$emit('loaded', [this.id])
       }
     },
-    loadCover() {
-
-    }
   }
 }
 </script>

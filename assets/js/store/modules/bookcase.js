@@ -36,16 +36,12 @@ export default {
     bookcaseWithPopularities: (state, getters, rootState) => rootState.collection.popularIssuesInCollection && state.bookcase &&
       state.bookcase
         .map((issue) => {
-          const {Pays: countryCode, Magazine: magazineCode, Numero: issueNumber, NumeroReference: issueNumberReference, EdgeID: edgeId, Sprites: sprites} = issue
-          const publicationCode = `${countryCode}/${magazineCode}`;
-          const issueCode = `${publicationCode} ${issueNumber}`;
+          const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
+          const issueCode = `${issue.publicationCode} ${issue.issueNumber}`;
           return {
-            edgeId,
+            ...issue,
             publicationCode,
             issueCode,
-            issueNumber,
-            issueNumberReference,
-            sprites,
             popularity: rootState.collection.popularIssuesInCollection[issueCode] || 0
           };
         }),
