@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>
+    <h3 v-if="title">
       {{ title }}
     </h3>
     <b-nav
@@ -27,7 +27,7 @@ export default {
   props: {
     title: {
       type: String,
-      required: true
+      default: null
     },
     rootPath: {
       type: String,

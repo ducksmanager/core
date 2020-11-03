@@ -19,7 +19,7 @@
         {{ l10n.ABONNEMENT_AUCUN }}
       </div>
       <b-row
-        v-for="(subscription, index) in subscriptions"
+        v-for="subscription in subscriptions"
         :key="subscription.id"
       >
         <b-col

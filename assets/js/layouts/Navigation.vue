@@ -14,7 +14,7 @@
       </template>
       <template #items>
         <template v-if="username">
-          <NavigationItem path="/bookcase">
+          <NavigationItem path="/bookcase/show">
             <b-icon-book-half />
             {{ l10n.BIBLIOTHEQUE_COURT }}
           </NavigationItem>

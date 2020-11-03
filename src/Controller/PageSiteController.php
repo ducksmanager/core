@@ -48,19 +48,36 @@ class PageSiteController extends AbstractController
 
     /**
      * @Route({
-     *     "en": "/bookcase/{username}",
-     *     "fr": "/bibliotheque/{username}"
+     *     "en": "/bookcase/show/{username}",
+     *     "fr": "/bibliotheque/show/{username}"
      * },
      *     defaults={"username"=null},
      *     methods={"GET"}
      * )
      */
-    public function showBookcasePage(TranslatorInterface $translator, ?string $username = null): Response
+    public function showBookcasePage(?string $username = null): Response
     {
         return $this->renderSitePage(
-            $translator->trans('BIBLIOTHEQUE_COURT'),
+            '',
             'Bookcase', [
+                'tab' => 'ViewBookcase',
                 'bookcase-username' => $username ?? $this->getUser()->getUsername(),
+            ]
+        );
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET", "POST"},
+     *     path="/bookcase/options"
+     * )
+     */
+    public function showBookcaseOptionsPage(): Response
+    {
+        return $this->renderSitePage(
+            '',
+            'Bookcase', [
+                'tab' => 'BookcaseOptions'
             ]
         );
     }
