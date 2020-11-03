@@ -27,7 +27,7 @@
         list="search"
         :placeholder="searchContext === 'story' ? l10n.RECHERCHER_HISTOIRE : l10n.RECHERCHER_PUBLICATIONS"
       />
-      <datalist v-if="searchResults.results">
+      <datalist v-if="searchResults.results && !isSearching">
         <option v-if="!searchResults.results.length">
           {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
         </option>
@@ -44,7 +44,7 @@
             :publicationcode="searchResult.publicationcode"
             :publicationname="publicationNames[searchResult.publicationcode]"
             :issuenumber="searchResult.issuenumber"
-            clickable
+            :clickable="withStoryLink"
           />
         </option>
       </datalist>
@@ -67,11 +67,17 @@ export default {
     withTitle: {
       type: Boolean,
       default: true
+    },
+    withStoryLink: {
+      type: Boolean,
+      default: true
     }
   },
-  emits: ['scroll-to-issue'],
+  emits: ['issue-selected'],
 
   data: () => ({
+    isSearching: false,
+    pendingSearch: null,
     search: '',
     searchResults: [],
     searchContext: 'story',
@@ -95,15 +101,10 @@ export default {
 
   watch: {
     async search(newValue) {
-      const vm = this
       if (newValue !== '') {
-        if (this.isSearchByCode()) {
-          this.searchResults = (await axios.get(`/api/coa/list/issues/withStoryVersionCode/${newValue.replace(/^code=/, '')}`)).data
-          this.searchResults.results = this.searchResults.results.sort((issue1, issue2) =>
-            !!vm.isInCollection(issue1) > !!vm.isInCollection(issue2) ? -1 : (!!vm.isInCollection(issue1) < !!vm.isInCollection(issue2) ? 1 : 0))
-          await this.fetchPublicationNames(this.searchResults.results.map(({publicationcode}) => publicationcode))
-        } else {
-          this.searchResults = (await axios.post('/api/coa/stories/search', {keywords: newValue})).data
+        this.pendingSearch = newValue
+        if (!this.isSearching) {
+          await this.runSearch(newValue)
         }
       }
     }
@@ -119,10 +120,31 @@ export default {
     },
     selectSearchResult(searchResult) {
       if (this.isSearchByCode()) {
-        this.$emit('scroll-to-issue', searchResult)
+        this.$emit('issue-selected', searchResult)
       } else {
         this.searchContext = 'storycode'
         this.search = searchResult.code
+      }
+    },
+    async runSearch(value) {
+      this.isSearching = true
+      try {
+        if (this.isSearchByCode()) {
+          const vm = this
+          this.searchResults = (await axios.get(`/api/coa/list/issues/withStoryVersionCode/${value.replace(/^code=/, '')}`)).data
+          this.searchResults.results = this.searchResults.results.sort((issue1, issue2) =>
+            Math.sign(!!vm.isInCollection(issue2) - !!vm.isInCollection(issue1)))
+          await this.fetchPublicationNames(this.searchResults.results.map(({publicationcode}) => publicationcode))
+        } else {
+          this.searchResults = (await axios.post('/api/coa/stories/search', {keywords: value})).data
+        }
+      }
+      finally {
+        this.isSearching = false
+        // The input value as changed since the beginning of the search, searching again
+        if (value !== this.pendingSearch) {
+          await this.runSearch(this.pendingSearch)
+        }
       }
     }
   }

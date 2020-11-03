@@ -19,10 +19,18 @@
         backgroundImage:`url(${src})`,
         backgroundSize: `${width}px ${height}px`,
         width: `${width}px`,
-        height: `${height}px`,
+        height: `${height}px`
       } : {}"
       @click="$emit('open-book')"
     >
+      <div
+        v-if="highlighted"
+        class="highlighted"
+        :style="{
+          width: `${width}px`,
+          height: `${height}px`
+        }"
+      />
       <img
         v-if="load && !imageLoaded"
         class="temp-image"
@@ -80,6 +88,10 @@ export default {
       required: true
     },
     invisible: {
+      type: Boolean,
+      default: false
+    },
+    highlighted: {
       type: Boolean,
       default: false
     }
@@ -158,6 +170,8 @@ export default {
       const checkWidthInterval = setInterval(() => {
         if (vm.$refs.edge.clientWidth > 0) {
           vm.spriteLoaded = true
+          vm.width = vm.$refs.edge.clientWidth
+          vm.height = vm.$refs.edge.clientHeight
           vm.$emit('loaded', [this.id])
           clearInterval(checkWidthInterval)
         }
@@ -190,10 +204,6 @@ export default {
   visibility: hidden;
   background-color: white;
 
-  &.visible {
-    visibility: visible;
-  }
-
   &:not(.visible-book)::after {
     position: absolute;
     content: "";
@@ -202,6 +212,12 @@ export default {
     right: -100vw;
     height: 15px;
     z-index: 50;
+  }
+
+  .highlighted {
+    position: absolute;
+    box-shadow: 0 0 15px 15px rgba(255,255,255,0.8);
+    z-index: 100;
   }
 }
 </style>

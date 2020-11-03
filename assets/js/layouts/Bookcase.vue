@@ -48,7 +48,11 @@
             </b-carousel>
           </div>
         </div>
-        <IssueSearch style="float: right" />
+        <IssueSearch
+          style="float: right"
+          :with-story-link="false"
+          @issue-selected="highlightIssue"
+        />
       </div>
       <Book
         v-if="currentEdgeOpened"
@@ -62,8 +66,10 @@
       >
         <Edge
           v-for="(edge, edgeIndex) in sortedBookcase"
+          :ref="`edge-${getEdgeKey(edge)}`"
           :key="getEdgeKey(edge)"
           :invisible="currentEdgeOpened === edge"
+          :highlighted="currentEdgeHighlighted === getEdgeKey(edge)"
           :publication-code="edge.publicationCode"
           :issue-number="edge.issueNumber"
           :issue-number-reference="edge.issueNumberReference"
@@ -96,13 +102,14 @@ export default {
   mixins: [l10nMixin, collectionMixin],
 
   props: {
-    bookcaseUsername: { type: String, required: true }
+    bookcaseUsername: {type: String, required: true}
   },
 
   data: () => ({
     edgesUsingSprites: [],
     currentEdgeIndex: 0,
     currentEdgeOpened: null,
+    currentEdgeHighlighted: null,
     bookStartPosition: null
   }),
 
@@ -202,6 +209,9 @@ export default {
           })
           return acc
         }, {})
+    },
+    currentEdgeHighlighted(newValue) {
+      this.$refs[`edge-${newValue}`][0].$el.scrollIntoView()
     }
   },
 
@@ -225,8 +235,11 @@ export default {
 
     getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
 
-    openBook(e) {
-      this.bookStartPosition = {left: e.edgeLeft, top: e.edgeTop}
+    highlightIssue(issue) {
+      this.currentEdgeHighlighted = this.getEdgeKey(this.bookcase.find(issueInCollection =>
+        issue.publicationcode === issueInCollection.publicationCode &&
+        issue.issuenumber === issueInCollection.issueNumber
+      ))
     }
   }
 }
