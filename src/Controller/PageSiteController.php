@@ -106,10 +106,10 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showWelcome(): Response
+    public function showWelcome(TranslatorInterface $translator): Response
     {
         return $this->renderSitePage(
-            '',
+            $translator->trans('BIENVENUE'),
             'Welcome'
         );
     }

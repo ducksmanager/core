@@ -5,6 +5,7 @@
     "php": ">=7.4.0",
     "ext-ctype": "*",
     "ext-iconv": "*",
+    "ext-json": "*",
     "composer/package-versions-deprecated": "^1.11",
     "phpdocumentor/reflection-docblock": "^5.2",
     "sensio/framework-extra-bundle": "^5.6",
@@ -36,7 +37,7 @@
     "twig/cssinliner-extra": "^3.0",
     "twig/extra-bundle": "^2.12|^3.0",
     "twig/twig": "^2.12|^3.0",
-    "ext-json": "*"
+    "webfactory/piwik-bundle": "^3.0"
   },
   "require-dev": {
     "symfony/browser-kit": "^5.1",

@@ -39,10 +39,17 @@
     </script>
 
     {% block menu %}{% endblock %}
+
     <div id="app" {% for key, value in (vueProps ?? {}) %} {{ key }}="{{ value }}"{% endfor %}></div>
     {% block content %}{% endblock %}
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
+
+    {{ piwik("setCustomVariable", 1, "Utilisateur", app.user ? app.user.id : '', "visit") }}
+    {{ piwik("trackPageView") }}
+    {{ piwik("enableLinkTracking") }}
+    {{ piwik("setDocumentTitle", title) }}
+    {{ piwik_code() }}
 </body>
 </html>
