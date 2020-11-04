@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Service\ApiService;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +26,7 @@ class ApiController extends AbstractController
 
     /**
      * @Route(
-     *     methods={"GET", "POST", "DELETE"},
+     *     methods={"GET", "POST", "PUT", "DELETE"},
      *     path="/api/{prefix}/{path}",
      *     requirements={"prefix"="^(collection|bookcase)$", "path"="^.+$"}
      * )

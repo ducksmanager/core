@@ -327,7 +327,8 @@ LES: Les
 LICENCE_INDUCKS1: Ce site se base en partie sur les données du site Inducks.
 LICENCE_INDUCKS2: Cliquez ici pour lire la licence Inducks.
 LICENCE_INDUCKS3: "Toutes les images de personnages et / ou produits Disney: © The Walt Disney Company."
-LISTE_AUTEURS_INTRO: "Vous suivez les auteurs suivants : "
+LISTE_AUTEURS_AJOUTER: Ajouter un auteur
+LISTE_AUTEURS_INTRO: Auteurs suivis
 LISTE_BOUQUINERIES: Liste des bouquineries
 LISTE_MAGAZINES: Liste des magazines
 LISTES_IDENTIQUES: Vos collections Inducks et DucksManager sont identiques. Aucune action n'est requise.
