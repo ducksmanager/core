@@ -12,9 +12,7 @@
         :key="textureType"
       >
         <h5>{{ l10n[l10nKey] }}</h5>
-        <b-dropdown
-          v-model="bookcaseTextures[textureType]"
-        >
+        <b-dropdown v-model="bookcaseTextures[textureType]">
           <template #button-content>
             <div
               class="selected"
@@ -52,6 +50,19 @@
           />
         </SlickItem>
       </SlickList>
+      <b-alert
+        variant="danger"
+        :show="error"
+      >
+        {{ l10n.ERREUR_GENERIQUE }}
+      </b-alert>
+      <b-btn
+        variant="success"
+        :disabled="loading"
+        @click="submit"
+      >
+        {{ l10n.VALIDER }}
+      </b-btn>
     </div>
   </div>
 </template>
@@ -73,6 +84,7 @@ export default {
   mixins: [l10nMixin],
 
   data: () => ({
+    error: false,
     textures: [
       'bois/ASH',
       'bois/BALTIC BIRCH',
@@ -146,16 +158,36 @@ export default {
 
   async mounted() {
     this.setBookcaseUsername(this.username);
-    await this.loadBookcaseTextures();
-    await this.loadBookcaseOrder();
+    await this.loadData();
     await this.fetchPublicationNames(this.bookcaseOrder);
-    this.loading = false
   },
 
   methods: {
     ...mapMutations("bookcase", ["setBookcaseUsername"]),
-    ...mapActions("bookcase", ["loadBookcaseTextures", "loadBookcaseOrder"]),
-    ...mapActions("coa", ["fetchPublicationNames"])
+    ...mapActions("bookcase", ["loadBookcaseTextures", "loadBookcaseOrder", "updateBookcaseTextures", "updateBookcaseOrder"]),
+    ...mapActions("coa", ["fetchPublicationNames"]),
+
+    async loadData() {
+      await this.loadBookcaseTextures();
+      await this.loadBookcaseOrder();
+      this.loading = false
+    },
+
+    async submit() {
+      this.error = false
+      this.loading = true
+      try {
+        await this.updateBookcaseTextures();
+        await this.updateBookcaseOrder();
+        await this.loadData();
+      }
+      catch {
+        this.error = true
+      }
+      finally {
+        this.loading = false
+      }
+    }
   }
 
 }

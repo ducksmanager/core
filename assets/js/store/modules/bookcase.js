@@ -58,10 +58,17 @@ export default {
         commit("setBookcaseTextures", (await axios.get(`/api/bookcase/${state.bookcaseUsername}/textures`)).data)
       }
     },
+    updateBookcaseTextures: async ({state}) => {
+        await axios.post(`/api/bookcase/textures`, state.bookcaseTextures)
+    },
+
     loadBookcaseOrder: async ({state, commit}) => {
       if (!state.bookcaseOrder) {
         commit("setBookcaseOrder", (await axios.get(`/api/bookcase/${state.bookcaseUsername}/sort`)).data)
       }
+    },
+    updateBookcaseOrder: async ({state}) => {
+        await axios.post(`/api/bookcase/sort`, {sorts: state.bookcaseOrder})
     },
   }
 }
