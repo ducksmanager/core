@@ -36,7 +36,7 @@
             :key="publicationCode"
             :href="`/collection/show/${publicationCode}`"
           >
-            {{ publicationNames[publicationCode] }}
+            {{ publicationNames[publicationCode] || publicationCode.split('/')[1] }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item href="/collection/show/new">

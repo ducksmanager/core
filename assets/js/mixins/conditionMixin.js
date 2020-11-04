@@ -1,10 +1,15 @@
 export default {
   data: () => ({
     conditions: [{
+      value: 'missing',
+      dbValue: 'non_possede',
+      color: 'black',
+      l10nKey: 'NON_POSSEDE'
+    }, {
       value: 'possessed',
-      dbValue: '',
+      dbValue: 'indefini',
       color: '#808080',
-      l10nKey: 'INDEFINI'
+      l10nKey: 'POSSEDE'
     }, {
       value: 'bad',
       dbValue: 'mauvais',
