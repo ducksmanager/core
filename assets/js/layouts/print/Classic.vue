@@ -20,11 +20,12 @@
 </template>
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
-import {mapActions} from "vuex";
+import {mapActions, mapState} from "vuex";
 
 export default {
   mixins: [collectionMixin],
   computed: {
+    ...mapState("coa", ["countryNames", "publicationNames"]),
     countryCodes() {
       return [...new Set(this.collection.map(i => i.country))]
     },
@@ -34,9 +35,12 @@ export default {
   },
 
   watch: {
-    publicationCodes(newValue) {
-      if (newValue) {
-        this.fetchPublicationNames(newValue)
+    publicationCodes: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.fetchPublicationNames(newValue)
+        }
       }
     }
   },
@@ -53,7 +57,9 @@ export default {
           .sort((a, b) => !vm.publicationNames[b] ? 1 : vm.publicationNames[a] < vm.publicationNames[b] ? -1 : vm.publicationNames[a] > vm.publicationNames[b] ? 1 : 0)
     },
     issuesOfPublicationCode(publicationCode) {
-      return this.collection.filter(i => publicationCode === `${i.country}/${i.magazine}`).map(i => i.issueNumber).join(', ')
+      return this.collection
+        .filter(i => publicationCode === `${i.country}/${i.magazine}`)
+        .map(({issueNumber}) => issueNumber).join(', ')
     }
   },
 }

@@ -58,7 +58,10 @@
             {{ totalPerPublication[publicationCode] }}
           </td>
         </tr>
-        <tr :key="`${publicationCode}-others`">
+        <tr
+          v-for="fakeloop in 1"
+          :key="`${publicationCode}-${fakeloop}`"
+        >
           <td
             v-if="issuesPerCell[publicationCode]['non-numeric'].length"
             :colspan="numbersPerRow"
@@ -84,15 +87,16 @@
               </td>
             </tr>
             <tr
-              v-for="(_, i) in Math.floor(letterToNumber(maxLetter) / 6)"
+              v-for="(_, i) in Math.floor(letterToNumber(maxLetter) / 6) + 1"
               :key="i"
             >
               <td
-                v-for="(__, group) in letterToNumber(maxLetter)"
+                v-for="(__, group) in letterToNumber(maxLetter) + 1"
                 :key="group"
+                class="issue-range"
               >
                 <span v-if="Math.floor(group / 6) === i">
-                  {{ numberToLetter(group) }} : {{ group * 100 + 1 }}-&gt;{{ (group + 1) * 100 }}
+                  {{ numberToLetter(group) }}<br>{{ group * 100 + 1 }}-&gt;{{ (group + 1) * 100 }}
                 </span>
               </td>
             </tr>
@@ -113,13 +117,11 @@
               :key="publicationCode"
             >
               <td>
-                <img
-                  :alt="publicationCode.split('/')[0]"
-                  :src="`${imagePath}/flags/${publicationCode.split('/')[0]}.png`"
-                >
-                {{ publicationCode.split('/')[1] }}
+                <Publication
+                  :publicationcode="publicationCode"
+                  :publicationname="`${publicationCode.split('/')[1]} : ${publicationName}`"
+                />
               </td>
-              <td>{{ publicationName }}</td>
             </tr>
           </table>
         </td>
@@ -134,11 +136,13 @@
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
 import l10nMixin from "../../mixins/l10nMixin";
-import {mapActions} from "vuex";
+import {mapActions, mapState} from "vuex";
+import Publication from "../../components/Publication";
 
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/
 
 export default {
+  components: {Publication},
   mixins: [collectionMixin, l10nMixin],
   data() {
     const lines = 2
@@ -149,6 +153,8 @@ export default {
     }
   },
   computed: {
+    ...mapState("coa", ["countryNames", "publicationNames"]),
+
     imagePath: () => window.imagePath,
     ready() {
       return this.issuesPerCell && this.countryNames && this.publicationNames && this.l10n
@@ -237,6 +243,11 @@ td {
     vertical-align: top;
     border-left: 1px solid gray;
     padding: 8px;
+
+    .issue-range {
+      border: 1px solid black;
+      text-align: center;
+    }
   }
 }
 
