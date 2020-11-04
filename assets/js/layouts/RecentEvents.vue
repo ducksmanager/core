@@ -5,7 +5,7 @@
   >
     <h4>{{ l10n.NEWS_TITRE }}</h4>
     <div id="events">
-      <span v-if="events && publicationNames">
+      <span v-if="events && publicationNames && stats && points">
         <div
           v-for="event in events"
           :key="JSON.stringify(event)"
@@ -36,6 +36,7 @@
               :publicationname="publicationNames[event.publicationcode]"
               :publicationcode="event.publicationcode"
               :issuenumber="event.issuenumber"
+              hide-condition
             />
             <template v-if="event.cpt > 1">
               {{ l10n.ET }} {{ event.cpt }}

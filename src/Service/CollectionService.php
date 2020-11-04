@@ -12,15 +12,16 @@ class CollectionService
 
     public function retrieveUserQuickStats(array $userIds) : array {
         return $this->apiService->runQuery('
-        select
-           u.ID,
-           count(distinct Pays) AS country_number,
-           count(distinct concat(Pays, \'/\', Magazine)) as publication_number,
-           count(*) as issue_number
-        from users u
-        inner join numeros on numeros.ID_Utilisateur = u.ID
-        where u.ID IN (' . implode(',', array_fill(0, count($userIds), '?')) . ')
-        group by u.ID
+            select
+               u.ID AS userId,
+               u.username,
+               count(distinct Pays) AS numberOfCountries,
+               count(distinct concat(Pays, \'/\', Magazine)) as numberOfPublications,
+               count(*) as numberOfIssues
+            from users u
+            inner join numeros on numeros.ID_Utilisateur = u.ID
+            where u.ID IN (' . implode(',', array_fill(0, count($userIds), '?')) . ')
+            group by u.ID
         ', 'dm', $userIds);
     }
 

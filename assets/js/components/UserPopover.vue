@@ -3,14 +3,14 @@
     <span
       :id="`user-${id}`"
       class="username"
-    >{{ username }}</span>
+    >{{ stats.username }}</span>
     <b-popover
       :target="`user-${id}`"
       placement="top"
       triggers="hover"
       :delay="0"
     >
-      <h4>{{ username }}</h4>
+      <h4>{{ stats.username }}</h4>
       <div class="d-flex">
         <Medal
           v-for="(numberOfPoints, contribution) in points"
@@ -35,7 +35,7 @@
           size="xs"
           variant="outline-secondary"
           target="_blank"
-          :href="`/bookcase/${username}`"
+          :href="`/bookcase/${stats.username}`"
         >
           {{ l10n.VOIR_BIBLIOTHEQUE }}
         </b-button>
@@ -62,7 +62,6 @@ export default {
 
   data: () => ({
     bookcaseShared: true,
-    username: 'test'
   }),
 
   computed: {

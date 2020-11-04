@@ -33,11 +33,10 @@ export default {
             [data.contribution]: data.points_total
           }
         }), {}))
-      commit('setStats', data.stats.map((
-        {country_number: numberOfCountries, publication_number: numberOfPublications, issue_number: numberOfIssues, ID: userId}) => ({
-          numberOfCountries, numberOfPublications, numberOfIssues, userId
-        })
-      ).reduce((acc, data) => ({...acc, [data.userId]: data}), {}))
+      commit('setStats', data.stats.reduce(
+        (acc, data) => ({...acc, [data.userId]: data}),
+        {}
+      ))
     }
   }
 }

@@ -3,7 +3,11 @@
     :class="{ clickable }"
     :href="`/collection/show/${publicationcode}#${issuenumber}`"
   >
-    <span v-if="issueInCollection && !hideCondition">{{ issueInCollection.condition }}</span>
+    <Condition
+      v-if="!hideCondition"
+      :publicationcode="publicationcode"
+      :issuenumber="issuenumber"
+    />
     <Publication
       :publicationcode="publicationcode"
       :publicationname="publicationname"
@@ -12,14 +16,12 @@
 </template>
 
 <script>
-import collectionMixin from "../mixins/collectionMixin";
-import {mapState} from "vuex";
 import Publication from "./Publication";
+import Condition from "./Condition";
 
 export default {
   name: "Issue",
-  components: {Publication},
-  mixins: [collectionMixin],
+  components: {Condition, Publication},
   props: {
     publicationcode: {type: String, required: true},
     publicationname: {type: String, required: true},
@@ -28,12 +30,7 @@ export default {
     hideCondition: { type: Boolean, default: false }
   },
   computed: {
-    ...mapState("collection", ["collection"]),
     imagePath: () => window.imagePath,
-
-    issueInCollection() {
-      return this.findInCollection(this.publicationcode, this.issuenumber)
-    }
   },
 }
 </script>
