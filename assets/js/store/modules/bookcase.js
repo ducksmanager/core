@@ -6,6 +6,7 @@ export default {
   state: () => ({
     loadedSprites: {},
 
+    isPrivateBookcase: false,
     bookcaseUsername: null,
     bookcase: null,
     bookcaseTextures: null,
@@ -28,12 +29,17 @@ export default {
     setBookcaseOrder(state, bookcaseOrder) {
       state.bookcaseOrder = bookcaseOrder
     },
+    setIsPrivateBookcase(state, isPrivateBookcase) {
+      state.isPrivateBookcase = isPrivateBookcase
+    },
   },
 
   getters: {
     isSharedBookcase: state => window.username !== state.bookcaseUsername,
 
-    bookcaseWithPopularities: (state, getters, rootState) => rootState.collection.popularIssuesInCollection && state.bookcase &&
+    bookcaseWithPopularities: (state, getters, rootState) => getters.isSharedBookcase
+      ? state.bookcase
+      : rootState.collection.popularIssuesInCollection && state.bookcase &&
       state.bookcase
         .map((issue) => {
           const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
@@ -50,7 +56,13 @@ export default {
   actions: {
     loadBookcase: async ({state, commit}) => {
       if (!state.bookcase) {
-        commit("setBookcase", (await axios.get(`/api/bookcase/${state.bookcaseUsername}`)).data)
+        try {
+          commit("setBookcase", (await axios.get(`/api/bookcase/${state.bookcaseUsername}`)).data)
+        } catch (e) {
+          if (e.response.status === 403) {
+            commit("setIsPrivateBookcase", true)
+          }
+        }
       }
     },
     loadBookcaseTextures: async ({state, commit}) => {
@@ -59,7 +71,7 @@ export default {
       }
     },
     updateBookcaseTextures: async ({state}) => {
-        await axios.post(`/api/bookcase/textures`, state.bookcaseTextures)
+      await axios.post(`/api/bookcase/textures`, state.bookcaseTextures)
     },
 
     loadBookcaseOrder: async ({state, commit}) => {
@@ -68,7 +80,7 @@ export default {
       }
     },
     updateBookcaseOrder: async ({state}) => {
-        await axios.post(`/api/bookcase/sort`, {sorts: state.bookcaseOrder})
+      await axios.post(`/api/bookcase/sort`, {sorts: state.bookcaseOrder})
     },
   }
 }

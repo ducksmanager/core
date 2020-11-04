@@ -9,6 +9,13 @@
     <div v-if="loading">
       {{ l10n.CHARGEMENT }}
     </div>
+    <b-alert
+      v-else-if="isPrivateBookcase"
+      variant="warning"
+      show
+    >
+      {{ l10n.BIBLIOTHEQUE_PRIVEE }}
+    </b-alert>
     <div v-else>
       <div v-if="!isSharedBookcase">
         <div
@@ -114,7 +121,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder"]),
+    ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder", "isPrivateBookcase"]),
     ...mapGetters("collection", ["totalPerPublication", "popularIssuesInCollectionWithoutEdge"]),
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
     ...mapGetters("bookcase", ["isSharedBookcase"]),
@@ -125,7 +132,7 @@ export default {
     imagePath: () => window.imagePath,
 
     loading() {
-      return !(this.sortedBookcase && this.bookcaseTextures && this.edgesUsingSprites)
+      return !this.isPrivateBookcase && !(this.sortedBookcase && this.bookcaseTextures && this.edgesUsingSprites)
     },
 
     userPoints() {
@@ -186,29 +193,38 @@ export default {
         }
       }
     },
-    bookcase(newValue) {
-      const usedSprites = newValue
-        .filter(({sprites}) => sprites)
-        .reduce((acc, {edgeId, sprites}) => {
-          JSON.parse(`[${sprites}]`).forEach((sprite) => {
-            const {name} = sprite
-            if (!acc[name]) {
-              acc[name] = {edges: [], ...sprite}
-            }
-            acc[name].edges.push(edgeId)
-          })
-          return acc
-        }, {})
+    bookcase: {
+      immediate: true,
+      async handler(newValue) {
+        if (newValue) {
+          await this.loadBookcaseTextures()
+          await this.loadBookcaseOrder()
+          await this.fetchStats([this.userId])
 
-      this.edgesUsingSprites = Object.values(usedSprites)
-        .filter(({edges, size}) => edges.length >= size * 80 / 100)
-        .sort(({size: aSize}, {size: bSize}) => Math.sign(aSize - bSize))
-        .reduce((acc, {name, version, edges}) => {
-          edges.forEach(edgeId => {
-            acc[edgeId] = `v${version}/${name}`
-          })
-          return acc
-        }, {})
+          const usedSprites = newValue
+            .filter(({sprites}) => sprites)
+            .reduce((acc, {edgeId, sprites}) => {
+              JSON.parse(`[${sprites}]`).forEach((sprite) => {
+                const {name} = sprite
+                if (!acc[name]) {
+                  acc[name] = {edges: [], ...sprite}
+                }
+                acc[name].edges.push(edgeId)
+              })
+              return acc
+            }, {})
+
+          this.edgesUsingSprites = Object.values(usedSprites)
+            .filter(({edges, size}) => edges.length >= size * 80 / 100)
+            .sort(({size: aSize}, {size: bSize}) => Math.sign(aSize - bSize))
+            .reduce((acc, {name, version, edges}) => {
+              edges.forEach(edgeId => {
+                acc[edgeId] = `v${version}/${name}`
+              })
+              return acc
+            }, {})
+        }
+      }
     },
     currentEdgeHighlighted(newValue) {
       this.$refs[`edge-${newValue}`][0].$el.scrollIntoView()
@@ -218,12 +234,9 @@ export default {
   async mounted() {
     this.setBookcaseUsername(this.bookcaseUsername)
     await this.loadBookcase()
-    await this.loadBookcaseTextures()
-
-    await this.loadBookcaseOrder()
-    await this.loadPopularIssuesInCollection()
-
-    await this.fetchStats([this.userId])
+    if (!this.isSharedBookcase) {
+      await this.loadPopularIssuesInCollection()
+    }
   },
 
   methods: {
