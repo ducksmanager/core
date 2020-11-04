@@ -4,7 +4,8 @@ export default {
   namespaced: true,
   state: () => ({
     stats: {},
-    points: {}
+    points: {},
+    bookcaseContributors: null
   }),
 
   mutations: {
@@ -13,6 +14,9 @@ export default {
     },
     setStats(state, stats) {
       state.stats = {...state.stats, ...stats}
+    },
+    setBookcaseContributors(state, bookcaseContributors) {
+      state.bookcaseContributors = bookcaseContributors
     }
   },
 
@@ -37,6 +41,12 @@ export default {
         (acc, data) => ({...acc, [data.userId]: data}),
         {}
       ))
+    },
+
+    async fetchBookcaseContributors({state, commit}) {
+      if (!state.bookcaseContributors) {
+        commit("setBookcaseContributors", (await axios.get(`/stats/bookcase/contributors`)).data)
+      }
     }
   }
 }

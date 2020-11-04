@@ -2,16 +2,12 @@
 
 namespace App\Controller;
 
-use App\Security\User;
 use App\Service\ApiService;
+use App\Service\BookcaseService;
 use App\Service\CollectionService;
-use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatsController extends AbstractController
 {
@@ -43,5 +39,15 @@ class StatsController extends AbstractController
             'points' => $collectionService->retrieveUserPoints($userIds),
             'stats' => $collectionService->retrieveUserQuickStats($userIds)
         ]);
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/stats/bookcase/contributors"
+     * )
+     */
+    public function getBookcaseContributors(BookcaseService $bookcaseService) {
+        return new JsonResponse($bookcaseService->retrieveBookcaseContributors());
     }
 }

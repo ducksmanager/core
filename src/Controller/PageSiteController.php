@@ -84,6 +84,24 @@ class PageSiteController extends AbstractController
 
     /**
      * @Route({
+     *     "en": "/bookcase/contributors",
+     *     "fr": "/bibliotheque/contributeurs"
+     * },
+     *     methods={"GET"}
+     * )
+     */
+    public function showBookcaseContributorsPage(): Response
+    {
+        return $this->renderSitePage(
+            '',
+            'Bookcase', [
+                'tab' => 'BookcaseContributors'
+            ]
+        );
+    }
+
+    /**
+     * @Route({
      *     "en": "/expand",
      *     "fr": "/agrandir"
      * },
