@@ -80,11 +80,6 @@ export default {
       }, {
         responsive: true,
         maintainAspectRatio: false,
-        legend: {
-          labels: {
-            fontColor: '#fff'
-          }
-        },
         tooltips: {
           callbacks: {
             label: (tooltipItem, {datasets}) => {
