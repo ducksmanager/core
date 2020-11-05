@@ -2,7 +2,13 @@
   <div v-if="l10n">
     {{ l10n.INTRO_BOUQUINERIES }}
     <br><br>
-    <div id="map">
+    <div v-if="!bookstores.length">
+      {{ l10n.CHARGEMENT }}
+    </div>
+    <div
+      v-else
+      id="map"
+    >
       <MglMap
         :access-token="accessToken"
         map-style="mapbox://styles/mapbox/light-v10"
@@ -11,9 +17,9 @@
       >
         <MglMarker
           v-for="bookstore in bookstores"
+          v-once
           :key="bookstore.id"
           :coordinates="[bookstore.coordY, bookstore.coordX]"
-          showed
         >
           <MglPopup>
             <div>
@@ -119,12 +125,16 @@ export default {
   methods: {
     async fetchBookstores() {
       this.bookstores = (await axios.get('/bookstore/list')).data.map(bookstore => {
-        debugger
-        ['name', 'address', 'comment'].forEach(field => {
-          bookstore[field] = decodeURIComponent(escape(bookstore[field]))
-        })
+        try {
+          ['name', 'address', 'comment'].forEach(field => {
+            bookstore[field] = decodeURIComponent(escape(bookstore[field]))
+          })
+        }
+        catch(_) {
+          return null;
+        }
         return bookstore
-      })
+      }).filter(bookstore => !!bookstore)
     },
     async suggestBookstore() {
       await axios.put('/bookstore/suggest', this.newBookstore)
