@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Security\User;
+use App\Security\UserAuthenticator;
 use App\Service\UserService;
 use LogicException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends PageSiteController
@@ -31,11 +35,28 @@ class SecurityController extends PageSiteController
 
         return $this->render('security/login.twig', [
             'vueProps' => [
-                    'component' => 'Site',
-                    'page' => 'Login',
-                    'last-username' => $lastUsername,
-                ] + compact('error')
+                'component' => 'Site',
+                'page' => 'Login',
+                'last-username' => $lastUsername,
+            ] + compact('error')
         ]);
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/demo"
+     * )
+     */
+    public function demo(Request $request, UserAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler): Response
+    {
+        $demoUser = new User(999, 'demo', sha1($_ENV['DEMO_PASSWORD']), []);
+        return $guardHandler->authenticateUserAndHandleSuccess(
+            $demoUser,
+            $request,
+            $authenticator,
+            'main'
+        );
     }
 
     /**

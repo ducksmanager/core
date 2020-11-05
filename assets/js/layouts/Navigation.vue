@@ -74,7 +74,7 @@
     </NavigationItem>
     <NavigationItem
       v-if="!username"
-      path="demo"
+      path="/demo"
     >
       {{ l10n.DEMO_MENU }}
     </NavigationItem>

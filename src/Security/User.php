@@ -14,7 +14,7 @@ class User implements UserInterface
     {
         $this->id = $id;
         $this->username = $username;
-        $this->password = $password;
+        $this->setPassword($password);
         $this->roles = $roles;
     }
 
