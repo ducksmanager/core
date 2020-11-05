@@ -24,7 +24,7 @@ export default {
       }
       const vm = this
       const level = MEDAL_LEVELS[this.contribution];
-      const maxThresholdReached = Object.values(level).filter(minimumPoints => vm.userLevelPoints >= minimumPoints).pop() || 3
+      const maxThresholdReached = Object.values(level).filter(minimumPoints => vm.userLevelPoints >= minimumPoints).pop() || 0
       return parseInt(Object.keys(level).find(key => level[key] === maxThresholdReached) || 0)
     },
 
