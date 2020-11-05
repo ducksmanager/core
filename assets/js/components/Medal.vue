@@ -4,11 +4,13 @@
       <div
         v-if="!small && !xSmall"
         class="title"
-        :title="$t(`DETAILS_MEDAILLE_${contribution.toUpperCase()}`, [
-          userLevelPoints,
-          pointsDiffNextLevel,
-          $t(`MEDAILLE_${level+1}`)
-        ])"
+        :title="currentLevel === 3
+          ? $t(`DETAILS_MEDAILLE_${contribution.toUpperCase()}_MAX`, [userLevelPoints])
+          : $t(`DETAILS_MEDAILLE_${contribution.toUpperCase()}`, [
+            userLevelPoints,
+            pointsDiffNextLevel,
+            $t(`MEDAILLE_${level+1}`)
+          ])"
       />
       <svg
         v-if="!small && !xSmall && level < 3"
@@ -52,7 +54,6 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import medalMixin from "../mixins/medalMixin";
-import {mapState} from "vuex";
 
 export default {
   name: 'Medal',
