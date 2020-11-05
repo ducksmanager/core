@@ -231,7 +231,7 @@ export default {
 
     transformEdgeIntoCover() {
       if (this.rotation > -90) {
-        this.rotation--
+        this.rotation-=2
       } else {
         clearInterval(this.rotationInterval)
       }
@@ -239,7 +239,7 @@ export default {
 
     transformCoverIntoEdge() {
       if (this.rotation < 0) {
-        this.rotation++
+        this.rotation+=2
       } else {
         clearInterval(this.rotationInterval)
         this.$emit('close-book')
