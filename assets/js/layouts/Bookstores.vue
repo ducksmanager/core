@@ -121,7 +121,6 @@ export default {
       this.bookstores = (await axios.get('/bookstore/list')).data.map(bookstore => {
         debugger
         ['name', 'address', 'comment'].forEach(field => {
-          console.log(field + '=' + bookstore[field])
           bookstore[field] = decodeURIComponent(escape(bookstore[field]))
         })
         return bookstore

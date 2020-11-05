@@ -221,11 +221,15 @@ class PageSiteController extends AbstractController
      *     defaults={"publicationCode"=null})
      * )
      */
-    public function showCollection(UserService $userService, TranslatorInterface $translator, ?string $publicationCode): Response
+    public function showCollection(ApiService $apiService, TranslatorInterface $translator, ?string $publicationCode): Response
     {
+        $username = $this->getUser()->getUsername();
+        if ($username === 'demo') {
+            $apiService->call('/ducksmanager/resetDemo', 'admin', [], 'POST');
+        }
         return $this->render("bare.twig", [
             'title' => $translator->trans('COLLECTION'),
-            'username' => $userService->getCurrentUsername(),
+            'username' => $username,
             'vueProps' => [
                 'component' => 'Site',
                 'page' => 'Collection',

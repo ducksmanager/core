@@ -68,7 +68,6 @@ export default {
     countrycode: {
       immediate: true,
       async handler(newValue) {
-        console.log("countrycode : " + newValue)
         await this.loadSuggestions({
           countryCode: newValue,
           sinceLastVisit: this.sinceLastVisit,

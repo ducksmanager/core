@@ -50,6 +50,9 @@
       </b-nav-form>
     </b-navbar-nav>
   </b-navbar>
+  <div v-else>
+    {{ l10n.CHARGEMENT }}
+  </div>
 </template>
 
 <script>

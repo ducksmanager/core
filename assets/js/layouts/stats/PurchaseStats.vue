@@ -157,14 +157,11 @@ export default {
                 },
                 title: (tooltipItem, {datasets}) => datasets[tooltipItem[0].datasetIndex].label,
                 label: (tooltipItem) => tooltipItem.yLabel,
-                footer: ([tooltipItem], {datasets}) => {
-                  console.log(tooltipItem)
-                  console.log(datasets)
-                  return [
+                footer: ([tooltipItem], {datasets}) =>
+                  [
                     vm.l10n.TOUS_MAGAZINES,
                     datasets.reduce((acc, dataset) => acc + dataset.data[tooltipItem.index], 0)
-                  ].join('\n');
-                }
+                  ].join('\n')
               }
             }
           })
