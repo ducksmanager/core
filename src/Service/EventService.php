@@ -32,20 +32,20 @@ class EventService
 
     public function retrieveCollectionUpdates(): array
     {
-        return $this->apiService->runQuery('
-            SELECT \'collection_update\' as type, users.ID AS ID_Utilisateur,
+        return $this->apiService->runQuery("
+            SELECT 'collection_update' as type, users.ID AS ID_Utilisateur,
                 UNIX_TIMESTAMP(DateAjout) AS timestamp, COUNT(Numero) AS cpt,
-                (SELECT CONCAT(Pays,\'/\',Magazine,\'/\',Numero)
+                (SELECT CONCAT(Pays,'/',Magazine,'/',Numero)
                 FROM numeros n
                 WHERE n.ID=numeros.ID
                 LIMIT 1) AS Numero_Exemple
             FROM numeros
             INNER JOIN users ON numeros.ID_Utilisateur=users.ID
-            WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH) AND users.username<>\'demo\' AND users.username NOT LIKE \'test%\'
+            WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH) AND users.username<>'demo' AND users.username NOT LIKE 'test%'
             GROUP BY users.ID, DATE(DateAjout)
             HAVING COUNT(Numero) > 0
             ORDER BY DateAjout DESC
-        ', 'dm');
+        ", 'dm');
     }
 
     public function retrieveBookstoreCreations(): array
