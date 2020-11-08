@@ -1,18 +1,21 @@
 <template>
-  <a
-    :class="{ clickable }"
-    :href="`/collection/show/${publicationcode}#${issuenumber}`"
-  >
-    <Condition
-      v-if="!hideCondition"
-      :publicationcode="publicationcode"
-      :issuenumber="issuenumber"
-    />
-    <Publication
-      :publicationcode="publicationcode"
-      :publicationname="publicationname"
-    /> {{ issuenumber }}
-  </a>
+  <div>
+    <a
+      :class="{ clickable }"
+      :href="`/collection/show/${publicationcode}#${issuenumber}`"
+    >
+      <Condition
+        v-if="!hideCondition"
+        :publicationcode="publicationcode"
+        :issuenumber="issuenumber"
+      />
+      <Publication
+        :publicationcode="publicationcode"
+        :publicationname="publicationname"
+      /> {{ issuenumber }}
+    </a>
+    <slot />
+  </div>
 </template>
 
 <script>

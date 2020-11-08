@@ -10,11 +10,14 @@ export default {
     suggestions: null,
 
     popularIssuesInCollection: null,
+    lastPublishedEdgesForCurrentUser: null,
 
     isLoadingCollection: false,
     isLoadingPurchases: false,
     isLoadingWatchedAuthors: false,
     isLoadingSuggestions: false,
+
+    user: null,
   }),
 
   mutations: {
@@ -36,6 +39,12 @@ export default {
     },
     setPopularIssuesInCollection(state, popularIssuesInCollection) {
       state.popularIssuesInCollection = popularIssuesInCollection
+    },
+    setLastPublishedEdgesForCurrentUser(state, lastPublishedEdgesForCurrentUser) {
+      state.lastPublishedEdgesForCurrentUser = lastPublishedEdgesForCurrentUser
+    },
+    setUser(state, user) {
+      state.user = user
     }
   },
 
@@ -55,8 +64,8 @@ export default {
     hasSuggestions: state => state.suggestions && state.suggestions.issues && Object.keys(state.suggestions.issues).length,
 
     popularIssuesInCollectionWithoutEdge: (state, getters, rootState, rootGetters) => rootGetters['bookcase/bookcaseWithPopularities'] && rootGetters['bookcase/bookcaseWithPopularities']
-        .filter(({edgeId, popularity}) => !edgeId && popularity > 0)
-        .sort(({popularity: popularity1}, {popularity: popularity2}) => popularity2 - popularity1)
+      .filter(({edgeId, popularity}) => !edgeId && popularity > 0)
+      .sort(({popularity: popularity1}, {popularity: popularity2}) => popularity2 - popularity1)
   },
 
   actions: {
@@ -100,5 +109,34 @@ export default {
         }), {}))
       }
     },
+    loadLastPublishedEdgesForCurrentUser: async ({state, commit}) => {
+      if (!state.lastPublishedEdgesForCurrentUser) {
+        commit("setLastPublishedEdgesForCurrentUser", (await axios.get("/api/collection/edges/lastPublished")).data.map(edge => ({
+          ...edge,
+          timestamp: parseInt(edge.dateajout.timestamp)
+        })))
+      }
+    },
+
+    loadUser: async ({state, commit}, afterUpdate = false) => {
+      if (afterUpdate || !state.user) {
+        commit("setUser", Object.entries(
+          (await axios.get(`/api/collection/user`)).data).reduce((acc, [key, value]) => {
+            switch (key) {
+              case 'accepterpartage':
+                acc.isShareEnabled = value;
+                break
+              case 'affichervideo':
+                acc.isVideoShown = value;
+                break
+              case 'email':
+                acc.email = value;
+                break
+            }
+            return acc
+          }, {})
+        )
+      }
+    }
   }
 }

@@ -1,7 +1,58 @@
 <template>
   <div v-if="l10n">
     <div v-if="!isSharedBookcase">
-      <!--      Added edges-->
+      <div
+        v-if="lastPublishedEdgesForCurrentUser && lastPublishedEdgesForCurrentUser.length"
+        id="last-published-edges"
+      >
+        {{ l10n.BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE }}
+        <div
+          v-for="edge in lastPublishedEdgesForCurrentUser"
+          :key="`last-published-${getEdgeKey(edge)}`"
+        >
+          <Issue
+            :publicationcode="edge.publicationcode"
+            :publicationname="publicationNames[edge.publicationcode]"
+            :issuenumber="edge.issuenumber"
+            hide-condition
+          >
+            <Ago :timestamp="edge.dateajout.timestamp" />
+          </Issue>
+        </div>
+      </div>
+      <b-alert
+        variant="info"
+        show
+        v-html="$t('EXPLICATION_ORDRE_MAGAZINES', [`<a href='/bookcase/options'>${l10n.BIBLIOTHEQUE_OPTIONS_COURT}</a>`])"
+      />
+      <div
+        v-if="user && user.isShareEnabled"
+        id="share-bookcase-section"
+      >
+        <b-alert
+          variant="info"
+          show
+          v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE', [`<a href='/collection/account'>${l10n.GESTION_COMPTE_COURT}</a>`])"
+        />
+        <SharePage
+          v-if="showShareButtons"
+          :title="`${l10n.BIBLIOTHEQUE_DE} ${bookcaseUsername}`"
+          :url="bookcaseUrl"
+        />
+        <b-btn
+          v-if="!showShareButtons"
+          size="sm"
+          @click="showShareButtons=true"
+        >
+          {{ l10n.BIBLIOTHEQUE_PROPOSITION_PARTAGE }}
+        </b-btn>
+      </div>
+      <b-alert
+        v-else
+        show
+        variant="warning"
+        v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE', [`<a href='/collection/account'>${l10n.GESTION_COMPTE_COURT}</a>`])"
+      />
     </div>
     <div v-if="percentVisible !== null">
       {{ percentVisible }}{{ l10n.POURCENTAGE_COLLECTION_VISIBLE }}
@@ -102,10 +153,12 @@ import Edge from "../../components/Edge";
 import MedalProgress from "../../components/MedalProgress";
 import Issue from "../../components/Issue";
 import Book from "../../components/Book";
+import Ago from "../Ago";
+import SharePage from "../../components/SharePage";
 
 export default {
   name: "ViewBookcase",
-  components: {Book, MedalProgress, Issue, Edge, IssueSearch},
+  components: {SharePage, Ago, Book, MedalProgress, Issue, Edge, IssueSearch},
   mixins: [l10nMixin, collectionMixin],
 
   props: {
@@ -117,11 +170,13 @@ export default {
     currentEdgeIndex: 0,
     currentEdgeOpened: null,
     currentEdgeHighlighted: null,
-    bookStartPosition: null
+    bookStartPosition: null,
+    showShareButtons: false
   }),
 
   computed: {
     ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder", "isPrivateBookcase"]),
+    ...mapState("collection", ["user", "lastPublishedEdgesForCurrentUser"]),
     ...mapGetters("collection", ["totalPerPublication", "popularIssuesInCollectionWithoutEdge"]),
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
     ...mapGetters("bookcase", ["isSharedBookcase"]),
@@ -130,6 +185,10 @@ export default {
 
     userId: () => window.userId,
     imagePath: () => window.imagePath,
+
+    bookcaseUrl() {
+      return !this.isPrivateBookcase && `${window.location.origin}/bookcase/show/${this.username}`
+    },
 
     loading() {
       return !this.isPrivateBookcase && !(this.sortedBookcase && this.bookcaseTextures && this.edgesUsingSprites)
@@ -236,13 +295,15 @@ export default {
     await this.loadBookcase()
     if (!this.isSharedBookcase) {
       await this.loadPopularIssuesInCollection()
+      await this.loadLastPublishedEdgesForCurrentUser()
+      await this.loadUser()
     }
   },
 
   methods: {
     ...mapMutations("bookcase", ["setBookcaseUsername"]),
     ...mapActions("bookcase", ["loadBookcase", "loadBookcaseTextures", "loadBookcaseOrder"]),
-    ...mapActions("collection", ["loadPopularIssuesInCollection"]),
+    ...mapActions("collection", ["loadPopularIssuesInCollection", "loadLastPublishedEdgesForCurrentUser", "loadUser"]),
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
     ...mapActions("users", ["fetchStats"]),
 
@@ -259,6 +320,11 @@ export default {
 </script>
 
 <style lang="scss">
+#last-published-edges,
+#share-bookcase-section {
+  margin-bottom: 16px;
+}
+
 #bookcase {
   height: 100%;
   overflow: hidden;

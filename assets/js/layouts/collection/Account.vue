@@ -75,9 +75,8 @@
 
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
-import axios from "axios";
 import Errorable from "../../components/Errorable";
-import {mapMutations} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 
 export default {
   name: "Account",
@@ -95,31 +94,20 @@ export default {
   },
 
   computed: {
+    ...mapState("collection", ["user"]),
     isSuccess() {
       return this.success === null ? null : parseInt(this.success) === 1
     }
   },
 
   async mounted() {
-    this.user = Object.entries((await axios.get(`/api/collection/user`)).data).reduce((acc, [key, value]) => {
-      switch (key) {
-        case 'accepterpartage':
-          acc.isShareEnabled = value;
-          break
-        case 'affichervideo':
-          acc.isVideoShown = value;
-          break
-        case 'email':
-          acc.email = value;
-          break
-      }
-      return acc
-    }, {})
+    await this.loadUser()
     this.setErrors(JSON.parse(this.errors))
   },
 
   methods: {
-    ...mapMutations("form", ["setErrors"])
+    ...mapMutations("form", ["setErrors"]),
+    ...mapActions("collection", ["loadUser"])
   },
 }
 </script>

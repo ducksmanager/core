@@ -49,7 +49,7 @@
             </template>
             {{ l10n.NEWS_A_SA_COLLECTION }}
           </template>
-          <span class="date">{{ event.ago }}</span>
+          <Ago :timestamp="event.timestamp" />
         </div>
       </template>
       <span v-else>{{ l10n.CHARGEMENT }}</span>
@@ -59,17 +59,18 @@
 
 <script>
 import axios from "axios";
-import * as timeago from "timeago.js";
 import l10nMixin from "../mixins/l10nMixin";
 import UserPopover from "../components/UserPopover";
 import Issue from "../components/Issue";
 import {mapActions, mapState} from "vuex";
 import medalMixin from "../mixins/medalMixin";
+import Ago from "./Ago";
 
 export default {
   name: "RecentEvents",
 
   components: {
+    Ago,
     UserPopover,
     Issue
   },
@@ -94,7 +95,7 @@ export default {
       return {
         ...event,
         cpt: event.cpt && parseInt(event.cpt),
-        ago: timeago.format(parseInt(event.timestamp) * 1000),
+        timestamp: parseInt(event.timestamp),
         userId: parseInt(event.ID_Utilisateur)
       }
     }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => timestamp1 < timestamp2)
@@ -131,10 +132,6 @@ export default {
   #events div.event {
     margin-top: 12px;
 
-    .date {
-      color: grey;
-      float: right;
-    }
   }
 }
 
