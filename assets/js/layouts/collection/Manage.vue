@@ -7,7 +7,7 @@
     {{ l10n.RECHERCHER_INTRO }}
     <IssueSearch />
   </div>
-  <div v-else>
+  <div v-else-if="hasPublicationNames">
     <Accordion
       v-if="suggestionsNumber"
       id="suggestions"
@@ -27,6 +27,42 @@
       </template>
       <template #footer>
         <div><a href="/expand">{{ l10n.SUGGESTIONS_SEE_ALL }}</a></div>
+      </template>
+    </Accordion>
+    <Accordion
+      v-if="lastPublishedEdgesForCurrentUser && lastPublishedEdgesForCurrentUser.length"
+      id="last-published-edges"
+      accordion-group-id="last-published-edges"
+    >
+      <template #header>
+        <div
+          v-html="$t(lastPublishedEdgesForCurrentUserMultiple
+                       ? 'BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE'
+                       : 'BIBLIOTHEQUE_NOUVELLE_TRANCHE_TITRE',
+                     [lastPublishedEdgesForCurrentUser.length])"
+        />
+      </template>
+      <template #content>
+        <div
+          v-for="edge in lastPublishedEdgesForCurrentUser"
+          :key="`last-published-${getEdgeKey(edge)}`"
+        >
+          <Issue
+            :publicationcode="edge.publicationcode"
+            :publicationname="publicationNames[edge.publicationcode]"
+            :issuenumber="edge.issuenumber"
+            hide-condition
+          >
+            <Ago :timestamp="edge.dateajout.timestamp" />
+          </Issue>
+        </div>
+      </template>
+      <template #footer>
+        <div
+          v-html="l10n[lastPublishedEdgesForCurrentUserMultiple
+            ? 'BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU'
+            : 'BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU']"
+        />
       </template>
     </Accordion>
     <div
@@ -63,16 +99,20 @@
 import IssueList from "../../components/IssueList";
 import l10nMixin from "../../mixins/l10nMixin";
 import collectionMixin from "../../mixins/collectionMixin";
-import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters, mapState} from "vuex";
 import IssueSearch from "../../components/IssueSearch";
 import PublicationSelect from "../../components/PublicationSelect";
 import SuggestionList from "../SuggestionList";
 import Accordion from "../../components/Accordion";
 import PublicationList from "../../components/PublicationList";
+import Issue from "../../components/Issue";
+import Ago from "../Ago";
 
 export default {
   name: "Manage",
   components: {
+    Ago,
+    Issue,
     PublicationList,
     Accordion,
     SuggestionList,
@@ -88,10 +128,17 @@ export default {
     }
   },
   data: () => ({
-    suggestionsNumber: 0
+    suggestionsNumber: 0,
+    hasPublicationNames: false
   }),
   computed: {
+    ...mapState("coa", ["publicationNames"]),
+    ...mapState("collection", ["lastPublishedEdgesForCurrentUser"]),
     ...mapGetters("collection", ["total", "totalPerCountry", "totalPerPublication"]),
+
+    lastPublishedEdgesForCurrentUserMultiple() {
+      return this.lastPublishedEdgesForCurrentUser && this.lastPublishedEdgesForCurrentUser > 1
+    },
 
     mostPossessedPublication() {
       const vm = this
@@ -99,12 +146,24 @@ export default {
     }
   },
 
+  watch: {
+    async totalPerPublication(newValue) {
+      if (newValue) {
+        await this.fetchPublicationNames(Object.keys(newValue))
+        this.hasPublicationNames = true
+      }
+    }
+  },
+
   async mounted() {
-    await this.fetchCountryNames()
+    await this.loadLastPublishedEdgesForCurrentUser()
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"])
+    ...mapActions("coa", ["fetchPublicationNames"]),
+    ...mapActions("collection", ["loadLastPublishedEdgesForCurrentUser"]),
+
+    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
   }
 }
 </script>

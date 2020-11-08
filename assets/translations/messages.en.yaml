@@ -80,9 +80,9 @@ BIBLIOTHEQUE_CONTRIBUTEURS_COURT: Contributors
 BIBLIOTHEQUE_COURT: My bookcase
 BIBLIOTHEQUE_DE: Bookcase of 
 BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE: "Recently added edges among your collection :"
-BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU: Head for <a target="_blank" href="?action=bibliotheque">your bookcase</a> to see it.
+BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU: Head for <a href="/bookcase">your bookcase</a> to see it.
 BIBLIOTHEQUE_NOUVELLE_TRANCHE_TITRE: Since your last visit, %u new book edge belonging to your collection has been created for the DucksManager bookcase
-BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU: Head for <a target="_blank" href="?action=bibliotheque">your bookcase</a> to see them.
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU: Head for <a href="/bookcase">your bookcase</a> to see them.
 BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE: Since your last visit, %u new book edges belonging to your collection have been created for the DucksManager bookcase
 BIBLIOTHEQUE_OPTIONS: Allows you to set up options for the display of your bookcase
 BIBLIOTHEQUE_OPTIONS_COURT: Bookcase options

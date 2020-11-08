@@ -1,34 +1,31 @@
 <template>
   <b-card
-    no-body 
+    no-body
     class="mb-1"
+    bg-variant="light"
+    header-text-variant="dark"
   >
-    <b-card-header
-      header-tag="header"
-      class="p-1"
-      role="tab"
-    >
-      <b-button
-        v-b-toggle="id"
-        block
-        variant="info"
-      >
+    <template #header>
+      <div v-b-toggle="id">
         <slot name="header" />
-      </b-button>
-    </b-card-header>
+      </div>
+    </template>
     <b-collapse
       :id="id"
       :visible="visible"
       :accordion="accordionGroupId"
       role="tabpanel"
-      @input="$emit('expand')"
     >
-      <b-card-body>
-        <b-card-text>
-          <slot name="content" />
-        </b-card-text>
-      </b-card-body>
-      <b-card-footer><slot name="footer" /></b-card-footer>
+      <b-card footer-text-variant="dark">
+        <b-card-body>
+          <b-card-text>
+            <slot name="content" />
+          </b-card-text>
+        </b-card-body>
+        <template #footer>
+          <slot name="footer" />
+        </template>
+      </b-card>
     </b-collapse>
   </b-card>
 </template>
@@ -49,6 +46,16 @@ export default {
       required: true
     }
   },
-emits: ['expand']
+  emits: ['expand']
 }
 </script>
+
+<style scoped lang="scss">
+::v-deep a {
+  color: grey;
+}
+
+::v-deep .card-body {
+  padding: 0.5rem;
+}
+</style>

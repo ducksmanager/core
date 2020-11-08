@@ -82,9 +82,9 @@ BIBLIOTHEQUE_DE: Bibliothèque de
 BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE: "Dernières tranches de votre collection ajoutées :"
 BIBLIOTHEQUE_NOUVELLE_TRANCHE: "%u nouvelle tranche (%s) a été conçue depuis votre dernière visite.<br />Accédez à <a target=\"_blank\" href=\"?action=bibliotheque\">votre bibliothèque</a> pour la voir."
 BIBLIOTHEQUE_NOUVELLES_TRANCHES: "%u nouvelles tranches (%s) ont été conçues depuis votre dernière visite.<br />Accédez à <a target=\"_blank\" href=\"?action=bibliotheque\">votre bibliothèque</a> pour les voir."
-BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU: Accédez à <a target="_blank" href="?action=bibliotheque">votre bibliothèque</a> pour la voir.
+BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU: Accédez à <a href="/bookcase">votre bibliothèque</a> pour la voir.
 BIBLIOTHEQUE_NOUVELLE_TRANCHE_TITRE: Depuis votre dernière visite, %u nouvelle tranche appartenant à votre collection a été conçue pour la bibliothèque DucksManager
-BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU: Accédez à <a target="_blank" href="?action=bibliotheque">votre bibliothèque</a> pour les voir.
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU: Accédez à <a href="/bookcase">votre bibliothèque</a> pour les voir.
 BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE: Depuis votre dernière visite, %u nouvelles tranches appartenant à votre collection a été conçue pour la bibliothèque DucksManager
 BIBLIOTHEQUE_OPTIONS: Définissez les options d'affichage de votre bibliothèque
 BIBLIOTHEQUE_OPTIONS_COURT: Options de la bibliothèque

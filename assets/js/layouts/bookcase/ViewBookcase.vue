@@ -319,7 +319,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #last-published-edges,
 #share-bookcase-section {
   margin-bottom: 16px;
