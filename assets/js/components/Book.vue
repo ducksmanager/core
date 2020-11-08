@@ -247,8 +247,11 @@ export default {
     },
 
     closeBook() {
+      const vm = this
+      this.book.on('flip', () => {
+        vm.rotationInterval = setInterval(this.transformCoverIntoEdge, 5)
+      })
       this.book.flip(0)
-      this.rotationInterval = setInterval(this.transformCoverIntoEdge, 5)
     }
   },
 }
