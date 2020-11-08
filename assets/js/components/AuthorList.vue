@@ -1,31 +1,46 @@
 <template>
-  <div v-if="watchedAuthors.length">
-    <h5>{{ l10n.LISTE_AUTEURS_INTRO }}</h5>
-    <div v-if="personNames">
-      <b-row
-        v-for="author in watchedAuthors"
-        :key="author.personCode"
-        align-v="center"
-      >
-        <b-col lg="1">
-          {{ personNames[author.personCode] }}
-        </b-col>
-        <b-col lg="2">
-          <b-form-rating
-            v-model="author.notation"
-            :stars="10"
-            @change="updateRating(author)"
-          />
-        </b-col>
-        <b-col lg="2">
-          <b-btn
-            size="sm"
-            @click="deleteAuthor(author)"
-          >
-            {{ l10n.SUPPRIMER }}
-          </b-btn>
-        </b-col>
-      </b-row>
+  <div v-if="l10n">
+    <b-alert
+      v-if="!watchedAuthors.length"
+      show
+      variant="warning"
+    >
+      {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
+      {{ l10n.AUCUN_AUTEUR_NOTE_2_MEME_PAGE }}
+      {{ l10n.AUCUN_AUTEUR_NOTE_3 }}
+    </b-alert>
+    <div v-else>
+      <h5>{{ l10n.LISTE_AUTEURS_INTRO }}</h5>
+      <p>
+        {{ l10n.AUTEURS_FAVORIS_INTRO_1 }}
+        <a href="/expand">{{ l10n.AUTEURS_FAVORIS_INTRO_2 }}</a>
+      </p>
+      <div v-if="personNames">
+        <b-row
+          v-for="author in watchedAuthors"
+          :key="author.personCode"
+          align-v="center"
+        >
+          <b-col lg="1">
+            {{ personNames[author.personCode] }}
+          </b-col>
+          <b-col lg="2">
+            <b-form-rating
+              v-model="author.notation"
+              :stars="10"
+              @change="updateRating(author)"
+            />
+          </b-col>
+          <b-col lg="2">
+            <b-btn
+              size="sm"
+              @click="deleteAuthor(author)"
+            >
+              {{ l10n.SUPPRIMER }}
+            </b-btn>
+          </b-col>
+        </b-row>
+      </div>
     </div>
     <h5>{{ l10n.LISTE_AUTEURS_AJOUTER }}</h5>
     <b-row>
@@ -36,13 +51,14 @@
             list="search"
             :placeholder="l10n.AUTEUR"
           />
-          <datalist v-if="Object.keys(searchResults) && !isSearching">
+          <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
             <option v-if="!Object.keys(searchResults).length">
               {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
             </option>
             <option
               v-for="(fullName, personCode) in searchResults"
               :key="personCode"
+              :disabled="watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)"
               @click="createRating(personCode)"
             >
               {{ fullName }}
@@ -52,16 +68,6 @@
       </b-col>
     </b-row>
   </div>
-
-  <b-alert
-    v-else-if="l10n"
-    show
-    variant="warn"
-  >
-    {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
-    {{ l10n.AUCUN_AUTEUR_NOTE_2_MEME_PAGE }}
-    {{ l10n.AUCUN_AUTEUR_NOTE_3 }}
-  </b-alert>
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
@@ -82,7 +88,7 @@ export default {
     isSearching: false,
     pendingSearch: null,
     search: '',
-    searchResults: {}
+    searchResults: null
   }),
 
   computed: {
@@ -97,11 +103,13 @@ export default {
           await this.runSearch(newValue)
         }
       }
+    },
+    watchedAuthors: {
+      immediate: true,
+      async handler(newValue) {
+        await this.fetchPersonNames(newValue.map(({personCode}) => personCode))
+      }
     }
-  },
-
-  mounted() {
-    this.fetchPersonNames(this.watchedAuthors.map(({personCode}) => personCode))
   },
 
   methods: {
@@ -167,6 +175,10 @@ datalist {
     padding: 5px;
     border-bottom: 1px solid #888;
     overflow-x: hidden;
+
+    &[disabled] {
+      cursor: default;
+    }
 
     a {
       border: 0;

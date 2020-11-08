@@ -26,7 +26,7 @@
       :style="{width: '500px'}"
     />
     <div v-else-if="tab === 'possessions' || tab === 'authors'">
-      <b-button-group>
+      <b-button-group v-if="tab !== 'authors' || (tab === 'authors' && watchedAuthorsStoryCount && Object.keys(watchedAuthorsStoryCount).length)">
         <b-button
           v-for="(l10nKey, unitType) in unitTypes"
           :key="unitType"
@@ -45,29 +45,31 @@
       <div v-else-if="tab === 'authors' && watchedAuthors">
         <b-alert
           v-if="!watchedAuthors.length"
+          show
           variant="warning"
         >
           {{ l10n.AUCUN_AUTEUR_SURVEILLE }}
         </b-alert>
         <div v-else>
-          <b-alert v-if="watchedAuthorsStoryCount === {}">
+          <template v-if="!watchedAuthorsStoryCount">
+            {{ l10n.CHARGEMENT }}
+          </template>
+          <b-alert v-else-if="!Object.keys(watchedAuthorsStoryCount).length">
             {{ l10n.CALCULS_PAS_ENCORE_FAITS }}
           </b-alert>
-          <AuthorStats
-            v-else
-            :unit="unitTypeCurrent"
-            :watched-authors-story-count="watchedAuthorsStoryCount"
-            :style="{width, height}"
-            @change-dimension="changeDimension"
-          />
-          {{ l10n.STATISTIQUES_QUOTIDIENNES }}
+          <div v-else>
+            <AuthorStats
+              :key="unitTypeCurrent"
+              :unit="unitTypeCurrent"
+              :watched-authors-story-count="watchedAuthorsStoryCount"
+              :style="{width, height}"
+              @change-dimension="changeDimension"
+            />
+            {{ l10n.STATISTIQUES_QUOTIDIENNES }}
+          </div>
           <hr>
-          {{ l10n.AUTEURS_FAVORIS_INTRO_1 }}
-          <a href="?action=agrandir&onglet=suggestions_achat">{{ l10n.AUTEURS_FAVORIS_INTRO_2 }}</a>
-          <AuthorList
-            :watched-authors="watchedAuthors"
-          />
         </div>
+        <AuthorList :watched-authors="watchedAuthors" />
       </div>
     </div>
     <div v-else-if="tab === 'purchases'">

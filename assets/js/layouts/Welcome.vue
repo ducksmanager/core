@@ -116,7 +116,7 @@
           size="xl"
           variant="success"
           class="no-border"
-          href="?action=new"
+          href="/signup"
         >
           {{ l10n.INSCRIVEZ_VOUS }}
         </b-btn>

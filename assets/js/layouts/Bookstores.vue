@@ -51,7 +51,6 @@
     <form
       id="form_bouquinerie"
       method="post"
-      action="?action=bouquineries"
     >
       <b-form-input
         v-model="newBookstore.name"
