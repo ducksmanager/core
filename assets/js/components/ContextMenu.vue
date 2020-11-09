@@ -39,13 +39,13 @@
         v-if="id === 'link'"
         class="v-context"
       >
-        <li>
-          <h3
+        <li class="menu-separator">
+          <h5
             v-if="!newPurchaseContext"
             @click="newPurchaseContext = !newPurchaseContext"
           >
             {{ l10n.ACHAT_NOUVELLE_DATE_ACHAT }}
-          </h3>
+          </h5>
           <template v-else>
             <input
               v-model="newPurchaseDescription"
@@ -69,7 +69,8 @@
             <button
               class="btn btn-default"
               @click="createPurchaseDate()
-                      newPurchaseDescription = newPurchaseDate = null"
+                      newPurchaseDescription = newPurchaseDate = null
+                      newPurchaseContext = false"
             >
               {{ l10n.CREER }}
             </button>
@@ -229,7 +230,11 @@ export default {
     }
 
     &.item {
+      display: flex;
+      align-items: center;
       color: black;
+      line-height: 25px;
+      background-position: left center;
 
       &.selected {
         background-color: #a52a2a;
@@ -238,18 +243,20 @@ export default {
 
       &.purchase-state {
         background-repeat: no-repeat;
-        background-position: 6px 6px;
+        background-position-x: 6px;
       }
 
       &.purchase-date {
+        flex-direction: column;
         background-repeat: no-repeat;
         background-size: 12px;
-        background-position: 10px 20px;
+        background-position-x: 10px;
+        line-height: 15px;
       }
 
       &.forsale-state {
         background-repeat: no-repeat;
-        background-position: 2px 4px;
+        background-position-x: 4px;
       }
 
       &.issue-condition:before {
