@@ -3,7 +3,7 @@
     <div v-if="publicationName">
       <Country :country="country" />
       <span class="publication-title">{{ publicationName }}</span>
-      <div v-if="issues && purchases">
+      <div v-if="issues">
         <div class="issue-filter">
           <table>
             <tr
@@ -105,7 +105,7 @@
                 :title="l10n[`ETAT_${conditions.find(({value}) => value === condition).dbValue.toUpperCase()}`]"
               />
               <div
-                v-if="purchaseId && purchases.find(({id}) => id === purchaseId)"
+                v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
                 v-once
                 class="issue-details issue-date"
               >
@@ -133,6 +133,7 @@
           </div>
         </div>
         <ContextMenu
+          v-if="purchases"
           ref="contextMenu"
           :publication-code="publicationcode"
           :selected-issues="selected"
@@ -141,11 +142,11 @@
           @create-purchase="createPurchase"
         />
       </div>
-      <div v-else>
+      <div v-else-if="loading">
         {{ l10n.LOADING }}
       </div>
     </div>
-    <div v-else-if="!loading">
+    <div v-else-if="!publicationNameLoading">
       <b-alert
         variant="danger"
         show
@@ -204,6 +205,7 @@ export default {
   },
   data: () => ({
     loading: true,
+    publicationNameLoading: true,
     filter: {
       missing: true,
       possessed: true,
@@ -270,6 +272,7 @@ export default {
   async mounted() {
     await this.loadPurchases()
     await this.fetchPublicationNames([this.publicationcode])
+    this.publicationNameLoading = false
   },
   methods: {
     ...mapActions("coa", ["fetchPublicationNames"]),
@@ -311,7 +314,7 @@ export default {
         date,
         description,
       })
-      await this.loadPurchases()
+      await this.loadPurchases(true)
     }
   }
 }
