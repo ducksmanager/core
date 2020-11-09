@@ -70,6 +70,26 @@
     >
       {{ l10n.VALIDER }}
     </b-btn>
+
+    <h5 class="mt-5">
+      {{ l10n.ZONE_DANGER }}
+    </h5>
+    <div>
+      <b-btn
+        variant="danger"
+        @click="emptyCollection"
+      >
+        {{ l10n.VIDER_LISTE }}
+      </b-btn>
+    </div>
+    <div>
+      <b-btn
+        variant="danger"
+        @click="deleteAccount"
+      >
+        {{ l10n.SUPPRIMER_COMPTE }}
+      </b-btn>
+    </div>
   </form>
 </template>
 
@@ -77,6 +97,7 @@
 import l10nMixin from "../../mixins/l10nMixin";
 import Errorable from "../../components/Errorable";
 import {mapActions, mapMutations, mapState} from "vuex";
+import axios from "axios";
 
 export default {
   name: "Account",
@@ -85,12 +106,6 @@ export default {
   props: {
     errors: {type: String, default: ''},
     success: {type: String, default: null},
-  },
-
-  data() {
-    return {
-      user: null
-    }
   },
 
   computed: {
@@ -107,7 +122,21 @@ export default {
 
   methods: {
     ...mapMutations("form", ["setErrors"]),
-    ...mapActions("collection", ["loadUser"])
+    ...mapActions("collection", ["loadUser"]),
+
+    async emptyCollection() {
+      if (confirm(this.l10n.VIDER_LISTE_CONFIRMATION)) {
+        await axios.delete(`/collection`)
+        window.location.replace('/collection/show')
+      }
+    },
+
+    async deleteAccount() {
+      if (confirm(this.l10n.SUPPRIMER_COMPTE_CONFIRMATION)) {
+        await axios.post(`/collection/empty`)
+        window.location.replace('/logout')
+      }
+    }
   },
 }
 </script>

@@ -510,6 +510,7 @@ SUPPRESSION_ACQUISITION_CONFIRMATION: Confirmez-vous la suppression de cette acq
 SUPPRIMER: Supprimer
 SUPPRIMER_ACQUISITION: Supprimer cette acquisition
 SUPPRIMER_COMPTE: Supprimer mon compte DucksManager
+SUPPRIMER_COMPTE_CONFIRMATION: Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?
 SUPPRIMER_NUMEROS_NON_INDUCKS: Supprimer de DucksManager les numéros qui n'apparaissent pas dans la collection Inducks
 SUR: sur
 TABLE_DES_MATIERES: Table des matières
@@ -553,6 +554,8 @@ VENTE_CONSERVER_VOLONTE_VENTE: Conserver la volonté de vente
 VENTE_MARQUER_A_VENDRE: Marquer comme "A vendre"
 VENTE_MARQUER_PAS_A_VENDRE: Enlever la mention "A vendre"
 VIDER_LISTE: Vider ma liste de numéros
+VIDER_LISTE_CONFIRMATION: Votre collection va être vidée. Continuer ?
 VILLE: Ville
 VOIR: Voir
 VOIR_BIBLIOTHEQUE: Voir la bibliothèque
+ZONE_DANGER: Zone danger

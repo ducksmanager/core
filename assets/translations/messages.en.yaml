@@ -508,6 +508,7 @@ SUPPRESSION_ACQUISITION_CONFIRMATION: Do you confirm the removal of this purchas
 SUPPRIMER: Remove
 SUPPRIMER_ACQUISITION: Remove this purchase
 SUPPRIMER_COMPTE: Delete my DucksManager account
+SUPPRIMER_COMPTE_CONFIRMATION: Your DucksManager account will be deleted with all the associated information. Continue?
 SUPPRIMER_NUMEROS_NON_INDUCKS: Remove from DucksManager the issues which don't appear in the Inducks collection
 SUR: of
 TABLE_DES_MATIERES: Table of contents
@@ -551,6 +552,8 @@ VENTE_CONSERVER_VOLONTE_VENTE: Do not change the "for sale" state
 VENTE_MARQUER_A_VENDRE: Mark as "For sale"
 VENTE_MARQUER_PAS_A_VENDRE: Remove the "For sale" label
 VIDER_LISTE: Empty my issues list
+VIDER_LISTE_CONFIRMATION: Your collection will be emptied. Continue?
 VILLE: City
 VOIR: View
 VOIR_BIBLIOTHEQUE: See the bookcase
+ZONE_DANGER: Danger zone
