@@ -18,6 +18,7 @@
       <b-select
         v-if="countryNamesWithAllCountriesOption"
         v-model="countryCode"
+        size="sm"
         :options="countryNamesWithAllCountriesOption"
       />
       <SuggestionList

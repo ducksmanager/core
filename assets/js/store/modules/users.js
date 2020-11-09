@@ -26,7 +26,7 @@ export default {
       if (!missingUserIds.length) {
         return
       }
-      const url = `/stats/user/${missingUserIds.join(',')}`
+      const url = `/global-stats/user/${missingUserIds.join(',')}`
 
       const data = (await axios.get(url)).data;
       commit('setPoints', data.points.reduce((acc, data) =>
@@ -45,7 +45,7 @@ export default {
 
     async fetchBookcaseContributors({state, commit}) {
       if (!state.bookcaseContributors) {
-        commit("setBookcaseContributors", (await axios.get(`/stats/bookcase/contributors`)).data)
+        commit("setBookcaseContributors", (await axios.get(`/global-stats/bookcase/contributors`)).data)
       }
     }
   }

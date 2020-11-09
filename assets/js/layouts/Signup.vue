@@ -57,12 +57,6 @@
       </b-col>
     </b-row>
 
-    <input
-      type="hidden"
-      name="_csrf_token"
-      :value="csrfToken"
-    >
-
     <b-btn
       variant="primary"
       size="xl"
@@ -82,11 +76,6 @@ export default {
   props: {
     success: {type: String, default: null},
     lastUsername: {type: String, default: null}
-  },
-  data() {
-    return {
-      csrfToken: document.getElementById('csrf').value
-    }
   },
 
   computed: {

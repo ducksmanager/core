@@ -65,7 +65,7 @@ export default {
   },
 
   async mounted() {
-    this.userCount = (await axios.get("/stats/user/count")).data.count
+    this.userCount = (await axios.get("/global-stats/user/count")).data.count
   },
 
   methods: {

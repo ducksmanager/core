@@ -25,7 +25,7 @@ class SecurityController extends PageSiteController
     public function login(AuthenticationUtils $authenticationUtils, UserService $userService): Response
     {
         if (!empty($userService->getCurrentUserId())) {
-            return $this->redirectToRoute('app_collection_display');
+            return $this->redirectToRoute('app_collection_show');
         }
 
         // get the login error if there is one
@@ -50,7 +50,7 @@ class SecurityController extends PageSiteController
      */
     public function demo(Request $request, UserAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler): Response
     {
-        $demoUser = new User(999, 'demo', sha1($_ENV['DEMO_PASSWORD']), []);
+        $demoUser = new User(999, 'demo', sha1($_ENV['DEMO_PASSWORD']), ['ROLE_USER']);
         return $guardHandler->authenticateUserAndHandleSuccess(
             $demoUser,
             $request,

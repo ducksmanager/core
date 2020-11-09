@@ -97,8 +97,6 @@ CALCUL: Calculation
 CALCUL_EN_COURS: Calculating...
 CALCUL_TERMINE: Calculations done... The page is going to reload...
 CALCULS_PAS_ENCORE_FAITS: The calculations have not been done yet. The stats are generated every day, come back tomorrow!
-CHAMP_OBLIGATOIRE_1: The field 
-CHAMP_OBLIGATOIRE_2:  is mandatory
 CHARGEMENT: Loading...
 CHARGEMENT_BIBLIOTHEQUE_TERMINE: 
 CLASSIQUE_ABREGE_DESCRIPTION: This displays the number of possessed issues for a magazine
@@ -107,31 +105,21 @@ CLASSIQUE_ABREGE_MOINS_2: Impossible to add issues manually
 CLASSIQUE_ABREGE_PLUS_1: Very short
 CLASSIQUE_DESCRIPTION: A <b>standard list</b>, listing for each publication the issues you possess.
 CLASSIQUE_MOINS_1: Easy to read but not practical when it comes to adding new issues in it.
-CLASSIQUE_MOINS_2: Hard to add an issue manually without disturbing the list order
-CLASSIQUE_MOINS_3: Don't tell me that you find this list stylish! ;-)
 CLASSIQUE_NOM: the classic list
 CLASSIQUE_PLUS_1: More adapted for collections with less than 500 issues.
 CLIQUEZ_ICI: Click here
 CLIQUEZ_SUR_MAGAZINE_POUR_EDITER: Click on one of the publications to edit its list!
-COA_KO_1: The Disney publications database is currently unavailable.
-COA_KO_2: You will be able to use your DucksManager account as soon as the connection is alive again.
 CODE_HISTOIRE: story code
 COLLECTABLE_DEMO: to view our 1min30 video explaining how CollecTable works!
 COLLECTABLE_DESCRIPTION: A <b>CollecTable list</b>, more digest but requiring a bit of training!
-COLLECTABLE_MOINS_1: Needs a little bit of time to understand how it works (A few minutes should really be enough though)
-COLLECTABLE_MOINS_2: Some problems when you've got a lot of issues with the same unit numbers (for instance 100,200,300). In this case the cell is enlarged.
 COLLECTABLE_NOM: CollecTable
 COLLECTABLE_PLUS_1: Especially adapted for big collections (more than 200 issues)
-COLLECTABLE_PLUS_2: The doublets can be represented
-COLLECTABLE_PLUS_3: The purchase date can be represented
 COLLECTION: Comics collection
 COLLECTION_DE: Collection of 
 COLLECTION_VIDE_1: Your collection is empty.
 COLLECTION_CLIQUER_GERER_COLLECTION: Click on %s to add issues to your collection.
 COLLECTION_CLIQUER_NOUVEAU_MAGAZINE: Click on "New magazine" to add an issue into your list.
-COMMENT_S_IDENTIFIER: Click on "Open my collection", in the left menu, in order to login.
-COMMENTAIRES_BOUQUINERIE: Comments
-COMMENTAIRES_BOUQUINERIE_EXEMPLE: Atmosphere, Price examples,...
+COMMENTAIRES_BOUQUINERIE: Comments (Atmosphere, price examples,...)
 COLLECTION_INDUCKS: Inducks collection
 COLLECTION_INDUCKS_POSSEDEE: Already have an Inducks collection?
 COMPTE_SUPPRIME_DECONNECTE: Your account has also been deleted. You are now logged out.
@@ -425,7 +413,7 @@ POINTS: points
 POSSESSIONS: Possessions
 POSSESSIONS_COURT: My possessions
 POSSESSION_HISTOIRES_AUTEURS: Possession of issues
-POSSESSION_MAGAZINES_INTRO: You have got
+POSSESSION_MAGAZINES_INTRO: You own
 POSSESSION_MAGAZINES_2: Your collection is made out of
 POSSESSION_MAGAZINES_3: different magazines from
 POSSESSION_NUMEROS: Issues possession

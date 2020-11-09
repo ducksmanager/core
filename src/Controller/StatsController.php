@@ -14,7 +14,7 @@ class StatsController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/stats/user/count"
+     *     path="/global-stats/user/count"
      * )
      */
     public function getUserCount(ApiService $apiService) {
@@ -28,7 +28,7 @@ class StatsController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/stats/user/{userIds}"
+     *     path="/global-stats/user/{userIds}"
      * )
      */
     public function getUsersStats(CollectionService $collectionService, string $userIds) {
@@ -44,7 +44,7 @@ class StatsController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/stats/bookcase/contributors"
+     *     path="/global-stats/bookcase/contributors"
      * )
      */
     public function getBookcaseContributors(BookcaseService $bookcaseService) {

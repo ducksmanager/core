@@ -41,7 +41,7 @@ class PageSiteController extends AbstractController
                     'title' => $title,
                     'component' => 'Site',
                     'page' => $page,
-                    'username' => $this->getUser()->getUsername()
+                    'username' => empty($this->getUser()) ? null : $this->getUser()->getUsername()
                 ] + $vueProps
         ]);
     }
@@ -161,7 +161,7 @@ class PageSiteController extends AbstractController
         if (!empty($email)) {
             $apiResponse = $apiService->call('/ducksmanager/user', 'ducksmanager', $request->getContent(), 'PUT');
             if (!is_null($apiResponse)) {
-                return $this->redirectToRoute('app_collection_display');
+                return $this->redirectToRoute('app_collection_show');
             }
             $success = false;
         }
@@ -217,6 +217,7 @@ class PageSiteController extends AbstractController
      *     "fr": "/collection/afficher/{publicationCode}"
      * },
      *     methods={"GET"},
+     *     name="app_collection_show",
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)|new$"},
      *     defaults={"publicationCode"=null})
      * )

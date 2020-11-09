@@ -29,3 +29,9 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: '^/admin', roles: ROLE_DUCKSMANAGER_ADMIN }
+        - { path: '^/collection', roles: ROLE_USER }
+        - { path: '^/bookcase', roles: ROLE_USER }
+        - { path: '^/stats', roles: ROLE_USER }
+        - { path: '^/expand', roles: ROLE_USER }
+        - { path: '^/print', roles: ROLE_USER }
+        - { path: '^/logout', roles: ROLE_USER }
