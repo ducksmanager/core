@@ -30,9 +30,9 @@
     <li
       v-for="(textKey, id) in purchaseStates"
       :key="`purchase-${id}`"
-      :class="{item: true, selected: purchase === id, 'purchase-state': true, 'v-context__sub': id === 'link' }"
+      :class="{item: true, selected: currentPurchaseId === id, 'purchase-state': true, 'v-context__sub': id === 'link' }"
       :style="id === 'do_not_change' ? {} : {backgroundImage: `url(${imagePath}/icons/purchase-${id}.png`}"
-      @click="purchase = id"
+      @click="currentPurchaseId = id"
     >
       {{ l10n[textKey] }}
       <ul
@@ -83,13 +83,14 @@
           </template>
         </li>
         <li
-          v-for="userPurchase in purchases"
-          :key="userPurchase.id"
+          v-for="{id: purchaseId, date, description} in purchases"
+          :key="purchaseId"
+          :class="{item: true, selected: currentPurchaseId === purchaseId, 'purchase-date': true}"
           class="item purchase-date"
           :style="id === 'do_not_change' ? {} : {backgroundImage: `url(${imagePath}/icons/purchase-link.png`}"
-          @click="purchaseId = userPurchase.id"
+          @click="currentPurchaseId = purchaseId"
         >
-          <b>{{ userPurchase.description }}</b><br>{{ userPurchase.date }}
+          <b>{{ description }}</b><br>{{ date }}
         </li>
       </ul>
     </li>
@@ -140,7 +141,7 @@ export default {
   data: () => ({
     condition: 'do_not_change',
     isToSell: 'do_not_change',
-    purchase: 'do_not_change',
+    currentPurchaseId: 'do_not_change',
     newPurchaseContext: false,
     newPurchaseDescription: '',
     newPurchaseDate: '',
@@ -174,9 +175,9 @@ export default {
       this.$emit('update-issues', {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,
-        condition: vm.conditions.find(({value}) => value === vm.condition).dbValue,
+        condition: (vm.conditions.find(({value}) => value === vm.condition) || {dbValue: null}).dbValue,
         istosell: this.isToSell,
-        purchaseId: this.purchaseId
+        purchaseId: this.currentPurchaseId
       })
     },
     async createPurchaseDate() {
