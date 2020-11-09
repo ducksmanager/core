@@ -20,6 +20,7 @@
             :publicationcode="publicationcode"
             :publicationname="suggestions.publicationTitles[publicationcode]"
             :issuenumber="issuenumber"
+            no-wrap
           /></span>
         {{ l10n.NUMERO_CONTIENT }}
       </div>

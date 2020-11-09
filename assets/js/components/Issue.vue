@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{display: noWrap ? 'inline-block' : 'block'}">
     <a
       :class="{ clickable }"
       :href="`/collection/show/${publicationcode}#${issuenumber}`"
@@ -30,7 +30,8 @@ export default {
     publicationname: {type: String, required: true},
     issuenumber: {type: String, required: true},
     clickable: { type: Boolean, default: false },
-    hideCondition: { type: Boolean, default: false }
+    hideCondition: { type: Boolean, default: false },
+    noWrap: { type: Boolean, default: false }
   },
   computed: {
     imagePath: () => window.imagePath,
