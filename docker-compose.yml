@@ -2,24 +2,22 @@ version: '2.4'
 services:
   front:
     container_name: ducksmanager-web
-    image: "nginx:1.15"
+    build:
+      context: .
+      target: web
     depends_on:
-      - gateway
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - current:/var/www/html
+      - php-flex
     restart: always
     networks:
       - workspace_global-front-network
       - dm-network
 
-  gateway:
+  php-flex:
     container_name: ducksmanager-php
     build:
       context: .
+      target: app
     restart: always
-    volumes:
-      - current:/var/www/html
     networks:
       - dm-network
       - dm-server_front-network
@@ -30,7 +28,3 @@ networks:
     external: true
   dm-server_front-network:
     external: true
-
-volumes:
-  current:
-
