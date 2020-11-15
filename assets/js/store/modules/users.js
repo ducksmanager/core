@@ -22,6 +22,7 @@ export default {
 
   actions: {
     async fetchStats({state, commit}, userIds) {
+      userIds = [...new Set(userIds)]
       const missingUserIds = userIds.filter(userId => !(Object.keys(state.points)).includes(userId))
       if (!missingUserIds.length) {
         return

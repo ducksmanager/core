@@ -1,5 +1,5 @@
 <template>
-  <div :style="{display: noWrap ? 'inline-block' : 'block'}">
+  <div :class="{[`d-${noWrap ? 'block' : 'inline'}`]: true}">
     <a
       :class="{ clickable }"
       :href="`/collection/show/${publicationcode}#${issuenumber}`"

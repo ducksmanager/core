@@ -106,7 +106,7 @@ import SuggestionList from "../SuggestionList";
 import Accordion from "../../components/Accordion";
 import PublicationList from "../../components/PublicationList";
 import Issue from "../../components/Issue";
-import Ago from "../Ago";
+import Ago from "../../components/Ago";
 
 export default {
   name: "Manage",

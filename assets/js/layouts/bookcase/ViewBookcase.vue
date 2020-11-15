@@ -153,7 +153,7 @@ import Edge from "../../components/Edge";
 import MedalProgress from "../../components/MedalProgress";
 import Issue from "../../components/Issue";
 import Book from "../../components/Book";
-import Ago from "../Ago";
+import Ago from "../../components/Ago";
 import SharePage from "../../components/SharePage";
 
 export default {

@@ -1,5 +1,5 @@
 <template>
-  <span>{{ timeAgo }}</span>
+  <span class="ago">{{ timeAgo }}</span>
 </template>
 <script>
 import * as timeago from "timeago.js";
@@ -21,7 +21,8 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-  span {
+  .ago {
+    float: right;
     color: grey;
     font-size: smaller;
   }
