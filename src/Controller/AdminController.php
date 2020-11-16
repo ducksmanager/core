@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminController extends AbstractController
 {
@@ -33,7 +32,7 @@ class AdminController extends AbstractController
     public function getEdgeProgressData(ApiService $apiService): Response
     {
         $mostWantedQuery = "
-        SELECT Count(Numero) as cpt, CONCAT(Pays,'/',Magazine) AS publicationcode, Numero
+        SELECT Count(Numero) as numberOfIssues, CONCAT(Pays,'/',Magazine) AS publicationcode, Numero
         FROM numeros
         WHERE NOT EXISTS(
             SELECT 1
@@ -42,7 +41,7 @@ class AdminController extends AbstractController
               AND numeros.Numero_nospace = tranches_pretes.issuenumber
         )
         GROUP BY Pays,Magazine,Numero
-        ORDER BY cpt DESC, Pays, Magazine, Numero
+        ORDER BY numberOfIssues DESC, Pays, Magazine, Numero
         LIMIT 20";
 
         return new JsonResponse($apiService->runQuery($mostWantedQuery, 'dm', []));

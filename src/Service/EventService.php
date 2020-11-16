@@ -34,7 +34,7 @@ class EventService
     {
         return $this->apiService->runQuery("
             SELECT 'collection_update' as type, users.ID AS userId,
-                UNIX_TIMESTAMP(DateAjout) AS timestamp, COUNT(Numero) AS cpt,
+                UNIX_TIMESTAMP(DateAjout) AS timestamp, COUNT(Numero) AS numberOfIssues,
                 (SELECT CONCAT(Pays,'/',Magazine,'/',Numero)
                 FROM numeros n
                 WHERE n.ID=numeros.ID
@@ -60,18 +60,28 @@ class EventService
 
     public function retrieveEdgeCreations(): array
     {
-        return $this->apiService->runQuery("
-            SELECT 'edge' as type,
-                   tp.publicationcode,
-                   tp.issuenumber,
-                   GROUP_CONCAT(DISTINCT tpc.ID_user) AS collaborators,
-                   UNIX_TIMESTAMP(tp.dateajout) AS timestamp
+        return $this->apiService->runQuery(<<<SQL
+        select 'edge' as type,
+            CONCAT('[', GROUP_CONCAT(json_object(
+                'publicationcode',
+                publicationcode,
+                'issuenumber',
+                issuenumber
+            )), ']') AS edges,
+            UNIX_TIMESTAMP(creationDate) AS timestamp,
+            collaborators
+        from (
+            SELECT tp.publicationcode,
+                tp.issuenumber,
+                tp.dateajout                       AS creationDate,
+                GROUP_CONCAT(DISTINCT tpc.ID_user) AS collaborators
             FROM tranches_pretes tp
-            INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
+               INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
             WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
               AND NOT (tp.publicationcode = 'fr/JM' AND tp.issuenumber REGEXP '^[0-9]+$')
-            GROUP BY tp.ID
-        ", 'dm');
+            GROUP BY tp.ID) as edges_and_collaborators
+        group by DATE_FORMAT(creationDate, '%Y-%m-%d %H:00:00')
+        SQL, 'dm');
     }
 
     public function retrieveNewMedals(): array

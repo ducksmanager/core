@@ -27,7 +27,7 @@
         :issuenumber="event.issuenumber"
         hide-condition
       />
-      <OtherIssues :number="event.cpt" />
+      <OtherIssues :number="event.numberOfIssues" />
       {{ l10n.NEWS_A_SA_COLLECTION }}
     </template>
     <template v-if="event.type === 'edge'">
@@ -56,13 +56,17 @@
         {{ l10n.NEWS_A_CREE_TRANCHE }}
       </template>
       <Issue
-        v-if="publicationNames[event.publicationcode]"
-        :publicationname="publicationNames[event.publicationcode]"
-        :publicationcode="event.publicationcode"
-        :issuenumber="event.issuenumber"
+        v-if="publicationNames[event.edges[0].publicationcode]"
+        :publicationname="publicationNames[event.edges[0].publicationcode]"
+        :publicationcode="event.edges[0].publicationcode"
+        :issuenumber="event.edges[0].issuenumber"
         hide-condition
       />
-      <OtherIssues :number="event.cpt" />
+      <OtherIssues
+        :number="event.edges.length"
+        l10-key-single="NEWS_AUTRE_TRANCHE"
+        l10-key-multiple="NEWS_AUTRES_TRANCHES"
+      />
       {{ l10n.NEWS_ONT_CREE_TRANCHE_2 }}
     </template>
     <slot />

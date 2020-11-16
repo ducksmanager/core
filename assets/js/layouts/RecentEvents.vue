@@ -5,7 +5,7 @@
   >
     <h4>{{ l10n.NEWS_TITRE }}</h4>
     <div id="events">
-      <template v-if="((events && publicationNames) || (events && !events.length)) && stats && points">
+      <template v-if="isLoaded">
         <Event
           v-for="event in events"
           :key="JSON.stringify(event)"
@@ -37,7 +37,8 @@ export default {
   mixins: [l10nMixin, medalMixin],
 
   data: () => ({
-    events: null
+    events: null,
+    isLoaded: false
   }),
 
   computed: {
@@ -57,10 +58,13 @@ export default {
       if (event.userId) {
         event.userId = parseInt(event.userId)
       }
+      if (event.edges) {
+        event.edges = JSON.parse(event.edges)
+      }
 
       return {
         ...event,
-        cpt: event.cpt && parseInt(event.cpt),
+        numberOfIssues: event.numberOfIssues && parseInt(event.numberOfIssues),
         timestamp: parseInt(event.timestamp),
       }
     }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => timestamp1 < timestamp2)
@@ -78,6 +82,7 @@ export default {
       )
       .filter(userId => !!userId)
     )
+    this.isLoaded = true
   },
 
   methods: {

@@ -5,7 +5,7 @@
       :key="mostWantedIssue"
     >
       <div>
-        <u>{{ mostWantedIssue.cpt }} utilisateurs possèdent le numéro :</u>
+        <u>{{ mostWantedIssue.numberOfIssues }} utilisateurs possèdent le numéro :</u>
       </div>&nbsp;
       <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`">
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{ mostWantedIssue.Numero }}
