@@ -1,11 +1,11 @@
 <template>
   <span>
     <span
-      :id="`user-${id}`"
+      :id="elementId"
       class="username"
     >{{ stats.username }}</span>
     <b-popover
-      :target="`user-${id}`"
+      :target="elementId"
       placement="top"
       triggers="hover"
       :delay="0"
@@ -35,7 +35,7 @@
           size="xs"
           variant="outline-secondary"
           target="_blank"
-          :href="`/bookcase/${stats.username}`"
+          :href="`/bookcase/show/${stats.username}`"
         >
           {{ l10n.VOIR_BIBLIOTHEQUE }}
         </b-button>
@@ -62,10 +62,15 @@ export default {
 
   data: () => ({
     bookcaseShared: true,
+    elementId: null
   }),
 
   computed: {
     imagePath: () => window.imagePath
+  },
+
+  created() {
+    this.elementId = `user-${this.id}-${Math.random()}`
   }
 }
 </script>
