@@ -55,17 +55,23 @@
       <template v-else>
         {{ l10n.NEWS_A_CREE_TRANCHE }}
       </template>
-      <Issue
-        v-if="publicationNames[event.edges[0].publicationcode]"
-        :publicationname="publicationNames[event.edges[0].publicationcode]"
-        :publicationcode="event.edges[0].publicationcode"
-        :issuenumber="event.edges[0].issuenumber"
-        hide-condition
-      />
-      <OtherIssues
-        :number="event.edges.length"
-        l10-key-single="NEWS_AUTRE_TRANCHE"
-        l10-key-multiple="NEWS_AUTRES_TRANCHES"
+      <span :id="`event-edges-${event.timestamp}`">
+        <Issue
+          v-if="publicationNames[event.edges[0].publicationCode]"
+          :publicationname="publicationNames[event.edges[0].publicationCode]"
+          :publicationcode="event.edges[0].publicationCode"
+          :issuenumber="event.edges[0].issueNumber"
+          hide-condition
+        />
+        <OtherIssues
+          :number="event.edges.length"
+          l10-key-single="NEWS_AUTRE_TRANCHE"
+          l10-key-multiple="NEWS_AUTRES_TRANCHES"
+        />
+      </span>
+      <BookcasePopover
+        :id="`event-edges-${event.timestamp}`"
+        :edges="event.edges"
       />
       {{ l10n.NEWS_ONT_CREE_TRANCHE_2 }}
     </template>
@@ -78,10 +84,11 @@ import OtherIssues from "../components/OtherIssues"
 import UserPopover from "../components/UserPopover"
 import {mapState} from "vuex";
 import l10nMixin from "../mixins/l10nMixin";
+import BookcasePopover from "./BookcasePopover";
 
 export default {
   name: 'Event',
-  components: {Issue, OtherIssues, UserPopover},
+  components: {BookcasePopover, Issue, OtherIssues, UserPopover},
   mixins: [l10nMixin],
   props: {
     event: {type: Object, required: true}
@@ -90,7 +97,7 @@ export default {
   computed: {
     ...mapState("coa", ["publicationNames"]),
     ...mapState("users", ["stats", "points"]),
-  },
+  }
 }
 </script>
 <style scoped lang="scss">

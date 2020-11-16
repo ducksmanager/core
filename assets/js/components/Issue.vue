@@ -1,5 +1,5 @@
 <template>
-  <div :class="{[`d-${noWrap ? 'block' : 'inline'}`]: true}">
+  <div :class="{[`d-${noWrap ? 'inline' : 'block'}`]: true}">
     <a
       :class="{ clickable }"
       :href="`/collection/show/${publicationcode}#${issuenumber}`"
@@ -31,7 +31,7 @@ export default {
     issuenumber: {type: String, required: true},
     clickable: { type: Boolean, default: false },
     hideCondition: { type: Boolean, default: false },
-    noWrap: { type: Boolean, default: false }
+    noWrap: { type: Boolean, default: true }
   },
   computed: {
     imagePath: () => window.imagePath,

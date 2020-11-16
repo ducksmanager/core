@@ -73,7 +73,7 @@ export default {
     },
     popularity: {
       type: Number,
-      required: true
+      default: null
     },
     spritePath: {
       type: String,

@@ -25,7 +25,7 @@ import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "vuex";
 import medalMixin from "../mixins/medalMixin";
 import Ago from "../components/Ago";
-import Event from "./Event";
+import Event from "../components/Event";
 
 export default {
   name: "RecentEvents",

@@ -63,9 +63,9 @@ class EventService
         return $this->apiService->runQuery(<<<SQL
         select 'edge' as type,
             CONCAT('[', GROUP_CONCAT(json_object(
-                'publicationcode',
+                'publicationCode',
                 publicationcode,
-                'issuenumber',
+                'issueNumber',
                 issuenumber
             )), ']') AS edges,
             UNIX_TIMESTAMP(creationDate) AS timestamp,

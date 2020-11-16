@@ -26,7 +26,7 @@
         v-html="$t('EXPLICATION_ORDRE_MAGAZINES', [`<a href='/bookcase/options'>${l10n.BIBLIOTHEQUE_OPTIONS_COURT}</a>`])"
       />
       <div
-        v-if="user && user.isShareEnabled"
+        v-if="user && user.isShareEnabled && username !== 'demo'"
         id="share-bookcase-section"
       >
         <b-alert
@@ -40,7 +40,7 @@
           :url="bookcaseUrl"
         />
         <b-btn
-          v-if="!showShareButtons"
+          v-else
           size="sm"
           @click="showShareButtons=true"
         >
@@ -48,7 +48,7 @@
         </b-btn>
       </div>
       <b-alert
-        v-else
+        v-else-if="username !== 'demo'"
         show
         variant="warning"
         v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE', [`<a href='/collection/account'>${l10n.GESTION_COMPTE_COURT}</a>`])"
@@ -118,28 +118,15 @@
         :issue-number="currentEdgeOpened.issueNumber"
         @close-book="currentEdgeOpened = null"
       />
-      <div
-        id="bookcase"
-        :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
-      >
-        <Edge
-          v-for="(edge, edgeIndex) in sortedBookcase"
-          :ref="`edge-${getEdgeKey(edge)}`"
-          :key="getEdgeKey(edge)"
-          :invisible="currentEdgeOpened === edge"
-          :highlighted="currentEdgeHighlighted === getEdgeKey(edge)"
-          :publication-code="edge.publicationCode"
-          :issue-number="edge.issueNumber"
-          :issue-number-reference="edge.issueNumberReference"
-          :creation-date="edge.creationDate"
-          :popularity="edge.popularity"
-          :existing="!!edge.edgeId"
-          :sprite-path="edgesUsingSprites[edge.edgeId] || null"
-          :load="currentEdgeIndex >= edgeIndex"
-          @loaded="currentEdgeIndex++"
-          @open-book="currentEdgeOpened = edge"
-        />
-      </div>
+      <Bookcase
+        :bookcase-textures="bookcaseTextures"
+        :current-edge-highlighted="currentEdgeHighlighted"
+        :current-edge-opened="currentEdgeOpened"
+        :edges-using-sprites="edgesUsingSprites"
+        :image-path="imagePath"
+        :sorted-bookcase="sortedBookcase"
+        @open-book="(edge) => currentEdgeOpened = edge"
+      />
     </div>
   </div>
 </template>
@@ -149,16 +136,16 @@ import l10nMixin from "../../mixins/l10nMixin";
 import IssueSearch from "../../components/IssueSearch";
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import collectionMixin from "../../mixins/collectionMixin";
-import Edge from "../../components/Edge";
 import MedalProgress from "../../components/MedalProgress";
 import Issue from "../../components/Issue";
 import Book from "../../components/Book";
 import Ago from "../../components/Ago";
 import SharePage from "../../components/SharePage";
+import Bookcase from "../../components/Bookcase";
 
 export default {
   name: "ViewBookcase",
-  components: {SharePage, Ago, Book, MedalProgress, Issue, Edge, IssueSearch},
+  components: {Bookcase, SharePage, Ago, Book, MedalProgress, Issue, IssueSearch},
   mixins: [l10nMixin, collectionMixin],
 
   props: {
@@ -166,8 +153,7 @@ export default {
   },
 
   data: () => ({
-    edgesUsingSprites: [],
-    currentEdgeIndex: 0,
+    edgesUsingSprites: {},
     currentEdgeOpened: null,
     currentEdgeHighlighted: null,
     bookStartPosition: null,
@@ -230,15 +216,6 @@ export default {
   },
 
   watch: {
-    bookcaseTextures(newValue) {
-      if (newValue) {
-        const {bookshelf: bookshelfTexture} = newValue
-        const bookshelfTextureUrl = `${imagePath}/textures/${bookshelfTexture}.jpg`
-        const style = document.createElement('style');
-        style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
-        document.head.append(style);
-      }
-    },
     totalPerPublication: {
       immediate: true,
       async handler(newValue) {
@@ -323,15 +300,6 @@ export default {
 #last-published-edges,
 #share-bookcase-section {
   margin-bottom: 16px;
-}
-
-#bookcase {
-  height: 100%;
-  overflow: hidden;
-  margin-top: 35px;
-  padding: 10px 5px 10px 15px;
-  background: transparent repeat left top;
-  clear: both;
 }
 
 .carousel {
