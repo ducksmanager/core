@@ -234,6 +234,7 @@ export default {
         this.rotation-=2
       } else {
         clearInterval(this.rotationInterval)
+        this.rotationInterval = null
       }
     },
 
@@ -242,16 +243,25 @@ export default {
         this.rotation+=2
       } else {
         clearInterval(this.rotationInterval)
+        this.rotationInterval = null
         this.$emit('close-book')
       }
     },
 
     closeBook() {
+      if (this.rotationInterval !== null) {
+        return
+      }
       const vm = this
-      this.book.on('flip', () => {
+      if (this.currentPage === 0) {
         vm.rotationInterval = setInterval(this.transformCoverIntoEdge, 5)
-      })
-      this.book.flip(0)
+      }
+      else {
+        this.book.on('flip', () => {
+          vm.rotationInterval = setInterval(this.transformCoverIntoEdge, 5)
+        })
+        this.book.flip(0)
+      }
     }
   },
 }

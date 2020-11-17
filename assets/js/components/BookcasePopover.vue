@@ -56,18 +56,18 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .popover-body {
     padding-top: 0;
     padding-right: 0;
     padding-left: 0;
   }
 
-  .bookcase {
+  ::v-deep .bookcase {
     margin-top: 0 !important;
   }
 
-  .issue{
+  ::v-deep .issue{
     padding: 0 10px;
   }
 </style>
