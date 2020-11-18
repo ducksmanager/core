@@ -129,7 +129,6 @@ CONNEXION: Log in
 CONNEXION_COMPTE: Log into my DucksManager account
 CONNEXION_INDUCKS: Logging in on Inducks...
 CONTACT_UTILISATEURS: Contact other DucksManager users
-CONTINUER_OUI_NON: Do you want to continue?
 CREER: Create
 DANS: in
 DATE: Date
@@ -169,6 +168,7 @@ DU: from
 EMAIL_ACHAT_VENTE_2: You can answer directly to this e-mail to propose him or her a price and discuss about a way to send these issues.
 EMAIL_ACHAT_VENTE_3: Happy selling, and see you soon on DucksManager!
 EMAIL_ACHAT_VENTE_TITRE: A user is interested by some items of your DucksManager collection
+EMAIL_INVALIDE: The e-mail address is invalid.
 EMAIL_ENVOYE: An e-mail has been sent to the webmaster.
 EMAIL_ENVOYE_BOUQUINERIE: If your second-hand bookshop is valid, it should be available soon on DucksManager.
 EMAIL_REINIT_MOT_DE_PASSE_1: You receive this e-mail following your password reset request on DucksManager.
@@ -188,6 +188,7 @@ ERREUR_CONNEXION_INDUCKS: Error while connecting to Inducks!
 ERREUR_EXECUTION_REQUETE: Error while submitting the query!
 ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: Merging two lists is only possible if they are of the same type!
 ERREUR_GENERIQUE: An error occurred.
+ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: This username or this e-mail address already exists.
 ERREUR_LECTURE_NUMEROS: Error while reading the issues list
 ERREUR_RAWDATA_INVALIDE: Error while analyzing the Inducks collection.. Please select all the content text of the Inducks page.
 ERREUR_TECHNIQUE: A technical error has occurred. Please send a message to the webmaster so that it gets solved as soon as possible!
@@ -328,8 +329,7 @@ MERCI_COMPREHENSION: Thank you for your understanding.
 MERCI_CONTRIBUTION: Thanks for your contribution!
 MINUTES: minute(s)
 MISE_A_JOUR: Updating...
-MODIFICATIONS_OK: Your changes have been applied.
-MONTRER_MAGAZINES_PAYS: Show publications of 
+MONTRER_MAGAZINES_PAYS: Show publications of
 MOT_DE_PASSE: Password
 MOT_DE_PASSE_6_CHAR: Password (6 characters or more)
 MOT_DE_PASSE_6_CHAR_ERREUR: The password must have at least 6 characters!

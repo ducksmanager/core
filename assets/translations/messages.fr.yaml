@@ -133,7 +133,6 @@ CONNEXION: Connexion
 CONNEXION_COMPTE: Connexion à mon compte DucksManager
 CONNEXION_INDUCKS: Connexion à Inducks...
 CONTACT_UTILISATEURS: Contacter d'autres utilisateurs de DucksManager
-CONTINUER_OUI_NON: Continuer ?
 CREER: Créer
 DANS: dans
 DATE: Date
@@ -175,6 +174,7 @@ EMAIL_ACHAT_VENTE_3: Bonne vente, et à bientôt sur DucksManager !
 EMAIL_ACHAT_VENTE_TITRE: Un utilisateur est intéressé par vos numéros en vente sur DucksManager
 EMAIL_ENVOYE: Un e-mail vient d'être envoyé au webmaster.
 EMAIL_ENVOYE_BOUQUINERIE: Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.
+EMAIL_INVALIDE: L'adresse e-mail est invalide.
 EMAIL_REINIT_MOT_DE_PASSE_1: Vous recevez cet e-mail à la suite de votre demande de réinitialisation de mot de passe sur DucksManager.
 EMAIL_REINIT_MOT_DE_PASSE_2: "Votre mot de passe temporaire est :"
 EMAIL_REINIT_MOT_DE_PASSE_3: A bientôt sur DucksManager !
@@ -192,6 +192,7 @@ ERREUR_CONNEXION_INDUCKS: Erreur de connexion à Inducks!
 ERREUR_EXECUTION_REQUETE: Erreur lors de l'éxécution de la requete !
 ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: La fusion de deux listes ne peut se faire que si elles sont du meme type!
 ERREUR_GENERIQUE: Une erreur s'est produite.
+ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: Ce nom d'utilisateur ou cette adresse e-mail existe déjà.
 ERREUR_LECTURE_NUMEROS: Erreur lors de la lecture de la liste de numéros
 ERREUR_RAWDATA_INVALIDE: Erreur lors de l'analyse de la collection. Sélectionnez tout le texte de la page Inducks !
 ERREUR_TECHNIQUE: Une erreur technique est survenue. Merci de prévenir le webmaster pour qu'elle soit résolue le plus tôt possible !
@@ -330,8 +331,7 @@ MERCI_COMPREHENSION: Merci de votre compréhension.
 MERCI_CONTRIBUTION: Merci pour votre contribution !
 MINUTES: minute(s)
 MISE_A_JOUR: Mise à jour...
-MODIFICATIONS_OK: Vos modifications ont été prises en compte.
-MONTRER_MAGAZINES_PAYS: Montrer les magazines de 
+MONTRER_MAGAZINES_PAYS: Montrer les magazines de
 MOT_DE_PASSE: Mot de passe
 MOT_DE_PASSE_6_CHAR: Mot de passe (au moins 6 caractères)
 MOT_DE_PASSE_6_CHAR_ERREUR: Le mot de passe doit comporter au moins 6 caractères !

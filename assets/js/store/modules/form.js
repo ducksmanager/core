@@ -5,8 +5,15 @@ export default {
   }),
 
   mutations: {
-    setErrors(state, errors) {
+    addErrors(state, errors) {
       state.errors = {...state.errors, ...errors}
+    },
+    clearErrors(state) {
+      state.errors = {}
     }
+  },
+
+  getters: {
+    hasErrors: state => Object.keys(state.errors).length
   }
 }

@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Security\User;
 use App\Security\UserAuthenticator;
-use App\Service\UserService;
 use LogicException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,9 +21,9 @@ class SecurityController extends PageSiteController
      *     name="app_login"
      * )
      */
-    public function login(AuthenticationUtils $authenticationUtils, UserService $userService): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        if (!empty($userService->getCurrentUserId())) {
+        if (!empty($this->getUser())) {
             return $this->redirectToRoute('app_collection_show');
         }
 

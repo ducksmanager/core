@@ -151,24 +151,22 @@ class PageSiteController extends AbstractController
      *     "en": "/signup",
      *     "fr": "/inscription"
      * },
-     *     methods={"GET", "POST"}
+     *     methods={"GET", "PUT"}
      * )
      */
     public function showSignupPage(TranslatorInterface $translator, ApiService $apiService, Request $request): Response
     {
-        $success = null;
-        $email = $request->request->get('email');
-        if (!empty($email)) {
-            $apiResponse = $apiService->call('/ducksmanager/user', 'ducksmanager', $request->getContent(), 'PUT');
+        if ($request->getMethod() === 'PUT') {
+            $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
+            $apiResponse = $apiService->call('/ducksmanager/user', 'ducksmanager', $data, 'PUT');
             if (!is_null($apiResponse)) {
-                return $this->redirectToRoute('app_collection_show');
+                return new Response('OK', Response::HTTP_CREATED);
             }
-            $success = false;
+            return new Response('KO', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return $this->renderSitePage(
             $translator->trans('INSCRIPTION'),
-            'Signup',
-            is_null($success) ? [] : compact('success')
+            'Signup'
         );
     }
 

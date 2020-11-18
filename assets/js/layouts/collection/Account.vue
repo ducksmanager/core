@@ -117,11 +117,11 @@ export default {
 
   async mounted() {
     await this.loadUser()
-    this.setErrors(JSON.parse(this.errors))
+    this.addErrors(JSON.parse(this.errors))
   },
 
   methods: {
-    ...mapMutations("form", ["setErrors"]),
+    ...mapMutations("form", ["addErrors"]),
     ...mapActions("collection", ["loadUser"]),
 
     async emptyCollection() {
