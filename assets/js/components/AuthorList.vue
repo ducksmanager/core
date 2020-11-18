@@ -4,12 +4,16 @@
       v-if="!watchedAuthors.length"
       show
       variant="warning"
+      class="section"
     >
       {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
       {{ l10n.AUCUN_AUTEUR_NOTE_2_MEME_PAGE }}
       {{ l10n.AUCUN_AUTEUR_NOTE_3 }}
     </b-alert>
-    <div v-else>
+    <div
+      v-else
+      class="section"
+    >
       <h5>{{ l10n.LISTE_AUTEURS_INTRO }}</h5>
       <p>
         {{ l10n.AUTEURS_FAVORIS_INTRO_1 }}
@@ -42,31 +46,40 @@
         </b-row>
       </div>
     </div>
-    <h5>{{ l10n.LISTE_AUTEURS_AJOUTER }}</h5>
-    <b-row>
-      <b-col sm="4">
-        <b-navbar-nav>
-          <b-form-input
-            v-model="search"
-            list="search"
-            :placeholder="l10n.AUTEUR"
-          />
-          <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
-            <option v-if="!Object.keys(searchResults).length">
-              {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
-            </option>
-            <option
-              v-for="(fullName, personCode) in searchResults"
-              :key="personCode"
-              :disabled="watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)"
-              @click="createRating(personCode)"
-            >
-              {{ fullName }}
-            </option>
-          </datalist>
-        </b-navbar-nav>
-      </b-col>
-    </b-row>
+    <div>
+      <h5>{{ l10n.LISTE_AUTEURS_AJOUTER }}</h5>
+      <b-alert
+        v-if="watchedAuthors.length >= 5"
+        variant="warning"
+        show
+      >
+        {{ l10n.MAX_AUTEURS_SURVEILLES_ATTEINT }}
+      </b-alert>
+      <b-row v-else>
+        <b-col sm="4">
+          <b-navbar-nav>
+            <b-form-input
+              v-model="search"
+              list="search"
+              :placeholder="l10n.AUTEUR"
+            />
+            <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
+              <option v-if="!Object.keys(searchResults).length">
+                {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
+              </option>
+              <option
+                v-for="(fullName, personCode) in searchResults"
+                :key="personCode"
+                :disabled="watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)"
+                @click="createRating(personCode)"
+              >
+                {{ fullName }}
+              </option>
+            </datalist>
+          </b-navbar-nav>
+        </b-col>
+      </b-row>
+    </div>
   </div>
 </template>
 <script>
@@ -159,7 +172,7 @@ ul li div {
 }
 
 h5 {
-  margin: 15px 0 0 0;
+  margin: 15px 0;
 }
 
 datalist {
