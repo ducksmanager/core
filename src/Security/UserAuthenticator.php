@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Service\ApiService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -87,10 +88,16 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator
 //            return (new User($username, $internalRoles));
 //        }
         $this->logger->info('Credentials : '.print_r($credentials, true));
-        $roles = $this->apiService->call('/collection/privileges', 'ducksmanager', [], 'GET', false, [
-            'dm-user' => $credentials['username'],
-            'dm-pass' => $credentials['password']
-        ]);
+        try {
+            $roles = $this->apiService->call('/collection/privileges', 'ducksmanager', [], 'GET', false, [
+                'dm-user' => $credentials['username'],
+                'dm-pass' => $credentials['password']
+            ]);
+        }
+        catch(ClientException $exception) {
+            $this->logger->info($exception->getMessage());
+            return false;
+        }
 
         return is_array($roles);
     }

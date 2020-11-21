@@ -3,6 +3,9 @@
     v-if="l10n"
     method="post"
   >
+    <h1 class="h3 mb-3 font-weight-normal">
+      {{ l10n.CONNEXION }}
+    </h1>
     <b-alert
       v-if="error"
       show
@@ -10,10 +13,6 @@
     >
       {{ error }}
     </b-alert>
-
-    <h1 class="h3 mb-3 font-weight-normal">
-      {{ l10n.CONNEXION }}
-    </h1>
     <b-form-input
       id="username"
       name="username"

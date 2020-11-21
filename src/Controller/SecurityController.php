@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SecurityController extends PageSiteController
 {
@@ -21,7 +22,7 @@ class SecurityController extends PageSiteController
      *     name="app_login"
      * )
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, TranslatorInterface $translator): Response
     {
         if (!empty($this->getUser())) {
             return $this->redirectToRoute('app_collection_show');
@@ -37,7 +38,8 @@ class SecurityController extends PageSiteController
                 'component' => 'Site',
                 'page' => 'Login',
                 'last-username' => $lastUsername,
-            ] + compact('error')
+                'error' => is_null($error) ? null : $translator->trans('IDENTIFIANTS_INCORRECTS')
+            ]
         ]);
     }
 
