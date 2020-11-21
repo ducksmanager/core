@@ -82,7 +82,7 @@ export default {
 #footer {
   height: 125px;
   border-top: 1px solid white;
-  padding: 10px 10px 10px 30px;
+  padding: 10px;
   display: flex;
   flex-direction: row;
   align-items: center;

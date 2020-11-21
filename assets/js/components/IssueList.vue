@@ -338,6 +338,10 @@ export default {
   * {
     font-size: 11px;
   }
+
+  tr td:nth-child(2) {
+    text-align: right;
+  }
 }
 
 .issue-list {
@@ -371,8 +375,13 @@ export default {
       background-color: rgb(200, 137, 100);
     }
 
+    img.preview {
+      float: left;
+      cursor: pointer;
+    }
+
     .issue-text {
-      margin-left: 15px;
+      margin-left: 10px;
     }
 
     .issue-details-wrapper {
