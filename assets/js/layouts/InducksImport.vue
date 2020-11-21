@@ -1,7 +1,52 @@
 <template>
   <div v-if="l10n">
+    <b-jumbotron v-if="!username">
+      <div id="dm-loves-inducks">
+        <div
+          id="dm-logo-small"
+          :style="{backgroundImage: `url(${imagePath}/logo_small.png)`}"
+        >
+          &nbsp;
+        </div>
+        <div
+          id="loves"
+          :style="{backgroundImage: `url(${imagePath}/icons/heart.png)`}"
+        >
+          &nbsp;
+        </div>
+        <div
+          id="inducks-logo"
+          :style="{backgroundImage: `url(${imagePath}/inducks_logo.png)`}"
+        >
+          &nbsp;
+        </div>
+      </div>
+      <p>
+        {{ l10n.IMPORTER_INDUCKS_DESCRIPTION_1 }}
+      </p>
+      <p>
+        <span v-html="l10n.IMPORTER_INDUCKS_DESCRIPTION_2" /><br>
+        {{ $t('IMPORTER_INDUCKS_DESCRIPTION_3', [l10n.COLLECTION_INDUCKS]) }}
+      </p>
+      <p>
+        <b-btn
+          size="lg"
+          variant="primary"
+          href="/signup"
+        >
+          {{ l10n.INSCRIPTION }}
+        </b-btn>
+        <b-btn
+          size="lg"
+          variant="primary"
+          href="/login"
+        >
+          {{ l10n.CONNEXION }}
+        </b-btn>
+      </p>
+    </b-jumbotron>
     <form
-      v-if="step === 1"
+      v-else-if="step === 1"
       id="inducks-import"
       method="post"
       action=""
@@ -38,7 +83,7 @@
         </b-col>
       </b-row>
     </form>
-    <template v-if="step === 2">
+    <template v-else-if="step === 2">
       <b-alert
         v-if="issuesImportable"
         show
@@ -164,7 +209,7 @@
           </b-form-select-option>
         </b-form-select>
       </b-form-group>
-      <b-btn v-if="issuesImportable.length">
+      <b-btn v-if="issuesImportable && issuesImportable.length">
         {{ l10n.IMPORTER }} {{ issuesImportable.length }} {{ l10n.NUMEROS }}
       </b-btn>
     </template>
@@ -201,6 +246,8 @@ export default {
 
   computed: {
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
+    username: () => window.username,
+
     imagePath: () => window.imagePath,
 
     importDataReady() {
@@ -219,11 +266,9 @@ export default {
           const {publicationCode, issueNumber} = issue
           if (!vm.issueNumbers[publicationCode].includes(issueNumber)) {
             vm.issuesNotReferenced.push(issue)
-          }
-          else if (vm.findInCollection(publicationCode, issueNumber)) {
+          } else if (vm.findInCollection(publicationCode, issueNumber)) {
             vm.issuesAlreadyInCollection.push(issue)
-          }
-          else {
+          } else {
             vm.issuesImportable.push(issue)
           }
         })
@@ -243,16 +288,16 @@ export default {
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
     processRawData() {
       const issues = this.rawData
-          .split('\n')
-          .filter(row => !/^country/.test(row) && /^([^^]+)\^([^^]+)\^/.test(row))
-          .map(row => {
-            const [, countryCode, magazineCodeAndIssueNumber] = row.match(/^([^^]+)\^([^^]+)\^/)
-            const [, magazineCode, issueNumber] = magazineCodeAndIssueNumber.match(/^([^ ]+)[ ]+(.+)$/)
-            return {
-              publicationCode: `${countryCode}/${magazineCode}`,
-              issueNumber
-            }
-          })
+        .split('\n')
+        .filter(row => !/^country/.test(row) && /^([^^]+)\^([^^]+)\^/.test(row))
+        .map(row => {
+          const [, countryCode, magazineCodeAndIssueNumber] = row.match(/^([^^]+)\^([^^]+)\^/)
+          const [, magazineCode, issueNumber] = magazineCodeAndIssueNumber.match(/^([^ ]+)[ ]+(.+)$/)
+          return {
+            publicationCode: `${countryCode}/${magazineCode}`,
+            issueNumber
+          }
+        })
       if (issues.length) {
         this.issuesToImport = issues
         this.step = 2
@@ -271,23 +316,63 @@ export default {
 
 <style scoped lang="scss">
 
-#inducks-import {
-  iframe, textarea {
-    height: 400px;
-    width: 100%;
+.jumbotron {
+  background: white;
+  color: black;
+
+  #dm-loves-inducks {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 350px;
   }
 
-  iframe {
-    border: 0;
+  #dm-logo-small {
+    width: 100px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position-y: center;
   }
 
-  pre {
-    padding: 2px;
-    display: inline;
+  #loves {
+    width: 32px;
+    height: 32px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position-y: center;
   }
 
-  li {
-    cursor: initial;
+  #inducks-logo {
+    width: 100px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position-y: center;
   }
+
+  p {
+    font-size: 14px;
+    line-height: 25px;
+  }
+}
+
+iframe, textarea {
+  height: 400px;
+  width: 100%;
+}
+
+iframe {
+  border: 0;
+}
+
+pre {
+  padding: 2px;
+  display: inline;
+}
+
+li {
+  cursor: initial;
 }
 </style>
