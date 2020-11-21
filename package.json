@@ -32,7 +32,7 @@
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",
-        "watch": "encore dev-server --hot",
+        "watch": "NODE_ENV=development encore dev-server --hot",
         "build": "encore production --progress"
     }
 }
