@@ -1,5 +1,8 @@
 <template>
-  <div id="logo_zone1">
+  <div
+    id="logo_zone1"
+    :class="classes"
+  >
     <a :href="username ? '/collection/show' : '/'">
       <img
         :src="`${imagePath}/logo_small.png`"
@@ -12,6 +15,14 @@
 <script>
 export default {
   name: "Banner",
+
+  props: {
+    classes: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+
   computed: {
     imagePath: () => window.imagePath,
     username: () => window.username
@@ -27,6 +38,15 @@ export default {
   background-color: rgb(200, 137, 100) !important;
   height: 180px;
 
+  &.small-image {
+    img {
+      height: 50px;
+      top: 0;
+      position: fixed;
+      right: 10px;
+    }
+  }
+
   a {
     position: absolute;
     border-bottom: none;
@@ -34,12 +54,6 @@ export default {
     &:hover {
       border-bottom: 0 !important;
     }
-  }
-}
-
-@media (max-width: 767px) {
-  #logo_zone1 {
-    display: none;
   }
 }
 </style>

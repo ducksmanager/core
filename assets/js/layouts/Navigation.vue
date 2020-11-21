@@ -119,6 +119,7 @@ export default {
 }
 
 ::v-deep ul, li {
+  background-color: #3d4b5f;
   list-style: none;
   padding: 0;
   margin: 0;

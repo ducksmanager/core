@@ -35,7 +35,23 @@
         </div>
       </div>
     </div>
-    <Navigation />
+    <Navigation class="d-none d-md-block" />
+    <b-navbar
+      class="d-block d-md-none"
+      toggleable
+      type="dark"
+    >
+      <b-navbar-brand href="#">
+        <Banner :classes="{'small-image': true}" />
+      </b-navbar-brand>
+      <b-navbar-toggle target="navbar-toggle-collapse" />
+      <b-collapse
+        id="navbar-toggle-collapse"
+        is-nav
+      >
+        <Navigation />
+      </b-collapse>
+    </b-navbar>
     <RecentEvents />
   </div>
 </template>
@@ -47,11 +63,13 @@ import RecentEvents from "./RecentEvents";
 import Navigation from "./Navigation";
 import Medal from "../components/Medal";
 import {mapActions, mapState} from "vuex";
+import Banner from "./Banner";
 
 export default {
   name: "LeftPanel",
 
   components: {
+    Banner,
     Medal,
     RecentEvents,
     Navigation
@@ -128,7 +146,7 @@ export default {
     width: 100%;
     height: 38px;
     margin-bottom: 10px;
-    opacity: 0.9;
+    opacity: 0.95;
     outline: 2px solid grey;
 
     .toggle-btn {
@@ -142,19 +160,32 @@ export default {
       width: 40px;
       text-align: center;
     }
-
-    #medals {
-      display: none;
-    }
   }
 
-  #medals_and_login #login {
-    margin-right: 35px;
-    text-align: right;
+  #medals_and_login {
+    display: none;
+  }
 
-    #logo_small {
-      float: left;
-      margin-top: 5px;
+  .navbar {
+    .navbar-brand {
+      float: right;
+    }
+
+    .navbar-toggler {
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .navbar-collapse {
+      .menu-content {
+        position: fixed;
+        left: 0;
+        top: 40px;
+        width: 100%;
+
+        li {
+          padding-right: 30px;
+        }
+      }
     }
   }
 
