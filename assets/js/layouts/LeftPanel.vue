@@ -168,7 +168,7 @@ export default {
 
   .navbar {
     .navbar-brand {
-      float: right;
+      position: fixed;
     }
 
     .navbar-toggler {

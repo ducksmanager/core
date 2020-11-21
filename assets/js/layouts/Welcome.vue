@@ -188,7 +188,7 @@ export default {
   }
 
   .row {
-    height: 300px;
+    min-height: 300px;
     margin-top: 50px;
     margin-bottom: 50px;
 

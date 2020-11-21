@@ -8,7 +8,6 @@
     <b-navbar-brand v-if="withTitle">
       {{ l10n.RECHERCHER_HISTOIRE }}
     </b-navbar-brand>
-    <b-navbar-toggle target="nav-collapse" />
     <b-navbar-nav>
       <b-dropdown
         class="search-type"
