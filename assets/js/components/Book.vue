@@ -26,7 +26,7 @@
         <b-card
           v-if="showTableOfContents"
           no-body
-          class="table-of-contents"
+          class="table-of-contents d-none d-md-block"
         >
           <template #header>
             <Issue
