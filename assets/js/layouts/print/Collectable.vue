@@ -79,7 +79,7 @@
             <tr>
               <td
                 align="center"
-                colspan="2"
+                colspan="6"
               >
                 <u>{{
                   l10n.NUMEROS[0].toUpperCase() + l10n.NUMEROS.substring(1, l10n.NUMEROS.length).toLowerCase()
@@ -91,7 +91,7 @@
               :key="i"
             >
               <td
-                v-for="(__, group) in letterToNumber(maxLetter) + 1"
+                v-for="group in groupsInRange(i)"
                 :key="group"
                 class="issue-range"
               >
@@ -223,7 +223,15 @@ export default {
     ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
     ...mapActions("collection", ["loadPurchases"]),
     numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : "A".charCodeAt() - 26) + number),
-    letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt()
+    letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt(),
+
+    groupsInRange(range) {
+      let groups = []
+      for (let group = 6*range; group < 6*(range+1); group++) {
+        groups.push(group)
+      }
+      return groups
+    }
   }
 }
 </script>
