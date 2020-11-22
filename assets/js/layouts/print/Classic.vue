@@ -1,7 +1,10 @@
 <template>
-  <div v-if="collection && countryNames && publicationNames">
+  <div
+    v-if="collection && countryNames && publicationNames"
+    class="list"
+  >
     <div
-      v-for="country in countryCodes"
+      v-for="country in countryCodesSortedByName"
       :key="country"
     >
       <div class="country">
@@ -27,10 +30,15 @@ export default {
   computed: {
     ...mapState("coa", ["countryNames", "publicationNames"]),
     countryCodes() {
-      return [...new Set(this.collection.map(i => i.country))]
+      return this.collection && [...new Set(this.collection.map(i => i.country))]
+    },
+    countryCodesSortedByName() {
+      const vm = this
+      return this.countryCodes && this.countryNames && [...this.countryCodes]
+        .sort((countryCodeA, countryCodeB) => vm.countryNames[countryCodeA] < vm.countryNames[countryCodeB] ? -1 : 1)
     },
     publicationCodes() {
-      return [...new Set(this.collection.map(i => `${i.country}/${i.magazine}`))]
+      return this.collection && [...new Set(this.collection.map(i => `${i.country}/${i.magazine}`))]
     },
   },
 
@@ -66,6 +74,9 @@ export default {
 </script>
 
 <style>
+.list {
+  padding: 10px;
+}
 .country {
   font-weight: bold;
   font-style: italic;
