@@ -3,7 +3,7 @@
     id="logo_zone1"
     :class="classes"
   >
-    <a :href="username ? '/collection/show' : '/'">
+    <a :href="username ? $r('/collection/show') : '/'">
       <img
         :src="`${imagePath}/logo_small.png`"
         alt="DucksManager"

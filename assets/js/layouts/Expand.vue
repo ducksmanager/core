@@ -5,7 +5,7 @@
       show
     >
       {{ l10n.EXPLICATION_NOTATION_AUTEURS1 }}
-      <a href="/stats/authors">{{ l10n.EXPLICATION_NOTATION_AUTEURS2 }}</a>
+      <a :href="$r('/stats/authors')">{{ l10n.EXPLICATION_NOTATION_AUTEURS2 }}</a>
       {{ l10n.EXPLICATION_NOTATION_AUTEURS3 }}
       <br><br>
       {{ l10n.SUGGESTIONS_ACHATS_QUOTIDIENNES }}
@@ -39,7 +39,7 @@
       {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
       <span
         v-html="$t('AUCUN_AUTEUR_NOTE_2_REDIRECTION', [
-          `<a href='/stats/authors'>${l10n.AUTEURS_COURT}</a>`
+          `<a :href='${$r('/stats/authors')}'>${l10n.AUTEURS_COURT}</a>`
         ])"
       />
       {{ l10n.AUCUN_AUTEUR_NOTE_3 }}

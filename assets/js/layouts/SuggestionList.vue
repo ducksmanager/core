@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     <div v-if="!hasSuggestions">
       {{ l10n.AUCUNE_SUGGESTION }}
     </div>

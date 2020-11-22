@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     <Menu
       :title="l10n.GERER_COLLECTION"
       :root-path="'/collection'"

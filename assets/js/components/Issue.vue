@@ -2,7 +2,7 @@
   <div :class="{[`d-${noWrap ? 'inline' : 'block'}`]: true}">
     <a
       :class="{ clickable }"
-      :href="`/collection/show/${publicationcode}#${issuenumber}`"
+      :href="`${$r(`/collection/show/{publicationCode:${publicationcode}}`)}#${issuenumber}`"
     >
       <Condition
         v-if="!hideCondition"

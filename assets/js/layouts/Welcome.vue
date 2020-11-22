@@ -7,10 +7,7 @@
       id="discord"
       :style="{backgroundImage: `url('${imagePath}/discord.png')`}"
     >{{ l10n.REJOIGNEZ_NOUS }}</div></a>
-    <div
-      v-if="l10n"
-      class="showcase"
-    >
+    <div class="showcase">
       <h2>{{ l10n.BIENVENUE }}</h2>
       <h5>{{ l10n.ACCROCHE }}</h5>
       <b-row>
@@ -116,7 +113,7 @@
           size="xl"
           variant="success"
           class="no-border"
-          href="/signup"
+          :href="$r('/signup')"
         >
           {{ l10n.INSCRIVEZ_VOUS }}
         </b-btn>

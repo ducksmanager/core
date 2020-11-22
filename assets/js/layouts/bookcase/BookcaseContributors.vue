@@ -1,27 +1,25 @@
 <template>
-  <div v-if="l10n">
-    <div v-if="loading">
-      {{ l10n.CHARGEMENT }}
-    </div>
+  <div v-if="loading">
+    {{ l10n.CHARGEMENT }}
+  </div>
+  <div
+    v-else
+    id="contributors"
+  >
+    <h2>{{ l10n.INTRO_CONTRIBUTEURS_BIBLIOTHEQUE }}</h2>
     <div
-      v-else
-      id="contributors"
+      v-for="contributor in bookcaseContributorsSorted"
+      :key="JSON.stringify(contributor)"
+      class="contributor"
     >
-      <h2>{{ l10n.INTRO_CONTRIBUTEURS_BIBLIOTHEQUE }}</h2>
-      <div
-        v-for="contributor in bookcaseContributorsSorted"
-        :key="JSON.stringify(contributor)"
-        class="contributor"
-      >
-        <UserPopover
-          v-if="contributor.userId && stats[contributor.userId]"
-          :id="contributor.userId"
-          :stats="stats[contributor.userId]"
-          :points="points[contributor.userId]"
-        />
-        <div v-else-if="contributor.text">
-          {{ contributor.name }} {{ contributor.text }}
-        </div>
+      <UserPopover
+        v-if="contributor.userId && stats[contributor.userId]"
+        :id="contributor.userId"
+        :stats="stats[contributor.userId]"
+        :points="points[contributor.userId]"
+      />
+      <div v-else-if="contributor.text">
+        {{ contributor.name }} {{ contributor.text }}
       </div>
     </div>
   </div>

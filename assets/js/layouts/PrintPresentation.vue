@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     {{ l10n.IMPRESSION_COLLECTION_PRESENTATION_LISTES }}
     <ul>
       <li
@@ -30,7 +30,7 @@
           </li>
         </ul>
         <a
-          :href="`/print/${type.link}`"
+          :href="$r(`/print/{currentType:${type.link}}`)"
           target="_blank"
         >{{ l10n.IMPRESSION_COLLECTION_AVEC }} {{ l10n[type.name] }}</a>
         <br>

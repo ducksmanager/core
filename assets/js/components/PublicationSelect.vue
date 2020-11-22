@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     <b-select
       v-model="currentCountryCode"
       :options="countryNames"
@@ -17,7 +17,7 @@
     <b-btn
       v-if="!noButton"
       :disabled="!currentPublicationCode"
-      :href="`/collection/show/${currentPublicationCode}`"
+      :href="$r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
     >
       {{ l10n.OK }}
     </b-btn>

@@ -1,8 +1,5 @@
 <template>
-  <span
-    v-if="l10n"
-    :class="{dark}"
-  >
+  <span :class="{dark}">
     <b-badge
       v-if="kind"
       size="xl"

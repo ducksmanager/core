@@ -1,9 +1,9 @@
 <template>
-  <div v-if="l10n">
+  <div v-if="l10n && l10nRoutes">
     <table>
       <tr>
         <td>
-          <a href="/collection/show"><img
+          <a :href="$r('/collection/show')"><img
             id="logo"
             alt="logo"
             :src="`${imagePath}/logo_small.png`"

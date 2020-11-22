@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="l10n"
-    id="menu"
-  >
+  <div id="menu">
     <div id="medals_and_login">
       <div
         v-if="userPoints"
@@ -18,7 +15,7 @@
       <div id="login">
         <a
           id="logo_small"
-          :href="username ? '/collection/show' : '/'"
+          :href="username ? $r('/collection/show') : '/'"
         >
           <img :src="`${imagePath}/logo_name.jpg`">
         </a>

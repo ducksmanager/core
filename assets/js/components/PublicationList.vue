@@ -34,12 +34,13 @@
           <b-dropdown-item
             v-for="publicationCode in getSortedPublications(country)"
             :key="publicationCode"
-            :href="`/collection/show/${publicationCode}`"
+            :href-l10n="`/collection/show/${publicationCode}`"
+            :href="$r(`/collection/show/{publicationCode:${publicationCode}}`)"
           >
             {{ publicationNames[publicationCode] || publicationCode.split('/')[1] }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
-        <b-nav-item href="/collection/show/new">
+        <b-nav-item :href="$r('/collection/show/{publicationCode:new}')">
           {{ l10n.NOUVEAU_MAGAZINE }}
         </b-nav-item>
       </b-navbar-nav>

@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="l10n"
-    id="footer"
-  >
+  <div id="footer">
     <div
       v-show="userCount"
       id="user_count"
@@ -20,17 +17,14 @@
       {{ l10n.LICENCE_INDUCKS3 }}
     </div>
     <div id="flags">
-      <a
+      <img
         v-for="locale in locales"
         :key="locale.key"
         class="flag"
-        :href="getLocalizedUrl(locale.key)"
+        :src="`${imagePath}/flags/xl/${locale.flagName}.png`"
+        :alt="locale.name"
+        @click="reloadWithLocale(locale.key)"
       >
-        <img
-          :src="`${imagePath}/flags/xl/${locale.flagName}.png`"
-          :alt="locale.name"
-        >
-      </a>
     </div>
   </div>
 </template>
@@ -69,10 +63,9 @@ export default {
   },
 
   methods: {
-    getLocalizedUrl: localeKey => {
-      const params = new URLSearchParams(window.location.search)
-      params.set('locale', localeKey)
-      return window.location.href.replace(/(\?|$).*$/, `?${params.toString()}`)
+    reloadWithLocale: async localeKey => {
+      await axios.post(`/locale/${localeKey}`)
+      window.location.replace(window.location.href)
     }
   }
 }
@@ -101,11 +94,6 @@ export default {
 
 #flags {
   margin: 20px;
-
-  a.flag,
-  a.flag:HOVER,
-  a img {
-    border: 0 !important;
-  }
+  cursor: pointer;
 }
 </style>

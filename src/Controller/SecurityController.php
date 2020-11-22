@@ -61,7 +61,11 @@ class SecurityController extends PageSiteController
     }
 
     /**
-     * @Route("/logout", name="app_logout")
+     * @Route({
+     *     "en": "/logout",
+     *     "fr": "/deconnexion"
+     * },
+     * name="app_logout")
      */
     public function logout()
     {

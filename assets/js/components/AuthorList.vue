@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     <b-alert
       v-if="!watchedAuthors.length"
       show
@@ -17,7 +17,7 @@
       <h5>{{ l10n.LISTE_AUTEURS_INTRO }}</h5>
       <p>
         {{ l10n.AUTEURS_FAVORIS_INTRO_1 }}
-        <a href="/expand">{{ l10n.AUTEURS_FAVORIS_INTRO_2 }}</a>
+        <a :href="$r('/expand')">{{ l10n.AUTEURS_FAVORIS_INTRO_2 }}</a>
       </p>
       <div v-if="personNames">
         <b-row
