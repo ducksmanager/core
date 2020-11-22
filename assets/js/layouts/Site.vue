@@ -1,7 +1,7 @@
 <template>
   <div v-if="l10n">
     <LeftPanel />
-    <Banner :classes="{'d-none d-md-block': true}" />
+    <Banner :classes="{'d-none d-md-flex': true}" />
     <div id="logo_zone2">
       <h2 v-if="title">
         {{ title }}
