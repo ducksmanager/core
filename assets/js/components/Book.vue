@@ -63,7 +63,7 @@
         <div
           v-for="({position, url}, index) in pagesWithUrl"
           :key="`page-${position}`"
-          class="page"
+          :class="{page: true, single: isSinglePageWithUrl}"
         >
           <div
             v-if="index === 0"
@@ -131,6 +131,10 @@ export default {
 
   computed: {
     ...mapState("coa", ["publicationNames", "issueDetails"]),
+
+    isSinglePageWithUrl() {
+      return this.pagesWithUrl.length === 1;
+    },
 
     edgeUrl() {
       return `${EDGES_BASE_URL}${this.publicationCode.replace('/', '/gen/')}.${this.issueNumber}.png`
@@ -393,6 +397,11 @@ export default {
     &.page-cover {
       background-color: hsl(35, 45, 80);
       color: hsl(35, 35, 35);
+    }
+
+    &.single {
+      left: initial !important;
+      right: 0 !important;
     }
   }
 }
