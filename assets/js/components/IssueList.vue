@@ -95,14 +95,14 @@
                   @click.prevent="false"
                 >
               </div>
-              <div
+              <Condition
                 v-if="condition"
+                :publicationcode="publicationcode"
+                :issuenumber="issueNumber"
                 :class="{
                   'issue-details': true,
                   'issue-condition': true
                 }"
-                :style="{backgroundColor: conditions.find(({value}) => value === condition).color}"
-                :title="l10n[`ETAT_${conditions.find(({value}) => value === condition).dbValue.toUpperCase()}`]"
               />
               <div
                 v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
@@ -187,10 +187,12 @@ import collectionMixin from "../mixins/collectionMixin";
 import Country from "./Country";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
+import Condition from "./Condition";
 
 export default {
   name: "IssueList",
   components: {
+    Condition,
     Book,
     Country,
     ContextMenu,
