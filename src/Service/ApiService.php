@@ -5,6 +5,7 @@ namespace App\Service;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\Exception\ClientException;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -16,18 +17,18 @@ class ApiService
 {
     private HttpClientInterface $client;
     private LoggerInterface $logger;
-    private UserService $userService;
+    private Security $security;
 
     private const CHUNKABLE_URLS = [
         '/coa/list/countries' => 50,
         '/coa/list/publications' => 10
     ];
 
-    public function __construct(HttpClientInterface $client, LoggerInterface $logger, UserService $userService)
+    public function __construct(HttpClientInterface $client, LoggerInterface $logger, Security $security)
     {
         $this->client = $client;
         $this->logger = $logger;
-        $this->userService = $userService;
+        $this->security = $security;
     }
 
     /**
@@ -58,8 +59,8 @@ class ApiService
                     'Content-Type: application/x-www-form-urlencoded',
                     'Cache-Control: no-cache',
                     'x-dm-version: 1.0',
-                    'x-dm-user: '.($userCredentials['dm-user'] ?? $this->userService->getCurrentUsername()),
-                    'x-dm-pass: '.($userCredentials['dm-pass'] ?? $this->userService->getCurrentPassword()),
+                    'x-dm-user: '.($userCredentials['dm-user'] ?? $this->security->getUser()->getUsername()),
+                    'x-dm-pass: '.($userCredentials['dm-pass'] ?? $this->security->getUser()->getPassword()),
                 ],
                 'body' => $method === 'GET' ? null : $parameters
             ]

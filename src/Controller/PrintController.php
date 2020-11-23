@@ -19,12 +19,12 @@ class PrintController extends AbstractController
      *     requirements={"type"="^(?P<print_type_regex>classic|collectable|test)$"}
      * )
      */
-    public function print(UserService $userService, TranslatorInterface $translator, string $currentType): Response
+    public function print(TranslatorInterface $translator, string $currentType): Response
     {
         return $this->render("bare.twig", [
             'bodyClass' => 'no-padding',
             'title' => $translator->trans('IMPRESSION_COLLECTION'),
-            'username' => $userService->getCurrentUsername(),
+            'username' => $this->getUser()->getUsername(),
             'vueProps' => ['component' => 'Print', 'current-type' => $currentType]
         ]);
     }

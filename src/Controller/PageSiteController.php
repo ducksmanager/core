@@ -20,13 +20,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PageSiteController extends AbstractController
 {
-    var UserService $userService;
     var RouterInterface $router;
     var LoggerInterface $logger;
 
-    public function __construct(UserService $userService, RouterInterface $router, LoggerInterface $logger)
+    public function __construct(RouterInterface $router, LoggerInterface $logger)
     {
-        $this->userService = $userService;
         $this->router = $router;
         $this->logger = $logger;
     }
