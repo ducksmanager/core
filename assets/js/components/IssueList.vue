@@ -58,7 +58,6 @@
               preselected: preselected.includes(issueNumber),
               selected: selected.includes(issueNumber)
             }"
-            :title="`${l10n.NUMERO_COURT}${issueNumber}`"
             @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = i"
             @mouseup.self.left="updateSelected"
             @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : i"
@@ -68,7 +67,6 @@
               v-once
               :publication-code="publicationcode"
               :issue-number="issueNumber"
-              placement="right"
             >
               <img
                 class="preview"

@@ -1,12 +1,13 @@
 <template>
   <span v-if="l10n">
     <span :id="id">
-      <slot />
+      &nbsp;<slot />
     </span>
     <b-popover
       :target="id"
-      :placement="placement"
-      triggers="hover focus"
+      placement="right"
+      triggers="hover"
+      :delay="0"
       @show="loadIssueUrls"
     >
       <template #title>
@@ -27,6 +28,7 @@
         :src="coverUrl"
         class="cover"
       >
+      <span v-else>{{ l10n.AUCUNE_COUVERTURE }}</span>
     </b-popover>
   </span>
 </template>
@@ -50,10 +52,6 @@ export default {
     issueNumber: {
       type: String,
       required: true
-    },
-    placement: {
-      type: String,
-      required: true
     }
   },
 
@@ -66,7 +64,7 @@ export default {
     ...mapState("coa", ["publicationNames", "issueDetails"]),
 
     id() {
-      return `issue-details-${this.publicationCode}-${this.issueNumber}`
+      return `issue-details-${this.publicationCode.replace('/', '-')}-${this.issueNumber}`
     },
 
     issueCode() {
