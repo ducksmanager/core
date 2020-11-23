@@ -48,6 +48,7 @@ ATTENTION_EMAIL_VIDE_ACHAT: Afin de pouvoir contacter les utilisateurs qui propo
 ATTENTION_VENTE_SANS_EMAIL: Attention ! Votre collection contient des numéros à vendre mais vous n'avez pas indiqué votre adresse e-mail dans la page 
 AU: au
 AUCUNE_ACQUISITION: Aucune acquisition enregistrée
+AUCUNE_COUVERTURE: La couverture de ce numéro n'est pas disponible
 AUCUNE_DATE_ACQUISITION: Vous n'avez entré aucune date d'acquisition pour le moment
 AUCUNE_NOTE: Aucune note
 AUCUN_NUMERO_INDUCKS: DucksManager n'a trouvé aucun numéro dans votre compte Inducks !

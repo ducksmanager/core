@@ -48,6 +48,7 @@ ATTENTION_EMAIL_VIDE_ACHAT: In order to contact the users who want to sell of th
 ATTENTION_VENTE_SANS_EMAIL: Warning! Your collection contains some issues that you want to sell, but you haven't specified any email address to which potential buyers can contact you. You can specify one on the page
 AU: to
 AUCUNE_ACQUISITION: No saved purchase
+AUCUNE_COUVERTURE: We don't have any cover of this book
 AUCUNE_DATE_ACQUISITION: You haven't added any purchase date for the moment
 AUCUNE_NOTE: No scoring
 AUCUN_NUMERO_INDUCKS: DucksManager didn't find any issue in your Inducks account!
