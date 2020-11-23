@@ -88,7 +88,7 @@
           :class="{item: true, selected: currentPurchaseId === purchaseId, 'purchase-date': true}"
           class="item purchase-date"
           :style="id === 'do_not_change' ? {} : {backgroundImage: `url(${imagePath}/icons/purchase-link.png`}"
-          @click="currentPurchaseId = purchaseId"
+          @click.stop="currentPurchaseId = purchaseId"
         >
           <b>{{ description }}</b><br>{{ date }}
         </li>
