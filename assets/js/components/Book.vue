@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="l10n"
     class="fixed-container"
     @click.self="closeBook()"
   >

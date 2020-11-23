@@ -1,8 +1,5 @@
 <template>
-  <form
-    v-if="l10n"
-    method="post"
-  >
+  <form method="post">
     <h1 class="h3 mb-3 font-weight-normal">
       {{ l10n.CONNEXION }}
     </h1>
@@ -44,7 +41,7 @@
       {{ l10n.CONNEXION }}
     </b-btn>
     <div>
-      <a href="/forgot">{{ l10n.MOT_DE_PASSE_OUBLIE }}</a>
+      <a :href="$r('/forgot')">{{ l10n.MOT_DE_PASSE_OUBLIE }}</a>
     </div>
   </form>
 </template>

@@ -1,7 +1,8 @@
 import {mapActions, mapState} from "vuex";
 
+const PATH_REGEX = /{([^:]+)(?::([^}]+))?}/g
 export default {
-    computed: mapState("l10n", ["l10n"]),
+    computed: mapState("l10n", ["l10n", "l10nRoutes"]),
 
     async mounted() {
         await this.loadL10n()
@@ -23,6 +24,23 @@ export default {
                 } else break;
             }
             return translation
+        },
+
+        $r(route) {
+            const routes = this.l10nRoutes
+            const routeName = routes[route.replaceAll(PATH_REGEX, '{$1}')]
+            const routeL10n = routes[routeName]
+            if (!routeL10n) {
+                return route
+            }
+            let finalRoute = routeL10n[window.locale];
+            [...(route.matchAll(PATH_REGEX))].forEach(([_, key, value]) => {
+                finalRoute = finalRoute.replace(`{${key}}`, value)
+            })
+
+            // Remove all remaining (default) parameters
+            finalRoute = finalRoute.replaceAll(PATH_REGEX, '').replace(/\/$/, '')
+            return finalRoute
         },
 
         ucFirst: string => string[0].toUpperCase() + string.substr(1)

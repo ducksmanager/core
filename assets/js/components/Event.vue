@@ -16,7 +16,7 @@
     </template>
     <template v-if="event.type === 'bookstore'">
       {{ l10n.NEWS_A_AJOUTE_BOUQUINERIE }}
-      <i><a href="/bookstores">{{ event.nom_bouquinerie }}</a></i>
+      <i><a :href="$r('/bookstores')">{{ event.nom_bouquinerie }}</a></i>
     </template>
     <template v-if="event.type === 'collection_update'">
       {{ l10n.NEWS_A_AJOUTE }}

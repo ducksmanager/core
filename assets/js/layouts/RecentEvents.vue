@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="l10n"
-    id="recently"
-  >
+  <div id="recently">
     <h4>{{ l10n.NEWS_TITRE }}</h4>
     <div id="events">
       <template v-if="isLoaded">

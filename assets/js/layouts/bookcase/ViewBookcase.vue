@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     <div v-if="!isSharedBookcase">
       <div
         v-if="lastPublishedEdgesForCurrentUser && lastPublishedEdgesForCurrentUser.length"
@@ -23,7 +23,7 @@
       <b-alert
         variant="info"
         show
-        v-html="$t('EXPLICATION_ORDRE_MAGAZINES', [`<a href='/bookcase/options'>${l10n.BIBLIOTHEQUE_OPTIONS_COURT}</a>`])"
+        v-html="$t('EXPLICATION_ORDRE_MAGAZINES', [`<a href='${$r('/bookcase/options')}'>${l10n.BIBLIOTHEQUE_OPTIONS_COURT}</a>`])"
       />
       <div
         v-if="user && user.isShareEnabled && username !== 'demo'"
@@ -32,7 +32,7 @@
         <b-alert
           variant="info"
           show
-          v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE', [`<a href='/collection/account'>${l10n.GESTION_COMPTE_COURT}</a>`])"
+          v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE', [`<a href='${$r('/collection/account')}'>${l10n.GESTION_COMPTE_COURT}</a>`])"
         />
         <SharePage
           v-if="showShareButtons"
@@ -51,7 +51,7 @@
         v-else-if="username !== 'demo'"
         show
         variant="warning"
-        v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE', [`<a href='/collection/account'>${l10n.GESTION_COMPTE_COURT}</a>`])"
+        v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE', [`<a href='${$r('/collection/account')}'>${l10n.GESTION_COMPTE_COURT}</a>`])"
       />
     </div>
     <div v-if="percentVisible !== null">

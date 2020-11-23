@@ -1,14 +1,18 @@
 <template>
   <b-nav-item
-    :href="active ? '#' : rootPath+path"
+    :href="active ? '#' : $r(rootPath+path)"
     :active="active"
   >
     <span v-html="text" />
   </b-nav-item>
 </template>
 <script>
+import l10nMixin from "../mixins/l10nMixin";
+
 export default {
   name: "MenuItem",
+
+  mixins: [l10nMixin],
 
   props: {
     rootPath: {

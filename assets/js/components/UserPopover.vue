@@ -35,7 +35,7 @@
           size="xs"
           variant="outline-secondary"
           target="_blank"
-          :href="`/bookcase/show/${stats.username}`"
+          :href="$r(`/bookcase/show/{username:${stats.username}}`)"
         >
           {{ l10n.VOIR_BIBLIOTHEQUE }}
         </b-button>

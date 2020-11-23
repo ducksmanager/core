@@ -26,7 +26,7 @@
         />
       </template>
       <template #footer>
-        <div><a href="/expand">{{ l10n.SUGGESTIONS_SEE_ALL }}</a></div>
+        <div><a :href="$r('/expand')">{{ l10n.SUGGESTIONS_SEE_ALL }}</a></div>
       </template>
     </Accordion>
     <Accordion

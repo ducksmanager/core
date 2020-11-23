@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     <b-jumbotron v-if="!username">
       <div id="dm-loves-inducks">
         <div
@@ -32,14 +32,14 @@
         <b-btn
           size="lg"
           variant="primary"
-          href="/signup"
+          :href="$r('/signup')"
         >
           {{ l10n.INSCRIPTION }}
         </b-btn>
         <b-btn
           size="lg"
           variant="primary"
-          href="/login"
+          :href="$r('/login')"
         >
           {{ l10n.CONNEXION }}
         </b-btn>

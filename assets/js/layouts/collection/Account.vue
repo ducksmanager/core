@@ -127,14 +127,14 @@ export default {
     async emptyCollection() {
       if (confirm(this.l10n.VIDER_LISTE_CONFIRMATION)) {
         await axios.delete(`/collection`)
-        window.location.replace('/collection/show')
+        window.location.replace(this.$r('/collection/show'))
       }
     },
 
     async deleteAccount() {
       if (confirm(this.l10n.SUPPRIMER_COMPTE_CONFIRMATION)) {
         await axios.post(`/collection/empty`)
-        window.location.replace('/logout')
+        window.location.replace(this.$r('/logout'))
       }
     }
   },

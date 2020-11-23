@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="l10n"
-    class="progress-wrapper"
-  >
+  <div class="progress-wrapper">
     <Medal
       class="left"
       x-small
@@ -39,6 +36,7 @@
 import Medal from "./Medal";
 import medalMixin from "../mixins/medalMixin";
 import l10nMixin from "../mixins/l10nMixin";
+
 export default {
   name: "MedalProgress",
   components: {Medal},

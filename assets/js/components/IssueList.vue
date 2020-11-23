@@ -1,176 +1,176 @@
 <template>
-  <div v-if="l10n">
-    <div v-if="publicationName">
-      <Country :country="country" />
-      <span class="publication-title">{{ publicationName }}</span>
-      <div v-if="issues">
-        <div class="issue-filter">
-          <table>
-            <tr
-              v-for="conditionFilter in ['possessed', 'missing']"
-              :key="conditionFilter"
-            >
-              <td>
-                <input
-                  :id="`show-${conditionFilter}`"
-                  v-model="filter[conditionFilter]"
-                  type="checkbox"
-                >
-              </td>
-              <td>
-                <label :for="`show-${conditionFilter}`">
-                  <template v-if="conditionFilter === 'possessed'">{{ l10n.AFFICHER_NUMEROS_POSSEDES }}</template>
-                  <template v-else-if="conditionFilter === 'missing'">{{ l10n.AFFICHER_NUMEROS_MANQUANTS }}</template>
-                  ({{
-                    issues.filter(issue => conditionFilter === 'possessed' ? issue.condition : !issue.condition).length
-                  }})
-                </label>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div
-          class="issue-list"
-          @contextmenu.prevent="$refs.contextMenu.$refs.menu.open"
-        >
-          <b-alert
-            v-once
-            show
-            variant="info"
-            style="margin-bottom: 0"
+  <div v-if="publicationName">
+    <Country :country="country" />
+    <span class="publication-title">{{ publicationName }}</span>
+    <div v-if="issues">
+      <div class="issue-filter">
+        <table>
+          <tr
+            v-for="conditionFilter in ['possessed', 'missing']"
+            :key="conditionFilter"
           >
-            {{ l10n.INFO_AJOUT_NUMEROS_1 }}
-            <span v-if="isTouchScreen">{{ l10n.INFO_AJOUT_NUMEROS_2_MOBILE }}</span>
-            <span v-else>{{ l10n.INFO_AJOUT_NUMEROS_2_DESKTOP }}</span>
-          </b-alert>
-          <Book
-            v-if="currentIssueOpened"
-            :publication-code="currentIssueOpened.publicationcode"
-            :issue-number="currentIssueOpened.issueNumber"
-            @close-book="currentIssueOpened = null"
-          />
-          <div
-            v-for="({issueNumber, title, condition, purchaseId, isToSell}, i) in filteredIssues"
-            :key="issueNumber"
-            :class="{
-              issue: true,
-              [`issue-${condition ? 'possessed' : 'missing'}`]: true,
-              preselected: preselected.includes(issueNumber),
-              selected: selected.includes(issueNumber)
-            }"
-            @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = i"
-            @mouseup.self.left="updateSelected"
-            @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : i"
-          >
-            <a :name="issueNumber" />
-            <IssueDetailsPopover
-              v-once
-              :publication-code="publicationcode"
-              :issue-number="issueNumber"
-            >
-              <img
-                class="preview"
-                :src="`${imagePath}/icons/view.png`"
-                :alt="l10n.VOIR"
-                @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
+            <td>
+              <input
+                :id="`show-${conditionFilter}`"
+                v-model="filter[conditionFilter]"
+                type="checkbox"
               >
-            </IssueDetailsPopover>
-            <span
-              v-once
-              class="issue-text"
+            </td>
+            <td>
+              <label :for="`show-${conditionFilter}`">
+                <template v-if="conditionFilter === 'possessed'">{{ l10n.AFFICHER_NUMEROS_POSSEDES }}</template>
+                <template v-else-if="conditionFilter === 'missing'">{{ l10n.AFFICHER_NUMEROS_MANQUANTS }}</template>
+                ({{
+                  issues.filter(issue => conditionFilter === 'possessed' ? issue.condition : !issue.condition).length
+                }})
+              </label>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div
+        class="issue-list"
+        @contextmenu.prevent="$refs.contextMenu.$refs.menu.open"
+      >
+        <b-alert
+          v-once
+          show
+          variant="info"
+          style="margin-bottom: 0"
+        >
+          {{ l10n.INFO_AJOUT_NUMEROS_1 }}
+          <span v-if="isTouchScreen">{{ l10n.INFO_AJOUT_NUMEROS_2_MOBILE }}</span>
+          <span v-else>{{ l10n.INFO_AJOUT_NUMEROS_2_DESKTOP }}</span>
+        </b-alert>
+        <Book
+          v-if="currentIssueOpened"
+          :publication-code="currentIssueOpened.publicationcode"
+          :issue-number="currentIssueOpened.issueNumber"
+          @close-book="currentIssueOpened = null"
+        />
+        <div
+          v-for="({issueNumber, title, condition, purchaseId, isToSell}, i) in filteredIssues"
+          :key="issueNumber"
+          :class="{
+            issue: true,
+            [`issue-${condition ? 'possessed' : 'missing'}`]: true,
+            preselected: preselected.includes(issueNumber),
+            selected: selected.includes(issueNumber)
+          }"
+          :name="issueNumber"
+          @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = i"
+          @mouseup.self.left="updateSelected"
+          @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : i"
+        >
+          <a :name="issueNumber" />
+          <IssueDetailsPopover
+            v-once
+            :publication-code="publicationcode"
+            :issue-number="issueNumber"
+            placement="right"
+          >
+            <img
+              class="preview"
+              :src="`${imagePath}/icons/view.png`"
+              :alt="l10n.VOIR"
+              @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
             >
-              {{ l10n.NUMERO_COURT }}{{ issueNumber }}
-              <span class="issue-title">{{ title }}</span>
-            </span>
-            <div
-              class="issue-details-wrapper"
-            >
-              <div class="issue-details">
-                <input
-                  type="checkbox"
-                  disabled
-                  :checked="selected.includes(issueNumber)"
-                  @click.prevent="false"
-                >
-              </div>
-              <Condition
-                v-if="condition"
-                :publicationcode="publicationcode"
-                :issuenumber="issueNumber"
-                :class="{
+          </IssueDetailsPopover>
+          <span
+            v-once
+            class="issue-text"
+          >
+            {{ l10n.NUMERO_COURT }}{{ issueNumber }}
+            <span class="issue-title">{{ title }}</span>
+          </span>
+          <div
+            class="issue-details-wrapper"
+          >
+            <div class="issue-details">
+              <input
+                type="checkbox"
+                disabled
+                :checked="selected.includes(issueNumber)"
+                @click.prevent="false"
+              >
+            </div>
+            <Condition
+              v-if="condition"
+              :publicationcode="publicationcode"
+              :issuenumber="issueNumber"
+              :class="{
                   'issue-details': true,
                   'issue-condition': true
                 }"
-              />
-              <div
-                v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
-                v-once
-                class="issue-details issue-date"
+            />
+            <div
+              v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
+              v-once
+              class="issue-details issue-date"
+            >
+              <img
+                :src="`${imagePath}/icons/date.png`"
+                :title="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`"
+                :alt="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`"
               >
-                <img
-                  :src="`${imagePath}/icons/date.png`"
-                  :title="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`"
-                  :alt="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`"
-                >
-              </div>
-              <div
-                v-else
-                v-once
-                class="issue-details"
-              />
-              <div class="issue-details">
-                <img
-                  v-if="isToSell"
-                  height="16px"
-                  :src="`${imagePath}/icons/for_sale.png`"
-                  :alt="l10n.A_VENDRE"
-                  :title="l10n.A_VENDRE"
-                >
-              </div>
+            </div>
+            <div
+              v-else
+              v-once
+              class="issue-details"
+            />
+            <div class="issue-details">
+              <img
+                v-if="isToSell"
+                height="16px"
+                :src="`${imagePath}/icons/for_sale.png`"
+                :alt="l10n.A_VENDRE"
+                :title="l10n.A_VENDRE"
+              >
             </div>
           </div>
         </div>
-        <ContextMenu
-          v-if="purchases"
-          ref="contextMenu"
-          :publication-code="publicationcode"
-          :selected-issues="selected"
-          :purchases="purchases"
-          @update-issues="updateIssues"
-          @create-purchase="createPurchase"
-        />
       </div>
-      <div v-else-if="loading">
-        {{ l10n.LOADING }}
-      </div>
+      <ContextMenu
+        v-if="purchases"
+        ref="contextMenu"
+        :publication-code="publicationcode"
+        :selected-issues="selected"
+        :purchases="purchases"
+        @update-issues="updateIssues"
+        @create-purchase="createPurchase"
+      />
     </div>
-    <div v-else-if="!publicationNameLoading">
-      <b-alert
-        variant="danger"
-        show
-      >
-        {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split('/')[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{ country }})
-        <br>
-        <br>
-        <div v-if="userIssuesForPublication.length">
-          {{ l10n.QUESTION_SUPPRIMER_MAGAZINE }}
-          <ul>
-            <li
-              v-for="issue in userIssuesForPublication"
-              :key="issue.issueNumber"
-            >
-              {{ issue.issueNumber }}
-            </li>
-          </ul>
-          <b-btn
-            variant="danger"
-            @click="deletePublicationIssues"
+    <div v-else-if="loading">
+      {{ l10n.LOADING }}
+    </div>
+  </div>
+  <div v-else-if="!publicationNameLoading">
+    <b-alert
+      variant="danger"
+      show
+    >
+      {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split('/')[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{ country }})
+      <br>
+      <br>
+      <div v-if="userIssuesForPublication.length">
+        {{ l10n.QUESTION_SUPPRIMER_MAGAZINE }}
+        <ul>
+          <li
+            v-for="issue in userIssuesForPublication"
+            :key="issue.issueNumber"
           >
-            {{ l10n.SUPPRIMER }}
-          </b-btn>
-        </div>
-      </b-alert>
-    </div>
+            {{ issue.issueNumber }}
+          </li>
+        </ul>
+        <b-btn
+          variant="danger"
+          @click="deletePublicationIssues"
+        >
+          {{ l10n.SUPPRIMER }}
+        </b-btn>
+      </div>
+    </b-alert>
   </div>
 </template>
 

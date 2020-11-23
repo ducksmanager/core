@@ -2,7 +2,7 @@
   <div :class="{[`d-${noWrap ? 'inline' : 'block'}`]: true}">
     <a
       :class="{ clickable }"
-      :href="`/collection/show/${publicationcode}#${issuenumber}`"
+      :href="`${$r(`/collection/show/{publicationCode:${publicationcode}}`)}#${issuenumber}`"
     >
       <Condition
         v-if="!hideCondition"
@@ -21,10 +21,12 @@
 <script>
 import Publication from "./Publication";
 import Condition from "./Condition";
+import l10nMixin from "../mixins/l10nMixin";
 
 export default {
   name: "Issue",
   components: {Condition, Publication},
+  mixins: [l10nMixin],
   props: {
     publicationcode: {type: String, required: true},
     publicationname: {type: String, required: true},

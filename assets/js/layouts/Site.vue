@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div v-if="l10n && l10nRoutes">
     <LeftPanel />
     <Banner :classes="{'d-none d-md-flex': true}" />
     <div id="logo_zone2">

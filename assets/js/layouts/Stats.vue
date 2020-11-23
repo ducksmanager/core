@@ -17,7 +17,7 @@
       variant="info"
     >
       {{ l10n.AUCUN_NUMERO_POSSEDE_1 }}
-      <a href="/collection/show">{{ l10n.ICI }}</a>
+      <a :href="$r('/collection/show')">{{ l10n.ICI }}</a>
       {{ l10n.AUCUN_NUMERO_POSSEDE_2 }}
     </b-alert>
     <PublicationStats v-if="tab === 'publications'" />
@@ -77,9 +77,9 @@
         <div>{{ l10n.EXPLICATION_GRAPH_ACHATS_1 }}</div>
         <div v-html="l10n.EXPLICATION_GRAPH_ACHATS_2" />
         <div>{{ l10n.EXPLICATION_GRAPH_ACHATS_3 }}</div>
-        <div v-html="$t('EXPLICATION_GRAPH_ACHATS_4', [`<a href='/collection/show'>${l10n.GERER_COLLECTION}</a>`]) " />
+        <div v-html="$t('EXPLICATION_GRAPH_ACHATS_4', [`<a href='${$r('/collection/show')}'>${l10n.GERER_COLLECTION}</a>`]) " />
         <div v-if="purchases && !purchases.length">
-          <a href="/collection/show">
+          <a :href="$r('/collection/show')">
             <img
               style="height: 300px"
               alt="demo"

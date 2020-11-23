@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n">
+  <div>
     {{ l10n.INTRO_BOUQUINERIES }}
     <br><br>
     <div v-if="!bookstores.length">

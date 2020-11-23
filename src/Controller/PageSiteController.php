@@ -6,10 +6,13 @@ use App\Entity\Account;
 use App\Security\User;
 use App\Service\ApiService;
 use App\Service\UserService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -18,10 +21,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PageSiteController extends AbstractController
 {
     var UserService $userService;
+    var RouterInterface $router;
+    var LoggerInterface $logger;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, RouterInterface $router, LoggerInterface $logger)
     {
         $this->userService = $userService;
+        $this->router = $router;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,24 +39,86 @@ class PageSiteController extends AbstractController
         return parent::getUser();
     }
 
+    /**
+     * @Route("/routes",
+     *     methods={"GET"}
+     * )
+     */
+    public function getRouteTranslations(): JsonResponse
+    {
+        $allRoutes = $this->router->getRouteCollection()->all();
+        return new JsonResponse(
+            array_reduce(array_keys($allRoutes), function (array $acc, string $routeName) use ($allRoutes) {
+                [$routeNameWithoutLocale, $routeLocale] = explode('.', $routeName) + [null, null];
+                if (strpos($routeNameWithoutLocale, 'app_') !== 0) {
+                    return $acc;
+                }
+                $route = $allRoutes[$routeName];
+                $path = $route->getPath();
+                if (!isset($acc[$routeNameWithoutLocale])) {
+                    $acc[$routeNameWithoutLocale] = [
+                        'fr' => $path,
+                        'en' => $path,
+                    ];
+                }
+                if (isset($routeLocale)) {
+                    $acc[$routeNameWithoutLocale][$routeLocale] = $path;
+                }
+                $acc[$path] = $routeNameWithoutLocale;
+                foreach(array_keys($route->getDefaults()) as $routeDefault) {
+                    // FIXME we will have issues when routes contain multiple defaults
+                    $this->logger->info($routeDefault);
+                    $acc[str_replace("/{{$routeDefault}}", "", $path)] = $routeNameWithoutLocale;
+                }
+                return $acc;
+            }, [])
+        );
+    }
+
+    /**
+     * @Route("/locale/{_locale}",
+     *     methods={"POST"}
+     * )
+     */
+    public function switchLocale(Request $request, LoggerInterface $logger, string $_locale): Response
+    {
+        $logger->info($request->getSession()->get('_locale'));
+        $request->getSession()->set('_locale', $_locale);
+        $logger->info($request->getSession()->get('_locale'));
+        return new Response();
+    }
 
     protected function renderSitePage(string $title, string $page, array $vueProps = []): Response
     {
         return $this->render("bare.twig", [
             'title' => $title,
             'vueProps' => [
-                    'title' => $title,
-                    'component' => 'Site',
-                    'page' => $page,
-                    'username' => empty($this->getUser()) ? null : $this->getUser()->getUsername()
-                ] + $vueProps
+                'title' => $title,
+                'component' => 'Site',
+                'routes' => json_encode($this->getRouteTranslations()),
+                'page' => $page,
+                'username' => empty($this->getUser()) ? null : $this->getUser()->getUsername()
+            ] + $vueProps
         ]);
+    }
+
+    /**
+     * @Route("/",
+     *     methods={"GET"}
+     * )
+     */
+    public function showWelcome(): Response
+    {
+        return $this->renderSitePage(
+            '',
+            'Welcome'
+        );
     }
 
     /**
      * @Route({
      *     "en": "/bookcase/show/{username}",
-     *     "fr": "/bibliotheque/show/{username}"
+     *     "fr": "/bibliotheque/afficher/{username}"
      * },
      *     defaults={"username"=null},
      *     methods={"GET"}
@@ -220,22 +289,22 @@ class PageSiteController extends AbstractController
      *     defaults={"publicationCode"=null})
      * )
      */
-    public function showCollection(ApiService $apiService, TranslatorInterface $translator, ?string $publicationCode): Response
+    public function showCollection(LoggerInterface $logger, Request $request, ApiService $apiService, ?string $publicationCode): Response
     {
         $username = $this->getUser()->getUsername();
         if ($username === 'demo') {
             $apiService->call('/ducksmanager/resetDemo', 'admin', [], 'POST');
         }
-        return $this->render("bare.twig", [
-            'title' => $translator->trans('COLLECTION'),
-            'username' => $username,
-            'vueProps' => [
+        $logger->info($request->getLocale());
+        return $this->renderSitePage(
+            '',
+            'Collection', [
                 'component' => 'Site',
                 'page' => 'Collection',
                 'tab' => 'Manage',
                 'publicationcode' => $publicationCode
             ]
-        ]);
+        );
     }
 
     /**

@@ -1,6 +1,5 @@
 <template>
   <form
-    v-if="l10n"
     method="post"
     @submit.prevent="signup"
   >

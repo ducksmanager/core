@@ -1,69 +1,67 @@
 <template>
-  <div v-if="l10n">
-    <div v-if="loading">
-      {{ l10n.CHARGEMENT }}
-    </div>
+  <div v-if="loading">
+    {{ l10n.CHARGEMENT }}
+  </div>
+  <div
+    v-else
+    class="bookcase-options"
+  >
     <div
-      v-else
-      class="bookcase-options"
+      v-for="(l10nKey, textureType) in textureTypes"
+      :key="textureType"
     >
-      <div
-        v-for="(l10nKey, textureType) in textureTypes"
-        :key="textureType"
-      >
-        <h5>{{ l10n[l10nKey] }}</h5>
-        <b-dropdown v-model="bookcaseTextures[textureType]">
-          <template #button-content>
-            <div
-              class="selected"
-              :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures[textureType]}.jpg'`}"
-            >
-              {{ bookcaseTextures[textureType] }}
-            </div>
-          </template>
-          <b-dropdown-item
-            v-for="texture in textures"
-            :key="texture"
-            :style="{backgroundImage: `url('${imagePath}/textures/${texture}.jpg'`}"
-            @click="bookcaseTextures[textureType] = texture"
+      <h5>{{ l10n[l10nKey] }}</h5>
+      <b-dropdown v-model="bookcaseTextures[textureType]">
+        <template #button-content>
+          <div
+            class="selected"
+            :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures[textureType]}.jpg'`}"
           >
-            {{ texture.replace(/[^/]+\/ /, '') }}
-          </b-dropdown-item>
-        </b-dropdown>
-      </div>
-
-      <h5>{{ l10n.ORDRE_MAGAZINES }}</h5>
-
-      <SlickList
-        v-model="bookcaseOrder"
-        class="publication-order"
-        helper-class="dragging"
-      >
-        <SlickItem
-          v-for="(publicationCode, index) in bookcaseOrder"
-          :key="index"
-          :index="index"
+            {{ bookcaseTextures[textureType] }}
+          </div>
+        </template>
+        <b-dropdown-item
+          v-for="texture in textures"
+          :key="texture"
+          :style="{backgroundImage: `url('${imagePath}/textures/${texture}.jpg'`}"
+          @click="bookcaseTextures[textureType] = texture"
         >
-          <Publication
-            :publicationcode="publicationCode"
-            :publicationname="publicationNames[publicationCode]"
-          />
-        </SlickItem>
-      </SlickList>
-      <b-alert
-        variant="danger"
-        :show="error"
-      >
-        {{ l10n.ERREUR_GENERIQUE }}
-      </b-alert>
-      <b-btn
-        variant="success"
-        :disabled="loading"
-        @click="submit"
-      >
-        {{ l10n.VALIDER }}
-      </b-btn>
+          {{ texture.replace(/[^/]+\/ /, '') }}
+        </b-dropdown-item>
+      </b-dropdown>
     </div>
+
+    <h5>{{ l10n.ORDRE_MAGAZINES }}</h5>
+
+    <SlickList
+      v-model="bookcaseOrder"
+      class="publication-order"
+      helper-class="dragging"
+    >
+      <SlickItem
+        v-for="(publicationCode, index) in bookcaseOrder"
+        :key="index"
+        :index="index"
+      >
+        <Publication
+          :publicationcode="publicationCode"
+          :publicationname="publicationNames[publicationCode]"
+        />
+      </SlickItem>
+    </SlickList>
+    <b-alert
+      variant="danger"
+      :show="error"
+    >
+      {{ l10n.ERREUR_GENERIQUE }}
+    </b-alert>
+    <b-btn
+      variant="success"
+      :disabled="loading"
+      @click="submit"
+    >
+      {{ l10n.VALIDER }}
+    </b-btn>
   </div>
 </template>
 

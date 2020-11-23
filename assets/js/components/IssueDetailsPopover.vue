@@ -1,5 +1,5 @@
 <template>
-  <span v-if="l10n">
+  <span>
     <span :id="id">
       &nbsp;<slot />
     </span>

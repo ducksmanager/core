@@ -47,6 +47,7 @@ import {mapMutations, mapState} from "vuex";
 import * as axios from "axios";
 import IssueEdgePopover from "./IssueEdgePopover";
 import Issue from "./Issue";
+import l10nMixin from "../mixins/l10nMixin";
 
 const EDGES_ROOT = 'https://edges.ducksmanager.net/edges/'
 const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
@@ -54,6 +55,7 @@ const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
 export default {
   name: "Edge",
   components: {Issue, IssueEdgePopover},
+  mixins: [l10nMixin],
   props: {
     publicationCode: {
       type: String,
@@ -203,6 +205,7 @@ export default {
   display: inline-block;
   visibility: hidden;
   background-color: white;
+  margin-top: 20px;
 
   &:not(.visible-book)::after {
     position: absolute;

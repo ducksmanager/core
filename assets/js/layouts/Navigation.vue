@@ -1,6 +1,5 @@
 <template>
   <ul
-    v-if="l10n"
     id="menu-content"
     class="menu-content collapse show"
   >
