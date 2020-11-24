@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import Issue from "./Issue";
 import l10nMixin from "../mixins/l10nMixin";
 import MedalProgress from "./MedalProgress";
 import {mapGetters, mapState} from "vuex";

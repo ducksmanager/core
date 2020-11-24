@@ -2,18 +2,11 @@
 
 namespace App\Controller;
 
-use App\Security\User;
 use App\Service\ApiService;
-use App\Service\CollectionService;
-use App\Service\UserService;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BookstoreController extends AbstractController
 {

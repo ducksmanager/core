@@ -48,6 +48,9 @@ export default {
     setIssueNumbers(state, issueNumbers) {
       state.issueNumbers = issueNumbers
     },
+    addIssueNumbers(state, issueNumbers) {
+      state.issueNumbers = {...state.issueNumbers, ...issueNumbers}
+    },
     setIssueDetails(state, {issueCode, issueDetails}) {
       Vue.set(state.issueDetails, issueCode, issueDetails)
     },

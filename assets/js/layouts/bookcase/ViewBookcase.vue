@@ -48,7 +48,7 @@
         </b-btn>
       </div>
       <b-alert
-        v-else-if="username !== 'demo'"
+        v-else-if="user && user.isShareEnabled === false && username !== 'demo'"
         show
         variant="warning"
         v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE', [`<a href='${$r('/collection/account')}'>${l10n.GESTION_COMPTE_COURT}</a>`])"
@@ -222,10 +222,21 @@ export default {
         const vm = this
         if (newValue) {
           await this.fetchPublicationNames(Object.keys(newValue))
-          await this.fetchIssueNumbers(Object.keys(newValue).filter(publicationCode =>
+
+          const nonObviousPublicationIssueNumbers = Object.keys(newValue).filter(publicationCode =>
             vm.collection.filter(({publicationCode: issuePublicationCode, issueNumber}) =>
               issuePublicationCode === publicationCode && !/^[0-9]$/.test(issueNumber)).length
-          ))
+          )
+          this.addIssueNumbers(
+            Object.keys(newValue).filter(publicationCode => !nonObviousPublicationIssueNumbers.includes(publicationCode)
+            ).reduce((acc, publicationCode) => ({
+              ...acc,
+              ...{
+                [publicationCode]: vm.collection.filter(({issuePublicationCode}) => issuePublicationCode === publicationCode)
+              }
+            }), {})
+          )
+          await this.fetchIssueNumbers(nonObviousPublicationIssueNumbers)
         }
       }
     },
@@ -279,6 +290,7 @@ export default {
 
   methods: {
     ...mapMutations("bookcase", ["setBookcaseUsername"]),
+    ...mapMutations("coa", ["addIssueNumbers"]),
     ...mapActions("bookcase", ["loadBookcase", "loadBookcaseTextures", "loadBookcaseOrder"]),
     ...mapActions("collection", ["loadPopularIssuesInCollection", "loadLastPublishedEdgesForCurrentUser", "loadUser"]),
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),

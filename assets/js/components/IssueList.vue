@@ -99,9 +99,9 @@
               :publicationcode="publicationcode"
               :issuenumber="issueNumber"
               :class="{
-                  'issue-details': true,
-                  'issue-condition': true
-                }"
+                'issue-details': true,
+                'issue-condition': true
+              }"
             />
             <div
               v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
@@ -150,7 +150,9 @@
       variant="danger"
       show
     >
-      {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split('/')[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{ country }})
+      {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split('/')[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{
+        country
+      }})
       <br>
       <br>
       <div v-if="userIssuesForPublication.length">
@@ -297,7 +299,7 @@ export default {
       this.preselected = []
     },
     async deletePublicationIssues() {
-      await this.updateIssues( {
+      await this.updateIssues({
         publicationCode: this.publicationcode,
         issueNumbers: this.userIssuesForPublication.map(({issueNumber}) => issueNumber),
         condition: this.conditions.find(({value}) => value === 'missing').dbValue,

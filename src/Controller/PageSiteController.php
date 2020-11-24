@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Account;
 use App\Security\User;
 use App\Service\ApiService;
-use App\Service\UserService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
