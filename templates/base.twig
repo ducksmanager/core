@@ -30,8 +30,8 @@
 </head>
 <body class="{{ bodyClass ?? '' }}">
     <script type="text/javascript">
-        window.locale = "{{ app.session.get('_locale')  }}"
-        window.l10nUrl = "{{ asset('build/translations/messages.'~app.session.get('_locale')~'.yaml') }}"
+        window.locale = "{{ app.session.get('_locale') ?? 'en'  }}"
+        window.l10nUrl = "{{ asset('build/translations/messages.'~(app.session.get('_locale') ?? 'en')~'.yaml') }}"
         window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
         window.userId = "{{ app.user ? app.user.id : '' }}"
         window.username = "{{ app.user ? app.user.username : '' }}"
