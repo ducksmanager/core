@@ -51,6 +51,7 @@ class ApiService
             return self::callWithChunks($url, $role, $parameters, $method);
         }
         $fullUrl = "http://web-api$url" . ($method === 'GET' && !empty($parameters) ? '/'.implode('/', $parameters) : '');
+        $user = $this->security->getUser();
         $response = $this->client->request(
             $method,
             $fullUrl, [
@@ -59,8 +60,8 @@ class ApiService
                     'Content-Type: application/x-www-form-urlencoded',
                     'Cache-Control: no-cache',
                     'x-dm-version: 1.0',
-                    'x-dm-user: '.($userCredentials['dm-user'] ?? $this->security->getUser()->getUsername()),
-                    'x-dm-pass: '.($userCredentials['dm-pass'] ?? $this->security->getUser()->getPassword()),
+                    'x-dm-user: '.($userCredentials['dm-user'] ?? ($user ? $user->getUsername() : '')),
+                    'x-dm-pass: '.($userCredentials['dm-pass'] ?? ($user ? $user->getPassword() : '')),
                 ],
                 'body' => $method === 'GET' ? null : $parameters
             ]
