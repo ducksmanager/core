@@ -78,7 +78,7 @@ BIBLIOTHEQUE: Visionnez votre collection comme si vous étiez devant!
 BIBLIOTHEQUE_CONTRIBUTEURS: Une liste de ceux qui ont participé à la création de la bibliothèque!
 BIBLIOTHEQUE_CONTRIBUTEURS_COURT: Contributeurs
 BIBLIOTHEQUE_COURT: Ma bibliothèque
-BIBLIOTHEQUE_DE: Bibliothèque de 
+BIBLIOTHEQUE_DE: Bibliothèque DucksManager de
 BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE: "Dernières tranches de votre collection ajoutées :"
 BIBLIOTHEQUE_NOUVELLE_TRANCHE: "%u nouvelle tranche (%s) a été conçue depuis votre dernière visite.<br />Accédez à <a target=\"_blank\" href=\"?action=bibliotheque\">votre bibliothèque</a> pour la voir."
 BIBLIOTHEQUE_NOUVELLES_TRANCHES: "%u nouvelles tranches (%s) ont été conçues depuis votre dernière visite.<br />Accédez à <a target=\"_blank\" href=\"?action=bibliotheque\">votre bibliothèque</a> pour les voir."

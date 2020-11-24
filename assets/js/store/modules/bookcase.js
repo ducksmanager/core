@@ -37,10 +37,10 @@ export default {
   getters: {
     isSharedBookcase: state => window.username !== state.bookcaseUsername,
 
-    bookcaseWithPopularities: (state, getters, rootState) => getters.isSharedBookcase
-      ? state.bookcase
-      : rootState.collection.popularIssuesInCollection && state.bookcase &&
-      state.bookcase
+    bookcaseWithPopularities: (state, getters, rootState) =>
+      (getters.isSharedBookcase ? true : rootState.collection.popularIssuesInCollection)
+      && state.bookcase
+      && state.bookcase
         .map((issue) => {
           const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
           const issueCode = `${issue.publicationCode} ${issue.issueNumber}`;
@@ -48,7 +48,7 @@ export default {
             ...issue,
             publicationCode,
             issueCode,
-            popularity: rootState.collection.popularIssuesInCollection[issueCode] || 0
+            popularity: getters.isSharedBookcase ? null : rootState.collection.popularIssuesInCollection[issueCode] || 0
           };
         }),
   },
