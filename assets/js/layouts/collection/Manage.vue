@@ -169,6 +169,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../css/app";
 #demo-intro {
   border: 1px solid white;
   margin-bottom: 20px;
@@ -197,6 +198,12 @@ export default {
 
   a {
     border: none;
+  }
+}
+
+@media (max-width: 767px) {
+  #publication-list {
+    top: $navbar-height;
   }
 }
 </style>

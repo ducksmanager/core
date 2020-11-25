@@ -101,6 +101,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../css/app";
 #menu {
   font-size: 12px;
   font-weight: 200;
@@ -164,6 +165,8 @@ export default {
   }
 
   .navbar {
+    height: $navbar-height;
+
     .navbar-brand {
       position: fixed;
     }

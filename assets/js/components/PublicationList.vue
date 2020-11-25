@@ -7,10 +7,10 @@
     variant="dark"
     sticky
   >
+    <b-navbar-toggle target="nav-publications" />
     <b-navbar-brand href="#">
       {{ l10n.COLLECTION }}
     </b-navbar-brand>
-    <b-navbar-toggle target="nav-publications" />
     <b-collapse
       id="nav-publications"
       is-nav
@@ -117,6 +117,10 @@ export default {
 .navbar {
   &#publication-list {
     margin-bottom: 20px;
+  }
+
+  .navbar-toggler {
+    margin-right: 1rem;
   }
 
   .navbar-brand {
