@@ -339,7 +339,7 @@ MOT_DE_PASSE_6_CHAR: Mot de passe (au moins 6 caractères)
 MOT_DE_PASSE_6_CHAR_ERREUR: Le mot de passe doit comporter au moins 6 caractères !
 MOT_DE_PASSE_ACTUEL: Mot de passe actuel
 MOT_DE_PASSE_ACTUEL_INCORRECT: Le mot de passe actuel renseigné est incorrect.
-MOT_DE_PASSE_CHANGE: Le mot de passe a été changé.
+MOT_DE_PASSE_CHANGE: Le mot de passe a été changé. Vous pouvez maintenant vous connecter en vous connectant via le menu.
 MOT_DE_PASSE_CHANGEMENT: Changement de mot de passe
 MOT_DE_PASSE_CONF: Mot de passe (confirmation)
 MOT_DE_PASSE_NOUVEAU: Nouveau mot de passe

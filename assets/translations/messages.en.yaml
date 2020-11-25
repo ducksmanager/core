@@ -336,7 +336,7 @@ MOT_DE_PASSE_6_CHAR: Password (6 characters or more)
 MOT_DE_PASSE_6_CHAR_ERREUR: The password must have at least 6 characters!
 MOT_DE_PASSE_ACTUEL: Current password
 MOT_DE_PASSE_ACTUEL_INCORRECT: The current password is incorrect.
-MOT_DE_PASSE_CHANGE: The password has been changed.
+MOT_DE_PASSE_CHANGE: The password has been changed. You can now login using the menu on the left.
 MOT_DE_PASSE_CHANGEMENT: Password change
 MOT_DE_PASSE_CONF: Password (confirmation)
 MOT_DE_PASSE_NOUVEAU: New password
