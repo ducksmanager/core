@@ -9,7 +9,7 @@ export default {
       value: 'possessed',
       dbValue: 'indefini',
       color: '#808080',
-      l10nKey: 'POSSEDE'
+      l10nKey: 'INDEFINI'
     }, {
       value: 'bad',
       dbValue: 'mauvais',

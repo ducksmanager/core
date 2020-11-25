@@ -13,20 +13,24 @@ export default {
   computed: {
     ...mapState("collection", ["collection"]),
 
+    conditionsWithoutMissing() {
+      return this.conditions.filter(({value}) => value !== 'missing')
+    },
+
     labels() {
       const vm = this
-      return this.l10n && Object.values(this.conditions).map(({l10nKey}) => vm.l10n[l10nKey])
+      return this.l10n && Object.values(this.conditionsWithoutMissing).map(({l10nKey}) => vm.l10n[l10nKey])
     },
 
     values() {
       const numberPerCondition = this.collection.reduce((acc, {condition}) => (
         {...acc, [condition || 'indefini']: (acc[condition || 'indefini'] || 0) + 1}
       ), {})
-      return Object.values(this.conditions).map(({dbValue}) => numberPerCondition[dbValue])
+      return Object.values(this.conditionsWithoutMissing).map(({dbValue}) => numberPerCondition[dbValue])
     },
 
     colors() {
-      return Object.values(this.conditions.map(({color}) => color))
+      return Object.values(this.conditionsWithoutMissing.map(({color}) => color))
     }
   },
 
