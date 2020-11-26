@@ -55,7 +55,10 @@
       <template v-else>
         {{ l10n.NEWS_A_CREE_TRANCHE }}
       </template>
-      <span :id="`event-edges-${event.timestamp}`">
+      <span
+        :id="`event-edges-${event.timestamp}`"
+        class="font-weight-bold"
+      >
         <Issue
           v-if="publicationNames[event.edges[0].publicationCode]"
           :publicationname="publicationNames[event.edges[0].publicationCode]"

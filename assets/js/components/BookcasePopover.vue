@@ -1,8 +1,9 @@
 <template>
   <b-popover
     :target="id"
-    placement="top"
-    triggers="focus"
+    placement="auto top"
+    boundary="viewport"
+    triggers="hover"
     :delay="0"
   >
     <Bookcase

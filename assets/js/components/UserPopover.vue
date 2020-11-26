@@ -2,7 +2,7 @@
   <span>
     <span
       :id="elementId"
-      class="username"
+      class="username font-weight-bold"
     >{{ stats.username }}</span>
     <b-popover
       :target="elementId"
@@ -77,8 +77,6 @@ export default {
 
 <style scoped lang="scss">
 .username {
-  font-weight: bold;
-  font-style: italic;
   cursor: help;
 }
 .bookcase-link {
