@@ -23,7 +23,7 @@ export default {
       return !this.path.split('/')
         .find(pathPart =>
           !window.location.pathname.split('/').includes(pathPart)
-        )
+        ) && !/bookcase\/show\/.+$/.test(window.location.pathname)
     }
   }
 }
