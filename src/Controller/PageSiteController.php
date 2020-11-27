@@ -123,6 +123,9 @@ class PageSiteController extends AbstractController
      */
     public function showBookcasePage(?string $username = null): Response
     {
+        if (is_null($username) && is_null($this->getUser())) {
+            return $this->redirectToRoute('app_login');
+        }
         return $this->renderSitePage(
             '',
             'Bookcase', [
