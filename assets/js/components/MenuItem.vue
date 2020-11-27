@@ -31,7 +31,7 @@ export default {
 
   computed: {
     active() {
-      return !(this.rootPath + this.path).split('/')
+      return !this.$r(this.rootPath + this.path).split('/')
         .find(pathPart =>
           !window.location.pathname.split('/').includes(pathPart)
         )

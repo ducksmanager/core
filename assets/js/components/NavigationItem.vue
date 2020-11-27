@@ -20,10 +20,10 @@ export default {
 
   computed: {
     active() {
-      return !this.path.split('/')
+      return !this.$r(this.path).split('/')
         .find(pathPart =>
           !window.location.pathname.split('/').includes(pathPart)
-        ) && !/bookcase\/show\/.+$/.test(window.location.pathname)
+        ) && !/(bibliotheque\/afficher)|(bookcase\/show\/).+$/.test(window.location.pathname)
     }
   }
 }
