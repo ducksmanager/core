@@ -70,6 +70,10 @@ export default {
       this.events
         .filter(({publicationcode}) => publicationcode)
         .map(({publicationcode}) => publicationcode)
+        .concat(
+          this.events.filter(({edges}) => edges)
+            .reduce((acc, {edges}) => ([...acc, ...edges.map(({publicationCode}) => publicationCode)]), [])
+        )
     )
 
     await this.fetchStats(this.events
