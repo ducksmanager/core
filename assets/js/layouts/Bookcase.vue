@@ -1,8 +1,7 @@
 <template>
   <div>
-    <div v-if="$attrs['bookcase-username'] !== username">
+    <div v-if="$attrs['bookcase-username'] && $attrs['bookcase-username'] !== username">
       <h5>{{ l10n.BIBLIOTHEQUE_DE }} {{ $attrs['bookcase-username'] }}</h5>
-      <ViewBookcase v-bind="attrsWithoutTab" />
     </div>
     <template v-else>
       <Menu

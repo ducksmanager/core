@@ -47,7 +47,7 @@ export default {
 
     bookcaseContributorsSorted() {
       return !this.loading && [...this.bookcaseContributors]
-        .sort(({name: name1}, {name: name2}) => name1 < name2 ? -1 : 1);
+        .sort(({name: name1}, {name: name2}) => name1.toLowerCase() < name2.toLowerCase() ? -1 : 1);
     }
   },
 
