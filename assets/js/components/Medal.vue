@@ -42,6 +42,7 @@
     </div>
 
     <img
+      v-if="level <= 3"
       class="medal"
       :src="`${imagePath}/medals/${contribution}_${level}_${xSmall ? 'fond' : locale}.png`"
     >
