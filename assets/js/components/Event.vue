@@ -58,6 +58,7 @@
       <span
         :id="`event-edges-${event.timestamp}`"
         class="font-weight-bold"
+        style="cursor: help"
       >
         <Issue
           v-if="publicationNames[event.edges[0].publicationCode]"
