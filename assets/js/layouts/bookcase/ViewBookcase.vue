@@ -163,7 +163,7 @@ export default {
   computed: {
     ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder", "isPrivateBookcase"]),
     ...mapState("collection", ["user", "lastPublishedEdgesForCurrentUser"]),
-    ...mapGetters("collection", ["totalPerPublication", "popularIssuesInCollectionWithoutEdge"]),
+    ...mapGetters("collection", ["popularIssuesInCollectionWithoutEdge"]),
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
     ...mapGetters("bookcase", ["isSharedBookcase"]),
     ...mapGetters("bookcase", {"bookcase": "bookcaseWithPopularities"}),
@@ -216,23 +216,23 @@ export default {
   },
 
   watch: {
-    totalPerPublication: {
+    bookcaseOrder: {
       immediate: true,
       async handler(newValue) {
         const vm = this
         if (newValue) {
-          await this.fetchPublicationNames(Object.keys(newValue))
+          await this.fetchPublicationNames(newValue)
 
-          const nonObviousPublicationIssueNumbers = Object.keys(newValue).filter(publicationCode =>
-            vm.collection.filter(({publicationCode: issuePublicationCode, issueNumber}) =>
+          const nonObviousPublicationIssueNumbers = newValue.filter(publicationCode =>
+            vm.bookcase.filter(({publicationCode: issuePublicationCode, issueNumber}) =>
               issuePublicationCode === publicationCode && !/^[0-9]$/.test(issueNumber)).length
           )
           this.addIssueNumbers(
-            Object.keys(newValue).filter(publicationCode => !nonObviousPublicationIssueNumbers.includes(publicationCode)
+            newValue.filter(publicationCode => !nonObviousPublicationIssueNumbers.includes(publicationCode)
             ).reduce((acc, publicationCode) => ({
               ...acc,
               ...{
-                [publicationCode]: vm.collection.filter(({issuePublicationCode}) => issuePublicationCode === publicationCode)
+                [publicationCode]: vm.bookcase.filter(({publicationCode: issuePublicationCode}) => issuePublicationCode === publicationCode)
               }
             }), {})
           )
