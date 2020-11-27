@@ -3,7 +3,7 @@
     :target="id"
     placement="auto top"
     boundary="viewport"
-    triggers="hover"
+    triggers="hover focus"
     :delay="0"
   >
     <Bookcase
