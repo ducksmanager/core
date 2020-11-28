@@ -1,48 +1,52 @@
 <template>
   <form method="post">
-    <h1 class="h3 mb-3 font-weight-normal">
-      {{ l10n.CONNEXION }}
-    </h1>
-    <b-alert
-      v-if="error"
-      show
-      variant="danger"
-    >
-      {{ error }}
-    </b-alert>
-    <b-form-input
-      id="username"
-      name="username"
-      type="text"
-      required
-      autofocus
-      :value="lastUsername"
-      :placeholder="l10n.NOM_UTILISATEUR"
-    />
-    <b-form-input
-      id="password"
-      name="password"
-      type="password"
-      required
-      :placeholder="l10n.MOT_DE_PASSE"
-    />
+    <b-row>
+      <b-col lg="6">
+        <h1 class="h3 mb-3 font-weight-normal">
+          {{ l10n.CONNEXION }}
+        </h1>
+        <b-alert
+          v-if="error"
+          show
+          variant="danger"
+        >
+          {{ error }}
+        </b-alert>
+        <b-form-input
+          id="username"
+          name="username"
+          type="text"
+          required
+          autofocus
+          :value="lastUsername"
+          :placeholder="l10n.NOM_UTILISATEUR"
+        />
+        <b-form-input
+          id="password"
+          name="password"
+          type="password"
+          required
+          :placeholder="l10n.MOT_DE_PASSE"
+        />
 
-    <input
-      type="hidden"
-      name="_csrf_token"
-      :value="csrfToken"
-    >
+        <input
+          type="hidden"
+          name="_csrf_token"
+          :value="csrfToken"
+        >
 
-    <b-btn
-      variant="primary"
-      size="xl"
-      type="submit"
-    >
-      {{ l10n.CONNEXION }}
-    </b-btn>
-    <div>
-      <a :href="$r('/forgot')">{{ l10n.MOT_DE_PASSE_OUBLIE }}</a>
-    </div>
+        <b-btn
+          variant="primary"
+          size="xl"
+          type="submit"
+        >
+          {{ l10n.CONNEXION }}
+        </b-btn>
+        <div>
+          <a :href="$r('/forgot')">{{ l10n.MOT_DE_PASSE_OUBLIE }}</a>
+        </div>
+      </b-col>
+    </b-row>
   </form>
 </template>
 
