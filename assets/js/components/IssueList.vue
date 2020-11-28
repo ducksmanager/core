@@ -69,12 +69,11 @@
             :issue-number="issueNumber"
             placement="right"
           >
-            <img
+            <b-icon-eye-fill
               class="preview"
-              :src="`${imagePath}/icons/view.png`"
               :alt="l10n.VOIR"
               @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
-            >
+            />
           </IssueDetailsPopover>
           <span
             v-once
@@ -377,8 +376,7 @@ export default {
       background-color: rgb(200, 137, 100);
     }
 
-    img.preview {
-      float: left;
+    .preview {
       cursor: pointer;
     }
 
