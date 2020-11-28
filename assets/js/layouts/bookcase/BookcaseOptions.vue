@@ -17,7 +17,7 @@
             class="selected"
             :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures[textureType]}.jpg'`}"
           >
-            {{ bookcaseTextures[textureType] }}
+            {{ textureWithoutSuperType(bookcaseTextures[textureType]) }}
           </div>
         </template>
         <b-dropdown-item
@@ -26,7 +26,7 @@
           :style="{backgroundImage: `url('${imagePath}/textures/${texture}.jpg'`}"
           @click="bookcaseTextures[textureType] = texture"
         >
-          {{ texture.replace(/[^/]+\/ /, '') }}
+          {{ textureWithoutSuperType(texture) }}
         </b-dropdown-item>
       </b-dropdown>
     </div>
@@ -185,7 +185,9 @@ export default {
       finally {
         this.loading = false
       }
-    }
+    },
+
+    textureWithoutSuperType: texture => texture.replace(/^[^/]+\//, '')
   }
 
 }
