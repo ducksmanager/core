@@ -16,6 +16,7 @@ RUN pecl install apcu && \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY . /var/www/html
+COPY .git/refs/remotes/origin/master /var/www/html/commit.txt
 RUN mv .env.prod.local .env.local
 
 RUN composer install && npm install && npm run build

@@ -1,5 +1,10 @@
 import Vue from 'vue'
 import axios from "axios";
+import {coaCache} from "../../util/cache"
+
+const coaApi = axios.create({
+  adapter: coaCache.adapter,
+})
 
 const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/${window.locale}`
 const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/'
@@ -63,7 +68,7 @@ export default {
     fetchCountryNames: async ({state, commit}) => {
       if (!state.isLoadingCountryNames && !state.countryNames) {
         state.isLoadingCountryNames = true
-        commit("setCountryNames", (await axios.get(URL_PREFIX_COUNTRIES)).data)
+        commit("setCountryNames", (await coaApi.get(URL_PREFIX_COUNTRIES)).data)
         state.isLoadingCountryNames = false
       }
     },
@@ -84,7 +89,7 @@ export default {
       if (state.publicationNamesFullCountries.includes(countryCode)) {
         return
       }
-      return axios.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({data}) => {
+      return coaApi.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({data}) => {
         commit("setPublicationNames", {
           ...(state.publicationNames || {}),
           ...data
@@ -129,7 +134,7 @@ export default {
 
     fetchIssueCounts: async ({state, commit}) => {
       if (!state.issueCounts) {
-        const issueCounts = (await axios.get(URL_ISSUE_COUNTS)).data;
+        const issueCounts = (await coaApi.get(URL_ISSUE_COUNTS)).data;
         commit("setIssueCounts", issueCounts)
       }
     },
@@ -139,7 +144,7 @@ export default {
       if (!state.issueDetails[issueCode]) {
         commit("setIssueDetails", {
           issueCode,
-          issueDetails: (await axios.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data
+          issueDetails: (await coaApi.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data
         })
       }
     },
@@ -149,7 +154,7 @@ export default {
         await Array.from({length: Math.ceil(parametersToChunk.length / chunkSize)}, (v, i) =>
           parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
         ).reduce(async (acc, codeChunk) =>
-            (await acc).concat(await axios.get(`${url}${codeChunk.join(',')}`)),
+            (await acc).concat(await coaApi.get(`${url}${codeChunk.join(',')}`)),
           Promise.resolve([])
         )
       )

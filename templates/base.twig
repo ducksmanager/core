@@ -33,6 +33,7 @@
         window.locale = "{{ app.session.get('_locale') ?? 'fr'  }}"
         window.l10nUrl = "{{ asset('build/translations/messages.'~(app.session.get('_locale') ?? 'fr')~'.yaml') }}"
         window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
+        window.commit = "{{ commit }}"
         window.userId = "{{ app.user ? app.user.id : '' }}"
         window.username = "{{ app.user ? app.user.username : '' }}"
     </script>

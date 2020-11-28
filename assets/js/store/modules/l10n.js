@@ -1,6 +1,12 @@
 import axios from "axios";
 import {safeLoad} from "js-yaml";
 
+import {appCache} from "../../util/cache"
+
+const appApi = axios.create({
+    adapter: appCache.adapter,
+})
+
 export default {
     namespaced: true,
     state: () => ({
@@ -24,10 +30,10 @@ export default {
             if (!state.isLoading && !state.l10n) {
                 state.isLoading = true
 
-                const yamlL10n= (await axios.get(window.l10nUrl)).data
+                const yamlL10n= (await appApi.get(`${window.l10nUrl}?${window.commit}`)).data
                 commit('setL10n', safeLoad(yamlL10n))
 
-                const l10nRoutes= (await axios.get('/routes')).data
+                const l10nRoutes= (await appApi.get(`/routes?${commit}`)).data
                 commit('setL10nRoutes', l10nRoutes)
 
                 state.isLoading = false
