@@ -89,6 +89,7 @@ class PageSiteController extends AbstractController
     {
         return $this->render("bare.twig", [
             'title' => $title,
+            'commit' => file_get_contents(getcwd().'/../commit.txt'),
             'vueProps' => [
                 'title' => $title,
                 'component' => 'Site',
