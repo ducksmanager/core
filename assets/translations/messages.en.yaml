@@ -52,7 +52,7 @@ AUCUNE_COUVERTURE: We don't have any cover of this book
 AUCUNE_DATE_ACQUISITION: You haven't added any purchase date for the moment
 AUCUNE_NOTE: No scoring
 AUCUN_NUMERO_INDUCKS: DucksManager didn't find any issue in your Inducks account!
-AUCUN_AUTEUR_NOTE_1: No author rate.
+AUCUN_AUTEUR_NOTE_1: You haven't rated any author.
 AUCUN_AUTEUR_NOTE_2_REDIRECTION: Go to the %s page to rate your favorite authors.
 AUCUN_AUTEUR_NOTE_2_MEME_PAGE: Add your favorite authors hereunder and attribute them a grade.
 AUCUN_AUTEUR_NOTE_3: Thanks to these grades, DucksManager will calculate the issues that you may be interested in.
@@ -68,7 +68,7 @@ AUTEURS_COURT: Statistics about authors
 AUTEURS_FAVORIS_TEXTE: Find which issues to buy following the authors you like
 AUTEURS_FAVORIS_INTRO_1: Type in the names of your favorite authors to see how many stories you have from them. Rating the authors will also allow DucksManager to
 AUTEURS_FAVORIS_INTRO_2: suggest to you a list of publications that you could like.
-AUTEURS_NON_NOTES: You haven't rated your favorite authors yet. Go to "Authors preferences" to do so.
+AUTEURS_NON_NOTES: You haven't rated your favorite authors yet. Rate your favorite authors so that DucksManager can suggest issues to add to your collection.
 AUTRES: Other
 AVEC_ACQUISITION: with the purchase date
 AVEC_ETAT: with the condition

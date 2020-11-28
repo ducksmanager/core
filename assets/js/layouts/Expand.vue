@@ -28,12 +28,14 @@
     </div>
     <b-alert
       v-else-if="!watchedAuthorsWithNotation.length"
+      show
       variant="warning"
     >
       {{ l10n.AUTEURS_NON_NOTES }}
     </b-alert>
     <b-alert
       v-else
+      show
       variant="warning"
     >
       {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
