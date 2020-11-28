@@ -3,7 +3,10 @@
     <Country :country="country" />
     <span class="publication-title">{{ publicationName }}</span>
     <div v-if="issues">
-      <div class="issue-filter">
+      <div
+        v-once
+        class="issue-filter"
+      >
         <table>
           <tr
             v-for="conditionFilter in ['possessed', 'missing']"
@@ -17,7 +20,9 @@
               >
             </td>
             <td>
-              <label :for="`show-${conditionFilter}`">
+              <label
+                :for="`show-${conditionFilter}`"
+              >
                 <template v-if="conditionFilter === 'possessed'">{{ l10n.AFFICHER_NUMEROS_POSSEDES }}</template>
                 <template v-else-if="conditionFilter === 'missing'">{{ l10n.AFFICHER_NUMEROS_MANQUANTS }}</template>
                 ({{
@@ -283,10 +288,10 @@ export default {
       if ([this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)) {
         return this.preselected
       }
-      return this.issues
+      return this.filteredIssues
         .map(({issueNumber}) => issueNumber)
-        .filter((issueNumber, i) =>
-          i >= vm.preselectedIndexStart && i <= vm.preselectedIndexEnd
+        .filter((issueNumber, index) =>
+          index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
         )
     },
     updateSelected() {
