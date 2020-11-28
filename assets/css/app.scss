@@ -6,18 +6,18 @@ html, body {
 }
 
 a {
-  color: lightgrey;
-  border-bottom: 1px dotted #ffffff;
+  color: darkgrey;
+  border-bottom: 1px solid darkgray;
 
   &[href='#'] {
     border-bottom: none !important;
   }
 
   &:hover, &:focus {
-    color: lightgrey;
+    color: darkgrey;
     text-decoration: none;
     outline: 0;
-    border-bottom: 1px dashed #ffffff;
+    border-bottom: 2px solid darkgray;
   }
 }
 
