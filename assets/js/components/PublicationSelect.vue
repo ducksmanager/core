@@ -54,10 +54,10 @@ export default {
         ? Object.keys(this.publicationNames)
           .filter(publicationCode =>
             new RegExp(`^${vm.currentCountryCode}/`).test(publicationCode)
-          ).reduce((acc, publicationCode) => ({
-            ...acc,
-            [publicationCode]: vm.publicationNames[publicationCode]
-          }), {})
+          ).map(publicationCode => ({
+            text: vm.publicationNames[publicationCode],
+            value: publicationCode
+          }))
         : []
     }
   },
