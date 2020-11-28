@@ -43,7 +43,7 @@ export default {
 
 <style scoped lang="scss">
   a {
-    color: lightgrey;
+    color: darkgrey;
     pointer-events: none;
     border-bottom: none;
 
