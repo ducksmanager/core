@@ -138,7 +138,7 @@ export default {
   methods: {
     ...mapMutations("bookcase", ["addLoadedSprite"]),
     async onImageLoad({target}) {
-      if (this.spritePath) {
+      if (this.spritePath && !this.ignoreSprite) {
         if (this.loadedSprites[this.spritePath]) {
           this.loadEdgeFromSprite()
         } else {
