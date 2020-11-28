@@ -10,7 +10,9 @@
       triggers="hover"
       :delay="0"
     >
-      <h4>{{ stats.username }}</h4>
+      <template #title>
+        <h4>{{ stats.username }}</h4>
+      </template>
       <div class="d-flex">
         <Medal
           v-for="(numberOfPoints, contribution) in points"
@@ -76,6 +78,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .popover-body {
+  font-size: 1rem;
+}
+
 .username {
   cursor: help;
 }
