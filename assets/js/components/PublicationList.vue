@@ -133,6 +133,12 @@ export default {
     .navbar-nav {
       max-height: 200px;
       overflow-y: auto;
+
+      ul {
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        z-index: 1030;
+      }
     }
   }
 
