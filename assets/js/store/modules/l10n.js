@@ -33,7 +33,7 @@ export default {
                 const yamlL10n= (await appApi.get(`${window.l10nUrl}?${window.commit}`)).data
                 commit('setL10n', safeLoad(yamlL10n))
 
-                const l10nRoutes= (await appApi.get(`/routes?${commit}`)).data
+                const l10nRoutes= (await appApi.get(`/routes?${window.commit}`)).data
                 commit('setL10nRoutes', l10nRoutes)
 
                 state.isLoading = false

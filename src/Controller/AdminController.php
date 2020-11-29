@@ -18,9 +18,12 @@ class AdminController extends AbstractController
      */
     public function showEdgeProgress(): Response
     {
-        return $this->render("bare.twig", ['vueProps' => [
-            'component' => 'EdgeProgress'
-        ]]);
+        return $this->render("bare.twig", [
+            'commit' => $_ENV['COMMIT'],
+            'vueProps' => [
+                'component' => 'EdgeProgress'
+            ]
+        ]);
     }
 
     /**

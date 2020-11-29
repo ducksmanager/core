@@ -21,6 +21,7 @@ class PrintController extends AbstractController
     public function print(TranslatorInterface $translator, string $currentType): Response
     {
         return $this->render("bare.twig", [
+            'commit' => $_ENV['COMMIT'],
             'bodyClass' => 'no-padding',
             'title' => $translator->trans('IMPRESSION_COLLECTION'),
             'username' => $this->getUser()->getUsername(),

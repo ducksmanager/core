@@ -34,6 +34,7 @@ class SecurityController extends PageSiteController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.twig', [
+            'commit' => $_ENV['COMMIT'],
             'vueProps' => [
                 'component' => 'Site',
                 'page' => 'Login',

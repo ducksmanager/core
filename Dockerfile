@@ -17,9 +17,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY . /var/www/html
 COPY .git/refs/remotes/origin/master /var/www/html/commit.txt
-RUN mv .env.prod.local .env.local
-
-RUN composer install && npm install && npm run build
+RUN cat /var/www/html/commit.txt >> .env.prod.local && rm /var/www/html/commit.txt && \
+    mv .env.prod.local .env.local && \
+    composer install && npm install && npm run build
 
 
 FROM nginx:1.15 AS web

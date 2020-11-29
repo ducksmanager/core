@@ -32,6 +32,11 @@
 <script>
 import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
+import {userCountCache} from "../util/cache";
+
+const api = axios.create({
+  adapter: userCountCache.adapter,
+})
 
 export default {
   name: "Footer",
@@ -59,7 +64,7 @@ export default {
   },
 
   async mounted() {
-    this.userCount = (await axios.get("/global-stats/user/count")).data.count
+    this.userCount = (await api.get("/global-stats/user/count")).data.count
   },
 
   methods: {
