@@ -107,7 +107,7 @@ export default {
     getSortedPublications(country) {
       const vm = this
       return this.publicationsPerCountry && this.publicationsPerCountry[country]
-        .sort((a, b) => Math.sign(vm.publicationNames[a] - vm.publicationNames[b]))
+        .sort((a, b) => vm.publicationNames[a] < vm.publicationNames[b] ? -1 : (vm.publicationNames[a] > vm.publicationNames[b] ? 1 : 0))
     }
   }
 }
@@ -130,15 +130,10 @@ export default {
   .navbar-nav {
     flex-wrap: wrap;
 
-    .navbar-nav {
-      max-height: 200px;
+    ::v-deep ul {
+      max-height: calc(100vh - 100px);
       overflow-y: auto;
-
-      ul {
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
-        z-index: 1030;
-      }
+      z-index: 1030;
     }
   }
 
