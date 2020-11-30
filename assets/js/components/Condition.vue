@@ -17,7 +17,8 @@ export default {
   mixins: [collectionMixin, conditionMixin, l10nMixin],
   props: {
     publicationcode: {type: String, required: true},
-    issuenumber: {type: String, required: true}
+    issuenumber: {type: String, required: true},
+    value: { type: String, default: null}
   },
 
   computed: {
@@ -26,7 +27,9 @@ export default {
     },
     condition() {
       const vm = this
-      return this.issueInCollection && this.conditions.find(({dbValue}) => dbValue === vm.issueInCollection.condition)
+      return this.value
+        ? this.conditions.find(({value}) => value === vm.value)
+        : this.issueInCollection && this.conditions.find(({dbValue}) => dbValue === vm.issueInCollection.condition)
     }
   }
 }

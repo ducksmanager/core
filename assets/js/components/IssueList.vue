@@ -102,6 +102,7 @@
               v-if="condition"
               :publicationcode="publicationcode"
               :issuenumber="issueNumber"
+              :value="condition"
               :class="{
                 'issue-details': true,
                 'issue-condition': true
