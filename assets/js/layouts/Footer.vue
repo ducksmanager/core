@@ -16,16 +16,6 @@
       <br>
       {{ l10n.LICENCE_INDUCKS3 }}
     </div>
-    <div id="flags">
-      <img
-        v-for="locale in locales"
-        :key="locale.key"
-        class="flag"
-        :src="`${imagePath}/flags/xl/${locale.flagName}.png`"
-        :alt="locale.name"
-        @click="reloadWithLocale(locale.key)"
-      >
-    </div>
   </div>
 </template>
 
@@ -40,39 +30,15 @@ const api = axios.create({
 
 export default {
   name: "Footer",
-
   mixins: [l10nMixin],
 
   data: () => ({
-    userCount: null,
-    locales: [
-      {
-        key: 'en',
-        name: 'English',
-        flagName: 'uk'
-      },
-      {
-        key: 'fr',
-        name: 'Français',
-        flagName: 'fr'
-      }
-    ]
+    userCount: null
   }),
-
-  computed: {
-    imagePath: () => window.imagePath
-  },
 
   async mounted() {
     this.userCount = (await api.get("/global-stats/user/count")).data.count
   },
-
-  methods: {
-    reloadWithLocale: async localeKey => {
-      await axios.post(`/locale/${localeKey}`)
-      window.location.replace(window.location.href)
-    }
-  }
 }
 </script>
 
@@ -84,7 +50,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 
   > * {
     text-align: center;
@@ -97,8 +63,4 @@ export default {
   padding-left: 4px;
 }
 
-#flags {
-  margin: 20px;
-  cursor: pointer;
-}
 </style>

@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="logo_zone1"
-    :class="classes"
-  >
+  <div :class="{...classes, small}">
     <a :href="username ? $r('/collection/show') : '/'">
       <img
         :src="`${imagePath}/logo_small.png`"
@@ -23,6 +20,10 @@ export default {
     classes: {
       type: Object,
       default: () => ({})
+    },
+    small: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -34,13 +35,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#logo_zone1 {
+div {
   display: flex;
   align-items: center;
   flex-direction: column;
   height: 180px;
 
-  &.small-image {
+  &.small {
     img {
       height: 50px;
       top: 0;

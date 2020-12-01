@@ -1,6 +1,7 @@
 <template>
   <div v-if="l10n && l10nRoutes">
     <LeftPanel />
+    <SwitchLocale />
     <Banner :classes="{'d-none d-md-flex': true}" />
     <div id="logo_zone2">
       <h2 v-if="title">
@@ -32,10 +33,12 @@ import Welcome from "./Welcome";
 import Forgot from "./Forgot";
 import Signup from "./Signup";
 import Collection from "./Collection";
+import SwitchLocale from "./SwitchLocale";
 
 export default {
   name: "Site",
   components: {
+    SwitchLocale,
     Banner,
     Bookcase,
     Bookstores,

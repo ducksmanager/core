@@ -39,7 +39,8 @@
       type="dark"
     >
       <b-navbar-brand href="#">
-        <Banner :classes="{'small-image': true}" />
+        <SwitchLocale fixed />
+        <Banner small />
       </b-navbar-brand>
       <b-navbar-toggle target="navbar-toggle-collapse" />
       <b-collapse
@@ -61,11 +62,13 @@ import Navigation from "./Navigation";
 import Medal from "../components/Medal";
 import {mapActions, mapState} from "vuex";
 import Banner from "./Banner";
+import SwitchLocale from "./SwitchLocale";
 
 export default {
   name: "LeftPanel",
 
   components: {
+    SwitchLocale,
     Banner,
     Medal,
     RecentEvents,
