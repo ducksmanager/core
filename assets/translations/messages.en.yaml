@@ -18,7 +18,6 @@ ACHAT_NOUVELLE_DATE_ACHAT: New purchase date...
 ACHAT_SPECIFIEZ_DATE: Please specify a date!
 ACHAT_VENTE_NUMEROS: Buy/Sell issues
 ACHATS: Purchases
-ACHATS_COURT: Purchases
 ACHATS_NUMEROS_NOUVELLES_ACQUISITIONS: New issues bought during
 ACHATS_NUMEROS_SANS_DATE: Issues without a purchase date
 ACHATS_NUMEROS_TAILLE: Collection size on
@@ -144,7 +143,6 @@ DEBUG_MOINS_3: Takes one line per issue
 DEBUG_MOINS_4: Ugly!
 DEBUG_PLUS_1: Useful for debugging corrupted lists
 DECONNEXION: Log out
-DECONNEXION_OK: You are now logged out.
 DECOUVRIR_COUVERTURE: Click on the edge to see its cover
 DEMO_MENU: Want to try a demo?
 DEPLACER_APRES: Move after
@@ -158,13 +156,6 @@ DETAILS_MEDAILLE_DUCKHUNTER: You have pinned %d second-hand bookshops, pin %d mo
 DETAILS_MEDAILLE_DUCKHUNTER_MAX: You have pinned %d second-hand bookshops
 DETAILS_MEDAILLE_PHOTOGRAPHE: You have %d Edge photographer points, send us edge photographs and get %d more points to receive the %s badge!
 DETAILS_MEDAILLE_PHOTOGRAPHE_MAX: You have %d Edge photographer points
-DMSPIRAL_DESCRIPTION: Spiral list, particularly useful for magazines with only a few hundreds of issues.
-DMSPIRAL_MOINS_1: Takes a lot of space for frequently published magazines
-DMSPIRAL_MOINS_2: Sometimes arduous to find an issue or to add one
-DMSPIRAL_MOINS_3: This list mode is currently under development
-DMSPIRAL_PLUS_1: Quite nice visually
-DMSPIRAL_PLUS_2: Can take into account the issues conditions (Bad condition, good condition,...)
-DMSPIRAL_PLUS_3: Easy viewing of issues series or missing issues
 DU: from
 EMAIL_ACHAT_VENTE_2: You can answer directly to this e-mail to propose him or her a price and discuss about a way to send these issues.
 EMAIL_ACHAT_VENTE_3: Happy selling, and see you soon on DucksManager!
@@ -186,14 +177,12 @@ ENVOYER_PHOTOS_DE_TRANCHE: Send edge photos
 ENVOYER_MESSAGE_A: Send a message to 
 ERREUR_CAPTCHA: The code you have typed is invalid. Please try again.
 ERREUR_CONNEXION_INDUCKS: Error while connecting to Inducks!
-ERREUR_EXECUTION_REQUETE: Error while submitting the query!
 ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: Merging two lists is only possible if they are of the same type!
 ERREUR_GENERIQUE: An error occurred.
 ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: This username or this e-mail address already exists.
 ERREUR_LECTURE_NUMEROS: Error while reading the issues list
 ERREUR_RAWDATA_INVALIDE: Error while analyzing the Inducks collection.. Please select all the content text of the Inducks page.
 ERREUR_TECHNIQUE: A technical error has occurred. Please send a message to the webmaster so that it gets solved as soon as possible!
-ERREUR_TYPE_LISTE_INVALIDE: "Error : list type is invalid"
 EST_EN_MAINTENANCE: DucksManager is in maintenance ...
 ET: and
 ETAT: Condition
@@ -210,7 +199,6 @@ ETAT_MAUVAIS: In bad condition
 ETAT_MOYEN: In not-so-good condition
 ETATS_MAGAZINES: Conditions of the issues of your collection
 ETATS_NUMEROS: Comics conditions
-ETATS_NUMEROS_COURT: Conditions of the issues
 EXCELLENT: Excellent
 EXCLUSIF_DUCKSMANAGER: Exclusive in DucksManager
 EXPLICATION_GRAPH_ACHATS_1: This graph allows you to trace back how your collection has evolved with time.
@@ -231,7 +219,6 @@ GENERAL: Page
 GERER_COLLECTION: Manage my collection
 GESTION_ABONNEMENTS: Subscriptions
 GESTION_ABONNEMENTS_COURT: My subscriptions <sup>New!</sup>
-GESTION_COLLECTION: Collection management
 GESTION_COMPTE: Account management
 GESTION_COMPTE_COURT: My account
 GESTION_NUMEROS: Management of your collection issues
@@ -254,17 +241,14 @@ HISTOIRES_NON_POSSEDEES: Non-possessed stories
 HISTOIRES_POSSEDEES: Possessed stories
 ICI: here
 IDENTIFIANTS_INCORRECTS: Incorrect username or password!
-IDENTIFICATION_OBLIGATOIRE: You must be logged in to access this page!
 IE_INF_A_9_NON_SUPPORTE: Sorry, Internet Explorer is only supported from version 9 for this feature
 IMPORT_INDUCKS_DESACTIVE: The Inducks collection import is currently disabled.
 IMPORTER: Import
 IMPORTER_INDUCKS: Import my Inducks collection
-IMPORTER_INDUCKS_AUCUN_NUMERO: No issue number was found in the list.
 IMPORTER_INDUCKS_DESCRIPTION_1: DucksManager uses the Inducks database to list the referenced issues of each Disney publication.
 IMPORTER_INDUCKS_DESCRIPTION_2: If you already have an Inducks collection, you can <b>import it into DucksManager.</b>
 IMPORTER_INDUCKS_DESCRIPTION_3: To do so, create a DucksManager collection or login to your existing DucksManager collection, then select "%s" in the menu.
 IMPORTER_INDUCKS_ETAT: Choose the condition in which you wish the new issues to be set.
-IMPORTER_INDUCKS_ETAT_INVALIDE: Please specify a default condition for the issues to import.
 IMPORTER_INDUCKS_INSTRUCTIONS_1: This page allows you to import your Inducks collection into DucksManager.
 IMPORTER_INDUCKS_INSTRUCTIONS_2: "To do so, follow the next steps :"
 IMPORTER_INDUCKS_INSTRUCTIONS_3: In the left section hereunder, log in your Inducks account.
@@ -274,9 +258,11 @@ IMPORTER_INDUCKS_INSTRUCTIONS_6: Paste this text in the section on the right sid
 IMPORTER_INDUCKS_INSTRUCTIONS_7: Click on the "Import" button at the bottom of the page.
 IMPORTER_INDUCKS_NUMEROS_A_IMPORTER: issues to be imported.
 IMPORTER_INDUCKS_NUMEROS_EXISTANTS: issues cannot be imported because they are already in your collection.
+IMPORTER_INDUCKS_NUMEROS_EXISTANTS_TITRE: Issues that are already in your collection
 IMPORTER_INDUCKS_NUMEROS_IMPORTES: issues have been imported.
 IMPORTER_INDUCKS_NUMEROS_NON_IMPORTES: issues haven't been imported because they are already in your collection.
 IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES: issues cannot be imported because they don't exist anymore on Inducks.
+IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES_TITRE: Non-existing issues
 IMPORTER_INDUCKS_TEXTE_INVALIDE: The pasted text is invalid, did you include the text <pre>country^entrycode^collectiontype^comment</pre> in the right section of the page?
 IMPRIMER_COLLECTION: Print my collection
 IMPRESSION_COLLECTION: Collection printing
@@ -534,7 +520,6 @@ UN_VISITEUR_ANONYME: an anonymous visitor
 UTILISATEUR_INEXISTANT: This username doesn't exist.
 UTILISATEUR_INVALIDE: Invalid username. Choose a username with at least 3 characters and containing only letters, digits and dashes.
 UTILISATEUR_EXISTANT: This username is already in use!
-UTILISATEUR_VALIDE: Valid username
 UTILISATEURS_INSCRITS: "%d users have signed up<br />on DucksManager"
 VALIDER: Submit
 VENTE_CONSERVER_VOLONTE_VENTE: Do not change the "for sale" state

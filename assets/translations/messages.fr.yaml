@@ -18,7 +18,6 @@ ACHAT_NOUVELLE_DATE_ACHAT: Nouvelle date d'achat...
 ACHAT_SPECIFIEZ_DATE: Spécifiez une date !
 ACHAT_VENTE_NUMEROS: Achat/Vente de numéros
 ACHATS: Achats
-ACHATS_COURT: Achats
 ACHATS_NUMEROS_NOUVELLES_ACQUISITIONS: Nouvelles acquisitions pour le mois
 ACHATS_NUMEROS_SANS_DATE: Numéros sans dates d'achat
 ACHATS_NUMEROS_TAILLE: Taille de la collection pour le mois
@@ -148,7 +147,6 @@ DEBUG_MOINS_3: Prend une ligne par numéro
 DEBUG_MOINS_4: Pas joli !
 DEBUG_PLUS_1: Pratique pour debugger les listes corrompues
 DECONNEXION: Déconnexion
-DECONNEXION_OK: Vous avez été déconnecté(e).
 DECOUVRIR_COUVERTURE: Cliquez sur la tranche pour découvrir sa couverture
 DEMO_MENU: Une petite démo ?
 DEPLACER_APRES: Déplacer après
@@ -162,13 +160,6 @@ DETAILS_MEDAILLE_DUCKHUNTER: Vous avez signalé %d bouquineries, signalez-en %d 
 DETAILS_MEDAILLE_DUCKHUNTER_MAX: Vous avez signalé %d bouquineries
 DETAILS_MEDAILLE_PHOTOGRAPHE: Vous avez %d points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez %d points de plus pour recevoir le badge %s !
 DETAILS_MEDAILLE_PHOTOGRAPHE_MAX: Vous avez %d points Photographe de tranches
-DMSPIRAL_DESCRIPTION: Liste en spirale, particulièrement utile pour les magazines avec peu de numéros. Elle permet de bien repérer les suites de numéros.
-DMSPIRAL_MOINS_1: Prend beaucoup d'espace pour les magazines à fréquence élevée (Journal de Mickey,...)
-DMSPIRAL_MOINS_2: Parfois laborieux pour repérer un numéro ou l'ajouter
-DMSPIRAL_MOINS_3: Ce mode de liste est actuellement en développement
-DMSPIRAL_PLUS_1: Assez esthétique
-DMSPIRAL_PLUS_2: Peut prendre en compte l'état du numéro (Mauvais état, bon état,...)
-DMSPIRAL_PLUS_3: Reconaissance rapide des séries de numéros et des numéros manquants
 DU: du
 EMAIL_ACHAT_VENTE_2: Vous pouvez répondre directement à cet e-mail pour lui proposer un prix et un moyen de lui transmettre vos numéros.
 EMAIL_ACHAT_VENTE_3: Bonne vente, et à bientôt sur DucksManager !
@@ -190,14 +181,12 @@ ENVOYER_PHOTOS_DE_TRANCHE: Envoyer des photos de tranches
 ENVOYER_MESSAGE_A: Envoyer un message à 
 ERREUR_CAPTCHA: Le code que vous avez entré est invalide. Merci de réessayer.
 ERREUR_CONNEXION_INDUCKS: Erreur de connexion à Inducks!
-ERREUR_EXECUTION_REQUETE: Erreur lors de l'éxécution de la requete !
 ERREUR_FUSION_LISTES_TYPES_DIFFERENTS: La fusion de deux listes ne peut se faire que si elles sont du meme type!
 ERREUR_GENERIQUE: Une erreur s'est produite.
 ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: Ce nom d'utilisateur ou cette adresse e-mail existe déjà.
 ERREUR_LECTURE_NUMEROS: Erreur lors de la lecture de la liste de numéros
 ERREUR_RAWDATA_INVALIDE: Erreur lors de l'analyse de la collection. Sélectionnez tout le texte de la page Inducks !
 ERREUR_TECHNIQUE: Une erreur technique est survenue. Merci de prévenir le webmaster pour qu'elle soit résolue le plus tôt possible !
-ERREUR_TYPE_LISTE_INVALIDE: "Erreur : type de liste invalide"
 EST_EN_MAINTENANCE: DucksManager est en maintenance ...
 ET: et
 ETAT: Etat
@@ -214,7 +203,6 @@ ETAT_MAUVAIS: En mauvais état
 ETAT_MOYEN: En moyen état
 ETATS_MAGAZINES: Part des états des magazines dans la collection
 ETATS_NUMEROS: Etats des numéros
-ETATS_NUMEROS_COURT: Etats des numéros
 EXCELLENT: Excellent
 EXCLUSIF_DUCKSMANAGER: Exclusif DucksManager
 EXPLICATION_GRAPH_ACHATS_1: Ce graphique vous permet de retracer l'évolution de votre collection dans le temps.
@@ -234,7 +222,6 @@ FUSIONNER_TOUT: Fusionner tout
 GENERAL: Général
 GERER_COLLECTION: Gérer ma collection
 GESTION_ABONNEMENTS_COURT: Mes abonnements <sup>Nouveau !</sup>
-GESTION_COLLECTION: Gestion de ma collection
 GESTION_COMPTE: Gestion de votre compte DucksManager
 GESTION_COMPTE_COURT: Mon compte
 GESTION_NUMEROS: Gestion des numéros de votre collecton
@@ -257,17 +244,14 @@ HISTOIRES_NON_POSSEDEES: Histoires non possédées
 HISTOIRES_POSSEDEES: Histoires possédées
 ICI: ici
 IDENTIFIANTS_INCORRECTS: Identifiants incorrects !
-IDENTIFICATION_OBLIGATOIRE: Vous devez être connecté(e) pour accéder à cette page.
 IE_INF_A_9_NON_SUPPORTE: Désolé, Internet Explorer n'est pas supporté qu'à partir de la version 9 pour cette fonctionnalité
 IMPORT_INDUCKS_DESACTIVE: L'import de collection Inducks est actuellement désactivé.
 IMPORTER: Importer
 IMPORTER_INDUCKS: Importer ma collection Inducks
-IMPORTER_INDUCKS_AUCUN_NUMERO: Aucun numéro trouvé dans la liste.
 IMPORTER_INDUCKS_DESCRIPTION_1: DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.
 IMPORTER_INDUCKS_DESCRIPTION_2: Si vous possédez déjà une collection Inducks, vous pouvez <b>l'importer sur DucksManager en quelques clics.</b>
 IMPORTER_INDUCKS_DESCRIPTION_3: Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez "%s" dans le menu.
 IMPORTER_INDUCKS_ETAT: Choisissez un état par défaut pour les nouveaux numéros
-IMPORTER_INDUCKS_ETAT_INVALIDE: Veuillez définir un état pour les nouveaux numéros.
 IMPORTER_INDUCKS_INSTRUCTIONS_1: Cette page vous permet d'importer votre collection Inducks dans DucksManager.
 IMPORTER_INDUCKS_INSTRUCTIONS_2: "Pour cela, suivez les étapes suivantes : "
 IMPORTER_INDUCKS_INSTRUCTIONS_3: Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks.
@@ -277,9 +261,11 @@ IMPORTER_INDUCKS_INSTRUCTIONS_6: Collez ce texte dans la partie droite de la pag
 IMPORTER_INDUCKS_INSTRUCTIONS_7: Cliquez sur le bouton "Importer" en bas de la page.
 IMPORTER_INDUCKS_NUMEROS_A_IMPORTER: numéros peuvent être importés.
 IMPORTER_INDUCKS_NUMEROS_EXISTANTS: numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.
+IMPORTER_INDUCKS_NUMEROS_EXISTANTS_TITRE: Numéros déjà dans la collection
 IMPORTER_INDUCKS_NUMEROS_IMPORTES: numéros ont été importés.
 IMPORTER_INDUCKS_NUMEROS_NON_IMPORTES: numéros n'ont pas été importés car vous les possédez déjà dans votre collection.
 IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES: numéros ne peuvent pas être importés car ils n'existent plus sur Inducks.
+IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES_TITRE: Numéros non référencés
 IMPORTER_INDUCKS_TEXTE_INVALIDE: Le texte entré est invalide, avez-vous inclus la ligne <pre>country^entrycode^collectiontype^comment</pre> dans la partie droite de la page ?
 IMPRIMER_COLLECTION: Imprimer ma collection
 IMPRESSION_COLLECTION: Impression de la collection
@@ -537,7 +523,6 @@ UN_VISITEUR_ANONYME: un visiteur anonyme
 UTILISATEUR_INEXISTANT: Ce nom d'utilisateur n'existe pas.
 UTILISATEUR_INVALIDE: Le nom d'utilisateur est invalide. Choisissez un nom d'utilisateur d'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.
 UTILISATEUR_EXISTANT: Ce nom d'utilisateur est déjà utilisé !
-UTILISATEUR_VALIDE: Utilisateur valide
 UTILISATEURS_INSCRITS: "%d utilisateurs sont inscrits<br />sur DucksManager"
 VALIDER: Valider
 VENTE_CONSERVER_VOLONTE_VENTE: Conserver la volonté de vente

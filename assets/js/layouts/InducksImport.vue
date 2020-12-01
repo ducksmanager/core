@@ -135,7 +135,7 @@
             @bv::toggle::collapse="expandedNotImportableAccordion = 'already-in-collection'"
           >
             <template #header>
-              Numéros déjà dans la collection
+              {{ l10n.IMPORTER_INDUCKS_NUMEROS_EXISTANTS_TITRE }}
             </template>
             <template #content>
               <div
@@ -165,7 +165,7 @@
             @bv::toggle::collapse="expandedNotImportableAccordion = 'not-found'"
           >
             <template #header>
-              Numéros non référencés
+              {{ l10n.IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES_TITRE }}
             </template>
             <template #content>
               <div
