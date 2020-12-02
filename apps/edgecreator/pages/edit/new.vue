@@ -17,6 +17,7 @@
 </template>
 <script>
 import IssueSelect from '@/components/IssueSelect'
+
 export default {
   components: { IssueSelect },
   data() {

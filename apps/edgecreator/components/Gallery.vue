@@ -9,15 +9,16 @@
     >
       <img :alt="clickedImage" :src="getImageUrl(clickedImage)" />
     </b-modal>
-    <b-modal v-model="showUploadModal" ok-only
-      ><upload
+    <b-modal v-model="showUploadModal" ok-only>
+      <upload
         :photo="imageType === 'photos'"
         :edge="{
           country,
           magazine,
           issuenumber: issuenumbers[0],
         }"
-    /></b-modal>
+      />
+    </b-modal>
     <b-alert v-if="!items.length" show variant="warning"
       >No items.
       <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">Upload new</a>
@@ -129,6 +130,7 @@ export default {
 .img-thumbnail {
   background: transparent;
 }
+
 .img-thumbnail:hover {
   background: black;
 }

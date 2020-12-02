@@ -1,6 +1,9 @@
 import { json } from 'body-parser'
+import ESLintPlugin from 'eslint-webpack-plugin'
 
 export default {
+  telemetry: false,
+
   /*
    ** Headers of the page
    */
@@ -91,17 +94,9 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {
-      if (ctx.isDev && ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /node_modules/,
-          options: {
-            fix: true,
-          },
-        })
+    extend(config, { isClient, isDev }) {
+      if (isDev && isClient) {
+        config.plugins.push(new ESLintPlugin())
       }
     },
   },

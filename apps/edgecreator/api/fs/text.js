@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { addAxiosInterceptor } from '../api'
+
 const fs = require('fs')
 
 const fontImageDirPath = `${process.env.EDGES_PATH}/images_myfonts/`

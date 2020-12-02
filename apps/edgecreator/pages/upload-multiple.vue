@@ -44,8 +44,8 @@
                 <b-card-body :title="crop.id">
                   <b-card-text>
                     {{ crop.publicationCode }} {{ crop.issueNumber }} <br />
-                    {{ crop.width }} x {{ crop.height }} mm</b-card-text
-                  >
+                    {{ crop.width }} x {{ crop.height }} mm
+                  </b-card-text>
                   <edge-canvas
                     v-if="crop.filename"
                     :issuenumber="crop.issueNumber"
@@ -58,9 +58,9 @@
                 </b-card-body>
               </b-col>
             </b-row>
-            <b-button v-if="!crop.sent" pill variant="danger" @click="crops.splice(i, 1)">{{
-              $t('upload.delete_edge')
-            }}</b-button>
+            <b-button v-if="!crop.sent" pill variant="danger" @click="crops.splice(i, 1)"
+              >{{ $t('upload.delete_edge') }}
+            </b-button>
             <div v-else class="text-center">{{ $t('upload.sent') }}</div>
           </b-card>
         </b-card-group>
@@ -71,8 +71,8 @@
         variant="success"
         :disabled="disableSend"
         @click="uploadAll"
-        >{{ $t('upload.send') }}</b-button
-      >
+        >{{ $t('upload.send') }}
+      </b-button>
     </template>
   </b-container>
 </template>
@@ -176,16 +176,19 @@ export default {
   background-size: contain;
   background-position: center;
 }
+
 .edge-card {
   max-width: 300px;
   max-height: 300px;
 }
+
 .loader {
   display: table;
   height: 100%;
   overflow: hidden;
   width: 100%;
 }
+
 .loader > p {
   color: #999;
   display: table-cell;
@@ -198,6 +201,7 @@ export default {
   cursor: pointer;
   margin-left: 0.25rem;
 }
+
 .loader:drop {
   color: #08f;
 }

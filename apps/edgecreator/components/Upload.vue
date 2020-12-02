@@ -96,6 +96,7 @@ export default {
   width: 100vw !important;
   height: 100vh !important;
 }
+
 >>> a.uppy-Dashboard-poweredBy {
   display: none;
 }

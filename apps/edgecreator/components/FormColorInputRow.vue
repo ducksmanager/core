@@ -20,15 +20,15 @@
       ><img :id="`${optionName}-transparent`" alt="transp" src="/transparent.png"
     /></label>
 
-    <template v-if="!isTransparent" v-slot:suffix>
+    <template v-if="!isTransparent" #suffix>
       <b-button
         :id="`${optionName}-popover-colors`"
         class="no-pointer"
         pill
         size="sm"
         variant="outline-primary"
-        >Re-use</b-button
-      >
+        >Re-use
+      </b-button>
       <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
         <div v-if="!frequentColorsWithoutCurrent.length">No other color</div>
         <ul v-else>
@@ -45,8 +45,8 @@
         :disabled="!hasPhotoUrl"
         :variant="colorPickerOption === optionName ? 'primary' : 'outline-primary'"
         @click="colorPickerOption = colorPickerOption ? null : optionName"
-        >From photo</b-button
-      >
+        >From photo
+      </b-button>
     </template>
   </form-input-row>
 </template>
@@ -112,12 +112,14 @@ ul {
   list-style-type: none;
   padding: 0;
 }
+
 input[type='color'] {
   display: inline-block;
   width: 40px;
   border: 0;
   background: none !important;
 }
+
 input[type='checkbox'][id$='-transparent'] {
   display: none;
 }
@@ -136,13 +138,16 @@ label.transparent img {
 .color-row.can-be-transparent:not(.transparent-selected) input[type='color'] {
   border: 1px dashed black;
 }
+
 .btn {
   font-size: smaller;
   vertical-align: top;
 }
+
 .btn.no-pointer {
   cursor: default !important;
 }
+
 .frequent-color {
   display: inline-block;
   width: 20px;

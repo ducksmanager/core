@@ -94,13 +94,13 @@ export default {
     BIconCamera,
   },
   mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin],
-  async fetch() {
-    this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
-  },
   data() {
     return {
       error: null,
     }
+  },
+  async fetch() {
+    this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
   },
   computed: {
     zoom: {
@@ -228,9 +228,11 @@ export default {
   flex-direction: column;
   user-select: none;
 }
+
 .picker {
   cursor: crosshair;
 }
+
 .clickable {
   cursor: pointer;
 }
