@@ -339,6 +339,7 @@ MOT_DE_PASSE_OUBLIE_ERREUR_EMAIL_INCONNU: Cet e-mail ne correspond à aucun comp
 MOT_DE_PASSE_OUBLIE_EXPLICATION: "Un mot de passe temporaire va vous être envoyé à l'adresse e-mail que vous indiquerez ci-dessous :"
 MOT_DE_PASSE_OUBLIE_OK: Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier "Spam".
 MOTS_DE_PASSE_DIFFERENTS: Les deux mots de passe ne correspondent pas !
+MOTS_DE_PASSE_DOIVENT_ETRE_RENSEIGNES_SI_CHANGEMENT: L'ancien et le nouveau mot de passe doivent être renseignés si vous voulez changer votre mot de passe
 MOYEN: Moyen
 NEWS_A_AJOUTE_BOUQUINERIE: a ajouté la bouquinerie
 NEWS_A_AJOUTE: a ajouté

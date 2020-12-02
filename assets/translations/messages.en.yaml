@@ -336,6 +336,7 @@ MOT_DE_PASSE_OUBLIE_ERREUR_TOKEN: The password reset link is invalid or has expi
 MOT_DE_PASSE_OUBLIE_EXPLICATION: Fill in your e-mail address to reset your password.
 MOT_DE_PASSE_OUBLIE_OK: If the typed e-mail address corresponds to a DucksManager account, we just sent there a link allowing you to reset your password. If the e-mail does not reach you within a few minutes, please check your "Spam" folder.
 MOTS_DE_PASSE_DIFFERENTS: The two passwords are different!
+MOTS_DE_PASSE_DOIVENT_ETRE_RENSEIGNES_SI_CHANGEMENT: Both the old and the new password must be filled if you want to change your password
 MOYEN: Not so good
 NEWS_A_AJOUTE_BOUQUINERIE: has reviewed the second-hand bookshop
 NEWS_A_AJOUTE: has added

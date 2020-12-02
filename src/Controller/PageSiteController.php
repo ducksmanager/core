@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Account;
+use App\Entity\PasswordChange;
 use App\Security\User;
 use App\Service\ApiService;
 use Psr\Log\LoggerInterface;
@@ -258,24 +259,48 @@ class PageSiteController extends AbstractController
 
     /**
      * @Route({
-     *     "en": "/forgot",
-     *     "fr": "/mot_de_passe_oublie"
+     *     "en": "/forgot/{token}",
+     *     "fr": "/mot_de_passe_oublie/{token}"
      * },
-     *     methods={"GET", "POST"}
+     *     methods={"GET", "POST"},
+     *     defaults={"token"=null}
      * )
      */
-    public function showForgotPasswordPage(Request $request, TranslatorInterface $translator, ApiService $apiService): Response
+    public function showForgotPasswordPage(Request $request, ValidatorInterface $validator, TranslatorInterface $translator, ApiService $apiService, ?string $token): Response
     {
+        $errors = [];
         $success = null;
-        $email = $request->request->get('email');
-        if (!empty($email)) {
+        if (!empty($token)) {
+            if ($request->getMethod() === 'POST') {
+                $account = PasswordChange::createFromRequest($translator, $request, $token);
+
+                $errorResult = $validator->validate($account);
+                if (!empty($errorResult->count())) {
+                    /** @var ConstraintViolation $error */
+                    foreach ($errorResult as $error) {
+                        $errors[$error->getPropertyPath()] = $error->getMessage();
+                    }
+                } else {
+                    $apiResponse = $apiService->callNoParse('/ducksmanager/resetpassword', 'ducksmanager', $account->toArray(), 'POST');
+                    $success = $apiResponse->getStatusCode() === 200;
+                }
+            }
+            else {
+                $apiResponse = $apiService->callNoParse("/ducksmanager/resetpassword/checktoken/$token", 'ducksmanager', [], 'POST');
+                if ($apiResponse->getStatusCode() !== 200) {
+                    $success = false;
+                }
+            }
+        }
+        else if (!empty($email = $request->request->get('email'))) {
             $apiResponse = $apiService->call('/ducksmanager/resetpassword/init', 'ducksmanager', compact('email'), 'POST');
             $success = !is_null($apiResponse);
         }
 
         return $this->renderSitePage(
             $translator->trans('MOT_DE_PASSE_OUBLIE'),
-            'Forgot', is_null($success) ? [] : compact('success')
+            'Forgot',
+            (is_null($success) ? [] : compact('success')) + compact('token') + ['errors' => json_encode($errors)]
         );
     }
 
@@ -316,12 +341,12 @@ class PageSiteController extends AbstractController
      *     methods={"GET", "POST"}
      * )
      */
-    public function showAccountPage(Request $request, ValidatorInterface $validator, ApiService $apiService): Response
+    public function showAccountPage(Request $request, TranslatorInterface $translator, ValidatorInterface $validator, ApiService $apiService): Response
     {
         $success = null;
         $errors = [];
-        if (!empty($request->getMethod() === 'POST')) {
-            $account = Account::createFromRequest($request, $this->getUser());
+        if ($request->getMethod() === 'POST') {
+            $account = Account::createFromRequest($translator, $request, $this->getUser());
 
             $errorResult = $validator->validate($account);
             if (!empty($errorResult->count())) {

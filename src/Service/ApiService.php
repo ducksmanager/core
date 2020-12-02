@@ -12,6 +12,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class ApiService
 {
@@ -38,14 +39,15 @@ class ApiService
      * @param string $method
      * @param bool $doNotChunk
      * @param array $userCredentials
-     * @return array|bool|null
+     * @param bool $noParse
+     * @return array|bool|null|ResponseInterface
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function call(string $url, string $role, $parameters = [], $method = 'GET', $doNotChunk = false, $userCredentials = [])
+    public function call(string $url, string $role, $parameters = [], $method = 'GET', $doNotChunk = false, $userCredentials = [], $noParse = false)
     {
         if (!$doNotChunk && isset(self::CHUNKABLE_URLS[$url])) {
             return self::callWithChunks($url, $role, $parameters, $method);
@@ -67,6 +69,10 @@ class ApiService
             ]
         );
 
+        if ($noParse) {
+            return $response;
+        }
+
         if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
             if (empty($response->getContent()) || $response->getContent() === 'OK') {
                 return true;
@@ -84,6 +90,10 @@ class ApiService
             $this->logger->error($e->getMessage());
         }
         throw new ClientException($response);
+    }
+
+    public function callNoParse(string $url, string $role, $parameters = [], $method = 'GET', $doNotChunk = false, $userCredentials = []) : ResponseInterface {
+        return $this->call($url, $role, $parameters, $method, $doNotChunk, $userCredentials, true);
     }
 
     public function runQuery(string $query, string $db, array $parameters = []) {

@@ -8,9 +8,11 @@ use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Account
 {
+    private static TranslatorInterface $translator;
     private $currentPassword;
 
     private $email = null;
@@ -20,8 +22,9 @@ class Account
     private $isShareEnabled = false;
     private $isVideoShown = false;
 
-    public static function createFromRequest(Request $request, User $user): Account
+    public static function createFromRequest(TranslatorInterface $translator, Request $request, User $user): Account
     {
+        self::$translator = $translator;
         $object = new Account();
         foreach ($request->request->all() as $field => $value) {
             if (!empty($value)) {
@@ -44,7 +47,7 @@ class Account
     public function validateNewPasswordEqualsNewPasswordConfirmation(ExecutionContextInterface $context)
     {
         if ($this->passwordNew !== $this->passwordNewConfirmation) {
-            $context->buildViolation('The new password and its confirmation should be equal')
+            $context->buildViolation(self::$translator->trans('MOTS_DE_PASSE_DIFFERENTS'))
                 ->atPath('passwordNew')
                 ->addViolation();
         }
@@ -53,7 +56,7 @@ class Account
     public function validateOldPasswordNotBlankIfNewPasswordNotBlank(ExecutionContextInterface $context)
     {
         if (empty($this->password) !== empty($this->passwordNew)) {
-            $context->buildViolation('Both the old and the new password must be filled if you want to change your password')
+            $context->buildViolation(self::$translator->trans('MOTS_DE_PASSE_DOIVENT_ETRE_RENSEIGNES_SI_CHANGEMENT'))
                 ->atPath('passwordNew')
                 ->addViolation();
         }
