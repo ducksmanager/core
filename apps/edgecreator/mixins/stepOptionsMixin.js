@@ -1,4 +1,5 @@
 import { mapState, mapMutations } from 'vuex'
+
 const interact = require('interactjs')
 
 export default {

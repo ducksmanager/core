@@ -2,7 +2,7 @@
   <b-card id="edit-card" no-body>
     <b-tabs v-model="editingStepNumber" lazy pills card vertical>
       <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
-        <template v-slot:title>
+        <template #title>
           <span
             :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
             @mouseover="hoveredStepNumber = stepNumber"
