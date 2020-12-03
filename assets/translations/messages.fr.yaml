@@ -237,6 +237,7 @@ HISTOIRE_TYPE_I: illustration
 HISTOIRE_TYPE_K: strip
 HISTOIRE_TYPE_L: peinture
 HISTOIRE_TYPE_N: histoire
+HISTOIRE_TYPE_N_G: gag
 HISTOIRE_TYPE_P: peinture
 HISTOIRE_TYPE_T: texte
 HISTOIRES_INEDITES: histoires inédites

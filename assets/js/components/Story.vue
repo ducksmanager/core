@@ -75,6 +75,10 @@ span {
   &.kind-n {
     background: #cbdced;
   }
+
+  &.kind-n_g {
+    background: #ff99ff;
+  }
 }
 
 .dark {

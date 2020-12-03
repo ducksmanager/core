@@ -43,14 +43,14 @@
             @input="currentPage = pagesWithUrl.findIndex(page => page.storycode === pages[$event].storycode)"
           >
             <b-tab
-              v-for="{storycode, kind, url, title, position} in pages"
+              v-for="{storycode, kind, entirepages, url, title, position} in pages"
               :key="`slide-${position}`"
               :title-item-class="!!url ? 'has-image':''"
             >
               <template #title>
                 <Story
                   no-link
-                  :kind="kind"
+                  :kind="`${kind}${kind === 'n' && entirepages < 1 ? '_g' : ''}`"
                   :title="title"
                   :storycode="storycode"
                   :dark="!!url"
