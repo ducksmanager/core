@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\Service\ApiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class ApiController extends AbstractController
 {
@@ -39,10 +39,11 @@ class ApiController extends AbstractController
         ];
         try {
             $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
-            return new JsonResponse($apiService->call("/$prefix/$path", 'ducksmanager', $data, $request->getMethod(), false, $userCredentials));
+            $response = $apiService->callNoParse("/$prefix/$path", 'ducksmanager', $data, $request->getMethod(), false, $userCredentials);
+            return new JsonResponse($apiService->getResponseContentOrBoolOrThrow($response));
         }
-        catch(ClientException $clientException) {
-            return new Response('', $clientException->getCode());
+        catch(ExceptionInterface $e) {
+            return new Response('', $e->getCode());
         }
     }
 }

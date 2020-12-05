@@ -73,6 +73,19 @@ class ApiService
             return $response;
         }
 
+        return $this->getResponseContentOrBoolOrThrow($response);
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @return array|bool
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getResponseContentOrBoolOrThrow(ResponseInterface $response) {
         if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
             if (empty($response->getContent()) || $response->getContent() === 'OK') {
                 return true;
@@ -84,7 +97,7 @@ class ApiService
         }
 
         try {
-            $this->logger->info("Call to service $method $url failed, Response code = {$response->getStatusCode()}, response buffer = {$response->getContent()}");
+            $this->logger->info("Call to service {$response->getInfo('http_method')} {$response->getInfo('url')} failed, Response code = {$response->getStatusCode()}, response buffer = {$response->getContent()}");
         }
         catch(Exception $e) {
             $this->logger->error($e->getMessage());
