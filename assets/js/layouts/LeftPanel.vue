@@ -60,7 +60,7 @@ import l10nMixin from "../mixins/l10nMixin";
 import RecentEvents from "./RecentEvents";
 import Navigation from "./Navigation";
 import Medal from "../components/Medal";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import Banner from "./Banner";
 import SwitchLocale from "./SwitchLocale";
 
@@ -92,12 +92,14 @@ export default {
 
   async mounted() {
     if (this.userId) {
-      await axios.post('/api/collection/lastvisit')
+      const {previousVisit}=(await axios.post('/api/collection/lastvisit')).data
+      this.setPreviousVisit(previousVisit)
       await this.fetchStats([this.userId])
     }
   },
 
   methods: {
+    ...mapMutations("collection", ["setPreviousVisit"]),
     ...mapActions("users", ["fetchStats"])
   }
 }
