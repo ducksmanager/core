@@ -35,7 +35,7 @@
       </div>
       <div
         class="issue-list"
-        @contextmenu.prevent="$refs.contextMenu.$refs.menu.open"
+        @contextmenu.prevent="openContextMenuIfBookNotOpen"
       >
         <b-alert
           v-once
@@ -137,7 +137,7 @@
         </div>
       </div>
       <ContextMenu
-        v-if="purchases && currentIssueOpened === null"
+        v-if="purchases"
         ref="contextMenu"
         :publication-code="publicationcode"
         :selected-issues="selected"
@@ -243,8 +243,8 @@ export default {
     filteredIssues() {
       const vm = this
       return this.issues && this.issues.filter(issue =>
-        vm.filter.possessed && issue.condition ||
-        vm.filter.missing && !issue.condition
+          vm.filter.possessed && issue.condition ||
+          vm.filter.missing && !issue.condition
       )
     }
   },
@@ -259,18 +259,18 @@ export default {
           const vm = this
 
           this.userIssuesForPublication = newValue.filter(issue =>
-            `${issue.country}/${issue.magazine}` === vm.publicationcode)
-            .map(issue => ({
-                ...issue,
-                condition: (vm.conditions.find(({dbValue}) => dbValue === issue.condition) || {value: 'possessed'}).value
-              })
-            )
+              `${issue.country}/${issue.magazine}` === vm.publicationcode)
+              .map(issue => ({
+                    ...issue,
+                    condition: (vm.conditions.find(({dbValue}) => dbValue === issue.condition) || {value: 'possessed'}).value
+                  })
+              )
 
           this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
-            .map(issueNumber => ({
-              issueNumber,
-              ...(vm.userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
-            }))
+              .map(issueNumber => ({
+                issueNumber,
+                ...(vm.userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
+              }))
           this.loading = false
         }
       }
@@ -284,22 +284,27 @@ export default {
   methods: {
     ...mapActions("coa", ["fetchPublicationNames"]),
     ...mapActions("collection", ["loadCollection", "loadPurchases"]),
+    openContextMenuIfBookNotOpen(e) {
+      if (this.currentIssueOpened === null) {
+        this.$refs.contextMenu.$refs.menu.open(e)
+      }
+    },
     getPreselected() {
       const vm = this
       if ([this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)) {
         return this.preselected
       }
       return this.filteredIssues
-        .map(({issueNumber}) => issueNumber)
-        .filter((issueNumber, index) =>
-          index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
-        )
+          .map(({issueNumber}) => issueNumber)
+          .filter((issueNumber, index) =>
+              index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
+          )
     },
     updateSelected() {
       const vm = this
       this.selected = this.issues
-        .map(({issueNumber}) => issueNumber)
-        .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber))
+          .map(({issueNumber}) => issueNumber)
+          .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber))
       this.preselectedIndexStart = this.preselectedIndexEnd = null
       this.preselected = []
     },
