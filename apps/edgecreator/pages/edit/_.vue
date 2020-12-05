@@ -3,6 +3,17 @@
     {{ error }}
   </b-alert>
   <b-container v-else-if="Object.keys(steps).length && width && height" id="wrapper" fluid>
+    <b-alert
+      v-for="(warning, idx) in warnings"
+      :key="`warning-${idx}`"
+      align="center"
+      dismissible
+      variant="warning"
+      show
+      @dismissed="removeWarning(idx)"
+    >
+      {{ warning }}
+    </b-alert>
     <top-bar @overwrite-model="overwriteModel($event)" />
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right">
@@ -122,6 +133,7 @@ export default {
       'edgesAfter',
       'photoUrls',
       'contributors',
+      'warnings',
     ]),
     ...mapState('editingStep', {
       editingIssuenumber: 'issuenumber',
@@ -210,6 +222,7 @@ export default {
       'setMagazine',
       'setPhotoUrl',
       'addContributor',
+      'removeWarning',
     ]),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
     ...mapActions([
