@@ -2,54 +2,31 @@
   <div>
     <h1>{{ $t('header.dashboard') }}</h1>
 
-    <h3>{{ $t('header.ongoing_edges') }}</h3>
+    <template v-for="{ category, l10nKey } in edgeCategories">
+      <h3 :key="`${category}-title`">{{ $t(l10nKey) }}</h3>
 
-    <b-container>
-      <b-card-group v-if="getEdgesByStatus('ongoing').length" deck columns>
-        <b-card
-          v-for="(edge, i) in getEdgesByStatus('ongoing')"
-          :key="i"
-          class="col-md-4 text-center"
-        >
-          <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
-            <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
-          </b-link>
-        </b-card>
-      </b-card-group>
-      <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
-    </b-container>
-
-    <h3>{{ $t('header.pending_edges') }}</h3>
-
-    <b-container>
-      <b-card-group v-if="getEdgesByStatus('pending').length" deck columns>
-        <b-card
-          v-for="(edge, i) in getEdgesByStatus('pending')"
-          :key="i"
-          class="col-md-4 text-center"
-        >
-          <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
-            <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
-          </b-link>
-        </b-card>
-      </b-card-group>
-      <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
-    </b-container>
-
-    <h3>{{ $t('header.ongoing_by_other_user_edges') }}</h3>
-
-    <b-container>
-      <b-card-group v-if="getEdgesByStatus('ongoing_by_other_user').length" deck columns>
-        <b-card
-          v-for="(edge, i) in getEdgesByStatus('ongoing_by_other_user')"
-          :key="i"
-          class="col-md-4 text-center"
-        >
-          <b-card-text>{{ edge.country }}/{{ edge.magazine }} {{ edge.issuenumber }}</b-card-text>
-        </b-card>
-      </b-card-group>
-      <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
-    </b-container>
+      <b-container :key="category">
+        <b-row v-if="getEdgesByStatus(category).length">
+          <b-col v-for="(edge, i) in getEdgesByStatus(category)" :key="`${category}-${i}`" cols="3">
+            <b-card class="text-center">
+              <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
+                <b-card-text v-if="hasPublicationNames"
+                  ><Issue
+                    :publicationcode="`${edge.country}/${edge.magazine}`"
+                    :publicationname="
+                      publications[edge.country][`${edge.country}/${edge.magazine}`]
+                    "
+                    :issuenumber="edge.issuenumber"
+                    hide-condition
+                  /><b-badge v-if="edge.v3">v3</b-badge></b-card-text
+                >
+              </b-link>
+            </b-card>
+          </b-col>
+        </b-row>
+        <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
+      </b-container>
+    </template>
 
     <hr />
 
@@ -65,13 +42,41 @@
 
 <script>
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
+import Issue from 'ducksmanager/assets/js/components/Issue.vue'
 
 export default {
+  components: {
+    Issue,
+  },
   mixins: [edgeCatalogMixin],
   middleware: 'authenticated',
+
+  data: () => ({
+    edgeCategories: [
+      {
+        category: 'ongoing',
+        l10nKey: 'header.ongoing_edges',
+      },
+      {
+        category: 'pending',
+        l10nKey: 'header.pending_edges',
+      },
+      {
+        category: 'ongoing_by_other_user',
+        l10nKey: 'header.ongoing_by_other_user_edges',
+      },
+    ],
+  }),
+
+  mounted() {
+    window.imagePath = '/images/'
+  },
 }
 </script>
-<style scoped lang="css">
+<style scoped lang="scss">
+.card {
+  margin: 15px 0;
+}
 .clickable {
   cursor: pointer;
 }
