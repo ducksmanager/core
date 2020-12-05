@@ -4,7 +4,7 @@
       <b-col sm="4">
         <label :for="dimension">{{ dimension }}:</label>
       </b-col>
-      <b-col sm="4">
+      <b-col sm="5">
         <b-form-input
           :id="dimension"
           :value="dimension === 'width' ? width : height"

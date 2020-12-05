@@ -10,6 +10,7 @@ export default function (req, res) {
   const { runExport, country, magazine, issuenumber, designers, photographers, content } = req.body
   const fileName = `${runExport ? '' : '_'}${magazine}.${issuenumber}.svg`
   const svgPath = `${process.env.EDGES_PATH}/${country}/gen/${fileName}`
+  const publicationCode = `${country}/${magazine}`
 
   fs.mkdirSync(require('path').dirname(svgPath), { recursive: true })
   fs.writeFile(svgPath, content, function () {
@@ -22,7 +23,7 @@ export default function (req, res) {
 
           try {
             await axios.put(
-              `${process.env.BACKEND_URL}/edgecreator/publish/${country}/${magazine}/${issuenumber}`,
+              `${process.env.BACKEND_URL}/edgecreator/publish/${publicationCode}/${issuenumber}`,
               {
                 designers: designers.map(({ username }) => username),
                 photographers: photographers.map(({ username }) => username),

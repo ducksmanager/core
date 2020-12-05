@@ -94,6 +94,7 @@ export default {
     BIconCamera,
   },
   mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin],
+  middleware: 'authenticated',
   data() {
     return {
       error: null,
@@ -219,7 +220,6 @@ export default {
     ]),
     ...mapMutations('user', ['setAllUsers']),
   },
-  middleware: 'authenticated',
 }
 </script>
 <style>

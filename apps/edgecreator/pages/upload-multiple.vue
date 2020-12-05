@@ -1,16 +1,14 @@
 <template>
   <b-container>
-    <template>
-      <div class="loader" @change="change" @dragover="dragover" @drop="drop">
-        <p>
-          {{ $t('upload.drag') }}
-          <label class="browse">
-            {{ $t('upload.browse') }}
-            <input id="file" class="sr-only" type="file" accept="image/jpeg" />
-          </label>
-        </p>
-      </div>
-    </template>
+    <div class="loader" @change="change" @dragover="dragover" @drop="drop">
+      <p>
+        {{ $t('upload.drag') }}
+        <label class="browse">
+          {{ $t('upload.browse') }}
+          <input id="file" class="sr-only" type="file" accept="image/jpeg" />
+        </label>
+      </p>
+    </div>
     <template v-if="uploadedImageData">
       <div id="cropper-wrapper">
         <vue-cropper
