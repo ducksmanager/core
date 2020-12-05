@@ -17,6 +17,8 @@ export const state = () => ({
   publicationPhotos: [],
 
   stepColors: {},
+
+  warnings: [],
 })
 
 export const mutations = {
@@ -71,6 +73,12 @@ export const mutations = {
   },
   setStepColors(state, { stepNumber, colors }) {
     Vue.set(state.stepColors, stepNumber, colors)
+  },
+  addWarning(state, warning) {
+    state.warnings = [...state.warnings, warning]
+  },
+  removeWarning(state, idx) {
+    state.warnings.splice(idx, 1)
   },
 }
 

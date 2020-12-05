@@ -10,6 +10,9 @@ export default {
     ...mapState('user', ['allUsers']),
   },
   mixins: [legacyDbMixin, svgUtilsMixin, stepListMixin],
+  data: () => ({
+    loadErrors: [],
+  }),
   methods: {
     async loadModel(country, magazine, issuenumber, targetIssuenumber) {
       const vm = this
@@ -111,20 +114,28 @@ export default {
     },
     async getStepsFromApi(issuenumber, stepData) {
       const vm = this
-      return await Promise.all(
-        stepData
-          .filter(({ ordre: originalStepNumber }) => originalStepNumber !== -1)
-          .map(async ({ nomFonction: originalComponentName, options: originalOptions }) => {
-            const { component } = vm.supportedRenders.find(
-              (component) => component.originalName === originalComponentName
-            )
-            const options = await vm.getOptionsFromDb(component, originalOptions)
-            return Promise.resolve({
-              component,
-              options,
+      return (
+        await Promise.all(
+          stepData
+            .filter(({ ordre: originalStepNumber }) => originalStepNumber !== -1)
+            .map(async ({ nomFonction: originalComponentName, options: originalOptions }) => {
+              const { component } = vm.supportedRenders.find(
+                (component) => component.originalName === originalComponentName
+              ) || { component: null }
+              if (component) {
+                return {
+                  component,
+                  options: await vm.getOptionsFromDb(component, originalOptions),
+                }
+              } else {
+                this.addWarning(
+                  `Unrecognized step name : ${originalComponentName}, step will be ignored.`
+                )
+                return null
+              }
             })
-          })
-      )
+        )
+      ).filter((step) => !!step)
     },
     async setPhotoUrlsFromApi(issuenumber, edgeId) {
       const photo = await this.$axios.$get(`/api/edgecreator/model/v2/${edgeId}/photo/main`)
@@ -143,6 +154,6 @@ export default {
         })
       })
     },
-    ...mapMutations(['setDimensions', 'setPhotoUrl', 'addContributor']),
+    ...mapMutations(['setDimensions', 'setPhotoUrl', 'addContributor', 'addWarning']),
   },
 }
