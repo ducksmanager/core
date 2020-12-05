@@ -2,21 +2,21 @@
   <b-container>
     <b-select
       v-model="currentCountryCode"
-      :options="countries"
+      :options="countriesWithSelect"
       @input="loadPublications"
       @change="$emit('change', null)"
     />
     <b-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
-      :options="publications[currentCountryCode]"
+      :options="publicationsWithSelect"
       @change="$emit('change', null)"
       @input="loadIssues"
     />
     <b-select
       v-show="currentCountryCode && currentPublicationCode"
       v-model="currentIssueNumber"
-      :options="issues[currentPublicationCode]"
+      :options="issuesWithSelect"
       @change="
         $emit('change', {
           countryCode: currentCountryCode,
@@ -39,10 +39,9 @@
   </b-container>
 </template>
 <script>
-import Vue from 'vue'
 import Dimensions from '@/components/Dimensions'
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
-import { mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
   components: { Dimensions },
@@ -58,10 +57,75 @@ export default {
     currentCountryCode: null,
     currentPublicationCode: null,
     currentIssueNumber: null,
-    countries: null,
-    issues: {},
-    publications: {},
   }),
+  computed: {
+    ...mapState('coa', ['countries', 'publications', 'issues']),
+    ...mapState('edgeCatalog', ['publishedEdges']),
+
+    countriesWithSelect() {
+      return (
+        this.countries &&
+        this.countries[this.$i18n.locale] && {
+          null: this.$t('select.country'),
+          ...this.countries[this.$i18n.locale],
+        }
+      )
+    },
+    publicationsWithSelect() {
+      return (
+        this.publications[this.currentCountryCode] && {
+          null: this.$t('select.publication'),
+          ...this.publications[this.currentCountryCode],
+        }
+      )
+    },
+    issuesWithSelect() {
+      const vm = this
+      return (
+        this.issues[this.currentPublicationCode] &&
+        this.publishedEdges[this.currentPublicationCode] && [
+          { value: null, text: this.$t('select.issue') },
+          ...this.issues[vm.currentPublicationCode].map((issuenumber) => {
+            const status = this.getEdgeStatus({
+              country: this.currentCountryCode,
+              magazine: this.currentPublicationCode.split('/')[1],
+              issuenumber,
+            })
+            return {
+              value: issuenumber,
+              text: `${issuenumber}${status === 'none' ? '' : ` (${status})`}`,
+              disabled:
+                (this.disableOngoingOrPublished && status !== 'none') ||
+                (this.disableNotOngoingNorPublished && status === 'none'),
+            }
+          }),
+        ]
+      )
+    },
+  },
+  watch: {
+    currentCountryCode: {
+      immediate: true,
+      async handler(newValue) {
+        if (newValue) {
+          this.currentPublicationCode = null
+          this.currentIssueNumber = null
+          await this.loadPublicationsByCountry(newValue)
+        }
+      },
+    },
+    currentPublicationCode: {
+      immediate: true,
+      async handler(newValue) {
+        this.currentIssueNumber = null
+        await this.loadIssues(newValue)
+        this.setPublishedEdges({
+          publicationCode: newValue,
+          publishedEdges: await this.$axios.$get(`/api/edges/${newValue}`),
+        })
+      },
+    },
+  },
   mounted() {
     if (this.countryCode) {
       this.currentCountryCode = this.countryCode
@@ -72,54 +136,7 @@ export default {
     this.loadCountries()
   },
   methods: {
-    async loadCountries() {
-      if (!this.countries) {
-        this.countries = {
-          null: this.$t('select.country'),
-          ...(await this.$axios.$get(`/api/coa/list/countries/${this.$i18n.locale}`)),
-        }
-      }
-      this.currentIssueNumber = null
-    },
-    async loadPublications() {
-      const country = this.currentCountryCode
-      if (!this.publications[country]) {
-        const publications = {
-          null: this.$t('select.publication'),
-          ...(await this.$axios.$get(`/api/coa/list/publications/${country}`)),
-        }
-        Vue.set(this.publications, country, publications)
-      }
-      this.currentIssueNumber = null
-    },
-    async loadIssues() {
-      const publicationCode = this.currentPublicationCode
-      if (publicationCode) {
-        if (!this.issues[publicationCode]) {
-          const publishedEdges = await this.$axios.$get(`/api/edges/${publicationCode}`)
-          this.setPublishedEdges({ publicationCode, publishedEdges })
-          let issues = Object.values(
-            await this.$axios.$get(`/api/coa/list/issues/${publicationCode}`)
-          ).map((issuenumber) => {
-            const status = this.getEdgeStatus({
-              country: this.currentCountryCode,
-              magazine: publicationCode.split('/')[1],
-              issuenumber,
-            })
-            return {
-              value: issuenumber,
-              text: `${issuenumber}${status === 'none' ? '' : ` (${status})`}`,
-              disabled:
-                (this.disableOngoingOrPublished && status !== 'none') ||
-                (this.disableNotOngoingNorPublished && status === 'none'),
-            }
-          })
-          issues = [{ value: null, text: this.$t('select.issue') }].concat(issues)
-          Vue.set(this.issues, publicationCode, issues)
-        }
-        this.currentIssueNumber = null
-      }
-    },
+    ...mapActions('coa', ['loadCountries', 'loadPublicationsByCountry', 'loadIssues']),
     ...mapMutations('edgeCatalog', ['setPublishedEdges']),
   },
 }
