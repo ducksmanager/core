@@ -34,7 +34,7 @@
     "ducksmanager": "git+https://github.com/bperel/DucksManager-next.git#expose-components",
     "image-size": "^0.9.3",
     "interactjs": "^1.10.1",
-    "nuxt": "^2.14.9",
+    "nuxt": "^2.14.10",
     "nuxt-i18n": "^6.13.2",
     "nuxt-svg-loader": "^1.2.0",
     "raw-body": "^2.4.1",
@@ -43,7 +43,7 @@
     "vue": "^2.6.12",
     "vue-bootstrap-typeahead": "^0.2.6",
     "vue-cropperjs": "^4.1.0",
-    "xmldom": "^0.3.0"
+    "xmldom": "^0.4.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^5.0.0",
@@ -52,7 +52,7 @@
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",
     "eslint": "^7.15.0",
-    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-prettier": "^3.2.0",
     "eslint-webpack-plugin": "^2.4.1",
