@@ -279,14 +279,6 @@ export default {
   height: 100%;
   z-index: 2000;
 
-  .closed {
-    transform: rotate3d(0, 1, 0, -90deg) !important;
-  }
-
-  .opened {
-    transform: rotate3d(0, 1, 0, 0deg) !important;
-  }
-
   img {
     display: none
   }
@@ -344,10 +336,13 @@ export default {
     background-repeat: no-repeat;
     transform: rotate3d(0, 1, 0, 0deg);
     transform-origin: right;
-    transition-timing-function: linear;
     transition: all 1s linear;
     height: 100%;
     z-index: 0;
+
+    &.closed {
+      transform: rotate3d(0, 1, 0, -90deg) !important;
+    }
   }
 
   .page {
@@ -379,6 +374,10 @@ export default {
           transform: rotate3d(0, 1, 0, -90deg);
           transform-origin: left;
           transition: all 1s linear;
+
+          &.opened {
+            transform: rotate3d(0, 1, 0, 0deg);
+          }
         }
       }
     }
