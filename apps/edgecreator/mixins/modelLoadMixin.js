@@ -29,6 +29,7 @@ export default {
         if (!onlyLoadStepsAndDimensions) {
           vm.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
           vm.setContributorsFromSvg(issuenumber, svgChildNodes)
+          vm.addCurrentUserAsDesigner(issuenumber)
         }
       }
 
@@ -54,6 +55,16 @@ export default {
       }
       this.setSteps(targetIssuenumber, steps)
     },
+
+    addCurrentUserAsDesigner(issuenumber) {
+      const vm = this
+      this.addContributor({
+        issuenumber,
+        contributionType: 'designers',
+        user: this.allUsers.find((user) => user.username === vm.$cookies.get('dm-user')),
+      })
+    },
+
     setDimensionsFromSvg(svgElement) {
       this.setDimensions({
         width: svgElement.getAttribute('width') / 1.5,
