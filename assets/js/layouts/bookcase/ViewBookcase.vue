@@ -15,9 +15,7 @@
             :publicationname="publicationNames[edge.publicationcode]"
             :issuenumber="edge.issuenumber"
             hide-condition
-          >
-            <Ago :timestamp="edge.timestamp" />
-          </Issue>
+          />
         </div>
       </div>
       <b-alert
