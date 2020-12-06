@@ -78,11 +78,9 @@ class PageSiteController extends AbstractController
      *     methods={"POST"}
      * )
      */
-    public function switchLocale(Request $request, LoggerInterface $logger, string $_locale): Response
+    public function switchLocale(Request $request, string $_locale): Response
     {
-        $logger->info($request->getSession()->get('_locale'));
         $request->getSession()->set('_locale', $_locale);
-        $logger->info($request->getSession()->get('_locale'));
         return new Response();
     }
 
@@ -102,12 +100,17 @@ class PageSiteController extends AbstractController
     }
 
     /**
-     * @Route("/",
+     * @Route("/{locale}",
+     *     defaults={"locale"=null},
+     *     requirements={"locale"="^fr|en$"},
      *     methods={"GET"}
      * )
      */
-    public function showWelcome(TranslatorInterface $translator): Response
+    public function showWelcome(Request $request, ?string $locale): Response
     {
+        if (!is_null($locale) && in_array($locale, ['en', 'fr'])) {
+            $this->switchLocale($request, $locale);
+        }
         return $this->renderSitePage(
             '',
             'Welcome'
