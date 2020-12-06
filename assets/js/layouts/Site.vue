@@ -4,8 +4,8 @@
     <SwitchLocale />
     <Banner :classes="{'d-none d-md-flex': true}" />
     <div id="logo_zone2">
-      <h2 v-if="title">
-        {{ title }}
+      <h2 v-if="innerTitle">
+        {{ innerTitle }}
       </h2>
       <component
         :is="page"
@@ -58,6 +58,7 @@ export default {
   props: {
     page: { type: String, required: true },
     title: { type: String, default: null },
+    innerTitle: { type: String, default: null },
   },
   data() {
     return this.$attrs;

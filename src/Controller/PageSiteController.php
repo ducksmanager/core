@@ -84,10 +84,11 @@ class PageSiteController extends AbstractController
         return new Response();
     }
 
-    protected function renderSitePage(string $title, string $page, array $vueProps = []): Response
+    protected function renderSitePage(string $page, string $title, ?string $innerTitle = null, array $vueProps = []): Response
     {
         return $this->render("bare.twig", [
             'title' => $title,
+            'innerTitle' => $innerTitle,
             'commit' => $_ENV['COMMIT'],
             'vueProps' => [
                 'title' => $title,
@@ -106,14 +107,14 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showWelcome(Request $request, ?string $locale): Response
+    public function showWelcome(Request $request, TranslatorInterface $translator, ?string $locale): Response
     {
         if (!is_null($locale) && in_array($locale, ['en', 'fr'])) {
             $this->switchLocale($request, $locale);
         }
         return $this->renderSitePage(
-            '',
-            'Welcome'
+            'Welcome',
+            $translator->trans('BIENVENUE')
         );
     }
 
@@ -126,14 +127,16 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showBookcasePage(?string $username = null): Response
+    public function showBookcasePage(TranslatorInterface $translator, ?string $username = null): Response
     {
         if (is_null($username) && is_null($this->getUser())) {
             return $this->redirectToRoute('app_login');
         }
         return $this->renderSitePage(
-            '',
-            'Bookcase', [
+            'Bookcase',
+            $username ? $translator->trans('BIBLIOTHEQUE_DE').' '.$username : $translator->trans('BIBLIOTHEQUE_COURT'),
+            null,
+            [
                 'tab' => 'ViewBookcase',
                 'bookcase-username' => $username ?? $this->getUser()->getUsername(),
             ]
@@ -146,10 +149,11 @@ class PageSiteController extends AbstractController
      *     path="/bookcase/options"
      * )
      */
-    public function showBookcaseOptionsPage(): Response
+    public function showBookcaseOptionsPage(TranslatorInterface $translator): Response
     {
         return $this->renderSitePage(
-            '',
+            $translator->trans('BIBLIOTHEQUE_OPTIONS_COURT'),
+            null,
             'Bookcase', [
                 'tab' => 'BookcaseOptions'
             ]
@@ -164,11 +168,12 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showBookcaseContributorsPage(): Response
+    public function showBookcaseContributorsPage(TranslatorInterface $translator): Response
     {
         return $this->renderSitePage(
-            '',
-            'Bookcase', [
+            'Bookcase',
+            $translator->trans('BIBLIOTHEQUE_CONTRIBUTEURS_COURT'),
+            null, [
                 'tab' => 'BookcaseContributors'
             ]
         );
@@ -185,8 +190,9 @@ class PageSiteController extends AbstractController
     public function showExpandPage(TranslatorInterface $translator): Response
     {
         return $this->renderSitePage(
+            'Expand',
             $translator->trans('AGRANDIR_COLLECTION'),
-            'Expand'
+            $translator->trans('AGRANDIR_COLLECTION'),
         );
     }
 
@@ -199,8 +205,9 @@ class PageSiteController extends AbstractController
     public function showImportPage(TranslatorInterface $translator): Response
     {
         return $this->renderSitePage(
+            'InducksImport',
             $translator->trans('IMPORTER_INDUCKS'),
-            'InducksImport'
+            $translator->trans('IMPORTER_INDUCKS'),
         );
     }
 
@@ -215,8 +222,8 @@ class PageSiteController extends AbstractController
     public function showPrintPresentationPage(TranslatorInterface $translator): Response
     {
         return $this->renderSitePage(
+            'PrintPresentation',
             $translator->trans('IMPRESSION_COLLECTION'),
-            'PrintPresentation'
         );
     }
 
@@ -239,8 +246,8 @@ class PageSiteController extends AbstractController
             return new Response('KO', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return $this->renderSitePage(
+            'Signup',
             $translator->trans('INSCRIPTION'),
-            'Signup'
         );
     }
 
@@ -250,11 +257,13 @@ class PageSiteController extends AbstractController
      *     path="/stats/{type}"
      * )
      */
-    public function showStatsPage(string $type): Response
+    public function showStatsPage(TranslatorInterface $translator, string $type): Response
     {
         return $this->renderSitePage(
-            '',
-            'Stats', [
+            'Stats',
+            $translator->trans('STATISTIQUES_COLLECTION'),
+            null,
+            [
                 'tab' => $type
             ]
         );
@@ -301,8 +310,9 @@ class PageSiteController extends AbstractController
         }
 
         return $this->renderSitePage(
-            $translator->trans('MOT_DE_PASSE_OUBLIE'),
             'Forgot',
+            $translator->trans('MOT_DE_PASSE_OUBLIE'),
+            $translator->trans('MOT_DE_PASSE_OUBLIE'),
             (is_null($success) ? [] : compact('success')) + compact('token') + ['errors' => json_encode($errors)]
         );
     }
@@ -318,7 +328,7 @@ class PageSiteController extends AbstractController
      *     defaults={"publicationCode"=null})
      * )
      */
-    public function showCollection(LoggerInterface $logger, Request $request, ApiService $apiService, ?string $publicationCode): Response
+    public function showCollection(TranslatorInterface $translator, LoggerInterface $logger, Request $request, ApiService $apiService, ?string $publicationCode): Response
     {
         $username = $this->getUser()->getUsername();
         if ($username === 'demo') {
@@ -326,10 +336,9 @@ class PageSiteController extends AbstractController
         }
         $logger->info($request->getLocale());
         return $this->renderSitePage(
-            '',
-            'Collection', [
-                'component' => 'Site',
-                'page' => 'Collection',
+            'Collection',
+            $translator->trans('COLLECTION'),
+            null, [
                 'tab' => 'Manage',
                 'publicationcode' => $publicationCode
             ]
@@ -365,8 +374,9 @@ class PageSiteController extends AbstractController
         }
 
         return $this->renderSitePage(
-            '',
             'Collection',
+            $translator->trans('GESTION_COMPTE_COURT'),
+            null,
             (is_null($success) ? [] : compact('success')) + ['tab' => 'account', 'errors' => json_encode($errors)]
         );
     }
@@ -379,7 +389,7 @@ class PageSiteController extends AbstractController
      *     methods={"GET", "POST"}
      * )
      */
-    public function showSubscriptions(Request $request, ApiService $apiService): Response
+    public function showSubscriptions(Request $request, ApiService $apiService, TranslatorInterface $translator): Response
     {
         $success = null;
         $errors = [];
@@ -393,8 +403,9 @@ class PageSiteController extends AbstractController
         }
 
         return $this->renderSitePage(
-            '',
             'Collection',
+            $translator->trans('GESTION_ABONNEMENTS'),
+            null,
             (is_null($success) ? [] : compact('success'))
             + ['tab' => 'subscriptions', 'errors' => json_encode($errors)]
         );
@@ -418,8 +429,9 @@ class PageSiteController extends AbstractController
             $success = !is_null($apiResponse);
         }
         return $this->renderSitePage(
-            $translator->trans('LISTE_BOUQUINERIES'),
             'Bookstores',
+            $translator->trans('LISTE_BOUQUINERIES'),
+            $translator->trans('LISTE_BOUQUINERIES'),
             compact('success')
         );
     }
