@@ -49,8 +49,8 @@ export default {
         const [publicationcode, issuenumber] = event.exampleIssue.split(/\/(?=[^/]+$)/)
         event = {...event, publicationcode, issuenumber}
       }
-      if (event.collaborators) {
-        event = {...event, collaborators: event.collaborators.split(',').map(userId => parseInt(userId))}
+      if (event.users) {
+        event = {...event, users: event.users.split(',').map(userId => parseInt(userId))}
       }
       if (event.userId) {
         event.userId = parseInt(event.userId)
@@ -68,8 +68,8 @@ export default {
 
     await this.fetchPublicationNames(
       this.events
-        .filter(({publicationcode}) => publicationcode)
-        .map(({publicationcode}) => publicationcode)
+        .filter(({publicationCode}) => publicationCode)
+        .map(({publicationCode}) => publicationCode)
         .concat(
           this.events.filter(({edges}) => edges)
             .reduce((acc, {edges}) => ([...acc, ...edges.map(({publicationCode}) => publicationCode)]), [])
@@ -78,7 +78,7 @@ export default {
 
     await this.fetchStats(this.events
       .reduce((acc, event) =>
-        [...acc, event.userId || null, ...(event.collaborators || [])]
+        [...acc, event.userId || null, ...(event.users || [])]
         , []
       )
       .filter(userId => !!userId)

@@ -41,10 +41,26 @@ class EventService
                 LIMIT 1) AS exampleIssue
             FROM numeros
             INNER JOIN users ON numeros.ID_Utilisateur=users.ID
-            WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH) AND users.username<>'demo' AND users.username NOT LIKE 'test%'
+            WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
+              AND users.username<>'demo' AND users.username NOT LIKE 'test%'
+              AND numeros.Abonnement = 0
             GROUP BY users.ID, DATE(DateAjout)
             HAVING COUNT(Numero) > 0
-            ORDER BY DateAjout DESC
+        ", 'dm');
+    }
+
+    public function retrieveCollectionSubscriptionAdditions(): array
+    {
+        return $this->apiService->runQuery("
+            SELECT 'subscription_additions' as type,
+                CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationCode,
+                numeros.Numero AS issueNumber,
+                GROUP_CONCAT(numeros.ID_Utilisateur) AS users,
+                UNIX_TIMESTAMP(DateAjout) AS timestamp
+            FROM numeros
+            WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
+              AND numeros.Abonnement = 1
+            GROUP BY DATE(DateAjout), numeros.Pays, numeros.Magazine, numeros.Numero
         ", 'dm');
     }
 
@@ -69,12 +85,12 @@ class EventService
                 issuenumber
             )), ']') AS edges,
             UNIX_TIMESTAMP(creationDate) AS timestamp,
-            collaborators
+            users
         from (
             SELECT tp.publicationcode,
                 tp.issuenumber,
                 tp.dateajout                       AS creationDate,
-                GROUP_CONCAT(DISTINCT tpc.ID_user) AS collaborators
+                GROUP_CONCAT(DISTINCT tpc.ID_user) AS users
             FROM tranches_pretes tp
                INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
             WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)

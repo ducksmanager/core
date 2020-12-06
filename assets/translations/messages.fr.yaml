@@ -356,6 +356,9 @@ NEWS_A_CREE_TRANCHE: a créé la tranche
 NEWS_A_OBTENU_MEDAILLE: a obtenu la médaille <b>%s niveau %d</b>
 NEWS_ONT_CREE_TRANCHE: ont créé la tranche 
 NEWS_ONT_CREE_TRANCHE_2: pour la bibliothèque DucksManager
+NEWS_A_RECU_NUMERO_ABONNEMENT: a reçu
+NEWS_ONT_RECU_NUMERO_ABONNEMENT: ont reçu
+NEWS_ONT_RECU_NUMERO_ABONNEMENT_2: grâce à leur abonnement à ce magazine
 NEWS_TEMPS_HEURE: heure
 NEWS_TEMPS_JOUR: jour
 NEWS_TEMPS_MINUTE: minute

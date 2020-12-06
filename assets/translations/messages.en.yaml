@@ -353,6 +353,9 @@ NEWS_IL_Y_A_PREFIXE:
 NEWS_IL_Y_A_SUFFIXE:  ago
 NEWS_ONT_CREE_TRANCHE: have created the edge of issue 
 NEWS_ONT_CREE_TRANCHE_2: for the DucksManager bookcase
+NEWS_A_RECU_NUMERO_ABONNEMENT: has received issue
+NEWS_ONT_RECU_NUMERO_ABONNEMENT: have received issue
+NEWS_ONT_RECU_NUMERO_ABONNEMENT_2: as part of a magazine subscription
 NEWS_TEMPS_HEURE: hour
 NEWS_TEMPS_JOUR: day
 NEWS_TEMPS_MINUTE: minute

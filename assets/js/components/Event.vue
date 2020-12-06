@@ -32,11 +32,11 @@
     </template>
     <template v-if="event.type === 'edge'">
       <span
-        v-for="(collaborator, index) in event.collaborators"
+        v-for="(collaborator, index) in event.users"
         :key="collaborator"
       >
-        <template v-if="event.collaborators.length > 1">
-          <template v-if="index === event.collaborators.length - 1">
+        <template v-if="event.users.length > 1">
+          <template v-if="index === event.users.length - 1">
             {{ l10n.ET }}
           </template>
           <template v-else-if="index > 0">
@@ -49,7 +49,7 @@
           :points="points[collaborator]"
         />
       </span>
-      <template v-if="event.collaborators.length>1">
+      <template v-if="event.users.length>1">
         {{ l10n.NEWS_ONT_CREE_TRANCHE }}
       </template>
       <template v-else>
@@ -78,6 +78,40 @@
         :edges="event.edges"
       />
       {{ l10n.NEWS_ONT_CREE_TRANCHE_2 }}
+    </template>
+    <template v-if="event.type === 'subscription_additions'">
+      <span
+        v-for="(subscriber, index) in event.users"
+        :key="subscriber"
+      >
+        <template v-if="event.users.length > 1">
+          <template v-if="index === event.users.length - 1">
+            {{ l10n.ET }}
+          </template>
+          <template v-else-if="index > 0">
+            ,
+          </template>
+        </template>
+        <UserPopover
+          :id="subscriber"
+          :stats="stats[subscriber]"
+          :points="points[subscriber]"
+        />
+      </span>
+      <template v-if="event.users.length>1">
+        {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT }}
+      </template>
+      <template v-else>
+        {{ l10n.NEWS_A_RECU_NUMERO_ABONNEMENT }}
+      </template>
+      <Issue
+        v-if="publicationNames[event.publicationCode]"
+        :publicationname="publicationNames[event.publicationCode]"
+        :publicationcode="event.publicationCode"
+        :issuenumber="event.issueNumber"
+        hide-condition
+      />
+      {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT_2 }}
     </template>
     <slot />
   </div>

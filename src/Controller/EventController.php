@@ -20,6 +20,7 @@ class EventController extends AbstractController
         return new JsonResponse(array_merge(
             $eventService->retrieveBookstoreCreations(),
             $eventService->retrieveCollectionUpdates(),
+            $eventService->retrieveCollectionSubscriptionAdditions(),
             $eventService->retrieveEdgeCreations(),
             $eventService->retrieveNewMedals(),
             $eventService->retrieveSignups()
