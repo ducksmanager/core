@@ -132,7 +132,6 @@ export default {
 
     ::v-deep ul {
       max-height: calc(100vh - 100px);
-      overflow-y: auto;
       z-index: 1030;
     }
   }

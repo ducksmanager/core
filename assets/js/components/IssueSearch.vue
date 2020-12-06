@@ -180,7 +180,7 @@ export default {
       ~ datalist {
         display: block;
         position: absolute;
-        background: darkgray;
+        background: #eee;
         width: 100%;
         top: 30px;
         padding-left: 0;
@@ -189,6 +189,7 @@ export default {
           cursor: pointer;
           padding: 5px;
           border-bottom: 1px solid #888;
+          color: #888;
           overflow-x: hidden;
 
           a {
