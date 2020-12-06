@@ -18,6 +18,8 @@ services:
       context: .
       target: app
     restart: always
+    volumes:
+      - dm_sessions:/tmp/sessions
     networks:
       - dm-network
       - dm-server_front-network
