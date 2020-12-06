@@ -15,6 +15,8 @@ RUN pecl install apcu && \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+RUN mkdir /tmp/sessions && chmod 777 -R /tmp/sessions
+
 COPY . /var/www/html
 COPY .git/refs/remotes/origin/master /var/www/html/commit.txt
 RUN echo COMMIT=`cat /var/www/html/commit.txt` >> .env.prod.local && rm /var/www/html/commit.txt && \
