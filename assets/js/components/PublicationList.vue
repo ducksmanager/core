@@ -17,7 +17,7 @@
     >
       <b-navbar-nav>
         <b-nav-item-dropdown
-          v-for="country in Object.keys(totalPerCountry)"
+          v-for="country in sortedCountries"
           :key="country"
           :text="country"
         >
@@ -75,6 +75,11 @@ export default {
   computed: {
     ...mapGetters("collection", ["totalPerCountry", "totalPerPublication"]),
     ...mapState("coa", ["countryNames", "publicationNames"]),
+    sortedCountries() {
+      const vm = this
+      return this.totalPerCountry && Object.keys(this.totalPerCountry)
+          .sort((countryCode1, countryCode2) => vm.countryNames[countryCode1] < vm.countryNames[countryCode2] ? -1 : (vm.countryNames[countryCode1] > vm.countryNames[countryCode2] ? 1 : 0))
+    },
     publicationsPerCountry() {
       const vm = this
       return this.totalPerCountry && this.publicationNames && Object.keys(this.totalPerCountry)
