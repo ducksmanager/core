@@ -137,13 +137,12 @@ import collectionMixin from "../../mixins/collectionMixin";
 import MedalProgress from "../../components/MedalProgress";
 import Issue from "../../components/Issue";
 import Book from "../../components/Book";
-import Ago from "../../components/Ago";
 import SharePage from "../../components/SharePage";
 import Bookcase from "../../components/Bookcase";
 
 export default {
   name: "ViewBookcase",
-  components: {Bookcase, SharePage, Ago, Book, MedalProgress, Issue, IssueSearch},
+  components: {Bookcase, SharePage, Book, MedalProgress, Issue, IssueSearch},
   mixins: [l10nMixin, collectionMixin],
 
   props: {
