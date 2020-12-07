@@ -18,6 +18,31 @@
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right">
         <table class="edges">
+          <tr v-if="showIssueNumbers">
+            <th v-if="showPreviousEdge && edgesBefore.length" class="surrounding-edge">
+              {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
+            </th>
+            <template v-for="issuenumber in issuenumbers">
+              <th :key="`issuenumber-${issuenumber}`">
+                <span v-if="editingIssuenumber === issuenumber || locked"><b-icon-pencil /></span>
+                <div
+                  :class="{ clickable: editingIssuenumber !== issuenumber && !locked }"
+                  @click="setEditIssuenumber(issuenumber)"
+                >
+                  {{ issuenumber }}
+                </div>
+              </th>
+              <th
+                v-if="showEdgePhotos && photoUrls[issuenumber]"
+                :key="`photo-icon-${issuenumber}`"
+              >
+                <b-icon-camera />
+              </th>
+            </template>
+            <th v-if="showNextEdge && edgesAfter.length" class="surrounding-edge">
+              {{ edgesAfter[0].issuenumber }}
+            </th>
+          </tr>
           <tr>
             <td v-if="showPreviousEdge && edgesBefore.length">
               <published-edge
@@ -27,7 +52,7 @@
               />
             </td>
             <template v-for="(issueSteps, issuenumber) in steps">
-              <td :key="issuenumber">
+              <td :key="`canvas-${issuenumber}`">
                 <edge-canvas
                   :issuenumber="issuenumber"
                   :width="width"
@@ -37,7 +62,7 @@
                   :contributors="contributors[issuenumber] || {}"
                 />
               </td>
-              <td v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
+              <td v-if="showEdgePhotos && photoUrls[issuenumber]" :key="`photo-${issuenumber}`">
                 <img
                   :alt="photoUrls[issuenumber]"
                   :src="getImageUrl('photos', photoUrls[issuenumber])"
@@ -56,28 +81,6 @@
                 @error="showNextEdge = null"
               />
             </td>
-          </tr>
-          <tr v-if="showIssueNumbers">
-            <th v-if="showPreviousEdge && edgesBefore.length" class="surrounding-edge">
-              {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
-            </th>
-            <template v-for="issuenumber in issuenumbers">
-              <th :key="issuenumber">
-                <div
-                  :class="{ clickable: editingIssuenumber !== issuenumber && !locked }"
-                  @click="setEditIssuenumber(issuenumber)"
-                >
-                  {{ issuenumber }}
-                </div>
-                <span v-if="editingIssuenumber === issuenumber || locked"><b-icon-pencil /></span>
-              </th>
-              <th v-if="showEdgePhotos && photoUrls[issuenumber]" :key="issuenumber">
-                <b-icon-camera />
-              </th>
-            </template>
-            <th v-if="showNextEdge && edgesAfter.length" class="surrounding-edge">
-              {{ edgesAfter[0].issuenumber }}
-            </th>
           </tr>
         </table>
       </b-col>
