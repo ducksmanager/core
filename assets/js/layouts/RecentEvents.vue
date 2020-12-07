@@ -46,8 +46,8 @@ export default {
   async mounted() {
     this.events = (await axios.get('/events')).data.map(event => {
       if (event.exampleIssue) {
-        const [publicationcode, issuenumber] = event.exampleIssue.split(/\/(?=[^/]+$)/)
-        event = {...event, publicationcode, issuenumber}
+        const [publicationCode, issueNumber] = event.exampleIssue.split(/\/(?=[^/]+$)/)
+        event = {...event, publicationCode, issueNumber}
       }
       if (event.users) {
         event = {...event, users: event.users.split(',').map(userId => parseInt(userId))}

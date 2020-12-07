@@ -104,8 +104,6 @@ export default {
     imageLoaded: false,
     spriteLoaded: false,
     ignoreSprite: false,
-    countryCode: null,
-    magazineCode: null,
     width: null,
     height: null
   }),
@@ -113,6 +111,14 @@ export default {
   computed: {
     ...mapState("bookcase", ["loadedSprites"]),
     ...mapState("coa", ["publicationNames"]),
+
+    countryCode() {
+      return this.publicationCode.split('/')[0]
+    },
+
+    magazineCode() {
+      return this.publicationCode.split('/')[1]
+    },
 
     id() {
       return `${this.publicationCode} ${this.issueNumber}`
@@ -127,12 +133,6 @@ export default {
     spriteClass() {
       return this.id && this.spritePath ? `edges-${this.publicationCode.replaceAll('/', '-')}-${this.issueNumber}` : ''
     }
-  },
-
-  mounted() {
-    const [ countryCode, magazineCode ] = this.publicationCode.split('/')
-    this.countryCode = countryCode
-    this.magazineCode = magazineCode
   },
 
   methods: {

@@ -4,39 +4,47 @@
     class="bookcase"
     :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
   >
-    <Edge
-      v-for="(edge, edgeIndex) in sortedBookcase"
-      :ref="`edge-${getEdgeKey(edge)}`"
+    <span
+      v-for="edge in edgesToLoad"
       :key="getEdgeKey(edge)"
-      :publication-code="edge.publicationCode"
-      :issue-number="edge.issueNumber"
-      existing
-      :load="currentEdgeIndex >= edgeIndex"
-      @loaded="currentEdgeIndex++"
-    />
+    >
+      <Edge
+        v-once
+        :ref="`edge-${getEdgeKey(edge)}`"
+        :key="getEdgeKey(edge)"
+        :publication-code="edge.publicationCode"
+        :issue-number="edge.issueNumber"
+        existing
+        load
+        @loaded="loadNextEdge"
+      />
+    </span>
   </div>
   <div
     v-else
     class="bookcase"
     :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
   >
-    <Edge
-      v-for="(edge, edgeIndex) in sortedBookcase"
-      :ref="`edge-${getEdgeKey(edge)}`"
+    <span
+      v-for="edge in edgesToLoad"
       :key="getEdgeKey(edge)"
-      :invisible="currentEdgeOpened === edge"
-      :highlighted="currentEdgeHighlighted === getEdgeKey(edge)"
-      :publication-code="edge.publicationCode"
-      :issue-number="edge.issueNumber"
-      :issue-number-reference="edge.issueNumberReference"
-      :creation-date="edge.creationDate"
-      :popularity="edge.popularity"
-      :existing="!!edge.edgeId"
-      :sprite-path="edgesUsingSprites[edge.edgeId] || null"
-      :load="currentEdgeIndex >= edgeIndex"
-      @loaded="currentEdgeIndex++"
-      @open-book="$emit('open-book', edge)"
-    />
+    >
+      <Edge
+        :ref="`edge-${getEdgeKey(edge)}`"
+        :invisible="currentEdgeOpened === edge"
+        :highlighted="currentEdgeHighlighted === getEdgeKey(edge)"
+        :publication-code="edge.publicationCode"
+        :issue-number="edge.issueNumber"
+        :issue-number-reference="edge.issueNumberReference"
+        :creation-date="edge.creationDate"
+        :popularity="edge.popularity"
+        :existing="!!edge.edgeId"
+        :sprite-path="edgesUsingSprites[edge.edgeId] || null"
+        load
+        @loaded="loadNextEdge"
+        @open-book="$emit('open-book', edge)"
+      />
+    </span>
   </div>
 </template>
 <script>
@@ -74,7 +82,8 @@ export default {
   emits: ['open-book'],
 
   data: () => ({
-    currentEdgeIndex: 0
+    currentEdgeIndex: 0,
+    edgesToLoad: []
   }),
 
   computed: {
@@ -90,10 +99,19 @@ export default {
       style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
       document.head.append(style);
     }
+
+    this.edgesToLoad = [this.sortedBookcase[0]]
   },
 
   methods: {
     getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
+
+    loadNextEdge() {
+      const nextEdge = this.sortedBookcase[++this.currentEdgeIndex];
+      if (nextEdge) {
+        this.edgesToLoad.push(nextEdge)
+      }
+    }
   }
 }
 </script>

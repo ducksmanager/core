@@ -24,7 +24,7 @@ export default {
     },
     l10KeySingle: {
       type: String,
-      default: 'NEWS_AUTRES_NUMERO'
+      default: 'NEWS_AUTRE_NUMERO'
     },
     l10KeyMultiple: {
       type: String,

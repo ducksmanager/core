@@ -1,36 +1,33 @@
 <template>
-  <span>
-    <span :id="id">
-      &nbsp;<slot />
-    </span>
-    <b-popover
-      :target="id"
-      placement="right"
-      triggers="hover"
-      :delay="500"
-      @show="loadIssueUrls"
+  <b-popover
+    :target="`issue-details-${issueNumber}`"
+    placement="right"
+    triggers="manual"
+    show
+    @show="loadIssueUrls"
+  >
+    <template #title>
+      <Issue
+        :publicationcode="publicationCode"
+        :issuenumber="issueNumber"
+        :publicationname="publicationNames[publicationCode]"
+        hide-condition
+      />
+    </template>
+    <div
+      v-if="isCoverLoading"
+      class="flex-grow-1"
     >
-      <template #title>
-        <Issue
-          :publicationcode="publicationCode"
-          :issuenumber="issueNumber"
-          :publicationname="publicationNames[publicationCode]"
-          hide-condition
-        />
-      </template>
-      <div
-        v-if="isCoverLoading"
-        class="flex-grow-1"
-      >{{ l10n.CHARGEMENT }}</div>
-      <img
-        v-else-if="coverUrl"
-        :alt="issueNumber"
-        :src="coverUrl"
-        class="cover"
-      >
-      <span v-else>{{ l10n.AUCUNE_COUVERTURE }}</span>
-    </b-popover>
-  </span>
+      {{ l10n.CHARGEMENT }}
+    </div>
+    <img
+      v-else-if="coverUrl"
+      :alt="issueNumber"
+      :src="coverUrl"
+      class="cover"
+    >
+    <span v-else>{{ l10n.AUCUNE_COUVERTURE }}</span>
+  </b-popover>
 </template>
 
 <script>

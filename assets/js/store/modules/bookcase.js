@@ -11,6 +11,8 @@ export default {
     bookcase: null,
     bookcaseTextures: null,
     bookcaseOrder: null,
+
+    edgeIndexToLoad: 0
   }),
 
   mutations: {
@@ -31,6 +33,9 @@ export default {
     },
     setIsPrivateBookcase(state, isPrivateBookcase) {
       state.isPrivateBookcase = isPrivateBookcase
+    },
+    incrementEdgeIndexToLoad(state) {
+      state.edgeIndexToLoad++
     },
   },
 
