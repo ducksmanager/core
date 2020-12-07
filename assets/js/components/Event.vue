@@ -21,10 +21,10 @@
     <template v-if="event.type === 'collection_update'">
       {{ l10n.NEWS_A_AJOUTE }}
       <Issue
-        v-if="publicationNames[event.publicationcode]"
-        :publicationname="publicationNames[event.publicationcode]"
-        :publicationcode="event.publicationcode"
-        :issuenumber="event.issuenumber"
+        v-if="publicationNames[event.publicationCode]"
+        :publicationname="publicationNames[event.publicationCode]"
+        :publicationcode="event.publicationCode"
+        :issuenumber="event.issueNumber"
         hide-condition
       />
       <OtherIssues :number="event.numberOfIssues" />
