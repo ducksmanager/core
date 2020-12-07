@@ -41,7 +41,11 @@
             <b-row>
               <b-col><label for="showEdgePhotos">Show edge photos</label></b-col>
               <b-col>
-                <b-checkbox id="showEdgePhotos" v-model="showEdgePhotos" :disabled="!hasPhotoUrl" />
+                <b-checkbox
+                  id="showEdgePhotos"
+                  v-model="showEdgePhotos"
+                  :disabled="!hasPhotoUrl || showEdgePhotos === null"
+                />
               </b-col>
             </b-row>
           </b-container>
@@ -151,6 +155,7 @@ import BIconCustomDuplicate from '@/components/BIconCustomDuplicate'
 import IssueSelect from '@/components/IssueSelect'
 import SaveButton from '@/components/SaveModelButton'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
+import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 
 export default {
   name: 'TopBar',
@@ -166,7 +171,7 @@ export default {
     BIconUnlock,
     BIconCustomDuplicate,
   },
-  mixins: [surroundingEdgeMixin],
+  mixins: [surroundingEdgeMixin, showEdgePhotosMixin],
   data() {
     return {
       showSidebar: true,
@@ -200,14 +205,6 @@ export default {
       },
       set(value) {
         this.$store.commit('ui/setShowIssueNumbers', value)
-      },
-    },
-    showEdgePhotos: {
-      get() {
-        return this.$store.state.ui.showEdgePhotos
-      },
-      set(value) {
-        this.$store.commit('ui/setShowEdgePhotos', value)
       },
     },
     hasPhotoUrl() {
