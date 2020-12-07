@@ -20,6 +20,7 @@ export default async function (req, res) {
     let isMultipleEdgePhoto
     let allowedMimeTypes
     let hash
+    let contents
 
     const fields = {}
 
@@ -42,7 +43,7 @@ export default async function (req, res) {
         const targetFilename = getTargetFilename(filename, isMultipleEdgePhoto)
         try {
           await validateUpload(mimetype, targetFilename, file)
-          saveFile(targetFilename, file)
+          saveFile(targetFilename)
           await storePhotoHash(targetFilename)
           res.writeHead(200, { Connection: 'close' })
           res.end(
@@ -115,7 +116,9 @@ export default async function (req, res) {
     }
 
     const hasAlreadySentPhoto = async (filestream) => {
-      hash = await calculateSha1FromStream(filestream)
+      const results = await calculateSha1FromStream(filestream)
+      hash = results.hash
+      contents = results.contents
 
       const existingPhoto = await axios.get(
         `${process.env.BACKEND_URL}/edgecreator/multiple_edge_photo/hash/${hash}`,
@@ -128,9 +131,18 @@ export default async function (req, res) {
     const calculateSha1FromStream = async (filestream) =>
       new Promise((resolve, reject) => {
         const hash = crypto.createHash('sha1')
+        const chunks = []
         filestream.on('error', (err) => reject(err))
-        filestream.on('data', (chunk) => hash.update(chunk))
-        filestream.on('end', () => resolve(hash.digest('hex')))
+        filestream.on('data', (chunk) => {
+          chunks.push(chunk)
+          return hash.update(chunk)
+        })
+        filestream.on('end', () =>
+          resolve({
+            contents: Buffer.concat(chunks),
+            hash: hash.digest('hex'),
+          })
+        )
       })
 
     const isFileExistingAndUsedInOtherModels = async (filename, currentModel) => {
@@ -146,9 +158,11 @@ export default async function (req, res) {
       ).length
     }
 
-    const saveFile = (filename, file) => {
+    const saveFile = (filename) => {
       fs.mkdirSync(require('path').dirname(filename), { recursive: true })
-      file.pipe(fs.createWriteStream(filename))
+      const writer = fs.createWriteStream(filename)
+      writer.write(contents)
+      writer.end()
     }
 
     const storePhotoHash = async (filename) => {
