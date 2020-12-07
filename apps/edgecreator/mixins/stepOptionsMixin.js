@@ -2,6 +2,21 @@ import { mapState, mapMutations } from 'vuex'
 
 const interact = require('interactjs')
 
+const TEMPLATES = [
+  {
+    regex: /\[Numero]/g,
+    replaceCallback({ issuenumber }) {
+      return issuenumber
+    },
+  },
+  {
+    regex: /\[Numero\[(\d)]]/g,
+    replaceCallback({ issuenumber }, digitIndex) {
+      return issuenumber[parseInt(digitIndex)]
+    },
+  },
+]
+
 export default {
   props: {
     issuenumber: { type: String },
@@ -29,6 +44,14 @@ export default {
     },
   },
   methods: {
+    resolveStringTemplates(text) {
+      const data = { issuenumber: this.issuenumber}
+      return TEMPLATES.reduce(
+        (text, { regex, replaceCallback }) =>
+          text.replaceAll(regex, (_match, group) => replaceCallback(data, group)),
+        text
+      )
+    },
     isColorOption(optionName) {
       return optionName.toLowerCase().includes('color') || ['fill', 'stroke'].includes(optionName)
     },

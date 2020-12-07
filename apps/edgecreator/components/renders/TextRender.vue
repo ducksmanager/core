@@ -43,21 +43,22 @@ export default {
     },
   },
 
-  data() {
-    return {
-      textImage: null,
-      textImageOptions: {},
-      image: { base64: null, width: null, height: null },
-    }
-  },
+  data: () => ({
+    textImage: null,
+    textImageOptions: {},
+    image: { base64: null, width: null, height: null },
+  }),
 
   computed: {
+    ...mapState(['width']),
     imageUrl() {
       return this.textImage
         ? `${process.env.EDGES_URL}/images_myfonts/${this.textImage.imageId}.png`
         : ''
     },
-    ...mapState(['width']),
+    effectiveText() {
+      return this.resolveStringTemplates(this.options.text)
+    },
   },
 
   watch: {
@@ -114,7 +115,7 @@ export default {
         return
       }
       this.textImageOptions = { ...this.options }
-      const { fgColor, bgColor, internalWidth, text, font } = this.options
+      const { fgColor, bgColor, internalWidth, font } = this.options
       const url = `/fs/text/${[
         fgColor.replace('#', ''),
         bgColor.replace('#', ''),
@@ -122,7 +123,7 @@ export default {
         'font',
         font,
         'text',
-        text,
+        this.effectiveText,
       ].join('/')}`
       try {
         this.textImage = await this.$axios.$get(url, {

@@ -28,14 +28,15 @@ export default {
     },
   },
 
-  data() {
-    return {
-      image: { base64: null, width: null, height: null },
-    }
-  },
+  data: () => ({
+    image: { base64: null, width: null, height: null },
+  }),
 
   computed: {
     ...mapState(['country', 'width']),
+    effectiveSource() {
+      return this.resolveStringTemplates(this.options.src)
+    },
   },
 
   watch: {
@@ -44,11 +45,12 @@ export default {
       async handler() {
         try {
           this.image = await this.$axios.$get(
-            `/fs/base64?${this.country}/elements/${this.options.src}`
+            `/fs/base64?${this.country}/elements/${this.effectiveSource}`
           )
           this.enableDragResize(this.$refs.image)
         } catch (e) {
-          console.error(`Image could not be retrieved : ${this.options.src}`)
+          console.error(`Image could not be retrieved : ${this.effectiveSource}`)
+          this.image = { base64: null, width: null, height: null }
         }
       },
     },
