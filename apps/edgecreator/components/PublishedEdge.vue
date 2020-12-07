@@ -2,7 +2,11 @@
   <b-img
     :height="(naturalHeight * zoom) / 1.5"
     :src="getEdgeUrl(issuenumber)"
-    @load="naturalHeight = $event.currentTarget.naturalHeight"
+    @load="
+      naturalHeight = $event.currentTarget.naturalHeight
+      $emit('load')
+    "
+    @error="$emit('error')"
   />
 </template>
 

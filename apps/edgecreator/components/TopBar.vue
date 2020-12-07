@@ -24,7 +24,7 @@
                 <b-checkbox
                   id="showPreviousEdge"
                   v-model="showPreviousEdge"
-                  :disabled="!edgesBefore.length"
+                  :disabled="!edgesBefore.length || showPreviousEdge === null"
                 />
               </b-col>
             </b-row>
@@ -34,7 +34,7 @@
                 <b-checkbox
                   id="showNextEdge"
                   v-model="showNextEdge"
-                  :disabled="!edgesAfter.length"
+                  :disabled="!edgesAfter.length || showNextEdge === null"
                 />
               </b-col>
             </b-row>
@@ -150,6 +150,7 @@ import Gallery from '@/components/Gallery'
 import BIconCustomDuplicate from '@/components/BIconCustomDuplicate'
 import IssueSelect from '@/components/IssueSelect'
 import SaveButton from '@/components/SaveModelButton'
+import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 
 export default {
   name: 'TopBar',
@@ -165,6 +166,7 @@ export default {
     BIconUnlock,
     BIconCustomDuplicate,
   },
+  mixins: [surroundingEdgeMixin],
   data() {
     return {
       showSidebar: true,
@@ -198,22 +200,6 @@ export default {
       },
       set(value) {
         this.$store.commit('ui/setShowIssueNumbers', value)
-      },
-    },
-    showPreviousEdge: {
-      get() {
-        return this.$store.state.ui.showPreviousEdge && this.$store.state.edgesBefore.length
-      },
-      set(value) {
-        this.$store.commit('ui/setShowPreviousEdge', value)
-      },
-    },
-    showNextEdge: {
-      get() {
-        return this.$store.state.ui.showNextEdge && this.$store.state.edgesAfter.length
-      },
-      set(value) {
-        this.$store.commit('ui/setShowNextEdge', value)
       },
     },
     showEdgePhotos: {
