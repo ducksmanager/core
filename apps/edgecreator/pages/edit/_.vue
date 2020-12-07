@@ -44,6 +44,8 @@
                   :class="{ picker: !!colorPickerOption }"
                   :style="{ height: `${zoom * height}px` }"
                   @click="setColorFromPhoto"
+                  @load="showEdgePhotos = true"
+                  @error="showEdgePhotos = null"
                 />
               </td>
             </template>
@@ -103,6 +105,7 @@ import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 import stepListMixin from '@/mixins/stepListMixin'
 import modelLoadMixin from '@/mixins/modelLoadMixin'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
+import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 
 export default {
   components: {
@@ -113,7 +116,7 @@ export default {
     BIconPencil,
     BIconCamera,
   },
-  mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin, surroundingEdgeMixin],
+  mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin, surroundingEdgeMixin, showEdgePhotosMixin],
   middleware: 'authenticated',
   data() {
     return {
@@ -149,13 +152,7 @@ export default {
       editingStepNumber: 'stepNumber',
     }),
     ...mapState('renders', ['supportedRenders']),
-    ...mapState('ui', [
-      'zoom',
-      'locked',
-      'showIssueNumbers',
-      'showEdgePhotos',
-      'colorPickerOption',
-    ]),
+    ...mapState('ui', ['zoom', 'locked', 'showIssueNumbers', 'colorPickerOption']),
     ...mapState('user', ['allUsers']),
   },
   watch: {
