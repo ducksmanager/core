@@ -48,7 +48,7 @@ export default {
       Vue.set(this.steps, issuenumber, issueSteps)
     },
     copySteps(issuenumber, otherIssuenumber) {
-      Vue.set(this.steps, issuenumber, [...this.steps[otherIssuenumber]])
+      Vue.set(this.steps, issuenumber, JSON.parse(JSON.stringify(this.steps[otherIssuenumber])))
     },
     addStep(component) {
       const vm = this
