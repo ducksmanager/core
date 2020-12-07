@@ -116,7 +116,7 @@ export default {
       handler: '~/api/fs/browse.js',
     },
     {
-      path: '/fs/browseWipEdges',
+      path: '/fs/browseCurrentEdges',
       handler: '~/api/fs/browseCurrentEdges.js',
     },
     {
