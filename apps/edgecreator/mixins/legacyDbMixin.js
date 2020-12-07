@@ -44,6 +44,10 @@ export default {
           } catch (e) {
             console.error(`Image could not be retrieved : ${dbOptions.Source}`)
             return {
+              x: 0,
+              y: 0,
+              width: 20,
+              height: 20,
               src: dbOptions.Source,
             }
           }
