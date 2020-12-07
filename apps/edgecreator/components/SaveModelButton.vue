@@ -164,7 +164,7 @@ export default {
             document.getElementById(`edge-canvas-${issuenumber}`).cloneNode(true)
           )
           const response = await vm.$axios.$put('/fs/save', {
-            export: vm.withExport,
+            runExport: vm.withExport,
             country: vm.country,
             magazine: vm.magazine,
             issuenumber,
