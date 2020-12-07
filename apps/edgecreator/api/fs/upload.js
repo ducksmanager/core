@@ -95,6 +95,7 @@ export default async function (req, res) {
           throw new Error(JSON.stringify({ error: 'error.photo_already_sent' }))
         }
       } else {
+        await readFile(filestream)
         const otherElementUses = isFileExistingAndUsedInOtherModels(filename, fields.edge)
         if (fs.existsSync(filename) && otherElementUses.length) {
           throw new Error(
@@ -115,10 +116,14 @@ export default async function (req, res) {
       return uploadedPhotos.data.length > 10
     }
 
+    const readFile = async (filestream) => {
+      const fileReadResults = await readContentsAndCalculateHash(filestream)
+      hash = fileReadResults.hash
+      contents = fileReadResults.contents
+    }
+
     const hasAlreadySentPhoto = async (filestream) => {
-      const results = await calculateSha1FromStream(filestream)
-      hash = results.hash
-      contents = results.contents
+      await readFile(filestream)
 
       const existingPhoto = await axios.get(
         `${process.env.BACKEND_URL}/edgecreator/multiple_edge_photo/hash/${hash}`,
@@ -128,7 +133,7 @@ export default async function (req, res) {
       return !!existingPhoto.data
     }
 
-    const calculateSha1FromStream = async (filestream) =>
+    const readContentsAndCalculateHash = async (filestream) =>
       new Promise((resolve, reject) => {
         const hash = crypto.createHash('sha1')
         const chunks = []
