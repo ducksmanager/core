@@ -15,6 +15,7 @@ if (now.getHours() >= 4) {
 coaCacheExpiration.setHours(4)
 coaCacheExpiration.setMinutes(0)
 coaCacheExpiration.setSeconds(0)
+coaCacheExpiration.setMilliseconds(0)
 
 const appCache = setupCache({
   maxAge: inAMonth,
