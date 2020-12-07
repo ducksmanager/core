@@ -20,7 +20,11 @@
         <table class="edges">
           <tr>
             <td v-if="showPreviousEdge && edgesBefore.length">
-              <published-edge :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber" />
+              <published-edge
+                :issuenumber="edgesBefore[edgesBefore.length - 1].issuenumber"
+                @load="showPreviousEdge = true"
+                @error="showPreviousEdge = null"
+              />
             </td>
             <template v-for="(issueSteps, issuenumber) in steps">
               <td :key="issuenumber">
@@ -44,7 +48,11 @@
               </td>
             </template>
             <td v-if="showNextEdge && edgesAfter.length">
-              <published-edge :issuenumber="edgesAfter[0].issuenumber" />
+              <published-edge
+                :issuenumber="edgesAfter[0].issuenumber"
+                @load="showNextEdge = true"
+                @error="showNextEdge = null"
+              />
             </td>
           </tr>
           <tr v-if="showIssueNumbers">
@@ -94,6 +102,7 @@ import ModelEdit from '@/components/ModelEdit'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 import stepListMixin from '@/mixins/stepListMixin'
 import modelLoadMixin from '@/mixins/modelLoadMixin'
+import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 
 export default {
   components: {
@@ -104,7 +113,7 @@ export default {
     BIconPencil,
     BIconCamera,
   },
-  mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin],
+  mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin, surroundingEdgeMixin],
   middleware: 'authenticated',
   data() {
     return {
@@ -144,8 +153,6 @@ export default {
       'zoom',
       'locked',
       'showIssueNumbers',
-      'showPreviousEdge',
-      'showNextEdge',
       'showEdgePhotos',
       'colorPickerOption',
     ]),
