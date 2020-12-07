@@ -131,17 +131,19 @@
       </b-col>
     </b-row>
     <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey">
-      <b-col align-self="center">
-        <img :src="flagImageUrl" :alt="country" />&nbsp;{{ magazine }}&nbsp;{{ issuenumbers[0]
-        }}<span v-if="issuenumbers.length > 1">
-          to {{ issuenumbers[issuenumbers.length - 1] }}</span
-        >
+      <b-col v-if="publications[country]" align-self="center">
+        <Issue
+          :publicationcode="`${country}/${magazine}`"
+          :publicationname="publications[country][`${country}/${magazine}`]"
+          :issuenumber="issuenumbers[0]"
+        />
+        <span v-if="issuenumbers.length > 1"> to {{ issuenumbers[issuenumbers.length - 1] }}</span>
       </b-col>
     </b-row>
   </b-container>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import {
   BIconArrowsAngleExpand,
   BIconCamera,
@@ -149,6 +151,7 @@ import {
   BIconLock,
   BIconUnlock,
 } from 'bootstrap-vue'
+import Issue from 'ducksmanager/assets/js/components/Issue.vue'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
 import BIconCustomDuplicate from '@/components/BIconCustomDuplicate'
@@ -161,6 +164,7 @@ export default {
   name: 'TopBar',
   components: {
     SaveButton,
+    Issue,
     IssueSelect,
     Gallery,
     Dimensions,
@@ -210,9 +214,6 @@ export default {
     hasPhotoUrl() {
       return Object.keys(this.photoUrls).length
     },
-    flagImageUrl() {
-      return `${process.env.DM_URL}/images/flags/${this.country}.png`
-    },
     ...mapState([
       'width',
       'height',
@@ -223,6 +224,11 @@ export default {
       'edgesAfter',
       'photoUrls',
     ]),
+    ...mapState('coa', ['publications']),
+  },
+  async mounted() {
+    window.imagePath = '/images/'
+    await this.loadPublicationsByCountry(this.country)
   },
   methods: {
     async clone() {
@@ -232,6 +238,7 @@ export default {
       }
     },
     ...mapMutations(['setDimensions', 'setPhotoUrl']),
+    ...mapActions('coa', ['loadPublicationsByCountry']),
   },
 }
 </script>
