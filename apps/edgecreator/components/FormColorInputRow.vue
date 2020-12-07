@@ -42,7 +42,7 @@
       <b-button
         pill
         size="sm"
-        :disabled="!hasPhotoUrl"
+        :disabled="!hasPhotoUrl || showEdgePhotos === null"
         :variant="colorPickerOption === optionName ? 'primary' : 'outline-primary'"
         @click="colorPickerOption = colorPickerOption ? null : optionName"
         >From photo
@@ -53,9 +53,11 @@
 <script>
 import FormInputRow from '@/components/FormInputRow'
 import { mapGetters, mapState } from 'vuex'
+import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 
 export default {
   components: { FormInputRow },
+  mixins: [showEdgePhotosMixin],
   props: {
     options: {
       type: Object,
