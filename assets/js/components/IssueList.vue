@@ -68,18 +68,14 @@
           @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : i"
         >
           <a :name="issueNumber" />
-          <IssueDetailsPopover
-            v-once
-            :publication-code="publicationcode"
-            :issue-number="issueNumber"
-            placement="right"
-          >
-            <b-icon-eye-fill
-              class="preview"
-              :alt="l10n.VOIR"
-              @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
-            />
-          </IssueDetailsPopover>
+          <b-icon-eye-fill
+            :id="`issue-details-${issueNumber}`"
+            class="preview"
+            :alt="l10n.VOIR"
+            @mouseover="hoveredIssueNumber=issueNumber"
+            @mouseout="hoveredIssueNumber=null"
+            @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
+          />
           <span
             v-once
             class="issue-text"
@@ -121,7 +117,6 @@
             </div>
             <div
               v-else
-              v-once
               class="issue-details"
             />
             <div class="issue-details">
@@ -135,6 +130,12 @@
             </div>
           </div>
         </div>
+        <IssueDetailsPopover
+          v-if="hoveredIssueNumber"
+          :publication-code="publicationcode"
+          :issue-number="hoveredIssueNumber"
+          placement="right"
+        />
       </div>
       <ContextMenu
         v-if="purchases"
@@ -224,6 +225,7 @@ export default {
     preselected: [],
     preselectedIndexStart: null,
     preselectedIndexEnd: null,
+    hoveredIssueNumber: null,
     currentIssueOpened: null
   }),
   computed: {
