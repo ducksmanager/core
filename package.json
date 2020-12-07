@@ -1,4 +1,11 @@
 {
+    "name": "ducksmanager",
+    "version": "1.0.0",
+    "files": [
+        "assets/js/components/**.vue",
+        "assets/js/mixins/**.js"
+    ],
+
     "devDependencies": {
         "@symfony/webpack-encore": "^0.33.0",
         "axios": "^0.21.0",

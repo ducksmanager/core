@@ -28,6 +28,9 @@ export default {
 
         $r(route) {
             const routes = this.l10nRoutes
+            if (!routes) {
+                return null;
+            }
             const routeName = routes[route.replaceAll(PATH_REGEX, '{$1}')]
             const routeL10n = routes[routeName]
             if (!routeL10n) {
