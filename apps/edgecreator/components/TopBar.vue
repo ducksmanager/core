@@ -131,10 +131,10 @@
       </b-col>
     </b-row>
     <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey">
-      <b-col v-if="publications[country]" align-self="center">
+      <b-col v-if="publicationName" align-self="center">
         <Issue
           :publicationcode="`${country}/${magazine}`"
-          :publicationname="publications[country][`${country}/${magazine}`]"
+          :publicationname="publicationName"
           :issuenumber="issuenumbers[0]"
         />
         <span v-if="issuenumbers.length > 1"> to {{ issuenumbers[issuenumbers.length - 1] }}</span>
@@ -214,6 +214,9 @@ export default {
     hasPhotoUrl() {
       return Object.keys(this.photoUrls).length
     },
+    publicationName() {
+      return this.publicationNames && this.publicationNames[`${this.country}/${this.magazine}`]
+    },
     ...mapState([
       'width',
       'height',
@@ -224,11 +227,11 @@ export default {
       'edgesAfter',
       'photoUrls',
     ]),
-    ...mapState('coa', ['publications']),
+    ...mapState('coa', ['publicationNames']),
   },
   async mounted() {
     window.imagePath = '/images/'
-    await this.loadPublicationsByCountry(this.country)
+    await this.fetchPublicationNames([`${this.country}/${this.magazine}`])
   },
   methods: {
     async clone() {
@@ -238,7 +241,7 @@ export default {
       }
     },
     ...mapMutations(['setDimensions', 'setPhotoUrl']),
-    ...mapActions('coa', ['loadPublicationsByCountry']),
+    ...mapActions('coa', ['fetchPublicationNames']),
   },
 }
 </script>
