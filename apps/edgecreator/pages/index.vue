@@ -7,7 +7,12 @@
 
       <b-container :key="category">
         <b-row v-if="getEdgesByStatus(category).length">
-          <b-col v-for="(edge, i) in getEdgesByStatus(category)" :key="`${category}-${i}`" cols="3">
+          <b-col
+            v-for="(edge, i) in getEdgesByStatus(category)"
+            :key="`${category}-${i}`"
+            cols="3"
+            align-self="center"
+          >
             <b-card class="text-center">
               <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
                 <b-card-text v-if="hasPublicationNames"
