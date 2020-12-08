@@ -3,7 +3,6 @@
     <b-select
       v-model="currentCountryCode"
       :options="countriesWithSelect"
-      @input="loadPublications"
       @change="$emit('change', null)"
     />
     <b-select
@@ -11,7 +10,6 @@
       v-model="currentPublicationCode"
       :options="publicationsWithSelect"
       @change="$emit('change', null)"
-      @input="loadIssues"
     />
     <b-select
       v-show="currentCountryCode && currentPublicationCode"
@@ -59,33 +57,36 @@ export default {
     currentIssueNumber: null,
   }),
   computed: {
-    ...mapState('coa', ['countries', 'publications', 'issues']),
+    ...mapState('coa', ['countryNames', 'publicationNames', 'issueNumbers']),
     ...mapState('edgeCatalog', ['publishedEdges']),
 
     countriesWithSelect() {
       return (
-        this.countries &&
-        this.countries[this.$i18n.locale] && {
+        this.countryNames && {
           null: this.$t('select.country'),
-          ...this.countries[this.$i18n.locale],
+          ...this.countryNames,
         }
       )
     },
     publicationsWithSelect() {
+      const vm = this
       return (
-        this.publications[this.currentCountryCode] && {
+        this.publicationNames && {
           null: this.$t('select.publication'),
-          ...this.publications[this.currentCountryCode],
+          ...Object.keys(this.publicationNames)
+            .filter((publicationCode) => publicationCode.indexOf(`${vm.currentCountryCode}/`) === 0)
+            .reduce((acc, value) => ({ ...acc, [value]: vm.publicationNames[value] }), {}),
         }
       )
     },
     issuesWithSelect() {
       const vm = this
       return (
-        this.issues[this.currentPublicationCode] &&
+        this.issueNumbers &&
+        this.issueNumbers[this.currentPublicationCode] &&
         this.publishedEdges[this.currentPublicationCode] && [
           { value: null, text: this.$t('select.issue') },
-          ...this.issues[vm.currentPublicationCode].map((issuenumber) => {
+          ...this.issueNumbers[vm.currentPublicationCode].map((issuenumber) => {
             const status = this.getEdgeStatus({
               country: this.currentCountryCode,
               magazine: this.currentPublicationCode.split('/')[1],
@@ -110,19 +111,22 @@ export default {
         if (newValue) {
           this.currentPublicationCode = null
           this.currentIssueNumber = null
-          await this.loadPublicationsByCountry(newValue)
+
+          await this.fetchPublicationNamesFromCountry(newValue)
         }
       },
     },
     currentPublicationCode: {
       immediate: true,
       async handler(newValue) {
-        this.currentIssueNumber = null
-        await this.loadIssues(newValue)
-        this.setPublishedEdges({
-          publicationCode: newValue,
-          publishedEdges: await this.$axios.$get(`/api/edges/${newValue}`),
-        })
+        if (newValue) {
+          this.currentIssueNumber = null
+          await this.fetchIssueNumbers([newValue])
+          this.setPublishedEdges({
+            publicationCode: newValue,
+            publishedEdges: await this.$axios.$get(`/api/edges/${newValue}`),
+          })
+        }
       },
     },
   },
@@ -133,10 +137,14 @@ export default {
     if (this.publicationCode) {
       this.currentPublicationCode = this.publicationCode
     }
-    this.loadCountries()
+    this.fetchCountryNames()
   },
   methods: {
-    ...mapActions('coa', ['loadCountries', 'loadPublicationsByCountry', 'loadIssues']),
+    ...mapActions('coa', [
+      'fetchCountryNames',
+      'fetchPublicationNamesFromCountry',
+      'fetchIssueNumbers',
+    ]),
     ...mapMutations('edgeCatalog', ['setPublishedEdges']),
   },
 }

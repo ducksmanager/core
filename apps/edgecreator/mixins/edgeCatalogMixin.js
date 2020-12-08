@@ -4,7 +4,8 @@ import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 export default {
   computed: {
     ...mapState('edgeCatalog', ['currentEdges', 'publishedEdges']),
-    ...mapState('coa', ['publications']),
+    ...mapState('coa', ['publicationNames']),
+    ...mapState('user', ['allUsers']),
   },
   mixins: [svgUtilsMixin],
 
@@ -12,30 +13,35 @@ export default {
     hasPublicationNames: false,
   }),
   methods: {
-    ...mapActions('coa', ['loadPublicationsByCountry']),
+    ...mapActions('coa', ['fetchPublicationNames']),
+    ...mapActions('user', ['fetchAllUsers']),
 
     addEdgeFromApi(
       { pays: country, magazine, numero: issuenumber, contributeurs: contributors },
       status
     ) {
+      const vm = this
+      const getContributorsOfType = (contributionType) =>
+        (contributors || [])
+          .filter(({ contribution }) => contribution === contributionType)
+          .map(({ idUtilisateur }) => vm.allUsers.find(({ id }) => id === idUtilisateur).username)
       this.addCurrentEdge(
         {
           country,
           magazine,
           issuenumber,
           v3: false,
-          designers: (contributors || [])
-            .filter(({ contribution }) => contribution === 'createur')
-            .map(({ idUtilisateur }) => idUtilisateur),
+          designers: getContributorsOfType('createur'),
+          photographers: getContributorsOfType('photographe'),
         },
         status
       )
     },
-    addEdgeFromSvg(edge, edgeDesigners) {
+    addEdgeFromSvg(edge, designers) {
       this.addCurrentEdge(
-        { ...edge, v3: true, designers: edgeDesigners },
-        edgeDesigners.length
-          ? edgeDesigners.includes(this.$cookies.get('dm-user'))
+        { ...edge, v3: true, designers },
+        designers.length
+          ? designers.includes(this.$cookies.get('dm-user'))
             ? 'ongoing'
             : 'ongoing_by_other_user'
           : 'pending'
@@ -75,14 +81,14 @@ export default {
   watch: {
     currentEdges: {
       immediate: true,
-      handler(newValue) {
+      async handler(newValue) {
         if (newValue) {
-          const vm = this
-          const currentEdgeCountryCodes = [...new Set(newValue.map(({ country }) => country))]
+          const edgePublicationCodes = [
+            ...new Set(newValue.map(({ country, magazine }) => `${country}/${magazine}`)),
+          ]
 
-          currentEdgeCountryCodes.forEach((country) => {
-            vm.loadPublicationsByCountry(country)
-          })
+          await this.fetchPublicationNames(edgePublicationCodes)
+          this.hasPublicationNames = true
         }
       },
     },
@@ -92,6 +98,7 @@ export default {
     if (this.currentEdges !== null) {
       return
     }
+    await this.fetchAllUsers()
     const vm = this
     const apiCalls = [
       { status: 'ongoing', url: '/api/edgecreator/v2/model' },
@@ -105,8 +112,6 @@ export default {
       })
     }
 
-    this.hasPublicationNames = true
-
     this.$axios.$get('/fs/browseCurrentEdges').then((currentEdges) => {
       currentEdges.forEach(async (fileName) => {
         const [, country, magazine, issuenumber] = fileName.match(
@@ -117,9 +122,9 @@ export default {
           return
         }
         const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
-        const edgeDesigners = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
+        const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
 
-        vm.addEdgeFromSvg({ country, magazine, issuenumber }, edgeDesigners)
+        vm.addEdgeFromSvg({ country, magazine, issuenumber }, designers)
       })
     })
   },

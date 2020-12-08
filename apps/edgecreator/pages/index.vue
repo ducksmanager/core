@@ -18,13 +18,21 @@
                 <b-card-text v-if="hasPublicationNames"
                   ><Issue
                     :publicationcode="`${edge.country}/${edge.magazine}`"
-                    :publicationname="
-                      publications[edge.country][`${edge.country}/${edge.magazine}`]
-                    "
+                    :publicationname="publicationNames[`${edge.country}/${edge.magazine}`]"
                     :issuenumber="edge.issuenumber"
                     hide-condition
-                  /><b-badge v-if="edge.v3">v3</b-badge></b-card-text
-                >
+                  /><b-badge v-if="edge.v3">v3</b-badge>
+                  <b-badge
+                    v-for="(designer, j) in edge.designers"
+                    :key="`${category}-${i}-designer-${j}`"
+                    >Designer:{{ designer }}</b-badge
+                  >
+                  <b-badge
+                    v-for="(photographer, j) in edge.photographers"
+                    :key="`${category}-${i}-photographer-${j}`"
+                    >Photographer:{{ photographer }}</b-badge
+                  >
+                </b-card-text>
               </b-link>
             </b-card>
           </b-col>

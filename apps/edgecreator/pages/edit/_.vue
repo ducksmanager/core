@@ -127,7 +127,7 @@ export default {
     }
   },
   async fetch() {
-    this.setAllUsers((await this.$axios.$get(`/api/ducksmanager/users`)).users)
+    await this.fetchAllUsers()
   },
   computed: {
     zoom: {
@@ -239,6 +239,7 @@ export default {
       'loadItems',
     ]),
     ...mapMutations('user', ['setAllUsers']),
+    ...mapActions('user', ['fetchAllUsers']),
   },
 }
 </script>

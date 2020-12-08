@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     resolveStringTemplates(text) {
-      const data = { issuenumber: this.issuenumber}
+      const data = { issuenumber: this.issuenumber }
       return TEMPLATES.reduce(
         (text, { regex, replaceCallback }) =>
           text.replaceAll(regex, (_match, group) => replaceCallback(data, group)),
