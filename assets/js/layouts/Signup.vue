@@ -120,7 +120,7 @@ export default {
           password2: this.password2,
           email: this.email
         })
-        window.location.replace('/collection/show')
+        window.location.replace(this.$r('/collection/show'))
       }
       catch(e) {
         this.addErrors({username: this.l10n.ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT})

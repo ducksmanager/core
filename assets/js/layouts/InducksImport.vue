@@ -209,9 +209,23 @@
           </b-form-select-option>
         </b-form-select>
       </b-form-group>
-      <b-btn v-if="issuesImportable && issuesImportable.length">
-        {{ l10n.IMPORTER }} {{ issuesImportable.length }} {{ l10n.NUMEROS }}
-      </b-btn>
+      <template v-if="issuesImportable && issuesImportable.length">
+        <b-progress
+          v-if="importProgress"
+          height="2rem"
+        >
+          <b-progress-bar
+            :value="importProgress"
+            :label="`${parseInt(importProgress)}%`"
+          />
+        </b-progress>
+        <b-btn
+          v-else
+          @click="importIssues"
+        >
+          {{ l10n.IMPORTER }} {{ issuesImportable.length }} {{ l10n.NUMEROS }}
+        </b-btn>
+      </template>
     </template>
   </div>
 </template>
@@ -222,6 +236,7 @@ import Accordion from "../components/Accordion";
 import Publication from "../components/Publication";
 import collectionMixin from "../mixins/collectionMixin";
 import Issue from "../components/Issue";
+import axios from "axios";
 
 export default {
   name: "InducksImport",
@@ -241,13 +256,12 @@ export default {
     conditions: {
       mauvais: 'ETAT_MAUVAIS',
       bon: 'ETAT_BON',
-    }
+    },
+    importProgress: 0
   }),
 
   computed: {
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
-    username: () => window.username,
-
     imagePath: () => window.imagePath,
 
     importDataReady() {
@@ -288,16 +302,16 @@ export default {
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
     processRawData() {
       const issues = this.rawData
-        .split('\n')
-        .filter(row => !/^country/.test(row) && /^([^^]+)\^([^^]+)\^/.test(row))
-        .map(row => {
-          const [, countryCode, magazineCodeAndIssueNumber] = row.match(/^([^^]+)\^([^^]+)\^/)
-          const [, magazineCode, issueNumber] = magazineCodeAndIssueNumber.match(/^([^ ]+)[ ]+(.+)$/)
-          return {
-            publicationCode: `${countryCode}/${magazineCode}`,
-            issueNumber
-          }
-        })
+          .split('\n')
+          .filter(row => !/^country/.test(row) && /^([^^]+)\^([^^]+)\^/.test(row))
+          .map(row => {
+            const [, countryCode, magazineCodeAndIssueNumber] = row.match(/^([^^]+)\^([^^]+)\^/)
+            const [, magazineCode, issueNumber] = magazineCodeAndIssueNumber.match(/^([^ ]+)[ ]+(.+)$/)
+            return {
+              publicationCode: `${countryCode}/${magazineCode}`,
+              issueNumber
+            }
+          })
       if (issues.length) {
         this.issuesToImport = issues
         this.step = 2
@@ -309,6 +323,23 @@ export default {
         ...acc,
         [issue.publicationCode]: [...new Set([...(acc[issue.publicationCode] || []), issue.issueNumber.replace(' ', '')])]
       }), {})
+    },
+
+    async importIssues() {
+      const importableIssuesByPublicationCode = this.groupByPublicationCode(this.issuesImportable)
+      for (let publicationCode in importableIssuesByPublicationCode){
+        if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
+          await axios.post('/api/collection/issues', {
+            publicationCode: publicationCode,
+            issueNumbers: importableIssuesByPublicationCode[publicationCode],
+            condition: this.issueDefaultCondition,
+            istosell: "do_not_change",
+            purchaseId: "do_not_change"
+          })
+          this.importProgress += 100 / Object.keys(importableIssuesByPublicationCode).length
+        }
+      }
+      window.location.replace(this.$r('/collection/show'))
     }
   }
 }
@@ -359,7 +390,7 @@ export default {
 }
 
 iframe, textarea {
-  height: 400px;
+  height: 400px !important;
   width: 100%;
 }
 
