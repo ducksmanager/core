@@ -17,7 +17,7 @@ export default {
   namespaced: true,
   state: () => ({
     countryNames: null,
-    publicationNames: null,
+    publicationNames: {},
     publicationNamesFullCountries: [],
     personNames: null,
     issueNumbers: null,
@@ -35,14 +35,8 @@ export default {
     },
     setPublicationNames(state, publicationNames) {
       state.publicationNames = {
-        ...(state.publicationNames || {}),
-        ...Object.keys(publicationNames).reduce(
-          (acc, publicationCode) => ({
-            ...acc,
-            [publicationCode]: publicationNames[publicationCode],
-          }),
-          {}
-        ),
+        ...state.publicationNames,
+        ...publicationNames,
       }
     },
     setPublicationNamesFullCountries(state, publicationNamesFullCountries) {
