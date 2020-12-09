@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import redirectMixin from '@/mixins/redirectMixin'
+
 const crypto = require('crypto')
 
 const roleMapping = {
@@ -36,6 +38,7 @@ const roleMapping = {
 }
 
 export default {
+  mixins: [redirectMixin],
   data() {
     return {
       username: null,

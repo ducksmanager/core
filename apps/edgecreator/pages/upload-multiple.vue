@@ -82,6 +82,7 @@ import IssueSelect from '@/components/IssueSelect'
 
 export default {
   components: { IssueSelect, EdgeCanvas },
+  middleware: 'authenticated',
   data: () => ({
     currentCrop: null,
     crops: [],
