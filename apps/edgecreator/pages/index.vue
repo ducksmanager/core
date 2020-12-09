@@ -21,7 +21,7 @@
                   (category === 'ongoing_by_other_user' && !$gates.hasRole('admin'))
                 "
               >
-                <b-card-text v-if="hasPublicationNames"
+                <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]"
                   ><EdgeLink
                     :publicationcode="`${edge.country}/${edge.magazine}`"
                     :issuenumber="edge.issuenumber"
