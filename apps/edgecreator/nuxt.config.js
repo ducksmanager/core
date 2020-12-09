@@ -32,6 +32,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    '~/plugins/vue-gates',
     '~/plugins/axios',
     { src: '~/plugins/vue-cropper', ssr: false },
     { src: '~/plugins/vue-bootstrap-typeahead', ssr: false },

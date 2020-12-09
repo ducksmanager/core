@@ -29,6 +29,12 @@
 <script>
 const crypto = require('crypto')
 
+const roleMapping = {
+  Affichage: 'display',
+  Edition: 'edit',
+  Admin: 'admin',
+}
+
 export default {
   data() {
     return {
@@ -41,17 +47,18 @@ export default {
       const password = crypto.createHash('sha1').update(this.password).digest('hex')
       const vm = this
       this.$axios
-        .$get('/api/edgecreator/v2/model', {
+        .$get('/api/collection/privileges', {
           headers: {
             'x-dm-user': this.username,
             'x-dm-pass': password,
           },
         })
-        .then(() => {
+        .then((data) => {
           vm.$cookies.setAll([
             { name: 'dm-user', value: vm.username },
             { name: 'dm-pass', value: password },
           ])
+          vm.$gates.setRoles([roleMapping[data.EdgeCreator] || 'display'])
           vm.$router.push('/')
         })
         .catch((e) => {

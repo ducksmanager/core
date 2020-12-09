@@ -6,7 +6,7 @@ const coaApi = axios.create({
   // adapter: coaCache.adapter,
 })
 
-const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/${window.locale}`
+const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/fr`
 const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/'
 const URL_PREFIX_ISSUES = '/api/coa/list/issues/'
 const URL_PREFIX_AUTHORS = '/api/coa/authorsfullnames/'
