@@ -40,12 +40,12 @@
 
     <hr />
 
-    <b-container align="center" style="margin-bottom: 20px">
-      <b-button to="/upload">{{ $t('button.send_photos') }}</b-button>
+    <b-container v-role:unless="'viewer'" align="center" style="margin-bottom: 20px">
+      <b-button to="/edit/new">{{ $t('button.create_or_update') }}</b-button>
     </b-container>
 
     <b-container align="center">
-      <b-button to="/edit/new">{{ $t('button.create_or_update') }}</b-button>
+      <b-button to="/upload">{{ $t('button.send_photos') }}</b-button>
     </b-container>
   </div>
 </template>
@@ -53,12 +53,13 @@
 <script>
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
 import EdgeLink from '@/components/EdgeLink'
+import redirectMixin from '@/mixins/redirectMixin'
 
 export default {
   components: {
     EdgeLink,
   },
-  mixins: [edgeCatalogMixin],
+  mixins: [edgeCatalogMixin, redirectMixin],
   middleware: 'authenticated',
 
   data: () => ({

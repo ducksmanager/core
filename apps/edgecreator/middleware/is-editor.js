@@ -1,5 +1,5 @@
 export default function ({ $gates, redirect }) {
-  if (!$gates.hasRole('edit')) {
-    return redirect('/login')
+  if ($gates.unlessRole('display')) {
+    return redirect({ path: '/', hash: '#403' })
   }
 }

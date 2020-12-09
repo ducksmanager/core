@@ -20,6 +20,7 @@ import IssueSelect from '@/components/IssueSelect'
 
 export default {
   components: { IssueSelect },
+  middleware: ['authenticated', 'is-editor'],
   data() {
     return {
       issue: null,

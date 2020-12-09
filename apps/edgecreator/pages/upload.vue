@@ -9,6 +9,7 @@ export default {
   components: {
     Upload,
   },
+  middleware: 'authenticated',
 }
 </script>
 

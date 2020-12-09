@@ -120,7 +120,7 @@ export default {
     BIconCamera,
   },
   mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin, surroundingEdgeMixin, showEdgePhotosMixin],
-  middleware: 'authenticated',
+  middleware: ['authenticated', 'is-editor'],
   data() {
     return {
       error: null,

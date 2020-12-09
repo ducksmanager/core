@@ -2,7 +2,6 @@ import axios from 'axios'
 
 export const addAxiosInterceptor = () => {
   axios.interceptors.request.use((config) => {
-    console.log(config)
     return {
       ...config,
       auth: {
