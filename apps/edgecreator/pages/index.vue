@@ -14,24 +14,21 @@
             align-self="center"
           >
             <b-card class="text-center">
-              <b-link :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`">
+              <b-link
+                :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`"
+                :disabled="
+                  $gates.hasRole('display') ||
+                  (category === 'ongoing_by_other_user' && !$gates.hasRole('admin'))
+                "
+              >
                 <b-card-text v-if="hasPublicationNames"
-                  ><Issue
+                  ><EdgeLink
                     :publicationcode="`${edge.country}/${edge.magazine}`"
-                    :publicationname="publicationNames[`${edge.country}/${edge.magazine}`]"
                     :issuenumber="edge.issuenumber"
-                    hide-condition
-                  /><b-badge v-if="edge.v3">v3</b-badge>
-                  <b-badge
-                    v-for="(designer, j) in edge.designers"
-                    :key="`${category}-${i}-designer-${j}`"
-                    >Designer:{{ designer }}</b-badge
-                  >
-                  <b-badge
-                    v-for="(photographer, j) in edge.photographers"
-                    :key="`${category}-${i}-photographer-${j}`"
-                    >Photographer:{{ photographer }}</b-badge
-                  >
+                    :designers="edge.designers"
+                    :photographers="edge.photographers"
+                    :v3="edge.v3"
+                  />
                 </b-card-text>
               </b-link>
             </b-card>
@@ -55,11 +52,11 @@
 
 <script>
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
-import Issue from 'ducksmanager/assets/js/components/Issue.vue'
+import EdgeLink from '@/components/EdgeLink'
 
 export default {
   components: {
-    Issue,
+    EdgeLink,
   },
   mixins: [edgeCatalogMixin],
   middleware: 'authenticated',
@@ -90,7 +87,7 @@ export default {
 .card {
   margin: 15px 0;
 }
-.clickable {
-  cursor: pointer;
+.disabled {
+  pointer-events: none;
 }
 </style>

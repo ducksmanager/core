@@ -1,12 +1,17 @@
 import axios from 'axios'
 
 export const addAxiosInterceptor = () => {
-  axios.interceptors.request.use(function (config) {
+  axios.interceptors.request.use((config) => {
+    console.log(config)
     return {
       ...config,
       auth: {
-        username: process.env.EDGECREATOR_USER,
-        password: process.env.EDGECREATOR_PASS,
+        username: /\/collection/.test(config.url)
+          ? process.env.DUCKSMANAGER_USER
+          : process.env.EDGECREATOR_USER,
+        password: /\/collection/.test(config.url)
+          ? process.env.DUCKSMANAGER_PASS
+          : process.env.EDGECREATOR_PASS,
       },
       headers: {
         ...config.headers,
@@ -19,7 +24,7 @@ export const addAxiosInterceptor = () => {
 
 addAxiosInterceptor()
 
-export default async function (req, res) {
+export default async (req, res) => {
   const response = await axios
     .request({
       method: req.method,
