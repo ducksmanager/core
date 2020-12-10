@@ -230,7 +230,6 @@ export default {
     ...mapState('coa', ['publicationNames']),
   },
   async mounted() {
-    window.imagePath = '/images/'
     await this.fetchPublicationNames([`${this.country}/${this.magazine}`])
   },
   methods: {

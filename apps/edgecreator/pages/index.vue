@@ -78,10 +78,6 @@ export default {
       },
     ],
   }),
-
-  mounted() {
-    window.imagePath = '/images/'
-  },
 }
 </script>
 <style scoped lang="scss">

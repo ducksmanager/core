@@ -34,6 +34,7 @@ export default {
   plugins: [
     '~/plugins/vue-gates',
     '~/plugins/axios',
+    '~/plugins/global',
     { src: '~/plugins/vue-cropper', ssr: false },
     { src: '~/plugins/vue-bootstrap-typeahead', ssr: false },
   ],
