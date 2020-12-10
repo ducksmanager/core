@@ -35,12 +35,9 @@ export const mutations = {
     Vue.set(state.photoUrls, issuenumber, filename)
   },
   addContributor(state, { issuenumber, contributionType, user }) {
-    let contributors = state.contributors[issuenumber]
-    if (!contributors) {
-      contributors = {
-        designers: [],
-        photographers: [],
-      }
+    const contributors = state.contributors[issuenumber] || {
+      designers: [],
+      photographers: [],
     }
     Vue.set(state.contributors, issuenumber, {
       ...contributors,

@@ -68,7 +68,7 @@ export default {
         try {
           this.image = await this.$axios.$get(newValue)
         } catch (e) {
-          console.error(`Text image details could not be retrieved : ${newValue}`)
+          console.error(`Text image details could not be retrieved : ${newValue} : ${e}`)
         }
       },
     },
@@ -152,4 +152,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+image {
+  touch-action: none;
+}
+</style>

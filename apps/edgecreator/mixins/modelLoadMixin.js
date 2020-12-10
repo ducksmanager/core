@@ -91,8 +91,7 @@ export default {
     },
     setContributorsFromSvg(issuenumber, svgChildNodes) {
       const vm = this
-      const contributionTypes = ['photographer', 'designer']
-      contributionTypes.forEach((contributionType) => {
+      ;['photographer', 'designer'].forEach((contributionType) => {
         vm.getSvgMetadata(svgChildNodes, `contributor-${contributionType}`).forEach((username) => {
           vm.addContributor({
             issuenumber,

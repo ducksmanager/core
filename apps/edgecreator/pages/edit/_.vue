@@ -273,7 +273,7 @@ table.edges tr td {
 }
 
 table.edges tr th {
-  vertical-align: top;
+  vertical-align: bottom;
   padding: 1px 2px;
   outline: 1px solid grey;
 }
