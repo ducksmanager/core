@@ -36,7 +36,7 @@ export default {
 
     const uppy = new Uppy({
       debug: true,
-      locale: require(`@uppy/locales/lib/${locale.replace('-', '_')}`),
+      locale: require(`@uppy/locales/lib/${locale.replace('-', '_')}.js`),
       allowMultipleUploads: false,
       meta: {
         photo: this.photo,
