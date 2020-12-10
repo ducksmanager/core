@@ -14,14 +14,14 @@
     </metadata>
     <metadata
       v-for="photographer in contributors.photographers"
-      :key="photographer.username"
+      :key="`photographer-${photographer.username}`"
       type="contributor-photographer"
     >
       {{ photographer.username }}
     </metadata>
     <metadata
       v-for="designer in contributors.designers"
-      :key="designer.username"
+      :key="`designer-${designer.username}`"
       type="contributor-designer"
     >
       {{ designer.username }}

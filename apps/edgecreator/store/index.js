@@ -42,8 +42,10 @@ export const mutations = {
         photographers: [],
       }
     }
-    contributors[contributionType].push(user)
-    Vue.set(state.contributors, issuenumber, contributors)
+    Vue.set(state.contributors, issuenumber, {
+      ...contributors,
+      [contributionType]: [...new Set([...contributors[contributionType], user])],
+    })
   },
   removeContributor(state, { contributionType, userToRemove }) {
     Object.keys(state.contributors).forEach((issuenumber) => {
