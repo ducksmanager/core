@@ -71,12 +71,14 @@ export default {
     publicationsWithSelect() {
       const vm = this
       return (
-        this.publicationNames && {
-          null: this.$t('select.publication'),
-          ...Object.keys(this.publicationNames)
-            .filter((publicationCode) => publicationCode.indexOf(`${vm.currentCountryCode}/`) === 0)
-            .reduce((acc, value) => ({ ...acc, [value]: vm.publicationNames[value] }), {}),
-        }
+        this.publicationNames &&
+        Object.keys(this.publicationNames)
+          .filter((publicationCode) => publicationCode.indexOf(`${vm.currentCountryCode}/`) === 0)
+          .map((publicationCode) => ({
+            text: vm.publicationNames[publicationCode],
+            value: publicationCode,
+          }))
+          .sort(({ text: text1 }, { text: text2 }) => (text1 < text2 ? -1 : text2 < text1 ? 1 : 0))
       )
     },
     issuesWithSelect() {
