@@ -2,8 +2,8 @@
   <b-container>
     <div class="loader" @change="change" @dragover="dragover" @drop="drop">
       <p>
-        {{ $t('upload.drag') }}
-        <label class="browse">
+        {{ $t('upload.drag')
+        }}<label class="browse">
           {{ $t('upload.browse') }}
           <input id="file" class="sr-only" type="file" accept="image/jpeg" />
         </label>
@@ -14,6 +14,8 @@
         <vue-cropper
           ref="cropper"
           alt="Source Image"
+          :img-style="{ maxHeight: '100vh' }"
+          :auto-crop-area="1"
           :src="uploadedImageData"
           :view-mode="1"
           :movable="false"
@@ -32,39 +34,52 @@
         :disable-not-ongoing-nor-published="false"
         @change="currentCrop = $event && $event.width ? $event : null"
       />
-      <b-button :disabled="!currentCrop" @click="addCrop">{{ $t('upload.add_edge') }}</b-button>
+      <b-button :disabled="!currentCrop" class="m-3 mb-4" @click="addCrop">{{
+        $t('upload.add_edge')
+      }}</b-button>
       <b-container>
         <b-card-group deck columns>
-          <b-card v-for="(crop, i) in crops" :key="i" no-body class="edge-card overflow-hidden">
-            <b-row no-gutters style="height: 280px">
-              <b-col md="6" class="edge-crop" :style="{ backgroundImage: `url('${crop.url}')` }" />
-              <b-col md="6" class="align-items-center d-flex justify-content-center">
-                <b-card-body :title="crop.id">
-                  <b-card-text>
-                    {{ crop.publicationCode }} {{ crop.issueNumber }} <br />
-                    {{ crop.width }} x {{ crop.height }} mm
-                  </b-card-text>
-                  <edge-canvas
-                    v-if="crop.filename"
-                    :issuenumber="crop.issueNumber"
-                    :width="crop.width"
-                    :height="crop.height"
-                    :steps="[]"
-                    :photo-urls="crop.filename"
-                    :contributors="{ photographers: [$cookies.get('dm-user')] }"
-                  />
-                </b-card-body>
-              </b-col>
-            </b-row>
-            <b-button v-if="!crop.sent" pill variant="danger" @click="crops.splice(i, 1)"
-              >{{ $t('upload.delete_edge') }}
-            </b-button>
-            <div v-else class="text-center">{{ $t('upload.sent') }}</div>
+          <b-card
+            v-for="(crop, i) in crops"
+            :key="`crop-${i}`"
+            class="edge-card overflow-hidden"
+            :body-class="['d-flex', 'align-items-center', 'justify-content-around', 'p-1']"
+          >
+            <template #header>
+              <Issue
+                :publicationcode="crop.publicationCode"
+                :publicationname="publicationNames[crop.publicationCode]"
+                :issuenumber="crop.issueNumber"
+            /></template>
+            <img
+              class="edge-crop"
+              :src="crop.url"
+              :width="crop.width * 1.5"
+              :height="crop.height * 1.5"
+            />
+            <edge-canvas
+              :issuenumber="crop.issueNumber"
+              :width="crop.width"
+              :height="crop.height"
+              :steps="[]"
+              :photo-urls="crop.filename"
+              :contributors="{ photographers: [$cookies.get('dm-user')] }"
+            />
+            <div>
+              <div v-if="crop.sent" class="text-center">{{ $t('upload.sent') }}</div>
+              <div v-else>
+                <b-button pill variant="danger" @click="crops.splice(i, 1)"
+                  >{{ $t('upload.delete_edge') }}
+                </b-button>
+              </div>
+            </div>
+            <template #footer> {{ crop.width }} x {{ crop.height }} mm </template>
           </b-card>
         </b-card-group>
       </b-container>
       <b-button
         v-if="crops.length"
+        class="m-3"
         style="width: 100%"
         variant="success"
         :disabled="disableSend"
@@ -79,9 +94,11 @@
 import Vue from 'vue'
 import EdgeCanvas from '@/components/EdgeCanvas'
 import IssueSelect from '@/components/IssueSelect'
+import Issue from 'ducksmanager/assets/js/components/Issue.vue'
+import { mapState } from 'vuex'
 
 export default {
-  components: { IssueSelect, EdgeCanvas },
+  components: { Issue, IssueSelect, EdgeCanvas },
   middleware: 'authenticated',
   data: () => ({
     currentCrop: null,
@@ -89,6 +106,9 @@ export default {
     disableSend: false,
     uploadedImageData: null,
   }),
+  computed: {
+    ...mapState('coa', ['publicationNames']),
+  },
   methods: {
     addCrop() {
       this.crops.push({
@@ -169,30 +189,31 @@ export default {
 }
 </script>
 
-<style scoped>
-.edge-crop {
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
+<style scoped lang="scss">
+#cropper-wrapper {
+  max-height: 100vh;
 }
 
 .edge-card {
   max-width: 300px;
-  max-height: 300px;
+
+  .edge-crop {
+    object-fit: contain;
+  }
 }
 
 .loader {
   display: table;
-  height: 100%;
   overflow: hidden;
+  height: 100%;
   width: 100%;
-}
 
-.loader > p {
-  color: #999;
-  display: table-cell;
-  text-align: center;
-  vertical-align: middle;
+  > p {
+    color: #999;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
 }
 
 .browse {

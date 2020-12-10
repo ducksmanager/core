@@ -75,12 +75,11 @@ export default {
       vm.bytesUploaded = data.bytesUploaded
     })
     uppy.on('upload-success', (fileId, payload) => {
-      vm.loadItems({ itemType: vm.photo ? 'photos' : 'elements' })
       vm.$emit('upload-success')
-      if (vm.photo) {
-        if (!vm.multiple) {
-          vm.setPhotoUrl({ issuenumber: vm.edge.issuenumber, filename: payload.body.filename })
-        }
+      if (vm.photo && !vm.multiple) {
+        vm.setPhotoUrl({ issuenumber: vm.edge.issuenumber, filename: payload.body.filename })
+      } else {
+        vm.loadItems({ itemType: vm.photo ? 'photos' : 'elements' })
       }
     })
   },
@@ -91,10 +90,14 @@ export default {
 }
 </script>
 
-<style scoped>
->>> .uppy-Dashboard-inner {
+<style lang="scss">
+.uppy-Dashboard-inner {
   width: 100vw !important;
   height: 100vh !important;
+
+  .uppy-Dashboard-Item-previewImg {
+    object-fit: contain !important;
+  }
 }
 
 >>> a.uppy-Dashboard-poweredBy {
