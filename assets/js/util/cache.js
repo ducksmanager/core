@@ -39,7 +39,7 @@ const coaCache = setupCache({
 localforage.keys((error, keys) => {
   keys.forEach(key => {
     localforage.getItem(key, (error, value) => {
-      if (isNaN(value) || !value) {
+      if ((typeof value !== 'object' && isNaN(value)) || !value) {
         localforage.removeItem(key)
       }
     })
