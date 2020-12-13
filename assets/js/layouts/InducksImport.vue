@@ -184,32 +184,32 @@
           </Accordion>
         </template>
       </b-alert>
-      <b-form-group>
-        <label for="condition">{{ l10n.ETAT }}</label>
-        <b-form-select
-          id="condition"
-          v-model="issueDefaultCondition"
-          class="mb-3"
-        >
-          <template #first>
-            <b-form-select-option
-              :value="null"
-              disabled
-            >
-              {{ l10n.IMPORTER_INDUCKS_ETAT }}
-            </b-form-select-option>
-          </template>
-
-          <b-form-select-option
-            v-for="(conditionTextKey, conditionValue) in conditions"
-            :key="conditionValue"
-            :value="conditionValue"
-          >
-            {{ l10n[conditionTextKey] }}
-          </b-form-select-option>
-        </b-form-select>
-      </b-form-group>
       <template v-if="issuesImportable && issuesImportable.length">
+        <b-form-group>
+          <label for="condition">{{ l10n.ETAT }}</label>
+          <b-form-select
+            id="condition"
+            v-model="issueDefaultCondition"
+            class="mb-3"
+          >
+            <template #first>
+              <b-form-select-option
+                :value="null"
+                disabled
+              >
+                {{ l10n.IMPORTER_INDUCKS_ETAT }}
+              </b-form-select-option>
+            </template>
+
+            <b-form-select-option
+              v-for="(conditionTextKey, conditionValue) in conditions"
+              :key="conditionValue"
+              :value="conditionValue"
+            >
+              {{ l10n[conditionTextKey] }}
+            </b-form-select-option>
+          </b-form-select>
+        </b-form-group>
         <b-progress
           v-if="importProgress"
           height="2rem"
