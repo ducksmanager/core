@@ -27,6 +27,9 @@ export default {
   }),
 
   mutations: {
+    setIsLoadingCountryNames(state, isLoadingCountryNames) {
+      state.isLoadingCountryNames = isLoadingCountryNames
+    },
     setCountryNames(state, countryNames) {
       state.countryNames = countryNames
     },
@@ -67,9 +70,9 @@ export default {
   actions: {
     fetchCountryNames: async ({state, commit}) => {
       if (!state.isLoadingCountryNames && !state.countryNames) {
-        state.isLoadingCountryNames = true
+        commit("setIsLoadingCountryNames", true)
         commit("setCountryNames", (await coaApi.get(URL_PREFIX_COUNTRIES)).data)
-        state.isLoadingCountryNames = false
+        commit("setIsLoadingCountryNames", false)
       }
     },
     fetchPublicationNames: async ({state, commit, dispatch}, publicationCodes) => {
