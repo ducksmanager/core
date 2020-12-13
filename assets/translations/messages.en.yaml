@@ -3,7 +3,9 @@ A_VENDRE: For sale
 A_VENDRE_TITRE: Sale
 ABONNEMENT_AJOUTER: Add a subscription
 ABONNEMENT_AUCUN: No subscription
-ABONNEMENT_EXPLICATION: Indicate the publications that you have a subscription for. DucksManager will automatically add them to your collection when new issues are released.
+ABONNEMENT_EXPLICATION: Indicate the publications that you have a subscription for.
+  DucksManager will automatically add them to your collection when new issues are
+  released.
 ABONNEMENT_TITRE: My subscriptions
 ACCROCHE: The reference website for Disney comic book collectors
 ACHAT: Purchase
@@ -38,54 +40,72 @@ AU: to
 AUCUNE_COUVERTURE: We don't have any cover of this book
 AUCUN_AUTEUR_NOTE_1: You haven't rated any author.
 AUCUN_AUTEUR_NOTE_2_REDIRECTION: Go to the %s page to rate your favorite authors.
-AUCUN_AUTEUR_NOTE_2_MEME_PAGE: Add your favorite authors hereunder and attribute them a grade.
-AUCUN_AUTEUR_NOTE_3: Thanks to these grades, DucksManager will calculate the issues that you may be interested in.
+AUCUN_AUTEUR_NOTE_2_MEME_PAGE: Add your favorite authors hereunder and attribute them
+  a grade.
+AUCUN_AUTEUR_NOTE_3: Thanks to these grades, DucksManager will calculate the issues
+  that you may be interested in.
 AUCUN_NUMERO_POSSEDE_1: You don't possess any comic book! Click
 AUCUN_NUMERO_POSSEDE_2: in order to add some comics to your collection!
-AUCUN_NUMERO_REPERTORIE: No issue reported for magazine 
-AUCUN_AUTEUR_SURVEILLE: No watched author. Add your favorite authors hereunder to know what percentage of their stories you have in your collection.
-AUCUNE_SUGGESTION: You already possess all the issues containing stories from your favorite authors for the selected country.
+AUCUN_NUMERO_REPERTORIE: No issue reported for magazine
+AUCUN_AUTEUR_SURVEILLE: No watched author. Add your favorite authors hereunder to
+  know what percentage of their stories you have in your collection.
+AUCUNE_SUGGESTION: You already possess all the issues containing stories from your
+  favorite authors for the selected country.
 AUTEUR: Author
 AUTEURS: Authors
 AUTEURS_COURT: Statistics about authors
-AUTEURS_FAVORIS_INTRO_1: Type in the names of your favorite authors to see how many stories you have from them. Rating the authors will also allow DucksManager to
+AUTEURS_FAVORIS_INTRO_1: Type in the names of your favorite authors to see how many
+  stories you have from them. Rating the authors will also allow DucksManager to
 AUTEURS_FAVORIS_INTRO_2: suggest to you a list of publications that you could like.
-AUTEURS_NON_NOTES: You haven't rated your favorite authors yet. Rate your favorite authors so that DucksManager can suggest issues to add to your collection.
+AUTEURS_NON_NOTES: You haven't rated your favorite authors yet. Rate your favorite
+  authors so that DucksManager can suggest issues to add to your collection.
 AUTRES: Other
 BIBLIOTHEQUE: View your collection like if you're in front of it!
-BIBLIOTHEQUE_CONTRIBUTEURS: A list of those who participated to the creation of DucksManager Bookcase
+BIBLIOTHEQUE_CONTRIBUTEURS: A list of those who participated to the creation of DucksManager
+  Bookcase
 BIBLIOTHEQUE_CONTRIBUTEURS_COURT: Contributors
 BIBLIOTHEQUE_COURT: My bookcase
 BIBLIOTHEQUE_DE: DucksManager bookcase of
-BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE: "Recently added edges among your collection :"
-BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU: Head for <a href="/bookcase">your bookcase</a> to see it.
-BIBLIOTHEQUE_NOUVELLE_TRANCHE_TITRE: Since your last visit, %u new book edge belonging to your collection has been created for the DucksManager bookcase
-BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU: Head for <a href="/bookcase">your bookcase</a> to see them.
-BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE: Since your last visit, %u new book edges belonging to your collection have been created for the DucksManager bookcase
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE: "Recently added edges among your collection\
+  \ :"
+BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU: Head for <a href="/bookcase">your bookcase</a>
+  to see it.
+BIBLIOTHEQUE_NOUVELLE_TRANCHE_TITRE: Since your last visit, %u new book edge belonging
+  to your collection has been created for the DucksManager bookcase
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU: Head for <a href="/bookcase">your bookcase</a>
+  to see them.
+BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE: Since your last visit, %u new book edges belonging
+  to your collection have been created for the DucksManager bookcase
 BIBLIOTHEQUE_OPTIONS: Allows you to set up options for the display of your bookcase
 BIBLIOTHEQUE_OPTIONS_COURT: Bookcase options
 BIBLIOTHEQUE_PRIVEE: This user's bookcase is private.
-BIBLIOTHEQUE_PROPOSITION_PARTAGE: Proud of your collection? Show your bookcase to your friends!
+BIBLIOTHEQUE_PROPOSITION_PARTAGE: Proud of your collection? Show your bookcase to
+  your friends!
 BIENVENUE: Welcome to DucksManager!
 BON: Good
 CALCUL: Calculation
-CALCULS_PAS_ENCORE_FAITS: The calculations have not been done yet. The stats are generated every day, come back tomorrow!
+CALCULS_PAS_ENCORE_FAITS: The calculations have not been done yet. The stats are generated
+  every day, come back tomorrow!
 CHARGEMENT: Loading...
-CLASSIQUE_DESCRIPTION: A <b>standard list</b>, listing for each publication the issues you possess.
-CLASSIQUE_MOINS_1: Easy to read but not practical when it comes to adding new issues in it.
+CLASSIQUE_DESCRIPTION: A <b>standard list</b>, listing for each publication the issues
+  you possess.
+CLASSIQUE_MOINS_1: Easy to read but not practical when it comes to adding new issues
+  in it.
 CLASSIQUE_NOM: the classic list
 CLASSIQUE_PLUS_1: More adapted for collections with less than 500 issues.
 CLIQUEZ_ICI: Click here
 CLIQUEZ_SUR_MAGAZINE_POUR_EDITER: Click on one of the publications to edit its list!
 CODE_HISTOIRE: story code
 COLLECTABLE_DEMO: to view our 1min30 video explaining how CollecTable works!
-COLLECTABLE_DESCRIPTION: A <b>CollecTable list</b>, more digest but requiring a bit of training!
+COLLECTABLE_DESCRIPTION: A <b>CollecTable list</b>, more digest but requiring a bit
+  of training!
 COLLECTABLE_NOM: CollecTable
 COLLECTABLE_PLUS_1: Especially adapted for big collections (more than 200 issues)
 COLLECTION: Comics collection
-COLLECTION_DE: Collection of 
+COLLECTION_DE: Collection of
 COLLECTION_VIDE_1: Your collection is empty.
-COLLECTION_CLIQUER_NOUVEAU_MAGAZINE: Click on "New magazine" to add an issue into your list.
+COLLECTION_CLIQUER_NOUVEAU_MAGAZINE: Click on "New magazine" to add an issue into
+  your list.
 COMMENTAIRES_BOUQUINERIE: Comments (Atmosphere, price examples,...)
 COLLECTION_INDUCKS: Inducks collection
 COLLECTION_INDUCKS_POSSEDEE: Already have an Inducks collection?
@@ -97,22 +117,27 @@ DECONNEXION: Log out
 DECOUVRIR_COUVERTURE: Click on the edge to see its cover
 DEMO_MENU: Want to try a demo?
 DETAILS_HISTOIRE: Story details
-DETAILS_MEDAILLE_CREATEUR: You have %d Edge designer points, get %d more to receive the %s badge!
+DETAILS_MEDAILLE_CREATEUR: You have %d Edge designer points, get %d more to receive
+  the %s badge!
 DETAILS_MEDAILLE_CREATEUR_MAX: You have %d Edge designer points
-DETAILS_MEDAILLE_DUCKHUNTER: You have pinned %d second-hand bookshops, pin %d more to receive the %s badge!
+DETAILS_MEDAILLE_DUCKHUNTER: You have pinned %d second-hand bookshops, pin %d more
+  to receive the %s badge!
 DETAILS_MEDAILLE_DUCKHUNTER_MAX: You have pinned %d second-hand bookshops
-DETAILS_MEDAILLE_PHOTOGRAPHE: You have %d Edge photographer points, send us edge photographs and get %d more points to receive the %s badge!
+DETAILS_MEDAILLE_PHOTOGRAPHE: You have %d Edge photographer points, send us edge photographs
+  and get %d more points to receive the %s badge!
 DETAILS_MEDAILLE_PHOTOGRAPHE_MAX: You have %d Edge photographer points
 DU: from
 EMAIL_INVALIDE: The e-mail address is invalid.
 EMAIL_ENVOYE: An e-mail has been sent to the webmaster.
-EMAIL_ENVOYE_BOUQUINERIE: If your second-hand bookshop is valid, it should be available soon on DucksManager.
+EMAIL_ENVOYE_BOUQUINERIE: If your second-hand bookshop is valid, it should be available
+  soon on DucksManager.
 ENREGISTRER_CHANGEMENTS: Save changes
 ENVOYER: Send
 ENVOYER_PHOTO_DE_TRANCHE: Send a photo of the edge
 ENVOYER_PHOTOS_DE_TRANCHE: Send edge photos
 ERREUR_GENERIQUE: An error occurred.
-ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: This username or this e-mail address already exists.
+ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: This username or this e-mail address already
+  exists.
 ET: and
 ETAT: Condition
 ETAT_BON: In good condition
@@ -128,16 +153,27 @@ ETAT_MAUVAIS: In bad condition
 ETAT_MOYEN: In not-so-good condition
 ETATS_NUMEROS: Comics conditions
 EXCLUSIF_DUCKSMANAGER: Exclusive in DucksManager
-EXPLICATION_GRAPH_ACHATS_1: This graph allows you to trace back how your collection has evolved with time.
-EXPLICATION_GRAPH_ACHATS_2: When did you get add the 10<sup>th</sup> issue in your collection? What about the 50<sup>th</sup>?
-EXPLICATION_GRAPH_ACHATS_3: During what period did you buy the most issues in the past?
-EXPLICATION_GRAPH_ACHATS_4: In order to trace back how your collection has evolved with time, indicate the purchase dates of your issues on the %s page, then come back here! If no purchase date is indicated for an issue, the date when it was added to the collection is used.
+EXPLICATION_GRAPH_ACHATS_1: This graph allows you to trace back how your collection
+  has evolved with time.
+EXPLICATION_GRAPH_ACHATS_2: When did you get add the 10<sup>th</sup> issue in your
+  collection? What about the 50<sup>th</sup>?
+EXPLICATION_GRAPH_ACHATS_3: During what period did you buy the most issues in the
+  past?
+EXPLICATION_GRAPH_ACHATS_4: In order to trace back how your collection has evolved
+  with time, indicate the purchase dates of your issues on the %s page, then come
+  back here! If no purchase date is indicated for an issue, the date when it was added
+  to the collection is used.
 EXPLICATION_NOTATION_AUTEURS1: DucksManager uses the
 EXPLICATION_NOTATION_AUTEURS2: ratings that you assign to your favorite authors
 EXPLICATION_NOTATION_AUTEURS3: to suggest you publications that may interest you.
-EXPLICATION_ORDRE_MAGAZINES: By default, the magazines are ordered by country and by magazine. You can change this order by moving the magazines names on the %s page.
-EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE: Your bookcase can be viewed by other visitors of DucksManager. If you don't want that, please disable collection sharing on the %s page.
-EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE: Your bookcase can NOT be viewed by other visitors of DucksManager. If you want your bookcase to be accessible by other people, please enable collection sharing on the %s page.
+EXPLICATION_ORDRE_MAGAZINES: By default, the magazines are ordered by country and
+  by magazine. You can change this order by moving the magazines names on the %s page.
+EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE: Your bookcase can be viewed by other visitors
+  of DucksManager. If you don't want that, please disable collection sharing on the
+  %s page.
+EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE: Your bookcase can NOT be viewed by other
+  visitors of DucksManager. If you want your bookcase to be accessible by other people,
+  please enable collection sharing on the %s page.
 GERER_COLLECTION: Manage my collection
 GESTION_ABONNEMENTS: Subscriptions
 GESTION_ABONNEMENTS_COURT: My subscriptions <sup>New!</sup>
@@ -163,46 +199,66 @@ HISTOIRES_POSSEDEES: Possessed stories
 ICI: here
 IMPORTER: Import
 IMPORTER_INDUCKS: Import my Inducks collection
-IMPORTER_INDUCKS_DESCRIPTION_1: DucksManager uses the Inducks database to list the referenced issues of each Disney publication.
-IMPORTER_INDUCKS_DESCRIPTION_2: If you already have an Inducks collection, you can <b>import it into DucksManager.</b>
-IMPORTER_INDUCKS_DESCRIPTION_3: To do so, create a DucksManager collection or login to your existing DucksManager collection, then select "%s" in the menu.
-IMPORTER_INDUCKS_ETAT: Choose the condition in which you wish the new issues to be set.
-IMPORTER_INDUCKS_INSTRUCTIONS_1: This page allows you to import your Inducks collection into DucksManager.
+IMPORTER_INDUCKS_DESCRIPTION_1: DucksManager uses the Inducks database to list the
+  referenced issues of each Disney publication.
+IMPORTER_INDUCKS_DESCRIPTION_2: If you already have an Inducks collection, you can
+  <b>import it into DucksManager.</b>
+IMPORTER_INDUCKS_DESCRIPTION_3: To do so, create a DucksManager collection or login
+  to your existing DucksManager collection, then select "%s" in the menu.
+IMPORTER_INDUCKS_ETAT: Choose the condition in which you wish the new issues to be
+  set.
+IMPORTER_INDUCKS_INSTRUCTIONS_1: This page allows you to import your Inducks collection
+  into DucksManager.
 IMPORTER_INDUCKS_INSTRUCTIONS_2: "To do so, follow the next steps :"
-IMPORTER_INDUCKS_INSTRUCTIONS_3: In the left section hereunder, log in your Inducks account.
-IMPORTER_INDUCKS_INSTRUCTIONS_4: "Once logged in, you will reach a page containing your collection as a list starting  with: <pre>country^entrycode^collectiontype^comment</pre>"
+IMPORTER_INDUCKS_INSTRUCTIONS_3: In the left section hereunder, log in your Inducks
+  account.
+IMPORTER_INDUCKS_INSTRUCTIONS_4: "Once logged in, you will reach a page containing\
+  \ your collection as a list starting  with: <pre>country^entrycode^collectiontype^comment</pre>"
 IMPORTER_INDUCKS_INSTRUCTIONS_5: Select the list in its entirety, and copy it.
-IMPORTER_INDUCKS_INSTRUCTIONS_6: Paste this text in the section on the right side of the page.
-IMPORTER_INDUCKS_INSTRUCTIONS_7: Click on the "Import" button at the bottom of the page.
+IMPORTER_INDUCKS_INSTRUCTIONS_6: Paste this text in the section on the right side
+  of the page.
+IMPORTER_INDUCKS_INSTRUCTIONS_7: Click on the "Import" button at the bottom of the
+  page.
 IMPORTER_INDUCKS_NUMEROS_A_IMPORTER: issues to be imported.
-IMPORTER_INDUCKS_NUMEROS_EXISTANTS: issues cannot be imported because they are already in your collection.
+IMPORTER_INDUCKS_NUMEROS_EXISTANTS: issues cannot be imported because they are already
+  in your collection.
 IMPORTER_INDUCKS_NUMEROS_EXISTANTS_TITRE: Issues that are already in your collection
-IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES: issues cannot be imported because they don't exist anymore on Inducks.
+IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES: issues cannot be imported because they don't
+  exist anymore on Inducks.
 IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES_TITRE: Non-existing issues
 IMPRIMER_COLLECTION: Print my collection
 IMPRESSION_COLLECTION: Collection printing
-IMPRESSION_COLLECTION_AVEC: Print my collection with 
-IMPRESSION_COLLECTION_PRESENTATION_LISTES: "DucksManager helps you print your issues collection with two possible lists :"
+IMPRESSION_COLLECTION_AVEC: Print my collection with
+IMPRESSION_COLLECTION_PRESENTATION_LISTES: "DucksManager helps you print your issues\
+  \ collection with two possible lists :"
 INDEFINI: Undefined
-INFO_AJOUT_NUMEROS_1: Click on the issues that you want to add to your collection, 
-INFO_AJOUT_NUMEROS_2_DESKTOP: then right-click on the list to indicate its condition and validate.
-INFO_AJOUT_NUMEROS_2_MOBILE: then make a long tap on the list to indicate its condition and validate.
+INFO_AJOUT_NUMEROS_1: Click on the issues that you want to add to your collection,
+INFO_AJOUT_NUMEROS_2_DESKTOP: then right-click on the list to indicate its condition
+  and validate.
+INFO_AJOUT_NUMEROS_2_MOBILE: then make a long tap on the list to indicate its condition
+  and validate.
 INSCRIPTION: Sign up
 INSCRIVEZ_VOUS: Click here to sign up!
-INTRO_BOUQUINERIES: This page allows you to easily find second-hand bookshops which often propose Disney magazines, in your city.
-INTRO_CONTRIBUTEURS_BIBLIOTHEQUE: "DucksManager Bookcase couldn't have existed without the help and the devotion of : "
-INTRO_NOUVELLE_BOUQUINERIE: Please type below the details you have got about the second-hand bookshop you know, then enter some examples about the issues prices in it.
-INVITATION_ENVOI_PHOTOS_TRANCHES: Send us photos of magazine edges and earn up to %s Edge photographer points per edge!
+INTRO_BOUQUINERIES: This page allows you to easily find second-hand bookshops which
+  often propose Disney magazines, in your city.
+INTRO_CONTRIBUTEURS_BIBLIOTHEQUE: "DucksManager Bookcase couldn't have existed without\
+  \ the help and the devotion of : "
+INTRO_NOUVELLE_BOUQUINERIE: Please type below the details you have got about the second-hand
+  bookshop you know, then enter some examples about the issues prices in it.
+INVITATION_ENVOI_PHOTOS_TRANCHES: Send us photos of magazine edges and earn up to
+  %s Edge photographer points per edge!
 LES: The
 LICENCE_INDUCKS1: This website is partially based on the Inducks website data.
 LICENCE_INDUCKS2: Click here to read the Inducks licence.
-LICENCE_INDUCKS3: All the pictures of Disney characters and products belong to The Walt Disney Company.
+LICENCE_INDUCKS3: All the pictures of Disney characters and products belong to The
+  Walt Disney Company.
 LISTE_AUTEURS_AJOUTER: Add an author
 LISTE_AUTEURS_INTRO: Tracked authors
 LISTE_BOUQUINERIES: List of second-hand bookshops
 MAGAZINES: publications
 MAUVAIS: Bad
-MAX_AUTEURS_SURVEILLES_ATTEINT: You have reached the maximum amount of watched authors. Remove existing authors from your list in order to watch other ones.
+MAX_AUTEURS_SURVEILLES_ATTEINT: You have reached the maximum amount of watched authors.
+  Remove existing authors from your list in order to watch other ones.
 MEDAILLE_1: bronze
 MEDAILLE_2: silver
 MEDAILLE_3: gold
@@ -213,28 +269,32 @@ MOT_DE_PASSE: Password
 MOT_DE_PASSE_6_CHAR: Password (6 characters or more)
 MOT_DE_PASSE_6_CHAR_ERREUR: The password must have at least 6 characters!
 MOT_DE_PASSE_ACTUEL: Current password
-MOT_DE_PASSE_CHANGE: The password has been changed. You can now login using the menu on the left.
+MOT_DE_PASSE_CHANGE: The password has been changed. You can now login using the menu
+  on the left.
 MOT_DE_PASSE_CHANGEMENT: Password change
 MOT_DE_PASSE_CONF: Password (confirmation)
 MOT_DE_PASSE_NOUVEAU: New password
 MOT_DE_PASSE_NOUVEAU_CONFIRMATION: New password (confirmation)
 MOT_DE_PASSE_OUBLIE: Password lost?
-MOT_DE_PASSE_OUBLIE_ERREUR: The field "Email" is not valid, does it correspond to an email registered on DucksManager?
+MOT_DE_PASSE_OUBLIE_ERREUR: The field "Email" is not valid, does it correspond to
+  an email registered on DucksManager?
 MOT_DE_PASSE_OUBLIE_EXPLICATION: Fill in your e-mail address to reset your password.
-MOT_DE_PASSE_OUBLIE_OK: If the typed e-mail address corresponds to a DucksManager account, we just sent there a link allowing you to reset your password. If the e-mail does not reach you within a few minutes, please check your "Spam" folder.
+MOT_DE_PASSE_OUBLIE_OK: If the typed e-mail address corresponds to a DucksManager
+  account, we just sent there a link allowing you to reset your password. If the e-mail
+  does not reach you within a few minutes, please check your "Spam" folder.
 MOTS_DE_PASSE_DIFFERENTS: The two passwords are different!
 MOYEN: Not so good
 NEWS_A_AJOUTE_BOUQUINERIE: has reviewed the second-hand bookshop
 NEWS_A_AJOUTE: has added
 NEWS_A_COMMENCE_COLLECTION: has started a collection on DucksManager. Welcome!
-NEWS_A_CREE_TRANCHE: has created the edge of issue 
+NEWS_A_CREE_TRANCHE: has created the edge of issue
 NEWS_A_OBTENU_MEDAILLE: received the <b>%s level %d</b> medal
 NEWS_A_SA_COLLECTION: to his/her collection
 NEWS_AUTRE_NUMERO: other issue
 NEWS_AUTRE_TRANCHE: other edge
 NEWS_AUTRES_NUMEROS: other issues
 NEWS_AUTRES_TRANCHES: other edges
-NEWS_ONT_CREE_TRANCHE: have created the edge of issue 
+NEWS_ONT_CREE_TRANCHE: have created the edge of issue
 NEWS_ONT_CREE_TRANCHE_2: for the DucksManager bookcase
 NEWS_A_RECU_NUMERO_ABONNEMENT: has received issue
 NEWS_ONT_RECU_NUMERO_ABONNEMENT: have received issue
@@ -271,56 +331,86 @@ POSSESSION_MAGAZINES_3: different magazines from
 POSSESSION_NUMEROS: Issues possession
 POURCENTAGE_COLLECTION_VISIBLE: "% of the collection can be viewed in the bookcase."
 PRESENTATION: Presentation
-PRESENTATION1: DucksManager is a website allowing you to manage your collection of Disney magazines.
-PRESENTATION2: From your collection management to its printing as a list, including complete statistics, all the functions you were waiting from a collection manager are here!
-PRESENTATION_BIBLIOTHEQUE_1: DucksManager's bookcase presents your comics collection on elegant shelves.
-PRESENTATION_BIBLIOTHEQUE_2: Since your bookcase is unique, DucksManager allows you to choose among different types of wood, for the bookcase and for its shelves.
-PRESENTATION_BIBLIOTHEQUE_3: ...And in order the immersion to be total, you are able to view the cover and some excerpts of nearly every issue of yours!!
+PRESENTATION1: DucksManager is a website allowing you to manage your collection of
+  Disney magazines.
+PRESENTATION2: From your collection management to its printing as a list, including
+  complete statistics, all the functions you were waiting from a collection manager
+  are here!
+PRESENTATION_BIBLIOTHEQUE_1: DucksManager's bookcase presents your comics collection
+  on elegant shelves.
+PRESENTATION_BIBLIOTHEQUE_2: Since your bookcase is unique, DucksManager allows you
+  to choose among different types of wood, for the bookcase and for its shelves.
+PRESENTATION_BIBLIOTHEQUE_3: '...And in order the immersion to be total, you are able
+  to view the cover and some excerpts of nearly every issue of yours!!'
 PRESENTATION_BIBLIOTHEQUE_TITRE: Your bookcase, like if you're in front of it!
-PRESENTATION_BOUQUINERIE1: You have visited in a cool second-hand bookshop? Let the other visitors know!
+PRESENTATION_BOUQUINERIE1: You have visited in a cool second-hand bookshop? Let the
+  other visitors know!
 PRESENTATION_DEMO_TITRE: Welcome in the demo mode!
-PRESENTATION_DEMO: Take the time to discover how DucksManager will change the way you manage your Disney comic books collection.<br /><br />You can add or remove issues from the demo collection, but remember that every hour all the user-generated data will be removed.<br />If you want to log out of the demo mode in order to sign up or to login to your real collection, use the link in the left menu.<br />Next account reset in 
-PRESENTATION_GERER_1: Our selection tool allows you to index your whole Disney issues collection in a matter of minutes.
-PRESENTATION_GERER_2: Want DucksManager to remember the most precise details of your collection? A right click will be enough!
-PRESENTATION_GERER_3: You will be able to select the condition of your books, along with their purchase date, or even propose to sell them to the other DucksManager users.
+PRESENTATION_DEMO: Take the time to discover how DucksManager will change the way
+  you manage your Disney comic books collection.<br /><br />You can add or remove
+  issues from the demo collection, but remember that every hour all the user-generated
+  data will be removed.<br />If you want to log out of the demo mode in order to sign
+  up or to login to your real collection, use the link in the left menu.<br />Next
+  account reset in
+PRESENTATION_GERER_1: Our selection tool allows you to index your whole Disney issues
+  collection in a matter of minutes.
+PRESENTATION_GERER_2: Want DucksManager to remember the most precise details of your
+  collection? A right click will be enough!
+PRESENTATION_GERER_3: You will be able to select the condition of your books, along
+  with their purchase date, or even propose to sell them to the other DucksManager
+  users.
 PRESENTATION_GERER_TITRE: Add issues to your collection in a few clicks!
-PRESENTATION_STATS_1: Updated everyday to take into account your collection changes, the DucksManager statistics inform you about the issues you have got, and tell you how much you need to get to complete your issues series.
-PRESENTATION_STATS_2: If you specified the conditions of your issues, a graph will sum them up.
-PRESENTATION_STATS_3: You like a script-writer or a drawer in particular? DucksManager generates bar chart containing the proportion of stories from this author that you've got in your collection.
+PRESENTATION_STATS_1: Updated everyday to take into account your collection changes,
+  the DucksManager statistics inform you about the issues you have got, and tell you
+  how much you need to get to complete your issues series.
+PRESENTATION_STATS_2: If you specified the conditions of your issues, a graph will
+  sum them up.
+PRESENTATION_STATS_3: You like a script-writer or a drawer in particular? DucksManager
+  generates bar chart containing the proportion of stories from this author that you've
+  got in your collection.
 PRESENTATION_STATS_TITRE: Complete statistics and all the tools to grow up your collection!
-PRESENTATION_WHATTHEDUCK_1: Keep your Disney collection with you at all times and add magazines to your collection by simply take a photo of them using  
+PRESENTATION_WHATTHEDUCK_1: Keep your Disney collection with you at all times and
+  add magazines to your collection by simply take a photo of them using
 PRESENTATION_WHATTHEDUCK_2: ", DucksManager's mobile app!"
 PRESENTATION_WHATTHEDUCK_3: Available for free on Google Play.
 PRESENTATION_WHATTHEDUCK_TITRE: Your Disney collection in your pocket
-PRIX_HONNETES: We are counting on your honnesty concerning the prices you mention, if any.
+PRIX_HONNETES: We are counting on your honnesty concerning the prices you mention,
+  if any.
 PROPOSER_BOUQUINERIE: Propose a second-hand bookshop
 PUBLICATION: Publication
 PUBLICATIONS: Publications
-QUESTION_SUPPRIMER_MAGAZINE: "Would you like this magazine to be removed from your collection? In this case, the following issues will also be removed from your collection :"
+QUESTION_SUPPRIMER_MAGAZINE: "Would you like this magazine to be removed from your\
+  \ collection? In this case, the following issues will also be removed from your\
+  \ collection :"
 RECHERCHE_MAGAZINE_AUCUN_RESULTAT: No result.
 RECHERCHER_BOUQUINERIES: Find second-hand bookshops
 RECHERCHER_HISTOIRE: Story search
-RECHERCHER_INTRO: "... or find an issue by searching for a story that's inside of it :"
+RECHERCHER_INTRO: "... or find an issue by searching for a story that's inside of\
+  \ it :"
 RECHERCHER_PUBLICATIONS: Find the publications of a story by story code
 REFERENCES: referenced
 REJOIGNEZ_NOUS: Join the community on
 REMERCIEMENT_LOGO: The DucksManager and WhatTheDuck logos are drawn by enigm.
-REMPLIR_INFOS_NOUVEAU_MAGAZINE: Indicate the publication that you wish to add some issues to.
+REMPLIR_INFOS_NOUVEAU_MAGAZINE: Indicate the publication that you wish to add some
+  issues to.
 SANS_TITRE: No title
 SCORE: Score
-SIGNALE_PAR: Reported by 
+SIGNALE_PAR: Reported by
 SOUS_TEXTURE: Detailed texture
 SOUS_TEXTURE_ETAGERE: Detailed shelf texture
 STATISTIQUES_COLLECTION: Statistics
 STATISTIQUES_QUOTIDIENNES: The statistics are updated every day.
 SUGGESTIONS_ACHATS: Purchase suggestor
-SUGGESTIONS_ACHATS_NOUVEAUTE: Depuis votre dernière visite, %d magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti!
-SUGGESTIONS_ACHATS_NOUVEAUTES: Depuis votre dernière visite, %d magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis!
+SUGGESTIONS_ACHATS_NOUVEAUTE: Since your last visit, %d issue has been released with
+  new stories from your favorite authors!
+SUGGESTIONS_ACHATS_NOUVEAUTES: Since your last visit, %d issues have been released
+  with new stories from your favorite authors!
 SUGGESTIONS_ACHATS_QUOTIDIENNES: The suggestions are updated every day.
 SUGGESTIONS_SEE_ALL: See all the suggestions for my collection
 SUPPRIMER: Remove
 SUPPRIMER_COMPTE: Delete my DucksManager account
-SUPPRIMER_COMPTE_CONFIRMATION: Your DucksManager account will be deleted with all the associated information. Continue?
+SUPPRIMER_COMPTE_CONFIRMATION: Your DucksManager account will be deleted with all
+  the associated information. Continue?
 SUR: of
 TABLE_DES_MATIERES: Table of contents
 TEXTURE: Texture
@@ -333,11 +423,13 @@ TITRE_MEDAILLE_DUCKHUNTER: Duckhunter
 TOTAL: Total
 TOUS_MAGAZINES: All issues
 TOUS_PAYS: All countries
-TRANCHE_NON_DISPONIBLE1: This edge is not viewable as we don't have any photography of it...
+TRANCHE_NON_DISPONIBLE1: This edge is not viewable as we don't have any photography
+  of it...
 TRANCHE_NON_DISPONIBLE2: You can photograph this edge?
 TRANCHE_NON_DISPONIBLE3: Send it to us and earn
 UN_VISITEUR_ANONYME: an anonymous visitor
-UTILISATEUR_INVALIDE: Invalid username. Choose a username with at least 3 characters and containing only letters, digits and dashes.
+UTILISATEUR_INVALIDE: Invalid username. Choose a username with at least 3 characters
+  and containing only letters, digits and dashes.
 UTILISATEURS_INSCRITS: "%d users have signed up<br />on DucksManager"
 VALIDER: Submit
 VENTE_CONSERVER_VOLONTE_VENTE: Do not change the "for sale" state
