@@ -152,9 +152,10 @@ class PageSiteController extends AbstractController
     public function showBookcaseOptionsPage(TranslatorInterface $translator): Response
     {
         return $this->renderSitePage(
+            'Bookcase',
             $translator->trans('BIBLIOTHEQUE_OPTIONS_COURT'),
             null,
-            'Bookcase', [
+            [
                 'tab' => 'BookcaseOptions'
             ]
         );

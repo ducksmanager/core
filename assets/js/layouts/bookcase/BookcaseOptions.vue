@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading">
+  <div v-if="loading || !hasPublicationNames">
     {{ l10n.CHARGEMENT }}
   </div>
   <div
@@ -134,7 +134,8 @@ export default {
       bookcase: 'SOUS_TEXTURE',
       bookshelf: 'SOUS_TEXTURE_ETAGERE'
     },
-    loading: true
+    loading: true,
+    hasPublicationNames: false
   }),
 
   computed: {
@@ -158,6 +159,7 @@ export default {
     this.setBookcaseUsername(this.username);
     await this.loadData();
     await this.fetchPublicationNames(this.bookcaseOrder);
+    this.hasPublicationNames = true
   },
 
   methods: {
