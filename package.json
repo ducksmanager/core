@@ -1,5 +1,7 @@
 {
     "devDependencies": {
+        "@sentry/tracing": "^5.29.0",
+        "@sentry/vue": "^5.29.0",
         "@symfony/webpack-encore": "^0.33.0",
         "axios": "^0.21.0",
         "axios-cache-adapter": "^2.5.0",

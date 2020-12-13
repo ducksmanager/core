@@ -1,6 +1,10 @@
 import Vue from "vue";
-import App from "./layouts/App"
 import {BootstrapVue, BootstrapVueIcons} from 'bootstrap-vue'
+
+import * as Sentry from '@sentry/vue';
+import {Integrations} from "@sentry/tracing";
+
+import App from "./layouts/App"
 import store from "./store"
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -10,10 +14,10 @@ import '../css/app.scss';
 new Vue({
   store,
   render(createElement) {
-    const vm = this
     let props = {}, component = null
-    Object.keys(this.$el.attributes).forEach(key => {
-      const {name, value} = vm.$el.attributes[key]
+    const attributes = this.$el.attributes;
+    Object.keys(attributes).forEach(key => {
+      const {name, value} = attributes[key]
       if (name === 'component') {
         component = value
       } else {
@@ -31,3 +35,18 @@ new Vue({
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
+
+Sentry.init({
+  Vue,
+  dsn: 'https://a225a6550b8c4c07914327618685a61c@sentry.io/1385898',
+  logErrors: true,
+
+  integrations: [
+    new Integrations.BrowserTracing(),
+  ],
+  tracesSampleRate: 1.0,
+  tracingOptions: {
+    trackComponents: true,
+  },
+});
+
