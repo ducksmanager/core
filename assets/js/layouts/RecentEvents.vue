@@ -64,7 +64,7 @@ export default {
         numberOfIssues: event.numberOfIssues && parseInt(event.numberOfIssues),
         timestamp: parseInt(event.timestamp),
       }
-    }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => timestamp1 < timestamp2)
+    }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => Math.sign(timestamp2 - timestamp1))
 
     await this.fetchPublicationNames(
       this.events
