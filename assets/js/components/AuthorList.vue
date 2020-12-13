@@ -70,8 +70,8 @@
               <option
                 v-for="(fullName, personCode) in searchResults"
                 :key="personCode"
-                :disabled="watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)"
-                @click="createRating(personCode)"
+                :disabled="isAuthorWatched(personCode)"
+                @click="isAuthorWatched(personCode) ? () => {} : createRating(personCode)"
               >
                 {{ fullName }}
               </option>
@@ -128,6 +128,10 @@ export default {
   methods: {
     ...mapActions("coa", ["fetchPersonNames"]),
     ...mapActions("collection", ["loadWatchedAuthors"]),
+
+    isAuthorWatched(personCode) {
+      return this.watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)
+    },
 
     async createRating(personCode) {
       await axios.put('/api/collection/authors/watched', {personCode})
