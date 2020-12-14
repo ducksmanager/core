@@ -124,7 +124,7 @@ export default {
     },
   },
   methods: {
-    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length - 1),
+    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),
     getContributors(contributionType) {
       const vm = this
       return this.allUsers.filter((user) => vm.isContributor(user, contributionType))
