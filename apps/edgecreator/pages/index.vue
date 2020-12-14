@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ $t('header.dashboard') }}</h1>
+    <h1>{{ $t('Dashboard') }}</h1>
 
     <template v-for="{ category, l10nKey } in edgeCategories">
       <h3 :key="`${category}-title`">{{ $t(l10nKey) }}</h3>
@@ -34,18 +34,18 @@
             </b-card>
           </b-col>
         </b-row>
-        <div v-else align="center">{{ $t('no_edges_in_category') }}</div>
+        <div v-else align="center">{{ $t('No edge in this category') }}</div>
       </b-container>
     </template>
 
     <hr />
 
     <b-container v-role:unless="'viewer'" align="center" style="margin-bottom: 20px">
-      <b-button to="/edit/new">{{ $t('button.create_or_update') }}</b-button>
+      <b-button to="/edit/new">{{ $t('Create or edit an edge model') }}</b-button>
     </b-container>
 
     <b-container align="center">
-      <b-button to="/upload-multiple">{{ $t('button.send_photos') }}</b-button>
+      <b-button to="/upload-multiple">{{ $t('Send edge photos') }}</b-button>
     </b-container>
   </div>
 </template>
@@ -66,15 +66,15 @@ export default {
     edgeCategories: [
       {
         category: 'ongoing',
-        l10nKey: 'header.ongoing_edges',
+        l10nKey: 'Ongoing edges',
       },
       {
         category: 'pending',
-        l10nKey: 'header.pending_edges',
+        l10nKey: 'Pending edges',
       },
       {
         category: 'ongoing_by_other_user',
-        l10nKey: 'header.ongoing_by_other_user_edges',
+        l10nKey: 'Ongoing edges handled by other users',
       },
     ],
   }),

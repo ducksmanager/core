@@ -7,19 +7,19 @@
           <b-form-input
             id="username"
             v-model="username"
-            :placeholder="$t('username')"
+            :placeholder="$t('Username')"
             required
           ></b-form-input>
 
           <b-form-input
             id="password"
             v-model="password"
-            :placeholder="$t('password')"
+            :placeholder="$t('Password')"
             class="mt-3"
             type="password"
             required
           ></b-form-input>
-          <b-button type="submit" variant="primary">{{ $t('login') }}</b-button>
+          <b-button type="submit" variant="primary">{{ $t('Login') }}</b-button>
         </b-form>
       </b-col>
     </b-row>

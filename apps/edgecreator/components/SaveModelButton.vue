@@ -33,7 +33,7 @@
             :ref="`${contributionType}-typeahead`"
             :data="allUsers.filter((user) => !isContributor(user, contributionType))"
             :serializer="({ username }) => username"
-            :placeholder="$t('export.typeahead.placeholder')"
+            :placeholder="$t('Enter a user name')"
             :min-matching-chars="0"
             @hit="
               addContributorAllIssues($event, contributionType)

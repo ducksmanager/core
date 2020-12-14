@@ -82,17 +82,18 @@ export default async function (req, res) {
       if (!allowedMimeTypes.includes(mimetype)) {
         throw new Error(
           JSON.stringify({
-            error: 'error.invalid_file_type',
+            error:
+              'Invalid file type: {mimetype}, the following types are allowed: {allowedMimeTypes}',
             placeholders: { mimetype, allowedMimeTypes },
           })
         )
       }
       if (isEdgePhoto) {
         if (await hasReachedDailyUploadLimit()) {
-          throw new Error(JSON.stringify({ error: 'error.daily_upload_limit_reached' }))
+          throw new Error(JSON.stringify({ error: 'You have reached your daily upload limit' }))
         }
         if (await hasAlreadySentPhoto(filestream)) {
-          throw new Error(JSON.stringify({ error: 'error.photo_already_sent' }))
+          throw new Error(JSON.stringify({ error: 'You have already sent this photo' }))
         }
       } else {
         await readFile(filestream)
@@ -100,7 +101,7 @@ export default async function (req, res) {
         if (fs.existsSync(filename) && otherElementUses.length) {
           throw new Error(
             JSON.stringify({
-              error: 'error.element_is_used_elsewhere',
+              error: 'This file name is already used in other models, please rename your file',
               placeholders: { otherElementUses: JSON.stringify(otherElementUses) },
             })
           )

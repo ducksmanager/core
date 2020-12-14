@@ -59,6 +59,8 @@ export default {
         lazy: true,
         langDir: 'locales/',
         defaultLocale: 'fr',
+        fallbackLocale: 'en',
+        formatFallbackMessages: true,
         locales: [
           {
             code: 'fr',

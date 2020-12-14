@@ -8,9 +8,9 @@
         @drop="drop"
       >
         <div>
-          {{ $t('upload.drag')
+          {{ $t('Drag a file here or')
           }}<label class="browse">
-            {{ $t('upload.browse') }}
+            {{ $t('Browse') }}
             <input id="file" class="sr-only" type="file" accept="image/jpeg" />
           </label>
         </div>
@@ -31,7 +31,12 @@
           />
         </div>
         <b-jumbotron>
-          {{ $t('upload.description') }}
+          {{
+            // eslint-disable-next-line max-len
+            $t(
+              'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".'
+            )
+          }}
         </b-jumbotron>
         <issue-select
           :key="crops.length"
@@ -41,7 +46,7 @@
           @change="currentCrop = $event && $event.width ? $event : null"
         />
         <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">{{
-          $t('upload.add_edge')
+          $t('Add')
         }}</b-button>
         <b-card-group deck columns>
           <b-card
@@ -71,11 +76,11 @@
               :contributors="initialContributors"
             />
             <div>
-              <div v-if="crop.error" class="text-center">{{ $t('upload.error') }}</div>
-              <div v-else-if="crop.sent" class="text-center">{{ $t('upload.sent') }}</div>
+              <div v-if="crop.error" class="text-center">{{ $t('Error') }}</div>
+              <div v-else-if="crop.sent" class="text-center">{{ $t('Sent!') }}</div>
               <div v-else>
                 <b-button pill variant="danger" @click="crops.splice(i, 1)"
-                  >{{ $t('upload.delete_edge') }}
+                  >{{ $t('Delete') }}
                 </b-button>
               </div>
             </div>
@@ -88,7 +93,7 @@
           style="width: 100%"
           variant="success"
           @click="uploadAll"
-          >{{ $t('upload.send') }}
+          >{{ $t('Send the edge pictures') }}
         </b-button>
         <div v-else-if="crops.length" class="my-3">
           <b-link to="/">Retour à l'accueil</b-link>
@@ -171,10 +176,10 @@ export default {
               url: URL.createObjectURL(file),
             })
           } else {
-            reject(new Error(this.$t('error.browser_not_supported')))
+            reject(new Error(this.$t('Your browser is not supported ')))
           }
         } else {
-          reject(new Error(this.$t('error.filetype_should_be_jpg')))
+          reject(new Error(this.$t('Please choose a JPG or JPEG file')))
         }
       })
     },
