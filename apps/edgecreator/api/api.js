@@ -1,24 +1,22 @@
 import axios from 'axios'
 
 export const addAxiosInterceptor = () => {
-  axios.interceptors.request.use((config) => {
-    return {
-      ...config,
-      auth: {
-        username: /\/collection/.test(config.url)
-          ? process.env.DUCKSMANAGER_USER
-          : process.env.EDGECREATOR_USER,
-        password: /\/collection/.test(config.url)
-          ? process.env.DUCKSMANAGER_PASS
-          : process.env.EDGECREATOR_PASS,
-      },
-      headers: {
-        ...config.headers,
-        'x-dm-version': '1.0.0',
-        'Content-Type': 'application/json',
-      },
-    }
-  })
+  axios.interceptors.request.use((config) => ({
+    ...config,
+    auth: {
+      username: /\/collection/.test(config.url)
+        ? process.env.DUCKSMANAGER_USER
+        : process.env.EDGECREATOR_USER,
+      password: /\/collection/.test(config.url)
+        ? process.env.DUCKSMANAGER_PASS
+        : process.env.EDGECREATOR_PASS,
+    },
+    headers: {
+      ...config.headers,
+      'x-dm-version': '1.0.0',
+      'Content-Type': 'application/json',
+    },
+  }))
 }
 
 addAxiosInterceptor()

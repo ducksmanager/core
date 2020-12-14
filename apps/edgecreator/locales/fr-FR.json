@@ -25,6 +25,7 @@
   "upload.browse": "cliquez ici pour parcourir",
   "upload.delete_edge": "Supprimer",
   "upload.drag": "Déplacez un fichier ici ou",
+  "upload.error": "Erreur",
   "upload.description": "Pour chaque tranche sur la photo, sélectionnez la partie de la photo correspondant à la tranche, remplissez les informations sur la tranche ci-dessous puis cliquez sur \"Ajouter\". Lorsque vous avez indiqué toutes tranches de la photo, cliquez sur \"Envoyer les images des tranches\".",
   "upload.restrictions": "Images jusqu'à 3 Mo",
   "upload.send": "Envoyer les images des tranches",

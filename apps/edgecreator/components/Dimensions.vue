@@ -11,6 +11,8 @@
           size="sm"
           autocomplete="off"
           type="number"
+          :min="dimension === 'width' ? 5 : 100"
+          :max="dimension === 'width' ? 50 : 350"
           @input="
             $emit(
               'change',
@@ -34,6 +36,13 @@ export default {
   props: {
     width: { type: Number, default: 15 },
     height: { type: Number, default: 200 },
+  },
+
+  mounted() {
+    this.$emit('change', {
+      width: this.width,
+      height: this.height,
+    })
   },
 }
 </script>
