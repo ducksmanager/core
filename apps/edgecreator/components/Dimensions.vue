@@ -2,7 +2,7 @@
   <b-card class="mb-2" style="max-width: 16rem">
     <b-row v-for="dimension in ['width', 'height']" :key="dimension">
       <b-col sm="4">
-        <label :for="dimension">{{ dimension }}:</label>
+        <label :for="dimension">{{ $t(ucFirst(dimension)) }}:</label>
       </b-col>
       <b-col sm="5">
         <b-form-input
@@ -43,6 +43,10 @@ export default {
       width: this.width,
       height: this.height,
     })
+  },
+
+  methods: {
+    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length - 1),
   },
 }
 </script>

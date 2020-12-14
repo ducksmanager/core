@@ -2,24 +2,28 @@
   <b-container fluid>
     <b-row align="center" class="pt-2">
       <b-col class="text-left">
-        <b-button v-b-toggle.sidebar>Toggle Options</b-button>
-        <b-sidebar id="sidebar" v-model="showSidebar" title="Options" shadow>
+        <b-button v-b-toggle.sidebar>{{ $t('Options') }}</b-button>
+        <b-sidebar id="sidebar" v-model="showSidebar" :title="$t('Options')" shadow>
           <b-container class="px-3 py-2">
             <b-row align-items="center">
-              <b-col cols="6"> Zoom</b-col>
+              <b-col cols="6"> {{ $t('Zoom') }}</b-col>
               <b-col cols="2">{{ zoom }}</b-col>
               <b-col cols="4">
                 <input v-model="zoom" type="range" min="1" max="8" step="0.5" style="width: 100%"
               /></b-col>
             </b-row>
             <b-row>
-              <b-col><label for="showIssueNumbers">Show issue numbers</label></b-col>
+              <b-col
+                ><label for="showIssueNumbers">{{ $t('Show issue numbers') }}</label></b-col
+              >
               <b-col>
                 <b-checkbox id="showIssueNumbers" v-model="showIssueNumbers" />
               </b-col>
             </b-row>
             <b-row>
-              <b-col><label for="showPreviousEdge">Show previous edge</label></b-col>
+              <b-col
+                ><label for="showPreviousEdge">{{ $t('Show previous edge') }}</label></b-col
+              >
               <b-col>
                 <b-checkbox
                   id="showPreviousEdge"
@@ -29,7 +33,9 @@
               </b-col>
             </b-row>
             <b-row>
-              <b-col><label for="showNextEdge">Show next edge</label></b-col>
+              <b-col
+                ><label for="showNextEdge">{{ $t('Show next edge') }}</label></b-col
+              >
               <b-col>
                 <b-checkbox
                   id="showNextEdge"
@@ -39,7 +45,9 @@
               </b-col>
             </b-row>
             <b-row>
-              <b-col><label for="showEdgePhotos">Show edge photos</label></b-col>
+              <b-col
+                ><label for="showEdgePhotos">{{ $t('Show edge photos') }}</label></b-col
+              >
               <b-col>
                 <b-checkbox
                   id="showEdgePhotos"
@@ -54,7 +62,7 @@
       <b-col align-self="center" class="col-sm-4">
         <b-button to="/">
           <b-icon-house />
-          Home
+          {{ $t('Home') }}
         </b-button>
       </b-col>
       <b-col />
@@ -78,7 +86,7 @@
         </b-button>
         <b-button
           v-b-tooltip.hover
-          title="Edge photo"
+          :title="$t('Edge photo')"
           pill
           variant="outline-primary"
           :disabled="issuenumbers.length > 1"
@@ -93,7 +101,7 @@
         <b-button
           v-b-tooltip.hover
           v-b-toggle.collapse-dimensions
-          title="Change dimensions"
+          :title="$t('Change dimensions')"
           pill
           size="sm"
           variant="outline-primary"
@@ -101,7 +109,7 @@
           <b-icon-arrows-angle-expand /> </b-button
         >&nbsp;<b-button
           v-b-tooltip.hover
-          title="Clone from another model"
+          :title="$t('Clone from another model')"
           pill
           size="sm"
           variant="outline-primary"
@@ -110,7 +118,7 @@
           <b-icon-custom-duplicate />
           <b-modal
             v-model="showCloneModal"
-            title="Clone from another model"
+            :title="$t('Clone from another model')"
             ok-only
             ok-title="Clone"
             :ok-disabled="!modelToClone"
@@ -140,6 +148,12 @@
         <span v-if="issuenumbers.length > 1"> to {{ issuenumbers[issuenumbers.length - 1] }}</span>
       </b-col>
     </b-row>
+    <div class="language-list m-2">
+      <template v-for="({ code, name }, idx) in $i18n.locales"
+        ><template v-if="idx > 0"> | </template><span v-if="$i18n.locale === code">{{ name }}</span
+        ><nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{ name }}</nuxt-link>
+      </template>
+    </div>
   </b-container>
 </template>
 <script>
@@ -211,6 +225,10 @@ export default {
         this.$store.commit('ui/setShowIssueNumbers', value)
       },
     },
+    availableLocales() {
+      return this.$i18n.locales.filter(({ code }) => code !== this.$i18n.locale)
+    },
+
     hasPhotoUrl() {
       return Object.keys(this.photoUrls).length
     },
@@ -245,6 +263,11 @@ export default {
 }
 </script>
 <style>
+.language-list {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 .b-icon {
   vertical-align: sub !important;
   height: 15px;
