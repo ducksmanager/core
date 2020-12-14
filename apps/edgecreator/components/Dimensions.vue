@@ -46,7 +46,7 @@ export default {
   },
 
   methods: {
-    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length - 1),
+    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),
   },
 }
 </script>

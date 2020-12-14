@@ -11,6 +11,7 @@
   "Create or edit an edge model": "Créer ou modifier une tranche",
   "Dashboard": "Tableau de bord",
   "Delete": "Supprimer",
+  "Designer": "Créateur",
   "Designers": "Créateurs",
   "Direction": "Direction",
   "Duplicate": "Dupliquer",
@@ -37,6 +38,7 @@
   "Options": "Options",
   "Password": "Mot de passe",
   "Pending edges": "Tranches en attente d'édition",
+  "Photographer": "Photographe",
   "Photographers": "Photographes",
   "Pictures up to 3 MB": "Images jusqu'à 3 Mo",
   "Please choose a JPG or JPEG file": "Veuillez choisir un fichier JPG ou JPEG.",
@@ -60,6 +62,6 @@
   "Width": "Largeur",
   "You have already sent this photo": "Vous avez déjà envoyé cette photo",
   "You have reached your daily upload limit": "Vous avez atteint votre limite d'envoi quotidienne",
-  "Your browser is not supported ": "Votre navigateur n'est pas supporté.",
-  "Zoom ": "Zoom"
+  "Your browser is not supported": "Votre navigateur n'est pas supporté.",
+  "Zoom": "Zoom"
 }
