@@ -26,9 +26,15 @@
     <b-icon-archive v-if="!isExport" />
     <template v-else>
       <b-icon-cloud-arrow-up-fill />
-      <b-modal v-model="showExportModal" title="Export" ok-only ok-title="Export" @ok="run">
+      <b-modal
+        v-model="showExportModal"
+        :title="$t('Edge publication')"
+        ok-only
+        ok-title="Export"
+        @ok="run"
+      >
         <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
-          <h2>{{ $t(`export.${contributionType}`) }}</h2>
+          <h2>{{ $t(ucFirst(contributionType)) }}</h2>
           <vue-bootstrap-typeahead
             :ref="`${contributionType}-typeahead`"
             :data="allUsers.filter((user) => !isContributor(user, contributionType))"
@@ -118,6 +124,7 @@ export default {
     },
   },
   methods: {
+    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length - 1),
     getContributors(contributionType) {
       const vm = this
       return this.allUsers.filter((user) => vm.isContributor(user, contributionType))

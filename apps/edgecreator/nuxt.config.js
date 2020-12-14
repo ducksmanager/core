@@ -68,6 +68,11 @@ export default {
             iso: 'fr-FR',
             file: 'fr-FR.json',
           },
+          {
+            code: 'en',
+            name: 'English',
+            iso: 'en-US',
+          },
         ],
       },
     ],

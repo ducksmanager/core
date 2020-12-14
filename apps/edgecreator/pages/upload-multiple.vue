@@ -96,7 +96,7 @@
           >{{ $t('Send the edge pictures') }}
         </b-button>
         <div v-else-if="crops.length" class="my-3">
-          <b-link to="/">Retour à l'accueil</b-link>
+          <b-link to="/">{{ $t('Back to home page') }}</b-link>
         </div>
       </template>
     </div></b-container

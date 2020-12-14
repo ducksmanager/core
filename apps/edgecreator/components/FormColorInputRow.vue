@@ -2,7 +2,9 @@
   <form-input-row
     type="color"
     :option-name="optionName"
-    :label="`Color${optionName === 'Color' ? '' : ` (${optionName})`}`"
+    :label="
+      optionName === 'Color' ? $t('Color') : $t('Color ({category})', { category: optionName })
+    "
     :class="{
       'color-row': true,
       'can-be-transparent': canBeTransparent,
@@ -27,10 +29,10 @@
         pill
         size="sm"
         variant="outline-primary"
-        >Re-use
+        >{{ $t('Re-use') }}
       </b-button>
       <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
-        <div v-if="!frequentColorsWithoutCurrent.length">No other color</div>
+        <div v-if="!frequentColorsWithoutCurrent.length">{{ $t('No other color') }}</div>
         <ul v-else>
           <li v-for="color in frequentColorsWithoutCurrent" :key="color">
             <span class="frequent-color" :style="{ background: color }" @click="change(color)"
@@ -45,7 +47,7 @@
         :disabled="!hasPhotoUrl || showEdgePhotos === null"
         :variant="colorPickerOption === optionName ? 'primary' : 'outline-primary'"
         @click="colorPickerOption = colorPickerOption ? null : optionName"
-        >From photo
+        >{{ $t('From photo') }}
       </b-button>
     </template>
   </form-input-row>

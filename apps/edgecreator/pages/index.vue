@@ -40,7 +40,7 @@
 
     <hr />
 
-    <b-container v-role:unless="'viewer'" align="center" style="margin-bottom: 20px">
+    <b-container v-role:unless="'viewer'" class="mb-3" align="center">
       <b-button to="/edit/new">{{ $t('Create or edit an edge model') }}</b-button>
     </b-container>
 

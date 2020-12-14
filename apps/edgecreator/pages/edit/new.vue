@@ -2,7 +2,7 @@
   <b-modal
     ok-only
     :ok-disabled="!issue"
-    title="Création de tranche"
+    :title="$t('Create or edit an edge model')"
     visible
     @close="toDashboard"
     @ok="startEditing"

@@ -7,10 +7,10 @@
       hide-condition
     /><b-badge v-if="v3">v3</b-badge>
     <b-badge v-for="designer in designers" :key="`designer-${designer}`"
-      >Designer:{{ designer }}</b-badge
+      >{{ $t('Designer') }}:{{ designer }}</b-badge
     >
     <b-badge v-for="photographer in photographers" :key="`photographer-${photographer}`"
-      >Photographer:{{ photographer }}</b-badge
+      >{{ $t('Photographer') }}:{{ photographer }}</b-badge
     >
   </span>
 </template>

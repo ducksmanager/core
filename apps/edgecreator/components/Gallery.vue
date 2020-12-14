@@ -4,7 +4,7 @@
       v-model="showChooseImageModal"
       :title="clickedImage"
       scrollable
-      ok-title="Choose"
+      :ok-title="$t('Choose')"
       @ok="chooseImage"
     >
       <img :alt="clickedImage" :src="getImageUrl(clickedImage)" />
@@ -20,11 +20,15 @@
       />
     </b-modal>
     <b-alert v-if="!items.length" show variant="warning"
-      >No items.
-      <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">Upload new</a>
+      >{{ $t('No item in this section.') }}
+      <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
+        $t('Upload new')
+      }}</a>
     </b-alert>
     <template v-else>
-      <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">Upload new</a>
+      <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
+        $t('Upload new')
+      }}</a>
       <b-row ref="gallery" class="gallery">
         <b-col
           v-for="image in items"
