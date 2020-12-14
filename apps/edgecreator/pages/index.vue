@@ -45,7 +45,7 @@
     </b-container>
 
     <b-container align="center">
-      <b-button to="/upload">{{ $t('button.send_photos') }}</b-button>
+      <b-button to="/upload-multiple">{{ $t('button.send_photos') }}</b-button>
     </b-container>
   </div>
 </template>

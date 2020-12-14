@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <div>
     <b-select
       v-model="currentCountryCode"
       :options="countriesWithSelect"
@@ -15,26 +15,10 @@
       v-show="currentCountryCode && currentPublicationCode"
       v-model="currentIssueNumber"
       :options="issuesWithSelect"
-      @change="
-        $emit('change', {
-          countryCode: currentCountryCode,
-          publicationCode: currentPublicationCode,
-          issueNumber: currentIssueNumber,
-        })
-      "
+      @change="onChange({})"
     />
-    <dimensions
-      v-if="withDimensions && currentIssueNumber !== null"
-      @change="
-        $emit('change', {
-          ...$event,
-          countryCode: currentCountryCode,
-          publicationCode: currentPublicationCode,
-          issueNumber: currentIssueNumber,
-        })
-      "
-    />
-  </b-container>
+    <dimensions v-if="withDimensions && currentIssueNumber !== null" @change="onChange($event)" />
+  </div>
 </template>
 <script>
 import Dimensions from '@/components/Dimensions'
@@ -148,6 +132,15 @@ export default {
       'fetchIssueNumbers',
     ]),
     ...mapMutations('edgeCatalog', ['setPublishedEdges']),
+
+    onChange(data) {
+      this.$emit('change', {
+        ...data,
+        countryCode: this.currentCountryCode,
+        publicationCode: this.currentPublicationCode,
+        issueNumber: this.currentIssueNumber,
+      })
+    },
   },
 }
 </script>

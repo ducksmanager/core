@@ -1,43 +1,48 @@
 <template>
   <b-container>
-    <div class="loader" @change="change" @dragover="dragover" @drop="drop">
-      <p>
-        {{ $t('upload.drag')
-        }}<label class="browse">
-          {{ $t('upload.browse') }}
-          <input id="file" class="sr-only" type="file" accept="image/jpeg" />
-        </label>
-      </p>
-    </div>
-    <template v-if="uploadedImageData">
-      <div id="cropper-wrapper">
-        <vue-cropper
-          ref="cropper"
-          alt="Source Image"
-          :img-style="{ maxHeight: '100vh' }"
-          :auto-crop-area="1"
-          :src="uploadedImageData"
-          :view-mode="1"
-          :movable="false"
-          :rotatable="false"
-          :scalable="false"
-          :zoomable="false"
-        />
+    <div>
+      <div
+        :class="{ loader: true, 'max-height': !uploadedImageData }"
+        @change="change"
+        @dragover="dragover"
+        @drop="drop"
+      >
+        <div>
+          {{ $t('upload.drag')
+          }}<label class="browse">
+            {{ $t('upload.browse') }}
+            <input id="file" class="sr-only" type="file" accept="image/jpeg" />
+          </label>
+        </div>
       </div>
-      <b-jumbotron>
-        {{ $t('upload.description') }}
-      </b-jumbotron>
-      <issue-select
-        :key="crops.length"
-        with-dimensions
-        disable-ongoing-or-published
-        :disable-not-ongoing-nor-published="false"
-        @change="currentCrop = $event && $event.width ? $event : null"
-      />
-      <b-button :disabled="!currentCrop" class="m-3 mb-4" @click="addCrop">{{
-        $t('upload.add_edge')
-      }}</b-button>
-      <b-container>
+      <template v-if="uploadedImageData">
+        <div id="cropper-wrapper">
+          <vue-cropper
+            ref="cropper"
+            alt="Source Image"
+            :img-style="{ maxHeight: '100vh' }"
+            :auto-crop-area="1"
+            :src="uploadedImageData"
+            :view-mode="1"
+            :movable="false"
+            :rotatable="false"
+            :scalable="false"
+            :zoomable="false"
+          />
+        </div>
+        <b-jumbotron>
+          {{ $t('upload.description') }}
+        </b-jumbotron>
+        <issue-select
+          :key="crops.length"
+          with-dimensions
+          disable-ongoing-or-published
+          :disable-not-ongoing-nor-published="false"
+          @change="currentCrop = $event && $event.width ? $event : null"
+        />
+        <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">{{
+          $t('upload.add_edge')
+        }}</b-button>
         <b-card-group deck columns>
           <b-card
             v-for="(crop, i) in crops"
@@ -62,11 +67,12 @@
               :width="crop.width"
               :height="crop.height"
               :steps="[]"
-              :photo-urls="crop.filename"
-              :contributors="{ photographers: [$cookies.get('dm-user')] }"
+              :photo-url="crop.filename"
+              :contributors="initialContributors"
             />
             <div>
-              <div v-if="crop.sent" class="text-center">{{ $t('upload.sent') }}</div>
+              <div v-if="crop.error" class="text-center">{{ $t('upload.error') }}</div>
+              <div v-else-if="crop.sent" class="text-center">{{ $t('upload.sent') }}</div>
               <div v-else>
                 <b-button pill variant="danger" @click="crops.splice(i, 1)"
                   >{{ $t('upload.delete_edge') }}
@@ -76,18 +82,20 @@
             <template #footer> {{ crop.width }} x {{ crop.height }} mm </template>
           </b-card>
         </b-card-group>
-      </b-container>
-      <b-button
-        v-if="crops.length"
-        class="m-3"
-        style="width: 100%"
-        variant="success"
-        :disabled="disableSend"
-        @click="uploadAll"
-        >{{ $t('upload.send') }}
-      </b-button>
-    </template>
-  </b-container>
+        <b-button
+          v-if="crops.length && crops.some(({ sent }) => !sent)"
+          class="my-3"
+          style="width: 100%"
+          variant="success"
+          @click="uploadAll"
+          >{{ $t('upload.send') }}
+        </b-button>
+        <div v-else-if="crops.length" class="my-3">
+          <b-link to="/">Retour à l'accueil</b-link>
+        </div>
+      </template>
+    </div></b-container
+  >
 </template>
 
 <script>
@@ -96,18 +104,22 @@ import EdgeCanvas from '@/components/EdgeCanvas'
 import IssueSelect from '@/components/IssueSelect'
 import Issue from 'ducksmanager/assets/js/components/Issue.vue'
 import { mapState } from 'vuex'
+import saveEdgeMixin from '@/mixins/saveEdgeMixin'
 
 export default {
   components: { Issue, IssueSelect, EdgeCanvas },
+  mixins: [saveEdgeMixin],
   middleware: 'authenticated',
   data: () => ({
     currentCrop: null,
     crops: [],
-    disableSend: false,
     uploadedImageData: null,
   }),
   computed: {
     ...mapState('coa', ['publicationNames']),
+    initialContributors() {
+      return { photographers: [{ username: this.$cookies.get('dm-user') }] }
+    },
   },
   methods: {
     addCrop() {
@@ -119,10 +131,10 @@ export default {
       this.currentCrop = null
     },
     async uploadAll() {
-      this.disableSend = true
+      const vm = this
       for (const crop of this.crops) {
         const [country, magazine] = crop.publicationCode.split('/')
-        crop.filename = (
+        const filename = (
           await this.$axios.$post('/fs/upload-base64', {
             country,
             magazine,
@@ -130,7 +142,16 @@ export default {
             data: crop.url,
           })
         ).filename
-        Vue.set(crop, 'sent', true)
+        Vue.set(crop, 'filename', filename)
+        this.$nextTick().then(() => {
+          vm.saveEdgeSvg(country, magazine, crop.issueNumber, this.initialContributors).then(
+            (response) => {
+              const isSuccess = response && response.svgPath
+              Vue.set(crop, 'sent', isSuccess)
+              Vue.set(crop, 'error', !isSuccess)
+            }
+          )
+        })
       }
       // window.location.replace('/')
     },
@@ -196,23 +217,24 @@ export default {
 
 .edge-card {
   max-width: 300px;
-
-  .edge-crop {
-    object-fit: contain;
-  }
 }
 
 .loader {
-  display: table;
+  display: flex;
   overflow: hidden;
   height: 100%;
   width: 100%;
+  justify-content: center;
+  align-items: center;
+  background: #eee;
+  border: 5px dashed lightgray;
 
-  > p {
+  &.max-height {
+    height: 100vh;
+  }
+
+  > div {
     color: #999;
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
   }
 }
 

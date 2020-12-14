@@ -68,6 +68,7 @@ import {
   BIconX,
   BIconXSquareFill,
 } from 'bootstrap-vue'
+import saveEdgeMixin from '@/mixins/saveEdgeMixin'
 
 export default {
   components: {
@@ -77,6 +78,7 @@ export default {
     BIconXSquareFill,
     BIconX,
   },
+  mixins: [saveEdgeMixin],
   props: {
     withExport: {
       type: Boolean,
@@ -137,17 +139,6 @@ export default {
         vm.addContributor({ issuenumber, contributionType, user })
       })
     },
-    removeVueMarkup(element) {
-      Object.values(element.attributes || {})
-        .filter((attribute) => attribute.name.startsWith('data-v-'))
-        .forEach(({ name: attributeName }) => {
-          element.removeAttribute(attributeName)
-        })
-      Object.values(element.childNodes).forEach((childNode) => {
-        this.removeVueMarkup(childNode)
-      })
-      return element
-    },
     onClick() {
       if (this.withExport) {
         this.showExportModal = !this.showExportModal
@@ -158,26 +149,23 @@ export default {
     run() {
       const vm = this
       this.setZoom(1.5)
-      vm.$nextTick().then(() => {
+      this.$nextTick().then(() => {
         vm.issuenumbers.forEach(async (issuenumber) => {
-          const cleanSvg = vm.removeVueMarkup(
-            document.getElementById(`edge-canvas-${issuenumber}`).cloneNode(true)
-          )
-          const response = await vm.$axios.$put('/fs/save', {
-            runExport: vm.withExport,
-            country: vm.country,
-            magazine: vm.magazine,
+          vm.saveEdgeSvg(
+            vm.country,
+            vm.magazine,
             issuenumber,
-            ...vm.contributors[issuenumber],
-            content: cleanSvg.outerHTML,
+            vm.contributors[issuenumber],
+            vm.withExport
+          ).then((response) => {
+            const isSuccess = response && response.svgPath
+            if (isSuccess) {
+              vm.progress = parseInt(vm.progress + 100 / vm.issuenumbers.length)
+            } else {
+              vm.progress = 0
+              vm.result = 'error'
+            }
           })
-          const isSuccess = response && response.svgPath
-          if (isSuccess) {
-            vm.progress = parseInt(vm.progress + 100 / vm.issuenumbers.length)
-          } else {
-            vm.progress = 0
-            vm.result = 'error'
-          }
         })
       })
     },

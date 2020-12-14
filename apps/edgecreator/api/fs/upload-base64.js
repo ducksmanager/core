@@ -11,10 +11,10 @@ export default async function (req, res) {
     const path = `${edgesPath}/${req.body.country}/photos`
     const tentativeFileName = `${req.body.magazine}.${req.body.issuenumber}.photo`
     const fileName = getNextAvailableFile(`${path}/${tentativeFileName}`, 'jpg').match(
-      /.+\/([^/]+).jpg$/
+      /\/([^/]+)$/
     )[1]
 
-    base64Img.imgSync(req.body.data, path, fileName)
+    base64Img.imgSync(req.body.data, path, fileName.replace('.jpg', ''))
 
     res.writeHead(200, { Connection: 'close', 'Content-Type': 'application/text' })
     res.end(JSON.stringify({ filename: fileName }))
