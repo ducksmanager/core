@@ -57,7 +57,7 @@ export default {
         inline: true,
         target: '.DashboardContainer',
         replaceTargetContent: true,
-        note: this.$t('upload.restrictions'),
+        note: this.$t('Pictures up to 3 MB'),
         height: 470,
         browserBackButtonClose: true,
         proudlyDisplayPoweredByUppy: false,

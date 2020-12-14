@@ -7,7 +7,7 @@
     @close="toDashboard"
     @ok="startEditing"
   >
-    {{ $t('prompt.select_issue') }}
+    {{ $t('Select the issue that you want to create the edge of.') }}
     <issue-select
       disable-ongoing-or-published
       :disable-not-ongoing-nor-published="false"

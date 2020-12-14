@@ -47,7 +47,7 @@ export default {
     countriesWithSelect() {
       return (
         this.countryNames && {
-          null: this.$t('select.country'),
+          null: this.$t('Select a country'),
           ...this.countryNames,
         }
       )
@@ -71,7 +71,7 @@ export default {
         this.issueNumbers &&
         this.issueNumbers[this.currentPublicationCode] &&
         this.publishedEdges[this.currentPublicationCode] && [
-          { value: null, text: this.$t('select.issue') },
+          { value: null, text: this.$t('Select an issue number') },
           ...this.issueNumbers[vm.currentPublicationCode].map((issuenumber) => {
             const status = this.getEdgeStatus({
               country: this.currentCountryCode,
