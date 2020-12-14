@@ -70,18 +70,17 @@
           <a :name="issueNumber" />
           <b-icon-eye-fill
             :id="`issue-details-${issueNumber}`"
-            class="preview"
+            class="preview mx-2"
             :alt="l10n.VOIR"
             @mouseover="hoveredIssueNumber=issueNumber"
             @mouseout="hoveredIssueNumber=null"
             @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
-          />
-          <span
+          /><span
             v-once
             class="issue-text"
           >
             {{ l10n.NUMERO_COURT }}{{ issueNumber }}
-            <span class="issue-title">{{ title }}</span>
+            <span>{{ title }}</span>
           </span>
           <div
             class="issue-details-wrapper"
@@ -393,10 +392,6 @@ export default {
       cursor: pointer;
     }
 
-    .issue-text {
-      margin-left: 10px;
-    }
-
     .issue-details-wrapper {
       display: inline;
       float: right;
@@ -419,7 +414,6 @@ export default {
 
 @media (max-width: 767px) {
   .issue-text {
-    float: left;
     white-space: nowrap;
     max-width: 170px;
     overflow-x: hidden;
