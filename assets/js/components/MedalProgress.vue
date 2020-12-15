@@ -57,10 +57,6 @@ export default {
       required: true
     }
   },
-
-  computed: {
-    imagePath: () => window.imagePath
-  }
 }
 </script>
 

@@ -32,7 +32,6 @@ export default {
     }
   },
   computed: {
-    imagePath: () => window.imagePath,
     countryCode() {
       return this.country || this.publicationCode.split('/')[0]
     }

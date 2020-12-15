@@ -72,9 +72,6 @@ export default {
   }),
 
   computed: {
-    locale: () => window.locale,
-    imagePath: () => window.imagePath,
-
     level() {
       return this.nextLevel && this.currentLevel !== null ? this.currentLevel + 1 : this.currentLevel
     }

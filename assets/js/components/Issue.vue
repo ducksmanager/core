@@ -36,9 +36,6 @@ export default {
     hideCondition: { type: Boolean, default: false },
     noWrap: { type: Boolean, default: true }
   },
-  computed: {
-    imagePath: () => window.imagePath,
-  },
 }
 </script>
 

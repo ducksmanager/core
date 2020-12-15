@@ -86,10 +86,6 @@ export default {
     edgesToLoad: []
   }),
 
-  computed: {
-    imagePath: () => window.imagePath,
-  },
-
   mounted() {
     if (!document.querySelector('style#bookshelves')) {
       const {bookshelf: bookshelfTexture} = this.bookcaseTextures

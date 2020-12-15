@@ -46,7 +46,6 @@ export default {
     }
   },
   computed: {
-    username: () => window.username,
     attrsWithoutTab() {
       const vm = this
       return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'tab')

@@ -41,10 +41,6 @@ export default {
     ]
   }),
 
-  computed: {
-    imagePath: () => window.imagePath
-  },
-
   methods: {
     reloadWithLocale: async locale => {
       await axios.post(`/locale/${locale.key}`)

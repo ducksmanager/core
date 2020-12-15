@@ -26,11 +26,6 @@ export default {
       default: false
     }
   },
-
-  computed: {
-    imagePath: () => window.imagePath,
-    username: () => window.username
-  }
 }
 </script>
 

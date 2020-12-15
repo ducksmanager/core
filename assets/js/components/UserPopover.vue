@@ -67,10 +67,6 @@ export default {
     elementId: null
   }),
 
-  computed: {
-    imagePath: () => window.imagePath
-  },
-
   created() {
     this.elementId = `user-${this.id}-${Math.random()}`
   }

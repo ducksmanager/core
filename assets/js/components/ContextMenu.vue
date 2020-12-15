@@ -165,10 +165,6 @@ export default {
     }
   }),
 
-  computed: {
-    imagePath: () => window.imagePath
-  },
-
   methods: {
     async updateSelectedIssues() {
       const vm = this

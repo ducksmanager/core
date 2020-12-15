@@ -238,7 +238,6 @@ export default {
     publicationName() {
       return this.publicationNames && this.publicationNames[this.publicationcode]
     },
-    imagePath: () => window.imagePath,
 
     isTouchScreen: () => window.matchMedia("(pointer: coarse)").matches,
     filteredIssues() {

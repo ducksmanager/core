@@ -80,8 +80,6 @@ export default {
     points() {
       return this.allUserPoints && this.allUserPoints[this.userId][this.contribution]
     },
-
-    userId: () => window.userId
   }
 }
 </script>
