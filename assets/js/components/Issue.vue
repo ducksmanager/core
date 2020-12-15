@@ -13,6 +13,7 @@
         :publicationcode="publicationcode"
         :publicationname="publicationname"
       /> {{ issuenumber }}
+      <slot name="title-suffix" />
     </a>
     <slot />
   </div>
