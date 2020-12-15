@@ -31,7 +31,7 @@
     "busboy": "^0.3.1",
     "cookie-universal-nuxt": "^2.1.4",
     "cropperjs": "^1.5.9",
-    "ducksmanager": "git+https://github.com/bperel/DucksManager-next.git#expose-components",
+    "ducksmanager": "git+https://github.com/bperel/DucksManager-next.git",
     "image-size": "^0.9.3",
     "interactjs": "^1.10.1",
     "nuxt": "^2.14.11",

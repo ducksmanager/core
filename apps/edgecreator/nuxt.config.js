@@ -34,9 +34,9 @@ export default {
   plugins: [
     '~/plugins/vue-gates',
     '~/plugins/axios',
-    '~/plugins/global',
     { src: '~/plugins/vue-cropper', ssr: false },
     { src: '~/plugins/vue-bootstrap-typeahead', ssr: false },
+    { src: '~/plugins/backend-data', ssr: false },
   ],
   /*
    ** Nuxt.js dev-modules
