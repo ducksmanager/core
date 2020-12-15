@@ -2,6 +2,7 @@
 <template>
   <svg
     :id="`edge-canvas-${issuenumber}`"
+    :class="{ 'hide-overflow': !showEdgeOverflow }"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
     :height="zoom * height"
@@ -134,17 +135,22 @@ export default {
         this.$store.commit('editingStep/setIssuenumber', value)
       },
     },
-    ...mapState('ui', ['zoom']),
+    ...mapState('ui', ['zoom', 'showEdgeOverflow']),
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 svg {
   overflow: visible;
-}
-svg g:hover,
-svg g.hovered {
-  animation: glowFilter 2s infinite;
+
+  &.hide-overflow {
+    overflow: hidden;
+  }
+
+  g:hover,
+  g.hovered {
+    animation: glowFilter 2s infinite;
+  }
 }
 </style>
