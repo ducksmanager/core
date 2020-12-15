@@ -68,6 +68,7 @@
                   :src="getImageUrl('photos', photoUrls[issuenumber])"
                   :class="{ picker: !!colorPickerOption }"
                   :style="{ height: `${zoom * height}px` }"
+                  crossorigin
                   @click="setColorFromPhoto"
                   @load="showEdgePhotos = true"
                   @error="showEdgePhotos = null"
