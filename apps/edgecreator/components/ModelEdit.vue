@@ -8,7 +8,11 @@
             @mouseover="hoveredStepNumber = stepNumber"
             @mouseout="hoveredStepNumber = null"
           >
-            {{ supportedRenders.find((render) => render.component === step.component).label }}
+            {{
+              $t(
+                supportedRenders.find((render) => render.component === step.component).labelL10nKey
+              )
+            }}
           </span>
           <div class="action-icons">
             <b-icon-arrow-up-square-fill
@@ -103,12 +107,12 @@
       </b-tab>
       <b-tab key="99" :title="$t('Add step')" title-item-class="font-weight-bold">
         <b-card-text>
-          <b-dropdown text="Select a step type">
+          <b-dropdown :text="$t('Select a step type')">
             <b-dropdown-item
               v-for="render in supportedRenders"
               :key="render.component"
               @click="$emit('add-step', render.component)"
-              >{{ render.description }}
+              >{{ $t(render.descriptionL10nKey) }}
             </b-dropdown-item>
           </b-dropdown>
         </b-card-text>
