@@ -151,8 +151,11 @@
           :publicationcode="`${country}/${magazine}`"
           :publicationname="publicationName"
           :issuenumber="issuenumbers[0]"
-        />
-        <span v-if="issuenumbers.length > 1"> to {{ issuenumbers[issuenumbers.length - 1] }}</span>
+        >
+          <template v-if="issuenumbers.length > 1" #title-suffix
+            >to {{ issuenumbers[issuenumbers.length - 1] }}</template
+          >
+        </Issue>
       </b-col>
     </b-row>
     <div class="language-list m-2">
