@@ -150,7 +150,8 @@
     </b-row>
     <div class="language-list m-2">
       <template v-for="({ code, name }, idx) in $i18n.locales"
-        ><template v-if="idx > 0"> | </template><span v-if="$i18n.locale === code">{{ name }}</span
+        ><template v-if="idx > 0"> | </template>
+        <span v-if="$i18n.locale === code" :key="code">{{ name }}</span
         ><nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{ name }}</nuxt-link>
       </template>
     </div>
@@ -224,9 +225,6 @@ export default {
       set(value) {
         this.$store.commit('ui/setShowIssueNumbers', value)
       },
-    },
-    availableLocales() {
-      return this.$i18n.locales.filter(({ code }) => code !== this.$i18n.locale)
     },
 
     hasPhotoUrl() {
