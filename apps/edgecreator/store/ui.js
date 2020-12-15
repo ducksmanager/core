@@ -1,6 +1,7 @@
 export const state = () => ({
   zoom: 1.5,
   showIssueNumbers: true,
+  showEdgeOverflow: true,
   showPreviousEdge: true,
   showNextEdge: true,
   showEdgePhotos: true,
@@ -14,6 +15,9 @@ export const mutations = {
   },
   setShowIssueNumbers(state, showIssueNumbers) {
     state.showIssueNumbers = showIssueNumbers
+  },
+  setShowEdgeOverflow(state, showEdgeOverflow) {
+    state.showEdgeOverflow = showEdgeOverflow
   },
   setShowPreviousEdge(state, showPreviousEdge) {
     state.showPreviousEdge = showPreviousEdge

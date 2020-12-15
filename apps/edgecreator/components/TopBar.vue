@@ -56,6 +56,14 @@
                 />
               </b-col>
             </b-row>
+            <b-row>
+              <b-col
+                ><label for="showEdgeOverflow">{{ $t('Show edge overflow') }}</label></b-col
+              >
+              <b-col>
+                <b-checkbox id="showEdgeOverflow" v-model="showEdgeOverflow" />
+              </b-col>
+            </b-row>
           </b-container>
         </b-sidebar>
       </b-col>
@@ -224,6 +232,14 @@ export default {
       },
       set(value) {
         this.$store.commit('ui/setShowIssueNumbers', value)
+      },
+    },
+    showEdgeOverflow: {
+      get() {
+        return this.$store.state.ui.showEdgeOverflow
+      },
+      set(value) {
+        this.$store.commit('ui/setShowEdgeOverflow', value)
       },
     },
 
