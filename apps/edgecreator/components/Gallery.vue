@@ -93,9 +93,11 @@ export default {
   },
   methods: {
     getImageUrl(elementFileName) {
-      return `${process.env.EDGES_URL}/${this.country}/${
-        this.imageType === 'elements' ? this.imageType : 'photos'
-      }/${elementFileName}`
+      return new RegExp(process.env.EDGES_URL).test(elementFileName)
+        ? elementFileName
+        : `${process.env.EDGES_URL}/${this.country}/${
+            this.imageType === 'elements' ? this.imageType : 'photos'
+          }/${elementFileName}`
     },
     chooseImage() {
       if (this.imageType === 'elements') {

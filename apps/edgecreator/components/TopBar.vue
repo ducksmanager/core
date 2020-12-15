@@ -97,7 +97,6 @@
           :title="$t('Edge photo')"
           pill
           variant="outline-primary"
-          :disabled="issuenumbers.length > 1"
           size="sm"
           @click="showPhotoModal = !showPhotoModal"
         >
