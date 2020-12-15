@@ -44,8 +44,8 @@
             :label="$t('Rotation : {rotation}°', { rotation: step.options.rotation })"
             type="range"
             :min="0"
-            :max="360"
-            :step="1"
+            :max="270"
+            :step="90"
             :options="step.options"
           />
         </b-card-text>

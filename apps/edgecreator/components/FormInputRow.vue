@@ -11,6 +11,7 @@
         :type="type"
         :min="min"
         :max="max"
+        :step="step"
         :range="range"
         :value="userValue"
         :disabled="disabled"
@@ -36,6 +37,7 @@ export default {
     options: { type: Object, required: true },
     min: { type: Number, default: null },
     max: { type: Number, default: null },
+    step: { type: Number, default: null },
     range: { type: Number, default: null },
     listId: { type: String, default: null },
   },
