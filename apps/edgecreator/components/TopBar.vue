@@ -143,7 +143,7 @@
         </b-button>
 
         <save-button />
-        <save-button with-export />
+        <save-button v-role="'admin'" with-export />
       </b-col>
     </b-row>
     <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey">
