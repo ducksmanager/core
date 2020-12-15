@@ -10,6 +10,7 @@
       :transform="`rotate(${options.rotation}, ${options.x + options.width / 2}, ${
         options.y + options.height / 2
       })`"
+      @load="load"
     >
       <metadata>{{ options }}</metadata>
     </image>
@@ -27,10 +28,10 @@ export default {
     options: {
       type: Object,
       default: () => ({
-        x: 5,
-        y: 5,
-        width: 15,
-        height: 15,
+        x: -35,
+        y: 50,
+        width: null,
+        height: null,
         src: null,
         rotation: 270,
         fgColor: '000000',
@@ -50,7 +51,7 @@ export default {
   }),
 
   computed: {
-    ...mapState(['width']),
+    ...mapState(['width', 'height']),
     imageUrl() {
       return this.textImage
         ? `${process.env.EDGES_URL}/images_myfonts/${this.textImage.imageId}.png`
@@ -147,6 +148,19 @@ export default {
           clearInterval(interval)
         }
       }, loopEvery)
+    },
+
+    load() {
+      const vm = this
+      const image = new Image()
+      image.src = this.imageUrl
+      image.onload = () => {
+        vm.$root.$emit('set-options', {
+          // By default, with a 270° rotation,
+          // the text shouldn't be larger than the width of the edge
+          height: Math.min(image.height, vm.width),
+        })
+      }
     },
   },
 }
