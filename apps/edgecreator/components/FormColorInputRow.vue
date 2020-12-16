@@ -111,7 +111,7 @@ export default {
   },
 }
 </script>
-<style>
+<style lang="scss" scoped>
 ul {
   list-style-type: none;
   padding: 0;
@@ -131,11 +131,11 @@ input[type='checkbox'][id$='-transparent'] {
 label.transparent {
   width: 40px;
   margin-right: 20px;
-}
 
-label.transparent img {
-  position: absolute;
-  top: 0;
+  img {
+    position: absolute;
+    top: 0;
+  }
 }
 
 .color-row.can-be-transparent.transparent-selected label.transparent img,
@@ -146,10 +146,10 @@ label.transparent img {
 .btn {
   font-size: smaller;
   vertical-align: top;
-}
 
-.btn.no-pointer {
-  cursor: default !important;
+  &.no-pointer {
+    cursor: default !important;
+  }
 }
 
 .frequent-color {

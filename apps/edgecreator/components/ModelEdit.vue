@@ -39,7 +39,32 @@
           </div>
         </template>
         <b-card-text v-if="step.component === 'Text'">
-          <form-input-row option-name="text" label="Text" type="text" :options="step.options" />
+          <form-input-row option-name="text" label="Text" type="text" :options="step.options">
+            <template #tooltip
+              >{{ $t('You can use special text parts to make your text dynamic :') }}
+              <ul>
+                <i18n
+                  tag="li"
+                  path="Write {templateString} to inject in your text the current issue number"
+                >
+                  <template #templateString>
+                    <pre>[Numero]</pre>
+                  </template>
+                </i18n>
+                <i18n
+                  tag="li"
+                  path="Write {templateString1} to inject in your text the first digit of the current issue number, {templateString2} for the second digit, etc."
+                >
+                  <template #templateString1>
+                    <pre>[Numero[0]]</pre>
+                  </template>
+                  <template #templateString2>
+                    <pre>[Numero[1]]</pre>
+                  </template>
+                </i18n>
+              </ul></template
+            >
+          </form-input-row>
           <form-input-row option-name="font" label="Font" type="text" :options="step.options" />
           <form-color-input-row :options="step.options" option-name="bgColor" />
           <form-color-input-row :options="step.options" option-name="fgColor" />
@@ -165,28 +190,36 @@ export default {
   },
 }
 </script>
-<style>
-#edit-card,
-#edit-card .tabs {
+<style lang="scss">
+#edit-card {
   height: 100%;
-}
 
-#edit-card .tabs ul li .action-icons {
-  float: right;
-}
+  .tabs {
+    height: 100%;
 
-#edit-card .tabs ul li .b-icon.invisible {
-  visibility: hidden;
-}
+    ul {
+      padding: 0;
+      li {
+        .action-icons {
+          float: right;
+        }
 
-#edit-card .tabs ul li .b-icon {
-  height: 15px;
-  font-size: initial !important;
-  vertical-align: middle;
-}
+        .b-icon {
+          height: 15px;
+          font-size: initial !important;
+          vertical-align: middle;
 
-#edit-card .tabs ul li .b-icon:first-of-type {
-  margin-left: 5px;
+          &.invisible {
+            visibility: hidden;
+          }
+
+          &:first-of-type {
+            margin-left: 5px;
+          }
+        }
+      }
+    }
+  }
 }
 
 .hovered-step {
