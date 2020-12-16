@@ -39,7 +39,12 @@
           </div>
         </template>
         <b-card-text v-if="step.component === 'Text'">
-          <form-input-row option-name="text" label="Text" type="text" :options="step.options">
+          <form-input-row
+            option-name="text"
+            :label="$t('Text')"
+            type="text"
+            :options="step.options"
+          >
             <template #tooltip
               >{{ $t('You can use special text parts to make your text dynamic :') }}
               <ul>
@@ -66,8 +71,16 @@
             >
           </form-input-row>
           <form-input-row option-name="font" label="Font" type="text" :options="step.options" />
-          <form-color-input-row :options="step.options" option-name="bgColor" />
-          <form-color-input-row :options="step.options" option-name="fgColor" />
+          <form-color-input-row
+            :options="step.options"
+            option-name="bgColor"
+            :label="$t('Background color')"
+          />
+          <form-color-input-row
+            :options="step.options"
+            option-name="fgColor"
+            :label="$t('Foreground color')"
+          />
           <form-input-row
             option-name="rotation"
             :label="$t('Rotation : {rotation}°', { rotation: step.options.rotation })"
@@ -79,7 +92,11 @@
           />
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
-          <form-color-input-row :options="step.options" option-name="fill" />
+          <form-color-input-row
+            :options="step.options"
+            option-name="fill"
+            :label="$t('Fill color')"
+          />
         </b-card-text>
         <b-card-text v-if="step.component === 'Image'">
           <form-input-row
@@ -100,6 +117,7 @@
             :key="optionName"
             :options="step.options"
             :option-name="optionName"
+            :label="$t(ucFirst(optionName + ' color'))"
             can-be-transparent
           />
         </b-card-text>
@@ -109,6 +127,7 @@
             :key="optionName"
             :options="step.options"
             :option-name="optionName"
+            :label="$t(optionName === 'colorStart' ? 'Start color' : 'End color')"
           />
 
           <b-row>
@@ -127,7 +146,11 @@
           </b-row>
         </b-card-text>
         <b-card-text v-if="step.component === 'Polygon'">
-          <form-color-input-row :options="step.options" option-name="fill" />
+          <form-color-input-row
+            :options="step.options"
+            option-name="fill"
+            :label="$t('Fill color')"
+          />
         </b-card-text>
       </b-tab>
       <b-tab key="99" :title="$t('Add step')" title-item-class="font-weight-bold">
@@ -187,6 +210,9 @@ export default {
     },
     ...mapState(['publicationElements', 'country']),
     ...mapState('renders', ['supportedRenders']),
+  },
+  methods: {
+    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),
   },
 }
 </script>
