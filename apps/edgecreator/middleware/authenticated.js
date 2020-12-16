@@ -1,5 +1,5 @@
 export default function ({ redirect, app }) {
   if (!app.$cookies.get('dm-user')) {
-    return redirect({ path: '/', hash: '#401' })
+    return redirect({ path: '/login', hash: '#401' })
   }
 }
