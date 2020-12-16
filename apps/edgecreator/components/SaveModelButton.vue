@@ -112,7 +112,7 @@ export default {
   watch: {
     progress(newValue) {
       const vm = this
-      if (newValue === 100) {
+      if (parseInt(newValue) === 100) {
         window.setTimeout(() => {
           vm.progress = 0
           vm.result = 'success'
@@ -167,7 +167,7 @@ export default {
           ).then((response) => {
             const isSuccess = response && response.svgPath
             if (isSuccess) {
-              vm.progress = parseInt(vm.progress + 100 / vm.issuenumbers.length)
+              vm.progress = vm.progress + 100 / vm.issuenumbers.length
             } else {
               vm.progress = 0
               vm.result = 'error'
