@@ -2,9 +2,7 @@
   <form-input-row
     type="color"
     :option-name="optionName"
-    :label="
-      optionName === 'Color' ? $t('Color') : $t('Color ({category})', { category: optionName })
-    "
+    :label="label || optionName"
     :class="{
       'color-row': true,
       'can-be-transparent': canBeTransparent,
@@ -68,6 +66,10 @@ export default {
     optionName: {
       type: String,
       required: true,
+    },
+    label: {
+      type: String,
+      default: null,
     },
     canBeTransparent: {
       type: Boolean,
