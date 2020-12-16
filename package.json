@@ -1,4 +1,13 @@
 {
+    "name": "ducksmanager",
+    "version": "1.0.0",
+    "files": [
+        "assets/js/components/**.vue",
+        "assets/js/mixins/**.js",
+        "assets/js/store/modules/**.js",
+        "assets/js/util/**.js"
+    ],
+
     "devDependencies": {
         "@sentry/tracing": "^5.29.0",
         "@sentry/vue": "^5.29.0",
