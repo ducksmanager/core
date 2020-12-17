@@ -32,11 +32,15 @@ export default {
   },
   mounted() {
     const vm = this
-    const locale = this.$i18n.locales.find((locale) => locale.code === vm.$i18n.locale).iso
+    const locale = this.$i18n.locales.find(({ code }) => code === vm.$i18n.locale).iso
+    const uppyTranslations = {
+      'fr-FR': require('@uppy/locales/lib/fr_FR'),
+      'en-US': require('@uppy/locales/lib/en_US'),
+    }
 
     const uppy = new Uppy({
       debug: true,
-      locale: require(`@uppy/locales/lib/${locale.replace('-', '_')}.js`),
+      locale: uppyTranslations[this.$i18n.locale],
       allowMultipleUploads: false,
       meta: {
         photo: this.photo,
