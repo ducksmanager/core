@@ -128,6 +128,7 @@
         @open-book="(edge) => currentEdgeOpened = edge"
       />
       <b-alert
+        v-else
         show
         variant="warning"
       >
