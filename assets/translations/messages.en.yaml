@@ -66,6 +66,7 @@ BIBLIOTHEQUE_OPTIONS: Allows you to set up options for the display of your bookc
 BIBLIOTHEQUE_OPTIONS_COURT: Bookcase options
 BIBLIOTHEQUE_PRIVEE: This user's bookcase is private.
 BIBLIOTHEQUE_PROPOSITION_PARTAGE: Proud of your collection? Show your bookcase to your friends!
+BIBLIOTHEQUE_VIDE: This bookcase is empty.
 BIENVENUE: Welcome to DucksManager!
 BON: Good
 CALCUL: Calculation

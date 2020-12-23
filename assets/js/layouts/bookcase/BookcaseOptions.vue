@@ -31,7 +31,9 @@
       </b-dropdown>
     </div>
 
-    <h5>{{ l10n.ORDRE_MAGAZINES }}</h5>
+    <h5 v-if="Object.keys(bookcaseOrder).length">
+      {{ l10n.ORDRE_MAGAZINES }}
+    </h5>
 
     <SlickList
       v-model="bookcaseOrder"
@@ -149,10 +151,7 @@ export default {
       set(newValue) {
         return this.$store.commit('bookcase/setBookcaseOrder', newValue)
       }
-    },
-
-    imagePath: () => window.imagePath,
-    username: () => window.username
+    }
   },
 
   async mounted() {

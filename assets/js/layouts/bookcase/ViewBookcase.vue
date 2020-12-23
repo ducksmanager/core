@@ -3,7 +3,7 @@
     <div v-if="!isSharedBookcase">
       <div
         v-if="lastPublishedEdgesForCurrentUser && lastPublishedEdgesForCurrentUser.length"
-        id="last-published-edges"
+        class="mb-4"
       >
         {{ l10n.BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE }}
         <div
@@ -24,8 +24,8 @@
         v-html="$t('EXPLICATION_ORDRE_MAGAZINES', [`<a href='${$r('/bookcase/options')}'>${l10n.BIBLIOTHEQUE_OPTIONS_COURT}</a>`])"
       />
       <div
-        v-if="user && user.isShareEnabled && username !== 'demo'"
-        id="share-bookcase-section"
+        v-if="user && user.isShareEnabled && username !== 'demo' && sortedBookcase.length"
+        class="mb-4"
       >
         <b-alert
           variant="info"
@@ -105,6 +105,7 @@
           </div>
         </div>
         <IssueSearch
+          v-if="sortedBookcase.length"
           style="float: right"
           :with-story-link="false"
           @issue-selected="highlightIssue"
@@ -117,6 +118,7 @@
         @close-book="currentEdgeOpened = null"
       />
       <Bookcase
+        v-if="sortedBookcase.length"
         :bookcase-textures="bookcaseTextures"
         :current-edge-highlighted="currentEdgeHighlighted"
         :current-edge-opened="currentEdgeOpened"
@@ -125,6 +127,12 @@
         :sorted-bookcase="sortedBookcase"
         @open-book="(edge) => currentEdgeOpened = edge"
       />
+      <b-alert
+        show
+        variant="warning"
+      >
+        {{ l10n.BIBLIOTHEQUE_VIDE }}
+      </b-alert>
     </div>
   </div>
 </template>
@@ -179,7 +187,7 @@ export default {
     },
 
     percentVisible() {
-      return this.bookcase && parseInt(100 * this.bookcase.filter(({edgeId}) => edgeId).length / this.bookcase.length)
+      return !(this.bookcase && this.bookcase.length) ? null : parseInt(100 * this.bookcase.filter(({edgeId}) => edgeId).length / this.bookcase.length)
     },
 
     mostPopularIssuesInCollectionWithoutEdge() {
@@ -303,10 +311,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#last-published-edges,
-#share-bookcase-section {
-  margin-bottom: 16px;
-}
 
 .carousel {
   width: 300px;
