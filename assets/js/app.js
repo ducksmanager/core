@@ -38,17 +38,18 @@ new Vue({
   }
 }).$mount('#app')
 
-Sentry.init({
-  Vue,
-  dsn: 'https://a225a6550b8c4c07914327618685a61c@sentry.io/1385898',
-  logErrors: true,
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    Vue,
+    dsn: 'https://a225a6550b8c4c07914327618685a61c@sentry.io/1385898',
+    logErrors: true,
 
-  integrations: [
-    new Integrations.BrowserTracing(),
-  ],
-  tracesSampleRate: 1.0,
-  tracingOptions: {
-    trackComponents: true,
-  },
-});
-
+    integrations: [
+      new Integrations.BrowserTracing(),
+    ],
+    tracesSampleRate: 1.0,
+    tracingOptions: {
+      trackComponents: true,
+    },
+  });
+}
