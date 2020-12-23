@@ -5,6 +5,7 @@
       target="_blank"
     ><div
       id="discord"
+      class="mb-4 pt-3"
       :style="{backgroundImage: `url('${imagePath}/discord.png')`}"
     >{{ l10n.REJOIGNEZ_NOUS }}</div></a>
     <div class="showcase">
@@ -134,14 +135,14 @@ export default {
 
 <style scoped lang="scss">
 #discord {
-  margin-bottom: 15px;
-  padding-top: 15px;
   background-color: #7289d9;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position-x: center;
+  background-position-y: 5px;
+  background-size: contain;
   color: white;
-  height: 140px;
-  font-size: 22px;
+  height: 90px;
+  font-size: 20px;
   font-family: sans-serif;
   text-align: center;
   text-transform: uppercase;
