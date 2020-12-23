@@ -12,7 +12,6 @@ services:
       - .:/var/www/html
     restart: always
     networks:
-      - dm-server_front-network
       - dm-network
 
   gateway:
@@ -27,15 +26,14 @@ services:
       - dm_sessions:/tmp/sessions
     networks:
       - dm-network
-      - dm-server_front-network
+      - dmserver_front-network
     command: sh -c 'composer install --no-plugins --no-scripts && php-fpm --force-stderr'
 
 networks:
   dm-network:
     driver: bridge
-  dm-server_front-network:
+  dmserver_front-network:
     external: true
 
 volumes:
   dm_sessions:
-    external: true
