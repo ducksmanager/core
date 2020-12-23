@@ -262,7 +262,6 @@ export default {
 
   computed: {
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
-    imagePath: () => window.imagePath,
 
     importDataReady() {
       return this.issuesToImport && this.collection && this.issueNumbers

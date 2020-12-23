@@ -155,7 +155,6 @@ export default {
   computed: {
     ...mapState("coa", ["countryNames", "publicationNames"]),
 
-    imagePath: () => window.imagePath,
     ready() {
       return this.issuesPerCell && this.countryNames && this.publicationNames && this.l10n
     },

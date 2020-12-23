@@ -3,7 +3,6 @@ import axios from "axios";
 export default {
   namespaced: true,
   state: () => ({
-    username: window.username,
     collection: null,
     purchases: null,
     watchedAuthors: null,

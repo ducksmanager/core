@@ -12,8 +12,7 @@ export default {
   state: () => ({
     isLoading: false,
     l10n: null,
-    l10nRoutes: null,
-    locale: window.locale
+    l10nRoutes: null
   }),
 
   mutations: {
@@ -30,10 +29,10 @@ export default {
       if (!state.isLoading && !state.l10n) {
         state.isLoading = true
 
-        const yamlL10n = (await appApi.get(`${window.l10nUrl}?${window.commit}`)).data
+        const yamlL10n = (await appApi.get(`${localStorage.getItem('l10nUrl')}?${localStorage.getItem('commit')}`)).data
         commit('setL10n', safeLoad(yamlL10n))
 
-        const l10nRoutes = (await appApi.get(`/routes?${window.commit}`)).data
+        const l10nRoutes = (await appApi.get(`/routes?${localStorage.getItem('commit')}`)).data
         commit('setL10nRoutes', l10nRoutes)
 
         state.isLoading = false

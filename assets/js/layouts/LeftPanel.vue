@@ -80,11 +80,6 @@ export default {
   computed: {
     ...mapState("users", ["points"]),
 
-    userId: () => window.userId,
-    username: () => window.username,
-    imagePath: () => window.imagePath,
-    locale: () => window.locale,
-
     userPoints() {
       return this.points && this.points[this.userId]
     }

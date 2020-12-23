@@ -1,9 +1,6 @@
 import {mapActions, mapGetters, mapState} from "vuex";
-import userMixin from "./userMixin";
 
 export default {
-
-    mixins: [userMixin],
 
     computed: {
         ...mapState("collection", ["collection", "purchases"]),

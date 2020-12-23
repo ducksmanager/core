@@ -36,7 +36,7 @@ export default {
             if (!routeL10n) {
                 return route
             }
-            let finalRoute = routeL10n[window.locale];
+            let finalRoute = routeL10n[localStorage.getItem('locale')];
             [...(route.matchAll(PATH_REGEX))].forEach(([_, key, value]) => {
                 finalRoute = finalRoute.replace(`{${key}}`, value)
             })

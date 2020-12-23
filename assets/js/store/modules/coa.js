@@ -1,12 +1,11 @@
 import Vue from 'vue'
 import axios from "axios";
 import {coaCache} from "../../util/cache"
-
 const coaApi = axios.create({
   adapter: coaCache.adapter,
 })
 
-const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/${window.locale}`
+const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/LOCALE`
 const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/'
 const URL_PREFIX_ISSUES = '/api/coa/list/issues/'
 const URL_PREFIX_AUTHORS = '/api/coa/authorsfullnames/'
@@ -71,7 +70,9 @@ export default {
     fetchCountryNames: async ({state, commit}) => {
       if (!state.isLoadingCountryNames && !state.countryNames) {
         commit("setIsLoadingCountryNames", true)
-        commit("setCountryNames", (await coaApi.get(URL_PREFIX_COUNTRIES)).data)
+        commit("setCountryNames", (await coaApi.get(
+          URL_PREFIX_COUNTRIES.replace('LOCALE', localStorage.getItem('locale'))
+        )).data)
         commit("setIsLoadingCountryNames", false)
       }
     },

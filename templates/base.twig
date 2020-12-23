@@ -30,12 +30,12 @@
 </head>
 <body class="{{ bodyClass ?? '' }}">
     <script type="text/javascript">
-        window.locale = "{{ app.session.get('_locale') ?? 'fr'  }}"
-        window.l10nUrl = "{{ asset('build/translations/messages.'~(app.session.get('_locale') ?? 'fr')~'.yaml') }}"
-        window.imagePath = "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}"
-        window.commit = "{{ commit }}"
-        window.userId = "{{ app.user ? app.user.id : '' }}"
-        window.username = "{{ app.user ? app.user.username : '' }}"
+        localStorage.setItem('locale', "{{ app.session.get('_locale') ?? 'fr'  }}")
+        localStorage.setItem('l10nUrl', "{{ asset('build/translations/messages.'~(app.session.get('_locale') ?? 'fr')~'.yaml') }}")
+        localStorage.setItem('imagePath', "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}")
+        localStorage.setItem('commit', "{{ commit }}")
+        localStorage.setItem('userId', "{{ app.user ? app.user.id : '' }}")
+        localStorage.setItem('username', "{{ app.user ? app.user.username : '' }}")
     </script>
 
     {% block menu %}{% endblock %}

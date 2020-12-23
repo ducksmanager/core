@@ -89,14 +89,14 @@ export default {
   mounted() {
     if (!document.querySelector('style#bookshelves')) {
       const {bookshelf: bookshelfTexture} = this.bookcaseTextures
-      const bookshelfTextureUrl = `${imagePath}/textures/${bookshelfTexture}.jpg`
+      const bookshelfTextureUrl = `${this.imagePath}/textures/${bookshelfTexture}.jpg`
       const style = document.createElement('style');
       style.id = 'bookshelves';
       style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
       document.head.append(style);
     }
 
-    this.edgesToLoad = [this.sortedBookcase[0]]
+      this.edgesToLoad = [this.sortedBookcase[0]]
   },
 
   methods: {

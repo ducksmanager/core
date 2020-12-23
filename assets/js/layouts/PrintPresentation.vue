@@ -63,10 +63,7 @@ export default {
         'COLLECTABLE_PLUS_1'
       ]
     }]
-  }),
-  computed: {
-    imagePath: () => window.imagePath
-  }
+  })
 }
 </script>
 

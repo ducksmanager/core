@@ -84,8 +84,7 @@ export default {
     ...mapState("coa", {"inducksIssueNumbers": "issueNumbers"}),
     ready() {
       return this.publicationNames && true
-    },
-    imagePath: () => window.imagePath,
+    }
   },
   async mounted() {
     this.mostWanted = (await axios.get("/admin/edges/wanted/data")).data.map(mostWantedIssue => ({

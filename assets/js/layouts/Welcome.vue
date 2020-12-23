@@ -129,11 +129,6 @@ export default {
   name: "Welcome",
 
   mixins: [l10nMixin],
-
-  computed: {
-    imagePath: () => window.imagePath,
-    username: () => window.username
-  }
 }
 </script>
 

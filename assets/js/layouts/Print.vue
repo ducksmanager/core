@@ -21,7 +21,6 @@
 import Collectable from "../layouts/print/Collectable";
 import Classic from "../layouts/print/Classic";
 import l10nMixin from "../mixins/l10nMixin";
-import userMixin from "../mixins/userMixin";
 
 export default {
   name: "Print",
@@ -29,12 +28,9 @@ export default {
     Collectable,
     Classic
   },
-  mixins: [l10nMixin, userMixin],
+  mixins: [l10nMixin],
   props: {
     currentType: {type: String, required: true}
-  },
-  computed: {
-    imagePath: () => window.imagePath
   }
 }
 </script>

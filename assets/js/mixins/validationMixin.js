@@ -31,8 +31,8 @@ export default {
         },
 
         validateUsername() {
-            if (!USERNAME_REGEX.test(this.username)) {
-                this.addErrors({username: this.l10n.UTILISATEUR_INVALIDE})
+            if (!USERNAME_REGEX.test(this.signupUsername)) {
+                this.addErrors({signupUsername: this.l10n.UTILISATEUR_INVALIDE})
             }
         }
     }

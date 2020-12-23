@@ -76,8 +76,6 @@ export default {
       }
     },
 
-    imagePath: () => window.imagePath,
-
     watchedAuthorsWithNotation() {
       return this.watchedAuthors && this.watchedAuthors.filter(({notation}) => notation > 0)
     }

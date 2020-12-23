@@ -40,7 +40,7 @@ export default {
   },
 
   getters: {
-    isSharedBookcase: state => window.username !== state.bookcaseUsername,
+    isSharedBookcase: state => localStorage.getItem('username') !== state.bookcaseUsername,
 
     bookcaseWithPopularities: (state, getters, rootState) =>
       (getters.isSharedBookcase ? true : rootState.collection.popularIssuesInCollection)

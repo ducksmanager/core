@@ -159,8 +159,6 @@ export default {
   }),
   computed: {
     ...mapState("collection", ["purchases", "watchedAuthors"]),
-    imagePath: () => window.imagePath,
-    locale: () => window.locale
   },
 
   async mounted() {

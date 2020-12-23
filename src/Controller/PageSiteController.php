@@ -94,8 +94,7 @@ class PageSiteController extends AbstractController
                 'title' => $title,
                 'component' => 'Site',
                 'routes' => json_encode($this->getRouteTranslations()),
-                'page' => $page,
-                'username' => empty($this->getUser()) ? null : $this->getUser()->getUsername()
+                'page' => $page
             ] + $vueProps
         ]);
     }

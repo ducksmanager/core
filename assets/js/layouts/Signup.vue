@@ -8,7 +8,7 @@
         <Errorable id="username">
           <b-form-input
             id="username"
-            v-model="username"
+            v-model="signupUsername"
             name="username"
             type="text"
             required
@@ -88,7 +88,7 @@ export default {
   },
 
   data: () => ({
-    username: '',
+    signupUsername: '',
     email: '',
     password: '',
     password2: '',
@@ -99,7 +99,7 @@ export default {
   },
 
   mounted() {
-    this.username = this.lastUsername;
+    this.signupUsername = this.lastUsername;
   },
 
   methods: {
@@ -115,7 +115,7 @@ export default {
       }
       try {
         await axios.put('/signup', {
-          username: this.username,
+          username: this.signupUsername,
           password: this.password,
           password2: this.password2,
           email: this.email

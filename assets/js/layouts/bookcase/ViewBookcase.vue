@@ -166,9 +166,6 @@ export default {
     ...mapGetters("bookcase", {"bookcase": "bookcaseWithPopularities"}),
     ...mapState("users", ["points"]),
 
-    userId: () => window.userId,
-    imagePath: () => window.imagePath,
-
     bookcaseUrl() {
       return !this.isPrivateBookcase && `${window.location.origin}/bookcase/show/${this.username}`
     },
