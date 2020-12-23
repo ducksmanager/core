@@ -8,7 +8,6 @@
         "assets/js/store/modules/**.js",
         "assets/js/util/**.js"
     ],
-
     "devDependencies": {
         "@sentry/tracing": "^5.29.0",
         "@sentry/vue": "^5.29.0",
