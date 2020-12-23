@@ -58,7 +58,7 @@ export default {
             text: vm.publicationNames[publicationCode],
             value: publicationCode
           }))
-          .sort(({text: text1}, {text: text2}) => text1 < text2 ? - 1 : ((text2 < text1) ? 1 : 0))
+          .sort(({text: text1}, {text: text2}) => text1.localeCompare(text2))
         : []
     }
   },

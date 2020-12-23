@@ -78,7 +78,7 @@ export default {
     sortedCountries() {
       const vm = this
       return this.totalPerCountry && Object.keys(this.totalPerCountry)
-          .sort((countryCode1, countryCode2) => vm.countryNames[countryCode1] < vm.countryNames[countryCode2] ? -1 : (vm.countryNames[countryCode1] > vm.countryNames[countryCode2] ? 1 : 0))
+          .sort((countryCode1, countryCode2) => vm.countryNames[countryCode1].localeCompare(vm.countryNames[countryCode2]))
     },
     publicationsPerCountry() {
       const vm = this
@@ -112,7 +112,7 @@ export default {
     getSortedPublications(country) {
       const vm = this
       return this.publicationsPerCountry && this.publicationsPerCountry[country]
-        .sort((a, b) => vm.publicationNames[a] < vm.publicationNames[b] ? -1 : (vm.publicationNames[a] > vm.publicationNames[b] ? 1 : 0))
+        .sort((a, b) => vm.publicationNames[a] && vm.publicationNames[a].localeCompare(vm.publicationNames[b]))
     }
   }
 }

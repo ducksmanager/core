@@ -35,7 +35,7 @@ export default {
     countryCodesSortedByName() {
       const vm = this
       return this.countryCodes && this.countryNames && [...this.countryCodes]
-        .sort((countryCodeA, countryCodeB) => vm.countryNames[countryCodeA] < vm.countryNames[countryCodeB] ? -1 : 1)
+        .sort((countryCodeA, countryCodeB) => vm.countryNames[countryCodeA] && vm.countryNames[countryCodeA].localeCompare(vm.countryNames[countryCodeB]))
     },
     publicationCodes() {
       return this.collection && [...new Set(this.collection.map(i => `${i.country}/${i.magazine}`))]
