@@ -165,6 +165,7 @@ HISTOIRE_TYPE_T: texte
 HISTOIRES_NON_POSSEDEES: Histoires non possédées
 HISTOIRES_POSSEDEES: Histoires possédées
 ICI: ici
+IDENTIFIANTS_INCORRECTS: Les identifiants que vous avez entré sont invalides, veuillez réessayer.
 IMPORTER: Importer
 IMPORTER_INDUCKS: Importer ma collection Inducks
 IMPORTER_INDUCKS_DESCRIPTION_1: DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.

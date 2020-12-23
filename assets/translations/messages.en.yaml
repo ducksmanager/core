@@ -161,6 +161,7 @@ HISTOIRE_TYPE_T: text
 HISTOIRES_NON_POSSEDEES: Non-possessed stories
 HISTOIRES_POSSEDEES: Possessed stories
 ICI: here
+IDENTIFIANTS_INCORRECTS: These credentials are invalid, please try again.
 IMPORTER: Import
 IMPORTER_INDUCKS: Import my Inducks collection
 IMPORTER_INDUCKS_DESCRIPTION_1: DucksManager uses the Inducks database to list the referenced issues of each Disney publication.
