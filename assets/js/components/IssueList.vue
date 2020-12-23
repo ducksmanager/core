@@ -155,11 +155,11 @@
       variant="danger"
       show
     >
-      {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split('/')[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{
-        country
-      }})
-      <br>
-      <br>
+      <div class="mb-4">
+        {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split('/')[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{
+          country
+        }})
+      </div>
       <div v-if="userIssuesForPublication.length">
         {{ l10n.QUESTION_SUPPRIMER_MAGAZINE }}
         <ul>
