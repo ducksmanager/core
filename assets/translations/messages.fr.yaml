@@ -344,6 +344,7 @@ TRANCHE_NON_DISPONIBLE1: Cette tranche n'est pas visible car nous n'en possédon
 TRANCHE_NON_DISPONIBLE2: Vous pouvez photographier cette tranche ?
 TRANCHE_NON_DISPONIBLE3: Envoyez-nous une photo et gagnez
 UN_VISITEUR_ANONYME: un visiteur anonyme
+UTILISATEUR_NON_EXISTANT: Cet utilisateur n'existe pas.
 UTILISATEUR_INVALIDE: Le nom d'utilisateur est invalide. Choisissez un nom d'utilisateur d'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.
 UTILISATEURS_INSCRITS: "%d utilisateurs sont inscrits<br />sur DucksManager"
 VALIDER: Valider

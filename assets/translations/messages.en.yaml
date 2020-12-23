@@ -340,6 +340,7 @@ TRANCHE_NON_DISPONIBLE2: You can photograph this edge?
 TRANCHE_NON_DISPONIBLE3: Send it to us and earn
 UN_VISITEUR_ANONYME: an anonymous visitor
 UTILISATEUR_INVALIDE: Invalid username. Choose a username with at least 3 characters and containing only letters, digits and dashes.
+UTILISATEUR_NON_EXISTANT: This user doesn't exist.
 UTILISATEURS_INSCRITS: "%d users have signed up<br />on DucksManager"
 VALIDER: Submit
 VENTE_CONSERVER_VOLONTE_VENTE: Do not change the "for sale" state

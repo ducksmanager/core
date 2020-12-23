@@ -65,6 +65,13 @@
     >
       {{ l10n.BIBLIOTHEQUE_PRIVEE }}
     </b-alert>
+    <b-alert
+      v-else-if="isUserNotExisting"
+      variant="warning"
+      show
+    >
+      {{ l10n.UTILISATEUR_NON_EXISTANT }}
+    </b-alert>
     <div v-else>
       <div v-if="!isSharedBookcase">
         <div
@@ -167,7 +174,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder", "isPrivateBookcase"]),
+    ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder", "isPrivateBookcase", "isUserNotExisting"]),
     ...mapState("collection", ["user", "lastPublishedEdgesForCurrentUser"]),
     ...mapGetters("collection", ["popularIssuesInCollectionWithoutEdge"]),
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
@@ -180,7 +187,7 @@ export default {
     },
 
     loading() {
-      return !this.isPrivateBookcase && !(this.sortedBookcase && this.bookcaseTextures && this.edgesUsingSprites)
+      return !this.isPrivateBookcase && !this.isUserNotExisting && !(this.sortedBookcase && this.bookcaseTextures && this.edgesUsingSprites)
     },
 
     userPoints() {

@@ -7,6 +7,7 @@ export default {
     loadedSprites: {},
 
     isPrivateBookcase: false,
+    isUserNotExisting: false,
     bookcaseUsername: null,
     bookcase: null,
     bookcaseTextures: null,
@@ -33,6 +34,9 @@ export default {
     },
     setIsPrivateBookcase(state, isPrivateBookcase) {
       state.isPrivateBookcase = isPrivateBookcase
+    },
+    setIsUserNotExisting(state, isUserNotExisting) {
+      state.isUserNotExisting = isUserNotExisting
     },
     incrementEdgeIndexToLoad(state) {
       state.edgeIndexToLoad++
@@ -64,8 +68,13 @@ export default {
         try {
           commit("setBookcase", (await axios.get(`/api/bookcase/${state.bookcaseUsername}`)).data)
         } catch (e) {
-          if (e.response.status === 403) {
-            commit("setIsPrivateBookcase", true)
+          switch (e.response.status) {
+            case 403:
+              commit("setIsPrivateBookcase", true)
+              break;
+            case 404:
+              commit("setIsUserNotExisting", true)
+              break;
           }
         }
       }
