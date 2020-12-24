@@ -21,8 +21,12 @@
                   (category === 'ongoing_by_other_user' && !$gates.hasRole('admin'))
                 "
               >
-                <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]"
-                  ><EdgeLink
+                <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]">
+                  <img
+                    v-if="edge.v3"
+                    class="edge-preview"
+                    :src="getEdgeUrl(edge.country, edge.magazine, edge.issuenumber, 'svg', false)"
+                  /><EdgeLink
                     :publicationcode="`${edge.country}/${edge.magazine}`"
                     :issuenumber="edge.issuenumber"
                     :designers="edge.designers"
@@ -83,6 +87,13 @@ export default {
 <style scoped lang="scss">
 .card {
   margin: 15px 0;
+
+  .edge-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+  }
 }
 .disabled {
   pointer-events: none;
