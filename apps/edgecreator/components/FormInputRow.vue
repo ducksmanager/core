@@ -74,6 +74,9 @@ export default {
   },
   methods: {
     onChangeValue(value) {
+      if (this.optionName === 'rotation') {
+        value = parseInt(value)
+      }
       this.$root.$emit('set-options', { [this.optionName]: value })
     },
   },
