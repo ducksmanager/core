@@ -63,13 +63,16 @@ export default {
   },
 
   actions: {
-    fetchCountryNames: async ({ state, commit }) => {
+    fetchCountryNames: async ({ state, commit }, locale) => {
       if (!state.isLoadingCountryNames && !state.countryNames) {
         commit('setIsLoadingCountryNames', true)
         commit(
           'setCountryNames',
-          (await coaApi.get(URL_PREFIX_COUNTRIES.replace('LOCALE', localStorage.getItem('locale'))))
-            .data
+          (
+            await coaApi.get(
+              URL_PREFIX_COUNTRIES.replace('LOCALE', locale || localStorage.getItem('locale'))
+            )
+          ).data
         )
         commit('setIsLoadingCountryNames', false)
       }

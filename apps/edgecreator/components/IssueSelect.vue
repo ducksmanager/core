@@ -123,7 +123,7 @@ export default {
     if (this.publicationCode) {
       this.currentPublicationCode = this.publicationCode
     }
-    this.fetchCountryNames()
+    this.fetchCountryNames(this.$i18n.locale)
   },
   methods: {
     ...mapActions('coa', [
