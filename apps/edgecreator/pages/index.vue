@@ -23,9 +23,13 @@
               >
                 <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]">
                   <img
-                    v-if="edge.v3"
+                    v-if="edge.v3 || category === 'pending'"
                     class="edge-preview"
-                    :src="getEdgeUrl(edge.country, edge.magazine, edge.issuenumber, 'svg', false)"
+                    :src="
+                      edge.v3
+                        ? getEdgeUrl(edge.country, edge.magazine, edge.issuenumber, 'svg', false)
+                        : getPhotoUrl(edge.country, edge.photo)
+                    "
                   /><EdgeLink
                     :publicationcode="`${edge.country}/${edge.magazine}`"
                     :issuenumber="edge.issuenumber"
@@ -82,6 +86,10 @@ export default {
       },
     ],
   }),
+
+  methods: {
+    getPhotoUrl: (country, fileName) => `${process.env.EDGES_URL}/${country}/photos/${fileName}`,
+  },
 }
 </script>
 <style scoped lang="scss">
