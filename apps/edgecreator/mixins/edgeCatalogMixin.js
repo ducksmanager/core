@@ -19,6 +19,7 @@ export default {
       status
     ) {
       const vm = this
+      const issuecode = `${country}/${magazine} ${issuenumber}`
       const getContributorsOfType = (contributionType) =>
         (contributors || [])
           .filter(({ contribution }) => contribution === contributionType)
@@ -27,6 +28,7 @@ export default {
         country,
         magazine,
         issuenumber,
+        issuecode,
         v3: false,
         designers: getContributorsOfType('createur'),
         photographers: getContributorsOfType('photographe'),
@@ -45,7 +47,9 @@ export default {
       }
     },
     getEdgesByStatus(status) {
-      return (this.currentEdges || []).filter(({ status: edgeStatus }) => edgeStatus === status)
+      return Object.values(this.currentEdges).filter(
+        ({ status: edgeStatus }) => edgeStatus === status
+      )
     },
     getEdgeStatus({ country, issuenumber, magazine }) {
       const isPublished = (this.publishedEdges[`${country}/${magazine}`] || []).some(
@@ -63,23 +67,10 @@ export default {
     },
   },
 
-  watch: {
-    currentEdges: {
-      immediate: true,
-      async handler(newValue) {
-        if (newValue) {
-          await this.fetchPublicationNames([
-            ...new Set(newValue.map(({ country, magazine }) => `${country}/${magazine}`)),
-          ])
-        }
-      },
-    },
-  },
-
   async mounted() {
     await this.fetchAllUsers()
     const vm = this
-    let newEdges = []
+    let newEdges = {}
 
     const apiCalls = [
       { status: 'ongoing', url: '/api/edgecreator/v2/model' },
@@ -88,7 +79,10 @@ export default {
     ]
     for (const { status, url } of apiCalls) {
       const data = await this.$axios.$get(url)
-      newEdges = [...newEdges, ...data.map((edge) => this.getEdgeFromApi(edge, status))]
+      newEdges = data.reduce((acc, edgeData) => {
+        const edge = this.getEdgeFromApi(edgeData, status)
+        return { ...acc, [edge.issuecode]: edge }
+      }, newEdges)
     }
 
     this.$axios.$get('/fs/browseCurrentEdges').then(async (currentEdges) => {
@@ -100,16 +94,26 @@ export default {
           console.error(`Invalid SVG file name : ${fileName}`)
           continue
         }
+        const issuecode = `${country}/${magazine} ${issuenumber}`
         const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
         const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
         const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
 
-        newEdges.push(
-          vm.getEdgeFromSvg({ country, magazine, issuenumber, designers, photographers })
-        )
+        newEdges[issuecode] = vm.getEdgeFromSvg({
+          country,
+          magazine,
+          issuenumber,
+          designers,
+          photographers,
+        })
       }
 
       this.addCurrentEdges(newEdges)
+      await this.fetchPublicationNames([
+        ...new Set(
+          Object.values(newEdges).map(({ country, magazine }) => `${country}/${magazine}`)
+        ),
+      ])
     })
   },
 }
