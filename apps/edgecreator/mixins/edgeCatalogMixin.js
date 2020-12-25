@@ -15,7 +15,7 @@ export default {
     ...mapActions('user', ['fetchAllUsers']),
 
     getEdgeFromApi(
-      { pays: country, magazine, numero: issuenumber, contributeurs: contributors },
+      { pays: country, magazine, numero: issuenumber, contributeurs: contributors, photos },
       status
     ) {
       const vm = this
@@ -24,6 +24,7 @@ export default {
         (contributors || [])
           .filter(({ contribution }) => contribution === contributionType)
           .map(({ idUtilisateur }) => vm.allUsers.find(({ id }) => id === idUtilisateur).username)
+      const photo = photos && photos.find(({ estphotoprincipale: isMainPhoto }) => isMainPhoto)
       return {
         country,
         magazine,
@@ -32,6 +33,7 @@ export default {
         v3: false,
         designers: getContributorsOfType('createur'),
         photographers: getContributorsOfType('photographe'),
+        photo: photo && photo.idImage.nomfichier,
         status,
       }
     },
