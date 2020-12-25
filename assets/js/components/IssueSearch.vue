@@ -39,7 +39,7 @@
             {{ searchResult.title }}
           </template>
           <Issue
-            v-else-if="publicationNames && publicationNames[searchResult.publicationcode]"
+            v-else-if="publicationNames[searchResult.publicationcode]"
             :publicationcode="searchResult.publicationcode"
             :publicationname="publicationNames[searchResult.publicationcode]"
             :issuenumber="searchResult.issuenumber"

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="ready">
+  <div v-if="hasData">
     <div
       v-for="mostWantedIssue in mostWanted"
       :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.Numero}`"
@@ -74,6 +74,7 @@ export default {
   mixins: [l10nMixin],
   data() {
     return {
+      hasData: false,
       show: false,
       mostWanted: null,
       publishedEdges: null,
@@ -82,9 +83,6 @@ export default {
   computed: {
     ...mapState("coa", ["publicationNames"]),
     ...mapState("coa", {"inducksIssueNumbers": "issueNumbers"}),
-    ready() {
-      return this.publicationNames && true
-    }
   },
   async mounted() {
     this.mostWanted = (await axios.get("/admin/edges/wanted/data")).data.map(mostWantedIssue => ({
@@ -104,6 +102,7 @@ export default {
     ])
 
     await this.fetchIssueNumbers(Object.keys(this.publishedEdges))
+    this.hasData = true
   },
   methods: {
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),

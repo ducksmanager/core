@@ -18,6 +18,7 @@ export default {
   emits: ['change-dimension'],
 
   data: () => ({
+    hasPublicationNames: false,
     purchasesById: null
   }),
 
@@ -39,7 +40,7 @@ export default {
       }))
     },
     ready() {
-      return this.labels && this.publicationNames
+      return this.labels && this.hasPublicationNames
     }
   },
 
@@ -49,6 +50,7 @@ export default {
       async handler(newValue) {
         if (newValue) {
           await this.fetchPublicationNames(Object.keys(newValue))
+          this.hasPublicationNames = true
         }
       }
     },

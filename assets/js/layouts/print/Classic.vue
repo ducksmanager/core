@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="collection && countryNames && publicationNames"
+    v-if="collection && countryNames && hasPublicationNames"
     class="list"
   >
     <div
@@ -27,6 +27,9 @@ import {mapActions, mapState} from "vuex";
 
 export default {
   mixins: [collectionMixin],
+  data: () => ({
+    hasPublicationNames: false
+  }),
   computed: {
     ...mapState("coa", ["countryNames", "publicationNames"]),
     countryCodes() {
@@ -48,6 +51,7 @@ export default {
       handler(newValue) {
         if (newValue) {
           this.fetchPublicationNames(newValue)
+          this.hasPublicationNames = true
         }
       }
     }

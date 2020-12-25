@@ -236,7 +236,7 @@ export default {
       return this.publicationcode.split('/')[0]
     },
     publicationName() {
-      return this.publicationNames && this.publicationNames[this.publicationcode]
+      return this.publicationNames[this.publicationcode]
     },
 
     isTouchScreen: () => window.matchMedia("(pointer: coarse)").matches,

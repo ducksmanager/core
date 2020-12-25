@@ -1,6 +1,6 @@
 <template>
   <b-navbar
-    v-if="countryNames && publicationNames"
+    v-if="countryNames && hasPublicationNames"
     id="publication-list"
     toggleable="lg"
     type="dark"
@@ -72,6 +72,10 @@ export default {
 
   mixins: [l10nMixin],
 
+  data: () => ({
+    hasPublicationNames: false
+  }),
+
   computed: {
     ...mapGetters("collection", ["totalPerCountry", "totalPerPublication"]),
     ...mapState("coa", ["countryNames", "publicationNames"]),
@@ -82,7 +86,7 @@ export default {
     },
     publicationsPerCountry() {
       const vm = this
-      return this.totalPerCountry && this.publicationNames && Object.keys(this.totalPerCountry)
+      return this.totalPerCountry && this.hasPublicationNames && Object.keys(this.totalPerCountry)
         .reduce((acc, country) => ({
           ...acc,
           [country]: Object.keys(vm.totalPerPublication).filter(publicationCode =>
@@ -98,6 +102,7 @@ export default {
       async handler(newValue) {
         if (newValue) {
           await this.fetchPublicationNames(Object.keys(newValue))
+          this.hasPublicationNames = true
         }
       }
     }

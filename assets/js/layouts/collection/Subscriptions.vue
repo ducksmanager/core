@@ -1,5 +1,5 @@
 <template>
-  <div v-if="subscriptions && publicationNames">
+  <div v-if="subscriptions && hasPublicationNames">
     <b-alert
       variant="info"
       show
@@ -115,6 +115,7 @@ export default {
   mixins: [l10nMixin],
   data() {
     return {
+      hasPublicationNames: false,
       subscriptions: null,
       newSubscription: {}
     }
@@ -127,6 +128,7 @@ export default {
   async mounted() {
     await this.loadSubscriptions()
     await this.fetchPublicationNames(this.subscriptions.map(({publicationCode}) => publicationCode))
+    this.hasPublicationNames = true
   },
   methods: {
     ...mapActions("collection", ["fetchSubscriptions"]),

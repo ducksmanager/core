@@ -156,7 +156,7 @@ export default {
     ...mapState("coa", ["countryNames", "publicationNames"]),
 
     ready() {
-      return this.issuesPerCell && this.countryNames && this.publicationNames && this.l10n
+      return this.issuesPerCell && this.countryNames && Object.keys(this.publicationNames).length && this.l10n
     },
     maxLetter() {
       return !this.issuesPerCell ? null : this.numberToLetter([

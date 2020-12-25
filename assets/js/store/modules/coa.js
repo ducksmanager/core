@@ -16,7 +16,7 @@ export default {
   namespaced: true,
   state: () => ({
     countryNames: null,
-    publicationNames: null,
+    publicationNames: { },
     publicationNamesFullCountries: [],
     personNames: null,
     issueNumbers: {},
@@ -34,7 +34,7 @@ export default {
     },
     setPublicationNames(state, publicationNames) {
       state.publicationNames = {
-        ...(state.publicationNames || {}),
+        ...state.publicationNames,
         ...Object.keys(publicationNames)
           .reduce((acc, publicationCode) => ({
             ...acc,
@@ -75,7 +75,7 @@ export default {
     },
     fetchPublicationNames: async ({state, commit, dispatch}, publicationCodes) => {
       const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
-        !Object.keys(state.publicationNames || {}).includes(publicationCode)
+        !Object.keys(state.publicationNames).includes(publicationCode)
       ))]
       return newPublicationCodes.length
         && commit("setPublicationNames",

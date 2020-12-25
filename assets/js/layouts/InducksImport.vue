@@ -91,7 +91,7 @@
       >
         <div>{{ issuesImportable.length }} {{ l10n.IMPORTER_INDUCKS_NUMEROS_A_IMPORTER }}</div>
         <div
-          v-if="publicationNames"
+          v-if="hasPublicationNames"
           role="tablist"
         >
           <Accordion
@@ -248,6 +248,7 @@ export default {
     rawData: '',
     expandedPublicationAccordion: null,
     expandedNotImportableAccordion: null,
+    hasPublicationNames: false,
     hasIssueNumbers: false,
     issueDefaultCondition: 'bon',
     issuesToImport: null,
@@ -294,6 +295,7 @@ export default {
     async issuesToImport(newValue) {
       const publicationCodes = newValue.reduce((acc, {publicationCode}) => [...acc, publicationCode], [])
       await this.fetchPublicationNames(publicationCodes)
+      this.hasPublicationNames = true
       await this.fetchIssueNumbers(publicationCodes)
       this.hasIssueNumbers = true
     }

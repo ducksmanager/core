@@ -9,6 +9,10 @@ export default {
   extends: Pie,
   mixins: [collectionMixin, l10nMixin],
 
+  data: () => ({
+    hasPublicationNames: false
+  }),
+
   computed: {
     ...mapState("collection", ["collection"]),
     ...mapState("coa", ["publicationNames"]),
@@ -37,7 +41,7 @@ export default {
 
     labels() {
       const vm = this
-      return this.publicationNames && Object.keys(this.totalPerPublicationGroupSmallCounts)
+      return this.hasPublicationNames && Object.keys(this.totalPerPublicationGroupSmallCounts)
           .sort(this.sortByCount)
           .reduce((acc, publicationCode) => [
             ...acc,
@@ -67,6 +71,7 @@ export default {
           this.fetchPublicationNames(Object.keys(this.totalPerPublicationGroupSmallCounts)
             .filter(publicationCode => publicationCode !== 'null')
           )
+          this.hasPublicationNames = true
         }
       }
     },
