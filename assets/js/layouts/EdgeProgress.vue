@@ -2,7 +2,7 @@
   <div v-if="ready">
     <div
       v-for="mostWantedIssue in mostWanted"
-      :key="mostWantedIssue"
+      :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.Numero}`"
     >
       <div>
         <u>{{ mostWantedIssue.numberOfIssues }} utilisateurs possèdent le numéro :</u>
@@ -10,7 +10,7 @@
       <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`">
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{ mostWantedIssue.Numero }}
     </div>
-    <div v-if="publishedEdges && inducksIssueNumbers">
+    <div v-if="publishedEdges && Object.keys(inducksIssueNumbers).length">
       <div
         v-for="(issuenumbers, publicationCode) in publishedEdges"
         :key="publicationCode"
@@ -25,7 +25,7 @@
         <div v-if="inducksIssueNumbers[publicationCode]">
           <span
             v-for="inducksIssueNumber in inducksIssueNumbers[publicationCode]"
-            :key="inducksIssueNumber"
+            :key="`${publicationCode}-${inducksIssueNumber}`"
           >
             <span
               v-if="!issuenumbers.includes(inducksIssueNumber)"
