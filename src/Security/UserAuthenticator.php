@@ -79,15 +79,6 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // TODO set roles
-//        if (is_array($roles)) {
-//            $internalRoles = [];
-//            foreach($roles as $role => $privilege) {
-//                $internalRoles[] = "ROLE_".strtoupper("${role}_$privilege");
-//            }
-//            return (new User($username, $internalRoles));
-//        }
-        $this->logger->info('Credentials : '.print_r($credentials, true));
         try {
             $roles = $this->apiService->call('/collection/privileges', 'ducksmanager', [], 'GET', false, [
                 'dm-user' => $credentials['username'],

@@ -20,7 +20,14 @@ class ApiUserProvider implements UserProviderInterface, PasswordUpgraderInterfac
     {
         $apiUser = $this->apiService->call("/ducksmanager/user/$username", 'ducksmanager');
         if ($apiUser) {
-            return new User($apiUser['id'], $apiUser['username'], $apiUser['password'], ['ROLE_USER']);
+            $permissions = $this->apiService->call("/collection/privileges", 'ducksmanager', [], 'GET', true, [
+                'dm-user' => $apiUser['username'],
+                'dm-pass' => $apiUser['password'],
+            ]);
+            $permissionList = array_merge(['ROLE_USER'], array_values(array_map(function(string $role) use ($permissions) {
+                return strtoupper("ROLE_${role}_{$permissions[$role]}");
+            }, array_keys($permissions))));
+            return new User($apiUser['id'], $apiUser['username'], $apiUser['password'], $permissionList);
         }
 
         throw new UsernameNotFoundException("Username not found : $username");
