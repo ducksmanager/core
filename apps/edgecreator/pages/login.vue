@@ -6,7 +6,7 @@
         <b-form @submit.prevent="login()">
           <b-form-input
             id="username"
-            v-model="username"
+            v-model="loginUsername"
             :placeholder="$t('Username')"
             required
           ></b-form-input>
@@ -41,7 +41,7 @@ export default {
   mixins: [redirectMixin],
   data() {
     return {
-      username: null,
+      loginUsername: null,
       password: null,
     }
   },
@@ -52,13 +52,13 @@ export default {
       this.$axios
         .$get('/api/collection/privileges', {
           headers: {
-            'x-dm-user': this.username,
+            'x-dm-user': this.loginUsername,
             'x-dm-pass': password,
           },
         })
         .then((data) => {
           vm.$cookies.setAll([
-            { name: 'dm-user', value: vm.username },
+            { name: 'dm-user', value: vm.loginUsername },
             { name: 'dm-pass', value: password },
           ])
           vm.$gates.setRoles([roleMapping[data.EdgeCreator] || 'display'])
