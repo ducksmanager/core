@@ -248,6 +248,7 @@ export default {
     rawData: '',
     expandedPublicationAccordion: null,
     expandedNotImportableAccordion: null,
+    hasIssueNumbers: false,
     issueDefaultCondition: 'bon',
     issuesToImport: null,
     issuesNotReferenced: null,
@@ -264,7 +265,7 @@ export default {
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
 
     importDataReady() {
-      return this.issuesToImport && this.collection && this.issueNumbers
+      return this.issuesToImport && this.collection && this.hasIssueNumbers
     },
   },
 
@@ -294,6 +295,7 @@ export default {
       const publicationCodes = newValue.reduce((acc, {publicationCode}) => [...acc, publicationCode], [])
       await this.fetchPublicationNames(publicationCodes)
       await this.fetchIssueNumbers(publicationCodes)
+      this.hasIssueNumbers = true
     }
   },
 

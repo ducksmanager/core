@@ -19,7 +19,7 @@ export default {
     publicationNames: null,
     publicationNamesFullCountries: [],
     personNames: null,
-    issueNumbers: null,
+    issueNumbers: {},
     issueDetails: {},
     isLoadingCountryNames: false,
     issueCounts: null,
@@ -51,9 +51,6 @@ export default {
           ...acc,
           [personCode]: personNames[personCode]
         }), {})
-    },
-    setIssueNumbers(state, issueNumbers) {
-      state.issueNumbers = issueNumbers
     },
     addIssueNumbers(state, issueNumbers) {
       state.issueNumbers = {...state.issueNumbers, ...issueNumbers}
@@ -123,9 +120,7 @@ export default {
       const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
         !Object.keys(state.issueNumbers || {}).includes(publicationCode)
       ))]
-      return newPublicationCodes.length && commit("setIssueNumbers", {
-        ...(state.issueNumbers || {}),
-        ...await dispatch('getChunkedRequests', {
+      return newPublicationCodes.length && commit("addIssueNumbers", await dispatch('getChunkedRequests', {
           url: URL_PREFIX_ISSUES,
           parametersToChunk: newPublicationCodes,
           chunkSize: 1
@@ -133,7 +128,7 @@ export default {
           ...acc,
           [result.config.url.replace(URL_PREFIX_ISSUES, '')]: result.data.map(issueNumber => issueNumber.replace(/ /g, ''))
         }), {}))
-      });
+      );
     },
 
     fetchIssueCounts: async ({state, commit}) => {

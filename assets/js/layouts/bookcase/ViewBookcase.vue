@@ -170,6 +170,7 @@ export default {
     currentEdgeOpened: null,
     currentEdgeHighlighted: null,
     bookStartPosition: null,
+    hasIssueNumbers: false,
     showShareButtons: false
   }),
 
@@ -207,7 +208,7 @@ export default {
 
     sortedBookcase() {
       const vm = this
-      return this.bookcase && this.bookcaseOrder && this.issueNumbers && ([...this.bookcase]).sort((
+      return this.bookcase && this.bookcaseOrder && this.hasIssueNumbers && ([...this.bookcase]).sort((
         {countryCode: countryCode1, magazineCode: magazineCode1, issueNumber: issueNumber1},
         {countryCode: countryCode2, magazineCode: magazineCode2, issueNumber: issueNumber2}
       ) => {
@@ -247,6 +248,7 @@ export default {
             }), {})
           )
           await this.fetchIssueNumbers(nonObviousPublicationIssueNumbers)
+          this.hasIssueNumbers = true
         }
       }
     },
