@@ -6,7 +6,7 @@ const coaApi = axios.create({
   // adapter: coaCache.adapter,
 })
 
-const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/fr`
+const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/LOCALE`
 const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/'
 const URL_PREFIX_ISSUES = '/api/coa/list/issues/'
 const URL_PREFIX_AUTHORS = '/api/coa/authorsfullnames/'
@@ -20,7 +20,7 @@ export default {
     publicationNames: {},
     publicationNamesFullCountries: [],
     personNames: null,
-    issueNumbers: null,
+    issueNumbers: {},
     issueDetails: {},
     isLoadingCountryNames: false,
     issueCounts: null,
@@ -51,9 +51,6 @@ export default {
         {}
       )
     },
-    setIssueNumbers(state, issueNumbers) {
-      state.issueNumbers = issueNumbers
-    },
     addIssueNumbers(state, issueNumbers) {
       state.issueNumbers = { ...state.issueNumbers, ...issueNumbers }
     },
@@ -69,7 +66,11 @@ export default {
     fetchCountryNames: async ({ state, commit }) => {
       if (!state.isLoadingCountryNames && !state.countryNames) {
         commit('setIsLoadingCountryNames', true)
-        commit('setCountryNames', (await coaApi.get(URL_PREFIX_COUNTRIES)).data)
+        commit(
+          'setCountryNames',
+          (await coaApi.get(URL_PREFIX_COUNTRIES.replace('LOCALE', localStorage.getItem('locale'))))
+            .data
+        )
         commit('setIsLoadingCountryNames', false)
       }
     },
@@ -77,8 +78,7 @@ export default {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
-            (publicationCode) =>
-              !Object.keys(state.publicationNames || {}).includes(publicationCode)
+            (publicationCode) => !Object.keys(state.publicationNames).includes(publicationCode)
           )
         ),
       ]
@@ -140,9 +140,9 @@ export default {
       ]
       return (
         newPublicationCodes.length &&
-        commit('setIssueNumbers', {
-          ...(state.issueNumbers || {}),
-          ...(await dispatch('getChunkedRequests', {
+        commit(
+          'addIssueNumbers',
+          await dispatch('getChunkedRequests', {
             url: URL_PREFIX_ISSUES,
             parametersToChunk: newPublicationCodes,
             chunkSize: 1,
@@ -156,8 +156,8 @@ export default {
               }),
               {}
             )
-          )),
-        })
+          )
+        )
       )
     },
 

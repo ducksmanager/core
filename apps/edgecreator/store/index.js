@@ -82,10 +82,15 @@ export const mutations = {
 }
 
 export const getters = {
+  publicationcode: (state) => `${state.country}/${state.magazine}`,
+
   colors: (state) => {
     return Object.values(state.stepColors).reduce((acc, colors) => {
       return [...new Set(acc.concat(colors))].sort()
     }, [])
+  },
+  publicationIssues: (state, getters, rootState) => {
+    return rootState.coa.issueNumbers[getters.publicationcode]
   },
 }
 
@@ -95,53 +100,51 @@ const numericSortCollator = new Intl.Collator(undefined, {
 })
 
 export const actions = {
-  setIssuenumbersFromMinMax({ state, commit }, { min, max }) {
-    const firstIssueIndex = state.publicationIssues.findIndex((issue) => issue === min)
+  setIssuenumbersFromMinMax({ getters, commit }, { min, max }) {
+    const firstIssueIndex = getters.publicationIssues.findIndex((issue) => issue === min)
     if (firstIssueIndex === -1) {
       throw new Error(`Issue ${min} doesn't exist`)
     }
     if (max === undefined) {
       commit('setIssuenumbers', [min])
     } else {
-      let lastIssueIndex = state.publicationIssues.findIndex((issue) => issue === max)
+      let lastIssueIndex = getters.publicationIssues.findIndex((issue) => issue === max)
       if (lastIssueIndex === -1) {
-        ;[lastIssueIndex] = Object.keys(state.publicationIssues).slice(-1)
+        ;[lastIssueIndex] = Object.keys(getters.publicationIssues).slice(-1)
         console.warn(
-          `Issue ${max} doesn't exist, falling back to ${state.publicationIssues[lastIssueIndex]}`
+          `Issue ${max} doesn't exist, falling back to ${getters.publicationIssues[lastIssueIndex]}`
         )
       }
       commit(
         'setIssuenumbers',
-        state.publicationIssues.filter(
+        getters.publicationIssues.filter(
           (unused, index) => index >= firstIssueIndex && index <= lastIssueIndex
         )
       )
     }
   },
-  async loadItems({ state, commit }, { itemType }) {
+  async loadItems({ getters, commit }, { itemType }) {
     commit(itemType === 'elements' ? 'setPublicationElements' : 'setPublicationPhotos', {
-      items: (
-        await this.$axios.$get(`/fs/browse/${itemType}/${state.country}/${state.magazine}`)
-      ).sort(numericSortCollator.compare),
+      items: (await this.$axios.$get(`/fs/browse/${itemType}/${getters.publicationcode}`)).sort(
+        numericSortCollator.compare
+      ),
     })
   },
-  async loadPublicationIssues({ state }) {
-    state.publicationIssues = await this.$axios.$get(
-      `/api/coa/list/issues/${state.country}/${state.magazine}`
-    )
+  async loadPublicationIssues({ getters, commit }) {
+    commit('coa/fetchIssueNumbers', `${getters.publicationcode}`)
   },
-  async loadSurroundingEdges({ state, commit }) {
-    const firstIssueIndex = state.publicationIssues.findIndex(
+  async loadSurroundingEdges({ state, getters, commit }) {
+    const firstIssueIndex = getters.publicationIssues.findIndex(
       (issue) => issue === state.issuenumbers[0]
     )
-    const lastIssueIndex = state.publicationIssues.findIndex(
+    const lastIssueIndex = getters.publicationIssues.findIndex(
       (issue) => issue === state.issuenumbers[state.issuenumbers.length - 1]
     )
-    const issuesBefore = state.publicationIssues.filter(
+    const issuesBefore = getters.publicationIssues.filter(
       (unused, index) =>
         firstIssueIndex !== -1 && index >= firstIssueIndex - 10 && index < firstIssueIndex
     )
-    const issuesAfter = state.publicationIssues.filter(
+    const issuesAfter = getters.publicationIssues.filter(
       (unused, index) =>
         lastIssueIndex !== -1 && index > lastIssueIndex && index <= lastIssueIndex + 10
     )
@@ -149,7 +152,7 @@ export const actions = {
     if (issuesBefore.length) {
       commit('setEdgesBefore', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.country}/${state.magazine}/${issuesBefore.join(',')}`
+          `/api/edges/${getters.publicationcode}/${issuesBefore.join(',')}`
         ),
       })
     }
@@ -157,7 +160,7 @@ export const actions = {
     if (issuesAfter.length) {
       commit('setEdgesAfter', {
         edges: await this.$axios.$get(
-          `/api/edges/${state.country}/${state.magazine}/${issuesAfter.join(',')}`
+          `/api/edges/${getters.publicationcode}/${issuesAfter.join(',')}`
         ),
       })
     }
