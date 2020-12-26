@@ -210,7 +210,11 @@ export default {
   },
   methods: {
     async overwriteModel({ publicationCode, issueNumber, targetIssuenumber }) {
-      await this.loadModel(...publicationCode.split('/'), issueNumber, targetIssuenumber)
+      try {
+        await this.loadModel(...publicationCode.split('/'), issueNumber, targetIssuenumber)
+      } catch (e) {
+        this.warnings.push(e)
+      }
     },
     getImageUrl(fileType, fileName) {
       return `${process.env.EDGES_URL}/${this.country}/${
