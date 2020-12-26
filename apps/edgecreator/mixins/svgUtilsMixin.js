@@ -15,7 +15,7 @@ export default {
       const edgeUrl = this.getEdgeUrl(country, magazine, issuenumber, 'svg', publishedVersion)
       const svgString = await this.$axios.$get(edgeUrl)
       if (!svgString) {
-        return new Error(`No SVG found : ${edgeUrl}`)
+        throw new Error(`No SVG found : ${edgeUrl}`)
       }
       const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml')
       const svgElement = doc.getElementsByTagName('svg')[0]

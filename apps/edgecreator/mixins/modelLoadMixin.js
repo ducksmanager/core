@@ -20,20 +20,22 @@ export default {
       let steps
 
       const loadSvg = async (publishedVersion) => {
-        const { svgElement, svgChildNodes } = await vm.loadSvgFromString(
-          country,
-          magazine,
-          issuenumber,
-          publishedVersion
-        )
+        try {
+          const { svgElement, svgChildNodes } = await vm.loadSvgFromString(
+            country,
+            magazine,
+            issuenumber,
+            publishedVersion
+          )
 
-        vm.setDimensionsFromSvg(svgElement)
-        steps = vm.getStepsFromSvg(issuenumber, svgChildNodes)
-        if (!onlyLoadStepsAndDimensions) {
-          vm.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
-          vm.setContributorsFromSvg(issuenumber, svgChildNodes)
-          vm.addCurrentUserAsDesigner(issuenumber)
-        }
+          vm.setDimensionsFromSvg(svgElement)
+          steps = vm.getStepsFromSvg(issuenumber, svgChildNodes)
+          if (!onlyLoadStepsAndDimensions) {
+            vm.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
+            vm.setContributorsFromSvg(issuenumber, svgChildNodes)
+            vm.addCurrentUserAsDesigner(issuenumber)
+          }
+        } catch (e) {}
       }
 
       try {
@@ -56,7 +58,11 @@ export default {
           await loadSvg(true)
         }
       }
-      this.setSteps(targetIssuenumber, steps)
+      if (steps) {
+        this.setSteps(targetIssuenumber, steps)
+      } else {
+        throw new Error('No model found for issue ' + issuenumber)
+      }
     },
 
     addCurrentUserAsDesigner(issuenumber) {
