@@ -15,7 +15,7 @@
           >
             <b-card class="text-center">
               <b-link
-                :to="`edit/${edge.country}/${edge.magazine}/${edge.issuenumber}`"
+                :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
                 :disabled="
                   $gates.hasRole('display') ||
                   (category === 'ongoing_by_other_user' && !$gates.hasRole('admin'))

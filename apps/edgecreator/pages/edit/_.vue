@@ -170,10 +170,13 @@ export default {
   },
   async mounted() {
     const vm = this
-    const [country, magazine, issuenumberMin, , issuenumberMax] = vm.$route.params.pathMatch.split(
-      '/'
-    )
-    if ([country, magazine, issuenumberMin].includes(undefined)) {
+    let country, magazine, issuenumberMin, issuenumberMax
+    try {
+      ;[, country, magazine, issuenumberMin, issuenumberMax] = vm.$route.params.pathMatch.match(
+        /^([^/]+)\/(.+) ([^/]+)(?:\/to\/(.+))?$/
+      )
+      magazine = magazine.replaceAll(/ +/g, '')
+    } catch (_) {
       this.error = 'Invalid URL'
       return
     }
