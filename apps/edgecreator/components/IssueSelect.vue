@@ -95,7 +95,7 @@ export default {
       immediate: true,
       async handler(newValue) {
         if (newValue) {
-          this.currentPublicationCode = null
+          this.currentPublicationCode = this.publicationCode
           this.currentIssueNumber = null
 
           await this.fetchPublicationNamesFromCountry(newValue)
@@ -119,9 +119,6 @@ export default {
   mounted() {
     if (this.countryCode) {
       this.currentCountryCode = this.countryCode
-    }
-    if (this.publicationCode) {
-      this.currentPublicationCode = this.publicationCode
     }
     this.fetchCountryNames(this.$i18n.locale)
   },
