@@ -130,8 +130,8 @@ export const actions = {
       ),
     })
   },
-  async loadPublicationIssues({ getters, commit }) {
-    commit('coa/fetchIssueNumbers', `${getters.publicationcode}`)
+  async loadPublicationIssues({ getters, dispatch }) {
+    return dispatch('coa/fetchIssueNumbers', [getters.publicationcode])
   },
   async loadSurroundingEdges({ state, getters, commit }) {
     const firstIssueIndex = getters.publicationIssues.findIndex(
