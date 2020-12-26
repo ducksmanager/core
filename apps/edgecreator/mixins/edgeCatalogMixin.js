@@ -57,15 +57,9 @@ export default {
       const isPublished = (this.publishedEdges[`${country}/${magazine}`] || []).some(
         (publishedEdge) => publishedEdge.issuenumber === issuenumber
       )
+      const issuecode = `${country}/${magazine} ${issuenumber}`
 
-      return (
-        this.currentEdges.find(
-          (currentEdge) =>
-            currentEdge.country === country &&
-            currentEdge.magazine === magazine &&
-            currentEdge.issuenumber === issuenumber
-        ) || { status: isPublished ? 'published' : 'none' }
-      ).status
+      return (this.currentEdges[issuecode] || { status: isPublished ? 'published' : 'none' }).status
     },
   },
 
