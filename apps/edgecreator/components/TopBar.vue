@@ -122,7 +122,7 @@
           variant="outline-primary"
           @click="showCloneModal = !showCloneModal"
         >
-          <b-icon-custom-duplicate />
+          <b-icon-front />
           <b-modal
             v-model="showCloneModal"
             :title="$t('Clone from another model')"
@@ -172,6 +172,7 @@ import { mapActions, mapMutations, mapState } from 'vuex'
 import {
   BIconArrowsAngleExpand,
   BIconCamera,
+  BIconFront,
   BIconHouse,
   BIconLock,
   BIconUnlock,
@@ -179,7 +180,6 @@ import {
 import Issue from 'ducksmanager/assets/js/components/Issue.vue'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
-import BIconCustomDuplicate from '@/components/BIconCustomDuplicate'
 import IssueSelect from '@/components/IssueSelect'
 import SaveButton from '@/components/SaveModelButton'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
@@ -195,10 +195,10 @@ export default {
     Dimensions,
     BIconArrowsAngleExpand,
     BIconCamera,
+    BIconFront,
     BIconHouse,
     BIconLock,
     BIconUnlock,
-    BIconCustomDuplicate,
   },
   mixins: [surroundingEdgeMixin, showEdgePhotosMixin],
   data() {

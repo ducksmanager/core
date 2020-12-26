@@ -21,10 +21,7 @@
               :class="{ invisible: stepNumber === 0 }"
               @click="$emit('swap-steps', [stepNumber - 1, stepNumber])"
             />
-            <b-icon-custom-duplicate
-              :title="$t('Duplicate')"
-              @click="$emit('duplicate-step', stepNumber)"
-            />
+            <b-icon-front :title="$t('Duplicate')" @click="$emit('duplicate-step', stepNumber)" />
             <b-icon-x-square-fill
               v-b-tooltip.hover
               :title="$t('Delete')"
@@ -174,19 +171,23 @@ import { mapState } from 'vuex'
 import FormColorInputRow from '@/components/FormColorInputRow'
 import FormInputRow from '@/components/FormInputRow'
 import Gallery from '@/components/Gallery'
-import BIconCustomDuplicate from '@/components/BIconCustomDuplicate'
-import { BIconArrowDownSquareFill, BIconArrowUpSquareFill, BIconXSquareFill } from 'bootstrap-vue'
+import {
+  BIconArrowDownSquareFill,
+  BIconArrowUpSquareFill,
+  BIconFront,
+  BIconXSquareFill,
+} from 'bootstrap-vue'
 
 export default {
   name: 'ModelEdit',
   components: {
-    BIconCustomDuplicate,
     FormColorInputRow,
     FormInputRow,
     Gallery,
     BIconXSquareFill,
     BIconArrowUpSquareFill,
     BIconArrowDownSquareFill,
+    BIconFront,
   },
   props: {
     steps: { type: Array, required: true },
