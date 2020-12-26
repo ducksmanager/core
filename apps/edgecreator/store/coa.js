@@ -33,7 +33,7 @@ export default {
     setCountryNames(state, countryNames) {
       state.countryNames = countryNames
     },
-    setPublicationNames(state, publicationNames) {
+    addPublicationNames(state, publicationNames) {
       state.publicationNames = {
         ...state.publicationNames,
         ...publicationNames,
@@ -88,7 +88,7 @@ export default {
       return (
         newPublicationCodes.length &&
         commit(
-          'setPublicationNames',
+          'addPublicationNames',
           await dispatch('getChunkedRequests', {
             url: URL_PREFIX_PUBLICATIONS,
             parametersToChunk: newPublicationCodes,
@@ -102,7 +102,7 @@ export default {
         return
       }
       return coaApi.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({ data }) => {
-        commit('setPublicationNames', {
+        commit('addPublicationNames', {
           ...(state.publicationNames || {}),
           ...data,
         })
