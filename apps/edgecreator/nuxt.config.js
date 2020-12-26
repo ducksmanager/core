@@ -145,5 +145,9 @@ export default {
       path: '/fs/upload-base64',
       handler: '~/api/fs/upload-base64.js',
     },
+    {
+      path: '/generate',
+      handler: '~/api/fs/generateDefaultEdge.js',
+    },
   ],
 }
