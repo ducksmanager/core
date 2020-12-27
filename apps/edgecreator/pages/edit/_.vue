@@ -15,8 +15,8 @@
       {{ warning }}
     </b-alert>
     <top-bar @overwrite-model="overwriteModel($event)" />
-    <b-row class="flex-grow-1 pt-2" align-h="end">
-      <b-col class="text-right">
+    <b-row class="flex-grow-1 pt-2 overflow-hidden" align-h="end">
+      <b-col class="text-right overflow-auto h-100">
         <table class="edges">
           <tr v-if="showIssueNumbers">
             <th v-if="showPreviousEdge && edgesBefore.length" class="surrounding-edge">
@@ -283,7 +283,6 @@ table.edges tr td {
 table.edges tr th {
   vertical-align: bottom;
   padding: 1px 2px;
-  outline: 1px solid grey;
 }
 
 table.edges tr th.surrounding-edge {
