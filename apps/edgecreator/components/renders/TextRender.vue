@@ -1,8 +1,7 @@
 <!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
-  <svg>
+  <svg v-if="options.x !== undefined" :width="options.width" :height="options.height">
     <image
-      v-if="options.x !== undefined"
       ref="image"
       preserveAspectRatio
       v-bind="options"
@@ -159,6 +158,7 @@ export default {
           // By default, with a 270° rotation,
           // the text shouldn't be larger than the width of the edge
           height: Math.min(image.height, vm.width),
+          aspectRatio: image.height / image.width,
         })
       }
     },
