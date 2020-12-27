@@ -1,7 +1,7 @@
 const fs = require('fs')
 const svg2img = require('svg2img')
 
-const REGEX_EDGE_URL = /^edges\/([^/]+\/)gen\/_?([^.]+)\.([^.]+)\.(svg|png)?$/
+const REGEX_EDGE_URL = /^edges\/([^/]+)\/gen\/_?([^.]+)\.([^.]+)\.(.+)?$/
 
 export default function (req, res) {
   const corsHeaders = {
@@ -14,8 +14,23 @@ export default function (req, res) {
   if (req.method === 'OPTIONS') {
     res.writeHeader(200, corsHeaders)
     res.end()
+    return
   }
-  const text = req.url.replace(/^\//, '').replace(REGEX_EDGE_URL, `$1$2 $3`)
+  const input = req.url.replace(/^\//, '')
+  let text
+  const match = input.match(REGEX_EDGE_URL)
+  if (match) {
+    const [, countryCode, magazineCode, issueNumber, extension] = match
+
+    if (countryCode && extension !== 'png') {
+      res.writeHeader(404, corsHeaders)
+      res.end('')
+      return
+    }
+    text = `${countryCode}/${magazineCode} ${issueNumber}`
+  } else {
+    text = input
+  }
 
   const content = fs
     .readFileSync('assets/default.svg')
