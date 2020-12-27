@@ -120,7 +120,7 @@ export default {
       const url = `/fs/text/${[
         fgColor.replace('#', ''),
         bgColor.replace('#', ''),
-        internalWidth,
+        Math.round(internalWidth * 100) / 100,
         'font',
         font,
         'text',
