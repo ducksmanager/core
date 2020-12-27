@@ -87,6 +87,19 @@
             :step="90"
             :options="step.options"
           />
+          <a
+            class="d-block mt-3"
+            href="javascript:void(0)"
+            @click="
+              $root.$emit('set-options', {
+                x: 0,
+                y: 0,
+                width,
+                height: width * step.options.aspectRatio,
+              })
+            "
+            >{{ $t('Reset position and size') }}</a
+          >
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
           <form-color-input-row
@@ -193,6 +206,7 @@ export default {
     steps: { type: Array, required: true },
   },
   computed: {
+    ...mapState(['width', 'height']),
     hoveredStepNumber: {
       get() {
         return this.$store.state.hoveredStep.stepNumber
