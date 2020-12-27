@@ -86,12 +86,14 @@ export default {
         }
         case 'Text': {
           return {
+            x: parseInt(dbOptions.Pos_x),
+            y: parseInt(dbOptions.Pos_y),
             fgColor: `#${dbOptions.Couleur_texte}`,
             bgColor: `#${dbOptions.Couleur_fond}`,
             font: dbOptions.URL.replace(/\./g, '/'),
             text: dbOptions.Chaine,
             internalWidth: parseFloat(dbOptions.Largeur),
-            rotation: 360 - parseFloat(dbOptions.Rotation),
+            rotation: 360 - Math.round(parseFloat(dbOptions.Rotation)),
             isHalfHeight: dbOptions.Demi_hauteur === 'Oui',
           }
         }
