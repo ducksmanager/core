@@ -4,14 +4,15 @@ const svg2img = require('svg2img')
 const REGEX_EDGE_URL = /^edges\/([^/]+\/)gen\/_?([^.]+)\.([^.]+)\.(svg|png)?$/
 
 export default function (req, res) {
-  res.writeHeader(200, {
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers':
       'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,x-dm-user,x-dm-pass',
-  })
+  }
   if (req.method === 'OPTIONS') {
+    res.writeHeader(200, corsHeaders)
     res.end()
   }
   const text = req.url.replace(/^\//, '').replace(REGEX_EDGE_URL, `$1$2 $3`)
@@ -22,10 +23,10 @@ export default function (req, res) {
     .replace('My text', decodeURIComponent(text))
   svg2img(content, (error, buffer) => {
     if (error) {
-      res.writeHeader(500)
+      res.writeHeader(500, corsHeaders)
       res.end('Error : ' + error)
     }
-    res.writeHeader(200, { 'Content-Type': 'image/png' })
+    res.writeHeader(200, { ...corsHeaders, 'Content-Type': 'image/png' })
     res.end(buffer)
   })
 }
