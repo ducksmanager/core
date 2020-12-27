@@ -20,22 +20,20 @@ export default {
       let steps
 
       const loadSvg = async (publishedVersion) => {
-        try {
-          const { svgElement, svgChildNodes } = await vm.loadSvgFromString(
-            country,
-            magazine,
-            issuenumber,
-            publishedVersion
-          )
+        const { svgElement, svgChildNodes } = await vm.loadSvgFromString(
+          country,
+          magazine,
+          issuenumber,
+          publishedVersion
+        )
 
-          vm.setDimensionsFromSvg(svgElement)
-          steps = vm.getStepsFromSvg(issuenumber, svgChildNodes)
-          if (!onlyLoadStepsAndDimensions) {
-            vm.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
-            vm.setContributorsFromSvg(issuenumber, svgChildNodes)
-            vm.addCurrentUserAsDesigner(issuenumber)
-          }
-        } catch (e) {}
+        vm.setDimensionsFromSvg(svgElement)
+        steps = vm.getStepsFromSvg(issuenumber, svgChildNodes)
+        if (!onlyLoadStepsAndDimensions) {
+          vm.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
+          vm.setContributorsFromSvg(issuenumber, svgChildNodes)
+          vm.addCurrentUserAsDesigner(issuenumber)
+        }
       }
 
       try {
