@@ -30,10 +30,11 @@
     <li
       v-for="(textKey, id) in purchaseStates"
       :key="`purchase-${id}`"
-      :class="{item: true, selected: currentPurchaseId === id, 'purchase-state': true, 'v-context__sub': id === 'link' }"
-      :style="id === 'do_not_change' ? {} : {backgroundImage: `url(${imagePath}/icons/purchase-${id}.png`}"
+      :class="{item: true, selected: currentPurchaseId === id, 'purchase-state': true, 'v-context__sub': id === 'link', [id]: true }"
       @click="currentPurchaseId = id"
     >
+      <BIconCalendar v-if="id === 'link'" />
+      <BIconCalendarX v-if="id === 'unlink'" />
       {{ l10n[textKey] }}
       <ul
         v-if="id === 'link'"
@@ -87,7 +88,6 @@
           :key="purchaseId"
           :class="{item: true, selected: currentPurchaseId === purchaseId, 'purchase-date': true}"
           class="item purchase-date"
-          :style="id === 'do_not_change' ? {} : {backgroundImage: `url(${imagePath}/icons/purchase-link.png`}"
           @click.stop="currentPurchaseId = purchaseId"
         >
           <b>{{ description }}</b><br>{{ date }}
@@ -100,11 +100,10 @@
     <li
       v-for="(textKey, id) in toSellStates"
       :key="`forsale-${id}`"
-      :class="{item: true, selected: isToSell === id, 'forsale-state': true}"
-      :style="id === 'do_not_change' ? {} : {backgroundImage: `url(${imagePath}/icons/${id}.png`}"
+      :class="{item: true, selected: isToSell === id, 'forsale-state': true, [id]: true}"
       @click="isToSell = id"
     >
-      {{ l10n[textKey] }}
+      <BIconTag v-if="id==='for_sale' || id === 'not_for_sale'" />{{ l10n[textKey] }}
     </li>
     <li
       class="footer"
@@ -119,11 +118,15 @@
 import l10nMixin from "../mixins/l10nMixin";
 import VueContext from "vue-context";
 import conditionMixin from "../mixins/conditionMixin";
+import { BIconCalendar, BIconCalendarX, BIconTag } from "bootstrap-vue";
 
 export default {
   name: "ContextMenu",
   components: {
-    VueContext
+    VueContext,
+    BIconCalendar,
+    BIconCalendarX,
+    BIconTag
   },
   mixins: [l10nMixin, conditionMixin],
   props: {
@@ -239,8 +242,14 @@ export default {
       }
 
       &.purchase-state {
-        background-repeat: no-repeat;
-        background-position-x: 6px;
+        &.link {
+          &:after {
+            position: absolute;
+            font-weight: bold;
+            right: 10px;
+            content: '>'
+          }
+        }
       }
 
       &.purchase-date {
@@ -252,8 +261,15 @@ export default {
       }
 
       &.forsale-state {
-        background-repeat: no-repeat;
-        background-position-x: 4px;
+        &.not_for_sale {
+          &:after {
+            position: absolute;
+            font-size: 9px;
+            left: 12px;
+            top: 1px;
+            content: '×';
+          }
+        }
       }
 
       &.issue-condition:before {
@@ -299,6 +315,12 @@ export default {
             color: white;
           }
         }
+      }
+
+      svg {
+        margin-left: -24px;
+        margin-right: 8px;
+        font-size: 16px;
       }
     }
   }
