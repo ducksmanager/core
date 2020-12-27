@@ -2,7 +2,7 @@
 <template>
   <svg
     :id="`edge-canvas-${issuenumber}`"
-    :class="{ 'hide-overflow': !showEdgeOverflow }"
+    :class="{ 'hide-overflow': !showEdgeOverflow, 'position-relative': true }"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
     :height="zoom * height"
