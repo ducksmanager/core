@@ -154,12 +154,14 @@ export default {
       const image = new Image()
       image.src = this.imageUrl
       image.onload = () => {
-        vm.$root.$emit('set-options', {
+        let options = { aspectRatio: image.height / image.width }
+        if (!this.height) {
           // By default, with a 270° rotation,
           // the text shouldn't be larger than the width of the edge
-          height: Math.min(image.height, vm.width),
-          aspectRatio: image.height / image.width,
-        })
+          options = { ...options, height: Math.min(image.height, vm.width) }
+        }
+
+        vm.$root.$emit('set-options', options)
       }
     },
   },
