@@ -79,7 +79,7 @@ export default {
           onresizemove ||
             (({ rect }) => {
               let { width, height } = rect
-              if (['90', '270'].includes(vm.options.rotation)) {
+              if ([90, 270].includes(vm.options.rotation)) {
                 ;[width, height] = [height, width]
               }
               vm.$root.$emit('set-options', {
