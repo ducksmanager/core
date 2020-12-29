@@ -3,7 +3,7 @@
   <svg v-if="options.x !== undefined" :width="options.width" :height="options.height">
     <image
       ref="image"
-      preserveAspectRatio
+      preserveAspectRatio="none"
       v-bind="options"
       :xlink:href="imageUrl"
       :transform="`rotate(${options.rotation}, ${options.x + options.width / 2}, ${
@@ -19,6 +19,7 @@
 <script>
 import { mapState } from 'vuex'
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
+import Vue from 'vue'
 
 export default {
   mixins: [stepOptionsMixin],
@@ -154,13 +155,26 @@ export default {
       const image = new Image()
       image.src = this.imageUrl
       image.onload = () => {
-        let options = { aspectRatio: image.height / image.width }
-        if (!this.height) {
+        const naturalAspectRatio = image.height / image.width
+        const options = { ...vm.options, stepNumber: vm.stepNumber }
+        if (options.height === null) {
           // By default, with a 270° rotation,
           // the text shouldn't be larger than the width of the edge
-          options = { ...options, height: Math.min(image.height, vm.width) }
+          options.height = Math.min(image.height, vm.width)
+        } else if (options.heightCompression) {
+          if (options.rotation === 90 || options.rotation === 270) {
+            options.height = options.widthCompression * vm.width
+            options.width = (options.heightCompression * vm.width) / naturalAspectRatio
+            options.x -= options.width / 2 - options.height / 2
+            options.y += options.width / 2
+          } else {
+            options.height = options.heightCompression * vm.width * naturalAspectRatio
+            options.width = options.widthCompression * vm.width
+          }
+          Vue.remove(vm.options, 'heightCompression')
+          Vue.remove(vm.options, 'widthCompression')
         }
-
+        options.aspectRatio = options.height / options.width
         vm.$root.$emit('set-options', options)
       }
     },

@@ -95,6 +95,8 @@ export default {
             internalWidth: parseFloat(dbOptions.Largeur),
             rotation: 360 - Math.round(parseFloat(dbOptions.Rotation)),
             isHalfHeight: dbOptions.Demi_hauteur === 'Oui',
+            widthCompression: parseFloat(dbOptions.Compression_x || 1),
+            heightCompression: parseFloat(dbOptions.Compression_y || 1),
           }
         }
       }
