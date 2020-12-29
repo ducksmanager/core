@@ -99,7 +99,7 @@ export default {
   },
   data() {
     return {
-      borderWidth: 1.5,
+      borderWidth: 1,
     }
   },
   computed: {
