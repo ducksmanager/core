@@ -79,14 +79,14 @@ CHARGEMENT: Chargement...
 CLASSIQUE_DESCRIPTION: Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez.
 CLASSIQUE_MOINS_1: Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros.
 CLASSIQUE_NOM: la liste classique
-CLASSIQUE_PLUS_1: Ce type de liste est plus adapté pour les collections de moins de 500 numéros.
+CLASSIQUE_PLUS_1: Ce type de liste est plus adapté pour les petites collections.
 CLIQUEZ_ICI: Cliquez ici
 CLIQUEZ_SUR_MAGAZINE_POUR_EDITER: Cliquez sur l'un de vos magazines pour éditer sa liste !
 CODE_HISTOIRE: code histoire
 COLLECTABLE_DEMO: pour visionner notre vidéo d'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !
 COLLECTABLE_DESCRIPTION: Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !
 COLLECTABLE_NOM: CollecTable
-COLLECTABLE_PLUS_1: Adaptée pour les collections de taille importante (plus de 200 numéros).
+COLLECTABLE_PLUS_1: Adaptée pour les grandes collections.
 COLLECTION: Collection
 COLLECTION_DE: Collection DucksManager de
 COLLECTION_VIDE_1: Votre collection est vide.
