@@ -26,7 +26,7 @@
                 <template v-if="conditionFilter === 'possessed'">{{ l10n.AFFICHER_NUMEROS_POSSEDES }}</template>
                 <template v-else-if="conditionFilter === 'missing'">{{ l10n.AFFICHER_NUMEROS_MANQUANTS }}</template>
                 ({{
-                  issues.filter(issue => conditionFilter === 'possessed' ? issue.condition : !issue.condition).length
+                  issues.filter(issue => conditionFilter === "possessed" ? issue.condition : !issue.condition).length
                 }})
               </label>
             </td>
@@ -75,12 +75,13 @@
             @mouseover="hoveredIssueNumber=issueNumber"
             @mouseout="hoveredIssueNumber=null"
             @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
-          /><span
+          />
+          <span
             v-once
             class="issue-text"
           >
             {{ l10n.NUMERO_COURT }}{{ issueNumber }}
-            <span>{{ title }}</span>
+            <span class="issue-title">{{ title }}</span>
           </span>
           <div
             class="issue-details-wrapper"
@@ -143,7 +144,7 @@
       show
     >
       <div class="mb-4">
-        {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split('/')[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{
+        {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split("/")[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{
           country
         }})
       </div>
@@ -170,9 +171,9 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import {mapActions, mapState} from "vuex";
+import { mapActions, mapState } from "vuex";
 import ContextMenu from "./ContextMenu";
-import 'vue-context/src/sass/vue-context.scss';
+import "vue-context/src/sass/vue-context.scss";
 import axios from "axios";
 import conditionMixin from "../mixins/conditionMixin";
 import collectionMixin from "../mixins/collectionMixin";
@@ -204,7 +205,7 @@ export default {
     publicationNameLoading: true,
     filter: {
       missing: true,
-      possessed: true,
+      possessed: true
     },
     coverUrl: null,
     issues: null,
@@ -219,106 +220,109 @@ export default {
   computed: {
     ...mapState("l10n", ["locale"]),
     ...mapState("coa", ["publicationNames"]),
-    ...mapState("collection", {userIssues: "collection"}),
+    ...mapState("collection", { userIssues: "collection" }),
 
     country() {
-      return this.publicationcode.split('/')[0]
+      return this.publicationcode.split("/")[0];
     },
     publicationName() {
-      return this.publicationNames[this.publicationcode]
+      return this.publicationNames[this.publicationcode];
     },
 
     isTouchScreen: () => window.matchMedia("(pointer: coarse)").matches,
     filteredIssues() {
-      const vm = this
+      const vm = this;
       return this.issues && this.issues.filter(issue =>
-          vm.filter.possessed && issue.condition ||
-          vm.filter.missing && !issue.condition
-      )
+        vm.filter.possessed && issue.condition ||
+        vm.filter.missing && !issue.condition
+      );
     }
   },
   watch: {
     preselectedIndexEnd() {
-      this.preselected = this.getPreselected()
+      this.preselected = this.getPreselected();
     },
     userIssues: {
       immediate: true,
       async handler(newValue) {
         if (newValue) {
-          const vm = this
+          const vm = this;
 
           this.userIssuesForPublication = newValue.filter(issue =>
-              `${issue.country}/${issue.magazine}` === vm.publicationcode)
-              .map(issue => ({
-                    ...issue,
-                    condition: (vm.conditions.find(({dbValue}) => dbValue === issue.condition) || {value: 'possessed'}).value
-                  })
-              )
+            `${issue.country}/${issue.magazine}` === vm.publicationcode)
+            .map(issue => ({
+                ...issue,
+                condition: (vm.conditions.find(({ dbValue }) => dbValue === issue.condition) || { value: "possessed" }).value
+              })
+            );
 
-          this.issues = (await axios.get(`/api/coa/list/issues/${this.publicationcode}`)).data
-              .map(issueNumber => ({
-                issueNumber,
-                ...(vm.userIssuesForPublication.find(({issueNumber: userIssueNumber}) => userIssueNumber === issueNumber) || {})
-              }))
-          this.loading = false
+          const issuesWithTitles = (await axios.get(`/api/coa/list/issues/withTitle/${this.publicationcode}`)).data;
+
+          this.issues = Object.keys(issuesWithTitles)
+            .map(issueNumber => ({
+              issueNumber,
+              title: issuesWithTitles[issueNumber],
+              ...(vm.userIssuesForPublication.find(({ issueNumber: userIssueNumber }) => userIssueNumber === issueNumber) || {})
+            }));
+          this.loading = false;
         }
       }
     }
   },
   async mounted() {
-    await this.loadPurchases()
-    await this.fetchPublicationNames([this.publicationcode])
-    this.publicationNameLoading = false
+    await this.loadPurchases();
+    await this.fetchPublicationNames([this.publicationcode]);
+    this.publicationNameLoading = false;
   },
   methods: {
     ...mapActions("coa", ["fetchPublicationNames"]),
     ...mapActions("collection", ["loadCollection", "loadPurchases"]),
     openContextMenuIfBookNotOpen(e) {
       if (this.currentIssueOpened === null) {
-        this.$refs.contextMenu.$refs.menu.open(e)
+        this.$refs.contextMenu.$refs.menu.open(e);
       }
     },
     getPreselected() {
-      const vm = this
+      const vm = this;
       if ([this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)) {
-        return this.preselected
+        return this.preselected;
       }
       return this.filteredIssues
-          .map(({issueNumber}) => issueNumber)
-          .filter((issueNumber, index) =>
-              index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
-          )
+        .map(({ issueNumber }) => issueNumber)
+        .filter((issueNumber, index) =>
+          index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
+        );
     },
     updateSelected() {
-      const vm = this
+      const vm = this;
       this.selected = this.issues
-          .map(({issueNumber}) => issueNumber)
-          .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber))
-      this.preselectedIndexStart = this.preselectedIndexEnd = null
-      this.preselected = []
+        .map(({ issueNumber }) => issueNumber)
+        .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber));
+      this.preselectedIndexStart = this.preselectedIndexEnd = null;
+      this.preselected = [];
     },
     async deletePublicationIssues() {
       await this.updateIssues({
         publicationCode: this.publicationcode,
-        issueNumbers: this.userIssuesForPublication.map(({issueNumber}) => issueNumber),
-        condition: this.conditions.find(({value}) => value === 'missing').dbValue,
+        issueNumbers: this.userIssuesForPublication.map(({ issueNumber }) => issueNumber),
+        condition: this.conditions.find(({ value }) => value === "missing").dbValue,
         istosell: false,
         purchaseId: null
-      })
+      });
     },
     async updateIssues(data) {
-      await axios.post('/api/collection/issues', data)
-      await this.loadCollection(true)
+      await axios.post("/api/collection/issues", data);
+      await this.loadCollection(true);
     },
-    async createPurchase({date, description}) {
-      await axios.post('/api/collection/purchases', {
+    async createPurchase({ date, description }) {
+      await axios.post("/api/collection/purchases", {
         date,
-        description,
-      })
-      await this.loadPurchases(true)
+        description
+      });
+      await this.loadPurchases(true);
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -378,6 +382,10 @@ export default {
 
     .preview {
       cursor: pointer;
+    }
+
+    .issue-title {
+      color: #aaa;
     }
 
     .issue-details-wrapper {
