@@ -7,6 +7,7 @@ export const state = () => ({
   showEdgePhotos: true,
   locked: false,
   colorPickerOption: null,
+  positionInCanvas: null,
 })
 
 export const mutations = {
@@ -33,5 +34,8 @@ export const mutations = {
   },
   setColorPickerOption(state, colorPickerOption) {
     state.colorPickerOption = colorPickerOption
+  },
+  setPositionInCanvas(state, positionInCanvas) {
+    state.positionInCanvas = positionInCanvas
   },
 }
