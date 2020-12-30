@@ -6,9 +6,13 @@
       preserveAspectRatio="none"
       v-bind="options"
       :xlink:href="imageUrl"
-      :transform="`rotate(${options.rotation}, ${options.x + options.width / 2}, ${
-        options.y + options.height / 2
-      })`"
+      :transform="
+        !options.width
+          ? null
+          : `rotate(${options.rotation}, ${options.x + options.width / 2}, ${
+              options.y + options.height / 2
+            })`
+      "
       @load="load"
     >
       <metadata>{{ options }}</metadata>
