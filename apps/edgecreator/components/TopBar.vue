@@ -165,6 +165,10 @@
         ><nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{ name }}</nuxt-link>
       </template>
     </div>
+    <div v-if="positionInCanvas" class="cursor-position position-fixed p-2">
+      <div>{{ `X = ${positionInCanvas[0]} mm` }}</div>
+      <div>{{ `Y = ${positionInCanvas[1]} mm` }}</div>
+    </div>
   </b-container>
 </template>
 <script>
@@ -212,6 +216,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('ui', ['positionInCanvas']),
     locked: {
       get() {
         return this.$store.state.ui.locked
@@ -289,8 +294,10 @@ export default {
   height: 15px;
 }
 
-.b-icon.bi-square,
-.b-icon.bi-square-fill {
-  vertical-align: middle !important;
+.cursor-position {
+  border: 1px solid black;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
 }
 </style>

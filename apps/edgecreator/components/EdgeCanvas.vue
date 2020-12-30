@@ -2,6 +2,7 @@
 <template>
   <svg
     :id="`edge-canvas-${issuenumber}`"
+    ref="canvas"
     :class="{ 'hide-overflow': !showEdgeOverflow, 'position-relative': true }"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
@@ -9,6 +10,8 @@
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
+    @mousemove="setPosition"
+    @mouseout="setPositionInCanvas(null)"
   >
     <metadata v-if="photoUrl" type="photo">
       {{ photoUrl }}
@@ -69,7 +72,7 @@
   </svg>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import RectangleRender from '@/components/renders/RectangleRender'
 import PolygonRender from '@/components/renders/PolygonRender'
 import ArcCircleRender from '@/components/renders/ArcCircleRender'
@@ -136,6 +139,17 @@ export default {
       },
     },
     ...mapState('ui', ['zoom', 'showEdgeOverflow']),
+  },
+
+  methods: {
+    ...mapMutations('ui', ['setPositionInCanvas']),
+    setPosition({ clientX: left, clientY: top }) {
+      const vm = this
+      const { left: svgLeft, top: svgTop } = this.$refs.canvas.getBoundingClientRect()
+      this.setPositionInCanvas(
+        [left - svgLeft, top - svgTop].map((value) => parseInt(value / vm.zoom))
+      )
+    },
   },
 }
 </script>
