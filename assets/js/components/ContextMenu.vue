@@ -94,17 +94,6 @@
         </li>
       </ul>
     </li>
-    <li class="menu-separator">
-      {{ l10n.A_VENDRE_TITRE }}
-    </li>
-    <li
-      v-for="(textKey, id) in toSellStates"
-      :key="`forsale-${id}`"
-      :class="{item: true, selected: isToSell === id, 'forsale-state': true, [id]: true}"
-      @click="isToSell = id"
-    >
-      <BIconTag v-if="id==='for_sale' || id === 'not_for_sale'" />{{ l10n[textKey] }}
-    </li>
     <li
       class="footer"
       @click="updateSelectedIssues"
@@ -125,8 +114,7 @@ export default {
   components: {
     VueContext,
     BIconCalendar,
-    BIconCalendarX,
-    BIconTag
+    BIconCalendarX
   },
   mixins: [l10nMixin, conditionMixin],
   props: {
@@ -160,11 +148,6 @@ export default {
       do_not_change: 'ACHAT_CONSERVER_DATE_ACHAT',
       link: 'ACHAT_ASSOCIER_DATE_ACHAT',
       unlink: 'ACHAT_DESASSOCIER_DATE_ACHAT'
-    },
-    toSellStates: {
-      do_not_change: 'VENTE_CONSERVER_VOLONTE_VENTE',
-      for_sale: 'VENTE_MARQUER_A_VENDRE',
-      not_for_sale: 'VENTE_MARQUER_PAS_A_VENDRE'
     }
   }),
 
@@ -258,18 +241,6 @@ export default {
         background-size: 12px;
         background-position-x: 10px;
         line-height: 15px;
-      }
-
-      &.forsale-state {
-        &.not_for_sale {
-          &:after {
-            position: absolute;
-            font-size: 9px;
-            left: 12px;
-            top: 1px;
-            content: '×';
-          }
-        }
       }
 
       &.issue-condition:before {

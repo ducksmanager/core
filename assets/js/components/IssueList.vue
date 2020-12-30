@@ -54,7 +54,7 @@
           @close-book="currentIssueOpened = null"
         />
         <div
-          v-for="({issueNumber, title, condition, purchaseId, isToSell}, i) in filteredIssues"
+          v-for="({issueNumber, title, condition, purchaseId}, i) in filteredIssues"
           :key="issueNumber"
           :class="{
             issue: true,
@@ -108,25 +108,12 @@
               v-once
               class="issue-details issue-date"
             >
-              <img
-                :src="`${imagePath}/icons/date.png`"
-                :title="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`"
-                :alt="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`"
-              >
+              <BIconCalendar :title="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`" />
             </div>
             <div
               v-else
               class="issue-details"
             />
-            <div class="issue-details">
-              <img
-                v-if="isToSell"
-                height="16px"
-                :src="`${imagePath}/icons/for_sale.png`"
-                :alt="l10n.A_VENDRE"
-                :title="l10n.A_VENDRE"
-              >
-            </div>
           </div>
         </div>
         <IssueDetailsPopover
@@ -193,11 +180,13 @@ import Country from "./Country";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
 import Condition from "./Condition";
+import { BIconCalendar } from "bootstrap-vue";
 
 export default {
   name: "IssueList",
   components: {
     Condition,
+    BIconCalendar,
     Book,
     Country,
     ContextMenu,
