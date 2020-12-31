@@ -7,7 +7,7 @@ const sharp = require('sharp')
 addAxiosInterceptor()
 
 export default function (req, res) {
-  const { runExport, country, magazine, issuenumber, designers, photographers, content } = req.body
+  const { runExport, country, magazine, issuenumber, contributors, content } = req.body
   const fileName = `${runExport ? '' : '_'}${magazine}.${issuenumber}.svg`
   const svgPath = `${process.env.EDGES_PATH}/${country}/gen/${fileName}`
   const publicationCode = `${country}/${magazine}`
@@ -22,6 +22,8 @@ export default function (req, res) {
         .toFile(pngPath)
         .then(async () => {
           paths = { ...paths, pngPath }
+
+          const { designers, photographers } = contributors
 
           try {
             await axios.put(
