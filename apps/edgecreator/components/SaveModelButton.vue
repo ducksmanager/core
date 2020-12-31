@@ -30,11 +30,14 @@
         v-model="showExportModal"
         :title="$t('Edge publication')"
         ok-only
-        ok-title="Export"
+        :ok-title="$t('Export')"
         @ok="run"
       >
         <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
           <h2>{{ $t(ucFirst(contributionType)) }}</h2>
+          <b-alert v-if="!hasAtLeastOneUser(contributionType)" show variant="warning">{{
+            $t('You should select at least one user')
+          }}</b-alert>
           <vue-bootstrap-typeahead
             :ref="`${contributionType}-typeahead`"
             :data="allUsers.filter((user) => !isContributor(user, contributionType))"
@@ -50,7 +53,9 @@
             <li v-for="user in getContributors(contributionType)" :key="user.username">
               {{ user.username }}
               <b-icon-x-square-fill
-                style="cursor: pointer"
+                v-if="
+                  !(user.username === $cookies.get('dm-user') && contributionType === 'designers')
+                "
                 @click="
                   removeContributor({
                     contributionType,
@@ -98,7 +103,7 @@ export default {
   }),
   computed: {
     label() {
-      return this.withExport ? 'Export' : 'Save'
+      return this.withExport ? this.$t('Export') : this.$t('Save')
     },
     variant() {
       return this.withExport ? 'success' : 'primary'
@@ -146,6 +151,11 @@ export default {
         vm.addContributor({ issuenumber, contributionType, user })
       })
     },
+    hasAtLeastOneUser(contributionType) {
+      return Object.values(this.contributors).every(
+        (contributionsForIssue) => contributionsForIssue[contributionType].length
+      )
+    },
     onClick() {
       if (this.withExport) {
         this.showExportModal = !this.showExportModal
@@ -181,10 +191,13 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped lang="scss">
 .progress-wrapper {
   display: inline-block;
   margin-top: 7px;
   width: 2rem;
+}
+.bi-x-square-fill {
+  cursor: pointer;
 }
 </style>
