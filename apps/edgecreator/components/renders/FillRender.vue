@@ -1,5 +1,5 @@
 <template>
-  <rect ref="rect" v-bind="options" x="0" y="0" :width="width" :height="height">
+  <rect ref="rect" v-bind="attributes" x="0" y="0" :width="width" :height="height">
     <metadata>{{ options }}</metadata>
   </rect>
 </template>
@@ -18,6 +18,10 @@ export default {
       }),
     },
   },
+
+  data: () => ({
+    attributeKeys: ['fill'],
+  }),
 }
 </script>
 

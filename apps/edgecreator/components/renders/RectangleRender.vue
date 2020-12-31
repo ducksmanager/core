@@ -24,6 +24,10 @@ export default {
     },
   },
 
+  data: () => ({
+    attributeKeys: ['x', 'y', 'width', 'height', 'fill', 'stroke'],
+  }),
+
   mounted() {
     this.enableDragResize(this.$refs.rect)
   },

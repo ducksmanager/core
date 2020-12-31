@@ -1,10 +1,10 @@
 <!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
-  <svg v-if="options.x !== undefined" :width="options.width" :height="options.height">
+  <svg v-if="options.x !== undefined">
     <image
       ref="image"
       preserveAspectRatio="none"
-      v-bind="options"
+      v-bind="attributes"
       :xlink:href="imageUrl"
       :transform="
         !options.width
@@ -52,6 +52,7 @@ export default {
     textImage: null,
     textImageOptions: {},
     image: { base64: null, width: null, height: null },
+    attributeKeys: ['x', 'y', 'width', 'height'],
   }),
 
   computed: {
