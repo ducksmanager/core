@@ -5,7 +5,7 @@
       ref="image"
       preserveAspectRatio="none"
       v-bind="attributes"
-      :xlink:href="imageUrl"
+      :xlink:href="image.base64"
       :transform="
         !options.width
           ? null
@@ -13,7 +13,6 @@
               options.y + options.height / 2
             })`
       "
-      @load="load"
     >
       <metadata>{{ options }}</metadata>
     </image>
@@ -23,7 +22,6 @@
 <script>
 import { mapState } from 'vuex'
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
-import Vue from 'vue'
 
 export default {
   mixins: [stepOptionsMixin],
@@ -71,10 +69,14 @@ export default {
     imageUrl: {
       immediate: true,
       async handler(newValue) {
-        try {
-          this.image = await this.$axios.$get(newValue)
-        } catch (e) {
-          console.error(`Text image details could not be retrieved : ${newValue} : ${e}`)
+        if (newValue) {
+          try {
+            this.image = await this.$axios.$get(
+              `/fs/base64?images_myfonts/${this.textImage.imageId}.png`
+            )
+          } catch (e) {
+            console.error(`Text image details could not be retrieved : ${newValue} : ${e}`)
+          }
         }
       },
     },
@@ -87,6 +89,7 @@ export default {
             () => vm.$refs.image,
             () => {
               vm.enableDragResize(vm.$refs.image)
+              vm.applyTextImageDimensions()
             },
             2000,
             100
@@ -155,33 +158,28 @@ export default {
       }, loopEvery)
     },
 
-    load() {
-      const vm = this
-      const image = new Image()
-      image.src = this.imageUrl
-      image.onload = () => {
-        const naturalAspectRatio = image.height / image.width
-        const options = { ...vm.options, stepNumber: vm.stepNumber }
-        if (options.height === null) {
-          // By default, with a 270° rotation,
-          // the text shouldn't be larger than the width of the edge
-          options.height = Math.min(image.height, vm.width)
-        } else if (options.heightCompression) {
-          if (options.rotation === 90 || options.rotation === 270) {
-            options.height = options.widthCompression * vm.width
-            options.width = (options.heightCompression * vm.width) / naturalAspectRatio
-            options.x -= options.width / 2 - options.height / 2
-            options.y += options.width / 2
-          } else {
-            options.height = options.heightCompression * vm.width * naturalAspectRatio
-            options.width = options.widthCompression * vm.width
-          }
-          options.heightCompression = undefined
-          options.widthCompression = undefined
+    applyTextImageDimensions() {
+      const naturalAspectRatio = this.image.height / this.image.width
+      const options = { ...this.options, stepNumber: this.stepNumber }
+      if (options.height === null) {
+        // By default, with a 270° rotation,
+        // the text shouldn't be larger than the width of the edge
+        options.height = Math.min(this.image.height, this.width)
+      } else if (options.heightCompression) {
+        if (options.rotation === 90 || options.rotation === 270) {
+          options.height = options.widthCompression * this.width
+          options.width = (options.heightCompression * this.width) / naturalAspectRatio
+          options.x -= options.width / 2 - options.height / 2
+          options.y += options.width / 2
+        } else {
+          options.height = options.heightCompression * this.width * naturalAspectRatio
+          options.width = options.widthCompression * this.width
         }
-        options.aspectRatio = options.height / options.width
-        vm.$root.$emit('set-options', options)
+        options.heightCompression = undefined
+        options.widthCompression = undefined
       }
+      options.aspectRatio = options.height / options.width
+      this.$root.$emit('set-options', options)
     },
   },
 }
