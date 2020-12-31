@@ -176,8 +176,8 @@ export default {
             options.height = options.heightCompression * vm.width * naturalAspectRatio
             options.width = options.widthCompression * vm.width
           }
-          Vue.delete(vm.options, 'heightCompression')
-          Vue.delete(vm.options, 'widthCompression')
+          options.heightCompression = undefined
+          options.widthCompression = undefined
         }
         options.aspectRatio = options.height / options.width
         vm.$root.$emit('set-options', options)
