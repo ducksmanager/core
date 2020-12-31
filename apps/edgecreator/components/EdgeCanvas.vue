@@ -106,6 +106,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('user', ['allUsers']),
     hoveredStepNumber: {
       get() {
         return this.$store.state.hoveredStep.stepNumber
@@ -141,7 +142,17 @@ export default {
     ...mapState('ui', ['zoom', 'showEdgeOverflow']),
   },
 
+  mounted() {
+    const vm = this
+    this.addContributor({
+      issuenumber: this.issuenumber,
+      contributionType: 'designers',
+      user: this.allUsers.find((user) => user.username === vm.$cookies.get('dm-user')),
+    })
+  },
+
   methods: {
+    ...mapMutations(['addContributor']),
     ...mapMutations('ui', ['setPositionInCanvas']),
     setPosition({ clientX: left, clientY: top }) {
       const vm = this
