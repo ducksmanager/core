@@ -12,7 +12,7 @@
         <stop offset="100%" :style="{ 'stop-color': options.colorEnd, 'stop-opacity': 1 }" />
       </linearGradient>
     </defs>
-    <rect ref="rect" v-bind="options" fill="url(#gradient)">
+    <rect ref="rect" v-bind="attributes" fill="url(#gradient)">
       <metadata>{{ options }}</metadata>
     </rect>
   </g>
@@ -38,6 +38,10 @@ export default {
       }),
     },
   },
+
+  data: () => ({
+    attributeKeys: ['x', 'y', 'width', 'height'],
+  }),
 
   mounted() {
     this.enableDragResize(this.$refs.rect)

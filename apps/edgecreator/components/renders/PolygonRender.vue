@@ -25,6 +25,10 @@ export default {
     },
   },
 
+  data: () => ({
+    attributeKeys: [],
+  }),
+
   mounted() {
     const vm = this
     this.enableDragResize(this.$refs.polygon, {

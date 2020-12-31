@@ -30,6 +30,7 @@ export default {
 
   data: () => ({
     image: { base64: null, width: null, height: null },
+    attributeKeys: ['x', 'y', 'width', 'height'],
   }),
 
   computed: {
@@ -43,14 +44,16 @@ export default {
     'options.src': {
       immediate: true,
       async handler() {
-        try {
-          this.image = await this.$axios.$get(
-            `/fs/base64?${this.country}/elements/${this.effectiveSource}`
-          )
-          this.enableDragResize(this.$refs.image)
-        } catch (e) {
-          console.error(`Image could not be retrieved : ${this.effectiveSource}`)
-          this.image = { base64: null, width: null, height: null }
+        if (this.effectiveSource) {
+          try {
+            this.image = await this.$axios.$get(
+              `/fs/base64?${this.country}/elements/${this.effectiveSource}`
+            )
+            this.enableDragResize(this.$refs.image)
+          } catch (e) {
+            console.error(`Image could not be retrieved : ${this.effectiveSource}`)
+            this.image = { base64: null, width: null, height: null }
+          }
         }
       },
     },

@@ -1,6 +1,6 @@
 <!--suppress RequiredAttributes -->
 <template>
-  <ellipse ref="ellipse" v-bind="options">
+  <ellipse ref="ellipse" v-bind="attributes">
     <metadata>{{ options }}</metadata>
   </ellipse>
 </template>
@@ -24,6 +24,10 @@ export default {
       }),
     },
   },
+
+  data: () => ({
+    attributeKeys: ['cx', 'cy', 'rx', 'ry', 'fill', 'stroke'],
+  }),
 
   mounted() {
     const vm = this

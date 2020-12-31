@@ -26,6 +26,18 @@ export default {
   computed: {
     ...mapState(['width', 'height']),
     ...mapState('ui', ['zoom']),
+    attributes() {
+      const vm = this
+      return Object.keys(this.options)
+        .filter((optionKey) => vm.attributeKeys.includes(optionKey))
+        .reduce(
+          (acc, optionKey) => ({
+            ...acc,
+            [optionKey]: vm.options[optionKey],
+          }),
+          {}
+        )
+    },
     colors() {
       return Object.keys(this.options || {})
         .filter(
