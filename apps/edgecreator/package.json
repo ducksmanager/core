@@ -39,7 +39,7 @@
     "nuxt-svg-loader": "^1.2.0",
     "raw-body": "^2.4.1",
     "request": "^2.88.2",
-    "svg2img": "^0.9.0",
+    "sharp": "^0.27.0",
     "vue": "^2.6.12",
     "vue-bootstrap-typeahead": "^0.2.6",
     "vue-cropperjs": "^4.2.0",

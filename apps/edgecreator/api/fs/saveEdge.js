@@ -2,7 +2,7 @@ import axios from 'axios'
 import { addAxiosInterceptor } from '../api'
 
 const fs = require('fs')
-const svg2img = require('svg2img')
+const sharp = require('sharp')
 
 addAxiosInterceptor()
 
@@ -13,35 +13,34 @@ export default function (req, res) {
   const publicationCode = `${country}/${magazine}`
 
   fs.mkdirSync(require('path').dirname(svgPath), { recursive: true })
-  fs.writeFile(svgPath, content, function () {
+  fs.writeFile(svgPath, content, () => {
     let paths = { svgPath }
     if (runExport) {
       const pngPath = svgPath.replace('.svg', '.png')
-      svg2img(content, (error, buffer) => {
-        fs.writeFile(pngPath, buffer, async function () {
+      sharp(svgPath)
+        .png()
+        .toFile(pngPath)
+        .then(async () => {
           paths = { ...paths, pngPath }
 
           try {
             await axios.put(
               `${process.env.BACKEND_URL}/edgecreator/publish/${publicationCode}/${issuenumber}`,
               {
-                designers: designers.map(({ username }) => username),
-                photographers: photographers.map(({ username }) => username),
+                designers: (designers || []).map(({ username }) => username),
+                photographers: (photographers || []).map(({ username }) => username),
               },
               { headers: req.headers }
             )
-          } catch (e) {
-            returnError(e)
-          }
-
-          if (error) {
-            returnError(res, error)
-          } else {
             res.writeHeader(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify(paths))
+          } catch (e) {
+            returnError(res, e)
           }
         })
-      })
+        .catch((error) => {
+          returnError(res, error)
+        })
     } else {
       res.writeHeader(200, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify(paths))
