@@ -1,5 +1,5 @@
+import sharp from 'sharp'
 const fs = require('fs')
-const svg2img = require('svg2img')
 
 const REGEX_EDGE_URL = /^edges\/([^/]+)\/gen\/_?([^.]+)\.([^.]+)\.(.+)?$/
 
@@ -32,11 +32,11 @@ export default function (req, res) {
     text = input
   }
 
-  const content = fs
-    .readFileSync('assets/default.svg')
-    .toString()
-    .replace('My text', decodeURIComponent(text))
-  svg2img(content, (error, buffer) => {
+  const content = Buffer.from(
+    fs.readFileSync('assets/default.svg').toString().replace('My text', decodeURIComponent(text)),
+    'utf8'
+  )
+  sharp(content).toBuffer((error, buffer) => {
     if (error) {
       res.writeHeader(500, corsHeaders)
       res.end('Error : ' + error)
