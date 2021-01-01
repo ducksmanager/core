@@ -8,8 +8,7 @@ addAxiosInterceptor()
 
 export default function (req, res) {
   const { runExport, country, magazine, issuenumber, contributors, content } = req.body
-  const fileName = `${runExport ? '' : '_'}${magazine}.${issuenumber}.svg`
-  const svgPath = `${process.env.EDGES_PATH}/${country}/gen/${fileName}`
+  const svgPath = getSvgPath(runExport, country, magazine, issuenumber)
   const publicationCode = `${country}/${magazine}`
 
   fs.mkdirSync(require('path').dirname(svgPath), { recursive: true })
@@ -34,6 +33,8 @@ export default function (req, res) {
               },
               { headers: req.headers }
             )
+            fs.unlinkSync(getSvgPath(false, country, magazine, issuenumber))
+
             res.writeHeader(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify(paths))
           } catch (e) {
@@ -49,6 +50,9 @@ export default function (req, res) {
     }
   })
 }
+
+const getSvgPath = (isExport, country, magazine, issuenumber) =>
+  `${process.env.EDGES_PATH}/${country}/gen/${isExport ? '' : '_'}${magazine}.${issuenumber}.svg`
 
 const returnError = (res, error) => {
   res.writeHeader(500, { 'Content-Type': 'application/json' })
