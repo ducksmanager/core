@@ -34,7 +34,7 @@ export default {
   }),
 
   methods: {
-    ...mapMutations('edgeCatalog', ['addCurrentEdges']),
+    ...mapMutations('edgeCatalog', ['addCurrentEdges', 'setPublishedEdges']),
     ...mapActions('coa', ['fetchPublicationNames']),
     ...mapActions('user', ['fetchAllUsers']),
 
@@ -123,12 +123,25 @@ export default {
         })
       }
 
-      this.addCurrentEdges(newEdges)
-      await this.fetchPublicationNames([
+      const publicationCodes = [
         ...new Set(
           Object.values(newEdges).map(({ country, magazine }) => `${country}/${magazine}`)
         ),
-      ])
+      ]
+      await this.fetchPublicationNames(publicationCodes)
+
+      for (const publicationCode of publicationCodes) {
+        this.setPublishedEdges({
+          publicationCode,
+          publishedEdges: await this.$axios.$get(`/api/edges/${publicationCode}`),
+        })
+      }
+
+      for (const edgeIssueCode of Object.keys(newEdges)) {
+        newEdges[edgeIssueCode].published = vm.getEdgeStatus(newEdges[edgeIssueCode])
+      }
+
+      this.addCurrentEdges(newEdges)
 
       this.isCatalogLoaded = true
     })
