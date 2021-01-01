@@ -20,13 +20,13 @@ export default {
       },
       {
         status: 'ongoing_by_other_user',
-        l10nKey: 'Pending edges',
+        l10nKey: 'Ongoing edges handled by other users',
         apiUrl: '/api/edgecreator/v2/model/editedbyother/all',
         svgCheckFn: (edge) => edge.designers.length,
       },
       {
         status: 'pending',
-        l10nKey: 'Ongoing edges handled by other users',
+        l10nKey: 'Pending edges',
         apiUrl: '/api/edgecreator/v2/model/unassigned/all',
         svgCheckFn: () => true,
       },
