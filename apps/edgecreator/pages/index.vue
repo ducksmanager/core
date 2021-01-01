@@ -18,14 +18,12 @@
             <b-card class="text-center">
               <b-link
                 :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
-                :disabled="
-                  $gates.hasRole('display') ||
-                  (status === 'ongoing_by_other_user' && !$gates.hasRole('admin'))
-                "
+                :disabled="$gates.hasRole('display') || status === 'ongoing_by_other_user'"
               >
                 <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]">
                   <img
                     v-if="edge.v3 || status === 'pending'"
+                    :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
                     class="edge-preview"
                     :src="
                       edge.v3
@@ -38,6 +36,7 @@
                     :designers="edge.designers"
                     :photographers="edge.photographers"
                     :v3="edge.v3"
+                    :published="edge.published === 'published'"
                   />
                 </b-card-text>
               </b-link>

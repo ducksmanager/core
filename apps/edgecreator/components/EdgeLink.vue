@@ -8,6 +8,7 @@
     />
     <div>
       <b-badge v-if="v3">v3</b-badge>
+      <b-badge v-if="published">modification</b-badge>
       <b-badge v-for="designer in designers" :key="`designer-${designer}`"
         >{{ $t('Designer') }}:{{ designer }}</b-badge
       >
@@ -45,6 +46,10 @@ export default {
       required: true,
     },
     v3: {
+      type: Boolean,
+      required: true,
+    },
+    published: {
       type: Boolean,
       required: true,
     },
