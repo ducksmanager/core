@@ -2,14 +2,16 @@
   <div>
     <h1>{{ $t('Dashboard') }}</h1>
 
-    <template v-for="{ category, l10nKey } in edgeCategories">
-      <h3 :key="`${category}-title`">{{ $t(l10nKey) }}</h3>
+    <b-alert v-if="!isCatalogLoaded" show variant="info">{{ $t('Loading...') }}</b-alert>
 
-      <b-container :key="category">
-        <b-row v-if="getEdgesByStatus(category).length">
+    <template v-for="{ status, l10nKey } in edgeCategories" v-else>
+      <h3 :key="`${status}-title`">{{ $t(l10nKey) }}</h3>
+
+      <b-container :key="status">
+        <b-row v-if="getEdgesByStatus(status).length">
           <b-col
-            v-for="(edge, i) in getEdgesByStatus(category)"
-            :key="`${category}-${i}`"
+            v-for="(edge, i) in getEdgesByStatus(status)"
+            :key="`${status}-${i}`"
             cols="3"
             align-self="center"
           >
@@ -18,12 +20,12 @@
                 :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
                 :disabled="
                   $gates.hasRole('display') ||
-                  (category === 'ongoing_by_other_user' && !$gates.hasRole('admin'))
+                  (status === 'ongoing_by_other_user' && !$gates.hasRole('admin'))
                 "
               >
                 <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]">
                   <img
-                    v-if="edge.v3 || category === 'pending'"
+                    v-if="edge.v3 || status === 'pending'"
                     class="edge-preview"
                     :src="
                       edge.v3
@@ -69,23 +71,6 @@ export default {
   },
   mixins: [edgeCatalogMixin, redirectMixin],
   middleware: 'authenticated',
-
-  data: () => ({
-    edgeCategories: [
-      {
-        category: 'ongoing',
-        l10nKey: 'Ongoing edges',
-      },
-      {
-        category: 'pending',
-        l10nKey: 'Pending edges',
-      },
-      {
-        category: 'ongoing_by_other_user',
-        l10nKey: 'Ongoing edges handled by other users',
-      },
-    ],
-  }),
 
   methods: {
     getPhotoUrl: (country, fileName) => `${process.env.EDGES_URL}/${country}/photos/${fileName}`,

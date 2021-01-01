@@ -42,6 +42,7 @@
   "Insert a text": "Ajouter un texte",
   "Insert an image": "Ajouter une image",
   "Invalid file type: {mimetype}, the following types are allowed: {allowedMimeTypes}": "Type de fichier invalide : {mimetype}, les types suivants sont autorisés : {allowedMimeTypes}",
+  "Loading...": "Chargement...",
   "Login": "Se connecter",
   "Move down": "Déplacer vers le bas",
   "Move up": "Déplacer vers le haut",
