@@ -88,7 +88,26 @@ export default {
           this.waitUntil(
             () => vm.$refs.image,
             () => {
-              vm.enableDragResize(vm.$refs.image)
+              vm.enableDragResize(vm.$refs.image, {
+                onresizemove: ({ rect }) => {
+                  let { width, height } = rect
+                  const isVertical = [90, 270].includes(vm.options.rotation)
+                  if (isVertical) {
+                    ;[width, height] = [height, width]
+                  }
+                  const options = {
+                    width: width / vm.zoom,
+                    height: height / vm.zoom,
+                  }
+
+                  // Correct coordinates due to rotation center moving after resize
+                  if (isVertical) {
+                    options.y = vm.options.y - (options.height - vm.options.height) / 2
+                    options.x = vm.options.x - (options.width - vm.options.width) / 2
+                  }
+                  vm.$root.$emit('set-options', options)
+                },
+              })
               vm.applyTextImageDimensions()
             },
             2000,
