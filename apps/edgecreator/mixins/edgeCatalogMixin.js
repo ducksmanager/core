@@ -9,6 +9,30 @@ export default {
   },
   mixins: [svgUtilsMixin],
 
+  data: () => ({
+    isCatalogLoaded: false,
+    edgeCategories: [
+      {
+        status: 'ongoing',
+        l10nKey: 'Ongoing edges',
+        apiUrl: '/api/edgecreator/v2/model',
+        svgCheckFn: (edge, currentUser) => edge.designers.includes(currentUser),
+      },
+      {
+        status: 'ongoing_by_other_user',
+        l10nKey: 'Pending edges',
+        apiUrl: '/api/edgecreator/v2/model/editedbyother/all',
+        svgCheckFn: (edge) => edge.designers.length,
+      },
+      {
+        status: 'pending',
+        l10nKey: 'Ongoing edges handled by other users',
+        apiUrl: '/api/edgecreator/v2/model/unassigned/all',
+        svgCheckFn: () => true,
+      },
+    ],
+  }),
+
   methods: {
     ...mapMutations('edgeCatalog', ['addCurrentEdges']),
     ...mapActions('coa', ['fetchPublicationNames']),
@@ -38,14 +62,14 @@ export default {
       }
     },
     getEdgeFromSvg(edge) {
+      const currentUser = this.$cookies.get('dm-user')
       return {
         ...edge,
         v3: true,
-        status: edge.designers.length
-          ? edge.designers.includes(this.$cookies.get('dm-user'))
-            ? 'ongoing'
-            : 'ongoing_by_other_user'
-          : 'pending',
+        status: this.edgeCategories.reduce(
+          (acc, { status, svgCheckFn }) => acc || (svgCheckFn(edge, currentUser) ? status : null),
+          null
+        ),
       }
     },
     getEdgesByStatus(status) {
@@ -68,13 +92,8 @@ export default {
     const vm = this
     let newEdges = {}
 
-    const apiCalls = [
-      { status: 'ongoing', url: '/api/edgecreator/v2/model' },
-      { status: 'ongoing_by_other_user', url: '/api/edgecreator/v2/model/editedbyother/all' },
-      { status: 'pending', url: '/api/edgecreator/v2/model/unassigned/all' },
-    ]
-    for (const { status, url } of apiCalls) {
-      const data = await this.$axios.$get(url)
+    for (const { status, apiUrl } of this.edgeCategories) {
+      const data = await this.$axios.$get(apiUrl)
       newEdges = data.reduce((acc, edgeData) => {
         const edge = this.getEdgeFromApi(edgeData, status)
         return { ...acc, [edge.issuecode]: edge }
@@ -110,6 +129,8 @@ export default {
           Object.values(newEdges).map(({ country, magazine }) => `${country}/${magazine}`)
         ),
       ])
+
+      this.isCatalogLoaded = true
     })
   },
 }
