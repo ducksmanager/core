@@ -352,7 +352,7 @@ export default {
   }
 
   .page {
-    color: hsl(35, 35, 35);
+    color: #785E3A;
 
     overflow: hidden;
 
@@ -405,12 +405,12 @@ export default {
     }
 
     &.hard { // for hard page
-      background-color: hsl(35, 50, 90);
+      background-color: #F2E8D9;
     }
 
     &.page-cover {
-      background-color: hsl(35, 45, 80);
-      color: hsl(35, 35, 35);
+      background-color: #E3D0B5;
+      color: #785E3A;
     }
 
     &.single {
