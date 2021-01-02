@@ -256,13 +256,12 @@ export default {
               })
             );
 
-          const issuesWithTitles = (await axios.get(`/api/coa/list/issues/withTitle/${this.publicationcode}`)).data;
+          const issuesWithTitles = (await axios.get(`/api/coa/list/issues/withTitle/asArray/${this.publicationcode}`)).data;
 
-          this.issues = Object.keys(issuesWithTitles)
-            .map(issueNumber => ({
-              issueNumber,
-              title: issuesWithTitles[issueNumber],
-              ...(vm.userIssuesForPublication.find(({ issueNumber: userIssueNumber }) => userIssueNumber === issueNumber) || {})
+          this.issues = issuesWithTitles
+            .map(issue => ({
+              ...issue,
+              ...(vm.userIssuesForPublication.find(({ issueNumber: userIssueNumber }) => userIssueNumber === issue.issueNumber) || {})
             }));
           this.loading = false;
         }
