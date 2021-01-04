@@ -36,7 +36,6 @@ export default {
   }),
 
   mounted() {
-    console.log('mounted')
     let script = document.createElement('script')
     script.type = 'text/javascript'
     script.async = true
