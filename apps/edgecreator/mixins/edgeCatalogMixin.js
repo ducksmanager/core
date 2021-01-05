@@ -83,7 +83,7 @@ export default {
       )
       const issuecode = `${country}/${magazine} ${issuenumber}`
 
-      return (this.currentEdges[issuecode] || { status: isPublished ? 'published' : 'none' }).status
+      return (this.currentEdges[issuecode] || { status: isPublished ? 'Published' : 'none' }).status
     },
   },
 

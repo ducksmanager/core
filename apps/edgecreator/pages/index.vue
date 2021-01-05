@@ -36,7 +36,7 @@
                     :designers="edge.designers"
                     :photographers="edge.photographers"
                     :v3="edge.v3"
-                    :published="edge.published === 'published'"
+                    :published="edge.published === 'Published'"
                   />
                 </b-card-text>
               </b-link>
