@@ -31,7 +31,7 @@ export default {
             if (!routes) {
                 return route;
             }
-            const routeName = routes[route.replaceAll(PATH_REGEX, '{$1}')]
+            const routeName = routes[route.replace(PATH_REGEX, '{$1}')]
             const routeL10n = routes[routeName]
             if (!routeL10n) {
                 return route
@@ -42,7 +42,7 @@ export default {
             })
 
             // Remove all remaining (default) parameters
-            finalRoute = finalRoute.replaceAll(PATH_REGEX, '').replace(/\/$/, '')
+            finalRoute = finalRoute.replace(PATH_REGEX, '').replace(/\/$/, '')
             return finalRoute
         },
 

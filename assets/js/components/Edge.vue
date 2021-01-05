@@ -131,7 +131,7 @@ export default {
     },
 
     spriteClass() {
-      return this.id && this.spritePath ? `edges-${this.publicationCode.replaceAll('/', '-')}-${this.issueNumber}` : ''
+      return this.id && this.spritePath ? `edges-${this.publicationCode.replace(/\//g, '-')}-${this.issueNumber}` : ''
     }
   },
 
