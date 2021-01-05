@@ -170,11 +170,16 @@ export default {
   },
   async mounted() {
     const vm = this
-    let country, magazine, issuenumberMin, issuenumberMax
+    let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers
     try {
-      ;[, country, magazine, issuenumberMin, issuenumberMax] = vm.$route.params.pathMatch.match(
-        /^([^/]+)\/(.+) ([^/]+)(?:\/to\/(.+))?$/
-      )
+      ;[
+        ,
+        country,
+        magazine,
+        issuenumberMin,
+        issuenumberMax,
+        issuenumberOthers,
+      ] = vm.$route.params.pathMatch.match(/^([^/]+)\/([^ ]+) ([^, ]+)(?: to (.+))?(?:,([^$]+))?$/)
       magazine = magazine.replaceAll(/ +/g, '')
     } catch (_) {
       this.error = 'Invalid URL'
@@ -187,7 +192,11 @@ export default {
     await this.loadPublicationIssues()
 
     try {
-      this.setIssuenumbersFromMinMax({ min: issuenumberMin, max: issuenumberMax })
+      this.setIssuenumbers({
+        min: issuenumberMin,
+        max: issuenumberMax,
+        others: issuenumberOthers,
+      })
 
       for (let idx = 0; idx < vm.issuenumbers.length; idx++) {
         if (!Object.prototype.hasOwnProperty.call(vm.issuenumbers, idx)) {
@@ -241,7 +250,7 @@ export default {
     ]),
     ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
     ...mapActions([
-      'setIssuenumbersFromMinMax',
+      'setIssuenumbers',
       'loadPublicationIssues',
       'loadSurroundingEdges',
       'loadItems',
