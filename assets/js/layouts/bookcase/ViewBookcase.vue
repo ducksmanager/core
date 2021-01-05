@@ -24,7 +24,7 @@
         v-html="$t('EXPLICATION_ORDRE_MAGAZINES', [`<a href='${$r('/bookcase/options')}'>${l10n.BIBLIOTHEQUE_OPTIONS_COURT}</a>`])"
       />
       <div
-        v-if="user && user.isShareEnabled && username !== 'demo' && sortedBookcase.length"
+        v-if="user && user.isShareEnabled && username !== 'demo' && sortedBookcase && sortedBookcase.length"
         class="mb-4"
       >
         <b-alert
@@ -112,7 +112,7 @@
           </div>
         </div>
         <IssueSearch
-          v-if="sortedBookcase.length"
+          v-if="sortedBookcase && sortedBookcase.length"
           style="float: right"
           :with-story-link="false"
           @issue-selected="highlightIssue"
@@ -125,7 +125,7 @@
         @close-book="currentEdgeOpened = null"
       />
       <Bookcase
-        v-if="sortedBookcase.length"
+        v-if="sortedBookcase && sortedBookcase.length"
         :bookcase-textures="bookcaseTextures"
         :current-edge-highlighted="currentEdgeHighlighted"
         :current-edge-opened="currentEdgeOpened"
