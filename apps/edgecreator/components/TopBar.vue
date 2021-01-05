@@ -151,9 +151,14 @@
           :publicationcode="`${country}/${magazine}`"
           :publicationname="publicationName"
           :issuenumber="issuenumbers[0]"
-        >
-          <template v-if="issuenumbers.length > 1" #title-suffix
+          ><template v-if="isRange" #title-suffix
             >to {{ issuenumbers[issuenumbers.length - 1] }}</template
+          ><template v-else-if="issuenumbers.length > 1" #title-suffix
+            ><span
+              v-for="otherIssuenumber in issuenumbers.slice(1)"
+              :key="`other-${otherIssuenumber}`"
+              >, {{ otherIssuenumber }}</span
+            ></template
           >
         </Issue>
       </b-col>
@@ -262,6 +267,7 @@ export default {
       'country',
       'magazine',
       'issuenumbers',
+      'isRange',
       'edgesBefore',
       'edgesAfter',
       'photoUrls',

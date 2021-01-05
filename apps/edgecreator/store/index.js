@@ -4,6 +4,7 @@ export const state = () => ({
   country: null,
   magazine: null,
   issuenumbers: [],
+  isRange: false,
   photoUrls: {},
   contributors: {},
 
@@ -30,6 +31,9 @@ export const mutations = {
   },
   setIssuenumbers(state, issuenumbers) {
     state.issuenumbers = issuenumbers
+  },
+  setIsRange(state, isRange) {
+    state.isRange = isRange
   },
   setPhotoUrl(state, { issuenumber, filename }) {
     Vue.set(state.photoUrls, issuenumber, filename)
@@ -100,14 +104,15 @@ const numericSortCollator = new Intl.Collator(undefined, {
 })
 
 export const actions = {
-  setIssuenumbersFromMinMax({ getters, commit }, { min, max }) {
+  setIssuenumbers({ getters, commit }, { min, max, others }) {
     const firstIssueIndex = getters.publicationIssues.findIndex((issue) => issue === min)
     if (firstIssueIndex === -1) {
       throw new Error(`Issue ${min} doesn't exist`)
     }
     if (max === undefined) {
-      commit('setIssuenumbers', [min])
+      commit('setIssuenumbers', [min, ...(others ? others.split(',') : [])])
     } else {
+      commit('setIsRange', true)
       let lastIssueIndex = getters.publicationIssues.findIndex((issue) => issue === max)
       if (lastIssueIndex === -1) {
         ;[lastIssueIndex] = Object.keys(getters.publicationIssues).slice(-1)
