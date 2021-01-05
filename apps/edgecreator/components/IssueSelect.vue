@@ -80,7 +80,7 @@ export default {
             })
             return {
               value: issuenumber,
-              text: `${issuenumber}${status === 'none' ? '' : ` (${status})`}`,
+              text: `${issuenumber}${status === 'none' ? '' : ` (${this.$t(status)})`}`,
               disabled:
                 (this.disableOngoingOrPublished && status !== 'none') ||
                 (this.disableNotOngoingNorPublished && status === 'none'),
