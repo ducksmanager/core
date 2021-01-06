@@ -265,11 +265,16 @@ export default {
   },
 }
 </script>
-<style>
+<style lang="scss" scoped>
 #wrapper {
   display: flex;
   flex-direction: column;
   user-select: none;
+}
+
+.alert-warning {
+  margin-left: 350px;
+  margin-right: 150px;
 }
 
 .picker {
@@ -282,24 +287,20 @@ export default {
 
 table.edges {
   float: right;
-}
-
-table.edges tr td,
-table.edges tr th {
-  text-align: center;
-}
-
-table.edges tr td {
-  padding: 0;
-  vertical-align: bottom;
-}
-
-table.edges tr th {
-  vertical-align: bottom;
-  padding: 1px 2px;
-}
-
-table.edges tr th.surrounding-edge {
-  font-weight: normal;
+  tr {
+    td {
+      text-align: center;
+      padding: 0;
+      vertical-align: bottom;
+    }
+    th {
+      text-align: center;
+      vertical-align: bottom;
+      padding: 1px 2px;
+    }
+    th.surrounding-edge {
+      font-weight: normal;
+    }
+  }
 }
 </style>
