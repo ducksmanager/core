@@ -2,7 +2,9 @@
   <b-container fluid>
     <b-row align="center" class="pt-2">
       <b-col class="text-left">
-        <b-button v-b-toggle.sidebar>{{ $t('Options') }}</b-button>
+        <b-button v-b-toggle.sidebar class="options position-fixed mt-2">{{
+          $t('Options')
+        }}</b-button>
         <b-sidebar id="sidebar" v-model="showSidebar" :title="$t('Options')" shadow>
           <b-container class="px-3 py-2">
             <b-row align-items="center">
@@ -290,6 +292,10 @@ export default {
 }
 </script>
 <style>
+.btn.options {
+  top: 0;
+  left: 130px;
+}
 .language-list {
   position: absolute;
   right: 0;
