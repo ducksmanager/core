@@ -167,6 +167,11 @@ export default {
         await this.loadSurroundingEdges()
       }
     },
+    error(newValue) {
+      if (newValue) {
+        console.trace(newValue)
+      }
+    },
   },
   async mounted() {
     const vm = this
@@ -214,7 +219,7 @@ export default {
         }
       }
     } catch (e) {
-      vm.error = e
+      this.error = e
     }
   },
   methods: {
