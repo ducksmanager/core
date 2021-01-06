@@ -28,23 +28,27 @@ export default {
   },
 
   methods: {
-    checkSameComponentsAsPreviousIssue(issuenumber, issueSteps) {
-      const previousIssuenumber = Object.keys(this.steps)[Object.keys(this.steps).length - 1]
-      const previousIssueSteps = this.steps[previousIssuenumber]
+    checkSameComponentsAsCompletedEdge(issuenumber, issueSteps) {
+      const vm = this
+      const completedIssuenumber = Object.keys(this.steps).find(
+        (issueNumber) => vm.steps[issueNumber].length
+      )
+      const completedIssueSteps = this.steps[completedIssuenumber]
       const getComponents = (steps) => steps && steps.map(({ component }) => component).join('+')
-      const previousIssueComponents = getComponents(previousIssueSteps)
+      const previousIssueComponents = getComponents(completedIssueSteps)
       const currentIssueComponents = getComponents(issueSteps)
       if (
-        previousIssuenumber !== issuenumber &&
-        previousIssueSteps &&
+        completedIssuenumber !== issuenumber &&
+        completedIssueSteps &&
         previousIssueComponents !== currentIssueComponents
       ) {
         throw new Error(
           this.$t(
-            `Issue numbers {previousIssuenumber} and {issuenumber} don't have the same components` +
-              `: {previousIssueComponents} vs {currentIssueComponents}`,
+            `Issue numbers {completedIssuenumber} and {issuenumber} ` +
+              `don't have the same components` +
+              `: {completedIssueSteps} vs {currentIssueComponents}`,
             {
-              previousIssuenumber,
+              completedIssuenumber,
               issuenumber,
               previousIssueComponents,
               currentIssueComponents,
@@ -54,7 +58,7 @@ export default {
       }
     },
     setSteps(issuenumber, issueSteps) {
-      this.checkSameComponentsAsPreviousIssue(issuenumber, issueSteps)
+      this.checkSameComponentsAsCompletedEdge(issuenumber, issueSteps)
       Vue.set(this.steps, issuenumber, issueSteps)
     },
     copySteps(issuenumber, otherIssuenumber) {

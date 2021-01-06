@@ -42,7 +42,7 @@
   "Insert a text": "Ajouter un texte",
   "Insert an image": "Ajouter une image",
   "Invalid file type: {mimetype}, the following types are allowed: {allowedMimeTypes}": "Type de fichier invalide : {mimetype}, les types suivants sont autorisés : {allowedMimeTypes}",
-  "Issue numbers {previousIssuenumber} and {issuenumber} don't have the same components: {previousIssueComponents} vs {currentIssueComponents}": "Les tranches des numéros {previousIssuenumber} et {issuenumber} ne contiennent pas les mêmes composants : {previousIssueComponents} vs {currentIssueComponents}",
+  "Issue numbers {completedIssuenumber} and {issuenumber} don't have the same components: {completedIssueSteps} vs {currentIssueComponents}": "Les tranches des numéros {completedIssuenumber} et {issuenumber} ne contiennent pas les mêmes composants : {completedIssueSteps} vs {currentIssueComponents}",
   "Loading...": "Chargement...",
   "Login": "Se connecter",
   "Move down": "Déplacer vers le bas",
