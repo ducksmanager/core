@@ -31,15 +31,25 @@ export default {
     checkSameComponentsAsPreviousIssue(issuenumber, issueSteps) {
       const previousIssuenumber = Object.keys(this.steps)[Object.keys(this.steps).length - 1]
       const previousIssueSteps = this.steps[previousIssuenumber]
-      const getComponents = (steps) => steps.map(({ component }) => component).join('+')
+      const getComponents = (steps) => steps && steps.map(({ component }) => component).join('+')
+      const previousIssueComponents = getComponents(previousIssueSteps)
+      const currentIssueComponents = getComponents(issueSteps)
       if (
         previousIssuenumber !== issuenumber &&
         previousIssueSteps &&
-        getComponents(previousIssueSteps) !== getComponents(issueSteps)
+        previousIssueComponents !== currentIssueComponents
       ) {
         throw new Error(
-          `Issue numbers ${previousIssuenumber} and ${issuenumber} don't have the same components` +
-            `: ${getComponents(previousIssueSteps)} vs ${getComponents(issueSteps)}`
+          this.$t(
+            `Issue numbers {previousIssuenumber} and {issuenumber} don't have the same components` +
+              `: {previousIssueComponents} vs {currentIssueComponents}`,
+            {
+              previousIssuenumber,
+              issuenumber,
+              previousIssueComponents,
+              currentIssueComponents,
+            }
+          )
         )
       }
     },
