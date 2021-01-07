@@ -39,6 +39,25 @@ export const getUserRoles = async (req) => {
   return [roleMapping[privileges.data.EdgeCreator] || 'display']
 }
 
+export const checkUserRoles = async (req, res, checkFn) => {
+  try {
+    const userRoles = await getUserRoles(req)
+    if (!userRoles.length) {
+      return false
+    }
+    if (!checkFn(userRoles)) {
+      res.writeHeader(403)
+      res.end('Forbidden')
+      return false
+    }
+    return true
+  } catch ({ response }) {
+    res.writeHeader(response.status)
+    res.end(response.statusText)
+    return false
+  }
+}
+
 const roleMapping = {
   Affichage: 'display',
   Edition: 'edit',

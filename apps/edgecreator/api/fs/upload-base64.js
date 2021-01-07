@@ -1,4 +1,4 @@
-import { addAxiosInterceptor } from '../api'
+import { addAxiosInterceptor, checkUserRoles } from '../api'
 
 const fs = require('fs')
 const base64Img = require('base64-img')
@@ -7,6 +7,13 @@ const edgesPath = process.env.EDGES_PATH
 addAxiosInterceptor()
 
 export default async function (req, res) {
+  if (
+    !(await checkUserRoles(req, res, (userRoles) =>
+      userRoles.some((role) => ['admin', 'edit'].includes(role))
+    ))
+  ) {
+    return
+  }
   if (req.method === 'POST') {
     const path = `${edgesPath}/${req.body.country}/photos`
     const tentativeFileName = `${req.body.magazine}.${req.body.issuenumber}.photo`

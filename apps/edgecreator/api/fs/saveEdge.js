@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { addAxiosInterceptor, getUserRoles } from '../api'
+import { addAxiosInterceptor, checkUserRoles } from '../api'
 
 const fs = require('fs')
 const sharp = require('sharp')
@@ -7,21 +7,14 @@ const sharp = require('sharp')
 addAxiosInterceptor()
 
 export default async function (req, res) {
-  let userRoles
-  try {
-    userRoles = await getUserRoles(req)
-  } catch ({ response }) {
-    res.writeHeader(response.status)
-    res.end(response.statusText)
-    return
-  }
   const { runExport, country, magazine, issuenumber, contributors, content } = req.body
-  if (!userRoles.length) {
-    return
-  }
-  if (!(userRoles.includes('admin') || (userRoles.includes('edit') && !runExport))) {
-    res.writeHeader(403)
-    res.end('Forbidden')
+  if (
+    !(await checkUserRoles(
+      req,
+      res,
+      (userRoles) => userRoles.includes('admin') || (userRoles.includes('edit') && !runExport)
+    ))
+  ) {
     return
   }
 

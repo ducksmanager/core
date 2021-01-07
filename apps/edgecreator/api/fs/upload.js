@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { addAxiosInterceptor, getUserCredentials } from '../api'
+import { addAxiosInterceptor, checkUserRoles, getUserCredentials } from '../api'
 
 const fs = require('fs')
 const crypto = require('crypto')
@@ -10,6 +10,13 @@ const edgesPath = process.env.EDGES_PATH
 addAxiosInterceptor()
 
 export default async function (req, res) {
+  if (
+    !(await checkUserRoles(req, res, (userRoles) =>
+      userRoles.some((role) => ['admin', 'edit'].includes(role))
+    ))
+  ) {
+    return
+  }
   if (req.method === 'POST') {
     const userCredentials = getUserCredentials(req)
 
