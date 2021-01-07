@@ -19,6 +19,32 @@ export const addAxiosInterceptor = () => {
   }))
 }
 
+export const getUserCredentials = (req) =>
+  req.headers.cookie
+    ? {
+        'x-dm-user': req.headers.cookie.match(/(?<=dm-user=)[^;]+/)[0],
+        'x-dm-pass': req.headers.cookie.match(/(?<=dm-pass=)[^;]+/)[0],
+      }
+    : null
+
+export const getUserRoles = async (req) => {
+  const privileges = await axios
+    .get(`${process.env.BACKEND_URL}/collection/privileges`, {
+      headers: getUserCredentials(req),
+    })
+    .catch((e) => {
+      console.error(e)
+      throw e
+    })
+  return [roleMapping[privileges.data.EdgeCreator] || 'display']
+}
+
+const roleMapping = {
+  Affichage: 'display',
+  Edition: 'edit',
+  Admin: 'admin',
+}
+
 addAxiosInterceptor()
 
 export default async (req, res) => {

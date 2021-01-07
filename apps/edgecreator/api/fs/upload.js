@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { addAxiosInterceptor } from '../api'
+import { addAxiosInterceptor, getUserCredentials } from '../api'
 
 const fs = require('fs')
 const crypto = require('crypto')
@@ -11,10 +11,7 @@ addAxiosInterceptor()
 
 export default async function (req, res) {
   if (req.method === 'POST') {
-    const userCredentials = {
-      'x-dm-user': req.headers.cookie.match(/(?<=dm-user=)[^;]+/)[0],
-      'x-dm-pass': req.headers.cookie.match(/(?<=dm-pass=)[^;]+/)[0],
-    }
+    const userCredentials = getUserCredentials(req)
 
     let isEdgePhoto
     let isMultipleEdgePhoto
