@@ -1,13 +1,30 @@
 import axios from 'axios'
-import { addAxiosInterceptor } from '../api'
+import { addAxiosInterceptor, getUserRoles } from '../api'
 
 const fs = require('fs')
 const sharp = require('sharp')
 
 addAxiosInterceptor()
 
-export default function (req, res) {
+export default async function (req, res) {
+  let userRoles
+  try {
+    userRoles = await getUserRoles(req)
+  } catch ({ response }) {
+    res.writeHeader(response.status)
+    res.end(response.statusText)
+    return
+  }
   const { runExport, country, magazine, issuenumber, contributors, content } = req.body
+  if (!userRoles.length) {
+    return
+  }
+  if (!(userRoles.includes('admin') || (userRoles.includes('edit') && !runExport))) {
+    res.writeHeader(403)
+    res.end('Forbidden')
+    return
+  }
+
   const svgPath = getSvgPath(runExport, country, magazine, issuenumber)
   const publicationCode = `${country}/${magazine}`
 
