@@ -23,16 +23,24 @@
     size="sm"
     @click="onClick"
   >
-    <b-icon-archive v-if="!isExport" />
+    <b-icon-archive v-if="!withExport && !withSubmit" />
     <template v-else>
       <b-icon-cloud-arrow-up-fill />
       <b-modal
-        v-model="showExportModal"
-        :title="$t('Edge publication')"
+        v-model="showModal"
+        :title="$t(withExport ? 'Edge publication' : 'Edge validation')"
         ok-only
-        :ok-title="$t('Export')"
+        :ok-disabled="!hasAtLeastOneUser('photographers') || !hasAtLeastOneUser('designers')"
+        :ok-title="$t(withExport ? 'Export' : 'Submit')"
         @ok="run"
       >
+        <b-alert show variant="info">{{
+          $t(
+            'Once your edge is ready, indicate the photographers and the designers of the edge. ' +
+              'When you click "Submit", the edge will be sent to an administrator for validation ' +
+              'before it is published on DucksManager'
+          )
+        }}</b-alert>
         <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
           <h2>{{ $t(ucFirst(contributionType)) }}</h2>
           <b-alert v-if="!hasAtLeastOneUser(contributionType)" show variant="warning">{{
@@ -91,25 +99,26 @@ export default {
   },
   mixins: [saveEdgeMixin],
   props: {
+    withSubmit: {
+      type: Boolean,
+      default: false,
+    },
     withExport: {
       type: Boolean,
       default: false,
     },
   },
   data: () => ({
-    showExportModal: false,
+    showModal: false,
     progress: 0,
     result: null,
   }),
   computed: {
     label() {
-      return this.withExport ? this.$t('Export') : this.$t('Save')
+      return this.$t(this.withExport ? 'Export' : this.withSubmit ? 'Submit' : 'Save')
     },
     variant() {
-      return this.withExport ? 'success' : 'primary'
-    },
-    isExport() {
-      return this.withExport
+      return this.withExport || this.withSubmit ? 'success' : 'primary'
     },
     ...mapState(['contributors', 'country', 'magazine', 'issuenumbers']),
     ...mapState('user', ['allUsers']),
@@ -157,8 +166,8 @@ export default {
       )
     },
     onClick() {
-      if (this.withExport) {
-        this.showExportModal = !this.showExportModal
+      if (this.withExport || this.withSubmit) {
+        this.showModal = !this.showModal
       } else {
         this.run()
       }
@@ -173,7 +182,8 @@ export default {
             vm.magazine,
             issuenumber,
             vm.contributors[issuenumber],
-            vm.withExport
+            vm.withExport,
+            vm.withSubmit
           ).then((response) => {
             const isSuccess = response && response.svgPath
             if (isSuccess) {
