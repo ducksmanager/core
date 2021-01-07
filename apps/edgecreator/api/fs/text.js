@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { addAxiosInterceptor } from '../api'
+import { addAxiosInterceptor, checkUserRoles } from '../api'
 
 const fs = require('fs')
 
@@ -8,7 +8,14 @@ const fontHashes = {}
 
 addAxiosInterceptor()
 
-export default function (req, res) {
+export default async function (req, res) {
+  if (
+    !(await checkUserRoles(req, res, (userRoles) =>
+      userRoles.some((role) => ['admin', 'edit'].includes(role))
+    ))
+  ) {
+    return
+  }
   axios
     .get(`${process.env.BACKEND_URL}/edgecreator/myfontspreview${req.url}`, {
       headers: req.headers,
