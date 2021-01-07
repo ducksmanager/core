@@ -58,6 +58,11 @@ export const checkUserRoles = async (req, res, checkFn) => {
   }
 }
 
+export const returnError = (res, error) => {
+  res.writeHeader(500, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ error }))
+}
+
 const roleMapping = {
   Affichage: 'display',
   Edition: 'edit',

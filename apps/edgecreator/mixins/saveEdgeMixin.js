@@ -12,7 +12,14 @@ export default {
       })
       return element
     },
-    saveEdgeSvg(country, magazine, issuenumber, contributors, withExport = false) {
+    saveEdgeSvg(
+      country,
+      magazine,
+      issuenumber,
+      contributors,
+      withExport = false,
+      withSubmit = false
+    ) {
       const vm = this
       const svgElementId = `edge-canvas-${issuenumber}`
       const cleanSvg = this.removeVueMarkup(document.getElementById(svgElementId).cloneNode(true))
@@ -21,6 +28,7 @@ export default {
       }
       return vm.$axios.$put('/fs/save', {
         runExport: withExport,
+        runSubmit: withSubmit,
         country,
         magazine,
         issuenumber,

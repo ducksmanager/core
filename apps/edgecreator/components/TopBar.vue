@@ -143,8 +143,9 @@
           </b-modal>
         </b-button>
 
-        <save-button />
-        <save-button v-role="'admin'" with-export />
+        <save-model-button />
+        <save-model-button v-role="'edit'" with-submit />
+        <save-model-button v-role="'admin'" with-export />
       </b-col>
     </b-row>
     <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey">
@@ -192,14 +193,14 @@ import Issue from 'ducksmanager/assets/js/components/Issue.vue'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
 import IssueSelect from '@/components/IssueSelect'
-import SaveButton from '@/components/SaveModelButton'
+import SaveModelButton from '@/components/SaveModelButton'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 
 export default {
   name: 'TopBar',
   components: {
-    SaveButton,
+    SaveModelButton,
     Issue,
     IssueSelect,
     Gallery,
