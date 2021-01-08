@@ -111,9 +111,14 @@
         :issuenumber="event.issueNumber"
         hide-condition
       />
-      {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT_2 }}
+      <template v-if="event.users.length>1">
+        {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT_2_MULTIPLE }}
+      </template>
+      <template v-else>
+        {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT_2 }}
+      </template>
+      <slot />
     </template>
-    <slot />
   </div>
 </template>
 <script>

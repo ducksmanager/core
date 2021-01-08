@@ -245,7 +245,8 @@ NEWS_ONT_CREE_TRANCHE: ont créé la tranche
 NEWS_ONT_CREE_TRANCHE_2: pour la bibliothèque DucksManager
 NEWS_A_RECU_NUMERO_ABONNEMENT: a reçu
 NEWS_ONT_RECU_NUMERO_ABONNEMENT: ont reçu
-NEWS_ONT_RECU_NUMERO_ABONNEMENT_2: grâce à leur abonnement à ce magazine
+NEWS_ONT_RECU_NUMERO_ABONNEMENT_2: grâce à son abonnement à ce magazine
+NEWS_ONT_RECU_NUMERO_ABONNEMENT_2_MULTIPLE: grâce à leur abonnement à ce magazine
 NEWS_TITRE: Récemment sur DucksManager...
 NIVEAU: niveau
 NOM_BOUQUINERIE: Nom de la bouquinerie
