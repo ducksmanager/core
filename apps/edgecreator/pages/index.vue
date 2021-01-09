@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="$gates.getRoles().length">
     <h1>{{ $t('Dashboard') }}</h1>
 
     <b-alert v-if="!isCatalogLoaded" show variant="info">{{ $t('Loading...') }}</b-alert>
@@ -48,7 +48,7 @@
 
     <hr />
 
-    <b-container v-role:unless="'viewer'" class="mb-3" align="center">
+    <b-container v-role:unless="'display'" class="mb-3" align="center">
       <b-button to="/edit/new">{{ $t('Create or edit an edge model') }}</b-button>
     </b-container>
 
