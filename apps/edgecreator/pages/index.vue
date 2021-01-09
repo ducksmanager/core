@@ -12,7 +12,6 @@
           <b-col
             v-for="(edge, i) in getEdgesByStatus(status)"
             :key="`${status}-${i}`"
-            cols="3"
             align-self="center"
           >
             <b-card class="text-center">
@@ -54,7 +53,7 @@
     </b-container>
 
     <b-container align="center">
-      <b-button to="/upload-multiple">{{ $t('Send edge photos') }}</b-button>
+      <b-button to="/upload">{{ $t('Send edge photos') }}</b-button>
     </b-container>
   </div>
 </template>

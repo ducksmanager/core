@@ -239,6 +239,7 @@ export default {
   }
 
   > div {
+    text-align: center;
     color: #999;
   }
 }
