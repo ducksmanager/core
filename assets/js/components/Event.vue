@@ -117,8 +117,8 @@
       <template v-else>
         {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT_2 }}
       </template>
-      <slot />
     </template>
+    <slot />
   </div>
 </template>
 <script>
