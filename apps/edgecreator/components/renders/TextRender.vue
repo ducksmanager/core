@@ -30,14 +30,14 @@ export default {
     options: {
       type: Object,
       default: () => ({
-        x: -35,
+        x: -25,
         y: 50,
         width: null,
         height: null,
         src: null,
         rotation: 270,
-        fgColor: '000000',
-        bgColor: 'ffffff',
+        fgColor: '#000000',
+        bgColor: '#ffffff',
         font: 'redrooster/block-gothic-rr/demi-extra-condensed',
         text: 'Le journal de mickey',
         internalWidth: 700,
@@ -178,12 +178,14 @@ export default {
     },
 
     applyTextImageDimensions() {
-      const naturalAspectRatio = this.image.height / this.image.width
+      const naturalAspectRatio = this.image.dimensions.height / this.image.dimensions.width
       const options = { ...this.options, stepNumber: this.stepNumber }
       if (options.height === null) {
         // By default, with a 270° rotation,
         // the text shouldn't be larger than the width of the edge
-        options.height = Math.min(this.image.height, this.width)
+        // noinspection JSSuspiciousNameCombination
+        options.height = 0.8 * this.width
+        options.width = options.height / naturalAspectRatio
       } else if (options.heightCompression) {
         if (options.rotation === 90 || options.rotation === 270) {
           options.height = options.widthCompression * this.width
