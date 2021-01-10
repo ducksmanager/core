@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-row class="vh-100 text-center" align-v="center">
-      <b-col cols="4" offset="4">
+      <b-col class="d-flex flex-column align-items-center" cols="6" offset="3" md="4" offset-md="4">
         <h2>EdgeCreator</h2>
         <b-form @submit.prevent="login()">
           <b-form-input
@@ -19,7 +19,7 @@
             type="password"
             required
           ></b-form-input>
-          <b-button type="submit" variant="primary">{{ $t('Login') }}</b-button>
+          <b-button type="submit" variant="primary" class="mt-3">{{ $t('Login') }}</b-button>
         </b-form>
       </b-col>
     </b-row>
