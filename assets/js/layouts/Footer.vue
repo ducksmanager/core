@@ -1,9 +1,9 @@
 <template>
   <div id="footer">
     <div
-      v-show="userCount"
-      id="user_count"
-      v-html="$t('UTILISATEURS_INSCRITS', [userCount])"
+      v-show="count"
+      id="user-count"
+      v-html="$t('UTILISATEURS_INSCRITS', [count])"
     />
     <div>
       {{ l10n.REMERCIEMENT_LOGO }}
@@ -20,25 +20,23 @@
 </template>
 
 <script>
-import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
-import {userCountCache} from "../util/cache";
-
-const api = axios.create({
-  adapter: userCountCache.adapter,
-})
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Footer",
   mixins: [l10nMixin],
-
-  data: () => ({
-    userCount: null
-  }),
+  computed: {
+    ...mapState("users", ["count"])
+  },
 
   async mounted() {
-    this.userCount = (await api.get("/global-stats/user/count")).data.count
+    await this.fetchCount()
   },
+
+  methods: {
+    ...mapActions("users", ["fetchCount"])
+  }
 }
 </script>
 
@@ -57,7 +55,7 @@ export default {
   }
 }
 
-#user_count {
+#user-count {
   text-align: center;
   vertical-align: middle;
   padding-left: 4px;

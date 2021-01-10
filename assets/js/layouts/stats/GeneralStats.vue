@@ -16,6 +16,7 @@
 import ShortStats from "../../components/ShortStats";
 import axios from "axios";
 import l10nMixin from "../../mixins/l10nMixin";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "GeneralStats",
@@ -27,10 +28,19 @@ export default {
     rarityTotal: null
   }),
 
+  computed: {
+    ...mapState("users", ["count"])
+  },
+
   async mounted() {
+    await this.fetchCount()
     const { userScores, myScore } =  (await axios.get(`/global-stats/user/collection/rarity`)).data;
     this.rarityValue = userScores.length - userScores.indexOf(myScore)
-    this.rarityTotal = userScores.length
+    this.rarityTotal = this.count
+  },
+
+  methods: {
+    ...mapActions("users", ["fetchCount"])
   }
 }
 </script>

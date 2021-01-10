@@ -1,14 +1,23 @@
 import axios from "axios";
+import { userCountCache } from "../../util/cache";
+
+const api = axios.create({
+  adapter: userCountCache.adapter,
+})
 
 export default {
   namespaced: true,
   state: () => ({
+    count: null,
     stats: {},
     points: {},
     bookcaseContributors: null
   }),
 
   mutations: {
+    setCount(state, count) {
+      state.count = count
+    },
     setPoints(state, points) {
       state.points = {...state.points, ...points}
     },
@@ -21,6 +30,11 @@ export default {
   },
 
   actions: {
+    async fetchCount({state, commit}) {
+      if (!state.count) {
+        commit("setCount", (await api.get("/global-stats/user/count")).data.count)
+      }
+    },
     async fetchStats({state, commit}, userIds) {
       userIds = [...new Set(userIds)]
       const missingUserIds = userIds.filter(userId => !(Object.keys(state.points)).includes(userId))
