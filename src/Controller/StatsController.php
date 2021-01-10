@@ -19,9 +19,7 @@ class StatsController extends AbstractController
      */
     public function getUserCount(ApiService $apiService) {
         return new JsonResponse([
-            'count' => count(
-                $apiService->call('/ducksmanager/users', 'ducksmanager')['users']
-            )
+            'count' => $apiService->call('/ducksmanager/users/count', 'ducksmanager')['count']
         ]);
     }
 
