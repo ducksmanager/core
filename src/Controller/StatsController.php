@@ -42,6 +42,28 @@ class StatsController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
+     *     path="/global-stats/user/collection/rarity"
+     * )
+     */
+    public function getUserRarityStats(ApiService $apiService) {
+        $userId = $this->getUser()->getId();
+        $rarityScores = $apiService->call('/ducksmanager/users/collection/rarity', 'ducksmanager');
+        $userScores = array_map(
+            fn(array $userScoreData) => $userScoreData['averageRarity'],
+            $rarityScores
+        );
+        $myScore = array_values(array_filter(
+            $rarityScores,
+            fn(array $userScoreData) => $userScoreData['userId'] === $userId));
+        return new JsonResponse([
+            'userScores' => $userScores,
+            'myScore' => $myScore ? $myScore[0]['averageRarity'] : 0
+        ]);
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
      *     path="/global-stats/bookcase/contributors"
      * )
      */

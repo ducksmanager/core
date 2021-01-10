@@ -37,21 +37,18 @@
       <h2>{{ l10n.PRESENTATION_DEMO_TITRE }}</h2>
       <span v-html="l10n.PRESENTATION_DEMO" /> {{ (60 - new Date().getMinutes()) || 60 }} {{ l10n.MINUTES }}
     </div>
-    <div v-if="total > 0">
-      {{ l10n.POSSESSION_MAGAZINES_INTRO }} {{ total }} {{ l10n.NUMEROS }}.<br>
-      {{ l10n.POSSESSION_MAGAZINES_2 }} {{ Object.keys(totalPerPublication).length }} {{
-        l10n.POSSESSION_MAGAZINES_3
-      }}
-      {{ Object.keys(totalPerCountry).length }} {{ l10n.PAYS }}.
-      <br>{{ l10n.CLIQUEZ_SUR_MAGAZINE_POUR_EDITER }}<br><br>
-    </div>
-    <div v-else>
-      {{ l10n.COLLECTION_VIDE_1 }}
-      <br>
-      {{ l10n.COLLECTION_CLIQUER_NOUVEAU_MAGAZINE }}
-      <br>
-      <br>
-    </div>
+    <ShortStats>
+      <template #empty-collection>
+        <div class="mb-3">
+          {{ l10n.COLLECTION_CLIQUER_NOUVEAU_MAGAZINE }}
+        </div>
+      </template>
+      <template #non-empty-collection>
+        <div class="mb-3">
+          {{ l10n.CLIQUEZ_SUR_MAGAZINE_POUR_EDITER }}
+        </div>
+      </template>
+    </ShortStats>
     <PublicationList />
     <IssueList
       v-if="publicationcode || mostPossessedPublication"
@@ -71,10 +68,12 @@ import SuggestionList from "../SuggestionList";
 import Accordion from "../../components/Accordion";
 import PublicationList from "../../components/PublicationList";
 import LastPublishedEdges from "../../components/LastPublishedEdges";
+import ShortStats from "../../components/ShortStats";
 
 export default {
   name: "Manage",
   components: {
+    ShortStats,
     LastPublishedEdges,
     PublicationList,
     Accordion,

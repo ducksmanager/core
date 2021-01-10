@@ -139,6 +139,7 @@ EXPLICATION_NOTATION_AUTEURS3: to suggest you publications that may interest you
 EXPLICATION_ORDRE_MAGAZINES: By default, the magazines are ordered by country and by magazine. You can change this order by moving the magazines names on the %s page.
 EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE: Your bookcase can be viewed by other visitors of DucksManager. If you don't want that, please disable collection sharing on the %s page.
 EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE: Your bookcase can NOT be viewed by other visitors of DucksManager. If you want your bookcase to be accessible by other people, please enable collection sharing on the %s page.
+GENERAL: General
 GERER_COLLECTION: Manage my collection
 GESTION_ABONNEMENTS: Subscriptions
 GESTION_ABONNEMENTS_COURT: My subscriptions <sup>New!</sup>
@@ -300,6 +301,8 @@ PROPOSER_BOUQUINERIE: Propose a second-hand bookshop
 PUBLICATION: Publication
 PUBLICATIONS: Publications
 QUESTION_SUPPRIMER_MAGAZINE: "Would you like this magazine to be removed from your\ \ collection? In this case, the following issues will also be removed from your\ \ collection :"
+RARETE_EXPLICATION: The rarity of your collection is based on the number of other users who own each of the issues of your collection.
+RARETE_TEXTE: Your collection is ranked <b>#%d / %d</b> in terms of rarity on DucksManager.
 RECHERCHE_MAGAZINE_AUCUN_RESULTAT: No result.
 RECHERCHER_BOUQUINERIES: Find second-hand bookshops
 RECHERCHER_HISTOIRE: Story search

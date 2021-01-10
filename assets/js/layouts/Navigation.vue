@@ -21,7 +21,7 @@
             <b-icon-list />
             {{ l10n.GERER_COLLECTION }}
           </NavigationItem>
-          <NavigationItem path="/stats/publications">
+          <NavigationItem path="/stats/general">
             <b-icon-graph-up />
             {{ l10n.STATISTIQUES_COLLECTION }}
           </NavigationItem>

@@ -143,6 +143,7 @@ EXPLICATION_NOTATION_AUTEURS3: pour vous proposer des magazines susceptibles de 
 EXPLICATION_ORDRE_MAGAZINES: Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page %s.
 EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE: Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page %s.
 EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE: Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page %s.
+GENERAL: Général
 GESTION_ABONNEMENTS: Abonnements
 GERER_COLLECTION: Gérer ma collection
 GESTION_ABONNEMENTS_COURT: Mes abonnements <sup>Nouveau !</sup>
@@ -305,6 +306,8 @@ PROPOSER_BOUQUINERIE: Proposer une bouquinerie
 PUBLICATION: Publication
 PUBLICATIONS: Publications
 QUESTION_SUPPRIMER_MAGAZINE: "Souhaitez-vous supprimer ce magazine de votre collection\ \ ? Les numéros suivants seront également supprimés de votre collection dans ce\ \ cas :"
+RARETE_EXPLICATION: La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.
+RARETE_TEXTE: Le contenu de votre collection est <b>n°%d / %d</b> en terme de rareté sur DucksManager.
 RECHERCHE_MAGAZINE_AUCUN_RESULTAT: Aucun résultat.
 RECHERCHER_BOUQUINERIES: Trouver des bouquineries
 RECHERCHER_HISTOIRE: Rechercher une histoire

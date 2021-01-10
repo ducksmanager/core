@@ -3,8 +3,9 @@
     <Menu
       :title="l10n.STATISTIQUES_COLLECTION"
       :root-path="'/stats'"
-      :default-path="'/publications'"
+      :default-path="'/general'"
       :items="[
+        {path: '/general', text: l10n.GENERAL},
         {path: '/publications', text: l10n.PUBLICATIONS},
         {path: '/possessions', text: l10n.POSSESSIONS},
         {path: '/conditions', text: l10n.ETATS_NUMEROS},
@@ -20,6 +21,7 @@
       <a :href="$r('/collection/show')">{{ l10n.ICI }}</a>
       {{ l10n.AUCUN_NUMERO_POSSEDE_2 }}
     </b-alert>
+    <GeneralStats v-if="tab === 'general'" />
     <PublicationStats v-if="tab === 'publications'" />
     <ConditionStats
       v-else-if="tab === 'conditions'"
@@ -128,12 +130,14 @@ import axios from "axios";
 import AuthorList from "../components/AuthorList";
 import ConditionStats from "./stats/ConditionStats";
 import Menu from "./Menu";
+import GeneralStats from "./stats/GeneralStats";
 
 export default {
   name: "Stats",
   components: {
     Menu,
     ConditionStats,
+    GeneralStats,
     PublicationStats,
     PossessionStats,
     PurchaseStats,
