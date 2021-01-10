@@ -13,6 +13,9 @@
             v-for="(edge, i) in getEdgesByStatus(status)"
             :key="`${status}-${i}`"
             align-self="center"
+            cols="12"
+            md="6"
+            lg="3"
           >
             <b-card class="text-center">
               <b-link
