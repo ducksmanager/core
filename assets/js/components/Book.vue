@@ -36,7 +36,7 @@
             <h3>{{ l10n.TABLE_DES_MATIERES }}</h3>
           </template>
           <b-tabs
-            :value="pages.findIndex(page => page.storycode === pagesWithUrl[currentPage].storycode)"
+            :value="pages.findIndex(page => page.storycode === pagesWithUrl[currentPage] && pagesWithUrl[currentPage].storycode)"
             pills
             card
             vertical
