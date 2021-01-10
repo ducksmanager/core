@@ -21,7 +21,7 @@
         "eslint": "^7.17.0",
         "eslint-loader": "^4.0.2",
         "eslint-plugin-vue": "^7.4.1",
-        "js-yaml": "^3.14.1",
+        "js-yaml": "^4.0.0",
         "localforage": "^1.9.0",
         "mapbox-gl": "^1.13.0",
         "page-flip": "^2.0.0",

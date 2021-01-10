@@ -1,5 +1,5 @@
 import axios from "axios";
-import {safeLoad} from "js-yaml";
+import {load} from "js-yaml";
 
 import {appCache} from "../../util/cache"
 
@@ -30,7 +30,7 @@ export default {
         state.isLoading = true
 
         const yamlL10n = (await appApi.get(`${localStorage.getItem('l10nUrl')}?${localStorage.getItem('commit')}`)).data
-        commit('setL10n', safeLoad(yamlL10n))
+        commit('setL10n', load(yamlL10n))
 
         const l10nRoutes = (await appApi.get(`/routes?${localStorage.getItem('commit')}`)).data
         commit('setL10nRoutes', l10nRoutes)
