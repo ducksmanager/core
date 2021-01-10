@@ -1,10 +1,10 @@
 <template>
   <b-card class="mb-2" style="max-width: 16rem">
     <b-row v-for="dimension in ['width', 'height']" :key="dimension">
-      <b-col sm="4">
+      <b-col cols="4">
         <label :for="dimension">{{ $t(ucFirst(dimension)) }}:</label>
       </b-col>
-      <b-col sm="5">
+      <b-col cols="4">
         <b-form-input
           :id="dimension"
           :value="dimension === 'width' ? width : height"
@@ -23,7 +23,7 @@
           "
         ></b-form-input>
       </b-col>
-      <b-col sm="2" class="text-left">
+      <b-col cols="2" class="text-left">
         <label :for="dimension">mm</label>
       </b-col>
     </b-row>
