@@ -160,9 +160,10 @@ export default {
     fetchIssueUrls: async ({ state, commit }, { publicationCode, issueNumber }) => {
       const issueCode = `${publicationCode} ${issueNumber}`;
       if (!state.issueDetails[issueCode]) {
+        let issueDetails = (await coaApi.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data;
         commit("setIssueDetails", {
           issueCode,
-          issueDetails: (await coaApi.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data
+          issueDetails
         });
       }
     },

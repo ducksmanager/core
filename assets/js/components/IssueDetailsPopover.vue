@@ -69,7 +69,7 @@ export default {
     },
 
     coverUrl() {
-      const cover = this.issueDetails && this.issueDetails[this.issueCode].find(({position}) => !/^p/.test(position))
+      const cover = this.issueDetails && this.issueDetails[this.issueCode].entries.find(({position}) => !/^p/.test(position))
       return cover ? this.cloudinaryBaseUrl + cover.url : null
     }
   },

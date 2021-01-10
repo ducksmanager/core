@@ -33,6 +33,9 @@
               :publicationname="publicationNames[publicationCode]"
               :issuenumber="issueNumber"
             />
+            <h6 v-if="releaseDate">
+              {{ l10n.SORTIE }}{{ releaseDate }}
+            </h6>
             <h3>{{ l10n.TABLE_DES_MATIERES }}</h3>
           </template>
           <b-tabs
@@ -95,6 +98,7 @@ import Story from "./Story";
 import Issue from "./Issue";
 
 const EDGES_BASE_URL = 'https://edges.ducksmanager.net/edges/';
+const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 
 export default {
   name: "Book",
@@ -148,16 +152,29 @@ export default {
     orientation() {
       return this.book && this.book.getOrientation()
     },
+
     state() {
       return this.book && this.book.getState()
     },
 
-    pages() {
+    currentIssueDetails() {
       return this.issueDetails && this.issueDetails[`${this.publicationCode} ${this.issueNumber}`]
+    },
+
+    pages() {
+      return this.currentIssueDetails && this.currentIssueDetails.entries
     },
 
     pagesWithUrl() {
       return this.pages && this.pages.filter(({url}) => !!url)
+    },
+
+    releaseDate() {
+      if (!(this.currentIssueDetails && this.currentIssueDetails.releaseDate)) {
+        return null;
+      }
+      const parsedDate = this.currentIssueDetails.releaseDate.match(RELEASE_DATE_REGEX)
+      return parsedDate && parsedDate[0] && parsedDate[0].split('-').reverse().join('/')
     },
 
     isReadyToOpen() {
@@ -273,6 +290,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .fixed-container {
   position: fixed;
   display: flex;
@@ -305,7 +323,7 @@ export default {
     .card-header {
       text-align: center;
 
-      ::v-deep a {
+      ::v-deep a, ::v-deep h6 {
         color: #666;
       }
 
