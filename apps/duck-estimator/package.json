@@ -1,0 +1,8 @@
+{
+  "name": "duck-estimator",
+  "version": "1.0.0",
+  "dependencies": {
+    "bedetheque-scraper": "^3.2.0",
+    "csv-parse": "^4.14.2"
+  }
+}
