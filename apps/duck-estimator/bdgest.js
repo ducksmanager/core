@@ -192,29 +192,15 @@ async function run() {
     }
     const mappedIssuesForSeries = mappedIssues.filter(({bedetheque_url}) => bedetheque_url === serieUrl)
     for (const mappedIssue of mappedIssuesForSeries) {
-      const bedethequeAlbum = scrapeOutput.albums.find(({albumNum, albumTitle}) => albumNum === mappedIssue.bedetheque_num || albumTitle === mappedIssue.bedetheque_title)
+      const bedethequeAlbum = scrapeOutput.albums.find(({albumNum, albumTitle}) =>
+        !(
+          (mappedIssue.bedetheque_num !== '' && albumNum !== mappedIssue.bedetheque_num) ||
+          (mappedIssue.bedetheque_title !== '' && albumTitle !== mappedIssue.bedetheque_title)))
       if (!bedethequeAlbum) {
         console.warn(`Issue not found in Bedetheque series "${serieUrl}": num=${mappedIssue.bedetheque_num}, title=${mappedIssue.bedetheque_title}`)
       }
-
     }
-  //     const estimationData = issues.map(({albumNum, estimationEuros: estimation}) => {
-  //       let publicationcode
-  //       let issuenumber
-  //       if (series.mapping) {
-  //         const mappingResult = series.mapping(albumNum)
-  //         publicationcode = mappingResult.publicationcode || publicationcode
-  //         issuenumber = mappingResult.issuenumber || issuenumber
-  //       } else {
-  //         publicationcode = series.coa.publicationcode
-  //         issuenumber = albumNum
-  //       }
-  //       return {
-  //         publicationcode,
-  //         issuenumber,
-  //         estimation: estimation,
-  //       };
-  //     });
+    console.log('Done')
     }
 }
 
