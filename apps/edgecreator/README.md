@@ -1,1 +1,1 @@
-# edgecreator-nuxt
+# EdgeCreator
