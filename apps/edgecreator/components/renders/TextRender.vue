@@ -49,33 +49,26 @@ export default {
   data: () => ({
     textImage: null,
     textImageOptions: {},
-    image: { base64: null, width: null, height: null },
+    image: { base64: null },
     attributeKeys: ['x', 'y', 'width', 'height'],
   }),
 
   computed: {
     ...mapState(['width', 'height']),
-    imageUrl() {
-      return this.textImage
-        ? `${process.env.EDGES_URL}/images_myfonts/${this.textImage.imageId}.png`
-        : ''
-    },
     effectiveText() {
       return this.resolveStringTemplates(this.options.text)
     },
   },
 
   watch: {
-    imageUrl: {
+    textImage: {
       immediate: true,
       async handler(newValue) {
         if (newValue) {
           try {
-            this.image = await this.$axios.$get(
-              `/fs/base64?images_myfonts/${this.textImage.imageId}.png`
-            )
+            this.image = await this.$axios.$get(`/fs/base64?${this.textImage.url}`)
           } catch (e) {
-            console.error(`Text image details could not be retrieved : ${newValue} : ${e}`)
+            console.error(`Base64 image could not be retrieved : ${newValue} : ${e}`)
           }
         }
       },
@@ -83,7 +76,7 @@ export default {
     image: {
       immediate: true,
       handler(newValue) {
-        if (newValue) {
+        if (newValue && newValue.base64) {
           const vm = this
           this.waitUntil(
             () => vm.$refs.image,
@@ -178,7 +171,7 @@ export default {
     },
 
     applyTextImageDimensions() {
-      const naturalAspectRatio = this.image.dimensions.height / this.image.dimensions.width
+      const naturalAspectRatio = this.textImage.height / this.textImage.width
       const options = { ...this.options, stepNumber: this.stepNumber }
       if (options.height === null) {
         // By default, with a 270° rotation,

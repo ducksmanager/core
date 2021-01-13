@@ -2,7 +2,11 @@ const request = require('request').defaults({ encoding: null })
 const sizeOf = require('image-size')
 
 export default function (req, res) {
-  const url = `${process.env.EDGES_URL}/${req.url.replace(/^\/\?/, '')}`
+  const targetUrl = req.url.replace(/^\/\?/, '')
+  const url =
+    targetUrl.indexOf('https://res.cloudinary.com') === 0
+      ? targetUrl
+      : `${process.env.EDGES_URL}/${targetUrl}`
   request.get(url, function (error, response, body) {
     if (!error && response.statusCode === 200) {
       const buffer = Buffer.from(body)
