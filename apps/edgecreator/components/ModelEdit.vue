@@ -264,7 +264,7 @@ export default {
 }
 
 .hovered-step {
-  animation: glowFilter 2s infinite;
+  animation: glow-filter 2s infinite;
 }
 
 .tab-pane.card-body {

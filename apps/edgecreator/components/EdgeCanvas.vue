@@ -175,7 +175,7 @@ svg {
 
   g:hover,
   g.hovered {
-    animation: glowFilter 2s infinite;
+    animation: glow-filter 2s infinite;
   }
 }
 </style>
