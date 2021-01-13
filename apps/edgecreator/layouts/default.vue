@@ -2,7 +2,7 @@
   <Nuxt keep-alive />
 </template>
 
-<style>
+<style lang="scss">
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
@@ -22,11 +22,19 @@ body,
   height: 100vh;
 }
 
-*,
-*:before,
-*:after {
+* {
   box-sizing: border-box;
   margin: 0;
+
+  &:before {
+    box-sizing: border-box;
+    margin: 0;
+  }
+
+  &:after {
+    box-sizing: border-box;
+    margin: 0;
+  }
 }
 
 .button--green {
@@ -36,11 +44,11 @@ body,
   color: #3b8070;
   text-decoration: none;
   padding: 10px 30px;
-}
 
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
+  &:hover {
+    color: #fff;
+    background-color: #3b8070;
+  }
 }
 
 .button--grey {
@@ -51,14 +59,14 @@ body,
   text-decoration: none;
   padding: 10px 30px;
   margin-left: 15px;
+
+  &:hover {
+    color: #fff;
+    background-color: #35495e;
+  }
 }
 
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
-}
-
-@keyframes glowFilter {
+@keyframes glow-filter {
   0% {
     filter: drop-shadow(-0.75px 0px 6px transparent);
     stroke: transparent;
