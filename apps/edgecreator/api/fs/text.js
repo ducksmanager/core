@@ -1,9 +1,7 @@
 import axios from 'axios'
 import { addAxiosInterceptor, checkUserRoles } from '../api'
+const cloudinary = require('cloudinary').v2
 
-const fs = require('fs')
-
-const fontImageDirPath = `${process.env.EDGES_PATH}/images_myfonts/`
 const fontHashes = {}
 
 addAxiosInterceptor()
@@ -16,91 +14,67 @@ export default async function (req, res) {
   ) {
     return
   }
-  axios
-    .get(`${process.env.BACKEND_URL}/edgecreator/myfontspreview${req.url}`, {
-      headers: req.headers,
-    })
-    .then(({ data }) => {
-      console.log(`Found an existing text : id=${data.result.id}`)
-      res.writeHeader(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ imageId: data.result.id }))
-    })
-    .catch(({ response }) => {
-      if (response.status === 404) {
+  const [, color, colorBackground, width, font, text] = req.url.match(
+    /\/([^/]+)\/([^/]+)\/([^/]+)\/font\/(.+)\/text\/(.+)/
+  )
+  const context = { color, colorBackground, width, text }
+  cloudinary.search
+    .expression(
+      `tags=${font} AND ${Object.keys(context)
+        .reduce((acc, key) => [...acc, `context.${key}="${context[key]}"`], [])
+        .join(' AND ')}`
+    )
+    .execute()
+    .then(({ resources }) => {
+      if (resources.length) {
+        console.log(`Found an existing text`)
+        const { width, height, secure_url: url } = resources[0]
+        res.writeHeader(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ width, height, url }))
+      } else {
         console.log(`Found no existing text, generating text image...`)
-        generateImage(req, response.data, req.headers.imageWidth)
-          .then(({ data }) => {
-            console.log(`Text image generated: id=${data.imageId}`)
+        generateImage(req, { ...context, font })
+          .then((data) => {
+            console.log(`Text image generated: url=${data.url}`)
             res.writeHeader(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ imageId: data.imageId }))
+            res.end(JSON.stringify(data))
           })
           .catch(({ response }) => {
             res.statusCode = response.status
             res.end()
           })
-      } else {
-        res.statusCode = response.status
-        res.end()
       }
     })
 }
 
-const generateImage = (req, parameters, imageWidth) => {
+const generateImage = (req, parameters) => {
   return axios
     .get(`${process.env.FONT_DATA_BASE_URL}${parameters.font}`)
     .then(({ data }) => {
       fontHashes[parameters.font] = data.family.styles[0].MD5hash
     })
     .then(() => {
-      return axios.put(
-        `${process.env.BACKEND_URL}/edgecreator/v2/myfontspreview`,
-        {
-          ...parameters,
-          precision: imageWidth / 2,
-        },
-        {
-          headers: req.headers,
-        }
-      )
-    })
-    .then(({ data }) => {
-      return downloadAndWrite(
+      return cloudinary.uploader.upload(
         `${process.env.FONT_IMAGE_GEN_URL}?${new URLSearchParams({
           id: fontHashes[parameters.font],
           rbe: 'fixed',
-          rt: parameters.texte,
+          rt: parameters.text,
           fg: parameters.color,
-          bg: parameters.colorbg,
+          bg: parameters.colorBackground,
         }).toString()}`,
         {
-          imageId: data.previewid,
-          outputPath: `${fontImageDirPath + data.previewid}.png`,
+          folder: 'texts',
+          async: false,
+          tags: [parameters.font],
+          context: parameters,
+        },
+        (error, result) => {
+          if (error) {
+            console.error(error)
+          }
+          const { width, height, secure_url: url } = result
+          return new Promise((resolve) => resolve({ width, height, url }))
         }
       )
-    })
-}
-
-const downloadAndWrite = (fileUrl, data) => {
-  const writer = fs.createWriteStream(data.outputPath)
-
-  return axios
-    .get(fileUrl, {
-      responseType: 'stream',
-    })
-    .then((response) => {
-      return new Promise((resolve, reject) => {
-        response.data.pipe(writer)
-        let error = null
-        writer.on('error', (err) => {
-          error = err
-          writer.close()
-          reject(err)
-        })
-        writer.on('close', () => {
-          if (!error) {
-            resolve({ data })
-          }
-        })
-      })
     })
 }
