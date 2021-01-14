@@ -172,7 +172,11 @@ export default {
 
     applyTextImageDimensions() {
       const naturalAspectRatio = this.textImage.height / this.textImage.width
-      const options = { ...this.options, stepNumber: this.stepNumber }
+      const options = {
+        ...this.options,
+        stepNumber: this.stepNumber,
+        issuenumber: this.issuenumber,
+      }
       if (options.height === null) {
         // By default, with a 270° rotation,
         // the text shouldn't be larger than the width of the edge
