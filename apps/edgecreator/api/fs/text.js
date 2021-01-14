@@ -34,10 +34,10 @@ export default async function (req, res) {
       } else {
         console.log(`Found no existing text, generating text image...`)
         generateImage(req, { ...context, font })
-          .then((data) => {
-            console.log(`Text image generated: url=${data.url}`)
+          .then(({ width, height, secure_url: url }) => {
+            console.log(`Text image generated: url=${url}`)
             res.writeHeader(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(data))
+            res.end(JSON.stringify({ width, height, url }))
           })
           .catch(({ response }) => {
             res.statusCode = response.status
