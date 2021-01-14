@@ -13,15 +13,10 @@ export default {
       Object.keys(vm.steps)
         .filter((issuenumber) => issuenumber === targetIssueNumber || vm.locked)
         .forEach((issuenumber) => {
-          if (!vm.steps[issuenumber][targetStepNumber].options) {
-            Vue.set(vm.steps[issuenumber][targetStepNumber], 'options', {})
-          }
-          Object.keys(optionChanges).forEach((optionName) => {
-            Vue.set(
-              vm.steps[issuenumber][targetStepNumber].options,
-              optionName,
-              optionChanges[optionName]
-            )
+          const step = vm.steps[issuenumber][targetStepNumber]
+          Vue.set(step, 'options', {
+            ...(step.options || {}),
+            ...optionChanges,
           })
         })
     })
@@ -58,8 +53,12 @@ export default {
       }
     },
     setSteps(issuenumber, issueSteps) {
+      const vm = this
       this.checkSameComponentsAsCompletedEdge(issuenumber, issueSteps)
-      Vue.set(this.steps, issuenumber, issueSteps)
+      Vue.set(this.steps, issuenumber, [])
+      Vue.nextTick().then(() => {
+        Vue.set(vm.steps, issuenumber, issueSteps)
+      })
     },
     copySteps(issuenumber, otherIssuenumber) {
       Vue.set(this.steps, issuenumber, JSON.parse(JSON.stringify(this.steps[otherIssuenumber])))
