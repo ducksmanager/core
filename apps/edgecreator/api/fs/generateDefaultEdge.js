@@ -9,7 +9,8 @@ export default function (req, res) {
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers':
-      'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,x-dm-user,x-dm-pass',
+      'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,' +
+      'If-Modified-Since,Cache-Control,Content-Type,x-dm-user,x-dm-pass',
   }
   if (req.method === 'OPTIONS') {
     res.writeHeader(200, corsHeaders)
