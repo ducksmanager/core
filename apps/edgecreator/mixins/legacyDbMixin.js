@@ -31,7 +31,8 @@ export default {
             y: parseFloat(dbOptions.Pos_y_debut),
             width: parseFloat(dbOptions.Pos_x_fin - dbOptions.Pos_x_debut),
             height: parseFloat(dbOptions.Pos_y_fin - dbOptions.Pos_y_debut),
-            fill: `#${dbOptions.Couleur}`,
+            colorStart: `#${dbOptions.Couleur_debut}`,
+            colorEnd: `#${dbOptions.Couleur_fin}`,
             direction: dbOptions.Sens,
           }
         }
