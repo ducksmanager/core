@@ -203,8 +203,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 image {
   touch-action: none;
+  visibility: hidden;
+
+  &[width] {
+    visibility: visible;
+  }
 }
 </style>
