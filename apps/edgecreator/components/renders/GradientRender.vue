@@ -45,7 +45,7 @@ export default {
 
   computed: {
     gradientId() {
-      return Object.values(this.options).join('-')
+      return btoa(JSON.stringify(this.options))
     },
   },
 
