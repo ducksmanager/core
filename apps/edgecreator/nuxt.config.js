@@ -85,6 +85,8 @@ export default {
     '@nuxtjs/dotenv',
     // Doc: https://github.com/microcipcip/cookie-universal
     'cookie-universal-nuxt',
+    // Doc: https://github.com/nuxt-community/sentry-module#readme
+    '@nuxtjs/sentry',
   ],
   /*
    ** Axios module configuration
@@ -94,6 +96,11 @@ export default {
     proxy: true,
     credentials: true,
     proxyHeaders: true,
+  },
+
+  sentry: {
+    dsn: 'https://1ef2d57a3c4d4414abbd5fb61771cd3f@o229092.ingest.sentry.io/5595460',
+    config: {},
   },
 
   /*
