@@ -15,6 +15,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.12.5",
     "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/sentry": "^4.5.0",
     "@uppy/core": "^1.15.0",
     "@uppy/dashboard": "^1.14.0",
     "@uppy/drag-drop": "^1.4.22",
