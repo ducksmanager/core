@@ -1,4 +1,4 @@
-FROM php:7.4-fpm AS app
+FROM php:8.0-fpm AS app
 MAINTAINER Bruno Perel
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
@@ -6,23 +6,19 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
       git wget unzip nano \
       nodejs \
       libpng-dev libfreetype6-dev libmcrypt-dev libjpeg-dev libpng-dev libicu-dev \
- && apt-get clean
-
-RUN pecl install apcu && \
-    echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini && \
-    docker-php-ext-configure gd &&\
-    docker-php-ext-install -j$(nproc) opcache intl
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-RUN mkdir /tmp/sessions && chmod 777 -R /tmp/sessions
+ && apt-get clean \
+ && pecl install apcu \
+ && echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini \
+ && docker-php-ext-configure gd \
+ && docker-php-ext-install -j$(nproc) opcache intl \
+ && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+ && mkdir /tmp/sessions && chmod 777 -R /tmp/sessions
 
 COPY . /var/www/html
 COPY .git/refs/remotes/origin/master /var/www/html/commit.txt
 RUN echo COMMIT=`cat /var/www/html/commit.txt` >> .env.prod.local && rm /var/www/html/commit.txt && \
     mv .env.prod.local .env.local && \
     composer install && npm install && npm run build
-
 
 FROM nginx:1.15 AS web
 MAINTAINER Bruno Perel
