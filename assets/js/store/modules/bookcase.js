@@ -52,7 +52,7 @@ export default {
       && state.bookcase
         .map((issue) => {
           const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
-          const issueCode = `${issue.publicationCode} ${issue.issueNumber}`;
+          const issueCode = `${publicationCode} ${issue.issueNumber}`;
           return {
             ...issue,
             publicationCode,
