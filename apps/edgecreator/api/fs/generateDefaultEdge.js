@@ -1,7 +1,8 @@
 import sharp from 'sharp'
 const fs = require('fs')
 
-const REGEX_EDGE_URL = /^edges\/([^/]+)\/gen\/_?([^.]+)\.([^.]+)\.(.+)?$/
+// eslint-disable-next-line max-len
+const REGEX_EDGE_URL = /^edges\/(?<countryCode>[^/]+)\/gen\/_?(?<magazineCode>[^.]+)\.(?<issueNumber>[^.]+)\.(?<extension>[^?]+)?(?:\?.+)?$/
 
 export default function (req, res) {
   const corsHeaders = {
@@ -21,7 +22,7 @@ export default function (req, res) {
   let text
   const match = input.match(REGEX_EDGE_URL)
   if (match) {
-    const [, countryCode, magazineCode, issueNumber, extension] = match
+    const { countryCode, magazineCode, issueNumber, extension } = match.groups
 
     if (countryCode && extension !== 'png') {
       res.writeHeader(404, corsHeaders)
