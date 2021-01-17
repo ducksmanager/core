@@ -19,13 +19,10 @@ const findInDir = (dir) => {
     .filter((file) => REGEX_IS_BROWSABLE_FILE.test(file))
     .forEach((file) => {
       const filePath = path.join(dir, file)
-      if (REGEX_IS_SVG_FILE.test(file)) {
+      if (!file.includes('.')) {
+        findInDir(filePath)
+      } else if (REGEX_IS_SVG_FILE.test(file)) {
         fileList.push(filePath.replace(edgePath, ''))
-      } else {
-        const fileStat = fs.lstatSync(filePath)
-        if (fileStat.isDirectory()) {
-          findInDir(filePath)
-        }
       }
     })
 }
