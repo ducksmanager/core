@@ -14,15 +14,19 @@ export default function (req, res) {
 }
 
 const findInDir = (dir) => {
-  const files = fs.readdirSync(dir)
-  files
-    .filter((file) => REGEX_IS_BROWSABLE_FILE.test(file))
-    .forEach((file) => {
-      const filePath = path.join(dir, file)
-      if (!file.includes('.')) {
-        findInDir(filePath)
-      } else if (REGEX_IS_SVG_FILE.test(file)) {
-        fileList.push(filePath.replace(edgePath, ''))
-      }
-    })
+  try {
+    const files = fs.readdirSync(dir)
+    files
+      .filter((file) => REGEX_IS_BROWSABLE_FILE.test(file))
+      .forEach((file) => {
+        const filePath = path.join(dir, file)
+        if (!file.includes('.')) {
+          findInDir(filePath)
+        } else if (REGEX_IS_SVG_FILE.test(file)) {
+          fileList.push(filePath.replace(edgePath, ''))
+        }
+      })
+  } catch (e) {
+    console.error(e)
+  }
 }
