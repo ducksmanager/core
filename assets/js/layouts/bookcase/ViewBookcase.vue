@@ -98,15 +98,14 @@
                   :user-level-points="userPoints.Photographe"
                   :extra-points="popularIssueWithoutEdge.popularity"
                 />
-                <div>
-                  <b-btn
-                    variant="info"
-                    href="https://edgecreator.ducksmanager.net"
-                    target="_blank"
-                  >
-                    {{ l10n.ENVOYER_PHOTOS_DE_TRANCHE }}
-                  </b-btn>
-                </div>
+                <b-btn
+                  class="mt-3"
+                  variant="info"
+                  href="https://edgecreator.ducksmanager.net"
+                  target="_blank"
+                >
+                  {{ l10n.ENVOYER_PHOTOS_DE_TRANCHE }}
+                </b-btn>
               </b-carousel-slide>
             </b-carousel>
           </div>
@@ -322,15 +321,25 @@ export default {
 
 <style lang="scss" scoped>
 
-.carousel {
-  width: 300px;
+::v-deep .carousel {
+  width: 400px;
+  height: 120px;
   margin: 15px 0 0;
+
+  .carousel-inner {
+    height: 100%;
+  }
 
   .carousel-caption {
     position: initial;
+    padding-left: 48px;
+    padding-right: 42px;
   }
 
   ol.carousel-indicators {
+    top: 0;
+    bottom: initial;
+
     li {
       width: 5px;
       height: 5px;
