@@ -1,9 +1,13 @@
 publicationcode,issuenumber,bedetheque_url,bedetheque_num,bedetheque_title
 fr/ABD,0,serie-11866-BD-Aristochats.html,,Les Aristochats
+fr/ABD,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Les Aristochats
+fr/ABD,3,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Blanche-Neige et les sept nains
 fr/ABD,5,serie-27604-BD-Trois-petits-cochons.html,,Les trois petits cochons
 fr/ABD,6,serie-12002-BD-Belle-et-le-Clochard.html,,La Belle et le Clochard
 fr/ABD,7,serie-12893-BD-Davy-Crockett-Hachette.html,,Davy Crockett contre les Comanches
 fr/ABD,11,serie-63546-BD-Belle-au-bois-dormant-Odege-Disney.html,,La Belle au bois dormant
+fr/ABD,15,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Bernard et Bianca
+fr/ABD,20,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Peter et Elliott Le Dragon
 fr/ABD,21,serie-12895-BD-Robin-des-bois-Disney.html,,Robin des bois
 fr/ABD,24,serie-27604-BD-Trois-petits-cochons.html,,Grand loup est un rusé !
 fr/AD,D   1,serie-6693-BD-Donald-Dargaud.html,1,
@@ -17,6 +21,8 @@ fr/AD,P   3,serie-3712-BD-Oncle-Picsou.html,,"Milliardaire, malgré lui !"
 fr/AD,P   4,serie-3712-BD-Oncle-Picsou.html,,Tout se change en or
 fr/AD,P   5,serie-3712-BD-Oncle-Picsou.html,,Qu'il est dur d'être riche
 fr/AD,P   6,serie-3712-BD-Oncle-Picsou.html,,La terre regorge de trésors
+fr/AF,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Donald Duck
+fr/AF,3,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Dingo le chic type
 fr/AFJ,0,serie-25092-BD-Votre-serie-Mickey-2e-serie-Albums-Filmes-ODEJ.html,,Quelle vie de chien
 fr/AFJ,1,serie-25092-BD-Votre-serie-Mickey-2e-serie-Albums-Filmes-ODEJ.html,,Mickey et le trésor du Rajah
 fr/AFJ,2,serie-25092-BD-Votre-serie-Mickey-2e-serie-Albums-Filmes-ODEJ.html,,Le lion d'Afrique
@@ -282,8 +288,11 @@ fr/CSV,94,serie-9713-BD-Grand-Loup-16-22.html,,Grand Loup
 fr/CSV,112,serie-9713-BD-Grand-Loup-16-22.html,,Pis que pendre
 fr/CSV,124,serie-9713-BD-Grand-Loup-16-22.html,,La main dans le sac
 fr/CSV,146,serie-9713-BD-Grand-Loup-16-22.html,,Vive le rêve
+fr/DAH,2,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Dingoofy - la course au flambeau
+fr/DCH,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Disney Channel
 fr/DG,1,serie-6625-BD-Walt-Disney-Dargaud.html,,Flagada Jones - Profession : Héros !
 fr/DG,2,serie-6625-BD-Walt-Disney-Dargaud.html,,Bébés Disney - Graines de stars
+fr/DLL,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Donaldus anas atque nox saraceni
 fr/ED,55M01,serie-31241-BD-Walt-Disney-Edicoq.html,,Mickey et ses neveux
 fr/ED,55M02,serie-31241-BD-Walt-Disney-Edicoq.html,,Mickey & Goofy
 fr/ED,55B07,serie-31241-BD-Walt-Disney-Edicoq.html,,Mickey et donald
@@ -306,18 +315,24 @@ fr/ED,59M04,serie-31241-BD-Walt-Disney-Edicoq.html,,Les aventures de Donald
 fr/ED,59B01,serie-31241-BD-Walt-Disney-Edicoq.html,,Les aventures de Mickey
 fr/ED,59B03,serie-31241-BD-Walt-Disney-Edicoq.html,,Mickey et le rayon magnétique
 fr/ED,59B05,serie-31241-BD-Walt-Disney-Edicoq.html,,Mickey sous les mers
+fr/GB,2,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,La vie trépidante d'Onc' Picsou
 fr/GB,3,serie-6898-BD-Dingo.html,,Les mésaventures de l'incorrigible Dingo et de ses amis
 fr/GB,4,serie-37415-BD-Donald-Edi-Monde.html,1,
 fr/GB,5,serie-37415-BD-Donald-Edi-Monde.html,3,
+fr/GB,8,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Oncle Picsou - 1947-1966
 fr/GB,11,serie-37415-BD-Donald-Edi-Monde.html,2,
 fr/GB,13,serie-6898-BD-Dingo.html,,Dingo et moi
 fr/GB,14,serie-7161-BD-Bandes-dessinees-Walt-Disney.html,,1932-1951
+fr/GB,15,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Disney Noël
 fr/GDP,D  1,serie-44074-BD-Donald-Gags-de-poche.html,1,
 fr/GDP,D  2,serie-44074-BD-Donald-Gags-de-poche.html,2,
 fr/GDP,D  3,serie-44074-BD-Donald-Gags-de-poche.html,3,
+fr/HS,B  4,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Mickey et le satellite
 fr/JP,0,serie-15917-BD-Picsou-Magazine-Hors-Serie.html,1,
 fr/JP,2,serie-15917-BD-Picsou-Magazine-Hors-Serie.html,2,
 fr/MET,1,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey explore le temps
+fr/MDE,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Le manuel des echecs d'anatoly karpov
+fr/MHC,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Mickey héros du cinéma
 fr/MTS,1,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey et les travaux d'Hercule
 fr/MTS,2,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey à Babylone
 fr/MTS,3,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey et Guillaume Tell
@@ -330,6 +345,7 @@ fr/MTS,9,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey chez les Peaux-
 fr/MTS,10,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey écuyer d'Ivanhoé
 fr/MTS,11,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey corsaire
 fr/MTS,12,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey ami de d'Artagnan
+fr/NAWD,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Notre ami Walt Disney
 fr/PM,1,serie-12842-BD-Picsou-Magazine.html,1,
 fr/PM,2,serie-12842-BD-Picsou-Magazine.html,2,
 fr/PM,3,serie-12842-BD-Picsou-Magazine.html,3,
