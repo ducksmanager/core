@@ -22,7 +22,7 @@ async function run() {
   await readCsvMapping(record => mappedIssues.push(record))
   const seriesUrls = [...new Set(mappedIssues.map(({bedetheque_url}) => bedetheque_url))]
   for (const serieUrl of seriesUrls) {
-    const cacheFileName = `${serieUrl}.json`
+    const cacheFileName = `cache/${serieUrl}.json`
     console.log(serieUrl)
     let scrapeOutput
     if (fs.existsSync(cacheFileName)) {

@@ -1,7 +1,9 @@
 publicationcode,issuenumber,bedetheque_url,bedetheque_num,bedetheque_title
+es/DB2,90,serie-21984-BD-Walt-Disney-editeurs-et-langues-divers.html,,La reina de las sirenas
 fr/ABD,0,serie-11866-BD-Aristochats.html,,Les Aristochats
 fr/ABD,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Les Aristochats
 fr/ABD,3,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Blanche-Neige et les sept nains
+fr/ABD,4,serie-53059-BD-Walt-Disney-presente.html,,Robin des bois
 fr/ABD,5,serie-27604-BD-Trois-petits-cochons.html,,Les trois petits cochons
 fr/ABD,6,serie-12002-BD-Belle-et-le-Clochard.html,,La Belle et le Clochard
 fr/ABD,7,serie-12893-BD-Davy-Crockett-Hachette.html,,Davy Crockett contre les Comanches
@@ -220,6 +222,39 @@ fr/ARS,67-06,serie-33826-BD-Albums-Roses-Hachette.html,257,
 fr/ARS,67-07,serie-33826-BD-Albums-Roses-Hachette.html,293,
 fr/ARS,68-01,serie-33826-BD-Albums-Roses-Hachette.html,284,
 fr/ARS,69-01,serie-33826-BD-Albums-Roses-Hachette.html,275,
+fr/AWD,1,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,1,
+fr/AWD,2,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,2,
+fr/AWD,3,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,3,
+fr/AWD,4,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,4,
+fr/AWD,5,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,5,
+fr/AWD,6,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,6,
+fr/AWD,7,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,7,
+fr/AWD,8,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,8,
+fr/AWD,9,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,9,
+fr/AWD,10,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,10,
+fr/AWD,11,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,11,
+fr/AWD,12,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,12,
+fr/AWD,13,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,13,
+fr/AWD,14,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,14,
+fr/AWD,15,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,15,
+fr/AWD,16,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,16,
+fr/AWD,17,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,17,
+fr/AWD,18,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,18,
+fr/AWD,19,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,19,
+fr/AWD,21,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,21,
+fr/AWD,22,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,22,
+fr/AWD,23,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,23,
+fr/AWD,24,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,24,
+fr/AWD,26,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,26,
+fr/AWD,27,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,27,
+fr/AWD,28,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,28,
+fr/AWD,29,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,29,
+fr/AWD,30,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,30,
+fr/AWD,31,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,31,
+fr/AWD,32,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,32,
+fr/AWD,33,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,33,
+fr/AWD,34,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,34,
+fr/AWD,35,serie-29950-BD-Walt-Disney-Hachette-Silly-Symphonies.html,35,
 fr/BAY,1,serie-45867-BD-Baymax.html,,Tome 1
 fr/BDD,1,serie-21413-BD-Dick-Tracy-La-BD.html,,Dick Tracy - La B.D. !
 fr/BR,1972A,serie-38228-BD-Walt-Disney-Bibliotheque-rose.html,,Donald cherche fortune
@@ -327,6 +362,11 @@ fr/GB,15,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Disney Noël
 fr/GDP,D  1,serie-44074-BD-Donald-Gags-de-poche.html,1,
 fr/GDP,D  2,serie-44074-BD-Donald-Gags-de-poche.html,2,
 fr/GDP,D  3,serie-44074-BD-Donald-Gags-de-poche.html,3,
+fr/HL,A  1,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Mickey Hop-là!
+fr/HL,A  2,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Mickey et le prince Malapatte
+fr/HL,A  3,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Une partie de polo
+fr/HL,A  4,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Les trois petits cochons
+fr/HL,A  6,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Blanche-Neige et ses amis les bêtes
 fr/HS,B  4,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Mickey et le satellite
 fr/JP,0,serie-15917-BD-Picsou-Magazine-Hors-Serie.html,1,
 fr/JP,2,serie-15917-BD-Picsou-Magazine-Hors-Serie.html,2,
