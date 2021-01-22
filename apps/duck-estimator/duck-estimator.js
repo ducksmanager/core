@@ -1,8 +1,13 @@
 const {Scraper} = require('bedetheque-scraper');
 const parse = require('csv-parse');
 const fs = require('fs')
+const yargs = require('yargs');
+const { hideBin } = require('yargs/helpers')
+
+const args = yargs(hideBin(process.argv)).argv
 
 const MAPPING_FILE='inducks_mapping.csv'
+const ROOT_URL = 'https://www.bedetheque.com/';
 
 const readCsvMapping = async (recordCallback) => {
   const parser = fs
@@ -15,14 +20,15 @@ const readCsvMapping = async (recordCallback) => {
   }
 }
 
-const ROOT_URL = 'https://www.bedetheque.com/';
-
 async function run() {
   let mappedIssues = []
+  const cacheDir = args['cache-dir'] || 'cache';
+  fs.mkdirSync(cacheDir, { recursive: true } )
+
   await readCsvMapping(record => mappedIssues.push(record))
   const seriesUrls = [...new Set(mappedIssues.map(({bedetheque_url}) => bedetheque_url))]
   for (const serieUrl of seriesUrls) {
-    const cacheFileName = `cache/${serieUrl}.json`
+    const cacheFileName = `${cacheDir}/${serieUrl}.json`
     console.log(serieUrl)
     let scrapeOutput
     if (fs.existsSync(cacheFileName)) {
