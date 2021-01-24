@@ -122,7 +122,7 @@ async function run(coaConnection, dmConnection) {
     }
     console.log('Done')
     for (let userId of Object.keys(estimationsPerUser)) {
-      estimationsPerUser[userId].details = estimationsPerUser[userId].details.sort((a, b) => Math.sign(a.estimationGivenCondition - b.estimationGivenCondition))
+      estimationsPerUser[userId].details = estimationsPerUser[userId].details.sort((a, b) => Math.sign(b .estimationGivenCondition - a.estimationGivenCondition))
     }
     fs.writeFileSync('output.json', JSON.stringify(estimationsPerUser))
   }
