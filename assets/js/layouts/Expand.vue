@@ -94,7 +94,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("collection", ["loadWatchedAuthors", "loadSuggestions"]),
+    ...mapActions("collection", ["loadWatchedAuthors"]),
     ...mapActions("coa", ["fetchCountryNames"])
   }
 }

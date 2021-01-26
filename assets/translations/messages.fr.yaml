@@ -348,6 +348,8 @@ TOUS_PAYS: Tous les pays
 TRANCHE_NON_DISPONIBLE1: Cette tranche n'est pas visible car nous n'en possédons pas de photographie...
 TRANCHE_NON_DISPONIBLE2: Vous pouvez photographier cette tranche ?
 TRANCHE_NON_DISPONIBLE3: Envoyez-nous une photo et gagnez
+TRIER_PAR_DATE_SORTIE: Trier par date de parution
+TRIER_PAR_SCORE: Trier par score
 UN_VISITEUR_ANONYME: un visiteur anonyme
 UTILISATEUR_NON_EXISTANT: Cet utilisateur n'existe pas.
 UTILISATEUR_INVALIDE: Le nom d'utilisateur est invalide. Choisissez un nom d'utilisateur d'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.

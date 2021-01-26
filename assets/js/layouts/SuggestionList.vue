@@ -1,36 +1,61 @@
 <template>
-  <div>
-    <div v-if="!hasSuggestions">
+  <div class="mt-4">
+    <div v-if="loading">
+      {{ l10n.CHARGEMENT }}
+    </div>
+    <div v-else-if="!hasSuggestions">
       {{ l10n.AUCUNE_SUGGESTION }}
     </div>
-    <div
-      v-for="{publicationcode, issuenumber, score, stories} in suggestions.issues"
-      v-else
-      :key="`${publicationcode} ${issuenumber}`"
-    >
-      <div :class="{suggestions: true, 'since-last-visit': sinceLastVisit}">
-        <span
-          :class="{issue: true, [`importance-${getImportance(score)}`]: true}"
-          :title="`${l10n.SCORE} : ${score}`"
-        ><b-icon-cash
-           v-for="i in 4-getImportance(score)"
-           :key="i"
-         />
-          <Issue
-            :publicationcode="publicationcode"
-            :publicationname="suggestions.publicationTitles[publicationcode]"
-            :issuenumber="issuenumber"
-            no-wrap
-          /></span>
-        {{ l10n.NUMERO_CONTIENT }}
+    <template v-else>
+      <b-button-group>
+        <b-button
+          v-for="(l10nKey, suggestionSort) in suggestionSorts"
+          :key="suggestionSort"
+          :pressed="suggestionSortCurrent === suggestionSort"
+          @click="suggestionSortCurrent = suggestionSort"
+        >
+          {{ l10n[l10nKey] }}
+        </b-button>
+      </b-button-group>
+      <div
+        v-for="{publicationcode, issuenumber, oldestdate, score, stories} in suggestions.issues"
+        :key="`${publicationcode} ${issuenumber}`"
+      >
+        <div :class="{suggestions: true, 'since-last-visit': sinceLastVisit}">
+          <div
+            :class="{'d-flex': true, 'align-items-center': true, issue: true, [`importance-${getImportance(score)}`]: true}"
+            :title="`${l10n.SCORE} : ${score}`"
+          >
+            <div class="mr-3">
+              <b-icon-cash
+                v-for="i in 4-getImportance(score)"
+                :key="i"
+              />
+            </div>
+            <div>
+              <Issue
+                :publicationcode="publicationcode"
+                :publicationname="suggestions.publicationTitles[publicationcode]"
+                :issuenumber="issuenumber"
+                no-wrap
+              >
+                <template #title-suffix>
+                  <div class="release-date mt-2">
+                    {{ l10n.SORTIE }}{{ oldestdate }}
+                  </div>
+                </template>
+              </Issue>
+            </div>
+          </div>
+        </div>
+        <StoryList
+          :key="`${publicationcode} ${issuenumber}-stories`"
+          :authors="suggestions.authors"
+          :stories="stories"
+          :story-details="suggestions.storyDetails"
+        />
       </div>
-      <StoryList
-        :key="`${publicationcode} ${issuenumber}-stories`"
-        :authors="suggestions.authors"
-        :stories="stories"
-        :story-details="suggestions.storyDetails"
-      />
-    </div>
+    </template>
   </div>
 </template>
 <script>
@@ -60,6 +85,12 @@ export default {
     }
   },
 
+  data: () => ({
+    loading: true,
+    suggestionSortCurrent: 'score',
+    suggestionSorts: {oldestdate: 'TRIER_PAR_DATE_SORTIE', score: 'TRIER_PAR_SCORE'},
+  }),
+
   computed: {
     ...mapState("collection", ["suggestions"]),
     ...mapGetters("collection", ["hasSuggestions"]),
@@ -69,11 +100,23 @@ export default {
     countrycode: {
       immediate: true,
       async handler(newValue) {
+        this.loading = true
         await this.loadSuggestions({
           countryCode: newValue,
+          sort: this.suggestionSortCurrent,
           sinceLastVisit: this.sinceLastVisit,
         })
+        this.loading = false
       }
+    },
+    async suggestionSortCurrent(newValue) {
+      this.loading = true
+      await this.loadSuggestions({
+        countryCode: this.countrycode,
+        sort: newValue,
+        sinceLastVisit: this.sinceLastVisit,
+      })
+      this.loading = false
     }
   },
 
@@ -108,6 +151,10 @@ select {
 
     .bi {
       margin: 0 4px;
+    }
+
+    .release-date {
+      font-size: 12px;
     }
   }
 

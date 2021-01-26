@@ -93,12 +93,13 @@ export default {
         state.isLoadingWatchedAuthors = false
       }
     },
-    loadSuggestions: async ({state, commit}, {countryCode, sinceLastVisit}) => {
+    loadSuggestions: async ({state, commit}, {countryCode, sort, sinceLastVisit}) => {
       if (!state.isLoadingSuggestions) {
         state.isLoadingSuggestions = true
         commit("setSuggestions", (await axios.get(`/api/collection/stats/suggestedissues/${[
           countryCode || 'ALL',
           sinceLastVisit ? 'since_previous_visit' : '_',
+          sort,
           sinceLastVisit ? 100 : 20
         ].join('/')}`)).data)
         state.isLoadingSuggestions = false
