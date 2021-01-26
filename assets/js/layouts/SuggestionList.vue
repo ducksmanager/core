@@ -21,12 +21,12 @@
         v-for="{publicationcode, issuenumber, oldestdate, score, stories} in suggestions.issues"
         :key="`${publicationcode} ${issuenumber}`"
       >
-        <div :class="{suggestions: true, 'since-last-visit': sinceLastVisit}">
+        <div :class="{suggestions: true, 'since-last-visit': sinceLastVisit, 'pt-2': true}">
           <div
-            :class="{'d-flex': true, 'align-items-center': true, issue: true, [`importance-${getImportance(score)}`]: true}"
+            class="d-flex align-items-center issue importance"
             :title="`${l10n.SCORE} : ${score}`"
           >
-            <div class="mr-3">
+            <div class="mr-3 d-flex justify-content-center importance-bills">
               <b-icon-cash
                 v-for="i in 4-getImportance(score)"
                 :key="i"
@@ -141,16 +141,16 @@ select {
     display: inline-block;
     margin: 20px 0 10px 0;
 
-    &.importance-1 {
-      font-size: x-large;
-    }
-
-    &.importance-2 {
+    &.importance {
       font-size: large;
     }
 
-    .bi {
-      margin: 0 4px;
+    .importance-bills {
+      width: 80px;
+
+      .bi {
+        margin: 0 4px;
+      }
     }
 
     .release-date {

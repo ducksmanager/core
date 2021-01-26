@@ -44,6 +44,7 @@ export default {
 
 <style scoped lang="scss">
 ul {
+  padding-left: 12px;
   li {
     font-size: 12px;
   }
