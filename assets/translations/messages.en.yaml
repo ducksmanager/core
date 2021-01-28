@@ -4,6 +4,7 @@ A_VENDRE_TITRE: Sale
 ABONNEMENT_AJOUTER: Add a subscription
 ABONNEMENT_AUCUN: No subscription
 ABONNEMENT_EXPLICATION: Indicate the publications that you have a subscription for. DucksManager will automatically add them to your collection when new issues are released.
+ABONNEMENT_PROPOSITION_ABONNEMENT_ASSOCIE: You have selected a subscription for %s. Usually, subscribing to this publication includes receiving publication %s as well. Do you want to add a subscription to %s for the same dates?
 ABONNEMENT_TITRE: My subscriptions
 ACCROCHE: The reference website for Disney comic book collectors
 ACHAT: Purchase
@@ -263,6 +264,7 @@ NUMEROS_REFERENCES: Non-possessed referenced issues
 OK: OK
 OPTIONS: Settings
 ORDRE_MAGAZINES: Order of the publications in the bookcase
+OUI: Yes
 OUVRIR_COLLECTION: Log in
 PAYS: countries
 PAYS_PUBLICATION: Country of publication

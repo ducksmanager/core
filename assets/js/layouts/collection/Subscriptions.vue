@@ -17,9 +17,24 @@
     <div v-if="!subscriptions.length">
       {{ l10n.ABONNEMENT_AUCUN }}
     </div>
+    <b-alert
+      v-for="(currentAssociatedPublication, idx) in currentAssociatedPublications"
+      :key="`associated-pub-${JSON.stringify(currentAssociatedPublication)}`"
+      show
+      variant="info"
+    >
+      {{ $t('ABONNEMENT_PROPOSITION_ABONNEMENT_ASSOCIE', [publicationNames[currentAssociatedPublication.referencePublicationcode], publicationNames[currentAssociatedPublication.publicationcode], publicationNames[currentAssociatedPublication.publicationcode]]) }}
+      <b-btn @click="createAssociatedPublicationSubscription(subscriptions.find(({publicationCode}) => publicationCode === currentAssociatedPublication.referencePublicationcode), currentAssociatedPublication)">
+        {{ l10n.OUI }}
+      </b-btn>
+      <b-btn @click="currentAssociatedPublications.splice(idx, 1)">
+        {{ l10n.NON }}
+      </b-btn>
+    </b-alert>
     <b-row
       v-for="subscription in subscriptions"
       :key="subscription.id"
+      class="mt-3 align-items-center"
     >
       <b-col
         sm="4"
@@ -50,14 +65,24 @@
       </b-col>
     </b-row>
     <br>
-    <b-form method="post">
+    <b-form
+      ref="form"
+      method="post"
+    >
       <b-row>
         <b-col
           sm="8"
           md="4"
         >
           <h4>{{ l10n.ABONNEMENT_AJOUTER }}</h4>
+          <input
+            v-if="forcedPublicationcode"
+            type="hidden"
+            name="publicationCode"
+            :value="newSubscription.publicationCode"
+          >
           <PublicationSelect
+            v-else
             no-button
             @input="newSubscription = {...newSubscription, publicationCode: $event}"
           />
@@ -117,7 +142,13 @@ export default {
     return {
       hasPublicationNames: false,
       subscriptions: null,
-      newSubscription: {}
+      currentAssociatedPublications: [],
+      newSubscription: {},
+      forcedPublicationcode: false,
+      associatedPublications: [{
+        referencePublicationcode: 'fr/JM',
+        publicationcode: 'fr/JMS'
+      }]
     }
   },
 
@@ -125,9 +156,24 @@ export default {
     ...mapState("coa", ["countryNames", "publicationNames"])
   },
 
+  watch: {
+    subscriptions: {
+      immediate: true,
+      handler(newValue) {
+        this.currentAssociatedPublications = newValue && this.associatedPublications
+          .filter(({referencePublicationcode, publicationcode: associatedPublicationcode}) =>
+            newValue.find(({ publicationCode }) => referencePublicationcode === publicationCode)
+            && !newValue.find(({ publicationCode }) => associatedPublicationcode === publicationCode))
+      }
+    }
+  },
+
   async mounted() {
     await this.loadSubscriptions()
-    await this.fetchPublicationNames(this.subscriptions.map(({publicationCode}) => publicationCode))
+    await this.fetchPublicationNames([
+      ...this.associatedPublications.map(({publicationcode}) => publicationcode),
+      ...this.subscriptions.map(({publicationCode}) => publicationCode)]
+    )
     this.hasPublicationNames = true
   },
   methods: {
@@ -136,6 +182,17 @@ export default {
 
     async loadSubscriptions() {
       this.subscriptions = (await axios.get(`/api/collection/subscriptions`)).data
+    },
+
+    createAssociatedPublicationSubscription(existingSubscription, { publicationcode: associatedPublicationcode }) {
+      this.newSubscription = {
+        ...existingSubscription,
+        publicationCode: associatedPublicationcode,
+      }
+      this.forcedPublicationcode = true
+      this.$nextTick(function() {
+        this.$refs.form.submit()
+      })
     },
 
     async deleteSubscription(id) {

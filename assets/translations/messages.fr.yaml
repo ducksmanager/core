@@ -3,7 +3,8 @@ A_VENDRE: A vendre
 A_VENDRE_TITRE: Vente
 ABONNEMENT_AJOUTER: Ajouter un abonnement
 ABONNEMENT_AUCUN: Aucun abonnement
-ABONNEMENT_EXPLICATION: Vous pouvez indiquer les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie.
+ABONNEMENT_EXPLICATION: Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie.
+ABONNEMENT_PROPOSITION_ABONNEMENT_ASSOCIE: Vous avez indiqué avoir un abonnement pour %s. Généralement, cet abonnement inclut également la réception du magazine %s. Voulez-vous ajouter un abonnement à %s pour les mêmes dates ?
 ABONNEMENT_TITRE: Mes abonnements
 ACCROCHE: Le site Internet de référence des collectionneurs de bandes dessinées Disney
 ACHAT: Achat
@@ -268,6 +269,7 @@ NUMEROS_REFERENCES: Numéros référencés non-possédés
 OK: OK
 OPTIONS: Options
 ORDRE_MAGAZINES: Ordre des magazines
+OUI: Oui
 OUVRIR_COLLECTION: Connexion
 PAYS: pays
 PAYS_PUBLICATION: Pays de publication
