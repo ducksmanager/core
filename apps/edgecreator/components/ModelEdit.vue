@@ -67,7 +67,12 @@
               </ul></template
             >
           </form-input-row>
-          <form-input-row option-name="font" label="Font" type="text" :options="step.options" />
+          <form-input-row
+            option-name="font"
+            :label="$t('Font')"
+            type="text"
+            :options="step.options"
+          />
           <form-color-input-row
             :options="step.options"
             option-name="bgColor"
