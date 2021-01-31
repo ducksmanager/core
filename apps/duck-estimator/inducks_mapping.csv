@@ -1,4 +1,46 @@
 publicationcode,issuenumber,bedetheque_url,bedetheque_num,bedetheque_title
+br/AOPD,1,serie-35547-BD-Anos-de-ouro-do-pato-Donald.html,1,
+br/AOPD,2,serie-35547-BD-Anos-de-ouro-do-pato-Donald.html,2,
+br/AOPD,3,serie-35547-BD-Anos-de-ouro-do-pato-Donald.html,3,
+ca/DD,3,serie-66671-BD-Donald-Duck-Editions-Heritage.html,3,
+ca/DD,7,serie-66671-BD-Donald-Duck-Editions-Heritage.html,7,
+ca/DD,10,serie-66671-BD-Donald-Duck-Editions-Heritage.html,10,
+ca/DD,11,serie-66671-BD-Donald-Duck-Editions-Heritage.html,11,
+ca/DD,16,serie-66671-BD-Donald-Duck-Editions-Heritage.html,16,
+ca/DD,20,serie-66671-BD-Donald-Duck-Editions-Heritage.html,20,
+ca/DD,26,serie-66671-BD-Donald-Duck-Editions-Heritage.html,26,
+ca/DED,10,serie-70323-BD-Daisy-et-Donald-Editions-Heritage.html,10,
+ca/DED,13,serie-70323-BD-Daisy-et-Donald-Editions-Heritage.html,13,
+ca/DED,15,serie-70323-BD-Daisy-et-Donald-Editions-Heritage.html,15,
+ca/DED,16,serie-70323-BD-Daisy-et-Donald-Editions-Heritage.html,16,
+ca/DED,19,serie-70323-BD-Daisy-et-Donald-Editions-Heritage.html,19,
+ca/DED,23,serie-70323-BD-Daisy-et-Donald-Editions-Heritage.html,23,
+ca/OP,2,serie-66979-BD-Oncle-Picsou-Editions-Heritage.html,2,
+ca/OP,3,serie-66979-BD-Oncle-Picsou-Editions-Heritage.html,3,
+ca/OP,4,serie-66979-BD-Oncle-Picsou-Editions-Heritage.html,4,
+ca/OP,5,serie-66979-BD-Oncle-Picsou-Editions-Heritage.html,5,
+ca/OP,6,revue-Oncle-Picsou-CANADA.html,#6,
+ca/OP,9,revue-Oncle-Picsou-CANADA.html,#9,
+ca/OP,10,serie-66979-BD-Oncle-Picsou-Editions-Heritage.html,10,
+ca/OP,18,serie-66979-BD-Oncle-Picsou-Editions-Heritage.html,18,
+ca/OP,24,revue-Oncle-Picsou-CANADA.html,#24,
+ca/OP,27,serie-66979-BD-Oncle-Picsou-Editions-Heritage.html,27,
+de/DD,7,serie-26379-BD-Donald-Duck-Pocket.html,7,
+de/DD,32,serie-26379-BD-Donald-Duck-Pocket.html,32,
+de/DD,262,serie-26379-BD-Donald-Duck-Pocket.html,262,
+de/DD,304,serie-26379-BD-Donald-Duck-Pocket.html,304,
+de/DD,319,serie-26379-BD-Donald-Duck-Pocket.html,319,
+de/DD,325,serie-26379-BD-Donald-Duck-Pocket.html,325,
+de/DD,328,serie-26379-BD-Donald-Duck-Pocket.html,328,
+de/DD,373,serie-26379-BD-Donald-Duck-Pocket.html,373,
+de/DD,447,serie-26379-BD-Donald-Duck-Pocket.html,447,
+de/DD,453,serie-26379-BD-Donald-Duck-Pocket.html,453,
+de/EEDCB,2,serie-26490-BD-Donald-von-Carl-Barks.html,2,
+de/EEDCB,3,serie-26490-BD-Donald-von-Carl-Barks.html,3,
+de/EEDCB,5,serie-26490-BD-Donald-von-Carl-Barks.html,5,
+de/JC,1,serie-26374-BD-Donald-Duck-Jumbo-Comics.html,1,
+de/JC,25A,serie-26374-BD-Donald-Duck-Jumbo-Comics.html,25,
+de/JC,69A,serie-26374-BD-Donald-Duck-Jumbo-Comics.html,69,
 es/DB2,90,serie-21984-BD-Walt-Disney-editeurs-et-langues-divers.html,,La reina de las sirenas
 fr/ABD,0,serie-11866-BD-Aristochats.html,,Les Aristochats
 fr/ABD,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Les Aristochats
@@ -131,6 +173,8 @@ fr/AH,27,serie-6185-BD-Mickey-Hachette.html,27,
 fr/AH,28,serie-6185-BD-Mickey-Hachette.html,28,
 fr/AH,29,serie-6185-BD-Mickey-Hachette.html,29,
 fr/AH,30,serie-6185-BD-Mickey-Hachette.html,30,
+fr/AHD,A  5,serie-68611-BD-Recueil-Donald-Hardi-presente.html,9bis,
+fr/AHD,S  9,serie-68611-BD-Recueil-Donald-Hardi-presente.html,9,
 fr/ALPM,A O,serie-12842-BD-Picsou-Magazine.html,Rec O,
 fr/ALPM,A Q,serie-12842-BD-Picsou-Magazine.html,Rec Q,
 fr/ALPM,A R,serie-12842-BD-Picsou-Magazine.html,Rec R,
@@ -330,8 +374,36 @@ fr/CSV,124,serie-9713-BD-Grand-Loup-16-22.html,,La main dans le sac
 fr/CSV,146,serie-9713-BD-Grand-Loup-16-22.html,,Vive le rêve
 fr/DAH,2,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Dingoofy - la course au flambeau
 fr/DCH,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Disney Channel
+fr/DDD,1,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,1,
+fr/DDD,2,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,2,
+fr/DDD,3,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,3,
+fr/DDD,4,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,4,
+fr/DDD,5,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,5,
+fr/DDD,6,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,6,
+fr/DDD,7,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,7,
+fr/DDD,8,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,8,
+fr/DDD,9,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,9,
+fr/DDD,10,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,10,
+fr/DDD,11,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,11,
+fr/DDD,12,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,12,
+fr/DDD,13,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,13,
+fr/DDD,14,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,14,
+fr/DDD,15,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,15,
+fr/DDD,16,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,16,
+fr/DDD,17,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,17,
+fr/DDD,18,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,18,
+fr/DDD,19,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,19,
+fr/DDD,20,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,20,
+fr/DDD,21,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,21,
+fr/DDD,22,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,22,
+fr/DDD,23,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,23,
+fr/DDD,24,serie-26341-BD-Dynastie-Donald-Duck-Integrale-Carl-Barks.html,24,
 fr/DG,1,serie-6625-BD-Walt-Disney-Dargaud.html,,Flagada Jones - Profession : Héros !
 fr/DG,2,serie-6625-BD-Walt-Disney-Dargaud.html,,Bébés Disney - Graines de stars
+fr/DHL,1,serie-33455-BD-Donald-et-les-heros-de-la-litterature.html,1,
+fr/DHL,2,serie-33455-BD-Donald-et-les-heros-de-la-litterature.html,2,
+fr/DHL,3,serie-33455-BD-Donald-et-les-heros-de-la-litterature.html,3,
+fr/DHL,4,serie-33455-BD-Donald-et-les-heros-de-la-litterature.html,4,
 fr/DLL,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Donaldus anas atque nox saraceni
 fr/ED,55M01,serie-31241-BD-Walt-Disney-Edicoq.html,,Mickey et ses neveux
 fr/ED,55M02,serie-31241-BD-Walt-Disney-Edicoq.html,,Mickey & Goofy
@@ -375,14 +447,36 @@ fr/GEP,5,serie-36394-BD-Grande-Epopee-de-Picsou.html,5,
 fr/GEP,6,serie-36394-BD-Grande-Epopee-de-Picsou.html,6,
 fr/GEP,7,serie-36394-BD-Grande-Epopee-de-Picsou.html,7,
 fr/GEP,X  1,serie-36394-BD-Grande-Epopee-de-Picsou.html,INT 1 Cof,
+fr/GHL,D  1,serie-27190-BD-Donald-Histoires-longues.html,,Doubleduck - 1
+fr/GHL,D  2,serie-27190-BD-Donald-Histoires-longues.html,,La légende de Donald des bois
+fr/GHL,D  3,serie-27190-BD-Donald-Histoires-longues.html,,Doubleduck - 2
+fr/GHL,D  3,serie-27190-BD-Donald-Histoires-longues.html,,Doubleduck - Tome 3
+fr/GHL,D  4,serie-27190-BD-Donald-Histoires-longues.html,,Doubleduck - Tome 4
+fr/GHL,D  5,serie-27190-BD-Donald-Histoires-longues.html,,Doubleduck - Tome 5
+fr/GSD,1,serie-27190-BD-Donald-Histoires-longues.html,,Dragon Lords
+fr/GSD,9,serie-48820-BD-Donald-Junior.html,1,
+fr/GSD,10,serie-48820-BD-Donald-Junior.html,2,
+fr/GSD,11,serie-48820-BD-Donald-Junior.html,3,
 fr/HL,A  1,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Mickey Hop-là!
 fr/HL,A  2,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Mickey et le prince malalapatte
 fr/HL,A  3,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Une partie de polo
 fr/HL,A  4,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Les trois petits cochons
 fr/HL,A  6,serie-31110-BD-Walt-Disney-Les-Albums-Hop-la.html,,Blanche-Neige et ses amies les bêtes
 fr/HS,B  4,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Mickey et le satellite
+fr/JMS,3195,serie-40588-BD-Heros-de-Donaldville.html,1,
+fr/JMS,3199,serie-40588-BD-Heros-de-Donaldville.html,2,
+fr/JMS,3203,serie-40588-BD-Heros-de-Donaldville.html,3,
+fr/JMS,3215,serie-40588-BD-Heros-de-Donaldville.html,4,
+fr/JMS,3219,serie-40588-BD-Heros-de-Donaldville.html,5,
+fr/JMS,3223,serie-40588-BD-Heros-de-Donaldville.html,6,
+fr/JMS,3227,serie-40588-BD-Heros-de-Donaldville.html,7,
+fr/JMS,3232,serie-40588-BD-Heros-de-Donaldville.html,8,
+fr/JMS,3248,serie-40588-BD-Heros-de-Donaldville.html,9,
+fr/JMS,3254,serie-40588-BD-Heros-de-Donaldville.html,10,
+fr/JMS,3258,serie-40588-BD-Heros-de-Donaldville.html,11,
 fr/JP,0,serie-15917-BD-Picsou-Magazine-Hors-Serie.html,1,
 fr/JP,2,serie-15917-BD-Picsou-Magazine-Hors-Serie.html,2,
+fr/LGM,1,serie-72879-BD-Picsou-et-la-fusee-de-la-fortune.html,,Picsou et la fusée de la fortune
 fr/MET,1,serie-6691-BD-Mickey-a-travers-les-siecles.html,,Mickey explore le temps
 fr/MDE,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Le manuel des echecs d'anatoly karpov
 fr/MHC,1,serie-36734-BD-Walt-Disney-Hachette-et-Edi-Monde.html,,Mickey héros du cinéma
@@ -1717,3 +1811,24 @@ fr/VSM,6,serie-36856-BD-Votre-serie-Mickey-1re-serie.html,,Donald et le secret d
 fr/VSM,7,serie-36856-BD-Votre-serie-Mickey-1re-serie.html,,Mickey dans l'île Tam-Tam
 fr/VSM,8,serie-36856-BD-Votre-serie-Mickey-1re-serie.html,,Donald au Klondike
 fr/VSM,9,serie-36856-BD-Votre-serie-Mickey-1re-serie.html,,La belle au bois dormant
+us/DDDN,1,serie-48898-BD-Walt-Disney-s-Donald-Duck-The-Complete-Daily-Newspaper-Comics-2015.html,,Volume 1: 1938-1940
+us/DDDN,2,serie-48898-BD-Walt-Disney-s-Donald-Duck-The-Complete-Daily-Newspaper-Comics-2015.html,,Volume 2: 1940-1942
+us/DDDN,3,serie-48898-BD-Walt-Disney-s-Donald-Duck-The-Complete-Daily-Newspaper-Comics-2015.html,,Volume 3: 1943-1945
+us/DDDN,4,serie-48898-BD-Walt-Disney-s-Donald-Duck-The-Complete-Daily-Newspaper-Comics-2015.html,,Volume 4: 1945-1947
+us/DDDN,5,serie-48898-BD-Walt-Disney-s-Donald-Duck-The-Complete-Daily-Newspaper-Comics-2015.html,,Volume 5: 1948-1950
+us/DDSC,1,serie-50936-BD-Walt-Disney-s-Donald-Duck-The-Sunday-Newspaper-Comics-2016.html,,"The Sunday Newspaper Comics, Vol. 1"
+us/DDSC,2,serie-50936-BD-Walt-Disney-s-Donald-Duck-The-Sunday-Newspaper-Comics-2016.html,,"The Sunday Newspaper Comics, Vol. 2"
+us/DRL,1,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Volume 1: The Son of the Sun
+us/DRL,2,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Volume 2 : Return to Plain Awful
+us/DRL,3,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Volume 3: Treasure Under Glass
+us/DRL,4,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Volume 4: The Last of the Clan McDuck
+us/DRL,5,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Volume 5: the richest duck in the world
+us/DRL,6,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Volume 6: The Universal Solvent
+us/DRL,7,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Volume 7 : the treasure of the ten avatars
+us/DRL,8,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,Escape from Forbidden Valley
+us/DRL,9,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,The Three Caballeros Ride Again
+us/DRL,10,serie-44909-BD-Walt-Disney-Uncle-Scrooge-and-Donald-Duck-2014.html,,The old castel other secret
+us/LICD,6,serie-28360-BD-Carl-Barks-Library-of-Donald-Duck-Adventures-in-Color-The-1994.html,6,
+us/LICD,17,serie-28360-BD-Carl-Barks-Library-of-Donald-Duck-Adventures-in-Color-The-1994.html,17,
+us/WTR,1,serie-53581-BD-Walt-Disney-Treasury-Donald-Duck-2011.html,,Donald Duck Vol 1
+us/WTR,2,serie-53581-BD-Walt-Disney-Treasury-Donald-Duck-2011.html,,Donald Duck Vol. 2
