@@ -32,7 +32,7 @@
         ok-only
         :ok-disabled="!hasAtLeastOneUser('photographers') || !hasAtLeastOneUser('designers')"
         :ok-title="$t(withExport ? 'Export' : 'Submit')"
-        @ok="run"
+        @ok="issueIndexToSave = 0"
       >
         <b-alert show variant="info">{{
           $t(
@@ -111,6 +111,7 @@ export default {
   data: () => ({
     showModal: false,
     progress: 0,
+    issueIndexToSave: null,
     result: null,
   }),
   computed: {
@@ -135,6 +136,33 @@ export default {
           }, 2000)
         }, 1000)
       }
+    },
+    issueIndexToSave(newValue) {
+      const vm = this
+      const currentIssueNumber = vm.issuenumbers[newValue]
+
+      if (currentIssueNumber === undefined) {
+        return
+      }
+
+      vm.saveEdgeSvg(
+        vm.country,
+        vm.magazine,
+        currentIssueNumber,
+        vm.contributors[currentIssueNumber],
+        vm.withExport,
+        vm.withSubmit
+      ).then((response) => {
+        const isSuccess = response && response.svgPath
+        if (isSuccess) {
+          vm.progress += 100 / vm.issuenumbers.length
+          vm.issueIndexToSave += 1
+        } else {
+          vm.progress = 0
+          vm.result = 'error'
+          vm.issueIndexToSave = null
+        }
+      })
     },
   },
   methods: {
@@ -169,32 +197,8 @@ export default {
       if (this.withExport || this.withSubmit) {
         this.showModal = !this.showModal
       } else {
-        this.run()
+        this.issueIndexToSave = 0
       }
-    },
-    run() {
-      const vm = this
-      this.setZoom(1.5)
-      this.$nextTick().then(() => {
-        vm.issuenumbers.forEach(async (issuenumber) => {
-          vm.saveEdgeSvg(
-            vm.country,
-            vm.magazine,
-            issuenumber,
-            vm.contributors[issuenumber],
-            vm.withExport,
-            vm.withSubmit
-          ).then((response) => {
-            const isSuccess = response && response.svgPath
-            if (isSuccess) {
-              vm.progress = vm.progress + 100 / vm.issuenumbers.length
-            } else {
-              vm.progress = 0
-              vm.result = 'error'
-            }
-          })
-        })
-      })
     },
     ...mapMutations('ui', ['setZoom']),
     ...mapMutations(['addContributor', 'removeContributor']),
