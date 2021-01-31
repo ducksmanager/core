@@ -12,7 +12,13 @@ export default {
         .map((metadataNode) => metadataNode.textContent.trim())
     },
     async loadSvgFromString(country, magazine, issuenumber, publishedVersion = false) {
-      const edgeUrl = this.getEdgeUrl(country, magazine, issuenumber, 'svg', publishedVersion)
+      const edgeUrl = this.getEdgeUrl(
+        country,
+        magazine,
+        issuenumber,
+        'svg?' + new Date().toISOString(),
+        publishedVersion
+      )
       const svgString = await this.$axios.$get(edgeUrl)
       if (!svgString) {
         throw new Error(`No SVG found : ${edgeUrl}`)
