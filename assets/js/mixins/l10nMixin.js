@@ -1,6 +1,19 @@
 import {mapActions, mapState} from "vuex";
 
 const PATH_REGEX = /{([^:]+)(?::([^}]+))?}/g
+
+const matchAll = (haystack, regex) => {
+    const matches = [];
+
+    const match_result = haystack.match(regex);
+    for (let index in match_result){
+        if (match_result.hasOwnProperty(index)) {
+            matches[index] = match_result[index].match(new RegExp(regex.source));
+        }
+    }
+    return matches;
+}
+
 export default {
     computed: mapState("l10n", ["l10n", "l10nRoutes"]),
 
@@ -37,7 +50,7 @@ export default {
                 return route
             }
             let finalRoute = routeL10n[localStorage.getItem('locale')];
-            [...(route.matchAll(PATH_REGEX))].forEach(([_, key, value]) => {
+            [...(matchAll(route, PATH_REGEX))].forEach(([_, key, value]) => {
                 finalRoute = finalRoute.replace(`{${key}}`, value)
             })
 
