@@ -99,6 +99,19 @@ async function run(coaConnection) {
 
 coaPool.getConnection()
   .then(async coaConnection => {
+    await coaConnection.query(`
+        CREATE TABLE IF NOT EXISTS inducks_issuequotation
+        (
+            publicationcode varchar(15) COLLATE utf8_unicode_ci NOT NULL,
+            issuenumber     varchar(12) COLLATE utf8_unicode_ci NOT NULL,
+            estimationmin   float DEFAULT NULL,
+            estimationmax   float DEFAULT NULL,
+            scrapedate      datetime                            NOT NULL,
+            PRIMARY KEY (publicationcode, issuenumber)
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+          COLLATE = utf8_unicode_ci
+    `)
     await run(coaConnection)
   }).catch(err => {
   console.error(err)
