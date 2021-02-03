@@ -102,6 +102,7 @@ DE: de
 DECONNEXION: Déconnexion
 DECOUVRIR_COUVERTURE: Cliquez sur la tranche pour découvrir sa couverture
 DEMO_MENU: Une petite démo ?
+DETAILS: Détails
 DETAILS_HISTOIRE: Détails de l'histoire
 DETAILS_MEDAILLE_CREATEUR: Vous avez %d points Concepteur de tranches, obtenez-en %d de plus pour recevoir le badge %s !
 DETAILS_MEDAILLE_CREATEUR_MAX: Vous avez %d points Concepteur de tranches
@@ -119,6 +120,8 @@ ENVOYER_PHOTO_DE_TRANCHE: Envoyer une photo de tranche
 ENVOYER_PHOTOS_DE_TRANCHE: Envoyer des photos de tranches
 ERREUR_GENERIQUE: Une erreur s'est produite.
 ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: Ce nom d'utilisateur ou cette adresse e-mail existe déjà.
+ESTIMATION: Estimation
+ESTIMATION_AJUSTEE: Estimation ajustée de l'état
 ET: et
 ETAT: Etat
 ETAT_BON: En bon état
@@ -273,6 +276,7 @@ OUI: Oui
 OUVRIR_COLLECTION: Connexion
 PAYS: pays
 PAYS_PUBLICATION: Pays de publication
+PLUS_DE: Plus de %d %s
 POINTS: Points
 POSSESSIONS: Possessions
 POSSESSION_HISTOIRES_AUTEURS: Possession des histoires d'auteurs
@@ -357,6 +361,19 @@ UTILISATEUR_NON_EXISTANT: Cet utilisateur n'existe pas.
 UTILISATEUR_INVALIDE: Le nom d'utilisateur est invalide. Choisissez un nom d'utilisateur d'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.
 UTILISATEURS_INSCRITS: "%d utilisateurs sont inscrits<br />sur DucksManager"
 VALIDER: Valider
+VALEUR_COLLECTION: Valeur de la collection
+VALEUR_COLLECTION_AUCUN_MAGAZINE_COTE: Votre collection ne contient pas de magazines cotés.
+VALEUR_COLLECTION_ESTIMATION: "La valeur de votre collection est estimée à : %s."
+VALEUR_COLLECTION_EXPLICATION_CONTENU_1: Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.
+VALEUR_COLLECTION_EXPLICATION_CONTENU_2: Les cotes utilisées sont celles référencées sur le site Internet %s.
+VALEUR_COLLECTION_EXPLICATION_CONTENU_3: "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_4: Une cote présente sur Bédéthèque n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à %s :-)
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_BON: "Numéro en bon état : pas d'ajustement"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_INDEFINI: "Etat non défini : 70% de la cote"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_MAUVAIS: "Numéro en mauvais état : 30% de la cote"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_MOYEN: "Numéro en moyen état : 70% de la cote"
+VALEUR_COLLECTION_EXPLICATION_TITRE: Comment DucksManager calcule-t-il la valeur de ma collection ?
+VALEUR_COLLECTION_NOMBRE_MAGAZINES_COTES: Votre collection contient %d magazines cotés.
 VENTE_CONSERVER_VOLONTE_VENTE: Conserver la volonté de vente
 VENTE_MARQUER_A_VENDRE: Marquer comme "A vendre"
 VENTE_MARQUER_PAS_A_VENDRE: Enlever la mention "A vendre"

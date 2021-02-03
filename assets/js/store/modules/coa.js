@@ -11,6 +11,7 @@ const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";
 const URL_PREFIX_ISSUES = "/api/coa/list/issues/";
 const URL_PREFIX_AUTHORS = "/api/coa/authorsfullnames/";
 const URL_PREFIX_URLS = "/api/coa/list/details/";
+const URL_PREFIX_ISSUE_QUOTATIONS = "/api/coa/quotations/";
 const URL_ISSUE_COUNTS = "/api/coa/list/issues/count";
 const URL_ISSUE_DECOMPOSE = "/api/coa/issues/decompose";
 
@@ -25,7 +26,8 @@ export default {
     issueDetails: {},
     isLoadingCountryNames: false,
     issueCounts: null,
-    issueCodeDetails: null
+    issueCodeDetails: null,
+    issueQuotations: {}
   }),
 
   mutations: {
@@ -62,6 +64,9 @@ export default {
     },
     addIssueCodeDetails(state, issueCodeDetails) {
       state.issueCodeDetails = { ...state.issueCodeDetails, ...issueCodeDetails };
+    },
+    addIssueQuotations(state, issueQuotations) {
+      state.issueQuotations = {...state.issueQuotations, ...issueQuotations};
     }
   },
 
@@ -86,6 +91,28 @@ export default {
             valuesToChunk: newPublicationCodes,
             chunkSize: 10
           }).then(data => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))
+        );
+    },
+    fetchIssueQuotations: async ({ state, commit, dispatch }, publicationCodes) => {
+      const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
+        !Object.keys(state.issueQuotations).includes(publicationCode)
+      ))];
+      return newPublicationCodes.length
+        && commit("addIssueQuotations",
+          await dispatch("getChunkedRequests", {
+            url: URL_PREFIX_ISSUE_QUOTATIONS,
+            valuesToChunk: newPublicationCodes,
+            chunkSize: 10
+          }).then(data => data.reduce((acc, result) =>
+            ({
+              ...acc, ...result.data.reduce((issueAcc, issue) => ({
+                ...issueAcc,
+                [`${issue.publicationcode} ${issue.issuenumber}`]: {
+                  min: issue.estimationmin,
+                  max: issue.estimationmax
+                }
+              }), {})
+            }), []))
         );
     },
     fetchPublicationNamesFromCountry: async ({ state, commit, dispatch }, countryCode) => {

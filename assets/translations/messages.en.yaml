@@ -98,6 +98,7 @@ DE: from
 DECONNEXION: Log out
 DECOUVRIR_COUVERTURE: Click on the edge to see its cover
 DEMO_MENU: Want to try a demo?
+DETAILS: Details
 DETAILS_HISTOIRE: Story details
 DETAILS_MEDAILLE_CREATEUR: You have %d Edge designer points, get %d more to receive the %s badge!
 DETAILS_MEDAILLE_CREATEUR_MAX: You have %d Edge designer points
@@ -115,6 +116,8 @@ ENVOYER_PHOTO_DE_TRANCHE: Send a photo of the edge
 ENVOYER_PHOTOS_DE_TRANCHE: Send edge photos
 ERREUR_GENERIQUE: An error occurred.
 ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT: This username or this e-mail address already exists.
+ESTIMATION: Estimation
+ESTIMATION_AJUSTEE: Estimation adjusted with issue condition
 ET: and
 ETAT: Condition
 ETAT_BON: In good condition
@@ -268,6 +271,7 @@ OUI: Yes
 OUVRIR_COLLECTION: Log in
 PAYS: countries
 PAYS_PUBLICATION: Country of publication
+PLUS_DE: More than %d %s
 POINTS: points
 POSSESSIONS: Possessions
 POSSESSION_HISTOIRES_AUTEURS: Possession of issues
@@ -281,7 +285,7 @@ PRESENTATION1: DucksManager is a website allowing you to manage your collection 
 PRESENTATION2: From your collection management to its printing as a list, including complete statistics, all the functions you were waiting from a collection manager are here!
 PRESENTATION_BIBLIOTHEQUE_1: DucksManager's bookcase presents your comics collection on elegant shelves.
 PRESENTATION_BIBLIOTHEQUE_2: Since your bookcase is unique, DucksManager allows you to choose among different types of wood, for the bookcase and for its shelves.
-PRESENTATION_BIBLIOTHEQUE_3: '...And in order the immersion to be total, you are able to view the cover and some excerpts of nearly every issue of yours!!'
+PRESENTATION_BIBLIOTHEQUE_3: '...And in order for the immersion to be complete, you can view the cover and some excerpts of nearly every issue of yours!!'
 PRESENTATION_BIBLIOTHEQUE_TITRE: Your bookcase, like if you're in front of it!
 PRESENTATION_BOUQUINERIE1: You have visited in a cool second-hand bookshop? Let the other visitors know!
 PRESENTATION_DEMO_TITRE: Welcome in the demo mode!
@@ -352,6 +356,19 @@ UTILISATEUR_INVALIDE: Invalid username. Choose a username with at least 3 charac
 UTILISATEUR_NON_EXISTANT: This user doesn't exist.
 UTILISATEURS_INSCRITS: "%d users have signed up<br />on DucksManager"
 VALIDER: Submit
+VALEUR_COLLECTION: Collection value
+VALEUR_COLLECTION_AUCUN_MAGAZINE_COTE: Your collection doesn't contain quoted issues.
+VALEUR_COLLECTION_ESTIMATION: "The value of your collection is estimated to: %s."
+VALEUR_COLLECTION_EXPLICATION_CONTENU_1: If some issues of your collection have a quoted value, DucksManager can calculate their approximative value.
+VALEUR_COLLECTION_EXPLICATION_CONTENU_2: The quotations originate from the %s website.
+VALEUR_COLLECTION_EXPLICATION_CONTENU_3: "The quotations are then adjusted to the conditions of the issues as set up in your DucksManager collection, using the following coefficients:"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_4: Did you see a quotation on Bédéthèque that is not present in the list hereunder? Make us know by sending an e-mail to %s :-)
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_BON: "Issue in good condition: no change from the original quotation"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_INDEFINI: "Undefined condition: 70% of the original quotation"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_MAUVAIS: "Issue in bad condition: 30% of the original quotation"
+VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_MOYEN: "Issue in not-so-good condition: 70% of the original quotation"
+VALEUR_COLLECTION_EXPLICATION_TITRE: How does DucksManger calculate the value of my collection?
+VALEUR_COLLECTION_NOMBRE_MAGAZINES_COTES: Your collection contains %d quoted issues.
 VENTE_CONSERVER_VOLONTE_VENTE: Do not change the "for sale" state
 VENTE_MARQUER_A_VENDRE: Mark as "For sale"
 VENTE_MARQUER_PAS_A_VENDRE: Remove the "For sale" label

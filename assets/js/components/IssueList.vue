@@ -135,7 +135,7 @@
       />
     </div>
     <div v-else-if="loading">
-      {{ l10n.LOADING }}
+      {{ l10n.CHARGEMENT }}
     </div>
   </div>
   <div v-else-if="!publicationNameLoading">
