@@ -94,6 +94,7 @@ async function run(coaConnection) {
     }
     console.log('Done')
   }
+  console.log('Done for all')
 }
 
 coaPool.getConnection()
@@ -112,6 +113,8 @@ coaPool.getConnection()
           COLLATE = utf8_unicode_ci
     `)
     await run(coaConnection)
+    await coaConnection.end()
+    return coaPool.end()
   }).catch(err => {
   console.error(err)
 });
