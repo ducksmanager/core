@@ -15,7 +15,6 @@ for (const envKey of ['MYSQL_COA_HOST', 'MYSQL_COA_DATABASE', 'MYSQL_PASSWORD'])
 const coaPool = mariadb.createPool({
   host: process.env.MYSQL_COA_HOST,
   user: 'root',
-  port: 64000,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_COA_DATABASE
 });
