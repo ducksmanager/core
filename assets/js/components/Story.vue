@@ -4,15 +4,15 @@
       v-if="kind"
       size="xl"
       :class="{[`kind-${kind}`]: true}"
-    >{{ l10n[`HISTOIRE_TYPE_${kind.toUpperCase()}`] || l10n.HISTOIRE_TYPE_AUTRE }}</b-badge>
-    {{ title || l10n.SANS_TITRE }}
+    >{{ storyTypeText }}</b-badge>
+    {{ title || $t("Sans titre") }}
     <small>{{ comment }}</small>
     <a
       v-if="!noLink"
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
     >
-      {{ l10n.DETAILS_HISTOIRE }}
+      {{ $t("Détails de l'histoire") }}
     </a>
   </span>
 </template>
@@ -48,15 +48,42 @@ export default {
     dark: {
       type: Boolean,
       default: false
-    },
+    }
   },
 
   computed: {
     urlEncodedStorycode() {
-      return this.storycode && encodeURIComponent(this.storycode)
+      return this.storycode && encodeURIComponent(this.storycode);
+    },
+    storyTypeText() {
+      switch (this.kind.toUpperCase()) {
+        case "A":
+          return this.$t("article");
+        case   "C":
+          return this.$t("couverture");
+        case   "F":
+          return this.$t("détachable");
+        case   "G":
+          return this.$t("jeu");
+        case   "I":
+          return this.$t("illustration");
+        case   "K":
+          return this.$t("strip");
+        case   "L":
+          return this.$t("peinture");
+        case   "N":
+          return this.$t("histoire");
+        case   "N_G":
+          return this.$t("gag");
+        case   "P":
+          return this.$t("peinture");
+        case   "T":
+          return this.$t("texte");
+      }
+      return this.$t("autre");
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

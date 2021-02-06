@@ -6,27 +6,27 @@
     >
       <template #non-empty-collection>
         <div>
-          <span v-html="$t('RARETE_TEXTE', [rarityValue, rarityTotal])" /><br>
-          <small class="d-inline-block mt-3">{{ l10n.RARETE_EXPLICATION }}</small>
+          <span v-html="$t('Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.', [rarityValue, rarityTotal])" /><br>
+          <small class="d-inline-block mt-3">{{ $t('La rareté de votre collection est calculée sur la base du nombre d\'autres utilisateurs qui possèdent chacun des magazines de votre collection.') }}</small>
         </div>
       </template>
     </ShortStats>
     <div v-else>
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
-    <h2>{{ l10n.VALEUR_COLLECTION }}<sup><small>{{ l10n.NOUVEAU }}</small></sup></h2>
+    <h2>{{ $t('Valeur de la collection') }}<sup><small>{{ $t('Nouveau!') }}</small></sup></h2>
     <template v-if="quotedIssues && hasPublicationNames">
       <b-alert
         v-if="quotationSum === 0"
         show
         variant="light"
       >
-        {{ l10n.VALEUR_COLLECTION_AUCUN_MAGAZINE_COTE }}
+        {{ $t('Votre collection ne contient pas de magazines cotés.') }}
       </b-alert>
       <div v-else>
         <div
           class="my-3"
-          v-html="$t('VALEUR_COLLECTION_ESTIMATION', [$t('PLUS_DE', [quotationSum, '€'])])"
+          v-html="$t('La valeur de votre collection est estimée à : {0}.', [$t('Plus de {0} {1}', [quotationSum, '€'])])"
         />
         <Accordion
           id="quotation-details"
@@ -34,11 +34,11 @@
           :visible="false"
         >
           <template #header>
-            {{ l10n.DETAILS }}
+            {{ $t('Détails') }}
           </template>
           <template #content>
             <div class="my-3">
-              {{ $t('VALEUR_COLLECTION_NOMBRE_MAGAZINES_COTES', [quotedIssues.length]) }}
+              {{ $t('Votre collection contient {0} magazines cotés.', [quotedIssues.length]) }}
             </div>
             <b-table
               striped
@@ -57,7 +57,7 @@
                 />
               </template>
               <template #cell(condition)="{item}">
-                {{ l10n[`ETAT_${item.condition.toUpperCase()}`] }}
+                {{ getConditionLabel(item.condition) }}
               </template>
               <template #cell(estimation)="{item}">
                 {{ item.estimation }}€
@@ -74,27 +74,27 @@
           :visible="false"
         >
           <template #header>
-            {{ l10n.VALEUR_COLLECTION_EXPLICATION_TITRE }}
+            {{ $t('Comment DucksManager calcule-t-il la valeur de ma collection ?') }}
           </template>
           <template #content>
             <div>
-              {{ l10n.VALEUR_COLLECTION_EXPLICATION_CONTENU_1 }}
+              {{ $t('Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.') }}
             </div>
-            <div v-html="$t('VALEUR_COLLECTION_EXPLICATION_CONTENU_2', ['<a href=\'https://bedetheque.com\'>Bédéthèque</a>'])" />
-            {{ l10n.VALEUR_COLLECTION_EXPLICATION_CONTENU_3 }}
+            <div v-html="$t('Les cotes utilisées sont celles référencées sur le site Internet {0}.', ['<a href=\'https://bedetheque.com\'>Bédéthèque</a>'])" />
+            {{ $t('Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :') }}
             <ul>
-              <li>{{ l10n.VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_BON }}</li>
-              <li>{{ l10n.VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_MOYEN }}</li>
-              <li>{{ l10n.VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_MAUVAIS }}</li>
-              <li>{{ l10n.VALEUR_COLLECTION_EXPLICATION_CONTENU_BAREME_INDEFINI }}</li>
+              <li>{{ $t('Numéro en bon état : pas d\'ajustement') }}</li>
+              <li>{{ $t('Numéro en moyen état : 70% de la cote') }}</li>
+              <li>{{ $t('Numéro en mauvais état : 30% de la cote') }}</li>
+              <li>{{ $t('Etat non défini : 70% de la cote') }}</li>
             </ul>
-            <div v-html="$t('VALEUR_COLLECTION_EXPLICATION_CONTENU_4', ['<a href=\'mailto:admin@ducksmanager.net\'>admin@ducksmanager.net</a>'])" />
+            <div v-html="$t('Une cote présente sur Bédéthèque n\'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)', ['<a href=\'mailto:admin@ducksmanager.net\'>admin@ducksmanager.net</a>'])" />
           </template>
         </Accordion>
       </div>
     </template>
     <div v-else>
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
   </div>
 </template>
@@ -126,10 +126,10 @@ export default {
     ...mapGetters("collection", ["totalPerPublication", "quotedIssues", "quotationSum"]),
     quotationFields() {
       return [
-        {key: 'issue', label: this.ucFirst(this.$t('NUMERO'))},
-        {key: 'condition', label: this.ucFirst(this.$t('ETAT'))},
-        {key: 'estimation', label: this.ucFirst(this.$t('ESTIMATION'))},
-        {key: 'estimationGivenCondition', label: this.ucFirst(this.$t('ESTIMATION_AJUSTEE'))}
+        {key: 'issue', label: this.ucFirst(this.$t('numéro'))},
+        {key: 'condition', label: this.ucFirst(this.$t('Etat'))},
+        {key: 'estimation', label: this.ucFirst(this.$t('Estimation'))},
+        {key: 'estimationGivenCondition', label: this.ucFirst(this.$t('Estimation ajustée de l\'état'))}
       ]
     }
   },

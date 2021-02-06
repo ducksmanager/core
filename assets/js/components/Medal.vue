@@ -47,8 +47,8 @@
       :src="`${imagePath}/medals/${contribution}_${level}_${xSmall ? 'fond' : locale}.png`"
     >
     <b v-if="small">
-      {{ l10n[`TITRE_MEDAILLE_${contribution.toUpperCase()}`] }}
-      <br>{{ l10n.NIVEAU }} {{ level }}
+      {{ medalTitle }}
+      <br>{{ $t('niveau') }} {{ level }}
     </b>
   </span>
 </template>
@@ -74,6 +74,14 @@ export default {
   computed: {
     level() {
       return this.nextLevel && this.currentLevel !== null ? this.currentLevel + 1 : this.currentLevel
+    },
+    medalTitle() {
+      switch(this.contribution.toUpperCase()) {
+        case 'CREATEUR': return this.$t("Concepteur de tranches")
+        case 'PHOTOGRAPHE': return this.$t("Photographe de tranches")
+        case 'DUCKHUNTER': return this.$t("Concepteur de tranches")
+      }
+      return ''
     }
   }
 }

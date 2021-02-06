@@ -6,29 +6,29 @@
     sticky
   >
     <b-navbar-brand v-if="withTitle">
-      {{ l10n.RECHERCHER_HISTOIRE }}
+      {{ $t('Rechercher une histoire') }}
     </b-navbar-brand>
     <b-navbar-nav>
       <b-dropdown
         class="search-type"
-        :text="l10n[searchContexts[searchContext]]"
+        :text="searchContexts[searchContext]"
       >
         <b-dropdown-item
           v-for="(l10nKey, alternativeSearchContext) in searchContextsWithoutCurrent"
           :key="alternativeSearchContext"
           @click="searchContext=alternativeSearchContext;search = ''"
         >
-          {{ l10n[l10nKey] }}
+          {{ l10nKey }}
         </b-dropdown-item>
       </b-dropdown>
       <b-form-input
         v-model="search"
         list="search"
-        :placeholder="searchContext === 'story' ? l10n.RECHERCHER_HISTOIRE : l10n.RECHERCHER_PUBLICATIONS"
+        :placeholder="searchContext === 'story' ? $t('Rechercher une histoire') : $t('Rechercher les publications d\'une histoire à partir d\'un code histoire')"
       />
       <datalist v-if="searchResults.results && !isSearching">
         <option v-if="!searchResults.results.length">
-          {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
+          {{ $t('Aucun résultat.') }}
         </option>
         <option
           v-for="searchResult in searchResults.results"
@@ -80,14 +80,16 @@ export default {
     search: '',
     searchResults: [],
     searchContext: 'story',
-    searchContexts: {
-      story: 'TITRE_HISTOIRE',
-      storycode: 'CODE_HISTOIRE',
-    }
   }),
 
   computed: {
     ...mapState("coa", ["publicationNames"]),
+    searchContexts() {
+      return {
+        story: this.$t("titre d'histoire"),
+        storycode: this.$t("code histoire")
+      }
+    },
     searchContextsWithoutCurrent() {
       const vm = this
       return Object.keys(this.searchContexts).filter(searchContext => searchContext !== vm.searchContext)

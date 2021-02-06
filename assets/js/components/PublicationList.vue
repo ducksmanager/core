@@ -9,7 +9,7 @@
   >
     <b-navbar-toggle target="nav-publications" />
     <b-navbar-brand href="#">
-      {{ l10n.COLLECTION }}
+      {{ $t('Collection') }}
     </b-navbar-brand>
     <b-collapse
       id="nav-publications"
@@ -41,7 +41,7 @@
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item :href="$r('/collection/show/{publicationCode:new}')">
-          {{ l10n.NOUVEAU_MAGAZINE }}
+          {{ $t('Nouveau magazine') }}
         </b-nav-item>
       </b-navbar-nav>
     </b-collapse>
@@ -52,7 +52,7 @@
     </b-navbar-nav>
   </b-navbar>
   <div v-else>
-    {{ l10n.CHARGEMENT }}
+    {{ $t('Chargement...') }}
   </div>
 </template>
 

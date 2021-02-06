@@ -22,7 +22,7 @@ class SecurityController extends PageSiteController
      *     name="app_login"
      * )
      */
-    public function login(AuthenticationUtils $authenticationUtils, TranslatorInterface $translator): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if (!empty($this->getUser())) {
             return $this->redirectToRoute('app_collection_show');
@@ -39,7 +39,7 @@ class SecurityController extends PageSiteController
                 'component' => 'Site',
                 'page' => 'Login',
                 'last-username' => $lastUsername,
-                'error' => is_null($error) ? null : $translator->trans('IDENTIFIANTS_INCORRECTS')
+                'error' => is_null($error) ? null : 'Les identifiants que vous avez entré sont invalides, veuillez réessayer.'
             ]
         ]);
     }

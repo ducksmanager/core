@@ -1,6 +1,6 @@
 <template>
   <div id="recently">
-    <h4>{{ l10n.NEWS_TITRE }}</h4>
+    <h4>{{ $t('Récemment sur DucksManager...') }}</h4>
     <div id="events">
       <template v-if="isLoaded">
         <Event
@@ -11,7 +11,7 @@
           <Ago :timestamp="event.timestamp" />
         </Event>
       </template>
-      <span v-else>{{ l10n.CHARGEMENT }}</span>
+      <span v-else>{{ $t('Chargement...') }}</span>
     </div>
   </div>
 </template>

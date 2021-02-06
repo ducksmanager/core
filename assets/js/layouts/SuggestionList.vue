@@ -1,20 +1,20 @@
 <template>
   <div class="mt-4">
     <div v-if="loading">
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
     <div v-else-if="!hasSuggestions">
-      {{ l10n.AUCUNE_SUGGESTION }}
+      {{ $t('Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné.') }}
     </div>
     <template v-else>
       <b-button-group>
         <b-button
-          v-for="(l10nKey, suggestionSort) in suggestionSorts"
+          v-for="(suggestionText, suggestionSort) in suggestionSorts"
           :key="suggestionSort"
           :pressed="suggestionSortCurrent === suggestionSort"
           @click="suggestionSortCurrent = suggestionSort"
         >
-          {{ l10n[l10nKey] }}
+          {{ suggestionText }}
         </b-button>
       </b-button-group>
       <div
@@ -24,7 +24,7 @@
         <div :class="{suggestions: true, 'since-last-visit': sinceLastVisit, 'pt-2': true}">
           <div
             class="d-flex align-items-center issue importance"
-            :title="`${l10n.SCORE} : ${score}`"
+            :title="`${$t('Score')} : ${score}`"
           >
             <div class="mr-3 d-flex justify-content-center importance-bills">
               <b-icon-cash
@@ -41,7 +41,7 @@
               >
                 <template #title-suffix>
                   <div class="release-date mt-2">
-                    {{ l10n.SORTIE }}{{ oldestdate }}
+                    {{ $t('Sortie :') }}{{ oldestdate }}
                   </div>
                 </template>
               </Issue>
@@ -88,12 +88,14 @@ export default {
   data: () => ({
     loading: true,
     suggestionSortCurrent: 'score',
-    suggestionSorts: {oldestdate: 'TRIER_PAR_DATE_SORTIE', score: 'TRIER_PAR_SCORE'},
   }),
 
   computed: {
     ...mapState("collection", ["suggestions"]),
     ...mapGetters("collection", ["hasSuggestions"]),
+    suggestionSorts() {
+      return {oldestdate: this.$t("Trier par date de parution"), score: this.$t("Trier par score")}
+    }
   },
 
   watch: {

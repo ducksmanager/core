@@ -1,10 +1,10 @@
 <template>
   <div v-if="publicationcode === 'new'">
-    {{ l10n.REMPLIR_INFOS_NOUVEAU_MAGAZINE }}
+    {{ $t('Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros.') }}
     <PublicationSelect />
     <br>
     <br>
-    {{ l10n.RECHERCHER_INTRO }}
+    {{ $t('... ou recherchez un magazine à partir d\'une histoire qui le contient :') }}
     <IssueSearch />
   </div>
   <div v-else-if="hasPublicationNames">
@@ -15,7 +15,7 @@
     >
       <template #header>
         {{
-          suggestionsNumber === 1 ? l10n.SUGGESTIONS_ACHATS_NOUVEAUTE : $t('SUGGESTIONS_ACHATS_NOUVEAUTES', suggestionsNumber)
+          suggestionsNumber === 1 ? $t('Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !') : $t('Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !', suggestionsNumber)
         }}
       </template>
       <template #content>
@@ -26,7 +26,7 @@
         />
       </template>
       <template #footer>
-        <div><a :href="$r('/expand')">{{ l10n.SUGGESTIONS_SEE_ALL }}</a></div>
+        <div><a :href="$r('/expand')">{{ $t('Voir toutes les suggestions d\'achat pour ma collection') }}</a></div>
       </template>
     </Accordion>
     <LastPublishedEdges />
@@ -34,18 +34,18 @@
       v-if="username === 'demo'"
       id="demo-intro"
     >
-      <h2>{{ l10n.PRESENTATION_DEMO_TITRE }}</h2>
-      <span v-html="l10n.PRESENTATION_DEMO" /> {{ (60 - new Date().getMinutes()) || 60 }} {{ l10n.MINUTES }}
+      <h2>{{ $t('Bienvenue dans le mode démo !') }}</h2>
+      <span v-html="$t('Prenez le temps de découvrir les fonctionnalités de DucksManager.<br /><br />Vous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.<br />Si vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.<br />Prochaine remise à zéro dans')" /> {{ (60 - new Date().getMinutes()) || 60 }} {{ $t('minute(s)') }}
     </div>
     <ShortStats>
       <template #empty-collection>
         <div class="mb-3">
-          {{ l10n.COLLECTION_CLIQUER_NOUVEAU_MAGAZINE }}
+          {{ $t('Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.') }}
         </div>
       </template>
       <template #non-empty-collection>
         <div class="mb-3">
-          {{ l10n.CLIQUEZ_SUR_MAGAZINE_POUR_EDITER }}
+          {{ $t('Cliquez sur l\'un de vos magazines pour éditer sa liste !') }}
         </div>
       </template>
     </ShortStats>

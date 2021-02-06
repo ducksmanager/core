@@ -1,16 +1,16 @@
 <template>
   <form
-    v-if="l10n && user"
+    v-if="user"
     method="post"
   >
     <b-alert
       v-if="isSuccess"
       variant="success"
     >
-      {{ l10n.OK }} !
+      {{ $t('OK') }} !
     </b-alert>
 
-    <h5>{{ l10n.ADRESSE_EMAIL }}</h5>
+    <h5>{{ $t('Adresse e-mail') }}</h5>
     <Errorable id="email">
       <b-form-input
         id="email"
@@ -20,13 +20,13 @@
         autofocus
       />
     </Errorable>
-    <h5>{{ l10n.MOT_DE_PASSE_CHANGEMENT }}</h5>
+    <h5>{{ $t('Changement de mot de passe') }}</h5>
     <Errorable id="password">
       <b-form-input
         id="password"
         name="password"
         type="password"
-        :placeholder="l10n.MOT_DE_PASSE_ACTUEL"
+        :placeholder="$t('Mot de passe actuel')"
       />
     </Errorable>
     <Errorable id="passwordNew">
@@ -34,7 +34,7 @@
         id="passwordNew"
         name="passwordNew"
         type="password"
-        :placeholder="l10n.MOT_DE_PASSE_NOUVEAU"
+        :placeholder="$t('Nouveau mot de passe')"
       />
     </Errorable>
     <Errorable id="passwordNewConfirmation">
@@ -42,17 +42,17 @@
         id="passwordNewConfirmation"
         name="passwordNewConfirmation"
         type="password"
-        :placeholder="l10n.MOT_DE_PASSE_NOUVEAU_CONFIRMATION"
+        :placeholder="$t('Nouveau mot de passe (confirmation)')"
       />
     </Errorable>
 
-    <h5>{{ l10n.OPTIONS }}</h5>
+    <h5>{{ $t('Options') }}</h5>
     <b-form-checkbox
       id="share-enabled"
       v-model="user.isShareEnabled"
       name="isShareEnabled"
     >
-      {{ l10n.ACTIVER_PARTAGE }}
+      {{ $t('Activer le partage de ma collection') }}
     </b-form-checkbox>
 
     <b-form-checkbox
@@ -60,7 +60,7 @@
       v-model="user.isVideoShown"
       name="isVideoShown"
     >
-      {{ l10n.AFFICHER_VIDEO }}
+      {{ $t('Afficher la vidéo d\'explication pour la sélection des numéros') }}
     </b-form-checkbox>
 
     <b-btn
@@ -68,18 +68,18 @@
       size="xl"
       type="submit"
     >
-      {{ l10n.VALIDER }}
+      {{ $t('Valider') }}
     </b-btn>
 
     <h5 class="mt-5">
-      {{ l10n.ZONE_DANGER }}
+      {{ $t('Zone danger') }}
     </h5>
     <div>
       <b-btn
         variant="danger"
         @click="emptyCollection"
       >
-        {{ l10n.VIDER_LISTE }}
+        {{ $t('Vider ma liste de numéros') }}
       </b-btn>
     </div>
     <div>
@@ -87,7 +87,7 @@
         variant="danger"
         @click="deleteAccount"
       >
-        {{ l10n.SUPPRIMER_COMPTE }}
+        {{ $t('Supprimer mon compte DucksManager') }}
       </b-btn>
     </div>
   </form>
@@ -125,14 +125,14 @@ export default {
     ...mapActions("collection", ["loadUser"]),
 
     async emptyCollection() {
-      if (confirm(this.l10n.VIDER_LISTE_CONFIRMATION)) {
+      if (confirm(this.$t('Votre collection va être vidée. Continuer ?'))) {
         await axios.delete(`/collection`)
         window.location.replace(this.$r('/collection/show'))
       }
     },
 
     async deleteAccount() {
-      if (confirm(this.l10n.SUPPRIMER_COMPTE_CONFIRMATION)) {
+      if (confirm(this.$t('Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?'))) {
         await axios.post(`/collection/empty`)
         window.location.replace(this.$r('/logout'))
       }

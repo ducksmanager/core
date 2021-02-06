@@ -11,14 +11,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PasswordChange
 {
-    private static TranslatorInterface $translator;
     private $token = null;
     private $password = null;
     private $passwordConfirmation = null;
 
-    public static function createFromRequest(TranslatorInterface $translator, Request $request, string $token): PasswordChange
+    public static function createFromRequest(Request $request, string $token): PasswordChange
     {
-        self::$translator = $translator;
         $object = new PasswordChange();
         foreach ($request->request->all() as $field => $value) {
             if (!empty($value)) {
@@ -32,13 +30,13 @@ class PasswordChange
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addConstraint(new Callback('validatePasswordEqualsPasswordConfirmation'));
-        $metadata->addPropertyConstraint('password', new Length(['min' => 6, 'minMessage' => self::$translator->trans('MOT_DE_PASSE_6_CHAR_ERREUR')]));
+        $metadata->addPropertyConstraint('password', new Length(['min' => 6, 'minMessage' => 'Le mot de passe doit comporter au moins 6 caractères !']));
     }
 
     public function validatePasswordEqualsPasswordConfirmation(ExecutionContextInterface $context)
     {
         if ($this->password !== $this->passwordConfirmation) {
-            $context->buildViolation(self::$translator->trans('MOTS_DE_PASSE_DIFFERENTS'))
+            $context->buildViolation('Les deux mots de passe ne correspondent pas !')
                 ->atPath('password')
                 ->addViolation();
         }

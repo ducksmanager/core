@@ -127,7 +127,7 @@ export default {
             responsiveAnimationDuration: 0,
             title: {
               display: true,
-              text: this.l10n.ACHATS
+              text: this.$t('Achats')
             },
             responsive: true,
             maintainAspectRatio: false,
@@ -152,16 +152,16 @@ export default {
                 beforeTitle: ([tooltipItem]) => {
                   return (tooltipItem.label !== '?'
                       ? `${vm.unit === 'total'
-                        ? vm.l10n.ACHATS_NUMEROS_TAILLE
-                        : vm.l10n.ACHATS_NUMEROS_NOUVELLES_ACQUISITIONS} ${tooltipItem.label}`
-                      : vm.l10n.ACHATS_NUMEROS_SANS_DATE
+                        ? vm.$t('Taille de la collection pour le mois')
+                        : vm.$t('Nouvelles acquisitions pour le mois')} ${tooltipItem.label}`
+                      : vm.$t('Numéros sans dates d\'achat')
                   ) + "\n";
                 },
                 title: (tooltipItem, {datasets}) => datasets[tooltipItem[0].datasetIndex].label,
                 label: (tooltipItem) => tooltipItem.yLabel,
                 footer: ([tooltipItem], {datasets}) =>
                   [
-                    vm.l10n.TOUS_MAGAZINES,
+                    vm.$t('Tous magazines'),
                     datasets.reduce((acc, dataset) => acc + dataset.data[tooltipItem.index], 0)
                   ].join('\n')
               }

@@ -11,14 +11,14 @@
     >
       <template #title><slot name="title" /></template>
       <div>
-        {{ l10n.DECOUVRIR_COUVERTURE }}.
+        {{ $t('Cliquez sur la tranche pour découvrir sa couverture') }}.
         <div
           v-if="!hasEdge"
           class="has-no-edge"
         >
-          {{ l10n.TRANCHE_NON_DISPONIBLE1 }}<br>
+          {{ $t('Cette tranche n\'est pas visible car nous n\'en possédons pas de photographie...') }}<br>
           <div v-if="!isSharedBookcase">
-            {{ l10n.TRANCHE_NON_DISPONIBLE2 }}<br>
+            {{ $t('Vous pouvez photographier cette tranche ?') }}<br>
             <div class="medal-progress-wrapper">
               <MedalProgress
                 contribution="Photographe"
@@ -27,8 +27,8 @@
               />
             </div>
             <div class="progress-info">
-              {{ l10n.TRANCHE_NON_DISPONIBLE3 }}
-              <span>{{ extraPoints }}</span> {{ l10n.POINTS }} !
+              {{ $t('Envoyez-nous une photo et gagnez') }}
+              <span>{{ extraPoints }}</span> {{ $t('Points') }} !
             </div>
             <br>
             <b-btn
@@ -36,7 +36,7 @@
               href="https://edgecreator.ducksmanager.net"
               target="_blank"
             >
-              {{ l10n.ENVOYER_PHOTO_DE_TRANCHE }}
+              {{ $t('Envoyer une photo de tranche') }}
             </b-btn>
           </div>
         </div>

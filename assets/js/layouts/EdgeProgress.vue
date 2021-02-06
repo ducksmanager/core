@@ -59,7 +59,7 @@
       <span class="num available">&nbsp;</span> Cette tranche est prête.<br>
     </div>
     <div v-else>
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
   </div>
 </template>

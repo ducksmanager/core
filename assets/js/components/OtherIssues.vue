@@ -1,11 +1,11 @@
 <template>
   <span v-if="number > 1">
-    {{ l10n.ET }} {{ number - 1 }}
+    {{ $t('et') }} {{ number - 1 }}
     <template v-if="number > 2">
-      {{ l10n[l10KeyMultiple] }}
+      {{ textMultiple || $t('autre numéro') }}
     </template>
     <template v-else>
-      {{ l10n[l10KeySingle] }}
+      {{ textSingle || $t('autres numéros') }}
     </template>
   </span>
 </template>
@@ -22,13 +22,13 @@ export default {
       type: Number,
       required: true
     },
-    l10KeySingle: {
+    textSingle: {
       type: String,
-      default: 'NEWS_AUTRE_NUMERO'
+      default: null
     },
-    l10KeyMultiple: {
+    textMultiple: {
       type: String,
-      default: 'NEWS_AUTRES_NUMEROS'
+      default: null
     }
   }
 }

@@ -7,35 +7,35 @@
     <li class="header">
       {{ selectedIssues.length }}
       <template v-if="selectedIssues.length <= 1">
-        {{ l10n.NUMERO_SELECTIONNE }}
+        {{ $t('numéro sélectionné') }}
       </template>
       <template v-else>
-        {{ l10n.NUMEROS_SELECTIONNES }}
+        {{ $t('numéros sélectionnés') }}
       </template>
     </li>
     <li class="menu-separator">
-      {{ l10n.ETAT }}
+      {{ $t('Etat') }}
     </li>
     <li
-      v-for="(textKey, id) in conditionStates"
+      v-for="(text, id) in conditionStates"
       :key="`condition-${id}`"
       :class="{item: true, selected: condition === id, 'issue-condition': true, [`issue-condition-${id}`]: true}"
       @click="condition = id"
     >
-      {{ l10n[textKey] }}
+      {{ text }}
     </li>
     <li class="menu-separator">
-      {{ l10n.ACHAT_DATE_ACHAT }}
+      {{ $t('Date d\'achat') }}
     </li>
     <li
-      v-for="(textKey, id) in purchaseStates"
+      v-for="(text, id) in purchaseStates"
       :key="`purchase-${id}`"
       :class="{item: true, selected: currentPurchaseId === id, 'purchase-state': true, 'v-context__sub': id === 'link', [id]: true }"
       @click="currentPurchaseId = id"
     >
       <BIconCalendar v-if="id === 'link'" />
       <BIconCalendarX v-if="id === 'unlink'" />
-      {{ l10n[textKey] }}
+      {{ text }}
       <ul
         v-if="id === 'link'"
         class="v-context"
@@ -45,7 +45,7 @@
             v-if="!newPurchaseContext"
             @click="newPurchaseContext = !newPurchaseContext"
           >
-            {{ l10n.ACHAT_NOUVELLE_DATE_ACHAT }}
+            {{ $t('Nouvelle date d\'achat...') }}
           </h5>
           <template v-else>
             <input
@@ -55,7 +55,7 @@
               class="form-control"
               size="30"
               maxlength="30"
-              :placeholder="l10n.ACHAT_DESCRIPTION"
+              :placeholder="$t('Description')"
             >
             <input
               v-model="newPurchaseDate"
@@ -64,7 +64,7 @@
               class="form-control"
               size="30"
               maxlength="10"
-              :placeholder="l10n.ACHAT_DATE_ACHAT"
+              :placeholder="$t('Date d\'achat')"
               @keydown.prevent="() => {}"
             >
             <button
@@ -73,13 +73,13 @@
                       newPurchaseDescription = newPurchaseDate = null
                       newPurchaseContext = false"
             >
-              {{ l10n.CREER }}
+              {{ $t('Créer') }}
             </button>
             <button
               class="btn btn-default cancel"
               @click="newPurchaseContext = false"
             >
-              {{ l10n.ANNULER }}
+              {{ $t('Annuler') }}
             </button>
           </template>
         </li>
@@ -98,7 +98,7 @@
       class="footer"
       @click="updateSelectedIssues"
     >
-      {{ l10n.ENREGISTRER_CHANGEMENTS }}
+      {{ $t('Enregistrer les changements') }}
     </li>
   </vue-context>
 </template>
@@ -136,20 +136,27 @@ export default {
     newPurchaseContext: false,
     newPurchaseDescription: '',
     newPurchaseDate: '',
-    conditionStates: {
-      do_not_change: 'ETAT_CONSERVER_ETAT_ACTUEL',
-      missing: 'ETAT_MARQUER_NON_POSSEDE',
-      possessed: 'ETAT_MARQUER_POSSEDE',
-      bad: 'ETAT_MARQUER_MAUVAIS_ETAT',
-      notsogood: 'ETAT_MARQUER_ETAT_MOYEN',
-      good: 'ETAT_MARQUER_BON_ETAT'
-    },
-    purchaseStates: {
-      do_not_change: 'ACHAT_CONSERVER_DATE_ACHAT',
-      link: 'ACHAT_ASSOCIER_DATE_ACHAT',
-      unlink: 'ACHAT_DESASSOCIER_DATE_ACHAT'
-    }
   }),
+
+  computed: {
+    conditionStates() {
+      return {
+        do_not_change: this.$t("Conserver l'état actuel"),
+        missing: this.$t("Marquer comme non-possédé(s)"),
+        possessed: this.$t("Marquer comme possédé(s)"),
+        bad: this.$t("Marquer comme en mauvais état"),
+        notsogood: this.$t("Marquer comme en état moyen"),
+        good: this.$t("Marquer comme en bon état")
+      }
+    },
+    purchaseStates() {
+      return {
+        do_not_change: this.$t("Conserver la date d'achat"),
+        link: this.$t("Associer avec une date d'achat"),
+        unlink: this.$t("Désassocier de la date d'achat")
+      }
+    }
+  },
 
   methods: {
     async updateSelectedIssues() {

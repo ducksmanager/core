@@ -52,28 +52,27 @@ export default {
   mounted() {
     this.$emit('change-dimension', 'width', 250 + 50 * this.labels.length);
     const vm = this
-    const {HISTOIRES_NON_POSSEDEES, POSSESSION_HISTOIRES_AUTEURS, HISTOIRES_POSSEDEES} = this.l10n;
     this.renderChart({
       datasets: [
         {
           data: this.values[0],
           backgroundColor: '#FF8000',
-          label: HISTOIRES_POSSEDEES,
-          legend: HISTOIRES_POSSEDEES
+          label: this.$t("Histoires possédées"),
+          legend: this.$t("Histoires possédées")
         },
         {
           data: this.values[1],
           backgroundColor: '#04B404',
-          label: HISTOIRES_NON_POSSEDEES,
-          legend: HISTOIRES_NON_POSSEDEES
+          label: this.$t("Histoires non possédées"),
+          legend: this.$t("Histoires non possédées")
         }
       ],
       labels: this.labels,
-      legends: [HISTOIRES_POSSEDEES, HISTOIRES_NON_POSSEDEES]
+      legends: [this.$t("Histoires possédées"), this.$t("Histoires non possédées")]
     }, {
       title: {
         display: true,
-        text: POSSESSION_HISTOIRES_AUTEURS
+        text: this.$t("Possession des histoires d'auteurs")
       },
       responsive: true,
       maintainAspectRatio: false,

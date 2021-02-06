@@ -18,7 +18,7 @@ export default {
     ...mapState("coa", ["publicationNames"]),
     ...mapGetters("collection", ["totalPerPublication"]),
     smallCountPublications() {
-      if (!this.totalPerPublication || !this.l10n) {
+      if (!this.totalPerPublication) {
         return null;
       }
       const vm = this
@@ -46,7 +46,7 @@ export default {
           .reduce((acc, publicationCode) => [
             ...acc,
             vm.publicationNames[publicationCode]
-            || `${this.l10n.AUTRES} (${this.smallCountPublications.length} ${this.l10n.PUBLICATIONS.toLowerCase()})`
+            || `${this.$t('Autres')} (${this.smallCountPublications.length} ${this.$t('Publications').toLowerCase()})`
           ], [])
     },
 

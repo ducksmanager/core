@@ -1,13 +1,13 @@
 <template>
   <div>
     <Menu
-      :title="l10n.GERER_COLLECTION"
+      :title="$t('Gérer ma collection')"
       :root-path="'/collection'"
       :default-path="'/show'"
       :items="[
-        {path: '/show', text: l10n.GESTION_NUMEROS_COURT},
-        {path: '/account', text: l10n.GESTION_COMPTE_COURT},
-        {path: '/subscriptions', text: l10n.GESTION_ABONNEMENTS_COURT}
+        {path: '/show', text: $t('Mes numéros')},
+        {path: '/account', text: $t('Mon compte')},
+        {path: '/subscriptions', text: $t('Mes abonnements <sup>Nouveau !</sup>')}
       ]"
     />
     <component

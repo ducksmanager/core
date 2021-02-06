@@ -1,16 +1,16 @@
 <template>
   <div v-if="total > 0">
-    <div>{{ l10n.POSSESSION_MAGAZINES_INTRO }} <b>{{ total }}</b> {{ l10n.NUMEROS }}.</div>
+    <div>{{ $t('Vous possédez') }} <b>{{ total }}</b> {{ $t('numéros') }}.</div>
     <div>
-      {{ l10n.POSSESSION_MAGAZINES_2 }} <b>{{ Object.keys(totalPerPublication).length }}</b> {{
-        l10n.POSSESSION_MAGAZINES_3
+      {{ $t('Votre collection est composée de') }} <b>{{ Object.keys(totalPerPublication).length }}</b> {{
+        $t('magazines différents issus de')
       }}
-      <b>{{ Object.keys(totalPerCountry).length }}</b> {{ l10n.PAYS }}.
+      <b>{{ Object.keys(totalPerCountry).length }}</b> {{ $t('pays') }}.
     </div>
     <slot name="non-empty-collection" />
   </div>
   <div v-else>
-    {{ l10n.COLLECTION_VIDE_1 }}
+    {{ $t('Votre collection est vide.') }}
     <slot name="empty-collection" />
   </div>
 </template>

@@ -22,11 +22,11 @@
         </div>
       </div>
       <p>
-        {{ l10n.IMPORTER_INDUCKS_DESCRIPTION_1 }}
+        {{ $t('DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.') }}
       </p>
       <p>
-        <span v-html="l10n.IMPORTER_INDUCKS_DESCRIPTION_2" /><br>
-        {{ $t("IMPORTER_INDUCKS_DESCRIPTION_3", [l10n.COLLECTION_INDUCKS]) }}
+        <span v-html="$t('Si vous possédez déjà une collection Inducks, vous pouvez <b>l\'importer sur DucksManager en quelques clics.</b>')" /><br>
+        {{ $t("Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez \"{0}\" dans le menu.", [$t('Collection Inducks')]) }}
       </p>
       <p>
         <b-btn
@@ -34,14 +34,14 @@
           variant="primary"
           :href="$r('/signup')"
         >
-          {{ l10n.INSCRIPTION }}
+          {{ $t('Inscription') }}
         </b-btn>
         <b-btn
           size="lg"
           variant="primary"
           :href="$r('/login')"
         >
-          {{ l10n.CONNEXION }}
+          {{ $t('Connexion') }}
         </b-btn>
       </p>
     </b-jumbotron>
@@ -55,14 +55,14 @@
         show
         variant="info"
       >
-        <div>{{ l10n.IMPORTER_INDUCKS_INSTRUCTIONS_1 }}</div>
-        {{ l10n.IMPORTER_INDUCKS_INSTRUCTIONS_2 }}
+        <div>{{ $t('Cette page vous permet d\'importer votre collection Inducks dans DucksManager.') }}</div>
+        {{ $t('Pour cela, suivez les étapes suivantes :') }}
         <ol>
-          <li>{{ l10n.IMPORTER_INDUCKS_INSTRUCTIONS_3 }}</li>
-          <li v-html="l10n.IMPORTER_INDUCKS_INSTRUCTIONS_4" />
-          <li>{{ l10n.IMPORTER_INDUCKS_INSTRUCTIONS_5 }}</li>
-          <li>{{ l10n.IMPORTER_INDUCKS_INSTRUCTIONS_6 }}</li>
-          <li>{{ l10n.IMPORTER_INDUCKS_INSTRUCTIONS_7 }}</li>
+          <li>{{ $t('Sur l\'écran de gauche, connectez-vous, si ce n\'est déjà fait, sur Inducks.') }}</li>
+          <li v-html="$t('IMPORTER_INDUCKS_INSTRUCTIONS_4')" />
+          <li>{{ $t('Sélectionnez toute la liste, puis copiez-la.') }}</li>
+          <li>{{ $t('Collez ce texte dans la partie droite de la page.') }}</li>
+          <li>{{ $t('Cliquez sur le bouton "Importer" en bas de la page.') }}</li>
         </ol>
       </b-alert>
       <b-row class="justify-content-center">
@@ -78,7 +78,7 @@
           </b-form-group>
           <b-btn
             @click="processRawData()"
-            v-text="l10n.IMPORTER"
+            v-text="$t('Importer')"
           />
         </b-col>
       </b-row>
@@ -89,7 +89,7 @@
         show
         variant="info"
       >
-        <div>{{ issuesImportable.length }} {{ l10n.IMPORTER_INDUCKS_NUMEROS_A_IMPORTER }}</div>
+        <div>{{ issuesImportable.length }} {{ $t('numéros peuvent être importés.') }}</div>
         <div
           v-if="hasPublicationNames"
           role="tablist"
@@ -114,7 +114,7 @@
                 v-for="issue in issues"
                 :key="issue"
               >
-                {{ ucFirst(l10n.NUMERO) }} {{ issue }}
+                {{ ucFirst($t('numéro')) }} {{ issue }}
               </div>
             </template>
           </Accordion>
@@ -127,7 +127,7 @@
         variant="warning"
       >
         <template v-if="issuesAlreadyInCollection && issuesAlreadyInCollection.length">
-          <div>{{ issuesAlreadyInCollection.length }} {{ l10n.IMPORTER_INDUCKS_NUMEROS_EXISTANTS }}</div>
+          <div>{{ issuesAlreadyInCollection.length }} {{ $t('numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.') }}</div>
           <Accordion
             id="already-in-collection"
             accordion-group-id="import-accordion-not-importable"
@@ -135,7 +135,7 @@
             @bv::toggle::collapse="expandedNotImportableAccordion = 'already-in-collection'"
           >
             <template #header>
-              {{ l10n.IMPORTER_INDUCKS_NUMEROS_EXISTANTS_TITRE }}
+              {{ $t('Numéros déjà dans la collection') }}
             </template>
             <template #content>
               <div
@@ -157,7 +157,7 @@
           </Accordion>
         </template>
         <template v-if="issuesNotReferenced && issuesNotReferenced.length">
-          <div>{{ issuesNotReferenced.length }} {{ l10n.IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES }}</div>
+          <div>{{ issuesNotReferenced.length }} {{ $t('numéros ne peuvent pas être importés car ils n\'existent plus sur Inducks.') }}</div>
           <Accordion
             id="not-found"
             accordion-group-id="import-accordion-not-importable"
@@ -165,7 +165,7 @@
             @bv::toggle::collapse="expandedNotImportableAccordion = 'not-found'"
           >
             <template #header>
-              {{ l10n.IMPORTER_INDUCKS_NUMEROS_NON_REFERENCES_TITRE }}
+              {{ $t('Numéros non référencés') }}
             </template>
             <template #content>
               <div
@@ -186,7 +186,7 @@
       </b-alert>
       <template v-if="issuesImportable && issuesImportable.length">
         <b-form-group>
-          <label for="condition">{{ l10n.ETAT }}</label>
+          <label for="condition">{{ $t('Etat') }}</label>
           <b-form-select
             id="condition"
             v-model="issueDefaultCondition"
@@ -197,16 +197,16 @@
                 :value="null"
                 disabled
               >
-                {{ l10n.IMPORTER_INDUCKS_ETAT }}
+                {{ $t('Choisissez un état par défaut pour les nouveaux numéros') }}
               </b-form-select-option>
             </template>
 
             <b-form-select-option
-              v-for="(conditionTextKey, conditionValue) in conditions"
+              v-for="(conditionText, conditionValue) in conditions"
               :key="conditionValue"
               :value="conditionValue"
             >
-              {{ l10n[conditionTextKey] }}
+              {{ conditionText }}
             </b-form-select-option>
           </b-form-select>
         </b-form-group>
@@ -223,7 +223,7 @@
           v-else
           @click="importIssues"
         >
-          {{ l10n.IMPORTER }} {{ issuesImportable.length }} {{ l10n.NUMEROS }}
+          {{ $t('Importer') }} {{ issuesImportable.length }} {{ $t('numéros') }}
         </b-btn>
       </template>
     </template>
@@ -255,15 +255,18 @@ export default {
     issuesNotReferenced: null,
     issuesAlreadyInCollection: null,
     issuesImportable: null,
-    conditions: {
-      mauvais: "ETAT_MAUVAIS",
-      bon: "ETAT_BON"
-    },
     importProgress: 0
   }),
 
   computed: {
     ...mapState("coa", ["publicationNames", "issueNumbers", "issueCodeDetails"]),
+
+    conditions() {
+      return {
+        mauvais: this.$t("En mauvais état"),
+        bon: this.$t("En bon état")
+      }
+    },
 
     importDataReady() {
       return this.issuesToImport && this.collection && this.hasIssueNumbers;

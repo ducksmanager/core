@@ -71,28 +71,27 @@ export default {
     values: function (newValue) {
       if (newValue) {
         const vm = this
-        const {NUMEROS_REFERENCES, POSSESSION_NUMEROS, NUMEROS_POSSEDES} = this.l10n;
         this.renderChart({
           datasets: [
             {
               data: this.values[0],
               backgroundColor: 'green',
-              label: NUMEROS_POSSEDES,
-              legend: NUMEROS_POSSEDES
+              label: this.$t("Numéros possédés"),
+              legend: this.$t("Numéros possédés")
             },
             {
               data: this.values[1],
               backgroundColor: 'orange',
-              label: NUMEROS_REFERENCES,
-              legend: NUMEROS_REFERENCES
+              label: this.$t("Numéros référencés non-possédés"),
+              legend: this.$t("Numéros référencés non-possédés")
             }
           ],
           labels: this.labels,
-          legends: [NUMEROS_POSSEDES, NUMEROS_REFERENCES]
+          legends: [this.$t("Numéros possédés"), this.$t("Numéros référencés non-possédés")]
         }, {
           title: {
             display: true,
-            text: POSSESSION_NUMEROS
+            text: this.$t("Possession des numéros")
           },
           responsive: true,
           maintainAspectRatio: false,

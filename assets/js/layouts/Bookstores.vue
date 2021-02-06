@@ -1,9 +1,9 @@
 <template>
   <div>
-    {{ l10n.INTRO_BOUQUINERIES }}
+    {{ $t('Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney.') }}
     <br><br>
     <div v-if="!bookstores.length">
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
     <div
       v-else
@@ -28,9 +28,9 @@
                 <p>{{ bookstore.comment }}</p>
                 <p>{{ bookstore.address }}</p>
                 <p>
-                  {{ l10n.SIGNALE_PAR }}
+                  {{ $t('Signalé par') }}
                   <span v-if="bookstore.username">{{ bookstore.username }}</span>
-                  <span v-else>{{ l10n.UN_VISITEUR_ANONYME }}</span>
+                  <span v-else>{{ $t('un visiteur anonyme') }}</span>
                 </p>
               </div>
             </div>
@@ -40,13 +40,13 @@
     </div>
     <br> <br>
     <h2>
-      {{ l10n.PROPOSER_BOUQUINERIE }}
+      {{ $t('Proposer une bouquinerie') }}
     </h2>
-    {{ l10n.PRESENTATION_BOUQUINERIE1 }}
+    {{ $t('Vous connaissez une bouquinerie sympa ? Faites-en profiter d\'autres collectionneurs !') }}
     <br>
-    {{ l10n.INTRO_NOUVELLE_BOUQUINERIE }}
+    {{ $t('Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.') }}
     <br>
-    {{ l10n.PRIX_HONNETES }}
+    {{ $t('Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.') }}
     <br> <br>
     <form
       id="form_bouquinerie"
@@ -58,14 +58,14 @@
         maxlength="25"
         name="nom"
         type="text"
-        :placeholder="l10n.NOM_BOUQUINERIE"
+        :placeholder="$t('Nom de la bouquinerie')"
       />
       <b-form-input
         v-model="newBookstore.address"
         required
         name="full-address"
         type="text"
-        :placeholder="l10n.ADRESSE"
+        :placeholder="$t('Adresse')"
       />
       <b-form-textarea
         v-model="newBookstore.comment"
@@ -75,13 +75,13 @@
         maxlength="25"
         name="comments"
         type="text"
-        :placeholder="l10n.COMMENTAIRES_BOUQUINERIE"
+        :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
       />
       <b-btn @click="suggestBookstore">
-        {{ l10n.AJOUTER_BOUQUINERIE }}
+        {{ $t('Ajouter la bouquinerie') }}
       </b-btn>
       <b-alert variant="info">
-        {{ l10n.EMAIL_ENVOYE }} {{ l10n.EMAIL_ENVOYE_BOUQUINERIE }} {{ l10n.MERCI_CONTRIBUTION }} ?>
+        {{ $t('Un e-mail vient d\'être envoyé au webmaster.') }} {{ $t('Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.') }} {{ $t('Merci pour votre contribution !') }} ?>
       </b-alert>
     </form>
   </div>

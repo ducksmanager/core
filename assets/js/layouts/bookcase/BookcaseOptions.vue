@@ -1,16 +1,16 @@
 <template>
   <div v-if="loading || !hasPublicationNames">
-    {{ l10n.CHARGEMENT }}
+    {{ $t("Chargement...") }}
   </div>
   <div
     v-else
     class="bookcase-options"
   >
     <div
-      v-for="(l10nKey, textureType) in textureTypes"
+      v-for="(textureText, textureType) in textureTypes"
       :key="textureType"
     >
-      <h5>{{ l10n[l10nKey] }}</h5>
+      <h5>{{ textureText }}</h5>
       <b-dropdown v-model="bookcaseTextures[textureType]">
         <template #button-content>
           <div
@@ -32,7 +32,7 @@
     </div>
 
     <h5 v-if="Object.keys(bookcaseOrder).length">
-      {{ l10n.ORDRE_MAGAZINES }}
+      {{ $t("Ordre des magazines") }}
     </h5>
 
     <SlickList
@@ -55,22 +55,22 @@
       variant="danger"
       :show="error"
     >
-      {{ l10n.ERREUR_GENERIQUE }}
+      {{ $t("Une erreur s'est produite.") }}
     </b-alert>
     <b-btn
       variant="success"
       :disabled="loading"
       @click="submit"
     >
-      {{ l10n.VALIDER }}
+      {{ $t("Valider") }}
     </b-btn>
   </div>
 </template>
 
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
-import {mapActions, mapMutations, mapState} from "vuex";
-import {SlickItem, SlickList} from "vue-slicksort";
+import { mapActions, mapMutations, mapState } from "vuex";
+import { SlickItem, SlickList } from "vue-slicksort";
 import Publication from "../../components/Publication";
 
 export default {
@@ -86,56 +86,52 @@ export default {
   data: () => ({
     error: false,
     textures: [
-      'bois/ASH',
-      'bois/BALTIC BIRCH',
-      'bois/BASSWOOD',
-      'bois/BIRDS EYE MAPLE',
-      'bois/BUBINGA',
-      'bois/BURL WALNUT',
-      'bois/CHERRY',
-      'bois/CLEAR PINE',
-      'bois/DURON',
-      'bois/FIDDLEBACK MAKORE',
-      'bois/FIGURED MAKORE',
-      'bois/HICKORY',
-      'bois/HOMOSOTE',
-      'bois/HONDURAN ROSEWOOD',
-      'bois/HONDURAS MAHOGANY',
-      'bois/ITALIAN POPLAR',
-      'bois/KEWAZINGA',
-      'bois/KNOTTY PINE',
-      'bois/KOA',
-      'bois/LACEWOOD',
-      'bois/LAUAN',
-      'bois/NATURAL BIRCH',
-      'bois/NOVA-CORK',
-      'bois/OLIVE ASH BURL',
-      'bois/PLAIN SLICED BEECH',
-      'bois/PLAIN SLICED RED OAK',
-      'bois/PLAIN SLICED WENGE',
-      'bois/POPLAR',
-      'bois/PREFINISHED MAPLE',
-      'bois/PURPLEHEART',
-      'bois/QUARTERSAWN BEECH',
-      'bois/QUARTERSAWN TEAK',
-      'bois/QUARTERSAWN WENGE',
-      'bois/QUARTERSAWN WHITE OAK',
-      'bois/RED BIRCH',
-      'bois/RIBBON STRIPE SAPELE',
-      'bois/ROTARY DOUGLAS FIR',
-      'bois/ROTARY SAPELE',
-      'bois/ROTARY WHITE MAPLE',
-      'bois/SPANISH CEDAR',
-      'bois/TEAK',
-      'bois/VERTICAL GRAIN FIR PLY',
-      'bois/WALNUT',
-      'bois/WHITE BIRCH',
-      'bois/ZEBRAWOOD',
+      "bois/ASH",
+      "bois/BALTIC BIRCH",
+      "bois/BASSWOOD",
+      "bois/BIRDS EYE MAPLE",
+      "bois/BUBINGA",
+      "bois/BURL WALNUT",
+      "bois/CHERRY",
+      "bois/CLEAR PINE",
+      "bois/DURON",
+      "bois/FIDDLEBACK MAKORE",
+      "bois/FIGURED MAKORE",
+      "bois/HICKORY",
+      "bois/HOMOSOTE",
+      "bois/HONDURAN ROSEWOOD",
+      "bois/HONDURAS MAHOGANY",
+      "bois/ITALIAN POPLAR",
+      "bois/KEWAZINGA",
+      "bois/KNOTTY PINE",
+      "bois/KOA",
+      "bois/LACEWOOD",
+      "bois/LAUAN",
+      "bois/NATURAL BIRCH",
+      "bois/NOVA-CORK",
+      "bois/OLIVE ASH BURL",
+      "bois/PLAIN SLICED BEECH",
+      "bois/PLAIN SLICED RED OAK",
+      "bois/PLAIN SLICED WENGE",
+      "bois/POPLAR",
+      "bois/PREFINISHED MAPLE",
+      "bois/PURPLEHEART",
+      "bois/QUARTERSAWN BEECH",
+      "bois/QUARTERSAWN TEAK",
+      "bois/QUARTERSAWN WENGE",
+      "bois/QUARTERSAWN WHITE OAK",
+      "bois/RED BIRCH",
+      "bois/RIBBON STRIPE SAPELE",
+      "bois/ROTARY DOUGLAS FIR",
+      "bois/ROTARY SAPELE",
+      "bois/ROTARY WHITE MAPLE",
+      "bois/SPANISH CEDAR",
+      "bois/TEAK",
+      "bois/VERTICAL GRAIN FIR PLY",
+      "bois/WALNUT",
+      "bois/WHITE BIRCH",
+      "bois/ZEBRAWOOD"
     ],
-    textureTypes: {
-      bookcase: 'SOUS_TEXTURE',
-      bookshelf: 'SOUS_TEXTURE_ETAGERE'
-    },
     loading: true,
     hasPublicationNames: false
   }),
@@ -143,13 +139,21 @@ export default {
   computed: {
     ...mapState("bookcase", ["bookcaseTextures"]),
     ...mapState("coa", ["publicationNames"]),
+    computed: {
+      textureTypes() {
+        return {
+          bookcase: this.$t("Sous-texture"),
+          bookshelf: this.$t("Sous-texture de l'étagère")
+        };
+      }
+    },
 
     bookcaseOrder: {
       get() {
-        return this.$store.state.bookcase.bookcaseOrder
+        return this.$store.state.bookcase.bookcaseOrder;
       },
       set(newValue) {
-        return this.$store.commit('bookcase/setBookcaseOrder', newValue)
+        return this.$store.commit("bookcase/setBookcaseOrder", newValue);
       }
     }
   },
@@ -158,7 +162,7 @@ export default {
     this.setBookcaseUsername(this.username);
     await this.loadData();
     await this.fetchPublicationNames(this.bookcaseOrder);
-    this.hasPublicationNames = true
+    this.hasPublicationNames = true;
   },
 
   methods: {
@@ -169,29 +173,27 @@ export default {
     async loadData() {
       await this.loadBookcaseTextures();
       await this.loadBookcaseOrder();
-      this.loading = false
+      this.loading = false;
     },
 
     async submit() {
-      this.error = false
-      this.loading = true
+      this.error = false;
+      this.loading = true;
       try {
         await this.updateBookcaseTextures();
         await this.updateBookcaseOrder();
         await this.loadData();
-      }
-      catch {
-        this.error = true
-      }
-      finally {
-        this.loading = false
+      } catch {
+        this.error = true;
+      } finally {
+        this.loading = false;
       }
     },
 
-    textureWithoutSuperType: texture => texture.replace(/^[^/]+\//, '')
+    textureWithoutSuperType: texture => texture.replace(/^[^/]+\//, "")
   }
 
-}
+};
 </script>
 
 <style lang="scss">

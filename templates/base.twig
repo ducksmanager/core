@@ -30,8 +30,6 @@
 </head>
 <body class="{{ bodyClass ?? '' }}">
     <script type="text/javascript">
-        localStorage.setItem('locale', "{{ app.session.get('_locale') ?? 'fr'  }}")
-        localStorage.setItem('l10nUrl', "{{ asset('build/translations/messages.'~(app.session.get('_locale') ?? 'fr')~'.yaml') }}")
         localStorage.setItem('imagePath', "{{ asset('build/images/logo_small.png') | replace({'/logo_small.png': ''}) }}")
         localStorage.setItem('commit', "{{ commit }}")
         localStorage.setItem('userId', "{{ app.user ? app.user.id : '' }}")

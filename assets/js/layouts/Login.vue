@@ -3,7 +3,7 @@
     <b-row>
       <b-col lg="6">
         <h1 class="h3 mb-3 font-weight-normal">
-          {{ l10n.CONNEXION }}
+          {{ $t('Connexion') }}
         </h1>
         <b-alert
           v-if="error"
@@ -19,14 +19,14 @@
           required
           autofocus
           :value="lastUsername"
-          :placeholder="l10n.NOM_UTILISATEUR"
+          :placeholder="$t('Nom d\'utilisateur')"
         />
         <b-form-input
           id="password"
           name="password"
           type="password"
           required
-          :placeholder="l10n.MOT_DE_PASSE"
+          :placeholder="$t('Mot de passe')"
         />
 
         <input
@@ -40,10 +40,10 @@
           size="xl"
           type="submit"
         >
-          {{ l10n.CONNEXION }}
+          {{ $t('Connexion') }}
         </b-btn>
         <div>
-          <a :href="$r('/forgot')">{{ l10n.MOT_DE_PASSE_OUBLIE }}</a>
+          <a :href="$r('/forgot')">{{ $t('Mot de passe oublié ?') }}</a>
         </div>
       </b-col>
     </b-row>

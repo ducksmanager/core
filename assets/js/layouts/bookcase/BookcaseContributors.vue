@@ -1,12 +1,12 @@
 <template>
   <div v-if="loading">
-    {{ l10n.CHARGEMENT }}
+    {{ $t('Chargement...') }}
   </div>
   <div
     v-else
     id="contributors"
   >
-    <h2>{{ l10n.INTRO_CONTRIBUTEURS_BIBLIOTHEQUE }}</h2>
+    <h2>{{ $t('La bibliothèque DucksManager n\'aurait pas pu voir le jour sans le soutien et l\'aide de :') }}</h2>
     <div
       v-for="contributor in bookcaseContributorsSorted"
       :key="JSON.stringify(contributor)"

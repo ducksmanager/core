@@ -18,7 +18,7 @@
       v-if="isCoverLoading"
       class="flex-grow-1"
     >
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
     <img
       v-else-if="coverUrl"
@@ -26,7 +26,7 @@
       :src="coverUrl"
       class="cover"
     >
-    <span v-else>{{ l10n.AUCUNE_COUVERTURE }}</span>
+    <span v-else>{{ $t('La couverture de ce numéro n\'est pas disponible') }}</span>
   </b-popover>
 </template>
 

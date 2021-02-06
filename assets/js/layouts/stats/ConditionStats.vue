@@ -19,7 +19,7 @@ export default {
 
     labels() {
       const vm = this
-      return this.l10n && Object.values(this.conditionsWithoutMissing).map(({l10nKey}) => vm.l10n[l10nKey])
+      return Object.values(this.conditionsWithoutMissing).map(({text}) => text)
     },
 
     values() {

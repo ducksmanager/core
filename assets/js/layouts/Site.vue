@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n && l10nRoutes">
+  <div v-if="l10nRoutes">
     <LeftPanel />
     <SwitchLocale />
     <Banner :classes="{'d-none d-md-flex': true}" />

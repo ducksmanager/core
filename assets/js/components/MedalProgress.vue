@@ -20,7 +20,7 @@
         :style="{width: `${getLevelProgressPercentage(extraPoints)}%`}"
       />
       <div class="progress-extra-text">
-        + {{ extraPoints }} {{ l10n.POINTS }}
+        + {{ extraPoints }} {{ $t('Points') }}
       </div>
     </b-progress>
     <Medal

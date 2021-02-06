@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10n && l10nRoutes">
+  <div v-if="l10nRoutes">
     <table>
       <tr>
         <td>
@@ -9,7 +9,7 @@
             :src="`${imagePath}/logo_small.png`"
           ></a>
         </td>
-        <td>{{ l10n.COLLECTION_DE }} {{ username }}</td>
+        <td>{{ $t('Collection DucksManager de') }} {{ username }}</td>
       </tr>
     </table>
     <Collectable v-if="currentType === 'collectable'" />

@@ -7,19 +7,19 @@
       :points="points[event.userId]"
     />
     <template v-if="event.type === 'signup'">
-      {{ l10n.NEWS_A_COMMENCE_COLLECTION }}
+      {{ $t('a commencé sa collection sur DucksManager. Bienvenue !') }}
     </template>
     <template v-if="event.type === 'medal'">
       <span
-        v-html="$t('NEWS_A_OBTENU_MEDAILLE', [$t(`TITRE_MEDAILLE_${event.contribution.toUpperCase()}`), event.niveau])"
+        v-html="$t('a obtenu la médaille <b>{0} niveau {1}</b>', [getMedalTitle(event.contribution), event.niveau])"
       />
     </template>
     <template v-if="event.type === 'bookstore'">
-      {{ l10n.NEWS_A_AJOUTE_BOUQUINERIE }}
+      {{ $t('a ajouté la bouquinerie') }}
       <i><a :href="$r('/bookstores')">{{ event.nom_bouquinerie }}</a></i>
     </template>
     <template v-if="event.type === 'collection_update'">
-      {{ l10n.NEWS_A_AJOUTE }}
+      {{ $t('a ajouté') }}
       <Issue
         v-if="publicationNames[event.publicationCode]"
         :publicationname="publicationNames[event.publicationCode]"
@@ -28,7 +28,7 @@
         hide-condition
       />
       <OtherIssues :number="event.numberOfIssues" />
-      {{ l10n.NEWS_A_SA_COLLECTION }}
+      {{ $t('à sa collection') }}
     </template>
     <template v-if="event.type === 'edge'">
       <span
@@ -37,7 +37,7 @@
       >
         <template v-if="event.users.length > 1">
           <template v-if="index === event.users.length - 1">
-            {{ l10n.ET }}
+            {{ $t('et') }}
           </template>
           <template v-else-if="index > 0">
             ,
@@ -50,10 +50,10 @@
         />
       </span>
       <template v-if="event.users.length>1">
-        {{ l10n.NEWS_ONT_CREE_TRANCHE }}
+        {{ $t('ont créé la tranche') }}
       </template>
       <template v-else>
-        {{ l10n.NEWS_A_CREE_TRANCHE }}
+        {{ $t('a créé la tranche') }}
       </template>
       <span
         :id="`event-edges-${event.timestamp}`"
@@ -69,15 +69,15 @@
         />
         <OtherIssues
           :number="event.edges.length"
-          l10-key-single="NEWS_AUTRE_TRANCHE"
-          l10-key-multiple="NEWS_AUTRES_TRANCHES"
+          :text-single="$t('autre tranche')"
+          :text-multiple="$t('autres tranches')"
         />
       </span>
       <BookcasePopover
         :id="`event-edges-${event.timestamp}`"
         :edges="event.edges"
       />
-      {{ l10n.NEWS_ONT_CREE_TRANCHE_2 }}
+      {{ $t('pour la bibliothèque DucksManager') }}
     </template>
     <template v-if="event.type === 'subscription_additions'">
       <span
@@ -86,7 +86,7 @@
       >
         <template v-if="event.users.length > 1">
           <template v-if="index === event.users.length - 1">
-            {{ l10n.ET }}
+            {{ $t('et') }}
           </template>
           <template v-else-if="index > 0">
             ,
@@ -99,10 +99,10 @@
         />
       </span>
       <template v-if="event.users.length>1">
-        {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT }}
+        {{ $t('ont reçu') }}
       </template>
       <template v-else>
-        {{ l10n.NEWS_A_RECU_NUMERO_ABONNEMENT }}
+        {{ $t('a reçu') }}
       </template>
       <Issue
         v-if="publicationNames[event.publicationCode]"
@@ -112,10 +112,10 @@
         hide-condition
       />
       <template v-if="event.users.length>1">
-        {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT_2_MULTIPLE }}
+        {{ $t('grâce à leur abonnement à ce magazine') }}
       </template>
       <template v-else>
-        {{ l10n.NEWS_ONT_RECU_NUMERO_ABONNEMENT_2 }}
+        {{ $t('grâce à son abonnement à ce magazine') }}
       </template>
     </template>
     <slot />
@@ -140,6 +140,16 @@ export default {
   computed: {
     ...mapState("coa", ["publicationNames"]),
     ...mapState("users", ["stats", "points"]),
+  },
+
+  methods: {
+    getMedalTitle(contribution) {
+      switch(contribution.toUpperCase()) {
+        case 'CREATEUR': return "Concepteur de tranches"
+        case 'PHOTOGRAPHE': return "Photographe de tranches"
+        case 'DUCKHUNTER': return "Concepteur de tranches"
+      }
+    }
   }
 }
 </script>

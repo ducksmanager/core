@@ -19,7 +19,7 @@
       :disabled="!currentPublicationCode"
       :href="$r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
     >
-      {{ l10n.OK }}
+      {{ $t('OK') }}
     </b-btn>
   </div>
 </template>

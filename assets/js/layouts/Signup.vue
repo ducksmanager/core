@@ -13,7 +13,7 @@
             type="text"
             required
             autofocus
-            :placeholder="l10n.NOM_UTILISATEUR"
+            :placeholder="$t('Nom d\'utilisateur')"
           />
         </Errorable>
       </b-col>
@@ -27,7 +27,7 @@
             name="email"
             type="text"
             required
-            :placeholder="l10n.ADRESSE_EMAIL"
+            :placeholder="$t('Adresse e-mail')"
           />
         </Errorable>
       </b-col>
@@ -41,7 +41,7 @@
             name="password"
             type="password"
             required
-            :placeholder="l10n.MOT_DE_PASSE_6_CHAR"
+            :placeholder="$t('Mot de passe (au moins 6 caractères)')"
           />
         </Errorable>
       </b-col>
@@ -55,7 +55,7 @@
             name="password2"
             type="password"
             required
-            :placeholder="l10n.MOT_DE_PASSE_CONF"
+            :placeholder="$t('Mot de passe (confirmation)')"
           />
         </Errorable>
       </b-col>
@@ -66,7 +66,7 @@
       size="xl"
       type="submit"
     >
-      {{ l10n.INSCRIPTION }}
+      {{ $t('Inscription') }}
     </b-btn>
   </form>
 </template>
@@ -123,7 +123,7 @@ export default {
         window.location.replace(this.$r('/collection/show'))
       }
       catch(e) {
-        this.addErrors({username: this.l10n.ERREUR_UTILISATEUR_OU_EMAIL_EXISTANT})
+        this.addErrors({username: this.$t('Ce nom d\'utilisateur ou cette adresse e-mail existe déjà.')})
       }
     }
   }

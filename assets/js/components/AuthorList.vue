@@ -6,18 +6,18 @@
       variant="warning"
       class="section"
     >
-      {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
-      {{ l10n.AUCUN_AUTEUR_NOTE_2_MEME_PAGE }}
-      {{ l10n.AUCUN_AUTEUR_NOTE_3 }}
+      {{ $t('Aucun auteur noté.') }}
+      {{ $t('Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez.') }}
+      {{ $t('Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.') }}
     </b-alert>
     <div
       v-else
       class="section"
     >
-      <h5>{{ l10n.LISTE_AUTEURS_INTRO }}</h5>
+      <h5>{{ $t('Auteurs suivis') }}</h5>
       <p>
-        {{ l10n.AUTEURS_FAVORIS_INTRO_1 }}
-        <a :href="$r('/expand')">{{ l10n.AUTEURS_FAVORIS_INTRO_2 }}</a>
+        {{ $t('Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous') }}
+        <a :href="$r('/expand')">{{ $t('suggérer des numéros en fonction de vos préférences.') }}</a>
       </p>
       <div v-if="personNames">
         <b-row
@@ -40,20 +40,20 @@
               size="sm"
               @click="deleteAuthor(author)"
             >
-              {{ l10n.SUPPRIMER }}
+              {{ $t('Supprimer') }}
             </b-btn>
           </b-col>
         </b-row>
       </div>
     </div>
     <div>
-      <h5>{{ l10n.LISTE_AUTEURS_AJOUTER }}</h5>
+      <h5>{{ $t('Ajouter un auteur') }}</h5>
       <b-alert
         v-if="watchedAuthors.length >= 5"
         variant="warning"
         show
       >
-        {{ l10n.MAX_AUTEURS_SURVEILLES_ATTEINT }}
+        {{ $t('Vous avez atteint le nombre maximal d\'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d\'autres.') }}
       </b-alert>
       <b-row v-else>
         <b-col sm="4">
@@ -61,11 +61,11 @@
             <b-form-input
               v-model="search"
               list="search"
-              :placeholder="l10n.AUTEUR"
+              :placeholder="$t('Auteur')"
             />
             <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
               <option v-if="!Object.keys(searchResults).length">
-                {{ l10n.RECHERCHE_MAGAZINE_AUCUN_RESULTAT }}
+                {{ $t('Aucun résultat.') }}
               </option>
               <option
                 v-for="(fullName, personCode) in searchResults"

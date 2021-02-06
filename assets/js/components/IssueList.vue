@@ -23,8 +23,8 @@
               <label
                 :for="`show-${conditionFilter}`"
               >
-                <template v-if="conditionFilter === 'possessed'">{{ l10n.AFFICHER_NUMEROS_POSSEDES }}</template>
-                <template v-else-if="conditionFilter === 'missing'">{{ l10n.AFFICHER_NUMEROS_MANQUANTS }}</template>
+                <template v-if="conditionFilter === 'possessed'">{{ $t('Afficher les numéros possédés') }}</template>
+                <template v-else-if="conditionFilter === 'missing'">{{ $t('Afficher les numéros manquants') }}</template>
                 ({{
                   issues.filter(issue => conditionFilter === "possessed" ? issue.condition : !issue.condition).length
                 }})
@@ -43,9 +43,9 @@
           variant="info"
           style="margin-bottom: 0"
         >
-          {{ l10n.INFO_AJOUT_NUMEROS_1 }}
-          <span v-if="isTouchScreen">{{ l10n.INFO_AJOUT_NUMEROS_2_MOBILE }}</span>
-          <span v-else>{{ l10n.INFO_AJOUT_NUMEROS_2_DESKTOP }}</span>
+          {{ $t('Cliquez sur les numéros que vous souhaitez ajouter à votre collection,') }}
+          <span v-if="isTouchScreen">{{ $t('puis faites un appui long pour indiquer son état et validez.') }}</span>
+          <span v-else>{{ $t('puis faites un clic droit pour indiquer son état et validez.') }}</span>
         </b-alert>
         <Book
           v-if="currentIssueOpened"
@@ -71,7 +71,7 @@
           <b-icon-eye-fill
             :id="`issue-details-${issueNumber}`"
             class="preview mx-2"
-            :alt="l10n.VOIR"
+            :alt="$t('Voir')"
             @mouseover="hoveredIssueNumber=issueNumber"
             @mouseout="hoveredIssueNumber=null"
             @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
@@ -80,7 +80,7 @@
             v-once
             class="issue-text"
           >
-            {{ l10n.NUMERO_COURT }}{{ issueNumber }}
+            {{ $t('n°') }}{{ issueNumber }}
             <span class="issue-title">{{ title }}</span>
           </span>
           <div
@@ -109,7 +109,7 @@
               v-once
               class="issue-details issue-date"
             >
-              <BIconCalendar :title="`${l10n.ACHETE_LE} ${purchases.find(({id}) => id === purchaseId).date}`" />
+              <BIconCalendar :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`" />
             </div>
             <div
               v-else
@@ -135,7 +135,7 @@
       />
     </div>
     <div v-else-if="loading">
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
   </div>
   <div v-else-if="!publicationNameLoading">
@@ -144,12 +144,12 @@
       show
     >
       <div class="mb-4">
-        {{ l10n.AUCUN_NUMERO_REPERTORIE }} {{ publicationcode.split("/")[1] }} ({{ l10n.PAYS_PUBLICATION }} : {{
+        {{ $t('Aucun numéro n\'est répertorié pour') }} {{ publicationcode.split("/")[1] }} ({{ $t('Pays de publication') }} : {{
           country
         }})
       </div>
       <div v-if="userIssuesForPublication.length">
-        {{ l10n.QUESTION_SUPPRIMER_MAGAZINE }}
+        {{ $t('Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront également supprimés de votre collection dans ce cas :') }}
         <ul>
           <li
             v-for="issue in userIssuesForPublication"
@@ -162,7 +162,7 @@
           variant="danger"
           @click="deletePublicationIssues"
         >
-          {{ l10n.SUPPRIMER }}
+          {{ $t('Supprimer') }}
         </b-btn>
       </div>
     </b-alert>
@@ -218,7 +218,6 @@ export default {
     currentIssueOpened: null
   }),
   computed: {
-    ...mapState("l10n", ["locale"]),
     ...mapState("coa", ["publicationNames"]),
     ...mapState("collection", { userIssues: "collection" }),
 

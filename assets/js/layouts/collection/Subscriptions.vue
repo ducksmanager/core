@@ -4,18 +4,18 @@
       variant="info"
       show
     >
-      {{ l10n.ABONNEMENT_EXPLICATION }}
+      {{ $t('Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie.') }}
     </b-alert>
     <b-row>
       <b-col
         sm="8"
         md="4"
       >
-        <h4>{{ l10n.ABONNEMENT_TITRE }}</h4>
+        <h4>{{ $t('Mes abonnements') }}</h4>
       </b-col>
     </b-row>
     <div v-if="!subscriptions.length">
-      {{ l10n.ABONNEMENT_AUCUN }}
+      {{ $t('Aucun abonnement') }}
     </div>
     <b-alert
       v-for="(currentAssociatedPublication, idx) in currentAssociatedPublications"
@@ -23,12 +23,12 @@
       show
       variant="info"
     >
-      {{ $t('ABONNEMENT_PROPOSITION_ABONNEMENT_ASSOCIE', [publicationNames[currentAssociatedPublication.referencePublicationcode], publicationNames[currentAssociatedPublication.publicationcode], publicationNames[currentAssociatedPublication.publicationcode]]) }}
+      {{ $t('Vous avez indiqué avoir un abonnement pour {0}. Généralement, cet abonnement inclut également la réception du magazine {0}. Voulez-vous ajouter un abonnement à {0} pour les mêmes dates ?', [publicationNames[currentAssociatedPublication.referencePublicationcode], publicationNames[currentAssociatedPublication.publicationcode], publicationNames[currentAssociatedPublication.publicationcode]]) }}
       <b-btn @click="createAssociatedPublicationSubscription(subscriptions.find(({publicationCode}) => publicationCode === currentAssociatedPublication.referencePublicationcode), currentAssociatedPublication)">
-        {{ l10n.OUI }}
+        {{ $t('Oui') }}
       </b-btn>
       <b-btn @click="currentAssociatedPublications.splice(idx, 1)">
-        {{ l10n.NON }}
+        {{ $t('Non') }}
       </b-btn>
     </b-alert>
     <b-row
@@ -50,7 +50,7 @@
         sm="4"
         md="2"
       >
-        {{ l10n.DU }} {{ subscription.startDate }} {{ l10n.AU }} {{ subscription.endDate }}
+        {{ $t('du') }} {{ subscription.startDate }} {{ $t('au') }} {{ subscription.endDate }}
       </b-col>
       <b-col
         sm="4"
@@ -60,7 +60,7 @@
           size="sm"
           @click="deleteSubscription(subscription.id)"
         >
-          {{ l10n.SUPPRIMER }}
+          {{ $t('Supprimer') }}
         </b-btn>
       </b-col>
     </b-row>
@@ -74,7 +74,7 @@
           sm="8"
           md="4"
         >
-          <h4>{{ l10n.ABONNEMENT_AJOUTER }}</h4>
+          <h4>{{ $t('Ajouter un abonnement') }}</h4>
           <input
             v-if="forcedPublicationcode"
             type="hidden"
@@ -93,7 +93,7 @@
           sm="4"
           md="2"
         >
-          {{ l10n.DU }} <input
+          {{ $t('du') }} <input
             v-model="newSubscription.startDate"
             name="startDate"
             required
@@ -105,7 +105,7 @@
           sm="4"
           md="2"
         >
-          {{ l10n.AU }} <input
+          {{ $t('au') }} <input
             v-model="newSubscription.endDate"
             name="endDate"
             required
@@ -119,12 +119,12 @@
         type="submit"
         :disabled="!newSubscription.publicationCode"
       >
-        {{ l10n.AJOUTER }}
+        {{ $t('Ajouter') }}
       </b-btn>
     </b-form>
   </div>
   <div v-else>
-    {{ l10n.CHARGEMENT }}
+    {{ $t('Chargement...') }}
   </div>
 </template>
 <script>

@@ -2,7 +2,7 @@
   <span
     v-if="condition"
     :style="{backgroundColor: condition.color}"
-    :title="l10n[`ETAT_${condition.dbValue.toUpperCase()}`]"
+    :title="getConditionLabel(condition.dbValue)"
   />
 </template>
 

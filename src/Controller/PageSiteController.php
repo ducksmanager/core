@@ -106,14 +106,14 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showWelcome(Request $request, TranslatorInterface $translator, ?string $locale): Response
+    public function showWelcome(Request $request, ?string $locale): Response
     {
         if (!is_null($locale) && in_array($locale, ['en', 'fr'])) {
             $this->switchLocale($request, $locale);
         }
         return $this->renderSitePage(
             'Welcome',
-            $translator->trans('BIENVENUE')
+            'Bienvenue sur DucksManager !'
         );
     }
 
@@ -126,14 +126,14 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showBookcasePage(TranslatorInterface $translator, ?string $username = null): Response
+    public function showBookcasePage(?string $username = null): Response
     {
         if (is_null($username) && is_null($this->getUser())) {
             return $this->redirectToRoute('app_login');
         }
         return $this->renderSitePage(
             'Bookcase',
-            $username ? $translator->trans('BIBLIOTHEQUE_DE').' '.$username : $translator->trans('BIBLIOTHEQUE_COURT'),
+            $username ? 'Bibliothèque DucksManager de'.' '.$username : 'Ma bibliothèque',
             null,
             [
                 'tab' => 'ViewBookcase',
@@ -148,11 +148,11 @@ class PageSiteController extends AbstractController
      *     path="/bookcase/options"
      * )
      */
-    public function showBookcaseOptionsPage(TranslatorInterface $translator): Response
+    public function showBookcaseOptionsPage(): Response
     {
         return $this->renderSitePage(
             'Bookcase',
-            $translator->trans('BIBLIOTHEQUE_OPTIONS_COURT'),
+            'Options de la bibliothèque',
             null,
             [
                 'tab' => 'BookcaseOptions'
@@ -168,11 +168,11 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showBookcaseContributorsPage(TranslatorInterface $translator): Response
+    public function showBookcaseContributorsPage(): Response
     {
         return $this->renderSitePage(
             'Bookcase',
-            $translator->trans('BIBLIOTHEQUE_CONTRIBUTEURS_COURT'),
+            'Contributeurs',
             null, [
                 'tab' => 'BookcaseContributors'
             ]
@@ -187,12 +187,12 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showExpandPage(TranslatorInterface $translator): Response
+    public function showExpandPage(): Response
     {
         return $this->renderSitePage(
             'Expand',
-            $translator->trans('AGRANDIR_COLLECTION'),
-            $translator->trans('AGRANDIR_COLLECTION'),
+            'Agrandir ma collection',
+            'Agrandir ma collection',
         );
     }
 
@@ -202,12 +202,12 @@ class PageSiteController extends AbstractController
      *     path="/inducks/import"
      * )
      */
-    public function showImportPage(TranslatorInterface $translator): Response
+    public function showImportPage(): Response
     {
         return $this->renderSitePage(
             'InducksImport',
-            $translator->trans('IMPORTER_INDUCKS'),
-            $translator->trans('IMPORTER_INDUCKS'),
+            'Importer ma collection Inducks',
+            'Importer ma collection Inducks',
         );
     }
 
@@ -219,11 +219,11 @@ class PageSiteController extends AbstractController
      *     methods={"GET"}
      * )
      */
-    public function showPrintPresentationPage(TranslatorInterface $translator): Response
+    public function showPrintPresentationPage(): Response
     {
         return $this->renderSitePage(
             'PrintPresentation',
-            $translator->trans('IMPRESSION_COLLECTION'),
+            'Impression de la collection',
         );
     }
 
@@ -235,7 +235,7 @@ class PageSiteController extends AbstractController
      *     methods={"GET", "PUT"}
      * )
      */
-    public function showSignupPage(TranslatorInterface $translator, ApiService $apiService, Request $request): Response
+    public function showSignupPage(ApiService $apiService, Request $request): Response
     {
         if ($request->getMethod() === 'PUT') {
             $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
@@ -247,7 +247,7 @@ class PageSiteController extends AbstractController
         }
         return $this->renderSitePage(
             'Signup',
-            $translator->trans('INSCRIPTION'),
+            'Inscription',
         );
     }
 
@@ -257,11 +257,11 @@ class PageSiteController extends AbstractController
      *     path="/stats/{type}"
      * )
      */
-    public function showStatsPage(TranslatorInterface $translator, string $type): Response
+    public function showStatsPage(string $type): Response
     {
         return $this->renderSitePage(
             'Stats',
-            $translator->trans('STATISTIQUES_COLLECTION'),
+            'Statistiques de ma collection',
             null,
             [
                 'tab' => $type
@@ -278,13 +278,13 @@ class PageSiteController extends AbstractController
      *     defaults={"token"=null}
      * )
      */
-    public function showForgotPasswordPage(Request $request, ValidatorInterface $validator, TranslatorInterface $translator, ApiService $apiService, ?string $token): Response
+    public function showForgotPasswordPage(Request $request, ValidatorInterface $validator, ApiService $apiService, ?string $token): Response
     {
         $errors = [];
         $success = null;
         if (!empty($token)) {
             if ($request->getMethod() === 'POST') {
-                $account = PasswordChange::createFromRequest($translator, $request, $token);
+                $account = PasswordChange::createFromRequest($request, $token);
 
                 $errorResult = $validator->validate($account);
                 if (!empty($errorResult->count())) {
@@ -311,8 +311,8 @@ class PageSiteController extends AbstractController
 
         return $this->renderSitePage(
             'Forgot',
-            $translator->trans('MOT_DE_PASSE_OUBLIE'),
-            $translator->trans('MOT_DE_PASSE_OUBLIE'),
+            'Mot de passe oublié ?',
+            'Mot de passe oublié ?',
             (is_null($success) ? [] : compact('success')) + compact('token') + ['errors' => json_encode($errors)]
         );
     }
@@ -328,7 +328,7 @@ class PageSiteController extends AbstractController
      *     defaults={"publicationCode"=null})
      * )
      */
-    public function showCollection(TranslatorInterface $translator, LoggerInterface $logger, Request $request, ApiService $apiService, ?string $publicationCode): Response
+    public function showCollection(LoggerInterface $logger, Request $request, ApiService $apiService, ?string $publicationCode): Response
     {
         $username = $this->getUser()->getUsername();
         if ($username === 'demo') {
@@ -337,7 +337,7 @@ class PageSiteController extends AbstractController
         $logger->info($request->getLocale());
         return $this->renderSitePage(
             'Collection',
-            $translator->trans('COLLECTION'),
+            'Collection',
             null, [
                 'tab' => 'Manage',
                 'publicationcode' => $publicationCode
@@ -353,12 +353,12 @@ class PageSiteController extends AbstractController
      *     methods={"GET", "POST"}
      * )
      */
-    public function showAccountPage(Request $request, TranslatorInterface $translator, ValidatorInterface $validator, ApiService $apiService): Response
+    public function showAccountPage(Request $request, ValidatorInterface $validator, ApiService $apiService): Response
     {
         $success = null;
         $errors = [];
         if ($request->getMethod() === 'POST') {
-            $account = Account::createFromRequest($translator, $request, $this->getUser());
+            $account = Account::createFromRequest($request, $this->getUser());
 
             $errorResult = $validator->validate($account);
             if (!empty($errorResult->count())) {
@@ -375,7 +375,7 @@ class PageSiteController extends AbstractController
 
         return $this->renderSitePage(
             'Collection',
-            $translator->trans('GESTION_COMPTE_COURT'),
+            'Mon compte',
             null,
             (is_null($success) ? [] : compact('success')) + ['tab' => 'account', 'errors' => json_encode($errors)]
         );
@@ -389,7 +389,7 @@ class PageSiteController extends AbstractController
      *     methods={"GET", "POST"}
      * )
      */
-    public function showSubscriptions(Request $request, ApiService $apiService, TranslatorInterface $translator): Response
+    public function showSubscriptions(Request $request, ApiService $apiService): Response
     {
         $success = null;
         $errors = [];
@@ -404,7 +404,7 @@ class PageSiteController extends AbstractController
 
         return $this->renderSitePage(
             'Collection',
-            $translator->trans('GESTION_ABONNEMENTS'),
+            'Abonnements',
             null,
             (is_null($success) ? [] : compact('success'))
             + ['tab' => 'subscriptions', 'errors' => json_encode($errors)]
@@ -420,7 +420,7 @@ class PageSiteController extends AbstractController
      *     methods={"GET", "PUT"}
      * )
      */
-    public function showBookstoreListPage(Request $request, ApiService $apiService, TranslatorInterface $translator): Response
+    public function showBookstoreListPage(Request $request, ApiService $apiService): Response
     {
         $success = null;
         if ($request->getMethod() === 'PUT') {
@@ -430,8 +430,8 @@ class PageSiteController extends AbstractController
         }
         return $this->renderSitePage(
             'Bookstores',
-            $translator->trans('LISTE_BOUQUINERIES'),
-            $translator->trans('LISTE_BOUQUINERIES'),
+            'Liste des bouquineries',
+            'Liste des bouquineries',
             compact('success')
         );
     }

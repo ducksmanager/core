@@ -15,7 +15,7 @@ const matchAll = (haystack, regex) => {
 }
 
 export default {
-    computed: mapState("l10n", ["l10n", "l10nRoutes"]),
+    computed: mapState("l10n", ["l10nRoutes"]),
 
     async mounted() {
         await this.loadL10n()
@@ -23,21 +23,6 @@ export default {
 
     methods: {
         ...mapActions("l10n", ["loadL10n"]),
-        $t(key, parameters = []) {
-            let match
-            let parameterIndex = 0
-            let translation = this.l10n[key]
-            while (true) {
-                if ((match = /%\w/.exec(translation)) != null) {
-                    let replacement = parameters[parameterIndex++];
-                    if (replacement === undefined) {
-                        replacement = ''
-                    }
-                    translation = translation.substring(0, match.index) + replacement + translation.substring(match.index + match[0].length);
-                } else break;
-            }
-            return translation
-        },
 
         $r(route) {
             const routes = this.l10nRoutes

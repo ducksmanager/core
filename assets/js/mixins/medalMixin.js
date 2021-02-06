@@ -67,6 +67,6 @@ export default {
 
     getLevelProgressPercentage(extraPoints) {
       return this.currentLevelThreshold ? (100 * (extraPoints / this.currentLevelThreshold - this.currentLevelPoints)) : 0
-    }
+    },
   }
 }

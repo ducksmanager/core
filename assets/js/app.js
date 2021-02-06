@@ -7,6 +7,7 @@ import {Integrations} from "@sentry/tracing";
 
 import App from "./layouts/App"
 import store from "./store"
+import { i18n } from "./i18n";
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -17,6 +18,7 @@ Vue.use(BootstrapVueIcons)
 Vue.use(BackendDataPlugin)
 
 new Vue({
+  i18n,
   store,
   render(createElement) {
     let props = {}, component = null

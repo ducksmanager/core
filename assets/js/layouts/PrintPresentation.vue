@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ l10n.IMPRESSION_COLLECTION_PRESENTATION_LISTES }}
+    {{ $t("DucksManager propose l'impression de votre liste sous deux formats différents :") }}
     <ul>
       <li
         v-for="type in types"
@@ -11,28 +11,29 @@
         <span
           v-if="type.exclusive"
           class="exclusive"
-        >{{ l10n.EXCLUSIF_DUCKSMANAGER }}</span>
-        <span v-html="l10n[type.description]" />
+        >{{ $t("Exclusif DucksManager") }}</span>
+        <span v-html="type.description" />
         <ul class="details">
           <li
             v-for="detail in type.details"
             :key="detail"
             class="detail"
           >
-            {{ l10n[detail] }}
+            {{ detail }}
           </li>
           <li v-if="type.link === 'collectable'">
             <a
               href="http://www.youtube.com/watch?v=PAg-g1cF148&hd=1"
               target="_blank"
-            >{{ l10n.CLIQUEZ_ICI }}</a>
-            {{ l10n.COLLECTABLE_DEMO }}
+            >{{ $t("Cliquez ici") }}</a>
+            {{ $t("pour visionner notre vidéo d'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !")
+            }}
           </li>
         </ul>
         <a
           :href="$r(`/print/{currentType:${type.link}}`)"
           target="_blank"
-        >{{ l10n.IMPRESSION_COLLECTION_AVEC }} {{ l10n[type.name] }}</a>
+        >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</a>
         <br>
       </li>
     </ul>
@@ -45,26 +46,28 @@ import l10nMixin from "../mixins/l10nMixin";
 export default {
   name: "PrintPresentation",
   mixins: [l10nMixin],
-  data: () => ({
-    types: [{
-      link: 'classic',
-      name: 'CLASSIQUE_NOM',
-      description: 'CLASSIQUE_DESCRIPTION',
-      details: [
-        'CLASSIQUE_PLUS_1',
-        'CLASSIQUE_MOINS_1'
-      ]
-    }, {
-      link: 'collectable',
-      name: 'COLLECTABLE_NOM',
-      exclusive: true,
-      description: 'COLLECTABLE_DESCRIPTION',
-      details: [
-        'COLLECTABLE_PLUS_1'
-      ]
-    }]
-  })
-}
+  computed: {
+    types() {
+      return [{
+        link: "classic",
+        name: this.$t("la liste classique"),
+        description: this.$t("Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez."),
+        details: [
+          this.$t("Ce type de liste est plus adapté pour les petites collections."),
+          this.$t("Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros.")
+        ]
+      }, {
+        link: "collectable",
+        name: this.$t("CollecTable"),
+        exclusive: true,
+        description: this.$t("Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !"),
+        details: [
+          this.$t("Adaptée pour les grandes collections.")
+        ]
+      }];
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

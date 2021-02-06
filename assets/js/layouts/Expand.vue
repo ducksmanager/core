@@ -1,20 +1,20 @@
 <template>
-  <div v-if="collection && l10n">
+  <div v-if="collection">
     <b-alert
       variant="info"
       show
     >
-      {{ l10n.EXPLICATION_NOTATION_AUTEURS1 }}
-      <a :href="$r('/stats/authors')">{{ l10n.EXPLICATION_NOTATION_AUTEURS2 }}</a>
-      {{ l10n.EXPLICATION_NOTATION_AUTEURS3 }}
+      {{ $t('DucksManager se base sur les') }}
+      <a :href="$r('/stats/authors')">{{ $t('notes que vous attribuez à vos auteurs préférés') }}</a>
+      {{ $t('pour vous proposer des magazines susceptibles de vous intéresser.') }}
       <br><br>
-      {{ l10n.SUGGESTIONS_ACHATS_QUOTIDIENNES }}
+      {{ $t('Les suggestions d\'achat sont mises à jour quotidiennement.') }}
     </b-alert>
     <div v-if="!watchedAuthors">
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
     <div v-else-if="watchedAuthors.length && watchedAuthorsWithNotation.length">
-      {{ l10n.MONTRER_MAGAZINES_PAYS }}
+      {{ $t('Montrer les magazines de') }}
       <b-select
         v-if="countryNamesWithAllCountriesOption"
         v-model="countryCode"
@@ -31,20 +31,20 @@
       show
       variant="warning"
     >
-      {{ l10n.AUTEURS_NON_NOTES }}
+      {{ $t('Vous n\'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection.') }}
     </b-alert>
     <b-alert
       v-else
       show
       variant="warning"
     >
-      {{ l10n.AUCUN_AUTEUR_NOTE_1 }}
+      {{ $t('Aucun auteur noté.') }}
       <span
-        v-html="$t('AUCUN_AUTEUR_NOTE_2_REDIRECTION', [
-          `<a :href='${$r('/stats/authors')}'>${l10n.AUTEURS_COURT}</a>`
+        v-html="$t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
+          `<a :href='${$r('/stats/authors')}'>${$t('Statistiques sur les auteurs')}</a>`
         ])"
       />
-      {{ l10n.AUCUN_AUTEUR_NOTE_3 }}
+      {{ $t('Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.') }}
     </b-alert>
   </div>
 </template>
@@ -70,8 +70,8 @@ export default {
     ...mapGetters("collection", ["hasSuggestions"]),
 
     countryNamesWithAllCountriesOption() {
-      return this.l10n && this.countryNames && {
-        ALL: this.l10n.TOUS_PAYS,
+      return this.countryNames && {
+        ALL: this.$t('Tous les pays'),
         ...this.countryNames
       }
     },

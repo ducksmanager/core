@@ -9,40 +9,40 @@
     >
       <template #text>
         <b-icon-house-fill />
-        {{ l10n.COLLECTION }}
+        {{ $t('Collection') }}
       </template>
       <template #items>
         <template v-if="username">
           <NavigationItem path="/bookcase/show">
             <b-icon-book-half />
-            {{ l10n.BIBLIOTHEQUE_COURT }}
+            {{ $t('Ma bibliothèque') }}
           </NavigationItem>
           <NavigationItem path="/collection/show">
             <b-icon-list />
-            {{ l10n.GERER_COLLECTION }}
+            {{ $t('Gérer ma collection') }}
           </NavigationItem>
           <NavigationItem path="/stats/general">
             <b-icon-graph-up />
-            {{ l10n.STATISTIQUES_COLLECTION }}
+            {{ $t('Statistiques de ma collection') }}
           </NavigationItem>
           <NavigationItem path="/expand">
             <b-icon-capslock-fill />
-            {{ l10n.AGRANDIR_COLLECTION }}
+            {{ $t('Agrandir ma collection') }}
           </NavigationItem>
           <NavigationItem path="/inducks/import">
             <div
               class="b-custom"
               :style="{backgroundImage: `url(${imagePath}/icons/inducks.png)`}"
             />
-            {{ l10n.COLLECTION_INDUCKS }}
+            {{ $t('Collection Inducks') }}
           </NavigationItem>
           <NavigationItem path="/print">
             <b-icon-printer-fill />
-            {{ l10n.IMPRIMER_COLLECTION }}
+            {{ $t('Imprimer ma collection') }}
           </NavigationItem>
           <NavigationItem path="/logout">
             <b-icon-x-square-fill />
-            {{ l10n.DECONNEXION }}
+            {{ $t('Déconnexion') }}
           </NavigationItem>
         </template>
         <template v-else>
@@ -50,32 +50,32 @@
             path="/signup"
             icon="glyphicon glyphicon-certificate"
           >
-            {{ l10n.NOUVELLE_COLLECTION }}
+            {{ $t('Inscription') }}
           </NavigationItem>
           <NavigationItem
             path="/login"
             icon="glyphicon glyphicon-folder-open"
           >
-            {{ l10n.OUVRIR_COLLECTION }}
+            {{ $t('Connexion') }}
           </NavigationItem>
         </template>
       </template>
     </NavigationItemGroup>
     <li class="empty" />
     <NavigationItem path="/bookstores">
-      {{ l10n.RECHERCHER_BOUQUINERIES }}
+      {{ $t('Trouver des bouquineries') }}
     </NavigationItem>
     <NavigationItem
       v-if="!username"
       path="/inducks/import"
     >
-      {{ l10n.COLLECTION_INDUCKS_POSSEDEE }}
+      {{ $t('Vous possédez une collection Inducks ?') }}
     </NavigationItem>
     <NavigationItem
       v-if="!username"
       path="/demo"
     >
-      {{ l10n.DEMO_MENU }}
+      {{ $t('Une petite démo ?') }}
     </NavigationItem>
   </ul>
 </template>

@@ -3,18 +3,18 @@
     <div
       v-show="count"
       id="user-count"
-      v-html="$t('UTILISATEURS_INSCRITS', [count])"
+      v-html="$t('{0} utilisateurs sont inscrits<br />sur DucksManager', [count])"
     />
     <div>
-      {{ l10n.REMERCIEMENT_LOGO }}
+      {{ $t('Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.') }}
       <br><br>
-      {{ l10n.LICENCE_INDUCKS1 }}
+      {{ $t('Ce site se base en partie sur les données du site Inducks.') }}
       <a
         target="_blank"
         href="http://coa.inducks.org/inducks/COPYING"
-      >{{ l10n.LICENCE_INDUCKS2 }}</a>
+      >{{ $t('Cliquez ici pour lire la licence Inducks.') }}</a>
       <br>
-      {{ l10n.LICENCE_INDUCKS3 }}
+      {{ $t('Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company.') }}
     </div>
   </div>
 </template>

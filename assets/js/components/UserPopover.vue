@@ -24,9 +24,9 @@
       </div>
       <div class="clearfix" />
       <div>
-        {{ stats.numberOfIssues }} {{ l10n.NUMEROS }}<br>
-        {{ stats.numberOfPublications }} {{ l10n.MAGAZINES }}<br>
-        {{ stats.numberOfCountries }} {{ l10n.PAYS }}
+        {{ stats.numberOfIssues }} {{ $t('numéros') }}<br>
+        {{ stats.numberOfPublications }} {{ $t('magazines') }}<br>
+        {{ stats.numberOfCountries }} {{ $t('pays') }}
       </div>
       <div
         v-if="bookcaseShared"
@@ -39,7 +39,7 @@
           target="_blank"
           :href="$r(`/bookcase/show/{username:${stats.username}}`)"
         >
-          {{ l10n.VOIR_BIBLIOTHEQUE }}
+          {{ $t('Voir la bibliothèque') }}
         </b-button>
       </div>
     </b-popover>

@@ -34,9 +34,9 @@
               :issuenumber="issueNumber"
             />
             <h6 v-if="releaseDate">
-              {{ l10n.SORTIE }}{{ releaseDate }}
+              {{ $t('Sortie :') }}{{ releaseDate }}
             </h6>
-            <h3>{{ l10n.TABLE_DES_MATIERES }}</h3>
+            <h3>{{ $t('Table des matières') }}</h3>
           </template>
           <b-tabs
             :value="pages.findIndex(page => page.storycode === pagesWithUrl[currentPage] && pagesWithUrl[currentPage].storycode)"

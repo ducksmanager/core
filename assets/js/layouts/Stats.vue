@@ -1,25 +1,25 @@
 <template>
-  <div v-if="collection && l10n">
+  <div v-if="collection">
     <Menu
-      :title="l10n.STATISTIQUES_COLLECTION"
+      :title="$t('Statistiques de ma collection')"
       :root-path="'/stats'"
       :default-path="'/general'"
       :items="[
-        {path: '/general', text: l10n.GENERAL},
-        {path: '/publications', text: l10n.PUBLICATIONS},
-        {path: '/possessions', text: l10n.POSSESSIONS},
-        {path: '/conditions', text: l10n.ETATS_NUMEROS},
-        {path: '/purchases', text: l10n.ACHATS},
-        {path: '/authors', text: l10n.AUTEURS}
+        {path: '/general', text: $t('Général')},
+        {path: '/publications', text: $t('Publications')},
+        {path: '/possessions', text: $t('Possessions')},
+        {path: '/conditions', text: $t('Etats des numéros')},
+        {path: '/purchases', text: $t('Achats')},
+        {path: '/authors', text: $t('Auteurs')}
       ]"
     />
     <b-alert
       v-if="!collection.length"
       variant="info"
     >
-      {{ l10n.AUCUN_NUMERO_POSSEDE_1 }}
-      <a :href="$r('/collection/show')">{{ l10n.ICI }}</a>
-      {{ l10n.AUCUN_NUMERO_POSSEDE_2 }}
+      {{ $t('Vous ne possédez aucun numéro ! Cliquez') }}
+      <a :href="$r('/collection/show')">{{ $t('ici') }}</a>
+      {{ $t('pour en ajouter à votre collection !') }}
     </b-alert>
     <GeneralStats v-if="tab === 'general'" />
     <PublicationStats v-if="tab === 'publications'" />
@@ -30,12 +30,12 @@
     <div v-else-if="tab === 'possessions' || tab === 'authors'">
       <b-button-group v-if="tab !== 'authors' || (tab === 'authors' && watchedAuthorsStoryCount && Object.keys(watchedAuthorsStoryCount).length)">
         <b-button
-          v-for="(l10nKey, unitType) in unitTypes"
+          v-for="(text, unitType) in unitTypes"
           :key="unitType"
           :pressed="unitTypeCurrent === unitType"
           @click="unitTypeCurrent = unitType"
         >
-          {{ l10n[l10nKey] }}
+          {{ text }}
         </b-button>
       </b-button-group>
       <PossessionStats
@@ -50,14 +50,14 @@
           show
           variant="warning"
         >
-          {{ l10n.AUCUN_AUTEUR_SURVEILLE }}
+          {{ $t('Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.') }}
         </b-alert>
         <div v-else>
           <template v-if="!watchedAuthorsStoryCount">
-            {{ l10n.CHARGEMENT }}
+            {{ $t('Chargement...') }}
           </template>
           <b-alert v-else-if="!Object.keys(watchedAuthorsStoryCount).length">
-            {{ l10n.CALCULS_PAS_ENCORE_FAITS }}
+            {{ $t('Les calculs n\'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !') }}
           </b-alert>
           <div v-else>
             <AuthorStats
@@ -67,7 +67,7 @@
               :style="{width, height}"
               @change-dimension="changeDimension"
             />
-            {{ l10n.STATISTIQUES_QUOTIDIENNES }}
+            {{ $t('Les statistiques sont mises à jour quotidiennement.') }}
           </div>
           <hr>
         </div>
@@ -76,10 +76,10 @@
     </div>
     <div v-else-if="tab === 'purchases'">
       <b-alert variant="info">
-        <div>{{ l10n.EXPLICATION_GRAPH_ACHATS_1 }}</div>
-        <div v-html="l10n.EXPLICATION_GRAPH_ACHATS_2" />
-        <div>{{ l10n.EXPLICATION_GRAPH_ACHATS_3 }}</div>
-        <div v-html="$t('EXPLICATION_GRAPH_ACHATS_4', [`<a href='${$r('/collection/show')}'>${l10n.GERER_COLLECTION}</a>`]) " />
+        <div>{{ $t('Ce graphique vous permet de retracer l\'évolution de votre collection dans le temps.') }}</div>
+        <div v-html="$t('A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?')" />
+        <div>{{ $t('Quand avez-vous acheté le plus de magazines dans le passé ?') }}</div>
+        <div v-html="$t('Afin de retracer l\'évolution de votre collection, renseignez les dates d\'achat de vos numéros dans la page {0}, puis revenez ici ! Si une date d\'achat n\'a pas été indiquée pour un numéro, sa date d\'ajout dans la collection est utilisée', [`<a href='${$r('/collection/show')}'>${$t('Gérer ma collection')}</a>`]) " />
         <div v-if="purchases && !purchases.length">
           <a :href="$r('/collection/show')">
             <img
@@ -93,12 +93,12 @@
       <div v-if="purchases && purchases.length">
         <b-button-group>
           <b-button
-            v-for="(l10nKey, purchaseType) in purchaseTypes"
+            v-for="(text, purchaseType) in purchaseTypes"
             :key="purchaseType"
             :pressed="purchaseTypeCurrent === purchaseType"
             @click="purchaseTypeCurrent = purchaseType"
           >
-            {{ l10n[l10nKey] }}
+            {{ text }}
           </b-button>
         </b-button-group>
         <PurchaseStats
@@ -155,14 +155,18 @@ export default {
     width: null,
     height: null,
     unitTypeCurrent: 'number',
-    unitTypes: {number: 'AFFICHER_VALEURS_REELLES', percentage: 'AFFICHER_POURCENTAGES'},
     purchaseTypeCurrent: 'new',
-    purchaseTypes: {new: 'AFFICHER_NOUVELLES_ACQUISITIONS', total: 'AFFICHER_POSSESSIONS_TOTALES'},
 
     watchedAuthorsStoryCount: null
   }),
   computed: {
     ...mapState("collection", ["purchases", "watchedAuthors"]),
+    unitTypes() {
+      return { number: this.$t("Afficher en valeurs réelles"), percentage: this.$t("Afficher en pourcentages") }
+    },
+    purchaseTypes() {
+      return { new: this.$t("Afficher les nouvelles acquisitions"), total: this.$t("Afficher les possessions totales") }
+    }
   },
 
   async mounted() {

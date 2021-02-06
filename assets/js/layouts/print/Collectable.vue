@@ -17,7 +17,7 @@
           :rowspan="lines"
           class="total_ligne"
         >
-          {{ l10n.TOTAL }}
+          {{ $t('Total') }}
         </td>
       </tr>
       <template v-for="(_, publicationCode) in publicationNames">
@@ -82,7 +82,7 @@
                 colspan="6"
               >
                 <u>{{
-                  l10n.NUMEROS[0].toUpperCase() + l10n.NUMEROS.substring(1, l10n.NUMEROS.length).toLowerCase()
+                  $t('numéros')[0].toUpperCase() + $t('numéros').substring(1, $t('numéros').length).toLowerCase()
                 }}</u>
               </td>
             </tr>
@@ -109,7 +109,7 @@
                 align="center"
                 colspan="4"
               >
-                <u>{{ l10n.PUBLICATIONS }}</u>
+                <u>{{ $t('Publications') }}</u>
               </td>
             </tr>
             <tr
@@ -128,8 +128,8 @@
       </tr>
     </table>
   </div>
-  <div v-else-if="l10n">
-    {{ l10n.CHARGEMENT }}
+  <div v-else>
+    {{ $t('Chargement...') }}
   </div>
 </template>
 
@@ -156,7 +156,7 @@ export default {
     ...mapState("coa", ["countryNames", "publicationNames"]),
 
     ready() {
-      return this.issuesPerCell && this.countryNames && Object.keys(this.publicationNames).length && this.l10n
+      return this.issuesPerCell && this.countryNames && Object.keys(this.publicationNames).length
     },
     maxLetter() {
       return !this.issuesPerCell ? null : this.numberToLetter([

@@ -14,8 +14,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-
 export default {
   name: 'SwitchLocale',
 
@@ -42,9 +40,9 @@ export default {
   }),
 
   methods: {
-    reloadWithLocale: async locale => {
-      await axios.post(`/locale/${locale.key}`)
-      window.location.replace(window.location.href)
+    reloadWithLocale({ key: locale }) {
+      localStorage.setItem('locale', locale)
+      this.$i18n.locale = locale
     }
   }
 }

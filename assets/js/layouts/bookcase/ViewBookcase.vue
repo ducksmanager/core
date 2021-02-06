@@ -5,7 +5,7 @@
         v-if="lastPublishedEdgesForCurrentUser && lastPublishedEdgesForCurrentUser.length"
         class="mb-4"
       >
-        {{ l10n.BIBLIOTHEQUE_NOUVELLES_TRANCHES_LISTE }}
+        {{ $t('Dernières tranches de votre collection ajoutées :') }}
         <div
           v-for="edge in lastPublishedEdgesForCurrentUser"
           :key="`last-published-${getEdgeKey(edge)}`"
@@ -21,7 +21,7 @@
       <b-alert
         variant="info"
         show
-        v-html="$t('EXPLICATION_ORDRE_MAGAZINES', [`<a href='${$r('/bookcase/options')}'>${l10n.BIBLIOTHEQUE_OPTIONS_COURT}</a>`])"
+        v-html="$t('Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page {0}.', [`<a href='${$r('/bookcase/options')}'>${$t('Options de la bibliothèque')}</a>`])"
       />
       <div
         v-if="user && user.isShareEnabled && username !== 'demo' && sortedBookcase && sortedBookcase.length"
@@ -30,11 +30,11 @@
         <b-alert
           variant="info"
           show
-          v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_ACTIVEE', [`<a href='${$r('/collection/account')}'>${l10n.GESTION_COMPTE_COURT}</a>`])"
+          v-html="$t('Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page {0}.', [`<a href='${$r('/collection/account')}'>${$t('Mon compte')}</a>`])"
         />
         <SharePage
           v-if="showShareButtons"
-          :title="`${l10n.BIBLIOTHEQUE_DE} ${bookcaseUsername}`"
+          :title="`${$t('Bibliothèque DucksManager de')} ${bookcaseUsername}`"
           :url="bookcaseUrl"
         />
         <b-btn
@@ -42,42 +42,42 @@
           size="sm"
           @click="showShareButtons=true"
         >
-          {{ l10n.BIBLIOTHEQUE_PROPOSITION_PARTAGE }}
+          {{ $t('Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !') }}
         </b-btn>
       </div>
       <b-alert
         v-else-if="user && user.isShareEnabled === false && username !== 'demo'"
         show
         variant="warning"
-        v-html="$t('EXPLICATION_PARTAGE_BIBLIOTHEQUE_DESACTIVEE', [`<a href='${$r('/collection/account')}'>${l10n.GESTION_COMPTE_COURT}</a>`])"
+        v-html="$t('Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page {0}.', [`<a href='${$r('/collection/account')}'>${$t('Mon compte')}</a>`])"
       />
     </div>
     <div v-if="percentVisible !== null">
-      {{ percentVisible }}{{ l10n.POURCENTAGE_COLLECTION_VISIBLE }}
+      {{ percentVisible }}{{ $t('% de la collection est visible dans la bibliothèque.') }}
     </div>
     <div v-if="loading">
-      {{ l10n.CHARGEMENT }}
+      {{ $t('Chargement...') }}
     </div>
     <b-alert
       v-else-if="isPrivateBookcase"
       variant="warning"
       show
     >
-      {{ l10n.BIBLIOTHEQUE_PRIVEE }}
+      {{ $t('La bibliothèque de cet utilisateur est privée.') }}
     </b-alert>
     <b-alert
       v-else-if="isUserNotExisting"
       variant="warning"
       show
     >
-      {{ l10n.UTILISATEUR_NON_EXISTANT }}
+      {{ $t('Cet utilisateur n\'existe pas.') }}
     </b-alert>
     <div v-else>
       <div v-if="!isSharedBookcase">
         <div
           v-if="mostPopularIssuesInCollectionWithoutEdge && mostPopularIssuesInCollectionWithoutEdge.length && userPoints"
         >
-          {{ $t('INVITATION_ENVOI_PHOTOS_TRANCHES', [mostPopularIssuesInCollectionWithoutEdge[0].popularity]) }}
+          {{ $t('Envoyez des photos de tranches de magazines et gagnez jusqu\'à {0} points par tranche !', [mostPopularIssuesInCollectionWithoutEdge[0].popularity]) }}
           <div>
             <b-carousel
               controls
@@ -104,7 +104,7 @@
                   href="https://edgecreator.ducksmanager.net"
                   target="_blank"
                 >
-                  {{ l10n.ENVOYER_PHOTOS_DE_TRANCHE }}
+                  {{ $t('Envoyer des photos de tranches') }}
                 </b-btn>
               </b-carousel-slide>
             </b-carousel>
@@ -138,7 +138,7 @@
         show
         variant="warning"
       >
-        {{ l10n.BIBLIOTHEQUE_VIDE }}
+        {{ $t('Cette bibliothèque est vide.') }}
       </b-alert>
     </div>
   </div>

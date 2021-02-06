@@ -29,9 +29,9 @@
     </template>
     <template #footer>
       <div
-        v-html="l10n[publishedEdgesSincePreviousVisit.length > 1
-          ? 'BIBLIOTHEQUE_NOUVELLES_TRANCHES_CONTENU'
-          : 'BIBLIOTHEQUE_NOUVELLE_TRANCHE_CONTENU']"
+        v-html="publishedEdgesSincePreviousVisit.length > 1
+          ? 'Accédez à <a href=\'/bookcase\'>votre bibliothèque</a> pour les voir.'
+          : 'Accédez à <a href=\'/bookcase\'>votre bibliothèque</a> pour la voir.'"
       />
     </template>
   </Accordion>

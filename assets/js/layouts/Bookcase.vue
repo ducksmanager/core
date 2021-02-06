@@ -1,18 +1,18 @@
 <template>
   <div>
     <div v-if="$attrs['bookcase-username'] && $attrs['bookcase-username'] !== username">
-      <h5><b>{{ l10n.BIBLIOTHEQUE_DE }} {{ $attrs['bookcase-username'] }}</b></h5>
+      <h5><b>{{ $t('Bibliothèque DucksManager de') }} {{ $attrs['bookcase-username'] }}</b></h5>
       <ViewBookcase v-bind="attrsWithoutTab" />
     </div>
     <template v-else>
       <Menu
-        :title="l10n.BIBLIOTHEQUE_COURT"
+        :title="$t('Ma bibliothèque')"
         :root-path="'/bookcase'"
         :default-path="'/show'"
         :items="[
-          {path: '/show', text: l10n.BIBLIOTHEQUE_COURT},
-          {path: '/options', text: l10n.BIBLIOTHEQUE_OPTIONS_COURT},
-          {path: '/contributors', text: l10n.BIBLIOTHEQUE_CONTRIBUTEURS_COURT}
+          {path: '/show', text: $t('Ma bibliothèque')},
+          {path: '/options', text: $t('Options de la bibliothèque')},
+          {path: '/contributors', text: $t('Contributeurs')}
         ]"
       />
       <component
