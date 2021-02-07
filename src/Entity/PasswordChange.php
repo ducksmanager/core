@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PasswordChange
 {

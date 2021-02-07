@@ -5,14 +5,14 @@
       show
       variant="danger"
     >
-      {{ errors[id] }}
+      {{ $t(errors[id]) }}
     </b-alert>
     <slot />
   </div>
 </template>
 
 <script>
-import {mapState} from "vuex";
+import { mapState } from "vuex";
 
 export default {
   name: "Errorable",

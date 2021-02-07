@@ -8,7 +8,6 @@ use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Account
 {
@@ -63,7 +62,7 @@ class Account
     public function validateOldPassword(ExecutionContextInterface $context)
     {
         if (!empty($this->password) && sha1($this->password) !== $this->currentPassword) {
-            $context->buildViolation("This value should be the user's current password.")
+            $context->buildViolation("L'ancien mot de passe est invalide.")
                 ->atPath('password')
                 ->addViolation();
         }
