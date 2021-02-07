@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span :class="{[size]: true}">
     <img
       :alt="countrycode"
       :src="`${imagePath}/flags/${countrycode}.png`"
@@ -18,16 +18,23 @@ export default {
     publicationname: {
       type: String,
       required: true
+    },
+    size: {
+      type: String,
+      default: "md"
     }
   },
   computed: {
     countrycode() {
-      return this.publicationcode.split('/')[0]
+      return this.publicationcode.split("/")[0];
     }
   }
-}
+};
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+span.xl {
+  font-size: 15pt;
+  font-weight: bold;
+}
 </style>

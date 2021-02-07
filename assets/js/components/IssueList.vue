@@ -1,7 +1,10 @@
 <template>
   <div v-if="publicationName">
-    <Country :country="country" />
-    <span class="publication-title">{{ publicationName }}</span>
+    <Publication
+      size="xl"
+      :publicationcode="publicationcode"
+      :publicationname="publicationName"
+    />
     <div v-if="issues">
       <div
         v-once
@@ -38,10 +41,30 @@
         @contextmenu.prevent="openContextMenuIfBookNotOpen"
       >
         <b-alert
+          v-if="userIssuesNotFoundForPublication.length"
+          show
+          variant="warning"
+        >
+          {{ $t('Certains des numéros que vous possédez pour ce magazine n\'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n\'existant plus, trouvez le numéro de remplacement, puis supprimez l\'ancien numéro en cliquant sur le bouton correspondant ci-dessous.') }}
+          <ul>
+            <li
+              v-for="issueNotFound in userIssuesNotFoundForPublication"
+              :key="`notfound-${issueNotFound}`"
+            >
+              {{ $t('n°') }}{{ issueNotFound.issueNumber }} <b-btn
+                size="sm"
+                @click="deletePublicationIssues([issueNotFound])"
+              >
+                {{ $t('Supprimer') }}
+              </b-btn>
+            </li>
+          </ul>
+        </b-alert>
+        <b-alert
           v-once
           show
           variant="info"
-          style="margin-bottom: 0"
+          class="mb-0"
         >
           {{ $t('Cliquez sur les numéros que vous souhaitez ajouter à votre collection,') }}
           <span v-if="isTouchScreen">{{ $t('puis faites un appui long pour indiquer son état et validez.') }}</span>
@@ -149,7 +172,7 @@
         }})
       </div>
       <div v-if="userIssuesForPublication.length">
-        {{ $t('Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront également supprimés de votre collection dans ce cas :') }}
+        {{ $t('Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :') }}
         <ul>
           <li
             v-for="issue in userIssuesForPublication"
@@ -160,7 +183,7 @@
         </ul>
         <b-btn
           variant="danger"
-          @click="deletePublicationIssues"
+          @click="deletePublicationIssues(userIssuesForPublication)"
         >
           {{ $t('Supprimer') }}
         </b-btn>
@@ -177,19 +200,19 @@ import "vue-context/src/sass/vue-context.scss";
 import axios from "axios";
 import conditionMixin from "../mixins/conditionMixin";
 import collectionMixin from "../mixins/collectionMixin";
-import Country from "./Country";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
 import Condition from "./Condition";
 import { BIconCalendar } from "bootstrap-vue";
+import Publication from "./Publication";
 
 export default {
   name: "IssueList",
   components: {
+    Publication,
     Condition,
     BIconCalendar,
     Book,
-    Country,
     ContextMenu,
     IssueDetailsPopover
   },
@@ -210,6 +233,7 @@ export default {
     coverUrl: null,
     issues: null,
     userIssuesForPublication: null,
+    userIssuesNotFoundForPublication: [],
     selected: [],
     preselected: [],
     preselectedIndexStart: null,
@@ -262,6 +286,9 @@ export default {
               ...issue,
               ...(vm.userIssuesForPublication.find(({ issueNumber: userIssueNumber }) => userIssueNumber === issue.issueNumber) || {})
             }));
+          const coaIssueNumbers = issuesWithTitles.map(({issueNumber}) => issueNumber)
+          this.userIssuesNotFoundForPublication = this.userIssuesForPublication
+            .filter(({ issueNumber }) => !coaIssueNumbers.includes(issueNumber))
           this.loading = false;
         }
       }
@@ -299,10 +326,10 @@ export default {
       this.preselectedIndexStart = this.preselectedIndexEnd = null;
       this.preselected = [];
     },
-    async deletePublicationIssues() {
+    async deletePublicationIssues(issuesToDelete) {
       await this.updateIssues({
         publicationCode: this.publicationcode,
-        issueNumbers: this.userIssuesForPublication.map(({ issueNumber }) => issueNumber),
+        issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
         condition: this.conditions.find(({ value }) => value === "missing").dbValue,
         istosell: false,
         purchaseId: null
@@ -324,10 +351,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.publication-title {
-  font-size: 15pt;
-  font-weight: bold;
-}
 
 .issue-list-header {
   border: 0;
