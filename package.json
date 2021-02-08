@@ -9,6 +9,7 @@
         "assets/js/util/**.js"
     ],
     "devDependencies": {
+        "@mapbox/mapbox-gl-geocoder": "^4.7.0",
         "@sentry/tracing": "^6.0.4",
         "@sentry/vue": "^6.0.4",
         "@symfony/webpack-encore": "^1.0.4",

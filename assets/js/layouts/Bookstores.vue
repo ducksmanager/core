@@ -1,9 +1,10 @@
 <template>
   <div>
-    {{ $t('Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney.') }}
+    {{ $t("Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney.")
+    }}
     <br><br>
     <div v-if="!bookstores.length">
-      {{ $t('Chargement...') }}
+      {{ $t("Chargement...") }}
     </div>
     <div
       v-else
@@ -28,9 +29,9 @@
                 <p>{{ bookstore.comment }}</p>
                 <p>{{ bookstore.address }}</p>
                 <p>
-                  {{ $t('Signalé par') }}
+                  {{ $t("Signalé par") }}
                   <span v-if="bookstore.username">{{ bookstore.username }}</span>
-                  <span v-else>{{ $t('un visiteur anonyme') }}</span>
+                  <span v-else>{{ $t("un visiteur anonyme") }}</span>
                 </p>
               </div>
             </div>
@@ -40,56 +41,66 @@
     </div>
     <br> <br>
     <h2>
-      {{ $t('Proposer une bouquinerie') }}
+      {{ $t("Proposer une bouquinerie") }}
     </h2>
-    {{ $t('Vous connaissez une bouquinerie sympa ? Faites-en profiter d\'autres collectionneurs !') }}
+    {{ $t("Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !") }}
     <br>
-    {{ $t('Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.') }}
+    {{ $t("Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.")
+    }}
     <br>
-    {{ $t('Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.') }}
+    {{ $t("Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.") }}
     <br> <br>
-    <form
-      id="form_bouquinerie"
-      method="post"
+    <b-alert
+      v-if="newBookstoreSent"
+      variant="success"
+      show
     >
+      {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
+      {{ $t("Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.") }}
+      {{ $t("Merci pour votre contribution !") }} ?>
+    </b-alert>
+    <form
+      v-else
+      id="form_bouquinerie"
+      @submit.prevent="suggestBookstore"
+    >
+      <input
+        v-model="newBookstore.coordX"
+        type="hidden"
+      >
+      <input
+        v-model="newBookstore.coordY"
+        type="hidden"
+      >
       <b-form-input
         v-model="newBookstore.name"
         required
         maxlength="25"
-        name="nom"
         type="text"
         :placeholder="$t('Nom de la bouquinerie')"
       />
-      <b-form-input
-        v-model="newBookstore.address"
-        required
-        name="full-address"
-        type="text"
-        :placeholder="$t('Adresse')"
-      />
+
+      <div id="address" />
       <b-form-textarea
         v-model="newBookstore.comment"
         required
         cols="41"
         rows="5"
         maxlength="1000"
-        name="comments"
         type="text"
         :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
       />
-      <b-btn @click="suggestBookstore">
-        {{ $t('Ajouter la bouquinerie') }}
+      <b-btn type="submit">
+        {{ $t("Ajouter la bouquinerie") }}
       </b-btn>
-      <b-alert variant="info">
-        {{ $t('Un e-mail vient d\'être envoyé au webmaster.') }} {{ $t('Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.') }} {{ $t('Merci pour votre contribution !') }} ?>
-      </b-alert>
     </form>
   </div>
 </template>
 <script>
-import {MglMap, MglMarker, MglPopup} from "vue-mapbox";
+import { MglMap, MglMarker, MglPopup } from "vue-mapbox";
 import l10nMixin from "../mixins/l10nMixin";
 import axios from "axios";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 
 const newBookstore = {
   name: null,
@@ -97,7 +108,7 @@ const newBookstore = {
   comment: null,
   coordX: null,
   coordY: null
-}
+};
 
 export default {
   name: "Bookstores",
@@ -111,36 +122,49 @@ export default {
   mixins: [l10nMixin],
 
   data: () => ({
-    accessToken: 'pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ',
+    accessToken: "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ",
     mapCenter: [1.73584, 46.754917],
     bookstores: [],
-    newBookstore
+    newBookstore,
+    newBookstoreSent: false
   }),
 
   async mounted() {
-    await this.fetchBookstores()
+    const vm = this;
+    await this.fetchBookstores();
+    const geocoder = new MapboxGeocoder({
+      accessToken: this.accessToken,
+      placeholder: this.$t("Adresse"),
+      types: "address",
+      proximity: { latitude: 46.754917, longitude: 1.73584 },
+      enableEventLogging: false
+    });
+    geocoder.addTo("#address");
+    geocoder.on("result", ({ result: { place_name, center } }) => {
+      vm.newBookstore.address = place_name
+      ;[vm.newBookstore.coordX, vm.newBookstore.coordY] = center;
+    });
   },
 
   methods: {
     async fetchBookstores() {
-      this.bookstores = (await axios.get('/bookstore/list')).data.map(bookstore => {
+      this.bookstores = (await axios.get("/bookstore/list")).data.map(bookstore => {
         try {
-          ['name', 'address', 'comment'].forEach(field => {
-            bookstore[field] = decodeURIComponent(escape(bookstore[field]))
-          })
-        }
-        catch(_) {
+          ["name", "address", "comment"].forEach(field => {
+            bookstore[field] = decodeURIComponent(escape(bookstore[field]));
+          });
+        } catch (_) {
           return null;
         }
-        return bookstore
-      }).filter(bookstore => !!bookstore)
+        return bookstore;
+      }).filter(bookstore => !!bookstore);
     },
     async suggestBookstore() {
-      await axios.put('/bookstore/suggest', this.newBookstore)
-      this.newBookstore = newBookstore
-    }
+      await axios.put("/bookstore/suggest", this.newBookstore);
+      this.newBookstoreSent = true;
+    },
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -153,6 +177,44 @@ export default {
 
   .mapboxgl-popup-content {
     color: black;
+  }
+}
+
+#address {
+  z-index: 1;
+  width: 100%;
+  text-align: left;
+  top: 20px;
+
+  svg {
+    display: none;
+  }
+
+  .mapboxgl-ctrl-geocoder {
+    min-width: 100%;
+
+    .mapboxgl-ctrl-geocoder--input {
+      width: 100%;
+    }
+
+    ul.suggestions {
+      list-style-type: none;
+      padding: 5px 0;
+
+      li {
+        background: #ddd;
+        color: black;
+        padding: 5px;
+        border: 1px solid white;
+        width: 50%;
+        min-width: 250px;
+        cursor: pointer;
+      }
+    }
+
+    .mapboxgl-ctrl-geocoder--pin-right {
+      display: none;
+    }
   }
 }
 </style>

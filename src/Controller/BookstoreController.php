@@ -30,7 +30,7 @@ class BookstoreController extends AbstractController
     public function suggestBookstore(Request $request, ApiService $apiService) {
         $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
         return new JsonResponse(
-            $apiService->call('/ducksmanager/bookstore/suggest', 'ducksmanager', $data, 'PUT')
+            $apiService->call('/ducksmanager/bookstore/suggest', 'ducksmanager', $data, 'POST')
         );
     }
 }
