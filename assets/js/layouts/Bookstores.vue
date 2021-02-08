@@ -72,7 +72,7 @@
         required
         cols="41"
         rows="5"
-        maxlength="25"
+        maxlength="1000"
         name="comments"
         type="text"
         :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
