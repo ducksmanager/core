@@ -80,7 +80,10 @@
         :placeholder="$t('Nom de la bouquinerie')"
       />
 
-      <div id="address" />
+      <div
+        id="address"
+        class="mb-2"
+      />
       <b-form-textarea
         v-model="newBookstore.comment"
         required
