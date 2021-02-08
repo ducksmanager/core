@@ -57,7 +57,7 @@
     >
       {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
       {{ $t("Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.") }}
-      {{ $t("Merci pour votre contribution !") }} ?>
+      {{ $t("Merci pour votre contribution !") }}
     </b-alert>
     <form
       v-else
