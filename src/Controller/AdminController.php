@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Service\ApiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,6 +23,21 @@ class AdminController extends AbstractController
             'commit' => $_ENV['COMMIT'],
             'vueProps' => [
                 'component' => 'EdgeProgress'
+            ]
+        ]);
+    }
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/admin/bookstores"
+     * )
+     */
+    public function showBookstoresAdmin(): Response
+    {
+        return $this->render("bare.twig", [
+            'commit' => $_ENV['COMMIT'],
+            'vueProps' => [
+                'component' => 'BookstoresAdmin'
             ]
         ]);
     }
@@ -60,5 +76,35 @@ class AdminController extends AbstractController
     {
         $publishedEdgesQuery = "SELECT publicationcode, issuenumber FROM tranches_pretes";
         return new JsonResponse($apiService->runQuery($publishedEdgesQuery, 'dm', []));
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/admin/bookstore/list"
+     * )
+     */
+    public function getBookstoresData(ApiService $apiService) {
+        return new JsonResponse(
+            $apiService->call('/ducksmanager/bookstore/list', 'ducksmanager')
+        );
+    }
+
+    /**
+     * @Route(
+     *     methods={"POST"},
+     *     path="/admin/bookstore/approve"
+     * )
+     */
+    public function approveBookstore(Request $request, ApiService $apiService) {
+        $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
+        return new JsonResponse(
+            $apiService->call(
+                '/ducksmanager/bookstore/approve',
+                'ducksmanager',
+                $data,
+                'POST'
+            )
+        );
     }
 }

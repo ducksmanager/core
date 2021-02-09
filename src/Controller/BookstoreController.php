@@ -16,9 +16,9 @@ class BookstoreController extends AbstractController
      *     path="/bookstore/list"
      * )
      */
-    public function getBookstores(ApiService $apiService) {
+    public function getActiveBookstores(ApiService $apiService) {
         return new JsonResponse(
-            $apiService->call('/ducksmanager/bookstore/list', 'ducksmanager')
+            $apiService->call('/ducksmanager/bookstore/list/active', 'ducksmanager')
         );
     }
     /**

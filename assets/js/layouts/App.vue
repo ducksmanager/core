@@ -9,12 +9,14 @@
 import Print from "./Print";
 import EdgeProgress from "./EdgeProgress";
 import Site from "./Site";
+import BookstoresAdmin from "./BookstoresAdmin";
 
 export default {
   name: "App",
   components: {
-    Print,
+    BookstoresAdmin,
     EdgeProgress,
+    Print,
     Site
   },
   data() {
