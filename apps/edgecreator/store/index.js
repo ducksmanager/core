@@ -154,19 +154,24 @@ export const actions = {
         lastIssueIndex !== -1 && index > lastIssueIndex && index <= lastIssueIndex + 10
     )
 
+    const getEdgePublicationStates = async (edges) =>
+      this.$axios
+        .$get(`/api/edges/${getters.publicationcode}/${edges.join(',')}`)
+        .then((data) =>
+          data.sort(({ issuenumber: issuenumber1 }, { issuenumber: issuenumber2 }) =>
+            Math.sign(edges.indexOf(issuenumber1) - edges.indexOf(issuenumber2))
+          )
+        )
+
     if (issuesBefore.length) {
       commit('setEdgesBefore', {
-        edges: await this.$axios.$get(
-          `/api/edges/${getters.publicationcode}/${issuesBefore.join(',')}`
-        ),
+        edges: await getEdgePublicationStates(issuesBefore),
       })
     }
 
     if (issuesAfter.length) {
       commit('setEdgesAfter', {
-        edges: await this.$axios.$get(
-          `/api/edges/${getters.publicationcode}/${issuesAfter.join(',')}`
-        ),
+        edges: await getEdgePublicationStates(issuesAfter),
       })
     }
   },
