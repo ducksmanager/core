@@ -54,6 +54,7 @@
       <component
         :is="`${step.component}Render`"
         v-if="$options.components[`${step.component}Render`]"
+        v-show="step.options.visible !== false"
         :issuenumber="issuenumber"
         :step-number="stepNumber"
         :options="step.options"
