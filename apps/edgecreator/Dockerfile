@@ -1,4 +1,4 @@
-FROM node:10-slim
+FROM node:12-slim
 
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3000
