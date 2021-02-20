@@ -4,6 +4,9 @@
       <label :for="optionName">{{ label }}</label>
     </b-col>
     <b-col sm="9">
+      <b-alert v-if="hasAlertSlot" show variant="info">
+        <slot name="alert" />
+      </b-alert>
       <b-form-input
         :id="optionName"
         size="sm"
@@ -22,16 +25,6 @@
       ></b-form-input>
       <slot />
       <slot name="suffix" />
-      <b-tooltip
-        v-if="hasTooltipSlot"
-        custom-class="option-tooltip"
-        :target="optionName"
-        triggers="click"
-        boundary="window"
-        placement="top"
-      >
-        <slot name="tooltip" />
-      </b-tooltip>
     </b-col>
   </b-row>
 </template>
@@ -52,8 +45,8 @@ export default {
     listId: { type: String, default: null },
   },
   computed: {
-    hasTooltipSlot() {
-      return !!this.$slots.tooltip || !!this.$scopedSlots.tooltip
+    hasAlertSlot() {
+      return !!this.$slots.alert || !!this.$scopedSlots.alert
     },
     userValue() {
       const value = this.options[this.optionName]
@@ -83,22 +76,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.option-tooltip {
-  .tooltip-inner {
-    text-align: left;
-    min-width: 300px;
+<style lang="scss" scoped>
+::v-deep .alert {
+  ul {
+    padding-left: 1rem;
+    margin-bottom: 0;
+  }
 
-    ul {
-      padding-left: 1rem;
-    }
-
-    pre {
-      display: inline-block;
-      line-height: 100%;
-      margin-bottom: 0;
-      color: #bbb;
-    }
+  pre {
+    margin-bottom: -5px;
   }
 }
 </style>
