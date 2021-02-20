@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
-if ! mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} -e ";" ; then
-    echo "Can't connect to the '${MYSQL_DATABASE}' DB, exiting"
+live_db_path=/var/lib/mysql_live
+
+if [ ! -d "$live_db_path" ]; then
+    echo "$live_db_path doesn't exist, exiting"
     exit 1
 fi
 
-inducks_path=/home/inducks
+docker-entrypoint.sh
+
+inducks_path=/tmp/inducks
 isv_path=$inducks_path/isv
 sql_clean_path=${inducks_path}/createtables_clean.sql
 
@@ -16,7 +20,7 @@ wget -c https://coa.inducks.org/inducks/isv.tgz -O - | tar -xz
 
 # Ignore lines with invalid UTF-8 characters
 for f in ${isv_path}/*.isv; do
-     iconv -f utf-8 -t utf-8 -c "$f" > "$f.clean" \
+  iconv -f utf-8 -t utf-8 -c "$f" > "$f.clean" \
   && mv -f "$f.clean" "$f"
 done
 mv ${isv_path}/createtables.sql $sql_clean_path
@@ -64,4 +68,9 @@ set foreign_key_checks = 1;
 set sql_log_bin=1;
 " > $sql_clean_path
 
-mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_PASSWORD} -v --default_character_set utf8 ${MYSQL_DATABASE} --local_infile=1 < $sql_clean_path
+mysql -h localhost -uroot -p${MYSQL_ROOT_PASSWORD} -v --default_character_set utf8 ${MYSQL_DATABASE} --local_infile=1 < $sql_clean_path
+
+cp -r /var/lib/mysql/* /var/lib/mysql_live
+
+trap "exit" SIGINT SIGTERM
+kill 1
