@@ -92,9 +92,10 @@
             :step="90"
             :options="step.options"
           />
-          <a
+          <b-btn
+            size="sm"
+            variant="outline-warning"
             class="d-block mt-3"
-            href="javascript:void(0)"
             @click="
               $root.$emit('set-options', {
                 x: 0,
@@ -103,7 +104,7 @@
                 height: width * step.options.aspectRatio,
               })
             "
-            >{{ $t('Reset position and size') }}</a
+            >{{ $t('Reset position and size') }}</b-btn
           >
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
