@@ -1,7 +1,7 @@
 <template>
   <span v-if="number > 1">
     {{ $t('et') }} {{ number - 1 }}
-    <template v-if="number > 2">
+    <template v-if="number === 2">
       {{ textMultiple || $t('autre numéro') }}
     </template>
     <template v-else>
