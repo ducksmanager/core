@@ -42,7 +42,7 @@
             type="text"
             :options="step.options"
           >
-            <template #tooltip
+            <template #alert
               >{{ $t('You can use special text parts to make your text dynamic :') }}
               <ul>
                 <i18n
@@ -50,7 +50,7 @@
                   path="Write {templateString} to inject in your text the current issue number"
                 >
                   <template #templateString>
-                    <pre>[Numero]</pre>
+                    <pre class="d-inline-block">[Numero]</pre>
                   </template>
                 </i18n>
                 <i18n
@@ -58,10 +58,10 @@
                   path="Write {templateString1} to inject in your text the first digit of the current issue number, {templateString2} for the second digit, etc."
                 >
                   <template #templateString1>
-                    <pre>[Numero[0]]</pre>
+                    <pre class="d-inline-block">[Numero[0]]</pre>
                   </template>
                   <template #templateString2>
-                    <pre>[Numero[1]]</pre>
+                    <pre class="d-inline-block">[Numero[1]]</pre>
                   </template>
                 </i18n>
               </ul></template
