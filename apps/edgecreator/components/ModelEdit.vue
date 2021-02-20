@@ -19,19 +19,32 @@
               v-b-tooltip.hover
               :title="$t('Move up')"
               :class="{ invisible: stepNumber === 0 }"
-              @click="$emit('swap-steps', [stepNumber - 1, stepNumber])"
+              @click.stop="$emit('swap-steps', [stepNumber - 1, stepNumber])"
             />
-            <b-icon-front :title="$t('Duplicate')" @click="$emit('duplicate-step', stepNumber)" />
+            <b-icon-eye-slash-fill
+              v-if="step.options.visible === false"
+              :title="$t('Click to show')"
+              @click.stop="$root.$emit('set-options', { stepNumber, visible: true })"
+            />
+            <b-icon-eye-fill
+              v-else
+              :title="$t('Click to hide')"
+              @click.stop="$root.$emit('set-options', { stepNumber, visible: false })"
+            />
+            <b-icon-front
+              :title="$t('Duplicate')"
+              @click.stop="$emit('duplicate-step', stepNumber)"
+            />
             <b-icon-x-square-fill
               v-b-tooltip.hover
               :title="$t('Delete')"
-              @click="$emit('remove-step', stepNumber)"
+              @click.stop="$emit('remove-step', stepNumber)"
             />
             <b-icon-arrow-down-square-fill
               v-b-tooltip.hover
               :title="$t('Move down')"
               :class="{ invisible: stepNumber === steps.length - 1 }"
-              @click="$emit('swap-steps', [stepNumber, stepNumber + 1])"
+              @click.stop="$emit('swap-steps', [stepNumber, stepNumber + 1])"
             />
           </div>
         </template>
@@ -193,6 +206,8 @@ import Gallery from '@/components/Gallery'
 import {
   BIconArrowDownSquareFill,
   BIconArrowUpSquareFill,
+  BIconEyeFill,
+  BIconEyeSlashFill,
   BIconFront,
   BIconXSquareFill,
 } from 'bootstrap-vue'
@@ -206,6 +221,8 @@ export default {
     BIconXSquareFill,
     BIconArrowUpSquareFill,
     BIconArrowDownSquareFill,
+    BIconEyeFill,
+    BIconEyeSlashFill,
     BIconFront,
   },
   props: {
