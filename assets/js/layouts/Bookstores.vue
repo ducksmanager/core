@@ -165,7 +165,7 @@ export default {
     async suggestBookstore() {
       await axios.put("/bookstore/suggest", this.newBookstore);
       this.newBookstoreSent = true;
-    },
+    }
   }
 };
 </script>
@@ -200,18 +200,23 @@ export default {
       width: 100%;
     }
 
-    ul.suggestions {
-      list-style-type: none;
-      padding: 5px 0;
+    .suggestions-wrapper {
+      position: absolute;
+      margin-top: -5px;
 
-      li {
-        background: #ddd;
-        color: black;
-        padding: 5px;
-        border: 1px solid white;
-        width: 50%;
-        min-width: 250px;
-        cursor: pointer;
+      ul.suggestions {
+        list-style-type: none;
+        padding: 5px 0;
+
+        li {
+          background: #ddd;
+          color: black;
+          padding: 5px;
+          border: 1px solid white;
+          width: 50%;
+          min-width: 250px;
+          cursor: pointer;
+        }
       }
     }
 
