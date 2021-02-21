@@ -79,7 +79,7 @@ export default {
       switch(this.contribution.toUpperCase()) {
         case 'CREATEUR': return this.$t("Concepteur de tranches")
         case 'PHOTOGRAPHE': return this.$t("Photographe de tranches")
-        case 'DUCKHUNTER': return this.$t("Concepteur de tranches")
+        case 'DUCKHUNTER': return this.$t("Duckhunter")
       }
       return ''
     }

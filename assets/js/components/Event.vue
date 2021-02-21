@@ -144,11 +144,11 @@ export default {
     getMedalTitle(contribution) {
       switch (contribution.toUpperCase()) {
         case "CREATEUR":
-          return "Concepteur de tranches";
+          return this.$t("Concepteur de tranches");
         case "PHOTOGRAPHE":
-          return "Photographe de tranches";
+          return this.$t("Photographe de tranches");
         case "DUCKHUNTER":
-          return "Concepteur de tranches";
+          return this.$t("Duckhunter");
       }
     }
   }
