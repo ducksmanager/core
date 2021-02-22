@@ -202,32 +202,32 @@ export default {
 
           console.log('Creating book')
           this.book = new PageFlip(
-              document.getElementById("book"),
-              {
-                width: this.coverWidth,
-                height: this.coverHeight,
+            document.getElementById("book"),
+            {
+              width: this.coverWidth,
+              height: this.coverHeight,
 
-                size: "fixed",
+              size: "fixed",
 
-                maxShadowOpacity: 0.5,
-                showCover: true,
-                usePortrait: false,
-                mobileScrollSupport: false
-              }
+              maxShadowOpacity: 0.5,
+              showCover: true,
+              usePortrait: false,
+              mobileScrollSupport: false
+            }
           );
           this.book.loadFromHTML(document.querySelectorAll(".page"));
 
           this.book
-              .on("flip", ({data}) => {
-                vm.currentPage = data
-              })
-              .on("changeState", ({data}) => {
-                vm.currentState = data
-              })
+            .on("flip", ({data}) => {
+              vm.currentPage = data
+            })
+            .on("changeState", ({data}) => {
+              vm.currentState = data
+            })
 
           setTimeout(() => {
             vm.opening = true
-          }, 1)
+          }, 50)
         }
       }
     },
@@ -259,6 +259,7 @@ export default {
     },
 
     onEndOpenCloseTransition() {
+      console.log('onEndOpenCloseTransition')
       if (this.opening) {
         this.opening = false
         this.opened = true
