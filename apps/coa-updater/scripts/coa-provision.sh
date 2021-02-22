@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
-
-live_db_path=/var/lib/mysql_live
-
-if [ ! -d "$live_db_path" ]; then
-    echo "$live_db_path doesn't exist, exiting"
-    exit 1
-fi
-
-docker-entrypoint.sh
+set -e
 
 inducks_path=/tmp/inducks
 isv_path=$inducks_path/isv
@@ -16,18 +8,17 @@ sql_clean_path=${inducks_path}/createtables_clean.sql
 mkdir -p ${isv_path}
 cd ${inducks_path}
 
-wget -c https://coa.inducks.org/inducks/isv.tgz -O - | tar -xz
+wget -c https://inducks.org/inducks/isv.tgz -O - | tar -xz
 
 # Ignore lines with invalid UTF-8 characters
 for f in ${isv_path}/*.isv; do
   iconv -f utf-8 -t utf-8 -c "$f" > "$f.clean" \
   && mv -f "$f.clean" "$f"
 done
-mv ${isv_path}/createtables.sql $sql_clean_path
+grep -vE '^(RENAME|DROP|# Step|# End of file|CREATE TABLE IF NOT EXISTS ([^ ]+) LIKE \2_temp)' ${isv_path}/createtables.sql > /tmp/temp.sql && mv /tmp/temp.sql $sql_clean_path
+sed -i "s/USE ${MYSQL_DATABASE};/DROP DATABASE IF EXISTS ${MYSQL_DATABASE_NEW};CREATE DATABASE ${MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;USE ${MYSQL_DATABASE_NEW};/" $sql_clean_path
 
 perl -0777 -i -pe 's%(CREATE TABLE (?:IF NOT EXISTS )?induckspriv[^;]+;)|([^\n]*induckspriv[^\n]*)%%gms' $sql_clean_path # Remove mentions of inducks_priv* tables
-
-perl -0777 -i -pe 's%# End of file%%gms' $sql_clean_path # Remove end-of-file comment
 
 # Convert text columns to varchar
 textFieldsToTransform=("inducks_person.fullname")
@@ -53,6 +44,8 @@ done
 
 perl -0777 -i -pe 's%(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));%$1$2$4 fulltext_$3 $5;%gs' $sql_clean_path # Prefix fulltext indexes with table name
 
+sed -i 's/_temp//g' $sql_clean_path
+
 echo "set unique_checks = 0;
 set foreign_key_checks = 0;
 set sql_log_bin=0;
@@ -68,9 +61,11 @@ set foreign_key_checks = 1;
 set sql_log_bin=1;
 " > $sql_clean_path
 
-mysql -h localhost -uroot -p${MYSQL_ROOT_PASSWORD} -v --default_character_set utf8 ${MYSQL_DATABASE} --local_infile=1 < $sql_clean_path
+mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -v --default_character_set utf8 --local_infile=1 < $sql_clean_path
 
-cp -r /var/lib/mysql/* /var/lib/mysql_live
+mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE_NEW} -sNe 'show tables' | \
+  while read -r table; do
+    mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -sNe "set foreign_key_checks = 0;drop table if exists ${MYSQL_DATABASE}.$table;rename table ${MYSQL_DATABASE_NEW}.$table to ${MYSQL_DATABASE}.$table;set foreign_key_checks = 1;";
+  done
 
-trap "exit" SIGINT SIGTERM
-kill 1
+mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -e "drop database ${MYSQL_DATABASE_NEW}"
