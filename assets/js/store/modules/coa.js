@@ -27,7 +27,8 @@ export default {
     isLoadingCountryNames: false,
     issueCounts: null,
     issueCodeDetails: null,
-    issueQuotations: {}
+    issueQuotations: {},
+    loadingIssueDetails: {}
   }),
 
   mutations: {

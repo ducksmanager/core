@@ -200,6 +200,7 @@ export default {
         if (newValue) {
           const vm = this
 
+          console.log('Creating book')
           this.book = new PageFlip(
               document.getElementById("book"),
               {
@@ -242,11 +243,8 @@ export default {
       }
     },
 
-    issueNumber: {
-      immediate: true,
-      async handler() {
-        await this.loadBookPages()
-      }
+    async issueNumber() {
+      await this.loadBookPages()
     }
   },
 
