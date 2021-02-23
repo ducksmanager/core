@@ -51,7 +51,7 @@ export default {
       restrictions: {
         maxFileSize: (this.photo ? 3 : 0.3) * 1024 * 1024,
         minNumberOfFiles: 1,
-        maxNumberOfFiles: 1,
+        maxNumberOfFiles: this.photo ? 1 : 10,
         allowedFileTypes: this.photo ? ['image/jpg', 'image/jpeg'] : ['image/png'],
       },
     })
