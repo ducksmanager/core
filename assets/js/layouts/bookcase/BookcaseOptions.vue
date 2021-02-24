@@ -139,13 +139,11 @@ export default {
   computed: {
     ...mapState("bookcase", ["bookcaseTextures"]),
     ...mapState("coa", ["publicationNames"]),
-    computed: {
-      textureTypes() {
-        return {
-          bookcase: this.$t("Sous-texture"),
-          bookshelf: this.$t("Sous-texture de l'étagère")
-        };
-      }
+    textureTypes() {
+      return {
+        bookcase: this.$t("Sous-texture"),
+        bookshelf: this.$t("Sous-texture de l'étagère")
+      };
     },
 
     bookcaseOrder: {
@@ -159,14 +157,16 @@ export default {
   },
 
   async mounted() {
+    const vm = this;
     this.setBookcaseUsername(this.username);
     await this.loadData();
     await this.fetchPublicationNames(this.bookcaseOrder);
+    this.setBookcaseOrder(this.bookcaseOrder.filter(publicationCode => Object.keys(vm.publicationNames).includes(publicationCode)));
     this.hasPublicationNames = true;
   },
 
   methods: {
-    ...mapMutations("bookcase", ["setBookcaseUsername"]),
+    ...mapMutations("bookcase", ["setBookcaseUsername", "setBookcaseOrder"]),
     ...mapActions("bookcase", ["loadBookcaseTextures", "loadBookcaseOrder", "updateBookcaseTextures", "updateBookcaseOrder"]),
     ...mapActions("coa", ["fetchPublicationNames"]),
 
