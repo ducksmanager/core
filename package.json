@@ -25,7 +25,7 @@
         "file-loader": "^6.2.0",
         "js-yaml": "^4.0.0",
         "localforage": "^1.9.0",
-        "mapbox-gl": "^1.13.0",
+        "mapbox-gl": "^2.1.1",
         "page-flip": "^2.0.0",
         "popper.js": "^1.16.0",
         "regenerator-runtime": "^0.13.2",
