@@ -32,6 +32,7 @@
                   {{ $t("Signalé par") }}
                   <span v-if="bookstore.username">{{ bookstore.username }}</span>
                   <span v-else>{{ $t("un visiteur anonyme") }}</span>
+                  <span>{{ formatDate(bookstore.creationDate) }}</span>
                 </p>
               </div>
             </div>
@@ -165,6 +166,15 @@ export default {
     async suggestBookstore() {
       await axios.put("/bookstore/suggest", this.newBookstore);
       this.newBookstoreSent = true;
+    },
+    formatDate(date) {
+      const dateObject = new Date(date)
+      if (isNaN(dateObject.getTime())) {
+        return this.$t('il y a longtemps')
+      }
+      else {
+        return this.$t('le {date}', {date: dateObject.toLocaleDateString()})
+      }
     }
   }
 };

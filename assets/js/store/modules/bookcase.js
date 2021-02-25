@@ -59,7 +59,7 @@ export default {
             issueCode,
             popularity: getters.isSharedBookcase ? null : rootState.collection.popularIssuesInCollection[issueCode] || 0
           };
-        }),
+        })
   },
 
   actions: {
