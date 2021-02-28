@@ -39,7 +39,7 @@
           hoveredStepNumber === stepNumber && [issuenumber, null].includes(hoveredIssuenumber),
       }"
       @mousedown="
-        editingIssuenumber = issuenumber
+        addEditingIssuenumber(issuenumber)
         editingStepNumber = stepNumber
       "
       @mouseover="
@@ -56,6 +56,7 @@
         v-if="$options.components[`${step.component}Render`]"
         v-show="step.options.visible !== false"
         :issuenumber="issuenumber"
+        :dimensions="dimensions"
         :step-number="stepNumber"
         :options="step.options"
       ></component>
@@ -95,8 +96,7 @@ export default {
   },
   props: {
     issuenumber: { type: String, required: true },
-    width: { type: Number, required: true },
-    height: { type: Number, required: true },
+    dimensions: { type: Object, required: true },
     steps: { type: Array, required: true },
     photoUrl: { type: String, default: null },
     contributors: { type: Object, required: true },
@@ -108,6 +108,12 @@ export default {
   },
   computed: {
     ...mapState('user', ['allUsers']),
+    width() {
+      return this.dimensions.width
+    },
+    height() {
+      return this.dimensions.height
+    },
     hoveredStepNumber: {
       get() {
         return this.$store.state.hoveredStep.stepNumber
@@ -132,9 +138,9 @@ export default {
         this.$store.commit('editingStep/setStepNumber', value)
       },
     },
-    editingIssuenumber: {
+    editingIssuenumbers: {
       get() {
-        return this.$store.state.editingStep.issuenumber
+        return this.$store.state.editingStep.issuenumbers
       },
       set(value) {
         this.$store.commit('editingStep/setIssuenumber', value)
@@ -155,6 +161,7 @@ export default {
   methods: {
     ...mapMutations(['addContributor']),
     ...mapMutations('ui', ['setPositionInCanvas']),
+    ...mapMutations('editingStep', { addEditingIssuenumber: 'addIssuenumber' }),
     setPosition({ clientX: left, clientY: top }) {
       const vm = this
       const { left: svgLeft, top: svgTop } = this.$refs.canvas.getBoundingClientRect()

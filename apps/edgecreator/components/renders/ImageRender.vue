@@ -34,7 +34,7 @@ export default {
   }),
 
   computed: {
-    ...mapState(['country', 'width']),
+    ...mapState(['country']),
     effectiveSource() {
       return this.resolveStringTemplates(this.options.src)
     },

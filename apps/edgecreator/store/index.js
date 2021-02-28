@@ -8,9 +8,6 @@ export const state = () => ({
   photoUrls: {},
   contributors: {},
 
-  width: 15,
-  height: 200,
-
   edgesBefore: [],
   edgesAfter: [],
 
@@ -57,10 +54,6 @@ export const mutations = {
       issueContributors[contributionType].splice(index, 1)
       Vue.set(state.contributors, issuenumber, issueContributors)
     })
-  },
-  setDimensions(state, { width, height }) {
-    state.width = parseFloat(width)
-    state.height = parseFloat(height)
   },
   setEdgesBefore(state, { edges: edgesBefore }) {
     state.edgesBefore = edgesBefore

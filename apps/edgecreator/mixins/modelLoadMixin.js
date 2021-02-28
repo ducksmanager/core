@@ -2,6 +2,7 @@ import { mapMutations, mapState } from 'vuex'
 import legacyDbMixin from '@/mixins/legacyDbMixin'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 import stepListMixin from '@/mixins/stepListMixin'
+import dimensionsMixin from './dimensionsMixin'
 
 export default {
   computed: {
@@ -9,7 +10,7 @@ export default {
     ...mapState('renders', ['supportedRenders']),
     ...mapState('user', ['allUsers']),
   },
-  mixins: [legacyDbMixin, svgUtilsMixin, stepListMixin],
+  mixins: [legacyDbMixin, svgUtilsMixin, dimensionsMixin, stepListMixin],
   data: () => ({
     loadErrors: [],
   }),
@@ -18,6 +19,7 @@ export default {
       const vm = this
       const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber
       let steps
+      let dimensions
 
       const loadSvg = async (publishedVersion) => {
         const { svgElement, svgChildNodes } = await vm.loadSvgFromString(
@@ -27,7 +29,7 @@ export default {
           publishedVersion
         )
 
-        vm.setDimensionsFromSvg(svgElement)
+        dimensions = vm.getDimensionsFromSvg(targetIssuenumber, svgElement)
         steps = vm.getStepsFromSvg(issuenumber, svgChildNodes)
         if (!onlyLoadStepsAndDimensions) {
           vm.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
@@ -44,8 +46,8 @@ export default {
         if (edge) {
           const apiSteps =
             (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
-          vm.setDimensionsFromApi(apiSteps)
-          steps = await vm.getStepsFromApi(issuenumber, apiSteps)
+          dimensions = vm.getDimensionsFromApi(targetIssuenumber, apiSteps)
+          steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions)
 
           if (!onlyLoadStepsAndDimensions) {
             await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
@@ -56,17 +58,18 @@ export default {
         }
       }
       if (steps) {
+        this.setDimensions(dimensions, targetIssuenumber)
         this.setSteps(targetIssuenumber, steps)
       } else {
         throw new Error('No model found for issue ' + issuenumber)
       }
     },
 
-    setDimensionsFromSvg(svgElement) {
-      this.setDimensions({
+    getDimensionsFromSvg(issuenumber, svgElement) {
+      return {
         width: svgElement.getAttribute('width') / 1.5,
         height: svgElement.getAttribute('height') / 1.5,
-      })
+      }
     },
     getStepsFromSvg: (issuenumber, svgChildNodes) =>
       svgChildNodes
@@ -96,16 +99,20 @@ export default {
       })
     },
 
-    setDimensionsFromApi(stepData) {
+    getDimensionsFromApi(issuenumber, stepData) {
       const dimensions = stepData.find(({ ordre: originalStepNumber }) => originalStepNumber === -1)
       if (dimensions) {
-        this.setDimensions({
+        return {
           width: dimensions.options.Dimension_x,
           height: dimensions.options.Dimension_y,
-        })
+        }
+      }
+      return {
+        width: 15,
+        height: 200,
       }
     },
-    async getStepsFromApi(issuenumber, stepData) {
+    async getStepsFromApi(issuenumber, stepData, dimensions) {
       const vm = this
       return (
         await Promise.all(
@@ -118,7 +125,7 @@ export default {
               if (component) {
                 return {
                   component,
-                  options: await vm.getOptionsFromDb(component, originalOptions),
+                  options: await vm.getOptionsFromDb(component, originalOptions, dimensions),
                 }
               } else {
                 this.addWarning(
@@ -147,6 +154,6 @@ export default {
         })
       })
     },
-    ...mapMutations(['setDimensions', 'setPhotoUrl', 'addContributor', 'addWarning']),
+    ...mapMutations(['setPhotoUrl', 'addContributor', 'addWarning']),
   },
 }

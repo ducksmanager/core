@@ -69,8 +69,7 @@
             />
             <edge-canvas
               :issuenumber="crop.issueNumber"
-              :width="crop.width"
-              :height="crop.height"
+              :dimensions="{ width: crop.width, height: crop.height }"
               :steps="[]"
               :photo-url="crop.filename"
               :contributors="initialContributors"

@@ -20,12 +20,18 @@ const TEMPLATES = [
 export default {
   props: {
     issuenumber: { type: String },
+    dimensions: { type: Object },
     stepNumber: { type: Number },
   },
 
   computed: {
-    ...mapState(['width', 'height']),
     ...mapState('ui', ['zoom']),
+    width() {
+      return this.dimensions.width
+    },
+    height() {
+      return this.dimensions.height
+    },
     attributes() {
       const vm = this
       return Object.keys(this.options)
