@@ -100,14 +100,18 @@ async function run(coaConnection) {
 coaPool.getConnection()
   .then(async coaConnection => {
     await coaConnection.query(`
-        CREATE TABLE IF NOT EXISTS inducks_issuequotation
+        CREATE TABLE inducks_issuequotation
         (
+            ID              int                             NOT NULL AUTO_INCREMENT,
             publicationcode varchar(15) COLLATE utf8_unicode_ci NOT NULL,
             issuenumber     varchar(12) COLLATE utf8_unicode_ci NOT NULL,
             estimationmin   float DEFAULT NULL,
             estimationmax   float DEFAULT NULL,
-            scrapedate      datetime                            NOT NULL,
-            PRIMARY KEY (publicationcode, issuenumber)
+            scrapedate      datetime     DEFAULT NULL,
+            issuecode       varchar(28) GENERATED ALWAYS AS (concat(publicationcode, ' ', issuenumber)) VIRTUAL,
+            PRIMARY KEY (ID),
+            UNIQUE KEY inducks_issuequotation__uindex_issuecode (issuecode),
+            KEY inducks_issuequotation__index_publication (publicationcode)
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
           COLLATE = utf8_unicode_ci
