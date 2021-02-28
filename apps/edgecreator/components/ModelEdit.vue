@@ -113,8 +113,8 @@
               $root.$emit('set-options', {
                 x: 0,
                 y: 0,
-                width,
-                height: width * step.options.aspectRatio,
+                width: dimensions.width,
+                height: dimensions.width * step.options.aspectRatio,
               })
             "
             >{{ $t('Reset position and size') }}</b-btn
@@ -226,10 +226,10 @@ export default {
     BIconFront,
   },
   props: {
+    dimensions: { type: Object, required: true },
     steps: { type: Array, required: true },
   },
   computed: {
-    ...mapState(['width', 'height']),
     hoveredStepNumber: {
       get() {
         return this.$store.state.hoveredStep.stepNumber

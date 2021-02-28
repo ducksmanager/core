@@ -1,6 +1,6 @@
 export default {
   methods: {
-    async getOptionsFromDb(targetComponent, dbOptions) {
+    async getOptionsFromDb(targetComponent, dbOptions, edgeDimensions) {
       switch (targetComponent) {
         case 'ArcCircle': {
           const filled = dbOptions.Rempli === 'Oui'
@@ -54,17 +54,17 @@ export default {
           }
 
           const embeddedImageHeight =
-            this.width * (image.dimensions.height / image.dimensions.width)
+            edgeDimensions.width * (image.dimensions.height / image.dimensions.width)
           const fromBottom = dbOptions.Position === 'bas'
           return {
             src: dbOptions.Source,
             x: parseFloat(dbOptions.Decalage_x || 0),
             y: parseFloat(
               fromBottom
-                ? this.height - embeddedImageHeight - (dbOptions.Decalage_y || 0)
+                ? edgeDimensions.height - embeddedImageHeight - (dbOptions.Decalage_y || 0)
                 : dbOptions.Decalage_y || 0
             ),
-            width: parseFloat(dbOptions.Compression_x || 1) * this.width,
+            width: parseFloat(dbOptions.Compression_x || 1) * edgeDimensions.width,
             height: parseFloat(dbOptions.Compression_y || 1) * embeddedImageHeight,
           }
         }

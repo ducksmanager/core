@@ -5,7 +5,6 @@ export const state = () => ({
   showPreviousEdge: true,
   showNextEdge: true,
   showEdgePhotos: true,
-  locked: false,
   colorPickerOption: null,
   positionInCanvas: null,
 })
@@ -28,9 +27,6 @@ export const mutations = {
   },
   setShowEdgePhotos(state, showEdgePhotos) {
     state.showEdgePhotos = showEdgePhotos
-  },
-  setLocked(state, locked) {
-    state.locked = locked
   },
   setColorPickerOption(state, colorPickerOption) {
     state.colorPickerOption = colorPickerOption

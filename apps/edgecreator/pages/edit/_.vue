@@ -2,7 +2,11 @@
   <b-alert v-if="error" align="center" variant="danger" show>
     {{ error }}
   </b-alert>
-  <b-container v-else-if="Object.keys(steps).length && width && height" id="wrapper" fluid>
+  <b-container
+    v-else-if="Object.keys(steps).length && Object.keys(dimensions).length"
+    id="wrapper"
+    fluid
+  >
     <b-alert
       v-for="(warning, idx) in warnings"
       :key="`warning-${idx}`"
@@ -14,7 +18,11 @@
     >
       {{ warning }}
     </b-alert>
-    <top-bar @overwrite-model="overwriteModel($event)" />
+    <top-bar
+      :dimensions="dimensions[Object.keys(dimensions)[0]]"
+      @overwrite-model="overwriteModel"
+      @set-dimensions="overwriteDimensions"
+    />
     <b-row class="flex-grow-1 pt-2 overflow-hidden" align-h="end">
       <b-col class="text-right overflow-auto h-100">
         <table class="edges">
@@ -23,12 +31,13 @@
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </th>
             <template v-for="issuenumber in issuenumbers">
-              <th :key="`issuenumber-${issuenumber}`">
-                <span v-if="editingIssuenumber === issuenumber || locked"><b-icon-pencil /></span>
-                <div
-                  :class="{ clickable: editingIssuenumber !== issuenumber && !locked }"
-                  @click="setEditIssuenumber(issuenumber)"
-                >
+              <th
+                :key="`issuenumber-${issuenumber}`"
+                class="clickable"
+                @click="toggleEditIssuenumber(issuenumber)"
+              >
+                <div v-if="editingIssuenumbers.includes(issuenumber)"><b-icon-pencil /></div>
+                <div>
                   {{ issuenumber }}
                 </div>
               </th>
@@ -55,8 +64,7 @@
               <td :key="`canvas-${issuenumber}`">
                 <edge-canvas
                   :issuenumber="issuenumber"
-                  :width="width"
-                  :height="height"
+                  :dimensions="dimensions[issuenumber]"
                   :steps="issueSteps"
                   :photo-url="photoUrls[issuenumber]"
                   :contributors="contributors[issuenumber] || {}"
@@ -87,7 +95,8 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <model-edit
-          :steps="steps[editingIssuenumber]"
+          :dimensions="dimensions[issuenumbers[0]]"
+          :steps="steps[issuenumbers[0]]"
           @add-step="addStep($event)"
           @remove-step="removeStep($event)"
           @duplicate-step="duplicateStep($event)"
@@ -106,7 +115,6 @@ import EdgeCanvas from '@/components/EdgeCanvas'
 import PublishedEdge from '@/components/PublishedEdge'
 import ModelEdit from '@/components/ModelEdit'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
-import stepListMixin from '@/mixins/stepListMixin'
 import modelLoadMixin from '@/mixins/modelLoadMixin'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
@@ -120,7 +128,7 @@ export default {
     BIconPencil,
     BIconCamera,
   },
-  mixins: [svgUtilsMixin, stepListMixin, modelLoadMixin, surroundingEdgeMixin, showEdgePhotosMixin],
+  mixins: [svgUtilsMixin, modelLoadMixin, surroundingEdgeMixin, showEdgePhotosMixin],
   middleware: ['authenticated', 'is-editor'],
   data() {
     return {
@@ -140,8 +148,6 @@ export default {
       },
     },
     ...mapState([
-      'width',
-      'height',
       'country',
       'magazine',
       'issuenumbers',
@@ -152,11 +158,11 @@ export default {
       'warnings',
     ]),
     ...mapState('editingStep', {
-      editingIssuenumber: 'issuenumber',
+      editingIssuenumbers: 'issuenumbers',
       editingStepNumber: 'stepNumber',
     }),
     ...mapState('renders', ['supportedRenders']),
-    ...mapState('ui', ['zoom', 'locked', 'showIssueNumbers', 'colorPickerOption']),
+    ...mapState('ui', ['zoom', 'showIssueNumbers', 'colorPickerOption']),
     ...mapState('user', ['allUsers']),
   },
   watch: {
@@ -192,7 +198,7 @@ export default {
     }
     this.setCountry(country)
     this.setMagazine(magazine)
-    this.setEditIssuenumber(issuenumberMin)
+    this.toggleEditIssuenumber(issuenumberMin)
 
     await this.loadPublicationIssues()
 
@@ -223,12 +229,20 @@ export default {
     }
   },
   methods: {
-    async overwriteModel({ publicationCode, issueNumber, targetIssuenumber }) {
-      try {
-        await this.loadModel(...publicationCode.split('/'), issueNumber, targetIssuenumber)
-      } catch (e) {
-        this.warnings.push(e)
+    async overwriteModel({ publicationCode, issueNumber }) {
+      for (const targetIssuenumber of this.editingIssuenumbers) {
+        try {
+          await this.loadModel(...publicationCode.split('/'), issueNumber, targetIssuenumber)
+        } catch (e) {
+          this.warnings.push(e)
+        }
       }
+    },
+    overwriteDimensions({ width, height }) {
+      this.setDimensions({
+        width,
+        height,
+      })
     },
     getImageUrl(fileType, fileName) {
       return `${process.env.EDGES_URL}/${this.country}/${
@@ -246,14 +260,13 @@ export default {
     },
     rgbToHex: (r, g, b) => `#${((r << 16) | (g << 8) | b).toString(16)}`,
     ...mapMutations([
-      'setDimensions',
       'setCountry',
       'setMagazine',
       'setPhotoUrl',
       'addContributor',
       'removeWarning',
     ]),
-    ...mapMutations('editingStep', { setEditIssuenumber: 'setIssuenumber' }),
+    ...mapMutations('editingStep', { toggleEditIssuenumber: 'toggleIssuenumber' }),
     ...mapActions([
       'setIssuenumbers',
       'loadPublicationIssues',

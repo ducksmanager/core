@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 
 export default {
@@ -54,7 +53,6 @@ export default {
   }),
 
   computed: {
-    ...mapState(['width', 'height']),
     effectiveText() {
       return this.resolveStringTemplates(this.options.text)
     },

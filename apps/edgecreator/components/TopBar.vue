@@ -2,9 +2,9 @@
   <b-container fluid>
     <b-row align="center" class="pt-2">
       <b-col class="text-left">
-        <b-button v-b-toggle.sidebar class="options position-fixed mt-2">{{
-          $t('Options')
-        }}</b-button>
+        <b-button v-b-toggle.sidebar class="options position-fixed mt-2"
+          >{{ $t('Options') }}
+        </b-button>
         <b-sidebar id="sidebar" v-model="showSidebar" :title="$t('Options')" shadow>
           <b-container class="px-3 py-2">
             <b-row align-items="center">
@@ -77,23 +77,28 @@
       </b-col>
       <b-col />
     </b-row>
-    <b-row align="center" class="p-2">
-      <b-col align-self="center">
-        <b-collapse id="collapse-dimensions" class="mt-2">
-          <dimensions :width="width" :height="height" @change="setDimensions" />
-        </b-collapse>
-        <b-button
-          v-b-tooltip.hover
-          title="Lock"
-          pill
-          :variant="locked ? 'primary' : 'outline-primary'"
-          :disabled="issuenumbers.length === 1"
-          size="sm"
-          @click="locked = !locked"
+    <b-row align="center" class="pb-1">
+      <b-col v-if="publicationName" align-self="center">
+        <Issue
+          :publicationcode="`${country}/${magazine}`"
+          :publicationname="publicationName"
+          :issuenumber="issuenumbers[0]"
         >
-          <b-icon-lock v-if="locked" />
-          <b-icon-unlock v-else />
-        </b-button>
+          <template v-if="isRange" #title-suffix
+            >to {{ issuenumbers[issuenumbers.length - 1] }}
+          </template>
+          <template v-else-if="issuenumbers.length > 1" #title-suffix
+            ><span
+              v-for="otherIssuenumber in issuenumbers.slice(1)"
+              :key="`other-${otherIssuenumber}`"
+              >, {{ otherIssuenumber }}</span
+            ></template
+          >
+        </Issue>
+      </b-col>
+    </b-row>
+    <b-row align="center" class="p-1">
+      <b-col align-self="center">
         <b-button
           v-b-tooltip.hover
           :title="$t('Edge photo')"
@@ -107,32 +112,48 @@
             <Gallery image-type="photos" />
           </b-modal>
         </b-button>
-        <b-button
-          v-b-tooltip.hover
-          v-b-toggle.collapse-dimensions
-          :title="$t('Change dimensions')"
-          pill
-          size="sm"
-          variant="outline-primary"
-        >
-          <b-icon-arrows-angle-expand /> </b-button
-        >&nbsp;<b-button
-          v-b-tooltip.hover
-          :title="$t('Clone from another model')"
-          pill
-          size="sm"
-          variant="outline-primary"
-          @click="showCloneModal = !showCloneModal"
-        >
-          <b-icon-front />
-          <b-modal
-            v-model="showCloneModal"
-            :title="$t('Clone from another model')"
-            ok-only
-            ok-title="Clone"
-            :ok-disabled="!modelToClone"
-            @ok="clone()"
+
+        <save-model-button />
+        <save-model-button v-role="'edit'" with-submit />
+        <save-model-button v-role="'admin'" with-export />
+      </b-col>
+    </b-row>
+    <b-row align="center" class="p-1" style="border-bottom: 1px solid lightgray">
+      <b-col align-self="center">
+        <MultipleTargetOptions>
+          <b-button
+            v-b-tooltip.hover
+            :title="$t('Change dimensions')"
+            pill
+            size="sm"
+            variant="outline-primary"
+            @click="
+              collapseClone = false
+              collapseDimensions = !collapseDimensions
+            "
           >
+            <b-icon-arrows-angle-expand /> </b-button
+          >&nbsp;<b-button
+            v-b-tooltip.hover
+            :title="$t('Clone from another model')"
+            pill
+            size="sm"
+            variant="outline-primary"
+            @click="
+              collapseDimensions = false
+              collapseClone = !collapseClone
+            "
+          >
+            <b-icon-front />
+          </b-button>
+          <b-collapse id="collapse-dimensions" v-model="collapseDimensions" class="mt-2">
+            <dimensions
+              :width="dimensions.width"
+              :height="dimensions.height"
+              @change="$emit('set-dimensions', $event)"
+            />
+          </b-collapse>
+          <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
             <issue-select
               :country-code="country"
               :publication-code="`${country}/${magazine}`"
@@ -140,37 +161,18 @@
               disable-not-ongoing-nor-published
               @change="modelToClone = $event"
             />
-          </b-modal>
-        </b-button>
-
-        <save-model-button />
-        <save-model-button v-role="'edit'" with-submit />
-        <save-model-button v-role="'admin'" with-export />
-      </b-col>
-    </b-row>
-    <b-row align="center" class="pb-2" style="border-bottom: 1px solid grey">
-      <b-col v-if="publicationName" align-self="center">
-        <Issue
-          :publicationcode="`${country}/${magazine}`"
-          :publicationname="publicationName"
-          :issuenumber="issuenumbers[0]"
-          ><template v-if="isRange" #title-suffix
-            >to {{ issuenumbers[issuenumbers.length - 1] }}</template
-          ><template v-else-if="issuenumbers.length > 1" #title-suffix
-            ><span
-              v-for="otherIssuenumber in issuenumbers.slice(1)"
-              :key="`other-${otherIssuenumber}`"
-              >, {{ otherIssuenumber }}</span
-            ></template
-          >
-        </Issue>
+            <b-btn :disabled="!modelToClone" @click="$emit('overwrite-model', modelToClone)">{{
+              $t('Clone')
+            }}</b-btn>
+          </b-collapse>
+        </MultipleTargetOptions>
       </b-col>
     </b-row>
     <div class="language-list m-2">
-      <template v-for="({ code, name }, idx) in $i18n.locales"
-        ><template v-if="idx > 0"> | </template>
-        <span v-if="$i18n.locale === code" :key="code">{{ name }}</span
-        ><nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{ name }}</nuxt-link>
+      <template v-for="({ code, name }, idx) in $i18n.locales">
+        <template v-if="idx > 0"> |</template>
+        <span v-if="$i18n.locale === code" :key="code">{{ name }}</span>
+        <nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{ name }}</nuxt-link>
       </template>
     </div>
     <div v-if="positionInCanvas" class="cursor-position position-fixed p-2">
@@ -181,14 +183,7 @@
 </template>
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
-import {
-  BIconArrowsAngleExpand,
-  BIconCamera,
-  BIconFront,
-  BIconHouse,
-  BIconLock,
-  BIconUnlock,
-} from 'bootstrap-vue'
+import { BIconArrowsAngleExpand, BIconCamera, BIconFront, BIconHouse } from 'bootstrap-vue'
 import Issue from 'ducksmanager/assets/js/components/Issue.vue'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
@@ -196,10 +191,12 @@ import IssueSelect from '@/components/IssueSelect'
 import SaveModelButton from '@/components/SaveModelButton'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
+import MultipleTargetOptions from './MultipleTargetOptions'
 
 export default {
   name: 'TopBar',
   components: {
+    MultipleTargetOptions,
     SaveModelButton,
     Issue,
     IssueSelect,
@@ -209,10 +206,14 @@ export default {
     BIconCamera,
     BIconFront,
     BIconHouse,
-    BIconLock,
-    BIconUnlock,
   },
   mixins: [surroundingEdgeMixin, showEdgePhotosMixin],
+  props: {
+    dimensions: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       showSidebar: true,
@@ -221,18 +222,13 @@ export default {
 
       showCloneModal: false,
       modelToClone: null,
+
+      collapseDimensions: false,
+      collapseClone: false,
     }
   },
   computed: {
     ...mapState('ui', ['positionInCanvas']),
-    locked: {
-      get() {
-        return this.$store.state.ui.locked
-      },
-      set(value) {
-        this.$store.commit('ui/setLocked', value)
-      },
-    },
     zoom: {
       get() {
         return this.$store.state.ui.zoom
@@ -265,8 +261,6 @@ export default {
       return this.publicationNames && this.publicationNames[`${this.country}/${this.magazine}`]
     },
     ...mapState([
-      'width',
-      'height',
       'country',
       'magazine',
       'issuenumbers',
@@ -281,28 +275,24 @@ export default {
     await this.fetchPublicationNames([`${this.country}/${this.magazine}`])
   },
   methods: {
-    async clone() {
-      const { publicationCode, issueNumber } = this.modelToClone
-      for (const targetIssuenumber of this.issuenumbers) {
-        this.$emit('overwrite-model', { publicationCode, issueNumber, targetIssuenumber })
-      }
-    },
-    ...mapMutations(['setDimensions', 'setPhotoUrl']),
+    ...mapMutations(['setPhotoUrl']),
     ...mapActions('coa', ['fetchPublicationNames']),
   },
 }
 </script>
-<style>
+<style lang="scss">
 .btn.options {
   top: 0;
   left: 130px;
 }
+
 .language-list {
   position: absolute;
   right: 0;
   top: 0;
 }
-.b-icon {
+
+::v-deep .b-icon {
   vertical-align: sub !important;
   height: 15px;
 }
