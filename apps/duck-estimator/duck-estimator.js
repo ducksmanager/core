@@ -100,7 +100,7 @@ async function run(coaConnection) {
 coaPool.getConnection()
   .then(async coaConnection => {
     await coaConnection.query(`
-        CREATE TABLE inducks_issuequotation
+        CREATE TABLE IF NOT EXISTS inducks_issuequotation
         (
             ID              int                             NOT NULL AUTO_INCREMENT,
             publicationcode varchar(15) COLLATE utf8_unicode_ci NOT NULL,
