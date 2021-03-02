@@ -153,13 +153,13 @@ export default {
   methods: {
     async fetchBookstores() {
       this.bookstores = (await axios.get("/bookstore/list")).data.map(bookstore => {
-        try {
-          ["name", "address", "comment"].forEach(field => {
+        ["name", "address", "comment"].forEach(field => {
+          try {
             bookstore[field] = decodeURIComponent(escape(bookstore[field]));
-          });
-        } catch (_) {
-          return null;
-        }
+          } catch (_) {
+            console.warn(`Bookstore ${bookstore.id}: ${field} is not decodable`)
+          }
+        });
         return bookstore;
       }).filter(bookstore => !!bookstore);
     },
@@ -168,12 +168,11 @@ export default {
       this.newBookstoreSent = true;
     },
     formatDate(date) {
-      const dateObject = new Date(date)
+      const dateObject = new Date(date);
       if (isNaN(dateObject.getTime())) {
-        return this.$t('il y a longtemps')
-      }
-      else {
-        return this.$t('le {date}', {date: dateObject.toLocaleDateString()})
+        return this.$t("il y a longtemps");
+      } else {
+        return this.$t("le {date}", { date: dateObject.toLocaleDateString() });
       }
     }
   }
