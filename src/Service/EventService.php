@@ -67,7 +67,7 @@ class EventService
     public function retrieveBookstoreCreations(): array
     {
         return $this->apiService->runQuery('
-            SELECT \'bookstore_creation\' as type, uc.ID_user AS userId, bouquineries.Nom AS Nom, UNIX_TIMESTAMP(DateAjout) AS timestamp
+            SELECT \'bookstore_creation\' as type, uc.ID_user AS userId, bouquineries.Nom AS name, UNIX_TIMESTAMP(DateAjout) AS timestamp
             FROM bouquineries
             INNER JOIN users_contributions uc ON bouquineries.ID = uc.ID_bookstore
             WHERE Actif=1 AND DateAjout > date_add(now(), interval -1 month)
