@@ -7,6 +7,9 @@ export const mutations = {
   addIssuenumber(state, issuenumber) {
     state.issuenumbers = [...new Set(state.issuenumbers.concat(issuenumber))].sort()
   },
+  replaceIssuenumber(state, issuenumber) {
+    state.issuenumbers = [issuenumber]
+  },
   toggleIssuenumber(state, issuenumber) {
     if (state.issuenumbers.includes(issuenumber)) {
       if (state.issuenumbers.length > 1) {
