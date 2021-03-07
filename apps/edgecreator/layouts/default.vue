@@ -68,24 +68,16 @@ body,
 
 @keyframes glow-filter {
   0% {
-    filter: drop-shadow(-0.75px 0px 6px transparent);
-    stroke: transparent;
-  }
-  25% {
-    filter: drop-shadow(-0.75px 0px 6px black);
-    stroke: black;
+    filter: drop-shadow(-0.75px 0px 6px rgba(0, 0, 0, 0.5));
+    outline-color: rgba(0, 0, 0, 0.5);
   }
   50% {
-    filter: drop-shadow(-0.75px 0px 6px white);
-    stroke: white;
-  }
-  75% {
-    filter: drop-shadow(-0.75px 0px 6px black);
-    stroke: black;
+    filter: drop-shadow(-0.75px 0px 6px rgba(128, 128, 128, 0.5));
+    outline-color: rgba(128, 128, 128, 0.5);
   }
   100% {
-    filter: drop-shadow(-0.75px 0px 6px transparent);
-    stroke: transparent;
+    filter: drop-shadow(-0.75px 0px 6px rgba(0, 0, 0, 0.5));
+    outline-color: rgba(0, 0, 0, 0.5);
   }
 }
 </style>
