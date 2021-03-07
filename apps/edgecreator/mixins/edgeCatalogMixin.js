@@ -110,17 +110,21 @@ export default {
           continue
         }
         const issuecode = `${country}/${magazine} ${issuenumber}`
-        const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
-        const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
-        const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
+        try {
+          const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
+          const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
+          const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
 
-        newEdges[issuecode] = vm.getEdgeFromSvg({
-          country,
-          magazine,
-          issuenumber,
-          designers,
-          photographers,
-        })
+          newEdges[issuecode] = vm.getEdgeFromSvg({
+            country,
+            magazine,
+            issuenumber,
+            designers,
+            photographers,
+          })
+        } catch (e) {
+          console.error(`No SVG found : ${country}/${magazine} ${issuenumber}`)
+        }
       }
 
       const publicationCodes = [
