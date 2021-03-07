@@ -26,13 +26,13 @@ services:
       - dm_sessions:/tmp/sessions
     networks:
       - dm-network
-      - dmserver_front-network
+      - dm-server_front-network
     command: sh -c 'composer install --no-plugins --no-scripts && php-fpm --force-stderr'
 
 networks:
   dm-network:
     driver: bridge
-  dmserver_front-network:
+  dm-server_front-network:
     external: true
 
 volumes:
