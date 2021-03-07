@@ -35,8 +35,7 @@
       :key="stepNumber"
       :class="{
         [step.component]: true,
-        hovered:
-          hoveredStepNumber === stepNumber && [issuenumber, null].includes(hoveredIssuenumber),
+        hovered: hoveredStepNumber === stepNumber && editingIssuenumbers.includes(issuenumber),
       }"
       @mousedown.exact="
         replaceEditingIssuenumber(issuenumber)
@@ -191,6 +190,9 @@ svg {
   g:hover,
   g.hovered {
     animation: glow-filter 2s infinite;
+    outline-width: 1px;
+    outline-style: dotted;
+    outline-offset: -1px;
   }
 }
 </style>
