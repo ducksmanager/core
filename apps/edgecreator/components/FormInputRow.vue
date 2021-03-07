@@ -4,55 +4,48 @@
       <label :for="optionName">{{ label }}</label>
     </b-col>
     <b-col sm="9">
-      <span v-if="values.length > 1 && !edit">
-        Valeurs multiples.
-        <b-btn
-          size="sm"
-          pill
-          @click="
-            edit = true
-            onChangeValue(values[0])
-          "
-          >Modifier</b-btn
-        >
-      </span>
-      <template v-else>
-        <b-alert v-if="hasAlertSlot" show variant="info">
-          <slot name="alert" />
-        </b-alert>
-        <b-form-select
-          v-if="type === 'select'"
-          :id="optionName"
-          :options="selectOptions"
-          :value="values[0]"
-          @input="onChangeValue"
-        />
-        <b-form-input
-          v-else
-          :id="optionName"
-          size="sm"
-          autocomplete="off"
-          :type="type"
-          :min="min"
-          :max="max"
-          :step="step"
-          :range="range"
-          :value="values[0]"
-          :disabled="disabled"
-          :list="listId"
-          v-on="{
-            [isTextImageOption || isImageSrcOption ? 'change' : 'input']: onChangeValue,
-          }"
-        ></b-form-input>
-        <slot />
-        <slot name="suffix" />
-      </template>
+      <confirm-edit-multiple-values :values="values" @change="onChangeValue">
+        <template>
+          <b-alert v-if="hasAlertSlot" show variant="info">
+            <slot name="alert" />
+          </b-alert>
+          <b-form-select
+            v-if="type === 'select'"
+            :id="optionName"
+            :options="selectOptions"
+            :value="values[0]"
+            @input="onChangeValue"
+          />
+          <b-form-input
+            v-else
+            :id="optionName"
+            size="sm"
+            autocomplete="off"
+            :type="type"
+            :min="min"
+            :max="max"
+            :step="step"
+            :range="range"
+            :value="values[0]"
+            :disabled="disabled"
+            :list="listId"
+            v-on="{
+              [isTextImageOption || isImageSrcOption ? 'change' : 'input']: onChangeValue,
+            }"
+          ></b-form-input>
+          <slot />
+          <slot name="suffix" />
+        </template>
+      </confirm-edit-multiple-values>
     </b-col>
   </b-row>
 </template>
 
 <script>
+import ConfirmEditMultipleValues from '@/components/ConfirmEditMultipleValues'
+
 export default {
+  components: { ConfirmEditMultipleValues },
   props: {
     label: { type: String, required: true },
     optionName: { type: String, required: true },

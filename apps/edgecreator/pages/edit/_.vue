@@ -19,7 +19,7 @@
       {{ warning }}
     </b-alert>
     <top-bar
-      :dimensions="dimensions[Object.keys(dimensions)[0]]"
+      :dimensions="editingDimensions"
       @overwrite-model="overwriteModel"
       @set-dimensions="overwriteDimensions"
     />

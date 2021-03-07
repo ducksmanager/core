@@ -4,7 +4,7 @@
       <b-col cols="4">
         <label :for="dimension">{{ $t(ucFirst(dimension)) }}:</label>
       </b-col>
-      <b-col cols="4">
+      <b-col cols="5">
         <b-form-input
           :id="dimension"
           :value="dimension === 'width' ? width : height"
