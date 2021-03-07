@@ -38,7 +38,11 @@
         hovered:
           hoveredStepNumber === stepNumber && [issuenumber, null].includes(hoveredIssuenumber),
       }"
-      @mousedown="
+      @mousedown.exact="
+        replaceEditingIssuenumber(issuenumber)
+        editingStepNumber = stepNumber
+      "
+      @mousedown.shift="
         addEditingIssuenumber(issuenumber)
         editingStepNumber = stepNumber
       "
@@ -161,7 +165,10 @@ export default {
   methods: {
     ...mapMutations(['addContributor']),
     ...mapMutations('ui', ['setPositionInCanvas']),
-    ...mapMutations('editingStep', { addEditingIssuenumber: 'addIssuenumber' }),
+    ...mapMutations('editingStep', {
+      addEditingIssuenumber: 'addIssuenumber',
+      replaceEditingIssuenumber: 'replaceIssuenumber',
+    }),
     setPosition({ clientX: left, clientY: top }) {
       const vm = this
       const { left: svgLeft, top: svgTop } = this.$refs.canvas.getBoundingClientRect()

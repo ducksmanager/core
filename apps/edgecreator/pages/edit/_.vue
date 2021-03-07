@@ -34,7 +34,8 @@
               <th
                 :key="`issuenumber-${issuenumber}`"
                 class="clickable"
-                @click="toggleEditIssuenumber(issuenumber)"
+                @click.exact="replaceEditIssuenumber(issuenumber)"
+                @click.shift="addEditIssuenumber(issuenumber)"
               >
                 <div v-if="editingIssuenumbers.includes(issuenumber)"><b-icon-pencil /></div>
                 <div>
@@ -198,7 +199,7 @@ export default {
     }
     this.setCountry(country)
     this.setMagazine(magazine)
-    this.toggleEditIssuenumber(issuenumberMin)
+    this.addEditIssuenumber(issuenumberMin)
 
     await this.loadPublicationIssues()
 
@@ -266,7 +267,11 @@ export default {
       'addContributor',
       'removeWarning',
     ]),
-    ...mapMutations('editingStep', { toggleEditIssuenumber: 'toggleIssuenumber' }),
+    ...mapMutations('editingStep', {
+      toggleEditIssuenumber: 'toggleIssuenumber',
+      replaceEditIssuenumber: 'replaceIssuenumber',
+      addEditIssuenumber: 'addIssuenumber',
+    }),
     ...mapActions([
       'setIssuenumbers',
       'loadPublicationIssues',
