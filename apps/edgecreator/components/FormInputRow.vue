@@ -4,27 +4,49 @@
       <label :for="optionName">{{ label }}</label>
     </b-col>
     <b-col sm="9">
-      <b-alert v-if="hasAlertSlot" show variant="info">
-        <slot name="alert" />
-      </b-alert>
-      <b-form-input
-        :id="optionName"
-        size="sm"
-        autocomplete="off"
-        :type="type"
-        :min="min"
-        :max="max"
-        :step="step"
-        :range="range"
-        :value="userValue"
-        :disabled="disabled"
-        :list="listId"
-        v-on="{
-          [isTextImageOption || isImageSrcOption ? 'change' : 'input']: onChangeValue,
-        }"
-      ></b-form-input>
-      <slot />
-      <slot name="suffix" />
+      <span v-if="values.length > 1 && !edit">
+        Valeurs multiples.
+        <b-btn
+          size="sm"
+          pill
+          @click="
+            edit = true
+            onChangeValue(values[0])
+          "
+          >Modifier</b-btn
+        >
+      </span>
+      <template v-else>
+        <b-alert v-if="hasAlertSlot" show variant="info">
+          <slot name="alert" />
+        </b-alert>
+        <b-form-select
+          v-if="type === 'select'"
+          :id="optionName"
+          :options="selectOptions"
+          :value="values[0]"
+          @input="onChangeValue"
+        />
+        <b-form-input
+          v-else
+          :id="optionName"
+          size="sm"
+          autocomplete="off"
+          :type="type"
+          :min="min"
+          :max="max"
+          :step="step"
+          :range="range"
+          :value="values[0]"
+          :disabled="disabled"
+          :list="listId"
+          v-on="{
+            [isTextImageOption || isImageSrcOption ? 'change' : 'input']: onChangeValue,
+          }"
+        ></b-form-input>
+        <slot />
+        <slot name="suffix" />
+      </template>
     </b-col>
   </b-row>
 </template>
@@ -35,7 +57,6 @@ export default {
     label: { type: String, required: true },
     optionName: { type: String, required: true },
     type: { type: String, required: true },
-    value: { type: String, default: null },
     disabled: { type: Boolean, default: false },
     options: { type: Object, required: true },
     min: { type: Number, default: null },
@@ -43,21 +64,29 @@ export default {
     step: { type: Number, default: null },
     range: { type: Number, default: null },
     listId: { type: String, default: null },
+    selectOptions: { type: Array, default: null },
   },
+
+  data: () => ({
+    edit: false,
+  }),
+
   computed: {
     hasAlertSlot() {
       return !!this.$slots.alert || !!this.$scopedSlots.alert
     },
-    userValue() {
-      const value = this.options[this.optionName]
+    inputValues() {
+      return this.options[this.optionName]
+    },
+    values() {
       if (this.optionName === 'xlink:href') {
-        return value.match(/\/([^/]+)$/)[1]
+        return this.inputValues.map((value) => value.match(/\/([^/]+)$/)[1])
       }
-      return value
+      return this.inputValues
     },
     isTextImageOption() {
       return (
-        this.options.text &&
+        !!this.options.text &&
         ['fgColor', 'bgColor', 'internalWidth', 'text', 'font'].includes(this.optionName)
       )
     },

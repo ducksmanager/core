@@ -76,18 +76,12 @@ export default {
       default: false,
     },
   },
-  data() {
-    let originalColor = this.options[this.optionName]
-    if (originalColor === 'transparent') {
-      originalColor = '#000000'
-    }
-    return {
-      originalColor,
-    }
-  },
   computed: {
+    inputValues() {
+      return this.options[this.optionName]
+    },
     isTransparent() {
-      return this.options[this.optionName] === 'transparent'
+      return this.inputValues[0] === 'transparent'
     },
     hasPhotoUrl() {
       return Object.keys(this.photoUrls).length
@@ -101,10 +95,24 @@ export default {
       },
     },
     frequentColorsWithoutCurrent() {
-      return this.colors.filter((color) => color !== this.options[this.optionName])
+      return this.colors.filter((color) => color !== this.inputValues[0])
     },
     ...mapGetters(['colors']),
     ...mapState(['photoUrls']),
+  },
+  watch: {
+    inputValues: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          let originalColor = this.inputValues[0]
+          if (originalColor === 'transparent') {
+            originalColor = '#000000'
+          }
+          this.originalColor = originalColor
+        }
+      },
+    },
   },
   methods: {
     change(value) {

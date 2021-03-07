@@ -1,7 +1,7 @@
 <template>
   <b-card id="edit-card" no-body>
     <b-tabs v-model="editingStepNumber" lazy pills card vertical>
-      <b-tab v-for="(step, stepNumber) in steps" :key="stepNumber">
+      <b-tab v-for="(step, stepNumber) in optionsPerName" :key="stepNumber">
         <template #title>
           <span
             :class="{ 'hovered-step': hoveredStepNumber === stepNumber }"
@@ -77,8 +77,8 @@
                     <pre class="d-inline-block">[Numero[1]]</pre>
                   </template>
                 </i18n>
-              </ul></template
-            >
+              </ul>
+            </template>
           </form-input-row>
           <form-input-row
             option-name="font"
@@ -117,8 +117,8 @@
                 height: dimensions.width * step.options.aspectRatio,
               })
             "
-            >{{ $t('Reset position and size') }}</b-btn
-          >
+            >{{ $t('Reset position and size') }}
+          </b-btn>
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
           <form-color-input-row
@@ -159,20 +159,13 @@
             :label="$t(optionName === 'colorStart' ? 'Start color' : 'End color')"
           />
 
-          <b-row>
-            <b-col sm="2">
-              <label for="direction">{{ $t('Direction') }}</label>
-            </b-col>
-            <b-col sm="6" md="5">
-              <b-form-select
-                id="direction"
-                :value="step.options.direction"
-                :options="[$t('Vertical'), $t('Horizontal')]"
-                @input="$root.$emit('set-options', { direction: $event })"
-              >
-              </b-form-select>
-            </b-col>
-          </b-row>
+          <form-input-row
+            type="select"
+            :options="step.options"
+            option-name="direction"
+            :label="$t('Direction')"
+            :select-options="[$t('Vertical'), $t('Horizontal')]"
+          />
         </b-card-text>
         <b-card-text v-if="step.component === 'Polygon'">
           <form-color-input-row
@@ -227,9 +220,30 @@ export default {
   },
   props: {
     dimensions: { type: Object, required: true },
-    steps: { type: Array, required: true },
+    steps: { type: Object, required: true },
   },
   computed: {
+    optionsPerName() {
+      const vm = this
+      const issueNumbers = Object.keys(this.steps)
+      return this.steps[issueNumbers[0]].map((step, stepNumber) => ({
+        ...step,
+        stepNumber,
+        options: Object.keys(step.options).reduce(
+          (acc, optionName) => ({
+            ...acc,
+            [optionName]: [
+              ...new Set(
+                issueNumbers.map(
+                  (issuenumber) => vm.steps[issuenumber][stepNumber].options[optionName]
+                )
+              ),
+            ],
+          }),
+          {}
+        ),
+      }))
+    },
     hoveredStepNumber: {
       get() {
         return this.$store.state.hoveredStep.stepNumber
@@ -247,6 +261,7 @@ export default {
       },
     },
     ...mapState(['publicationElements', 'country']),
+    ...mapState('editingStep', { editingIssueNumbers: 'issuenumbers' }),
     ...mapState('renders', ['supportedRenders']),
   },
   methods: {
@@ -263,6 +278,7 @@ export default {
 
     ul {
       padding: 0;
+
       li {
         .action-icons {
           float: right;
