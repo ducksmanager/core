@@ -27,7 +27,7 @@ export default {
       const svgElement = doc.getElementsByTagName('svg')[0]
       const svgChildNodes = Object.values(svgElement.childNodes)
 
-      return { doc, svgElement, svgChildNodes }
+      return { svgElement, svgChildNodes }
     },
     getEdgeUrl(country, magazine, issuenumber, extension, publishedVersion) {
       return (
