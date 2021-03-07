@@ -23,7 +23,7 @@
       @overwrite-model="overwriteModel"
       @set-dimensions="overwriteDimensions"
     />
-    <b-row class="flex-grow-1 pt-2 overflow-hidden" align-h="end">
+    <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right overflow-auto h-100">
         <table class="edges">
           <tr v-if="showIssueNumbers">
@@ -96,8 +96,8 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <model-edit
-          :dimensions="dimensions[issuenumbers[0]]"
-          :steps="steps[issuenumbers[0]]"
+          :dimensions="editingDimensions"
+          :steps="editingSteps"
           @add-step="addStep($event)"
           @remove-step="removeStep($event)"
           @duplicate-step="duplicateStep($event)"
@@ -147,6 +147,14 @@ export default {
       set(value) {
         this.$store.commit('ui/setZoom', value)
       },
+    },
+    editingDimensions() {
+      const vm = this
+      return this.editingIssuenumbers.map((issuenumber) => vm.dimensions[issuenumber])
+    },
+    editingSteps() {
+      const vm = this
+      return this.editingIssuenumbers.map((issuenumber) => vm.steps[issuenumber])
     },
     ...mapState([
       'country',
