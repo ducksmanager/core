@@ -76,7 +76,7 @@
                   :alt="photoUrls[issuenumber]"
                   :src="getImageUrl('photos', photoUrls[issuenumber])"
                   :class="{ picker: !!colorPickerOption }"
-                  :style="{ height: `${zoom * height}px` }"
+                  :style="{ height: `${zoom * dimensions[issuenumber].height}px` }"
                   crossorigin
                   @click="setColorFromPhoto"
                   @load="showEdgePhotos = true"
@@ -121,6 +121,7 @@ import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 
 export default {
+  name: 'Edit',
   components: {
     TopBar,
     EdgeCanvas,
