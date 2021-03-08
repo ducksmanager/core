@@ -150,11 +150,17 @@ export default {
     },
     editingDimensions() {
       const vm = this
-      return this.editingIssuenumbers.map((issuenumber) => vm.dimensions[issuenumber])
+      return this.editingIssuenumbers.reduce(
+        (acc, issuenumber) => ({ ...acc, [issuenumber]: vm.dimensions[issuenumber] }),
+        {}
+      )
     },
     editingSteps() {
       const vm = this
-      return this.editingIssuenumbers.map((issuenumber) => vm.steps[issuenumber])
+      return this.editingIssuenumbers.reduce(
+        (acc, issuenumber) => ({ ...acc, [issuenumber]: vm.steps[issuenumber] }),
+        {}
+      )
     },
     ...mapState([
       'country',
@@ -248,10 +254,15 @@ export default {
       }
     },
     overwriteDimensions({ width, height }) {
-      this.setDimensions({
-        width,
-        height,
-      })
+      for (const targetIssuenumber of this.editingIssuenumbers) {
+        this.setDimensions(
+          {
+            width,
+            height,
+          },
+          targetIssuenumber
+        )
+      }
     },
     getImageUrl(fileType, fileName) {
       return `${process.env.EDGES_URL}/${this.country}/${
