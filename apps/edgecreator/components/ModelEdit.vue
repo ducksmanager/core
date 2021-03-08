@@ -109,14 +109,7 @@
             size="sm"
             variant="outline-warning"
             class="d-block mt-3"
-            @click="
-              $root.$emit('set-options', {
-                x: 0,
-                y: 0,
-                width: dimensions.width,
-                height: dimensions.width * step.options.aspectRatio,
-              })
-            "
+            @click="resetPositionAndSize(step)"
             >{{ $t('Reset position and size') }}
           </b-btn>
         </b-card-text>
@@ -266,6 +259,18 @@ export default {
   },
   methods: {
     ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),
+
+    resetPositionAndSize(step) {
+      for (const issuenumber of Object.keys(this.steps)) {
+        this.$root.$emit('set-options', {
+          x: 0,
+          y: 0,
+          width: this.dimensions[issuenumber].width,
+          height: this.dimensions[issuenumber].width * step.options.aspectRatio,
+          issuenumbers: [issuenumber],
+        })
+      }
+    },
   },
 }
 </script>

@@ -147,11 +147,13 @@
             <b-icon-front />
           </b-button>
           <b-collapse id="collapse-dimensions" v-model="collapseDimensions" class="mt-2">
-            <dimensions
-              :width="dimensions.width"
-              :height="dimensions.height"
-              @change="$emit('set-dimensions', $event)"
-            />
+            <confirm-edit-multiple-values :values="uniqueDimensions">
+              <dimensions
+                :width="uniqueDimensions[0].width"
+                :height="uniqueDimensions[0].height"
+                @change="$emit('set-dimensions', $event)"
+              />
+            </confirm-edit-multiple-values>
           </b-collapse>
           <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
             <issue-select
@@ -191,11 +193,13 @@ import IssueSelect from '@/components/IssueSelect'
 import SaveModelButton from '@/components/SaveModelButton'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
+import ConfirmEditMultipleValues from '@/components/ConfirmEditMultipleValues'
 import MultipleTargetOptions from './MultipleTargetOptions'
 
 export default {
   name: 'TopBar',
   components: {
+    ConfirmEditMultipleValues,
     MultipleTargetOptions,
     SaveModelButton,
     Issue,
@@ -259,6 +263,11 @@ export default {
     },
     publicationName() {
       return this.publicationNames && this.publicationNames[`${this.country}/${this.magazine}`]
+    },
+    uniqueDimensions() {
+      return [
+        ...new Set(Object.values(this.dimensions).map((item) => JSON.stringify(item))),
+      ].map((item) => JSON.parse(item))
     },
     ...mapState([
       'country',
