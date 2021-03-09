@@ -24,9 +24,9 @@
       </div>
       <div class="clearfix" />
       <div>
-        {{ stats.numberOfIssues }} {{ $t('numéros') }}<br>
-        {{ stats.numberOfPublications }} {{ $t('magazines') }}<br>
-        {{ stats.numberOfCountries }} {{ $t('pays') }}
+        {{ stats.numberOfIssues }} {{ $tc('numéro | numéros', stats.numberOfIssues) }}<br>
+        {{ stats.numberOfPublications }} {{ $tc('magazine | magazines', stats.numberOfPublications) }}<br>
+        {{ stats.numberOfCountries }} {{ $tc('pays', stats.numberOfCountries) }}
       </div>
       <div
         v-if="bookcaseShared"

@@ -223,7 +223,7 @@
           v-else
           @click="importIssues"
         >
-          {{ $t('Importer') }} {{ issuesImportable.length }} {{ $t('numéros') }}
+          {{ $t('Importer') }} {{ issuesImportable.length }} {{ $tc('numéro | numéros', issuesImportable.length) }}
         </b-btn>
       </template>
     </template>

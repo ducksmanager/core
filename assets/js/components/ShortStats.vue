@@ -1,6 +1,6 @@
 <template>
   <div v-if="total > 0">
-    <div>{{ $t('Vous possédez') }} <b>{{ total }}</b> {{ $t('numéros') }}.</div>
+    <div>{{ $t('Vous possédez') }} <b>{{ total }}</b> {{ $tc('numéro | numéros', total) }}.</div>
     <div>
       {{ $t('Votre collection est composée de') }} <b>{{ Object.keys(totalPerPublication).length }}</b> {{
         $t('magazines différents issus de')

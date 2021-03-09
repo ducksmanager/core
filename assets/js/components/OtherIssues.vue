@@ -2,10 +2,10 @@
   <span v-if="number > 1">
     {{ $t('et') }} {{ number - 1 }}
     <template v-if="number === 2">
-      {{ textMultiple || $t('autre numéro') }}
+      {{ textSingle || $t('autre numéro') }}
     </template>
     <template v-else>
-      {{ textSingle || $t('autres numéros') }}
+      {{ textMultiple || $t('autres numéros') }}
     </template>
   </span>
 </template>

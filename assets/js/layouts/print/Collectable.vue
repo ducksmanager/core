@@ -81,9 +81,7 @@
                 align="center"
                 colspan="6"
               >
-                <u>{{
-                  $t('numéros')[0].toUpperCase() + $t('numéros').substring(1, $t('numéros').length).toLowerCase()
-                }}</u>
+                <u>{{ issueCountTitle }}</u>
               </td>
             </tr>
             <tr
@@ -167,6 +165,11 @@ export default {
               .sort((a, b) => b - a)[0]
       )
     },
+
+    issueCountTitle() {
+      const issueCountString = this.$tc('numéro | numéros', 2)
+      return issueCountString[0].toUpperCase() + issueCountString.substring(1, issueCountString.length).toLowerCase()
+    }
   },
   watch: {
     collection(newCollectionValue) {
