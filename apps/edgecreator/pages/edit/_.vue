@@ -23,6 +23,7 @@
       @overwrite-model="overwriteModel"
       @set-dimensions="overwriteDimensions"
     />
+    <position-helper />
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="text-right overflow-auto h-100">
         <table class="edges">
@@ -119,10 +120,12 @@ import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 import modelLoadMixin from '@/mixins/modelLoadMixin'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
+import PositionHelper from '@/components/PositionHelper'
 
 export default {
   name: 'Edit',
   components: {
+    PositionHelper,
     TopBar,
     EdgeCanvas,
     PublishedEdge,
