@@ -1,4 +1,4 @@
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 
 const interact = require('interactjs')
 
@@ -50,22 +50,6 @@ export default {
           {}
         )
     },
-    colors() {
-      return Object.keys(this.options || {})
-        .filter(
-          (optionName) =>
-            this.isColorOption(optionName) && this.options[optionName] !== 'transparent'
-        )
-        .map((optionName) => this.options[optionName])
-    },
-  },
-  watch: {
-    colors: {
-      immediate: true,
-      handler(newColors) {
-        this.setStepColors({ stepNumber: this.stepNumber, colors: newColors })
-      },
-    },
   },
   data: () => ({
     attributeKeys: [],
@@ -113,7 +97,6 @@ export default {
             })
         )
     },
-    ...mapMutations(['setStepColors']),
   },
   mounted() {
     const { issuenumber, stepNumber } = this

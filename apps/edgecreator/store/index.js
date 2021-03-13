@@ -14,8 +14,6 @@ export const state = () => ({
   publicationElements: [],
   publicationPhotos: [],
 
-  stepColors: {},
-
   warnings: [],
 })
 
@@ -67,9 +65,6 @@ export const mutations = {
   setPublicationPhotos(state, { items: publicationPhotos }) {
     state.publicationPhotos = publicationPhotos
   },
-  setStepColors(state, { stepNumber, colors }) {
-    Vue.set(state.stepColors, stepNumber, colors)
-  },
   addWarning(state, warning) {
     state.warnings = [...state.warnings, warning]
   },
@@ -81,11 +76,6 @@ export const mutations = {
 export const getters = {
   publicationcode: (state) => `${state.country}/${state.magazine}`,
 
-  colors: (state) => {
-    return Object.values(state.stepColors).reduce((acc, colors) => {
-      return [...new Set(acc.concat(colors))].sort()
-    }, [])
-  },
   publicationIssues: (state, getters, rootState) => {
     return rootState.coa.issueNumbers[getters.publicationcode]
   },
