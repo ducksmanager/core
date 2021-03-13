@@ -88,11 +88,13 @@
           />
           <form-color-input-row
             :options="step.options"
+            :other-colors="otherColors[stepNumber]"
             option-name="bgColor"
             :label="$t('Background color')"
           />
           <form-color-input-row
             :options="step.options"
+            :other-colors="otherColors[stepNumber]"
             option-name="fgColor"
             :label="$t('Foreground color')"
           />
@@ -115,6 +117,7 @@
         </b-card-text>
         <b-card-text v-if="step.component === 'Fill'">
           <form-color-input-row
+            :other-colors="otherColors[stepNumber]"
             :options="step.options"
             option-name="fill"
             :label="$t('Fill color')"
@@ -137,6 +140,7 @@
           <form-color-input-row
             v-for="optionName in ['fill', 'stroke']"
             :key="optionName"
+            :other-colors="otherColors[stepNumber]"
             :options="step.options"
             :option-name="optionName"
             :label="$t(ucFirst(optionName + ' color'))"
@@ -147,6 +151,7 @@
           <form-color-input-row
             v-for="optionName in ['colorStart', 'colorEnd']"
             :key="optionName"
+            :other-colors="otherColors[stepNumber]"
             :options="step.options"
             :option-name="optionName"
             :label="$t(optionName === 'colorStart' ? 'Start color' : 'End color')"
@@ -166,6 +171,7 @@
         <b-card-text v-if="step.component === 'Polygon'">
           <form-color-input-row
             :options="step.options"
+            :other-colors="otherColors[stepNumber]"
             option-name="fill"
             :label="$t('Fill color')"
           />
@@ -217,6 +223,7 @@ export default {
   props: {
     dimensions: { type: Object, required: true },
     steps: { type: Object, required: true },
+    allStepColors: { type: Object, required: true },
   },
   computed: {
     optionsPerName() {
@@ -240,6 +247,38 @@ export default {
         ),
       }))
     },
+
+    otherColors() {
+      const currentIssueNumbers = Object.keys(this.steps)
+      const allIssueNumbers = Object.keys(this.allStepColors)
+      const emptyColorList = Object.keys(this.allStepColors[Object.keys(this.steps)[0]]).reduce(
+        (acc, stepNumber) => ({ ...acc, [stepNumber]: [] }),
+        {}
+      )
+      return Object.keys(this.optionsPerName)
+        .map((currentStepNumber) => parseInt(currentStepNumber))
+        .map((currentStepNumber) => {
+          const otherColors = {
+            sameIssuenumber: { ...emptyColorList },
+            differentIssuenumber: { ...emptyColorList },
+          }
+          allIssueNumbers.forEach((issuenumber) => {
+            const issueColors = this.allStepColors[issuenumber]
+            issueColors.forEach((stepColors, stepNumber) => {
+              const isCurrentIssueNumber = currentIssueNumbers.includes(issuenumber)
+              if (!(isCurrentIssueNumber && currentStepNumber === stepNumber)) {
+                const otherColorGroupKey = isCurrentIssueNumber
+                  ? 'sameIssuenumber'
+                  : 'differentIssuenumber'
+                otherColors[otherColorGroupKey][stepNumber] = [
+                  ...new Set([...otherColors[otherColorGroupKey][stepNumber], ...stepColors]),
+                ]
+              }
+            })
+          })
+          return otherColors
+        })
+    },
     hoveredStepNumber: {
       get() {
         return this.$store.state.hoveredStep.stepNumber
@@ -257,7 +296,6 @@ export default {
       },
     },
     ...mapState(['publicationElements', 'country']),
-    ...mapState('editingStep', { editingIssueNumbers: 'issuenumbers' }),
     ...mapState('renders', ['supportedRenders']),
   },
   methods: {

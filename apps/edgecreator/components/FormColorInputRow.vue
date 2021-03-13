@@ -30,14 +30,31 @@
         >{{ $t('Re-use') }}
       </b-button>
       <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
-        <div v-if="!frequentColorsWithoutCurrent.length">{{ $t('No other color') }}</div>
-        <ul v-else>
-          <li v-for="color in frequentColorsWithoutCurrent" :key="color">
-            <span class="frequent-color" :style="{ background: color }" @click="change(color)"
-              >&nbsp;</span
+        <div
+          v-for="colorLocation in ['sameIssuenumber', 'differentIssuenumber']"
+          :key="colorLocation"
+        >
+          <h6 v-if="colorLocation === 'sameIssuenumber'">{{ $t('Colors used in other steps') }}</h6>
+          <h6 v-if="colorLocation === 'differentIssuenumber'">
+            {{ $t('Colors used in other edges') }}
+          </h6>
+          <ul>
+            <li
+              v-for="(_, stepNumber) in otherColors[colorLocation]"
+              :key="`${colorLocation}-${stepNumber}`"
             >
-          </li>
-        </ul>
+              {{ $t('Step') }} {{ stepNumber }}:
+              <span
+                v-for="color in otherColors[colorLocation][stepNumber]"
+                :key="color"
+                class="frequent-color"
+                :style="{ background: color }"
+                @click="change(color)"
+                >&nbsp;</span
+              >
+            </li>
+          </ul>
+        </div>
       </b-popover>
       <b-button
         pill
@@ -52,7 +69,7 @@
 </template>
 <script>
 import FormInputRow from '@/components/FormInputRow'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 
 export default {
@@ -65,6 +82,10 @@ export default {
     },
     optionName: {
       type: String,
+      required: true,
+    },
+    otherColors: {
+      type: Object,
       required: true,
     },
     label: {
@@ -94,10 +115,6 @@ export default {
         this.$store.commit('ui/setColorPickerOption', value)
       },
     },
-    frequentColorsWithoutCurrent() {
-      return this.colors.filter((color) => color !== this.inputValues[0])
-    },
-    ...mapGetters(['colors']),
     ...mapState(['photoUrls']),
   },
   watch: {

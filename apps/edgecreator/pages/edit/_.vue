@@ -99,6 +99,7 @@
         <model-edit
           :dimensions="editingDimensions"
           :steps="editingSteps"
+          :all-step-colors="stepColors"
           @add-step="addStep($event)"
           @remove-step="removeStep($event)"
           @duplicate-step="duplicateStep($event)"
@@ -163,6 +164,27 @@ export default {
       const vm = this
       return this.editingIssuenumbers.reduce(
         (acc, issuenumber) => ({ ...acc, [issuenumber]: vm.steps[issuenumber] }),
+        {}
+      )
+    },
+    stepColors() {
+      const vm = this
+      const isColorOption = (optionName) =>
+        optionName.toLowerCase().includes('color') || ['fill', 'stroke'].includes(optionName)
+      return Object.keys(this.steps).reduce(
+        (acc, issuenumber) => ({
+          ...acc,
+          [issuenumber]: vm.steps[issuenumber].map((step) => [
+            ...new Set(
+              Object.keys(step.options)
+                .filter(
+                  (optionName) =>
+                    isColorOption(optionName) && step.options[optionName] !== 'transparent'
+                )
+                .reduce((acc, optionName) => [...acc, step.options[optionName]], [])
+            ),
+          ]),
+        }),
         {}
       )
     },
