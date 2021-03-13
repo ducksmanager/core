@@ -81,6 +81,7 @@ import { mapMutations, mapState } from 'vuex'
 import RectangleRender from '@/components/renders/RectangleRender'
 import PolygonRender from '@/components/renders/PolygonRender'
 import ArcCircleRender from '@/components/renders/ArcCircleRender'
+import StapleRender from '@/components/renders/StapleRender'
 import ImageRender from '@/components/renders/ImageRender'
 import FillRender from '@/components/renders/FillRender'
 import TextRender from '@/components/renders/TextRender'
@@ -92,6 +93,7 @@ export default {
     RectangleRender,
     PolygonRender,
     ArcCircleRender,
+    StapleRender,
     ImageRender,
     FillRender,
     TextRender,

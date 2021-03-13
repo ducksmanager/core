@@ -160,6 +160,9 @@
             :select-options="[$t('Vertical'), $t('Horizontal')]"
           />
         </b-card-text>
+        <b-card-text v-if="step.component === 'Staple'">
+          {{ $t('Move and resize the staples directly on the edge.') }}
+        </b-card-text>
         <b-card-text v-if="step.component === 'Polygon'">
           <form-color-input-row
             :options="step.options"
@@ -175,7 +178,7 @@
               v-for="render in supportedRenders"
               :key="render.component"
               @click="$emit('add-step', render.component)"
-              >{{ $t(render.descriptionL10nKey) }}
+              >{{ $t(render.description) }}
             </b-dropdown-item>
           </b-dropdown>
         </b-card-text>
@@ -222,7 +225,7 @@ export default {
       return this.steps[issueNumbers[0]].map((step, stepNumber) => ({
         ...step,
         stepNumber,
-        options: Object.keys(step.options).reduce(
+        options: Object.keys(step.options || {}).reduce(
           (acc, optionName) => ({
             ...acc,
             [optionName]: [

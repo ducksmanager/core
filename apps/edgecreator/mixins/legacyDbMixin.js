@@ -85,6 +85,13 @@ export default {
             stroke: filled ? 'transparent' : `#${dbOptions.Couleur}`,
           }
         }
+        case 'Staple': {
+          return {
+            y1: dbOptions.Y1,
+            y2: dbOptions.Y2,
+            height: dbOptions.Taille_agrafe,
+          }
+        }
         case 'Text': {
           return {
             x: parseInt(dbOptions.Pos_x),

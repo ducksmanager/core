@@ -4,6 +4,12 @@ const interact = require('interactjs')
 
 const TEMPLATES = [
   {
+    regex: /\[Hauteur]\*([.0-9]+)/g,
+    replaceCallback({ dimensions: { height } }, coefficient) {
+      return parseFloat(height) * coefficient
+    },
+  },
+  {
     regex: /\[Numero]/g,
     replaceCallback({ issuenumber }) {
       return issuenumber
@@ -61,12 +67,15 @@ export default {
       },
     },
   },
+  data: () => ({
+    attributeKeys: [],
+  }),
   methods: {
     resolveStringTemplates(text) {
       if (!text) {
         return text
       }
-      const data = { issuenumber: this.issuenumber }
+      const data = this
       return TEMPLATES.reduce(
         (text, { regex, replaceCallback }) =>
           text.replaceAll(regex, (_match, group) => replaceCallback(data, group)),
