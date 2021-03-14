@@ -173,7 +173,7 @@ export default {
       const options = {
         ...this.options,
         stepNumber: this.stepNumber,
-        issuenumber: this.issuenumber,
+        issuenumbers: [this.issuenumber],
       }
       if (options.height === null) {
         // By default, with a 270° rotation,
