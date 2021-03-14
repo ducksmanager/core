@@ -260,7 +260,9 @@ export default {
         .map((currentStepNumber) => {
           const otherColors = {
             sameIssuenumber: { ...emptyColorList },
-            differentIssuenumber: { ...emptyColorList },
+          }
+          if (allIssueNumbers.length > 1) {
+            otherColors.differentIssuenumber = { ...emptyColorList }
           }
           allIssueNumbers.forEach((issuenumber) => {
             const issueColors = this.allStepColors[issuenumber]

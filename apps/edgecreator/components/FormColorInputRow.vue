@@ -30,22 +30,21 @@
         >{{ $t('Re-use') }}
       </b-button>
       <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
-        <div
-          v-for="colorLocation in ['sameIssuenumber', 'differentIssuenumber']"
-          :key="colorLocation"
-        >
+        <div v-for="(otherColorsForLocation, colorLocation) in otherColors" :key="colorLocation">
           <h6 v-if="colorLocation === 'sameIssuenumber'">{{ $t('Colors used in other steps') }}</h6>
           <h6 v-if="colorLocation === 'differentIssuenumber'">
             {{ $t('Colors used in other edges') }}
           </h6>
           <ul>
             <li
-              v-for="(_, stepNumber) in otherColors[colorLocation]"
+              v-for="(_, stepNumber) in otherColorsForLocation"
               :key="`${colorLocation}-${stepNumber}`"
             >
-              {{ $t('Step') }} {{ stepNumber }}:
+              <span :class="{ 'text-secondary': !otherColorsForLocation[stepNumber].length }"
+                >{{ $t('Step') }} {{ stepNumber }}</span
+              >
               <span
-                v-for="color in otherColors[colorLocation][stepNumber]"
+                v-for="color in otherColorsForLocation[stepNumber]"
                 :key="color"
                 class="frequent-color"
                 :style="{ background: color }"
