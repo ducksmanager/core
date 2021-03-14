@@ -191,9 +191,11 @@ svg {
 }
 body:not(.interacting) {
   g:hover,
-  g.hovered {
+  g.Text:hover image,
+  g.hovered,
+  g.hovered.Text image {
     animation: glow-filter 2s infinite;
-    outline-width: 1px;
+    outline-width: 2px;
     outline-style: dotted;
     outline-offset: -1px;
   }
