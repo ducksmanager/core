@@ -55,7 +55,6 @@ export default {
     setSteps(issuenumber, issueSteps) {
       const vm = this
       this.checkSameComponentsAsCompletedEdge(issuenumber, issueSteps)
-      Vue.set(this.steps, issuenumber, [])
       Vue.nextTick().then(() => {
         Vue.set(vm.steps, issuenumber, issueSteps)
       })

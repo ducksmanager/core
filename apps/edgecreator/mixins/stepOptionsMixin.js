@@ -113,6 +113,6 @@ export default {
   },
   mounted() {
     const { issuenumber, stepNumber } = this
-    this.$root.$emit('set-options', { ...this.options, issuenumber, stepNumber })
+    this.$root.$emit('set-options', { ...this.options, issuenumbers: [issuenumber], stepNumber })
   },
 }
