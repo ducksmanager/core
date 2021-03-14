@@ -1,5 +1,6 @@
 <template>
   <div v-show="$gates.getRoles().length">
+    <session-info />
     <h1>{{ $t('Dashboard') }}</h1>
 
     <b-alert v-if="!isCatalogLoaded" show variant="info">{{ $t('Loading...') }}</b-alert>
@@ -65,9 +66,11 @@
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
 import EdgeLink from '@/components/EdgeLink'
 import redirectMixin from '@/mixins/redirectMixin'
+import SessionInfo from '@/components/SessionInfo'
 
 export default {
   components: {
+    SessionInfo,
     EdgeLink,
   },
   mixins: [edgeCatalogMixin, redirectMixin],

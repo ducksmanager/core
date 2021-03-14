@@ -170,13 +170,7 @@
         </MultipleTargetOptions>
       </b-col>
     </b-row>
-    <div class="language-list m-2">
-      <template v-for="({ code, name }, idx) in $i18n.locales">
-        <template v-if="idx > 0"> |</template>
-        <span v-if="$i18n.locale === code" :key="code">{{ name }}</span>
-        <nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{ name }}</nuxt-link>
-      </template>
-    </div>
+    <session-info />
   </b-container>
 </template>
 <script>
@@ -190,11 +184,13 @@ import SaveModelButton from '@/components/SaveModelButton'
 import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 import ConfirmEditMultipleValues from '@/components/ConfirmEditMultipleValues'
+import SessionInfo from '@/components/SessionInfo'
 import MultipleTargetOptions from './MultipleTargetOptions'
 
 export default {
   name: 'TopBar',
   components: {
+    SessionInfo,
     ConfirmEditMultipleValues,
     MultipleTargetOptions,
     SaveModelButton,
@@ -288,12 +284,6 @@ export default {
 .btn.options {
   top: 0;
   left: 130px;
-}
-
-.language-list {
-  position: absolute;
-  right: 0;
-  top: 0;
 }
 
 ::v-deep .b-icon {
