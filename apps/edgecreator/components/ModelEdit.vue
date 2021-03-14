@@ -22,7 +22,7 @@
               @click.stop="$emit('swap-steps', [stepNumber - 1, stepNumber])"
             />
             <b-icon-eye-slash-fill
-              v-if="step.options.visible === false"
+              v-if="step.options.visible && step.options.visible[0] === false"
               :title="$t('Click to show')"
               @click.stop="$root.$emit('set-options', { stepNumber, visible: true })"
             />
