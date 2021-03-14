@@ -3,7 +3,7 @@
   <svg
     :id="`edge-canvas-${issuenumber}`"
     ref="canvas"
-    :class="{ 'hide-overflow': !showEdgeOverflow, 'position-relative': true }"
+    :class="{ 'edge-canvas': true, 'hide-overflow': !showEdgeOverflow, 'position-relative': true }"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
     :height="zoom * height"
@@ -182,7 +182,7 @@ export default {
 </script>
 
 <style lang="scss">
-svg {
+svg.edge-canvas {
   overflow: visible;
 
   &.hide-overflow {
@@ -190,14 +190,16 @@ svg {
   }
 }
 body:not(.interacting) {
-  g:hover,
-  g.Text:hover image,
-  g.hovered,
-  g.hovered.Text image {
-    animation: glow-filter 2s infinite;
-    outline-width: 2px;
-    outline-style: dotted;
-    outline-offset: -1px;
+  svg.edge-canvas {
+    g:hover,
+    g.Text:hover image,
+    g.hovered,
+    g.hovered.Text image {
+      animation: glow-filter 2s infinite;
+      outline-width: 2px;
+      outline-style: dotted;
+      outline-offset: -1px;
+    }
   }
 }
 </style>
