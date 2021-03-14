@@ -181,14 +181,15 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 svg {
   overflow: visible;
 
   &.hide-overflow {
     overflow: hidden;
   }
-
+}
+body:not(.interacting) {
   g:hover,
   g.hovered {
     animation: glow-filter 2s infinite;
