@@ -261,6 +261,7 @@ export default {
           if (vm.issuenumbers[idx - 1]) {
             vm.copySteps(issuenumber, vm.issuenumbers[idx - 1])
           } else {
+            vm.setDimensions({ width: 15, height: 200 }, issuenumber)
             vm.setSteps(issuenumber, [])
           }
         }
