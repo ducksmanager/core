@@ -218,8 +218,8 @@ export default {
           - vm.bookcaseOrder.indexOf(publicationCode2)
         )
         return publicationOrderSign || (!vm.issueNumbers[publicationCode1] && -1) || Math.sign(
-          vm.issueNumbers[publicationCode1].indexOf(issueNumber1)
-          - vm.issueNumbers[publicationCode1].indexOf(issueNumber2)
+          vm.issueNumbers[publicationCode1].indexOf(issueNumber1.replaceAll(' ', ''))
+          - vm.issueNumbers[publicationCode1].indexOf(issueNumber2.replaceAll(' ', ''))
         )
       })
     }
