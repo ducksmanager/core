@@ -69,8 +69,10 @@ export default {
           }
         }
         case 'Polygon': {
+          const x = dbOptions.X.split(',')
+          const y = dbOptions.Y.split(',')
           return {
-            points: dbOptions.X.map((x, i) => [x, dbOptions.Y[i]]),
+            points: x.map((x, i) => [x, y[i]]),
             fill: `#${dbOptions.Couleur}`,
           }
         }
