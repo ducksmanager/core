@@ -165,6 +165,17 @@ export default {
       })
     },
   },
+
+  mounted() {
+    const vm = this
+    if (this.withSubmit) {
+      this.addContributorAllIssues(
+        this.allUsers.find((user) => user.username === vm.$cookies.get('dm-user')),
+        'designers'
+      )
+    }
+  },
+
   methods: {
     ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),
     getContributors(contributionType) {

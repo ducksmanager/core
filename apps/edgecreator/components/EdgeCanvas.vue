@@ -154,15 +154,6 @@ export default {
     ...mapState('ui', ['zoom', 'showEdgeOverflow']),
   },
 
-  mounted() {
-    const vm = this
-    this.addContributor({
-      issuenumber: this.issuenumber,
-      contributionType: 'designers',
-      user: this.allUsers.find((user) => user.username === vm.$cookies.get('dm-user')),
-    })
-  },
-
   methods: {
     ...mapMutations(['addContributor']),
     ...mapMutations('ui', ['setPositionInCanvas']),
