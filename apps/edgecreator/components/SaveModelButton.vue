@@ -164,16 +164,15 @@ export default {
         }
       })
     },
-  },
-
-  mounted() {
-    const vm = this
-    if (this.withSubmit) {
-      this.addContributorAllIssues(
-        this.allUsers.find((user) => user.username === vm.$cookies.get('dm-user')),
-        'designers'
-      )
-    }
+    showModal(newValue) {
+      const vm = this
+      if (newValue && this.withSubmit) {
+        this.addContributorAllIssues(
+          this.allUsers.find((user) => user.username === vm.$cookies.get('dm-user')),
+          'designers'
+        )
+      }
+    },
   },
 
   methods: {
