@@ -5,8 +5,8 @@
 
     <b-alert v-if="!isCatalogLoaded" show variant="info">{{ $t('Loading...') }}</b-alert>
 
-    <template v-for="{ status, l10nKey } in edgeCategories" v-else>
-      <h3 :key="`${status}-title`">{{ $t(l10nKey) }}</h3>
+    <template v-for="{ status, l10n } in edgeCategories" v-else>
+      <h3 :key="`${status}-title`">{{ $t(l10n) }}</h3>
 
       <b-container :key="status">
         <b-row v-if="getEdgesByStatus(status).length">

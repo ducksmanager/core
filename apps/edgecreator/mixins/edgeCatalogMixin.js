@@ -14,19 +14,19 @@ export default {
     edgeCategories: [
       {
         status: 'ongoing',
-        l10nKey: 'Ongoing edges',
+        l10n: 'Ongoing edges',
         apiUrl: '/api/edgecreator/v2/model',
         svgCheckFn: (edge, currentUser) => edge.designers.includes(currentUser),
       },
       {
         status: 'ongoing_by_other_user',
-        l10nKey: 'Ongoing edges handled by other users',
+        l10n: 'Ongoing edges handled by other users',
         apiUrl: '/api/edgecreator/v2/model/editedbyother/all',
         svgCheckFn: (edge) => edge.designers.length,
       },
       {
         status: 'pending',
-        l10nKey: 'Pending edges',
+        l10n: 'Pending edges',
         apiUrl: '/api/edgecreator/v2/model/unassigned/all',
         svgCheckFn: () => true,
       },
@@ -78,12 +78,24 @@ export default {
       )
     },
     getEdgeStatus({ country, issuenumber, magazine }) {
-      const isPublished = (this.publishedEdges[`${country}/${magazine}`] || []).some(
-        (publishedEdge) => publishedEdge.issuenumber === issuenumber
-      )
+      let isPublished = false
+      let isEditable = false
+      const publishedEdgesForPublication = this.publishedEdges[`${country}/${magazine}`] || []
+      publishedEdgesForPublication.forEach((publishedEdge) => {
+        if (publishedEdge.issuenumber === issuenumber) {
+          isPublished = true
+          if (publishedEdge.editable) {
+            isEditable = true
+          }
+        }
+      })
       const issuecode = `${country}/${magazine} ${issuenumber}`
 
-      return (this.currentEdges[issuecode] || { status: isPublished ? 'Published' : 'none' }).status
+      return (
+        this.currentEdges[issuecode] || {
+          status: isPublished ? (isEditable ? 'Published' : 'Published, not usable') : 'none',
+        }
+      ).status
     },
   },
 
