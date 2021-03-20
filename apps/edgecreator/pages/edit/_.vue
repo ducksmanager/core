@@ -36,7 +36,7 @@
                 :key="`issuenumber-${issuenumber}`"
                 class="clickable"
                 @click.exact="replaceEditIssuenumber(issuenumber)"
-                @click.shift="addEditIssuenumber(issuenumber)"
+                @click.shift="toggleEditIssuenumber(issuenumber)"
               >
                 <div v-if="editingIssuenumbers.includes(issuenumber)"><b-icon-pencil /></div>
                 <div>
