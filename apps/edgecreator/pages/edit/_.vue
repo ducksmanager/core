@@ -176,7 +176,7 @@ export default {
           ...acc,
           [issuenumber]: vm.steps[issuenumber].map((step) => [
             ...new Set(
-              Object.keys(step.options)
+              Object.keys(step.options || {})
                 .filter(
                   (optionName) =>
                     isColorOption(optionName) && step.options[optionName] !== 'transparent'
