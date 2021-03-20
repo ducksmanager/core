@@ -38,7 +38,7 @@
         hovered: hoveredStepNumber === stepNumber && editingIssuenumbers.includes(issuenumber),
       }"
       @mousedown.exact="
-        replaceEditingIssuenumber(issuenumber)
+        replaceEditingIssuenumberIfNotAlreadyEditing(issuenumber)
         editingStepNumber = stepNumber
       "
       @mousedown.shift="
@@ -167,6 +167,11 @@ export default {
       this.setPositionInCanvas(
         [left - svgLeft, top - svgTop].map((value) => parseInt(value / vm.zoom))
       )
+    },
+    replaceEditingIssuenumberIfNotAlreadyEditing(issuenumber) {
+      if (!this.editingIssuenumbers.includes(issuenumber)) {
+        this.replaceEditingIssuenumber(issuenumber)
+      }
     },
   },
 }
