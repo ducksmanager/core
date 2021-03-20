@@ -49,9 +49,12 @@ export default {
     const vm = this
     const onmove = ({ dy, currentTarget }) => {
       const isStaple2 = vm.$refs.rect2 === currentTarget
-      const yDistanceFromCenter = Math.max(
-        vm.options.height,
-        parseInt(vm.options.yDistanceFromCenter + ((isStaple2 ? 1 : -1) * dy) / vm.zoom / 3)
+      const yDistanceFromCenter = Math.min(
+        Math.max(
+          vm.options.height,
+          parseInt(vm.options.yDistanceFromCenter + ((isStaple2 ? 1 : -1) * dy) / vm.zoom)
+        ),
+        vm.dimensions.height / 2 - vm.options.height * 2
       )
       vm.$root.$emit('set-options', {
         yDistanceFromCenter,
