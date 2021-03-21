@@ -67,20 +67,23 @@
               :placeholder="$t('Date d\'achat')"
               @keydown.prevent="() => {}"
             >
-            <button
-              class="btn btn-default"
-              @click="createPurchaseDate()
-                      newPurchaseDescription = newPurchaseDate = null
-                      newPurchaseContext = false"
+            <b-btn
+              @click="
+                $emit('create-purchase', {
+                  date: newPurchaseDate,
+                  description: newPurchaseDescription,
+                })
+                newPurchaseDescription = newPurchaseDate = null
+                newPurchaseContext = false"
             >
               {{ $t('Créer') }}
-            </button>
-            <button
-              class="btn btn-default cancel"
+            </b-btn>
+            <b-btn
+              class="cancel"
               @click="newPurchaseContext = false"
             >
               {{ $t('Annuler') }}
-            </button>
+            </b-btn>
           </template>
         </li>
         <li
@@ -90,7 +93,16 @@
           class="item purchase-date"
           @click.stop="currentPurchaseId = purchaseId"
         >
-          <b>{{ description }}</b><br>{{ date }}
+          <b>{{ description }}</b><br>{{ date }}<b-btn
+            class="delete-purchase btn-sm"
+            :title="$t('Supprimer')"
+            @click="
+              $emit('delete-purchase', {
+                id: purchaseId,
+              })"
+          >
+            <b-icon-trash />
+          </b-btn>
         </li>
       </ul>
     </li>
@@ -128,7 +140,7 @@ export default {
       type: Array, required: true
     },
   },
-  emits: ['update-issues', 'create-purchase'],
+  emits: ['update-issues', 'create-purchase', 'delete-purchase'],
   data: () => ({
     condition: 'do_not_change',
     isToSell: 'do_not_change',
@@ -248,6 +260,12 @@ export default {
         background-size: 12px;
         background-position-x: 10px;
         line-height: 15px;
+
+        .delete-purchase {
+          position: absolute;
+          right: 0;
+          top: calc(50% - 11px);
+        }
       }
 
       &.issue-condition:before {
@@ -281,10 +299,6 @@ export default {
       }
 
       &.v-context__sub {
-        * {
-          color: black;
-        }
-
         .item {
           line-height: 15px;
           padding-top: 10px;
@@ -295,7 +309,7 @@ export default {
         }
       }
 
-      svg {
+      > svg {
         margin-left: -24px;
         margin-right: 8px;
         font-size: 16px;

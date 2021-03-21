@@ -155,6 +155,7 @@
         :purchases="purchases"
         @update-issues="updateIssues"
         @create-purchase="createPurchase"
+        @delete-purchase="deletePurchase"
       />
     </div>
     <div v-else-if="loading">
@@ -344,6 +345,10 @@ export default {
         date,
         description
       });
+      await this.loadPurchases(true);
+    },
+    async deletePurchase({ id }) {
+      await axios.delete(`/api/collection/purchases/${id}`);
       await this.loadPurchases(true);
     }
   }
