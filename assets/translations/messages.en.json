@@ -247,7 +247,7 @@
   "Numéro en bon état : pas d'ajustement": "Issue in good condition: no change from the original quotation",
   "Numéro en mauvais état : 30% de la cote": "Issue in bad condition: 30% of the original quotation",
   "Numéro en moyen état : 70% de la cote": "Issue in not-so-good condition: 70% of the original quotation",
-  "numéro sélectionné": "selected issue",
+  "{count} numéro sélectionné|{count} numéros sélectionnés": "{count} selected issue|{count} selected issues",
   "numéro | numéros": "issue | issues",
   "Numéros déjà dans la collection": "Issues that are already in your collection",
   "Numéros manquants": "Missing issues",

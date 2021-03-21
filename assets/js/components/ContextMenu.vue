@@ -5,13 +5,7 @@
     :close-on-scroll="false"
   >
     <li class="header">
-      {{ selectedIssues.length }}
-      <template v-if="selectedIssues.length <= 1">
-        {{ $t('numéro sélectionné') }}
-      </template>
-      <template v-else>
-        {{ $t('numéros sélectionnés') }}
-      </template>
+      {{ $tc("{count} numéro sélectionné|{count} numéros sélectionnés", selectedIssues.length) }}
     </li>
     <li class="menu-separator">
       {{ $t('Etat') }}
