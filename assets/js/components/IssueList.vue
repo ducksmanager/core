@@ -77,39 +77,62 @@
           @close-book="currentIssueOpened = null"
         />
         <div
-          v-for="({issueNumber, title, condition, purchaseId}, i) in filteredIssues"
+          v-for="({issueNumber, title, userCopies}, idx) in filteredIssues"
           :key="issueNumber"
           :class="{
             issue: true,
-            [`issue-${condition ? 'possessed' : 'missing'}`]: true,
+            [`issue-${userCopies.length ? 'possessed' : 'missing'}`]: true,
             preselected: preselected.includes(issueNumber),
             selected: selected.includes(issueNumber)
           }"
           :name="issueNumber"
-          @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = i"
+          @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = idx"
           @mouseup.self.left="updateSelected"
-          @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : i"
+          @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : idx"
         >
-          <a :name="issueNumber" />
-          <b-icon-eye-fill
-            :id="`issue-details-${issueNumber}`"
-            class="preview mx-2"
-            :alt="$t('Voir')"
-            @mouseover="hoveredIssueNumber=issueNumber"
-            @mouseout="hoveredIssueNumber=null"
-            @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
-          />
-          <span
-            v-once
-            class="issue-text"
-          >
-            {{ $t('n°') }}{{ issueNumber }}
-            <span class="issue-title">{{ title }}</span>
+          <span>
+            <a :name="issueNumber" />
+            <b-icon-eye-fill
+              :id="`issue-details-${issueNumber}`"
+              class="preview mx-2"
+              :alt="$t('Voir')"
+              @mouseover="hoveredIssueNumber=issueNumber"
+              @mouseout="hoveredIssueNumber=null"
+              @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
+            />
+            <span
+              v-once
+              class="issue-text"
+            >
+              {{ $t('n°') }}{{ issueNumber }}
+              <span class="issue-title">{{ title }}</span>
+            </span>
           </span>
-          <div
-            class="issue-details-wrapper"
-          >
-            <div class="issue-details">
+          <div class="issue-details-wrapper">
+            <div class="issue-copies">
+              <div
+                v-for="({condition, purchaseId}, copyIndex) in userCopies"
+                :key="`${issueNumber}-copy-${copyIndex}`"
+                class="issue-copy"
+              >
+                <BIconCalendar
+                  v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
+                  v-once
+                  class="issue-purchase-date"
+                  :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`"
+                />
+                <Condition
+                  v-if="condition"
+                  :publicationcode="publicationcode"
+                  :issuenumber="issueNumber"
+                  :value="condition"
+                  :class="{
+                    'issue-condition': true
+                  }"
+                />
+              </div>
+            </div>
+            <div class="issue-check">
               <input
                 type="checkbox"
                 disabled
@@ -117,27 +140,6 @@
                 @click.prevent="false"
               >
             </div>
-            <Condition
-              v-if="condition"
-              :publicationcode="publicationcode"
-              :issuenumber="issueNumber"
-              :value="condition"
-              :class="{
-                'issue-details': true,
-                'issue-condition': true
-              }"
-            />
-            <div
-              v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
-              v-once
-              class="issue-details issue-date"
-            >
-              <BIconCalendar :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`" />
-            </div>
-            <div
-              v-else
-              class="issue-details"
-            />
           </div>
         </div>
         <IssueDetailsPopover
@@ -152,6 +154,7 @@
         ref="contextMenu"
         :publication-code="publicationcode"
         :selected-issues="selected"
+        :selected-issues-user-copies="userCopiesOfSelectedIssues"
         :purchases="purchases"
         @update-issues="updateIssues"
         @create-purchase="createPurchase"
@@ -260,6 +263,10 @@ export default {
         vm.filter.possessed && issue.condition ||
         vm.filter.missing && !issue.condition
       );
+    },
+    userCopiesOfSelectedIssues() {
+      const vm = this
+      return this.userIssuesForPublication.filter(({issueNumber}) => vm.selected.includes(issueNumber))
     }
   },
   watch: {
@@ -285,7 +292,7 @@ export default {
           this.issues = issuesWithTitles
             .map(issue => ({
               ...issue,
-              ...(vm.userIssuesForPublication.find(({ issueNumber: userIssueNumber }) => userIssueNumber === issue.issueNumber) || {})
+              userCopies: vm.userIssuesForPublication.filter(({ issueNumber: userIssueNumber }) => userIssueNumber === issue.issueNumber)
             }));
           const coaIssueNumbers = issuesWithTitles.map(({issueNumber}) => issueNumber)
           this.userIssuesNotFoundForPublication = this.userIssuesForPublication
@@ -380,10 +387,13 @@ export default {
   user-select: none;
 
   .issue {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
     background-color: black;
     cursor: default;
-    height: 20px;
+    min-height: 20px;
 
     &:hover {
       opacity: 0.7;
@@ -415,19 +425,37 @@ export default {
     }
 
     .issue-details-wrapper {
-      display: inline;
-      float: right;
+      display: flex;
+      align-items: center;
       padding-right: 20px;
-      padding-top: 2px;
 
-      .issue-details {
-        float: right;
-        width: 14px;
-        height: 14px;
+      .issue-check {
+        width: 15px;
+        height: 15px;
         margin-right: 5px;
+      }
 
-        &.issue-condition {
-          border-radius: 50%;
+      .issue-copies {
+        margin-right: 10px;
+
+        .issue-copy {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          height: 20px;
+          padding: 1px;
+
+          .issue-purchase-date,
+          .issue-condition {
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+          }
+
+          .issue-condition {
+            display: inline-block;
+            border-radius: 50%;
+          }
         }
       }
     }

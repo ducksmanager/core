@@ -154,6 +154,9 @@ export default {
     selectedIssues: {
       type: Array, required: true
     },
+    selectedIssuesUserCopies: {
+      type: Array, required: true
+    },
     purchases: {
       type: Array, required: true
     },
@@ -195,19 +198,43 @@ export default {
     }
   },
 
-  mounted() {
-    this.copies = [{ ...this.defaultState }]
+  watch:{
+    selectedIssues: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue.length === 1) {
+          this.copies = [...this.selectedIssuesUserCopies]
+        }
+        else {
+          this.copies = [{ ...this.defaultState }]
+        }
+      }
+    }
   },
 
   methods: {
+    convertConditionToDbValue(condition) {
+      return (this.conditions.find(({value}) => value === condition) || {dbValue: null}).dbValue
+    },
+
     async updateSelectedIssues() {
       const vm = this
+      let issueDetails = {
+        condition: this.copies.map(({condition}) => vm.convertConditionToDbValue(condition)),
+        istosell: this.copies.map(({isToSell}) => isToSell),
+        purchaseId: this.copies.map(({currentPurchaseId}) => currentPurchaseId),
+      }
+      if (this.selectedIssues.length > 1) {
+        issueDetails = Object.keys(issueDetails).reduce((acc, detailKey) => ({
+          ...acc,
+          [detailKey]: issueDetails[detailKey][0]
+        }), {})
+      }
+
       this.$emit('update-issues', {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,
-        condition: (vm.conditions.find(({value}) => value === vm.condition) || {dbValue: null}).dbValue,
-        istosell: this.isToSell,
-        purchaseId: this.currentPurchaseId
+        ...issueDetails
       })
     },
     async createPurchaseDate() {
