@@ -125,9 +125,10 @@
         <template #tabs-end>
           <b-nav-item
             v-if="!hasMaxCopies"
-            class="p-0"
+            :class="{'p-0': true, disabled: selectedIssues.length !== 1}"
             role="presentation"
-            @click="copies.push({...defaultState})"
+            :title="selectedIssues.length === 1 ? null : $t('Vous pouvez seulement ajouter un exemplaire lorsqu\'un seul numéro est sélectionné')"
+            @click="selectedIssues.length === 1 ? copies.push({...defaultState}) : () => {}"
           >
             {{ $t('Ajouter un exemplaire') }}
           </b-nav-item>
@@ -233,6 +234,14 @@ export default {
 
   li {
     padding: 0 30px;
+
+    &.disabled {
+      a {
+        background: initial;
+        border: initial;
+        cursor: not-allowed;
+      }
+    }
 
     &.item:hover, &.footer:hover {
       background-color: #4f5b69 !important;
