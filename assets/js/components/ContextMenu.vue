@@ -195,7 +195,9 @@ export default {
   computed: {
     conditionStates() {
       return {
-        do_not_change: this.$t("Conserver l'état actuel"),
+        ...(this.isEditingCopiesMode ? {} : {
+          do_not_change: this.$t("Conserver l'état actuel")
+        }),
         missing: this.$t("Marquer comme non-possédé(s)"),
         possessed: this.$t("Marquer comme possédé(s)"),
         bad: this.$t("Marquer comme en mauvais état"),
@@ -205,7 +207,9 @@ export default {
     },
     purchaseStates() {
       return {
-        do_not_change: this.$t("Conserver la date d'achat"),
+        ...(this.isEditingCopiesMode ? {} : {
+          do_not_change: this.$t("Conserver la date d'achat")
+        }),
         link: this.$t("Associer avec une date d'achat"),
         unlink: this.$t("Désassocier de la date d'achat")
       }
