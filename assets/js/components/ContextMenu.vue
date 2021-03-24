@@ -7,6 +7,13 @@
     <li class="header">
       {{ $tc("{count} numéro sélectionné|{count} numéros sélectionnés", selectedIssues.length) }}
     </li>
+    <b-alert
+      v-if="!copies.length"
+      class="text-center m-0"
+      show
+      variant="danger"
+      v-html="$t('Vous allez retirer tous les exemplaires<br />des numéros sélectionnés')"
+    />
     <b-tabs
       v-model="currentCopyIndex"
       nav-class="copies-tabs"
@@ -17,7 +24,7 @@
       >
         <template #title>
           Copy {{ copyIndex + 1 }}
-          <b-icon-trash @click="copies.splice(copyIndex, 1)" />
+          <b-icon-trash @click.stop.prevent="copies.splice(copyIndex, 1)" />
         </template>
         <ul class="position-static border-0 shadow-none p-0">
           <li class="menu-separator">
@@ -26,7 +33,7 @@
           <li
             v-for="(text, id) in conditionStates"
             :key="`condition-${id}`"
-            :class="{item: true, selected: copy.condition === id, 'issue-condition': true, [`issue-condition-${id}`]: true}"
+            :class="{item: true, clickable: true, selected: copy.condition === id, 'issue-condition': true, [`issue-condition-${id}`]: true}"
             @click="copy.condition = id"
           >
             {{ text }}
@@ -37,7 +44,7 @@
           <li
             v-for="(purchaseStateText, purchaseStateId) in purchaseStates"
             :key="`copy-${copyIndex}-purchase-state-${purchaseStateId}`"
-            :class="{item: true, selected: copy.currentPurchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
+            :class="{item: true, clickable: true, selected: copy.currentPurchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
             @click="copy.currentPurchaseId = purchaseStateId"
           >
             <b-icon-calendar v-if="purchaseStateId === 'link'" />
@@ -96,7 +103,7 @@
               <li
                 v-for="{id: purchaseId, date, description} in purchases"
                 :key="`copy-${copyIndex}-purchase-${purchaseId}`"
-                :class="{item: true, selected: copy.currentPurchaseId === purchaseId, 'purchase-date': true}"
+                :class="{item: true, clickable: true, selected: copy.currentPurchaseId === purchaseId, 'purchase-date': true}"
                 class="item purchase-date"
                 @click.stop="copy.currentPurchaseId = purchaseId"
               >
@@ -113,26 +120,36 @@
               </li>
             </ul>
           </li>
-          <li
-            class="footer"
-            @click="updateSelectedIssues"
-          >
-            {{ $t('Enregistrer les changements') }}
-          </li>
         </ul>
       </b-tab>
-      <template #tabs-end>
+      <template
+        v-if="!hasMaxCopies"
+        #tabs-end
+      >
         <b-nav-item
-          v-if="!hasMaxCopies"
-          :class="{'p-0': true, disabled: selectedIssues.length !== 1}"
+          v-if="isSingleIssueSelected || hasNoCopies"
+          class="p-0"
           role="presentation"
-          :title="selectedIssues.length === 1 ? '' : $t('Vous pouvez seulement ajouter un exemplaire lorsqu\'un seul numéro est sélectionné')"
-          @click="selectedIssues.length === 1 ? copies.push({...defaultState}) : () => {}"
+          @click="copies.push({...defaultState})"
+        >
+          {{ $t('Ajouter un exemplaire') }}
+        </b-nav-item>
+        <b-nav-item
+          v-else
+          class="p-0 disabled text-secondary"
+          role="presentation"
+          :title="$t('Vous pouvez seulement ajouter un exemplaire lorsqu\'un seul numéro est sélectionné')"
         >
           {{ $t('Ajouter un exemplaire') }}
         </b-nav-item>
       </template>
     </b-tabs>
+    <li
+      class="footer clickable"
+      @click="updateSelectedIssues"
+    >
+      {{ $t('Enregistrer les changements') }}
+    </li>
   </vue-context>
 </template>
 
@@ -193,8 +210,17 @@ export default {
         unlink: this.$t("Désassocier de la date d'achat")
       }
     },
+    isSingleIssueSelected() {
+      return this.selectedIssues.length === 1
+    },
+    hasNoCopies() {
+      return !this.copies.length
+    },
     hasMaxCopies() {
       return this.copies.length >= 3
+    },
+    isEditingCopiesMode() {
+      return this.isSingleIssueSelected && this.selectedIssuesUserCopies.length
     }
   },
 
@@ -202,7 +228,7 @@ export default {
     selectedIssues: {
       immediate: true,
       handler(newValue) {
-        if (newValue.length === 1) {
+        if (newValue.length === 1 && this.selectedIssuesUserCopies.length) {
           this.copies = [...this.selectedIssuesUserCopies]
         }
         else {
@@ -224,7 +250,7 @@ export default {
         istosell: this.copies.map(({isToSell}) => isToSell),
         purchaseId: this.copies.map(({currentPurchaseId}) => currentPurchaseId),
       }
-      if (this.selectedIssues.length > 1) {
+      if (!this.isEditingCopiesMode) {
         issueDetails = Object.keys(issueDetails).reduce((acc, detailKey) => ({
           ...acc,
           [detailKey]: issueDetails[detailKey][0]
@@ -255,6 +281,7 @@ export default {
     position: initial;
     display: flex;
     padding-bottom: 0;
+    padding-top: 0;
   }
 
   li {
@@ -264,11 +291,12 @@ export default {
       a {
         background: initial;
         border: initial;
+        color: inherit;
         cursor: not-allowed;
       }
     }
 
-    &.item:hover, &.footer:hover {
+    &.clickable:hover {
       background-color: #4f5b69 !important;
       color: #fff;
       cursor: pointer;
