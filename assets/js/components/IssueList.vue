@@ -152,6 +152,7 @@
       <ContextMenu
         v-if="purchases"
         ref="contextMenu"
+        :key="contextMenuKey"
         :publication-code="publicationcode"
         :selected-issues="selected"
         :selected-issues-user-copies="userCopiesOfSelectedIssues"
@@ -159,6 +160,7 @@
         @update-issues="updateIssues"
         @create-purchase="createPurchase"
         @delete-purchase="deletePurchase"
+        @close="contextMenuKey = `context-menu-${Math.random()}`"
       />
     </div>
     <div v-else-if="loading">
@@ -243,7 +245,8 @@ export default {
     preselectedIndexStart: null,
     preselectedIndexEnd: null,
     hoveredIssueNumber: null,
-    currentIssueOpened: null
+    currentIssueOpened: null,
+    contextMenuKey: 'context-menu'
   }),
   computed: {
     ...mapState("coa", ["publicationNames"]),

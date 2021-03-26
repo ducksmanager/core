@@ -3,6 +3,7 @@
     ref="menu"
     :close-on-click="false"
     :close-on-scroll="false"
+    @close="$emit('close')"
   >
     <li class="header">
       {{ $tc("{count} numéro sélectionné|{count} numéros sélectionnés", selectedIssues.length) }}
@@ -178,7 +179,7 @@ export default {
       type: Array, required: true
     },
   },
-  emits: ['update-issues', 'create-purchase', 'delete-purchase'],
+  emits: ['update-issues', 'create-purchase', 'delete-purchase', 'close'],
   data: () => ({
     defaultState: {
       condition: 'do_not_change',
