@@ -45,8 +45,8 @@
           <li
             v-for="(purchaseStateText, purchaseStateId) in purchaseStates"
             :key="`copy-${copyIndex}-purchase-state-${purchaseStateId}`"
-            :class="{item: true, clickable: true, selected: copy.currentPurchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
-            @click="copy.currentPurchaseId = purchaseStateId"
+            :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
+            @click="copy.purchaseId = purchaseStateId"
           >
             <b-icon-calendar v-if="purchaseStateId === 'link'" />
             <b-icon-calendar-x v-if="purchaseStateId === 'unlink'" />
@@ -104,9 +104,9 @@
               <li
                 v-for="{id: purchaseId, date, description} in purchases"
                 :key="`copy-${copyIndex}-purchase-${purchaseId}`"
-                :class="{item: true, clickable: true, selected: copy.currentPurchaseId === purchaseId, 'purchase-date': true}"
+                :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseId, 'purchase-date': true}"
                 class="item purchase-date"
-                @click.stop="copy.currentPurchaseId = purchaseId"
+                @click.stop="copy.purchaseId = purchaseId"
               >
                 <b>{{ description }}</b><br>{{ date }}<b-btn
                   class="delete-purchase btn-sm"
@@ -164,6 +164,7 @@ export default {
   components: {
     VueContext
   },
+
   mixins: [l10nMixin, conditionMixin],
   props: {
     publicationCode: {
@@ -184,7 +185,7 @@ export default {
     defaultState: {
       condition: 'do_not_change',
       isToSell: 'do_not_change',
-      currentPurchaseId: 'do_not_change',
+      purchaseId: 'do_not_change',
     },
     newPurchaseContext: false,
     newPurchaseDescription: '',
@@ -196,7 +197,7 @@ export default {
   computed: {
     conditionStates() {
       return {
-        ...(this.isEditingCopiesMode ? {} : {
+        ...(this.isSingleIssueSelected ? {} : {
           do_not_change: this.$t("Conserver l'état actuel")
         }),
         missing: this.$t("Marquer comme non-possédé(s)"),
@@ -208,7 +209,7 @@ export default {
     },
     purchaseStates() {
       return {
-        ...(this.isEditingCopiesMode ? {} : {
+        ...(this.isSingleIssueSelected ? {} : {
           do_not_change: this.$t("Conserver la date d'achat")
         }),
         link: this.$t("Associer avec une date d'achat"),
@@ -233,11 +234,14 @@ export default {
     selectedIssues: {
       immediate: true,
       handler(newValue) {
-        if (newValue.length === 1 && this.selectedIssuesUserCopies.length) {
-          this.copies = [...this.selectedIssuesUserCopies]
-        }
-        else {
-          this.copies = [{ ...this.defaultState }]
+        if (newValue.length === 1) {
+          if (this.selectedIssuesUserCopies.length) {
+            this.copies = [...this.selectedIssuesUserCopies];
+          } else {
+            this.copies = [{ ...this.defaultState, condition: 'missing' }];
+          }
+        } else {
+          this.copies = [{ ...this.defaultState }];
         }
       }
     }
@@ -253,7 +257,7 @@ export default {
       let issueDetails = {
         condition: this.copies.map(({condition}) => vm.convertConditionToDbValue(condition)),
         istosell: this.copies.map(({isToSell}) => isToSell),
-        purchaseId: this.copies.map(({currentPurchaseId}) => currentPurchaseId),
+        purchaseId: this.copies.map(({purchaseId}) => purchaseId),
       }
       if (!this.isEditingCopiesMode) {
         issueDetails = Object.keys(issueDetails).reduce((acc, detailKey) => ({
