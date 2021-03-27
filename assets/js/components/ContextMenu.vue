@@ -281,6 +281,7 @@ export default {
         }), {});
       }
 
+      this.$refs.menu.close();
       this.$emit("update-issues", {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,

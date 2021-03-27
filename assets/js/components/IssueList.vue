@@ -362,6 +362,7 @@ export default {
     async updateIssues(data) {
       await axios.post("/api/collection/issues", data);
       await this.loadCollection(true);
+      this.selected = []
     },
     async createPurchase({ date, description }) {
       await axios.post("/api/collection/purchases", {
