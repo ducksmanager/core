@@ -6,12 +6,13 @@
   >
     <span
       v-for="edge in edgesToLoad"
-      :key="getEdgeKey(edge)"
+      :key="`edge-wrapper-${edge.id}`"
     >
       <Edge
         v-once
-        :ref="`edge-${getEdgeKey(edge)}`"
-        :key="getEdgeKey(edge)"
+        :id="edge.id"
+        :ref="`edge-${edge.id}`"
+        :key="`edge-${edge.id}`"
         :publication-code="edge.publicationCode"
         :issue-number="edge.issueNumber"
         existing
@@ -27,12 +28,13 @@
   >
     <span
       v-for="edge in edgesToLoad"
-      :key="getEdgeKey(edge)"
+      :key="`edge-wrapper-${edge.id}`"
     >
       <Edge
-        :ref="`edge-${getEdgeKey(edge)}`"
+        :id="edge.id"
+        :ref="`edge-${edge.id}`"
         :invisible="currentEdgeOpened === edge"
-        :highlighted="currentEdgeHighlighted === getEdgeKey(edge)"
+        :highlighted="currentEdgeHighlighted === edge.id"
         :publication-code="edge.publicationCode"
         :issue-number="edge.issueNumber"
         :issue-number-reference="edge.issueNumberReference"
@@ -55,6 +57,10 @@ export default {
   components: {Edge},
   props: {
     embedded: {
+      type: Boolean,
+      default: false
+    },
+    withAllCopies: {
       type: Boolean,
       default: false
     },
@@ -100,8 +106,6 @@ export default {
   },
 
   methods: {
-    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
-
     loadNextEdge() {
       const nextEdge = this.sortedBookcase[++this.currentEdgeIndex];
       if (nextEdge) {

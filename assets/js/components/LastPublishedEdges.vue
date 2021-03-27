@@ -15,7 +15,7 @@
     <template #content>
       <div
         v-for="edge in publishedEdgesSincePreviousVisit"
-        :key="`last-published-${getEdgeKey(edge)}`"
+        :key="`last-published-${edge.id}`"
       >
         <Issue
           :publicationcode="edge.publicationcode"
@@ -68,9 +68,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("collection", ["loadLastPublishedEdgesForCurrentUser"]),
-
-    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
+    ...mapActions("collection", ["loadLastPublishedEdgesForCurrentUser"])
   }
 }
 </script>

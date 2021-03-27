@@ -8,7 +8,7 @@
         {{ $t('Dernières tranches de votre collection ajoutées :') }}
         <div
           v-for="edge in lastPublishedEdgesForCurrentUser"
-          :key="`last-published-${getEdgeKey(edge)}`"
+          :key="`last-published-${edge.id}`"
         >
           <Issue
             :publicationcode="edge.publicationcode"
@@ -125,7 +125,8 @@
       />
       <Bookcase
         v-if="sortedBookcase && sortedBookcase.length"
-        :bookcase-textures="bookcaseTextures"
+        :bookcase-textures="bookcaseOptions.textures"
+        :with-all-copies="bookcaseOptions.showAllCopies"
         :current-edge-highlighted="currentEdgeHighlighted"
         :current-edge-opened="currentEdgeOpened"
         :edges-using-sprites="edgesUsingSprites"
@@ -174,7 +175,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("bookcase", ["bookcaseTextures", "bookcaseOrder", "isPrivateBookcase", "isUserNotExisting"]),
+    ...mapState("bookcase", ["bookcaseOptions", "bookcaseOrder", "isPrivateBookcase", "isUserNotExisting"]),
     ...mapState("collection", ["user", "lastPublishedEdgesForCurrentUser"]),
     ...mapGetters("collection", ["popularIssuesInCollectionWithoutEdge"]),
     ...mapState("coa", ["publicationNames", "issueNumbers"]),
@@ -187,7 +188,7 @@ export default {
     },
 
     loading() {
-      return !this.isPrivateBookcase && !this.isUserNotExisting && !(this.sortedBookcase && this.bookcaseTextures && this.edgesUsingSprites)
+      return !this.isPrivateBookcase && !this.isUserNotExisting && !(this.sortedBookcase && this.bookcaseOptions && this.edgesUsingSprites)
     },
 
     userPoints() {
@@ -255,7 +256,7 @@ export default {
       immediate: true,
       async handler(newValue) {
         if (newValue) {
-          await this.loadBookcaseTextures()
+          await this.loadBookcaseOptions()
           await this.loadBookcaseOrder()
           await this.fetchStats([this.userId])
 
@@ -302,18 +303,16 @@ export default {
   methods: {
     ...mapMutations("bookcase", ["setBookcaseUsername"]),
     ...mapMutations("coa", ["addIssueNumbers"]),
-    ...mapActions("bookcase", ["loadBookcase", "loadBookcaseTextures", "loadBookcaseOrder"]),
+    ...mapActions("bookcase", ["loadBookcase", "loadBookcaseOptions", "loadBookcaseOrder"]),
     ...mapActions("collection", ["loadPopularIssuesInCollection", "loadLastPublishedEdgesForCurrentUser", "loadUser"]),
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
     ...mapActions("users", ["fetchStats"]),
 
-    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
-
     highlightIssue(issue) {
-      this.currentEdgeHighlighted = this.getEdgeKey(this.bookcase.find(issueInCollection =>
+      this.currentEdgeHighlighted = this.bookcase.find(issueInCollection =>
         issue.publicationcode === issueInCollection.publicationCode &&
         issue.issuenumber === issueInCollection.issueNumber
-      ))
+      ).id
     }
   }
 }

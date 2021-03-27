@@ -10,7 +10,7 @@ export default {
     isUserNotExisting: false,
     bookcaseUsername: null,
     bookcase: null,
-    bookcaseTextures: null,
+    bookcaseOptions: null,
     bookcaseOrder: null,
 
     edgeIndexToLoad: 0
@@ -26,8 +26,8 @@ export default {
     setBookcaseUsername(state, bookcaseUsername) {
       state.bookcaseUsername = bookcaseUsername
     },
-    setBookcaseTextures(state, bookcaseTextures) {
-      state.bookcaseTextures = bookcaseTextures
+    setBookcaseOptions(state, bookcaseOptions) {
+      state.bookcaseOptions = bookcaseOptions
     },
     setBookcaseOrder(state, bookcaseOrder) {
       state.bookcaseOrder = bookcaseOrder
@@ -79,13 +79,13 @@ export default {
         }
       }
     },
-    loadBookcaseTextures: async ({state, commit}) => {
-      if (!state.bookcaseTextures) {
-        commit("setBookcaseTextures", (await axios.get(`/api/bookcase/${state.bookcaseUsername}/textures`)).data)
+    loadBookcaseOptions: async ({state, commit}) => {
+      if (!state.bookcaseOptions) {
+        commit("setBookcaseOptions", (await axios.get(`/api/bookcase/${state.bookcaseUsername}/options`)).data)
       }
     },
-    updateBookcaseTextures: async ({state}) => {
-      await axios.post(`/api/bookcase/textures`, state.bookcaseTextures)
+    updateBookcaseOptions: async ({state}) => {
+      await axios.post(`/api/bookcase/options`, state.bookcaseOptions)
     },
 
     loadBookcaseOrder: async ({state, commit}) => {

@@ -11,27 +11,37 @@
       :key="textureType"
     >
       <h5>{{ textureText }}</h5>
-      <b-dropdown v-model="bookcaseTextures[textureType]">
+      <b-dropdown v-model="bookcaseOptions.textures[textureType]">
         <template #button-content>
           <div
             class="selected"
-            :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures[textureType]}.jpg'`}"
+            :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseOptions.textures[textureType]}.jpg'`}"
           >
-            {{ textureWithoutSuperType(bookcaseTextures[textureType]) }}
+            {{ textureWithoutSuperType(bookcaseOptions.textures[textureType]) }}
           </div>
         </template>
         <b-dropdown-item
           v-for="texture in textures"
           :key="texture"
           :style="{backgroundImage: `url('${imagePath}/textures/${texture}.jpg'`}"
-          @click="bookcaseTextures[textureType] = texture"
+          @click="bookcaseOptions.textures[textureType] = texture"
         >
           {{ textureWithoutSuperType(texture) }}
         </b-dropdown-item>
       </b-dropdown>
     </div>
 
-    <h5 v-if="Object.keys(bookcaseOrder).length">
+    <h5 class="mt-4 mb-3">
+      {{ $t("Affichage des exemplaires multiples") }}
+    </h5>
+    <b-form-checkbox v-model="bookcaseOptions.showAllCopies">
+      {{ $t('Show all the issue copies that I possess') }}
+    </b-form-checkbox>
+
+    <h5
+      v-if="Object.keys(bookcaseOrder).length"
+      class="mt-4 mb-3"
+    >
       {{ $t("Ordre des magazines") }}
     </h5>
 
@@ -58,6 +68,7 @@
       {{ $t("Une erreur s'est produite.") }}
     </b-alert>
     <b-btn
+      class="mt-4"
       variant="success"
       :disabled="loading"
       @click="submit"
@@ -137,7 +148,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("bookcase", ["bookcaseTextures"]),
+    ...mapState("bookcase", ["bookcaseOptions"]),
     ...mapState("coa", ["publicationNames"]),
     textureTypes() {
       return {
@@ -167,11 +178,11 @@ export default {
 
   methods: {
     ...mapMutations("bookcase", ["setBookcaseUsername", "setBookcaseOrder"]),
-    ...mapActions("bookcase", ["loadBookcaseTextures", "loadBookcaseOrder", "updateBookcaseTextures", "updateBookcaseOrder"]),
+    ...mapActions("bookcase", ["loadBookcaseOptions", "loadBookcaseOrder", "updateBookcaseOptions", "updateBookcaseOrder"]),
     ...mapActions("coa", ["fetchPublicationNames"]),
 
     async loadData() {
-      await this.loadBookcaseTextures();
+      await this.loadBookcaseOptions();
       await this.loadBookcaseOrder();
       this.loading = false;
     },
@@ -180,7 +191,7 @@ export default {
       this.error = false;
       this.loading = true;
       try {
-        await this.updateBookcaseTextures();
+        await this.updateBookcaseOptions();
         await this.updateBookcaseOrder();
         await this.loadData();
       } catch {

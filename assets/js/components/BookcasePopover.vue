@@ -13,7 +13,7 @@
     <slot name="footer">
       <Issue
         v-for="edge in edges"
-        :key="getEdgeKey(edge)"
+        :key="edge.id"
         class="issue"
         :publicationname="publicationNames[edge.publicationCode]"
         :publicationcode="edge.publicationCode"
@@ -49,10 +49,6 @@ export default {
 
   computed: {
     ...mapState("coa", ["publicationNames"]),
-  },
-
-  methods: {
-    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
   }
 }
 </script>

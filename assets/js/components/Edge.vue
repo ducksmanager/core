@@ -57,6 +57,10 @@ export default {
   components: {Issue, IssueEdgePopover},
   mixins: [l10nMixin],
   props: {
+    id: {
+      type: String,
+      required: true
+    },
     publicationCode: {
       type: String,
       required: true
@@ -118,10 +122,6 @@ export default {
 
     magazineCode() {
       return this.publicationCode.split('/')[1]
-    },
-
-    id() {
-      return `${this.publicationCode} ${this.issueNumber}`
     },
 
     src() {
