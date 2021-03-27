@@ -9,23 +9,30 @@
       {{ $tc("{count} numéro sélectionné|{count} numéros sélectionnés", selectedIssues.length) }}
     </li>
     <b-alert
-      v-if="!copies.length"
+      v-if="!editingCopies.length"
       class="text-center m-0"
       show
       variant="danger"
       v-html="$t('Vous allez retirer tous les exemplaires<br />des numéros sélectionnés')"
+    />
+    <b-alert
+      v-if="copies.length && !isSingleIssueSelected"
+      class="text-center m-0"
+      show
+      variant="warning"
+      v-html="$t('Vous possédez certains numéros sélectionnés<br />en plusieurs exemplaires.<br />Seul le premier exemplaire sera modifié.')"
     />
     <b-tabs
       v-model="currentCopyIndex"
       nav-class="copies-tabs"
     >
       <b-tab
-        v-for="(copy, copyIndex) in copies"
+        v-for="(copy, copyIndex) in editingCopies"
         :key="`copy-${copyIndex}`"
       >
         <template #title>
           Copy {{ copyIndex + 1 }}
-          <b-icon-trash @click.stop.prevent="copies.splice(copyIndex, 1)" />
+          <b-icon-trash @click.stop.prevent="editingCopies.splice(copyIndex, 1)" />
         </template>
         <ul class="position-static border-0 shadow-none p-0">
           <li class="menu-separator">
@@ -131,7 +138,7 @@
           v-if="isSingleIssueSelected || hasNoCopies"
           class="p-0"
           role="presentation"
-          @click="copies.push({...defaultState})"
+          @click="editingCopies.push({...defaultState})"
         >
           {{ $t('Ajouter un exemplaire') }}
         </b-nav-item>
@@ -173,7 +180,7 @@ export default {
     selectedIssues: {
       type: Array, required: true
     },
-    selectedIssuesUserCopies: {
+    copies: {
       type: Array, required: true
     },
     purchases: {
@@ -190,7 +197,7 @@ export default {
     newPurchaseContext: false,
     newPurchaseDescription: '',
     newPurchaseDate: '',
-    copies: [],
+    editingCopies: [],
     currentCopyIndex: 0
   }),
 
@@ -220,34 +227,40 @@ export default {
       return this.selectedIssues.length === 1
     },
     hasNoCopies() {
-      return !this.copies.length
+      return !this.editingCopies.length
     },
     hasMaxCopies() {
-      return this.copies.length >= 3
-    },
-    isEditingCopiesMode() {
-      return this.isSingleIssueSelected && this.selectedIssuesUserCopies.length
+      return this.editingCopies.length >= 3
     }
   },
 
   watch:{
     selectedIssues: {
       immediate: true,
-      handler(newValue) {
-        if (newValue.length === 1) {
-          if (this.selectedIssuesUserCopies.length) {
-            this.copies = [...this.selectedIssuesUserCopies];
-          } else {
-            this.copies = [{ ...this.defaultState, condition: 'missing' }];
-          }
-        } else {
-          this.copies = [{ ...this.defaultState }];
-        }
+      handler() {
+        this.updateEditingCopies()
+      }
+    },
+    copies: {
+      immediate: true,
+      handler() {
+        this.updateEditingCopies()
       }
     }
   },
 
   methods: {
+    updateEditingCopies() {
+      if (this.selectedIssues.length === 1) {
+        if (this.copies.length) {
+          this.editingCopies = JSON.parse(JSON.stringify(this.copies));
+        } else {
+          this.editingCopies = [{ ...this.defaultState, condition: 'missing' }];
+        }
+      } else {
+        this.editingCopies = [{ ...this.defaultState }];
+      }
+    },
     convertConditionToDbValue(condition) {
       return (this.conditions.find(({value}) => value === condition) || {dbValue: null}).dbValue
     },
@@ -255,11 +268,11 @@ export default {
     async updateSelectedIssues() {
       const vm = this
       let issueDetails = {
-        condition: this.copies.map(({condition}) => vm.convertConditionToDbValue(condition)),
-        istosell: this.copies.map(({isToSell}) => isToSell),
-        purchaseId: this.copies.map(({purchaseId}) => purchaseId),
+        condition: this.editingCopies.map(({condition}) => vm.convertConditionToDbValue(condition)),
+        istosell: this.editingCopies.map(({isToSell}) => isToSell),
+        purchaseId: this.editingCopies.map(({purchaseId}) => purchaseId),
       }
-      if (!this.isEditingCopiesMode) {
+      if (!this.isSingleIssueSelected) {
         issueDetails = Object.keys(issueDetails).reduce((acc, detailKey) => ({
           ...acc,
           [detailKey]: issueDetails[detailKey][0]

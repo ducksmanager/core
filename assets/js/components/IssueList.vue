@@ -26,8 +26,9 @@
               <label
                 :for="`show-${conditionFilter}`"
               >
-                <template v-if="conditionFilter === 'possessed'">{{ $t('Afficher les numéros possédés') }}</template>
-                <template v-else-if="conditionFilter === 'missing'">{{ $t('Afficher les numéros manquants') }}</template>
+                <template v-if="conditionFilter === 'possessed'">{{ $t("Afficher les numéros possédés") }}</template>
+                <template v-else-if="conditionFilter === 'missing'">{{ $t("Afficher les numéros manquants") }}
+                </template>
                 ({{
                   issues.filter(issue => conditionFilter === "possessed" ? issue.condition : !issue.condition).length
                 }})
@@ -45,17 +46,19 @@
           show
           variant="warning"
         >
-          {{ $t('Certains des numéros que vous possédez pour ce magazine n\'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n\'existant plus, trouvez le numéro de remplacement, puis supprimez l\'ancien numéro en cliquant sur le bouton correspondant ci-dessous.') }}
+          {{ $t("Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous.")
+          }}
           <ul>
             <li
               v-for="issueNotFound in userIssuesNotFoundForPublication"
               :key="`notfound-${issueNotFound}`"
             >
-              {{ $t('n°') }}{{ issueNotFound.issueNumber }} <b-btn
+              {{ $t("n°") }}{{ issueNotFound.issueNumber }}
+              <b-btn
                 size="sm"
                 @click="deletePublicationIssues([issueNotFound])"
               >
-                {{ $t('Supprimer') }}
+                {{ $t("Supprimer") }}
               </b-btn>
             </li>
           </ul>
@@ -66,9 +69,9 @@
           variant="info"
           class="mb-0"
         >
-          {{ $t('Cliquez sur les numéros que vous souhaitez ajouter à votre collection,') }}
-          <span v-if="isTouchScreen">{{ $t('puis faites un appui long pour indiquer son état et validez.') }}</span>
-          <span v-else>{{ $t('puis faites un clic droit pour indiquer son état et validez.') }}</span>
+          {{ $t("Cliquez sur les numéros que vous souhaitez ajouter à votre collection,") }}
+          <span v-if="isTouchScreen">{{ $t("puis faites un appui long pour indiquer son état et validez.") }}</span>
+          <span v-else>{{ $t("puis faites un clic droit pour indiquer son état et validez.") }}</span>
         </b-alert>
         <Book
           v-if="currentIssueOpened"
@@ -104,7 +107,7 @@
               v-once
               class="issue-text"
             >
-              {{ $t('n°') }}{{ issueNumber }}
+              {{ $t("n°") }}{{ issueNumber }}
               <span class="issue-title">{{ title }}</span>
             </span>
           </span>
@@ -155,7 +158,7 @@
         :key="contextMenuKey"
         :publication-code="publicationcode"
         :selected-issues="selected"
-        :selected-issues-user-copies="userCopiesOfSelectedIssues"
+        :copies="selectedIssuesCopies"
         :purchases="purchases"
         @update-issues="updateIssues"
         @create-purchase="createPurchase"
@@ -164,7 +167,7 @@
       />
     </div>
     <div v-else-if="loading">
-      {{ $t('Chargement...') }}
+      {{ $t("Chargement...") }}
     </div>
   </div>
   <div v-else-if="!publicationNameLoading">
@@ -173,12 +176,14 @@
       show
     >
       <div class="mb-4">
-        {{ $t('Aucun numéro n\'est répertorié pour') }} {{ publicationcode.split("/")[1] }} ({{ $t('Pays de publication') }} : {{
+        {{ $t("Aucun numéro n'est répertorié pour") }} {{ publicationcode.split("/")[1] }}
+        ({{ $t("Pays de publication") }} : {{
           country
         }})
       </div>
       <div v-if="userIssuesForPublication.length">
-        {{ $t('Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :') }}
+        {{ $t("Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :")
+        }}
         <ul>
           <li
             v-for="issue in userIssuesForPublication"
@@ -191,7 +196,7 @@
           variant="danger"
           @click="deletePublicationIssues(userIssuesForPublication)"
         >
-          {{ $t('Supprimer') }}
+          {{ $t("Supprimer") }}
         </b-btn>
       </div>
     </b-alert>
@@ -246,7 +251,7 @@ export default {
     preselectedIndexEnd: null,
     hoveredIssueNumber: null,
     currentIssueOpened: null,
-    contextMenuKey: 'context-menu'
+    contextMenuKey: "context-menu"
   }),
   computed: {
     ...mapState("coa", ["publicationNames"]),
@@ -267,9 +272,17 @@ export default {
         vm.filter.missing && !issue.condition
       );
     },
-    userCopiesOfSelectedIssues() {
-      const vm = this
-      return this.userIssuesForPublication.filter(({issueNumber}) => vm.selected.includes(issueNumber))
+    selectedIssuesCopies() {
+      const vm = this;
+      return this.userIssuesForPublication
+        .filter(({ issueNumber }, idx) =>
+          vm.selected.includes(issueNumber) &&
+          (vm.selected.length === 1 ||
+            vm.userIssuesForPublication
+              .some(({ issueNumber: issueNumber2 }, idx2) =>
+                issueNumber2 === issueNumber && idx !== idx2
+              ))
+        );
     }
   },
   watch: {
@@ -297,9 +310,9 @@ export default {
               ...issue,
               userCopies: vm.userIssuesForPublication.filter(({ issueNumber: userIssueNumber }) => userIssueNumber === issue.issueNumber)
             }));
-          const coaIssueNumbers = issuesWithTitles.map(({issueNumber}) => issueNumber)
+          const coaIssueNumbers = issuesWithTitles.map(({ issueNumber }) => issueNumber);
           this.userIssuesNotFoundForPublication = this.userIssuesForPublication
-            .filter(({ issueNumber }) => !coaIssueNumbers.includes(issueNumber))
+            .filter(({ issueNumber }) => !coaIssueNumbers.includes(issueNumber));
           this.loading = false;
         }
       }
