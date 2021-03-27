@@ -25,6 +25,7 @@
     <b-tabs
       v-model="currentCopyIndex"
       nav-class="copies-tabs"
+      @changed="(newTabs) => { currentCopyIndex = newTabs.length - 1 }"
     >
       <b-tab
         v-for="(copy, copyIndex) in editingCopies"
@@ -36,7 +37,7 @@
         </template>
         <ul class="position-static border-0 shadow-none p-0">
           <li class="menu-separator">
-            {{ $t('Etat') }}
+            {{ $t("Etat") }}
           </li>
           <li
             v-for="(text, id) in conditionStates"
@@ -47,7 +48,7 @@
             {{ text }}
           </li>
           <li class="menu-separator">
-            {{ $t('Date d\'achat') }}
+            {{ $t("Date d'achat") }}
           </li>
           <li
             v-for="(purchaseStateText, purchaseStateId) in purchaseStates"
@@ -67,7 +68,7 @@
                   v-if="!copy.newPurchaseContext"
                   @click="copy.newPurchaseContext = !copy.newPurchaseContext"
                 >
-                  {{ $t('Nouvelle date d\'achat...') }}
+                  {{ $t("Nouvelle date d'achat...") }}
                 </h5>
                 <template v-else>
                   <input
@@ -98,13 +99,13 @@
                       copy.newPurchaseDescription = copy.newPurchaseDate = null
                       copy.newPurchaseContext = false"
                   >
-                    {{ $t('Créer') }}
+                    {{ $t("Créer") }}
                   </b-btn>
                   <b-btn
                     class="cancel"
                     @click="copy.newPurchaseContext = false"
                   >
-                    {{ $t('Annuler') }}
+                    {{ $t("Annuler") }}
                   </b-btn>
                 </template>
               </li>
@@ -115,7 +116,8 @@
                 class="item purchase-date"
                 @click.stop="copy.purchaseId = purchaseId"
               >
-                <b>{{ description }}</b><br>{{ date }}<b-btn
+                <b>{{ description }}</b><br>{{ date }}
+                <b-btn
                   class="delete-purchase btn-sm"
                   :title="$t('Supprimer')"
                   @click="
@@ -140,7 +142,7 @@
           role="presentation"
           @click="editingCopies.push({...defaultState})"
         >
-          {{ $t('Ajouter un exemplaire') }}
+          {{ $t("Ajouter un exemplaire") }}
         </b-nav-item>
         <b-nav-item
           v-else
@@ -148,7 +150,7 @@
           role="presentation"
           :title="$t('Vous pouvez seulement ajouter un exemplaire lorsqu\'un seul numéro est sélectionné')"
         >
-          {{ $t('Ajouter un exemplaire') }}
+          {{ $t("Ajouter un exemplaire") }}
         </b-nav-item>
       </template>
     </b-tabs>
@@ -156,7 +158,7 @@
       class="footer clickable"
       @click="updateSelectedIssues"
     >
-      {{ $t('Enregistrer les changements') }}
+      {{ $t("Enregistrer les changements") }}
     </li>
   </vue-context>
 </template>
@@ -185,18 +187,18 @@ export default {
     },
     purchases: {
       type: Array, required: true
-    },
+    }
   },
-  emits: ['update-issues', 'create-purchase', 'delete-purchase', 'close'],
+  emits: ["update-issues", "create-purchase", "delete-purchase", "close"],
   data: () => ({
     defaultState: {
-      condition: 'do_not_change',
-      isToSell: 'do_not_change',
-      purchaseId: 'do_not_change',
+      condition: "do_not_change",
+      isToSell: "do_not_change",
+      purchaseId: "do_not_change"
     },
     newPurchaseContext: false,
-    newPurchaseDescription: '',
-    newPurchaseDate: '',
+    newPurchaseDescription: "",
+    newPurchaseDate: "",
     editingCopies: [],
     currentCopyIndex: 0
   }),
@@ -212,7 +214,7 @@ export default {
         bad: this.$t("Marquer comme en mauvais état"),
         notsogood: this.$t("Marquer comme en état moyen"),
         good: this.$t("Marquer comme en bon état")
-      }
+      };
     },
     purchaseStates() {
       return {
@@ -221,30 +223,30 @@ export default {
         }),
         link: this.$t("Associer avec une date d'achat"),
         unlink: this.$t("Désassocier de la date d'achat")
-      }
+      };
     },
     isSingleIssueSelected() {
-      return this.selectedIssues.length === 1
+      return this.selectedIssues.length === 1;
     },
     hasNoCopies() {
-      return !this.editingCopies.length
+      return !this.editingCopies.length;
     },
     hasMaxCopies() {
-      return this.editingCopies.length >= 3
+      return this.editingCopies.length >= 3;
     }
   },
 
-  watch:{
+  watch: {
     selectedIssues: {
       immediate: true,
       handler() {
-        this.updateEditingCopies()
+        this.updateEditingCopies();
       }
     },
     copies: {
       immediate: true,
       handler() {
-        this.updateEditingCopies()
+        this.updateEditingCopies();
       }
     }
   },
@@ -255,44 +257,44 @@ export default {
         if (this.copies.length) {
           this.editingCopies = JSON.parse(JSON.stringify(this.copies));
         } else {
-          this.editingCopies = [{ ...this.defaultState, condition: 'missing' }];
+          this.editingCopies = [{ ...this.defaultState, condition: "missing" }];
         }
       } else {
         this.editingCopies = [{ ...this.defaultState }];
       }
     },
     convertConditionToDbValue(condition) {
-      return (this.conditions.find(({value}) => value === condition) || {dbValue: null}).dbValue
+      return (this.conditions.find(({ value }) => value === condition) || { dbValue: null }).dbValue;
     },
 
     async updateSelectedIssues() {
-      const vm = this
+      const vm = this;
       let issueDetails = {
-        condition: this.editingCopies.map(({condition}) => vm.convertConditionToDbValue(condition)),
-        istosell: this.editingCopies.map(({isToSell}) => isToSell),
-        purchaseId: this.editingCopies.map(({purchaseId}) => purchaseId),
-      }
+        condition: this.editingCopies.map(({ condition }) => vm.convertConditionToDbValue(condition)),
+        istosell: this.editingCopies.map(({ isToSell }) => isToSell),
+        purchaseId: this.editingCopies.map(({ purchaseId }) => purchaseId)
+      };
       if (!this.isSingleIssueSelected) {
         issueDetails = Object.keys(issueDetails).reduce((acc, detailKey) => ({
           ...acc,
           [detailKey]: issueDetails[detailKey][0]
-        }), {})
+        }), {});
       }
 
-      this.$emit('update-issues', {
+      this.$emit("update-issues", {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,
         ...issueDetails
-      })
+      });
     },
     async createPurchaseDate() {
-      this.$emit('create-purchase', {
+      this.$emit("create-purchase", {
         date: this.newPurchaseDate,
-        description: this.newPurchaseDescription,
-      })
+        description: this.newPurchaseDescription
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
