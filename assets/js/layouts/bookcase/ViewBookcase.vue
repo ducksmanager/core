@@ -260,20 +260,23 @@ export default {
           await this.loadBookcaseOrder()
           await this.fetchStats([this.userId])
 
-          const usedSprites = newValue
+          const usableSpritesBySpriteId = newValue
             .filter(({sprites}) => sprites)
             .reduce((acc, {edgeId, sprites}) => {
               JSON.parse(`[${sprites}]`).forEach((sprite) => {
-                const {name} = sprite
-                if (!acc[name]) {
-                  acc[name] = {edges: [], ...sprite}
+                const {name: spriteId} = sprite
+                if (!acc[spriteId]) {
+                  acc[spriteId] = {edges: [], ...sprite}
                 }
-                acc[name].edges.push(edgeId)
+                acc[spriteId].edges.push(edgeId)
               })
               return acc
             }, {})
 
-          this.edgesUsingSprites = Object.values(usedSprites)
+          const usableSprites = Object.values(usableSpritesBySpriteId)
+            .map(usableSprite => ({...usableSprite, edges: [...new Set(usableSprite.edges)]}))
+
+          this.edgesUsingSprites = usableSprites
             .filter(({edges, size}) => edges.length >= size * 80 / 100)
             .sort(({size: aSize}, {size: bSize}) => Math.sign(aSize - bSize))
             .reduce((acc, {name, version, edges}) => {

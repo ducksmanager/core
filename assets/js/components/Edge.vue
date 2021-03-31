@@ -148,15 +148,15 @@ export default {
             style.textContent = css;
             document.head.append(style);
 
-            this.addLoadedSprite({spritePath: this.spritePath, css})
+            this.addLoadedSprite({ spritePath: this.spritePath, css })
             this.loadEdgeFromSprite()
           } catch (_) {
             this.ignoreSprite = true
           }
         }
       } else {
-        this.width=target.naturalWidth
-        this.height=target.naturalHeight
+        this.width = target.naturalWidth
+        this.height = target.naturalHeight
         this.imageLoaded = true
         this.$emit('loaded', [this.id])
       }
@@ -204,7 +204,7 @@ export default {
   position: relative;
   display: inline-block;
   visibility: hidden;
-  background-color: white;
+  background-color: transparent;
   margin-top: 20px;
 
   &:not(.visible-book)::after {
