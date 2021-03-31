@@ -4,49 +4,42 @@
     class="bookcase"
     :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
   >
-    <span
+    <Edge
       v-for="edge in edgesToLoad"
-      :key="`edge-wrapper-${edge.id}`"
-    >
-      <Edge
-        v-once
-        :id="edge.id"
-        :ref="`edge-${edge.id}`"
-        :key="`edge-${edge.id}`"
-        :publication-code="edge.publicationCode"
-        :issue-number="edge.issueNumber"
-        existing
-        load
-        @loaded="loadNextEdge"
-      />
-    </span>
+      v-once
+      :id="edge.id"
+      :ref="`edge-${edge.id}`"
+      :key="`edge-${edge.id}`"
+      :publication-code="edge.publicationCode"
+      :issue-number="edge.issueNumber"
+      existing
+      load
+      @loaded="loadNextEdge"
+    />
   </div>
   <div
     v-else
     class="bookcase"
     :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
   >
-    <span
+    <Edge
       v-for="edge in edgesToLoad"
-      :key="`edge-wrapper-${edge.id}`"
-    >
-      <Edge
-        :id="edge.id"
-        :ref="`edge-${edge.id}`"
-        :invisible="currentEdgeOpened === edge"
-        :highlighted="currentEdgeHighlighted === edge.id"
-        :publication-code="edge.publicationCode"
-        :issue-number="edge.issueNumber"
-        :issue-number-reference="edge.issueNumberReference"
-        :creation-date="edge.creationDate"
-        :popularity="edge.popularity"
-        :existing="!!edge.edgeId"
-        :sprite-path="edgesUsingSprites[edge.edgeId] || null"
-        load
-        @loaded="loadNextEdge"
-        @open-book="$emit('open-book', edge)"
-      />
-    </span>
+      :id="edge.id"
+      :key="`edge-${edge.id}`"
+      :ref="`edge-${edge.id}`"
+      :invisible="currentEdgeOpened === edge"
+      :highlighted="currentEdgeHighlighted === edge.id"
+      :publication-code="edge.publicationCode"
+      :issue-number="edge.issueNumber"
+      :issue-number-reference="edge.issueNumberReference"
+      :creation-date="edge.creationDate"
+      :popularity="edge.popularity"
+      :existing="!!edge.edgeId"
+      :sprite-path="edgesUsingSprites[edge.edgeId] || null"
+      load
+      @loaded="loadNextEdge"
+      @open-book="$emit('open-book', edge)"
+    />
   </div>
 </template>
 <script>
