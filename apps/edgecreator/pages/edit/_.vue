@@ -34,7 +34,11 @@
             <template v-for="issuenumber in issuenumbers">
               <th
                 :key="`issuenumber-${issuenumber}`"
-                class="clickable"
+                :class="{
+                  clickable: true,
+                  published: isPublished(issuenumber),
+                  pending: isPending(issuenumber),
+                }"
                 @click.exact="replaceEditIssuenumber(issuenumber)"
                 @click.shift="toggleEditIssuenumber(issuenumber)"
               >
@@ -205,6 +209,7 @@ export default {
     ...mapState('renders', ['supportedRenders']),
     ...mapState('ui', ['zoom', 'showIssueNumbers', 'colorPickerOption']),
     ...mapState('user', ['allUsers']),
+    ...mapState('edgeCatalog', ['currentEdges', 'publishedEdges']),
   },
   watch: {
     async issuenumbers(newValue) {
@@ -305,6 +310,14 @@ export default {
       const color = context.getImageData(offsetX, offsetY, 1, 1).data
       this.$root.$emit('set-options', { [this.colorPickerOption]: this.rgbToHex(...color) })
     },
+    isPending(issuenumber) {
+      return !!this.currentEdges[`${this.country}/${this.magazine} ${issuenumber}`]
+    },
+    isPublished(issuenumber) {
+      return (this.publishedEdges[`${this.country}/${this.magazine}`] || []).some(
+        ({ issuenumber: publishedIssuenumber }) => publishedIssuenumber === issuenumber
+      )
+    },
     rgbToHex: (r, g, b) => `#${((r << 16) | (g << 8) | b).toString(16)}`,
     ...mapMutations([
       'setCountry',
@@ -361,6 +374,14 @@ table.edges {
     }
     th {
       padding: 1px 2px;
+
+      &.published {
+        background: green;
+      }
+
+      &.pending {
+        background: orange;
+      }
 
       &.surrounding-edge {
         font-weight: normal;
