@@ -145,23 +145,26 @@ export default {
         return
       }
 
-      vm.saveEdgeSvg(
-        vm.country,
-        vm.magazine,
-        currentIssueNumber,
-        vm.contributors[currentIssueNumber],
-        vm.withExport,
-        vm.withSubmit
-      ).then((response) => {
-        const isSuccess = response && response.svgPath
-        if (isSuccess) {
-          vm.progress += 100 / vm.issuenumbers.length
-          vm.issueIndexToSave += 1
-        } else {
-          vm.progress = 0
-          vm.result = 'error'
-          vm.issueIndexToSave = null
-        }
+      this.setZoom(1.5)
+      this.$nextTick(() => {
+        vm.saveEdgeSvg(
+          vm.country,
+          vm.magazine,
+          currentIssueNumber,
+          vm.contributors[currentIssueNumber],
+          vm.withExport,
+          vm.withSubmit
+        ).then((response) => {
+          const isSuccess = response && response.svgPath
+          if (isSuccess) {
+            vm.progress += 100 / vm.issuenumbers.length
+            vm.issueIndexToSave += 1
+          } else {
+            vm.progress = 0
+            vm.result = 'error'
+            vm.issueIndexToSave = null
+          }
+        })
       })
     },
     showModal(newValue) {
