@@ -85,7 +85,7 @@
           :issuenumber="issuenumbers[0]"
         >
           <template v-if="isRange" #title-suffix
-            >to {{ issuenumbers[issuenumbers.length - 1] }}
+            >{{ $t('to') }} {{ issuenumbers[issuenumbers.length - 1] }}
           </template>
           <template v-else-if="issuenumbers.length > 1" #title-suffix
             ><span
