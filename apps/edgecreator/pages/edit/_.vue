@@ -25,7 +25,7 @@
     />
     <position-helper />
     <b-row class="flex-grow-1 pt-2" align-h="end">
-      <b-col class="text-right overflow-auto h-100">
+      <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
         <table class="edges">
           <tr v-if="showIssueNumbers">
             <th v-if="showPreviousEdge && edgesBefore.length" class="surrounding-edge">
@@ -350,20 +350,21 @@ export default {
 }
 
 table.edges {
-  float: right;
+  margin-left: auto !important; /* https://stackoverflow.com/a/37515194/2847079 */
   tr {
-    td {
+    > * {
       text-align: center;
-      padding: 0;
       vertical-align: bottom;
+    }
+    td {
+      padding: 0;
     }
     th {
-      text-align: center;
-      vertical-align: bottom;
       padding: 1px 2px;
-    }
-    th.surrounding-edge {
-      font-weight: normal;
+
+      &.surrounding-edge {
+        font-weight: normal;
+      }
     }
   }
 }
