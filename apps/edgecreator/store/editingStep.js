@@ -7,6 +7,9 @@ export const mutations = {
   addIssuenumber(state, issuenumber) {
     state.issuenumbers = [...new Set(state.issuenumbers.concat(issuenumber))].sort()
   },
+  addIssuenumbers(state, issuenumbers) {
+    state.issuenumbers = [...new Set([...state.issuenumbers, ...issuenumbers])].sort()
+  },
   replaceIssuenumber(state, issuenumber) {
     state.issuenumbers = [issuenumber]
   },

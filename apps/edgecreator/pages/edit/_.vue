@@ -41,6 +41,7 @@
                 }"
                 @click.exact="replaceEditIssuenumber(issuenumber)"
                 @click.shift="toggleEditIssuenumber(issuenumber)"
+                @dblclick="addEditIssuenumbers(issuenumbers)"
               >
                 <div v-if="editingIssuenumbers.includes(issuenumber)"><b-icon-pencil /></div>
                 <div>
@@ -330,6 +331,7 @@ export default {
       toggleEditIssuenumber: 'toggleIssuenumber',
       replaceEditIssuenumber: 'replaceIssuenumber',
       addEditIssuenumber: 'addIssuenumber',
+      addEditIssuenumbers: 'addIssuenumbers',
     }),
     ...mapActions([
       'setIssuenumbers',
