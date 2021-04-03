@@ -19,7 +19,7 @@ export default {
         svgCheckFn: (edge, currentUser) => edge.designers.includes(currentUser),
       },
       {
-        status: 'ongoing_by_other_user',
+        status: 'ongoing by another user',
         l10n: 'Ongoing edges handled by other users',
         apiUrl: '/api/edgecreator/v2/model/editedbyother/all',
         svgCheckFn: (edge) => edge.designers.length,
