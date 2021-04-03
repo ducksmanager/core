@@ -111,10 +111,13 @@ export default {
           await this.fetchIssueNumbers([newValue])
           const publishedEdges = await this.$axios.$get(`/api/edges/${newValue}`)
           this.addPublishedEdges({
-            [newValue]: publishedEdges.map(({ issuenumber, editable }) => ({
-              issuenumber,
-              editable,
-            })),
+            [newValue]: publishedEdges.reduce(
+              (acc, { issuenumber, editable }) => ({
+                ...acc,
+                [issuenumber]: { editable },
+              }),
+              {}
+            ),
           })
         }
       },

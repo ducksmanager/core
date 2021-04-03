@@ -315,9 +315,7 @@ export default {
       return !!this.currentEdges[`${this.country}/${this.magazine} ${issuenumber}`]
     },
     isPublished(issuenumber) {
-      return (this.publishedEdges[`${this.country}/${this.magazine}`] || []).some(
-        ({ issuenumber: publishedIssuenumber }) => publishedIssuenumber === issuenumber
-      )
+      return !!(this.publishedEdges[`${this.country}/${this.magazine}`] || {})[issuenumber]
     },
     rgbToHex: (r, g, b) => `#${((r << 16) | (g << 8) | b).toString(16)}`,
     ...mapMutations([
