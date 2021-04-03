@@ -5,7 +5,6 @@
     boundary="viewport"
     triggers="hover focus"
     :delay="0"
-    show
   >
     <Bookcase
       :bookcase-textures="bookcaseTextures"
