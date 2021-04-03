@@ -8,20 +8,19 @@ export const mutations = {
     state.currentEdges = { ...state.currentEdges, ...edges }
   },
   addPublishedEdges(state, publishedEdges) {
-    const combinedPublicationCodes = [
-      ...new Set([...Object.keys(publishedEdges), ...Object.keys(state.publishedEdges)]),
-    ]
-    state.publishedEdges = combinedPublicationCodes.reduce(
-      (acc, publicationcode) => ({
-        ...acc,
-        [publicationcode]: [
-          ...new Set([
-            ...(publishedEdges[publicationcode] || []),
-            ...(state.publishedEdges[publicationcode] || []),
-          ]),
-        ],
-      }),
-      {}
-    )
+    Object.keys(publishedEdges).forEach((publicationcode) => {
+      const publicationEdges = publishedEdges[publicationcode]
+      if (!state.publishedEdges[publicationcode]) {
+        state.publishedEdges[publicationcode] = {}
+      }
+      Object.keys(publicationEdges).forEach((issueNumber) => {
+        const edgeStatus = publicationEdges[issueNumber]
+        if (!state.publishedEdges[publicationcode][issueNumber]) {
+          state.publishedEdges[publicationcode][issueNumber] = edgeStatus
+        } else if (edgeStatus.editable) {
+          state.publishedEdges[publicationcode][issueNumber].editable = edgeStatus.editable
+        }
+      })
+    })
   },
 }

@@ -77,19 +77,18 @@ export default {
         ({ status: edgeStatus }) => edgeStatus === status
       )
     },
-    getEdgeStatus({ country, issuenumber, magazine }) {
+    getEdgeStatus({ country, magazine, issuenumber }) {
       let isPublished = false
       let isEditable = false
-      const publishedEdgesForPublication = this.publishedEdges[`${country}/${magazine}`] || []
-      publishedEdgesForPublication.forEach((publishedEdge) => {
-        if (publishedEdge.issuenumber === issuenumber) {
-          isPublished = true
-          if (publishedEdge.editable) {
-            isEditable = true
-          }
+      const publicationcode = `${country}/${magazine}`
+      const publishedEdgesForPublication = this.publishedEdges[publicationcode] || {}
+      if (publishedEdgesForPublication[issuenumber]) {
+        isPublished = true
+        if (publishedEdgesForPublication[issuenumber].editable) {
+          isEditable = true
         }
-      })
-      const issuecode = `${country}/${magazine} ${issuenumber}`
+      }
+      const issuecode = `${publicationcode} ${issuenumber}`
 
       return (
         this.currentEdges[issuecode] || {
@@ -127,9 +126,9 @@ export default {
           const issuecode = `${publicationcode} ${issuenumber}`
           if (edgeStatus === 'published') {
             if (!publishedSvgEdges[publicationcode]) {
-              publishedSvgEdges[publicationcode] = []
+              publishedSvgEdges[publicationcode] = {}
             }
-            publishedSvgEdges[publicationcode].push({ issuenumber, editable: true })
+            publishedSvgEdges[publicationcode][issuenumber] = { editable: true }
           } else {
             try {
               const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
