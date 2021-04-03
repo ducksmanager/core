@@ -5,6 +5,7 @@
     boundary="viewport"
     triggers="hover focus"
     :delay="0"
+    show
   >
     <Bookcase
       :bookcase-textures="bookcaseTextures"
@@ -25,13 +26,13 @@
   </b-popover>
 </template>
 <script>
-import Bookcase from "./Bookcase"
-import Issue from "../components/Issue"
-import {mapState} from "vuex";
+import Bookcase from "./Bookcase";
+import Issue from "../components/Issue";
+import { mapState } from "vuex";
 
 export default {
-  name: 'BookcasePopover',
-  components: {Bookcase, Issue},
+  name: "BookcasePopover",
+  components: { Bookcase, Issue },
   props: {
     id: {
       type: String,
@@ -40,24 +41,27 @@ export default {
     edges: {
       type: Array,
       required: true
-    },
+    }
   },
 
   data: () => ({
-    bookcaseTextures: {bookcase: 'bois/HONDURAS MAHOGANY', bookshelf: 'bois/KNOTTY PINE'}
+    bookcaseTextures: { bookcase: "bois/HONDURAS MAHOGANY", bookshelf: "bois/KNOTTY PINE" }
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames"]),
+    ...mapState("coa", ["publicationNames"])
   },
 
   methods: {
-    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`,
+    getEdgeKey: edge => `${edge.publicationCode} ${edge.issueNumber}`
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
+.popover {
+  max-width: 25vw;
+
   .popover-body {
     padding-top: 0;
     padding-right: 0;
@@ -68,7 +72,8 @@ export default {
     margin-top: 0 !important;
   }
 
-  ::v-deep .issue{
+  ::v-deep .issue {
     padding: 0 10px;
   }
+}
 </style>
