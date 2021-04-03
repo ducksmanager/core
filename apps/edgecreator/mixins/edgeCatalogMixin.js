@@ -34,7 +34,7 @@ export default {
   }),
 
   methods: {
-    ...mapMutations('edgeCatalog', ['addCurrentEdges', 'setPublishedEdges']),
+    ...mapMutations('edgeCatalog', ['addCurrentEdges', 'addPublishedEdges']),
     ...mapActions('coa', ['fetchPublicationNames']),
     ...mapActions('user', ['fetchAllUsers']),
 
@@ -102,62 +102,71 @@ export default {
   async mounted() {
     await this.fetchAllUsers()
     const vm = this
-    let newEdges = {}
+    let currentEdges = {}
+    const publishedSvgEdges = {}
 
     for (const { status, apiUrl } of this.edgeCategories) {
       const data = await this.$axios.$get(apiUrl)
-      newEdges = data.reduce((acc, edgeData) => {
+      currentEdges = data.reduce((acc, edgeData) => {
         const edge = this.getEdgeFromApi(edgeData, status)
         return { ...acc, [edge.issuecode]: edge }
-      }, newEdges)
+      }, currentEdges)
     }
 
-    this.$axios.$get('/fs/browseCurrentEdges').then(async (currentEdges) => {
-      for (const fileName of currentEdges) {
-        const [, country, magazine, issuenumber] = fileName.match(
-          /\/([^/]+)\/gen\/_([^.]+)\.(.+).svg$/
-        )
-        if ([country, magazine, issuenumber].includes(undefined)) {
-          console.error(`Invalid SVG file name : ${fileName}`)
-          continue
+    this.$axios.$get('/fs/browseEdges').then(async (edges) => {
+      for (const edgeStatus in edges) {
+        for (const fileName of edges[edgeStatus]) {
+          const [, country, magazine, issuenumber] = fileName.match(
+            /\/([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/
+          )
+          if ([country, magazine, issuenumber].includes(undefined)) {
+            console.error(`Invalid SVG file name : ${fileName}`)
+            continue
+          }
+          const publicationcode = `${country}/${magazine}`
+          const issuecode = `${publicationcode} ${issuenumber}`
+          if (edgeStatus === 'published') {
+            if (!publishedSvgEdges[publicationcode]) {
+              publishedSvgEdges[publicationcode] = []
+            }
+            publishedSvgEdges[publicationcode].push({ issuenumber, editable: true })
+          } else {
+            try {
+              const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
+              const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
+              const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
+
+              currentEdges[issuecode] = vm.getEdgeFromSvg({
+                country,
+                magazine,
+                issuenumber,
+                designers,
+                photographers,
+              })
+            } catch (e) {
+              console.error(`No SVG found : ${country}/${magazine} ${issuenumber}`)
+            }
+          }
         }
-        const issuecode = `${country}/${magazine} ${issuenumber}`
-        try {
-          const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
-          const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
-          const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
+      }
 
-          newEdges[issuecode] = vm.getEdgeFromSvg({
-            country,
-            magazine,
-            issuenumber,
-            designers,
-            photographers,
-          })
-        } catch (e) {
-          console.error(`No SVG found : ${country}/${magazine} ${issuenumber}`)
+      if (Object.keys(currentEdges).length) {
+        await this.fetchPublicationNames([
+          ...new Set(
+            Object.values(currentEdges).map(({ country, magazine }) => `${country}/${magazine}`)
+          ),
+        ])
+
+        for (const edgeIssueCode of Object.keys(currentEdges)) {
+          currentEdges[edgeIssueCode].published = vm.getEdgeStatus(currentEdges[edgeIssueCode])
         }
+
+        this.addCurrentEdges(currentEdges)
       }
 
-      const publicationCodes = [
-        ...new Set(
-          Object.values(newEdges).map(({ country, magazine }) => `${country}/${magazine}`)
-        ),
-      ]
-      await this.fetchPublicationNames(publicationCodes)
-
-      for (const publicationCode of publicationCodes) {
-        this.setPublishedEdges({
-          publicationCode,
-          publishedEdges: await this.$axios.$get(`/api/edges/${publicationCode}`),
-        })
+      if (Object.keys(publishedSvgEdges).length) {
+        this.addPublishedEdges(publishedSvgEdges)
       }
-
-      for (const edgeIssueCode of Object.keys(newEdges)) {
-        newEdges[edgeIssueCode].published = vm.getEdgeStatus(newEdges[edgeIssueCode])
-      }
-
-      this.addCurrentEdges(newEdges)
 
       this.isCatalogLoaded = true
     })

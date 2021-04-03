@@ -109,9 +109,12 @@ export default {
         if (newValue) {
           this.currentIssueNumber = null
           await this.fetchIssueNumbers([newValue])
-          this.setPublishedEdges({
-            publicationCode: newValue,
-            publishedEdges: await this.$axios.$get(`/api/edges/${newValue}`),
+          const publishedEdges = await this.$axios.$get(`/api/edges/${newValue}`)
+          this.addPublishedEdges({
+            [newValue]: publishedEdges.map(({ issuenumber, editable }) => ({
+              issuenumber,
+              editable,
+            })),
           })
         }
       },
@@ -129,7 +132,7 @@ export default {
       'fetchPublicationNamesFromCountry',
       'fetchIssueNumbers',
     ]),
-    ...mapMutations('edgeCatalog', ['setPublishedEdges']),
+    ...mapMutations('edgeCatalog', ['addPublishedEdges']),
 
     onChange(data) {
       this.$emit('change', {

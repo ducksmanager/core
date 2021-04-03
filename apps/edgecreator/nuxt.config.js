@@ -86,7 +86,7 @@ export default {
     // Doc: https://github.com/microcipcip/cookie-universal
     'cookie-universal-nuxt',
     // Doc: https://github.com/nuxt-community/sentry-module#readme
-    '@nuxtjs/sentry',
+    // '@nuxtjs/sentry',
   ],
   /*
    ** Axios module configuration
@@ -133,8 +133,8 @@ export default {
       handler: '~/api/fs/browse.js',
     },
     {
-      path: '/fs/browseCurrentEdges',
-      handler: '~/api/fs/browseCurrentEdges.js',
+      path: '/fs/browseEdges',
+      handler: '~/api/fs/browseEdges.js',
     },
     {
       path: '/fs/save',
