@@ -35,7 +35,7 @@
           :key="image"
           sm="2"
           :class="{
-            selected: selected === image,
+            selected: selected.includes(image),
           }"
           @click="
             clickedImage = image
@@ -67,6 +67,7 @@ export default {
   },
   props: {
     imageType: { type: String, required: true },
+    selected: { type: Array, default: () => [] },
   },
   data: () => ({
     clickedImage: null,
@@ -84,11 +85,6 @@ export default {
     ]),
     items() {
       return this.imageType === 'elements' ? this.publicationElements : this.publicationPhotos
-    },
-    selected() {
-      return this.imageType === 'elements'
-        ? null // this.editingStepOptions.src
-        : this.photoUrls[this.issuenumbers[0]]
     },
   },
   methods: {
@@ -112,32 +108,38 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .row.gallery {
   margin-top: 25px;
   height: 100px;
-}
 
-.row.gallery > div {
-  height: 100%;
-}
+  > div {
+    height: 100%;
 
-.row.gallery > div > img {
-  cursor: pointer;
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-}
+    > img {
+      cursor: pointer;
+      object-fit: contain;
+      width: 100%;
+      height: 100%;
+    }
 
-.row.gallery > div.selected > img {
-  outline: 2px solid #3b8070;
+    &.locked {
+      img {
+        cursor: not-allowed;
+      }
+    }
+
+    &.selected > img {
+      outline: 2px solid #3b8070;
+    }
+  }
 }
 
 .img-thumbnail {
   background: transparent;
-}
 
-.img-thumbnail:hover {
-  background: black;
+  &:hover {
+    background: black;
+  }
 }
 </style>

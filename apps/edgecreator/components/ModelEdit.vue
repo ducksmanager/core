@@ -128,13 +128,12 @@
             option-name="src"
             :label="$t('Image')"
             type="text"
-            readonly
             list-id="src-list"
             :options="step.options"
           >
             <b-form-datalist id="src-list" :options="publicationElements" />
+            <Gallery image-type="elements" :selected="step.options.src" />
           </form-input-row>
-          <Gallery image-type="elements" />
         </b-card-text>
         <b-card-text v-if="['Rectangle', 'ArcCircle'].includes(step.component)">
           <form-color-input-row
