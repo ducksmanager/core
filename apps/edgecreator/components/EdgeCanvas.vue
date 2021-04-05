@@ -3,7 +3,12 @@
   <svg
     :id="`edge-canvas-${issuenumber}`"
     ref="canvas"
-    :class="{ 'edge-canvas': true, 'hide-overflow': !showEdgeOverflow, 'position-relative': true }"
+    :class="{
+      'edge-canvas': true,
+      'hide-overflow': !showEdgeOverflow,
+      'position-relative': true,
+      editing: editingIssuenumbers.includes(issuenumber),
+    }"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
     :height="zoom * height"
@@ -65,7 +70,7 @@
       ></component>
     </g>
     <rect
-      id="border"
+      class="border"
       :x="borderWidth / 2"
       :y="borderWidth / 2"
       :width="width - borderWidth"
@@ -152,6 +157,9 @@ export default {
       },
     },
     ...mapState('ui', ['zoom', 'showEdgeOverflow']),
+    ...mapState('editingStep', {
+      editingIssuenumbers: 'issuenumbers',
+    }),
   },
 
   methods: {
@@ -183,6 +191,12 @@ svg.edge-canvas {
 
   &.hide-overflow {
     overflow: hidden;
+  }
+
+  &:not(.editing) {
+    .border {
+      stroke: #555;
+    }
   }
 }
 body:not(.interacting) {
