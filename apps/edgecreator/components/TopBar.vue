@@ -84,17 +84,54 @@
           :publicationname="publicationName"
           :issuenumber="issuenumbers[0]"
         >
-          <template v-if="isRange" #title-suffix
-            >{{ $t('to') }} {{ issuenumbers[issuenumbers.length - 1] }}
-          </template>
-          <template v-else-if="issuenumbers.length > 1" #title-suffix
-            ><span
-              v-for="otherIssuenumber in issuenumbers.slice(1)"
-              :key="`other-${otherIssuenumber}`"
-              >, {{ otherIssuenumber }}</span
+          <template v-if="isEditingMultiple" #title-suffix>
+            <template v-if="isRange"
+              >{{ $t('to') }} {{ issuenumbers[issuenumbers.length - 1] }}
+            </template>
+            <template v-else-if="issuenumbers.length > 1"
+              ><span
+                v-for="otherIssuenumber in issuenumbers.slice(1)"
+                :key="`other-${otherIssuenumber}`"
+                >, {{ otherIssuenumber }}</span
+              ></template
             ></template
           >
         </Issue>
+
+        <template v-if="isEditingMultiple">
+          <b-icon-info-circle-fill id="multiple-issues-hints" variant="secondary" />
+          <b-popover
+            id="multiple-issues-hints-popover"
+            target="multiple-issues-hints"
+            triggers="hover"
+            placement="bottom"
+          >
+            <template #title>{{ $t('Multiple-edge modification') }}</template>
+            <ul class="pl-2">
+              <li>
+                {{
+                  $t(
+                    'If you want your changes to be applied to a single edge, click on its issue number.'
+                  )
+                }}
+              </li>
+              <li>
+                {{
+                  $t(
+                    'If you want to add an edge to the list of edges to apply changes on, click on its issue number while maintaining the Shift key pressed.'
+                  )
+                }}
+              </li>
+              <li>
+                {{
+                  $t(
+                    'If you want to apply your changes to all the edges at the same time, double-click on any issue number.'
+                  )
+                }}
+              </li>
+            </ul>
+          </b-popover>
+        </template>
       </b-col>
     </b-row>
     <b-row align="center" class="p-1">
@@ -163,9 +200,9 @@
               disable-not-ongoing-nor-published
               @change="modelToClone = $event"
             />
-            <b-btn :disabled="!modelToClone" @click="$emit('overwrite-model', modelToClone)">{{
-              $t('Clone')
-            }}</b-btn>
+            <b-btn :disabled="!modelToClone" @click="$emit('overwrite-model', modelToClone)"
+              >{{ $t('Clone') }}
+            </b-btn>
           </b-collapse>
         </MultipleTargetOptions>
       </b-col>
@@ -175,7 +212,13 @@
 </template>
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
-import { BIconArrowsAngleExpand, BIconCamera, BIconFront, BIconHouse } from 'bootstrap-vue'
+import {
+  BIconArrowsAngleExpand,
+  BIconCamera,
+  BIconFront,
+  BIconHouse,
+  BIconInfoCircleFill,
+} from 'bootstrap-vue'
 import Issue from 'ducksmanager/assets/js/components/Issue.vue'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
@@ -202,6 +245,7 @@ export default {
     BIconCamera,
     BIconFront,
     BIconHouse,
+    BIconInfoCircleFill,
   },
   mixins: [surroundingEdgeMixin, showEdgePhotosMixin],
   props: {
@@ -259,6 +303,9 @@ export default {
       return [
         ...new Set(Object.values(this.dimensions).map((item) => JSON.stringify(item))),
       ].map((item) => JSON.parse(item))
+    },
+    isEditingMultiple() {
+      return this.isRange || this.issuenumbers.length > 1
     },
     ...mapState([
       'country',
