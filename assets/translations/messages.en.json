@@ -339,6 +339,7 @@
   "un visiteur anonyme": "an anonymous visitor",
   "Une cote présente sur Bédéthèque n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)": "Did you see a quotation on Bédéthèque that is not present in the list hereunder? Make us know by sending an e-mail to {0} :-)",
   "Une erreur s'est produite.": "An error occurred.",
+  "Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d\\'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>": "Once logged in, you will reach a page containing your collection as a list starting  with: <pre>country^entrycode^collectiontype^comment</pre>",
   "Une liste de ceux qui ont participé à la création de la bibliothèque!": "A list of those who participated to the creation of DucksManager Bookcase",
   "Une petite démo ?": "Want to try a demo?",
   "{0} utilisateurs sont inscrits<br />sur DucksManager": "{0} users have signed up<br />on DucksManager",
