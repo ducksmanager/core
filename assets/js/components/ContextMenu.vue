@@ -22,144 +22,153 @@
       variant="warning"
       v-html="$t('Vous possédez certains numéros sélectionnés<br />en plusieurs exemplaires.<br />Seul le premier exemplaire sera modifié.')"
     />
-    <b-tabs
-      v-model="currentCopyIndex"
-      nav-class="copies-tabs"
-      @changed="(newTabs) => { currentCopyIndex = newTabs.length - 1 }"
-    >
-      <b-tab
-        v-for="(copy, copyIndex) in editingCopies"
-        :key="`copy-${copyIndex}`"
+    <b-alert
+      v-if="!selectedIssues.length"
+      class="text-center m-0"
+      show
+      variant="warning"
+      v-html="$t('Sélectionnez un ou plusieurs numéros dans la liste<br />pour les ajouter, modifier ou supprimer de votre collection.')"
+    />
+    <template v-else>
+      <b-tabs
+        v-model="currentCopyIndex"
+        nav-class="copies-tabs"
+        @changed="(newTabs) => { currentCopyIndex = newTabs.length - 1 }"
       >
-        <template #title>
-          Copy {{ copyIndex + 1 }}
-          <b-icon-trash @click.stop.prevent="editingCopies.splice(copyIndex, 1)" />
-        </template>
-        <ul class="position-static border-0 shadow-none p-0">
-          <li class="menu-separator">
-            {{ $t("Etat") }}
-          </li>
-          <li
-            v-for="(text, id) in conditionStates"
-            :key="`condition-${id}`"
-            :class="{item: true, clickable: true, selected: copy.condition === id, 'issue-condition': true, [`issue-condition-${id}`]: true}"
-            @click="copy.condition = id"
-          >
-            {{ text }}
-          </li>
-          <li class="menu-separator">
-            {{ $t("Date d'achat") }}
-          </li>
-          <li
-            v-for="(purchaseStateText, purchaseStateId) in purchaseStates"
-            :key="`copy-${copyIndex}-purchase-state-${purchaseStateId}`"
-            :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
-            @click="copy.purchaseId = purchaseStateId"
-          >
-            <b-icon-calendar v-if="purchaseStateId === 'link'" />
-            <b-icon-calendar-x v-if="purchaseStateId === 'unlink'" />
-            {{ purchaseStateText }}
-            <ul
-              v-if="purchaseStateId === 'link'"
-              class="v-context"
+        <b-tab
+          v-for="(copy, copyIndex) in editingCopies"
+          :key="`copy-${copyIndex}`"
+        >
+          <template #title>
+            {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
+            <b-icon-trash @click.stop.prevent="editingCopies.splice(copyIndex, 1)" />
+          </template>
+          <ul class="position-static border-0 shadow-none p-0">
+            <li class="menu-separator">
+              {{ $t("Etat") }}
+            </li>
+            <li
+              v-for="(text, id) in conditionStates"
+              :key="`condition-${id}`"
+              :class="{item: true, clickable: true, selected: copy.condition === id, 'issue-condition': true, [`issue-condition-${id}`]: true}"
+              @click="copy.condition = id"
             >
-              <li class="menu-separator">
-                <h5
-                  v-if="!copy.newPurchaseContext"
-                  @click="copy.newPurchaseContext = !copy.newPurchaseContext"
-                >
-                  {{ $t("Nouvelle date d'achat...") }}
-                </h5>
-                <template v-else>
-                  <input
-                    v-model="copy.newPurchaseDescription"
-                    required
-                    type="text"
-                    class="form-control"
-                    size="30"
-                    maxlength="30"
-                    :placeholder="$t('Description')"
-                  >
-                  <input
-                    v-model="copy.newPurchaseDate"
-                    required
-                    type="date"
-                    class="form-control"
-                    size="30"
-                    maxlength="10"
-                    :placeholder="$t('Date d\'achat')"
-                    @keydown.prevent="() => {}"
-                  >
-                  <b-btn
-                    @click="
-                      $emit('create-purchase', {
-                        date: copy.newPurchaseDate,
-                        description: copy.newPurchaseDescription,
-                      })
-                      copy.newPurchaseDescription = copy.newPurchaseDate = null
-                      copy.newPurchaseContext = false"
-                  >
-                    {{ $t("Créer") }}
-                  </b-btn>
-                  <b-btn
-                    class="cancel"
-                    @click="copy.newPurchaseContext = false"
-                  >
-                    {{ $t("Annuler") }}
-                  </b-btn>
-                </template>
-              </li>
-              <li
-                v-for="{id: purchaseId, date, description} in purchases"
-                :key="`copy-${copyIndex}-purchase-${purchaseId}`"
-                :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseId, 'purchase-date': true}"
-                class="item purchase-date"
-                @click.stop="copy.purchaseId = purchaseId"
+              {{ text }}
+            </li>
+            <li class="menu-separator">
+              {{ $t("Date d'achat") }}
+            </li>
+            <li
+              v-for="(purchaseStateText, purchaseStateId) in purchaseStates"
+              :key="`copy-${copyIndex}-purchase-state-${purchaseStateId}`"
+              :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
+              @click="copy.purchaseId = purchaseStateId"
+            >
+              <b-icon-calendar v-if="purchaseStateId === 'link'" />
+              <b-icon-calendar-x v-if="purchaseStateId === 'unlink'" />
+              {{ purchaseStateText }}
+              <ul
+                v-if="purchaseStateId === 'link'"
+                class="v-context"
               >
-                <b>{{ description }}</b><br>{{ date }}
-                <b-btn
-                  class="delete-purchase btn-sm"
-                  :title="$t('Supprimer')"
-                  @click="
-                    $emit('delete-purchase', {
-                      id: purchaseId,
-                    })"
+                <li class="menu-separator">
+                  <h5
+                    v-if="!copy.newPurchaseContext"
+                    @click="copy.newPurchaseContext = !copy.newPurchaseContext"
+                  >
+                    {{ $t("Nouvelle date d'achat...") }}
+                  </h5>
+                  <template v-else>
+                    <input
+                      v-model="copy.newPurchaseDescription"
+                      required
+                      type="text"
+                      class="form-control"
+                      size="30"
+                      maxlength="30"
+                      :placeholder="$t('Description')"
+                    >
+                    <input
+                      v-model="copy.newPurchaseDate"
+                      required
+                      type="date"
+                      class="form-control"
+                      size="30"
+                      maxlength="10"
+                      :placeholder="$t('Date d\'achat')"
+                      @keydown.prevent="() => {}"
+                    >
+                    <b-btn
+                      @click="
+                        $emit('create-purchase', {
+                          date: copy.newPurchaseDate,
+                          description: copy.newPurchaseDescription,
+                        })
+                        copy.newPurchaseDescription = copy.newPurchaseDate = null
+                        copy.newPurchaseContext = false"
+                    >
+                      {{ $t("Créer") }}
+                    </b-btn>
+                    <b-btn
+                      class="cancel"
+                      @click="copy.newPurchaseContext = false"
+                    >
+                      {{ $t("Annuler") }}
+                    </b-btn>
+                  </template>
+                </li>
+                <li
+                  v-for="{id: purchaseId, date, description} in purchases"
+                  :key="`copy-${copyIndex}-purchase-${purchaseId}`"
+                  :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseId, 'purchase-date': true}"
+                  class="item purchase-date"
+                  @click.stop="copy.purchaseId = purchaseId"
                 >
-                  <b-icon-trash />
-                </b-btn>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </b-tab>
-      <template
-        v-if="!hasMaxCopies"
-        #tabs-end
+                  <b>{{ description }}</b><br>{{ date }}
+                  <b-btn
+                    class="delete-purchase btn-sm"
+                    :title="$t('Supprimer')"
+                    @click="
+                      $emit('delete-purchase', {
+                        id: purchaseId,
+                      })"
+                  >
+                    <b-icon-trash />
+                  </b-btn>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </b-tab>
+        <template
+          v-if="!hasMaxCopies"
+          #tabs-end
+        >
+          <b-nav-item
+            v-if="isSingleIssueSelected || hasNoCopies"
+            class="p-0"
+            role="presentation"
+            @click="editingCopies.push({...defaultState})"
+          >
+            {{ $t("Ajouter un exemplaire") }}
+          </b-nav-item>
+          <b-nav-item
+            v-else
+            class="p-0 disabled text-secondary"
+            role="presentation"
+            :title="$t('Vous pouvez seulement ajouter un exemplaire lorsqu\'un seul numéro est sélectionné')"
+          >
+            {{ $t("Ajouter un exemplaire") }}
+          </b-nav-item>
+        </template>
+      </b-tabs>
+      <li
+        class="footer clickable"
+        @click="updateSelectedIssues"
       >
-        <b-nav-item
-          v-if="isSingleIssueSelected || hasNoCopies"
-          class="p-0"
-          role="presentation"
-          @click="editingCopies.push({...defaultState})"
-        >
-          {{ $t("Ajouter un exemplaire") }}
-        </b-nav-item>
-        <b-nav-item
-          v-else
-          class="p-0 disabled text-secondary"
-          role="presentation"
-          :title="$t('Vous pouvez seulement ajouter un exemplaire lorsqu\'un seul numéro est sélectionné')"
-        >
-          {{ $t("Ajouter un exemplaire") }}
-        </b-nav-item>
-      </template>
-    </b-tabs>
-    <li
-      class="footer clickable"
-      @click="updateSelectedIssues"
-    >
-      {{ $t("Enregistrer les changements") }}
-    </li>
+        {{ $t("Enregistrer les changements") }}
+      </li>
+    </template>
   </vue-context>
 </template>
 
