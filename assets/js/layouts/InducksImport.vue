@@ -22,11 +22,15 @@
         </div>
       </div>
       <p>
-        {{ $t('DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.') }}
+        {{ $t("DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.")
+        }}
       </p>
       <p>
-        <span v-html="$t('Si vous possédez déjà une collection Inducks, vous pouvez <b>l\'importer sur DucksManager en quelques clics.</b>')" /><br>
-        {{ $t("Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez \"{0}\" dans le menu.", [$t('Collection Inducks')]) }}
+        <span
+          v-html="$t('Si vous possédez déjà une collection Inducks, vous pouvez <b>l\'importer sur DucksManager en quelques clics.</b>')"
+        /><br>
+        {{ $t("Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez \"{0}\" dans le menu.", [$t("Collection Inducks")])
+        }}
       </p>
       <p>
         <b-btn
@@ -34,14 +38,14 @@
           variant="primary"
           :href="$r('/signup')"
         >
-          {{ $t('Inscription') }}
+          {{ $t("Inscription") }}
         </b-btn>
         <b-btn
           size="lg"
           variant="primary"
           :href="$r('/login')"
         >
-          {{ $t('Connexion') }}
+          {{ $t("Connexion") }}
         </b-btn>
       </p>
     </b-jumbotron>
@@ -55,14 +59,16 @@
         show
         variant="info"
       >
-        <div>{{ $t('Cette page vous permet d\'importer votre collection Inducks dans DucksManager.') }}</div>
-        {{ $t('Pour cela, suivez les étapes suivantes :') }}
+        <div>{{ $t("Cette page vous permet d'importer votre collection Inducks dans DucksManager.") }}</div>
+        {{ $t("Pour cela, suivez les étapes suivantes :") }}
         <ol>
-          <li>{{ $t('Sur l\'écran de gauche, connectez-vous, si ce n\'est déjà fait, sur Inducks.') }}</li>
-          <li v-html="$t('IMPORTER_INDUCKS_INSTRUCTIONS_4')" />
-          <li>{{ $t('Sélectionnez toute la liste, puis copiez-la.') }}</li>
-          <li>{{ $t('Collez ce texte dans la partie droite de la page.') }}</li>
-          <li>{{ $t('Cliquez sur le bouton "Importer" en bas de la page.') }}</li>
+          <li>{{ $t("Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks.") }}</li>
+          <li
+            v-html="$t('Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d\'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>')"
+          />
+          <li>{{ $t("Sélectionnez toute la liste, puis copiez-la.") }}</li>
+          <li>{{ $t("Collez ce texte dans la partie droite de la page.") }}</li>
+          <li>{{ $t("Cliquez sur le bouton \"Importer\" en bas de la page.") }}</li>
         </ol>
       </b-alert>
       <b-row class="justify-content-center">
@@ -89,7 +95,7 @@
         show
         variant="info"
       >
-        <div>{{ issuesImportable.length }} {{ $t('numéros peuvent être importés.') }}</div>
+        <div>{{ issuesImportable.length }} {{ $t("numéros peuvent être importés.") }}</div>
         <div
           v-if="hasPublicationNames"
           role="tablist"
@@ -114,7 +120,7 @@
                 v-for="issue in issues"
                 :key="issue"
               >
-                {{ ucFirst($t('numéro')) }} {{ issue }}
+                {{ ucFirst($t("numéro")) }} {{ issue }}
               </div>
             </template>
           </Accordion>
@@ -127,7 +133,10 @@
         variant="warning"
       >
         <template v-if="issuesAlreadyInCollection && issuesAlreadyInCollection.length">
-          <div>{{ issuesAlreadyInCollection.length }} {{ $t('numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.') }}</div>
+          <div>
+            {{ issuesAlreadyInCollection.length }}
+            {{ $t("numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.") }}
+          </div>
           <Accordion
             id="already-in-collection"
             accordion-group-id="import-accordion-not-importable"
@@ -135,7 +144,7 @@
             @bv::toggle::collapse="expandedNotImportableAccordion = 'already-in-collection'"
           >
             <template #header>
-              {{ $t('Numéros déjà dans la collection') }}
+              {{ $t("Numéros déjà dans la collection") }}
             </template>
             <template #content>
               <div
@@ -157,7 +166,10 @@
           </Accordion>
         </template>
         <template v-if="issuesNotReferenced && issuesNotReferenced.length">
-          <div>{{ issuesNotReferenced.length }} {{ $t('numéros ne peuvent pas être importés car ils n\'existent plus sur Inducks.') }}</div>
+          <div>
+            {{ issuesNotReferenced.length }}
+            {{ $t("numéros ne peuvent pas être importés car ils n'existent plus sur Inducks.") }}
+          </div>
           <Accordion
             id="not-found"
             accordion-group-id="import-accordion-not-importable"
@@ -165,7 +177,7 @@
             @bv::toggle::collapse="expandedNotImportableAccordion = 'not-found'"
           >
             <template #header>
-              {{ $t('Numéros non référencés') }}
+              {{ $t("Numéros non référencés") }}
             </template>
             <template #content>
               <div
@@ -186,7 +198,7 @@
       </b-alert>
       <template v-if="issuesImportable && issuesImportable.length">
         <b-form-group>
-          <label for="condition">{{ $t('Etat') }}</label>
+          <label for="condition">{{ $t("Etat") }}</label>
           <b-form-select
             id="condition"
             v-model="issueDefaultCondition"
@@ -197,7 +209,7 @@
                 :value="null"
                 disabled
               >
-                {{ $t('Choisissez un état par défaut pour les nouveaux numéros') }}
+                {{ $t("Choisissez un état par défaut pour les nouveaux numéros") }}
               </b-form-select-option>
             </template>
 
@@ -223,7 +235,7 @@
           v-else
           @click="importIssues"
         >
-          {{ $t('Importer') }} {{ issuesImportable.length }} {{ $tc('numéro | numéros', issuesImportable.length) }}
+          {{ $t("Importer") }} {{ issuesImportable.length }} {{ $tc("numéro | numéros", issuesImportable.length) }}
         </b-btn>
       </template>
     </template>
@@ -265,7 +277,7 @@ export default {
       return {
         mauvais: this.$t("En mauvais état"),
         bon: this.$t("En bon état")
-      }
+      };
     },
 
     importDataReady() {
@@ -307,7 +319,7 @@ export default {
   methods: {
     ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers", "fetchIssueCodesDetails"]),
     async processRawData() {
-      const vm = this
+      const vm = this;
       const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
       const issueCodes = this.rawData
         .split("\n")
@@ -318,9 +330,9 @@ export default {
       const issues = issueCodes
         .filter(issueCode => vm.issueCodeDetails[issueCode])
         .reduce((acc, issueCode) => ([
-        ...acc,
-        vm.issueCodeDetails[issueCode]
-      ]), [])
+          ...acc,
+          vm.issueCodeDetails[issueCode]
+        ]), []);
       if (issues.length) {
         this.issuesToImport = issues;
         this.step = 2;
