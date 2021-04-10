@@ -17,9 +17,9 @@
       v-if="!collection.length"
       variant="info"
     >
-      {{ $t('Vous ne possédez aucun numéro ! Cliquez') }}
-      <a :href="$r('/collection/show')">{{ $t('ici') }}</a>
-      {{ $t('pour en ajouter à votre collection !') }}
+      {{ $t("Vous ne possédez aucun numéro ! Cliquez") }}
+      <a :href="$r('/collection/show')">{{ $t("ici") }}</a>
+      {{ $t("pour en ajouter à votre collection !") }}
     </b-alert>
     <GeneralStats v-if="tab === 'general'" />
     <PublicationStats v-if="tab === 'publications'" />
@@ -28,7 +28,9 @@
       :style="{width: '500px'}"
     />
     <div v-else-if="tab === 'possessions' || tab === 'authors'">
-      <b-button-group v-if="tab !== 'authors' || (tab === 'authors' && watchedAuthorsStoryCount && Object.keys(watchedAuthorsStoryCount).length)">
+      <b-button-group
+        v-if="tab !== 'authors' || (tab === 'authors' && watchedAuthorsStoryCount && Object.keys(watchedAuthorsStoryCount).length)"
+      >
         <b-button
           v-for="(text, unitType) in unitTypes"
           :key="unitType"
@@ -50,14 +52,16 @@
           show
           variant="warning"
         >
-          {{ $t('Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.') }}
+          {{ $t("Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.")
+          }}
         </b-alert>
         <div v-else>
           <template v-if="!watchedAuthorsStoryCount">
-            {{ $t('Chargement...') }}
+            {{ $t("Chargement...") }}
           </template>
           <b-alert v-else-if="!Object.keys(watchedAuthorsStoryCount).length">
-            {{ $t('Les calculs n\'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !') }}
+            {{ $t("Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !")
+            }}
           </b-alert>
           <div v-else>
             <AuthorStats
@@ -67,7 +71,7 @@
               :style="{width, height}"
               @change-dimension="changeDimension"
             />
-            {{ $t('Les statistiques sont mises à jour quotidiennement.') }}
+            {{ $t("Les statistiques sont mises à jour quotidiennement.") }}
           </div>
           <hr>
         </div>
@@ -76,10 +80,12 @@
     </div>
     <div v-else-if="tab === 'purchases'">
       <b-alert variant="info">
-        <div>{{ $t('Ce graphique vous permet de retracer l\'évolution de votre collection dans le temps.') }}</div>
-        <div v-html="$t('A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?')" />
-        <div>{{ $t('Quand avez-vous acheté le plus de magazines dans le passé ?') }}</div>
-        <div v-html="$t('Afin de retracer l\'évolution de votre collection, renseignez les dates d\'achat de vos numéros dans la page {0}, puis revenez ici ! Si une date d\'achat n\'a pas été indiquée pour un numéro, sa date d\'ajout dans la collection est utilisée', [`<a href='${$r('/collection/show')}'>${$t('Gérer ma collection')}</a>`]) " />
+        <div>{{ $t("Ce graphique vous permet de retracer l'évolution de votre collection dans le temps.") }}</div>
+        <div
+          v-html="$t('A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?')"
+        />
+        <div>{{ $t("Quand avez-vous acheté le plus de magazines dans le passé ?") }}</div>
+        <div v-html="$t(`Afin de retracer l'évolution de votre collection, renseignez les dates d'achat de vos numéros dans la page {0}, puis revenez ici ! Si une date d'achat n'a pas été indiquée pour un numéro, sa date d'ajout dans la collection est utilisée`, [`<a href='${$r('/collection/show')}'>${$t('Gérer ma collection')}</a>`]) " />
         <div v-if="purchases && !purchases.length">
           <a :href="$r('/collection/show')">
             <img
@@ -125,7 +131,7 @@ import collectionMixin from "../mixins/collectionMixin";
 import PurchaseStats from "./stats/PurchaseStats";
 import AuthorStats from "./stats/AuthorStats";
 import l10nMixin from "../mixins/l10nMixin";
-import {mapActions, mapState} from "vuex";
+import { mapActions, mapState } from "vuex";
 import axios from "axios";
 import AuthorList from "../components/AuthorList";
 import ConditionStats from "./stats/ConditionStats";
@@ -154,32 +160,32 @@ export default {
   data: () => ({
     width: null,
     height: null,
-    unitTypeCurrent: 'number',
-    purchaseTypeCurrent: 'new',
+    unitTypeCurrent: "number",
+    purchaseTypeCurrent: "new",
 
     watchedAuthorsStoryCount: null
   }),
   computed: {
     ...mapState("collection", ["purchases", "watchedAuthors"]),
     unitTypes() {
-      return { number: this.$t("Afficher en valeurs réelles"), percentage: this.$t("Afficher en pourcentages") }
+      return { number: this.$t("Afficher en valeurs réelles"), percentage: this.$t("Afficher en pourcentages") };
     },
     purchaseTypes() {
-      return { new: this.$t("Afficher les nouvelles acquisitions"), total: this.$t("Afficher les possessions totales") }
+      return { new: this.$t("Afficher les nouvelles acquisitions"), total: this.$t("Afficher les possessions totales") };
     }
   },
 
   async mounted() {
     switch (this.tab) {
-      case 'authors':
-        await this.loadWatchedAuthors()
-        this.watchedAuthorsStoryCount = (await axios.get('/api/collection/stats/watchedauthorsstorycount')).data
+      case "authors":
+        await this.loadWatchedAuthors();
+        this.watchedAuthorsStoryCount = (await axios.get("/api/collection/stats/watchedauthorsstorycount")).data;
         if (!this.watchedAuthorsStoryCount) {
-          this.watchedAuthorsStoryCount = {}
+          this.watchedAuthorsStoryCount = {};
         }
         break;
-      case 'purchases':
-        await this.loadPurchases()
+      case "purchases":
+        await this.loadPurchases();
         break;
     }
   },
@@ -187,10 +193,10 @@ export default {
   methods: {
     ...mapActions("collection", ["loadWatchedAuthors", "loadPurchases"]),
     changeDimension(dimension, value) {
-      this[dimension] = `${value}px`
+      this[dimension] = `${value}px`;
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

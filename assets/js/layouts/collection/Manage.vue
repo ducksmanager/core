@@ -1,10 +1,11 @@
 <template>
   <div v-if="publicationcode === 'new'">
-    {{ $t('Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros.') }}
+    {{ $t("Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros.")
+    }}
     <PublicationSelect />
     <br>
     <br>
-    {{ $t('... ou recherchez un magazine à partir d\'une histoire qui le contient :') }}
+    {{ $t("... ou recherchez un magazine à partir d'une histoire qui le contient :") }}
     <IssueSearch />
   </div>
   <div v-else-if="hasPublicationNames">
@@ -15,7 +16,7 @@
     >
       <template #header>
         {{
-          suggestionsNumber === 1 ? $t('Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !') : $t('Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !', suggestionsNumber)
+          suggestionsNumber === 1 ? $t("Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !") : $t("Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !", suggestionsNumber)
         }}
       </template>
       <template #content>
@@ -26,7 +27,7 @@
         />
       </template>
       <template #footer>
-        <div><a :href="$r('/expand')">{{ $t('Voir toutes les suggestions d\'achat pour ma collection') }}</a></div>
+        <div><a :href="$r('/expand')">{{ $t("Voir toutes les suggestions d'achat pour ma collection") }}</a></div>
       </template>
     </Accordion>
     <LastPublishedEdges />
@@ -34,18 +35,20 @@
       v-if="username === 'demo'"
       id="demo-intro"
     >
-      <h2>{{ $t('Bienvenue dans le mode démo !') }}</h2>
-      <span v-html="$t('Prenez le temps de découvrir les fonctionnalités de DucksManager.<br /><br />Vous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.<br />Si vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.<br />Prochaine remise à zéro dans')" /> {{ (60 - new Date().getMinutes()) || 60 }} {{ $t('minute(s)') }}
+      <h2>{{ $t("Bienvenue dans le mode démo !") }}</h2>
+      <span
+        v-html="$t('Prenez le temps de découvrir les fonctionnalités de DucksManager.<br /><br />Vous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.<br />Si vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.<br />Prochaine remise à zéro dans')"
+      /> {{ (60 - new Date().getMinutes()) || 60 }} {{ $t("minute(s)") }}
     </div>
     <ShortStats>
       <template #empty-collection>
         <div class="mb-3">
-          {{ $t('Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.') }}
+          {{ $t("Cliquez sur \"Nouveau magazine\" pour ajouter un numéro dans votre liste.") }}
         </div>
       </template>
       <template #non-empty-collection>
         <div class="mb-3">
-          {{ $t('Cliquez sur l\'un de vos magazines pour éditer sa liste !') }}
+          {{ $t("Cliquez sur l'un de vos magazines pour éditer sa liste !") }}
         </div>
       </template>
     </ShortStats>
@@ -61,7 +64,7 @@
 import IssueList from "../../components/IssueList";
 import l10nMixin from "../../mixins/l10nMixin";
 import collectionMixin from "../../mixins/collectionMixin";
-import {mapActions, mapGetters, mapState} from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import IssueSearch from "../../components/IssueSearch";
 import PublicationSelect from "../../components/PublicationSelect";
 import SuggestionList from "../SuggestionList";
@@ -98,7 +101,7 @@ export default {
     ...mapGetters("collection", ["total", "totalPerCountry", "totalPerPublication"]),
 
     mostPossessedPublication() {
-      const vm = this
+      const vm = this;
       return this.totalPerPublication && Object.keys(this.totalPerPublication).reduce((acc, publicationCode) => vm.totalPerPublication[acc] > vm.totalPerPublication[publicationCode] ? acc : publicationCode, null);
     }
   },
@@ -106,8 +109,8 @@ export default {
   watch: {
     async totalPerPublication(newValue) {
       if (newValue) {
-        await this.fetchPublicationNames(Object.keys(newValue))
-        this.hasPublicationNames = true
+        await this.fetchPublicationNames(Object.keys(newValue));
+        this.hasPublicationNames = true;
       }
     }
   },
@@ -115,11 +118,12 @@ export default {
   methods: {
     ...mapActions("coa", ["fetchPublicationNames"])
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
 @import "../../../css/app";
+
 #demo-intro {
   border: 1px solid white;
   margin-bottom: 20px;

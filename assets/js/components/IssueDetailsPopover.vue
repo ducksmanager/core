@@ -26,7 +26,7 @@
       :src="coverUrl"
       class="cover"
     >
-    <span v-else>{{ $t('La couverture de ce numéro n\'est pas disponible') }}</span>
+    <span v-else>{{ $t("La couverture de ce numéro n'est pas disponible") }}</span>
   </b-popover>
 </template>
 

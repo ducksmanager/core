@@ -7,10 +7,10 @@
       v-if="isSuccess"
       variant="success"
     >
-      {{ $t('OK') }} !
+      {{ $t("OK") }} !
     </b-alert>
 
-    <h5>{{ $t('Adresse e-mail') }}</h5>
+    <h5>{{ $t("Adresse e-mail") }}</h5>
     <Errorable id="email">
       <b-form-input
         id="email"
@@ -20,7 +20,7 @@
         autofocus
       />
     </Errorable>
-    <h5>{{ $t('Changement de mot de passe') }}</h5>
+    <h5>{{ $t("Changement de mot de passe") }}</h5>
     <Errorable id="password">
       <b-form-input
         id="password"
@@ -46,13 +46,13 @@
       />
     </Errorable>
 
-    <h5>{{ $t('Options') }}</h5>
+    <h5>{{ $t("Options") }}</h5>
     <b-form-checkbox
       id="share-enabled"
       v-model="user.isShareEnabled"
       name="isShareEnabled"
     >
-      {{ $t('Activer le partage de ma collection') }}
+      {{ $t("Activer le partage de ma collection") }}
     </b-form-checkbox>
 
     <b-form-checkbox
@@ -60,7 +60,7 @@
       v-model="user.isVideoShown"
       name="isVideoShown"
     >
-      {{ $t('Afficher la vidéo d\'explication pour la sélection des numéros') }}
+      {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
     </b-form-checkbox>
 
     <b-btn
@@ -68,18 +68,18 @@
       size="xl"
       type="submit"
     >
-      {{ $t('Valider') }}
+      {{ $t("Valider") }}
     </b-btn>
 
     <h5 class="mt-5">
-      {{ $t('Zone danger') }}
+      {{ $t("Zone danger") }}
     </h5>
     <div>
       <b-btn
         variant="danger"
         @click="emptyCollection"
       >
-        {{ $t('Vider ma liste de numéros') }}
+        {{ $t("Vider ma liste de numéros") }}
       </b-btn>
     </div>
     <div>
@@ -87,7 +87,7 @@
         variant="danger"
         @click="deleteAccount"
       >
-        {{ $t('Supprimer mon compte DucksManager') }}
+        {{ $t("Supprimer mon compte DucksManager") }}
       </b-btn>
     </div>
   </form>
@@ -96,28 +96,28 @@
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
 import Errorable from "../../components/Errorable";
-import {mapActions, mapMutations, mapState} from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import axios from "axios";
 
 export default {
   name: "Account",
-  components: {Errorable},
+  components: { Errorable },
   mixins: [l10nMixin],
   props: {
-    errors: {type: String, default: ''},
-    success: {type: String, default: null},
+    errors: { type: String, default: "" },
+    success: { type: String, default: null }
   },
 
   computed: {
     ...mapState("collection", ["user"]),
     isSuccess() {
-      return this.success === null ? null : parseInt(this.success) === 1
+      return this.success === null ? null : parseInt(this.success) === 1;
     }
   },
 
   async mounted() {
-    await this.loadUser()
-    this.addErrors(JSON.parse(this.errors))
+    await this.loadUser();
+    this.addErrors(JSON.parse(this.errors));
   },
 
   methods: {
@@ -125,20 +125,20 @@ export default {
     ...mapActions("collection", ["loadUser"]),
 
     async emptyCollection() {
-      if (confirm(this.$t('Votre collection va être vidée. Continuer ?'))) {
-        await axios.delete(`/collection`)
-        window.location.replace(this.$r('/collection/show'))
+      if (confirm(this.$t("Votre collection va être vidée. Continuer ?"))) {
+        await axios.delete(`/collection`);
+        window.location.replace(this.$r("/collection/show"));
       }
     },
 
     async deleteAccount() {
-      if (confirm(this.$t('Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?'))) {
-        await axios.post(`/collection/empty`)
-        window.location.replace(this.$r('/logout'))
+      if (confirm(this.$t("Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?"))) {
+        await axios.post(`/collection/empty`);
+        window.location.replace(this.$r("/logout"));
       }
     }
-  },
-}
+  }
+};
 </script>
 
 <style scoped lang="scss">

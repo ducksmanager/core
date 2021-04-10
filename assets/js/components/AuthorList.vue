@@ -53,7 +53,7 @@
         variant="warning"
         show
       >
-        {{ $t('Vous avez atteint le nombre maximal d\'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d\'autres.') }}
+        {{ $t("Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres.") }}
       </b-alert>
       <b-row v-else>
         <b-col sm="4">

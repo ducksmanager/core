@@ -154,7 +154,7 @@ export default {
                       ? `${vm.unit === 'total'
                         ? vm.$t('Taille de la collection pour le mois')
                         : vm.$t('Nouvelles acquisitions pour le mois')} ${tooltipItem.label}`
-                      : vm.$t('Numéros sans dates d\'achat')
+                      : vm.$t("Numéros sans dates d'achat")
                   ) + "\n";
                 },
                 title: (tooltipItem, {datasets}) => datasets[tooltipItem[0].datasetIndex].label,

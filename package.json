@@ -36,6 +36,7 @@
         "vue-chartjs": "^3.5.1",
         "vue-context": "^6.0.0",
         "vue-i18n": "^8.22.4",
+        "vue-i18n-extract": "^1.2.0",
         "vue-loader": "^15.9.6",
         "vue-mapbox": "^0.4.1",
         "vue-slicksort": "^1.1.3",

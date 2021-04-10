@@ -13,7 +13,7 @@
             type="text"
             required
             autofocus
-            :placeholder="$t('Nom d\'utilisateur')"
+            :placeholder="$t(`Nom d'utilisateur`)"
           />
         </Errorable>
       </b-col>
@@ -66,7 +66,7 @@
       size="xl"
       type="submit"
     >
-      {{ $t('Inscription') }}
+      {{ $t("Inscription") }}
     </b-btn>
   </form>
 </template>
@@ -75,23 +75,23 @@
 import l10nMixin from "../mixins/l10nMixin";
 import * as axios from "axios";
 import validationMixin from "../mixins/validationMixin";
-import {mapGetters, mapMutations} from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import Errorable from "../components/Errorable";
 
 
 export default {
   name: "Signup",
-  components: {Errorable},
+  components: { Errorable },
   mixins: [l10nMixin, validationMixin],
   props: {
-    lastUsername: {type: String, default: null}
+    lastUsername: { type: String, default: null }
   },
 
   data: () => ({
-    signupUsername: '',
-    email: '',
-    password: '',
-    password2: '',
+    signupUsername: "",
+    email: "",
+    password: "",
+    password2: ""
   }),
 
   computed: {
@@ -106,28 +106,27 @@ export default {
     ...mapMutations("form", ["clearErrors"]),
 
     async signup() {
-      this.clearErrors()
-      this.validatePasswords()
-      this.validateEmail()
-      this.validateUsername()
+      this.clearErrors();
+      this.validatePasswords();
+      this.validateEmail();
+      this.validateUsername();
       if (this.hasErrors) {
-        return
+        return;
       }
       try {
-        await axios.put('/signup', {
+        await axios.put("/signup", {
           username: this.signupUsername,
           password: this.password,
           password2: this.password2,
           email: this.email
-        })
-        window.location.replace(this.$r('/collection/show'))
-      }
-      catch(e) {
-        this.addErrors({username: this.$t('Ce nom d\'utilisateur ou cette adresse e-mail existe déjà.')})
+        });
+        window.location.replace(this.$r("/collection/show"));
+      } catch (e) {
+        this.addErrors({ username: this.$t("Ce nom d'utilisateur ou cette adresse e-mail existe déjà.") });
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>

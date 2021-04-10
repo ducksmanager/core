@@ -95,7 +95,7 @@
                       class="form-control"
                       size="30"
                       maxlength="10"
-                      :placeholder="$t('Date d\'achat')"
+                      :placeholder="$t(`Date d'achat`)"
                       @keydown.prevent="() => {}"
                     >
                     <b-btn
@@ -156,7 +156,7 @@
             v-else
             class="p-0 disabled text-secondary"
             role="presentation"
-            :title="$t('Vous pouvez seulement ajouter un exemplaire lorsqu\'un seul numéro est sélectionné')"
+            :title="$t(`Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`)"
           >
             {{ $t("Ajouter un exemplaire") }}
           </b-nav-item>

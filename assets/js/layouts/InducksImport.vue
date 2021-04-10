@@ -27,7 +27,7 @@
       </p>
       <p>
         <span
-          v-html="$t('Si vous possédez déjà une collection Inducks, vous pouvez <b>l\'importer sur DucksManager en quelques clics.</b>')"
+          v-html="$t(`Si vous possédez déjà une collection Inducks, vous pouvez <b>l'importer sur DucksManager en quelques clics.</b>`)"
         /><br>
         {{ $t("Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez \"{0}\" dans le menu.", [$t("Collection Inducks")])
         }}
@@ -64,11 +64,11 @@
         <ol>
           <li>{{ $t("Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks.") }}</li>
           <li
-            v-html="$t('Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d\'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>')"
+            v-html="$t(`Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>`)"
           />
           <li>{{ $t("Sélectionnez toute la liste, puis copiez-la.") }}</li>
           <li>{{ $t("Collez ce texte dans la partie droite de la page.") }}</li>
-          <li>{{ $t("Cliquez sur le bouton \"Importer\" en bas de la page.") }}</li>
+          <li>{{ $t(`Cliquez sur le bouton "Importer" en bas de la page.`) }}</li>
         </ol>
       </b-alert>
       <b-row class="justify-content-center">

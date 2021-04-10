@@ -6,22 +6,27 @@
     >
       <template #non-empty-collection>
         <div>
-          <span v-html="$t('Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.', [rarityValue, rarityTotal])" /><br>
-          <small class="d-inline-block mt-3">{{ $t('La rareté de votre collection est calculée sur la base du nombre d\'autres utilisateurs qui possèdent chacun des magazines de votre collection.') }}</small>
+          <span
+            v-html="$t('Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.', [rarityValue, rarityTotal])"
+          /><br>
+          <small
+            class="d-inline-block mt-3"
+          >{{ $t("La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.")
+          }}</small>
         </div>
       </template>
     </ShortStats>
     <div v-else>
-      {{ $t('Chargement...') }}
+      {{ $t("Chargement...") }}
     </div>
-    <h2>{{ $t('Valeur de la collection') }}<sup><small>{{ $t('Nouveau!') }}</small></sup></h2>
+    <h2>{{ $t("Valeur de la collection") }}<sup><small>{{ $t("Nouveau!") }}</small></sup></h2>
     <template v-if="quotedIssues && hasPublicationNames">
       <b-alert
         v-if="quotationSum === 0"
         show
         variant="light"
       >
-        {{ $t('Votre collection ne contient pas de magazines cotés.') }}
+        {{ $t("Votre collection ne contient pas de magazines cotés.") }}
       </b-alert>
       <div v-else>
         <div
@@ -34,11 +39,11 @@
           :visible="false"
         >
           <template #header>
-            {{ $t('Détails') }}
+            {{ $t("Détails") }}
           </template>
           <template #content>
             <div class="my-3">
-              {{ $t('Votre collection contient {0} magazines cotés.', [quotedIssues.length]) }}
+              {{ $t("Votre collection contient {0} magazines cotés.", [quotedIssues.length]) }}
             </div>
             <b-table
               striped
@@ -74,27 +79,33 @@
           :visible="false"
         >
           <template #header>
-            {{ $t('Comment DucksManager calcule-t-il la valeur de ma collection ?') }}
+            {{ $t("Comment DucksManager calcule-t-il la valeur de ma collection ?") }}
           </template>
           <template #content>
             <div>
-              {{ $t('Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.') }}
+              {{ $t("Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.")
+              }}
             </div>
-            <div v-html="$t('Les cotes utilisées sont celles référencées sur le site Internet {0}.', ['<a href=\'https://bedetheque.com\'>Bédéthèque</a>'])" />
-            {{ $t('Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :') }}
+            <div
+              v-html="$t('Les cotes utilisées sont celles référencées sur le site Internet {0}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`])"
+            />
+            {{ $t("Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :")
+            }}
             <ul>
-              <li>{{ $t('Numéro en bon état : pas d\'ajustement') }}</li>
-              <li>{{ $t('Numéro en moyen état : 70% de la cote') }}</li>
-              <li>{{ $t('Numéro en mauvais état : 30% de la cote') }}</li>
-              <li>{{ $t('Etat non défini : 70% de la cote') }}</li>
+              <li>{{ $t("Numéro en bon état : pas d'ajustement") }}</li>
+              <li>{{ $t("Numéro en moyen état : 70% de la cote") }}</li>
+              <li>{{ $t("Numéro en mauvais état : 30% de la cote") }}</li>
+              <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
             </ul>
-            <div v-html="$t('Une cote présente sur Bédéthèque n\'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)', ['<a href=\'mailto:admin@ducksmanager.net\'>admin@ducksmanager.net</a>'])" />
+            <div
+              v-html="$t(`Une cote présente sur Bédéthèque n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`, [`<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`])"
+            />
           </template>
         </Accordion>
       </div>
     </template>
     <div v-else>
-      {{ $t('Chargement...') }}
+      {{ $t("Chargement...") }}
     </div>
   </div>
 </template>
@@ -117,7 +128,7 @@ export default {
     rarityValue: null,
     rarityTotal: null,
     hasPublicationNames: false,
-    currentPage: 1,
+    currentPage: 1
   }),
 
   computed: {
@@ -126,11 +137,11 @@ export default {
     ...mapGetters("collection", ["totalPerPublication", "quotedIssues", "quotationSum"]),
     quotationFields() {
       return [
-        {key: 'issue', label: this.ucFirst(this.$t('numéro'))},
-        {key: 'condition', label: this.ucFirst(this.$t('Etat'))},
-        {key: 'estimation', label: this.ucFirst(this.$t('Estimation'))},
-        {key: 'estimationGivenCondition', label: this.ucFirst(this.$t('Estimation ajustée de l\'état'))}
-      ]
+        { key: "issue", label: this.ucFirst(this.$t("numéro")) },
+        { key: "condition", label: this.ucFirst(this.$t("Etat")) },
+        { key: "estimation", label: this.ucFirst(this.$t("Estimation")) },
+        { key: "estimationGivenCondition", label: this.ucFirst(this.$t("Estimation ajustée de l'état")) }
+      ];
     }
   },
 
@@ -138,13 +149,13 @@ export default {
     totalPerPublication: {
       immediate: true,
       async handler() {
-        await this.fetchIssueQuotations(Object.keys(this.totalPerPublication))
+        await this.fetchIssueQuotations(Object.keys(this.totalPerPublication));
       }
     },
     async quotedIssues(newValue) {
-        await this.fetchPublicationNames(newValue.map(({publicationCode}) => publicationCode))
-        this.hasPublicationNames = true
-      }
+      await this.fetchPublicationNames(newValue.map(({ publicationCode }) => publicationCode));
+      this.hasPublicationNames = true;
+    }
   },
 
   async mounted() {
@@ -156,7 +167,7 @@ export default {
 
   methods: {
     ...mapActions("users", ["fetchCount"]),
-    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueQuotations"]),
+    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueQuotations"])
   }
 };
 </script>
@@ -165,9 +176,11 @@ export default {
 ::v-deep div {
   font-size: 16px;
 }
+
 #short-stats ::v-deep div {
   margin-bottom: 32px;
 }
+
 .card {
   color: black;
 

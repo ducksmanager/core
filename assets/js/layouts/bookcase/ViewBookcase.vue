@@ -70,14 +70,14 @@
       variant="warning"
       show
     >
-      {{ $t('Cet utilisateur n\'existe pas.') }}
+      {{ $t("Cet utilisateur n'existe pas.") }}
     </b-alert>
     <div v-else>
       <div v-if="!isSharedBookcase">
         <div
           v-if="mostPopularIssuesInCollectionWithoutEdge && mostPopularIssuesInCollectionWithoutEdge.length && userPoints"
         >
-          {{ $t('Envoyez des photos de tranches de magazines et gagnez jusqu\'à {0} points par tranche !', [mostPopularIssuesInCollectionWithoutEdge[0].popularity]) }}
+          {{ $t("Envoyez des photos de tranches de magazines et gagnez jusqu'à {0} points par tranche !", [mostPopularIssuesInCollectionWithoutEdge[0].popularity]) }}
           <div>
             <b-carousel
               controls

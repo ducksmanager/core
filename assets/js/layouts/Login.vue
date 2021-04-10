@@ -3,7 +3,7 @@
     <b-row>
       <b-col lg="6">
         <h1 class="h3 mb-3 font-weight-normal">
-          {{ $t('Connexion') }}
+          {{ $t("Connexion") }}
         </h1>
         <b-alert
           v-if="error"
@@ -19,7 +19,7 @@
           required
           autofocus
           :value="lastUsername"
-          :placeholder="$t('Nom d\'utilisateur')"
+          :placeholder="$t(`Nom d'utilisateur`)"
         />
         <b-form-input
           id="password"
@@ -40,10 +40,10 @@
           size="xl"
           type="submit"
         >
-          {{ $t('Connexion') }}
+          {{ $t("Connexion") }}
         </b-btn>
         <div>
-          <a :href="$r('/forgot')">{{ $t('Mot de passe oublié ?') }}</a>
+          <a :href="$r('/forgot')">{{ $t("Mot de passe oublié ?") }}</a>
         </div>
       </b-col>
     </b-row>
@@ -57,15 +57,15 @@ export default {
   name: "Login",
   mixins: [l10nMixin],
   props: {
-    error: {type: String, default: null},
-    lastUsername: {type: String, default: null}
+    error: { type: String, default: null },
+    lastUsername: { type: String, default: null }
   },
   data() {
     return {
-      csrfToken: document.getElementById('csrf').value
-    }
+      csrfToken: document.getElementById("csrf").value
+    };
   }
-}
+};
 </script>
 
 <style scoped>

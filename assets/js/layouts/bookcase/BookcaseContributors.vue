@@ -1,12 +1,12 @@
 <template>
   <div v-if="loading">
-    {{ $t('Chargement...') }}
+    {{ $t("Chargement...") }}
   </div>
   <div
     v-else
     id="contributors"
   >
-    <h2>{{ $t('La bibliothèque DucksManager n\'aurait pas pu voir le jour sans le soutien et l\'aide de :') }}</h2>
+    <h2>{{ $t("La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de :") }}</h2>
     <div
       v-for="contributor in bookcaseContributorsSorted"
       :key="JSON.stringify(contributor)"
@@ -27,7 +27,7 @@
 
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
-import {mapActions, mapState} from "vuex";
+import { mapActions, mapState } from "vuex";
 import UserPopover from "../../components/UserPopover";
 
 export default {
@@ -39,7 +39,7 @@ export default {
   mixins: [l10nMixin],
 
   data: () => ({
-    loading: true,
+    loading: true
   }),
 
   computed: {
@@ -47,22 +47,22 @@ export default {
 
     bookcaseContributorsSorted() {
       return !this.loading && [...this.bookcaseContributors]
-        .sort(({name: name1}, {name: name2}) => name1.toLowerCase() < name2.toLowerCase() ? -1 : 1);
+        .sort(({ name: name1 }, { name: name2 }) => name1.toLowerCase() < name2.toLowerCase() ? -1 : 1);
     }
   },
 
   async mounted() {
     await this.fetchBookcaseContributors();
     await this.fetchStats(
-      this.bookcaseContributors.filter(({userId}) => !!userId).map(({userId}) => userId)
+      this.bookcaseContributors.filter(({ userId }) => !!userId).map(({ userId }) => userId)
     );
-    this.loading = false
+    this.loading = false;
   },
 
   methods: {
     ...mapActions("users", ["fetchStats", "fetchBookcaseContributors"])
-  },
-}
+  }
+};
 </script>
 
 <style lang="scss" scoped>

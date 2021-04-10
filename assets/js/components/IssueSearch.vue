@@ -24,7 +24,7 @@
       <b-form-input
         v-model="search"
         list="search"
-        :placeholder="searchContext === 'story' ? $t('Rechercher une histoire') : $t('Rechercher les publications d\'une histoire à partir d\'un code histoire')"
+        :placeholder="searchContext === 'story' ? $t('Rechercher une histoire') : $t(`Rechercher les publications d'une histoire à partir d'un code histoire`)"
       />
       <datalist v-if="searchResults.results && !isSearching">
         <option v-if="!searchResults.results.length">

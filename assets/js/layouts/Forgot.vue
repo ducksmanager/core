@@ -6,7 +6,7 @@
       variant="info"
       v-html="token
         ? $t('Le mot de passe a été changé. Vous pouvez maintenant vous connecter en vous connectant via le menu.')
-        : $t('Si l\'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient d\'y être envoyé. Si l\'e-mail ne vous parvient pas d\'ici quelques minutes, pensez à vérifier le dossier Spam.')"
+        : $t(`Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`)"
     />
     <form
       v-else
@@ -16,7 +16,7 @@
         v-if="isSuccess === false"
         show
         variant="danger"
-        v-html="token ? $t('Une erreur s\'est produite.') : $t('Le champ E-mail est invalide, correspond-il à un email enregistré sur DucksManager ?')"
+        v-html="token ? $t(`Une erreur s'est produite.`) : $t('Le champ E-mail est invalide, correspond-il à un email enregistré sur DucksManager ?')"
       />
       <template v-if="(isSuccess === false && parsedErrors.length) || isSuccess === null">
         <div v-if="token">
@@ -38,7 +38,7 @@
           </Errorable>
         </div>
         <div v-else>
-          {{ $t('Un mot de passe temporaire va vous être envoyé à l\'adresse e-mail que vous indiquerez ci-dessous.') }}
+          {{ $t("Un mot de passe temporaire va vous être envoyé à l'adresse e-mail que vous indiquerez ci-dessous.") }}
           <b-form-row>
             <b-col sm="6">
               <b-form-input
@@ -55,7 +55,7 @@
         <b-form-row>
           <b-col sm="4">
             <b-btn type="submit">
-              {{ $t('Envoyer') }}
+              {{ $t("Envoyer") }}
             </b-btn>
           </b-col>
         </b-form-row>
@@ -67,35 +67,35 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import Errorable from "../components/Errorable";
-import {mapMutations} from "vuex";
+import { mapMutations } from "vuex";
 
 export default {
   name: "Forgot",
-  components: {Errorable},
+  components: { Errorable },
   mixins: [l10nMixin],
   props: {
-    success: {type: String, default: null},
-    token: {type: String, default: null},
-    errors: {type: String, default: ''},
+    success: { type: String, default: null },
+    token: { type: String, default: null },
+    errors: { type: String, default: "" }
   },
 
   computed: {
     isSuccess() {
-      return this.success === null ? null : parseInt(this.success) === 1
+      return this.success === null ? null : parseInt(this.success) === 1;
     },
     parsedErrors() {
-      return JSON.parse(this.errors)
+      return JSON.parse(this.errors);
     }
   },
 
   mounted() {
-    this.addErrors(JSON.parse(this.errors))
+    this.addErrors(JSON.parse(this.errors));
   },
 
   methods: {
-    ...mapMutations("form", ["addErrors"]),
+    ...mapMutations("form", ["addErrors"])
   }
-}
+};
 </script>
 
 <style scoped>

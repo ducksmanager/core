@@ -16,7 +16,7 @@
           v-if="!hasEdge"
           class="has-no-edge"
         >
-          {{ $t('Cette tranche n\'est pas visible car nous n\'en possédons pas de photographie...') }}<br>
+          {{ $t("Cette tranche n'est pas visible car nous n'en possédons pas de photographie...") }}<br>
           <div v-if="!isSharedBookcase">
             {{ $t('Vous pouvez photographier cette tranche ?') }}<br>
             <div class="medal-progress-wrapper">

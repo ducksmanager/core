@@ -35,7 +35,7 @@
       {{ $t("Affichage des exemplaires multiples") }}
     </h5>
     <b-form-checkbox v-model="bookcaseOptions.showAllCopies">
-      {{ $t('Show all the issue copies that I possess') }}
+      {{ $t('Afficher les doubles de ma collection dans la bibliothèque') }}
     </b-form-checkbox>
 
     <h5

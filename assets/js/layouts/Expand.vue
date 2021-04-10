@@ -4,17 +4,17 @@
       variant="info"
       show
     >
-      {{ $t('DucksManager se base sur les') }}
-      <a :href="$r('/stats/authors')">{{ $t('notes que vous attribuez à vos auteurs préférés') }}</a>
-      {{ $t('pour vous proposer des magazines susceptibles de vous intéresser.') }}
+      {{ $t("DucksManager se base sur les") }}
+      <a :href="$r('/stats/authors')">{{ $t("notes que vous attribuez à vos auteurs préférés") }}</a>
+      {{ $t("pour vous proposer des magazines susceptibles de vous intéresser.") }}
       <br><br>
-      {{ $t('Les suggestions d\'achat sont mises à jour quotidiennement.') }}
+      {{ $t("Les suggestions d'achat sont mises à jour quotidiennement.") }}
     </b-alert>
     <div v-if="!watchedAuthors">
-      {{ $t('Chargement...') }}
+      {{ $t("Chargement...") }}
     </div>
     <div v-else-if="watchedAuthors.length && watchedAuthorsWithNotation.length">
-      {{ $t('Montrer les magazines de') }}
+      {{ $t("Montrer les magazines de") }}
       <b-select
         v-if="countryNamesWithAllCountriesOption"
         v-model="countryCode"
@@ -31,20 +31,21 @@
       show
       variant="warning"
     >
-      {{ $t('Vous n\'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection.') }}
+      {{ $t("Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection.")
+      }}
     </b-alert>
     <b-alert
       v-else
       show
       variant="warning"
     >
-      {{ $t('Aucun auteur noté.') }}
+      {{ $t("Aucun auteur noté.") }}
       <span
         v-html="$t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
-          `<a :href='${$r('/stats/authors')}'>${$t('Statistiques sur les auteurs')}</a>`
+          `<a :href='${$r('/stats/authors')}'>${$t(`Statistiques sur les auteurs`)}</a>`
         ])"
       />
-      {{ $t('Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.') }}
+      {{ $t("Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.") }}
     </b-alert>
   </div>
 </template>
@@ -52,12 +53,12 @@
 <script>
 import collectionMixin from "../mixins/collectionMixin";
 import l10nMixin from "../mixins/l10nMixin";
-import {mapActions, mapGetters, mapState} from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import SuggestionList from "./SuggestionList";
 
 export default {
   name: "Expand",
-  components: {SuggestionList},
+  components: { SuggestionList },
   mixins: [collectionMixin, l10nMixin],
 
   data: () => ({
@@ -71,33 +72,33 @@ export default {
 
     countryNamesWithAllCountriesOption() {
       return this.countryNames && {
-        ALL: this.$t('Tous les pays'),
+        ALL: this.$t("Tous les pays"),
         ...this.countryNames
-      }
+      };
     },
 
     watchedAuthorsWithNotation() {
-      return this.watchedAuthors && this.watchedAuthors.filter(({notation}) => notation > 0)
+      return this.watchedAuthors && this.watchedAuthors.filter(({ notation }) => notation > 0);
     }
   },
 
   watch: {
     async watchedAuthors(newValue) {
       if (newValue && newValue.length) {
-        await this.fetchCountryNames()
+        await this.fetchCountryNames();
       }
     }
   },
 
   async mounted() {
-    await this.loadWatchedAuthors()
+    await this.loadWatchedAuthors();
   },
 
   methods: {
     ...mapActions("collection", ["loadWatchedAuthors"]),
     ...mapActions("coa", ["fetchCountryNames"])
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
