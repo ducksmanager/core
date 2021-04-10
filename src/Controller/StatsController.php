@@ -30,9 +30,7 @@ class StatsController extends AbstractController
      * )
      */
     public function getUsersStats(CollectionService $collectionService, string $userIds) {
-        $userIds = array_values(array_filter(explode(',', $userIds), function(string $userIds) {
-            return (int) $userIds;
-        }));
+        $userIds = array_values(array_filter(explode(',', $userIds), fn(string $userIds) => (int) $userIds));
         return new JsonResponse([
             'points' => $collectionService->retrieveUserPoints($userIds),
             'stats' => $collectionService->retrieveUserQuickStats($userIds)

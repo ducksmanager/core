@@ -33,9 +33,11 @@ class CollectionService
         $results = $this->apiService->runQuery(
             '
             select type_contribution.contribution, ids_users.ID_User, ifnull(contributions_utilisateur.points_total, 0) as points_total
-            from (' . implode(' union ', array_map(function ($medalType) {
-                return "select '$medalType' as contribution";
-            }, ['Photographe', 'Createur', 'Duckhunter'])) . ') as type_contribution
+            from (
+                select \'Photographe\' as contribution union
+                select \'Createur\' as contribution union
+                select \'Duckhunter\' as contribution
+            ) as type_contribution
             join (
                 SELECT ID AS ID_User
                 FROM users
@@ -51,8 +53,8 @@ class CollectionService
         );
 
         return array_map(function(array $result) {
-            $result['points_total'] = intval($result['points_total']);
-            $result['ID_User'] = intval($result['ID_User']);
+            $result['points_total'] = (int)$result['points_total'];
+            $result['ID_User'] = (int)$result['ID_User'];
             return $result;
         }, $results);
     }
