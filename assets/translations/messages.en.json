@@ -1,4 +1,5 @@
 {
+  "{countries} pays | {countries} pays": "{countries} country | {countries} countries",
   "% de la collection est visible dans la bibliothèque.": "% of the collection can be viewed in the bookcase.",
   ", l'application mobile de DucksManager !": ", DucksManager's mobile app!",
   "... ou recherchez un magazine à partir d'une histoire qui le contient :": "... or find an issue by searching for a story that's inside of  it :",
@@ -275,7 +276,6 @@
   "Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page {0}.": "By default, the magazines are ordered by country and by magazine. You can change this order by moving the magazines names on the {0} page.",
   "Parce que votre bibliothèque est unique, DucksManager vous propose de choisir entre différents types de bois pour le cadre de la bibliothèque et ses égères.": "Since your bookcase is unique, DucksManager allows you to choose among different types of wood, for the bookcase and for its shelves.",
   "Pays de publication": "Country of publication",
-  "pays": "country | countries",
   "peinture": "painting",
   "Photographe de tranches": "Edge photographer",
   "Plus de {0} {1}": "More than {0} {1}",
