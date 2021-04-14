@@ -1,6 +1,9 @@
 <template>
   <div v-if="total > 0">
-    <div>{{ $t('Vous possédez') }} <b>{{ total }}</b> {{ $tc('numéro | numéros', total) }}.</div>
+    <div>
+      {{ $t('Vous possédez') }} <b>{{ total }}</b> {{ $tc('numéro | numéros', total) }},
+      {{ $t('dont') }} {{ totalUniqueIssues }} {{ $tc('numéro unique | numéros uniques', totalUniqueIssues) }}.
+    </div>
     <div>
       {{ $t('Votre collection est composée de') }} <b>{{ Object.keys(totalPerPublication).length }}</b> {{
         $t('magazines différents issus de')
@@ -31,7 +34,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters("collection", ["total", "totalPerCountry", "totalPerPublication"])
+    ...mapGetters("collection", ["total", "totalUniqueIssues", "totalPerCountry", "totalPerPublication"])
   },
 };
 </script>

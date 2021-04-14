@@ -9,10 +9,16 @@
           <span
             v-html="$t('Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.', [rarityValue, rarityTotal])"
           /><br>
-          <small
+          <b-alert
+            variant="info"
+            show
+            size="sm"
             class="d-inline-block mt-3"
-          >{{ $t("La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.")
-          }}</small>
+          >
+            <small>
+              {{ $t("La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.")
+              }}</small>
+          </b-alert>
         </div>
       </template>
     </ShortStats>
@@ -177,7 +183,7 @@ export default {
   font-size: 16px;
 }
 
-#short-stats ::v-deep div {
+#short-stats ::v-deep > div {
   margin-bottom: 32px;
 }
 

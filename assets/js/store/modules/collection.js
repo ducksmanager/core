@@ -54,6 +54,12 @@ export default {
   getters: {
     total: state => state.collection && state.collection.length,
 
+    totalUniqueIssues: state => state.collection && state.collection.length && [...new Set(state.collection.map(
+      ({
+         publicationCode,
+         issueNumber
+       }) => `${publicationCode} ${issueNumber}`))].length,
+
     totalPerCountry: state => state.collection && state.collection.reduce((acc, issue) => ({
       ...acc,
       [issue.country]: (acc[issue.country] || 0) + 1
@@ -95,7 +101,7 @@ export default {
               estimation,
               estimationGivenCondition: CONDITION_TO_ESTIMATION_PCT[condition] * estimation
             });
-          })
+          });
     },
 
     quotationSum: (state, getters) => getters.quotedIssues && Math.round(getters.quotedIssues.reduce((acc, { estimationGivenCondition }) => acc + estimationGivenCondition, 0))
