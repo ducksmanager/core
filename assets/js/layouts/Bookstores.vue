@@ -168,11 +168,11 @@ export default {
       this.newBookstoreSent = true;
     },
     formatDate(date) {
-      const dateObject = new Date(date);
-      if (isNaN(dateObject.getTime())) {
+      if (date == null) {
         return this.$t("il y a longtemps");
-      } else {
-        return this.$t("le {date}", { date: dateObject.toLocaleDateString() });
+      }
+      else {
+        return this.$t("le {date}", { date: new Date(date).toLocaleDateString() });
       }
     }
   }
