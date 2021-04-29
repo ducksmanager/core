@@ -44,7 +44,7 @@ export default {
   },
 
   async mounted() {
-    this.events = (await axios.get('/events')).data.map(event => {
+    this.events = ((await axios.get('/events')).data || []).map(event => {
       if (event.exampleIssue) {
         const [publicationCode, issueNumber] = event.exampleIssue.split(/\/(?=[^/]+$)/)
         event = {...event, publicationCode, issueNumber}
