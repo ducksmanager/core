@@ -23,7 +23,7 @@ new Vue({
   render(createElement) {
     let props = {}, component = null
     const attributes = this.$el.attributes;
-    Object.keys(attributes).forEach(key => {
+    Object.keys(attributes || {}).forEach(key => {
       const {name, value} = attributes[key]
       if (name === 'component') {
         component = value
