@@ -77,6 +77,9 @@ export default {
       .sort(({ popularity: popularity1 }, { popularity: popularity2 }) => popularity2 - popularity1),
 
     quotedIssues: (state, getters, rootState) => {
+      if (rootState.coa.issueQuotations === null) {
+        return null;
+      }
       const getEstimation = (publicationCode, issueNumber) => {
         const estimationData = rootState.coa.issueQuotations[`${publicationCode} ${issueNumber}`];
         return estimationData && (estimationData.max ? (estimationData.min + estimationData.max) / 2 : estimationData.min);
@@ -89,7 +92,6 @@ export default {
         "": 0.7
       };
       return state.collection
-        && Object.keys(rootState.coa.issueQuotations).length
         && state.collection
           .filter(({ publicationCode, issueNumber }) => getEstimation(publicationCode, issueNumber))
           .map(({ publicationCode, issueNumber, condition }) => {

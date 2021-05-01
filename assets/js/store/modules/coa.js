@@ -27,7 +27,7 @@ export default {
     isLoadingCountryNames: false,
     issueCounts: null,
     issueCodeDetails: null,
-    issueQuotations: {},
+    issueQuotations: null,
     loadingIssueDetails: {}
   }),
 
@@ -67,7 +67,7 @@ export default {
       state.issueCodeDetails = { ...state.issueCodeDetails, ...issueCodeDetails };
     },
     addIssueQuotations(state, issueQuotations) {
-      state.issueQuotations = {...state.issueQuotations, ...issueQuotations};
+      state.issueQuotations = {...(state.issueQuotations || {}), ...issueQuotations};
     }
   },
 
@@ -96,7 +96,7 @@ export default {
     },
     fetchIssueQuotations: async ({ state, commit, dispatch }, publicationCodes) => {
       const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
-        !Object.keys(state.issueQuotations).includes(publicationCode)
+        !Object.keys(state.issueQuotations || {}).includes(publicationCode)
       ))];
       return newPublicationCodes.length
         && commit("addIssueQuotations",

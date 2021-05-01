@@ -1,7 +1,7 @@
 <template>
   <div>
     <ShortStats
-      v-if="rarityTotal"
+      v-if="rarityTotal !== null"
       id="short-stats"
     >
       <template #non-empty-collection>
@@ -25,14 +25,14 @@
     <div v-else>
       {{ $t("Chargement...") }}
     </div>
-    <h2>{{ $t("Valeur de la collection") }}<sup><small>{{ $t("Nouveau!") }}</small></sup></h2>
-    <template v-if="quotedIssues && hasPublicationNames">
+    <h2>{{ $t("Valeur de la collection") }}</h2>
+    <template v-if="quotedIssues !== null && hasPublicationNames">
       <b-alert
         v-if="quotationSum === 0"
         show
-        variant="light"
+        variant="info"
       >
-        {{ $t("Votre collection ne contient pas de magazines cotés.") }}
+        <small>{{ $t("Votre collection ne contient pas de magazines cotés.") }}</small>
       </b-alert>
       <div v-else>
         <div
@@ -79,36 +79,36 @@
             </b-table>
           </template>
         </Accordion>
-        <Accordion
-          id="quotation-explanation"
-          accordion-group-id="quotation-explanation"
-          :visible="false"
-        >
-          <template #header>
-            {{ $t("Comment DucksManager calcule-t-il la valeur de ma collection ?") }}
-          </template>
-          <template #content>
-            <div>
-              {{ $t("Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.")
-              }}
-            </div>
-            <div
-              v-html="$t('Les cotes utilisées sont celles référencées sur le site Internet {0}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`])"
-            />
-            {{ $t("Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :")
-            }}
-            <ul>
-              <li>{{ $t("Numéro en bon état : pas d'ajustement") }}</li>
-              <li>{{ $t("Numéro en moyen état : 70% de la cote") }}</li>
-              <li>{{ $t("Numéro en mauvais état : 30% de la cote") }}</li>
-              <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
-            </ul>
-            <div
-              v-html="$t(`Une cote présente sur Bédéthèque n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`, [`<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`])"
-            />
-          </template>
-        </Accordion>
       </div>
+      <Accordion
+        id="quotation-explanation"
+        accordion-group-id="quotation-explanation"
+        :visible="false"
+      >
+        <template #header>
+          {{ $t("Comment DucksManager calcule-t-il la valeur de ma collection ?") }}
+        </template>
+        <template #content>
+          <div>
+            {{ $t("Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.")
+            }}
+          </div>
+          <div
+            v-html="$t('Les cotes utilisées sont celles référencées sur le site Internet {0}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`])"
+          />
+          {{ $t("Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :")
+          }}
+          <ul>
+            <li>{{ $t("Numéro en bon état : pas d'ajustement") }}</li>
+            <li>{{ $t("Numéro en moyen état : 70% de la cote") }}</li>
+            <li>{{ $t("Numéro en mauvais état : 30% de la cote") }}</li>
+            <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
+          </ul>
+          <div
+            v-html="$t(`Une cote présente sur Bédéthèque n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`, [`<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`])"
+          />
+        </template>
+      </Accordion>
     </template>
     <div v-else>
       {{ $t("Chargement...") }}
@@ -158,9 +158,14 @@ export default {
         await this.fetchIssueQuotations(Object.keys(this.totalPerPublication));
       }
     },
-    async quotedIssues(newValue) {
-      await this.fetchPublicationNames(newValue.map(({ publicationCode }) => publicationCode));
-      this.hasPublicationNames = true;
+    quotedIssues: {
+      immediate: true,
+      async handler(newValue) {
+        if (newValue !== null) {
+          await this.fetchPublicationNames(newValue.map(({ publicationCode }) => publicationCode));
+          this.hasPublicationNames = true;
+        }
+      }
     }
   },
 
