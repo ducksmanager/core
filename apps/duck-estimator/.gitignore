@@ -1,3 +1,3 @@
 .idea
-cache/*.html.json
+cache/*/**.html.json
 node_modules
