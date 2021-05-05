@@ -32,6 +32,25 @@ module.exports = {
       ]
     );
   },
+  createQuotations: async (quotations) => {
+    console.log(`Adding ${quotations.length} quotations`)
+    return await coaConnection.batch(
+      'INSERT INTO inducks_issuequotation(publicationcode, issuenumber, estimationmin, estimationmax, scrapedate) VALUES(?,?,?,?,?)',
+      quotations.map(({
+                        publicationcode,
+                        issuenumber,
+                        estimationMin,
+                        estimationMax,
+                        scrapeDate
+                      }) => [
+        publicationcode,
+        issuenumber,
+        estimationMin,
+        estimationMax,
+        scrapeDate
+      ])
+    );
+  },
 
   truncateQuotations: async () =>
     await coaConnection.query('TRUNCATE inducks_issuequotation'),

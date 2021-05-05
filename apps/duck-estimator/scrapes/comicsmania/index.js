@@ -1,9 +1,10 @@
-const {createQuotation, isInducksIssueExisting} = require('../../coa')
+const {createQuotations, isInducksIssueExisting} = require('../../coa')
 
 const {firefox} = require('playwright')
 const REGEX_ISSUENUMBER = /^\d+\b/s
-const REGEX_PRICE = /[\d]+(?= ?€)/s
-const prices = {}
+const REGEX_PRICE = /[\d,]+(?= ?€)/s
+const publicationsWithIssues = []
+const quotations = []
 
 const publicationCodesAndSections = [
   {
@@ -13,6 +14,18 @@ const publicationCodesAndSections = [
   {
     publicationcode: 'gr/MMB',
     sectionTitle: 'ΜΙΚΥ ΜΑΟΥΣ (ΝΕΑ ΠΕΡΙΟΔΟΣ)'
+  },
+  {
+    publicationcode: null,
+    sectionTitle: 'ΞΕΝΟΓΛΩΣΣΑ ΜΙΚΥ ΜΑΟΥΣ (DELL)'
+  },
+  {
+    publicationcode: null,
+    sectionTitle: 'ΜΙΚΥ ΜΑΟΥΣ ΧΑΡΤΑΚΙΑ 1950;'
+  },
+  {
+    publicationcode: null,
+    sectionTitle: 'ΧΑΡΤΑΚΙΑ DISNEY  (ΜΕΓΑΛΟ ΣΧΗΜΑ)'
   }
 ]
 
@@ -34,21 +47,18 @@ module.exports = {
     for (const issueCell of issueCells) {
       const tagName = await issueCell.evaluate(e => e.tagName)
       const cellText = await issueCell.innerText()
+      if (cellText.replace(/ /g, '') === '') {
+        continue
+      }
       switch (tagName) {
         case 'TH': {
-          if (prices[currentPublicationCode] && !Object.keys(prices[currentPublicationCode]).length) {
-            continue
-          }
           const publicationSection = publicationCodesAndSections.find(({sectionTitle}) => sectionTitle === cellText)
           if (publicationSection) {
             currentPublicationCode = publicationSection.publicationcode
-            prices[currentPublicationCode] = {}
-            continue
-          } else {
-            console.warn(`No Inducks publication for ${cellText}`)
+            console.info(`Section found for ${currentPublicationCode} : ${cellText}`)
           }
+          continue
         }
-        break;
         case 'TD':
           if (!currentPublicationCode) {
             console.error(`No current publication found in page for issue number ${cellText}`)
@@ -65,17 +75,22 @@ module.exports = {
       const [issuenumber] = issueTextMatch;
 
       try {
-        const priceCell = await issueCell.waitForSelector('xpath=following-sibling::td', {timeout: 100})
+        const priceCell = await issueCell.waitForSelector('xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td', {timeout: 100})
         const priceText = await priceCell.innerText()
         const priceMatch = priceText.match(REGEX_PRICE)
         if (!priceMatch) {
           continue
         }
+        publicationsWithIssues.push(currentPublicationCode)
         if (await isInducksIssueExisting(currentPublicationCode, issuenumber)) {
-          await createQuotation(currentPublicationCode, issuenumber, priceMatch[0], null, null)
+          const price = parseFloat(priceMatch[0].replace(',', '.'));
+          quotations.push({publicationcode: currentPublicationCode, issuenumber, estimationMin: price, estimationMax: null, scrapeDate: null})
+          console.log(`Found ${currentPublicationCode} ${issuenumber}`)
         }
-      } catch (_) {}
+      } catch (_) {
+      }
     }
     await browser.close()
+    await createQuotations(quotations)
   }
 }
