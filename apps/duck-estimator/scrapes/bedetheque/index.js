@@ -1,28 +1,17 @@
-const fs = require('fs')
 const {Scraper} = require('bedetheque-scraper')
-const parse = require('csv-parse')
-const { createQuotation, isInducksIssueExisting } = require('../../coa')
+const { createQuotations, isInducksIssueExisting } = require('../../coa')
 const { syncScrapeCache, getScrapeCacheTime } = require('../../cache')
+const {readCsvMapping } = require('../../csv')
 
 const MAPPING_FILE = 'scrapes/bedetheque/bedetheque_mapping.csv'
 const ROOT_URL = 'https://www.bedetheque.com/'
-
-const readCsvMapping = async (recordCallback) => {
-  const parser = fs
-    .createReadStream(MAPPING_FILE)
-    .pipe(parse({
-      columns: true
-    }))
-  for await (const record of parser) {
-    recordCallback(record)
-  }
-}
+const quotations = []
 
 module.exports = {
   async scrape() {
     const mappedIssues = []
 
-    await readCsvMapping(record => mappedIssues.push(record))
+    await readCsvMapping(MAPPING_FILE, record => mappedIssues.push(record))
     const seriesUrls = [...new Set(mappedIssues.map(({bedetheque_url}) => bedetheque_url))]
 
     for (const serieUrl of seriesUrls) {
@@ -48,18 +37,20 @@ module.exports = {
             if (!estimationEuros) {
               estimationEuros = []
             }
-            await createQuotation(
+            quotations.push({
               publicationcode,
               issuenumber,
-              estimationEuros[0] || null,
-              estimationEuros[1] || null,
-              getScrapeCacheTime('bedetheque', `${serieUrl}.json`)
-            )
+              estimationMin: estimationEuros[0] || null,
+              estimationMax: estimationEuros[1] || null,
+              scrapeDate: getScrapeCacheTime('bedetheque', `${serieUrl}.json`),
+              source: 'bedetheque'
+            })
           }
         }
       }
       console.log('Done')
     }
+    await createQuotations(quotations)
     console.log('Done for all')
   }
 }

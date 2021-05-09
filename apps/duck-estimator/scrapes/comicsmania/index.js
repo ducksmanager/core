@@ -254,7 +254,8 @@ module.exports = {
               issuenumber,
               estimationMin: price,
               estimationMax: null,
-              scrapeDate: null
+              scrapeDate: null,
+              source: 'comicsmania'
             })
             console.log(`Found ${currentPublicationCode} ${issuenumber}`)
           }

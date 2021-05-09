@@ -19,37 +19,11 @@ const coaPool = mariadb.createPool({
 })
 
 module.exports = {
-  createQuotation: async (publicationcode, issuenumber, estimationMin, estimationMax, scrapeDate) => {
-    console.log(`Adding ${publicationcode} ${issuenumber}`)
-    return await coaConnection.query(
-      'INSERT INTO inducks_issuequotation(publicationcode, issuenumber, estimationmin, estimationmax, scrapedate) VALUES(?,?,?,?,?)',
-      [
-        publicationcode,
-        issuenumber,
-        estimationMin,
-        estimationMax,
-        scrapeDate
-      ]
-    );
-  },
   createQuotations: async (quotations) => {
     console.log(`Adding ${quotations.length} quotations`)
     return await coaConnection.batch(
-      'INSERT INTO inducks_issuequotation(publicationcode, issuenumber, estimationmin, estimationmax, scrapedate) VALUES(?,?,?,?,?)',
-      quotations.map(({
-                        publicationcode,
-                        issuenumber,
-                        estimationMin,
-                        estimationMax,
-                        scrapeDate
-                      }) => [
-        publicationcode,
-        issuenumber,
-        estimationMin,
-        estimationMax,
-        scrapeDate
-      ])
-    );
+      'INSERT INTO inducks_issuequotation(publicationcode, issuenumber, estimationmin, estimationmax, scrapedate, source) VALUES(?,?,?,?,?,?)',
+      quotations.map(object => Object.values(object)));
   },
 
   truncateQuotations: async () =>
@@ -71,8 +45,13 @@ module.exports = {
     return true
   },
 
-  async connect() {
-    return coaPool.getConnection()
+  getAll: async () =>
+    await coaConnection.query(
+      'SELECT publicationcode, issuenumber, estimationmin, estimationmax, source FROM inducks_issuequotation ORDER BY publicationcode, issuenumber'
+    ),
+
+  connect: async () =>
+    coaPool.getConnection()
       .then(async connection => {
         coaConnection = connection
         await coaConnection.query(`
@@ -84,6 +63,7 @@ module.exports = {
                 estimationmin   float    DEFAULT NULL,
                 estimationmax   float    DEFAULT NULL,
                 scrapedate      datetime DEFAULT NULL,
+                source          varchar(15)                         NOT NULL,
                 issuecode       varchar(28) GENERATED ALWAYS AS (concat(publicationcode, ' ', issuenumber)) VIRTUAL,
                 PRIMARY KEY (ID),
                 UNIQUE KEY inducks_issuequotation__uindex_issuecode (issuecode),
@@ -93,11 +73,10 @@ module.exports = {
               COLLATE = utf8_unicode_ci
         `)
       }).catch(err => {
-        console.error(err)
-      })
-  },
+      console.error(err)
+    }),
 
-  async disconnect() {
+  disconnect: async () => {
     await coaConnection.end()
     return coaPool.end()
   }
