@@ -1,6 +1,6 @@
 const {createQuotations, isInducksIssueExisting} = require('../../coa')
 
-const {firefox} = require('playwright')
+const {firefox} = require('playwright-firefox')
 const REGEX_ISSUENUMBER = /^(?:ΤΕΥΧΟΣ:|\n)?[-\d]+\b(?! ?€)/s
 const REGEX_PRICE = /[\d,]+(?= ?€)/s
 const publicationsWithIssues = []
