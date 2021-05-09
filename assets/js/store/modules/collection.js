@@ -101,7 +101,7 @@ export default {
               issueNumber,
               condition,
               estimation,
-              estimationGivenCondition: CONDITION_TO_ESTIMATION_PCT[condition] * estimation
+              estimationGivenCondition: parseFloat((CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(1))
             });
           });
     },

@@ -77,6 +77,11 @@
                 {{ item.estimationGivenCondition }}€
               </template>
             </b-table>
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="quotedIssues.length"
+              :per-page="50"
+            />
           </template>
         </Accordion>
       </div>
