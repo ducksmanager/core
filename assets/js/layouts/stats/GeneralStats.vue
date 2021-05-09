@@ -99,7 +99,7 @@
             }}
           </div>
           <div
-            v-html="$t('Les cotes utilisées sont celles référencées sur le site Internet {0}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`])"
+            v-html="$t('Les cotes utilisées proviennent des sites Internet {0} et {1}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`, `<a href='http://comicsmania.gr'>ComicsMania</a>`])"
           />
           {{ $t("Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :")
           }}
@@ -110,7 +110,7 @@
             <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
           </ul>
           <div
-            v-html="$t(`Une cote présente sur Bédéthèque n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`, [`<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`])"
+            v-html="$t(`Une cote présente sur les sites indiqués ci-dessus n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`, [`<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`])"
           />
         </template>
       </Accordion>
