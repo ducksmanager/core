@@ -44,8 +44,25 @@ const publicationCodesAndSections = [
     sectionTitle: 'ΤΑ ΜΙΚΡΑ ΜΕΓΑΛΑ ΒΙΒΛΙΑ (ΕΚΔ. ΚΑΜΠΑΝΑΣ)'
   },
   {
+    publicationcode: null,
+    sectionTitle: 'ΑΛΜΠΟΥΜ ΑΣΤΕΡΩΝ (ΕΚΔΟΣΕΙΣ ΒΟΣΚΑΚΗΣ)'
+  },
+  {
+    publicationcode: null,
+    sectionTitle: 'ΓΑΛΑΖΙΑ ΣΕΙΡΑ - WALT DISNEY - ΤΕΡΖΟΠΟΥΛΟΣ  1972'
+  },
+  {
     publicationcode: 'gr/KVD',
-    sectionTitle: 'EDITOR CHOICE (ΚΑΘΗΜΕΡΙΝΗ) - Η ΟΙΚΟΝΟΜΙΑ ΤΟΥ ΣΚΡΟΥΤΖ'
+    sectionTitle: 'EDITOR CHOICE (ΚΑΘΗΜΕΡΙΝΗ) - Η ΟΙΚΟΝΟΜΙΑ ΤΟΥ ΣΚΡΟΥΤΖ',
+    issueCellRegex: /(?<!ΤΟΥ ΣΚΡΟΥΤΖ)$/
+  },
+  {
+    publicationcode: null,
+    sectionTitle: 'ΜΙΚΥ - ΣΠΟΡ'
+  },
+  {
+    publicationcode: null,
+    sectionTitle: 'ΕΠΕΤΕΙΑΚΑ'
   },
   {
     publicationcode: 'gr/MS',
@@ -65,7 +82,7 @@ const publicationCodesAndSections = [
   },
   {
     publicationcode: 'gr/MY',
-    sectionTitle: 'ΜΙΚΥ ΜΥΣΤΗΡΙΟ (Α ΄ ΚΥΚΛΟΣ) Α\'  ΕΚΔΟΣΗ ΣΕ ΔΡΧ.'
+    sectionTitle: 'ΜΙΚΥ ΜΥΣΤΗΡΙΟ- ΝΤΟΝΑΛΝΤ-ΑΛΜΑΝΑΚΟ ΜΙΝΙ-DISNEY CINEMA'
   },
   {
     publicationcode: 'gr/MYE',
@@ -179,13 +196,13 @@ module.exports = {
       const issueCells = await subPage.$$('tr td:nth-child(odd), tr th')
       for (const issueCell of issueCells) {
         const tagName = await issueCell.evaluate(e => e.tagName)
-        const cellText = await issueCell.innerText()
+        const cellText = (await issueCell.innerText()).replace(/[\n\t ]+/g, ' ').replace(/^ /, '')
         if (cellText.replace(/ /g, '') === '') {
           continue
         }
         switch (tagName) {
           case 'TH': {
-            const publicationSection = publicationCodesAndSections.find(({sectionTitle}) => sectionTitle.replace(/\u00a0/g, " ") === cellText)
+            const publicationSection = publicationCodesAndSections.find(({sectionTitle}) => sectionTitle.replace(/\u00a0/g, ' ') === cellText.replace(/\u00a0/g, ' '))
             if (publicationSection) {
               currentPublication = publicationSection
               console.info(`Section found for ${currentPublication.publicationcode} : ${cellText}`)
@@ -244,11 +261,13 @@ module.exports = {
         } catch (_) {
         }
       }
+
+      await subPage.close()
     }
     await browser.close()
     const sectionsNotFound = publicationCodesAndSections
-      .filter(({sectionTitle}) =>
-        !publicationsWithIssues.some(({sectionTitle: foundSectionTitle}) => foundSectionTitle === sectionTitle)
+      .filter(({sectionTitle, publicationcode}) =>
+        publicationcode !== null && !publicationsWithIssues.some(({sectionTitle: foundSectionTitle}) => foundSectionTitle === sectionTitle)
       )
     for (const {sectionTitle} of sectionsNotFound) {
       console.log('Section not found: ' + sectionTitle)
