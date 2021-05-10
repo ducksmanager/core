@@ -30,7 +30,7 @@
                 <template v-else-if="conditionFilter === 'missing'">{{ $t("Afficher les numéros manquants") }}
                 </template>
                 ({{
-                  issues.filter(issue => conditionFilter === "possessed" ? issue.condition : !issue.condition).length
+                  conditionFilter === 'possessed' ? ownedIssuesCount : issues.length - ownedIssuesCount
                 }})
               </label>
             </td>
@@ -51,7 +51,7 @@
           <ul>
             <li
               v-for="issueNotFound in userIssuesNotFoundForPublication"
-              :key="`notfound-${issueNotFound}`"
+              :key="`notfound-${issueNotFound.issueNumber}`"
             >
               {{ $t("n°") }}{{ issueNotFound.issueNumber }}
               <b-btn
@@ -268,8 +268,8 @@ export default {
     filteredIssues() {
       const vm = this;
       return this.issues && this.issues.filter(issue =>
-        vm.filter.possessed && issue.condition ||
-        vm.filter.missing && !issue.condition
+        vm.filter.possessed && issue.userCopies.length ||
+        vm.filter.missing && !issue.userCopies.length
       );
     },
     selectedIssuesCopies() {
@@ -283,6 +283,10 @@ export default {
                 issueNumber2 === issueNumber && idx !== idx2
               ))
         );
+    },
+
+    ownedIssuesCount() {
+      return this.issues.reduce((acc, { userCopies }) => acc+(userCopies.length ? 1 : 0), 0)
     }
   },
   watch: {
