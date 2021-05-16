@@ -39,18 +39,23 @@ export default async function (req, res) {
           const { designers, photographers } = contributors
 
           try {
-            await axios.put(
-              `${process.env.BACKEND_URL}/edgecreator/publish/${publicationcode}/${issuenumber}`,
-              {
-                designers: (designers || []).map(({ username }) => username),
-                photographers: (photographers || []).map(({ username }) => username),
-              },
-              { headers: req.headers }
-            )
-            fs.unlinkSync(getSvgPath(false, country, magazine, issuenumber))
+            const isNew = !(
+              await axios.get(`${process.env.BACKEND_URL}/edges/${publicationcode}/${issuenumber}`)
+            ).data.length
+            if (isNew) {
+              await axios.put(
+                `${process.env.BACKEND_URL}/edgecreator/publish/${publicationcode}/${issuenumber}`,
+                {
+                  designers: (designers || []).map(({ username }) => username),
+                  photographers: (photographers || []).map(({ username }) => username),
+                },
+                { headers: req.headers }
+              )
+              fs.unlinkSync(getSvgPath(false, country, magazine, issuenumber))
+            }
 
             res.writeHeader(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(paths))
+            res.end(JSON.stringify({ paths, isNew }))
           } catch (e) {
             returnError(res, e)
           }
