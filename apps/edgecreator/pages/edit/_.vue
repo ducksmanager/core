@@ -230,14 +230,8 @@ export default {
     const vm = this
     let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers
     try {
-      ;[
-        ,
-        country,
-        magazine,
-        issuenumberMin,
-        issuenumberMax,
-        issuenumberOthers,
-      ] = vm.$route.params.pathMatch.match(/^([^/]+)\/([^ ]+) ([^, ]+)(?: to (.+))?(?:,([^$]+))?$/)
+      ;[, country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers] =
+        vm.$route.params.pathMatch.match(/^([^/]+)\/([^ ]+) ([^, ]+)(?: to (.+))?(?:,([^$]+))?$/)
       magazine = magazine.replaceAll(/ +/g, '')
     } catch (_) {
       this.error = 'Invalid URL'

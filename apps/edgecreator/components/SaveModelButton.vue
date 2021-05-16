@@ -155,7 +155,7 @@ export default {
           vm.withExport,
           vm.withSubmit
         ).then((response) => {
-          const isSuccess = response && response.svgPath
+          const isSuccess = response.paths && response.paths.svgPath
           if (isSuccess) {
             vm.progress += 100 / vm.issuenumbers.length
             vm.issueIndexToSave += 1
