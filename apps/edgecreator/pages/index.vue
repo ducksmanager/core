@@ -56,9 +56,11 @@
       <b-button to="/edit/new">{{ $t('Create or edit an edge model') }}</b-button>
     </b-container>
 
-    <b-container align="center" class="mb-5 pb-4">
+    <b-container align="center">
       <b-button to="/upload">{{ $t('Send edge photos') }}</b-button>
     </b-container>
+
+    <b-container align="center" class="m-5">&nbsp;</b-container>
 
     <b-container id="footer" class="position-fixed text-center w-100 bg-light p-2"
       >{{ $t('EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.')

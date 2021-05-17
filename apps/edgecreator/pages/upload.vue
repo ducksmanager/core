@@ -127,12 +127,25 @@ export default {
   },
   methods: {
     addCrop() {
-      this.crops.push({
-        ...this.currentCrop,
-        data: this.$refs.cropper.getData(),
-        url: this.$refs.cropper.getCroppedCanvas().toDataURL('image/jpeg'),
-      })
-      this.currentCrop = null
+      const data = this.$refs.cropper.getData()
+      if (data.height < data.width) {
+        this.$bvToast.toast(
+          this.$t(
+            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`
+          ),
+          {
+            title: this.$t('Error'),
+            autoHideDelay: 5000,
+          }
+        )
+      } else {
+        this.crops.push({
+          ...this.currentCrop,
+          data,
+          url: this.$refs.cropper.getCroppedCanvas().toDataURL('image/jpeg'),
+        })
+        this.currentCrop = null
+      }
     },
     async uploadAll() {
       const vm = this
