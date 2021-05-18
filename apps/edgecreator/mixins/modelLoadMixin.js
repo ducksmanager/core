@@ -118,22 +118,41 @@ export default {
         await Promise.all(
           stepData
             .filter(({ ordre: originalStepNumber }) => originalStepNumber !== -1)
-            .map(async ({ nomFonction: originalComponentName, options: originalOptions }) => {
-              const { component } = vm.supportedRenders.find(
-                (component) => component.originalName === originalComponentName
-              ) || { component: null }
-              if (component) {
-                return {
-                  component,
-                  options: await vm.getOptionsFromDb(component, originalOptions, dimensions),
+            .map(
+              async ({
+                ordre: originalStepNumber,
+                nomFonction: originalComponentName,
+                options: originalOptions,
+              }) => {
+                const { component } = vm.supportedRenders.find(
+                  (component) => component.originalName === originalComponentName
+                ) || { component: null }
+                if (component) {
+                  try {
+                    return {
+                      component,
+                      options: await vm.getOptionsFromDb(
+                        component,
+                        originalOptions,
+                        dimensions,
+                        issuenumber
+                      ),
+                    }
+                  } catch (e) {
+                    this.addWarning(
+                      `Invalid step ${originalStepNumber} (${component}) : ${e},
+                      step will be ignored.`
+                    )
+                    return null
+                  }
+                } else {
+                  this.addWarning(
+                    `Unrecognized step name : ${originalComponentName}, step will be ignored.`
+                  )
+                  return null
                 }
-              } else {
-                this.addWarning(
-                  `Unrecognized step name : ${originalComponentName}, step will be ignored.`
-                )
-                return null
               }
-            })
+            )
         )
       ).filter((step) => !!step)
     },

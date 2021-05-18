@@ -1,29 +1,10 @@
 import { mapState } from 'vuex'
+import textTemplateMixin from '@/mixins/textTemplateMixin'
 
 const interact = require('interactjs')
 
-const TEMPLATES = [
-  {
-    regex: /\[Hauteur]\*([.0-9]+)/g,
-    replaceCallback({ dimensions: { height } }, coefficient) {
-      return parseFloat(height) * coefficient
-    },
-  },
-  {
-    regex: /\[Numero]/g,
-    replaceCallback({ issuenumber }) {
-      return issuenumber
-    },
-  },
-  {
-    regex: /\[Numero\[(\d)]]/g,
-    replaceCallback({ issuenumber }, digitIndex) {
-      return issuenumber[parseInt(digitIndex)]
-    },
-  },
-]
-
 export default {
+  mixins: [textTemplateMixin],
   props: {
     issuenumber: { type: String },
     dimensions: { type: Object },
@@ -51,21 +32,7 @@ export default {
         )
     },
   },
-  data: () => ({
-    attributeKeys: [],
-  }),
   methods: {
-    resolveStringTemplates(text) {
-      if (!text) {
-        return text
-      }
-      const data = this
-      return TEMPLATES.reduce(
-        (text, { regex, replaceCallback }) =>
-          text.replaceAll(regex, (_match, group) => replaceCallback(data, group)),
-        text
-      )
-    },
     isColorOption(optionName) {
       return optionName.toLowerCase().includes('color') || ['fill', 'stroke'].includes(optionName)
     },
