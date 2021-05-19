@@ -30,7 +30,7 @@
                 <template v-else-if="conditionFilter === 'missing'">{{ $t("Afficher les numéros manquants") }}
                 </template>
                 ({{
-                  conditionFilter === 'possessed' ? ownedIssuesCount : issues.length - ownedIssuesCount
+                  conditionFilter === "possessed" ? ownedIssuesCount : issues.length - ownedIssuesCount
                 }})
               </label>
             </td>
@@ -267,9 +267,9 @@ export default {
     isTouchScreen: () => window.matchMedia("(pointer: coarse)").matches,
     filteredIssues() {
       const vm = this;
-      return this.issues && this.issues.filter(issue =>
-        vm.filter.possessed && issue.userCopies.length ||
-        vm.filter.missing && !issue.userCopies.length
+      return this.issues && this.issues.filter(({ userCopies }) =>
+        vm.filter.possessed && userCopies.length ||
+        vm.filter.missing && !userCopies.length
       );
     },
     selectedIssuesCopies() {
@@ -286,7 +286,7 @@ export default {
     },
 
     ownedIssuesCount() {
-      return this.issues.reduce((acc, { userCopies }) => acc+(userCopies.length ? 1 : 0), 0)
+      return this.issues.reduce((acc, { userCopies }) => acc + (userCopies.length ? 1 : 0), 0);
     }
   },
   watch: {
@@ -366,7 +366,7 @@ export default {
     async updateIssues(data) {
       await axios.post("/api/collection/issues", data);
       await this.loadCollection(true);
-      this.selected = []
+      this.selected = [];
     },
     async createPurchase({ date, description }) {
       await axios.post("/api/collection/purchases", {

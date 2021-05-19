@@ -159,7 +159,8 @@ export default {
     maxLetter() {
       return !this.issuesPerCell ? null : this.numberToLetter([
             ...new Set(JSON.stringify(this.issuesPerCell)
-                .match(/(?<=")[a-zA-Z]+(?=")/g))
+              .match(/"[a-zA-Z]+"/g)
+              .map(letter => letter.replace(/"/g, '')))
           ]
               .map(this.letterToNumber)
               .sort((a, b) => b - a)[0]
