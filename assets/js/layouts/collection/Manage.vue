@@ -30,6 +30,7 @@
         <div><a :href="$r('/expand')">{{ $t("Voir toutes les suggestions d'achat pour ma collection") }}</a></div>
       </template>
     </Accordion>
+    <LastPurchases v-if="total > 0 && hasPublicationNames" />
     <LastPublishedEdges />
     <div
       v-if="username === 'demo'"
@@ -72,10 +73,12 @@ import Accordion from "../../components/Accordion";
 import PublicationList from "../../components/PublicationList";
 import LastPublishedEdges from "../../components/LastPublishedEdges";
 import ShortStats from "../../components/ShortStats";
+import LastPurchases from "../../components/LastPurchases";
 
 export default {
   name: "Manage",
   components: {
+    LastPurchases,
     ShortStats,
     LastPublishedEdges,
     PublicationList,

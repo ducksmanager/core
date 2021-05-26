@@ -22,7 +22,10 @@
             <slot name="content" />
           </b-card-text>
         </b-card-body>
-        <template #footer>
+        <template
+          v-if="$slots.footer"
+          #footer
+        >
           <slot name="footer" />
         </template>
       </b-card>

@@ -7,8 +7,8 @@
     <template #header>
       <div
         v-html="$t(publishedEdgesSincePreviousVisit.length > 1
-                     ? 'BIBLIOTHEQUE_NOUVELLES_TRANCHES_TITRE'
-                     : 'BIBLIOTHEQUE_NOUVELLE_TRANCHE_TITRE',
+                     ? 'Depuis votre dernière visite, {0} nouvelles tranches appartenant à votre collection a été conçue pour la bibliothèque DucksManager'
+                     : 'Depuis votre dernière visite, {0} nouvelle tranche appartenant à votre collection a été conçue pour la bibliothèque DucksManager',
                    [publishedEdgesSincePreviousVisit.length])"
       />
     </template>
