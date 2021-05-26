@@ -16,7 +16,7 @@
         :visible="false"
       >
         <template #header>
-          <b>{{ purchase.date }}</b> <i v-if="purchase.description">{{ purchase.description }} </i>{{ $tc("numéro | numéros", issues.length) }}
+          <b>{{ purchase.date }}</b> <i v-if="purchase.description">{{ purchase.description }} </i>{{ issues.length }} {{ $tc("numéro | numéros", issues.length) }}
         </template>
         <template #content>
           <Issue
