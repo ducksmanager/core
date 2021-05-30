@@ -144,9 +144,10 @@ export default {
       enableEventLogging: false
     });
     geocoder.addTo("#address");
+    window.document.querySelector('.mapboxgl-ctrl-geocoder--input').attributes.required = true
     geocoder.on("result", ({ result: { place_name, center } }) => {
       vm.newBookstore.address = place_name
-      ;[vm.newBookstore.coordX, vm.newBookstore.coordY] = center;
+      ;[vm.newBookstore.coordY, vm.newBookstore.coordX] = center;
     });
   },
 
@@ -164,6 +165,10 @@ export default {
       }).filter(bookstore => !!bookstore);
     },
     async suggestBookstore() {
+      if (!newBookstore.coordX) {
+        window.alert(this.$t('Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'))
+        return false
+      }
       await axios.put("/bookstore/suggest", this.newBookstore);
       this.newBookstoreSent = true;
     },

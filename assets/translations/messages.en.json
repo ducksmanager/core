@@ -380,6 +380,7 @@
   "Vous avez signalé {0} bouquineries": "You have pinned {0} second-hand bookshops",
   "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!": "You have pinned {0} second-hand bookshops, pin {1} more to receive the {2} badge!",
   "Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !": "You have visited in a cool second-hand bookshop? Let the other visitors know!",
+  "Vous devez sélectionner une adresse dans la liste lorsque vous l'entrez dans le champ \"Adresse\"": "You need to select an address from the list when you type it in the \"Address\" field",
   "Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection.": "You haven't rated your favorite authors yet. Rate your favorite authors so that DucksManager can suggest issues to add to your collection.",
   "Vous ne possédez aucun numéro ! Cliquez": "You don't possess any comic book! Click",
   "Vous possédez certains numéros sélectionnés<br />en plusieurs exemplaires.<br />Seul le premier exemplaire sera modifié.": "You own multiple copies of some of the selected issues. Only the first copy will be altered.",
