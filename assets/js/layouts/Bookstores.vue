@@ -21,6 +21,7 @@
           v-once
           :key="bookstore.id"
           :coordinates="[bookstore.coordY, bookstore.coordX]"
+          :offset="markerSize.map(side => -side/4)"
         >
           <MglPopup>
             <div>
@@ -130,7 +131,8 @@ export default {
     mapCenter: [1.73584, 46.754917],
     bookstores: [],
     newBookstore,
-    newBookstoreSent: false
+    newBookstoreSent: false,
+    markerSize: [27,35],
   }),
 
   async mounted() {
