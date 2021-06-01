@@ -21,7 +21,10 @@
             <b-card class="text-center">
               <b-link
                 :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
-                :disabled="$gates.hasRole('display') || status === 'ongoing by another user'"
+                :disabled="
+                  $gates.hasRole('display') ||
+                  (!$gates.hasRole('admin') && status === 'ongoing by another user')
+                "
               >
                 <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]">
                   <img
