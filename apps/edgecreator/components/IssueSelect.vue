@@ -150,8 +150,9 @@ export default {
     ]),
     ...mapMutations('edgeCatalog', ['addPublishedEdges']),
 
-    onChange() {
+    onChange(data) {
       this.$emit('change', {
+        ...data,
         countryCode: this.currentCountryCode,
         publicationCode: this.currentPublicationCode,
         issueNumber: this.currentIssueNumber,
