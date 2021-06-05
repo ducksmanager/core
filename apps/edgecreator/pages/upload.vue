@@ -149,7 +149,7 @@ export default {
     },
     async uploadAll() {
       const vm = this
-      for (const crop of this.crops) {
+      for (const crop of this.crops.filter(({ sent }) => !sent)) {
         const [country, magazine] = crop.publicationCode.split('/')
         const filename = (
           await this.$axios.$post('/fs/upload-base64', {
