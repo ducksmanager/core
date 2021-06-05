@@ -79,6 +79,26 @@ export const getters = {
   publicationIssues: (state, getters, rootState) => {
     return rootState.coa.issueNumbers[getters.publicationcode]
   },
+
+  publicationElementsForGallery: (state) => {
+    return (
+      state.publicationElements &&
+      state.publicationElements.map((elementFileName) => ({
+        name: elementFileName,
+        url: `${process.env.EDGES_URL}/${state.country}/elements/${elementFileName}`,
+      }))
+    )
+  },
+
+  publicationPhotosForGallery: (state) => {
+    return (
+      state.publicationPhotos &&
+      state.publicationPhotos.map((elementFileName) => ({
+        name: elementFileName,
+        url: `${process.env.EDGES_URL}/${state.country}/photos/${elementFileName}`,
+      }))
+    )
+  },
 }
 
 const numericSortCollator = new Intl.Collator(undefined, {
@@ -158,4 +178,15 @@ export const actions = {
       })
     }
   },
+
+  getChunkedRequests: async (_, { api, url, parametersToChunk, chunkSize, suffix = '' }) =>
+    await Promise.all(
+      await Array.from({ length: Math.ceil(parametersToChunk.length / chunkSize) }, (_, i) =>
+        parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+      ).reduce(
+        async (acc, codeChunk) =>
+          (await acc).concat(await api.get(`${url}${codeChunk.join(',')}${suffix}`)),
+        Promise.resolve([])
+      )
+    ),
 }

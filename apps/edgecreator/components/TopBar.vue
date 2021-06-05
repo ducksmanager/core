@@ -146,7 +146,7 @@
         >
           <b-icon-camera />
           <b-modal v-model="showPhotoModal" ok-only>
-            <Gallery image-type="photos" />
+            <Gallery image-type="photos" :items="publicationPhotosForGallery" @change="addPhoto" />
           </b-modal>
         </b-button>
 
@@ -197,6 +197,7 @@
               :country-code="country"
               :publication-code="`${country}/${magazine}`"
               :disable-ongoing-or-published="false"
+              edge-gallery
               disable-not-ongoing-nor-published
               @change="modelToClone = $event"
             />
@@ -211,7 +212,7 @@
   </b-container>
 </template>
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
 import {
   BIconArrowsAngleExpand,
   BIconCamera,
@@ -300,9 +301,9 @@ export default {
       return this.publicationNames && this.publicationNames[`${this.country}/${this.magazine}`]
     },
     uniqueDimensions() {
-      return [
-        ...new Set(Object.values(this.dimensions).map((item) => JSON.stringify(item))),
-      ].map((item) => JSON.parse(item))
+      return [...new Set(Object.values(this.dimensions).map((item) => JSON.stringify(item)))].map(
+        (item) => JSON.parse(item)
+      )
     },
     isEditingMultiple() {
       return this.isRange || this.issuenumbers.length > 1
@@ -317,11 +318,17 @@ export default {
       'photoUrls',
     ]),
     ...mapState('coa', ['publicationNames']),
+    ...mapGetters(['publicationPhotosForGallery']),
   },
   async mounted() {
     await this.fetchPublicationNames([`${this.country}/${this.magazine}`])
   },
   methods: {
+    addPhoto(src) {
+      if (!(this.photoUrls[this.issuenumbers[0]] || []).includes(src)) {
+        this.setPhotoUrl({ issuenumber: this.issuenumbers[0], filename: src })
+      }
+    },
     ...mapMutations(['setPhotoUrl']),
     ...mapActions('coa', ['fetchPublicationNames']),
   },

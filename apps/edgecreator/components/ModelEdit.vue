@@ -132,7 +132,12 @@
             :options="step.options"
           >
             <b-form-datalist id="src-list" :options="publicationElements" />
-            <Gallery image-type="elements" :selected="step.options.src" />
+            <Gallery
+              :items="publicationElementsForGallery"
+              image-type="elements"
+              :selected="step.options.src"
+              @change="$root.$emit('set-options', { src: $event })"
+            />
           </form-input-row>
         </b-card-text>
         <b-card-text v-if="['Rectangle', 'ArcCircle'].includes(step.component)">
@@ -192,7 +197,7 @@
   </b-card>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import FormColorInputRow from '@/components/FormColorInputRow'
 import FormInputRow from '@/components/FormInputRow'
@@ -298,6 +303,7 @@ export default {
     },
     ...mapState(['publicationElements', 'country']),
     ...mapState('renders', ['supportedRenders']),
+    ...mapGetters(['publicationElementsForGallery']),
   },
   methods: {
     ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),

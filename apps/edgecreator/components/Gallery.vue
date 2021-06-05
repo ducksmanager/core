@@ -1,13 +1,15 @@
 <template>
-  <div>
+  <b-alert v-if="loading" show variant="info">{{ $t('Loading...') }} </b-alert>
+  <div v-else-if="items">
     <b-modal
+      v-if="clickedImage"
       v-model="showChooseImageModal"
-      :title="clickedImage"
+      :title="clickedImage.name"
       scrollable
       :ok-title="$t('Choose')"
-      @ok="chooseImage"
+      @ok="$emit('change', clickedImage.name)"
     >
-      <img :alt="clickedImage" :src="getImageUrl(clickedImage)" />
+      <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>
     <b-modal v-model="showUploadModal" ok-only>
       <upload
@@ -21,34 +23,46 @@
     </b-modal>
     <b-alert v-if="!items.length" show variant="warning"
       >{{ $t('No item in this section.') }}
-      <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
+      <a v-if="allowUpload" href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
         $t('Upload new')
       }}</a>
     </b-alert>
     <template v-else>
-      <a href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
+      <a v-if="allowUpload" href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
         $t('Upload new')
       }}</a>
-      <b-row ref="gallery" class="gallery">
+      <b-row ref="gallery" class="gallery mt-1">
         <b-col
-          v-for="image in items"
-          :key="image"
+          v-for="item in items"
+          :key="item.name"
           sm="2"
           :class="{
-            selected: selected.includes(image),
+            'my-1': true,
+            selected: selected.includes(item.name),
+            disabled: item.disabled,
           }"
-          @click="
-            clickedImage = image
-            showChooseImageModal = true
-          "
+          @click="onSelect(item)"
         >
+          <a v-if="imageType === 'edges'" class="position-absolute">
+            <b-icon-emoji-smile-fill
+              v-if="item.quality == 1"
+              variant="success"
+              :title="item.tooltip"
+            />
+            <b-icon-emoji-neutral-fill
+              v-else-if="item.quality > 0"
+              variant="warning"
+              :title="item.tooltip"
+            />
+            <b-icon-emoji-frown-fill v-else variant="danger" :title="item.tooltip" />
+          </a>
           <b-img-lazy
             v-b-tooltip.hover
             thumbnail
             class="fit"
-            :src="getImageUrl(image)"
-            :alt="image"
-            :title="image"
+            :src="item.url"
+            :alt="item.name"
+            :title="item.name"
           ></b-img-lazy>
         </b-col>
       </b-row>
@@ -57,17 +71,26 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import Upload from '@/components/Upload'
+import legacyDbMixin from '@/mixins/legacyDbMixin'
+import { BIconEmojiFrownFill, BIconEmojiNeutralFill, BIconEmojiSmileFill } from 'bootstrap-vue'
 
 export default {
   name: 'Gallery',
   components: {
     Upload,
+    BIconEmojiSmileFill,
+    BIconEmojiNeutralFill,
+    BIconEmojiFrownFill,
   },
+  mixins: [legacyDbMixin],
   props: {
+    loading: { type: Boolean, default: false },
     imageType: { type: String, required: true },
     selected: { type: Array, default: () => [] },
+    allowUpload: { type: Boolean, default: true },
+    items: { type: Array, required: true },
   },
   data: () => ({
     clickedImage: null,
@@ -75,42 +98,21 @@ export default {
     showChooseImageModal: false,
   }),
   computed: {
-    ...mapState([
-      'country',
-      'magazine',
-      'issuenumbers',
-      'publicationElements',
-      'publicationPhotos',
-      'photoUrls',
-    ]),
-    items() {
-      return this.imageType === 'elements' ? this.publicationElements : this.publicationPhotos
-    },
+    ...mapState(['country', 'magazine', 'issuenumbers']),
   },
   methods: {
-    getImageUrl(elementFileName) {
-      return new RegExp(process.env.EDGES_URL).test(elementFileName)
-        ? elementFileName
-        : `${process.env.EDGES_URL}/${this.country}/${
-            this.imageType === 'elements' ? this.imageType : 'photos'
-          }/${elementFileName}`
-    },
-    chooseImage() {
-      if (this.imageType === 'elements') {
-        this.$root.$emit('set-options', { src: this.clickedImage })
-      } else if (!(this.photoUrls[this.issuenumbers[0]] || []).includes(this.clickedImage)) {
-        this.setPhotoUrl({ issuenumber: this.issuenumbers[0], filename: this.clickedImage })
+    onSelect(item) {
+      if (!item.disabled) {
+        this.clickedImage = item
+        this.showChooseImageModal = true
       }
-      this.clickedImage = null
     },
-    ...mapMutations(['setPhotoUrl']),
   },
 }
 </script>
 
 <style scoped lang="scss">
 .row.gallery {
-  margin-top: 25px;
   height: 100px;
 
   > div {
@@ -129,7 +131,12 @@ export default {
       }
     }
 
-    &.selected > img {
+    &.disabled,
+    &.disabled > img {
+      cursor: not-allowed;
+    }
+
+    &.selected img {
       outline: 2px solid #3b8070;
     }
   }
