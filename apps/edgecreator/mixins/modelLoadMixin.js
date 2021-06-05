@@ -1,4 +1,4 @@
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import legacyDbMixin from '@/mixins/legacyDbMixin'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 import stepListMixin from '@/mixins/stepListMixin'
@@ -9,6 +9,7 @@ export default {
     ...mapState(['country', 'magazine', 'issuenumbers']),
     ...mapState('renders', ['supportedRenders']),
     ...mapState('user', ['allUsers']),
+    ...mapState('edgeCatalog', ['publishedEdgesSteps']),
   },
   mixins: [legacyDbMixin, svgUtilsMixin, dimensionsMixin, stepListMixin],
   data: () => ({
@@ -40,14 +41,17 @@ export default {
       try {
         await loadSvg(false)
       } catch {
+        const publicationcode = `${country}/${magazine}`
         const edge = await this.$axios.$get(
-          `/api/edgecreator/v2/model/${country}/${magazine}/${issuenumber}`
+          `/api/edgecreator/v2/model/${publicationcode}/${issuenumber}`
         )
         if (edge) {
-          const apiSteps =
-            (await vm.$axios.$get(`/api/edgecreator/v2/model/${edge.id}/steps`)) || []
-          dimensions = vm.getDimensionsFromApi(targetIssuenumber, apiSteps)
-          steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions)
+          await this.getPublishedEdgesSteps({ publicationcode, edgeModelIds: [edge.id] })
+          const apiSteps = this.publishedEdgesSteps[publicationcode][issuenumber]
+          dimensions = vm.getDimensionsFromApi(apiSteps)
+          steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions, (error) => {
+            vm.addWarning(error)
+          })
 
           if (!onlyLoadStepsAndDimensions) {
             await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
@@ -99,29 +103,28 @@ export default {
       })
     },
 
-    getDimensionsFromApi(issuenumber, stepData) {
-      const dimensions = stepData.find(({ ordre: originalStepNumber }) => originalStepNumber === -1)
+    getDimensionsFromApi(stepData, defaultDimensions = { width: 15, height: 200 }) {
+      const dimensions = Object.values(stepData).find(
+        ({ stepNumber: originalStepNumber }) => originalStepNumber === -1
+      )
       if (dimensions) {
         return {
           width: dimensions.options.Dimension_x,
           height: dimensions.options.Dimension_y,
         }
       }
-      return {
-        width: 15,
-        height: 200,
-      }
+      return defaultDimensions
     },
-    async getStepsFromApi(issuenumber, stepData, dimensions) {
+    async getStepsFromApi(issuenumber, stepData, dimensions, onError) {
       const vm = this
       return (
         await Promise.all(
-          stepData
-            .filter(({ ordre: originalStepNumber }) => originalStepNumber !== -1)
+          Object.values(stepData)
+            .filter(({ stepNumber: originalStepNumber }) => originalStepNumber !== -1)
             .map(
               async ({
-                ordre: originalStepNumber,
-                nomFonction: originalComponentName,
+                stepNumber: originalStepNumber,
+                functionName: originalComponentName,
                 options: originalOptions,
               }) => {
                 const { component } = vm.supportedRenders.find(
@@ -139,15 +142,17 @@ export default {
                       ),
                     }
                   } catch (e) {
-                    this.addWarning(
+                    onError(
                       `Invalid step ${originalStepNumber} (${component}) : ${e},
-                      step will be ignored.`
+                      step will be ignored.`,
+                      originalStepNumber
                     )
                     return null
                   }
                 } else {
-                  this.addWarning(
-                    `Unrecognized step name : ${originalComponentName}, step will be ignored.`
+                  onError(
+                    `Unrecognized step name : ${originalComponentName}, step will be ignored.`,
+                    originalStepNumber
                   )
                   return null
                 }
@@ -174,5 +179,6 @@ export default {
       })
     },
     ...mapMutations(['setPhotoUrl', 'addContributor', 'addWarning']),
+    ...mapActions('edgeCatalog', ['getPublishedEdgesSteps']),
   },
 }

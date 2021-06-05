@@ -1,10 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
-// import {coaCache} from "../../util/cache"
 
-const coaApi = axios.create({
-  // adapter: coaCache.adapter,
-})
+const coaApi = axios.create({})
 
 const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/LOCALE`
 const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/'
@@ -89,11 +86,16 @@ export default {
         newPublicationCodes.length &&
         commit(
           'addPublicationNames',
-          await dispatch('getChunkedRequests', {
-            url: URL_PREFIX_PUBLICATIONS,
-            parametersToChunk: newPublicationCodes,
-            chunkSize: 10,
-          }).then((data) => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))
+          await dispatch(
+            'getChunkedRequests',
+            {
+              api: coaApi,
+              url: URL_PREFIX_PUBLICATIONS,
+              parametersToChunk: newPublicationCodes,
+              chunkSize: 10,
+            },
+            { root: true }
+          ).then((data) => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))
         )
       )
     },
@@ -124,11 +126,16 @@ export default {
         newPersonNames.length &&
         commit('setPersonNames', {
           ...(state.personNames || {}),
-          ...(await dispatch('getChunkedRequests', {
-            url: URL_PREFIX_AUTHORS,
-            parametersToChunk: newPersonNames,
-            chunkSize: 10,
-          }).then((data) => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))),
+          ...(await dispatch(
+            'getChunkedRequests',
+            {
+              api: coaApi,
+              url: URL_PREFIX_AUTHORS,
+              parametersToChunk: newPersonNames,
+              chunkSize: 10,
+            },
+            { root: true }
+          ).then((data) => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))),
         })
       )
     },
@@ -145,11 +152,16 @@ export default {
         newPublicationCodes.length &&
         commit(
           'addIssueNumbers',
-          await dispatch('getChunkedRequests', {
-            url: URL_PREFIX_ISSUES,
-            parametersToChunk: newPublicationCodes,
-            chunkSize: 1,
-          }).then((data) =>
+          await dispatch(
+            'getChunkedRequests',
+            {
+              api: coaApi,
+              url: URL_PREFIX_ISSUES,
+              parametersToChunk: newPublicationCodes,
+              chunkSize: 1,
+            },
+            { root: true }
+          ).then((data) =>
             data.reduce(
               (acc, result) => ({
                 ...acc,
@@ -181,16 +193,5 @@ export default {
         })
       }
     },
-
-    getChunkedRequests: async (_, { url, parametersToChunk, chunkSize }) =>
-      await Promise.all(
-        await Array.from({ length: Math.ceil(parametersToChunk.length / chunkSize) }, (v, i) =>
-          parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
-        ).reduce(
-          async (acc, codeChunk) =>
-            (await acc).concat(await coaApi.get(`${url}${codeChunk.join(',')}`)),
-          Promise.resolve([])
-        )
-      ),
   },
 }

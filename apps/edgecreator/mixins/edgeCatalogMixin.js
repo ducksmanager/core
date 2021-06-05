@@ -79,20 +79,16 @@ export default {
     },
     getEdgeStatus({ country, magazine, issuenumber }) {
       let isPublished = false
-      let isEditable = false
       const publicationcode = `${country}/${magazine}`
       const publishedEdgesForPublication = this.publishedEdges[publicationcode] || {}
       if (publishedEdgesForPublication[issuenumber]) {
         isPublished = true
-        if (publishedEdgesForPublication[issuenumber].editable) {
-          isEditable = true
-        }
       }
       const issuecode = `${publicationcode} ${issuenumber}`
 
       return (
         this.currentEdges[issuecode] || {
-          status: isPublished ? (isEditable ? 'Published' : 'Published, not usable') : 'none',
+          status: isPublished ? 'Published' : 'none',
         }
       ).status
     },
@@ -128,7 +124,6 @@ export default {
             if (!publishedSvgEdges[publicationcode]) {
               publishedSvgEdges[publicationcode] = {}
             }
-            publishedSvgEdges[publicationcode][issuenumber] = { editable: true }
           } else {
             try {
               const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)

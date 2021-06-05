@@ -5,7 +5,6 @@ const componentToHex = (c) => {
   return hex.length === 1 ? '0' + hex : hex
 }
 const rgbToHex = (color) => {
-  console.log(color)
   if (!color.includes(',')) {
     return `#${color}`
   }

@@ -276,7 +276,7 @@ export default {
         try {
           await this.loadModel(...publicationCode.split('/'), issueNumber, targetIssuenumber)
         } catch (e) {
-          this.warnings.push(e)
+          this.addWarning(e)
         }
       }
     },
@@ -317,6 +317,7 @@ export default {
       'setMagazine',
       'setPhotoUrl',
       'addContributor',
+      'addWarning',
       'removeWarning',
     ]),
     ...mapMutations('editingStep', {

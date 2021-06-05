@@ -11,12 +11,24 @@
       :options="publicationsWithSelect"
       @change="$emit('change', null)"
     />
-    <b-select
-      v-show="currentCountryCode && currentPublicationCode"
-      v-model="currentIssueNumber"
-      :options="issuesWithSelect"
-      @change="onChange({})"
-    />
+    <template v-if="currentCountryCode && currentPublicationCode">
+      <EdgeGallery
+        v-if="edgeGallery"
+        :publicationcode="currentPublicationCode"
+        :selected="currentIssueNumber"
+        @change="
+          currentIssueNumber = $event
+          onChange()
+        "
+      />
+      <b-select
+        v-else
+        v-show="currentCountryCode && currentPublicationCode"
+        v-model="currentIssueNumber"
+        :options="issuesWithSelect"
+        @change="onChange({})"
+      />
+    </template>
     <dimensions v-if="withDimensions && currentIssueNumber !== null" @change="onChange($event)" />
   </div>
 </template>
@@ -24,9 +36,10 @@
 import Dimensions from '@/components/Dimensions'
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
 import { mapActions, mapMutations, mapState } from 'vuex'
+import EdgeGallery from '@/components/EdgeGallery'
 
 export default {
-  components: { Dimensions },
+  components: { EdgeGallery, Dimensions },
   mixins: [edgeCatalogMixin],
   props: {
     countryCode: { type: String, default: null },
@@ -34,6 +47,7 @@ export default {
     withDimensions: { type: Boolean, default: false },
     disableOngoingOrPublished: { type: Boolean, required: true },
     disableNotOngoingNorPublished: { type: Boolean, required: true },
+    edgeGallery: { type: Boolean, default: false },
   },
   data: () => ({
     currentCountryCode: null,
@@ -82,7 +96,6 @@ export default {
               value: issuenumber,
               text: `${issuenumber}${status === 'none' ? '' : ` (${this.$t(status)})`}`,
               disabled:
-                status === 'Published, not usable' ||
                 (this.disableOngoingOrPublished && status !== 'none') ||
                 (this.disableNotOngoingNorPublished && status === 'none'),
             }
@@ -112,9 +125,9 @@ export default {
           const publishedEdges = await this.$axios.$get(`/api/edges/${newValue}`)
           this.addPublishedEdges({
             [newValue]: publishedEdges.reduce(
-              (acc, { issuenumber, editable }) => ({
+              (acc, { issuenumber, id, modelId }) => ({
                 ...acc,
-                [issuenumber]: { editable },
+                [issuenumber]: { id, modelId },
               }),
               {}
             ),
@@ -137,9 +150,8 @@ export default {
     ]),
     ...mapMutations('edgeCatalog', ['addPublishedEdges']),
 
-    onChange(data) {
+    onChange() {
       this.$emit('change', {
-        ...data,
         countryCode: this.currentCountryCode,
         publicationCode: this.currentPublicationCode,
         issueNumber: this.currentIssueNumber,
@@ -148,4 +160,11 @@ export default {
   },
 }
 </script>
-<style scoped></style>
+<style scoped>
+::v-deep select + div {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 3px;
+  margin-bottom: 10px;
+}
+</style>
