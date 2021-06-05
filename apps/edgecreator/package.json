@@ -42,7 +42,7 @@
     "raw-body": "^2.4.1",
     "request": "^2.88.2",
     "sharp": "^0.28.0",
-    "vue": "^2.6.12",
+    "vue": "^2.6.13",
     "vue-bootstrap-typeahead": "^0.2.6",
     "vue-cropperjs": "^4.2.0",
     "vue-gates": "^2.1.0",
@@ -67,6 +67,6 @@
     "prettier": "^2.2.1",
     "sass-loader": "^10.1.1",
     "vue-jest": "^4.0.1",
-    "vue-server-renderer": "^2.6.12"
+    "vue-server-renderer": "^2.6.13"
   }
 }
