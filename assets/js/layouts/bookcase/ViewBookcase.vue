@@ -74,42 +74,29 @@
     </b-alert>
     <div v-else>
       <div v-if="!isSharedBookcase">
-        <div
+        <UploadableEdgesCarousel
           v-if="mostPopularIssuesInCollectionWithoutEdge && mostPopularIssuesInCollectionWithoutEdge.length && userPoints"
+          :issues="mostPopularIssuesInCollectionWithoutEdge"
+          :user-points="userPoints.Photographe"
+          :publication-names="publicationNames"
         >
-          {{ $t("Envoyez des photos de tranches de magazines et gagnez jusqu'à {0} points par tranche !", [mostPopularIssuesInCollectionWithoutEdge[0].popularity]) }}
-          <div>
-            <b-carousel
-              controls
-              indicators
+          <template #header>
+            {{ $t(
+              "Envoyez des photos de tranches de magazines et gagnez jusqu'à {0} points par tranche !",
+              [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
+            ) }}
+          </template>
+          <template #footer>
+            <b-btn
+              class="mt-3"
+              variant="info"
+              href="https://edgecreator.ducksmanager.net"
+              target="_blank"
             >
-              <b-carousel-slide
-                v-for="popularIssueWithoutEdge in mostPopularIssuesInCollectionWithoutEdge"
-                :key="popularIssueWithoutEdge.issueCode"
-              >
-                <Issue
-                  :publicationcode="popularIssueWithoutEdge.publicationCode"
-                  :publicationname="publicationNames[popularIssueWithoutEdge.publicationCode]"
-                  :issuenumber="popularIssueWithoutEdge.issueNumber"
-                  hide-condition
-                />
-                <MedalProgress
-                  contribution="Photographe"
-                  :user-level-points="userPoints.Photographe"
-                  :extra-points="popularIssueWithoutEdge.popularity"
-                />
-                <b-btn
-                  class="mt-3"
-                  variant="info"
-                  href="https://edgecreator.ducksmanager.net"
-                  target="_blank"
-                >
-                  {{ $t('Envoyer des photos de tranches') }}
-                </b-btn>
-              </b-carousel-slide>
-            </b-carousel>
-          </div>
-        </div>
+              {{ $t('Envoyer des photos de tranches') }}
+            </b-btn>
+          </template>
+        </UploadableEdgesCarousel>
         <IssueSearch
           v-if="sortedBookcase && sortedBookcase.length"
           style="float: right"
@@ -155,10 +142,11 @@ import Issue from "../../components/Issue";
 import Book from "../../components/Book";
 import SharePage from "../../components/SharePage";
 import Bookcase from "../../components/Bookcase";
+import UploadableEdgesCarousel from "../../components/UploadableEdgesCarousel";
 
 export default {
   name: "ViewBookcase",
-  components: {Bookcase, SharePage, Book, MedalProgress, Issue, IssueSearch},
+  components: {Bookcase, SharePage, Book, Issue, IssueSearch, UploadableEdgesCarousel},
   mixins: [l10nMixin, collectionMixin],
 
   props: {
