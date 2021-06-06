@@ -40,13 +40,41 @@ export default {
   },
 
   props: {
-    issues: { type: Array, required: true},
-    userPoints: { type: Number, required: true},
-    publicationNames: { type: Object, required: true}
-  },
+    issues: { type: Array, required: true },
+    userPoints: { type: Number, required: true },
+    publicationNames: { type: Object, required: true }
+  }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+::v-deep .carousel {
+  width: 400px;
+  height: 120px;
+  margin: 15px 0 0;
 
+  .carousel-inner {
+    height: 100%;
+  }
+
+  .carousel-caption {
+    position: initial;
+    padding-left: 48px;
+    padding-right: 42px;
+  }
+
+  ol.carousel-indicators {
+    top: 0;
+    bottom: initial;
+
+    li {
+      width: 5px;
+      height: 5px;
+      border: 5px solid white;
+      border-radius: 8px;
+      padding: 0;
+      background: white;
+    }
+  }
+}
 </style>
