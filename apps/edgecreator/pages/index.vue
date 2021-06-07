@@ -10,24 +10,25 @@
 
       <b-container align="center">
         <template v-if="isUploadableEdgesCarouselReady">
-          <UploadableEdgesCarousel
-            v-if="mostPopularIssuesInCollectionWithoutEdge.length"
-            :user-points="userPhotographerPoints"
-            :issues="mostPopularIssuesInCollectionWithoutEdge"
-            :publication-names="publicationNames"
-          >
-            <template #header>
-              {{
-                $t(
-                  'Send us photos of magazine edges and earn up to {0} Edge photographer points per edge!',
-                  [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
-                )
-              }}
-            </template>
-            <template #footer>
-              <b-button to="/upload">{{ $t('Send edge photos') }}</b-button>
-            </template>
-          </UploadableEdgesCarousel>
+          <b-alert v-if="mostPopularIssuesInCollectionWithoutEdge.length" show variant="info">
+            <UploadableEdgesCarousel
+              :user-points="userPhotographerPoints"
+              :issues="mostPopularIssuesInCollectionWithoutEdge"
+              :publication-names="publicationNames"
+            >
+              <template #header>
+                {{
+                  $t(
+                    'Send us photos of magazine edges and earn up to {0} Edge photographer points per edge!',
+                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
+                  )
+                }}
+              </template>
+              <template #footer>
+                <b-button to="/upload">{{ $t('Send edge photos') }}</b-button>
+              </template>
+            </UploadableEdgesCarousel>
+          </b-alert>
           <b-button v-else to="/upload">{{ $t('Send edge photos') }}</b-button>
         </template>
       </b-container>
@@ -157,6 +158,9 @@ export default {
   * {
     line-height: 10px;
     font-size: 11px !important;
+    a span {
+      color: #666;
+    }
   }
 }
 .card {
