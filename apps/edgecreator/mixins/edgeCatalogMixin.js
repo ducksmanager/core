@@ -5,7 +5,7 @@ export default {
   computed: {
     ...mapState('edgeCatalog', ['currentEdges', 'publishedEdges']),
     ...mapState('coa', ['publicationNames']),
-    ...mapState('user', ['allUsers']),
+    ...mapState('user', ['allUsers', 'username']),
   },
   mixins: [svgUtilsMixin],
 
@@ -36,6 +36,7 @@ export default {
   methods: {
     ...mapMutations('edgeCatalog', ['addCurrentEdges', 'addPublishedEdges']),
     ...mapActions('coa', ['fetchPublicationNames']),
+    ...mapMutations('user', ['setUsername']),
     ...mapActions('user', ['fetchAllUsers']),
 
     getEdgeFromApi(
@@ -62,7 +63,7 @@ export default {
       }
     },
     getEdgeFromSvg(edge) {
-      const currentUser = this.$cookies.get('dm-user')
+      const currentUser = this.username
       return {
         ...edge,
         v3: true,
@@ -96,6 +97,8 @@ export default {
 
   async mounted() {
     await this.fetchAllUsers()
+    this.setUsername(this.$cookies.get('dm-user'))
+
     const vm = this
     let currentEdges = {}
     const publishedSvgEdges = {}

@@ -61,9 +61,7 @@
             <li v-for="user in getContributors(contributionType)" :key="user.username">
               {{ user.username }}
               <b-icon-x-square-fill
-                v-if="
-                  !(user.username === $cookies.get('dm-user') && contributionType === 'designers')
-                "
+                v-if="!(user.username === username && contributionType === 'designers')"
                 @click="
                   removeContributor({
                     contributionType,
@@ -122,7 +120,7 @@ export default {
       return this.withExport || this.withSubmit ? 'success' : 'primary'
     },
     ...mapState(['contributors', 'country', 'magazine', 'issuenumbers']),
-    ...mapState('user', ['allUsers']),
+    ...mapState('user', ['allUsers', 'username']),
   },
   watch: {
     progress(newValue) {
@@ -168,14 +166,17 @@ export default {
       })
     },
     showModal(newValue) {
-      const vm = this
       if (newValue && this.withSubmit) {
         this.addContributorAllIssues(
-          this.allUsers.find((user) => user.username === vm.$cookies.get('dm-user')),
+          this.allUsers.find((user) => user.username === this.username),
           'designers'
         )
       }
     },
+  },
+
+  mounted() {
+    this.setUsername(this.$cookies.get('dm-user'))
   },
 
   methods: {
@@ -214,6 +215,7 @@ export default {
       }
     },
     ...mapMutations('ui', ['setZoom']),
+    ...mapMutations('user', ['setUsername']),
     ...mapMutations(['addContributor', 'removeContributor']),
   },
 }

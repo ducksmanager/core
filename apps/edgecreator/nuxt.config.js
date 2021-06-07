@@ -125,6 +125,10 @@ export default {
       handler: '~/api/api.js',
     },
     {
+      path: '/user-id',
+      handler: '~/api/user-id.js',
+    },
+    {
       path: '/fs/base64',
       handler: '~/api/fs/base64.js',
     },
