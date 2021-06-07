@@ -1,6 +1,6 @@
 <template>
   <div class="user-and-locale m-2">
-    <div class="text-right font-weight-bold">{{ $cookies.get('dm-user') }}</div>
+    <div class="text-right font-weight-bold">{{ username }}</div>
     <template v-for="({ code, name }, idx) in $i18n.locales">
       <template v-if="idx > 0"> |</template>
       <span v-if="$i18n.locale === code" :key="code">{{ name }}</span>
@@ -9,8 +9,21 @@
   </div>
 </template>
 <script>
+import { mapMutations, mapState } from 'vuex'
+
 export default {
   name: 'SessionInfo',
+  computed: {
+    ...mapState('user', ['username']),
+  },
+
+  mounted() {
+    this.setUsername(this.$cookies.get('dm-user'))
+  },
+
+  methods: {
+    ...mapMutations('user', ['setUsername']),
+  },
 }
 </script>
 <style lang="scss">
