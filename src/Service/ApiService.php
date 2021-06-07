@@ -33,24 +33,16 @@ class ApiService
     }
 
     /**
-     * @param string $url
-     * @param string $role
-     * @param array $parameters
-     * @param string $method
-     * @param bool $doNotChunk
-     * @param array $userCredentials
-     * @param bool $noParse
-     * @return array|bool|null|ResponseInterface
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function call(string $url, string $role, $parameters = [], $method = 'GET', $doNotChunk = false, $userCredentials = [], $noParse = false)
+    public function call(string $url, string $role, ?array $parameters = [], string $method = 'GET', bool $doNotChunk = false, array $userCredentials = [], bool $noParse = false): bool|array|ResponseInterface|null
     {
         if (!$doNotChunk && isset(self::CHUNKABLE_URLS[$url])) {
-            return self::callWithChunks($url, $role, $parameters, $method);
+            return $this->callWithChunks($url, $role, $parameters, $method);
         }
         $fullUrl = "http://web-api$url" . ($method === 'GET' && !empty($parameters) ? '/'.implode('/', $parameters) : '');
         $user = $this->security->getUser();

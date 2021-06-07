@@ -21,7 +21,7 @@ class ApiController extends AbstractController
      */
     public function retrieveCoa(Request $request, ApiService $apiService, string $path): JsonResponse
     {
-        return new JsonResponse($apiService->call("/coa/$path", 'coa', json_decode($request->getContent(), true), $request->getMethod()));
+        return new JsonResponse($apiService->call("/coa/$path", 'coa', json_decode($request->getContent(), true) ?? [], $request->getMethod()));
     }
 
     /**

@@ -49,7 +49,6 @@ export default {
     collectionPerPurchaseDate() {
       const vm = this;
       return this.collection && this.purchases && this.collection.reduce((acc, issue) => {
-        debugger
         const purchase = (issue.purchaseId > 0 && vm.purchases.find(({ id }) => id === issue.purchaseId)) || { date: issue.creationDate };
         let purchaseIndex = acc.findIndex(({ purchase: currentPurchase }) => JSON.stringify(currentPurchase) === JSON.stringify(purchase));
         if (purchaseIndex === -1) {

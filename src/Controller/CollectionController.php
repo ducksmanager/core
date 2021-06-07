@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class CollectionController extends AbstractController
 {
     /**
-     * @return User|UserInterface|object|null
+     * @return object|UserInterface|null
      */
     protected function getUser()
     {
@@ -27,11 +27,11 @@ class CollectionController extends AbstractController
      *     path="/collection/points"
      * )
      */
-    public function retrievePoints(CollectionService $collectionService): JsonResponse
+    public function retrievePoints(ApiService $apiService): JsonResponse
     {
-        return new JsonResponse($collectionService->retrieveUserPoints(
-            [$this->getUser()->getId()]
-        ));
+        return new JsonResponse(
+            $apiService->call('/global-stats/user/'.$this->getUser()->getId(), 'ducksmanager')
+        );
     }
 
     /**

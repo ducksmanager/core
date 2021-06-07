@@ -17,7 +17,8 @@ class StatsController extends AbstractController
      *     path="/global-stats/user/count"
      * )
      */
-    public function getUserCount(ApiService $apiService) {
+    public function getUserCount(ApiService $apiService): JsonResponse
+    {
         return new JsonResponse([
             'count' => $apiService->call('/ducksmanager/users/count', 'ducksmanager')['count']
         ]);
@@ -29,12 +30,11 @@ class StatsController extends AbstractController
      *     path="/global-stats/user/{userIds}"
      * )
      */
-    public function getUsersStats(CollectionService $collectionService, string $userIds) {
-        $userIds = array_values(array_filter(explode(',', $userIds), fn(string $userIds) => (int) $userIds));
-        return new JsonResponse([
-            'points' => $collectionService->retrieveUserPoints($userIds),
-            'stats' => $collectionService->retrieveUserQuickStats($userIds)
-        ]);
+    public function getUsersStats(ApiService $apiService, string $userIds): JsonResponse
+    {
+        return new JsonResponse(
+            $apiService->call("/global-stats/user/$userIds", 'ducksmanager')
+        );
     }
 
     /**
@@ -43,7 +43,8 @@ class StatsController extends AbstractController
      *     path="/global-stats/user/collection/rarity"
      * )
      */
-    public function getUserRarityStats(ApiService $apiService) {
+    public function getUserRarityStats(ApiService $apiService): JsonResponse
+    {
         $userId = $this->getUser()->getId();
         $rarityScores = $apiService->call('/ducksmanager/users/collection/rarity', 'ducksmanager');
         $userScores = array_map(
@@ -65,7 +66,8 @@ class StatsController extends AbstractController
      *     path="/global-stats/bookcase/contributors"
      * )
      */
-    public function getBookcaseContributors(BookcaseService $bookcaseService) {
+    public function getBookcaseContributors(BookcaseService $bookcaseService): JsonResponse
+    {
         return new JsonResponse($bookcaseService->retrieveBookcaseContributors());
     }
 }
