@@ -7,6 +7,7 @@ export default {
     purchases: null,
     watchedAuthors: null,
     suggestions: null,
+    subscriptions: null,
 
     popularIssuesInCollection: null,
     lastPublishedEdgesForCurrentUser: null,
@@ -15,6 +16,7 @@ export default {
     isLoadingPurchases: false,
     isLoadingWatchedAuthors: false,
     isLoadingSuggestions: false,
+    isLoadingSubscriptions: false,
 
     user: null,
     previousVisit: null
@@ -33,6 +35,9 @@ export default {
     },
     setWatchedAuthors(state, watchedAuthors) {
       state.watchedAuthors = watchedAuthors;
+    },
+    setSubscriptions(state, subscriptions) {
+      state.subscriptions = subscriptions;
     },
     setSuggestions(state, suggestions) {
       state.suggestions = suggestions;
@@ -141,6 +146,13 @@ export default {
           sinceLastVisit ? 100 : 20
         ].join("/")}`)).data);
         state.isLoadingSuggestions = false;
+      }
+    },
+    loadSubscriptions: async ({ state, commit }, afterUpdate = false) => {
+      if (afterUpdate || !state.isLoadingSubscriptions && !state.subscriptions) {
+        state.isLoadingSubscriptions = true;
+        commit("setSubscriptions", (await axios.get("/api/collection/subscriptions")).data);
+        state.isLoadingSubscriptions = false;
       }
     },
     loadPopularIssuesInCollection: async ({ state, commit }) => {

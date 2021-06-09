@@ -24,12 +24,14 @@
       variant="info"
     >
       {{ $t('Vous avez indiqué avoir un abonnement pour {0}. Généralement, cet abonnement inclut également la réception du magazine {1}. Voulez-vous ajouter un abonnement à {1} pour les mêmes dates ?', [publicationNames[currentAssociatedPublication.referencePublicationcode], publicationNames[currentAssociatedPublication.publicationcode], publicationNames[currentAssociatedPublication.publicationcode]]) }}
-      <b-btn @click="createAssociatedPublicationSubscription(subscriptions.find(({publicationCode}) => publicationCode === currentAssociatedPublication.referencePublicationcode), currentAssociatedPublication)">
-        {{ $t('Oui') }}
-      </b-btn>
-      <b-btn @click="currentAssociatedPublications.splice(idx, 1)">
-        {{ $t('Non') }}
-      </b-btn>
+      <p>
+        <b-btn @click="createAssociatedPublicationSubscription(subscriptions.find(({publicationCode}) => publicationCode === currentAssociatedPublication.referencePublicationcode), currentAssociatedPublication)">
+          {{ $t('Oui') }}
+        </b-btn>
+        <b-btn @click="currentAssociatedPublications.splice(idx, 1)">
+          {{ $t('Non') }}
+        </b-btn>
+      </p>
     </b-alert>
     <b-row
       v-for="subscription in subscriptions"
@@ -133,15 +135,15 @@ import l10nMixin from "../../mixins/l10nMixin";
 import PublicationSelect from "../../components/PublicationSelect";
 import axios from "axios";
 import Publication from "../../components/Publication";
+import subscriptionMixin from "../../mixins/subscriptionMixin";
 
 export default {
   name: "Subscriptions",
   components: {Publication, PublicationSelect},
-  mixins: [l10nMixin],
+  mixins: [l10nMixin, subscriptionMixin],
   data() {
     return {
       hasPublicationNames: false,
-      subscriptions: null,
       currentAssociatedPublications: [],
       newSubscription: {},
       forcedPublicationcode: false,
@@ -159,30 +161,24 @@ export default {
   watch: {
     subscriptions: {
       immediate: true,
-      handler(newValue) {
-        this.currentAssociatedPublications = newValue && this.associatedPublications
-          .filter(({referencePublicationcode, publicationcode: associatedPublicationcode}) =>
-            newValue.find(({ publicationCode }) => referencePublicationcode === publicationCode)
-            && !newValue.find(({ publicationCode }) => associatedPublicationcode === publicationCode))
+      async handler(newValue) {
+        if (newValue) {
+          this.currentAssociatedPublications = this.associatedPublications
+            .filter(({ referencePublicationcode, publicationcode: associatedPublicationcode }) =>
+              newValue.find(({ publicationCode }) => referencePublicationcode === publicationCode)
+              && !newValue.find(({ publicationCode }) => associatedPublicationcode === publicationCode))
+          await this.fetchPublicationNames([
+            ...this.associatedPublications.map(({ publicationcode }) => publicationcode),
+            ...this.subscriptions.map(({ publicationCode }) => publicationCode)]
+          )
+          this.hasPublicationNames = true
+        }
       }
     }
   },
 
-  async mounted() {
-    await this.loadSubscriptions()
-    await this.fetchPublicationNames([
-      ...this.associatedPublications.map(({publicationcode}) => publicationcode),
-      ...this.subscriptions.map(({publicationCode}) => publicationCode)]
-    )
-    this.hasPublicationNames = true
-  },
   methods: {
-    ...mapActions("collection", ["fetchSubscriptions"]),
     ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
-
-    async loadSubscriptions() {
-      this.subscriptions = (await axios.get(`/api/collection/subscriptions`)).data
-    },
 
     createAssociatedPublicationSubscription(existingSubscription, { publicationcode: associatedPublicationcode }) {
       this.newSubscription = {

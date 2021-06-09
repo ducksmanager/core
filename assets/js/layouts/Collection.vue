@@ -5,9 +5,9 @@
       :root-path="'/collection'"
       :default-path="'/show'"
       :items="[
-        {path: '/show', text: $t('Mes numéros')},
-        {path: '/account', text: $t('Mon compte')},
-        {path: '/subscriptions', text: $t('Mes abonnements <sup>Nouveau !</sup>')}
+        {path: '/show', text: total == null ? $t('Mes numéros') : $t('Mes numéros ({0})', [total])},
+        {path: '/subscriptions', text: subscriptions == null ? $t('Mes abonnements') : $t('Mes abonnements ({0})', [subscriptions.length])},
+        {path: '/account', text: $t('Mon compte')}
       ]"
     />
     <component
@@ -23,6 +23,9 @@ import Menu from "./Menu";
 import Account from "./collection/Account";
 import Manage from "./collection/Manage";
 import Subscriptions from "./collection/Subscriptions";
+import { mapGetters, mapState } from "vuex";
+import collectionMixin from "../mixins/collectionMixin";
+import subscriptionMixin from "../mixins/subscriptionMixin";
 
 export default {
   name: "Collection",
@@ -32,7 +35,7 @@ export default {
     Menu,
     Subscriptions
   },
-  mixins: [l10nMixin],
+  mixins: [l10nMixin, collectionMixin, subscriptionMixin],
   props: {
     tab: {
       type: String,
@@ -40,12 +43,14 @@ export default {
     }
   },
   computed: {
+    ...mapState("collection", ["subscriptions"]),
+    ...mapGetters("collection", ["total"]),
     attrsWithoutTab() {
       const vm = this
       return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'tab')
         .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
     }
-  }
+  },
 }
 </script>
 
