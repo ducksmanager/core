@@ -57,36 +57,56 @@ export default {
   },
 
   getters: {
-    total: state => state.collection && state.collection.length,
+    total: ({ collection }) => collection && collection.length,
 
-    totalUniqueIssues: state => state.collection && state.collection.length && [...new Set(state.collection.map(
-      ({
-         publicationCode,
-         issueNumber
-       }) => `${publicationCode} ${issueNumber}`))].length,
+    duplicateIssues: ({ collection }) => {
+      if (collection) {
+        const issuesByIssueCode = collection.reduce((acc, issue) => {
+          const issuecode = `${issue.publicationCode} ${issue.issueNumber}`
+          if (!acc[issuecode]) {
+            acc[issuecode] = []
+          }
+          return {
+            ...acc,
+            [issuecode]: [...acc[issuecode], issue]
+          }
+        }, {})
+        return Object.keys(issuesByIssueCode).reduce((acc, issuecode) => {
+          let issues = issuesByIssueCode[issuecode];
+          return issues.length > 1 ? { ...acc, [issuecode]: issues } : acc;
+        }, {})
+      }
+    },
 
-    totalPerCountry: state => state.collection && state.collection.reduce((acc, issue) => ({
+    totalUniqueIssues: ({ collection }, { duplicateIssues }) => {
+      return collection && collection.length - Object.values(duplicateIssues).reduce((acc, duplicatedIssue) => {
+        return acc + duplicatedIssue.length - 1
+      }, 0)
+    },
+
+    totalPerCountry: ({ collection }) => collection && collection.reduce((acc, issue) => ({
       ...acc,
       [issue.country]: (acc[issue.country] || 0) + 1
     }), {}),
 
-    totalPerPublication: state => state.collection && state.collection.reduce((acc, issue) => {
+    totalPerPublication: ({ collection }) => collection && collection.reduce((acc, issue) => {
       const publicationCode = `${issue.country}/${issue.magazine}`;
       return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
     }, {}),
 
-    hasSuggestions: state => state.suggestions && state.suggestions.issues && Object.keys(state.suggestions.issues).length,
+    hasSuggestions: ({ suggestions }) => suggestions && suggestions.issues && Object.keys(suggestions.issues).length,
 
     popularIssuesInCollectionWithoutEdge: (state, getters, rootState, rootGetters) => rootGetters["bookcase/bookcaseWithPopularities"] && rootGetters["bookcase/bookcaseWithPopularities"]
       .filter(({ edgeId, popularity }) => !edgeId && popularity > 0)
       .sort(({ popularity: popularity1 }, { popularity: popularity2 }) => popularity2 - popularity1),
 
-    quotedIssues: (state, getters, rootState) => {
-      if (rootState.coa.issueQuotations === null) {
+    quotedIssues: ({ collection }, getters, { coa: coaState }) => {
+      const { issueQuotations } = coaState;
+      if (issueQuotations === null) {
         return null;
       }
       const getEstimation = (publicationCode, issueNumber) => {
-        const estimationData = rootState.coa.issueQuotations[`${publicationCode} ${issueNumber}`];
+        const estimationData = issueQuotations[`${publicationCode} ${issueNumber}`];
         return estimationData && (estimationData.max ? (estimationData.min + estimationData.max) / 2 : estimationData.min);
       };
       const CONDITION_TO_ESTIMATION_PCT = {
@@ -96,8 +116,8 @@ export default {
         indefini: 0.7,
         "": 0.7
       };
-      return state.collection
-        && state.collection
+      return collection
+        && collection
           .filter(({ publicationCode, issueNumber }) => getEstimation(publicationCode, issueNumber))
           .map(({ publicationCode, issueNumber, condition }) => {
             const estimation = getEstimation(publicationCode, issueNumber);
@@ -111,7 +131,7 @@ export default {
           });
     },
 
-    quotationSum: (state, getters) => getters.quotedIssues && Math.round(getters.quotedIssues.reduce((acc, { estimationGivenCondition }) => acc + estimationGivenCondition, 0))
+    quotationSum: (state, { quotedIssues }) => quotedIssues && Math.round(quotedIssues.reduce((acc, { estimationGivenCondition }) => acc + estimationGivenCondition, 0))
   },
 
   actions: {

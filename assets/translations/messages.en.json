@@ -228,6 +228,8 @@
   "Mes abonnements ({0})": "My subscriptions ({0})",
   "Mes numéros": "My issues",
   "Mes numéros ({0})": "My issues ({0})",
+  "Mes numéros en double": "My duplicate issues",
+  "Mes numéros en double ({0})": "My duplicate issues ({0})",
   "minute(s)": "minute(s)",
   "Mises à jour quotidiennement pour prendre en compte tous vos changements, les statistiques de DucksManager vous informent sur les numéros que vous possédez, et vous précisent combien en acquérir pour compléter des séries.": "Updated everyday to take into account your collection changes, the DucksManager statistics inform you about the issues you have got, and tell you how much you need to get to complete your issues series.",
   "Mon compte": "My account",

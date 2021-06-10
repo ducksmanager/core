@@ -7,6 +7,7 @@
       :items="[
         {path: '/show', text: total == null ? $t('Mes numéros') : $t('Mes numéros ({0})', [total])},
         {path: '/subscriptions', text: subscriptions == null ? $t('Mes abonnements') : $t('Mes abonnements ({0})', [subscriptions.length])},
+        {path: '/duplicates', text: totalUniqueIssues == null ? $t('Mes numéros en double') : $t('Mes numéros en double ({0})', [total - totalUniqueIssues])},
         {path: '/account', text: $t('Mon compte')}
       ]"
     />
@@ -21,6 +22,7 @@
 import l10nMixin from "../mixins/l10nMixin";
 import Menu from "./Menu";
 import Account from "./collection/Account";
+import Duplicates from "./collection/Duplicates";
 import Manage from "./collection/Manage";
 import Subscriptions from "./collection/Subscriptions";
 import { mapGetters, mapState } from "vuex";
@@ -31,6 +33,7 @@ export default {
   name: "Collection",
   components: {
     Account,
+    Duplicates,
     Manage,
     Menu,
     Subscriptions
@@ -44,7 +47,7 @@ export default {
   },
   computed: {
     ...mapState("collection", ["subscriptions"]),
-    ...mapGetters("collection", ["total"]),
+    ...mapGetters("collection", ["total", "totalUniqueIssues"]),
     attrsWithoutTab() {
       const vm = this
       return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'tab')

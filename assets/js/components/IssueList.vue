@@ -1,5 +1,8 @@
 <template>
-  <div v-if="publicationName">
+  <div
+    v-if="publicationName"
+    class="mt-4"
+  >
     <Publication
       size="xl"
       :publicationcode="publicationcode"
@@ -7,6 +10,7 @@
     />
     <div v-if="issues">
       <div
+        v-if="!duplicatesOnly"
         v-once
         class="issue-filter"
       >
@@ -64,6 +68,7 @@
           </ul>
         </b-alert>
         <b-alert
+          v-if="!duplicatesOnly"
           v-once
           show
           variant="info"
@@ -232,6 +237,10 @@ export default {
     publicationcode: {
       type: String,
       required: true
+    },
+    duplicatesOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -313,7 +322,8 @@ export default {
             .map(issue => ({
               ...issue,
               userCopies: vm.userIssuesForPublication.filter(({ issueNumber: userIssueNumber }) => userIssueNumber === issue.issueNumber)
-            }));
+            }))
+            .filter(({userCopies}) => !vm.duplicatesOnly || userCopies.length > 1);
           const coaIssueNumbers = issuesWithTitles.map(({ issueNumber }) => issueNumber);
           this.userIssuesNotFoundForPublication = this.userIssuesForPublication
             .filter(({ issueNumber }) => !coaIssueNumbers.includes(issueNumber));

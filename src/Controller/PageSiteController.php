@@ -410,6 +410,24 @@ class PageSiteController extends AbstractController
         );
     }
 
+    /**
+     * @Route({
+     *     "en": "/collection/duplicates",
+     *     "fr": "/collection/doubles"
+     * },
+     *     methods={"GET"}
+     * )
+     */
+    public function showDuplicateIssues(): Response
+    {
+        return $this->renderSitePage(
+            'Collection',
+            'Mes numéros en double',
+            null,
+            ['tab' => 'Duplicates']
+        );
+    }
+
 
     /**
      * @Route({
