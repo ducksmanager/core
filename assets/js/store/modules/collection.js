@@ -100,8 +100,7 @@ export default {
       .filter(({ edgeId, popularity }) => !edgeId && popularity > 0)
       .sort(({ popularity: popularity1 }, { popularity: popularity2 }) => popularity2 - popularity1),
 
-    quotedIssues: ({ collection }, getters, { coa: coaState }) => {
-      const { issueQuotations } = coaState;
+    quotedIssues: ({ collection }, getters, { coa: { issueQuotations } }) => {
       if (issueQuotations === null) {
         return null;
       }

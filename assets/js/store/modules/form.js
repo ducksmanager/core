@@ -14,6 +14,6 @@ export default {
   },
 
   getters: {
-    hasErrors: state => Object.keys(state.errors).length
+    hasErrors: ({ errors }) => Object.keys(errors).length
   }
 }
