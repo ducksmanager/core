@@ -28,10 +28,10 @@
       class="mb-0"
     >
       <template v-if="hasRequestedPresentationSentence">
-        {{ $t('Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu\'il sera validé.') }}
+        {{ $t('Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu\'elle sera validée.') }}
       </template>
       <template v-else>
-        {{ $t('Votre phrase de présentation sera soumis à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés.') }}
+        {{ $t('Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés.') }}
       </template>
     </b-alert>
     <Errorable id="presentationSentenceRequest">
@@ -41,7 +41,7 @@
         :value="user.presentationSentence"
         name="presentationSentenceRequest"
         maxlength="100"
-        :placeholder="$t('Présentez vous en quelques mots (100 caractères maximum)')"
+        :placeholder="$t('Présentez-vous en quelques mots (100 caractères maximum)')"
         @input="user.presentationSentenceRequest = $event"
       />
     </Errorable>
