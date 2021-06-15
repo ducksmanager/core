@@ -7,9 +7,9 @@
 
 <script>
 import Print from "./Print";
-import EdgeProgress from "./EdgeProgress";
+import BookstoresAdmin from "./admin/BookstoresAdmin";
+import EdgeProgress from "./admin/EdgeProgress";
 import Site from "./Site";
-import BookstoresAdmin from "./BookstoresAdmin";
 
 export default {
   name: "App",

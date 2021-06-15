@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class AdminController extends AbstractController
 {
@@ -26,6 +27,7 @@ class AdminController extends AbstractController
             ]
         ]);
     }
+
     /**
      * @Route(
      *     methods={"GET"},
@@ -40,6 +42,25 @@ class AdminController extends AbstractController
                 'component' => 'BookstoresAdmin'
             ]
         ]);
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/admin/presentationSentence/{choice}"
+     * )
+     */
+    public function validatePresentationSentence(string $choice, Request $request, ApiService $apiService): Response
+    {
+        $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
+        return new JsonResponse(
+            $apiService->call(
+                "/ducksmanager/presentationSentence/$choice",
+                'ducksmanager',
+                $data,
+                'POST'
+            )
+        );
     }
 
     /**

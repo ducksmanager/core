@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
+import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
 import {mapActions, mapState} from "vuex";
 

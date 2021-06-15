@@ -12,6 +12,7 @@
     >
       <template #title>
         <h4>{{ stats.username }}</h4>
+        <div v-if="stats.presentationSentence">{{ stats.presentationSentence }}</div>
       </template>
       <div class="d-flex">
         <Medal

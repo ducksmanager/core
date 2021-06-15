@@ -20,6 +20,31 @@
         autofocus
       />
     </Errorable>
+
+    <h5>{{ $t("Phrase de présentation") }} <sup>{{ $t('Nouveau !') }}</sup></h5>
+    <b-alert
+      variant="info"
+      show
+      class="mb-0"
+    >
+      <template v-if="hasRequestedPresentationSentence">
+        {{ $t('Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu\'il sera validé.') }}
+      </template>
+      <template v-else>
+        {{ $t('Votre phrase de présentation sera soumis à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés.') }}
+      </template>
+    </b-alert>
+    <Errorable id="presentationSentenceRequest">
+      <b-form-input
+        id="presentationSentenceRequest"
+        class="mt-0"
+        :value="user.presentationSentence"
+        name="presentationSentenceRequest"
+        maxlength="100"
+        :placeholder="$t('Présentez vous en quelques mots (100 caractères maximum)')"
+        @input="user.presentationSentenceRequest = $event"
+      />
+    </Errorable>
     <h5>{{ $t("Changement de mot de passe") }}</h5>
     <Errorable id="password">
       <b-form-input
@@ -105,13 +130,17 @@ export default {
   mixins: [l10nMixin],
   props: {
     errors: { type: String, default: "" },
-    success: { type: String, default: null }
+    success: { type: String, default: null },
+    hasrequestedpresentationsentence: { type: String, default: null },
   },
 
   computed: {
     ...mapState("collection", ["user"]),
     isSuccess() {
       return this.success === null ? null : parseInt(this.success) === 1;
+    },
+    hasRequestedPresentationSentence() {
+      return this.hasrequestedpresentationsentence === null ? null : parseInt(this.hasrequestedpresentationsentence) === 1;
     }
   },
 

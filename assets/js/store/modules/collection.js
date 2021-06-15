@@ -205,6 +205,9 @@ export default {
               case "email":
                 acc.email = value;
                 break;
+              case "presentationSentence":
+                acc.presentationSentence = value;
+                break;
             }
             return acc;
           }, {})

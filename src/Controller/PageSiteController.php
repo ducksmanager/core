@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Account;
 use App\Entity\PasswordChange;
+use App\Security\ApiUserProvider;
 use App\Security\User;
 use App\Service\ApiService;
 use Psr\Log\LoggerInterface;
@@ -355,9 +356,11 @@ class PageSiteController extends AbstractController
     public function showAccountPage(Request $request, ValidatorInterface $validator, ApiService $apiService): Response
     {
         $success = null;
+        $hasRequestedPresentationSentence = false;
         $errors = [];
         if ($request->getMethod() === 'POST') {
-            $account = Account::createFromRequest($request, $this->getUser());
+            $dbUser = $apiService->call("/ducksmanager/user/{$this->getUser()->getUsername()}", 'ducksmanager');
+            $account = Account::createFromRequest($request, $dbUser);
 
             $errorResult = $validator->validate($account);
             if (!empty($errorResult->count())) {
@@ -366,9 +369,20 @@ class PageSiteController extends AbstractController
                     $errors[$error->getPropertyPath()] = $error->getMessage();
                 }
             } else {
-                $this->getUser()->setPassword($account->getUpToDatePassword());
-                $apiResponse = $apiService->call('/ducksmanager/user/'.$this->getUser()->getUsername(), 'ducksmanager', $account->toArray(), 'POST');
+                /** @var User $user */
+                $user = $this->getUser();
+
+                $accountData = $account->toArray();
+                $apiResponse = $apiService->call(
+                    "/ducksmanager/user/{$user->getUsername()}",
+                    'ducksmanager',
+                    $accountData,
+                    'POST'
+                );
+                $user->setPassword($accountData['password']);
+
                 $success = !is_null($apiResponse);
+                $hasRequestedPresentationSentence = $account->hasRequestedPresentationSentence();
             }
         }
 
@@ -376,7 +390,8 @@ class PageSiteController extends AbstractController
             'Collection',
             'Mon compte',
             null,
-            (is_null($success) ? [] : compact('success')) + ['tab' => 'account', 'errors' => json_encode($errors)]
+            (is_null($success) ? [] : compact('success', 'hasRequestedPresentationSentence'))
+            + ['tab' => 'account', 'errors' => json_encode($errors)]
         );
     }
 

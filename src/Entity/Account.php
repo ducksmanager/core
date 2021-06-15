@@ -2,25 +2,27 @@
 
 namespace App\Entity;
 
-use App\Security\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Account
 {
-    private $currentPassword;
+    private ?string $currentPassword;
+    private ?string $currentPresentationSentence;
 
-    private $email = null;
-    private $password = null;
-    private $passwordNew = null;
-    private $passwordNewConfirmation = null;
-    private $isShareEnabled = false;
-    private $isVideoShown = false;
+    private ?string $email = null;
+    private ?string $password = null;
+    private ?string $passwordNew = null;
+    private ?string $passwordNewConfirmation = null;
+    private ?string $presentationSentenceRequest = null;
+    private bool|string $isShareEnabled = false;
+    private bool|string $isVideoShown = false;
 
-    public static function createFromRequest(Request $request, User $user): Account
+    public static function createFromRequest(Request $request, array $user): Account
     {
         $object = new Account();
         foreach ($request->request->all() as $field => $value) {
@@ -28,13 +30,15 @@ class Account
                 $object->$field = $value;
             }
         }
-        $object->currentPassword = $user->getPassword();
+        $object->currentPassword = $user['password'];
+        $object->currentPresentationSentence = $user['presentationSentence'];
         return $object;
     }
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraint('email', new NotBlank());
+        $metadata->addPropertyConstraint('presentationSentenceRequest', new Length(null, null, 100));
 
         $metadata->addConstraint(new Callback('validateOldPasswordNotBlankIfNewPasswordNotBlank'));
         $metadata->addConstraint(new Callback('validateNewPasswordEqualsNewPasswordConfirmation'));
@@ -68,17 +72,22 @@ class Account
         }
     }
 
+    public function hasRequestedPresentationSentence() : bool {
+        return !empty($this->presentationSentenceRequest) && $this->presentationSentenceRequest !== $this->currentPresentationSentence;
+    }
+
     public function toArray(): array
     {
         return [
             'email' => $this->email,
-            'password' => is_null($this->passwordNew ?? $this->password) ? null : sha1($this->passwordNew ?? $this->password),
+            'presentationSentenceRequest' => $this->hasRequestedPresentationSentence() ? $this->presentationSentenceRequest : null,
+            'password' => $this->getUpToDatePassword(),
             'isShareEnabled' => $this->isShareEnabled === 'true',
             'isVideoShown' => $this->isVideoShown === 'true',
         ];
     }
 
     public function getUpToDatePassword() : string {
-        return sha1($this->passwordNew ?? $this->password);
+        return is_null($this->passwordNew ?? $this->password) ? $this->currentPassword : sha1($this->passwordNew ?? $this->password);
     }
 }
