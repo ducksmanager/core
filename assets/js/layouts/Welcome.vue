@@ -169,7 +169,7 @@ export default {
 
 <style scoped lang="scss">
 #discord {
-  background-color: #7289d9;
+  background-color: #a1aed7;
   background-repeat: no-repeat;
   background-position-x: center;
   background-position-y: 5px;
