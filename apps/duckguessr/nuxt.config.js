@@ -1,3 +1,4 @@
+import { json } from 'body-parser'
 export default {
   telemetry: false,
 
@@ -51,9 +52,14 @@ export default {
   build: {},
 
   serverMiddleware: [
+    json({ limit: '10mb' }),
     {
-      path: '/api/randomImage',
-      handler: '~/api/getRandomImage.js',
+      path: '/api/game',
+      handler: '~/api/game.js',
+    },
+    {
+      path: '/api/round',
+      handler: '~/api/round.js',
     },
   ],
 }

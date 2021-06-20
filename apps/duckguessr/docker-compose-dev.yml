@@ -1,0 +1,9 @@
+services:
+  db:
+    restart: always
+    image: mariadb:10.5
+    ports:
+      - 33061:3306
+    environment:
+      MYSQL_DATABASE: duckguessr
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD

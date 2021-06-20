@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model games {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.DateTime(0)
+  finished_at DateTime? @db.DateTime(0)
+  rounds      rounds[]
+}
+
+model players {
+  id           Int            @id @default(autoincrement())
+  username     String         @db.VarChar(50)
+  email        String         @db.VarChar(100)
+  round_scores round_scores[]
+}
+
+model round_scores {
+  id              Int         @id @default(autoincrement())
+  player_id       Int
+  round_id        Int
+  score_type_name String      @db.VarChar(20)
+  score           Int         @db.UnsignedSmallInt
+  players         players     @relation(fields: [player_id], references: [id])
+  rounds          rounds      @relation(fields: [round_id], references: [id])
+  score_types     score_types @relation(fields: [score_type_name], references: [type_name])
+
+  @@index([player_id], name: "round_score_player_id_fk")
+  @@index([round_id], name: "round_score_round_id_fk")
+  @@index([score_type_name], name: "round_scores_score_types_type_name_fk")
+}
+
+model rounds {
+  id                   Int            @id @default(autoincrement())
+  game_id              Int
+  round_number         Int            @db.UnsignedTinyInt
+  entryurl_id          Int
+  entryurl_url         String         @db.VarChar(100)
+  personcode           String         @db.VarChar(79)
+  personnationality    String         @db.VarChar(2)
+  personfullname       String         @db.VarChar(79)
+  personrole           String         @db.VarChar(1)
+  firstpublicationyear Int            @db.UnsignedSmallInt
+  started_at           DateTime?      @default(now()) @db.DateTime(0)
+  finished_at          DateTime?      @db.DateTime(0)
+  games                games          @relation(fields: [game_id], references: [id])
+  round_scores         round_scores[]
+
+  @@index([game_id], name: "round_game_id_fk")
+}
+
+model score_types {
+  type_name    String         @id @db.VarChar(20)
+  round_scores round_scores[]
+}
