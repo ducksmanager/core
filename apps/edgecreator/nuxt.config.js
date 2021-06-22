@@ -129,6 +129,10 @@ export default {
       handler: '~/api/user-id.js',
     },
     {
+      path: '/wanted-edges',
+      handler: '~/api/wanted-edges.js',
+    },
+    {
       path: '/fs/base64',
       handler: '~/api/fs/base64.js',
     },

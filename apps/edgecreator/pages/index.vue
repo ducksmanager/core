@@ -8,9 +8,9 @@
     <template v-else>
       <h3>{{ $t('Edge creation') }}</h3>
 
-      <b-container align="center">
-        <template v-if="isUploadableEdgesCarouselReady">
-          <b-alert v-if="mostPopularIssuesInCollectionWithoutEdge.length" show variant="info">
+      <b-container v-if="isUploadableEdgesCarouselReady" align="center">
+        <b-alert show variant="info">
+          <template v-if="mostPopularIssuesInCollectionWithoutEdge.length">
             <UploadableEdgesCarousel
               :user-points="userPhotographerPoints"
               :issues="mostPopularIssuesInCollectionWithoutEdge"
@@ -19,21 +19,36 @@
               <template #header>
                 {{
                   $t(
-                    'Send us photos of magazine edges and earn up to {0} Edge photographer points per edge!',
+                    'Send us photos of magazine edges that you own and earn up to {0} Edge photographer points per edge!',
                     [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
                   )
                 }}
               </template>
-              <template #footer>
-                <b-button to="/upload">{{ $t('Send edge photos') }}</b-button>
-              </template>
             </UploadableEdgesCarousel>
-          </b-alert>
-          <b-button v-else to="/upload">{{ $t('Send edge photos') }}</b-button>
-        </template>
+            <div>
+              <div class="position-absolute px-2 separation-text">{{ $t('or') }}</div>
+              <hr />
+            </div>
+          </template>
+          <UploadableEdgesCarousel
+            :user-points="userPhotographerPoints"
+            :issues="mostWantedEdges"
+            :publication-names="publicationNames"
+          >
+            <template #header>
+              {{
+                $t(
+                  'Send us photos of magazine edges that you find on the Internet and earn up to {0} Edge photographer points per edge!',
+                  [mostWantedEdges[0].popularity]
+                )
+              }}
+            </template>
+          </UploadableEdgesCarousel>
+          <b-button to="/upload" class="mt-1">{{ $t('Send edge photos') }}</b-button>
+        </b-alert>
       </b-container>
 
-      <b-container v-role:unless="'display'" class="mt-5" align="center">
+      <b-container v-role:unless="'display'" class="mt-3" align="center">
         <b-button to="/edit/new">{{ $t('Create or edit an edge model') }}</b-button>
       </b-container>
 
@@ -116,6 +131,7 @@ export default {
 
   data: () => ({
     isUploadableEdgesCarouselReady: false,
+    mostWantedEdges: null,
   }),
 
   computed: {
@@ -140,9 +156,13 @@ export default {
     await this.fetchUserPoints()
     await this.loadPopularIssuesInCollection()
     await this.loadBookcase()
-    await this.fetchPublicationNames(
-      this.bookcase.map(({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`)
-    )
+    await this.loadMostWantedEdges()
+    await this.fetchPublicationNames([
+      ...new Set([
+        ...this.bookcase.map(({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`),
+        ...this.mostWantedEdges.map(({ publicationCode }) => publicationCode),
+      ]),
+    ])
     this.isUploadableEdgesCarouselReady = true
   },
 
@@ -150,11 +170,23 @@ export default {
     ...mapActions('user', ['fetchUserPoints']),
     ...mapActions('collection', ['loadPopularIssuesInCollection', 'loadBookcase']),
     getPhotoUrl: (country, fileName) => `${process.env.EDGES_URL}/${country}/photos/${fileName}`,
+
+    async loadMostWantedEdges() {
+      this.mostWantedEdges = (await this.$axios.$get('/wanted-edges')).wantedEdges
+        .slice(0, 10)
+        .map(({ publicationcode, issuenumber, numberOfIssues }) => ({
+          issueCode: `${publicationcode} ${issuenumber}`,
+          publicationCode: publicationcode,
+          issueNumber: issuenumber,
+          popularity: numberOfIssues,
+        }))
+    },
   },
 }
 </script>
 <style scoped lang="scss">
 ::v-deep .carousel {
+  height: 100px;
   * {
     line-height: 10px;
     font-size: 11px !important;
@@ -175,6 +207,12 @@ export default {
 }
 .disabled {
   pointer-events: none;
+}
+
+.separation-text {
+  margin-top: -12px !important;
+  background: #d1ecf1;
+  left: 50%;
 }
 
 #footer {
