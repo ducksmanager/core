@@ -2,13 +2,13 @@
   <div v-if="hasData">
     <div
       v-for="mostWantedIssue in mostWanted"
-      :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.Numero}`"
+      :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.issuenumber}`"
     >
       <div>
         <u>{{ mostWantedIssue.numberOfIssues }} utilisateurs possèdent le numéro :</u>
       </div>&nbsp;
       <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`">
-      {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{ mostWantedIssue.Numero }}
+      {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{ mostWantedIssue.issuenumber }}
     </div>
     <div v-if="publishedEdges && Object.keys(inducksIssueNumbers).length">
       <div

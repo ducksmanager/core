@@ -71,20 +71,9 @@ class AdminController extends AbstractController
      */
     public function getEdgeProgressData(ApiService $apiService): Response
     {
-        $mostWantedQuery = "
-        SELECT Count(Numero) as numberOfIssues, CONCAT(Pays,'/',Magazine) AS publicationcode, Numero
-        FROM numeros
-        WHERE NOT EXISTS(
-            SELECT 1
-            FROM tranches_pretes
-            WHERE CONCAT(numeros.Pays, '/', numeros.Magazine) = tranches_pretes.publicationcode
-              AND numeros.Numero_nospace = tranches_pretes.issuenumber
-        )
-        GROUP BY Pays,Magazine,Numero
-        ORDER BY numberOfIssues DESC, Pays, Magazine, Numero
-        LIMIT 20";
-
-        return new JsonResponse($apiService->runQuery($mostWantedQuery, 'dm', []));
+        return new JsonResponse(
+            $apiService->call('/edges/wanted', 'ducksmanager')
+        );
     }
 
     /**
