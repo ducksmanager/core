@@ -70,8 +70,21 @@ export default async (req, res) => {
       }
       break
     case 'PUT': {
+      const pendingGame = await prisma.games.findFirst({
+        include: {
+          game_players: true,
+        },
+        where: {
+          started_at: null,
+        },
+      })
+      if (pendingGame) {
+        res.writeHeader(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ gameId: pendingGame.id, created: false }))
+        return
+      }
       const numberOfRounds = 10
-      const response = await axios
+      const { data: roundDataResponse } = await axios
         .request({
           method: 'POST',
           url: `${process.env.BACKEND_URL}/rawsql`,
@@ -114,24 +127,26 @@ export default async (req, res) => {
           throw e
         })
 
-      if (response) {
-        const { id: gameId } = await prisma.games.create({
+      if (roundDataResponse) {
+        const game = await prisma.games.create({
           data: {
             rounds: {
               create: [...Array(numberOfRounds).keys()].map((roundNumber) => ({
-                ...response.data[roundNumber],
+                ...data[roundNumber],
                 round_number: roundNumber,
-                entryurl_id: parseInt(response.data[roundNumber].entryurl_id),
+                entryurl_id: parseInt(data[roundNumber].entryurl_id),
                 firstpublicationyear: parseInt(
-                  response.data[roundNumber].firstpublicationyear
+                  data[roundNumber].firstpublicationyear
                 ),
               })),
             },
           },
         })
 
+        console.log(game)
+
         res.writeHeader(200, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify({ gameId }))
+        res.end(JSON.stringify({ gameId: game.gameId, created: true }))
       }
     }
   }

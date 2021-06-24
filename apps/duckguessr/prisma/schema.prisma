@@ -8,16 +8,19 @@ datasource db {
 }
 
 model games {
-  id          Int       @id @default(autoincrement())
-  created_at  DateTime  @default(now()) @db.DateTime(0)
-  finished_at DateTime? @db.DateTime(0)
-  rounds      rounds[]
+  id           Int            @id @default(autoincrement())
+  created_at   DateTime       @default(now()) @db.DateTime(0)
+  started_at   DateTime?      @db.DateTime(0)
+  finished_at  DateTime?      @db.DateTime(0)
+  game_players game_players[]
+  rounds       rounds[]
 }
 
 model players {
   id           Int            @id @default(autoincrement())
   username     String         @db.VarChar(50)
   email        String         @db.VarChar(100)
+  game_players game_players[]
   round_scores round_scores[]
 }
 
@@ -58,4 +61,15 @@ model rounds {
 model score_types {
   type_name    String         @id @db.VarChar(20)
   round_scores round_scores[]
+}
+
+model game_players {
+  id        Int     @id @default(autoincrement())
+  game_id   Int
+  player_id Int
+  games     games   @relation(fields: [game_id], references: [id])
+  players   players @relation(fields: [player_id], references: [id])
+
+  @@index([game_id], name: "game_players_games_id_fk")
+  @@index([player_id], name: "game_players_players_id_fk")
 }
