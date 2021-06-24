@@ -5,7 +5,7 @@
       size="xl"
       :class="{[`kind-${kind}`]: true}"
     >{{ storyTypeText }}</b-badge>
-    {{ title || $t("Sans titre") }}
+    {{ title || $t("Sans titre") }}<template v-if="part"> - {{ $t('partie') }} {{ part }}</template>
     <small>{{ comment }}</small>
     <a
       v-if="!noLink"
@@ -35,6 +35,10 @@ export default {
     },
     title: {
       type: String,
+      default: null
+    },
+    part: {
+      type: Number,
       default: null
     },
     comment: {

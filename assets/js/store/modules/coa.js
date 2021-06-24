@@ -15,6 +15,26 @@ const URL_PREFIX_ISSUE_QUOTATIONS = "/api/coa/quotations/";
 const URL_ISSUE_COUNTS = "/api/coa/list/issues/count";
 const URL_ISSUE_DECOMPOSE = "/api/coa/issues/decompose";
 
+function addPartInfo(issueDetails) {
+  const storyPartCounter = Object.entries(
+    issueDetails.entries.reduce((acc, { storycode }) => ({
+      ...acc,
+      [storycode]: !storycode ? 0 : ((acc[storycode] || 0) + 1)
+    }), {}))
+    .filter(([, occurrences]) => occurrences > 1)
+    .reduce((acc, [storycode]) => ({
+      ...acc,
+      [storycode]: 1
+    }), {});
+  return {
+    ...issueDetails,
+    entries: issueDetails.entries.map(entry => ({
+      ...entry,
+      part: storyPartCounter[entry.storycode] ? storyPartCounter[entry.storycode]++ : null
+    }))
+  }
+}
+
 export default {
   namespaced: true,
   state: () => ({
@@ -58,7 +78,7 @@ export default {
       state.issueNumbers = { ...state.issueNumbers, ...issueNumbers };
     },
     setIssueDetails(state, { issueCode, issueDetails }) {
-      Vue.set(state.issueDetails, issueCode, issueDetails);
+      Vue.set(state.issueDetails, issueCode, addPartInfo(issueDetails));
     },
     setIssueCounts(state, issueCounts) {
       state.issueCounts = issueCounts;

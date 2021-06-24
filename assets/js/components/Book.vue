@@ -46,7 +46,7 @@
             @input="currentPage = pagesWithUrl.findIndex(page => page.storycode === pages[$event].storycode)"
           >
             <b-tab
-              v-for="{storycode, kind, entirepages, url, title, position} in pages"
+              v-for="{storycode, kind, entirepages, url, title, position, part} in pages"
               :key="`slide-${position}`"
               :title-item-class="!!url ? 'has-image':''"
             >
@@ -56,6 +56,7 @@
                   :kind="`${kind}${kind === 'n' && entirepages < 1 ? '_g' : ''}`"
                   :title="title"
                   :storycode="storycode"
+                  :part="part"
                   :dark="!!url"
                 />
               </template>
@@ -314,7 +315,8 @@ export default {
     width: auto;
     max-width: 400px;
     height: 100%;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     background-color: #eee;
     color: black;
     white-space: nowrap;
@@ -334,6 +336,10 @@ export default {
 
     .col-auto {
       width: 100%;
+    }
+
+    ::v-deep ul {
+      overflow-x: auto;
     }
 
     ::v-deep .tab-content {
