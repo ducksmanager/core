@@ -22,7 +22,13 @@ export default {
         }
       }
     },
-    async getOptionsFromDb(targetComponent, dbOptions, edgeDimensions, issuenumber) {
+    async getOptionsFromDb(
+      targetComponent,
+      dbOptions,
+      edgeDimensions,
+      issuenumber,
+      calculateBase64 = true
+    ) {
       switch (targetComponent) {
         case 'ArcCircle': {
           this.validateOptions(
@@ -82,12 +88,17 @@ export default {
           )
           let image
           try {
-            image = await this.$axios.$get(
-              `/fs/base64?${this.country}/elements/${this.resolveStringTemplates(dbOptions.Source, {
+            const elementPath = `${this.country}/elements/${this.resolveStringTemplates(
+              dbOptions.Source,
+              {
                 dimensions: edgeDimensions,
                 issuenumber,
-              })}`
-            )
+              }
+            )}`
+            const imagePath = calculateBase64
+              ? `/fs/base64?${elementPath}`
+              : `${process.env.EDGES_URL}/${elementPath}`
+            image = await this.$axios.$get(imagePath)
           } catch (e) {
             console.error(`Image could not be retrieved : ${dbOptions.Source}`)
             return {

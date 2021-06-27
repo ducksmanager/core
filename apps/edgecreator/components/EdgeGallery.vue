@@ -90,6 +90,7 @@ export default {
                 issuenumber,
                 allSteps,
                 dimensions,
+                false,
                 (error, stepNumber) => {
                   if (!issueStepWarnings[stepNumber]) {
                     issueStepWarnings[stepNumber] = []
