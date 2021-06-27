@@ -49,7 +49,7 @@ export default {
           await this.getPublishedEdgesSteps({ publicationcode, edgeModelIds: [edge.id] })
           const apiSteps = this.publishedEdgesSteps[publicationcode][issuenumber]
           dimensions = vm.getDimensionsFromApi(apiSteps)
-          steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions, (error) => {
+          steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions, true, (error) => {
             vm.addWarning(error)
           })
 
@@ -115,7 +115,7 @@ export default {
       }
       return defaultDimensions
     },
-    async getStepsFromApi(issuenumber, stepData, dimensions, onError) {
+    async getStepsFromApi(issuenumber, stepData, dimensions, calculateBase64, onError) {
       const vm = this
       return (
         await Promise.all(
@@ -138,7 +138,8 @@ export default {
                         component,
                         originalOptions,
                         dimensions,
-                        issuenumber
+                        issuenumber,
+                        calculateBase64
                       ),
                     }
                   } catch (e) {
