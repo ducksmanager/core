@@ -194,6 +194,7 @@
           </b-collapse>
           <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
             <issue-select
+              v-if="collapseClone"
               :country-code="country"
               :publication-code="`${country}/${magazine}`"
               :disable-ongoing-or-published="false"

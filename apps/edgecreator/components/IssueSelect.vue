@@ -12,15 +12,18 @@
       @change="$emit('change', null)"
     />
     <template v-if="currentCountryCode && currentPublicationCode">
-      <EdgeGallery
-        v-if="edgeGallery"
-        :publicationcode="currentPublicationCode"
-        :selected="currentIssueNumber"
-        @change="
-          currentIssueNumber = $event
-          onChange()
-        "
-      />
+      <template v-if="edgeGallery">
+        <EdgeGallery
+          v-if="isCatalogLoaded"
+          :publicationcode="currentPublicationCode"
+          :selected="currentIssueNumber"
+          @change="
+            currentIssueNumber = $event
+            onChange()
+          "
+        />
+        <b-alert v-else show variant="info">{{ $t('Loading...') }} </b-alert>
+      </template>
       <b-select
         v-else
         v-show="currentCountryCode && currentPublicationCode"
@@ -127,7 +130,7 @@ export default {
             [newValue]: publishedEdges.reduce(
               (acc, { issuenumber, id, modelId }) => ({
                 ...acc,
-                [issuenumber]: { id, modelId },
+                ...(modelId ? { [issuenumber]: { id, modelId } } : {}),
               }),
               {}
             ),
