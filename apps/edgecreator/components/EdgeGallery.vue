@@ -59,6 +59,7 @@ export default {
     },
   },
   methods: {
+    async populateItemsIfNotOngoing() {},
     async populateItems(publicationcode, items) {
       const vm = this
       const [countryCode, magazineCode] = publicationcode.split('/')
@@ -72,6 +73,16 @@ export default {
       this.items = (
         await Promise.all(
           Object.keys(items).map(async (issuenumber) => {
+            const url = `${process.env.EDGES_URL}/${countryCode}/gen/${magazineCode}.${issuenumber}.png`
+            if (items[issuenumber].v3) {
+              return {
+                name: issuenumber,
+                quality: 1,
+                disabled: false,
+                tooltip: '',
+                url,
+              }
+            }
             let quality
             let tooltip
             const allSteps =
@@ -102,7 +113,7 @@ export default {
                 issueStepWarnings[0] = 'No steps'
                 quality = 0
               } else {
-                quality = 1 - Object.keys(issueStepWarnings).length / issueSteps.length
+                quality = Math.max(0, 1 - Object.keys(issueStepWarnings).length / issueSteps.length)
               }
               tooltip = Object.values(issueStepWarnings).join('\n')
             }
@@ -111,7 +122,7 @@ export default {
               quality,
               disabled: quality === 0,
               tooltip,
-              url: `${process.env.EDGES_URL}/${countryCode}/gen/${magazineCode}.${issuenumber}.png`,
+              url,
             }
           })
         )

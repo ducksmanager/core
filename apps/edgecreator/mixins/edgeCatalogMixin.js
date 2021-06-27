@@ -123,26 +123,34 @@ export default {
           }
           const publicationcode = `${country}/${magazine}`
           const issuecode = `${publicationcode} ${issuenumber}`
-          if (edgeStatus === 'published') {
-            if (!publishedSvgEdges[publicationcode]) {
-              publishedSvgEdges[publicationcode] = {}
-            }
-          } else {
-            try {
-              const { svgChildNodes } = await this.loadSvgFromString(country, magazine, issuenumber)
-              const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
-              const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
+          try {
+            const { svgChildNodes } = await this.loadSvgFromString(
+              country,
+              magazine,
+              issuenumber,
+              edgeStatus === 'published'
+            )
+            const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
+            const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
 
-              currentEdges[issuecode] = vm.getEdgeFromSvg({
-                country,
-                magazine,
-                issuenumber,
-                designers,
-                photographers,
-              })
-            } catch (e) {
-              console.error(`No SVG found : ${country}/${magazine} ${issuenumber}`)
+            const edge = vm.getEdgeFromSvg({
+              country,
+              magazine,
+              issuenumber,
+              designers,
+              photographers,
+            })
+
+            if (edgeStatus === 'published') {
+              if (!publishedSvgEdges[publicationcode]) {
+                publishedSvgEdges[publicationcode] = {}
+              }
+              publishedSvgEdges[publicationcode][issuenumber] = { ...edge, v3: true }
+            } else {
+              currentEdges[issuecode] = edge
             }
+          } catch (e) {
+            console.error(`No SVG found : ${country}/${magazine} ${issuenumber}`)
           }
         }
       }

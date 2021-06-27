@@ -15,6 +15,15 @@ const rgbToHex = (color) => {
 export default {
   mixins: [textTemplateMixin],
   methods: {
+    getImageSize: (url) =>
+      new Promise((resolve, reject) => {
+        const img = new Image()
+        img.src = url
+        img.onload = function () {
+          resolve([img.width, img.height])
+        }
+        img.onerror = reject
+      }),
     validateOptions(optionNames, options) {
       for (const requiredOption of optionNames) {
         if (options[requiredOption] === undefined) {
@@ -95,10 +104,14 @@ export default {
                 issuenumber,
               }
             )}`
-            const imagePath = calculateBase64
-              ? `/fs/base64?${elementPath}`
-              : `${process.env.EDGES_URL}/${elementPath}`
-            image = await this.$axios.$get(imagePath)
+
+            if (calculateBase64) {
+              image = await this.$axios.$get(`/fs/base64?${elementPath}`)
+            } else {
+              image = {
+                dimensions: await this.getImageSize(`${process.env.EDGES_URL}/${elementPath}`),
+              }
+            }
           } catch (e) {
             console.error(`Image could not be retrieved : ${dbOptions.Source}`)
             return {
