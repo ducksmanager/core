@@ -13,7 +13,7 @@ const io = IO(server, {
   },
 })
 
-io.of('/game').on('connection', (socket) => {
+io.of('/matchmaking').on('connection', (socket) => {
   console.log('a user connected')
   socket.on('iAmReady', async ({ username, id }) => {
     console.log(`${username} is ready`)

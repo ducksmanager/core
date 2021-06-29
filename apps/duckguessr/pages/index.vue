@@ -10,6 +10,9 @@
         </template>
         <template v-else>
           <b-row align-h="center">
+            <b-col>Waiting for other players...</b-col>
+          </b-row>
+          <b-row align-h="center">
             <b-card
               v-for="player in players"
               :key="player.username"
@@ -18,13 +21,6 @@
             >
           </b-row>
         </template>
-        <b-button
-          class="m-3"
-          variant="info"
-          :disabled="players.length < requiredPlayers"
-          @click="createGame()"
-          >Start game</b-button
-        >
       </b-col>
     </b-row>
   </b-container>
@@ -51,9 +47,8 @@ export default defineComponent({
     const username = ref('')
     const gameId = ref(null as number | null)
     const players = reactive([] as Array<Player>)
-    const showCurrentGames = ref(false)
 
-    const gameSocket = io(`${process.env.SOCKET_URL}/game`)
+    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
 
     const addPlayer = (player: any) => {
       if (
@@ -62,38 +57,36 @@ export default defineComponent({
       ) {
         gameId.value = player.gameId
         players.push(player)
+        if (players.length === requiredPlayers) {
+          router.replace(`/game/${gameId.value}`)
+        }
       }
     }
 
+    const requiredPlayers = 4
     return {
-      requiredPlayers: 4,
       username,
       players,
-      showCurrentGames,
-      gameSocket,
       gameId,
-      createGame() {
-        router.push({ path: `/game/${gameId.value}` })
-      },
       iAmReady() {
-        gameSocket.on('iAmReadyWithGameID', (me: any) => {
+        matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
           console.log('Received iAmReadyWithGameID')
           addPlayer(me)
-          gameSocket.emit('whoElseIsReady', me)
+          matchmakingSocket.emit('whoElseIsReady', me)
         })
-        gameSocket.on('whoElseIsReady', (otherPlayer: any) => {
+        matchmakingSocket.on('whoElseIsReady', (otherPlayer: any) => {
           console.log('Received whoElseIsReady')
           if (otherPlayer.gameId === gameId.value) {
-            gameSocket.emit('iAmAlsoReady', players[0])
+            matchmakingSocket.emit('iAmAlsoReady', players[0])
           }
         })
-        gameSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {
+        matchmakingSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {
           console.log(alsoReadyPlayer.username + ' is also ready')
           if (alsoReadyPlayer.gameId === gameId.value) {
             addPlayer(alsoReadyPlayer)
           }
         })
-        gameSocket.emit('iAmReady', { id: 1, username: username.value })
+        matchmakingSocket.emit('iAmReady', { id: 1, username: username.value })
       },
     }
   },
