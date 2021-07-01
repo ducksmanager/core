@@ -2,87 +2,59 @@
   <b-container v-if="!currentRound">Loading...</b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <b-row>
-      <b-col cols="10" align-self="center">
-        <b-row align-v="center">
-          <b-col cols="6">
-            <b-img center :src="url" @load="hasUrlLoaded = true" />
-          </b-col>
-          <b-col cols="3">
-            <b-row align-v="center" style="height: 50px">
-              <b-col class="text-center"><h4>Guess the author!</h4></b-col>
-            </b-row>
-            <b-row id="author-list">
-              <b-col
-                v-for="(author, idx) in game.authors"
-                :key="`author-${idx}`"
-                cols="6"
-                :class="{
-                  author: true,
-                  selected: author === chosenAuthor,
-                  selectable:
-                    game.authors.findIndex(
-                      ({ personcode }) => personcode === author.personcode
-                    ) >= currentRound.roundNumber,
-                  'p-1': true,
-                }"
-                @click="chosenAuthor = author"
-              >
-                <div
-                  class="author-image"
-                  :style="{
-                    'background-image': `url('https://inducks.org/creators/photos/${author.personcode}.jpg')`,
-                  }"
-                >
-                  <div
-                    class="position-absolute"
-                    style="bottom: 10px; background: rgba(255, 255, 255, 0.5)"
-                  >
-                    <b-img
-                      :src="`https://www.countryflags.io/${author.personnationality}/flat/16.png`"
-                    />
-                    {{ author.personfullname }} ({{ author.personrole }})
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-          </b-col>
-          <b-col cols="3">
-            <b-row align-v="center" style="height: 50px">
-              <b-col class="text-center"
-                ><h4>Guess the first publication date!</h4></b-col
-              >
-            </b-row>
-            <b-row align-v="center" id="date-picker">
-              <b-col class="text-center" style="height: 100%">
-                <b-input
-                  orient="vertical"
-                  :value="chosenDate"
-                  type="range"
-                  min="1928"
-                  max="2021"
-                  @input="chosenDate = parseInt($event)"
-                />
-                <div class="slider-date" :style="{ top: dateTextTop + '%' }">
-                  {{ chosenDate }}
-                </div>
-              </b-col>
-            </b-row>
-          </b-col>
+      <b-col cols="5" align-self="center">
+        <b-img center :src="url" @load="hasUrlLoaded = true" />
+      </b-col>
+      <b-col cols="5" class="h-100">
+        <b-row align-v="center" style="height: 50px">
+          <b-col class="text-center"
+            ><b-progress :variant="progressbarVariant">
+              <div class="position-absolute pt-2 w-100">
+                Guess the author! ({{ remainingTime }})
+              </div>
+              <b-progress-bar
+                animated
+                :value="remainingTime * (100 / availableTime)" /></b-progress
+          ></b-col>
         </b-row>
-        <b-row align-v="end" style="height: 50px">
-          <b-col offset="6" class="text-center p-0">
-            <b-btn
-              :disabled="remainingTime === 0"
-              @click="validateGuess"
-              style="width: 100%"
-              >Validate guess ({{ remainingTime }})
-            </b-btn>
+        <b-row id="author-list">
+          <b-col
+            v-for="(author, idx) in game.authors"
+            :key="`author-${idx}`"
+            cols="4"
+            :class="{
+              author: true,
+              selected: author === chosenAuthor,
+              selectable:
+                game.authors.findIndex(
+                  ({ personcode }) => personcode === author.personcode
+                ) >= currentRound.roundNumber,
+              'p-1': true,
+            }"
+            @click="chosenAuthor = author"
+          >
+            <div
+              class="author-image"
+              :style="{
+                'background-image': `url('https://inducks.org/creators/photos/${author.personcode}.jpg')`,
+              }"
+            >
+              <div
+                class="position-absolute"
+                style="bottom: 10px; background: rgba(255, 255, 255, 0.5)"
+              >
+                <b-img
+                  :src="`https://www.countryflags.io/${author.personnationality}/flat/16.png`"
+                />
+                {{ author.personfullname }} ({{ author.personrole }})
+              </div>
+            </div>
           </b-col>
         </b-row>
       </b-col>
       <b-col cols="2" class="border vh-100 overflow-auto">
         <h3>Scores</h3>
-        <h4>Round {{ currentRound.roundNumber + 1 }}/{{ stages }}</h4>
+        <h4>Round {{ currentRound.roundNumber + 1 }}/{{ rounds }}</h4>
         <div
           v-for="pastRound in pastRounds"
           :key="`score-${pastRound.round_number}-${pastRound.name}`"
@@ -118,6 +90,7 @@ import {
 } from '@nuxtjs/composition-api'
 
 import { games, rounds } from '@prisma/client'
+import { io, Socket } from 'socket.io-client'
 
 interface Author {
   personnationality: string
@@ -142,28 +115,26 @@ export default defineComponent({
     const { $axios } = useContext()
     const route = useRoute()
 
-    const stages = 10
-
-    const minDate = 1928
-    const maxDate = new Date().getFullYear()
-    const chosenDate = ref(parseInt('' + (maxDate + minDate) / 2))
+    const rounds = 9
 
     const currentRound = ref(null as roundWithImage | null)
     const chosenAuthor = ref(null as Author | null)
 
     const game = ref(null as games | null)
+    let gameSocket: Socket | null = null
 
     const scores = reactive([] as Array<Score>)
+    const username = ref('player1' as string)
 
     const hasUrlLoaded = ref(false as boolean)
 
-    const validateGuess = async () => {
+    const validateGuess = () => {
       currentRound.value!.guessed = true
-      await $axios.$post(`/api/round/${game.value!.id}/guess`, {
+      gameSocket!.emit('guess', {
+        username: username.value,
         guess: {
           personcode: chosenAuthor.value?.personcode ?? null,
           personnationality: chosenAuthor.value?.personnationality ?? null,
-          firstpublicationyear: chosenDate.value,
         },
       })
     }
@@ -174,7 +145,11 @@ export default defineComponent({
       )
     }
 
-    const remainingTime = ref(10 as number)
+    const availableTime = 10
+    const remainingTime = ref(availableTime as number)
+    const remainingTimePercentage = computed(
+      () => remainingTime.value * (100 / availableTime)
+    )
     setInterval(() => {
       remainingTime.value = Math.max(0, remainingTime.value - 1)
     }, 1000)
@@ -202,24 +177,32 @@ export default defineComponent({
         console.error('No game ID')
       } else {
         currentRound.value = await $axios.$get(`/api/round/${game.value.id}`)
+        gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value.id}`)
       }
     })
 
     return {
       game,
-      stages,
+      gameSocket,
+      rounds,
       scores,
-      minDate,
-      maxDate,
+      availableTime,
       remainingTime,
-      chosenDate,
+      remainingTimePercentage,
       chosenAuthor,
       hasUrlLoaded,
       currentRound,
-      dateTextTop: computed(
-        () => 100 - (100 * (chosenDate.value - minDate)) / (maxDate - minDate)
-      ),
       url: computed(() => currentRound.value && currentRound.value.base64),
+      progressbarVariant: computed(() => {
+        if (remainingTimePercentage.value <= 20) {
+          return 'danger'
+        }
+        if (remainingTimePercentage.value <= 40) {
+          return 'warning'
+        }
+        return 'success'
+      }),
+
       validateGuess,
       finishRound,
     }
@@ -232,9 +215,8 @@ export default defineComponent({
   height: 100vh;
 }
 
-#author-list,
-#date-picker {
-  height: calc(100vh - 100px);
+#author-list {
+  height: calc(100vh - 50px);
 }
 
 .author {
@@ -265,24 +247,6 @@ export default defineComponent({
     .author-image {
       opacity: 1;
     }
-  }
-}
-
-input[type='range'][orient='vertical'] {
-  background: #666;
-  writing-mode: bt-lr; /* IE */
-  -webkit-appearance: slider-vertical; /* WebKit */
-  width: 8px;
-  height: 100%;
-  padding: 0 5px;
-  border-radius: 5px;
-
-  + .slider-date {
-    position: absolute;
-    font-size: small;
-    left: 50%;
-    margin-top: -10px;
-    padding-left: 15px;
   }
 }
 </style>

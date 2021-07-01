@@ -95,8 +95,7 @@ export default async (req, res) => {
                               person.personcode,
                               person.nationalitycountrycode as personnationality,
                               person.fullname as personfullname,
-                              plotwritartink as personrole,
-                              regexp_replace(firstpublicationdate, '-.*', '') as firstpublicationyear
+                              plotwritartink as personrole
               from (
                      SELECT entrycode, url, sitecode, storycode, id
                      FROM inducks_entryurl
@@ -135,9 +134,6 @@ export default async (req, res) => {
                 ...data[roundNumber],
                 round_number: roundNumber,
                 entryurl_id: parseInt(data[roundNumber].entryurl_id),
-                firstpublicationyear: parseInt(
-                  data[roundNumber].firstpublicationyear
-                ),
               })),
             },
           },

@@ -40,20 +40,19 @@ model round_scores {
 }
 
 model rounds {
-  id                   Int            @id @default(autoincrement())
-  game_id              Int
-  round_number         Int            @db.UnsignedTinyInt
-  entryurl_id          Int
-  entryurl_url         String         @db.VarChar(100)
-  personcode           String         @db.VarChar(79)
-  personnationality    String         @db.VarChar(2)
-  personfullname       String         @db.VarChar(79)
-  personrole           String         @db.VarChar(1)
-  firstpublicationyear Int            @db.UnsignedSmallInt
-  started_at           DateTime?      @default(now()) @db.DateTime(0)
-  finished_at          DateTime?      @db.DateTime(0)
-  games                games          @relation(fields: [game_id], references: [id])
-  round_scores         round_scores[]
+  id                Int            @id @default(autoincrement())
+  game_id           Int
+  round_number      Int            @db.UnsignedTinyInt
+  entryurl_id       Int
+  entryurl_url      String         @db.VarChar(100)
+  personcode        String         @db.VarChar(79)
+  personnationality String         @db.VarChar(2)
+  personfullname    String         @db.VarChar(79)
+  personrole        String         @db.VarChar(1)
+  started_at        DateTime?      @default(now()) @db.DateTime(0)
+  finished_at       DateTime?      @db.DateTime(0)
+  games             games          @relation(fields: [game_id], references: [id])
+  round_scores      round_scores[]
 
   @@index([game_id], name: "round_game_id_fk")
 }

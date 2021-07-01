@@ -121,32 +121,17 @@ export default async (req, res) => {
               guess.personnationality === round.personnationality ? 150 : 0,
           })
 
-          console.log(
-            `${guess.firstpublicationyear} vs ${round.firstpublicationyear}`
-          )
-          const closeDatePoints = Math.max(
-            0,
-            500 -
-              Math.pow(
-                guess.firstpublicationyear - round.firstpublicationyear,
-                2.5
-              )
-          )
-          scores.push({
-            score_type_name: 'Close date',
-            score: closeDatePoints,
-          })
-
+          const scoresWithMetadata = scores.map((score) => ({
+            ...score,
+            player_id: playerId,
+            round_id: round.id,
+          }))
           await prisma.round_scores.createMany({
-            data: scores.map((score) => ({
-              ...score,
-              player_id: playerId,
-              round_id: round.id,
-            })),
+            data: scoresWithMetadata,
           })
 
           res.writeHeader(200, { 'Content-Type': 'application/json' })
-          res.end(JSON.stringify({ scores }))
+          res.end(JSON.stringify({ scores: scoresWithMetadata }))
           break
         }
       }

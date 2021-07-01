@@ -17,13 +17,13 @@ io.of('/matchmaking').on('connection', (socket) => {
   console.log('a user connected')
   socket.on('iAmReady', async ({ username, id }) => {
     console.log(`${username} is ready`)
-    const createdGameData = await axios.request({
+    const { data: createdGameData } = await axios.request({
       method: 'PUT',
       url: `${process.env.NUXT_URL}/api/game`,
     })
-    console.log(createdGameData.data)
+    console.log(createdGameData)
     const eventBack = {
-      gameId: createdGameData.data.gameId,
+      gameId: createdGameData.gameId,
       userId: id,
       username,
     }
@@ -36,6 +36,19 @@ io.of('/matchmaking').on('connection', (socket) => {
   socket.on('iAmAlsoReady', ({ username, gameId }) => {
     console.log(`${username} is also ready in game ID ${gameId}`)
     socket.broadcast.emit('iAmAlsoReady', { username, gameId })
+
+    io.of(`/game/${gameId}`).on('connection', (socket) => {
+      const gameId = socket.id.split('/').slice(-1)
+      socket.on('guess', async ({ username, guess }) => {
+        const { data: guessResultsData } = await axios.request({
+          method: 'POST',
+          url: `${process.env.NUXT_URL}/api/round/${gameId}/guess`,
+          data: guess,
+        })
+        socket.broadcast.emit('playerGuessed', { username, guessResultsData })
+        socket.emit('iGuessed', { guessResultsData })
+      })
+    })
   })
 })
 
