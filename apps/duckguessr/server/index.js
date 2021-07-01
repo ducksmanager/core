@@ -37,6 +37,9 @@ io.of('/matchmaking').on('connection', (socket) => {
     console.log(`${username} is also ready in game ID ${gameId}`)
     socket.broadcast.emit('iAmAlsoReady', { username, gameId })
 
+    if ([...io._nsps.keys()].includes(`/game/${gameId}`)) {
+      return
+    }
     io.of(`/game/${gameId}`).on('connection', (socket) => {
       const gameId = socket.id.split('/').slice(-1)
       socket.on('guess', async ({ username, guess }) => {

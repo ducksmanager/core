@@ -27,8 +27,12 @@
     "types": [
       "@nuxt/types",
       "@nuxtjs/axios",
-      "@types/node"
+      "@types/node",
+      "codeceptjs"
     ]
+  },
+  "ts-node": {
+    "files": true
   },
   "exclude": [
     "node_modules",

@@ -70,18 +70,31 @@ export default defineComponent({
       gameId,
       iAmReady() {
         matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
-          console.log('Received iAmReadyWithGameID')
+          console.debug(
+            username.value +
+              '-' +
+              'Received iAmReadyWithGameID from ' +
+              me.username
+          )
           addPlayer(me)
           matchmakingSocket.emit('whoElseIsReady', me)
         })
         matchmakingSocket.on('whoElseIsReady', (otherPlayer: any) => {
-          console.log('Received whoElseIsReady')
+          console.debug(
+            username.value +
+              '-' +
+              'Received whoElseIsReady from ' +
+              otherPlayer.username
+          )
           if (otherPlayer.gameId === gameId.value) {
+            addPlayer(otherPlayer)
             matchmakingSocket.emit('iAmAlsoReady', players[0])
           }
         })
         matchmakingSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {
-          console.log(alsoReadyPlayer.username + ' is also ready')
+          console.debug(
+            username.value + '-' + alsoReadyPlayer.username + ' is also ready'
+          )
           if (alsoReadyPlayer.gameId === gameId.value) {
             addPlayer(alsoReadyPlayer)
           }
