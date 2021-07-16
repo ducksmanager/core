@@ -64,12 +64,12 @@ export default {
             await loadSvg(true)
           }
         }
-        if (steps) {
-          this.setDimensions(dimensions, targetIssuenumber)
-          this.setSteps(targetIssuenumber, steps)
-        } else {
-          throw new Error('No model found for issue ' + issuenumber)
-        }
+      }
+      if (steps) {
+        this.setDimensions(dimensions, targetIssuenumber)
+        this.setSteps(targetIssuenumber, steps)
+      } else {
+        throw new Error('No model found for issue ' + issuenumber)
       }
     },
 
