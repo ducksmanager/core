@@ -41,31 +41,35 @@ export default {
       try {
         await loadSvg(false)
       } catch {
-        const publicationcode = `${country}/${magazine}`
-        const edge = await this.$axios.$get(
-          `/api/edgecreator/v2/model/${publicationcode}/${issuenumber}`
-        )
-        if (edge) {
-          await this.getPublishedEdgesSteps({ publicationcode, edgeModelIds: [edge.id] })
-          const apiSteps = this.publishedEdgesSteps[publicationcode][issuenumber]
-          dimensions = vm.getDimensionsFromApi(apiSteps)
-          steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions, true, (error) => {
-            vm.addWarning(error)
-          })
-
-          if (!onlyLoadStepsAndDimensions) {
-            await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
-            await vm.setContributorsFromApi(issuenumber, edge.id)
-          }
-        } else {
+        try {
           await loadSvg(true)
+        } catch {
+          const publicationcode = `${country}/${magazine}`
+          const edge = await this.$axios.$get(
+            `/api/edgecreator/v2/model/${publicationcode}/${issuenumber}`
+          )
+          if (edge) {
+            await this.getPublishedEdgesSteps({ publicationcode, edgeModelIds: [edge.id] })
+            const apiSteps = this.publishedEdgesSteps[publicationcode][issuenumber]
+            dimensions = vm.getDimensionsFromApi(apiSteps)
+            steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions, true, (error) => {
+              vm.addWarning(error)
+            })
+
+            if (!onlyLoadStepsAndDimensions) {
+              await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
+              await vm.setContributorsFromApi(issuenumber, edge.id)
+            }
+          } else {
+            await loadSvg(true)
+          }
         }
-      }
-      if (steps) {
-        this.setDimensions(dimensions, targetIssuenumber)
-        this.setSteps(targetIssuenumber, steps)
-      } else {
-        throw new Error('No model found for issue ' + issuenumber)
+        if (steps) {
+          this.setDimensions(dimensions, targetIssuenumber)
+          this.setSteps(targetIssuenumber, steps)
+        } else {
+          throw new Error('No model found for issue ' + issuenumber)
+        }
       }
     },
 

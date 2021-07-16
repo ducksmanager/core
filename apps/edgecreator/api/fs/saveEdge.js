@@ -9,15 +9,11 @@ addAxiosInterceptor()
 export default async function (req, res) {
   const { runExport, runSubmit, country, magazine, issuenumber, contributors, content } = req.body
   const svgPath = getSvgPath(runExport, country, magazine, issuenumber)
-  const fileAlreadyExists = fs.existsSync(svgPath)
   if (
     !(await checkUserRoles(
       req,
       res,
-      (userRoles) =>
-        userRoles.includes('admin') ||
-        (userRoles.includes('edit') && !runExport) ||
-        !fileAlreadyExists // Photo import (viewer role is enough for that)
+      (userRoles) => userRoles.includes('admin') || (userRoles.includes('edit') && !runExport)
     ))
   ) {
     return
@@ -39,10 +35,7 @@ export default async function (req, res) {
           const { designers, photographers } = contributors
 
           try {
-            const isNew = !(
-              await axios.get(`${process.env.BACKEND_URL}/edges/${publicationcode}/${issuenumber}`)
-            ).data.length
-            if (isNew) {
+            const { isNew } = (
               await axios.put(
                 `${process.env.BACKEND_URL}/edgecreator/publish/${publicationcode}/${issuenumber}`,
                 {
@@ -51,7 +44,15 @@ export default async function (req, res) {
                 },
                 { headers: req.headers }
               )
+            ).data
+            try {
               fs.unlinkSync(getSvgPath(false, country, magazine, issuenumber))
+            } catch (err) {
+              if (err.code === 'ENOENT') {
+                console.log('No temporary SVG file to delete was found')
+              } else {
+                throw err
+              }
             }
 
             res.writeHeader(200, { 'Content-Type': 'application/json' })
