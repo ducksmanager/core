@@ -90,7 +90,6 @@
                       :issuenumber="edge.issuenumber"
                       :designers="edge.designers"
                       :photographers="edge.photographers"
-                      :v3="edge.v3"
                       :published="edge.published === 'Published'"
                     />
                   </b-card-text>
