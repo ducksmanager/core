@@ -1,5 +1,11 @@
 <template>
-  <b-container v-if="!currentRound">Loading...</b-container>
+  <b-container v-if="!game">Loading...</b-container>
+  <b-container v-else-if="game.finished_at"
+    ><b-alert show align="center" variant="info"
+      >This game is finished.</b-alert
+    >
+    <game-scores :scores="game.rounds" />
+  </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <b-row>
       <b-col cols="5" align-self="center">
@@ -31,7 +37,10 @@
                 ) >= currentRound.roundNumber,
               'p-1': true,
             }"
-            @click="chosenAuthor = author"
+            @click="
+              chosenAuthor = author
+              validateGuess()
+            "
           >
             <div
               class="author-image"
@@ -55,23 +64,9 @@
       <b-col cols="2" class="border vh-100 overflow-auto">
         <h3>Scores</h3>
         <h4>Round {{ currentRound.roundNumber + 1 }}/{{ rounds }}</h4>
-        <div
-          v-for="pastRound in pastRounds"
-          :key="`score-${pastRound.round_number}-${pastRound.name}`"
-          class="border p-2 m-2"
-        >
-          <h5>Stage {{ pastRound.stage + 1 }}</h5>
-          <!--          <template v-if="Object.keys(score.points).length">-->
-          <!--            <div-->
-          <!--              v-for="{ reason, value } in score.points"-->
-          <!--              :key="`score-${score.stage}-${score.name}-${reason}`"-->
-          <!--            >-->
-          <!--              <h6>{{ reason }}</h6>-->
-          <!--              <div>{{ value }} points</div>-->
-          <!--            </div>-->
-          <!--          </template>-->
-          <!--          <div v-else>0 point</div>-->
-        </div>
+        <round-scores
+          :scores="game.rounds[currentRound.roundNumber].round_scores"
+        />
       </b-col>
     </b-row>
   </b-container>
@@ -111,6 +106,7 @@ interface roundWithImage extends rounds {
 }
 
 export default defineComponent({
+  name: 'Game',
   setup() {
     const { $axios } = useContext()
     const route = useRoute()
@@ -150,9 +146,6 @@ export default defineComponent({
     const remainingTimePercentage = computed(
       () => remainingTime.value * (100 / availableTime)
     )
-    setInterval(() => {
-      remainingTime.value = Math.max(0, remainingTime.value - 1)
-    }, 1000)
     watch(
       () => remainingTime.value,
       (remainingTimeValue: Number) => {
@@ -172,12 +165,19 @@ export default defineComponent({
     )
 
     onMounted(async () => {
-      game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
-      if (!game.value) {
+      const gameData = await $axios.$get(`/api/game/${route.value.params.id}`)
+      game.value = gameData
+      if (!gameData) {
         console.error('No game ID')
-      } else {
-        currentRound.value = await $axios.$get(`/api/round/${game.value.id}`)
-        gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value.id}`)
+      } else if (!gameData.finished_at) {
+        currentRound.value = await $axios.$get(`/api/round/${gameData.id}`)
+        setInterval(() => {
+          remainingTime.value = Math.max(0, remainingTime.value - 1)
+        }, 1000)
+        gameSocket = io(`${process.env.SOCKET_URL}/game/${gameData.id}`)
+        gameSocket.on('guess', (otherPlayerScore: any) => {
+          console.debug(otherPlayerScore)
+        })
       }
     })
 

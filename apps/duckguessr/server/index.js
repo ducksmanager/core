@@ -2,6 +2,8 @@ const http = require('http')
 const axios = require('axios')
 require('dotenv').config({ path: '../.env' })
 
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 const express = require('express')
 const app = express()
 const server = http.createServer(app)
@@ -12,6 +14,32 @@ const io = IO(server, {
     methods: ['GET', 'POST'],
   },
 })
+
+const onGameConnection = (socket) => {
+  const gameId = socket.id.split('/').slice(-1)
+  socket.on('guess', async ({ username, guess }) => {
+    console.log(`${username} is guessing ${guess}`)
+    const { data: guessResultsData } = await axios.request({
+      method: 'POST',
+      url: `${process.env.NUXT_URL}/api/round/${gameId}/guess`,
+      data: guess,
+    })
+    socket.broadcast.emit('playerGuessed', { username, guessResultsData })
+    socket.emit('iGuessed', { guessResultsData })
+  })
+}
+
+prisma.games
+  .findMany({
+    where: {
+      started_at: null,
+    },
+  })
+  .then((pendingGames) => {
+    for (const { gameId } of pendingGames) {
+      io.of(`/game/${gameId}`).on('connection', onGameConnection)
+    }
+  })
 
 io.of('/matchmaking').on('connection', (socket) => {
   console.log('a user connected')
@@ -40,18 +68,7 @@ io.of('/matchmaking').on('connection', (socket) => {
     if ([...io._nsps.keys()].includes(`/game/${gameId}`)) {
       return
     }
-    io.of(`/game/${gameId}`).on('connection', (socket) => {
-      const gameId = socket.id.split('/').slice(-1)
-      socket.on('guess', async ({ username, guess }) => {
-        const { data: guessResultsData } = await axios.request({
-          method: 'POST',
-          url: `${process.env.NUXT_URL}/api/round/${gameId}/guess`,
-          data: guess,
-        })
-        socket.broadcast.emit('playerGuessed', { username, guessResultsData })
-        socket.emit('iGuessed', { guessResultsData })
-      })
-    })
+    io.of(`/game/${gameId}`).on('connection', onGameConnection)
   })
 })
 

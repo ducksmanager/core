@@ -3,7 +3,7 @@ import { addAxiosInterceptor } from './axiosApiInterceptor'
 
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-const numberOfRounds = 9
+const numberOfRounds = 8
 
 addAxiosInterceptor()
 
@@ -19,31 +19,32 @@ async function generateRoundsFromCOA(res) {
   return await axios
     .post(`${process.env.BACKEND_URL}/rawsql`, {
       query: `
-              select distinct id as entryurl_id,
-                              concat(sitecode, '/', url) as entryurl_url,
-                              person.personcode,
-                              person.nationalitycountrycode as personnationality,
-                              person.fullname as personfullname,
-                              plotwritartink as personrole
-              from (
-                     SELECT entrycode, url, sitecode, storycode, id
-                     FROM inducks_entryurl
-                     WHERE id >= FLOOR(RAND() * (SELECT MAX(id) FROM inducks_entryurl))
-                       AND sitecode = 'thumbnails3'
-                     LIMIT 150
-                   ) as entryurl
-                     inner join inducks_entry entry on entry.entrycode = entryurl.entrycode
-                     inner join inducks_storyversion storyversion
-                                on entry.storyversioncode = storyversion.storyversioncode
-                     inner join inducks_story story on storyversion.storycode = story.storycode
-                     inner join inducks_storyjob storyjob on storyversion.storyversioncode = storyjob.storyversioncode
-                     inner join inducks_person person on storyjob.personcode = person.personcode
-              where position like 'p%'
-                and person.personcode <> '?'
-                and person.nationalitycountrycode <> ''
-              group by url
-              limit ${numberOfRounds}
-            `,
+        select distinct id                            as entryurl_id,
+                        concat(sitecode, '/', url)    as entryurl_url,
+                        person.personcode,
+                        person.nationalitycountrycode as personnationality,
+                        person.fullname               as personfullname,
+                        plotwritartink                as personrole
+        from (
+               SELECT entrycode, url, sitecode, storycode, id
+               FROM inducks_entryurl
+               WHERE id >= FLOOR(RAND() * (SELECT MAX(id) FROM inducks_entryurl))
+                 AND sitecode = 'thumbnails3'
+               LIMIT 150
+             ) as entryurl
+               inner join inducks_entry entry on entry.entrycode = entryurl.entrycode
+               inner join inducks_storyversion storyversion
+                          on entry.storyversioncode = storyversion.storyversioncode
+               inner join inducks_story story on storyversion.storycode = story.storycode
+               inner join inducks_storyjob storyjob on storyversion.storyversioncode = storyjob.storyversioncode
+               inner join inducks_person person on storyjob.personcode = person.personcode
+        where position like 'p%'
+          and person.personcode <> '?'
+          and person.nationalitycountrycode <> ''
+          and storyjob.plotwritartink = 'a'
+        group by person.personcode
+        limit ${numberOfRounds + 1}
+      `,
       db: 'coa',
     })
     .catch((e) => {
@@ -68,13 +69,30 @@ export default async (req, res) => {
         prisma.games
           .findFirst({
             include: {
-              rounds: true,
+              rounds: {
+                include: {
+                  round_scores: {
+                    include: {
+                      players: {
+                        select: {
+                          username: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
             where: {
               id: gameId,
             },
           })
           .then((game) => {
+            if (!game) {
+              res.statusCode = 400
+              res.end()
+              return
+            }
             const authorFields = [
               'personcode',
               'personnationality',
@@ -96,7 +114,9 @@ export default async (req, res) => {
                     )
                   )
                 ),
-                rounds: null,
+                rounds: game.rounds.filter(
+                  ({ finished_at: finishedAt }) => !!finishedAt
+                ),
               })
             )
           })
@@ -128,7 +148,7 @@ export default async (req, res) => {
       let attempts = 0
       do {
         roundDataResponse = (await generateRoundsFromCOA(res)).data
-      } while (roundDataResponse.length < numberOfRounds && ++attempts < 5)
+      } while (roundDataResponse.length < numberOfRounds + 1 && ++attempts < 5)
 
       if (attempts === 5) {
         res.writeHeader(500, { 'Content-Type': 'application/json' })

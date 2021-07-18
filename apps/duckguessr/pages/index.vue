@@ -71,20 +71,14 @@ export default defineComponent({
       iAmReady() {
         matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
           console.debug(
-            username.value +
-              '-' +
-              'Received iAmReadyWithGameID from ' +
-              me.username
+            `${username.value}-Received iAmReadyWithGameID from ${me.username}`
           )
           addPlayer(me)
           matchmakingSocket.emit('whoElseIsReady', me)
         })
         matchmakingSocket.on('whoElseIsReady', (otherPlayer: any) => {
           console.debug(
-            username.value +
-              '-' +
-              'Received whoElseIsReady from ' +
-              otherPlayer.username
+            `${username.value}-Received whoElseIsReady from ${otherPlayer.username}`
           )
           if (otherPlayer.gameId === gameId.value) {
             addPlayer(otherPlayer)
@@ -93,7 +87,7 @@ export default defineComponent({
         })
         matchmakingSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {
           console.debug(
-            username.value + '-' + alsoReadyPlayer.username + ' is also ready'
+            `${username.value}-${alsoReadyPlayer.username} is also ready`
           )
           if (alsoReadyPlayer.gameId === gameId.value) {
             addPlayer(alsoReadyPlayer)
