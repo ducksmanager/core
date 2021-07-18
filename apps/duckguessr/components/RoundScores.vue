@@ -1,5 +1,8 @@
 <template>
   <div>
+    <h5 :key="`round-score-title-${roundNumber}`">
+      Round {{ roundNumber + 1 }}
+    </h5>
     <div
       v-for="(userScores, username) in scoresPerPlayer"
       :key="`score-${username}`"
@@ -28,6 +31,10 @@ export default defineComponent({
   props: {
     scores: {
       type: Array,
+      required: true,
+    },
+    roundNumber: {
+      type: Number,
       required: true,
     },
   },

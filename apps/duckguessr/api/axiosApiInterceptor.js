@@ -1,6 +1,6 @@
-import axios from 'axios'
+const axios = require('axios')
 
-export const addAxiosInterceptor = () => {
+exports.addAxiosInterceptor = () => {
   axios.interceptors.request.use((config) => ({
     ...config,
     auth: {

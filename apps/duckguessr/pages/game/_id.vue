@@ -24,47 +24,28 @@
           ></b-col>
         </b-row>
         <b-row id="author-list">
-          <b-col
+          <author-card
             v-for="(author, idx) in game.authors"
             :key="`author-${idx}`"
-            cols="4"
-            :class="{
-              author: true,
-              selected: author === chosenAuthor,
-              selectable:
-                game.authors.findIndex(
-                  ({ personcode }) => personcode === author.personcode
-                ) >= currentRound.roundNumber,
-              'p-1': true,
-            }"
-            @click="
-              chosenAuthor = author
+            :author="author"
+            :selected="author === chosenAuthor"
+            :selectable="
+              game.authors.findIndex(
+                ({ personcode }) => personcode === author.personcode
+              ) >= currentRound.roundNumber
+            "
+            @select="
+              chosenAuthor = $event
               validateGuess()
             "
-          >
-            <div
-              class="author-image"
-              :style="{
-                'background-image': `url('https://inducks.org/creators/photos/${author.personcode}.jpg')`,
-              }"
-            >
-              <div
-                class="position-absolute"
-                style="bottom: 10px; background: rgba(255, 255, 255, 0.5)"
-              >
-                <b-img
-                  :src="`https://www.countryflags.io/${author.personnationality}/flat/16.png`"
-                />
-                {{ author.personfullname }} ({{ author.personrole }})
-              </div>
-            </div>
-          </b-col>
+          />
         </b-row>
       </b-col>
       <b-col cols="2" class="border vh-100 overflow-auto">
         <h3>Scores</h3>
         <h4>Round {{ currentRound.roundNumber + 1 }}/{{ rounds }}</h4>
         <round-scores
+          :round-number="currentRound.round_number"
           :scores="game.rounds[currentRound.roundNumber].round_scores"
         />
       </b-col>
@@ -84,8 +65,9 @@ import {
   useRoute,
 } from '@nuxtjs/composition-api'
 
-import { games, rounds } from '@prisma/client'
+import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
+import AuthorCard from '~/components/AuthorCard.vue'
 
 interface Author {
   personnationality: string
@@ -100,13 +82,14 @@ interface Score {
   points: object
 }
 
-interface roundWithImage extends rounds {
+interface roundWithImage extends Index.rounds {
   base64: string
   guessed: boolean
 }
 
 export default defineComponent({
   name: 'Game',
+  components: { AuthorCard },
   setup() {
     const { $axios } = useContext()
     const route = useRoute()
@@ -116,7 +99,7 @@ export default defineComponent({
     const currentRound = ref(null as roundWithImage | null)
     const chosenAuthor = ref(null as Author | null)
 
-    const game = ref(null as games | null)
+    const game = ref(null as Index.games | null)
     let gameSocket: Socket | null = null
 
     const scores = reactive([] as Array<Score>)
@@ -217,36 +200,5 @@ export default defineComponent({
 
 #author-list {
   height: calc(100vh - 50px);
-}
-
-.author {
-  font-size: 12px;
-  border-radius: 5px;
-  pointer-events: none;
-
-  .author-image {
-    background-size: cover;
-    background-position: center;
-    height: 100%;
-    border-radius: 5px;
-    opacity: 0.2;
-  }
-
-  &.selectable {
-    cursor: pointer;
-    pointer-events: all;
-
-    &:hover {
-      outline: 1px solid lightgray;
-    }
-
-    &.selected {
-      outline: 1px solid black;
-    }
-
-    .author-image {
-      opacity: 1;
-    }
-  }
 }
 </style>

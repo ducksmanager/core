@@ -6,8 +6,7 @@ const prisma = new PrismaClient()
 
 addAxiosInterceptor()
 
-const playerId = 1
-const numberOfRounds = 10
+const numberOfRounds = 9
 
 async function getStartedRound(gameId, finished) {
   return await prisma.rounds.findFirst({
@@ -36,103 +35,39 @@ export default async (req, res) => {
   switch (req.method) {
     case 'POST': {
       switch (action) {
-        case 'start':
-          if (!round) {
-            round = await prisma.rounds.update({
+        case 'finish': {
+          let finishedRound
+          if (round) {
+            finishedRound = await prisma.rounds.update({
+              include: {
+                round_scores: true,
+              },
               data: {
-                started_at: new Date().toISOString().replace(/[TZ]/g, ' '),
+                finished_at: new Date(),
               },
               where: {
-                game_id: parseInt(gameId),
-                orderBy: {
-                  round_number: 'desc',
-                },
-                take: 1,
+                id: round.id,
               },
             })
-          }
-          res.writeHeader(200, { 'Content-Type': 'application/json' })
-          res.end(JSON.stringify({ round }))
-          break
-        case 'finish':
-          {
-            let finishedRound
-            if (round) {
-              finishedRound = await prisma.rounds.update({
-                include: {
-                  round_scores: true,
-                },
+            if (finishedRound.round_number === numberOfRounds - 1) {
+              await prisma.games.update({
                 data: {
                   finished_at: new Date(),
                 },
                 where: {
-                  id: round.id,
+                  id: round.game_id,
                 },
               })
-              if (finishedRound.round_number === numberOfRounds - 1) {
-                await prisma.games.update({
-                  data: {
-                    finished_at: new Date(),
-                  },
-                  where: {
-                    id: round.game_id,
-                  },
-                })
-              }
             }
-            round = finishedRound || (await getStartedRound(gameId, true))
-            const { round_scores: roundScores } = round
-            res.writeHeader(200, { 'Content-Type': 'application/json' })
-            res.end(
-              JSON.stringify({
-                roundScores,
-              })
-            )
           }
-          break
-        case 'guess': {
-          const { guess } = req.body
-          const scores = []
-          if (guess == null) {
-            res.statusCode = 400
-            res.end(`No guess was provided`)
-            return
-          }
-          if (
-            await prisma.round_scores.findFirst({
-              where: {
-                player_id: playerId,
-                round_id: round.id,
-              },
-            })
-          ) {
-            res.statusCode = 400
-            res.end(`Player ${playerId} already guessed round ${round.id}`)
-            return
-          }
-
-          scores.push({
-            score_type_name: 'Correct author',
-            score: guess.personcode === round.personcode ? 350 : 0,
-          })
-          scores.push({
-            score_type_name: 'Correct nationality',
-            score:
-              guess.personnationality === round.personnationality ? 150 : 0,
-          })
-
-          const scoresWithMetadata = scores.map((score) => ({
-            ...score,
-            player_id: playerId,
-            round_id: round.id,
-          }))
-          await prisma.round_scores.createMany({
-            data: scoresWithMetadata,
-          })
-
+          round = finishedRound || (await getStartedRound(gameId, true))
+          const { round_scores: roundScores } = round
           res.writeHeader(200, { 'Content-Type': 'application/json' })
-          res.end(JSON.stringify({ scores: scoresWithMetadata }))
-          break
+          res.end(
+            JSON.stringify({
+              roundScores,
+            })
+          )
         }
       }
       break

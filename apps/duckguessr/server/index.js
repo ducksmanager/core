@@ -1,5 +1,4 @@
 const http = require('http')
-const axios = require('axios')
 require('dotenv').config({ path: '../.env' })
 
 const { PrismaClient } = require('@prisma/client')
@@ -8,36 +7,34 @@ const express = require('express')
 const app = express()
 const server = http.createServer(app)
 const IO = require('socket.io')
+
+const { addAxiosInterceptor } = require('../api/axiosApiInterceptor')
+const game = require('./game')
+
 const io = IO(server, {
   cors: {
     origin: process.env.NUXT_URL,
-    methods: ['GET', 'POST'],
+    methods: ['GET'],
   },
 })
 
-const onGameConnection = (socket) => {
-  const gameId = socket.id.split('/').slice(-1)
-  socket.on('guess', async ({ username, guess }) => {
-    console.log(`${username} is guessing ${guess}`)
-    const { data: guessResultsData } = await axios.request({
-      method: 'POST',
-      url: `${process.env.NUXT_URL}/api/round/${gameId}/guess`,
-      data: guess,
-    })
-    socket.broadcast.emit('playerGuessed', { username, guessResultsData })
-    socket.emit('iGuessed', { guessResultsData })
-  })
-}
+addAxiosInterceptor()
 
 prisma.games
   .findMany({
+    include: {
+      rounds: {
+        where: { finished_at: null },
+      },
+    },
     where: {
-      started_at: null,
+      finished_at: null,
     },
   })
   .then((pendingGames) => {
-    for (const { gameId } of pendingGames) {
-      io.of(`/game/${gameId}`).on('connection', onGameConnection)
+    for (const game of pendingGames) {
+      console.debug(`Creating socket for unfinished game with ID ${game.id}`)
+      game.createSocket(io, game)
     }
   })
 
@@ -45,13 +42,10 @@ io.of('/matchmaking').on('connection', (socket) => {
   console.log('a user connected')
   socket.on('iAmReady', async ({ username, id }) => {
     console.log(`${username} is ready`)
-    const { data: createdGameData } = await axios.request({
-      method: 'PUT',
-      url: `${process.env.NUXT_URL}/api/game`,
-    })
-    console.log(createdGameData)
+    const gameData = await game.createOrGetPending()
+    console.log(gameData)
     const eventBack = {
-      gameId: createdGameData.gameId,
+      gameId: gameData.gameId,
       userId: id,
       username,
     }
@@ -64,11 +58,22 @@ io.of('/matchmaking').on('connection', (socket) => {
   socket.on('iAmAlsoReady', ({ username, gameId }) => {
     console.log(`${username} is also ready in game ID ${gameId}`)
     socket.broadcast.emit('iAmAlsoReady', { username, gameId })
-
+  })
+  socket.on('matchStarts', async ({ gameId }) => {
     if ([...io._nsps.keys()].includes(`/game/${gameId}`)) {
       return
     }
-    io.of(`/game/${gameId}`).on('connection', onGameConnection)
+    const game = await prisma.games.findUnique({
+      include: {
+        rounds: {
+          where: { finished_at: false },
+        },
+      },
+      where: {
+        game_id: gameId,
+      },
+    })
+    game.createSocket(io, game)
   })
 })
 

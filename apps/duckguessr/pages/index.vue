@@ -58,6 +58,8 @@ export default defineComponent({
         gameId.value = player.gameId
         players.push(player)
         if (players.length === requiredPlayers) {
+          matchmakingSocket.emit('matchStarts')
+          matchmakingSocket.close()
           router.replace(`/game/${gameId.value}`)
         }
       }
