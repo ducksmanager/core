@@ -50,7 +50,7 @@ import Issue from "./Issue";
 import l10nMixin from "../mixins/l10nMixin";
 
 const EDGES_ROOT = 'https://edges.ducksmanager.net/edges/'
-const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
+const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/f_auto/'
 
 export default {
   name: "Edge",

@@ -119,7 +119,7 @@ export default {
   emits: ['close-book'],
 
   data: () => ({
-    cloudinaryBaseUrl: 'https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/',
+    cloudinaryBaseUrl: 'https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/',
 
     edgeWidth: null,
     coverHeight: null,
