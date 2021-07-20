@@ -246,6 +246,23 @@ export default {
 
     async issueNumber() {
       await this.loadBookPages()
+    },
+
+    pagesWithUrl: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue && !newValue.length) {
+          this.$root.$bvToast.toast(this.$t("DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !"), {
+            autoHideDelay: 5000,
+            noCloseButton: true,
+            solid: true,
+            title: this.$t("Pas d'informations sur le contenu du livre"),
+            toaster: 'b-toaster-top-center',
+            variant: 'warning'
+          })
+          this.$emit('close-book')
+        }
+      }
     }
   },
 
