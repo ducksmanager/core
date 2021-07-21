@@ -50,7 +50,7 @@ import Issue from "./Issue";
 import l10nMixin from "../mixins/l10nMixin";
 
 const EDGES_ROOT = 'https://edges.ducksmanager.net/edges/'
-const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/f_auto/'
+const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
 
 export default {
   name: "Edge",
@@ -107,6 +107,7 @@ export default {
   data: () => ({
     imageLoaded: false,
     spriteLoaded: false,
+    spriteHasAutoFormat: true,
     ignoreSprite: false,
     width: null,
     height: null
@@ -143,7 +144,7 @@ export default {
           this.loadEdgeFromSprite()
         } else {
           try {
-            const css = (await axios.get(`${SPRITES_ROOT}${this.spritePath}.css`)).data
+            const css = (await axios.get(`${SPRITES_ROOT}${this.spritePath.replace('f_auto/', '')}.css`)).data
             const style = document.createElement('style');
             style.textContent = css;
             document.head.append(style);

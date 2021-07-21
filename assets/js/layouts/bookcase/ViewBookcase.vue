@@ -267,9 +267,12 @@ export default {
           this.edgesUsingSprites = usableSprites
             .filter(({edges, size}) => edges.length >= size * 80 / 100)
             .sort(({size: aSize}, {size: bSize}) => Math.sign(aSize - bSize))
-            .reduce((acc, {name, version, edges}) => {
+            .reduce((acc, {name, version, edges, size}) => {
               edges.forEach(edgeId => {
                 acc[edgeId] = `v${version}/${name}`
+                if (size <= 50) {
+                  acc[edgeId] = `f_auto/${acc[edgeId]}`
+                }
               })
               return acc
             }, {})
