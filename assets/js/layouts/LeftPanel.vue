@@ -32,8 +32,12 @@
         </div>
       </div>
     </div>
-    <Navigation class="d-none d-md-block" />
+    <Navigation
+      v-once
+      class="d-none d-md-block"
+    />
     <b-navbar
+      v-once
       class="d-block d-md-none"
       toggleable
       type="dark"

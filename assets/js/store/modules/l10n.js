@@ -21,7 +21,7 @@ export default {
 
   actions: {
     loadL10n: async ({state, commit}) => {
-      if (!state.isLoading) {
+      if (!state.isLoading && !state.l10nRoutes) {
         state.isLoading = true
 
         const l10nRoutes = (await appApi.get(`/routes?${localStorage.getItem('commit')}`)).data
