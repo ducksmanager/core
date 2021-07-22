@@ -1,7 +1,5 @@
-require('ts-node/register')
-
 exports.config = {
-  tests: './test/*.ts',
+  tests: './test/*.js',
   output: './test/output',
   helpers: {
     Playwright: {

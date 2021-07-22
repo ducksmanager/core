@@ -1,21 +1,21 @@
 Feature('matchmaking')
 
-function join(I: CodeceptJS.I, username: string) {
+function join(I, username) {
   I.amOnPage('/')
   I.fillField('Username', username)
   I.click('OK')
 }
 
-function joinMultiple(I: CodeceptJS.I, usernames: string[]) {
+async function joinMultiple(I, usernames) {
   for (const sessionName of usernames) {
-    session(sessionName, () => {
+    await session(sessionName, () => {
       join(I, sessionName)
     })
   }
 }
 
-Scenario('Create match between multiple users', ({ I }) => {
-  const seeAllUsernames = (I: CodeceptJS.I, allUsernames: string[]) => {
+Scenario('Create match between multiple users', async ({ I }) => {
+  const seeAllUsernames = (I, allUsernames) => {
     for (const username of allUsernames) {
       I.seeElement(`//div[contains(., "${username}")]`)
     }
@@ -25,11 +25,11 @@ Scenario('Create match between multiple users', ({ I }) => {
   const otherUsernames = ['user2', 'user3']
   const allUsernames = [mainUsername, ...otherUsernames]
   join(I, mainUsername)
-  joinMultiple(I, otherUsernames)
+  await joinMultiple(I, otherUsernames)
 
   seeAllUsernames(I, allUsernames)
   for (const sessionName of otherUsernames) {
-    session(sessionName, () => {
+    await session(sessionName, () => {
       seeAllUsernames(I, allUsernames)
     })
   }
@@ -40,6 +40,4 @@ Scenario('Create match between multiple users and start game', ({ I }) => {
   const otherUsernames = ['user2', 'user3', 'user4']
   join(I, mainUsername)
   joinMultiple(I, otherUsernames)
-
-  pause()
 })
