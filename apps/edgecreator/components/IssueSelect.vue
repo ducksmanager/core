@@ -63,10 +63,13 @@ export default {
 
     countriesWithSelect() {
       return (
-        this.countryNames && {
-          null: this.$t('Select a country'),
-          ...this.countryNames,
-        }
+        this.countryNames && [
+          { value: null, text: this.$t('Select a country') },
+          ...Object.keys(this.countryNames).map((countryName) => ({
+            value: countryName,
+            text: this.countryNames[countryName],
+          })),
+        ]
       )
     },
     publicationsWithSelect() {
