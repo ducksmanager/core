@@ -32,7 +32,12 @@
         @change="onChange({})"
       />
     </template>
-    <dimensions v-if="withDimensions && currentIssueNumber !== null" @change="onChange($event)" />
+    <dimensions
+      v-if="dimensions && currentIssueNumber !== null"
+      :width="dimensions.width"
+      :height="dimensions.height"
+      @change="onChange($event)"
+    />
   </div>
 </template>
 <script>
@@ -47,7 +52,7 @@ export default {
   props: {
     countryCode: { type: String, default: null },
     publicationCode: { type: String, default: null },
-    withDimensions: { type: Boolean, default: false },
+    dimensions: { type: Object, default: null },
     disableOngoingOrPublished: { type: Boolean, required: true },
     disableNotOngoingNorPublished: { type: Boolean, required: true },
     edgeGallery: { type: Boolean, default: false },
