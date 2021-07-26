@@ -40,7 +40,11 @@
         </b-jumbotron>
         <issue-select
           :key="crops.length"
-          with-dimensions
+          :dimensions="
+            currentCrop
+              ? { width: currentCrop.width, height: currentCrop.height }
+              : { width: 15, height: 200 }
+          "
           disable-ongoing-or-published
           :disable-not-ongoing-nor-published="false"
           @change="currentCrop = $event && $event.width ? $event : null"
