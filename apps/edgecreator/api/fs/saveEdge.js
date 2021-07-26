@@ -9,11 +9,16 @@ addAxiosInterceptor()
 export default async function (req, res) {
   const { runExport, runSubmit, country, magazine, issuenumber, contributors, content } = req.body
   const svgPath = getSvgPath(runExport, country, magazine, issuenumber)
+  const fileAlreadyExists = fs.existsSync(svgPath)
   if (
     !(await checkUserRoles(
       req,
       res,
-      (userRoles) => userRoles.includes('admin') || (userRoles.includes('edit') && !runExport)
+      (userRoles) =>
+        userRoles.includes('admin') ||
+        ((userRoles.includes('edit') ||
+          !fileAlreadyExists) /* Initial photo upload (viewer role is enough for that) */ &&
+          !runExport)
     ))
   ) {
     return
