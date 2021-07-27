@@ -85,7 +85,7 @@ export default async function (req, res) {
         }
       }
       res.writeHeader(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify(paths))
+      res.end(JSON.stringify({ paths }))
     }
   })
 }

@@ -1,15 +1,20 @@
 <template>
-  <div v-if="progress" class="progress-wrapper">
-    <b-progress v-b-tooltip.hover animated :value="progress" :max="100" :variant="variant" />
-  </div>
   <b-button
-    v-else-if="result === 'success'"
+    v-if="progress || result === 'success'"
     disabled
     pill
     :variant="`outline-${variant}`"
     size="sm"
   >
-    <b-icon-check />
+    <b-progress
+      v-if="progress"
+      v-b-tooltip.hover
+      animated
+      :value="progress"
+      :max="100"
+      :variant="variant"
+    />
+    <b-icon-check v-if="result === 'success'" />
   </b-button>
   <b-button v-else-if="result === 'error'" disabled pill variant="outline-danger" size="sm">
     <b-icon-x />
@@ -221,11 +226,11 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.progress-wrapper {
-  display: inline-block;
-  margin-top: 7px;
-  width: 2rem;
+::v-deep.btn {
+  width: 2.25rem;
+  height: 2rem;
 }
+
 .bi-x-square-fill {
   cursor: pointer;
 }
