@@ -4,8 +4,6 @@ const round = require('./round')
 
 const prisma = new PrismaClient()
 const numberOfRounds = 8
-const kickoffTime = 5000
-const roundTime = 10000
 
 exports.createOrGetPending = async () => {
   const pendingGame = await prisma.games.findFirst({
@@ -37,18 +35,12 @@ exports.createOrGetPending = async () => {
   }
 
   if (roundDataResponse) {
-    const now = new Date()
     const game = await prisma.games.create({
       data: {
         rounds: {
           create: roundDataResponse.map((roundData, roundNumber) => ({
             ...roundData,
             round_number: roundNumber,
-            starting_at: new Date(
-              now.getTime() + kickoffTime + roundNumber * roundTime
-            )
-              .toISOString()
-              .replace(/[TZ]/g, ' '),
             entryurl_id: parseInt(roundData.entryurl_id),
           })),
         },
@@ -83,6 +75,18 @@ exports.createSocket = (io, game) => {
 }
 
 const generateRoundsFromCOA = async () => {
+  axios.interceptors.request.use((config) => ({
+    ...config,
+    auth: {
+      username: process.env.RAWSQL_USER,
+      password: process.env.RAWSQL_PASS,
+    },
+    headers: {
+      ...config.headers,
+      'x-dm-version': '1.0.0',
+      'Content-Type': 'application/json',
+    },
+  }))
   return await axios
     .post(`${process.env.BACKEND_URL}/rawsql`, {
       query: `

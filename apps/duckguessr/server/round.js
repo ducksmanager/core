@@ -1,6 +1,10 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+const numberOfRounds = 8
+const kickoffTime = 5000
+const roundTime = 10000
+
 exports.getStartedRound = async (gameId, finished) => {
   return await prisma.rounds.findFirst({
     include: {
@@ -14,6 +18,32 @@ exports.getStartedRound = async (gameId, finished) => {
       round_number: finished ? 'desc' : 'asc',
     },
   })
+}
+
+exports.createGameRounds = async (gameId) => {
+  const now = new Date()
+  return await prisma.$transaction(
+    Array(numberOfRounds)
+      .fill(0)
+      .map((_, roundNumber) =>
+        prisma.rounds.updateMany({
+          where: {
+            game_id: gameId,
+            round_number: roundNumber,
+            started_at: null,
+          },
+          data: {
+            started_at: new Date(
+              now.getTime() + roundNumber * (kickoffTime + roundTime)
+            ),
+            finished_at: new Date(
+              now.getTime() +
+                (roundNumber * (kickoffTime + roundTime) + roundTime)
+            ),
+          },
+        })
+      )
+  )
 }
 
 exports.guess = async (playerId, gameId, guess) => {

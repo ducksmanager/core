@@ -8,8 +8,8 @@ const app = express()
 const server = http.createServer(app)
 const IO = require('socket.io')
 
-const { addAxiosInterceptor } = require('../api/axiosApiInterceptor')
 const game = require('./game')
+const round = require('./round')
 
 const io = IO(server, {
   cors: {
@@ -17,8 +17,6 @@ const io = IO(server, {
     methods: ['GET'],
   },
 })
-
-addAxiosInterceptor()
 
 prisma.games
   .findMany({
@@ -28,13 +26,15 @@ prisma.games
       },
     },
     where: {
-      finished_at: null,
+      finished_at: { not: null },
     },
   })
   .then((pendingGames) => {
-    for (const game of pendingGames) {
-      console.debug(`Creating socket for unfinished game with ID ${game.id}`)
-      game.createSocket(io, game)
+    for (const pendingGame of pendingGames) {
+      console.debug(
+        `Creating socket for unfinished game with ID ${pendingGame.id}`
+      )
+      game.createSocket(io, pendingGame)
     }
   })
 
@@ -60,20 +60,21 @@ io.of('/matchmaking').on('connection', (socket) => {
     socket.broadcast.emit('iAmAlsoReady', { username, gameId })
   })
   socket.on('matchStarts', async ({ gameId }) => {
-    if ([...io._nsps.keys()].includes(`/game/${gameId}`)) {
-      return
-    }
-    const game = await prisma.games.findUnique({
+    console.log(`Game ${gameId} is starting!`)
+    const currentGame = await prisma.games.findUnique({
       include: {
         rounds: {
-          where: { finished_at: false },
+          where: { finished_at: null },
         },
       },
       where: {
-        game_id: gameId,
+        id: gameId,
       },
     })
-    game.createSocket(io, game)
+    if (!currentGame.rounds[0].started_at) {
+      await round.createGameRounds(currentGame.id)
+    }
+    game.createSocket(io, currentGame)
   })
 })
 

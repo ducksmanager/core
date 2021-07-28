@@ -4,7 +4,12 @@
       <b-col align>
         <template v-if="!gameId">
           <b-form @submit.prevent="iAmReady()">
-            <b-input v-model="username" placeholder="Username" required />
+            <b-input
+              v-model="username"
+              placeholder="Username"
+              autofocus
+              required
+            />
             <b-button type="submit" variant="success">OK</b-button>
           </b-form>
         </template>
@@ -58,7 +63,7 @@ export default defineComponent({
         gameId.value = player.gameId
         players.push(player)
         if (players.length === requiredPlayers) {
-          matchmakingSocket.emit('matchStarts')
+          matchmakingSocket.emit('matchStarts', { gameId: gameId.value })
           matchmakingSocket.close()
           router.replace(`/game/${gameId.value}`)
         }
@@ -83,8 +88,8 @@ export default defineComponent({
             `${username.value}-Received whoElseIsReady from ${otherPlayer.username}`
           )
           if (otherPlayer.gameId === gameId.value) {
-            addPlayer(otherPlayer)
             matchmakingSocket.emit('iAmAlsoReady', players[0])
+            addPlayer(otherPlayer)
           }
         })
         matchmakingSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {

@@ -30,7 +30,7 @@ export default (req, res) => {
           },
           where: {
             id: gameId,
-            finished_at: { not: null },
+            finished_at: null,
           },
         })
         .then((game) => {
@@ -57,9 +57,6 @@ export default (req, res) => {
                   }),
                   {}
                 )
-              ),
-              rounds: game.rounds.filter(
-                ({ finished_at: finishedAt }) => !!finishedAt
               ),
             })
           )
