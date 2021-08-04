@@ -30,7 +30,6 @@ export default (req, res) => {
           },
           where: {
             id: gameId,
-            finished_at: null,
           },
         })
         .then((game) => {

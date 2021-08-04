@@ -22,7 +22,7 @@
         <b-img
           :src="`https://www.countryflags.io/${author.personnationality}/flat/16.png`"
         />
-        {{ author.personfullname }} ({{ author.personrole }})
+        {{ author.personfullname }}
       </div>
     </div>
   </b-col>
