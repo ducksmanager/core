@@ -42,7 +42,6 @@ export default (req, res) => {
             'personcode',
             'personnationality',
             'personfullname',
-            'personrole',
           ]
           res.writeHeader(200, { 'Content-Type': 'application/json' })
           res.end(

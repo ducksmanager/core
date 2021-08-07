@@ -73,7 +73,6 @@ interface Author {
   personnationality: string
   personcode: string
   personfullname: string
-  personrole: string
 }
 
 interface Score {

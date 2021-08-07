@@ -48,7 +48,6 @@ model rounds {
   personcode        String         @db.VarChar(79)
   personnationality String         @db.VarChar(2)
   personfullname    String         @db.VarChar(79)
-  personrole        String         @db.VarChar(1)
   started_at        DateTime?      @db.DateTime(0)
   finished_at       DateTime?      @db.DateTime(0)
   games             games          @relation(fields: [game_id], references: [id])

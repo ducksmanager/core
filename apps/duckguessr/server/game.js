@@ -94,8 +94,7 @@ const generateRoundsFromCOA = async () => {
                         concat(sitecode, '/', url)    as entryurl_url,
                         person.personcode,
                         person.nationalitycountrycode as personnationality,
-                        person.fullname               as personfullname,
-                        plotwritartink                as personrole
+                        person.fullname               as personfullname
         from (
                SELECT entrycode, url, sitecode, storycode, id
                FROM inducks_entryurl
