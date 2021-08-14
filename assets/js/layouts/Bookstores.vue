@@ -204,7 +204,7 @@ export default {
       try {
         return decodeURIComponent(escape(object[field]));
       } catch (_) {
-        console.warn(`Object ${object.id}: ${field} is not decodable`)
+        return object[field];
       }
     },
     async fetchBookstores() {
