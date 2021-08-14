@@ -14,8 +14,8 @@
         v-html="$t('a obtenu la médaille <b>{0} niveau {1}</b>', [getMedalTitle(event.contribution), event.niveau])"
       />
     </template>
-    <template v-if="event.type === 'bookstore_creation'">
-      {{ $t("a ajouté la bouquinerie") }}
+    <template v-if="event.type === 'bookstore_comment'">
+      {{ $t("a visité la bouquinerie") }}
       <i><a :href="$r('/bookstores')">{{ event.name }}</a></i>
     </template>
     <template v-if="event.type === 'collection_update'">

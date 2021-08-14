@@ -13,21 +13,23 @@ class BookstoreController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/bookstore/list"
+     *     path="/bookstoreComment/list"
      * )
      */
-    public function getActiveBookstores(ApiService $apiService) {
+    public function getActiveBookstoreComments(ApiService $apiService): JsonResponse
+    {
         return new JsonResponse(
-            $apiService->call('/ducksmanager/bookstore/list/active', 'ducksmanager')
+            $apiService->call('/ducksmanager/bookstoreComment/list/active', 'ducksmanager')
         );
     }
     /**
      * @Route(
      *     methods={"PUT"},
-     *     path="/bookstore/suggest"
+     *     path="/bookstoreComment/suggest"
      * )
      */
-    public function suggestBookstore(Request $request, ApiService $apiService) {
+    public function suggestBookstoreComment(Request $request, ApiService $apiService): JsonResponse
+    {
         $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
         return new JsonResponse(
             $apiService->call('/ducksmanager/bookstore/suggest', 'ducksmanager', $data, 'POST')

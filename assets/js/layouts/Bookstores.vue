@@ -18,7 +18,6 @@
       >
         <MglMarker
           v-for="bookstore in bookstores"
-          v-once
           :key="bookstore.id"
           :coordinates="[bookstore.coordY, bookstore.coordX]"
           anchor="bottom"
@@ -28,14 +27,59 @@
             <div>
               <h2>{{ bookstore.name }}</h2>
               <div>
-                <p>{{ bookstore.comment }}</p>
-                <p>{{ bookstore.address }}</p>
-                <p>
-                  {{ $t("Signalé par") }}
-                  <span v-if="bookstore.username">{{ bookstore.username }}</span>
-                  <span v-else>{{ $t("un visiteur anonyme") }}</span>
-                  <span>{{ formatDate(bookstore.creationDate) }}</span>
+                <p class="text-secondary">
+                  {{ bookstore.address }}
                 </p>
+                <div
+                  v-for="{username, creationDate, comment} in bookstore.comments"
+                  :key="`bookstore-${bookstore.id}-comment-${creationDate}`"
+                  class="mb-2"
+                >
+                  <b v-if="username">{{ username }}</b>
+                  <span v-else>{{ $t("un visiteur anonyme") }}</span>
+                  <i class="float-right">{{ formatDate(creationDate) }}</i>
+                  <blockquote class="px-3 clearfix">
+                    {{ comment }}
+                  </blockquote>
+                </div>
+                <b-alert
+                  v-if="existingBookstoreSent"
+                  variant="success"
+                  show
+                >
+                  {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
+                  {{ $t("Si votre commentaire est valide, il sera ajouté sur le site très prochainement.") }}
+                  {{ $t("Merci pour votre contribution !") }}
+                </b-alert>
+                <form
+                  v-else-if="existingBookstore"
+                  class="mb-2"
+                  @submit.prevent="suggestComment(bookstore)"
+                >
+                  <b-form-textarea
+                    v-model="bookstore.comment"
+                    required
+                    cols="41"
+                    rows="5"
+                    minlength="50"
+                    maxlength="1000"
+                    type="text"
+                    :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
+                  />
+                  <b-btn
+                    type="submit"
+                  >
+                    {{ $t("Ajouter un commentaire") }}
+                  </b-btn>
+                  <b-btn @click="existingBookstore = null">
+                    {{ $t("Annuler") }}
+                  </b-btn>
+                </form>
+                <a
+                  v-else
+                  href="javascript:void(0)"
+                  @click="existingBookstore = bookstore"
+                >{{ $t("Ajouter un commentaire") }}</a>
               </div>
             </div>
           </MglPopup>
@@ -64,8 +108,7 @@
     </b-alert>
     <form
       v-else
-      id="form_bouquinerie"
-      @submit.prevent="suggestBookstore"
+      @submit.prevent="suggestComment(newBookstore)"
     >
       <input
         v-model="newBookstore.coordX"
@@ -92,6 +135,7 @@
         required
         cols="41"
         rows="5"
+        minlength="50"
         maxlength="1000"
         type="text"
         :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
@@ -132,7 +176,9 @@ export default {
     mapCenter: [1.73584, 46.754917],
     bookstores: [],
     newBookstore,
+    existingBookstore: null,
     newBookstoreSent: false,
+    existingBookstoreSent: false
   }),
 
   async mounted() {
@@ -154,25 +200,39 @@ export default {
   },
 
   methods: {
+    decodeText(object, field) {
+      try {
+        return decodeURIComponent(escape(object[field]));
+      } catch (_) {
+        console.warn(`Object ${object.id}: ${field} is not decodable`)
+      }
+    },
     async fetchBookstores() {
-      this.bookstores = (await axios.get("/bookstore/list")).data.map(bookstore => {
-        ["name", "address", "comment"].forEach(field => {
-          try {
-            bookstore[field] = decodeURIComponent(escape(bookstore[field]));
-          } catch (_) {
-            console.warn(`Bookstore ${bookstore.id}: ${field} is not decodable`)
-          }
+      this.bookstores = (await axios.get("/bookstoreComment/list")).data.map(bookstore => {
+        ["name", "address"].forEach(field => {
+          bookstore[field] = this.decodeText(bookstore, field);
         });
+        bookstore.comments.forEach((comment, commentNumber) => {
+          ["comment"].forEach(field => {
+            bookstore.comments[commentNumber][field] = this.decodeText(comment, field);
+          });
+        })
         return bookstore;
       }).filter(bookstore => !!bookstore);
     },
-    async suggestBookstore() {
-      if (!newBookstore.coordX) {
+    async suggestComment(bookstore) {
+      if (!bookstore.id && !bookstore.coordX) {
         window.alert(this.$t('Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'))
         return false
       }
-      await axios.put("/bookstore/suggest", this.newBookstore);
-      this.newBookstoreSent = true;
+      await axios.put("/bookstore/suggest", bookstore);
+      if (bookstore.id) {
+        this.existingBookstoreSent = true;
+        this.existingBookstore = null
+      }
+      else {
+        this.newBookstoreSent = true;
+      }
     },
     formatDate(date) {
       if (date == null) {

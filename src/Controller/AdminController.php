@@ -91,26 +91,26 @@ class AdminController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/admin/bookstore/list"
+     *     path="/admin/bookstoreComment/list"
      * )
      */
     public function getBookstoresData(ApiService $apiService) {
         return new JsonResponse(
-            $apiService->call('/ducksmanager/bookstore/list', 'ducksmanager')
+            $apiService->call('/ducksmanager/bookstoreComment/list', 'ducksmanager')
         );
     }
 
     /**
      * @Route(
      *     methods={"POST"},
-     *     path="/admin/bookstore/approve"
+     *     path="/admin/bookstoreComment/approve"
      * )
      */
     public function approveBookstore(Request $request, ApiService $apiService) {
         $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
         return new JsonResponse(
             $apiService->call(
-                '/ducksmanager/bookstore/approve',
+                '/ducksmanager/bookstoreComment/approve',
                 'ducksmanager',
                 $data,
                 'POST'

@@ -3,17 +3,18 @@
     v-if="bookstores"
     :items="bookstores"
   >
-    <template #cell(active)="{item, value}">
-      {{ data }}
-      <b-btn
-        v-if="!value"
-        show
-        @click="validateBookstore(item)"
+    <template #cell(comments)="{value}">
+      <div
+        v-for="comment in value"
+        :key="`comment-${comment.id}`"
       >
-        {{ $t("Valider") }}
-      </b-btn>
-      <div v-else>
-        Active
+        <u>{{ comment.username }} on {{ comment.creationDate }}</u>: {{ comment.comment }} <b-btn
+          v-if="!comment.active"
+          show
+          @click="validateBookstoreComment(comment)"
+        >
+          {{ $t("Valider") }}
+        </b-btn>
       </div>
     </template>
   </b-table>
@@ -29,13 +30,13 @@ export default {
   }),
 
   async mounted() {
-    this.bookstores = (await axios.get("/admin/bookstore/list")).data;
+    this.bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
   },
 
   methods: {
-    async validateBookstore({ id }) {
-      await axios.post("/admin/bookstore/approve", { id });
-      this.bookstores = (await axios.get("/admin/bookstore/list")).data;
+    async validateBookstoreComment({ id }) {
+      await axios.post("/admin/bookstoreComment/approve", { id });
+      this.bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
     }
   }
 };

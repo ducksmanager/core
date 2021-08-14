@@ -83,6 +83,11 @@ Encore
 
   .disableCssExtraction()
 
+  .configureDevServerOptions(options => {
+    options.allowedHosts = 'all';
+    delete options.client.host;
+  })
+
 // uncomment if you use TypeScript
 //.enableTypeScriptLoader()
 
