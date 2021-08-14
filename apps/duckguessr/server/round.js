@@ -48,7 +48,6 @@ exports.createGameRounds = async (gameId) => {
 
 exports.guess = async (playerId, gameId, guess) => {
   const round = await exports.getStartedRound(gameId, false)
-  const scores = []
   if (guess == null) {
     throw new Error(`No guess was provided`)
   }
@@ -63,23 +62,31 @@ exports.guess = async (playerId, gameId, guess) => {
     throw new Error(`Player ${playerId} already guessed round ${round.id}`)
   }
 
-  scores.push({
-    score_type_name: 'Correct author',
-    score: guess.personcode === round.personcode ? 350 : 0,
-  })
-  scores.push({
-    score_type_name: 'Correct nationality',
-    score: guess.personnationality === round.personnationality ? 150 : 0,
-  })
+  let scoreData
 
-  const scoresWithMetadata = scores.map((score) => ({
-    ...score,
+  if (guess.personcode === round.personcode) {
+    scoreData = {
+      score_type_name: 'Correct author',
+      score: 300,
+    }
+  } else if (guess.personnationality === round.personnationality) {
+    scoreData = {
+      score_type_name: 'Correct nationality',
+      score: 100,
+    }
+  } else {
+    scoreData = {
+      score_type_name: 'Wrong author',
+      score: 0,
+    }
+  }
+
+  const scoreWithMetadata = {
+    ...scoreData,
     player_id: playerId,
     round_id: round.id,
-  }))
-  await prisma.round_scores.createMany({
-    data: scoresWithMetadata,
-  })
+  }
+  await prisma.round_scores.create({ data: scoreWithMetadata })
 
-  return scoresWithMetadata
+  return scoreWithMetadata
 }

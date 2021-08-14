@@ -1,10 +1,12 @@
 <template>
-  <b-container align="center" fluid>
+  <b-container align="center">
     <b-row align-v="center" style="height: 100vh">
       <b-col align>
+        Welcome to Duckguessr! Please enter your username.
         <template v-if="!gameId">
           <b-form @submit.prevent="iAmReady()">
             <b-input
+              class="my-2"
               v-model="username"
               placeholder="Username"
               autofocus
@@ -21,7 +23,7 @@
             <b-card
               v-for="player in players"
               :key="player.username"
-              class="m-3 col-md-1"
+              class="m-3 col-lg-1 col-md-3"
               >{{ player.username }}</b-card
             >
           </b-row>
@@ -70,12 +72,13 @@ export default defineComponent({
       }
     }
 
-    const requiredPlayers = 4
+    const requiredPlayers = 2
     return {
       username,
       players,
       gameId,
       iAmReady() {
+        sessionStorage.setItem('username', username.value)
         matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
           console.debug(
             `${username.value}-Received iAmReadyWithGameID from ${me.username}`

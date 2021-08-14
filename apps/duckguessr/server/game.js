@@ -49,28 +49,52 @@ exports.createOrGetPending = async () => {
 
     console.log(game)
 
-    return { gameId: game.gameId, created: true }
+    return { gameId: game.id, created: true }
   }
 }
 
-exports.onGameConnection = (socket) => {
-  const gameId = socket.id.split('/').slice(-1)
+exports.setFinishedAtFromLastRound = async (gameId) => {
+  const rounds = await prisma.rounds.findMany({
+    where: {
+      game_id: parseInt(gameId),
+      finished_at: {
+        not: null,
+      },
+    },
+  })
+
+  await prisma.games.update({
+    data: {
+      started_at: new Date(),
+      finished_at: rounds[rounds.length - 1].finished_at,
+    },
+    where: {
+      id: parseInt(gameId),
+    },
+  })
+}
+
+exports.onGameConnection = (gameId, socket) => {
   socket.on('guess', async ({ username, guess }) => {
-    console.log(`${username} is guessing ${guess}`)
-    const user = prisma.players.findFirst({
+    console.log(
+      `${username} is guessing ${JSON.stringify(guess)} on game ${gameId}`
+    )
+    const user = await prisma.players.findFirst({
       where: { username },
     })
-    const guessResultsData = await round.guess(user.username, gameId, guess)
-    socket.broadcast.emit('playerGuessed', { username, guessResultsData })
-    socket.emit('iGuessed', { guessResultsData })
+    try {
+      const guessResultsData = await round.guess(user.id, gameId, guess)
+      socket.broadcast.emit('playerGuessed', { username, ...guessResultsData })
+      socket.emit('playerGuessed', { username, ...guessResultsData })
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 
 exports.createSocket = (io, game) => {
   io.of(`/game/${game.id}`).on('connection', (socket) => {
-    console.log(game.rounds)
-    // socket.broadcast.emit()
-    exports.onGameConnection(socket)
+    exports.onGameConnection(game.id, socket)
   })
 }
 

@@ -1,6 +1,10 @@
 <template>
-  <b-container v-if="!game">Loading...</b-container>
-  <b-container v-else-if="game.finished_at"
+  <b-container
+    v-if="!game || (!currentRound && !gameIsFinished)"
+    class="text-center"
+    >Loading...</b-container
+  >
+  <b-container v-else-if="gameIsFinished" fluid
     ><b-alert show align="center" variant="info"
       >This game is finished.</b-alert
     >
@@ -30,9 +34,9 @@
             :author="author"
             :selected="author === chosenAuthor"
             :selectable="
-              game.authors.findIndex(
-                ({ personcode }) => personcode === author.personcode
-              ) >= currentRound.roundNumber
+              !game.rounds
+                .map(({ personcode }) => personcode)
+                .includes(author.personcode)
             "
             @select="
               chosenAuthor = $event
@@ -42,12 +46,15 @@
         </b-row>
       </b-col>
       <b-col cols="2" class="border vh-100 overflow-auto">
-        <h3>Scores</h3>
-        <h4>Round {{ currentRound.roundNumber + 1 }}/{{ rounds }}</h4>
-        <round-scores
-          :round-number="currentRound.round_number"
-          :scores="game.rounds[currentRound.roundNumber].round_scores"
-        />
+        <h3>Round scores</h3>
+        <template v-for="score in currentRoundScores">
+          <b-alert
+            :key="`score-${score.player_id}`"
+            show
+            :variant="scoreTypeNameToVariant(score.score_type_name)"
+            >{{ score.player_id }}: {{ score.score_type_name }}</b-alert
+          >
+        </template>
       </b-col>
     </b-row>
   </b-container>
@@ -76,13 +83,14 @@ interface Author {
 }
 
 interface Score {
-  stage: number
-  user: string
-  points: object
+  // eslint-disable-next-line camelcase
+  player_id: number
+  score: string
+  // eslint-disable-next-line camelcase
+  score_type_name: object
 }
 
-interface roundWithImage extends Index.rounds {
-  base64: string
+interface roundWithGuessedFlag extends Index.rounds {
   guessed: boolean
 }
 
@@ -93,23 +101,23 @@ export default defineComponent({
     const { $axios } = useContext()
     const route = useRoute()
 
-    const rounds = 9
+    const rounds = 8
 
-    const currentRound = ref(null as roundWithImage | null)
+    const gameIsFinished = ref(false as Boolean)
+    const currentRound = ref(null as roundWithGuessedFlag | null)
     const chosenAuthor = ref(null as Author | null)
 
     const game = ref(null as Index.games | null)
     let gameSocket: Socket | null = null
 
-    const scores = reactive([] as Array<Score>)
-    const username = ref('player1' as string)
+    const currentRoundScores = reactive([] as Array<Score>)
 
     const hasUrlLoaded = ref(false as boolean)
 
     const validateGuess = () => {
       currentRound.value!.guessed = true
       gameSocket!.emit('guess', {
-        username: username.value,
+        username: sessionStorage.getItem('username'),
         guess: {
           personcode: chosenAuthor.value?.personcode ?? null,
           personnationality: chosenAuthor.value?.personnationality ?? null,
@@ -117,13 +125,7 @@ export default defineComponent({
       })
     }
 
-    const finishRound = async () => {
-      scores.push(
-        (await $axios.$post(`/api/round/${game.value!.id}/finish`)).roundScores
-      )
-    }
-
-    const availableTime = 10
+    const availableTime = 1000
     const remainingTime = ref(availableTime as number)
     const remainingTimePercentage = computed(
       () => remainingTime.value * (100 / availableTime)
@@ -135,7 +137,6 @@ export default defineComponent({
           if (!currentRound.value!.guessed) {
             validateGuess()
           }
-          finishRound()
         }
       }
     )
@@ -151,30 +152,39 @@ export default defineComponent({
       game.value = gameData
       if (!gameData) {
         console.error('No game ID')
-      } else if (!gameData.finished_at) {
-        currentRound.value = await $axios.$get(`/api/round/${gameData.id}`)
+      } else if (new Date(gameData.finished_at) > new Date()) {
+        currentRound.value = [...gameData.rounds]
+          .reverse()
+          .find(({ finished_at: finishedAt }) => finishedAt < new Date())
         setInterval(() => {
           remainingTime.value = Math.max(0, remainingTime.value - 1)
         }, 1000)
         gameSocket = io(`${process.env.SOCKET_URL}/game/${gameData.id}`)
-        gameSocket.on('guess', (otherPlayerScore: any) => {
-          console.debug(otherPlayerScore)
+        gameSocket.on('playerGuessed', (data: any) => {
+          currentRoundScores.push(data)
         })
+      } else {
+        gameIsFinished.value = true
       }
     })
 
     return {
       game,
+      gameIsFinished,
       gameSocket,
       rounds,
-      scores,
       availableTime,
       remainingTime,
       remainingTimePercentage,
       chosenAuthor,
       hasUrlLoaded,
       currentRound,
-      url: computed(() => currentRound.value && currentRound.value.base64),
+      currentRoundScores,
+      url: computed(
+        () =>
+          currentRound.value &&
+          `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.entryurl_url}`
+      ),
       progressbarVariant: computed(() => {
         if (remainingTimePercentage.value <= 20) {
           return 'danger'
@@ -185,8 +195,18 @@ export default defineComponent({
         return 'success'
       }),
 
+      scoreTypeNameToVariant: (scoreTypeName: string) => {
+        switch (scoreTypeName) {
+          case 'Correct author':
+            return 'success'
+          case 'Correct nationality':
+            return 'warning'
+          default:
+            return 'danger'
+        }
+      },
+
       validateGuess,
-      finishRound,
     }
   },
 })
@@ -199,5 +219,9 @@ export default defineComponent({
 
 #author-list {
   height: calc(100vh - 50px);
+
+  .author-image {
+    height: 100%;
+  }
 }
 </style>

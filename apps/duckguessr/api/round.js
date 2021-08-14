@@ -6,8 +6,6 @@ const prisma = new PrismaClient()
 
 addAxiosInterceptor()
 
-const numberOfRounds = 9
-
 async function getStartedRound(gameId, finished) {
   return await prisma.rounds.findFirst({
     include: {
@@ -31,47 +29,8 @@ export default async (req, res) => {
     res.end()
     return
   }
-  let round = await getStartedRound(gameId, false)
+  const round = await getStartedRound(gameId, false)
   switch (req.method) {
-    case 'POST': {
-      switch (action) {
-        case 'finish': {
-          let finishedRound
-          if (round) {
-            finishedRound = await prisma.rounds.update({
-              include: {
-                round_scores: true,
-              },
-              data: {
-                finished_at: new Date(),
-              },
-              where: {
-                id: round.id,
-              },
-            })
-            if (finishedRound.round_number === numberOfRounds - 1) {
-              await prisma.games.update({
-                data: {
-                  finished_at: new Date(),
-                },
-                where: {
-                  id: round.game_id,
-                },
-              })
-            }
-          }
-          round = finishedRound || (await getStartedRound(gameId, true))
-          const { round_scores: roundScores } = round
-          res.writeHeader(200, { 'Content-Type': 'application/json' })
-          res.end(
-            JSON.stringify({
-              roundScores,
-            })
-          )
-        }
-      }
-      break
-    }
     case 'GET':
       switch (action) {
         case undefined: {

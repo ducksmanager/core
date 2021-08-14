@@ -1,6 +1,15 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+// eslint-disable-next-line no-extend-native
+Array.prototype.shuffle = function () {
+  for (let i = this.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[this[i], this[j]] = [this[j], this[i]]
+  }
+  return this
+}
+
 export default (req, res) => {
   switch (req.method) {
     case 'GET': {
@@ -47,15 +56,32 @@ export default (req, res) => {
           res.end(
             JSON.stringify({
               ...game,
-              authors: game.rounds.map((round) =>
-                authorFields.reduce(
-                  (author, field) => ({
-                    ...author,
-                    [field]: round[field],
-                  }),
-                  {}
+              rounds: game.rounds.map((round) => ({
+                ...round,
+                ...Object.keys(round)
+                  .filter((key) => key.indexOf('person') === 0)
+                  .reduce(
+                    (acc, field) => ({
+                      ...acc,
+                      [field]:
+                        round.finished_at && round.finished_at <= Date.now()
+                          ? round[field]
+                          : null,
+                    }),
+                    {}
+                  ),
+              })),
+              authors: game.rounds
+                .map((round) =>
+                  authorFields.reduce(
+                    (author, field) => ({
+                      ...author,
+                      [field]: round[field],
+                    }),
+                    {}
+                  )
                 )
-              ),
+                .shuffle(),
             })
           )
         })

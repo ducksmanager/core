@@ -20,13 +20,8 @@ const io = IO(server, {
 
 prisma.games
   .findMany({
-    include: {
-      rounds: {
-        where: { finished_at: null },
-      },
-    },
     where: {
-      finished_at: { not: null },
+      finished_at: { gt: new Date() },
     },
   })
   .then((pendingGames) => {
@@ -63,9 +58,7 @@ io.of('/matchmaking').on('connection', (socket) => {
     console.log(`Game ${gameId} is starting!`)
     const currentGame = await prisma.games.findUnique({
       include: {
-        rounds: {
-          where: { finished_at: null },
-        },
+        rounds: true,
       },
       where: {
         id: gameId,
@@ -73,6 +66,7 @@ io.of('/matchmaking').on('connection', (socket) => {
     })
     if (!currentGame.rounds[0].started_at) {
       await round.createGameRounds(currentGame.id)
+      await game.setFinishedAtFromLastRound(currentGame.id)
     }
     game.createSocket(io, currentGame)
   })

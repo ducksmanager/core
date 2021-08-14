@@ -13,16 +13,15 @@
             'background-image': `url('${imageUrl(round)}')`,
           }"
         >
-          <div class="author-banner w-100 mx-auto">
-            <div
-              class="author-image"
-              :style="{
-                'background-image': `url('https://inducks.org/creators/photos/${round.personcode}.jpg')`,
-              }"
-            ></div>
-            <div class="position-absolute text-center w-100">
-              {{ round.personfullname }}
-            </div>
+          <div
+            class="author-banner mx-auto"
+            :style="{
+              'background-image': `url('https://inducks.org/creators/photos/${round.personcode}.jpg')`,
+            }"
+          >
+            <flag :country="round.personnationality" />&nbsp;{{
+              round.personfullname
+            }}
           </div>
         </b-col>
       </b-row>
@@ -146,8 +145,10 @@ export default defineComponent({
     height: 50px;
     bottom: 0;
     right: 0;
-    padding: 5px;
-    background: rgba(230, 230, 230, 0.9);
+    padding: 5px 0 0 60px;
+    background-color: rgba(230, 230, 230, 0.9);
+    background-size: 50px auto;
+    background-repeat: no-repeat;
     text-align: center;
 
     .author-image {
