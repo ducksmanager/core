@@ -32,7 +32,7 @@ class BookstoreController extends AbstractController
     {
         $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
         return new JsonResponse(
-            $apiService->call('/ducksmanager/bookstore/suggest', 'ducksmanager', $data, 'POST')
+            $apiService->call('/ducksmanager/bookstoreComment/suggest', 'ducksmanager', $data, 'POST')
         );
     }
 }

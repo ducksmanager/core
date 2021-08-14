@@ -225,7 +225,7 @@ export default {
         window.alert(this.$t('Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'))
         return false
       }
-      await axios.put("/bookstore/suggest", bookstore);
+      await axios.put("/bookstoreComment/suggest", bookstore);
       if (bookstore.id) {
         this.existingBookstoreSent = true;
         this.existingBookstore = null

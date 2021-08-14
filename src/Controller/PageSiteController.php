@@ -457,7 +457,7 @@ class PageSiteController extends AbstractController
         $success = null;
         if ($request->getMethod() === 'PUT') {
             $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
-            $apiResponse = $apiService->call('/ducksmanager/bookstore/suggest', 'ducksmanager', $data, 'PUT');
+            $apiResponse = $apiService->call('/ducksmanager/bookstoreComment/suggest', 'ducksmanager', $data, 'PUT');
             $success = !is_null($apiResponse);
         }
         return $this->renderSitePage(
