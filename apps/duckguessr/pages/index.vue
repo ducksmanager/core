@@ -6,8 +6,8 @@
         <template v-if="!gameId">
           <b-form @submit.prevent="iAmReady()">
             <b-input
-              class="my-2"
               v-model="username"
+              class="my-2"
               placeholder="Username"
               autofocus
               required
@@ -23,7 +23,7 @@
             <b-card
               v-for="player in players"
               :key="player.username"
-              class="m-3 col-lg-1 col-md-3"
+              class="m-3 col-lg-3"
               >{{ player.username }}</b-card
             >
           </b-row>
@@ -39,6 +39,7 @@ import {
   useRouter,
   ref,
   reactive,
+  onMounted,
 } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 
@@ -72,39 +73,49 @@ export default defineComponent({
       }
     }
 
+    const iAmReady = () => {
+      sessionStorage.setItem('username', username.value)
+      matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
+        console.debug(
+          `${username.value}-Received iAmReadyWithGameID from ${me.username}`
+        )
+        addPlayer(me)
+        matchmakingSocket.emit('whoElseIsReady', me)
+      })
+      matchmakingSocket.on('whoElseIsReady', (otherPlayer: any) => {
+        console.debug(
+          `${username.value}-Received whoElseIsReady from ${otherPlayer.username}`
+        )
+        if (otherPlayer.gameId === gameId.value) {
+          matchmakingSocket.emit('iAmAlsoReady', players[0])
+          addPlayer(otherPlayer)
+        }
+      })
+      matchmakingSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {
+        console.debug(
+          `${username.value}-${alsoReadyPlayer.username} is also ready`
+        )
+        if (alsoReadyPlayer.gameId === gameId.value) {
+          addPlayer(alsoReadyPlayer)
+        }
+      })
+      matchmakingSocket.emit('iAmReady', { username: username.value })
+    }
+
     const requiredPlayers = 2
+
+    onMounted(() => {
+      username.value = sessionStorage.getItem('username') || ''
+      if (username.value) {
+        iAmReady()
+      }
+    })
+
     return {
       username,
       players,
       gameId,
-      iAmReady() {
-        sessionStorage.setItem('username', username.value)
-        matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
-          console.debug(
-            `${username.value}-Received iAmReadyWithGameID from ${me.username}`
-          )
-          addPlayer(me)
-          matchmakingSocket.emit('whoElseIsReady', me)
-        })
-        matchmakingSocket.on('whoElseIsReady', (otherPlayer: any) => {
-          console.debug(
-            `${username.value}-Received whoElseIsReady from ${otherPlayer.username}`
-          )
-          if (otherPlayer.gameId === gameId.value) {
-            matchmakingSocket.emit('iAmAlsoReady', players[0])
-            addPlayer(otherPlayer)
-          }
-        })
-        matchmakingSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {
-          console.debug(
-            `${username.value}-${alsoReadyPlayer.username} is also ready`
-          )
-          if (alsoReadyPlayer.gameId === gameId.value) {
-            addPlayer(alsoReadyPlayer)
-          }
-        })
-        matchmakingSocket.emit('iAmReady', { id: 1, username: username.value })
-      },
+      iAmReady,
     }
   },
 })

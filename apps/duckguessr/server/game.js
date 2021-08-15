@@ -74,18 +74,21 @@ exports.setFinishedAtFromLastRound = async (gameId) => {
   })
 }
 
-exports.onGameConnection = (gameId, socket) => {
-  socket.on('guess', async ({ username, guess }) => {
+exports.onGameConnection = (socket) => {
+  socket.on('guess', async ({ username, roundId, guess }) => {
     console.log(
-      `${username} is guessing ${JSON.stringify(guess)} on game ${gameId}`
+      `${username} is guessing ${JSON.stringify(guess)} on round ${roundId}`
     )
-    const user = await prisma.players.findFirst({
-      where: { username },
-    })
     try {
-      const guessResultsData = await round.guess(user.id, gameId, guess)
-      socket.broadcast.emit('playerGuessed', { username, ...guessResultsData })
-      socket.emit('playerGuessed', { username, ...guessResultsData })
+      const guessResultsData = await round.guess(
+        Object.values(global.cachedUsers).find(
+          ({ username: cachedUsername }) => cachedUsername === username
+        ).id,
+        roundId,
+        guess
+      )
+      socket.broadcast.emit('playerGuessed', guessResultsData)
+      socket.emit('playerGuessed', guessResultsData)
     } catch (e) {
       console.error(e)
     }
@@ -94,7 +97,7 @@ exports.onGameConnection = (gameId, socket) => {
 
 exports.createSocket = (io, game) => {
   io.of(`/game/${game.id}`).on('connection', (socket) => {
-    exports.onGameConnection(game.id, socket)
+    exports.onGameConnection(socket)
   })
 }
 
@@ -124,6 +127,7 @@ const generateRoundsFromCOA = async () => {
                FROM inducks_entryurl
                WHERE id >= FLOOR(RAND() * (SELECT MAX(id) FROM inducks_entryurl))
                  AND sitecode = 'thumbnails3'
+               ORDER BY RAND()
                LIMIT 150
              ) as entryurl
                inner join inducks_entry entry on entry.entrycode = entryurl.entrycode

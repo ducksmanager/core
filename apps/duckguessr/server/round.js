@@ -5,17 +5,13 @@ const numberOfRounds = 8
 const kickoffTime = 5000
 const roundTime = 10000
 
-exports.getStartedRound = async (gameId, finished) => {
+exports.getRound = async (roundId) => {
   return await prisma.rounds.findFirst({
     include: {
       round_scores: true,
     },
     where: {
-      game_id: parseInt(gameId),
-      finished_at: finished ? { not: null } : null,
-    },
-    orderBy: {
-      round_number: finished ? 'desc' : 'asc',
+      id: roundId,
     },
   })
 }
@@ -46,8 +42,8 @@ exports.createGameRounds = async (gameId) => {
   )
 }
 
-exports.guess = async (playerId, gameId, guess) => {
-  const round = await exports.getStartedRound(gameId, false)
+exports.guess = async (playerId, roundId, guess) => {
+  const round = await exports.getRound(roundId)
   if (guess == null) {
     throw new Error(`No guess was provided`)
   }
@@ -88,5 +84,9 @@ exports.guess = async (playerId, gameId, guess) => {
   }
   await prisma.round_scores.create({ data: scoreWithMetadata })
 
-  return scoreWithMetadata
+  return {
+    ...scoreWithMetadata,
+    round_number: round.round_number,
+    username: global.cachedUsers[playerId].username,
+  }
 }

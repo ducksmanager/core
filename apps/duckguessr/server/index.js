@@ -11,6 +11,8 @@ const IO = require('socket.io')
 const game = require('./game')
 const round = require('./round')
 
+global.cachedUsers = {}
+
 const io = IO(server, {
   cors: {
     origin: process.env.NUXT_URL,
@@ -35,16 +37,20 @@ prisma.games
 
 io.of('/matchmaking').on('connection', (socket) => {
   console.log('a user connected')
-  socket.on('iAmReady', async ({ username, id }) => {
+  socket.on('iAmReady', async ({ username }) => {
     console.log(`${username} is ready`)
     const gameData = await game.createOrGetPending()
     console.log(gameData)
-    const eventBack = {
+
+    const user = await prisma.players.findFirst({
+      where: { username },
+    })
+    global.cachedUsers[user.id] = user
+
+    socket.emit('iAmReadyWithGameID', {
       gameId: gameData.gameId,
-      userId: id,
-      username,
-    }
-    socket.emit('iAmReadyWithGameID', eventBack)
+      ...user,
+    })
   })
   socket.on('whoElseIsReady', ({ username, gameId }) => {
     console.log(`${username} wants to know who else is in game ID ${gameId}`)

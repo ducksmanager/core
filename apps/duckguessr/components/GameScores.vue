@@ -35,7 +35,9 @@
           :src="imageUrl(scores[column.replace('round', '')])"
           class="w-100"
         />
-        <div>{{ column.replace('round', 'Round ') }}</div></template
+        <div class="text-nowrap">
+          {{ column.replace('round', 'Round ') }}
+        </div></template
       >
       <template #cell(playerName)="{ value: playerName }">
         {{ playerName }}

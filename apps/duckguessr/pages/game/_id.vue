@@ -11,6 +11,15 @@
     <game-scores :scores="game.rounds" />
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
+    <round-result-modal
+      v-if="currentRound.guessed || false"
+      :status="scoreTypeNameToVariant(currentRoundPlayerScoreTypeName)"
+      :round-number="currentRound.round_number"
+      :next-round-start-date="
+        nextRoundStartDate && new Date(nextRoundStartDate)
+      "
+      @next-round="startRound()"
+    />
     <b-row>
       <b-col cols="5" align-self="center">
         <b-img center :src="url" @load="hasUrlLoaded = true" />
@@ -49,10 +58,10 @@
         <h3>Round scores</h3>
         <template v-for="score in currentRoundScores">
           <b-alert
-            :key="`score-${score.player_id}`"
+            :key="`score-${score.username}`"
             show
             :variant="scoreTypeNameToVariant(score.score_type_name)"
-            >{{ score.player_id }}: {{ score.score_type_name }}</b-alert
+            >{{ score.username }}: {{ score.score_type_name }}</b-alert
           >
         </template>
       </b-col>
@@ -64,13 +73,14 @@
 import {
   defineComponent,
   ref,
-  reactive,
   computed,
   useContext,
   watch,
   onMounted,
   useRoute,
 } from '@nuxtjs/composition-api'
+
+import Vue from 'vue'
 
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
@@ -85,9 +95,16 @@ interface Author {
 interface Score {
   // eslint-disable-next-line camelcase
   player_id: number
+  username: string
   score: string
   // eslint-disable-next-line camelcase
   score_type_name: object
+  // eslint-disable-next-line camelcase
+  round_number: number
+}
+
+interface gameWithRounds extends Index.games {
+  rounds: Array<Index.rounds>
 }
 
 interface roundWithGuessedFlag extends Index.rounds {
@@ -103,21 +120,25 @@ export default defineComponent({
 
     const rounds = 8
 
-    const gameIsFinished = ref(false as Boolean)
+    const gameIsFinished = ref(false as boolean)
     const currentRound = ref(null as roundWithGuessedFlag | null)
+    const currentRoundIndex = ref(-1 as number)
     const chosenAuthor = ref(null as Author | null)
 
-    const game = ref(null as Index.games | null)
+    const game = ref(null as gameWithRounds | null)
     let gameSocket: Socket | null = null
 
-    const currentRoundScores = reactive([] as Array<Score>)
+    const currentRoundScores = ref([] as Array<Score>)
 
     const hasUrlLoaded = ref(false as boolean)
+
+    const username = ref(null as string | null)
 
     const validateGuess = () => {
       currentRound.value!.guessed = true
       gameSocket!.emit('guess', {
-        username: sessionStorage.getItem('username'),
+        username: username.value,
+        roundId: currentRound.value!.id,
         guess: {
           personcode: chosenAuthor.value?.personcode ?? null,
           personnationality: chosenAuthor.value?.personnationality ?? null,
@@ -125,8 +146,9 @@ export default defineComponent({
       })
     }
 
-    const availableTime = 1000
-    const remainingTime = ref(availableTime as number)
+    const availableTime = 10
+    const remainingTime = ref(0 as number)
+
     const remainingTimePercentage = computed(
       () => remainingTime.value * (100 / availableTime)
     )
@@ -147,28 +169,52 @@ export default defineComponent({
       }
     )
 
-    onMounted(async () => {
+    const startRound = async () => {
       const gameData = await $axios.$get(`/api/game/${route.value.params.id}`)
+      const now = new Date()
       game.value = gameData
       if (!gameData) {
         console.error('No game ID')
       } else if (new Date(gameData.finished_at) > new Date()) {
-        currentRound.value = [...gameData.rounds]
-          .reverse()
-          .find(({ finished_at: finishedAt }) => finishedAt < new Date())
-        setInterval(() => {
-          remainingTime.value = Math.max(0, remainingTime.value - 1)
-        }, 1000)
-        gameSocket = io(`${process.env.SOCKET_URL}/game/${gameData.id}`)
-        gameSocket.on('playerGuessed', (data: any) => {
-          currentRoundScores.push(data)
-        })
+        if (!gameSocket) {
+          gameSocket = io(`${process.env.SOCKET_URL}/game/${gameData.id}`)
+          gameSocket.on('playerGuessed', (data: any) => {
+            Vue.set(
+              currentRoundScores.value,
+              currentRoundScores.value.length,
+              data
+            )
+          })
+        }
+
+        remainingTime.value = availableTime
+        currentRound.value = [...gameData.rounds].find(
+          ({ finished_at: finishedAt }) =>
+            finishedAt && new Date(finishedAt).getTime() > now.getTime()
+        )
+        if (currentRound.value) {
+          currentRoundScores.value = []
+          currentRoundIndex.value = game.value!.rounds.indexOf(
+            currentRound.value!
+          )
+          setInterval(() => {
+            remainingTime.value = Math.max(0, remainingTime.value - 1)
+          }, 1000)
+        } else {
+          gameIsFinished.value = true
+        }
       } else {
         gameIsFinished.value = true
       }
+    }
+
+    onMounted(async () => {
+      username.value = sessionStorage.getItem('username')
+      await startRound()
     })
 
     return {
+      username,
       game,
       gameIsFinished,
       gameSocket,
@@ -179,11 +225,24 @@ export default defineComponent({
       chosenAuthor,
       hasUrlLoaded,
       currentRound,
+      currentRoundIndex,
       currentRoundScores,
+      startRound,
+      currentRoundPlayerScoreTypeName: computed(
+        () =>
+          currentRoundScores.value.find(
+            ({ username: scoreUsername, round_number: roundNumber }) =>
+              username.value === scoreUsername &&
+              roundNumber === currentRound.value!.round_number
+          )?.score_type_name
+      ),
       url: computed(
         () =>
           currentRound.value &&
           `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.entryurl_url}`
+      ),
+      nextRoundStartDate: computed(
+        () => game.value?.rounds[currentRoundIndex.value + 1]?.started_at
       ),
       progressbarVariant: computed(() => {
         if (remainingTimePercentage.value <= 20) {
