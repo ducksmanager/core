@@ -53,6 +53,6 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "mapbox-gl": "^2.4.0"
+        "mapbox-gl": "^2.4.1"
     }
 }
