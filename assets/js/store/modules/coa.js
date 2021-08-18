@@ -176,7 +176,7 @@ export default {
           chunkSize: 1
         }).then(data => data.reduce((acc, result) => ({
           ...acc,
-          [result.config.url.replace(URL_PREFIX_ISSUES, "")]: result.data.map(issueNumber => issueNumber.replace(/ /g, ""))
+          [result.config.url.replace(URL_PREFIX_ISSUES, "")]: result.data.map(issueNumber => issueNumber.replace(/ /g, " "))
         }), {}))
       );
     },

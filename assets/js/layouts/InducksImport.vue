@@ -294,7 +294,7 @@ export default {
         vm.issuesImportable = [];
         this.issuesToImport.forEach(issue => {
           const { publicationcode, issuenumber } = issue;
-          if (!vm.issueNumbers[publicationcode].includes(issuenumber)) {
+          if (!vm.issueNumbers[publicationcode].includes(issuenumber.replace(/[ ]+/g, ' '))) {
             vm.issuesNotReferenced.push(issue);
           } else if (vm.findInCollection(publicationcode, issuenumber)) {
             vm.issuesAlreadyInCollection.push(issue);
