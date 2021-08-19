@@ -4,7 +4,7 @@
     <b-container class="bv-example-row">
       <b-row>
         <b-col
-          v-for="round in scores.slice(0, scores.length - 1)"
+          v-for="round in scoresExceptLast"
           :key="`round${round.round_number}`"
           align-self="center"
           cols="3"
@@ -16,7 +16,7 @@
           <div
             class="author-banner mx-auto"
             :style="{
-              'background-image': `url('https://inducks.org/creators/photos/${round.personcode}.jpg')`,
+              'background-image': `url('${round.personurl}')`,
             }"
           >
             <flag :country="round.personnationality" />&nbsp;{{
@@ -36,7 +36,7 @@
           class="w-100"
         />
         <div class="text-nowrap">
-          {{ column.replace('round', 'Round ') }}
+          Round {{ parseInt(column.match(/round([0-9])/)[1]) + 1 }}
         </div></template
       >
       <template #cell(playerName)="{ value: playerName }">
@@ -49,11 +49,19 @@
         <round-scores :scores="value" />
       </template>
     </b-table>
+    <div
+      hidden
+      v-for="({ personcode, personurl }, idx) in scoresExceptLast"
+      :key="`author${personcode}`"
+    >
+      <b-img :src="personurl" @error="setDefaultAuthorUrl(idx)" />
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from '@nuxtjs/composition-api'
+import { defineComponent, ref } from '@nuxtjs/composition-api'
+import Vue from 'vue'
 
 const cloudinaryUrlRoot =
   'https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/'
@@ -77,9 +85,18 @@ export default defineComponent({
           .flat()
       ),
     ]
+
+    const scoresExceptLast = ref(
+      scores.slice(0, scores.length - 1).map((roundScore) => ({
+        ...roundScore,
+        personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
+      }))
+    )
+
     return {
+      scoresExceptLast,
       playersWithScores: playerIds.map((playerId) => {
-        const playerScores = scores.reduce(
+        const playerScores = scoresExceptLast.value.reduce(
           (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
             ...acc,
             [`round${roundNumber}`]: roundScores
@@ -111,19 +128,13 @@ export default defineComponent({
           ),
         }
       }),
-      fields: [
-        { key: 'playerName', label: 'Player name' },
-        ...scores.reduce(
-          (acc, { round_number: roundNumber }) => [
-            ...acc,
-            {
-              key: `round${roundNumber}`,
-            },
-          ],
-          []
-        ),
-        { key: 'totalScore', label: 'Total' },
-      ],
+      setDefaultAuthorUrl: (idx) => {
+        Vue.set(scoresExceptLast.value, idx, {
+          ...scoresExceptLast.value[idx],
+          personurl:
+            'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg',
+        })
+      },
       imageUrl: ({ entryurl_url: entryUrl }) =>
         `${cloudinaryUrlRoot}/${entryUrl}`,
     }

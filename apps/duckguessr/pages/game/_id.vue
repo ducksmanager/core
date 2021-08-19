@@ -12,12 +12,10 @@
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
-      v-if="currentRound.guessed || false"
+      v-if="(currentRound.guessed || false) && nextRoundStartDate"
       :status="scoreTypeNameToVariant(currentRoundPlayerScoreTypeName)"
       :round-number="currentRound.round_number"
-      :next-round-start-date="
-        nextRoundStartDate && new Date(nextRoundStartDate)
-      "
+      :next-round-start-date="new Date(nextRoundStartDate)"
       @next-round="startRound()"
     />
     <b-row>
@@ -152,6 +150,11 @@ export default defineComponent({
     const remainingTimePercentage = computed(
       () => remainingTime.value * (100 / availableTime)
     )
+
+    const nextRoundStartDate = computed(
+      () => game.value?.rounds[currentRoundIndex.value + 1]?.started_at
+    )
+
     watch(
       () => remainingTime.value,
       (remainingTimeValue: Number) => {
@@ -166,6 +169,15 @@ export default defineComponent({
       () => currentRound.value,
       () => {
         hasUrlLoaded.value = false
+      }
+    )
+
+    watch(
+      () => nextRoundStartDate.value,
+      (nextRoundStartDate) => {
+        if (nextRoundStartDate === null) {
+          gameIsFinished.value = true
+        }
       }
     )
 
@@ -197,9 +209,6 @@ export default defineComponent({
           currentRoundIndex.value = game.value!.rounds.indexOf(
             currentRound.value!
           )
-          setInterval(() => {
-            remainingTime.value = Math.max(0, remainingTime.value - 1)
-          }, 1000)
         } else {
           gameIsFinished.value = true
         }
@@ -211,6 +220,9 @@ export default defineComponent({
     onMounted(async () => {
       username.value = sessionStorage.getItem('username')
       await startRound()
+      setInterval(() => {
+        remainingTime.value = Math.max(0, remainingTime.value - 1)
+      }, 1000)
     })
 
     return {
@@ -241,9 +253,7 @@ export default defineComponent({
           currentRound.value &&
           `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.entryurl_url}`
       ),
-      nextRoundStartDate: computed(
-        () => game.value?.rounds[currentRoundIndex.value + 1]?.started_at
-      ),
+      nextRoundStartDate,
       progressbarVariant: computed(() => {
         if (remainingTimePercentage.value <= 20) {
           return 'danger'

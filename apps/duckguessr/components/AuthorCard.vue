@@ -9,13 +9,22 @@
     }"
     @click="$emit('select', author)"
   >
-    <div class="author-image" :style="{ backgroundImage: authorImageUrl }">
+    <div
+      class="author-image"
+      :style="{ backgroundImage: `url('${authorImageUrl}')` }"
+    >
       <div
         class="position-absolute"
         style="bottom: 10px; background: rgba(255, 255, 255, 0.5)"
       >
         <flag :country="author.personnationality" />
         {{ author.personfullname }}
+      </div>
+      <div hidden>
+        <b-img
+          :src="authorImageUrl"
+          @error="authorImageUrl = defaultAuthorUrl"
+        />
       </div>
     </div>
   </b-col>
@@ -42,7 +51,9 @@ export default defineComponent({
 
   setup({ author: { personcode } }) {
     return {
-      authorImageUrl: `url('https://inducks.org/creators/photos/${personcode}.jpg')`,
+      authorImageUrl: `https://inducks.org/creators/photos/${personcode}.jpg`,
+      defaultAuthorUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg',
     }
   },
 })
