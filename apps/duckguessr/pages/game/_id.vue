@@ -15,7 +15,7 @@
       v-if="(currentRound.guessed || false) && nextRoundStartDate"
       :status="scoreTypeNameToVariant(currentRoundPlayerScoreTypeName)"
       :round-number="currentRound.round_number"
-      :next-round-start-date="new Date(nextRoundStartDate)"
+      :next-round-start-date="nextRoundStartDate"
       @next-round="startRound()"
     />
     <b-row>
@@ -69,13 +69,13 @@
 
 <script lang="ts">
 import {
-  defineComponent,
-  ref,
   computed,
-  useContext,
-  watch,
+  defineComponent,
   onMounted,
+  ref,
+  useContext,
   useRoute,
+  watch,
 } from '@nuxtjs/composition-api'
 
 import Vue from 'vue'
@@ -101,12 +101,12 @@ interface Score {
   round_number: number
 }
 
-interface gameWithRounds extends Index.games {
-  rounds: Array<Index.rounds>
-}
-
 interface roundWithGuessedFlag extends Index.rounds {
   guessed: boolean
+}
+
+interface gameWithRounds extends Index.games {
+  rounds: Array<roundWithGuessedFlag>
 }
 
 export default defineComponent({
@@ -116,10 +116,6 @@ export default defineComponent({
     const { $axios } = useContext()
     const route = useRoute()
 
-    const rounds = 8
-
-    const gameIsFinished = ref(false as boolean)
-    const currentRound = ref(null as roundWithGuessedFlag | null)
     const currentRoundIndex = ref(-1 as number)
     const chosenAuthor = ref(null as Author | null)
 
@@ -131,6 +127,97 @@ export default defineComponent({
     const hasUrlLoaded = ref(false as boolean)
 
     const username = ref(null as string | null)
+
+    const now = ref(Date.now() as number)
+
+    const gameIsFinished = computed(() => {
+      return (
+        (game.value!.finished_at &&
+          new Date(game.value!.finished_at!).getTime() < now.value) ||
+        !currentRound.value ||
+        !nextRoundStartDate.value
+      )
+    })
+
+    const currentRound = computed(
+      (): roundWithGuessedFlag | null =>
+        [...(game.value?.rounds || [])].find(
+          ({ finished_at: finishedAt }) =>
+            finishedAt && new Date(finishedAt).getTime() > now.value
+        ) || null
+    )
+
+    const availableTime = computed(() =>
+      !currentRound.value || !currentRound.value.finished_at
+        ? Infinity
+        : (new Date(currentRound.value!.finished_at).getTime() -
+            new Date(currentRound.value!.started_at!).getTime()) /
+          1000
+    )
+
+    const remainingTime = computed(() =>
+      !currentRound.value || !currentRound.value.finished_at
+        ? Infinity
+        : Math.floor(
+            Math.max(
+              0,
+              (new Date(currentRound.value!.finished_at!).getTime() -
+                now.value) /
+                1000
+            )
+          )
+    )
+
+    const remainingTimePercentage = computed(
+      () => remainingTime.value * (100 / availableTime.value)
+    )
+
+    const nextRoundStartDate = computed(() => {
+      const nextRound = game.value?.rounds[currentRoundIndex.value + 1]
+      return nextRound?.started_at ? new Date(nextRound?.started_at) : null
+    })
+
+    watch(
+      () => game.value,
+      (game) => {
+        if (!game) {
+          console.error('No game ID')
+        } else if (new Date(game.finished_at!) > new Date()) {
+          if (!gameSocket) {
+            gameSocket = io(`${process.env.SOCKET_URL}/game/${game.id}`)
+            gameSocket.on('playerGuessed', (data: any) => {
+              Vue.set(
+                currentRoundScores.value,
+                currentRoundScores.value.length,
+                data
+              )
+            })
+          }
+        }
+      }
+    )
+
+    watch(
+      () => currentRound.value,
+      (currentRound) => {
+        hasUrlLoaded.value = false
+        if (currentRound) {
+          currentRoundScores.value = []
+          currentRoundIndex.value = game.value!.rounds.indexOf(currentRound)
+        }
+      }
+    )
+
+    watch(
+      () => remainingTime.value,
+      (remainingTimeValue: Number) => {
+        if (remainingTimeValue === 0) {
+          if (!currentRound.value!.guessed) {
+            validateGuess()
+          }
+        }
+      }
+    )
 
     const validateGuess = () => {
       currentRound.value!.guessed = true
@@ -144,93 +231,17 @@ export default defineComponent({
       })
     }
 
-    const availableTime = 10
-    const remainingTime = ref(0 as number)
-
-    const remainingTimePercentage = computed(
-      () => remainingTime.value * (100 / availableTime)
-    )
-
-    const nextRoundStartDate = computed(
-      () => game.value?.rounds[currentRoundIndex.value + 1]?.started_at
-    )
-
-    watch(
-      () => remainingTime.value,
-      (remainingTimeValue: Number) => {
-        if (remainingTimeValue === 0) {
-          if (!currentRound.value!.guessed) {
-            validateGuess()
-          }
-        }
-      }
-    )
-    watch(
-      () => currentRound.value,
-      () => {
-        hasUrlLoaded.value = false
-      }
-    )
-
-    watch(
-      () => nextRoundStartDate.value,
-      (nextRoundStartDate) => {
-        if (nextRoundStartDate === null) {
-          gameIsFinished.value = true
-        }
-      }
-    )
-
-    const startRound = async () => {
-      const gameData = await $axios.$get(`/api/game/${route.value.params.id}`)
-      const now = new Date()
-      game.value = gameData
-      if (!gameData) {
-        console.error('No game ID')
-      } else if (new Date(gameData.finished_at) > new Date()) {
-        if (!gameSocket) {
-          gameSocket = io(`${process.env.SOCKET_URL}/game/${gameData.id}`)
-          gameSocket.on('playerGuessed', (data: any) => {
-            Vue.set(
-              currentRoundScores.value,
-              currentRoundScores.value.length,
-              data
-            )
-          })
-        }
-
-        remainingTime.value = availableTime
-        currentRound.value = [...gameData.rounds].find(
-          ({ finished_at: finishedAt }) =>
-            finishedAt && new Date(finishedAt).getTime() > now.getTime()
-        )
-        if (currentRound.value) {
-          currentRoundScores.value = []
-          currentRoundIndex.value = game.value!.rounds.indexOf(
-            currentRound.value!
-          )
-        } else {
-          gameIsFinished.value = true
-        }
-      } else {
-        gameIsFinished.value = true
-      }
-    }
-
     onMounted(async () => {
       username.value = sessionStorage.getItem('username')
-      await startRound()
+      game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
       setInterval(() => {
-        remainingTime.value = Math.max(0, remainingTime.value - 1)
+        now.value = Date.now()
       }, 1000)
     })
 
     return {
-      username,
       game,
       gameIsFinished,
-      gameSocket,
-      rounds,
       availableTime,
       remainingTime,
       remainingTimePercentage,
@@ -239,7 +250,6 @@ export default defineComponent({
       currentRound,
       currentRoundIndex,
       currentRoundScores,
-      startRound,
       currentRoundPlayerScoreTypeName: computed(
         () =>
           currentRoundScores.value.find(
@@ -248,12 +258,13 @@ export default defineComponent({
               roundNumber === currentRound.value!.round_number
           )?.score_type_name
       ),
+      nextRoundStartDate,
+      validateGuess,
       url: computed(
         () =>
           currentRound.value &&
           `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.entryurl_url}`
       ),
-      nextRoundStartDate,
       progressbarVariant: computed(() => {
         if (remainingTimePercentage.value <= 20) {
           return 'danger'
@@ -274,8 +285,6 @@ export default defineComponent({
             return 'danger'
         }
       },
-
-      validateGuess,
     }
   },
 })

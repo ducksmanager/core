@@ -40,7 +40,6 @@ io.of('/matchmaking').on('connection', (socket) => {
   socket.on('iAmReady', async ({ username }) => {
     console.log(`${username} is ready`)
     const gameData = await game.createOrGetPending()
-    console.log(gameData)
 
     const user = await prisma.players.findFirst({
       where: { username },

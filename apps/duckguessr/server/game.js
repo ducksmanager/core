@@ -47,8 +47,6 @@ exports.createOrGetPending = async () => {
       },
     })
 
-    console.log(game)
-
     return { gameId: game.id, created: true }
   }
 }
