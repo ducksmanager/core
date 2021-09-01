@@ -159,7 +159,6 @@ export default {
   }
 
   .navbar-nav {
-    position: relative;
     flex-wrap: wrap;
 
     .dropdown.search-type {
@@ -190,12 +189,19 @@ export default {
         option {
           cursor: pointer;
           padding: 5px;
+          overflow: auto;
           border-bottom: 1px solid #888;
           color: #888;
-          overflow-x: hidden;
 
-          a {
-            border: 0;
+          ::v-deep a {
+            .issue-condition {
+              width: 20px;
+              display: inline-block;
+
+              &:before {
+                margin-top: -12px;
+              }
+            }
           }
         }
       }

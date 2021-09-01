@@ -50,10 +50,12 @@
             <li
               v-for="(text, id) in conditionStates"
               :key="`condition-${id}`"
-              :class="{item: true, clickable: true, selected: copy.condition === id, 'issue-condition': true, [`issue-condition-${id}`]: true}"
+              :class="{item: true, clickable: true, selected: copy.condition === id}"
               @click="copy.condition = id"
             >
-              {{ text }}
+              <Condition
+                :value="id"
+              />&nbsp;{{ text }}
             </li>
             <li class="menu-separator">
               {{ $t("Date d'achat") }}
@@ -176,11 +178,13 @@
 import l10nMixin from "../mixins/l10nMixin";
 import VueContext from "vue-context";
 import conditionMixin from "../mixins/conditionMixin";
+import Condition from "./Condition";
 
 export default {
   name: "ContextMenu",
   components: {
-    VueContext
+    VueContext,
+    Condition
   },
 
   mixins: [l10nMixin, conditionMixin],
@@ -409,34 +413,8 @@ export default {
         }
       }
 
-      &.issue-condition:before {
-        position: absolute;
-        left: 0;
-        content: " ";
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        margin: 6px;
-      }
-
-      &.issue-condition-missing:before {
-        border: 8px solid black;
-      }
-
-      &.issue-condition-bad:before {
-        border: 8px solid red;
-      }
-
-      &.issue-condition-notsogood:before {
-        border: 8px solid orange;
-      }
-
-      &.issue-condition-good:before {
-        border: 8px solid #2CA77B;
-      }
-
-      &.issue-condition-possessed:before {
-        border: 8px solid #808080;
+      .issue-condition:before {
+        margin-top: -8px;
       }
 
       &.v-context__sub {

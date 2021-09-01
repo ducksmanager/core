@@ -134,9 +134,6 @@
                   :publicationcode="publicationcode"
                   :issuenumber="issueNumber"
                   :value="condition"
-                  :class="{
-                    'issue-condition': true
-                  }"
                 />
               </div>
             </div>
