@@ -54,7 +54,7 @@ export default {
     'nuxt-svg-loader',
     // Doc: https://nuxt-community.github.io/nuxt-i18n/
     [
-      'nuxt-i18n',
+      '@nuxtjs/i18n',
       {
         lazy: true,
         langDir: 'locales/',
