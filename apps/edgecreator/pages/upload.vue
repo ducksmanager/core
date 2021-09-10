@@ -167,7 +167,7 @@ export default {
         this.$nextTick().then(() => {
           vm.saveEdgeSvg(country, magazine, crop.issueNumber, this.initialContributors).then(
             (response) => {
-              const isSuccess = response && response.svgPath
+              const isSuccess = response && response.paths && response.paths.svgPath
               Vue.set(crop, 'sent', isSuccess)
               Vue.set(crop, 'error', !isSuccess)
             }
