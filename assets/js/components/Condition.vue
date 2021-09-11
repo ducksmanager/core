@@ -41,33 +41,23 @@ export default {
 .issue-condition {
   border-radius: 50%;
 
-  &:before {
-    position: absolute;
-    left: 0;
-    content: " ";
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    margin: 6px;
-  }
-
-  &.issue-condition-missing:before {
+  &.issue-condition-missing {
     border: 8px solid black;
   }
 
-  &.issue-condition-bad:before {
+  &.issue-condition-bad {
     border: 8px solid red;
   }
 
-  &.issue-condition-notsogood:before {
+  &.issue-condition-notsogood {
     border: 8px solid orange;
   }
 
-  &.issue-condition-good:before {
+  &.issue-condition-good {
     border: 8px solid #2CA77B;
   }
 
-  &.issue-condition-possessed:before {
+  &.issue-condition-possessed {
     border: 8px solid #808080;
   }
 

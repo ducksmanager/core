@@ -323,7 +323,7 @@ export default {
   }
 
   li {
-    padding: 0 30px;
+    padding: 0 12px;
 
     &.disabled {
       a {
@@ -413,10 +413,6 @@ export default {
         }
       }
 
-      .issue-condition:before {
-        margin-top: -8px;
-      }
-
       &.v-context__sub {
         .item {
           line-height: 15px;
@@ -428,8 +424,11 @@ export default {
         }
       }
 
+      ::v-deep .issue-condition {
+        margin-right: 8px;
+      }
+
       > svg {
-        margin-left: -24px;
         margin-right: 8px;
         font-size: 16px;
       }

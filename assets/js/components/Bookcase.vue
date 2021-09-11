@@ -7,8 +7,7 @@
     <Edge
       v-for="edge in edgesToLoad"
       v-once
-      :id="edge.id"
-      :ref="`edge-${edge.id}`"
+      :id="`edge-${edge.id}`"
       :key="`edge-${edge.id}`"
       :publication-code="edge.publicationCode"
       :issue-number="edge.issueNumber"
@@ -24,9 +23,8 @@
   >
     <Edge
       v-for="edge in edgesToLoad"
-      :id="edge.id"
+      :id="`edge-${edge.id}`"
       :key="`edge-${edge.id}`"
-      :ref="`edge-${edge.id}`"
       :invisible="currentEdgeOpened === edge"
       :highlighted="currentEdgeHighlighted === edge.id"
       :publication-code="edge.publicationCode"

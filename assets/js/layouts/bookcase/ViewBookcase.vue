@@ -280,7 +280,10 @@ export default {
       }
     },
     currentEdgeHighlighted(newValue) {
-      this.$refs[`edge-${newValue}`][0].$el.scrollIntoView()
+      const element = document.getElementById(`edge-${newValue}`);
+      if (element) {
+        element.scrollIntoView()
+      }
     }
   },
 

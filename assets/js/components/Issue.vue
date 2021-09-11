@@ -12,7 +12,7 @@
       <Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname"
-      /> {{ issuenumber }}
+      /><span>{{ issuenumber }}</span>
       <slot name="title-suffix" />
     </a>
     <slot />
@@ -41,6 +41,9 @@ export default {
 
 <style scoped lang="scss">
   a {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1rem;
     color: darkgrey;
     pointer-events: none;
     border-bottom: none;
@@ -48,6 +51,10 @@ export default {
     &.clickable {
       pointer-events: initial;
       border-bottom: initial;
+    }
+
+    * {
+      margin: 0 2px;
     }
   }
 </style>

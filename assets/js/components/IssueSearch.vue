@@ -183,11 +183,12 @@ export default {
         position: absolute;
         background: #eee;
         width: 100%;
-        top: 30px;
+        top: 36px;
         padding-left: 0;
 
         option {
           cursor: pointer;
+          height: 26px;
           padding: 5px;
           overflow: auto;
           border-bottom: 1px solid #888;
@@ -195,7 +196,6 @@ export default {
 
           ::v-deep a {
             .issue-condition {
-              width: 20px;
               display: inline-block;
 
               &:before {
