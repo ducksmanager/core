@@ -44,27 +44,28 @@ export default {
   },
 
   async mounted() {
-    this.events = ((await axios.get('/events')).data || []).map(event => {
+    this.events = ((await axios.get("/events")).data || []).map(event => {
       if (event.exampleIssue) {
-        const [publicationCode, issueNumber] = event.exampleIssue.split(/\/(?=[^/]+$)/)
-        event = {...event, publicationCode, issueNumber}
+        const [publicationCode, issueNumber] = event.exampleIssue.split(/\/(?=[^/]+$)/);
+        event = { ...event, publicationCode, issueNumber };
       }
       if (event.users) {
-        event = {...event, users: event.users.split(',').map(userId => parseInt(userId))}
+        event = { ...event, users: event.users.split(",").map(userId => parseInt(userId)) };
       }
       if (event.userId) {
-        event.userId = parseInt(event.userId)
+        event.userId = parseInt(event.userId);
       }
       if (event.edges) {
-        event.edges = JSON.parse(event.edges)
+        event.edges = JSON.parse(event.edges);
       }
 
       return {
         ...event,
         numberOfIssues: event.numberOfIssues && parseInt(event.numberOfIssues),
-        timestamp: parseInt(event.timestamp),
-      }
-    }).sort(({timestamp: timestamp1}, {timestamp: timestamp2}) => Math.sign(timestamp2 - timestamp1))
+        timestamp: parseInt(event.timestamp)
+      };
+    }).sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) => Math.sign(timestamp2 - timestamp1))
+      .filter((_, index) => index < 50);
 
     await this.fetchPublicationNames(
       this.events
