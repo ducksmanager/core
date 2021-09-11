@@ -17,13 +17,13 @@ class EventController extends AbstractController
      */
     public function getEvents(EventService $eventService): JsonResponse
     {
-        return new JsonResponse(array_merge(
+        return new JsonResponse(array_slice(array_merge(
             $eventService->retrieveBookstoreCreations(),
             $eventService->retrieveCollectionUpdates(),
             $eventService->retrieveCollectionSubscriptionAdditions(),
             $eventService->retrieveEdgeCreations(),
             $eventService->retrieveNewMedals(),
             $eventService->retrieveSignups()
-        ));
+        ), 0, 50));
     }
 }
