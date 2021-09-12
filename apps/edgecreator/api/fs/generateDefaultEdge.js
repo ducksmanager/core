@@ -36,7 +36,10 @@ export default function (req, res) {
   }
 
   const content = Buffer.from(
-    fs.readFileSync('assets/default.svg').toString().replace('My text', decodeURIComponent(text)),
+    fs
+      .readFileSync('assets/default.svg')
+      .toString()
+      .replace('My text', decodeURIComponent(text)),
     'utf8'
   )
   sharp(content).toBuffer((error, buffer) => {

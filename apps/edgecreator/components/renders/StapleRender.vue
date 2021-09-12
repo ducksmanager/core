@@ -52,7 +52,10 @@ export default {
       const yDistanceFromCenter = Math.min(
         Math.max(
           vm.options.height,
-          parseInt(vm.options.yDistanceFromCenter + ((isStaple2 ? 1 : -1) * dy) / vm.zoom)
+          parseInt(
+            vm.options.yDistanceFromCenter +
+              ((isStaple2 ? 1 : -1) * dy) / vm.zoom
+          )
         ),
         vm.dimensions.height / 2 - vm.options.height * 2
       )
@@ -63,7 +66,8 @@ export default {
     if (this.options.yDistanceFromCenter === undefined) {
       this.$root.$emit('set-options', {
         yDistanceFromCenter:
-          parseInt(this.resolveStringTemplates(this.options.y2)) - this.dimensions.height / 2,
+          parseInt(this.resolveStringTemplates(this.options.y2)) -
+          this.dimensions.height / 2,
       })
     }
     if (typeof this.options.height === 'string') {

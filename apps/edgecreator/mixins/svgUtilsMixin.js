@@ -11,7 +11,12 @@ export default {
         )
         .map((metadataNode) => metadataNode.textContent.trim())
     },
-    async loadSvgFromString(country, magazine, issuenumber, publishedVersion = false) {
+    async loadSvgFromString(
+      country,
+      magazine,
+      issuenumber,
+      publishedVersion = false
+    ) {
       const edgeUrl = this.getEdgeUrl(
         country,
         magazine,

@@ -49,12 +49,22 @@ export default {
             `/api/edgecreator/v2/model/${publicationcode}/${issuenumber}`
           )
           if (edge) {
-            await this.getPublishedEdgesSteps({ publicationcode, edgeModelIds: [edge.id] })
-            const apiSteps = this.publishedEdgesSteps[publicationcode][issuenumber]
-            dimensions = vm.getDimensionsFromApi(apiSteps)
-            steps = await vm.getStepsFromApi(issuenumber, apiSteps, dimensions, true, (error) => {
-              vm.addWarning(error)
+            await this.getPublishedEdgesSteps({
+              publicationcode,
+              edgeModelIds: [edge.id],
             })
+            const apiSteps =
+              this.publishedEdgesSteps[publicationcode][issuenumber]
+            dimensions = vm.getDimensionsFromApi(apiSteps)
+            steps = await vm.getStepsFromApi(
+              issuenumber,
+              apiSteps,
+              dimensions,
+              true,
+              (error) => {
+                vm.addWarning(error)
+              }
+            )
 
             if (!onlyLoadStepsAndDimensions) {
               await vm.setPhotoUrlsFromApi(issuenumber, edge.id)
@@ -85,7 +95,8 @@ export default {
         .map((group) => ({
           component: group.getAttribute('class'),
           options: JSON.parse(
-            (group.getElementsByTagName('metadata')[0] || { textContent: '{}' }).textContent
+            (group.getElementsByTagName('metadata')[0] || { textContent: '{}' })
+              .textContent
           ),
         })),
     setPhotoUrlsFromSvg(issuenumber, svgChildNodes) {
@@ -97,7 +108,10 @@ export default {
     setContributorsFromSvg(issuenumber, svgChildNodes) {
       const vm = this
       ;['photographer', 'designer'].forEach((contributionType) => {
-        vm.getSvgMetadata(svgChildNodes, `contributor-${contributionType}`).forEach((username) => {
+        vm.getSvgMetadata(
+          svgChildNodes,
+          `contributor-${contributionType}`
+        ).forEach((username) => {
           vm.addContributor({
             issuenumber,
             contributionType: `${contributionType}s`,
@@ -107,7 +121,10 @@ export default {
       })
     },
 
-    getDimensionsFromApi(stepData, defaultDimensions = { width: 15, height: 200 }) {
+    getDimensionsFromApi(
+      stepData,
+      defaultDimensions = { width: 15, height: 200 }
+    ) {
       const dimensions = Object.values(stepData).find(
         ({ stepNumber: originalStepNumber }) => originalStepNumber === -1
       )
@@ -119,12 +136,20 @@ export default {
       }
       return defaultDimensions
     },
-    async getStepsFromApi(issuenumber, stepData, dimensions, calculateBase64, onError) {
+    async getStepsFromApi(
+      issuenumber,
+      stepData,
+      dimensions,
+      calculateBase64,
+      onError
+    ) {
       const vm = this
       return (
         await Promise.all(
           Object.values(stepData)
-            .filter(({ stepNumber: originalStepNumber }) => originalStepNumber !== -1)
+            .filter(
+              ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1
+            )
             .map(
               async ({
                 stepNumber: originalStepNumber,
@@ -132,7 +157,8 @@ export default {
                 options: originalOptions,
               }) => {
                 const { component } = vm.supportedRenders.find(
-                  (component) => component.originalName === originalComponentName
+                  (component) =>
+                    component.originalName === originalComponentName
                 ) || { component: null }
                 if (component) {
                   try {
@@ -167,18 +193,23 @@ export default {
       ).filter((step) => !!step)
     },
     async setPhotoUrlsFromApi(issuenumber, edgeId) {
-      const photo = await this.$axios.$get(`/api/edgecreator/model/v2/${edgeId}/photo/main`)
+      const photo = await this.$axios.$get(
+        `/api/edgecreator/model/v2/${edgeId}/photo/main`
+      )
       if (photo) {
         this.setPhotoUrl({ issuenumber, filename: photo.nomfichier })
       }
     },
     async setContributorsFromApi(issuenumber, edgeId) {
       const vm = this
-      const contributors = await vm.$axios.$get(`/api/edgecreator/contributors/${edgeId}`)
+      const contributors = await vm.$axios.$get(
+        `/api/edgecreator/contributors/${edgeId}`
+      )
       contributors.forEach(({ contribution, idUtilisateur }) => {
         vm.addContributor({
           issuenumber,
-          contributionType: contribution === 'photographe' ? 'photographers' : 'designers',
+          contributionType:
+            contribution === 'photographe' ? 'photographers' : 'designers',
           user: vm.allUsers.find((user) => user.id === idUtilisateur),
         })
       })

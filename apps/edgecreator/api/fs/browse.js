@@ -8,16 +8,21 @@ export default function (req, res) {
     res.statusCode = 400
     res.end()
   }
-  fs.readdir(`${process.env.EDGES_PATH}/${country}/${imageType}`, (err, items) => {
-    res.writeHeader(200, { 'Content-Type': 'application/json' })
-    if (err) {
-      res.end(JSON.stringify([]))
-    } else {
-      res.end(
-        JSON.stringify(
-          items.filter((item) => new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item))
+  fs.readdir(
+    `${process.env.EDGES_PATH}/${country}/${imageType}`,
+    (err, items) => {
+      res.writeHeader(200, { 'Content-Type': 'application/json' })
+      if (err) {
+        res.end(JSON.stringify([]))
+      } else {
+        res.end(
+          JSON.stringify(
+            items.filter((item) =>
+              new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
+            )
+          )
         )
-      )
+      }
     }
-  })
+  )
 }

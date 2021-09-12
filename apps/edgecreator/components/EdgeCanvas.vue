@@ -40,7 +40,9 @@
       :key="stepNumber"
       :class="{
         [step.component]: true,
-        hovered: hoveredStepNumber === stepNumber && editingIssuenumbers.includes(issuenumber),
+        hovered:
+          hoveredStepNumber === stepNumber &&
+          editingIssuenumbers.includes(issuenumber),
       }"
       @mousedown.exact="
         replaceEditingIssuenumberIfNotAlreadyEditing(issuenumber)
@@ -171,7 +173,8 @@ export default {
     }),
     setPosition({ clientX: left, clientY: top }) {
       const vm = this
-      const { left: svgLeft, top: svgTop } = this.$refs.canvas.getBoundingClientRect()
+      const { left: svgLeft, top: svgTop } =
+        this.$refs.canvas.getBoundingClientRect()
       this.setPositionInCanvas(
         [left - svgLeft, top - svgTop].map((value) => parseInt(value / vm.zoom))
       )

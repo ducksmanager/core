@@ -13,7 +13,10 @@ export default async function (req, res) {
       res.writeHead(500, { Connection: 'close' })
     })
   const { id, username } = user.data
-  res.writeHead(200, { Connection: 'close', 'Content-Type': 'application/json' })
+  res.writeHead(200, {
+    Connection: 'close',
+    'Content-Type': 'application/json',
+  })
   res.end(
     JSON.stringify({
       id,

@@ -22,9 +22,13 @@ export default {
     ) {
       const vm = this
       const svgElementId = `edge-canvas-${issuenumber}`
-      const cleanSvg = this.removeVueMarkup(document.getElementById(svgElementId).cloneNode(true))
+      const cleanSvg = this.removeVueMarkup(
+        document.getElementById(svgElementId).cloneNode(true)
+      )
       if (!cleanSvg) {
-        return Promise.reject(new Error(`Couldn't save SVG : empty content for ID ${svgElementId}`))
+        return Promise.reject(
+          new Error(`Couldn't save SVG : empty content for ID ${svgElementId}`)
+        )
       }
       return vm.$axios.$put('/fs/save', {
         runExport: withExport,

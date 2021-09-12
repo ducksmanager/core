@@ -11,7 +11,9 @@
       <b-badge v-for="designer in designers" :key="`designer-${designer}`"
         >{{ $t('Designer') }}:{{ designer }}</b-badge
       >
-      <b-badge v-for="photographer in photographers" :key="`photographer-${photographer}`"
+      <b-badge
+        v-for="photographer in photographers"
+        :key="`photographer-${photographer}`"
         >{{ $t('Photographer') }}:{{ photographer }}</b-badge
       >
     </div>

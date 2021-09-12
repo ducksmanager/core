@@ -12,7 +12,9 @@ export default {
 
   methods: {
     setDimensions(dimensions, issuenumber) {
-      const issuenumbers = issuenumber ? [issuenumber] : this.editingIssuenumbers
+      const issuenumbers = issuenumber
+        ? [issuenumber]
+        : this.editingIssuenumbers
       for (const issuenumber of issuenumbers) {
         Vue.set(this.dimensions, issuenumber, {
           width: parseInt(dimensions.width),

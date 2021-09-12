@@ -36,13 +36,17 @@ export const getters = {
     getters.bookcaseWithPopularities
       .filter(({ edgeId, popularity }) => !edgeId && popularity > 0)
       .sort(
-        ({ popularity: popularity1 }, { popularity: popularity2 }) => popularity2 - popularity1
+        ({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          popularity2 - popularity1
       ),
 }
 
 export const actions = {
-  async loadBookcase({ state, commit, rootState }) {
-    commit('setBookcase', (await this.$axios.get(`/api/bookcase/${rootState.user.username}`)).data)
+  async loadBookcase({ commit, rootState }) {
+    commit(
+      'setBookcase',
+      (await this.$axios.get(`/api/bookcase/${rootState.user.username}`)).data
+    )
   },
   async loadPopularIssuesInCollection({ state, commit }) {
     if (!state.popularIssuesInCollection) {
@@ -51,7 +55,8 @@ export const actions = {
         (await this.$axios.get('/api/collection/popular')).data.reduce(
           (acc, issue) => ({
             ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]: issue.popularity,
+            [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]:
+              issue.popularity,
           }),
           {}
         )

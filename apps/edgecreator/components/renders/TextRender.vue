@@ -64,9 +64,13 @@ export default {
       async handler(newValue) {
         if (newValue) {
           try {
-            this.image = await this.$axios.$get(`/fs/base64?${this.textImage.url}`)
+            this.image = await this.$axios.$get(
+              `/fs/base64?${this.textImage.url}`
+            )
           } catch (e) {
-            console.error(`Base64 image could not be retrieved : ${newValue} : ${e}`)
+            console.error(
+              `Base64 image could not be retrieved : ${newValue} : ${e}`
+            )
           }
         }
       },
@@ -93,8 +97,10 @@ export default {
 
                   // Correct coordinates due to rotation center moving after resize
                   if (isVertical) {
-                    options.y = vm.options.y - (options.height - vm.options.height) / 2
-                    options.x = vm.options.x - (options.width - vm.options.width) / 2
+                    options.y =
+                      vm.options.y - (options.height - vm.options.height) / 2
+                    options.x =
+                      vm.options.x - (options.width - vm.options.width) / 2
                   }
                   vm.$root.$emit('set-options', options)
                 },
@@ -130,7 +136,9 @@ export default {
 
   methods: {
     async refreshPreview() {
-      if (JSON.stringify(this.textImageOptions) === JSON.stringify(this.options)) {
+      if (
+        JSON.stringify(this.textImageOptions) === JSON.stringify(this.options)
+      ) {
         return
       }
       this.textImageOptions = { ...this.options }
@@ -184,11 +192,13 @@ export default {
       } else if (options.heightCompression) {
         if (options.rotation === 90 || options.rotation === 270) {
           options.height = options.widthCompression * this.width
-          options.width = (options.heightCompression * this.width) / naturalAspectRatio
+          options.width =
+            (options.heightCompression * this.width) / naturalAspectRatio
           options.x -= options.width / 2 - options.height / 2
           options.y += options.width / 2
         } else {
-          options.height = options.heightCompression * this.width * naturalAspectRatio
+          options.height =
+            options.heightCompression * this.width * naturalAspectRatio
           options.width = options.widthCompression * this.width
         }
         options.heightCompression = undefined

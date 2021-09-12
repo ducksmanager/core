@@ -4,7 +4,9 @@
     <template v-for="({ code, name }, idx) in $i18n.locales">
       <template v-if="idx > 0"> |</template>
       <span v-if="$i18n.locale === code" :key="code">{{ name }}</span>
-      <nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{ name }}</nuxt-link>
+      <nuxt-link v-else :key="code" :to="switchLocalePath(code)">{{
+        name
+      }}</nuxt-link>
     </template>
   </div>
 </template>

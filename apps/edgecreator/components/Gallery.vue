@@ -23,14 +23,20 @@
     </b-modal>
     <b-alert v-if="!items.length" show variant="warning"
       >{{ $t('No item in this section.') }}
-      <a v-if="allowUpload" href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
-        $t('Upload new')
-      }}</a>
+      <a
+        v-if="allowUpload"
+        href="javascript:void(0)"
+        @click="showUploadModal = !showUploadModal"
+        >{{ $t('Upload new') }}</a
+      >
     </b-alert>
     <template v-else>
-      <a v-if="allowUpload" href="javascript:void(0)" @click="showUploadModal = !showUploadModal">{{
-        $t('Upload new')
-      }}</a>
+      <a
+        v-if="allowUpload"
+        href="javascript:void(0)"
+        @click="showUploadModal = !showUploadModal"
+        >{{ $t('Upload new') }}</a
+      >
       <b-row ref="gallery" class="gallery mt-1">
         <b-col
           v-for="item in items"
@@ -54,7 +60,11 @@
               variant="warning"
               :title="item.tooltip"
             />
-            <b-icon-emoji-frown-fill v-else variant="danger" :title="item.tooltip" />
+            <b-icon-emoji-frown-fill
+              v-else
+              variant="danger"
+              :title="item.tooltip"
+            />
           </a>
           <b-img-lazy
             v-b-tooltip.hover
@@ -74,7 +84,11 @@
 import { mapState } from 'vuex'
 import Upload from '@/components/Upload'
 import legacyDbMixin from '@/mixins/legacyDbMixin'
-import { BIconEmojiFrownFill, BIconEmojiNeutralFill, BIconEmojiSmileFill } from 'bootstrap-vue'
+import {
+  BIconEmojiFrownFill,
+  BIconEmojiNeutralFill,
+  BIconEmojiSmileFill,
+} from 'bootstrap-vue'
 
 export default {
   name: 'Gallery',

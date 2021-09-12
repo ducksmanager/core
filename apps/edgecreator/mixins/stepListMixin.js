@@ -9,7 +9,8 @@ export default {
     this.$root.$on('set-options', (changes) => {
       const { issuenumbers, stepNumber, ...optionChanges } = { ...changes }
       const targetIssueNumbers = issuenumbers || vm.editingIssuenumbers
-      const targetStepNumber = stepNumber !== undefined ? stepNumber : vm.editingStepNumber
+      const targetStepNumber =
+        stepNumber !== undefined ? stepNumber : vm.editingStepNumber
       Object.keys(vm.steps)
         .filter((issuenumber) => targetIssueNumbers.includes(issuenumber))
         .forEach((issuenumber) => {
@@ -29,7 +30,8 @@ export default {
         (issueNumber) => vm.steps[issueNumber].length
       )
       const completedIssueSteps = this.steps[completedIssuenumber]
-      const getComponents = (steps) => steps && steps.map(({ component }) => component).join('+')
+      const getComponents = (steps) =>
+        steps && steps.map(({ component }) => component).join('+')
       const previousIssueComponents = getComponents(completedIssueSteps)
       const currentIssueComponents = getComponents(issueSteps)
       if (
@@ -65,12 +67,18 @@ export default {
         issuenumber,
         JSON.parse(JSON.stringify(this.dimensions[otherIssuenumber]))
       )
-      Vue.set(this.steps, issuenumber, JSON.parse(JSON.stringify(this.steps[otherIssuenumber])))
+      Vue.set(
+        this.steps,
+        issuenumber,
+        JSON.parse(JSON.stringify(this.steps[otherIssuenumber]))
+      )
     },
     addStep(component) {
       const vm = this
       Object.keys(vm.steps).forEach((issuenumber) => {
-        Vue.set(vm.steps[issuenumber], vm.steps[issuenumber].length, { component })
+        Vue.set(vm.steps[issuenumber], vm.steps[issuenumber].length, {
+          component,
+        })
       })
     },
     removeStep(stepNumber) {
@@ -94,7 +102,12 @@ export default {
       Object.keys(vm.steps).forEach((issuenumber) => {
         const steps = vm.steps[issuenumber]
         const stepsToSwap = [steps[stepNumbers[0]], steps[stepNumbers[1]]]
-        vm.steps[issuenumber].splice(stepNumbers[0], 2, stepsToSwap[1], stepsToSwap[0])
+        vm.steps[issuenumber].splice(
+          stepNumbers[0],
+          2,
+          stepsToSwap[1],
+          stepsToSwap[0]
+        )
       })
     },
   },

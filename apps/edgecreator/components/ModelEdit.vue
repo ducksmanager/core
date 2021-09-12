@@ -10,7 +10,9 @@
           >
             {{
               $t(
-                supportedRenders.find((render) => render.component === step.component).labelL10nKey
+                supportedRenders.find(
+                  (render) => render.component === step.component
+                ).labelL10nKey
               )
             }}
           </span>
@@ -24,12 +26,16 @@
             <b-icon-eye-slash-fill
               v-if="step.options.visible && step.options.visible[0] === false"
               :title="$t('Click to show')"
-              @click.stop="$root.$emit('set-options', { stepNumber, visible: true })"
+              @click.stop="
+                $root.$emit('set-options', { stepNumber, visible: true })
+              "
             />
             <b-icon-eye-fill
               v-else
               :title="$t('Click to hide')"
-              @click.stop="$root.$emit('set-options', { stepNumber, visible: false })"
+              @click.stop="
+                $root.$emit('set-options', { stepNumber, visible: false })
+              "
             />
             <b-icon-front
               :title="$t('Duplicate')"
@@ -56,7 +62,9 @@
             :options="step.options"
           >
             <template #alert
-              >{{ $t('You can use special text parts to make your text dynamic :') }}
+              >{{
+                $t('You can use special text parts to make your text dynamic :')
+              }}
               <ul>
                 <i18n
                   tag="li"
@@ -100,7 +108,9 @@
           />
           <form-input-row
             option-name="rotation"
-            :label="$t('Rotation : {rotation}°', { rotation: step.options.rotation })"
+            :label="
+              $t('Rotation : {rotation}°', { rotation: step.options.rotation })
+            "
             type="range"
             :min="0"
             :max="270"
@@ -158,7 +168,9 @@
             :other-colors="otherColors[stepNumber]"
             :options="step.options"
             :option-name="optionName"
-            :label="$t(optionName === 'colorStart' ? 'Start color' : 'End color')"
+            :label="
+              $t(optionName === 'colorStart' ? 'Start color' : 'End color')
+            "
           />
 
           <form-input-row
@@ -181,7 +193,11 @@
           />
         </b-card-text>
       </b-tab>
-      <b-tab key="99" :title="$t('Add step')" title-item-class="font-weight-bold">
+      <b-tab
+        key="99"
+        :title="$t('Add step')"
+        title-item-class="font-weight-bold"
+      >
         <b-card-text>
           <b-dropdown :text="$t('Select a step type')">
             <b-dropdown-item
@@ -242,7 +258,8 @@ export default {
             [optionName]: [
               ...new Set(
                 issueNumbers.map(
-                  (issuenumber) => vm.steps[issuenumber][stepNumber].options[optionName]
+                  (issuenumber) =>
+                    vm.steps[issuenumber][stepNumber].options[optionName]
                 )
               ),
             ],
@@ -255,10 +272,9 @@ export default {
     otherColors() {
       const currentIssueNumbers = Object.keys(this.steps)
       const allIssueNumbers = Object.keys(this.allStepColors)
-      const emptyColorList = Object.keys(this.allStepColors[Object.keys(this.steps)[0]]).reduce(
-        (acc, stepNumber) => ({ ...acc, [stepNumber]: [] }),
-        {}
-      )
+      const emptyColorList = Object.keys(
+        this.allStepColors[Object.keys(this.steps)[0]]
+      ).reduce((acc, stepNumber) => ({ ...acc, [stepNumber]: [] }), {})
       return Object.keys(this.optionsPerName)
         .map((currentStepNumber) => parseInt(currentStepNumber))
         .map((currentStepNumber) => {
@@ -271,13 +287,17 @@ export default {
           allIssueNumbers.forEach((issuenumber) => {
             const issueColors = this.allStepColors[issuenumber]
             issueColors.forEach((stepColors, stepNumber) => {
-              const isCurrentIssueNumber = currentIssueNumbers.includes(issuenumber)
+              const isCurrentIssueNumber =
+                currentIssueNumbers.includes(issuenumber)
               if (!(isCurrentIssueNumber && currentStepNumber === stepNumber)) {
                 const otherColorGroupKey = isCurrentIssueNumber
                   ? 'sameIssuenumber'
                   : 'differentIssuenumber'
                 otherColors[otherColorGroupKey][stepNumber] = [
-                  ...new Set([...otherColors[otherColorGroupKey][stepNumber], ...stepColors]),
+                  ...new Set([
+                    ...otherColors[otherColorGroupKey][stepNumber],
+                    ...stepColors,
+                  ]),
                 ]
               }
             })

@@ -30,7 +30,9 @@ export default {
       }
       return TEMPLATES.reduce(
         (text, { regex, replaceCallback }) =>
-          text.replaceAll(regex, (_match, group) => replaceCallback(data, group)),
+          text.replaceAll(regex, (_match, group) =>
+            replaceCallback(data, group)
+          ),
         text
       )
     },

@@ -19,16 +19,22 @@ export const mutations = {
 export const actions = {
   async fetchAllUsers({ commit, state }) {
     if (!state.allUsers) {
-      commit('setAllUsers', (await this.$axios.$get(`/api/ducksmanager/users`)).users)
+      commit(
+        'setAllUsers',
+        (await this.$axios.$get(`/api/ducksmanager/users`)).users
+      )
     }
   },
 
   async fetchUserPoints({ commit }) {
     const userIdData = await this.$axios.$get(`/user-id`)
-    const userData = await this.$axios.$get(`/api/global-stats/user/${userIdData.id}`)
+    const userData = await this.$axios.$get(
+      `/api/global-stats/user/${userIdData.id}`
+    )
     commit(
       'setUserPhotographerPoints',
-      userData.points.find(({ contribution }) => contribution === 'Photographe').points_total
+      userData.points.find(({ contribution }) => contribution === 'Photographe')
+        .points_total
     )
   },
 }

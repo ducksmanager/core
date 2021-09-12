@@ -15,7 +15,9 @@ export default {
             toastError('You are not logged in')
             break
           case '#403':
-            toastError("You don't have enough rights to access the requested page")
+            toastError(
+              "You don't have enough rights to access the requested page"
+            )
             break
         }
       },

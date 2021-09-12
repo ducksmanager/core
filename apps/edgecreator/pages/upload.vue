@@ -57,7 +57,12 @@
             v-for="(crop, i) in crops"
             :key="`crop-${i}`"
             class="edge-card overflow-hidden"
-            :body-class="['d-flex', 'align-items-center', 'justify-content-around', 'p-1']"
+            :body-class="[
+              'd-flex',
+              'align-items-center',
+              'justify-content-around',
+              'p-1',
+            ]"
           >
             <template #header>
               <Issue
@@ -80,14 +85,18 @@
             />
             <div>
               <div v-if="crop.error" class="text-center">{{ $t('Error') }}</div>
-              <div v-else-if="crop.sent" class="text-center">{{ $t('Sent!') }}</div>
+              <div v-else-if="crop.sent" class="text-center">
+                {{ $t('Sent!') }}
+              </div>
               <div v-else>
                 <b-button pill variant="danger" @click="crops.splice(i, 1)"
                   >{{ $t('Delete') }}
                 </b-button>
               </div>
             </div>
-            <template #footer> {{ crop.width }} x {{ crop.height }} mm </template>
+            <template #footer>
+              {{ crop.width }} x {{ crop.height }} mm
+            </template>
           </b-card>
         </b-card-group>
         <b-button
@@ -165,13 +174,17 @@ export default {
         ).filename
         Vue.set(crop, 'filename', filename)
         this.$nextTick().then(() => {
-          vm.saveEdgeSvg(country, magazine, crop.issueNumber, this.initialContributors).then(
-            (response) => {
-              const isSuccess = response && response.paths && response.paths.svgPath
-              Vue.set(crop, 'sent', isSuccess)
-              Vue.set(crop, 'error', !isSuccess)
-            }
-          )
+          vm.saveEdgeSvg(
+            country,
+            magazine,
+            crop.issueNumber,
+            this.initialContributors
+          ).then((response) => {
+            const isSuccess =
+              response && response.paths && response.paths.svgPath
+            Vue.set(crop, 'sent', isSuccess)
+            Vue.set(crop, 'error', !isSuccess)
+          })
         })
       }
       // window.location.replace('/')

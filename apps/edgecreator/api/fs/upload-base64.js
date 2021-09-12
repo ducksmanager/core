@@ -12,9 +12,10 @@ export default async function (req, res) {
     const { country, issuenumber, magazine, data } = req.body
     const path = `${edgesPath}/${country}/photos`
     const tentativeFileName = `${magazine}.${issuenumber}.photo`
-    const fileName = getNextAvailableFile(`${path}/${tentativeFileName}`, 'jpg').match(
-      /\/([^/]+)$/
-    )[1]
+    const fileName = getNextAvailableFile(
+      `${path}/${tentativeFileName}`,
+      'jpg'
+    ).match(/\/([^/]+)$/)[1]
 
     base64Img.imgSync(data, path, fileName.replace('.jpg', ''))
 
@@ -32,10 +33,16 @@ export default async function (req, res) {
       returnError(res, e)
     }
 
-    res.writeHead(200, { Connection: 'close', 'Content-Type': 'application/text' })
+    res.writeHead(200, {
+      Connection: 'close',
+      'Content-Type': 'application/text',
+    })
     res.end(JSON.stringify({ filename: fileName }))
   } else {
-    res.writeHead(400, { Connection: 'close', 'Content-Type': 'application/text' })
+    res.writeHead(400, {
+      Connection: 'close',
+      'Content-Type': 'application/text',
+    })
     res.end('Only POST is allowed')
   }
 }

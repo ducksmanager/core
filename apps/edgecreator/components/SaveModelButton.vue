@@ -16,7 +16,13 @@
     />
     <b-icon-check v-if="result === 'success'" />
   </b-button>
-  <b-button v-else-if="result === 'error'" disabled pill variant="outline-danger" size="sm">
+  <b-button
+    v-else-if="result === 'error'"
+    disabled
+    pill
+    variant="outline-danger"
+    size="sm"
+  >
     <b-icon-x />
   </b-button>
   <b-button
@@ -35,7 +41,9 @@
         v-model="showModal"
         :title="$t(withExport ? 'Edge publication' : 'Edge validation')"
         ok-only
-        :ok-disabled="!hasAtLeastOneUser('photographers') || !hasAtLeastOneUser('designers')"
+        :ok-disabled="
+          !hasAtLeastOneUser('photographers') || !hasAtLeastOneUser('designers')
+        "
         :ok-title="$t(withExport ? 'Export' : 'Submit')"
         @ok="issueIndexToSave = 0"
       >
@@ -46,14 +54,22 @@
               'before it is published on DucksManager'
           )
         }}</b-alert>
-        <div v-for="contributionType in ['photographers', 'designers']" :key="contributionType">
+        <div
+          v-for="contributionType in ['photographers', 'designers']"
+          :key="contributionType"
+        >
           <h2>{{ $t(ucFirst(contributionType)) }}</h2>
-          <b-alert v-if="!hasAtLeastOneUser(contributionType)" show variant="warning">{{
-            $t('You should select at least one user')
-          }}</b-alert>
+          <b-alert
+            v-if="!hasAtLeastOneUser(contributionType)"
+            show
+            variant="warning"
+            >{{ $t('You should select at least one user') }}</b-alert
+          >
           <vue-bootstrap-typeahead
             :ref="`${contributionType}-typeahead`"
-            :data="allUsers.filter((user) => !isContributor(user, contributionType))"
+            :data="
+              allUsers.filter((user) => !isContributor(user, contributionType))
+            "
             :serializer="({ username }) => username"
             :placeholder="$t('Enter a user name')"
             :min-matching-chars="0"
@@ -63,10 +79,18 @@
             "
           />
           <ul>
-            <li v-for="user in getContributors(contributionType)" :key="user.username">
+            <li
+              v-for="user in getContributors(contributionType)"
+              :key="user.username"
+            >
               {{ user.username }}
               <b-icon-x-square-fill
-                v-if="!(user.username === username && contributionType === 'designers')"
+                v-if="
+                  !(
+                    user.username === username &&
+                    contributionType === 'designers'
+                  )
+                "
                 @click="
                   removeContributor({
                     contributionType,
@@ -119,7 +143,9 @@ export default {
   }),
   computed: {
     label() {
-      return this.$t(this.withExport ? 'Export' : this.withSubmit ? 'Submit' : 'Save')
+      return this.$t(
+        this.withExport ? 'Export' : this.withSubmit ? 'Submit' : 'Save'
+      )
     },
     variant() {
       return this.withExport || this.withSubmit ? 'success' : 'primary'
@@ -188,7 +214,9 @@ export default {
     ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),
     getContributors(contributionType) {
       const vm = this
-      return this.allUsers.filter((user) => vm.isContributor(user, contributionType))
+      return this.allUsers.filter((user) =>
+        vm.isContributor(user, contributionType)
+      )
     },
     isContributor(user, contributionType) {
       const vm = this
@@ -209,7 +237,8 @@ export default {
     },
     hasAtLeastOneUser(contributionType) {
       return Object.values(this.contributors).every(
-        (contributionsForIssue) => contributionsForIssue[contributionType].length
+        (contributionsForIssue) =>
+          contributionsForIssue[contributionType].length
       )
     },
     onClick() {

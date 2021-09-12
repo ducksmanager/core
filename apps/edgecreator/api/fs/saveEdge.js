@@ -7,7 +7,15 @@ const sharp = require('sharp')
 addAxiosInterceptor()
 
 export default async function (req, res) {
-  const { runExport, runSubmit, country, magazine, issuenumber, contributors, content } = req.body
+  const {
+    runExport,
+    runSubmit,
+    country,
+    magazine,
+    issuenumber,
+    contributors,
+    content,
+  } = req.body
   const svgPath = getSvgPath(runExport, country, magazine, issuenumber)
   const fileAlreadyExists = fs.existsSync(svgPath)
   if (
@@ -45,7 +53,9 @@ export default async function (req, res) {
                 `${process.env.BACKEND_URL}/edgecreator/publish/${publicationcode}/${issuenumber}`,
                 {
                   designers: (designers || []).map(({ username }) => username),
-                  photographers: (photographers || []).map(({ username }) => username),
+                  photographers: (photographers || []).map(
+                    ({ username }) => username
+                  ),
                 },
                 { headers: req.headers }
               )
@@ -91,4 +101,6 @@ export default async function (req, res) {
 }
 
 const getSvgPath = (isExport, country, magazine, issuenumber) =>
-  `${process.env.EDGES_PATH}/${country}/gen/${isExport ? '' : '_'}${magazine}.${issuenumber}.svg`
+  `${process.env.EDGES_PATH}/${country}/gen/${
+    isExport ? '' : '_'
+  }${magazine}.${issuenumber}.svg`
