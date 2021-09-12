@@ -8,7 +8,7 @@ const coaApi = axios.create({
 
 const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/LOCALE`;
 const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";
-const URL_PREFIX_ISSUES = "/api/coa/list/issues/";
+const URL_PREFIX_ISSUES = "/api/coa/list/issues/multiple/";
 const URL_PREFIX_AUTHORS = "/api/coa/authorsfullnames/";
 const URL_PREFIX_URLS = "/api/coa/list/details/";
 const URL_PREFIX_ISSUE_QUOTATIONS = "/api/coa/quotations/";
@@ -110,7 +110,7 @@ export default {
           await dispatch("getChunkedRequests", {
             url: URL_PREFIX_PUBLICATIONS,
             valuesToChunk: newPublicationCodes,
-            chunkSize: 10
+            chunkSize: 20
           }).then(data => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))
         );
     },
@@ -173,11 +173,8 @@ export default {
       return newPublicationCodes.length && commit("addIssueNumbers", await dispatch("getChunkedRequests", {
           url: URL_PREFIX_ISSUES,
           valuesToChunk: newPublicationCodes,
-          chunkSize: 1
-        }).then(data => data.reduce((acc, result) => ({
-          ...acc,
-          [result.config.url.replace(URL_PREFIX_ISSUES, "")]: result.data.map(issueNumber => issueNumber.replace(/ /g, " "))
-        }), {}))
+          chunkSize: 10
+        }).then(data => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))
       );
     },
 
