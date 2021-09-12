@@ -10,21 +10,38 @@
       <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`">
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{ mostWantedIssue.issuenumber }}
     </div>
-    <div v-if="publishedEdges && Object.keys(inducksIssueNumbers).length">
+    <div v-if="publishedEdges && Object.keys(inducksIssueNumbersNoSpace).length">
       <div
         v-for="(issuenumbers, publicationCode) in publishedEdges"
         :key="publicationCode"
         class="publication"
       >
-        <span>
-          (<img :src="`${imagePath}/flags/${publicationCode.split('/')[0]}.png`"> {{
-            publicationCode.split('/')[1]
-          }})
-          {{ publicationNames[publicationCode] }}
-        </span>
-        <div v-if="inducksIssueNumbers[publicationCode]">
+        <b-icon-eye-fill
+          v-if="!showEdgesForPublication.includes(publicationCode)"
+          @click="showEdgesForPublication.push(publicationCode)"
+        />
+        <b-icon-eye-slash-fill
+          v-else
+          @click="showEdgesForPublication.splice(showEdgesForPublication.indexOf(publicationCode), 1)"
+        />
+        <Publication
+          :publicationcode="publicationCode"
+          :publicationname="publicationNames[publicationCode]"
+        />
+        <div v-if="inducksIssueNumbersNoSpace[publicationCode]">
+          <Bookcase
+            v-if="showEdgesForPublication.includes(publicationCode)"
+            :bookcase-textures="bookcaseTextures"
+            :sorted-bookcase="inducksIssueNumbersNoSpace[publicationCode].map(issueNumber => ({
+              id: `${publicationCode.replace('/', '-')} ${issueNumber}`,
+              edgeId: issuenumbers.includes(issueNumber) ? 1 : null,
+              publicationCode,
+              issueNumber,
+            }))"
+          />
           <span
-            v-for="inducksIssueNumber in inducksIssueNumbers[publicationCode]"
+            v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[publicationCode]"
+            v-else
             :key="`${publicationCode}-${inducksIssueNumber}`"
           >
             <span
@@ -58,9 +75,9 @@
       <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette tranche !<br>
       <span class="num available">&nbsp;</span> Cette tranche est prête.<br>
     </div>
-    <div v-else>
-      {{ $t('Chargement...') }}
-    </div>
+  </div>
+  <div v-else>
+    {{ $t('Chargement...') }}
   </div>
 </template>
 
@@ -68,9 +85,12 @@
 import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
 import {mapActions, mapState} from "vuex";
+import Publication from "../../components/Publication";
+import Bookcase from "../../components/Bookcase";
 
 export default {
   name: "EdgeProgress",
+  components: { Bookcase, Publication },
   mixins: [l10nMixin],
   data() {
     return {
@@ -78,11 +98,20 @@ export default {
       show: false,
       mostWanted: null,
       publishedEdges: null,
+      showEdgesForPublication: [],
+      bookcaseTextures: { bookcase: "bois/HONDURAS MAHOGANY", bookshelf: "bois/KNOTTY PINE" }
     }
   },
   computed: {
     ...mapState("coa", ["publicationNames"]),
-    ...mapState("coa", {"inducksIssueNumbers": "issueNumbers"}),
+    ...mapState("coa", ["issueNumbers"]),
+    inducksIssueNumbersNoSpace() {
+      const vm = this
+      return Object.keys(this.issueNumbers).reduce((acc, publicationCode) => ({
+        ...acc,
+        [publicationCode]: vm.issueNumbers[publicationCode].map(issueNumber => issueNumber.replace(/ /g, ''))
+      }))
+    }
   },
   async mounted() {
     this.mostWanted = (await axios.get("/admin/edges/wanted/data")).data.map(mostWantedIssue => ({
