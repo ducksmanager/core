@@ -2,7 +2,8 @@ import sharp from 'sharp'
 const fs = require('fs')
 
 // eslint-disable-next-line max-len
-const REGEX_EDGE_URL = /^edges\/(?<countryCode>[^/]+)\/gen\/_?(?<magazineCode>[^.]+)\.(?<issueNumber>[^.]+)\.(?<extension>[^?]+)?(?:\?.+)?$/
+const REGEX_EDGE_URL =
+  /^edges\/(?<countryCode>[^/]+)\/gen\/_?(?<magazineCode>[^.]+)\.(?<issueNumber>[^.]+)\.(?<extension>[^?]+)?(?:\?.+)?$/
 
 export default function (req, res) {
   const corsHeaders = {
