@@ -49,7 +49,7 @@ export default {
         locale,
       },
       restrictions: {
-        maxFileSize: (this.photo ? 3 : 0.5) * 1024 * 1024,
+        maxFileSize: 3 * 1024 * 1024,
         minNumberOfFiles: 1,
         maxNumberOfFiles: this.photo ? 1 : 10,
         allowedFileTypes: this.photo ? ['image/jpg', 'image/jpeg'] : ['image/png'],
