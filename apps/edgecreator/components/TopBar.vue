@@ -5,18 +5,31 @@
         <b-button v-b-toggle.sidebar class="options position-fixed mt-2"
           >{{ $t('Options') }}
         </b-button>
-        <b-sidebar id="sidebar" v-model="showSidebar" :title="$t('Options')" shadow>
+        <b-sidebar
+          id="sidebar"
+          v-model="showSidebar"
+          :title="$t('Options')"
+          shadow
+        >
           <b-container class="px-3 py-2">
             <b-row align-items="center">
               <b-col cols="6"> {{ $t('Zoom') }}</b-col>
               <b-col cols="2">{{ zoom }}</b-col>
               <b-col cols="4">
-                <input v-model="zoom" type="range" min="1" max="8" step="0.5" style="width: 100%"
+                <input
+                  v-model="zoom"
+                  type="range"
+                  min="1"
+                  max="8"
+                  step="0.5"
+                  style="width: 100%"
               /></b-col>
             </b-row>
             <b-row>
               <b-col
-                ><label for="showIssueNumbers">{{ $t('Show issue numbers') }}</label></b-col
+                ><label for="showIssueNumbers">{{
+                  $t('Show issue numbers')
+                }}</label></b-col
               >
               <b-col>
                 <b-checkbox id="showIssueNumbers" v-model="showIssueNumbers" />
@@ -24,7 +37,9 @@
             </b-row>
             <b-row>
               <b-col
-                ><label for="showPreviousEdge">{{ $t('Show previous edge') }}</label></b-col
+                ><label for="showPreviousEdge">{{
+                  $t('Show previous edge')
+                }}</label></b-col
               >
               <b-col>
                 <b-checkbox
@@ -36,7 +51,9 @@
             </b-row>
             <b-row>
               <b-col
-                ><label for="showNextEdge">{{ $t('Show next edge') }}</label></b-col
+                ><label for="showNextEdge">{{
+                  $t('Show next edge')
+                }}</label></b-col
               >
               <b-col>
                 <b-checkbox
@@ -48,7 +65,9 @@
             </b-row>
             <b-row>
               <b-col
-                ><label for="showEdgePhotos">{{ $t('Show edge photos') }}</label></b-col
+                ><label for="showEdgePhotos">{{
+                  $t('Show edge photos')
+                }}</label></b-col
               >
               <b-col>
                 <b-checkbox
@@ -60,7 +79,9 @@
             </b-row>
             <b-row>
               <b-col
-                ><label for="showEdgeOverflow">{{ $t('Show edge overflow') }}</label></b-col
+                ><label for="showEdgeOverflow">{{
+                  $t('Show edge overflow')
+                }}</label></b-col
               >
               <b-col>
                 <b-checkbox id="showEdgeOverflow" v-model="showEdgeOverflow" />
@@ -99,7 +120,10 @@
         </Issue>
 
         <template v-if="isEditingMultiple">
-          <b-icon-info-circle-fill id="multiple-issues-hints" variant="secondary" />
+          <b-icon-info-circle-fill
+            id="multiple-issues-hints"
+            variant="secondary"
+          />
           <b-popover
             id="multiple-issues-hints-popover"
             target="multiple-issues-hints"
@@ -146,7 +170,11 @@
         >
           <b-icon-camera />
           <b-modal v-model="showPhotoModal" ok-only>
-            <Gallery image-type="photos" :items="publicationPhotosForGallery" @change="addPhoto" />
+            <Gallery
+              image-type="photos"
+              :items="publicationPhotosForGallery"
+              @change="addPhoto"
+            />
           </b-modal>
         </b-button>
 
@@ -155,7 +183,11 @@
         <save-model-button v-role="'admin'" with-export />
       </b-col>
     </b-row>
-    <b-row align="center" class="p-1" style="border-bottom: 1px solid lightgray">
+    <b-row
+      align="center"
+      class="p-1"
+      style="border-bottom: 1px solid lightgray"
+    >
       <b-col align-self="center">
         <MultipleTargetOptions>
           <b-button
@@ -183,7 +215,11 @@
           >
             <b-icon-front />
           </b-button>
-          <b-collapse id="collapse-dimensions" v-model="collapseDimensions" class="mt-2">
+          <b-collapse
+            id="collapse-dimensions"
+            v-model="collapseDimensions"
+            class="mt-2"
+          >
             <confirm-edit-multiple-values :values="uniqueDimensions">
               <dimensions
                 :width="uniqueDimensions[0].width"
@@ -202,7 +238,9 @@
               disable-not-ongoing-nor-published
               @change="modelToClone = $event"
             />
-            <b-btn :disabled="!modelToClone" @click="$emit('overwrite-model', modelToClone)"
+            <b-btn
+              :disabled="!modelToClone"
+              @click="$emit('overwrite-model', modelToClone)"
               >{{ $t('Clone') }}
             </b-btn>
           </b-collapse>
@@ -299,12 +337,17 @@ export default {
       return Object.keys(this.photoUrls).length
     },
     publicationName() {
-      return this.publicationNames && this.publicationNames[`${this.country}/${this.magazine}`]
+      return (
+        this.publicationNames &&
+        this.publicationNames[`${this.country}/${this.magazine}`]
+      )
     },
     uniqueDimensions() {
-      return [...new Set(Object.values(this.dimensions).map((item) => JSON.stringify(item)))].map(
-        (item) => JSON.parse(item)
-      )
+      return [
+        ...new Set(
+          Object.values(this.dimensions).map((item) => JSON.stringify(item))
+        ),
+      ].map((item) => JSON.parse(item))
     },
     isEditingMultiple() {
       return this.isRange || this.issuenumbers.length > 1

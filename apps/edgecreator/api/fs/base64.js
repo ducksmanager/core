@@ -12,9 +12,9 @@ export default function (req, res) {
       try {
         const buffer = Buffer.from(body)
         const dimensions = sizeOf(buffer)
-        const base64 = `data:${response.headers['content-type']};base64,${buffer.toString(
-          'base64'
-        )}`
+        const base64 = `data:${
+          response.headers['content-type']
+        };base64,${buffer.toString('base64')}`
         res.writeHeader(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ dimensions, base64, url }))
       } catch (e) {

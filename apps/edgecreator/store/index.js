@@ -40,7 +40,9 @@ export const mutations = {
     }
     Vue.set(state.contributors, issuenumber, {
       ...contributors,
-      [contributionType]: [...new Set([...contributors[contributionType], user])],
+      [contributionType]: [
+        ...new Set([...contributors[contributionType], user]),
+      ],
     })
   },
   removeContributor(state, { contributionType, userToRemove }) {
@@ -108,7 +110,9 @@ const numericSortCollator = new Intl.Collator(undefined, {
 
 export const actions = {
   setIssuenumbers({ getters, commit }, { min, max, others }) {
-    const firstIssueIndex = getters.publicationIssues.findIndex((issue) => issue === min)
+    const firstIssueIndex = getters.publicationIssues.findIndex(
+      (issue) => issue === min
+    )
     if (firstIssueIndex === -1) {
       throw new Error(`Issue ${min} doesn't exist`)
     }
@@ -116,7 +120,9 @@ export const actions = {
       commit('setIssuenumbers', [min, ...(others ? others.split(',') : [])])
     } else {
       commit('setIsRange', true)
-      let lastIssueIndex = getters.publicationIssues.findIndex((issue) => issue === max)
+      let lastIssueIndex = getters.publicationIssues.findIndex(
+        (issue) => issue === max
+      )
       if (lastIssueIndex === -1) {
         ;[lastIssueIndex] = Object.keys(getters.publicationIssues).slice(-1)
         console.warn(
@@ -132,11 +138,18 @@ export const actions = {
     }
   },
   async loadItems({ getters, commit }, { itemType }) {
-    commit(itemType === 'elements' ? 'setPublicationElements' : 'setPublicationPhotos', {
-      items: (await this.$axios.$get(`/fs/browse/${itemType}/${getters.publicationcode}`)).sort(
-        numericSortCollator.compare
-      ),
-    })
+    commit(
+      itemType === 'elements'
+        ? 'setPublicationElements'
+        : 'setPublicationPhotos',
+      {
+        items: (
+          await this.$axios.$get(
+            `/fs/browse/${itemType}/${getters.publicationcode}`
+          )
+        ).sort(numericSortCollator.compare),
+      }
+    )
   },
   async loadPublicationIssues({ getters, dispatch }) {
     return dispatch('coa/fetchIssueNumbers', [getters.publicationcode])
@@ -150,19 +163,26 @@ export const actions = {
     )
     const issuesBefore = getters.publicationIssues.filter(
       (unused, index) =>
-        firstIssueIndex !== -1 && index >= firstIssueIndex - 10 && index < firstIssueIndex
+        firstIssueIndex !== -1 &&
+        index >= firstIssueIndex - 10 &&
+        index < firstIssueIndex
     )
     const issuesAfter = getters.publicationIssues.filter(
       (unused, index) =>
-        lastIssueIndex !== -1 && index > lastIssueIndex && index <= lastIssueIndex + 10
+        lastIssueIndex !== -1 &&
+        index > lastIssueIndex &&
+        index <= lastIssueIndex + 10
     )
 
     const getEdgePublicationStates = async (edges) =>
       this.$axios
         .$get(`/api/edges/${getters.publicationcode}/${edges.join(',')}`)
         .then((data) =>
-          data.sort(({ issuenumber: issuenumber1 }, { issuenumber: issuenumber2 }) =>
-            Math.sign(edges.indexOf(issuenumber1) - edges.indexOf(issuenumber2))
+          data.sort(
+            ({ issuenumber: issuenumber1 }, { issuenumber: issuenumber2 }) =>
+              Math.sign(
+                edges.indexOf(issuenumber1) - edges.indexOf(issuenumber2)
+              )
           )
         )
 
@@ -179,13 +199,20 @@ export const actions = {
     }
   },
 
-  getChunkedRequests: async (_, { api, url, parametersToChunk, chunkSize, suffix = '' }) =>
+  getChunkedRequests: async (
+    _,
+    { api, url, parametersToChunk, chunkSize, suffix = '' }
+  ) =>
     await Promise.all(
-      await Array.from({ length: Math.ceil(parametersToChunk.length / chunkSize) }, (_, i) =>
-        parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+      await Array.from(
+        { length: Math.ceil(parametersToChunk.length / chunkSize) },
+        (_, i) =>
+          parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
       ).reduce(
         async (acc, codeChunk) =>
-          (await acc).concat(await api.get(`${url}${codeChunk.join(',')}${suffix}`)),
+          (
+            await acc
+          ).concat(await api.get(`${url}${codeChunk.join(',')}${suffix}`)),
         Promise.resolve([])
       )
     ),

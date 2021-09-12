@@ -39,7 +39,10 @@ export default {
         if (publishedEdges[this.publicationcode]) {
           if (!this.isPopulating) {
             this.isPopulating = true
-            await this.populateItems(this.publicationcode, publishedEdges[this.publicationcode])
+            await this.populateItems(
+              this.publicationcode,
+              publishedEdges[this.publicationcode]
+            )
             this.isPopulating = false
           }
         }
@@ -51,7 +54,10 @@ export default {
         if (this.publishedEdges[publicationcode]) {
           if (!this.isPopulating) {
             this.isPopulating = true
-            await this.populateItems(publicationcode, this.publishedEdges[publicationcode])
+            await this.populateItems(
+              publicationcode,
+              this.publishedEdges[publicationcode]
+            )
             this.isPopulating = false
           }
         }
@@ -106,14 +112,19 @@ export default {
                   if (!issueStepWarnings[stepNumber]) {
                     issueStepWarnings[stepNumber] = []
                   }
-                  issueStepWarnings[stepNumber].push(`Step ${stepNumber}: ${error}`)
+                  issueStepWarnings[stepNumber].push(
+                    `Step ${stepNumber}: ${error}`
+                  )
                 }
               )
               if (!issueSteps.length) {
                 issueStepWarnings[0] = 'No steps'
                 quality = 0
               } else {
-                quality = Math.max(0, 1 - Object.keys(issueStepWarnings).length / issueSteps.length)
+                quality = Math.max(
+                  0,
+                  1 - Object.keys(issueStepWarnings).length / issueSteps.length
+                )
               }
               tooltip = Object.values(issueStepWarnings).join('\n')
             }

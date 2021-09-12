@@ -82,12 +82,17 @@ export default {
       return (
         this.publicationNames &&
         Object.keys(this.publicationNames)
-          .filter((publicationCode) => publicationCode.indexOf(`${vm.currentCountryCode}/`) === 0)
+          .filter(
+            (publicationCode) =>
+              publicationCode.indexOf(`${vm.currentCountryCode}/`) === 0
+          )
           .map((publicationCode) => ({
             text: vm.publicationNames[publicationCode],
             value: publicationCode,
           }))
-          .sort(({ text: text1 }, { text: text2 }) => (text1 < text2 ? -1 : text2 < text1 ? 1 : 0))
+          .sort(({ text: text1 }, { text: text2 }) =>
+            text1 < text2 ? -1 : text2 < text1 ? 1 : 0
+          )
       )
     },
     issuesWithSelect() {
@@ -105,7 +110,9 @@ export default {
             })
             return {
               value: issuenumber,
-              text: `${issuenumber}${status === 'none' ? '' : ` (${this.$t(status)})`}`,
+              text: `${issuenumber}${
+                status === 'none' ? '' : ` (${this.$t(status)})`
+              }`,
               disabled:
                 (this.disableOngoingOrPublished && status !== 'none') ||
                 (this.disableNotOngoingNorPublished && status === 'none'),
@@ -133,7 +140,9 @@ export default {
         if (newValue) {
           this.currentIssueNumber = null
           await this.fetchIssueNumbers([newValue])
-          const publishedEdges = await this.$axios.$get(`/api/edges/${newValue}`)
+          const publishedEdges = await this.$axios.$get(
+            `/api/edges/${newValue}`
+          )
           this.addPublishedEdges({
             [newValue]: publishedEdges.reduce(
               (acc, { issuenumber, id, modelId }) => ({

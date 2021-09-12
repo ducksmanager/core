@@ -39,34 +39,51 @@ export default async function (req, res) {
       .on('field', function (fieldname, val) {
         fields[fieldname] = val
       })
-      .on('file', async function (fieldname, file, filename, encoding, mimetype) {
-        isEdgePhoto = fields.photo === 'true'
-        isMultipleEdgePhoto = fields.multiple === 'true'
-        allowedMimeTypes = isEdgePhoto ? ['image/jpg', 'image/jpeg'] : ['image/png']
+      .on(
+        'file',
+        async function (fieldname, file, filename, encoding, mimetype) {
+          isEdgePhoto = fields.photo === 'true'
+          isMultipleEdgePhoto = fields.multiple === 'true'
+          allowedMimeTypes = isEdgePhoto
+            ? ['image/jpg', 'image/jpeg']
+            : ['image/png']
 
-        const targetFilename = getTargetFilename(filename, isMultipleEdgePhoto)
-        try {
-          await validateUpload(mimetype, targetFilename, file)
-          saveFile(targetFilename)
-          await storePhotoHash(targetFilename)
-          res.writeHead(200, { Connection: 'close' })
-          res.end(
-            JSON.stringify({
-              filename: targetFilename.replace(process.env.EDGES_PATH, process.env.EDGES_URL),
-            })
+          const targetFilename = getTargetFilename(
+            filename,
+            isMultipleEdgePhoto
           )
-        } catch (e) {
-          res.writeHead(400, { Connection: 'close', 'Content-Type': 'application/json' })
-          res.end(e.message)
+          try {
+            await validateUpload(mimetype, targetFilename, file)
+            saveFile(targetFilename)
+            await storePhotoHash(targetFilename)
+            res.writeHead(200, { Connection: 'close' })
+            res.end(
+              JSON.stringify({
+                filename: targetFilename.replace(
+                  process.env.EDGES_PATH,
+                  process.env.EDGES_URL
+                ),
+              })
+            )
+          } catch (e) {
+            res.writeHead(400, {
+              Connection: 'close',
+              'Content-Type': 'application/json',
+            })
+            res.end(e.message)
+          }
         }
-      })
+      )
     req.pipe(busboy)
 
     const getTargetFilename = (filename, isMultipleEdgePhoto) => {
       filename = filename.normalize('NFD').replace(/[\u0300-\u036F]/g, '')
 
       if (isMultipleEdgePhoto) {
-        return getNextAvailableFile(`${edgesPath}/tranches_multiples/photo.multiple`, 'jpg')
+        return getNextAvailableFile(
+          `${edgesPath}/tranches_multiples/photo.multiple`,
+          'jpg'
+        )
       } else {
         const { country, issuenumber, magazine } = JSON.parse(fields.edge)
         if (isEdgePhoto) {
@@ -94,19 +111,31 @@ export default async function (req, res) {
       }
       if (isEdgePhoto) {
         if (await hasReachedDailyUploadLimit()) {
-          throw new Error(JSON.stringify({ error: 'You have reached your daily upload limit' }))
+          throw new Error(
+            JSON.stringify({
+              error: 'You have reached your daily upload limit',
+            })
+          )
         }
         if (await hasAlreadySentPhoto(filestream)) {
-          throw new Error(JSON.stringify({ error: 'You have already sent this photo' }))
+          throw new Error(
+            JSON.stringify({ error: 'You have already sent this photo' })
+          )
         }
       } else {
         await readFile(filestream)
-        const otherElementUses = isFileExistingAndUsedInOtherModels(filename, fields.edge)
+        const otherElementUses = isFileExistingAndUsedInOtherModels(
+          filename,
+          fields.edge
+        )
         if (fs.existsSync(filename) && otherElementUses.length) {
           throw new Error(
             JSON.stringify({
-              error: 'This file name is already used in other models, please rename your file',
-              placeholders: { otherElementUses: JSON.stringify(otherElementUses) },
+              error:
+                'This file name is already used in other models, please rename your file',
+              placeholders: {
+                otherElementUses: JSON.stringify(otherElementUses),
+              },
             })
           )
         }
@@ -155,7 +184,10 @@ export default async function (req, res) {
         )
       })
 
-    const isFileExistingAndUsedInOtherModels = async (filename, currentModel) => {
+    const isFileExistingAndUsedInOtherModels = async (
+      filename,
+      currentModel
+    ) => {
       const elementUses = await axios.get(
         `${process.env.BACKEND_URL}/edgecreator/elements/images/${filename}`,
         { headers: userCredentials }
@@ -183,7 +215,10 @@ export default async function (req, res) {
       )
     }
   } else {
-    res.writeHead(400, { Connection: 'close', 'Content-Type': 'application/text' })
+    res.writeHead(400, {
+      Connection: 'close',
+      'Content-Type': 'application/text',
+    })
     res.end('Only POST is allowed')
   }
 }

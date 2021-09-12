@@ -29,7 +29,8 @@
           :disabled="disabled"
           :list="listId"
           v-on="{
-            [isTextImageOption || isImageSrcOption ? 'change' : 'input']: onChangeValue,
+            [isTextImageOption || isImageSrcOption ? 'change' : 'input']:
+              onChangeValue,
           }"
         ></b-form-input>
         <slot />
@@ -78,7 +79,9 @@ export default {
     isTextImageOption() {
       return (
         !!this.options.text &&
-        ['fgColor', 'bgColor', 'internalWidth', 'text', 'font'].includes(this.optionName)
+        ['fgColor', 'bgColor', 'internalWidth', 'text', 'font'].includes(
+          this.optionName
+        )
       )
     },
     isImageSrcOption() {

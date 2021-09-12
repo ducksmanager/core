@@ -1,7 +1,12 @@
 <!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
   <svg>
-    <image ref="image" v-bind="options" :xlink:href="image.base64" preserveAspectRatio="none">
+    <image
+      ref="image"
+      v-bind="options"
+      :xlink:href="image.base64"
+      preserveAspectRatio="none"
+    >
       <metadata>{{ options }}</metadata>
     </image>
   </svg>
@@ -51,7 +56,9 @@ export default {
             )
             this.enableDragResize(this.$refs.image)
           } catch (e) {
-            console.error(`Image could not be retrieved : ${this.effectiveSource}`)
+            console.error(
+              `Image could not be retrieved : ${this.effectiveSource}`
+            )
             this.image = { base64: null, width: null, height: null }
           }
         }

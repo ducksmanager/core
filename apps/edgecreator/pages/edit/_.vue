@@ -28,7 +28,10 @@
       <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
         <table class="edges">
           <tr v-if="showIssueNumbers">
-            <th v-if="showPreviousEdge && edgesBefore.length" class="surrounding-edge">
+            <th
+              v-if="showPreviousEdge && edgesBefore.length"
+              class="surrounding-edge"
+            >
               {{ edgesBefore[edgesBefore.length - 1].issuenumber }}
             </th>
             <template v-for="issuenumber in issuenumbers">
@@ -43,7 +46,9 @@
                 @click.shift="toggleEditIssuenumber(issuenumber)"
                 @dblclick="addEditIssuenumbers(issuenumbers)"
               >
-                <div v-if="editingIssuenumbers.includes(issuenumber)"><b-icon-pencil /></div>
+                <div v-if="editingIssuenumbers.includes(issuenumber)">
+                  <b-icon-pencil />
+                </div>
                 <div>
                   {{ issuenumber }}
                 </div>
@@ -55,7 +60,10 @@
                 <b-icon-camera />
               </th>
             </template>
-            <th v-if="showNextEdge && edgesAfter.length" class="surrounding-edge">
+            <th
+              v-if="showNextEdge && edgesAfter.length"
+              class="surrounding-edge"
+            >
               {{ edgesAfter[0].issuenumber }}
             </th>
           </tr>
@@ -77,12 +85,17 @@
                   :contributors="contributors[issuenumber] || {}"
                 />
               </td>
-              <td v-if="showEdgePhotos && photoUrls[issuenumber]" :key="`photo-${issuenumber}`">
+              <td
+                v-if="showEdgePhotos && photoUrls[issuenumber]"
+                :key="`photo-${issuenumber}`"
+              >
                 <img
                   :alt="photoUrls[issuenumber]"
                   :src="getImageUrl('photos', photoUrls[issuenumber])"
                   :class="{ picker: !!colorPickerOption }"
-                  :style="{ height: `${zoom * dimensions[issuenumber].height}px` }"
+                  :style="{
+                    height: `${zoom * dimensions[issuenumber].height}px`,
+                  }"
                   crossorigin
                   @click="setColorFromPhoto"
                   @load="showEdgePhotos = true"
@@ -139,7 +152,12 @@ export default {
     BIconPencil,
     BIconCamera,
   },
-  mixins: [svgUtilsMixin, modelLoadMixin, surroundingEdgeMixin, showEdgePhotosMixin],
+  mixins: [
+    svgUtilsMixin,
+    modelLoadMixin,
+    surroundingEdgeMixin,
+    showEdgePhotosMixin,
+  ],
   middleware: ['authenticated', 'is-editor'],
   data() {
     return {
@@ -161,21 +179,28 @@ export default {
     editingDimensions() {
       const vm = this
       return this.editingIssuenumbers.reduce(
-        (acc, issuenumber) => ({ ...acc, [issuenumber]: vm.dimensions[issuenumber] }),
+        (acc, issuenumber) => ({
+          ...acc,
+          [issuenumber]: vm.dimensions[issuenumber],
+        }),
         {}
       )
     },
     editingSteps() {
       const vm = this
       return this.editingIssuenumbers.reduce(
-        (acc, issuenumber) => ({ ...acc, [issuenumber]: vm.steps[issuenumber] }),
+        (acc, issuenumber) => ({
+          ...acc,
+          [issuenumber]: vm.steps[issuenumber],
+        }),
         {}
       )
     },
     stepColors() {
       const vm = this
       const isColorOption = (optionName) =>
-        optionName.toLowerCase().includes('color') || ['fill', 'stroke'].includes(optionName)
+        optionName.toLowerCase().includes('color') ||
+        ['fill', 'stroke'].includes(optionName)
       return Object.keys(this.steps).reduce(
         (acc, issuenumber) => ({
           ...acc,
@@ -184,9 +209,13 @@ export default {
               Object.keys(step.options || {})
                 .filter(
                   (optionName) =>
-                    isColorOption(optionName) && step.options[optionName] !== 'transparent'
+                    isColorOption(optionName) &&
+                    step.options[optionName] !== 'transparent'
                 )
-                .reduce((acc, optionName) => [...acc, step.options[optionName]], [])
+                .reduce(
+                  (acc, optionName) => [...acc, step.options[optionName]],
+                  []
+                )
             ),
           ]),
         }),
@@ -230,8 +259,16 @@ export default {
     const vm = this
     let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers
     try {
-      ;[, country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers] =
-        vm.$route.params.pathMatch.match(/^([^/]+)\/([^ ]+) ([^, ]+)(?: to (.+))?(?:,([^$]+))?$/)
+      ;[
+        ,
+        country,
+        magazine,
+        issuenumberMin,
+        issuenumberMax,
+        issuenumberOthers,
+      ] = vm.$route.params.pathMatch.match(
+        /^([^/]+)\/([^ ]+) ([^, ]+)(?: to (.+))?(?:,([^$]+))?$/
+      )
       magazine = magazine.replaceAll(/ +/g, '')
     } catch (_) {
       this.error = 'Invalid URL'
@@ -274,7 +311,11 @@ export default {
     async overwriteModel({ publicationCode, issueNumber }) {
       for (const targetIssuenumber of this.editingIssuenumbers) {
         try {
-          await this.loadModel(...publicationCode.split('/'), issueNumber, targetIssuenumber)
+          await this.loadModel(
+            ...publicationCode.split('/'),
+            issueNumber,
+            targetIssuenumber
+          )
         } catch (e) {
           this.addWarning(e)
         }
@@ -303,13 +344,19 @@ export default {
       canvas.height = imgElement.height
       context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height)
       const color = context.getImageData(offsetX, offsetY, 1, 1).data
-      this.$root.$emit('set-options', { [this.colorPickerOption]: this.rgbToHex(...color) })
+      this.$root.$emit('set-options', {
+        [this.colorPickerOption]: this.rgbToHex(...color),
+      })
     },
     isPending(issuenumber) {
-      return !!this.currentEdges[`${this.country}/${this.magazine} ${issuenumber}`]
+      return !!this.currentEdges[
+        `${this.country}/${this.magazine} ${issuenumber}`
+      ]
     },
     isPublished(issuenumber) {
-      return !!(this.publishedEdges[`${this.country}/${this.magazine}`] || {})[issuenumber]
+      return !!(this.publishedEdges[`${this.country}/${this.magazine}`] || {})[
+        issuenumber
+      ]
     },
     rgbToHex: (r, g, b) => `#${((r << 16) | (g << 8) | b).toString(16)}`,
     ...mapMutations([

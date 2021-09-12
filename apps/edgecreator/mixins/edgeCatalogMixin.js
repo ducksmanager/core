@@ -40,7 +40,13 @@ export default {
     ...mapActions('user', ['fetchAllUsers']),
 
     getEdgeFromApi(
-      { pays: country, magazine, numero: issuenumber, contributeurs: contributors, photos },
+      {
+        pays: country,
+        magazine,
+        numero: issuenumber,
+        contributeurs: contributors,
+        photos,
+      },
       status
     ) {
       const vm = this
@@ -48,8 +54,13 @@ export default {
       const getContributorsOfType = (contributionType) =>
         (contributors || [])
           .filter(({ contribution }) => contribution === contributionType)
-          .map(({ idUtilisateur }) => vm.allUsers.find(({ id }) => id === idUtilisateur).username)
-      const photo = photos && photos.find(({ estphotoprincipale: isMainPhoto }) => isMainPhoto)
+          .map(
+            ({ idUtilisateur }) =>
+              vm.allUsers.find(({ id }) => id === idUtilisateur).username
+          )
+      const photo =
+        photos &&
+        photos.find(({ estphotoprincipale: isMainPhoto }) => isMainPhoto)
       return {
         country,
         magazine,
@@ -68,7 +79,8 @@ export default {
         ...edge,
         v3: true,
         status: this.edgeCategories.reduce(
-          (acc, { status, svgCheckFn }) => acc || (svgCheckFn(edge, currentUser) ? status : null),
+          (acc, { status, svgCheckFn }) =>
+            acc || (svgCheckFn(edge, currentUser) ? status : null),
           null
         ),
       }
@@ -81,7 +93,8 @@ export default {
     getEdgeStatus({ country, magazine, issuenumber }) {
       let isPublished = false
       const publicationcode = `${country}/${magazine}`
-      const publishedEdgesForPublication = this.publishedEdges[publicationcode] || {}
+      const publishedEdgesForPublication =
+        this.publishedEdges[publicationcode] || {}
       if (publishedEdgesForPublication[issuenumber]) {
         isPublished = true
       }
@@ -128,7 +141,10 @@ export default {
               if (!publishedSvgEdges[publicationcode]) {
                 publishedSvgEdges[publicationcode] = {}
               }
-              publishedSvgEdges[publicationcode][issuenumber] = { issuenumber, v3: true }
+              publishedSvgEdges[publicationcode][issuenumber] = {
+                issuenumber,
+                v3: true,
+              }
             } else {
               const { svgChildNodes } = await this.loadSvgFromString(
                 country,
@@ -136,8 +152,14 @@ export default {
                 issuenumber,
                 edgeStatus === 'published'
               )
-              const designers = vm.getSvgMetadata(svgChildNodes, 'contributor-designer')
-              const photographers = vm.getSvgMetadata(svgChildNodes, 'contributor-photographer')
+              const designers = vm.getSvgMetadata(
+                svgChildNodes,
+                'contributor-designer'
+              )
+              const photographers = vm.getSvgMetadata(
+                svgChildNodes,
+                'contributor-photographer'
+              )
 
               currentEdges[issuecode] = vm.getEdgeFromSvg({
                 country,
@@ -148,7 +170,9 @@ export default {
               })
             }
           } catch (e) {
-            console.error(`No SVG found : ${country}/${magazine} ${issuenumber}`)
+            console.error(
+              `No SVG found : ${country}/${magazine} ${issuenumber}`
+            )
           }
         }
       }
@@ -156,12 +180,16 @@ export default {
       if (Object.keys(currentEdges).length) {
         await this.fetchPublicationNames([
           ...new Set(
-            Object.values(currentEdges).map(({ country, magazine }) => `${country}/${magazine}`)
+            Object.values(currentEdges).map(
+              ({ country, magazine }) => `${country}/${magazine}`
+            )
           ),
         ])
 
         for (const edgeIssueCode of Object.keys(currentEdges)) {
-          currentEdges[edgeIssueCode].published = vm.getEdgeStatus(currentEdges[edgeIssueCode])
+          currentEdges[edgeIssueCode].published = vm.getEdgeStatus(
+            currentEdges[edgeIssueCode]
+          )
         }
 
         this.addCurrentEdges(currentEdges)

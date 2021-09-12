@@ -67,18 +67,25 @@ export default {
           'setCountryNames',
           (
             await coaApi.get(
-              URL_PREFIX_COUNTRIES.replace('LOCALE', locale || localStorage.getItem('locale'))
+              URL_PREFIX_COUNTRIES.replace(
+                'LOCALE',
+                locale || localStorage.getItem('locale')
+              )
             )
           ).data
         )
         commit('setIsLoadingCountryNames', false)
       }
     },
-    fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) => {
+    fetchPublicationNames: async (
+      { state, commit, dispatch },
+      publicationCodes
+    ) => {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
-            (publicationCode) => !Object.keys(state.publicationNames).includes(publicationCode)
+            (publicationCode) =>
+              !Object.keys(state.publicationNames).includes(publicationCode)
           )
         ),
       ]
@@ -95,30 +102,38 @@ export default {
               chunkSize: 10,
             },
             { root: true }
-          ).then((data) => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))
+          ).then((data) =>
+            data.reduce((acc, result) => ({ ...acc, ...result.data }), {})
+          )
         )
       )
     },
-    fetchPublicationNamesFromCountry: async ({ state, commit, dispatch }, countryCode) => {
+    fetchPublicationNamesFromCountry: async (
+      { state, commit, dispatch },
+      countryCode
+    ) => {
       if (state.publicationNamesFullCountries.includes(countryCode)) {
         return
       }
-      return coaApi.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({ data }) => {
-        commit('addPublicationNames', {
-          ...(state.publicationNames || {}),
-          ...data,
+      return coaApi
+        .get(URL_PREFIX_PUBLICATIONS + countryCode)
+        .then(({ data }) => {
+          commit('addPublicationNames', {
+            ...(state.publicationNames || {}),
+            ...data,
+          })
+          commit('setPublicationNamesFullCountries', [
+            ...state.publicationNamesFullCountries,
+            countryCode,
+          ])
         })
-        commit('setPublicationNamesFullCountries', [
-          ...state.publicationNamesFullCountries,
-          countryCode,
-        ])
-      })
     },
     fetchPersonNames: async ({ state, commit, dispatch }, personCodes) => {
       const newPersonNames = [
         ...new Set(
           personCodes.filter(
-            (personCode) => !Object.keys(state.personNames || {}).includes(personCode)
+            (personCode) =>
+              !Object.keys(state.personNames || {}).includes(personCode)
           )
         ),
       ]
@@ -135,16 +150,22 @@ export default {
               chunkSize: 10,
             },
             { root: true }
-          ).then((data) => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))),
+          ).then((data) =>
+            data.reduce((acc, result) => ({ ...acc, ...result.data }), {})
+          )),
         })
       )
     },
 
-    fetchIssueNumbers: async ({ state, commit, dispatch }, publicationCodes) => {
+    fetchIssueNumbers: async (
+      { state, commit, dispatch },
+      publicationCodes
+    ) => {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
-            (publicationCode) => !Object.keys(state.issueNumbers || {}).includes(publicationCode)
+            (publicationCode) =>
+              !Object.keys(state.issueNumbers || {}).includes(publicationCode)
           )
         ),
       ]
@@ -165,9 +186,10 @@ export default {
             data.reduce(
               (acc, result) => ({
                 ...acc,
-                [result.config.url.replace(URL_PREFIX_ISSUES, '')]: result.data.map((issueNumber) =>
-                  issueNumber.replace(/ /g, '')
-                ),
+                [result.config.url.replace(URL_PREFIX_ISSUES, '')]:
+                  result.data.map((issueNumber) =>
+                    issueNumber.replace(/ /g, '')
+                  ),
               }),
               {}
             )
@@ -183,13 +205,19 @@ export default {
       }
     },
 
-    fetchIssueUrls: async ({ state, commit }, { publicationCode, issueNumber }) => {
+    fetchIssueUrls: async (
+      { state, commit },
+      { publicationCode, issueNumber }
+    ) => {
       const issueCode = `${publicationCode} ${issueNumber}`
       if (!state.issueDetails[issueCode]) {
         commit('setIssueDetails', {
           issueCode,
-          issueDetails: (await coaApi.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`))
-            .data,
+          issueDetails: (
+            await coaApi.get(
+              `${URL_PREFIX_URLS + publicationCode}/${issueNumber}`
+            )
+          ).data,
         })
       }
     },

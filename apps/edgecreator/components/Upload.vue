@@ -32,7 +32,9 @@ export default {
   },
   mounted() {
     const vm = this
-    const locale = this.$i18n.locales.find(({ code }) => code === vm.$i18n.locale).iso
+    const locale = this.$i18n.locales.find(
+      ({ code }) => code === vm.$i18n.locale
+    ).iso
     const uppyTranslations = {
       'fr-FR': require('@uppy/locales/lib/fr_FR'),
       'en-US': require('@uppy/locales/lib/en_US'),
@@ -52,7 +54,9 @@ export default {
         maxFileSize: 3 * 1024 * 1024,
         minNumberOfFiles: 1,
         maxNumberOfFiles: this.photo ? 1 : 10,
-        allowedFileTypes: this.photo ? ['image/jpg', 'image/jpeg'] : ['image/png'],
+        allowedFileTypes: this.photo
+          ? ['image/jpg', 'image/jpeg']
+          : ['image/png'],
       },
     })
 
@@ -81,7 +85,10 @@ export default {
     uppy.on('upload-success', (fileId, payload) => {
       vm.$emit('upload-success')
       if (vm.photo && !vm.multiple) {
-        vm.setPhotoUrl({ issuenumber: vm.edge.issuenumber, filename: payload.body.filename })
+        vm.setPhotoUrl({
+          issuenumber: vm.edge.issuenumber,
+          filename: payload.body.filename,
+        })
       } else {
         vm.loadItems({ itemType: vm.photo ? 'photos' : 'elements' })
       }

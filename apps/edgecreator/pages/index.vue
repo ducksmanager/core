@@ -3,7 +3,9 @@
     <session-info />
     <h1>{{ $t('Dashboard') }}</h1>
 
-    <b-alert v-if="!isCatalogLoaded" show variant="info">{{ $t('Loading...') }}</b-alert>
+    <b-alert v-if="!isCatalogLoaded" show variant="info">{{
+      $t('Loading...')
+    }}</b-alert>
 
     <template v-else>
       <h3>{{ $t('Edge creation') }}</h3>
@@ -26,7 +28,9 @@
               </template>
             </UploadableEdgesCarousel>
             <div>
-              <div class="position-absolute px-2 separation-text">{{ $t('or') }}</div>
+              <div class="position-absolute px-2 separation-text">
+                {{ $t('or') }}
+              </div>
               <hr />
             </div>
           </template>
@@ -44,12 +48,16 @@
               }}
             </template>
           </UploadableEdgesCarousel>
-          <b-button to="/upload" class="mt-1">{{ $t('Send edge photos') }}</b-button>
+          <b-button to="/upload" class="mt-1">{{
+            $t('Send edge photos')
+          }}</b-button>
         </b-alert>
       </b-container>
 
       <b-container v-role:unless="'display'" class="mt-3" align="center">
-        <b-button to="/edit/new">{{ $t('Create or edit an edge model') }}</b-button>
+        <b-button to="/edit/new">{{
+          $t('Create or edit an edge model')
+        }}</b-button>
       </b-container>
 
       <hr />
@@ -72,17 +80,26 @@
                   :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
                   :disabled="
                     $gates.hasRole('display') ||
-                    (!$gates.hasRole('admin') && status === 'ongoing by another user')
+                    (!$gates.hasRole('admin') &&
+                      status === 'ongoing by another user')
                   "
                 >
-                  <b-card-text v-if="publicationNames[`${edge.country}/${edge.magazine}`]">
+                  <b-card-text
+                    v-if="publicationNames[`${edge.country}/${edge.magazine}`]"
+                  >
                     <img
                       v-if="edge.v3 || status === 'pending'"
                       :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
                       class="edge-preview"
                       :src="
                         edge.v3
-                          ? getEdgeUrl(edge.country, edge.magazine, edge.issuenumber, 'svg', false)
+                          ? getEdgeUrl(
+                              edge.country,
+                              edge.magazine,
+                              edge.issuenumber,
+                              'svg',
+                              false
+                            )
                           : getPhotoUrl(edge.country, edge.photo)
                       "
                     /><EdgeLink
@@ -104,9 +121,16 @@
 
     <b-container align="center" class="m-5">&nbsp;</b-container>
 
-    <b-container id="footer" class="position-fixed text-center w-100 bg-light p-2"
-      >{{ $t('EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.')
-      }}<br /><a href="https://ducksmanager.net">{{ $t('Go to DucksManager') }}</a></b-container
+    <b-container
+      id="footer"
+      class="position-fixed text-center w-100 bg-light p-2"
+      >{{
+        $t(
+          'EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.'
+        )
+      }}<br /><a href="https://ducksmanager.net">{{
+        $t('Go to DucksManager')
+      }}</a></b-container
     >
   </div>
 </template>
@@ -139,12 +163,14 @@ export default {
     ...mapGetters('collection', ['popularIssuesInCollectionWithoutEdge']),
 
     mostPopularIssuesInCollectionWithoutEdge() {
-      const popularIssuesInCollectionWithoutEdge = this.popularIssuesInCollectionWithoutEdge
+      const popularIssuesInCollectionWithoutEdge =
+        this.popularIssuesInCollectionWithoutEdge
       return (
         popularIssuesInCollectionWithoutEdge &&
         popularIssuesInCollectionWithoutEdge
           .sort(
-            ({ popularity: popularity1 }, { popularity: popularity2 }) => popularity2 - popularity1
+            ({ popularity: popularity1 }, { popularity: popularity2 }) =>
+              popularity2 - popularity1
           )
           .filter((_, index) => index < 10)
       )
@@ -158,7 +184,9 @@ export default {
     await this.loadMostWantedEdges()
     await this.fetchPublicationNames([
       ...new Set([
-        ...this.bookcase.map(({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`),
+        ...this.bookcase.map(
+          ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`
+        ),
         ...this.mostWantedEdges.map(({ publicationCode }) => publicationCode),
       ]),
     ])
@@ -167,11 +195,17 @@ export default {
 
   methods: {
     ...mapActions('user', ['fetchUserPoints']),
-    ...mapActions('collection', ['loadPopularIssuesInCollection', 'loadBookcase']),
-    getPhotoUrl: (country, fileName) => `${process.env.EDGES_URL}/${country}/photos/${fileName}`,
+    ...mapActions('collection', [
+      'loadPopularIssuesInCollection',
+      'loadBookcase',
+    ]),
+    getPhotoUrl: (country, fileName) =>
+      `${process.env.EDGES_URL}/${country}/photos/${fileName}`,
 
     async loadMostWantedEdges() {
-      this.mostWantedEdges = (await this.$axios.$get('/wanted-edges')).wantedEdges
+      this.mostWantedEdges = (
+        await this.$axios.$get('/wanted-edges')
+      ).wantedEdges
         .slice(0, 10)
         .map(({ publicationcode, issuenumber, numberOfIssues }) => ({
           issueCode: `${publicationcode} ${issuenumber}`,

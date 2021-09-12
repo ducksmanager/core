@@ -14,10 +14,18 @@
       :id="`${optionName}-transparent`"
       :checked="isTransparent"
       type="checkbox"
-      @change="change($event.currentTarget.checked ? 'transparent' : originalColor)"
+      @change="
+        change($event.currentTarget.checked ? 'transparent' : originalColor)
+      "
     />
-    <label v-if="canBeTransparent" class="transparent" :for="`${optionName}-transparent`"
-      ><img :id="`${optionName}-transparent`" alt="transp" src="/transparent.png"
+    <label
+      v-if="canBeTransparent"
+      class="transparent"
+      :for="`${optionName}-transparent`"
+      ><img
+        :id="`${optionName}-transparent`"
+        alt="transp"
+        src="/transparent.png"
     /></label>
 
     <template v-if="!isTransparent" #suffix>
@@ -29,9 +37,18 @@
         variant="outline-primary"
         >{{ $t('Re-use') }}
       </b-button>
-      <b-popover :target="`${optionName}-popover-colors`" triggers="hover focus" placement="bottom">
-        <div v-for="(otherColorsForLocation, colorLocation) in otherColors" :key="colorLocation">
-          <h6 v-if="colorLocation === 'sameIssuenumber'">{{ $t('Colors used in other steps') }}</h6>
+      <b-popover
+        :target="`${optionName}-popover-colors`"
+        triggers="hover focus"
+        placement="bottom"
+      >
+        <div
+          v-for="(otherColorsForLocation, colorLocation) in otherColors"
+          :key="colorLocation"
+        >
+          <h6 v-if="colorLocation === 'sameIssuenumber'">
+            {{ $t('Colors used in other steps') }}
+          </h6>
           <h6 v-if="colorLocation === 'differentIssuenumber'">
             {{ $t('Colors used in other edges') }}
           </h6>
@@ -40,7 +57,10 @@
               v-for="(_, stepNumber) in otherColorsForLocation"
               :key="`${colorLocation}-${stepNumber}`"
             >
-              <span :class="{ 'text-secondary': !otherColorsForLocation[stepNumber].length }"
+              <span
+                :class="{
+                  'text-secondary': !otherColorsForLocation[stepNumber].length,
+                }"
                 >{{ $t('Step') }} {{ stepNumber }}</span
               >
               <span
@@ -59,7 +79,9 @@
         pill
         size="sm"
         :disabled="!hasPhotoUrl || showEdgePhotos === null"
-        :variant="colorPickerOption === optionName ? 'primary' : 'outline-primary'"
+        :variant="
+          colorPickerOption === optionName ? 'primary' : 'outline-primary'
+        "
         @click="colorPickerOption = colorPickerOption ? null : optionName"
         >{{ $t('From photo') }}
       </b-button>

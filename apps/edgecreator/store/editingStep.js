@@ -5,10 +5,14 @@ export const state = () => ({
 
 export const mutations = {
   addIssuenumber(state, issuenumber) {
-    state.issuenumbers = [...new Set(state.issuenumbers.concat(issuenumber))].sort()
+    state.issuenumbers = [
+      ...new Set(state.issuenumbers.concat(issuenumber)),
+    ].sort()
   },
   addIssuenumbers(state, issuenumbers) {
-    state.issuenumbers = [...new Set([...state.issuenumbers, ...issuenumbers])].sort()
+    state.issuenumbers = [
+      ...new Set([...state.issuenumbers, ...issuenumbers]),
+    ].sort()
   },
   replaceIssuenumber(state, issuenumber) {
     state.issuenumbers = [issuenumber]
@@ -19,7 +23,9 @@ export const mutations = {
         state.issuenumbers.splice(state.issuenumbers.indexOf(issuenumber), 1)
       }
     } else {
-      state.issuenumbers = [...new Set(state.issuenumbers.concat(issuenumber))].sort()
+      state.issuenumbers = [
+        ...new Set(state.issuenumbers.concat(issuenumber)),
+      ].sort()
     }
   },
   setStepNumber(state, stepNumber) {

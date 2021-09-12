@@ -41,7 +41,14 @@ export default {
       switch (targetComponent) {
         case 'ArcCircle': {
           this.validateOptions(
-            ['Rempli', 'Pos_x_centre', 'Pos_y_centre', 'Largeur', 'Hauteur', 'Couleur'],
+            [
+              'Rempli',
+              'Pos_x_centre',
+              'Pos_y_centre',
+              'Largeur',
+              'Hauteur',
+              'Couleur',
+            ],
             dbOptions
           )
           const filled = dbOptions.Rempli === 'Oui'
@@ -58,10 +65,14 @@ export default {
         case 'Fill': {
           this.validateOptions(['Pos_x', 'Pos_y', 'Couleur'], dbOptions)
           if (parseFloat(dbOptions.Pos_x) !== 0) {
-            console.error(`Step ${this.stepNumber}: Pos_x !== 0, this is not supported`)
+            console.error(
+              `Step ${this.stepNumber}: Pos_x !== 0, this is not supported`
+            )
           }
           if (parseFloat(dbOptions.Pos_y) !== 0) {
-            console.error(`Step ${this.stepNumber}: Pos_y !== 0, this is not supported`)
+            console.error(
+              `Step ${this.stepNumber}: Pos_y !== 0, this is not supported`
+            )
           }
           return {
             fill: rgbToHex(dbOptions.Couleur),
@@ -92,24 +103,32 @@ export default {
         }
         case 'Image': {
           this.validateOptions(
-            ['Source', 'Position', 'Decalage_x', 'Decalage_y', 'Compression_x', 'Compression_y'],
+            [
+              'Source',
+              'Position',
+              'Decalage_x',
+              'Decalage_y',
+              'Compression_x',
+              'Compression_y',
+            ],
             dbOptions
           )
           let image
           try {
-            const elementPath = `${this.country}/elements/${this.resolveStringTemplates(
-              dbOptions.Source,
-              {
-                dimensions: edgeDimensions,
-                issuenumber,
-              }
-            )}`
+            const elementPath = `${
+              this.country
+            }/elements/${this.resolveStringTemplates(dbOptions.Source, {
+              dimensions: edgeDimensions,
+              issuenumber,
+            })}`
 
             if (calculateBase64) {
               image = await this.$axios.$get(`/fs/base64?${elementPath}`)
             } else {
               image = {
-                dimensions: await this.getImageSize(`${process.env.EDGES_URL}/${elementPath}`),
+                dimensions: await this.getImageSize(
+                  `${process.env.EDGES_URL}/${elementPath}`
+                ),
               }
             }
           } catch (e) {
@@ -124,18 +143,23 @@ export default {
           }
 
           const embeddedImageHeight =
-            edgeDimensions.width * (image.dimensions.height / image.dimensions.width)
+            edgeDimensions.width *
+            (image.dimensions.height / image.dimensions.width)
           const fromBottom = dbOptions.Position === 'bas'
           return {
             src: dbOptions.Source,
             x: parseFloat(dbOptions.Decalage_x || 0),
             y: parseFloat(
               fromBottom
-                ? edgeDimensions.height - embeddedImageHeight - (dbOptions.Decalage_y || 0)
+                ? edgeDimensions.height -
+                    embeddedImageHeight -
+                    (dbOptions.Decalage_y || 0)
                 : dbOptions.Decalage_y || 0
             ),
-            width: parseFloat(dbOptions.Compression_x || 1) * edgeDimensions.width,
-            height: parseFloat(dbOptions.Compression_y || 1) * embeddedImageHeight,
+            width:
+              parseFloat(dbOptions.Compression_x || 1) * edgeDimensions.width,
+            height:
+              parseFloat(dbOptions.Compression_y || 1) * embeddedImageHeight,
           }
         }
         case 'Polygon': {
@@ -149,7 +173,14 @@ export default {
         }
         case 'Rectangle': {
           this.validateOptions(
-            ['Rempli', 'Pos_x_debut', 'Pos_y_debut', 'Pos_x_fin', 'Pos_y_fin', 'Couleur'],
+            [
+              'Rempli',
+              'Pos_x_debut',
+              'Pos_y_debut',
+              'Pos_x_fin',
+              'Pos_y_fin',
+              'Couleur',
+            ],
             dbOptions
           )
           const filled = dbOptions.Rempli === 'Oui'

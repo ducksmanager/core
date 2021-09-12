@@ -31,7 +31,9 @@ export default {
       window.location.replace(`/`)
     },
     startEditing() {
-      window.location.replace(`/edit/${this.issue.publicationCode} ${this.issue.issueNumber}`)
+      window.location.replace(
+        `/edit/${this.issue.publicationCode} ${this.issue.issueNumber}`
+      )
     },
   },
 }

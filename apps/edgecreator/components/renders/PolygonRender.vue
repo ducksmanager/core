@@ -1,5 +1,9 @@
 <template>
-  <polygon ref="polygon" :points="options.points.join(' ')" :style="{ fill: options.fill }">
+  <polygon
+    ref="polygon"
+    :points="options.points.join(' ')"
+    :style="{ fill: options.fill }"
+  >
     <metadata>{{ options }}</metadata>
   </polygon>
 </template>
@@ -34,7 +38,10 @@ export default {
     this.enableDragResize(this.$refs.polygon, {
       onmove: ({ dy, dx }) => {
         vm.$root.$emit('set-options', {
-          points: vm.options.points.map(([x, y]) => [x + dx / vm.zoom, y + dy / vm.zoom]),
+          points: vm.options.points.map(([x, y]) => [
+            x + dx / vm.zoom,
+            y + dy / vm.zoom,
+          ]),
         })
       },
       onresizemove: ({ dy, dx }) => {

@@ -21,7 +21,11 @@ export const mutations = {
       Object.keys(publicationEdges).forEach((issueNumber) => {
         const edgeStatus = publicationEdges[issueNumber]
         if (!state.publishedEdges[publicationcode][issueNumber]) {
-          Vue.set(state.publishedEdges[publicationcode], issueNumber, edgeStatus)
+          Vue.set(
+            state.publishedEdges[publicationcode],
+            issueNumber,
+            edgeStatus
+          )
         } else {
           Vue.set(state.publishedEdges[publicationcode], issueNumber, {
             ...state.publishedEdges[publicationcode][issueNumber],
@@ -48,7 +52,9 @@ export const actions = {
   ) {
     const newModelIds = [
       ...new Set(
-        edgeModelIds.filter((modelId) => !Object.keys(state.publishedEdgesSteps).includes(modelId))
+        edgeModelIds.filter(
+          (modelId) => !Object.keys(state.publishedEdgesSteps).includes(modelId)
+        )
       ),
     ]
     return (
@@ -65,7 +71,9 @@ export const actions = {
             suffix: '/steps',
           },
           { root: true }
-        ).then((data) => data.reduce((acc, result) => ({ ...acc, ...result.data }), {})),
+        ).then((data) =>
+          data.reduce((acc, result) => ({ ...acc, ...result.data }), {})
+        ),
       })
     )
   },
