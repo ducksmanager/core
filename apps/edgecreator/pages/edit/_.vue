@@ -75,12 +75,13 @@
                 @error="showPreviousEdge = null"
               />
             </td>
-            <template v-for="(issueSteps, issuenumber) in steps">
+            <template v-for="issuenumber in issuenumbers">
               <td :key="`canvas-${issuenumber}`">
                 <edge-canvas
+                  v-if="dimensions[issuenumber]"
                   :issuenumber="issuenumber"
                   :dimensions="dimensions[issuenumber]"
-                  :steps="issueSteps"
+                  :steps="steps[issuenumber]"
                   :photo-url="photoUrls[issuenumber]"
                   :contributors="contributors[issuenumber] || {}"
                 />
