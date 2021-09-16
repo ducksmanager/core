@@ -11,7 +11,12 @@ exports.createOrGetPending = async () => {
       game_players: true,
     },
     where: {
-      started_at: null,
+      rounds: {
+        some: {
+          started_at: null,
+          round_number: 0,
+        },
+      },
     },
   })
   if (pendingGame) {
@@ -51,25 +56,17 @@ exports.createOrGetPending = async () => {
   }
 }
 
-exports.setFinishedAtFromLastRound = async (gameId) => {
-  const rounds = await prisma.rounds.findMany({
-    where: {
-      game_id: parseInt(gameId),
-      finished_at: {
-        not: null,
-      },
-    },
+exports.associatePlayer = async (gameId, username) => {
+  const user = await prisma.players.findFirst({
+    where: { username },
+  })
+  global.cachedUsers[user.id] = user
+  prisma.game_players.create({
+    game_id: gameId,
+    player_id: user.id,
   })
 
-  await prisma.games.update({
-    data: {
-      started_at: new Date(),
-      finished_at: rounds[rounds.length - 1].finished_at,
-    },
-    where: {
-      id: parseInt(gameId),
-    },
-  })
+  return user
 }
 
 exports.onGameConnection = (socket) => {

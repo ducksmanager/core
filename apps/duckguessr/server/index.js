@@ -23,7 +23,11 @@ const io = IO(server, {
 prisma.games
   .findMany({
     where: {
-      finished_at: { gt: new Date() },
+      rounds: {
+        some: {
+          finished_at: { gt: new Date() },
+        },
+      },
     },
   })
   .then((pendingGames) => {
@@ -40,11 +44,7 @@ io.of('/matchmaking').on('connection', (socket) => {
   socket.on('iAmReady', async ({ username }) => {
     console.log(`${username} is ready`)
     const gameData = await game.createOrGetPending()
-
-    const user = await prisma.players.findFirst({
-      where: { username },
-    })
-    global.cachedUsers[user.id] = user
+    const user = await game.associatePlayer(gameData.gameId, username)
 
     socket.emit('iAmReadyWithGameID', {
       gameId: gameData.gameId,
@@ -55,8 +55,10 @@ io.of('/matchmaking').on('connection', (socket) => {
     console.log(`${username} wants to know who else is in game ID ${gameId}`)
     socket.broadcast.emit('whoElseIsReady', { username, gameId })
   })
-  socket.on('iAmAlsoReady', ({ username, gameId }) => {
+  socket.on('iAmAlsoReady', async ({ username, gameId }) => {
     console.log(`${username} is also ready in game ID ${gameId}`)
+    await game.associatePlayer(gameId, username)
+
     socket.broadcast.emit('iAmAlsoReady', { username, gameId })
   })
   socket.on('matchStarts', async ({ gameId }) => {
@@ -71,7 +73,6 @@ io.of('/matchmaking').on('connection', (socket) => {
     })
     if (!currentGame.rounds[0].started_at) {
       await round.createGameRounds(currentGame.id)
-      await game.setFinishedAtFromLastRound(currentGame.id)
     }
     game.createSocket(io, currentGame)
   })

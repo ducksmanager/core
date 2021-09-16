@@ -12,11 +12,10 @@
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
-      v-if="(currentRound.guessed || false) && nextRoundStartDate"
+      v-if="(currentRound.guessed || remainingTime === 0) && nextRoundStartDate"
       :status="scoreTypeNameToVariant(currentRoundPlayerScoreTypeName)"
       :round-number="currentRound.round_number"
       :next-round-start-date="nextRoundStartDate"
-      @next-round="startRound()"
     />
     <b-row>
       <b-col cols="5" align-self="center">
@@ -53,7 +52,7 @@
         </b-row>
       </b-col>
       <b-col cols="2" class="border vh-100 overflow-auto">
-        <h3>Round scores</h3>
+        <h3>Round {{ currentRoundIndex + 1 }}</h3>
         <template v-for="score in currentRoundScores">
           <b-alert
             :key="`score-${score.username}`"
@@ -116,7 +115,6 @@ export default defineComponent({
     const { $axios } = useContext()
     const route = useRoute()
 
-    const currentRoundIndex = ref(-1 as number)
     const chosenAuthor = ref(null as Author | null)
 
     const game = ref(null as gameWithRounds | null)
@@ -131,20 +129,25 @@ export default defineComponent({
     const now = ref(Date.now() as number)
 
     const gameIsFinished = computed(() => {
-      return (
-        (game.value!.finished_at &&
-          new Date(game.value!.finished_at!).getTime() < now.value) ||
-        !currentRound.value ||
-        !nextRoundStartDate.value
-      )
+      return !nextRoundStartDate.value
     })
 
-    const currentRound = computed(
-      (): roundWithGuessedFlag | null =>
-        [...(game.value?.rounds || [])].find(
-          ({ finished_at: finishedAt }) =>
-            finishedAt && new Date(finishedAt).getTime() > now.value
-        ) || null
+    const currentRoundIndex = computed((): number | null => {
+      const lastUnfinishedRoundIndex = [...(game.value?.rounds || [])]
+        .reverse()
+        .findIndex(
+          ({ started_at: startedAt }) =>
+            startedAt && new Date(startedAt).getTime() < now.value
+        )
+      return lastUnfinishedRoundIndex === -1
+        ? 0
+        : (game.value?.rounds || []).length - lastUnfinishedRoundIndex - 1
+    })
+
+    const currentRound = computed((): roundWithGuessedFlag | null =>
+      currentRoundIndex.value == null
+        ? null
+        : (game.value?.rounds || [])[currentRoundIndex.value]
     )
 
     const availableTime = computed(() =>
@@ -156,7 +159,8 @@ export default defineComponent({
     )
 
     const remainingTime = computed(() =>
-      !currentRound.value || !currentRound.value.finished_at
+      !currentRound.value ||
+      new Date(currentRound.value!.started_at!).getTime() > now.value
         ? Infinity
         : Math.floor(
             Math.max(
@@ -173,7 +177,10 @@ export default defineComponent({
     )
 
     const nextRoundStartDate = computed(() => {
-      const nextRound = game.value?.rounds[currentRoundIndex.value + 1]
+      const nextRound =
+        currentRoundIndex.value == null
+          ? null
+          : game.value?.rounds[currentRoundIndex.value + 1]
       return nextRound?.started_at ? new Date(nextRound?.started_at) : null
     })
 
@@ -182,9 +189,19 @@ export default defineComponent({
       (game) => {
         if (!game) {
           console.error('No game ID')
-        } else if (new Date(game.finished_at!) > new Date()) {
+        }
+      }
+    )
+
+    watch(
+      () => currentRound.value,
+      (currentRound) => {
+        hasUrlLoaded.value = false
+        if (currentRound) {
           if (!gameSocket) {
-            gameSocket = io(`${process.env.SOCKET_URL}/game/${game.id}`)
+            gameSocket = io(
+              `${process.env.SOCKET_URL}/game/${currentRound.game_id}`
+            )
             gameSocket.on('playerGuessed', (data: any) => {
               Vue.set(
                 currentRoundScores.value,
@@ -198,23 +215,16 @@ export default defineComponent({
     )
 
     watch(
-      () => currentRound.value,
-      (currentRound) => {
-        hasUrlLoaded.value = false
-        if (currentRound) {
-          currentRoundScores.value = []
-          currentRoundIndex.value = game.value!.rounds.indexOf(currentRound)
-        }
-      }
-    )
-
-    watch(
       () => remainingTime.value,
-      (remainingTimeValue: Number) => {
-        if (remainingTimeValue === 0) {
+      (remainingTimeValue: number) => {
+        if (remainingTimeValue <= 0) {
           if (!currentRound.value!.guessed) {
             validateGuess()
           }
+          currentRoundScores.value = []
+          setTimeout(async () => {
+            game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
+          }, 1000)
         }
       }
     )
@@ -229,6 +239,7 @@ export default defineComponent({
           personnationality: chosenAuthor.value?.personnationality ?? null,
         },
       })
+      chosenAuthor.value = null
     }
 
     onMounted(async () => {
@@ -256,7 +267,7 @@ export default defineComponent({
             ({ username: scoreUsername, round_number: roundNumber }) =>
               username.value === scoreUsername &&
               roundNumber === currentRound.value!.round_number
-          )?.score_type_name
+          )?.score_type_name || null
       ),
       nextRoundStartDate,
       validateGuess,
@@ -275,8 +286,10 @@ export default defineComponent({
         return 'success'
       }),
 
-      scoreTypeNameToVariant: (scoreTypeName: string) => {
+      scoreTypeNameToVariant(scoreTypeName: string) {
         switch (scoreTypeName) {
+          case null:
+            return 'default'
           case 'Correct author':
             return 'success'
           case 'Correct nationality':

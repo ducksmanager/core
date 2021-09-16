@@ -14,17 +14,10 @@ export default (req, res) => {
       prisma.games
         .findFirst({
           include: {
+            game_players: true,
             rounds: {
               include: {
-                round_scores: {
-                  include: {
-                    players: {
-                      select: {
-                        username: true,
-                      },
-                    },
-                  },
-                },
+                round_scores: true,
               },
             },
           },
