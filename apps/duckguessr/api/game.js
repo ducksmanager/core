@@ -1,15 +1,6 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-// eslint-disable-next-line no-extend-native
-Array.prototype.shuffle = function () {
-  for (let i = this.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[this[i], this[j]] = [this[j], this[i]]
-  }
-  return this
-}
-
 export default (req, res) => {
   switch (req.method) {
     case 'GET': {
@@ -81,7 +72,10 @@ export default (req, res) => {
                     {}
                   )
                 )
-                .shuffle(),
+                .sort(
+                  ({ personcode: personcode1 }, { personcode: personcode2 }) =>
+                    personcode1 < personcode2 ? -1 : 1
+                ),
             })
           )
         })

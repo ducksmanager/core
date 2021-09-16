@@ -30,7 +30,7 @@
   </b-col>
 </template>
 <script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api'
+import { defineComponent, ref, watch } from '@nuxtjs/composition-api'
 
 export default defineComponent({
   name: 'AuthorCard',
@@ -50,10 +50,23 @@ export default defineComponent({
   },
 
   setup({ author: { personcode } }) {
+    const authorImageUrl = ref('')
+    const defaultAuthorUrl = ref('')
+
+    watch(
+      () => personcode,
+      (personcode) => {
+        authorImageUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`
+        defaultAuthorUrl.value =
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
+      },
+      {
+        immediate: true,
+      }
+    )
     return {
-      authorImageUrl: `https://inducks.org/creators/photos/${personcode}.jpg`,
-      defaultAuthorUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg',
+      authorImageUrl,
+      defaultAuthorUrl,
     }
   },
 })
