@@ -71,3 +71,11 @@ model game_players {
   @@index([game_id], name: "game_players_games_id_fk")
   @@index([player_id], name: "game_players_players_id_fk")
 }
+
+model entryurl_validations {
+  id           Int      @id @default(autoincrement())
+  entrycode    String?  @db.VarChar(21)
+  sitecode_url String   @db.VarChar(99)
+  updated_at   DateTime @default(now()) @db.Timestamp(0)
+  decision     Boolean
+}
