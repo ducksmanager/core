@@ -8,7 +8,7 @@
         {path: '/show', text: total == null ? $t('Mes numéros') : $t('Mes numéros ({0})', [total])},
         {path: '/duplicates', text: totalUniqueIssues == null ? $t('Mes numéros en double') : $t('Mes numéros en double ({0})', [total - totalUniqueIssues])},
         {path: '/subscriptions', text: subscriptions == null ? $t('Mes abonnements') : $t('Mes abonnements ({0})', [subscriptions.length])},
-        {path: '/account', text: $t('Mon compte') + ` <sup>${$t('Nouveau !')}</sup>`}
+        {path: '/account', text: $t('Mon compte')}
       ]"
     />
     <component
