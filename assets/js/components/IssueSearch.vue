@@ -6,7 +6,7 @@
     sticky
   >
     <b-navbar-brand v-if="withTitle">
-      {{ $t('Rechercher une histoire') }}
+      {{ $t("Rechercher une histoire") }}
     </b-navbar-brand>
     <b-navbar-nav>
       <b-dropdown
@@ -28,15 +28,19 @@
       />
       <datalist v-if="searchResults.results && !isSearching">
         <option v-if="!searchResults.results.length">
-          {{ $t('Aucun résultat.') }}
+          {{ $t("Aucun résultat.") }}
         </option>
         <option
           v-for="searchResult in searchResults.results"
           :key="searchResult.code"
+          class="d-flex align-items-center"
           @click="selectSearchResult(searchResult)"
         >
           <template v-if="!isSearchByCode(search)">
-            {{ searchResult.title }}
+            <Condition
+              v-if="searchResult.collectionIssue"
+              :value="conditions.find(({dbValue}) => dbValue === searchResult.collectionIssue.condition).value"
+            />&nbsp;{{ searchResult.title }}
           </template>
           <Issue
             v-else-if="publicationNames[searchResult.publicationcode]"
@@ -54,13 +58,15 @@
 import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
 import Issue from "./Issue";
-import {mapActions, mapState} from "vuex";
+import { mapActions, mapState } from "vuex";
 import collectionMixin from "../mixins/collectionMixin";
+import Condition from "./Condition";
+import conditionMixin from "../mixins/conditionMixin";
 
 export default {
   name: "IssueSearch",
-  components: {Issue},
-  mixins: [l10nMixin, collectionMixin],
+  components: { Issue, Condition },
+  mixins: [l10nMixin, collectionMixin, conditionMixin],
 
   props: {
     withTitle: {
@@ -72,14 +78,14 @@ export default {
       default: true
     }
   },
-  emits: ['issue-selected'],
+  emits: ["issue-selected"],
 
   data: () => ({
     isSearching: false,
     pendingSearch: null,
-    search: '',
+    search: "",
     searchResults: [],
-    searchContext: 'story',
+    searchContext: "story"
   }),
 
   computed: {
@@ -88,24 +94,24 @@ export default {
       return {
         story: this.$t("titre d'histoire"),
         storycode: this.$t("code histoire")
-      }
+      };
     },
     searchContextsWithoutCurrent() {
-      const vm = this
+      const vm = this;
       return Object.keys(this.searchContexts).filter(searchContext => searchContext !== vm.searchContext)
         .reduce((acc, searchContext) => ({
           ...acc,
           [searchContext]: vm.searchContexts[searchContext]
-        }), {})
+        }), {});
     }
   },
 
   watch: {
     async search(newValue) {
-      if (newValue !== '') {
-        this.pendingSearch = newValue
+      if (newValue !== "") {
+        this.pendingSearch = newValue;
         if (!this.isSearching) {
-          await this.runSearch(newValue)
+          await this.runSearch(newValue);
         }
       }
     }
@@ -114,42 +120,55 @@ export default {
   methods: {
     ...mapActions("coa", ["fetchPublicationNames"]),
     isInCollection(issue) {
-      return this.findInCollection(issue.publicationcode, issue.issuenumber)
+      return this.findInCollection(issue.publicationcode, issue.issuenumber);
     },
     isSearchByCode() {
-      return this.searchContext === 'storycode'
+      return this.searchContext === "storycode";
     },
     selectSearchResult(searchResult) {
       if (this.isSearchByCode()) {
-        this.$emit('issue-selected', searchResult)
+        this.$emit("issue-selected", searchResult);
       } else {
-        this.searchContext = 'storycode'
-        this.search = searchResult.code
+        this.searchContext = "storycode";
+        this.search = searchResult.code;
       }
     },
     async runSearch(value) {
-      this.isSearching = true
+      this.isSearching = true;
       try {
+        const vm = this;
         if (this.isSearchByCode()) {
-          const vm = this
-          this.searchResults = (await axios.get(`/api/coa/list/issues/withStoryVersionCode/${value.replace(/^code=/, '')}`)).data
+          this.searchResults = (await axios.get(`/api/coa/list/issues/withStoryVersionCode/${value.replace(/^code=/, "")}`)).data;
           this.searchResults.results = this.searchResults.results.sort((issue1, issue2) =>
-            Math.sign(!!vm.isInCollection(issue2) - !!vm.isInCollection(issue1)))
-          await this.fetchPublicationNames(this.searchResults.results.map(({publicationcode}) => publicationcode))
+            Math.sign(!!vm.isInCollection(issue2) - !!vm.isInCollection(issue1)));
+          await this.fetchPublicationNames(this.searchResults.results.map(({ publicationcode }) => publicationcode));
         } else {
-          this.searchResults = (await axios.post('/api/coa/stories/search', {keywords: value})).data
+          this.searchResults = ((await axios.post("/api/coa/stories/search/withIssues", { keywords: value })).data)
+          this.searchResults.results = this.searchResults.results.map(
+              (story => ({
+                ...story,
+                collectionIssue: vm.collection
+                  .find(({ publicationCode: collectionPublicationCode, issueNumber: collectionIssueNumber }) =>
+                    story.issues.map(
+                      ({
+                         publicationcode,
+                         issuenumber
+                       }) =>
+                        `${publicationcode}-${issuenumber}`
+                    ).includes(`${collectionPublicationCode}-${collectionIssueNumber}`))
+              }))
+            );
         }
-      }
-      finally {
-        this.isSearching = false
+      } finally {
+        this.isSearching = false;
         // The input value as changed since the beginning of the search, searching again
         if (value !== this.pendingSearch) {
-          await this.runSearch(this.pendingSearch)
+          await this.runSearch(this.pendingSearch);
         }
       }
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
