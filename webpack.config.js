@@ -85,7 +85,7 @@ Encore
 
   .configureDevServerOptions(options => {
     options.allowedHosts = 'all';
-    delete options.client.host;
+    delete options.host;
   })
 
 // uncomment if you use TypeScript
