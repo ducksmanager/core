@@ -400,28 +400,16 @@ class PageSiteController extends AbstractController
      *     "en": "/collection/subscriptions",
      *     "fr": "/collection/abonnements"
      * },
-     *     methods={"GET", "POST"}
+     *     methods={"GET"}
      * )
      */
-    public function showSubscriptions(Request $request, ApiService $apiService): Response
+    public function showSubscriptions(): Response
     {
-        $success = null;
-        $errors = [];
-        if (!empty($request->getMethod() === 'POST')) {
-            $apiResponse = $apiService->call('/collection/subscriptions', 'ducksmanager', [
-                'startDate' => $request->request->get('startDate'),
-                'endDate' => $request->request->get('endDate'),
-                'publicationCode' => $request->request->get('publicationCode'),
-            ], 'PUT');
-            $success = !is_null($apiResponse);
-        }
-
         return $this->renderSitePage(
             'Collection',
             'Abonnements',
             null,
-            (is_null($success) ? [] : compact('success'))
-            + ['tab' => 'subscriptions', 'errors' => json_encode($errors)]
+            ['tab' => 'subscriptions']
         );
     }
 

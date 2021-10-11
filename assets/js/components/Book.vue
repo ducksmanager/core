@@ -34,7 +34,7 @@
               :issuenumber="issueNumber"
             />
             <h6 v-if="releaseDate">
-              {{ $t('Sortie :') }}{{ releaseDate }}
+              {{ $t('Sortie :') }} {{ releaseDate }}
             </h6>
             <h3>{{ $t('Table des matières') }}</h3>
           </template>

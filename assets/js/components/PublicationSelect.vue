@@ -4,7 +4,6 @@
       v-model="currentCountryCode"
       :options="countryNames"
       required
-      @input="fetchPublicationNamesFromCountry(currentCountryCode)"
     />
     <b-select
       v-show="currentCountryCode"
@@ -37,14 +36,24 @@ export default {
     noButton: {
       type: Boolean,
       default: false
+    },
+    initialCountryCode: {
+      type: String,
+      default: null
+    },
+    initialPublicationCode: {
+      type: String,
+      default: null
     }
   },
   emits: ['input'],
 
-  data: () => ({
-    currentCountryCode: null,
-    currentPublicationCode: null,
-  }),
+  data: function() {
+    return {
+      currentCountryCode: this.initialCountryCode,
+      currentPublicationCode: this.initialPublicationCode,
+    }
+  },
 
   computed: {
     ...mapState("coa", ["countryNames", "publicationNames", "publicationNamesFullCountries"]),
@@ -60,6 +69,17 @@ export default {
           }))
           .sort(({text: text1}, {text: text2}) => text1.localeCompare(text2))
         : []
+    }
+  },
+
+  watch: {
+    currentCountryCode: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.fetchPublicationNamesFromCountry(this.currentCountryCode)
+        }
+      }
     }
   },
 

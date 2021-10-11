@@ -41,7 +41,7 @@
               >
                 <template #title-suffix>
                   <div class="release-date mt-2">
-                    {{ $t('Sortie :') }}{{ oldestdate }}
+                    {{ $t('Sortie :') }} {{ oldestdate }}
                   </div>
                 </template>
               </Issue>

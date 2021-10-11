@@ -33,124 +33,65 @@
         </b-btn>
       </p>
     </b-alert>
-    <b-row
+    <Subscription
       v-for="subscription in subscriptions"
+      :id="subscription.id"
       :key="subscription.id"
+      :is-edit="editedSubscriptionId === subscription.id"
+      :publication-code="subscription.publicationCode"
+      :start-date="subscription.startDate"
+      :end-date="subscription.endDate"
+      @start-edit="editedSubscriptionId = subscription.id"
+      @cancel-edit="editedSubscriptionId = undefined"
+      @edit="editSubscription(subscription.id, $event)"
+      @delete="deleteSubscription(subscription.id)"
+    />
+    <b-row
+      v-if="editedSubscriptionId !== null"
       class="mt-3 align-items-center"
     >
-      <b-col
-        sm="4"
-        md="2"
-      >
-        <Publication
-          v-if="publicationNames[subscription.publicationCode]"
-          :publicationname="publicationNames[subscription.publicationCode]"
-          :publicationcode="subscription.publicationCode"
-        />
-      </b-col>
-      <b-col
-        sm="4"
-        md="2"
-      >
-        {{ $t('du') }} {{ subscription.startDate }} {{ $t('au') }} {{ subscription.endDate }}
-      </b-col>
-      <b-col
-        sm="4"
-        md="2"
-      >
+      <b-col>
         <b-btn
-          size="sm"
-          @click="deleteSubscription(subscription.id)"
+          class="mt-4"
+          :disabled="editedSubscriptionId !== undefined"
+          @click="editedSubscriptionId = null"
         >
-          {{ $t('Supprimer') }}
+          {{ $t('Ajouter un abonnement') }}
         </b-btn>
       </b-col>
     </b-row>
-    <br>
-    <b-form
-      ref="form"
-      method="post"
-    >
-      <b-row>
-        <b-col
-          sm="8"
-          md="4"
-        >
-          <h4>{{ $t('Ajouter un abonnement') }}</h4>
-          <input
-            v-if="forcedPublicationcode"
-            type="hidden"
-            name="publicationCode"
-            :value="newSubscription.publicationCode"
-          >
-          <PublicationSelect
-            v-else
-            no-button
-            @input="newSubscription = {...newSubscription, publicationCode: $event}"
-          />
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col
-          sm="4"
-          md="2"
-        >
-          {{ $t('du') }} <input
-            v-model="newSubscription.startDate"
-            name="startDate"
-            required
-            class="form-control"
-            type="date"
-          >
-        </b-col>
-        <b-col
-          sm="4"
-          md="2"
-        >
-          {{ $t('au') }} <input
-            v-model="newSubscription.endDate"
-            name="endDate"
-            required
-            class="form-control"
-            type="date"
-          >
-        </b-col>
-      </b-row>
-      <b-btn
-        variant="success"
-        type="submit"
-        :disabled="!newSubscription.publicationCode"
-      >
-        {{ $t('Ajouter') }}
-      </b-btn>
-    </b-form>
+    <Subscription
+      v-if="editedSubscriptionId === null"
+      :is-edit="editedSubscriptionId === null"
+      @start-edit="editedSubscriptionId = null"
+      @cancel-edit="editedSubscriptionId = undefined"
+      @edit="createSubscription($event)"
+    />
   </div>
   <div v-else>
     {{ $t('Chargement...') }}
   </div>
 </template>
 <script>
-import {mapActions, mapState} from "vuex";
+import { mapActions, mapState } from "vuex";
 import l10nMixin from "../../mixins/l10nMixin";
-import PublicationSelect from "../../components/PublicationSelect";
 import axios from "axios";
-import Publication from "../../components/Publication";
 import subscriptionMixin from "../../mixins/subscriptionMixin";
+import Subscription from "../../components/Subscription";
 
 export default {
   name: "Subscriptions",
-  components: {Publication, PublicationSelect},
+  components: { Subscription },
   mixins: [l10nMixin, subscriptionMixin],
   data() {
     return {
       hasPublicationNames: false,
       currentAssociatedPublications: [],
-      newSubscription: {},
-      forcedPublicationcode: false,
       associatedPublications: [{
         referencePublicationcode: 'fr/JM',
         publicationcode: 'fr/JMS'
-      }]
+      }],
+      editedSubscriptionId: undefined
     }
   },
 
@@ -178,22 +119,32 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
+    ...mapActions("coa", ["fetchPublicationNames"]),
 
     createAssociatedPublicationSubscription(existingSubscription, { publicationcode: associatedPublicationcode }) {
       this.newSubscription = {
         ...existingSubscription,
         publicationCode: associatedPublicationcode,
       }
-      this.forcedPublicationcode = true
-      this.$nextTick(function() {
-        this.$refs.form.submit()
-      })
+      this.createSubscription(this.newSubscription)
+    },
+
+    async createSubscription(data) {
+      await axios.put(`/api/collection/subscriptions`, data)
+      await this.loadSubscriptions(true)
+      this.editedSubscriptionId = undefined
+    },
+
+    async editSubscription(id, data) {
+      await axios.post(`/api/collection/subscriptions/${id}`, data)
+      await this.loadSubscriptions(true)
+      this.editedSubscriptionId = undefined
     },
 
     async deleteSubscription(id) {
-      (await axios.delete(`/api/collection/subscriptions/${id}`)).data
-      await this.loadSubscriptions()
+      await axios.delete(`/api/collection/subscriptions/${id}`)
+      await this.loadSubscriptions(true)
+      this.editedSubscriptionId = undefined
     }
   }
 }
