@@ -28,6 +28,15 @@
           class="table-of-contents d-none d-md-block"
         >
           <template #header>
+            <a
+              :href="inducksLink"
+              target="_blank"
+              class="inducks-link"
+            ><img
+              :src="`${imagePath}/coafoot.png`"
+              :title="`Voir ${publicationNames[publicationCode]} ${issueNumber} sur Inducks`"
+              alt="Inducks"
+            ></a>
             <Issue
               :publicationcode="publicationCode"
               :publicationname="publicationNames[publicationCode]"
@@ -64,7 +73,7 @@
           </b-tabs>
         </b-card>
         <div
-          v-for="({position, url}, index) in pagesWithUrl"
+          v-for="({position, url }, index) in pagesWithUrl"
           :key="`page-${position}`"
           :class="{page: true, single: isSinglePageWithUrl}"
         >
@@ -184,6 +193,11 @@ export default {
 
     showTableOfContents() {
       return this.currentPage > 0 || this.opened
+    },
+
+    inducksLink() {
+      const [ country, magazine ] = this.publicationCode.split('/')
+      return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${this.issueNumber}`
     }
   },
 
@@ -322,6 +336,19 @@ export default {
 
   img {
     display: none
+  }
+
+  .inducks-link {
+    position: absolute;
+    cursor: pointer !important;
+    top: 6px;
+    right: 6px;
+    border: 0;
+    width: 24px;
+    img {
+      display: initial;
+      width: 100%;
+    }
   }
 
   .table-of-contents {
