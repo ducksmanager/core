@@ -1,4 +1,6 @@
 **/node_modules/
-/.nuxt/
+.nuxt-storybook
 /.idea/
+/.nuxt/
 /test/output
+storybook-static

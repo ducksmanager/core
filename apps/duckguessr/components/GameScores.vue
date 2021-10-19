@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Rounds</h3>
-    <b-container class="bv-example-row">
+    <b-container>
       <b-row>
         <b-col
           v-for="round in scoresExceptLast"
@@ -50,9 +50,9 @@
       </template>
     </b-table>
     <div
-      hidden
       v-for="({ personcode, personurl }, idx) in scoresExceptLast"
       :key="`author${personcode}`"
+      hidden
     >
       <b-img :src="personurl" @error="setDefaultAuthorUrl(idx)" />
     </div>
