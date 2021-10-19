@@ -28,6 +28,17 @@ exports.createOrGetPending = async () => {
   let attempts = 0
   do {
     roundDataResponse = (await this.runCoaQuery(getCOARoundsQuery())).data
+    const invalidEntryurls = await prisma.entryurl_validations.findMany({
+      where: {
+        sitecode_url: {
+          in: roundDataResponse.map(({ entryurl_url: entryUrl }) => entryUrl),
+        },
+        decision: true,
+      },
+    })
+    roundDataResponse = roundDataResponse.filter(
+      ({ entryurl_url: entryUrl }) => !invalidEntryurls.includes(entryUrl)
+    )
   } while (
     roundDataResponse.length < numberOfRounds + 1 &&
     ++attempts < maxAttempts

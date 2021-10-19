@@ -12,7 +12,12 @@
               autofocus
               required
             />
-            <b-button type="submit" variant="success">OK</b-button>
+            <b-button
+              type="submit"
+              variant="success"
+              :disabled="isButtonDisabled"
+              >OK</b-button
+            >
           </b-form>
         </template>
         <template v-else>
@@ -55,6 +60,7 @@ export default defineComponent({
     const username = ref('')
     const gameId = ref(null as number | null)
     const players = reactive([] as Array<Player>)
+    const isButtonDisabled = ref(false as boolean)
 
     const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
 
@@ -74,6 +80,7 @@ export default defineComponent({
     }
 
     const iAmReady = () => {
+      isButtonDisabled.value = true
       sessionStorage.setItem('username', username.value)
       matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
         console.debug(
@@ -112,6 +119,7 @@ export default defineComponent({
     })
 
     return {
+      isButtonDisabled: false,
       username,
       players,
       gameId,

@@ -77,8 +77,6 @@ import {
   watch,
 } from '@nuxtjs/composition-api'
 
-import Vue from 'vue'
-
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import AuthorCard from '~/components/AuthorCard.vue'
@@ -128,9 +126,7 @@ export default defineComponent({
 
     const now = ref(Date.now() as number)
 
-    const gameIsFinished = computed(() => {
-      return !nextRoundStartDate.value
-    })
+    const gameIsFinished = computed(() => !nextRoundStartDate.value)
 
     const currentRoundIndex = computed((): number | null => {
       const lastUnfinishedRoundIndex = [...(game.value?.rounds || [])]
@@ -143,6 +139,15 @@ export default defineComponent({
         ? 0
         : (game.value?.rounds || []).length - lastUnfinishedRoundIndex - 1
     })
+    // const currentRoundIndex = computed((): number | null => {
+    //   const firstUnfinishedRoundIndex = [
+    //     ...(game.value?.rounds || []),
+    //   ].findIndex(
+    //     ({ finished_at: finishedAt }) =>
+    //       finishedAt && new Date(finishedAt).getTime() > now.value
+    //   )
+    //   return firstUnfinishedRoundIndex === -1 ? null : firstUnfinishedRoundIndex
+    // })
 
     const currentRound = computed((): roundWithGuessedFlag | null =>
       currentRoundIndex.value == null
@@ -195,7 +200,7 @@ export default defineComponent({
 
     watch(
       () => currentRound.value,
-      (currentRound) => {
+      (currentRound, previousRound) => {
         hasUrlLoaded.value = false
         if (currentRound) {
           if (!gameSocket) {
@@ -203,12 +208,17 @@ export default defineComponent({
               `${process.env.SOCKET_URL}/game/${currentRound.game_id}`
             )
             gameSocket.on('playerGuessed', (data: any) => {
-              Vue.set(
-                currentRoundScores.value,
-                currentRoundScores.value.length,
-                data
-              )
+              currentRoundScores.value = [
+                ...currentRoundScores.value.filter(
+                  ({ round_number: roundNumber }) =>
+                    roundNumber === currentRound.round_number
+                ),
+                data,
+              ]
             })
+          }
+          if (currentRound.round_number !== previousRound?.round_number) {
+            currentRoundScores.value = []
           }
         }
       }
@@ -221,7 +231,6 @@ export default defineComponent({
           if (!currentRound.value!.guessed) {
             validateGuess()
           }
-          currentRoundScores.value = []
           setTimeout(async () => {
             game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
           }, 1000)
