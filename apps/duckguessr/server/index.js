@@ -46,20 +46,19 @@ io.of('/matchmaking').on('connection', (socket) => {
     const gameData = await game.createOrGetPending()
     const user = await game.associatePlayer(gameData.gameId, username)
 
-    socket.emit('iAmReadyWithGameID', {
-      gameId: gameData.gameId,
-      ...user,
-    })
+    socket.emit('iAmReadyWithGameID', user, gameData.gameId)
   })
-  socket.on('whoElseIsReady', ({ username, gameId }) => {
-    console.log(`${username} wants to know who else is in game ID ${gameId}`)
-    socket.broadcast.emit('whoElseIsReady', { username, gameId })
+  socket.on('whoElseIsReady', (user, gameId) => {
+    console.log(
+      `${user.username} wants to know who else is in game ID ${gameId}`
+    )
+    socket.broadcast.emit('whoElseIsReady', user, gameId)
   })
-  socket.on('iAmAlsoReady', async ({ username, gameId }) => {
+  socket.on('iAmAlsoReady', async ({ username }, gameId) => {
     console.log(`${username} is also ready in game ID ${gameId}`)
-    await game.associatePlayer(gameId, username)
+    const user = await game.associatePlayer(gameId, username)
 
-    socket.broadcast.emit('iAmAlsoReady', { username, gameId })
+    socket.broadcast.emit('iAmAlsoReady', user, gameId)
   })
   socket.on('matchStarts', async ({ gameId }) => {
     console.log(`Game ${gameId} is starting!`)

@@ -47,29 +47,24 @@ import {
   onMounted,
 } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
-
-interface Player {
-  gameId: number
-  userId: number
-  username: string
-}
+import type Index from '@prisma/client'
 
 export default defineComponent({
   setup() {
     const router = useRouter()
     const username = ref('')
     const gameId = ref(null as number | null)
-    const players = reactive([] as Array<Player>)
+    const players = reactive([] as Array<Index.players>)
     const isButtonDisabled = ref(false as boolean)
 
     const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
 
-    const addPlayer = (player: any) => {
+    const addPlayer = (player: Index.players, existingGameId: number) => {
       if (
         player.username &&
         !players.map(({ username }) => username).includes(player.username)
       ) {
-        gameId.value = player.gameId
+        gameId.value = existingGameId
         players.push(player)
         if (players.length === requiredPlayers) {
           matchmakingSocket.emit('matchStarts', { gameId: gameId.value })
@@ -81,38 +76,50 @@ export default defineComponent({
 
     const iAmReady = () => {
       isButtonDisabled.value = true
-      sessionStorage.setItem('username', username.value)
-      matchmakingSocket.on('iAmReadyWithGameID', (me: any) => {
-        console.debug(
-          `${username.value}-Received iAmReadyWithGameID from ${me.username}`
-        )
-        addPlayer(me)
-        matchmakingSocket.emit('whoElseIsReady', me)
-      })
-      matchmakingSocket.on('whoElseIsReady', (otherPlayer: any) => {
-        console.debug(
-          `${username.value}-Received whoElseIsReady from ${otherPlayer.username}`
-        )
-        if (otherPlayer.gameId === gameId.value) {
-          matchmakingSocket.emit('iAmAlsoReady', players[0])
-          addPlayer(otherPlayer)
+      matchmakingSocket.on(
+        'iAmReadyWithGameID',
+        (user: Index.players, gameId: number) => {
+          sessionStorage.setItem('user', JSON.stringify(user))
+          console.debug(
+            `${username.value}-Received iAmReadyWithGameID from ${user.username}`
+          )
+          addPlayer(user, gameId)
+          matchmakingSocket.emit('whoElseIsReady', user, gameId)
         }
-      })
-      matchmakingSocket.on('iAmAlsoReady', (alsoReadyPlayer: any) => {
-        console.debug(
-          `${username.value}-${alsoReadyPlayer.username} is also ready`
-        )
-        if (alsoReadyPlayer.gameId === gameId.value) {
-          addPlayer(alsoReadyPlayer)
+      )
+      matchmakingSocket.on(
+        'whoElseIsReady',
+        (otherPlayer: Index.players, otherPlayerGameId: number) => {
+          console.debug(
+            `${username.value}-Received whoElseIsReady from ${otherPlayer.username}`
+          )
+          if (otherPlayerGameId === gameId.value) {
+            matchmakingSocket.emit(
+              'iAmAlsoReady',
+              players[0],
+              otherPlayerGameId
+            )
+            addPlayer(otherPlayer, otherPlayerGameId)
+          }
         }
-      })
+      )
+      matchmakingSocket.on(
+        'iAmAlsoReady',
+        (user: Index.players, existingGameId: number) => {
+          console.debug(`${username.value}-${user.username} is also ready`)
+          if (existingGameId === gameId.value) {
+            addPlayer(user, existingGameId)
+          }
+        }
+      )
       matchmakingSocket.emit('iAmReady', { username: username.value })
     }
 
     const requiredPlayers = 2
 
     onMounted(() => {
-      username.value = sessionStorage.getItem('username') || ''
+      const user = sessionStorage.getItem('user')
+      username.value = (user && JSON.parse(user).username) || ''
       if (username.value) {
         iAmReady()
       }

@@ -12,7 +12,7 @@
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
-      v-if="(currentRound.guessed || remainingTime === 0) && nextRoundStartDate"
+      v-if="(chosenAuthor || remainingTime === 0) && nextRoundStartDate"
       :status="scoreTypeNameToVariant(currentRoundPlayerScoreTypeName)"
       :round-number="currentRound.round_number"
       :next-round-start-date="nextRoundStartDate"
@@ -87,23 +87,13 @@ interface Author {
   personfullname: string
 }
 
-interface Score {
+interface roundWithScores extends Index.rounds {
   // eslint-disable-next-line camelcase
-  player_id: number
-  username: string
-  score: string
-  // eslint-disable-next-line camelcase
-  score_type_name: object
-  // eslint-disable-next-line camelcase
-  round_number: number
-}
-
-interface roundWithGuessedFlag extends Index.rounds {
-  guessed: boolean
+  round_scores: Array<Index.round_scores>
 }
 
 interface gameWithRounds extends Index.games {
-  rounds: Array<roundWithGuessedFlag>
+  rounds: Array<roundWithScores>
 }
 
 export default defineComponent({
@@ -118,11 +108,12 @@ export default defineComponent({
     const game = ref(null as gameWithRounds | null)
     let gameSocket: Socket | null = null
 
-    const currentRoundScores = ref([] as Array<Score>)
+    // eslint-disable-next-line camelcase
+    const currentRoundScores = ref([] as Array<Index.round_scores>)
 
     const hasUrlLoaded = ref(false as boolean)
 
-    const username = ref(null as string | null)
+    let user: Index.players | null
 
     const now = ref(Date.now() as number)
 
@@ -149,7 +140,7 @@ export default defineComponent({
     //   return firstUnfinishedRoundIndex === -1 ? null : firstUnfinishedRoundIndex
     // })
 
-    const currentRound = computed((): roundWithGuessedFlag | null =>
+    const currentRound = computed((): roundWithScores | null =>
       currentRoundIndex.value == null
         ? null
         : (game.value?.rounds || [])[currentRoundIndex.value]
@@ -210,7 +201,7 @@ export default defineComponent({
             gameSocket.on('playerGuessed', (data: any) => {
               currentRoundScores.value = [
                 ...currentRoundScores.value.filter(
-                  ({ round_number: roundNumber }) =>
+                  ({ round_id: roundNumber }) =>
                     roundNumber === currentRound.round_number
                 ),
                 data,
@@ -228,31 +219,28 @@ export default defineComponent({
       () => remainingTime.value,
       (remainingTimeValue: number) => {
         if (remainingTimeValue <= 0) {
-          if (!currentRound.value!.guessed) {
+          if (!chosenAuthor.value) {
             validateGuess()
           }
           setTimeout(async () => {
             game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
+            currentRoundScores.value =
+              game.value!.rounds[currentRound.value!.round_number].round_scores
           }, 1000)
         }
       }
     )
 
     const validateGuess = () => {
-      currentRound.value!.guessed = true
-      gameSocket!.emit('guess', {
-        username: username.value,
-        roundId: currentRound.value!.id,
-        guess: {
-          personcode: chosenAuthor.value?.personcode ?? null,
-          personnationality: chosenAuthor.value?.personnationality ?? null,
-        },
+      gameSocket!.emit('guess', user, currentRound.value!.id, {
+        personcode: chosenAuthor.value?.personcode ?? null,
+        personnationality: chosenAuthor.value?.personnationality ?? null,
       })
       chosenAuthor.value = null
     }
 
     onMounted(async () => {
-      username.value = sessionStorage.getItem('username')
+      user = JSON.parse(sessionStorage.getItem('user')!)
       game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
       setInterval(() => {
         now.value = Date.now()
@@ -273,8 +261,8 @@ export default defineComponent({
       currentRoundPlayerScoreTypeName: computed(
         () =>
           currentRoundScores.value.find(
-            ({ username: scoreUsername, round_number: roundNumber }) =>
-              username.value === scoreUsername &&
+            ({ player_id: playerId, round_id: roundNumber }) =>
+              user!.id === playerId &&
               roundNumber === currentRound.value!.round_number
           )?.score_type_name || null
       ),

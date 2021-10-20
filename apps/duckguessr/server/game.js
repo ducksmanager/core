@@ -81,7 +81,7 @@ exports.associatePlayer = async (gameId, username) => {
 }
 
 exports.onGameConnection = (socket) => {
-  socket.on('guess', async ({ username, roundId, guess }) => {
+  socket.on('guess', async ({ username }, roundId, guess) => {
     console.log(
       `${username} is guessing ${JSON.stringify(guess)} on round ${roundId}`
     )
