@@ -8,22 +8,28 @@
         v-for="comment in value"
         :key="`comment-${comment.id}`"
       >
-        <u>{{ comment.username }} on {{ comment.creationDate }}</u>: {{ comment.comment }} <b-btn
+        <u>{{ comment.username }} on {{ comment.creationDate }}</u>: {{ comment.comment }} <b-button
           v-if="!comment.active"
           show
           @click="validateBookstoreComment(comment)"
         >
           {{ $t("Valider") }}
-        </b-btn>
+        </b-button>
       </div>
     </template>
   </b-table>
 </template>
 <script>
 import axios from "axios";
+import {BButton, BTable} from "bootstrap-vue";
 
 export default {
   name: "BookstoresAdmin",
+
+  components: {
+    BTable,
+    BButton
+  },
 
   data: () => ({
     bookstores: null

@@ -59,40 +59,40 @@
         md="1"
         class="text-center m-2"
       >
-        <b-btn
+        <b-button
           v-if="isEdit"
           size="sm"
           @click="$emit('edit', editSubscription)"
         >
           {{ $t("OK") }}
-        </b-btn>
-        <b-btn
+        </b-button>
+        <b-button
           v-else
           size="sm"
           @click="$emit('start-edit')"
         >
           {{ $t("Modifier") }}
-        </b-btn>
+        </b-button>
       </b-col>
       <b-col
         sm="3"
         md="1"
         class="text-center m-2"
       >
-        <b-btn
+        <b-button
           v-if="isEdit"
           size="sm"
           @click="$emit('cancel-edit')"
         >
           {{ $t("Annuler") }}
-        </b-btn>
-        <b-btn
+        </b-button>
+        <b-button
           v-else
           size="sm"
           @click="$emit('delete')"
         >
           {{ $t("Supprimer") }}
-        </b-btn>
+        </b-button>
       </b-col>
     </b-row>
   </b-form>
@@ -104,13 +104,19 @@ import PublicationSelect from "./PublicationSelect";
 import l10nMixin from "../mixins/l10nMixin";
 import subscriptionMixin from "../mixins/subscriptionMixin";
 import { mapState } from "vuex";
+import {BButton, BCol, BForm, BRow} from "bootstrap-vue";
 
 export default {
   name: "Subscription",
 
   components: {
     PublicationSelect,
-    Publication
+    Publication,
+    BForm,
+    BRow,
+    BCol,
+    BButton,
+
   },
   mixins: [l10nMixin, subscriptionMixin],
   

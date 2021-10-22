@@ -13,22 +13,28 @@
       :options="publicationNamesForCurrentCountry"
       @input="$emit('input', currentPublicationCode)"
     />
-    <b-btn
+    <b-button
       v-if="!noButton"
       :disabled="!currentPublicationCode"
       :href="$r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
     >
       {{ $t('OK') }}
-    </b-btn>
+    </b-button>
   </div>
 </template>
 
 <script>
 import {mapActions, mapState} from "vuex";
 import l10nMixin from "../mixins/l10nMixin";
+import {BButton, BFormSelect} from "bootstrap-vue";
 
 export default {
   name: "PublicationSelect",
+
+  components: {
+    BSelect: BFormSelect,
+    BButton
+  },
 
   mixins: [l10nMixin],
 

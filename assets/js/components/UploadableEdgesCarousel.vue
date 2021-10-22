@@ -30,13 +30,16 @@
 <script>
 import MedalProgress from "./MedalProgress";
 import Issue from "./Issue";
+import {BCarousel, BCarouselSlide} from "bootstrap-vue";
 
 export default {
   name: "UploadableEdgesCarousel",
 
   components: {
     MedalProgress,
-    Issue
+    Issue,
+    BCarousel,
+    BCarouselSlide
   },
 
   props: {

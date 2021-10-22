@@ -28,10 +28,11 @@
 import Bookcase from "./Bookcase";
 import Issue from "../components/Issue";
 import { mapState } from "vuex";
+import {BPopover} from "bootstrap-vue";
 
 export default {
   name: "BookcasePopover",
-  components: { Bookcase, Issue },
+  components: { Bookcase, Issue, BPopover },
   props: {
     id: {
       type: String,

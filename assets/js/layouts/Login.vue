@@ -35,13 +35,13 @@
           :value="csrfToken"
         >
 
-        <b-btn
+        <b-button
           variant="primary"
           size="xl"
           type="submit"
         >
           {{ $t("Connexion") }}
-        </b-btn>
+        </b-button>
         <div>
           <a :href="$r('/forgot')">{{ $t("Mot de passe oublié ?") }}</a>
         </div>
@@ -52,9 +52,17 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
+import {BAlert, BButton, BCol, BFormInput, BRow} from "bootstrap-vue";
 
 export default {
   name: "Login",
+  components: {
+    BRow,
+    BCol,
+    BAlert,
+    BFormInput,
+    BButton
+  },
   mixins: [l10nMixin],
   props: {
     error: { type: String, default: null },

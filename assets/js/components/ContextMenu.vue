@@ -100,7 +100,7 @@
                       :placeholder="$t(`Date d'achat`)"
                       @keydown.prevent="() => {}"
                     >
-                    <b-btn
+                    <b-button
                       @click="
                         $emit('create-purchase', {
                           date: copy.newPurchaseDate,
@@ -110,13 +110,13 @@
                         copy.newPurchaseContext = false"
                     >
                       {{ $t("Créer") }}
-                    </b-btn>
-                    <b-btn
+                    </b-button>
+                    <b-button
                       class="cancel"
                       @click="copy.newPurchaseContext = false"
                     >
                       {{ $t("Annuler") }}
-                    </b-btn>
+                    </b-button>
                   </template>
                 </li>
                 <li
@@ -127,7 +127,7 @@
                   @click.stop="copy.purchaseId = purchaseId"
                 >
                   <b>{{ description }}</b><br>{{ date }}
-                  <b-btn
+                  <b-button
                     class="delete-purchase btn-sm"
                     :title="$t('Supprimer')"
                     @click="
@@ -136,7 +136,7 @@
                       })"
                   >
                     <b-icon-trash />
-                  </b-btn>
+                  </b-button>
                 </li>
               </ul>
             </li>
@@ -179,12 +179,15 @@ import l10nMixin from "../mixins/l10nMixin";
 import VueContext from "vue-context";
 import conditionMixin from "../mixins/conditionMixin";
 import Condition from "./Condition";
+import {BAlert, BIconCalendar, BIconCalendarX, BIconTrash, BNavItem, BTab, BTabs} from "bootstrap-vue";
 
 export default {
   name: "ContextMenu",
   components: {
     VueContext,
-    Condition
+    Condition,
+    BAlert,
+    BTabs,BTab,BIconTrash,BIconCalendar,BIconCalendarX,BNavItem
   },
 
   mixins: [l10nMixin, conditionMixin],

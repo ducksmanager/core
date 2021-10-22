@@ -20,10 +20,11 @@
 
 <script>
 import MenuItem from "../components/MenuItem";
+import {BNav} from "bootstrap-vue";
 
 export default {
   name: "Menu",
-  components: {MenuItem},
+  components: {MenuItem, BNav},
   props: {
     title: {
       type: String,

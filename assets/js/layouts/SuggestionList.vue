@@ -63,13 +63,17 @@ import {mapActions, mapGetters, mapState} from "vuex";
 import l10nMixin from "../mixins/l10nMixin";
 import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
+import {BButton, BButtonGroup, BIconCash} from "bootstrap-vue";
 
 export default {
   name: 'SuggestionList',
 
   components: {
     StoryList,
-    Issue
+    Issue,
+    BButtonGroup,
+    BButton,
+    BIconCash
   },
 
   mixins: [l10nMixin],

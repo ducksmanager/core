@@ -67,6 +67,7 @@ import Medal from "../components/Medal";
 import {mapActions, mapMutations, mapState} from "vuex";
 import Banner from "./Banner";
 import SwitchLocale from "./SwitchLocale";
+import {BCollapse, BNavbar, BNavbarBrand, BNavbarToggle} from "bootstrap-vue";
 
 export default {
   name: "LeftPanel",
@@ -76,7 +77,11 @@ export default {
     Banner,
     Medal,
     RecentEvents,
-    Navigation
+    Navigation,
+    BNavbar,
+    BNavbarBrand,
+    BNavbarToggle,
+    BCollapse
   },
 
   mixins: [l10nMixin],

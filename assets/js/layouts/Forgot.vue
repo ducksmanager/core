@@ -54,9 +54,9 @@
         </div>
         <b-form-row>
           <b-col sm="4">
-            <b-btn type="submit">
+            <b-button type="submit">
               {{ $t("Envoyer") }}
-            </b-btn>
+            </b-button>
           </b-col>
         </b-form-row>
       </template>
@@ -68,10 +68,11 @@
 import l10nMixin from "../mixins/l10nMixin";
 import Errorable from "../components/Errorable";
 import { mapMutations } from "vuex";
+import {BAlert, BButton, BCol, BFormInput, BFormRow} from "bootstrap-vue";
 
 export default {
   name: "Forgot",
-  components: { Errorable },
+  components: { Errorable, BAlert, BFormInput, BFormRow, BCol, BButton },
   mixins: [l10nMixin],
   props: {
     success: { type: String, default: null },

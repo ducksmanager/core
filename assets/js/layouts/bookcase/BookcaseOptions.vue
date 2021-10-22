@@ -67,14 +67,14 @@
     >
       {{ $t("Une erreur s'est produite.") }}
     </b-alert>
-    <b-btn
+    <b-button
       class="mt-4"
       variant="success"
       :disabled="loading"
       @click="submit"
     >
       {{ $t("Valider") }}
-    </b-btn>
+    </b-button>
   </div>
 </template>
 
@@ -83,6 +83,7 @@ import l10nMixin from "../../mixins/l10nMixin";
 import { mapActions, mapMutations, mapState } from "vuex";
 import { SlickItem, SlickList } from "vue-slicksort";
 import Publication from "../../components/Publication";
+import {BAlert, BButton, BDropdown, BDropdownItem, BFormCheckbox} from "bootstrap-vue";
 
 export default {
   name: "BookcaseOptions",
@@ -90,7 +91,12 @@ export default {
   components: {
     Publication,
     SlickList,
-    SlickItem
+    SlickItem,
+    BDropdown,
+    BDropdownItem,
+    BFormCheckbox,
+    BAlert,
+    BButton
   },
   mixins: [l10nMixin],
 

@@ -37,13 +37,13 @@
           :title="`${$t('Bibliothèque DucksManager de')} ${bookcaseUsername}`"
           :url="bookcaseUrl"
         />
-        <b-btn
+        <b-button
           v-else
           size="sm"
           @click="showShareButtons=true"
         >
           {{ $t('Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !') }}
-        </b-btn>
+        </b-button>
       </div>
       <b-alert
         v-else-if="user && user.isShareEnabled === false && username !== 'demo'"
@@ -87,14 +87,14 @@
             ) }}
           </template>
           <template #footer>
-            <b-btn
+            <b-button
               class="mt-3"
               variant="info"
               href="https://edgecreator.ducksmanager.net"
               target="_blank"
             >
               {{ $t('Envoyer des photos de tranches') }}
-            </b-btn>
+            </b-button>
           </template>
         </UploadableEdgesCarousel>
         <IssueSearch
@@ -143,10 +143,11 @@ import Book from "../../components/Book";
 import SharePage from "../../components/SharePage";
 import Bookcase from "../../components/Bookcase";
 import UploadableEdgesCarousel from "../../components/UploadableEdgesCarousel";
+import {BAlert, BButton} from "bootstrap-vue";
 
 export default {
   name: "ViewBookcase",
-  components: {Bookcase, SharePage, Book, Issue, IssueSearch, UploadableEdgesCarousel},
+  components: {Bookcase, SharePage, Book, Issue, IssueSearch, UploadableEdgesCarousel, BAlert, BButton},
   mixins: [l10nMixin, collectionMixin],
 
   props: {

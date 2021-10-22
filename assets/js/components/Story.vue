@@ -18,9 +18,14 @@
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
+import {BBadge} from "bootstrap-vue";
 
 export default {
   name: "Story",
+
+  components: {
+    BBadge
+  },
 
   mixins: [l10nMixin],
 

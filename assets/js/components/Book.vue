@@ -106,13 +106,14 @@ import {mapActions, mapState} from "vuex";
 import l10nMixin from "../mixins/l10nMixin";
 import Story from "./Story";
 import Issue from "./Issue";
+import {BCard, BTab, BTabs} from "bootstrap-vue";
 
 const EDGES_BASE_URL = 'https://edges.ducksmanager.net/edges/';
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 
 export default {
   name: "Book",
-  components: {Issue, Story},
+  components: {Issue, Story, BCard, BTabs, BTab},
   mixins: [l10nMixin],
 
   props: {

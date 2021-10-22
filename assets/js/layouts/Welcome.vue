@@ -144,14 +144,14 @@
         v-if="!username"
         id="sign-up-prompt"
       >
-        <b-btn
+        <b-button
           size="xl"
           variant="success"
           class="no-border"
           :href="$r('/signup')"
         >
           {{ $t("Cliquez ici pour vous inscrire !") }}
-        </b-btn>
+        </b-button>
       </div>
     </div>
   </div>
@@ -159,9 +159,15 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
+import {BCol, BRow} from "bootstrap-vue";
 
 export default {
   name: "Welcome",
+
+  components: {
+    BRow,
+    BCol
+  },
 
   mixins: [l10nMixin]
 };

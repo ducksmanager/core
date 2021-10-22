@@ -137,6 +137,7 @@ import AuthorList from "../components/AuthorList";
 import ConditionStats from "./stats/ConditionStats";
 import Menu from "./Menu";
 import GeneralStats from "./stats/GeneralStats";
+import {BAlert, BButton, BButtonGroup} from "bootstrap-vue";
 
 export default {
   name: "Stats",
@@ -148,7 +149,10 @@ export default {
     PossessionStats,
     PurchaseStats,
     AuthorList,
-    AuthorStats
+    AuthorStats,
+    BAlert,
+    BButtonGroup,
+    BButton
   },
   mixins: [collectionMixin, l10nMixin],
   props: {

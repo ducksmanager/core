@@ -61,13 +61,13 @@
       </b-col>
     </b-row>
 
-    <b-btn
+    <b-button
       variant="primary"
       size="xl"
       type="submit"
     >
       {{ $t("Inscription") }}
-    </b-btn>
+    </b-button>
   </form>
 </template>
 
@@ -77,11 +77,12 @@ import * as axios from "axios";
 import validationMixin from "../mixins/validationMixin";
 import { mapGetters, mapMutations } from "vuex";
 import Errorable from "../components/Errorable";
+import {BButton, BCol, BFormInput, BRow} from "bootstrap-vue";
 
 
 export default {
   name: "Signup",
-  components: { Errorable },
+  components: { Errorable, BRow, BCol, BFormInput, BButton },
   mixins: [l10nMixin, validationMixin],
   props: {
     lastUsername: { type: String, default: null }

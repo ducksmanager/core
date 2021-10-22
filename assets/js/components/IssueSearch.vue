@@ -62,10 +62,11 @@ import { mapActions, mapState } from "vuex";
 import collectionMixin from "../mixins/collectionMixin";
 import Condition from "./Condition";
 import conditionMixin from "../mixins/conditionMixin";
+import {BDropdown, BDropdownItem, BFormInput, BNavbar, BNavbarBrand, BNavbarNav} from "bootstrap-vue";
 
 export default {
   name: "IssueSearch",
-  components: { Issue, Condition },
+  components: { Issue, Condition, BNavbar, BNavbarNav, BNavbarBrand, BDropdown, BDropdownItem, BFormInput },
   mixins: [l10nMixin, collectionMixin, conditionMixin],
 
   props: {

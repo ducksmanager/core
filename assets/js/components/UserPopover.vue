@@ -50,11 +50,14 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import Medal from "./Medal";
+import {BButton, BPopover} from "bootstrap-vue";
 
 export default {
   name: "UserPopover",
   components: {
-    Medal
+    Medal,
+    BPopover,
+    BButton
   },
   mixins: [l10nMixin],
   props: {

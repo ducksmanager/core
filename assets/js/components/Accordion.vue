@@ -33,8 +33,19 @@
   </b-card>
 </template>
 <script>
+import {BCard, BCardBody, BCardText, BCollapse, VBToggle} from "bootstrap-vue";
+
 export default {
   name: 'Accordion',
+  components: {
+    BCard,
+    BCollapse,
+    BCardBody,
+    BCardText,
+  },
+  directives: {
+    BToggle: VBToggle
+  },
   props: {
     accordionGroupId: {
       type: String,

@@ -87,10 +87,11 @@ import axios from "axios";
 import {mapActions, mapState} from "vuex";
 import Publication from "../../components/Publication";
 import Bookcase from "../../components/Bookcase";
+import {BIconEyeFill, BIconEyeSlashFill} from "bootstrap-vue";
 
 export default {
   name: "EdgeProgress",
-  components: { Bookcase, Publication },
+  components: { Bookcase, Publication, BIconEyeFill, BIconEyeSlashFill },
   mixins: [l10nMixin],
   data() {
     return {

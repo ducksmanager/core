@@ -25,12 +25,12 @@
     >
       {{ $t('Vous avez indiqué avoir un abonnement pour {0}. Généralement, cet abonnement inclut également la réception du magazine {1}. Voulez-vous ajouter un abonnement à {1} pour les mêmes dates ?', [publicationNames[currentAssociatedPublication.referencePublicationcode], publicationNames[currentAssociatedPublication.publicationcode], publicationNames[currentAssociatedPublication.publicationcode]]) }}
       <p>
-        <b-btn @click="createAssociatedPublicationSubscription(subscriptions.find(({publicationCode}) => publicationCode === currentAssociatedPublication.referencePublicationcode), currentAssociatedPublication)">
+        <b-button @click="createAssociatedPublicationSubscription(subscriptions.find(({publicationCode}) => publicationCode === currentAssociatedPublication.referencePublicationcode), currentAssociatedPublication)">
           {{ $t('Oui') }}
-        </b-btn>
-        <b-btn @click="currentAssociatedPublications.splice(idx, 1)">
+        </b-button>
+        <b-button @click="currentAssociatedPublications.splice(idx, 1)">
           {{ $t('Non') }}
-        </b-btn>
+        </b-button>
       </p>
     </b-alert>
     <Subscription
@@ -51,13 +51,13 @@
       class="mt-3 align-items-center"
     >
       <b-col>
-        <b-btn
+        <b-button
           class="mt-4"
           :disabled="editedSubscriptionId !== undefined"
           @click="editedSubscriptionId = null"
         >
           {{ $t('Ajouter un abonnement') }}
-        </b-btn>
+        </b-button>
       </b-col>
     </b-row>
     <Subscription
@@ -78,10 +78,11 @@ import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
 import subscriptionMixin from "../../mixins/subscriptionMixin";
 import Subscription from "../../components/Subscription";
+import {BAlert, BButton, BCol, BRow} from "bootstrap-vue";
 
 export default {
   name: "Subscriptions",
-  components: { Subscription },
+  components: { Subscription, BAlert, BRow, BCol, BButton },
   mixins: [l10nMixin, subscriptionMixin],
   data() {
     return {

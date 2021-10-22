@@ -17,12 +17,14 @@
 </template>
 <script>
 import Story from "./Story";
+import {BBadge} from "bootstrap-vue";
 
 export default {
   name: "StoryList",
 
   components: {
-    Story
+    Story,
+    BBadge
   },
 
   props: {

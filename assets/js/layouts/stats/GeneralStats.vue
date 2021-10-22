@@ -129,10 +129,11 @@ import { mapActions, mapGetters, mapState } from "vuex";
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
 import conditionMixin from "../../mixins/conditionMixin";
+import {BAlert, BPagination, BTable} from "bootstrap-vue";
 
 export default {
   name: "GeneralStats",
-  components: { Issue, Accordion, ShortStats },
+  components: { Issue, Accordion, ShortStats, BAlert, BTable, BPagination },
   mixins: [l10nMixin, conditionMixin],
 
   data: () => ({

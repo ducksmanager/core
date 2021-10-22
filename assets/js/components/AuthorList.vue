@@ -36,12 +36,12 @@
             />
           </b-col>
           <b-col lg="2">
-            <b-btn
+            <b-button
               size="sm"
               @click="deleteAuthor(author)"
             >
               {{ $t('Supprimer') }}
-            </b-btn>
+            </b-button>
           </b-col>
         </b-row>
       </div>
@@ -86,9 +86,18 @@
 import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "vuex";
 import axios from "axios";
+import {BAlert, BCol, BFormInput, BFormRating, BNavbarNav, BRow} from "bootstrap-vue";
 
 export default {
   name: "AuthorList",
+  components: {
+    BAlert,
+    BRow,
+    BCol,
+    BFormRating,
+    BNavbarNav,
+    BFormInput
+  },
   mixins: [l10nMixin],
   props: {
     watchedAuthors: {

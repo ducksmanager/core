@@ -33,20 +33,20 @@
         }}
       </p>
       <p>
-        <b-btn
+        <b-button
           size="lg"
           variant="primary"
           :href="$r('/signup')"
         >
           {{ $t("Inscription") }}
-        </b-btn>
-        <b-btn
+        </b-button>
+        <b-button
           size="lg"
           variant="primary"
           :href="$r('/login')"
         >
           {{ $t("Connexion") }}
-        </b-btn>
+        </b-button>
       </p>
     </b-jumbotron>
     <form
@@ -82,7 +82,7 @@
               v-model="rawData"
             />
           </b-form-group>
-          <b-btn
+          <b-button
             @click="processRawData()"
             v-text="$t('Importer')"
           />
@@ -231,12 +231,12 @@
             :label="`${parseInt(importProgress)}%`"
           />
         </b-progress>
-        <b-btn
+        <b-button
           v-else
           @click="importIssues"
         >
           {{ $t("Importer") }} {{ issuesImportable.length }} {{ $tc("numéro | numéros", issuesImportable.length) }}
-        </b-btn>
+        </b-button>
       </template>
     </template>
   </div>
@@ -249,10 +249,22 @@ import Publication from "../components/Publication";
 import collectionMixin from "../mixins/collectionMixin";
 import Issue from "../components/Issue";
 import axios from "axios";
+import {
+  BAlert,
+  BButton,
+  BCol,
+  BCollapse,
+  BFormGroup, BFormSelect,
+  BFormSelectOption, BFormTextarea,
+  BJumbotron,
+  BProgress,
+  BProgressBar,
+  BRow
+} from "bootstrap-vue";
 
 export default {
   name: "InducksImport",
-  components: { Accordion, Publication, Issue },
+  components: { Accordion, Publication, Issue, BJumbotron, BButton, BAlert, BRow, BCol, BFormGroup, BTextarea: BFormTextarea, BCollapse, BFormSelect, BFormSelectOption, BProgress, BProgressBar},
   mixins: [l10nMixin, collectionMixin],
 
   data: () => ({

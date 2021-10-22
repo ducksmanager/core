@@ -55,10 +55,11 @@ import collectionMixin from "../mixins/collectionMixin";
 import l10nMixin from "../mixins/l10nMixin";
 import { mapActions, mapGetters, mapState } from "vuex";
 import SuggestionList from "./SuggestionList";
+import {BAlert, BFormSelect} from "bootstrap-vue";
 
 export default {
   name: "Expand",
-  components: { SuggestionList },
+  components: { SuggestionList, BAlert, BSelect: BFormSelect },
   mixins: [collectionMixin, l10nMixin],
 
   data: () => ({

@@ -66,14 +66,14 @@
                     type="text"
                     :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
                   />
-                  <b-btn
+                  <b-button
                     type="submit"
                   >
                     {{ $t("Ajouter un commentaire") }}
-                  </b-btn>
-                  <b-btn @click="existingBookstore = null">
+                  </b-button>
+                  <b-button @click="existingBookstore = null">
                     {{ $t("Annuler") }}
-                  </b-btn>
+                  </b-button>
                 </form>
                 <a
                   v-else
@@ -140,9 +140,9 @@
         type="text"
         :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
       />
-      <b-btn type="submit">
+      <b-button type="submit">
         {{ $t("Ajouter la bouquinerie") }}
-      </b-btn>
+      </b-button>
     </form>
   </div>
 </template>
@@ -151,6 +151,7 @@ import { MglMap, MglMarker, MglPopup } from "vue-mapbox";
 import l10nMixin from "../mixins/l10nMixin";
 import axios from "axios";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import {BAlert, BButton, BFormInput, BFormTextarea} from "bootstrap-vue";
 
 const newBookstore = {
   name: null,
@@ -166,7 +167,11 @@ export default {
   components: {
     MglMap,
     MglMarker,
-    MglPopup
+    MglPopup,
+    BAlert,
+    BFormTextarea,
+    BButton,
+    BFormInput
   },
 
   mixins: [l10nMixin],

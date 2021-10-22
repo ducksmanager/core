@@ -58,12 +58,12 @@
               :key="`notfound-${issueNotFound.issueNumber}`"
             >
               {{ $t("n°") }}{{ issueNotFound.issueNumber }}
-              <b-btn
+              <b-button
                 size="sm"
                 @click="deletePublicationIssues([issueNotFound])"
               >
                 {{ $t("Supprimer") }}
-              </b-btn>
+              </b-button>
             </li>
           </ul>
         </b-alert>
@@ -194,12 +194,12 @@
             {{ issue.issueNumber }}
           </li>
         </ul>
-        <b-btn
+        <b-button
           variant="danger"
           @click="deletePublicationIssues(userIssuesForPublication)"
         >
           {{ $t("Supprimer") }}
-        </b-btn>
+        </b-button>
       </div>
     </b-alert>
   </div>
@@ -216,7 +216,7 @@ import collectionMixin from "../mixins/collectionMixin";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
 import Condition from "./Condition";
-import { BIconCalendar } from "bootstrap-vue";
+import {BAlert, BIconCalendar, BIconEyeFill} from "bootstrap-vue";
 import Publication from "./Publication";
 
 export default {
@@ -227,7 +227,9 @@ export default {
     BIconCalendar,
     Book,
     ContextMenu,
-    IssueDetailsPopover
+    IssueDetailsPopover,
+    BAlert,
+    BIconEyeFill
   },
   mixins: [l10nMixin, collectionMixin, conditionMixin],
   props: {

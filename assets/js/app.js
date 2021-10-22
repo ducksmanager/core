@@ -1,5 +1,4 @@
 import Vue from "vue";
-import {BootstrapVue, BootstrapVueIcons} from 'bootstrap-vue'
 import BackendDataPlugin from './plugins/backendDataPlugin'
 
 import * as Sentry from '@sentry/vue';
@@ -13,8 +12,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../css/app.scss';
 
-Vue.use(BootstrapVue)
-Vue.use(BootstrapVueIcons)
 Vue.use(BackendDataPlugin)
 
 new Vue({

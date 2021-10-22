@@ -8,9 +8,14 @@
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
+import {BNavItem} from "bootstrap-vue";
 
 export default {
   name: "MenuItem",
+
+  components: {
+    BNavItem
+  },
 
   mixins: [l10nMixin],
 

@@ -34,10 +34,12 @@
 import Issue from "./Issue";
 import {mapActions, mapState} from "vuex";
 import l10nMixin from "../mixins/l10nMixin";
+import {BPopover} from "bootstrap-vue";
 
 export default {
   name: "IssueDetailsPopover",
   components: {
+    BPopover,
     Issue
   },
   mixins: [l10nMixin],

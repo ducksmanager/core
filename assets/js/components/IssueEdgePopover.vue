@@ -31,13 +31,13 @@
               <span>{{ extraPoints }}</span> {{ $t('Points') }} !
             </div>
             <br>
-            <b-btn
+            <b-button
               variant="info"
               href="https://edgecreator.ducksmanager.net"
               target="_blank"
             >
               {{ $t('Envoyer une photo de tranche') }}
-            </b-btn>
+            </b-button>
           </div>
         </div>
       </div>
@@ -49,10 +49,11 @@
 import l10nMixin from "../mixins/l10nMixin";
 import MedalProgress from "./MedalProgress";
 import {mapGetters, mapState} from "vuex";
+import {BButton, BPopover} from "bootstrap-vue";
 
 export default {
   name: "IssueEdgePopover",
-  components: {MedalProgress},
+  components: {MedalProgress, BPopover, BButton},
   mixins: [l10nMixin],
   props: {
     id: {

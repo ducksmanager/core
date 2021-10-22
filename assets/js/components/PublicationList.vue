@@ -61,11 +61,30 @@ import Country from "./Country";
 import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapGetters, mapState} from "vuex";
 import IssueSearch from "./IssueSearch";
+import {
+  BCollapse,
+  BDropdownItem,
+  BNavbar, BNavbarBrand,
+  BNavbarNav,
+  BNavbarToggle,
+  BNavForm,
+  BNavItem,
+  BNavItemDropdown
+} from "bootstrap-vue";
 
 export default {
   name: "PublicationList",
 
   components: {
+    BCollapse,
+    BDropdownItem,
+    BNavItemDropdown,
+    BNavbar,
+    BNavbarNav,
+    BNavbarBrand,
+    BNavbarToggle,
+    BNavForm,
+    BNavItem,
     IssueSearch,
     Country
   },

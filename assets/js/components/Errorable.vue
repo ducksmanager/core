@@ -13,9 +13,13 @@
 
 <script>
 import { mapState } from "vuex";
+import {BAlert} from "bootstrap-vue";
 
 export default {
   name: "Errorable",
+  components: {
+    BAlert
+  },
   props: {
     id: {
       type: String,

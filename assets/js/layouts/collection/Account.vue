@@ -88,32 +88,32 @@
       {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
     </b-form-checkbox>
 
-    <b-btn
+    <b-button
       variant="success"
       size="xl"
       type="submit"
     >
       {{ $t("Valider") }}
-    </b-btn>
+    </b-button>
 
     <h5 class="mt-5">
       {{ $t("Zone danger") }}
     </h5>
     <div>
-      <b-btn
+      <b-button
         variant="danger"
         @click="emptyCollection"
       >
         {{ $t("Vider ma liste de numéros") }}
-      </b-btn>
+      </b-button>
     </div>
     <div>
-      <b-btn
+      <b-button
         variant="danger"
         @click="deleteAccount"
       >
         {{ $t("Supprimer mon compte DucksManager") }}
-      </b-btn>
+      </b-button>
     </div>
   </form>
 </template>
@@ -123,10 +123,11 @@ import l10nMixin from "../../mixins/l10nMixin";
 import Errorable from "../../components/Errorable";
 import { mapActions, mapMutations, mapState } from "vuex";
 import axios from "axios";
+import {BAlert, BButton, BFormCheckbox, BFormInput} from "bootstrap-vue";
 
 export default {
   name: "Account",
-  components: { Errorable },
+  components: { Errorable, BAlert, BFormInput, BFormCheckbox, BButton },
   mixins: [l10nMixin],
   props: {
     errors: { type: String, default: "" },

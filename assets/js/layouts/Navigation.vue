@@ -84,13 +84,28 @@
 import NavigationItemGroup from "../components/NavigationItemGroup";
 import NavigationItem from "../components/NavigationItem";
 import l10nMixin from "../mixins/l10nMixin";
+import {
+  BIconBookHalf,
+  BIconCapslockFill,
+  BIconGraphUp, BIconHouseFill,
+  BIconList,
+  BIconPrinterFill,
+  BIconXSquareFill
+} from "bootstrap-vue";
 
 export default {
   name: "Navigation",
 
   components: {
     NavigationItemGroup,
-    NavigationItem
+    NavigationItem,
+    BIconHouseFill,
+    BIconBookHalf,
+    BIconList,
+    BIconGraphUp,
+    BIconCapslockFill,
+    BIconPrinterFill,
+    BIconXSquareFill
   },
 
   mixins: [l10nMixin],
