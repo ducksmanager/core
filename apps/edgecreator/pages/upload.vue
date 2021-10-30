@@ -164,15 +164,15 @@ export default {
       const vm = this
       for (const crop of this.crops.filter(({ sent }) => !sent)) {
         const [country, magazine] = crop.publicationCode.split('/')
-        const filename = (
+        const fileName = (
           await this.$axios.$post('/fs/upload-base64', {
             country,
             magazine,
             issuenumber: crop.issueNumber,
             data: crop.url,
           })
-        ).filename
-        Vue.set(crop, 'filename', filename)
+        ).fileName
+        Vue.set(crop, 'filename', fileName)
         this.$nextTick().then(() => {
           vm.saveEdgeSvg(
             country,
