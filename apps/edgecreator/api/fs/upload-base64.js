@@ -37,7 +37,7 @@ export default async function (req, res) {
       Connection: 'close',
       'Content-Type': 'application/text',
     })
-    res.end(JSON.stringify({ filename: fileName }))
+    res.end(JSON.stringify({ fileName }))
   } else {
     res.writeHead(400, {
       Connection: 'close',
