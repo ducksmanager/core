@@ -10,6 +10,7 @@ import Print from "./Print";
 import BookstoresAdmin from "./admin/BookstoresAdmin";
 import EdgeProgress from "./admin/EdgeProgress";
 import Site from "./Site";
+import Privacy from "./Privacy";
 
 export default {
   name: "App",
@@ -17,6 +18,7 @@ export default {
     BookstoresAdmin,
     EdgeProgress,
     Print,
+    Privacy,
     Site
   },
   data() {
