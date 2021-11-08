@@ -1,6 +1,6 @@
 const fs = require('fs')
-const {parse} = require('csv-parse')
-const {createObjectCsvWriter: createCsvWriter} = require('csv-writer')
+const { parse } = require('csv-parse')
+const { createObjectCsvWriter: createCsvWriter } = require('csv-writer')
 
 module.exports = {
   readCsvMapping: async (mappingFile, recordCallback) => {
@@ -18,14 +18,14 @@ module.exports = {
     const csvWriter = createCsvWriter({
       path: 'dump.csv',
       header: [
-        {id: 'publicationcode', title: 'publicationcode'},
-        {id: 'issuenumber', title: 'issuenumber'},
-        {id: 'estimationmin', title: 'estimationmin'},
-        {id: 'estimationmax', title: 'estimationmax'},
-        {id: 'source', title: 'source'},
+        { id: 'publicationcode', title: 'publicationcode' },
+        { id: 'issuenumber', title: 'issuenumber' },
+        { id: 'estimationmin', title: 'estimationmin' },
+        { id: 'estimationmax', title: 'estimationmax' },
+        { id: 'source', title: 'source' }
       ]
-    });
+    })
     await csvWriter.writeRecords(data)
-    console.log('CSV dumped');
+    console.log('CSV dumped')
   }
 }

@@ -1,17 +1,17 @@
-const { createQuotations, getInducksIssuesBetween} = require('../../coa')
-const {readCsvMapping } = require('../../csv')
-const {firefox} = require("playwright-firefox");
+const { createQuotations, getInducksIssuesBetween } = require('../../coa')
+const { readCsvMapping } = require('../../csv')
+const { firefox } = require('playwright-firefox')
 
 const MAPPING_FILE = 'scrapes/seriesam/coa-mapping.csv'
 const ROOT_URL = 'https://www.seriesam.com/cgi-bin/guide?s='
 const quotations = []
 
 module.exports = {
-  async scrape() {
+  async scrape () {
     const mappedIssues = []
 
     await readCsvMapping(MAPPING_FILE, record => mappedIssues.push(record))
-    const seriesUrls = [...new Set(mappedIssues.map(({seriesamQuery}) => seriesamQuery))]
+    const seriesUrls = [...new Set(mappedIssues.map(({ seriesamQuery }) => seriesamQuery))]
 
     const browser = await firefox.launch()
     const page = await browser.newPage()
@@ -31,9 +31,9 @@ module.exports = {
           seriesamTitle: seriesamTitleMapping,
           publicationcode,
           issuenumber
-        } = mappedIssues[mappedIssueRowNumber];
-        const seriesamYearCell = await row.$('td:nth-child(1)');
-        const seriesamTitleCell = await row.$('td:nth-child(2)');
+        } = mappedIssues[mappedIssueRowNumber]
+        const seriesamYearCell = await row.$('td:nth-child(1)')
+        const seriesamTitleCell = await row.$('td:nth-child(2)')
         if (!seriesamYearCell || !seriesamTitleCell) {
           continue
         }

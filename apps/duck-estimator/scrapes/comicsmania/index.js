@@ -1,7 +1,7 @@
-const {createQuotations, isInducksIssueExisting} = require('../../coa')
+const { createQuotations, isInducksIssueExisting } = require('../../coa')
 
-const {firefox} = require('playwright-firefox')
-const {readCsvMapping} = require("../../csv");
+const { firefox } = require('playwright-firefox')
+const { readCsvMapping } = require('../../csv')
 
 const MAPPING_FILE = 'scrapes/comicsmania/coa-mapping.csv'
 const REGEX_ISSUENUMBER = /^(?:ΤΕΥΧΟΣ:|\n)?[-\d]+\b(?! ?€)/s
@@ -10,7 +10,7 @@ const publicationsWithIssues = []
 const quotations = []
 
 module.exports = {
-  async scrape() {
+  async scrape () {
     const mappedIssues = []
 
     await readCsvMapping(MAPPING_FILE, record => mappedIssues.push(record))
@@ -40,7 +40,7 @@ module.exports = {
         }
         switch (tagName) {
           case 'TH': {
-            const publicationSection = mappedIssues.find(({sectionTitle}) => sectionTitle.replace(/\u00a0/g, ' ') === cellText.replace(/\u00a0/g, ' '))
+            const publicationSection = mappedIssues.find(({ sectionTitle }) => sectionTitle.replace(/\u00a0/g, ' ') === cellText.replace(/\u00a0/g, ' '))
             if (publicationSection) {
               currentPublication = publicationSection
               console.info(`Section found for ${currentPublication.publicationcode} : ${cellText}`)
@@ -63,7 +63,7 @@ module.exports = {
         if (!issueTextMatch || (currentPublication.issueCellRegex && !new RegExp(currentPublication.issueCellRegex).test(cellText))) {
           continue
         }
-        let issuenumber = issueTextMatch[0].replace('ΤΕΥΧΟΣ:', '');
+        let issuenumber = issueTextMatch[0].replace('ΤΕΥΧΟΣ:', '')
         let issuenumberParts = issuenumber.split(/[-/]/)
         if (issuenumberParts.length === 2) {
           issuenumberParts = issuenumberParts.map(part => parseInt(part))
@@ -75,7 +75,7 @@ module.exports = {
         try {
           let priceMatch = cellText.match(REGEX_PRICE)
           if (!priceMatch) {
-            const priceCell = await issueCell.waitForSelector('xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td', {timeout: 100})
+            const priceCell = await issueCell.waitForSelector('xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td', { timeout: 100 })
             const priceText = await priceCell.innerText()
             priceMatch = priceText.match(REGEX_PRICE)
           }
@@ -84,9 +84,9 @@ module.exports = {
             continue
           }
           publicationsWithIssues.push(currentPublication)
-          const {publicationcode: currentPublicationCode} = currentPublication
+          const { publicationcode: currentPublicationCode } = currentPublication
           if (await isInducksIssueExisting(currentPublicationCode, issuenumber)) {
-            const price = parseFloat(priceMatch[0].replace(',', '.'));
+            const price = parseFloat(priceMatch[0].replace(',', '.'))
             quotations.push({
               publicationcode: currentPublicationCode,
               issuenumber,
@@ -105,10 +105,10 @@ module.exports = {
     }
     await browser.close()
     const sectionsNotFound = mappedIssues
-      .filter(({sectionTitle, publicationcode}) =>
-        publicationcode !== null && !publicationsWithIssues.some(({sectionTitle: foundSectionTitle}) => foundSectionTitle === sectionTitle)
+      .filter(({ sectionTitle, publicationcode }) =>
+        publicationcode !== null && !publicationsWithIssues.some(({ sectionTitle: foundSectionTitle }) => foundSectionTitle === sectionTitle)
       )
-    for (const {sectionTitle} of sectionsNotFound) {
+    for (const { sectionTitle } of sectionsNotFound) {
       console.log('Section not found: ' + sectionTitle)
     }
     await createQuotations(quotations)
