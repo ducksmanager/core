@@ -29,7 +29,7 @@ const truncateQuotations = async () =>
   await coaConnection.query('TRUNCATE inducks_issuequotation')
 
 const isInducksIssueExisting = async (publicationcode, issuenumber) =>
-  await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber).length
+  (await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber)).length
 
 const getInducksIssuesBetween = async (publicationcode, issuenumberStart, issuenumberEnd = issuenumberStart) => {
   cachedCoaIssues[publicationcode] = cachedCoaIssues[publicationcode] ||
