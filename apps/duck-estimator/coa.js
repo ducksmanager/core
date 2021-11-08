@@ -15,7 +15,8 @@ const coaPool = mariadb.createPool({
   port: process.env.MYSQL_COA_PORT,
   user: 'root',
   password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_COA_DATABASE
+  database: process.env.MYSQL_COA_DATABASE,
+  initSql: 'set @@wait_timeout = 1800'
 })
 
 const createQuotations = async (quotations) => {
