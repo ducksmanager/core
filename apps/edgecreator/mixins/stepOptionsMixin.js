@@ -65,7 +65,7 @@ export default {
         id: 'move-resize-tip-toast',
         toaster: 'b-toaster-top-center',
         noCloseButton: true,
-        autoHideDelay: 40000,
+        autoHideDelay: 5000,
       })
       shownTips.push(type)
     },
