@@ -1,7 +1,7 @@
 <template>
   <b-modal
     ok-only
-    :ok-disabled="!issue"
+    :ok-disabled="!issueData"
     :title="$t('Create or edit an edge model')"
     visible
     @close="toDashboard"
@@ -9,9 +9,12 @@
   >
     {{ $t('Select the issue that you want to create the edge of.') }}
     <issue-select
+      can-be-multiple
       disable-ongoing-or-published
       :disable-not-ongoing-nor-published="false"
-      @change="issue = $event && $event.issueNumber ? $event : null"
+      @change="
+        issueData = $event && $event.issueNumber !== null ? $event : null
+      "
     />
   </b-modal>
 </template>
@@ -23,8 +26,21 @@ export default {
   middleware: ['authenticated', 'is-editor'],
   data() {
     return {
-      issue: null,
+      issueData: null,
     }
+  },
+  computed: {
+    issueSpecification() {
+      if (this.issueData === null) {
+        return null
+      } else {
+        switch (this.issueData.editMode) {
+          case 'range':
+            return `${this.issueData.issueNumber} to ${this.issueData.issueNumberEnd}`
+        }
+        return this.issueData.issueNumber
+      }
+    },
   },
   methods: {
     toDashboard() {
@@ -32,7 +48,7 @@ export default {
     },
     startEditing() {
       window.location.replace(
-        `/edit/${this.issue.publicationCode} ${this.issue.issueNumber}`
+        `/edit/${this.issueData.publicationCode} ${this.issueSpecification}`
       )
     },
   },
