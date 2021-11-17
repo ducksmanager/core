@@ -19,18 +19,35 @@
           :selected="currentIssueNumber"
           @change="
             currentIssueNumber = $event
-            onChange()
+            onChange({})
           "
         />
         <b-alert v-else show variant="info">{{ $t('Loading...') }} </b-alert>
       </template>
-      <b-select
-        v-else
-        v-show="currentCountryCode && currentPublicationCode"
-        v-model="currentIssueNumber"
-        :options="issuesWithSelect"
-        @change="onChange({})"
-      />
+      <template v-else>
+        <b-select
+          v-show="currentCountryCode && currentPublicationCode"
+          v-model="currentIssueNumber"
+          :options="issuesWithSelect"
+          @input="onChange({})"
+        />
+        <template v-if="canBeMultiple && currentIssueNumber !== null">
+          <b-form-group class="mt-2">
+            <b-form-radio v-model="editMode" name="editMode" value="single"
+              >Edit a single edge</b-form-radio
+            >
+            <b-form-radio v-model="editMode" name="editMode" value="range"
+              >Edit a range of edges (e.g. issues 1 to 3)</b-form-radio
+            >
+          </b-form-group>
+          <b-select
+            v-show="editMode === 'range'"
+            v-model="currentIssueNumberEnd"
+            :options="issuesWithSelect"
+            @input="onChange({})"
+          />
+        </template>
+      </template>
     </template>
     <dimensions
       v-if="dimensions && currentIssueNumber !== null"
@@ -52,6 +69,7 @@ export default {
   props: {
     countryCode: { type: String, default: null },
     publicationCode: { type: String, default: null },
+    canBeMultiple: { type: Boolean, default: false },
     dimensions: { type: Object, default: null },
     disableOngoingOrPublished: { type: Boolean, required: true },
     disableNotOngoingNorPublished: { type: Boolean, required: true },
@@ -61,6 +79,8 @@ export default {
     currentCountryCode: null,
     currentPublicationCode: null,
     currentIssueNumber: null,
+    currentIssueNumberEnd: null,
+    editMode: 'single',
   }),
   computed: {
     ...mapState('coa', ['countryNames', 'publicationNames', 'issueNumbers']),
@@ -173,19 +193,25 @@ export default {
     onChange(data) {
       this.$emit('change', {
         ...data,
+        editMode: this.editMode,
         countryCode: this.currentCountryCode,
         publicationCode: this.currentPublicationCode,
         issueNumber: this.currentIssueNumber,
+        issueNumberEnd: this.currentIssueNumberEnd,
       })
     },
   },
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 ::v-deep select + div {
   overflow-x: hidden;
   overflow-y: auto;
   padding: 3px;
   margin-bottom: 10px;
+}
+::v-deep .custom-control-input[type='checkbox'] {
+  position: static;
+  width: 2rem;
 }
 </style>
