@@ -93,7 +93,13 @@
             :label="$t('Font')"
             type="text"
             :options="step.options"
-          />
+            ><a
+              target="_blank"
+              :href="fontSearchUrl"
+              class="position-absolute input-extra"
+              >Rechercher</a
+            ></form-input-row
+          >
           <form-color-input-row
             :options="step.options"
             :other-colors="otherColors[stepNumber]"
@@ -246,6 +252,9 @@ export default {
     allStepColors: { type: Object, required: true },
   },
   computed: {
+    fontSearchUrl() {
+      return process.env.FONT_SEARCH_URL
+    },
     optionsPerName() {
       const vm = this
       const issueNumbers = Object.keys(this.steps)
@@ -382,5 +391,10 @@ export default {
 .tab-pane.card-body {
   overflow-y: auto;
   height: 100%;
+}
+
+.input-extra {
+  top: 3px;
+  right: 2rem;
 }
 </style>
