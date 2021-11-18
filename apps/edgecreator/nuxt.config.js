@@ -164,5 +164,9 @@ export default {
       path: '/generate',
       handler: '~/api/fs/generateDefaultEdge.js',
     },
+    {
+      path: '/edges',
+      handler: '~/api/edge-proxy.js',
+    },
   ],
 }

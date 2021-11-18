@@ -199,8 +199,7 @@ export default {
       'loadPopularIssuesInCollection',
       'loadBookcase',
     ]),
-    getPhotoUrl: (country, fileName) =>
-      `${process.env.EDGES_URL}/${country}/photos/${fileName}`,
+    getPhotoUrl: (country, fileName) => `/edges/${country}/photos/${fileName}`,
 
     async loadMostWantedEdges() {
       this.mostWantedEdges = (

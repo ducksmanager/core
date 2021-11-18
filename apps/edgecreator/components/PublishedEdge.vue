@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     getEdgeUrl() {
-      return `${process.env.EDGES_URL}/${this.country}/gen/${this.magazine}.${this.issuenumber}.png`
+      return `/edges/${this.country}/gen/${this.magazine}.${this.issuenumber}.png`
     },
   },
 }

@@ -79,7 +79,7 @@ export default {
       this.items = (
         await Promise.all(
           Object.keys(items).map(async (issuenumber) => {
-            const url = `${process.env.EDGES_URL}/${countryCode}/gen/${magazineCode}.${issuenumber}.png`
+            const url = `/edges/${countryCode}/gen/${magazineCode}.${issuenumber}.png`
             if (items[issuenumber].v3) {
               return {
                 name: issuenumber,

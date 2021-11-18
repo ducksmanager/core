@@ -87,7 +87,7 @@ export const getters = {
       state.publicationElements &&
       state.publicationElements.map((elementFileName) => ({
         name: elementFileName,
-        url: `${process.env.EDGES_URL}/${state.country}/elements/${elementFileName}`,
+        url: `/edges/${state.country}/elements/${elementFileName}`,
       }))
     )
   },
@@ -97,7 +97,7 @@ export const getters = {
       state.publicationPhotos &&
       state.publicationPhotos.map((elementFileName) => ({
         name: elementFileName,
-        url: `${process.env.EDGES_URL}/${state.country}/photos/${elementFileName}`,
+        url: `/edges/${state.country}/photos/${elementFileName}`,
       }))
     )
   },
