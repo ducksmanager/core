@@ -60,7 +60,11 @@ export const checkUserRoles = async (req, res, checkFn) => {
 
 export const returnError = (res, error) => {
   res.writeHeader(500, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify({ error }))
+  res.end(
+    JSON.stringify({
+      error: typeof error === 'object' ? JSON.stringify(error) : error,
+    })
+  )
 }
 
 const roleMapping = {
