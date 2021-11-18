@@ -36,7 +36,7 @@ export default {
     },
     getEdgeUrl(country, magazine, issuenumber, extension, publishedVersion) {
       return (
-        `${process.env.EDGES_URL}/${country}/gen/` +
+        `/edges/${country}/gen/` +
         `${publishedVersion ? '' : '_'}${magazine}.${issuenumber}.${extension}`
       )
     },

@@ -334,7 +334,7 @@ export default {
       }
     },
     getImageUrl(fileType, fileName) {
-      return `${process.env.EDGES_URL}/${this.country}/${
+      return `/edges/${this.country}/${
         fileType === 'elements' ? fileType : 'photos'
       }/${fileName}`
     },

@@ -126,9 +126,7 @@ export default {
               image = await this.$axios.$get(`/fs/base64?${elementPath}`)
             } else {
               image = {
-                dimensions: await this.getImageSize(
-                  `${process.env.EDGES_URL}/${elementPath}`
-                ),
+                dimensions: await this.getImageSize(`/edges/${elementPath}`),
               }
             }
           } catch (e) {
