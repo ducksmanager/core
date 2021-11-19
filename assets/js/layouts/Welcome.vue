@@ -145,7 +145,7 @@
         id="sign-up-prompt"
       >
         <b-button
-          size="xl"
+          size="lg"
           variant="success"
           class="no-border"
           :href="$r('/signup')"
@@ -159,14 +159,15 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import {BCol, BRow} from "bootstrap-vue";
+import { BButton, BCol, BRow } from "bootstrap-vue";
 
 export default {
   name: "Welcome",
 
   components: {
     BRow,
-    BCol
+    BCol,
+    BButton
   },
 
   mixins: [l10nMixin]
