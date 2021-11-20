@@ -70,7 +70,7 @@
           lg="5"
         >
           <video
-            :src="`${imagePath}/demos/bookcase.mp4`"
+            :src="`${imagePath}/demos/bookcase.mp4?new`"
             autoplay
             muted
             loop
@@ -123,7 +123,7 @@
           lg="5"
         >
           <video
-            :src="`${imagePath}/demos/whattheduck.mp4`"
+            :src="`${imagePath}/demos/whattheduck.mp4?new`"
             autoplay
             muted
             loop
