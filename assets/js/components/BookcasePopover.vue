@@ -11,16 +11,21 @@
       :sorted-bookcase="edges"
     />
     <slot name="footer">
-      <Issue
-        v-for="edge in edges"
-        :key="edge.id"
-        class="issue"
-        :publicationname="publicationNames[edge.publicationCode]"
-        :publicationcode="edge.publicationCode"
-        :issuenumber="edge.issueNumber"
-        hide-condition
-        :no-wrap="false"
-      />
+      <b-row>
+        <b-col
+          v-for="edge in edges"
+          :key="edge.id"
+          cols="6"
+        >
+          <Issue
+            class="issue"
+            :publicationname="publicationNames[edge.publicationCode]"
+            :publicationcode="edge.publicationCode"
+            :issuenumber="edge.issueNumber"
+            hide-condition
+          />
+        </b-col>
+      </b-row>
     </slot>
   </b-popover>
 </template>
@@ -28,11 +33,11 @@
 import Bookcase from "./Bookcase";
 import Issue from "../components/Issue";
 import { mapState } from "vuex";
-import {BPopover} from "bootstrap-vue";
+import { BCol, BPopover, BRow } from "bootstrap-vue";
 
 export default {
   name: "BookcasePopover",
-  components: { Bookcase, Issue, BPopover },
+  components: { Bookcase, Issue, BPopover, BRow, BCol },
   props: {
     id: {
       type: String,
