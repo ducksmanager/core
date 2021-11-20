@@ -127,6 +127,7 @@
             autoplay
             muted
             loop
+            height="360"
           />
         </b-col>
         <b-col lg="5">
