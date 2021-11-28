@@ -1,5 +1,6 @@
-import { mapMutations } from "vuex";
 import l10nMixin from "./l10nMixin";
+import { mapActions } from "pinia";
+import { form } from "../stores/form";
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
 
@@ -13,7 +14,7 @@ export default {
   mixins: [l10nMixin],
 
   methods: {
-    ...mapMutations("form", ["addErrors"]),
+    ...mapActions(form, ["addErrors"]),
 
     validatePasswords() {
       if (this.password !== this.password2) {

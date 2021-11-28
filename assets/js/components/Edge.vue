@@ -43,11 +43,13 @@
 </template>
 
 <script>
-import {mapMutations, mapState} from "vuex";
+import { mapActions, mapState } from "pinia";
 import * as axios from "axios";
 import IssueEdgePopover from "./IssueEdgePopover";
 import Issue from "./Issue";
 import l10nMixin from "../mixins/l10nMixin";
+import { bookcase } from "../stores/bookcase";
+import { coa } from "../stores/coa";
 
 const EDGES_ROOT = 'https://edges.ducksmanager.net/edges/'
 const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
@@ -114,8 +116,8 @@ export default {
   }),
 
   computed: {
-    ...mapState("bookcase", ["loadedSprites"]),
-    ...mapState("coa", ["publicationNames"]),
+    ...mapState(bookcase, ["loadedSprites"]),
+    ...mapState(coa, ["publicationNames"]),
 
     countryCode() {
       return this.publicationCode.split('/')[0]
@@ -137,7 +139,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("bookcase", ["addLoadedSprite"]),
+    ...mapActions(bookcase, ["addLoadedSprite"]),
     async onImageLoad({target}) {
       if (this.spritePath && !this.ignoreSprite) {
         if (this.loadedSprites[this.spritePath]) {

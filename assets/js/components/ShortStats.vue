@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import axios from "axios";
+import { mapState } from "pinia";
 import collectionMixin from "../mixins/collectionMixin";
 import l10nMixin from "../mixins/l10nMixin";
+import { collection } from "../stores/collection";
 
 export default {
   name: "ShortStats",
@@ -34,7 +34,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters("collection", ["total", "totalUniqueIssues", "totalPerCountry", "totalPerPublication"])
+    ...mapState(collection, ["total", "totalUniqueIssues", "totalPerCountry", "totalPerPublication"])
   },
 };
 </script>

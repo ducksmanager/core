@@ -65,7 +65,7 @@
 import IssueList from "../../components/IssueList";
 import l10nMixin from "../../mixins/l10nMixin";
 import collectionMixin from "../../mixins/collectionMixin";
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import IssueSearch from "../../components/IssueSearch";
 import PublicationSelect from "../../components/PublicationSelect";
 import SuggestionList from "../SuggestionList";
@@ -74,6 +74,8 @@ import PublicationList from "../../components/PublicationList";
 import LastPublishedEdges from "../../components/LastPublishedEdges";
 import ShortStats from "../../components/ShortStats";
 import LastPurchases from "../../components/LastPurchases";
+import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 
 export default {
   name: "Manage",
@@ -100,8 +102,8 @@ export default {
     hasPublicationNames: false
   }),
   computed: {
-    ...mapState("coa", ["publicationNames"]),
-    ...mapGetters("collection", ["total", "totalPerCountry", "totalPerPublication"]),
+    ...mapState(coa, ["publicationNames"]),
+    ...mapState(collection, ["total", "totalPerCountry", "totalPerPublication"]),
 
     mostPossessedPublication() {
       const vm = this;
@@ -119,7 +121,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames"])
+    ...mapActions(coa, ["fetchPublicationNames"])
   }
 };
 </script>

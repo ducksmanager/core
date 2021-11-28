@@ -1,8 +1,10 @@
 <script>
 import {Bar} from 'vue-chartjs'
 import collectionMixin from "../../mixins/collectionMixin";
-import {mapActions, mapGetters, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
+import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 
 export default {
   name: "PurchaseStats",
@@ -23,9 +25,8 @@ export default {
   }),
 
   computed: {
-    ...mapState("collection", ["collection", "purchases"]),
-    ...mapState("coa", ["publicationNames"]),
-    ...mapGetters("collection", ["totalPerPublication"]),
+    ...mapState(collection, ["collection", "purchases", "totalPerPublication"]),
+    ...mapState(coa, ["publicationNames"]),
 
     labels() {
       return this.collectionWithDates && [...new Set(
@@ -177,8 +178,8 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames"]),
-    ...mapActions("collection", ["loadPurchases"]),
+    ...mapActions(coa, ["fetchPublicationNames"]),
+    ...mapActions(collection, ["loadPurchases"]),
 
     compareDates: (a, b) => Math.sign(
       new Date(a === '?' ? '0001-01-01' : a)

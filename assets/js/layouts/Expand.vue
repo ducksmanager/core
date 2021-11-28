@@ -53,9 +53,11 @@
 <script>
 import collectionMixin from "../mixins/collectionMixin";
 import l10nMixin from "../mixins/l10nMixin";
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import SuggestionList from "./SuggestionList";
 import {BAlert, BFormSelect} from "bootstrap-vue";
+import { coa } from "../stores/coa";
+import { collection } from "../stores/collection";
 
 export default {
   name: "Expand",
@@ -67,9 +69,8 @@ export default {
   }),
 
   computed: {
-    ...mapState("collection", ["watchedAuthors", "suggestions"]),
-    ...mapState("coa", ["countryNames"]),
-    ...mapGetters("collection", ["hasSuggestions"]),
+    ...mapState(collection, ["watchedAuthors", "suggestions", "hasSuggestions"]),
+    ...mapState(coa, ["countryNames"]),
 
     countryNamesWithAllCountriesOption() {
       return this.countryNames && {
@@ -96,8 +97,8 @@ export default {
   },
 
   methods: {
-    ...mapActions("collection", ["loadWatchedAuthors"]),
-    ...mapActions("coa", ["fetchCountryNames"])
+    ...mapActions(collection, ["loadWatchedAuthors"]),
+    ...mapActions(coa, ["fetchCountryNames"])
   }
 };
 </script>

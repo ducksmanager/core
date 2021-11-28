@@ -12,8 +12,9 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from "pinia";
 import {BAlert} from "bootstrap-vue";
+import { form } from "../stores/form";
 
 export default {
   name: "Errorable",
@@ -28,7 +29,7 @@ export default {
   },
 
   computed: {
-    ...mapState("form", ["errors"])
+    ...mapState(form, ["errors"])
   }
 }
 </script>

@@ -48,8 +48,10 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import MedalProgress from "./MedalProgress";
-import {mapGetters, mapState} from "vuex";
+import {mapState} from "pinia";
 import {BButton, BPopover} from "bootstrap-vue";
+import { users } from "../stores/users";
+import { bookcase } from "../stores/bookcase";
 
 export default {
   name: "IssueEdgePopover",
@@ -75,8 +77,8 @@ export default {
   }),
 
   computed: {
-    ...mapGetters("bookcase", ["isSharedBookcase"]),
-    ...mapState("users", {allUserPoints: "points"}),
+    ...mapState(bookcase, ["isSharedBookcase"]),
+    ...mapState(users, {allUserPoints: "points"}),
 
     points() {
       return this.allUserPoints && this.allUserPoints[this.userId][this.contribution]

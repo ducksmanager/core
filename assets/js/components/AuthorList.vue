@@ -84,9 +84,11 @@
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import axios from "axios";
 import {BAlert, BCol, BFormInput, BFormRating, BNavbarNav, BRow} from "bootstrap-vue";
+import { coa } from "../stores/coa";
+import { collection } from "../stores/collection";
 
 export default {
   name: "AuthorList",
@@ -114,7 +116,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["personNames"])
+    ...mapState(coa, ["personNames"])
   },
 
   watch: {
@@ -135,8 +137,8 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPersonNames"]),
-    ...mapActions("collection", ["loadWatchedAuthors"]),
+    ...mapActions(coa, ["fetchPersonNames"]),
+    ...mapActions(collection, ["loadWatchedAuthors"]),
 
     isAuthorWatched(personCode) {
       return this.watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)

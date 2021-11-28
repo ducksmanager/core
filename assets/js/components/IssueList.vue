@@ -207,7 +207,7 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import ContextMenu from "./ContextMenu";
 import "vue-context/src/sass/vue-context.scss";
 import axios from "axios";
@@ -218,6 +218,8 @@ import Book from "./Book";
 import Condition from "./Condition";
 import {BAlert, BIconCalendar, BIconEyeFill} from "bootstrap-vue";
 import Publication from "./Publication";
+import { collection } from "../stores/collection";
+import { coa } from "../stores/coa";
 
 export default {
   name: "IssueList",
@@ -262,8 +264,8 @@ export default {
     contextMenuKey: "context-menu"
   }),
   computed: {
-    ...mapState("coa", ["publicationNames"]),
-    ...mapState("collection", { userIssues: "collection" }),
+    ...mapState(coa, ["publicationNames"]),
+    ...mapState(collection, { userIssues: "collection" }),
 
     country() {
       return this.publicationcode.split("/")[0];
@@ -337,8 +339,8 @@ export default {
     this.publicationNameLoading = false;
   },
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames"]),
-    ...mapActions("collection", ["loadCollection", "loadPurchases"]),
+    ...mapActions(coa, ["fetchPublicationNames"]),
+    ...mapActions(collection, ["loadCollection", "loadPurchases"]),
     openContextMenuIfBookNotOpen(e) {
       if (this.currentIssueOpened === null) {
         this.$refs.contextMenu.$refs.menu.open(e);

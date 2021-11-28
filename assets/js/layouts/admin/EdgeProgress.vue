@@ -84,10 +84,11 @@
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import Publication from "../../components/Publication";
 import Bookcase from "../../components/Bookcase";
 import {BIconEyeFill, BIconEyeSlashFill} from "bootstrap-vue";
+import { coa } from "../../stores/coa";
 
 export default {
   name: "EdgeProgress",
@@ -104,8 +105,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("coa", ["publicationNames"]),
-    ...mapState("coa", ["issueNumbers"]),
+    ...mapState(coa, ["publicationNames", "issueNumbers"]),
     inducksIssueNumbersNoSpace() {
       const vm = this
       return Object.keys(this.issueNumbers).reduce((acc, publicationCode) => ({
@@ -135,7 +135,7 @@ export default {
     this.hasData = true
   },
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
+    ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers"]),
     getEdgeUrl(publicationCode, issueNumber) {
       const [country, magazine] = publicationCode.split('/')
       return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`

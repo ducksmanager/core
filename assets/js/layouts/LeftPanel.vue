@@ -64,10 +64,12 @@ import l10nMixin from "../mixins/l10nMixin";
 import RecentEvents from "./RecentEvents";
 import Navigation from "./Navigation";
 import Medal from "../components/Medal";
-import {mapActions, mapMutations, mapState} from "vuex";
+import {mapState, mapActions} from "pinia";
 import Banner from "./Banner";
 import SwitchLocale from "./SwitchLocale";
 import {BCollapse, BNavbar, BNavbarBrand, BNavbarToggle} from "bootstrap-vue";
+import { users } from "../stores/users";
+import { collection } from "../stores/collection";
 
 export default {
   name: "LeftPanel",
@@ -87,7 +89,7 @@ export default {
   mixins: [l10nMixin],
 
   computed: {
-    ...mapState("users", ["points"]),
+    ...mapState(users, ["points"]),
 
     userPoints() {
       return this.points && this.points[this.userId]
@@ -103,8 +105,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations("collection", ["setPreviousVisit"]),
-    ...mapActions("users", ["fetchStats"])
+    ...mapActions(collection, ["setPreviousVisit"]),
+    ...mapActions(users, ["fetchStats"])
   }
 }
 </script>

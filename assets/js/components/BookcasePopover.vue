@@ -32,8 +32,9 @@
 <script>
 import Bookcase from "./Bookcase";
 import Issue from "../components/Issue";
-import { mapState } from "vuex";
+import { mapState } from "pinia";
 import { BCol, BPopover, BRow } from "bootstrap-vue";
+import { coa } from "../stores/coa";
 
 export default {
   name: "BookcasePopover",
@@ -54,7 +55,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames"]),
+    ...mapState(coa, ["publicationNames"]),
   }
 };
 </script>

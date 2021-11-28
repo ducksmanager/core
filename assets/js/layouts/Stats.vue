@@ -131,13 +131,14 @@ import collectionMixin from "../mixins/collectionMixin";
 import PurchaseStats from "./stats/PurchaseStats";
 import AuthorStats from "./stats/AuthorStats";
 import l10nMixin from "../mixins/l10nMixin";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import axios from "axios";
 import AuthorList from "../components/AuthorList";
 import ConditionStats from "./stats/ConditionStats";
 import Menu from "./Menu";
 import GeneralStats from "./stats/GeneralStats";
 import {BAlert, BButton, BButtonGroup} from "bootstrap-vue";
+import { collection } from "../stores/collection";
 
 export default {
   name: "Stats",
@@ -170,7 +171,7 @@ export default {
     watchedAuthorsStoryCount: null
   }),
   computed: {
-    ...mapState("collection", ["purchases", "watchedAuthors"]),
+    ...mapState(collection, ["purchases", "watchedAuthors"]),
     unitTypes() {
       return { number: this.$t("Afficher en valeurs réelles"), percentage: this.$t("Afficher en pourcentages") };
     },
@@ -195,7 +196,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("collection", ["loadWatchedAuthors", "loadPurchases"]),
+    ...mapActions(collection, ["loadWatchedAuthors", "loadPurchases"]),
     changeDimension(dimension, value) {
       this[dimension] = `${value}px`;
     }

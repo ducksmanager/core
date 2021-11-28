@@ -80,10 +80,12 @@
 
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import { SlickItem, SlickList } from "vue-slicksort";
 import Publication from "../../components/Publication";
 import {BAlert, BButton, BDropdown, BDropdownItem, BFormCheckbox} from "bootstrap-vue";
+import { bookcase } from "../../stores/bookcase";
+import { coa } from "../../stores/coa";
 
 export default {
   name: "BookcaseOptions",
@@ -154,8 +156,8 @@ export default {
   }),
 
   computed: {
-    ...mapState("bookcase", ["bookcaseOptions"]),
-    ...mapState("coa", ["publicationNames"]),
+    ...mapState(bookcase, ["bookcaseOptions"]),
+    ...mapState(coa, ["publicationNames"]),
     textureTypes() {
       return {
         bookcase: this.$t("Sous-texture"),
@@ -183,9 +185,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations("bookcase", ["setBookcaseUsername", "setBookcaseOrder"]),
-    ...mapActions("bookcase", ["loadBookcaseOptions", "loadBookcaseOrder", "updateBookcaseOptions", "updateBookcaseOrder"]),
-    ...mapActions("coa", ["fetchPublicationNames"]),
+    ...mapActions(bookcase, ["setBookcaseUsername", "setBookcaseOrder", "loadBookcaseOptions", "loadBookcaseOrder", "updateBookcaseOptions", "updateBookcaseOrder"]),
+    ...mapActions(coa, ["fetchPublicationNames"]),
 
     async loadData() {
       await this.loadBookcaseOptions();

@@ -1,7 +1,9 @@
 import axios from "axios";
+import { defineStore } from "pinia";
+import { bookcase } from "./bookcase";
+import { coa } from "./coa";
 
-export default {
-  namespaced: true,
+export const collection = defineStore('collection', {
   state: () => ({
     collection: null,
     purchases: null,
@@ -21,40 +23,6 @@ export default {
     user: null,
     previousVisit: null
   }),
-
-  mutations: {
-    setCollection(state, collection) {
-      state.collection = collection.map(issue => ({
-        ...issue,
-        publicationCode: `${issue.country}/${issue.magazine}`
-      }));
-    },
-    setPurchases(state, purchases) {
-      state.purchases = purchases.sort(({ date: purchaseDate1 }, { date: purchaseDate2 }) =>
-        Math.sign(purchaseDate2 - purchaseDate1));
-    },
-    setWatchedAuthors(state, watchedAuthors) {
-      state.watchedAuthors = watchedAuthors;
-    },
-    setSubscriptions(state, subscriptions) {
-      state.subscriptions = subscriptions;
-    },
-    setSuggestions(state, suggestions) {
-      state.suggestions = suggestions;
-    },
-    setPopularIssuesInCollection(state, popularIssuesInCollection) {
-      state.popularIssuesInCollection = popularIssuesInCollection;
-    },
-    setLastPublishedEdgesForCurrentUser(state, lastPublishedEdgesForCurrentUser) {
-      state.lastPublishedEdgesForCurrentUser = lastPublishedEdgesForCurrentUser;
-    },
-    setUser(state, user) {
-      state.user = user;
-    },
-    setPreviousVisit(state, previousVisit) {
-      state.previousVisit = previousVisit;
-    }
-  },
 
   getters: {
     total: ({ collection }) => collection && collection.length,
@@ -78,7 +46,7 @@ export default {
       }
     },
 
-    totalUniqueIssues: ({ collection }, { duplicateIssues }) => {
+    totalUniqueIssues: ({ collection, duplicateIssues }) => {
       return collection && collection.length - Object.values(duplicateIssues).reduce((acc, duplicatedIssue) => {
         return acc + duplicatedIssue.length - 1
       }, 0)
@@ -96,11 +64,12 @@ export default {
 
     hasSuggestions: ({ suggestions }) => suggestions && suggestions.issues && Object.keys(suggestions.issues).length,
 
-    popularIssuesInCollectionWithoutEdge: (state, getters, rootState, rootGetters) => rootGetters["bookcase/bookcaseWithPopularities"] && rootGetters["bookcase/bookcaseWithPopularities"]
+    popularIssuesInCollectionWithoutEdge: () => bookcase().bookcaseWithPopularities && bookcase().bookcaseWithPopularities
       .filter(({ edgeId, popularity }) => !edgeId && popularity > 0)
       .sort(({ popularity: popularity1 }, { popularity: popularity2 }) => popularity2 - popularity1),
 
-    quotedIssues: ({ collection }, getters, { coa: { issueQuotations } }) => {
+    quotedIssues: ({ collection }) => {
+      const issueQuotations = coa().issueQuotations
       if (issueQuotations === null) {
         return null;
       }
@@ -130,70 +99,74 @@ export default {
           });
     },
 
-    quotationSum: (state, { quotedIssues }) => quotedIssues && Math.round(quotedIssues.reduce((acc, { estimationGivenCondition }) => acc + estimationGivenCondition, 0))
+    quotationSum: ({ quotedIssues }) => quotedIssues && Math.round(quotedIssues.reduce((acc, { estimationGivenCondition }) => acc + estimationGivenCondition, 0))
   },
 
   actions: {
-    loadCollection: async ({ state, commit }, afterUpdate = false) => {
-      if (afterUpdate || !state.isLoadingCollection && !state.collection) {
-        state.isLoadingCollection = true;
-        commit("setCollection", (await axios.get("/api/collection/issues")).data);
-        state.isLoadingCollection = false;
+    setPreviousVisit(previousVisit) {
+      this.previousVisit = previousVisit;
+    },
+    async loadCollection(afterUpdate = false) {
+      if (afterUpdate || !this.isLoadingCollection && !this.collection) {
+        this.isLoadingCollection = true;
+        this.collection = (await axios.get("/api/collection/issues")).data
+          .map(issue => ({...issue, publicationCode: `${issue.country}/${issue.magazine}`}));
+        this.isLoadingCollection = false;
       }
     },
-    loadPurchases: async ({ state, commit }, afterUpdate = false) => {
-      if (afterUpdate || !state.isLoadingPurchases && !state.purchases) {
-        state.isLoadingPurchases = true;
-        commit("setPurchases", (await axios.get("/api/collection/purchases")).data);
-        state.isLoadingPurchases = false;
+    async loadPurchases(afterUpdate = false) {
+      if (afterUpdate || !this.isLoadingPurchases && !this.purchases) {
+        this.isLoadingPurchases = true;
+        this.purchases = (await axios.get("/api/collection/purchases")).data;
+        this.isLoadingPurchases = false;
       }
     },
-    loadWatchedAuthors: async ({ state, commit }, afterUpdate = false) => {
-      if (afterUpdate || !state.isLoadingWatchedAuthors && !state.watchedAuthors) {
-        state.isLoadingWatchedAuthors = true;
-        commit("setWatchedAuthors", (await axios.get("/api/collection/authors/watched")).data);
-        state.isLoadingWatchedAuthors = false;
+    async loadWatchedAuthors(afterUpdate = false) {
+      if (afterUpdate || !this.isLoadingWatchedAuthors && !this.watchedAuthors) {
+        this.isLoadingWatchedAuthors = true;
+        this.watchedAuthors = (await axios.get("/api/collection/authors/watched")).data;
+        this.isLoadingWatchedAuthors = false;
       }
     },
-    loadSuggestions: async ({ state, commit }, { countryCode, sort, sinceLastVisit }) => {
-      if (!state.isLoadingSuggestions) {
-        state.isLoadingSuggestions = true;
-        commit("setSuggestions", (await axios.get(`/api/collection/stats/suggestedissues/${[
+    async loadSuggestions({ countryCode, sort, sinceLastVisit }) {
+      if (!this.isLoadingSuggestions) {
+        this.isLoadingSuggestions = true;
+        this.suggestions = (await axios.get(`/api/collection/stats/suggestedissues/${[
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
           sort,
           sinceLastVisit ? 100 : 20
-        ].join("/")}`)).data);
-        state.isLoadingSuggestions = false;
+        ].join("/")}`)).data;
+        this.isLoadingSuggestions = false;
       }
     },
-    loadSubscriptions: async ({ state, commit }, afterUpdate = false) => {
-      if (afterUpdate || !state.isLoadingSubscriptions && !state.subscriptions) {
-        state.isLoadingSubscriptions = true;
-        commit("setSubscriptions", (await axios.get("/api/collection/subscriptions")).data);
-        state.isLoadingSubscriptions = false;
+    async loadSubscriptions(afterUpdate = false) {
+      if (afterUpdate || !this.isLoadingSubscriptions && !this.subscriptions) {
+        this.isLoadingSubscriptions = true;
+        this.subscriptions = (await axios.get("/api/collection/subscriptions")).data;
+        this.isLoadingSubscriptions = false;
       }
     },
-    loadPopularIssuesInCollection: async ({ state, commit }) => {
-      if (!state.popularIssuesInCollection) {
-        commit("setPopularIssuesInCollection", (await axios.get("/api/collection/popular")).data.reduce((acc, issue) => ({
+    async loadPopularIssuesInCollection() {
+      if (!this.popularIssuesInCollection) {
+        this.popularIssuesInCollection = (await axios.get("/api/collection/popular")).data.reduce((acc, issue) => ({
           ...acc,
           [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]: issue.popularity
-        }), {}));
+        }), {});
       }
     },
-    loadLastPublishedEdgesForCurrentUser: async ({ state, commit }) => {
-      if (!state.lastPublishedEdgesForCurrentUser) {
-        commit("setLastPublishedEdgesForCurrentUser", (await axios.get("/api/collection/edges/lastPublished")).data.map(edge => ({
+    async loadLastPublishedEdgesForCurrentUser() {
+      if (!this.lastPublishedEdgesForCurrentUser) {
+        this.lastPublishedEdgesForCurrentUser = (await axios.get("/api/collection/edges/lastPublished")).data.map(edge => ({
           ...edge,
           timestamp: Date.parse(edge.creationDate)
-        })));
+        }));
       }
     },
 
-    loadUser: async ({ state, commit }, afterUpdate = false) => {
-      if (afterUpdate || !state.user) {
-        commit("setUser", Object.entries(
+    async loadUser(afterUpdate = false) {
+      if (afterUpdate || !this.user) {
+        this.user = Object.entries(
           (await axios.get(`/api/collection/user`)).data).reduce((acc, [key, value]) => {
             switch (key) {
               case "accepterpartage":
@@ -210,9 +183,8 @@ export default {
                 break;
             }
             return acc;
-          }, {})
-        );
+          }, {});
       }
     }
   }
-};
+});

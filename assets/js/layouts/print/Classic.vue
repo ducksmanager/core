@@ -23,7 +23,8 @@
 </template>
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
+import { coa } from "../../stores/coa";
 
 export default {
   mixins: [collectionMixin],
@@ -31,7 +32,7 @@ export default {
     hasPublicationNames: false
   }),
   computed: {
-    ...mapState("coa", ["countryNames", "publicationNames"]),
+    ...mapState(coa, ["countryNames", "publicationNames"]),
     countryCodes() {
       return this.collection && [...new Set(this.collection.map(i => i.country))]
     },
@@ -62,7 +63,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
+    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
     publicationCodesOfCountry(countryCode) {
       const vm = this
       return this.publicationCodes.filter(publicationCode => publicationCode.split('/')[0] === countryCode)

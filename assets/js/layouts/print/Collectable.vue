@@ -134,8 +134,10 @@
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
 import l10nMixin from "../../mixins/l10nMixin";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import Publication from "../../components/Publication";
+import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/
 
@@ -151,7 +153,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("coa", ["countryNames", "publicationNames"]),
+    ...mapState(coa, ["countryNames", "publicationNames"]),
 
     ready() {
       return this.issuesPerCell && this.countryNames && Object.keys(this.publicationNames).length
@@ -223,8 +225,8 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions("collection", ["loadPurchases"]),
+    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
+    ...mapActions(collection, ["loadPurchases"]),
     numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : "A".charCodeAt() - 26) + number),
     letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt(),
 

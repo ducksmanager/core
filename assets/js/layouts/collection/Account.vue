@@ -121,9 +121,11 @@
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
 import Errorable from "../../components/Errorable";
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import axios from "axios";
 import {BAlert, BButton, BFormCheckbox, BFormInput} from "bootstrap-vue";
+import { form } from "../../stores/form";
+import { collection } from "../../stores/collection";
 
 export default {
   name: "Account",
@@ -136,7 +138,7 @@ export default {
   },
 
   computed: {
-    ...mapState("collection", ["user"]),
+    ...mapState(collection, ["user"]),
     isSuccess() {
       return this.success === null ? null : parseInt(this.success) === 1;
     },
@@ -151,8 +153,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations("form", ["addErrors"]),
-    ...mapActions("collection", ["loadUser"]),
+    ...mapActions(form, ["addErrors"]),
+    ...mapActions(collection, ["loadUser"]),
 
     async emptyCollection() {
       if (confirm(this.$t("Votre collection va être vidée. Continuer ?"))) {

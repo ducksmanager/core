@@ -1,6 +1,7 @@
 import Vue from "vue";
 import axios from "axios";
-import { coaCache } from "../../util/cache";
+import { coaCache } from "../util/cache";
+import { defineStore } from "pinia";
 
 const coaApi = axios.create({
   adapter: coaCache.adapter
@@ -35,8 +36,7 @@ function addPartInfo(issueDetails) {
   }
 }
 
-export default {
-  namespaced: true,
+export const coa = defineStore('coa', {
   state: () => ({
     countryNames: null,
     publicationNames: {},
@@ -51,76 +51,59 @@ export default {
     loadingIssueDetails: {}
   }),
 
-  mutations: {
-    setIsLoadingCountryNames(state, isLoadingCountryNames) {
-      state.isLoadingCountryNames = isLoadingCountryNames;
-    },
-    setCountryNames(state, countryNames) {
-      state.countryNames = countryNames;
-    },
-    addPublicationNames(state, publicationNames) {
-      state.publicationNames = {
-        ...state.publicationNames,
+  actions: {
+    addPublicationNames(publicationNames) {
+      this.publicationNames = {
+        ...this.publicationNames,
         ...publicationNames
       };
     },
-    setPublicationNamesFullCountries(state, publicationNamesFullCountries) {
-      state.publicationNamesFullCountries = publicationNamesFullCountries;
-    },
-    setPersonNames(state, personNames) {
-      state.personNames = Object.keys(personNames)
+    setPersonNames(personNames) {
+      this.personNames = Object.keys(personNames)
         .reduce((acc, personCode) => ({
           ...acc,
           [personCode]: personNames[personCode]
         }), {});
     },
-    addIssueNumbers(state, issueNumbers) {
-      state.issueNumbers = { ...state.issueNumbers, ...issueNumbers };
+    addIssueNumbers(issueNumbers) {
+      this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };
     },
-    setIssueDetails(state, { issueCode, issueDetails }) {
-      Vue.set(state.issueDetails, issueCode, addPartInfo(issueDetails));
+    addIssueCodeDetails(issueCodeDetails) {
+      this.issueCodeDetails = { ...this.issueCodeDetails, ...issueCodeDetails };
     },
-    setIssueCounts(state, issueCounts) {
-      state.issueCounts = issueCounts;
+    addIssueQuotations(issueQuotations) {
+      this.issueQuotations = { ...(this.issueQuotations || {}), ...issueQuotations };
     },
-    addIssueCodeDetails(state, issueCodeDetails) {
-      state.issueCodeDetails = { ...state.issueCodeDetails, ...issueCodeDetails };
-    },
-    addIssueQuotations(state, issueQuotations) {
-      state.issueQuotations = {...(state.issueQuotations || {}), ...issueQuotations};
-    }
-  },
 
-  actions: {
-    fetchCountryNames: async ({ state, commit }) => {
-      if (!state.isLoadingCountryNames && !state.countryNames) {
-        commit("setIsLoadingCountryNames", true);
-        commit("setCountryNames", (await coaApi.get(
+    async fetchCountryNames() {
+      if (!this.isLoadingCountryNames && !this.countryNames) {
+        this.isLoadingCountryNames = true;
+        this.countryNames = (await coaApi.get(
           URL_PREFIX_COUNTRIES.replace("LOCALE", localStorage.getItem("locale"))
-        )).data);
-        commit("setIsLoadingCountryNames", false);
+        )).data;
+        this.isLoadingCountryNames = false;
       }
     },
-    fetchPublicationNames: async ({ state, commit, dispatch }, publicationCodes) => {
+    async fetchPublicationNames(publicationCodes) {
       const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
-        !Object.keys(state.publicationNames).includes(publicationCode)
+        !Object.keys(this.publicationNames).includes(publicationCode)
       ))];
       return newPublicationCodes.length
-        && commit("addPublicationNames",
-          await dispatch("getChunkedRequests", {
+        && this.addPublicationNames(
+          await this.getChunkedRequests({
             url: URL_PREFIX_PUBLICATIONS,
             valuesToChunk: newPublicationCodes,
             chunkSize: 20
           }).then(data => data.reduce((acc, result) => ({ ...acc, ...result.data }), {}))
         );
     },
-    fetchIssueQuotations: async ({ state, commit, dispatch }, publicationCodes) => {
+    async fetchIssueQuotations(publicationCodes) {
       const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
-        !Object.keys(state.issueQuotations || {}).includes(publicationCode)
+        !Object.keys(this.issueQuotations || {}).includes(publicationCode)
       ))];
       return newPublicationCodes.length
-        && commit("addIssueQuotations",
-          await dispatch("getChunkedRequests", {
+        && this.addIssueQuotations(
+          await this.getChunkedRequests({
             url: URL_PREFIX_ISSUE_QUOTATIONS,
             valuesToChunk: newPublicationCodes,
             chunkSize: 10
@@ -136,29 +119,29 @@ export default {
             }), []))
         );
     },
-    fetchPublicationNamesFromCountry: async ({ state, commit, dispatch }, countryCode) => {
-      if (state.publicationNamesFullCountries.includes(countryCode)) {
+    async fetchPublicationNamesFromCountry(countryCode) {
+      if (this.publicationNamesFullCountries.includes(countryCode)) {
         return;
       }
       return coaApi.get(URL_PREFIX_PUBLICATIONS + countryCode).then(({ data }) => {
-        commit("addPublicationNames", {
-          ...(state.publicationNames || {}),
+        this.addPublicationNames({
+          ...(this.publicationNames || {}),
           ...data
         });
-        commit("setPublicationNamesFullCountries", [
-          ...state.publicationNamesFullCountries,
+        this.publicationNamesFullCountries = [
+          ...this.publicationNamesFullCountries,
           countryCode
-        ]);
+        ];
       });
     },
-    fetchPersonNames: async ({ state, commit, dispatch }, personCodes) => {
+    async fetchPersonNames(personCodes) {
       const newPersonNames = [...new Set(personCodes.filter(personCode =>
-        !Object.keys(state.personNames || {}).includes(personCode)
+        !Object.keys(this.personNames || {}).includes(personCode)
       ))];
       return newPersonNames.length
-        && commit("setPersonNames", {
-          ...(state.personNames || {}),
-          ...await dispatch("getChunkedRequests", {
+        && this.setPersonNames({
+          ...(this.personNames || {}),
+          ...await this.getChunkedRequests({
             url: URL_PREFIX_AUTHORS,
             valuesToChunk: newPersonNames,
             chunkSize: 10
@@ -166,11 +149,11 @@ export default {
         });
     },
 
-    fetchIssueNumbers: async ({ state, commit, dispatch }, publicationCodes) => {
+    async fetchIssueNumbers(publicationCodes) {
       const newPublicationCodes = [...new Set(publicationCodes.filter(publicationCode =>
-        !Object.keys(state.issueNumbers || {}).includes(publicationCode)
+        !Object.keys(this.issueNumbers || {}).includes(publicationCode)
       ))];
-      return newPublicationCodes.length && commit("addIssueNumbers", await dispatch("getChunkedRequests", {
+      return newPublicationCodes.length && this.addIssueNumbers(await this.getChunkedRequests({
           url: URL_PREFIX_ISSUES,
           valuesToChunk: newPublicationCodes,
           chunkSize: 10
@@ -178,11 +161,11 @@ export default {
       );
     },
 
-    fetchIssueCodesDetails: async ({ state, commit, dispatch }, issueCodes) => {
+    async fetchIssueCodesDetails(issueCodes) {
       const newIssueCodes = [...new Set(issueCodes.filter(issueCode =>
-        !Object.keys(state.issueCodeDetails || {}).includes(issueCode)
+        !Object.keys(this.issueCodeDetails || {}).includes(issueCode)
       ))];
-      return newIssueCodes.length && commit("addIssueCodeDetails", await dispatch("getChunkedRequests", {
+      return newIssueCodes.length && this.addIssueCodeDetails(await this.getChunkedRequests({
           url: URL_ISSUE_DECOMPOSE,
           valuesToChunk: newIssueCodes,
           chunkSize: 50,
@@ -195,32 +178,29 @@ export default {
       );
     },
 
-    fetchIssueCounts: async ({ state, commit }) => {
-      if (!state.issueCounts) {
-        const issueCounts = (await coaApi.get(URL_ISSUE_COUNTS)).data;
-        commit("setIssueCounts", issueCounts);
+    async fetchIssueCounts() {
+      if (!this.issueCounts) {
+        this.issueCounts = (await coaApi.get(URL_ISSUE_COUNTS)).data;
       }
     },
 
-    fetchIssueUrls: async ({ state, commit }, { publicationCode, issueNumber }) => {
+    async fetchIssueUrls({ publicationCode, issueNumber }) {
       const issueCode = `${publicationCode} ${issueNumber}`;
-      if (!state.issueDetails[issueCode]) {
+      if (!this.issueDetails[issueCode]) {
         let issueDetails = (await coaApi.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data;
-        commit("setIssueDetails", {
-          issueCode,
-          issueDetails
-        });
+
+        Vue.set(this.issueDetails, issueCode, addPartInfo(issueDetails));
       }
     },
 
-    getChunkedRequests: async (_, {
-      url,
-      valuesToChunk,
-      chunkSize,
-      method = "get",
-      parameterName = null
-    }) =>
-      await Promise.all(
+    async getChunkedRequests({
+                              url,
+                              valuesToChunk,
+                              chunkSize,
+                              method = "get",
+                              parameterName = null
+                            }) {
+      return await Promise.all(
         await Array.from({ length: Math.ceil(valuesToChunk.length / chunkSize) }, (v, i) =>
           valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
         ).reduce(async (acc, codeChunk) =>
@@ -234,5 +214,6 @@ export default {
           Promise.resolve([])
         )
       )
+    }
   }
-};
+});

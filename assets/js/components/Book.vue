@@ -102,11 +102,12 @@
 </template>
 <script>
 import {PageFlip} from 'page-flip';
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import Story from "./Story";
 import Issue from "./Issue";
 import {BCard, BTab, BTabs} from "bootstrap-vue";
+import { coa } from "../stores/coa";
 
 const EDGES_BASE_URL = 'https://edges.ducksmanager.net/edges/';
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
@@ -146,7 +147,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames", "issueDetails"]),
+    ...mapState(coa, ["publicationNames", "issueDetails"]),
 
     isSinglePageWithUrl() {
       return this.pagesWithUrl.length === 1;
@@ -282,7 +283,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchIssueUrls"]),
+    ...mapActions(coa, ["fetchIssueUrls"]),
 
     async loadBookPages() {
       await this.fetchIssueUrls({

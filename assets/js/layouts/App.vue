@@ -11,6 +11,8 @@ import BookstoresAdmin from "./admin/BookstoresAdmin";
 import EdgeProgress from "./admin/EdgeProgress";
 import Site from "./Site";
 import Privacy from "./Privacy";
+import { mapActions } from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "App",
@@ -27,6 +29,12 @@ export default {
       component,
       props,
     }
+  },
+  async mounted() {
+    await this.loadL10n()
+  },
+  methods: {
+    ...mapActions(l10n, ['loadL10n'])
   }
 }
 </script>

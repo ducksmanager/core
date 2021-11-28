@@ -33,18 +33,20 @@
   </Accordion>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState } from "pinia";
 import collectionMixin from "../mixins/collectionMixin";
 import Accordion from "./Accordion";
 import Issue from "./Issue";
+import { coa } from "../stores/coa";
+import { collection } from "../stores/collection";
 
 export default {
   name: "LastPurchases",
   components: { Accordion, Issue },
   mixins: [collectionMixin],
   computed: {
-    ...mapState("coa", ["publicationNames"]),
-    ...mapState("collection", ["collection", "purchases"]),
+    ...mapState(coa, ["publicationNames"]),
+    ...mapState(collection, ["collection", "purchases"]),
 
     collectionPerPurchaseDate() {
       const vm = this;

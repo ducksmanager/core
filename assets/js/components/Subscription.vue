@@ -103,8 +103,9 @@ import Publication from "./Publication";
 import PublicationSelect from "./PublicationSelect";
 import l10nMixin from "../mixins/l10nMixin";
 import subscriptionMixin from "../mixins/subscriptionMixin";
-import { mapState } from "vuex";
+import { mapState } from "pinia";
 import {BButton, BCol, BForm, BRow} from "bootstrap-vue";
+import { coa } from "../stores/coa";
 
 export default {
   name: "Subscription",
@@ -156,7 +157,7 @@ export default {
   },
 
   computed: {
-    ...mapState("coa", ["countryNames", "publicationNames"])
+    ...mapState(coa, ["countryNames", "publicationNames"])
   }
 };
 </script>

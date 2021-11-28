@@ -125,11 +125,14 @@
 import ShortStats from "../../components/ShortStats";
 import axios from "axios";
 import l10nMixin from "../../mixins/l10nMixin";
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
 import conditionMixin from "../../mixins/conditionMixin";
 import {BAlert, BPagination, BTable} from "bootstrap-vue";
+import { users } from "../../stores/users";
+import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 
 export default {
   name: "GeneralStats",
@@ -144,9 +147,9 @@ export default {
   }),
 
   computed: {
-    ...mapState("users", ["count"]),
-    ...mapState("coa", ["publicationNames"]),
-    ...mapGetters("collection", ["totalPerPublication", "quotedIssues", "quotationSum"]),
+    ...mapState(users, ["count"]),
+    ...mapState(coa, ["publicationNames"]),
+    ...mapState(collection, ["totalPerPublication", "quotedIssues", "quotationSum"]),
     quotationFields() {
       return [
         { key: "issue", label: this.ucFirst(this.$t("numéro")) },
@@ -183,8 +186,8 @@ export default {
   },
 
   methods: {
-    ...mapActions("users", ["fetchCount"]),
-    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueQuotations"])
+    ...mapActions(users, ["fetchCount"]),
+    ...mapActions(coa, ["fetchPublicationNames", "fetchIssueQuotations"])
   }
 };
 </script>

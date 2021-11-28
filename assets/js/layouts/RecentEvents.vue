@@ -19,10 +19,12 @@
 <script>
 import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
-import {mapActions, mapState} from "vuex";
+import {mapState, mapActions} from "pinia";
 import medalMixin from "../mixins/medalMixin";
 import Ago from "../components/Ago";
 import Event from "../components/Event";
+import { users } from "../stores/users";
+import { coa } from "../stores/coa";
 
 export default {
   name: "RecentEvents",
@@ -39,8 +41,8 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames"]),
-    ...mapState("users", ["stats", "points"]),
+    ...mapState(coa, ["publicationNames"]),
+    ...mapState(users, ["stats", "points"]),
   },
 
   async mounted() {
@@ -79,17 +81,18 @@ export default {
 
     await this.fetchStats(this.events
       .reduce((acc, event) =>
-        [...acc, event.userId || null, ...(event.users || [])]
+          [...acc, event.userId || null, ...(event.users || [])]
         , []
       )
       .filter(userId => !!userId)
     )
+
     this.isLoaded = true
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions("users", ["fetchStats"])
+    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
+    ...mapActions(users, ["fetchStats"])
   },
 }
 </script>

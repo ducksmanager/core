@@ -27,8 +27,9 @@
 
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import UserPopover from "../../components/UserPopover";
+import { users } from "../../stores/users";
 
 export default {
   name: "BookcaseContributors",
@@ -43,7 +44,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("users", ["bookcaseContributors", "stats", "points"]),
+    ...mapState(users, ["bookcaseContributors", "stats", "points"]),
 
     bookcaseContributorsSorted() {
       return !this.loading && [...this.bookcaseContributors]
@@ -60,7 +61,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("users", ["fetchStats", "fetchBookcaseContributors"])
+    ...mapActions(users, ["fetchStats", "fetchBookcaseContributors"])
   }
 };
 </script>

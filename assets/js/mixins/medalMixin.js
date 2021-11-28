@@ -1,4 +1,5 @@
-import {mapActions} from "vuex";
+import {mapActions} from "pinia";
+import { users } from "../stores/users";
 
 const MEDAL_LEVELS = {
   Photographe: {1: 50, 2: 150, 3: 600},
@@ -63,7 +64,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("users", ["fetchStats"]),
+    ...mapActions(users, ["fetchStats"]),
 
     getLevelProgressPercentage(extraPoints) {
       return this.currentLevelThreshold ? (100 * (extraPoints / this.currentLevelThreshold - this.currentLevelPoints)) : 0

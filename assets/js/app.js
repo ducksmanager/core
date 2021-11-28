@@ -5,18 +5,21 @@ import * as Sentry from '@sentry/vue';
 import {Integrations} from "@sentry/tracing";
 
 import App from "./layouts/App"
-import store from "./store"
 import { i18n } from "./i18n";
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../css/app.scss';
+import { createPinia, PiniaVuePlugin } from "pinia";
 
+const store = createPinia()
+
+Vue.use(PiniaVuePlugin)
 Vue.use(BackendDataPlugin)
 
 new Vue({
   i18n,
-  store,
+  pinia: store,
   render(createElement) {
     let props = {}, component = null
     const attributes = this.$el.attributes;

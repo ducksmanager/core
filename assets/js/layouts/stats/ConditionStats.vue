@@ -1,9 +1,10 @@
 <script>
 import {Pie} from 'vue-chartjs'
 import collectionMixin from "../../mixins/collectionMixin";
-import {mapState} from "vuex";
+import {mapState} from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
 import conditionMixin from "../../mixins/conditionMixin";
+import { collection } from "../../stores/collection";
 
 export default {
   name: "ConditionStats",
@@ -11,7 +12,7 @@ export default {
   mixins: [collectionMixin, l10nMixin, conditionMixin],
 
   computed: {
-    ...mapState("collection", ["collection"]),
+    ...mapState(collection, ["collection"]),
 
     conditionsWithoutMissing() {
       return this.conditions.filter(({value}) => value !== 'missing')

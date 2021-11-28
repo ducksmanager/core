@@ -1,4 +1,5 @@
-import {mapActions, mapState} from "vuex";
+import { mapState, mapActions } from "pinia";
+import { l10n } from "../stores/l10n";
 
 const PATH_REGEX = /{([^:]+)(?::([^}]+))?}/g
 
@@ -15,15 +16,9 @@ const matchAll = (haystack, regex) => {
 }
 
 export default {
-    computed: mapState("l10n", ["l10nRoutes"]),
-
-    async mounted() {
-        await this.loadL10n()
-    },
+    computed: mapState(l10n, ['l10nRoutes']),
 
     methods: {
-        ...mapActions("l10n", ["loadL10n"]),
-
         $r(route) {
             const routes = this.l10nRoutes
             if (!routes) {

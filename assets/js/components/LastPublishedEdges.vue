@@ -40,17 +40,19 @@
 import Accordion from "./Accordion";
 import Issue from "./Issue";
 import Ago from "./Ago";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import collectionMixin from "../mixins/collectionMixin";
+import { coa } from "../stores/coa";
+import { collection } from "../stores/collection";
 
 export default {
   name: "LastPublishedEdges",
   components: {Ago, Issue, Accordion},
   mixins: [l10nMixin, collectionMixin],
   computed: {
-    ...mapState("coa", ["publicationNames"]),
-    ...mapState("collection", ["previousVisit", "lastPublishedEdgesForCurrentUser"]),
+    ...mapState(coa, ["publicationNames"]),
+    ...mapState(collection, ["previousVisit", "lastPublishedEdgesForCurrentUser"]),
 
     publishedEdgesSincePreviousVisit() {
       const vm = this
@@ -68,7 +70,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("collection", ["loadLastPublishedEdgesForCurrentUser"])
+    ...mapActions(collection, ["loadLastPublishedEdgesForCurrentUser"])
   }
 }
 </script>

@@ -32,9 +32,10 @@
 
 <script>
 import Issue from "./Issue";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import {BPopover} from "bootstrap-vue";
+import { coa } from "../stores/coa";
 
 export default {
   name: "IssueDetailsPopover",
@@ -60,7 +61,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames", "issueDetails"]),
+    ...mapState(coa, ["publicationNames", "issueDetails"]),
 
     id() {
       return `issue-details-${this.publicationCode.replace('/', '-')}-${this.issueNumber}`
@@ -77,7 +78,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchIssueUrls"]),
+    ...mapActions(coa, ["fetchIssueUrls"]),
 
     async loadIssueUrls() {
       this.isCoverLoading = true

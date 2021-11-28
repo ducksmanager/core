@@ -12,10 +12,12 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
 import collectionMixin from "../../mixins/collectionMixin";
 import IssueList from "../../components/IssueList";
+import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 
 export default {
   name: "Duplicates",
@@ -28,8 +30,8 @@ export default {
   }),
 
   computed: {
-    ...mapGetters("collection", ["total", "duplicateIssues"]),
-    ...mapState("coa", ["publicationNames"])
+    ...mapState(collection, ["total", "duplicateIssues"]),
+    ...mapState(coa, ["publicationNames"])
   },
 
   watch: {
@@ -55,7 +57,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames"])
+    ...mapActions(coa, ["fetchPublicationNames"])
   }
 };
 </script>

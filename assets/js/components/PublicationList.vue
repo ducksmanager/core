@@ -59,7 +59,7 @@
 <script>
 import Country from "./Country";
 import l10nMixin from "../mixins/l10nMixin";
-import {mapActions, mapGetters, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import IssueSearch from "./IssueSearch";
 import {
   BCollapse,
@@ -71,6 +71,8 @@ import {
   BNavItem,
   BNavItemDropdown
 } from "bootstrap-vue";
+import { coa } from "../stores/coa";
+import { collection } from "../stores/collection";
 
 export default {
   name: "PublicationList",
@@ -96,8 +98,8 @@ export default {
   }),
 
   computed: {
-    ...mapGetters("collection", ["totalPerCountry", "totalPerPublication"]),
-    ...mapState("coa", ["countryNames", "publicationNames"]),
+    ...mapState(collection, ["totalPerCountry", "totalPerPublication"]),
+    ...mapState(coa, ["countryNames", "publicationNames"]),
     sortedCountries() {
       const vm = this
       return this.totalPerCountry && Object.keys(this.totalPerCountry)
@@ -132,7 +134,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames"]),
+    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
     getSortedPublications(country) {
       const vm = this
       return this.publicationsPerCountry && this.publicationsPerCountry[country]

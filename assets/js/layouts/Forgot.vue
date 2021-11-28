@@ -67,8 +67,9 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import Errorable from "../components/Errorable";
-import { mapMutations } from "vuex";
 import {BAlert, BButton, BCol, BFormInput, BFormRow} from "bootstrap-vue";
+import { mapActions } from "pinia";
+import { form } from "../stores/form";
 
 export default {
   name: "Forgot",
@@ -94,7 +95,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("form", ["addErrors"])
+    ...mapActions(form, ["addErrors"])
   }
 };
 </script>

@@ -21,13 +21,14 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
+import { users } from "../stores/users";
 
 export default {
   name: "Footer",
   mixins: [l10nMixin],
   computed: {
-    ...mapState("users", ["count"])
+    ...mapState(users, ["count"])
   },
 
   async mounted() {
@@ -35,7 +36,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("users", ["fetchCount"])
+    ...mapActions(users, ["fetchCount"])
   }
 }
 </script>

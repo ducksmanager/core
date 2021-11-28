@@ -1,8 +1,10 @@
 <script>
 import {HorizontalBar} from 'vue-chartjs'
 import collectionMixin from "../../mixins/collectionMixin";
-import {mapActions, mapGetters, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
+import { collection } from "../../stores/collection";
+import { coa } from "../../stores/coa";
 
 export default {
   name: "PossessionStats",
@@ -22,9 +24,8 @@ export default {
   }),
 
   computed: {
-    ...mapState("collection", ["collection"]),
-    ...mapState("coa", ["countryNames", "issueCounts", "publicationNames"]),
-    ...mapGetters("collection", ["totalPerPublication"]),
+    ...mapState(collection, ["collection", "totalPerPublication"]),
+    ...mapState(coa, ["countryNames", "issueCounts", "publicationNames"]),
 
     labels() {
       return Object.keys(this.totalPerPublication)
@@ -130,7 +131,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNames", "fetchIssueCounts"])
+    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames", "fetchIssueCounts"])
   }
 }
 </script>

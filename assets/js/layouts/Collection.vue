@@ -25,9 +25,10 @@ import Account from "./collection/Account";
 import Duplicates from "./collection/Duplicates";
 import Manage from "./collection/Manage";
 import Subscriptions from "./collection/Subscriptions";
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "pinia";
 import collectionMixin from "../mixins/collectionMixin";
 import subscriptionMixin from "../mixins/subscriptionMixin";
+import { collection } from "../stores/collection";
 
 export default {
   name: "Collection",
@@ -46,8 +47,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("collection", ["subscriptions"]),
-    ...mapGetters("collection", ["total", "totalUniqueIssues"]),
+    ...mapState(collection, ["subscriptions", "total", "totalUniqueIssues"]),
     attrsWithoutTab() {
       const vm = this
       return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'tab')

@@ -73,12 +73,13 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
 import subscriptionMixin from "../../mixins/subscriptionMixin";
 import Subscription from "../../components/Subscription";
 import {BAlert, BButton, BCol, BRow} from "bootstrap-vue";
+import { coa } from "../../stores/coa";
 
 export default {
   name: "Subscriptions",
@@ -97,7 +98,7 @@ export default {
   },
 
   computed: {
-    ...mapState("coa", ["countryNames", "publicationNames"])
+    ...mapState(coa, ["countryNames", "publicationNames"])
   },
 
   watch: {
@@ -120,7 +121,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames"]),
+    ...mapActions(coa, ["fetchPublicationNames"]),
 
     createAssociatedPublicationSubscription(existingSubscription, { publicationcode: associatedPublicationcode }) {
       this.newSubscription = {

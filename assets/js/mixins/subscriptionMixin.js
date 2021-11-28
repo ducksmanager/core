@@ -1,11 +1,12 @@
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
+import { collection } from "../stores/collection";
 
 export default {
     computed: {
-        ...mapState("collection", ["subscriptions"]),
+        ...mapState(collection, ["subscriptions"]),
     },
     methods: {
-        ...mapActions("collection", ["loadSubscriptions"])
+        ...mapActions(collection, ["loadSubscriptions"])
     },
     async mounted() {
         if (this.username) {

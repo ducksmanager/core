@@ -243,7 +243,7 @@
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import Accordion from "../components/Accordion";
 import Publication from "../components/Publication";
 import collectionMixin from "../mixins/collectionMixin";
@@ -261,6 +261,7 @@ import {
   BProgressBar,
   BRow
 } from "bootstrap-vue";
+import { coa } from "../stores/coa";
 
 export default {
   name: "InducksImport",
@@ -283,7 +284,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames", "issueNumbers", "issueCodeDetails"]),
+    ...mapState(coa, ["publicationNames", "issueNumbers", "issueCodeDetails"]),
 
     conditions() {
       return {
@@ -329,7 +330,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers", "fetchIssueCodesDetails"]),
+    ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers", "fetchIssueCodesDetails"]),
     async processRawData() {
       const vm = this;
       const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;

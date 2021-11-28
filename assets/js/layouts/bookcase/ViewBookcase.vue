@@ -135,15 +135,18 @@
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
 import IssueSearch from "../../components/IssueSearch";
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import collectionMixin from "../../mixins/collectionMixin";
-import MedalProgress from "../../components/MedalProgress";
 import Issue from "../../components/Issue";
 import Book from "../../components/Book";
 import SharePage from "../../components/SharePage";
 import Bookcase from "../../components/Bookcase";
 import UploadableEdgesCarousel from "../../components/UploadableEdgesCarousel";
 import {BAlert, BButton} from "bootstrap-vue";
+import { users } from "../../stores/users";
+import { bookcase } from "../../stores/bookcase";
+import { collection } from "../../stores/collection";
+import { coa } from "../../stores/coa";
 
 export default {
   name: "ViewBookcase",
@@ -164,13 +167,11 @@ export default {
   }),
 
   computed: {
-    ...mapState("bookcase", ["bookcaseOptions", "bookcaseOrder", "isPrivateBookcase", "isUserNotExisting"]),
-    ...mapState("collection", ["user", "lastPublishedEdgesForCurrentUser"]),
-    ...mapGetters("collection", ["popularIssuesInCollectionWithoutEdge"]),
-    ...mapState("coa", ["publicationNames", "issueNumbers"]),
-    ...mapGetters("bookcase", ["isSharedBookcase"]),
-    ...mapGetters("bookcase", {"bookcase": "bookcaseWithPopularities"}),
-    ...mapState("users", ["points"]),
+    ...mapState(collection, ["user", "lastPublishedEdgesForCurrentUser", "popularIssuesInCollectionWithoutEdge"]),
+    ...mapState(coa, ["publicationNames", "issueNumbers"]),
+    ...mapState(bookcase, ["bookcaseOptions", "bookcaseOrder", "isPrivateBookcase", "isUserNotExisting", "isSharedBookcase"]),
+    ...mapState(bookcase, {"bookcase": "bookcaseWithPopularities"}),
+    ...mapState(users, ["points"]),
 
     bookcaseUrl() {
       return !this.isPrivateBookcase && `${window.location.origin}/bookcase/show/${this.username}`
@@ -299,12 +300,10 @@ export default {
   },
 
   methods: {
-    ...mapMutations("bookcase", ["setBookcaseUsername"]),
-    ...mapMutations("coa", ["addIssueNumbers"]),
-    ...mapActions("bookcase", ["loadBookcase", "loadBookcaseOptions", "loadBookcaseOrder"]),
-    ...mapActions("collection", ["loadPopularIssuesInCollection", "loadLastPublishedEdgesForCurrentUser", "loadUser"]),
-    ...mapActions("coa", ["fetchPublicationNames", "fetchIssueNumbers"]),
-    ...mapActions("users", ["fetchStats"]),
+    ...mapActions(bookcase, ["setBookcaseUsername", "loadBookcase", "loadBookcaseOptions", "loadBookcaseOrder"]),
+    ...mapActions(collection, ["loadPopularIssuesInCollection", "loadLastPublishedEdgesForCurrentUser", "loadUser"]),
+    ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers", "addIssueNumbers"]),
+    ...mapActions(users, ["fetchStats"]),
 
     highlightIssue(issue) {
       this.currentEdgeHighlighted = this.bookcase.find(issueInCollection =>

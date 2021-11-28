@@ -163,6 +163,7 @@ import l10nMixin from "../mixins/l10nMixin";
 import { BButton, BCol, BRow } from "bootstrap-vue";
 
 export default {
+  // vue/multi-word-component-names
   name: "Welcome",
 
   components: {

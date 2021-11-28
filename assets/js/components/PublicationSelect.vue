@@ -24,9 +24,10 @@
 </template>
 
 <script>
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import {BButton, BFormSelect} from "bootstrap-vue";
+import { coa } from "../stores/coa";
 
 export default {
   name: "PublicationSelect",
@@ -62,7 +63,7 @@ export default {
   },
 
   computed: {
-    ...mapState("coa", ["countryNames", "publicationNames", "publicationNamesFullCountries"]),
+    ...mapState(coa, ["countryNames", "publicationNames", "publicationNamesFullCountries"]),
     publicationNamesForCurrentCountry() {
       const vm = this
       return this.publicationNamesFullCountries.includes(this.currentCountryCode)
@@ -94,7 +95,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchCountryNames", "fetchPublicationNamesFromCountry"]),
+    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNamesFromCountry"]),
   }
 }
 </script>

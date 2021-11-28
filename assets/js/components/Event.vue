@@ -123,9 +123,11 @@
 import Issue from "../components/Issue";
 import OtherIssues from "../components/OtherIssues";
 import UserPopover from "../components/UserPopover";
-import { mapState } from "vuex";
+import { mapState } from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import BookcasePopover from "./BookcasePopover";
+import { users } from "../stores/users";
+import { coa } from "../stores/coa";
 
 export default {
   name: "Event",
@@ -136,8 +138,8 @@ export default {
   },
 
   computed: {
-    ...mapState("coa", ["publicationNames"]),
-    ...mapState("users", ["stats", "points"])
+    ...mapState(coa, ["publicationNames"]),
+    ...mapState(users, ["stats", "points"])
   },
 
   methods: {

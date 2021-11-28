@@ -59,11 +59,12 @@
   </div>
 </template>
 <script>
-import {mapActions, mapGetters, mapState} from "vuex";
+import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
 import {BButton, BButtonGroup, BIconCash} from "bootstrap-vue";
+import { collection } from "../stores/collection";
 
 export default {
   name: 'SuggestionList',
@@ -95,8 +96,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("collection", ["suggestions"]),
-    ...mapGetters("collection", ["hasSuggestions"]),
+    ...mapState(collection, ["suggestions", "hasSuggestions"]),
     suggestionSorts() {
       return {oldestdate: this.$t("Trier par date de parution"), score: this.$t("Trier par score")}
     }
@@ -127,7 +127,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("collection", ["loadSuggestions"]),
+    ...mapActions(collection, ["loadSuggestions"]),
 
     getImportance(score) {
       const {minScore, maxScore} = this.suggestions

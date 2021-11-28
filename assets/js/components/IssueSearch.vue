@@ -58,11 +58,12 @@
 import axios from "axios";
 import l10nMixin from "../mixins/l10nMixin";
 import Issue from "./Issue";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 import collectionMixin from "../mixins/collectionMixin";
 import Condition from "./Condition";
 import conditionMixin from "../mixins/conditionMixin";
 import {BDropdown, BDropdownItem, BFormInput, BNavbar, BNavbarBrand, BNavbarNav} from "bootstrap-vue";
+import { coa } from "../stores/coa";
 
 export default {
   name: "IssueSearch",
@@ -90,7 +91,7 @@ export default {
   }),
 
   computed: {
-    ...mapState("coa", ["publicationNames"]),
+    ...mapState(coa, ["publicationNames"]),
     searchContexts() {
       return {
         story: this.$t("titre d'histoire"),
@@ -119,7 +120,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("coa", ["fetchPublicationNames"]),
+    ...mapActions(coa, ["fetchPublicationNames"]),
     isInCollection(issue) {
       return this.findInCollection(issue.publicationcode, issue.issuenumber);
     },
