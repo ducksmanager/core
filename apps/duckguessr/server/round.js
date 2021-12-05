@@ -25,7 +25,7 @@ exports.createGameRounds = async (gameId) => {
         prisma.rounds.updateMany({
           where: {
             game_id: gameId,
-            round_number: roundNumber,
+            round_number: roundNumber + 1,
             started_at: null,
           },
           data: {
@@ -42,7 +42,7 @@ exports.createGameRounds = async (gameId) => {
 exports.guess = async (playerId, roundId, guess) => {
   const round = await exports.getRound(roundId)
   if (guess == null) {
-    throw new Error(`No guess was provided`)
+    console.error(`No guess was provided`)
   }
   if (
     await prisma.round_scores.findFirst({
@@ -52,7 +52,7 @@ exports.guess = async (playerId, roundId, guess) => {
       },
     })
   ) {
-    throw new Error(`Player ${playerId} already guessed round ${round.id}`)
+    console.error(`Player ${playerId} already guessed round ${round.id}`)
   }
 
   let scoreData

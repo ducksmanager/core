@@ -55,7 +55,7 @@
         </b-row>
       </b-col>
       <b-col cols="2" class="border vh-100 overflow-auto">
-        <h3>Round {{ currentRoundIndex + 1 }}</h3>
+        <h3>Round {{ currentRoundIndex }}</h3>
         <template v-for="score in currentRoundScores">
           <b-alert
             :key="`score-${score.username}`"
@@ -134,15 +134,6 @@ export default defineComponent({
         ? 0
         : (game.value?.rounds || []).length - lastUnfinishedRoundIndex - 1
     })
-    // const currentRoundIndex = computed((): number | null => {
-    //   const firstUnfinishedRoundIndex = [
-    //     ...(game.value?.rounds || []),
-    //   ].findIndex(
-    //     ({ finished_at: finishedAt }) =>
-    //       finishedAt && new Date(finishedAt).getTime() > now.value
-    //   )
-    //   return firstUnfinishedRoundIndex === -1 ? null : firstUnfinishedRoundIndex
-    // })
 
     const currentRound = computed((): roundWithScores | null =>
       currentRoundIndex.value == null

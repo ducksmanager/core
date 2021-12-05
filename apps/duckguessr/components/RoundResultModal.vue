@@ -1,13 +1,13 @@
 <template>
   <b-modal visible :body-bg-variant="status" hide-footer hide-header-close>
-    <template #modal-title> Round {{ userRoundNumber }} </template>
+    <template #modal-title> Round {{ roundNumber }} </template>
     <div v-if="status === 'success'">Correct!</div>
     <div v-else-if="status === 'warning'">
       Incorrect, but you got the author's country correct.
     </div>
     <div v-else>Incorrect</div>
     <template v-if="timeBeforeNextRound">
-      <div>Round {{ userRoundNumber + 1 }} starts in</div>
+      <div>Round {{ roundNumber + 1 }} starts in</div>
       <div class="text-xl-center">
         {{ timeBeforeNextRound }}
       </div>
@@ -34,9 +34,8 @@ export default defineComponent({
       default: null,
     },
   },
-  setup({ roundNumber, nextRoundStartDate }, { emit }) {
+  setup({ nextRoundStartDate }, { emit }) {
     const timeBeforeNextRound = ref(null as Number | null)
-    const userRoundNumber = roundNumber + 1
 
     const updateTimeBeforeNextRound = () => {
       timeBeforeNextRound.value = Math.ceil(
@@ -58,7 +57,6 @@ export default defineComponent({
     )
 
     return {
-      userRoundNumber,
       timeBeforeNextRound,
     }
   },

@@ -36,7 +36,7 @@
           class="w-100"
         />
         <div class="text-nowrap">
-          Round {{ parseInt(column.match(/round([0-9])/)[1]) + 1 }}
+          Round {{ parseInt(column.match(/round([0-9])/)[1]) }}
         </div>
       </template>
       <template #cell(playerName)="{ value: playerName }">
