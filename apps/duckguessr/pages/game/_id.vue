@@ -2,12 +2,13 @@
   <b-container
     v-if="!game || (!currentRound && !gameIsFinished)"
     class="text-center"
-    >Loading...</b-container
   >
-  <b-container v-else-if="gameIsFinished" fluid
-    ><b-alert show align="center" variant="info"
-      >This game is finished.</b-alert
-    >
+    Loading...
+  </b-container>
+  <b-container v-else-if="gameIsFinished" fluid>
+    <b-alert show align="center" variant="info">
+      This game is finished.
+    </b-alert>
     <game-scores :scores="game.rounds" />
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
@@ -23,15 +24,17 @@
       </b-col>
       <b-col cols="5" class="h-100">
         <b-row align-v="center" style="height: 50px">
-          <b-col class="text-center"
-            ><b-progress :variant="progressbarVariant">
+          <b-col class="text-center">
+            <b-progress :variant="progressbarVariant">
               <div class="position-absolute pt-2 w-100">
                 Guess the author! ({{ remainingTime }})
               </div>
               <b-progress-bar
                 animated
-                :value="remainingTime * (100 / availableTime)" /></b-progress
-          ></b-col>
+                :value="remainingTime * (100 / availableTime)"
+              />
+            </b-progress>
+          </b-col>
         </b-row>
         <b-row id="author-list">
           <author-card
@@ -58,8 +61,9 @@
             :key="`score-${score.username}`"
             show
             :variant="scoreTypeNameToVariant(score.score_type_name)"
-            >{{ score.username }}: {{ score.score_type_name }}</b-alert
           >
+            {{ score.username }}: {{ score.score_type_name }}
+          </b-alert>
         </template>
       </b-col>
     </b-row>

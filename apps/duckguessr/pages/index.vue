@@ -16,8 +16,9 @@
               type="submit"
               variant="success"
               :disabled="isButtonDisabled"
-              >OK</b-button
             >
+              OK
+            </b-button>
           </b-form>
         </template>
         <template v-else>
@@ -29,8 +30,9 @@
               v-for="player in players"
               :key="player.username"
               class="m-3 col-lg-3"
-              >{{ player.username }}</b-card
             >
+              {{ player.username }}
+            </b-card>
           </b-row>
         </template>
       </b-col>

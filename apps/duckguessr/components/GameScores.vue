@@ -28,8 +28,8 @@
     </b-container>
     <h3 class="mt-3">Scores</h3>
     <b-table striped :items="playersWithScores">
-      <template #head(playerName)="">Player name</template>
-      <template #head(totalScore)="">Total score</template>
+      <template #head(playerName)=""> Player name </template>
+      <template #head(totalScore)=""> Total score </template>
       <template #head()="{ column }">
         <b-img
           :src="imageUrl(scores[column.replace('round', '')])"
@@ -37,8 +37,8 @@
         />
         <div class="text-nowrap">
           Round {{ parseInt(column.match(/round([0-9])/)[1]) + 1 }}
-        </div></template
-      >
+        </div>
+      </template>
       <template #cell(playerName)="{ value: playerName }">
         {{ playerName }}
       </template>
