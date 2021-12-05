@@ -30,13 +30,13 @@ model round_scores {
   round_id        Int
   score_type_name String      @db.VarChar(20)
   score           Int         @db.UnsignedSmallInt
-  players         players     @relation(fields: [player_id], references: [id])
-  rounds          rounds      @relation(fields: [round_id], references: [id])
-  score_types     score_types @relation(fields: [score_type_name], references: [type_name])
+  players         players     @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "round_score_player_id_fk")
+  rounds          rounds      @relation(fields: [round_id], references: [id], onUpdate: Restrict, map: "round_score_round_id_fk")
+  score_types     score_types @relation(fields: [score_type_name], references: [type_name], onUpdate: Restrict, map: "round_scores_score_types_type_name_fk")
 
-  @@index([player_id], name: "round_score_player_id_fk")
-  @@index([round_id], name: "round_score_round_id_fk")
-  @@index([score_type_name], name: "round_scores_score_types_type_name_fk")
+  @@index([player_id], map: "round_score_player_id_fk")
+  @@index([round_id], map: "round_score_round_id_fk")
+  @@index([score_type_name], map: "round_scores_score_types_type_name_fk")
 }
 
 model rounds {
@@ -50,10 +50,10 @@ model rounds {
   personfullname    String         @db.VarChar(79)
   started_at        DateTime?      @db.DateTime(0)
   finished_at       DateTime?      @db.DateTime(0)
-  games             games          @relation(fields: [game_id], references: [id])
+  games             games          @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "round_game_id_fk")
   round_scores      round_scores[]
 
-  @@index([game_id], name: "round_game_id_fk")
+  @@index([game_id], map: "round_game_id_fk")
 }
 
 model score_types {
@@ -65,11 +65,11 @@ model game_players {
   id        Int     @id @default(autoincrement())
   game_id   Int
   player_id Int
-  games     games   @relation(fields: [game_id], references: [id])
-  players   players @relation(fields: [player_id], references: [id])
+  games     games   @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "game_players_games_id_fk")
+  players   players @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "game_players_players_id_fk")
 
-  @@index([game_id], name: "game_players_games_id_fk")
-  @@index([player_id], name: "game_players_players_id_fk")
+  @@index([game_id], map: "game_players_games_id_fk")
+  @@index([player_id], map: "game_players_players_id_fk")
 }
 
 model entryurl_validations {
