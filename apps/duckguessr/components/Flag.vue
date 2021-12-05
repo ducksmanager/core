@@ -18,7 +18,7 @@ export default {
         fixedCountry = 'gb'
     }
     return {
-      url: `https://www.countryflags.io/${fixedCountry}/flat/16.png`,
+      url: `https://flagcdn.com/w20/${fixedCountry}.png`,
     }
   },
 }
