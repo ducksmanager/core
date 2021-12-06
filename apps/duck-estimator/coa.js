@@ -22,7 +22,7 @@ module.exports = {
   createQuotations: async (quotations) => {
     console.log(`Adding ${quotations.length} quotations`)
     return await coaConnection.batch(
-      'INSERT INTO inducks_issuequotation(publicationcode, issuenumber, estimationmin, estimationmax, scrapedate, source) VALUES(?,?,?,?,?,?)',
+      'INSERT IGNORE INTO inducks_issuequotation(publicationcode, issuenumber, estimationmin, estimationmax, scrapedate, source) VALUES(?,?,?,?,?,?)',
       quotations.map(object => Object.values(object)));
   },
 

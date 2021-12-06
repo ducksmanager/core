@@ -3,7 +3,7 @@ const { createQuotations, isInducksIssueExisting } = require('../../coa')
 const { syncScrapeCache, getScrapeCacheTime } = require('../../cache')
 const {readCsvMapping } = require('../../csv')
 
-const MAPPING_FILE = 'scrapes/bedetheque/bedetheque_mapping.csv'
+const MAPPING_FILE = 'scrapes/bedetheque/coa-mapping.csv'
 const ROOT_URL = 'https://www.bedetheque.com/'
 const quotations = []
 

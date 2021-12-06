@@ -1,12 +1,12 @@
 const fs = require('fs')
-const csvParse = require('csv-parse')
+const {parse} = require('csv-parse')
 const {createObjectCsvWriter: createCsvWriter} = require('csv-writer')
 
 module.exports = {
   readCsvMapping: async (mappingFile, recordCallback) => {
     const parser = fs
       .createReadStream(mappingFile)
-      .pipe(csvParse({
+      .pipe(parse({
         columns: true
       }))
     for await (const record of parser) {

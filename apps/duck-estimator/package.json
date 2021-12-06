@@ -1,9 +1,17 @@
 {
   "name": "duck-estimator",
   "version": "1.0.0",
+  "author": {
+    "email": "brunoperel@gmail.com",
+    "name": "Bruno Perel"
+  },
+  "repository": {
+    "url": "https://github.com/bperel/duck-estimator",
+    "type": "Git"
+  },
   "dependencies": {
     "bedetheque-scraper": "^3.2.0",
-    "csv-parse": "^4.15.0",
+    "csv-parse": "^5.0.3",
     "csv-writer": "^1.6.0",
     "mariadb": "^2.5.2",
     "playwright-firefox": "^1.10.0",
@@ -14,6 +22,6 @@
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.3.1"
+    "eslint-plugin-promise": "^5.2.0"
   }
 }
