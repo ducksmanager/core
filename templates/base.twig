@@ -43,11 +43,5 @@
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
-
-    {{ piwik("setCustomVariable", 1, "Utilisateur", app.user ? app.user.id : '', "visit") }}
-    {{ piwik("trackPageView") }}
-    {{ piwik("enableLinkTracking") }}
-    {{ piwik("setDocumentTitle", title ?? '') }}
-    {{ piwik_code() }}
 </body>
 </html>

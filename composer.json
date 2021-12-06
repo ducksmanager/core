@@ -36,8 +36,7 @@
     "symfony/yaml": "5.3.*",
     "twig/cssinliner-extra": "^3.0",
     "twig/extra-bundle": "^2.12|^3.0",
-    "twig/twig": "^2.12|^3.0",
-    "webfactory/piwik-bundle": "^3.0"
+    "twig/twig": "^2.12|^3.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

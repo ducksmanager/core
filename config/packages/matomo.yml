@@ -1,6 +1,0 @@
-webfactory_piwik:
-    site_id: 1
-    piwik_host: '%env(MATOMO_URL)%'
-    disabled: '%kernel.debug%'
-    tracker_path: "/piwik.php"
-    disable_cookies: true

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d471a01592dac444d65585ca40ff33ff",
+    "content-hash": "9d6679de0221fad05cfea04606a3d6cf",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -6175,61 +6175,6 @@
             "time": "2021-11-25T13:46:55+00:00"
         },
         {
-            "name": "webfactory/piwik-bundle",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webfactory/piwik-bundle.git",
-                "reference": "dc1996cfcf22f83d84f1dcfbdb270e66c282e94f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webfactory/piwik-bundle/zipball/dc1996cfcf22f83d84f1dcfbdb270e66c282e94f",
-                "reference": "dc1996cfcf22f83d84f1dcfbdb270e66c282e94f",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": ">=7.1",
-                "symfony/config": "~3.0|~4.0|~5.0",
-                "symfony/dependency-injection": "~3.0|~4.0|~5.0",
-                "symfony/http-kernel": "~3.0|~4.0|~5.0",
-                "twig/twig": "^1.34|^2.0|^3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~7.0",
-                "symfony/phpunit-bridge": "@dev"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "Webfactory\\Bundle\\PiwikBundle\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "webfactory GmbH",
-                    "email": "info@webfactory.de",
-                    "homepage": "https://www.webfactory.de",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Tim Bernhard",
-                    "email": "tim@genieblog.ch"
-                }
-            ],
-            "description": "Symfony Bundle that adds a twig-function for the Matomo tracking code.",
-            "support": {
-                "issues": "https://github.com/webfactory/piwik-bundle/issues",
-                "source": "https://github.com/webfactory/piwik-bundle/tree/3.0.0"
-            },
-            "time": "2020-11-04T08:27:15+00:00"
-        },
-        {
             "name": "webmozart/assert",
             "version": "1.10.0",
             "source": {
@@ -7414,5 +7359,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
