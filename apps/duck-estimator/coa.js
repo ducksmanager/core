@@ -1,4 +1,5 @@
 const mariadb = require('mariadb')
+const {getInducksIssuesBetween} = require("./coa");
 
 for (const envKey of ['MYSQL_COA_HOST', 'MYSQL_COA_PORT', 'MYSQL_COA_DATABASE', 'MYSQL_PASSWORD']) {
   if (!process.env[envKey]) {
@@ -29,20 +30,32 @@ module.exports = {
   truncateQuotations: async () =>
     await coaConnection.query('TRUNCATE inducks_issuequotation'),
 
-  isInducksIssueExisting: async (publicationcode, issuenumber) => {
+  isInducksIssueExisting: async (publicationcode, issuenumber) =>
+    await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber).length,
+
+  getInducksIssuesBetween: async (publicationcode, issuenumberStart, issuenumberEnd = issuenumberStart) => {
     cachedCoaIssues[publicationcode] = cachedCoaIssues[publicationcode] ||
       (await coaConnection.query(
         'SELECT issuenumber FROM inducks_issue WHERE publicationcode=?',
         [publicationcode]
       )).map(({issuenumber}) => issuenumber)
+
     if (!cachedCoaIssues[publicationcode].length) {
       console.warn(` No issue found in COA for publication code ${publicationcode}`)
-      return false
-    } else if (!cachedCoaIssues[publicationcode].find(dbIssuenumber => dbIssuenumber === issuenumber)) {
-      console.warn(` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumber}`)
-      return false
+      return []
     }
-    return true
+
+    let startIssueIndex = cachedCoaIssues[publicationcode].indexOf(issuenumberStart)
+    if (startIssueIndex === -1) {
+      console.warn(` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberStart}`)
+      return []
+    }
+    let endIssueIndex = cachedCoaIssues[publicationcode].indexOf(issuenumberEnd)
+    if (endIssueIndex === -1) {
+      console.warn(` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberEnd}`)
+      return []
+    }
+    return cachedCoaIssues[publicationcode].filter((_, index) => index >= startIssueIndex && index <= endIssueIndex)
   },
 
   getAll: async () =>
