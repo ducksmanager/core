@@ -1,10 +1,20 @@
 <template>
-  <div>
-    <Nuxt />
+  <div id="app">
+    <div id="menu" class="position-fixed d-flex justify-content-center">
+      Menu
+      <div id="medals-and-login" />
+    </div>
+    <div id="logo-zone" class="d-flex align-items-center flex-column">
+      <div><b-img src="/logo.png" height="70" /></div>
+      <small>by DucksManager</small>
+    </div>
+    <div id="main" class="d-flex justify-content-center align-items-center">
+      <Nuxt />
+    </div>
   </div>
 </template>
 
-<style>
+<style lang="scss">
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -15,6 +25,32 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+
+  body {
+    padding: 0 0 0 320px;
+    background-color: #3d4b5f !important;
+
+    #app {
+      color: white;
+
+      #menu {
+        top: 0;
+        left: 0;
+        width: 325px;
+        height: 100%;
+        border-right: 1px solid #2e353d;
+      }
+
+      #logo-zone {
+        height: 180px;
+      }
+
+      #main {
+        height: calc(100vh - 180px);
+        padding: 0 20px 20px 20px;
+      }
+    }
+  }
 }
 
 *,
