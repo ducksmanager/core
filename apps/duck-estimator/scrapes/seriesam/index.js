@@ -4,6 +4,8 @@ const { firefox } = require('playwright-firefox')
 
 const MAPPING_FILE = 'scrapes/seriesam/coa-mapping.csv'
 const ROOT_URL = 'https://www.seriesam.com/cgi-bin/guide?s='
+const SEK_TO_EUR_RATE = 0.098
+
 const quotations = []
 
 module.exports = {
@@ -62,7 +64,7 @@ module.exports = {
                   cellNumber++
                 } else {
                   console.info(` Inducks issue ${publicationcode} ${issuenumberInRange}: A quotation was found`)
-                  const adjustedEstimation = estimation * Math.pow(0.8, cellNumber - 5)
+                  const adjustedEstimation = estimation * Math.pow(0.8, cellNumber - 5) * SEK_TO_EUR_RATE
                   quotations.push({
                     publicationcode,
                     issuenumberInRange,
