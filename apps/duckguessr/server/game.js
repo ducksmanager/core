@@ -27,7 +27,7 @@ exports.createOrGetPending = async () => {
   let roundDataResponse = []
   let attempts = 0
   do {
-    roundDataResponse = (await this.runCoaQuery(getCOARoundsQuery())).data
+    roundDataResponse = (await this.runQuery(getCOARoundsQuery(), 'coa')).data
     const invalidEntryurls = await prisma.entryurl_validations.findMany({
       where: {
         sitecode_url: {
@@ -67,14 +67,24 @@ exports.createOrGetPending = async () => {
   }
 }
 
-exports.associatePlayer = async (gameId, username) => {
-  const user = await prisma.players.findFirst({
-    where: { username },
-  })
-  global.cachedUsers[user.id] = user
+exports.associatePlayer = async (gameId, username, password) => {
+  const users = (
+    await this.runQuery(
+      'SELECT ID, username from users where username=? AND password=?',
+      'dm',
+      [username, password]
+    )
+  ).data
+  const user = users[0]
+  if (!user) {
+    console.error(`No user with username ${username}`)
+    return null
+  }
+  const userId = user.ID
+  global.cachedUsers[userId] = user
   prisma.game_players.create({
     game_id: gameId,
-    player_id: user.id,
+    player_id: userId,
   })
 
   return user
@@ -143,7 +153,7 @@ const getCOARoundsQuery = () => `
   limit ${numberOfRounds + 1}
 `
 
-exports.runCoaQuery = async (query) => {
+exports.runQuery = async (query, db, parameters = []) => {
   axios.interceptors.request.use((config) => ({
     ...config,
     auth: {
@@ -159,7 +169,8 @@ exports.runCoaQuery = async (query) => {
   return await axios
     .post(`${process.env.BACKEND_URL}/rawsql`, {
       query,
-      db: 'coa',
+      db,
+      parameters,
     })
     .catch((e) => {
       console.error(e)

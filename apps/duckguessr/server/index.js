@@ -41,10 +41,10 @@ prisma.games
 
 io.of('/matchmaking').on('connection', (socket) => {
   console.log('a user connected')
-  socket.on('iAmReady', async ({ username }) => {
+  socket.on('iAmReady', async ({ username, password }) => {
     console.log(`${username} is ready`)
     const gameData = await game.createOrGetPending()
-    const user = await game.associatePlayer(gameData.gameId, username)
+    const user = await game.associatePlayer(gameData.gameId, username, password)
 
     socket.emit('iAmReadyWithGameID', user, gameData.gameId)
   })
@@ -54,9 +54,9 @@ io.of('/matchmaking').on('connection', (socket) => {
     )
     socket.broadcast.emit('whoElseIsReady', user, gameId)
   })
-  socket.on('iAmAlsoReady', async ({ username }, gameId) => {
+  socket.on('iAmAlsoReady', async ({ username, password }, gameId) => {
     console.log(`${username} is also ready in game ID ${gameId}`)
-    const user = await game.associatePlayer(gameId, username)
+    const user = await game.associatePlayer(gameId, username, password)
 
     socket.broadcast.emit('iAmAlsoReady', user, gameId)
   })
@@ -89,7 +89,7 @@ io.of('/admin/maintenance').on('connection', (socket) => {
         alreadyVerifiedCoaEntryUrls.length)
     ) {
       const coaEntryUrls = (
-        await game.runCoaQuery(game.getCOAEntryurlsQuery([minRow, batch]))
+        await game.runQuery(game.getCOAEntryurlsQuery([minRow, batch]), 'coa')
       ).data.map(({ sitecode_url: sitecodeUrl }) => sitecodeUrl)
       alreadyVerifiedCoaEntryUrls = (
         await prisma.entryurl_validations.findMany({

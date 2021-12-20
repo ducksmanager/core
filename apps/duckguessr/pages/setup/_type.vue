@@ -1,8 +1,5 @@
 <template>
-  <b-alert v-if="!username" show variant="warning">
-    You are not connected
-  </b-alert>
-  <b-card-group v-else deck>
+  <b-card-group deck>
     <b-card
       v-for="(label, url) in cards"
       :key="url"
@@ -11,7 +8,7 @@
       :img-alt="label"
       img-top
       align="center"
-      @click="$router.push(`/setup/${url}`)"
+      @click="$router.push(`/start/${url}`)"
     />
   </b-card-group>
 </template>
@@ -19,15 +16,12 @@
 <script>
 import { defineComponent } from '@nuxtjs/composition-api'
 
-import useUser from '../components/user'
-
 export default defineComponent({
   setup() {
     return {
-      username: useUser().username,
       cards: {
-        any: 'All creators',
-        us: 'US artists',
+        againstBot: 'Play against a bot',
+        againstHumans: 'Play against humans',
       },
     }
   },

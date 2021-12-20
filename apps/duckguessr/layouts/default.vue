@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <div id="menu" class="position-fixed d-flex justify-content-center">
-      Menu
-      <div id="medals-and-login" />
+      <div id="medals-and-login">
+        <div v-if="username">{{ username }}</div>
+      </div>
     </div>
     <div id="logo-zone" class="d-flex align-items-center flex-column">
       <div><b-img src="/logo.png" height="70" /></div>
@@ -13,6 +14,19 @@
     </div>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from '@nuxtjs/composition-api'
+import useUser from '../components/user'
+
+export default defineComponent({
+  setup() {
+    return {
+      username: useUser().username,
+    }
+  },
+})
+</script>
 
 <style lang="scss">
 html {

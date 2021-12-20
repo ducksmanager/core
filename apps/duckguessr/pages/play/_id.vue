@@ -2,7 +2,6 @@
   <b-container align="center">
     <b-row align-v="center">
       <b-col align>
-        Welcome to Duckguessr! Please enter your username.
         <template v-if="!gameId">
           <b-form @submit.prevent="iAmReady()">
             <b-input
@@ -50,11 +49,12 @@ import {
 } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
+import useUser from '@/components/user'
 
 export default defineComponent({
   setup() {
+    const { username, password } = useUser()
     const router = useRouter()
-    const username = ref('')
     const gameId = ref(null as number | null)
     const players = reactive([] as Array<Index.players>)
     const isButtonDisabled = ref(false as boolean)
@@ -83,7 +83,7 @@ export default defineComponent({
         (user: Index.players, gameId: number) => {
           sessionStorage.setItem('user', JSON.stringify(user))
           console.debug(
-            `${username.value}-Received iAmReadyWithGameID from ${user.username}`
+            `${username}-Received iAmReadyWithGameID from ${user.username}`
           )
           addPlayer(user, gameId)
           matchmakingSocket.emit('whoElseIsReady', user, gameId)
@@ -93,7 +93,7 @@ export default defineComponent({
         'whoElseIsReady',
         (otherPlayer: Index.players, otherPlayerGameId: number) => {
           console.debug(
-            `${username.value}-Received whoElseIsReady from ${otherPlayer.username}`
+            `${username}-Received whoElseIsReady from ${otherPlayer.username}`
           )
           if (otherPlayerGameId === gameId.value) {
             matchmakingSocket.emit(
@@ -108,28 +108,26 @@ export default defineComponent({
       matchmakingSocket.on(
         'iAmAlsoReady',
         (user: Index.players, existingGameId: number) => {
-          console.debug(`${username.value}-${user.username} is also ready`)
+          console.debug(`${username}-${user.username} is also ready`)
           if (existingGameId === gameId.value) {
             addPlayer(user, existingGameId)
           }
         }
       )
-      matchmakingSocket.emit('iAmReady', { username: username.value })
+      matchmakingSocket.emit('iAmReady', { username, password })
     }
 
     const requiredPlayers = 2
 
     onMounted(() => {
-      const user = sessionStorage.getItem('user')
-      username.value = (user && JSON.parse(user).username) || ''
-      if (username.value) {
+      if (username) {
         iAmReady()
       }
     })
 
     return {
       isButtonDisabled: false,
-      username,
+      username: useUser().username,
       players,
       gameId,
       iAmReady,
@@ -139,7 +137,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.card-deck .card {
-  max-width: calc(50% - 30px);
+.card {
+  color: black;
+
+  .card {
+    max-width: calc(50% - 30px);
+  }
 }
 </style>
