@@ -13,19 +13,11 @@
   </b-card-group>
 </template>
 
-<script>
-import { defineComponent } from '@nuxtjs/composition-api'
-
-export default defineComponent({
-  setup() {
-    return {
-      cards: {
-        againstBot: 'Play against a bot',
-        againstHumans: 'Play against humans',
-      },
-    }
-  },
-})
+<script setup>
+const cards = {
+  againstBot: 'Play against a bot',
+  againstHumans: 'Play against humans',
+}
 </script>
 
 <style scoped lang="scss">

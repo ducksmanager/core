@@ -15,17 +15,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api'
-import useUser from '../components/user'
-
-export default defineComponent({
-  setup() {
-    return {
-      username: useUser().username,
-    }
-  },
-})
+<script setup>
+import useUser from '@/components/user'
+const username = useUser().username
 </script>
 
 <style lang="scss">

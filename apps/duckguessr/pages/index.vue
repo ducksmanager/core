@@ -16,22 +16,13 @@
   </b-card-group>
 </template>
 
-<script>
-import { defineComponent } from '@nuxtjs/composition-api'
-
-import useUser from '../components/user'
-
-export default defineComponent({
-  setup() {
-    return {
-      username: useUser().username,
-      cards: {
-        any: 'All creators',
-        us: 'US artists',
-      },
-    }
-  },
-})
+<script setup>
+import useUser from '@/components/user'
+const username = useUser().username
+const cards = {
+  any: 'All creators',
+  us: 'US artists',
+}
 </script>
 
 <style scoped lang="scss">

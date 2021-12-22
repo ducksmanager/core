@@ -11,24 +11,15 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from '@nuxtjs/composition-api'
+<script setup lang="ts">
+const { scores } = defineProps<{
+  scores: unknown
+}>()
 
-export default defineComponent({
-  name: 'RoundScores',
-  props: {
-    scores: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  setup({ scores }) {
-    return {
-      totalScore: Object.values(scores).reduce((acc, score) => acc + score, 0),
-    }
-  },
-})
+const totalScore = (Object.values(scores) as number[]).reduce(
+  (acc, score) => acc + score,
+  0
+)
 </script>
 
 <style scoped></style>
