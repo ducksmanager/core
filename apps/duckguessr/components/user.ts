@@ -1,21 +1,31 @@
-export default () => {
-  const cookies: { [p: string]: string } = document.cookie.split(';').reduce(
+function setCookie(name: string, value: string) {
+  document.cookie = `${name}=${value};expires=Session;path=/`
+}
+
+const getCookies = (): { [p: string]: string } =>
+  document.cookie.split(';').reduce(
     (acc, cookie) => ({
       ...acc,
       [cookie.split('=')[0].replace(/^ /, '')]: cookie.split('=')[1],
     }),
     {}
   )
-  const username = cookies['dm-user']
-  const password = cookies['dm-pass']
+
+export default () => {
+  const cookies = getCookies()
+  let username = cookies['dm-user'] || cookies['duckguessr-user']
+  const password = cookies['dm-pass'] || null
   if (username) {
     return {
       username,
       password,
     }
-  } else
+  } else {
+    username = `user${Math.random().toString().replace('0.', '')}`
+    setCookie('duckguessr-user', username)
     return {
-      username: undefined,
-      password: undefined,
+      username,
+      password: null,
     }
+  }
 }
