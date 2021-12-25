@@ -161,7 +161,7 @@ export default {
   cursor: default;
   background-color: red;
 
-  .available {
+  &.available {
     cursor: pointer;
   }
 }
