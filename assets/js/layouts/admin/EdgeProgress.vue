@@ -152,38 +152,25 @@ export default {
   margin-top: 20px;
 }
 
+.bi-eye-fill {
+  cursor: pointer;
+}
+
 .num {
   width: 4px;
   cursor: default;
   background-color: red;
-}
 
-#num_courant {
-  background-color: red;
+  .available {
+    cursor: pointer;
+  }
 }
 
 .available {
   background-color: green !important;
 }
 
-.num.available {
-  cursor: pointer;
-}
-
 .bordered {
   border-right: 1px solid black;
-}
-
-#num_courant {
-  position: fixed;
-  top: 0;
-  left: 90%;
-  width: 10%;
-  border: 1px solid black;
-  text-align: center;
-
-  &.init {
-    background-color: white !important;
-  }
 }
 </style>
