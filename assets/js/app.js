@@ -12,28 +12,29 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../css/app.scss';
 import { createPinia, PiniaVuePlugin } from "pinia";
 import axios from "axios";
-import {ongoingRequests} from "./stores/ongoing-requests";
+import { ongoingRequests } from "./stores/ongoing-requests";
 
 const store = createPinia()
 
 Vue.use(PiniaVuePlugin)
 Vue.use(BackendDataPlugin)
 
+const useOngoingRequests = ongoingRequests(store);
 axios.interceptors.request.use(config => {
-  if (ongoingRequests().numberOfOngoingAjaxCalls === null) {
-    ongoingRequests().numberOfOngoingAjaxCalls = 1
+  if (useOngoingRequests.numberOfOngoingAjaxCalls === null) {
+    useOngoingRequests.numberOfOngoingAjaxCalls = 1
   } else {
-    ongoingRequests().numberOfOngoingAjaxCalls++;
+    useOngoingRequests.numberOfOngoingAjaxCalls++;
   }
   return config;
 }, function (error) {
   return Promise.reject(error);
 });
 axios.interceptors.response.use(response => {
-  ongoingRequests().numberOfOngoingAjaxCalls--;
+  useOngoingRequests.numberOfOngoingAjaxCalls--;
   return response;
 }, error => {
-  ongoingRequests().numberOfOngoingAjaxCalls--;
+  useOngoingRequests.numberOfOngoingAjaxCalls--;
   return Promise.reject(error);
 });
 
