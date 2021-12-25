@@ -111,7 +111,7 @@ export default {
       return Object.keys(this.issueNumbers).reduce((acc, publicationCode) => ({
         ...acc,
         [publicationCode]: vm.issueNumbers[publicationCode].map(issueNumber => issueNumber.replace(/ /g, ''))
-      }))
+      }), {})
     }
   },
   async mounted() {
