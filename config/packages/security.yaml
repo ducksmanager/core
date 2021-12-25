@@ -29,7 +29,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: '^/admin/edges/*', roles: ROLE_EDGECREATOR_EDITION }
+        - { path: '^/admin/edges/*', roles: [ROLE_EDGECREATOR_EDITION, ROLE_DUCKSMANAGER_ADMIN] }
         - { path: '^/admin', roles: ROLE_DUCKSMANAGER_ADMIN }
         - { path: '^/collection', roles: ROLE_USER }
         - { path: '^/bookcase(?!/show/.+)', roles: ROLE_USER }
