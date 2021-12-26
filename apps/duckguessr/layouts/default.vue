@@ -1,11 +1,17 @@
 <template>
   <div id="app">
     <div id="menu" class="position-fixed d-flex justify-content-center">
-      <div id="medals-and-login">
-        <div v-if="username">{{ username }}</div>
+      <div id="medals-and-login" class="d-inline-flex flex-column">
+        <div class="text-center">
+          <b-avatar v-if="isAnonymous" size="4rem" src="/anonymous.png" />
+        </div>
+        <div>{{ username }}</div>
       </div>
     </div>
-    <div id="logo-zone" class="d-flex align-items-center flex-column">
+    <div
+      id="logo-zone"
+      class="d-flex align-items-center flex-column align-items-center"
+    >
       <div><b-img src="/logo.png" height="70" /></div>
       <small>by DucksManager</small>
     </div>
@@ -17,7 +23,8 @@
 
 <script setup>
 import useUser from '@/components/user'
-const username = useUser().username
+
+const { username, isAnonymous } = useUser()
 </script>
 
 <style lang="scss">

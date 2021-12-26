@@ -1,24 +1,28 @@
 <template>
-  <b-alert v-if="!username" show variant="warning">
-    You are not connected
-  </b-alert>
-  <b-card-group v-else deck>
-    <b-card
-      v-for="(label, url) in cards"
-      :key="url"
-      :title="label"
-      img-src="https://picsum.photos/600/300/?image=25"
-      :img-alt="label"
-      img-top
-      align="center"
-      @click="$router.push(`/setup/${url}`)"
-    />
-  </b-card-group>
+  <div>
+    <b-alert v-if="isAnonymous" show variant="warning">
+      You are not connected. You can still play but you won't keep any won
+      medals.
+    </b-alert>
+    <b-card-group deck>
+      <b-card
+        v-for="(label, url) in cards"
+        :key="url"
+        :title="label"
+        img-src="https://picsum.photos/600/300/?image=25"
+        :img-alt="label"
+        img-top
+        align="center"
+        @click="$router.push(`/setup/${url}`)"
+      />
+    </b-card-group>
+  </div>
 </template>
 
 <script setup>
 import useUser from '@/components/user'
-const username = useUser().username
+
+const { isAnonymous } = useUser()
 const cards = {
   any: 'All creators',
   us: 'US artists',
