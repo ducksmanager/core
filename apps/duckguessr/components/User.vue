@@ -12,5 +12,5 @@ const { username } = defineProps<{
   username: string | null
 }>()
 
-const isAnonymous = true // /^user[0-9]+$/.test(username)
+const isAnonymous = true
 </script>

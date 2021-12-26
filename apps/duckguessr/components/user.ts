@@ -19,7 +19,7 @@ export default () => {
     return {
       username,
       password,
-      isAnonymous: true,
+      isAnonymous: /^user[0-9]+$/.test(username),
     }
   } else {
     username = `user${Math.random().toString().replace('0.', '')}`
@@ -27,7 +27,7 @@ export default () => {
     return {
       username,
       password: null,
-      isAnonymous: false,
+      isAnonymous: true,
     }
   }
 }
