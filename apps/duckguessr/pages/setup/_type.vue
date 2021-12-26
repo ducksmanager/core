@@ -1,5 +1,5 @@
 <template>
-  <b-card-group v-if="!selectedType" deck>
+  <b-card-group v-if="!players.length" deck>
     <b-card
       v-for="({ title, disabled }, type) in cards"
       :key="type"
@@ -29,16 +29,10 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  useRouter,
-  ref,
-  reactive,
-} from '@nuxtjs/composition-api'
+import { defineComponent, useRouter, reactive } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
 import useUser from '~/components/user'
-const selectedType = ref('')
 
 const cards = {
   againstBot: { title: 'Play against a bot (coming soon)', disabled: true },
@@ -49,11 +43,13 @@ const cards = {
 
 const requiredPlayers = 2
 
+let gameId: number | null = null
+
 export default defineComponent({
+  name: 'Setup',
   setup() {
     const { username, password } = useUser()
     const router = useRouter()
-    const gameId = ref(null as number | null)
     const players = reactive([] as Array<Index.players>)
 
     const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
@@ -63,12 +59,12 @@ export default defineComponent({
         player.username &&
         !players.map(({ username }) => username).includes(player.username)
       ) {
-        gameId.value = existingGameId
+        gameId = existingGameId
         players.push(player)
         if (players.length === requiredPlayers) {
-          matchmakingSocket.emit('matchStarts', { gameId: gameId.value })
+          matchmakingSocket.emit('matchStarts', { gameId })
           matchmakingSocket.close()
-          router.replace(`/game/${gameId.value}`)
+          router.replace(`/game/${gameId}`)
         }
       }
     }
@@ -90,7 +86,7 @@ export default defineComponent({
           console.debug(
             `${username}-Received whoElseIsReady from ${otherPlayer.username}`
           )
-          if (otherPlayerGameId === gameId.value) {
+          if (otherPlayerGameId === gameId) {
             matchmakingSocket.emit(
               'iAmAlsoReady',
               players[0],
@@ -104,7 +100,7 @@ export default defineComponent({
         'iAmAlsoReady',
         (user: Index.players, existingGameId: number) => {
           console.debug(`${username}-${user.username} is also ready`)
-          if (existingGameId === gameId.value) {
+          if (existingGameId === gameId) {
             addPlayer(user, existingGameId)
           }
         }
@@ -114,10 +110,8 @@ export default defineComponent({
 
     return {
       cards,
-      selectedType,
       username: useUser().username,
       players,
-      gameId,
       iAmReady,
     }
   },
