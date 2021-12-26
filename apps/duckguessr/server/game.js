@@ -68,17 +68,31 @@ exports.createOrGetPending = async () => {
 }
 
 exports.associatePlayer = async (gameId, username, password) => {
-  const users = (
-    await this.runQuery(
-      'SELECT ID, username from users where username=? AND password=?',
-      'dm',
-      [username, password]
-    )
-  ).data
-  const user = users[0]
-  if (!user) {
-    console.error(`No user with username ${username}`)
-    return null
+  let user
+  if (/^user[0-9]+$/.test(username)) {
+    const newUser = await prisma.players.create({
+      data: {
+        username,
+        email: '',
+      },
+    })
+    user = {
+      ID: newUser.id,
+      username,
+    }
+  } else {
+    const users = (
+      await this.runQuery(
+        'SELECT ID, username from users where username=? AND password=?',
+        'dm',
+        [username, password]
+      )
+    ).data
+    user = users[0]
+    if (!user) {
+      console.error(`No user with username ${username}`)
+      return null
+    }
   }
   const userId = user.ID
   global.cachedUsers[userId] = user

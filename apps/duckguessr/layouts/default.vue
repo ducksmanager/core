@@ -1,11 +1,8 @@
 <template>
   <div id="app">
     <div id="menu" class="position-fixed d-flex justify-content-center">
-      <div id="medals-and-login" class="d-inline-flex flex-column">
-        <div class="text-center">
-          <b-avatar v-if="isAnonymous" size="4rem" src="/anonymous.png" />
-        </div>
-        <div>{{ username }}</div>
+      <div id="medals-and-login">
+        <user :username="username" />
       </div>
     </div>
     <div
@@ -24,7 +21,7 @@
 <script setup>
 import useUser from '@/components/user'
 
-const { username, isAnonymous } = useUser()
+const { username } = useUser()
 </script>
 
 <style lang="scss">

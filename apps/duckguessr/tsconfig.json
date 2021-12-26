@@ -28,7 +28,8 @@
       "@nuxt/types",
       "@nuxtjs/axios",
       "@types/node",
-      "codeceptjs"
+      "codeceptjs",
+      "unplugin-vue2-script-setup/types"
     ]
   },
   "ts-node": {
@@ -38,5 +39,8 @@
     "node_modules",
     ".nuxt",
     "dist"
-  ]
+  ],
+  "vueCompilerOptions": {
+    "experimentalCompatMode": 2
+  }
 }

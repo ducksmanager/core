@@ -28,7 +28,7 @@
     </b-container>
     <h3 class="mt-3">Scores</h3>
     <b-table striped :items="playersWithScores">
-      <template #head(playerName)=""> Player name </template>
+      <template #head(playerName)=""> Player </template>
       <template #head(totalScore)=""> Total score </template>
       <template #head()="{ column }">
         <b-img
@@ -40,7 +40,7 @@
         </div>
       </template>
       <template #cell(playerName)="{ value: playerName }">
-        {{ playerName }}
+        <user :username="playerName" />
       </template>
       <template #cell(totalScore)="{ value: totalScore }">
         {{ totalScore }}
