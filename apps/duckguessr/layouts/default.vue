@@ -56,7 +56,7 @@ html {
       }
 
       #main {
-        height: calc(100vh - 180px);
+        min-height: calc(100vh - 180px);
         padding: 0 20px 20px 20px;
       }
     }

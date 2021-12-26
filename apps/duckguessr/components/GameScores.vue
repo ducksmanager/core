@@ -27,17 +27,23 @@
       </b-row>
     </b-container>
     <h3 class="mt-3">Scores</h3>
-    <b-table striped :items="playersWithScores">
-      <template #head(playerName)=""> Player </template>
-      <template #head(totalScore)=""> Total score </template>
+    <b-table striped dark :items="playersWithScores">
+      <template #head(playerName)="">&nbsp;</template>
+      <template #head(totalScore)="">&nbsp;</template>
       <template #head()="{ column }">
         <b-img
           :src="imageUrl(scores[column.replace('round', '')])"
-          class="w-100"
+          style="max-height: 100px; max-width: 100%"
         />
-        <div class="text-nowrap">
-          Round {{ parseInt(column.match(/round([0-9])/)[1]) }}
-        </div>
+      </template>
+      <template #thead-top="{ columns }">
+        <tr>
+          <th>Player</th>
+          <th v-for="index in columns" :key="index" class="text-nowrap">
+            Round {{ index }}
+          </th>
+          <th>Total score</th>
+        </tr>
       </template>
       <template #cell(playerName)="{ value: playerName }">
         <user :username="playerName" />
@@ -143,6 +149,23 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+::v-deep tr {
+  height: 100px;
+
+  th {
+    width: 11%;
+    vertical-align: middle;
+    text-align: center;
+    img {
+      max-height: 100px;
+    }
+
+    div {
+      text-align: center;
+    }
+  }
+}
+
 .round-card {
   display: flex;
   align-items: flex-end;
