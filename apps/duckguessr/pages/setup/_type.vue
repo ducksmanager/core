@@ -121,7 +121,6 @@ export default defineComponent({
 <style scoped lang="scss">
 .card {
   color: black;
-  cursor: pointer;
 
   &.disabled {
     cursor: not-allowed;

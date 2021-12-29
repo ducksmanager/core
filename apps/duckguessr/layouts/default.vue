@@ -7,9 +7,9 @@
     </div>
     <div
       id="logo-zone"
-      class="d-flex align-items-center flex-column align-items-center"
+      class="p-4 d-flex align-items-center flex-column align-items-center"
     >
-      <div><b-img src="/logo.png" height="70" /></div>
+      <a href="/"><b-img src="/logo.png" height="70" /></a>
       <small>by DucksManager</small>
     </div>
     <div id="main" class="d-flex justify-content-center align-items-center">
@@ -51,12 +51,8 @@ html {
         border-right: 1px solid #2e353d;
       }
 
-      #logo-zone {
-        height: 180px;
-      }
-
       #main {
-        min-height: calc(100vh - 180px);
+        min-height: calc(100vh - 140px);
         padding: 0 20px 20px 20px;
       }
     }
