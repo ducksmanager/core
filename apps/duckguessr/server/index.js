@@ -106,10 +106,17 @@ io.of('/admin/maintenance').on('connection', (socket) => {
       ]
       minRow += batch
     }
-    socket.emit(
-      'entryurlsPendingMaintenance',
-      entryurlsToMaintain.map((sitecodeUrl) => ({ sitecodeUrl }))
-    )
+    const maintainedEntryurlsCount = await prisma.entryurl_validations.count({
+      where: {
+        decision: false,
+      },
+    })
+    socket.emit('entryurlsPendingMaintenance', {
+      entryurlsToMaintain: entryurlsToMaintain.map((sitecodeUrl) => ({
+        sitecodeUrl,
+      })),
+      maintainedEntryurlsCount,
+    })
   })
 
   socket.on(

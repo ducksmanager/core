@@ -1,6 +1,20 @@
 <template>
   <b-container fluid class="p-4 bg-dark">
     <b-row>
+      <b-col cols="12">
+        <div v-if="maintainedEntryurlsCount !== null">
+          {{ maintainedEntryurlsCount }} images can currently be seen on
+          Duckguessr.
+        </div>
+        Cliquez sur les images qui ne doivent pas être utilisées dans
+        Duckguessr:
+        <ul>
+          <li>Images qui ne contiennent pas de dessin</li>
+          <li>Images sur lesquelles le nom du dessinateur est inscrit</li>
+        </ul>
+      </b-col>
+    </b-row>
+    <b-row>
       <b-col
         v-for="data in entryurlsPendingMaintenanceWithUrls"
         :key="data.sitecodeUrl"
@@ -29,6 +43,7 @@ export default {
   setup() {
     let entryurlsPendingMaintenance: Array<any>
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
+    const maintainedEntryurlsCount = ref(null as Number | null)
     const invalidSitecodeUrls = ref([] as Array<string>)
     let gameSocket: Socket | null = null
 
@@ -36,7 +51,8 @@ export default {
       gameSocket = io(`${process.env.SOCKET_URL}/admin/maintenance`)
       gameSocket!.emit('get')
       gameSocket!.on('entryurlsPendingMaintenance', (data: any) => {
-        entryurlsPendingMaintenance = data
+        entryurlsPendingMaintenance = data.entryurlsToMaintain
+        maintainedEntryurlsCount.value = data.maintainedEntryurlsCount
         entryurlsPendingMaintenanceWithUrls.value =
           entryurlsPendingMaintenance.map((data: any) => ({
             ...data,
@@ -48,6 +64,7 @@ export default {
     return {
       entryurlsPendingMaintenanceWithUrls,
       invalidSitecodeUrls,
+      maintainedEntryurlsCount,
       toggleEntryurl(sitecodeUrl: string) {
         if (invalidSitecodeUrls.value.includes(sitecodeUrl)) {
           invalidSitecodeUrls.value.splice(
@@ -65,6 +82,11 @@ export default {
         })
         window.location.reload()
       },
+    }
+  },
+  head() {
+    return {
+      title: 'Duckguessr - image maintenance',
     }
   },
 }
