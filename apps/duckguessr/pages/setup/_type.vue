@@ -19,7 +19,7 @@
         :key="player.username"
         class="player m-3 col-lg-3"
       >
-        <user :username="player.username" />
+        <user-info :username="player.username" />
       </b-card>
     </b-row>
     <b-row align-h="center">
@@ -120,6 +120,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .card {
+  cursor: pointer;
   color: black;
 
   &.disabled {

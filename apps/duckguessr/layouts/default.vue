@@ -2,7 +2,7 @@
   <div id="app">
     <div id="menu" class="position-fixed d-flex justify-content-center">
       <div id="medals-and-login">
-        <user :username="username" />
+        <user-info :username="username" />
       </div>
     </div>
     <div
