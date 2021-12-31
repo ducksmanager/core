@@ -104,33 +104,6 @@ exports.associatePlayer = async (gameId, username, password) => {
   return user
 }
 
-exports.onGameConnection = (socket) => {
-  socket.on('guess', async ({ username }, roundId, guess) => {
-    console.log(
-      `${username} is guessing ${JSON.stringify(guess)} on round ${roundId}`
-    )
-    try {
-      const guessResultsData = await round.guess(
-        Object.values(global.cachedUsers).find(
-          ({ username: cachedUsername }) => cachedUsername === username
-        ).id,
-        roundId,
-        guess
-      )
-      socket.broadcast.emit('playerGuessed', guessResultsData)
-      socket.emit('playerGuessed', guessResultsData)
-    } catch (e) {
-      console.error(e)
-    }
-  })
-}
-
-exports.createSocket = (io, game) => {
-  io.of(`/game/${game.id}`).on('connection', (socket) => {
-    exports.onGameConnection(socket)
-  })
-}
-
 exports.getCOAEntryurlsQuery = (limits) => `
   select concat(sitecode, '/', url) as sitecode_url
   from inducks_entryurl
@@ -158,9 +131,8 @@ const getCOARoundsQuery = () => `
          inner join inducks_story story on storyversion.storycode = story.storycode
          inner join inducks_storyjob storyjob on storyversion.storyversioncode = storyjob.storyversioncode
          inner join inducks_person person on storyjob.personcode = person.personcode
-  where position like 'p%'
-    and person.personcode <> '?'
-    and person.nationalitycountrycode <> ''
+  where person.personcode <> '?'
+    and person.nationalitycountrycode = 'us'
     and storyjob.plotwritartink = 'a'
   group by person.personcode
   order by RAND()
