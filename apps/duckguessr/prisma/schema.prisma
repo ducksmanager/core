@@ -17,11 +17,11 @@ model games {
 }
 
 model players {
-  id           Int            @id @default(autoincrement())
-  username     String         @db.VarChar(50)
-  email        String         @db.VarChar(100)
-  game_players game_players[]
-  round_scores round_scores[]
+  id              Int            @id @default(autoincrement())
+  username        String         @unique(map: "players_username_uindex") @db.VarChar(50)
+  ducksmanager_id Int?           @unique(map: "players_ducksmanager_id_uindex")
+  game_players    game_players[]
+  round_scores    round_scores[]
 }
 
 model round_scores {

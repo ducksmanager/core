@@ -70,15 +70,17 @@ exports.createOrGetPending = async () => {
 exports.associatePlayer = async (gameId, username, password) => {
   let user
   if (/^user[0-9]+$/.test(username)) {
-    const newUser = await prisma.players.create({
-      data: {
+    user = await prisma.players.findFirst({
+      where: {
         username,
-        email: '',
       },
     })
-    user = {
-      id: newUser.id,
-      username,
+    if (!user) {
+      user = await prisma.players.create({
+        data: {
+          username,
+        },
+      })
     }
   } else {
     const users = (
@@ -96,9 +98,11 @@ exports.associatePlayer = async (gameId, username, password) => {
   }
   const userId = user.id
   global.cachedUsers[userId] = user
-  prisma.game_players.create({
-    game_id: gameId,
-    player_id: userId,
+  await prisma.game_players.create({
+    data: {
+      game_id: gameId,
+      player_id: userId,
+    },
   })
 
   return user
