@@ -9,7 +9,7 @@
     <b-alert show align="center" variant="info">
       This game is finished.
     </b-alert>
-    <game-scores :scores="game.rounds" />
+    <game-scores :scores="game.rounds" :players="game.game_players" />
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal

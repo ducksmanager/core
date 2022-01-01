@@ -13,10 +13,7 @@
       class="author-image"
       :style="{ backgroundImage: `url('${authorImageUrl}')` }"
     >
-      <div
-        class="position-absolute"
-        style="bottom: 10px; background: rgba(255, 255, 255, 0.5)"
-      >
+      <div class="author-name position-absolute">
         <flag :country="author.personnationality" />
         {{ author.personfullname }}
       </div>
@@ -83,6 +80,11 @@ export default defineComponent({
     height: 100%;
     border-radius: 5px;
     opacity: 0.2;
+
+    .author-name {
+      bottom: 10px;
+      background-color: rgba(127, 127, 127, 0.85);
+    }
   }
 
   &.selectable {

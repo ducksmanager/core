@@ -49,8 +49,8 @@
           <th>Total score</th>
         </tr>
       </template>
-      <template #cell(playerName)="{ value: playerName }">
-        <user-info :username="playerName" />
+      <template #cell(playerName)="{ value: playerId }">
+        <user-info :username="playerNames[playerId]" />
       </template>
       <template #cell(totalScore)="{ value: totalScore }">
         {{ totalScore }} points
@@ -59,13 +59,6 @@
         <round-scores :scores="value" />
       </template>
     </b-table>
-    <div
-      v-for="({ personcode, personurl }, idx) in scoresWithPersonUrls"
-      :key="`author${personcode}`"
-      hidden
-    >
-      <b-img :src="personurl" @error="setDefaultAuthorUrl(idx)" />
-    </div>
   </div>
 </template>
 
@@ -83,18 +76,19 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    players: {
+      type: Array,
+      required: true,
+    },
   },
 
-  setup({ scores }) {
-    const playerIds = [
-      ...new Set(
-        scores
-          .map(({ round_scores: roundScores }) =>
-            roundScores.map(({ player_id: playerId }) => playerId)
-          )
-          .flat()
-      ),
-    ]
+  setup({ scores, players }) {
+    const playerIds = players.map(({ player_id: playerId }) => playerId)
+
+    const playerNames = players.reduce(
+      (acc, { players }) => ({ ...acc, [players.id]: players.username }),
+      {}
+    )
 
     const scoresWithPersonUrls = ref(
       scores.map((roundScore) => ({
@@ -105,6 +99,7 @@ export default defineComponent({
 
     return {
       scoresWithPersonUrls,
+      playerNames,
       playersWithScores: playerIds.map((playerId) => {
         const playerScores = scoresWithPersonUrls.value.reduce(
           (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
@@ -186,7 +181,7 @@ export default defineComponent({
     bottom: 0;
     right: 0;
     padding: 5px 0 0 60px;
-    background-color: rgba(230, 230, 230, 0.9);
+    background-color: rgba(127, 127, 127, 0.85);
     background-size: 50px auto;
     background-repeat: no-repeat;
     text-align: center;
