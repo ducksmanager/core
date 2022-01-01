@@ -84,6 +84,7 @@ import {
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import AuthorCard from '~/components/AuthorCard.vue'
+import { getUser } from '@/components/user'
 
 interface Author {
   personnationality: string
@@ -105,6 +106,7 @@ export default defineComponent({
   components: { AuthorCard },
   setup() {
     const { $axios } = useContext()
+    const { username } = getUser()
     const route = useRoute()
 
     const chosenAuthor = ref(null as Author | null)
@@ -227,7 +229,7 @@ export default defineComponent({
     )
 
     const validateGuess = () => {
-      gameSocket!.emit('guess', user, currentRound.value!.id, {
+      gameSocket!.emit('guess', { username }, currentRound.value!.id, {
         personcode: chosenAuthor.value?.personcode ?? null,
         personnationality: chosenAuthor.value?.personnationality ?? null,
       })
@@ -235,7 +237,6 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      user = JSON.parse(sessionStorage.getItem('user')!)
       game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
       setInterval(() => {
         now.value = Date.now()

@@ -77,13 +77,13 @@ exports.associatePlayer = async (gameId, username, password) => {
       },
     })
     user = {
-      ID: newUser.id,
+      id: newUser.id,
       username,
     }
   } else {
     const users = (
       await this.runQuery(
-        'SELECT ID, username from users where username=? AND password=?',
+        'SELECT ID AS id, username from users where username=? AND password=?',
         'dm',
         [username, password]
       )
@@ -94,7 +94,7 @@ exports.associatePlayer = async (gameId, username, password) => {
       return null
     }
   }
-  const userId = user.ID
+  const userId = user.id
   global.cachedUsers[userId] = user
   prisma.game_players.create({
     game_id: gameId,

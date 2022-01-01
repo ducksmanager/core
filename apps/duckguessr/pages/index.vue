@@ -20,9 +20,9 @@
 </template>
 
 <script setup>
-import useUser from '@/components/user'
+import { getUser } from '@/components/user'
 
-const { isAnonymous } = useUser()
+const { isAnonymous } = getUser()
 const cards = {
   any: 'All creators',
   us: 'US artists',

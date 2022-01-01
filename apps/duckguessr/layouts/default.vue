@@ -19,9 +19,9 @@
 </template>
 
 <script setup>
-import useUser from '@/components/user'
+import { getUser } from '@/components/user'
 
-const { username } = useUser()
+const { username } = getUser()
 </script>
 
 <style lang="scss">
