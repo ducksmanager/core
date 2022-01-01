@@ -134,7 +134,7 @@ export default defineComponent({
         )
       return lastUnfinishedRoundIndex === -1
         ? 0
-        : (game.value?.rounds || []).length - lastUnfinishedRoundIndex - 1
+        : (game.value?.rounds || []).length - lastUnfinishedRoundIndex
     })
 
     const currentRound = computed((): roundWithScores | null =>
@@ -173,7 +173,7 @@ export default defineComponent({
       const nextRound =
         currentRoundIndex.value == null
           ? null
-          : game.value?.rounds[currentRoundIndex.value + 1]
+          : game.value?.rounds[currentRoundIndex.value]
       return nextRound?.started_at ? new Date(nextRound?.started_at) : null
     })
 

@@ -4,8 +4,8 @@
     <b-container>
       <b-row>
         <b-col
-          v-for="round in scoresExceptLast"
-          :key="`round${round.round_number}`"
+          v-for="round in scoresWithPersonUrls"
+          :key="`round-${round.round_number}`"
           align-self="center"
           cols="3"
           class="round-card"
@@ -32,15 +32,19 @@
       <template #head(totalScore)="">&nbsp;</template>
       <template #head()="{ column }">
         <b-img
-          :src="imageUrl(scores[column.replace('round', '')])"
+          :src="imageUrl(scores[column.replace('round', '') - 1])"
           style="max-height: 100px; max-width: 100%"
         />
       </template>
-      <template #thead-top="{ columns }">
+      <template #thead-top>
         <tr>
           <th>Player</th>
-          <th v-for="index in columns" :key="index" class="text-nowrap">
-            Round {{ index }}
+          <th
+            v-for="(round, index) in scoresWithPersonUrls"
+            :key="`column-${index}`"
+            class="text-nowrap"
+          >
+            Round {{ round.round_number }}
           </th>
           <th>Total score</th>
         </tr>
@@ -49,14 +53,14 @@
         <user-info :username="playerName" />
       </template>
       <template #cell(totalScore)="{ value: totalScore }">
-        {{ totalScore }}
+        {{ totalScore }} points
       </template>
       <template #cell()="{ value }">
         <round-scores :scores="value" />
       </template>
     </b-table>
     <div
-      v-for="({ personcode, personurl }, idx) in scoresExceptLast"
+      v-for="({ personcode, personurl }, idx) in scoresWithPersonUrls"
       :key="`author${personcode}`"
       hidden
     >
@@ -92,17 +96,17 @@ export default defineComponent({
       ),
     ]
 
-    const scoresExceptLast = ref(
-      scores.slice(0, scores.length - 1).map((roundScore) => ({
+    const scoresWithPersonUrls = ref(
+      scores.map((roundScore) => ({
         ...roundScore,
         personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
       }))
     )
 
     return {
-      scoresExceptLast,
+      scoresWithPersonUrls,
       playersWithScores: playerIds.map((playerId) => {
-        const playerScores = scoresExceptLast.value.reduce(
+        const playerScores = scoresWithPersonUrls.value.reduce(
           (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
             ...acc,
             [`round${roundNumber}`]: roundScores
@@ -135,8 +139,8 @@ export default defineComponent({
         }
       }),
       setDefaultAuthorUrl: (idx) => {
-        Vue.set(scoresExceptLast.value, idx, {
-          ...scoresExceptLast.value[idx],
+        Vue.set(scoresWithPersonUrls.value, idx, {
+          ...scoresWithPersonUrls.value[idx],
           personurl:
             'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg',
         })

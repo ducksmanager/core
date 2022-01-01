@@ -38,3 +38,5 @@ export const getUser = () => {
 export const setDuckguessrId = (id: number) => {
   setCookie('duckguessr-id', `${id}`)
 }
+
+export default () => {}
