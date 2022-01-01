@@ -3,12 +3,12 @@
     <div class="text-center">
       <b-avatar v-if="isAnonymous" size="4rem" src="/anonymous.png" />
     </div>
-    <div>{{ username }}</div>
+    <div>{{ shownUsername }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { username } = defineProps<{
+const { username: shownUsername } = defineProps<{
   username: string | null
 }>()
 
