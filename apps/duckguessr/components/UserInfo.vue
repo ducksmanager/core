@@ -1,5 +1,5 @@
 <template>
-  <div class="d-inline-flex flex-column">
+  <div class="d-flex flex-column align-items-center">
     <div class="text-center">
       <b-avatar v-if="isAnonymous" size="4rem" src="/anonymous.png" />
     </div>
