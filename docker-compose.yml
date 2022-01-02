@@ -24,6 +24,16 @@ services:
       - dm-network
       - dm-server_front-network
 
+  sentry-relay:
+    image: getsentry/relay
+    restart: always
+    container_name: sentry
+    volumes:
+      - ./config/sentry-relay:/work/.relay
+    networks:
+      - workspace_global-front-network
+
+
 networks:
   dm-network:
   workspace_global-front-network:

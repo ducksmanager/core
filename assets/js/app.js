@@ -64,7 +64,7 @@ new Vue({
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     Vue,
-    dsn: 'https://a225a6550b8c4c07914327618685a61c@sentry.io/1385898',
+    dsn: 'https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898',
     logErrors: true,
 
     integrations: [
