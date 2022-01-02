@@ -3,4 +3,7 @@
 /.idea/
 /.nuxt/
 /test/output
+server/models/*
 storybook-static
+
+!.gitkeep

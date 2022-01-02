@@ -1,23 +1,20 @@
+const { io: IOClient } = require('socket.io-client')
 const { PrismaClient } = require('@prisma/client')
 const game = require('../../server/game')
 const round = require('../../server/round')
+const { createGameSocket, addBotToGame } = require('./game')
 
 const prisma = new PrismaClient()
-const { createGameSocket } = require('./game')
 
 exports.createMatchmakingSocket = (io) => {
   io.of('/matchmaking').on('connection', (socket) => {
     console.log('a user connected')
-    socket.on('iAmReady', async ({ username, password }) => {
+    socket.on('iAmReady', async ({ username, password, gameType }) => {
       console.log(`${username} is ready`)
-      const gameData = await game.createOrGetPending()
-      const user = await game.associatePlayer(
-        gameData.gameId,
-        username,
-        password
-      )
+      const { gameId } = await game.createOrGetPending(gameType)
+      const user = await game.associatePlayer(gameId, username, password)
 
-      socket.emit('iAmReadyWithGameID', user, gameData.gameId)
+      socket.emit('iAmReadyWithGameID', user, gameId)
     })
     socket.on('whoElseIsReady', (user, gameId) => {
       console.log(
@@ -45,6 +42,13 @@ exports.createMatchmakingSocket = (io) => {
         await round.createGameRounds(currentGame.id)
       }
       createGameSocket(io, currentGame)
+
+      const botGameSocket = IOClient(
+        `${process.env.SOCKET_URL}/game/${currentGame.id}`
+      )
+      if (currentGame.game_type === 'against_bot') {
+        await addBotToGame(botGameSocket, currentGame.id)
+      }
     })
   })
 }

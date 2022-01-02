@@ -1,10 +1,9 @@
 <template>
   <b-card-group v-if="!players.length" deck>
     <b-card
-      v-for="({ title, disabled }, type) in cards"
+      v-for="({ title }, type) in gameTypes"
       :key="type"
       :title="title"
-      :class="{ disabled }"
       img-src="https://picsum.photos/600/300/?image=25"
       :img-alt="title"
       img-top
@@ -34,14 +33,14 @@ import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
 import { getUser, setDuckguessrId } from '~/components/user'
 
-const cards = {
-  againstBot: { title: 'Play against a bot (coming soon)', disabled: true },
-  againstHumans: {
+const gameTypes = {
+  against_bot: { title: 'Play against a bot' },
+  against_humans: {
     title: 'Play against humans',
   },
 }
 
-const requiredPlayers = 2
+const requiredPlayers = 1
 
 let gameId: number | null = null
 
@@ -69,7 +68,7 @@ export default defineComponent({
       }
     }
 
-    const iAmReady = (type: string) => {
+    const iAmReady = (gameType: string) => {
       matchmakingSocket.on(
         'iAmReadyWithGameID',
         (user: Index.players, gameId: number) => {
@@ -106,11 +105,11 @@ export default defineComponent({
           }
         }
       )
-      matchmakingSocket.emit('iAmReady', { type, username, password })
+      matchmakingSocket.emit('iAmReady', { gameType, username, password })
     }
 
     return {
-      cards,
+      gameTypes,
       username,
       players,
       iAmReady,
@@ -123,21 +122,6 @@ export default defineComponent({
 .card {
   cursor: pointer;
   color: black;
-
-  &.disabled {
-    cursor: not-allowed;
-    background-image: linear-gradient(
-      120deg,
-      #e0e0e0 25%,
-      #ffffff 25%,
-      #ffffff 50%,
-      #e0e0e0 50%,
-      #e0e0e0 75%,
-      #ffffff 75%,
-      #ffffff 100%
-    );
-    background-size: 40% 100%;
-  }
 
   &.player {
     .card {

@@ -8,10 +8,11 @@ datasource db {
 }
 
 model games {
-  id           Int            @id @default(autoincrement())
-  created_at   DateTime       @default(now()) @db.DateTime(0)
-  started_at   DateTime?      @db.DateTime(0)
-  finished_at  DateTime?      @db.DateTime(0)
+  id           Int             @id @default(autoincrement())
+  created_at   DateTime        @default(now()) @db.DateTime(0)
+  started_at   DateTime?       @db.DateTime(0)
+  finished_at  DateTime?       @db.DateTime(0)
+  game_type    games_game_type @default(against_players)
   game_players game_players[]
   rounds       rounds[]
 }
@@ -78,4 +79,9 @@ model entryurl_validations {
   sitecode_url String   @db.VarChar(99)
   updated_at   DateTime @default(now()) @db.Timestamp(0)
   decision     Boolean
+}
+
+enum games_game_type {
+  against_bot
+  against_players
 }

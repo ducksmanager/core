@@ -8,7 +8,7 @@ const app = express()
 const server = http.createServer(app)
 const IO = require('socket.io')
 
-const { createGameSocket } = require('./sockets/game')
+const { createGameSocket, addBotToGame } = require('./sockets/game')
 const { createMatchmakingSocket } = require('./sockets/matchmaking')
 const { createMaintenanceSocket } = require('./sockets/admin/maintenance')
 
@@ -34,12 +34,15 @@ prisma.games
       },
     },
   })
-  .then((pendingGames) => {
+  .then(async (pendingGames) => {
     for (const pendingGame of pendingGames) {
       console.debug(
         `Creating socket for unfinished game with ID ${pendingGame.id}`
       )
-      createGameSocket(io, pendingGame)
+      const gameSocket = createGameSocket(io, pendingGame)
+      if (pendingGame.game_type === 'against_bot') {
+        await addBotToGame(gameSocket, gameSocket.id)
+      }
     }
   })
 
