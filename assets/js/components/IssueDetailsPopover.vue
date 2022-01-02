@@ -54,6 +54,7 @@ export default {
       required: true
     }
   },
+  emits: ['cover-loaded'],
 
   data: () => ({
     cloudinaryBaseUrl: 'https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/',
@@ -73,7 +74,9 @@ export default {
 
     coverUrl() {
       const cover = this.issueDetails && this.issueDetails[this.issueCode].entries.find(({position}) => !/^p/.test(position))
-      return cover ? this.cloudinaryBaseUrl + cover.url : null
+      const hasCover = cover && !!cover.url
+      this.$emit('cover-loaded', hasCover)
+      return hasCover ? this.cloudinaryBaseUrl + cover.url : null
     }
   },
 

@@ -102,11 +102,11 @@
             <a :name="issueNumber" />
             <b-icon-eye-fill
               :id="`issue-details-${issueNumber}`"
-              class="preview mx-2"
+              :class="{'mx-2': true, [`can-show-book-${hoveredIssueHasCover}`]: true}"
               :alt="$t('Voir')"
               @mouseover="hoveredIssueNumber=issueNumber"
-              @mouseout="hoveredIssueNumber=null"
-              @click.prevent="currentIssueOpened = {publicationcode, issueNumber}"
+              @mouseout="hoveredIssueNumber=null;hoveredIssueHasCover=undefined"
+              @click.prevent="currentIssueOpened = hoveredIssueHasCover ? {publicationcode, issueNumber}: null"
             />
             <span
               v-once
@@ -152,6 +152,7 @@
           :publication-code="publicationcode"
           :issue-number="hoveredIssueNumber"
           placement="right"
+          @cover-loaded="hoveredIssueHasCover = $event"
         />
       </div>
       <ContextMenu
@@ -260,6 +261,7 @@ export default {
     preselectedIndexStart: null,
     preselectedIndexEnd: null,
     hoveredIssueNumber: null,
+    hoveredIssueHasCover: undefined,
     currentIssueOpened: null,
     contextMenuKey: "context-menu"
   }),
@@ -396,6 +398,18 @@ export default {
 
 <style scoped lang="scss">
 
+.can-show-book-undefined {
+  cursor: initial;
+}
+
+.can-show-book-false {
+  cursor: not-allowed;
+}
+
+.can-show-book-true {
+  cursor: pointer;
+}
+
 .issue-list-header {
   border: 0;
   width: 100%;
@@ -446,10 +460,6 @@ export default {
 
     &.issue-possessed {
       background-color: rgb(200, 137, 100);
-    }
-
-    .preview {
-      cursor: pointer;
     }
 
     .issue-title {
