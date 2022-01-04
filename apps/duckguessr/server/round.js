@@ -41,7 +41,7 @@ exports.createGameRounds = async (gameId) => {
 
 exports.guess = async (playerId, roundId, guess) => {
   const round = await exports.getRound(roundId)
-  if (guess == null) {
+  if (!guess) {
     console.error(`No guess was provided`)
   }
   if (
@@ -52,7 +52,9 @@ exports.guess = async (playerId, roundId, guess) => {
       },
     })
   ) {
-    console.error(`Player ${playerId} already guessed round ${round.id}`)
+    console.error(
+      `Player ${global.cachedUsers[playerId].username} already guessed round ${round.id}`
+    )
   }
 
   let scoreData

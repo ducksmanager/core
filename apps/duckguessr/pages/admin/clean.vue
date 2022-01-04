@@ -2,6 +2,11 @@
   <b-container fluid class="p-4 bg-dark">
     <b-row>
       <b-col cols="12">
+        <b-select v-model="selectedDataset">
+          <b-select-option value="published-fr-recent">
+            published-fr-recent
+          </b-select-option>
+        </b-select>
         <div v-if="maintainedEntryurlsCount !== null">
           {{ maintainedEntryurlsCount }} images can currently be seen on
           Duckguessr.
@@ -35,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from '@nuxtjs/composition-api'
+import { onMounted, ref, watch } from '@nuxtjs/composition-api'
 import { io, Socket } from 'socket.io-client'
 
 export default {
@@ -44,6 +49,7 @@ export default {
     let entryurlsPendingMaintenance: Array<any>
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
     const maintainedEntryurlsCount = ref(null as Number | null)
+    const selectedDataset = ref('published-fr-recent' as String)
     const invalidSitecodeUrls = ref([] as Array<string>)
     let gameSocket: Socket | null = null
 
@@ -61,7 +67,20 @@ export default {
       })
     })
 
+    watch(
+      () => selectedDataset.value,
+      (newValue) => {
+        gameSocket = io(
+          `${process.env.SOCKET_URL}/admin/maintenance?${newValue}`
+        )
+      },
+      {
+        immediate: true,
+      }
+    )
+
     return {
+      selectedDataset,
       entryurlsPendingMaintenanceWithUrls,
       invalidSitecodeUrls,
       maintainedEntryurlsCount,

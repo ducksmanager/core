@@ -8,7 +8,7 @@
           :key="`round-${round.round_number}`"
           align-self="center"
           cols="3"
-          class="round-card"
+          class="round-card my-3"
           :style="{
             'background-image': `url('${imageUrl(round)}')`,
           }"

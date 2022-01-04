@@ -3,7 +3,7 @@ const tf = require('@tensorflow/tfjs')
 const tfn = require('@tensorflow/tfjs-node')
 const sharp = require('sharp')
 
-const modelFile = tfn.io.fileSystem('models/us/model.json')
+const modelFile = tfn.io.fileSystem('datasets/us/model/model.json')
 
 const artists = ['CB', 'AT', 'TS', 'FG', 'DR', 'PM', 'JB', 'AH', 'PAl', 'WVH']
 
