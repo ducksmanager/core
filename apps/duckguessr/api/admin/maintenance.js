@@ -19,7 +19,7 @@ export default async (req, res) => {
               left join entryurl_validations using (sitecode_url)
               where dataset_id = (select id from datasets where name = ${dataset})
                 and decision is null
-              limit 50
+              limit 60
             `,
           maintainedEntryurlsCount: await prisma.$queryRaw`
             select decision, count(*) as 'count'

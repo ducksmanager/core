@@ -8,9 +8,9 @@
           </b-select-option>
         </b-select>
         <div v-if="validatedAndRemainingImageCount !== null">
-          {{ validatedAndRemainingImageCount.ok }} images from this dataset can
-          currently be seen on Duckguessr,
-          {{ validatedAndRemainingImageCount.ko }}
+          {{ validatedAndRemainingImageCount.validated || 0 }} images from this
+          dataset can currently be seen on Duckguessr,
+          {{ validatedAndRemainingImageCount.not_validated || 0 }}
           are left to maintain.
         </div>
         Cliquez sur les images qui ne doivent pas être utilisées dans
@@ -21,31 +21,38 @@
         </ul>
       </b-col>
     </b-row>
-    <b-row>
-      <b-col
-        v-for="(
-          { sitecodeUrl, url, decision }, index
-        ) in entryurlsPendingMaintenanceWithUrls"
-        :key="sitecodeUrl"
-        class="d-flex align-items-center justify-content-end flex-column"
-        col
-        cols="2"
-      >
-        <b-img thumbnail fluid :src="url" />
-        <b-button-group vertical size="sm">
-          <b-button
-            v-for="({ variant, title }, value) in decisions"
-            :key="`${sitecodeUrl}-${value}`"
-            :variant="variant"
-            :pressed="decision === value"
-            @click="entryurlsPendingMaintenanceWithUrls[index].decision = value"
-          >
-            {{ title }}
-          </b-button>
-        </b-button-group>
-      </b-col>
+    <b-row v-if="!entryurlsPendingMaintenanceWithUrls.length">
+      Toutes les images de ce jeu de données ont été validées.
     </b-row>
-    <b-btn variant="success" @click="submitInvalidations()">OK</b-btn>
+    <template v-else>
+      <b-row>
+        <b-col
+          v-for="(
+            { sitecodeUrl, url, decision }, index
+          ) in entryurlsPendingMaintenanceWithUrls"
+          :key="sitecodeUrl"
+          class="d-flex align-items-center justify-content-end flex-column"
+          col
+          cols="2"
+        >
+          <b-img thumbnail fluid :src="url" />
+          <b-button-group vertical size="sm">
+            <b-button
+              v-for="({ variant, title }, value) in decisions"
+              :key="`${sitecodeUrl}-${value}`"
+              :variant="variant"
+              :pressed="decision === value"
+              @click="
+                entryurlsPendingMaintenanceWithUrls[index].decision = value
+              "
+            >
+              {{ title }}
+            </b-button>
+          </b-button-group>
+        </b-col>
+      </b-row>
+      <b-btn variant="success" @click="submitInvalidations()">OK</b-btn>
+    </template>
   </b-container>
 </template>
 
@@ -92,8 +99,8 @@ export default {
           ? maintainedEntryurlsCount.value.reduce(
               (acc, { decision, count }) => ({
                 ...acc,
-                [decision === 'ok' ? 'ok' : 'ko']:
-                  decision === 'ok' ? count : (acc.ko || 0) + count,
+                [decision === null ? 'not_validated' : 'validated']:
+                  decision === null ? count : (acc.validated || 0) + count,
               }),
               {}
             )
