@@ -4,14 +4,14 @@
       <b-col cols="12">
         <b-select v-model="selectedDataset">
           <b-select-option value="published-fr-recent">
-            published-fr-recent ({{ leftToMaintainImageCount }} left to
-            maintain)
+            published-fr-recent
           </b-select-option>
         </b-select>
-        <div v-if="validatedImageCount !== null">
-          {{ validatedImageCount }} images from this dataset can currently be
-          seen on Duckguessr, {{ leftToMaintainImageCount }} are left to
-          maintain.
+        <div v-if="validatedAndRemainingImageCount !== null">
+          {{ validatedAndRemainingImageCount.ok }} images from this dataset can
+          currently be seen on Duckguessr,
+          {{ validatedAndRemainingImageCount.ko }}
+          are left to maintain.
         </div>
         Cliquez sur les images qui ne doivent pas être utilisées dans
         Duckguessr:
@@ -23,18 +23,26 @@
     </b-row>
     <b-row>
       <b-col
-        v-for="{ sitecodeUrl, url } in entryurlsPendingMaintenanceWithUrls"
+        v-for="(
+          { sitecodeUrl, url, decision }, index
+        ) in entryurlsPendingMaintenanceWithUrls"
         :key="sitecodeUrl"
-        :class="{
-          'd-flex': true,
-          'align-items-center': true,
-          invalid: invalidSitecodeUrls.includes(sitecodeUrl),
-        }"
+        class="d-flex align-items-center justify-content-end flex-column"
         col
-        cols="1"
-        @click="toggleEntryurl(sitecodeUrl)"
+        cols="2"
       >
         <b-img thumbnail fluid :src="url" />
+        <b-button-group vertical size="sm">
+          <b-button
+            v-for="({ variant, title }, value) in decisions"
+            :key="`${sitecodeUrl}-${value}`"
+            :variant="variant"
+            :pressed="decision === value"
+            @click="entryurlsPendingMaintenanceWithUrls[index].decision = value"
+          >
+            {{ title }}
+          </b-button>
+        </b-button-group>
       </b-col>
     </b-row>
     <b-btn variant="success" @click="submitInvalidations()">OK</b-btn>
@@ -49,11 +57,16 @@ export default {
   setup() {
     const { $axios } = useContext()
 
+    const decisions = {
+      ok: { title: 'OK', variant: 'success' },
+      shows_author: { title: 'Image contains author', variant: 'warning' },
+      no_drawing: { title: "Image doesn't have a drawing", variant: 'warning' },
+    }
+
     let entryurlsPendingMaintenance: Array<String>
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
     const maintainedEntryurlsCount = ref(null as Array<any> | null)
     const selectedDataset = ref('published-fr-recent' as String)
-    const invalidSitecodeUrls = ref([] as Array<string>)
 
     onMounted(async () => {
       const maintenanceData = await $axios.$get(
@@ -62,45 +75,34 @@ export default {
       entryurlsPendingMaintenance = maintenanceData.entryurlsToMaintain
       maintainedEntryurlsCount.value = maintenanceData.maintainedEntryurlsCount
       entryurlsPendingMaintenanceWithUrls.value =
-        entryurlsPendingMaintenance.map((sitecodeUrl: String) => ({
-          sitecodeUrl,
-          url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${sitecodeUrl}`,
+        entryurlsPendingMaintenance.map((data: any) => ({
+          ...data,
+          decision: data.decision || 'ok',
+          url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${data.sitecodeUrl}`,
         }))
     })
 
     return {
+      decisions,
       selectedDataset,
       entryurlsPendingMaintenanceWithUrls,
-      invalidSitecodeUrls,
       maintainedEntryurlsCount,
-      leftToMaintainImageCount: computed(() =>
+      validatedAndRemainingImageCount: computed(() =>
         maintainedEntryurlsCount.value
-          ? maintainedEntryurlsCount.value.find(
-              ({ decision }) => decision === null
-            ).count
+          ? maintainedEntryurlsCount.value.reduce(
+              (acc, { decision, count }) => ({
+                ...acc,
+                [decision === 'ok' ? 'ok' : 'ko']:
+                  decision === 'ok' ? count : (acc.ko || 0) + count,
+              }),
+              {}
+            )
           : null
       ),
-      validatedImageCount: computed(() =>
-        maintainedEntryurlsCount.value
-          ? maintainedEntryurlsCount.value.find(
-              ({ decision }) => decision === 0
-            ).count
-          : null
-      ),
-      toggleEntryurl(sitecodeUrl: string) {
-        if (invalidSitecodeUrls.value.includes(sitecodeUrl)) {
-          invalidSitecodeUrls.value.splice(
-            invalidSitecodeUrls.value.indexOf(sitecodeUrl),
-            1
-          )
-        } else {
-          invalidSitecodeUrls.value.push(sitecodeUrl)
-        }
-      },
       async submitInvalidations() {
         await $axios.$post(`/api/admin/maintenance`, {
-          entryurlsPendingMaintenance,
-          invalidSitecodeUrls: invalidSitecodeUrls.value,
+          entryurlsPendingMaintenance:
+            entryurlsPendingMaintenanceWithUrls.value,
         })
         window.location.reload()
       },
@@ -116,8 +118,8 @@ export default {
 
 <style scoped lang="scss">
 .col {
-  border: 1px solid green;
-  cursor: pointer;
+  padding-left: 5px;
+  padding-right: 5px;
 
   &.invalid {
     border: 1px solid red;

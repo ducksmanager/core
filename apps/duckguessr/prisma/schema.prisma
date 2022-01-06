@@ -78,10 +78,10 @@ model game_players {
 }
 
 model entryurl_validations {
-  id           Int      @id @default(autoincrement())
-  sitecode_url String   @unique(map: "entryurl_validations_sitecode_url_uindex") @db.VarChar(99)
-  updated_at   DateTime @default(now()) @db.Timestamp(0)
-  decision     Boolean
+  id           Int                           @id @default(autoincrement())
+  sitecode_url String                        @unique(map: "entryurl_validations_sitecode_url_uindex") @db.VarChar(99)
+  updated_at   DateTime                      @default(now()) @db.Timestamp(0)
+  decision     entryurl_validations_decision
 }
 
 model datasets {
@@ -119,4 +119,10 @@ enum games_game_type {
 enum inducks_entryurl_public {
   Y
   N
+}
+
+enum entryurl_validations_decision {
+  ok
+  shows_author
+  no_drawing
 }
