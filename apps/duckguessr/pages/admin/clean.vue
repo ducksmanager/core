@@ -2,12 +2,8 @@
   <b-container fluid class="p-4 bg-dark">
     <b-row>
       <b-col cols="12">
-        <b-select v-model="selectedDataset">
-          <b-select-option value="published-fr-recent">
-            published-fr-recent
-          </b-select-option>
-        </b-select>
-        <div v-if="validatedAndRemainingImageCount !== null">
+        <b-select v-model="selectedDataset" :options="datasets" />
+        <div v-if="validatedAndRemainingImageCount">
           {{ validatedAndRemainingImageCount.validated || 0 }} images from this
           dataset can currently be seen on Duckguessr,
           {{ validatedAndRemainingImageCount.not_validated || 0 }}
@@ -57,7 +53,8 @@
 </template>
 
 <script lang="ts">
-import { computed, onMounted, ref, useContext } from '@nuxtjs/composition-api'
+import { onMounted, ref, useContext, watch } from '@nuxtjs/composition-api'
+import type Index from '@prisma/client'
 
 export default {
   name: 'Clean',
@@ -70,42 +67,61 @@ export default {
       no_drawing: { title: "Image doesn't have a drawing", variant: 'warning' },
     }
 
-    let entryurlsPendingMaintenance: Array<String>
+    let datasets: Index.datasets[] | null = null
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
-    const maintainedEntryurlsCount = ref(null as Array<any> | null)
-    const selectedDataset = ref('published-fr-recent' as String)
+    const maintainedEntryurlsCount: Array<any> | null = null
+    let validatedAndRemainingImageCount: any = null
+    const selectedDataset = ref(null as String | null)
 
     onMounted(async () => {
-      const maintenanceData = await $axios.$get(
-        `/api/admin/maintenance?dataset=${selectedDataset.value}`
-      )
-      entryurlsPendingMaintenance = maintenanceData.entryurlsToMaintain
-      maintainedEntryurlsCount.value = maintenanceData.maintainedEntryurlsCount
-      entryurlsPendingMaintenanceWithUrls.value =
-        entryurlsPendingMaintenance.map((data: any) => ({
-          ...data,
-          decision: data.decision || 'ok',
-          url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${data.sitecodeUrl}`,
-        }))
+      const data = await $axios.$get(`/api/admin/maintenance?dataset=us`)
+      datasets = [
+        { value: null, text: 'Please select an option' },
+        ...data.datasets.map(({ name }: { name: string }) => ({
+          value: name,
+          text: name,
+        })),
+      ]
     })
 
+    watch(
+      () => selectedDataset.value,
+      async (newValue) => {
+        if (!newValue) {
+          validatedAndRemainingImageCount = null
+          return
+        }
+        const { entryurlsToMaintain, maintainedEntryurlsCount } =
+          await $axios.$get(`/api/admin/maintenance?dataset=${newValue}`)
+        entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map(
+          (data: any) => ({
+            ...data,
+            decision: data.decision || 'ok',
+            url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${data.sitecodeUrl}`,
+          })
+        )
+
+        validatedAndRemainingImageCount = maintainedEntryurlsCount.reduce(
+          (
+            acc: { validated: number },
+            { decision, count }: { decision: string | null; count: number }
+          ) => ({
+            ...acc,
+            [decision === null ? 'not_validated' : 'validated']:
+              decision === null ? count : (acc.validated || 0) + count,
+          }),
+          {}
+        )
+      }
+    )
+
     return {
+      datasets,
       decisions,
       selectedDataset,
       entryurlsPendingMaintenanceWithUrls,
       maintainedEntryurlsCount,
-      validatedAndRemainingImageCount: computed(() =>
-        maintainedEntryurlsCount.value
-          ? maintainedEntryurlsCount.value.reduce(
-              (acc, { decision, count }) => ({
-                ...acc,
-                [decision === null ? 'not_validated' : 'validated']:
-                  decision === null ? count : (acc.validated || 0) + count,
-              }),
-              {}
-            )
-          : null
-      ),
+      validatedAndRemainingImageCount,
       async submitInvalidations() {
         await $axios.$post(`/api/admin/maintenance`, {
           entryurlsPendingMaintenance:

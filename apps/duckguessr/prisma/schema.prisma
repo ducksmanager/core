@@ -86,7 +86,7 @@ model entryurl_validations {
 
 model datasets {
   id                 Int                  @id @default(autoincrement())
-  name               String               @unique(map: "game_types_dataset_uindex") @db.VarChar(20)
+  name               String               @unique(map: "game_types_dataset_uindex") @db.VarChar(30)
   datasets_entryurls datasets_entryurls[]
   games              games[]
 }
