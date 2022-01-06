@@ -70,5 +70,9 @@ export default {
       path: '/api/round',
       handler: '~/api/round.js',
     },
+    {
+      path: '/api/admin/maintenance',
+      handler: '~/api/admin/maintenance.js',
+    },
   ],
 }

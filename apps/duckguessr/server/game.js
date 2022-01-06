@@ -112,13 +112,6 @@ exports.associatePlayer = async (gameId, username, password) => {
   return user
 }
 
-exports.getCOAEntryurlsQuery = (limits) => `
-  select concat(sitecode, '/', url) as sitecode_url
-  from inducks_entryurl
-  where sitecode = 'thumbnails3'
-  limit ${limits.join(',')}
-`
-
 const getCOARoundsQuery = (dataset) =>
   fs.existsSync(`datasets/${dataset}/game.sql`)
     ? fs

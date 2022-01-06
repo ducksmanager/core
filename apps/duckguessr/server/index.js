@@ -10,7 +10,6 @@ const IO = require('socket.io')
 
 const { createGameSocket, addBotToGame } = require('./sockets/game')
 const { createMatchmakingSocket } = require('./sockets/matchmaking')
-const { createMaintenanceSocket } = require('./sockets/admin/maintenance')
 
 global.cachedUsers = {}
 
@@ -22,7 +21,6 @@ const io = IO(server, {
 })
 
 createMatchmakingSocket(io)
-createMaintenanceSocket(io)
 
 prisma.games
   .findMany({

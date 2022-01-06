@@ -4,12 +4,14 @@
       <b-col cols="12">
         <b-select v-model="selectedDataset">
           <b-select-option value="published-fr-recent">
-            published-fr-recent
+            published-fr-recent ({{ leftToMaintainImageCount }} left to
+            maintain)
           </b-select-option>
         </b-select>
-        <div v-if="maintainedEntryurlsCount !== null">
-          {{ maintainedEntryurlsCount }} images can currently be seen on
-          Duckguessr.
+        <div v-if="validatedImageCount !== null">
+          {{ validatedImageCount }} images from this dataset can currently be
+          seen on Duckguessr, {{ leftToMaintainImageCount }} are left to
+          maintain.
         </div>
         Cliquez sur les images qui ne doivent pas être utilisées dans
         Duckguessr:
@@ -21,18 +23,18 @@
     </b-row>
     <b-row>
       <b-col
-        v-for="data in entryurlsPendingMaintenanceWithUrls"
-        :key="data.sitecodeUrl"
+        v-for="{ sitecodeUrl, url } in entryurlsPendingMaintenanceWithUrls"
+        :key="sitecodeUrl"
         :class="{
           'd-flex': true,
           'align-items-center': true,
-          invalid: invalidSitecodeUrls.includes(data.sitecodeUrl),
+          invalid: invalidSitecodeUrls.includes(sitecodeUrl),
         }"
         col
         cols="1"
-        @click="toggleEntryurl(data.sitecodeUrl)"
+        @click="toggleEntryurl(sitecodeUrl)"
       >
-        <b-img thumbnail fluid :src="data.url" />
+        <b-img thumbnail fluid :src="url" />
       </b-col>
     </b-row>
     <b-btn variant="success" @click="submitInvalidations()">OK</b-btn>
@@ -40,50 +42,51 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from '@nuxtjs/composition-api'
-import { io, Socket } from 'socket.io-client'
+import { computed, onMounted, ref, useContext } from '@nuxtjs/composition-api'
 
 export default {
   name: 'Clean',
   setup() {
-    let entryurlsPendingMaintenance: Array<any>
+    const { $axios } = useContext()
+
+    let entryurlsPendingMaintenance: Array<String>
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
-    const maintainedEntryurlsCount = ref(null as Number | null)
+    const maintainedEntryurlsCount = ref(null as Array<any> | null)
     const selectedDataset = ref('published-fr-recent' as String)
     const invalidSitecodeUrls = ref([] as Array<string>)
-    let gameSocket: Socket | null = null
 
-    onMounted(() => {
-      gameSocket = io(`${process.env.SOCKET_URL}/admin/maintenance`)
-      gameSocket!.emit('get')
-      gameSocket!.on('entryurlsPendingMaintenance', (data: any) => {
-        entryurlsPendingMaintenance = data.entryurlsToMaintain
-        maintainedEntryurlsCount.value = data.maintainedEntryurlsCount
-        entryurlsPendingMaintenanceWithUrls.value =
-          entryurlsPendingMaintenance.map((data: any) => ({
-            ...data,
-            url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${data.sitecodeUrl}`,
-          }))
-      })
+    onMounted(async () => {
+      const maintenanceData = await $axios.$get(
+        `/api/admin/maintenance?dataset=${selectedDataset.value}`
+      )
+      entryurlsPendingMaintenance = maintenanceData.entryurlsToMaintain
+      maintainedEntryurlsCount.value = maintenanceData.maintainedEntryurlsCount
+      entryurlsPendingMaintenanceWithUrls.value =
+        entryurlsPendingMaintenance.map((sitecodeUrl: String) => ({
+          sitecodeUrl,
+          url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${sitecodeUrl}`,
+        }))
     })
-
-    watch(
-      () => selectedDataset.value,
-      (newValue) => {
-        gameSocket = io(
-          `${process.env.SOCKET_URL}/admin/maintenance?${newValue}`
-        )
-      },
-      {
-        immediate: true,
-      }
-    )
 
     return {
       selectedDataset,
       entryurlsPendingMaintenanceWithUrls,
       invalidSitecodeUrls,
       maintainedEntryurlsCount,
+      leftToMaintainImageCount: computed(() =>
+        maintainedEntryurlsCount.value
+          ? maintainedEntryurlsCount.value.find(
+              ({ decision }) => decision === null
+            ).count
+          : null
+      ),
+      validatedImageCount: computed(() =>
+        maintainedEntryurlsCount.value
+          ? maintainedEntryurlsCount.value.find(
+              ({ decision }) => decision === 0
+            ).count
+          : null
+      ),
       toggleEntryurl(sitecodeUrl: string) {
         if (invalidSitecodeUrls.value.includes(sitecodeUrl)) {
           invalidSitecodeUrls.value.splice(
@@ -94,8 +97,8 @@ export default {
           invalidSitecodeUrls.value.push(sitecodeUrl)
         }
       },
-      submitInvalidations() {
-        gameSocket!.emit('postValidationsChoices', {
+      async submitInvalidations() {
+        await $axios.$post(`/api/admin/maintenance`, {
           entryurlsPendingMaintenance,
           invalidSitecodeUrls: invalidSitecodeUrls.value,
         })

@@ -13,8 +13,12 @@ model games {
   started_at   DateTime?       @db.DateTime(0)
   finished_at  DateTime?       @db.DateTime(0)
   game_type    games_game_type @default(against_players)
+  dataset_id   Int?
+  datasets     datasets?       @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "games_datasets_id_fk")
   game_players game_players[]
   rounds       rounds[]
+
+  @@index([dataset_id], map: "games_datasets_id_fk")
 }
 
 model players {
@@ -75,13 +79,44 @@ model game_players {
 
 model entryurl_validations {
   id           Int      @id @default(autoincrement())
-  entrycode    String?  @db.VarChar(21)
-  sitecode_url String   @db.VarChar(99)
+  sitecode_url String   @unique(map: "entryurl_validations_sitecode_url_uindex") @db.VarChar(99)
   updated_at   DateTime @default(now()) @db.Timestamp(0)
   decision     Boolean
+}
+
+model datasets {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique(map: "game_types_dataset_uindex") @db.VarChar(20)
+  datasets_entryurls datasets_entryurls[]
+  games              games[]
+}
+
+model datasets_entryurls {
+  id           Int       @id @default(autoincrement())
+  dataset_id   Int?
+  sitecode_url String    @db.VarChar(99)
+  datasets     datasets? @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "datasets_entryurl_validations_datasets_id_fk")
+
+  @@unique([dataset_id, sitecode_url], map: "datasets_entryurl_validations_dataset_validation")
+  @@index([sitecode_url], map: "datasets_entryurl_validations_entryurl_validations_id_fk")
+}
+
+model inducks_entryurl {
+  entrycode  String?                  @db.VarChar(21)
+  sitecode   String?                  @db.VarChar(11)
+  pagenumber Int?
+  url        String?                  @db.VarChar(87)
+  storycode  String?                  @db.VarChar(39)
+  public     inducks_entryurl_public?
+  id         Int                      @id @default(autoincrement())
 }
 
 enum games_game_type {
   against_bot
   against_players
+}
+
+enum inducks_entryurl_public {
+  Y
+  N
 }
