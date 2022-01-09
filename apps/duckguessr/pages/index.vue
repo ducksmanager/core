@@ -24,7 +24,7 @@ import { getUser } from '@/components/user'
 
 const { isAnonymous } = getUser()
 const cards = {
-  any: 'All creators',
+  'published-fr-recent': 'Stories from recent French publications',
   us: 'US artists',
 }
 </script>

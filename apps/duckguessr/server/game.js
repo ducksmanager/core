@@ -4,13 +4,20 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const numberOfRounds = 8
 
-exports.createOrGetPending = async (gameType) => {
+exports.createOrGetPending = async (gameType, datasetName) => {
+  const dataset = await prisma.datasets.findFirst({
+    name: datasetName,
+  })
+  if (!dataset) {
+    throw new Error(`Cannot find dataset with name ${datasetName}`)
+  }
   const pendingGame = await prisma.games.findFirst({
     include: {
       game_players: true,
     },
     where: {
       game_type: gameType,
+      dataset_id: dataset.id,
       rounds: {
         some: {
           started_at: null,

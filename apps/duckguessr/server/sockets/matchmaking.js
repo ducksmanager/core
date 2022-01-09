@@ -9,9 +9,9 @@ const prisma = new PrismaClient()
 exports.createMatchmakingSocket = (io) => {
   io.of('/matchmaking').on('connection', (socket) => {
     console.log('a user connected')
-    socket.on('iAmReady', async ({ username, password, gameType }) => {
+    socket.on('iAmReady', async ({ username, password, gameType, dataset }) => {
       console.log(`${username} is ready`)
-      const { gameId } = await game.createOrGetPending(gameType)
+      const { gameId } = await game.createOrGetPending(gameType, dataset)
       const user = await game.associatePlayer(gameId, username, password)
 
       socket.emit('iAmReadyWithGameID', user, gameId)
