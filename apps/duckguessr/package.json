@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.js\" \"npx nuxt storybook\"",
+    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.js\"",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -19,10 +19,10 @@
     "body-parser": "^1.19.1",
     "bootstrap": "^4.6.1",
     "bootstrap-vue": "^2.21.2",
-    "core-js": "^3.20.1",
+    "core-js": "^3.20.2",
     "nuxt": "^2.15.8",
     "request": "^2.88.2",
-    "socket.io-client": "^4.4.0"
+    "socket.io-client": "^4.4.1"
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.8",
@@ -31,13 +31,13 @@
     "@nuxtjs/eslint-config-typescript": "^8.0.0",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/storybook": "^4.2.0",
-    "@types/node": "^14.18.2",
+    "@types/node": "^14.18.5",
     "@vue/test-utils": "^1.3.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
-    "codeceptjs": "^3.2.2",
-    "concurrently": "^6.5.1",
-    "eslint": "^8.5.0",
+    "codeceptjs": "^3.2.3",
+    "concurrently": "^7.0.0",
+    "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-nuxt": "^3.1.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -47,7 +47,7 @@
     "playwright": "^1.17.1",
     "prettier": "^2.5.1",
     "prisma": "^3.7.0",
-    "sass": "^1.45.1",
+    "sass": "^1.47.0",
     "sass-loader": "^10.1.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4"
