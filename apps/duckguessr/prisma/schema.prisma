@@ -92,10 +92,10 @@ model datasets {
 }
 
 model datasets_entryurls {
-  id           Int       @id @default(autoincrement())
-  dataset_id   Int?
-  sitecode_url String    @db.VarChar(99)
-  datasets     datasets? @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "datasets_entryurl_validations_datasets_id_fk")
+  id           Int      @id @default(autoincrement())
+  dataset_id   Int
+  sitecode_url String   @db.VarChar(99)
+  datasets     datasets @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "datasets_entryurl_validations_datasets_id_fk")
 
   @@unique([dataset_id, sitecode_url], map: "datasets_entryurl_validations_dataset_validation")
   @@index([sitecode_url], map: "datasets_entryurl_validations_entryurl_validations_id_fk")
