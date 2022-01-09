@@ -11,7 +11,8 @@
         </div>
       </b-col>
     </b-row>
-    <b-row v-if="!entryurlsPendingMaintenanceWithUrls.length">
+    <template v-if="!selectedDataset" />
+    <b-row v-else-if="!entryurlsPendingMaintenanceWithUrls.length">
       Toutes les images de ce jeu de données ont été validées.
     </b-row>
     <template v-else>
@@ -90,7 +91,7 @@ export default {
     onMounted(async () => {
       const data = await $axios.$get(`/api/admin/maintenance`)
       datasets.value = [
-        { value: null, text: 'Please select an option' },
+        { value: null, text: 'Select a dataset' },
         ...data.datasets.map(({ name }: { name: string }) => ({
           value: name,
           text: name,
