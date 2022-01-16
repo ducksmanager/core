@@ -140,6 +140,20 @@
           />
         </b-card-text>
         <b-card-text v-if="step.component === 'Image'">
+          <b-btn
+            size="sm"
+            variant="outline-warning"
+            class="d-block my-3 float-right"
+            @click="splitImageAcrossEdges(step)"
+            >{{
+              $t(
+                Object.keys(steps).length === 1
+                  ? 'Fill the edge with this image'
+                  : 'Split this image to fit all selected edges'
+              )
+            }}
+          </b-btn>
+          <div class="clearfix" />
           <form-input-row
             option-name="src"
             :label="$t('Image')"
@@ -346,6 +360,25 @@ export default {
           height: this.dimensions[issuenumber].width * step.options.aspectRatio,
           issuenumbers: [issuenumber],
         })
+      }
+    },
+
+    splitImageAcrossEdges() {
+      const vm = this
+      let leftOffset = 0
+      const widthSum = Object.keys(this.steps).reduce(
+        (acc, issuenumber) => acc + vm.dimensions[issuenumber].width,
+        0
+      )
+      for (const issuenumber of Object.keys(this.steps)) {
+        this.$root.$emit('set-options', {
+          x: leftOffset,
+          y: 0,
+          width: widthSum,
+          height: this.dimensions[issuenumber].height,
+          issuenumbers: [issuenumber],
+        })
+        leftOffset -= parseInt(this.dimensions[issuenumber].width)
       }
     },
   },
