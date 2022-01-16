@@ -34,7 +34,7 @@
     "cloudinary": "^1.28.1",
     "cookie-universal-nuxt": "^2.1.4",
     "cropperjs": "^1.5.9",
-    "ducksmanager": "git+https://github.com/bperel/DucksManager-next.git",
+    "ducksmanager": "git+https://github.com/bperel/DucksManager.git#83e8d2c9f2b2efc049eb8d71657968b4aef1a9c8",
     "http-proxy": "^1.18.1",
     "image-size": "^1.0.1",
     "interactjs": "^1.10.11",
