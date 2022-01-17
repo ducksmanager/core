@@ -20,7 +20,7 @@
 
 <script>
 import MenuItem from "../components/MenuItem";
-import {BNav} from "bootstrap-vue";
+import {BNav} from "bootstrap-vue-3";
 
 export default {
   name: "Menu",

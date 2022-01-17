@@ -41,7 +41,10 @@
         >
           <template #title>
             {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
-            <b-icon-trash @click.stop.prevent="editingCopies.splice(copyIndex, 1)" />
+            <b-icon
+              icon="trash"
+              @click.stop.prevent="editingCopies.splice(copyIndex, 1)"
+            />
           </template>
           <ul class="position-static border-0 shadow-none p-0">
             <li class="menu-separator">
@@ -66,8 +69,14 @@
               :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
               @click="copy.purchaseId = purchaseStateId"
             >
-              <b-icon-calendar v-if="purchaseStateId === 'link'" />
-              <b-icon-calendar-x v-if="purchaseStateId === 'unlink'" />
+              <b-icon
+                v-if="purchaseStateId === 'link'"
+                icon="calendar"
+              />
+              <b-icon
+                v-if="purchaseStateId === 'unlink'"
+                icon="calendar-x"
+              />
               {{ purchaseStateText }}
               <ul
                 v-if="purchaseStateId === 'link'"
@@ -105,8 +114,8 @@
                         $emit('create-purchase', {
                           date: copy.newPurchaseDate,
                           description: copy.newPurchaseDescription,
-                        })
-                        copy.newPurchaseDescription = copy.newPurchaseDate = null
+                        });
+                        copy.newPurchaseDescription = copy.newPurchaseDate = null;
                         copy.newPurchaseContext = false"
                     >
                       {{ $t("Créer") }}
@@ -135,7 +144,7 @@
                         id: purchaseId,
                       })"
                   >
-                    <b-icon-trash />
+                    <b-icon icon="trash" />
                   </b-button>
                 </li>
               </ul>
@@ -179,7 +188,7 @@ import l10nMixin from "../mixins/l10nMixin";
 import VueContext from "vue-context";
 import conditionMixin from "../mixins/conditionMixin";
 import Condition from "./Condition";
-import {BAlert, BIconCalendar, BIconCalendarX, BIconTrash, BNavItem, BTab, BTabs} from "bootstrap-vue";
+import {BAlert, BIcon, BNavItem, BTab, BTabs} from "bootstrap-vue-3";
 
 export default {
   name: "ContextMenu",
@@ -187,7 +196,7 @@ export default {
     VueContext,
     Condition,
     BAlert,
-    BTabs,BTab,BIconTrash,BIconCalendar,BIconCalendarX,BNavItem
+    BTabs,BTab,BIcon,BNavItem
   },
 
   mixins: [l10nMixin, conditionMixin],
@@ -318,7 +327,7 @@ export default {
 .v-context {
   padding: 0;
 
-  ::v-deep .copies-tabs {
+  :deep(.copies-tabs) {
     position: initial;
     display: flex;
     padding-bottom: 0;
@@ -427,7 +436,7 @@ export default {
         }
       }
 
-      ::v-deep .issue-condition {
+      :deep(.issue-condition) {
         margin-right: 8px;
       }
 

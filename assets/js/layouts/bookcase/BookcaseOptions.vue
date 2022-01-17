@@ -83,7 +83,7 @@ import l10nMixin from "../../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import { SlickItem, SlickList } from "vue-slicksort";
 import Publication from "../../components/Publication";
-import {BAlert, BButton, BDropdown, BDropdownItem, BFormCheckbox} from "bootstrap-vue";
+import {BAlert, BButton, BDropdown, BDropdownItem, BFormCheckbox} from "bootstrap-vue-3";
 import { bookcase } from "../../stores/bookcase";
 import { coa } from "../../stores/coa";
 

@@ -8,25 +8,25 @@
       icon="glyphicon-home"
     >
       <template #text>
-        <b-icon-house-fill />
+        <b-icon icon="house-fill" />
         {{ $t('Collection') }}
       </template>
       <template #items>
         <template v-if="username">
           <NavigationItem path="/bookcase/show">
-            <b-icon-book-half />
+            <b-icon icon="book-half" />
             {{ $t('Ma bibliothèque') }}
           </NavigationItem>
           <NavigationItem path="/collection/show">
-            <b-icon-list />
+            <b-icon icon="list" />
             {{ $t('Gérer ma collection') }}
           </NavigationItem>
           <NavigationItem path="/stats/general">
-            <b-icon-graph-up />
+            <b-icon icon="graph-up" />
             {{ $t('Statistiques de ma collection') }}
           </NavigationItem>
           <NavigationItem path="/expand">
-            <b-icon-capslock-fill />
+            <b-icon icon="capslock-fill" />
             {{ $t('Agrandir ma collection') }}
           </NavigationItem>
           <NavigationItem path="/inducks/import">
@@ -37,11 +37,11 @@
             {{ $t('Collection Inducks') }}
           </NavigationItem>
           <NavigationItem path="/print">
-            <b-icon-printer-fill />
+            <b-icon icon="printer-fill" />
             {{ $t('Imprimer ma collection') }}
           </NavigationItem>
           <NavigationItem path="/logout">
-            <b-icon-x-square-fill />
+            <b-icon icon="x-square-fill" />
             {{ $t('Déconnexion') }}
           </NavigationItem>
         </template>
@@ -85,13 +85,8 @@ import NavigationItemGroup from "../components/NavigationItemGroup";
 import NavigationItem from "../components/NavigationItem";
 import l10nMixin from "../mixins/l10nMixin";
 import {
-  BIconBookHalf,
-  BIconCapslockFill,
-  BIconGraphUp, BIconHouseFill,
-  BIconList,
-  BIconPrinterFill,
-  BIconXSquareFill
-} from "bootstrap-vue";
+  BIcon
+} from "bootstrap-vue-3";
 
 export default {
   name: "Navigation",
@@ -99,13 +94,7 @@ export default {
   components: {
     NavigationItemGroup,
     NavigationItem,
-    BIconHouseFill,
-    BIconBookHalf,
-    BIconList,
-    BIconGraphUp,
-    BIconCapslockFill,
-    BIconPrinterFill,
-    BIconXSquareFill
+    BIcon,
   },
 
   mixins: [l10nMixin],
@@ -127,7 +116,7 @@ export default {
   background-position: bottom;
 }
 
-::v-deep ul, li {
+:deep(ul), li {
   background-color: #3d4b5f;
   list-style: none;
   padding: 0;
@@ -159,7 +148,7 @@ export default {
   }
 }
 
-::v-deep li {
+:deep(li) {
   .sub-menu li:hover {
     background-color: #020203;
   }
@@ -202,7 +191,7 @@ export default {
 
 
 @media (max-width: 767px) {
-  ::v-deep li.empty {
+  :deep(li.empty) {
     display: none;
   }
 }

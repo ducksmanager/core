@@ -76,7 +76,7 @@ import l10nMixin from "../mixins/l10nMixin";
 import * as axios from "axios";
 import validationMixin from "../mixins/validationMixin";
 import Errorable from "../components/Errorable";
-import {BButton, BCol, BFormInput, BRow} from "bootstrap-vue";
+import {BButton, BCol, BFormInput, BRow} from "bootstrap-vue-3";
 import { mapState, mapActions } from "pinia";
 import { form } from "../stores/form";
 

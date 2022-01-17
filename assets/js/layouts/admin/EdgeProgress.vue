@@ -16,12 +16,16 @@
         :key="publicationCode"
         class="publication"
       >
-        <b-icon-eye-fill
+        <b-icon
           v-if="!showEdgesForPublication.includes(publicationCode)"
+          icon="eye-fill
+"
           @click="showEdgesForPublication.push(publicationCode)"
         />
-        <b-icon-eye-slash-fill
+        <b-icon
           v-else
+          icon="eye-slash-fill
+"
           @click="showEdgesForPublication.splice(showEdgesForPublication.indexOf(publicationCode), 1)"
         />
         <Publication
@@ -87,12 +91,12 @@ import axios from "axios";
 import {mapActions, mapState} from "pinia";
 import Publication from "../../components/Publication";
 import Bookcase from "../../components/Bookcase";
-import {BIconEyeFill, BIconEyeSlashFill} from "bootstrap-vue";
+import {BIcon} from "bootstrap-vue-3";
 import { coa } from "../../stores/coa";
 
 export default {
   name: "EdgeProgress",
-  components: { Bookcase, Publication, BIconEyeFill, BIconEyeSlashFill },
+  components: { Bookcase, Publication, BIcon },
   mixins: [l10nMixin],
   data() {
     return {

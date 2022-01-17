@@ -49,7 +49,7 @@
 import l10nMixin from "../mixins/l10nMixin";
 import MedalProgress from "./MedalProgress";
 import {mapState} from "pinia";
-import {BButton, BPopover} from "bootstrap-vue";
+import {BButton, BPopover} from "bootstrap-vue-3";
 import { users } from "../stores/users";
 import { bookcase } from "../stores/bookcase";
 
@@ -98,7 +98,7 @@ span {
     position: relative;
     margin: 20px 0;
 
-    ::v-deep .wrapper {
+    :deep(.wrapper) {
       &.left, &.right {
         top: -15px;
       }

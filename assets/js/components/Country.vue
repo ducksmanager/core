@@ -4,7 +4,7 @@
       class="flag"
       :alt="countryCode"
       :src="`${imagePath}/flags/${countryCode}.png`"
-    >
+    >&nbsp;
     <slot
       v-if="countryName"
       :country-name="countryName"

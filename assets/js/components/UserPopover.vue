@@ -50,7 +50,7 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import Medal from "./Medal";
-import {BButton, BPopover} from "bootstrap-vue";
+import {BButton, BPopover} from "bootstrap-vue-3";
 
 export default {
   name: "UserPopover",
@@ -78,7 +78,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .popover-body {
+:deep(.popover-body) {
   font-size: 1rem;
 }
 

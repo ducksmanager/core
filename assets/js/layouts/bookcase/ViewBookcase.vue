@@ -142,7 +142,7 @@ import Book from "../../components/Book";
 import SharePage from "../../components/SharePage";
 import Bookcase from "../../components/Bookcase";
 import UploadableEdgesCarousel from "../../components/UploadableEdgesCarousel";
-import {BAlert, BButton} from "bootstrap-vue";
+import {BAlert, BButton} from "bootstrap-vue-3";
 import { users } from "../../stores/users";
 import { bookcase } from "../../stores/bookcase";
 import { collection } from "../../stores/collection";

@@ -33,7 +33,7 @@
 import Bookcase from "./Bookcase";
 import Issue from "../components/Issue";
 import { mapState } from "pinia";
-import { BCol, BPopover, BRow } from "bootstrap-vue";
+import { BCol, BPopover, BRow } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 export default {
@@ -70,11 +70,11 @@ export default {
     padding-left: 0;
   }
 
-  ::v-deep .bookcase {
+  :deep(.bookcase) {
     margin-top: 0 !important;
   }
 
-  ::v-deep .issue {
+  :deep(.issue) {
     padding: 0 10px;
   }
 }

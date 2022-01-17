@@ -1,18 +1,31 @@
+<template>
+  <PieChart
+    v-if="chartData"
+    :chart-data="chartData"
+    :options="options"
+  />
+</template>
+
 <script>
-import {Pie} from 'vue-chartjs'
 import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapState} from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
+import {PieChart} from "vue-chart-3";
+
+import {ArcElement, Chart, Legend, PieController, Title, Tooltip} from 'chart.js';
+Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
 export default {
   name: "PublicationStats",
-  extends: Pie,
+  components: {PieChart},
   mixins: [collectionMixin, l10nMixin],
 
   data: () => ({
-    hasPublicationNames: false
+    hasPublicationNames: false,
+    chartData: null,
+    options: {}
   }),
 
   computed: {
@@ -77,28 +90,32 @@ export default {
       }
     },
     labels() {
-      this.renderChart({
+      const vm = this
+      this.chartData = {
         datasets: [{
           data: this.values,
           backgroundColor: this.colors
         }],
         labels: this.labels
-      }, {
+      }
+
+      this.options = {
         responsive: true,
         maintainAspectRatio: false,
-        tooltips: {
-          callbacks: {
-            label: (tooltipItem, {datasets}) => {
-              const dataset = datasets[tooltipItem.datasetIndex];
-              const total = dataset._meta[Object.keys(dataset._meta)[0]].total;
-              const currentValue = dataset.data[tooltipItem.index];
-              const percentage = parseFloat((currentValue / total * 100).toFixed(1));
-              return `${currentValue} (${percentage}%)`;
-            },
-            title: (tooltipItem, {labels}) => labels[tooltipItem[0].index]
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: tooltipItem => {
+                const {dataset, parsed: currentValue} = tooltipItem;
+                const total = dataset.data.reduce((acc, value) => acc+value, 0);
+                const percentage = parseFloat((currentValue / total * 100).toFixed(1));
+                return `${currentValue} (${percentage}%)`;
+              },
+              title: ([tooltipItem]) => vm.chartData.labels[tooltipItem.dataIndex],
+            }
           }
         }
-      })
+      }
     }
   },
 

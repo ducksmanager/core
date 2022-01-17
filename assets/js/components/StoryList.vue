@@ -17,7 +17,7 @@
 </template>
 <script>
 import Story from "./Story";
-import {BBadge} from "bootstrap-vue";
+import {BBadge} from "bootstrap-vue-3";
 
 export default {
   name: "StoryList",

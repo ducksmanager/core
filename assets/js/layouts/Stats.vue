@@ -59,7 +59,10 @@
           <template v-if="!watchedAuthorsStoryCount">
             {{ $t("Chargement...") }}
           </template>
-          <b-alert v-else-if="!Object.keys(watchedAuthorsStoryCount).length">
+          <b-alert
+            v-else-if="!Object.keys(watchedAuthorsStoryCount).length"
+            show
+          >
             {{ $t("Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !")
             }}
           </b-alert>
@@ -137,7 +140,7 @@ import AuthorList from "../components/AuthorList";
 import ConditionStats from "./stats/ConditionStats";
 import Menu from "./Menu";
 import GeneralStats from "./stats/GeneralStats";
-import {BAlert, BButton, BButtonGroup} from "bootstrap-vue";
+import {BAlert, BButton, BButtonGroup} from "bootstrap-vue-3";
 import { collection } from "../stores/collection";
 
 export default {
@@ -205,11 +208,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep canvas {
+:deep(canvas) {
   background-color: white;
 }
 
-::v-deep .btn {
+:deep(.btn) {
   &:focus {
     box-shadow: none !important;
   }

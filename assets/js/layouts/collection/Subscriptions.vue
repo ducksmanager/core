@@ -78,7 +78,7 @@ import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
 import subscriptionMixin from "../../mixins/subscriptionMixin";
 import Subscription from "../../components/Subscription";
-import {BAlert, BButton, BCol, BRow} from "bootstrap-vue";
+import {BAlert, BButton, BCol, BRow} from "bootstrap-vue-3";
 import { coa } from "../../stores/coa";
 
 export default {

@@ -151,7 +151,7 @@ import { MglMap, MglMarker, MglPopup } from "vue-mapbox";
 import l10nMixin from "../mixins/l10nMixin";
 import axios from "axios";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import {BAlert, BButton, BFormInput, BFormTextarea} from "bootstrap-vue";
+import {BAlert, BButton, BFormInput, BFormTextarea} from "bootstrap-vue-3";
 
 const newBookstore = {
   name: null,

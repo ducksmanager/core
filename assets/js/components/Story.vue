@@ -18,7 +18,7 @@
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import {BBadge} from "bootstrap-vue";
+import {BBadge} from "bootstrap-vue-3";
 
 export default {
   name: "Story",

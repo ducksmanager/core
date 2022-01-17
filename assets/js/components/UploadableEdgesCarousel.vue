@@ -30,7 +30,7 @@
 <script>
 import MedalProgress from "./MedalProgress";
 import Issue from "./Issue";
-import {BCarousel, BCarouselSlide} from "bootstrap-vue";
+import {BCarousel, BCarouselSlide} from "bootstrap-vue-3";
 
 export default {
   name: "UploadableEdgesCarousel",
@@ -51,7 +51,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .carousel {
+:deep(.carousel) {
   width: 400px;
   height: 120px;
   margin: 15px 0 0;

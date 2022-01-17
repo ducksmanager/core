@@ -36,24 +36,35 @@
       v-once
       class="d-none d-md-block"
     />
-    <b-navbar
-      v-once
-      class="d-block d-md-none"
-      toggleable
-      type="dark"
+    <div
+      id="navbar-toggle-collapse"
+      class="collapse"
     >
-      <b-navbar-brand href="#">
-        <SwitchLocale fixed />
-        <Banner small />
-      </b-navbar-brand>
-      <b-navbar-toggle target="navbar-toggle-collapse" />
-      <b-collapse
-        id="navbar-toggle-collapse"
-        is-nav
-      >
+      <div class="bg-dark p-4">
         <Navigation />
-      </b-collapse>
-    </b-navbar>
+      </div>
+    </div>
+    <nav
+      v-once
+      class="navbar navbar-dark d-block d-md-none"
+    >
+      <div class="container-fluid">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar-toggle-collapse"
+        >
+          <span class="navbar-toggler-icon" />
+        </button>
+        <a
+          class="navbar-brand"
+          href="#"
+        >
+          <SwitchLocale fixed />
+          <Banner small /></a>
+      </div>
+    </nav>
     <RecentEvents />
   </div>
 </template>
@@ -67,7 +78,6 @@ import Medal from "../components/Medal";
 import {mapState, mapActions} from "pinia";
 import Banner from "./Banner";
 import SwitchLocale from "./SwitchLocale";
-import {BCollapse, BNavbar, BNavbarBrand, BNavbarToggle} from "bootstrap-vue";
 import { users } from "../stores/users";
 import { collection } from "../stores/collection";
 
@@ -79,11 +89,7 @@ export default {
     Banner,
     Medal,
     RecentEvents,
-    Navigation,
-    BNavbar,
-    BNavbarBrand,
-    BNavbarToggle,
-    BCollapse
+    Navigation
   },
 
   mixins: [l10nMixin],

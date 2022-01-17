@@ -1,11 +1,22 @@
+<template>
+  <BarChart
+    v-if="chartData"
+    :chart-data="chartData"
+    :options="options"
+  />
+</template>
+
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
 import l10nMixin from "../../mixins/l10nMixin";
-import {Bar} from "vue-chartjs";
+import {BarChart} from "vue-chart-3";
+
+import {Chart, CategoryScale, LinearScale, Legend, BarElement, BarController, Title, Tooltip} from 'chart.js';
+Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
 
 export default {
   name: "AuthorStats",
-  extends: Bar,
+  components: {BarChart},
   mixins: [collectionMixin, l10nMixin],
 
   props: {
@@ -19,6 +30,13 @@ export default {
     }
   },
   emits: ['change-dimension'],
+
+  data() {
+    return {
+      chartData: null,
+      options: {}
+    }
+  },
 
   computed: {
     labels() {
@@ -52,7 +70,7 @@ export default {
   mounted() {
     this.$emit('change-dimension', 'width', 250 + 50 * this.labels.length);
     const vm = this
-    this.renderChart({
+    this.chartData = {
       datasets: [
         {
           data: this.values[0],
@@ -69,34 +87,36 @@ export default {
       ],
       labels: this.labels,
       legends: [this.$t("Histoires possédées"), this.$t("Histoires non possédées")]
-    }, {
-      title: {
-        display: true,
-        text: this.$t("Possession des histoires d'auteurs")
-      },
+    }
+
+    this.options = {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        xAxes: [{
+        x: {
           stacked: true,
           ticks: {
             autoSkip: false
           }
-        }],
-        yAxes: [{
+        },
+        y: {
           stacked: true
-        }]
+        }
       },
-      tooltips: {
-        enabled: true,
-        mode: 'label',
-        callbacks: {
-          title: ([tooltip]) => tooltip.label,
-          label: (tooltipItems, {datasets}) =>
-            `${datasets[tooltipItems.datasetIndex].legend} : ${tooltipItems.yLabel}${vm.unit === 'percentage' ? '%' : ''}`
+      plugins: {
+        title: {
+          display: true,
+          text: this.$t("Possession des histoires d'auteurs")
+        },
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            title: ([tooltip]) => tooltip.label,
+            label: (tooltipItem) => `${tooltipItem.dataset.label}: ${tooltipItem.raw}${vm.unit === 'percentage' ? '%' : ''}`,
+          }
         }
       }
-    })
+    }
   }
 }
 </script>

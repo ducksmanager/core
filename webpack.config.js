@@ -38,7 +38,10 @@ Encore
   //.addEntry('page2', './assets/js/page2.js')
 
   .enableVueLoader(() => {
-  }, {runtimeCompilerBuild: false})
+  }, {
+    version: 3,
+    runtimeCompilerBuild: false
+  })
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
@@ -103,4 +106,8 @@ Encore
 //.addEntry('admin', './assets/js/admin.js')
 ;
 
-module.exports = Encore.getWebpackConfig();
+let config = Encore.getWebpackConfig();
+config.resolve.alias = {
+  vue: '@vue/compat'
+};
+module.exports = config;

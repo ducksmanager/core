@@ -104,7 +104,7 @@ import PublicationSelect from "./PublicationSelect";
 import l10nMixin from "../mixins/l10nMixin";
 import subscriptionMixin from "../mixins/subscriptionMixin";
 import { mapState } from "pinia";
-import {BButton, BCol, BForm, BRow} from "bootstrap-vue";
+import {BButton, BCol, BForm, BRow} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 export default {
@@ -120,7 +120,7 @@ export default {
 
   },
   mixins: [l10nMixin, subscriptionMixin],
-  
+
   props: {
     id: {
       default: null,
@@ -144,7 +144,7 @@ export default {
     }
   },
   emits: ['delete', 'edit', 'start-edit', 'cancel-edit'],
-  
+
   data() {
     return {
       editSubscription: {

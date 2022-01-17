@@ -67,7 +67,7 @@
 <script>
 import l10nMixin from "../mixins/l10nMixin";
 import Errorable from "../components/Errorable";
-import {BAlert, BButton, BCol, BFormInput, BFormRow} from "bootstrap-vue";
+import {BAlert, BButton, BCol, BFormInput, BFormRow} from "bootstrap-vue-3";
 import { mapActions } from "pinia";
 import { form } from "../stores/form";
 

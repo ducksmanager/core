@@ -1,7 +1,10 @@
 <template>
   <div>
-    <b-jumbotron v-if="!username">
-      <div id="dm-loves-inducks">
+    <div
+      v-if="!username"
+      class="container-fluid py-5"
+    >
+      <p class="col-md-8 fs-4" /><div id="dm-loves-inducks">
         <div
           id="dm-logo-small"
           :style="{backgroundImage: `url(${imagePath}/logo_small.png)`}"
@@ -48,7 +51,7 @@
           {{ $t("Connexion") }}
         </b-button>
       </p>
-    </b-jumbotron>
+    </div>
     <form
       v-else-if="step === 1"
       id="inducks-import"
@@ -256,16 +259,15 @@ import {
   BCollapse,
   BFormGroup, BFormSelect,
   BFormSelectOption, BFormTextarea,
-  BJumbotron,
   BProgress,
   BProgressBar,
   BRow
-} from "bootstrap-vue";
+} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 export default {
   name: "InducksImport",
-  components: { Accordion, Publication, Issue, BJumbotron, BButton, BAlert, BRow, BCol, BFormGroup, BTextarea: BFormTextarea, BCollapse, BFormSelect, BFormSelectOption, BProgress, BProgressBar},
+  components: { Accordion, Publication, Issue, BButton, BAlert, BRow, BCol, BFormGroup, BTextarea: BFormTextarea, BCollapse, BFormSelect, BFormSelectOption, BProgress, BProgressBar},
   mixins: [l10nMixin, collectionMixin],
 
   data: () => ({

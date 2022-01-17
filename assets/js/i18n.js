@@ -1,7 +1,4 @@
-import Vue from "vue";
-import VueI18n from "vue-i18n";
-
-Vue.use(VueI18n);
+import {createI18n} from "vue-i18n";
 
 const fallbackLocale = "fr";
 let locale = localStorage.getItem("locale");
@@ -10,7 +7,7 @@ if (!locale) {
   localStorage.setItem("locale", fallbackLocale);
 }
 
-export const i18n = new VueI18n({
+export const i18n = createI18n({
   locale,
   fallbackLocale,
   formatFallbackMessages: true,

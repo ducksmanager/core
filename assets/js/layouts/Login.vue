@@ -52,7 +52,7 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import {BAlert, BButton, BCol, BFormInput, BRow} from "bootstrap-vue";
+import {BAlert, BButton, BCol, BFormInput, BRow} from "bootstrap-vue-3";
 
 export default {
   name: "Login",

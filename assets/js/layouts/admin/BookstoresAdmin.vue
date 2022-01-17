@@ -21,7 +21,7 @@
 </template>
 <script>
 import axios from "axios";
-import {BButton, BTable} from "bootstrap-vue";
+import {BButton, BTable} from "bootstrap-vue-3";
 
 export default {
   name: "BookstoresAdmin",
@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.table ::v-deep td {
+.table :deep(td) {
   vertical-align: middle;
 }
 </style>

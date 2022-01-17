@@ -29,9 +29,9 @@
             {{ personNames[author.personCode] }}
           </b-col>
           <b-col lg="2">
-            <b-form-rating
-              v-model="author.notation"
-              :stars="10"
+            <star-rating
+              v-model:rating="author.notation"
+              :max-rating="10"
               @change="updateRating(author)"
             />
           </b-col>
@@ -57,26 +57,30 @@
       </b-alert>
       <b-row v-else>
         <b-col sm="4">
-          <b-navbar-nav>
-            <b-form-input
-              v-model="search"
-              list="search"
-              :placeholder="$t('Auteur')"
-            />
-            <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
-              <option v-if="!Object.keys(searchResults).length">
-                {{ $t('Aucun résultat.') }}
-              </option>
-              <option
-                v-for="(fullName, personCode) in searchResults"
-                :key="personCode"
-                :disabled="isAuthorWatched(personCode)"
-                @click="isAuthorWatched(personCode) ? () => {} : createRating(personCode)"
-              >
-                {{ fullName }}
-              </option>
-            </datalist>
-          </b-navbar-nav>
+          <nav class="navbar">
+            <div class="collapse navbar-collapse">
+              <ul class="navbar-nav">
+                <b-form-input
+                  v-model="search"
+                  list="search"
+                  :placeholder="$t('Auteur')"
+                />
+                <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
+                  <option v-if="!Object.keys(searchResults).length">
+                    {{ $t('Aucun résultat.') }}
+                  </option>
+                  <option
+                    v-for="(fullName, personCode) in searchResults"
+                    :key="personCode"
+                    :disabled="isAuthorWatched(personCode)"
+                    @click="isAuthorWatched(personCode) ? () => {} : createRating(personCode)"
+                  >
+                    {{ fullName }}
+                  </option>
+                </datalist>
+              </ul>
+            </div>
+          </nav>
         </b-col>
       </b-row>
     </div>
@@ -86,7 +90,8 @@
 import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "pinia";
 import axios from "axios";
-import {BAlert, BCol, BFormInput, BFormRating, BNavbarNav, BRow} from "bootstrap-vue";
+import {BAlert, BCol, BFormInput, BRow} from "bootstrap-vue-3";
+import StarRating from 'vue-star-rating'
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
 
@@ -96,9 +101,8 @@ export default {
     BAlert,
     BRow,
     BCol,
-    BFormRating,
-    BNavbarNav,
-    BFormInput
+    BFormInput,
+    StarRating
   },
   mixins: [l10nMixin],
   props: {

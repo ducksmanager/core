@@ -13,7 +13,7 @@
 
 <script>
 import { mapState } from "pinia";
-import {BAlert} from "bootstrap-vue";
+import {BAlert} from "bootstrap-vue-3";
 import { form } from "../stores/form";
 
 export default {

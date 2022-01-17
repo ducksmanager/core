@@ -1,4 +1,4 @@
-import { mapState, mapActions } from "pinia";
+import { mapState } from "pinia";
 import { l10n } from "../stores/l10n";
 
 const PATH_REGEX = /{([^:]+)(?::([^}]+))?}/g

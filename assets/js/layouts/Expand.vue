@@ -55,7 +55,7 @@ import collectionMixin from "../mixins/collectionMixin";
 import l10nMixin from "../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import SuggestionList from "./SuggestionList";
-import {BAlert, BFormSelect} from "bootstrap-vue";
+import {BAlert, BFormSelect} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
 

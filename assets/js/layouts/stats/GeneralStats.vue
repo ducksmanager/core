@@ -129,7 +129,7 @@ import { mapActions, mapState } from "pinia";
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
 import conditionMixin from "../../mixins/conditionMixin";
-import {BAlert, BPagination, BTable} from "bootstrap-vue";
+import {BAlert, BPagination, BTable} from "bootstrap-vue-3";
 import { users } from "../../stores/users";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
@@ -193,18 +193,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep div {
+:deep(div) {
   font-size: 16px;
 }
 
-#short-stats ::v-deep > div {
+#short-stats :deep( > div) {
   margin-bottom: 32px;
 }
 
 .card {
   color: black;
 
-  ::v-deep td, ::v-deep div {
+  :deep(td), :deep(div) {
     line-height: 30px;
   }
 }

@@ -27,9 +27,11 @@
             :title="`${$t('Score')} : ${score}`"
           >
             <div class="mr-3 d-flex justify-content-center importance-bills">
-              <b-icon-cash
+              <b-icon
                 v-for="i in 4-getImportance(score)"
                 :key="i"
+                icon="cash
+"
               />
             </div>
             <div>
@@ -63,7 +65,7 @@ import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
-import {BButton, BButtonGroup, BIconCash} from "bootstrap-vue";
+import {BButton, BButtonGroup, BIcon} from "bootstrap-vue-3";
 import { collection } from "../stores/collection";
 
 export default {
@@ -74,7 +76,7 @@ export default {
     Issue,
     BButtonGroup,
     BButton,
-    BIconCash
+    BIcon
   },
 
   mixins: [l10nMixin],

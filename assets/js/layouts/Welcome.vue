@@ -160,7 +160,7 @@
 
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import { BButton, BCol, BRow } from "bootstrap-vue";
+import { BButton, BCol, BRow } from "bootstrap-vue-3";
 
 export default {
   // vue/multi-word-component-names

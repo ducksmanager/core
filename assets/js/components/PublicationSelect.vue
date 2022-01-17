@@ -26,7 +26,7 @@
 <script>
 import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
-import {BButton, BFormSelect} from "bootstrap-vue";
+import {BButton, BFormSelect} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 export default {

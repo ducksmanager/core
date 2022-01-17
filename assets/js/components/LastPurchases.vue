@@ -68,7 +68,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .card-body {
+:deep(.card-body) {
   color: black;
 }
 </style>

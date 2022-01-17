@@ -106,7 +106,7 @@ import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import Story from "./Story";
 import Issue from "./Issue";
-import {BCard, BTab, BTabs} from "bootstrap-vue";
+import {BCard, BTab, BTabs} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 const EDGES_BASE_URL = 'https://edges.ducksmanager.net/edges/';
@@ -370,7 +370,7 @@ export default {
     .card-header {
       text-align: center;
 
-      ::v-deep a, ::v-deep h6 {
+      :deep(a), :deep(h6) {
         color: #666;
       }
 
@@ -384,15 +384,15 @@ export default {
       width: 100%;
     }
 
-    ::v-deep ul {
+    :deep(ul) {
       overflow-x: auto;
     }
 
-    ::v-deep .tab-content {
+    :deep(.tab-content) {
       display: none;
     }
 
-    ::v-deep :not(.has-image) {
+    :deep(:not(.has-image)) {
       a {
         cursor: default;
       }

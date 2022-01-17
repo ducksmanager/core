@@ -34,7 +34,7 @@
 import Issue from "./Issue";
 import {mapActions, mapState} from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
-import {BPopover} from "bootstrap-vue";
+import {BPopover} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 export default {
@@ -99,7 +99,7 @@ export default {
 .popover  {
   width: 150px;
 
-  ::v-deep .popover-body {
+  :deep(.popover-body) {
     padding: 0;
 
     .cover {

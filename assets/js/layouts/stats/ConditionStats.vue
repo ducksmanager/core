@@ -1,14 +1,23 @@
+<template>
+  <PieChart
+    :chart-data="chartData"
+    :options="options"
+  />
+</template>
 <script>
-import {Pie} from 'vue-chartjs'
 import collectionMixin from "../../mixins/collectionMixin";
 import {mapState} from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
 import conditionMixin from "../../mixins/conditionMixin";
-import { collection } from "../../stores/collection";
+import {collection} from "../../stores/collection";
+import {PieChart} from "vue-chart-3";
+
+import {ArcElement, Chart, Legend, PieController, Title, Tooltip} from 'chart.js';
+Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
 export default {
   name: "ConditionStats",
-  extends: Pie,
+  components: {PieChart},
   mixins: [collectionMixin, l10nMixin, conditionMixin],
 
   computed: {
@@ -16,11 +25,6 @@ export default {
 
     conditionsWithoutMissing() {
       return this.conditions.filter(({value}) => value !== 'missing')
-    },
-
-    labels() {
-      const vm = this
-      return Object.values(this.conditionsWithoutMissing).map(({text}) => text)
     },
 
     values() {
@@ -32,32 +36,38 @@ export default {
 
     colors() {
       return Object.values(this.conditionsWithoutMissing.map(({color}) => color))
-    }
-  },
+    },
 
-  mounted() {
-    this.renderChart({
-      datasets: [{
-        data: this.values,
-        backgroundColor: this.colors
-      }],
-      labels: this.labels
-    }, {
-      responsive: true,
-      maintainAspectRatio: false,
-      tooltips: {
-        callbacks: {
-          label: (tooltipItem, {datasets}) => {
-            const dataset = datasets[tooltipItem.datasetIndex];
-            const total = dataset._meta[Object.keys(dataset._meta)[0]].total;
-            const currentValue = dataset.data[tooltipItem.index];
-            const percentage = parseFloat((currentValue / total * 100).toFixed(1));
-            return `${currentValue} (${percentage}%)`;
-          },
-          title: ([tooltipItem], {labels}) => labels[tooltipItem.index]
+    chartData() {
+      return {
+        labels: Object.values(this.conditionsWithoutMissing).map(({text}) => text),
+        datasets: [{
+          data: this.values,
+          backgroundColor: this.colors
+        }]
+      }
+    },
+
+    options() {
+      const vm = this
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: tooltipItem => {
+                const {dataset, parsed: currentValue} = tooltipItem;
+                const total = dataset.data.reduce((acc, value) => acc+value, 0);
+                const percentage = parseFloat((currentValue / total * 100).toFixed(1));
+                return `${currentValue} (${percentage}%)`;
+              },
+              title: ([tooltipItem]) => vm.chartData.labels[tooltipItem.dataIndex],
+            }
+          }
         }
       }
-    })
+    }
   }
 }
 </script>

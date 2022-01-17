@@ -1,14 +1,24 @@
+<template>
+  <BarChart
+    v-if="chartData"
+    :chart-data="chartData"
+    :options="options"
+  />
+</template>
 <script>
-import {Bar} from 'vue-chartjs'
 import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapState} from "pinia";
 import l10nMixin from "../../mixins/l10nMixin";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
+import {BarChart} from "vue-chart-3";
+
+import {Chart, CategoryScale, LinearScale, Legend, BarElement, BarController, Title, Tooltip} from 'chart.js';
+Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
 
 export default {
   name: "PurchaseStats",
-  extends: Bar,
+  components: {BarChart},
   mixins: [collectionMixin, l10nMixin],
 
   props: {
@@ -21,7 +31,9 @@ export default {
 
   data: () => ({
     hasPublicationNames: false,
-    purchasesById: null
+    purchasesById: null,
+    chartData: null,
+    options: {}
   }),
 
   computed: {
@@ -115,10 +127,12 @@ export default {
             }
           });
 
-          this.renderChart({
+          this.chartData = {
             datasets,
             labels: this.labels,
-          }, {
+          }
+
+          this.options = {
             animation: {
               duration: 0
             },
@@ -126,48 +140,48 @@ export default {
               animationDuration: 0
             },
             responsiveAnimationDuration: 0,
-            title: {
-              display: true,
-              text: this.$t('Achats')
-            },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              xAxes: [{
+              x: {
                 stacked: true,
                 ticks: {
                   autoSkip: false
                 }
-              }],
-              yAxes: [{
+              },
+              y: {
                 stacked: true
-              }]
+              }
             },
             legend: {
               display: false
             },
-            tooltips: {
-              enabled: true,
-              mode: 'single',
-              callbacks: {
-                beforeTitle: ([tooltipItem]) => {
-                  return (tooltipItem.label !== '?'
-                      ? `${vm.unit === 'total'
-                        ? vm.$t('Taille de la collection pour le mois')
-                        : vm.$t('Nouvelles acquisitions pour le mois')} ${tooltipItem.label}`
-                      : vm.$t("Numéros sans dates d'achat")
-                  ) + "\n";
-                },
-                title: (tooltipItem, {datasets}) => datasets[tooltipItem[0].datasetIndex].label,
-                label: (tooltipItem) => tooltipItem.yLabel,
-                footer: ([tooltipItem], {datasets}) =>
-                  [
-                    vm.$t('Tous magazines'),
-                    datasets.reduce((acc, dataset) => acc + dataset.data[tooltipItem.index], 0)
-                  ].join('\n')
+            plugins: {
+              title: {
+                display: true,
+                text: this.$t('Achats')
+              },
+              tooltip: {
+                enabled: true,
+                callbacks: {
+                  beforeTitle: ([tooltipItem]) =>
+                    (tooltipItem.label !== '?'
+                        ? `${vm.unit === 'total'
+                          ? vm.$t('Taille de la collection pour le mois')
+                          : vm.$t('Nouvelles acquisitions pour le mois')} ${tooltipItem.label}`
+                        : vm.$t("Numéros sans dates d'achat")
+                    ) + "\n",
+                  title: ([tooltipItem]) => vm.chartData.datasets[tooltipItem.datasetIndex].label,
+                  label: (tooltipItem) => tooltipItem.raw,
+                  footer: ([tooltipItem]) =>
+                    [
+                      vm.$t('Tous magazines'),
+                      datasets.reduce((acc, dataset) => acc + dataset.data[tooltipItem.dataIndex], 0)
+                    ].join('\n')
+                }
               }
             }
-          })
+          }
         }
       }
     }

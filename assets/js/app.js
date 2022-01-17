@@ -1,23 +1,22 @@
-import Vue from "vue";
+import {createApp, h} from "vue";
+import BootstrapVue3 from 'bootstrap-vue-3'
 import BackendDataPlugin from './plugins/backendDataPlugin'
 
 import * as Sentry from '@sentry/vue';
 import {Integrations} from "@sentry/tracing";
 
 import App from "./layouts/App"
-import { i18n } from "./i18n";
+import {i18n} from "./i18n";
 
 import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+
 import '../css/app.scss';
-import { createPinia, PiniaVuePlugin } from "pinia";
+import {createPinia} from "pinia";
 import axios from "axios";
-import { ongoingRequests } from "./stores/ongoing-requests";
+import {ongoingRequests} from "./stores/ongoing-requests";
 
-const store = createPinia()
-
-Vue.use(PiniaVuePlugin)
-Vue.use(BackendDataPlugin)
+let store = createPinia();
 
 const useOngoingRequests = ongoingRequests(store);
 axios.interceptors.request.use(config => {
@@ -38,32 +37,21 @@ axios.interceptors.response.use(response => {
   return Promise.reject(error);
 });
 
-new Vue({
-  i18n,
-  pinia: store,
-  render(createElement) {
-    let props = {}, component = null
-    const attributes = this.$el.attributes;
-    Object.keys(attributes || {}).forEach(key => {
-      const {name, value} = attributes[key]
-      if (name === 'component') {
-        component = value
-      } else {
-        props[name] = value
-      }
-    })
-    return createElement(App, {
-      attrs: {
-        props,
-        component
-      }
-    })
+const app = createApp({
+  render() {
+    return h(App)
   }
-}).$mount('#app')
+})
+
+app.use(i18n)
+app.use(store)
+app.use(BackendDataPlugin)
+app.use(BootstrapVue3)
+app.mount('#app')
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
-    Vue,
+    app,
     dsn: 'https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898',
     logErrors: true,
 

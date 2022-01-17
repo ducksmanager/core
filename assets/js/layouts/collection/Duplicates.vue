@@ -21,7 +21,7 @@ import { collection } from "../../stores/collection";
 
 export default {
   name: "Duplicates",
-  components: { IssueList },
+  components: {  IssueList },
   mixins: [l10nMixin, collectionMixin],
 
   data: () => ({

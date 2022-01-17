@@ -8,7 +8,7 @@
 </template>
 <script>
 import l10nMixin from "../mixins/l10nMixin";
-import {BNavItem} from "bootstrap-vue";
+import {BNavItem} from "bootstrap-vue-3";
 
 export default {
   name: "MenuItem",

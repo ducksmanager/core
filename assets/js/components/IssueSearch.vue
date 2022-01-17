@@ -1,58 +1,62 @@
 <template>
-  <b-navbar
-    toggleable="lg"
-    type="dark"
-    variant="dark"
-    sticky
+  <nav
+    class="navbar navbar-expand-lg navbar-dark position-sticky"
   >
-    <b-navbar-brand v-if="withTitle">
-      {{ $t("Rechercher une histoire") }}
-    </b-navbar-brand>
-    <b-navbar-nav>
-      <b-dropdown
-        class="search-type"
-        :text="searchContexts[searchContext]"
+    <div class="container-fluid">
+      <div
+        v-if="withTitle"
+        class="navbar-brand"
       >
-        <b-dropdown-item
-          v-for="(l10nKey, alternativeSearchContext) in searchContextsWithoutCurrent"
-          :key="alternativeSearchContext"
-          @click="searchContext=alternativeSearchContext;search = ''"
-        >
-          {{ l10nKey }}
-        </b-dropdown-item>
-      </b-dropdown>
-      <b-form-input
-        v-model="search"
-        list="search"
-        :placeholder="searchContext === 'story' ? $t('Rechercher une histoire') : $t(`Rechercher les publications d'une histoire à partir d'un code histoire`)"
-      />
-      <datalist v-if="searchResults.results && !isSearching">
-        <option v-if="!searchResults.results.length">
-          {{ $t("Aucun résultat.") }}
-        </option>
-        <option
-          v-for="searchResult in searchResults.results"
-          :key="searchResult.code"
-          class="d-flex align-items-center"
-          @click="selectSearchResult(searchResult)"
-        >
-          <template v-if="!isSearchByCode(search)">
-            <Condition
-              v-if="searchResult.collectionIssue"
-              :value="conditions.find(({dbValue}) => dbValue === searchResult.collectionIssue.condition).value"
-            />&nbsp;{{ searchResult.title }}
-          </template>
-          <Issue
-            v-else-if="publicationNames[searchResult.publicationcode]"
-            :publicationcode="searchResult.publicationcode"
-            :publicationname="publicationNames[searchResult.publicationcode]"
-            :issuenumber="searchResult.issuenumber"
-            :clickable="withStoryLink"
+        {{ $t("Rechercher une histoire") }}
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+          <b-dropdown
+            class="dropdown search-type"
+            :text="searchContexts[searchContext]"
+          >
+            <b-dropdown-item
+              v-for="(l10nKey, alternativeSearchContext) in searchContextsWithoutCurrent"
+              :key="alternativeSearchContext"
+              @click="searchContext=alternativeSearchContext;search = ''"
+            >
+              {{ l10nKey }}
+            </b-dropdown-item>
+          </b-dropdown>
+          <b-form-input
+            v-model="search"
+            list="search"
+            :placeholder="searchContext === 'story' ? $t('Rechercher une histoire') : $t(`Rechercher les publications d'une histoire à partir d'un code histoire`)"
           />
-        </option>
-      </datalist>
-    </b-navbar-nav>
-  </b-navbar>
+          <datalist v-if="searchResults.results && !isSearching">
+            <option v-if="!searchResults.results.length">
+              {{ $t("Aucun résultat.") }}
+            </option>
+            <option
+              v-for="searchResult in searchResults.results"
+              :key="searchResult.code"
+              class="d-flex align-items-center"
+              @click="selectSearchResult(searchResult)"
+            >
+              <template v-if="!isSearchByCode(search)">
+                <Condition
+                  v-if="searchResult.collectionIssue"
+                  :value="conditions.find(({dbValue}) => dbValue === searchResult.collectionIssue.condition).value"
+                />&nbsp;{{ searchResult.title }}
+              </template>
+              <Issue
+                v-else-if="publicationNames[searchResult.publicationcode]"
+                :publicationcode="searchResult.publicationcode"
+                :publicationname="publicationNames[searchResult.publicationcode]"
+                :issuenumber="searchResult.issuenumber"
+                :clickable="withStoryLink"
+              />
+            </option>
+          </datalist>
+        </ul>
+      </div>
+    </div>
+  </nav>
 </template>
 <script>
 import axios from "axios";
@@ -62,12 +66,12 @@ import { mapActions, mapState } from "pinia";
 import collectionMixin from "../mixins/collectionMixin";
 import Condition from "./Condition";
 import conditionMixin from "../mixins/conditionMixin";
-import {BDropdown, BDropdownItem, BFormInput, BNavbar, BNavbarBrand, BNavbarNav} from "bootstrap-vue";
+import {BDropdown, BDropdownItem, BFormInput} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 export default {
   name: "IssueSearch",
-  components: { Issue, Condition, BNavbar, BNavbarNav, BNavbarBrand, BDropdown, BDropdownItem, BFormInput },
+  components: { Issue, Condition, BDropdown, BDropdownItem, BFormInput },
   mixins: [l10nMixin, collectionMixin, conditionMixin],
 
   props: {
@@ -175,12 +179,18 @@ export default {
 
 <style scoped lang="scss">
 .navbar {
+  flex-flow: row nowrap;
+
   .navbar-brand {
     min-width: 120px;
   }
 
   .navbar-nav {
     flex-wrap: wrap;
+
+    input {
+      width: auto;
+    }
 
     .dropdown.search-type {
       position: absolute;
@@ -215,7 +225,7 @@ export default {
           border-bottom: 1px solid #888;
           color: #888;
 
-          ::v-deep a {
+          :deep(a) {
             .issue-condition {
               display: inline-block;
 

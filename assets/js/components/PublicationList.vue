@@ -1,27 +1,40 @@
 <template>
-  <b-navbar
+  <nav
     v-if="countryNames && hasPublicationNames"
     id="publication-list"
-    toggleable="lg"
-    type="dark"
-    variant="dark"
-    sticky
+    class="navbar navbar-expand-lg navbar-dark bg-dark flex-row align-items-center position-sticky"
   >
-    <b-navbar-toggle target="nav-publications" />
-    <b-navbar-brand href="#">
-      {{ $t('Collection') }}
-    </b-navbar-brand>
-    <b-collapse
-      id="nav-publications"
-      is-nav
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#nav-publications"
     >
-      <b-navbar-nav>
-        <b-nav-item-dropdown
+      <span class="navbar-toggler-icon" />
+    </button>
+    <a
+      class="navbar-brand"
+      href="#"
+    >
+      {{ $t('Collection') }}
+    </a>
+    <div
+      id="nav-publications"
+      class="collapse navbar-collapse"
+    >
+      <ul class="navbar-nav">
+        <li
           v-for="country in sortedCountries"
           :key="country"
-          :text="country"
+          class="nav-item dropdown"
         >
-          <template #button-content>
+          <a
+            id="navbarDropdown"
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+          >
             <Country
               :country="country"
               :country-name="countryNames[country]"
@@ -30,27 +43,35 @@
                 {{ props.countryName }}
               </template>
             </Country>
-          </template>
-          <b-dropdown-item
-            v-for="publicationCode in getSortedPublications(country)"
-            :key="publicationCode"
-            :href-l10n="`/collection/show/${publicationCode}`"
-            :href="$r(`/collection/show/{publicationCode:${publicationCode}}`)"
-          >
-            {{ publicationNames[publicationCode] || publicationCode.split('/')[1] }}
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item :href="$r('/collection/show/{publicationCode:new}')">
-          {{ $t('Nouveau magazine') }}
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-collapse>
-    <b-navbar-nav class="ml-auto">
-      <b-nav-form>
+          </a>
+          <ul class="dropdown-menu">
+            <li
+              v-for="publicationCode in getSortedPublications(country)"
+              :key="publicationCode"
+            >
+              <a
+                class="dropdown-item"
+                :href="$r(`/collection/show/{publicationCode:${publicationCode}}`)"
+              >
+                {{ publicationNames[publicationCode] || publicationCode.split('/')[1] }}
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            :href="$r('/collection/show/{publicationCode:new}')"
+          >{{ $t('Nouveau magazine') }}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="navbar-nav">
+      <form class="d-flex">
         <IssueSearch :with-title="false" />
-      </b-nav-form>
-    </b-navbar-nav>
-  </b-navbar>
+      </form>
+    </div>
+  </nav>
   <div v-else>
     {{ $t('Chargement...') }}
   </div>
@@ -61,16 +82,6 @@ import Country from "./Country";
 import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "pinia";
 import IssueSearch from "./IssueSearch";
-import {
-  BCollapse,
-  BDropdownItem,
-  BNavbar, BNavbarBrand,
-  BNavbarNav,
-  BNavbarToggle,
-  BNavForm,
-  BNavItem,
-  BNavItemDropdown
-} from "bootstrap-vue";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
 
@@ -78,15 +89,6 @@ export default {
   name: "PublicationList",
 
   components: {
-    BCollapse,
-    BDropdownItem,
-    BNavItemDropdown,
-    BNavbar,
-    BNavbarNav,
-    BNavbarBrand,
-    BNavbarToggle,
-    BNavForm,
-    BNavItem,
     IssueSearch,
     Country
   },
@@ -146,6 +148,8 @@ export default {
 
 <style scoped lang="scss">
 .navbar {
+  padding: 0.5rem 1rem;
+
   &#publication-list {
     margin-bottom: 20px;
   }
@@ -161,7 +165,7 @@ export default {
   .navbar-nav {
     flex-wrap: wrap;
 
-    ::v-deep ul {
+    :deep(ul) {
       max-height: calc(100vh - 100px);
       z-index: 1030;
       overflow-y: auto;

@@ -123,7 +123,7 @@ import l10nMixin from "../../mixins/l10nMixin";
 import Errorable from "../../components/Errorable";
 import { mapActions, mapState } from "pinia";
 import axios from "axios";
-import {BAlert, BButton, BFormCheckbox, BFormInput} from "bootstrap-vue";
+import {BAlert, BButton, BFormCheckbox, BFormInput} from "bootstrap-vue-3";
 import { form } from "../../stores/form";
 import { collection } from "../../stores/collection";
 

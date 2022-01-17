@@ -100,8 +100,9 @@
         >
           <span>
             <a :name="issueNumber" />
-            <b-icon-eye-fill
+            <b-icon
               :id="`issue-details-${issueNumber}`"
+              icon="eye-fill"
               :class="{'mx-2': true, [`can-show-book-${hoveredIssueHasCover}`]: true}"
               :alt="$t('Voir')"
               @mouseover="hoveredIssueNumber=issueNumber"
@@ -109,7 +110,6 @@
               @click.prevent="currentIssueOpened = hoveredIssueHasCover ? {publicationcode, issueNumber}: null"
             />
             <span
-              v-once
               class="issue-text"
             >
               {{ $t("n°") }}{{ issueNumber }}
@@ -123,7 +123,7 @@
                 :key="`${issueNumber}-copy-${copyIndex}`"
                 class="issue-copy"
               >
-                <BIconCalendar
+                <BIcon
                   v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
                   v-once
                   class="issue-purchase-date"
@@ -217,7 +217,7 @@ import collectionMixin from "../mixins/collectionMixin";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
 import Condition from "./Condition";
-import {BAlert, BIconCalendar, BIconEyeFill} from "bootstrap-vue";
+import {BAlert, BIcon} from "bootstrap-vue-3";
 import Publication from "./Publication";
 import { collection } from "../stores/collection";
 import { coa } from "../stores/coa";
@@ -227,12 +227,11 @@ export default {
   components: {
     Publication,
     Condition,
-    BIconCalendar,
     Book,
     ContextMenu,
     IssueDetailsPopover,
     BAlert,
-    BIconEyeFill
+    BIcon
   },
   mixins: [l10nMixin, collectionMixin, conditionMixin],
   props: {

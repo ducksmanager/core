@@ -6,9 +6,9 @@
     header-text-variant="dark"
   >
     <template #header>
-      <div v-b-toggle="id">
-        <slot name="header" />
-      </div>
+      <!--      <div v-b-toggle="id">-->
+      <slot name="header" />
+      <!--      </div>-->
     </template>
     <b-collapse
       :id="id"
@@ -33,7 +33,7 @@
   </b-card>
 </template>
 <script>
-import {BCard, BCardBody, BCardText, BCollapse, VBToggle} from "bootstrap-vue";
+import {BCard, BCardBody, BCardText, BCollapse} from "bootstrap-vue-3";
 
 export default {
   name: 'Accordion',
@@ -42,9 +42,6 @@ export default {
     BCollapse,
     BCardBody,
     BCardText,
-  },
-  directives: {
-    BToggle: VBToggle
   },
   props: {
     accordionGroupId: {
@@ -65,11 +62,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep a {
+:deep(a) {
   color: grey;
 }
 
-::v-deep .card-body {
+:deep(.card-body) {
   padding: 0.5rem;
 }
 </style>
