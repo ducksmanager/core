@@ -19,7 +19,7 @@ Default.args = {
       personnationality: 'us',
       personfullname: 'Don Rosa',
       round_number: 0,
-      entryurl_url: 'thumbnails3/webusers/2010/08/fr_jm_1473p20_001.jpg',
+      sitecode_url: 'thumbnails3/webusers/2010/08/fr_jm_1473p20_001.jpg',
       round_scores: [
         {
           player_id: 1,
@@ -33,7 +33,7 @@ Default.args = {
       personnationality: 'us',
       personfullname: 'Carl Barks',
       round_number: 1,
-      entryurl_url: 'thumbnails3/webusers/2011/04/gr_mm_2288p005_001.jpg',
+      sitecode_url: 'thumbnails3/webusers/2011/04/gr_mm_2288p005_001.jpg',
       round_scores: [
         {
           player_id: 1,

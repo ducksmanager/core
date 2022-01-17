@@ -32,6 +32,8 @@ from duckguessr_published_fr_recent_game_all entryurl_ids
       having count(*) >= 20
      ) as person on person.personcode = entryurl_ids.personcode;
 
+select * from datasets_entryurls where dataset_id=(select id from datasets where name=:datasetName) order by rand() limit @numberOfRounds_plus_1
+
 select entryurl_url, entryurl_id.personcode, entryurl_id.personnationality, entryurl_id.personfullname
 from (
        SELECT entryurl_url, personcode, personnationality, personfullname

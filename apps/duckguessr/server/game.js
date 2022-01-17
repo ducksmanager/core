@@ -6,7 +6,9 @@ const numberOfRounds = 8
 
 exports.createOrGetPending = async (gameType, datasetName) => {
   const dataset = await prisma.datasets.findFirst({
-    name: datasetName,
+    where: {
+      name: datasetName,
+    },
   })
   if (!dataset) {
     throw new Error(`Cannot find dataset with name ${datasetName}`)
@@ -30,39 +32,19 @@ exports.createOrGetPending = async (gameType, datasetName) => {
     return { gameId: pendingGame.id, created: false }
   }
 
-  const maxAttempts = 5
-  let roundDataResponse = []
-  let attempts = 0
-  do {
-    roundDataResponse = (await this.runQuery(getCOARoundsQuery(), 'coa')).data
-    const invalidEntryurls = await prisma.entryurl_validations.findMany({
-      where: {
-        sitecode_url: {
-          in: roundDataResponse.map(({ entryurl_url: entryUrl }) => entryUrl),
-        },
-        decision: true,
-      },
-    })
-    roundDataResponse = roundDataResponse.filter(
-      ({ entryurl_url: entryUrl }) => !invalidEntryurls.includes(entryUrl)
-    )
-  } while (
-    roundDataResponse.length < numberOfRounds + 1 &&
-    ++attempts < maxAttempts
-  )
-
-  if (attempts === maxAttempts) {
-    throw new Error(
-      "Couldn't generate rounds, not enough matches from COA query results"
-    )
-  }
+  const roundDataResponse = await prisma.$queryRaw`
+    select personcode, sitecode_url
+    from datasets_entryurls
+    where dataset_id = ${dataset.id}
+    order by rand()
+    limit ${numberOfRounds + 1}
+  `
 
   if (roundDataResponse) {
     const rounds = roundDataResponse
       .map((roundData, roundNumber) => ({
         ...roundData,
         round_number: roundNumber + 1,
-        entryurl_id: parseInt(roundData.entryurl_id),
       }))
       .filter(({ round_number: roundNumber }) => roundNumber <= numberOfRounds)
     const game = await prisma.games.create({
@@ -75,6 +57,8 @@ exports.createOrGetPending = async (gameType, datasetName) => {
     })
 
     return { gameId: game.id, created: true }
+  } else {
+    throw new Error(`Couldn't find rounds for dataset ${dataset.id}`)
   }
 }
 
@@ -94,17 +78,29 @@ exports.associatePlayer = async (gameId, username, password) => {
       })
     }
   } else {
-    const users = (
+    const [dmUser] = (
       await this.runQuery(
         'SELECT ID AS id, username from users where username=? AND password=?',
         'dm',
         [username, password]
       )
     ).data
-    user = users[0]
-    if (!user) {
-      console.error(`No user with username ${username}`)
+    if (!dmUser) {
+      console.error(`No DM user with username ${username}`)
       return null
+    }
+    user = await prisma.players.findFirst({
+      where: {
+        username,
+      },
+    })
+    if (!user) {
+      user = await prisma.players.create({
+        data: {
+          ducksmanager_id: parseInt(dmUser.id),
+          username,
+        },
+      })
     }
   }
   const userId = user.id
@@ -118,14 +114,6 @@ exports.associatePlayer = async (gameId, username, password) => {
 
   return user
 }
-
-const getCOARoundsQuery = (dataset) =>
-  fs.existsSync(`datasets/${dataset}/game.sql`)
-    ? fs
-        .readFileSync(`datasets/${dataset}/game.sql`)
-        .toString()
-        .replace('@numberOfRounds_plus_1', '' + (numberOfRounds + 1))
-    : null
 
 exports.runQuery = async (query, db, parameters = []) => {
   axios.interceptors.request.use((config) => ({

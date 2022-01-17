@@ -48,8 +48,8 @@ model rounds {
   id                Int            @id @default(autoincrement())
   game_id           Int
   round_number      Int            @db.UnsignedTinyInt
-  entryurl_id       Int
-  entryurl_url      String         @db.VarChar(100)
+  entryurl_id       Int?
+  sitecode_url      String         @db.VarChar(100)
   personcode        String         @db.VarChar(79)
   personnationality String         @db.VarChar(2)
   personfullname    String         @db.VarChar(79)
@@ -95,6 +95,7 @@ model datasets_entryurls {
   id           Int      @id @default(autoincrement())
   dataset_id   Int
   sitecode_url String   @db.VarChar(99)
+  personcode   String   @db.VarChar(79)
   datasets     datasets @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "datasets_entryurl_validations_datasets_id_fk")
 
   @@unique([dataset_id, sitecode_url], map: "datasets_entryurl_validations_dataset_validation")

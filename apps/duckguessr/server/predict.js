@@ -32,7 +32,7 @@ exports.playAsBot = (botUsername, socket, rounds) => {
       exports
         .predict(
           currentRound.round_number,
-          currentRound.entryurl_url,
+          currentRound.sitecode_url,
           possibleAuthors
         )
         .then((personcode) => {

@@ -267,7 +267,7 @@ export default defineComponent({
       url: computed(
         () =>
           currentRound.value &&
-          `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.entryurl_url}`
+          `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.sitecode_url}`
       ),
       progressbarVariant: computed(() => {
         if (remainingTimePercentage.value <= 20) {

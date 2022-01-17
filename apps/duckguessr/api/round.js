@@ -47,7 +47,7 @@ export default async (req, res) => {
             )
             return
           }
-          const cloudinaryUrl = `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${round.entryurl_url}`
+          const cloudinaryUrl = `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${round.sitecode_url}`
           request.get(cloudinaryUrl, function (error, response, body) {
             if (!error && response.statusCode === 200) {
               try {
