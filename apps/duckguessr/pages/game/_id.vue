@@ -231,7 +231,6 @@ export default defineComponent({
     const validateGuess = () => {
       gameSocket!.emit('guess', { username }, currentRound.value!.id, {
         personcode: chosenAuthor.value?.personcode ?? null,
-        personnationality: chosenAuthor.value?.personnationality ?? null,
       })
       chosenAuthor.value = null
     }

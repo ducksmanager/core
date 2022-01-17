@@ -45,18 +45,15 @@ model round_scores {
 }
 
 model rounds {
-  id                Int            @id @default(autoincrement())
-  game_id           Int
-  round_number      Int            @db.UnsignedTinyInt
-  entryurl_id       Int?
-  sitecode_url      String         @db.VarChar(100)
-  personcode        String         @db.VarChar(79)
-  personnationality String         @db.VarChar(2)
-  personfullname    String         @db.VarChar(79)
-  started_at        DateTime?      @db.DateTime(0)
-  finished_at       DateTime?      @db.DateTime(0)
-  games             games          @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "round_game_id_fk")
-  round_scores      round_scores[]
+  id           Int            @id @default(autoincrement())
+  game_id      Int
+  round_number Int            @db.UnsignedTinyInt
+  sitecode_url String         @db.VarChar(100)
+  personcode   String         @db.VarChar(79)
+  started_at   DateTime?      @db.DateTime(0)
+  finished_at  DateTime?      @db.DateTime(0)
+  games        games          @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "round_game_id_fk")
+  round_scores round_scores[]
 
   @@index([game_id], map: "round_game_id_fk")
 }
