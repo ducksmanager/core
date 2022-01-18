@@ -10,20 +10,20 @@
       v-else
       id="map"
     >
-      <MglMap
+      <MapboxMap
         :access-token="accessToken"
         map-style="mapbox://styles/mapbox/light-v10"
         :center="mapCenter"
         :zoom="4"
       >
-        <MglMarker
+        <MapboxMarker
           v-for="bookstore in bookstores"
           :key="bookstore.id"
-          :coordinates="[bookstore.coordY, bookstore.coordX]"
+          :lng-lat="[bookstore.coordY, bookstore.coordX]"
           anchor="bottom"
           :offset="[0,6]"
         >
-          <MglPopup>
+          <MapboxPopup>
             <div>
               <h2>{{ bookstore.name }}</h2>
               <div>
@@ -37,7 +37,7 @@
                 >
                   <b v-if="username">{{ username }}</b>
                   <span v-else>{{ $t("un visiteur anonyme") }}</span>
-                  <i class="float-right">{{ formatDate(creationDate) }}</i>
+                  &nbsp;<i class="float-right">{{ formatDate(creationDate) }}</i>
                   <blockquote class="px-3 clearfix">
                     {{ comment }}
                   </blockquote>
@@ -82,9 +82,9 @@
                 >{{ $t("Ajouter un commentaire") }}</a>
               </div>
             </div>
-          </MglPopup>
-        </MglMarker>
-      </MglMap>
+          </MapboxPopup>
+        </MapboxMarker>
+      </MapboxMap>
     </div>
     <br> <br>
     <h2>
@@ -147,7 +147,7 @@
   </div>
 </template>
 <script>
-import { MglMap, MglMarker, MglPopup } from "vue-mapbox";
+import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 import axios from "axios";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import {BAlert, BButton, BFormInput, BFormTextarea} from "bootstrap-vue-3";
@@ -164,9 +164,9 @@ export default {
   name: "Bookstores",
 
   components: {
-    MglMap,
-    MglMarker,
-    MglPopup,
+    MapboxMap,
+    MapboxMarker,
+    MapboxPopup,
     BAlert,
     BFormTextarea,
     BButton,
@@ -277,15 +277,18 @@ export default {
 
     .mapboxgl-ctrl-geocoder--input {
       width: 100%;
+      height: initial;
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
     }
 
     .suggestions-wrapper {
       position: absolute;
+      width: 100%;
       margin-top: -5px;
 
       ul.suggestions {
         list-style-type: none;
-        padding: 5px 0;
 
         li {
           background: #ddd;

@@ -7,6 +7,7 @@ html, body {
 
 a {
   color: darkgrey !important;
+  text-decoration: none;
   border-bottom: 1px solid darkgray;
 
   &[href='#'] {
