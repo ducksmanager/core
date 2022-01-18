@@ -88,7 +88,6 @@
       <Accordion
         id="quotation-explanation"
         accordion-group-id="quotation-explanation"
-        :visible="false"
       >
         <template #header>
           {{ $t("Comment DucksManager calcule-t-il la valeur de ma collection ?") }}

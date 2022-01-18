@@ -3,28 +3,33 @@
     <h3 v-if="title">
       {{ title }}
     </h3>
-    <b-nav
+    <b-tabs
       v-if="items.length"
-      tabs
+      class="my-4"
     >
-      <MenuItem
+      <b-tab
         v-for="item in items"
         :key="JSON.stringify(item)"
-        :root-path="rootPath"
-        :path="item.path"
-        :text="item.text"
-      />
-    </b-nav>
+        :active="isActive(item)"
+        no-body
+        @click.stop="onTabClick(item)"
+      >
+        <template #title>
+          {{ item.text }}
+        </template>
+      </b-tab>
+    </b-tabs>
   </div>
 </template>
 
 <script>
-import MenuItem from "../components/MenuItem";
-import {BNav} from "bootstrap-vue-3";
+import {BTab, BTabs} from "bootstrap-vue-3";
+import {mapActions} from "pinia";
+import {l10n} from "../stores/l10n";
 
 export default {
   name: "Menu",
-  components: {MenuItem, BNav},
+  components: {BTab, BTabs},
   props: {
     title: {
       type: String,
@@ -38,12 +43,22 @@ export default {
       type: Array,
       required: true
     }
+  },
+
+  methods: {
+    ...mapActions(l10n, ["$r"]),
+    isActive({path}) {
+      return window.location.pathname === this.$r(this.rootPath + path)
+    },
+    onTabClick(item) {
+      window.location.replace(this.isActive(item) ? '#' : this.$r(this.rootPath+item.path))
+    }
   }
 }
 </script>
 
-<style scoped>
-.nav {
-  margin: 20px 0;
+<style scoped lang="scss">
+:deep(a).active {
+  color: black !important;
 }
 </style>
