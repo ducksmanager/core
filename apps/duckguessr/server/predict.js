@@ -57,53 +57,49 @@ exports.predict = (roundNumber, url, possibleAuthors) =>
     axios({
       url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${url}`,
       responseType: 'arraybuffer',
-    }).then(({ data: input }) =>
-      sharp(input)
-        .resize(224, 224)
-        .toBuffer()
-        .then((data) => {
-          let image = tfn.node.decodeImage(data, 0)
-          image = tf.expandDims(image, 0)
-          image = tf.cast(image, 'float32').div(255)
-          const prediction = model.predict(image)
-          prediction.array().then(([predictionArray]) => {
+    }).then(({ data: input }) => {
+      const buffer = tfn.node.decodeImage(input, 3)
+      let image = buffer.resizeBilinear([224, 224]).div(tf.scalar(255))
+      image = tf.expandDims(image, 0)
+      image = tf.cast(image, 'float32').div(255)
+      model
+        .predict(image)
+        .array()
+        .then(([predictionArray]) => {
+          console.log(
+            `Prediction done in ${new Date().getTime() - startTime}ms`
+          )
+          const sortedPredictions = predictionArray
+            .map((predictionProbability, predictionIndex) => ({
+              personcode: artists[predictionIndex],
+              predictionProbability: predictionProbability * 100,
+            }))
+            .sort(
+              (
+                { predictionProbability: predictionProbability1 },
+                { predictionProbability: predictionProbability2 }
+              ) => (predictionProbability2 > predictionProbability1 ? 1 : -1)
+            )
+          for (const {
+            personcode,
+            predictionProbability,
+          } of sortedPredictions) {
             console.log(
-              `Prediction done in ${new Date().getTime() - startTime}ms`
+              `Round ${roundNumber} - Predicted artist = ${personcode}, probability of ${predictionProbability}%`
             )
-            const sortedPredictions = predictionArray
-              .map((predictionProbability, predictionIndex) => ({
-                personcode: artists[predictionIndex],
-                predictionProbability: predictionProbability * 100,
-              }))
-              .sort(
-                (
-                  { predictionProbability: predictionProbability1 },
-                  { predictionProbability: predictionProbability2 }
-                ) => (predictionProbability2 > predictionProbability1 ? 1 : -1)
-              )
-            for (const {
-              personcode,
-              predictionProbability,
-            } of sortedPredictions) {
-              console.log(
-                `Round ${roundNumber} - Predicted artist = ${personcode}, probability of ${predictionProbability}%`
-              )
-              if (!possibleAuthors.includes(personcode)) {
-                console.log('Skipped')
-              } else {
-                resolve(personcode)
-                return
-              }
+            if (!possibleAuthors.includes(personcode)) {
+              console.log('Skipped')
+            } else {
+              resolve(personcode)
+              return
             }
-            console.error(
-              'No possible authors match the prediction, choosing a random author'
-            )
-            const randomElement =
-              possibleAuthors[
-                Math.floor(Math.random() * possibleAuthors.length)
-              ]
-            resolve(randomElement)
-          })
+          }
+          console.error(
+            'No possible authors match the prediction, choosing a random author'
+          )
+          const randomElement =
+            possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)]
+          resolve(randomElement)
         })
-    )
+    })
   })
