@@ -184,7 +184,6 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import VueContext from "vue-context";
 import conditionMixin from "../mixins/conditionMixin";
 import Condition from "./Condition";
@@ -199,7 +198,7 @@ export default {
     BTabs,BTab,BIcon,BNavItem
   },
 
-  mixins: [l10nMixin, conditionMixin],
+  mixins: [conditionMixin],
   props: {
     publicationCode: {
       type: String, required: true

@@ -51,8 +51,9 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import {BAlert, BButton, BCol, BFormInput, BRow} from "bootstrap-vue-3";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "Login",
@@ -63,7 +64,6 @@ export default {
     BFormInput,
     BButton
   },
-  mixins: [l10nMixin],
   props: {
     error: { type: String, default: null },
     lastUsername: { type: String, default: null }
@@ -72,6 +72,9 @@ export default {
     return {
       csrfToken: document.getElementById("csrf").value
     };
+  },
+  methods: {
+    ...mapActions(l10n, ["$r"]),
   }
 };
 </script>

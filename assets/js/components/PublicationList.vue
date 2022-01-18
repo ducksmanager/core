@@ -79,11 +79,12 @@
 
 <script>
 import Country from "./Country";
-import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "pinia";
 import IssueSearch from "./IssueSearch";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "PublicationList",
@@ -93,7 +94,6 @@ export default {
     Country
   },
 
-  mixins: [l10nMixin],
 
   data: () => ({
     hasPublicationNames: false
@@ -136,6 +136,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
     getSortedPublications(country) {
       const vm = this

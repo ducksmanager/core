@@ -36,14 +36,13 @@
 <script>
 import Medal from "./Medal";
 import medalMixin from "../mixins/medalMixin";
-import l10nMixin from "../mixins/l10nMixin";
 import {BProgress, BProgressBar} from "bootstrap-vue-3";
 
 export default {
   name: "MedalProgress",
   components: { Medal, BProgress, BProgressBar },
 
-  mixins: [l10nMixin, medalMixin],
+  mixins: [medalMixin],
 
   props: {
     contribution: {

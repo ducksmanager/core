@@ -9,7 +9,6 @@
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapState} from "pinia";
-import l10nMixin from "../../mixins/l10nMixin";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
 import {PieChart} from "vue-chart-3";
@@ -20,7 +19,7 @@ Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 export default {
   name: "PublicationStats",
   components: {PieChart},
-  mixins: [collectionMixin, l10nMixin],
+  mixins: [collectionMixin],
 
   data: () => ({
     hasPublicationNames: false,

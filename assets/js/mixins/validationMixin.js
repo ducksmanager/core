@@ -1,4 +1,3 @@
-import l10nMixin from "./l10nMixin";
 import { mapActions } from "pinia";
 import { form } from "../stores/form";
 
@@ -10,8 +9,6 @@ export default {
   data: () => ({
     errors: []
   }),
-
-  mixins: [l10nMixin],
 
   methods: {
     ...mapActions(form, ["addErrors"]),

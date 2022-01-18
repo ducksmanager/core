@@ -17,7 +17,6 @@
   </span>
 </template>
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import {BBadge} from "bootstrap-vue-3";
 
 export default {
@@ -27,7 +26,6 @@ export default {
     BBadge
   },
 
-  mixins: [l10nMixin],
 
   props: {
     storycode: {

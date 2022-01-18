@@ -22,12 +22,12 @@
 <script>
 import Publication from "./Publication";
 import Condition from "./Condition";
-import l10nMixin from "../mixins/l10nMixin";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "Issue",
   components: {Condition, Publication},
-  mixins: [l10nMixin],
   props: {
     publicationcode: {type: String, required: true},
     publicationname: {type: String, required: true},
@@ -36,6 +36,10 @@ export default {
     hideCondition: { type: Boolean, default: false },
     noWrap: { type: Boolean, default: true }
   },
+
+  methods: {
+    ...mapActions(l10n, ["$r"]),
+  }
 }
 </script>
 

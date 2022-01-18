@@ -65,37 +65,26 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import Errorable from "../components/Errorable";
 import {BAlert, BButton, BCol, BFormInput, BFormRow} from "bootstrap-vue-3";
-import { mapActions } from "pinia";
-import { form } from "../stores/form";
+import {mapActions} from "pinia";
+import {form} from "../stores/form";
 
 export default {
   name: "Forgot",
-  components: { Errorable, BAlert, BFormInput, BFormRow, BCol, BButton },
-  mixins: [l10nMixin],
+  components: {Errorable, BAlert, BFormInput, BFormRow, BCol, BButton},
   props: {
-    success: { type: String, default: null },
-    token: { type: String, default: null },
-    errors: { type: String, default: "" }
+    success: {type: String, default: null},
+    token: {type: String, default: null},
+    errors: {type: String, default: ""}
   },
 
-  computed: {
-    isSuccess() {
-      return this.success === null ? null : parseInt(this.success) === 1;
-    },
-    parsedErrors() {
-      return JSON.parse(this.errors);
+  setup(props) {
+    return {
+      isSuccess: () => props.success === null ? null : parseInt(props.success) === 1,
+      parsedErrors: () => JSON.parse(props.errors),
+      ...mapActions(form, ["addErrors"])
     }
-  },
-
-  mounted() {
-    this.addErrors(JSON.parse(this.errors));
-  },
-
-  methods: {
-    ...mapActions(form, ["addErrors"])
   }
 };
 </script>

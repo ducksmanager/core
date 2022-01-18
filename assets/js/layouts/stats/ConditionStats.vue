@@ -7,7 +7,6 @@
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
 import {mapState} from "pinia";
-import l10nMixin from "../../mixins/l10nMixin";
 import conditionMixin from "../../mixins/conditionMixin";
 import {collection} from "../../stores/collection";
 import {PieChart} from "vue-chart-3";
@@ -18,7 +17,7 @@ Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 export default {
   name: "ConditionStats",
   components: {PieChart},
-  mixins: [collectionMixin, l10nMixin, conditionMixin],
+  mixins: [collectionMixin, conditionMixin],
 
   computed: {
     ...mapState(collection, ["collection"]),

@@ -63,7 +63,6 @@
 
 <script>
 import IssueList from "../../components/IssueList";
-import l10nMixin from "../../mixins/l10nMixin";
 import collectionMixin from "../../mixins/collectionMixin";
 import { mapActions, mapState } from "pinia";
 import IssueSearch from "../../components/IssueSearch";
@@ -76,6 +75,7 @@ import ShortStats from "../../components/ShortStats";
 import LastPurchases from "../../components/LastPurchases";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "Manage",
@@ -90,7 +90,7 @@ export default {
     IssueSearch,
     IssueList
   },
-  mixins: [l10nMixin, collectionMixin],
+  mixins: [collectionMixin],
   props: {
     publicationcode: {
       type: String,
@@ -121,6 +121,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(coa, ["fetchPublicationNames"])
   }
 };

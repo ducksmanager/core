@@ -133,7 +133,6 @@
 </template>
 
 <script>
-import l10nMixin from "../../mixins/l10nMixin";
 import IssueSearch from "../../components/IssueSearch";
 import {mapActions, mapState} from "pinia";
 import collectionMixin from "../../mixins/collectionMixin";
@@ -147,11 +146,12 @@ import { users } from "../../stores/users";
 import { bookcase } from "../../stores/bookcase";
 import { collection } from "../../stores/collection";
 import { coa } from "../../stores/coa";
+import { l10n } from "../../stores/l10n";
 
 export default {
   name: "ViewBookcase",
   components: {Bookcase, SharePage, Book, Issue, IssueSearch, UploadableEdgesCarousel, BAlert, BButton},
-  mixins: [l10nMixin, collectionMixin],
+  mixins: [collectionMixin],
 
   props: {
     bookcaseUsername: {type: String, required: true}
@@ -300,6 +300,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(bookcase, ["setBookcaseUsername", "loadBookcase", "loadBookcaseOptions", "loadBookcaseOrder"]),
     ...mapActions(collection, ["loadPopularIssuesInCollection", "loadLastPublishedEdgesForCurrentUser", "loadUser"]),
     ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers", "addIssueNumbers"]),

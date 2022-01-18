@@ -79,7 +79,6 @@
 </template>
 
 <script>
-import l10nMixin from "../../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import { SlickItem, SlickList } from "vue-slicksort";
 import Publication from "../../components/Publication";
@@ -100,7 +99,6 @@ export default {
     BAlert,
     BButton
   },
-  mixins: [l10nMixin],
 
   data: () => ({
     error: false,

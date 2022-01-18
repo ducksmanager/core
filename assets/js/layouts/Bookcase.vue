@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import ViewBookcase from "./bookcase/ViewBookcase";
 import Menu from "./Menu";
 import BookcaseOptions from "./bookcase/BookcaseOptions";
@@ -38,7 +37,6 @@ export default {
     BookcaseContributors,
     Menu
   },
-  mixins: [l10nMixin],
   props: {
     tab: {
       type: String,

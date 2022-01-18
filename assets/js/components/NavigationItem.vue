@@ -8,11 +8,11 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "NavigationItem",
-  mixins: [l10nMixin],
   props: {
     path: {type: String, required: true},
     icon: {type: String, default: null}
@@ -25,6 +25,9 @@ export default {
           !window.location.pathname.split('/').includes(pathPart)
         ) && !/(bibliotheque\/afficher)|(bookcase\/show\/).+$/.test(window.location.pathname)
     }
+  },
+  methods: {
+    ...mapActions(l10n, ["$r"]),
   }
 }
 </script>

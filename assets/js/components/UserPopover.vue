@@ -48,9 +48,10 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import Medal from "./Medal";
 import {BButton, BPopover} from "bootstrap-vue-3";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "UserPopover",
@@ -59,21 +60,20 @@ export default {
     BPopover,
     BButton
   },
-  mixins: [l10nMixin],
   props: {
     id: {type: Number, required: true},
     points: {type: Object, required: true},
     stats: {type: Object, required: true}
   },
 
-  data: () => ({
-    bookcaseShared: true,
-    elementId: null
-  }),
+  setup(props) {
+    return {
+    ...mapActions(l10n, ["$r"]),
+      elementId: `user-${props.id}-${Math.random()}`,
+      bookcaseShared: true
+    }
+  },
 
-  created() {
-    this.elementId = `user-${this.id}-${Math.random()}`
-  }
 }
 </script>
 

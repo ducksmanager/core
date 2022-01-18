@@ -159,8 +159,9 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import { BButton, BCol, BRow } from "bootstrap-vue-3";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   // vue/multi-word-component-names
@@ -172,7 +173,10 @@ export default {
     BButton
   },
 
-  mixins: [l10nMixin]
+
+  methods: {
+    ...mapActions(l10n, ["$r"]),
+  }
 };
 </script>
 

@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import {mapState, mapActions} from "pinia";
 import medalMixin from "../mixins/medalMixin";
 import Ago from "../components/Ago";
@@ -33,7 +32,7 @@ export default {
     Event,
     Ago
   },
-  mixins: [l10nMixin, medalMixin],
+  mixins: [medalMixin],
 
   data: () => ({
     isLoaded: false,

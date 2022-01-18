@@ -124,7 +124,6 @@
 <script>
 import ShortStats from "../../components/ShortStats";
 import axios from "axios";
-import l10nMixin from "../../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
@@ -133,11 +132,12 @@ import {BAlert, BPagination, BTable} from "bootstrap-vue-3";
 import { users } from "../../stores/users";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
+import {l10n} from "../../stores/l10n";
 
 export default {
   name: "GeneralStats",
   components: { Issue, Accordion, ShortStats, BAlert, BTable, BPagination },
-  mixins: [l10nMixin, conditionMixin],
+  mixins: [conditionMixin],
 
   data: () => ({
     rarityValue: null,
@@ -147,6 +147,7 @@ export default {
   }),
 
   computed: {
+    ...mapActions(l10n, ['ucFirst']),
     ...mapState(users, ["count"]),
     ...mapState(coa, ["publicationNames"]),
     ...mapState(collection, ["totalPerPublication", "quotedIssues", "quotationSum"]),

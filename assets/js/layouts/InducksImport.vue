@@ -245,7 +245,6 @@
   </div>
 </template>
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import Accordion from "../components/Accordion";
 import Publication from "../components/Publication";
@@ -264,11 +263,12 @@ import {
   BRow
 } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "InducksImport",
   components: { Accordion, Publication, Issue, BButton, BAlert, BRow, BCol, BFormGroup, BTextarea: BFormTextarea, BCollapse, BFormSelect, BFormSelectOption, BProgress, BProgressBar},
-  mixins: [l10nMixin, collectionMixin],
+  mixins: [collectionMixin],
 
   data: () => ({
     step: 1,
@@ -332,6 +332,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r", 'ucFirst']),
     ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers", "fetchIssueCodesDetails"]),
     async processRawData() {
       const vm = this;

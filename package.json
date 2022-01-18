@@ -32,7 +32,7 @@
         "pinia": "^2.0.9",
         "popper.js": "^1.16.0",
         "regenerator-runtime": "^0.13.9",
-        "sass": "^1.48.0",
+        "sass": "^1.49.0",
         "sass-loader": "^12.4.0",
         "timeago.js": "^4.0.2",
         "vue": "^3.1.5",

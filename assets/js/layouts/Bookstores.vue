@@ -148,7 +148,6 @@
 </template>
 <script>
 import { MglMap, MglMarker, MglPopup } from "vue-mapbox";
-import l10nMixin from "../mixins/l10nMixin";
 import axios from "axios";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import {BAlert, BButton, BFormInput, BFormTextarea} from "bootstrap-vue-3";
@@ -174,7 +173,6 @@ export default {
     BFormInput
   },
 
-  mixins: [l10nMixin],
 
   data: () => ({
     accessToken: "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ",

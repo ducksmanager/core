@@ -86,7 +86,6 @@
 </template>
 
 <script>
-import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
 import {mapActions, mapState} from "pinia";
 import Publication from "../../components/Publication";
@@ -97,7 +96,6 @@ import { coa } from "../../stores/coa";
 export default {
   name: "EdgeProgress",
   components: { Bookcase, Publication, BIcon },
-  mixins: [l10nMixin],
   data() {
     return {
       hasData: false,

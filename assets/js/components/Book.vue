@@ -103,7 +103,6 @@
 <script>
 import {PageFlip} from 'page-flip';
 import {mapActions, mapState} from "pinia";
-import l10nMixin from "../mixins/l10nMixin";
 import Story from "./Story";
 import Issue from "./Issue";
 import {BCard, BTab, BTabs} from "bootstrap-vue-3";
@@ -115,7 +114,6 @@ const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 export default {
   name: "Book",
   components: {Issue, Story, BCard, BTabs, BTab},
-  mixins: [l10nMixin],
 
   props: {
     publicationCode: {

@@ -11,11 +11,9 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 
 export default {
   name: "OtherIssues",
-  mixins: [l10nMixin],
 
   props: {
     number: {

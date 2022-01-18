@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import Menu from "./Menu";
 import Account from "./collection/Account";
 import Duplicates from "./collection/Duplicates";
@@ -39,7 +38,7 @@ export default {
     Menu,
     Subscriptions
   },
-  mixins: [l10nMixin, collectionMixin, subscriptionMixin],
+  mixins: [collectionMixin, subscriptionMixin],
   props: {
     tab: {
       type: String,

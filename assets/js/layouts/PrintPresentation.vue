@@ -41,11 +41,11 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "PrintPresentation",
-  mixins: [l10nMixin],
   computed: {
     types() {
       return [{
@@ -66,6 +66,9 @@ export default {
         ]
       }];
     }
+  },
+  methods: {
+    ...mapActions(l10n, ["$r"]),
   }
 };
 </script>

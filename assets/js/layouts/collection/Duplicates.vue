@@ -13,7 +13,6 @@
 </template>
 <script>
 import { mapActions, mapState } from "pinia";
-import l10nMixin from "../../mixins/l10nMixin";
 import collectionMixin from "../../mixins/collectionMixin";
 import IssueList from "../../components/IssueList";
 import { coa } from "../../stores/coa";
@@ -22,7 +21,7 @@ import { collection } from "../../stores/collection";
 export default {
   name: "Duplicates",
   components: {  IssueList },
-  mixins: [l10nMixin, collectionMixin],
+  mixins: [collectionMixin],
 
   data: () => ({
     hasPublicationNames: false,

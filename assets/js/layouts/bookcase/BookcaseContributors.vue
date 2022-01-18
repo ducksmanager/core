@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import l10nMixin from "../../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import UserPopover from "../../components/UserPopover";
 import { users } from "../../stores/users";
@@ -37,7 +36,6 @@ export default {
   components: {
     UserPopover
   },
-  mixins: [l10nMixin],
 
   data: () => ({
     loading: true

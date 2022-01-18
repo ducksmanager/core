@@ -20,7 +20,8 @@
 <script>
 import Collectable from "../layouts/print/Collectable";
 import Classic from "../layouts/print/Classic";
-import l10nMixin from "../mixins/l10nMixin";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "Print",
@@ -28,9 +29,11 @@ export default {
     Collectable,
     Classic
   },
-  mixins: [l10nMixin],
   props: {
     currentType: {type: String, required: true}
+  },
+  methods: {
+    ...mapActions(l10n, ["$r"]),
   }
 }
 </script>

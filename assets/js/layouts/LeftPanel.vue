@@ -71,7 +71,6 @@
 
 <script>
 import axios from "axios";
-import l10nMixin from "../mixins/l10nMixin";
 import RecentEvents from "./RecentEvents";
 import Navigation from "./Navigation";
 import Medal from "../components/Medal";
@@ -80,6 +79,7 @@ import Banner from "./Banner";
 import SwitchLocale from "./SwitchLocale";
 import { users } from "../stores/users";
 import { collection } from "../stores/collection";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "LeftPanel",
@@ -92,7 +92,6 @@ export default {
     Navigation
   },
 
-  mixins: [l10nMixin],
 
   computed: {
     ...mapState(users, ["points"]),
@@ -111,6 +110,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(collection, ["setPreviousVisit"]),
     ...mapActions(users, ["fetchStats"])
   }

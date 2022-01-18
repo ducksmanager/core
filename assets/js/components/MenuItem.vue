@@ -7,8 +7,9 @@
   </b-nav-item>
 </template>
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import {BNavItem} from "bootstrap-vue-3";
+import {mapActions} from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "MenuItem",
@@ -17,7 +18,6 @@ export default {
     BNavItem
   },
 
-  mixins: [l10nMixin],
 
   props: {
     rootPath: {
@@ -42,6 +42,10 @@ export default {
         )
     }
   },
+
+  methods: {
+    ...mapActions(l10n, ["$r"]),
+  }
 }
 </script>
 

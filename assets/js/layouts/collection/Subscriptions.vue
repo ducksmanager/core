@@ -74,7 +74,6 @@
 </template>
 <script>
 import { mapActions, mapState } from "pinia";
-import l10nMixin from "../../mixins/l10nMixin";
 import axios from "axios";
 import subscriptionMixin from "../../mixins/subscriptionMixin";
 import Subscription from "../../components/Subscription";
@@ -84,7 +83,7 @@ import { coa } from "../../stores/coa";
 export default {
   name: "Subscriptions",
   components: { Subscription, BAlert, BRow, BCol, BButton },
-  mixins: [l10nMixin, subscriptionMixin],
+  mixins: [subscriptionMixin],
   data() {
     return {
       hasPublicationNames: false,

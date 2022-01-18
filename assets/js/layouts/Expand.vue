@@ -52,17 +52,17 @@
 
 <script>
 import collectionMixin from "../mixins/collectionMixin";
-import l10nMixin from "../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import SuggestionList from "./SuggestionList";
 import {BAlert, BFormSelect} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "Expand",
   components: { SuggestionList, BAlert, BSelect: BFormSelect },
-  mixins: [collectionMixin, l10nMixin],
+  mixins: [collectionMixin],
 
   data: () => ({
     countryCode: "ALL"
@@ -97,6 +97,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(collection, ["loadWatchedAuthors"]),
     ...mapActions(coa, ["fetchCountryNames"])
   }

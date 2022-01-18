@@ -47,7 +47,6 @@ import { mapActions, mapState } from "pinia";
 import * as axios from "axios";
 import IssueEdgePopover from "./IssueEdgePopover";
 import Issue from "./Issue";
-import l10nMixin from "../mixins/l10nMixin";
 import { bookcase } from "../stores/bookcase";
 import { coa } from "../stores/coa";
 
@@ -57,7 +56,6 @@ const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
 export default {
   name: "Edge",
   components: {Issue, IssueEdgePopover},
-  mixins: [l10nMixin],
   props: {
     id: {
       type: String,

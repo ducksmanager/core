@@ -21,12 +21,11 @@
 <script>
 import { mapState } from "pinia";
 import collectionMixin from "../mixins/collectionMixin";
-import l10nMixin from "../mixins/l10nMixin";
 import { collection } from "../stores/collection";
 
 export default {
   name: "ShortStats",
-  mixins: [collectionMixin, l10nMixin],
+  mixins: [collectionMixin],
 
   data: () => ({
     hasPublicationNames: false,

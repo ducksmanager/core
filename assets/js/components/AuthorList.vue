@@ -87,13 +87,13 @@
   </div>
 </template>
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import {mapActions, mapState} from "pinia";
 import axios from "axios";
 import {BAlert, BCol, BFormInput, BRow} from "bootstrap-vue-3";
 import StarRating from 'vue-star-rating'
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "AuthorList",
@@ -104,7 +104,6 @@ export default {
     BFormInput,
     StarRating
   },
-  mixins: [l10nMixin],
   props: {
     watchedAuthors: {
       type: Array,
@@ -141,6 +140,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(coa, ["fetchPersonNames"]),
     ...mapActions(collection, ["loadWatchedAuthors"]),
 

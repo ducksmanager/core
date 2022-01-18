@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import LeftPanel from "./LeftPanel";
 import Footer from "./Footer";
 import Login from "./Login";
@@ -53,7 +52,6 @@ export default {
     Stats,
     Welcome,
   },
-  mixins: [l10nMixin],
   props: {
     page: { type: String, required: true },
     title: { type: String, default: null },

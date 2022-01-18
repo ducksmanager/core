@@ -48,12 +48,11 @@
   </span>
 </template>
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import medalMixin from "../mixins/medalMixin";
 
 export default {
   name: 'Medal',
-  mixins: [l10nMixin, medalMixin],
+  mixins: [medalMixin],
   props: {
     small: {type: Boolean, default: false},
     xSmall: {type: Boolean, default: false},

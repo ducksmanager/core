@@ -207,7 +207,6 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import ContextMenu from "./ContextMenu";
 import "vue-context/src/sass/vue-context.scss";
@@ -233,7 +232,7 @@ export default {
     BAlert,
     BIcon
   },
-  mixins: [l10nMixin, collectionMixin, conditionMixin],
+  mixins: [collectionMixin, conditionMixin],
   props: {
     publicationcode: {
       type: String,

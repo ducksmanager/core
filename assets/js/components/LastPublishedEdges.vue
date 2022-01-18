@@ -41,7 +41,6 @@ import Accordion from "./Accordion";
 import Issue from "./Issue";
 import Ago from "./Ago";
 import {mapActions, mapState} from "pinia";
-import l10nMixin from "../mixins/l10nMixin";
 import collectionMixin from "../mixins/collectionMixin";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
@@ -49,7 +48,7 @@ import { collection } from "../stores/collection";
 export default {
   name: "LastPublishedEdges",
   components: {Ago, Issue, Accordion},
-  mixins: [l10nMixin, collectionMixin],
+  mixins: [collectionMixin],
   computed: {
     ...mapState(coa, ["publicationNames"]),
     ...mapState(collection, ["previousVisit", "lastPublishedEdgesForCurrentUser"]),

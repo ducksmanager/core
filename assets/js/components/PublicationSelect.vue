@@ -25,9 +25,9 @@
 
 <script>
 import {mapActions, mapState} from "pinia";
-import l10nMixin from "../mixins/l10nMixin";
 import {BButton, BFormSelect} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "PublicationSelect",
@@ -37,7 +37,6 @@ export default {
     BButton
   },
 
-  mixins: [l10nMixin],
 
   props: {
     noButton: {
@@ -95,6 +94,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNamesFromCountry"]),
   }
 }

@@ -124,15 +124,15 @@ import Issue from "../components/Issue";
 import OtherIssues from "../components/OtherIssues";
 import UserPopover from "../components/UserPopover";
 import { mapState } from "pinia";
-import l10nMixin from "../mixins/l10nMixin";
 import BookcasePopover from "./BookcasePopover";
 import { users } from "../stores/users";
 import { coa } from "../stores/coa";
+import {mapActions} from "pinia";
+import {l10n} from "../stores/l10n";
 
 export default {
   name: "Event",
   components: { BookcasePopover, Issue, OtherIssues, UserPopover },
-  mixins: [l10nMixin],
   props: {
     event: { type: Object, required: true }
   },
@@ -143,6 +143,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     getMedalTitle(contribution) {
       switch (contribution.toUpperCase()) {
         case "CREATEUR":

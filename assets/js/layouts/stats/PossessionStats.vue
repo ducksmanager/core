@@ -9,7 +9,6 @@
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapState} from "pinia";
-import l10nMixin from "../../mixins/l10nMixin";
 import { collection } from "../../stores/collection";
 import { coa } from "../../stores/coa";
 import {BarChart} from "vue-chart-3";
@@ -20,7 +19,7 @@ Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, To
 export default {
   name: "PossessionStats",
   components: {BarChart},
-  mixins: [collectionMixin, l10nMixin],
+  mixins: [collectionMixin],
 
   props: {
     unit: {

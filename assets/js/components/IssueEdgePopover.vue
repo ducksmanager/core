@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import l10nMixin from "../mixins/l10nMixin";
 import MedalProgress from "./MedalProgress";
 import {mapState} from "pinia";
 import {BButton, BPopover} from "bootstrap-vue-3";
@@ -56,7 +55,6 @@ import { bookcase } from "../stores/bookcase";
 export default {
   name: "IssueEdgePopover",
   components: {MedalProgress, BPopover, BButton},
-  mixins: [l10nMixin],
   props: {
     id: {
       type: String,

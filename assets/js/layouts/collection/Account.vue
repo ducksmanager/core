@@ -119,18 +119,17 @@
 </template>
 
 <script>
-import l10nMixin from "../../mixins/l10nMixin";
 import Errorable from "../../components/Errorable";
 import { mapActions, mapState } from "pinia";
 import axios from "axios";
 import {BAlert, BButton, BFormCheckbox, BFormInput} from "bootstrap-vue-3";
 import { form } from "../../stores/form";
 import { collection } from "../../stores/collection";
+import { l10n } from "../../stores/l10n";
 
 export default {
   name: "Account",
   components: { Errorable, BAlert, BFormInput, BFormCheckbox, BButton },
-  mixins: [l10nMixin],
   props: {
     errors: { type: String, default: "" },
     success: { type: String, default: null },
@@ -153,6 +152,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(form, ["addErrors"]),
     ...mapActions(collection, ["loadUser"]),
 

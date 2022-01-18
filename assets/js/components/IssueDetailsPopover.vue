@@ -33,7 +33,6 @@
 <script>
 import Issue from "./Issue";
 import {mapActions, mapState} from "pinia";
-import l10nMixin from "../mixins/l10nMixin";
 import {BPopover} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
@@ -43,7 +42,6 @@ export default {
     BPopover,
     Issue
   },
-  mixins: [l10nMixin],
   props: {
     publicationCode: {
       type: String,

@@ -62,7 +62,6 @@
 </template>
 <script>
 import {mapActions, mapState} from "pinia";
-import l10nMixin from "../mixins/l10nMixin";
 import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
 import {BButton, BButtonGroup, BIcon} from "bootstrap-vue-3";
@@ -79,7 +78,6 @@ export default {
     BIcon
   },
 
-  mixins: [l10nMixin],
 
   props: {
     countrycode: {

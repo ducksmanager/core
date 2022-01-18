@@ -101,7 +101,6 @@
 <script>
 import Publication from "./Publication";
 import PublicationSelect from "./PublicationSelect";
-import l10nMixin from "../mixins/l10nMixin";
 import subscriptionMixin from "../mixins/subscriptionMixin";
 import { mapState } from "pinia";
 import {BButton, BCol, BForm, BRow} from "bootstrap-vue-3";
@@ -119,7 +118,7 @@ export default {
     BButton,
 
   },
-  mixins: [l10nMixin, subscriptionMixin],
+  mixins: [subscriptionMixin],
 
   props: {
     id: {
@@ -145,19 +144,16 @@ export default {
   },
   emits: ['delete', 'edit', 'start-edit', 'cancel-edit'],
 
-  data() {
+  setup(props) {
     return {
       editSubscription: {
-          publicationCode: this.publicationCode,
-          startDate: this.startDate,
-          endDate: this.endDate
+          publicationCode: props.publicationCode,
+          startDate: props.startDate,
+          endDate: props.endDate
       },
-      editedSubscriptionId: null
+      editedSubscriptionId: null,
+      ...mapState(coa, ["countryNames", "publicationNames"])
     }
-  },
-
-  computed: {
-    ...mapState(coa, ["countryNames", "publicationNames"])
   }
 };
 </script>

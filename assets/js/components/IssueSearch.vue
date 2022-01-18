@@ -60,7 +60,6 @@
 </template>
 <script>
 import axios from "axios";
-import l10nMixin from "../mixins/l10nMixin";
 import Issue from "./Issue";
 import { mapActions, mapState } from "pinia";
 import collectionMixin from "../mixins/collectionMixin";
@@ -72,7 +71,7 @@ import { coa } from "../stores/coa";
 export default {
   name: "IssueSearch",
   components: { Issue, Condition, BDropdown, BDropdownItem, BFormInput },
-  mixins: [l10nMixin, collectionMixin, conditionMixin],
+  mixins: [collectionMixin, conditionMixin],
 
   props: {
     withTitle: {

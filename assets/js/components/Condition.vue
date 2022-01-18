@@ -10,12 +10,11 @@
 <script>
 import collectionMixin from "../mixins/collectionMixin";
 import conditionMixin from "../mixins/conditionMixin";
-import l10nMixin from "../mixins/l10nMixin";
 
 export default {
   name: "Condition",
 
-  mixins: [collectionMixin, conditionMixin, l10nMixin],
+  mixins: [collectionMixin, conditionMixin],
   props: {
     publicationcode: {type: String, default: null},
     issuenumber: {type: String, default: null},

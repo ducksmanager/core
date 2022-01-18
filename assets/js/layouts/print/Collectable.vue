@@ -133,7 +133,6 @@
 
 <script>
 import collectionMixin from "../../mixins/collectionMixin";
-import l10nMixin from "../../mixins/l10nMixin";
 import {mapActions, mapState} from "pinia";
 import Publication from "../../components/Publication";
 import { coa } from "../../stores/coa";
@@ -143,7 +142,7 @@ const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/
 
 export default {
   components: {Publication},
-  mixins: [collectionMixin, l10nMixin],
+  mixins: [collectionMixin],
   data() {
     const lines = 2
     return {

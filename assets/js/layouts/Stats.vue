@@ -133,7 +133,6 @@ import PossessionStats from "./stats/PossessionStats";
 import collectionMixin from "../mixins/collectionMixin";
 import PurchaseStats from "./stats/PurchaseStats";
 import AuthorStats from "./stats/AuthorStats";
-import l10nMixin from "../mixins/l10nMixin";
 import { mapActions, mapState } from "pinia";
 import axios from "axios";
 import AuthorList from "../components/AuthorList";
@@ -142,6 +141,7 @@ import Menu from "./Menu";
 import GeneralStats from "./stats/GeneralStats";
 import {BAlert, BButton, BButtonGroup} from "bootstrap-vue-3";
 import { collection } from "../stores/collection";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "Stats",
@@ -158,7 +158,7 @@ export default {
     BButtonGroup,
     BButton
   },
-  mixins: [collectionMixin, l10nMixin],
+  mixins: [collectionMixin],
   props: {
     tab: {
       type: String,
@@ -199,6 +199,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(collection, ["loadWatchedAuthors", "loadPurchases"]),
     changeDimension(dimension, value) {
       this[dimension] = `${value}px`;

@@ -83,7 +83,6 @@
 <script>
 import NavigationItemGroup from "../components/NavigationItemGroup";
 import NavigationItem from "../components/NavigationItem";
-import l10nMixin from "../mixins/l10nMixin";
 import {
   BIcon
 } from "bootstrap-vue-3";
@@ -97,7 +96,6 @@ export default {
     BIcon,
   },
 
-  mixins: [l10nMixin],
 }
 </script>
 
