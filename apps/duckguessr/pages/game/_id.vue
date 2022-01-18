@@ -9,7 +9,11 @@
     <b-alert show align="center" variant="info">
       This game is finished.
     </b-alert>
-    <game-scores :scores="game.rounds" :players="game.game_players" />
+    <game-scores
+      :scores="game.rounds"
+      :players="game.game_players"
+      :authors="game.authors"
+    />
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
@@ -106,7 +110,7 @@ export default defineComponent({
   components: { AuthorCard },
   setup() {
     const { $axios } = useContext()
-    const { username } = getUser()
+    const { duckguessrId, username } = getUser()
     const route = useRoute()
 
     const chosenAuthor = ref(null as Author | null)
@@ -118,8 +122,6 @@ export default defineComponent({
     const currentRoundScores = ref([] as Array<Index.round_scores>)
 
     const hasUrlLoaded = ref(false as boolean)
-
-    let user: Index.players | null
 
     const now = ref(Date.now() as number)
 
@@ -257,7 +259,7 @@ export default defineComponent({
         () =>
           currentRoundScores.value.find(
             ({ player_id: playerId, round_id: roundNumber }) =>
-              user!.id === playerId &&
+              duckguessrId === playerId &&
               roundNumber === currentRound.value!.round_number
           )?.score_type_name || null
       ),

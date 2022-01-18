@@ -4,7 +4,7 @@
     <b-container>
       <b-row>
         <b-col
-          v-for="round in scoresWithPersonUrls"
+          v-for="(round, idx) in scoresWithPersonUrls"
           :key="`round-${round.round_number}`"
           align-self="center"
           cols="3"
@@ -19,6 +19,11 @@
               'background-image': `url('${round.personurl}')`,
             }"
           >
+            <b-img
+              class="d-none"
+              :src="round.personurl"
+              @error="setDefaultAuthorUrl(idx)"
+            />
             <flag :country="round.personnationality" />&nbsp;{{
               round.personfullname
             }}
@@ -80,9 +85,13 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    authors: {
+      type: Array,
+      required: true,
+    },
   },
 
-  setup({ scores, players }) {
+  setup({ scores, players, authors }) {
     const playerIds = players.map(({ player_id: playerId }) => playerId)
 
     const playerNames = players.reduce(
@@ -93,6 +102,9 @@ export default defineComponent({
     const scoresWithPersonUrls = ref(
       scores.map((roundScore) => ({
         ...roundScore,
+        ...authors.find(
+          ({ personcode }) => personcode === roundScore.personcode
+        ),
         personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
       }))
     )

@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-exports.addAxiosInterceptor = () => {
+exports.runQuery = async (query, db, parameters = []) => {
   axios.interceptors.request.use((config) => ({
     ...config,
     auth: {
@@ -13,4 +13,14 @@ exports.addAxiosInterceptor = () => {
       'Content-Type': 'application/json',
     },
   }))
+  return await axios
+    .post(`${process.env.BACKEND_URL}/rawsql`, {
+      query,
+      db,
+      parameters,
+    })
+    .catch((e) => {
+      console.error(e)
+      throw e
+    })
 }

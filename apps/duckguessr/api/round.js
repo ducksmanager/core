@@ -1,10 +1,6 @@
-import { addAxiosInterceptor } from './axiosApiInterceptor'
-
 const request = require('request').defaults({ encoding: null })
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-
-addAxiosInterceptor()
 
 async function getStartedRound(gameId, finished) {
   return await prisma.rounds.findFirst({

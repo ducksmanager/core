@@ -1,5 +1,5 @@
-const axios = require('axios')
 const { PrismaClient } = require('@prisma/client')
+const { runQuery } = require('../api/runQuery')
 
 const prisma = new PrismaClient()
 const numberOfRounds = 8
@@ -79,7 +79,7 @@ exports.associatePlayer = async (gameId, username, password) => {
     }
   } else {
     const [dmUser] = (
-      await this.runQuery(
+      await runQuery(
         'SELECT ID AS id, username from users where username=? AND password=?',
         'dm',
         [username, password]
@@ -113,29 +113,4 @@ exports.associatePlayer = async (gameId, username, password) => {
   })
 
   return user
-}
-
-exports.runQuery = async (query, db, parameters = []) => {
-  axios.interceptors.request.use((config) => ({
-    ...config,
-    auth: {
-      username: process.env.RAWSQL_USER,
-      password: process.env.RAWSQL_PASS,
-    },
-    headers: {
-      ...config.headers,
-      'x-dm-version': '1.0.0',
-      'Content-Type': 'application/json',
-    },
-  }))
-  return await axios
-    .post(`${process.env.BACKEND_URL}/rawsql`, {
-      query,
-      db,
-      parameters,
-    })
-    .catch((e) => {
-      console.error(e)
-      throw e
-    })
 }

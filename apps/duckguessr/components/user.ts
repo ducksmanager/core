@@ -15,7 +15,8 @@ export const getUser = () => {
   const cookies = getCookies()
   let username = cookies['dm-user'] || cookies['duckguessr-user']
   const password = cookies['dm-pass'] || null
-  const duckguessrId = cookies['duckguessr-id'] || null
+  const duckguessrId: number | null =
+    (cookies['duckguessr-id'] && parseInt(cookies['duckguessr-id'])) || null
   if (username) {
     return {
       duckguessrId,

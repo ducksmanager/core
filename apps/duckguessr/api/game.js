@@ -1,3 +1,5 @@
+import { runQuery } from './runQuery'
+
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
@@ -35,46 +37,41 @@ export default (req, res) => {
             res.end()
             return
           }
-          const authorFields = [
-            'personcode',
-            'personnationality',
-            'personfullname',
-          ]
-          res.writeHeader(200, { 'Content-Type': 'application/json' })
-          res.end(
-            JSON.stringify({
-              ...game,
-              rounds: game.rounds.map((round) => ({
-                ...round,
-                ...Object.keys(round)
-                  .filter((key) => key.indexOf('person') === 0)
-                  .reduce(
-                    (acc, field) => ({
-                      ...acc,
-                      [field]:
-                        round.finished_at && round.finished_at <= Date.now()
-                          ? round[field]
-                          : null,
-                    }),
-                    {}
-                  ),
-              })),
-              authors: game.rounds
-                .map((round) =>
-                  authorFields.reduce(
-                    (author, field) => ({
-                      ...author,
-                      [field]: round[field],
-                    }),
-                    {}
-                  )
-                )
-                .sort(
+          runQuery(
+            `
+              SELECT personcode, fullname AS personfullname, nationalitycountrycode AS personnationality
+              FROM coa.inducks_person
+              WHERE personcode IN ('${game.rounds
+                .map(({ personcode }) => personcode)
+                .join("', '")}')`,
+            'coa'
+          ).then(({ data: personDetails }) => {
+            res.writeHeader(200, { 'Content-Type': 'application/json' })
+            res.end(
+              JSON.stringify({
+                ...game,
+                rounds: game.rounds.map((round) => ({
+                  ...round,
+                  ...Object.keys(round)
+                    .filter((key) => key === 'personcode')
+                    .reduce(
+                      (acc, field) => ({
+                        ...acc,
+                        [field]:
+                          round.finished_at && round.finished_at <= Date.now()
+                            ? round[field]
+                            : null,
+                      }),
+                      {}
+                    ),
+                })),
+                authors: personDetails.sort(
                   ({ personcode: personcode1 }, { personcode: personcode2 }) =>
                     personcode1 < personcode2 ? -1 : 1
                 ),
-            })
-          )
+              })
+            )
+          })
         })
         .catch((e) => {
           throw e
