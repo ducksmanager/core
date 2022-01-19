@@ -32,7 +32,8 @@
             <star-rating
               v-model:rating="author.notation"
               :max-rating="10"
-              @change="updateRating(author)"
+              :star-size="20"
+              @update:rating="updateRating(author)"
             />
           </b-col>
           <b-col lg="2">
@@ -58,28 +59,26 @@
       <b-row v-else>
         <b-col sm="4">
           <nav class="navbar">
-            <div class="collapse navbar-collapse">
-              <ul class="navbar-nav">
-                <b-form-input
-                  v-model="search"
-                  list="search"
-                  :placeholder="$t('Auteur')"
-                />
-                <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
-                  <option v-if="!Object.keys(searchResults).length">
-                    {{ $t('Aucun résultat.') }}
-                  </option>
-                  <option
-                    v-for="(fullName, personCode) in searchResults"
-                    :key="personCode"
-                    :disabled="isAuthorWatched(personCode)"
-                    @click="isAuthorWatched(personCode) ? () => {} : createRating(personCode)"
-                  >
-                    {{ fullName }}
-                  </option>
-                </datalist>
-              </ul>
-            </div>
+            <ul class="navbar-nav">
+              <b-form-input
+                v-model="search"
+                list="search"
+                :placeholder="$t('Auteur')"
+              />
+              <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
+                <option v-if="!Object.keys(searchResults).length">
+                  {{ $t('Aucun résultat.') }}
+                </option>
+                <option
+                  v-for="(fullName, personCode) in searchResults"
+                  :key="personCode"
+                  :disabled="isAuthorWatched(personCode)"
+                  @click="isAuthorWatched(personCode) ? () => {} : createRating(personCode)"
+                >
+                  {{ fullName }}
+                </option>
+              </datalist>
+            </ul>
           </nav>
         </b-col>
       </b-row>
