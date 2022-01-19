@@ -416,7 +416,7 @@ export default {
     z-index: 0;
 
     &.closed {
-      transform: rotate3d(0, 1, 0, -90deg) !important;
+      transform: rotate3d(0, 1, 0, -45deg) !important;
     }
   }
 

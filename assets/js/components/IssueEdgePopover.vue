@@ -90,6 +90,8 @@ export default {
 <style scoped lang="scss">
 span {
   display: inline-block;
+  perspective: 30000px;
+  transform-style: preserve-3d;
 }
 .has-no-edge {
   margin-top: 25px;

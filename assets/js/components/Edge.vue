@@ -39,6 +39,14 @@
         @error="onImageError"
       >
     </div>
+    <img
+      class="cover-peek"
+      src="https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/webusers/webusers/2011/09/fr_mp_0324a_001.jpg"
+      :style="load && imageLoaded ? {
+        width: `272px`,
+        height: `${height}px`,
+      } : {}"
+    >
   </IssueEdgePopover>
 </template>
 
@@ -225,5 +233,30 @@ export default {
     box-shadow: 0 0 15px 15px rgba(255,255,255,0.8);
     z-index: 100;
   }
+
+  + .cover-peek {
+    position: absolute;
+    border: 1px solid black;
+    display: none;
+    transform-origin: left;
+    transform: rotateY(80deg) translateY(20px);
+  }
+
+  &:hover {
+    transform: rotateY(-30deg);
+    transform-origin: right;
+    + .cover-peek {
+      display: inline-block;
+    }
+    &::after {
+      display: none;
+    }
+  }
+
+  &[id="edge-337807"] {
+    //margin-left: 50px;
+  }
 }
+
+
 </style>
