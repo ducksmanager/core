@@ -36,6 +36,7 @@
         "sass-loader": "^12.4.0",
         "timeago.js": "^4.0.2",
         "vue": "^3.1.5",
+        "vue-chart-3": "^3.0.7",
         "vue-context": "^6.0.0",
         "vue-i18n": "^9.1.9",
         "vue-i18n-extract": "^2.0.0",
@@ -53,8 +54,5 @@
         "dev": "encore dev",
         "watch": "NODE_ENV=development encore dev-server --hot",
         "build": "encore production --progress"
-    },
-    "dependencies": {
-        "vue-chart-3": "^3.0.7"
     }
 }

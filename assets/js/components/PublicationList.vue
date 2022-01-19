@@ -83,7 +83,6 @@ import {mapActions, mapState} from "pinia";
 import IssueSearch from "./IssueSearch";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
-import {mapActions} from "pinia";
 import { l10n } from "../stores/l10n";
 
 export default {

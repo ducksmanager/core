@@ -20,7 +20,7 @@
 <script>
 import Collectable from "../layouts/print/Collectable";
 import Classic from "../layouts/print/Classic";
-import {mapActions} from "pinia";
+import {mapState, mapActions} from "pinia";
 import { l10n } from "../stores/l10n";
 
 export default {
@@ -31,6 +31,9 @@ export default {
   },
   props: {
     currentType: {type: String, required: true}
+  },
+  computed: {
+    ...mapState(l10n, ['l10nRoutes']),
   },
   methods: {
     ...mapActions(l10n, ["$r"]),

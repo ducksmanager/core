@@ -75,7 +75,7 @@ import ShortStats from "../../components/ShortStats";
 import LastPurchases from "../../components/LastPurchases";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-import { l10n } from "../stores/l10n";
+import { l10n } from "../../stores/l10n";
 
 export default {
   name: "Manage",

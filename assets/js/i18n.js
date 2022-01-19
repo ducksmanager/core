@@ -15,6 +15,5 @@ export const i18n = createI18n({
   messages: locale === fallbackLocale ? {} : {
     [locale]: require(`../translations/messages.${locale}.json`)
   },
-  globalInjection: true,
-  legacy: false,
+  globalInjection: true
 });

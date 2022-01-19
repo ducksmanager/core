@@ -32,6 +32,8 @@ import Forgot from "./Forgot";
 import Signup from "./Signup";
 import Collection from "./Collection";
 import SwitchLocale from "./SwitchLocale";
+import { mapState } from "pinia";
+import { l10n } from "../stores/l10n";
 
 export default {
   name: "Site",
@@ -61,6 +63,7 @@ export default {
     return this.$attrs;
   },
   computed: {
+    ...mapState(l10n, ['l10nRoutes']),
     attrsWithoutId() {
       const vm = this
       return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'id')
