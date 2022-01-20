@@ -33,11 +33,18 @@ exports.createOrGetPending = async (gameType, datasetName) => {
   }
 
   const roundDataResponse = await prisma.$queryRaw`
-    select personcode, sitecode_url
-    from datasets_entryurls
-    where dataset_id = ${dataset.id}
-    order by rand()
-    limit ${numberOfRounds + 1}
+    SELECT datasets_entryurls.personcode, sitecode_url
+    FROM datasets_entryurls
+    INNER JOIN (
+      SELECT DISTINCT personcode
+      FROM datasets_entryurls
+      WHERE dataset_id = 1
+      ORDER BY RAND()
+    ) random_authors ON random_authors.personcode = datasets_entryurls.personcode
+    WHERE dataset_id = 1
+    GROUP BY datasets_entryurls.personcode
+    ORDER BY RAND()
+    LIMIT ${numberOfRounds + 1}
   `
 
   if (roundDataResponse) {
