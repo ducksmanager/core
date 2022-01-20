@@ -64,11 +64,11 @@ exports.guess = async (playerId, roundId, guess) => {
       score_type_name: 'Correct author',
       score: 300,
     }
-  } else if (guess.personnationality === round.personnationality) {
-    scoreData = {
-      score_type_name: 'Correct nationality',
-      score: 100,
-    }
+    // } else if (guess.personnationality === round.personnationality) {
+    //   scoreData = {
+    //     score_type_name: 'Correct nationality',
+    //     score: 100,
+    //   }
   } else {
     scoreData = {
       score_type_name: 'Wrong author',
