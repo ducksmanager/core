@@ -146,11 +146,8 @@ export default defineComponent({
         }
       }),
       setDefaultAuthorUrl: (idx) => {
-        Vue.set(scoresWithPersonUrls.value, idx, {
-          ...scoresWithPersonUrls.value[idx],
-          personurl:
-            'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg',
-        })
+        scoresWithPersonUrls.value[idx].personurl =
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
       },
       imageUrl: ({ sitecode_url: url }) => `${cloudinaryUrlRoot}/${url}`,
     }
