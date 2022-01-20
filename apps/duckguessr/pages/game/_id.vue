@@ -309,4 +309,8 @@ export default defineComponent({
     height: 100%;
   }
 }
+
+.progress {
+  color: black;
+}
 </style>
