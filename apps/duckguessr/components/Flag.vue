@@ -1,5 +1,5 @@
 <template>
-  <b-img :src="url" />
+  <b-img :class="{ invisible: !isShown }" :src="url" @error="isShown = false" />
 </template>
 
 <script setup lang="ts">
@@ -12,6 +12,7 @@ switch (country) {
     fixedCountry = 'gb'
 }
 const url = `https://flagcdn.com/w20/${fixedCountry}.png`
+const isShown = true
 </script>
 
 <style scoped></style>
