@@ -1,7 +1,9 @@
 <template>
   <b-progress :variant="progressbarVariant">
     <div class="position-absolute pt-2 w-100">
-      Guess the author! ({{ remainingTime }})
+      Guess the author!<template v-if="remainingTime">
+        ({{ remainingTime }})
+      </template>
     </div>
     <b-progress-bar animated :value="remainingTime * (100 / availableTime)" />
   </b-progress>
