@@ -55,6 +55,7 @@ exports.guess = async (playerId, roundId, guess) => {
     console.error(
       `Player ${global.cachedUsers[playerId].username} already guessed round ${round.id}`
     )
+    return
   }
 
   let scoreData
