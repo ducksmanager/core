@@ -54,7 +54,7 @@
         </b-row>
       </b-col>
       <b-col cols="2" class="border vh-100 overflow-auto">
-        <h3>Round {{ currentRoundIndex }}</h3>
+        <h3>Round {{ currentRoundNumber }}</h3>
         <template v-for="score in currentRoundScores">
           <b-alert
             :key="`score-${score.username}`"
@@ -123,22 +123,23 @@ export default defineComponent({
 
     const gameIsFinished = computed(() => !nextRoundStartDate.value)
 
-    const currentRoundIndex = computed((): number | null => {
-      const lastUnfinishedRoundIndex = [...(game.value?.rounds || [])]
-        .reverse()
-        .findIndex(
-          ({ started_at: startedAt }) =>
-            startedAt && new Date(startedAt).getTime() < now.value
-        )
-      return lastUnfinishedRoundIndex === -1
-        ? 0
-        : (game.value?.rounds || []).length - lastUnfinishedRoundIndex
-    })
+    const currentRoundNumber = computed(
+      (): number | null =>
+        [...(game.value?.rounds || [])]
+          .reverse()
+          .find(
+            ({ started_at: startedAt }) =>
+              startedAt && new Date(startedAt).getTime() < now.value
+          )?.round_number || null
+    )
 
     const currentRound = computed((): roundWithScores | null =>
-      currentRoundIndex.value == null
+      currentRoundNumber.value == null
         ? null
-        : (game.value?.rounds || [])[currentRoundIndex.value]
+        : (game.value?.rounds || []).find(
+            ({ round_number: roundNumber }) =>
+              roundNumber === currentRoundNumber.value
+          ) || null
     )
 
     const availableTime = computed(() =>
@@ -165,9 +166,12 @@ export default defineComponent({
 
     const nextRoundStartDate = computed(() => {
       const nextRound =
-        currentRoundIndex.value == null
+        currentRoundNumber.value == null
           ? null
-          : game.value?.rounds[currentRoundIndex.value]
+          : game.value?.rounds.find(
+              ({ round_number: roundNumber }) =>
+                roundNumber === currentRoundNumber.value! + 1
+            ) || null
       return nextRound?.started_at ? new Date(nextRound?.started_at) : null
     })
 
@@ -192,7 +196,7 @@ export default defineComponent({
             gameSocket.on('playerGuessed', (data: any) => {
               currentRoundScores.value = [
                 ...currentRoundScores.value.filter(
-                  ({ round_id: roundNumber }) =>
+                  ({ round_number: roundNumber }) =>
                     roundNumber === currentRound.round_number
                 ),
                 data,
@@ -244,14 +248,13 @@ export default defineComponent({
       chosenAuthor,
       hasUrlLoaded,
       currentRound,
-      currentRoundIndex,
+      currentRoundNumber,
       currentRoundScores,
       currentRoundPlayerScoreTypeName: computed(
         () =>
           currentRoundScores.value.find(
-            ({ player_id: playerId, round_id: roundNumber }) =>
-              duckguessrId === playerId &&
-              roundNumber === currentRound.value!.round_number
+            ({ player_id: playerId, round_id: roundId }) =>
+              duckguessrId === playerId && roundId === currentRound.value!.id
           )?.score_type_name || null
       ),
       nextRoundStartDate,
