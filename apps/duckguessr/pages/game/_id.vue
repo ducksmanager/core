@@ -40,7 +40,6 @@
             v-for="(author, idx) in game.authors"
             :key="`author-${idx}`"
             :author="author"
-            :selected="author === chosenAuthor"
             :selectable="
               !game.rounds
                 .map(({ personcode }) => personcode)
@@ -196,8 +195,7 @@ export default defineComponent({
             gameSocket.on('playerGuessed', (data: any) => {
               currentRoundScores.value = [
                 ...currentRoundScores.value.filter(
-                  ({ round_number: roundNumber }) =>
-                    roundNumber === currentRound.round_number
+                  ({ round_id: roundId }) => roundId === currentRound.id
                 ),
                 data,
               ]
@@ -217,6 +215,7 @@ export default defineComponent({
           if (!chosenAuthor.value) {
             validateGuess()
           }
+          chosenAuthor.value = null
           setTimeout(async () => {
             game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
             currentRoundScores.value =
@@ -230,7 +229,6 @@ export default defineComponent({
       gameSocket!.emit('guess', { username }, currentRound.value!.id, {
         personcode: chosenAuthor.value?.personcode ?? null,
       })
-      chosenAuthor.value = null
     }
 
     onMounted(async () => {

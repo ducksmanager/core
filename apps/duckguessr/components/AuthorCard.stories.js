@@ -15,7 +15,6 @@ const Template = (args) => ({
 export const Default = Template.bind({})
 Default.args = {
   selectable: true,
-  selected: true,
   author: {
     personcode: 'DR',
     personfullname: 'Don Rosa',

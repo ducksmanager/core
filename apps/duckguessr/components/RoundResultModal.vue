@@ -2,9 +2,6 @@
   <b-modal visible :body-bg-variant="status" hide-footer hide-header-close>
     <template #modal-title> Round {{ roundNumber }} </template>
     <div v-if="status === 'success'">Correct!</div>
-    <div v-else-if="status === 'warning'">
-      Incorrect, but you got the author's country correct.
-    </div>
     <div v-else>Incorrect</div>
     <template v-if="timeBeforeNextRound">
       <div>Round {{ roundNumber + 1 }} starts in</div>

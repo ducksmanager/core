@@ -3,7 +3,6 @@
     cols="4"
     :class="{
       author: true,
-      selected,
       selectable,
       'p-1': true,
     }"
@@ -37,10 +36,6 @@ export default defineComponent({
       required: true,
     },
     selectable: {
-      type: Boolean,
-      required: true,
-    },
-    selected: {
       type: Boolean,
       required: true,
     },
@@ -92,10 +87,6 @@ export default defineComponent({
 
     &:hover {
       outline: 1px solid lightgray;
-    }
-
-    &.selected {
-      outline: 1px solid black;
     }
 
     .author-image {
