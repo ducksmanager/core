@@ -29,15 +29,10 @@
       <b-col cols="5" class="h-100">
         <b-row align-v="center" style="height: 50px">
           <b-col class="text-center">
-            <b-progress :variant="progressbarVariant">
-              <div class="position-absolute pt-2 w-100">
-                Guess the author! ({{ remainingTime }})
-              </div>
-              <b-progress-bar
-                animated
-                :value="remainingTime * (100 / availableTime)"
-              />
-            </b-progress>
+            <progress-bar
+              :available-time="availableTime"
+              :remaining-time="remainingTime"
+            />
           </b-col>
         </b-row>
         <b-row id="author-list">
@@ -88,6 +83,7 @@ import {
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import AuthorCard from '~/components/AuthorCard.vue'
+import ProgressBar from '~/components/ProgressBar.vue'
 import { getUser } from '@/components/user'
 
 interface Author {
@@ -107,7 +103,7 @@ interface gameWithRounds extends Index.games {
 
 export default defineComponent({
   name: 'Game',
-  components: { AuthorCard },
+  components: { AuthorCard, ProgressBar },
   setup() {
     const { $axios } = useContext()
     const { duckguessrId, username } = getUser()
@@ -165,10 +161,6 @@ export default defineComponent({
                 1000
             )
           )
-    )
-
-    const remainingTimePercentage = computed(
-      () => remainingTime.value * (100 / availableTime.value)
     )
 
     const nextRoundStartDate = computed(() => {
@@ -249,7 +241,6 @@ export default defineComponent({
       gameIsFinished,
       availableTime,
       remainingTime,
-      remainingTimePercentage,
       chosenAuthor,
       hasUrlLoaded,
       currentRound,
@@ -270,15 +261,6 @@ export default defineComponent({
           currentRound.value &&
           `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.sitecode_url}`
       ),
-      progressbarVariant: computed(() => {
-        if (remainingTimePercentage.value <= 20) {
-          return 'danger'
-        }
-        if (remainingTimePercentage.value <= 40) {
-          return 'warning'
-        }
-        return 'success'
-      }),
 
       scoreTypeNameToVariant(scoreTypeName: string) {
         switch (scoreTypeName) {
