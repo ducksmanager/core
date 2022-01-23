@@ -82,26 +82,26 @@ export default {
       if (this.currentLevel === 3) {
         switch (this.contribution.toUpperCase()) {
           case 'CREATEUR':
-            textTemplate = this.$t("Vous avez {0} points Concepteur de tranches")
+            textTemplate = "Vous avez {0} points Concepteur de tranches"
           break;
             case 'PHOTOGRAPHE':
-            textTemplate = this.$t("Vous avez {0} points Photographe de tranches")
+            textTemplate = "Vous avez {0} points Photographe de tranches"
           break;
             case 'DUCKHUNTER':
-            textTemplate = this.$t("Vous avez signalé {0} bouquineries")
+            textTemplate = "Vous avez signalé {0} bouquineries"
         }
         return this.$t(textTemplate, [this.userLevelPoints])
       }
       else {
         switch (this.contribution.toUpperCase()) {
           case 'CREATEUR':
-            textTemplate = this.$t("Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !")
+            textTemplate = "Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !"
             break;
           case 'PHOTOGRAPHE':
-            textTemplate = this.$t("Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !")
+            textTemplate = "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !"
             break;
           case 'DUCKHUNTER':
-            textTemplate = this.$t("Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!")
+            textTemplate = "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!"
         }
         return this.$t(textTemplate, [
           this.userLevelPoints,
