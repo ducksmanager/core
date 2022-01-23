@@ -69,7 +69,7 @@ Encore
     config.corejs = 3;
   })
 
-  .enableEslintLoader(options => {
+  .enableEslintPlugin(options => {
     delete options.parser;
   })
   .configureLoaderRule('eslint', loader => {
