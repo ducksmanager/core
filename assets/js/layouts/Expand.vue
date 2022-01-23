@@ -19,8 +19,15 @@
         v-if="countryNamesWithAllCountriesOption"
         v-model="countryCode"
         size="sm"
-        :options="countryNamesWithAllCountriesOption"
-      />
+      >
+        <b-form-select-option
+          v-for="(text, value) in countryNamesWithAllCountriesOption"
+          :key="value"
+          :value="value"
+        >
+          {{ text }}
+        </b-form-select-option>>
+      </b-select>
       <SuggestionList
         :countrycode="countryCode"
         :since-last-visit="false"

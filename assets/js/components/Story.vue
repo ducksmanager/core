@@ -7,7 +7,7 @@
     >{{ storyTypeText }}</b-badge>
     {{ title || $t("Sans titre") }}<template v-if="part"> - {{ $t('partie') }} {{ part }}</template>
     <small>{{ comment }}</small>
-    <a
+    &nbsp;<a
       v-if="!noLink"
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
@@ -25,7 +25,6 @@ export default {
   components: {
     BBadge
   },
-
 
   props: {
     storycode: {
