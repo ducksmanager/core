@@ -36,23 +36,19 @@ export default {
     const labels = Object.values(props.watchedAuthorsStoryCount).map(({fullname: fullName}) => fullName);
     emit('change-dimension', 'width', 250 + 50 * labels.length);
 
-    let possessedStories,
-        missingStories;
+    let possessedStories= Object.values(props.watchedAuthorsStoryCount)
+      .map(({storycount: storyCount, missingstorycount: missingStoryCount}) =>
+        storyCount - missingStoryCount
+      ),
+      missingStories= Object.values(props.watchedAuthorsStoryCount)
+        .map(({missingstorycount: missingStoryCount}) =>
+          missingStoryCount
+        );
 
     if (props.unit === 'percentage') {
       possessedStories = possessedStories.map((possessedCount, key) =>
         Math.round(possessedCount * (100 / (possessedCount + missingStories[key]))))
       missingStories = possessedStories.map(possessedCount => 100 - possessedCount)
-    }
-    else {
-      possessedStories = Object.values(props.watchedAuthorsStoryCount)
-        .map(({storycount: storyCount, missingstorycount: missingStoryCount}) =>
-          storyCount - missingStoryCount
-        );
-      missingStories = Object.values(props.watchedAuthorsStoryCount)
-        .map(({missingstorycount: missingStoryCount}) =>
-          missingStoryCount
-        );
     }
 
     const values = [
