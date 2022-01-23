@@ -131,7 +131,6 @@ import {BAlert, BPagination, BTable} from "bootstrap-vue-3";
 import { users } from "../../stores/users";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-import {l10n} from "../../stores/l10n";
 
 export default {
   name: "GeneralStats",
@@ -146,16 +145,15 @@ export default {
   }),
 
   computed: {
-    ...mapActions(l10n, ['ucFirst']),
     ...mapState(users, ["count"]),
     ...mapState(coa, ["publicationNames"]),
     ...mapState(collection, ["totalPerPublication", "quotedIssues", "quotationSum"]),
     quotationFields() {
       return [
-        { key: "issue", label: this.ucFirst(this.$t("numéro")) },
-        { key: "condition", label: this.ucFirst(this.$t("Etat")) },
-        { key: "estimation", label: this.ucFirst(this.$t("Estimation")) },
-        { key: "estimationGivenCondition", label: this.ucFirst(this.$t("Estimation ajustée de l'état")) }
+        { key: "issue", label: this.$t("Numéro") },
+        { key: "condition", label: this.$t("Etat") },
+        { key: "estimation", label: this.$t("Estimation") },
+        { key: "estimationGivenCondition", label: this.$t("Estimation ajustée de l'état") }
       ];
     }
   },

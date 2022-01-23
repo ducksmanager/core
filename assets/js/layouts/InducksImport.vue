@@ -123,7 +123,7 @@
                 v-for="issue in issues"
                 :key="issue"
               >
-                {{ ucFirst($t("numéro")) }} {{ issue }}
+                {{ $t("Numéro") }} {{ issue }}
               </div>
             </template>
           </Accordion>
@@ -332,7 +332,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(l10n, ["$r", 'ucFirst']),
+    ...mapActions(l10n, ["$r"]),
     ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers", "fetchIssueCodesDetails"]),
     async processRawData() {
       const vm = this;

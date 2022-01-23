@@ -259,6 +259,7 @@
   "Numéro en mauvais état : 30% de la cote": "Issue in bad condition: 30% of the original quotation",
   "Numéro en moyen état : 70% de la cote": "Issue in not-so-good condition: 70% of the original quotation",
   "{count} numéro sélectionné|{count} numéros sélectionnés": "{count} selected issue|{count} selected issues",
+  "Numéro": "Issue",
   "numéro | numéros": "issue | issues",
   "numéro unique | numéros uniques": "unique issue | unique issues",
   "Numéros déjà dans la collection": "Issues that are already in your collection",

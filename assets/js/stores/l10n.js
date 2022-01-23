@@ -36,8 +36,6 @@ export const l10n = defineStore('l10n', {
       }
     },
 
-    ucFirst: (string) => string[0].toUpperCase() + string.substr(1),
-
     $r(route) {
       const routes = this.l10nRoutes
       if (!routes) {
