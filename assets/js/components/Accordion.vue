@@ -6,9 +6,9 @@
     header-text-variant="dark"
   >
     <template #header>
-      <!--      <div v-b-toggle="id">-->
-      <slot name="header" />
-      <!--      </div>-->
+      <div v-b-toggle="id">
+        <slot name="header" />
+      </div>
     </template>
     <b-collapse
       :id="id"
@@ -62,6 +62,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+:deep(.card-header) {
+  cursor: pointer;
+}
 :deep(a) {
   color: grey;
 }
