@@ -102,9 +102,9 @@ export default {
 
           const maxPerDate = Object.keys(accDate).reduce((acc, date) => Math.max(acc, accDate[date]), 0)
 
-          this.$emit('change-dimension', 'height', Math.min(
+          this.$emit('change-dimension', 'height', Math.max(
             document.body.offsetHeight,
-            Math.max(300, maxPerDate / 4)
+            maxPerDate / 4
           ));
 
           this.$emit('change-dimension', 'width', 250 + 30 * vm.labels.length)
@@ -140,7 +140,7 @@ export default {
             },
             responsiveAnimationDuration: 0,
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
             scales: {
               x: {
                 stacked: true,
