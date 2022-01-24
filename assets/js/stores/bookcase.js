@@ -37,7 +37,10 @@ export const bookcase = defineStore('bookcase', {
 
   actions: {
     addLoadedSprite({spritePath, css}) {
-      Vue.set(this.loadedSprites, spritePath, css)
+      this.loadedSprites = {
+        ...this.loadedSprites,
+        [spritePath]: css
+      }
     },
     setBookcaseOrder(bookcaseOrder) {
       this.bookcaseOrder = bookcaseOrder

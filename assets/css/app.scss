@@ -14,12 +14,20 @@ a {
     border-bottom: none !important;
   }
 
-  &:hover, &:focus {
+  &:hover, &:focus, &:active {
     color: darkgrey;
     text-decoration: none;
     outline: 0;
     border-bottom: 2px solid darkgray;
   }
+
+  &.nav-link.active {
+    color: black !important;
+  }
+}
+
+.dropdown ul li a {
+  color: black !important;
 }
 
 .alert {

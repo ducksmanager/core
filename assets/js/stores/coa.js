@@ -189,7 +189,7 @@ export const coa = defineStore('coa', {
       if (!this.issueDetails[issueCode]) {
         let issueDetails = (await coaApi.get(`${URL_PREFIX_URLS + publicationCode}/${issueNumber}`)).data;
 
-        Vue.set(this.issueDetails, issueCode, addPartInfo(issueDetails));
+        this.issueDetails = {...this.issueDetails, [issueCode]: addPartInfo(issueDetails)};
       }
     },
 

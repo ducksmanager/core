@@ -50,7 +50,6 @@
 <script>
 import Medal from "./Medal";
 import {BButton, BPopover} from "bootstrap-vue-3";
-import {mapActions} from "pinia";
 import { l10n } from "../stores/l10n";
 
 export default {
@@ -68,7 +67,7 @@ export default {
 
   setup(props) {
     return {
-    ...mapActions(l10n, ["$r"]),
+      $r: l10n().$r,
       elementId: `user-${props.id}-${Math.random()}`,
       bookcaseShared: true
     }

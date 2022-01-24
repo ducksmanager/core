@@ -1,10 +1,5 @@
 <template>
-  <vue-context
-    ref="menu"
-    :close-on-click="false"
-    :close-on-scroll="false"
-    @close="$emit('close')"
-  >
+  <v-contextmenu-group>
     <li class="header">
       {{ $tc("{count} numéro sélectionné|{count} numéros sélectionnés", selectedIssues.length) }}
     </li>
@@ -46,49 +41,55 @@
               @click.stop.prevent="editingCopies.splice(copyIndex, 1)"
             />
           </template>
-          <ul class="position-static border-0 shadow-none p-0">
-            <li class="menu-separator">
-              {{ $t("Etat") }}
-            </li>
-            <li
+          <v-contextmenu-group :title="$t('Etat')">
+            <v-contextmenu-item
               v-for="(text, id) in conditionStates"
               :key="`condition-${id}`"
-              :class="{item: true, clickable: true, selected: copy.condition === id}"
+              :hide-on-click="false"
+              :class="{clickable: true, selected: copy.condition === id}"
               @click="copy.condition = id"
             >
               <Condition
                 :value="id"
               />&nbsp;{{ text }}
-            </li>
-            <li class="menu-separator">
-              {{ $t("Date d'achat") }}
-            </li>
-            <li
+            </v-contextmenu-item>
+            <v-contextmenu-divider />
+          </v-contextmenu-group>
+          <v-contextmenu-group :title="$t('Date d\'achat')">
+            <template
               v-for="(purchaseStateText, purchaseStateId) in purchaseStates"
               :key="`copy-${copyIndex}-purchase-state-${purchaseStateId}`"
-              :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
-              @click="copy.purchaseId = purchaseStateId"
             >
-              <b-icon
-                v-if="purchaseStateId === 'link'"
-                icon="calendar"
-              />
-              <b-icon
-                v-if="purchaseStateId === 'unlink'"
-                icon="calendar-x"
-              />
-              {{ purchaseStateText }}
-              <ul
-                v-if="purchaseStateId === 'link'"
-                class="v-context"
+              <v-contextmenu-item
+                v-if="purchaseStateId !== 'link'"
+                :hide-on-click="false"
+                :class="{clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
+                @click="copy.purchaseId = purchaseStateId"
               >
+                <b-icon
+                  v-if="purchaseStateId === 'unlink'"
+                  icon="calendar-x"
+                />
+                {{ purchaseStateText }}
+              </v-contextmenu-item>
+              <v-contextmenu-submenu
+                v-else
+                :title="$t(`Date d'achat`)"
+              >
+                <template #title>
+                  <b-icon
+                    v-if="purchaseStateId === 'link'"
+                    icon="calendar"
+                  />
+                  {{ purchaseStateText }}
+                </template>
                 <li class="menu-separator">
-                  <h5
+                  <v-contextmenu-item
                     v-if="!copy.newPurchaseContext"
                     @click="copy.newPurchaseContext = !copy.newPurchaseContext"
                   >
                     {{ $t("Nouvelle date d'achat...") }}
-                  </h5>
+                  </v-contextmenu-item>
                   <template v-else>
                     <input
                       v-model="copy.newPurchaseDescription"
@@ -128,28 +129,30 @@
                     </b-button>
                   </template>
                 </li>
-                <li
-                  v-for="{id: purchaseId, date, description} in purchases"
-                  :key="`copy-${copyIndex}-purchase-${purchaseId}`"
-                  :class="{item: true, clickable: true, selected: copy.purchaseId === purchaseId, 'purchase-date': true}"
-                  class="item purchase-date"
-                  @click.stop="copy.purchaseId = purchaseId"
-                >
-                  <b>{{ description }}</b><br>{{ date }}
-                  <b-button
-                    class="delete-purchase btn-sm"
-                    :title="$t('Supprimer')"
-                    @click="
-                      $emit('delete-purchase', {
-                        id: purchaseId,
-                      })"
+                <v-contextmenu-group :title="$t('Date d\'achat')">
+                  <v-contextmenu-item
+                    v-for="{id: purchaseId, date, description} in purchases"
+                    :key="`copy-${copyIndex}-purchase-${purchaseId}`"
+                    :hide-on-click="false"
+                    :class="{clickable: true, selected: copy.purchaseId === purchaseId, 'purchase-date': true}"
+                    @click.stop="copy.purchaseId = purchaseId"
                   >
-                    <b-icon icon="trash" />
-                  </b-button>
-                </li>
-              </ul>
-            </li>
-          </ul>
+                    {{ description }}<br><small>{{ date }}</small>
+                    <b-button
+                      class="delete-purchase btn-sm"
+                      :title="$t('Supprimer')"
+                      @click="
+                        $emit('delete-purchase', {
+                          id: purchaseId,
+                        })"
+                    >
+                      <b-icon icon="trash" />
+                    </b-button>
+                  </v-contextmenu-item>
+                </v-contextmenu-group>
+              </v-contextmenu-submenu>
+            </template>
+          </v-contextmenu-group>
         </b-tab>
         <template
           v-if="!hasMaxCopies"
@@ -180,19 +183,30 @@
         {{ $t("Enregistrer les changements") }}
       </li>
     </template>
-  </vue-context>
+  </v-contextmenu-group>
 </template>
 
 <script>
-import VueContext from "vue-context";
+import "v-contextmenu/dist/themes/default.css";
+
 import conditionMixin from "../mixins/conditionMixin";
 import Condition from "./Condition";
 import {BAlert, BIcon, BNavItem, BTab, BTabs} from "bootstrap-vue-3";
+import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu, ContextmenuDivider, ContextmenuGroup } from "v-contextmenu";
+import {mapActions} from "pinia";
+import {l10n} from "../stores/l10n";
 
 export default {
   name: "ContextMenu",
+  directives: {
+    'v-contextmenu': directive,
+  },
   components: {
-    VueContext,
+    [Contextmenu.name]: Contextmenu,
+    [ContextmenuItem.name]: ContextmenuItem,
+    [ContextmenuSubmenu.name]: ContextmenuSubmenu,
+    [ContextmenuDivider.name]: ContextmenuDivider,
+    [ContextmenuGroup.name]: ContextmenuGroup,
     Condition,
     BAlert,
     BTabs,BTab,BIcon,BNavItem
@@ -276,6 +290,10 @@ export default {
   },
 
   methods: {
+    ...mapActions(l10n, ["$r"]),
+    test() {
+      console.log('test')
+    },
     updateEditingCopies() {
       if (this.selectedIssues.length === 1) {
         if (this.copies.length) {
@@ -322,9 +340,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.v-context {
-  padding: 0;
+<style lang="scss">
+.v-contextmenu-inner {
+  &, li, .v-contextmenu-group__menus {
+    padding: 0 !important;
+  }
 
   :deep(.copies-tabs) {
     position: initial;
@@ -333,9 +353,12 @@ export default {
     padding-top: 0;
   }
 
-  li {
-    padding: 0 12px;
+  .nav-item:not(.disabled) .nav-link {
+    color: #212529 !important;
+    cursor: pointer;
+  }
 
+  li {
     &.disabled {
       a {
         background: initial;
@@ -387,12 +410,13 @@ export default {
       padding: .2em;
     }
 
-    &.item {
+    .v-contextmenu-item {
       display: flex;
       align-items: center;
       color: black;
       line-height: 25px;
       background-position: left center;
+      padding: 0 12px !important;
 
       &.selected {
         background-color: #a52a2a;
@@ -411,27 +435,18 @@ export default {
       }
 
       &.purchase-date {
+        align-items: start;
+        justify-content: center;
         flex-direction: column;
         background-repeat: no-repeat;
         background-size: 12px;
         background-position-x: 10px;
-        line-height: 15px;
+        line-height: 20px;
 
         .delete-purchase {
           position: absolute;
           right: 0;
           top: calc(50% - 11px);
-        }
-      }
-
-      &.v-context__sub {
-        .item {
-          line-height: 15px;
-          padding-top: 10px;
-
-          &:hover {
-            color: white;
-          }
         }
       }
 

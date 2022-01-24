@@ -84,90 +84,79 @@
           :issue-number="currentIssueOpened.issueNumber"
           @close-book="currentIssueOpened = null"
         />
-        <div
-          v-for="({issueNumber, title, userCopies}, idx) in filteredIssues"
-          :key="issueNumber"
-          :class="{
-            issue: true,
-            [`issue-${userCopies.length ? 'possessed' : 'missing'}`]: true,
-            preselected: preselected.includes(issueNumber),
-            selected: selected.includes(issueNumber)
-          }"
-          :name="issueNumber"
-          @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = idx"
-          @mouseup.self.left="updateSelected"
-          @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : idx"
-        >
-          <span>
-            <a :name="issueNumber" />
-            <b-icon
-              :id="`issue-details-${issueNumber}`"
-              icon="eye-fill"
-              :class="{'mx-2': true, [`can-show-book-${hoveredIssueHasCover}`]: true}"
-              :alt="$t('Voir')"
-              @mouseover="hoveredIssueNumber=issueNumber"
-              @mouseout="hoveredIssueNumber=null;hoveredIssueHasCover=undefined"
+        <div v-contextmenu:contextmenu>
+          <div
+            v-for="({issueNumber, title, userCopies}, idx) in filteredIssues"
+            :key="issueNumber"
+            :class="{
+              issue: true,
+              [`issue-${userCopies.length ? 'possessed' : 'missing'}`]: true,
+              preselected: preselected.includes(issueNumber),
+              selected: selected.includes(issueNumber)
+            }"
+            :name="issueNumber"
+            @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = idx"
+            @mouseup.self.left="updateSelected"
+            @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : idx"
+          >
+            <span>
+              <a :name="issueNumber" />
+              <b-icon
+                :id="`issue-details-${issueNumber}`"
+                icon="eye-fill"
+                :class="{'mx-2': true, [`can-show-book-${hoveredIssueHasCover}`]: true}"
+                :alt="$t('Voir')"
+                @mouseover="hoveredIssueNumber=issueNumber"
+                @mouseout="hoveredIssueNumber=null;hoveredIssueHasCover=undefined"
               @click.prevent="currentIssueOpened = hoveredIssueHasCover ? {publicationcode, issueNumber}: null"
-            />
-            <span
-              class="issue-text"
-            >
-              {{ $t("n°") }}{{ issueNumber }}
-              <span class="issue-title">{{ title }}</span>
-            </span>
-          </span>
-          <div class="issue-details-wrapper">
-            <div class="issue-copies">
-              <div
-                v-for="({condition, purchaseId}, copyIndex) in userCopies"
-                :key="`${issueNumber}-copy-${copyIndex}`"
-                class="issue-copy"
+              />
+              <span
+                class="issue-text"
               >
-                <BIcon
-                  v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
-                  v-once
-                  class="issue-purchase-date"
-                  :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`"
-                />
-                <Condition
-                  v-if="condition"
-                  :publicationcode="publicationcode"
-                  :issuenumber="issueNumber"
-                  :value="condition"
-                />
+                {{ $t("n°") }}{{ issueNumber }}
+                <span class="issue-title">{{ title }}</span>
+              </span>
+            </span>
+            <div class="issue-details-wrapper">
+              <div class="issue-copies">
+                <div
+                  v-for="({condition, purchaseId}, copyIndex) in userCopies"
+                  :key="`${issueNumber}-copy-${copyIndex}`"
+                  class="issue-copy"
+                >
+                  <BIcon
+                    v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
+                    v-once
+                    class="issue-purchase-date"
+                    :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`"
+                  />
+                  <Condition
+                    v-if="condition"
+                    :publicationcode="publicationcode"
+                    :issuenumber="issueNumber"
+                    :value="condition"
+                  />
+                </div>
+              </div>
+              <div class="issue-check">
+                <input
+                  type="checkbox"
+                  disabled
+                  :checked="selected.includes(issueNumber)"
+                  @click.prevent="false"
+                >
               </div>
             </div>
-            <div class="issue-check">
-              <input
-                type="checkbox"
-                disabled
-                :checked="selected.includes(issueNumber)"
-                @click.prevent="false"
-              >
-            </div>
           </div>
+          <IssueDetailsPopover
+            v-if="hoveredIssueNumber"
+            :publication-code="publicationcode"
+            :issue-number="hoveredIssueNumber"
+            placement="right"
+            @cover-loaded="hoveredIssueHasCover = $event"
+          />
         </div>
-        <IssueDetailsPopover
-          v-if="hoveredIssueNumber"
-          :publication-code="publicationcode"
-          :issue-number="hoveredIssueNumber"
-          placement="right"
-          @cover-loaded="hoveredIssueHasCover = $event"
-        />
       </div>
-      <ContextMenu
-        v-if="purchases"
-        ref="contextMenu"
-        :key="contextMenuKey"
-        :publication-code="publicationcode"
-        :selected-issues="selected"
-        :copies="selectedIssuesCopies"
-        :purchases="purchases"
-        @update-issues="updateIssues"
-        @create-purchase="createPurchase"
-        @delete-purchase="deletePurchase"
-        @close="contextMenuKey = `context-menu-${Math.random()}`"
-      />
     </div>
     <div v-else-if="loading">
       {{ $t("Chargement...") }}
@@ -204,12 +193,29 @@
       </div>
     </b-alert>
   </div>
+
+  <v-contextmenu
+    ref="contextmenu"
+  >
+    <ContextMenu
+      v-if="purchases"
+      ref="contextMenu"
+      :key="contextMenuKey"
+      :publication-code="publicationcode"
+      :selected-issues="selected"
+      :copies="selectedIssuesCopies"
+      :purchases="purchases"
+      @update-issues="updateIssues"
+      @create-purchase="createPurchase"
+      @delete-purchase="deletePurchase"
+      @close="contextMenuKey = `context-menu-${Math.random()}`"
+    />
+  </v-contextmenu>
 </template>
 
 <script>
 import { mapActions, mapState } from "pinia";
 import ContextMenu from "./ContextMenu";
-import "vue-context/src/sass/vue-context.scss";
 import axios from "axios";
 import conditionMixin from "../mixins/conditionMixin";
 import collectionMixin from "../mixins/collectionMixin";
@@ -220,10 +226,16 @@ import {BAlert, BIcon} from "bootstrap-vue-3";
 import Publication from "./Publication";
 import { collection } from "../stores/collection";
 import { coa } from "../stores/coa";
+import {Contextmenu, ContextmenuItem, directive} from "v-contextmenu";
 
 export default {
   name: "IssueList",
+  directives: {
+    'contextmenu': directive,
+  },
   components: {
+    [Contextmenu.name]: Contextmenu,
+    [ContextmenuItem.name]: ContextmenuItem,
     Publication,
     Condition,
     Book,

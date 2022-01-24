@@ -106,8 +106,4 @@ Encore
 //.addEntry('admin', './assets/js/admin.js')
 ;
 
-let config = Encore.getWebpackConfig();
-config.resolve.alias = {
-  vue: '@vue/compat'
-};
-module.exports = config;
+module.exports = Encore.getWebpackConfig();

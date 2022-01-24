@@ -19,7 +19,7 @@
       <i><a :href="$r('/bookstores')">{{ event.name }}</a></i>
     </template>
     <template v-if="event.type === 'collection_update'">
-      {{ $t("a ajouté") }}
+      &nbsp;{{ $t("a ajouté") }}
       <Issue
         v-if="publicationNames[event.publicationCode]"
         :publicationname="publicationNames[event.publicationCode]"
