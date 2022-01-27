@@ -1,6 +1,6 @@
 <template>
   <b-container
-    v-if="!game || (!currentRound && !gameIsFinished)"
+    v-if="!game || (!currentRoundNumber && !gameIsFinished)"
     class="text-center"
   >
     Loading...
@@ -18,8 +18,9 @@
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
       v-if="(chosenAuthor || remainingTime === 0) && nextRoundStartDate"
-      :status="scoreTypeNameToVariant(currentRoundPlayerScoreTypeName)"
-      :round-number="currentRound.round_number"
+      :status="scoreToVariant(currentRoundPlayerScore)"
+      :correct-answer="scoreToVariant.answer"
+      :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
     />
     <b-row>
@@ -58,7 +59,7 @@
           <b-alert
             :key="`score-${score.username}`"
             show
-            :variant="scoreTypeNameToVariant(score.score_type_name)"
+            :variant="scoreToVariant(score)"
           >
             {{ score.username }}: {{ score.score_type_name }}
           </b-alert>
@@ -84,20 +85,10 @@ import { io, Socket } from 'socket.io-client'
 import AuthorCard from '~/components/AuthorCard.vue'
 import ProgressBar from '~/components/ProgressBar.vue'
 import { getUser } from '@/components/user'
-
-interface Author {
-  personnationality: string
-  personcode: string
-  personfullname: string
-}
-
-interface roundWithScores extends Index.rounds {
-  // eslint-disable-next-line camelcase
-  round_scores: Array<Index.round_scores>
-}
+import { roundWithScoresAndPerson } from '~/types/roundWithScoresAndPerson'
 
 interface gameWithRounds extends Index.games {
-  rounds: Array<roundWithScores>
+  rounds: Array<roundWithScoresAndPerson>
 }
 
 export default defineComponent({
@@ -108,12 +99,11 @@ export default defineComponent({
     const { duckguessrId, username } = getUser()
     const route = useRoute()
 
-    const chosenAuthor = ref(null as Author | null)
+    const chosenAuthor = ref(null as String | null)
 
     const game = ref(null as gameWithRounds | null)
     let gameSocket: Socket | null = null
 
-    // eslint-disable-next-line camelcase
     const currentRoundScores = ref([] as Array<Index.round_scores>)
 
     const hasUrlLoaded = ref(false as boolean)
@@ -132,13 +122,22 @@ export default defineComponent({
           )?.round_number || null
     )
 
-    const currentRound = computed((): roundWithScores | null =>
-      currentRoundNumber.value == null
+    const getRound = (
+      searchedRoundNumber: number | null
+    ): roundWithScoresAndPerson | null =>
+      searchedRoundNumber == null
         ? null
         : (game.value?.rounds || []).find(
             ({ round_number: roundNumber }) =>
-              roundNumber === currentRoundNumber.value
+              roundNumber === searchedRoundNumber
           ) || null
+
+    const previousRound = computed((): roundWithScoresAndPerson | null =>
+      getRound(currentRoundNumber.value!! - 1)
+    )
+
+    const currentRound = computed((): roundWithScoresAndPerson | null =>
+      getRound(currentRoundNumber.value)
     )
 
     const availableTime = computed(() =>
@@ -189,16 +188,9 @@ export default defineComponent({
         hasUrlLoaded.value = false
         if (currentRound) {
           if (!gameSocket) {
-            gameSocket = io(
-              `${process.env.SOCKET_URL}/game/${currentRound.game_id}`
-            )
+            gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!!.id}`)
             gameSocket.on('playerGuessed', (data: any) => {
-              currentRoundScores.value = [
-                ...currentRoundScores.value.filter(
-                  ({ round_id: roundId }) => roundId === currentRound.id
-                ),
-                data,
-              ]
+              currentRoundScores.value = [...currentRound.round_scores, data]
             })
           }
           if (currentRound.round_number !== previousRound?.round_number) {
@@ -217,9 +209,8 @@ export default defineComponent({
           }
           chosenAuthor.value = null
           setTimeout(async () => {
-            game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
-            currentRoundScores.value =
-              game.value!.rounds[currentRound.value!.round_number].round_scores
+            await loadGame()
+            currentRoundScores.value = currentRound.value!!.round_scores
           }, 1000)
         }
       }
@@ -227,15 +218,21 @@ export default defineComponent({
 
     const validateGuess = () => {
       gameSocket!.emit('guess', { username }, currentRound.value!.id, {
-        personcode: chosenAuthor.value?.personcode ?? null,
+        personcode: chosenAuthor.value ?? null,
       })
     }
 
-    onMounted(async () => {
+    const loadGame = async () => {
       game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
-      setInterval(() => {
-        now.value = Date.now()
-      }, 1000)
+    }
+
+    onMounted(async () => {
+      await loadGame()
+      if (currentRound.value) {
+        setInterval(() => {
+          now.value = Date.now()
+        }, 1000)
+      }
     })
 
     return {
@@ -245,26 +242,26 @@ export default defineComponent({
       remainingTime,
       chosenAuthor,
       hasUrlLoaded,
-      currentRound,
+      previousRound,
       currentRoundNumber,
+      currentRound,
       currentRoundScores,
-      currentRoundPlayerScoreTypeName: computed(
-        () =>
-          currentRoundScores.value.find(
-            ({ player_id: playerId, round_id: roundId }) =>
-              duckguessrId === playerId && roundId === currentRound.value!.id
-          )?.score_type_name || null
+      currentRoundPlayerScore: computed(() =>
+        currentRoundScores.value.find(
+          ({ player_id: playerId, round_id: roundId }) =>
+            duckguessrId === playerId && roundId === currentRound.value!.id
+        )
       ),
       nextRoundStartDate,
       validateGuess,
       url: computed(
         () =>
           currentRound.value &&
-          `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${currentRound.value.sitecode_url}`
+          `${process.env.CLOUDINARY_URL_ROOT}${currentRound.value.sitecode_url}`
       ),
 
-      scoreTypeNameToVariant(scoreTypeName: string) {
-        switch (scoreTypeName) {
+      scoreToVariant(roundScore: Index.round_scores | null) {
+        switch (roundScore?.score_type_name) {
           case null:
             return 'default'
           case 'Correct author':

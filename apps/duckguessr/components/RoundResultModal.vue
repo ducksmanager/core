@@ -2,7 +2,7 @@
   <b-modal visible :body-bg-variant="status" hide-footer hide-header-close>
     <template #modal-title> Round {{ roundNumber }} </template>
     <div v-if="status === 'success'">Correct!</div>
-    <div v-else>Incorrect</div>
+    <div v-else>Incorrect. The answer was: {{ correctAnswer }}</div>
     <template v-if="timeBeforeNextRound">
       <div>Round {{ roundNumber + 1 }} starts in</div>
       <div class="text-xl-center">
@@ -24,6 +24,10 @@ export default defineComponent({
     },
     roundNumber: {
       type: Number,
+      required: true,
+    },
+    correctAnswer: {
+      type: String,
       required: true,
     },
     nextRoundStartDate: {

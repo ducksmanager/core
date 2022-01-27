@@ -20,8 +20,9 @@ exports.createGameSocket = (io, game) =>
           guess
         )
         if (guessResultsData) {
-          socket.broadcast.emit('playerGuessed', guessResultsData)
           socket.emit('playerGuessed', guessResultsData)
+          delete guessResultsData.answer
+          socket.broadcast.emit('playerGuessed', guessResultsData)
         }
       } catch (e) {
         console.error(e)

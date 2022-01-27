@@ -110,7 +110,7 @@ export default {
         (data: any) => ({
           ...data,
           decision: data.decision || 'ok',
-          url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${data.sitecodeUrl}`,
+          url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecodeUrl}`,
         })
       )
 

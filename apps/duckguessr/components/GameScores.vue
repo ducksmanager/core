@@ -3,32 +3,11 @@
     <h3>Rounds</h3>
     <b-container>
       <b-row>
-        <b-col
-          v-for="(round, idx) in scoresWithPersonUrls"
+        <RoundResult
+          v-for="round in scoresWithPersonUrls"
           :key="`round-${round.round_number}`"
-          align-self="center"
-          cols="3"
-          class="round-card my-3"
-          :style="{
-            'background-image': `url('${imageUrl(round)}')`,
-          }"
-        >
-          <div
-            class="author-banner mx-auto"
-            :style="{
-              'background-image': `url('${round.personurl}')`,
-            }"
-          >
-            <b-img
-              class="d-none"
-              :src="round.personurl"
-              @error="setDefaultAuthorUrl(idx)"
-            />
-            <flag :country="round.personnationality" />&nbsp;{{
-              round.personfullname
-            }}
-          </div>
-        </b-col>
+          :round="round"
+        />
       </b-row>
     </b-container>
     <h3 class="mt-3">Scores</h3>
@@ -69,10 +48,6 @@
 
 <script>
 import { defineComponent, ref } from '@nuxtjs/composition-api'
-import Vue from 'vue'
-
-const cloudinaryUrlRoot =
-  'https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/'
 
 export default defineComponent({
   name: 'GameScores',
@@ -145,11 +120,8 @@ export default defineComponent({
           ),
         }
       }),
-      setDefaultAuthorUrl: (idx) => {
-        scoresWithPersonUrls.value[idx].personurl =
-          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
-      },
-      imageUrl: ({ sitecode_url: url }) => `${cloudinaryUrlRoot}/${url}`,
+      imageUrl: ({ sitecode_url: url }) =>
+        `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
     }
   },
 })
@@ -169,37 +141,6 @@ export default defineComponent({
 
     div {
       text-align: center;
-    }
-  }
-}
-
-.round-card {
-  display: flex;
-  align-items: flex-end;
-  height: 200px;
-  background-size: 90%;
-  background-repeat: no-repeat;
-  background-position: center;
-
-  .author-banner {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 50px;
-    bottom: 0;
-    right: 0;
-    padding: 5px 0 0 60px;
-    background-color: rgba(127, 127, 127, 0.85);
-    background-size: 50px auto;
-    background-repeat: no-repeat;
-    text-align: center;
-
-    .author-image {
-      width: 40px;
-      height: 40px;
-      background-size: cover;
-      border-radius: 25px;
-      margin: 0 20px;
     }
   }
 }

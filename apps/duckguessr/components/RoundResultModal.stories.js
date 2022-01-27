@@ -17,5 +17,6 @@ futureDate.setMinutes(futureDate.getMinutes() + 1)
 Default.args = {
   status: 'success',
   roundNumber: 1,
+  correctAnswer: 'DR',
   nextRoundStartDate: futureDate,
 }

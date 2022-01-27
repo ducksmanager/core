@@ -55,7 +55,7 @@ exports.predict = (roundNumber, url, possibleAuthors) =>
     console.log('Possible authors: ' + JSON.stringify(possibleAuthors))
     const startTime = new Date().getTime()
     axios({
-      url: `https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/${url}`,
+      url: `${process.env.CLOUDINARY_URL_ROOT}${url}`,
       responseType: 'arraybuffer',
     }).then(({ data: input }) => {
       const buffer = tfn.node.decodeImage(input, 3)

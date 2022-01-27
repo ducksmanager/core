@@ -6,7 +6,7 @@
       selectable,
       'p-1': true,
     }"
-    @click="$emit('select', author)"
+    @click="$emit('select', author.personcode)"
   >
     <div
       class="author-image"
