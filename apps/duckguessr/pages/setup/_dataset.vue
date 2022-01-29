@@ -67,7 +67,7 @@ export default defineComponent({
         gameId = existingGameId
         players.push(player)
         if (players.length === requiredPlayers) {
-          matchmakingSocket.emit('matchStarts', { gameId })
+          matchmakingSocket.emit('matchStarts', gameId)
           matchmakingSocket.close()
           router.replace(`/game/${gameId}`)
         }
@@ -111,12 +111,13 @@ export default defineComponent({
           }
         }
       )
-      matchmakingSocket.emit('iAmReady', {
+      matchmakingSocket.emit(
+        'iAmReady',
         gameType,
-        dataset: route.value.params.dataset,
+        route.value.params.dataset,
         username,
-        password,
-      })
+        password
+      )
     }
 
     return {

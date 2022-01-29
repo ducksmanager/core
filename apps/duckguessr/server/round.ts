@@ -1,3 +1,5 @@
+import type Index from '@prisma/client'
+import { GuessRequest, GuessResponseWithAnswer } from '../types/guess'
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
@@ -5,7 +7,7 @@ const numberOfRounds = 8
 const kickoffTime = 8000
 const roundTime = 15000
 
-exports.getRound = async (roundId) => {
+export async function getRound(roundId: number) {
   return await prisma.rounds.findFirst({
     include: {
       round_scores: true,
@@ -16,7 +18,7 @@ exports.getRound = async (roundId) => {
   })
 }
 
-exports.createGameRounds = async (gameId) => {
+export async function createGameRounds(gameId: number) {
   const now = new Date().getTime()
   return await prisma.$transaction(
     Array(numberOfRounds)
@@ -39,28 +41,33 @@ exports.createGameRounds = async (gameId) => {
   )
 }
 
-exports.guess = async (playerId, roundId, guess) => {
+export async function guess(
+  player: Index.players,
+  roundId: number,
+  { personcode }: GuessRequest
+): Promise<GuessResponseWithAnswer | void> {
   const round = await exports.getRound(roundId)
-  if (!guess) {
+  if (!personcode) {
     console.error(`No guess was provided`)
   }
   if (
     await prisma.round_scores.findFirst({
       where: {
-        player_id: playerId,
+        player_id: player.id,
         round_id: round.id,
+      },
+      include: {
+        players: true,
       },
     })
   ) {
-    console.error(
-      `Player ${global.cachedUsers[playerId].username} already guessed round ${round.id}`
-    )
+    console.error(`Player ${player.username} already guessed round ${round.id}`)
     return
   }
 
   let scoreData
 
-  if (guess.personcode === round.personcode) {
+  if (personcode === round.personcode) {
     scoreData = {
       score_type_name: 'Correct author',
       score: 300,
@@ -72,9 +79,10 @@ exports.guess = async (playerId, roundId, guess) => {
     }
   }
 
-  const scoreWithMetadata = {
+  // @ts-ignore TS2742
+  const scoreWithMetadata: Index.round_scores = {
     ...scoreData,
-    player_id: playerId,
+    player_id: player.id,
     round_id: round.id,
   }
   await prisma.round_scores.create({ data: scoreWithMetadata })
@@ -82,7 +90,7 @@ exports.guess = async (playerId, roundId, guess) => {
   return {
     ...scoreWithMetadata,
     round_number: round.round_number,
-    username: global.cachedUsers[playerId].username,
+    players: round.players,
     answer: round.personcode,
   }
 }

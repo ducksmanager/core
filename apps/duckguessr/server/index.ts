@@ -1,19 +1,31 @@
+import type Index from '@prisma/client'
+import { Server } from 'socket.io'
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from '../types/socketEvents'
+import { createMatchmakingSocket } from './sockets/matchmaking'
+
 const http = require('http')
 require('dotenv').config({ path: '../.env' })
 
 const { PrismaClient } = require('@prisma/client')
+
 const prisma = new PrismaClient()
 const express = require('express')
 const app = express()
 const server = http.createServer(app)
-const IO = require('socket.io')
 
 const { createGameSocket, addBotToGame } = require('./sockets/game')
-const { createMatchmakingSocket } = require('./sockets/matchmaking')
 
-global.cachedUsers = {}
-
-const io = IO(server, {
+const io = new Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>(server, {
   cors: {
     origin: process.env.NUXT_URL,
     methods: ['GET'],
@@ -32,7 +44,7 @@ prisma.games
       },
     },
   })
-  .then(async (pendingGames) => {
+  .then(async (pendingGames: Index.games[]) => {
     for (const pendingGame of pendingGames) {
       console.debug(
         `Creating socket for unfinished game with ID ${pendingGame.id}`

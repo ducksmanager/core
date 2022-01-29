@@ -1,15 +1,30 @@
+import { Server } from 'socket.io'
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from '../../types/socketEvents'
+
 const { io: IOClient } = require('socket.io-client')
 const { PrismaClient } = require('@prisma/client')
-const game = require('../../server/game')
-const round = require('../../server/round')
+const game = require('../game')
+const round = require('../round')
 const { createGameSocket, addBotToGame } = require('./game')
 
 const prisma = new PrismaClient()
 
-exports.createMatchmakingSocket = (io) => {
+export function createMatchmakingSocket(
+  io: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >
+) {
   io.of('/matchmaking').on('connection', (socket) => {
     console.log('a user connected')
-    socket.on('iAmReady', async ({ username, password, gameType, dataset }) => {
+    socket.on('iAmReady', async (gameType, dataset, username, password) => {
       console.log(`${username} is ready`)
       const { gameId } = await game.createOrGetPending(gameType, dataset)
       const user = await game.associatePlayer(gameId, username, password)
@@ -28,7 +43,7 @@ exports.createMatchmakingSocket = (io) => {
 
       socket.broadcast.emit('iAmAlsoReady', user, gameId)
     })
-    socket.on('matchStarts', async ({ gameId }) => {
+    socket.on('matchStarts', async (gameId) => {
       console.log(`Game ${gameId} is starting!`)
       const currentGame = await prisma.games.findUnique({
         include: {

@@ -1,10 +1,13 @@
-const { PrismaClient } = require('@prisma/client')
-const { runQuery } = require('../api/runQuery')
+import Index, { PrismaClient } from '@prisma/client'
+import { runQuery } from '../api/runQuery'
 
 const prisma = new PrismaClient()
 const numberOfRounds = 8
 
-exports.createOrGetPending = async (gameType, datasetName) => {
+exports.createOrGetPending = async (
+  gameType: Index.games['game_type'],
+  datasetName: string
+) => {
   const dataset = await prisma.datasets.findFirst({
     where: {
       name: datasetName,
@@ -32,7 +35,7 @@ exports.createOrGetPending = async (gameType, datasetName) => {
     return { gameId: pendingGame.id, created: false }
   }
 
-  const roundDataResponse = await prisma.$queryRaw`
+  const roundDataResponse = (await prisma.$queryRaw`
     SELECT datasets_entryurls.personcode, sitecode_url
     FROM datasets_entryurls
     INNER JOIN (
@@ -45,15 +48,25 @@ exports.createOrGetPending = async (gameType, datasetName) => {
     GROUP BY datasets_entryurls.personcode
     ORDER BY RAND()
     LIMIT ${numberOfRounds + 1}
-  `
+  `) as { personcode: string; sitecode_url: string }[]
 
   if (roundDataResponse) {
     const rounds = roundDataResponse
-      .map((roundData, roundNumber) => ({
-        ...roundData,
-        round_number: roundNumber + 1,
-      }))
-      .filter(({ round_number: roundNumber }) => roundNumber <= numberOfRounds)
+      .map(
+        (
+          // eslint-disable-next-line camelcase
+          roundData,
+          roundNumber: number
+        ) => ({
+          ...roundData,
+          round_number: roundNumber + 1,
+        })
+      )
+      .filter(
+        // eslint-disable-next-line camelcase
+        ({ round_number: roundNumber }: { round_number: number }) =>
+          roundNumber <= numberOfRounds
+      )
     const game = await prisma.games.create({
       data: {
         game_type: gameType,
@@ -69,7 +82,11 @@ exports.createOrGetPending = async (gameType, datasetName) => {
   }
 }
 
-exports.associatePlayer = async (gameId, username, password) => {
+exports.associatePlayer = async (
+  gameId: number,
+  username: string,
+  password: string | null = null
+) => {
   let user
   if (/^user[0-9]+$/.test(username) || /^bot_.+$/.test(username)) {
     user = await prisma.players.findFirst({
@@ -111,7 +128,6 @@ exports.associatePlayer = async (gameId, username, password) => {
     }
   }
   const userId = user.id
-  global.cachedUsers[userId] = user
   await prisma.game_players.create({
     data: {
       game_id: gameId,

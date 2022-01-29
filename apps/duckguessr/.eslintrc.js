@@ -14,6 +14,7 @@ module.exports = {
   // add your custom rules here
   rules: {
     'no-console': 'off',
+    camelcase: 'off',
     'import/default': 'off',
     'vue/multi-word-component-names': 'off',
     'vue/singleline-html-element-content-newline': 'off',

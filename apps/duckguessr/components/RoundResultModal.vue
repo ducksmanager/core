@@ -36,7 +36,7 @@ export default defineComponent({
     },
   },
   setup({ nextRoundStartDate }, { emit }) {
-    const timeBeforeNextRound = ref(null as Number | null)
+    const timeBeforeNextRound = ref(null as number | null)
 
     const updateTimeBeforeNextRound = () => {
       timeBeforeNextRound.value = Math.ceil(
@@ -50,7 +50,7 @@ export default defineComponent({
 
     watch(
       () => timeBeforeNextRound.value,
-      (timeBeforeNextRound: Number | null) => {
+      (timeBeforeNextRound: number | null) => {
         if (timeBeforeNextRound! <= 0) {
           emit('next-round')
         }

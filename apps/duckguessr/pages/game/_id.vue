@@ -86,6 +86,11 @@ import AuthorCard from '~/components/AuthorCard.vue'
 import ProgressBar from '~/components/ProgressBar.vue'
 import { getUser } from '@/components/user'
 import { roundWithScoresAndPerson } from '~/types/roundWithScoresAndPerson'
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from '~/types/socketEvents'
+import { GuessResponse } from '~/types/guess'
 
 interface gameWithRounds extends Index.games {
   rounds: Array<roundWithScoresAndPerson>
@@ -99,10 +104,11 @@ export default defineComponent({
     const { duckguessrId, username } = getUser()
     const route = useRoute()
 
-    const chosenAuthor = ref(null as String | null)
+    const chosenAuthor = ref(null as string | null)
 
     const game = ref(null as gameWithRounds | null)
-    let gameSocket: Socket | null = null
+    let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> | null =
+      null
 
     const currentRoundScores = ref([] as Array<Index.round_scores>)
 
@@ -189,7 +195,7 @@ export default defineComponent({
         if (currentRound) {
           if (!gameSocket) {
             gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!!.id}`)
-            gameSocket.on('playerGuessed', (data: any) => {
+            gameSocket.on('playerGuessed', (data: GuessResponse) => {
               currentRoundScores.value = [...currentRound.round_scores, data]
             })
           }
@@ -217,9 +223,12 @@ export default defineComponent({
     )
 
     const validateGuess = () => {
-      gameSocket!.emit('guess', { username }, currentRound.value!.id, {
-        personcode: chosenAuthor.value ?? null,
-      })
+      gameSocket!.emit(
+        'guess',
+        username,
+        currentRound.value!.id,
+        chosenAuthor.value ?? null
+      )
     }
 
     const loadGame = async () => {
