@@ -63,6 +63,10 @@ export default {
   serverMiddleware: [
     json({ limit: '10mb' }),
     {
+      path: '/api/dataset',
+      handler: '~/api/dataset.js',
+    },
+    {
       path: '/api/game',
       handler: '~/api/game.js',
     },
