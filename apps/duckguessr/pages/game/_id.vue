@@ -17,9 +17,9 @@
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
-      v-if="(chosenAuthor || remainingTime === 0) && nextRoundStartDate"
+      v-if="currentRound.personcode"
       :status="scoreToVariant(currentRoundPlayerScore)"
-      :correct-answer="scoreToVariant.answer"
+      :correct-answer="currentRound.personcode"
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
     />
@@ -196,6 +196,7 @@ export default defineComponent({
           if (!gameSocket) {
             gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!!.id}`)
             gameSocket.on('playerGuessed', (data: GuessResponse) => {
+              console.log(data)
               currentRoundScores.value = [...currentRound.round_scores, data]
             })
           }

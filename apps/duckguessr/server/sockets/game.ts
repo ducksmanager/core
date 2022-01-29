@@ -44,11 +44,10 @@ exports.createGameSocket = (
           )
           if (guessResultsData) {
             socket.emit('playerGuessed', guessResultsData)
-            guessResultsData.answer = null
-            socket.broadcast.emit(
-              'playerGuessed',
-              guessResultsData as GuessResponse
-            )
+            socket.broadcast.emit('playerGuessed', {
+              ...guessResultsData,
+              answer: null,
+            } as GuessResponse)
           }
         } catch (e) {
           console.error(e)
