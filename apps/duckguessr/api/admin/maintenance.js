@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 
 export default async (req, res) => {
   const query = (req._parsedOriginalUrl || { query: '' }).query || ''
-  const { dataset } = query
+  const { dataset: datasetName } = query
     .split('&')
     .reduce(
       (acc, value) => ({ ...acc, [value.split('=')[0]]: value.split('=')[1] }),
@@ -12,24 +12,44 @@ export default async (req, res) => {
   switch (req.method) {
     case 'GET': {
       res.writeHeader(200, { 'Content-Type': 'application/json' })
-      if (dataset) {
+      if (datasetName) {
+        const dataset = await prisma.dataset.findUnique({
+          where: {
+            name: datasetName,
+          },
+        })
         res.end(
           JSON.stringify({
-            entryurlsToMaintain: await prisma.$queryRaw`
-              select sitecode_url as sitecodeUrl, decision
-              from dataset_entryurl de
-                     left join entryurl_validation using (sitecode_url)
-              where dataset_id = (select id from dataset where name = ${dataset})
-                and decision is null
-              limit 60
-            `,
+            entryurlsToMaintain: await prisma.dataset_entryurl.findMany({
+              where: {
+                dataset_id: dataset.id,
+                entryurl_details: {
+                  decision: null,
+                },
+              },
+            }),
             maintainedEntryurlsCount: await prisma.$queryRaw`
               select decision, count(*) as 'count'
               from dataset_entryurl de
-                     left join entryurl_validation using (sitecode_url)
-              where dataset_id = (select id from dataset where name = ${dataset})
+                     left join entryurl_details using (sitecode_url)
+              where dataset_id = ${dataset.id}
               group by decision
             `,
+            // entryurlsToMaintain: await prisma.$queryRaw`
+            //   select sitecode_url as sitecodeUrl, decision
+            //   from dataset_entryurl de
+            //          left join entryurl_details using (sitecode_url)
+            //   where dataset_id = ${dataset.id}
+            //     and decision is null
+            //   limit 60
+            // `,
+            // maintainedEntryurlsCount: await prisma.$queryRaw`
+            //   select decision, count(*) as 'count'
+            //   from dataset_entryurl de
+            //          left join entryurl_details using (sitecode_url)
+            //   where dataset_id = ${dataset.id}
+            //   group by decision
+            // `,
           })
         )
       } else {

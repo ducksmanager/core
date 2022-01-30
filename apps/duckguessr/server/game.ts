@@ -36,37 +36,33 @@ export async function createOrGetPending(
   }
 
   const roundDataResponse = (await prisma.$queryRaw`
-    SELECT dataset_entryurl.personcode, sitecode_url
-    FROM dataset_entryurl
-    INNER JOIN (
-      SELECT DISTINCT personcode
-      FROM dataset_entryurl
-      WHERE dataset_id = 1
+    SELECT random_images.personcode, random_images.sitecode_url
+    FROM (
+           SELECT DISTINCT entryurl_details.personcode
+           FROM entryurl_details
+                  INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
+           WHERE dataset_id = ${dataset.id}
+           ORDER BY RAND()
+           LIMIT ${numberOfRounds + 1}
+         ) AS random_authors
+           INNER JOIN (
+      SELECT DISTINCT entryurl_details.personcode, entryurl_details.sitecode_url
+      FROM entryurl_details
+             INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
+      WHERE dataset_id = ${dataset.id}
       ORDER BY RAND()
-    ) random_authors ON random_authors.personcode = dataset_entryurl.personcode
-    WHERE dataset_id = 1
-    GROUP BY dataset_entryurl.personcode
+    ) AS random_images ON random_authors.personcode = random_images.personcode
+    GROUP BY random_images.personcode
     ORDER BY RAND()
-    LIMIT ${numberOfRounds + 1}
   `) as { personcode: string; sitecode_url: string }[]
 
   if (roundDataResponse) {
     const rounds = roundDataResponse
-      .map(
-        (
-          // eslint-disable-next-line camelcase
-          roundData,
-          roundNumber: number
-        ) => ({
-          ...roundData,
-          round_number: roundNumber + 1,
-        })
-      )
-      .filter(
-        // eslint-disable-next-line camelcase
-        ({ round_number: roundNumber }: { round_number: number }) =>
-          roundNumber <= numberOfRounds
-      )
+      .map((roundData, roundNumber: number) => ({
+        ...roundData,
+        round_number: roundNumber + 1,
+      }))
+      .filter(({ round_number: roundNumber }) => roundNumber <= numberOfRounds)
     const game = await prisma.game.create({
       data: {
         game_type: gameType,
@@ -104,7 +100,7 @@ export async function associatePlayer(
   } else {
     const [dmUser] = (
       await runQuery(
-        'SELECT ID AS id, username from users where username=? AND password=?',
+        'SELECT ID AS id, username FROM users WHERE username=? AND password=?',
         'dm',
         [username, password]
       )

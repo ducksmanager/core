@@ -8,6 +8,7 @@ export default async (req, res) => {
         SELECT name, title, COUNT(*) AS images, COUNT(DISTINCT personcode) AS authors
         FROM dataset
         LEFT JOIN dataset_entryurl de ON dataset.id = de.dataset_id
+        LEFT JOIN entryurl_details entryurl ON de.sitecode_url = entryurl.sitecode_url
         WHERE dataset.name NOT LIKE '%-ml'
         GROUP BY dataset.name
       `

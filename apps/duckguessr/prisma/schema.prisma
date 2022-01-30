@@ -9,28 +9,21 @@ datasource db {
 
 model dataset {
   id               Int                @id @default(autoincrement())
-  name             String             @unique(map: "game_types_dataset_uindex") @db.VarChar(30)
+  name             String             @unique(map: "dataset_name_uindex") @db.VarChar(30)
   title            String?            @db.VarChar(50)
   dataset_entryurl dataset_entryurl[]
   games            game[]
 }
 
 model dataset_entryurl {
-  id           Int     @id @default(autoincrement())
-  dataset_id   Int
-  sitecode_url String  @db.VarChar(99)
-  personcode   String  @db.VarChar(79)
-  dataset      dataset @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "datasets_entryurl_validations_datasets_id_fk")
+  id               Int              @id @default(autoincrement())
+  dataset_id       Int
+  sitecode_url     String           @db.VarChar(99)
+  dataset          dataset          @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "dataset_entryurl__dataset_id_fk")
+  entryurl_details entryurl_details @relation(fields: [sitecode_url], references: [sitecode_url], onUpdate: Restrict, map: "dataset_entryurl__entryurl_details_sitecode_url_fk")
 
   @@unique([dataset_id, sitecode_url], map: "datasets_entryurl_validations_dataset_validation")
   @@index([sitecode_url], map: "datasets_entryurl_validations_entryurl_validations_id_fk")
-}
-
-model entryurl_validation {
-  id           Int                          @id @default(autoincrement())
-  sitecode_url String                       @unique(map: "entryurl_validations_sitecode_url_uindex") @db.VarChar(99)
-  updated_at   DateTime                     @default(now()) @db.Timestamp(0)
-  decision     entryurl_validation_decision
 }
 
 model game {
@@ -40,28 +33,28 @@ model game {
   finished_at  DateTime?      @db.DateTime(0)
   game_type    game_game_type @default(against_players)
   dataset_id   Int?
-  dataset      dataset?       @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "games_datasets_id_fk")
+  dataset      dataset?       @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "game__dataset_id_fk")
   game_players game_player[]
   rounds       round[]
 
-  @@index([dataset_id], map: "games_datasets_id_fk")
+  @@index([dataset_id], map: "game__dataset_id_fk")
 }
 
 model game_player {
   id        Int    @id @default(autoincrement())
   game_id   Int
   player_id Int
-  game      game   @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "game_players_games_id_fk")
-  player    player @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "game_players_players_id_fk")
+  game      game   @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "game_player_game_id_fk")
+  player    player @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "game_player_player_id_fk")
 
-  @@index([game_id], map: "game_players_games_id_fk")
-  @@index([player_id], map: "game_players_players_id_fk")
+  @@index([game_id], map: "game_player_game_id_fk")
+  @@index([player_id], map: "game_player_player_id_fk")
 }
 
 model player {
   id              Int           @id @default(autoincrement())
-  username        String        @unique(map: "players_username_uindex") @db.VarChar(50)
-  ducksmanager_id Int?          @unique(map: "players_ducksmanager_id_uindex")
+  username        String        @unique(map: "player_username_uindex") @db.VarChar(50)
+  ducksmanager_id Int?          @unique(map: "player_ducksmanager_id_uindex")
   game_players    game_player[]
   round_scores    round_score[]
 }
@@ -88,11 +81,11 @@ model round_score {
   score           Int        @db.UnsignedSmallInt
   player          player     @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "round_score_player_id_fk")
   round           round      @relation(fields: [round_id], references: [id], onUpdate: Restrict, map: "round_score_round_id_fk")
-  score_type      score_type @relation(fields: [score_type_name], references: [type_name], onUpdate: Restrict, map: "round_scores_score_types_type_name_fk")
+  score_type      score_type @relation(fields: [score_type_name], references: [type_name], onUpdate: Restrict, map: "round_score__score_type_type_name_fk")
 
+  @@index([score_type_name], map: "round_score__score_type_type_name_fk")
   @@index([player_id], map: "round_score_player_id_fk")
   @@index([round_id], map: "round_score_round_id_fk")
-  @@index([score_type_name], map: "round_scores_score_types_type_name_fk")
 }
 
 model score_type {
@@ -100,13 +93,21 @@ model score_type {
   round_scores round_score[]
 }
 
-enum entryurl_validation_decision {
-  ok
-  shows_author
-  no_drawing
+model entryurl_details {
+  sitecode_url      String                     @id @unique(map: "entryurl_details_sitecode_url_uindex") @db.VarChar(99)
+  updated_at        DateTime                   @default(now()) @db.Timestamp(0)
+  decision          entryurl_details_decision?
+  personcode        String?                    @db.VarChar(79)
+  dataset_entryurls dataset_entryurl[]
 }
 
 enum game_game_type {
   against_bot
   against_players
+}
+
+enum entryurl_details_decision {
+  ok
+  shows_author
+  no_drawing
 }
