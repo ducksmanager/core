@@ -7,8 +7,8 @@ const numberOfRounds = 8
 const kickoffTime = 8000
 const roundTime = 15000
 
-export async function getRound(roundId: number) {
-  return await prisma.rounds.findFirst({
+export async function getRound(roundId: number): Promise<Index.round> {
+  return await prisma.round.findFirst({
     include: {
       round_scores: true,
     },
@@ -24,7 +24,7 @@ export async function createGameRounds(gameId: number) {
     Array(numberOfRounds)
       .fill(0)
       .map((_, roundNumber) =>
-        prisma.rounds.updateMany({
+        prisma.round.updateMany({
           where: {
             game_id: gameId,
             round_number: roundNumber + 1,
@@ -42,22 +42,22 @@ export async function createGameRounds(gameId: number) {
 }
 
 export async function guess(
-  player: Index.players,
+  player: Index.player,
   roundId: number,
   { personcode }: GuessRequest
 ): Promise<GuessResponseWithAnswer | void> {
-  const round = await exports.getRound(roundId)
+  const round = await getRound(roundId)
   if (!personcode) {
     console.error(`No guess was provided`)
   }
   if (
-    await prisma.round_scores.findFirst({
+    await prisma.round_score.findFirst({
       where: {
         player_id: player.id,
         round_id: round.id,
       },
       include: {
-        players: true,
+        player: true,
       },
     })
   ) {
@@ -80,17 +80,15 @@ export async function guess(
   }
 
   // @ts-ignore TS2742
-  const scoreWithMetadata: Index.round_scores = {
+  const scoreWithMetadata: Index.round_score = {
     ...scoreData,
     player_id: player.id,
     round_id: round.id,
   }
-  await prisma.round_scores.create({ data: scoreWithMetadata })
+  await prisma.round_score.create({ data: scoreWithMetadata })
 
   return {
     ...scoreWithMetadata,
-    round_number: round.round_number,
-    players: round.players,
     answer: round.personcode,
   }
 }

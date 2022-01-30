@@ -57,11 +57,12 @@
         <h3>Round {{ currentRoundNumber }}</h3>
         <template v-for="score in currentRoundScores">
           <b-alert
-            :key="`score-${score.username}`"
+            :key="`score-${score.player_id}`"
             show
             :variant="scoreToVariant(score)"
           >
-            {{ score.username }}: {{ score.score_type_name }}
+            {{ players.find(({ id }) => id === score.player_id).username }}:
+            {{ score.score_type_name }}
           </b-alert>
         </template>
       </b-col>
@@ -92,8 +93,13 @@ import {
 } from '~/types/socketEvents'
 import { GuessResponse } from '~/types/guess'
 
-interface gameWithRounds extends Index.games {
+interface GamePlayerWithFullPlayer extends Index.game_player {
+  player: Index.player
+}
+
+interface GameWithRoundsAndPlayers extends Index.game {
   rounds: Array<roundWithScoresAndPerson>
+  game_players: Array<GamePlayerWithFullPlayer>
 }
 
 export default defineComponent({
@@ -106,11 +112,16 @@ export default defineComponent({
 
     const chosenAuthor = ref(null as string | null)
 
-    const game = ref(null as gameWithRounds | null)
+    const game = ref(null as GameWithRoundsAndPlayers | null)
     let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> | null =
       null
 
-    const currentRoundScores = ref([] as Array<Index.round_scores>)
+    const currentRoundScores = ref([] as Array<Index.round_score>)
+
+    const players = computed(
+      (): Array<Index.player> =>
+        game.value ? game.value.game_players.map(({ player }) => player) : []
+    )
 
     const hasUrlLoaded = ref(false as boolean)
 
@@ -197,7 +208,7 @@ export default defineComponent({
             gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!!.id}`)
             gameSocket.on('playerGuessed', (data: GuessResponse) => {
               console.log(data)
-              currentRoundScores.value = [...currentRound.round_scores, data]
+              currentRoundScores.value = [...currentRoundScores.value, data]
             })
           }
           if (currentRound.round_number !== previousRound?.round_number) {
@@ -248,6 +259,7 @@ export default defineComponent({
     return {
       game,
       gameIsFinished,
+      players,
       availableTime,
       remainingTime,
       chosenAuthor,
@@ -270,7 +282,7 @@ export default defineComponent({
           `${process.env.CLOUDINARY_URL_ROOT}${currentRound.value.sitecode_url}`
       ),
 
-      scoreToVariant(roundScore: Index.round_scores | null) {
+      scoreToVariant(roundScore: Index.round_score | null) {
         switch (roundScore?.score_type_name) {
           case null:
             return 'default'

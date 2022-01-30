@@ -55,11 +55,11 @@ export default defineComponent({
     const { username, password } = getUser()
     const router = useRouter()
     const route = useRoute()
-    const players = reactive([] as Array<Index.players>)
+    const players = reactive([] as Array<Index.player>)
 
     const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
 
-    const addPlayer = (player: Index.players, existingGameId: number) => {
+    const addPlayer = (player: Index.player, existingGameId: number) => {
       if (
         player.username &&
         !players.map(({ username }) => username).includes(player.username)
@@ -77,7 +77,7 @@ export default defineComponent({
     const iAmReady = (gameType: string) => {
       matchmakingSocket.on(
         'iAmReadyWithGameID',
-        (user: Index.players, gameId: number) => {
+        (user: Index.player, gameId: number) => {
           console.debug(
             `${username}-Received iAmReadyWithGameID from ${user.username}`
           )
@@ -88,7 +88,7 @@ export default defineComponent({
       )
       matchmakingSocket.on(
         'whoElseIsReady',
-        (otherPlayer: Index.players, otherPlayerGameId: number) => {
+        (otherPlayer: Index.player, otherPlayerGameId: number) => {
           console.debug(
             `${username}-Received whoElseIsReady from ${otherPlayer.username}`
           )
@@ -104,7 +104,7 @@ export default defineComponent({
       )
       matchmakingSocket.on(
         'iAmAlsoReady',
-        (user: Index.players, existingGameId: number) => {
+        (user: Index.player, existingGameId: number) => {
           console.debug(`${username}-${user.username} is also ready`)
           if (existingGameId === gameId) {
             addPlayer(user, existingGameId)

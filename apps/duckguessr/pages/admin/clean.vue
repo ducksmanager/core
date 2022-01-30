@@ -70,7 +70,7 @@ export default {
   setup() {
     const { $axios } = useContext()
 
-    const datasets = ref([] as Array<Index.datasets>)
+    const datasets = ref([] as Array<Index.dataset>)
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
     const validatedAndRemainingImageCount = ref(null as any)
     const selectedDataset = ref(null as string | null)

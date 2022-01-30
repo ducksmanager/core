@@ -17,17 +17,17 @@ export default async (req, res) => {
           JSON.stringify({
             entryurlsToMaintain: await prisma.$queryRaw`
               select sitecode_url as sitecodeUrl, decision
-              from datasets_entryurls de
-                     left join entryurl_validations using (sitecode_url)
-              where dataset_id = (select id from datasets where name = ${dataset})
+              from dataset_entryurl de
+                     left join entryurl_validation using (sitecode_url)
+              where dataset_id = (select id from dataset where name = ${dataset})
                 and decision is null
               limit 60
             `,
             maintainedEntryurlsCount: await prisma.$queryRaw`
               select decision, count(*) as 'count'
-              from datasets_entryurls de
-                     left join entryurl_validations using (sitecode_url)
-              where dataset_id = (select id from datasets where name = ${dataset})
+              from dataset_entryurl de
+                     left join entryurl_validation using (sitecode_url)
+              where dataset_id = (select id from dataset where name = ${dataset})
               group by decision
             `,
           })
@@ -35,7 +35,7 @@ export default async (req, res) => {
       } else {
         res.end(
           JSON.stringify({
-            datasets: await prisma.datasets.findMany(),
+            datasets: await prisma.dataset.findMany(),
           })
         )
       }
@@ -43,7 +43,7 @@ export default async (req, res) => {
     }
     case 'POST': {
       const { entryurlsPendingMaintenance } = req.body
-      await prisma.entryurl_validations.createMany({
+      await prisma.entryurl_validation.createMany({
         data: entryurlsPendingMaintenance.map(({ sitecodeUrl, decision }) => ({
           sitecode_url: sitecodeUrl,
           decision,

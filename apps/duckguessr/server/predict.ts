@@ -19,7 +19,7 @@ tf.loadLayersModel(modelFile).then((loadedModel: LayersModel) => {
 export function playAsBot(
   botUsername: string,
   socket: Socket,
-  rounds: Index.rounds[]
+  rounds: Index.round[]
 ) {
   const predicted: number[] = []
   const predictionInterval = setInterval(() => {

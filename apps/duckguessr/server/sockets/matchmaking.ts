@@ -45,7 +45,7 @@ export function createMatchmakingSocket(
     })
     socket.on('matchStarts', async (gameId) => {
       console.log(`Game ${gameId} is starting!`)
-      const currentGame = await prisma.games.findUnique({
+      const currentGame = await prisma.game.findUnique({
         include: {
           rounds: true,
         },

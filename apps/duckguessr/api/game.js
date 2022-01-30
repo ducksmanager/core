@@ -13,12 +13,12 @@ export default (req, res) => {
         return
       }
       const gameId = parseInt(gameIdMatch[1])
-      prisma.games
+      prisma.game
         .findFirst({
           include: {
             game_players: {
               include: {
-                players: true,
+                player: true,
               },
             },
             rounds: {

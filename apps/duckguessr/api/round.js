@@ -34,7 +34,7 @@ export default async (req, res) => {
             res.writeHeader(200, { 'Content-Type': 'application/json' })
             res.end(
               JSON.stringify({
-                round_scores: prisma.round_scores.findMany({
+                round_scores: prisma.round_score.findMany({
                   where: {
                     game_id: gameId,
                   },

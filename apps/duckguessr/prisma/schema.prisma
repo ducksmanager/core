@@ -7,121 +7,106 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model games {
-  id           Int             @id @default(autoincrement())
-  created_at   DateTime        @default(now()) @db.DateTime(0)
-  started_at   DateTime?       @db.DateTime(0)
-  finished_at  DateTime?       @db.DateTime(0)
-  game_type    games_game_type @default(against_players)
+model dataset {
+  id               Int                @id @default(autoincrement())
+  name             String             @unique(map: "game_types_dataset_uindex") @db.VarChar(30)
+  title            String?            @db.VarChar(50)
+  dataset_entryurl dataset_entryurl[]
+  games            game[]
+}
+
+model dataset_entryurl {
+  id           Int     @id @default(autoincrement())
+  dataset_id   Int
+  sitecode_url String  @db.VarChar(99)
+  personcode   String  @db.VarChar(79)
+  dataset      dataset @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "datasets_entryurl_validations_datasets_id_fk")
+
+  @@unique([dataset_id, sitecode_url], map: "datasets_entryurl_validations_dataset_validation")
+  @@index([sitecode_url], map: "datasets_entryurl_validations_entryurl_validations_id_fk")
+}
+
+model entryurl_validation {
+  id           Int                          @id @default(autoincrement())
+  sitecode_url String                       @unique(map: "entryurl_validations_sitecode_url_uindex") @db.VarChar(99)
+  updated_at   DateTime                     @default(now()) @db.Timestamp(0)
+  decision     entryurl_validation_decision
+}
+
+model game {
+  id           Int            @id @default(autoincrement())
+  created_at   DateTime       @default(now()) @db.DateTime(0)
+  started_at   DateTime?      @db.DateTime(0)
+  finished_at  DateTime?      @db.DateTime(0)
+  game_type    game_game_type @default(against_players)
   dataset_id   Int?
-  datasets     datasets?       @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "games_datasets_id_fk")
-  game_players game_players[]
-  rounds       rounds[]
+  dataset      dataset?       @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "games_datasets_id_fk")
+  game_players game_player[]
+  rounds       round[]
 
   @@index([dataset_id], map: "games_datasets_id_fk")
 }
 
-model players {
-  id              Int            @id @default(autoincrement())
-  username        String         @unique(map: "players_username_uindex") @db.VarChar(50)
-  ducksmanager_id Int?           @unique(map: "players_ducksmanager_id_uindex")
-  game_players    game_players[]
-  round_scores    round_scores[]
+model game_player {
+  id        Int    @id @default(autoincrement())
+  game_id   Int
+  player_id Int
+  game      game   @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "game_players_games_id_fk")
+  player    player @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "game_players_players_id_fk")
+
+  @@index([game_id], map: "game_players_games_id_fk")
+  @@index([player_id], map: "game_players_players_id_fk")
 }
 
-model round_scores {
-  id              Int         @id @default(autoincrement())
+model player {
+  id              Int           @id @default(autoincrement())
+  username        String        @unique(map: "players_username_uindex") @db.VarChar(50)
+  ducksmanager_id Int?          @unique(map: "players_ducksmanager_id_uindex")
+  game_players    game_player[]
+  round_scores    round_score[]
+}
+
+model round {
+  id           Int           @id @default(autoincrement())
+  game_id      Int
+  round_number Int           @db.UnsignedTinyInt
+  sitecode_url String        @db.VarChar(100)
+  personcode   String        @db.VarChar(79)
+  started_at   DateTime?     @db.DateTime(0)
+  finished_at  DateTime?     @db.DateTime(0)
+  game         game          @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "round_game_id_fk")
+  round_scores round_score[]
+
+  @@index([game_id], map: "round_game_id_fk")
+}
+
+model round_score {
+  id              Int        @id @default(autoincrement())
   player_id       Int
   round_id        Int
-  score_type_name String      @db.VarChar(20)
-  score           Int         @db.UnsignedSmallInt
-  players         players     @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "round_score_player_id_fk")
-  rounds          rounds      @relation(fields: [round_id], references: [id], onUpdate: Restrict, map: "round_score_round_id_fk")
-  score_types     score_types @relation(fields: [score_type_name], references: [type_name], onUpdate: Restrict, map: "round_scores_score_types_type_name_fk")
+  score_type_name String     @db.VarChar(20)
+  score           Int        @db.UnsignedSmallInt
+  player          player     @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "round_score_player_id_fk")
+  round           round      @relation(fields: [round_id], references: [id], onUpdate: Restrict, map: "round_score_round_id_fk")
+  score_type      score_type @relation(fields: [score_type_name], references: [type_name], onUpdate: Restrict, map: "round_scores_score_types_type_name_fk")
 
   @@index([player_id], map: "round_score_player_id_fk")
   @@index([round_id], map: "round_score_round_id_fk")
   @@index([score_type_name], map: "round_scores_score_types_type_name_fk")
 }
 
-model rounds {
-  id           Int            @id @default(autoincrement())
-  game_id      Int
-  round_number Int            @db.UnsignedTinyInt
-  sitecode_url String         @db.VarChar(100)
-  personcode   String         @db.VarChar(79)
-  started_at   DateTime?      @db.DateTime(0)
-  finished_at  DateTime?      @db.DateTime(0)
-  games        games          @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "round_game_id_fk")
-  round_scores round_scores[]
-
-  @@index([game_id], map: "round_game_id_fk")
+model score_type {
+  type_name    String        @id @db.VarChar(20)
+  round_scores round_score[]
 }
 
-model score_types {
-  type_name    String         @id @db.VarChar(20)
-  round_scores round_scores[]
-}
-
-model game_players {
-  id        Int     @id @default(autoincrement())
-  game_id   Int
-  player_id Int
-  games     games   @relation(fields: [game_id], references: [id], onUpdate: Restrict, map: "game_players_games_id_fk")
-  players   players @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "game_players_players_id_fk")
-
-  @@index([game_id], map: "game_players_games_id_fk")
-  @@index([player_id], map: "game_players_players_id_fk")
-}
-
-model entryurl_validations {
-  id           Int                           @id @default(autoincrement())
-  sitecode_url String                        @unique(map: "entryurl_validations_sitecode_url_uindex") @db.VarChar(99)
-  updated_at   DateTime                      @default(now()) @db.Timestamp(0)
-  decision     entryurl_validations_decision
-}
-
-model datasets {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @unique(map: "game_types_dataset_uindex") @db.VarChar(30)
-  title              String?              @db.VarChar(50)
-  datasets_entryurls datasets_entryurls[]
-  games              games[]
-}
-
-model datasets_entryurls {
-  id           Int      @id @default(autoincrement())
-  dataset_id   Int
-  sitecode_url String   @db.VarChar(99)
-  personcode   String   @db.VarChar(79)
-  datasets     datasets @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "datasets_entryurl_validations_datasets_id_fk")
-
-  @@unique([dataset_id, sitecode_url], map: "datasets_entryurl_validations_dataset_validation")
-  @@index([sitecode_url], map: "datasets_entryurl_validations_entryurl_validations_id_fk")
-}
-
-model inducks_entryurl {
-  entrycode  String?                  @db.VarChar(21)
-  sitecode   String?                  @db.VarChar(11)
-  pagenumber Int?
-  url        String?                  @db.VarChar(87)
-  storycode  String?                  @db.VarChar(39)
-  public     inducks_entryurl_public?
-  id         Int                      @id @default(autoincrement())
-}
-
-enum games_game_type {
-  against_bot
-  against_players
-}
-
-enum inducks_entryurl_public {
-  Y
-  N
-}
-
-enum entryurl_validations_decision {
+enum entryurl_validation_decision {
   ok
   shows_author
   no_drawing
+}
+
+enum game_game_type {
+  against_bot
+  against_players
 }

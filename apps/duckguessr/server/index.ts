@@ -34,7 +34,7 @@ const io = new Server<
 
 createMatchmakingSocket(io)
 
-prisma.games
+prisma.game
   .findMany({
     where: {
       rounds: {
@@ -44,7 +44,7 @@ prisma.games
       },
     },
   })
-  .then(async (pendingGames: Index.games[]) => {
+  .then(async (pendingGames: Index.game[]) => {
     for (const pendingGame of pendingGames) {
       console.debug(
         `Creating socket for unfinished game with ID ${pendingGame.id}`

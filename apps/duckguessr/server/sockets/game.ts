@@ -14,16 +14,16 @@ const game = require('../../server/game')
 
 const prisma = new PrismaClient()
 
-exports.createGameSocket = (
+export function createGameSocket(
   io: Server<
     ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
     SocketData
   >,
-  game: Index.games
-) =>
-  io.of(`/game/${game.id}`).on('connection', (socket: Socket) => {
+  game: Index.game
+) {
+  return io.of(`/game/${game.id}`).on('connection', (socket: Socket) => {
     socket.on(
       'guess',
       async (username: string, roundId: number, personcode: string) => {
@@ -34,7 +34,7 @@ exports.createGameSocket = (
         )
         try {
           const guessResultsData = await round.guess(
-            await prisma.players.findFirst({
+            await prisma.player.findFirst({
               where: {
                 username,
               },
@@ -55,9 +55,10 @@ exports.createGameSocket = (
       }
     )
   })
+}
 
-exports.addBotToGame = async (socket: Socket, gameId: number) => {
-  const rounds = await prisma.rounds.findMany({
+export async function addBotToGame(socket: Socket, gameId: number) {
+  const rounds = await prisma.round.findMany({
     where: {
       game_id: gameId,
     },

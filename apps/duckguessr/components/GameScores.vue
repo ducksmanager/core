@@ -70,7 +70,7 @@ export default defineComponent({
     const playerIds = players.map(({ player_id: playerId }) => playerId)
 
     const playerNames = players.reduce(
-      (acc, { players }) => ({ ...acc, [players.id]: players.username }),
+      (acc, { player }) => ({ ...acc, [player.id]: player.username }),
       {}
     )
 
