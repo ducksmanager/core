@@ -75,6 +75,7 @@
               <v-contextmenu-submenu
                 v-else
                 :title="$t(`Date d'achat`)"
+                @mouseleave.prevent="() => {}"
               >
                 <template #title>
                   <b-icon
@@ -83,53 +84,66 @@
                   />
                   {{ purchaseStateText }}
                 </template>
-                <li class="menu-separator">
+                <v-contextmenu-group :title="$t('Date d\'achat')">
                   <v-contextmenu-item
                     v-if="!copy.newPurchaseContext"
-                    @click="copy.newPurchaseContext = !copy.newPurchaseContext"
+                    :hide-on-click="false"
+                    class="clickable"
+                    @click.stop="
+                      copy.newPurchaseContext = !copy.newPurchaseContext;
+                      copy.newPurchaseDate = today
+                    "
                   >
-                    {{ $t("Nouvelle date d'achat...") }}
+                    <b>{{ $t("Nouvelle date d'achat...") }}</b>
                   </v-contextmenu-item>
-                  <template v-else>
+                  <v-contextmenu-item
+                    v-else
+                    class="purchase-date"
+                    @click.stop="() => {}"
+                  >
+                    <b-form-input
+                      v-model="copy.newPurchaseDate"
+                      type="text"
+                      lazy-formatter
+                      :formatter="formatDate"
+                      pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                      required
+                      class="form-control date px-0"
+                      maxlength="10"
+                      :placeholder="$t(`Date d'achat`)"
+                      @click.stop="() => {}"
+                    />
                     <input
                       v-model="copy.newPurchaseDescription"
                       required
                       type="text"
-                      class="form-control"
-                      size="30"
+                      class="form-control text-center"
                       maxlength="30"
                       :placeholder="$t('Description')"
-                    >
-                    <input
-                      v-model="copy.newPurchaseDate"
-                      required
-                      type="date"
-                      class="form-control"
-                      size="30"
-                      maxlength="10"
-                      :placeholder="$t(`Date d'achat`)"
-                      @keydown.prevent="() => {}"
+                      @click.stop="() => {}"
                     >
                     <b-button
-                      @click="
+                      variant="success"
+                      class="btn-sm"
+                      @click.stop="
                         $emit('create-purchase', {
                           date: copy.newPurchaseDate,
                           description: copy.newPurchaseDescription,
                         });
-                        copy.newPurchaseDescription = copy.newPurchaseDate = null;
+                        copy.newPurchaseDescription = '';
+                        copy.newPurchaseDate = today;
                         copy.newPurchaseContext = false"
                     >
-                      {{ $t("Créer") }}
+                      <b-icon icon="check" />
                     </b-button>
                     <b-button
-                      class="cancel"
-                      @click="copy.newPurchaseContext = false"
+                      variant="warning"
+                      class="btn-sm"
+                      @click.stop="copy.newPurchaseContext = false"
                     >
-                      {{ $t("Annuler") }}
+                      <b-icon icon="x" />
                     </b-button>
-                  </template>
-                </li>
-                <v-contextmenu-group :title="$t('Date d\'achat')">
+                  </v-contextmenu-item>
                   <v-contextmenu-item
                     v-for="{id: purchaseId, date, description} in purchases"
                     :key="`copy-${copyIndex}-purchase-${purchaseId}`"
@@ -137,7 +151,9 @@
                     :class="{clickable: true, selected: copy.purchaseId === purchaseId, 'purchase-date': true}"
                     @click.stop="copy.purchaseId = purchaseId"
                   >
-                    {{ description }}<br><small>{{ date }}</small>
+                    <small class="date">{{ date }}</small><div class="mx-2">
+                      {{ description }}
+                    </div>
                     <b-button
                       class="delete-purchase btn-sm"
                       :title="$t('Supprimer')"
@@ -193,9 +209,11 @@ import conditionMixin from "../mixins/conditionMixin";
 import Condition from "./Condition";
 import {BAlert, BIcon, BNavItem, BTab, BTabs} from "bootstrap-vue-3";
 import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu, ContextmenuDivider, ContextmenuGroup } from "v-contextmenu";
-import {mapActions} from "pinia";
+import {mapActions, mapState} from "pinia";
 import {l10n} from "../stores/l10n";
+import {collection} from "../stores/collection";
 
+const today = new Date().toISOString().slice(0, 10);
 export default {
   name: "ContextMenu",
   directives: {
@@ -223,9 +241,6 @@ export default {
     copies: {
       type: Array, required: true
     },
-    purchases: {
-      type: Array, required: true
-    }
   },
   emits: ["update-issues", "create-purchase", "delete-purchase", "close"],
   data: () => ({
@@ -236,12 +251,14 @@ export default {
     },
     newPurchaseContext: false,
     newPurchaseDescription: "",
-    newPurchaseDate: "",
+    newPurchaseDate: today,
     editingCopies: [],
-    currentCopyIndex: 0
+    currentCopyIndex: 0,
+    today
   }),
 
   computed: {
+    ...mapState(collection, ["purchases"]),
     conditionStates() {
       return {
         ...(this.isSingleIssueSelected ? {} : {
@@ -291,9 +308,11 @@ export default {
 
   methods: {
     ...mapActions(l10n, ["$r"]),
-    test() {
-      console.log('test')
-    },
+    formatDate: (value) =>
+      /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)
+        ? value
+        : today,
+
     updateEditingCopies() {
       if (this.selectedIssues.length === 1) {
         if (this.copies.length) {
@@ -323,7 +342,6 @@ export default {
         }), {});
       }
 
-      this.$refs.menu.close();
       this.$emit("update-issues", {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,
@@ -435,18 +453,14 @@ export default {
       }
 
       &.purchase-date {
-        align-items: start;
-        justify-content: center;
-        flex-direction: column;
+        justify-content: space-between;
         background-repeat: no-repeat;
         background-size: 12px;
         background-position-x: 10px;
-        line-height: 20px;
+        line-height: 25px;
 
-        .delete-purchase {
-          position: absolute;
-          right: 0;
-          top: calc(50% - 11px);
+        .date {
+          width: 70px;
         }
       }
 

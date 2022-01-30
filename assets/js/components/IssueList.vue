@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="publicationName"
+    v-if="publicationName && purchases"
     class="mt-4"
   >
     <Publication
@@ -108,7 +108,7 @@
                 :alt="$t('Voir')"
                 @mouseover="hoveredIssueNumber=issueNumber"
                 @mouseout="hoveredIssueNumber=null;hoveredIssueHasCover=undefined"
-              @click.prevent="currentIssueOpened = hoveredIssueHasCover ? {publicationcode, issueNumber}: null"
+                @click.prevent="currentIssueOpened = hoveredIssueHasCover ? {publicationcode, issueNumber}: null"
               />
               <span
                 class="issue-text"
@@ -124,9 +124,9 @@
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
-                  <BIcon
-                    v-if="purchaseId && purchases && purchases.find(({id}) => id === purchaseId)"
-                    v-once
+                  <b-icon
+                    v-if="purchaseId && purchases.find(({id}) => id === purchaseId)"
+                    icon="calendar"
                     class="issue-purchase-date"
                     :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`"
                   />
@@ -198,13 +198,11 @@
     ref="contextmenu"
   >
     <ContextMenu
-      v-if="purchases"
       ref="contextMenu"
       :key="contextMenuKey"
       :publication-code="publicationcode"
       :selected-issues="selected"
       :copies="selectedIssuesCopies"
-      :purchases="purchases"
       @update-issues="updateIssues"
       @create-purchase="createPurchase"
       @delete-purchase="deletePurchase"
@@ -355,7 +353,7 @@ export default {
     ...mapActions(collection, ["loadCollection", "loadPurchases"]),
     openContextMenuIfBookNotOpen(e) {
       if (this.currentIssueOpened === null) {
-        this.$refs.contextMenu.$refs.menu.open(e);
+        // this.$refs.contextMenu.$refs.menu.open(e);
       }
     },
     getPreselected() {
@@ -387,6 +385,7 @@ export default {
       });
     },
     async updateIssues(data) {
+      this.$refs.contextmenu.hide();
       await axios.post("/api/collection/issues", data);
       await this.loadCollection(true);
       this.selected = [];
