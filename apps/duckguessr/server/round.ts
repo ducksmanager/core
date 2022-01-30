@@ -1,5 +1,5 @@
 import type Index from '@prisma/client'
-import { GuessRequest, GuessResponseWithAnswer } from '../types/guess'
+import { GuessRequest, GuessResponse } from '../types/guess'
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
@@ -45,7 +45,7 @@ export async function guess(
   player: Index.player,
   roundId: number,
   { personcode }: GuessRequest
-): Promise<GuessResponseWithAnswer | void> {
+): Promise<GuessResponse | void> {
   const round = await getRound(roundId)
   if (!personcode) {
     console.error(`No guess was provided`)

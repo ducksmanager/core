@@ -205,17 +205,20 @@ export default defineComponent({
 
     watch(
       () => currentRound.value,
-      (currentRound, previousRound) => {
+      (newCurrentRound, previousRound) => {
         hasUrlLoaded.value = false
-        if (currentRound) {
+        if (newCurrentRound) {
           if (!gameSocket) {
             gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!!.id}`)
             gameSocket.on('playerGuessed', (data: GuessResponse) => {
-              console.log(data)
+              const { answer } = data
               currentRoundScores.value = [...currentRoundScores.value, data]
+              if (answer) {
+                currentRound.value!!.personcode = answer
+              }
             })
           }
-          if (currentRound.round_number !== previousRound?.round_number) {
+          if (newCurrentRound.round_number !== previousRound?.round_number) {
             currentRoundScores.value = []
           }
         }

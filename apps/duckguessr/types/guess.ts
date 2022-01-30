@@ -4,8 +4,6 @@ export interface GuessRequest {
   personcode: string
 }
 
-export interface GuessResponse extends Index.round_score {}
-
-export interface GuessResponseWithAnswer extends GuessResponse {
+export interface GuessResponse extends Index.round_score {
   answer: string
 }
