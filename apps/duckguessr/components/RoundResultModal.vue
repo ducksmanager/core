@@ -2,7 +2,10 @@
   <b-modal visible :body-bg-variant="status" hide-footer hide-header-close>
     <template #modal-title> Round {{ roundNumber }} </template>
     <div v-if="status === 'success'">Correct!</div>
-    <div v-else>Incorrect. The answer was: {{ correctAnswer }}</div>
+    <div v-else>
+      <div>Incorrect. The answer was:</div>
+      <b-row><author-card selectable :author="correctAuthor" /></b-row>
+    </div>
     <template v-if="timeBeforeNextRound">
       <div>Round {{ roundNumber + 1 }} starts in</div>
       <div class="text-xl-center">
@@ -14,6 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from '@nuxtjs/composition-api'
+import { Author } from '~/types/roundWithScoresAndAuthor'
 
 export default defineComponent({
   name: 'RoundResultModal',
@@ -26,8 +30,8 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    correctAnswer: {
-      type: String,
+    correctAuthor: {
+      type: Object as () => Author,
       required: true,
     },
     nextRoundStartDate: {
@@ -74,5 +78,10 @@ export default defineComponent({
   right: 0;
   height: 100vh;
   display: flex;
+
+  .author {
+    background-color: white;
+    height: 150px;
+  }
 }
 </style>

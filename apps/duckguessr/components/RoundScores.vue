@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 const { scores } = defineProps<{
-  scores: number[]
+  scores: { [key: string]: number }
 }>()
 
 const totalScore = (Object.values(scores) as number[]).reduce(

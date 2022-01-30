@@ -24,12 +24,12 @@
 <script lang="ts">
 import { ref } from '@nuxtjs/composition-api'
 
-import { roundWithScoresAndPerson } from '~/types/roundWithScoresAndPerson'
+import { RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 
 export default {
   props: {
     round: {
-      type: Object as () => roundWithScoresAndPerson,
+      type: Object as () => RoundWithScoresAndAuthor,
       required: true,
     },
   },

@@ -19,7 +19,7 @@
     <round-result-modal
       v-if="currentRound.personcode"
       :status="scoreToVariant(currentRoundPlayerScore)"
-      :correct-answer="currentRound.personcode"
+      :correct-author="getAuthor(currentRound.personcode)"
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
     />
@@ -61,7 +61,7 @@
             show
             :variant="scoreToVariant(score)"
           >
-            {{ players.find(({ id }) => id === score.player_id).username }}:
+            {{ getUsername(score.player_id) }}:
             {{ score.score_type_name }}
           </b-alert>
         </template>
@@ -86,7 +86,10 @@ import { io, Socket } from 'socket.io-client'
 import AuthorCard from '~/components/AuthorCard.vue'
 import ProgressBar from '~/components/ProgressBar.vue'
 import { getUser } from '@/components/user'
-import { roundWithScoresAndPerson } from '~/types/roundWithScoresAndPerson'
+import {
+  Author,
+  RoundWithScoresAndAuthor,
+} from '~/types/roundWithScoresAndAuthor'
 import {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -97,8 +100,9 @@ interface GamePlayerWithFullPlayer extends Index.game_player {
   player: Index.player
 }
 
-interface GameWithRoundsAndPlayers extends Index.game {
-  rounds: Array<roundWithScoresAndPerson>
+interface GameFull extends Index.game {
+  authors: Array<Author>
+  rounds: Array<RoundWithScoresAndAuthor>
   game_players: Array<GamePlayerWithFullPlayer>
 }
 
@@ -112,7 +116,7 @@ export default defineComponent({
 
     const chosenAuthor = ref(null as string | null)
 
-    const game = ref(null as GameWithRoundsAndPlayers | null)
+    const game = ref(null as GameFull | null)
     let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> | null =
       null
 
@@ -141,7 +145,7 @@ export default defineComponent({
 
     const getRound = (
       searchedRoundNumber: number | null
-    ): roundWithScoresAndPerson | null =>
+    ): RoundWithScoresAndAuthor | null =>
       searchedRoundNumber == null
         ? null
         : (game.value?.rounds || []).find(
@@ -149,11 +153,11 @@ export default defineComponent({
               roundNumber === searchedRoundNumber
           ) || null
 
-    const previousRound = computed((): roundWithScoresAndPerson | null =>
+    const previousRound = computed((): RoundWithScoresAndAuthor | null =>
       getRound(currentRoundNumber.value!! - 1)
     )
 
-    const currentRound = computed((): roundWithScoresAndPerson | null =>
+    const currentRound = computed((): RoundWithScoresAndAuthor | null =>
       getRound(currentRoundNumber.value)
     )
 
@@ -281,6 +285,14 @@ export default defineComponent({
           currentRound.value &&
           `${process.env.CLOUDINARY_URL_ROOT}${currentRound.value.sitecode_url}`
       ),
+
+      getUsername: (playerId: number) =>
+        players.value.find(({ id }) => id === playerId)?.username || '?',
+
+      getAuthor: (personcode2: string): Author =>
+        game.value!!.authors.find(
+          ({ personcode }) => personcode2 === personcode
+        )!!,
 
       scoreToVariant(roundScore: Index.round_score | null) {
         switch (roundScore?.score_type_name) {

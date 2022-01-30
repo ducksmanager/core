@@ -2,7 +2,7 @@ const request = require('request').defaults({ encoding: null })
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-async function getStartedRound(gameId, finished) {
+async function getStartedRound(gameId) {
   return await prisma.rounds.findFirst({
     include: {
       round_scores: true,
@@ -10,10 +10,10 @@ async function getStartedRound(gameId, finished) {
     where: {
       game_id: parseInt(gameId),
       started_at: { not: null },
-      finished_at: finished ? { not: null } : null,
+      finished_at: null,
     },
     orderBy: {
-      round_number: finished ? 'desc' : 'asc',
+      round_number: 'asc',
     },
   })
 }
@@ -25,7 +25,7 @@ export default async (req, res) => {
     res.end()
     return
   }
-  const round = await getStartedRound(gameId, false)
+  const round = await getStartedRound(gameId)
   switch (req.method) {
     case 'GET':
       switch (action) {
