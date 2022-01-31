@@ -21,9 +21,10 @@
 
 <script>
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
+import base64Mixin from '@/mixins/base64Mixin'
 
 export default {
-  mixins: [stepOptionsMixin],
+  mixins: [stepOptionsMixin, base64Mixin],
 
   props: {
     options: {
@@ -48,7 +49,6 @@ export default {
   data: () => ({
     textImage: null,
     textImageOptions: {},
-    image: { base64: null },
     attributeKeys: ['x', 'y', 'width', 'height'],
   }),
 
@@ -63,15 +63,7 @@ export default {
       immediate: true,
       async handler(newValue) {
         if (newValue) {
-          try {
-            this.image = await this.$axios.$get(
-              `/fs/base64?${this.textImage.url}`
-            )
-          } catch (e) {
-            console.error(
-              `Base64 image could not be retrieved : ${newValue} : ${e}`
-            )
-          }
+          this.loadImage(this.textImage.url)
         }
       },
     },
