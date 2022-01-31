@@ -1,4 +1,4 @@
-FROM node:12-slim
+FROM node:14-slim
 
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3000
@@ -9,10 +9,11 @@ RUN apt-get update \
 
 RUN mkdir -p /usr/src/nuxt-app
 WORKDIR /usr/src/nuxt-app
-COPY . /usr/src/nuxt-app/
-COPY .env.prod /usr/src/nuxt-app/.env
-
+COPY package*.json ./
 RUN npm install
+
+COPY . ./
+COPY .env.prod ./.env
 RUN npm run build
 
 EXPOSE 3000
