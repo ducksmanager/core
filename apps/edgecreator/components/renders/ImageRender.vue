@@ -51,10 +51,9 @@ export default {
       async handler() {
         if (this.effectiveSource) {
           try {
-            this.image = await this.$axios.$get(
-              `/fs/base64?${this.country}/elements/${this.effectiveSource}`
+            this.loadImage(
+              `${process.env.EDGES_URL_PUBLIC}/${this.country}/elements/${this.effectiveSource}`
             )
-            this.enableDragResize(this.$refs.image)
           } catch (e) {
             console.error(
               `Image could not be retrieved : ${this.effectiveSource}`
@@ -67,6 +66,27 @@ export default {
   },
   async mounted() {
     this.enableDragResize(this.$refs.image)
+  },
+  methods: {
+    loadImage(src) {
+      const vm = this
+      const img = new Image()
+      img.crossOrigin = 'Anonymous'
+      img.onload = function () {
+        const canvas = document.createElement('CANVAS')
+        const ctx = canvas.getContext('2d')
+        canvas.height = this.naturalHeight
+        canvas.width = this.naturalWidth
+        ctx.drawImage(this, 0, 0)
+        vm.image = {
+          base64: canvas.toDataURL('png'),
+          width: this.naturalWidth,
+          height: this.naturalHeight,
+        }
+        vm.enableDragResize(vm.$refs.image)
+      }
+      img.src = src
+    },
   },
 }
 </script>
