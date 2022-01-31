@@ -5,20 +5,42 @@ import { Socket } from 'socket.io'
 const axios = require('axios')
 const tf = require('@tensorflow/tfjs')
 const tfn = require('@tensorflow/tfjs-node')
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 
-const modelFile = tfn.io.fileSystem('datasets/us/model/model.json')
+interface ModelWithArtist {
+  model: LayersModel
+  artists: Array<string>
+}
 
-const artists = ['CB', 'AT', 'TS', 'FG', 'DR', 'PM', 'JB', 'AH', 'PAl', 'WVH']
+const models: { [key: string]: ModelWithArtist } = {}
 
-let model: LayersModel
-
-tf.loadLayersModel(modelFile).then((loadedModel: LayersModel) => {
-  model = loadedModel
-})
+prisma.dataset
+  .findMany({
+    where: {
+      name: { endsWith: '-ml' },
+    },
+  })
+  .then(async (mlDatasets: Array<Index.dataset>) => {
+    for (const { id, name } of mlDatasets) {
+      const artists = await prisma.$queryRaw`
+        select distinct personcode
+        from dataset_entryurl
+        left join entryurl_details using (sitecode_url)
+        where dataset_id = ${id}
+      `
+      const modelFile = tfn.io.fileSystem(`models/${name}/model.json`)
+      models[name] = {
+        artists,
+        model: await tf.loadLayersModel(modelFile),
+      }
+    }
+  })
 
 export function playAsBot(
   botUsername: string,
   socket: Socket,
+  dataset: Index.dataset,
   rounds: Index.round[]
 ) {
   const predicted: number[] = []
@@ -39,6 +61,7 @@ export function playAsBot(
       predict(
         currentRound.round_number,
         currentRound.sitecode_url,
+        dataset,
         possibleAuthors
       ).then((personcode) => {
         socket.emit('guess', botUsername, currentRound.id, {
@@ -55,7 +78,12 @@ export function playAsBot(
   }, 1000)
 }
 
-const predict = (roundNumber: number, url: string, possibleAuthors: string[]) =>
+const predict = (
+  roundNumber: number,
+  url: string,
+  dataset: Index.dataset,
+  possibleAuthors: string[]
+) =>
   new Promise((resolve) => {
     console.log('Possible authors: ' + JSON.stringify(possibleAuthors))
     const startTime = new Date().getTime()
@@ -68,12 +96,12 @@ const predict = (roundNumber: number, url: string, possibleAuthors: string[]) =>
       image = tf.expandDims(image, 0)
       image = tf.cast(image, 'float32').div(255)
 
-      const prediction = model.predict(image) as Tensor
+      const prediction = models[dataset.name].model.predict(image) as Tensor
       prediction.array().then(([predictionArray]: any) => {
         console.log(`Prediction done in ${new Date().getTime() - startTime}ms`)
         const sortedPredictions = predictionArray
           .map((predictionProbability: number, predictionIndex: number) => ({
-            personcode: artists[predictionIndex],
+            personcode: models[dataset.name].artists[predictionIndex],
             predictionProbability: predictionProbability * 100,
           }))
           .sort(
