@@ -24,9 +24,15 @@ export default async (req, res) => {
               where: {
                 dataset_id: dataset.id,
                 entryurl_details: {
-                  decision: null,
+                  is: {
+                    decision: null,
+                  },
                 },
               },
+              include: {
+                entryurl_details: true,
+              },
+              take: 60,
             }),
             maintainedEntryurlsCount: await prisma.$queryRaw`
               select decision, count(*) as 'count'
@@ -35,21 +41,6 @@ export default async (req, res) => {
               where dataset_id = ${dataset.id}
               group by decision
             `,
-            // entryurlsToMaintain: await prisma.$queryRaw`
-            //   select sitecode_url as sitecodeUrl, decision
-            //   from dataset_entryurl de
-            //          left join entryurl_details using (sitecode_url)
-            //   where dataset_id = ${dataset.id}
-            //     and decision is null
-            //   limit 60
-            // `,
-            // maintainedEntryurlsCount: await prisma.$queryRaw`
-            //   select decision, count(*) as 'count'
-            //   from dataset_entryurl de
-            //          left join entryurl_details using (sitecode_url)
-            //   where dataset_id = ${dataset.id}
-            //   group by decision
-            // `,
           })
         )
       } else {
@@ -63,13 +54,19 @@ export default async (req, res) => {
     }
     case 'POST': {
       const { entryurlsPendingMaintenance } = req.body
-      await prisma.entryurl_validation.createMany({
-        data: entryurlsPendingMaintenance.map(({ sitecodeUrl, decision }) => ({
-          sitecode_url: sitecodeUrl,
-          decision,
-          updated_at: new Date(),
-        })),
-      })
+      await prisma.$transaction(
+        entryurlsPendingMaintenance.map(({ sitecode_url, decision }) =>
+          prisma.entryurl_details.update({
+            where: {
+              sitecode_url,
+            },
+            data: {
+              decision,
+              updated_at: new Date(),
+            },
+          })
+        )
+      )
       res.writeHeader(200, { 'Content-Type': 'application/json' })
       res.end()
     }

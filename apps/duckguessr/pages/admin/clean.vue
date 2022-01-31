@@ -27,9 +27,9 @@
         </b-col>
         <b-col
           v-for="(
-            { sitecodeUrl, url, decision }, index
+            { sitecode_url, url, decision }, index
           ) in entryurlsPendingMaintenanceWithUrls"
-          :key="sitecodeUrl"
+          :key="sitecode_url"
           class="d-flex align-items-center justify-content-end flex-column"
           col
           cols="2"
@@ -38,7 +38,7 @@
           <b-button-group vertical size="sm">
             <b-button
               v-for="({ variant, title }, value) in decisions"
-              :key="`${sitecodeUrl}-${value}`"
+              :key="`${sitecode_url}-${value}`"
               :variant="variant"
               :pressed="decision === value"
               @click="
@@ -109,8 +109,8 @@ export default {
       entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map(
         (data: any) => ({
           ...data,
-          decision: data.decision || 'ok',
-          url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecodeUrl}`,
+          decision: data.entryurl_details.decision || 'ok',
+          url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecode_url}`,
         })
       )
 
