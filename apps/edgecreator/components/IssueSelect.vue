@@ -17,6 +17,14 @@
           v-if="isCatalogLoaded"
           :publicationcode="currentPublicationCode"
           :selected="currentIssueNumber"
+          :has-more-before="hasMoreIssuesToLoad.before"
+          :has-more-after="hasMoreIssuesToLoad.after"
+          @load-more="
+            surroundingIssuesToLoad = {
+              ...surroundingIssuesToLoad,
+              [$event]: surroundingIssuesToLoad[$event] + 10,
+            }
+          "
           @change="
             currentIssueNumber = $event
             onChange({})
@@ -74,6 +82,7 @@ export default {
     disableOngoingOrPublished: { type: Boolean, required: true },
     disableNotOngoingNorPublished: { type: Boolean, required: true },
     edgeGallery: { type: Boolean, default: false },
+    baseIssueNumbers: { type: Array, default: () => [] },
   },
   data: () => ({
     currentCountryCode: null,
@@ -81,6 +90,8 @@ export default {
     currentIssueNumber: null,
     currentIssueNumberEnd: null,
     editMode: 'single',
+    hasMoreIssuesToLoad: { before: false, after: false },
+    surroundingIssuesToLoad: { before: 10, after: 10 },
   }),
   computed: {
     ...mapState('coa', ['countryNames', 'publicationNames', 'issueNumbers']),
@@ -115,11 +126,13 @@ export default {
           )
       )
     },
+    publicationIssues() {
+      return this.issueNumbers && this.issueNumbers[this.currentPublicationCode]
+    },
     issuesWithSelect() {
       const vm = this
       return (
-        this.issueNumbers &&
-        this.issueNumbers[this.currentPublicationCode] &&
+        this.publicationIssues &&
         this.publishedEdges[this.currentPublicationCode] && [
           { value: null, text: this.$t('Select an issue number') },
           ...this.issueNumbers[vm.currentPublicationCode].map((issuenumber) => {
@@ -160,20 +173,12 @@ export default {
         if (newValue) {
           this.currentIssueNumber = null
           await this.fetchIssueNumbers([newValue])
-          const publishedEdges = await this.$axios.$get(
-            `/api/edges/${newValue}`
-          )
-          this.addPublishedEdges({
-            [newValue]: publishedEdges.reduce(
-              (acc, { issuenumber, id, modelId }) => ({
-                ...acc,
-                ...(modelId ? { [issuenumber]: { id, modelId } } : {}),
-              }),
-              {}
-            ),
-          })
+          await this.loadEdges()
         }
       },
+    },
+    async surroundingIssuesToLoad() {
+      await this.loadEdges()
     },
   },
   mounted() {
@@ -189,6 +194,47 @@ export default {
       'fetchIssueNumbers',
     ]),
     ...mapMutations('edgeCatalog', ['addPublishedEdges']),
+
+    async loadEdges() {
+      let issueNumbersFilter = ''
+      if (this.edgeGallery) {
+        const vm = this
+        const minBaseIssueNumberIndex = this.publicationIssues.indexOf(
+          this.baseIssueNumbers[0]
+        )
+        const maxBaseIssueNumberIndex = this.publicationIssues.indexOf(
+          this.baseIssueNumbers[this.baseIssueNumbers.length - 1]
+        )
+        issueNumbersFilter = `/${this.publicationIssues
+          .filter(
+            (issueNumber, index) =>
+              minBaseIssueNumberIndex - index <
+                vm.surroundingIssuesToLoad.before &&
+              index - maxBaseIssueNumberIndex <
+                vm.surroundingIssuesToLoad.after &&
+              !vm.baseIssueNumbers.includes(issueNumber)
+          )
+          .join(',')}`
+        this.hasMoreIssuesToLoad = {
+          before: issueNumbersFilter[0] !== this.publicationIssues[0],
+          after:
+            issueNumbersFilter[issueNumbersFilter.length] !==
+            this.publicationIssues[this.publicationIssues.length],
+        }
+      }
+      const publishedEdges = await this.$axios.$get(
+        `/api/edges/${this.publicationCode}${issueNumbersFilter}`
+      )
+      this.addPublishedEdges({
+        [this.publicationCode]: publishedEdges.reduce(
+          (acc, { issuenumber, id, modelId }) => ({
+            ...acc,
+            ...(modelId ? { [issuenumber]: { id, modelId } } : {}),
+          }),
+          {}
+        ),
+      })
+    },
 
     onChange(data) {
       this.$emit('change', {
