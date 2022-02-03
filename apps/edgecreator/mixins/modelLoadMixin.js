@@ -1,15 +1,19 @@
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapState } from 'pinia'
+import dimensionsMixin from './dimensionsMixin'
 import legacyDbMixin from '@/mixins/legacyDbMixin'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 import stepListMixin from '@/mixins/stepListMixin'
-import dimensionsMixin from './dimensionsMixin'
+import { edgeCatalog } from '~/stores/edgeCatalog'
+import { main } from '~/stores/main'
+import { user } from '~/stores/user'
+import { renders } from '~/stores/renders'
 
 export default {
   computed: {
-    ...mapState(['country', 'magazine', 'issuenumbers']),
-    ...mapState('renders', ['supportedRenders']),
-    ...mapState('user', ['allUsers']),
-    ...mapState('edgeCatalog', ['publishedEdgesSteps']),
+    ...mapState(main, ['country', 'magazine', 'issuenumbers']),
+    ...mapState(renders, ['supportedRenders']),
+    ...mapState(user, ['allUsers']),
+    ...mapState(edgeCatalog, ['publishedEdgesSteps']),
   },
   mixins: [legacyDbMixin, svgUtilsMixin, dimensionsMixin, stepListMixin],
   data: () => ({
@@ -214,7 +218,7 @@ export default {
         })
       })
     },
-    ...mapMutations(['setPhotoUrl', 'addContributor', 'addWarning']),
-    ...mapActions('edgeCatalog', ['getPublishedEdgesSteps']),
+    ...mapActions(main, ['setPhotoUrl', 'addContributor', 'addWarning']),
+    ...mapActions(edgeCatalog, ['getPublishedEdgesSteps']),
   },
 }

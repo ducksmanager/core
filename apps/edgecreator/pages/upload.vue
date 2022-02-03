@@ -117,11 +117,12 @@
 
 <script>
 import Vue from 'vue'
+import Issue from 'ducksmanager/assets/js/components/Issue.vue'
+import { mapState } from 'pinia'
 import EdgeCanvas from '@/components/EdgeCanvas'
 import IssueSelect from '@/components/IssueSelect'
-import Issue from 'ducksmanager/assets/js/components/Issue.vue'
-import { mapState } from 'vuex'
 import saveEdgeMixin from '@/mixins/saveEdgeMixin'
+import { coa } from '~/stores/coa'
 
 export default {
   components: { Issue, IssueSelect, EdgeCanvas },
@@ -133,7 +134,7 @@ export default {
     uploadedImageData: null,
   }),
   computed: {
-    ...mapState('coa', ['publicationNames']),
+    ...mapState(coa, ['publicationNames']),
     initialContributors() {
       return { photographers: [{ username: this.$cookies.get('dm-user') }] }
     },

@@ -66,10 +66,12 @@
   </div>
 </template>
 <script>
+import { mapActions, mapState } from 'pinia'
 import Dimensions from '@/components/Dimensions'
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
-import { mapActions, mapMutations, mapState } from 'vuex'
 import EdgeGallery from '@/components/EdgeGallery'
+import { coa } from '~/stores/coa'
+import { edgeCatalog } from '~/stores/edgeCatalog'
 
 export default {
   components: { EdgeGallery, Dimensions },
@@ -94,8 +96,8 @@ export default {
     surroundingIssuesToLoad: { before: 10, after: 10 },
   }),
   computed: {
-    ...mapState('coa', ['countryNames', 'publicationNames', 'issueNumbers']),
-    ...mapState('edgeCatalog', ['publishedEdges']),
+    ...mapState(coa, ['countryNames', 'publicationNames', 'issueNumbers']),
+    ...mapState(edgeCatalog, ['publishedEdges']),
 
     countriesWithSelect() {
       return (
@@ -188,12 +190,12 @@ export default {
     this.fetchCountryNames(this.$i18n.locale)
   },
   methods: {
-    ...mapActions('coa', [
+    ...mapActions(coa, [
       'fetchCountryNames',
       'fetchPublicationNamesFromCountry',
       'fetchIssueNumbers',
     ]),
-    ...mapMutations('edgeCatalog', ['addPublishedEdges']),
+    ...mapActions(edgeCatalog, ['addPublishedEdges']),
 
     async loadEdges() {
       let issueNumbersFilter = ''
@@ -223,10 +225,10 @@ export default {
         }
       }
       const publishedEdges = await this.$axios.$get(
-        `/api/edges/${this.publicationCode}${issueNumbersFilter}`
+        `/api/edges/${this.currentPublicationCode}${issueNumbersFilter}`
       )
       this.addPublishedEdges({
-        [this.publicationCode]: publishedEdges.reduce(
+        [this.currentPublicationCode]: publishedEdges.reduce(
           (acc, { issuenumber, id, modelId }) => ({
             ...acc,
             ...(modelId ? { [issuenumber]: { id, modelId } } : {}),

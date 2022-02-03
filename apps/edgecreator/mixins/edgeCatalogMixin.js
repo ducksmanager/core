@@ -1,11 +1,14 @@
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapState, mapWritableState } from 'pinia'
+import { edgeCatalog } from '~/stores/edgeCatalog'
+import { coa } from '~/stores/coa'
+import { user } from '~/stores/user'
 import svgUtilsMixin from '@/mixins/svgUtilsMixin'
 
 export default {
   computed: {
-    ...mapState('edgeCatalog', ['currentEdges', 'publishedEdges']),
-    ...mapState('coa', ['publicationNames']),
-    ...mapState('user', ['allUsers', 'username']),
+    ...mapState(edgeCatalog, ['currentEdges', 'publishedEdges']),
+    ...mapState(coa, ['publicationNames']),
+    ...mapWritableState(user, ['allUsers', 'username']),
   },
   mixins: [svgUtilsMixin],
 
@@ -34,10 +37,9 @@ export default {
   }),
 
   methods: {
-    ...mapMutations('edgeCatalog', ['addCurrentEdges', 'addPublishedEdges']),
-    ...mapActions('coa', ['fetchPublicationNames']),
-    ...mapMutations('user', ['setUsername']),
-    ...mapActions('user', ['fetchAllUsers']),
+    ...mapActions(edgeCatalog, ['addCurrentEdges', 'addPublishedEdges']),
+    ...mapActions(coa, ['fetchPublicationNames']),
+    ...mapActions(user, ['fetchAllUsers']),
 
     getEdgeFromApi(
       {
@@ -110,7 +112,7 @@ export default {
 
   async mounted() {
     await this.fetchAllUsers()
-    this.setUsername(this.$cookies.get('dm-user'))
+    this.username = this.$cookies.get('dm-user')
 
     const vm = this
     let currentEdges = {}

@@ -1,26 +1,31 @@
+import { mapState } from 'pinia'
+import { main } from '~/stores/main'
+
+const { ui: uiStore } = require('../stores/ui')
+
+let ui
+
 export default {
   computed: {
+    ...mapState(main, ['edgesBefore', 'edgesAfter']),
     showPreviousEdge: {
       get() {
-        return (
-          this.$store.state.ui.showPreviousEdge &&
-          this.$store.state.edgesBefore.length > 0
-        )
+        return ui.showPreviousEdge && this.edgesBefore.length > 0
       },
       set(value) {
-        this.$store.commit('ui/setShowPreviousEdge', value)
+        ui.$patch({ showPreviousEdge: value })
       },
     },
     showNextEdge: {
       get() {
-        return (
-          this.$store.state.ui.showNextEdge &&
-          this.$store.state.edgesAfter.length > 0
-        )
+        return ui.showNextEdge && this.edgesAfter.length > 0
       },
       set(value) {
-        this.$store.commit('ui/setShowNextEdge', value)
+        ui.$patch({ showNextEdge: value })
       },
     },
+  },
+  mounted() {
+    ui = uiStore()
   },
 }

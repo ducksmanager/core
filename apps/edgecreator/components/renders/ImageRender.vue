@@ -13,8 +13,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 
+import { main } from '~/stores/main'
 import stepOptionsMixin from '@/mixins/stepOptionsMixin'
 import base64Mixin from '@/mixins/base64Mixin'
 
@@ -39,7 +40,7 @@ export default {
   }),
 
   computed: {
-    ...mapState(['country']),
+    ...mapState(main, ['country']),
     effectiveSource() {
       return this.resolveStringTemplates(this.options.src)
     },

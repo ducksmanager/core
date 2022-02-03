@@ -11,7 +11,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import { main } from '~/stores/main'
+import { ui } from '~/stores/ui'
 
 export default {
   name: 'PublishedEdge',
@@ -24,8 +26,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(['country', 'magazine']),
-    ...mapState('ui', ['zoom']),
+    ...mapState(main, ['country', 'magazine']),
+    ...mapState(ui, ['zoom']),
   },
   methods: {
     getEdgeUrl() {

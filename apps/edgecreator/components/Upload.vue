@@ -6,7 +6,8 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'pinia'
+import { main } from '~/stores/main'
 
 require('@uppy/core/dist/style.css')
 require('@uppy/dashboard/dist/style.css')
@@ -95,8 +96,7 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(['setPhotoUrl']),
-    ...mapActions(['loadItems']),
+    ...mapActions(main, ['setPhotoUrl', 'loadItems']),
   },
 }
 </script>

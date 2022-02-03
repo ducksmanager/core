@@ -6,13 +6,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import { ui } from '~/stores/ui'
 
 export default {
   name: 'PositionHelper',
 
   computed: {
-    ...mapState('ui', ['positionInCanvas']),
+    ...mapState(ui, ['positionInCanvas']),
   },
 }
 </script>

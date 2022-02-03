@@ -129,9 +129,15 @@
   </b-container>
 </template>
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapState, mapWritableState } from 'pinia'
 
 import { BIconCamera, BIconPencil } from 'bootstrap-vue'
+import { main } from '~/stores/main'
+import { user } from '~/stores/user'
+import { editingStep } from '~/stores/editingStep'
+import { renders } from '~/stores/renders'
+import { ui } from '~/stores/ui'
+import { edgeCatalog } from '~/stores/edgeCatalog'
 import TopBar from '@/components/TopBar'
 import EdgeCanvas from '@/components/EdgeCanvas'
 import PublishedEdge from '@/components/PublishedEdge'
@@ -169,14 +175,6 @@ export default {
     await this.fetchAllUsers()
   },
   computed: {
-    zoom: {
-      get() {
-        return this.$store.state.ui.zoom
-      },
-      set(value) {
-        this.$store.commit('ui/setZoom', value)
-      },
-    },
     editingDimensions() {
       const vm = this
       return this.editingIssuenumbers.reduce(
@@ -223,9 +221,9 @@ export default {
         {}
       )
     },
-    ...mapState([
-      'country',
-      'magazine',
+    ...mapWritableState(main, ['country', 'magazine']),
+    ...mapWritableState(ui, ['zoom']),
+    ...mapState(main, [
       'issuenumbers',
       'edgesBefore',
       'edgesAfter',
@@ -233,14 +231,14 @@ export default {
       'contributors',
       'warnings',
     ]),
-    ...mapState('editingStep', {
+    ...mapState(editingStep, {
       editingIssuenumbers: 'issuenumbers',
       editingStepNumber: 'stepNumber',
     }),
-    ...mapState('renders', ['supportedRenders']),
-    ...mapState('ui', ['zoom', 'showIssueNumbers', 'colorPickerOption']),
-    ...mapState('user', ['allUsers']),
-    ...mapState('edgeCatalog', ['currentEdges', 'publishedEdges']),
+    ...mapState(renders, ['supportedRenders']),
+    ...mapState(ui, ['zoom', 'showIssueNumbers', 'colorPickerOption']),
+    ...mapState(user, ['allUsers']),
+    ...mapState(edgeCatalog, ['currentEdges', 'publishedEdges']),
   },
   watch: {
     async issuenumbers(newValue) {
@@ -275,8 +273,8 @@ export default {
       this.error = 'Invalid URL'
       return
     }
-    this.setCountry(country)
-    this.setMagazine(magazine)
+    this.country = country
+    this.magazine = magazine
     this.addEditIssuenumber(issuenumberMin)
 
     await this.loadPublicationIssues()
@@ -360,28 +358,25 @@ export default {
       ]
     },
     rgbToHex: (r, g, b) => `#${((r << 16) | (g << 8) | b).toString(16)}`,
-    ...mapMutations([
-      'setCountry',
-      'setMagazine',
+    ...mapActions(main, [
       'setPhotoUrl',
       'addContributor',
       'addWarning',
       'removeWarning',
     ]),
-    ...mapMutations('editingStep', {
+    ...mapActions(editingStep, {
       toggleEditIssuenumber: 'toggleIssuenumber',
       replaceEditIssuenumber: 'replaceIssuenumber',
       addEditIssuenumber: 'addIssuenumber',
       addEditIssuenumbers: 'addIssuenumbers',
     }),
-    ...mapActions([
+    ...mapActions(main, [
       'setIssuenumbers',
       'loadPublicationIssues',
       'loadSurroundingEdges',
       'loadItems',
     ]),
-    ...mapMutations('user', ['setAllUsers']),
-    ...mapActions('user', ['fetchAllUsers']),
+    ...mapActions(user, ['fetchAllUsers']),
   },
 }
 </script>

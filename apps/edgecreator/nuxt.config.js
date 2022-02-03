@@ -43,8 +43,17 @@ export default {
    */
   buildModules: [
     '@nuxtjs/dotenv',
+
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
+
+    // Nuxt 2 only:
+    // https://composition-api.nuxtjs.org/getting-started/setup#quick-start
+    '@nuxtjs/composition-api/module',
+    '@pinia/nuxt',
+
+    // https://github.com/nuxt-community/localforage-module
+    '@nuxtjs/localforage',
   ],
   /*
    ** Nuxt.js modules

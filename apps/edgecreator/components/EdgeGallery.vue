@@ -29,9 +29,11 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'pinia'
 import Gallery from '@/components/Gallery'
 import modelLoadMixin from '@/mixins/modelLoadMixin'
+import { edgeCatalog } from '~/stores/edgeCatalog'
+import { coa } from '~/stores/coa'
 
 export default {
   name: 'EdgeGallery',
@@ -48,8 +50,8 @@ export default {
     isPopulating: false,
   }),
   computed: {
-    ...mapState('edgeCatalog', ['publishedEdges', 'publishedEdgesSteps']),
-    ...mapState('coa', ['issueNumbers']),
+    ...mapState(edgeCatalog, ['publishedEdges', 'publishedEdgesSteps']),
+    ...mapState(coa, ['issueNumbers']),
   },
   watch: {
     publishedEdges: {
@@ -164,7 +166,7 @@ export default {
         )
       )
     },
-    ...mapActions('edgeCatalog', ['getPublishedEdgesSteps']),
+    ...mapActions(edgeCatalog, ['getPublishedEdgesSteps']),
   },
 }
 </script>

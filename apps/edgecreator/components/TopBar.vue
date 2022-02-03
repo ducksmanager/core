@@ -104,6 +104,7 @@
           :publicationcode="`${country}/${magazine}`"
           :publicationname="publicationName"
           :issuenumber="issuenumbers[0]"
+          hide-condition
         >
           <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="isRange"
@@ -252,7 +253,7 @@
   </b-container>
 </template>
 <script>
-import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
+import { mapActions, mapState, mapWritableState } from 'pinia'
 import {
   BIconArrowsAngleExpand,
   BIconCamera,
@@ -261,6 +262,10 @@ import {
   BIconInfoCircleFill,
 } from 'bootstrap-vue'
 import Issue from 'ducksmanager/assets/js/components/Issue.vue'
+import MultipleTargetOptions from './MultipleTargetOptions'
+import { ui } from '~/stores/ui'
+import { coa } from '~/stores/coa'
+import { main } from '~/stores/main'
 import Dimensions from '@/components/Dimensions'
 import Gallery from '@/components/Gallery'
 import IssueSelect from '@/components/IssueSelect'
@@ -269,7 +274,6 @@ import surroundingEdgeMixin from '@/mixins/surroundingEdgeMixin'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
 import ConfirmEditMultipleValues from '@/components/ConfirmEditMultipleValues'
 import SessionInfo from '@/components/SessionInfo'
-import MultipleTargetOptions from './MultipleTargetOptions'
 
 export default {
   name: 'TopBar',
@@ -309,30 +313,7 @@ export default {
     }
   },
   computed: {
-    zoom: {
-      get() {
-        return this.$store.state.ui.zoom
-      },
-      set(value) {
-        this.$store.commit('ui/setZoom', value)
-      },
-    },
-    showIssueNumbers: {
-      get() {
-        return this.$store.state.ui.showIssueNumbers
-      },
-      set(value) {
-        this.$store.commit('ui/setShowIssueNumbers', value)
-      },
-    },
-    showEdgeOverflow: {
-      get() {
-        return this.$store.state.ui.showEdgeOverflow
-      },
-      set(value) {
-        this.$store.commit('ui/setShowEdgeOverflow', value)
-      },
-    },
+    ...mapWritableState(ui, ['zoom', 'showIssueNumbers', 'showEdgeOverflow']),
 
     hasPhotoUrl() {
       return Object.keys(this.photoUrls).length
@@ -353,7 +334,7 @@ export default {
     isEditingMultiple() {
       return this.isRange || this.issuenumbers.length > 1
     },
-    ...mapState([
+    ...mapState(main, [
       'country',
       'magazine',
       'issuenumbers',
@@ -361,9 +342,9 @@ export default {
       'edgesBefore',
       'edgesAfter',
       'photoUrls',
+      'publicationPhotosForGallery',
     ]),
-    ...mapState('coa', ['publicationNames']),
-    ...mapGetters(['publicationPhotosForGallery']),
+    ...mapState(coa, ['publicationNames']),
   },
   async mounted() {
     await this.fetchPublicationNames([`${this.country}/${this.magazine}`])
@@ -374,8 +355,8 @@ export default {
         this.setPhotoUrl({ issuenumber: this.issuenumbers[0], filename: src })
       }
     },
-    ...mapMutations(['setPhotoUrl']),
-    ...mapActions('coa', ['fetchPublicationNames']),
+    ...mapActions(main, ['setPhotoUrl']),
+    ...mapActions(coa, ['fetchPublicationNames']),
   },
 }
 </script>
