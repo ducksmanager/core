@@ -233,6 +233,7 @@
               v-if="collapseClone"
               :country-code="country"
               :publication-code="`${country}/${magazine}`"
+              :base-issue-numbers="issuenumbers"
               :disable-ongoing-or-published="false"
               edge-gallery
               disable-not-ongoing-nor-published

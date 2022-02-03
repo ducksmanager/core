@@ -1,13 +1,31 @@
 <template>
-  <Gallery
-    v-if="items"
-    image-type="edges"
-    :loading="isPopulating"
-    :selected="selected == null ? [] : [selected]"
-    :items="items"
-    :allow-upload="false"
-    @change="$emit('change', $event)"
-  />
+  <div>
+    <b-button
+      v-if="!isPopulating && hasMoreBefore"
+      class="w-100"
+      show
+      variant="info"
+      @click="$emit('load-more', 'before')"
+      >Load more...</b-button
+    >
+    <Gallery
+      v-if="items"
+      image-type="edges"
+      :loading="isPopulating"
+      :selected="selected == null ? [] : [selected]"
+      :items="items"
+      :allow-upload="false"
+      @change="$emit('change', $event)"
+    />
+    <b-button
+      v-if="!isPopulating && hasMoreAfter"
+      class="w-100"
+      show
+      variant="info"
+      @click="$emit('load-more', 'after')"
+      >Load more...</b-button
+    >
+  </div>
 </template>
 
 <script>
@@ -22,6 +40,8 @@ export default {
   props: {
     publicationcode: { type: String, required: true },
     selected: { type: String, default: null },
+    hasMoreBefore: { type: Boolean, default: false },
+    hasMoreAfter: { type: Boolean, default: false },
   },
   data: () => ({
     items: [],
@@ -149,4 +169,10 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+::v-deep .row.gallery {
+  width: 100%;
+  height: 200px;
+  overflow-y: auto;
+}
+</style>

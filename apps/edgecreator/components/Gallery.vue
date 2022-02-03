@@ -127,10 +127,8 @@ export default {
 
 <style scoped lang="scss">
 .row.gallery {
-  height: 100px;
-
   > div {
-    height: 100%;
+    height: 100px;
 
     > img {
       cursor: pointer;
