@@ -233,11 +233,8 @@
   </b-card>
 </template>
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapWritableState } from 'pinia'
 
-import FormColorInputRow from '@/components/FormColorInputRow'
-import FormInputRow from '@/components/FormInputRow'
-import Gallery from '@/components/Gallery'
 import {
   BIconArrowDownSquareFill,
   BIconArrowUpSquareFill,
@@ -246,6 +243,13 @@ import {
   BIconFront,
   BIconXSquareFill,
 } from 'bootstrap-vue'
+import { main } from '~/stores/main'
+import { renders } from '~/stores/renders'
+import FormColorInputRow from '@/components/FormColorInputRow'
+import FormInputRow from '@/components/FormInputRow'
+import Gallery from '@/components/Gallery'
+import { editingStep } from '~/stores/editingStep'
+import { hoveredStep } from '~/stores/hoveredStep'
 
 export default {
   name: 'ModelEdit',
@@ -328,25 +332,14 @@ export default {
           return otherColors
         })
     },
-    hoveredStepNumber: {
-      get() {
-        return this.$store.state.hoveredStep.stepNumber
-      },
-      set(value) {
-        this.$store.commit('hoveredStep/setStepNumber', value)
-      },
-    },
-    editingStepNumber: {
-      get() {
-        return this.$store.state.editingStep.stepNumber
-      },
-      set(value) {
-        this.$store.commit('editingStep/setStepNumber', value)
-      },
-    },
-    ...mapState(['publicationElements', 'country']),
-    ...mapState('renders', ['supportedRenders']),
-    ...mapGetters(['publicationElementsForGallery']),
+    ...mapWritableState(hoveredStep, { hoveredStepNumber: 'stepNumber' }),
+    ...mapWritableState(editingStep, { editingStepNumber: 'stepNumber' }),
+    ...mapState(main, [
+      'publicationElements',
+      'country',
+      'publicationElementsForGallery',
+    ]),
+    ...mapState(renders, ['supportedRenders']),
   },
   methods: {
     ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),

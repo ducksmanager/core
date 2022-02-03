@@ -136,12 +136,14 @@
 </template>
 
 <script>
+import UploadableEdgesCarousel from 'ducksmanager/assets/js/components/UploadableEdgesCarousel.vue'
+import { mapActions, mapState } from 'pinia'
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
 import EdgeLink from '@/components/EdgeLink'
 import redirectMixin from '@/mixins/redirectMixin'
 import SessionInfo from '@/components/SessionInfo'
-import UploadableEdgesCarousel from 'ducksmanager/assets/js/components/UploadableEdgesCarousel.vue'
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { collection } from '~/stores/collection'
+import { user } from '~/stores/user'
 
 export default {
   components: {
@@ -158,9 +160,11 @@ export default {
   }),
 
   computed: {
-    ...mapState('user', ['userPhotographerPoints']),
-    ...mapState('collection', ['bookcase']),
-    ...mapGetters('collection', ['popularIssuesInCollectionWithoutEdge']),
+    ...mapState(user, ['userPhotographerPoints']),
+    ...mapState(collection, [
+      'bookcase',
+      'popularIssuesInCollectionWithoutEdge',
+    ]),
 
     mostPopularIssuesInCollectionWithoutEdge() {
       const popularIssuesInCollectionWithoutEdge =
@@ -194,8 +198,8 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['fetchUserPoints']),
-    ...mapActions('collection', [
+    ...mapActions(user, ['fetchUserPoints']),
+    ...mapActions(collection, [
       'loadPopularIssuesInCollection',
       'loadBookcase',
     ]),

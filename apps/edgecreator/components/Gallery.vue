@@ -81,14 +81,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import Upload from '@/components/Upload'
-import legacyDbMixin from '@/mixins/legacyDbMixin'
+import { mapState } from 'pinia'
 import {
   BIconEmojiFrownFill,
   BIconEmojiNeutralFill,
   BIconEmojiSmileFill,
 } from 'bootstrap-vue'
+import { main } from '~/stores/main'
+import Upload from '@/components/Upload'
+import legacyDbMixin from '@/mixins/legacyDbMixin'
 
 export default {
   name: 'Gallery',
@@ -112,7 +113,7 @@ export default {
     showChooseImageModal: false,
   }),
   computed: {
-    ...mapState(['country', 'magazine', 'issuenumbers']),
+    ...mapState(main, ['country', 'magazine', 'issuenumbers']),
   },
   methods: {
     onSelect(item) {

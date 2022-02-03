@@ -11,20 +11,17 @@
   </div>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapWritableState } from 'pinia'
+import { user } from '~/stores/user'
 
 export default {
   name: 'SessionInfo',
   computed: {
-    ...mapState('user', ['username']),
+    ...mapWritableState(user, ['username']),
   },
 
   mounted() {
-    this.setUsername(this.$cookies.get('dm-user'))
-  },
-
-  methods: {
-    ...mapMutations('user', ['setUsername']),
+    this.username = this.$cookies.get('dm-user')
   },
 }
 </script>

@@ -89,9 +89,11 @@
   </form-input-row>
 </template>
 <script>
-import FormInputRow from '@/components/FormInputRow'
-import { mapState } from 'vuex'
+import { mapState, mapWritableState } from 'pinia'
+import { ui } from '~/stores/ui'
+import { main } from '~/stores/main'
 import showEdgePhotosMixin from '@/mixins/showEdgePhotosMixin'
+import FormInputRow from '@/components/FormInputRow'
 
 export default {
   components: { FormInputRow },
@@ -119,6 +121,7 @@ export default {
     },
   },
   computed: {
+    ...mapWritableState(ui, ['colorPickerOption']),
     inputValues() {
       return this.options[this.optionName]
     },
@@ -128,15 +131,7 @@ export default {
     hasPhotoUrl() {
       return Object.keys(this.photoUrls).length
     },
-    colorPickerOption: {
-      get() {
-        return this.$store.state.ui.colorPickerOption
-      },
-      set(value) {
-        this.$store.commit('ui/setColorPickerOption', value)
-      },
-    },
-    ...mapState(['photoUrls']),
+    ...mapState(main, ['photoUrls']),
   },
   watch: {
     inputValues: {

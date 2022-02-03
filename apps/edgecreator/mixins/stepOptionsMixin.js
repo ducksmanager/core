@@ -1,4 +1,5 @@
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import { ui } from '~/stores/ui'
 import textTemplateMixin from '@/mixins/textTemplateMixin'
 
 const interact = require('interactjs')
@@ -14,7 +15,7 @@ export default {
   },
 
   computed: {
-    ...mapState('ui', ['zoom']),
+    ...mapState(ui, ['zoom']),
     width() {
       return this.dimensions.width
     },

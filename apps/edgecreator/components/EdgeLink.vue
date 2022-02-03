@@ -21,8 +21,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import Issue from 'ducksmanager/assets/js/components/Issue.vue'
+import { coa } from '~/stores/coa'
 
 export default {
   name: 'EdgeLink',
@@ -53,7 +54,7 @@ export default {
   },
 
   computed: {
-    ...mapState('coa', ['publicationNames']),
+    ...mapState(coa, ['publicationNames']),
   },
 }
 </script>

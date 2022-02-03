@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import { editingStep } from '~/stores/editingStep'
 
 export default {
   data: () => ({
@@ -7,7 +8,7 @@ export default {
   }),
 
   computed: {
-    ...mapState('editingStep', { editingIssuenumbers: 'issuenumbers' }),
+    ...mapState(editingStep, { editingIssuenumbers: 'issuenumbers' }),
   },
 
   methods: {

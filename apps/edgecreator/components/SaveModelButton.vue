@@ -106,7 +106,7 @@
   </b-button>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapState, mapWritableState } from 'pinia'
 import {
   BIconArchive,
   BIconCheck,
@@ -114,6 +114,9 @@ import {
   BIconX,
   BIconXSquareFill,
 } from 'bootstrap-vue'
+import { ui } from '~/stores/ui'
+import { main } from '~/stores/main'
+import { user } from '~/stores/user'
 import saveEdgeMixin from '@/mixins/saveEdgeMixin'
 
 export default {
@@ -150,8 +153,9 @@ export default {
     variant() {
       return this.withExport || this.withSubmit ? 'success' : 'primary'
     },
-    ...mapState(['contributors', 'country', 'magazine', 'issuenumbers']),
-    ...mapState('user', ['allUsers', 'username']),
+    ...mapWritableState(ui, ['zoom']),
+    ...mapState(main, ['contributors', 'country', 'magazine', 'issuenumbers']),
+    ...mapWritableState(user, ['allUsers', 'username']),
   },
   watch: {
     progress(newValue) {
@@ -174,7 +178,7 @@ export default {
         return
       }
 
-      this.setZoom(1.5)
+      this.zoom = 1.5
       this.$nextTick(() => {
         vm.saveEdgeSvg(
           vm.country,
@@ -207,7 +211,7 @@ export default {
   },
 
   mounted() {
-    this.setUsername(this.$cookies.get('dm-user'))
+    this.username = this.$cookies.get('dm-user')
   },
 
   methods: {
@@ -248,9 +252,7 @@ export default {
         this.issueIndexToSave = 0
       }
     },
-    ...mapMutations('ui', ['setZoom']),
-    ...mapMutations('user', ['setUsername']),
-    ...mapMutations(['addContributor', 'removeContributor']),
+    ...mapActions(main, ['addContributor', 'removeContributor']),
   },
 }
 </script>

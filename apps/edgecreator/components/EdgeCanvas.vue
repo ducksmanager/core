@@ -16,7 +16,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
     @mousemove="setPosition"
-    @mouseout="setPositionInCanvas(null)"
+    @mouseout="positionInCanvas = null"
   >
     <metadata v-if="photoUrl" type="photo">
       {{ photoUrl }}
@@ -84,7 +84,12 @@
   </svg>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapState, mapWritableState } from 'pinia'
+import { ui } from '~/stores/ui'
+import { hoveredStep } from '~/stores/hoveredStep'
+import { editingStep } from '~/stores/editingStep'
+import { user } from '~/stores/user'
+import { main } from '~/stores/main'
 import RectangleRender from '@/components/renders/RectangleRender'
 import PolygonRender from '@/components/renders/PolygonRender'
 import ArcCircleRender from '@/components/renders/ArcCircleRender'
@@ -119,55 +124,28 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['allUsers']),
+    ...mapState(user, ['allUsers']),
+    ...mapWritableState(hoveredStep, {
+      hoveredStepNumber: 'stepNumber',
+      hoveredIssuenumber: 'issuenumber',
+    }),
+    ...mapWritableState(editingStep, {
+      editingStepNumber: 'stepNumber',
+      editingIssuenumbers: 'issuenumbers',
+    }),
+    ...mapState(ui, ['zoom', 'showEdgeOverflow']),
+    ...mapWritableState(ui, ['positionInCanvas']),
     width() {
       return this.dimensions.width
     },
     height() {
       return this.dimensions.height
     },
-    hoveredStepNumber: {
-      get() {
-        return this.$store.state.hoveredStep.stepNumber
-      },
-      set(value) {
-        this.$store.commit('hoveredStep/setStepNumber', value)
-      },
-    },
-    hoveredIssuenumber: {
-      get() {
-        return this.$store.state.hoveredStep.issuenumber
-      },
-      set(value) {
-        this.$store.commit('hoveredStep/setIssuenumber', value)
-      },
-    },
-    editingStepNumber: {
-      get() {
-        return this.$store.state.editingStep.stepNumber
-      },
-      set(value) {
-        this.$store.commit('editingStep/setStepNumber', value)
-      },
-    },
-    editingIssuenumbers: {
-      get() {
-        return this.$store.state.editingStep.issuenumbers
-      },
-      set(value) {
-        this.$store.commit('editingStep/setIssuenumber', value)
-      },
-    },
-    ...mapState('ui', ['zoom', 'showEdgeOverflow']),
-    ...mapState('editingStep', {
-      editingIssuenumbers: 'issuenumbers',
-    }),
   },
 
   methods: {
-    ...mapMutations(['addContributor']),
-    ...mapMutations('ui', ['setPositionInCanvas']),
-    ...mapMutations('editingStep', {
+    ...mapActions(main, ['addContributor']),
+    ...mapActions(editingStep, {
       addEditingIssuenumber: 'addIssuenumber',
       replaceEditingIssuenumber: 'replaceIssuenumber',
     }),
@@ -175,8 +153,8 @@ export default {
       const vm = this
       const { left: svgLeft, top: svgTop } =
         this.$refs.canvas.getBoundingClientRect()
-      this.setPositionInCanvas(
-        [left - svgLeft, top - svgTop].map((value) => parseInt(value / vm.zoom))
+      this.positionInCanvas = [left - svgLeft, top - svgTop].map((value) =>
+        parseInt(value / vm.zoom)
       )
     },
     replaceEditingIssuenumberIfNotAlreadyEditing(issuenumber) {
