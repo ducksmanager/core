@@ -102,7 +102,9 @@ export default {
   }),
 
   computed: {
-    ...mapState(form, ["hasErrors"])
+    hasErrors() {
+      return Object.keys(this.errors).length
+    }
   },
 
   mounted() {
