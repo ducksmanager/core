@@ -25,7 +25,8 @@ class UserAuthenticator extends AbstractAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'POST app_login';
+    public const SIGNUP_ROUTE = 'POST app_pagesite_showsignuppage';
 
     private UrlGeneratorInterface $urlGenerator;
     private ApiService $apiService;
@@ -40,8 +41,11 @@ class UserAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): ?bool
     {
-        return self::LOGIN_ROUTE === $request->attributes->get('_route')
-            && $request->isMethod('POST');
+        return in_array(
+            $request->getMethod().' ' .$request->attributes->get('_route'),
+            [self::LOGIN_ROUTE, self::SIGNUP_ROUTE],
+            true
+        );
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
@@ -55,6 +59,14 @@ class UserAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): PassportInterface
     {
+        if ($request->getMethod().' ' .$request->attributes->get('_route') === self::SIGNUP_ROUTE) {
+            $data = $request->request->all();
+            $apiResponse = $this->apiService->call('/ducksmanager/user', 'ducksmanager', $data, 'PUT');
+            if (is_null($apiResponse)) {
+                throw new AuthenticationException('KO', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+
         $credentials = [
             'username' => $request->request->get('username'),
             'password' => sha1($request->request->get('password')),
@@ -81,9 +93,9 @@ class UserAuthenticator extends AbstractAuthenticator
                             'dm-user' => $apiUser['username'],
                             'dm-pass' => $apiUser['password'],
                         ]);
-                        $permissionList = array_merge(['ROLE_USER'], array_values(array_map(function(string $role) use ($permissions) {
-                            return strtoupper("ROLE_${role}_{$permissions[$role]}");
-                        }, array_keys($permissions))));
+                        $permissionList = array_merge(['ROLE_USER'], array_values(array_map(fn(string $role) =>
+                            strtoupper("ROLE_${role}_{$permissions[$role]}"), array_keys($permissions)
+                        )));
                         return new User($apiUser['id'], $apiUser['username'], $apiUser['password'], $permissionList);
                     }
 
