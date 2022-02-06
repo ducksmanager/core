@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 import { LayersModel, Tensor } from '@tensorflow/tfjs-node'
 import Index from '@prisma/client'
 import { Socket } from 'socket.io'
@@ -29,10 +30,16 @@ prisma.dataset
         left join entryurl_details using (sitecode_url)
         where dataset_id = ${id}
       `
-      const modelFile = tfn.io.fileSystem(`models/${name}/model.json`)
-      models[name] = {
-        artists,
-        model: await tf.loadLayersModel(modelFile),
+      const modelScopeName = name.replace(/-ml$/, '')
+      const modelFilePath = `datasets/${modelScopeName}/model/model.json`
+      if (fs.existsSync(modelFilePath)) {
+        const modelFile = tfn.io.fileSystem(modelFilePath)
+        models[modelScopeName] = {
+          artists,
+          model: await tf.loadLayersModel(modelFile),
+        }
+      } else {
+        console.error(`There is no ML model at path ${modelFilePath}`)
       }
     }
   })
@@ -46,20 +53,24 @@ export function playAsBot(
   const predicted: number[] = []
   const predictionInterval = setInterval(() => {
     const now = new Date()
-    const currentRound = rounds.find(
-      ({ started_at: startedAt, finished_at: finishedAt }) =>
-        startedAt!! <= now && now < finishedAt!!
-    )
-    if (currentRound && !predicted.includes(currentRound.round_number)) {
-      console.log('We are now at round ' + currentRound.round_number)
+    const currentRound =
+      rounds.find(
+        ({
+          started_at: startedAt,
+          finished_at: finishedAt,
+          round_number: roundNumber,
+        }) => roundNumber !== null && startedAt!! <= now && now < finishedAt!!
+      ) || null
+    if (currentRound && !predicted.includes(currentRound.round_number!!)) {
+      console.log('We are now at round ' + currentRound.round_number!!)
       const possibleAuthors = rounds
         .filter(
           ({ round_number: roundNumber }) =>
-            roundNumber >= currentRound.round_number
+            roundNumber === null || roundNumber >= currentRound.round_number!!
         )
         .map(({ personcode }) => personcode)
       predict(
-        currentRound.round_number,
+        currentRound.round_number!!,
         currentRound.sitecode_url,
         dataset,
         possibleAuthors
@@ -68,7 +79,7 @@ export function playAsBot(
           personcode,
         })
       })
-      predicted.push(currentRound.round_number)
+      predicted.push(currentRound.round_number!!)
       if (predicted.length === rounds.length) {
         clearInterval(predictionInterval)
       }

@@ -7,6 +7,7 @@ import {
   SocketData,
 } from '../../types/socketEvents'
 import { GuessResponse } from '../../types/guess'
+import { associatePlayer } from '../game'
 const { PrismaClient } = require('@prisma/client')
 const { playAsBot } = require('../predict')
 const round = require('../../server/round')
@@ -67,6 +68,6 @@ export async function addBotToGame(socket: Socket, gameId: number) {
     },
   })
   const botUsername = 'bot_us'
-  await game.associatePlayer(gameId, botUsername)
+  await associatePlayer(gameId, botUsername)
   playAsBot(botUsername, socket, game.dataset, game.rounds)
 }

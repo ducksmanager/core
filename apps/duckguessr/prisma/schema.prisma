@@ -62,7 +62,7 @@ model player {
 model round {
   id           Int           @id @default(autoincrement())
   game_id      Int
-  round_number Int           @db.UnsignedTinyInt
+  round_number Int?          @db.UnsignedTinyInt
   sitecode_url String        @db.VarChar(100)
   personcode   String        @db.VarChar(79)
   started_at   DateTime?     @db.DateTime(0)

@@ -54,18 +54,18 @@ export async function createOrGetPending(
     ) AS random_images ON random_authors.personcode = random_images.personcode
     GROUP BY random_images.personcode
     ORDER BY RAND()
+    LIMIT ${numberOfRounds + 1}
   `) as { personcode: string; sitecode_url: string }[]
 
   if (roundDataResponse) {
-    const rounds = roundDataResponse
-      .map((roundData, roundNumber: number) => ({
-        ...roundData,
-        round_number: roundNumber + 1,
-      }))
-      .filter(({ round_number: roundNumber }) => roundNumber <= numberOfRounds)
+    const rounds = roundDataResponse.map((roundData, roundNumber: number) => ({
+      ...roundData,
+      round_number: roundNumber === 0 ? null : roundNumber,
+    }))
     const game = await prisma.game.create({
       data: {
         game_type: gameType,
+        dataset_id: dataset.id,
         rounds: {
           create: rounds,
         },
@@ -123,11 +123,14 @@ export async function associatePlayer(
       })
     }
   }
-  const userId = user.id
   await prisma.game_player.create({
     data: {
-      game_id: gameId,
-      player_id: userId,
+      game: {
+        connect: { id: gameId },
+      },
+      player: {
+        connect: { id: user.id },
+      },
     },
   })
 

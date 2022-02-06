@@ -4,8 +4,8 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 const numberOfRounds = 8
-const kickoffTime = 8000
-const roundTime = 15000
+const kickoffTime = 5000
+const roundTime = 10000
 
 export async function getRound(roundId: number): Promise<Index.round> {
   return await prisma.round.findFirst({
