@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^3.8.1",
+    "@prisma/client": "^3.9.1",
     "@tensorflow/tfjs": "^3.13.0",
     "@tensorflow/tfjs-node": "^3.13.0",
     "axios": "^0.24.0",
