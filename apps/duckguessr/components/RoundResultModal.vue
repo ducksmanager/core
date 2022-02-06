@@ -42,9 +42,12 @@ export default defineComponent({
     const timeBeforeNextRound = ref(null as number | null)
 
     const updateTimeBeforeNextRound = () => {
-      timeBeforeNextRound.value = Math.ceil(
-        (nextRoundStartDate.getTime() - new Date().getTime()) / 1000
-      )
+      timeBeforeNextRound.value =
+        nextRoundStartDate === null
+          ? null
+          : Math.ceil(
+              (nextRoundStartDate.getTime() - new Date().getTime()) / 1000
+            )
     }
 
     onMounted(() => {

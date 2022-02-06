@@ -40,7 +40,7 @@ export default (req, res) => {
           runQuery(
             `
               SELECT personcode, fullname AS personfullname, nationalitycountrycode AS personnationality
-              FROM coa.inducks_person
+              FROM inducks_person
               WHERE personcode IN ('${game.rounds
                 .map(({ personcode }) => personcode)
                 .join("', '")}')`,

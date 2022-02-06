@@ -1,11 +1,5 @@
 <template>
-  <b-container
-    v-if="!game || (!currentRoundNumber && !gameIsFinished)"
-    class="text-center"
-  >
-    Loading...
-  </b-container>
-  <b-container v-else-if="gameIsFinished" fluid>
+  <b-container v-if="gameIsFinished" fluid>
     <b-alert show align="center" variant="info">
       This game is finished.
     </b-alert>
@@ -14,6 +8,9 @@
       :players="game.game_players"
       :authors="game.authors"
     />
+  </b-container>
+  <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
+    Loading...
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
@@ -131,7 +128,9 @@ export default defineComponent({
 
     const now = ref(Date.now() as number)
 
-    const gameIsFinished = computed(() => !nextRoundStartDate.value)
+    const gameIsFinished = computed(
+      () => game.value?.id && !nextRoundStartDate.value
+    )
 
     const currentRoundNumber = computed(
       (): number | null =>
