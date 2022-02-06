@@ -8,25 +8,25 @@
       icon="glyphicon-home"
     >
       <template #text>
-        <b-icon icon="house-fill" />
+        <b-icon-house-fill />
         {{ $t('Collection') }}
       </template>
       <template #items>
         <template v-if="username">
           <NavigationItem path="/bookcase/show">
-            <b-icon icon="book-half" />
+            <b-icon-book-half />
             {{ $t('Ma bibliothèque') }}
           </NavigationItem>
           <NavigationItem path="/collection/show">
-            <b-icon icon="list" />
+            <b-icon-list />
             {{ $t('Gérer ma collection') }}
           </NavigationItem>
           <NavigationItem path="/stats/general">
-            <b-icon icon="graph-up" />
+            <b-icon-graph-up />
             {{ $t('Statistiques de ma collection') }}
           </NavigationItem>
           <NavigationItem path="/expand">
-            <b-icon icon="capslock-fill" />
+            <b-icon-capslock-fill />
             {{ $t('Agrandir ma collection') }}
           </NavigationItem>
           <NavigationItem path="/inducks/import">
@@ -37,11 +37,11 @@
             {{ $t('Collection Inducks') }}
           </NavigationItem>
           <NavigationItem path="/print">
-            <b-icon icon="printer-fill" />
+            <b-icon-printer-fill />
             {{ $t('Imprimer ma collection') }}
           </NavigationItem>
           <NavigationItem path="/logout">
-            <b-icon icon="x-square-fill" />
+            <b-icon-x-square-fill />
             {{ $t('Déconnexion') }}
           </NavigationItem>
         </template>
@@ -84,8 +84,13 @@
 import NavigationItemGroup from "../components/NavigationItemGroup";
 import NavigationItem from "../components/NavigationItem";
 import {
-  BIcon
-} from "bootstrap-vue-3";
+  BIconBookHalf,
+  BIconCapslockFill,
+  BIconGraphUp, BIconHouseFill,
+  BIconList,
+  BIconPrinterFill,
+  BIconXSquareFill
+} from "bootstrap-icons-vue";
 
 export default {
   name: "Navigation",
@@ -93,7 +98,13 @@ export default {
   components: {
     NavigationItemGroup,
     NavigationItem,
-    BIcon,
+    BIconHouseFill,
+    BIconBookHalf,
+    BIconList,
+    BIconGraphUp,
+    BIconCapslockFill,
+    BIconPrinterFill,
+    BIconXSquareFill,
   },
 
 }

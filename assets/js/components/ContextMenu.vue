@@ -36,8 +36,7 @@
         >
           <template #title>
             {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
-            <b-icon
-              icon="trash"
+            <b-icon-trash
               @click.stop.prevent="editingCopies.splice(copyIndex, 1)"
             />
           </template>
@@ -66,9 +65,8 @@
                 :class="{clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
                 @click="copy.purchaseId = purchaseStateId"
               >
-                <b-icon
+                <b-icon-calendar-x
                   v-if="purchaseStateId === 'unlink'"
-                  icon="calendar-x"
                 />
                 {{ purchaseStateText }}
               </v-contextmenu-item>
@@ -78,9 +76,8 @@
                 @mouseleave.prevent="() => {}"
               >
                 <template #title>
-                  <b-icon
+                  <b-icon-calendar
                     v-if="purchaseStateId === 'link'"
-                    icon="calendar"
                   />
                   {{ purchaseStateText }}
                 </template>
@@ -134,14 +131,14 @@
                         copy.newPurchaseDate = today;
                         copy.newPurchaseContext = false"
                     >
-                      <b-icon icon="check" />
+                      <b-icon-check icon="check" />
                     </b-button>
                     <b-button
                       variant="warning"
                       class="btn-sm"
                       @click.stop="copy.newPurchaseContext = false"
                     >
-                      <b-icon icon="x" />
+                      <b-icon-x icon="x" />
                     </b-button>
                   </v-contextmenu-item>
                   <v-contextmenu-item
@@ -162,7 +159,7 @@
                           id: purchaseId,
                         })"
                     >
-                      <b-icon icon="trash" />
+                      <b-icon-trash />
                     </b-button>
                   </v-contextmenu-item>
                 </v-contextmenu-group>
@@ -207,11 +204,13 @@ import "v-contextmenu/dist/themes/default.css";
 
 import conditionMixin from "../mixins/conditionMixin";
 import Condition from "./Condition";
-import {BAlert, BIcon, BNavItem, BTab, BTabs} from "bootstrap-vue-3";
+import {BAlert, BNavItem, BTab, BTabs} from "bootstrap-vue-3";
+
 import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu, ContextmenuDivider, ContextmenuGroup } from "v-contextmenu";
 import {mapActions, mapState} from "pinia";
 import {l10n} from "../stores/l10n";
 import {collection} from "../stores/collection";
+import {BIconCalendar, BIconCalendarX, BIconCheck, BIconTrash, BIconX} from "bootstrap-icons-vue";
 
 const today = new Date().toISOString().slice(0, 10);
 export default {
@@ -227,7 +226,11 @@ export default {
     [ContextmenuGroup.name]: ContextmenuGroup,
     Condition,
     BAlert,
-    BTabs,BTab,BIcon,BNavItem
+    BTabs,BTab,BNavItem,
+    BIconTrash,
+    BIconCalendar,
+    BIconCheck,BIconX,
+    BIconCalendarX
   },
 
   mixins: [conditionMixin],

@@ -4,12 +4,7 @@
       :title="$t('Gérer ma collection')"
       :root-path="'/collection'"
       :default-path="'/show'"
-      :items="[
-        {path: '/show', text: total == null ? $t('Mes numéros') : $t('Mes numéros ({0})', [total])},
-        {path: '/duplicates', text: totalUniqueIssues == null ? $t('Mes numéros en double') : $t('Mes numéros en double ({0})', [total - totalUniqueIssues])},
-        {path: '/subscriptions', text: subscriptions == null ? $t('Mes abonnements') : $t('Mes abonnements ({0})', [subscriptions.length])},
-        {path: '/account', text: $t('Mon compte')}
-      ]"
+      :items="items"
     />
     <component
       :is="tab"
@@ -43,6 +38,22 @@ export default {
     tab: {
       type: String,
       required: true
+    }
+  },
+  data() {
+    return {
+      items: [
+        {path: '/show', text: this.total == null ? this.$t('Mes numéros') : this.$t('Mes numéros ({0})', [this.total])},
+        {
+          path: '/duplicates',
+          text: this.totalUniqueIssues == null ? this.$t('Mes numéros en double') : this.$t('Mes numéros en double ({0})', [this.total - this.totalUniqueIssues])
+        },
+        {
+          path: '/subscriptions',
+          text: this.subscriptions == null ? this.$t('Mes abonnements') : this.$t('Mes abonnements ({0})', [this.subscriptions.length])
+        },
+        {path: '/account', text: this.$t('Mon compte')}
+      ]
     }
   },
   computed: {

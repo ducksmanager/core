@@ -4,7 +4,9 @@
       {{ $t('Chargement...') }}
     </div>
     <div v-else-if="!hasSuggestions">
-      {{ $t('Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné.') }}
+      {{
+        $t('Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné.')
+      }}
     </div>
     <template v-else>
       <b-button-group>
@@ -27,11 +29,9 @@
             :title="`${$t('Score')} : ${score}`"
           >
             <div class="mr-3 d-flex justify-content-center importance-bills">
-              <b-icon
+              <b-icon-cash
                 v-for="i in 4-getImportance(score)"
                 :key="i"
-                icon="cash
-"
               />
             </div>
             <div>
@@ -64,8 +64,9 @@
 import {mapActions, mapState} from "pinia";
 import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
-import {BButton, BButtonGroup, BIcon} from "bootstrap-vue-3";
-import { collection } from "../stores/collection";
+import {BButton, BButtonGroup} from "bootstrap-vue-3";
+import {collection} from "../stores/collection";
+import {BIconCash} from "bootstrap-icons-vue";
 
 export default {
   name: 'SuggestionList',
@@ -75,7 +76,7 @@ export default {
     Issue,
     BButtonGroup,
     BButton,
-    BIcon
+    BIconCash
   },
 
 

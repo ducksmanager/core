@@ -101,9 +101,8 @@
           >
             <span>
               <a :name="issueNumber" />
-              <b-icon
+              <b-icon-eye-fill
                 :id="`issue-details-${issueNumber}`"
-                icon="eye-fill"
                 :class="{'mx-2': true, [`can-show-book-${hoveredIssueHasCover}`]: true}"
                 :alt="$t('Voir')"
                 @mouseover="hoveredIssueNumber=issueNumber"
@@ -124,9 +123,8 @@
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
-                  <b-icon
+                  <b-icon-calendar
                     v-if="purchaseId && purchases.find(({id}) => id === purchaseId)"
-                    icon="calendar"
                     class="issue-purchase-date"
                     :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`"
                   />
@@ -220,7 +218,8 @@ import collectionMixin from "../mixins/collectionMixin";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
 import Condition from "./Condition";
-import {BAlert, BIcon} from "bootstrap-vue-3";
+import {BAlert} from "bootstrap-vue-3";
+import {BIconEyeFill, BIconCalendar} from "bootstrap-icons-vue";
 import Publication from "./Publication";
 import { collection } from "../stores/collection";
 import { coa } from "../stores/coa";
@@ -240,7 +239,8 @@ export default {
     ContextMenu,
     IssueDetailsPopover,
     BAlert,
-    BIcon
+    BIconEyeFill,
+    BIconCalendar
   },
   mixins: [collectionMixin, conditionMixin],
   props: {
