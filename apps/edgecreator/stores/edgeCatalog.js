@@ -59,7 +59,7 @@ export const edgeCatalog = defineStore('edgeCatalog', {
         newModelIds.length &&
         this.addPublishedEdgesSteps({
           publicationcode,
-          publishedEdgesSteps: await main
+          publishedEdgesSteps: await main()
             .getChunkedRequests(
               {
                 api: this.$nuxt.$axios,

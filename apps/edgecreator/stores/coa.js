@@ -116,7 +116,7 @@ export const coa = defineStore('coa', {
         newPersonNames.length &&
         this.setPersonNames({
           ...(this.personNames || {}),
-          ...(await main
+          ...(await main()
             .getChunkedRequests(
               {
                 api: coaApi,
