@@ -4,6 +4,17 @@ import { runQuery } from '../api/runQuery'
 const prisma = new PrismaClient()
 const numberOfRounds = 8
 
+export const getGameWithRoundsAndDataset = async (gameId: number) =>
+  await prisma.game.findUnique({
+    include: {
+      rounds: true,
+      dataset: true,
+    },
+    where: {
+      id: gameId,
+    },
+  })
+
 export async function createOrGetPending(
   gameType: Index.game['game_type'],
   datasetName: string

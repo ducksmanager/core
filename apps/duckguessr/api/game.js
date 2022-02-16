@@ -50,21 +50,23 @@ export default (req, res) => {
             res.end(
               JSON.stringify({
                 ...game,
-                rounds: game.rounds.map((round) => ({
-                  ...round,
-                  ...Object.keys(round)
-                    .filter((key) => key === 'personcode')
-                    .reduce(
-                      (acc, field) => ({
-                        ...acc,
-                        [field]:
-                          round.finished_at && round.finished_at <= Date.now()
-                            ? round[field]
-                            : null,
-                      }),
-                      {}
-                    ),
-                })),
+                rounds: game.rounds
+                  .filter(({ round_number }) => round_number !== null)
+                  .map((round) => ({
+                    ...round,
+                    ...Object.keys(round)
+                      .filter((key) => key === 'personcode')
+                      .reduce(
+                        (acc, field) => ({
+                          ...acc,
+                          [field]:
+                            round.finished_at && round.finished_at <= Date.now()
+                              ? round[field]
+                              : null,
+                        }),
+                        {}
+                      ),
+                  })),
                 authors: personDetails.sort(
                   ({ personcode: personcode1 }, { personcode: personcode2 }) =>
                     personcode1 < personcode2 ? -1 : 1

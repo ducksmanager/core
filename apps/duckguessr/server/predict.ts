@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import { LayersModel, Tensor } from '@tensorflow/tfjs-node'
 import Index from '@prisma/client'
-import { Socket } from 'socket.io'
 
 const axios = require('axios')
 const tf = require('@tensorflow/tfjs')
@@ -44,52 +43,7 @@ prisma.dataset
     }
   })
 
-export function playAsBot(
-  botUsername: string,
-  socket: Socket,
-  dataset: Index.dataset,
-  rounds: Index.round[]
-) {
-  const predicted: number[] = []
-  const predictionInterval = setInterval(() => {
-    const now = new Date()
-    const currentRound =
-      rounds.find(
-        ({
-          started_at: startedAt,
-          finished_at: finishedAt,
-          round_number: roundNumber,
-        }) => roundNumber !== null && startedAt!! <= now && now < finishedAt!!
-      ) || null
-    if (currentRound && !predicted.includes(currentRound.round_number!!)) {
-      console.log('We are now at round ' + currentRound.round_number!!)
-      const possibleAuthors = rounds
-        .filter(
-          ({ round_number: roundNumber }) =>
-            roundNumber === null || roundNumber >= currentRound.round_number!!
-        )
-        .map(({ personcode }) => personcode)
-      predict(
-        currentRound.round_number!!,
-        currentRound.sitecode_url,
-        dataset,
-        possibleAuthors
-      ).then((personcode) => {
-        socket.emit('guess', botUsername, currentRound.id, {
-          personcode,
-        })
-      })
-      predicted.push(currentRound.round_number!!)
-      if (predicted.length === rounds.length) {
-        clearInterval(predictionInterval)
-      }
-    } else {
-      console.log('No round currently')
-    }
-  }, 1000)
-}
-
-const predict = (
+export const predict = (
   roundNumber: number,
   url: string,
   dataset: Index.dataset,
@@ -111,23 +65,22 @@ const predict = (
       prediction.array().then(([predictionArray]: any) => {
         console.log(`Prediction done in ${new Date().getTime() - startTime}ms`)
         const sortedPredictions = predictionArray
-          .map((predictionProbability: number, predictionIndex: number) => ({
-            personcode: models[dataset.name].artists[predictionIndex],
-            predictionProbability: predictionProbability * 100,
+          .map((probability: number, predictionIndex: number) => ({
+            artist: models[dataset.name].artists[predictionIndex],
+            probability: probability * 100,
           }))
           .sort(
             (
-              {
-                predictionProbability: predictionProbability1,
-              }: { predictionProbability: number },
-              {
-                predictionProbability: predictionProbability2,
-              }: { predictionProbability: number }
-            ) => (predictionProbability2 > predictionProbability1 ? 1 : -1)
+              { probability: probability1 }: { probability: number },
+              { probability: probability2 }: { probability: number }
+            ) => (probability2 > probability1 ? 1 : -1)
           )
-        for (const { personcode, predictionProbability } of sortedPredictions) {
+        for (const {
+          artist: { personcode },
+          probability,
+        } of sortedPredictions) {
           console.log(
-            `Round ${roundNumber} - Predicted artist = ${personcode}, probability of ${predictionProbability}%`
+            `Round ${roundNumber} - Predicted artist = ${personcode}, probability of ${probability}%`
           )
           if (!possibleAuthors.includes(personcode)) {
             console.log('Skipped')

@@ -1,5 +1,6 @@
 import type Index from '@prisma/client'
 import { Server, Socket } from 'socket.io'
+import { PrismaClient, Prisma } from '@prisma/client'
 import {
   ClientToServerEvents,
   InterServerEvents,
@@ -7,67 +8,132 @@ import {
   SocketData,
 } from '../../types/socketEvents'
 import { GuessResponse } from '../../types/guess'
-import { associatePlayer } from '../game'
-const { PrismaClient } = require('@prisma/client')
-const { playAsBot } = require('../predict')
+import { associatePlayer, getGameWithRoundsAndDataset } from '../game'
+import { predict } from '../predict'
 const round = require('../../server/round')
 
 const prisma = new PrismaClient()
 
-export function createGameSocket(
+const doOnRoundStart = (round: Index.round, callback: Function) => {
+  const now = new Date()
+  setTimeout(() => callback(round), round.started_at!.getTime() - now.getTime())
+}
+
+const doOnRoundFinish = (round: Index.round, callback: Function) => {
+  const now = new Date()
+  setTimeout(
+    () => callback(round),
+    round.finished_at!.getTime() - now.getTime()
+  )
+}
+
+const onGuess = async function (
+  this: Socket,
+  username: string,
+  roundId: number,
+  personcode: string | null
+) {
+  console.log(
+    `${username} is guessing ${JSON.stringify(personcode)} on round ${roundId}`
+  )
+  try {
+    const guessResultsData = await round.guess(
+      await prisma.player.findFirst({
+        where: {
+          username,
+        },
+      }),
+      roundId,
+      { personcode }
+    )
+    if (guessResultsData) {
+      this.emit('playerGuessed', guessResultsData)
+      this.broadcast.emit('playerGuessed', {
+        ...guessResultsData,
+        answer: null,
+      } as GuessResponse)
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const guessWithNullAtEndOfRound = (socket: Socket, round: Index.round) => {
+  console.log('guessWithNullAtEndOfRound ' + round.id)
+  doOnRoundFinish(round, async ({ game_id, id }: Index.round) => {
+    console.log('Round ' + id + ' finished')
+    const missingScores = (await prisma.$queryRaw`
+        SELECT DISTINCT username
+        FROM game_player
+        INNER JOIN player ON game_player.player_id = player.id
+        WHERE game_player.game_id = ${game_id} AND player_id NOT IN (
+          SELECT player_id
+          FROM round_score
+          WHERE round_id = ${id}
+        )
+        GROUP BY username
+      `) as Index.player[]
+    for (const { username } of missingScores) {
+      console.log(username + ' is missing a score')
+      await onGuess.apply(socket, [username, id, null])
+    }
+  })
+}
+
+const playRoundAsBot = (
+  round: any,
+  game: Prisma.PromiseReturnType<typeof getGameWithRoundsAndDataset>,
+  socket: Socket,
+  botUsername: string
+) => {
+  doOnRoundStart(round, (round: Index.round) => {
+    const possibleAuthors = game!.rounds
+      .filter(
+        ({ round_number: roundNumber }) =>
+          roundNumber === null || roundNumber >= round.round_number!
+      )
+      .map(({ personcode }) => personcode)
+    predict(
+      round.round_number!,
+      round.sitecode_url,
+      game!.dataset,
+      possibleAuthors
+    ).then((personcode: any) => {
+      onGuess.apply(socket, [botUsername, round.id, personcode])
+    })
+  })
+}
+
+export const createGameSocket = (
   io: Server<
     ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
     SocketData
   >,
-  game: Index.game
-) {
-  return io.of(`/game/${game.id}`).on('connection', (socket: Socket) => {
-    socket.on(
-      'guess',
-      async (username: string, roundId: number, personcode: string) => {
-        console.log(
-          `${username} is guessing ${JSON.stringify(
-            personcode
-          )} on round ${roundId}`
-        )
-        try {
-          const guessResultsData = await round.guess(
-            await prisma.player.findFirst({
-              where: {
-                username,
-              },
-            }),
-            roundId,
-            { personcode }
-          )
-          if (guessResultsData) {
-            socket.emit('playerGuessed', guessResultsData)
-            socket.broadcast.emit('playerGuessed', {
-              ...guessResultsData,
-              answer: null,
-            } as GuessResponse)
-          }
-        } catch (e) {
-          console.error(e)
-        }
-      }
-    )
-  })
-}
+  game: Prisma.PromiseReturnType<typeof getGameWithRoundsAndDataset>
+) => {
+  if (game === null) {
+    throw new Error('game is null')
+  }
+  return io.of(`/game/${game!.id}`).on('connection', async (socket: Socket) => {
+    console.log('connection')
+    socket.on('guess', onGuess)
 
-export async function addBotToGame(socket: Socket, gameId: number) {
-  const game = await prisma.game.findFirst({
-    where: {
-      id: gameId,
-    },
-    include: {
-      rounds: true,
-      dataset: true,
-    },
+    const playableRounds = game!.rounds.filter(
+      ({ finished_at }) => !!finished_at
+    )
+
+    if (game.game_type === 'against_bot') {
+      const botUsername = 'bot_us'
+      await associatePlayer(game.id, botUsername)
+      for (const round of playableRounds) {
+        playRoundAsBot(round, game, socket, botUsername)
+      }
+    }
+
+    for (const round of playableRounds) {
+      guessWithNullAtEndOfRound(socket, round)
+    }
   })
-  const botUsername = 'bot_us'
-  await associatePlayer(gameId, botUsername)
-  playAsBot(botUsername, socket, game.dataset, game.rounds)
 }

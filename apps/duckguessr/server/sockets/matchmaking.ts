@@ -5,14 +5,11 @@ import {
   ServerToClientEvents,
   SocketData,
 } from '../../types/socketEvents'
+import { getGameWithRoundsAndDataset } from '../game'
 
-const { io: IOClient } = require('socket.io-client')
-const { PrismaClient } = require('@prisma/client')
 const game = require('../game')
 const round = require('../round')
-const { createGameSocket, addBotToGame } = require('./game')
-
-const prisma = new PrismaClient()
+const { createGameSocket } = require('./game')
 
 export function createMatchmakingSocket(
   io: Server<
@@ -45,25 +42,18 @@ export function createMatchmakingSocket(
     })
     socket.on('matchStarts', async (gameId) => {
       console.log(`Game ${gameId} is starting!`)
-      const currentGame = await prisma.game.findUnique({
-        include: {
-          rounds: true,
-        },
-        where: {
-          id: gameId,
-        },
-      })
-      if (!currentGame.rounds[0].started_at) {
-        await round.createGameRounds(currentGame.id)
+      const currentGame = await getGameWithRoundsAndDataset(gameId)
+      if (currentGame === null) {
+        throw new Error(`Game ${gameId} doesn't exist`)
       }
-      createGameSocket(io, currentGame)
+      if (currentGame.rounds.filter(({ started_at }) => !!started_at).length) {
+        throw new Error(`Game ${gameId} already has rounds`)
+      }
 
-      const botGameSocket = IOClient(
-        `${process.env.SOCKET_URL}/game/${currentGame.id}`
-      )
-      if (currentGame.game_type === 'against_bot') {
-        await addBotToGame(botGameSocket, currentGame.id)
-      }
+      await round.createGameRounds(currentGame!.id)
+
+      const currentGameWithRounds = await getGameWithRoundsAndDataset(gameId)
+      createGameSocket(io, currentGameWithRounds!)
     })
   })
 }

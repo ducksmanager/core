@@ -7,8 +7,8 @@ const numberOfRounds = 8
 const kickoffTime = 5000
 const roundTime = 10000
 
-export async function getRound(roundId: number): Promise<Index.round> {
-  return await prisma.round.findFirst({
+export const getRound = async (roundId: number): Promise<Index.round> =>
+  await prisma.round.findFirst({
     include: {
       round_scores: true,
     },
@@ -16,7 +16,6 @@ export async function getRound(roundId: number): Promise<Index.round> {
       id: roundId,
     },
   })
-}
 
 export async function createGameRounds(gameId: number) {
   const now = new Date().getTime()
@@ -47,9 +46,6 @@ export async function guess(
   { personcode }: GuessRequest
 ): Promise<GuessResponse | void> {
   const round = await getRound(roundId)
-  if (!personcode) {
-    console.error(`No guess was provided`)
-  }
   if (
     await prisma.round_score.findFirst({
       where: {

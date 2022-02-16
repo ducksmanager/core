@@ -32,8 +32,8 @@ model game {
   started_at   DateTime?      @db.DateTime(0)
   finished_at  DateTime?      @db.DateTime(0)
   game_type    game_game_type @default(against_players)
-  dataset_id   Int?
-  dataset      dataset?       @relation(fields: [dataset_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "game__dataset_id_fk")
+  dataset_id   Int
+  dataset      dataset        @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "game__dataset_id_fk")
   game_players game_player[]
   rounds       round[]
 
