@@ -91,7 +91,6 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from '~/types/socketEvents'
-import { GuessResponse } from '~/types/guess'
 
 interface GamePlayerWithFullPlayer extends Index.game_player {
   player: Index.player
@@ -128,9 +127,7 @@ export default defineComponent({
 
     const now = ref(Date.now() as number)
 
-    const gameIsFinished = computed(
-      () => game.value?.id && !nextRoundStartDate.value
-    )
+    const gameIsFinished = computed(() => game.value?.id && !currentRound.value)
 
     const currentRoundNumber = computed(
       (): number | null =>
@@ -153,7 +150,7 @@ export default defineComponent({
           ) || null
 
     const previousRound = computed((): RoundWithScoresAndAuthor | null =>
-      getRound(currentRoundNumber.value!! - 1)
+      getRound(currentRoundNumber.value! - 1)
     )
 
     const currentRound = computed((): RoundWithScoresAndAuthor | null =>
@@ -208,12 +205,12 @@ export default defineComponent({
         hasUrlLoaded.value = false
         if (newCurrentRound) {
           if (!gameSocket) {
-            gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!!.id}`)
-            gameSocket.on('playerGuessed', (data: GuessResponse) => {
+            gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!.id}`)
+            gameSocket.on('playerGuessed', (data) => {
               const { answer } = data
               currentRoundScores.value = [...currentRoundScores.value, data]
               if (answer) {
-                currentRound.value!!.personcode = answer
+                currentRound.value!.personcode = answer
               }
             })
           }
@@ -228,13 +225,10 @@ export default defineComponent({
       () => remainingTime.value,
       (remainingTimeValue: number) => {
         if (remainingTimeValue <= 0) {
-          if (!chosenAuthor.value) {
-            validateGuess()
-          }
           chosenAuthor.value = null
           setTimeout(async () => {
             await loadGame()
-            currentRoundScores.value = currentRound.value!!.round_scores
+            currentRoundScores.value = currentRound.value!.round_scores
           }, 1000)
         }
       }
@@ -292,9 +286,9 @@ export default defineComponent({
         players.value.find(({ id }) => id === playerId)?.username || '?',
 
       getAuthor: (personcode2: string): Author =>
-        game.value!!.authors.find(
+        game.value!.authors.find(
           ({ personcode }) => personcode2 === personcode
-        )!!,
+        )!,
 
       scoreToVariant(roundScore: Index.round_score | null) {
         switch (roundScore?.score_type_name) {

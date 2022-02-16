@@ -1,5 +1,5 @@
 <template>
-  <b-card-group v-if="!players.length" deck>
+  <b-card-group deck>
     <b-card
       v-for="({ title }, type) in gameTypes"
       :key="type"
@@ -11,20 +11,6 @@
       @click="iAmReady(type)"
     />
   </b-card-group>
-  <b-container v-else align="center">
-    <b-row align-h="center">
-      <b-card
-        v-for="player in players"
-        :key="player.username"
-        class="player m-3 col-lg-3"
-      >
-        <user-info :username="player.username" />
-      </b-card>
-    </b-row>
-    <b-row align-h="center">
-      <b-col>Waiting for other players...</b-col>
-    </b-row>
-  </b-container>
 </template>
 
 <script lang="ts">
@@ -40,14 +26,10 @@ import { getUser, setDuckguessrId } from '~/components/user'
 
 const gameTypes = {
   against_bot: { title: 'Play against a bot' },
-  against_humans: {
+  against_players: {
     title: 'Play against humans',
   },
 }
-
-const requiredPlayers = 1
-
-let gameId: number | null = null
 
 export default defineComponent({
   name: 'Setup',
@@ -59,64 +41,18 @@ export default defineComponent({
 
     const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
 
-    const addPlayer = (player: Index.player, existingGameId: number) => {
-      if (
-        player.username &&
-        !players.map(({ username }) => username).includes(player.username)
-      ) {
-        gameId = existingGameId
-        players.push(player)
-        if (players.length === requiredPlayers) {
-          matchmakingSocket.emit('matchStarts', gameId)
-          matchmakingSocket.close()
-          router.replace(`/game/${gameId}`)
-        }
-      }
-    }
-
     const iAmReady = (gameType: string) => {
-      matchmakingSocket.on(
-        'iAmReadyWithGameID',
-        (user: Index.player, gameId: number) => {
-          console.debug(
-            `${username}-Received iAmReadyWithGameID from ${user.username}`
-          )
-          setDuckguessrId(user.id)
-          addPlayer(user, gameId)
-          matchmakingSocket.emit('whoElseIsReady', user, gameId)
-        }
-      )
-      matchmakingSocket.on(
-        'whoElseIsReady',
-        (otherPlayer: Index.player, otherPlayerGameId: number) => {
-          console.debug(
-            `${username}-Received whoElseIsReady from ${otherPlayer.username}`
-          )
-          if (otherPlayerGameId === gameId) {
-            matchmakingSocket.emit(
-              'iAmAlsoReady',
-              players[0],
-              otherPlayerGameId
-            )
-            addPlayer(otherPlayer, otherPlayerGameId)
-          }
-        }
-      )
-      matchmakingSocket.on(
-        'iAmAlsoReady',
-        (user: Index.player, existingGameId: number) => {
-          console.debug(`${username}-${user.username} is also ready`)
-          if (existingGameId === gameId) {
-            addPlayer(user, existingGameId)
-          }
-        }
-      )
       matchmakingSocket.emit(
         'iAmReady',
         gameType,
         route.value.params.dataset,
         username,
-        password
+        password,
+        (_: null, { gameId, user }: { gameId: number; user: Index.player }) => {
+          setDuckguessrId(user.id)
+          matchmakingSocket.close()
+          router.replace(`/matchmaking/${gameId}`)
+        }
       )
     }
 

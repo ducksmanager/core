@@ -117,8 +117,7 @@ export async function associatePlayer(
       )
     ).data
     if (!dmUser) {
-      console.error(`No DM user with username ${username}`)
-      return null
+      throw new Error(`No DM user with username ${username}`)
     }
     user = await prisma.player.findFirst({
       where: {

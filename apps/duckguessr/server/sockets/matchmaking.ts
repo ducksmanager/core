@@ -20,25 +20,49 @@ export function createMatchmakingSocket(
   >
 ) {
   io.of('/matchmaking').on('connection', (socket) => {
-    console.log('a user connected')
-    socket.on('iAmReady', async (gameType, dataset, username, password) => {
-      console.log(`${username} is ready`)
-      const { gameId } = await game.createOrGetPending(gameType, dataset)
-      const user = await game.associatePlayer(gameId, username, password)
+    console.log('a player is creating a match')
+    socket.on(
+      'iAmReady',
+      async (gameType, dataset, username, password, callback) => {
+        const { gameId } = await game.createOrGetPending(gameType, dataset)
+        const user = await game.associatePlayer(gameId, username, password)
+        console.log(`${username} is ready in game ${gameId}`)
 
-      socket.emit('iAmReadyWithGameID', user, gameId)
-    })
-    socket.on('whoElseIsReady', (user, gameId) => {
-      console.log(
-        `${user.username} wants to know who else is in game ID ${gameId}`
-      )
-      socket.broadcast.emit('whoElseIsReady', user, gameId)
-    })
-    socket.on('iAmAlsoReady', async ({ username, password }, gameId) => {
-      console.log(`${username} is also ready in game ID ${gameId}`)
-      const user = await game.associatePlayer(gameId, username, password)
+        createGameMatchmaking(io, gameId)
 
-      socket.broadcast.emit('iAmAlsoReady', user, gameId)
+        callback(null, {
+          user,
+          gameId,
+        })
+      }
+    )
+  })
+}
+
+const createGameMatchmaking = (
+  io: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >,
+  gameId: number
+) => {
+  io.of(`/matchmaking/${gameId}`).on('connection', (socket) => {
+    socket.on('iAmAlsoReady', async (gameId, username, password, callback) => {
+      const currentGame = await getGameWithRoundsAndDataset(gameId)
+      if (currentGame === null) {
+        throw new Error(`Game ${gameId} doesn't exist`)
+      }
+      const user = await game.associatePlayer(gameId, username, password)
+      console.log(`${username} is ready in game ${gameId}`)
+
+      socket.broadcast.emit('playerJoined', username)
+
+      callback(null, {
+        user,
+        gameId,
+      })
     })
     socket.on('matchStarts', async (gameId) => {
       console.log(`Game ${gameId} is starting!`)
