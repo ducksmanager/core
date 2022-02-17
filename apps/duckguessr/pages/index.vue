@@ -1,8 +1,7 @@
 <template>
   <div>
     <b-alert v-if="isAnonymous" show variant="warning">
-      You are not connected. You can still play but you won't keep any won
-      medals.
+      You are not connected. You can still play but you won't keep any won medals.
     </b-alert>
     <b-card-group deck>
       <b-card
@@ -15,9 +14,7 @@
         align="center"
         @click="$router.push(`/setup/${name}`)"
       >
-        <b-card-footer>
-          Images: {{ images }}, authors: {{ authors }}
-        </b-card-footer>
+        <b-card-footer> Images: {{ images }}, authors: {{ authors }} </b-card-footer>
       </b-card>
     </b-card-group>
   </div>

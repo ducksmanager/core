@@ -80,7 +80,8 @@ export const predict = (
           probability,
         } of sortedPredictions) {
           console.log(
-            `Round ${roundNumber} - Predicted artist = ${personcode}, probability of ${probability}%`
+            `Round ${roundNumber} - Predicted artist = ${personcode},
+            probability of ${probability}%`
           )
           if (!possibleAuthors.includes(personcode)) {
             console.log('Skipped')
@@ -89,11 +90,8 @@ export const predict = (
             return
           }
         }
-        console.error(
-          'No possible authors match the prediction, choosing a random author'
-        )
-        const randomElement =
-          possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)]
+        console.error('No possible authors match the prediction, choosing a random author')
+        const randomElement = possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)]
         resolve(randomElement)
       })
     })

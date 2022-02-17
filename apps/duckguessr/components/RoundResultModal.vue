@@ -45,9 +45,7 @@ export default defineComponent({
       timeBeforeNextRound.value =
         nextRoundStartDate === null
           ? null
-          : Math.ceil(
-              (nextRoundStartDate.getTime() - new Date().getTime()) / 1000
-            )
+          : Math.ceil((nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
     }
 
     onMounted(() => {

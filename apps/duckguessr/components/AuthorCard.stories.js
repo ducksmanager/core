@@ -9,8 +9,7 @@ const Template = (args) => ({
   setup() {
     return { args }
   },
-  template:
-    '<div class="row" style="height: 200px"><AuthorCard v-bind="args" /></div>',
+  template: '<div class="row" style="height: 200px"><AuthorCard v-bind="args" /></div>',
 })
 export const Default = Template.bind({})
 Default.args = {

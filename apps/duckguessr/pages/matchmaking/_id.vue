@@ -1,11 +1,7 @@
 <template>
   <b-container align="center">
     <b-row align-h="center">
-      <b-card
-        v-for="username in playersUsernames"
-        :key="username"
-        class="player m-3 col-lg-3"
-      >
+      <b-card v-for="username in playersUsernames" :key="username" class="player m-3 col-lg-3">
         <user-info :username="username" />
       </b-card>
     </b-row>
@@ -16,18 +12,10 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  onMounted,
-  reactive,
-  useRoute,
-  useRouter,
-} from '@nuxtjs/composition-api'
+import { defineComponent, onMounted, reactive, useRoute, useRouter } from '@nuxtjs/composition-api'
 import Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { getUser, setDuckguessrId } from '@/components/user'
-
-const requiredPlayers = 2
 
 export default defineComponent({
   name: 'Matchmaking',
@@ -38,10 +26,9 @@ export default defineComponent({
     const playersUsernames = reactive([] as Array<string>)
 
     const gameId = parseInt(route.value.params.id)
+    let requiredPlayers: number
 
-    const matchmakingSocket = io(
-      `${process.env.SOCKET_URL}/matchmaking/${gameId}`
-    )
+    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`)
 
     const addPlayer = (username: string) => {
       if (username && !playersUsernames.includes(username)) {
@@ -65,9 +52,10 @@ export default defineComponent({
         gameId,
         username,
         password,
-        (_: null, { user }: { user: Index.player }) => {
-          setDuckguessrId(user.id)
-          addPlayer(user.username)
+        ({ player, gameType }: { player: Index.player; gameType: string }) => {
+          requiredPlayers = gameType === 'against_bot' ? 1 : 2
+          setDuckguessrId(player.id)
+          addPlayer(player.username)
         }
       )
     })

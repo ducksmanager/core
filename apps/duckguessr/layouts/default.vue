@@ -5,10 +5,7 @@
         <user-info :username="username" />
       </div>
     </div>
-    <div
-      id="logo-zone"
-      class="p-4 d-flex align-items-center flex-column align-items-center"
-    >
+    <div id="logo-zone" class="p-4 d-flex align-items-center flex-column align-items-center">
       <a href="/"><b-img src="/logo.png" height="70" /></a>
       <small>by DucksManager</small>
     </div>
@@ -26,8 +23,8 @@ const { username } = getUser()
 
 <style lang="scss">
 html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;

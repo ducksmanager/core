@@ -13,7 +13,9 @@ module.exports = {
   plugins: [],
   // add your custom rules here
   rules: {
+    'max-len': [2, { code: 100, tabWidth: 4, ignoreUrls: true }],
     'no-console': 'off',
+    'node/no-callback-literal': 'off',
     camelcase: 'off',
     'import/default': 'off',
     'vue/multi-word-component-names': 'off',

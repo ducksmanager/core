@@ -5,10 +5,7 @@ export default async (req, res) => {
   const query = (req._parsedOriginalUrl || { query: '' }).query || ''
   const { dataset: datasetName } = query
     .split('&')
-    .reduce(
-      (acc, value) => ({ ...acc, [value.split('=')[0]]: value.split('=')[1] }),
-      {}
-    )
+    .reduce((acc, value) => ({ ...acc, [value.split('=')[0]]: value.split('=')[1] }), {})
   switch (req.method) {
     case 'GET': {
       res.writeHeader(200, { 'Content-Type': 'application/json' })

@@ -1,13 +1,7 @@
 <template>
   <b-container v-if="gameIsFinished" fluid>
-    <b-alert show align="center" variant="info">
-      This game is finished.
-    </b-alert>
-    <game-scores
-      :scores="game.rounds"
-      :players="game.game_players"
-      :authors="game.authors"
-    />
+    <b-alert show align="center" variant="info"> This game is finished. </b-alert>
+    <game-scores :scores="game.rounds" :players="game.game_players" :authors="game.authors" />
   </b-container>
   <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
     Loading...
@@ -27,10 +21,7 @@
       <b-col cols="5" class="h-100">
         <b-row align-v="center" style="height: 50px">
           <b-col class="text-center">
-            <progress-bar
-              :available-time="availableTime"
-              :remaining-time="remainingTime"
-            />
+            <progress-bar :available-time="availableTime" :remaining-time="remainingTime" />
           </b-col>
         </b-row>
         <b-row id="author-list">
@@ -39,9 +30,7 @@
             :key="`author-${idx}`"
             :author="author"
             :selectable="
-              !game.rounds
-                .map(({ personcode }) => personcode)
-                .includes(author.personcode)
+              !game.rounds.map(({ personcode }) => personcode).includes(author.personcode)
             "
             @select="
               chosenAuthor = $event
@@ -53,11 +42,7 @@
       <b-col cols="2" class="border vh-100 overflow-auto">
         <h3>Round {{ currentRoundNumber }}</h3>
         <template v-for="score in currentRoundScores">
-          <b-alert
-            :key="`score-${score.player_id}`"
-            show
-            :variant="scoreToVariant(score)"
-          >
+          <b-alert :key="`score-${score.player_id}`" show :variant="scoreToVariant(score)">
             {{ getUsername(score.player_id) }}:
             {{ score.score_type_name }}
           </b-alert>
@@ -83,14 +68,8 @@ import { io, Socket } from 'socket.io-client'
 import AuthorCard from '~/components/AuthorCard.vue'
 import ProgressBar from '~/components/ProgressBar.vue'
 import { getUser } from '@/components/user'
-import {
-  Author,
-  RoundWithScoresAndAuthor,
-} from '~/types/roundWithScoresAndAuthor'
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from '~/types/socketEvents'
+import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
+import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
 
 interface GamePlayerWithFullPlayer extends Index.game_player {
   player: Index.player
@@ -113,8 +92,7 @@ export default defineComponent({
     const chosenAuthor = ref(null as string | null)
 
     const game = ref(null as GameFull | null)
-    let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> | null =
-      null
+    let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
 
     const currentRoundScores = ref([] as Array<Index.round_score>)
 
@@ -134,19 +112,15 @@ export default defineComponent({
         [...(game.value?.rounds || [])]
           .reverse()
           .find(
-            ({ started_at: startedAt }) =>
-              startedAt && new Date(startedAt).getTime() < now.value
+            ({ started_at: startedAt }) => startedAt && new Date(startedAt).getTime() < now.value
           )?.round_number || null
     )
 
-    const getRound = (
-      searchedRoundNumber: number | null
-    ): RoundWithScoresAndAuthor | null =>
+    const getRound = (searchedRoundNumber: number | null): RoundWithScoresAndAuthor | null =>
       searchedRoundNumber == null
         ? null
         : (game.value?.rounds || []).find(
-            ({ round_number: roundNumber }) =>
-              roundNumber === searchedRoundNumber
+            ({ round_number: roundNumber }) => roundNumber === searchedRoundNumber
           ) || null
 
     const previousRound = computed((): RoundWithScoresAndAuthor | null =>
@@ -166,16 +140,10 @@ export default defineComponent({
     )
 
     const remainingTime = computed(() =>
-      !currentRound.value ||
-      new Date(currentRound.value!.started_at!).getTime() > now.value
+      !currentRound.value || new Date(currentRound.value!.started_at!).getTime() > now.value
         ? Infinity
         : Math.floor(
-            Math.max(
-              0,
-              (new Date(currentRound.value!.finished_at!).getTime() -
-                now.value) /
-                1000
-            )
+            Math.max(0, (new Date(currentRound.value!.finished_at!).getTime() - now.value) / 1000)
           )
     )
 
@@ -184,8 +152,7 @@ export default defineComponent({
         currentRoundNumber.value == null
           ? null
           : game.value?.rounds.find(
-              ({ round_number: roundNumber }) =>
-                roundNumber === currentRoundNumber.value! + 1
+              ({ round_number: roundNumber }) => roundNumber === currentRoundNumber.value! + 1
             ) || null
       return nextRound?.started_at ? new Date(nextRound?.started_at) : null
     })
@@ -235,12 +202,7 @@ export default defineComponent({
     )
 
     const validateGuess = () => {
-      gameSocket!.emit(
-        'guess',
-        username,
-        currentRound.value!.id,
-        chosenAuthor.value ?? null
-      )
+      gameSocket!.emit('guess', username, currentRound.value!.id, chosenAuthor.value ?? null)
     }
 
     const loadGame = async () => {
@@ -286,9 +248,7 @@ export default defineComponent({
         players.value.find(({ id }) => id === playerId)?.username || '?',
 
       getAuthor: (personcode2: string): Author =>
-        game.value!.authors.find(
-          ({ personcode }) => personcode2 === personcode
-        )!,
+        game.value!.authors.find(({ personcode }) => personcode2 === personcode)!,
 
       scoreToVariant(roundScore: Index.round_score | null) {
         switch (roundScore?.score_type_name) {

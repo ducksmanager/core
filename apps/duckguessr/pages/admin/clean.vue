@@ -4,8 +4,8 @@
       <b-col cols="12">
         <b-select v-model="selectedDataset" :options="datasets" />
         <div v-if="validatedAndRemainingImageCount">
-          {{ validatedAndRemainingImageCount.validated || 0 }} images from this
-          dataset can currently be seen on Duckguessr,
+          {{ validatedAndRemainingImageCount.validated || 0 }} images from this dataset can
+          currently be seen on Duckguessr,
           {{ validatedAndRemainingImageCount.not_validated || 0 }}
           are left to maintain.
         </div>
@@ -18,17 +18,14 @@
     <template v-else>
       <b-row>
         <b-col cols="12">
-          Cliquez sur les images qui ne doivent pas être utilisées dans
-          Duckguessr:
+          Cliquez sur les images qui ne doivent pas être utilisées dans Duckguessr:
           <ul>
             <li>Images qui ne contiennent pas de dessin</li>
             <li>Images sur lesquelles le nom du dessinateur est inscrit</li>
           </ul>
         </b-col>
         <b-col
-          v-for="(
-            { sitecode_url, url, decision }, index
-          ) in entryurlsPendingMaintenanceWithUrls"
+          v-for="({ sitecode_url, url, decision }, index) in entryurlsPendingMaintenanceWithUrls"
           :key="sitecode_url"
           class="d-flex align-items-center justify-content-end flex-column"
           col
@@ -41,9 +38,7 @@
               :key="`${sitecode_url}-${value}`"
               :variant="variant"
               :pressed="decision === value"
-              @click="
-                entryurlsPendingMaintenanceWithUrls[index].decision = value
-              "
+              @click="entryurlsPendingMaintenanceWithUrls[index].decision = value"
             >
               {{ title }}
             </b-button>
@@ -56,13 +51,7 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  onMounted,
-  ref,
-  useContext,
-  watch,
-} from '@nuxtjs/composition-api'
+import { computed, onMounted, ref, useContext, watch } from '@nuxtjs/composition-api'
 import type Index from '@prisma/client'
 
 export default {
@@ -104,15 +93,14 @@ export default {
         validatedAndRemainingImageCount.value = null
         return
       }
-      const { entryurlsToMaintain, maintainedEntryurlsCount } =
-        await $axios.$get(`/api/admin/maintenance?dataset=${datasetName}`)
-      entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map(
-        (data: any) => ({
-          ...data,
-          decision: data.entryurl_details.decision || 'ok',
-          url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecode_url}`,
-        })
+      const { entryurlsToMaintain, maintainedEntryurlsCount } = await $axios.$get(
+        `/api/admin/maintenance?dataset=${datasetName}`
       )
+      entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map((data: any) => ({
+        ...data,
+        decision: data.entryurl_details.decision || 'ok',
+        url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecode_url}`,
+      }))
 
       validatedAndRemainingImageCount.value = maintainedEntryurlsCount.reduce(
         (
@@ -142,8 +130,7 @@ export default {
       validatedAndRemainingImageCount,
       async submitInvalidations() {
         await $axios.$post(`/api/admin/maintenance`, {
-          entryurlsPendingMaintenance:
-            entryurlsPendingMaintenanceWithUrls.value,
+          entryurlsPendingMaintenance: entryurlsPendingMaintenanceWithUrls.value,
         })
         await loadImagesToMaintain(selectedDataset.value)
       },

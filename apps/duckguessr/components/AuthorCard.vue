@@ -8,19 +8,13 @@
     }"
     @click="$emit('select', author.personcode)"
   >
-    <div
-      class="author-image"
-      :style="{ backgroundImage: `url('${authorImageUrl}')` }"
-    >
+    <div class="author-image" :style="{ backgroundImage: `url('${authorImageUrl}')` }">
       <div class="author-name position-absolute">
         <flag :country="author.personnationality" />
         {{ author.personfullname }}
       </div>
       <div hidden>
-        <b-img
-          :src="authorImageUrl"
-          @error="authorImageUrl = defaultAuthorUrl"
-        />
+        <b-img :src="authorImageUrl" @error="authorImageUrl = defaultAuthorUrl" />
       </div>
     </div>
   </b-col>

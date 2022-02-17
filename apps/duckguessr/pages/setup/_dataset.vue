@@ -14,12 +14,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  useRouter,
-  reactive,
-  useRoute,
-} from '@nuxtjs/composition-api'
+import { defineComponent, useRouter, reactive, useRoute } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
 import { getUser, setDuckguessrId } from '~/components/user'
@@ -48,8 +43,8 @@ export default defineComponent({
         route.value.params.dataset,
         username,
         password,
-        (_: null, { gameId, user }: { gameId: number; user: Index.player }) => {
-          setDuckguessrId(user.id)
+        ({ gameId, player }: { gameId: number; player: Index.player }) => {
+          setDuckguessrId(player.id)
           matchmakingSocket.close()
           router.replace(`/matchmaking/${gameId}`)
         }

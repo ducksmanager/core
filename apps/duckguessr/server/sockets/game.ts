@@ -8,7 +8,7 @@ import {
   SocketData,
 } from '../../types/socketEvents'
 import { GuessResponse } from '../../types/guess'
-import { associatePlayer, getGameWithRoundsAndDataset } from '../game'
+import { getGameWithRoundsDatasetPlayers } from '../game'
 import { predict } from '../predict'
 const round = require('../../server/round')
 
@@ -21,10 +21,7 @@ const doOnRoundStart = (round: Index.round, callback: Function) => {
 
 const doOnRoundFinish = (round: Index.round, callback: Function) => {
   const now = new Date()
-  setTimeout(
-    () => callback(round),
-    round.finished_at!.getTime() - now.getTime()
-  )
+  setTimeout(() => callback(round), round.finished_at!.getTime() - now.getTime())
 }
 
 const onGuess = async function (
@@ -33,9 +30,7 @@ const onGuess = async function (
   roundId: number,
   personcode: string | null
 ) {
-  console.log(
-    `${username} is guessing ${JSON.stringify(personcode)} on round ${roundId}`
-  )
+  console.log(`${username} is guessing ${JSON.stringify(personcode)} on round ${roundId}`)
   try {
     const guessResultsData = await round.guess(
       await prisma.player.findFirst({
@@ -82,7 +77,7 @@ const guessWithNullAtEndOfRound = (socket: Socket, round: Index.round) => {
 
 const playRoundAsBot = (
   round: any,
-  game: Prisma.PromiseReturnType<typeof getGameWithRoundsAndDataset>,
+  game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>,
   socket: Socket,
   botUsername: string
 ) => {
@@ -93,40 +88,29 @@ const playRoundAsBot = (
           roundNumber === null || roundNumber >= round.round_number!
       )
       .map(({ personcode }) => personcode)
-    predict(
-      round.round_number!,
-      round.sitecode_url,
-      game!.dataset,
-      possibleAuthors
-    ).then((personcode: any) => {
-      onGuess.apply(socket, [botUsername, round.id, personcode])
-    })
+    predict(round.round_number!, round.sitecode_url, game!.dataset, possibleAuthors).then(
+      (personcode: any) => {
+        onGuess.apply(socket, [botUsername, round.id, personcode])
+      }
+    )
   })
 }
 
 export const createGameSocket = (
-  io: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >,
-  game: Prisma.PromiseReturnType<typeof getGameWithRoundsAndDataset>
+  io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
+  game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
 ) => {
   if (game === null) {
     throw new Error('game is null')
   }
-  return io.of(`/game/${game!.id}`).on('connection', async (socket: Socket) => {
+  return io.of(`/game/${game!.id}`).on('connection', (socket: Socket) => {
     console.log('connection')
     socket.on('guess', onGuess)
 
-    const playableRounds = game!.rounds.filter(
-      ({ finished_at }) => !!finished_at
-    )
+    const playableRounds = game!.rounds.filter(({ finished_at }) => !!finished_at)
 
     if (game.game_type === 'against_bot') {
       const botUsername = 'bot_us'
-      await associatePlayer(game.id, botUsername)
       for (const round of playableRounds) {
         playRoundAsBot(round, game, socket, botUsername)
       }

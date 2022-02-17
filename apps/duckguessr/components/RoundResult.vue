@@ -14,9 +14,7 @@
       }"
     >
       <b-img class="d-none" :src="personUrl" @error="setDefaultAuthorUrl()" />
-      <flag :country="round.personnationality" />&nbsp;{{
-        round.personfullname
-      }}
+      <flag :country="round.personnationality" />&nbsp;{{ round.personfullname }}
     </div>
   </b-col>
 </template>
@@ -35,9 +33,7 @@ export default {
   },
 
   setup(props: any) {
-    const personUrl = ref(
-      `https://inducks.org/creators/photos/${props.round.personcode}.jpg`
-    )
+    const personUrl = ref(`https://inducks.org/creators/photos/${props.round.personcode}.jpg`)
     const setDefaultAuthorUrl = () => {
       personUrl.value =
         'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'

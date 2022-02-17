@@ -20,17 +20,15 @@ const server = http.createServer(app)
 
 const { createGameSocket } = require('./sockets/game')
 
-const io = new Server<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->(server, {
-  cors: {
-    origin: process.env.NUXT_URL,
-    methods: ['GET'],
-  },
-})
+const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
+  server,
+  {
+    cors: {
+      origin: process.env.NUXT_URL,
+      methods: ['GET'],
+    },
+  }
+)
 
 createMatchmakingSocket(io)
 
@@ -46,9 +44,7 @@ prisma.game
   })
   .then((pendingGames: Index.game[]) => {
     for (const pendingGame of pendingGames) {
-      console.debug(
-        `Creating socket for unfinished game with ID ${pendingGame.id}`
-      )
+      console.debug(`Creating socket for unfinished game with ID ${pendingGame.id}`)
       createGameSocket(io, pendingGame)
     }
   })

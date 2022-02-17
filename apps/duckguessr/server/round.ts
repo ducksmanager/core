@@ -31,9 +31,7 @@ export async function createGameRounds(gameId: number) {
           },
           data: {
             started_at: new Date(now + roundNumber * (kickoffTime + roundTime)),
-            finished_at: new Date(
-              now + (roundNumber * (kickoffTime + roundTime) + roundTime)
-            ),
+            finished_at: new Date(now + (roundNumber * (kickoffTime + roundTime) + roundTime)),
           },
         })
       )

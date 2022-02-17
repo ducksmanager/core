@@ -1,72 +1,80 @@
 import { Server } from 'socket.io'
+import { Prisma } from '@prisma/client'
 import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
 } from '../../types/socketEvents'
-import { getGameWithRoundsAndDataset } from '../game'
+import { getPlayer, getGameWithRoundsDatasetPlayers } from '../game'
 
 const game = require('../game')
 const round = require('../round')
 const { createGameSocket } = require('./game')
 
+const checkAndAssociatePlayer = async (
+  username: string,
+  password: string,
+  currentGame: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
+) => {
+  const player = await game.getPlayer(username, password)
+  if (player === null) {
+    throw new Error(`Player ${username} has invalid credentials`)
+  }
+  if (currentGame!.game_players.find(({ player_id }) => player_id === player.id)) {
+    console.info(`Player ${player.username} is already associated with game ${currentGame!.id}`)
+  } else {
+    await game.associatePlayer(currentGame!.id, player)
+    console.log(`${username} is ready in game ${currentGame!.id}`)
+  }
+  return player
+}
+
 export function createMatchmakingSocket(
-  io: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >
+  io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
 ) {
   io.of('/matchmaking').on('connection', (socket) => {
     console.log('a player is creating a match')
-    socket.on(
-      'iAmReady',
-      async (gameType, dataset, username, password, callback) => {
-        const { gameId } = await game.createOrGetPending(gameType, dataset)
-        const user = await game.associatePlayer(gameId, username, password)
-        console.log(`${username} is ready in game ${gameId}`)
+    socket.on('iAmReady', async (gameType, dataset, username, password, callback) => {
+      const currentGame = await game.createOrGetPending(gameType, dataset)
+      const player = await checkAndAssociatePlayer(username, password, currentGame)
 
-        createGameMatchmaking(io, gameId)
+      createGameMatchmaking(io, currentGame.id)
 
-        callback(null, {
-          user,
-          gameId,
-        })
+      if (gameType === 'against_bot') {
+        const botUsername = 'bot_us'
+        const botPlayer = await getPlayer(botUsername)
+        await game.associatePlayer(currentGame!.id, botPlayer)
       }
-    )
+      callback({
+        player,
+        gameId: currentGame.id,
+      })
+    })
   })
 }
 
 const createGameMatchmaking = (
-  io: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >,
+  io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
   gameId: number
 ) => {
   io.of(`/matchmaking/${gameId}`).on('connection', (socket) => {
     socket.on('iAmAlsoReady', async (gameId, username, password, callback) => {
-      const currentGame = await getGameWithRoundsAndDataset(gameId)
+      const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame === null) {
         throw new Error(`Game ${gameId} doesn't exist`)
       }
-      const user = await game.associatePlayer(gameId, username, password)
-      console.log(`${username} is ready in game ${gameId}`)
+      const player = await checkAndAssociatePlayer(username, password, currentGame)
+      socket.broadcast.emit('playerJoined', player.username)
 
-      socket.broadcast.emit('playerJoined', username)
-
-      callback(null, {
-        user,
-        gameId,
+      callback({
+        player,
+        gameType: currentGame.game_type,
       })
     })
     socket.on('matchStarts', async (gameId) => {
       console.log(`Game ${gameId} is starting!`)
-      const currentGame = await getGameWithRoundsAndDataset(gameId)
+      const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame === null) {
         throw new Error(`Game ${gameId} doesn't exist`)
       }
@@ -76,7 +84,7 @@ const createGameMatchmaking = (
 
       await round.createGameRounds(currentGame!.id)
 
-      const currentGameWithRounds = await getGameWithRoundsAndDataset(gameId)
+      const currentGameWithRounds = await getGameWithRoundsDatasetPlayers(gameId)
       createGameSocket(io, currentGameWithRounds!)
     })
   })

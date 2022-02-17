@@ -48,9 +48,9 @@ export default async (req, res) => {
             if (!error && response.statusCode === 200) {
               try {
                 const buffer = Buffer.from(body)
-                const base64 = `data:${
-                  response.headers['content-type']
-                };base64,${buffer.toString('base64')}`
+                const base64 = `data:${response.headers['content-type']};base64,${buffer.toString(
+                  'base64'
+                )}`
                 res.writeHeader(200, { 'Content-Type': 'application/json' })
                 res.end(
                   JSON.stringify({

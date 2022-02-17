@@ -36,9 +36,7 @@
       <template #cell(playerName)="{ value: playerId }">
         <user-info :username="playerNames[playerId]" />
       </template>
-      <template #cell(totalScore)="{ value: totalScore }">
-        {{ totalScore }} points
-      </template>
+      <template #cell(totalScore)="{ value: totalScore }"> {{ totalScore }} points </template>
       <template #cell()="{ value }">
         <round-scores :scores="value" />
       </template>
@@ -77,9 +75,7 @@ export default defineComponent({
     const scoresWithPersonUrls = ref(
       scores.map((roundScore) => ({
         ...roundScore,
-        ...authors.find(
-          ({ personcode }) => personcode === roundScore.personcode
-        ),
+        ...authors.find(({ personcode }) => personcode === roundScore.personcode),
         personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
       }))
     )
@@ -92,9 +88,7 @@ export default defineComponent({
           (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
             ...acc,
             [`round${roundNumber}`]: roundScores
-              .filter(
-                ({ player_id: scorePlayerId }) => scorePlayerId === playerId
-              )
+              .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
               .reduce(
                 (acc2, { score_type_name: scoreTypeName, score }) => ({
                   ...acc2,
@@ -112,16 +106,14 @@ export default defineComponent({
             (accTotalScore, roundScores) =>
               accTotalScore +
               Object.values(roundScores).reduce(
-                (accTotalRoundScore, roundScore) =>
-                  accTotalRoundScore + roundScore,
+                (accTotalRoundScore, roundScore) => accTotalRoundScore + roundScore,
                 0
               ),
             0
           ),
         }
       }),
-      imageUrl: ({ sitecode_url: url }) =>
-        `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
+      imageUrl: ({ sitecode_url: url }) => `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
     }
   },
 })

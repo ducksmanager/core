@@ -4,21 +4,19 @@ import { runQuery } from '../api/runQuery'
 const prisma = new PrismaClient()
 const numberOfRounds = 8
 
-export const getGameWithRoundsAndDataset = async (gameId: number) =>
+export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
     include: {
       rounds: true,
       dataset: true,
+      game_players: true,
     },
     where: {
       id: gameId,
     },
   })
 
-export async function createOrGetPending(
-  gameType: Index.game['game_type'],
-  datasetName: string
-) {
+export async function createOrGetPending(gameType: Index.game['game_type'], datasetName: string) {
   const dataset = await prisma.dataset.findFirst({
     where: {
       name: datasetName,
@@ -43,23 +41,23 @@ export async function createOrGetPending(
     },
   })
   if (pendingGame) {
-    return { gameId: pendingGame.id, created: false }
+    return await getGameWithRoundsDatasetPlayers(pendingGame.id)
   }
 
   const roundDataResponse = (await prisma.$queryRaw`
     SELECT random_images.personcode, random_images.sitecode_url
     FROM (
-           SELECT DISTINCT entryurl_details.personcode
-           FROM entryurl_details
-                  INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
-           WHERE dataset_id = ${dataset.id}
-           ORDER BY RAND()
-           LIMIT ${numberOfRounds + 1}
-         ) AS random_authors
-           INNER JOIN (
+      SELECT DISTINCT entryurl_details.personcode
+      FROM entryurl_details
+      INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
+      WHERE dataset_id = ${dataset.id}
+      ORDER BY RAND()
+      LIMIT ${numberOfRounds + 1}
+    ) AS random_authors
+    INNER JOIN (
       SELECT DISTINCT entryurl_details.personcode, entryurl_details.sitecode_url
       FROM entryurl_details
-             INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
+      INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
       WHERE dataset_id = ${dataset.id}
       ORDER BY RAND()
     ) AS random_images ON random_authors.personcode = random_images.personcode
@@ -83,17 +81,26 @@ export async function createOrGetPending(
       },
     })
 
-    return { gameId: game.id, created: true }
+    return await getGameWithRoundsDatasetPlayers(game.id)
   } else {
     throw new Error(`Couldn't find rounds for dataset ${dataset.id}`)
   }
 }
 
-export async function associatePlayer(
-  gameId: number,
-  username: string,
-  password: string | null = null
-) {
+export async function associatePlayer(gameId: number, player: Index.player) {
+  await prisma.game_player.create({
+    data: {
+      game: {
+        connect: { id: gameId },
+      },
+      player: {
+        connect: { id: player.id },
+      },
+    },
+  })
+}
+
+export async function getPlayer(username: string, password: string | null = null) {
   let user
   if (/^user[0-9]+$/.test(username) || /^bot_.+$/.test(username)) {
     user = await prisma.player.findFirst({
@@ -110,11 +117,10 @@ export async function associatePlayer(
     }
   } else {
     const [dmUser] = (
-      await runQuery(
-        'SELECT ID AS id, username FROM users WHERE username=? AND password=?',
-        'dm',
-        [username, password]
-      )
+      await runQuery('SELECT ID AS id, username FROM users WHERE username=? AND password=?', 'dm', [
+        username,
+        password,
+      ])
     ).data
     if (!dmUser) {
       throw new Error(`No DM user with username ${username}`)
@@ -133,16 +139,6 @@ export async function associatePlayer(
       })
     }
   }
-  await prisma.game_player.create({
-    data: {
-      game: {
-        connect: { id: gameId },
-      },
-      player: {
-        connect: { id: user.id },
-      },
-    },
-  })
 
   return user
 }
