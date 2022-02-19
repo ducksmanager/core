@@ -26,18 +26,12 @@ export default defineComponent({
     const playersUsernames = reactive([] as Array<string>)
 
     const gameId = parseInt(route.value.params.id)
-    let requiredPlayers: number
 
     const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`)
 
     const addPlayer = (username: string) => {
       if (username && !playersUsernames.includes(username)) {
         playersUsernames.push(username)
-        if (playersUsernames.length === requiredPlayers) {
-          matchmakingSocket.emit('matchStarts', gameId)
-          matchmakingSocket.close()
-          router.replace(`/game/${gameId}`)
-        }
       }
     }
 
@@ -46,14 +40,21 @@ export default defineComponent({
         console.debug(`${username} is also ready`)
         addPlayer(username)
       })
+      matchmakingSocket.on('matchStarts', (gameId: number) => {
+        setTimeout(() => {
+          // Leave time for the iAmAlsoReady callback to be called
+          console.debug(`Match starts on game ${gameId}`)
+          matchmakingSocket.close()
+          router.replace(`/game/${gameId}`)
+        }, 200)
+      })
 
       matchmakingSocket.emit(
         'iAmAlsoReady',
         gameId,
         username,
         password,
-        ({ player, gameType }: { player: Index.player; gameType: string }) => {
-          requiredPlayers = gameType === 'against_bot' ? 1 : 2
+        ({ player }: { player: Index.player }) => {
           setDuckguessrId(player.id)
           addPlayer(player.username)
         }

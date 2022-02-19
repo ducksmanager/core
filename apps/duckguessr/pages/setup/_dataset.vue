@@ -49,6 +49,15 @@ export default defineComponent({
           router.replace(`/matchmaking/${gameId}`)
         }
       )
+
+      matchmakingSocket.on('matchStarts', (gameId: number) => {
+        setTimeout(() => {
+          // Leave time for the iAmReady callback to be called
+          console.debug(`Match starts on game ${gameId}`)
+          matchmakingSocket.close()
+          router.replace(`/game/${gameId}`)
+        }, 200)
+      })
     }
 
     return {

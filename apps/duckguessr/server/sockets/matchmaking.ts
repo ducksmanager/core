@@ -39,12 +39,16 @@ export function createMatchmakingSocket(
       const currentGame = await game.createOrGetPending(gameType, dataset)
       const player = await checkAndAssociatePlayer(username, password, currentGame)
 
-      createGameMatchmaking(io, currentGame.id)
-
       if (gameType === 'against_bot') {
         const botUsername = 'bot_us'
         const botPlayer = await getPlayer(botUsername)
         await game.associatePlayer(currentGame!.id, botPlayer)
+
+        await round.createGameRounds(currentGame!.id)
+        createGameSocket(io, (await getGameWithRoundsDatasetPlayers(currentGame!.id))!)
+        socket.emit('matchStarts', currentGame!.id)
+      } else {
+        createGameMatchmaking(io, currentGame.id)
       }
       callback({
         player,
@@ -54,6 +58,7 @@ export function createMatchmakingSocket(
   })
 }
 
+const numberOfPlayers = 2
 const createGameMatchmaking = (
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
   gameId: number
@@ -65,27 +70,26 @@ const createGameMatchmaking = (
         throw new Error(`Game ${gameId} doesn't exist`)
       }
       const player = await checkAndAssociatePlayer(username, password, currentGame)
-      socket.broadcast.emit('playerJoined', player.username)
+      if (currentGame.game_players.length + 1 === numberOfPlayers) {
+        console.log(`Game ${gameId} is starting!`)
+        const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+        if (currentGame === null) {
+          throw new Error(`Game ${gameId} doesn't exist`)
+        }
+        if (currentGame.rounds.filter(({ started_at }) => !!started_at).length) {
+          throw new Error(`Game ${gameId} already has rounds`)
+        }
+
+        await round.createGameRounds(currentGame!.id)
+        createGameSocket(io, (await getGameWithRoundsDatasetPlayers(gameId))!)
+        socket.broadcast.emit('matchStarts', player.username)
+      } else {
+        socket.broadcast.emit('playerJoined', player.username)
+      }
 
       callback({
         player,
-        gameType: currentGame.game_type,
       })
-    })
-    socket.on('matchStarts', async (gameId) => {
-      console.log(`Game ${gameId} is starting!`)
-      const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
-      if (currentGame === null) {
-        throw new Error(`Game ${gameId} doesn't exist`)
-      }
-      if (currentGame.rounds.filter(({ started_at }) => !!started_at).length) {
-        throw new Error(`Game ${gameId} already has rounds`)
-      }
-
-      await round.createGameRounds(currentGame!.id)
-
-      const currentGameWithRounds = await getGameWithRoundsDatasetPlayers(gameId)
-      createGameSocket(io, currentGameWithRounds!)
     })
   })
 }
