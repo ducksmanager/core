@@ -75,6 +75,10 @@ export default {
       handler: '~/api/round.js',
     },
     {
+      path: '/api/podium',
+      handler: '~/api/podium.js',
+    },
+    {
       path: '/api/admin/maintenance',
       handler: '~/api/admin/maintenance.js',
     },

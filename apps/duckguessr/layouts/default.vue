@@ -1,9 +1,10 @@
 <template>
   <div id="app">
-    <div id="menu" class="position-fixed d-flex justify-content-center">
-      <div id="medals-and-login">
+    <div id="menu" class="position-fixed d-flex flex-column align-items-center">
+      <div id="medals-and-login" class="pb-3">
         <user-info :username="username" />
       </div>
+      <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
     </div>
     <div id="logo-zone" class="p-4 d-flex align-items-center flex-column align-items-center">
       <a href="/"><b-img src="/logo.png" height="70" /></a>
@@ -40,12 +41,28 @@ html {
     #app {
       color: white;
 
+      a {
+        color: darkgrey;
+        border-bottom: 1px solid darkgray;
+      }
+
       #menu {
         top: 0;
         left: 0;
         width: 325px;
         height: 100%;
         border-right: 1px solid #2e353d;
+
+        #medals-and-login {
+          width: 100%;
+          border-bottom: 1px solid #23282e;
+        }
+      }
+
+      #logo-zone {
+        a {
+          border-bottom: 0;
+        }
       }
 
       #main {
