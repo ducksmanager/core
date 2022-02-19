@@ -36,11 +36,11 @@ export function createMatchmakingSocket(
   io.of('/matchmaking').on('connection', (socket) => {
     console.log('a player is creating a match')
     socket.on('iAmReady', async (gameType, dataset, username, password, callback) => {
-      const currentGame = await game.createOrGetPending(gameType, dataset)
+      const currentGame = await game.create(gameType, dataset)
       const player = await checkAndAssociatePlayer(username, password, currentGame)
 
       if (gameType === 'against_bot') {
-        const botUsername = 'bot_us'
+        const botUsername = `bot_${currentGame.dataset.name}`
         const botPlayer = await getPlayer(botUsername)
         await game.associatePlayer(currentGame!.id, botPlayer)
 

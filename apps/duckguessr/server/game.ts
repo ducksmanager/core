@@ -7,7 +7,11 @@ const numberOfRounds = 8
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
     include: {
-      rounds: true,
+      rounds: {
+        include: {
+          round_scores: true,
+        },
+      },
       dataset: true,
       game_players: true,
     },
@@ -16,7 +20,7 @@ export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
     },
   })
 
-export async function createOrGetPending(gameType: Index.game['game_type'], datasetName: string) {
+export async function create(gameType: Index.game['game_type'], datasetName: string) {
   const dataset = await prisma.dataset.findFirst({
     where: {
       name: datasetName,
@@ -24,24 +28,6 @@ export async function createOrGetPending(gameType: Index.game['game_type'], data
   })
   if (!dataset) {
     throw new Error(`Cannot find dataset with name ${datasetName}`)
-  }
-  const pendingGame = await prisma.game.findFirst({
-    include: {
-      game_players: true,
-    },
-    where: {
-      game_type: gameType,
-      dataset_id: dataset.id,
-      rounds: {
-        some: {
-          started_at: null,
-          round_number: 0,
-        },
-      },
-    },
-  })
-  if (pendingGame) {
-    return await getGameWithRoundsDatasetPlayers(pendingGame.id)
   }
 
   const roundDataResponse = (await prisma.$queryRaw`

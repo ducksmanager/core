@@ -7,7 +7,7 @@ const numberOfRounds = 8
 const kickoffTime = 5000
 const roundTime = 10000
 
-export const getRound = async (roundId: number): Promise<Index.round> =>
+export const getRoundWithScores = async (roundId: number) =>
   await prisma.round.findFirst({
     include: {
       round_scores: true,
@@ -43,7 +43,7 @@ export async function guess(
   roundId: number,
   { personcode }: GuessRequest
 ): Promise<GuessResponse | void> {
-  const round = await getRound(roundId)
+  const round = await getRoundWithScores(roundId)
   if (
     await prisma.round_score.findFirst({
       where: {
@@ -82,7 +82,7 @@ export async function guess(
   await prisma.round_score.create({ data: scoreWithMetadata })
 
   return {
-    ...scoreWithMetadata,
+    scoreWithMetadata,
     answer: round.personcode,
-  }
+  } as GuessResponse
 }

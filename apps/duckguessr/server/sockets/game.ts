@@ -10,6 +10,7 @@ import {
 import { GuessResponse } from '../../types/guess'
 import { getGameWithRoundsDatasetPlayers } from '../game'
 import { predict } from '../predict'
+import { getRoundWithScores } from '../round'
 const round = require('../../server/round')
 
 const prisma = new PrismaClient()
@@ -53,10 +54,9 @@ const onGuess = async function (
   }
 }
 
-const guessWithNullAtEndOfRound = (socket: Socket, round: Index.round) => {
-  console.log('guessWithNullAtEndOfRound ' + round.id)
+const initRoundEnds = (socket: Socket, round: Index.round) => {
   doOnRoundFinish(round, async ({ game_id, id }: Index.round) => {
-    console.log('Round ' + id + ' finished')
+    console.log(`Round ${id} finished`)
     const missingScores = (await prisma.$queryRaw`
         SELECT DISTINCT username
         FROM game_player
@@ -72,27 +72,32 @@ const guessWithNullAtEndOfRound = (socket: Socket, round: Index.round) => {
       console.log(username + ' is missing a score')
       await onGuess.apply(socket, [username, id, null])
     }
+    socket.broadcast.emit('roundEnds', await getRoundWithScores(id))
+    socket.emit('roundEnds', await getRoundWithScores(id))
   })
 }
 
-const playRoundAsBot = (
+const initRoundStarts = (
   round: any,
   game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>,
-  socket: Socket,
-  botUsername: string
+  socket: Socket
 ) => {
   doOnRoundStart(round, (round: Index.round) => {
-    const possibleAuthors = game!.rounds
-      .filter(
-        ({ round_number: roundNumber }) =>
-          roundNumber === null || roundNumber >= round.round_number!
+    socket.broadcast.emit('roundStarts', { ...round, personcode: null })
+    socket.emit('roundStarts', { ...round, personcode: null })
+    if (game!.game_type === 'against_bot') {
+      const possibleAuthors = game!.rounds
+        .filter(
+          ({ round_number: roundNumber }) =>
+            roundNumber === null || roundNumber >= round.round_number!
+        )
+        .map(({ personcode }) => personcode)
+      predict(round.round_number!, round.sitecode_url, game!.dataset, possibleAuthors).then(
+        (personcode: any) => {
+          onGuess.apply(socket, [`bot_${game!.dataset.name}`, round.id, personcode])
+        }
       )
-      .map(({ personcode }) => personcode)
-    predict(round.round_number!, round.sitecode_url, game!.dataset, possibleAuthors).then(
-      (personcode: any) => {
-        onGuess.apply(socket, [botUsername, round.id, personcode])
-      }
-    )
+    }
   })
 }
 
@@ -109,15 +114,9 @@ export const createGameSocket = (
 
     const playableRounds = game!.rounds.filter(({ finished_at }) => !!finished_at)
 
-    if (game.game_type === 'against_bot') {
-      const botUsername = 'bot_us'
-      for (const round of playableRounds) {
-        playRoundAsBot(round, game, socket, botUsername)
-      }
-    }
-
     for (const round of playableRounds) {
-      guessWithNullAtEndOfRound(socket, round)
+      initRoundStarts(round, game, socket)
+      initRoundEnds(socket, round)
     }
   })
 }

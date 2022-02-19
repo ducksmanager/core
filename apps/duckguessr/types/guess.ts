@@ -6,4 +6,5 @@ export interface GuessRequest {
 
 export interface GuessResponse extends Index.round_score {
   answer: string
+  scoreWithMetadata: Index.round_score
 }

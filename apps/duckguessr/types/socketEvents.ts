@@ -1,8 +1,12 @@
+import { Prisma } from '@prisma/client'
 import { GuessResponse } from '~/types/guess'
+import { getRoundWithScores } from '~/server/round'
 
 export interface ServerToClientEvents {
   playerJoined: (username: string) => void
   matchStarts: (gameId: number) => void
+  roundStarts: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
+  roundEnds: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
   playerGuessed: (guessResponse: GuessResponse) => void
 }
 

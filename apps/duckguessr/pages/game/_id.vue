@@ -1,14 +1,12 @@
 <template>
-  <b-container v-if="gameIsFinished" fluid>
+  <b-container v-if="!game || !currentRoundNumber" class="text-center"> Loading... </b-container>
+  <b-container v-else-if="gameIsFinished" fluid>
     <b-alert show align="center" variant="info"> This game is finished. </b-alert>
     <game-scores :scores="game.rounds" :players="game.game_players" :authors="game.authors" />
   </b-container>
-  <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
-    Loading...
-  </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
-      v-if="currentRound.personcode"
+      v-if="currentRoundPlayerScore"
       :status="scoreToVariant(currentRoundPlayerScore)"
       :correct-author="getAuthor(currentRound.personcode)"
       :round-number="currentRoundNumber"
@@ -60,11 +58,11 @@ import {
   ref,
   useContext,
   useRoute,
-  watch,
 } from '@nuxtjs/composition-api'
 
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
+import Vue from 'vue'
 import AuthorCard from '~/components/AuthorCard.vue'
 import ProgressBar from '~/components/ProgressBar.vue'
 import { getUser } from '@/components/user'
@@ -92,7 +90,9 @@ export default defineComponent({
     const chosenAuthor = ref(null as string | null)
 
     const game = ref(null as GameFull | null)
-    let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
+    let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>
+
+    const currentRoundNumber = ref(null as number | null)
 
     const currentRoundScores = ref([] as Array<Index.round_score>)
 
@@ -105,15 +105,8 @@ export default defineComponent({
 
     const now = ref(Date.now() as number)
 
-    const gameIsFinished = computed(() => game.value?.id && !currentRound.value)
-
-    const currentRoundNumber = computed(
-      (): number | null =>
-        [...(game.value?.rounds || [])]
-          .reverse()
-          .find(
-            ({ started_at: startedAt }) => startedAt && new Date(startedAt).getTime() < now.value
-          )?.round_number || null
+    const gameIsFinished = computed(
+      () => currentRoundNumber.value === game.value!.rounds.length && chosenAuthor.value === null
     )
 
     const getRound = (searchedRoundNumber: number | null): RoundWithScoresAndAuthor | null =>
@@ -122,10 +115,6 @@ export default defineComponent({
         : (game.value?.rounds || []).find(
             ({ round_number: roundNumber }) => roundNumber === searchedRoundNumber
           ) || null
-
-    const previousRound = computed((): RoundWithScoresAndAuthor | null =>
-      getRound(currentRoundNumber.value! - 1)
-    )
 
     const currentRound = computed((): RoundWithScoresAndAuthor | null =>
       getRound(currentRoundNumber.value)
@@ -157,65 +146,43 @@ export default defineComponent({
       return nextRound?.started_at ? new Date(nextRound?.started_at) : null
     })
 
-    watch(
-      () => game.value,
-      (game) => {
-        if (!game) {
-          console.error('No game ID')
-        }
-      }
-    )
-
-    watch(
-      () => currentRound.value,
-      (newCurrentRound, previousRound) => {
-        hasUrlLoaded.value = false
-        if (newCurrentRound) {
-          if (!gameSocket) {
-            gameSocket = io(`${process.env.SOCKET_URL}/game/${game.value!.id}`)
-            gameSocket.on('playerGuessed', (data) => {
-              const { answer } = data
-              currentRoundScores.value = [...currentRoundScores.value, data]
-              if (answer) {
-                currentRound.value!.personcode = answer
-              }
-            })
-          }
-          if (newCurrentRound.round_number !== previousRound?.round_number) {
-            currentRoundScores.value = []
-          }
-        }
-      }
-    )
-
-    watch(
-      () => remainingTime.value,
-      (remainingTimeValue: number) => {
-        if (remainingTimeValue <= 0) {
-          chosenAuthor.value = null
-          setTimeout(async () => {
-            await loadGame()
-            currentRoundScores.value = currentRound.value!.round_scores
-          }, 1000)
-        }
-      }
-    )
-
     const validateGuess = () => {
-      gameSocket!.emit('guess', username, currentRound.value!.id, chosenAuthor.value ?? null)
+      gameSocket!.emit('guess', username, currentRound.value!.id, chosenAuthor.value)
     }
 
     const loadGame = async () => {
       game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
+      if (!game) {
+        console.error('No game ID')
+      }
     }
 
     onMounted(async () => {
       await loadGame()
-      if (currentRound.value) {
-        setInterval(() => {
-          now.value = Date.now()
-        }, 1000)
-      }
+
+      gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`)
+      gameSocket
+        .on('roundStarts', (round) => {
+          console.log('roundStarts')
+          currentRoundNumber.value = round.round_number
+          Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
+          hasUrlLoaded.value = false
+        })
+        .on('roundEnds', (round) => {
+          console.log('roundEnds')
+          chosenAuthor.value = null
+          Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
+        })
+        .on('playerGuessed', ({ scoreWithMetadata, answer }) => {
+          console.log('playerGuessed ' + scoreWithMetadata.player_id)
+          if (scoreWithMetadata.player_id === duckguessrId) {
+            Vue.set(game.value!.rounds[currentRoundNumber.value! - 1], 'personcode', answer)
+          }
+          game.value!.rounds[currentRoundNumber.value! - 1].round_scores.push(scoreWithMetadata)
+        })
+      setInterval(() => {
+        now.value = Date.now()
+      }, 1000)
     })
 
     return {
@@ -226,18 +193,16 @@ export default defineComponent({
       remainingTime,
       chosenAuthor,
       hasUrlLoaded,
-      previousRound,
       currentRoundNumber,
       currentRound,
       currentRoundScores,
-      currentRoundPlayerScore: computed(() =>
-        currentRoundScores.value.find(
-          ({ player_id: playerId, round_id: roundId }) =>
-            duckguessrId === playerId && roundId === currentRound.value!.id
-        )
-      ),
       nextRoundStartDate,
       validateGuess,
+      currentRoundPlayerScore: computed(() =>
+        game.value!.rounds[currentRoundNumber.value! - 1].round_scores.find(
+          ({ player_id: playerId }) => duckguessrId === playerId
+        )
+      ),
       url: computed(
         () =>
           currentRound.value &&
