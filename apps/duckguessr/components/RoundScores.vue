@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-const { scores } = defineProps<{
+const props = defineProps<{
   scores: { [key: string]: number }
 }>()
 
-const totalScore = (Object.values(scores) as number[]).reduce((acc, score) => acc + score, 0)
+const totalScore = (Object.values(props.scores) as number[]).reduce((acc, score) => acc + score, 0)
 </script>
 
 <style scoped></style>

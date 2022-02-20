@@ -90,21 +90,22 @@ export default defineComponent({
       scoresWithPersonUrls,
       playerNames,
       playersWithScores: playerIds.map((playerId) => {
-        const playerScores: Array<number> = scoresWithPersonUrls.value.reduce(
-          (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
-            ...acc,
-            [`round${roundNumber}`]: roundScores
-              .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
-              .reduce(
-                (acc2, { score_type_name: scoreTypeName, score }) => ({
-                  ...acc2,
-                  [scoreTypeName]: score,
-                }),
-                {}
-              ),
-          }),
-          {}
-        )
+        const playerScores: { [key: string]: { [key: string]: number } } =
+          scoresWithPersonUrls.value.reduce(
+            (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
+              ...acc,
+              [`round${roundNumber}`]: roundScores
+                .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
+                .reduce(
+                  (acc2, { score_type_name: scoreTypeName, score }) => ({
+                    ...acc2,
+                    [scoreTypeName]: score,
+                  }),
+                  {}
+                ),
+            }),
+            {}
+          )
         return {
           playerName: playerId,
           ...playerScores,
