@@ -44,6 +44,7 @@ html {
       a {
         color: darkgrey;
         border-bottom: 1px solid darkgray;
+        text-decoration: none;
       }
 
       #menu {
