@@ -10,6 +10,7 @@
     <round-result-modal
       v-if="currentRoundPlayerScore"
       :status="scoreToVariant(currentRoundPlayerScore)"
+      :speed-bonus="currentRoundPlayerScore.speed_bonus"
       :correct-author="getAuthor(currentRound.personcode)"
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
@@ -174,12 +175,12 @@ export default defineComponent({
           chosenAuthor.value = null
           Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
         })
-        .on('playerGuessed', ({ scoreWithMetadata, answer }) => {
-          console.log('playerGuessed ' + scoreWithMetadata.player_id)
-          if (scoreWithMetadata.player_id === duckguessrId) {
+        .on('playerGuessed', ({ roundScore, answer }) => {
+          console.log('playerGuessed ' + roundScore.player_id)
+          if (roundScore.player_id === duckguessrId) {
             Vue.set(game.value!.rounds[currentRoundNumber.value! - 1], 'personcode', answer)
           }
-          game.value!.rounds[currentRoundNumber.value! - 1].round_scores.push(scoreWithMetadata)
+          game.value!.rounds[currentRoundNumber.value! - 1].round_scores.push(roundScore)
         })
       setInterval(() => {
         now.value = Date.now()

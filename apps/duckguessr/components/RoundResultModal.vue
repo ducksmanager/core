@@ -1,16 +1,21 @@
 <template>
   <b-modal visible :body-bg-variant="status" hide-footer hide-header-close>
     <template #modal-title> Round {{ roundNumber }} </template>
-    <div v-if="status === 'success'">Correct!</div>
+    <div v-if="status === 'success'">
+      <div>Correct!</div>
+      <div v-if="speedBonus">Speed bonus: {{ speedBonus }}</div>
+    </div>
     <div v-else>Incorrect.</div>
-    <div>The answer was:</div>
-    <b-row><author-card selectable :author="correctAuthor" /></b-row>
-    <template v-if="timeBeforeNextRound">
+    <div class="my-3">
+      <div>The answer was:</div>
+      <b-row><author-card selectable :author="correctAuthor" /></b-row>
+    </div>
+    <div v-if="timeBeforeNextRound" class="text-center">
       <div>Round {{ roundNumber + 1 }} starts in</div>
       <div class="text-xl-center">
         {{ timeBeforeNextRound }}
       </div>
-    </template>
+    </div>
   </b-modal>
 </template>
 
@@ -32,6 +37,10 @@ export default defineComponent({
     correctAuthor: {
       type: Object as () => Author,
       required: true,
+    },
+    speedBonus: {
+      type: Number,
+      default: null,
     },
     nextRoundStartDate: {
       type: Date,

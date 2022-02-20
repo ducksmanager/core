@@ -38,7 +38,8 @@ html {
     padding: 0 0 0 320px;
     background-color: #3d4b5f !important;
 
-    #app {
+    #app,
+    #root {
       color: white;
 
       a {

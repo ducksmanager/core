@@ -13,10 +13,11 @@ const Template = (args) => ({
 })
 export const Default = Template.bind({})
 const futureDate = new Date()
-futureDate.setMinutes(futureDate.getMinutes() + 1)
+futureDate.setSeconds(futureDate.getSeconds() + 20)
 Default.args = {
   status: 'success',
   roundNumber: 1,
+  speedBonus: 65,
   correctAuthor: {
     personcode: 'DR',
     personfullname: 'Don Rosa',

@@ -59,30 +59,36 @@ export async function guess(
     return
   }
 
-  let scoreData
+  // @ts-ignore TS2742
+  let roundScore: Index.round_score = {
+    player_id: player.id,
+    round_id: round.id,
+  }
 
   if (personcode === round.personcode) {
-    scoreData = {
+    const timeSpentGuessing = Date.now() - round.started_at
+    const speedBonus =
+      timeSpentGuessing < roundTime / 2
+        ? Number((100 - timeSpentGuessing * (100 / (roundTime / 2))).toFixed(0))
+        : 0
+    roundScore = {
+      ...roundScore,
       score_type_name: 'Correct author',
-      score: 300,
+      score: 100,
+      speed_bonus: speedBonus,
     }
   } else {
-    scoreData = {
+    roundScore = {
+      ...roundScore,
       score_type_name: 'Wrong author',
       score: 0,
     }
   }
 
-  // @ts-ignore TS2742
-  const scoreWithMetadata: Index.round_score = {
-    ...scoreData,
-    player_id: player.id,
-    round_id: round.id,
-  }
-  await prisma.round_score.create({ data: scoreWithMetadata })
+  await prisma.round_score.create({ data: roundScore })
 
   return {
-    scoreWithMetadata,
+    roundScore,
     answer: round.personcode,
   } as GuessResponse
 }
