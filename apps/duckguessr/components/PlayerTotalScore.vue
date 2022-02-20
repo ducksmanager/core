@@ -1,9 +1,12 @@
 <template>
-  <div class="d-flex flex-column" :class="{ vertical }">
-    <div class="username">{{ username }}</div>
-    <b-progress show-value variant="success" :max="score" :style="{ width: score }">
-      <b-progress-bar :value="score" />
-    </b-progress>
+  <div class="wrapper d-flex" :class="{ vertical }">
+    <div class="username"><user-info :username="username" /></div>
+    <div
+      class="progress bg-success d-inline-flex justify-content-center align-items-center"
+      :style="{ [vertical ? 'height' : 'width']: score + 'px' }"
+    >
+      {{ score.toFixed(0) }}
+    </div>
   </div>
 </template>
 
@@ -28,22 +31,34 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.vertical {
-  width: 110px;
-  height: 200px;
-  .username {
-    width: 100%;
-    height: 100%;
-    text-align: center;
-  }
-  .progress {
-    height: 200px;
-    transform: rotate(-90deg);
-    align-self: center;
-  }
-}
+.wrapper {
+  align-items: center;
+  width: 100%;
 
-.progress {
-  width: 200px;
+  .progress {
+    flex-direction: row;
+    height: 25px;
+  }
+
+  .username {
+    width: 100px;
+  }
+
+  &.vertical {
+    flex-direction: column;
+    width: 110px;
+    height: 250px;
+
+    .username {
+      width: 100%;
+      height: 100%;
+      text-align: center;
+    }
+
+    .progress {
+      flex-direction: row;
+      width: 90%;
+    }
+  }
 }
 </style>

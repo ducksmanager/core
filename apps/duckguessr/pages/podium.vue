@@ -1,5 +1,6 @@
 <template>
   <div v-if="players">
+    <h3 class="text-center mb-5">Podium</h3>
     <div
       v-if="topPlayers.length"
       class="d-flex flex-row justify-content-around"
