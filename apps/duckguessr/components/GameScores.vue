@@ -44,22 +44,28 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from '@nuxtjs/composition-api'
+import Index from '@prisma/client'
+import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
+
+interface GamePlayerWithFullPlayer extends Index.game_player {
+  player: Index.player
+}
 
 export default defineComponent({
   name: 'GameScores',
   props: {
     scores: {
-      type: Array,
+      type: Array as () => Array<RoundWithScoresAndAuthor>,
       required: true,
     },
     players: {
-      type: Array,
+      type: Array as () => Array<GamePlayerWithFullPlayer>,
       required: true,
     },
     authors: {
-      type: Array,
+      type: Array as () => Array<Author>,
       required: true,
     },
   },
@@ -84,7 +90,7 @@ export default defineComponent({
       scoresWithPersonUrls,
       playerNames,
       playersWithScores: playerIds.map((playerId) => {
-        const playerScores = scoresWithPersonUrls.value.reduce(
+        const playerScores: Array<number> = scoresWithPersonUrls.value.reduce(
           (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
             ...acc,
             [`round${roundNumber}`]: roundScores
@@ -103,17 +109,18 @@ export default defineComponent({
           playerName: playerId,
           ...playerScores,
           totalScore: Object.values(playerScores).reduce(
-            (accTotalScore, roundScores) =>
+            (accTotalScore: number, roundScores) =>
               accTotalScore +
               Object.values(roundScores).reduce(
-                (accTotalRoundScore, roundScore) => accTotalRoundScore + roundScore,
+                (accTotalRoundScore: number, roundScore) => accTotalRoundScore + roundScore,
                 0
               ),
             0
           ),
         }
       }),
-      imageUrl: ({ sitecode_url: url }) => `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
+      imageUrl: ({ sitecode_url: url }: RoundWithScoresAndAuthor) =>
+        `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
     }
   },
 })

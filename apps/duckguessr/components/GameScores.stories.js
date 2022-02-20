@@ -13,13 +13,44 @@ const Template = (args) => ({
 })
 export const Default = Template.bind({})
 Default.args = {
-  scores: [
+  players: [
+    {
+      player_id: 1,
+      player: {
+        id: 1,
+        username: 'player 1',
+      },
+    },
+    {
+      player_id: 2,
+      player: {
+        id: 2,
+        username: 'player 2',
+      },
+    },
+  ],
+  authors: [
     {
       personcode: 'DR',
       personnationality: 'us',
       personfullname: 'Don Rosa',
-      round_number: 0,
-      sitecode_url: 'thumbnails3/webusers/2010/08/fr_jm_1473p20_001.jpg',
+    },
+    {
+      personcode: 'CB',
+      personnationality: 'us',
+      personfullname: 'Carl Barks',
+    },
+    {
+      personcode: 'RSc',
+      personnationality: 'it',
+      personfullname: 'Romano Scarpa',
+    },
+  ],
+  scores: [
+    {
+      personcode: 'DR',
+      round_number: 1,
+      sitecode_url: 'thumbnails3/webusers/2014/04/hu_mm1992_07e_001.jpg',
       round_scores: [
         {
           player_id: 1,
@@ -30,10 +61,8 @@ Default.args = {
     },
     {
       personcode: 'CB',
-      personnationality: 'us',
-      personfullname: 'Carl Barks',
-      round_number: 1,
-      sitecode_url: 'thumbnails3/webusers/2011/04/gr_mm_2288p005_001.jpg',
+      round_number: 2,
+      sitecode_url: 'thumbnails3/webusers/2017/03/it_om_1341g_001.jpg',
       round_scores: [
         {
           player_id: 1,
@@ -48,10 +77,9 @@ Default.args = {
       ],
     },
     {
-      personcode: 'RS',
-      personnationality: 'it',
-      personfullname: 'Romano Scarpa',
-      round_number: 2,
+      personcode: 'RSc',
+      round_number: 3,
+      sitecode_url: 'webusers/webusers-auth/rsc_ommi0o.png',
       round_scores: [],
     },
   ],
