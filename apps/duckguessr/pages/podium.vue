@@ -7,11 +7,12 @@
       style="height: 350px"
     >
       <player-total-score
-        v-for="player in topPlayers"
+        v-for="(player, index) in topPlayers"
         :key="player.username"
         :score="player.average_score"
         :username="player.username"
         vertical
+        :top-player="index === 1"
       />
     </div>
     <div v-else>Il n'y a pas assez de joueurs pour établir un podium.</div>
