@@ -28,7 +28,8 @@
             :key="`column-${index}`"
             class="text-nowrap"
           >
-            Round {{ round.round_number }}
+            <div>Round {{ round.round_number }}</div>
+            <div class="font-weight-normal">{{ round.personfullname }}</div>
           </th>
           <th>Total score</th>
         </tr>
