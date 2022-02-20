@@ -3,6 +3,7 @@
     <div class="username"><user-info :username="username" :top-player="topPlayer" /></div>
     <div
       class="progress bg-success d-inline-flex justify-content-center align-items-center"
+      :class="rank === null ? null : { [`rank-${rank}`]: true }"
       :style="{ [vertical ? 'height' : 'width']: score + 'px' }"
     >
       {{ score.toFixed(0) }}
@@ -26,9 +27,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    topPlayer: {
-      type: Boolean,
-      default: false,
+    rank: {
+      type: Number,
+      default: null,
     },
   },
 }
@@ -42,6 +43,18 @@ export default {
   .progress {
     flex-direction: row;
     height: 25px;
+
+    &.rank-0 {
+      background-color: #c9b037 !important;
+    }
+
+    &.rank-1 {
+      background-color: #d7d7d7 !important;
+    }
+
+    &.rank-2 {
+      background-color: #ad8a56 !important;
+    }
   }
 
   .username {

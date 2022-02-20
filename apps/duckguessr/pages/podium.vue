@@ -12,7 +12,7 @@
         :score="player.average_score"
         :username="player.username"
         vertical
-        :top-player="index === 1"
+        :rank="index === 2 ? 2 : 1 - index"
       />
     </div>
     <div v-else>Il n'y a pas assez de joueurs pour établir un podium.</div>
