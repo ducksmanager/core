@@ -1,8 +1,10 @@
 <template>
-  <b-container v-if="!game || !currentRoundNumber" class="text-center"> Loading... </b-container>
-  <b-container v-else-if="gameIsFinished" fluid>
+  <b-container v-if="gameIsFinished" fluid>
     <b-alert show align="center" variant="info"> This game is finished. </b-alert>
     <game-scores :scores="game.rounds" :players="game.game_players" :authors="game.authors" />
+  </b-container>
+  <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
+    Loading...
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
@@ -64,7 +66,6 @@ import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import Vue from 'vue'
 import AuthorCard from '~/components/AuthorCard.vue'
-import ProgressBar from '~/components/ProgressBar.vue'
 import { getUser } from '@/components/user'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
@@ -81,7 +82,7 @@ interface GameFull extends Index.game {
 
 export default defineComponent({
   name: 'Game',
-  components: { AuthorCard, ProgressBar },
+  components: { AuthorCard },
   setup() {
     const { $axios } = useContext()
     const { duckguessrId, username } = getUser()
@@ -106,7 +107,7 @@ export default defineComponent({
     const now = ref(Date.now() as number)
 
     const gameIsFinished = computed(
-      () => currentRoundNumber.value === game.value!.rounds.length && chosenAuthor.value === null
+      () => game.value && !game.value!.rounds.find(({ personcode }) => !personcode)
     )
 
     const getRound = (searchedRoundNumber: number | null): RoundWithScoresAndAuthor | null =>
@@ -198,11 +199,14 @@ export default defineComponent({
       currentRoundScores,
       nextRoundStartDate,
       validateGuess,
-      currentRoundPlayerScore: computed(() =>
-        game.value!.rounds[currentRoundNumber.value! - 1].round_scores.find(
+      currentRoundPlayerScore: computed(() => {
+        if (!currentRound.value) {
+          return null
+        }
+        return game.value!.rounds[currentRoundNumber.value! - 1].round_scores.find(
           ({ player_id: playerId }) => duckguessrId === playerId
         )
-      ),
+      }),
       url: computed(
         () =>
           currentRound.value &&
