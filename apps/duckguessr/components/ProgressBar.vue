@@ -8,8 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from '@vue/runtime-dom'
-
 const { availableTime, remainingTime } = defineProps<{
   availableTime: number
   remainingTime: number

@@ -1,18 +1,17 @@
 <template>
-  <b-container align="center">
-    <b-row align-h="center">
-      <b-card v-for="username in playersUsernames" :key="username" class="player m-3 col-lg-3">
-        <user-info :username="username" />
-      </b-card>
-    </b-row>
-    <b-row align-h="center">
-      <b-col>Waiting for other players...</b-col>
-    </b-row>
-  </b-container>
+  <div v-if="!isReady">Loading...</div>
+  <waiting-for-players v-else :usernames="playersUsernames" :game-id="gameId" />
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, useRoute, useRouter } from '@nuxtjs/composition-api'
+import {
+  defineComponent,
+  onMounted,
+  reactive,
+  ref,
+  useRoute,
+  useRouter,
+} from '@nuxtjs/composition-api'
 import Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { getUser, setDuckguessrId } from '@/components/user'
@@ -24,6 +23,7 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const playersUsernames = reactive([] as Array<string>)
+    const isReady = ref(false as Boolean)
 
     const gameId = parseInt(route.value.params.id)
 
@@ -37,6 +37,7 @@ export default defineComponent({
 
     onMounted(() => {
       matchmakingSocket.on('playerJoined', (username: string) => {
+        isReady.value = true
         console.debug(`${username} is also ready`)
         addPlayer(username)
       })
@@ -62,21 +63,10 @@ export default defineComponent({
     })
 
     return {
+      isReady,
+      gameId,
       playersUsernames,
     }
   },
 })
 </script>
-
-<style scoped lang="scss">
-.card {
-  cursor: pointer;
-  color: black;
-
-  &.player {
-    .card {
-      max-width: calc(50% - 30px);
-    }
-  }
-}
-</style>
