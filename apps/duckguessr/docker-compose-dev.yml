@@ -7,3 +7,9 @@ services:
     environment:
       MYSQL_DATABASE: duckguessr
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    networks:
+      - dm-server_db-network
+
+networks:
+  dm-server_db-network:
+    external: true
