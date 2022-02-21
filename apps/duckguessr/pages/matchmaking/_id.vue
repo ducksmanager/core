@@ -27,7 +27,9 @@ export default defineComponent({
 
     const gameId = parseInt(route.value.params.id)
 
-    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`)
+    const matchmakingSocket = io(
+      `${location.origin}:${process.env.SOCKET_PORT}/matchmaking/${gameId}`
+    )
 
     const addPlayer = (username: string) => {
       if (username && !playersUsernames.includes(username)) {
