@@ -30,3 +30,6 @@ networks:
     external: true
   dm-server_front-network:
     external: true
+
+volumes:
+  db:
