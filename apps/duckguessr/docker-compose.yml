@@ -7,10 +7,13 @@ services:
     volumes:
       - ./server/datasets:/usr/src/nuxt-app/server/datasets
     networks:
-      dm-server_front-network:
+      workspace_global-front-network:
         aliases:
           - duckguessr
-      workspace_global-front-network:
+      duckguessr-network:
+        aliases:
+          - duckguessr
+      dm-server_front-network:
         aliases:
           - duckguessr
   db:
@@ -24,10 +27,15 @@ services:
     environment:
       MYSQL_DATABASE: duckguessr
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    networks:
+      duckguessr-network:
+        aliases:
+          - db
 
 networks:
   workspace_global-front-network:
     external: true
+  duckguessr-network:
   dm-server_front-network:
     external: true
 
