@@ -5,7 +5,7 @@ services:
     build: .
     restart: always
     volumes:
-      - ./server/models:/usr/src/nuxt-app/server/models
+      - ./server/datasets:/usr/src/nuxt-app/server/datasets
     networks:
       dm-server_front-network:
         aliases:
@@ -19,6 +19,7 @@ services:
     ports:
       - "33061:3306"
     volumes:
+      - db:/var/lib/mysql
       - ./prisma/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql:ro
     environment:
       MYSQL_DATABASE: duckguessr
