@@ -34,7 +34,7 @@ export default defineComponent({
     const route = useRoute()
     const players = reactive([] as Array<Index.player>)
 
-    const matchmakingSocket = io(`${location.origin}:${process.env.SOCKET_PORT}/matchmaking`)
+    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
 
     const iAmReady = (gameType: string) => {
       matchmakingSocket.emit(
