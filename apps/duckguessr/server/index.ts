@@ -6,15 +6,15 @@ import {
   ServerToClientEvents,
   SocketData,
 } from '../types/socketEvents'
-import { createMatchmakingSocket } from './sockets/matchmaking'
+require('dotenv').config({ path: '../.env' })
 
 const http = require('http')
-require('dotenv').config({ path: '../.env' })
 
 const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 const express = require('express')
+const { createMatchmakingSocket } = require('./sockets/matchmaking')
 const app = express()
 const server = http.createServer(app)
 
