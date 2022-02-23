@@ -12,6 +12,7 @@
     "@prisma/client": "^3.9.2",
     "@tensorflow/tfjs": "^3.13.0",
     "@tensorflow/tfjs-node": "^3.13.0",
+    "axios": "^0.26.0",
     "dotenv": "^14.3.2",
     "express": "^4.17.3",
     "mariadb": "^2.5.5",
