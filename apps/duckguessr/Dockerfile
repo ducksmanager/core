@@ -43,6 +43,11 @@ ENTRYPOINT [ "node_modules/.bin/nuxt", "start" ]
 FROM node:14-slim AS runtime-socketio
 
 WORKDIR /home
+
+RUN apt-get update \
+ && apt-get install --no-install-recommends -y openssl \
+ && apt-get clean
+
 COPY .env.prod .env
 COPY server ./server
 COPY types ./types
