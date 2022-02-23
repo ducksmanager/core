@@ -1,6 +1,16 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { GuessResponse } from '~/types/guess'
-import { getRoundWithScores } from '~/server/round'
+const prisma = new PrismaClient()
+
+const getRoundWithScores = async (roundId: number) =>
+  await prisma.round.findFirst({
+    include: {
+      round_scores: true,
+    },
+    where: {
+      id: roundId,
+    },
+  })
 
 export interface ServerToClientEvents {
   playerJoined: (username: string) => void

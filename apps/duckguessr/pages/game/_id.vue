@@ -166,7 +166,7 @@ export default defineComponent({
       gameSocket
         .on('roundStarts', (round) => {
           console.log('roundStarts')
-          currentRoundNumber.value = round.round_number
+          currentRoundNumber.value = round!.round_number
           Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
           hasUrlLoaded.value = false
         })
