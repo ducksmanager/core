@@ -14,9 +14,14 @@ const dmPool = createPool({
 
 let dmConnection
 
-dmPool.getConnection().then((connection) => {
-  dmConnection = connection
-})
+dmPool
+  .getConnection()
+  .then((connection) => {
+    dmConnection = connection
+  })
+  .catch((e) => {
+    console.error(e)
+  })
 
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
