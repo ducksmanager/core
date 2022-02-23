@@ -9,7 +9,7 @@ import {
 } from '../../types/socketEvents'
 import { GuessResponse } from '../../types/guess'
 import { getGameWithRoundsDatasetPlayers } from '../game'
-import { predict } from '../predict'
+// import { predict } from '../predict'
 import { getRoundWithScores } from '../round'
 const round = require('../../server/round')
 
@@ -79,25 +79,25 @@ const initRoundEnds = (socket: Socket, round: Index.round) => {
 
 const initRoundStarts = (
   round: any,
-  game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>,
+  _game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>,
   socket: Socket
 ) => {
   doOnRoundStart(round, (round: Index.round) => {
     socket.broadcast.emit('roundStarts', { ...round, personcode: null })
     socket.emit('roundStarts', { ...round, personcode: null })
-    if (game!.game_type === 'against_bot') {
-      const possibleAuthors = game!.rounds
-        .filter(
-          ({ round_number: roundNumber }) =>
-            roundNumber === null || roundNumber >= round.round_number!
-        )
-        .map(({ personcode }) => personcode)
-      predict(round.round_number!, round.sitecode_url, game!.dataset, possibleAuthors).then(
-        (personcode: any) => {
-          onGuess.apply(socket, [`bot_${game!.dataset.name}`, round.id, personcode])
-        }
-      )
-    }
+    // if (game!.game_type === 'against_bot') {
+    //   const possibleAuthors = game!.rounds
+    //     .filter(
+    //       ({ round_number: roundNumber }) =>
+    //         roundNumber === null || roundNumber >= round.round_number!
+    //     )
+    //     .map(({ personcode }) => personcode)
+    //   predict(round.round_number!, round.sitecode_url, game!.dataset, possibleAuthors).then(
+    //     (personcode: any) => {
+    //       onGuess.apply(socket, [`bot_${game!.dataset.name}`, round.id, personcode])
+    //     }
+    //   )
+    // }
   })
 }
 
