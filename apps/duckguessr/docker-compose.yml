@@ -1,8 +1,26 @@
-version: '2'
+version: '3.8'
 services:
   web:
     container_name: duckguessr
-    build: .
+    build:
+      context: .
+      target: runtime-nuxt
+    restart: always
+    networks:
+      workspace_global-front-network:
+        aliases:
+          - duckguessr
+      duckguessr-network:
+        aliases:
+          - duckguessr
+      dm-server_front-network:
+        aliases:
+          - duckguessr
+  socketio:
+    container_name: duckguessr-socketio
+    build:
+      context: .
+      target: runtime-socketio
     restart: always
     volumes:
       - ./server/datasets:/usr/src/nuxt-app/server/datasets
