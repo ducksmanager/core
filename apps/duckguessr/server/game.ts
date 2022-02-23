@@ -1,8 +1,22 @@
 import Index, { PrismaClient } from '@prisma/client'
-import { runQuery } from '../api/runQuery'
+const { createPool } = require('mariadb')
 
 const prisma = new PrismaClient()
 const numberOfRounds = 8
+
+const dmPool = createPool({
+  host: process.env.MYSQL_DM_HOST,
+  user: 'root',
+  database: 'dm',
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  connectionLimit: 5,
+})
+
+let dmConnection
+
+dmPool.getConnection().then((connection) => {
+  dmConnection = connection
+})
 
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
@@ -102,12 +116,10 @@ export async function getPlayer(username: string, password: string | null = null
       })
     }
   } else {
-    const [dmUser] = (
-      await runQuery('SELECT ID AS id, username FROM users WHERE username=? AND password=?', 'dm', [
-        username,
-        password,
-      ])
-    ).data
+    const [dmUser] = await dmConnection.query(
+      'SELECT ID AS id, username FROM users WHERE username=? AND password=?',
+      [username, password]
+    )
     if (!dmUser) {
       throw new Error(`No DM user with username ${username}`)
     }

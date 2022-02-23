@@ -11,11 +11,7 @@ services:
         aliases:
           - duckguessr
       duckguessr-network:
-        aliases:
-          - duckguessr
-      dm-server_front-network:
-        aliases:
-          - duckguessr
+      dm-server_db-network:
   socketio:
     container_name: duckguessr-socketio
     build:
@@ -27,13 +23,11 @@ services:
     networks:
       workspace_global-front-network:
         aliases:
-          - duckguessr
+          - duckguessr-socketio
       duckguessr-network:
         aliases:
-          - duckguessr
-      dm-server_front-network:
-        aliases:
-          - duckguessr
+          - duckguessr-socketio
+      dm-server_db-network:
   db:
     restart: always
     image: mariadb:10.5
@@ -54,7 +48,7 @@ networks:
   workspace_global-front-network:
     external: true
   duckguessr-network:
-  dm-server_front-network:
+  dm-server_db-network:
     external: true
 
 volumes:

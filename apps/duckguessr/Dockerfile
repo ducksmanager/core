@@ -42,9 +42,13 @@ ENTRYPOINT [ "node_modules/.bin/nuxt", "start" ]
 FROM node:14-slim AS runtime-socketio
 
 WORKDIR /home
-
-COPY prisma server ./
 COPY .env.prod .env
+COPY prisma ./prisma
+COPY server ./server
+COPY types ./types
+
+WORKDIR /home/server
 COPY --from=install-socketio /home/node_modules ./node_modules
+RUN npm install typescript
 
 ENTRYPOINT [ "./node_modules/.bin/ts-node", "index.ts" ]
