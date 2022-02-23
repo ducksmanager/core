@@ -27,6 +27,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
       origin: process.env.NUXT_URL,
       methods: ['GET'],
     },
+    allowEIO3: true,
   }
 )
 
