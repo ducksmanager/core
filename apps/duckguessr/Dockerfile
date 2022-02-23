@@ -37,7 +37,7 @@ RUN rm -rf server && npm run build
 
 EXPOSE 3000
 
-CMD [ "nuxt" ]
+ENTRYPOINT [ "node_modules/.bin/nuxt", "start" ]
 
 FROM node:14-slim AS runtime-socketio
 
@@ -47,4 +47,4 @@ COPY prisma server ./
 COPY .env.prod .env
 COPY --from=install-socketio /home/node_modules ./node_modules
 
-CMD [ "ts-node", "index.ts" ]
+ENTRYPOINT [ "./node_modules/.bin/ts-node", "index.ts" ]
