@@ -12,17 +12,6 @@ const dmPool = createPool({
   connectionLimit: 5,
 })
 
-let dmConnection
-
-dmPool
-  .getConnection()
-  .then((connection) => {
-    dmConnection = connection
-  })
-  .catch((e) => {
-    console.error(e)
-  })
-
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
     include: {
@@ -121,10 +110,12 @@ export async function getPlayer(username: string, password: string | null = null
       })
     }
   } else {
+    const dmConnection = await dmPool.getConnection()
     const [dmUser] = await dmConnection.query(
       'SELECT ID AS id, username FROM users WHERE username=? AND password=?',
       [username, password]
     )
+    await dmConnection.end()
     if (!dmUser) {
       throw new Error(`No DM user with username ${username}`)
     }
