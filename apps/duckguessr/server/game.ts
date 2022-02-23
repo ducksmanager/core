@@ -4,13 +4,7 @@ const { createPool } = require('mariadb')
 const prisma = new PrismaClient()
 const numberOfRounds = 8
 
-const dmPool = createPool({
-  host: process.env.MYSQL_DM_HOST,
-  user: 'root',
-  database: 'dm',
-  password: process.env.MYSQL_ROOT_PASSWORD,
-  connectionLimit: 5,
-})
+let dmPool
 
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
@@ -110,6 +104,15 @@ export async function getPlayer(username: string, password: string | null = null
       })
     }
   } else {
+    if (!dmPool) {
+      dmPool = createPool({
+        host: process.env.MYSQL_DM_HOST,
+        user: 'root',
+        database: 'dm',
+        password: process.env.MYSQL_ROOT_PASSWORD,
+        connectionLimit: 5,
+      })
+    }
     const dmConnection = await dmPool.getConnection()
     const [dmUser] = await dmConnection.query(
       'SELECT ID AS id, username FROM users WHERE username=? AND password=?',

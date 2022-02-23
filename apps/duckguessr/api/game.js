@@ -2,19 +2,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const { createPool } = require('mariadb')
 
-const coaPool = createPool({
-  host: process.env.MYSQL_COA_HOST,
-  user: 'root',
-  database: 'coa',
-  password: process.env.MYSQL_ROOT_PASSWORD,
-  connectionLimit: 5,
-})
-
-let coaConnection
-
-coaPool.getConnection().then((connection) => {
-  coaConnection = connection
-})
+let coaPool
 
 export default async (req, res) => {
   switch (req.method) {
@@ -48,6 +36,17 @@ export default async (req, res) => {
         res.end()
         return
       }
+
+      if (!coaPool) {
+        coaPool = createPool({
+          host: process.env.MYSQL_COA_HOST,
+          user: 'root',
+          database: 'coa',
+          password: process.env.MYSQL_ROOT_PASSWORD,
+          connectionLimit: 5,
+        })
+      }
+      const coaConnection = await coaPool.getConnection()
       const [personDetails] = await coaConnection.query(
         `
           SELECT personcode, fullname AS personfullname, nationalitycountrycode AS personnationality
