@@ -48,14 +48,15 @@ export default async (req, res) => {
         })
       }
       const coaConnection = await coaPool.getConnection()
-      const [personDetails] = await coaConnection.query(
+      const personDetails = await coaConnection.query(
         `
           SELECT personcode, fullname AS personfullname, nationalitycountrycode AS personnationality
           FROM inducks_person
-          WHERE personcode IN (${game.rounds.map(() => '?').join(',')}
+          WHERE personcode IN (${game.rounds.map(() => '?').join(',')})
         `,
         game.rounds.map(({ personcode }) => personcode)
       )
+      await coaConnection.end()
       res.writeHeader(200, { 'Content-Type': 'application/json' })
       res.end(
         JSON.stringify({
