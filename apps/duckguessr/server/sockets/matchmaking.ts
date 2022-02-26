@@ -65,12 +65,13 @@ const createGameMatchmaking = (
 ) => {
   io.of(`/matchmaking/${gameId}`).on('connection', (socket) => {
     socket.on('iAmAlsoReady', async (gameId, username, password, callback) => {
-      const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+      let currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame === null) {
         throw new Error(`Game ${gameId} doesn't exist`)
       }
       const player = await checkAndAssociatePlayer(username, password, currentGame)
-      if (currentGame.game_players.length + 1 === numberOfPlayers) {
+      currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+      if (currentGame.game_players.length === numberOfPlayers) {
         console.log(`Game ${gameId} is starting!`)
         const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
         if (currentGame === null) {
@@ -82,9 +83,11 @@ const createGameMatchmaking = (
 
         await round.createGameRounds(currentGame!.id)
         createGameSocket(io, (await getGameWithRoundsDatasetPlayers(gameId))!)
-        socket.broadcast.emit('matchStarts', player.username)
+        socket.broadcast.emit('matchStarts', currentGame!.id)
+        socket.emit('matchStarts', currentGame!.id)
       } else {
         socket.broadcast.emit('playerJoined', player.username)
+        socket.emit('playerJoined', player.username)
       }
 
       callback({
