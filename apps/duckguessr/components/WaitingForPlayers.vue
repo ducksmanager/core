@@ -22,7 +22,7 @@ const props = defineProps<{
   usernames: Array<string>
   gameId: number
 }>()
-const gameUrl = `${location.origin}/game/${props.gameId}`
+const gameUrl = `${location.origin}/matchmaking/${props.gameId}`
 </script>
 
 <style scoped lang="scss">
