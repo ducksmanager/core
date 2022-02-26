@@ -69,7 +69,7 @@ const initRoundEnds = (socket: Socket, round: Index.round) => {
         GROUP BY username
       `) as Index.player[]
     for (const { username } of missingScores) {
-      console.log(username + ' is missing a score')
+      console.log(`${username} is missing a score`)
       await onGuess.apply(socket, [username, id, null])
     }
     socket.broadcast.emit('roundEnds', await getRoundWithScores(id))
@@ -109,7 +109,6 @@ export const createGameSocket = (
     throw new Error('game is null')
   }
   return io.of(`/game/${game!.id}`).on('connection', (socket: Socket) => {
-    console.log('connection')
     socket.on('guess', onGuess)
 
     const playableRounds = game!.rounds.filter(({ finished_at }) => !!finished_at)

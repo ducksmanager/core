@@ -8,7 +8,7 @@
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
-      v-if="currentRoundPlayerScore"
+      v-if="currentRoundPlayerScore && currentRound.personcode"
       :status="scoreToVariant(currentRoundPlayerScore)"
       :speed-bonus="currentRoundPlayerScore.speed_bonus"
       :correct-author="getAuthor(currentRound.personcode)"
@@ -165,18 +165,15 @@ export default defineComponent({
       gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`)
       gameSocket
         .on('roundStarts', (round) => {
-          console.log('roundStarts')
           currentRoundNumber.value = round!.round_number
           Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
           hasUrlLoaded.value = false
         })
         .on('roundEnds', (round) => {
-          console.log('roundEnds')
           chosenAuthor.value = null
           Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
         })
         .on('playerGuessed', ({ roundScore, answer }) => {
-          console.log('playerGuessed ' + roundScore.player_id)
           if (roundScore.player_id === duckguessrId) {
             Vue.set(game.value!.rounds[currentRoundNumber.value! - 1], 'personcode', answer)
           }
