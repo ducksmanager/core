@@ -107,6 +107,7 @@ export async function getPlayer(username: string, password: string | null = null
     if (!dmPool) {
       dmPool = createPool({
         host: process.env.MYSQL_DM_HOST,
+        port: process.env.MYSQL_DM_PORT,
         user: 'root',
         database: 'dm',
         password: process.env.MYSQL_ROOT_PASSWORD,

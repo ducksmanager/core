@@ -40,6 +40,7 @@ export default async (req, res) => {
       if (!coaPool) {
         coaPool = createPool({
           host: process.env.MYSQL_COA_HOST,
+          port: process.env.MYSQL_COA_PORT,
           user: 'root',
           database: 'coa',
           password: process.env.MYSQL_ROOT_PASSWORD,
