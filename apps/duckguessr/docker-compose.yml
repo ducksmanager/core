@@ -12,6 +12,7 @@ services:
           - duckguessr
       duckguessr-network:
       dm-server_db-network:
+      ducksmanager-flex_dm-network:
   socketio:
     container_name: duckguessr-socketio
     build:
@@ -28,7 +29,6 @@ services:
         aliases:
           - duckguessr-socketio
       dm-server_db-network:
-      ducksmanager-flex_dm-network:
   db:
     restart: always
     image: mariadb:10.5
@@ -42,8 +42,6 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
       duckguessr-network:
-        aliases:
-          - db
 
 networks:
   duckguessr-network:
