@@ -71,7 +71,7 @@ const createGameMatchmaking = (
       }
       const player = await checkAndAssociatePlayer(username, password, currentGame)
       currentGame = await getGameWithRoundsDatasetPlayers(gameId)
-      if (currentGame.game_players.length === numberOfPlayers) {
+      if (currentGame!.game_players.length === numberOfPlayers) {
         console.log(`Game ${gameId} is starting!`)
         const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
         if (currentGame === null) {

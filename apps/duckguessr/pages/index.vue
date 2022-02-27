@@ -34,6 +34,8 @@ export default {
 
     onMounted(async () => {
       datasets.value = (await $axios.$get(`/api/dataset`)).datasets
+      const userData = (await $axios.$get(`/api/user`)).points
+      console.log(userData)
     })
 
     return {

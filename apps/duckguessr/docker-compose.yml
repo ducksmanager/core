@@ -28,6 +28,7 @@ services:
         aliases:
           - duckguessr-socketio
       dm-server_db-network:
+      ducksmanager-flex_dm-network:
   db:
     restart: always
     image: mariadb:10.5
@@ -45,9 +46,11 @@ services:
           - db
 
 networks:
+  duckguessr-network:
   workspace_global-front-network:
     external: true
-  duckguessr-network:
+  ducksmanager-flex_dm-network:
+    external: true
   dm-server_db-network:
     external: true
 
