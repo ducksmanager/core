@@ -12,7 +12,19 @@
       </b-col>
     </b-row>
     <b-row align-h="center">
-      <b-col><input type="text" class="text-center" readonly :value="gameUrl" /></b-col>
+      <b-col>
+        <b-row class="justify-content-center">
+          <b-col cols="6">
+            <input
+              type="text"
+              class="text-center"
+              readonly
+              :value="gameUrl"
+              @click="$event.target.select()"
+            />
+          </b-col>
+        </b-row>
+      </b-col>
     </b-row>
   </b-container>
 </template>
@@ -38,6 +50,6 @@ const gameUrl = `${location.origin}/matchmaking/${props.gameId}`
 }
 input {
   color: gray;
-  width: 300px;
+  width: 100%;
 }
 </style>
