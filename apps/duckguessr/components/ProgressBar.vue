@@ -8,12 +8,12 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+const { remainingTime, availableTime } = defineProps<{
   availableTime: number
   remainingTime: number
 }>()
 
-const remainingTimePercentage = props.remainingTime * (100 / props.availableTime)
+const remainingTimePercentage = remainingTime * (100 / availableTime)
 
 let progressbarVariant
 if (remainingTimePercentage <= 20) {

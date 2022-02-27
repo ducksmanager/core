@@ -1,10 +1,11 @@
 import Index, { PrismaClient } from '@prisma/client'
+import { Pool } from 'mariadb'
 const { createPool } = require('mariadb')
 
 const prisma = new PrismaClient()
 const numberOfRounds = 8
 
-let dmPool
+let dmPool: Pool
 
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
