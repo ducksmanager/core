@@ -11,6 +11,7 @@ import { GuessResponse } from '../../types/guess'
 import { getGameWithRoundsDatasetPlayers } from '../game'
 // import { predict } from '../predict'
 import { getRoundWithScores } from '../round'
+import { getUsername } from '../get-username'
 const round = require('../../server/round')
 
 const prisma = new PrismaClient()
@@ -108,10 +109,13 @@ export const createGameSocket = (
   if (game === null) {
     throw new Error('game is null')
   }
-  return io.of(`/game/${game!.id}`).on('connection', (socket: Socket) => {
-    socket.on('guess', onGuess)
+  const playableRounds = game!.rounds.filter(({ finished_at }) => !!finished_at)
 
-    const playableRounds = game!.rounds.filter(({ finished_at }) => !!finished_at)
+  return io.of(`/game/${game!.id}`).on('connection', (socket: Socket) => {
+    const username = getUsername(socket.handshake.auth.cookie)
+    socket.on('guess', (roundId, personcode) => {
+      onGuess.apply(socket, [username, roundId, personcode])
+    })
 
     for (const round of playableRounds) {
       initRoundStarts(round, game, socket)

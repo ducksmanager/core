@@ -13,6 +13,8 @@ services:
       duckguessr-network:
       dm-server_db-network:
       ducksmanager-flex_dm-network:
+    volumes:
+      - ducksmanager_dm_sessions:/tmp/sessions
   socketio:
     container_name: duckguessr-socketio
     build:
@@ -54,3 +56,5 @@ networks:
 
 volumes:
   db:
+  ducksmanager_dm_sessions:
+    external: true

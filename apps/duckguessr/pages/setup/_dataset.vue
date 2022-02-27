@@ -29,20 +29,22 @@ const gameTypes = {
 export default defineComponent({
   name: 'Setup',
   setup() {
-    const { username, password } = getUser()
+    const { username } = getUser()
     const router = useRouter()
     const route = useRoute()
     const players = reactive([] as Array<Index.player>)
 
-    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`)
+    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`, {
+      auth: {
+        cookie: document.cookie,
+      },
+    })
 
     const iAmReady = (gameType: string) => {
       matchmakingSocket.emit(
         'iAmReady',
         gameType,
         route.value.params.dataset,
-        username,
-        password,
         ({ gameId, player }: { gameId: number; player: Index.player }) => {
           setDuckguessrId(player.id)
           matchmakingSocket.close()

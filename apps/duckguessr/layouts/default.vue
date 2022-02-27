@@ -2,7 +2,7 @@
   <div id="app">
     <div id="menu" class="position-fixed d-flex flex-column align-items-center">
       <div id="medals-and-login" class="pb-3">
-        <user-info :username="username" />
+        <user-info v-if="username" :username="username" />
       </div>
       <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
     </div>
@@ -11,15 +11,36 @@
       <small>by DucksManager</small>
     </div>
     <div id="main" class="d-flex justify-content-center align-items-center">
+      <b-alert v-if="isAnonymous === true" show variant="warning">
+        You are not connected. You can still play but you won't keep any won medals.
+      </b-alert>
       <Nuxt />
     </div>
   </div>
 </template>
 
-<script setup>
-import { getUser } from '@/components/user'
+<script lang="ts">
+import { onMounted, ref } from '@nuxtjs/composition-api'
+import { defineComponent } from '@vue/runtime-dom'
+import { io } from 'socket.io-client'
 
-const { username } = getUser()
+export default defineComponent({
+  setup() {
+    const username = ref(undefined as string | undefined | null)
+
+    onMounted(() => {
+      io(`${process.env.SOCKET_URL}/login`, {
+        auth: {
+          cookie: document.cookie,
+        },
+      }).on('logged', (username) => {})
+    })
+
+    return {
+      username,
+    }
+  },
+})
 </script>
 
 <style lang="scss">

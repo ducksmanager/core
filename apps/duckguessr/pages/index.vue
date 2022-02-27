@@ -1,8 +1,5 @@
 <template>
   <div>
-    <b-alert v-if="isAnonymous" show variant="warning">
-      You are not connected. You can still play but you won't keep any won medals.
-    </b-alert>
     <b-card-group deck>
       <b-card
         v-for="{ title, name, images, authors } in datasets"
@@ -34,8 +31,6 @@ export default {
 
     onMounted(async () => {
       datasets.value = (await $axios.$get(`/api/dataset`)).datasets
-      const userData = (await $axios.$get(`/api/user`)).points
-      console.log(userData)
     })
 
     return {

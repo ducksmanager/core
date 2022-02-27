@@ -89,7 +89,7 @@ export async function associatePlayer(gameId: number, player: Index.player) {
   })
 }
 
-export async function getPlayer(username: string, password: string | null = null) {
+export async function getPlayer(username: string) {
   let user
   if (/^user[0-9]+$/.test(username) || /^bot_.+$/.test(username)) {
     user = await prisma.player.findFirst({
@@ -117,8 +117,8 @@ export async function getPlayer(username: string, password: string | null = null
     }
     const dmConnection = await dmPool.getConnection()
     const [dmUser] = await dmConnection.query(
-      'SELECT ID AS id, username FROM users WHERE username=? AND password=?',
-      [username, password]
+      'SELECT ID AS id, username FROM users WHERE username=?',
+      [username]
     )
     await dmConnection.end()
     if (!dmUser) {

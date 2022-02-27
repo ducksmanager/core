@@ -11,6 +11,7 @@
   "dependencies": {
     "@prisma/client": "^3.10.0",
     "axios": "^0.26.0",
+    "cookie": "^0.4.2",
     "dotenv": "^14.3.2",
     "express": "^4.17.3",
     "mariadb": "^2.5.5",

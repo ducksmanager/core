@@ -14,12 +14,11 @@ import {
 } from '@nuxtjs/composition-api'
 import Index from '@prisma/client'
 import { io } from 'socket.io-client'
-import { getUser, setDuckguessrId } from '@/components/user'
+import { setDuckguessrId } from '@/components/user'
 
 export default defineComponent({
   name: 'Matchmaking',
   setup() {
-    const { username, password } = getUser()
     const router = useRouter()
     const route = useRoute()
     const playersUsernames = reactive([] as Array<string>)
@@ -27,7 +26,11 @@ export default defineComponent({
 
     const gameId = parseInt(route.value.params.id)
 
-    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`)
+    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`, {
+      auth: {
+        cookie: document.cookie,
+      },
+    })
 
     const addPlayer = (username: string) => {
       if (username && !playersUsernames.includes(username)) {
@@ -50,16 +53,10 @@ export default defineComponent({
         }, 200)
       })
 
-      matchmakingSocket.emit(
-        'iAmAlsoReady',
-        gameId,
-        username,
-        password,
-        ({ player }: { player: Index.player }) => {
-          setDuckguessrId(player.id)
-          addPlayer(player.username)
-        }
-      )
+      matchmakingSocket.emit('iAmAlsoReady', gameId, ({ player }: { player: Index.player }) => {
+        setDuckguessrId(player.id)
+        addPlayer(player.username)
+      })
     })
 
     return {

@@ -14,14 +14,12 @@ const getCookies = (): { [p: string]: string } =>
 export const getUser = () => {
   const cookies = getCookies()
   let username = cookies['dm-user'] || cookies['duckguessr-user']
-  const password = cookies['dm-pass'] || null
   const duckguessrId: number | null =
     (cookies['duckguessr-id'] && parseInt(cookies['duckguessr-id'])) || null
   if (username) {
     return {
       duckguessrId,
       username,
-      password,
       isAnonymous: /^user[0-9]+$/.test(username),
     }
   } else {
@@ -30,7 +28,6 @@ export const getUser = () => {
     return {
       duckguessrId,
       username,
-      password: null,
       isAnonymous: true,
     }
   }

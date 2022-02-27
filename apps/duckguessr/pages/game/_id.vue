@@ -162,7 +162,11 @@ export default defineComponent({
     onMounted(async () => {
       await loadGame()
 
-      gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`)
+      gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`, {
+        auth: {
+          cookie: document.cookie,
+        },
+      })
       gameSocket
         .on('roundStarts', (round) => {
           currentRoundNumber.value = round!.round_number
