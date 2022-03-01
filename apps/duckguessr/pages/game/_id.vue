@@ -43,9 +43,14 @@
       <b-col cols="2" class="border vh-100 overflow-auto">
         <h3>Round {{ currentRoundNumber }}</h3>
         <template v-for="score in currentRoundScores">
-          <b-alert :key="`score-${score.player_id}`" show :variant="scoreToVariant(score)">
-            {{ getUsername(score.player_id) }}:
-            {{ score.score_type_name }}
+          <b-alert
+            :key="`score-${score.player_id}`"
+            show
+            :variant="scoreToVariant(score)"
+            class="d-flex flex-row p-1 align-items-center justify-content-between"
+          >
+            <user-info :username="getUsername(score.player_id)" />
+            <div class="text-center">{{ score.score_type_name }}</div>
           </b-alert>
         </template>
       </b-col>
@@ -255,5 +260,13 @@ export default defineComponent({
 
 .progress {
   color: black;
+}
+.alert {
+  > *:nth-child(1) {
+    width: 33%;
+  }
+  > *:nth-child(2) {
+    width: 67%;
+  }
 }
 </style>

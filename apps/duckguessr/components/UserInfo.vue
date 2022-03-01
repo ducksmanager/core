@@ -10,13 +10,11 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    isAnonymous: boolean
     username: string | null
     topPlayer: boolean
   }>(),
   {
     topPlayer: false,
-    isAnonymous: false,
   }
 )
 </script>

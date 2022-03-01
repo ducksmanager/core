@@ -2,7 +2,7 @@
   <div id="app">
     <div id="menu" class="position-fixed d-flex flex-column align-items-center">
       <div id="medals-and-login" class="pb-3">
-        <user-info v-if="user" :username="user.username" :is-anonymous="isAnonymous" />
+        <user-info v-if="user" :username="user.username" />
       </div>
       <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
     </div>
