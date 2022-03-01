@@ -96,8 +96,6 @@ export default defineComponent({
 
     const currentRoundNumber = ref(null as number | null)
 
-    const currentRoundScores = ref([] as Array<Index.round_score>)
-
     const players = computed(
       (): Array<Index.player> =>
         game.value ? game.value.game_players.map(({ player }) => player) : []
@@ -188,6 +186,13 @@ export default defineComponent({
       }, 1000)
     })
 
+    const currentRoundScores = computed(() => {
+      if (!currentRound.value) {
+        return null
+      }
+      return game.value!.rounds[currentRoundNumber.value! - 1].round_scores
+    })
+
     return {
       game,
       gameIsFinished,
@@ -198,17 +203,14 @@ export default defineComponent({
       hasUrlLoaded,
       currentRoundNumber,
       currentRound,
-      currentRoundScores,
       nextRoundStartDate,
       validateGuess,
-      currentRoundPlayerScore: computed(() => {
-        if (!currentRound.value) {
-          return null
-        }
-        return game.value!.rounds[currentRoundNumber.value! - 1].round_scores.find(
+      currentRoundScores,
+      currentRoundPlayerScore: computed(() =>
+        (currentRoundScores.value || []).find(
           ({ player_id: playerId }) => duckguessrId === playerId
         )
-      }),
+      ),
       url: computed(
         () =>
           currentRound.value &&

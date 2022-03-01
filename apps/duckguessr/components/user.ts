@@ -35,7 +35,7 @@ export const setUserCookieIfNotExists = () => {
 
 export const isAnonymous = (username: string) => /^user[0-9]+$/.test(username)
 
-export const getDuckguessrId = () => getCookies()['duckguessr-id']
+export const getDuckguessrId = () => parseInt(getCookies()['duckguessr-id'])
 
 export const setDuckguessrId = (id: number) => {
   setCookie('duckguessr-id', `${id}`)
