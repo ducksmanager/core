@@ -36,7 +36,7 @@ export function createMatchmakingSocket(
     socket.on('iAmReady', async (gameType, dataset, callback) => {
       const user = await getUser(socket.handshake.auth.cookie)
       const currentGame = await game.create(gameType, dataset)
-      const player = await checkAndAssociatePlayer(user, currentGame)
+      await checkAndAssociatePlayer(user, currentGame)
 
       if (gameType === 'against_bot') {
         const botUsername = `bot_${currentGame.dataset.name}`
@@ -50,7 +50,6 @@ export function createMatchmakingSocket(
         createGameMatchmaking(io, currentGame.id)
       }
       callback({
-        player,
         gameId: currentGame.id,
       })
     })

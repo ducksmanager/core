@@ -8,7 +8,8 @@
       :img-alt="title"
       img-top
       align="center"
-      @click="iAmReady(type)"
+      :class="{ disabled: type === 'against_bot' }"
+      @click="type === 'against_bot' ? () => {} : iAmReady(type)"
     />
   </b-card-group>
 </template>
@@ -43,7 +44,7 @@ export default defineComponent({
         'iAmReady',
         gameType,
         route.value.params.dataset,
-        ({ gameId, player }: { gameId: number; player: Index.player }) => {
+        ({ gameId }: { gameId: number; player: Index.player }) => {
           matchmakingSocket.close()
           router.replace(`/matchmaking/${gameId}`)
         }
@@ -72,6 +73,11 @@ export default defineComponent({
 .card {
   cursor: pointer;
   color: black;
+
+  &.disabled {
+    cursor: not-allowed;
+    color: grey;
+  }
 
   &.player {
     .card {
