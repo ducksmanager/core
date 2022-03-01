@@ -1,31 +1,27 @@
 import { Server } from 'socket.io'
-import { Prisma } from '@prisma/client'
+import Index, { Prisma } from '@prisma/client'
 import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
 } from '../../types/socketEvents'
-import { getPlayer, getGameWithRoundsDatasetPlayers } from '../game'
-import { getUsername } from '../get-username'
+import { getGameWithRoundsDatasetPlayers } from '../game'
+import { getBotUser, getUser } from '../get-user'
 
 const game = require('../game')
 const round = require('../round')
 const { createGameSocket } = require('./game')
 
 const checkAndAssociatePlayer = async (
-  username: string,
+  player: Index.player,
   currentGame: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
 ) => {
-  const player = await game.getPlayer(username)
-  if (player === null) {
-    throw new Error(`Player ${username} has invalid credentials`)
-  }
   if (currentGame!.game_players.find(({ player_id }) => player_id === player.id)) {
     console.info(`Player ${player.username} is already associated with game ${currentGame!.id}`)
   } else {
     await game.associatePlayer(currentGame!.id, player)
-    console.log(`${username} is ready in game ${currentGame!.id}`)
+    console.log(`${player} is ready in game ${currentGame!.id}`)
   }
   return player
 }
@@ -33,17 +29,18 @@ const checkAndAssociatePlayer = async (
 export function createMatchmakingSocket(
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
 ) {
-  io.of('/matchmaking').on('connection', (socket) => {
-    const username = getUsername(socket.handshake.auth.cookie)
-    console.log(`${username} is creating a match`)
+  io.of('/matchmaking').on('connection', async (socket) => {
+    const user = await getUser(socket.handshake.auth.cookie)
+    console.log(`${user.username} is creating a match`)
 
     socket.on('iAmReady', async (gameType, dataset, callback) => {
+      const user = await getUser(socket.handshake.auth.cookie)
       const currentGame = await game.create(gameType, dataset)
-      const player = await checkAndAssociatePlayer(username, currentGame)
+      const player = await checkAndAssociatePlayer(user, currentGame)
 
       if (gameType === 'against_bot') {
         const botUsername = `bot_${currentGame.dataset.name}`
-        const botPlayer = await getPlayer(botUsername)
+        const botPlayer = await getBotUser(botUsername)
         await game.associatePlayer(currentGame!.id, botPlayer)
 
         await round.createGameRounds(currentGame!.id)
@@ -71,8 +68,8 @@ const createGameMatchmaking = (
       if (currentGame === null) {
         throw new Error(`Game ${gameId} doesn't exist`)
       }
-      const username = getUsername(socket.handshake.auth.cookie)
-      const player = await checkAndAssociatePlayer(username, currentGame)
+      const user = await getUser(socket.handshake.auth.cookie)
+      const player = await checkAndAssociatePlayer(user, currentGame)
       currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame!.game_players.length === numberOfPlayers) {
         console.log(`Game ${gameId} is starting!`)

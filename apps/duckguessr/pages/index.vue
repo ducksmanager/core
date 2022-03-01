@@ -19,8 +19,6 @@
 
 <script lang="ts">
 import { onMounted, ref, useContext } from '@nuxtjs/composition-api'
-import { getUser } from '@/components/user'
-const { isAnonymous } = getUser()
 
 export default {
   name: 'Welcome',
@@ -35,7 +33,6 @@ export default {
 
     return {
       datasets,
-      isAnonymous,
     }
   },
 }

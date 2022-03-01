@@ -5,14 +5,14 @@ import {
   ServerToClientEvents,
   SocketData,
 } from '../../types/socketEvents'
-import { getUsername } from '../get-username'
+import { getUser } from '../get-user'
 
 export function createLoginSocket(
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
 ) {
-  io.of('/login').on('connection', (socket) => {
-    const username = getUsername(socket.handshake.auth.cookie)
+  io.of('/login').on('connection', async (socket) => {
+    const user = await getUser(socket.handshake.auth.cookie)
 
-    socket.emit('logged', username)
+    socket.emit('logged', user)
   })
 }

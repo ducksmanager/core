@@ -1,29 +1,24 @@
 <template>
   <div class="d-flex flex-column align-items-center text-center">
     <div>
-      <b-avatar
-        v-if="isAnonymous"
-        :class="{ 'top-player': topPlayer }"
-        size="4rem"
-        src="/anonymous.png"
-      />
+      <b-avatar :class="{ 'top-player': topPlayer }" size="4rem" src="/anonymous.png" />
     </div>
-    <div>{{ shownUsername }}</div>
+    <div>{{ username }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { username: shownUsername } = withDefaults(
+withDefaults(
   defineProps<{
+    isAnonymous: boolean
     username: string | null
     topPlayer: boolean
   }>(),
   {
     topPlayer: false,
+    isAnonymous: false,
   }
 )
-
-const isAnonymous = true
 </script>
 
 <style lang="scss">

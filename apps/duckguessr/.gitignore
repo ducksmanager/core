@@ -6,5 +6,6 @@
 /server/datasets/*
 storybook-static
 .env.prod
+sessions
 
 !.gitkeep

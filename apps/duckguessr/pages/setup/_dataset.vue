@@ -17,7 +17,6 @@
 import { defineComponent, useRouter, reactive, useRoute } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
-import { getUser, setDuckguessrId } from '~/components/user'
 
 const gameTypes = {
   against_bot: { title: 'Play against a bot' },
@@ -29,7 +28,6 @@ const gameTypes = {
 export default defineComponent({
   name: 'Setup',
   setup() {
-    const { username } = getUser()
     const router = useRouter()
     const route = useRoute()
     const players = reactive([] as Array<Index.player>)
@@ -46,7 +44,6 @@ export default defineComponent({
         gameType,
         route.value.params.dataset,
         ({ gameId, player }: { gameId: number; player: Index.player }) => {
-          setDuckguessrId(player.id)
           matchmakingSocket.close()
           router.replace(`/matchmaking/${gameId}`)
         }
@@ -64,7 +61,6 @@ export default defineComponent({
 
     return {
       gameTypes,
-      username,
       players,
       iAmReady,
     }

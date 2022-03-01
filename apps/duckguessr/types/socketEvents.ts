@@ -12,13 +12,17 @@ const getRoundWithScores = async (roundId: number) =>
     },
   })
 
+export type user = {
+  username: string
+}
+
 export interface ServerToClientEvents {
   playerJoined: (username: string) => void
   matchStarts: (gameId: number) => void
   roundStarts: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
   roundEnds: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
   playerGuessed: (guessResponse: GuessResponse) => void
-  logged: (username: string | null) => void
+  logged: (user: user) => void
 }
 
 export interface ClientToServerEvents {

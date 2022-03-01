@@ -11,16 +11,16 @@ const getCookies = (): { [p: string]: string } =>
     {}
   )
 
-export const getUser = () => {
+export const setUserCookieIfNotExists = () => {
   const cookies = getCookies()
-  let username = cookies['dm-user'] || cookies['duckguessr-user']
+  let username = cookies.PHPSESSID || cookies['duckguessr-user']
   const duckguessrId: number | null =
     (cookies['duckguessr-id'] && parseInt(cookies['duckguessr-id'])) || null
   if (username) {
     return {
       duckguessrId,
       username,
-      isAnonymous: /^user[0-9]+$/.test(username),
+      isAnonymous: isAnonymous(username),
     }
   } else {
     username = `user${Math.random().toString().replace('0.', '')}`
@@ -32,6 +32,10 @@ export const getUser = () => {
     }
   }
 }
+
+export const isAnonymous = (username: string) => /^user[0-9]+$/.test(username)
+
+export const getDuckguessrId = () => getCookies()['duckguessr-id']
 
 export const setDuckguessrId = (id: number) => {
   setCookie('duckguessr-id', `${id}`)

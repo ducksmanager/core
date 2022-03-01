@@ -67,7 +67,7 @@ import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import Vue from 'vue'
 import AuthorCard from '~/components/AuthorCard.vue'
-import { getUser } from '@/components/user'
+import { getDuckguessrId } from '@/components/user'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
 
@@ -86,7 +86,7 @@ export default defineComponent({
   components: { AuthorCard },
   setup() {
     const { $axios } = useContext()
-    const { duckguessrId, username } = getUser()
+    const duckguessrId = getDuckguessrId()
     const route = useRoute()
 
     const chosenAuthor = ref(null as string | null)
@@ -149,7 +149,7 @@ export default defineComponent({
     })
 
     const validateGuess = () => {
-      gameSocket!.emit('guess', username, currentRound.value!.id, chosenAuthor.value)
+      gameSocket!.emit('guess', currentRound.value!.id, chosenAuthor.value)
     }
 
     const loadGame = async () => {
