@@ -13,8 +13,6 @@ services:
       duckguessr-network:
       dm-server_db-network:
       ducksmanager-flex_dm-network:
-    volumes:
-      - ducksmanager_dm_sessions:/tmp/sessions
   socketio:
     container_name: duckguessr-socketio
     build:
@@ -23,6 +21,7 @@ services:
     restart: always
     volumes:
       - ./server/datasets:/usr/src/nuxt-app/server/datasets
+      - ducksmanager_dm_sessions:/tmp/sessions
     networks:
       workspace_global-front-network:
         aliases:
