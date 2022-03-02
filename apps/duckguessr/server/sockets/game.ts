@@ -32,7 +32,7 @@ const onGuess = async function (
   roundId: number,
   personcode: string | null
 ) {
-  console.log(`${user} is guessing ${JSON.stringify(personcode)} on round ${roundId}`)
+  console.log(`${user.username} is guessing ${JSON.stringify(personcode)} on round ${roundId}`)
   try {
     const guessResultsData = await round.guess(user, roundId, { personcode })
     if (guessResultsData) {
