@@ -14,7 +14,7 @@
     <div v-else>
       <b-row class="justify-content-center">
         <b-alert v-if="isAnonymous === true" show variant="warning">
-          You are not connected. You can still play but you won't keep any won medals.
+          You are not connected. You can still play but you won't get any medals.
         </b-alert>
       </b-row>
       <div id="main" class="d-flex justify-content-center align-items-center">

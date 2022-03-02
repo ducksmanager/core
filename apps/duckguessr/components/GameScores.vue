@@ -12,7 +12,7 @@
     </b-container>
     <h3 class="mt-3">Scores</h3>
     <b-table striped dark :items="playersWithScores">
-      <template #head(playerName)="">&nbsp;</template>
+      <template #head(playerId)="">&nbsp;</template>
       <template #head(totalScore)="">&nbsp;</template>
       <template #head()="{ column }">
         <b-img
@@ -34,12 +34,18 @@
           <th>Total score</th>
         </tr>
       </template>
-      <template #cell(playerName)="{ value: playerId }">
+      <template #cell(playerId)="{ value: playerId }">
         <user-info :username="playerNames[playerId]" />
       </template>
       <template #cell(totalScore)="{ value: totalScore }"> {{ totalScore }} points </template>
-      <template #cell()="{ value }">
-        <round-scores :scores="value" />
+      <template #cell()="{ value: playerRoundScores }">
+        <round-score
+          v-for="({ score, speedBonus }, score_type_name) in playerRoundScores"
+          :key="score_type_name"
+          :score="score"
+          :score-type-name="score_type_name"
+          :speed-bonus="speedBonus"
+        />
       </template>
     </b-table>
   </div>
@@ -91,16 +97,16 @@ export default defineComponent({
       scoresWithPersonUrls,
       playerNames,
       playersWithScores: playerIds.map((playerId) => {
-        const playerScores: { [key: string]: { [key: string]: number } } =
+        const playerScores: { [key: string]: { [key: string]: { [key: string]: number } } } =
           scoresWithPersonUrls.value.reduce(
             (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
               ...acc,
               [`round${roundNumber}`]: roundScores
                 .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
                 .reduce(
-                  (acc2, { score_type_name: scoreTypeName, score }) => ({
+                  (acc2, { score_type_name: scoreTypeName, score, speed_bonus: speedBonus }) => ({
                     ...acc2,
-                    [scoreTypeName]: score,
+                    [scoreTypeName]: { score, speedBonus },
                   }),
                   {}
                 ),
@@ -108,13 +114,14 @@ export default defineComponent({
             {}
           )
         return {
-          playerName: playerId,
+          playerId,
           ...playerScores,
           totalScore: Object.values(playerScores).reduce(
             (accTotalScore: number, roundScores) =>
               accTotalScore +
               Object.values(roundScores).reduce(
-                (accTotalRoundScore: number, roundScore) => accTotalRoundScore + roundScore,
+                (accTotalRoundScore: number, { score: roundScore, speedBonus: roundSpeedBonus }) =>
+                  accTotalRoundScore + roundScore + roundSpeedBonus,
                 0
               ),
             0

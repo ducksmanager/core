@@ -3,7 +3,7 @@
     <b-card
       v-for="({ title }, type) in gameTypes"
       :key="type"
-      :title="title"
+      :title="title + (type === 'against_bot' ? ' (coming soon)' : '')"
       img-src="https://picsum.photos/600/300/?image=25"
       :img-alt="title"
       img-top
