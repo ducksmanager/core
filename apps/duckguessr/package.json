@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.ts\" \"npx nuxt storybook\"",
+    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.ts\"",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -51,7 +51,7 @@
     "prisma": "^3.10.0",
     "sass": "^1.49.9",
     "sass-loader": "^10.2.1",
-    "ts-node": "^10.5.0",
-    "typescript": "^4.5.5"
+    "ts-node": "^10.6.0",
+    "typescript": "^4.6.2"
   }
 }
