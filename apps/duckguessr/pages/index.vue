@@ -14,7 +14,9 @@
         align="center"
         @click="$router.push(`/setup/${name}`)"
       >
-        <b-card-footer> Images: {{ images }}, authors: {{ authors }} </b-card-footer>
+        <b-card-footer>
+          {{ t('Images: {images}, authors: {authors}', { images, authors }) }}
+        </b-card-footer>
       </b-card>
     </b-card-group>
   </div>
@@ -24,11 +26,13 @@
 import { onMounted, ref, useContext } from '@nuxtjs/composition-api'
 import { getUser } from '@/components/user'
 const { isAnonymous } = getUser()
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'Welcome',
   setup() {
     const { $axios } = useContext()
+    const { t } = useI18n()
 
     const datasets = ref([] as Array<any>)
 
@@ -37,6 +41,7 @@ export default {
     })
 
     return {
+      t,
       datasets,
       isAnonymous,
     }

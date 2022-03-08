@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isReady">Loading...</div>
+  <div v-if="!isReady">{{ t('Loading...') }}</div>
   <waiting-for-players v-else :usernames="playersUsernames" :game-id="gameId" />
 </template>
 
@@ -15,6 +15,7 @@ import {
 import Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { getUser, setDuckguessrId } from '@/components/user'
+import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
   name: 'Matchmaking',
@@ -22,6 +23,7 @@ export default defineComponent({
     const { username, password } = getUser()
     const router = useRouter()
     const route = useRoute()
+    const { t } = useI18n()
     const playersUsernames = reactive([] as Array<string>)
     const isReady = ref(false as Boolean)
 
@@ -65,6 +67,7 @@ export default defineComponent({
     })
 
     return {
+      t,
       isReady,
       gameId,
       playersUsernames,

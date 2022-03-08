@@ -17,14 +17,7 @@
 import { defineComponent, useRouter, reactive, useRoute } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
-import { getUser, setDuckguessrId } from '~/components/user'
-
-const gameTypes = {
-  against_bot: { title: 'Play against a bot' },
-  against_players: {
-    title: 'Play against humans',
-  },
-}
+import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
   name: 'Setup',
@@ -32,7 +25,15 @@ export default defineComponent({
     const { username, password } = getUser()
     const router = useRouter()
     const route = useRoute()
+    const { t } = useI18n()
     const players = reactive([] as Array<Index.player>)
+
+    const gameTypes = {
+      against_bot: { title: t('Play against a bot') },
+      against_players: {
+        title: t('Play against other humans'),
+      },
+    }
 
     const matchmakingSocket = io(`${location.origin}:${process.env.SOCKET_PORT}/matchmaking`)
 
@@ -53,7 +54,7 @@ export default defineComponent({
       matchmakingSocket.on('matchStarts', (gameId: number) => {
         setTimeout(() => {
           // Leave time for the iAmReady callback to be called
-          console.debug(`Match starts on game ${gameId}`)
+          console.debug(`Match is starting on game ${gameId}`)
           matchmakingSocket.close()
           router.replace(`/game/${gameId}`)
         }, 200)

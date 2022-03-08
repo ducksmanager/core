@@ -1,13 +1,14 @@
 <template>
   <b-progress :variant="progressbarVariant">
     <div class="position-absolute pt-2 w-100">
-      <template v-if="remainingTime"> Guess the author! ({{ remainingTime }}) </template>
+      <template v-if="remainingTime"> {{ t('Guess the author!') }} ({{ remainingTime }}) </template>
     </div>
     <b-progress-bar animated :value="remainingTime * (100 / availableTime)" />
   </b-progress>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 const { availableTime, remainingTime } = defineProps<{
   availableTime: number
   remainingTime: number
@@ -23,6 +24,7 @@ if (remainingTimePercentage <= 20) {
 } else {
   progressbarVariant = 'success'
 }
+const { t } = useI18n()
 </script>
 
 <style scoped></style>

@@ -42,6 +42,32 @@ export default {
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    // Doc: https://nuxt-community.github.io/nuxt-i18n/
+    [
+      '@nuxtjs/i18n',
+      {
+        lazy: true,
+        legacy: false,
+        langDir: 'locales/',
+        defaultLocale: 'fr',
+        fallbackLocale: 'en',
+        formatFallbackMessages: true,
+        locales: [
+          {
+            code: 'fr',
+            name: 'Français',
+            iso: 'fr-FR',
+            file: 'fr-FR.json',
+          },
+          {
+            code: 'en',
+            name: 'English',
+            iso: 'en-US',
+            file: 'en-US.js',
+          },
+        ],
+      },
+    ],
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

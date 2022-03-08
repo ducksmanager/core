@@ -22,7 +22,7 @@
       </template>
       <template #thead-top>
         <tr>
-          <th>Player</th>
+          <th>{{ t('Player') }}</th>
           <th
             v-for="(round, index) in scoresWithPersonUrls"
             :key="`column-${index}`"
@@ -31,7 +31,7 @@
             <div>Round {{ round.round_number }}</div>
             <div class="font-weight-normal">{{ round.personfullname }}</div>
           </th>
-          <th>Total score</th>
+          <th>{{ t('Total score') }}</th>
         </tr>
       </template>
       <template #cell(playerName)="{ value: playerId }">
@@ -48,6 +48,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@nuxtjs/composition-api'
 import Index from '@prisma/client'
+import { useI18n } from 'vue-i18n'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 
 interface GamePlayerWithFullPlayer extends Index.game_player {
@@ -72,6 +73,7 @@ export default defineComponent({
   },
 
   setup({ scores, players, authors }) {
+    const { t } = useI18n()
     const playerIds = players.map(({ player_id: playerId }) => playerId)
 
     const playerNames = players.reduce(
@@ -88,6 +90,7 @@ export default defineComponent({
     )
 
     return {
+      t,
       scoresWithPersonUrls,
       playerNames,
       playersWithScores: playerIds.map((playerId) => {

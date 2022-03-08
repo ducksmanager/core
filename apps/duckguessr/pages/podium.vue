@@ -15,7 +15,7 @@
         :rank="index === 2 ? 2 : 1 - index"
       />
     </div>
-    <div v-else>Il n'y a pas assez de joueurs pour établir un podium.</div>
+    <div v-else>{{ t("There aren't enough players to show the podium") }}</div>
     <player-total-score
       v-for="{ username, average_score } in otherPlayers"
       :key="username"
@@ -27,12 +27,14 @@
 <script lang="ts">
 import Index from '@prisma/client'
 import { computed, defineComponent, onMounted, ref, useContext } from '@nuxtjs/composition-api'
+import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
   name: 'Podium',
 
   setup() {
     const { $axios } = useContext()
+    const { t } = useI18n()
     const players = ref(null as Index.player[] | null)
 
     onMounted(async () => {
@@ -40,6 +42,7 @@ export default defineComponent({
     })
 
     return {
+      t,
       players,
       topPlayers: computed(() =>
         players.value && players.value.length >= 3

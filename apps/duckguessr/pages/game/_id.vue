@@ -1,10 +1,10 @@
 <template>
   <b-container v-if="gameIsFinished" fluid>
-    <b-alert show align="center" variant="info"> This game is finished. </b-alert>
+    <b-alert show align="center" variant="info"> {{ t('This game is finished.') }} </b-alert>
     <game-scores :scores="game.rounds" :players="game.game_players" :authors="game.authors" />
   </b-container>
   <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
-    Loading...
+    {{ t('Loading...') }}
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
@@ -66,6 +66,7 @@ import {
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import Vue from 'vue'
+import { useI18n } from 'vue-i18n'
 import AuthorCard from '~/components/AuthorCard.vue'
 import { getUser } from '@/components/user'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
@@ -86,6 +87,7 @@ export default defineComponent({
   components: { AuthorCard },
   setup() {
     const { $axios } = useContext()
+    const { t } = useI18n()
     const { duckguessrId, username } = getUser()
     const route = useRoute()
 
@@ -188,6 +190,7 @@ export default defineComponent({
     })
 
     return {
+      t,
       game,
       gameIsFinished,
       players,

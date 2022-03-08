@@ -4,24 +4,29 @@
       <b-col cols="12">
         <b-select v-model="selectedDataset" :options="datasets" />
         <div v-if="validatedAndRemainingImageCount">
-          {{ validatedAndRemainingImageCount.validated || 0 }} images from this dataset can
-          currently be seen on Duckguessr,
-          {{ validatedAndRemainingImageCount.not_validated || 0 }}
-          are left to maintain.
+          {{
+            t(
+              '{validated} images from this dataset can currently be seen on Duckguessr, {notValidated} are left to maintain.',
+              {
+                validated: validatedAndRemainingImageCount.validated || 0,
+                notValidated: validatedAndRemainingImageCount.not_validated || 0,
+              }
+            )
+          }}
         </div>
       </b-col>
     </b-row>
     <template v-if="!selectedDataset" />
     <b-row v-else-if="!entryurlsPendingMaintenanceWithUrls.length">
-      Toutes les images de ce jeu de données ont été validées.
+      {{ t('All the images in this dataset have been validated.') }}
     </b-row>
     <template v-else>
       <b-row>
         <b-col cols="12">
-          Cliquez sur les images qui ne doivent pas être utilisées dans Duckguessr:
+          {{ t("Click on the images that shouldn't be shown on Duckguessr:") }}
           <ul>
-            <li>Images qui ne contiennent pas de dessin</li>
-            <li>Images sur lesquelles le nom du dessinateur est inscrit</li>
+            <li>{{ t('Images with no drawing inside') }}</li>
+            <li>{{ t("Images on which the cartoonist's name is written") }}</li>
           </ul>
         </b-col>
         <b-col
@@ -53,11 +58,13 @@
 <script lang="ts">
 import { computed, onMounted, ref, useContext, watch } from '@nuxtjs/composition-api'
 import type Index from '@prisma/client'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'Clean',
   setup() {
     const { $axios } = useContext()
+    const { t } = useI18n()
 
     const datasets = ref([] as Array<Index.dataset>)
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
@@ -66,12 +73,12 @@ export default {
 
     const decisions = computed(() => ({
       ok: { title: 'OK', variant: 'success' },
-      no_drawing: { title: "Image doesn't have a drawing", variant: 'warning' },
+      no_drawing: { title: t("Image doesn't have a drawing"), variant: 'warning' },
       ...(/-ml$/.test(selectedDataset.value!)
         ? {}
         : {
             shows_author: {
-              title: 'Image contains author',
+              title: t('Image contains author'),
               variant: 'warning',
             },
           }),
@@ -123,6 +130,7 @@ export default {
     )
 
     return {
+      t,
       datasets,
       decisions,
       selectedDataset,

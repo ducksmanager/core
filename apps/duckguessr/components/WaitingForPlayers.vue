@@ -1,6 +1,6 @@
 <template>
   <b-container align="center">
-    <h3>The game is about to start!</h3>
+    <h3>{{ t('The game is about to start!') }}</h3>
     <b-row align-h="center">
       <b-card v-for="username in usernames" :key="username" class="player m-3 col-lg-3">
         <user-info :username="username" />
@@ -8,7 +8,11 @@
     </b-row>
     <b-row align-h="center" class="mt-3">
       <b-col>
-        Waiting for other players... Send this link to your friends to invite them to this game:
+        {{
+          t(
+            'Waiting for other players... Send this link to your friends to invite them to this game:'
+          )
+        }}
       </b-col>
     </b-row>
     <b-row align-h="center">
@@ -18,11 +22,14 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 const props = defineProps<{
   usernames: Array<string>
   gameId: number
 }>()
 const gameUrl = `${location.origin}/game/${props.gameId}`
+const { t } = useI18n()
 </script>
 
 <style scoped lang="scss">
