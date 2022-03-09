@@ -47,7 +47,6 @@ export default {
       '@nuxtjs/i18n',
       {
         lazy: true,
-        legacy: false,
         langDir: 'locales/',
         defaultLocale: 'fr',
         fallbackLocale: 'en',

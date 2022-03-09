@@ -1,5 +1,9 @@
 <template>
-  <b-container fluid class="p-4 bg-dark">
+  <b-container v-if="!user" fluid class="p-4 bg-dark"> Loading... </b-container>
+  <b-container v-else-if="user.username !== 'brunoperel'" fluid class="p-4 bg-dark">
+    Only an administrator can clean images!
+  </b-container>
+  <b-container v-else fluid class="p-4 bg-dark">
     <b-row>
       <b-col cols="12">
         <b-select v-model="selectedDataset" :options="datasets" />
@@ -58,7 +62,9 @@
 <script lang="ts">
 import { computed, onMounted, ref, useContext, watch } from '@nuxtjs/composition-api'
 import type Index from '@prisma/client'
-import { useI18n } from 'vue-i18n'
+import { io } from 'socket.io-client'
+import { useI18n } from 'nuxt-i18n-composable'
+import { setUserCookieIfNotExists } from '~/components/user'
 
 export default {
   name: 'Clean',
@@ -70,6 +76,8 @@ export default {
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
     const validatedAndRemainingImageCount = ref(null as any)
     const selectedDataset = ref(null as string | null)
+
+    const user = ref(null as Index.player | null)
 
     const decisions = computed(() => ({
       ok: { title: 'OK', variant: 'success' },
@@ -84,15 +92,27 @@ export default {
           }),
     }))
 
-    onMounted(async () => {
-      const data = await $axios.$get(`/api/admin/maintenance`)
-      datasets.value = [
-        { value: null, text: 'Select a dataset' },
-        ...data.datasets.map(({ name }: { name: string }) => ({
-          value: name,
-          text: name,
-        })),
-      ]
+    onMounted(() => {
+      setUserCookieIfNotExists()
+      io(`${process.env.SOCKET_URL}/login`, {
+        auth: {
+          cookie: document.cookie,
+        },
+      }).on('logged', async (loggedInUser) => {
+        console.log(loggedInUser)
+        user.value = loggedInUser
+        if (user.value?.username === 'brunoperel') {
+          const data = await $axios.$get(`/api/admin/maintenance`)
+
+          datasets.value = [
+            { value: null, text: 'Select a dataset' },
+            ...data.datasets.map(({ name }: { name: string }) => ({
+              value: name,
+              text: name,
+            })),
+          ]
+        }
+      })
     })
 
     const loadImagesToMaintain = async (datasetName: string | null) => {
@@ -133,6 +153,7 @@ export default {
       t,
       datasets,
       decisions,
+      user,
       selectedDataset,
       entryurlsPendingMaintenanceWithUrls,
       validatedAndRemainingImageCount,

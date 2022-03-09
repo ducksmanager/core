@@ -6,15 +6,16 @@ import {
   ServerToClientEvents,
   SocketData,
 } from '../types/socketEvents'
-import { createMatchmakingSocket } from './sockets/matchmaking'
+import { createLoginSocket } from './sockets/login'
+require('dotenv').config({ path: '../.env' })
 
 const http = require('http')
-require('dotenv').config({ path: '../.env' })
 
 const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 const express = require('express')
+const { createMatchmakingSocket } = require('./sockets/matchmaking')
 const app = express()
 const server = http.createServer(app)
 
@@ -27,9 +28,11 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
       origin: process.env.NUXT_URL,
       methods: ['GET'],
     },
+    allowEIO3: true,
   }
 )
 
+createLoginSocket(io)
 createMatchmakingSocket(io)
 
 prisma.game

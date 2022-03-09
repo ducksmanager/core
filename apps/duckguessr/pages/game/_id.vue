@@ -8,7 +8,7 @@
   </b-container>
   <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
     <round-result-modal
-      v-if="currentRoundPlayerScore"
+      v-if="currentRoundPlayerScore && currentRound.personcode"
       :status="scoreToVariant(currentRoundPlayerScore)"
       :speed-bonus="currentRoundPlayerScore.speed_bonus"
       :correct-author="getAuthor(currentRound.personcode)"
@@ -43,9 +43,14 @@
       <b-col cols="2" class="border vh-100 overflow-auto">
         <h3>Round {{ currentRoundNumber }}</h3>
         <template v-for="score in currentRoundScores">
-          <b-alert :key="`score-${score.player_id}`" show :variant="scoreToVariant(score)">
-            {{ getUsername(score.player_id) }}:
-            {{ score.score_type_name }}
+          <b-alert
+            :key="`score-${score.player_id}`"
+            show
+            :variant="scoreToVariant(score)"
+            class="d-flex flex-row p-1 align-items-center justify-content-between"
+          >
+            <user-info :username="getUsername(score.player_id)" />
+            <div class="text-center">{{ score.score_type_name }}</div>
           </b-alert>
         </template>
       </b-col>
@@ -66,9 +71,9 @@ import {
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import Vue from 'vue'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'nuxt-i18n-composable'
 import AuthorCard from '~/components/AuthorCard.vue'
-import { getUser } from '@/components/user'
+import { getDuckguessrId } from '@/components/user'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
 
@@ -87,8 +92,8 @@ export default defineComponent({
   components: { AuthorCard },
   setup() {
     const { $axios } = useContext()
+    const duckguessrId = getDuckguessrId()
     const { t } = useI18n()
-    const { duckguessrId, username } = getUser()
     const route = useRoute()
 
     const chosenAuthor = ref(null as string | null)
@@ -97,8 +102,6 @@ export default defineComponent({
     let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>
 
     const currentRoundNumber = ref(null as number | null)
-
-    const currentRoundScores = ref([] as Array<Index.round_score>)
 
     const players = computed(
       (): Array<Index.player> =>
@@ -151,7 +154,7 @@ export default defineComponent({
     })
 
     const validateGuess = () => {
-      gameSocket!.emit('guess', username, currentRound.value!.id, chosenAuthor.value)
+      gameSocket!.emit('guess', currentRound.value!.id, chosenAuthor.value)
     }
 
     const loadGame = async () => {
@@ -164,21 +167,22 @@ export default defineComponent({
     onMounted(async () => {
       await loadGame()
 
-      gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`)
+      gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`, {
+        auth: {
+          cookie: document.cookie,
+        },
+      })
       gameSocket
         .on('roundStarts', (round) => {
-          console.log('roundStarts')
           currentRoundNumber.value = round!.round_number
           Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
           hasUrlLoaded.value = false
         })
         .on('roundEnds', (round) => {
-          console.log('roundEnds')
           chosenAuthor.value = null
           Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
         })
         .on('playerGuessed', ({ roundScore, answer }) => {
-          console.log('playerGuessed ' + roundScore.player_id)
           if (roundScore.player_id === duckguessrId) {
             Vue.set(game.value!.rounds[currentRoundNumber.value! - 1], 'personcode', answer)
           }
@@ -188,6 +192,14 @@ export default defineComponent({
         now.value = Date.now()
       }, 1000)
     })
+
+    const currentRoundScores = computed(() =>
+      !currentRound.value ? null : currentRound.value.round_scores
+    )
+
+    const currentRoundPlayerScore = computed(() =>
+      (currentRoundScores.value || []).find(({ player_id: playerId }) => duckguessrId === playerId)
+    )
 
     return {
       t,
@@ -200,17 +212,10 @@ export default defineComponent({
       hasUrlLoaded,
       currentRoundNumber,
       currentRound,
-      currentRoundScores,
       nextRoundStartDate,
       validateGuess,
-      currentRoundPlayerScore: computed(() => {
-        if (!currentRound.value) {
-          return null
-        }
-        return game.value!.rounds[currentRoundNumber.value! - 1].round_scores.find(
-          ({ player_id: playerId }) => duckguessrId === playerId
-        )
-      }),
+      currentRoundScores,
+      currentRoundPlayerScore,
       url: computed(
         () =>
           currentRound.value &&
@@ -255,5 +260,13 @@ export default defineComponent({
 
 .progress {
   color: black;
+}
+.alert {
+  > *:nth-child(1) {
+    width: 33%;
+  }
+  > *:nth-child(2) {
+    width: 67%;
+  }
 }
 </style>

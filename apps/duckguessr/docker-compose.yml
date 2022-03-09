@@ -12,6 +12,7 @@ services:
           - duckguessr
       duckguessr-network:
       dm-server_db-network:
+      ducksmanager-flex_dm-network:
   socketio:
     container_name: duckguessr-socketio
     build:
@@ -20,6 +21,7 @@ services:
     restart: always
     volumes:
       - ./server/datasets:/usr/src/nuxt-app/server/datasets
+      - ducksmanager_dm_sessions:/tmp/sessions
     networks:
       workspace_global-front-network:
         aliases:
@@ -41,15 +43,17 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
       duckguessr-network:
-        aliases:
-          - db
 
 networks:
+  duckguessr-network:
   workspace_global-front-network:
     external: true
-  duckguessr-network:
+  ducksmanager-flex_dm-network:
+    external: true
   dm-server_db-network:
     external: true
 
 volumes:
   db:
+  ducksmanager_dm_sessions:
+    external: true

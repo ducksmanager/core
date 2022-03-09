@@ -2,31 +2,36 @@
   <b-modal visible :body-bg-variant="status" hide-footer hide-header-close>
     <template #modal-title> Round {{ roundNumber }} </template>
     <div v-if="status === 'success'">
-      <div>{{ t('Correct!') }}</div>
+      <div class="font-weight-bold">{{ t('Correct!') }}</div>
       <div v-if="speedBonus" class="my-3">
         <b-icon-stopwatch-fill />&nbsp;{{ t('Speed bonus') }}: {{ speedBonus }}
-      </div>    </div>
+      </div>
+    </div>
     <div v-else>{{ t('Incorrect.') }}</div>
     <div class="my-3">
       <div>{{ t('The answer was:') }}</div>
-      <b-row><author-card selectable :author="correctAuthor" /></b-row>
+      <b-row class="justify-content-center">
+        <author-card selectable :author="correctAuthor" />
+      </b-row>
     </div>
     <div v-if="timeBeforeNextRound" class="text-center">
       <div>{{ t('Round {roundNumber} starts in...') }}</div>
-      <div class="text-xl-center">
-        {{ timeBeforeNextRound }}
-      </div>
+      <circle-progress-bar :total="initialTimeBeforeNextRound" :remaining="timeBeforeNextRound" />
     </div>
   </b-modal>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from '@nuxtjs/composition-api'
+import { BIconStopwatchFill } from 'bootstrap-vue'
+import { useI18n } from 'nuxt-i18n-composable'
 import { Author } from '~/types/roundWithScoresAndAuthor'
-import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
   name: 'RoundResultModal',
+  components: {
+    BIconStopwatchFill,
+  },
   props: {
     status: {
       type: String,
@@ -52,13 +57,14 @@ export default defineComponent({
   setup({ nextRoundStartDate }, { emit }) {
     const { t } = useI18n()
 
+    const getTimeBeforeNextRound = () =>
+      Math.ceil((nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
+
     const timeBeforeNextRound = ref(null as number | null)
+    const initialTimeBeforeNextRound = getTimeBeforeNextRound()
 
     const updateTimeBeforeNextRound = () => {
-      timeBeforeNextRound.value =
-        nextRoundStartDate === null
-          ? null
-          : Math.ceil((nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
+      timeBeforeNextRound.value = nextRoundStartDate === null ? null : getTimeBeforeNextRound()
     }
 
     onMounted(() => {
@@ -76,6 +82,7 @@ export default defineComponent({
 
     return {
       t,
+      initialTimeBeforeNextRound,
       timeBeforeNextRound,
     }
   },
@@ -83,15 +90,12 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.modal-dialog {
-  max-width: 100%;
-  margin: 0;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  display: flex;
+::v-deep .modal-body {
+  &.bg-success {
+    background-color: #52a350 !important;
+  }
+  color: white;
+  text-align: center;
 
   .author {
     background-color: white;

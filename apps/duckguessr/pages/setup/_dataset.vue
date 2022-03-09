@@ -17,17 +17,21 @@
 import { defineComponent, useRouter, reactive, useRoute } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'nuxt-i18n-composable'
 
 export default defineComponent({
   name: 'Setup',
   setup() {
-    const { username, password } = getUser()
     const router = useRouter()
     const route = useRoute()
     const { t } = useI18n()
     const players = reactive([] as Array<Index.player>)
 
+    const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`, {
+      auth: {
+        cookie: document.cookie,
+      },
+    })
     const gameTypes = {
       against_bot: { title: t('Play against a bot') },
       against_players: {
@@ -35,17 +39,12 @@ export default defineComponent({
       },
     }
 
-    const matchmakingSocket = io(`${location.origin}:${process.env.SOCKET_PORT}/matchmaking`)
-
     const iAmReady = (gameType: string) => {
       matchmakingSocket.emit(
         'iAmReady',
         gameType,
         route.value.params.dataset,
-        username,
-        password,
-        ({ gameId, player }: { gameId: number; player: Index.player }) => {
-          setDuckguessrId(player.id)
+        ({ gameId }: { gameId: number; player: Index.player }) => {
           matchmakingSocket.close()
           router.replace(`/matchmaking/${gameId}`)
         }
@@ -63,7 +62,6 @@ export default defineComponent({
 
     return {
       gameTypes,
-      username,
       players,
       iAmReady,
     }

@@ -27,7 +27,7 @@
 <script lang="ts">
 import Index from '@prisma/client'
 import { computed, defineComponent, onMounted, ref, useContext } from '@nuxtjs/composition-api'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'nuxt-i18n-composable'
 
 export default defineComponent({
   name: 'Podium',

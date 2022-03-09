@@ -1,22 +1,7 @@
 import Index, { PrismaClient } from '@prisma/client'
-const { createPool } = require('mariadb')
 
 const prisma = new PrismaClient()
 const numberOfRounds = 8
-
-const dmPool = createPool({
-  host: process.env.MYSQL_DM_HOST,
-  user: 'root',
-  database: 'dm',
-  password: process.env.MYSQL_ROOT_PASSWORD,
-  connectionLimit: 5,
-})
-
-let dmConnection
-
-dmPool.getConnection().then((connection) => {
-  dmConnection = connection
-})
 
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
@@ -98,45 +83,4 @@ export async function associatePlayer(gameId: number, player: Index.player) {
       },
     },
   })
-}
-
-export async function getPlayer(username: string, password: string | null = null) {
-  let user
-  if (/^user[0-9]+$/.test(username) || /^bot_.+$/.test(username)) {
-    user = await prisma.player.findFirst({
-      where: {
-        username,
-      },
-    })
-    if (!user) {
-      user = await prisma.player.create({
-        data: {
-          username,
-        },
-      })
-    }
-  } else {
-    const [dmUser] = await dmConnection.query(
-      'SELECT ID AS id, username FROM users WHERE username=? AND password=?',
-      [username, password]
-    )
-    if (!dmUser) {
-      throw new Error(`No DM user with username ${username}`)
-    }
-    user = await prisma.player.findFirst({
-      where: {
-        username,
-      },
-    })
-    if (!user) {
-      user = await prisma.player.create({
-        data: {
-          ducksmanager_id: parseInt(dmUser.id),
-          username,
-        },
-      })
-    }
-  }
-
-  return user
 }

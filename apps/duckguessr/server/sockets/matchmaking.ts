@@ -1,31 +1,27 @@
 import { Server } from 'socket.io'
-import { Prisma } from '@prisma/client'
+import Index, { Prisma } from '@prisma/client'
 import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
 } from '../../types/socketEvents'
-import { getPlayer, getGameWithRoundsDatasetPlayers } from '../game'
+import { getGameWithRoundsDatasetPlayers } from '../game'
+import { getBotUser, getUser } from '../get-user'
 
 const game = require('../game')
 const round = require('../round')
 const { createGameSocket } = require('./game')
 
 const checkAndAssociatePlayer = async (
-  username: string,
-  password: string,
+  player: Index.player,
   currentGame: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
 ) => {
-  const player = await game.getPlayer(username, password)
-  if (player === null) {
-    throw new Error(`Player ${username} has invalid credentials`)
-  }
   if (currentGame!.game_players.find(({ player_id }) => player_id === player.id)) {
     console.info(`Player ${player.username} is already associated with game ${currentGame!.id}`)
   } else {
     await game.associatePlayer(currentGame!.id, player)
-    console.log(`${username} is ready in game ${currentGame!.id}`)
+    console.log(`${player} is ready in game ${currentGame!.id}`)
   }
   return player
 }
@@ -33,15 +29,18 @@ const checkAndAssociatePlayer = async (
 export function createMatchmakingSocket(
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
 ) {
-  io.of('/matchmaking').on('connection', (socket) => {
-    console.log('a player is creating a match')
-    socket.on('iAmReady', async (gameType, dataset, username, password, callback) => {
+  io.of('/matchmaking').on('connection', async (socket) => {
+    const user = await getUser(socket.handshake.auth.cookie)
+    console.log(`${user.username} is creating a match`)
+
+    socket.on('iAmReady', async (gameType, dataset, callback) => {
+      const user = await getUser(socket.handshake.auth.cookie)
       const currentGame = await game.create(gameType, dataset)
-      const player = await checkAndAssociatePlayer(username, password, currentGame)
+      await checkAndAssociatePlayer(user, currentGame)
 
       if (gameType === 'against_bot') {
         const botUsername = `bot_${currentGame.dataset.name}`
-        const botPlayer = await getPlayer(botUsername)
+        const botPlayer = await getBotUser(botUsername)
         await game.associatePlayer(currentGame!.id, botPlayer)
 
         await round.createGameRounds(currentGame!.id)
@@ -51,7 +50,6 @@ export function createMatchmakingSocket(
         createGameMatchmaking(io, currentGame.id)
       }
       callback({
-        player,
         gameId: currentGame.id,
       })
     })
@@ -64,13 +62,15 @@ const createGameMatchmaking = (
   gameId: number
 ) => {
   io.of(`/matchmaking/${gameId}`).on('connection', (socket) => {
-    socket.on('iAmAlsoReady', async (gameId, username, password, callback) => {
-      const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+    socket.on('iAmAlsoReady', async (gameId, callback) => {
+      let currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame === null) {
         throw new Error(`Game ${gameId} doesn't exist`)
       }
-      const player = await checkAndAssociatePlayer(username, password, currentGame)
-      if (currentGame.game_players.length + 1 === numberOfPlayers) {
+      const user = await getUser(socket.handshake.auth.cookie)
+      const player = await checkAndAssociatePlayer(user, currentGame)
+      currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+      if (currentGame!.game_players.length === numberOfPlayers) {
         console.log(`Game ${gameId} is starting!`)
         const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
         if (currentGame === null) {
@@ -82,9 +82,11 @@ const createGameMatchmaking = (
 
         await round.createGameRounds(currentGame!.id)
         createGameSocket(io, (await getGameWithRoundsDatasetPlayers(gameId))!)
-        socket.broadcast.emit('matchStarts', player.username)
+        socket.broadcast.emit('matchStarts', currentGame!.id)
+        socket.emit('matchStarts', currentGame!.id)
       } else {
         socket.broadcast.emit('playerJoined', player.username)
+        socket.emit('playerJoined', player.username)
       }
 
       callback({

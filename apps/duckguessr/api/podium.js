@@ -5,7 +5,7 @@ export default async (req, res) => {
   switch (req.method) {
     case 'GET': {
       const players = await prisma.$queryRaw`
-        SELECT player.*, avg(score) AS average_score
+        SELECT player.*, avg(score + speed_bonus) AS average_score
         FROM player
         INNER JOIN round_score ON player.id = round_score.player_id
         WHERE username NOT like 'bot_%' and username NOT LIKE 'user%'

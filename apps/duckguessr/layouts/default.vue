@@ -2,7 +2,7 @@
   <div id="app">
     <div id="menu" class="position-fixed d-flex flex-column align-items-center">
       <div id="medals-and-login" class="pb-3">
-        <user-info :username="username" />
+        <user-info v-if="user" :username="user.username" />
       </div>
       <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
     </div>
@@ -10,16 +10,49 @@
       <a href="/"><b-img src="/logo.png" height="70" /></a>
       <small>by DucksManager</small>
     </div>
-    <div id="main" class="d-flex justify-content-center align-items-center">
-      <Nuxt />
+    <div v-if="!user">Loading...</div>
+    <div v-else>
+      <b-row class="justify-content-center">
+        <b-alert v-if="isAnonymous === true" show variant="warning">
+          You are not connected. You can still play but you won't get any medals.
+        </b-alert>
+      </b-row>
+      <div id="main" class="d-flex justify-content-center align-items-center">
+        <Nuxt />
+      </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { getUser } from '@/components/user'
+<script lang="ts">
+import { computed, onMounted, ref } from '@nuxtjs/composition-api'
+import { defineComponent } from '@vue/runtime-dom'
+import { io } from 'socket.io-client'
+import Index from '@prisma/client'
+import { isAnonymous, setUserCookieIfNotExists } from '~/components/user'
 
-const { username } = getUser()
+export default defineComponent({
+  setup() {
+    const user = ref(null as Index.player | null)
+
+    onMounted(() => {
+      setUserCookieIfNotExists()
+      io(`${process.env.SOCKET_URL}/login`, {
+        auth: {
+          cookie: document.cookie,
+        },
+      }).on('logged', (loggedInUser) => {
+        console.log(loggedInUser)
+        user.value = loggedInUser
+      })
+    })
+
+    return {
+      user,
+      isAnonymous: computed(() => user.value && isAnonymous(user.value.username)),
+    }
+  },
+})
 </script>
 
 <style lang="scss">

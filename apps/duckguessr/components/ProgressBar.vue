@@ -8,13 +8,13 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { availableTime, remainingTime } = defineProps<{
+import { useI18n } from 'nuxt-i18n-composable'
+const props2 = defineProps<{
   availableTime: number
   remainingTime: number
 }>()
 
-const remainingTimePercentage = remainingTime * (100 / availableTime)
+const remainingTimePercentage = props2.remainingTime * (100 / props2.availableTime)
 
 let progressbarVariant
 if (remainingTimePercentage <= 20) {

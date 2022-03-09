@@ -1,8 +1,5 @@
 <template>
   <div>
-    <b-alert v-if="isAnonymous" show variant="warning">
-      You are not connected. You can still play but you won't keep any won medals.
-    </b-alert>
     <b-card-group deck>
       <b-card
         v-for="{ title, name, images, authors } in datasets"
@@ -24,9 +21,7 @@
 
 <script lang="ts">
 import { onMounted, ref, useContext } from '@nuxtjs/composition-api'
-import { getUser } from '@/components/user'
-const { isAnonymous } = getUser()
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'nuxt-i18n-composable'
 
 export default {
   name: 'Welcome',
@@ -43,7 +38,6 @@ export default {
     return {
       t,
       datasets,
-      isAnonymous,
     }
   },
 }

@@ -16,19 +16,31 @@
       </b-col>
     </b-row>
     <b-row align-h="center">
-      <b-col><input type="text" class="text-center" readonly :value="gameUrl" /></b-col>
+      <b-col>
+        <b-row class="justify-content-center">
+          <b-col cols="6">
+            <input
+              type="text"
+              class="text-center"
+              readonly
+              :value="gameUrl"
+              @click="$event.target.select()"
+            />
+          </b-col>
+        </b-row>
+      </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'nuxt-i18n-composable'
 
 const props = defineProps<{
   usernames: Array<string>
   gameId: number
 }>()
-const gameUrl = `${location.origin}/game/${props.gameId}`
+const gameUrl = `${location.origin}/matchmaking/${props.gameId}`
 const { t } = useI18n()
 </script>
 
@@ -45,6 +57,6 @@ const { t } = useI18n()
 }
 input {
   color: gray;
-  width: 300px;
+  width: 100%;
 }
 </style>
