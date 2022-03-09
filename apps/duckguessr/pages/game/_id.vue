@@ -15,46 +15,21 @@
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
     />
-    <b-row>
-      <b-col cols="5" align-self="center">
-        <b-img center :src="url" @load="hasUrlLoaded = true" />
-      </b-col>
-      <b-col cols="5" class="h-100">
-        <b-row align-v="center" style="height: 50px">
-          <b-col class="text-center">
-            <progress-bar :available-time="availableTime" :remaining-time="remainingTime" />
-          </b-col>
-        </b-row>
-        <b-row id="author-list">
-          <author-card
-            v-for="(author, idx) in game.authors"
-            :key="`author-${idx}`"
-            :author="author"
-            :selectable="
-              !game.rounds.map(({ personcode }) => personcode).includes(author.personcode)
-            "
-            @select="
-              chosenAuthor = $event
-              validateGuess()
-            "
-          />
-        </b-row>
-      </b-col>
-      <b-col cols="2" class="border vh-100 overflow-auto">
-        <h3>Round {{ currentRoundNumber }}</h3>
-        <template v-for="score in currentRoundScores">
-          <b-alert
-            :key="`score-${score.player_id}`"
-            show
-            :variant="scoreToVariant(score)"
-            class="d-flex flex-row p-1 align-items-center justify-content-between"
-          >
-            <user-info :username="getUsername(score.player_id)" />
-            <div class="text-center">{{ score.score_type_name }}</div>
-          </b-alert>
-        </template>
-      </b-col>
-    </b-row>
+    <game
+      :available-time="availableTime"
+      :chosen-author="chosenAuthor"
+      :current-round-number="currentRoundNumber"
+      :current-round-scores="currentRoundScores"
+      :authors="game.authors"
+      :players="players"
+      :previous-personcodes="game.rounds.map(({ personcode }) => personcode)"
+      :remaining-time="remainingTime"
+      :url="url"
+      @select-author="
+        chosenAuthor = $event
+        validateGuess()
+      "
+    />
   </b-container>
 </template>
 
@@ -72,24 +47,23 @@ import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import Vue from 'vue'
 import { useI18n } from 'nuxt-i18n-composable'
-import AuthorCard from '~/components/AuthorCard.vue'
 import { getDuckguessrId } from '@/components/user'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
+import { useScoreToVariant } from '~/composables/use-score-to-variant'
 
 interface GamePlayerWithFullPlayer extends Index.game_player {
   player: Index.player
 }
 
 interface GameFull extends Index.game {
-  authors: Array<Author>
-  rounds: Array<RoundWithScoresAndAuthor>
-  game_players: Array<GamePlayerWithFullPlayer>
+  authors: Author[]
+  rounds: RoundWithScoresAndAuthor[]
+  game_players: GamePlayerWithFullPlayer[]
 }
 
 export default defineComponent({
-  name: 'Game',
-  components: { AuthorCard },
+  name: 'GamePage',
   setup() {
     const { $axios } = useContext()
     const duckguessrId = getDuckguessrId()
@@ -222,24 +196,10 @@ export default defineComponent({
           `${process.env.CLOUDINARY_URL_ROOT}${currentRound.value.sitecode_url}`
       ),
 
-      getUsername: (playerId: number) =>
-        players.value.find(({ id }) => id === playerId)?.username || '?',
-
       getAuthor: (personcode2: string): Author =>
         game.value!.authors.find(({ personcode }) => personcode2 === personcode)!,
 
-      scoreToVariant(roundScore: Index.round_score | null) {
-        switch (roundScore?.score_type_name) {
-          case null:
-            return 'default'
-          case 'Correct author':
-            return 'success'
-          case 'Correct nationality':
-            return 'warning'
-          default:
-            return 'danger'
-        }
-      },
+      scoreToVariant: useScoreToVariant,
     }
   },
 })
