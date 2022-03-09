@@ -15,7 +15,7 @@ import {
 import Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
-import { setDuckguessrId } from '@/components/user'
+import { setDuckguessrId } from '@/composables/user'
 
 export default defineComponent({
   name: 'Matchmaking',

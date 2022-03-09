@@ -29,7 +29,7 @@ import { computed, onMounted, ref } from '@nuxtjs/composition-api'
 import { defineComponent } from '@vue/runtime-dom'
 import { io } from 'socket.io-client'
 import Index from '@prisma/client'
-import { isAnonymous, setUserCookieIfNotExists } from '~/components/user'
+import { isAnonymous, setUserCookieIfNotExists } from '~/composables/user'
 
 export default defineComponent({
   setup() {

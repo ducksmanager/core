@@ -64,7 +64,7 @@ import { computed, onMounted, ref, useContext, watch } from '@nuxtjs/composition
 import type Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
-import { setUserCookieIfNotExists } from '~/components/user'
+import { setUserCookieIfNotExists } from '~/composables/user'
 
 export default {
   name: 'Clean',
