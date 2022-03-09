@@ -3,13 +3,12 @@
     <b-card
       v-for="({ title }, type) in gameTypes"
       :key="type"
-      :title="title + (type === 'against_bot' ? ' (coming soon)' : '')"
+      :title="title"
       img-src="https://picsum.photos/600/300/?image=25"
       :img-alt="title"
       img-top
       align="center"
-      :class="{ disabled: type === 'against_bot' }"
-      @click="type === 'against_bot' ? () => {} : iAmReady(type)"
+      @click="iAmReady(type)"
     />
   </b-card-group>
 </template>
@@ -73,11 +72,6 @@ export default defineComponent({
 .card {
   cursor: pointer;
   color: black;
-
-  &.disabled {
-    cursor: not-allowed;
-    color: grey;
-  }
 
   &.player {
     .card {
