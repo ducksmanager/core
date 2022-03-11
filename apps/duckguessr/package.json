@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.ts\"",
+    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.ts\" \"npx nuxt storybook\"",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",

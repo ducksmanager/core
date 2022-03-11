@@ -6,7 +6,7 @@
   <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
     {{ t('Loading...') }}
   </b-container>
-  <b-container v-else fluid class="overflow-hidden" style="height: 100vh">
+  <b-container v-else fluid class="d-flex flex-grow-1">
     <round-result-modal
       v-if="currentRoundPlayerScore && currentRound.personcode"
       :status="scoreToVariant(currentRoundPlayerScore)"
@@ -206,21 +206,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.container-fluid > .row {
-  height: 100vh;
-}
-
-#author-list {
-  height: calc(100vh - 50px);
-
-  .author-image {
-    height: 100%;
-  }
-}
-
-.progress {
-  color: black;
-}
 .alert {
   > *:nth-child(1) {
     width: 33%;

@@ -30,6 +30,12 @@ Default.args = {
     { personcode: 'CB', personnationality: 'us', personfullname: 'Carl Barks' },
     { personcode: 'DR', personnationality: 'us', personfullname: 'Don Rosa' },
     { personcode: 'RSc', personnationality: 'us', personfullname: 'Romano Scarpa' },
+    { personcode: 'CB', personnationality: 'us', personfullname: 'Carl Barks' },
+    { personcode: 'DR', personnationality: 'us', personfullname: 'Don Rosa' },
+    { personcode: 'RSc', personnationality: 'us', personfullname: 'Romano Scarpa' },
+    { personcode: 'CB', personnationality: 'us', personfullname: 'Carl Barks' },
+    { personcode: 'DR', personnationality: 'us', personfullname: 'Don Rosa' },
+    { personcode: 'RSc', personnationality: 'us', personfullname: 'Romano Scarpa' },
   ],
   players: [
     {
