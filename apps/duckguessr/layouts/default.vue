@@ -11,15 +11,13 @@
       <small>by DucksManager</small>
     </div>
     <div v-if="!user">Loading...</div>
-    <div v-else>
-      <b-row class="justify-content-center">
-        <b-alert v-if="isAnonymous === true" show variant="warning">
+    <div id="main" class="d-flex justify-content-center flex-column">
+      <b-row v-if="isAnonymous === true" class="justify-content-center">
+        <b-alert show variant="warning">
           You are not connected. You can still play but you won't get any medals.
         </b-alert>
       </b-row>
-      <div id="main" class="d-flex justify-content-center align-items-center">
-        <Nuxt />
-      </div>
+      <Nuxt />
     </div>
   </div>
 </template>
@@ -68,8 +66,20 @@ html {
   box-sizing: border-box;
 
   body {
+    height: 100vh;
     padding: 0 0 0 320px;
     background-color: #3d4b5f !important;
+
+    &.sb-main-padded {
+      padding: 0 !important;
+    }
+
+    #__nuxt,
+    #__layout,
+    #app,
+    #root {
+      height: 100% !important;
+    }
 
     #app,
     #root {
