@@ -43,8 +43,7 @@ create table game
   created_at  datetime default CURRENT_TIMESTAMP() not null,
   started_at  datetime null,
   finished_at datetime null,
-  game_type   enum ('against_bot', 'against_players') default 'against_players' not null,
-  dataset_id  int                                  not null,
+  dataset_id  int                                  null,
   constraint game__dataset_id_fk
     foreign key (dataset_id) references dataset (id)
 ) collate = utf8mb4_unicode_ci;

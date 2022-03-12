@@ -35,7 +35,7 @@
         </tr>
       </template>
       <template #cell(playerId)="{ value: playerId }">
-        <user-info :username="playerNames[playerId]" />
+        <player-info :username="playerNames[playerId]" />
       </template>
       <template #cell(totalScore)="{ value: totalScore }"> {{ totalScore }} points </template>
       <template #cell()="{ value: playerRoundScores }">

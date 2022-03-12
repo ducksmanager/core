@@ -3,7 +3,7 @@
     <h3>{{ t('The game is about to start!') }}</h3>
     <b-row align-h="center">
       <b-card v-for="username in usernames" :key="username" class="player m-3 col-lg-3">
-        <user-info :username="username" />
+        <player-info :username="username" />
       </b-card>
     </b-row>
     <b-row align-h="center" class="mt-3">

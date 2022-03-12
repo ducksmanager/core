@@ -15,7 +15,6 @@ import {
 import Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
-import { setDuckguessrId } from '@/composables/user'
 
 export default defineComponent({
   name: 'Matchmaking',
@@ -35,7 +34,7 @@ export default defineComponent({
     })
 
     const addPlayer = (username: string) => {
-      if (username && !playersUsernames.includes(username)) {
+      if (!playersUsernames.includes(username)) {
         playersUsernames.push(username)
       }
     }
@@ -55,9 +54,10 @@ export default defineComponent({
         }, 200)
       })
 
-      matchmakingSocket.emit('iAmAlsoReady', gameId, ({ player }: { player: Index.player }) => {
-        setDuckguessrId(player.id)
-        addPlayer(player.username)
+      matchmakingSocket.emit('iAmAlsoReady', gameId, ({ players }: { players: Index.player[] }) => {
+        for (const player of players) {
+          addPlayer(player.username)
+        }
       })
     })
 

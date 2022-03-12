@@ -21,7 +21,7 @@ const checkAndAssociatePlayer = async (
     console.info(`Player ${player.username} is already associated with game ${currentGame!.id}`)
   } else {
     await game.associatePlayer(currentGame!.id, player)
-    console.log(`${player} is ready in game ${currentGame!.id}`)
+    console.log(`${player.username} is ready in game ${currentGame!.id}`)
   }
   return player
 }
@@ -33,22 +33,13 @@ export function createMatchmakingSocket(
     const user = await getUser(socket.handshake.auth.cookie)
     console.log(`${user.username} is creating a match`)
 
-    socket.on('iAmReady', async (gameType, dataset, callback) => {
+    socket.on('iAmReady', async (dataset, numberOfPlayers, addBot, callback) => {
       const user = await getUser(socket.handshake.auth.cookie)
-      const currentGame = await game.create(gameType, dataset)
+      const currentGame = await game.create(dataset)
       await checkAndAssociatePlayer(user, currentGame)
 
-      if (gameType === 'against_bot') {
-        const botUsername = `bot_${currentGame.dataset.name}`
-        const botPlayer = await getBotUser(botUsername)
-        await game.associatePlayer(currentGame!.id, botPlayer)
-
-        await round.createGameRounds(currentGame!.id)
-        createGameSocket(io, (await getGameWithRoundsDatasetPlayers(currentGame!.id))!)
-        socket.emit('matchStarts', currentGame!.id)
-      } else {
-        createGameMatchmaking(io, currentGame.id)
-      }
+      const botUsername = addBot ? `bot_${currentGame.dataset.name}` : null
+      await createGameMatchmaking(io, currentGame.id, numberOfPlayers, botUsername)
       callback({
         gameId: currentGame.id,
       })
@@ -56,21 +47,34 @@ export function createMatchmakingSocket(
   })
 }
 
-const numberOfPlayers = 2
-const createGameMatchmaking = (
+const createGameMatchmaking = async (
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-  gameId: number
+  gameId: number,
+  numberOfPlayers: number,
+  botUsername: string | null
 ) => {
+  let botPlayer: Index.player
+  if (botUsername) {
+    botPlayer = await getBotUser(botUsername)
+    await game.associatePlayer(gameId, botPlayer)
+  }
+
   io.of(`/matchmaking/${gameId}`).on('connection', (socket) => {
+    if (botUsername) {
+      socket.broadcast.emit('playerJoined', botPlayer.username)
+      socket.emit('playerJoined', botPlayer.username)
+    }
+
     socket.on('iAmAlsoReady', async (gameId, callback) => {
       let currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame === null) {
         throw new Error(`Game ${gameId} doesn't exist`)
       }
+      const numberOfPlayersWithBots = numberOfPlayers + (botUsername ? 1 : 0)
       const user = await getUser(socket.handshake.auth.cookie)
       const player = await checkAndAssociatePlayer(user, currentGame)
       currentGame = await getGameWithRoundsDatasetPlayers(gameId)
-      if (currentGame!.game_players.length === numberOfPlayers) {
+      if (currentGame!.game_players.length === numberOfPlayersWithBots) {
         console.log(`Game ${gameId} is starting!`)
         const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
         if (currentGame === null) {
@@ -90,7 +94,7 @@ const createGameMatchmaking = (
       }
 
       callback({
-        player,
+        players: currentGame!.game_players.map(({ player }) => player),
       })
     })
   })

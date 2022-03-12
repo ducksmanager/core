@@ -29,7 +29,7 @@
             :variant="scoreToVariant(score)"
             class="d-flex flex-row p-1 align-items-center justify-content-between"
           >
-            <user-info :username="getUsername(score.player_id)" />
+            <player-info :username="getUsername(score.player_id)" />
             <div class="text-center">{{ score.score_type_name }}</div>
           </b-alert>
         </template>

@@ -14,5 +14,13 @@ const Template = (args) => ({
 export const Default = Template.bind({})
 Default.args = {
   gameId: 123,
-  usernames: ['brunoperel', 'Wizyx', 'remifanpicsou', 'Alex Puaud', 'GlxbltHugo', 'Picsou22'],
+  usernames: [
+    'brunoperel',
+    'Wizyx',
+    'remifanpicsou',
+    'Alex Puaud',
+    'GlxbltHugo',
+    'Picsou22',
+    'bot_us',
+  ],
 }

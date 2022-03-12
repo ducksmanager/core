@@ -12,14 +12,18 @@ export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
         },
       },
       dataset: true,
-      game_players: true,
+      game_players: {
+        include: {
+          player: true,
+        },
+      },
     },
     where: {
       id: gameId,
     },
   })
 
-export async function create(gameType: Index.game['game_type'], datasetName: string) {
+export async function create(datasetName: string) {
   const dataset = await prisma.dataset.findFirst({
     where: {
       name: datasetName,
@@ -58,7 +62,6 @@ export async function create(gameType: Index.game['game_type'], datasetName: str
     }))
     const game = await prisma.game.create({
       data: {
-        game_type: gameType,
         dataset_id: dataset.id,
         rounds: {
           create: rounds,

@@ -27,13 +27,12 @@ model dataset_entryurl {
 }
 
 model game {
-  id           Int            @id @default(autoincrement())
-  created_at   DateTime       @default(now()) @db.DateTime(0)
-  started_at   DateTime?      @db.DateTime(0)
-  finished_at  DateTime?      @db.DateTime(0)
-  game_type    game_game_type @default(against_players)
+  id           Int           @id @default(autoincrement())
+  created_at   DateTime      @default(now()) @db.DateTime(0)
+  started_at   DateTime?     @db.DateTime(0)
+  finished_at  DateTime?     @db.DateTime(0)
   dataset_id   Int
-  dataset      dataset        @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "game__dataset_id_fk")
+  dataset      dataset       @relation(fields: [dataset_id], references: [id], onUpdate: Restrict, map: "game__dataset_id_fk")
   game_players game_player[]
   rounds       round[]
 
@@ -100,11 +99,6 @@ model entryurl_details {
   decision          entryurl_details_decision?
   personcode        String?                    @db.VarChar(79)
   dataset_entryurls dataset_entryurl[]
-}
-
-enum game_game_type {
-  against_bot
-  against_players
 }
 
 enum entryurl_details_decision {

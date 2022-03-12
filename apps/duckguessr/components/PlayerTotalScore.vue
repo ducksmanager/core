@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper d-flex" :class="{ vertical }">
-    <div class="username"><user-info :username="username" :top-player="topPlayer" /></div>
+    <div class="username"><player-info :username="username" :top-player="topPlayer" /></div>
     <div
       class="progress bg-success d-inline-flex justify-content-center align-items-center"
       :class="rank === null ? null : { [`rank-${rank}`]: true }"

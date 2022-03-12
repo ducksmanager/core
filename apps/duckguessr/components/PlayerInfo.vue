@@ -1,22 +1,26 @@
 <template>
   <div class="d-flex flex-column align-items-center text-center">
     <div>
-      <b-avatar :class="{ 'top-player': topPlayer }" size="4rem" src="/anonymous.png" />
+      <b-avatar :class="{ 'top-player': topPlayer }" size="4rem" :src="src" />
     </div>
-    <div>{{ username }}</div>
+    <div>{{ isBot ? 'BOT' : username }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-withDefaults(
+const props = withDefaults(
   defineProps<{
-    username: string | null
+    username: string
     topPlayer: boolean
   }>(),
   {
     topPlayer: false,
   }
 )
+
+const isBot = /^bot_/.test(props.username)
+
+const src = isBot ? '/little-helper.png' : '/anonymous.png'
 </script>
 
 <style lang="scss">

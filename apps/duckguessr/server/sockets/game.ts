@@ -82,10 +82,10 @@ const initRoundStarts = (
   doOnRoundStart(round, async (round: Index.round) => {
     socket.broadcast.emit('roundStarts', { ...round, personcode: null })
     socket.emit('roundStarts', { ...round, personcode: null })
-    if (game!.game_type === 'against_bot') {
-      const botPlayer = await prisma.player.findUnique({
-        where: { username: `bot_${game!.dataset.name}` },
-      })
+    const botPlayer = await game!.game_players
+      .map(({ player }) => player)
+      .find((player) => /^bot_/.test(player.username))
+    if (botPlayer) {
       const possibleAuthors = game!.rounds
         .filter(
           ({ round_number: roundNumber }) =>

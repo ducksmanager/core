@@ -2,7 +2,7 @@
   <div id="app">
     <div id="menu" class="position-fixed d-flex flex-column align-items-center">
       <div id="medals-and-login" class="pb-3">
-        <user-info v-if="user" :username="user.username" />
+        <player-info v-if="user" :username="user.username" />
       </div>
       <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
     </div>
@@ -27,7 +27,7 @@ import { computed, onMounted, ref } from '@nuxtjs/composition-api'
 import { defineComponent } from '@vue/runtime-dom'
 import { io } from 'socket.io-client'
 import Index from '@prisma/client'
-import { isAnonymous, setUserCookieIfNotExists } from '~/composables/user'
+import { isAnonymous, setDuckguessrId, setUserCookieIfNotExists } from '~/composables/user'
 
 export default defineComponent({
   setup() {
@@ -42,6 +42,7 @@ export default defineComponent({
       }).on('logged', (loggedInUser) => {
         console.log(loggedInUser)
         user.value = loggedInUser
+        setDuckguessrId(loggedInUser.id)
       })
     })
 
