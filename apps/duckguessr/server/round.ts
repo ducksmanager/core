@@ -18,7 +18,7 @@ export const getRoundWithScores = async (roundId: number) =>
   })
 
 export async function createGameRounds(gameId: number) {
-  const now = new Date().getTime()
+  const now = new Date(new Date().getTime() + 3000).getTime()
   return await prisma.$transaction(
     Array(numberOfRounds)
       .fill(0)
