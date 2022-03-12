@@ -2,7 +2,9 @@
 !/api
 !/assets
 !/components
+!/composables
 !/layouts
+!/locales
 !/middleware
 !/pages
 !/plugins
