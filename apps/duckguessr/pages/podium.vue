@@ -3,7 +3,7 @@
     <h3 class="text-center mb-5">Podium</h3>
     <div
       v-if="topPlayers.length"
-      class="d-flex flex-row justify-content-around"
+      class="d-flex flex-row justify-content-center"
       style="height: 350px"
     >
       <player-total-score
