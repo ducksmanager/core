@@ -75,9 +75,9 @@ const initRoundEnds = (socket: Socket, round: Index.round) => {
 }
 
 const initRoundStarts = (
+  socket: Socket,
   round: any,
-  game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>,
-  socket: Socket
+  game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
 ) => {
   doOnRoundStart(round, async (round: Index.round) => {
     socket.broadcast.emit('roundStarts', { ...round, personcode: null })
@@ -109,19 +109,25 @@ export const createGameSocket = (
     throw new Error('game is null')
   }
 
+  let areRoundsInitialized = false
+
   return io.of(`/game/${game!.id}`).on('connection', async (socket: Socket) => {
+    if (!areRoundsInitialized) {
+      areRoundsInitialized = true
+      const playableRounds = game!.rounds.filter(
+        ({ finished_at }) => !!finished_at && finished_at > new Date()
+      )
+
+      for (const round of playableRounds) {
+        initRoundStarts(socket, round, game)
+        initRoundEnds(socket, round)
+      }
+    }
+
     const user = await getUser(socket.handshake.auth.cookie)
+
     socket.on('guess', (roundId, personcode) => {
       onGuess.apply(socket, [user, roundId, personcode])
     })
-
-    const playableRounds = game!.rounds.filter(
-      ({ finished_at }) => !!finished_at && finished_at > new Date()
-    )
-
-    for (const round of playableRounds) {
-      initRoundStarts(round, game, socket)
-      initRoundEnds(socket, round)
-    }
   })
 }
