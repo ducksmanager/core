@@ -4,7 +4,7 @@
 
     <b-container class="my-4">
       <b-row class="align-items-center w-100">
-        <b-col cols="6" class="text-right">{{ t('Nombre de joueurs') }}</b-col>
+        <b-col cols="6" class="text-right">{{ t('Number of players') }}</b-col>
         <b-col cols="1" class="d-flex justify-content-center">
           {{ numberOfPlayers }}
         </b-col>
@@ -31,19 +31,19 @@
             <div>
               {{
                 t(
-                  "Si vous décidez d'ajouter un bot, le nombre de joueurs minimal est de 1 (vous seul(e) contre le bot)."
+                  'If you decide to add a bot, the minimum number of players is 1 (yourself against the bot).'
                 )
               }}
             </div>
-            <div>{{ t('Sinon, le nombre de joueurs minimal est de 2.') }}</div>
+            <div>{{ t('Otherwise, the minimum number of players is 2.') }}</div>
           </template>
           <div v-else>
-            {{ t('Les bots ne sont pas encore disponibles pour le mode de jeu "Artistes US"') }}
+            {{ t("Bots are not available yet for the 'US artists' game") }}
           </div>
         </b-col>
       </b-row>
     </b-container>
-    <b-button variant="success" @click="iAmReady()">{{ t("C'est parti !") }}</b-button>
+    <b-button variant="success" @click="iAmReady()">{{ t("Let's go!") }}</b-button>
   </b-container>
 </template>
 

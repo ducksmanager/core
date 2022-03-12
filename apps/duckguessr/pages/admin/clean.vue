@@ -1,10 +1,10 @@
 <template>
   <b-container v-if="!user" fluid class="p-4 bg-dark"> Loading... </b-container>
-  <b-container v-else-if="user.username !== 'brunoperel'" fluid class="p-4 bg-dark">
-    Only an administrator can clean images!
+  <b-container v-else-if="!isAllowed" fluid class="p-4 bg-dark">
+    {{ t('Only an administrator can clean images!') }}
   </b-container>
   <b-container v-else fluid class="p-4 bg-dark">
-    <b-row>
+    <b-row class="my-3">
       <b-col cols="12">
         <b-select v-model="selectedDataset" :options="datasets" />
         <div v-if="validatedAndRemainingImageCount">
@@ -21,16 +21,58 @@
       </b-col>
     </b-row>
     <template v-if="!selectedDataset" />
-    <b-row v-else-if="!entryurlsPendingMaintenanceWithUrls.length">
+    <b-alert v-else-if="!entryurlsPendingMaintenanceWithUrls.length" show variant="success">
       {{ t('All the images in this dataset have been validated.') }}
-    </b-row>
+    </b-alert>
     <template v-else>
       <b-row>
         <b-col cols="12">
-          {{ t("Click on the images that shouldn't be shown on Duckguessr:") }}
+          {{ t("Select the images that shouldn't be shown on Duckguessr:") }}
           <ul>
-            <li>{{ t('Images with no drawing inside') }}</li>
-            <li>{{ t("Images on which the cartoonist's name is written") }}</li>
+            <li>
+              {{ t('Images with no drawing inside') }}. Examples:
+              <b-table-simple hover small bordered responsive>
+                <b-tr>
+                  <b-td>
+                    <img
+                      src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2017/08/gr_mm_0721d_001.jpg"
+                    />
+                  </b-td>
+                  <b-td>
+                    <div>{{ t('The image contains only a text') }}</div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <img
+                      src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2019/09/it_cts_017dd_001.jpg"
+                    />
+                  </b-td>
+                  <b-td>
+                    <div>{{ t("The image doesn't contain a proper drawing") }}</div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <img
+                      src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2014/02/es_pd1_11i_001.jpg"
+                    />
+                  </b-td>
+                  <b-td>
+                    <div>
+                      {{
+                        t(
+                          "The image contains only a generic Disney drawing that's not specific to a story"
+                        )
+                      }}
+                    </div>
+                  </b-td>
+                </b-tr>
+              </b-table-simple>
+            </li>
+            <li>
+              {{ t("Images on which the cartoonist's name is written") }}
+            </li>
           </ul>
         </b-col>
         <b-col
@@ -79,6 +121,14 @@ export default {
 
     const user = ref(null as Index.player | null)
 
+    const isAllowed = computed(
+      () =>
+        user.value &&
+        ['brunoperel', 'Wizyx', 'remifanpicsou', 'Alex Puaud', 'GlxbltHugo', 'Picsou22'].includes(
+          user.value.username
+        )
+    )
+
     const decisions = computed(() => ({
       ok: { title: 'OK', variant: 'success' },
       no_drawing: { title: t("Image doesn't have a drawing"), variant: 'warning' },
@@ -101,7 +151,7 @@ export default {
       }).on('logged', async (loggedInUser) => {
         console.log(loggedInUser)
         user.value = loggedInUser
-        if (user.value?.username === 'brunoperel') {
+        if (isAllowed.value) {
           const data = await $axios.$get(`/api/admin/maintenance`)
 
           datasets.value = [
@@ -154,6 +204,7 @@ export default {
       datasets,
       decisions,
       user,
+      isAllowed,
       selectedDataset,
       entryurlsPendingMaintenanceWithUrls,
       validatedAndRemainingImageCount,
@@ -174,6 +225,23 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep table {
+  color: white !important;
+
+  tr {
+    td {
+      vertical-align: middle;
+
+      &:nth-child(1) {
+        text-align: center;
+      }
+
+      img {
+        height: 100px;
+      }
+    }
+  }
+}
 .col {
   padding: 10px 5px;
 
