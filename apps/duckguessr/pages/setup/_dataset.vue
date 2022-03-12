@@ -20,20 +20,26 @@
           <b-form-checkbox
             id="add-bot"
             v-model="addBot"
+            :disabled="!isBotAvailable"
             @input="
               numberOfPlayers = String(Math.max(1 + ($event ? 0 : 1), parseInt(numberOfPlayers)))
             "
           />
         </b-col>
         <b-col cols="5" class="d-flex justify-content-center flex-column small">
-          <div>
-            {{
-              t(
-                "Si vous décidez d'ajouter un bot, le nombre de joueurs minimal est de 1 (vous seul(e) contre le bot)."
-              )
-            }}
+          <template v-if="isBotAvailable">
+            <div>
+              {{
+                t(
+                  "Si vous décidez d'ajouter un bot, le nombre de joueurs minimal est de 1 (vous seul(e) contre le bot)."
+                )
+              }}
+            </div>
+            <div>{{ t('Sinon, le nombre de joueurs minimal est de 2.') }}</div>
+          </template>
+          <div v-else>
+            {{ t('Les bots ne sont pas encore disponibles pour le mode de jeu "Artistes US"') }}
           </div>
-          <div>{{ t('Sinon, le nombre de joueurs minimal est de 2.') }}</div>
         </b-col>
       </b-row>
     </b-container>
@@ -42,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter, useRoute, ref } from '@nuxtjs/composition-api'
+import { useRouter, useRoute, ref, computed } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
@@ -81,6 +87,8 @@ const iAmReady = () => {
 
 const numberOfPlayers = ref('2' as string)
 const addBot = ref(false as boolean)
+
+const isBotAvailable = computed(() => route.value.params.dataset !== 'us')
 </script>
 
 <style scoped lang="scss">
