@@ -1,6 +1,6 @@
 <template>
   <b-row class="m-0 flex-grow-1">
-    <b-col cols="5" class="d-flex p-2">
+    <b-col cols="5" class="d-flex p-2 align-items-center">
       <b-img center :src="url" />
     </b-col>
     <b-col cols="5">
