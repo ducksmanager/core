@@ -15,7 +15,7 @@
       </b-row>
     </div>
     <div v-if="timeBeforeNextRound" class="text-center">
-      <div>{{ t('Round {roundNumber} starts in...', { roundNumber }) }}</div>
+      <div>{{ t('Round {roundNumber} starts in...', { roundNumber: roundNumber + 1 }) }}</div>
       <circle-progress-bar :total="initialTimeBeforeNextRound" :remaining="timeBeforeNextRound" />
     </div>
   </b-modal>
