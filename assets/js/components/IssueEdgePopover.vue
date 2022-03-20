@@ -1,5 +1,9 @@
 <template>
-  <span>
+  <span
+    :id="`${edgeId}-wrapper`"
+    @mouseenter="$emit('mouseenter', $event)"
+    @mouseleave="$emit('mouseleave', $event)"
+  >
     <span :id="id">
       <slot />
     </span>
@@ -58,7 +62,7 @@ export default {
   components: {MedalProgress, BPopover, BButton},
   mixins: [l10nMixin],
   props: {
-    id: {
+    edgeId: {
       type: String,
       required: true
     },
@@ -71,6 +75,7 @@ export default {
       default: null
     }
   },
+emits: ['mouseenter', 'mouseleave'],
 
   data: () => ({
     contribution: 'Photographe'
@@ -79,6 +84,10 @@ export default {
   computed: {
     ...mapState(bookcase, ["isSharedBookcase"]),
     ...mapState(users, {allUserPoints: "points"}),
+
+    id() {
+      return `${this.edgeId}-popover`
+    },
 
     points() {
       return this.allUserPoints && this.allUserPoints[this.userId][this.contribution]

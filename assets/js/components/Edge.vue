@@ -1,8 +1,10 @@
 <template>
   <IssueEdgePopover
-    :id="`${id}-popover`"
+    :edge-id="id"
     :has-edge="existing"
     :extra-points="popularity"
+    @mouseenter="$emit('peek-edge')"
+    @mouseleave="$emit('unpeek-edge')"
   >
     <template #title>
       <Issue
@@ -14,7 +16,7 @@
     <div
       :id="id"
       ref="edge"
-      :class="{edge: true, visible: !invisible && (imageLoaded || spriteLoaded), [spriteClass]: true}"
+      :class="{edge: true, peeked, visible: !invisible && (imageLoaded || spriteLoaded), [spriteClass]: true}"
       :style="load && imageLoaded ? {
         backgroundImage:`url(${src})`,
         backgroundSize: `${width}px ${height}px`,
@@ -39,14 +41,6 @@
         @error="onImageError"
       >
     </div>
-    <img
-      class="cover-peek"
-      src="https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/webusers/webusers/2011/09/fr_mp_0324a_001.jpg"
-      :style="load && imageLoaded ? {
-        width: `272px`,
-        height: `${height}px`,
-      } : {}"
-    >
   </IssueEdgePopover>
 </template>
 
@@ -110,9 +104,13 @@ export default {
     highlighted: {
       type: Boolean,
       default: false
+    },
+    peeked: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['loaded', 'open-book'],
+  emits: ['loaded', 'open-book', 'peek-edge', 'unpeek-edge'],
 
   data: () => ({
     imageLoaded: false,
@@ -234,27 +232,9 @@ export default {
     z-index: 100;
   }
 
-  + .cover-peek {
-    position: absolute;
-    border: 1px solid black;
-    display: none;
-    transform-origin: left;
-    transform: rotateY(80deg) translateY(20px);
-  }
-
-  &:hover {
-    transform: rotateY(-30deg);
+  &.peeked {
+    transform: rotateY(-40deg);
     transform-origin: right;
-    + .cover-peek {
-      display: inline-block;
-    }
-    &::after {
-      display: none;
-    }
-  }
-
-  &[id="edge-337807"] {
-    //margin-left: 50px;
   }
 }
 
