@@ -183,11 +183,12 @@ export default {
       await this.loadEdges()
     },
   },
-  mounted() {
+  async mounted() {
     if (this.countryCode) {
       this.currentCountryCode = this.countryCode
     }
-    this.fetchCountryNames(this.$i18n.locale)
+    await this.fetchCountryNames(this.$i18n.locale)
+    await this.loadCatalog(false)
   },
   methods: {
     ...mapActions(coa, [
