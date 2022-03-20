@@ -186,12 +186,16 @@ export default {
     await this.loadPopularIssuesInCollection()
     await this.loadBookcase()
     await this.loadMostWantedEdges()
+    await this.loadCatalog(true)
     await this.fetchPublicationNames([
       ...new Set([
         ...this.bookcase.map(
           ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`
         ),
         ...this.mostWantedEdges.map(({ publicationCode }) => publicationCode),
+        ...Object.values(this.currentEdges).map(
+          ({ country, magazine }) => `${country}/${magazine}`
+        ),
       ]),
     ])
     this.isUploadableEdgesCarouselReady = true

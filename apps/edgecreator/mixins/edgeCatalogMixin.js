@@ -108,25 +108,24 @@ export default {
         }
       ).status
     },
-  },
 
-  async mounted() {
-    await this.fetchAllUsers()
-    this.username = this.$cookies.get('dm-user')
+    async loadCatalog(withDetails) {
+      if (this.isCatalogLoaded) {
+        return
+      }
+      const vm = this
+      let currentEdges = {}
+      const publishedSvgEdges = {}
 
-    const vm = this
-    let currentEdges = {}
-    const publishedSvgEdges = {}
+      for (const { status, apiUrl } of this.edgeCategories) {
+        const data = await this.$axios.$get(apiUrl)
+        currentEdges = data.reduce((acc, edgeData) => {
+          const edge = this.getEdgeFromApi(edgeData, status)
+          return { ...acc, [edge.issuecode]: edge }
+        }, currentEdges)
+      }
 
-    for (const { status, apiUrl } of this.edgeCategories) {
-      const data = await this.$axios.$get(apiUrl)
-      currentEdges = data.reduce((acc, edgeData) => {
-        const edge = this.getEdgeFromApi(edgeData, status)
-        return { ...acc, [edge.issuecode]: edge }
-      }, currentEdges)
-    }
-
-    this.$axios.$get('/fs/browseEdges').then(async (edges) => {
+      const edges = await this.$axios.$get('/fs/browseEdges')
       for (const edgeStatus in edges) {
         for (const fileName of edges[edgeStatus]) {
           const [, country, magazine, issuenumber] = fileName.match(
@@ -147,7 +146,7 @@ export default {
                 issuenumber,
                 v3: true,
               }
-            } else {
+            } else if (withDetails) {
               const { svgChildNodes } = await this.loadSvgFromString(
                 country,
                 magazine,
@@ -169,6 +168,14 @@ export default {
                 issuenumber,
                 designers,
                 photographers,
+              })
+            } else {
+              currentEdges[issuecode] = vm.getEdgeFromSvg({
+                country,
+                magazine,
+                issuenumber,
+                designers: [],
+                photographers: [],
               })
             }
           } catch (e) {
@@ -197,11 +204,13 @@ export default {
         this.addCurrentEdges(currentEdges)
       }
 
-      if (Object.keys(publishedSvgEdges).length) {
-        this.addPublishedEdges(publishedSvgEdges)
-      }
+      this.addPublishedEdges(publishedSvgEdges)
 
       this.isCatalogLoaded = true
-    })
+    },
+  },
+  async mounted() {
+    await this.fetchAllUsers()
+    this.username = this.$cookies.get('dm-user')
   },
 }

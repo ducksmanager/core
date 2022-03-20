@@ -178,8 +178,7 @@ export default {
                     }
                   } catch (e) {
                     onError(
-                      `Invalid step ${originalStepNumber} (${component}) : ${e},
-                      step will be ignored.`,
+                      `Invalid step ${originalStepNumber} (${component}) : ${e}, step will be ignored.`,
                       originalStepNumber
                     )
                     return null
