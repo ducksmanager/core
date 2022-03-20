@@ -99,7 +99,6 @@ emits: ['mouseenter', 'mouseleave'],
 <style scoped lang="scss">
 span {
   display: inline-block;
-  perspective: 30000px;
   transform-style: preserve-3d;
 }
 .has-no-edge {

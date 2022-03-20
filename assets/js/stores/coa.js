@@ -75,6 +75,10 @@ export const coa = defineStore('coa', {
       this.issueQuotations = { ...(this.issueQuotations || {}), ...issueQuotations };
     },
 
+    getIssueDetails(publicationCode, issueNumber) {
+      return this.issueDetails && this.issueDetails[`${publicationCode} ${issueNumber}`]
+    },
+
     async fetchCountryNames() {
       if (!this.isLoadingCountryNames && !this.countryNames) {
         this.isLoadingCountryNames = true;

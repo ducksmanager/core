@@ -215,6 +215,9 @@ export default {
   visibility: hidden;
   background-color: transparent;
   margin-top: 20px;
+  transform: rotateY(0deg);
+  transform-origin: right;
+  transition: transform 1s linear;
 
   &:not(.visible-book)::after {
     position: absolute;
@@ -234,7 +237,6 @@ export default {
 
   &.peeked {
     transform: rotateY(-40deg);
-    transform-origin: right;
   }
 }
 

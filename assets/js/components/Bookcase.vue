@@ -27,7 +27,7 @@
       :key="`edge-${edge.id}`"
       :invisible="currentEdgeOpened === edge"
       :highlighted="currentEdgeHighlighted === edge.id"
-      :peeked="peekedEdgeId === edge.id"
+      :peeked="peekedEdge && peekedEdge.id === edge.id"
       :publication-code="edge.publicationCode"
       :issue-number="edge.issueNumber"
       :issue-number-reference="edge.issueNumberReference"
@@ -38,29 +38,34 @@
       load
       @loaded="loadNextEdge"
       @open-book="$emit('open-book', edge)"
-      @peek-edge="peekedEdgeId = edge.id"
-      @unpeek-edge="peekedEdgeId = null"
+      @peek-edge="peekedEdge = edge"
+      @unpeek-edge="peekedEdge = null"
     />
     <img
-      v-if="peekedEdgeElement"
+      v-show="peekedCover"
       class="cover-peek"
       :class="{visible: !!peekedEdgeElement}"
-      src="https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/webusers/webusers/2011/09/fr_mp_0324a_001.jpg"
+      :src="cloudinaryBaseUrl + peekedCover"
       :style="peekedEdgeElement ? {
         top: `${peekedEdgeElement.offsetTop}px`,
         left: `${peekedEdgeElement.offsetLeft - 15 + peekedEdgeElement.clientWidth}px`,
         width: `${peekedEdgeElement.clientWidth * 10}px`,
         height: `${peekedEdgeElement.clientHeight - 25}px`,
       } : {}"
+      @load="({target}) => { coverRatio = target.naturalHeight/target.naturalWidth }"
     >
   </div>
 </template>
 <script>
 import Edge from "./Edge"
+import bookMixin from "../mixins/bookMixin";
+import { mapActions } from "pinia";
+import { coa } from "../stores/coa";
 
 export default {
   name: 'Bookcase',
   components: {Edge},
+  mixins: [bookMixin],
   props: {
     embedded: {
       type: Boolean,
@@ -96,12 +101,25 @@ export default {
   data: () => ({
     currentEdgeIndex: 0,
     edgesToLoad: [],
-    peekedEdgeId: null
+    peekedEdge: null,
+    peekedCover: null,
+    pages: []
   }),
 
   computed: {
     peekedEdgeElement() {
-      return this.peekedEdgeId && document.getElementById(`edge-${this.peekedEdgeId}-wrapper`)
+      return this.peekedEdge && document.getElementById(`edge-${this.peekedEdge.id}-wrapper`)
+    }
+  },
+
+  watch: {
+    async peekedEdge(edge) {
+      if (edge) {
+        let publicationCode = `${edge.countryCode}/${edge.magazineCode}`;
+        await this.loadBookPages(publicationCode, edge.issueNumber)
+        const issueDetails = this.getIssueDetails(publicationCode, edge.issueNumber)
+        this.peekedCover = issueDetails && issueDetails.entries && issueDetails.entries[0] ? issueDetails.entries[0].url : null
+      }
     }
   },
 
@@ -119,6 +137,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(coa, ['getIssueDetails']),
     loadNextEdge() {
       const nextEdge = this.sortedBookcase[++this.currentEdgeIndex];
       if (nextEdge) {
@@ -141,16 +160,14 @@ export default {
 
   .cover-peek {
     position: absolute;
-    visibility: hidden;
     margin-left: 15px;
     margin-top: 20px;
     border: 1px solid black;
     transform-origin: left;
-    transform: rotateY(0deg);
-    transition: all 1s linear;
+    transform: rotateY(90deg);
+    transition: transform 1s linear;
 
     &.visible {
-      visibility: visible;
       transform: rotateY(70deg);
     }
   }

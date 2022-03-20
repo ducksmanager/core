@@ -102,12 +102,13 @@
 </template>
 <script>
 import {PageFlip} from 'page-flip';
-import {mapActions, mapState} from "pinia";
+import { mapActions, mapState } from "pinia";
 import l10nMixin from "../mixins/l10nMixin";
 import Story from "./Story";
 import Issue from "./Issue";
 import {BCard, BTab, BTabs} from "bootstrap-vue";
 import { coa } from "../stores/coa";
+import bookMixin from "../mixins/bookMixin";
 
 const EDGES_BASE_URL = 'https://edges.ducksmanager.net/edges/';
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
@@ -115,7 +116,7 @@ const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 export default {
   name: "Book",
   components: {Issue, Story, BCard, BTabs, BTab},
-  mixins: [l10nMixin],
+  mixins: [l10nMixin, bookMixin],
 
   props: {
     publicationCode: {
@@ -130,12 +131,6 @@ export default {
   emits: ['close-book'],
 
   data: () => ({
-    cloudinaryBaseUrl: 'https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/',
-
-    edgeWidth: null,
-    coverHeight: null,
-    coverRatio: null,
-
     opening: false,
     opened: false,
     closing: false,
@@ -157,10 +152,6 @@ export default {
       return `${EDGES_BASE_URL}${this.publicationCode.replace('/', '/gen/')}.${this.issueNumber}.png`
     },
 
-    coverWidth() {
-      return this.coverRatio && this.coverHeight / this.coverRatio
-    },
-
     orientation() {
       return this.book && this.book.getOrientation()
     },
@@ -170,7 +161,7 @@ export default {
     },
 
     currentIssueDetails() {
-      return this.issueDetails && this.issueDetails[`${this.publicationCode} ${this.issueNumber}`]
+      return this.getIssueDetails(this.publicationCode, this.issueNumber)
     },
 
     pages() {
@@ -204,13 +195,6 @@ export default {
   },
 
   watch: {
-    coverWidth(newValue) {
-      const availableWidthPerPage = document.body.clientWidth / 2 - 15
-      if (newValue > availableWidthPerPage) {
-        this.edgeWidth /= newValue / availableWidthPerPage
-        this.coverHeight /= newValue / availableWidthPerPage
-      }
-    },
     isReadyToOpen: {
       immediate: true,
       handler(newValue) {
@@ -256,12 +240,12 @@ export default {
     publicationCode: {
       immediate: true,
       async handler() {
-        await this.loadBookPages()
+        await this.loadBookPages(this.publicationCode, this.issueNumber)
       }
     },
 
     async issueNumber() {
-      await this.loadBookPages()
+      await this.loadBookPages(this.publicationCode, this.issueNumber)
     },
 
     pagesWithUrl: {
@@ -283,14 +267,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(coa, ["fetchIssueUrls"]),
-
-    async loadBookPages() {
-      await this.fetchIssueUrls({
-        publicationCode: this.publicationCode,
-        issueNumber: this.issueNumber
-      });
-    },
+    ...mapActions(coa, ['getIssueDetails']),
 
     onEndOpenCloseTransition() {
       console.log('onEndOpenCloseTransition')
