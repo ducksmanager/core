@@ -31,19 +31,18 @@ export default async (req, res) => {
               },
               take: 60,
             }),
-            maintainedEntryurlsCount: await prisma.$queryRaw`
-              select decision, count(*) as 'count'
-              from dataset_entryurl de
-                     left join entryurl_details using (sitecode_url)
-              where dataset_id = ${dataset.id}
-              group by decision
-            `,
           })
         )
       } else {
         res.end(
           JSON.stringify({
-            datasets: await prisma.dataset.findMany(),
+            datasets: await prisma.$queryRaw`
+              select name, decision, count(*) as 'count'
+              from dataset
+              left join dataset_entryurl de on dataset.id = de.dataset_id
+              left join entryurl_details using (sitecode_url)
+              group by dataset_id, decision
+            `,
           })
         )
       }
