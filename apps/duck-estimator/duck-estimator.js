@@ -27,13 +27,14 @@ dbConnect().then(async () => {
   exec('sh bump-dump.sh', (error, stdout, stderr) => {
     if (error) {
       console.error(`error: ${error.message}`)
-      return
+      process.exit(1)
     }
     if (stderr) {
       console.error(`stderr: ${stderr}`)
-      return
+      process.exit(1)
     }
     console.log(`stdout: ${stdout}`)
+    process.exit(0)
   })
 
   await dbDisconnect()
