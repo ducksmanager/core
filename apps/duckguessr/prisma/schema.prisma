@@ -99,6 +99,8 @@ model entryurl_details {
   decision          entryurl_details_decision?
   personcode        String?                    @db.VarChar(79)
   dataset_entryurls dataset_entryurl[]
+
+  @@index([decision], map: "decision_index")
 }
 
 enum entryurl_details_decision {
