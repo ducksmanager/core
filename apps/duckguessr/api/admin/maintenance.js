@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 
 export default async (req, res) => {
   const query = (req._parsedOriginalUrl || { query: '' }).query || ''
-  const { dataset: datasetName } = query
+  const { dataset: datasetName, decisions } = query
     .split('&')
     .reduce((acc, value) => ({ ...acc, [value.split('=')[0]]: value.split('=')[1] }), {})
   switch (req.method) {
@@ -15,16 +15,27 @@ export default async (req, res) => {
             name: datasetName,
           },
         })
+        const conditions = decisions.split(',').reduce((acc, decision) => {
+          if (decision === 'null') {
+            decision = null
+          }
+          return [
+            ...acc,
+            {
+              dataset_id: dataset.id,
+              entryurl_details: {
+                is: {
+                  decision,
+                },
+              },
+            },
+          ]
+        }, [])
         res.end(
           JSON.stringify({
             entryurlsToMaintain: await prisma.dataset_entryurl.findMany({
               where: {
-                dataset_id: dataset.id,
-                entryurl_details: {
-                  is: {
-                    decision: null,
-                  },
-                },
+                OR: conditions,
               },
               include: {
                 entryurl_details: true,

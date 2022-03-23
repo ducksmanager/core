@@ -4,6 +4,57 @@
     {{ t('Only an administrator can clean images!') }}
   </b-container>
   <b-container v-else fluid class="p-4 bg-dark">
+    <b-row>
+      <b-col cols="12">
+        {{ t("Select the images that shouldn't be shown on Duckguessr:") }}
+        <ul>
+          <li>
+            {{ t('Images with no drawing inside') }}. Examples:
+            <b-table-simple hover small bordered responsive>
+              <b-tr>
+                <b-td>
+                  <img
+                    src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2017/08/gr_mm_0721d_001.jpg"
+                  />
+                </b-td>
+                <b-td>
+                  <div>{{ t('The image contains only a text') }}</div>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <img
+                    src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2019/09/it_cts_017dd_001.jpg"
+                  />
+                </b-td>
+                <b-td>
+                  <div>{{ t("The image doesn't contain a proper drawing") }}</div>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <img
+                    src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2014/02/es_pd1_11i_001.jpg"
+                  />
+                </b-td>
+                <b-td>
+                  <div>
+                    {{
+                      t(
+                        "The image contains only a generic Disney drawing that's not specific to a story"
+                      )
+                    }}
+                  </div>
+                </b-td>
+              </b-tr>
+            </b-table-simple>
+          </li>
+          <li>
+            {{ t("Images on which the cartoonist's name is written") }}
+          </li>
+        </ul>
+      </b-col>
+    </b-row>
     <b-row class="my-3">
       <b-col cols="12">
         <b-form-select v-model="selectedDataset" :options="datasets" :plain="false" />
@@ -20,86 +71,55 @@
         </div>
       </b-col>
     </b-row>
+
+    <b-row v-show="selectedDataset">
+      <b-col cols="12">
+        <b-button-group>
+          <b-button
+            v-for="(decision, id) in decisionsWithNonValidated"
+            :key="id"
+            :variant="decision.variant"
+            :pressed="decision.pressed"
+            @click="decision.pressed = !decision.pressed"
+          >
+            <b-icon-check v-if="decision.pressed" /><b-icon-x v-else />&nbsp;{{ decision.title }}
+          </b-button>
+        </b-button-group>
+      </b-col>
+    </b-row>
     <template v-if="!selectedDataset" />
     <div v-else-if="isLoading">Loading...</div>
-    <b-alert v-else-if="!entryurlsPendingMaintenanceWithUrls.length" show variant="success">
-      {{ t('All the images in this dataset have been validated.') }}
-    </b-alert>
-    <template v-else>
-      <b-row>
-        <b-col cols="12">
-          {{ t("Select the images that shouldn't be shown on Duckguessr:") }}
-          <ul>
-            <li>
-              {{ t('Images with no drawing inside') }}. Examples:
-              <b-table-simple hover small bordered responsive>
-                <b-tr>
-                  <b-td>
-                    <img
-                      src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2017/08/gr_mm_0721d_001.jpg"
-                    />
-                  </b-td>
-                  <b-td>
-                    <div>{{ t('The image contains only a text') }}</div>
-                  </b-td>
-                </b-tr>
-                <b-tr>
-                  <b-td>
-                    <img
-                      src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2019/09/it_cts_017dd_001.jpg"
-                    />
-                  </b-td>
-                  <b-td>
-                    <div>{{ t("The image doesn't contain a proper drawing") }}</div>
-                  </b-td>
-                </b-tr>
-                <b-tr>
-                  <b-td>
-                    <img
-                      src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2014/02/es_pd1_11i_001.jpg"
-                    />
-                  </b-td>
-                  <b-td>
-                    <div>
-                      {{
-                        t(
-                          "The image contains only a generic Disney drawing that's not specific to a story"
-                        )
-                      }}
-                    </div>
-                  </b-td>
-                </b-tr>
-              </b-table-simple>
-            </li>
-            <li>
-              {{ t("Images on which the cartoonist's name is written") }}
-            </li>
-          </ul>
-        </b-col>
-        <b-col
-          v-for="({ sitecode_url, url, decision }, index) in entryurlsPendingMaintenanceWithUrls"
-          :key="sitecode_url"
-          class="d-flex align-items-center justify-content-end flex-column"
-          col
-          cols="2"
-        >
-          <b-img thumbnail fluid :src="url" />
-          <b-button-group vertical size="sm">
-            <b-button
-              v-for="({ variant, title }, value) in decisions"
-              :key="`${sitecode_url}-${value}`"
-              :disabled="isLoading"
-              :variant="variant"
-              :pressed="decision === value"
-              @click="entryurlsPendingMaintenanceWithUrls[index].decision = value"
-            >
-              {{ title }}
-            </b-button>
-          </b-button-group>
-        </b-col>
-      </b-row>
-      <b-btn variant="success" @click="submitInvalidations()">OK</b-btn>
-    </template>
+    <b-row>
+      <b-col
+        v-for="({ sitecode_url, url, decision }, index) in entryurlsPendingMaintenanceWithUrls"
+        :key="sitecode_url"
+        class="d-flex align-items-center justify-content-end flex-column"
+        col
+        cols="2"
+      >
+        <b-img thumbnail fluid :src="url" />
+        <b-button-group vertical size="sm">
+          <b-button
+            v-for="({ variant, title }, id) in decisions"
+            :key="`${sitecode_url}-${id}`"
+            :disabled="isLoading"
+            :variant="variant"
+            :pressed="decision === id"
+            @click="entryurlsPendingMaintenanceWithUrls[index].decision = id"
+          >
+            {{ title }}
+          </b-button>
+        </b-button-group>
+      </b-col>
+    </b-row>
+    <b-btn
+      v-show="entryurlsPendingMaintenanceWithUrls.length"
+      variant="success"
+      :disabled="isLoading"
+      @click="submitInvalidations()"
+    >
+      OK
+    </b-btn>
   </b-container>
 </template>
 
@@ -108,6 +128,7 @@ import { computed, onMounted, ref, useContext, watch } from '@nuxtjs/composition
 import type Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
+import { BIconCheck, BIconX } from 'bootstrap-vue'
 import { setUserCookieIfNotExists } from '~/composables/user'
 
 interface DatasetWithDecisionCounts {
@@ -121,8 +142,18 @@ interface DatasetWithDecisionCounts {
   }
 }
 
+interface Decision {
+  variant: string
+  title: string
+  pressed: boolean
+}
+
 export default {
   name: 'Clean',
+  components: {
+    BIconCheck,
+    BIconX,
+  },
   setup() {
     const { $axios } = useContext()
     const { t } = useI18n()
@@ -144,18 +175,24 @@ export default {
         )
     )
 
-    const decisions = computed(() => ({
-      ok: { title: 'OK', variant: 'success' },
-      no_drawing: { title: t("Image doesn't have a drawing"), variant: 'warning' },
-      ...(/-ml$/.test(selectedDataset.value!)
-        ? {}
-        : {
-            shows_author: {
-              title: t('Image contains author'),
-              variant: 'warning',
-            },
-          }),
-    }))
+    const decisions: { [key: string]: Decision } = {
+      ok: { pressed: false, title: 'OK', variant: 'success' },
+      no_drawing: {
+        pressed: false,
+        title: t("Image doesn't have a drawing").toString(),
+        variant: 'warning',
+      },
+      shows_author: {
+        pressed: false,
+        title: t('Image contains author').toString(),
+        variant: 'warning',
+      },
+    }
+
+    const decisionsWithNonValidated = ref({
+      null: { pressed: true, title: t('Non-validated images').toString(), variant: 'secondary' },
+      ...decisions,
+    } as { [key: string]: Decision })
 
     const loadDatasets = async () => {
       const data = await $axios.$get(`/api/admin/maintenance`)
@@ -182,6 +219,7 @@ export default {
         ...Object.values(datasetsGroupedByDecision.value).map(
           ({ name, decisions }: DatasetWithDecisionCounts) => ({
             value: name,
+            disabled: (decisions.null || 0) === 0,
             text:
               name +
               ' (accepted: ' +
@@ -196,28 +234,19 @@ export default {
       ]
     }
 
-    onMounted(() => {
-      setUserCookieIfNotExists()
-      io(`${process.env.SOCKET_URL}/login`, {
-        auth: {
-          cookie: document.cookie,
-        },
-      }).on('logged', async (loggedInUser) => {
-        user.value = loggedInUser
-        if (isAllowed.value) {
-          await loadDatasets()
-        }
-      })
-    })
-
-    const loadImagesToMaintain = async (datasetName: string | null) => {
+    const loadImagesToMaintain = async (
+      datasetName: string | null,
+      decisionsWithNonValidated: { [key: string]: Decision }
+    ) => {
       if (!datasetName) {
         validatedAndRemainingImageCount.value = null
         return
       }
       isLoading.value = true
       const { entryurlsToMaintain } = await $axios.$get(
-        `/api/admin/maintenance?dataset=${datasetName}`
+        `/api/admin/maintenance?dataset=${datasetName}&decisions=${Object.keys(
+          decisionsWithNonValidated
+        ).filter((key) => decisionsWithNonValidated[key].pressed)}`
       )
       await loadDatasets()
       isLoading.value = false
@@ -238,16 +267,39 @@ export default {
     }
 
     watch(
+      () => decisionsWithNonValidated.value,
+      async (newValue) => {
+        await loadImagesToMaintain(selectedDataset.value, newValue)
+      },
+      { deep: true }
+    )
+
+    watch(
       () => selectedDataset.value,
       async (newValue) => {
-        await loadImagesToMaintain(newValue)
+        await loadImagesToMaintain(newValue, decisionsWithNonValidated.value)
       }
     )
+
+    onMounted(() => {
+      setUserCookieIfNotExists()
+      io(`${process.env.SOCKET_URL}/login`, {
+        auth: {
+          cookie: document.cookie,
+        },
+      }).on('logged', async (loggedInUser) => {
+        user.value = loggedInUser
+        if (isAllowed.value) {
+          await loadDatasets()
+        }
+      })
+    })
 
     return {
       t,
       datasets,
       decisions,
+      decisionsWithNonValidated,
       user,
       isAllowed,
       isLoading,
@@ -259,7 +311,7 @@ export default {
         await $axios.$post(`/api/admin/maintenance`, {
           entryurlsPendingMaintenance: entryurlsPendingMaintenanceWithUrls.value,
         })
-        await loadImagesToMaintain(selectedDataset.value)
+        await loadImagesToMaintain(selectedDataset.value, decisionsWithNonValidated.value)
         isLoading.value = false
       },
     }
