@@ -31,7 +31,7 @@ dbConnect().then(async () => {
     }
     if (stderr) {
       console.error(`stderr: ${stderr}`)
-      process.exit(1)
+      process.exit(0)
     }
     console.log(`stdout: ${stdout}`)
     process.exit(0)
