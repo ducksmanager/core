@@ -3,13 +3,22 @@ const prisma = new PrismaClient()
 
 export default async (req, res) => {
   const query = (req._parsedOriginalUrl || { query: '' }).query || ''
-  const { dataset: datasetName, decisions } = query
+  const {
+    dataset: datasetName,
+    decisions,
+    offset,
+  } = query
     .split('&')
     .reduce((acc, value) => ({ ...acc, [value.split('=')[0]]: value.split('=')[1] }), {})
   switch (req.method) {
     case 'GET': {
       res.writeHeader(200, { 'Content-Type': 'application/json' })
       if (datasetName) {
+        if (!decisions) {
+          res.writeHeader(400, { 'Content-Type': 'application/text' })
+          res.end()
+          return
+        }
         const dataset = await prisma.dataset.findUnique({
           where: {
             name: datasetName,
@@ -41,6 +50,7 @@ export default async (req, res) => {
                 entryurl_details: true,
               },
               take: 60,
+              skip: parseInt(offset),
             }),
           })
         )

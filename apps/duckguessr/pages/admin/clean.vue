@@ -89,29 +89,39 @@
     </b-row>
     <template v-if="!selectedDataset" />
     <div v-else-if="isLoading">Loading...</div>
-    <b-row>
-      <b-col
-        v-for="({ sitecode_url, url, decision }, index) in entryurlsPendingMaintenanceWithUrls"
-        :key="sitecode_url"
-        class="d-flex align-items-center justify-content-end flex-column"
-        col
-        cols="2"
-      >
-        <b-img thumbnail fluid :src="url" />
-        <b-button-group vertical size="sm">
-          <b-button
-            v-for="({ variant, title }, id) in decisions"
-            :key="`${sitecode_url}-${id}`"
-            :disabled="isLoading"
-            :variant="variant"
-            :pressed="decision === id"
-            @click="entryurlsPendingMaintenanceWithUrls[index].decision = id"
-          >
-            {{ title }}
-          </b-button>
-        </b-button-group>
-      </b-col>
-    </b-row>
+    <template v-else>
+      <b-row>
+        <b-pagination
+          v-if="totalRows"
+          v-model="currentPage"
+          :total-rows="totalRows"
+          :per-page="rowsPerPage"
+        />
+      </b-row>
+      <b-row>
+        <b-col
+          v-for="({ sitecode_url, url, decision }, index) in entryurlsPendingMaintenanceWithUrls"
+          :key="sitecode_url"
+          class="d-flex align-items-center justify-content-end flex-column"
+          col
+          cols="2"
+        >
+          <b-img thumbnail fluid :src="url" />
+          <b-button-group vertical size="sm">
+            <b-button
+              v-for="({ variant, title }, id) in decisions"
+              :key="`${sitecode_url}-${id}`"
+              :disabled="isLoading"
+              :variant="variant"
+              :pressed="decision === id"
+              @click="entryurlsPendingMaintenanceWithUrls[index].decision = id"
+            >
+              {{ title }}
+            </b-button>
+          </b-button-group>
+        </b-col>
+      </b-row>
+    </template>
     <b-btn
       v-show="entryurlsPendingMaintenanceWithUrls.length"
       variant="success"
@@ -128,7 +138,7 @@ import { computed, onMounted, ref, useContext, watch } from '@nuxtjs/composition
 import type Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
-import { BIconCheck, BIconX } from 'bootstrap-vue'
+import { BIconCheck, BIconX, BPagination } from 'bootstrap-vue'
 import { setUserCookieIfNotExists } from '~/composables/user'
 
 interface DatasetWithDecisionCounts {
@@ -153,6 +163,7 @@ export default {
   components: {
     BIconCheck,
     BIconX,
+    BPagination,
   },
   setup() {
     const { $axios } = useContext()
@@ -163,7 +174,11 @@ export default {
     const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
     const validatedAndRemainingImageCount = ref(null as any)
     const selectedDataset = ref(null as string | null)
+
     const isLoading = ref(false as boolean)
+    const currentPage = ref(1 as number)
+    const totalRows = ref(10000 as number | null)
+    const rowsPerPage = 60
 
     const user = ref(null as Index.player | null)
 
@@ -236,18 +251,23 @@ export default {
 
     const loadImagesToMaintain = async (
       datasetName: string | null,
-      decisionsWithNonValidated: { [key: string]: Decision }
+      decisionsWithNonValidated: { [key: string]: Decision },
+      offset: number
     ) => {
       if (!datasetName) {
         validatedAndRemainingImageCount.value = null
         return
       }
       isLoading.value = true
-      const { entryurlsToMaintain } = await $axios.$get(
-        `/api/admin/maintenance?dataset=${datasetName}&decisions=${Object.keys(
-          decisionsWithNonValidated
-        ).filter((key) => decisionsWithNonValidated[key].pressed)}`
-      )
+      const { entryurlsToMaintain } = await $axios
+        .$get(
+          `/api/admin/maintenance?dataset=${datasetName}&offset=${offset}&decisions=${Object.keys(
+            decisionsWithNonValidated
+          ).filter((key) => decisionsWithNonValidated[key].pressed)}`
+        )
+        .catch(() => {
+          isLoading.value = false
+        })
       await loadDatasets()
       isLoading.value = false
       entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map((data: any) => ({
@@ -269,7 +289,11 @@ export default {
     watch(
       () => decisionsWithNonValidated.value,
       async (newValue) => {
-        await loadImagesToMaintain(selectedDataset.value, newValue)
+        await loadImagesToMaintain(
+          selectedDataset.value,
+          newValue,
+          (currentPage.value - 1) * rowsPerPage
+        )
       },
       { deep: true }
     )
@@ -277,7 +301,22 @@ export default {
     watch(
       () => selectedDataset.value,
       async (newValue) => {
-        await loadImagesToMaintain(newValue, decisionsWithNonValidated.value)
+        await loadImagesToMaintain(
+          newValue,
+          decisionsWithNonValidated.value,
+          (currentPage.value - 1) * rowsPerPage
+        )
+      }
+    )
+
+    watch(
+      () => currentPage.value,
+      async (newValue) => {
+        await loadImagesToMaintain(
+          selectedDataset.value,
+          decisionsWithNonValidated.value,
+          (newValue - 1) * rowsPerPage
+        )
       }
     )
 
@@ -297,6 +336,9 @@ export default {
 
     return {
       t,
+      currentPage,
+      totalRows,
+      rowsPerPage,
       datasets,
       decisions,
       decisionsWithNonValidated,
@@ -311,7 +353,11 @@ export default {
         await $axios.$post(`/api/admin/maintenance`, {
           entryurlsPendingMaintenance: entryurlsPendingMaintenanceWithUrls.value,
         })
-        await loadImagesToMaintain(selectedDataset.value, decisionsWithNonValidated.value)
+        await loadImagesToMaintain(
+          selectedDataset.value,
+          decisionsWithNonValidated.value,
+          currentPage.value - 1
+        )
         isLoading.value = false
       },
     }
