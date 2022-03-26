@@ -1,5 +1,5 @@
 <template>
-  <b-row class="h-100 align-items-center m-0 flex-grow-1">
+  <b-row class="align-items-center m-0 flex-grow-1">
     <b-col cols="12" class="text-center d-md-none">
       <progress-bar :available-time="availableTime" :remaining-time="remainingTime" />
     </b-col>

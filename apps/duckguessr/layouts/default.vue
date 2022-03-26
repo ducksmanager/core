@@ -1,17 +1,9 @@
 <template>
   <div id="app">
-    <div id="menu" class="position-fixed d-flex flex-column align-items-center">
-      <div id="medals-and-login" class="pb-3">
-        <player-info v-if="user" :username="user.username" />
-      </div>
-      <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
-    </div>
-    <div id="logo-zone" class="p-4 d-flex align-items-center flex-column align-items-center">
-      <a href="/"><b-img src="/logo.png" height="70" /></a>
-      <small>by DucksManager</small>
-    </div>
-    <div v-if="!user">Loading...</div>
+    <left-menu :user="user" />
+    <banner />
     <div id="main" class="d-flex justify-content-center flex-column">
+      <div v-if="!user">Loading...</div>
       <b-row v-if="isAnonymous === true" class="justify-content-center">
         <b-alert show variant="warning">
           You are not connected. You can still play but you won't get any medals.
@@ -28,8 +20,11 @@ import { defineComponent } from '@vue/runtime-dom'
 import { io } from 'socket.io-client'
 import Index from '@prisma/client'
 import { isAnonymous, setDuckguessrId, setUserCookieIfNotExists } from '~/composables/user'
+import LeftMenu from '~/layouts/LeftMenu.vue'
+import Banner from '~/layouts/Banner.vue'
 
 export default defineComponent({
+  components: { Banner, LeftMenu },
   setup() {
     const user = ref(null as Index.player | null)
 
@@ -68,7 +63,6 @@ html {
 
   body {
     height: 100vh;
-    padding: 0 0 0 320px;
     background-color: #3d4b5f !important;
 
     &.sb-main-padded {
@@ -82,6 +76,11 @@ html {
       height: 100% !important;
     }
 
+    #root {
+      display: flex;
+      flex-direction: column;
+    }
+
     #app,
     #root {
       color: white;
@@ -92,19 +91,6 @@ html {
         text-decoration: none;
       }
 
-      #menu {
-        top: 0;
-        left: 0;
-        width: 325px;
-        height: 100%;
-        border-right: 1px solid #2e353d;
-
-        #medals-and-login {
-          width: 100%;
-          border-bottom: 1px solid #23282e;
-        }
-      }
-
       #logo-zone {
         a {
           border-bottom: 0;
@@ -112,9 +98,14 @@ html {
       }
 
       #main {
+        height: 100%;
         min-height: calc(100vh - 140px);
-        padding: 0 20px 20px 20px;
+        padding: 120px 20px 20px 20px;
       }
+    }
+
+    @media (min-width: 767px) {
+      padding: 0 0 0 320px;
     }
   }
 }
