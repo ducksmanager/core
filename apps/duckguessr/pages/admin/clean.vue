@@ -234,7 +234,6 @@ export default {
         ...Object.values(datasetsGroupedByDecision.value).map(
           ({ name, decisions }: DatasetWithDecisionCounts) => ({
             value: name,
-            disabled: (decisions.null || 0) === 0,
             text:
               name +
               ' (accepted: ' +
