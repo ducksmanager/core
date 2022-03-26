@@ -1,10 +1,13 @@
 <template>
-  <b-row class="m-0 flex-grow-1">
-    <b-col cols="5" class="d-flex p-2 align-items-center">
+  <b-row class="h-100 align-items-center m-0 flex-grow-1">
+    <b-col cols="12" class="text-center d-md-none">
+      <progress-bar :available-time="availableTime" :remaining-time="remainingTime" />
+    </b-col>
+    <b-col id="image-to-guess" cols="12" md="5" class="d-flex p-2 align-items-center">
       <b-img center :src="url" />
     </b-col>
-    <b-col cols="5">
-      <b-row align-v="center" style="height: 50px">
+    <b-col id="author-list-wrapper" cols="12" sm="5">
+      <b-row align-v="center" style="height: 50px" class="d-none d-md-block">
         <b-col class="text-center">
           <progress-bar :available-time="availableTime" :remaining-time="remainingTime" />
         </b-col>
@@ -19,7 +22,7 @@
         />
       </b-row>
     </b-col>
-    <b-col cols="2">
+    <b-col id="round-scores" cols="2" class="d-none d-md-block">
       <div class="m-1 p-1 border overflow-auto">
         <h3>Round {{ currentRoundNumber }}</h3>
         <template v-for="score in currentRoundScores">
@@ -63,10 +66,35 @@ const getUsername = (playerId: number) => {
 const scoreToVariant = useScoreToVariant
 </script>
 <style lang="scss">
+#image-to-guess {
+  @media (max-width: 767px) {
+    height: calc(50% - 50px);
+  }
+
+  img {
+    max-height: 100%;
+  }
+}
+#author-list-wrapper {
+  height: 100%;
+  @media (max-width: 767px) {
+    height: calc(50% - 50px);
+  }
+}
+
 #author-list {
   height: calc(100% - 50px);
+  @media (max-width: 767px) {
+    height: 100%;
+  }
 
   .author-image {
+    height: 100%;
+  }
+}
+
+#round-scores {
+  @media (min-width: 767px) {
     height: 100%;
   }
 }

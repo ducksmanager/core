@@ -18,7 +18,7 @@
     <b-row align-h="center">
       <b-col>
         <b-row class="justify-content-center">
-          <b-col cols="6">
+          <b-col cols="12" md="6" class="my-3">
             <input
               type="text"
               class="text-center"

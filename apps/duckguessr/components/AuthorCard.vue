@@ -63,6 +63,10 @@ export default defineComponent({
   border-radius: 5px;
   pointer-events: none;
 
+  @media (max-width: 767px) {
+    font-size: 10px;
+  }
+
   .author-image {
     background-size: cover;
     background-position: center;
