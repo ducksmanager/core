@@ -20,11 +20,10 @@ import { defineComponent } from '@vue/runtime-dom'
 import { io } from 'socket.io-client'
 import Index from '@prisma/client'
 import { isAnonymous, setDuckguessrId, setUserCookieIfNotExists } from '~/composables/user'
-import LeftMenu from '~/layouts/LeftMenu.vue'
 import Banner from '~/layouts/Banner.vue'
 
 export default defineComponent({
-  components: { Banner, LeftMenu },
+  components: { Banner },
   setup() {
     const user = ref(null as Index.player | null)
 
