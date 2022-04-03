@@ -6,10 +6,10 @@
     :variant="alertVariant"
     class="d-flex flex-row p-1 align-items-center justify-content-between"
   >
-    <b-col cols="3">
+    <b-col cols="4" class="px-0">
       <player-info :username="player.username" />
     </b-col>
-    <b-col cols="9">
+    <b-col cols="8">
       <div class="text-center">{{ score.score_type_name }}</div>
     </b-col>
   </b-alert>

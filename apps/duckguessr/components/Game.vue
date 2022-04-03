@@ -6,7 +6,7 @@
     <b-col id="image-to-guess" cols="12" md="5" class="d-flex p-2 align-items-center">
       <b-img center :src="url" />
     </b-col>
-    <b-col id="author-list-wrapper" cols="12" sm="5">
+    <b-col id="author-list-wrapper" cols="12" md="5">
       <b-row align-v="center" style="height: 50px" class="d-none d-md-block">
         <b-col class="text-center">
           <progress-bar :available-time="availableTime" :remaining-time="remainingTime" />
