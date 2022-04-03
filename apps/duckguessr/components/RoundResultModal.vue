@@ -1,5 +1,5 @@
 <template>
-  <b-modal visible :body-bg-variant="status" hide-footer hide-header-close>
+  <b-modal visible :body-bg-variant="status" hide-footer hide-header-close no-close-on-backdrop>
     <template #modal-title> Round {{ roundNumber }} </template>
     <div v-if="status === 'success'">
       <div class="font-weight-bold">{{ t('Correct!') }}</div>
