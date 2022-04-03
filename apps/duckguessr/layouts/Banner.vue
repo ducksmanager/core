@@ -5,8 +5,8 @@
   >
     <a href="/">
       <b-img src="/logo.png" />
+      <div class="small">by DucksManager</div>
     </a>
-    <small>by DucksManager</small>
   </div>
 </template>
 <script lang="ts">

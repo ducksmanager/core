@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <left-menu :user="user" />
     <banner />
+    <duckguessr-menu :user="user" />
     <div id="main" class="d-flex justify-content-center flex-column">
       <div v-if="!user">Loading...</div>
       <b-row v-if="isAnonymous === true" class="justify-content-center">
@@ -21,9 +21,10 @@ import { io } from 'socket.io-client'
 import Index from '@prisma/client'
 import { isAnonymous, setDuckguessrId, setUserCookieIfNotExists } from '~/composables/user'
 import Banner from '~/layouts/Banner.vue'
+import DuckguessrMenu from '~/layouts/DuckguessrMenu.vue'
 
 export default defineComponent({
-  components: { Banner },
+  components: { Banner, DuckguessrMenu },
   setup() {
     const user = ref(null as Index.player | null)
 
@@ -100,6 +101,10 @@ html {
         height: 100%;
         min-height: calc(100vh - 140px);
         padding: 120px 20px 20px 20px;
+
+        @media (max-width: 767px) {
+          padding-top: 200px;
+        }
       }
     }
 
