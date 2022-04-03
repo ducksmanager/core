@@ -2,7 +2,7 @@
   <div>
     <h3>Rounds</h3>
     <b-container>
-      <b-row>
+      <b-row class="justify-content-center">
         <RoundResult
           v-for="round in scoresWithPersonUrls"
           :key="`round-${round.round_number}`"
@@ -39,10 +39,10 @@
       </template>
       <template #cell(totalScore)="{ value: totalScore }"> {{ totalScore }} points </template>
       <template #cell()="{ value: playerRoundScores }">
-        <pre>{{ JSON.stringify(playerRoundScores) }}</pre>
         <round-score
           v-for="score in playerRoundScores"
           :key="`round-${score.round_id}-player-${score.player_id}`"
+          class="text-center"
           :players="players.map(({ player }) => player)"
           :score="score"
         />
@@ -118,15 +118,13 @@ export default defineComponent({
           )
         return {
           playerId,
-          getPlayer: (playerId: number): Index.player =>
-            players.find(({ id }) => id === playerId)!.player,
           ...playerScores,
           totalScore: Object.values(playerScores).reduce(
             (accTotalScore: number, roundScores) =>
               accTotalScore +
-              Object.values(roundScores).reduce(
+              Object.values(roundScores || {}).reduce(
                 (accTotalRoundScore: number, { score: roundScore, speedBonus: roundSpeedBonus }) =>
-                  accTotalRoundScore + roundScore + roundSpeedBonus,
+                  accTotalRoundScore + roundScore + (roundSpeedBonus || 0),
                 0
               ),
             0

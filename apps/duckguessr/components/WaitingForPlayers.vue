@@ -46,7 +46,6 @@ const { t } = useI18n()
 
 <style scoped lang="scss">
 .card {
-  cursor: pointer;
   color: black;
 
   &.player {
