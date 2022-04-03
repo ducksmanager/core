@@ -39,12 +39,12 @@
       </template>
       <template #cell(totalScore)="{ value: totalScore }"> {{ totalScore }} points </template>
       <template #cell()="{ value: playerRoundScores }">
+        <pre>{{ JSON.stringify(playerRoundScores) }}</pre>
         <round-score
-          v-for="({ score, speedBonus }, score_type_name) in playerRoundScores"
-          :key="score_type_name"
+          v-for="score in playerRoundScores"
+          :key="`round-${score.round_id}-player-${score.player_id}`"
+          :players="players.map(({ player }) => player)"
           :score="score"
-          :score-type-name="score_type_name"
-          :speed-bonus="speedBonus"
         />
       </template>
     </b-table>
@@ -118,6 +118,8 @@ export default defineComponent({
           )
         return {
           playerId,
+          getPlayer: (playerId: number): Index.player =>
+            players.find(({ id }) => id === playerId)!.player,
           ...playerScores,
           totalScore: Object.values(playerScores).reduce(
             (accTotalScore: number, roundScores) =>

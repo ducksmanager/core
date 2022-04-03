@@ -25,17 +25,13 @@
     <b-col id="round-scores" cols="2" class="d-none d-md-block">
       <div class="m-1 p-1 border overflow-auto">
         <h3>Round {{ currentRoundNumber }}</h3>
-        <template v-for="score in currentRoundScores">
-          <b-alert
-            :key="`score-${score.player_id}`"
-            show
-            :variant="scoreToVariant(score)"
-            class="d-flex flex-row p-1 align-items-center justify-content-between"
-          >
-            <player-info :username="getUsername(score.player_id)" />
-            <div class="text-center">{{ score.score_type_name }}</div>
-          </b-alert>
-        </template>
+        <round-score
+          v-for="score in currentRoundScores"
+          :key="`score-${score.player_id}`"
+          in-game
+          :players="players"
+          :score="score"
+        />
       </div>
     </b-col>
   </b-row>
@@ -43,7 +39,6 @@
 <script lang="ts" setup>
 import Index from '@prisma/client'
 import AuthorCard from '~/components/AuthorCard.vue'
-import { useScoreToVariant } from '~/composables/use-score-to-variant'
 import { Author } from '~/types/roundWithScoresAndAuthor'
 
 defineEmits(['select-author'])
@@ -58,12 +53,6 @@ const { players } = defineProps<{
   remainingTime: number
   url: string
 }>()
-
-const getUsername = (playerId: number) => {
-  return players.find(({ id }) => id === playerId)?.username || '?'
-}
-
-const scoreToVariant = useScoreToVariant
 </script>
 <style lang="scss">
 #image-to-guess {
