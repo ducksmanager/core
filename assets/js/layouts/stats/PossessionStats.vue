@@ -24,21 +24,21 @@ export default {
   }),
 
   computed: {
-    ...mapState(collection, ["collection", "totalPerPublication"]),
+    ...mapState(collection, ["collection", "totalPerPublicationUniqueIssueNumbers"]),
     ...mapState(coa, ["countryNames", "issueCounts", "publicationNames"]),
 
     labels() {
-      return Object.keys(this.totalPerPublication)
+      return Object.keys(this.totalPerPublicationUniqueIssueNumbers)
     },
 
     values() {
-      if (!(this.totalPerPublication && this.issueCounts && this.countryNames)) {
+      if (!(this.totalPerPublicationUniqueIssueNumbers && this.issueCounts && this.countryNames)) {
         return null
       }
       const vm = this
-      let possessedIssues = Object.values(this.totalPerPublication);
-      let missingIssues = Object.keys(this.totalPerPublication)
-        .map(publicationCode => vm.issueCounts[publicationCode] - this.totalPerPublication[publicationCode]);
+      let possessedIssues = Object.values(this.totalPerPublicationUniqueIssueNumbers);
+      let missingIssues = Object.keys(this.totalPerPublicationUniqueIssueNumbers)
+        .map(publicationCode => vm.issueCounts[publicationCode] - this.totalPerPublicationUniqueIssueNumbers[publicationCode]);
       if (this.unit === 'percentage') {
         possessedIssues = possessedIssues.map((possessedCount, key) =>
           Math.round(possessedCount * (100 / (possessedCount + missingIssues[key]))))
@@ -52,7 +52,7 @@ export default {
   },
 
   watch: {
-    totalPerPublication: {
+    totalPerPublicationUniqueIssueNumbers: {
       immediate: true,
       async handler(newValue) {
         if (newValue) {
