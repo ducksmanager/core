@@ -39,7 +39,7 @@ jobs:
           push: true
           target: runtime-nuxt
           tags: |
-            bperel/duckguessr-web:latest
+            ghcr.io/bperel/duckguessr-web:latest
 
       - name: Build and push socket runtime
         uses: docker/build-push-action@v2
@@ -49,7 +49,7 @@ jobs:
           push: true
           target: runtime-socketio
           tags: |
-            bperel/duckguessr-socketio:latest
+            ghcr.io/bperel/duckguessr-socketio:latest
 
       - name: Recreate container
         uses: appleboy/ssh-action@v0.1.4
