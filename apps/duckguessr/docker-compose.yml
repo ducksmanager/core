@@ -2,9 +2,7 @@ version: '3.4'
 services:
   web:
     container_name: duckguessr
-    build:
-      context: .
-      target: runtime-nuxt
+    image: bperel/duckguessr-web:latest
     restart: always
     networks:
       workspace_global-front-network:
@@ -15,9 +13,7 @@ services:
       ducksmanager-flex_dm-network:
   socketio:
     container_name: duckguessr-socketio
-    build:
-      context: .
-      target: runtime-socketio
+    image: bperel/duckguessr-socketio:latest
     restart: always
     volumes:
       - ./server/datasets:/usr/src/nuxt-app/server/datasets
