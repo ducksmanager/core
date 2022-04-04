@@ -17,7 +17,7 @@ services:
     restart: always
     volumes:
       - ./server/datasets:/usr/src/nuxt-app/server/datasets
-      - ducksmanager_dm_sessions:/tmp/sessions
+      - dm_sessions:/tmp/sessions
     networks:
       workspace_global-front-network:
         aliases:
@@ -51,5 +51,5 @@ networks:
 
 volumes:
   db:
-  ducksmanager_dm_sessions:
+  dm_sessions:
     external: true
