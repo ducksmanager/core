@@ -1,7 +1,7 @@
 FROM php:8.0-fpm AS app
 MAINTAINER Bruno Perel
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
  && apt-get install -y \
       git wget unzip nano \
       nodejs \
