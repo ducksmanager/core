@@ -43,6 +43,7 @@ $navbar-height: 40px;
     right: 0;
     left: initial;
     width: 300px;
+    height: auto;
     padding: 12px;
     z-index: 1;
 
