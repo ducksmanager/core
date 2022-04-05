@@ -18,8 +18,8 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager-flex/.env.prod
-          target: .env.prod
+          source: /home/bperel/workspace/DucksManager-flex/.env.prod.local
+          target: .env.prod.local
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
