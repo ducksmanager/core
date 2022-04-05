@@ -56,15 +56,18 @@ export default {
   },
 
   watch: {
-    async numberOfOngoingAjaxCalls(newValue) {
-      const vm = this
-      if (newValue === 0) {
-        setTimeout(async () => {
-          if (!vm.hasFreshEvents && vm.numberOfOngoingAjaxCalls === 0) { // Still no ongoing call after 1 second
-            await this.fetchEventsAndAssociatedData(true)
-            this.hasFreshEvents = true
-          }
-        }, 1000)
+    numberOfOngoingAjaxCalls: {
+      immediate: true,
+      handler: async function (newValue) {
+        const vm = this
+        if (newValue === 0 || newValue === null) {
+          setTimeout(async () => {
+            if (!vm.hasFreshEvents && (vm.numberOfOngoingAjaxCalls === 0 || vm.numberOfOngoingAjaxCalls === null)) { // Still no ongoing call after 1 second
+              await this.fetchEventsAndAssociatedData(true)
+              this.hasFreshEvents = true
+            }
+          }, 1000)
+        }
       }
     }
   },
