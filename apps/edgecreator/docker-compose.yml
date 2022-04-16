@@ -2,8 +2,7 @@ version: '2'
 services:
   web:
     container_name: edgecreator-v3
-    build:
-      context: .
+    image: ghcr.io/bperel/edgecreator
     volumes:
       - '../edges:/home/edges'
     ports:
