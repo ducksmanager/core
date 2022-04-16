@@ -9,6 +9,26 @@ export default {
     ...mapState(edgeCatalog, ['currentEdges', 'publishedEdges']),
     ...mapState(coa, ['publicationNames']),
     ...mapWritableState(user, ['allUsers', 'username']),
+    edgesByStatus() {
+      const edgesByStatus = Object.values(this.edgeCategories).reduce(
+        (acc, { status }) => ({
+          ...acc,
+          [status]: {},
+        }),
+        {}
+      )
+      if (!this.currentEdges) {
+        return edgesByStatus
+      }
+      return Object.values(this.currentEdges).reduce((acc, edge) => {
+        const publicationcode = `${edge.country}/${edge.magazine}`
+        if (!acc[edge.status][publicationcode]) {
+          acc[edge.status][publicationcode] = []
+        }
+        acc[edge.status][publicationcode].push(edge)
+        return acc
+      }, edgesByStatus)
+    },
   },
   mixins: [svgUtilsMixin],
 
@@ -87,9 +107,10 @@ export default {
         ),
       }
     },
-    getEdgesByStatus(status) {
-      return Object.values(this.currentEdges).filter(
-        ({ status: edgeStatus }) => edgeStatus === status
+    canEditEdge(status) {
+      return (
+        !this.$gates.hasRole('display') &&
+        (this.$gates.hasRole('admin') || status !== 'ongoing by another user')
       )
     },
     getEdgeStatus({ country, magazine, issuenumber }) {

@@ -65,57 +65,72 @@
       <template v-for="{ status, l10n } in edgeCategories">
         <h3 :key="`${status}-title`">{{ $t(l10n) }}</h3>
 
-        <b-container :key="status">
-          <b-row v-if="getEdgesByStatus(status).length">
-            <b-col
-              v-for="(edge, i) in getEdgesByStatus(status)"
-              :key="`${status}-${i}`"
-              align-self="center"
-              cols="12"
-              md="6"
-              lg="3"
-            >
-              <b-card class="text-center">
-                <b-link
-                  :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
-                  :disabled="
-                    $gates.hasRole('display') ||
-                    (!$gates.hasRole('admin') &&
-                      status === 'ongoing by another user')
-                  "
-                >
-                  <b-card-text
-                    v-if="publicationNames[`${edge.country}/${edge.magazine}`]"
+        <b-container
+          v-if="Object.keys(edgesByStatus[status]).length"
+          :key="status"
+        >
+          <template v-for="(edges, publicationcode) in edgesByStatus[status]">
+            <b-row :key="`${status}-${publicationcode}-title`">
+              <b-link
+                class="mx-3"
+                :to="`edit/${publicationcode} ${edges
+                  .map((edge) => edge.issuenumber)
+                  .join(',')}`"
+                ><b-btn
+                  v-if="canEditEdge(status)"
+                  size="sm"
+                  variant="outline-secondary"
+                  >Tout éditer ({{ edges.length }})</b-btn
+                ></b-link
+              ><Publication
+                :publicationname="publicationNames[publicationcode]"
+                :publicationcode="publicationcode"
+            /></b-row>
+            <b-row :key="`${status}-${publicationcode}-edges`">
+              <b-col
+                v-for="(edge, i) in edges"
+                :key="`${status}-${i}`"
+                align-self="center"
+                cols="12"
+                md="6"
+                lg="3"
+              >
+                <b-card class="text-center">
+                  <b-link
+                    :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
+                    :disabled="!canEditEdge(status)"
                   >
-                    <img
-                      v-if="edge.v3 || status === 'pending'"
-                      :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
-                      class="edge-preview"
-                      :src="
-                        edge.v3
-                          ? getEdgeUrl(
-                              edge.country,
-                              edge.magazine,
-                              edge.issuenumber,
-                              'svg',
-                              false
-                            )
-                          : getPhotoUrl(edge.country, edge.photo)
-                      "
-                    /><EdgeLink
-                      :publicationcode="`${edge.country}/${edge.magazine}`"
-                      :issuenumber="edge.issuenumber"
-                      :designers="edge.designers"
-                      :photographers="edge.photographers"
-                      :published="edge.published === 'Published'"
-                    />
-                  </b-card-text>
-                </b-link>
-              </b-card>
-            </b-col>
-          </b-row>
-          <div v-else align="center">{{ $t('No edge in this category') }}</div>
+                    <b-card-text>
+                      <img
+                        v-if="edge.v3 || status === 'pending'"
+                        :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
+                        class="edge-preview"
+                        :src="
+                          edge.v3
+                            ? getEdgeUrl(
+                                edge.country,
+                                edge.magazine,
+                                edge.issuenumber,
+                                'svg',
+                                false
+                              )
+                            : getPhotoUrl(edge.country, edge.photo)
+                        "
+                      /><EdgeLink
+                        :publicationcode="`${edge.country}/${edge.magazine}`"
+                        :issuenumber="edge.issuenumber"
+                        :designers="edge.designers"
+                        :photographers="edge.photographers"
+                        :published="edge.published === 'Published'"
+                      />
+                    </b-card-text>
+                  </b-link>
+                </b-card>
+              </b-col>
+            </b-row>
+          </template>
         </b-container>
+        <div v-else align="center">{{ $t('No edge in this category') }}</div>
       </template>
     </template>
 
@@ -137,6 +152,7 @@
 
 <script>
 import UploadableEdgesCarousel from 'ducksmanager/assets/js/components/UploadableEdgesCarousel.vue'
+import Publication from 'ducksmanager/assets/js/components/Publication.vue'
 import { mapActions, mapState } from 'pinia'
 import edgeCatalogMixin from '@/mixins/edgeCatalogMixin'
 import EdgeLink from '@/components/EdgeLink'
@@ -150,6 +166,7 @@ export default {
     SessionInfo,
     EdgeLink,
     UploadableEdgesCarousel,
+    Publication,
   },
   mixins: [edgeCatalogMixin, redirectMixin],
   middleware: 'authenticated',
