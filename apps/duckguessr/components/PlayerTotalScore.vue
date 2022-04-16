@@ -1,44 +1,40 @@
 <template>
   <div class="wrapper d-flex" :class="{ vertical }">
-    <div class="username"><player-info :username="username" :top-player="topPlayer" /></div>
+    <div class="username">
+      <player-info :username="username" :top-player="topPlayer" />
+    </div>
     <div
       class="progress bg-success d-inline-flex justify-content-center align-items-center"
       :class="rank === null ? null : { [`rank-${rank}`]: true }"
-      :style="{ [vertical ? 'height' : 'width']: score + 'px' }"
+      :style="{ [vertical ? 'height' : 'width']: `${barSizePct}%` }"
     >
       {{ score.toFixed(0) }}
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'PlayerTotalScore',
-  props: {
-    username: {
-      type: String,
-      required: true,
-    },
-    score: {
-      type: Number,
-      required: true,
-    },
-    vertical: {
-      type: Boolean,
-      default: false,
-    },
-    rank: {
-      type: Number,
-      default: null,
-    },
-  },
-}
+<script lang="ts" setup>
+const props = withDefaults(
+  defineProps<{
+    username: string
+    score: number
+    maxScoreAllPlayers: number
+    vertical: boolean
+    topPlayer: boolean
+    rank: number | null
+  }>(),
+  {
+    rank: null,
+  }
+)
+
+const barSizePct = (100 * props.score) / props.maxScoreAllPlayers
 </script>
 
 <style scoped lang="scss">
 .wrapper {
   align-items: center;
-  width: 100%;
+  justify-content: center;
 
   .progress {
     flex-direction: row;

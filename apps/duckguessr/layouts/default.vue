@@ -2,7 +2,7 @@
   <div id="app">
     <banner />
     <duckguessr-menu :user="user" />
-    <div id="main" class="d-flex justify-content-center flex-column">
+    <div id="main" class="d-flex justify-content-start flex-column">
       <div v-if="!user">Loading...</div>
       <b-row v-if="isAnonymous === true" class="justify-content-center">
         <b-alert show variant="warning">

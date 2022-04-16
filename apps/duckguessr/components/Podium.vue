@@ -1,0 +1,46 @@
+<template>
+  <div class="container-fluid">
+    <h3 class="text-center mb-5">Podium</h3>
+    <div
+      v-if="topPlayers.length"
+      class="d-flex flex-row justify-content-center"
+      style="height: 350px"
+    >
+      <player-total-score
+        v-for="(player, index) in topPlayers"
+        :key="player.username"
+        :score="player.average_score"
+        :username="player.username"
+        :max-score-all-players="maxPoints"
+        top-player
+        vertical
+        :rank="index === 2 ? 2 : 1 - index"
+      />
+    </div>
+    <div v-else>{{ t("There aren't enough players to show the podium") }}</div>
+    <player-total-score
+      v-for="{ username, average_score } in otherPlayers"
+      :key="username"
+      :score="average_score"
+      :username="username"
+      :top-player="false"
+      :vertical="false"
+      :max-score-all-players="maxPoints"
+    />
+  </div>
+</template>
+<script lang="ts" setup>
+import { useI18n } from 'nuxt-i18n-composable'
+
+const { t } = useI18n()
+const props = defineProps<{
+  players: any[]
+}>()
+
+const topPlayers =
+  props.players.length >= 3 ? [props.players[1], props.players[0], props.players[2]] : []
+
+const maxPoints = topPlayers.reduce((acc, player) => Math.max(acc, player.average_score), 0)
+
+const otherPlayers = props.players.slice(3)
+</script>
