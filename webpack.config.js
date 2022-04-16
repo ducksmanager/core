@@ -79,6 +79,10 @@ Encore
   .addPlugin(new webpack.ProvidePlugin({
     mapboxgl: 'mapbox-gl',
   }))
+  .addPlugin(new webpack.DefinePlugin({
+    __VUE_OPTIONS_API__: true,
+    __VUE_PROD_DEVTOOLS__: false,
+  }))
 
 
   // enables Sass/SCSS support
