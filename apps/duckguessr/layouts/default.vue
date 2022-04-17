@@ -6,7 +6,7 @@
       <div v-if="!user">Loading...</div>
       <b-row v-if="isAnonymous === true" class="justify-content-center">
         <b-alert show variant="warning">
-          You are not connected. You can still play but you won't get any medals.
+          {{ t("You are not connected. You can still play but you won't get any medals.") }}
         </b-alert>
       </b-row>
       <Nuxt />
@@ -19,14 +19,15 @@ import { computed, onMounted, ref } from '@nuxtjs/composition-api'
 import { defineComponent } from '@vue/runtime-dom'
 import { io } from 'socket.io-client'
 import Index from '@prisma/client'
+import { useI18n } from 'nuxt-i18n-composable'
 import { isAnonymous, setDuckguessrId, setUserCookieIfNotExists } from '~/composables/user'
 import Banner from '~/layouts/Banner.vue'
-import DuckguessrMenu from '~/layouts/DuckguessrMenu.vue'
 
 export default defineComponent({
-  components: { Banner, DuckguessrMenu },
+  components: { Banner },
   setup() {
     const user = ref(null as Index.player | null)
+    const { t } = useI18n()
 
     onMounted(() => {
       setUserCookieIfNotExists()
@@ -42,6 +43,7 @@ export default defineComponent({
     })
 
     return {
+      t,
       user,
       isAnonymous: computed(() => user.value && isAnonymous(user.value.username)),
     }
