@@ -14,7 +14,12 @@
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
-      <b-dropdown id="language-navbar" class="position-fixed" variant="outline-secondary">
+      <b-dropdown
+        id="language-navbar"
+        class="position-fixed"
+        variant="outline-secondary"
+        boundary="viewport"
+      >
         <template #button-content><b-icon-flag-fill /></template>
         <b-dropdown-item
           v-for="(title, possibleLocale) in availableLocales"
@@ -78,7 +83,8 @@ $navbar-height: 40px;
     padding: 12px;
     z-index: 1;
 
-    .navbar-toggler {
+    .navbar-toggler,
+    .dropdown-toggle {
       background: #3d4b5f !important;
     }
 

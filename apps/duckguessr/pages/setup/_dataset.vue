@@ -3,16 +3,7 @@
     <h3>Nouvelle partie</h3>
 
     <b-container class="my-4">
-      <b-row class="align-items-center w-100">
-        <b-col cols="6" class="text-right">{{ t('Number of players') }}</b-col>
-        <b-col cols="1" class="d-flex justify-content-center">
-          {{ numberOfPlayers }}
-        </b-col>
-        <b-col cols="5" class="d-flex justify-content-center">
-          <b-form-input v-model="numberOfPlayers" type="range" :min="addBot ? 1 : 2" :max="6" />
-        </b-col>
-      </b-row>
-      <b-row class="align-items-center w-100 mt-3">
+      <b-row class="align-items-center w-100 mb-3">
         <b-col cols="6" class="text-right">
           <label for="add-bot">{{ t('Ajouter un bot') }}</label>
         </b-col>
@@ -40,6 +31,15 @@
           <div v-else>
             {{ t("Bots are not available yet for the 'US artists' game") }}
           </div>
+        </b-col>
+      </b-row>
+      <b-row class="align-items-center w-100">
+        <b-col cols="6" class="text-right">{{ t('Number of players') }}</b-col>
+        <b-col cols="1" class="d-flex justify-content-center">
+          {{ numberOfPlayers }}
+        </b-col>
+        <b-col cols="5" class="d-flex justify-content-center">
+          <b-form-input v-model="numberOfPlayers" type="range" :min="addBot ? 1 : 2" :max="6" />
         </b-col>
       </b-row>
     </b-container>

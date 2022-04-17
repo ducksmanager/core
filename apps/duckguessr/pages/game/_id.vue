@@ -6,7 +6,7 @@
   <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
     {{ t('Loading...') }}
   </b-container>
-  <b-container v-else fluid class="d-flex flex-grow-1">
+  <b-container v-else fluid class="d-flex flex-grow-1 p-0">
     <round-result-modal
       v-if="currentRoundPlayerScore && currentRound.personcode"
       :status="scoreToVariant(currentRoundPlayerScore)"

@@ -57,7 +57,7 @@ const { players } = defineProps<{
 <style lang="scss">
 #image-to-guess {
   @media (max-width: 767px) {
-    height: calc(50% - 50px);
+    height: calc(50% - 15px);
   }
 
   img {
@@ -67,7 +67,7 @@ const { players } = defineProps<{
 #author-list-wrapper {
   height: 100%;
   @media (max-width: 767px) {
-    height: calc(50% - 50px);
+    height: calc(50% - 15px);
   }
 }
 

@@ -3,7 +3,7 @@
     id="logo-zone"
     class="position-absolute p-2 px-5 d-flex align-items-center flex-column align-items-center"
   >
-    <a href="/">
+    <a class="px-5" href="/">
       <b-img src="/logo.png" />
       <div class="small">by DucksManager</div>
     </a>
@@ -17,9 +17,13 @@ export default {
 <style lang="scss">
 #logo-zone {
   width: 100%;
+  height: 100px;
+  justify-content: center;
 
   a {
+    z-index: 2;
     max-width: 100%;
+    border-bottom: 0 !important;
 
     img {
       max-width: 100%;

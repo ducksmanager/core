@@ -89,23 +89,20 @@ html {
 
       a {
         color: darkgrey;
-        border-bottom: 1px solid darkgray;
         text-decoration: none;
-      }
 
-      #logo-zone {
-        a {
-          border-bottom: 0;
+        &:hover {
+          border-bottom: 1px solid darkgray;
         }
       }
 
       #main {
         height: 100%;
         min-height: calc(100vh - 140px);
-        padding: 120px 20px 20px 20px;
+        padding: 120px 1rem 1rem 1rem;
 
         @media (max-width: 767px) {
-          padding-top: 200px;
+          padding: 120px 0.25rem 0.25rem 0.25rem;
         }
       }
     }

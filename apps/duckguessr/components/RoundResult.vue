@@ -1,7 +1,9 @@
 <template>
   <b-col
     align-self="center"
-    cols="3"
+    xl="3"
+    md="4"
+    sm="6"
     class="round-card my-3"
     :style="{
       'background-image': `url('${imageUrl}')`,
