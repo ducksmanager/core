@@ -9,7 +9,7 @@
       <player-total-score
         v-for="(player, index) in topPlayers"
         :key="player.username"
-        :score="player.average_score"
+        :score="player.sum_score"
         :username="player.username"
         :max-score-all-players="maxPoints"
         top-player
@@ -17,11 +17,15 @@
         :rank="index === 2 ? 2 : 1 - index"
       />
     </div>
-    <div v-else>{{ t("There aren't enough players to show the podium") }}</div>
+    <b-row v-else align-h="center">
+      <b-alert show variant="warning">
+        {{ t("There aren't enough players to show the podium") }}
+      </b-alert>
+    </b-row>
     <player-total-score
-      v-for="{ username, average_score } in otherPlayers"
+      v-for="{ username, sum_score } in otherPlayers"
       :key="username"
-      :score="average_score"
+      :score="sum_score"
       :username="username"
       :top-player="false"
       :vertical="false"
@@ -40,7 +44,7 @@ const props = defineProps<{
 const topPlayers =
   props.players.length >= 3 ? [props.players[1], props.players[0], props.players[2]] : []
 
-const maxPoints = topPlayers.reduce((acc, player) => Math.max(acc, player.average_score), 0)
+const maxPoints = topPlayers.reduce((acc, player) => Math.max(acc, player.sum_score), 0)
 
 const otherPlayers = props.players.slice(3)
 </script>

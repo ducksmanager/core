@@ -4,8 +4,7 @@
       <player-info :username="username" :top-player="topPlayer" />
     </div>
     <div
-      class="progress bg-success d-inline-flex justify-content-center align-items-center"
-      :class="rank === null ? null : { [`rank-${rank}`]: true }"
+      :class="`progress bg-success d-inline-flex justify-content-center align-items-center rank-${rank}`"
       :style="{ [vertical ? 'height' : 'width']: `${barSizePct}%` }"
     >
       {{ score.toFixed(0) }}
