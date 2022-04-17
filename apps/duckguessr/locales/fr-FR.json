@@ -1,8 +1,7 @@
 {
-  "Ajouter un bot": "Add a bot",
+  "Add a bot": "Ajouter un bot",
   "All the images in this dataset have been validated.": "Toutes les images de ce jeu de données ont été validées.",
   "Bots are not available yet for the 'US artists' game": "Les bots ne sont pas encore disponibles pour le mode de jeu \"Artistes US\"",
-  "Let's go!": "C'est parti !",
   "Click on the images that shouldn't be shown on Duckguessr:": "Sélectionnez les images qui ne doivent pas être utilisées dans Duckguessr:",
   "Correct!": "Bonne réponse !",
   "Duckguessr - image maintenance": "Duckguessr - maintenance des images",
@@ -14,6 +13,7 @@
   "Images with no drawing inside": "Images qui ne contiennent pas de dessin",
   "Images on which the cartoonist's name is written": "Images sur lesquelles le nom du dessinateur est inscrit",
   "Incorrect.": "Mauvaise réponse.",
+  "Let's go!": "C'est parti !",
   "Loading...": "Chargement...",
   "Number of players": "Nombre de joueurs",
   "Only an administrator can clean images!": "Seul un administrateur peut nettoyer des images !",
@@ -33,5 +33,5 @@
   "Total score": "Score total",
   "{validated} images from this dataset can currently be seen on Duckguessr, {notValidated} are left to maintain.": "{validated} images de ce jeu de données sont jouables sur Duckguessr, {notValidated} images doivent être maintenues.",
   "Waiting for other players... Send this link to your friends to invite them to this game:": "En attente d'autres joueurs... Envoyez le lien suivant à vos amis pour qu'ils rejoignent cette partie:",
-  "You are not connected. You can still play but you won't get any medals.": "Vous n'êtes pas connecté(e). Vous pouvez jouer mais vous ne pourrez pas gagner pas de médailles."
+  "You are not connected. You can still play but you won't get any medals.": "Vous n'êtes pas connecté(e). Vous pouvez jouer mais vous ne pourrez pas gagner de médailles."
 }
