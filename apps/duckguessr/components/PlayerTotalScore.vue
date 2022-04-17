@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(
+const { score, maxScoreAllPlayers, username, vertical, topPlayer, rank } = withDefaults(
   defineProps<{
     username: string
     score: number
@@ -28,7 +28,7 @@ const props = withDefaults(
   }
 )
 
-const barSizePct = (100 * props.score) / props.maxScoreAllPlayers
+const barSizePct = (100 * score) / maxScoreAllPlayers
 </script>
 
 <style scoped lang="scss">
