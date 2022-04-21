@@ -80,7 +80,7 @@
 
 <script>
 import l10nMixin from "../../mixins/l10nMixin";
-import { mapActions, mapState } from "pinia";
+import {mapActions, mapState, mapWritableState} from "pinia";
 import { SlickItem, SlickList } from "vue-slicksort";
 import Publication from "../../components/Publication";
 import {BAlert, BButton, BDropdown, BDropdownItem, BFormCheckbox} from "bootstrap-vue";
@@ -158,21 +158,13 @@ export default {
   computed: {
     ...mapState(bookcase, ["bookcaseOptions"]),
     ...mapState(coa, ["publicationNames"]),
+    ...mapWritableState(bookcase, ['bookcaseOrder']),
     textureTypes() {
       return {
         bookcase: this.$t("Sous-texture"),
         bookshelf: this.$t("Sous-texture de l'étagère")
       };
     },
-
-    bookcaseOrder: {
-      get() {
-        return this.$store.state.bookcase.bookcaseOrder;
-      },
-      set(newValue) {
-        return this.$store.commit("bookcase/setBookcaseOrder", newValue);
-      }
-    }
   },
 
   async mounted() {
