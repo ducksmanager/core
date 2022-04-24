@@ -1,21 +1,15 @@
 <template>
   <b-container fluid>
     <b-row align="center" class="pt-2">
-      <b-col class="text-left">
-        <b-button v-b-toggle.sidebar class="options position-fixed mt-2"
-          >{{ $t('Options') }}
-        </b-button>
-        <b-sidebar
-          id="sidebar"
-          v-model="showSidebar"
-          :title="$t('Options')"
-          shadow
-        >
-          <b-container class="px-3 py-2">
-            <b-row align-items="center">
-              <b-col cols="6"> {{ $t('Zoom') }}</b-col>
-              <b-col cols="2">{{ zoom }}</b-col>
-              <b-col cols="4">
+      <b-col class="text-left position-absolute col-12 col-md-6 options">
+        <b-navbar toggleable class="justify-content-start pl-0 pt-0">
+          <b-navbar-brand href="#">{{ $t('Options') }}</b-navbar-brand>
+
+          <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+          <b-collapse id="nav-collapse" is-nav class="flex-column p-2 bg-white">
+            <b-row class="zoom-option">
+              <b-col cols="3">
                 <input
                   v-model="zoom"
                   type="range"
@@ -24,73 +18,74 @@
                   step="0.5"
                   style="width: 100%"
               /></b-col>
+              <b-col>{{ $t('Zoom') }}: {{ zoom }}</b-col>
             </b-row>
             <b-row>
+              <b-col cols="3">
+                <b-checkbox id="showIssueNumbers" v-model="showIssueNumbers" />
+              </b-col>
               <b-col
                 ><label for="showIssueNumbers">{{
                   $t('Show issue numbers')
                 }}</label></b-col
               >
-              <b-col>
-                <b-checkbox id="showIssueNumbers" v-model="showIssueNumbers" />
-              </b-col>
             </b-row>
             <b-row>
-              <b-col
-                ><label for="showPreviousEdge">{{
-                  $t('Show previous edge')
-                }}</label></b-col
-              >
-              <b-col>
+              <b-col cols="3">
                 <b-checkbox
                   id="showPreviousEdge"
                   v-model="showPreviousEdge"
                   :disabled="!edgesBefore.length || showPreviousEdge === null"
                 />
               </b-col>
-            </b-row>
-            <b-row>
               <b-col
-                ><label for="showNextEdge">{{
-                  $t('Show next edge')
+                ><label for="showPreviousEdge">{{
+                  $t('Show previous edge')
                 }}</label></b-col
               >
-              <b-col>
+            </b-row>
+            <b-row>
+              <b-col cols="3">
                 <b-checkbox
                   id="showNextEdge"
                   v-model="showNextEdge"
                   :disabled="!edgesAfter.length || showNextEdge === null"
                 />
               </b-col>
-            </b-row>
-            <b-row>
               <b-col
-                ><label for="showEdgePhotos">{{
-                  $t('Show edge photos')
+                ><label for="showNextEdge">{{
+                  $t('Show next edge')
                 }}</label></b-col
               >
-              <b-col>
+            </b-row>
+            <b-row>
+              <b-col cols="3">
                 <b-checkbox
                   id="showEdgePhotos"
                   v-model="showEdgePhotos"
                   :disabled="!hasPhotoUrl || showEdgePhotos === null"
                 />
               </b-col>
+              <b-col
+                ><label for="showEdgePhotos">{{
+                  $t('Show edge photos')
+                }}</label></b-col
+              >
             </b-row>
             <b-row>
+              <b-col cols="3">
+                <b-checkbox id="showEdgeOverflow" v-model="showEdgeOverflow" />
+              </b-col>
               <b-col
                 ><label for="showEdgeOverflow">{{
                   $t('Show edge overflow')
                 }}</label></b-col
               >
-              <b-col>
-                <b-checkbox id="showEdgeOverflow" v-model="showEdgeOverflow" />
-              </b-col>
             </b-row>
-          </b-container>
-        </b-sidebar>
+          </b-collapse>
+        </b-navbar>
       </b-col>
-      <b-col align-self="center" class="col-sm-4">
+      <b-col align-self="center" class="col-sm-4 offset-4">
         <b-button to="/">
           <b-icon-house />
           {{ $t('Home') }}
@@ -361,9 +356,23 @@ export default {
 }
 </script>
 <style lang="scss">
-.btn.options {
-  top: 0;
-  left: 130px;
+.options {
+  left: 0;
+  .navbar-collapse {
+    z-index: 1;
+    font-size: small;
+    opacity: 0.9;
+
+    .row {
+      :not(.zoom-option) {
+        height: 25px;
+      }
+
+      > :nth-child(1) {
+        text-align: center;
+      }
+    }
+  }
 }
 
 ::v-deep .b-icon {
