@@ -11,7 +11,7 @@
       </b-row>
     </b-container>
     <h3 class="mt-3">Scores</h3>
-    <b-table striped dark :items="playersWithScores">
+    <b-table striped dark :items="playersWithScoresAndTotalScore" class="align-items-center">
       <template #head(playerId)="">&nbsp;</template>
       <template #head(totalScore)="">&nbsp;</template>
       <template #head()="{ column }">
@@ -34,10 +34,12 @@
           <th>{{ t('Total score') }}</th>
         </tr>
       </template>
-      <template #cell(playerId)="{ value: playerId }">
-        <player-info :username="playerNames[playerId]" />
+      <template #cell(playerId)="{ value: playerId, index }">
+        <player-info :username="playerNames[playerId]" :top-player="index === 0" />
       </template>
-      <template #cell(totalScore)="{ value: totalScore }"> {{ totalScore }} points </template>
+      <template #cell(totalScore)="{ value: totalScore }">
+        <div>{{ totalScore }} points</div>
+      </template>
       <template #cell()="{ value: playerRoundScores }">
         <round-score
           v-for="score in playerRoundScores"
@@ -95,42 +97,60 @@ export default defineComponent({
       }))
     )
 
+    const playersWithScores: {
+      [key: number]: { [key: string]: { [key: string]: { [key: string]: number } } }
+    } = playerIds.reduce(
+      (acc, playerId) => ({
+        ...acc,
+        [playerId]: scoresWithPersonUrls.value.reduce(
+          (acc2, { round_number: roundNumber, round_scores: roundScores }) => ({
+            ...acc2,
+            [`round${roundNumber}`]: roundScores
+              .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
+              .reduce(
+                (acc3, { score_type_name: scoreTypeName, score, speed_bonus: speedBonus }) => ({
+                  ...acc3,
+                  [scoreTypeName]: { score, speedBonus },
+                }),
+                {}
+              ),
+          }),
+          {}
+        ),
+      }),
+      {}
+    )
+
+    const playersWithScoresAndTotalScore = playerIds
+      .map((playerId) => ({
+        playerId,
+        ...playersWithScores[playerId],
+        totalScore: Object.values(playersWithScores[playerId]).reduce(
+          (accTotalScore: number, roundScores) =>
+            accTotalScore +
+            Object.values(roundScores || {}).reduce(
+              (accTotalRoundScore: number, { score: roundScore, speedBonus: roundSpeedBonus }) =>
+                accTotalRoundScore + roundScore + (roundSpeedBonus || 0),
+              0
+            ),
+          0
+        ),
+      }))
+      .sort((player1WithScores, player2WithScores) =>
+        player1WithScores.totalScore < player2WithScores.totalScore ? 1 : -1
+      )
+      .map((playerWithScores, idx) => {
+        return {
+          ...playerWithScores,
+          _rowVariant: idx === 0 ? 'success' : '',
+        }
+      })
+
     return {
       t,
       scoresWithPersonUrls,
       playerNames,
-      playersWithScores: playerIds.map((playerId) => {
-        const playerScores: { [key: string]: { [key: string]: { [key: string]: number } } } =
-          scoresWithPersonUrls.value.reduce(
-            (acc, { round_number: roundNumber, round_scores: roundScores }) => ({
-              ...acc,
-              [`round${roundNumber}`]: roundScores
-                .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
-                .reduce(
-                  (acc2, { score_type_name: scoreTypeName, score, speed_bonus: speedBonus }) => ({
-                    ...acc2,
-                    [scoreTypeName]: { score, speedBonus },
-                  }),
-                  {}
-                ),
-            }),
-            {}
-          )
-        return {
-          playerId,
-          ...playerScores,
-          totalScore: Object.values(playerScores).reduce(
-            (accTotalScore: number, roundScores) =>
-              accTotalScore +
-              Object.values(roundScores || {}).reduce(
-                (accTotalRoundScore: number, { score: roundScore, speedBonus: roundSpeedBonus }) =>
-                  accTotalRoundScore + roundScore + (roundSpeedBonus || 0),
-                0
-              ),
-            0
-          ),
-        }
-      }),
+      playersWithScoresAndTotalScore,
       imageUrl: ({ sitecode_url: url }: RoundWithScoresAndAuthor) =>
         `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
     }
@@ -141,6 +161,11 @@ export default defineComponent({
 <style scoped lang="scss">
 ::v-deep tr {
   height: 100px;
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
 
   th {
     width: 11%;
