@@ -5,7 +5,7 @@
     <b-container class="my-4">
       <b-row class="align-items-center w-100 mb-3">
         <b-col cols="6" class="text-right">
-          <label for="add-bot">{{ t('Ajouter un bot') }}</label>
+          <label for="add-bot">{{ t('Add a bot') }}</label>
         </b-col>
         <b-col cols="1" class="d-flex justify-content-center pl-4">
           <b-form-checkbox

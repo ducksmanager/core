@@ -8,7 +8,7 @@ import {
   SocketData,
 } from '../../types/socketEvents'
 import { GuessResponse } from '../../types/guess'
-import { getGameWithRoundsDatasetPlayers } from '../game'
+import { getGameWithRoundsDatasetPlayers, numberOfRounds } from '../game'
 import { predict } from '../predict'
 import { getRoundWithScores } from '../round'
 import { getUser } from '../get-user'
@@ -71,6 +71,10 @@ const initRoundEnds = (socket: Socket, round: Index.round) => {
     }
     socket.broadcast.emit('roundEnds', await getRoundWithScores(id))
     socket.emit('roundEnds', await getRoundWithScores(id))
+    if (round.round_number === numberOfRounds) {
+      socket.broadcast.emit('gameEnds')
+      socket.emit('gameEnds')
+    }
   })
 }
 

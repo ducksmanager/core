@@ -18,6 +18,9 @@
       <div>{{ t('Round {roundNumber} starts in...', { roundNumber: roundNumber + 1 }) }}</div>
       <circle-progress-bar :total="initialTimeBeforeNextRound" :remaining="timeBeforeNextRound" />
     </div>
+    <div v-else-if="timeBeforeNextRound === null" class="text-center">
+      <div>{{ t('Waiting for all other players to guess the last round...') }}</div>
+    </div>
   </b-modal>
 </template>
 
@@ -60,9 +63,6 @@ export default defineComponent({
     const getTimeBeforeNextRound = () =>
       Math.ceil((nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
 
-    const timeBeforeNextRound = ref(null as number | null)
-    const initialTimeBeforeNextRound = getTimeBeforeNextRound()
-
     const updateTimeBeforeNextRound = () => {
       timeBeforeNextRound.value = nextRoundStartDate === null ? null : getTimeBeforeNextRound()
     }
@@ -70,6 +70,10 @@ export default defineComponent({
     onMounted(() => {
       setInterval(updateTimeBeforeNextRound, 1000)
     })
+
+    const timeBeforeNextRound = ref(null as number | null)
+    updateTimeBeforeNextRound()
+    const initialTimeBeforeNextRound = timeBeforeNextRound.value
 
     watch(
       () => timeBeforeNextRound.value,

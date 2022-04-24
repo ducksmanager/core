@@ -37,3 +37,15 @@ Incorrect.args = {
   },
   nextRoundStartDate: futureDate,
 }
+
+export const LastRound = Template.bind({})
+LastRound.args = {
+  status: 'success',
+  roundNumber: 7,
+  correctAuthor: {
+    personcode: 'CB',
+    personfullname: 'Carl Barks',
+    personnationality: 'us',
+  },
+  nextRoundStartDate: null,
+}

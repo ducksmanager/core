@@ -1,9 +1,9 @@
 import type Index from '@prisma/client'
 import { GuessRequest, GuessResponse } from '../types/guess'
+import { numberOfRounds } from './game'
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-const numberOfRounds = 8
 const kickoffTime = 5000
 const roundTime = 10000
 

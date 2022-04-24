@@ -21,6 +21,7 @@ export interface ServerToClientEvents {
   matchStarts: (gameId: number) => void
   roundStarts: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
   roundEnds: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
+  gameEnds: () => void
   playerGuessed: (guessResponse: GuessResponse) => void
   logged: (user: user) => void
 }

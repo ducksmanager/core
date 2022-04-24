@@ -24,9 +24,9 @@
     </b-col>
     <b-col id="round-scores" cols="2" class="d-none d-md-block">
       <div class="m-1 p-1 border overflow-auto">
-        <h3>Round {{ currentRoundNumber }}</h3>
+        <h3>Round {{ currentRound.round_number }}</h3>
         <round-score
-          v-for="score in currentRoundScores"
+          v-for="score in currentRound.round_scores"
           :key="`score-${score.player_id}`"
           in-game
           :players="players"
@@ -38,21 +38,22 @@
 </template>
 <script lang="ts" setup>
 import Index from '@prisma/client'
+import { ref } from '@nuxtjs/composition-api'
 import AuthorCard from '~/components/AuthorCard.vue'
-import { Author } from '~/types/roundWithScoresAndAuthor'
+import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 
 defineEmits(['select-author'])
 
-const { players } = defineProps<{
+const props = defineProps<{
+  currentRound: RoundWithScoresAndAuthor
   availableTime: number
-  currentRoundNumber: number
-  currentRoundScores: Index.round_score[]
   authors: Author[]
   players: Index.player[]
   previousPersoncodes: string[]
   remainingTime: number
-  url: string
 }>()
+
+const url = ref(`${process.env.CLOUDINARY_URL_ROOT}${props.currentRound.sitecode_url}`)
 </script>
 <style lang="scss">
 #image-to-guess {

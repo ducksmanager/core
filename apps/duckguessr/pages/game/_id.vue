@@ -7,28 +7,26 @@
     {{ t('Loading...') }}
   </b-container>
   <b-container v-else fluid class="d-flex flex-grow-1 p-0">
+    <game
+      :available-time="availableTime"
+      :chosen-author="chosenAuthor"
+      :current-round="currentRound"
+      :authors="game.authors"
+      :players="players"
+      :previous-personcodes="game.rounds.map(({ personcode }) => personcode)"
+      :remaining-time="remainingTime"
+      @select-author="
+        chosenAuthor = $event
+        validateGuess()
+      "
+    />
     <round-result-modal
-      v-if="currentRoundPlayerScore && currentRound.personcode"
+      v-if="currentRoundPlayerScore !== undefined"
       :status="scoreToVariant(currentRoundPlayerScore)"
       :speed-bonus="currentRoundPlayerScore.speed_bonus"
       :correct-author="getAuthor(currentRound.personcode)"
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
-    />
-    <game
-      :available-time="availableTime"
-      :chosen-author="chosenAuthor"
-      :current-round-number="currentRoundNumber"
-      :current-round-scores="currentRoundScores"
-      :authors="game.authors"
-      :players="players"
-      :previous-personcodes="game.rounds.map(({ personcode }) => personcode)"
-      :remaining-time="remainingTime"
-      :url="url"
-      @select-author="
-        chosenAuthor = $event
-        validateGuess()
-      "
     />
   </b-container>
 </template>
@@ -71,6 +69,7 @@ export default defineComponent({
     const route = useRoute()
 
     const chosenAuthor = ref(null as string | null)
+    const gameIsFinished = ref(false as boolean)
 
     const game = ref(null as GameFull | null)
     let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>
@@ -85,10 +84,6 @@ export default defineComponent({
     const hasUrlLoaded = ref(false as boolean)
 
     const now = ref(Date.now() as number)
-
-    const gameIsFinished = computed(
-      () => game.value && !game.value!.rounds.find(({ personcode }) => !personcode)
-    )
 
     const getRound = (searchedRoundNumber: number | null): RoundWithScoresAndAuthor | null =>
       searchedRoundNumber == null
@@ -156,6 +151,9 @@ export default defineComponent({
           chosenAuthor.value = null
           Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
         })
+        .on('gameEnds', () => {
+          gameIsFinished.value = true
+        })
         .on('playerGuessed', ({ roundScore, answer }) => {
           if (roundScore.player_id === duckguessrId) {
             Vue.set(game.value!.rounds[currentRoundNumber.value! - 1], 'personcode', answer)
@@ -187,14 +185,9 @@ export default defineComponent({
       currentRoundNumber,
       currentRound,
       nextRoundStartDate,
-      validateGuess,
-      currentRoundScores,
       currentRoundPlayerScore,
-      url: computed(
-        () =>
-          currentRound.value &&
-          `${process.env.CLOUDINARY_URL_ROOT}${currentRound.value.sitecode_url}`
-      ),
+
+      validateGuess,
 
       getAuthor: (personcode2: string): Author =>
         game.value!.authors.find(({ personcode }) => personcode2 === personcode)!,

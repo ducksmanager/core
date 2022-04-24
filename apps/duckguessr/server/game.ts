@@ -1,7 +1,7 @@
 import Index, { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
-const numberOfRounds = 8
+export const numberOfRounds = 8
 
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
   await prisma.game.findUnique({
