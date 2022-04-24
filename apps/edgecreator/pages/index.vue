@@ -67,7 +67,7 @@
 
         <b-container
           v-if="Object.keys(edgesByStatus[status]).length"
-          :key="status"
+          :key="`status-${status}`"
         >
           <template v-for="(edges, publicationcode) in edgesByStatus[status]">
             <b-row :key="`${status}-${publicationcode}-title`">
@@ -130,7 +130,9 @@
             </b-row>
           </template>
         </b-container>
-        <div v-else align="center">{{ $t('No edge in this category') }}</div>
+        <div v-else :key="`no-edge-${status}`" align="center">
+          {{ $t('No edge in this category') }}
+        </div>
       </template>
     </template>
 
