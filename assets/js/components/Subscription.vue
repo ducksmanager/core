@@ -101,7 +101,6 @@
 <script>
 import Publication from "./Publication";
 import PublicationSelect from "./PublicationSelect";
-import subscriptionMixin from "../mixins/subscriptionMixin";
 import { mapState } from "pinia";
 import {BButton, BCol, BForm, BRow} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
@@ -116,9 +115,7 @@ export default {
     BRow,
     BCol,
     BButton,
-
   },
-  mixins: [subscriptionMixin],
 
   props: {
     id: {

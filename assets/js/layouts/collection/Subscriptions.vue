@@ -75,15 +75,14 @@
 <script>
 import { mapActions, mapState } from "pinia";
 import axios from "axios";
-import subscriptionMixin from "../../mixins/subscriptionMixin";
 import Subscription from "../../components/Subscription";
 import {BAlert, BButton, BCol, BRow} from "bootstrap-vue-3";
 import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 
 export default {
   name: "Subscriptions",
   components: { Subscription, BAlert, BRow, BCol, BButton },
-  mixins: [subscriptionMixin],
   data() {
     return {
       hasPublicationNames: false,
@@ -97,7 +96,8 @@ export default {
   },
 
   computed: {
-    ...mapState(coa, ["countryNames", "publicationNames"])
+    ...mapState(coa, ["countryNames", "publicationNames"]),
+    ...mapState(collection, ["subscriptions"]),
   },
 
   watch: {
@@ -119,8 +119,13 @@ export default {
     }
   },
 
+  mounted() {
+    this.loadSubscriptions()
+  },
+
   methods: {
     ...mapActions(coa, ["fetchPublicationNames"]),
+    ...mapActions(collection, ["loadSubscriptions"]),
 
     createAssociatedPublicationSubscription(existingSubscription, { publicationcode: associatedPublicationcode }) {
       this.newSubscription = {

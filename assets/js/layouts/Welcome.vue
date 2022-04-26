@@ -149,7 +149,7 @@
           size="lg"
           variant="success"
           class="no-border"
-          :href="$r('/signup')"
+          :href="r('/signup')"
         >
           {{ $t("Cliquez ici pour vous inscrire !") }}
         </b-button>

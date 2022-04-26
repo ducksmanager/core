@@ -73,17 +73,19 @@
 
 <script>
 import * as axios from "axios";
-import validationMixin from "../mixins/validationMixin";
 import Errorable from "../components/Errorable";
 import {BButton, BCol, BFormInput, BRow} from "bootstrap-vue-3";
 import { mapState, mapActions } from "pinia";
 import { form } from "../stores/form";
 import { l10n } from "../stores/l10n";
+import { validation } from "../composables/validation";
+import { useI18n } from "vue-i18n";
+
+let t
 
 export default {
   name: "Signup",
   components: { Errorable, BRow, BCol, BFormInput, BButton },
-  mixins: [validationMixin],
   props: {
     lastUsername: { type: String, default: null }
   },
@@ -101,19 +103,21 @@ export default {
 
   mounted() {
     this.signupUsername = this.lastUsername;
+    t = useI18n().t
   },
 
   methods: {
     ...mapActions(l10n, ["$r"]),
     ...mapActions(form, ["clearErrors"]),
 
-
-
     async signup() {
+      const {validatePasswords, validateEmail, validateUsername} = validation(t)
+
       this.clearErrors();
-      this.validatePasswords();
-      this.validateEmail();
-      this.validateUsername();
+      validatePasswords(this.password, this.password2);
+      validateEmail(this.email);
+      validateUsername(this.signupUsername);
+
       if (this.hasErrors) {
         return;
       }

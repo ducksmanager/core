@@ -20,9 +20,8 @@ import Duplicates from "./collection/Duplicates";
 import Manage from "./collection/Manage";
 import Subscriptions from "./collection/Subscriptions";
 import { mapState } from "pinia";
-import {collection} from "../composables/collection";
-import subscriptionMixin from "../mixins/subscriptionMixin";
-const { collection: collectionStore } = require('../stores/collection');
+import { mapActions } from "pinia/dist/pinia.esm-browser";
+const { collection } = require('../stores/collection');
 
 export default {
   name: "Collection",
@@ -33,7 +32,6 @@ export default {
     Menu,
     Subscriptions
   },
-  mixins: [subscriptionMixin],
   props: {
     tab: {
       type: String,
@@ -64,6 +62,14 @@ export default {
         .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
     }
   },
+
+  mounted() {
+    this.loadSubscriptions()
+  },
+
+  methods: {
+    ...mapActions(collection, ["loadSubscriptions"]),
+  }
 }
 </script>
 
