@@ -132,17 +132,15 @@
 </template>
 
 <script>
-import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapState} from "pinia";
 import Publication from "../../components/Publication";
 import { coa } from "../../stores/coa";
-import { collection } from "../../stores/collection";
+const { collection } = require("../../stores/collection");
 
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/
 
 export default {
   components: {Publication},
-  mixins: [collectionMixin],
   data() {
     const lines = 2
     return {
@@ -153,18 +151,19 @@ export default {
   },
   computed: {
     ...mapState(coa, ["countryNames", "publicationNames"]),
+    ...mapState(collection, ["collection", "totalPerPublication"]),
 
     ready() {
       return this.issuesPerCell && this.countryNames && Object.keys(this.publicationNames).length
     },
     maxLetter() {
       return !this.issuesPerCell ? null : this.numberToLetter([
-            ...new Set(JSON.stringify(this.issuesPerCell)
-              .match(/"[a-zA-Z]+"/g)
-              .map(letter => letter.replace(/"/g, '')))
-          ]
-              .map(this.letterToNumber)
-              .sort((a, b) => b - a)[0]
+          ...new Set(JSON.stringify(this.issuesPerCell)
+          .match(/"[a-zA-Z]+"/g)
+          .map(letter => letter.replace(/"/g, '')))
+        ]
+          .map(this.letterToNumber)
+          .sort((a, b) => b - a)[0]
       )
     },
 
@@ -219,13 +218,14 @@ export default {
     }
   },
   async mounted() {
+    await this.loadCollection()
     await this.fetchCountryNames()
     await this.loadPurchases()
   },
 
   methods: {
     ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions(collection, ["loadPurchases"]),
+    ...mapActions(collection, ["loadCollection", "loadPurchases"]),
     numberToLetter: number => String.fromCharCode((number < 26 ? "a".charCodeAt() : "A".charCodeAt() - 26) + number),
     letterToNumber: letter => letter >= "a" ? letter.charCodeAt() - "a".charCodeAt() : 26 + letter.charCodeAt() - "A".charCodeAt(),
 

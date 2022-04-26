@@ -80,7 +80,10 @@
   </ul>
 </template>
 
-<script>
+<script setup>
+import {user} from "../composables/global";
+
+const { username } = user()
 import NavigationItemGroup from "../components/NavigationItemGroup";
 import NavigationItem from "../components/NavigationItem";
 import {
@@ -91,23 +94,6 @@ import {
   BIconPrinterFill,
   BIconXSquareFill
 } from "bootstrap-icons-vue";
-
-export default {
-  name: "Navigation",
-
-  components: {
-    NavigationItemGroup,
-    NavigationItem,
-    BIconHouseFill,
-    BIconBookHalf,
-    BIconList,
-    BIconGraphUp,
-    BIconCapslockFill,
-    BIconPrinterFill,
-    BIconXSquareFill,
-  },
-
-}
 </script>
 
 <style lang="scss" scoped>

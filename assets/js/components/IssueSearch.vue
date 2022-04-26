@@ -62,16 +62,15 @@
 import axios from "axios";
 import Issue from "./Issue";
 import { mapActions, mapState } from "pinia";
-import collectionMixin from "../mixins/collectionMixin";
+import {collection} from "../composables/collection";
 import Condition from "./Condition";
-import conditionMixin from "../mixins/conditionMixin";
+import {condition} from "../composables/condition";
 import {BDropdown, BDropdownItem, BFormInput} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 
 export default {
   name: "IssueSearch",
   components: { Issue, Condition, BDropdown, BDropdownItem, BFormInput },
-  mixins: [collectionMixin, conditionMixin],
 
   props: {
     withTitle: {
@@ -84,6 +83,15 @@ export default {
     }
   },
   emits: ["issue-selected"],
+
+  setup() {
+    collection()
+
+    const {conditions} = condition()
+    return {
+      conditions
+    }
+  },
 
   data: () => ({
     isSearching: false,

@@ -85,6 +85,9 @@ import Publication from "../../components/Publication";
 import {BAlert, BButton, BDropdown, BDropdownItem, BFormCheckbox} from "bootstrap-vue-3";
 import { bookcase } from "../../stores/bookcase";
 import { coa } from "../../stores/coa";
+import {user} from "../../composables/global";
+
+const {username} = user()
 
 export default {
   name: "BookcaseOptions",
@@ -175,7 +178,7 @@ export default {
 
   async mounted() {
     const vm = this;
-    this.setBookcaseUsername(this.username);
+    this.setBookcaseUsername(username);
     await this.loadData();
     await this.fetchPublicationNames(this.bookcaseOrder);
     this.setBookcaseOrder(this.bookcaseOrder.filter(publicationCode => Object.keys(vm.publicationNames).includes(publicationCode)));

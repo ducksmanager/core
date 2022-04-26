@@ -51,6 +51,8 @@ import {mapState} from "pinia";
 import {BButton, BPopover} from "bootstrap-vue-3";
 import { users } from "../stores/users";
 import { bookcase } from "../stores/bookcase";
+import {user} from "../composables/global";
+const {userId} = user()
 
 export default {
   name: "IssueEdgePopover",
@@ -79,7 +81,7 @@ export default {
     ...mapState(users, {allUserPoints: "points"}),
 
     points() {
-      return this.allUserPoints && this.allUserPoints[this.userId][this.contribution]
+      return this.allUserPoints && this.allUserPoints[userId][this.contribution]
     },
   }
 }

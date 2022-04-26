@@ -213,17 +213,19 @@
 import { mapActions, mapState } from "pinia";
 import ContextMenu from "./ContextMenu";
 import axios from "axios";
-import conditionMixin from "../mixins/conditionMixin";
-import collectionMixin from "../mixins/collectionMixin";
+import {condition} from "../composables/condition";
+import {collection} from "../composables/collection";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
 import Condition from "./Condition";
 import {BAlert} from "bootstrap-vue-3";
 import {BIconEyeFill, BIconCalendar} from "bootstrap-icons-vue";
 import Publication from "./Publication";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require("../stores/collection")
 import { coa } from "../stores/coa";
 import {Contextmenu, ContextmenuItem, directive} from "v-contextmenu";
+
+let conditions
 
 export default {
   name: "IssueList",
@@ -242,7 +244,6 @@ export default {
     BIconEyeFill,
     BIconCalendar
   },
-  mixins: [collectionMixin, conditionMixin],
   props: {
     publicationcode: {
       type: String,
@@ -253,6 +254,11 @@ export default {
       default: false
     }
   },
+
+  setup() {
+    conditions = condition().conditions
+  },
+
   data: () => ({
     loading: true,
     publicationNameLoading: true,
@@ -273,9 +279,11 @@ export default {
     currentIssueOpened: null,
     contextMenuKey: "context-menu"
   }),
+
   computed: {
     ...mapState(coa, ["publicationNames"]),
-    ...mapState(collection, { userIssues: "collection" }),
+    ...mapState(collectionStore, { userIssues: "collection" }),
+    ...mapState(collectionStore, ["purchases"] ),
 
     country() {
       return this.publicationcode.split("/")[0];
@@ -323,7 +331,7 @@ export default {
             `${issue.country}/${issue.magazine}` === vm.publicationcode)
             .map(issue => ({
                 ...issue,
-                condition: (vm.conditions.find(({ dbValue }) => dbValue === issue.condition) || { value: "possessed" }).value
+                condition: (conditions.find(({ dbValue }) => dbValue === issue.condition) || { value: "possessed" }).value
               })
             );
 
@@ -350,7 +358,7 @@ export default {
   },
   methods: {
     ...mapActions(coa, ["fetchPublicationNames"]),
-    ...mapActions(collection, ["loadCollection", "loadPurchases"]),
+    ...mapActions(collectionStore, ["loadCollection", "loadPurchases"]),
     openContextMenuIfBookNotOpen(e) {
       if (this.currentIssueOpened === null) {
         // this.$refs.contextMenu.$refs.menu.open(e);
@@ -379,7 +387,7 @@ export default {
       await this.updateIssues({
         publicationCode: this.publicationcode,
         issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
-        condition: this.conditions.find(({ value }) => value === "missing").dbValue,
+        condition: conditions.find(({ value }) => value === "missing").dbValue,
         istosell: false,
         purchaseId: null
       });

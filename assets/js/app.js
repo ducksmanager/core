@@ -1,6 +1,5 @@
 import {createApp, h} from "vue";
 import BootstrapVue3 from 'bootstrap-vue-3'
-import BackendDataPlugin from './plugins/backendDataPlugin'
 
 import * as Sentry from '@sentry/vue';
 import {Integrations} from "@sentry/tracing";
@@ -43,9 +42,10 @@ const app = createApp({
   }
 })
 
+app.config.globalProperties.imagePath = localStorage.getItem('imagePath') || undefined
+
 app.use(i18n)
 app.use(store)
-app.use(BackendDataPlugin)
 app.use(BootstrapVue3)
 app.mount('#app')
 

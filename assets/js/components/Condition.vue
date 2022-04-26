@@ -1,38 +1,34 @@
 <template>
   <span
-    v-if="condition"
-    :class="{'issue-condition': true, [`issue-condition-${condition.value}`]: true}"
-    :style="{backgroundColor: condition.color}"
-    :title="getConditionLabel(condition.dbValue)"
+    v-if="currentCondition"
+    :class="{'issue-condition': true, [`issue-condition-${currentCondition.value}`]: true}"
+    :style="{backgroundColor: currentCondition.color}"
+    :title="getConditionLabel(currentCondition.dbValue)"
   />
 </template>
 
-<script>
-import collectionMixin from "../mixins/collectionMixin";
-import conditionMixin from "../mixins/conditionMixin";
+<script setup>
+import {computed} from "vue";
 
-export default {
-  name: "Condition",
+const props = defineProps({
+  publicationcode: {type: String, default: null},
+  issuenumber: {type: String, default: null},
+  value: {type: String, default: null}
+})
+import {collection} from "../composables/collection";
+import {condition} from "../composables/condition";
 
-  mixins: [collectionMixin, conditionMixin],
-  props: {
-    publicationcode: {type: String, default: null},
-    issuenumber: {type: String, default: null},
-    value: { type: String, default: null}
-  },
+const {conditions, getConditionLabel} = condition()
+const {findInCollection} = collection()
 
-  computed: {
-    issueInCollection() {
-      return this.value ? true: this.findInCollection(this.publicationcode, this.issuenumber)
-    },
-    condition() {
-      const vm = this
-      return this.value
-        ? this.conditions.find(({value}) => value === vm.value)
-        : this.issueInCollection && this.conditions.find(({dbValue}) => dbValue === vm.issueInCollection.condition)
-    }
-  }
-}
+const issueInCollection = computed(() =>
+    props.value ? true : findInCollection(props.publicationcode, props.issuenumber)
+)
+
+const currentCondition = computed(() =>
+    props.value
+        ? conditions.find(({value}) => value === props.value)
+        : issueInCollection.value && conditions.find(({dbValue}) => dbValue === issueInCollection.value.condition))
 </script>
 
 <style scoped lang="scss">

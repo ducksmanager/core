@@ -58,25 +58,24 @@
 </template>
 
 <script>
-import collectionMixin from "../mixins/collectionMixin";
+import {collection} from "../composables/collection";
 import { mapActions, mapState } from "pinia";
 import SuggestionList from "./SuggestionList";
 import {BAlert, BFormSelect} from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require('../stores/collection');
 import { l10n } from "../stores/l10n";
 
 export default {
   name: "Expand",
   components: { SuggestionList, BAlert, BSelect: BFormSelect },
-  mixins: [collectionMixin],
 
   data: () => ({
     countryCode: "ALL"
   }),
 
   computed: {
-    ...mapState(collection, ["watchedAuthors", "suggestions", "hasSuggestions"]),
+    ...mapState(collectionStore, ["watchedAuthors", "suggestions", "hasSuggestions"]),
     ...mapState(coa, ["countryNames"]),
 
     countryNamesWithAllCountriesOption() {

@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import collectionMixin from "../../mixins/collectionMixin";
+import {collection} from "../../composables/collection";
 import {mapActions, mapState} from "pinia";
-import { collection } from "../../stores/collection";
+const { collection: collectionStore } = require("../../stores/collection");
 import { coa } from "../../stores/coa";
 import {BarChart} from "vue-chart-3";
 
@@ -19,7 +19,6 @@ Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, To
 export default {
   name: "PossessionStats",
   components: {BarChart},
-  mixins: [collectionMixin],
 
   props: {
     unit: {
@@ -29,13 +28,17 @@ export default {
   },
   emits: ['change-dimension'],
 
+  setup() {
+    collection().load()
+  },
+
   data: () => ({
     chartData: null,
     options: {}
   }),
 
   computed: {
-    ...mapState(collection, ["collection", "totalPerPublication"]),
+    ...mapState(collectionStore, ["collection", "totalPerPublication"]),
     ...mapState(coa, ["countryNames", "issueCounts", "publicationNames"]),
 
     labels() {

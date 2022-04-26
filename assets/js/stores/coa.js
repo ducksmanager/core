@@ -1,4 +1,3 @@
-import Vue from "vue";
 import axios from "axios";
 import { coaCache } from "../util/cache";
 import { defineStore } from "pinia";

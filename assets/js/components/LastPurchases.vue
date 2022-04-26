@@ -16,7 +16,7 @@
         :visible="false"
       >
         <template #header>
-          <b>{{ purchase.date }}</b> <i v-if="purchase.description">{{ purchase.description }} </i>{{ issues.length }} {{ $tc("numéro | numéros", issues.length) }}
+          <b>{{ purchase.date }}</b>&nbsp;<i v-if="purchase.description">{{ purchase.description }}&nbsp;</i>{{ issues.length }} {{ $tc("numéro | numéros", issues.length) }}
         </template>
         <template #content>
           <Issue
@@ -34,19 +34,17 @@
 </template>
 <script>
 import { mapState } from "pinia";
-import collectionMixin from "../mixins/collectionMixin";
 import Accordion from "./Accordion";
 import Issue from "./Issue";
 import { coa } from "../stores/coa";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require('../stores/collection');
 
 export default {
   name: "LastPurchases",
   components: { Accordion, Issue },
-  mixins: [collectionMixin],
   computed: {
     ...mapState(coa, ["publicationNames"]),
-    ...mapState(collection, ["collection", "purchases"]),
+    ...mapState(collectionStore, ["collection", "purchases"]),
 
     collectionPerPurchaseDate() {
       const vm = this;

@@ -49,6 +49,9 @@
 </template>
 <script>
 import medalMixin from "../mixins/medalMixin";
+import {locale} from "../composables/global";
+
+const currentLocale = locale()
 
 export default {
   name: 'Medal',
@@ -63,6 +66,7 @@ export default {
 
   data: () => ({
     medalColors: ['bronze', 'argent', 'or'],
+    locale: currentLocale
   }),
 
   computed: {

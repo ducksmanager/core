@@ -15,7 +15,7 @@
       <div id="login">
         <a
           id="logo_small"
-          :href="username ? $r('/collection/show') : '/'"
+          :href="username ? r('/collection/show') : '/'"
         >
           <img :src="`${imagePath}/logo_name.jpg`">
         </a>
@@ -69,52 +69,30 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import axios from "axios";
 import RecentEvents from "./RecentEvents";
 import Navigation from "./Navigation";
 import Medal from "../components/Medal";
-import {mapState, mapActions} from "pinia";
 import Banner from "./Banner";
 import SwitchLocale from "./SwitchLocale";
 import { users } from "../stores/users";
-import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
+import {user} from "../composables/global";
+import {computed} from "vue";
+import {collection} from "../stores/collection";
 
-export default {
-  name: "LeftPanel",
+const points = users().points
+const userPoints = computed(() => points && points[userId])
 
-  components: {
-    SwitchLocale,
-    Banner,
-    Medal,
-    RecentEvents,
-    Navigation
-  },
+const { userId, username } = user()
 
-
-  computed: {
-    ...mapState(users, ["points"]),
-
-    userPoints() {
-      return this.points && this.points[this.userId]
-    }
-  },
-
-  async mounted() {
-    if (this.userId) {
-      const {previousVisit}=(await axios.post('/api/collection/lastvisit')).data
-      this.setPreviousVisit(previousVisit)
-      await this.fetchStats([this.userId])
-    }
-  },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(collection, ["setPreviousVisit"]),
-    ...mapActions(users, ["fetchStats"])
-  }
+if (userId) {
+  axios.post('/api/collection/lastvisit').then(data => collection().setPreviousVisit(data))
+  users().fetchStats([userId])
 }
+
+const {$r: r} = l10n()
 </script>
 
 <style scoped lang="scss">

@@ -1,6 +1,6 @@
 <template>
   <div :class="{...classes, small}">
-    <a :href="username ? $r('/collection/show') : '/'">
+    <a :href="username ? r('/collection/show') : '/'">
       <img
         :src="`${imagePath}/logo_small.png`"
         alt="DucksManager"
@@ -9,27 +9,23 @@
   </div>
 </template>
 
-<script>
-import {mapActions} from "pinia";
-import { l10n } from "../stores/l10n";
+<script setup>
+import {user} from "../composables/global";
+import {l10n} from "../stores/l10n";
 
-export default {
-  name: "Banner",
-
-  props: {
-    classes: {
-      type: Object,
-      default: () => ({})
-    },
-    small: {
-      type: Boolean,
-      default: false
-    }
+defineProps({
+  classes: {
+    type: Object,
+    default: () => ({})
   },
-  methods: {
-    ...mapActions(l10n, ["$r"]),
+  small: {
+    type: Boolean,
+    default: false
   }
-}
+})
+
+const {$r: r} = l10n()
+const {username} = user()
 </script>
 
 <style scoped lang="scss">

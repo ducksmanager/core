@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import collectionMixin from "../../mixins/collectionMixin";
+import {collection} from "../../composables/collection";
 import {BarChart} from "vue-chart-3";
 
 import {Chart, CategoryScale, LinearScale, Legend, BarElement, BarController, Title, Tooltip} from 'chart.js';
@@ -16,7 +16,6 @@ Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, To
 export default {
   name: "AuthorStats",
   components: {BarChart},
-  mixins: [collectionMixin],
 
   props: {
     unit: {
@@ -30,8 +29,9 @@ export default {
   },
   emits: ['change-dimension'],
 
-  setup(props, { emit }) {
+  async setup(props, { emit }) {
     const { t: $t } = useI18n()
+    collection()
 
     const labels = Object.values(props.watchedAuthorsStoryCount).map(({fullname: fullName}) => fullName);
     emit('change-dimension', 'width', 250 + 50 * labels.length);

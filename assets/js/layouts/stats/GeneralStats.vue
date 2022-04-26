@@ -126,7 +126,7 @@ import axios from "axios";
 import { mapActions, mapState } from "pinia";
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
-import conditionMixin from "../../mixins/conditionMixin";
+import {condition} from "../../composables/condition";
 import {BAlert, BPagination, BTable} from "bootstrap-vue-3";
 import { users } from "../../stores/users";
 import { coa } from "../../stores/coa";
@@ -135,7 +135,6 @@ import { collection } from "../../stores/collection";
 export default {
   name: "GeneralStats",
   components: { Issue, Accordion, ShortStats, BAlert, BTable, BPagination },
-  mixins: [conditionMixin],
 
   data: () => ({
     rarityValue: null,

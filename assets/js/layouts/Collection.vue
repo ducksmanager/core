@@ -20,9 +20,9 @@ import Duplicates from "./collection/Duplicates";
 import Manage from "./collection/Manage";
 import Subscriptions from "./collection/Subscriptions";
 import { mapState } from "pinia";
-import collectionMixin from "../mixins/collectionMixin";
+import {collection} from "../composables/collection";
 import subscriptionMixin from "../mixins/subscriptionMixin";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require('../stores/collection');
 
 export default {
   name: "Collection",
@@ -33,7 +33,7 @@ export default {
     Menu,
     Subscriptions
   },
-  mixins: [collectionMixin, subscriptionMixin],
+  mixins: [subscriptionMixin],
   props: {
     tab: {
       type: String,

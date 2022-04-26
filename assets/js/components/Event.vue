@@ -10,9 +10,7 @@
       {{ $t("a commencé sa collection sur DucksManager. Bienvenue !") }}
     </template>
     <template v-if="event.type === 'medal'">
-      <span
-        v-html="$t('a obtenu la médaille <b>{0} niveau {1}</b>', [getMedalTitle(event.contribution), event.niveau])"
-      />
+      {{ $t('a obtenu la médaille <b>{0} niveau {1}</b>', [getMedalTitle(event.contribution), event.niveau]) }}
     </template>
     <template v-if="event.type === 'bookstore_comment'">
       {{ $t("a visité la bouquinerie") }}

@@ -64,29 +64,20 @@
   </div>
 </template>
 
-<script>
-import Errorable from "../components/Errorable";
-import {BAlert, BButton, BCol, BFormInput, BFormRow} from "bootstrap-vue-3";
-import {mapActions} from "pinia";
+<script setup>
 import {form} from "../stores/form";
 
-export default {
-  name: "Forgot",
-  components: {Errorable, BAlert, BFormInput, BFormRow, BCol, BButton},
-  props: {
-    success: {type: String, default: null},
-    token: {type: String, default: null},
-    errors: {type: String, default: ""}
-  },
+const props = defineProps({
+  success: {type: String, default: null},
+  token: {type: String, default: null},
+  errors: {type: String, default: ""}
+})
 
-  setup(props) {
-    return {
-      isSuccess: () => props.success === null ? null : parseInt(props.success) === 1,
-      parsedErrors: () => JSON.parse(props.errors),
-      ...mapActions(form, ["addErrors"])
-    }
-  }
-};
+const
+  isSuccess = props.success === null ? null : parseInt(props.success) === 1,
+  parsedErrors = JSON.parse(props.errors)
+
+form().addErrors(parsedErrors)
 </script>
 
 <style scoped>

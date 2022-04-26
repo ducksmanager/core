@@ -158,26 +158,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { BButton, BCol, BRow } from "bootstrap-vue-3";
-import {mapActions} from "pinia";
 import { l10n } from "../stores/l10n";
+import {user} from "../composables/global";
 
-export default {
-  // vue/multi-word-component-names
-  name: "Welcome",
-
-  components: {
-    BRow,
-    BCol,
-    BButton
-  },
-
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-  }
-};
+const {$r: r} = l10n()
+const { username } = user()
 </script>
 
 <style scoped lang="scss">

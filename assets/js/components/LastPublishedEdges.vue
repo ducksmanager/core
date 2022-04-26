@@ -41,17 +41,15 @@ import Accordion from "./Accordion";
 import Issue from "./Issue";
 import Ago from "./Ago";
 import {mapActions, mapState} from "pinia";
-import collectionMixin from "../mixins/collectionMixin";
 import { coa } from "../stores/coa";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require('../stores/collection');
 
 export default {
   name: "LastPublishedEdges",
   components: {Ago, Issue, Accordion},
-  mixins: [collectionMixin],
   computed: {
     ...mapState(coa, ["publicationNames"]),
-    ...mapState(collection, ["previousVisit", "lastPublishedEdgesForCurrentUser"]),
+    ...mapState(collectionStore, ["previousVisit", "lastPublishedEdgesForCurrentUser"]),
 
     publishedEdgesSincePreviousVisit() {
       const vm = this
@@ -69,7 +67,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(collection, ["loadLastPublishedEdgesForCurrentUser"])
+    ...mapActions(collectionStore, ["loadLastPublishedEdgesForCurrentUser"])
   }
 }
 </script>

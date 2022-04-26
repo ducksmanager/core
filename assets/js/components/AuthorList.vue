@@ -91,7 +91,7 @@ import axios from "axios";
 import {BAlert, BCol, BFormInput, BRow} from "bootstrap-vue-3";
 import StarRating from 'vue-star-rating'
 import { coa } from "../stores/coa";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require('../stores/collection');
 import { l10n } from "../stores/l10n";
 
 export default {
@@ -141,7 +141,7 @@ export default {
   methods: {
     ...mapActions(l10n, ["$r"]),
     ...mapActions(coa, ["fetchPersonNames"]),
-    ...mapActions(collection, ["loadWatchedAuthors"]),
+    ...mapActions(collectionStore, ["loadWatchedAuthors"]),
 
     isAuthorWatched(personCode) {
       return this.watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)

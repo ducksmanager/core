@@ -13,7 +13,6 @@
 </template>
 <script>
 import { mapActions, mapState } from "pinia";
-import collectionMixin from "../../mixins/collectionMixin";
 import IssueList from "../../components/IssueList";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
@@ -21,7 +20,6 @@ import { collection } from "../../stores/collection";
 export default {
   name: "Duplicates",
   components: {  IssueList },
-  mixins: [collectionMixin],
 
   data: () => ({
     hasPublicationNames: false,
@@ -55,8 +53,13 @@ export default {
     }
   },
 
+  mounted() {
+    this.loadCollection
+  },
+
   methods: {
-    ...mapActions(coa, ["fetchPublicationNames"])
+    ...mapActions(coa, ["fetchPublicationNames"]),
+    ...mapActions(collection, ["loadCollection"])
   }
 };
 </script>

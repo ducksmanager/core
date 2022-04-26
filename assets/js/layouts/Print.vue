@@ -17,28 +17,18 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Collectable from "../layouts/print/Collectable";
 import Classic from "../layouts/print/Classic";
-import {mapState, mapActions} from "pinia";
-import { l10n } from "../stores/l10n";
+import {l10n} from "../stores/l10n";
+import {user} from "../composables/global";
 
-export default {
-  name: "Print",
-  components: {
-    Collectable,
-    Classic
-  },
-  props: {
-    currentType: {type: String, required: true}
-  },
-  computed: {
-    ...mapState(l10n, ['l10nRoutes']),
-  },
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-  }
-}
+defineProps({
+  currentType: {type: String, required: true}
+})
+
+const {l10nRoutes, $r: r} = l10n()
+const {username} = user()
 </script>
 
 <style lang="scss" scoped>

@@ -6,7 +6,6 @@
   />
 </template>
 <script>
-import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapState} from "pinia";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
@@ -18,7 +17,6 @@ Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, To
 export default {
   name: "PurchaseStats",
   components: {BarChart},
-  mixins: [collectionMixin],
 
   props: {
     unit: {
@@ -27,6 +25,10 @@ export default {
     }
   },
   emits: ['change-dimension'],
+
+  setup() {
+    this.loadCollection()
+  },
 
   data: () => ({
     hasPublicationNames: false,
@@ -192,7 +194,7 @@ export default {
 
   methods: {
     ...mapActions(coa, ["fetchPublicationNames"]),
-    ...mapActions(collection, ["loadPurchases"]),
+    ...mapActions(collection, ["loadCollection", "loadPurchases"]),
 
     compareDates: (a, b) => Math.sign(
       new Date(a === '?' ? '0001-01-01' : a)

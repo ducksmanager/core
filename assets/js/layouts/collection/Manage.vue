@@ -63,7 +63,6 @@
 
 <script>
 import IssueList from "../../components/IssueList";
-import collectionMixin from "../../mixins/collectionMixin";
 import { mapActions, mapState } from "pinia";
 import IssueSearch from "../../components/IssueSearch";
 import PublicationSelect from "../../components/PublicationSelect";
@@ -74,8 +73,11 @@ import LastPublishedEdges from "../../components/LastPublishedEdges";
 import ShortStats from "../../components/ShortStats";
 import LastPurchases from "../../components/LastPurchases";
 import { coa } from "../../stores/coa";
-import { collection } from "../../stores/collection";
 import { l10n } from "../../stores/l10n";
+import {user} from "../../composables/global";
+import {collection} from "../../stores/collection";
+
+const {username} = user()
 
 export default {
   name: "Manage",
@@ -90,7 +92,6 @@ export default {
     IssueSearch,
     IssueList
   },
-  mixins: [collectionMixin],
   props: {
     publicationcode: {
       type: String,
@@ -99,7 +100,8 @@ export default {
   },
   data: () => ({
     suggestionsNumber: 0,
-    hasPublicationNames: false
+    hasPublicationNames: false,
+    username
   }),
   computed: {
     ...mapState(coa, ["publicationNames"]),

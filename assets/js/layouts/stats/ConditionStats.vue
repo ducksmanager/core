@@ -5,25 +5,31 @@
   />
 </template>
 <script>
-import collectionMixin from "../../mixins/collectionMixin";
+import {collection} from "../../composables/collection";
 import {mapState} from "pinia";
-import conditionMixin from "../../mixins/conditionMixin";
-import {collection} from "../../stores/collection";
+import {condition} from "../../composables/condition";
+const {collection: collectionStore} = require("../../stores/collection");
 import {PieChart} from "vue-chart-3";
 
 import {ArcElement, Chart, Legend, PieController, Title, Tooltip} from 'chart.js';
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
+let conditions
+
 export default {
   name: "ConditionStats",
   components: {PieChart},
-  mixins: [collectionMixin, conditionMixin],
+
+  setup() {
+    conditions = condition().conditions
+    collection().load()
+  },
 
   computed: {
-    ...mapState(collection, ["collection"]),
+    ...mapState(collectionStore, ["collection"]),
 
     conditionsWithoutMissing() {
-      return this.conditions.filter(({value}) => value !== 'missing')
+      return conditions.filter(({value}) => value !== 'missing')
     },
 
     values() {
@@ -67,7 +73,7 @@ export default {
         }
       }
     }
-  }
+  },
 }
 </script>
 

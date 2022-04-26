@@ -135,7 +135,6 @@
 <script>
 import IssueSearch from "../../components/IssueSearch";
 import {mapActions, mapState} from "pinia";
-import collectionMixin from "../../mixins/collectionMixin";
 import Issue from "../../components/Issue";
 import Book from "../../components/Book";
 import SharePage from "../../components/SharePage";
@@ -147,11 +146,13 @@ import { bookcase } from "../../stores/bookcase";
 import { collection } from "../../stores/collection";
 import { coa } from "../../stores/coa";
 import { l10n } from "../../stores/l10n";
+import {user} from "../../composables/global";
+
+const {userId, username} = user()
 
 export default {
   name: "ViewBookcase",
   components: {Bookcase, SharePage, Book, Issue, IssueSearch, UploadableEdgesCarousel, BAlert, BButton},
-  mixins: [collectionMixin],
 
   props: {
     bookcaseUsername: {type: String, required: true}
@@ -163,7 +164,8 @@ export default {
     currentEdgeHighlighted: null,
     bookStartPosition: null,
     hasIssueNumbers: false,
-    showShareButtons: false
+    showShareButtons: false,
+    username
   }),
 
   computed: {
@@ -174,7 +176,7 @@ export default {
     ...mapState(users, ["points"]),
 
     bookcaseUrl() {
-      return !this.isPrivateBookcase && `${window.location.origin}/bookcase/show/${this.username}`
+      return !this.isPrivateBookcase && `${window.location.origin}/bookcase/show/${username}`
     },
 
     loading() {
@@ -182,7 +184,7 @@ export default {
     },
 
     userPoints() {
-      return this.points && this.points[this.userId]
+      return this.points && this.points[userId]
     },
 
     percentVisible() {
@@ -248,7 +250,7 @@ export default {
         if (newValue) {
           await this.loadBookcaseOptions()
           await this.loadBookcaseOrder()
-          await this.fetchStats([this.userId])
+          await this.fetchStats([userId])
 
           const usableSpritesBySpriteId = newValue
             .filter(({sprites}) => sprites)

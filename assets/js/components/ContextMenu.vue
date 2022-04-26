@@ -202,7 +202,6 @@
 <script>
 import "v-contextmenu/dist/themes/default.css";
 
-import conditionMixin from "../mixins/conditionMixin";
 import Condition from "./Condition";
 import {BAlert, BNavItem, BTab, BTabs} from "bootstrap-vue-3";
 
@@ -211,6 +210,9 @@ import {mapActions, mapState} from "pinia";
 import {l10n} from "../stores/l10n";
 import {collection} from "../stores/collection";
 import {BIconCalendar, BIconCalendarX, BIconCheck, BIconTrash, BIconX} from "bootstrap-icons-vue";
+import {condition} from "../composables/condition";
+
+let conditions
 
 const today = new Date().toISOString().slice(0, 10);
 export default {
@@ -233,7 +235,6 @@ export default {
     BIconCalendarX
   },
 
-  mixins: [conditionMixin],
   props: {
     publicationCode: {
       type: String, required: true
@@ -246,6 +247,11 @@ export default {
     },
   },
   emits: ["update-issues", "create-purchase", "delete-purchase", "close"],
+
+  setup() {
+    conditions = condition().conditions
+  },
+
   data: () => ({
     defaultState: {
       condition: "do_not_change",
@@ -328,7 +334,7 @@ export default {
       }
     },
     convertConditionToDbValue(condition) {
-      return (this.conditions.find(({ value }) => value === condition) || { dbValue: null }).dbValue;
+      return (conditions.find(({ value }) => value === condition) || { dbValue: null }).dbValue;
     },
 
     async updateSelectedIssues() {

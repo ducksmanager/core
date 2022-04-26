@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import axios from "axios";
 import { defineStore } from "pinia";
 import { collection } from "./collection";

@@ -20,12 +20,10 @@
 
 <script>
 import { mapState } from "pinia";
-import collectionMixin from "../mixins/collectionMixin";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require('../stores/collection');
 
 export default {
   name: "ShortStats",
-  mixins: [collectionMixin],
 
   data: () => ({
     hasPublicationNames: false,
@@ -33,7 +31,7 @@ export default {
   }),
 
   computed: {
-    ...mapState(collection, ["total", "totalUniqueIssues", "totalPerCountry", "totalPerPublication"])
+    ...mapState(collectionStore, ["total", "totalUniqueIssues", "totalPerCountry", "totalPerPublication"])
   },
 };
 </script>

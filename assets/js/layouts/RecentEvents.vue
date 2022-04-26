@@ -36,7 +36,7 @@ export default {
 
   data: () => ({
     isLoaded: false,
-    hasFreshEvents: false
+    hasFreshEvents: false,
   }),
 
   computed: {

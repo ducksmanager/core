@@ -7,10 +7,9 @@
 </template>
 
 <script>
-import collectionMixin from "../../mixins/collectionMixin";
 import {mapActions, mapState} from "pinia";
 import { coa } from "../../stores/coa";
-import { collection } from "../../stores/collection";
+const { collection } = require("../../stores/collection");
 import {PieChart} from "vue-chart-3";
 
 import {ArcElement, Chart, Legend, PieController, Title, Tooltip} from 'chart.js';
@@ -19,7 +18,10 @@ Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 export default {
   name: "PublicationStats",
   components: {PieChart},
-  mixins: [collectionMixin],
+
+  setup() {
+    this.loadCollection()
+  },
 
   data: () => ({
     hasPublicationNames: false,
@@ -120,6 +122,7 @@ export default {
 
   methods: {
     ...mapActions(coa, ["fetchPublicationNames"]),
+    ...mapActions(collection, ["loadCollection"]),
     randomColor: () => `rgb(${[Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].join(',')})`,
 
     sortByCount(publicationCode1, publicationCode2) {

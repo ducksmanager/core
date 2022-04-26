@@ -118,59 +118,44 @@
   </form>
 </template>
 
-<script>
+<script setup>
 import Errorable from "../../components/Errorable";
-import { mapActions, mapState } from "pinia";
 import axios from "axios";
 import {BAlert, BButton, BFormCheckbox, BFormInput} from "bootstrap-vue-3";
 import { form } from "../../stores/form";
 import { collection } from "../../stores/collection";
 import { l10n } from "../../stores/l10n";
+import {computed, onMounted} from "vue";
+const props = defineProps({
+  errors: { type: String, default: "" },
+  success: { type: String, default: null },
+  hasrequestedpresentationsentence: { type: String, default: null },
+})
 
-export default {
-  name: "Account",
-  components: { Errorable, BAlert, BFormInput, BFormCheckbox, BButton },
-  props: {
-    errors: { type: String, default: "" },
-    success: { type: String, default: null },
-    hasrequestedpresentationsentence: { type: String, default: null },
-  },
+const user = computed(() => collection().user)
+const isSuccess = computed(() => props.success === null ? null : parseInt(props.success) === 1)
+const hasRequestedPresentationSentence = computed(() => props.hasrequestedpresentationsentence === null ? null : parseInt(props.hasrequestedpresentationsentence) === 1);
 
-  computed: {
-    ...mapState(collection, ["user"]),
-    isSuccess() {
-      return this.success === null ? null : parseInt(this.success) === 1;
-    },
-    hasRequestedPresentationSentence() {
-      return this.hasrequestedpresentationsentence === null ? null : parseInt(this.hasrequestedpresentationsentence) === 1;
-    }
-  },
+const {$r: r } = l10n()
 
-  async mounted() {
-    await this.loadUser();
-    this.addErrors(JSON.parse(this.errors));
-  },
+onMounted(async () => {
+  await collection().loadUser();
+  form().addErrors(JSON.parse(props.errors));
+})
 
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(form, ["addErrors"]),
-    ...mapActions(collection, ["loadUser"]),
-
-    async emptyCollection() {
-      if (confirm(this.$t("Votre collection va être vidée. Continuer ?"))) {
-        await axios.delete(`/collection`);
-        window.location.replace(this.$r("/collection/show"));
-      }
-    },
-
-    async deleteAccount() {
-      if (confirm(this.$t("Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?"))) {
-        await axios.post(`/collection/empty`);
-        window.location.replace(this.$r("/logout"));
-      }
-    }
+const emptyCollection = async() => {
+  if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
+    await axios.delete(`/collection`);
+    window.location.replace(r("/collection/show"));
   }
-};
+}
+
+const deleteAccount = async() => {
+  if (confirm(t("Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?"))) {
+    await axios.post(`/collection/empty`);
+    window.location.replace(r("/logout"));
+  }
+}
 </script>
 
 <style scoped lang="scss">

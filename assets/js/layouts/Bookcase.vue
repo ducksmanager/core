@@ -23,34 +23,24 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ViewBookcase from "./bookcase/ViewBookcase";
 import Menu from "./Menu";
-import BookcaseOptions from "./bookcase/BookcaseOptions";
-import BookcaseContributors from "./bookcase/BookcaseContributors";
+import {user} from "../composables/global";
+import {computed, useAttrs} from "vue";
 
-export default {
-  name: "Bookcase",
-  components: {
-    ViewBookcase,
-    BookcaseOptions,
-    BookcaseContributors,
-    Menu
-  },
-  props: {
-    tab: {
-      type: String,
-      required: true
-    }
-  },
-  computed: {
-    attrsWithoutTab() {
-      const vm = this
-      return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'tab')
-        .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
-    }
+const {username} = user()
+const attrs = useAttrs()
+
+defineProps({
+  tab: {
+    type: String,
+    required: true
   }
-}
+})
+
+const attrsWithoutTab = computed(() => Object.keys(attrs).filter(attrKey => attrKey !== 'tab')
+    .reduce((acc, attrKey) => ({...acc, [attrKey]: attrs[attrKey]}), {}))
 </script>
 
 <style scoped lang="scss">

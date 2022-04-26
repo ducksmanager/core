@@ -58,7 +58,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-:deep(a).active {
-  color: black !important;
+:deep(.nav-link) {
+  color: darkgrey !important;
+  &.active {
+    color: black !important;
+  }
 }
 </style>

@@ -130,7 +130,6 @@
 <script>
 import PublicationStats from "./stats/PublicationStats";
 import PossessionStats from "./stats/PossessionStats";
-import collectionMixin from "../mixins/collectionMixin";
 import PurchaseStats from "./stats/PurchaseStats";
 import AuthorStats from "./stats/AuthorStats";
 import { mapActions, mapState } from "pinia";
@@ -140,8 +139,11 @@ import ConditionStats from "./stats/ConditionStats";
 import Menu from "./Menu";
 import GeneralStats from "./stats/GeneralStats";
 import {BAlert, BButton, BButtonGroup} from "bootstrap-vue-3";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require('../stores/collection');
 import { l10n } from "../stores/l10n";
+import {locale} from "../composables/global";
+
+const currentLocale = locale()
 
 export default {
   name: "Stats",
@@ -158,7 +160,6 @@ export default {
     BButtonGroup,
     BButton
   },
-  mixins: [collectionMixin],
   props: {
     tab: {
       type: String,
@@ -171,10 +172,11 @@ export default {
     unitTypeCurrent: "number",
     purchaseTypeCurrent: "new",
 
-    watchedAuthorsStoryCount: null
+    watchedAuthorsStoryCount: null,
+    locale: currentLocale
   }),
   computed: {
-    ...mapState(collection, ["purchases", "watchedAuthors"]),
+    ...mapState(collectionStore, ["purchases", "watchedAuthors", "collection"]),
     unitTypes() {
       return { number: this.$t("Afficher en valeurs réelles"), percentage: this.$t("Afficher en pourcentages") };
     },
@@ -200,7 +202,7 @@ export default {
 
   methods: {
     ...mapActions(l10n, ["$r"]),
-    ...mapActions(collection, ["loadWatchedAuthors", "loadPurchases"]),
+    ...mapActions(collectionStore, ["loadWatchedAuthors", "loadPurchases"]),
     changeDimension(dimension, value) {
       this[dimension] = `${value}px`;
     }

@@ -248,7 +248,6 @@
 import { mapActions, mapState } from "pinia";
 import Accordion from "../components/Accordion";
 import Publication from "../components/Publication";
-import collectionMixin from "../mixins/collectionMixin";
 import Issue from "../components/Issue";
 import axios from "axios";
 import {
@@ -264,11 +263,14 @@ import {
 } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
+import {user} from "../composables/global";
+import {collection} from "../stores/collection";
+
+const {username} = user()
 
 export default {
   name: "InducksImport",
   components: { Accordion, Publication, Issue, BButton, BAlert, BRow, BCol, BFormGroup, BTextarea: BFormTextarea, BCollapse, BFormSelect, BFormSelectOption, BProgress, BProgressBar},
-  mixins: [collectionMixin],
 
   data: () => ({
     step: 1,
@@ -282,11 +284,13 @@ export default {
     issuesNotReferenced: null,
     issuesAlreadyInCollection: null,
     issuesImportable: null,
-    importProgress: 0
+    importProgress: 0,
+    username
   }),
 
   computed: {
     ...mapState(coa, ["publicationNames", "issueNumbers", "issueCodeDetails"]),
+    ...mapState(collection, ["collection"]),
 
     conditions() {
       return {

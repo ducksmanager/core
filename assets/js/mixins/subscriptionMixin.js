@@ -9,7 +9,7 @@ export default {
         ...mapActions(collection, ["loadSubscriptions"])
     },
     async mounted() {
-        if (this.username) {
+        if (username) {
             await this.loadSubscriptions()
         }
     }
