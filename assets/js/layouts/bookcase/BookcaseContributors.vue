@@ -2,11 +2,14 @@
   <div v-if="loading">
     {{ $t("Chargement...") }}
   </div>
-  <div
-    v-else
-    id="contributors"
-  >
-    <h2>{{ $t("La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de :") }}</h2>
+  <div v-else id="contributors">
+    <h2>
+      {{
+        $t(
+          "La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de :"
+        )
+      }}
+    </h2>
     <div
       v-for="contributor in bookcaseContributorsSorted"
       :key="JSON.stringify(contributor)"
@@ -25,43 +28,36 @@
   </div>
 </template>
 
-<script>
-import { mapActions, mapState } from "pinia";
+<script setup>
 import UserPopover from "../../components/UserPopover";
 import { users } from "../../stores/users";
+import { computed, onMounted } from "vue";
 
-export default {
-  name: "BookcaseContributors",
+const usersStore = users();
 
-  components: {
-    UserPopover
-  },
+const loading = ref(true),
+  bookcaseContributors = usersStore.bookcaseContributors,
+  stats = usersStore.stats,
+  points = usersStore.points,
+  fetchStats = usersStore.fetchStats,
+  fetchBookcaseContributors = usersStore.fetchBookcaseContributors,
+  bookcaseContributorsSorted = computed(
+    () =>
+      !loading.value &&
+      [...bookcaseContributors.value].sort(({ name: name1 }, { name: name2 }) =>
+        name1.toLowerCase() < name2.toLowerCase() ? -1 : 1
+      )
+  );
 
-  data: () => ({
-    loading: true
-  }),
-
-  computed: {
-    ...mapState(users, ["bookcaseContributors", "stats", "points"]),
-
-    bookcaseContributorsSorted() {
-      return !this.loading && [...this.bookcaseContributors]
-        .sort(({ name: name1 }, { name: name2 }) => name1.toLowerCase() < name2.toLowerCase() ? -1 : 1);
-    }
-  },
-
-  async mounted() {
-    await this.fetchBookcaseContributors();
-    await this.fetchStats(
-      this.bookcaseContributors.filter(({ userId }) => !!userId).map(({ userId }) => userId)
-    );
-    this.loading = false;
-  },
-
-  methods: {
-    ...mapActions(users, ["fetchStats", "fetchBookcaseContributors"])
-  }
-};
+onMounted(async () => {
+  await fetchBookcaseContributors();
+  await fetchStats(
+    bookcaseContributors.value
+      .filter(({ userId }) => !!userId)
+      .map(({ userId }) => userId)
+  );
+  loading.value = false;
+});
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,6 @@
 <template>
   <div id="recently">
-    <h4>{{ $t('Récemment sur DucksManager...') }}</h4>
+    <h4>{{ $t("Récemment sur DucksManager...") }}</h4>
     <div id="events">
       <template v-if="isLoaded">
         <Event
@@ -11,26 +11,26 @@
           <Ago :timestamp="event.timestamp" />
         </Event>
       </template>
-      <span v-else>{{ $t('Chargement...') }}</span>
+      <span v-else>{{ $t("Chargement...") }}</span>
     </div>
   </div>
 </template>
 
 <script>
-import {mapState, mapActions} from "pinia";
-import medalMixin from "../mixins/medalMixin";
+import { mapState, mapActions } from "pinia";
+import medalMixin from "../composables/medal";
 import Ago from "../components/Ago";
 import Event from "../components/Event";
 import { users } from "../stores/users";
 import { coa } from "../stores/coa";
-import {ongoingRequests} from "../stores/ongoing-requests";
+import { ongoingRequests } from "../stores/ongoing-requests";
 
 export default {
   name: "RecentEvents",
 
   components: {
     Event,
-    Ago
+    Ago,
   },
   mixins: [medalMixin],
 
@@ -45,32 +45,37 @@ export default {
     ...mapState(ongoingRequests, ["numberOfOngoingAjaxCalls"]),
 
     eventUserIds() {
-      return this.events && this.events
+      return this.events?.events
         .reduce(
-          (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
+          (acc, event) => [
+            ...acc,
+            event.userId || null,
+            ...(event.users || []),
+          ],
           []
         )
-        .filter(userId => !!userId)
-    }
+        .filter((userId) => !!userId);
+    },
   },
 
   watch: {
     async numberOfOngoingAjaxCalls(newValue) {
-      const vm = this
+      const vm = this;
       if (newValue === 0) {
         setTimeout(async () => {
-          if (!vm.hasFreshEvents && vm.numberOfOngoingAjaxCalls === 0) { // Still no ongoing call after 1 second
-            await this.fetchEventsAndAssociatedData(true)
-            this.hasFreshEvents = true
+          if (!vm.hasFreshEvents && vm.numberOfOngoingAjaxCalls === 0) {
+            // Still no ongoing call after 1 second
+            await this.fetchEventsAndAssociatedData(true);
+            this.hasFreshEvents = true;
           }
-        }, 1000)
+        }, 1000);
       }
-    }
+    },
   },
 
   async mounted() {
-    await this.fetchEventsAndAssociatedData(false)
-    this.isLoaded = true
+    await this.fetchEventsAndAssociatedData(false);
+    this.isLoaded = true;
   },
 
   methods: {
@@ -78,22 +83,29 @@ export default {
     ...mapActions(users, ["fetchEvents", "fetchStats"]),
 
     async fetchEventsAndAssociatedData(clearCacheEntry) {
-      this.hasFreshEvents = await this.fetchEvents(clearCacheEntry)
+      this.hasFreshEvents = await this.fetchEvents(clearCacheEntry);
 
       await this.fetchPublicationNames(
         this.events
-          .filter(({publicationCode}) => publicationCode)
-          .map(({publicationCode}) => publicationCode)
+          .filter(({ publicationCode }) => publicationCode)
+          .map(({ publicationCode }) => publicationCode)
           .concat(
-            this.events.filter(({edges}) => edges)
-              .reduce((acc, {edges}) => ([...acc, ...edges.map(({publicationCode}) => publicationCode)]), [])
+            this.events
+              .filter(({ edges }) => edges)
+              .reduce(
+                (acc, { edges }) => [
+                  ...acc,
+                  ...edges.map(({ publicationCode }) => publicationCode),
+                ],
+                []
+              )
           )
-      )
+      );
 
-      await this.fetchStats(this.eventUserIds, clearCacheEntry)
-    }
+      await this.fetchStats(this.eventUserIds, clearCacheEntry);
+    },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -112,7 +124,7 @@ export default {
 
 @media (max-width: 767px) {
   #recently {
-    display: none
+    display: none;
   }
 }
 </style>

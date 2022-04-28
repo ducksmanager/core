@@ -1,14 +1,10 @@
 <template>
-  <b-table
-    v-if="bookstores"
-    :items="bookstores"
-  >
-    <template #cell(comments)="{value}">
-      <div
-        v-for="comment in value"
-        :key="`comment-${comment.id}`"
-      >
-        <u>{{ comment.username }} on {{ comment.creationDate }}</u>: {{ comment.comment }} <b-button
+  <b-table v-if="bookstores" :items="bookstores">
+    <template #cell(comments)="{ value }">
+      <div v-for="comment in value" :key="`comment-${comment.id}`">
+        <u>{{ comment.username }} on {{ comment.creationDate }}</u
+        >: {{ comment.comment }}
+        <b-button
           v-if="!comment.active"
           show
           @click="validateBookstoreComment(comment)"
@@ -19,33 +15,20 @@
     </template>
   </b-table>
 </template>
-<script>
+<script setup>
 import axios from "axios";
-import {BButton, BTable} from "bootstrap-vue-3";
+import { BButton, BTable } from "bootstrap-vue-3";
+import { onMounted } from "vue";
 
-export default {
-  name: "BookstoresAdmin",
+const bookstores = ref(null),
+  validateBookstoreComment = async ({ id }) => {
+    await axios.post("/admin/bookstoreComment/approve", { id });
+    bookstores.value = (await axios.get("/admin/bookstoreComment/list")).data;
+  };
 
-  components: {
-    BTable,
-    BButton
-  },
-
-  data: () => ({
-    bookstores: null
-  }),
-
-  async mounted() {
-    this.bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
-  },
-
-  methods: {
-    async validateBookstoreComment({ id }) {
-      await axios.post("/admin/bookstoreComment/approve", { id });
-      this.bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
-    }
-  }
-};
+onMounted(async () => {
+  bookstores.value = (await axios.get("/admin/bookstoreComment/list")).data;
+});
 </script>
 
 <style scoped lang="scss">

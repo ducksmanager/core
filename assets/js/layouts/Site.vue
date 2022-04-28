@@ -2,15 +2,12 @@
   <div v-if="l10nRoutes">
     <LeftPanel />
     <SwitchLocale />
-    <Banner :classes="{'d-none d-md-flex': true}" />
+    <Banner :classes="{ 'd-none d-md-flex': true }" />
     <div id="logo_zone2">
       <h2 v-if="innerTitle">
         {{ innerTitle }}
       </h2>
-      <component
-        :is="page"
-        v-bind="attrsWithoutId"
-      />
+      <component :is="page" v-bind="attrsWithoutId" />
     </div>
     <Footer />
   </div>
@@ -63,14 +60,18 @@ export default {
     return this.$attrs;
   },
   computed: {
-    ...mapState(l10n, ['l10nRoutes']),
+    ...mapState(l10n, ["l10nRoutes"]),
     attrsWithoutId() {
-      const vm = this
-      return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'id')
-          .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
-    }
-  }
-}
+      const vm = this;
+      return Object.keys(this.$attrs)
+        .filter((attrKey) => attrKey !== "id")
+        .reduce(
+          (acc, attrKey) => ({ ...acc, [attrKey]: vm.$attrs[attrKey] }),
+          {}
+        );
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

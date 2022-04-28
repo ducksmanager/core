@@ -1,12 +1,7 @@
 <template>
-  <nav
-    class="navbar navbar-expand-lg navbar-dark position-sticky"
-  >
+  <nav class="navbar navbar-expand-lg navbar-dark position-sticky">
     <div class="container-fluid">
-      <div
-        v-if="withTitle"
-        class="navbar-brand"
-      >
+      <div v-if="withTitle" class="navbar-brand">
         {{ $t("Rechercher une histoire") }}
       </div>
       <div class="collapse navbar-collapse">
@@ -16,9 +11,14 @@
             :text="searchContexts[searchContext]"
           >
             <b-dropdown-item
-              v-for="(l10nKey, alternativeSearchContext) in searchContextsWithoutCurrent"
+              v-for="(
+                l10nKey, alternativeSearchContext
+              ) in searchContextsWithoutCurrent"
               :key="alternativeSearchContext"
-              @click="searchContext=alternativeSearchContext;search = ''"
+              @click="
+                searchContext = alternativeSearchContext;
+                search = '';
+              "
             >
               {{ l10nKey }}
             </b-dropdown-item>
@@ -26,7 +26,13 @@
           <b-form-input
             v-model="search"
             list="search"
-            :placeholder="searchContext === 'story' ? $t('Rechercher une histoire') : $t(`Rechercher les publications d'une histoire à partir d'un code histoire`)"
+            :placeholder="
+              searchContext === 'story'
+                ? $t('Rechercher une histoire')
+                : $t(
+                    `Rechercher les publications d'une histoire à partir d'un code histoire`
+                  )
+            "
           />
           <datalist v-if="searchResults.results && !isSearching">
             <option v-if="!searchResults.results.length">
@@ -41,13 +47,20 @@
               <template v-if="!isSearchByCode(search)">
                 <Condition
                   v-if="searchResult.collectionIssue"
-                  :value="conditions.find(({dbValue}) => dbValue === searchResult.collectionIssue.condition).value"
+                  :value="
+                    conditions.find(
+                      ({ dbValue }) =>
+                        dbValue === searchResult.collectionIssue.condition
+                    ).value
+                  "
                 />&nbsp;{{ searchResult.title }}
               </template>
               <Issue
                 v-else-if="publicationNames[searchResult.publicationcode]"
                 :publicationcode="searchResult.publicationcode"
-                :publicationname="publicationNames[searchResult.publicationcode]"
+                :publicationname="
+                  publicationNames[searchResult.publicationcode]
+                "
                 :issuenumber="searchResult.issuenumber"
                 :clickable="withStoryLink"
               />
@@ -58,130 +71,135 @@
     </div>
   </nav>
 </template>
-<script>
+<script setup>
 import axios from "axios";
 import Issue from "./Issue";
 import { mapActions, mapState } from "pinia";
-import {collection} from "../composables/collection";
+import { collection } from "../composables/collection";
 import Condition from "./Condition";
-import {condition} from "../composables/condition";
-import {BDropdown, BDropdownItem, BFormInput} from "bootstrap-vue-3";
+import { condition } from "../composables/condition";
+import { BDropdown, BDropdownItem, BFormInput } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-export default {
-  name: "IssueSearch",
-  components: { Issue, Condition, BDropdown, BDropdownItem, BFormInput },
-
-  props: {
-    withTitle: {
-      type: Boolean,
-      default: true
-    },
-    withStoryLink: {
-      type: Boolean,
-      default: true
-    }
+defineProps({
+  withTitle: {
+    type: Boolean,
+    default: true,
   },
-  emits: ["issue-selected"],
-
-  setup() {
-    collection()
-
-    const {conditions} = condition()
-    return {
-      conditions
-    }
+  withStoryLink: {
+    type: Boolean,
+    default: true,
   },
+});
+const emit = defineEmits(["issue-selected"]);
 
-  data: () => ({
-    isSearching: false,
-    pendingSearch: null,
-    search: "",
-    searchResults: [],
-    searchContext: "story"
-  }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames"]),
-    searchContexts() {
-      return {
-        story: this.$t("titre d'histoire"),
-        storycode: this.$t("code histoire")
-      };
-    },
-    searchContextsWithoutCurrent() {
-      const vm = this;
-      return Object.keys(this.searchContexts).filter(searchContext => searchContext !== vm.searchContext)
-        .reduce((acc, searchContext) => ({
+const { findInCollection } = collection(),
+  { conditions } = condition(),
+  isSearching = ref(false),
+  pendingSearch = ref(null),
+  search = ref(""),
+  searchResults = ref([]),
+  searchContext = ref("story"),
+  publicationNames = computed(() => coa().publicationNames),
+  { t: $t } = useI18n(),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  isInCollection = (issue) =>
+    findInCollection(issue.publicationcode, issue.issuenumber),
+  searchContexts = {
+    story: $t("titre d'histoire"),
+    storycode: $t("code histoire"),
+  },
+  searchContextsWithoutCurrent = computed(() =>
+    Object.keys(searchContexts)
+      .filter(
+        (currentSearchContext) => currentSearchContext !== searchContext.value
+      )
+      .reduce(
+        (acc, currentSearchContext) => ({
           ...acc,
-          [searchContext]: vm.searchContexts[searchContext]
-        }), {});
+          [currentSearchContext]: searchContexts[currentSearchContext],
+        }),
+        {}
+      )
+  ),
+  isSearchByCode = computed(() => searchContext.value === "storycode"),
+  selectSearchResult = (searchResult) => {
+    if (isSearchByCode.value) {
+      emit("issue-selected", searchResult);
+    } else {
+      searchContext.value = "storycode";
+      search.value = searchResult.code;
     }
   },
-
-  watch: {
-    async search(newValue) {
-      if (newValue !== "") {
-        this.pendingSearch = newValue;
-        if (!this.isSearching) {
-          await this.runSearch(newValue);
-        }
-      }
-    }
-  },
-
-  methods: {
-    ...mapActions(coa, ["fetchPublicationNames"]),
-    isInCollection(issue) {
-      return this.findInCollection(issue.publicationcode, issue.issuenumber);
-    },
-    isSearchByCode() {
-      return this.searchContext === "storycode";
-    },
-    selectSearchResult(searchResult) {
-      if (this.isSearchByCode()) {
-        this.$emit("issue-selected", searchResult);
+  runSearch = async (value) => {
+    isSearching.value = true;
+    try {
+      if (isSearchByCode.value) {
+        searchResults.value = (
+          await axios.get(
+            `/api/coa/list/issues/withStoryVersionCode/${value.replace(
+              /^code=/,
+              ""
+            )}`
+          )
+        ).data;
+        searchResults.value.results = searchResults.value.results.sort(
+          (issue1, issue2) =>
+            Math.sign(!!isInCollection(issue2) - !!isInCollection(issue1))
+        );
+        await fetchPublicationNames(
+          searchResults.value.results.map(
+            ({ publicationcode }) => publicationcode
+          )
+        );
       } else {
-        this.searchContext = "storycode";
-        this.search = searchResult.code;
+        searchResults.value = (
+          await axios.post("/api/coa/stories/search/withIssues", {
+            keywords: value,
+          })
+        ).data;
+        searchResults.value.results = searchResults.value.results.map(
+          (story) => ({
+            ...story,
+            collectionIssue: collection.value.find(
+              ({
+                publicationCode: collectionPublicationCode,
+                issueNumber: collectionIssueNumber,
+              }) =>
+                story.issues
+                  .map(
+                    ({ publicationcode, issuenumber }) =>
+                      `${publicationcode}-${issuenumber}`
+                  )
+                  .includes(
+                    `${collectionPublicationCode}-${collectionIssueNumber}`
+                  )
+            ),
+          })
+        );
       }
-    },
-    async runSearch(value) {
-      this.isSearching = true;
-      try {
-        const vm = this;
-        if (this.isSearchByCode()) {
-          this.searchResults = (await axios.get(`/api/coa/list/issues/withStoryVersionCode/${value.replace(/^code=/, "")}`)).data;
-          this.searchResults.results = this.searchResults.results.sort((issue1, issue2) =>
-            Math.sign(!!vm.isInCollection(issue2) - !!vm.isInCollection(issue1)));
-          await this.fetchPublicationNames(this.searchResults.results.map(({ publicationcode }) => publicationcode));
-        } else {
-          this.searchResults = ((await axios.post("/api/coa/stories/search/withIssues", { keywords: value })).data)
-          this.searchResults.results = this.searchResults.results.map(
-              (story => ({
-                ...story,
-                collectionIssue: vm.collection
-                  .find(({ publicationCode: collectionPublicationCode, issueNumber: collectionIssueNumber }) =>
-                    story.issues.map(
-                      ({
-                         publicationcode,
-                         issuenumber
-                       }) =>
-                        `${publicationcode}-${issuenumber}`
-                    ).includes(`${collectionPublicationCode}-${collectionIssueNumber}`))
-              }))
-            );
-        }
-      } finally {
-        this.isSearching = false;
-        // The input value as changed since the beginning of the search, searching again
-        if (value !== this.pendingSearch) {
-          await this.runSearch(this.pendingSearch);
-        }
+    } finally {
+      isSearching.value = false;
+      // The input value as changed since the beginning of the search, searching again
+      if (value !== pendingSearch.value) {
+        await runSearch(pendingSearch.value);
+      }
+    }
+  };
+
+watch(
+  () => search.value,
+  async (newValue) => {
+    if (newValue !== "") {
+      pendingSearch.value = newValue;
+      if (!isSearching.value) {
+        await runSearch(newValue);
       }
     }
   }
-};
+);
 </script>
 
 <style scoped lang="scss">

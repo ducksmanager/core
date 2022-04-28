@@ -1,11 +1,13 @@
 <template>
   <div class="mt-4">
     <div v-if="loading">
-      {{ $t('Chargement...') }}
+      {{ $t("Chargement...") }}
     </div>
     <div v-else-if="!hasSuggestions">
       {{
-        $t('Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné.')
+        $t(
+          "Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné."
+        )
       }}
     </div>
     <template v-else>
@@ -20,30 +22,41 @@
         </b-button>
       </b-button-group>
       <div
-        v-for="{publicationcode, issuenumber, oldestdate, score, stories} in suggestions.issues"
+        v-for="{
+          publicationcode,
+          issuenumber,
+          oldestdate,
+          score,
+          stories,
+        } in suggestions.issues"
         :key="`${publicationcode} ${issuenumber}`"
       >
-        <div :class="{suggestions: true, 'since-last-visit': sinceLastVisit, 'pt-2': true}">
+        <div
+          :class="{
+            suggestions: true,
+            'since-last-visit': sinceLastVisit,
+            'pt-2': true,
+          }"
+        >
           <div
             class="d-flex align-items-center issue importance"
             :title="`${$t('Score')} : ${score}`"
           >
             <div class="mr-3 d-flex justify-content-center importance-bills">
-              <b-icon-cash
-                v-for="i in 4-getImportance(score)"
-                :key="i"
-              />
+              <b-icon-cash v-for="i in 4 - getImportance(score)" :key="i" />
             </div>
             <div>
               <Issue
                 :publicationcode="publicationcode"
-                :publicationname="suggestions.publicationTitles[publicationcode]"
+                :publicationname="
+                  suggestions.publicationTitles[publicationcode]
+                "
                 :issuenumber="issuenumber"
                 no-wrap
               >
                 <template #title-suffix>
                   <div class="release-date mt-2">
-                    {{ $t('Sortie :') }} {{ oldestdate }}
+                    {{ $t("Sortie :") }} {{ oldestdate }}
                   </div>
                 </template>
               </Issue>
@@ -61,80 +74,83 @@
   </div>
 </template>
 <script>
-import {mapActions, mapState} from "pinia";
+import { mapActions, mapState } from "pinia";
 import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
-import {BButton, BButtonGroup} from "bootstrap-vue-3";
-import {collection} from "../stores/collection";
-import {BIconCash} from "bootstrap-icons-vue";
+import { BButton, BButtonGroup } from "bootstrap-vue-3";
+import { collection } from "../stores/collection";
+import { BIconCash } from "bootstrap-icons-vue";
 
 export default {
-  name: 'SuggestionList',
+  name: "SuggestionList",
 
   components: {
     StoryList,
     Issue,
     BButtonGroup,
     BButton,
-    BIconCash
+    BIconCash,
   },
 
   props: {
     countrycode: {
       type: String,
-      default: null
+      default: null,
     },
     sinceLastVisit: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data: () => ({
     loading: true,
-    suggestionSortCurrent: 'score',
+    suggestionSortCurrent: "score",
   }),
 
   computed: {
     ...mapState(collection, ["suggestions", "hasSuggestions"]),
     suggestionSorts() {
-      return {oldestdate: this.$t("Trier par date de parution"), score: this.$t("Trier par score")}
-    }
+      return {
+        oldestdate: this.$t("Trier par date de parution"),
+        score: this.$t("Trier par score"),
+      };
+    },
   },
 
   watch: {
     countrycode: {
       immediate: true,
       async handler(newValue) {
-        this.loading = true
+        this.loading = true;
         await this.loadSuggestions({
           countryCode: newValue,
           sort: this.suggestionSortCurrent,
           sinceLastVisit: this.sinceLastVisit,
-        })
-        this.loading = false
-      }
+        });
+        this.loading = false;
+      },
     },
     async suggestionSortCurrent(newValue) {
-      this.loading = true
+      this.loading = true;
       await this.loadSuggestions({
         countryCode: this.countrycode,
         sort: newValue,
         sinceLastVisit: this.sinceLastVisit,
-      })
-      this.loading = false
-    }
+      });
+      this.loading = false;
+    },
   },
 
   methods: {
     ...mapActions(collection, ["loadSuggestions"]),
 
     getImportance(score) {
-      const {minScore, maxScore} = this.suggestions
-      return maxScore === score ? 1 : (minScore === score ? 3 : 2)
-    }
-  }
-}
+      const { minScore, maxScore } = this.suggestions;
+      return maxScore === score ? 1 : minScore === score ? 3 : 2;
+    },
+  },
+};
 </script>
 <style scoped lang="scss">
 select {
@@ -142,7 +158,6 @@ select {
 }
 
 .suggestions {
-
   .issue {
     display: inline-block;
     margin: 20px 0 10px 0;

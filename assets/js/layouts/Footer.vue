@@ -3,18 +3,27 @@
     <div
       v-show="count"
       id="user-count"
-      v-html="$t('{0} utilisateurs sont inscrits<br />sur DucksManager', [count])"
+      v-html="
+        $t('{0} utilisateurs sont inscrits<br />sur DucksManager', [count])
+      "
     />
     <div>
-      {{ $t('Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.') }}
-      <br><br>
-      {{ $t('Ce site se base en partie sur les données du site Inducks.') }}
-      <a
-        target="_blank"
-        href="http://coa.inducks.org/inducks/COPYING"
-      >{{ $t('Cliquez ici pour lire la licence Inducks.') }}</a>
-      <br>
-      {{ $t('Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company.') }}
+      {{
+        $t(
+          "Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm."
+        )
+      }}
+      <br /><br />
+      {{ $t("Ce site se base en partie sur les données du site Inducks.") }}
+      <a target="_blank" href="http://coa.inducks.org/inducks/COPYING">{{
+        $t("Cliquez ici pour lire la licence Inducks.")
+      }}</a>
+      <br />
+      {{
+        $t(
+          "Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company."
+        )
+      }}
     </div>
   </div>
 </template>
@@ -26,17 +35,17 @@ import { users } from "../stores/users";
 export default {
   name: "Footer",
   computed: {
-    ...mapState(users, ["count"])
+    ...mapState(users, ["count"]),
   },
 
   async mounted() {
-    await this.fetchCount()
+    await this.fetchCount();
   },
 
   methods: {
-    ...mapActions(users, ["fetchCount"])
-  }
-}
+    ...mapActions(users, ["fetchCount"]),
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -59,5 +68,4 @@ export default {
   vertical-align: middle;
   padding-left: 4px;
 }
-
 </style>

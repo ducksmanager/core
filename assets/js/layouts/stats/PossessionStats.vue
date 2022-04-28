@@ -1,160 +1,179 @@
 <template>
-  <BarChart
-    v-if="chartData"
-    :chart-data="chartData"
-    :options="options"
-  />
+  <BarChart v-if="chartData" :chart-data="chartData" :options="options" />
 </template>
 
-<script>
-import {collection} from "../../composables/collection";
-import {mapActions, mapState} from "pinia";
+<script setup>
+import { collection } from "../../composables/collection";
+import { mapActions } from "pinia";
 const { collection: collectionStore } = require("../../stores/collection");
 import { coa } from "../../stores/coa";
-import {BarChart} from "vue-chart-3";
+import { BarChart } from "vue-chart-3";
 
-import {ArcElement, Chart, CategoryScale, LinearScale, Legend, BarElement, BarController, Title, Tooltip} from 'chart.js';
-Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title, ArcElement);
+import {
+  ArcElement,
+  Chart,
+  CategoryScale,
+  LinearScale,
+  Legend,
+  BarElement,
+  BarController,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { computed, watch } from "vue";
+Chart.register(
+  Legend,
+  CategoryScale,
+  BarElement,
+  LinearScale,
+  BarController,
+  Tooltip,
+  Title,
+  ArcElement
+);
 
-export default {
-  name: "PossessionStats",
-  components: {BarChart},
+const props = defineProps({
+  unit: {
+    type: String,
+    required: true,
+  },
+});
+const emit = defineEmits(["change-dimension"]);
 
-  props: {
-    unit: {
-      type: String,
-      required: true
+collection().load();
+
+const chartData = null,
+  options = {},
+  totalPerPublication = computed(() => collectionStore().totalPerPublication),
+  countryNames = computed(() => coa().countryNames),
+  issueCounts = computed(() => coa().issueCounts),
+  publicationNames = computed(() => coa().publicationNames),
+  labels = computed(() => Object.keys(totalPerPublication.value)),
+  values = computed(() => {
+    if (
+      !(totalPerPublication.value && issueCounts.value && countryNames.value)
+    ) {
+      return null;
     }
-  },
-  emits: ['change-dimension'],
-
-  setup() {
-    collection().load()
-  },
-
-  data: () => ({
-    chartData: null,
-    options: {}
+    let possessedIssues = Object.values(totalPerPublication.value);
+    let missingIssues = Object.keys(totalPerPublication.value).map(
+      (publicationCode) =>
+        issueCounts.value[publicationCode] -
+        totalPerPublication.value[publicationCode]
+    );
+    if (unit.value === "percentage") {
+      possessedIssues = possessedIssues.map((possessedCount, key) =>
+        Math.round(
+          possessedCount * (100 / (possessedCount + missingIssues[key]))
+        )
+      );
+      missingIssues = possessedIssues.map(
+        (possessedCount) => 100 - possessedCount
+      );
+    }
+    return [possessedIssues, missingIssues];
   }),
+  fetchCountryNames = coa().fetchCountryNames,
+  fetchPublicationNames = coa().fetchPublicationNames,
+  fetchIssueCounts = coa().fetchIssueCounts;
 
-  computed: {
-    ...mapState(collectionStore, ["collection", "totalPerPublication"]),
-    ...mapState(coa, ["countryNames", "issueCounts", "publicationNames"]),
-
-    labels() {
-      return Object.keys(this.totalPerPublication)
-    },
-
-    values() {
-      if (!(this.totalPerPublication && this.issueCounts && this.countryNames)) {
-        return null
-      }
-      const vm = this
-      let possessedIssues = Object.values(this.totalPerPublication);
-      let missingIssues = Object.keys(this.totalPerPublication)
-        .map(publicationCode => vm.issueCounts[publicationCode] - this.totalPerPublication[publicationCode]);
-      if (this.unit === 'percentage') {
-        possessedIssues = possessedIssues.map((possessedCount, key) =>
-          Math.round(possessedCount * (100 / (possessedCount + missingIssues[key]))))
-        missingIssues = possessedIssues.map(possessedCount => 100 - possessedCount)
-      }
-      return [
-        possessedIssues,
-        missingIssues
-      ]
-    },
+watch(
+  () => totalPerPublication.value,
+  async (newValue) => {
+    await fetchCountryNames();
+    await fetchPublicationNames(Object.keys(newValue));
+    await fetchIssueCounts();
   },
+  { immediate: true }
+);
 
-  watch: {
-    totalPerPublication: {
-      immediate: true,
-      async handler(newValue) {
-        if (newValue) {
-          await this.fetchCountryNames()
-          await this.fetchPublicationNames(Object.keys(newValue))
-          await this.fetchIssueCounts()
-        }
-      }
-    },
-    labels: {
-      immediate: true,
-      async handler(newValue) {
-        this.$emit('change-dimension', 'height', 100 + 30 * newValue.length)
-        this.$emit('change-dimension', 'width', 500)
-      }
-    },
-    values: function (newValue) {
-      if (newValue) {
-        const vm = this
-        this.chartData = {
-          datasets: [
-            {
-              data: this.values[0],
-              backgroundColor: 'green',
-              label: this.$t("Numéros possédés"),
-              legend: this.$t("Numéros possédés")
-            },
-            {
-              data: this.values[1],
-              backgroundColor: 'orange',
-              label: this.$t("Numéros référencés non-possédés"),
-              legend: this.$t("Numéros référencés non-possédés")
-            }
-          ],
-          labels: this.labels,
-          legends: [this.$t("Numéros possédés"), this.$t("Numéros référencés non-possédés")]
-        }
+watch(
+  () => labels.value,
+  async (newValue) => {
+    emit("change-dimension", "height", 100 + 30 * newValue.length);
+    emit("change-dimension", "width", 500);
+  },
+  { immediate: true }
+);
 
-        this.options = {
-          responsive: true,
-          indexAxis: 'y',
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              min: 0,
-              max: vm.unit === 'percentage' ? 100 : undefined,
-              stacked: true,
-              ticks: {
-                stepSize: 1,
-                callback: value => vm.unit === 'percentage' ? `${value}%` : value
-              }
-            },
-            y: {
-              stacked: true
-            }
+watch(
+  () => values.value,
+  async (newValue) => {
+    if (newValue) {
+      chartData.value = {
+        datasets: [
+          {
+            data: values.value[0],
+            backgroundColor: "green",
+            label: $t("Numéros possédés"),
+            legend: $t("Numéros possédés"),
           },
-          plugins: {
-            title: {
-              display: true,
-              text: this.$t("Possession des numéros")
+          {
+            data: values.value[1],
+            backgroundColor: "orange",
+            label: $t("Numéros référencés non-possédés"),
+            legend: $t("Numéros référencés non-possédés"),
+          },
+        ],
+        labels: labels.value,
+        legends: [
+          $t("Numéros possédés"),
+          $t("Numéros référencés non-possédés"),
+        ],
+      };
+
+      options.value = {
+        responsive: true,
+        indexAxis: "y",
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            min: 0,
+            max: props.unit === "percentage" ? 100 : undefined,
+            stacked: true,
+            ticks: {
+              stepSize: 1,
+              callback: (value) =>
+                props.unit === "percentage" ? `${value}%` : value,
             },
-            tooltip: {
-              enabled: true,
-              position: 'nearest',
-              mode: 'index',
-              axis: 'y',
-              intersect: false,
-              callbacks: {
-                title: ([tooltipItem]) => {
-                  const publicationcode = tooltipItem.label
-                  if (!vm.publicationNames[publicationcode]) {
-                    vm.publicationNames[publicationcode] = '?';
-                  }
-                  return `${vm.publicationNames[publicationcode] || '?'} (${vm.countryNames[publicationcode.split('/')[0]]})`;
-                },
-                label: (tooltipItem) => `${tooltipItem.dataset.label}: ${tooltipItem.raw}${vm.unit === 'percentage' ? '%' : ''}`,
-              }
-            }
-          }
-        }
-      }
+          },
+          y: {
+            stacked: true,
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: $t("Possession des numéros"),
+          },
+          tooltip: {
+            enabled: true,
+            position: "nearest",
+            mode: "index",
+            axis: "y",
+            intersect: false,
+            callbacks: {
+              title: ([tooltipItem]) => {
+                const publicationcode = tooltipItem.label;
+                if (!publicationNames.value[publicationcode]) {
+                  publicationNames.value[publicationcode] = "?";
+                }
+                return `${publicationNames.value[publicationcode] || "?"} (${
+                  countryNames.value[publicationcode.split("/")[0]]
+                })`;
+              },
+              label: (tooltipItem) =>
+                `${tooltipItem.dataset.label}: ${tooltipItem.raw}${
+                  props.unit === "percentage" ? "%" : ""
+                }`,
+            },
+          },
+        },
+      };
     }
   },
-
-  methods: {
-    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames", "fetchIssueCounts"])
-  }
-}
+  { immediate: true }
+);
 </script>
 
 <style scoped>

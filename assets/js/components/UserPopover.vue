@@ -1,14 +1,8 @@
 <template>
-  <span
-    :id="elementId"
-    class="username font-weight-bold"
-  >{{ stats.username }}</span>
-  <b-popover
-    :target="elementId"
-    placement="top"
-    triggers="hover"
-    :delay="0"
-  >
+  <span :id="elementId" class="username font-weight-bold">{{
+    stats.username
+  }}</span>
+  <b-popover :target="elementId" placement="top" triggers="hover" :delay="0">
     <template #title>
       <h4>{{ stats.username }}</h4>
       <div v-if="stats.presentationSentence">
@@ -26,54 +20,40 @@
     </div>
     <div class="clearfix" />
     <div>
-      {{ stats.numberOfIssues }} {{ $tc('numéro | numéros', stats.numberOfIssues) }}<br>
-      {{ stats.numberOfPublications }} {{ $tc('magazine | magazines', stats.numberOfPublications) }}<br>
-      {{ stats.numberOfCountries }} {{ $tc('pays | pays', stats.numberOfCountries) }}
+      {{ stats.numberOfIssues }}
+      {{ $tc("numéro | numéros", stats.numberOfIssues) }}<br />
+      {{ stats.numberOfPublications }}
+      {{ $tc("magazine | magazines", stats.numberOfPublications) }}<br />
+      {{ stats.numberOfCountries }}
+      {{ $tc("pays | pays", stats.numberOfCountries) }}
     </div>
-    <div
-      v-if="bookcaseShared"
-      class="bookcase-link"
-    >
-      <img :src="`${imagePath}/icons/bookcase.png`">&nbsp;
+    <div v-if="bookcaseShared" class="bookcase-link">
+      <img :src="`${imagePath}/icons/bookcase.png`" />&nbsp;
       <b-button
         size="xs"
         variant="outline-secondary"
         target="_blank"
         :href="r(`/bookcase/show/{username:${stats.username}}`)"
       >
-        {{ $t('Voir la bibliothèque') }}
+        {{ $t("Voir la bibliothèque") }}
       </b-button>
     </div>
   </b-popover>
 </template>
 
-<script>
+<script setup>
 import Medal from "./Medal";
-import {BButton, BPopover} from "bootstrap-vue-3";
+import { BButton, BPopover } from "bootstrap-vue-3";
 import { l10n } from "../stores/l10n";
 
-export default {
-  name: "UserPopover",
-  components: {
-    Medal,
-    BPopover,
-    BButton
-  },
-  props: {
-    id: {type: Number, required: true},
-    points: {type: Object, required: true},
-    stats: {type: Object, required: true}
-  },
-
-  setup(props) {
-    return {
-      r: l10n().$r,
-      elementId: `user-${props.id}-${Math.random()}`,
-      bookcaseShared: true
-    }
-  },
-
-}
+const props = defineProps({
+  id: { type: Number, required: true },
+  points: { type: Object, required: true },
+  stats: { type: Object, required: true },
+});
+const r = l10n().$r,
+  elementId = `user-${props.id}-${Math.random()}`,
+  bookcaseShared = true;
 </script>
 
 <style scoped lang="scss">

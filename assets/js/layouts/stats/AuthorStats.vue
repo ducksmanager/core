@@ -1,113 +1,117 @@
 <template>
-  <BarChart
-    :chart-data="chartData"
-    :options="options"
-  />
+  <BarChart :chart-data="chartData" :options="options" />
 </template>
 
-<script>
-import {collection} from "../../composables/collection";
-import {BarChart} from "vue-chart-3";
+<script setup>
+import { collection } from "../../composables/collection";
+import { BarChart } from "vue-chart-3";
 
-import {Chart, CategoryScale, LinearScale, Legend, BarElement, BarController, Title, Tooltip} from 'chart.js';
-import {useI18n} from "vue-i18n";
-Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  Legend,
+  BarElement,
+  BarController,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { useI18n } from "vue-i18n";
+Chart.register(
+  Legend,
+  CategoryScale,
+  BarElement,
+  LinearScale,
+  BarController,
+  Tooltip,
+  Title
+);
 
-export default {
-  name: "AuthorStats",
-  components: {BarChart},
-
-  props: {
-    unit: {
-      type: String,
-      required: true
-    },
-    watchedAuthorsStoryCount: {
-      type: Object,
-      required: true
-    }
+const props = defineProps({
+  unit: {
+    type: String,
+    required: true,
   },
-  emits: ['change-dimension'],
+  watchedAuthorsStoryCount: {
+    type: Object,
+    required: true,
+  },
+});
+const emit = defineEmits(["change-dimension"]);
 
-  async setup(props, { emit }) {
-    const { t: $t } = useI18n()
-    collection()
+const { t: $t } = useI18n();
+collection();
 
-    const labels = Object.values(props.watchedAuthorsStoryCount).map(({fullname: fullName}) => fullName);
-    emit('change-dimension', 'width', 250 + 50 * labels.length);
+const labels = Object.values(props.watchedAuthorsStoryCount).map(
+  ({ fullname: fullName }) => fullName
+);
+emit("change-dimension", "width", 250 + 50 * labels.length);
 
-    let possessedStories= Object.values(props.watchedAuthorsStoryCount)
-      .map(({storycount: storyCount, missingstorycount: missingStoryCount}) =>
-        storyCount - missingStoryCount
-      ),
-      missingStories= Object.values(props.watchedAuthorsStoryCount)
-        .map(({missingstorycount: missingStoryCount}) =>
-          missingStoryCount
-        );
+let possessedStories = Object.values(props.watchedAuthorsStoryCount).map(
+    ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
+      storyCount - missingStoryCount
+  ),
+  missingStories = Object.values(props.watchedAuthorsStoryCount).map(
+    ({ missingstorycount: missingStoryCount }) => missingStoryCount
+  );
 
-    if (props.unit === 'percentage') {
-      possessedStories = possessedStories.map((possessedCount, key) =>
-        Math.round(possessedCount * (100 / (possessedCount + missingStories[key]))))
-      missingStories = possessedStories.map(possessedCount => 100 - possessedCount)
-    }
-
-    const values = [
-      possessedStories,
-      missingStories
-    ]
-
-    return {
-      values,
-      chartData: {
-        datasets: [
-          {
-            data: values[0],
-            backgroundColor: '#FF8000',
-            label: $t("Histoires possédées"),
-            legend: $t("Histoires possédées")
-          },
-          {
-            data: values[1],
-            backgroundColor: '#04B404',
-            label: $t("Histoires non possédées"),
-            legend: $t("Histoires non possédées")
-          }
-        ],
-        labels,
-        legends: [$t("Histoires possédées"), $t("Histoires non possédées")]
-      },
-
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            stacked: true,
-            ticks: {
-              autoSkip: false
-            }
-          },
-          y: {
-            stacked: true
-          }
-        },
-        plugins: {
-          title: {
-            display: true,
-            text: $t("Possession des histoires d'auteurs")
-          },
-          tooltip: {
-            enabled: true,
-            callbacks: {
-              title: ([tooltip]) => tooltip.label,
-              label: ({dataset, raw}) => `${dataset.label}: ${raw}${props.unit === 'percentage' ? '%' : ''}`,
-            }
-          }
-        }
-      }
-    }
-  }
+if (props.unit === "percentage") {
+  possessedStories = possessedStories.map((possessedCount, key) =>
+    Math.round(possessedCount * (100 / (possessedCount + missingStories[key])))
+  );
+  missingStories = possessedStories.map(
+    (possessedCount) => 100 - possessedCount
+  );
 }
+
+const values = [possessedStories, missingStories],
+  chartData = {
+    datasets: [
+      {
+        data: values[0],
+        backgroundColor: "#FF8000",
+        label: $t("Histoires possédées"),
+        legend: $t("Histoires possédées"),
+      },
+      {
+        data: values[1],
+        backgroundColor: "#04B404",
+        label: $t("Histoires non possédées"),
+        legend: $t("Histoires non possédées"),
+      },
+    ],
+    labels,
+    legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
+  },
+  options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          autoSkip: false,
+        },
+      },
+      y: {
+        stacked: true,
+      },
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: $t("Possession des histoires d'auteurs"),
+      },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          title: ([tooltip]) => tooltip.label,
+          label: ({ dataset, raw }) =>
+            `${dataset.label}: ${raw}${props.unit === "percentage" ? "%" : ""}`,
+        },
+      },
+    },
+  };
 </script>
 
 <style scoped>

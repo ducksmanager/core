@@ -1,13 +1,14 @@
 <template>
   <div v-if="collection">
-    <b-alert
-      variant="info"
-      show
-    >
+    <b-alert variant="info" show>
       {{ $t("DucksManager se base sur les") }}
-      <a :href="$r('/stats/authors')">{{ $t("notes que vous attribuez à vos auteurs préférés") }}</a>
-      {{ $t("pour vous proposer des magazines susceptibles de vous intéresser.") }}
-      <br><br>
+      <a :href="$r('/stats/authors')">{{
+        $t("notes que vous attribuez à vos auteurs préférés")
+      }}</a>
+      {{
+        $t("pour vous proposer des magazines susceptibles de vous intéresser.")
+      }}
+      <br /><br />
       {{ $t("Les suggestions d'achat sont mises à jour quotidiennement.") }}
     </b-alert>
     <div v-if="!watchedAuthors">
@@ -25,45 +26,49 @@
           :key="value"
           :value="value"
         >
-          {{ text }}
-        </b-form-select-option>>
+          {{ text }} </b-form-select-option
+        >>
       </b-select>
-      <SuggestionList
-        :countrycode="countryCode"
-        :since-last-visit="false"
-      />
+      <SuggestionList :countrycode="countryCode" :since-last-visit="false" />
     </div>
     <b-alert
       v-else-if="!watchedAuthorsWithNotation.length"
       show
       variant="warning"
     >
-      {{ $t("Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection.")
+      {{
+        $t(
+          "Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection."
+        )
       }}
     </b-alert>
-    <b-alert
-      v-else
-      show
-      variant="warning"
-    >
+    <b-alert v-else show variant="warning">
       {{ $t("Aucun auteur noté.") }}
       <span
-        v-html="$t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
-          `<a :href='${$r('/stats/authors')}'>${$t(`Statistiques sur les auteurs`)}</a>`
-        ])"
+        v-html="
+          $t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
+            `<a :href='${$r('/stats/authors')}'>${$t(
+              `Statistiques sur les auteurs`
+            )}</a>`,
+          ])
+        "
       />
-      {{ $t("Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.") }}
+      {{
+        $t(
+          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."
+        )
+      }}
     </b-alert>
   </div>
 </template>
 
 <script>
-import {collection} from "../composables/collection";
+import { collection } from "../composables/collection";
 import { mapActions, mapState } from "pinia";
 import SuggestionList from "./SuggestionList";
-import {BAlert, BFormSelect} from "bootstrap-vue-3";
+import { BAlert, BFormSelect } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
-const { collection: collectionStore } = require('../stores/collection');
+const { collection: collectionStore } = require("../stores/collection");
 import { l10n } from "../stores/l10n";
 
 export default {
@@ -71,31 +76,37 @@ export default {
   components: { SuggestionList, BAlert, BSelect: BFormSelect },
 
   data: () => ({
-    countryCode: "ALL"
+    countryCode: "ALL",
   }),
 
   computed: {
-    ...mapState(collectionStore, ["watchedAuthors", "suggestions", "hasSuggestions"]),
+    ...mapState(collectionStore, [
+      "watchedAuthors",
+      "suggestions",
+      "hasSuggestions",
+    ]),
     ...mapState(coa, ["countryNames"]),
 
     countryNamesWithAllCountriesOption() {
-      return this.countryNames && {
-        ALL: this.$t("Tous les pays"),
-        ...this.countryNames
-      };
+      return (
+        this.countryNames && {
+          ALL: this.$t("Tous les pays"),
+          ...this.countryNames,
+        }
+      );
     },
 
     watchedAuthorsWithNotation() {
-      return this.watchedAuthors && this.watchedAuthors.filter(({ notation }) => notation > 0);
-    }
+      return this.watchedAuthors?.filter(({ notation }) => notation > 0);
+    },
   },
 
   watch: {
     async watchedAuthors(newValue) {
-      if (newValue && newValue.length) {
+      if (newValue?.length) {
         await this.fetchCountryNames();
       }
-    }
+    },
   },
 
   async mounted() {
@@ -105,8 +116,8 @@ export default {
   methods: {
     ...mapActions(l10n, ["$r"]),
     ...mapActions(collection, ["loadWatchedAuthors"]),
-    ...mapActions(coa, ["fetchCountryNames"])
-  }
+    ...mapActions(coa, ["fetchCountryNames"]),
+  },
 };
 </script>
 

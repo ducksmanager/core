@@ -2,7 +2,9 @@
   <div
     v-if="embedded"
     class="bookcase"
-    :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
+    :style="{
+      backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`,
+    }"
   >
     <Edge
       v-for="edge in edgesToLoad"
@@ -19,7 +21,9 @@
   <div
     v-else
     class="bookcase"
-    :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`}"
+    :style="{
+      backgroundImage: `url('${imagePath}/textures/${bookcaseTextures.bookcase}.jpg')`,
+    }"
   >
     <Edge
       v-for="edge in edgesToLoad"
@@ -40,74 +44,66 @@
     />
   </div>
 </template>
-<script>
-import Edge from "./Edge"
+<script setup>
+import Edge from "./Edge";
+import { onMounted } from "vue";
 
-export default {
-  name: 'Bookcase',
-  components: {Edge},
-  props: {
-    embedded: {
-      type: Boolean,
-      default: false
-    },
-    withAllCopies: {
-      type: Boolean,
-      default: false
-    },
-    bookcaseTextures: {
-      type: Object,
-      required: true
-    },
-    currentEdgeHighlighted: {
-      type: String,
-      default: null
-    },
-    currentEdgeOpened: {
-      type: Object,
-      default: null
-    },
-    edgesUsingSprites: {
-      type: Object,
-      default: () => ({})
-    },
-    sortedBookcase: {
-      type: Array,
-      required: true
-    }
+const props = defineProps({
+  embedded: {
+    type: Boolean,
+    default: false,
   },
-  emits: ['open-book'],
-
-  data: () => ({
-    currentEdgeIndex: 0,
-    edgesToLoad: []
-  }),
-
-  mounted() {
-    if (!document.querySelector('style#bookshelves')) {
-      const {bookshelf: bookshelfTexture} = this.bookcaseTextures
-      const bookshelfTextureUrl = `${this.imagePath}/textures/${bookshelfTexture}.jpg`
-      const style = document.createElement('style');
-      style.id = 'bookshelves';
-      style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
-      document.head.append(style);
-    }
-
-      this.edgesToLoad = [this.sortedBookcase[0]]
+  withAllCopies: {
+    type: Boolean,
+    default: false,
   },
+  bookcaseTextures: {
+    type: Object,
+    required: true,
+  },
+  currentEdgeHighlighted: {
+    type: String,
+    default: null,
+  },
+  currentEdgeOpened: {
+    type: Object,
+    default: null,
+  },
+  edgesUsingSprites: {
+    type: Object,
+    default: () => ({}),
+  },
+  sortedBookcase: {
+    type: Array,
+    required: true,
+  },
+});
 
-  methods: {
-    loadNextEdge() {
-      const nextEdge = this.sortedBookcase[++this.currentEdgeIndex];
-      if (nextEdge) {
-        this.edgesToLoad.push(nextEdge)
-      }
-    }
+defineEmits(["open-book"]);
+
+const currentEdgeIndex = ref(0),
+  edgesToLoad = ref([]);
+
+onMounted(() => {
+  if (!document.querySelector("style#bookshelves")) {
+    const { bookshelf: bookshelfTexture } = props.bookcaseTextures;
+    const bookshelfTextureUrl = `${imagePath}/textures/${bookshelfTexture}.jpg`;
+    const style = document.createElement("style");
+    style.id = "bookshelves";
+    style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
+    document.head.append(style);
   }
-}
+  edgesToLoad.value = [props.sortedBookcase[0]];
+});
+
+const loadNextEdge = () => {
+  const nextEdge = props.sortedBookcase[++currentEdgeIndex.value];
+  if (nextEdge) {
+    edgesToLoad.value.push(nextEdge);
+  }
+};
 </script>
 <style lang="scss" scoped>
-
 .bookcase {
   height: 100%;
   overflow: hidden;
@@ -116,5 +112,4 @@ export default {
   background: transparent repeat left top;
   clear: both;
 }
-
 </style>

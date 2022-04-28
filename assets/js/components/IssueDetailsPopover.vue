@@ -14,87 +14,72 @@
         hide-condition
       />
     </template>
-    <div
-      v-if="isCoverLoading"
-      class="flex-grow-1"
-    >
-      {{ $t('Chargement...') }}
+    <div v-if="isCoverLoading" class="flex-grow-1">
+      {{ $t("Chargement...") }}
     </div>
     <img
       v-else-if="coverUrl"
       :alt="issueNumber"
       :src="coverUrl"
       class="cover"
-    >
-    <span v-else>{{ $t("La couverture de ce numéro n'est pas disponible") }}</span>
+    />
+    <span v-else>{{
+      $t("La couverture de ce numéro n'est pas disponible")
+    }}</span>
   </b-popover>
 </template>
 
-<script>
+<script setup>
 import Issue from "./Issue";
-import {mapActions, mapState} from "pinia";
-import {BPopover} from "bootstrap-vue-3";
+import { BPopover } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
+import { computed } from "vue";
 
-export default {
-  name: "IssueDetailsPopover",
-  components: {
-    BPopover,
-    Issue
+const props = defineProps({
+  publicationCode: {
+    type: String,
+    required: true,
   },
-  props: {
-    publicationCode: {
-      type: String,
-      required: true
-    },
-    issueNumber: {
-      type: String,
-      required: true
-    }
+  issueNumber: {
+    type: String,
+    required: true,
   },
-  emits: ['cover-loaded'],
+});
+const emit = defineEmits(["cover-loaded"]);
 
-  data: () => ({
-    cloudinaryBaseUrl: 'https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/',
-    isCoverLoading: true
+const cloudinaryBaseUrl =
+    "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/",
+  isCoverLoading = ref(true),
+  publicationNames = computed(() => coa().publicationNames),
+  issueDetails = computed(() => coa().issueDetails),
+  id = computed(
+    () =>
+      `issue-details-${props.publicationCode.replace("/", "-")}-${
+        props.issueNumber
+      }`
+  ),
+  issueCode = computed(() => `${props.publicationCode} ${props.issueNumber}`),
+  coverUrl = computed(() => {
+    const cover = issueDetails?.[issueCode].entries.find(
+      ({ position }) => !/^p/.test(position)
+    );
+    const hasCover = cover && !!cover.url;
+    emit("cover-loaded", hasCover);
+    return hasCover ? cloudinaryBaseUrl + cover.url : null;
   }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames", "issueDetails"]),
-
-    id() {
-      return `issue-details-${this.publicationCode.replace('/', '-')}-${this.issueNumber}`
-    },
-
-    issueCode() {
-      return `${this.publicationCode} ${this.issueNumber}`
-    },
-
-    coverUrl() {
-      const cover = this.issueDetails && this.issueDetails[this.issueCode].entries.find(({position}) => !/^p/.test(position))
-      const hasCover = cover && !!cover.url
-      this.$emit('cover-loaded', hasCover)
-      return hasCover ? this.cloudinaryBaseUrl + cover.url : null
-    }
-  },
-
-  methods: {
-    ...mapActions(coa, ["fetchIssueUrls"]),
-
-    async loadIssueUrls() {
-      this.isCoverLoading = true
-      await this.fetchIssueUrls({
-        publicationCode: this.publicationCode,
-        issueNumber: this.issueNumber
-      });
-      this.isCoverLoading = false
-    }
-  }
-}
+  fetchIssueUrls = coa().fetchIssueUrls,
+  loadIssueUrls = async () => {
+    isCoverLoading.value = true;
+    await fetchIssueUrls({
+      publicationCode: props.publicationCode,
+      issueNumber: props.issueNumber,
+    });
+    isCoverLoading.value = false;
+  };
 </script>
 
 <style scoped lang="scss">
-.popover  {
+.popover {
   width: 150px;
 
   :deep(.popover-body) {
@@ -105,6 +90,7 @@ export default {
     }
   }
 }
+
 label {
   font-weight: bold;
 }

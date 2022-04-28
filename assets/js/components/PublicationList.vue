@@ -12,16 +12,10 @@
     >
       <span class="navbar-toggler-icon" />
     </button>
-    <a
-      class="navbar-brand"
-      href="#"
-    >
-      {{ $t('Collection') }}
+    <a class="navbar-brand" href="#">
+      {{ $t("Collection") }}
     </a>
-    <div
-      id="nav-publications"
-      class="collapse navbar-collapse"
-    >
+    <div id="nav-publications" class="collapse navbar-collapse">
       <ul class="navbar-nav">
         <li
           v-for="country in sortedCountries"
@@ -35,10 +29,7 @@
             role="button"
             data-bs-toggle="dropdown"
           >
-            <Country
-              :country="country"
-              :country-name="countryNames[country]"
-            >
+            <Country :country="country" :country-name="countryNames[country]">
               <template #default="props">
                 {{ props.countryName }}
               </template>
@@ -51,9 +42,14 @@
             >
               <a
                 class="dropdown-item"
-                :href="$r(`/collection/show/{publicationCode:${publicationCode}}`)"
+                :href="
+                  $r(`/collection/show/{publicationCode:${publicationCode}}`)
+                "
               >
-                {{ publicationNames[publicationCode] || publicationCode.split('/')[1] }}
+                {{
+                  publicationNames[publicationCode] ||
+                  publicationCode.split("/")[1]
+                }}
               </a>
             </li>
           </ul>
@@ -62,7 +58,8 @@
           <a
             class="nav-link"
             :href="$r('/collection/show/{publicationCode:new}')"
-          >{{ $t('Nouveau magazine') }}</a>
+            >{{ $t("Nouveau magazine") }}</a
+          >
         </li>
       </ul>
     </div>
@@ -73,77 +70,71 @@
     </div>
   </nav>
   <div v-else>
-    {{ $t('Chargement...') }}
+    {{ $t("Chargement...") }}
   </div>
 </template>
 
-<script>
+<script setup>
 import Country from "./Country";
-import {mapActions, mapState} from "pinia";
 import IssueSearch from "./IssueSearch";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
+import { computed, onMounted, watch } from "vue";
 
-export default {
-  name: "PublicationList",
-
-  components: {
-    IssueSearch,
-    Country
-  },
-
-
-  data: () => ({
-    hasPublicationNames: false
-  }),
-
-  computed: {
-    ...mapState(collection, ["totalPerCountry", "totalPerPublication"]),
-    ...mapState(coa, ["countryNames", "publicationNames"]),
-    sortedCountries() {
-      const vm = this
-      return this.totalPerCountry && Object.keys(this.totalPerCountry)
-          .sort((countryCode1, countryCode2) => vm.countryNames[countryCode1].localeCompare(vm.countryNames[countryCode2]))
-    },
-    publicationsPerCountry() {
-      const vm = this
-      return this.totalPerCountry && this.hasPublicationNames && Object.keys(this.totalPerCountry)
-        .reduce((acc, country) => ({
+const hasPublicationNames = ref(false),
+  totalPerCountry = computed(() => collection().totalPerCountry),
+  totalPerPublication = computed(() => collection().totalPerPublication),
+  countryNames = computed(() => coa().countryNames),
+  publicationNames = computed(() => coa().publicationNames),
+  sortedCountries = computed(
+    () =>
+      totalPerCountry.value &&
+      Object.keys(totalPerCountry.value).sort((countryCode1, countryCode2) =>
+        countryNames.value[countryCode1].localeCompare(
+          countryNames.value[countryCode2]
+        )
+      )
+  ),
+  publicationsPerCountry = computed(() => {
+    return (
+      totalPerCountry.value &&
+      hasPublicationNames.value &&
+      Object.keys(totalPerCountry.value).reduce(
+        (acc, country) => ({
           ...acc,
-          [country]: Object.keys(vm.totalPerPublication).filter(publicationCode =>
-            publicationCode.split('/')[0] === country
-          )
-        }), {})
-    },
-  },
+          [country]: Object.keys(totalPerPublication.value).filter(
+            (publicationCode) => publicationCode.split("/")[0] === country
+          ),
+        }),
+        {}
+      )
+    );
+  }),
+  r = l10n().$r,
+  fetchCountryNames = coa().fetchCountryNames,
+  fetchPublicationNames = coa().fetchPublicationNames,
+  getSortedPublications = (country) =>
+    publicationsPerCountry.value?.[country].sort(
+      (a, b) =>
+        publicationNames.value[a] &&
+        publicationNames.value[a].localeCompare(publicationNames.value[b])
+    );
 
-  watch: {
-    totalPerPublication: {
-      immediate: true,
-      async handler(newValue) {
-        if (newValue) {
-          await this.fetchPublicationNames(Object.keys(newValue))
-          this.hasPublicationNames = true
-        }
-      }
+watch(
+  () => totalPerPublication.value,
+  async (newValue) => {
+    if (newValue) {
+      await fetchPublicationNames(Object.keys(newValue));
+      hasPublicationNames.value = true;
     }
   },
+  { immediate: true }
+);
 
-  async mounted() {
-    await this.fetchCountryNames()
-  },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
-    getSortedPublications(country) {
-      const vm = this
-      return this.publicationsPerCountry && this.publicationsPerCountry[country]
-        .sort((a, b) => vm.publicationNames[a] && vm.publicationNames[a].localeCompare(vm.publicationNames[b]))
-    }
-  }
-}
+onMounted(async () => {
+  await fetchCountryNames();
+});
 </script>
 
 <style scoped lang="scss">

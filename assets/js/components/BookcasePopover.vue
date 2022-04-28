@@ -6,17 +6,10 @@
     triggers="hover focus"
     :delay="0"
   >
-    <Bookcase
-      :bookcase-textures="bookcaseTextures"
-      :sorted-bookcase="edges"
-    />
+    <Bookcase :bookcase-textures="bookcaseTextures" :sorted-bookcase="edges" />
     <slot name="footer">
       <b-row>
-        <b-col
-          v-for="edge in edges"
-          :key="edge.id"
-          cols="6"
-        >
+        <b-col v-for="edge in edges" :key="edge.id" cols="6">
           <Issue
             class="issue"
             :publicationname="publicationNames[edge.publicationCode]"
@@ -32,32 +25,27 @@
 <script>
 import Bookcase from "./Bookcase";
 import Issue from "../components/Issue";
-import { mapState } from "pinia";
 import { BCol, BPopover, BRow } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
+import { computed } from "vue";
 
-export default {
-  name: "BookcasePopover",
-  components: { Bookcase, Issue, BPopover, BRow, BCol },
-  props: {
-    id: {
-      type: String,
-      required: true
-    },
-    edges: {
-      type: Array,
-      required: true
-    }
+defineProps({
+  id: {
+    type: String,
+    required: true,
   },
+  edges: {
+    type: Array,
+    required: true,
+  },
+});
 
-  data: () => ({
-    bookcaseTextures: { bookcase: "bois/HONDURAS MAHOGANY", bookshelf: "bois/KNOTTY PINE" }
-  }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames"]),
-  }
+const bookcaseTextures = {
+  bookcase: "bois/HONDURAS MAHOGANY",
+  bookshelf: "bois/KNOTTY PINE",
 };
+
+const publicationNames = computed(() => coa().publicationNames);
 </script>
 
 <style lang="scss" scoped>

@@ -1,7 +1,7 @@
 <template>
   <div v-if="duplicateIssues && hasPublicationNames">
     <IssueList
-      v-for="(issueNumbers, publicationcode) in issueNumbersByPublicationCode"
+      v-for="publicationcode in Object.keys(issueNumbersByPublicationCode)"
       :key="publicationcode"
       :publicationcode="publicationcode"
       duplicates-only
@@ -11,57 +11,45 @@
     {{ $t("Chargement...") }}
   </div>
 </template>
-<script>
+<script setup>
 import { mapActions, mapState } from "pinia";
 import IssueList from "../../components/IssueList";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
+import { computed, onMounted, watch } from "vue";
+const hasPublicationNames = ref(false),
+  issueNumbersByPublicationCode = ref(null),
+  total = computed(() => collection().total),
+  duplicateIssues = computed(() => collection().duplicateIssues),
+  publicationNames = computed(() => coa().publicationNames),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  loadCollection = coa().loadCollection;
 
-export default {
-  name: "Duplicates",
-  components: {  IssueList },
-
-  data: () => ({
-    hasPublicationNames: false,
-    issueNumbersByPublicationCode: null
-  }),
-
-  computed: {
-    ...mapState(collection, ["total", "duplicateIssues"]),
-    ...mapState(coa, ["publicationNames"])
-  },
-
-  watch: {
-    duplicateIssues: {
-      immediate: true,
-      async handler(duplicateIssues) {
-        if (duplicateIssues) {
-          const vm = this
-          this.issueNumbersByPublicationCode = {}
-          Object.keys(duplicateIssues).forEach(issuecode => {
-            const [publicationcode, issuenumber] = issuecode.split(' ')
-            if (!vm.issueNumbersByPublicationCode[publicationcode]) {
-              vm.issueNumbersByPublicationCode[publicationcode] = []
-            }
-            vm.issueNumbersByPublicationCode[publicationcode].push(issuenumber)
-          })
-
-          await this.fetchPublicationNames(Object.keys(this.issueNumbersByPublicationCode))
-          this.hasPublicationNames = true
+watch(
+  () => duplicateIssues.value,
+  async (duplicateIssues) => {
+    if (duplicateIssues) {
+      issueNumbersByPublicationCode.value = {};
+      Object.keys(duplicateIssues).forEach((issuecode) => {
+        const [publicationcode, issuenumber] = issuecode.split(" ");
+        if (!issueNumbersByPublicationCode.value[publicationcode]) {
+          issueNumbersByPublicationCode.value[publicationcode] = [];
         }
-      }
+        issueNumbersByPublicationCode.value[publicationcode].push(issuenumber);
+      });
+
+      await fetchPublicationNames(
+        Object.keys(issueNumbersByPublicationCode.value)
+      );
+      hasPublicationNames.value = true;
     }
   },
+  { immediate: true }
+);
 
-  mounted() {
-    this.loadCollection
-  },
-
-  methods: {
-    ...mapActions(coa, ["fetchPublicationNames"]),
-    ...mapActions(collection, ["loadCollection"])
-  }
-};
+onMounted(() => {
+  loadCollection();
+});
 </script>
 <style scoped>
 </style>

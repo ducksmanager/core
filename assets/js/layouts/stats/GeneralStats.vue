@@ -1,23 +1,24 @@
 <template>
   <div>
-    <ShortStats
-      v-if="rarityTotal !== null"
-      id="short-stats"
-    >
+    <ShortStats v-if="rarityTotal !== null" id="short-stats">
       <template #non-empty-collection>
         <div>
           <span
-            v-html="$t('Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.', [rarityValue, rarityTotal])"
-          /><br>
-          <b-alert
-            variant="info"
-            show
-            size="sm"
-            class="d-inline-block mt-3"
-          >
+            v-html="
+              $t(
+                'Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.',
+                [rarityValue, rarityTotal]
+              )
+            "
+          /><br />
+          <b-alert variant="info" show size="sm" class="d-inline-block mt-3">
             <small>
-              {{ $t("La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.")
-              }}</small>
+              {{
+                $t(
+                  "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection."
+                )
+              }}</small
+            >
           </b-alert>
         </div>
       </template>
@@ -27,17 +28,19 @@
     </div>
     <h2>{{ $t("Valeur de la collection") }}</h2>
     <template v-if="quotedIssues !== null && hasPublicationNames">
-      <b-alert
-        v-if="quotationSum === 0"
-        show
-        variant="info"
-      >
-        <small>{{ $t("Votre collection ne contient pas de magazines cotés.") }}</small>
+      <b-alert v-if="quotationSum === 0" show variant="info">
+        <small>{{
+          $t("Votre collection ne contient pas de magazines cotés.")
+        }}</small>
       </b-alert>
       <div v-else>
         <div
           class="my-3"
-          v-html="$t('La valeur de votre collection est estimée à : {0}.', [$t('Plus de {0} {1}', [quotationSum, '€'])])"
+          v-html="
+            $t('La valeur de votre collection est estimée à : {0}.', [
+              $t('Plus de {0} {1}', [quotationSum, '€']),
+            ])
+          "
         />
         <Accordion
           id="quotation-details"
@@ -49,7 +52,11 @@
           </template>
           <template #content>
             <div class="my-3">
-              {{ $t("Votre collection contient {0} magazines cotés.", [quotedIssues.length]) }}
+              {{
+                $t("Votre collection contient {0} magazines cotés.", [
+                  quotedIssues.length,
+                ])
+              }}
             </div>
             <b-table
               striped
@@ -60,20 +67,20 @@
               :current-page="currentPage"
               :fields="quotationFields"
             >
-              <template #cell(issue)="{item}">
+              <template #cell(issue)="{ item }">
                 <Issue
                   :publicationcode="item.publicationCode"
                   :publicationname="publicationNames[item.publicationCode]"
                   :issuenumber="item.issueNumber"
                 />
               </template>
-              <template #cell(condition)="{item}">
+              <template #cell(condition)="{ item }">
                 {{ getConditionLabel(item.condition) }}
               </template>
-              <template #cell(estimation)="{item}">
+              <template #cell(estimation)="{ item }">
                 {{ item.estimation }}€
               </template>
-              <template #cell(estimationGivenCondition)="{item}">
+              <template #cell(estimationGivenCondition)="{ item }">
                 {{ item.estimationGivenCondition }}€
               </template>
             </b-table>
@@ -90,17 +97,33 @@
         accordion-group-id="quotation-explanation"
       >
         <template #header>
-          {{ $t("Comment DucksManager calcule-t-il la valeur de ma collection ?") }}
+          {{
+            $t("Comment DucksManager calcule-t-il la valeur de ma collection ?")
+          }}
         </template>
         <template #content>
           <div>
-            {{ $t("Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.")
+            {{
+              $t(
+                "Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative."
+              )
             }}
           </div>
           <div
-            v-html="$t('Les cotes utilisées proviennent des sites Internet {0} et {1}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`, `<a href='http://comicsmania.gr'>ComicsMania</a>`])"
+            v-html="
+              $t(
+                'Les cotes utilisées proviennent des sites Internet {0} et {1}.',
+                [
+                  `<a href='https://bedetheque.com'>Bédéthèque</a>`,
+                  `<a href='http://comicsmania.gr'>ComicsMania</a>`,
+                ]
+              )
+            "
           />
-          {{ $t("Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :")
+          {{
+            $t(
+              "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :"
+            )
           }}
           <ul>
             <li>{{ $t("Numéro en bon état : pas d'ajustement") }}</li>
@@ -109,7 +132,14 @@
             <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
           </ul>
           <div
-            v-html="$t(`Une cote présente sur les sites indiqués ci-dessus n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`, [`<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`])"
+            v-html="
+              $t(
+                `Une cote présente sur les sites indiqués ci-dessus n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`,
+                [
+                  `<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`,
+                ]
+              )
+            "
           />
         </template>
       </Accordion>
@@ -120,73 +150,75 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ShortStats from "../../components/ShortStats";
 import axios from "axios";
 import { mapActions, mapState } from "pinia";
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
-import {condition} from "../../composables/condition";
-import {BAlert, BPagination, BTable} from "bootstrap-vue-3";
+import { condition } from "../../composables/condition";
+import { BAlert, BPagination, BTable } from "bootstrap-vue-3";
 import { users } from "../../stores/users";
 import { coa } from "../../stores/coa";
-import { collection } from "../../stores/collection";
+import { useI18n } from "vue-i18n";
+import { computed, onMounted, watch } from "vue";
+const { collection: collectionStore } = require("../../stores/collection");
 
-export default {
-  name: "GeneralStats",
-  components: { Issue, Accordion, ShortStats, BAlert, BTable, BPagination },
+const collection = collectionStore();
 
-  data: () => ({
-    rarityValue: null,
-    rarityTotal: null,
-    hasPublicationNames: false,
-    currentPage: 1
-  }),
-
-  computed: {
-    ...mapState(users, ["count"]),
-    ...mapState(coa, ["publicationNames"]),
-    ...mapState(collection, ["totalPerPublication", "quotedIssues", "quotationSum"]),
-    quotationFields() {
-      return [
-        { key: "issue", label: this.$t("Numéro") },
-        { key: "condition", label: this.$t("Etat") },
-        { key: "estimation", label: this.$t("Estimation") },
-        { key: "estimationGivenCondition", label: this.$t("Estimation ajustée de l'état") }
-      ];
-    }
-  },
-
-  watch: {
-    totalPerPublication: {
-      immediate: true,
-      async handler() {
-        await this.fetchIssueQuotations(Object.keys(this.totalPerPublication));
-      }
+const { $t } = useI18n(),
+  t = $t;
+const rarityValue = ref(null),
+  rarityTotal = ref(null),
+  hasPublicationNames = ref(false),
+  currentPage = 1,
+  count = computed(() => users().count),
+  publicationNames = computed(() => users().publicationNames),
+  totalPerPublication = computed(() => collectionStore().totalPerPublication),
+  quotedIssues = computed(() => collectionStore().quotedIssues),
+  quotationSum = computed(() => collectionStore().quotationSum),
+  quotationFields = () => [
+    { key: "issue", label: $t("Numéro") },
+    { key: "condition", label: $t("Etat") },
+    { key: "estimation", label: $t("Estimation") },
+    {
+      key: "estimationGivenCondition",
+      label: $t("Estimation ajustée de l'état"),
     },
-    quotedIssues: {
-      immediate: true,
-      async handler(newValue) {
-        if (newValue !== null) {
-          await this.fetchPublicationNames(newValue.map(({ publicationCode }) => publicationCode));
-          this.hasPublicationNames = true;
-        }
-      }
+  ],
+  fetchCount = users().fetchCount,
+  fetchPublicationNames = coa().fetchPublicationNames,
+  fetchIssueQuotations = coa().fetchIssueQuotations;
+
+watch(
+  () => totalPerPublication.value,
+  async () => {
+    await fetchIssueQuotations(Object.keys(totalPerPublication.value));
+  },
+  { immediate: true }
+);
+
+watch(
+  () => quotedIssues.value,
+  async (newValue) => {
+    if (newValue !== null) {
+      await fetchPublicationNames(
+        newValue.map(({ publicationCode }) => publicationCode)
+      );
+      hasPublicationNames.value = true;
     }
   },
+  { immediate: true }
+);
 
-  async mounted() {
-    await this.fetchCount();
-    const { userScores, myScore } = (await axios.get(`/global-stats/user/collection/rarity`)).data;
-    this.rarityValue = userScores.length - userScores.indexOf(myScore);
-    this.rarityTotal = this.count;
-  },
-
-  methods: {
-    ...mapActions(users, ["fetchCount"]),
-    ...mapActions(coa, ["fetchPublicationNames", "fetchIssueQuotations"])
-  }
-};
+onMounted(async () => {
+  await fetchCount();
+  const { userScores, myScore } = (
+    await axios.get(`/global-stats/user/collection/rarity`)
+  ).data;
+  rarityValue.value = userScores.length - userScores.indexOf(myScore);
+  rarityTotal.value = count.value;
+});
 </script>
 
 <style scoped lang="scss">
@@ -194,14 +226,15 @@ export default {
   font-size: 16px;
 }
 
-#short-stats :deep( > div) {
+#short-stats :deep(> div) {
   margin-bottom: 32px;
 }
 
 .card {
   color: black;
 
-  :deep(td), :deep(div) {
+  :deep(td),
+  :deep(div) {
     line-height: 30px;
   }
 }

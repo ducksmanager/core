@@ -1,98 +1,83 @@
 <template>
-  <ul
-    id="menu-content"
-    class="menu-content collapse show"
-  >
-    <NavigationItemGroup
-      path="collection"
-      icon="glyphicon-home"
-    >
+  <ul id="menu-content" class="menu-content collapse show">
+    <NavigationItemGroup path="collection" icon="glyphicon-home">
       <template #text>
         <b-icon-house-fill />
-        {{ $t('Collection') }}
+        {{ $t("Collection") }}
       </template>
       <template #items>
         <template v-if="username">
           <NavigationItem path="/bookcase/show">
             <b-icon-book-half />
-            {{ $t('Ma bibliothèque') }}
+            {{ $t("Ma bibliothèque") }}
           </NavigationItem>
           <NavigationItem path="/collection/show">
             <b-icon-list />
-            {{ $t('Gérer ma collection') }}
+            {{ $t("Gérer ma collection") }}
           </NavigationItem>
           <NavigationItem path="/stats/general">
             <b-icon-graph-up />
-            {{ $t('Statistiques de ma collection') }}
+            {{ $t("Statistiques de ma collection") }}
           </NavigationItem>
           <NavigationItem path="/expand">
             <b-icon-capslock-fill />
-            {{ $t('Agrandir ma collection') }}
+            {{ $t("Agrandir ma collection") }}
           </NavigationItem>
           <NavigationItem path="/inducks/import">
             <div
               class="b-custom"
-              :style="{backgroundImage: `url(${imagePath}/icons/inducks.png)`}"
+              :style="{
+                backgroundImage: `url(${imagePath}/icons/inducks.png)`,
+              }"
             />
-            {{ $t('Collection Inducks') }}
+            {{ $t("Collection Inducks") }}
           </NavigationItem>
           <NavigationItem path="/print">
             <b-icon-printer-fill />
-            {{ $t('Imprimer ma collection') }}
+            {{ $t("Imprimer ma collection") }}
           </NavigationItem>
           <NavigationItem path="/logout">
             <b-icon-x-square-fill />
-            {{ $t('Déconnexion') }}
+            {{ $t("Déconnexion") }}
           </NavigationItem>
         </template>
         <template v-else>
-          <NavigationItem
-            path="/signup"
-            icon="glyphicon glyphicon-certificate"
-          >
-            {{ $t('Inscription') }}
+          <NavigationItem path="/signup" icon="glyphicon glyphicon-certificate">
+            {{ $t("Inscription") }}
           </NavigationItem>
-          <NavigationItem
-            path="/login"
-            icon="glyphicon glyphicon-folder-open"
-          >
-            {{ $t('Connexion') }}
+          <NavigationItem path="/login" icon="glyphicon glyphicon-folder-open">
+            {{ $t("Connexion") }}
           </NavigationItem>
         </template>
       </template>
     </NavigationItemGroup>
     <li class="empty" />
     <NavigationItem path="/bookstores">
-      {{ $t('Trouver des bouquineries') }}
+      {{ $t("Trouver des bouquineries") }}
     </NavigationItem>
-    <NavigationItem
-      v-if="!username"
-      path="/inducks/import"
-    >
-      {{ $t('Vous possédez une collection Inducks ?') }}
+    <NavigationItem v-if="!username" path="/inducks/import">
+      {{ $t("Vous possédez une collection Inducks ?") }}
     </NavigationItem>
-    <NavigationItem
-      v-if="!username"
-      path="/demo"
-    >
-      {{ $t('Une petite démo ?') }}
+    <NavigationItem v-if="!username" path="/demo">
+      {{ $t("Une petite démo ?") }}
     </NavigationItem>
   </ul>
 </template>
 
 <script setup>
-import {user} from "../composables/global";
+import { user } from "../composables/global";
 
-const { username } = user()
+const { username } = user();
 import NavigationItemGroup from "../components/NavigationItemGroup";
 import NavigationItem from "../components/NavigationItem";
 import {
   BIconBookHalf,
   BIconCapslockFill,
-  BIconGraphUp, BIconHouseFill,
+  BIconGraphUp,
+  BIconHouseFill,
   BIconList,
   BIconPrinterFill,
-  BIconXSquareFill
+  BIconXSquareFill,
 } from "bootstrap-icons-vue";
 </script>
 
@@ -111,7 +96,8 @@ import {
   background-position: bottom;
 }
 
-:deep(ul), li {
+:deep(ul),
+li {
   background-color: #3d4b5f;
   list-style: none;
   padding: 0;
@@ -184,11 +170,9 @@ import {
   }
 }
 
-
 @media (max-width: 767px) {
   :deep(li.empty) {
     display: none;
   }
 }
-
 </style>

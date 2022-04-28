@@ -1,10 +1,6 @@
 <template>
   <div>
-    <b-select
-      v-model="currentCountryCode"
-      :options="countryNames"
-      required
-    />
+    <b-select v-model="currentCountryCode" :options="countryNames" required />
     <b-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
@@ -18,86 +14,58 @@
       :disabled="!currentPublicationCode"
       :href="$r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
     >
-      {{ $t('OK') }}
+      {{ $t("OK") }}
     </b-button>
   </div>
 </template>
 
-<script>
-import {mapActions, mapState} from "pinia";
-import {BButton, BFormSelect} from "bootstrap-vue-3";
+<script setup>
+import { mapActions, mapState } from "pinia";
+import { BButton, BFormSelect } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
+import { computed, onMounted, watch } from "vue";
 
-export default {
-  name: "PublicationSelect",
-
-  components: {
-    BSelect: BFormSelect,
-    BButton
+const props = defineProps({
+  noButton: {
+    type: Boolean,
+    default: false,
   },
-
-
-  props: {
-    noButton: {
-      type: Boolean,
-      default: false
-    },
-    initialCountryCode: {
-      type: String,
-      default: null
-    },
-    initialPublicationCode: {
-      type: String,
-      default: null
-    }
+  initialCountryCode: {
+    type: String,
+    default: null,
   },
-  emits: ['input'],
-
-  data: function() {
-    return {
-      currentCountryCode: this.initialCountryCode,
-      currentPublicationCode: this.initialPublicationCode,
-    }
+  initialPublicationCode: {
+    type: String,
+    default: null,
   },
+});
+defineEmits(["input"]);
 
-  computed: {
-    ...mapState(coa, ["countryNames", "publicationNames", "publicationNamesFullCountries"]),
-    publicationNamesForCurrentCountry() {
-      const vm = this
-      return this.publicationNamesFullCountries.includes(this.currentCountryCode)
-        ? Object.keys(this.publicationNames)
-          .filter(publicationCode =>
-            new RegExp(`^${vm.currentCountryCode}/`).test(publicationCode)
-          ).map(publicationCode => ({
-            text: vm.publicationNames[publicationCode],
-            value: publicationCode
+const currentCountryCode = computed(() => props.initialCountryCode),
+  currentPublicationCode = computed(() => props.initialPublicationCode);
+const coaStore = coa(),
+  countryNames = computed(() => coaStore.countryNames),
+  publicationNames = computed(() => coaStore.publicationNames),
+  publicationNamesFullCountries = computed(
+    () => coaStore.publicationNamesFullCountries
+  ),
+  publicationNamesForCurrentCountry = computed(() =>
+    publicationNamesFullCountries.value.includes(currentCountryCode.value)
+      ? Object.keys(publicationNames.value)
+          .filter((publicationCode) =>
+            new RegExp(`^${currentCountryCode.value}/`).test(publicationCode)
+          )
+          .map((publicationCode) => ({
+            text: publicationNames.value[publicationCode],
+            value: publicationCode,
           }))
-          .sort(({text: text1}, {text: text2}) => text1.localeCompare(text2))
-        : []
-    }
-  },
-
-  watch: {
-    currentCountryCode: {
-      immediate: true,
-      handler(newValue) {
-        if (newValue) {
-          this.fetchPublicationNamesFromCountry(this.currentCountryCode)
-        }
-      }
-    }
-  },
-
-  mounted() {
-    this.fetchCountryNames()
-  },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNamesFromCountry"]),
-  }
-}
+          .sort(({ text: text1 }, { text: text2 }) =>
+            text1.localeCompare(text2)
+          )
+      : []
+  ),
+  r = l10n().$r;
 </script>
 
 <style scoped>

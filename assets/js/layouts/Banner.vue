@@ -1,31 +1,28 @@
 <template>
-  <div :class="{...classes, small}">
+  <div :class="{ ...classes, small }">
     <a :href="username ? r('/collection/show') : '/'">
-      <img
-        :src="`${imagePath}/logo_small.png`"
-        alt="DucksManager"
-      >
+      <img :src="`${imagePath}/logo_small.png`" alt="DucksManager" />
     </a>
   </div>
 </template>
 
 <script setup>
-import {user} from "../composables/global";
-import {l10n} from "../stores/l10n";
+import { user } from "../composables/global";
+import { l10n } from "../stores/l10n";
 
 defineProps({
   classes: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   small: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
-const {$r: r} = l10n()
-const {username} = user()
+const { $r: r } = l10n();
+const { username } = user();
 </script>
 
 <style scoped lang="scss">

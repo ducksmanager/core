@@ -5,12 +5,20 @@
       :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.issuenumber}`"
     >
       <div>
-        <u>{{ mostWantedIssue.numberOfIssues }} utilisateurs possèdent le numéro :</u>
-      </div>&nbsp;
-      <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`">
-      {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{ mostWantedIssue.issuenumber }}
+        <u
+          >{{ mostWantedIssue.numberOfIssues }} utilisateurs possèdent le numéro
+          :</u
+        >
+      </div>
+      &nbsp;
+      <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`" />
+      {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{
+        mostWantedIssue.issuenumber
+      }}
     </div>
-    <div v-if="publishedEdges && Object.keys(inducksIssueNumbersNoSpace).length">
+    <div
+      v-if="publishedEdges && Object.keys(inducksIssueNumbersNoSpace).length"
+    >
       <div
         v-for="(issuenumbers, publicationCode) in publishedEdges"
         :key="publicationCode"
@@ -22,7 +30,12 @@
         />
         <b-icon-eye-slash-fill
           v-else
-          @click="showEdgesForPublication.splice(showEdgesForPublication.indexOf(publicationCode), 1)"
+          @click="
+            showEdgesForPublication.splice(
+              showEdgesForPublication.indexOf(publicationCode),
+              1
+            )
+          "
         />
         <Publication
           :publicationcode="publicationCode"
@@ -32,15 +45,21 @@
           <Bookcase
             v-if="showEdgesForPublication.includes(publicationCode)"
             :bookcase-textures="bookcaseTextures"
-            :sorted-bookcase="inducksIssueNumbersNoSpace[publicationCode].map(issueNumber => ({
-              id: `${publicationCode.replace('/', '-')} ${issueNumber}`,
-              edgeId: issuenumbers.includes(issueNumber) ? 1 : null,
-              publicationCode,
-              issueNumber,
-            }))"
+            :sorted-bookcase="
+              inducksIssueNumbersNoSpace[publicationCode].map(
+                (issueNumber) => ({
+                  id: `${publicationCode.replace('/', '-')} ${issueNumber}`,
+                  edgeId: issuenumbers.includes(issueNumber) ? 1 : null,
+                  publicationCode,
+                  issueNumber,
+                })
+              )
+            "
           />
           <span
-            v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[publicationCode]"
+            v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[
+              publicationCode
+            ]"
             v-else
             :key="`${publicationCode}-${inducksIssueNumber}`"
           >
@@ -48,101 +67,122 @@
               v-if="!issuenumbers.includes(inducksIssueNumber)"
               class="num bordered"
               :title="inducksIssueNumber"
-            >&nbsp;</span>
+              >&nbsp;</span
+            >
             <span
               v-else-if="!show"
               class="num bordered available"
               :title="inducksIssueNumber"
               @click="open(publicationCode, inducksIssueNumber)"
-            >&nbsp;</span>
+              >&nbsp;</span
+            >
             <img
               v-else
               :src="getEdgeUrl(publicationCode, inducksIssueNumber)"
-            >
+            />
           </span>
         </div>
         <div v-else>
-          Certaines tranches de cette publication sont prêtes mais la publication n'existe plus sur Inducks :
-          {{ issuenumbers.join(', ') }}
+          Certaines tranches de cette publication sont prêtes mais la
+          publication n'existe plus sur Inducks :
+          {{ issuenumbers.join(", ") }}
         </div>
       </div>
-      <br><br>
-      <b>{{
-        Object.keys(publishedEdges).reduce((acc, publicationCode) => acc + publishedEdges[publicationCode].length, 0)
-      }} tranches prêtes.</b><br>
-      <br><br>
-      <u>Légende : </u><br>
-      <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette tranche !<br>
-      <span class="num available">&nbsp;</span> Cette tranche est prête.<br>
+      <br /><br />
+      <b
+        >{{
+          Object.keys(publishedEdges).reduce(
+            (acc, publicationCode) =>
+              acc + publishedEdges[publicationCode].length,
+            0
+          )
+        }}
+        tranches prêtes.</b
+      ><br />
+      <br /><br />
+      <u>Légende : </u><br />
+      <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette
+      tranche !<br />
+      <span class="num available">&nbsp;</span> Cette tranche est prête.<br />
     </div>
   </div>
   <div v-else>
-    {{ $t('Chargement...') }}
+    {{ $t("Chargement...") }}
   </div>
 </template>
 
-<script>
+<script setup>
 import axios from "axios";
-import {mapActions, mapState} from "pinia";
 import Publication from "../../components/Publication";
 import Bookcase from "../../components/Bookcase";
 import { coa } from "../../stores/coa";
-import {BIconEyeFill, BIconEyeSlashFill} from "bootstrap-icons-vue";
+import { BIconEyeFill, BIconEyeSlashFill } from "bootstrap-icons-vue";
+import { computed, onMounted } from "vue";
 
-export default {
-  name: "EdgeProgress",
-  components: { Bookcase, Publication, BIconEyeFill, BIconEyeSlashFill },
-  data() {
-    return {
-      hasData: false,
-      show: false,
-      mostWanted: null,
-      publishedEdges: null,
-      showEdgesForPublication: [],
-      bookcaseTextures: { bookcase: "bois/HONDURAS MAHOGANY", bookshelf: "bois/KNOTTY PINE" }
-    }
+const hasData = ref(false),
+  show = ref(false),
+  mostWanted = ref(null),
+  publishedEdges = ref(null),
+  showEdgesForPublication = ref([]),
+  bookcaseTextures = ref({
+    bookcase: "bois/HONDURAS MAHOGANY",
+    bookshelf: "bois/KNOTTY PINE",
+  }),
+  publicationNames = computed(() => coa().publicationNames),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  fetchIssueNumbers = coa().fetchIssueNumbers,
+  getEdgeUrl = (publicationCode, issueNumber) => {
+    const [country, magazine] = publicationCode.split("/");
+    return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`;
   },
-  computed: {
-    ...mapState(coa, ["publicationNames", "issueNumbers"]),
-    inducksIssueNumbersNoSpace() {
-      const vm = this
-      return Object.keys(this.issueNumbers).reduce((acc, publicationCode) => ({
+  open = (publicationCode, issueNumber) => {
+    window.open(getEdgeUrl(publicationCode, issueNumber), "_blank");
+  },
+  issueNumbers = computed(() => coa().issueNumbers),
+  inducksIssueNumbersNoSpace = computed(() =>
+    Object.keys(issueNumbers.value).reduce(
+      (acc, publicationCode) => ({
         ...acc,
-        [publicationCode]: vm.issueNumbers[publicationCode].map(issueNumber => issueNumber.replace(/ /g, ''))
-      }), {})
-    }
-  },
-  async mounted() {
-    this.mostWanted = (await axios.get("/admin/edges/wanted/data")).data.map(mostWantedIssue => ({
+        [publicationCode]: issueNumbers.value[publicationCode].map(
+          (issueNumber) => issueNumber.replace(/ /g, "")
+        ),
+      }),
+      {}
+    )
+  );
+
+onMounted(async () => {
+  mostWanted.value = (await axios.get("/admin/edges/wanted/data")).data.map(
+    (mostWantedIssue) => ({
       ...mostWantedIssue,
-      country: mostWantedIssue.publicationcode.split('/')[0],
-      magazine: mostWantedIssue.publicationcode.split('/')[1],
-    }))
+      country: mostWantedIssue.publicationcode.split("/")[0],
+      magazine: mostWantedIssue.publicationcode.split("/")[1],
+    })
+  );
 
-    this.publishedEdges = (await axios.get("/admin/edges/published/data")).data.reduce((acc, value) => ({
+  publishedEdges.value = (
+    await axios.get("/admin/edges/published/data")
+  ).data.reduce(
+    (acc, value) => ({
       ...acc,
-      [value.publicationcode]: [...acc[value.publicationcode] || [], value.issuenumber]
-    }), {})
+      [value.publicationcode]: [
+        ...(acc[value.publicationcode] || []),
+        value.issuenumber,
+      ],
+    }),
+    {}
+  );
 
-    await this.fetchPublicationNames([
-        ...this.mostWanted.map(mostWantedIssue => mostWantedIssue.publicationcode),
-        ...Object.keys(this.publishedEdges)
-    ])
+  await fetchPublicationNames([
+    ...mostWanted.value.map(
+      (mostWantedIssue) => mostWantedIssue.publicationcode
+    ),
+    ...Object.keys(publishedEdges.value),
+  ]);
 
-    await this.fetchIssueNumbers(Object.keys(this.publishedEdges))
-    this.hasData = true
-  },
-  methods: {
-    ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers"]),
-    getEdgeUrl(publicationCode, issueNumber) {
-      const [country, magazine] = publicationCode.split('/')
-      return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`
-    },
-    open(publicationCode, issueNumber) {
-      window.open(this.getEdgeUrl(publicationCode, issueNumber), '_blank')
-    }
-  }
-}
+  await fetchIssueNumbers(Object.keys(publishedEdges.value));
+  hasData.value = true;
+});
 </script>
 
 <style scoped lang="scss">

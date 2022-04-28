@@ -2,20 +2,16 @@
   <div v-if="loading || !hasPublicationNames">
     {{ $t("Chargement...") }}
   </div>
-  <div
-    v-else
-    class="bookcase-options"
-  >
-    <div
-      v-for="(textureText, textureType) in textureTypes"
-      :key="textureType"
-    >
+  <div v-else class="bookcase-options">
+    <div v-for="(textureText, textureType) in textureTypes" :key="textureType">
       <h5>{{ textureText }}</h5>
       <b-dropdown v-model="bookcaseOptions.textures[textureType]">
         <template #button-content>
           <div
             class="selected"
-            :style="{backgroundImage: `url('${imagePath}/textures/${bookcaseOptions.textures[textureType]}.jpg'`}"
+            :style="{
+              backgroundImage: `url('${imagePath}/textures/${bookcaseOptions.textures[textureType]}.jpg'`,
+            }"
           >
             {{ textureWithoutSuperType(bookcaseOptions.textures[textureType]) }}
           </div>
@@ -23,7 +19,9 @@
         <b-dropdown-item
           v-for="texture in textures"
           :key="texture"
-          :style="{backgroundImage: `url('${imagePath}/textures/${texture}.jpg'`}"
+          :style="{
+            backgroundImage: `url('${imagePath}/textures/${texture}.jpg'`,
+          }"
           @click="bookcaseOptions.textures[textureType] = texture"
         >
           {{ textureWithoutSuperType(texture) }}
@@ -35,13 +33,10 @@
       {{ $t("Affichage des exemplaires multiples") }}
     </h5>
     <b-form-checkbox v-model="bookcaseOptions.showAllCopies">
-      {{ $t('Afficher les doubles de ma collection dans la bibliothèque') }}
+      {{ $t("Afficher les doubles de ma collection dans la bibliothèque") }}
     </b-form-checkbox>
 
-    <h5
-      v-if="Object.keys(bookcaseOrder).length"
-      class="mt-4 mb-3"
-    >
+    <h5 v-if="Object.keys(bookcaseOrder).length" class="mt-4 mb-3">
       {{ $t("Ordre des magazines") }}
     </h5>
 
@@ -61,10 +56,7 @@
         />
       </SlickItem>
     </SlickList>
-    <b-alert
-      variant="danger"
-      :show="error"
-    >
+    <b-alert variant="danger" :show="error">
       {{ $t("Une erreur s'est produite.") }}
     </b-alert>
     <b-button
@@ -78,141 +70,121 @@
   </div>
 </template>
 
-<script>
-import { mapActions, mapState } from "pinia";
+<script setup>
 import { SlickItem, SlickList } from "vue-slicksort";
 import Publication from "../../components/Publication";
-import {BAlert, BButton, BDropdown, BDropdownItem, BFormCheckbox} from "bootstrap-vue-3";
+import {
+  BAlert,
+  BButton,
+  BDropdown,
+  BDropdownItem,
+  BFormCheckbox,
+} from "bootstrap-vue-3";
 import { bookcase } from "../../stores/bookcase";
 import { coa } from "../../stores/coa";
-import {user} from "../../composables/global";
+import { user } from "../../composables/global";
+import { useI18n } from "vue-i18n";
+import { computed, onMounted } from "vue";
 
-const {username} = user()
+const { username } = user(),
+  { t: $t } = useI18n(),
+  bookcaseStore = bookcase();
 
-export default {
-  name: "BookcaseOptions",
-
-  components: {
-    Publication,
-    SlickList,
-    SlickItem,
-    BDropdown,
-    BDropdownItem,
-    BFormCheckbox,
-    BAlert,
-    BButton
-  },
-
-  data: () => ({
-    error: false,
-    textures: [
-      "bois/ASH",
-      "bois/BALTIC BIRCH",
-      "bois/BASSWOOD",
-      "bois/BIRDS EYE MAPLE",
-      "bois/BUBINGA",
-      "bois/BURL WALNUT",
-      "bois/CHERRY",
-      "bois/CLEAR PINE",
-      "bois/DURON",
-      "bois/FIDDLEBACK MAKORE",
-      "bois/FIGURED MAKORE",
-      "bois/HICKORY",
-      "bois/HOMOSOTE",
-      "bois/HONDURAN ROSEWOOD",
-      "bois/HONDURAS MAHOGANY",
-      "bois/ITALIAN POPLAR",
-      "bois/KEWAZINGA",
-      "bois/KNOTTY PINE",
-      "bois/KOA",
-      "bois/LACEWOOD",
-      "bois/LAUAN",
-      "bois/NATURAL BIRCH",
-      "bois/NOVA-CORK",
-      "bois/OLIVE ASH BURL",
-      "bois/PLAIN SLICED BEECH",
-      "bois/PLAIN SLICED RED OAK",
-      "bois/PLAIN SLICED WENGE",
-      "bois/POPLAR",
-      "bois/PREFINISHED MAPLE",
-      "bois/PURPLEHEART",
-      "bois/QUARTERSAWN BEECH",
-      "bois/QUARTERSAWN TEAK",
-      "bois/QUARTERSAWN WENGE",
-      "bois/QUARTERSAWN WHITE OAK",
-      "bois/RED BIRCH",
-      "bois/RIBBON STRIPE SAPELE",
-      "bois/ROTARY DOUGLAS FIR",
-      "bois/ROTARY SAPELE",
-      "bois/ROTARY WHITE MAPLE",
-      "bois/SPANISH CEDAR",
-      "bois/TEAK",
-      "bois/VERTICAL GRAIN FIR PLY",
-      "bois/WALNUT",
-      "bois/WHITE BIRCH",
-      "bois/ZEBRAWOOD"
-    ],
-    loading: true,
-    hasPublicationNames: false
+const error = ref(false),
+  textures = ref([
+    "bois/ASH",
+    "bois/BALTIC BIRCH",
+    "bois/BASSWOOD",
+    "bois/BIRDS EYE MAPLE",
+    "bois/BUBINGA",
+    "bois/BURL WALNUT",
+    "bois/CHERRY",
+    "bois/CLEAR PINE",
+    "bois/DURON",
+    "bois/FIDDLEBACK MAKORE",
+    "bois/FIGURED MAKORE",
+    "bois/HICKORY",
+    "bois/HOMOSOTE",
+    "bois/HONDURAN ROSEWOOD",
+    "bois/HONDURAS MAHOGANY",
+    "bois/ITALIAN POPLAR",
+    "bois/KEWAZINGA",
+    "bois/KNOTTY PINE",
+    "bois/KOA",
+    "bois/LACEWOOD",
+    "bois/LAUAN",
+    "bois/NATURAL BIRCH",
+    "bois/NOVA-CORK",
+    "bois/OLIVE ASH BURL",
+    "bois/PLAIN SLICED BEECH",
+    "bois/PLAIN SLICED RED OAK",
+    "bois/PLAIN SLICED WENGE",
+    "bois/POPLAR",
+    "bois/PREFINISHED MAPLE",
+    "bois/PURPLEHEART",
+    "bois/QUARTERSAWN BEECH",
+    "bois/QUARTERSAWN TEAK",
+    "bois/QUARTERSAWN WENGE",
+    "bois/QUARTERSAWN WHITE OAK",
+    "bois/RED BIRCH",
+    "bois/RIBBON STRIPE SAPELE",
+    "bois/ROTARY DOUGLAS FIR",
+    "bois/ROTARY SAPELE",
+    "bois/ROTARY WHITE MAPLE",
+    "bois/SPANISH CEDAR",
+    "bois/TEAK",
+    "bois/VERTICAL GRAIN FIR PLY",
+    "bois/WALNUT",
+    "bois/WHITE BIRCH",
+    "bois/ZEBRAWOOD",
+  ]),
+  loading = ref(true),
+  hasPublicationNames = ref(false),
+  bookcaseOptions = bookcaseStore.bookcaseOptions,
+  publicationNames = bookcaseStore.publicationNames,
+  textureTypes = () => ({
+    bookcase: $t("Sous-texture"),
+    bookshelf: $t("Sous-texture de l'étagère"),
   }),
-
-  computed: {
-    ...mapState(bookcase, ["bookcaseOptions"]),
-    ...mapState(coa, ["publicationNames"]),
-    textureTypes() {
-      return {
-        bookcase: this.$t("Sous-texture"),
-        bookshelf: this.$t("Sous-texture de l'étagère")
-      };
-    },
-
-    bookcaseOrder: {
-      get() {
-        return this.$store.state.bookcase.bookcaseOrder;
-      },
-      set(newValue) {
-        return this.$store.commit("bookcase/setBookcaseOrder", newValue);
-      }
+  bookcaseOrder = computed(() => bookcaseStore.bookcaseOrder),
+  setBookcaseUsername = bookcase().setBookcaseUsername,
+  setBookcaseOrder = bookcase().setBookcaseOrder,
+  loadBookcaseOptions = bookcase().loadBookcaseOptions,
+  loadBookcaseOrder = bookcase().loadBookcaseOrder,
+  updateBookcaseOptions = bookcase().updateBookcaseOptions,
+  updateBookcaseOrder = bookcase().updateBookcaseOrder,
+  fetchPublicationNames = coa().fetchPublicationNames,
+  loadData = async () => {
+    await loadBookcaseOptions();
+    await loadBookcaseOrder();
+    loading.value = false;
+  },
+  submit = async () => {
+    error.value = false;
+    loading.value = true;
+    try {
+      await updateBookcaseOptions();
+      await updateBookcaseOrder();
+      await loadData();
+    } catch {
+      error.value = true;
+    } finally {
+      loading.value = false;
     }
   },
+  textureWithoutSuperType = (texture) => texture.replace(/^[^/]+\//, "");
 
-  async mounted() {
-    const vm = this;
-    this.setBookcaseUsername(username);
-    await this.loadData();
-    await this.fetchPublicationNames(this.bookcaseOrder);
-    this.setBookcaseOrder(this.bookcaseOrder.filter(publicationCode => Object.keys(vm.publicationNames).includes(publicationCode)));
-    this.hasPublicationNames = true;
-  },
-
-  methods: {
-    ...mapActions(bookcase, ["setBookcaseUsername", "setBookcaseOrder", "loadBookcaseOptions", "loadBookcaseOrder", "updateBookcaseOptions", "updateBookcaseOrder"]),
-    ...mapActions(coa, ["fetchPublicationNames"]),
-
-    async loadData() {
-      await this.loadBookcaseOptions();
-      await this.loadBookcaseOrder();
-      this.loading = false;
-    },
-
-    async submit() {
-      this.error = false;
-      this.loading = true;
-      try {
-        await this.updateBookcaseOptions();
-        await this.updateBookcaseOrder();
-        await this.loadData();
-      } catch {
-        this.error = true;
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    textureWithoutSuperType: texture => texture.replace(/^[^/]+\//, "")
-  }
-
-};
+onMounted(async () => {
+  setBookcaseUsername(username);
+  await loadData();
+  await fetchPublicationNames(bookcaseOrder.value);
+  setBookcaseOrder(
+    bookcaseOrder.value.filter((publicationCode) =>
+      Object.keys(publicationNames).includes(publicationCode)
+    )
+  );
+  hasPublicationNames.value = true;
+});
 </script>
 
 <style lang="scss">
@@ -238,7 +210,8 @@ export default {
   }
 }
 
-.dragging, .publication-order > div {
+.dragging,
+.publication-order > div {
   display: flex;
   align-items: center;
   margin-top: 5px;

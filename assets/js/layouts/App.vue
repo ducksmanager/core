@@ -1,9 +1,5 @@
 <template>
-  <component
-    :is="component"
-    ref="root"
-    v-bind="props"
-  />
+  <component :is="component" ref="root" v-bind="props" />
 </template>
 
 <script>
@@ -13,9 +9,9 @@ import EdgeProgress from "./admin/EdgeProgress";
 import Site from "./Site";
 import Privacy from "./Privacy";
 
-const {l10n: l10nStore} = require("../stores/l10n");
+const { l10n: l10nStore } = require("../stores/l10n");
 
-import {ref, onMounted} from 'vue'
+import { ref, onMounted } from "vue";
 
 export default {
   name: "App",
@@ -24,30 +20,29 @@ export default {
     EdgeProgress,
     Print,
     Privacy,
-    Site
+    Site,
   },
   setup() {
-    const
-      component = ref(null),
+    const component = ref(null),
       props = ref({}),
       root = ref(null),
-      {loadL10n} = l10nStore()
+      { loadL10n } = l10nStore();
     onMounted(async () => {
-      for (const {name, value} of root.value.parentElement.attributes) {
-        if (name === 'component') {
-          component.value = value
+      for (const { name, value } of root.value.parentElement.attributes) {
+        if (name === "component") {
+          component.value = value;
         } else {
-          props.value[name] = value
+          props.value[name] = value;
         }
       }
-      await loadL10n()
-    })
+      await loadL10n();
+    });
 
     return {
       root,
       component,
-      props
-    }
+      props,
+    };
   },
   // data() {
   //   const {component, props} = this.$attrs
@@ -59,7 +54,7 @@ export default {
   // async mounted() {
   //   await this.loadL10n()
   // },
-}
+};
 </script>
 
 <style scoped>

@@ -6,10 +6,7 @@
       :default-path="'/show'"
       :items="items"
     />
-    <component
-      :is="tab"
-      v-bind="attrsWithoutTab"
-    />
+    <component :is="tab" v-bind="attrsWithoutTab" />
   </div>
 </template>
 
@@ -21,7 +18,7 @@ import Manage from "./collection/Manage";
 import Subscriptions from "./collection/Subscriptions";
 import { mapState } from "pinia";
 import { mapActions } from "pinia/dist/pinia.esm-browser";
-const { collection } = require('../stores/collection');
+const { collection } = require("../stores/collection");
 
 export default {
   name: "Collection",
@@ -30,47 +27,65 @@ export default {
     Duplicates,
     Manage,
     Menu,
-    Subscriptions
+    Subscriptions,
   },
   props: {
     tab: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       items: [
-        {path: '/show', text: this.total == null ? this.$t('Mes numéros') : this.$t('Mes numéros ({0})', [this.total])},
         {
-          path: '/duplicates',
-          text: this.totalUniqueIssues == null ? this.$t('Mes numéros en double') : this.$t('Mes numéros en double ({0})', [this.total - this.totalUniqueIssues])
+          path: "/show",
+          text:
+            this.total == null
+              ? this.$t("Mes numéros")
+              : this.$t("Mes numéros ({0})", [this.total]),
         },
         {
-          path: '/subscriptions',
-          text: this.subscriptions == null ? this.$t('Mes abonnements') : this.$t('Mes abonnements ({0})', [this.subscriptions.length])
+          path: "/duplicates",
+          text:
+            this.totalUniqueIssues == null
+              ? this.$t("Mes numéros en double")
+              : this.$t("Mes numéros en double ({0})", [
+                  this.total - this.totalUniqueIssues,
+                ]),
         },
-        {path: '/account', text: this.$t('Mon compte')}
-      ]
-    }
+        {
+          path: "/subscriptions",
+          text:
+            this.subscriptions == null
+              ? this.$t("Mes abonnements")
+              : this.$t("Mes abonnements ({0})", [this.subscriptions.length]),
+        },
+        { path: "/account", text: this.$t("Mon compte") },
+      ],
+    };
   },
   computed: {
     ...mapState(collection, ["subscriptions", "total", "totalUniqueIssues"]),
     attrsWithoutTab() {
-      const vm = this
-      return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'tab')
-        .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
-    }
+      const vm = this;
+      return Object.keys(this.$attrs)
+        .filter((attrKey) => attrKey !== "tab")
+        .reduce(
+          (acc, attrKey) => ({ ...acc, [attrKey]: vm.$attrs[attrKey] }),
+          {}
+        );
+    },
   },
 
   mounted() {
-    this.loadSubscriptions()
+    this.loadSubscriptions();
   },
 
   methods: {
     ...mapActions(collection, ["loadSubscriptions"]),
-  }
-}
+  },
+};
 </script>
 
 <style scoped lang="scss">

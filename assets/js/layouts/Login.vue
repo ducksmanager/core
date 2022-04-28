@@ -5,11 +5,7 @@
         <h1 class="h3 mb-3 font-weight-normal">
           {{ $t("Connexion") }}
         </h1>
-        <b-alert
-          v-if="error"
-          show
-          variant="danger"
-        >
+        <b-alert v-if="error" show variant="danger">
           {{ error }}
         </b-alert>
         <b-form-input
@@ -29,17 +25,9 @@
           :placeholder="$t('Mot de passe')"
         />
 
-        <input
-          type="hidden"
-          name="_csrf_token"
-          :value="csrfToken"
-        >
+        <input type="hidden" name="_csrf_token" :value="csrfToken" />
 
-        <b-button
-          variant="primary"
-          size="xl"
-          type="submit"
-        >
+        <b-button variant="primary" size="xl" type="submit">
           {{ $t("Connexion") }}
         </b-button>
         <div>
@@ -51,8 +39,8 @@
 </template>
 
 <script>
-import {BAlert, BButton, BCol, BFormInput, BRow} from "bootstrap-vue-3";
-import {mapActions} from "pinia";
+import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
+import { mapActions } from "pinia";
 import { l10n } from "../stores/l10n";
 
 export default {
@@ -62,20 +50,20 @@ export default {
     BCol,
     BAlert,
     BFormInput,
-    BButton
+    BButton,
   },
   props: {
     error: { type: String, default: null },
-    lastUsername: { type: String, default: null }
+    lastUsername: { type: String, default: null },
   },
   data() {
     return {
-      csrfToken: document.getElementById("csrf").value
+      csrfToken: document.getElementById("csrf").value,
     };
   },
   methods: {
     ...mapActions(l10n, ["$r"]),
-  }
+  },
 };
 </script>
 

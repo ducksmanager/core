@@ -1,35 +1,28 @@
 <template>
-  <span :class="{[size]: true}">
-    <img
-      :alt="countrycode"
-      :src="`${imagePath}/flags/${countrycode}.png`"
-    > {{ publicationname }}
+  <span :class="{ [size]: true }">
+    <img :alt="countrycode" :src="`${imagePath}/flags/${countrycode}.png`" />
+    {{ publicationname }}
   </span>
 </template>
 
-<script>
-export default {
-  name: "Publication",
-  props: {
+<script setup>
+import { computed } from "vue";
+
+const props = defineProps({
     publicationcode: {
       type: String,
-      required: true
+      required: true,
     },
     publicationname: {
       type: String,
-      required: true
+      required: true,
     },
     size: {
       type: String,
-      default: "md"
-    }
-  },
-  computed: {
-    countrycode() {
-      return this.publicationcode.split("/")[0];
-    }
-  }
-};
+      default: "md",
+    },
+  }),
+  countrycode = computed(() => props.publicationcode.split("/")[0]);
 </script>
 
 <style scoped lang="scss">

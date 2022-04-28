@@ -1,8 +1,5 @@
 <template>
-  <form
-    method="post"
-    @submit.prevent="signup"
-  >
+  <form method="post" @submit.prevent="signup">
     <b-row>
       <b-col lg="4">
         <Errorable id="username">
@@ -61,11 +58,7 @@
       </b-col>
     </b-row>
 
-    <b-button
-      variant="primary"
-      size="xl"
-      type="submit"
-    >
+    <b-button variant="primary" size="xl" type="submit">
       {{ $t("Inscription") }}
     </b-button>
   </form>
@@ -74,36 +67,36 @@
 <script>
 import * as axios from "axios";
 import Errorable from "../components/Errorable";
-import {BButton, BCol, BFormInput, BRow} from "bootstrap-vue-3";
+import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { mapState, mapActions } from "pinia";
 import { form } from "../stores/form";
 import { l10n } from "../stores/l10n";
 import { validation } from "../composables/validation";
 import { useI18n } from "vue-i18n";
 
-let t
+let t;
 
 export default {
   name: "Signup",
   components: { Errorable, BRow, BCol, BFormInput, BButton },
   props: {
-    lastUsername: { type: String, default: null }
+    lastUsername: { type: String, default: null },
   },
 
   data: () => ({
     signupUsername: "",
     email: "",
     password: "",
-    password2: ""
+    password2: "",
   }),
 
   computed: {
-    ...mapState(form, ["hasErrors"])
+    ...mapState(form, ["hasErrors"]),
   },
 
   mounted() {
     this.signupUsername = this.lastUsername;
-    t = useI18n().t
+    t = useI18n().t;
   },
 
   methods: {
@@ -111,7 +104,8 @@ export default {
     ...mapActions(form, ["clearErrors"]),
 
     async signup() {
-      const {validatePasswords, validateEmail, validateUsername} = validation(t)
+      const { validatePasswords, validateEmail, validateUsername } =
+        validation(t);
 
       this.clearErrors();
       validatePasswords(this.password, this.password2);
@@ -126,14 +120,18 @@ export default {
           username: this.signupUsername,
           password: this.password,
           password2: this.password2,
-          email: this.email
+          email: this.email,
         });
         window.location.replace(this.$r("/collection/show"));
       } catch (e) {
-        this.addErrors({ username: this.$t("Ce nom d'utilisateur ou cette adresse e-mail existe déjà.") });
+        this.addErrors({
+          username: this.$t(
+            "Ce nom d'utilisateur ou cette adresse e-mail existe déjà."
+          ),
+        });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -1,10 +1,5 @@
 <template>
-  <b-card
-    no-body
-    class="mb-1"
-    bg-variant="light"
-    header-text-variant="dark"
-  >
+  <b-card no-body class="mb-1" bg-variant="light" header-text-variant="dark">
     <template #header>
       <div v-b-toggle="id">
         <slot name="header" />
@@ -22,43 +17,32 @@
             <slot name="content" />
           </b-card-text>
         </b-card-body>
-        <template
-          v-if="$slots.footer"
-          #footer
-        >
+        <template v-if="$slots.footer" #footer>
           <slot name="footer" />
         </template>
       </b-card>
     </b-collapse>
   </b-card>
 </template>
-<script>
-import {BCard, BCardBody, BCardText, BCollapse} from "bootstrap-vue-3";
+<script setup>
+import { BCard, BCardBody, BCardText, BCollapse } from "bootstrap-vue-3";
 
-export default {
-  name: 'Accordion',
-  components: {
-    BCard,
-    BCollapse,
-    BCardBody,
-    BCardText,
+defineProps({
+  accordionGroupId: {
+    type: String,
+    required: true,
   },
-  props: {
-    accordionGroupId: {
-      type: String,
-      required: true
-    },
-    visible: {
-      type: Boolean,
-      default: true
-    },
-    id: {
-      type: String,
-      required: true
-    }
+  visible: {
+    type: Boolean,
+    default: true,
   },
-  emits: ['expand']
-}
+  id: {
+    type: String,
+    required: true,
+  },
+});
+
+defineEmits(["expand"]);
 </script>
 
 <style scoped lang="scss">

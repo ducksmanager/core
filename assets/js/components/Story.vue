@@ -1,95 +1,87 @@
 <template>
-  <span :class="{dark}">
-    <b-badge
-      v-if="kind"
-      size="xl"
-      :class="{[`kind-${kind}`]: true}"
-    >{{ storyTypeText }}</b-badge>
-    {{ title || $t("Sans titre") }}<template v-if="part"> - {{ $t('partie') }} {{ part }}</template>
+  <span :class="{ dark }">
+    <b-badge v-if="kind" size="xl" :class="{ [`kind-${kind}`]: true }">{{
+      storyTypeText
+    }}</b-badge>
+    {{ title || t("Sans titre")
+    }}<template v-if="part"> - {{ t("partie") }} {{ part }}</template>
     <small>{{ comment }}</small>
     &nbsp;<a
       v-if="!noLink"
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
     >
-      {{ $t("Détails de l'histoire") }}
+      {{ t("Détails de l'histoire") }}
     </a>
   </span>
 </template>
 <script>
-import {BBadge} from "bootstrap-vue-3";
+import { BBadge } from "bootstrap-vue-3";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-export default {
-  name: "Story",
-
-  components: {
-    BBadge
-  },
-
-  props: {
+const { $t } = useI18n();
+const t = $t;
+const props = defineProps({
     storycode: {
       type: String,
-      required: true
+      required: true,
     },
     kind: {
       type: String,
-      default: null
+      default: null,
     },
     title: {
       type: String,
-      default: null
+      default: null,
     },
     part: {
       type: Number,
-      default: null
+      default: null,
     },
     comment: {
       type: String,
-      default: null
+      default: null,
     },
     noLink: {
       type: Boolean,
-      default: false
+      default: false,
     },
     dark: {
       type: Boolean,
-      default: false
-    }
-  },
-
-  computed: {
-    urlEncodedStorycode() {
-      return this.storycode && encodeURIComponent(this.storycode);
+      default: false,
     },
-    storyTypeText() {
-      switch (this.kind.toUpperCase()) {
-        case "A":
-          return this.$t("article");
-        case   "C":
-          return this.$t("couverture");
-        case   "F":
-          return this.$t("détachable");
-        case   "G":
-          return this.$t("jeu");
-        case   "I":
-          return this.$t("illustration");
-        case   "K":
-          return this.$t("strip");
-        case   "L":
-          return this.$t("peinture");
-        case   "N":
-          return this.$t("histoire");
-        case   "N_G":
-          return this.$t("gag");
-        case   "P":
-          return this.$t("peinture");
-        case   "T":
-          return this.$t("texte");
-      }
-      return this.$t("autre");
+  }),
+  urlEncodedStorycode = computed(
+    () => props.storycode && encodeURIComponent(props.storycode)
+  ),
+  storyTypeText = computed(() => {
+    switch (props.kind.toUpperCase()) {
+      case "A":
+        return $t("article");
+      case "C":
+        return $t("couverture");
+      case "F":
+        return $t("détachable");
+      case "G":
+        return $t("jeu");
+      case "I":
+        return $t("illustration");
+      case "K":
+        return $t("strip");
+      case "L":
+        return $t("peinture");
+      case "N":
+        return $t("histoire");
+      case "N_G":
+        return $t("gag");
+      case "P":
+        return $t("peinture");
+      case "T":
+        return $t("texte");
     }
-  }
-};
+    return $t("autre");
+  });
 </script>
 
 <style scoped lang="scss">

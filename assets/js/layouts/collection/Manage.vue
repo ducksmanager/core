@@ -1,11 +1,18 @@
 <template>
   <div v-if="publicationcode === 'new'">
-    {{ $t("Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros.")
+    {{
+      $t(
+        "Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros."
+      )
     }}
     <PublicationSelect />
-    <br>
-    <br>
-    {{ $t("... ou recherchez un magazine à partir d'une histoire qui le contient :") }}
+    <br />
+    <br />
+    {{
+      $t(
+        "... ou recherchez un magazine à partir d'une histoire qui le contient :"
+      )
+    }}
     <IssueSearch />
   </div>
   <div v-else-if="hasPublicationNames">
@@ -16,35 +23,56 @@
     >
       <template #header>
         {{
-          suggestionsNumber === 1 ? $t("Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !") : $t("Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !", suggestionsNumber)
+          suggestionsNumber === 1
+            ? $t(
+                "Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !"
+              )
+            : $t(
+                "Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !",
+                suggestionsNumber
+              )
         }}
       </template>
       <template #content>
         <SuggestionList
           countrycode="ALL"
           since-last-visit
-          @has-suggestions-data="e => {suggestionsNumber = e}"
+          @has-suggestions-data="
+            (e) => {
+              suggestionsNumber = e;
+            }
+          "
         />
       </template>
       <template #footer>
-        <div><a :href="$r('/expand')">{{ $t("Voir toutes les suggestions d'achat pour ma collection") }}</a></div>
+        <div>
+          <a :href="$r('/expand')">{{
+            $t("Voir toutes les suggestions d'achat pour ma collection")
+          }}</a>
+        </div>
       </template>
     </Accordion>
     <LastPurchases v-if="total > 0 && hasPublicationNames" />
     <LastPublishedEdges />
-    <div
-      v-if="username === 'demo'"
-      id="demo-intro"
-    >
+    <div v-if="username === 'demo'" id="demo-intro">
       <h2>{{ $t("Bienvenue dans le mode démo !") }}</h2>
       <span
-        v-html="$t('Prenez le temps de découvrir les fonctionnalités de DucksManager.<br /><br />Vous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.<br />Si vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.<br />Prochaine remise à zéro dans')"
-      /> {{ (60 - new Date().getMinutes()) || 60 }} {{ $t("minute(s)") }}
+        v-html="
+          $t(
+            'Prenez le temps de découvrir les fonctionnalités de DucksManager.<br /><br />Vous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.<br />Si vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.<br />Prochaine remise à zéro dans'
+          )
+        "
+      />
+      {{ 60 - new Date().getMinutes() || 60 }} {{ $t("minute(s)") }}
     </div>
     <ShortStats>
       <template #empty-collection>
         <div class="mb-3">
-          {{ $t("Cliquez sur \"Nouveau magazine\" pour ajouter un numéro dans votre liste.") }}
+          {{
+            $t(
+              'Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.'
+            )
+          }}
         </div>
       </template>
       <template #non-empty-collection>
@@ -61,9 +89,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import IssueList from "../../components/IssueList";
-import { mapActions, mapState } from "pinia";
 import IssueSearch from "../../components/IssueSearch";
 import PublicationSelect from "../../components/PublicationSelect";
 import SuggestionList from "../SuggestionList";
@@ -74,59 +101,47 @@ import ShortStats from "../../components/ShortStats";
 import LastPurchases from "../../components/LastPurchases";
 import { coa } from "../../stores/coa";
 import { l10n } from "../../stores/l10n";
-import {user} from "../../composables/global";
-import {collection} from "../../stores/collection";
+import { user } from "../../composables/global";
+import { collection } from "../../stores/collection";
+import { computed, watch } from "vue";
 
-const {username} = user()
-
-export default {
-  name: "Manage",
-  components: {
-    LastPurchases,
-    ShortStats,
-    LastPublishedEdges,
-    PublicationList,
-    Accordion,
-    SuggestionList,
-    PublicationSelect,
-    IssueSearch,
-    IssueList
+defineProps({
+  publicationcode: {
+    type: String,
+    required: true,
   },
-  props: {
-    publicationcode: {
-      type: String,
-      required: true
+});
+
+const suggestionsNumber = ref(0),
+  hasPublicationNames = ref(false),
+  username = ref(user().username),
+  publicationNames = computed(() => coa().publicationNames),
+  total = computed(() => collection().total),
+  totalPerPublication = computed(() => collection().totalPerPublication),
+  mostPossessedPublication = computed(
+    () =>
+      totalPerPublication.value &&
+      Object.keys(totalPerPublication.value).reduce(
+        (acc, publicationCode) =>
+          totalPerPublication.value[acc] >
+          totalPerPublication.value[publicationCode]
+            ? acc
+            : publicationCode,
+        null
+      )
+  ),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  { $r: r } = l10n();
+
+watch(
+  () => totalPerPublication.value,
+  async (newValue) => {
+    if (newValue) {
+      await fetchPublicationNames(Object.keys(newValue));
+      hasPublicationNames.value = true;
     }
-  },
-  data: () => ({
-    suggestionsNumber: 0,
-    hasPublicationNames: false,
-    username
-  }),
-  computed: {
-    ...mapState(coa, ["publicationNames"]),
-    ...mapState(collection, ["total", "totalPerCountry", "totalPerPublication"]),
-
-    mostPossessedPublication() {
-      const vm = this;
-      return this.totalPerPublication && Object.keys(this.totalPerPublication).reduce((acc, publicationCode) => vm.totalPerPublication[acc] > vm.totalPerPublication[publicationCode] ? acc : publicationCode, null);
-    }
-  },
-
-  watch: {
-    async totalPerPublication(newValue) {
-      if (newValue) {
-        await this.fetchPublicationNames(Object.keys(newValue));
-        this.hasPublicationNames = true;
-      }
-    }
-  },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(coa, ["fetchPublicationNames"])
   }
-};
+);
 </script>
 
 <style scoped lang="scss">

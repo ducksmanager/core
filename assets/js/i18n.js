@@ -1,4 +1,4 @@
-import {createI18n} from "vue-i18n";
+import { createI18n } from "vue-i18n";
 
 const fallbackLocale = "fr";
 let locale = localStorage.getItem("locale");
@@ -12,8 +12,11 @@ export const i18n = createI18n({
   fallbackLocale,
   formatFallbackMessages: true,
   silentTranslationWarn: true,
-  messages: locale === fallbackLocale ? {} : {
-    [locale]: require(`../translations/messages.${locale}.json`)
-  },
-  globalInjection: true
+  messages:
+    locale === fallbackLocale
+      ? {}
+      : {
+          [locale]: require(`../translations/messages.${locale}.json`),
+        },
+  globalInjection: true,
 });

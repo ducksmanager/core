@@ -6,18 +6,29 @@
       variant="warning"
       class="section"
     >
-      {{ $t('Aucun auteur noté.') }}
-      {{ $t('Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez.') }}
-      {{ $t('Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.') }}
+      {{ $t("Aucun auteur noté.") }}
+      {{
+        $t(
+          "Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez."
+        )
+      }}
+      {{
+        $t(
+          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."
+        )
+      }}
     </b-alert>
-    <div
-      v-else
-      class="section"
-    >
-      <h5>{{ $t('Auteurs suivis') }}</h5>
+    <div v-else class="section">
+      <h5>{{ $t("Auteurs suivis") }}</h5>
       <p>
-        {{ $t('Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous') }}
-        <a :href="$r('/expand')">{{ $t('suggérer des numéros en fonction de vos préférences.') }}</a>
+        {{
+          $t(
+            "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous"
+          )
+        }}
+        <a :href="$r('/expand')">{{
+          $t("suggérer des numéros en fonction de vos préférences.")
+        }}</a>
       </p>
       <div v-if="personNames">
         <b-row
@@ -37,24 +48,21 @@
             />
           </b-col>
           <b-col lg="2">
-            <b-button
-              size="sm"
-              @click="deleteAuthor(author)"
-            >
-              {{ $t('Supprimer') }}
+            <b-button size="sm" @click="deleteAuthor(author)">
+              {{ $t("Supprimer") }}
             </b-button>
           </b-col>
         </b-row>
       </div>
     </div>
     <div>
-      <h5>{{ $t('Ajouter un auteur') }}</h5>
-      <b-alert
-        v-if="watchedAuthors.length >= 5"
-        variant="warning"
-        show
-      >
-        {{ $t("Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres.") }}
+      <h5>{{ $t("Ajouter un auteur") }}</h5>
+      <b-alert v-if="watchedAuthors.length >= 5" variant="warning" show>
+        {{
+          $t(
+            "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres."
+          )
+        }}
       </b-alert>
       <b-row v-else>
         <b-col sm="4">
@@ -65,15 +73,23 @@
                 list="search"
                 :placeholder="$t('Auteur')"
               />
-              <datalist v-if="searchResults && Object.keys(searchResults) && !isSearching">
+              <datalist
+                v-if="
+                  searchResults && Object.keys(searchResults) && !isSearching
+                "
+              >
                 <option v-if="!Object.keys(searchResults).length">
-                  {{ $t('Aucun résultat.') }}
+                  {{ $t("Aucun résultat.") }}
                 </option>
                 <option
                   v-for="(fullName, personCode) in searchResults"
                   :key="personCode"
                   :disabled="isAuthorWatched(personCode)"
-                  @click="isAuthorWatched(personCode) ? () => {} : createRating(personCode)"
+                  @click="
+                    isAuthorWatched(personCode)
+                      ? () => {}
+                      : createRating(personCode)
+                  "
                 >
                   {{ fullName }}
                 </option>
@@ -85,102 +101,89 @@
     </div>
   </div>
 </template>
-<script>
-import {mapActions, mapState} from "pinia";
+<script setup>
 import axios from "axios";
-import {BAlert, BCol, BFormInput, BRow} from "bootstrap-vue-3";
-import StarRating from 'vue-star-rating'
+import { BAlert, BCol, BFormInput, BRow } from "bootstrap-vue-3";
+import StarRating from "vue-star-rating";
 import { coa } from "../stores/coa";
-const { collection: collectionStore } = require('../stores/collection');
+const { collection } = require("../stores/collection");
 import { l10n } from "../stores/l10n";
+import { computed, defineProps, watch } from "vue";
 
-export default {
-  name: "AuthorList",
-  components: {
-    BAlert,
-    BRow,
-    BCol,
-    BFormInput,
-    StarRating
+const props = defineProps({
+  watchedAuthors: {
+    type: Array,
+    required: true,
   },
-  props: {
-    watchedAuthors: {
-      type: Array,
-      required: true
-    }
-  },
+});
 
-  data: () => ({
-    isSearching: false,
-    pendingSearch: null,
-    search: '',
-    searchResults: null
-  }),
+const isSearching = ref(false),
+  pendingSearch = ref(null),
+  search = ref(""),
+  searchResults = ref(null),
+  personNames = computed(() => coa().personNames);
 
-  computed: {
-    ...mapState(coa, ["personNames"])
-  },
-
-  watch: {
-    async search(newValue) {
-      if (newValue !== '') {
-        this.pendingSearch = newValue
-        if (!this.isSearching) {
-          await this.runSearch(newValue)
-        }
-      }
-    },
-    watchedAuthors: {
-      immediate: true,
-      async handler(newValue) {
-        await this.fetchPersonNames(newValue.map(({personCode}) => personCode))
-      }
-    }
-  },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(coa, ["fetchPersonNames"]),
-    ...mapActions(collectionStore, ["loadWatchedAuthors"]),
-
-    isAuthorWatched(personCode) {
-      return this.watchedAuthors.some(({personCode: watchedPersonCode}) => personCode === watchedPersonCode)
-    },
-
-    async createRating(personCode) {
-      await axios.put('/api/collection/authors/watched', {personCode})
-      await this.loadWatchedAuthors(true)
-    },
-
-    async updateRating(author) {
-      await axios.post('/api/collection/authors/watched', author)
-    },
-
-    async deleteAuthor(author) {
-      await axios.delete('/api/collection/authors/watched', {
-        params: {
-          personCode: author.personCode
-        }
-      })
-      await this.loadWatchedAuthors(true)
-    },
-
-    async runSearch(value) {
-      if (!this.isSearching) {
-        try {
-          this.isSearching = true
-          this.searchResults = (await axios.get(`/api/coa/authorsfullnames/search/${value}`)).data;
-        } finally {
-          this.isSearching = false
-          // The input value as changed since the beginning of the search, searching again
-          if (value !== this.pendingSearch) {
-            await this.runSearch(this.pendingSearch)
-          }
-        }
+watch(
+  () => search.value,
+  async (newValue) => {
+    if (newValue !== "") {
+      pendingSearch.value = newValue;
+      if (!isSearching.value) {
+        await runSearch(newValue);
       }
     }
   }
-}
+);
+watch(
+  () => props.watchedAuthors,
+  async (newValue) => {
+    await coa().fetchPersonNames(newValue.map(({ personCode }) => personCode));
+  },
+  { immediate: true }
+);
+
+const { $r: r } = l10n();
+const { loadWatchedAuthors } = collection();
+
+const isAuthorWatched = (personCode) =>
+  props.watchedAuthors.some(
+    ({ personCode: watchedPersonCode }) => personCode === watchedPersonCode
+  );
+
+const createRating = async (personCode) => {
+  await axios.put("/api/collection/authors/watched", { personCode });
+  await loadWatchedAuthors(true);
+};
+
+const updateRating = async (author) => {
+  await axios.post("/api/collection/authors/watched", author);
+};
+
+const deleteAuthor = async (author) => {
+  await axios.delete("/api/collection/authors/watched", {
+    params: {
+      personCode: author.personCode,
+    },
+  });
+  await loadWatchedAuthors(true);
+};
+
+const runSearch = async (value) => {
+  if (!isSearching.value) {
+    try {
+      isSearching.value = true;
+      searchResults.value = (
+        await axios.get(`/api/coa/authorsfullnames/search/${value}`)
+      ).data;
+    } finally {
+      isSearching.value = false;
+      // The input value has changed since the beginning of the search, searching again
+      if (value !== pendingSearch) {
+        await runSearch(pendingSearch);
+      }
+    }
+  }
+};
 </script>
 
 <style scoped lang="scss">
