@@ -56,7 +56,7 @@ import IssueEdgePopover from "./IssueEdgePopover";
 import Issue from "./Issue";
 import { bookcase } from "../stores/bookcase";
 import { coa } from "../stores/coa";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const EDGES_ROOT = "https://edges.ducksmanager.net/edges/";
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
@@ -174,10 +174,10 @@ const loadEdgeFromSprite = () => {
   }
   let retries = 0;
   const checkWidthInterval = setInterval(() => {
-    if (edge.clientWidth > 0) {
+    if (edge.value.clientWidth > 0) {
       spriteLoaded.value = true;
-      width.value = edge.clientWidth;
-      height.value = edge.clientHeight;
+      width.value = edge.value.clientWidth;
+      height.value = edge.value.clientHeight;
       emit("loaded", [props.id]);
       clearInterval(checkWidthInterval);
     } else if (retries > 100) {

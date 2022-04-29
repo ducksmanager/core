@@ -74,13 +74,12 @@
 <script setup>
 import axios from "axios";
 import Issue from "./Issue";
-import { mapActions, mapState } from "pinia";
 import { collection } from "../composables/collection";
 import Condition from "./Condition";
 import { condition } from "../composables/condition";
 import { BDropdown, BDropdownItem, BFormInput } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
-import { computed, watch } from "vue";
+import { computed, watch, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 defineProps({
@@ -163,7 +162,7 @@ const { findInCollection } = collection(),
         searchResults.value.results = searchResults.value.results.map(
           (story) => ({
             ...story,
-            collectionIssue: collection.value.find(
+            collectionIssue: collection().collection.value.find(
               ({
                 publicationCode: collectionPublicationCode,
                 issueNumber: collectionIssueNumber,

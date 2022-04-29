@@ -47,11 +47,12 @@ import { BButton, BPopover } from "bootstrap-vue-3";
 import { l10n } from "../stores/l10n";
 
 const props = defineProps({
-  id: { type: Number, required: true },
-  points: { type: Object, required: true },
-  stats: { type: Object, required: true },
-});
-const r = l10n().$r,
+    id: { type: Number, required: true },
+    points: { type: Object, required: true },
+    stats: { type: Object, required: true },
+  }),
+  { imagePath } = require("../composables/imagePath"),
+  { r } = l10n(),
   elementId = `user-${props.id}-${Math.random()}`,
   bookcaseShared = true;
 </script>

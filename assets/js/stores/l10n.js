@@ -38,7 +38,7 @@ export const l10n = defineStore("l10n", {
       }
     },
 
-    $r(route) {
+    r(route) {
       const routes = this.l10nRoutes;
       if (!routes) {
         return route;

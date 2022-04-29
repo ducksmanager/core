@@ -12,18 +12,17 @@
   </div>
 </template>
 <script setup>
-import { mapActions, mapState } from "pinia";
 import IssueList from "../../components/IssueList";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
 const hasPublicationNames = ref(false),
   issueNumbersByPublicationCode = ref(null),
   total = computed(() => collection().total),
   duplicateIssues = computed(() => collection().duplicateIssues),
   publicationNames = computed(() => coa().publicationNames),
   fetchPublicationNames = coa().fetchPublicationNames,
-  loadCollection = coa().loadCollection;
+  loadCollection = collection().loadCollection;
 
 watch(
   () => duplicateIssues.value,

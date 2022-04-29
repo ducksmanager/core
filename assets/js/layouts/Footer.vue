@@ -28,24 +28,16 @@
   </div>
 </template>
 
-<script>
-import { mapActions, mapState } from "pinia";
+<script setup>
 import { users } from "../stores/users";
+import { computed, onMounted } from "vue";
 
-export default {
-  name: "Footer",
-  computed: {
-    ...mapState(users, ["count"]),
-  },
+const count = computed(() => users().count),
+  fetchCount = users().fetchCount;
 
-  async mounted() {
-    await this.fetchCount();
-  },
-
-  methods: {
-    ...mapActions(users, ["fetchCount"]),
-  },
-};
+onMounted(async () => {
+  await fetchCount();
+});
 </script>
 
 <style scoped lang="scss">

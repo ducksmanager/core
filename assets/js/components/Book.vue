@@ -114,32 +114,30 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
 import { PageFlip } from "page-flip";
 import Story from "./Story";
 import Issue from "./Issue";
 import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
-import { computed, watch } from "vue";
+const { imagePath } = require("../composables/imagePath");
+import { computed, watch, ref } from "vue";
 
 let toast = useToast();
-
-const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/";
-const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
-
-const props = defineProps({
-  publicationCode: {
-    type: String,
-    required: true,
-  },
-  issueNumber: {
-    type: String,
-    required: true,
-  },
-});
-const emit = defineEmits(["close-book"]);
-
-const cloudinaryBaseUrl =
+const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/",
+  RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/,
+  props = defineProps({
+    publicationCode: {
+      type: String,
+      required: true,
+    },
+    issueNumber: {
+      type: String,
+      required: true,
+    },
+  }),
+  emit = defineEmits(["close-book"]),
+  cloudinaryBaseUrl =
     "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/",
   edgeWidth = ref(null),
   coverHeight = ref(null),

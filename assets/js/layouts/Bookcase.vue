@@ -24,7 +24,7 @@
           { path: '/contributors', text: $t('Contributeurs') },
         ]"
       />
-      <component :is="tab" v-bind="attrsWithoutTab" />
+      <component :is="component" v-bind="attrsWithoutTab" />
     </template>
   </div>
 </template>
@@ -33,23 +33,26 @@
 import ViewBookcase from "./bookcase/ViewBookcase";
 import Menu from "./Menu";
 import { user } from "../composables/global";
-import { computed, useAttrs } from "vue";
+import { computed, useAttrs, defineAsyncComponent } from "vue";
 
 const { username } = user();
 const attrs = useAttrs();
 
-defineProps({
+const props = defineProps({
   tab: {
     type: String,
     required: true,
   },
 });
 
-const attrsWithoutTab = computed(() =>
-  Object.keys(attrs)
-    .filter((attrKey) => attrKey !== "tab")
-    .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
-);
+const component = computed(() =>
+    props.tab ? defineAsyncComponent(() => import(`./${props.tab}`)) : null
+  ),
+  attrsWithoutTab = computed(() =>
+    Object.keys(attrs)
+      .filter((attrKey) => attrKey !== "tab")
+      .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
+  );
 </script>
 
 <style scoped lang="scss">

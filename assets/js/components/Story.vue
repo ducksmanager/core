@@ -15,13 +15,12 @@
     </a>
   </span>
 </template>
-<script>
+<script setup>
 import { BBadge } from "bootstrap-vue-3";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-const { $t } = useI18n();
-const t = $t;
+const { t: $t } = useI18n();
 const props = defineProps({
     storycode: {
       type: String,

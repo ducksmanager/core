@@ -31,40 +31,24 @@
           {{ $t("Connexion") }}
         </b-button>
         <div>
-          <a :href="$r('/forgot')">{{ $t("Mot de passe oublié ?") }}</a>
+          <a :href="r('/forgot')">{{ $t("Mot de passe oublié ?") }}</a>
         </div>
       </b-col>
     </b-row>
   </form>
 </template>
 
-<script>
+<script setup>
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
-import { mapActions } from "pinia";
 import { l10n } from "../stores/l10n";
 
-export default {
-  name: "Login",
-  components: {
-    BRow,
-    BCol,
-    BAlert,
-    BFormInput,
-    BButton,
-  },
-  props: {
-    error: { type: String, default: null },
-    lastUsername: { type: String, default: null },
-  },
-  data() {
-    return {
-      csrfToken: document.getElementById("csrf").value,
-    };
-  },
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-  },
-};
+defineProps({
+  error: { type: String, default: null },
+  lastUsername: { type: String, default: null },
+});
+
+const csrfToken = document.getElementById("csrf").value,
+  { r } = l10n();
 </script>
 
 <style scoped>

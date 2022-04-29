@@ -2,7 +2,7 @@
   <div v-if="collection">
     <b-alert variant="info" show>
       {{ $t("DucksManager se base sur les") }}
-      <a :href="$r('/stats/authors')">{{
+      <a :href="r('/stats/authors')">{{
         $t("notes que vous attribuez à vos auteurs préférés")
       }}</a>
       {{
@@ -16,7 +16,7 @@
     </div>
     <div v-else-if="watchedAuthors.length && watchedAuthorsWithNotation.length">
       {{ $t("Montrer les magazines de") }}
-      <b-select
+      <b-form-select
         v-if="countryNamesWithAllCountriesOption"
         v-model="countryCode"
         size="sm"
@@ -28,7 +28,7 @@
         >
           {{ text }} </b-form-select-option
         >>
-      </b-select>
+      </b-form-select>
       <SuggestionList :countrycode="countryCode" :since-last-visit="false" />
     </div>
     <b-alert
@@ -47,7 +47,7 @@
       <span
         v-html="
           $t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
-            `<a :href='${$r('/stats/authors')}'>${$t(
+            `<a :href='${r('/stats/authors')}'>${$t(
               `Statistiques sur les auteurs`
             )}</a>`,
           ])
@@ -62,63 +62,47 @@
   </div>
 </template>
 
-<script>
-import { collection } from "../composables/collection";
-import { mapActions, mapState } from "pinia";
+<script setup>
 import SuggestionList from "./SuggestionList";
 import { BAlert, BFormSelect } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 const { collection: collectionStore } = require("../stores/collection");
 import { l10n } from "../stores/l10n";
+import { useI18n } from "vue-i18n";
+import { computed, onMounted, watch, ref } from "vue";
 
-export default {
-  name: "Expand",
-  components: { SuggestionList, BAlert, BSelect: BFormSelect },
-
-  data: () => ({
-    countryCode: "ALL",
-  }),
-
-  computed: {
-    ...mapState(collectionStore, [
-      "watchedAuthors",
-      "suggestions",
-      "hasSuggestions",
-    ]),
-    ...mapState(coa, ["countryNames"]),
-
-    countryNamesWithAllCountriesOption() {
-      return (
-        this.countryNames && {
-          ALL: this.$t("Tous les pays"),
-          ...this.countryNames,
-        }
-      );
-    },
-
-    watchedAuthorsWithNotation() {
-      return this.watchedAuthors?.filter(({ notation }) => notation > 0);
-    },
-  },
-
-  watch: {
-    async watchedAuthors(newValue) {
-      if (newValue?.length) {
-        await this.fetchCountryNames();
+const { t: $t } = useI18n(),
+  t = $t,
+  { r } = l10n(),
+  countryCode = ref("ALL"),
+  watchedAuthors = computed(() => collectionStore().watchedAuthors),
+  suggestions = computed(() => collectionStore().suggestions),
+  countryNames = computed(() => coa().countryNames),
+  countryNamesWithAllCountriesOption = computed(
+    () =>
+      countryNames.value && {
+        ALL: $t("Tous les pays"),
+        ...countryNames.value,
       }
-    },
-  },
+  ),
+  watchedAuthorsWithNotation = computed(() =>
+    watchedAuthors.value?.filter(({ notation }) => notation > 0)
+  ),
+  loadWatchedAuthors = collectionStore().loadWatchedAuthors,
+  fetchCountryNames = coa().fetchCountryNames;
 
-  async mounted() {
-    await this.loadWatchedAuthors();
-  },
+watch(
+  () => watchedAuthors.value,
+  async (newValue) => {
+    if (newValue?.length) {
+      await fetchCountryNames();
+    }
+  }
+);
 
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(collection, ["loadWatchedAuthors"]),
-    ...mapActions(coa, ["fetchCountryNames"]),
-  },
-};
+onMounted(async () => {
+  await loadWatchedAuthors();
+});
 </script>
 
 <style scoped lang="scss">

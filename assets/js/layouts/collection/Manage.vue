@@ -46,7 +46,7 @@
       </template>
       <template #footer>
         <div>
-          <a :href="$r('/expand')">{{
+          <a :href="r('/expand')">{{
             $t("Voir toutes les suggestions d'achat pour ma collection")
           }}</a>
         </div>
@@ -103,7 +103,7 @@ import { coa } from "../../stores/coa";
 import { l10n } from "../../stores/l10n";
 import { user } from "../../composables/global";
 import { collection } from "../../stores/collection";
-import { computed, watch } from "vue";
+import { computed, watch, ref } from "vue";
 
 defineProps({
   publicationcode: {
@@ -131,7 +131,7 @@ const suggestionsNumber = ref(0),
       )
   ),
   fetchPublicationNames = coa().fetchPublicationNames,
-  { $r: r } = l10n();
+  { r } = l10n();
 
 watch(
   () => totalPerPublication.value,

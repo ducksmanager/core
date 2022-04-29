@@ -16,7 +16,8 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 Chart.register(
   Legend,
@@ -35,6 +36,7 @@ const props = defineProps({
       required: true,
     },
   }),
+  { t: $t } = useI18n(),
   emit = defineEmits(["change-dimension"]),
   hasPublicationNames = ref(false),
   purchasesById = ref(null),
@@ -47,7 +49,7 @@ const props = defineProps({
     () =>
       collectionWithDates.value &&
       [...new Set(collectionWithDates.value.map(({ date }) => date))].sort(
-        compareDates.value
+        compareDates
       )
   ),
   collectionWithDates = computed(

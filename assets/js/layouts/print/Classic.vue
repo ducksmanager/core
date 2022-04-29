@@ -17,7 +17,7 @@
 </template>
 <script setup>
 import { coa } from "../../stores/coa";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
 const { collection: collectionStore } = require("../../stores/collection");
 
 const hasPublicationNames = ref(false),
@@ -26,7 +26,7 @@ const hasPublicationNames = ref(false),
   collection = computed(() => collectionStore().collection),
   countryCodes = computed(
     () =>
-      collection.value && [...new Set(this.collection.map((i) => i.country))]
+      collection.value && [...new Set(collection.value.map((i) => i.country))]
   ),
   countryCodesSortedByName = computed(
     () =>
@@ -49,7 +49,7 @@ const hasPublicationNames = ref(false),
   fetchCountryNames = coa().fetchCountryNames,
   fetchPublicationNames = coa().fetchPublicationNames,
   loadCollection = collectionStore().loadCollection,
-  publicationCodesOfCountry = computed((countryCode) =>
+  publicationCodesOfCountry = (countryCode) =>
     publicationCodes.value
       .filter(
         (publicationCode) => publicationCode.split("/")[0] === countryCode
@@ -62,15 +62,12 @@ const hasPublicationNames = ref(false),
           : publicationNames.value[a] > publicationNames.value[b]
           ? 1
           : 0
-      )
-  ),
-  issuesOfPublicationCode = computed((publicationCode) =>
+      ),
+  issuesOfPublicationCode = (publicationCode) =>
     collection.value
       .filter((i) => publicationCode === `${i.country}/${i.magazine}`)
       .map(({ issueNumber }) => issueNumber)
-      .join(", ")
-  );
-
+      .join(", ");
 watch(
   () => publicationCodes.value,
   (newValue) => {

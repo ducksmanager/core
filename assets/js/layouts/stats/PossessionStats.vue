@@ -4,10 +4,10 @@
 
 <script setup>
 import { collection } from "../../composables/collection";
-import { mapActions } from "pinia";
 const { collection: collectionStore } = require("../../stores/collection");
 import { coa } from "../../stores/coa";
 import { BarChart } from "vue-chart-3";
+import { ref } from "vue";
 
 import {
   ArcElement,
@@ -21,6 +21,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 Chart.register(
   Legend,
   CategoryScale,
@@ -40,10 +41,11 @@ const props = defineProps({
 });
 const emit = defineEmits(["change-dimension"]);
 
-collection().load();
+collection();
 
-const chartData = null,
-  options = {},
+const { t: $t } = useI18n(),
+  chartData = ref(null),
+  options = ref({}),
   totalPerPublication = computed(() => collectionStore().totalPerPublication),
   countryNames = computed(() => coa().countryNames),
   issueCounts = computed(() => coa().issueCounts),
@@ -61,7 +63,7 @@ const chartData = null,
         issueCounts.value[publicationCode] -
         totalPerPublication.value[publicationCode]
     );
-    if (unit.value === "percentage") {
+    if (props.unit.value === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>
         Math.round(
           possessedCount * (100 / (possessedCount + missingIssues[key]))

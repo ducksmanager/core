@@ -45,10 +45,10 @@
         }}
       </p>
       <p>
-        <b-button size="lg" variant="primary" :href="$r('/signup')">
+        <b-button size="lg" variant="primary" :href="r('/signup')">
           {{ $t("Inscription") }}
         </b-button>
-        <b-button size="lg" variant="primary" :href="$r('/login')">
+        <b-button size="lg" variant="primary" :href="r('/login')">
           {{ $t("Connexion") }}
         </b-button>
       </p>
@@ -91,7 +91,7 @@
         </b-col>
         <b-col sm="6">
           <b-form-group>
-            <b-textarea id="inducks-collection" v-model="rawData" />
+            <b-form-textarea id="inducks-collection" v-model="rawData" />
           </b-form-group>
           <b-button @click="processRawData()" v-text="$t('Importer')" />
         </b-col>
@@ -108,8 +108,8 @@
             v-for="(issues, publicationCode) in groupByPublicationCode(
               issuesImportable
             )"
-            :id="publicationCode"
-            :key="publicationCode"
+            :id="publicationCode.replace('/', '-')"
+            :key="publicationCode.replace('/', '-')"
             :visible="expandedPublicationAccordion === publicationCode"
             accordion-group-id="import-accordion"
             @bv::toggle::collapse="
@@ -256,8 +256,7 @@
     </template>
   </div>
 </template>
-<script>
-import { mapActions, mapState } from "pinia";
+<script setup>
 import Accordion from "../components/Accordion";
 import Publication from "../components/Publication";
 import Issue from "../components/Issue";
@@ -278,165 +277,138 @@ import {
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
 import { user } from "../composables/global";
-import { collection } from "../stores/collection";
+const { collection: collectionStore } = require("../stores/collection");
+import { useI18n } from "vue-i18n";
+import { computed, watch, ref } from "vue";
+import { collection } from "../composables/collection";
+const { findInCollection } = collection();
 
-const { username } = user();
-
-export default {
-  name: "InducksImport",
-  components: {
-    Accordion,
-    Publication,
-    Issue,
-    BButton,
-    BAlert,
-    BRow,
-    BCol,
-    BFormGroup,
-    BTextarea: BFormTextarea,
-    BCollapse,
-    BFormSelect,
-    BFormSelectOption,
-    BProgress,
-    BProgressBar,
+const { t: $t } = useI18n(),
+  { imagePath } = require("../composables/imagePath"),
+  step = ref(1),
+  rawData = ref(""),
+  expandedPublicationAccordion = ref(null),
+  expandedNotImportableAccordion = ref(null),
+  hasPublicationNames = ref(false),
+  hasIssueNumbers = ref(false),
+  issueDefaultCondition = ref("bon"),
+  issuesToImport = ref(null),
+  issuesNotReferenced = ref(null),
+  issuesAlreadyInCollection = ref(null),
+  issuesImportable = ref(null),
+  importProgress = ref(0),
+  { username } = user(),
+  publicationNames = computed(() => coa().publicationNames),
+  issueNumbers = computed(() => coa().issueNumbers),
+  issueCodeDetails = computed(() => coa().issueCodeDetails),
+  conditions = {
+    mauvais: $t("En mauvais état"),
+    bon: $t("En bon état"),
   },
+  importDataReady = computed(
+    () =>
+      issuesToImport.value &&
+      collectionStore().collection &&
+      hasIssueNumbers.value
+  ),
+  { r } = l10n(),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  fetchIssueNumbers = coa().fetchIssueNumbers,
+  fetchIssueCodesDetails = coa().fetchIssueCodesDetails,
+  processRawData = async () => {
+    const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
+    const issueCodes = rawData.value
+      .split("\n")
+      .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
+      .map((row) => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
+    await fetchIssueCodesDetails(issueCodes);
 
-  data: () => ({
-    step: 1,
-    rawData: "",
-    expandedPublicationAccordion: null,
-    expandedNotImportableAccordion: null,
-    hasPublicationNames: false,
-    hasIssueNumbers: false,
-    issueDefaultCondition: "bon",
-    issuesToImport: null,
-    issuesNotReferenced: null,
-    issuesAlreadyInCollection: null,
-    issuesImportable: null,
-    importProgress: 0,
-    username,
-  }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames", "issueNumbers", "issueCodeDetails"]),
-    ...mapState(collection, ["collection"]),
-
-    conditions() {
-      return {
-        mauvais: this.$t("En mauvais état"),
-        bon: this.$t("En bon état"),
-      };
-    },
-
-    importDataReady() {
-      return this.issuesToImport && this.collection && this.hasIssueNumbers;
-    },
-  },
-
-  watch: {
-    importDataReady(newValue) {
-      if (newValue) {
-        const vm = this;
-        vm.issuesNotReferenced = [];
-        vm.issuesAlreadyInCollection = [];
-        vm.issuesImportable = [];
-        this.issuesToImport.forEach((issue) => {
-          const { publicationcode, issuenumber } = issue;
-          if (
-            !vm.issueNumbers[publicationcode].includes(
-              issuenumber.replace(/[ ]+/g, " ")
-            )
-          ) {
-            vm.issuesNotReferenced.push(issue);
-          } else if (vm.findInCollection(publicationcode, issuenumber)) {
-            vm.issuesAlreadyInCollection.push(issue);
-          } else {
-            vm.issuesImportable.push(issue);
-          }
-        });
-        this.issuesNotReferenced = [...new Set(this.issuesNotReferenced)];
-        this.issuesAlreadyInCollection = [
-          ...new Set(this.issuesAlreadyInCollection),
-        ];
-        this.issuesImportable = [...new Set(this.issuesImportable)];
-      }
-    },
-    async issuesToImport(newValue) {
-      const publicationCodes = newValue.reduce(
-        (acc, { publicationcode }) => [...acc, publicationcode],
+    const issues = issueCodes
+      .filter((issueCode) => issueCodeDetails.value[issueCode])
+      .reduce(
+        (acc, issueCode) => [...acc, issueCodeDetails.value[issueCode]],
         []
       );
-      await this.fetchPublicationNames(publicationCodes);
-      this.hasPublicationNames = true;
-      await this.fetchIssueNumbers(publicationCodes);
-      this.hasIssueNumbers = true;
-    },
+    if (issues.length) {
+      issuesToImport.value = issues;
+      step.value = 2;
+    }
   },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(coa, [
-      "fetchPublicationNames",
-      "fetchIssueNumbers",
-      "fetchIssueCodesDetails",
-    ]),
-    async processRawData() {
-      const vm = this;
-      const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
-      const issueCodes = this.rawData
-        .split("\n")
-        .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
-        .map((row) => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
-      await this.fetchIssueCodesDetails(issueCodes);
-
-      const issues = issueCodes
-        .filter((issueCode) => vm.issueCodeDetails[issueCode])
-        .reduce(
-          (acc, issueCode) => [...acc, vm.issueCodeDetails[issueCode]],
-          []
-        );
-      if (issues.length) {
-        this.issuesToImport = issues;
-        this.step = 2;
+  groupByPublicationCode = (issues) =>
+    issues?.reduce(
+      (acc, { publicationcode, issuenumber }) => ({
+        ...acc,
+        [publicationcode]: [
+          ...new Set([
+            ...(acc[publicationcode] || []),
+            issuenumber.replace(" ", ""),
+          ]),
+        ],
+      }),
+      {}
+    ),
+  importIssues = async () => {
+    const importableIssuesByPublicationCode = groupByPublicationCode(
+      issuesImportable.value
+    );
+    for (let publicationCode in importableIssuesByPublicationCode) {
+      if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
+        await axios.post("/api/collection/issues", {
+          publicationCode: publicationCode,
+          issueNumbers: importableIssuesByPublicationCode[publicationCode],
+          condition: issueDefaultCondition.value,
+          istosell: "do_not_change",
+          purchaseId: "do_not_change",
+        });
+        importProgress.value +=
+          100 / Object.keys(importableIssuesByPublicationCode).length;
       }
-    },
+    }
+    window.location.replace(r("/collection/show"));
+  };
 
-    groupByPublicationCode(issues) {
-      return issues?.reduce(
-        (acc, { publicationcode, issuenumber }) => ({
-          ...acc,
-          [publicationcode]: [
-            ...new Set([
-              ...(acc[publicationcode] || []),
-              issuenumber.replace(" ", ""),
-            ]),
-          ],
-        }),
-        {}
-      );
-    },
-
-    async importIssues() {
-      const importableIssuesByPublicationCode = this.groupByPublicationCode(
-        this.issuesImportable
-      );
-      for (let publicationCode in importableIssuesByPublicationCode) {
-        if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
-          await axios.post("/api/collection/issues", {
-            publicationCode: publicationCode,
-            issueNumbers: importableIssuesByPublicationCode[publicationCode],
-            condition: this.issueDefaultCondition,
-            istosell: "do_not_change",
-            purchaseId: "do_not_change",
-          });
-          this.importProgress +=
-            100 / Object.keys(importableIssuesByPublicationCode).length;
+watch(
+  () => importDataReady.value,
+  (newValue) => {
+    if (newValue) {
+      issuesNotReferenced.value = [];
+      issuesAlreadyInCollection.value = [];
+      issuesImportable.value = [];
+      issuesToImport.value.forEach((issue) => {
+        const { publicationcode, issuenumber } = issue;
+        if (
+          !issueNumbers.value[publicationcode].includes(
+            issuenumber.replace(/[ ]+/g, " ")
+          )
+        ) {
+          issuesNotReferenced.value.push(issue);
+        } else if (findInCollection(publicationcode, issuenumber)) {
+          issuesAlreadyInCollection.value.push(issue);
+        } else {
+          issuesImportable.value.push(issue);
         }
-      }
-      window.location.replace(this.$r("/collection/show"));
-    },
-  },
-};
+      });
+      issuesNotReferenced.value = [...new Set(issuesNotReferenced.value)];
+      issuesAlreadyInCollection.value = [
+        ...new Set(issuesAlreadyInCollection.value),
+      ];
+      issuesImportable.value = [...new Set(issuesImportable.value)];
+    }
+  }
+);
+watch(
+  () => issuesToImport.value,
+  async (newValue) => {
+    const publicationCodes = newValue.reduce(
+      (acc, { publicationcode }) => [...acc, publicationcode],
+      []
+    );
+    await fetchPublicationNames(publicationCodes);
+    hasPublicationNames.value = true;
+    await fetchIssueNumbers(publicationCodes);
+    hasIssueNumbers.value = true;
+  }
+);
 </script>
 
 <style scoped lang="scss">

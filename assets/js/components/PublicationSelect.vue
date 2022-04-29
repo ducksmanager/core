@@ -1,7 +1,11 @@
 <template>
   <div>
-    <b-select v-model="currentCountryCode" :options="countryNames" required />
-    <b-select
+    <b-form-select
+      v-model="currentCountryCode"
+      :options="countryNames"
+      required
+    />
+    <b-form-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
       name="publicationCode"
@@ -12,7 +16,7 @@
     <b-button
       v-if="!noButton"
       :disabled="!currentPublicationCode"
-      :href="$r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
+      :href="r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
     >
       {{ $t("OK") }}
     </b-button>
@@ -20,11 +24,10 @@
 </template>
 
 <script setup>
-import { mapActions, mapState } from "pinia";
 import { BButton, BFormSelect } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
-import { computed, onMounted, watch } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   noButton: {
@@ -65,7 +68,7 @@ const coaStore = coa(),
           )
       : []
   ),
-  r = l10n().$r;
+  { r } = l10n();
 </script>
 
 <style scoped>

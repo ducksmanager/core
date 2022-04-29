@@ -46,7 +46,8 @@
 </template>
 <script setup>
 import Edge from "./Edge";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
+const { imagePath } = require("../composables/imagePath");
 
 const props = defineProps({
   embedded: {
@@ -80,9 +81,14 @@ const props = defineProps({
 });
 
 defineEmits(["open-book"]);
-
 const currentEdgeIndex = ref(0),
-  edgesToLoad = ref([]);
+  edgesToLoad = ref([]),
+  loadNextEdge = () => {
+    const nextEdge = props.sortedBookcase[++currentEdgeIndex.value];
+    if (nextEdge) {
+      edgesToLoad.value.push(nextEdge);
+    }
+  };
 
 onMounted(() => {
   if (!document.querySelector("style#bookshelves")) {
@@ -95,13 +101,6 @@ onMounted(() => {
   }
   edgesToLoad.value = [props.sortedBookcase[0]];
 });
-
-const loadNextEdge = () => {
-  const nextEdge = props.sortedBookcase[++currentEdgeIndex.value];
-  if (nextEdge) {
-    edgesToLoad.value.push(nextEdge);
-  }
-};
 </script>
 <style lang="scss" scoped>
 .bookcase {

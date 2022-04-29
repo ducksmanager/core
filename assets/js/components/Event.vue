@@ -130,8 +130,8 @@ defineProps({
 const publicationNames = computed(() => coa().publicationNames),
   stats = computed(() => users().stats),
   points = computed(() => users().points),
-  r = l10n().$r,
-  { $t } = useI18n(),
+  { r } = l10n(),
+  { t: $t } = useI18n(),
   getMedalTitle = (contribution) => {
     switch (contribution.toUpperCase()) {
       case "CREATEUR":

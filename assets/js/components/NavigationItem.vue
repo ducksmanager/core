@@ -15,11 +15,10 @@ const props = defineProps({
     path: { type: String, required: true },
     icon: { type: String, default: null },
   }),
-  { $r } = l10n(),
-  r = $r,
+  { r } = l10n(),
   active = computed(
     () =>
-      !$r(props.path)
+      !r(props.path)
         .split("/")
         .find(
           (pathPart) => !window.location.pathname.split("/").includes(pathPart)

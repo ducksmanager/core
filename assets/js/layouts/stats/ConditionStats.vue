@@ -21,32 +21,31 @@ Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 let conditions;
 
 conditions = condition().conditions;
-collection().load();
-
-const conditionsWithoutMissing = () =>
-    conditions.filter(({ value }) => value !== "missing"),
-  values = () => {
-    const numberPerCondition = collectionStore().collection.reduce(
+collection();
+const numberPerCondition = computed(() =>
+    collectionStore().collection.reduce(
       (acc, { condition }) => ({
         ...acc,
         [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
       }),
       {}
-    );
-    return Object.values(conditionsWithoutMissing.value).map(
-      ({ dbValue }) => numberPerCondition[dbValue]
-    );
-  },
-  colors = () =>
-    Object.values(conditionsWithoutMissing.value.map(({ color }) => color)),
+    )
+  ),
+  conditionsWithoutMissing = conditions.filter(
+    ({ value }) => value !== "missing"
+  ),
+  values = computed(() =>
+    Object.values(conditionsWithoutMissing).map(
+      ({ dbValue }) => numberPerCondition.value[dbValue]
+    )
+  ),
+  colors = Object.values(conditionsWithoutMissing.map(({ color }) => color)),
   chartData = computed(() => ({
-    labels: Object.values(conditionsWithoutMissing.value).map(
-      ({ text }) => text
-    ),
+    labels: Object.values(conditionsWithoutMissing).map(({ text }) => text),
     datasets: [
       {
         data: values.value,
-        backgroundColor: colors.value,
+        backgroundColor: colors,
       },
     ],
   })),

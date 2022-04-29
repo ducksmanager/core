@@ -73,84 +73,64 @@
     </template>
   </div>
 </template>
-<script>
-import { mapActions, mapState } from "pinia";
+<script setup>
 import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
 import { BButton, BButtonGroup } from "bootstrap-vue-3";
 import { collection } from "../stores/collection";
 import { BIconCash } from "bootstrap-icons-vue";
+import { computed, watch, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
-export default {
-  name: "SuggestionList",
-
-  components: {
-    StoryList,
-    Issue,
-    BButtonGroup,
-    BButton,
-    BIconCash,
+const props = defineProps({
+  countrycode: {
+    type: String,
+    default: null,
   },
-
-  props: {
-    countrycode: {
-      type: String,
-      default: null,
-    },
-    sinceLastVisit: {
-      type: Boolean,
-      default: false,
-    },
+  sinceLastVisit: {
+    type: Boolean,
+    default: false,
   },
-
-  data: () => ({
-    loading: true,
-    suggestionSortCurrent: "score",
+});
+const { t: $t } = useI18n(),
+  loading = ref(true),
+  suggestionSortCurrent = ref("score"),
+  suggestions = computed(() => collection().suggestions),
+  hasSuggestions = computed(() => collection().hasSuggestions),
+  suggestionSorts = () => ({
+    oldestdate: $t("Trier par date de parution"),
+    score: $t("Trier par score"),
   }),
-
-  computed: {
-    ...mapState(collection, ["suggestions", "hasSuggestions"]),
-    suggestionSorts() {
-      return {
-        oldestdate: this.$t("Trier par date de parution"),
-        score: this.$t("Trier par score"),
-      };
-    },
+  loadSuggestions = collection().loadSuggestions,
+  getImportance = (score) => {
+    const { minScore, maxScore } = suggestions.value;
+    return maxScore === score ? 1 : minScore === score ? 3 : 2;
+  };
+watch(
+  () => props.countrycode,
+  async (newValue) => {
+    loading.value = true;
+    await loadSuggestions({
+      countryCode: newValue,
+      sort: suggestionSortCurrent.value,
+      sinceLastVisit: props.sinceLastVisit,
+    });
+    loading.value = false;
   },
-
-  watch: {
-    countrycode: {
-      immediate: true,
-      async handler(newValue) {
-        this.loading = true;
-        await this.loadSuggestions({
-          countryCode: newValue,
-          sort: this.suggestionSortCurrent,
-          sinceLastVisit: this.sinceLastVisit,
-        });
-        this.loading = false;
-      },
-    },
-    async suggestionSortCurrent(newValue) {
-      this.loading = true;
-      await this.loadSuggestions({
-        countryCode: this.countrycode,
-        sort: newValue,
-        sinceLastVisit: this.sinceLastVisit,
-      });
-      this.loading = false;
-    },
-  },
-
-  methods: {
-    ...mapActions(collection, ["loadSuggestions"]),
-
-    getImportance(score) {
-      const { minScore, maxScore } = this.suggestions;
-      return maxScore === score ? 1 : minScore === score ? 3 : 2;
-    },
-  },
-};
+  { immediate: true }
+);
+watch(
+  () => suggestionSortCurrent.value,
+  async (newValue) => {
+    loading.value = true;
+    await loadSuggestions({
+      countryCode: props.countrycode,
+      sort: newValue,
+      sinceLastVisit: props.sinceLastVisit,
+    });
+    loading.value = false;
+  }
+);
 </script>
 <style scoped lang="scss">
 select {

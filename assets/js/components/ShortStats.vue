@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const { collection } = require("../stores/collection"),
   collectionStore = collection(),

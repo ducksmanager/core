@@ -16,96 +16,76 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from "pinia";
-import medalMixin from "../composables/medal";
+<script setup>
 import Ago from "../components/Ago";
 import Event from "../components/Event";
 import { users } from "../stores/users";
 import { coa } from "../stores/coa";
 import { ongoingRequests } from "../stores/ongoing-requests";
+import { computed, onMounted, watch, ref } from "vue";
 
-export default {
-  name: "RecentEvents",
+const isLoaded = ref(false),
+  hasFreshEvents = ref(false),
+  publicationNames = computed(() => coa().publicationNames),
+  stats = computed(() => users().stats),
+  points = computed(() => users().points),
+  events = computed(() => users().events),
+  numberOfOngoingAjaxCalls = computed(
+    () => ongoingRequests().numberOfOngoingAjaxCalls
+  ),
+  eventUserIds = computed(() =>
+    events.value
+      ?.reduce(
+        (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
+        []
+      )
+      .filter((userId) => !!userId)
+  ),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  fetchEvents = users().fetchEvents,
+  fetchStats = users().fetchStats,
+  fetchEventsAndAssociatedData = async (clearCacheEntry) => {
+    hasFreshEvents.value = await fetchEvents(clearCacheEntry);
 
-  components: {
-    Event,
-    Ago,
-  },
-  mixins: [medalMixin],
-
-  data: () => ({
-    isLoaded: false,
-    hasFreshEvents: false,
-  }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames"]),
-    ...mapState(users, ["stats", "points", "events"]),
-    ...mapState(ongoingRequests, ["numberOfOngoingAjaxCalls"]),
-
-    eventUserIds() {
-      return this.events?.events
-        .reduce(
-          (acc, event) => [
-            ...acc,
-            event.userId || null,
-            ...(event.users || []),
-          ],
-          []
+    await fetchPublicationNames(
+      events.value
+        .filter(({ publicationCode }) => publicationCode)
+        .map(({ publicationCode }) => publicationCode)
+        .concat(
+          events.value
+            .filter(({ edges }) => edges)
+            .reduce(
+              (acc, { edges }) => [
+                ...acc,
+                ...edges.map(({ publicationCode }) => publicationCode),
+              ],
+              []
+            )
         )
-        .filter((userId) => !!userId);
-    },
-  },
+    );
 
-  watch: {
-    async numberOfOngoingAjaxCalls(newValue) {
-      const vm = this;
-      if (newValue === 0) {
-        setTimeout(async () => {
-          if (!vm.hasFreshEvents && vm.numberOfOngoingAjaxCalls === 0) {
-            // Still no ongoing call after 1 second
-            await this.fetchEventsAndAssociatedData(true);
-            this.hasFreshEvents = true;
-          }
-        }, 1000);
-      }
-    },
-  },
+    await fetchStats(eventUserIds.value, clearCacheEntry);
+  };
 
-  async mounted() {
-    await this.fetchEventsAndAssociatedData(false);
-    this.isLoaded = true;
-  },
+watch(
+  () => numberOfOngoingAjaxCalls.value,
+  async (newValue) => {
+    if (newValue === 0) {
+      setTimeout(async () => {
+        if (!hasFreshEvents.value && numberOfOngoingAjaxCalls.value === 0) {
+          // Still no ongoing call after 1 second
+          await fetchEventsAndAssociatedData(true);
+          hasFreshEvents.value = true;
+        }
+      }, 1000);
+    }
+  }
+);
 
-  methods: {
-    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions(users, ["fetchEvents", "fetchStats"]),
-
-    async fetchEventsAndAssociatedData(clearCacheEntry) {
-      this.hasFreshEvents = await this.fetchEvents(clearCacheEntry);
-
-      await this.fetchPublicationNames(
-        this.events
-          .filter(({ publicationCode }) => publicationCode)
-          .map(({ publicationCode }) => publicationCode)
-          .concat(
-            this.events
-              .filter(({ edges }) => edges)
-              .reduce(
-                (acc, { edges }) => [
-                  ...acc,
-                  ...edges.map(({ publicationCode }) => publicationCode),
-                ],
-                []
-              )
-          )
-      );
-
-      await this.fetchStats(this.eventUserIds, clearCacheEntry);
-    },
-  },
-};
+onMounted(async () => {
+  await fetchEventsAndAssociatedData(false);
+  isLoaded.value = true;
+});
 </script>
 
 <style scoped lang="scss">

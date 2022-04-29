@@ -35,7 +35,7 @@ defineProps({
   noWrap: { type: Boolean, default: true },
 });
 
-const r = l10n().$r;
+const { r } = l10n();
 </script>
 
 <style scoped lang="scss">

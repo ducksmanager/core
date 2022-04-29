@@ -97,7 +97,7 @@ import Subscription from "../../components/Subscription";
 import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-3";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
 
 const hasPublicationNames = ref(false),
   currentAssociatedPublications = ref([]),
@@ -112,7 +112,7 @@ const hasPublicationNames = ref(false),
   publicationNames = computed(() => coa().publicationNames),
   subscriptions = computed(() => collection().subscriptions),
   fetchPublicationNames = coa().fetchPublicationNames,
-  loadSubscriptions = coa().loadSubscriptions,
+  loadSubscriptions = collection().loadSubscriptions,
   createAssociatedPublicationSubscription = (
     existingSubscription,
     { publicationcode: associatedPublicationcode }

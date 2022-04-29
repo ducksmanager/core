@@ -84,13 +84,13 @@ import { bookcase } from "../../stores/bookcase";
 import { coa } from "../../stores/coa";
 import { user } from "../../composables/global";
 import { useI18n } from "vue-i18n";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const { username } = user(),
   { t: $t } = useI18n(),
-  bookcaseStore = bookcase();
-
-const error = ref(false),
+  bookcaseStore = bookcase(),
+  { imagePath } = require("../../composables/imagePath"),
+  error = ref(false),
   textures = ref([
     "bois/ASH",
     "bois/BALTIC BIRCH",

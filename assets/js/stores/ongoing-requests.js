@@ -1,4 +1,4 @@
-import { defineStore } from "pinia/dist/pinia";
+import { defineStore } from "pinia";
 
 export const ongoingRequests = defineStore("ongoing-requests", {
   state: () => ({

@@ -13,8 +13,9 @@
 
 <script setup>
 import { computed } from "vue";
+const { imagePath } = require("../composables/imagePath");
 
-defineProps({
+const props = defineProps({
   country: {
     type: String,
     default: null,

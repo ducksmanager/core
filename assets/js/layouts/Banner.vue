@@ -21,8 +21,9 @@ defineProps({
   },
 });
 
-const { $r: r } = l10n();
-const { username } = user();
+const { imagePath } = require("../composables/imagePath"),
+  { r } = l10n(),
+  { username } = user();
 </script>
 
 <style scoped lang="scss">

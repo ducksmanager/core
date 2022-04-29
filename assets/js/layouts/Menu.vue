@@ -19,41 +19,32 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { BTab, BTabs } from "bootstrap-vue-3";
-import { mapActions } from "pinia";
 import { l10n } from "../stores/l10n";
 
-export default {
-  name: "Menu",
-  components: { BTab, BTabs },
-  props: {
-    title: {
-      type: String,
-      default: null,
-    },
-    rootPath: {
-      type: String,
-      default: "/",
-    },
-    items: {
-      type: Array,
-      required: true,
-    },
+const props = defineProps({
+  title: {
+    type: String,
+    default: null,
   },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    isActive({ path }) {
-      return window.location.pathname === this.$r(this.rootPath + path);
-    },
-    onTabClick(item) {
-      window.location.replace(
-        this.isActive(item) ? "#" : this.$r(this.rootPath + item.path)
-      );
-    },
+  rootPath: {
+    type: String,
+    default: "/",
   },
-};
+  items: {
+    type: Array,
+    required: true,
+  },
+});
+const { r } = l10n(),
+  isActive = ({ path }) =>
+    window.location.pathname === r(props.rootPath + path),
+  onTabClick = (item) => {
+    window.location.replace(
+      isActive(item) ? "#" : r(props.rootPath + item.path)
+    );
+  };
 </script>
 
 <style scoped lang="scss">

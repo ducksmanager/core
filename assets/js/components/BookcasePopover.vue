@@ -22,7 +22,7 @@
     </slot>
   </b-popover>
 </template>
-<script>
+<script setup>
 import Bookcase from "./Bookcase";
 import Issue from "../components/Issue";
 import { BCol, BPopover, BRow } from "bootstrap-vue-3";

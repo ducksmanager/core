@@ -47,10 +47,6 @@ const app = createApp({
     return h(App);
   },
 });
-
-app.config.globalProperties.imagePath =
-  localStorage.getItem("imagePath") || undefined;
-
 app.use(i18n);
 app.use(store);
 app.use(BootstrapVue3);

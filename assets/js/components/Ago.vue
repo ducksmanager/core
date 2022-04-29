@@ -3,15 +3,15 @@
 </template>
 <script setup>
 import * as timeago from "timeago.js";
+import { computed } from "vue";
 
 const props = defineProps({
-  timestamp: {
-    type: Number,
-    required: true,
-  },
-});
-
-const timeAgo = () => timeago.format(props.timestamp * 1000);
+    timestamp: {
+      type: Number,
+      required: true,
+    },
+  }),
+  timeAgo = computed(() => timeago.format(props.timestamp * 1000));
 </script>
 <style scoped lang="scss">
 .ago {

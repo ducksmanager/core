@@ -8,6 +8,7 @@
 <script setup>
 import { computed } from "vue";
 
+const { imagePath } = require("../composables/imagePath");
 const props = defineProps({
     publicationcode: {
       type: String,

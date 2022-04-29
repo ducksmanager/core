@@ -33,7 +33,7 @@
 import Issue from "./Issue";
 import { BPopover } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   publicationCode: {

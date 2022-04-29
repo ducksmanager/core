@@ -59,10 +59,11 @@ import { user } from "../composables/global";
 import { computed } from "vue";
 import { collection } from "../stores/collection";
 
-const points = users().points;
-const userPoints = computed(() => points?.[userId]);
-
-const { userId, username } = user();
+const points = users().points,
+  userPoints = computed(() => points?.[userId]),
+  { userId, username } = user(),
+  { r } = l10n(),
+  { imagePath } = require("../composables/imagePath");
 
 if (userId) {
   axios
@@ -70,8 +71,6 @@ if (userId) {
     .then((data) => collection().setPreviousVisit(data));
   users().fetchStats([userId]);
 }
-
-const { $r: r } = l10n();
 </script>
 
 <style scoped lang="scss">

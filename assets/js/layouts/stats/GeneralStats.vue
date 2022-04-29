@@ -153,7 +153,6 @@
 <script setup>
 import ShortStats from "../../components/ShortStats";
 import axios from "axios";
-import { mapActions, mapState } from "pinia";
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
 import { condition } from "../../composables/condition";
@@ -161,14 +160,13 @@ import { BAlert, BPagination, BTable } from "bootstrap-vue-3";
 import { users } from "../../stores/users";
 import { coa } from "../../stores/coa";
 import { useI18n } from "vue-i18n";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
 const { collection: collectionStore } = require("../../stores/collection");
 
 const collection = collectionStore();
 
-const { $t } = useI18n(),
-  t = $t;
-const rarityValue = ref(null),
+const { t: $t } = useI18n(),
+  rarityValue = ref(null),
   rarityTotal = ref(null),
   hasPublicationNames = ref(false),
   currentPage = 1,

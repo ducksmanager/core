@@ -132,7 +132,7 @@ const hasRequestedPresentationSentence = computed(() =>
     : parseInt(props.hasrequestedpresentationsentence) === 1
 );
 
-const { $r: r } = l10n();
+const { r } = l10n();
 
 onMounted(async () => {
   await collection().loadUser();

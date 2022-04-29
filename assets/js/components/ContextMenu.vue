@@ -365,7 +365,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(l10n, ["$r"]),
+    ...mapActions(l10n, ["r"]),
     formatDate: (value) =>
       /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value) ? value : today,
 

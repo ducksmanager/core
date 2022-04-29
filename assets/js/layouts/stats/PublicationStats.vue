@@ -3,7 +3,6 @@
 </template>
 
 <script setup>
-import { mapActions, mapState } from "pinia";
 import { coa } from "../../stores/coa";
 const { collection } = require("../../stores/collection");
 import { PieChart } from "vue-chart-3";
@@ -16,29 +15,29 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { computed, watch } from "vue";
+import { computed, watch, ref } from "vue";
+import { useI18n } from "vue-i18n";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
 collection().loadCollection();
-
-const hasPublicationNames = ref(false),
+const { t: $t } = useI18n(),
+  hasPublicationNames = ref(false),
   chartData = ref(null),
   options = ref({}),
   totalPerPublication = computed(() => collection().totalPerPublication),
   publicationNames = computed(() => coa().publicationNames),
-  smallCountPublications = computed(() => {
-    if (!totalPerPublication.value) {
-      return null;
-    }
-    return Object.keys(totalPerPublication.value).filter(
-      (publicationCode) =>
-        totalPerPublication.value[publicationCode] /
-          collection().collection.length <
-        0.01
-    );
-  }),
-  totalPerPublicationGroupSmallCounts = () => {
-    return (
+  smallCountPublications = computed(() =>
+    !totalPerPublication.value
+      ? null
+      : Object.keys(totalPerPublication.value).filter(
+          (publicationCode) =>
+            totalPerPublication.value[publicationCode] /
+              collection().collection.length <
+            0.01
+        )
+  ),
+  totalPerPublicationGroupSmallCounts = computed(
+    () =>
       smallCountPublications.value && {
         ...Object.keys(totalPerPublication.value)
           .filter(
@@ -52,14 +51,15 @@ const hasPublicationNames = ref(false),
             }),
             {}
           ),
-        [null]: smallCountPublications.value.reduce((acc, publicationCode) => {
-          return acc + totalPerPublication.value[publicationCode];
-        }, 0),
+        [null]: smallCountPublications.value.reduce(
+          (acc, publicationCode) =>
+            acc + totalPerPublication.value[publicationCode],
+          0
+        ),
       }
-    );
-  },
-  labels = computed(() => {
-    return (
+  ),
+  labels = computed(
+    () =>
       hasPublicationNames.value &&
       Object.keys(totalPerPublicationGroupSmallCounts.value)
         .sort(sortByCount.value)
@@ -67,29 +67,27 @@ const hasPublicationNames = ref(false),
           (acc, publicationCode) => [
             ...acc,
             publicationNames.value[publicationCode] ||
-              `${this.$t("Autres")} (${
-                this.smallCountPublications.length
-              } ${this.$t("Publications").toLowerCase()})`,
+              `${$t("Autres")} (${smallCountPublications.value.length} ${$t(
+                "Publications"
+              ).toLowerCase()})`,
           ],
           []
         )
-    );
-  }),
+  ),
   values = computed(() =>
     Object.values(totalPerPublicationGroupSmallCounts.value).sort(
       (count1, count2) => Math.sign(count1 - count2)
     )
   ),
-  colors = computed(() => {
-    return (
+  colors = computed(
+    () =>
       totalPerPublicationGroupSmallCounts.value &&
       Object.keys(totalPerPublicationGroupSmallCounts.value)
         .sort(sortByCount.value)
         .map((publicationCode) =>
           publicationCode === "null" ? "#000" : randomColor()
         )
-    );
-  }),
+  ),
   fetchPublicationNames = coa().fetchPublicationNames,
   randomColor = () =>
     `rgb(${[
@@ -107,12 +105,12 @@ watch(
   () => totalPerPublicationGroupSmallCounts.value,
   (newValue) => {
     if (newValue) {
-      this.fetchPublicationNames(
+      fetchPublicationNames(
         Object.keys(totalPerPublicationGroupSmallCounts.value).filter(
           (publicationCode) => publicationCode !== "null"
         )
       );
-      this.hasPublicationNames = true;
+      hasPublicationNames.value = true;
     }
   },
   { immediate: true }
@@ -151,7 +149,8 @@ watch(
         },
       },
     };
-  }
+  },
+  { immediate: true }
 );
 </script>
 

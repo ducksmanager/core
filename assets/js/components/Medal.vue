@@ -52,8 +52,9 @@ import { computed } from "vue";
 import medal from "../composables/medal";
 import { useI18n } from "vue-i18n";
 
-const { t: $t } = useI18n();
-const props = defineProps({
+const { t: $t } = useI18n(),
+  { imagePath } = require("../composables/imagePath"),
+  props = defineProps({
     small: { type: Boolean, default: false },
     xSmall: { type: Boolean, default: false },
     nextLevel: { type: Boolean, default: false },

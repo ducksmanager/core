@@ -106,13 +106,13 @@
 <script setup>
 import Publication from "../../components/Publication";
 import { coa } from "../../stores/coa";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
 import { useI18n } from "vue-i18n";
 const { collection: collectionStore } = require("../../stores/collection");
 
-const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/;
-
-const lines = 2,
+const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/,
+  { imagePath } = require("../../composables/imagePath"),
+  lines = 2,
   numbersPerRow = 100 / lines,
   issuesPerCell = ref(null),
   countryNames = computed(() => coa().countryNames),
@@ -140,10 +140,9 @@ const lines = 2,
             .sort((a, b) => b - a)[0]
         )
   ),
-  { $t, $tc } = useI18n(),
-  t = $t,
+  { t: $t } = useI18n(),
   issueCountTitle = computed(() => {
-    const issueCountString = $tc("numéro | numéros", 2);
+    const issueCountString = $t("numéro | numéros", 2);
     return (
       issueCountString[0].toUpperCase() +
       issueCountString.substring(1, issueCountString.length).toLowerCase()

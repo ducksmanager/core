@@ -26,7 +26,7 @@
             "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous"
           )
         }}
-        <a :href="$r('/expand')">{{
+        <a :href="r('/expand')">{{
           $t("suggérer des numéros en fonction de vos préférences.")
         }}</a>
       </p>
@@ -108,7 +108,7 @@ import StarRating from "vue-star-rating";
 import { coa } from "../stores/coa";
 const { collection } = require("../stores/collection");
 import { l10n } from "../stores/l10n";
-import { computed, defineProps, watch } from "vue";
+import { computed, watch, ref } from "vue";
 
 const props = defineProps({
   watchedAuthors: {
@@ -141,49 +141,43 @@ watch(
   },
   { immediate: true }
 );
-
-const { $r: r } = l10n();
-const { loadWatchedAuthors } = collection();
-
-const isAuthorWatched = (personCode) =>
-  props.watchedAuthors.some(
-    ({ personCode: watchedPersonCode }) => personCode === watchedPersonCode
-  );
-
-const createRating = async (personCode) => {
-  await axios.put("/api/collection/authors/watched", { personCode });
-  await loadWatchedAuthors(true);
-};
-
-const updateRating = async (author) => {
-  await axios.post("/api/collection/authors/watched", author);
-};
-
-const deleteAuthor = async (author) => {
-  await axios.delete("/api/collection/authors/watched", {
-    params: {
-      personCode: author.personCode,
-    },
-  });
-  await loadWatchedAuthors(true);
-};
-
-const runSearch = async (value) => {
-  if (!isSearching.value) {
-    try {
-      isSearching.value = true;
-      searchResults.value = (
-        await axios.get(`/api/coa/authorsfullnames/search/${value}`)
-      ).data;
-    } finally {
-      isSearching.value = false;
-      // The input value has changed since the beginning of the search, searching again
-      if (value !== pendingSearch) {
-        await runSearch(pendingSearch);
+const { r } = l10n(),
+  { loadWatchedAuthors } = collection(),
+  isAuthorWatched = (personCode) =>
+    props.watchedAuthors.some(
+      ({ personCode: watchedPersonCode }) => personCode === watchedPersonCode
+    ),
+  createRating = async (personCode) => {
+    await axios.put("/api/collection/authors/watched", { personCode });
+    await loadWatchedAuthors(true);
+  },
+  updateRating = async (author) => {
+    await axios.post("/api/collection/authors/watched", author);
+  },
+  deleteAuthor = async (author) => {
+    await axios.delete("/api/collection/authors/watched", {
+      params: {
+        personCode: author.personCode,
+      },
+    });
+    await loadWatchedAuthors(true);
+  },
+  runSearch = async (value) => {
+    if (!isSearching.value) {
+      try {
+        isSearching.value = true;
+        searchResults.value = (
+          await axios.get(`/api/coa/authorsfullnames/search/${value}`)
+        ).data;
+      } finally {
+        isSearching.value = false;
+        // The input value has changed since the beginning of the search, searching again
+        if (value !== pendingSearch.value) {
+          await runSearch(pendingSearch);
+        }
       }
     }
-  }
-};
+  };
 </script>
 
 <style scoped lang="scss">

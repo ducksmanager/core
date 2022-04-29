@@ -18,7 +18,7 @@
 <script setup>
 import axios from "axios";
 import { BButton, BTable } from "bootstrap-vue-3";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 const bookstores = ref(null),
   validateBookstoreComment = async ({ id }) => {

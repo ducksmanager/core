@@ -1,11 +1,11 @@
 <template>
   <span v-if="number > 1">
-    {{ t("et") }} {{ number - 1 }}
+    {{ $t("et") }} {{ number - 1 }}
     <template v-if="number === 2">
-      {{ textSingle || t("autre numéro") }}
+      {{ textSingle || $t("autre numéro") }}
     </template>
     <template v-else>
-      {{ textMultiple || t("autres numéros") }}
+      {{ textMultiple || $t("autres numéros") }}
     </template>
   </span>
 </template>
@@ -27,7 +27,6 @@ defineProps({
     default: null,
   },
 });
-const { t: $t } = useI18n();
 </script>
 
 <style scoped>

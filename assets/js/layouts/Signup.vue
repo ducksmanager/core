@@ -64,75 +64,61 @@
   </form>
 </template>
 
-<script>
+<script setup>
 import * as axios from "axios";
 import Errorable from "../components/Errorable";
 import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
-import { mapState, mapActions } from "pinia";
 import { form } from "../stores/form";
 import { l10n } from "../stores/l10n";
 import { validation } from "../composables/validation";
 import { useI18n } from "vue-i18n";
+import { computed, onMounted, ref } from "vue";
 
 let t;
 
-export default {
-  name: "Signup",
-  components: { Errorable, BRow, BCol, BFormInput, BButton },
-  props: {
-    lastUsername: { type: String, default: null },
-  },
+defineProps({
+  lastUsername: { type: String, default: null },
+});
 
-  data: () => ({
-    signupUsername: "",
-    email: "",
-    password: "",
-    password2: "",
-  }),
+const { r } = l10n(),
+  signupUsername = ref(""),
+  email = ref(""),
+  password = ref(""),
+  password2 = ref(""),
+  hasErrors = computed(() => form().hasErrors),
+  signup = async () => {
+    const { validatePasswords, validateEmail, validateUsername } =
+      validation(t);
 
-  computed: {
-    ...mapState(form, ["hasErrors"]),
-  },
+    form().clearErrors();
+    validatePasswords(password.value, password2.value);
+    validateEmail(email.value);
+    validateUsername(signupUsername.value);
 
-  mounted() {
-    this.signupUsername = this.lastUsername;
-    t = useI18n().t;
-  },
+    if (hasErrors.value) {
+      return;
+    }
+    try {
+      await axios.put("/signup", {
+        username: signupUsername.value,
+        password: password.value,
+        password2: password2.value,
+        email: email.value,
+      });
+      window.location.replace(l10n().r("/collection/show"));
+    } catch (e) {
+      form().addErrors({
+        username: $t(
+          "Ce nom d'utilisateur ou cette adresse e-mail existe déjà."
+        ),
+      });
+    }
+  };
 
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(form, ["clearErrors"]),
-
-    async signup() {
-      const { validatePasswords, validateEmail, validateUsername } =
-        validation(t);
-
-      this.clearErrors();
-      validatePasswords(this.password, this.password2);
-      validateEmail(this.email);
-      validateUsername(this.signupUsername);
-
-      if (this.hasErrors) {
-        return;
-      }
-      try {
-        await axios.put("/signup", {
-          username: this.signupUsername,
-          password: this.password,
-          password2: this.password2,
-          email: this.email,
-        });
-        window.location.replace(this.$r("/collection/show"));
-      } catch (e) {
-        this.addErrors({
-          username: this.$t(
-            "Ce nom d'utilisateur ou cette adresse e-mail existe déjà."
-          ),
-        });
-      }
-    },
-  },
-};
+onMounted(() => {
+  signupUsername.value = lastUsername.value;
+  t = useI18n().t;
+});
 </script>
 
 <style scoped>

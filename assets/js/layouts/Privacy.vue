@@ -506,10 +506,7 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Privacy",
-};
+<script setup>
 </script>
 
 <style lang="scss" scoped>

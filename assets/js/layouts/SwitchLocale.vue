@@ -10,39 +10,32 @@
     />
   </div>
 </template>
-<script>
-export default {
-  name: "SwitchLocale",
+<script setup>
+import { useI18n } from "vue-i18n";
 
-  props: {
-    fixed: {
-      type: Boolean,
-      default: false,
-    },
+defineProps({
+  fixed: {
+    type: Boolean,
+    default: false,
   },
-
-  data: () => ({
-    locales: [
-      {
-        key: "en",
-        name: "English",
-        flagName: "uk",
-      },
-      {
-        key: "fr",
-        name: "Français",
-        flagName: "fr",
-      },
-    ],
-  }),
-
-  methods: {
-    reloadWithLocale({ key: locale }) {
-      localStorage.setItem("locale", locale);
-      this.$i18n.locale = locale;
+});
+const { imagePath } = require("../composables/imagePath"),
+  locales = [
+    {
+      key: "en",
+      name: "English",
+      flagName: "uk",
     },
-  },
-};
+    {
+      key: "fr",
+      name: "Français",
+      flagName: "fr",
+    },
+  ],
+  reloadWithLocale = ({ key }) => {
+    localStorage.setItem("locale", key);
+    useI18n().locale = key;
+  };
 </script>
 <style scoped lang="scss">
 #flags {

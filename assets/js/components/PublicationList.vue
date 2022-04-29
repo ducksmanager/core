@@ -43,7 +43,7 @@
               <a
                 class="dropdown-item"
                 :href="
-                  $r(`/collection/show/{publicationCode:${publicationCode}}`)
+                  r(`/collection/show/{publicationCode:${publicationCode}}`)
                 "
               >
                 {{
@@ -57,7 +57,7 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            :href="$r('/collection/show/{publicationCode:new}')"
+            :href="r('/collection/show/{publicationCode:new}')"
             >{{ $t("Nouveau magazine") }}</a
           >
         </li>
@@ -80,7 +80,7 @@ import IssueSearch from "./IssueSearch";
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
 
 const hasPublicationNames = ref(false),
   totalPerCountry = computed(() => collection().totalPerCountry),
@@ -111,7 +111,7 @@ const hasPublicationNames = ref(false),
       )
     );
   }),
-  r = l10n().$r,
+  { r } = l10n(),
   fetchCountryNames = coa().fetchCountryNames,
   fetchPublicationNames = coa().fetchPublicationNames,
   getSortedPublications = (country) =>

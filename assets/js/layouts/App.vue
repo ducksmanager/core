@@ -1,60 +1,28 @@
 <template>
-  <component :is="component" ref="root" v-bind="props" />
+  <component :is="component" v-bind="props" />
 </template>
 
-<script>
-import Print from "./Print";
-import BookstoresAdmin from "./admin/BookstoresAdmin";
-import EdgeProgress from "./admin/EdgeProgress";
-import Site from "./Site";
-import Privacy from "./Privacy";
+<script setup>
+import { computed, defineAsyncComponent, ref, onMounted } from "vue";
+import { l10n } from "../stores/l10n";
+const componentName = ref(null),
+  component = computed(() =>
+    componentName.value
+      ? defineAsyncComponent(() => import(`./${componentName.value}`))
+      : null
+  ),
+  props = ref({});
 
-const { l10n: l10nStore } = require("../stores/l10n");
-
-import { ref, onMounted } from "vue";
-
-export default {
-  name: "App",
-  components: {
-    BookstoresAdmin,
-    EdgeProgress,
-    Print,
-    Privacy,
-    Site,
-  },
-  setup() {
-    const component = ref(null),
-      props = ref({}),
-      root = ref(null),
-      { loadL10n } = l10nStore();
-    onMounted(async () => {
-      for (const { name, value } of root.value.parentElement.attributes) {
-        if (name === "component") {
-          component.value = value;
-        } else {
-          props.value[name] = value;
-        }
-      }
-      await loadL10n();
-    });
-
-    return {
-      root,
-      component,
-      props,
-    };
-  },
-  // data() {
-  //   const {component, props} = this.$attrs
-  //   return {
-  //     component,
-  //     props,
-  //   }
-  // },
-  // async mounted() {
-  //   await this.loadL10n()
-  // },
-};
+onMounted(() => {
+  for (const { name, value } of document.getElementById("app").attributes) {
+    if (name === "component") {
+      componentName.value = value;
+    } else {
+      props.value[name] = value;
+    }
+  }
+  l10n().loadL10n();
+});
 </script>
 
 <style scoped>

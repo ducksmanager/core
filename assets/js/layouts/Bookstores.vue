@@ -154,118 +154,97 @@
     </form>
   </div>
 </template>
-<script>
+<script setup>
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 import axios from "axios";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
+import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
-const newBookstore = {
-  name: null,
-  address: null,
-  comment: null,
-  coordX: null,
-  coordY: null,
-};
-
-export default {
-  name: "Bookstores",
-
-  components: {
-    MapboxMap,
-    MapboxMarker,
-    MapboxPopup,
-    BAlert,
-    BFormTextarea,
-    BButton,
-    BFormInput,
+const { t: $t } = useI18n(),
+  newBookstore = {
+    name: null,
+    address: null,
+    comment: null,
+    coordX: null,
+    coordY: null,
   },
-
-  data: () => ({
-    accessToken:
-      "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ",
-    mapCenter: [1.73584, 46.754917],
-    bookstores: [],
-    newBookstore,
-    existingBookstore: null,
-    newBookstoreSent: false,
-    existingBookstoreSent: false,
-  }),
-
-  async mounted() {
-    const vm = this;
-    await this.fetchBookstores();
-    const geocoder = new MapboxGeocoder({
-      accessToken: this.accessToken,
-      placeholder: this.$t("Adresse"),
-      types: "address",
-      proximity: { latitude: 46.754917, longitude: 1.73584 },
-      enableEventLogging: false,
-    });
-    geocoder.addTo("#address");
-    window.document.querySelector(
-      ".mapboxgl-ctrl-geocoder--input"
-    ).attributes.required = true;
-    geocoder.on("result", ({ result: { place_name, center } }) => {
-      vm.newBookstore.address = place_name;
-      [vm.newBookstore.coordY, vm.newBookstore.coordX] = center;
-    });
+  accessToken =
+    "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ",
+  mapCenter = [1.73584, 46.754917],
+  bookstores = ref([]),
+  existingBookstore = ref(null),
+  newBookstoreSent = ref(false),
+  existingBookstoreSent = ref(false),
+  decodeText = (object, field) => {
+    try {
+      return decodeURIComponent(escape(object[field]));
+    } catch (_) {
+      return object[field];
+    }
   },
-
-  methods: {
-    decodeText(object, field) {
-      try {
-        return decodeURIComponent(escape(object[field]));
-      } catch (_) {
-        return object[field];
-      }
-    },
-    async fetchBookstores() {
-      this.bookstores = (await axios.get("/bookstoreComment/list")).data
-        .map((bookstore) => {
-          ["name", "address"].forEach((field) => {
-            bookstore[field] = this.decodeText(bookstore, field);
+  fetchBookstores = async () => {
+    bookstores.value = (await axios.get("/bookstoreComment/list")).data
+      .map((bookstore) => {
+        ["name", "address"].forEach((field) => {
+          bookstore[field] = decodeText(bookstore, field);
+        });
+        bookstore.comments.forEach((comment, commentNumber) => {
+          ["comment"].forEach((field) => {
+            bookstore.comments[commentNumber][field] = decodeText(
+              comment,
+              field
+            );
           });
-          bookstore.comments.forEach((comment, commentNumber) => {
-            ["comment"].forEach((field) => {
-              bookstore.comments[commentNumber][field] = this.decodeText(
-                comment,
-                field
-              );
-            });
-          });
-          return bookstore;
-        })
-        .filter((bookstore) => !!bookstore);
-    },
-    async suggestComment(bookstore) {
-      if (!bookstore.id && !bookstore.coordX) {
-        window.alert(
-          this.$t(
-            'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'
-          )
-        );
-        return false;
-      }
-      await axios.put("/bookstoreComment/suggest", bookstore);
-      if (bookstore.id) {
-        this.existingBookstoreSent = true;
-        this.existingBookstore = null;
-      } else {
-        this.newBookstoreSent = true;
-      }
-    },
-    formatDate(date) {
-      if (date == null) {
-        return this.$t("il y a longtemps");
-      } else {
-        return this.$t("le {date}", {
+        });
+        return bookstore;
+      })
+      .filter((bookstore) => !!bookstore);
+  },
+  suggestComment = async (bookstore) => {
+    if (!bookstore.id && !bookstore.coordX) {
+      window.alert(
+        $t(
+          'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'
+        )
+      );
+      return false;
+    }
+    await axios.put("/bookstoreComment/suggest", bookstore);
+    if (bookstore.id) {
+      existingBookstoreSent.value = true;
+      existingBookstore.value = null;
+    } else {
+      newBookstoreSent.value = true;
+    }
+  },
+  formatDate = (date) => {
+    return date == null
+      ? $t("il y a longtemps")
+      : $t("le {date}", {
           date: new Date(date).toLocaleDateString(),
         });
-      }
-    },
-  },
-};
+  };
+
+onMounted(async () => {
+  await fetchBookstores();
+  const geocoder = new MapboxGeocoder({
+    accessToken: accessToken,
+    placeholder: $t("Adresse"),
+    types: "address",
+    proximity: { latitude: 46.754917, longitude: 1.73584 },
+    enableEventLogging: false,
+  });
+  geocoder.addTo("#address");
+  window.document.querySelector(
+    ".mapboxgl-ctrl-geocoder--input"
+  ).attributes.required = true;
+  geocoder.on("result", ({ result: { place_name, center } }) => {
+    newBookstore.value.address = place_name;
+    [newBookstore.value.coordY, newBookstore.value.coordX] = center;
+  });
+});
 </script>
 
 <style lang="scss">

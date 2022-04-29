@@ -1,20 +1,17 @@
 import { user } from "./global";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 
 const { collection: collectionStore } = require("../stores/collection");
 const { username } = user();
 
 export let collection = () => {
-  const {
-    collection: userCollection,
-    purchases,
-    totalPerPublication,
-    loadCollection,
-  } = collectionStore();
+  const userCollection = computed(() => collectionStore().collection),
+    purchases = computed(() => collectionStore().purchases),
+    totalPerPublication = computed(() => collectionStore().totalPerPublication),
+    loadCollection = collectionStore().loadCollection;
   const load = async () => username && (await loadCollection());
   const findInCollection = (publicationCode, issueNumber) =>
-    userCollection &&
-    userCollection.find(
+    userCollection.value?.find(
       ({ country, magazine, issueNumber: collectionIssueNumber }) =>
         publicationCode === `${country}/${magazine}` &&
         collectionIssueNumber === issueNumber

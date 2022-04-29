@@ -33,7 +33,7 @@
             }}
           </li>
         </ul>
-        <a :href="$r(`/print/{currentType:${type.link}}`)" target="_blank"
+        <a :href="r(`/print/{currentType:${type.link}}`)" target="_blank"
           >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</a
         >
         <br />
@@ -42,46 +42,37 @@
   </div>
 </template>
 
-<script>
-import { mapActions } from "pinia";
+<script setup>
 import { l10n } from "../stores/l10n";
+import { useI18n } from "vue-i18n";
 
-export default {
-  name: "PrintPresentation",
-  computed: {
-    types() {
-      return [
-        {
-          link: "classic",
-          name: this.$t("la liste classique"),
-          description: this.$t(
-            "Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez."
-          ),
-          details: [
-            this.$t(
-              "Ce type de liste est plus adapté pour les petites collections."
-            ),
-            this.$t(
-              "Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros."
-            ),
-          ],
-        },
-        {
-          link: "collectable",
-          name: this.$t("CollecTable"),
-          exclusive: true,
-          description: this.$t(
-            "Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !"
-          ),
-          details: [this.$t("Adaptée pour les grandes collections.")],
-        },
-      ];
+const { t: $t } = useI18n(),
+  { imagePath } = require("../composables/imagePath"),
+  types = [
+    {
+      link: "classic",
+      name: $t("la liste classique"),
+      description: $t(
+        "Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez."
+      ),
+      details: [
+        $t("Ce type de liste est plus adapté pour les petites collections."),
+        $t(
+          "Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros."
+        ),
+      ],
     },
-  },
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-  },
-};
+    {
+      link: "collectable",
+      name: $t("CollecTable"),
+      exclusive: true,
+      description: $t(
+        "Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !"
+      ),
+      details: [$t("Adaptée pour les grandes collections.")],
+    },
+  ],
+  { r } = l10n();
 </script>
 
 <style lang="scss" scoped>

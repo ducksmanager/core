@@ -66,8 +66,6 @@
 
 <script setup>
 import { user } from "../composables/global";
-
-const { username } = user();
 import NavigationItemGroup from "../components/NavigationItemGroup";
 import NavigationItem from "../components/NavigationItem";
 import {
@@ -79,6 +77,9 @@ import {
   BIconPrinterFill,
   BIconXSquareFill,
 } from "bootstrap-icons-vue";
+
+const { username } = user(),
+  { imagePath } = require("../composables/imagePath");
 </script>
 
 <style lang="scss" scoped>

@@ -3,7 +3,7 @@
     <table>
       <tr>
         <td>
-          <a :href="$r('/collection/show')"
+          <a :href="r('/collection/show')"
             ><img id="logo" alt="logo" :src="`${imagePath}/logo_small.png`"
           /></a>
         </td>
@@ -20,13 +20,15 @@ import Collectable from "../layouts/print/Collectable";
 import Classic from "../layouts/print/Classic";
 import { l10n } from "../stores/l10n";
 import { user } from "../composables/global";
+import { computed } from "vue";
 
 defineProps({
   currentType: { type: String, required: true },
 });
-
-const { l10nRoutes, $r: r } = l10n();
-const { username } = user();
+const { r } = l10n(),
+  l10nRoutes = computed(() => l10n().l10nRoutes),
+  { username } = user(),
+  { imagePath } = require("../composables/imagePath");
 </script>
 
 <style lang="scss" scoped>
