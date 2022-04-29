@@ -11,7 +11,7 @@
       @click="$router.push(`/setup/${name}`)"
     >
       <b-card-footer>
-        {{ t('Images: {images}, authors: {authors}', { images, authors }) }}
+        {{ t('Images') }}: {{ images }}, {{ $t('authors') }}: {{ authors }}
       </b-card-footer>
     </b-card>
   </b-card-group>
