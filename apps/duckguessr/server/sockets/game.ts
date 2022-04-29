@@ -116,7 +116,15 @@ export const createGameSocket = (
   let areRoundsInitialized = false
 
   return io.of(`/game/${game!.id}`).on('connection', async (socket: Socket) => {
-    if (!areRoundsInitialized) {
+    const user = await getUser(socket.handshake.auth.cookie)
+
+    if (areRoundsInitialized) {
+      const currentRound = game!.rounds.find(
+        ({ started_at, finished_at }) =>
+          started_at && started_at < new Date() && finished_at && finished_at > new Date()
+      )
+      socket.emit('roundStarts', { ...currentRound, personcode: null })
+    } else {
       areRoundsInitialized = true
       const playableRounds = game!.rounds.filter(
         ({ finished_at }) => !!finished_at && finished_at > new Date()
@@ -127,8 +135,6 @@ export const createGameSocket = (
         initRoundEnds(socket, round)
       }
     }
-
-    const user = await getUser(socket.handshake.auth.cookie)
 
     socket.on('guess', (roundId, personcode) => {
       onGuess.apply(socket, [user, roundId, personcode])
