@@ -57,12 +57,20 @@ export default defineComponent({
           content: title.value,
         },
         {
+          name: 'og:site_name',
+          content: 'Duckguessr',
+        },
+        {
+          property: 'og:description',
+          content: title.value,
+        },
+        {
           property: 'og:url',
           content: gameUrl,
         },
         {
           property: 'og:image',
-          content: `${location.origin}/favicon.ico`,
+          content: `${location.origin}/favicon.png`,
         },
       ],
     }))
