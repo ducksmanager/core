@@ -1,6 +1,7 @@
-export default () => {
-  const messages = require('../locales/fr-FR.json')
-  return Promise.resolve(
-    Object.keys(messages).reduce((acc, value) => ({ ...acc, [value]: value }), {})
+export default () =>
+  Promise.resolve(
+    Object.keys(require('../locales/fr-FR.json')).reduce(
+      (acc, value) => ({ ...acc, [value]: value }),
+      {}
+    )
   )
-}

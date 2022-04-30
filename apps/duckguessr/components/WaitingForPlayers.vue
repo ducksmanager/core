@@ -33,15 +33,47 @@
   </b-container>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { computed, defineComponent, useMeta } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
 
-const props = defineProps<{
-  usernames: Array<string>
-  gameId: number
-}>()
-const gameUrl = `${location.origin}/matchmaking/${props.gameId}`
-const { t } = useI18n()
+export default defineComponent({
+  props: {
+    usernames: { type: Array as () => Array<string>, required: true },
+    gameId: { type: Number, required: true },
+  },
+  setup(props) {
+    const { t } = useI18n()
+    // For some reason vue-i18n's interpolation doesn't work
+    const title = computed(() =>
+      t("Join {username}'s Duckguessr game!").toString().replace('{username}', props.usernames[0])
+    )
+    const gameUrl = `${location.origin}/matchmaking/${props.gameId}`
+    useMeta(() => ({
+      title: title.value,
+      meta: [
+        {
+          property: 'og:title',
+          content: title.value,
+        },
+        {
+          property: 'og:url',
+          content: gameUrl,
+        },
+        {
+          property: 'og:image',
+          content: `${location.origin}/favicon.ico`,
+        },
+      ],
+    }))
+
+    return {
+      gameUrl,
+      t,
+    }
+  },
+  head: {},
+})
 </script>
 
 <style scoped lang="scss">
@@ -54,6 +86,7 @@ const { t } = useI18n()
     }
   }
 }
+
 input {
   color: gray;
   width: 100%;

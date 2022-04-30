@@ -20,6 +20,7 @@
   "Only an administrator can clean images!": "Seul un administrateur peut nettoyer des images !",
   "Otherwise, the minimum number of players is 2.": "Sinon, le nombre de joueurs minimal est de 2.",
   "Player": "Joueur",
+  "Join {username}'s Duckguessr game!": "Rejoignez la partie Duckguessr de {username}!",
   "Round {roundNumber} starts in...": "Le round {roundNumber} commence dans...",
   "Select a dataset": "Sélectionnez un jeu de données",
   "Select the images that shouldn't be shown on Duckguessr:": "Sélectionnez les images qui ne devraient pas être utilisées sur Duckguessr:",
