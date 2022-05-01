@@ -96,8 +96,8 @@ const hasPublicationNames = ref(false),
         )
       )
   ),
-  publicationsPerCountry = computed(() => {
-    return (
+  publicationsPerCountry = computed(
+    () =>
       totalPerCountry.value &&
       hasPublicationNames.value &&
       Object.keys(totalPerCountry.value).reduce(
@@ -109,8 +109,7 @@ const hasPublicationNames = ref(false),
         }),
         {}
       )
-    );
-  }),
+  ),
   { r } = l10n(),
   fetchCountryNames = coa().fetchCountryNames,
   fetchPublicationNames = coa().fetchPublicationNames,

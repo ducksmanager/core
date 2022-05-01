@@ -1,7 +1,5 @@
 <template>
-  <span :id="elementId" class="username font-weight-bold">{{
-    stats.username
-  }}</span>
+  <span :id="elementId" class="username fw-bold">{{ stats.username }}</span>
   <b-popover :target="elementId" placement="top" triggers="hover" :delay="0">
     <template #title>
       <h4>{{ stats.username }}</h4>

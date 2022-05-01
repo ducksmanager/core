@@ -7,14 +7,15 @@
     }"
   >
     <Edge
-      v-for="edge in edgesToLoad"
+      v-for="(edge, edgeId) in edgesToLoad"
       v-once
-      :id="`edge-${edge.id}`"
-      :key="`edge-${edge.id}`"
+      :id="`edge-${edgeId}`"
+      :key="`edge-${edgeId}`"
       :publication-code="edge.publicationCode"
       :issue-number="edge.issueNumber"
       existing
       load
+      embedded
       @loaded="loadNextEdge"
     />
   </div>
@@ -26,9 +27,9 @@
     }"
   >
     <Edge
-      v-for="edge in edgesToLoad"
-      :id="`edge-${edge.id}`"
-      :key="`edge-${edge.id}`"
+      v-for="(edge, edgeId) in edgesToLoad"
+      :id="`edge-${edgeId}`"
+      :key="`edge-${edgeId}`"
       :invisible="currentEdgeOpened === edge"
       :highlighted="currentEdgeHighlighted === edge.id"
       :publication-code="edge.publicationCode"

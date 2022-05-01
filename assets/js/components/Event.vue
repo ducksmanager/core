@@ -46,15 +46,13 @@
           :points="points[collaborator]"
         />
       </span>
-      <template v-if="event.users.length > 1">
-        {{ $t("ont créé la tranche") }}
+      <template v-if="event.users.length > 1"
+        >&nbsp;{{ $t("ont créé la tranche") }}
       </template>
-      <template v-else>
-        {{ $t("a créé la tranche") }}
-      </template>
-      <span
+      <template v-else>&nbsp;{{ $t("a créé la tranche") }} </template
+      >&nbsp;<span
         :id="`event-edges-${event.timestamp}`"
-        class="font-weight-bold"
+        class="fw-bold"
         style="cursor: help"
       >
         <Issue
@@ -64,8 +62,7 @@
           :issuenumber="event.edges[0].issueNumber"
           hide-condition
           :flex="false"
-        />
-        <OtherIssues
+        />&nbsp;<OtherIssues
           :number="event.edges.length"
           :text-single="$t('autre tranche')"
           :text-multiple="$t('autres tranches')"

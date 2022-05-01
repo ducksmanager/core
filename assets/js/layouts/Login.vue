@@ -2,7 +2,7 @@
   <form method="post">
     <b-row>
       <b-col lg="6">
-        <h1 class="h3 mb-3 font-weight-normal">
+        <h1 class="h3 mb-3 fw-normal">
           {{ $t("Connexion") }}
         </h1>
         <b-alert v-if="error" show variant="danger">

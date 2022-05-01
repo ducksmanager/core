@@ -93,7 +93,7 @@ const { r } = l10n(),
   email = ref(""),
   password = ref(""),
   password2 = ref(""),
-  csrfToken: document.getElementById("csrf").value,
+  csrfToken = document.getElementById("csrf").value,
   hasErrors = computed(() => form().hasErrors),
   signup = async () => {
     const { validatePasswords, validateEmail, validateUsername } =

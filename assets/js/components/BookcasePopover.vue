@@ -6,10 +6,18 @@
     triggers="hover focus"
     :delay="0"
   >
-    <Bookcase :bookcase-textures="bookcaseTextures" :sorted-bookcase="edges" />
+    <Bookcase
+      :bookcase-textures="bookcaseTextures"
+      :sorted-bookcase="edges"
+      embedded
+    />
     <slot name="footer">
       <b-row>
-        <b-col v-for="edge in edges" :key="edge.id" cols="6">
+        <b-col
+          v-for="(edge, edgeId) in edges"
+          :key="`bookcase-${id}-issue-${edgeId}`"
+          cols="6"
+        >
           <Issue
             class="issue"
             :publicationname="publicationNames[edge.publicationCode]"

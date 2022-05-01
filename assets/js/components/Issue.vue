@@ -2,7 +2,9 @@
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
     <a
       :class="{ clickable, flex }"
-      :href="`${r(`/collection/show/{publicationCode:${publicationcode}}`)}#${issuenumber}`"
+      :href="`${r(
+        `/collection/show/{publicationCode:${publicationcode}}`
+      )}#${issuenumber}`"
     >
       <Condition
         v-if="!hideCondition"
@@ -12,9 +14,10 @@
       <Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname"
-      /><span>{{ issuenumber }}</span>
+      /><span>&nbsp;{{ issuenumber }}</span>
       <slot name="title-suffix" />
-    </a><slot />
+    </a>
+    <slot />
   </div>
 </template>
 
@@ -30,27 +33,27 @@ defineProps({
   clickable: { type: Boolean, default: false },
   hideCondition: { type: Boolean, default: false },
   noWrap: { type: Boolean, default: true },
-  flex: { type: Boolean, default: true }
+  flex: { type: Boolean, default: true },
 });
 
 const { r } = l10n();
 </script>
 
 <style scoped lang="scss">
-  a {
-    align-items: center;
-    line-height: 1rem;
-    color: darkgrey;
-    pointer-events: none;
-    border-bottom: none;
+a {
+  align-items: center;
+  line-height: 1rem;
+  color: darkgrey;
+  pointer-events: none;
+  border-bottom: none;
 
-    &.flex {
-      display: inline-flex;
-    }
-
-    &.clickable {
-      pointer-events: initial;
-      border-bottom: initial;
-    }
+  &.flex {
+    display: inline-flex;
   }
+
+  &.clickable {
+    pointer-events: initial;
+    border-bottom: initial;
+  }
+}
 </style>

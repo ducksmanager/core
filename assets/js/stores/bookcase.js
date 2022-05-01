@@ -22,8 +22,7 @@ export const bookcase = defineStore("bookcase", {
 
     bookcaseWithPopularities: ({ bookcase, isSharedBookcase }) =>
       (isSharedBookcase ? true : collection().popularIssuesInCollection) &&
-      bookcase &&
-      bookcase.map((issue) => {
+      bookcase?.map((issue) => {
         const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
         const issueCode = `${publicationCode} ${issue.issueNumber}`;
         return {

@@ -26,7 +26,7 @@ export const collection = defineStore("collection", {
   }),
 
   getters: {
-    total: ({ collection }) => collection && collection.length,
+    total: ({ collection }) => collection?.length,
 
     duplicateIssues: ({ collection }) => {
       if (collection) {
@@ -47,19 +47,15 @@ export const collection = defineStore("collection", {
       }
     },
 
-    totalUniqueIssues: ({ collection, duplicateIssues }) => {
-      return (
-        collection &&
-        collection.length -
-          Object.values(duplicateIssues).reduce((acc, duplicatedIssue) => {
-            return acc + duplicatedIssue.length - 1;
-          }, 0)
-      );
-    },
+    totalUniqueIssues: ({ collection, duplicateIssues }) =>
+      collection?.length -
+      Object.values(duplicateIssues).reduce(
+        (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
+        0
+      ),
 
     totalPerCountry: ({ collection }) =>
-      collection &&
-      collection.reduce(
+      collection?.reduce(
         (acc, issue) => ({
           ...acc,
           [issue.country]: (acc[issue.country] || 0) + 1,
@@ -68,25 +64,35 @@ export const collection = defineStore("collection", {
       ),
 
     totalPerPublication: ({ collection }) =>
-      collection &&
-      collection.reduce((acc, issue) => {
+      collection?.reduce((acc, issue) => {
         const publicationCode = `${issue.country}/${issue.magazine}`;
         return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
       }, {}),
 
     hasSuggestions: ({ suggestions }) =>
-      suggestions &&
-      suggestions.issues &&
-      Object.keys(suggestions.issues).length,
+      suggestions?.issues && Object.keys(suggestions.issues).length,
 
-    issueNumbersPerPublication: ({collection}) => collection && collection.reduce((acc, issue) => {
-      const publicationCode = `${issue.country}/${issue.magazine}`;
-      return { ...acc, [publicationCode]: [...(acc[publicationCode] || []), issue.issueNumber] };
-    }, {}),
+    issueNumbersPerPublication: ({ collection }) =>
+      collection?.reduce(
+        (acc, { country, issueNumber, magazine }) => ({
+          ...acc,
+          [`${country}/${magazine}`]: [
+            ...(acc[`${country}/${magazine}`] || []),
+            issueNumber,
+          ],
+        }),
+        {}
+      ),
 
     totalPerPublicationUniqueIssueNumbers: ({ issueNumbersPerPublication }) =>
-      issueNumbersPerPublication && Object.keys(issueNumbersPerPublication).reduce((acc, publicationCode) =>
-          ({ ...acc, [publicationCode]: [...new Set(issueNumbersPerPublication[publicationCode])].length }),
+      issueNumbersPerPublication &&
+      Object.keys(issueNumbersPerPublication).reduce(
+        (acc, publicationCode) => ({
+          ...acc,
+          [publicationCode]: [
+            ...new Set(issueNumbersPerPublication[publicationCode]),
+          ].length,
+        }),
         {}
       ),
 
@@ -123,25 +129,22 @@ export const collection = defineStore("collection", {
         indefini: 0.7,
         "": 0.7,
       };
-      return (
-        collection &&
-        collection
-          .filter(({ publicationCode, issueNumber }) =>
-            getEstimation(publicationCode, issueNumber)
-          )
-          .map(({ publicationCode, issueNumber, condition }) => {
-            const estimation = getEstimation(publicationCode, issueNumber);
-            return {
-              publicationCode,
-              issueNumber,
-              condition,
-              estimation,
-              estimationGivenCondition: parseFloat(
-                (CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(1)
-              ),
-            };
-          })
-      );
+      return collection
+        ?.filter(({ publicationCode, issueNumber }) =>
+          getEstimation(publicationCode, issueNumber)
+        )
+        .map(({ publicationCode, issueNumber, condition }) => {
+          const estimation = getEstimation(publicationCode, issueNumber);
+          return {
+            publicationCode,
+            issueNumber,
+            condition,
+            estimation,
+            estimationGivenCondition: parseFloat(
+              (CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(1)
+            ),
+          };
+        });
     },
 
     quotationSum: ({ quotedIssues }) =>
