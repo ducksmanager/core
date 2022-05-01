@@ -1,77 +1,88 @@
 <template>
   <div>
-    <div
-      v-if="!username"
-      class="container-fluid py-5"
-    >
-      <p class="col-md-8 fs-4" /><div id="dm-loves-inducks">
+    <div v-if="!username" class="container-fluid py-5">
+      <p class="col-md-8 fs-4" />
+      <div id="dm-loves-inducks">
         <div
           id="dm-logo-small"
-          :style="{backgroundImage: `url(${imagePath}/logo_small.png)`}"
+          :style="{ backgroundImage: `url(${imagePath}/logo_small.png)` }"
         >
           &nbsp;
         </div>
         <div
           id="loves"
-          :style="{backgroundImage: `url(${imagePath}/icons/heart.png)`}"
+          :style="{ backgroundImage: `url(${imagePath}/icons/heart.png)` }"
         >
           &nbsp;
         </div>
         <div
           id="inducks-logo"
-          :style="{backgroundImage: `url(${imagePath}/inducks_logo.png)`}"
+          :style="{ backgroundImage: `url(${imagePath}/inducks_logo.png)` }"
         >
           &nbsp;
         </div>
       </div>
       <p>
-        {{ $t("DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.")
+        {{
+          $t(
+            "DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney."
+          )
         }}
       </p>
       <p>
         <span
-          v-html="$t(`Si vous possédez déjà une collection Inducks, vous pouvez <b>l'importer sur DucksManager en quelques clics.</b>`)"
-        /><br>
-        {{ $t("Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez \"{0}\" dans le menu.", [$t("Collection Inducks")])
+          v-html="
+            $t(
+              `Si vous possédez déjà une collection Inducks, vous pouvez <b>l'importer sur DucksManager en quelques clics.</b>`
+            )
+          "
+        /><br />
+        {{
+          $t(
+            'Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez "{0}" dans le menu.',
+            [$t("Collection Inducks")]
+          )
         }}
       </p>
       <p>
-        <b-button
-          size="lg"
-          variant="primary"
-          :href="$r('/signup')"
-        >
+        <b-button size="lg" variant="primary" :href="r('/signup')">
           {{ $t("Inscription") }}
         </b-button>
-        <b-button
-          size="lg"
-          variant="primary"
-          :href="$r('/login')"
-        >
+        <b-button size="lg" variant="primary" :href="r('/login')">
           {{ $t("Connexion") }}
         </b-button>
       </p>
     </div>
-    <form
-      v-else-if="step === 1"
-      id="inducks-import"
-      method="post"
-      action=""
-    >
-      <b-alert
-        show
-        variant="info"
-      >
-        <div>{{ $t("Cette page vous permet d'importer votre collection Inducks dans DucksManager.") }}</div>
+    <form v-else-if="step === 1" id="inducks-import" method="post" action="">
+      <b-alert show variant="info">
+        <div>
+          {{
+            $t(
+              "Cette page vous permet d'importer votre collection Inducks dans DucksManager."
+            )
+          }}
+        </div>
         {{ $t("Pour cela, suivez les étapes suivantes :") }}
         <ol>
-          <li>{{ $t("Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks.") }}</li>
+          <li>
+            {{
+              $t(
+                "Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks."
+              )
+            }}
+          </li>
           <li
-            v-html="$t(`Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>`)"
+            v-html="
+              $t(
+                `Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>`
+              )
+            "
           />
           <li>{{ $t("Sélectionnez toute la liste, puis copiez-la.") }}</li>
           <li>{{ $t("Collez ce texte dans la partie droite de la page.") }}</li>
-          <li>{{ $t(`Cliquez sur le bouton "Importer" en bas de la page.`) }}</li>
+          <li>
+            {{ $t(`Cliquez sur le bouton "Importer" en bas de la page.`) }}
+          </li>
         </ol>
       </b-alert>
       <b-row class="justify-content-center">
@@ -80,36 +91,30 @@
         </b-col>
         <b-col sm="6">
           <b-form-group>
-            <b-textarea
-              id="inducks-collection"
-              v-model="rawData"
-            />
+            <b-form-textarea id="inducks-collection" v-model="rawData" />
           </b-form-group>
-          <b-button
-            @click="processRawData()"
-            v-text="$t('Importer')"
-          />
+          <b-button @click="processRawData()" v-text="$t('Importer')" />
         </b-col>
       </b-row>
     </form>
     <template v-else-if="step === 2">
-      <b-alert
-        v-if="issuesImportable"
-        show
-        variant="info"
-      >
-        <div>{{ issuesImportable.length }} {{ $t("numéros peuvent être importés.") }}</div>
-        <div
-          v-if="hasPublicationNames"
-          role="tablist"
-        >
+      <b-alert v-if="issuesImportable" show variant="info">
+        <div>
+          {{ issuesImportable.length }}
+          {{ $t("numéros peuvent être importés.") }}
+        </div>
+        <div v-if="hasPublicationNames" role="tablist">
           <Accordion
-            v-for="(issues, publicationCode) in groupByPublicationCode(issuesImportable)"
-            :id="publicationCode"
-            :key="publicationCode"
+            v-for="(issues, publicationCode) in groupByPublicationCode(
+              issuesImportable
+            )"
+            :id="publicationCode.replace('/', '-')"
+            :key="publicationCode.replace('/', '-')"
             :visible="expandedPublicationAccordion === publicationCode"
             accordion-group-id="import-accordion"
-            @bv::toggle::collapse="expandedPublicationAccordion = publicationCode"
+            @bv::toggle::collapse="
+              expandedPublicationAccordion = publicationCode
+            "
           >
             <template #header>
               <Publication
@@ -119,10 +124,7 @@
               x {{ issues.length }}
             </template>
             <template #content>
-              <div
-                v-for="issue in issues"
-                :key="issue"
-              >
+              <div v-for="issue in issues" :key="issue">
                 {{ $t("Numéro") }} {{ issue }}
               </div>
             </template>
@@ -131,27 +133,37 @@
         </div>
       </b-alert>
       <b-alert
-        v-if="issuesNotReferenced && issuesNotReferenced.length || issuesAlreadyInCollection && issuesAlreadyInCollection.length"
+        v-if="issuesNotReferenced?.length || issuesAlreadyInCollection?.length"
         show
         variant="warning"
       >
-        <template v-if="issuesAlreadyInCollection && issuesAlreadyInCollection.length">
+        <template v-if="issuesAlreadyInCollection?.length">
           <div>
             {{ issuesAlreadyInCollection.length }}
-            {{ $t("numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.") }}
+            {{
+              $t(
+                "numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection."
+              )
+            }}
           </div>
           <Accordion
             id="already-in-collection"
             accordion-group-id="import-accordion-not-importable"
-            :visible="expandedNotImportableAccordion === 'already-in-collection'"
-            @bv::toggle::collapse="expandedNotImportableAccordion = 'already-in-collection'"
+            :visible="
+              expandedNotImportableAccordion === 'already-in-collection'
+            "
+            @bv::toggle::collapse="
+              expandedNotImportableAccordion = 'already-in-collection'
+            "
           >
             <template #header>
               {{ $t("Numéros déjà dans la collection") }}
             </template>
             <template #content>
               <div
-                v-for="(issueNumbers, publicationCode) in groupByPublicationCode(issuesAlreadyInCollection)"
+                v-for="(
+                  issueNumbers, publicationCode
+                ) in groupByPublicationCode(issuesAlreadyInCollection)"
                 :key="publicationCode"
               >
                 <div
@@ -168,10 +180,14 @@
             </template>
           </Accordion>
         </template>
-        <template v-if="issuesNotReferenced && issuesNotReferenced.length">
+        <template v-if="issuesNotReferenced?.length">
           <div>
             {{ issuesNotReferenced.length }}
-            {{ $t("numéros ne peuvent pas être importés car ils n'existent plus sur Inducks.") }}
+            {{
+              $t(
+                "numéros ne peuvent pas être importés car ils n'existent plus sur Inducks."
+              )
+            }}
           </div>
           <Accordion
             id="not-found"
@@ -184,7 +200,9 @@
             </template>
             <template #content>
               <div
-                v-for="(issueNumbers, publicationCode) in groupByPublicationCode(issuesNotReferenced)"
+                v-for="(
+                  issueNumbers, publicationCode
+                ) in groupByPublicationCode(issuesNotReferenced)"
                 :key="publicationCode"
               >
                 <Issue
@@ -199,7 +217,7 @@
           </Accordion>
         </template>
       </b-alert>
-      <template v-if="issuesImportable && issuesImportable.length">
+      <template v-if="issuesImportable?.length">
         <b-form-group>
           <label for="condition">{{ $t("Etat") }}</label>
           <b-form-select
@@ -208,11 +226,10 @@
             class="mb-3"
           >
             <template #first>
-              <b-form-select-option
-                :value="null"
-                disabled
-              >
-                {{ $t("Choisissez un état par défaut pour les nouveaux numéros") }}
+              <b-form-select-option :value="null" disabled>
+                {{
+                  $t("Choisissez un état par défaut pour les nouveaux numéros")
+                }}
               </b-form-select-option>
             </template>
 
@@ -225,27 +242,21 @@
             </b-form-select-option>
           </b-form-select>
         </b-form-group>
-        <b-progress
-          v-if="importProgress"
-          height="2rem"
-        >
+        <b-progress v-if="importProgress" height="2rem">
           <b-progress-bar
             :value="importProgress"
             :label="`${parseInt(importProgress)}%`"
           />
         </b-progress>
-        <b-button
-          v-else
-          @click="importIssues"
-        >
-          {{ $t("Importer") }} {{ issuesImportable.length }} {{ $tc("numéro | numéros", issuesImportable.length) }}
+        <b-button v-else @click="importIssues">
+          {{ $t("Importer") }} {{ issuesImportable.length }}
+          {{ $tc("numéro | numéros", issuesImportable.length) }}
         </b-button>
       </template>
     </template>
   </div>
 </template>
-<script>
-import { mapActions, mapState } from "pinia";
+<script setup>
 import Accordion from "../components/Accordion";
 import Publication from "../components/Publication";
 import Issue from "../components/Issue";
@@ -255,139 +266,152 @@ import {
   BButton,
   BCol,
   BCollapse,
-  BFormGroup, BFormSelect,
-  BFormSelectOption, BFormTextarea,
+  BFormGroup,
+  BFormSelect,
+  BFormSelectOption,
+  BFormTextarea,
   BProgress,
   BProgressBar,
-  BRow
+  BRow,
 } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
-import {user} from "../composables/global";
-import {collection} from "../stores/collection";
+import { user } from "../composables/global";
+const { collection: collectionStore } = require("../stores/collection");
+import { useI18n } from "vue-i18n";
+import { computed, watch, ref } from "vue";
+import { collection } from "../composables/collection";
+const { findInCollection } = collection();
 
-const {username} = user()
+const { t: $t } = useI18n(),
+  { imagePath } = require("../composables/imagePath"),
+  step = ref(1),
+  rawData = ref(""),
+  expandedPublicationAccordion = ref(null),
+  expandedNotImportableAccordion = ref(null),
+  hasPublicationNames = ref(false),
+  hasIssueNumbers = ref(false),
+  issueDefaultCondition = ref("bon"),
+  issuesToImport = ref(null),
+  issuesNotReferenced = ref(null),
+  issuesAlreadyInCollection = ref(null),
+  issuesImportable = ref(null),
+  importProgress = ref(0),
+  { username } = user(),
+  publicationNames = computed(() => coa().publicationNames),
+  issueNumbers = computed(() => coa().issueNumbers),
+  issueCodeDetails = computed(() => coa().issueCodeDetails),
+  conditions = {
+    mauvais: $t("En mauvais état"),
+    bon: $t("En bon état"),
+  },
+  importDataReady = computed(
+    () =>
+      issuesToImport.value &&
+      collectionStore().collection &&
+      hasIssueNumbers.value
+  ),
+  { r } = l10n(),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  fetchIssueNumbers = coa().fetchIssueNumbers,
+  fetchIssueCodesDetails = coa().fetchIssueCodesDetails,
+  processRawData = async () => {
+    const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
+    const issueCodes = rawData.value
+      .split("\n")
+      .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
+      .map((row) => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
+    await fetchIssueCodesDetails(issueCodes);
 
-export default {
-  name: "InducksImport",
-  components: { Accordion, Publication, Issue, BButton, BAlert, BRow, BCol, BFormGroup, BTextarea: BFormTextarea, BCollapse, BFormSelect, BFormSelectOption, BProgress, BProgressBar},
-
-  data: () => ({
-    step: 1,
-    rawData: "",
-    expandedPublicationAccordion: null,
-    expandedNotImportableAccordion: null,
-    hasPublicationNames: false,
-    hasIssueNumbers: false,
-    issueDefaultCondition: "bon",
-    issuesToImport: null,
-    issuesNotReferenced: null,
-    issuesAlreadyInCollection: null,
-    issuesImportable: null,
-    importProgress: 0,
-    username
-  }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames", "issueNumbers", "issueCodeDetails"]),
-    ...mapState(collection, ["collection"]),
-
-    conditions() {
-      return {
-        mauvais: this.$t("En mauvais état"),
-        bon: this.$t("En bon état")
-      };
-    },
-
-    importDataReady() {
-      return this.issuesToImport && this.collection && this.hasIssueNumbers;
+    const issues = issueCodes
+      .filter((issueCode) => issueCodeDetails.value[issueCode])
+      .reduce(
+        (acc, issueCode) => [...acc, issueCodeDetails.value[issueCode]],
+        []
+      );
+    if (issues.length) {
+      issuesToImport.value = issues;
+      step.value = 2;
     }
   },
-
-  watch: {
-    importDataReady(newValue) {
-      if (newValue) {
-        const vm = this;
-        vm.issuesNotReferenced = [];
-        vm.issuesAlreadyInCollection = [];
-        vm.issuesImportable = [];
-        this.issuesToImport.forEach(issue => {
-          const { publicationcode, issuenumber } = issue;
-          if (!vm.issueNumbers[publicationcode].includes(issuenumber.replace(/[ ]+/g, ' '))) {
-            vm.issuesNotReferenced.push(issue);
-          } else if (vm.findInCollection(publicationcode, issuenumber)) {
-            vm.issuesAlreadyInCollection.push(issue);
-          } else {
-            vm.issuesImportable.push(issue);
-          }
-        });
-        this.issuesNotReferenced = [...new Set(this.issuesNotReferenced)];
-        this.issuesAlreadyInCollection = [...new Set(this.issuesAlreadyInCollection)];
-        this.issuesImportable = [...new Set(this.issuesImportable)];
-      }
-    },
-    async issuesToImport(newValue) {
-      const publicationCodes = newValue.reduce((acc, { publicationcode }) => [...acc, publicationcode], []);
-      await this.fetchPublicationNames(publicationCodes);
-      this.hasPublicationNames = true;
-      await this.fetchIssueNumbers(publicationCodes);
-      this.hasIssueNumbers = true;
-    }
-  },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    ...mapActions(coa, ["fetchPublicationNames", "fetchIssueNumbers", "fetchIssueCodesDetails"]),
-    async processRawData() {
-      const vm = this;
-      const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
-      const issueCodes = this.rawData
-        .split("\n")
-        .filter(row => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
-        .map(row => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
-      await this.fetchIssueCodesDetails(issueCodes);
-
-      const issues = issueCodes
-        .filter(issueCode => vm.issueCodeDetails[issueCode])
-        .reduce((acc, issueCode) => ([
-          ...acc,
-          vm.issueCodeDetails[issueCode]
-        ]), []);
-      if (issues.length) {
-        this.issuesToImport = issues;
-        this.step = 2;
-      }
-    },
-
-    groupByPublicationCode(issues) {
-      return issues && issues.reduce((acc, { publicationcode, issuenumber }) => ({
+  groupByPublicationCode = (issues) =>
+    issues?.reduce(
+      (acc, { publicationcode, issuenumber }) => ({
         ...acc,
-        [publicationcode]: [...new Set([...(acc[publicationcode] || []), issuenumber.replace(" ", "")])]
-      }), {});
-    },
-
-    async importIssues() {
-      const importableIssuesByPublicationCode = this.groupByPublicationCode(this.issuesImportable);
-      for (let publicationCode in importableIssuesByPublicationCode) {
-        if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
-          await axios.post("/api/collection/issues", {
-            publicationCode: publicationCode,
-            issueNumbers: importableIssuesByPublicationCode[publicationCode],
-            condition: this.issueDefaultCondition,
-            istosell: "do_not_change",
-            purchaseId: "do_not_change"
-          });
-          this.importProgress += 100 / Object.keys(importableIssuesByPublicationCode).length;
-        }
+        [publicationcode]: [
+          ...new Set([
+            ...(acc[publicationcode] || []),
+            issuenumber.replace(" ", ""),
+          ]),
+        ],
+      }),
+      {}
+    ),
+  importIssues = async () => {
+    const importableIssuesByPublicationCode = groupByPublicationCode(
+      issuesImportable.value
+    );
+    for (let publicationCode in importableIssuesByPublicationCode) {
+      if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
+        await axios.post("/api/collection/issues", {
+          publicationCode: publicationCode,
+          issueNumbers: importableIssuesByPublicationCode[publicationCode],
+          condition: issueDefaultCondition.value,
+          istosell: "do_not_change",
+          purchaseId: "do_not_change",
+        });
+        importProgress.value +=
+          100 / Object.keys(importableIssuesByPublicationCode).length;
       }
-      window.location.replace(this.$r("/collection/show"));
+    }
+    window.location.replace(r("/collection/show"));
+  };
+
+watch(
+  () => importDataReady.value,
+  (newValue) => {
+    if (newValue) {
+      issuesNotReferenced.value = [];
+      issuesAlreadyInCollection.value = [];
+      issuesImportable.value = [];
+      issuesToImport.value.forEach((issue) => {
+        const { publicationcode, issuenumber } = issue;
+        if (
+          !issueNumbers.value[publicationcode].includes(
+            issuenumber.replace(/[ ]+/g, " ")
+          )
+        ) {
+          issuesNotReferenced.value.push(issue);
+        } else if (findInCollection(publicationcode, issuenumber)) {
+          issuesAlreadyInCollection.value.push(issue);
+        } else {
+          issuesImportable.value.push(issue);
+        }
+      });
+      issuesNotReferenced.value = [...new Set(issuesNotReferenced.value)];
+      issuesAlreadyInCollection.value = [
+        ...new Set(issuesAlreadyInCollection.value),
+      ];
+      issuesImportable.value = [...new Set(issuesImportable.value)];
     }
   }
-};
+);
+watch(
+  () => issuesToImport.value,
+  async (newValue) => {
+    const publicationCodes = newValue.reduce(
+      (acc, { publicationcode }) => [...acc, publicationcode],
+      []
+    );
+    await fetchPublicationNames(publicationCodes);
+    hasPublicationNames.value = true;
+    await fetchIssueNumbers(publicationCodes);
+    hasIssueNumbers.value = true;
+  }
+);
 </script>
 
 <style scoped lang="scss">
-
 .jumbotron {
   background: white;
   color: black;
@@ -430,7 +454,8 @@ export default {
   }
 }
 
-iframe, textarea {
+iframe,
+textarea {
   height: 400px !important;
   width: 100%;
 }

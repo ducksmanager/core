@@ -1,6 +1,6 @@
 <template>
   <div id="recently">
-    <h4>{{ $t('Récemment sur DucksManager...') }}</h4>
+    <h4>{{ $t("Récemment sur DucksManager...") }}</h4>
     <div id="events">
       <template v-if="isLoaded">
         <Event
@@ -11,92 +11,81 @@
           <Ago :timestamp="event.timestamp" />
         </Event>
       </template>
-      <span v-else>{{ $t('Chargement...') }}</span>
+      <span v-else>{{ $t("Chargement...") }}</span>
     </div>
   </div>
 </template>
 
-<script>
-import {mapState, mapActions} from "pinia";
-import medalMixin from "../mixins/medalMixin";
+<script setup>
 import Ago from "../components/Ago";
 import Event from "../components/Event";
 import { users } from "../stores/users";
 import { coa } from "../stores/coa";
-import {ongoingRequests} from "../stores/ongoing-requests";
+import { ongoingRequests } from "../stores/ongoing-requests";
+import { computed, onMounted, watch, ref } from "vue";
 
-export default {
-  name: "RecentEvents",
-
-  components: {
-    Event,
-    Ago
-  },
-  mixins: [medalMixin],
-
-  data: () => ({
-    isLoaded: false,
-    hasFreshEvents: false,
-  }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames"]),
-    ...mapState(users, ["stats", "points", "events"]),
-    ...mapState(ongoingRequests, ["numberOfOngoingAjaxCalls"]),
-
-    eventUserIds() {
-      return this.events && this.events
-        .reduce(
-          (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
-          []
-        )
-        .filter(userId => !!userId)
-    }
-  },
-
-  watch: {
-    numberOfOngoingAjaxCalls: {
-      immediate: true,
-      handler: async function (newValue) {
-        const vm = this
-        if (newValue === 0 || newValue === null) {
-          setTimeout(async () => {
-            if (!vm.hasFreshEvents && (vm.numberOfOngoingAjaxCalls === 0 || vm.numberOfOngoingAjaxCalls === null)) { // Still no ongoing call after 1 second
-              await this.fetchEventsAndAssociatedData(true)
-              this.hasFreshEvents = true
-            }
-          }, 1000)
-        }
-      }
-    }
-  },
-
-  async mounted() {
-    await this.fetchEventsAndAssociatedData(false)
-    this.isLoaded = true
-  },
-
-  methods: {
-    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions(users, ["fetchEvents", "fetchStats"]),
-
-    async fetchEventsAndAssociatedData(clearCacheEntry) {
-      this.hasFreshEvents = await this.fetchEvents(clearCacheEntry)
-
-      await this.fetchPublicationNames(
-        this.events
-          .filter(({publicationCode}) => publicationCode)
-          .map(({publicationCode}) => publicationCode)
-          .concat(
-            this.events.filter(({edges}) => edges)
-              .reduce((acc, {edges}) => ([...acc, ...edges.map(({publicationCode}) => publicationCode)]), [])
-          )
+const isLoaded = ref(false),
+  hasFreshEvents = ref(false),
+  publicationNames = computed(() => coa().publicationNames),
+  stats = computed(() => users().stats),
+  points = computed(() => users().points),
+  events = computed(() => users().events),
+  numberOfOngoingAjaxCalls = computed(
+    () => ongoingRequests().numberOfOngoingAjaxCalls
+  ),
+  eventUserIds = computed(() =>
+    events.value
+      ?.reduce(
+        (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
+        []
       )
+      .filter((userId) => !!userId)
+  ),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  fetchEvents = users().fetchEvents,
+  fetchStats = users().fetchStats,
+  fetchEventsAndAssociatedData = async (clearCacheEntry) => {
+    hasFreshEvents.value = await fetchEvents(clearCacheEntry);
 
-      await this.fetchStats(this.eventUserIds, clearCacheEntry)
+    await fetchPublicationNames(
+      events.value
+        .filter(({ publicationCode }) => publicationCode)
+        .map(({ publicationCode }) => publicationCode)
+        .concat(
+          events.value
+            .filter(({ edges }) => edges)
+            .reduce(
+              (acc, { edges }) => [
+                ...acc,
+                ...edges.map(({ publicationCode }) => publicationCode),
+              ],
+              []
+            )
+        )
+    );
+
+    await fetchStats(eventUserIds.value, clearCacheEntry);
+  };
+
+watch(
+  () => numberOfOngoingAjaxCalls.value,
+  async (newValue) => {
+    if (newValue === 0) {
+      setTimeout(async () => {
+        if (!hasFreshEvents.value && numberOfOngoingAjaxCalls.value === 0) {
+          // Still no ongoing call after 1 second
+          await fetchEventsAndAssociatedData(true);
+          hasFreshEvents.value = true;
+        }
+      }, 1000);
     }
-  },
-}
+  }, { immediate: true}
+);
+
+onMounted(async () => {
+  await fetchEventsAndAssociatedData(false);
+  isLoaded.value = true;
+});
 </script>
 
 <style scoped lang="scss">
@@ -115,7 +104,7 @@ export default {
 
 @media (max-width: 767px) {
   #recently {
-    display: none
+    display: none;
   }
 }
 </style>

@@ -1,14 +1,6 @@
 <template>
-  <form
-    v-if="user"
-    method="post"
-  >
-    <b-alert
-      v-if="isSuccess"
-      variant="success"
-    >
-      {{ $t("OK") }} !
-    </b-alert>
+  <form v-if="user" method="post">
+    <b-alert v-if="isSuccess" variant="success"> {{ $t("OK") }} ! </b-alert>
 
     <h5>{{ $t("Adresse e-mail") }}</h5>
     <Errorable id="email">
@@ -21,17 +13,23 @@
       />
     </Errorable>
 
-    <h5>{{ $t("Phrase de présentation") }} <sup>{{ $t('Nouveau !') }}</sup></h5>
-    <b-alert
-      variant="info"
-      show
-      class="mb-0"
-    >
+    <h5>
+      {{ $t("Phrase de présentation") }} <sup>{{ $t("Nouveau !") }}</sup>
+    </h5>
+    <b-alert variant="info" show class="mb-0">
       <template v-if="hasRequestedPresentationSentence">
-        {{ $t('Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu\'elle sera validée.') }}
+        {{
+          $t(
+            "Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu'elle sera validée."
+          )
+        }}
       </template>
       <template v-else>
-        {{ $t('Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés.') }}
+        {{
+          $t(
+            "Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés."
+          )
+        }}
       </template>
     </b-alert>
     <Errorable id="presentationSentenceRequest">
@@ -41,7 +39,9 @@
         :value="user.presentationSentence"
         name="presentationSentenceRequest"
         maxlength="100"
-        :placeholder="$t('Présentez-vous en quelques mots (100 caractères maximum)')"
+        :placeholder="
+          $t('Présentez-vous en quelques mots (100 caractères maximum)')
+        "
         @input="user.presentationSentenceRequest = $event"
       />
     </Errorable>
@@ -88,11 +88,7 @@
       {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
     </b-form-checkbox>
 
-    <b-button
-      variant="success"
-      size="xl"
-      type="submit"
-    >
+    <b-button variant="success" size="xl" type="submit">
       {{ $t("Valider") }}
     </b-button>
 
@@ -100,18 +96,12 @@
       {{ $t("Zone danger") }}
     </h5>
     <div>
-      <b-button
-        variant="danger"
-        @click="emptyCollection"
-      >
+      <b-button variant="danger" @click="emptyCollection">
         {{ $t("Vider ma liste de numéros") }}
       </b-button>
     </div>
     <div>
-      <b-button
-        variant="danger"
-        @click="deleteAccount"
-      >
+      <b-button variant="danger" @click="deleteAccount">
         {{ $t("Supprimer mon compte DucksManager") }}
       </b-button>
     </div>
@@ -121,45 +111,58 @@
 <script setup>
 import Errorable from "../../components/Errorable";
 import axios from "axios";
-import {BAlert, BButton, BFormCheckbox, BFormInput} from "bootstrap-vue-3";
+import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
 import { form } from "../../stores/form";
 import { collection } from "../../stores/collection";
 import { l10n } from "../../stores/l10n";
-import {computed, onMounted} from "vue";
+import { computed, onMounted } from "vue";
 const props = defineProps({
   errors: { type: String, default: "" },
   success: { type: String, default: null },
   hasrequestedpresentationsentence: { type: String, default: null },
-})
+});
 
-const user = computed(() => collection().user)
-const isSuccess = computed(() => props.success === null ? null : parseInt(props.success) === 1)
-const hasRequestedPresentationSentence = computed(() => props.hasrequestedpresentationsentence === null ? null : parseInt(props.hasrequestedpresentationsentence) === 1);
+const user = computed(() => collection().user);
+const isSuccess = computed(() =>
+  props.success === null ? null : parseInt(props.success) === 1
+);
+const hasRequestedPresentationSentence = computed(() =>
+  props.hasrequestedpresentationsentence === null
+    ? null
+    : parseInt(props.hasrequestedpresentationsentence) === 1
+);
 
-const {$r: r } = l10n()
+const { r } = l10n();
 
 onMounted(async () => {
   await collection().loadUser();
   form().addErrors(JSON.parse(props.errors));
-})
+});
 
-const emptyCollection = async() => {
+const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await axios.delete(`/collection`);
     window.location.replace(r("/collection/show"));
   }
-}
+};
 
-const deleteAccount = async() => {
-  if (confirm(t("Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?"))) {
+const deleteAccount = async () => {
+  if (
+    confirm(
+      t(
+        "Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?"
+      )
+    )
+  ) {
     await axios.post(`/collection/empty`);
     window.location.replace(r("/logout"));
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
-h5, .btn {
+h5,
+.btn {
   margin-top: 20px;
 }
 </style>

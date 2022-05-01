@@ -1,19 +1,12 @@
 <template>
-  <div
-    v-if="publicationName && purchases"
-    class="mt-4"
-  >
+  <div v-if="publicationName && purchases" class="mt-4">
     <Publication
       size="xl"
       :publicationcode="publicationcode"
       :publicationname="publicationName"
     />
     <div v-if="issues">
-      <div
-        v-if="!duplicatesOnly"
-        v-once
-        class="issue-filter"
-      >
+      <div v-if="!duplicatesOnly" v-once class="issue-filter">
         <table>
           <tr
             v-for="conditionFilter in ['possessed', 'missing']"
@@ -24,17 +17,20 @@
                 :id="`show-${conditionFilter}`"
                 v-model="filter[conditionFilter]"
                 type="checkbox"
-              >
+              />
             </td>
             <td>
-              <label
-                :for="`show-${conditionFilter}`"
-              >
-                <template v-if="conditionFilter === 'possessed'">{{ $t("Afficher les numéros possédés") }}</template>
-                <template v-else-if="conditionFilter === 'missing'">{{ $t("Afficher les numéros manquants") }}
+              <label :for="`show-${conditionFilter}`">
+                <template v-if="conditionFilter === 'possessed'">{{
+                  $t("Afficher les numéros possédés")
+                }}</template>
+                <template v-else-if="conditionFilter === 'missing'"
+                  >{{ $t("Afficher les numéros manquants") }}
                 </template>
                 ({{
-                  conditionFilter === "possessed" ? ownedIssuesCount : issues.length - ownedIssuesCount
+                  conditionFilter === "possessed"
+                    ? ownedIssuesCount
+                    : issues.length - ownedIssuesCount
                 }})
               </label>
             </td>
@@ -50,7 +46,10 @@
           show
           variant="warning"
         >
-          {{ $t("Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous.")
+          {{
+            $t(
+              "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous."
+            )
           }}
           <ul>
             <li
@@ -67,16 +66,18 @@
             </li>
           </ul>
         </b-alert>
-        <b-alert
-          v-if="!duplicatesOnly"
-          v-once
-          show
-          variant="info"
-          class="mb-0"
-        >
-          {{ $t("Cliquez sur les numéros que vous souhaitez ajouter à votre collection,") }}
-          <span v-if="isTouchScreen">{{ $t("puis faites un appui long pour indiquer son état et validez.") }}</span>
-          <span v-else>{{ $t("puis faites un clic droit pour indiquer son état et validez.") }}</span>
+        <b-alert v-if="!duplicatesOnly" v-once show variant="info" class="mb-0">
+          {{
+            $t(
+              "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
+            )
+          }}
+          <span v-if="isTouchScreen">{{
+            $t("puis faites un appui long pour indiquer son état et validez.")
+          }}</span>
+          <span v-else>{{
+            $t("puis faites un clic droit pour indiquer son état et validez.")
+          }}</span>
         </b-alert>
         <Book
           v-if="currentIssueOpened"
@@ -86,32 +87,44 @@
         />
         <div v-contextmenu:contextmenu>
           <div
-            v-for="({issueNumber, title, userCopies}, idx) in filteredIssues"
+            v-for="({ issueNumber, title, userCopies }, idx) in filteredIssues"
             :key="issueNumber"
             :class="{
               issue: true,
               [`issue-${userCopies.length ? 'possessed' : 'missing'}`]: true,
               preselected: preselected.includes(issueNumber),
-              selected: selected.includes(issueNumber)
+              selected: selected.includes(issueNumber),
             }"
             :name="issueNumber"
-            @mousedown.self.left="preselectedIndexStart = preselectedIndexEnd = idx"
+            @mousedown.self.left="
+              preselectedIndexStart = preselectedIndexEnd = idx
+            "
             @mouseup.self.left="updateSelected"
-            @mouseover="preselectedIndexEnd = preselectedIndexStart === null ? null : idx"
+            @mouseover="
+              preselectedIndexEnd = preselectedIndexStart === null ? null : idx
+            "
           >
             <span>
               <a :name="issueNumber" />
               <b-icon-eye-fill
                 :id="`issue-details-${issueNumber}`"
-                :class="{'mx-2': true, [`can-show-book-${hoveredIssueHasCover}`]: true}"
+                :class="{
+                  'mx-2': true,
+                  [`can-show-book-${hoveredIssueHasCover}`]: true,
+                }"
                 :alt="$t('Voir')"
-                @mouseover="hoveredIssueNumber=issueNumber"
-                @mouseout="hoveredIssueNumber=null;hoveredIssueHasCover=undefined"
-                @click.prevent="currentIssueOpened = hoveredIssueHasCover ? {publicationcode, issueNumber}: null"
+                @mouseover="hoveredIssueNumber = issueNumber"
+                @mouseout="
+                  hoveredIssueNumber = null;
+                  hoveredIssueHasCover = undefined;
+                "
+                @click.prevent="
+                  currentIssueOpened = hoveredIssueHasCover
+                    ? { publicationcode, issueNumber }
+                    : null
+                "
               />
-              <span
-                class="issue-text"
-              >
+              <span class="issue-text">
                 {{ $t("n°") }}{{ issueNumber }}
                 <span class="issue-title">{{ title }}</span>
               </span>
@@ -119,14 +132,19 @@
             <div class="issue-details-wrapper">
               <div class="issue-copies">
                 <div
-                  v-for="({condition, purchaseId}, copyIndex) in userCopies"
+                  v-for="({ condition, purchaseId }, copyIndex) in userCopies"
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
                   <b-icon-calendar
-                    v-if="purchaseId && purchases.find(({id}) => id === purchaseId)"
+                    v-if="
+                      purchaseId &&
+                      purchases.find(({ id }) => id === purchaseId)
+                    "
                     class="issue-purchase-date"
-                    :title="`${$t('Acheté le')} ${purchases.find(({id}) => id === purchaseId).date}`"
+                    :title="`${$t('Acheté le')} ${
+                      purchases.find(({ id }) => id === purchaseId).date
+                    }`"
                   />
                   <Condition
                     v-if="condition"
@@ -142,7 +160,7 @@
                   disabled
                   :checked="selected.includes(issueNumber)"
                   @click.prevent="false"
-                >
+                />
               </div>
             </div>
           </div>
@@ -161,18 +179,17 @@
     </div>
   </div>
   <div v-else-if="!publicationNameLoading">
-    <b-alert
-      variant="danger"
-      show
-    >
+    <b-alert variant="danger" show>
       <div class="mb-4">
-        {{ $t("Aucun numéro n'est répertorié pour") }} {{ publicationcode.split("/")[1] }}
-        ({{ $t("Pays de publication") }} : {{
-          country
-        }})
+        {{ $t("Aucun numéro n'est répertorié pour") }}
+        {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
+        {{ country }})
       </div>
       <div v-if="userIssuesForPublication.length">
-        {{ $t("Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :")
+        {{
+          $t(
+            "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :"
+          )
         }}
         <ul>
           <li
@@ -192,9 +209,7 @@
     </b-alert>
   </div>
 
-  <v-contextmenu
-    ref="contextmenu"
-  >
+  <v-contextmenu ref="contextmenu">
     <ContextMenu
       ref="contextMenu"
       :key="contextMenuKey"
@@ -213,24 +228,23 @@
 import { mapActions, mapState } from "pinia";
 import ContextMenu from "./ContextMenu";
 import axios from "axios";
-import {condition} from "../composables/condition";
-import {collection} from "../composables/collection";
+import { condition } from "../composables/condition";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Book from "./Book";
 import Condition from "./Condition";
-import {BAlert} from "bootstrap-vue-3";
-import {BIconEyeFill, BIconCalendar} from "bootstrap-icons-vue";
+import { BAlert } from "bootstrap-vue-3";
+import { BIconEyeFill, BIconCalendar } from "bootstrap-icons-vue";
 import Publication from "./Publication";
-const { collection: collectionStore } = require("../stores/collection")
+const { collection: collectionStore } = require("../stores/collection");
 import { coa } from "../stores/coa";
-import {Contextmenu, ContextmenuItem, directive} from "v-contextmenu";
+import { Contextmenu, ContextmenuItem, directive } from "v-contextmenu";
 
-let conditions
+let conditions;
 
 export default {
   name: "IssueList",
   directives: {
-    'contextmenu': directive,
+    contextmenu: directive,
   },
   components: {
     [Contextmenu.name]: Contextmenu,
@@ -242,21 +256,21 @@ export default {
     IssueDetailsPopover,
     BAlert,
     BIconEyeFill,
-    BIconCalendar
+    BIconCalendar,
   },
   props: {
     publicationcode: {
       type: String,
-      required: true
+      required: true,
     },
     duplicatesOnly: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   setup() {
-    conditions = condition().conditions
+    conditions = condition().conditions;
   },
 
   data: () => ({
@@ -264,7 +278,7 @@ export default {
     publicationNameLoading: true,
     filter: {
       missing: true,
-      possessed: true
+      possessed: true,
     },
     coverUrl: null,
     issues: null,
@@ -277,13 +291,13 @@ export default {
     hoveredIssueNumber: null,
     hoveredIssueHasCover: undefined,
     currentIssueOpened: null,
-    contextMenuKey: "context-menu"
+    contextMenuKey: "context-menu",
   }),
 
   computed: {
     ...mapState(coa, ["publicationNames"]),
     ...mapState(collectionStore, { userIssues: "collection" }),
-    ...mapState(collectionStore, ["purchases"] ),
+    ...mapState(collectionStore, ["purchases"]),
 
     country() {
       return this.publicationcode.split("/")[0];
@@ -295,27 +309,31 @@ export default {
     isTouchScreen: () => window.matchMedia("(pointer: coarse)").matches,
     filteredIssues() {
       const vm = this;
-      return this.issues && this.issues.filter(({ userCopies }) =>
-        vm.filter.possessed && userCopies.length ||
-        vm.filter.missing && !userCopies.length
+      return this.issues?.filter(
+        ({ userCopies }) =>
+          (vm.filter.possessed && userCopies.length) ||
+          (vm.filter.missing && !userCopies.length)
       );
     },
     selectedIssuesCopies() {
       const vm = this;
-      return this.userIssuesForPublication
-        .filter(({ issueNumber }, idx) =>
+      return this.userIssuesForPublication.filter(
+        ({ issueNumber }, idx) =>
           vm.selected.includes(issueNumber) &&
           (vm.selected.length === 1 ||
-            vm.userIssuesForPublication
-              .some(({ issueNumber: issueNumber2 }, idx2) =>
+            vm.userIssuesForPublication.some(
+              ({ issueNumber: issueNumber2 }, idx2) =>
                 issueNumber2 === issueNumber && idx !== idx2
-              ))
-        );
+            ))
+      );
     },
 
     ownedIssuesCount() {
-      return this.issues.reduce((acc, { userCopies }) => acc + (userCopies.length ? 1 : 0), 0);
-    }
+      return this.issues.reduce(
+        (acc, { userCopies }) => acc + (userCopies.length ? 1 : 0),
+        0
+      );
+    },
   },
   watch: {
     preselectedIndexEnd() {
@@ -327,29 +345,48 @@ export default {
         if (newValue) {
           const vm = this;
 
-          this.userIssuesForPublication = newValue.filter(issue =>
-            `${issue.country}/${issue.magazine}` === vm.publicationcode)
-            .map(issue => ({
-                ...issue,
-                condition: (conditions.find(({ dbValue }) => dbValue === issue.condition) || { value: "possessed" }).value
-              })
-            );
+          this.userIssuesForPublication = newValue
+            .filter(
+              (issue) =>
+                `${issue.country}/${issue.magazine}` === vm.publicationcode
+            )
+            .map((issue) => ({
+              ...issue,
+              condition: (
+                conditions.find(
+                  ({ dbValue }) => dbValue === issue.condition
+                ) || { value: "possessed" }
+              ).value,
+            }));
 
-          const issuesWithTitles = (await axios.get(`/api/coa/list/issues/withTitle/asArray/${this.publicationcode}`)).data;
+          const issuesWithTitles = (
+            await axios.get(
+              `/api/coa/list/issues/withTitle/asArray/${this.publicationcode}`
+            )
+          ).data;
 
           this.issues = issuesWithTitles
-            .map(issue => ({
+            .map((issue) => ({
               ...issue,
-              userCopies: vm.userIssuesForPublication.filter(({ issueNumber: userIssueNumber }) => userIssueNumber === issue.issueNumber)
+              userCopies: vm.userIssuesForPublication.filter(
+                ({ issueNumber: userIssueNumber }) =>
+                  userIssueNumber === issue.issueNumber
+              ),
             }))
-            .filter(({userCopies}) => !vm.duplicatesOnly || userCopies.length > 1);
-          const coaIssueNumbers = issuesWithTitles.map(({ issueNumber }) => issueNumber);
-          this.userIssuesNotFoundForPublication = this.userIssuesForPublication
-            .filter(({ issueNumber }) => !coaIssueNumbers.includes(issueNumber));
+            .filter(
+              ({ userCopies }) => !vm.duplicatesOnly || userCopies.length > 1
+            );
+          const coaIssueNumbers = issuesWithTitles.map(
+            ({ issueNumber }) => issueNumber
+          );
+          this.userIssuesNotFoundForPublication =
+            this.userIssuesForPublication.filter(
+              ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
+            );
           this.loading = false;
         }
-      }
-    }
+      },
+    },
   },
   async mounted() {
     await this.loadPurchases();
@@ -366,20 +403,27 @@ export default {
     },
     getPreselected() {
       const vm = this;
-      if ([this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)) {
+      if (
+        [this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)
+      ) {
         return this.preselected;
       }
       return this.filteredIssues
         .map(({ issueNumber }) => issueNumber)
-        .filter((issueNumber, index) =>
-          index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
+        .filter(
+          (issueNumber, index) =>
+            index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
         );
     },
     updateSelected() {
       const vm = this;
       this.selected = this.issues
         .map(({ issueNumber }) => issueNumber)
-        .filter(issueNumber => vm.selected.includes(issueNumber) !== vm.preselected.includes(issueNumber));
+        .filter(
+          (issueNumber) =>
+            vm.selected.includes(issueNumber) !==
+            vm.preselected.includes(issueNumber)
+        );
       this.preselectedIndexStart = this.preselectedIndexEnd = null;
       this.preselected = [];
     },
@@ -389,7 +433,7 @@ export default {
         issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
         condition: conditions.find(({ value }) => value === "missing").dbValue,
         istosell: false,
-        purchaseId: null
+        purchaseId: null,
       });
     },
     async updateIssues(data) {
@@ -401,20 +445,19 @@ export default {
     async createPurchase({ date, description }) {
       await axios.post("/api/collection/purchases", {
         date,
-        description
+        description,
       });
       await this.loadPurchases(true);
     },
     async deletePurchase({ id }) {
       await axios.delete(`/api/collection/purchases/${id}`);
       await this.loadPurchases(true);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
-
 .can-show-book-undefined {
   cursor: initial;
 }
@@ -532,5 +575,4 @@ export default {
     padding-right: 0;
   }
 }
-
 </style>

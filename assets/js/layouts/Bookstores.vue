@@ -1,15 +1,15 @@
 <template>
   <div>
-    {{ $t("Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney.")
+    {{
+      $t(
+        "Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney."
+      )
     }}
-    <br><br>
+    <br /><br />
     <div v-if="!bookstores.length">
       {{ $t("Chargement...") }}
     </div>
-    <div
-      v-else
-      id="map"
-    >
+    <div v-else id="map">
       <MapboxMap
         :access-token="accessToken"
         map-style="mapbox://styles/mapbox/light-v10"
@@ -21,7 +21,7 @@
           :key="bookstore.id"
           :lng-lat="[bookstore.coordY, bookstore.coordX]"
           anchor="bottom"
-          :offset="[0,6]"
+          :offset="[0, 6]"
         >
           <MapboxPopup>
             <div>
@@ -31,24 +31,30 @@
                   {{ bookstore.address }}
                 </p>
                 <div
-                  v-for="{username, creationDate, comment} in bookstore.comments"
+                  v-for="{
+                    username,
+                    creationDate,
+                    comment,
+                  } in bookstore.comments"
                   :key="`bookstore-${bookstore.id}-comment-${creationDate}`"
                   class="mb-2"
                 >
                   <b v-if="username">{{ username }}</b>
                   <span v-else>{{ $t("un visiteur anonyme") }}</span>
-                  &nbsp;<i class="float-right">{{ formatDate(creationDate) }}</i>
+                  &nbsp;<i class="float-right">{{
+                    formatDate(creationDate)
+                  }}</i>
                   <blockquote class="px-3 clearfix">
                     {{ comment }}
                   </blockquote>
                 </div>
-                <b-alert
-                  v-if="existingBookstoreSent"
-                  variant="success"
-                  show
-                >
+                <b-alert v-if="existingBookstoreSent" variant="success" show>
                   {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
-                  {{ $t("Si votre commentaire est valide, il sera ajouté sur le site très prochainement.") }}
+                  {{
+                    $t(
+                      "Si votre commentaire est valide, il sera ajouté sur le site très prochainement."
+                    )
+                  }}
                   {{ $t("Merci pour votre contribution !") }}
                 </b-alert>
                 <form
@@ -64,11 +70,11 @@
                     minlength="50"
                     maxlength="1000"
                     type="text"
-                    :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
+                    :placeholder="
+                      $t('Commentaires (ambiance, exemples de prix,...)')
+                    "
                   />
-                  <b-button
-                    type="submit"
-                  >
+                  <b-button type="submit">
                     {{ $t("Ajouter un commentaire") }}
                   </b-button>
                   <b-button @click="existingBookstore = null">
@@ -79,45 +85,50 @@
                   v-else
                   href="javascript:void(0)"
                   @click="existingBookstore = bookstore"
-                >{{ $t("Ajouter un commentaire") }}</a>
+                  >{{ $t("Ajouter un commentaire") }}</a
+                >
               </div>
             </div>
           </MapboxPopup>
         </MapboxMarker>
       </MapboxMap>
     </div>
-    <br> <br>
+    <br />
+    <br />
     <h2>
       {{ $t("Proposer une bouquinerie") }}
     </h2>
-    {{ $t("Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !") }}
-    <br>
-    {{ $t("Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.")
+    {{
+      $t(
+        "Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !"
+      )
     }}
-    <br>
-    {{ $t("Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.") }}
-    <br> <br>
-    <b-alert
-      v-if="newBookstoreSent"
-      variant="success"
-      show
-    >
+    <br />
+    {{
+      $t(
+        "Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines."
+      )
+    }}
+    <br />
+    {{
+      $t(
+        "Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez."
+      )
+    }}
+    <br />
+    <br />
+    <b-alert v-if="newBookstoreSent" variant="success" show>
       {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
-      {{ $t("Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.") }}
+      {{
+        $t(
+          "Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement."
+        )
+      }}
       {{ $t("Merci pour votre contribution !") }}
     </b-alert>
-    <form
-      v-else
-      @submit.prevent="suggestComment(newBookstore)"
-    >
-      <input
-        v-model="newBookstore.coordX"
-        type="hidden"
-      >
-      <input
-        v-model="newBookstore.coordY"
-        type="hidden"
-      >
+    <form v-else @submit.prevent="suggestComment(newBookstore)">
+      <input v-model="newBookstore.coordX" type="hidden" />
+      <input v-model="newBookstore.coordY" type="hidden" />
       <b-form-input
         v-model="newBookstore.name"
         required
@@ -126,10 +137,7 @@
         :placeholder="$t('Nom de la bouquinerie')"
       />
 
-      <div
-        id="address"
-        class="mb-2"
-      />
+      <div id="address" class="mb-2" />
       <b-form-textarea
         v-model="newBookstore.comment"
         required
@@ -146,107 +154,97 @@
     </form>
   </div>
 </template>
-<script>
+<script setup>
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 import axios from "axios";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import {BAlert, BButton, BFormInput, BFormTextarea} from "bootstrap-vue-3";
+import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
+import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
-const newBookstore = {
-  name: null,
-  address: null,
-  comment: null,
-  coordX: null,
-  coordY: null
-};
-
-export default {
-  name: "Bookstores",
-
-  components: {
-    MapboxMap,
-    MapboxMarker,
-    MapboxPopup,
-    BAlert,
-    BFormTextarea,
-    BButton,
-    BFormInput
+const { t: $t } = useI18n(),
+  newBookstore = {
+    name: null,
+    address: null,
+    comment: null,
+    coordX: null,
+    coordY: null,
   },
-
-
-  data: () => ({
-    accessToken: "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ",
-    mapCenter: [1.73584, 46.754917],
-    bookstores: [],
-    newBookstore,
-    existingBookstore: null,
-    newBookstoreSent: false,
-    existingBookstoreSent: false
-  }),
-
-  async mounted() {
-    const vm = this;
-    await this.fetchBookstores();
-    const geocoder = new MapboxGeocoder({
-      accessToken: this.accessToken,
-      placeholder: this.$t("Adresse"),
-      types: "address",
-      proximity: { latitude: 46.754917, longitude: 1.73584 },
-      enableEventLogging: false
-    });
-    geocoder.addTo("#address");
-    window.document.querySelector('.mapboxgl-ctrl-geocoder--input').attributes.required = true
-    geocoder.on("result", ({ result: { place_name, center } }) => {
-      vm.newBookstore.address = place_name
-      ;[vm.newBookstore.coordY, vm.newBookstore.coordX] = center;
-    });
+  accessToken =
+    "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ",
+  mapCenter = [1.73584, 46.754917],
+  bookstores = ref([]),
+  existingBookstore = ref(null),
+  newBookstoreSent = ref(false),
+  existingBookstoreSent = ref(false),
+  decodeText = (object, field) => {
+    try {
+      return decodeURIComponent(escape(object[field]));
+    } catch (_) {
+      return object[field];
+    }
   },
-
-  methods: {
-    decodeText(object, field) {
-      try {
-        return decodeURIComponent(escape(object[field]));
-      } catch (_) {
-        return object[field];
-      }
-    },
-    async fetchBookstores() {
-      this.bookstores = (await axios.get("/bookstoreComment/list")).data.map(bookstore => {
-        ["name", "address"].forEach(field => {
-          bookstore[field] = this.decodeText(bookstore, field);
+  fetchBookstores = async () => {
+    bookstores.value = (await axios.get("/bookstoreComment/list")).data
+      .map((bookstore) => {
+        ["name", "address"].forEach((field) => {
+          bookstore[field] = decodeText(bookstore, field);
         });
         bookstore.comments.forEach((comment, commentNumber) => {
-          ["comment"].forEach(field => {
-            bookstore.comments[commentNumber][field] = this.decodeText(comment, field);
+          ["comment"].forEach((field) => {
+            bookstore.comments[commentNumber][field] = decodeText(
+              comment,
+              field
+            );
           });
-        })
+        });
         return bookstore;
-      }).filter(bookstore => !!bookstore);
-    },
-    async suggestComment(bookstore) {
-      if (!bookstore.id && !bookstore.coordX) {
-        window.alert(this.$t('Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'))
-        return false
-      }
-      await axios.put("/bookstoreComment/suggest", bookstore);
-      if (bookstore.id) {
-        this.existingBookstoreSent = true;
-        this.existingBookstore = null
-      }
-      else {
-        this.newBookstoreSent = true;
-      }
-    },
-    formatDate(date) {
-      if (date == null) {
-        return this.$t("il y a longtemps");
-      }
-      else {
-        return this.$t("le {date}", { date: new Date(date).toLocaleDateString() });
-      }
+      })
+      .filter((bookstore) => !!bookstore);
+  },
+  suggestComment = async (bookstore) => {
+    if (!bookstore.id && !bookstore.coordX) {
+      window.alert(
+        $t(
+          'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'
+        )
+      );
+      return false;
     }
-  }
-};
+    await axios.put("/bookstoreComment/suggest", bookstore);
+    if (bookstore.id) {
+      existingBookstoreSent.value = true;
+      existingBookstore.value = null;
+    } else {
+      newBookstoreSent.value = true;
+    }
+  },
+  formatDate = (date) => {
+    return date == null
+      ? $t("il y a longtemps")
+      : $t("le {date}", {
+          date: new Date(date).toLocaleDateString(),
+        });
+  };
+
+onMounted(async () => {
+  await fetchBookstores();
+  const geocoder = new MapboxGeocoder({
+    accessToken: accessToken,
+    placeholder: $t("Adresse"),
+    types: "address",
+    proximity: { latitude: 46.754917, longitude: 1.73584 },
+    enableEventLogging: false,
+  });
+  geocoder.addTo("#address");
+  window.document.querySelector(
+    ".mapboxgl-ctrl-geocoder--input"
+  ).attributes.required = true;
+  geocoder.on("result", ({ result: { place_name, center } }) => {
+    newBookstore.value.address = place_name;
+    [newBookstore.value.coordY, newBookstore.value.coordX] = center;
+  });
+});
 </script>
 
 <style lang="scss">

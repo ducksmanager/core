@@ -1,34 +1,55 @@
 <template>
   <v-contextmenu-group>
     <li class="header">
-      {{ $tc("{count} numéro sélectionné|{count} numéros sélectionnés", selectedIssues.length) }}
+      {{
+        $tc(
+          "{count} numéro sélectionné|{count} numéros sélectionnés",
+          selectedIssues.length
+        )
+      }}
     </li>
     <b-alert
       v-if="!editingCopies.length"
       class="text-center m-0"
       show
       variant="danger"
-      v-html="$t('Vous allez retirer tous les exemplaires<br />des numéros sélectionnés')"
+      v-html="
+        $t(
+          'Vous allez retirer tous les exemplaires<br />des numéros sélectionnés'
+        )
+      "
     />
     <b-alert
       v-if="copies.length && !isSingleIssueSelected"
       class="text-center m-0"
       show
       variant="warning"
-      v-html="$t('Vous possédez certains numéros sélectionnés<br />en plusieurs exemplaires.<br />Seul le premier exemplaire sera modifié.')"
+      v-html="
+        $t(
+          'Vous possédez certains numéros sélectionnés<br />en plusieurs exemplaires.<br />Seul le premier exemplaire sera modifié.'
+        )
+      "
     />
     <b-alert
       v-if="!selectedIssues.length"
       class="text-center m-0"
       show
       variant="warning"
-      v-html="$t('Sélectionnez un ou plusieurs numéros dans la liste<br />pour les ajouter, modifier ou supprimer de votre collection.')"
+      v-html="
+        $t(
+          'Sélectionnez un ou plusieurs numéros dans la liste<br />pour les ajouter, modifier ou supprimer de votre collection.'
+        )
+      "
     />
     <template v-else>
       <b-tabs
         v-model="currentCopyIndex"
         nav-class="copies-tabs"
-        @changed="(newTabs) => { currentCopyIndex = newTabs.length - 1 }"
+        @changed="
+          (newTabs) => {
+            currentCopyIndex = newTabs.length - 1;
+          }
+        "
       >
         <b-tab
           v-for="(copy, copyIndex) in editingCopies"
@@ -45,12 +66,10 @@
               v-for="(text, id) in conditionStates"
               :key="`condition-${id}`"
               :hide-on-click="false"
-              :class="{clickable: true, selected: copy.condition === id}"
+              :class="{ clickable: true, selected: copy.condition === id }"
               @click="copy.condition = id"
             >
-              <Condition
-                :value="id"
-              />&nbsp;{{ text }}
+              <Condition :value="id" />&nbsp;{{ text }}
             </v-contextmenu-item>
             <v-contextmenu-divider />
           </v-contextmenu-group>
@@ -62,12 +81,16 @@
               <v-contextmenu-item
                 v-if="purchaseStateId !== 'link'"
                 :hide-on-click="false"
-                :class="{clickable: true, selected: copy.purchaseId === purchaseStateId, 'purchase-state': true, 'v-context__sub': purchaseStateId === 'link', [purchaseStateId]: true }"
+                :class="{
+                  clickable: true,
+                  selected: copy.purchaseId === purchaseStateId,
+                  'purchase-state': true,
+                  'v-context__sub': purchaseStateId === 'link',
+                  [purchaseStateId]: true,
+                }"
                 @click="copy.purchaseId = purchaseStateId"
               >
-                <b-icon-calendar-x
-                  v-if="purchaseStateId === 'unlink'"
-                />
+                <b-icon-calendar-x v-if="purchaseStateId === 'unlink'" />
                 {{ purchaseStateText }}
               </v-contextmenu-item>
               <v-contextmenu-submenu
@@ -76,9 +99,7 @@
                 @mouseleave.prevent="() => {}"
               >
                 <template #title>
-                  <b-icon-calendar
-                    v-if="purchaseStateId === 'link'"
-                  />
+                  <b-icon-calendar v-if="purchaseStateId === 'link'" />
                   {{ purchaseStateText }}
                 </template>
                 <v-contextmenu-group :title="$t('Date d\'achat')">
@@ -88,7 +109,7 @@
                     class="clickable"
                     @click.stop="
                       copy.newPurchaseContext = !copy.newPurchaseContext;
-                      copy.newPurchaseDate = today
+                      copy.newPurchaseDate = today;
                     "
                   >
                     <b>{{ $t("Nouvelle date d'achat...") }}</b>
@@ -118,7 +139,7 @@
                       maxlength="30"
                       :placeholder="$t('Description')"
                       @click.stop="() => {}"
-                    >
+                    />
                     <b-button
                       variant="success"
                       class="btn-sm"
@@ -129,7 +150,8 @@
                         });
                         copy.newPurchaseDescription = '';
                         copy.newPurchaseDate = today;
-                        copy.newPurchaseContext = false"
+                        copy.newPurchaseContext = false;
+                      "
                     >
                       <b-icon-check icon="check" />
                     </b-button>
@@ -142,13 +164,18 @@
                     </b-button>
                   </v-contextmenu-item>
                   <v-contextmenu-item
-                    v-for="{id: purchaseId, date, description} in purchases"
+                    v-for="{ id: purchaseId, date, description } in purchases"
                     :key="`copy-${copyIndex}-purchase-${purchaseId}`"
                     :hide-on-click="false"
-                    :class="{clickable: true, selected: copy.purchaseId === purchaseId, 'purchase-date': true}"
+                    :class="{
+                      clickable: true,
+                      selected: copy.purchaseId === purchaseId,
+                      'purchase-date': true,
+                    }"
                     @click.stop="copy.purchaseId = purchaseId"
                   >
-                    <small class="date">{{ date }}</small><div class="mx-2">
+                    <small class="date">{{ date }}</small>
+                    <div class="mx-2">
                       {{ description }}
                     </div>
                     <b-button
@@ -157,7 +184,8 @@
                       @click="
                         $emit('delete-purchase', {
                           id: purchaseId,
-                        })"
+                        })
+                      "
                     >
                       <b-icon-trash />
                     </b-button>
@@ -167,15 +195,12 @@
             </template>
           </v-contextmenu-group>
         </b-tab>
-        <template
-          v-if="!hasMaxCopies"
-          #tabs-end
-        >
+        <template v-if="!hasMaxCopies" #tabs-end>
           <b-nav-item
             v-if="isSingleIssueSelected || hasNoCopies"
             class="p-0"
             role="presentation"
-            @click="editingCopies.push({...defaultState})"
+            @click="editingCopies.push({ ...defaultState })"
           >
             {{ $t("Ajouter un exemplaire") }}
           </b-nav-item>
@@ -183,16 +208,17 @@
             v-else
             class="p-0 disabled text-secondary"
             role="presentation"
-            :title="$t(`Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`)"
+            :title="
+              $t(
+                `Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`
+              )
+            "
           >
             {{ $t("Ajouter un exemplaire") }}
           </b-nav-item>
         </template>
       </b-tabs>
-      <li
-        class="footer clickable"
-        @click="updateSelectedIssues"
-      >
+      <li class="footer clickable" @click="updateSelectedIssues">
         {{ $t("Enregistrer les changements") }}
       </li>
     </template>
@@ -203,22 +229,35 @@
 import "v-contextmenu/dist/themes/default.css";
 
 import Condition from "./Condition";
-import {BAlert, BNavItem, BTab, BTabs} from "bootstrap-vue-3";
+import { BAlert, BNavItem, BTab, BTabs } from "bootstrap-vue-3";
 
-import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu, ContextmenuDivider, ContextmenuGroup } from "v-contextmenu";
-import {mapActions, mapState} from "pinia";
-import {l10n} from "../stores/l10n";
-import {collection} from "../stores/collection";
-import {BIconCalendar, BIconCalendarX, BIconCheck, BIconTrash, BIconX} from "bootstrap-icons-vue";
-import {condition} from "../composables/condition";
+import {
+  directive as vContextMenu,
+  Contextmenu,
+  ContextmenuItem,
+  ContextmenuSubmenu,
+  ContextmenuDivider,
+  ContextmenuGroup,
+} from "v-contextmenu";
+import { mapActions, mapState } from "pinia";
+import { l10n } from "../stores/l10n";
+import { collection } from "../stores/collection";
+import {
+  BIconCalendar,
+  BIconCalendarX,
+  BIconCheck,
+  BIconTrash,
+  BIconX,
+} from "bootstrap-icons-vue";
+import { condition } from "../composables/condition";
 
-let conditions
+let conditions;
 
 const today = new Date().toISOString().slice(0, 10);
 export default {
   name: "ContextMenu",
   directives: {
-    'v-contextmenu': directive,
+    "v-contextmenu": vContextMenu,
   },
   components: {
     [Contextmenu.name]: Contextmenu,
@@ -228,65 +267,75 @@ export default {
     [ContextmenuGroup.name]: ContextmenuGroup,
     Condition,
     BAlert,
-    BTabs,BTab,BNavItem,
+    BTabs,
+    BTab,
+    BNavItem,
     BIconTrash,
     BIconCalendar,
-    BIconCheck,BIconX,
-    BIconCalendarX
+    BIconCheck,
+    BIconX,
+    BIconCalendarX,
   },
 
   props: {
     publicationCode: {
-      type: String, required: true
+      type: String,
+      required: true,
     },
     selectedIssues: {
-      type: Array, required: true
+      type: Array,
+      required: true,
     },
     copies: {
-      type: Array, required: true
+      type: Array,
+      required: true,
     },
   },
   emits: ["update-issues", "create-purchase", "delete-purchase", "close"],
 
   setup() {
-    conditions = condition().conditions
+    conditions = condition().conditions;
   },
 
   data: () => ({
     defaultState: {
       condition: "do_not_change",
       isToSell: "do_not_change",
-      purchaseId: "do_not_change"
+      purchaseId: "do_not_change",
     },
     newPurchaseContext: false,
     newPurchaseDescription: "",
     newPurchaseDate: today,
     editingCopies: [],
     currentCopyIndex: 0,
-    today
+    today,
   }),
 
   computed: {
     ...mapState(collection, ["purchases"]),
     conditionStates() {
       return {
-        ...(this.isSingleIssueSelected ? {} : {
-          do_not_change: this.$t("Conserver l'état actuel")
-        }),
+        ...(this.isSingleIssueSelected
+          ? {}
+          : {
+              do_not_change: this.$t("Conserver l'état actuel"),
+            }),
         missing: this.$t("Marquer comme non-possédé(s)"),
         possessed: this.$t("Marquer comme possédé(s)"),
         bad: this.$t("Marquer comme en mauvais état"),
         notsogood: this.$t("Marquer comme en état moyen"),
-        good: this.$t("Marquer comme en bon état")
+        good: this.$t("Marquer comme en bon état"),
       };
     },
     purchaseStates() {
       return {
-        ...(this.isSingleIssueSelected ? {} : {
-          do_not_change: this.$t("Conserver la date d'achat")
-        }),
+        ...(this.isSingleIssueSelected
+          ? {}
+          : {
+              do_not_change: this.$t("Conserver la date d'achat"),
+            }),
         link: this.$t("Associer avec une date d'achat"),
-        unlink: this.$t("Désassocier de la date d'achat")
+        unlink: this.$t("Désassocier de la date d'achat"),
       };
     },
     isSingleIssueSelected() {
@@ -297,7 +346,7 @@ export default {
     },
     hasMaxCopies() {
       return this.editingCopies.length >= 3;
-    }
+    },
   },
 
   watch: {
@@ -305,22 +354,20 @@ export default {
       immediate: true,
       handler() {
         this.updateEditingCopies();
-      }
+      },
     },
     copies: {
       immediate: true,
       handler() {
         this.updateEditingCopies();
-      }
-    }
+      },
+    },
   },
 
   methods: {
-    ...mapActions(l10n, ["$r"]),
+    ...mapActions(l10n, ["r"]),
     formatDate: (value) =>
-      /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)
-        ? value
-        : today,
+      /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value) ? value : today,
 
     updateEditingCopies() {
       if (this.selectedIssues.length === 1) {
@@ -334,42 +381,51 @@ export default {
       }
     },
     convertConditionToDbValue(condition) {
-      return (conditions.find(({ value }) => value === condition) || { dbValue: null }).dbValue;
+      return (
+        conditions.find(({ value }) => value === condition) || { dbValue: null }
+      ).dbValue;
     },
 
     async updateSelectedIssues() {
       const vm = this;
       let issueDetails = {
-        condition: this.editingCopies.map(({ condition }) => vm.convertConditionToDbValue(condition)),
+        condition: this.editingCopies.map(({ condition }) =>
+          vm.convertConditionToDbValue(condition)
+        ),
         istosell: this.editingCopies.map(({ isToSell }) => isToSell),
-        purchaseId: this.editingCopies.map(({ purchaseId }) => purchaseId)
+        purchaseId: this.editingCopies.map(({ purchaseId }) => purchaseId),
       };
       if (!this.isSingleIssueSelected) {
-        issueDetails = Object.keys(issueDetails).reduce((acc, detailKey) => ({
-          ...acc,
-          [detailKey]: issueDetails[detailKey][0]
-        }), {});
+        issueDetails = Object.keys(issueDetails).reduce(
+          (acc, detailKey) => ({
+            ...acc,
+            [detailKey]: issueDetails[detailKey][0],
+          }),
+          {}
+        );
       }
 
       this.$emit("update-issues", {
         publicationCode: this.publicationCode,
         issueNumbers: this.selectedIssues,
-        ...issueDetails
+        ...issueDetails,
       });
     },
     async createPurchaseDate() {
       this.$emit("create-purchase", {
         date: this.newPurchaseDate,
-        description: this.newPurchaseDescription
+        description: this.newPurchaseDescription,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
 .v-contextmenu-inner {
-  &, li, .v-contextmenu-group__menus {
+  &,
+  li,
+  .v-contextmenu-group__menus {
     padding: 0 !important;
   }
 
@@ -401,7 +457,9 @@ export default {
       cursor: pointer;
     }
 
-    &.header, &.clone, &.footer {
+    &.header,
+    &.clone,
+    &.footer {
       height: 30px;
       line-height: 25px;
       font-size: 14px;
@@ -434,7 +492,7 @@ export default {
       text-align: center;
       border: 1px solid #e6e6e6;
       border-top-width: 3px;
-      padding: .2em;
+      padding: 0.2em;
     }
 
     .v-contextmenu-item {
@@ -456,7 +514,7 @@ export default {
             position: absolute;
             font-weight: bold;
             right: 10px;
-            content: '>'
+            content: ">";
           }
         }
       }

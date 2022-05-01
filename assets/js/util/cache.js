@@ -21,8 +21,8 @@ const appCache = setupCache({
   maxAge: inAMonth - now,
   store: localforage,
   exclude: {
-    query: false
-  }
+    query: false,
+  },
 });
 
 const userCache = setupCache({
@@ -30,24 +30,25 @@ const userCache = setupCache({
   store: localforage,
   invalidate: async (config, request) => {
     if (request.clearCacheEntry) {
-      await config.store.removeItem(config.uuid)
+      await config.store.removeItem(config.uuid);
     }
-  }
+  },
 });
 
 const coaCache = setupCache({
   maxAge: coaCacheExpiration - now,
-  store: localforage
+  store: localforage,
 });
 
 // Remove infinite cache set by mistake
 localforage.keys((error, keys) => {
-  keys.forEach(key => {
+  keys.forEach((key) => {
     localforage.getItem(key, (error, value) => {
-      if ((typeof value !== "object" && isNaN(value))
-        || !value
-        || !value.expires
-        || (typeof value.expires !== "number")
+      if (
+        (typeof value !== "object" && isNaN(value)) ||
+        !value ||
+        !value.expires ||
+        typeof value.expires !== "number"
       ) {
         localforage.removeItem(key);
       }
@@ -55,8 +56,4 @@ localforage.keys((error, keys) => {
   });
 });
 
-export {
-  appCache,
-  userCache,
-  coaCache
-};
+export { appCache, userCache, coaCache };

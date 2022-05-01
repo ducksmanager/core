@@ -2,17 +2,16 @@
   <div>
     <slot name="header" />
     <div>
-      <b-carousel
-        controls
-        indicators
-      >
+      <b-carousel controls indicators>
         <b-carousel-slide
           v-for="popularIssueWithoutEdge in issues"
           :key="popularIssueWithoutEdge.issueCode"
         >
           <Issue
             :publicationcode="popularIssueWithoutEdge.publicationCode"
-            :publicationname="publicationNames[popularIssueWithoutEdge.publicationCode]"
+            :publicationname="
+              publicationNames[popularIssueWithoutEdge.publicationCode]
+            "
             :issuenumber="popularIssueWithoutEdge.issueNumber"
             hide-condition
           />
@@ -27,27 +26,16 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
 import MedalProgress from "./MedalProgress";
 import Issue from "./Issue";
-import {BCarousel, BCarouselSlide} from "bootstrap-vue-3";
+import { BCarousel, BCarouselSlide } from "bootstrap-vue-3";
 
-export default {
-  name: "UploadableEdgesCarousel",
-
-  components: {
-    MedalProgress,
-    Issue,
-    BCarousel,
-    BCarouselSlide
-  },
-
-  props: {
-    issues: { type: Array, required: true },
-    userPoints: { type: Number, required: true },
-    publicationNames: { type: Object, required: true }
-  }
-};
+defineProps({
+  issues: { type: Array, required: true },
+  userPoints: { type: Number, required: true },
+  publicationNames: { type: Object, required: true },
+});
 </script>
 
 <style scoped lang="scss">

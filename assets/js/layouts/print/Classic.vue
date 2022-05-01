@@ -1,12 +1,6 @@
 <template>
-  <div
-    v-if="collection && countryNames && hasPublicationNames"
-    class="list"
-  >
-    <div
-      v-for="country in countryCodesSortedByName"
-      :key="country"
-    >
+  <div v-if="collection && countryNames && hasPublicationNames" class="list">
+    <div v-for="country in countryCodesSortedByName" :key="country">
       <div class="country">
         {{ countryNames[country] }}
       </div>
@@ -16,68 +10,79 @@
       >
         <u>{{ publicationNames[publicationCode] || publicationCode }}</u>
         {{ issuesOfPublicationCode(publicationCode) }}
-        <br>
+        <br />
       </div>
     </div>
   </div>
 </template>
-<script>
-import {mapActions, mapState} from "pinia";
+<script setup>
 import { coa } from "../../stores/coa";
-const {collection: collectionStore} = require("../../stores/collection");
+import { computed, onMounted, watch, ref } from "vue";
+const { collection: collectionStore } = require("../../stores/collection");
 
-export default {
-  data: () => ({
-    hasPublicationNames: false
-  }),
-  computed: {
-    ...mapState(coa, ["countryNames", "publicationNames"]),
-    ...mapState(collectionStore, ["collection"]),
-    countryCodes() {
-      return this.collection && [...new Set(this.collection.map(i => i.country))]
-    },
-    countryCodesSortedByName() {
-      const vm = this
-      return this.countryCodes && this.countryNames && [...this.countryCodes]
-        .sort((countryCodeA, countryCodeB) => vm.countryNames[countryCodeA] && vm.countryNames[countryCodeA].localeCompare(vm.countryNames[countryCodeB]))
-    },
-    publicationCodes() {
-      return this.collection && [...new Set(this.collection.map(i => `${i.country}/${i.magazine}`))]
-    },
-  },
-
-  watch: {
-    publicationCodes: {
-      immediate: true,
-      handler(newValue) {
-        if (newValue) {
-          this.fetchPublicationNames(newValue)
-          this.hasPublicationNames = true
-        }
-      }
+const hasPublicationNames = ref(false),
+  countryNames = computed(() => coa().countryNames),
+  publicationNames = computed(() => coa().publicationNames),
+  collection = computed(() => collectionStore().collection),
+  countryCodes = computed(
+    () =>
+      collection.value && [...new Set(collection.value.map((i) => i.country))]
+  ),
+  countryCodesSortedByName = computed(
+    () =>
+      countryCodes.value &&
+      countryNames.value &&
+      [...countryCodes.value].sort(
+        (countryCodeA, countryCodeB) =>
+          countryNames.value[countryCodeA] &&
+          countryNames.value[countryCodeA].localeCompare(
+            countryNames.value[countryCodeB]
+          )
+      )
+  ),
+  publicationCodes = computed(
+    () =>
+      collection.value && [
+        ...new Set(collection.value.map((i) => `${i.country}/${i.magazine}`)),
+      ]
+  ),
+  fetchCountryNames = coa().fetchCountryNames,
+  fetchPublicationNames = coa().fetchPublicationNames,
+  loadCollection = collectionStore().loadCollection,
+  publicationCodesOfCountry = (countryCode) =>
+    publicationCodes.value
+      .filter(
+        (publicationCode) => publicationCode.split("/")[0] === countryCode
+      )
+      .sort((a, b) =>
+        !publicationNames.value[b]
+          ? 1
+          : publicationNames.value[a] < publicationNames.value[b]
+          ? -1
+          : publicationNames.value[a] > publicationNames.value[b]
+          ? 1
+          : 0
+      ),
+  issuesOfPublicationCode = (publicationCode) =>
+    collection.value
+      .filter((i) => publicationCode === `${i.country}/${i.magazine}`)
+      .map(({ issueNumber }) => issueNumber)
+      .join(", ");
+watch(
+  () => publicationCodes.value,
+  (newValue) => {
+    if (newValue) {
+      fetchPublicationNames(newValue);
+      hasPublicationNames.value = true;
     }
   },
+  { immediate: true }
+);
 
-  async mounted() {
-    await this.fetchCountryNames()
-    await this.loadCollection()
-  },
-
-  methods: {
-    ...mapActions(coa, ["fetchCountryNames", "fetchPublicationNames"]),
-    ...mapActions(collectionStore, ["loadCollection"]),
-    publicationCodesOfCountry(countryCode) {
-      const vm = this
-      return this.publicationCodes.filter(publicationCode => publicationCode.split('/')[0] === countryCode)
-          .sort((a, b) => !vm.publicationNames[b] ? 1 : vm.publicationNames[a] < vm.publicationNames[b] ? -1 : vm.publicationNames[a] > vm.publicationNames[b] ? 1 : 0)
-    },
-    issuesOfPublicationCode(publicationCode) {
-      return this.collection
-        .filter(i => publicationCode === `${i.country}/${i.magazine}`)
-        .map(({issueNumber}) => issueNumber).join(', ')
-    }
-  },
-}
+onMounted(async () => {
+  await fetchCountryNames();
+  await loadCollection();
+});
 </script>
 
 <style>

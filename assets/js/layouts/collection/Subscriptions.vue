@@ -1,35 +1,57 @@
 <template>
   <div v-if="subscriptions && hasPublicationNames">
-    <b-alert
-      variant="info"
-      show
-    >
-      {{ $t('Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie.') }}
+    <b-alert variant="info" show>
+      {{
+        $t(
+          "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie."
+        )
+      }}
     </b-alert>
     <b-row>
-      <b-col
-        sm="8"
-        md="4"
-      >
-        <h4>{{ $t('Mes abonnements') }}</h4>
+      <b-col sm="8" md="4">
+        <h4>{{ $t("Mes abonnements") }}</h4>
       </b-col>
     </b-row>
     <div v-if="!subscriptions.length">
-      {{ $t('Aucun abonnement') }}
+      {{ $t("Aucun abonnement") }}
     </div>
     <b-alert
-      v-for="(currentAssociatedPublication, idx) in currentAssociatedPublications"
+      v-for="(
+        currentAssociatedPublication, idx
+      ) in currentAssociatedPublications"
       :key="`associated-pub-${JSON.stringify(currentAssociatedPublication)}`"
       show
       variant="info"
     >
-      {{ $t('Vous avez indiqué avoir un abonnement pour {0}. Généralement, cet abonnement inclut également la réception du magazine {1}. Voulez-vous ajouter un abonnement à {1} pour les mêmes dates ?', [publicationNames[currentAssociatedPublication.referencePublicationcode], publicationNames[currentAssociatedPublication.publicationcode], publicationNames[currentAssociatedPublication.publicationcode]]) }}
+      {{
+        $t(
+          "Vous avez indiqué avoir un abonnement pour {0}. Généralement, cet abonnement inclut également la réception du magazine {1}. Voulez-vous ajouter un abonnement à {1} pour les mêmes dates ?",
+          [
+            publicationNames[
+              currentAssociatedPublication.referencePublicationcode
+            ],
+            publicationNames[currentAssociatedPublication.publicationcode],
+            publicationNames[currentAssociatedPublication.publicationcode],
+          ]
+        )
+      }}
       <p>
-        <b-button @click="createAssociatedPublicationSubscription(subscriptions.find(({publicationCode}) => publicationCode === currentAssociatedPublication.referencePublicationcode), currentAssociatedPublication)">
-          {{ $t('Oui') }}
+        <b-button
+          @click="
+            createAssociatedPublicationSubscription(
+              subscriptions.find(
+                ({ publicationCode }) =>
+                  publicationCode ===
+                  currentAssociatedPublication.referencePublicationcode
+              ),
+              currentAssociatedPublication
+            )
+          "
+        >
+          {{ $t("Oui") }}
         </b-button>
         <b-button @click="currentAssociatedPublications.splice(idx, 1)">
-          {{ $t('Non') }}
+          {{ $t("Non") }}
         </b-button>
       </p>
     </b-alert>
@@ -46,17 +68,14 @@
       @edit="editSubscription(subscription.id, $event)"
       @delete="deleteSubscription(subscription.id)"
     />
-    <b-row
-      v-if="editedSubscriptionId !== null"
-      class="mt-3 align-items-center"
-    >
+    <b-row v-if="editedSubscriptionId !== null" class="mt-3 align-items-center">
       <b-col>
         <b-button
           class="mt-4"
           :disabled="editedSubscriptionId !== undefined"
           @click="editedSubscriptionId = null"
         >
-          {{ $t('Ajouter un abonnement') }}
+          {{ $t("Ajouter un abonnement") }}
         </b-button>
       </b-col>
     </b-row>
@@ -69,91 +88,90 @@
     />
   </div>
   <div v-else>
-    {{ $t('Chargement...') }}
+    {{ $t("Chargement...") }}
   </div>
 </template>
-<script>
-import { mapActions, mapState } from "pinia";
+<script setup>
 import axios from "axios";
 import Subscription from "../../components/Subscription";
-import {BAlert, BButton, BCol, BRow} from "bootstrap-vue-3";
+import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-3";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
+import { computed, onMounted, watch, ref } from "vue";
 
-export default {
-  name: "Subscriptions",
-  components: { Subscription, BAlert, BRow, BCol, BButton },
-  data() {
-    return {
-      hasPublicationNames: false,
-      currentAssociatedPublications: [],
-      associatedPublications: [{
-        referencePublicationcode: 'fr/JM',
-        publicationcode: 'fr/JMS'
-      }],
-      editedSubscriptionId: undefined
-    }
+const hasPublicationNames = ref(false),
+  currentAssociatedPublications = ref([]),
+  associatedPublications = ref([
+    {
+      referencePublicationcode: "fr/JM",
+      publicationcode: "fr/JMS",
+    },
+  ]),
+  editedSubscriptionId = ref(undefined),
+  newSubscription = ref(null),
+  publicationNames = computed(() => coa().publicationNames),
+  subscriptions = computed(() => collection().subscriptions),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  loadSubscriptions = collection().loadSubscriptions,
+  createAssociatedPublicationSubscription = (
+    existingSubscription,
+    { publicationcode: associatedPublicationcode }
+  ) => {
+    newSubscription.value = {
+      ...existingSubscription,
+      publicationCode: associatedPublicationcode,
+    };
+    createSubscription(newSubscription.value);
   },
-
-  computed: {
-    ...mapState(coa, ["countryNames", "publicationNames"]),
-    ...mapState(collection, ["subscriptions"]),
+  createSubscription = async (data) => {
+    await axios.put(`/api/collection/subscriptions`, data);
+    await loadSubscriptions(true);
+    editedSubscriptionId.value = undefined;
   },
+  editSubscription = async (id, data) => {
+    await axios.post(`/api/collection/subscriptions/${id}`, data);
+    await loadSubscriptions(true);
+    editedSubscriptionId.value = undefined;
+  },
+  deleteSubscription = async (id) => {
+    await axios.delete(`/api/collection/subscriptions/${id}`);
+    await loadSubscriptions(true);
+    editedSubscriptionId.value = undefined;
+  };
 
-  watch: {
-    subscriptions: {
-      immediate: true,
-      async handler(newValue) {
-        if (newValue) {
-          this.currentAssociatedPublications = this.associatedPublications
-            .filter(({ referencePublicationcode, publicationcode: associatedPublicationcode }) =>
-              newValue.find(({ publicationCode }) => referencePublicationcode === publicationCode)
-              && !newValue.find(({ publicationCode }) => associatedPublicationcode === publicationCode))
-          await this.fetchPublicationNames([
-            ...this.associatedPublications.map(({ publicationcode }) => publicationcode),
-            ...this.subscriptions.map(({ publicationCode }) => publicationCode)]
+watch(
+  () => subscriptions.value,
+  async (newValue) => {
+    if (newValue) {
+      currentAssociatedPublications.value = associatedPublications.value.filter(
+        ({
+          referencePublicationcode,
+          publicationcode: associatedPublicationcode,
+        }) =>
+          newValue.find(
+            ({ publicationCode }) =>
+              referencePublicationcode === publicationCode
+          ) &&
+          !newValue.find(
+            ({ publicationCode }) =>
+              associatedPublicationcode === publicationCode
           )
-          this.hasPublicationNames = true
-        }
-      }
+      );
+      await fetchPublicationNames([
+        ...associatedPublications.value.map(
+          ({ publicationcode }) => publicationcode
+        ),
+        ...subscriptions.value.map(({ publicationCode }) => publicationCode),
+      ]);
+      hasPublicationNames.value = true;
     }
   },
+  { immediate: true }
+);
 
-  mounted() {
-    this.loadSubscriptions()
-  },
-
-  methods: {
-    ...mapActions(coa, ["fetchPublicationNames"]),
-    ...mapActions(collection, ["loadSubscriptions"]),
-
-    createAssociatedPublicationSubscription(existingSubscription, { publicationcode: associatedPublicationcode }) {
-      this.newSubscription = {
-        ...existingSubscription,
-        publicationCode: associatedPublicationcode,
-      }
-      this.createSubscription(this.newSubscription)
-    },
-
-    async createSubscription(data) {
-      await axios.put(`/api/collection/subscriptions`, data)
-      await this.loadSubscriptions(true)
-      this.editedSubscriptionId = undefined
-    },
-
-    async editSubscription(id, data) {
-      await axios.post(`/api/collection/subscriptions/${id}`, data)
-      await this.loadSubscriptions(true)
-      this.editedSubscriptionId = undefined
-    },
-
-    async deleteSubscription(id) {
-      await axios.delete(`/api/collection/subscriptions/${id}`)
-      await this.loadSubscriptions(true)
-      this.editedSubscriptionId = undefined
-    }
-  }
-}
+onMounted(() => {
+  loadSubscriptions();
+});
 </script>
 <style scoped>
 </style>

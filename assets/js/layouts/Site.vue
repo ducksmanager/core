@@ -2,75 +2,40 @@
   <div v-if="l10nRoutes">
     <LeftPanel />
     <SwitchLocale />
-    <Banner :classes="{'d-none d-md-flex': true}" />
+    <Banner :classes="{ 'd-none d-md-flex': true }" />
     <div id="logo_zone2">
       <h2 v-if="innerTitle">
         {{ innerTitle }}
       </h2>
-      <component
-        :is="page"
-        v-bind="attrsWithoutId"
-      />
+      <component :is="pageComponent" v-bind="attrsWithoutId" />
     </div>
     <Footer />
   </div>
 </template>
 
-<script>
+<script setup>
 import LeftPanel from "./LeftPanel";
 import Footer from "./Footer";
-import Login from "./Login";
 import Banner from "./Banner";
-import InducksImport from "./InducksImport";
-import Stats from "./Stats";
-import Bookcase from "./Bookcase";
-import Expand from "./Expand";
-import Bookstores from "./Bookstores";
-import PrintPresentation from "./PrintPresentation";
-import Welcome from "./Welcome";
-import Forgot from "./Forgot";
-import Signup from "./Signup";
-import Collection from "./Collection";
 import SwitchLocale from "./SwitchLocale";
-import { mapState } from "pinia";
 import { l10n } from "../stores/l10n";
+import { computed, useAttrs, defineAsyncComponent } from "vue";
 
-export default {
-  name: "Site",
-  components: {
-    SwitchLocale,
-    Banner,
-    Bookcase,
-    Bookstores,
-    Collection,
-    Expand,
-    Footer,
-    Forgot,
-    InducksImport,
-    LeftPanel,
-    Login,
-    PrintPresentation,
-    Signup,
-    Stats,
-    Welcome,
-  },
-  props: {
+const props = defineProps({
     page: { type: String, required: true },
     title: { type: String, default: null },
     innerTitle: { type: String, default: null },
-  },
-  data() {
-    return this.$attrs;
-  },
-  computed: {
-    ...mapState(l10n, ['l10nRoutes']),
-    attrsWithoutId() {
-      const vm = this
-      return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'id')
-          .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
-    }
-  }
-}
+  }),
+  attrs = useAttrs(),
+  pageComponent = computed(() =>
+    defineAsyncComponent(() => import(`./${props.page}`))
+  ),
+  l10nRoutes = computed(() => l10n().l10nRoutes),
+  attrsWithoutId = computed(() =>
+    Object.keys(attrs)
+      .filter((attrKey) => attrKey !== "id")
+      .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
+  );
 </script>
 
 <style scoped lang="scss">

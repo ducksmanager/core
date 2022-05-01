@@ -6,71 +6,66 @@
       :default-path="'/show'"
       :items="items"
     />
-    <component
-      :is="tab"
-      v-bind="attrsWithoutTab"
-    />
+    <component :is="component" v-bind="attrsWithoutTab" />
   </div>
 </template>
 
-<script>
+<script setup>
 import Menu from "./Menu";
-import Account from "./collection/Account";
-import Duplicates from "./collection/Duplicates";
-import Manage from "./collection/Manage";
-import Subscriptions from "./collection/Subscriptions";
-import { mapState } from "pinia";
-import { mapActions } from "pinia/dist/pinia.esm-browser";
-const { collection } = require('../stores/collection');
+import { useI18n } from "vue-i18n";
+import { computed, onMounted, useAttrs, defineAsyncComponent } from "vue";
+const { collection } = require("../stores/collection");
 
-export default {
-  name: "Collection",
-  components: {
-    Account,
-    Duplicates,
-    Manage,
-    Menu,
-    Subscriptions
+const props = defineProps({
+  tab: {
+    type: String,
+    required: true,
   },
-  props: {
-    tab: {
-      type: String,
-      required: true
-    }
-  },
-  data() {
-    return {
-      items: [
-        {path: '/show', text: this.total == null ? this.$t('Mes numéros') : this.$t('Mes numéros ({0})', [this.total])},
-        {
-          path: '/duplicates',
-          text: this.totalUniqueIssues == null ? this.$t('Mes numéros en double') : this.$t('Mes numéros en double ({0})', [this.total - this.totalUniqueIssues])
-        },
-        {
-          path: '/subscriptions',
-          text: this.subscriptions == null ? this.$t('Mes abonnements') : this.$t('Mes abonnements ({0})', [this.subscriptions.length])
-        },
-        {path: '/account', text: this.$t('Mon compte')}
-      ]
-    }
-  },
-  computed: {
-    ...mapState(collection, ["subscriptions", "total", "totalUniqueIssues"]),
-    attrsWithoutTab() {
-      const vm = this
-      return Object.keys(this.$attrs).filter(attrKey => attrKey !== 'tab')
-        .reduce((acc, attrKey) => ({...acc, [attrKey]: vm.$attrs[attrKey]}), {})
-    }
-  },
+});
+const component = computed(() =>
+    defineAsyncComponent(() => import(`./collection/${props.tab}`))
+  ),
+  attrs = useAttrs(),
+  { t: $t } = useI18n(),
+  items = computed(() => [
+    {
+      path: "/show",
+      text:
+        total.value == null
+          ? $t("Mes numéros")
+          : $t("Mes numéros ({0})", [total.value]),
+    },
+    {
+      path: "/duplicates",
+      text:
+        totalUniqueIssues.value == null
+          ? $t("Mes numéros en double")
+          : $t("Mes numéros en double ({0})", [
+              total.value - totalUniqueIssues.value,
+            ]),
+    },
+    {
+      path: "/subscriptions",
+      text:
+        subscriptions.value == null
+          ? $t("Mes abonnements")
+          : $t("Mes abonnements ({0})", [subscriptions.value.length]),
+    },
+    { path: "/account", text: $t("Mon compte") },
+  ]),
+  subscriptions = computed(() => collection().subscriptions),
+  total = computed(() => collection().total),
+  totalUniqueIssues = computed(() => collection().totalUniqueIssues),
+  attrsWithoutTab = computed(() =>
+    Object.keys(attrs)
+      .filter((attrKey) => attrKey !== "tab")
+      .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
+  ),
+  loadSubscriptions = collection().loadSubscriptions;
 
-  mounted() {
-    this.loadSubscriptions()
-  },
-
-  methods: {
-    ...mapActions(collection, ["loadSubscriptions"]),
-  }
-}
+onMounted(() => {
+  loadSubscriptions();
+});
 </script>
 
 <style scoped lang="scss">

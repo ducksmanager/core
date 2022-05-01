@@ -3,13 +3,11 @@
     <table>
       <tr>
         <td>
-          <a :href="$r('/collection/show')"><img
-            id="logo"
-            alt="logo"
-            :src="`${imagePath}/logo_small.png`"
-          ></a>
+          <a :href="r('/collection/show')"
+            ><img id="logo" alt="logo" :src="`${imagePath}/logo_small.png`"
+          /></a>
         </td>
-        <td>{{ $t('Collection DucksManager de') }} {{ username }}</td>
+        <td>{{ $t("Collection DucksManager de") }} {{ username }}</td>
       </tr>
     </table>
     <Collectable v-if="currentType === 'collectable'" />
@@ -20,15 +18,17 @@
 <script setup>
 import Collectable from "../layouts/print/Collectable";
 import Classic from "../layouts/print/Classic";
-import {l10n} from "../stores/l10n";
-import {user} from "../composables/global";
+import { l10n } from "../stores/l10n";
+import { user } from "../composables/global";
+import { computed } from "vue";
 
 defineProps({
-  currentType: {type: String, required: true}
-})
-
-const {l10nRoutes, $r: r} = l10n()
-const {username} = user()
+  currentType: { type: String, required: true },
+});
+const { r } = l10n(),
+  l10nRoutes = computed(() => l10n().l10nRoutes),
+  { username } = user(),
+  { imagePath } = require("../composables/imagePath");
 </script>
 
 <style lang="scss" scoped>

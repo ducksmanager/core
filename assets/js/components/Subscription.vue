@@ -1,20 +1,16 @@
 <template>
-  <b-form
-    ref="form"
-    method="post"
-  >
-    <b-row
-      class="mt-3 align-items-center"
-    >
-      <b-col
-        sm="3"
-        md="2"
-      >
-        {{ $t('Abonnement au magazine') }}<br>
+  <b-form ref="form" method="post">
+    <b-row class="mt-3 align-items-center">
+      <b-col sm="3" md="2">
+        {{ $t("Abonnement au magazine") }}<br />
         <template v-if="isEdit">
           <PublicationSelect
             no-button
-            :initial-country-code="editSubscription.publicationCode ? editSubscription.publicationCode.split('/')[0] : null"
+            :initial-country-code="
+              editSubscription.publicationCode
+                ? editSubscription.publicationCode.split('/')[0]
+                : null
+            "
             :initial-publication-code="editSubscription.publicationCode"
             @input="editSubscription.publicationCode = $event"
           />
@@ -25,10 +21,7 @@
           :publicationcode="publicationCode"
         />
       </b-col>
-      <b-col
-        sm="3"
-        md="2"
-      >
+      <b-col sm="3" md="2">
         {{ $t("du") }}
         <input
           v-if="isEdit"
@@ -37,7 +30,7 @@
           required
           class="form-control"
           type="date"
-        >
+        />
         <template v-else>
           {{ startDate }}
         </template>
@@ -49,16 +42,12 @@
           required
           class="form-control"
           type="date"
-        >
+        />
         <template v-else>
           {{ endDate }}
         </template>
       </b-col>
-      <b-col
-        sm="3"
-        md="1"
-        class="text-center m-2"
-      >
+      <b-col sm="3" md="1" class="text-center m-2">
         <b-button
           v-if="isEdit"
           size="sm"
@@ -66,31 +55,15 @@
         >
           {{ $t("OK") }}
         </b-button>
-        <b-button
-          v-else
-          size="sm"
-          @click="$emit('start-edit')"
-        >
+        <b-button v-else size="sm" @click="$emit('start-edit')">
           {{ $t("Modifier") }}
         </b-button>
       </b-col>
-      <b-col
-        sm="3"
-        md="1"
-        class="text-center m-2"
-      >
-        <b-button
-          v-if="isEdit"
-          size="sm"
-          @click="$emit('cancel-edit')"
-        >
+      <b-col sm="3" md="1" class="text-center m-2">
+        <b-button v-if="isEdit" size="sm" @click="$emit('cancel-edit')">
           {{ $t("Annuler") }}
         </b-button>
-        <b-button
-          v-else
-          size="sm"
-          @click="$emit('delete')"
-        >
+        <b-button v-else size="sm" @click="$emit('delete')">
           {{ $t("Supprimer") }}
         </b-button>
       </b-col>
@@ -98,61 +71,43 @@
   </b-form>
 </template>
 
-<script>
+<script setup>
 import Publication from "./Publication";
 import PublicationSelect from "./PublicationSelect";
-import { mapState } from "pinia";
-import {BButton, BCol, BForm, BRow} from "bootstrap-vue-3";
+import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
+import { computed } from "vue";
 
-export default {
-  name: "Subscription",
-
-  components: {
-    PublicationSelect,
-    Publication,
-    BForm,
-    BRow,
-    BCol,
-    BButton,
-  },
-
-  props: {
+defineEmits(["delete", "edit", "start-edit", "cancel-edit"]);
+const props = defineProps({
     id: {
       default: null,
-      type: Number
+      type: Number,
     },
     isEdit: {
       required: true,
-      type: Boolean
+      type: Boolean,
     },
     publicationCode: {
       default: null,
-      type: String
+      type: String,
     },
     startDate: {
       default: null,
-      type: String
+      type: String,
     },
     endDate: {
       default: null,
-      type: String
-    }
+      type: String,
+    },
+  }),
+  editSubscription = {
+    publicationCode: props.publicationCode,
+    startDate: props.startDate,
+    endDate: props.endDate,
   },
-  emits: ['delete', 'edit', 'start-edit', 'cancel-edit'],
-
-  setup(props) {
-    return {
-      editSubscription: {
-          publicationCode: props.publicationCode,
-          startDate: props.startDate,
-          endDate: props.endDate
-      },
-      editedSubscriptionId: null,
-      ...mapState(coa, ["countryNames", "publicationNames"])
-    }
-  }
-};
+  editedSubscriptionId = null,
+  publicationNames = computed(() => coa().publicationNames);
 </script>
 
 <style scoped>

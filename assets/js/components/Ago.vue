@@ -1,29 +1,22 @@
 <template>
   <span class="ago pl-2">{{ timeAgo }}</span>
 </template>
-<script>
+<script setup>
 import * as timeago from "timeago.js";
+import { computed } from "vue";
 
-export default {
-  name: 'Ago',
-  props: {
+const props = defineProps({
     timestamp: {
       type: Number,
-      required: true
-    }
-  },
-
-  computed: {
-    timeAgo() {
-      return timeago.format(this.timestamp * 1000)
-    }
-  }
-}
+      required: true,
+    },
+  }),
+  timeAgo = computed(() => timeago.format(props.timestamp * 1000));
 </script>
 <style scoped lang="scss">
-  .ago {
-    float: right;
-    color: grey;
-    font-size: smaller;
-  }
+.ago {
+  float: right;
+  color: grey;
+  font-size: smaller;
+}
 </style>

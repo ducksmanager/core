@@ -1,135 +1,157 @@
 <template>
-  <PieChart
-    v-if="chartData"
-    :chart-data="chartData"
-    :options="options"
-  />
+  <PieChart v-if="chartData" :chart-data="chartData" :options="options" />
 </template>
 
-<script>
-import {mapActions, mapState} from "pinia";
+<script setup>
 import { coa } from "../../stores/coa";
 const { collection } = require("../../stores/collection");
-import {PieChart} from "vue-chart-3";
+import { PieChart } from "vue-chart-3";
 
-import {ArcElement, Chart, Legend, PieController, Title, Tooltip} from 'chart.js';
+import {
+  ArcElement,
+  Chart,
+  Legend,
+  PieController,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { computed, watch, ref } from "vue";
+import { useI18n } from "vue-i18n";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
-export default {
-  name: "PublicationStats",
-  components: {PieChart},
-
-  setup() {
-    this.loadCollection()
-  },
-
-  data: () => ({
-    hasPublicationNames: false,
-    chartData: null,
-    options: {}
-  }),
-
-  computed: {
-    ...mapState(collection, ["collection", "totalPerPublication"]),
-    ...mapState(coa, ["publicationNames"]),
-    smallCountPublications() {
-      if (!this.totalPerPublication) {
-        return null;
-      }
-      const vm = this
-      return Object.keys(this.totalPerPublication).filter(publicationCode =>
-          vm.totalPerPublication[publicationCode] / vm.collection.length < 0.01)
-    },
-    totalPerPublicationGroupSmallCounts() {
-      const vm = this
-      return this.smallCountPublications && {
-        ...Object.keys(this.totalPerPublication)
-            .filter(publicationCode => !vm.smallCountPublications.includes(publicationCode))
-            .reduce((acc, publicationCode) =>
-                    ({...acc, [publicationCode]: vm.totalPerPublication[publicationCode]})
-                , {}),
-        [null]: this.smallCountPublications.reduce((acc, publicationCode) => {
-          return acc + vm.totalPerPublication[publicationCode]
-        }, 0)
-      }
-    },
-
-    labels() {
-      const vm = this
-      return this.hasPublicationNames && Object.keys(this.totalPerPublicationGroupSmallCounts)
-          .sort(this.sortByCount)
-          .reduce((acc, publicationCode) => [
-            ...acc,
-            vm.publicationNames[publicationCode]
-            || `${this.$t('Autres')} (${this.smallCountPublications.length} ${this.$t('Publications').toLowerCase()})`
-          ], [])
-    },
-
-    values() {
-      return Object.values(this.totalPerPublicationGroupSmallCounts)
-          .sort((count1, count2) => Math.sign(count1 - count2))
-    },
-
-    colors() {
-      const vm = this
-      return this.totalPerPublicationGroupSmallCounts && Object.keys(this.totalPerPublicationGroupSmallCounts)
-          .sort(this.sortByCount)
-          .map(publicationCode => publicationCode === 'null' ? '#000' : vm.randomColor())
-    }
-  },
-
-  watch: {
-    totalPerPublicationGroupSmallCounts: {
-      immediate: true,
-      handler(newValue) {
-        if (newValue) {
-          this.fetchPublicationNames(Object.keys(this.totalPerPublicationGroupSmallCounts)
-            .filter(publicationCode => publicationCode !== 'null')
+collection().loadCollection();
+const { t: $t } = useI18n(),
+  hasPublicationNames = ref(false),
+  chartData = ref(null),
+  options = ref({}),
+  totalPerPublication = computed(() => collection().totalPerPublication),
+  publicationNames = computed(() => coa().publicationNames),
+  smallCountPublications = computed(() =>
+    !totalPerPublication.value
+      ? null
+      : Object.keys(totalPerPublication.value).filter(
+          (publicationCode) =>
+            totalPerPublication.value[publicationCode] /
+              collection().collection.length <
+            0.01
+        )
+  ),
+  totalPerPublicationGroupSmallCounts = computed(
+    () =>
+      smallCountPublications.value && {
+        ...Object.keys(totalPerPublication.value)
+          .filter(
+            (publicationCode) =>
+              !smallCountPublications.value.includes(publicationCode)
           )
-          this.hasPublicationNames = true
-        }
+          .reduce(
+            (acc, publicationCode) => ({
+              ...acc,
+              [publicationCode]: totalPerPublication.value[publicationCode],
+            }),
+            {}
+          ),
+        [null]: smallCountPublications.value.reduce(
+          (acc, publicationCode) =>
+            acc + totalPerPublication.value[publicationCode],
+          0
+        ),
       }
-    },
-    labels() {
-      const vm = this
-      this.chartData = {
-        datasets: [{
-          data: this.values,
-          backgroundColor: this.colors
-        }],
-        labels: this.labels
-      }
+  ),
+  labels = computed(
+    () =>
+      hasPublicationNames.value &&
+      Object.keys(totalPerPublicationGroupSmallCounts.value)
+        .sort(sortByCount.value)
+        .reduce(
+          (acc, publicationCode) => [
+            ...acc,
+            publicationNames.value[publicationCode] ||
+              `${$t("Autres")} (${smallCountPublications.value.length} ${$t(
+                "Publications"
+              ).toLowerCase()})`,
+          ],
+          []
+        )
+  ),
+  values = computed(() =>
+    Object.values(totalPerPublicationGroupSmallCounts.value).sort(
+      (count1, count2) => Math.sign(count1 - count2)
+    )
+  ),
+  colors = computed(
+    () =>
+      totalPerPublicationGroupSmallCounts.value &&
+      Object.keys(totalPerPublicationGroupSmallCounts.value)
+        .sort(sortByCount.value)
+        .map((publicationCode) =>
+          publicationCode === "null" ? "#000" : randomColor()
+        )
+  ),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  randomColor = () =>
+    `rgb(${[
+      Math.floor(Math.random() * 255),
+      Math.floor(Math.random() * 255),
+      Math.floor(Math.random() * 255),
+    ].join(",")})`,
+  sortByCount = (publicationCode1, publicationCode2) =>
+    Math.sign(
+      totalPerPublicationGroupSmallCounts.value[publicationCode1] -
+        totalPerPublicationGroupSmallCounts.value[publicationCode2]
+    );
 
-      this.options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: tooltipItem => {
-                const {dataset, parsed: currentValue} = tooltipItem;
-                const total = dataset.data.reduce((acc, value) => acc+value, 0);
-                const percentage = parseFloat((currentValue / total * 100).toFixed(1));
-                return `${currentValue} (${percentage}%)`;
-              },
-              title: ([tooltipItem]) => vm.chartData.labels[tooltipItem.dataIndex],
-            }
-          }
-        }
-      }
+watch(
+  () => totalPerPublicationGroupSmallCounts.value,
+  (newValue) => {
+    if (newValue) {
+      fetchPublicationNames(
+        Object.keys(totalPerPublicationGroupSmallCounts.value).filter(
+          (publicationCode) => publicationCode !== "null"
+        )
+      );
+      hasPublicationNames.value = true;
     }
   },
+  { immediate: true }
+);
 
-  methods: {
-    ...mapActions(coa, ["fetchPublicationNames"]),
-    ...mapActions(collection, ["loadCollection"]),
-    randomColor: () => `rgb(${[Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].join(',')})`,
+watch(
+  () => labels.value,
+  () => {
+    chartData.value = {
+      datasets: [
+        {
+          data: values.value,
+          backgroundColor: colors.value,
+        },
+      ],
+      labels: labels.value,
+    };
 
-    sortByCount(publicationCode1, publicationCode2) {
-      return Math.sign(this.totalPerPublicationGroupSmallCounts[publicationCode1] - this.totalPerPublicationGroupSmallCounts[publicationCode2])
-    }
-  }
-}
+    options.value = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (tooltipItem) => {
+              const { dataset, parsed: currentValue } = tooltipItem;
+              const total = dataset.data.reduce((acc, value) => acc + value, 0);
+              const percentage = parseFloat(
+                ((currentValue / total) * 100).toFixed(1)
+              );
+              return `${currentValue} (${percentage}%)`;
+            },
+            title: ([tooltipItem]) =>
+              chartData.value.labels[tooltipItem.dataIndex],
+          },
+        },
+      },
+    };
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>

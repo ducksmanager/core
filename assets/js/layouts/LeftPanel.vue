@@ -1,10 +1,7 @@
 <template>
   <div id="menu">
     <div id="medals_and_login">
-      <div
-        v-if="userPoints"
-        id="medals"
-      >
+      <div v-if="userPoints" id="medals">
         <Medal
           v-for="(numberOfPoints, contribution) in userPoints"
           :key="contribution"
@@ -13,41 +10,23 @@
         />
       </div>
       <div id="login">
-        <a
-          id="logo_small"
-          :href="username ? r('/collection/show') : '/'"
-        >
-          <img :src="`${imagePath}/logo_name.jpg`">
+        <a id="logo_small" :href="username ? r('/collection/show') : '/'">
+          <img :src="`${imagePath}/logo_name.jpg`" />
         </a>
 
-        <div
-          v-if="username"
-          id="login_status"
-        >
-          <img
-            alt="O"
-            :src="`${imagePath}/icons/green.png`"
-          >&nbsp;
+        <div v-if="username" id="login_status">
+          <img alt="O" :src="`${imagePath}/icons/green.png`" />&nbsp;
           <span>{{ username }}</span>
         </div>
       </div>
     </div>
-    <Navigation
-      v-once
-      class="d-none d-md-block"
-    />
-    <div
-      id="navbar-toggle-collapse"
-      class="collapse"
-    >
+    <Navigation v-once class="d-none d-md-block" />
+    <div id="navbar-toggle-collapse" class="collapse">
       <div class="bg-dark p-4">
         <Navigation />
       </div>
     </div>
-    <nav
-      v-once
-      class="navbar navbar-dark d-block d-md-none"
-    >
+    <nav v-once class="navbar navbar-dark d-block d-md-none">
       <div class="container-fluid">
         <button
           class="navbar-toggler"
@@ -57,12 +36,10 @@
         >
           <span class="navbar-toggler-icon" />
         </button>
-        <a
-          class="navbar-brand"
-          href="#"
-        >
+        <a class="navbar-brand" href="#">
           <SwitchLocale fixed />
-          <Banner small /></a>
+          <Banner small
+        /></a>
       </div>
     </nav>
     <RecentEvents />
@@ -78,21 +55,22 @@ import Banner from "./Banner";
 import SwitchLocale from "./SwitchLocale";
 import { users } from "../stores/users";
 import { l10n } from "../stores/l10n";
-import {user} from "../composables/global";
-import {computed} from "vue";
-import {collection} from "../stores/collection";
+import { user } from "../composables/global";
+import { computed } from "vue";
+import { collection } from "../stores/collection";
 
-const points = users().points
-const userPoints = computed(() => points && points[userId])
-
-const { userId, username } = user()
+const points = users().points,
+  userPoints = computed(() => points?.[userId]),
+  { userId, username } = user(),
+  { r } = l10n(),
+  { imagePath } = require("../composables/imagePath");
 
 if (userId) {
-  axios.post('/api/collection/lastvisit').then(data => collection().setPreviousVisit(data))
-  users().fetchStats([userId])
+  axios
+    .post("/api/collection/lastvisit")
+    .then((data) => collection().setPreviousVisit(data));
+  users().fetchStats([userId]);
 }
-
-const {$r: r} = l10n()
 </script>
 
 <style scoped lang="scss">
@@ -167,7 +145,7 @@ const {$r: r} = l10n()
     }
 
     .navbar-toggler {
-      border-color: rgba(255,255,255,0.5);
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
     .navbar-collapse {
@@ -204,7 +182,8 @@ const {$r: r} = l10n()
     margin-top: 40px;
   }
 
-  #nb_users, #flags {
+  #nb_users,
+  #flags {
     position: static;
     width: inherit;
     text-align: center;
@@ -239,5 +218,4 @@ const {$r: r} = l10n()
 #menu a {
   border-bottom: none;
 }
-
 </style>

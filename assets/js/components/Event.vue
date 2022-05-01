@@ -1,5 +1,5 @@
 <template>
-  <div :class="{event: true, [`event_${event.type}`]: true}">
+  <div :class="{ event: true, [`event_${event.type}`]: true }">
     <UserPopover
       v-if="event.userId && stats[event.userId]"
       :id="event.userId"
@@ -10,11 +10,14 @@
       {{ $t("a commencé sa collection sur DucksManager. Bienvenue !") }}
     </template>
     <template v-if="event.type === 'medal'">
-      {{ $t('a obtenu la médaille <b>{0} niveau {1}</b>', [getMedalTitle(event.contribution), event.niveau]) }}
+      {{ $t('a obtenu la médaille <b>{0} niveau {1}</b>',
+      [getMedalTitle(event.contribution), event.niveau]) }}
     </template>
     <template v-if="event.type === 'bookstore_comment'">
       {{ $t("a visité la bouquinerie") }}
-      <i><a :href="$r('/bookstores')">{{ event.name }}</a></i>
+      <i
+        ><a :href="r('/bookstores')">{{ event.name }}</a></i
+      >
     </template>
     <template v-if="event.type === 'collection_update'">
       &nbsp;{{ $t("a ajouté") }}
@@ -30,10 +33,7 @@
       {{ $t("à sa collection") }}
     </template>
     <template v-if="event.type === 'edge'">
-      <span
-        v-for="(collaborator, index) in event.users"
-        :key="collaborator"
-      >
+      <span v-for="(collaborator, index) in event.users" :key="collaborator">
         <template v-if="event.users.length > 1">
           <template v-if="index === event.users.length - 1">
             {{ $t("et") }}
@@ -46,7 +46,7 @@
           :points="points[collaborator]"
         />
       </span>
-      <template v-if="event.users.length>1">
+      <template v-if="event.users.length > 1">
         {{ $t("ont créé la tranche") }}
       </template>
       <template v-else>
@@ -78,17 +78,12 @@
       {{ $t("pour la bibliothèque DucksManager") }}
     </template>
     <template v-if="event.type === 'subscription_additions'">
-      <span
-        v-for="(subscriber, index) in event.users"
-        :key="subscriber"
-      >
+      <span v-for="(subscriber, index) in event.users" :key="subscriber">
         <template v-if="event.users.length > 1">
           <template v-if="index === event.users.length - 1">
             {{ $t("et") }}
           </template>
-          <template v-else-if="index > 0">
-            ,
-          </template>
+          <template v-else-if="index > 0"> , </template>
         </template>
         <UserPopover
           :id="subscriber"
@@ -96,7 +91,7 @@
           :points="points[subscriber]"
         />
       </span>
-      <template v-if="event.users.length>1">
+      <template v-if="event.users.length > 1">
         {{ $t("ont reçu") }}
       </template>
       <template v-else>
@@ -110,7 +105,7 @@
         hide-condition
         :flex="false"
       />
-      <template v-if="event.users.length>1">
+      <template v-if="event.users.length > 1">
         {{ $t("grâce à leur abonnement à ce magazine") }}
       </template>
       <template v-else>
@@ -120,43 +115,36 @@
     <slot />
   </div>
 </template>
-<script>
+<script setup>
 import Issue from "../components/Issue";
 import OtherIssues from "../components/OtherIssues";
 import UserPopover from "../components/UserPopover";
-import { mapState } from "pinia";
 import BookcasePopover from "./BookcasePopover";
 import { users } from "../stores/users";
 import { coa } from "../stores/coa";
-import {mapActions} from "pinia";
-import {l10n} from "../stores/l10n";
+import { l10n } from "../stores/l10n";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-export default {
-  name: "Event",
-  components: { BookcasePopover, Issue, OtherIssues, UserPopover },
-  props: {
-    event: { type: Object, required: true }
-  },
+defineProps({
+  event: { type: Object, required: true },
+});
 
-  computed: {
-    ...mapState(coa, ["publicationNames"]),
-    ...mapState(users, ["stats", "points"])
-  },
-
-  methods: {
-    ...mapActions(l10n, ["$r"]),
-    getMedalTitle(contribution) {
-      switch (contribution.toUpperCase()) {
-        case "CREATEUR":
-          return this.$t("Concepteur de tranches");
-        case "PHOTOGRAPHE":
-          return this.$t("Photographe de tranches");
-        case "DUCKHUNTER":
-          return this.$t("Duckhunter");
-      }
+const publicationNames = computed(() => coa().publicationNames),
+  stats = computed(() => users().stats),
+  points = computed(() => users().points),
+  { r } = l10n(),
+  { t: $t } = useI18n(),
+  getMedalTitle = (contribution) => {
+    switch (contribution.toUpperCase()) {
+      case "CREATEUR":
+        return $t("Concepteur de tranches");
+      case "PHOTOGRAPHE":
+        return $t("Photographe de tranches");
+      case "DUCKHUNTER":
+        return $t("Duckhunter");
     }
-  }
-};
+  };
 </script>
 <style scoped lang="scss">
 .event {

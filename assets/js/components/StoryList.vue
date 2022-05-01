@@ -1,10 +1,7 @@
 <template>
   <ul>
     <template v-for="(storiesOfAuthor, author) in stories">
-      <li
-        v-for="storyCode in storiesOfAuthor"
-        :key="`${author}- ${storyCode}`"
-      >
+      <li v-for="storyCode in storiesOfAuthor" :key="`${author}- ${storyCode}`">
         <b-badge>{{ authors[author] }}</b-badge>
         <Story
           :storycode="storyCode"
@@ -15,33 +12,24 @@
     </template>
   </ul>
 </template>
-<script>
+<script setup>
 import Story from "./Story";
-import {BBadge} from "bootstrap-vue-3";
+import { BBadge } from "bootstrap-vue-3";
 
-export default {
-  name: "StoryList",
-
-  components: {
-    Story,
-    BBadge
+defineProps({
+  stories: {
+    type: Object,
+    required: true,
   },
-
-  props: {
-    stories: {
-      type: Object,
-      required: true
-    },
-    authors: {
-      type: Object,
-      required: true
-    },
-    storyDetails: {
-      type: Object,
-      required: true
-    }
-  }
-}
+  authors: {
+    type: Object,
+    required: true,
+  },
+  storyDetails: {
+    type: Object,
+    required: true,
+  },
+});
 </script>
 
 <style scoped lang="scss">

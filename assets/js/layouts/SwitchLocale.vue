@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="flags"
-    :class="{fixed}"
-  >
+  <div id="flags" :class="{ fixed }">
     <img
       v-for="locale in locales"
       :key="locale.key"
@@ -10,45 +7,37 @@
       :src="`${imagePath}/flags/xl/${locale.flagName}.png`"
       :alt="locale.name"
       @click="reloadWithLocale(locale)"
-    >
+    />
   </div>
 </template>
-<script>
-export default {
-  name: 'SwitchLocale',
+<script setup>
+import { useI18n } from "vue-i18n";
 
-  props: {
-    fixed: {
-      type: Boolean,
-      default: false,
-    }
+defineProps({
+  fixed: {
+    type: Boolean,
+    default: false,
   },
-
-  data: () => ({
-    locales: [
-      {
-        key: 'en',
-        name: 'English',
-        flagName: 'uk'
-      },
-      {
-        key: 'fr',
-        name: 'Français',
-        flagName: 'fr'
-      }
-    ]
-  }),
-
-  methods: {
-    reloadWithLocale({ key: locale }) {
-      localStorage.setItem('locale', locale)
-      this.$i18n.locale = locale
-    }
-  }
-}
+});
+const { imagePath } = require("../composables/imagePath"),
+  locales = [
+    {
+      key: "en",
+      name: "English",
+      flagName: "uk",
+    },
+    {
+      key: "fr",
+      name: "Français",
+      flagName: "fr",
+    },
+  ],
+  reloadWithLocale = ({ key }) => {
+    localStorage.setItem("locale", key);
+    useI18n().locale = key;
+  };
 </script>
 <style scoped lang="scss">
-
 #flags {
   position: absolute;
   top: 0;

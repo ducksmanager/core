@@ -1,37 +1,25 @@
 <template>
   <div>
-    <b-alert
-      v-if="errors[id]"
-      show
-      variant="danger"
-    >
+    <b-alert v-if="errors[id]" show variant="danger">
       {{ $t(errors[id]) }}
     </b-alert>
     <slot />
   </div>
 </template>
 
-<script>
-import { mapState } from "pinia";
-import {BAlert} from "bootstrap-vue-3";
+<script setup>
+import { BAlert } from "bootstrap-vue-3";
 import { form } from "../stores/form";
+import { computed } from "vue";
 
-export default {
-  name: "Errorable",
-  components: {
-    BAlert
+defineProps({
+  id: {
+    type: String,
+    required: true,
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
+});
 
-  computed: {
-    ...mapState(form, ["errors"])
-  }
-}
+const errors = computed(() => form().errors);
 </script>
 
 <style scoped lang="scss">

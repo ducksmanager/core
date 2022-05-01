@@ -10,17 +10,17 @@
     <b-progress>
       <b-progress-bar
         class="progress-current"
-        :style="{width: `${medalProgressCurrentPercentage}%`}"
+        :style="{ width: `${medalProgressCurrentPercentage}%` }"
       />
       <b-progress-bar
         class="progress-extra"
         striped
         animated
         variant="success"
-        :style="{width: `${getLevelProgressPercentage(extraPoints)}%`}"
+        :style="{ width: `${getLevelProgressPercentage(extraPoints)}%` }"
       />
       <div class="progress-extra-text">
-        + {{ extraPoints }} {{ $t('Points') }}
+        + {{ extraPoints }} {{ $t("Points") }}
       </div>
     </b-progress>
     <Medal
@@ -33,36 +33,33 @@
     />
   </div>
 </template>
-<script>
+<script setup>
 import Medal from "./Medal";
-import medalMixin from "../mixins/medalMixin";
-import {BProgress, BProgressBar} from "bootstrap-vue-3";
+import { BProgress, BProgressBar } from "bootstrap-vue-3";
+import medal from "../composables/medal";
 
-export default {
-  name: "MedalProgress",
-  components: { Medal, BProgress, BProgressBar },
+const props = defineProps({
+  contribution: {
+    type: String,
+    default: "Photographe",
+  },
+  userLevelPoints: {
+    type: Number,
+    required: true,
+  },
+  extraPoints: {
+    type: Number,
+    required: true,
+  },
+});
 
-  mixins: [medalMixin],
-
-  props: {
-    contribution: {
-      type: String,
-      default: "Photographe"
-    },
-    userLevelPoints: {
-      type: Number,
-      required: true
-    },
-    extraPoints: {
-      type: Number,
-      required: true
-    }
-  }
-};
+const { medalProgressCurrentPercentage, getLevelProgressPercentage } = medal(
+  props.contribution,
+  props.userLevelPoints
+);
 </script>
 
 <style lang="scss">
-
 .progress-wrapper {
   margin: 12px 0;
 
@@ -78,7 +75,16 @@ export default {
 
     .progress-extra {
       color: rgb(40, 40, 40) !important;
-      background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+      background-image: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+      );
       text-shadow: 1px 1px 2px lightgrey;
       white-space: nowrap;
       overflow-x: visible;
@@ -95,5 +101,4 @@ export default {
     }
   }
 }
-
 </style>
