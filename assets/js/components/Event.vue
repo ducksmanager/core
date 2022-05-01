@@ -26,6 +26,7 @@
         :publicationcode="event.publicationCode"
         :issuenumber="event.issueNumber"
         hide-condition
+        :flex="false"
       />
       <OtherIssues :number="event.numberOfIssues" />
       {{ $t("à sa collection") }}
@@ -64,6 +65,7 @@
           :publicationcode="event.edges[0].publicationCode"
           :issuenumber="event.edges[0].issueNumber"
           hide-condition
+          :flex="false"
         />
         <OtherIssues
           :number="event.edges.length"
@@ -108,6 +110,7 @@
         :publicationcode="event.publicationCode"
         :issuenumber="event.issueNumber"
         hide-condition
+        :flex="false"
       />
       <template v-if="event.users.length>1">
         {{ $t("grâce à leur abonnement à ce magazine") }}
