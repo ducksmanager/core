@@ -9,10 +9,10 @@
         :publicationcode="publicationcode"
         :issuenumber="issuenumber"
       />
-      <Publication
+      <span class="mx-1"><Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname"
-      /><span>{{ issuenumber }}</span>
+      /></span><span>{{ issuenumber }}</span>
       <slot name="title-suffix" />
     </a><slot />
   </div>
@@ -43,6 +43,7 @@ export default {
   a {
     align-items: center;
     line-height: 1rem;
+    height: 1.1rem;
     color: darkgrey;
     pointer-events: none;
     border-bottom: none;
