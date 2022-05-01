@@ -232,23 +232,19 @@ class PageSiteController extends AbstractController
      *     "en": "/signup",
      *     "fr": "/inscription"
      * },
-     *     methods={"GET", "PUT"}
+     *     methods={"GET", "POST"}
      * )
      */
-    public function showSignupPage(ApiService $apiService, Request $request): Response
+    public function showSignupPage(): Response
     {
-        if ($request->getMethod() === 'PUT') {
-            $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
-            $apiResponse = $apiService->call('/ducksmanager/user', 'ducksmanager', $data, 'PUT');
-            if (!is_null($apiResponse)) {
-                return new Response('OK', Response::HTTP_CREATED);
-            }
-            return new Response('KO', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-        return $this->renderSitePage(
-            'Signup',
-            'Inscription',
-        );
+        return $this->render('security/login.twig', [
+            'commit' => $_ENV['COMMIT'],
+            'title'=> 'Inscription',
+            'vueProps' => [
+                'component' => 'Site',
+                'page' => 'Signup',
+            ]
+        ]);
     }
 
     /**

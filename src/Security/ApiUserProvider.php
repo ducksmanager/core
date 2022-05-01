@@ -2,6 +2,7 @@
 namespace App\Security;
 
 use App\Service\ApiService;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -10,10 +11,12 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class ApiUserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
     private ApiService $apiService;
+    private LoggerInterface $logger;
 
-    public function __construct(ApiService $apiService)
+    public function __construct(ApiService $apiService, LoggerInterface $logger)
     {
         $this->apiService = $apiService;
+        $this->logger = $logger;
     }
 
     public function loadUserByUsername(string $username)
@@ -24,9 +27,9 @@ class ApiUserProvider implements UserProviderInterface, PasswordUpgraderInterfac
                 'dm-user' => $apiUser['username'],
                 'dm-pass' => $apiUser['password'],
             ]);
-            $permissionList = array_merge(['ROLE_USER'], array_values(array_map(function(string $role) use ($permissions) {
-                return strtoupper("ROLE_${role}_{$permissions[$role]}");
-            }, array_keys($permissions))));
+            $permissionList = array_merge(['ROLE_USER'], array_values(array_map(fn(string $role) =>
+                strtoupper("ROLE_${role}_{$permissions[$role]}"), array_keys($permissions)
+            )));
             return new User($apiUser['id'], $apiUser['username'], $apiUser['password'], $permissionList);
         }
 

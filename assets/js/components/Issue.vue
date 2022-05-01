@@ -1,7 +1,7 @@
 <template>
-  <div :class="{[`d-${noWrap ? 'inline' : 'block'}`]: true}">
+  <div :class="`d-${noWrap ? 'inline' : 'block'}`">
     <a
-      :class="{ clickable }"
+      :class="{ clickable, flex }"
       :href="`${$r(`/collection/show/{publicationCode:${publicationcode}}`)}#${issuenumber}`"
     >
       <Condition
@@ -14,8 +14,7 @@
         :publicationname="publicationname"
       /><span>{{ issuenumber }}</span>
       <slot name="title-suffix" />
-    </a>
-    <slot />
+    </a><slot />
   </div>
 </template>
 
@@ -34,7 +33,8 @@ export default {
     issuenumber: {type: String, required: true},
     clickable: { type: Boolean, default: false },
     hideCondition: { type: Boolean, default: false },
-    noWrap: { type: Boolean, default: true }
+    noWrap: { type: Boolean, default: true },
+    flex: { type: Boolean, default: true }
   },
 
   methods: {
@@ -45,20 +45,19 @@ export default {
 
 <style scoped lang="scss">
   a {
-    display: inline-flex;
     align-items: center;
     line-height: 1rem;
     color: darkgrey;
     pointer-events: none;
     border-bottom: none;
 
+    &.flex {
+      display: inline-flex;
+    }
+
     &.clickable {
       pointer-events: initial;
       border-bottom: initial;
-    }
-
-    * {
-      margin: 0 2px;
     }
   }
 </style>

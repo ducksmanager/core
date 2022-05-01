@@ -57,10 +57,22 @@ export const collection = defineStore('collection', {
       [issue.country]: (acc[issue.country] || 0) + 1
     }), {}),
 
-    totalPerPublication: ({ collection }) => collection && collection.reduce((acc, issue) => {
+    issueNumbersPerPublication: ({collection}) => collection && collection.reduce((acc, issue) => {
       const publicationCode = `${issue.country}/${issue.magazine}`;
-      return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
+      return { ...acc, [publicationCode]: [...(acc[publicationCode] || []), issue.issueNumber] };
     }, {}),
+
+    totalPerPublication: ({ issueNumbersPerPublication }) =>
+      issueNumbersPerPublication && Object.keys(issueNumbersPerPublication).reduce((acc, publicationCode) =>
+        ({ ...acc, [publicationCode]: issueNumbersPerPublication[publicationCode].length }),
+        {}
+      ),
+
+    totalPerPublicationUniqueIssueNumbers: ({ issueNumbersPerPublication }) =>
+      issueNumbersPerPublication && Object.keys(issueNumbersPerPublication).reduce((acc, publicationCode) =>
+        ({ ...acc, [publicationCode]: [...new Set(issueNumbersPerPublication[publicationCode])].length }),
+        {}
+      ),
 
     hasSuggestions: ({ suggestions }) => suggestions && suggestions.issues && Object.keys(suggestions.issues).length,
 

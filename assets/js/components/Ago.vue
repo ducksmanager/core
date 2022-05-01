@@ -1,5 +1,5 @@
 <template>
-  <span class="ago">{{ timeAgo }}</span>
+  <span class="ago pl-2">{{ timeAgo }}</span>
 </template>
 <script>
 import * as timeago from "timeago.js";

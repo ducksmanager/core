@@ -23,6 +23,7 @@
             :publicationcode="edge.publicationCode"
             :issuenumber="edge.issueNumber"
             hide-condition
+            :flex="false"
           />
         </b-col>
       </b-row>
@@ -63,6 +64,8 @@ export default {
 <style lang="scss" scoped>
 .popover {
   max-width: 25vw;
+  max-height: 90vh;
+  overflow: auto;
 
   .popover-body {
     padding-top: 0;

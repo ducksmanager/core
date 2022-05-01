@@ -5,10 +5,6 @@ export const form = defineStore('form', {
     errors: {}
   }),
 
-  getters: {
-    hasErrors: ({ errors }) => Object.keys(errors).length
-  },
-
   actions: {
     addErrors(errors) {
       this.errors = {...this.errors, ...errors}

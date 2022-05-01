@@ -2,7 +2,7 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     access_denied_url: /login
     enable_authenticator_manager: true
-    encoders:
+    password_hashers:
         App\Security\User: plaintext
     providers:
         api_user_provider:
@@ -30,10 +30,10 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: '^/admin/edges/*', roles: [ROLE_EDGECREATOR_EDITION, ROLE_DUCKSMANAGER_ADMIN] }
-        - { path: '^/admin', roles: ROLE_DUCKSMANAGER_ADMIN }
-        - { path: '^/collection', roles: ROLE_USER }
-        - { path: '^/bookcase(?!/show/.+)', roles: ROLE_USER }
-        - { path: '^/stats', roles: ROLE_USER }
-        - { path: '^/expand', roles: ROLE_USER }
-        - { path: '^/print', roles: ROLE_USER }
-        - { path: '^/logout', roles: ROLE_USER }
+        - { path: '^/admin', roles: [ROLE_DUCKSMANAGER_ADMIN] }
+        - { path: '^/collection', roles: [ROLE_USER] }
+        - { path: '^/bookcase(?!/show/.+)', roles: [ROLE_USER] }
+        - { path: '^/stats', roles: [ROLE_USER] }
+        - { path: '^/expand', roles: [ROLE_USER] }
+        - { path: '^/print', roles: [ROLE_USER] }
+        - { path: '^/logout', roles: [ROLE_USER] }

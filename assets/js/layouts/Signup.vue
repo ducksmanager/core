@@ -3,6 +3,11 @@
     method="post"
     @submit.prevent="signup"
   >
+    <input
+      type="hidden"
+      name="_csrf_token"
+      :value="csrfToken"
+    >
     <b-row>
       <b-col lg="4">
         <Errorable id="username">
@@ -94,11 +99,14 @@ export default {
     signupUsername: "",
     email: "",
     password: "",
-    password2: ""
+    password2: "",
+    csrfToken: document.getElementById("csrf").value
   }),
 
   computed: {
-    ...mapState(form, ["hasErrors"])
+    hasErrors() {
+      return Object.keys(this.errors).length
+    }
   },
 
   mounted() {
@@ -121,13 +129,14 @@ export default {
       if (this.hasErrors) {
         return;
       }
+      const bodyFormData = new FormData();
+      bodyFormData.append('username', this.signupUsername)
+      bodyFormData.append('password', this.password)
+      bodyFormData.append('password2',this.password2)
+      bodyFormData.append('email', this.email)
+      bodyFormData.append('_csrf_token', this.csrfToken)
       try {
-        await axios.put("/signup", {
-          username: this.signupUsername,
-          password: this.password,
-          password2: this.password2,
-          email: this.email
-        });
+        await axios.post("/signup", bodyFormData, { headers: { "Content-Type": "multipart/form-data" } });
         window.location.replace(this.$r("/collection/show"));
       } catch (e) {
         this.addErrors({ username: this.$t("Ce nom d'utilisateur ou cette adresse e-mail existe déjà.") });
