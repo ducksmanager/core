@@ -1,18 +1,22 @@
 <template>
-  <b-alert
+  <b-progress
     v-if="inGame"
     :key="`score-${player.id}`"
-    show
-    :variant="alertVariant"
-    class="d-flex flex-row p-1 align-items-center justify-content-between"
+    class="position-relative d-flex flex-row align-items-center justify-content-between mb-1"
   >
-    <b-col cols="4" class="px-0">
+    <b-progress-bar
+      class="position-absolute"
+      :variant="alertVariant"
+      :value="alertVariant === 'danger' ? 100 : score.percentage_time_spent_guessing"
+      max="100"
+    />
+    <b-col cols="6" class="px-0 d-flex align-items-center justify-content-center">
       <player-info :username="player.username" :top-player="false" />
     </b-col>
-    <b-col cols="8">
+    <b-col cols="6" class="d-flex align-items-center justify-content-center">
       <div class="text-center">{{ score.score_type_name }}</div>
     </b-col>
-  </b-alert>
+  </b-progress>
   <div v-else>
     <h6>{{ score.score_type_name }}</h6>
     <div>{{ score.score }} points</div>
@@ -25,23 +29,36 @@
 import { BIconStopwatchFill } from 'bootstrap-vue'
 import Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
+import { computed } from '@nuxtjs/composition-api'
 import { useScoreToVariant } from '~/composables/use-score-to-variant'
+import { OngoingRoundScore } from '~/types/roundWithScoresAndAuthor'
 
 const props = withDefaults(
   defineProps<{
     inGame: boolean
     players: Index.player[]
-    score: Index.round_score
+    score: Index.round_score | OngoingRoundScore
   }>(),
   {
     inGame: false,
   }
 )
 
-const alertVariant = useScoreToVariant(props.score)
+const alertVariant = computed(() => useScoreToVariant(props.score))
 const player: Index.player = props.players.find(({ id }) => id === props.score.player_id)!
 
 const { t } = useI18n()
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.progress,
+.progress > * {
+  color: #555;
+  height: 100px;
+  line-height: 15px;
+
+  &.progress-bar {
+    border-radius: 0.25rem;
+  }
+}
+</style>

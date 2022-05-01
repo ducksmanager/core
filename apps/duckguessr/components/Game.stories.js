@@ -25,6 +25,16 @@ Default.args = {
         score_type_name: 'Correct author',
         score: 100,
         speed_bonus: 10,
+        percentage_time_spent_guessing: 50,
+      },
+      {
+        id: 101,
+        player_id: 3,
+        round_id: 10,
+        score_type_name: 'Wrong author',
+        score: 0,
+        speed_bonus: 0,
+        percentage_time_spent_guessing: 35,
       },
     ],
     sitecode_url:
@@ -46,6 +56,16 @@ Default.args = {
       id: 1,
       username: 'brunoperel',
       ducksmanager_id: 117,
+    },
+    {
+      id: 2,
+      username: 'Wizyx',
+      ducksmanager_id: 1,
+    },
+    {
+      id: 3,
+      username: 'remifanpicsou',
+      ducksmanager_id: 3,
     },
   ],
   previousPersoncodes: ['CB', 'DR'],

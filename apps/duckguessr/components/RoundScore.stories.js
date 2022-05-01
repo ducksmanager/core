@@ -20,7 +20,13 @@ Default.args = {
       username: 'Wizyx',
     },
   ],
-  score: { player_id: 1, score: 10, speedBonus: 5, score_type_name: 'Correct author' },
+  score: {
+    player_id: 1,
+    score: 10,
+    speedBonus: 5,
+    score_type_name: 'Correct author',
+    percentage_time_spent_guessing: 25,
+  },
 }
 export const InGame = Template.bind({})
 InGame.args = {
@@ -32,10 +38,32 @@ InGame.args = {
       username: 'Wizyx',
     },
   ],
-  score: { player_id: 1, score: 10, speedBonus: 5, score_type_name: 'Correct author' },
+  score: {
+    player_id: 1,
+    score: 10,
+    speedBonus: 5,
+    score_type_name: 'Correct author',
+    percentage_time_spent_guessing: 25,
+  },
+}
+export const InGameNotGuessedYet = Template.bind({})
+InGameNotGuessedYet.args = {
+  inGame: true,
+  players: [
+    {
+      id: 1,
+      username: 'Wizyx',
+    },
+  ],
+  score: {
+    player_id: 1,
+    score: null,
+    speedBonus: null,
+    percentage_time_spent_guessing: 25,
+  },
 }
 export const InGameWrongAuthor = Template.bind({})
-InGame.args = {
+InGameWrongAuthor.args = {
   inGame: true,
   scoreTypeName: 'Score type 1',
   players: [
@@ -44,5 +72,11 @@ InGame.args = {
       username: 'Wizyx',
     },
   ],
-  score: { player_id: 1, score: 0, speedBonus: 5, score_type_name: 'Wrong author' },
+  score: {
+    player_id: 1,
+    score: 0,
+    speedBonus: 5,
+    score_type_name: 'Wrong author',
+    percentage_time_spent_guessing: 30,
+  },
 }

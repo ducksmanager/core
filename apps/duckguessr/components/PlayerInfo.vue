@@ -1,7 +1,10 @@
 <template>
-  <div class="d-flex flex-column align-items-center text-center">
+  <div
+    class="d-flex flex-column align-items-center justify-content-around text-center"
+    style="height: 100px"
+  >
     <b-avatar :class="{ 'top-player': topPlayer }" size="4rem" :src="src" />
-    <div>{{ isBot ? 'BOT' : username }}</div>
+    <div class="username">{{ isBot ? 'BOT' : username }}</div>
   </div>
 </template>
 
@@ -35,5 +38,9 @@ const src = isBot ? '/little-helper.png' : '/anonymous.png'
     background: url('/hat.png') no-repeat;
     background-size: contain;
   }
+}
+
+.username {
+  height: 1rem;
 }
 </style>

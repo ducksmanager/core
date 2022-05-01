@@ -26,7 +26,7 @@
       <div class="m-1 p-1 border overflow-auto">
         <h3>Round {{ currentRound.round_number }}</h3>
         <round-score
-          v-for="score in currentRound.round_scores"
+          v-for="score in roundScoresAllPlayers"
           :key="`score-${score.player_id}`"
           in-game
           :players="players"
@@ -38,9 +38,13 @@
 </template>
 <script lang="ts" setup>
 import Index from '@prisma/client'
-import { ref } from '@nuxtjs/composition-api'
+import { computed, ref } from '@nuxtjs/composition-api'
 import AuthorCard from '~/components/AuthorCard.vue'
-import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
+import {
+  Author,
+  OngoingRoundScore,
+  RoundWithScoresAndAuthor,
+} from '~/types/roundWithScoresAndAuthor'
 
 defineEmits(['select-author'])
 
@@ -54,6 +58,23 @@ const props = defineProps<{
 }>()
 
 const url = ref(`${process.env.CLOUDINARY_URL_ROOT}${props.currentRound.sitecode_url}`)
+
+const roundScoresAllPlayers = computed(() =>
+  props.players
+    .map(
+      (player) =>
+        props.currentRound.round_scores.find(({ player_id }) => player_id === player.id) ||
+        ({
+          percentage_time_spent_guessing: props.remainingTime * (100 / props.availableTime),
+          player_id: player.id,
+          round_id: props.currentRound.id,
+        } as OngoingRoundScore)
+    )
+    // Correct scores first, then ongoing players, then wrong scores
+    .sort(({ score: score1 }, { score: score2 }) =>
+      score1 === 0 ? 1 : score2 === 0 ? -1 : (score1 || 0) > (score2 || 0) ? -1 : 1
+    )
+)
 </script>
 <style lang="scss">
 #image-to-guess {

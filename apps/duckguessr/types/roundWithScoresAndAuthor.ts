@@ -9,3 +9,11 @@ export interface Author {
 export interface RoundWithScoresAndAuthor extends Index.round, Author {
   round_scores: Array<Index.round_score>
 }
+
+export interface OngoingRoundScore {
+  percentage_time_spent_guessing: number
+  player_id: number
+  round_id: number
+  score_type_name: null
+  score: null
+}
