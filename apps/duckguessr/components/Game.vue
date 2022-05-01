@@ -57,7 +57,7 @@ const props = defineProps<{
   remainingTime: number
 }>()
 
-const url = ref(`${process.env.CLOUDINARY_URL_ROOT}${props.currentRound.sitecode_url}`)
+const url = computed(() => `${process.env.CLOUDINARY_URL_ROOT}${props.currentRound.sitecode_url}`)
 
 const roundScoresAllPlayers = computed(() =>
   props.players
