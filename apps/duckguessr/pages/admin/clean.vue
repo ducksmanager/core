@@ -139,6 +139,7 @@ import type Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
 import { BIconCheck, BIconX, BPagination } from 'bootstrap-vue'
+import { useCookies } from '@vueuse/integrations/useCookies'
 import { setUserCookieIfNotExists } from '~/composables/user'
 
 interface DatasetWithDecisionCounts {
@@ -323,7 +324,7 @@ export default {
       setUserCookieIfNotExists()
       io(`${process.env.SOCKET_URL}/login`, {
         auth: {
-          cookie: document.cookie,
+          cookie: useCookies().getAll(),
         },
       }).on('logged', async (loggedInUser) => {
         user.value = loggedInUser

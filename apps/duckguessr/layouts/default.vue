@@ -20,6 +20,7 @@ import { defineComponent } from '@vue/runtime-dom'
 import { io } from 'socket.io-client'
 import Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
+import { useCookies } from '@vueuse/integrations/useCookies'
 import { isAnonymous, setDuckguessrId, setUserCookieIfNotExists } from '~/composables/user'
 import Banner from '~/layouts/Banner.vue'
 
@@ -33,7 +34,7 @@ export default defineComponent({
       setUserCookieIfNotExists()
       io(`${process.env.SOCKET_URL}/login`, {
         auth: {
-          cookie: document.cookie,
+          cookie: useCookies().getAll(),
         },
       }).on('logged', (loggedInUser) => {
         console.log(loggedInUser)

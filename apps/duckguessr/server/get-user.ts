@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from 'fs'
 import Index, { PrismaClient } from '@prisma/client'
-const { parse: parseCookie } = require('cookie')
 
 const prisma = new PrismaClient()
 
@@ -11,8 +10,7 @@ export const getBotUser = async (botUsername: string): Promise<Index.player> =>
     },
   }))!
 
-export const getUser = async (cookieContents: string): Promise<Index.player> => {
-  const cookies = parseCookie(cookieContents)
+export const getUser = async (cookies: { [key: string]: any }): Promise<Index.player> => {
   const { PHPSESSID: sessionId, 'duckguessr-user': duckguessrName } = cookies
   let user: Index.player | null
   if (sessionId) {
@@ -24,7 +22,7 @@ export const getUser = async (cookieContents: string): Promise<Index.player> => 
         /i:(\d+);s:\d+:".?App\\Security\\User.?username";s:\d+:"([^"]+)/
       )
       if (!match) {
-        throw new Error(`Invalid cookie: ${cookieContents}`)
+        throw new Error(`Invalid cookie: ${cookies}`)
       }
       const ducksmanagerId = parseInt(match[1])
       const username = match[2]

@@ -15,6 +15,7 @@ import {
 import Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
+import { useCookies } from '@vueuse/integrations/useCookies'
 
 export default defineComponent({
   name: 'Matchmaking',
@@ -29,7 +30,7 @@ export default defineComponent({
 
     const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`, {
       auth: {
-        cookie: document.cookie,
+        cookie: useCookies().getAll(),
       },
     })
 

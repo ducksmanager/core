@@ -52,6 +52,7 @@ import { useRouter, useRoute, ref, computed } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import type Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
+import { useCookies } from '@vueuse/integrations/useCookies'
 
 const router = useRouter()
 const route = useRoute()
@@ -59,7 +60,7 @@ const { t } = useI18n()
 
 const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking`, {
   auth: {
-    cookie: document.cookie,
+    cookie: useCookies().getAll(),
   },
 })
 

@@ -14,30 +14,13 @@
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
-      <b-dropdown
-        id="language-navbar"
-        class="position-fixed"
-        variant="outline-secondary"
-        boundary="viewport"
-      >
-        <template #button-content><b-icon-flag-fill /></template>
-        <b-dropdown-item
-          v-for="(title, possibleLocale) in availableLocales"
-          :key="possibleLocale"
-          :active="locale === possibleLocale"
-          @click="changeLocale(possibleLocale)"
-        >
-          {{ title }}
-        </b-dropdown-item>
-      </b-dropdown>
+      <language-switch-dropdown />
     </div>
     <nuxt-link to="/podium" class="d-none d-md-block m-2 align-self-start">Podium</nuxt-link>
   </div>
 </template>
 <script lang="ts" setup>
 import Index from '@prisma/client'
-import { BIconFlagFill } from 'bootstrap-vue'
-import { useI18n } from 'nuxt-i18n-composable'
 
 withDefaults(
   defineProps<{
@@ -47,21 +30,6 @@ withDefaults(
     user: null,
   }
 )
-
-const availableLocales = {
-  fr: 'Français',
-  en: 'English',
-}
-
-const { locale } = useI18n()
-if (localStorage.getItem('locale')) {
-  locale.value = localStorage.getItem('locale')!
-}
-
-const changeLocale = (newLocale: string) => {
-  locale.value = newLocale
-  window.localStorage.setItem('locale', newLocale)
-}
 </script>
 <style lang="scss">
 $navbar-height: 40px;

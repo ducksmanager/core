@@ -45,6 +45,7 @@ import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
 import Vue from 'vue'
 import { useI18n } from 'nuxt-i18n-composable'
+import { useCookies } from '@vueuse/integrations/useCookies'
 import { getDuckguessrId } from '@/composables/user'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
@@ -138,7 +139,7 @@ export default defineComponent({
 
       gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`, {
         auth: {
-          cookie: document.cookie,
+          cookie: useCookies().getAll(),
         },
       })
       gameSocket
