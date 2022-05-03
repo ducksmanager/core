@@ -12,10 +12,11 @@
   </div>
 </template>
 <script setup>
+import { computed, onMounted, ref, watch } from "vue";
+
 import IssueList from "../../components/IssueList";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-import { computed, onMounted, watch, ref } from "vue";
 const hasPublicationNames = ref(false),
   issueNumbersByPublicationCode = ref(null),
   total = computed(() => collection().total),

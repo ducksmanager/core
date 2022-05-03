@@ -93,11 +93,12 @@
 </template>
 <script setup>
 import axios from "axios";
-import Subscription from "../../components/Subscription";
 import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-3";
+import { computed, onMounted, ref, watch } from "vue";
+
+import Subscription from "../../components/Subscription";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-import { computed, onMounted, watch, ref } from "vue";
 
 const hasPublicationNames = ref(false),
   currentAssociatedPublications = ref([]),

@@ -157,21 +157,23 @@
 </template>
 
 <script setup>
-import PublicationStats from "./stats/PublicationStats";
-import PossessionStats from "./stats/PossessionStats";
-import PurchaseStats from "./stats/PurchaseStats";
-import AuthorStats from "./stats/AuthorStats";
 import axios from "axios";
-import AuthorList from "../components/AuthorList";
-import ConditionStats from "./stats/ConditionStats";
-import Menu from "./Menu";
-import GeneralStats from "./stats/GeneralStats";
 import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-3";
-const { collection: collectionStore } = require("../stores/collection");
-import { l10n } from "../stores/l10n";
-import { locale } from "../composables/global";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { computed, onMounted, ref, defineAsyncComponent } from "vue";
+
+import AuthorList from "../components/AuthorList";
+import { locale } from "../composables/global";
+import { imagePath } from "../composables/imagePath";
+import { collection as collectionStore } from "../stores/collection";
+import { l10n } from "../stores/l10n";
+import Menu from "./Menu";
+import AuthorStats from "./stats/AuthorStats";
+import ConditionStats from "./stats/ConditionStats";
+import GeneralStats from "./stats/GeneralStats";
+import PossessionStats from "./stats/PossessionStats";
+import PublicationStats from "./stats/PublicationStats";
+import PurchaseStats from "./stats/PurchaseStats";
 
 const props = defineProps({
   tab: {
@@ -180,7 +182,6 @@ const props = defineProps({
   },
 });
 const { t: $t } = useI18n(),
-  { imagePath } = require("../composables/imagePath"),
   component = computed(() =>
     defineAsyncComponent(() => import(`./${props.tab}`))
   ),

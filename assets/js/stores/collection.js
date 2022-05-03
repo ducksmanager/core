@@ -1,8 +1,9 @@
 import axios from "axios";
 import { defineStore } from "pinia";
+import { computed } from "vue";
+
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
-import { computed } from "vue";
 
 export const collection = defineStore("collection", {
   state: () => ({
@@ -48,11 +49,12 @@ export const collection = defineStore("collection", {
     },
 
     totalUniqueIssues: ({ collection, duplicateIssues }) =>
+      duplicateIssues &&
       collection?.length -
-      Object.values(duplicateIssues).reduce(
-        (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-        0
-      ),
+        Object.values(duplicateIssues).reduce(
+          (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
+          0
+        ),
 
     totalPerCountry: ({ collection }) =>
       collection?.reduce(

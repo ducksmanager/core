@@ -2,11 +2,6 @@
   <PieChart :chart-data="chartData" :options="options" />
 </template>
 <script setup>
-import { collection } from "../../composables/collection";
-import { condition } from "../../composables/condition";
-const { collection: collectionStore } = require("../../stores/collection");
-import { PieChart } from "vue-chart-3";
-
 import {
   ArcElement,
   Chart,
@@ -16,6 +11,11 @@ import {
   Tooltip,
 } from "chart.js";
 import { computed } from "vue";
+import { PieChart } from "vue-chart-3";
+
+import { collection } from "../../composables/collection";
+import { condition } from "../../composables/condition";
+import { collection as collectionStore } from "../../stores/collection";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
 let conditions;

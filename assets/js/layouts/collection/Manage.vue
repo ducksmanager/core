@@ -90,20 +90,21 @@
 </template>
 
 <script setup>
+import { computed, onMounted, ref, watch } from "vue";
+
+import Accordion from "../../components/Accordion";
 import IssueList from "../../components/IssueList";
 import IssueSearch from "../../components/IssueSearch";
-import PublicationSelect from "../../components/PublicationSelect";
-import SuggestionList from "../SuggestionList";
-import Accordion from "../../components/Accordion";
-import PublicationList from "../../components/PublicationList";
 import LastPublishedEdges from "../../components/LastPublishedEdges";
-import ShortStats from "../../components/ShortStats";
 import LastPurchases from "../../components/LastPurchases";
-import { coa } from "../../stores/coa";
-import { l10n } from "../../stores/l10n";
+import PublicationList from "../../components/PublicationList";
+import PublicationSelect from "../../components/PublicationSelect";
+import ShortStats from "../../components/ShortStats";
 import { user } from "../../composables/global";
+import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-import { computed, watch, ref } from "vue";
+import { l10n } from "../../stores/l10n";
+import SuggestionList from "../SuggestionList";
 
 defineProps({
   publicationcode: {
@@ -142,6 +143,10 @@ watch(
     }
   }
 );
+
+onMounted(() => {
+  collection().loadCollection();
+});
 </script>
 
 <style scoped lang="scss">

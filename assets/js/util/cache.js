@@ -1,5 +1,5 @@
-import localforage from "localforage";
 import { setupCache } from "axios-cache-adapter";
+import localforage from "localforage";
 
 const now = new Date();
 let inAnHour = new Date();
@@ -56,4 +56,4 @@ localforage.keys((error, keys) => {
   });
 });
 
-export { appCache, userCache, coaCache };
+export { appCache, coaCache, userCache };

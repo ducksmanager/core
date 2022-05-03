@@ -113,14 +113,15 @@
 
 <script setup>
 import axios from "axios";
-import Publication from "../../components/Publication";
-import Bookcase from "../../components/Bookcase";
-import { coa } from "../../stores/coa";
 import { BIconEyeFill, BIconEyeSlashFill } from "bootstrap-icons-vue";
 import { computed, onMounted, ref } from "vue";
 
-const { imagePath } = require("../../composables/imagePath"),
-  hasData = ref(false),
+import Bookcase from "../../components/Bookcase";
+import Publication from "../../components/Publication";
+import { imagePath } from "../../composables/imagePath";
+import { coa } from "../../stores/coa";
+
+const hasData = ref(false),
   show = ref(false),
   mostWanted = ref(null),
   publishedEdges = ref(null),

@@ -16,9 +16,10 @@
   </div>
 </template>
 <script setup>
+import { computed, onMounted, ref, watch } from "vue";
+
 import { coa } from "../../stores/coa";
-import { computed, onMounted, watch, ref } from "vue";
-const { collection: collectionStore } = require("../../stores/collection");
+import { collection as collectionStore } from "../../stores/collection";
 
 const hasPublicationNames = ref(false),
   countryNames = computed(() => coa().countryNames),

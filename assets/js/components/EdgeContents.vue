@@ -38,8 +38,9 @@
 </template>
 <script setup>
 import * as axios from "axios";
-import { bookcase } from "../stores/bookcase";
 import { computed, ref } from "vue";
+
+import { bookcase } from "../stores/bookcase";
 
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 

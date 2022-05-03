@@ -104,11 +104,12 @@
 <script setup>
 import axios from "axios";
 import { BAlert, BCol, BFormInput, BRow } from "bootstrap-vue-3";
+import { computed, ref, watch } from "vue";
 import StarRating from "vue-star-rating";
+
 import { coa } from "../stores/coa";
-const { collection } = require("../stores/collection");
+import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
-import { computed, watch, ref } from "vue";
 
 const props = defineProps({
   watchedAuthors: {

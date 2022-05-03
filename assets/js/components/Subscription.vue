@@ -72,11 +72,12 @@
 </template>
 
 <script setup>
+import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
+import { computed } from "vue";
+
+import { coa } from "../stores/coa";
 import Publication from "./Publication";
 import PublicationSelect from "./PublicationSelect";
-import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
-import { coa } from "../stores/coa";
-import { computed } from "vue";
 
 defineEmits(["delete", "edit", "start-edit", "cancel-edit"]);
 const props = defineProps({

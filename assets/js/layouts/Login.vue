@@ -40,6 +40,7 @@
 
 <script setup>
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
+
 import { l10n } from "../stores/l10n";
 
 defineProps({

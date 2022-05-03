@@ -22,9 +22,9 @@
 </template>
 
 <script setup>
-import Publication from "./Publication";
-import Condition from "./Condition";
 import { l10n } from "../stores/l10n";
+import Condition from "./Condition";
+import Publication from "./Publication";
 
 defineProps({
   publicationcode: { type: String, required: true },

@@ -43,11 +43,12 @@
 </template>
 
 <script setup>
-import { l10n } from "../stores/l10n";
 import { useI18n } from "vue-i18n";
 
+import { imagePath } from "../composables/imagePath";
+import { l10n } from "../stores/l10n";
+
 const { t: $t } = useI18n(),
-  { imagePath } = require("../composables/imagePath"),
   types = [
     {
       link: "classic",

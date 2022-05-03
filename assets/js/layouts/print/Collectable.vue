@@ -104,14 +104,15 @@
 </template>
 
 <script setup>
-import Publication from "../../components/Publication";
-import { coa } from "../../stores/coa";
-import { computed, onMounted, watch, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-const { collection: collectionStore } = require("../../stores/collection");
+
+import Publication from "../../components/Publication";
+import { imagePath } from "../../composables/imagePath";
+import { coa } from "../../stores/coa";
+import { collection as collectionStore } from "../../stores/collection";
 
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/,
-  { imagePath } = require("../../composables/imagePath"),
   lines = 2,
   numbersPerRow = 100 / lines,
   issuesPerCell = ref(null),

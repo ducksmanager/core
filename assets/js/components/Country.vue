@@ -13,7 +13,8 @@
 
 <script setup>
 import { computed } from "vue";
-const { imagePath } = require("../composables/imagePath");
+
+import { imagePath } from "../composables/imagePath";
 
 const props = defineProps({
   country: {

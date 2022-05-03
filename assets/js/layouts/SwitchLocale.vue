@@ -13,14 +13,15 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
+import { imagePath } from "../composables/imagePath";
+
 defineProps({
   fixed: {
     type: Boolean,
     default: false,
   },
 });
-const { imagePath } = require("../composables/imagePath"),
-  locales = [
+const locales = [
     {
       key: "en",
       name: "English",

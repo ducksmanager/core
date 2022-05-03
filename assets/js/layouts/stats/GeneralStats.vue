@@ -151,17 +151,18 @@
 </template>
 
 <script setup>
-import ShortStats from "../../components/ShortStats";
 import axios from "axios";
+import { BAlert, BPagination, BTable } from "bootstrap-vue-3";
+import { computed, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
 import Accordion from "../../components/Accordion";
 import Issue from "../../components/Issue";
+import ShortStats from "../../components/ShortStats";
 import { condition } from "../../composables/condition";
-import { BAlert, BPagination, BTable } from "bootstrap-vue-3";
-import { users } from "../../stores/users";
 import { coa } from "../../stores/coa";
-import { useI18n } from "vue-i18n";
-import { computed, onMounted, watch, ref } from "vue";
-const { collection: collectionStore } = require("../../stores/collection");
+import { collection as collectionStore } from "../../stores/collection";
+import { users } from "../../stores/users";
 
 const collection = collectionStore();
 

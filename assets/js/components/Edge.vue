@@ -37,11 +37,12 @@
 </template>
 
 <script setup>
-import IssueEdgePopover from "./IssueEdgePopover";
-import Issue from "./Issue";
-import { coa } from "../stores/coa";
 import { computed, ref } from "vue";
+
+import { coa } from "../stores/coa";
 import EdgeContents from "./EdgeContents";
+import Issue from "./Issue";
+import IssueEdgePopover from "./IssueEdgePopover";
 
 const EDGES_ROOT = "https://edges.ducksmanager.net/edges/";
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";

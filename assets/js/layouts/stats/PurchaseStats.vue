@@ -2,22 +2,22 @@
   <BarChart v-if="chartData" :chart-data="chartData" :options="options" />
 </template>
 <script setup>
-import { coa } from "../../stores/coa";
-import { collection } from "../../stores/collection";
-import { BarChart } from "vue-chart-3";
-
 import {
-  Chart,
-  CategoryScale,
-  LinearScale,
-  Legend,
-  BarElement,
   BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
 } from "chart.js";
-import { computed, onMounted, watch, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
+
+import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 
 Chart.register(
   Legend,

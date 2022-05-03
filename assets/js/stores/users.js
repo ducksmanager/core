@@ -1,6 +1,7 @@
 import axios from "axios";
-import { userCache } from "../util/cache";
 import { defineStore } from "pinia";
+
+import { userCache } from "../util/cache";
 
 const api = axios.create({
   adapter: userCache.adapter,

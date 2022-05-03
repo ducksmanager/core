@@ -139,20 +139,21 @@
 </template>
 
 <script setup>
-import IssueSearch from "../../components/IssueSearch";
-import Issue from "../../components/Issue";
-import Book from "../../components/Book";
-import SharePage from "../../components/SharePage";
-import Bookcase from "../../components/Bookcase";
-import UploadableEdgesCarousel from "../../components/UploadableEdgesCarousel";
 import { BAlert, BButton } from "bootstrap-vue-3";
-import { users } from "../../stores/users";
-const { bookcase: bookcaseStore } = require("../../stores/bookcase");
-const { collection: collectionStore } = require("../../stores/collection");
-const { coa: coaStore } = require("../../stores/coa");
-import { l10n } from "../../stores/l10n";
+import { computed, onMounted, ref, watch } from "vue";
+
+import Book from "../../components/Book";
+import Bookcase from "../../components/Bookcase";
+import Issue from "../../components/Issue";
+import IssueSearch from "../../components/IssueSearch";
+import SharePage from "../../components/SharePage";
+import UploadableEdgesCarousel from "../../components/UploadableEdgesCarousel";
 import { user } from "../../composables/global";
-import { computed, onMounted, watch, ref } from "vue";
+import { bookcase as bookcaseStore } from "../../stores/bookcase";
+import { coa as coaStore } from "../../stores/coa";
+import { collection as collectionStore } from "../../stores/collection";
+import { l10n } from "../../stores/l10n";
+import { users } from "../../stores/users";
 
 defineProps({
   bookcaseUsername: { type: String, required: true },

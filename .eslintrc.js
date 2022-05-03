@@ -10,5 +10,8 @@ module.exports = {
   rules: {
     "vue/no-v-html": "off",
     "vue/multi-word-component-names": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
   },
+  plugins: ["simple-import-sort"],
 };

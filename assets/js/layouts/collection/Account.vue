@@ -109,13 +109,14 @@
 </template>
 
 <script setup>
-import Errorable from "../../components/Errorable";
 import axios from "axios";
 import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
-import { form } from "../../stores/form";
-import { collection } from "../../stores/collection";
-import { l10n } from "../../stores/l10n";
 import { computed, onMounted } from "vue";
+
+import Errorable from "../../components/Errorable";
+import { collection } from "../../stores/collection";
+import { form } from "../../stores/form";
+import { l10n } from "../../stores/l10n";
 const props = defineProps({
   errors: { type: String, default: "" },
   success: { type: String, default: null },

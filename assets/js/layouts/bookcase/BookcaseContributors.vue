@@ -29,9 +29,10 @@
 </template>
 
 <script setup>
+import { computed, onMounted, ref } from "vue";
+
 import UserPopover from "../../components/UserPopover";
 import { users } from "../../stores/users";
-import { computed, onMounted, ref } from "vue";
 
 const usersStore = users();
 

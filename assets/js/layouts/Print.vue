@@ -16,19 +16,19 @@
 </template>
 
 <script setup>
-import Collectable from "../layouts/print/Collectable";
-import Classic from "../layouts/print/Classic";
-import { l10n } from "../stores/l10n";
-import { user } from "../composables/global";
 import { computed } from "vue";
 
+import { user } from "../composables/global";
+import { imagePath } from "../composables/imagePath";
+import Classic from "../layouts/print/Classic";
+import Collectable from "../layouts/print/Collectable";
+import { l10n } from "../stores/l10n";
 defineProps({
   currentType: { type: String, required: true },
 });
 const { r } = l10n(),
   l10nRoutes = computed(() => l10n().l10nRoutes),
-  { username } = user(),
-  { imagePath } = require("../composables/imagePath");
+  { username } = user();
 </script>
 
 <style lang="scss" scoped>

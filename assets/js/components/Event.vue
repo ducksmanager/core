@@ -113,15 +113,16 @@
   </div>
 </template>
 <script setup>
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
 import Issue from "../components/Issue";
 import OtherIssues from "../components/OtherIssues";
 import UserPopover from "../components/UserPopover";
-import BookcasePopover from "./BookcasePopover";
-import { users } from "../stores/users";
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
+import { users } from "../stores/users";
+import BookcasePopover from "./BookcasePopover";
 
 defineProps({
   event: { type: Object, required: true },

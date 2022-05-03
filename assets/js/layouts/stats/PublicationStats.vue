@@ -3,10 +3,6 @@
 </template>
 
 <script setup>
-import { coa } from "../../stores/coa";
-const { collection } = require("../../stores/collection");
-import { PieChart } from "vue-chart-3";
-
 import {
   ArcElement,
   Chart,
@@ -15,8 +11,12 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { computed, watch, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { PieChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
+
+import { coa } from "../../stores/coa";
+import { collection } from "../../stores/collection";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
 collection().loadCollection();

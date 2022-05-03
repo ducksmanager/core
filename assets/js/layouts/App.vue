@@ -3,7 +3,8 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, ref, onMounted } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
+
 import { l10n } from "../stores/l10n";
 const componentName = ref(null),
   component = computed(() =>

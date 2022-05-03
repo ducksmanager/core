@@ -115,13 +115,14 @@
   </div>
 </template>
 <script setup>
-import { PageFlip } from "page-flip";
-import Story from "./Story";
-import Issue from "./Issue";
 import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
+import { PageFlip } from "page-flip";
+import { computed, ref, watch } from "vue";
+
+import { imagePath } from "../composables/imagePath";
 import { coa } from "../stores/coa";
-const { imagePath } = require("../composables/imagePath");
-import { computed, watch, ref } from "vue";
+import Issue from "./Issue";
+import Story from "./Story";
 
 let toast = useToast();
 const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/",

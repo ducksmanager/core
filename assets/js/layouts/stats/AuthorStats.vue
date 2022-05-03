@@ -3,20 +3,20 @@
 </template>
 
 <script setup>
-import { collection } from "../../composables/collection";
-import { BarChart } from "vue-chart-3";
-
 import {
-  Chart,
-  CategoryScale,
-  LinearScale,
-  Legend,
-  BarElement,
   BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
 } from "chart.js";
+import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
+
+import { collection } from "../../composables/collection";
 Chart.register(
   Legend,
   CategoryScale,

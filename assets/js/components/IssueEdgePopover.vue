@@ -47,12 +47,13 @@
 </template>
 
 <script setup>
-import MedalProgress from "./MedalProgress";
 import { BButton, BPopover } from "bootstrap-vue-3";
-import { users } from "../stores/users";
-import { bookcase } from "../stores/bookcase";
-import { user } from "../composables/global";
 import { computed } from "vue";
+
+import { user } from "../composables/global";
+import { bookcase } from "../stores/bookcase";
+import { users } from "../stores/users";
+import MedalProgress from "./MedalProgress";
 
 const { userId } = user();
 

@@ -3,25 +3,25 @@
 </template>
 
 <script setup>
-import { collection } from "../../composables/collection";
-const { collection: collectionStore } = require("../../stores/collection");
-import { coa } from "../../stores/coa";
-import { BarChart } from "vue-chart-3";
-import { ref } from "vue";
-
 import {
   ArcElement,
-  Chart,
-  CategoryScale,
-  LinearScale,
-  Legend,
-  BarElement,
   BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
 } from "chart.js";
+import { ref } from "vue";
 import { computed, watch } from "vue";
+import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
+
+import { collection } from "../../composables/collection";
+import { coa } from "../../stores/coa";
+import { collection as collectionStore } from "../../stores/collection";
 Chart.register(
   Legend,
   CategoryScale,
@@ -46,19 +46,31 @@ collection();
 const { t: $t } = useI18n(),
   chartData = ref(null),
   options = ref({}),
-  totalPerPublicationUniqueIssueNumbers = computed(() => collectionStore().totalPerPublicationUniqueIssueNumbers),
+  totalPerPublicationUniqueIssueNumbers = computed(
+    () => collectionStore().totalPerPublicationUniqueIssueNumbers
+  ),
   countryNames = computed(() => coa().countryNames),
   issueCounts = computed(() => coa().issueCounts),
   publicationNames = computed(() => coa().publicationNames),
-  labels = computed(() => Object.keys(totalPerPublicationUniqueIssueNumbers.value)),
+  labels = computed(() =>
+    Object.keys(totalPerPublicationUniqueIssueNumbers.value)
+  ),
   values = computed(() => {
     if (
-      !(totalPerPublicationUniqueIssueNumbers.value && issueCounts.value && countryNames.value)
+      !(
+        totalPerPublicationUniqueIssueNumbers.value &&
+        issueCounts.value &&
+        countryNames.value
+      )
     ) {
       return null;
     }
-    let possessedIssues = Object.values(totalPerPublicationUniqueIssueNumbers.value);
-    let missingIssues = Object.keys(totalPerPublicationUniqueIssueNumbers.value).map(
+    let possessedIssues = Object.values(
+      totalPerPublicationUniqueIssueNumbers.value
+    );
+    let missingIssues = Object.keys(
+      totalPerPublicationUniqueIssueNumbers.value
+    ).map(
       (publicationCode) =>
         issueCounts.value[publicationCode] -
         totalPerPublicationUniqueIssueNumbers.value[publicationCode]

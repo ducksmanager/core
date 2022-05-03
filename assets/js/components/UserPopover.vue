@@ -40,16 +40,17 @@
 </template>
 
 <script setup>
-import Medal from "./Medal";
 import { BButton, BPopover } from "bootstrap-vue-3";
+
+import { imagePath } from "../composables/imagePath";
 import { l10n } from "../stores/l10n";
+import Medal from "./Medal";
 
 const props = defineProps({
     id: { type: Number, required: true },
     points: { type: Object, required: true },
     stats: { type: Object, required: true },
   }),
-  { imagePath } = require("../composables/imagePath"),
   { r } = l10n(),
   elementId = `user-${props.id}-${Math.random()}`,
   bookcaseShared = true;

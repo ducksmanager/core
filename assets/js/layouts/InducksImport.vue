@@ -162,12 +162,12 @@
             <template #content>
               <div
                 v-for="(
-                  issueNumbers, publicationCode
+                  publicationIssueNumbers, publicationCode
                 ) in groupByPublicationCode(issuesAlreadyInCollection)"
                 :key="publicationCode"
               >
                 <div
-                  v-for="issueNumber in issueNumbers"
+                  v-for="issueNumber in publicationIssueNumbers"
                   :key="`${publicationCode}-${issueNumber}`"
                 >
                   <Issue
@@ -201,12 +201,12 @@
             <template #content>
               <div
                 v-for="(
-                  issueNumbers, publicationCode
+                  publicationIssueNumbers, publicationCode
                 ) in groupByPublicationCode(issuesNotReferenced)"
                 :key="publicationCode"
               >
                 <Issue
-                  v-for="issueNumber in issueNumbers"
+                  v-for="issueNumber in publicationIssueNumbers"
                   :key="`${publicationCode}-${issueNumber}`"
                   :publicationcode="publicationCode"
                   :publicationname="publicationCode"
@@ -257,9 +257,6 @@
   </div>
 </template>
 <script setup>
-import Accordion from "../components/Accordion";
-import Publication from "../components/Publication";
-import Issue from "../components/Issue";
 import axios from "axios";
 import {
   BAlert,
@@ -274,17 +271,21 @@ import {
   BProgressBar,
   BRow,
 } from "bootstrap-vue-3";
-import { coa } from "../stores/coa";
-import { l10n } from "../stores/l10n";
-import { user } from "../composables/global";
-const { collection: collectionStore } = require("../stores/collection");
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { computed, watch, ref } from "vue";
+
+import Accordion from "../components/Accordion";
+import Issue from "../components/Issue";
+import Publication from "../components/Publication";
 import { collection } from "../composables/collection";
+import { user } from "../composables/global";
+import { imagePath } from "../composables/imagePath";
+import { coa } from "../stores/coa";
+import { collection as collectionStore } from "../stores/collection";
+import { l10n } from "../stores/l10n";
 const { findInCollection } = collection();
 
 const { t: $t } = useI18n(),
-  { imagePath } = require("../composables/imagePath"),
   step = ref(1),
   rawData = ref(""),
   expandedPublicationAccordion = ref(null),

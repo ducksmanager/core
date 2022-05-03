@@ -21,8 +21,8 @@ defineProps({
   },
 });
 
-const { imagePath } = require("../composables/imagePath"),
-  { r } = l10n(),
+import { imagePath } from "../composables/imagePath";
+const { r } = l10n(),
   { username } = user();
 </script>
 

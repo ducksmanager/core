@@ -27,9 +27,10 @@
   </div>
 </template>
 <script setup>
-import MedalProgress from "./MedalProgress";
-import Issue from "./Issue";
 import { BCarousel, BCarouselSlide } from "bootstrap-vue-3";
+
+import Issue from "./Issue";
+import MedalProgress from "./MedalProgress";
 
 defineProps({
   issues: { type: Array, required: true },

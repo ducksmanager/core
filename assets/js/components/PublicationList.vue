@@ -75,12 +75,13 @@
 </template>
 
 <script setup>
-import Country from "./Country";
-import IssueSearch from "./IssueSearch";
+import { computed, onMounted, ref, watch } from "vue";
+
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
-import { computed, onMounted, watch, ref } from "vue";
+import Country from "./Country";
+import IssueSearch from "./IssueSearch";
 
 const hasPublicationNames = ref(false),
   totalPerCountry = computed(() => collection().totalPerCountry),

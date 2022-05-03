@@ -71,8 +71,6 @@
 </template>
 
 <script setup>
-import { SlickItem, SlickList } from "vue-slicksort";
-import Publication from "../../components/Publication";
 import {
   BAlert,
   BButton,
@@ -80,16 +78,19 @@ import {
   BDropdownItem,
   BFormCheckbox,
 } from "bootstrap-vue-3";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { SlickItem, SlickList } from "vue-slicksort";
+
+import Publication from "../../components/Publication";
+import { user } from "../../composables/global";
+import { imagePath } from "../../composables/imagePath";
 import { bookcase } from "../../stores/bookcase";
 import { coa } from "../../stores/coa";
-import { user } from "../../composables/global";
-import { useI18n } from "vue-i18n";
-import { computed, onMounted, ref } from "vue";
 
 const { username } = user(),
   { t: $t } = useI18n(),
   bookcaseStore = bookcase(),
-  { imagePath } = require("../../composables/imagePath"),
   error = ref(false),
   textures = ref([
     "bois/ASH",

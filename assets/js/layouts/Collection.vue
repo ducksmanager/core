@@ -11,10 +11,11 @@
 </template>
 
 <script setup>
-import Menu from "./Menu";
+import { computed, defineAsyncComponent, onMounted, useAttrs } from "vue";
 import { useI18n } from "vue-i18n";
-import { computed, onMounted, useAttrs, defineAsyncComponent } from "vue";
-const { collection } = require("../stores/collection");
+
+import { collection } from "../stores/collection";
+import Menu from "./Menu";
 
 const props = defineProps({
   tab: {

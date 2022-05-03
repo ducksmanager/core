@@ -17,12 +17,13 @@
 </template>
 
 <script setup>
+import { computed, onMounted, ref, watch } from "vue";
+
 import Ago from "../components/Ago";
 import Event from "../components/Event";
-import { users } from "../stores/users";
 import { coa } from "../stores/coa";
 import { ongoingRequests } from "../stores/ongoing-requests";
-import { computed, onMounted, watch, ref } from "vue";
+import { users } from "../stores/users";
 
 const isLoaded = ref(false),
   hasFreshEvents = ref(false),
@@ -79,7 +80,8 @@ watch(
         }
       }, 1000);
     }
-  }, { immediate: true}
+  },
+  { immediate: true }
 );
 
 onMounted(async () => {

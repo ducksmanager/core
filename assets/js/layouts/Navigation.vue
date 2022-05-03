@@ -65,9 +65,6 @@
 </template>
 
 <script setup>
-import { user } from "../composables/global";
-import NavigationItemGroup from "../components/NavigationItemGroup";
-import NavigationItem from "../components/NavigationItem";
 import {
   BIconBookHalf,
   BIconCapslockFill,
@@ -78,8 +75,12 @@ import {
   BIconXSquareFill,
 } from "bootstrap-icons-vue";
 
-const { username } = user(),
-  { imagePath } = require("../composables/imagePath");
+import NavigationItem from "../components/NavigationItem";
+import NavigationItemGroup from "../components/NavigationItemGroup";
+import { user } from "../composables/global";
+import { imagePath } from "../composables/imagePath";
+
+const { username } = user();
 </script>
 
 <style lang="scss" scoped>

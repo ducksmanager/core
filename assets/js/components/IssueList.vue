@@ -132,7 +132,9 @@
             <div class="issue-details-wrapper">
               <div class="issue-copies">
                 <div
-                  v-for="({ condition, purchaseId }, copyIndex) in userCopies"
+                  v-for="(
+                    { condition: copyCondition, purchaseId }, copyIndex
+                  ) in userCopies"
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
@@ -147,10 +149,10 @@
                     }`"
                   />
                   <Condition
-                    v-if="condition"
+                    v-if="copyCondition"
                     :publicationcode="publicationcode"
                     :issuenumber="issueNumber"
-                    :value="condition"
+                    :value="copyCondition"
                   />
                 </div>
               </div>
@@ -224,237 +226,194 @@
   </v-contextmenu>
 </template>
 
-<script>
-import { mapActions, mapState } from "pinia";
-import ContextMenu from "./ContextMenu";
+<script setup>
 import axios from "axios";
+import { BIconCalendar, BIconEyeFill } from "bootstrap-icons-vue";
+import { BAlert } from "bootstrap-vue-3";
+import { computed, onMounted, ref, watch } from "vue";
+
 import { condition } from "../composables/condition";
-import IssueDetailsPopover from "./IssueDetailsPopover";
+import { coa } from "../stores/coa";
+import { collection as collectionStore } from "../stores/collection";
 import Book from "./Book";
 import Condition from "./Condition";
-import { BAlert } from "bootstrap-vue-3";
-import { BIconEyeFill, BIconCalendar } from "bootstrap-icons-vue";
+import ContextMenu from "./ContextMenu";
+import IssueDetailsPopover from "./IssueDetailsPopover";
 import Publication from "./Publication";
-const { collection: collectionStore } = require("../stores/collection");
-import { coa } from "../stores/coa";
-import { Contextmenu, ContextmenuItem, directive } from "v-contextmenu";
 
-let conditions;
+const props = defineProps({
+  publicationcode: {
+    type: String,
+    required: true,
+  },
+  duplicatesOnly: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-export default {
-  name: "IssueList",
-  directives: {
-    contextmenu: directive,
-  },
-  components: {
-    [Contextmenu.name]: Contextmenu,
-    [ContextmenuItem.name]: ContextmenuItem,
-    Publication,
-    Condition,
-    Book,
-    ContextMenu,
-    IssueDetailsPopover,
-    BAlert,
-    BIconEyeFill,
-    BIconCalendar,
-  },
-  props: {
-    publicationcode: {
-      type: String,
-      required: true,
-    },
-    duplicatesOnly: {
-      type: Boolean,
-      default: false,
-    },
-  },
+const { conditions } = condition();
 
-  setup() {
-    conditions = condition().conditions;
-  },
-
-  data: () => ({
-    loading: true,
-    publicationNameLoading: true,
-    filter: {
-      missing: true,
-      possessed: true,
-    },
-    coverUrl: null,
-    issues: null,
-    userIssuesForPublication: null,
-    userIssuesNotFoundForPublication: [],
-    selected: [],
-    preselected: [],
-    preselectedIndexStart: null,
-    preselectedIndexEnd: null,
-    hoveredIssueNumber: null,
-    hoveredIssueHasCover: undefined,
-    currentIssueOpened: null,
-    contextMenuKey: "context-menu",
+const loading = ref(true),
+  publicationNameLoading = ref(true),
+  filter = ref({
+    missing: true,
+    possessed: true,
   }),
-
-  computed: {
-    ...mapState(coa, ["publicationNames"]),
-    ...mapState(collectionStore, { userIssues: "collection" }),
-    ...mapState(collectionStore, ["purchases"]),
-
-    country() {
-      return this.publicationcode.split("/")[0];
-    },
-    publicationName() {
-      return this.publicationNames[this.publicationcode];
-    },
-
-    isTouchScreen: () => window.matchMedia("(pointer: coarse)").matches,
-    filteredIssues() {
-      const vm = this;
-      return this.issues?.filter(
-        ({ userCopies }) =>
-          (vm.filter.possessed && userCopies.length) ||
-          (vm.filter.missing && !userCopies.length)
+  contextmenu = ref(null),
+  issues = ref(null),
+  userIssuesForPublication = ref(null),
+  userIssuesNotFoundForPublication = ref([]),
+  selected = ref([]),
+  preselected = ref([]),
+  preselectedIndexStart = ref(null),
+  preselectedIndexEnd = ref(null),
+  hoveredIssueNumber = ref(null),
+  hoveredIssueHasCover = ref(undefined),
+  currentIssueOpened = ref(null),
+  contextMenuKey = "context-menu",
+  publicationNames = computed(() => coa().publicationNames),
+  userIssues = computed(() => collectionStore().collection),
+  purchases = computed(() => collectionStore().purchases),
+  country = computed(() => props.publicationcode.split("/")[0]),
+  publicationName = computed(
+    () => publicationNames.value[props.publicationcode]
+  ),
+  isTouchScreen = window.matchMedia("(pointer: coarse)").matches,
+  filteredIssues = computed(() =>
+    issues.value?.filter(
+      ({ userCopies }) =>
+        (filter.value.possessed && userCopies.length) ||
+        (filter.value.missing && !userCopies.length)
+    )
+  ),
+  selectedIssuesCopies = computed(() =>
+    userIssuesForPublication.value.filter(
+      ({ issueNumber }, idx) =>
+        selected.value.includes(issueNumber) &&
+        (selected.value.length === 1 ||
+          userIssuesForPublication.value.some(
+            ({ issueNumber: issueNumber2 }, idx2) =>
+              issueNumber2 === issueNumber && idx !== idx2
+          ))
+    )
+  ),
+  ownedIssuesCount = computed(() =>
+    issues.value.reduce(
+      (acc, { userCopies }) => acc + (userCopies.length ? 1 : 0),
+      0
+    )
+  ),
+  fetchPublicationNames = coa().fetchPublicationNames,
+  loadCollection = collectionStore().loadCollection,
+  loadPurchases = collectionStore().loadPurchases,
+  getPreselected = () =>
+    [preselectedIndexStart.value, preselectedIndexEnd.value].includes(null)
+      ? preselected.value
+      : filteredIssues.value
+          .map(({ issueNumber }) => issueNumber)
+          .filter(
+            (issueNumber, index) =>
+              index >= preselectedIndexStart.value &&
+              index <= preselectedIndexEnd.value
+          ),
+  updateSelected = () => {
+    selected.value = issues.value
+      .map(({ issueNumber }) => issueNumber)
+      .filter(
+        (issueNumber) =>
+          selected.value.includes(issueNumber) !==
+          preselected.value.includes(issueNumber)
       );
-    },
-    selectedIssuesCopies() {
-      const vm = this;
-      return this.userIssuesForPublication.filter(
-        ({ issueNumber }, idx) =>
-          vm.selected.includes(issueNumber) &&
-          (vm.selected.length === 1 ||
-            vm.userIssuesForPublication.some(
-              ({ issueNumber: issueNumber2 }, idx2) =>
-                issueNumber2 === issueNumber && idx !== idx2
-            ))
-      );
-    },
-
-    ownedIssuesCount() {
-      return this.issues.reduce(
-        (acc, { userCopies }) => acc + (userCopies.length ? 1 : 0),
-        0
-      );
-    },
+    preselectedIndexStart.value = preselectedIndexEnd.value = null;
+    preselected.value = [];
   },
-  watch: {
-    preselectedIndexEnd() {
-      this.preselected = this.getPreselected();
-    },
-    userIssues: {
-      immediate: true,
-      async handler(newValue) {
-        if (newValue) {
-          const vm = this;
-
-          this.userIssuesForPublication = newValue
-            .filter(
-              (issue) =>
-                `${issue.country}/${issue.magazine}` === vm.publicationcode
-            )
-            .map((issue) => ({
-              ...issue,
-              condition: (
-                conditions.find(
-                  ({ dbValue }) => dbValue === issue.condition
-                ) || { value: "possessed" }
-              ).value,
-            }));
-
-          const issuesWithTitles = (
-            await axios.get(
-              `/api/coa/list/issues/withTitle/asArray/${this.publicationcode}`
-            )
-          ).data;
-
-          this.issues = issuesWithTitles
-            .map((issue) => ({
-              ...issue,
-              userCopies: vm.userIssuesForPublication.filter(
-                ({ issueNumber: userIssueNumber }) =>
-                  userIssueNumber === issue.issueNumber
-              ),
-            }))
-            .filter(
-              ({ userCopies }) => !vm.duplicatesOnly || userCopies.length > 1
-            );
-          const coaIssueNumbers = issuesWithTitles.map(
-            ({ issueNumber }) => issueNumber
-          );
-          this.userIssuesNotFoundForPublication =
-            this.userIssuesForPublication.filter(
-              ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
-            );
-          this.loading = false;
-        }
-      },
-    },
+  deletePublicationIssues = async (issuesToDelete) =>
+    await updateIssues({
+      publicationCode: props.publicationcode,
+      issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
+      condition: conditions.find(({ value }) => value === "missing").dbValue,
+      istosell: false,
+      purchaseId: null,
+    }),
+  updateIssues = async (data) => {
+    contextmenu.value.hide();
+    await axios.post("/api/collection/issues", data);
+    await loadCollection(true);
+    selected.value = [];
   },
-  async mounted() {
-    await this.loadPurchases();
-    await this.fetchPublicationNames([this.publicationcode]);
-    this.publicationNameLoading = false;
+  createPurchase = async ({ date, description }) => {
+    await axios.post("/api/collection/purchases", {
+      date,
+      description,
+    });
+    await loadPurchases(true);
   },
-  methods: {
-    ...mapActions(coa, ["fetchPublicationNames"]),
-    ...mapActions(collectionStore, ["loadCollection", "loadPurchases"]),
-    openContextMenuIfBookNotOpen(e) {
-      if (this.currentIssueOpened === null) {
-        // this.$refs.contextMenu.$refs.menu.open(e);
-      }
-    },
-    getPreselected() {
-      const vm = this;
-      if (
-        [this.preselectedIndexStart, this.preselectedIndexEnd].includes(null)
-      ) {
-        return this.preselected;
-      }
-      return this.filteredIssues
-        .map(({ issueNumber }) => issueNumber)
+  deletePurchase = async ({ id }) => {
+    await axios.delete(`/api/collection/purchases/${id}`);
+    await loadPurchases(true);
+  };
+
+watch(
+  () => preselectedIndexEnd.value,
+  () => {
+    preselected.value = getPreselected();
+  }
+);
+
+watch(
+  () => userIssues.value,
+  async (newValue) => {
+    if (newValue) {
+      userIssuesForPublication.value = newValue
         .filter(
-          (issueNumber, index) =>
-            index >= vm.preselectedIndexStart && index <= vm.preselectedIndexEnd
-        );
-    },
-    updateSelected() {
-      const vm = this;
-      this.selected = this.issues
-        .map(({ issueNumber }) => issueNumber)
+          (issue) =>
+            `${issue.country}/${issue.magazine}` === props.publicationcode
+        )
+        .map((issue) => ({
+          ...issue,
+          condition: (
+            conditions.find(({ dbValue }) => dbValue === issue.condition) || {
+              value: "possessed",
+            }
+          ).value,
+        }));
+
+      const issuesWithTitles = (
+        await axios.get(
+          `/api/coa/list/issues/withTitle/asArray/${props.publicationcode}`
+        )
+      ).data;
+
+      issues.value = issuesWithTitles
+        .map((issue) => ({
+          ...issue,
+          userCopies: userIssuesForPublication.value.filter(
+            ({ issueNumber: userIssueNumber }) =>
+              userIssueNumber === issue.issueNumber
+          ),
+        }))
         .filter(
-          (issueNumber) =>
-            vm.selected.includes(issueNumber) !==
-            vm.preselected.includes(issueNumber)
+          ({ userCopies }) => !props.duplicatesOnly || userCopies.length > 1
         );
-      this.preselectedIndexStart = this.preselectedIndexEnd = null;
-      this.preselected = [];
-    },
-    async deletePublicationIssues(issuesToDelete) {
-      await this.updateIssues({
-        publicationCode: this.publicationcode,
-        issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
-        condition: conditions.find(({ value }) => value === "missing").dbValue,
-        istosell: false,
-        purchaseId: null,
-      });
-    },
-    async updateIssues(data) {
-      this.$refs.contextmenu.hide();
-      await axios.post("/api/collection/issues", data);
-      await this.loadCollection(true);
-      this.selected = [];
-    },
-    async createPurchase({ date, description }) {
-      await axios.post("/api/collection/purchases", {
-        date,
-        description,
-      });
-      await this.loadPurchases(true);
-    },
-    async deletePurchase({ id }) {
-      await axios.delete(`/api/collection/purchases/${id}`);
-      await this.loadPurchases(true);
-    },
+      const coaIssueNumbers = issuesWithTitles.map(
+        ({ issueNumber }) => issueNumber
+      );
+      userIssuesNotFoundForPublication.value =
+        userIssuesForPublication.value.filter(
+          ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
+        );
+      loading.value = false;
+    }
   },
-};
+  { immediate: true }
+);
+
+onMounted(async () => {
+  await loadPurchases();
+  await fetchPublicationNames([props.publicationcode]);
+  publicationNameLoading.value = false;
+});
 </script>
 
 <style scoped lang="scss">

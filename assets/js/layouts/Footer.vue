@@ -29,8 +29,9 @@
 </template>
 
 <script setup>
-import { users } from "../stores/users";
 import { computed, onMounted } from "vue";
+
+import { users } from "../stores/users";
 
 const count = computed(() => users().count),
   fetchCount = users().fetchCount;

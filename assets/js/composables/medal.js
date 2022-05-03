@@ -1,4 +1,3 @@
-import { users } from "../stores/users";
 import { computed } from "vue";
 
 const MEDAL_LEVELS = {

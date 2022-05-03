@@ -32,11 +32,12 @@
   </b-popover>
 </template>
 <script setup>
-import Bookcase from "./Bookcase";
-import Issue from "../components/Issue";
 import { BCol, BPopover, BRow } from "bootstrap-vue-3";
-import { coa } from "../stores/coa";
 import { computed } from "vue";
+
+import Issue from "../components/Issue";
+import { coa } from "../stores/coa";
+import Bookcase from "./Bookcase";
 
 defineProps({
   id: {

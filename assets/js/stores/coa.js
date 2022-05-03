@@ -1,6 +1,7 @@
 import axios from "axios";
-import { coaCache } from "../util/cache";
 import { defineStore } from "pinia";
+
+import { coaCache } from "../util/cache";
 
 const coaApi = axios.create({
   adapter: coaCache.adapter,

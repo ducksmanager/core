@@ -21,6 +21,7 @@
 
 <script setup>
 import { BTab, BTabs } from "bootstrap-vue-3";
+
 import { l10n } from "../stores/l10n";
 
 const props = defineProps({

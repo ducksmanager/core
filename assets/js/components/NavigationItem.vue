@@ -8,8 +8,9 @@
 </template>
 
 <script setup>
-import { l10n } from "../stores/l10n";
 import { computed } from "vue";
+
+import { l10n } from "../stores/l10n";
 
 const props = defineProps({
     path: { type: String, required: true },

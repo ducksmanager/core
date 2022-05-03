@@ -30,10 +30,11 @@
 </template>
 
 <script setup>
+import { computed, defineAsyncComponent, useAttrs } from "vue";
+
+import { user } from "../composables/global";
 import ViewBookcase from "./bookcase/ViewBookcase";
 import Menu from "./Menu";
-import { user } from "../composables/global";
-import { computed, useAttrs, defineAsyncComponent } from "vue";
 
 const { username } = user();
 const attrs = useAttrs();

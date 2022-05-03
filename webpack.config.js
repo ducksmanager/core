@@ -1,26 +1,26 @@
-const Encore = require('@symfony/webpack-encore');
-const webpack = require('webpack');
+const Encore = require("@symfony/webpack-encore");
+const webpack = require("webpack");
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
-  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
+  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || "dev");
 }
 
 Encore
   // directory where compiled assets will be stored
-  .setOutputPath('public/build/')
+  .setOutputPath("public/build/")
   .copyFiles({
-    from: './assets/translations',
-    to: 'translations/[path][name].[ext]',
+    from: "./assets/translations",
+    to: "translations/[path][name].[ext]",
   })
   .copyFiles({
-    from: './assets/images',
-    to: 'images/[path][name].[ext]',
+    from: "./assets/images",
+    to: "images/[path][name].[ext]",
   })
 
   // public path used by the web server to access the output path
-  .setPublicPath('/build')
+  .setPublicPath("/build")
   // only needed for CDN's or sub-directory deploy
   //.setManifestKeyPrefix('build/')
 
@@ -33,14 +33,13 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
    */
-  .addEntry('app', './assets/js/app.js')
+  .addEntry("app", "./assets/js/app.js")
   //.addEntry('page1', './assets/js/page1.js')
   //.addEntry('page2', './assets/js/page2.js')
 
-  .enableVueLoader(() => {
-  }, {
+  .enableVueLoader(() => {}, {
     version: 3,
-    runtimeCompilerBuild: false
+    runtimeCompilerBuild: false,
   })
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
@@ -64,36 +63,39 @@ Encore
   .enableVersioning(Encore.isProduction())
 
   // enables @babel/preset-env polyfills
-  .configureBabelPresetEnv(config => {
-    config.useBuiltIns = 'usage';
+  .configureBabelPresetEnv((config) => {
+    config.useBuiltIns = "usage";
     config.corejs = 3;
   })
 
-  .enableEslintPlugin(options => {
+  .enableEslintPlugin((options) => {
     delete options.parser;
   })
-  .configureLoaderRule('eslint', loader => {
+  .configureLoaderRule("eslint", (loader) => {
     loader.test = /\.(jsx?|vue)$/;
   })
 
-  .addPlugin(new webpack.ProvidePlugin({
-    mapboxgl: 'mapbox-gl',
-  }))
-  .addPlugin(new webpack.DefinePlugin({
-    __VUE_OPTIONS_API__: true,
-    __VUE_PROD_DEVTOOLS__: false,
-  }))
-
+  .addPlugin(
+    new webpack.ProvidePlugin({
+      mapboxgl: "mapbox-gl",
+    })
+  )
+  .addPlugin(
+    new webpack.DefinePlugin({
+      __VUE_OPTIONS_API__: true,
+      __VUE_PROD_DEVTOOLS__: false,
+    })
+  )
 
   // enables Sass/SCSS support
   .enableSassLoader()
 
   .disableCssExtraction()
 
-  .configureDevServerOptions(options => {
-    options.allowedHosts = 'all';
+  .configureDevServerOptions((options) => {
+    options.allowedHosts = "all";
     delete options.host;
-  })
+  });
 
 // uncomment if you use TypeScript
 //.enableTypeScriptLoader()
@@ -108,6 +110,5 @@ Encore
 // uncomment if you use API Platform Admin (composer req api-admin)
 //.enableReactPreset()
 //.addEntry('admin', './assets/js/admin.js')
-;
 
 module.exports = Encore.getWebpackConfig();

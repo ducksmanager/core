@@ -1,7 +1,7 @@
-import { user } from "./global";
 import { computed, onMounted } from "vue";
 
-const { collection: collectionStore } = require("../stores/collection");
+import { collection as collectionStore } from "../stores/collection";
+import { user } from "./global";
 const { username } = user();
 
 export let collection = () => {

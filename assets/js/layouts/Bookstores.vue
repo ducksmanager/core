@@ -155,12 +155,12 @@
   </div>
 </template>
 <script setup>
-import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
-import axios from "axios";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import axios from "axios";
 import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 const { t: $t } = useI18n(),
   newBookstore = {

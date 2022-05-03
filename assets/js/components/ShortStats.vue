@@ -31,8 +31,8 @@
 <script setup>
 import { computed, ref } from "vue";
 
-const { collection } = require("../stores/collection"),
-  collectionStore = collection(),
+import { collection } from "../stores/collection";
+const collectionStore = collection(),
   hasPublicationNames = ref(false),
   total = computed(() => collectionStore.total),
   totalUniqueIssues = computed(() => collectionStore.totalUniqueIssues),

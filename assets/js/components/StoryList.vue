@@ -13,8 +13,9 @@
   </ul>
 </template>
 <script setup>
-import Story from "./Story";
 import { BBadge } from "bootstrap-vue-3";
+
+import Story from "./Story";
 
 defineProps({
   stories: {

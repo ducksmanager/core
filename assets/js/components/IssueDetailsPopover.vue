@@ -30,10 +30,11 @@
 </template>
 
 <script setup>
-import Issue from "./Issue";
 import { BPopover } from "bootstrap-vue-3";
-import { coa } from "../stores/coa";
 import { computed, ref } from "vue";
+
+import { coa } from "../stores/coa";
+import Issue from "./Issue";
 
 const props = defineProps({
   publicationCode: {

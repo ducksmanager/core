@@ -9,8 +9,9 @@
 
 <script setup>
 import { BAlert } from "bootstrap-vue-3";
-import { form } from "../stores/form";
 import { computed } from "vue";
+
+import { form } from "../stores/form";
 
 defineProps({
   id: {

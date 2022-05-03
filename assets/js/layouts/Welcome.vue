@@ -200,12 +200,13 @@
 
 <script setup>
 import { BButton, BCol, BRow } from "bootstrap-vue-3";
-import { l10n } from "../stores/l10n";
+
 import { user } from "../composables/global";
+import { imagePath } from "../composables/imagePath";
+import { l10n } from "../stores/l10n";
 
 const { r } = l10n(),
-  { username } = user(),
-  { imagePath } = require("../composables/imagePath");
+  { username } = user();
 </script>
 
 <style scoped lang="scss">

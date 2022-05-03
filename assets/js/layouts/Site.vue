@@ -14,12 +14,13 @@
 </template>
 
 <script setup>
-import LeftPanel from "./LeftPanel";
-import Footer from "./Footer";
-import Banner from "./Banner";
-import SwitchLocale from "./SwitchLocale";
+import { computed, defineAsyncComponent, useAttrs } from "vue";
+
 import { l10n } from "../stores/l10n";
-import { computed, useAttrs, defineAsyncComponent } from "vue";
+import Banner from "./Banner";
+import Footer from "./Footer";
+import LeftPanel from "./LeftPanel";
+import SwitchLocale from "./SwitchLocale";
 
 const props = defineProps({
     page: { type: String, required: true },

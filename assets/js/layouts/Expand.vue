@@ -63,13 +63,14 @@
 </template>
 
 <script setup>
-import SuggestionList from "./SuggestionList";
 import { BAlert, BFormSelect } from "bootstrap-vue-3";
-import { coa } from "../stores/coa";
-const { collection: collectionStore } = require("../stores/collection");
-import { l10n } from "../stores/l10n";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { computed, onMounted, watch, ref } from "vue";
+
+import { coa } from "../stores/coa";
+import { collection as collectionStore } from "../stores/collection";
+import { l10n } from "../stores/l10n";
+import SuggestionList from "./SuggestionList";
 
 const { t: $t } = useI18n(),
   t = $t,

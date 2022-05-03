@@ -47,13 +47,14 @@
   </span>
 </template>
 <script setup>
-import { locale } from "../composables/global";
 import { computed } from "vue";
-import medal from "../composables/medal";
 import { useI18n } from "vue-i18n";
 
+import { locale } from "../composables/global";
+import { imagePath } from "../composables/imagePath";
+import medal from "../composables/medal";
+
 const { t: $t } = useI18n(),
-  { imagePath } = require("../composables/imagePath"),
   props = defineProps({
     small: { type: Boolean, default: false },
     xSmall: { type: Boolean, default: false },

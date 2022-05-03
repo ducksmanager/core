@@ -45,12 +45,13 @@
   </Accordion>
 </template>
 <script setup>
-import Accordion from "./Accordion";
-import Issue from "./Issue";
-import Ago from "./Ago";
-import { coa } from "../stores/coa";
 import { computed, onMounted } from "vue";
-const { collection: collectionStore } = require("../stores/collection");
+
+import { coa } from "../stores/coa";
+import { collection as collectionStore } from "../stores/collection";
+import Accordion from "./Accordion";
+import Ago from "./Ago";
+import Issue from "./Issue";
 
 const publicationNames = computed(() => coa().publicationNames),
   previousVisit = computed(() => collectionStore().previousVisit),

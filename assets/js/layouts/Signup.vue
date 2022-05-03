@@ -1,13 +1,6 @@
 <template>
-  <form
-    method="post"
-    @submit.prevent="signup"
-  >
-    <input
-      type="hidden"
-      name="_csrf_token"
-      :value="csrfToken"
-    >
+  <form method="post" @submit.prevent="signup">
+    <input type="hidden" name="_csrf_token" :value="csrfToken" />
     <b-row>
       <b-col lg="4">
         <Errorable id="username">
@@ -74,13 +67,14 @@
 
 <script setup>
 import * as axios from "axios";
-import Errorable from "../components/Errorable";
 import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+import Errorable from "../components/Errorable";
+import { validation } from "../composables/validation";
 import { form } from "../stores/form";
 import { l10n } from "../stores/l10n";
-import { validation } from "../composables/validation";
-import { useI18n } from "vue-i18n";
-import { computed, onMounted, ref } from "vue";
 
 let t;
 

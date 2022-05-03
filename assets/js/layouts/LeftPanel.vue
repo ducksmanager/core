@@ -1,9 +1,9 @@
 <template>
   <div id="menu">
     <div id="medals_and_login">
-      <div v-if="userPoints" id="medals">
+      <div v-if="points[userId]" id="medals">
         <Medal
-          v-for="(numberOfPoints, contribution) in userPoints"
+          v-for="(numberOfPoints, contribution) in points[userId] || {}"
           :key="contribution"
           :contribution="contribution"
           :user-level-points="numberOfPoints"
@@ -48,22 +48,22 @@
 
 <script setup>
 import axios from "axios";
-import RecentEvents from "./RecentEvents";
-import Navigation from "./Navigation";
-import Medal from "../components/Medal";
-import Banner from "./Banner";
-import SwitchLocale from "./SwitchLocale";
-import { users } from "../stores/users";
-import { l10n } from "../stores/l10n";
-import { user } from "../composables/global";
 import { computed } from "vue";
-import { collection } from "../stores/collection";
 
-const points = users().points,
-  userPoints = computed(() => points?.[userId]),
+import Medal from "../components/Medal";
+import { user } from "../composables/global";
+import { imagePath } from "../composables/imagePath";
+import { collection } from "../stores/collection";
+import { l10n } from "../stores/l10n";
+import { users } from "../stores/users";
+import Banner from "./Banner";
+import Navigation from "./Navigation";
+import RecentEvents from "./RecentEvents";
+import SwitchLocale from "./SwitchLocale";
+
+const points = computed(() => users().points),
   { userId, username } = user(),
-  { r } = l10n(),
-  { imagePath } = require("../composables/imagePath");
+  { r } = l10n();
 
 if (userId) {
   axios

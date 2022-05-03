@@ -46,9 +46,10 @@
   </div>
 </template>
 <script setup>
-import Edge from "./Edge";
 import { onMounted, ref } from "vue";
-const { imagePath } = require("../composables/imagePath");
+
+import { imagePath } from "../composables/imagePath";
+import Edge from "./Edge";
 
 const props = defineProps({
   embedded: {

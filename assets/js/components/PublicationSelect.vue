@@ -25,9 +25,10 @@
 
 <script setup>
 import { BButton, BFormSelect } from "bootstrap-vue-3";
+import { computed } from "vue";
+
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
-import { computed } from "vue";
 
 const props = defineProps({
   noButton: {

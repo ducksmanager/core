@@ -73,14 +73,15 @@
 </template>
 <script setup>
 import axios from "axios";
-import Issue from "./Issue";
-import { collection } from "../composables/collection";
-import Condition from "./Condition";
-import { condition } from "../composables/condition";
 import { BDropdown, BDropdownItem, BFormInput } from "bootstrap-vue-3";
-import { coa } from "../stores/coa";
-import { computed, watch, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+
+import { collection } from "../composables/collection";
+import { condition } from "../composables/condition";
+import { coa } from "../stores/coa";
+import Condition from "./Condition";
+import Issue from "./Issue";
 
 defineProps({
   withTitle: {
