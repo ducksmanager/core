@@ -29,7 +29,7 @@ module.exports = {
         math: 'always',
       },
     ],
-    'vue/max-len': [2, { code: 100, tabWidth: 4, ignoreUrls: true, ignoreStrings: true }],
+    'vue/max-len': [2, { code: 110, tabWidth: 4, ignoreUrls: true, ignoreStrings: true }],
     'vue/multi-word-component-names': 'off',
     'vue/singleline-html-element-content-newline': 'off',
   },

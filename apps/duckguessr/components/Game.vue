@@ -38,7 +38,7 @@
 </template>
 <script lang="ts" setup>
 import Index from '@prisma/client'
-import { computed, ref } from '@nuxtjs/composition-api'
+import { computed } from '@nuxtjs/composition-api'
 import AuthorCard from '~/components/AuthorCard.vue'
 import {
   Author,
