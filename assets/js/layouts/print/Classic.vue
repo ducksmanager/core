@@ -16,65 +16,62 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import { coa } from "../../stores/coa";
 import { collection as collectionStore } from "../../stores/collection";
 
-const hasPublicationNames = ref(false),
-  countryNames = computed(() => coa().countryNames),
-  publicationNames = computed(() => coa().publicationNames),
-  collection = computed(() => collectionStore().collection),
-  countryCodes = computed(
-    () =>
-      collection.value && [...new Set(collection.value.map((i) => i.country))]
+let hasPublicationNames = $ref(false);
+let countryNames = $computed(() => coa().countryNames),
+  publicationNames = $computed(() => coa().publicationNames),
+  collection = $computed(() => collectionStore().collection),
+  countryCodes = $computed(
+    () => collection && [...new Set(collection.map((i) => i.country))]
   ),
-  countryCodesSortedByName = computed(
+  countryCodesSortedByName = $computed(
     () =>
-      countryCodes.value &&
-      countryNames.value &&
-      [...countryCodes.value].sort(
+      countryCodes &&
+      countryNames &&
+      [...countryCodes].sort(
         (countryCodeA, countryCodeB) =>
-          countryNames.value[countryCodeA] &&
-          countryNames.value[countryCodeA].localeCompare(
-            countryNames.value[countryCodeB]
-          )
+          countryNames[countryCodeA] &&
+          countryNames[countryCodeA].localeCompare(countryNames[countryCodeB])
       )
   ),
-  publicationCodes = computed(
+  publicationCodes = $computed(
     () =>
-      collection.value && [
-        ...new Set(collection.value.map((i) => `${i.country}/${i.magazine}`)),
+      collection && [
+        ...new Set(collection.map((i) => `${i.country}/${i.magazine}`)),
       ]
-  ),
-  fetchCountryNames = coa().fetchCountryNames,
+  );
+const fetchCountryNames = coa().fetchCountryNames,
   fetchPublicationNames = coa().fetchPublicationNames,
   loadCollection = collectionStore().loadCollection,
   publicationCodesOfCountry = (countryCode) =>
-    publicationCodes.value
+    publicationCodes
       .filter(
         (publicationCode) => publicationCode.split("/")[0] === countryCode
       )
       .sort((a, b) =>
-        !publicationNames.value[b]
+        !publicationNames[b]
           ? 1
-          : publicationNames.value[a] < publicationNames.value[b]
+          : publicationNames[a] < publicationNames[b]
           ? -1
-          : publicationNames.value[a] > publicationNames.value[b]
+          : publicationNames[a] > publicationNames[b]
           ? 1
           : 0
       ),
   issuesOfPublicationCode = (publicationCode) =>
-    collection.value
+    collection
       .filter((i) => publicationCode === `${i.country}/${i.magazine}`)
       .map(({ issueNumber }) => issueNumber)
       .join(", ");
 watch(
-  () => publicationCodes.value,
+  () => publicationCodes,
   (newValue) => {
     if (newValue) {
       fetchPublicationNames(newValue);
-      hasPublicationNames.value = true;
+      hasPublicationNames = true;
     }
   },
   { immediate: true }

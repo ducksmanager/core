@@ -14,8 +14,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { ref } from "vue";
-import { computed, watch } from "vue";
+import { watch } from "vue";
 import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
 
@@ -32,50 +31,36 @@ Chart.register(
   Title,
   ArcElement
 );
-
-const props = defineProps({
-  unit: {
-    type: String,
-    required: true,
-  },
-});
-const emit = defineEmits(["change-dimension"]);
-
+const { unit } = defineProps({
+    unit: {
+      type: String,
+      required: true,
+    },
+  }),
+  emit = defineEmits(["change-dimension"]);
 collection();
 
 const { t: $t } = useI18n(),
-  chartData = ref(null),
-  options = ref({}),
-  totalPerPublicationUniqueIssueNumbers = computed(
+  totalPerPublicationUniqueIssueNumbers = $computed(
     () => collectionStore().totalPerPublicationUniqueIssueNumbers
   ),
-  countryNames = computed(() => coa().countryNames),
-  issueCounts = computed(() => coa().issueCounts),
-  publicationNames = computed(() => coa().publicationNames),
-  labels = computed(() =>
-    Object.keys(totalPerPublicationUniqueIssueNumbers.value)
-  ),
-  values = computed(() => {
+  countryNames = $computed(() => coa().countryNames),
+  issueCounts = $computed(() => coa().issueCounts),
+  publicationNames = $computed(() => coa().publicationNames),
+  labels = $computed(() => Object.keys(totalPerPublicationUniqueIssueNumbers)),
+  values = $computed(() => {
     if (
-      !(
-        totalPerPublicationUniqueIssueNumbers.value &&
-        issueCounts.value &&
-        countryNames.value
-      )
+      !(totalPerPublicationUniqueIssueNumbers && issueCounts && countryNames)
     ) {
       return null;
     }
-    let possessedIssues = Object.values(
-      totalPerPublicationUniqueIssueNumbers.value
-    );
-    let missingIssues = Object.keys(
-      totalPerPublicationUniqueIssueNumbers.value
-    ).map(
+    let possessedIssues = Object.values(totalPerPublicationUniqueIssueNumbers);
+    let missingIssues = Object.keys(totalPerPublicationUniqueIssueNumbers).map(
       (publicationCode) =>
-        issueCounts.value[publicationCode] -
-        totalPerPublicationUniqueIssueNumbers.value[publicationCode]
+        issueCounts[publicationCode] -
+        totalPerPublicationUniqueIssueNumbers[publicationCode]
     );
-    if (props.unit.value === "percentage") {
+    if (unit === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>
         Math.round(
           possessedCount * (100 / (possessedCount + missingIssues[key]))
@@ -91,8 +76,11 @@ const { t: $t } = useI18n(),
   fetchPublicationNames = coa().fetchPublicationNames,
   fetchIssueCounts = coa().fetchIssueCounts;
 
+let chartData = $ref(null),
+  options = $ref({});
+
 watch(
-  () => totalPerPublicationUniqueIssueNumbers.value,
+  () => totalPerPublicationUniqueIssueNumbers,
   async (newValue) => {
     await fetchCountryNames();
     await fetchPublicationNames(Object.keys(newValue));
@@ -102,7 +90,7 @@ watch(
 );
 
 watch(
-  () => labels.value,
+  () => labels,
   async (newValue) => {
     emit("change-dimension", "height", 100 + 30 * newValue.length);
     emit("change-dimension", "width", 500);
@@ -111,44 +99,44 @@ watch(
 );
 
 watch(
-  () => values.value,
+  () => values,
   async (newValue) => {
     if (newValue) {
-      chartData.value = {
+      chartData = {
         datasets: [
           {
-            data: values.value[0],
+            data: values[0],
             backgroundColor: "green",
             label: $t("Numéros possédés"),
             legend: $t("Numéros possédés"),
           },
           {
-            data: values.value[1],
+            data: values[1],
             backgroundColor: "orange",
             label: $t("Numéros référencés non-possédés"),
             legend: $t("Numéros référencés non-possédés"),
           },
         ],
-        labels: labels.value,
+        labels: labels,
         legends: [
           $t("Numéros possédés"),
           $t("Numéros référencés non-possédés"),
         ],
       };
 
-      options.value = {
+      options = {
         responsive: true,
         indexAxis: "y",
         maintainAspectRatio: false,
         scales: {
           x: {
             min: 0,
-            max: props.unit === "percentage" ? 100 : undefined,
+            max: unit === "percentage" ? 100 : undefined,
             stacked: true,
             ticks: {
               stepSize: 1,
               callback: (value) =>
-                props.unit === "percentage" ? `${value}%` : value,
+                unit === "percentage" ? `${value}%` : value,
             },
           },
           y: {
@@ -169,16 +157,16 @@ watch(
             callbacks: {
               title: ([tooltipItem]) => {
                 const publicationcode = tooltipItem.label;
-                if (!publicationNames.value[publicationcode]) {
-                  publicationNames.value[publicationcode] = "?";
+                if (!publicationNames[publicationcode]) {
+                  publicationNames[publicationcode] = "?";
                 }
-                return `${publicationNames.value[publicationcode] || "?"} (${
-                  countryNames.value[publicationcode.split("/")[0]]
+                return `${publicationNames[publicationcode] || "?"} (${
+                  countryNames[publicationcode.split("/")[0]]
                 })`;
               },
               label: (tooltipItem) =>
                 `${tooltipItem.dataset.label}: ${tooltipItem.raw}${
-                  props.unit === "percentage" ? "%" : ""
+                  unit === "percentage" ? "%" : ""
                 }`,
             },
           },

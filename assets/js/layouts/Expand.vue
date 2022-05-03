@@ -64,7 +64,7 @@
 
 <script setup>
 import { BAlert, BFormSelect } from "bootstrap-vue-3";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "../stores/coa";
@@ -72,28 +72,28 @@ import { collection as collectionStore } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 import SuggestionList from "./SuggestionList";
 
+let countryCode = $ref("ALL");
 const { t: $t } = useI18n(),
   t = $t,
   { r } = l10n(),
-  countryCode = ref("ALL"),
-  watchedAuthors = computed(() => collectionStore().watchedAuthors),
-  suggestions = computed(() => collectionStore().suggestions),
-  countryNames = computed(() => coa().countryNames),
-  countryNamesWithAllCountriesOption = computed(
+  watchedAuthors = $computed(() => collectionStore().watchedAuthors),
+  suggestions = $computed(() => collectionStore().suggestions),
+  countryNames = $computed(() => coa().countryNames),
+  countryNamesWithAllCountriesOption = $computed(
     () =>
-      countryNames.value && {
+      countryNames && {
         ALL: $t("Tous les pays"),
-        ...countryNames.value,
+        ...countryNames,
       }
   ),
-  watchedAuthorsWithNotation = computed(() =>
-    watchedAuthors.value?.filter(({ notation }) => notation > 0)
+  watchedAuthorsWithNotation = $computed(() =>
+    watchedAuthors?.filter(({ notation }) => notation > 0)
   ),
   loadWatchedAuthors = collectionStore().loadWatchedAuthors,
   fetchCountryNames = coa().fetchCountryNames;
 
 watch(
-  () => watchedAuthors.value,
+  () => watchedAuthors,
   async (newValue) => {
     if (newValue?.length) {
       await fetchCountryNames();

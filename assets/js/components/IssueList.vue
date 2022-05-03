@@ -230,7 +230,7 @@
 import axios from "axios";
 import { BIconCalendar, BIconEyeFill } from "bootstrap-icons-vue";
 import { BAlert } from "bootstrap-vue-3";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import { condition } from "../composables/condition";
 import { coa } from "../stores/coa";
@@ -254,79 +254,73 @@ const props = defineProps({
 
 const { conditions } = condition();
 
-const loading = ref(true),
-  publicationNameLoading = ref(true),
-  filter = ref({
+let loading = $ref(true),
+  publicationNameLoading = $ref(true),
+  filter = $ref({
     missing: true,
     possessed: true,
   }),
-  contextmenu = ref(null),
-  issues = ref(null),
-  userIssuesForPublication = ref(null),
-  userIssuesNotFoundForPublication = ref([]),
-  selected = ref([]),
-  preselected = ref([]),
-  preselectedIndexStart = ref(null),
-  preselectedIndexEnd = ref(null),
-  hoveredIssueNumber = ref(null),
-  hoveredIssueHasCover = ref(undefined),
-  currentIssueOpened = ref(null),
-  contextMenuKey = "context-menu",
-  publicationNames = computed(() => coa().publicationNames),
-  userIssues = computed(() => collectionStore().collection),
-  purchases = computed(() => collectionStore().purchases),
-  country = computed(() => props.publicationcode.split("/")[0]),
-  publicationName = computed(
-    () => publicationNames.value[props.publicationcode]
-  ),
+  contextmenu = $ref(null),
+  issues = $ref(null),
+  userIssuesForPublication = $ref(null),
+  userIssuesNotFoundForPublication = $ref([]),
+  selected = $ref([]),
+  preselected = $ref([]),
+  preselectedIndexStart = $ref(null),
+  preselectedIndexEnd = $ref(null),
+  hoveredIssueNumber = $ref(null),
+  hoveredIssueHasCover = $ref(undefined),
+  currentIssueOpened = $ref(null);
+
+const contextMenuKey = "context-menu",
+  publicationNames = $computed(() => coa().publicationNames),
+  userIssues = $computed(() => collectionStore().collection),
+  purchases = $computed(() => collectionStore().purchases),
+  country = $computed(() => props.publicationcode.split("/")[0]),
+  publicationName = $computed(() => publicationNames[props.publicationcode]),
   isTouchScreen = window.matchMedia("(pointer: coarse)").matches,
-  filteredIssues = computed(() =>
-    issues.value?.filter(
+  filteredIssues = $computed(() =>
+    issues?.filter(
       ({ userCopies }) =>
-        (filter.value.possessed && userCopies.length) ||
-        (filter.value.missing && !userCopies.length)
+        (filter.possessed && userCopies.length) ||
+        (filter.missing && !userCopies.length)
     )
   ),
-  selectedIssuesCopies = computed(() =>
-    userIssuesForPublication.value.filter(
+  selectedIssuesCopies = $computed(() =>
+    userIssuesForPublication.filter(
       ({ issueNumber }, idx) =>
-        selected.value.includes(issueNumber) &&
-        (selected.value.length === 1 ||
-          userIssuesForPublication.value.some(
+        selected.includes(issueNumber) &&
+        (selected.length === 1 ||
+          userIssuesForPublication.some(
             ({ issueNumber: issueNumber2 }, idx2) =>
               issueNumber2 === issueNumber && idx !== idx2
           ))
     )
   ),
-  ownedIssuesCount = computed(() =>
-    issues.value.reduce(
-      (acc, { userCopies }) => acc + (userCopies.length ? 1 : 0),
-      0
-    )
+  ownedIssuesCount = $computed(() =>
+    issues.reduce((acc, { userCopies }) => acc + (userCopies.length ? 1 : 0), 0)
   ),
   fetchPublicationNames = coa().fetchPublicationNames,
   loadCollection = collectionStore().loadCollection,
   loadPurchases = collectionStore().loadPurchases,
   getPreselected = () =>
-    [preselectedIndexStart.value, preselectedIndexEnd.value].includes(null)
-      ? preselected.value
-      : filteredIssues.value
+    [preselectedIndexStart, preselectedIndexEnd].includes(null)
+      ? preselected
+      : filteredIssues
           .map(({ issueNumber }) => issueNumber)
           .filter(
             (issueNumber, index) =>
-              index >= preselectedIndexStart.value &&
-              index <= preselectedIndexEnd.value
+              index >= preselectedIndexStart && index <= preselectedIndexEnd
           ),
   updateSelected = () => {
-    selected.value = issues.value
+    selected = issues
       .map(({ issueNumber }) => issueNumber)
       .filter(
         (issueNumber) =>
-          selected.value.includes(issueNumber) !==
-          preselected.value.includes(issueNumber)
+          selected.includes(issueNumber) !== preselected.includes(issueNumber)
       );
-    preselectedIndexStart.value = preselectedIndexEnd.value = null;
-    preselected.value = [];
+    preselectedIndexStart = preselectedIndexEnd = null;
+    preselected = [];
   },
   deletePublicationIssues = async (issuesToDelete) =>
     await updateIssues({
@@ -337,10 +331,10 @@ const loading = ref(true),
       purchaseId: null,
     }),
   updateIssues = async (data) => {
-    contextmenu.value.hide();
+    contextmenu.hide();
     await axios.post("/api/collection/issues", data);
     await loadCollection(true);
-    selected.value = [];
+    selected = [];
   },
   createPurchase = async ({ date, description }) => {
     await axios.post("/api/collection/purchases", {
@@ -355,28 +349,28 @@ const loading = ref(true),
   };
 
 watch(
-  () => preselectedIndexEnd.value,
+  () => preselectedIndexEnd,
   () => {
-    preselected.value = getPreselected();
+    preselected = getPreselected();
   }
 );
 
 watch(
-  () => userIssues.value,
+  () => userIssues,
   async (newValue) => {
     if (newValue) {
-      userIssuesForPublication.value = newValue
+      userIssuesForPublication = newValue
         .filter(
           (issue) =>
             `${issue.country}/${issue.magazine}` === props.publicationcode
         )
         .map((issue) => ({
           ...issue,
-          condition: (
-            conditions.find(({ dbValue }) => dbValue === issue.condition) || {
-              value: "possessed",
-            }
-          ).value,
+          condition: conditions.find(
+            ({ dbValue }) => dbValue === issue.condition
+          ) || {
+            value: "possessed",
+          },
         }));
 
       const issuesWithTitles = (
@@ -385,10 +379,10 @@ watch(
         )
       ).data;
 
-      issues.value = issuesWithTitles
+      issues = issuesWithTitles
         .map((issue) => ({
           ...issue,
-          userCopies: userIssuesForPublication.value.filter(
+          userCopies: userIssuesForPublication.filter(
             ({ issueNumber: userIssueNumber }) =>
               userIssueNumber === issue.issueNumber
           ),
@@ -399,11 +393,10 @@ watch(
       const coaIssueNumbers = issuesWithTitles.map(
         ({ issueNumber }) => issueNumber
       );
-      userIssuesNotFoundForPublication.value =
-        userIssuesForPublication.value.filter(
-          ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
-        );
-      loading.value = false;
+      userIssuesNotFoundForPublication = userIssuesForPublication.filter(
+        ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
+      );
+      loading = false;
     }
   },
   { immediate: true }
@@ -412,7 +405,7 @@ watch(
 onMounted(async () => {
   await loadPurchases();
   await fetchPublicationNames([props.publicationcode]);
-  publicationNameLoading.value = false;
+  publicationNameLoading = false;
 });
 </script>
 

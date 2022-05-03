@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, useAttrs } from "vue";
+import { defineAsyncComponent, useAttrs } from "vue";
 
 import { user } from "../composables/global";
 import ViewBookcase from "./bookcase/ViewBookcase";
@@ -46,10 +46,10 @@ const props = defineProps({
   },
 });
 
-const component = computed(() =>
+const component = $computed(() =>
     props.tab ? defineAsyncComponent(() => import(`./${props.tab}`)) : null
   ),
-  attrsWithoutTab = computed(() =>
+  attrsWithoutTab = $computed(() =>
     Object.keys(attrs)
       .filter((attrKey) => attrKey !== "tab")
       .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})

@@ -73,7 +73,6 @@
 
 <script setup>
 import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
-import { computed } from "vue";
 
 import { coa } from "../stores/coa";
 import Publication from "./Publication";
@@ -108,7 +107,7 @@ const props = defineProps({
     endDate: props.endDate,
   },
   editedSubscriptionId = null,
-  publicationNames = computed(() => coa().publicationNames);
+  publicationNames = $computed(() => coa().publicationNames);
 </script>
 
 <style scoped>

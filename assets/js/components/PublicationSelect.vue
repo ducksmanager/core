@@ -25,7 +25,6 @@
 
 <script setup>
 import { BButton, BFormSelect } from "bootstrap-vue-3";
-import { computed } from "vue";
 
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
@@ -46,22 +45,22 @@ const props = defineProps({
 });
 defineEmits(["input"]);
 
-const currentCountryCode = computed(() => props.initialCountryCode),
-  currentPublicationCode = computed(() => props.initialPublicationCode);
+const currentCountryCode = $computed(() => props.initialCountryCode),
+  currentPublicationCode = $computed(() => props.initialPublicationCode);
 const coaStore = coa(),
-  countryNames = computed(() => coaStore.countryNames),
-  publicationNames = computed(() => coaStore.publicationNames),
-  publicationNamesFullCountries = computed(
+  countryNames = $computed(() => coaStore.countryNames),
+  publicationNames = $computed(() => coaStore.publicationNames),
+  publicationNamesFullCountries = $computed(
     () => coaStore.publicationNamesFullCountries
   ),
-  publicationNamesForCurrentCountry = computed(() =>
-    publicationNamesFullCountries.value.includes(currentCountryCode.value)
-      ? Object.keys(publicationNames.value)
+  publicationNamesForCurrentCountry = $computed(() =>
+    publicationNamesFullCountries.includes(currentCountryCode)
+      ? Object.keys(publicationNames)
           .filter((publicationCode) =>
-            new RegExp(`^${currentCountryCode.value}/`).test(publicationCode)
+            new RegExp(`^${currentCountryCode}/`).test(publicationCode)
           )
           .map((publicationCode) => ({
-            text: publicationNames.value[publicationCode],
+            text: publicationNames[publicationCode],
             value: publicationCode,
           }))
           .sort(({ text: text1 }, { text: text2 }) =>

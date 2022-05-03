@@ -38,24 +38,22 @@
   </Accordion>
 </template>
 <script setup>
-import { computed } from "vue";
-
 import { coa } from "../stores/coa";
 import { collection as collectionStore } from "../stores/collection";
 import Accordion from "./Accordion";
 import Issue from "./Issue";
 
-const publicationNames = computed(() => coa().publicationNames),
-  collection = computed(() => collectionStore().collection),
-  purchases = computed(() => collectionStore().purchases),
-  collectionPerPurchaseDate = computed(
+const publicationNames = $computed(() => coa().publicationNames),
+  collection = $computed(() => collectionStore().collection),
+  purchases = $computed(() => collectionStore().purchases),
+  collectionPerPurchaseDate = $computed(
     () =>
-      collection.value &&
-      purchases.value &&
-      collection.value
+      collection &&
+      purchases &&
+      collection
         .reduce((acc, issue) => {
           const purchase = (issue.purchaseId > 0 &&
-            purchases.value.find(({ id }) => id === issue.purchaseId)) || {
+            purchases.find(({ id }) => id === issue.purchaseId)) || {
             date: issue.creationDate,
           };
           let purchaseIndex = acc.findIndex(

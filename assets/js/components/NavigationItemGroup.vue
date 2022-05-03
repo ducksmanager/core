@@ -16,13 +16,11 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 const props = defineProps({
     path: { type: String, required: true },
     icon: { type: String, required: true },
   }),
-  active = computed(() =>
+  active = $computed(() =>
     window.location.pathname.split("/").includes(props.path)
   );
 </script>

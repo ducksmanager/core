@@ -90,7 +90,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import Accordion from "../../components/Accordion";
 import IssueList from "../../components/IssueList";
@@ -113,19 +113,18 @@ defineProps({
   },
 });
 
-const suggestionsNumber = ref(0),
-  hasPublicationNames = ref(false),
-  username = ref(user().username),
-  publicationNames = computed(() => coa().publicationNames),
-  total = computed(() => collection().total),
-  totalPerPublication = computed(() => collection().totalPerPublication),
-  mostPossessedPublication = computed(
+let suggestionsNumber = $ref(0),
+  hasPublicationNames = $ref(false);
+const username = user().username,
+  publicationNames = $computed(() => coa().publicationNames),
+  total = $computed(() => collection().total),
+  totalPerPublication = $computed(() => collection().totalPerPublication),
+  mostPossessedPublication = $computed(
     () =>
-      totalPerPublication.value &&
-      Object.keys(totalPerPublication.value).reduce(
+      totalPerPublication &&
+      Object.keys(totalPerPublication).reduce(
         (acc, publicationCode) =>
-          totalPerPublication.value[acc] >
-          totalPerPublication.value[publicationCode]
+          totalPerPublication[acc] > totalPerPublication[publicationCode]
             ? acc
             : publicationCode,
         null
@@ -135,11 +134,11 @@ const suggestionsNumber = ref(0),
   { r } = l10n();
 
 watch(
-  () => totalPerPublication.value,
+  () => totalPerPublication,
   async (newValue) => {
     if (newValue) {
       await fetchPublicationNames(Object.keys(newValue));
-      hasPublicationNames.value = true;
+      hasPublicationNames = true;
     }
   }
 );

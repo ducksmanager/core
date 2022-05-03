@@ -33,7 +33,6 @@
 </template>
 <script setup>
 import { BCol, BPopover, BRow } from "bootstrap-vue-3";
-import { computed } from "vue";
 
 import Issue from "../components/Issue";
 import { coa } from "../stores/coa";
@@ -55,7 +54,7 @@ const bookcaseTextures = {
   bookshelf: "bois/KNOTTY PINE",
 };
 
-const publicationNames = computed(() => coa().publicationNames);
+const publicationNames = $computed(() => coa().publicationNames);
 </script>
 
 <style lang="scss" scoped>

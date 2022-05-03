@@ -48,7 +48,6 @@
 
 <script setup>
 import axios from "axios";
-import { computed } from "vue";
 
 import Medal from "../components/Medal";
 import { user } from "../composables/global";
@@ -61,7 +60,7 @@ import Navigation from "./Navigation";
 import RecentEvents from "./RecentEvents";
 import SwitchLocale from "./SwitchLocale";
 
-const points = computed(() => users().points),
+const points = $computed(() => users().points),
   { userId, username } = user(),
   { r } = l10n();
 

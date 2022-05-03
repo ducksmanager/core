@@ -111,7 +111,7 @@
 <script setup>
 import axios from "axios";
 import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 
 import Errorable from "../../components/Errorable";
 import { collection } from "../../stores/collection";
@@ -123,11 +123,11 @@ const props = defineProps({
   hasrequestedpresentationsentence: { type: String, default: null },
 });
 
-const user = computed(() => collection().user);
-const isSuccess = computed(() =>
+const user = $computed(() => collection().user);
+const isSuccess = $computed(() =>
   props.success === null ? null : parseInt(props.success) === 1
 );
-const hasRequestedPresentationSentence = computed(() =>
+const hasRequestedPresentationSentence = $computed(() =>
   props.hasrequestedpresentationsentence === null
     ? null
     : parseInt(props.hasrequestedpresentationsentence) === 1

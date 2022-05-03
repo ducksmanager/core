@@ -3,7 +3,7 @@
     v-if="currentCondition"
     :class="{
       'issue-condition': true,
-      [`issue-condition-${currentCondition.value}`]: true,
+      [`issue-condition-${currentCondition}`]: true,
     }"
     :style="{ backgroundColor: currentCondition.color }"
     :title="getConditionLabel(currentCondition.dbValue)"
@@ -11,9 +11,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
-const props = defineProps({
+const { publicationcode, issuenumber, value } = defineProps({
   publicationcode: { type: String, default: null },
   issuenumber: { type: String, default: null },
   value: { type: String, default: null },
@@ -21,23 +19,19 @@ const props = defineProps({
 import { collection } from "../composables/collection";
 import { condition } from "../composables/condition";
 
-const { conditions, getConditionLabel } = condition();
-const { findInCollection } = collection();
-
-const issueInCollection = computed(() =>
-  props.value
-    ? true
-    : findInCollection(props.publicationcode, props.issuenumber)
-);
-
-const currentCondition = computed(() =>
-  props.value
-    ? conditions.find(({ value }) => value === props.value)
-    : issueInCollection.value &&
-      conditions.find(
-        ({ dbValue }) => dbValue === issueInCollection.value.condition
-      )
-);
+const { conditions, getConditionLabel } = condition(),
+  { findInCollection } = collection(),
+  issueInCollection = $computed(() =>
+    value ? true : findInCollection(publicationcode, issuenumber)
+  ),
+  currentCondition = $computed(() =>
+    value
+      ? conditions.find(({ value: conditionValue }) => value === conditionValue)
+      : issueInCollection &&
+        conditions.find(
+          ({ dbValue }) => dbValue === issueInCollection.condition
+        )
+  );
 </script>
 
 <style scoped lang="scss">

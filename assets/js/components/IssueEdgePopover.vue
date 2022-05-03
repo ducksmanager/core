@@ -48,7 +48,6 @@
 
 <script setup>
 import { BButton, BPopover } from "bootstrap-vue-3";
-import { computed } from "vue";
 
 import { user } from "../composables/global";
 import { bookcase } from "../stores/bookcase";
@@ -74,7 +73,7 @@ defineProps({
 
 const contribution = "Photographe",
   isSharedBookcase = bookcase().isSharedBookcase,
-  points = computed(() => users().points?.[userId][contribution]);
+  points = $computed(() => users().points?.[userId][contribution]);
 </script>
 
 <style scoped lang="scss">

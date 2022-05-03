@@ -6,8 +6,6 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 import { imagePath } from "../composables/imagePath";
 const props = defineProps({
     publicationcode: {
@@ -23,7 +21,7 @@ const props = defineProps({
       default: "md",
     },
   }),
-  countrycode = computed(() => props.publicationcode.split("/")[0]);
+  countrycode = $computed(() => props.publicationcode.split("/")[0]);
 </script>
 
 <style scoped lang="scss">

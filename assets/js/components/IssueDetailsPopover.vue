@@ -31,7 +31,6 @@
 
 <script setup>
 import { BPopover } from "bootstrap-vue-3";
-import { computed, ref } from "vue";
 
 import { coa } from "../stores/coa";
 import Issue from "./Issue";
@@ -48,19 +47,20 @@ const props = defineProps({
 });
 const emit = defineEmits(["cover-loaded"]);
 
+let isCoverLoading = $ref(true);
+
 const cloudinaryBaseUrl =
     "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/",
-  isCoverLoading = ref(true),
-  publicationNames = computed(() => coa().publicationNames),
-  issueDetails = computed(() => coa().issueDetails),
-  id = computed(
+  publicationNames = $computed(() => coa().publicationNames),
+  issueDetails = $computed(() => coa().issueDetails),
+  id = $computed(
     () =>
       `issue-details-${props.publicationCode.replace("/", "-")}-${
         props.issueNumber
       }`
   ),
-  issueCode = computed(() => `${props.publicationCode} ${props.issueNumber}`),
-  coverUrl = computed(() => {
+  issueCode = $computed(() => `${props.publicationCode} ${props.issueNumber}`),
+  coverUrl = $computed(() => {
     const cover = issueDetails?.[issueCode].entries.find(
       ({ position }) => !/^p/.test(position)
     );
@@ -70,12 +70,12 @@ const cloudinaryBaseUrl =
   }),
   fetchIssueUrls = coa().fetchIssueUrls,
   loadIssueUrls = async () => {
-    isCoverLoading.value = true;
+    isCoverLoading = true;
     await fetchIssueUrls({
       publicationCode: props.publicationCode,
       issueNumber: props.issueNumber,
     });
-    isCoverLoading.value = false;
+    isCoverLoading = false;
   };
 </script>
 

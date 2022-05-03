@@ -10,7 +10,6 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { computed } from "vue";
 import { PieChart } from "vue-chart-3";
 
 import { collection } from "../../composables/collection";
@@ -22,7 +21,7 @@ let conditions;
 
 conditions = condition().conditions;
 collection();
-const numberPerCondition = computed(() =>
+const numberPerCondition = $computed(() =>
     collectionStore().collection.reduce(
       (acc, { condition }) => ({
         ...acc,
@@ -34,22 +33,22 @@ const numberPerCondition = computed(() =>
   conditionsWithoutMissing = conditions.filter(
     ({ value }) => value !== "missing"
   ),
-  values = computed(() =>
+  values = $computed(() =>
     Object.values(conditionsWithoutMissing).map(
-      ({ dbValue }) => numberPerCondition.value[dbValue]
+      ({ dbValue }) => numberPerCondition[dbValue]
     )
   ),
   colors = Object.values(conditionsWithoutMissing.map(({ color }) => color)),
-  chartData = computed(() => ({
+  chartData = $computed(() => ({
     labels: Object.values(conditionsWithoutMissing).map(({ text }) => text),
     datasets: [
       {
-        data: values.value,
+        data: values,
         backgroundColor: colors,
       },
     ],
   })),
-  options = computed(() => ({
+  options = $computed(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -63,8 +62,7 @@ const numberPerCondition = computed(() =>
             );
             return `${currentValue} (${percentage}%)`;
           },
-          title: ([tooltipItem]) =>
-            chartData.value.labels[tooltipItem.dataIndex],
+          title: ([tooltipItem]) => chartData.labels[tooltipItem.dataIndex],
         },
       },
     },

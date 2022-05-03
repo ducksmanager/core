@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
@@ -83,28 +83,26 @@ import { l10n } from "../stores/l10n";
 import Country from "./Country";
 import IssueSearch from "./IssueSearch";
 
-const hasPublicationNames = ref(false),
-  totalPerCountry = computed(() => collection().totalPerCountry),
-  totalPerPublication = computed(() => collection().totalPerPublication),
-  countryNames = computed(() => coa().countryNames),
-  publicationNames = computed(() => coa().publicationNames),
-  sortedCountries = computed(
+let hasPublicationNames = $ref(false);
+const totalPerCountry = $computed(() => collection().totalPerCountry),
+  totalPerPublication = $computed(() => collection().totalPerPublication),
+  countryNames = $computed(() => coa().countryNames),
+  publicationNames = $computed(() => coa().publicationNames),
+  sortedCountries = $computed(
     () =>
-      totalPerCountry.value &&
-      Object.keys(totalPerCountry.value).sort((countryCode1, countryCode2) =>
-        countryNames.value[countryCode1].localeCompare(
-          countryNames.value[countryCode2]
-        )
+      totalPerCountry &&
+      Object.keys(totalPerCountry).sort((countryCode1, countryCode2) =>
+        countryNames[countryCode1].localeCompare(countryNames[countryCode2])
       )
   ),
-  publicationsPerCountry = computed(
+  publicationsPerCountry = $computed(
     () =>
-      totalPerCountry.value &&
-      hasPublicationNames.value &&
-      Object.keys(totalPerCountry.value).reduce(
+      totalPerCountry &&
+      hasPublicationNames &&
+      Object.keys(totalPerCountry).reduce(
         (acc, country) => ({
           ...acc,
-          [country]: Object.keys(totalPerPublication.value).filter(
+          [country]: Object.keys(totalPerPublication).filter(
             (publicationCode) => publicationCode.split("/")[0] === country
           ),
         }),
@@ -115,18 +113,18 @@ const hasPublicationNames = ref(false),
   fetchCountryNames = coa().fetchCountryNames,
   fetchPublicationNames = coa().fetchPublicationNames,
   getSortedPublications = (country) =>
-    publicationsPerCountry.value?.[country].sort(
+    publicationsPerCountry?.[country].sort(
       (a, b) =>
-        publicationNames.value[a] &&
-        publicationNames.value[a].localeCompare(publicationNames.value[b])
+        publicationNames[a] &&
+        publicationNames[a].localeCompare(publicationNames[b])
     );
 
 watch(
-  () => totalPerPublication.value,
+  () => totalPerPublication,
   async (newValue) => {
     if (newValue) {
       await fetchPublicationNames(Object.keys(newValue));
-      hasPublicationNames.value = true;
+      hasPublicationNames = true;
     }
   },
   { immediate: true }

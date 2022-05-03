@@ -12,11 +12,9 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 import { imagePath } from "../composables/imagePath";
 
-const props = defineProps({
+const { country, publicationCode } = defineProps({
   country: {
     type: String,
     default: null,
@@ -31,9 +29,7 @@ const props = defineProps({
   },
 });
 
-const countryCode = computed(
-  () => props.country || props.publicationCode.split("/")[0]
-);
+const countryCode = $computed(() => country || publicationCode.split("/")[0]);
 </script>
 
 <style scoped>

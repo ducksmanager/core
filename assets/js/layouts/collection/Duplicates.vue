@@ -12,36 +12,34 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import IssueList from "../../components/IssueList";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-const hasPublicationNames = ref(false),
-  issueNumbersByPublicationCode = ref(null),
-  total = computed(() => collection().total),
-  duplicateIssues = computed(() => collection().duplicateIssues),
-  publicationNames = computed(() => coa().publicationNames),
+let hasPublicationNames = $ref(false),
+  issueNumbersByPublicationCode = $ref(null);
+const total = $computed(() => collection().total),
+  duplicateIssues = $computed(() => collection().duplicateIssues),
+  publicationNames = $computed(() => coa().publicationNames),
   fetchPublicationNames = coa().fetchPublicationNames,
   loadCollection = collection().loadCollection;
 
 watch(
-  () => duplicateIssues.value,
+  () => duplicateIssues,
   async (duplicateIssues) => {
     if (duplicateIssues) {
-      issueNumbersByPublicationCode.value = {};
+      issueNumbersByPublicationCode = {};
       Object.keys(duplicateIssues).forEach((issuecode) => {
         const [publicationcode, issuenumber] = issuecode.split(" ");
-        if (!issueNumbersByPublicationCode.value[publicationcode]) {
-          issueNumbersByPublicationCode.value[publicationcode] = [];
+        if (!issueNumbersByPublicationCode[publicationcode]) {
+          issueNumbersByPublicationCode[publicationcode] = [];
         }
-        issueNumbersByPublicationCode.value[publicationcode].push(issuenumber);
+        issueNumbersByPublicationCode[publicationcode].push(issuenumber);
       });
 
-      await fetchPublicationNames(
-        Object.keys(issueNumbersByPublicationCode.value)
-      );
-      hasPublicationNames.value = true;
+      await fetchPublicationNames(Object.keys(issueNumbersByPublicationCode));
+      hasPublicationNames = true;
     }
   },
   { immediate: true }

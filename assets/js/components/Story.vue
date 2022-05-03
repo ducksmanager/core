@@ -17,7 +17,6 @@
 </template>
 <script setup>
 import { BBadge } from "bootstrap-vue-3";
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t: $t } = useI18n();
@@ -51,10 +50,10 @@ const props = defineProps({
       default: false,
     },
   }),
-  urlEncodedStorycode = computed(
+  urlEncodedStorycode = $computed(
     () => props.storycode && encodeURIComponent(props.storycode)
   ),
-  storyTypeText = computed(() => {
+  storyTypeText = $computed(() => {
     switch (props.kind.toUpperCase()) {
       case "A":
         return $t("article");

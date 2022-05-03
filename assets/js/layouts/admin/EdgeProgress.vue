@@ -114,23 +114,24 @@
 <script setup>
 import axios from "axios";
 import { BIconEyeFill, BIconEyeSlashFill } from "bootstrap-icons-vue";
-import { computed, onMounted, ref } from "vue";
+import { onMounted } from "vue";
 
 import Bookcase from "../../components/Bookcase";
 import Publication from "../../components/Publication";
 import { imagePath } from "../../composables/imagePath";
 import { coa } from "../../stores/coa";
 
-const hasData = ref(false),
-  show = ref(false),
-  mostWanted = ref(null),
-  publishedEdges = ref(null),
-  showEdgesForPublication = ref([]),
-  bookcaseTextures = ref({
+let hasData = $ref(false),
+  show = $ref(false),
+  mostWanted = $ref(null),
+  publishedEdges = $ref(null),
+  showEdgesForPublication = $ref([]),
+  bookcaseTextures = $ref({
     bookcase: "bois/HONDURAS MAHOGANY",
     bookshelf: "bois/KNOTTY PINE",
-  }),
-  publicationNames = computed(() => coa().publicationNames),
+  });
+
+const publicationNames = $computed(() => coa().publicationNames),
   fetchPublicationNames = coa().fetchPublicationNames,
   fetchIssueNumbers = coa().fetchIssueNumbers,
   getEdgeUrl = (publicationCode, issueNumber) => {
@@ -140,13 +141,13 @@ const hasData = ref(false),
   open = (publicationCode, issueNumber) => {
     window.open(getEdgeUrl(publicationCode, issueNumber), "_blank");
   },
-  issueNumbers = computed(() => coa().issueNumbers),
-  inducksIssueNumbersNoSpace = computed(() =>
-    Object.keys(issueNumbers.value).reduce(
+  issueNumbers = $computed(() => coa().issueNumbers),
+  inducksIssueNumbersNoSpace = $computed(() =>
+    Object.keys(issueNumbers).reduce(
       (acc, publicationCode) => ({
         ...acc,
-        [publicationCode]: issueNumbers.value[publicationCode].map(
-          (issueNumber) => issueNumber.replace(/ /g, "")
+        [publicationCode]: issueNumbers[publicationCode].map((issueNumber) =>
+          issueNumber.replace(/ /g, "")
         ),
       }),
       {}
@@ -154,7 +155,7 @@ const hasData = ref(false),
   );
 
 onMounted(async () => {
-  mostWanted.value = (await axios.get("/admin/edges/wanted/data")).data.map(
+  mostWanted = (await axios.get("/admin/edges/wanted/data")).data.map(
     (mostWantedIssue) => ({
       ...mostWantedIssue,
       country: mostWantedIssue.publicationcode.split("/")[0],
@@ -162,9 +163,7 @@ onMounted(async () => {
     })
   );
 
-  publishedEdges.value = (
-    await axios.get("/admin/edges/published/data")
-  ).data.reduce(
+  publishedEdges = (await axios.get("/admin/edges/published/data")).data.reduce(
     (acc, value) => ({
       ...acc,
       [value.publicationcode]: [
@@ -176,14 +175,12 @@ onMounted(async () => {
   );
 
   await fetchPublicationNames([
-    ...mostWanted.value.map(
-      (mostWantedIssue) => mostWantedIssue.publicationcode
-    ),
-    ...Object.keys(publishedEdges.value),
+    ...mostWanted.map((mostWantedIssue) => mostWantedIssue.publicationcode),
+    ...Object.keys(publishedEdges),
   ]);
 
-  await fetchIssueNumbers(Object.keys(publishedEdges.value));
-  hasData.value = true;
+  await fetchIssueNumbers(Object.keys(publishedEdges));
+  hasData = true;
 });
 </script>
 

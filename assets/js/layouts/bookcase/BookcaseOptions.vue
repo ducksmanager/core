@@ -78,7 +78,7 @@ import {
   BDropdownItem,
   BFormCheckbox,
 } from "bootstrap-vue-3";
-import { computed, onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { SlickItem, SlickList } from "vue-slicksort";
 
@@ -91,8 +91,7 @@ import { coa } from "../../stores/coa";
 const { username } = user(),
   { t: $t } = useI18n(),
   bookcaseStore = bookcase(),
-  error = ref(false),
-  textures = ref([
+  textures = [
     "bois/ASH",
     "bois/BALTIC BIRCH",
     "bois/BASSWOOD",
@@ -138,16 +137,14 @@ const { username } = user(),
     "bois/WALNUT",
     "bois/WHITE BIRCH",
     "bois/ZEBRAWOOD",
-  ]),
-  loading = ref(true),
-  hasPublicationNames = ref(false),
+  ],
   bookcaseOptions = bookcaseStore.bookcaseOptions,
   publicationNames = bookcaseStore.publicationNames,
   textureTypes = () => ({
     bookcase: $t("Sous-texture"),
     bookshelf: $t("Sous-texture de l'étagère"),
   }),
-  bookcaseOrder = computed(() => bookcaseStore.bookcaseOrder),
+  bookcaseOrder = $computed(() => bookcaseStore.bookcaseOrder),
   setBookcaseUsername = bookcase().setBookcaseUsername,
   setBookcaseOrder = bookcase().setBookcaseOrder,
   loadBookcaseOptions = bookcase().loadBookcaseOptions,
@@ -158,33 +155,37 @@ const { username } = user(),
   loadData = async () => {
     await loadBookcaseOptions();
     await loadBookcaseOrder();
-    loading.value = false;
+    loading = false;
   },
   submit = async () => {
-    error.value = false;
-    loading.value = true;
+    error = false;
+    loading = true;
     try {
       await updateBookcaseOptions();
       await updateBookcaseOrder();
       await loadData();
     } catch {
-      error.value = true;
+      error = true;
     } finally {
-      loading.value = false;
+      loading = false;
     }
   },
   textureWithoutSuperType = (texture) => texture.replace(/^[^/]+\//, "");
 
+let error = $ref(false),
+  loading = $ref(true),
+  hasPublicationNames = $ref(false);
+
 onMounted(async () => {
   setBookcaseUsername(username);
   await loadData();
-  await fetchPublicationNames(bookcaseOrder.value);
+  await fetchPublicationNames(bookcaseOrder);
   setBookcaseOrder(
-    bookcaseOrder.value.filter((publicationCode) =>
+    bookcaseOrder.filter((publicationCode) =>
       Object.keys(publicationNames).includes(publicationCode)
     )
   );
-  hasPublicationNames.value = true;
+  hasPublicationNames = true;
 });
 </script>
 

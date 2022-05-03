@@ -16,8 +16,6 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 import { user } from "../composables/global";
 import { imagePath } from "../composables/imagePath";
 import Classic from "../layouts/print/Classic";
@@ -27,7 +25,7 @@ defineProps({
   currentType: { type: String, required: true },
 });
 const { r } = l10n(),
-  l10nRoutes = computed(() => l10n().l10nRoutes),
+  l10nRoutes = $computed(() => l10n().l10nRoutes),
   { username } = user();
 </script>
 

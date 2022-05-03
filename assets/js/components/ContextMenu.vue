@@ -234,7 +234,7 @@ import {
   BIconX,
 } from "bootstrap-icons-vue";
 import { BAlert, BNavItem, BTab, BTabs } from "bootstrap-vue-3";
-import { computed, ref, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { condition } from "../composables/condition";
@@ -242,42 +242,42 @@ import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 import Condition from "./Condition";
 
-const props = defineProps({
-  publicationCode: {
-    type: String,
-    required: true,
-  },
-  selectedIssues: {
-    type: Array,
-    required: true,
-  },
-  copies: {
-    type: Array,
-    required: true,
-  },
-});
-const emit = defineEmits([
-  "update-issues",
-  "create-purchase",
-  "delete-purchase",
-  "close",
-]);
+const { copies, publicationcode, selectedIssues } = defineProps({
+    publicationCode: {
+      type: String,
+      required: true,
+    },
+    selectedIssues: {
+      type: Array,
+      required: true,
+    },
+    copies: {
+      type: Array,
+      required: true,
+    },
+  }),
+  emit = defineEmits([
+    "update-issues",
+    "create-purchase",
+    "delete-purchase",
+    "close",
+  ]),
+  { conditions } = condition();
 
-const { conditions } = condition();
-const defaultState = ref({
+let defaultState = $ref({
     condition: "do_not_change",
     isToSell: "do_not_change",
     purchaseId: "do_not_change",
   }),
   today = new Date().toISOString().slice(0, 10),
   { t: $t } = useI18n(),
-  newPurchaseDescription = ref(""),
-  newPurchaseDate = ref(today),
-  editingCopies = ref([]),
-  currentCopyIndex = ref(0),
-  purchases = computed(() => collection().purchases),
-  conditionStates = computed(() => ({
-    ...(isSingleIssueSelected.value
+  newPurchaseDescription = $ref(""),
+  newPurchaseDate = $ref(today),
+  editingCopies = $ref([]),
+  currentCopyIndex = $ref(0),
+  purchases = $computed(() => collection().purchases),
+  conditionStates = $computed(() => ({
+    ...(isSingleIssueSelected
       ? {}
       : {
           do_not_change: $t("Conserver l'état actuel"),
@@ -288,8 +288,8 @@ const defaultState = ref({
     notsogood: $t("Marquer comme en état moyen"),
     good: $t("Marquer comme en bon état"),
   })),
-  purchaseStates = computed(() => ({
-    ...(isSingleIssueSelected.value
+  purchaseStates = $computed(() => ({
+    ...(isSingleIssueSelected
       ? {}
       : {
           do_not_change: $t("Conserver la date d'achat"),
@@ -297,20 +297,20 @@ const defaultState = ref({
     link: $t("Associer avec une date d'achat"),
     unlink: $t("Désassocier de la date d'achat"),
   })),
-  isSingleIssueSelected = computed(() => props.selectedIssues.length === 1),
-  hasNoCopies = computed(() => !editingCopies.value.length),
-  hasMaxCopies = computed(() => editingCopies.value.length >= 3),
+  isSingleIssueSelected = $computed(() => selectedIssues.length === 1),
+  hasNoCopies = $computed(() => !editingCopies.length),
+  hasMaxCopies = $computed(() => editingCopies.length >= 3),
   r = l10n().r,
   formatDate = (value) => (/\d{4}-\d{2}-\d{2}/.test(value) ? value : today),
   updateEditingCopies = () => {
-    if (props.selectedIssues.length === 1) {
-      if (props.copies.length) {
-        editingCopies.value = JSON.parse(JSON.stringify(props.copies));
+    if (selectedIssues.length === 1) {
+      if (copies.length) {
+        editingCopies = JSON.parse(JSON.stringify(copies));
       } else {
-        editingCopies.value = [{ ...defaultState.value, condition: "missing" }];
+        editingCopies = [{ ...defaultState, condition: "missing" }];
       }
     } else {
-      editingCopies.value = [{ ...defaultState.value }];
+      editingCopies = [{ ...defaultState }];
     }
   },
   convertConditionToDbValue = (condition) =>
@@ -318,13 +318,13 @@ const defaultState = ref({
       .dbValue,
   updateSelectedIssues = async () => {
     let issueDetails = {
-      condition: editingCopies.value.map(({ condition }) =>
+      condition: editingCopies.map(({ condition }) =>
         convertConditionToDbValue(condition)
       ),
-      istosell: editingCopies.value.map(({ isToSell }) => isToSell),
-      purchaseId: editingCopies.value.map(({ purchaseId }) => purchaseId),
+      istosell: editingCopies.map(({ isToSell }) => isToSell),
+      purchaseId: editingCopies.map(({ purchaseId }) => purchaseId),
     };
-    if (!isSingleIssueSelected.value) {
+    if (!isSingleIssueSelected) {
       issueDetails = Object.keys(issueDetails).reduce(
         (acc, detailKey) => ({
           ...acc,
@@ -335,24 +335,24 @@ const defaultState = ref({
     }
 
     emit("update-issues", {
-      publicationCode: props.publicationcode,
-      issueNumbers: props.selectedIssues,
+      publicationCode: publicationcode,
+      issueNumbers: selectedIssues,
       ...issueDetails,
     });
   },
   createPurchaseDate = async () =>
     emit("create-purchase", {
-      date: newPurchaseDate.value,
-      description: newPurchaseDescription.value,
+      date: newPurchaseDate,
+      description: newPurchaseDescription,
     });
 
 watch(
-  () => props.selectedIssues,
+  () => selectedIssues,
   () => updateEditingCopies(),
   { immediate: true }
 );
 watch(
-  () => props.copies,
+  () => copies,
   () => updateEditingCopies(),
   { immediate: true }
 );

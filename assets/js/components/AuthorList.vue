@@ -104,39 +104,40 @@
 <script setup>
 import axios from "axios";
 import { BAlert, BCol, BFormInput, BRow } from "bootstrap-vue-3";
-import { computed, ref, watch } from "vue";
+import { watch } from "vue";
 import StarRating from "vue-star-rating";
 
 import { coa } from "../stores/coa";
 import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 
-const props = defineProps({
+const { watchedAuthors } = defineProps({
   watchedAuthors: {
     type: Array,
     required: true,
   },
 });
 
-const isSearching = ref(false),
-  pendingSearch = ref(null),
-  search = ref(""),
-  searchResults = ref(null),
-  personNames = computed(() => coa().personNames);
+let isSearching = $ref(false),
+  pendingSearch = $ref(null),
+  search = $ref(""),
+  searchResults = $ref(null);
+
+const personNames = $computed(() => coa().personNames);
 
 watch(
-  () => search.value,
+  () => search,
   async (newValue) => {
     if (newValue !== "") {
-      pendingSearch.value = newValue;
-      if (!isSearching.value) {
+      pendingSearch = newValue;
+      if (!isSearching) {
         await runSearch(newValue);
       }
     }
   }
 );
 watch(
-  () => props.watchedAuthors,
+  () => watchedAuthors,
   async (newValue) => {
     await coa().fetchPersonNames(newValue.map(({ personCode }) => personCode));
   },
@@ -145,7 +146,7 @@ watch(
 const { r } = l10n(),
   { loadWatchedAuthors } = collection(),
   isAuthorWatched = (personCode) =>
-    props.watchedAuthors.some(
+    watchedAuthors.some(
       ({ personCode: watchedPersonCode }) => personCode === watchedPersonCode
     ),
   createRating = async (personCode) => {
@@ -164,16 +165,16 @@ const { r } = l10n(),
     await loadWatchedAuthors(true);
   },
   runSearch = async (value) => {
-    if (!isSearching.value) {
+    if (!isSearching) {
       try {
-        isSearching.value = true;
-        searchResults.value = (
+        isSearching = true;
+        searchResults = (
           await axios.get(`/api/coa/authorsfullnames/search/${value}`)
         ).data;
       } finally {
-        isSearching.value = false;
+        isSearching = false;
         // The input value has changed since the beginning of the search, searching again
-        if (value !== pendingSearch.value) {
+        if (value !== pendingSearch) {
           await runSearch(pendingSearch);
         }
       }

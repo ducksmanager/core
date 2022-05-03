@@ -12,7 +12,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
 
@@ -30,7 +30,7 @@ Chart.register(
 );
 
 collection().loadCollection();
-const props = defineProps({
+const { unit } = defineProps({
     unit: {
       type: String,
       required: true,
@@ -38,29 +38,25 @@ const props = defineProps({
   }),
   { t: $t } = useI18n(),
   emit = defineEmits(["change-dimension"]),
-  hasPublicationNames = ref(false),
-  purchasesById = ref(null),
-  chartData = ref(null),
-  options = ref({}),
-  purchases = computed(() => collection().purchases),
-  totalPerPublication = computed(() => collection().totalPerPublication),
-  publicationNames = computed(() => coa().publicationNames),
-  labels = computed(
+  purchases = $computed(() => collection().purchases),
+  totalPerPublication = $computed(() => collection().totalPerPublication),
+  publicationNames = $computed(() => coa().publicationNames),
+  labels = $computed(
     () =>
-      collectionWithDates.value &&
-      [...new Set(collectionWithDates.value.map(({ date }) => date))].sort(
+      collectionWithDates &&
+      [...new Set(collectionWithDates.map(({ date }) => date))].sort(
         compareDates
       )
   ),
-  collectionWithDates = computed(
+  collectionWithDates = $computed(
     () =>
-      purchasesById.value &&
+      purchasesById &&
       collection().collection?.map((issue) => ({
         ...issue,
         date: getIssueMonth(issue),
       }))
   ),
-  ready = computed(() => labels.value && hasPublicationNames.value),
+  ready = $computed(() => labels && hasPublicationNames),
   fetchPublicationNames = coa().fetchPublicationNames,
   loadPurchases = collection().loadPurchases,
   compareDates = (a, b) =>
@@ -77,29 +73,34 @@ const props = defineProps({
   getIssueMonth = (issue) =>
     getMonthFromDate(
       issue.purchaseId
-        ? (purchasesById.value[issue.purchaseId] || { date: "?" }).date
+        ? (purchasesById[issue.purchaseId] || { date: "?" }).date
         : issue.creationDate && new Date(issue.creationDate)
         ? getMonthFromDate(issue.creationDate)
         : "?"
     ),
   getMonthFromDate = (date) => date.match(/^\?|([^-]+-[^-]+)/)[0];
 
+let hasPublicationNames = $ref(false),
+  purchasesById = $ref(null),
+  chartData = $ref(null),
+  options = $ref({});
+
 watch(
-  () => totalPerPublication.value,
+  () => totalPerPublication,
   async (newValue) => {
     if (newValue) {
       await fetchPublicationNames(Object.keys(newValue));
-      hasPublicationNames.value = true;
+      hasPublicationNames = true;
     }
   },
   { immediate: true }
 );
 
 watch(
-  () => purchases.value,
+  () => purchases,
   (newValue) => {
     if (newValue) {
-      purchasesById.value = purchases.value.reduce(
+      purchasesById = purchases.reduce(
         (acc, purchase) => ({
           ...acc,
           [purchase.id]: purchase,
@@ -112,10 +113,10 @@ watch(
 );
 
 watch(
-  () => ready.value,
+  () => ready,
   (newValue) => {
     if (newValue) {
-      const dateAssoc = labels.value.reduce(
+      const dateAssoc = labels.reduce(
         (dates, date) => ({
           ...dates,
           [date]: 0,
@@ -123,11 +124,8 @@ watch(
         {}
       );
 
-      let accDate = labels.value.reduce(
-        (acc, value) => ({ ...acc, [value]: 0 }),
-        {}
-      );
-      const values = collectionWithDates.value
+      let accDate = labels.reduce((acc, value) => ({ ...acc, [value]: 0 }), {});
+      const values = collectionWithDates
         .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
         .reduce((acc, { date, publicationCode }) => {
           if (!acc[publicationCode]) {
@@ -149,16 +147,16 @@ watch(
         Math.max(document.body.offsetHeight, maxPerDate / 4)
       );
 
-      emit("change-dimension", "width", 250 + 30 * labels.value.length);
+      emit("change-dimension", "width", 250 + 30 * labels.length);
 
       const datasets = Object.keys(values).map((publicationCode) => {
         let data = values[publicationCode];
-        if (props.unit === "total") {
-          data = labels.value.reduce(
+        if (unit === "total") {
+          data = labels.reduce(
             (acc, currentDate) => ({
               ...acc,
-              [currentDate]: labels.value
-                .filter((_, idx) => idx <= labels.value.indexOf(currentDate))
+              [currentDate]: labels
+                .filter((_, idx) => idx <= labels.indexOf(currentDate))
                 .reduce((sum, date) => sum + data[date], 0),
             }),
             {}
@@ -166,17 +164,17 @@ watch(
         }
         return {
           data: Object.values(data),
-          label: publicationNames.value[publicationCode],
+          label: publicationNames[publicationCode],
           backgroundColor: randomColor(),
         };
       });
 
-      chartData.value = {
+      chartData = {
         datasets,
-        labels: labels.value,
+        labels: labels,
       };
 
-      options.value = {
+      options = {
         animation: {
           duration: 0,
         },
@@ -211,13 +209,13 @@ watch(
               beforeTitle: ([tooltipItem]) =>
                 (tooltipItem.label !== "?"
                   ? `${
-                      props.unit === "total"
+                      unit === "total"
                         ? $t("Taille de la collection pour le mois")
                         : $t("Nouvelles acquisitions pour le mois")
                     } ${tooltipItem.label}`
                   : $t("Numéros sans dates d'achat")) + "\n",
               title: ([tooltipItem]) =>
-                chartData.value.datasets[tooltipItem.datasetIndex].label,
+                chartData.datasets[tooltipItem.datasetIndex].label,
               label: (tooltipItem) => tooltipItem.raw,
               footer: ([tooltipItem]) =>
                 [

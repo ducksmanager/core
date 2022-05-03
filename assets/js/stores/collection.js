@@ -1,6 +1,5 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { computed } from "vue";
 
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
@@ -110,8 +109,8 @@ export const collection = defineStore("collection", {
         ),
 
     quotedIssues: ({ collection }) => {
-      const issueQuotations = computed(() => coa().issueQuotations);
-      if (issueQuotations.value === null) {
+      const issueQuotations = $computed(() => coa().issueQuotations);
+      if (issueQuotations === null) {
         return null;
       }
       const getEstimation = (publicationCode, issueNumber) => {

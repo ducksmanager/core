@@ -38,115 +38,104 @@
 </template>
 <script setup>
 import * as axios from "axios";
-import { computed, ref } from "vue";
 
 import { bookcase } from "../stores/bookcase";
 
-const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
-
-const props = defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
-  src: {
-    type: String,
-    required: true,
-  },
-  spritePath: {
-    type: String,
-    default: null,
-  },
-  load: {
-    type: Boolean,
-    required: true,
-  },
-  invisible: {
-    type: Boolean,
-    default: false,
-  },
-  highlighted: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const emit = defineEmits(["loaded", "open-book"]);
-
-const edge = ref(null),
-  imageLoaded = ref(false),
-  spriteLoaded = ref(false),
-  ignoreSprite = ref(false),
-  width = ref(null),
-  height = ref(null),
-  loadedSprites = bookcase().bookcase,
-  spriteClass = computed(() =>
-    props.id && props.spritePath
-      ? `edges-${props.publicationCode.replace(/\//g, "-")}-${
-          props.issueNumber
-        }`
+const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/",
+  { id, issueNumber, publicationCode, spritePath } = defineProps({
+    id: {
+      type: String,
+      required: true,
+    },
+    src: {
+      type: String,
+      required: true,
+    },
+    spritePath: {
+      type: String,
+      default: null,
+    },
+    load: {
+      type: Boolean,
+      required: true,
+    },
+    invisible: {
+      type: Boolean,
+      default: false,
+    },
+    highlighted: {
+      type: Boolean,
+      default: false,
+    },
+  }),
+  emit = defineEmits(["loaded", "open-book"]),
+  loadedSprites = $computed(() => bookcase().bookcase),
+  spriteClass = $computed(() =>
+    id && spritePath
+      ? `edges-${publicationCode.replace(/\//g, "-")}-${issueNumber}`
       : ""
-  );
+  ),
+  onImageLoad = async ({ target }) => {
+    if (spritePath && !ignoreSprite) {
+      if (loadedSprites[spritePath]) {
+        loadEdgeFromSprite();
+      } else {
+        try {
+          const css = (
+            await axios.get(
+              `${SPRITES_ROOT}${spritePath.replace("f_auto/", "")}.css`
+            )
+          ).data;
+          const style = document.createElement("style");
+          style.textContent = css;
+          document.head.append(style);
 
-const onImageLoad = async ({ target }) => {
-  if (props.spritePath && !ignoreSprite.value) {
-    if (loadedSprites.value[props.spritePath]) {
-      loadEdgeFromSprite.value();
-    } else {
-      try {
-        const css = (
-          await axios.get(
-            `${SPRITES_ROOT}${props.spritePath.replace("f_auto/", "")}.css`
-          )
-        ).data;
-        const style = document.createElement("style");
-        style.textContent = css;
-        document.head.append(style);
-
-        bookcase().addLoadedSprite({ spritePath: props.spritePath, css });
-        loadEdgeFromSprite.value();
-      } catch (_) {
-        ignoreSprite.value = true;
+          bookcase().addLoadedSprite({ spritePath: spritePath, css });
+          loadEdgeFromSprite();
+        } catch (_) {
+          ignoreSprite = true;
+        }
       }
+    } else {
+      width = target.naturalWidth;
+      height = target.naturalHeight;
+      imageLoaded = true;
+      emit("loaded", [id]);
     }
-  } else {
-    width.value = target.naturalWidth;
-    height.value = target.naturalHeight;
-    imageLoaded.value = true;
-    emit("loaded", [props.id]);
-  }
-};
-
-const loadEdgeFromSprite = () => {
-  if (
-    loadedSprites.value[props.spritePath].indexOf(`.${spriteClass.value} {`) ===
-    -1
-  ) {
-    ignoreSprite.value = true;
-    return;
-  }
-  let retries = 0;
-  const checkWidthInterval = setInterval(() => {
-    if (edge.value.clientWidth > 0) {
-      spriteLoaded.value = true;
-      width.value = edge.value.clientWidth;
-      height.value = edge.value.clientHeight;
-      emit("loaded", [props.id]);
-      clearInterval(checkWidthInterval);
-    } else if (retries > 100) {
-      ignoreSprite.value = true;
-      clearInterval(checkWidthInterval);
+  },
+  loadEdgeFromSprite = () => {
+    if (loadedSprites[spritePath].indexOf(`.${spriteClass} {`) === -1) {
+      ignoreSprite = true;
+      return;
     }
-  }, 5);
-};
+    let retries = 0;
+    const checkWidthInterval = setInterval(() => {
+      if (edge.clientWidth > 0) {
+        spriteLoaded = true;
+        width = edge.clientWidth;
+        height = edge.clientHeight;
+        emit("loaded", [id]);
+        clearInterval(checkWidthInterval);
+      } else if (retries > 100) {
+        ignoreSprite = true;
+        clearInterval(checkWidthInterval);
+      }
+    }, 5);
+  },
+  onImageError = () => {
+    if (spritePath && !ignoreSprite) {
+      ignoreSprite = true;
+    } else {
+      emit("loaded", [id]);
+    }
+  };
 
-const onImageError = () => {
-  if (props.spritePath && !ignoreSprite.value) {
-    ignoreSprite.value = true;
-  } else {
-    emit("loaded", [props.id]);
-  }
-};
+let edge = $ref(null),
+  imageLoaded = $ref(false),
+  spriteLoaded = $ref(false),
+  ignoreSprite = $ref(false),
+  width = $ref(null),
+  height = $ref(null);
 </script>
 <style scoped lang="scss">
 .temp-image {

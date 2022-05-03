@@ -47,7 +47,6 @@
   </span>
 </template>
 <script setup>
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { locale } from "../composables/global";
@@ -62,16 +61,15 @@ const { t: $t } = useI18n(),
     userLevelPoints: { type: Number, required: true },
     contribution: { type: String, required: true },
   }),
-  { currentLevel, pointsDiffNextLevel, levelProgressPercentage } = medal(
-    props.contribution,
-    props.userLevelPoints
+  { currentLevel, pointsDiffNextLevel, levelProgressPercentage } = $(
+    medal(props.contribution, props.userLevelPoints)
   ),
   currentLocale = locale(),
   medalColors = ["bronze", "argent", "or"],
-  level = computed(() =>
+  level = $computed(() =>
     props.nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
   ),
-  medalTitle = computed(() => {
+  medalTitle = $computed(() => {
     switch (props.contribution.toUpperCase()) {
       case "CREATEUR":
         return $t("Concepteur de tranches");
@@ -82,7 +80,7 @@ const { t: $t } = useI18n(),
     }
     return "";
   }),
-  medalDescription = computed(() => {
+  medalDescription = $computed(() => {
     let textTemplate;
     if (currentLevel === 3) {
       switch (props.contribution.toUpperCase()) {
@@ -112,7 +110,7 @@ const { t: $t } = useI18n(),
       }
       return $t(textTemplate, [
         props.userLevelPoints,
-        pointsDiffNextLevel.value,
+        pointsDiffNextLevel,
         $t(medalColors[currentLevel]),
       ]);
     }

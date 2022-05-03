@@ -45,7 +45,7 @@
   </Accordion>
 </template>
 <script setup>
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 
 import { coa } from "../stores/coa";
 import { collection as collectionStore } from "../stores/collection";
@@ -53,17 +53,17 @@ import Accordion from "./Accordion";
 import Ago from "./Ago";
 import Issue from "./Issue";
 
-const publicationNames = computed(() => coa().publicationNames),
-  previousVisit = computed(() => collectionStore().previousVisit),
+const publicationNames = $computed(() => coa().publicationNames),
+  previousVisit = $computed(() => collectionStore().previousVisit),
   lastPublishedEdgesForCurrentUser =
     collectionStore().lastPublishedEdgesForCurrentUser,
   publishedEdgesSincePreviousVisit = () =>
-    lastPublishedEdgesForCurrentUser.value?.filter(
-      ({ creationDate }) => creationDate >= previousVisit.value
+    lastPublishedEdgesForCurrentUser?.filter(
+      ({ creationDate }) => creationDate >= previousVisit
     ),
   hasPublicationNames = () =>
-    publishedEdgesSincePreviousVisit.value?.every(
-      ({ publicationcode }) => publicationNames.value[publicationcode]
+    publishedEdgesSincePreviousVisit?.every(
+      ({ publicationcode }) => publicationNames[publicationcode]
     );
 
 onMounted(async () => {

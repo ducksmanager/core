@@ -46,12 +46,12 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 
 import { imagePath } from "../composables/imagePath";
 import Edge from "./Edge";
 
-const props = defineProps({
+const { bookcaseTextures, sortedBookcase } = defineProps({
   embedded: {
     type: Boolean,
     default: false,
@@ -83,25 +83,26 @@ const props = defineProps({
 });
 
 defineEmits(["open-book"]);
-const currentEdgeIndex = ref(0),
-  edgesToLoad = ref([]),
-  loadNextEdge = () => {
-    const nextEdge = props.sortedBookcase[++currentEdgeIndex.value];
-    if (nextEdge) {
-      edgesToLoad.value.push(nextEdge);
-    }
-  };
+let currentEdgeIndex = $ref(0),
+  edgesToLoad = $ref([]);
+
+const loadNextEdge = () => {
+  const nextEdge = sortedBookcase[++currentEdgeIndex];
+  if (nextEdge) {
+    edgesToLoad.push(nextEdge);
+  }
+};
 
 onMounted(() => {
   if (!document.querySelector("style#bookshelves")) {
-    const { bookshelf: bookshelfTexture } = props.bookcaseTextures;
+    const { bookshelf: bookshelfTexture } = bookcaseTextures;
     const bookshelfTextureUrl = `${imagePath}/textures/${bookshelfTexture}.jpg`;
     const style = document.createElement("style");
     style.id = "bookshelves";
     style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
     document.head.append(style);
   }
-  edgesToLoad.value = [props.sortedBookcase[0]];
+  edgesToLoad = [sortedBookcase[0]];
 });
 </script>
 <style lang="scss" scoped>

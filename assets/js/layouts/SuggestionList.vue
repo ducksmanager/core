@@ -76,7 +76,7 @@
 <script setup>
 import { BIconCash } from "bootstrap-icons-vue";
 import { BButton, BButtonGroup } from "bootstrap-vue-3";
-import { computed, ref, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Issue from "../components/Issue";
@@ -84,52 +84,54 @@ import StoryList from "../components/StoryList";
 import { collection } from "../stores/collection";
 
 const props = defineProps({
-  countrycode: {
-    type: String,
-    default: null,
-  },
-  sinceLastVisit: {
-    type: Boolean,
-    default: false,
-  },
-});
-const { t: $t } = useI18n(),
-  loading = ref(true),
-  suggestionSortCurrent = ref("score"),
-  suggestions = computed(() => collection().suggestions),
-  hasSuggestions = computed(() => collection().hasSuggestions),
+    countrycode: {
+      type: String,
+      default: null,
+    },
+    sinceLastVisit: {
+      type: Boolean,
+      default: false,
+    },
+  }),
+  { t: $t } = useI18n(),
+  suggestions = $computed(() => collection().suggestions),
+  hasSuggestions = $computed(() => collection().hasSuggestions),
   suggestionSorts = () => ({
     oldestdate: $t("Trier par date de parution"),
     score: $t("Trier par score"),
   }),
   loadSuggestions = collection().loadSuggestions,
   getImportance = (score) => {
-    const { minScore, maxScore } = suggestions.value;
+    const { minScore, maxScore } = suggestions;
     return maxScore === score ? 1 : minScore === score ? 3 : 2;
   };
+
+let loading = $ref(true),
+  suggestionSortCurrent = $ref("score");
+
 watch(
   () => props.countrycode,
   async (newValue) => {
-    loading.value = true;
+    loading = true;
     await loadSuggestions({
       countryCode: newValue,
-      sort: suggestionSortCurrent.value,
+      sort: suggestionSortCurrent,
       sinceLastVisit: props.sinceLastVisit,
     });
-    loading.value = false;
+    loading = false;
   },
   { immediate: true }
 );
 watch(
-  () => suggestionSortCurrent.value,
+  () => suggestionSortCurrent,
   async (newValue) => {
-    loading.value = true;
+    loading = true;
     await loadSuggestions({
       countryCode: props.countrycode,
       sort: newValue,
       sinceLastVisit: props.sinceLastVisit,
     });
-    loading.value = false;
+    loading = false;
   }
 );
 </script>

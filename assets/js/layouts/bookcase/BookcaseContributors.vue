@@ -29,23 +29,25 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { onMounted } from "vue";
 
 import UserPopover from "../../components/UserPopover";
 import { users } from "../../stores/users";
 
 const usersStore = users();
 
-const loading = ref(true),
-  bookcaseContributors = usersStore.bookcaseContributors,
-  stats = usersStore.stats,
-  points = usersStore.points,
-  fetchStats = usersStore.fetchStats,
-  fetchBookcaseContributors = usersStore.fetchBookcaseContributors,
-  bookcaseContributorsSorted = computed(
+let loading = $ref(true);
+const bookcaseContributors = $computed(() => usersStore.bookcaseContributors),
+  stats = $computed(() => usersStore.stats),
+  points = $computed(() => usersStore.points),
+  fetchStats = $computed(() => usersStore.fetchStats),
+  fetchBookcaseContributors = $computed(
+    () => usersStore.fetchBookcaseContributors
+  ),
+  bookcaseContributorsSorted = $computed(
     () =>
-      !loading.value &&
-      [...bookcaseContributors.value].sort(({ name: name1 }, { name: name2 }) =>
+      !loading &&
+      [...bookcaseContributors].sort(({ name: name1 }, { name: name2 }) =>
         name1.toLowerCase() < name2.toLowerCase() ? -1 : 1
       )
   );
@@ -53,11 +55,11 @@ const loading = ref(true),
 onMounted(async () => {
   await fetchBookcaseContributors();
   await fetchStats(
-    bookcaseContributors.value
+    bookcaseContributors
       .filter(({ userId }) => !!userId)
       .map(({ userId }) => userId)
   );
-  loading.value = false;
+  loading = false;
 });
 </script>
 

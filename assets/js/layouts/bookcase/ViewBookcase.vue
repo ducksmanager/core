@@ -140,7 +140,7 @@
 
 <script setup>
 import { BAlert, BButton } from "bootstrap-vue-3";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import Book from "../../components/Book";
 import Bookcase from "../../components/Bookcase";
@@ -163,62 +163,53 @@ const { r } = l10n(),
   collection = collectionStore(),
   coa = coaStore(),
   bookcase = bookcaseStore(),
-  edgesUsingSprites = ref({}),
-  currentEdgeOpened = ref(null),
-  currentEdgeHighlighted = ref(null),
-  hasIssueNumbers = ref(false),
-  showShareButtons = ref(false),
   { userId, username } = user(),
-  isShareEnabled = computed(() => collection.user.isShareEnabled),
-  lastPublishedEdgesForCurrentUser = computed(
+  isShareEnabled = $computed(() => collection.user.isShareEnabled),
+  lastPublishedEdgesForCurrentUser = $computed(
     () => collection.lastPublishedEdgesForCurrentUser
   ),
-  popularIssuesInCollectionWithoutEdge = computed(
+  popularIssuesInCollectionWithoutEdge = $computed(
     () => collection.popularIssuesInCollectionWithoutEdge
   ),
-  publicationNames = computed(() => coa.publicationNames),
-  issueNumbers = computed(() => coa.issueNumbers),
-  bookcaseOptions = computed(() => bookcase.bookcaseOptions),
-  bookcaseOrder = computed(() => bookcase.bookcaseOrder),
-  isPrivateBookcase = computed(() => bookcase.isPrivateBookcase),
-  isUserNotExisting = computed(() => bookcase.isUserNotExisting),
-  isSharedBookcase = computed(() => users().isSharedBookcase),
-  bookcaseUrl = computed(
+  publicationNames = $computed(() => coa.publicationNames),
+  issueNumbers = $computed(() => coa.issueNumbers),
+  bookcaseOptions = $computed(() => bookcase.bookcaseOptions),
+  bookcaseOrder = $computed(() => bookcase.bookcaseOrder),
+  isPrivateBookcase = $computed(() => bookcase.isPrivateBookcase),
+  isUserNotExisting = $computed(() => bookcase.isUserNotExisting),
+  isSharedBookcase = $computed(() => users().isSharedBookcase),
+  bookcaseUrl = $computed(
     () =>
-      !isPrivateBookcase.value &&
+      !isPrivateBookcase &&
       `${window.location.origin}/bookcase/show/${username}`
   ),
-  loading = computed(
+  loading = $computed(
     () =>
-      !isPrivateBookcase.value &&
-      !isUserNotExisting.value &&
-      !(
-        sortedBookcase.value &&
-        bookcaseOptions.value &&
-        edgesUsingSprites.value
-      )
+      !isPrivateBookcase &&
+      !isUserNotExisting &&
+      !(sortedBookcase && bookcaseOptions && edgesUsingSprites)
   ),
-  userPoints = computed(() => points.value?.[userId]),
-  percentVisible = computed(() =>
+  userPoints = $computed(() => points?.[userId]),
+  percentVisible = $computed(() =>
     bookcase.bookcase.length
       ? null
       : (
           100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length
         ).toPrecision(0) / bookcase.bookcase.length
   ),
-  mostPopularIssuesInCollectionWithoutEdge = computed(() =>
-    [...popularIssuesInCollectionWithoutEdge.value]
+  mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
+    [...popularIssuesInCollectionWithoutEdge]
       ?.sort(
         ({ popularity: popularity1 }, { popularity: popularity2 }) =>
           popularity2 - popularity1
       )
       .filter((_, index) => index < 10)
   ),
-  sortedBookcase = computed(
+  sortedBookcase = $computed(
     () =>
       bookcase.bookcase &&
-      bookcaseOrder.value &&
-      hasIssueNumbers.value &&
+      bookcaseOrder &&
+      hasIssueNumbers &&
       [...bookcase.bookcase].sort(
         (
           {
@@ -235,17 +226,17 @@ const { r } = l10n(),
           const publicationCode1 = `${countryCode1}/${magazineCode1}`;
           const publicationCode2 = `${countryCode2}/${magazineCode2}`;
           const publicationOrderSign = Math.sign(
-            bookcaseOrder.value.indexOf(publicationCode1) -
-              bookcaseOrder.value.indexOf(publicationCode2)
+            bookcaseOrder.indexOf(publicationCode1) -
+              bookcaseOrder.indexOf(publicationCode2)
           );
           return (
             publicationOrderSign ||
-            (!issueNumbers.value[publicationCode1] && -1) ||
+            (!issueNumbers[publicationCode1] && -1) ||
             Math.sign(
-              issueNumbers.value[publicationCode1].indexOf(
+              issueNumbers[publicationCode1].indexOf(
                 issueNumber1.replace(/ /g, "")
               ) -
-                issueNumbers.value[publicationCode1].indexOf(
+                issueNumbers[publicationCode1].indexOf(
                   issueNumber2.replace(/ /g, "")
                 )
             )
@@ -266,15 +257,21 @@ const { r } = l10n(),
   addIssueNumbers = coa.addIssueNumbers,
   fetchStats = users().fetchStats,
   highlightIssue = (issue) => {
-    currentEdgeHighlighted.value = bookcase.bookcase.find(
+    currentEdgeHighlighted = bookcase.bookcase.find(
       (issueInCollection) =>
         issue.publicationcode === issueInCollection.publicationCode &&
         issue.issuenumber === issueInCollection.issueNumber
     ).id;
   };
 
+let edgesUsingSprites = $ref({}),
+  currentEdgeOpened = $ref(null),
+  currentEdgeHighlighted = $ref(null),
+  hasIssueNumbers = $ref(false),
+  showShareButtons = $ref(false);
+
 watch(
-  () => bookcaseOrder.value,
+  () => bookcaseOrder,
   async (newValue) => {
     if (newValue) {
       await fetchPublicationNames(newValue);
@@ -307,13 +304,13 @@ watch(
           )
       );
       await fetchIssueNumbers(nonObviousPublicationIssueNumbers);
-      hasIssueNumbers.value = true;
+      hasIssueNumbers = true;
     }
   },
   { immediate: true }
 );
 watch(
-  () => bookcase.bookcase.value,
+  () => bookcase.bookcase,
   async (newValue) => {
     if (newValue) {
       await loadBookcaseOptions();
@@ -340,7 +337,7 @@ watch(
         })
       );
 
-      edgesUsingSprites.value = usableSprites
+      edgesUsingSprites = usableSprites
         .filter(({ edges, size }) => edges.length >= (size * 80) / 100)
         .sort(({ size: aSize }, { size: bSize }) => Math.sign(aSize - bSize))
         .reduce((acc, { name, version, edges, size }) => {
@@ -358,7 +355,7 @@ watch(
 );
 
 watch(
-  () => currentEdgeHighlighted.value,
+  () => currentEdgeHighlighted,
   (newValue) => {
     const element = document.getElementById(`edge-${newValue}`);
     if (element) {
@@ -368,9 +365,9 @@ watch(
 );
 
 onMounted(async () => {
-  setBookcaseUsername(bookcaseUsername.value);
+  setBookcaseUsername(bookcaseUsername);
   await loadBookcase();
-  if (!isSharedBookcase.value) {
+  if (!isSharedBookcase) {
     await loadPopularIssuesInCollection();
     await loadLastPublishedEdgesForCurrentUser();
     await loadUser();

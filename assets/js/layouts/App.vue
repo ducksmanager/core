@@ -3,23 +3,24 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, onMounted, ref } from "vue";
+import { defineAsyncComponent, onMounted } from "vue";
 
 import { l10n } from "../stores/l10n";
-const componentName = ref(null),
-  component = computed(() =>
-    componentName.value
-      ? defineAsyncComponent(() => import(`./${componentName.value}`))
+let componentName = $ref(null);
+
+const component = $computed(() =>
+    componentName
+      ? defineAsyncComponent(() => import(`./${componentName}`))
       : null
   ),
-  props = ref({});
+  props = $ref({});
 
 onMounted(() => {
   for (const { name, value } of document.getElementById("app").attributes) {
     if (name === "component") {
-      componentName.value = value;
+      componentName = value;
     } else {
-      props.value[name] = value;
+      props[name] = value;
     }
   }
   l10n().loadL10n();

@@ -159,7 +159,7 @@
 <script setup>
 import axios from "axios";
 import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-3";
-import { computed, defineAsyncComponent, onMounted, ref } from "vue";
+import { defineAsyncComponent, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AuthorList from "../components/AuthorList";
@@ -175,25 +175,18 @@ import PossessionStats from "./stats/PossessionStats";
 import PublicationStats from "./stats/PublicationStats";
 import PurchaseStats from "./stats/PurchaseStats";
 
-const props = defineProps({
+const { tab } = defineProps({
   tab: {
     type: String,
     required: true,
   },
 });
 const { t: $t } = useI18n(),
-  component = computed(() =>
-    defineAsyncComponent(() => import(`./${props.tab}`))
-  ),
-  width = ref(null),
-  height = ref(null),
-  unitTypeCurrent = ref("number"),
-  purchaseTypeCurrent = ref("new"),
-  watchedAuthorsStoryCount = ref(null),
+  component = $computed(() => defineAsyncComponent(() => import(`./${tab}`))),
   currentLocale = locale(),
-  purchases = computed(() => collectionStore().purchases),
-  watchedAuthors = computed(() => collectionStore().watchedAuthors),
-  collection = computed(() => collectionStore().collection),
+  purchases = $computed(() => collectionStore().purchases),
+  watchedAuthors = $computed(() => collectionStore().watchedAuthors),
+  collection = $computed(() => collectionStore().collection),
   unitTypes = {
     number: $t("Afficher en valeurs réelles"),
     percentage: $t("Afficher en pourcentages"),
@@ -207,20 +200,27 @@ const { t: $t } = useI18n(),
   loadPurchases = collectionStore().loadPurchases,
   changeDimension = (dimension, value) => {
     if (dimension === "width") {
-      width.value = `${value}px`;
+      width = `${value}px`;
     } else {
-      height.value = `${value}px`;
+      height = `${value}px`;
     }
   };
+
+let width = $ref(null),
+  height = $ref(null),
+  unitTypeCurrent = $ref("number"),
+  purchaseTypeCurrent = $ref("new"),
+  watchedAuthorsStoryCount = $ref(null);
+
 onMounted(async () => {
-  switch (props.tab) {
+  switch (tab) {
     case "authors":
       await loadWatchedAuthors();
-      watchedAuthorsStoryCount.value = (
+      watchedAuthorsStoryCount = (
         await axios.get("/api/collection/stats/watchedauthorsstorycount")
       ).data;
-      if (!watchedAuthorsStoryCount.value) {
-        watchedAuthorsStoryCount.value = {};
+      if (!watchedAuthorsStoryCount) {
+        watchedAuthorsStoryCount = {};
       }
       break;
     case "purchases":

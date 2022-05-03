@@ -68,7 +68,7 @@
 <script setup>
 import * as axios from "axios";
 import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
-import { computed, onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Errorable from "../components/Errorable";
@@ -76,38 +76,38 @@ import { validation } from "../composables/validation";
 import { form } from "../stores/form";
 import { l10n } from "../stores/l10n";
 
-let t;
-
 defineProps({
   lastUsername: { type: String, default: null },
 });
 
+let signupUsername = $ref(""),
+  email = $ref(""),
+  password = $ref(""),
+  password2 = $ref("");
+
 const { r } = l10n(),
-  signupUsername = ref(""),
-  email = ref(""),
-  password = ref(""),
-  password2 = ref(""),
-  csrfToken = document.getElementById("csrf").value,
-  hasErrors = computed(() => form().hasErrors),
+  t = useI18n().t,
+  csrfToken = document.getElementById("csrf"),
+  hasErrors = $computed(() => form().hasErrors),
   signup = async () => {
     const { validatePasswords, validateEmail, validateUsername } =
       validation(t);
 
     form().clearErrors();
-    validatePasswords(password.value, password2.value);
-    validateEmail(email.value);
-    validateUsername(signupUsername.value);
+    validatePasswords(password, password2);
+    validateEmail(email);
+    validateUsername(signupUsername);
 
-    if (hasErrors.value) {
+    if (hasErrors) {
       return;
     }
     try {
       await axios.put("/signup", {
-        username: signupUsername.value,
-        password: password.value,
-        password2: password2.value,
-        email: email.value,
-        _csrf_token: csrfToken.value,
+        username: signupUsername,
+        password: password,
+        password2: password2,
+        email: email,
+        _csrf_token: csrfToken,
       });
       window.location.replace(l10n().r("/collection/show"));
     } catch (e) {
@@ -120,8 +120,7 @@ const { r } = l10n(),
   };
 
 onMounted(() => {
-  signupUsername.value = lastUsername.value;
-  t = useI18n().t;
+  signupUsername = lastUsername;
 });
 </script>
 

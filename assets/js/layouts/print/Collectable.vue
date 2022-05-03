@@ -104,7 +104,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Publication from "../../components/Publication";
@@ -115,24 +115,20 @@ import { collection as collectionStore } from "../../stores/collection";
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/,
   lines = 2,
   numbersPerRow = 100 / lines,
-  issuesPerCell = ref(null),
-  countryNames = computed(() => coa().countryNames),
-  publicationNames = computed(() => coa().publicationNames),
-  collection = computed(() => collectionStore().collection),
-  totalPerPublication = computed(() => collectionStore().totalPerPublication),
-  ready = computed(
-    () =>
-      issuesPerCell.value &&
-      countryNames.value &&
-      Object.keys(publicationNames.value).length
+  countryNames = $computed(() => coa().countryNames),
+  publicationNames = $computed(() => coa().publicationNames),
+  collection = $computed(() => collectionStore().collection),
+  totalPerPublication = $computed(() => collectionStore().totalPerPublication),
+  ready = $computed(
+    () => issuesPerCell && countryNames && Object.keys(publicationNames).length
   ),
-  maxLetter = computed(() =>
-    !issuesPerCell.value
+  maxLetter = $computed(() =>
+    !issuesPerCell
       ? null
       : numberToLetter(
           [
             ...new Set(
-              JSON.stringify(issuesPerCell.value)
+              JSON.stringify(issuesPerCell)
                 .match(/"[a-zA-Z]+"/g)
                 .map((letter) => letter.replace(/"/g, ""))
             ),
@@ -142,7 +138,7 @@ const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/,
         )
   ),
   { t: $t } = useI18n(),
-  issueCountTitle = computed(() => {
+  issueCountTitle = $computed(() => {
     const issueCountString = $t("numéro | numéros", 2);
     return (
       issueCountString[0].toUpperCase() +
@@ -169,8 +165,10 @@ const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/,
     return groups;
   };
 
+let issuesPerCell = $ref(null);
+
 watch(
-  () => collection.value,
+  () => collection,
   (newCollectionValue) => {
     const addIssueToCell = (
       acc,
@@ -204,7 +202,7 @@ watch(
         ].join("")
       );
     };
-    issuesPerCell.value = newCollectionValue.reduce((acc, issue) => {
+    issuesPerCell = newCollectionValue.reduce((acc, issue) => {
       const publicationCode = `${issue.country}/${issue.magazine}`;
       const issueNumber = issue.issueNumber;
       const doubleNumberMatch = issueNumber.match(doubleNumberRegex);
@@ -223,7 +221,7 @@ watch(
   }
 );
 watch(
-  () => totalPerPublication.value,
+  () => totalPerPublication,
   (newValue) => {
     fetchPublicationNames(Object.keys(newValue));
   }

@@ -18,16 +18,17 @@
 <script setup>
 import axios from "axios";
 import { BButton, BTable } from "bootstrap-vue-3";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 
-const bookstores = ref(null),
-  validateBookstoreComment = async ({ id }) => {
-    await axios.post("/admin/bookstoreComment/approve", { id });
-    bookstores.value = (await axios.get("/admin/bookstoreComment/list")).data;
-  };
+let bookstores = $ref(null);
+
+const validateBookstoreComment = async ({ id }) => {
+  await axios.post("/admin/bookstoreComment/approve", { id });
+  bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
+};
 
 onMounted(async () => {
-  bookstores.value = (await axios.get("/admin/bookstoreComment/list")).data;
+  bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
 });
 </script>
 

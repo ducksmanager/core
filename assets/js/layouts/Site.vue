@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, useAttrs } from "vue";
+import { defineAsyncComponent, useAttrs } from "vue";
 
 import { l10n } from "../stores/l10n";
 import Banner from "./Banner";
@@ -28,11 +28,11 @@ const props = defineProps({
     innerTitle: { type: String, default: null },
   }),
   attrs = useAttrs(),
-  pageComponent = computed(() =>
+  pageComponent = $computed(() =>
     defineAsyncComponent(() => import(`./${props.page}`))
   ),
-  l10nRoutes = computed(() => l10n().l10nRoutes),
-  attrsWithoutId = computed(() =>
+  l10nRoutes = $computed(() => l10n().l10nRoutes),
+  attrsWithoutId = $computed(() =>
     Object.keys(attrs)
       .filter((attrKey) => attrKey !== "id")
       .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})

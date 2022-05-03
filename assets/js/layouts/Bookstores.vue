@@ -158,9 +158,14 @@
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import axios from "axios";
 import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
+
+let bookstores = $ref([]),
+  existingBookstore = $ref(null),
+  newBookstoreSent = $ref(false),
+  existingBookstoreSent = $ref(false);
 
 const { t: $t } = useI18n(),
   newBookstore = {
@@ -173,10 +178,6 @@ const { t: $t } = useI18n(),
   accessToken =
     "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ",
   mapCenter = [1.73584, 46.754917],
-  bookstores = ref([]),
-  existingBookstore = ref(null),
-  newBookstoreSent = ref(false),
-  existingBookstoreSent = ref(false),
   decodeText = (object, field) => {
     try {
       return decodeURIComponent(escape(object[field]));
@@ -185,7 +186,7 @@ const { t: $t } = useI18n(),
     }
   },
   fetchBookstores = async () => {
-    bookstores.value = (await axios.get("/bookstoreComment/list")).data
+    bookstores = (await axios.get("/bookstoreComment/list")).data
       .map((bookstore) => {
         ["name", "address"].forEach((field) => {
           bookstore[field] = decodeText(bookstore, field);
@@ -213,10 +214,10 @@ const { t: $t } = useI18n(),
     }
     await axios.put("/bookstoreComment/suggest", bookstore);
     if (bookstore.id) {
-      existingBookstoreSent.value = true;
-      existingBookstore.value = null;
+      existingBookstoreSent = true;
+      existingBookstore = null;
     } else {
-      newBookstoreSent.value = true;
+      newBookstoreSent = true;
     }
   },
   formatDate = (date) => {
@@ -241,8 +242,8 @@ onMounted(async () => {
     ".mapboxgl-ctrl-geocoder--input"
   ).attributes.required = true;
   geocoder.on("result", ({ result: { place_name, center } }) => {
-    newBookstore.value.address = place_name;
-    [newBookstore.value.coordY, newBookstore.value.coordX] = center;
+    newBookstore.address = place_name;
+    [newBookstore.coordY, newBookstore.coordX] = center;
   });
 });
 </script>

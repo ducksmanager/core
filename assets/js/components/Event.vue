@@ -113,7 +113,6 @@
   </div>
 </template>
 <script setup>
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Issue from "../components/Issue";
@@ -128,9 +127,9 @@ defineProps({
   event: { type: Object, required: true },
 });
 
-const publicationNames = computed(() => coa().publicationNames),
-  stats = computed(() => users().stats),
-  points = computed(() => users().points),
+const publicationNames = $computed(() => coa().publicationNames),
+  stats = $computed(() => users().stats),
+  points = $computed(() => users().points),
   { r } = l10n(),
   { t: $t } = useI18n(),
   getMedalTitle = (contribution) => {

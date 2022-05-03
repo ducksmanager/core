@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import Ago from "../components/Ago";
 import Event from "../components/Event";
@@ -25,17 +25,17 @@ import { coa } from "../stores/coa";
 import { ongoingRequests } from "../stores/ongoing-requests";
 import { users } from "../stores/users";
 
-const isLoaded = ref(false),
-  hasFreshEvents = ref(false),
-  publicationNames = computed(() => coa().publicationNames),
-  stats = computed(() => users().stats),
-  points = computed(() => users().points),
-  events = computed(() => users().events),
-  numberOfOngoingAjaxCalls = computed(
+let isLoaded = $ref(false),
+  hasFreshEvents = $ref(false);
+const publicationNames = $computed(() => coa().publicationNames),
+  stats = $computed(() => users().stats),
+  points = $computed(() => users().points),
+  events = $computed(() => users().events),
+  numberOfOngoingAjaxCalls = $computed(
     () => ongoingRequests().numberOfOngoingAjaxCalls
   ),
-  eventUserIds = computed(() =>
-    events.value
+  eventUserIds = $computed(() =>
+    events
       ?.reduce(
         (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
         []
@@ -46,14 +46,14 @@ const isLoaded = ref(false),
   fetchEvents = users().fetchEvents,
   fetchStats = users().fetchStats,
   fetchEventsAndAssociatedData = async (clearCacheEntry) => {
-    hasFreshEvents.value = await fetchEvents(clearCacheEntry);
+    hasFreshEvents = await fetchEvents(clearCacheEntry);
 
     await fetchPublicationNames(
-      events.value
+      events
         .filter(({ publicationCode }) => publicationCode)
         .map(({ publicationCode }) => publicationCode)
         .concat(
-          events.value
+          events
             .filter(({ edges }) => edges)
             .reduce(
               (acc, { edges }) => [
@@ -65,18 +65,18 @@ const isLoaded = ref(false),
         )
     );
 
-    await fetchStats(eventUserIds.value, clearCacheEntry);
+    await fetchStats(eventUserIds, clearCacheEntry);
   };
 
 watch(
-  () => numberOfOngoingAjaxCalls.value,
+  () => numberOfOngoingAjaxCalls,
   async (newValue) => {
     if (newValue === 0) {
       setTimeout(async () => {
-        if (!hasFreshEvents.value && numberOfOngoingAjaxCalls.value === 0) {
+        if (!hasFreshEvents && numberOfOngoingAjaxCalls === 0) {
           // Still no ongoing call after 1 second
           await fetchEventsAndAssociatedData(true);
-          hasFreshEvents.value = true;
+          hasFreshEvents = true;
         }
       }, 1000);
     }
@@ -86,7 +86,7 @@ watch(
 
 onMounted(async () => {
   await fetchEventsAndAssociatedData(false);
-  isLoaded.value = true;
+  isLoaded = true;
 });
 </script>
 

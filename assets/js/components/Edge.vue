@@ -37,81 +37,83 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-
 import { coa } from "../stores/coa";
 import EdgeContents from "./EdgeContents";
 import Issue from "./Issue";
 import IssueEdgePopover from "./IssueEdgePopover";
 
-const EDGES_ROOT = "https://edges.ducksmanager.net/edges/";
-const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
-
-const props = defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
-  publicationCode: {
-    type: String,
-    required: true,
-  },
-  issueNumber: {
-    type: String,
-    required: true,
-  },
-  issueNumberReference: {
-    type: String,
-    default: null,
-  },
-  creationDate: {
-    type: String,
-    default: null,
-  },
-  popularity: {
-    type: Number,
-    default: null,
-  },
-  spritePath: {
-    type: String,
-    default: null,
-  },
-  existing: {
-    type: Boolean,
-    required: true,
-  },
-  load: {
-    type: Boolean,
-    required: true,
-  },
-  invisible: {
-    type: Boolean,
-    default: false,
-  },
-  highlighted: {
-    type: Boolean,
-    default: false,
-  },
-  embedded: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const emit = defineEmits(["loaded", "open-book"]);
-
-const edge = ref(null),
-  ignoreSprite = ref(false),
-  publicationNames = computed(() => coa().publicationNames),
-  countryCode = computed(() => props.publicationCode.split("/")[0]),
-  magazineCode = computed(() => props.publicationCode.split("/")[1]),
-  src = computed(() =>
-    props.spritePath && !ignoreSprite.value
-      ? `${SPRITES_ROOT}${props.spritePath}.png`
-      : `${EDGES_ROOT}${countryCode.value}/gen/${magazineCode.value}.${
-          props.issueNumberReference || props.issueNumber
-        }.png?${new Date(props.creationDate).getTime()}`
+const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
+  SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/",
+  {
+    creationDate,
+    issueNumber,
+    issueNumberReference,
+    publicationCode,
+    spritePath,
+  } = defineProps({
+    id: {
+      type: String,
+      required: true,
+    },
+    publicationCode: {
+      type: String,
+      required: true,
+    },
+    issueNumber: {
+      type: String,
+      required: true,
+    },
+    issueNumberReference: {
+      type: String,
+      default: null,
+    },
+    creationDate: {
+      type: String,
+      default: null,
+    },
+    popularity: {
+      type: Number,
+      default: null,
+    },
+    spritePath: {
+      type: String,
+      default: null,
+    },
+    existing: {
+      type: Boolean,
+      required: true,
+    },
+    load: {
+      type: Boolean,
+      required: true,
+    },
+    invisible: {
+      type: Boolean,
+      default: false,
+    },
+    highlighted: {
+      type: Boolean,
+      default: false,
+    },
+    embedded: {
+      type: Boolean,
+      default: false,
+    },
+  }),
+  emit = defineEmits(["loaded", "open-book"]),
+  publicationNames = $computed(() => coa().publicationNames),
+  countryCode = $computed(() => publicationCode.split("/")[0]),
+  magazineCode = $computed(() => publicationCode.split("/")[1]),
+  src = $computed(() =>
+    spritePath && !ignoreSprite
+      ? `${SPRITES_ROOT}${spritePath}.png`
+      : `${EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
+          issueNumberReference || issueNumber
+        }.png?${new Date(creationDate).getTime()}`
   );
+
+let edge = $ref(null),
+  ignoreSprite = $ref(false);
 </script>
 
 <style>

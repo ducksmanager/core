@@ -9,7 +9,6 @@
 
 <script setup>
 import { BAlert } from "bootstrap-vue-3";
-import { computed } from "vue";
 
 import { form } from "../stores/form";
 
@@ -20,7 +19,7 @@ defineProps({
   },
 });
 
-const errors = computed(() => form().errors);
+const errors = $computed(() => form().errors);
 </script>
 
 <style scoped lang="scss">

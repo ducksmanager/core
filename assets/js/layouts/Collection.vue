@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, onMounted, useAttrs } from "vue";
+import { defineAsyncComponent, onMounted, useAttrs } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "../stores/collection";
@@ -23,41 +23,37 @@ const props = defineProps({
     required: true,
   },
 });
-const component = computed(() =>
+const component = $computed(() =>
     defineAsyncComponent(() => import(`./collection/${props.tab}`))
   ),
   attrs = useAttrs(),
   { t: $t } = useI18n(),
-  items = computed(() => [
+  items = $computed(() => [
     {
       path: "/show",
       text:
-        total.value == null
-          ? $t("Mes numéros")
-          : $t("Mes numéros ({0})", [total.value]),
+        total == null ? $t("Mes numéros") : $t("Mes numéros ({0})", [total]),
     },
     {
       path: "/duplicates",
       text:
-        totalUniqueIssues.value == null
+        totalUniqueIssues == null
           ? $t("Mes numéros en double")
-          : $t("Mes numéros en double ({0})", [
-              total.value - totalUniqueIssues.value,
-            ]),
+          : $t("Mes numéros en double ({0})", [total - totalUniqueIssues]),
     },
     {
       path: "/subscriptions",
       text:
-        subscriptions.value == null
+        subscriptions == null
           ? $t("Mes abonnements")
-          : $t("Mes abonnements ({0})", [subscriptions.value.length]),
+          : $t("Mes abonnements ({0})", [subscriptions.length]),
     },
     { path: "/account", text: $t("Mon compte") },
   ]),
-  subscriptions = computed(() => collection().subscriptions),
-  total = computed(() => collection().total),
-  totalUniqueIssues = computed(() => collection().totalUniqueIssues),
-  attrsWithoutTab = computed(() =>
+  subscriptions = $computed(() => collection().subscriptions),
+  total = $computed(() => collection().total),
+  totalUniqueIssues = $computed(() => collection().totalUniqueIssues),
+  attrsWithoutTab = $computed(() =>
     Object.keys(attrs)
       .filter((attrKey) => attrKey !== "tab")
       .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})

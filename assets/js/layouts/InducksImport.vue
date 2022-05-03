@@ -271,7 +271,7 @@ import {
   BProgressBar,
   BRow,
 } from "bootstrap-vue-3";
-import { computed, ref, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Accordion from "../components/Accordion";
@@ -285,32 +285,30 @@ import { collection as collectionStore } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 const { findInCollection } = collection();
 
+let step = $ref(1),
+  rawData = $ref(""),
+  expandedPublicationAccordion = $ref(null),
+  expandedNotImportableAccordion = $ref(null),
+  hasPublicationNames = $ref(false),
+  hasIssueNumbers = $ref(false),
+  issueDefaultCondition = $ref("bon"),
+  issuesToImport = $ref(null),
+  issuesNotReferenced = $ref(null),
+  issuesAlreadyInCollection = $ref(null),
+  issuesImportable = $ref(null),
+  importProgress = $ref(0);
+
 const { t: $t } = useI18n(),
-  step = ref(1),
-  rawData = ref(""),
-  expandedPublicationAccordion = ref(null),
-  expandedNotImportableAccordion = ref(null),
-  hasPublicationNames = ref(false),
-  hasIssueNumbers = ref(false),
-  issueDefaultCondition = ref("bon"),
-  issuesToImport = ref(null),
-  issuesNotReferenced = ref(null),
-  issuesAlreadyInCollection = ref(null),
-  issuesImportable = ref(null),
-  importProgress = ref(0),
   { username } = user(),
-  publicationNames = computed(() => coa().publicationNames),
-  issueNumbers = computed(() => coa().issueNumbers),
-  issueCodeDetails = computed(() => coa().issueCodeDetails),
+  publicationNames = $computed(() => coa().publicationNames),
+  issueNumbers = $computed(() => coa().issueNumbers),
+  issueCodeDetails = $computed(() => coa().issueCodeDetails),
   conditions = {
     mauvais: $t("En mauvais état"),
     bon: $t("En bon état"),
   },
-  importDataReady = computed(
-    () =>
-      issuesToImport.value &&
-      collectionStore().collection &&
-      hasIssueNumbers.value
+  importDataReady = $computed(
+    () => issuesToImport && collectionStore().collection && hasIssueNumbers
   ),
   { r } = l10n(),
   fetchPublicationNames = coa().fetchPublicationNames,
@@ -318,21 +316,18 @@ const { t: $t } = useI18n(),
   fetchIssueCodesDetails = coa().fetchIssueCodesDetails,
   processRawData = async () => {
     const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
-    const issueCodes = rawData.value
+    const issueCodes = rawData
       .split("\n")
       .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
       .map((row) => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
     await fetchIssueCodesDetails(issueCodes);
 
     const issues = issueCodes
-      .filter((issueCode) => issueCodeDetails.value[issueCode])
-      .reduce(
-        (acc, issueCode) => [...acc, issueCodeDetails.value[issueCode]],
-        []
-      );
+      .filter((issueCode) => issueCodeDetails[issueCode])
+      .reduce((acc, issueCode) => [...acc, issueCodeDetails[issueCode]], []);
     if (issues.length) {
-      issuesToImport.value = issues;
-      step.value = 2;
+      issuesToImport = issues;
+      step = 2;
     }
   },
   groupByPublicationCode = (issues) =>
@@ -349,19 +344,18 @@ const { t: $t } = useI18n(),
       {}
     ),
   importIssues = async () => {
-    const importableIssuesByPublicationCode = groupByPublicationCode(
-      issuesImportable.value
-    );
+    const importableIssuesByPublicationCode =
+      groupByPublicationCode(issuesImportable);
     for (let publicationCode in importableIssuesByPublicationCode) {
       if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
         await axios.post("/api/collection/issues", {
           publicationCode: publicationCode,
           issueNumbers: importableIssuesByPublicationCode[publicationCode],
-          condition: issueDefaultCondition.value,
+          condition: issueDefaultCondition,
           istosell: "do_not_change",
           purchaseId: "do_not_change",
         });
-        importProgress.value +=
+        importProgress +=
           100 / Object.keys(importableIssuesByPublicationCode).length;
       }
     }
@@ -369,45 +363,43 @@ const { t: $t } = useI18n(),
   };
 
 watch(
-  () => importDataReady.value,
+  () => importDataReady,
   (newValue) => {
     if (newValue) {
-      issuesNotReferenced.value = [];
-      issuesAlreadyInCollection.value = [];
-      issuesImportable.value = [];
-      issuesToImport.value.forEach((issue) => {
+      issuesNotReferenced = [];
+      issuesAlreadyInCollection = [];
+      issuesImportable = [];
+      issuesToImport.forEach((issue) => {
         const { publicationcode, issuenumber } = issue;
         if (
-          !issueNumbers.value[publicationcode].includes(
+          !issueNumbers[publicationcode].includes(
             issuenumber.replace(/[ ]+/g, " ")
           )
         ) {
-          issuesNotReferenced.value.push(issue);
+          issuesNotReferenced.push(issue);
         } else if (findInCollection(publicationcode, issuenumber)) {
-          issuesAlreadyInCollection.value.push(issue);
+          issuesAlreadyInCollection.push(issue);
         } else {
-          issuesImportable.value.push(issue);
+          issuesImportable.push(issue);
         }
       });
-      issuesNotReferenced.value = [...new Set(issuesNotReferenced.value)];
-      issuesAlreadyInCollection.value = [
-        ...new Set(issuesAlreadyInCollection.value),
-      ];
-      issuesImportable.value = [...new Set(issuesImportable.value)];
+      issuesNotReferenced = [...new Set(issuesNotReferenced)];
+      issuesAlreadyInCollection = [...new Set(issuesAlreadyInCollection)];
+      issuesImportable = [...new Set(issuesImportable)];
     }
   }
 );
 watch(
-  () => issuesToImport.value,
+  () => issuesToImport,
   async (newValue) => {
     const publicationCodes = newValue.reduce(
       (acc, { publicationcode }) => [...acc, publicationcode],
       []
     );
     await fetchPublicationNames(publicationCodes);
-    hasPublicationNames.value = true;
+    hasPublicationNames = true;
     await fetchIssueNumbers(publicationCodes);
-    hasIssueNumbers.value = true;
+    hasIssueNumbers = true;
   }
 );
 </script>

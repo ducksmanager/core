@@ -94,57 +94,58 @@
 <script setup>
 import axios from "axios";
 import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-3";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import Subscription from "../../components/Subscription";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
 
-const hasPublicationNames = ref(false),
-  currentAssociatedPublications = ref([]),
-  associatedPublications = ref([
+let hasPublicationNames = $ref(false),
+  currentAssociatedPublications = $ref([]),
+  associatedPublications = $ref([
     {
       referencePublicationcode: "fr/JM",
       publicationcode: "fr/JMS",
     },
   ]),
-  editedSubscriptionId = ref(undefined),
-  newSubscription = ref(null),
-  publicationNames = computed(() => coa().publicationNames),
-  subscriptions = computed(() => collection().subscriptions),
+  editedSubscriptionId = $ref(undefined),
+  newSubscription = $ref(null);
+
+const publicationNames = $computed(() => coa().publicationNames),
+  subscriptions = $computed(() => collection().subscriptions),
   fetchPublicationNames = coa().fetchPublicationNames,
   loadSubscriptions = collection().loadSubscriptions,
   createAssociatedPublicationSubscription = (
     existingSubscription,
     { publicationcode: associatedPublicationcode }
   ) => {
-    newSubscription.value = {
+    newSubscription = {
       ...existingSubscription,
       publicationCode: associatedPublicationcode,
     };
-    createSubscription(newSubscription.value);
+    createSubscription(newSubscription);
   },
   createSubscription = async (data) => {
     await axios.put(`/api/collection/subscriptions`, data);
     await loadSubscriptions(true);
-    editedSubscriptionId.value = undefined;
+    editedSubscriptionId = undefined;
   },
   editSubscription = async (id, data) => {
     await axios.post(`/api/collection/subscriptions/${id}`, data);
     await loadSubscriptions(true);
-    editedSubscriptionId.value = undefined;
+    editedSubscriptionId = undefined;
   },
   deleteSubscription = async (id) => {
     await axios.delete(`/api/collection/subscriptions/${id}`);
     await loadSubscriptions(true);
-    editedSubscriptionId.value = undefined;
+    editedSubscriptionId = undefined;
   };
 
 watch(
-  () => subscriptions.value,
+  () => subscriptions,
   async (newValue) => {
     if (newValue) {
-      currentAssociatedPublications.value = associatedPublications.value.filter(
+      currentAssociatedPublications = associatedPublications.filter(
         ({
           referencePublicationcode,
           publicationcode: associatedPublicationcode,
@@ -159,12 +160,10 @@ watch(
           )
       );
       await fetchPublicationNames([
-        ...associatedPublications.value.map(
-          ({ publicationcode }) => publicationcode
-        ),
-        ...subscriptions.value.map(({ publicationCode }) => publicationCode),
+        ...associatedPublications.map(({ publicationcode }) => publicationcode),
+        ...subscriptions.map(({ publicationCode }) => publicationCode),
       ]);
-      hasPublicationNames.value = true;
+      hasPublicationNames = true;
     }
   },
   { immediate: true }

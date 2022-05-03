@@ -29,15 +29,13 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-
 import { collection } from "../stores/collection";
+let hasPublicationNames = $ref(false);
 const collectionStore = collection(),
-  hasPublicationNames = ref(false),
-  total = computed(() => collectionStore.total),
-  totalUniqueIssues = computed(() => collectionStore.totalUniqueIssues),
-  totalPerCountry = computed(() => collectionStore.totalPerCountry),
-  totalPerPublication = computed(() => collectionStore.totalPerPublication);
+  total = $computed(() => collectionStore.total),
+  totalUniqueIssues = $computed(() => collectionStore.totalUniqueIssues),
+  totalPerCountry = $computed(() => collectionStore.totalPerCountry),
+  totalPerPublication = $computed(() => collectionStore.totalPerPublication);
 </script>
 
 <style scoped>

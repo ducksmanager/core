@@ -153,7 +153,7 @@
 <script setup>
 import axios from "axios";
 import { BAlert, BPagination, BTable } from "bootstrap-vue-3";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Accordion from "../../components/Accordion";
@@ -167,15 +167,12 @@ import { users } from "../../stores/users";
 const collection = collectionStore();
 
 const { t: $t } = useI18n(),
-  rarityValue = ref(null),
-  rarityTotal = ref(null),
-  hasPublicationNames = ref(false),
   currentPage = 1,
-  count = computed(() => users().count),
-  publicationNames = computed(() => users().publicationNames),
-  totalPerPublication = computed(() => collectionStore().totalPerPublication),
-  quotedIssues = computed(() => collectionStore().quotedIssues),
-  quotationSum = computed(() => collectionStore().quotationSum),
+  count = $computed(() => users().count),
+  publicationNames = $computed(() => users().publicationNames),
+  totalPerPublication = $computed(() => collectionStore().totalPerPublication),
+  quotedIssues = $computed(() => collectionStore().quotedIssues),
+  quotationSum = $computed(() => collectionStore().quotationSum),
   quotationFields = () => [
     { key: "issue", label: $t("Numéro") },
     { key: "condition", label: $t("Etat") },
@@ -189,22 +186,26 @@ const { t: $t } = useI18n(),
   fetchPublicationNames = coa().fetchPublicationNames,
   fetchIssueQuotations = coa().fetchIssueQuotations;
 
+let rarityValue = $ref(null),
+  rarityTotal = $ref(null),
+  hasPublicationNames = $ref(false);
+
 watch(
-  () => totalPerPublication.value,
+  () => totalPerPublication,
   async () => {
-    await fetchIssueQuotations(Object.keys(totalPerPublication.value));
+    await fetchIssueQuotations(Object.keys(totalPerPublication));
   },
   { immediate: true }
 );
 
 watch(
-  () => quotedIssues.value,
+  () => quotedIssues,
   async (newValue) => {
     if (newValue !== null) {
       await fetchPublicationNames(
         newValue.map(({ publicationCode }) => publicationCode)
       );
-      hasPublicationNames.value = true;
+      hasPublicationNames = true;
     }
   },
   { immediate: true }
@@ -215,8 +216,8 @@ onMounted(async () => {
   const { userScores, myScore } = (
     await axios.get(`/global-stats/user/collection/rarity`)
   ).data;
-  rarityValue.value = userScores.length - userScores.indexOf(myScore);
-  rarityTotal.value = count.value;
+  rarityValue = userScores.length - userScores.indexOf(myScore);
+  rarityTotal = count;
 });
 </script>
 

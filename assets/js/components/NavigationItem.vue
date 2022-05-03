@@ -8,8 +8,6 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 import { l10n } from "../stores/l10n";
 
 const props = defineProps({
@@ -17,7 +15,7 @@ const props = defineProps({
     icon: { type: String, default: null },
   }),
   { r } = l10n(),
-  active = computed(
+  active = $computed(
     () =>
       !r(props.path)
         .split("/")
