@@ -16,6 +16,19 @@ Gold.args = {
   level: 3,
   type: 'Magazine_Francais',
 }
+export const Gold30Pct = Template.bind({})
+Gold30Pct.args = {
+  level: 3,
+  type: 'Magazine_Francais',
+  levelPercentage: 30,
+}
+export const Gold30PctProgress10Pct = Template.bind({})
+Gold30PctProgress10Pct.args = {
+  level: 3,
+  type: 'Magazine_Francais',
+  levelPercentage: 30,
+  levelPercentageProgress: 10,
+}
 
 export const Silver = Template.bind({})
 Silver.args = {
