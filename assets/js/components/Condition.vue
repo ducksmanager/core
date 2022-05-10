@@ -3,7 +3,7 @@
     v-if="currentCondition"
     :class="{
       'issue-condition': true,
-      [`issue-condition-${currentCondition}`]: true,
+      [`issue-condition-${currentCondition.value}`]: true,
     }"
     :style="{ backgroundColor: currentCondition.color }"
     :title="getConditionLabel(currentCondition.dbValue)"

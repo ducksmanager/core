@@ -44,7 +44,7 @@
               class="d-flex align-items-center"
               @click="selectSearchResult(searchResult)"
             >
-              <template v-if="!isSearchByCode(search)">
+              <template v-if="!isSearchByCode">
                 <Condition
                   v-if="searchResult.collectionIssue"
                   :value="

@@ -11,10 +11,10 @@ const RADIUS = 42;
 export default function (contribution, userLevelPoints) {
   const circumference = Math.PI * RADIUS * 2,
     currentLevel = computed(() => {
-      if (!contribution.value) {
+      if (!contribution) {
         return null;
       }
-      const level = MEDAL_LEVELS[contribution.value];
+      const level = MEDAL_LEVELS[contribution];
       const maxThresholdReached =
         Object.values(level)
           .filter((minimumPoints) => userLevelPoints >= minimumPoints)

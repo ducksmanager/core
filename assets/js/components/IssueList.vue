@@ -152,7 +152,7 @@
                     v-if="copyCondition"
                     :publicationcode="publicationcode"
                     :issuenumber="issueNumber"
-                    :value="copyCondition"
+                    :value="copyCondition.value"
                   />
                 </div>
               </div>
