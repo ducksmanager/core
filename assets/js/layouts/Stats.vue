@@ -196,8 +196,6 @@ const { t: $t } = useI18n(),
     total: $t("Afficher les possessions totales"),
   },
   { r } = l10n(),
-  loadWatchedAuthors = collectionStore().loadWatchedAuthors,
-  loadPurchases = collectionStore().loadPurchases,
   changeDimension = (dimension, value) => {
     if (dimension === "width") {
       width = `${value}px`;
@@ -213,9 +211,10 @@ let width = $ref(null),
   watchedAuthorsStoryCount = $ref(null);
 
 onMounted(async () => {
+  await collectionStore().loadCollection();
   switch (tab) {
     case "authors":
-      await loadWatchedAuthors();
+      await collectionStore().loadWatchedAuthors();
       watchedAuthorsStoryCount = (
         await axios.get("/api/collection/stats/watchedauthorsstorycount")
       ).data;
@@ -224,7 +223,7 @@ onMounted(async () => {
       }
       break;
     case "purchases":
-      await loadPurchases();
+      await collectionStore().loadPurchases();
       break;
   }
 });

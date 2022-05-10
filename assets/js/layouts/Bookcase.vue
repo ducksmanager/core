@@ -47,7 +47,9 @@ const props = defineProps({
 });
 
 const component = $computed(() =>
-    props.tab ? defineAsyncComponent(() => import(`./${props.tab}`)) : null
+    props.tab
+      ? defineAsyncComponent(() => import(`./bookcase/${props.tab}`))
+      : null
   ),
   attrsWithoutTab = $computed(() =>
     Object.keys(attrs)

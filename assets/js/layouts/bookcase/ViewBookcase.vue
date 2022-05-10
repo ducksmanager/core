@@ -1,7 +1,10 @@
 <template>
   <div>
     <div v-if="!isSharedBookcase">
-      <div v-if="lastPublishedEdgesForCurrentUser?.length" class="mb-4">
+      <div
+        v-if="hasPublicationNames && lastPublishedEdgesForCurrentUser?.length"
+        class="mb-4"
+      >
         {{ $t("Dernières tranches de votre collection ajoutées :") }}
         <div
           v-for="edge in lastPublishedEdgesForCurrentUser"
@@ -82,7 +85,7 @@
       {{ $t("Cet utilisateur n'existe pas.") }}
     </b-alert>
     <div v-else>
-      <div v-if="!isSharedBookcase">
+      <div v-if="!isSharedBookcase && hasPublicationNames">
         <UploadableEdgesCarousel
           v-if="mostPopularIssuesInCollectionWithoutEdge?.length && userPoints"
           :issues="mostPopularIssuesInCollectionWithoutEdge"
@@ -155,7 +158,7 @@ import { collection as collectionStore } from "../../stores/collection";
 import { l10n } from "../../stores/l10n";
 import { users } from "../../stores/users";
 
-defineProps({
+const { bookcaseUsername } = defineProps({
   bookcaseUsername: { type: String, required: true },
 });
 
@@ -164,7 +167,7 @@ const { r } = l10n(),
   coa = coaStore(),
   bookcase = bookcaseStore(),
   { userId, username } = user(),
-  isShareEnabled = $computed(() => collection.user.isShareEnabled),
+  isShareEnabled = $computed(() => collection.user?.isShareEnabled),
   lastPublishedEdgesForCurrentUser = $computed(
     () => collection.lastPublishedEdgesForCurrentUser
   ),
@@ -189,13 +192,14 @@ const { r } = l10n(),
       !isUserNotExisting &&
       !(sortedBookcase && bookcaseOptions && edgesUsingSprites)
   ),
-  userPoints = $computed(() => points?.[userId]),
+  userPoints = $computed(() => users().points[userId]),
   percentVisible = $computed(() =>
-    bookcase.bookcase.length
-      ? null
-      : (
-          100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length
-        ).toPrecision(0) / bookcase.bookcase.length
+    bookcase.bookcase?.length
+      ? parseInt(
+          (100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length) /
+            bookcase.bookcase.length
+        )
+      : null
   ),
   mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
     [...popularIssuesInCollectionWithoutEdge]
@@ -210,7 +214,12 @@ const { r } = l10n(),
       bookcase.bookcase &&
       bookcaseOrder &&
       hasIssueNumbers &&
-      [...bookcase.bookcase].sort(
+      [
+        ...bookcase.bookcase.map((edge) => ({
+          ...edge,
+          publicationCode: `${edge.countryCode}/${edge.magazineCode}`,
+        })),
+      ].sort(
         (
           {
             countryCode: countryCode1,
@@ -244,18 +253,6 @@ const { r } = l10n(),
         }
       )
   ),
-  setBookcaseUsername = bookcase.setBookcaseUsername,
-  loadBookcase = bookcase.loadBookcase,
-  loadBookcaseOptions = bookcase.loadBookcaseOptions,
-  loadBookcaseOrder = bookcase.loadBookcaseOrder,
-  loadPopularIssuesInCollection = collection.loadPopularIssuesInCollection,
-  loadLastPublishedEdgesForCurrentUser =
-    collection.loadLastPublishedEdgesForCurrentUser,
-  loadUser = collection.loadUser,
-  fetchPublicationNames = coa.fetchPublicationNames,
-  fetchIssueNumbers = coa.fetchIssueNumbers,
-  addIssueNumbers = coa.addIssueNumbers,
-  fetchStats = users().fetchStats,
   highlightIssue = (issue) => {
     currentEdgeHighlighted = bookcase.bookcase.find(
       (issueInCollection) =>
@@ -267,6 +264,7 @@ const { r } = l10n(),
 let edgesUsingSprites = $ref({}),
   currentEdgeOpened = $ref(null),
   currentEdgeHighlighted = $ref(null),
+  hasPublicationNames = $ref(false),
   hasIssueNumbers = $ref(false),
   showShareButtons = $ref(false);
 
@@ -274,7 +272,8 @@ watch(
   () => bookcaseOrder,
   async (newValue) => {
     if (newValue) {
-      await fetchPublicationNames(newValue);
+      await coa.fetchPublicationNames(newValue);
+      hasPublicationNames = true;
 
       const nonObviousPublicationIssueNumbers = newValue.filter(
         (publicationCode) =>
@@ -284,7 +283,7 @@ watch(
               !/^[0-9]$/.test(issueNumber)
           ).length
       );
-      addIssueNumbers(
+      coa.addIssueNumbers(
         newValue
           .filter(
             (publicationCode) =>
@@ -303,7 +302,7 @@ watch(
             {}
           )
       );
-      await fetchIssueNumbers(nonObviousPublicationIssueNumbers);
+      await coa.fetchIssueNumbers(nonObviousPublicationIssueNumbers);
       hasIssueNumbers = true;
     }
   },
@@ -313,9 +312,9 @@ watch(
   () => bookcase.bookcase,
   async (newValue) => {
     if (newValue) {
-      await loadBookcaseOptions();
-      await loadBookcaseOrder();
-      await fetchStats([userId]);
+      await bookcase.loadBookcaseOptions();
+      await bookcase.loadBookcaseOrder();
+      await users().fetchStats([userId]);
 
       const usableSpritesBySpriteId = newValue
         .filter(({ sprites }) => sprites)
@@ -365,12 +364,12 @@ watch(
 );
 
 onMounted(async () => {
-  setBookcaseUsername(bookcaseUsername);
-  await loadBookcase();
+  bookcase.setBookcaseUsername(bookcaseUsername);
+  await bookcase.loadBookcase();
   if (!isSharedBookcase) {
-    await loadPopularIssuesInCollection();
-    await loadLastPublishedEdgesForCurrentUser();
-    await loadUser();
+    await collection.loadPopularIssuesInCollection();
+    await collection.loadLastPublishedEdgesForCurrentUser();
+    await collection.loadUser();
   }
 });
 </script>

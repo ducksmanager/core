@@ -165,15 +165,16 @@ import { collection as collectionStore } from "../../stores/collection";
 import { users } from "../../stores/users";
 
 const collection = collectionStore();
+const { getConditionLabel } = condition();
 
 const { t: $t } = useI18n(),
   currentPage = 1,
   count = $computed(() => users().count),
-  publicationNames = $computed(() => users().publicationNames),
+  publicationNames = $computed(() => coa().publicationNames),
   totalPerPublication = $computed(() => collectionStore().totalPerPublication),
   quotedIssues = $computed(() => collectionStore().quotedIssues),
   quotationSum = $computed(() => collectionStore().quotationSum),
-  quotationFields = () => [
+  quotationFields = [
     { key: "issue", label: $t("Numéro") },
     { key: "condition", label: $t("Etat") },
     { key: "estimation", label: $t("Estimation") },
@@ -181,10 +182,7 @@ const { t: $t } = useI18n(),
       key: "estimationGivenCondition",
       label: $t("Estimation ajustée de l'état"),
     },
-  ],
-  fetchCount = users().fetchCount,
-  fetchPublicationNames = coa().fetchPublicationNames,
-  fetchIssueQuotations = coa().fetchIssueQuotations;
+  ];
 
 let rarityValue = $ref(null),
   rarityTotal = $ref(null),
@@ -193,7 +191,7 @@ let rarityValue = $ref(null),
 watch(
   () => totalPerPublication,
   async () => {
-    await fetchIssueQuotations(Object.keys(totalPerPublication));
+    await coa().fetchIssueQuotations(Object.keys(totalPerPublication));
   },
   { immediate: true }
 );
@@ -202,7 +200,7 @@ watch(
   () => quotedIssues,
   async (newValue) => {
     if (newValue !== null) {
-      await fetchPublicationNames(
+      await coa().fetchPublicationNames(
         newValue.map(({ publicationCode }) => publicationCode)
       );
       hasPublicationNames = true;
@@ -212,7 +210,7 @@ watch(
 );
 
 onMounted(async () => {
-  await fetchCount();
+  await users().fetchCount();
   const { userScores, myScore } = (
     await axios.get(`/global-stats/user/collection/rarity`)
   ).data;

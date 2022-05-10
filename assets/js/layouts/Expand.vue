@@ -76,6 +76,7 @@ let countryCode = $ref("ALL");
 const { t: $t } = useI18n(),
   t = $t,
   { r } = l10n(),
+  collection = $computed(() => collectionStore().collection),
   watchedAuthors = $computed(() => collectionStore().watchedAuthors),
   suggestions = $computed(() => collectionStore().suggestions),
   countryNames = $computed(() => coa().countryNames),
@@ -88,21 +89,20 @@ const { t: $t } = useI18n(),
   ),
   watchedAuthorsWithNotation = $computed(() =>
     watchedAuthors?.filter(({ notation }) => notation > 0)
-  ),
-  loadWatchedAuthors = collectionStore().loadWatchedAuthors,
-  fetchCountryNames = coa().fetchCountryNames;
+  );
 
 watch(
   () => watchedAuthors,
   async (newValue) => {
     if (newValue?.length) {
-      await fetchCountryNames();
+      await coa().fetchCountryNames();
     }
   }
 );
 
 onMounted(async () => {
-  await loadWatchedAuthors();
+  await collectionStore().loadCollection();
+  await collectionStore().loadWatchedAuthors();
 });
 </script>
 

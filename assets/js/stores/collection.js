@@ -109,7 +109,7 @@ export const collection = defineStore("collection", {
         ),
 
     quotedIssues: ({ collection }) => {
-      const issueQuotations = $computed(() => coa().issueQuotations);
+      const issueQuotations = coa().issueQuotations;
       if (issueQuotations === null) {
         return null;
       }
