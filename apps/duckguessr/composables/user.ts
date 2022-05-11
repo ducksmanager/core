@@ -2,6 +2,9 @@ import { useCookies } from '@vueuse/integrations/useCookies'
 function setCookie(name: string, value: string) {
   useCookies().set(name, value, { expires: new Date(new Date().getTime() + 3600000), path: '/' })
 }
+export const removeCookie = (name: string) => {
+  useCookies().remove(name)
+}
 
 export const setUserCookieIfNotExists = () => {
   const cookies = useCookies().getAll()
