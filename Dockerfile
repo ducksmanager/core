@@ -1,7 +1,7 @@
 FROM php:8.0-fpm AS app
 MAINTAINER Bruno Perel
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
  && apt-get install -y \
       git wget unzip nano \
       nodejs \
@@ -16,6 +16,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
 
 COPY . /var/www/html
 COPY .git/refs/remotes/origin/master /var/www/html/commit.txt
+RUN mkdir -p /var/www/html/public/build && chmod a+w -R /var/www/html/public
 RUN echo COMMIT=`cat /var/www/html/commit.txt` >> .env.prod.local && rm /var/www/html/commit.txt && \
     mv .env.prod.local .env.local && \
     composer install && npm install && npm run build

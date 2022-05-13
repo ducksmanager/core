@@ -241,7 +241,7 @@ export const collection = defineStore("collection", {
           await axios.get("/api/collection/edges/lastPublished")
         ).data.map((edge) => ({
           ...edge,
-          timestamp: Date.parse(edge.creationDate),
+          timestamp: Date.parse(edge.creationDate) / 1000,
         }));
       }
     },
