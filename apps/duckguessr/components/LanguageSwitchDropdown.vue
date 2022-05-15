@@ -40,6 +40,7 @@ const changeLocale = (newLocale: string) => {
 <style lang="scss">
 $navbar-height: 40px;
 
-@media (max-width: 767px) {
+#language-navbar button {
+  background: #3d4b5f;
 }
 </style>
