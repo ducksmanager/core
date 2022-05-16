@@ -3,11 +3,10 @@
     <h3 v-if="title">
       {{ title }}
     </h3>
-    <b-tabs v-if="items.length" class="my-4">
+    <b-tabs v-if="items.length" v-model="activeTabIndex" class="my-4">
       <b-tab
         v-for="item in items"
         :key="JSON.stringify(item)"
-        :active="isActive(item)"
         no-body
         @click.stop="onTabClick(item)"
       >
@@ -24,7 +23,7 @@ import { BTab, BTabs } from "bootstrap-vue-3";
 
 import { l10n } from "../stores/l10n";
 
-const props = defineProps({
+const { items, rootPath } = defineProps({
   title: {
     type: String,
     default: null,
@@ -39,12 +38,13 @@ const props = defineProps({
   },
 });
 const { r } = l10n(),
-  isActive = ({ path }) =>
-    window.location.pathname === r(props.rootPath + path),
-  onTabClick = (item) => {
-    window.location.replace(
-      isActive(item) ? "#" : r(props.rootPath + item.path)
-    );
+  activeTabIndex = $ref(
+    items.findIndex(
+      ({ path }) => window.location.pathname === r(rootPath + path)
+    )
+  ),
+  onTabClick = ({ path }) => {
+    window.location.replace(r(rootPath + path));
   };
 </script>
 

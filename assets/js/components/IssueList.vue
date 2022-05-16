@@ -1,11 +1,11 @@
 <template>
-  <div v-if="publicationName && purchases" class="mt-4">
+  <div v-if="publicationName" class="mt-4">
     <Publication
       size="xl"
       :publicationcode="publicationcode"
       :publicationname="publicationName"
     />
-    <div v-if="issues">
+    <div v-if="issues && purchases">
       <div v-if="!duplicatesOnly" v-once class="issue-filter">
         <table>
           <tr
@@ -180,7 +180,7 @@
       {{ $t("Chargement...") }}
     </div>
   </div>
-  <div v-else-if="!publicationNameLoading">
+  <div v-else-if="!publicationNameLoading && issues && !issues.length">
     <b-alert variant="danger" show>
       <div class="mb-4">
         {{ $t("Aucun numéro n'est répertorié pour") }}

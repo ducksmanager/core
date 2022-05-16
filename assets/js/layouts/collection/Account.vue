@@ -35,8 +35,8 @@
     <Errorable id="presentationSentenceRequest">
       <b-form-input
         id="presentationSentenceRequest"
+        v-model="user.presentationSentence"
         class="mt-0"
-        :value="user.presentationSentence"
         name="presentationSentenceRequest"
         maxlength="100"
         :placeholder="

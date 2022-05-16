@@ -11,10 +11,11 @@
         :publicationcode="publicationcode"
         :issuenumber="issuenumber"
       />
-      <span class="mx-1"><Publication
-        :publicationcode="publicationcode"
-        :publicationname="publicationname"
-      /></span><span>&nbsp;{{ issuenumber }}</span>
+      <span class="mx-1"
+        ><Publication
+          :publicationcode="publicationcode"
+          :publicationname="publicationname" /></span
+      ><span>&nbsp;{{ issuenumber }}&nbsp;</span>
       <slot name="title-suffix" />
     </a>
     <slot />

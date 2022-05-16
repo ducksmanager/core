@@ -24,7 +24,11 @@ const props = defineProps({
   },
 });
 const component = $computed(() =>
-    defineAsyncComponent(() => import(`./collection/${props.tab}`))
+    defineAsyncComponent(() =>
+      import(
+        `./collection/${props.tab[0].toUpperCase() + props.tab.substring(1)}`
+      )
+    )
   ),
   attrs = useAttrs(),
   { t: $t } = useI18n(),
