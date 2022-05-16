@@ -23,7 +23,7 @@
           anchor="bottom"
           :offset="[0, 6]"
         >
-          <MapboxPopup>
+          <MapboxPopup anchor="top">
             <div>
               <h2>{{ bookstore.name }}</h2>
               <div>
@@ -294,7 +294,6 @@ onMounted(async () => {
           color: black;
           padding: 5px;
           border: 1px solid white;
-          width: 50%;
           min-width: 250px;
           cursor: pointer;
         }
