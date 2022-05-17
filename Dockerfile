@@ -15,7 +15,7 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
  && mkdir /tmp/sessions && chmod 777 -R /tmp/sessions
 
 COPY . /var/www/html
-COPY .git/refs/remotes/origin/master /var/www/html/commit.txt
+COPY .git/refs/remotes/origin/vue-3-new--bootstrap /var/www/html/commit.txt
 RUN mkdir -p /var/www/html/public/build && chmod a+w -R /var/www/html/public
 RUN echo COMMIT=`cat /var/www/html/commit.txt` >> .env.prod.local && rm /var/www/html/commit.txt && \
     mv .env.prod.local .env.local && \

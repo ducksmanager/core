@@ -59,7 +59,7 @@ if (process.env.NODE_ENV === "production") {
     app,
     dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
     logErrors: true,
-
+    environment: "vue-3",
     integrations: [new Integrations.BrowserTracing()],
     tracesSampleRate: 1.0,
     tracingOptions: {

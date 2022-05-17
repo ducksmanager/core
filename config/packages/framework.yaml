@@ -11,7 +11,7 @@ framework:
         cookie_secure: auto
         cookie_httponly: false
         cookie_samesite: lax
-        cookie_domain: ducksmanager.net
+        cookie_domain: vue3.ducksmanager.net
         cookie_lifetime: 1209600 # 2 weeks
         save_path: "/tmp/sessions"
         storage_factory_id: session.storage.factory.native
