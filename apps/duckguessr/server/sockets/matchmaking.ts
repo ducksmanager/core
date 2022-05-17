@@ -7,7 +7,7 @@ import {
   SocketData,
 } from '../../types/socketEvents'
 import { getGameWithRoundsDatasetPlayers } from '../game'
-import { getBotUser, getUser } from '../get-user'
+import { getBotUser, getPlayer } from '../get-player'
 
 const game = require('../game')
 const round = require('../round')
@@ -30,11 +30,11 @@ export function createMatchmakingSocket(
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
 ) {
   io.of('/matchmaking').on('connection', async (socket) => {
-    const user = await getUser(socket.handshake.auth.cookie)
+    const user = await getPlayer(socket.handshake.auth.cookie)
     console.log(`${user.username} is creating a match`)
 
     socket.on('iAmReady', async (dataset, numberOfPlayers, addBot, callback) => {
-      const user = await getUser(socket.handshake.auth.cookie)
+      const user = await getPlayer(socket.handshake.auth.cookie)
       const currentGame = await game.create(dataset)
       await checkAndAssociatePlayer(user, currentGame)
 
@@ -71,7 +71,7 @@ const createGameMatchmaking = async (
         throw new Error(`Game ${gameId} doesn't exist`)
       }
       const numberOfPlayersWithBots = numberOfPlayers + (botUsername ? 1 : 0)
-      const user = await getUser(socket.handshake.auth.cookie)
+      const user = await getPlayer(socket.handshake.auth.cookie)
       const player = await checkAndAssociatePlayer(user, currentGame)
       currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame!.game_players.length === numberOfPlayersWithBots) {

@@ -31,6 +31,7 @@
           in-game
           :players="players"
           :score="score"
+          :round="currentRound"
         />
       </div>
     </b-col>

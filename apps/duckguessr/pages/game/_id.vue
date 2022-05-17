@@ -1,7 +1,12 @@
 <template>
   <b-container v-if="gameIsFinished" fluid>
     <b-alert show align="center" variant="info"> {{ t('This game is finished.') }} </b-alert>
-    <game-scores :scores="game.rounds" :players="game.game_players" :authors="game.authors" />
+    <game-scores
+      :scores="game.rounds"
+      :players="game.game_players"
+      :authors="game.authors"
+      :game-id="game.id"
+    />
   </b-container>
   <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
     {{ t('Loading...') }}
@@ -129,8 +134,13 @@ export default defineComponent({
 
     const loadGame = async () => {
       game.value = await $axios.$get(`/api/game/${route.value.params.id}`)
-      if (!game) {
-        console.error('No game ID')
+      if (game.value) {
+        const now = new Date().toISOString()
+        gameIsFinished.value = game.value.rounds.every(
+          ({ finished_at }) => finished_at && finished_at.toString() < now
+        )
+      } else {
+        console.error('No game for this ID')
       }
     }
 

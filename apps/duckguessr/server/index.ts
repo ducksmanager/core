@@ -6,7 +6,7 @@ import {
   ServerToClientEvents,
   SocketData,
 } from '../types/socketEvents'
-import { createLoginSocket } from './sockets/login'
+import { createPlayerSocket } from './sockets/player'
 require('dotenv').config({ path: '../.env' })
 
 const http = require('http')
@@ -32,7 +32,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
   }
 )
 
-createLoginSocket(io)
+createPlayerSocket(io)
 createMatchmakingSocket(io)
 
 prisma.game

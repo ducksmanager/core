@@ -75,9 +75,7 @@ export async function guess(
       ...roundScore,
       score_type_name: 'Correct author',
       score: 100,
-      percentage_time_spent_guessing: parseInt(
-        (100 * ((timeSpentGuessing - roundTime) / roundTime)).toPrecision(1)
-      ),
+      time_spent_guessing: timeSpentGuessing,
       speed_bonus: speedBonus,
     }
   } else {

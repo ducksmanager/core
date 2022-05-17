@@ -1,0 +1,89 @@
+import { existsSync, readFileSync } from 'fs'
+import Index, { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
+export const getBotUser = async (botUsername: string): Promise<Index.player> =>
+  (await prisma.player.findFirst({
+    where: {
+      username: botUsername,
+    },
+  }))!
+
+export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.player> => {
+  const { PHPSESSID: sessionId, 'duckguessr-user': duckguessrName } = cookies
+  let player: Index.player | null
+  if (sessionId) {
+    const sessionFilePath = `${process.env.SESSION_PATH}/sess_${sessionId}`
+    const sessionExists = existsSync(sessionFilePath)
+    if (sessionExists) {
+      const fileContents = readFileSync(sessionFilePath).toString()
+      const match = fileContents.match(
+        /i:(\d+);s:\d+:".?App\\Security\\User.?username";s:\d+:"([^"]+)/
+      )
+      if (!match) {
+        throw new Error(`Invalid cookie: ${cookies}`)
+      }
+      const ducksmanagerId = parseInt(match[1])
+      const username = match[2]
+      player = await prisma.player.findFirst({
+        where: {
+          ducksmanager_id: ducksmanagerId,
+        },
+      })
+      if (!player) {
+        player = await prisma.player.create({
+          data: {
+            ducksmanager_id: ducksmanagerId,
+            username,
+          },
+        })
+      }
+      return player
+    }
+  }
+  if (duckguessrName && /^user\d+$/.test(duckguessrName)) {
+    player = await prisma.player.findFirst({
+      where: {
+        username: duckguessrName,
+      },
+    })
+    if (!player) {
+      player = await prisma.player.create({
+        data: {
+          username: duckguessrName,
+        },
+      })
+    }
+  }
+  return player!
+}
+
+export const getPlayerStatistics = async (
+  player: Index.player,
+  gameId: number
+): Promise<{ [key: string]: number }[]> =>
+  await prisma.$queryRaw`
+    SELECT (SELECT COUNT(*)
+            FROM round_score
+            WHERE player_id = ${player.id}
+              AND time_spent_guessing < 2) AS ultra_fast
+      ,
+           (SELECT COUNT(*)
+            FROM round_score
+            WHERE player_id = ${player.id}
+              AND time_spent_guessing < 5)
+                                           AS fast,
+        (SELECT COUNT(*)
+            FROM round_score
+            INNER JOIN round ON round_score.round_id = round.id
+            WHERE player_id = ${player.id} AND round.game_id=${gameId}
+              AND time_spent_guessing < 2) AS ultra_fast_current_game
+      ,
+           (SELECT COUNT(*)
+            FROM round_score
+            INNER JOIN round ON round_score.round_id = round.id
+            WHERE player_id = ${player.id} AND round.game_id=${gameId}
+              AND time_spent_guessing < 5)
+                                           AS fast_current_game
+  `

@@ -1,6 +1,28 @@
 <template>
   <div>
-    <h3>Rounds</h3>
+    <h3>{{ t('Game summary') }}</h3>
+    <b-container>
+      <b-row class="flex-column align-items-center">
+        <template v-if="currentUserHasParticipated">
+          <div>
+            Vous avez trouvé la bonne réponse dans<b>
+              {{ currentUserWonRounds.length }} rounds sur {{ scoresWithPersonUrls.length }}</b
+            >.
+          </div>
+          <div>
+            Vous avez été le plus rapide dans<b>
+              {{ currentUserWonFastestRounds.length }} rounds sur
+              {{ scoresWithPersonUrls.length }}</b
+            >.
+          </div>
+        </template>
+        <div v-else>Vous n'avez pas participé à cette partie.</div>
+      </b-row>
+    </b-container>
+    <template v-if="currentUserHasParticipated && currentUserFastRounds">
+      <h3>Médailles</h3>
+      <medal-list :stats="currentUserFastRounds" />
+    </template>
     <b-container>
       <b-row class="justify-content-center">
         <RoundResult
@@ -57,7 +79,10 @@
 import { defineComponent, ref } from '@nuxtjs/composition-api'
 import Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
+import { io } from 'socket.io-client'
+import { useCookies } from '@vueuse/integrations/useCookies'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
+import { getDuckguessrId } from '@/composables/user'
 
 interface GamePlayerWithFullPlayer extends Index.game_player {
   player: Index.player
@@ -66,6 +91,10 @@ interface GamePlayerWithFullPlayer extends Index.game_player {
 export default defineComponent({
   name: 'GameScores',
   props: {
+    gameId: {
+      type: Number,
+      required: true,
+    },
     scores: {
       type: Array as () => Array<RoundWithScoresAndAuthor>,
       required: true,
@@ -80,15 +109,14 @@ export default defineComponent({
     },
   },
 
-  setup({ scores, players, authors }) {
+  setup({ gameId, scores, players, authors }) {
     const { t } = useI18n()
+    const duckguessrId = getDuckguessrId()
     const playerIds = players.map(({ player_id: playerId }) => playerId)
-
     const playerNames = players.reduce(
       (acc, { player }) => ({ ...acc, [player.id]: player.username }),
       {}
     )
-
     const scoresWithPersonUrls = ref(
       scores.map((roundScore) => ({
         ...roundScore,
@@ -96,7 +124,6 @@ export default defineComponent({
         personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
       }))
     )
-
     const playersWithScores: {
       [key: number]: { [key: string]: { [key: string]: { [key: string]: number } } }
     } = playerIds.reduce(
@@ -120,7 +147,6 @@ export default defineComponent({
       }),
       {}
     )
-
     const playersWithScoresAndTotalScore = playerIds
       .map((playerId) => ({
         playerId,
@@ -139,15 +165,51 @@ export default defineComponent({
       .sort((player1WithScores, player2WithScores) =>
         player1WithScores.totalScore < player2WithScores.totalScore ? 1 : -1
       )
-      .map((playerWithScores, idx) => {
-        return {
-          ...playerWithScores,
-          _rowVariant: idx === 0 ? 'success' : '',
-        }
+      .map((playerWithScores, idx) => ({
+        ...playerWithScores,
+        _rowVariant: idx === 0 ? 'success' : '',
+      }))
+
+    const currentUserHasParticipated = players
+      .map(({ player_id }) => player_id)
+      .includes(duckguessrId)
+
+    const currentUserScores = scores.map(({ round_scores }) =>
+      round_scores.find(({ player_id }) => player_id === duckguessrId)
+    )
+
+    const currentUserWonRounds = currentUserScores.filter(
+      (roundScore) => roundScore?.score_type_name === 'Correct author'
+    )
+
+    const currentUserWonFastestRounds = currentUserWonRounds.filter(
+      (roundScore) =>
+        roundScore!.speed_bonus ===
+        Math.max(
+          ...scores
+            .find((score) => score.id === roundScore!.round_id)!
+            .round_scores.map((otherPlayerRoundScore) => otherPlayerRoundScore!.speed_bonus || 0)
+        )
+    )
+
+    const currentUserFastRounds = ref(null as { [key: string]: number } | null)
+
+    if (currentUserHasParticipated) {
+      io(`${process.env.SOCKET_URL}/login`, {
+        auth: {
+          cookie: useCookies().getAll(),
+        },
+      }).emit('getStats', gameId, (stats: { [key: string]: number }) => {
+        currentUserFastRounds.value = stats
       })
+    }
 
     return {
       t,
+      currentUserHasParticipated,
+      currentUserWonRounds,
+      currentUserWonFastestRounds,
+      currentUserFastRounds,
       scoresWithPersonUrls,
       playerNames,
       playersWithScoresAndTotalScore,

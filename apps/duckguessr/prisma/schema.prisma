@@ -73,16 +73,16 @@ model round {
 }
 
 model round_score {
-  id                             Int        @id @default(autoincrement())
-  player_id                      Int
-  round_id                       Int
-  score_type_name                String     @db.VarChar(20)
-  score                          Int        @db.UnsignedSmallInt
-  percentage_time_spent_guessing Int?       @db.SmallInt
-  speed_bonus                    Int?
-  player                         player     @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "round_score_player_id_fk")
-  round                          round      @relation(fields: [round_id], references: [id], onUpdate: Restrict, map: "round_score_round_id_fk")
-  score_type                     score_type @relation(fields: [score_type_name], references: [type_name], onUpdate: Restrict, map: "round_score__score_type_type_name_fk")
+  id                  Int        @id @default(autoincrement())
+  player_id           Int
+  round_id            Int
+  score_type_name     String     @db.VarChar(20)
+  score               Int        @db.UnsignedSmallInt
+  time_spent_guessing Float?     @db.Float
+  speed_bonus         Int?
+  player              player     @relation(fields: [player_id], references: [id], onUpdate: Restrict, map: "round_score_player_id_fk")
+  round               round      @relation(fields: [round_id], references: [id], onUpdate: Restrict, map: "round_score_round_id_fk")
+  score_type          score_type @relation(fields: [score_type_name], references: [type_name], onUpdate: Restrict, map: "round_score__score_type_type_name_fk")
 
   @@index([score_type_name], map: "round_score__score_type_type_name_fk")
   @@index([player_id], map: "round_score_player_id_fk")

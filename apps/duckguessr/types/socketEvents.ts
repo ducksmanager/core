@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import Index, { Prisma, PrismaClient } from '@prisma/client'
 import { GuessResponse } from '~/types/guess'
 const prisma = new PrismaClient()
 
@@ -12,10 +12,6 @@ const getRoundWithScores = async (roundId: number) =>
     },
   })
 
-export type user = {
-  username: string
-}
-
 export interface ServerToClientEvents {
   playerJoined: (username: string) => void
   matchStarts: (gameId: number) => void
@@ -23,7 +19,7 @@ export interface ServerToClientEvents {
   roundEnds: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
   gameEnds: () => void
   playerGuessed: (guessResponse: GuessResponse) => void
-  logged: (user: user) => void
+  logged: (player: Index.player) => void
 }
 
 export interface ClientToServerEvents {
@@ -31,6 +27,7 @@ export interface ClientToServerEvents {
   iAmReady: (dataset: string, numberOfPlayers: number, addBot: boolean, callback: Function) => void
   iAmAlsoReady: (gameId: number, callback: Function) => void
   guess: (roundId: number, personcode: string | null) => void
+  getStats: (gameId: number, callback: Function) => void
 }
 
 export interface InterServerEvents {}

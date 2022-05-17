@@ -1,22 +1,27 @@
 <template>
   <div class="wrapper d-flex flex-column text-center">
-    <div v-if="level > 0" class="position-relative medal" :style="{ backgroundImage: medalUrl }">
+    <div class="position-relative medal" :style="{ backgroundImage: medalUrl }">
       <div
         class="position-absolute overlay"
         :style="{
           backgroundImage: medalUrl,
-          width: `${100 - levelPercentage - currentLevelPercentageProgress}%`,
+          width: `${100 - medalLevelAndProgress.levelPercentage - currentLevelPercentageProgress}%`,
         }"
       />
     </div>
     <h6>{{ medalTypes[type].title }}</h6>
     <div class="small">{{ medalTypes[type].description }}</div>
+    <div class="small">
+      &cross;
+      {{ medalLevelAndProgress.currentLevelProgressPoints }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
+import { MedalLevelAndProgress } from '~/types/playerStats'
 
 const { t } = useI18n()
 const medalTypes = {
@@ -30,8 +35,8 @@ const medalTypes = {
     title: t('French Publications Expert'),
     description: t('You won a game guessing authors from French publications'),
   },
-  Rapide: { title: t('Fast'), description: t('You guessed a drawing in less than 4 seconds') },
-  Super_Rapide: {
+  fast: { title: t('Fast'), description: t('You guessed a drawing in less than 4 seconds') },
+  ultra_fast: {
     title: t('Super Fast'),
     description: t('You guessed a drawing in less than 2 seconds'),
   },
@@ -42,27 +47,32 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  level: { type: Number, required: true, validator: (prop: number) => [0, 1, 2, 3].includes(prop) },
-  levelPercentage: { type: Number, default: 100 },
-  levelPercentageProgress: { type: Number, default: 0 },
+  medalLevelAndProgress: { type: Object as () => MedalLevelAndProgress, required: true },
 })
 
 const currentLevelPercentageProgress = ref(0)
 const currentLevelPercentageProgressGoingUp = ref(true)
 
 const fileName = computed(
-  () => `${props.type} ${props.level === 1 ? 'BRONZE' : props.level === 2 ? 'ARGENT' : 'OR'}.png`
+  () =>
+    `${props.type} ${
+      props.medalLevelAndProgress.level === 0
+        ? 'BRONZE'
+        : props.medalLevelAndProgress.level === 1
+        ? 'SILVER'
+        : 'GOLD'
+    }.png`
 )
 
 const medalUrl = computed(() => `url('${process.env.NUXT_URL}/medals/256px/${fileName.value}'`)
 
-if (props.levelPercentageProgress) {
+if (props.medalLevelAndProgress.levelPercentageProgress) {
   onMounted(() => {
     setInterval(() => {
-      const increment = props.levelPercentageProgress / 20
+      const increment = props.medalLevelAndProgress.levelPercentageProgress / 20
       if (
         currentLevelPercentageProgress.value < 0 ||
-        currentLevelPercentageProgress.value >= props.levelPercentageProgress
+        currentLevelPercentageProgress.value >= props.medalLevelAndProgress.levelPercentageProgress
       ) {
         currentLevelPercentageProgressGoingUp.value = !currentLevelPercentageProgressGoingUp.value
       }
