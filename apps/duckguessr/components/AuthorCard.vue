@@ -36,13 +36,13 @@ export default defineComponent({
     },
   },
 
-  setup({ author: { personcode } }) {
+  setup(props) {
     const authorImageUrl = ref('')
     const defaultAuthorUrl =
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
 
     watch(
-      () => personcode,
+      () => props.author.personcode,
       (personcode) => {
         authorImageUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`
       },

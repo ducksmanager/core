@@ -109,18 +109,18 @@ export default defineComponent({
     },
   },
 
-  setup({ gameId, scores, players, authors }) {
+  setup(props) {
     const { t } = useI18n()
     const duckguessrId = getDuckguessrId()
-    const playerIds = players.map(({ player_id: playerId }) => playerId)
-    const playerNames = players.reduce(
+    const playerIds = props.players.map(({ player_id: playerId }) => playerId)
+    const playerNames = props.players.reduce(
       (acc, { player }) => ({ ...acc, [player.id]: player.username }),
       {}
     )
     const scoresWithPersonUrls = ref(
-      scores.map((roundScore) => ({
+      props.scores.map((roundScore) => ({
         ...roundScore,
-        ...authors.find(({ personcode }) => personcode === roundScore.personcode),
+        ...props.authors.find(({ personcode }) => personcode === roundScore.personcode),
         personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
       }))
     )
@@ -170,11 +170,11 @@ export default defineComponent({
         _rowVariant: idx === 0 ? 'success' : '',
       }))
 
-    const currentUserHasParticipated = players
+    const currentUserHasParticipated = props.players
       .map(({ player_id }) => player_id)
       .includes(duckguessrId)
 
-    const currentUserScores = scores.map(({ round_scores }) =>
+    const currentUserScores = props.scores.map(({ round_scores }) =>
       round_scores.find(({ player_id }) => player_id === duckguessrId)
     )
 
@@ -186,7 +186,7 @@ export default defineComponent({
       (roundScore) =>
         roundScore!.speed_bonus ===
         Math.max(
-          ...scores
+          ...props.scores
             .find((score) => score.id === roundScore!.round_id)!
             .round_scores.map((otherPlayerRoundScore) => otherPlayerRoundScore!.speed_bonus || 0)
         )
@@ -199,7 +199,7 @@ export default defineComponent({
         auth: {
           cookie: useCookies().getAll(),
         },
-      }).emit('getStats', gameId, (stats: { [key: string]: number }) => {
+      }).emit('getStats', props.gameId, (stats: { [key: string]: number }) => {
         currentUserFastRounds.value = stats
       })
     }

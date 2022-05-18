@@ -3,15 +3,17 @@
 </template>
 
 <script setup lang="ts">
-const { country } = defineProps<{
+import { computed, ref } from '@nuxtjs/composition-api'
+
+const props = defineProps<{
   country: string
 }>()
-let fixedCountry = country
-switch (country) {
+const fixedCountry = ref(props.country)
+switch (props.country) {
   case 'uk':
-    fixedCountry = 'gb'
+    fixedCountry.value = 'gb'
 }
-const url = `https://flagcdn.com/w20/${fixedCountry}.png`
+const url = computed(() => `https://flagcdn.com/w20/${fixedCountry.value}.png`)
 const isShown = true
 </script>
 

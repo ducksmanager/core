@@ -57,14 +57,15 @@ export default defineComponent({
       default: null,
     },
   },
-  setup({ nextRoundStartDate }, { emit }) {
+  setup(props, { emit }) {
     const { t } = useI18n()
 
     const getTimeBeforeNextRound = () =>
-      Math.ceil((nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
+      Math.ceil((props.nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
 
     const updateTimeBeforeNextRound = () => {
-      timeBeforeNextRound.value = nextRoundStartDate === null ? null : getTimeBeforeNextRound()
+      timeBeforeNextRound.value =
+        props.nextRoundStartDate === null ? null : getTimeBeforeNextRound()
     }
 
     onMounted(() => {

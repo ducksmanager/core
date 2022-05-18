@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper d-flex" :class="{ vertical }">
+  <div class="wrapper d-flex" :class="{ vertical: vertical }">
     <div class="username">
       <player-info :username="username" :top-player="topPlayer" />
     </div>
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-const { score, maxScoreAllPlayers, username, vertical, topPlayer, rank } = withDefaults(
+const playerTotalScoreProps = withDefaults(
   defineProps<{
     username: string
     score: number
@@ -27,7 +27,7 @@ const { score, maxScoreAllPlayers, username, vertical, topPlayer, rank } = withD
   }
 )
 
-const barSizePct = (100 * score) / maxScoreAllPlayers
+const barSizePct = (100 * playerTotalScoreProps.score) / playerTotalScoreProps.maxScoreAllPlayers
 </script>
 
 <style scoped lang="scss">
