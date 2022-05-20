@@ -91,7 +91,6 @@ class PageSiteController extends AbstractController
             'innerTitle' => $innerTitle,
             'commit' => $_ENV['COMMIT'],
             'vueProps' => [
-                'title' => $title,
                 'component' => 'Site',
                 'routes' => json_encode($this->getRouteTranslations()),
                 'page' => $page

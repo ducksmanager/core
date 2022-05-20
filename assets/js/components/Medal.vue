@@ -169,10 +169,12 @@ const { t: $t } = useI18n(),
   }
 
   &.small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     float: left;
     text-align: center;
     margin: 5px;
-    width: 160px;
 
     .medal {
       height: 70px;
