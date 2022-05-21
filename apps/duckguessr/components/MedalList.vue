@@ -5,7 +5,11 @@
     </b-row>
     <b-row v-else>
       <b-col v-for="(medalLevelAndProgress, type) in levelsAndProgress" :key="type">
-        <Medal :type="type" :medal-level-and-progress="medalLevelAndProgress" />
+        <Medal
+          v-if="medalLevelAndProgress.currentLevelProgressPoints"
+          :type="type"
+          :medal-level-and-progress="medalLevelAndProgress"
+        />
       </b-col>
     </b-row>
   </b-container>
