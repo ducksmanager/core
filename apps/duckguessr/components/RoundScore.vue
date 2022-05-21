@@ -7,14 +7,21 @@
     <b-progress-bar
       class="position-absolute"
       :variant="alertVariant"
-      :value="alertVariant === 'danger' ? 100 : score.percentage_time_spent_guessing"
+      :value="
+        alertVariant === 'danger' ? 100 : 100 - (100 * score.time_spent_guessing) / roundDuration
+      "
       max="100"
     />
     <b-col cols="6" class="px-0 d-flex align-items-center justify-content-center">
       <player-info :username="player.username" :top-player="false" />
     </b-col>
     <b-col cols="6" class="d-flex align-items-center justify-content-center">
-      <div class="text-center">{{ score.score_type_name }}</div>
+      <div
+        class="text-center p-1 border border-dark"
+        style="background-color: #e9ecef; height: initial"
+      >
+        {{ score.score_type_name }}
+      </div>
     </b-col>
   </b-progress>
   <div v-else>
@@ -38,9 +45,11 @@ const props = withDefaults(
     inGame: boolean
     players: Index.player[]
     score: Index.round_score | OngoingRoundScore
+    roundDuration: Number | null
   }>(),
   {
     inGame: false,
+    roundDuration: null,
   }
 )
 

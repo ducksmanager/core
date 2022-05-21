@@ -6,13 +6,13 @@
         <template v-if="currentUserHasParticipated">
           <div>
             Vous avez trouvé la bonne réponse dans<b>
-              {{ currentUserWonRounds.length }} rounds sur {{ scoresWithPersonUrls.length }}</b
+              {{ currentUserWonRounds.length }} rounds sur {{ roundsWithPersonUrls.length }}</b
             >.
           </div>
           <div>
             Vous avez été le plus rapide dans<b>
               {{ currentUserWonFastestRounds.length }} rounds sur
-              {{ scoresWithPersonUrls.length }}</b
+              {{ roundsWithPersonUrls.length }}</b
             >.
           </div>
         </template>
@@ -26,7 +26,7 @@
     <b-container>
       <b-row class="justify-content-center">
         <RoundResult
-          v-for="round in scoresWithPersonUrls"
+          v-for="round in roundsWithPersonUrls"
           :key="`round-${round.round_number}`"
           :round="round"
         />
@@ -37,16 +37,13 @@
       <template #head(playerId)="">&nbsp;</template>
       <template #head(totalScore)="">&nbsp;</template>
       <template #head()="{ column }">
-        <b-img
-          :src="imageUrl(scores[column.replace('round', '') - 1])"
-          style="max-height: 100px; max-width: 100%"
-        />
+        <b-img :src="imageUrl(columnToRound(column))" style="max-height: 100px; max-width: 100%" />
       </template>
       <template #thead-top>
         <tr>
           <th>{{ t('Player') }}</th>
           <th
-            v-for="(round, index) in scoresWithPersonUrls"
+            v-for="(round, index) in roundsWithPersonUrls"
             :key="`column-${index}`"
             class="text-nowrap"
           >
@@ -95,7 +92,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    scores: {
+    rounds: {
       type: Array as () => Array<RoundWithScoresAndAuthor>,
       required: true,
     },
@@ -117,8 +114,8 @@ export default defineComponent({
       (acc, { player }) => ({ ...acc, [player.id]: player.username }),
       {}
     )
-    const scoresWithPersonUrls = ref(
-      props.scores.map((roundScore) => ({
+    const roundsWithPersonUrls = ref(
+      props.rounds.map((roundScore) => ({
         ...roundScore,
         ...props.authors.find(({ personcode }) => personcode === roundScore.personcode),
         personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
@@ -129,7 +126,7 @@ export default defineComponent({
     } = playerIds.reduce(
       (acc, playerId) => ({
         ...acc,
-        [playerId]: scoresWithPersonUrls.value.reduce(
+        [playerId]: roundsWithPersonUrls.value.reduce(
           (acc2, { round_number: roundNumber, round_scores: roundScores }) => ({
             ...acc2,
             [`round${roundNumber}`]: roundScores
@@ -174,7 +171,7 @@ export default defineComponent({
       .map(({ player_id }) => player_id)
       .includes(duckguessrId)
 
-    const currentUserScores = props.scores.map(({ round_scores }) =>
+    const currentUserScores = props.rounds.map(({ round_scores }) =>
       round_scores.find(({ player_id }) => player_id === duckguessrId)
     )
 
@@ -186,7 +183,7 @@ export default defineComponent({
       (roundScore) =>
         roundScore!.speed_bonus ===
         Math.max(
-          ...props.scores
+          ...props.rounds
             .find((score) => score.id === roundScore!.round_id)!
             .round_scores.map((otherPlayerRoundScore) => otherPlayerRoundScore!.speed_bonus || 0)
         )
@@ -210,11 +207,12 @@ export default defineComponent({
       currentUserWonRounds,
       currentUserWonFastestRounds,
       currentUserFastRounds,
-      scoresWithPersonUrls,
+      roundsWithPersonUrls,
       playerNames,
       playersWithScoresAndTotalScore,
       imageUrl: ({ sitecode_url: url }: RoundWithScoresAndAuthor) =>
         `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
+      columnToRound: (column: string) => props.rounds[parseInt(column.replace('round', '')) - 1],
     }
   },
 })

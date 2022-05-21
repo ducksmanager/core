@@ -2,7 +2,7 @@
   <b-container v-if="gameIsFinished" fluid>
     <b-alert show align="center" variant="info"> {{ t('This game is finished.') }} </b-alert>
     <game-scores
-      :scores="game.rounds"
+      :rounds="game.rounds"
       :players="game.game_players"
       :authors="game.authors"
       :game-id="game.id"

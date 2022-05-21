@@ -17,6 +17,8 @@ Default.args = {
   chosenAuthor: 'DR',
   currentRound: {
     round_number: 2,
+    started_at: '2022-05-21T00:00:00',
+    finished_at: '2022-05-21T00:01:00',
     round_scores: [
       {
         id: 100,
@@ -25,7 +27,7 @@ Default.args = {
         score_type_name: 'Correct author',
         score: 100,
         speed_bonus: 10,
-        percentage_time_spent_guessing: 50,
+        time_spent_guessing: 20 * 1000,
       },
       {
         id: 101,
@@ -34,7 +36,7 @@ Default.args = {
         score_type_name: 'Wrong author',
         score: 0,
         speed_bonus: 0,
-        percentage_time_spent_guessing: 35,
+        time_spent_guessing: 10 * 1000,
       },
     ],
     sitecode_url:

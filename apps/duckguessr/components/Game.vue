@@ -32,6 +32,7 @@
           :players="players"
           :score="score"
           :round="currentRound"
+          :round-duration="roundDuration"
         />
       </div>
     </b-col>
@@ -39,7 +40,7 @@
 </template>
 <script lang="ts" setup>
 import Index from '@prisma/client'
-import { computed } from '@nuxtjs/composition-api'
+import { computed, ref } from '@nuxtjs/composition-api'
 import AuthorCard from '~/components/AuthorCard.vue'
 import {
   Author,
@@ -75,6 +76,11 @@ const roundScoresAllPlayers = computed(() =>
     .sort(({ score: score1 }, { score: score2 }) =>
       score1 === 0 ? 1 : score2 === 0 ? -1 : (score1 || 0) > (score2 || 0) ? -1 : 1
     )
+)
+
+const roundDuration = ref(
+  new Date(props.currentRound.finished_at!).getTime() -
+    new Date(props.currentRound.started_at!).getTime()
 )
 </script>
 <style lang="scss">

@@ -46,7 +46,7 @@ Default.args = {
       personfullname: 'Romano Scarpa',
     },
   ],
-  scores: [
+  rounds: [
     {
       personcode: 'DR',
       round_number: 1,
