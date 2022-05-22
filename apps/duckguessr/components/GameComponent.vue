@@ -67,7 +67,7 @@ const roundScoresAllPlayers = computed(() =>
       (player) =>
         props.currentRound.round_scores.find(({ player_id }) => player_id === player.id) ||
         ({
-          percentage_time_spent_guessing: props.remainingTime * (100 / props.availableTime),
+          time_spent_guessing: 1000 * (props.availableTime - props.remainingTime),
           player_id: player.id,
           round_id: props.currentRound.id,
         } as OngoingRoundScore)

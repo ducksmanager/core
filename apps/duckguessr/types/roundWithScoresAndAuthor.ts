@@ -11,7 +11,7 @@ export interface RoundWithScoresAndAuthor extends Index.round, Author {
 }
 
 export interface OngoingRoundScore {
-  percentage_time_spent_guessing: number
+  time_spent_guessing: number
   player_id: number
   round_id: number
   score_type_name: null
