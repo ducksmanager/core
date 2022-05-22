@@ -5,8 +5,13 @@
     <div id="main" class="d-flex justify-content-start flex-column">
       <div v-if="!user">Loading...</div>
       <b-row v-if="isAnonymous === true" class="justify-content-center">
-        <b-alert show variant="warning">
+        <b-alert show variant="warning" class="text-center">
           {{ t("You are not connected. You can still play but you won't get any medals.") }}
+          <div>
+            <a href="https://ducksmanager.net/login" target="_blank">{{
+              t('Log in on DucksManager then refresh this page to be able to win medals :-)')
+            }}</a>
+          </div>
         </b-alert>
       </b-row>
       <Nuxt />
