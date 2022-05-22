@@ -140,6 +140,7 @@ import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { useAxios } from '@vueuse/integrations/useAxios'
+import { BIconCheck, BIconX } from 'bootstrap-vue'
 import { setUserCookieIfNotExists } from '~/composables/user'
 
 interface DatasetWithDecisionCounts {
@@ -170,13 +171,7 @@ const currentPage = ref(1 as number)
 const totalRows = ref(10000 as number | null)
 const rowsPerPage = 60
 const user = ref(null as Index.player | null)
-const isAllowed = computed(
-  () =>
-    user.value &&
-    ['brunoperel', 'Wizyx', 'remifanpicsou', 'Alex Puaud', 'GlxbltHugo', 'Picsou22'].includes(
-      user.value.username
-    )
-)
+const isAllowed = computed(() => user.value)
 const decisions: { [key: string]: Decision } = {
   ok: { pressed: false, title: 'OK', variant: 'success' },
   no_drawing: {
@@ -239,14 +234,16 @@ const loadImagesToMaintain = async (
     return
   }
   isLoading.value = true
-  const { data: entryurlsToMaintain } = useAxios(
-    `/api/admin/maintenance?dataset=${datasetName}&offset=${offset}&decisions=${Object.keys(
-      decisionsWithNonValidated
-    ).filter((key) => decisionsWithNonValidated[key].pressed)}`
-  )
+  const { entryurlsToMaintain } = (
+    await useAxios(
+      `/api/admin/maintenance?dataset=${datasetName}&offset=${offset}&decisions=${Object.keys(
+        decisionsWithNonValidated
+      ).filter((key) => decisionsWithNonValidated[key].pressed)}`
+    )
+  ).data.value
   await loadDatasets()
   isLoading.value = false
-  entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.value.map((data: any) => ({
+  entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map((data: any) => ({
     ...data,
     decision: data.entryurl_details.decision || 'ok',
     url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecode_url}`,
