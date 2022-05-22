@@ -17,6 +17,7 @@
     </b-col>
     <b-col cols="6" class="d-flex align-items-center justify-content-center">
       <div
+        v-if="score.score_type_name"
         class="text-center p-1 border border-dark"
         style="background-color: #e9ecef; height: initial"
       >

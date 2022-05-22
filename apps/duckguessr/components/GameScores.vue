@@ -72,8 +72,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
+import { ref } from '@nuxtjs/composition-api'
 import Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
 import { io } from 'socket.io-client'
@@ -85,137 +85,111 @@ interface GamePlayerWithFullPlayer extends Index.game_player {
   player: Index.player
 }
 
-export default defineComponent({
-  name: 'GameScores',
-  props: {
-    gameId: {
-      type: Number,
-      required: true,
-    },
-    rounds: {
-      type: Array as () => Array<RoundWithScoresAndAuthor>,
-      required: true,
-    },
-    players: {
-      type: Array as () => Array<GamePlayerWithFullPlayer>,
-      required: true,
-    },
-    authors: {
-      type: Array as () => Array<Author>,
-      required: true,
-    },
-  },
+const gameScoresProps = defineProps<{
+  gameId: Number
+  rounds: Array<RoundWithScoresAndAuthor>
+  players: Array<GamePlayerWithFullPlayer>
+  authors: Array<Author>
+}>()
 
-  setup(props) {
-    const { t } = useI18n()
-    const duckguessrId = getDuckguessrId()
-    const playerIds = props.players.map(({ player_id: playerId }) => playerId)
-    const playerNames = props.players.reduce(
-      (acc, { player }) => ({ ...acc, [player.id]: player.username }),
-      {}
-    )
-    const roundsWithPersonUrls = ref(
-      props.rounds.map((roundScore) => ({
-        ...roundScore,
-        ...props.authors.find(({ personcode }) => personcode === roundScore.personcode),
-        personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
-      }))
-    )
-    const playersWithScores: {
-      [key: number]: { [key: string]: { [key: string]: { [key: string]: number } } }
-    } = playerIds.reduce(
-      (acc, playerId) => ({
-        ...acc,
-        [playerId]: roundsWithPersonUrls.value.reduce(
-          (acc2, { round_number: roundNumber, round_scores: roundScores }) => ({
-            ...acc2,
-            [`round${roundNumber}`]: roundScores
-              .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
-              .reduce(
-                (acc3, { score_type_name: scoreTypeName, score, speed_bonus: speedBonus }) => ({
-                  ...acc3,
-                  [scoreTypeName]: { score, speedBonus },
-                }),
-                {}
-              ),
-          }),
-          {}
-        ),
+const duckguessrId = getDuckguessrId()
+const playerIds = gameScoresProps.players.map(({ player_id: playerId }) => playerId)
+const playerNames = gameScoresProps.players.reduce(
+  (acc, { player }) => ({ ...acc, [player.id]: player.username }),
+  {}
+)
+const roundsWithPersonUrls = ref(
+  gameScoresProps.rounds.map((roundScore) => ({
+    ...roundScore,
+    ...gameScoresProps.authors.find(({ personcode }) => personcode === roundScore.personcode),
+    personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
+  }))
+)
+const playersWithScores: {
+  [key: number]: { [key: string]: { [key: string]: { [key: string]: number } } }
+} = playerIds.reduce(
+  (acc, playerId) => ({
+    ...acc,
+    [playerId]: roundsWithPersonUrls.value.reduce(
+      (acc2, { round_number: roundNumber, round_scores: roundScores }) => ({
+        ...acc2,
+        [`round${roundNumber}`]: roundScores
+          .filter(({ player_id: scorePlayerId }) => scorePlayerId === playerId)
+          .reduce(
+            (acc3, { score_type_name: scoreTypeName, score, speed_bonus: speedBonus }) => ({
+              ...acc3,
+              [scoreTypeName]: { score, speedBonus },
+            }),
+            {}
+          ),
       }),
       {}
-    )
-    const playersWithScoresAndTotalScore = playerIds
-      .map((playerId) => ({
-        playerId,
-        ...playersWithScores[playerId],
-        totalScore: Object.values(playersWithScores[playerId]).reduce(
-          (accTotalScore: number, roundScores) =>
-            accTotalScore +
-            Object.values(roundScores || {}).reduce(
-              (accTotalRoundScore: number, { score: roundScore, speedBonus: roundSpeedBonus }) =>
-                accTotalRoundScore + roundScore + (roundSpeedBonus || 0),
-              0
-            ),
+    ),
+  }),
+  {}
+)
+const playersWithScoresAndTotalScore = playerIds
+  .map((playerId) => ({
+    playerId,
+    ...playersWithScores[playerId],
+    totalScore: Object.values(playersWithScores[playerId]).reduce(
+      (accTotalScore: number, roundScores) =>
+        accTotalScore +
+        Object.values(roundScores || {}).reduce(
+          (accTotalRoundScore: number, { score: roundScore, speedBonus: roundSpeedBonus }) =>
+            accTotalRoundScore + roundScore + (roundSpeedBonus || 0),
           0
         ),
-      }))
-      .sort((player1WithScores, player2WithScores) =>
-        player1WithScores.totalScore < player2WithScores.totalScore ? 1 : -1
-      )
-      .map((playerWithScores, idx) => ({
-        ...playerWithScores,
-        _rowVariant: idx === 0 ? 'success' : '',
-      }))
+      0
+    ),
+  }))
+  .sort((player1WithScores, player2WithScores) =>
+    player1WithScores.totalScore < player2WithScores.totalScore ? 1 : -1
+  )
+  .map((playerWithScores, idx) => ({
+    ...playerWithScores,
+    _rowVariant: idx === 0 ? 'success' : '',
+  }))
 
-    const currentUserHasParticipated = props.players
-      .map(({ player_id }) => player_id)
-      .includes(duckguessrId)
+const currentUserHasParticipated = gameScoresProps.players
+  .map(({ player_id }) => player_id)
+  .includes(duckguessrId)
 
-    const currentUserScores = props.rounds.map(({ round_scores }) =>
-      round_scores.find(({ player_id }) => player_id === duckguessrId)
+const currentUserScores = gameScoresProps.rounds.map(({ round_scores }) =>
+  round_scores.find(({ player_id }) => player_id === duckguessrId)
+)
+
+const currentUserWonRounds = currentUserScores.filter(
+  (roundScore) => roundScore?.score_type_name === 'Correct author'
+)
+
+const currentUserWonFastestRounds = currentUserWonRounds.filter(
+  (roundScore) =>
+    roundScore!.speed_bonus ===
+    Math.max(
+      ...gameScoresProps.rounds
+        .find((score) => score.id === roundScore!.round_id)!
+        .round_scores.map((otherPlayerRoundScore) => otherPlayerRoundScore!.speed_bonus || 0)
     )
+)
 
-    const currentUserWonRounds = currentUserScores.filter(
-      (roundScore) => roundScore?.score_type_name === 'Correct author'
-    )
+const currentUserFastRounds = ref(null as { [key: string]: number } | null)
 
-    const currentUserWonFastestRounds = currentUserWonRounds.filter(
-      (roundScore) =>
-        roundScore!.speed_bonus ===
-        Math.max(
-          ...props.rounds
-            .find((score) => score.id === roundScore!.round_id)!
-            .round_scores.map((otherPlayerRoundScore) => otherPlayerRoundScore!.speed_bonus || 0)
-        )
-    )
+if (currentUserHasParticipated) {
+  io(`${process.env.SOCKET_URL}/login`, {
+    auth: {
+      cookie: useCookies().getAll(),
+    },
+  }).emit('getStats', gameScoresProps.gameId, (stats: { [key: string]: number }) => {
+    currentUserFastRounds.value = stats
+  })
+}
 
-    const currentUserFastRounds = ref(null as { [key: string]: number } | null)
-
-    if (currentUserHasParticipated) {
-      io(`${process.env.SOCKET_URL}/login`, {
-        auth: {
-          cookie: useCookies().getAll(),
-        },
-      }).emit('getStats', props.gameId, (stats: { [key: string]: number }) => {
-        currentUserFastRounds.value = stats
-      })
-    }
-
-    return {
-      t,
-      currentUserHasParticipated,
-      currentUserWonRounds,
-      currentUserWonFastestRounds,
-      currentUserFastRounds,
-      roundsWithPersonUrls,
-      playerNames,
-      playersWithScoresAndTotalScore,
-      imageUrl: ({ sitecode_url: url }: RoundWithScoresAndAuthor) =>
-        `${process.env.CLOUDINARY_URL_ROOT}/${url}`,
-      columnToRound: (column: string) => props.rounds[parseInt(column.replace('round', '')) - 1],
-    }
-  },
-})
+const { t } = useI18n()
+const imageUrl = ({ sitecode_url: url }: RoundWithScoresAndAuthor) =>
+  `${process.env.CLOUDINARY_URL_ROOT}/${url}`
+const columnToRound = (column: string) =>
+  gameScoresProps.rounds[parseInt(column.replace('round', '')) - 1]
 </script>
 
 <style scoped lang="scss">

@@ -14,53 +14,42 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { computed, onMounted, ref } from '@nuxtjs/composition-api'
-import { defineComponent } from '@vue/runtime-dom'
 import { io } from 'socket.io-client'
 import Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import {
-  isAnonymous,
+  isAnonymous as isAnonymousNative,
   setDuckguessrId,
   removeCookie,
   setUserCookieIfNotExists,
 } from '~/composables/user'
-import Banner from '~/layouts/Banner.vue'
 
-export default defineComponent({
-  components: { Banner },
-  setup() {
-    const user = ref(null as Index.player | null)
-    const { t } = useI18n()
+const user = ref(null as Index.player | null)
+const { t } = useI18n()
 
-    const login = () => {
-      setUserCookieIfNotExists()
-      io(`${process.env.SOCKET_URL}/login`, {
-        auth: {
-          cookie: useCookies().getAll(),
-        },
-      }).on('logged', (loggedInUser) => {
-        if (!loggedInUser) {
-          // Session can't be found, regenerate the user ID
-          removeCookie('PHPSESSID')
-        }
-        user.value = loggedInUser
-        setDuckguessrId(loggedInUser.id)
-      })
+const login = () => {
+  setUserCookieIfNotExists()
+  io(`${process.env.SOCKET_URL}/login`, {
+    auth: {
+      cookie: useCookies().getAll(),
+    },
+  }).on('logged', (loggedInUser) => {
+    if (!loggedInUser) {
+      // Session can't be found, regenerate the user ID
+      removeCookie('PHPSESSID')
     }
+    user.value = loggedInUser
+    setDuckguessrId(loggedInUser.id)
+  })
+}
 
-    onMounted(() => {
-      login()
-    })
+const isAnonymous = computed(() => user.value && isAnonymousNative(user.value.username))
 
-    return {
-      t,
-      user,
-      isAnonymous: computed(() => user.value && isAnonymous(user.value.username)),
-    }
-  },
+onMounted(() => {
+  login()
 })
 </script>
 

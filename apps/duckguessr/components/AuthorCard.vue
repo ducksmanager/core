@@ -19,43 +19,27 @@
     </div>
   </b-col>
 </template>
-<script lang="ts">
-import { defineComponent, ref, watch } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
+import { ref, watch } from '@nuxtjs/composition-api'
 import { Author } from '~/types/roundWithScoresAndAuthor'
+const authorCardProps = defineProps<{
+  author: Author
+  selectable: Boolean
+}>()
 
-export default defineComponent({
-  name: 'AuthorCard',
-  props: {
-    author: {
-      type: Object as () => Author,
-      required: true,
-    },
-    selectable: {
-      type: Boolean,
-      required: true,
-    },
+const authorImageUrl = ref('')
+const defaultAuthorUrl =
+  'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
+
+watch(
+  () => authorCardProps.author.personcode,
+  (personcode) => {
+    authorImageUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`
   },
-
-  setup(props) {
-    const authorImageUrl = ref('')
-    const defaultAuthorUrl =
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
-
-    watch(
-      () => props.author.personcode,
-      (personcode) => {
-        authorImageUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`
-      },
-      {
-        immediate: true,
-      }
-    )
-    return {
-      authorImageUrl,
-      defaultAuthorUrl,
-    }
-  },
-})
+  {
+    immediate: true,
+  }
+)
 </script>
 <style lang="scss">
 .author {

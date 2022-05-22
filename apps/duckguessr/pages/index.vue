@@ -17,28 +17,18 @@
   </b-card-group>
 </template>
 
-<script lang="ts">
-import { onMounted, ref, useContext } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
+import { onMounted, ref } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
+import { useAxios } from '@vueuse/integrations/useAxios'
 
-export default {
-  name: 'Welcome',
-  setup() {
-    const { $axios } = useContext()
-    const { t } = useI18n()
+const { t } = useI18n()
 
-    const datasets = ref([] as Array<any>)
+const datasets = ref([] as Array<any>)
 
-    onMounted(async () => {
-      datasets.value = (await $axios.$get(`/api/dataset`)).datasets
-    })
-
-    return {
-      t,
-      datasets,
-    }
-  },
-}
+onMounted(async () => {
+  datasets.value = (await useAxios(`/api/dataset`)).data.value.datasets
+})
 </script>
 
 <style scoped lang="scss">

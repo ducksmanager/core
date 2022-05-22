@@ -7,7 +7,7 @@ let coaPool
 export default async (req, res) => {
   switch (req.method) {
     case 'GET': {
-      const gameIdMatch = req.url.match(/^\/([0-9]+)/)
+      const gameIdMatch = req.url.match(/^\/(\d+)/)
       if (!gameIdMatch || !gameIdMatch[1]) {
         res.statusCode = 400
         res.end()

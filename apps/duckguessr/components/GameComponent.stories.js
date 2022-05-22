@@ -1,15 +1,15 @@
-import Game from '~/components/Game'
+import GameComponent from '~/components/GameComponent'
 
 export default {
-  title: 'Game',
+  title: 'GameComponent',
 }
 
 const Template = (args) => ({
-  components: { Game },
+  components: { GameComponent },
   setup() {
     return { args }
   },
-  template: '<Game v-bind="args" />',
+  template: '<GameComponent v-bind="args" />',
 })
 export const Default = Template.bind({})
 Default.args = {

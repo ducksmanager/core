@@ -21,33 +21,23 @@
   </b-col>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { ref } from '@nuxtjs/composition-api'
 
 import { RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 
-export default {
-  props: {
-    round: {
-      type: Object as () => RoundWithScoresAndAuthor,
-      required: true,
-    },
-  },
+const roundResultProps = defineProps<{
+  round: RoundWithScoresAndAuthor
+}>()
 
-  setup(props: any) {
-    const personUrl = ref(`https://inducks.org/creators/photos/${props.round.personcode}.jpg`)
-    const setDefaultAuthorUrl = () => {
-      personUrl.value =
-        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
-    }
-
-    return {
-      personUrl,
-      setDefaultAuthorUrl,
-      imageUrl: `${process.env.CLOUDINARY_URL_ROOT}/${props.round.sitecode_url}`,
-    }
-  },
+const personUrl = ref(
+  `https://inducks.org/creators/photos/${roundResultProps.round.personcode}.jpg`
+)
+const setDefaultAuthorUrl = () => {
+  personUrl.value =
+    'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
 }
+const imageUrl = `${process.env.CLOUDINARY_URL_ROOT}/${roundResultProps.round.sitecode_url}`
 </script>
 
 <style scoped lang="scss">

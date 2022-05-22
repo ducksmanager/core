@@ -11,7 +11,7 @@
     <div class="my-3">
       <div>{{ t('The answer was:') }}</div>
       <b-row class="justify-content-center">
-        <author-card selectable :author="correctAuthor" />
+        <author-card :selectable="true" :author="correctAuthor" />
       </b-row>
     </div>
     <div v-if="timeBeforeNextRound" class="text-center">
@@ -24,74 +24,48 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref, watch } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
+import { onMounted, ref, watch } from '@nuxtjs/composition-api'
 import { BIconStopwatchFill } from 'bootstrap-vue'
 import { useI18n } from 'nuxt-i18n-composable'
+import { defineEmits } from '@vue/runtime-dom'
 import { Author } from '~/types/roundWithScoresAndAuthor'
 
-export default defineComponent({
-  name: 'RoundResultModal',
-  components: {
-    BIconStopwatchFill,
-  },
-  props: {
-    status: {
-      type: String,
-      required: true,
-    },
-    roundNumber: {
-      type: Number,
-      required: true,
-    },
-    correctAuthor: {
-      type: Object as () => Author,
-      required: true,
-    },
-    speedBonus: {
-      type: Number,
-      default: null,
-    },
-    nextRoundStartDate: {
-      type: Date,
-      default: null,
-    },
-  },
-  setup(props, { emit }) {
-    const { t } = useI18n()
+const props = defineProps<{
+  status: String
+  roundNumber: Number
+  correctAuthor: Author
+  speedBonus: Number | null
+  nextRoundStartDate: Date | null
+}>()
 
-    const getTimeBeforeNextRound = () =>
-      Math.ceil((props.nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
+const emit = defineEmits(['next-round'])
 
-    const updateTimeBeforeNextRound = () => {
-      timeBeforeNextRound.value =
-        props.nextRoundStartDate === null ? null : getTimeBeforeNextRound()
-    }
+const { t } = useI18n()
 
-    onMounted(() => {
-      setInterval(updateTimeBeforeNextRound, 1000)
-    })
+const updateTimeBeforeNextRound = () => {
+  timeBeforeNextRound.value =
+    props.nextRoundStartDate === null
+      ? null
+      : Math.ceil((props.nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
+}
 
-    const timeBeforeNextRound = ref(null as number | null)
-    updateTimeBeforeNextRound()
-    const initialTimeBeforeNextRound = timeBeforeNextRound.value
-
-    watch(
-      () => timeBeforeNextRound.value,
-      (timeBeforeNextRound: number | null) => {
-        if (timeBeforeNextRound! <= 0) {
-          emit('next-round')
-        }
-      }
-    )
-
-    return {
-      t,
-      initialTimeBeforeNextRound,
-      timeBeforeNextRound,
-    }
-  },
+onMounted(() => {
+  setInterval(updateTimeBeforeNextRound, 1000)
 })
+
+const timeBeforeNextRound = ref(null as number | null)
+updateTimeBeforeNextRound()
+const initialTimeBeforeNextRound = timeBeforeNextRound.value
+
+watch(
+  () => timeBeforeNextRound.value,
+  (timeBeforeNextRound: number | null) => {
+    if (timeBeforeNextRound! <= 0) {
+      emit('next-round')
+    }
+  }
+)
 </script>
 
 <style scoped lang="scss">

@@ -133,13 +133,13 @@
   </b-container>
 </template>
 
-<script lang="ts">
-import { computed, onMounted, ref, useContext, watch } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
+import { computed, onMounted, ref, watch } from '@nuxtjs/composition-api'
 import type Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
-import { BIconCheck, BIconX, BPagination } from 'bootstrap-vue'
 import { useCookies } from '@vueuse/integrations/useCookies'
+import { useAxios } from '@vueuse/integrations/useAxios'
 import { setUserCookieIfNotExists } from '~/composables/user'
 
 interface DatasetWithDecisionCounts {
@@ -159,214 +159,171 @@ interface Decision {
   pressed: boolean
 }
 
-export default {
-  name: 'Clean',
-  components: {
-    BIconCheck,
-    BIconX,
-    BPagination,
+const { t } = useI18n()
+const datasetsGroupedByDecision = ref({} as { [key: string]: DatasetWithDecisionCounts })
+const datasets = ref([] as Array<{ text: string; value: string | null }>)
+const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
+const validatedAndRemainingImageCount = ref(null as any)
+const selectedDataset = ref(null as string | null)
+const isLoading = ref(false as boolean)
+const currentPage = ref(1 as number)
+const totalRows = ref(10000 as number | null)
+const rowsPerPage = 60
+const user = ref(null as Index.player | null)
+const isAllowed = computed(
+  () =>
+    user.value &&
+    ['brunoperel', 'Wizyx', 'remifanpicsou', 'Alex Puaud', 'GlxbltHugo', 'Picsou22'].includes(
+      user.value.username
+    )
+)
+const decisions: { [key: string]: Decision } = {
+  ok: { pressed: false, title: 'OK', variant: 'success' },
+  no_drawing: {
+    pressed: false,
+    title: t("Image doesn't have a drawing").toString(),
+    variant: 'warning',
   },
-  setup() {
-    const { $axios } = useContext()
-    const { t } = useI18n()
-
-    const datasetsGroupedByDecision = ref({} as { [key: string]: DatasetWithDecisionCounts })
-    const datasets = ref([] as Array<{ text: string; value: string | null }>)
-    const entryurlsPendingMaintenanceWithUrls = ref([] as Array<any>)
-    const validatedAndRemainingImageCount = ref(null as any)
-    const selectedDataset = ref(null as string | null)
-
-    const isLoading = ref(false as boolean)
-    const currentPage = ref(1 as number)
-    const totalRows = ref(10000 as number | null)
-    const rowsPerPage = 60
-
-    const user = ref(null as Index.player | null)
-
-    const isAllowed = computed(
-      () =>
-        user.value &&
-        ['brunoperel', 'Wizyx', 'remifanpicsou', 'Alex Puaud', 'GlxbltHugo', 'Picsou22'].includes(
-          user.value.username
-        )
-    )
-
-    const decisions: { [key: string]: Decision } = {
-      ok: { pressed: false, title: 'OK', variant: 'success' },
-      no_drawing: {
-        pressed: false,
-        title: t("Image doesn't have a drawing").toString(),
-        variant: 'warning',
-      },
-      shows_author: {
-        pressed: false,
-        title: t('Image contains author').toString(),
-        variant: 'warning',
-      },
-    }
-
-    const decisionsWithNonValidated = ref({
-      null: { pressed: true, title: t('Non-validated images').toString(), variant: 'secondary' },
-      ...decisions,
-    } as { [key: string]: Decision })
-
-    const loadDatasets = async () => {
-      const data = await $axios.$get(`/api/admin/maintenance`)
-
-      datasetsGroupedByDecision.value = data.datasets.reduce(
-        (
-          acc: any,
-          { name, decision, count }: { name: string; decision: string; count: number }
-        ) => ({
-          ...acc,
-          [name]: {
-            ...(acc[name] || { name }),
-            decisions: {
-              ...((acc[name] || { decisions: {} }).decisions || {}),
-              [decision + '']: count,
-            },
-          },
-        }),
-        {}
-      )
-
-      datasets.value = [
-        { value: null, text: 'Select a dataset' },
-        ...Object.values(datasetsGroupedByDecision.value).map(
-          ({ name, decisions }: DatasetWithDecisionCounts) => ({
-            value: name,
-            text:
-              name +
-              ' (accepted: ' +
-              (decisions.ok || 0) +
-              ', rejected: ' +
-              ((decisions.shows_author || 0) + (decisions.no_drawing || 0)) +
-              ', left to validate: ' +
-              (decisions.null || 0) +
-              ')',
-          })
-        ),
-      ]
-    }
-
-    const loadImagesToMaintain = async (
-      datasetName: string | null,
-      decisionsWithNonValidated: { [key: string]: Decision },
-      offset: number
-    ) => {
-      if (!datasetName) {
-        validatedAndRemainingImageCount.value = null
-        return
-      }
-      isLoading.value = true
-      const { entryurlsToMaintain } = await $axios
-        .$get(
-          `/api/admin/maintenance?dataset=${datasetName}&offset=${offset}&decisions=${Object.keys(
-            decisionsWithNonValidated
-          ).filter((key) => decisionsWithNonValidated[key].pressed)}`
-        )
-        .catch(() => {
-          isLoading.value = false
-        })
-      await loadDatasets()
-      isLoading.value = false
-      entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map((data: any) => ({
-        ...data,
-        decision: data.entryurl_details.decision || 'ok',
-        url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecode_url}`,
-      }))
-
-      const datasetsAndDecisions = datasetsGroupedByDecision.value[datasetName].decisions
-      validatedAndRemainingImageCount.value = {
-        not_validated: datasetsAndDecisions.null || 0,
-        validated:
-          (datasetsAndDecisions.ok || 0) +
-          (datasetsAndDecisions.shows_author || 0) +
-          (datasetsAndDecisions.no_drawing || 0),
-      }
-    }
-
-    watch(
-      () => decisionsWithNonValidated.value,
-      async (newValue) => {
-        await loadImagesToMaintain(
-          selectedDataset.value,
-          newValue,
-          (currentPage.value - 1) * rowsPerPage
-        )
-      },
-      { deep: true }
-    )
-
-    watch(
-      () => selectedDataset.value,
-      async (newValue) => {
-        await loadImagesToMaintain(
-          newValue,
-          decisionsWithNonValidated.value,
-          (currentPage.value - 1) * rowsPerPage
-        )
-      }
-    )
-
-    watch(
-      () => currentPage.value,
-      async (newValue) => {
-        await loadImagesToMaintain(
-          selectedDataset.value,
-          decisionsWithNonValidated.value,
-          (newValue - 1) * rowsPerPage
-        )
-      }
-    )
-
-    onMounted(() => {
-      setUserCookieIfNotExists()
-      io(`${process.env.SOCKET_URL}/login`, {
-        auth: {
-          cookie: useCookies().getAll(),
+  shows_author: {
+    pressed: false,
+    title: t('Image contains author').toString(),
+    variant: 'warning',
+  },
+}
+const decisionsWithNonValidated = ref({
+  null: { pressed: true, title: t('Non-validated images').toString(), variant: 'secondary' },
+  ...decisions,
+} as { [key: string]: Decision })
+const loadDatasets = async () => {
+  datasetsGroupedByDecision.value = (
+    await useAxios(`/api/admin/maintenance`)
+  ).data.value.datasets.reduce(
+    (acc: any, { name, decision, count }: { name: string; decision: string; count: number }) => ({
+      ...acc,
+      [name]: {
+        ...(acc[name] || { name }),
+        decisions: {
+          ...((acc[name] || { decisions: {} }).decisions || {}),
+          [decision + '']: count,
         },
-      }).on('logged', async (loggedInUser) => {
-        user.value = loggedInUser
-        if (isAllowed.value) {
-          await loadDatasets()
-        }
-      })
-    })
-
-    return {
-      t,
-      currentPage,
-      totalRows,
-      rowsPerPage,
-      datasets,
-      decisions,
-      decisionsWithNonValidated,
-      user,
-      isAllowed,
-      isLoading,
-      selectedDataset,
-      entryurlsPendingMaintenanceWithUrls,
-      validatedAndRemainingImageCount,
-      async submitInvalidations() {
-        isLoading.value = true
-        await $axios.$post(`/api/admin/maintenance`, {
-          entryurlsPendingMaintenance: entryurlsPendingMaintenanceWithUrls.value,
-        })
-        await loadImagesToMaintain(
-          selectedDataset.value,
-          decisionsWithNonValidated.value,
-          currentPage.value - 1
-        )
-        isLoading.value = false
       },
-    }
+    }),
+    {}
+  )
+
+  datasets.value = [
+    { value: null, text: 'Select a dataset' },
+    ...Object.values(datasetsGroupedByDecision.value).map(
+      ({ name, decisions }: DatasetWithDecisionCounts) => ({
+        value: name,
+        text:
+          name +
+          ' (accepted: ' +
+          (decisions.ok || 0) +
+          ', rejected: ' +
+          ((decisions.shows_author || 0) + (decisions.no_drawing || 0)) +
+          ', left to validate: ' +
+          (decisions.null || 0) +
+          ')',
+      })
+    ),
+  ]
+}
+const loadImagesToMaintain = async (
+  datasetName: string | null,
+  decisionsWithNonValidated: { [key: string]: Decision },
+  offset: number
+) => {
+  if (!datasetName) {
+    validatedAndRemainingImageCount.value = null
+    return
+  }
+  isLoading.value = true
+  const { data: entryurlsToMaintain } = useAxios(
+    `/api/admin/maintenance?dataset=${datasetName}&offset=${offset}&decisions=${Object.keys(
+      decisionsWithNonValidated
+    ).filter((key) => decisionsWithNonValidated[key].pressed)}`
+  )
+  await loadDatasets()
+  isLoading.value = false
+  entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.value.map((data: any) => ({
+    ...data,
+    decision: data.entryurl_details.decision || 'ok',
+    url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecode_url}`,
+  }))
+
+  const datasetsAndDecisions = datasetsGroupedByDecision.value[datasetName].decisions
+  validatedAndRemainingImageCount.value = {
+    not_validated: datasetsAndDecisions.null || 0,
+    validated:
+      (datasetsAndDecisions.ok || 0) +
+      (datasetsAndDecisions.shows_author || 0) +
+      (datasetsAndDecisions.no_drawing || 0),
+  }
+}
+
+watch(
+  () => decisionsWithNonValidated.value,
+  async (newValue) => {
+    await loadImagesToMaintain(
+      selectedDataset.value,
+      newValue,
+      (currentPage.value - 1) * rowsPerPage
+    )
   },
-  head() {
-    return {
-      title: 'Duckguessr - image maintenance',
+  { deep: true }
+)
+
+watch(
+  () => selectedDataset.value,
+  async (newValue) => {
+    await loadImagesToMaintain(
+      newValue,
+      decisionsWithNonValidated.value,
+      (currentPage.value - 1) * rowsPerPage
+    )
+  }
+)
+
+watch(
+  () => currentPage.value,
+  async (newValue) => {
+    await loadImagesToMaintain(
+      selectedDataset.value,
+      decisionsWithNonValidated.value,
+      (newValue - 1) * rowsPerPage
+    )
+  }
+)
+
+onMounted(() => {
+  setUserCookieIfNotExists()
+  io(`${process.env.SOCKET_URL}/login`, {
+    auth: {
+      cookie: useCookies().getAll(),
+    },
+  }).on('logged', async (loggedInUser) => {
+    user.value = loggedInUser
+    if (isAllowed.value) {
+      await loadDatasets()
     }
-  },
+  })
+})
+
+const submitInvalidations = async () => {
+  isLoading.value = true
+  await useAxios(`/api/admin/maintenance`, {
+    method: 'POST',
+    data: {
+      entryurlsPendingMaintenance: entryurlsPendingMaintenanceWithUrls.value,
+    },
+  })
+  await loadImagesToMaintain(
+    selectedDataset.value,
+    decisionsWithNonValidated.value,
+    currentPage.value - 1
+  )
+  isLoading.value = false
 }
 </script>
 

@@ -3,12 +3,11 @@
 </template>
 <script lang="ts" setup>
 import Index from '@prisma/client'
-import { onMounted, ref, useContext } from '@nuxtjs/composition-api'
+import { onMounted, ref } from '@nuxtjs/composition-api'
+import { useAxios } from '@vueuse/integrations/useAxios'
 const players = ref(null as Index.player[] | null)
 
-const { $axios } = useContext()
-
 onMounted(async () => {
-  players.value = (await $axios.$get(`/api/podium`)).players
+  players.value = (await useAxios(`/api/podium`)).data.value.players
 })
 </script>
