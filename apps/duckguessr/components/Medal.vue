@@ -35,7 +35,7 @@ const medalTypes = {
     title: t('French Publications Expert'),
     description: t('You won a game guessing authors from French publications'),
   },
-  fast: { title: t('Fast'), description: t('You guessed a drawing in less than 4 seconds') },
+  fast: { title: t('Fast'), description: t('You guessed a drawing in less than 5 seconds') },
   ultra_fast: {
     title: t('Super Fast'),
     description: t('You guessed a drawing in less than 2 seconds'),
