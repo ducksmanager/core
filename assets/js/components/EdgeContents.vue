@@ -41,35 +41,36 @@ import * as axios from "axios";
 
 import { bookcase } from "../stores/bookcase";
 
-const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/",
-  { id, issueNumber, publicationCode, spritePath } = defineProps({
-    id: {
-      type: String,
-      required: true,
-    },
-    src: {
-      type: String,
-      required: true,
-    },
-    spritePath: {
-      type: String,
-      default: null,
-    },
-    load: {
-      type: Boolean,
-      required: true,
-    },
-    invisible: {
-      type: Boolean,
-      default: false,
-    },
-    highlighted: {
-      type: Boolean,
-      default: false,
-    },
-  }),
-  emit = defineEmits(["loaded", "open-book"]),
-  loadedSprites = $computed(() => bookcase().bookcase),
+const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
+const { id, issueNumber, publicationCode, spritePath } = defineProps({
+  id: {
+    type: String,
+    required: true,
+  },
+  src: {
+    type: String,
+    required: true,
+  },
+  spritePath: {
+    type: String,
+    default: null,
+  },
+  load: {
+    type: Boolean,
+    required: true,
+  },
+  invisible: {
+    type: Boolean,
+    default: false,
+  },
+  highlighted: {
+    type: Boolean,
+    default: false,
+  },
+});
+const emit = defineEmits(["loaded", "open-book"]);
+
+const loadedSprites = $computed(() => bookcase().bookcase),
   spriteClass = $computed(() =>
     id && spritePath
       ? `edges-${publicationCode.replace(/\//g, "-")}-${issueNumber}`

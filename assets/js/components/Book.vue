@@ -41,23 +41,7 @@
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
           </template>
-          <b-tabs
-            :value="
-              pages.findIndex(
-                (page) =>
-                  page.storycode === pagesWithUrl[currentPage] &&
-                  pagesWithUrl[currentPage].storycode
-              )
-            "
-            pills
-            card
-            vertical
-            @input="
-              currentPage = pagesWithUrl.findIndex(
-                (page) => page.storycode === pages[$event].storycode
-              )
-            "
-          >
+          <b-tabs v-if="pages" v-model="currentTabIndex" pills card vertical>
             <b-tab
               v-for="{
                 storycode,
@@ -69,7 +53,7 @@
                 part,
               } in pages"
               :key="`slide-${position}`"
-              :title-item-class="!!url ? 'has-image' : ''"
+              :disabled="!url"
             >
               <template #title>
                 <Story
@@ -124,10 +108,7 @@ import { coa } from "../stores/coa";
 import Issue from "./Issue";
 import Story from "./Story";
 
-let toast = useToast();
-const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/",
-  RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/,
-  { issueNumber, publicationCode } = defineProps({
+const { issueNumber, publicationCode } = defineProps({
     publicationCode: {
       type: String,
       required: true,
@@ -137,10 +118,14 @@ const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/",
       required: true,
     },
   }),
-  emit = defineEmits(["close-book"]),
+  emit = defineEmits(["close-book"]);
+
+const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/",
+  RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/,
   cloudinaryBaseUrl =
     "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
 
+const toast = useToast();
 let edgeWidth = $ref(null),
   coverHeight = $ref(null),
   coverRatio = $ref(null),
@@ -150,6 +135,7 @@ let edgeWidth = $ref(null),
   closed = $ref(false),
   book = $ref(null),
   currentPage = $ref(0),
+  currentTabIndex = $ref(0),
   currentState = $ref(null),
   publicationNames = $computed(() => coa().publicationNames),
   issueDetails = $computed(() => coa().issueDetails),
@@ -182,6 +168,47 @@ let edgeWidth = $ref(null),
     const [country, magazine] = publicationCode.split("/");
     return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issueNumber}`;
   });
+
+const loadBookPages = async () => {
+  await coa().fetchIssueUrls({
+    publicationCode: publicationCode,
+    issueNumber: issueNumber,
+  });
+};
+
+const onEndOpenCloseTransition = () => {
+  if (opening) {
+    opening = false;
+    opened = true;
+  }
+  if (closing) {
+    closing = false;
+    closed = true;
+    emit("close-book");
+  }
+};
+
+const closeBook = () => {
+  if (currentPage === 0) {
+    opened = false;
+    closing = true;
+  } else {
+    book.on("flip", () => {
+      opened = false;
+      closing = true;
+    });
+    book.flip(0);
+  }
+};
+
+watch(
+  () => currentTabIndex,
+  (newValue) => {
+    currentPage = pagesWithUrl.findIndex(
+      (page) => page.storycode === pages[newValue].storycode
+    );
+  }
+);
 
 watch(
   () => coverWidth,
@@ -271,39 +298,6 @@ watch(
   },
   { immediate: true }
 );
-
-const loadBookPages = async () => {
-  await coa().fetchIssueUrls({
-    publicationCode: publicationCode,
-    issueNumber: issueNumber,
-  });
-};
-
-const onEndOpenCloseTransition = () => {
-  console.log("onEndOpenCloseTransition");
-  if (opening) {
-    opening = false;
-    opened = true;
-  }
-  if (closing) {
-    closing = false;
-    closed = true;
-    emit("close-book");
-  }
-};
-
-const closeBook = () => {
-  if (currentPage === 0) {
-    opened = false;
-    closing = true;
-  } else {
-    book.on("flip", () => {
-      opened = false;
-      closing = true;
-    });
-    book.flip(0);
-  }
-};
 </script>
 
 <style scoped lang="scss">
@@ -375,12 +369,6 @@ const closeBook = () => {
 
     :deep(.tab-content) {
       display: none;
-    }
-
-    :deep(:not(.has-image)) {
-      a {
-        cursor: default;
-      }
     }
   }
 

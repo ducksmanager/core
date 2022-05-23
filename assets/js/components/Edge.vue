@@ -11,7 +11,7 @@
     @open-book="$emit('open-book')"
   />
   <IssueEdgePopover
-    v-else
+    v-else-if="publicationNames"
     :id="`${id}-popover`"
     :has-edge="existing"
     :extra-points="popularity"
@@ -43,8 +43,8 @@ import Issue from "./Issue";
 import IssueEdgePopover from "./IssueEdgePopover";
 
 const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
-  SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/",
-  {
+  SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
+const {
     creationDate,
     issueNumber,
     issueNumberReference,
@@ -100,9 +100,8 @@ const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
       default: false,
     },
   }),
-  emit = defineEmits(["loaded", "open-book"]),
-  publicationNames = $computed(() => coa().publicationNames),
-  countryCode = $computed(() => publicationCode.split("/")[0]),
+  emit = defineEmits(["loaded", "open-book"]);
+let countryCode = $computed(() => publicationCode.split("/")[0]),
   magazineCode = $computed(() => publicationCode.split("/")[1]),
   src = $computed(() =>
     spritePath && !ignoreSprite
@@ -110,10 +109,10 @@ const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
       : `${EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
           issueNumberReference || issueNumber
         }.png?${new Date(creationDate).getTime()}`
-  );
-
-let edge = $ref(null),
-  ignoreSprite = $ref(false);
+  ),
+  edge = $ref(null),
+  ignoreSprite = $ref(false),
+  publicationNames = $computed(() => coa().publicationNames);
 </script>
 
 <style>

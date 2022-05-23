@@ -1,17 +1,17 @@
 <template>
-  <span :class="{ dark }">
+  <span v-once :class="{ dark }">
     <b-badge v-if="kind" size="xl" :class="{ [`kind-${kind}`]: true }">{{
       storyTypeText
     }}</b-badge>
-    {{ title || t("Sans titre")
-    }}<template v-if="part"> - {{ t("partie") }} {{ part }}</template>
+    {{ title || $t("Sans titre")
+    }}<template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
     <small>{{ comment }}</small>
     &nbsp;<a
       v-if="!noLink"
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
     >
-      {{ t("Détails de l'histoire") }}
+      {{ $t("Détails de l'histoire") }}
     </a>
   </span>
 </template>
