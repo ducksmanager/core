@@ -64,8 +64,8 @@ const props = defineProps({
   bookcaseShared = true,
   closeDelay = 500,
   forceClosePopup = () => {
-    show = false;
-    setTimeout(() => (show = null), closeDelay);
+    setTimeout(() => (show = false), closeDelay);
+    setTimeout(() => (show = null), closeDelay * 2);
   };
 let show = $ref(null);
 </script>
