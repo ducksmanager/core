@@ -266,7 +266,7 @@ export default {
         issuenumberMax,
         issuenumberOthers,
       ] = vm.$route.params.pathMatch.match(
-        /^([^/]+)\/([^ ]+) ([^, ]+)(?: to (.+))?(?:,([^$]+))?$/
+        /^([^/]+)\/([^ ]+) ([^,]+)(?: to (.+))?(?:,([^$]+))?$/
       )
       magazine = magazine.replaceAll(/ +/g, '')
     } catch (_) {
