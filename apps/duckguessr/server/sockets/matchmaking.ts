@@ -31,6 +31,10 @@ export function createMatchmakingSocket(
 ) {
   io.of('/matchmaking').on('connection', async (socket) => {
     const user = await getPlayer(socket.handshake.auth.cookie)
+    if (!user) {
+      console.log(`Can' find user for cookie ${JSON.stringify(socket.handshake.auth.cookie)}`)
+      return false
+    }
     console.log(`${user.username} is creating a match`)
 
     socket.on('iAmReady', async (dataset, numberOfPlayers, addBot, callback) => {
