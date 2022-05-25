@@ -17,12 +17,14 @@ export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.
     const sessionFilePath = `${process.env.SESSION_PATH}/sess_${sessionId}`
     const sessionExists = existsSync(sessionFilePath)
     if (sessionExists) {
+      console.log('Session exists')
       const fileContents = readFileSync(sessionFilePath).toString()
       const match = fileContents.match(
         /i:(\d+);s:\d+:".?App\\Security\\User.?username";s:\d+:"([^"]+)/
       )
       if (!match) {
-        throw new Error(`Invalid cookie: ${cookies}`)
+        console.log(`Invalid cookie: ${JSON.stringify(cookies)}`)
+        throw new Error(`Invalid cookie: ${JSON.stringify(cookies)}`)
       }
       const ducksmanagerId = parseInt(match[1])
       const username = match[2]
@@ -31,7 +33,10 @@ export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.
           ducksmanager_id: ducksmanagerId,
         },
       })
-      if (!player) {
+      if (player) {
+        console.log('Player exists')
+      } else {
+        console.log('Player is created')
         player = await prisma.player.create({
           data: {
             ducksmanager_id: ducksmanagerId,
