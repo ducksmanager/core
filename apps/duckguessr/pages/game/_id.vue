@@ -179,7 +179,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .alert {
   > *:nth-child(1) {
     width: 33%;
