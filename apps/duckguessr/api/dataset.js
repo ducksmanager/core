@@ -10,6 +10,7 @@ export default async (req, res) => {
         LEFT JOIN dataset_entryurl de ON dataset.id = de.dataset_id
         LEFT JOIN entryurl_details entryurl ON de.sitecode_url = entryurl.sitecode_url
         WHERE dataset.name NOT LIKE '%-ml'
+        AND decision = 'ok'
         GROUP BY dataset.name
       `
       res.writeHeader(200, { 'Content-Type': 'application/json' })

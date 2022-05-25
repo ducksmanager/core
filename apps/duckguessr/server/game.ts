@@ -48,6 +48,7 @@ export async function create(datasetName: string) {
       FROM entryurl_details
       INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
       WHERE dataset_id = ${dataset.id}
+      AND decision = 'ok'
       ORDER BY RAND()
     ) AS random_images ON random_authors.personcode = random_images.personcode
     GROUP BY random_images.personcode
