@@ -20,6 +20,7 @@ export interface ServerToClientEvents {
   gameEnds: () => void
   playerGuessed: (guessResponse: GuessResponse) => void
   logged: (player: Index.player) => void
+  loginFailed: () => void
 }
 
 export interface ClientToServerEvents {

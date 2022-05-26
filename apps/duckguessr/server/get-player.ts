@@ -10,7 +10,7 @@ export const getBotUser = async (botUsername: string): Promise<Index.player> =>
     },
   }))!
 
-export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.player> => {
+export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.player | null> => {
   const { PHPSESSID: sessionId, 'duckguessr-user': duckguessrName } = cookies
   let player: Index.player | null
   if (sessionId) {

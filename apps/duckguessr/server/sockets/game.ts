@@ -119,6 +119,10 @@ export const createGameSocket = (
   return io.of(`/game/${game!.id}`).on('connection', async (socket: Socket) => {
     const user = await getPlayer(socket.handshake.auth.cookie)
 
+    if (!user) {
+      return
+    }
+
     if (areRoundsInitialized) {
       const currentRound = game!.rounds.find(
         ({ started_at, finished_at }) =>
@@ -138,7 +142,7 @@ export const createGameSocket = (
     }
 
     socket.on('guess', (roundId, personcode) => {
-      onGuess.apply(socket, [user, roundId, personcode])
+      onGuess.apply(socket, [user!, roundId, personcode])
     })
   })
 }

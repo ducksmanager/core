@@ -41,14 +41,20 @@ const login = () => {
     auth: {
       cookie: useCookies().getAll(),
     },
-  }).on('logged', (loggedInUser) => {
-    if (!loggedInUser) {
-      // Session can't be found, regenerate the user ID
-      removeCookie('PHPSESSID')
-    }
-    user.value = loggedInUser
-    setDuckguessrId(loggedInUser.id)
   })
+    .on('logged', (loggedInUser) => {
+      if (!loggedInUser) {
+        // Session can't be found, regenerate the user ID
+        removeCookie('PHPSESSID')
+      }
+      user.value = loggedInUser
+      setDuckguessrId(loggedInUser.id)
+    })
+    .on('loginFailed', () => {
+      removeCookie('PHPSESSID')
+      setUserCookieIfNotExists()
+      login()
+    })
 }
 
 const isAnonymous = computed(() => user.value && isAnonymousNative(user.value.username))
