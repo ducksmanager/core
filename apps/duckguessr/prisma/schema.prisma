@@ -11,6 +11,7 @@ model dataset {
   id               Int                @id @default(autoincrement())
   name             String             @unique(map: "dataset_name_uindex") @db.VarChar(30)
   title            String?            @db.VarChar(50)
+  description      String?            @db.Text
   dataset_entryurl dataset_entryurl[]
   games            game[]
 }

@@ -1,17 +1,18 @@
 <template>
   <b-card-group deck>
     <b-card
-      v-for="{ title, name, images, authors } in datasets"
+      v-for="{ title, description, name, images, authors } in datasets"
       :key="name"
-      :title="title"
-      img-src="https://picsum.photos/600/300/?image=25"
-      :img-alt="title"
+      :title="t(title)"
       img-top
       align="center"
       @click="$router.push(`/setup/${name}`)"
     >
+      <b-card-header class="my-2 bg-transparent border-0 small">
+        {{ t(description) }}
+      </b-card-header>
       <b-card-footer>
-        {{ t('Images') }}: {{ images }}, {{ $t('authors') }}: {{ authors }}
+        {{ t('Images') }}: {{ images }}, {{ t('authors') }}: {{ authors }}
       </b-card-footer>
     </b-card>
   </b-card-group>

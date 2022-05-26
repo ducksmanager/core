@@ -5,7 +5,7 @@ export default async (req, res) => {
   switch (req.method) {
     case 'GET': {
       const datasets = await prisma.$queryRaw`
-        SELECT name, title, COUNT(*) AS images, COUNT(DISTINCT personcode) AS authors
+        SELECT name, title, description, COUNT(*) AS images, COUNT(DISTINCT personcode) AS authors
         FROM dataset
         LEFT JOIN dataset_entryurl de ON dataset.id = de.dataset_id
         LEFT JOIN entryurl_details entryurl ON de.sitecode_url = entryurl.sitecode_url
