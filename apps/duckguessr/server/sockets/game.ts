@@ -110,7 +110,8 @@ export const createGameSocket = (
   game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
 ) => {
   if (game === null) {
-    throw new Error('game is null')
+    console.error('game is null')
+    return
   }
 
   let areRoundsInitialized = false

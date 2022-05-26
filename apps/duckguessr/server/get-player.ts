@@ -24,7 +24,7 @@ export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.
       )
       if (!match) {
         console.log(`Invalid cookie: ${JSON.stringify(cookies)}`)
-        throw new Error(`Invalid cookie: ${JSON.stringify(cookies)}`)
+        return null
       }
       const ducksmanagerId = parseInt(match[1])
       const username = match[2]

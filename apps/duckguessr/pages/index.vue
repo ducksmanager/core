@@ -6,7 +6,7 @@
       :title="t(title)"
       img-top
       align="center"
-      @click="$router.push(`/setup/${name}`)"
+      @click="createMatch(name)"
     >
       <b-card-header class="my-2 bg-transparent border-0 small">
         {{ t(description) }}
@@ -19,13 +19,29 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from '@nuxtjs/composition-api'
+import { onMounted, ref, useRouter } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
 import { useAxios } from '@vueuse/integrations/useAxios'
+import { io } from 'socket.io-client'
+import { useCookies } from '@vueuse/integrations/useCookies'
+const router = useRouter()
 
 const { t } = useI18n()
 
 const datasets = ref([] as Array<any>)
+
+const matchCreationSocket = io(`${process.env.SOCKET_URL}/match`, {
+  auth: {
+    cookie: useCookies().getAll(),
+  },
+})
+
+const createMatch = (datasetName: string) => {
+  matchCreationSocket.emit('createMatch', datasetName, (gameId: number) => {
+    matchCreationSocket.close()
+    router.replace(`/matchmaking/${gameId}`)
+  })
+}
 
 onMounted(async () => {
   datasets.value = (await useAxios(`/api/dataset`)).data.value.datasets

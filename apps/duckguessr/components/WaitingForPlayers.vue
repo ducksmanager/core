@@ -5,6 +5,9 @@
       <b-card v-for="username in usernames" :key="username" class="player m-3 col-lg-3">
         <player-info :username="username" />
       </b-card>
+      <b-card v-if="isMatchCreator && isBotAvailable && !isBotPlaying" class="player m-3 col-lg-3">
+        <player-info username="potential_bot" @click="$emit('add-bot')" />
+      </b-card>
     </b-row>
     <b-row align-h="center" class="mt-3">
       <b-col>
@@ -30,18 +33,29 @@
         </b-row>
       </b-col>
     </b-row>
+    <b-button
+      v-if="isMatchCreator"
+      :disabled="usernames.length < 2"
+      variant="success"
+      @click="$emit('start-match')"
+    >
+      {{ t("Let's go!") }}
+    </b-button>
   </b-container>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, useMeta } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
+import { getDuckguessrUsername } from '~/composables/user'
 
 export default defineComponent({
   props: {
     usernames: { type: Array as () => Array<string>, required: true },
     gameId: { type: Number, required: true },
+    isBotAvailable: { type: Boolean, require: true },
   },
+  emits: ['start-match', 'add-bot'],
   setup(props) {
     const { t } = useI18n()
     // For some reason vue-i18n's interpolation doesn't work
@@ -49,6 +63,9 @@ export default defineComponent({
       t("Join {username}'s Duckguessr game!").toString().replace('{username}', props.usernames[0])
     )
     const gameUrl = `${location.origin}/matchmaking/${props.gameId}`
+    const isMatchCreator = getDuckguessrUsername() === props.usernames[0]
+    const isBotPlaying = computed(() => props.usernames.find((username) => /^bot_/.test(username)))
+
     useMeta(() => ({
       title: title.value,
       meta: [
@@ -78,6 +95,8 @@ export default defineComponent({
     return {
       gameUrl,
       t,
+      isMatchCreator,
+      isBotPlaying,
     }
   },
   head: {},

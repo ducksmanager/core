@@ -24,8 +24,10 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   login: (callback: Function) => void
-  iAmReady: (dataset: string, numberOfPlayers: number, addBot: boolean, callback: Function) => void
-  iAmAlsoReady: (gameId: number, callback: Function) => void
+  createMatch: (dataset: string, callback: Function) => void
+  addBot: (gameId: number) => void
+  joinMatch: (gameId: number, callback: Function) => void
+  startMatch: (gameId: number) => void
   guess: (roundId: number, personcode: string | null) => void
   getStats: (gameId: number, callback: Function) => void
 }
