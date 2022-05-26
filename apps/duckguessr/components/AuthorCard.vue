@@ -14,7 +14,7 @@
         {{ author.personfullname }}
       </div>
       <div hidden>
-        <b-img :src="authorImageUrl" @error="authorImageUrl = defaultAuthorUrl" />
+        <b-img :src="authorImageUrl" @error="setDefaultAuthorUrl()" />
       </div>
     </div>
   </b-col>
@@ -28,8 +28,10 @@ const authorCardProps = defineProps<{
 }>()
 
 const authorImageUrl = ref('')
-const defaultAuthorUrl =
-  'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
+const setDefaultAuthorUrl = () => {
+  authorImageUrl.value =
+    'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
+}
 
 watch(
   () => authorCardProps.author.personcode,
