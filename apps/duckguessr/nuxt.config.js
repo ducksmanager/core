@@ -67,6 +67,8 @@ export default {
         ],
       },
     ],
+    // Doc: https://github.com/nuxt-community/sentry-module#readme
+    '@nuxtjs/sentry',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -74,6 +76,11 @@ export default {
     proxy: true,
     credentials: true,
     proxyHeaders: true,
+  },
+
+  sentry: {
+    dsn: 'https://4cefe8e809654e9099663f8891e701d2@o229092.ingest.sentry.io/6443646',
+    config: {},
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

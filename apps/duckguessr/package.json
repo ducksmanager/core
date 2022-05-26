@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.ts\" \"npx nuxt storybook\"",
+    "dev": "concurrently \"nuxt\" \"cd server && nodemon index.ts\"",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -16,6 +16,7 @@
     "@nuxtjs/axios": "^5.13.1",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/i18n": "^7.2.2",
+    "@nuxtjs/sentry": "^5.1.7",
     "@prisma/client": "^3.14.0",
     "@vue/runtime-dom": "^3.2.33",
     "@vueuse/integrations": "^8.4.2",
