@@ -24,22 +24,20 @@ export default async (req, res) => {
             name: datasetName,
           },
         })
-        const conditions = decisions.split(',').reduce((acc, decision) => {
-          if (decision === 'null') {
-            decision = null
-          }
-          return [
+        const conditions = decisions.split(',').reduce(
+          (acc, decision) => [
             ...acc,
             {
               dataset_id: dataset.id,
               entryurl_details: {
                 is: {
-                  decision,
+                  decision: decision === 'null' ? null : decision,
                 },
               },
             },
-          ]
-        }, [])
+          ],
+          []
+        )
         res.end(
           JSON.stringify({
             entryurlsToMaintain: await prisma.dataset_entryurl.findMany({
