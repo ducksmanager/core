@@ -41,7 +41,7 @@ export async function create(datasetName: string) {
       INNER JOIN dataset_entryurl ON entryurl_details.sitecode_url = dataset_entryurl.sitecode_url
       WHERE dataset_id = ${dataset.id}
       ORDER BY RAND()
-      LIMIT ${numberOfRounds + 1}
+      LIMIT 100
     ) AS random_authors
     INNER JOIN (
       SELECT DISTINCT entryurl_details.personcode, entryurl_details.sitecode_url

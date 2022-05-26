@@ -103,6 +103,7 @@ model entryurl_details {
   dataset_entryurls dataset_entryurl[]
 
   @@index([decision], map: "decision_index")
+  @@index([personcode], map: "entryurl_details_personcode_index")
 }
 
 enum entryurl_details_decision {
