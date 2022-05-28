@@ -13,15 +13,15 @@
     "bedetheque-scraper": "^3.2.0",
     "csv-parse": "^5.0.3",
     "csv-writer": "^1.6.0",
-    "mariadb": "^2.5.2",
+    "mariadb": "^3.0.0",
     "playwright-firefox": "^1.10.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "eslint": "^7.25.0",
-    "eslint-config-standard": "^16.0.2",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.2.0"
+    "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-promise": "^6.0.0"
   }
 }

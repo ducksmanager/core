@@ -10,7 +10,7 @@ module.exports = {
   getCacheDir,
 
   syncScrapeCache: async (scrapeDirName, fileName, url, fetchFn, postGetFromCacheTransformFn, preSetInCacheTransformFn) => {
-    const cacheDirName = `${getCacheDir()}/${scrapeDirName}`;
+    const cacheDirName = `${getCacheDir()}/${scrapeDirName}`
     const cacheFileName = `${cacheDirName}/${fileName}`
     console.log(url)
     let scrapeOutput
