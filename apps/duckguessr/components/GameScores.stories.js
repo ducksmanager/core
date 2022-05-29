@@ -13,6 +13,7 @@ const Template = (args) => ({
 })
 export const Default = Template.bind({})
 Default.args = {
+  gameId: 100,
   players: [
     {
       player_id: 1,

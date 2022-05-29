@@ -30,6 +30,7 @@
   @media (min-width: 767px) {
     height: 110px;
     width: calc(100% - 320px);
+    right: 0;
   }
 }
 </style>
