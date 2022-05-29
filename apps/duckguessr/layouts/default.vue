@@ -27,7 +27,7 @@ import { useI18n } from 'nuxt-i18n-composable'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import {
   isAnonymous as isAnonymousNative,
-  setDuckguessrId,
+  setDuckguessrUserData,
   removeCookie,
   setUserCookieIfNotExists,
 } from '~/composables/user'
@@ -42,13 +42,13 @@ const login = () => {
       cookie: useCookies().getAll(),
     },
   })
-    .on('logged', (loggedInUser) => {
+    .on('logged', (loggedInUser: Index.player) => {
       if (!loggedInUser) {
         // Session can't be found, regenerate the user ID
         removeCookie('PHPSESSID')
       }
       user.value = loggedInUser
-      setDuckguessrId(loggedInUser.id)
+      setDuckguessrUserData(loggedInUser)
     })
     .on('loginFailed', () => {
       removeCookie('PHPSESSID')

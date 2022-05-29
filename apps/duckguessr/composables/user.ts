@@ -1,4 +1,5 @@
 import { useCookies } from '@vueuse/integrations/useCookies'
+import Index from '@prisma/client'
 function setCookie(name: string, value: string) {
   useCookies().set(name, value, { expires: new Date(new Date().getTime() + 3600000), path: '/' })
 }
@@ -34,8 +35,9 @@ export const getDuckguessrId = () => parseInt(useCookies().getAll()['duckguessr-
 
 export const getDuckguessrUsername = () => useCookies().getAll()['duckguessr-user']
 
-export const setDuckguessrId = (id: number) => {
+export const setDuckguessrUserData = ({ id, username }: Index.player) => {
   setCookie('duckguessr-id', `${id}`)
+  setCookie('duckguessr-user', `${username}`)
 }
 
 export default () => {}

@@ -12,10 +12,10 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref, useRoute, useRouter } from '@nuxtjs/composition-api'
-import Index from '@prisma/client'
 import { io } from 'socket.io-client'
 import { useI18n } from 'nuxt-i18n-composable'
 import { useCookies } from '@vueuse/integrations/useCookies'
+import { MatchDetails } from '~/types/matchDetails'
 
 const router = useRouter()
 const route = useRoute()
@@ -59,15 +59,13 @@ onMounted(() => {
     }, 200)
   })
 
-  matchmakingSocket.emit(
-    'joinMatch',
-    gameId,
-    ({ players, isBotAvailable }: { players: Index.player[]; isBotAvailable: boolean }) => {
+  setTimeout(() => {
+    matchmakingSocket.emit('joinMatch', gameId, ({ players, isBotAvailable }: MatchDetails) => {
       isBotAvailableForGame.value = isBotAvailable
       for (const player of players) {
         addPlayer(player.username)
       }
-    }
-  )
+    })
+  }, 200)
 })
 </script>

@@ -8,6 +8,7 @@ import {
 } from '../../types/socketEvents'
 import { getGameWithRoundsDatasetPlayers } from '../game'
 import { getBotUser, getPlayer } from '../get-player'
+import { MatchDetails } from '../../types/matchDetails'
 
 const game = require('../game')
 const round = require('../round')
@@ -74,7 +75,7 @@ const createGameMatchmaking = (
       socket.emit('playerJoined', botUsername)
     })
 
-    socket.on('joinMatch', async (gameId, callback) => {
+    socket.on('joinMatch', async (gameId, callback: Function) => {
       let currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame === null) {
         console.error(`Game ${gameId} doesn't exist`)
@@ -89,7 +90,7 @@ const createGameMatchmaking = (
       callback({
         isBotAvailable: currentGame.dataset.name === 'published-fr-recent',
         players: currentGame.game_players.map(({ player }) => player),
-      })
+      } as MatchDetails)
     })
 
     socket.on('startMatch', async (gameId) => {
