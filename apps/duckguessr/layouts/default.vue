@@ -46,12 +46,14 @@ const login = () => {
       if (!loggedInUser) {
         // Session can't be found, regenerate the user ID
         removeCookie('PHPSESSID')
+        removeCookie('duckguessr-user')
       }
       user.value = loggedInUser
       setDuckguessrUserData(loggedInUser)
     })
     .on('loginFailed', () => {
       removeCookie('PHPSESSID')
+      removeCookie('duckguessr-user')
       setUserCookieIfNotExists()
       login()
     })
