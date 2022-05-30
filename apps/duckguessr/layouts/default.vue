@@ -33,6 +33,7 @@ import {
 } from '~/composables/user'
 
 const user = ref(null as Index.player | null)
+const attempts = ref(0 as number)
 const { t } = useI18n()
 
 const login = () => {
@@ -43,19 +44,26 @@ const login = () => {
     },
   })
     .on('logged', (loggedInUser: Index.player) => {
+      console.log('logged')
       if (!loggedInUser) {
         // Session can't be found, regenerate the user ID
         removeCookie('PHPSESSID')
         removeCookie('duckguessr-user')
+        attempts.value++
+      } else {
+        user.value = loggedInUser
+        setDuckguessrUserData(loggedInUser)
       }
-      user.value = loggedInUser
-      setDuckguessrUserData(loggedInUser)
     })
     .on('loginFailed', () => {
+      console.log('loginFailed')
       removeCookie('PHPSESSID')
       removeCookie('duckguessr-user')
-      setUserCookieIfNotExists()
-      login()
+      if (attempts.value < 1) {
+        attempts.value++
+        setUserCookieIfNotExists()
+        login()
+      }
     })
 }
 
