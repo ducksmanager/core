@@ -37,7 +37,6 @@ const attempts = ref(0 as number)
 const { t } = useI18n()
 
 const login = () => {
-  setUserCookieIfNotExists()
   io(`${process.env.SOCKET_URL}/login`, {
     auth: {
       cookie: useCookies().getAll(),
@@ -45,19 +44,11 @@ const login = () => {
   })
     .on('logged', (loggedInUser: Index.player) => {
       console.log('logged')
-      if (!loggedInUser) {
-        // Session can't be found, regenerate the user ID
-        removeCookie('PHPSESSID')
-        removeCookie('duckguessr-user')
-        attempts.value++
-      } else {
-        user.value = loggedInUser
-        setDuckguessrUserData(loggedInUser)
-      }
+      user.value = loggedInUser
+      setDuckguessrUserData(loggedInUser)
     })
     .on('loginFailed', () => {
       console.log('loginFailed')
-      removeCookie('PHPSESSID')
       removeCookie('duckguessr-user')
       if (attempts.value < 1) {
         attempts.value++

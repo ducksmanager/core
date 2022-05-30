@@ -294,7 +294,6 @@ watch(
 )
 
 onMounted(() => {
-  setUserCookieIfNotExists()
   io(`${process.env.SOCKET_URL}/login`, {
     auth: {
       cookie: useCookies().getAll(),

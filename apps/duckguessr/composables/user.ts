@@ -9,23 +9,8 @@ export const removeCookie = (name: string) => {
 
 export const setUserCookieIfNotExists = () => {
   const cookies = useCookies().getAll()
-  let username = cookies.PHPSESSID || cookies['duckguessr-user']
-  const duckguessrId: number | null =
-    (cookies['duckguessr-id'] && parseInt(cookies['duckguessr-id'])) || null
-  if (username) {
-    return {
-      duckguessrId,
-      username,
-      isAnonymous: isAnonymous(username),
-    }
-  } else {
-    username = `user${Math.random().toString().replace('0.', '')}`
-    setCookie('duckguessr-user', username)
-    return {
-      duckguessrId,
-      username,
-      isAnonymous: true,
-    }
+  if (!cookies['duckguessr-user']) {
+    setCookie('duckguessr-user', `user${Math.random().toString().replace('0.', '')}`)
   }
 }
 
