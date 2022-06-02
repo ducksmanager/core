@@ -25,3 +25,9 @@ export const Bot = Template.bind({})
 Bot.args = {
   username: 'bot_us',
 }
+
+export const CustomAvatar = Template.bind({})
+CustomAvatar.args = {
+  username: 'brunoperel',
+  avatar: 'US',
+}

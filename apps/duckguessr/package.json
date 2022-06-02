@@ -8,6 +8,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
+    "generate-avatars": "node create-avatar-files.js",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint": "npm run lint:js",
     "test": "npx codeceptjs run -f start",
@@ -57,6 +58,7 @@
     "prisma": "^3.14.0",
     "sass": "^1.51.0",
     "sass-loader": "^10.2.1",
+    "sharp": "^0.30.6",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
   }

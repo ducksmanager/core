@@ -21,18 +21,20 @@ const props = withDefaults(
   defineProps<{
     username: string
     topPlayer: boolean
+    avatar: string
   }>(),
   {
     topPlayer: false,
+    avatar: "HDL's father",
   }
 )
 
 defineEmits(['click'])
 
-const isBot = /^bot_/.test(props.username)
-const isPotentialBot = props.username === 'potential_bot'
-
-const src = isBot || isPotentialBot ? '/little-helper.png' : '/anonymous.png'
+const src =
+  /^bot_/.test(props.username) || props.username === 'potential_bot'
+    ? '/avatars/Little Helper.png'
+    : `/avatars/${props.avatar}.png`
 
 const { t } = useI18n()
 </script>

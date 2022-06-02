@@ -55,6 +55,7 @@ model player {
   id              Int           @id @default(autoincrement())
   username        String        @unique(map: "player_username_uindex") @db.VarChar(50)
   ducksmanager_id Int?          @unique(map: "player_ducksmanager_id_uindex")
+  avatar          String        @default("HDL's father") @db.VarChar(25)
   game_players    game_player[]
   round_scores    round_score[]
 }
