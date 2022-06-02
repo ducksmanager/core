@@ -35,8 +35,12 @@ const barSizePct = (100 * playerTotalScoreProps.score) / playerTotalScoreProps.m
   align-items: center;
   justify-content: center;
 
+  height: 110px;
+  width: 250px;
+
   .progress {
     flex-direction: row;
+    min-width: 30px;
     height: 25px;
 
     &.rank-0 {
@@ -54,6 +58,7 @@ const barSizePct = (100 * playerTotalScoreProps.score) / playerTotalScoreProps.m
 
   .username {
     width: 100px;
+    height: initial;
   }
 
   &.vertical {
@@ -70,6 +75,7 @@ const barSizePct = (100 * playerTotalScoreProps.score) / playerTotalScoreProps.m
     .progress {
       flex-direction: row;
       width: 90%;
+      min-height: 16px;
     }
   }
 }

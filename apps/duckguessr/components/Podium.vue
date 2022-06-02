@@ -1,11 +1,7 @@
 <template>
   <div class="container-fluid">
     <h3 class="text-center mb-5">Podium</h3>
-    <div
-      v-if="topPlayers.length"
-      class="d-flex flex-row justify-content-center"
-      style="height: 350px"
-    >
+    <div v-if="topPlayers.length" class="d-flex flex-row justify-content-center">
       <player-total-score
         v-for="(player, index) in topPlayers"
         :key="player.username"
@@ -22,23 +18,26 @@
         {{ t("There aren't enough players to show the podium") }}
       </b-alert>
     </b-row>
-    <player-total-score
-      v-for="{ username, sum_score } in otherPlayers"
-      :key="username"
-      :score="sum_score"
-      :username="username"
-      :top-player="false"
-      :vertical="false"
-      :max-score-all-players="maxPoints"
-    />
+    <div class="d-flex flex-row justify-content-center m-5">
+      <player-total-score
+        v-for="{ username, sum_score } in otherPlayers"
+        :key="username"
+        :score="sum_score"
+        :username="username"
+        :top-player="false"
+        :vertical="false"
+        :max-score-all-players="maxPoints"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from 'nuxt-i18n-composable'
+import { PlayerWithSumScore } from '~/types/playerStats'
 
 const { t } = useI18n()
 const props = defineProps<{
-  players: any[]
+  players: PlayerWithSumScore[]
 }>()
 
 const topPlayers =

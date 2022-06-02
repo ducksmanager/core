@@ -1,3 +1,5 @@
+import Index from '@prisma/client'
+
 export class MedalLevel {
   medalType: string
   levels: number[]
@@ -28,4 +30,8 @@ export class MedalLevelAndProgress {
     this.levelPercentage = levelPercentage
     this.levelPercentageProgress = levelPercentageProgress
   }
+}
+
+export interface PlayerWithSumScore extends Index.player {
+  sum_score: number
 }
