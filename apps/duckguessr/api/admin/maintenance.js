@@ -49,6 +49,9 @@ export default async (req, res) => {
               },
               take: 60,
               skip: parseInt(offset),
+              orderBy: {
+                sitecode_url: 'asc',
+              },
             }),
           })
         )
