@@ -3,7 +3,6 @@
     <banner />
     <duckguessr-menu :user="user" />
     <div id="main" class="d-flex justify-content-start flex-column">
-      <div v-if="!user">Loading...</div>
       <b-row v-if="isAnonymous === true" class="justify-content-center">
         <b-alert show variant="warning" class="text-center">
           {{ t("You are not connected. You can still play but you won't get any medals.") }}

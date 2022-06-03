@@ -8,9 +8,7 @@
       :game-id="game.id"
     />
   </b-container>
-  <b-container v-else-if="!game || !currentRoundNumber" class="text-center">
-    {{ t('Loading...') }}
-  </b-container>
+  <div v-else-if="!game || !currentRoundNumber" class="text-center" />
   <b-container v-else fluid class="d-flex flex-grow-1 p-0">
     <game-component
       :available-time="availableTime"

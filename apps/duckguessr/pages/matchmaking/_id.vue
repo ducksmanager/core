@@ -7,7 +7,6 @@
     @start-match="startMatch"
     @add-bot="addBot"
   />
-  <div v-else>{{ t('Loading...') }}</div>
 </template>
 
 <script lang="ts" setup>

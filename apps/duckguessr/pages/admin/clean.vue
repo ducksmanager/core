@@ -1,5 +1,5 @@
 <template>
-  <b-container v-if="!user" fluid class="p-4 bg-dark"> Loading... </b-container>
+  <div v-if="!user" />
   <b-container v-else-if="!isAllowed" fluid class="p-4 bg-dark">
     {{ t('Only an administrator can clean images!') }}
   </b-container>
@@ -88,7 +88,7 @@
       </b-col>
     </b-row>
     <template v-if="!selectedDataset" />
-    <div v-else-if="isLoading">Loading...</div>
+    <template v-else-if="isLoading" />
     <template v-else>
       <b-row>
         <b-pagination
