@@ -9,7 +9,7 @@
       "ESNext.AsyncIterable",
       "DOM"
     ],
-    "module": "ESNext",
+    "module": "commonjs",
     "moduleResolution": "Node",
     "noEmit": true,
     "outDir": "dist",
