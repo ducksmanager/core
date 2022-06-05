@@ -1,66 +1,19 @@
 <template>
   <div id="app">
     <banner />
-    <duckguessr-menu :user="user" />
+    <duckguessr-menu />
     <div id="main" class="d-flex justify-content-start flex-column">
-      <b-row v-if="isAnonymous === true" class="justify-content-center">
-        <b-alert show variant="warning" class="text-center">
-          {{ t("You are not connected. You can still play but you won't get any medals.") }}
-          <div>
-            <a href="https://ducksmanager.net/login" target="_blank">{{
-              t('Log in on DucksManager then refresh this page to be able to win medals :-)')
-            }}</a>
-          </div>
-        </b-alert>
-      </b-row>
       <Nuxt />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from '@nuxtjs/composition-api'
-import { io } from 'socket.io-client'
-import Index from '@prisma/client'
-import { useI18n } from 'nuxt-i18n-composable'
-import { useCookies } from '@vueuse/integrations/useCookies'
-import {
-  isAnonymous as isAnonymousNative,
-  setDuckguessrUserData,
-  removeCookie,
-  setUserCookieIfNotExists,
-} from '~/composables/user'
-
-const user = ref(null as Index.player | null)
-const attempts = ref(0 as number)
-const { t } = useI18n()
-
-const login = () => {
-  io(`${process.env.SOCKET_URL}/login`, {
-    auth: {
-      cookie: useCookies().getAll(),
-    },
-  })
-    .on('logged', (loggedInUser: Index.player) => {
-      console.log('logged')
-      user.value = loggedInUser
-      setDuckguessrUserData(loggedInUser)
-    })
-    .on('loginFailed', () => {
-      console.log('loginFailed')
-      removeCookie('duckguessr-user')
-      if (attempts.value < 1) {
-        attempts.value++
-        setUserCookieIfNotExists()
-        login()
-      }
-    })
-}
-
-const isAnonymous = computed(() => user.value && isAnonymousNative(user.value.username))
+import { onMounted } from '@nuxtjs/composition-api'
+import { userStore } from '~/store/user'
 
 onMounted(() => {
-  login()
+  userStore().login()
 })
 </script>
 

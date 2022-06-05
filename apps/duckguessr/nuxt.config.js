@@ -1,4 +1,5 @@
 import { json } from 'body-parser'
+
 export default {
   telemetry: false,
 
@@ -33,6 +34,7 @@ export default {
     '@nuxt/typescript-build',
     // https://composition-api.nuxtjs.org
     '@nuxtjs/composition-api/module',
+    '@pinia/nuxt',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules

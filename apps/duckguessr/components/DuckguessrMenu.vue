@@ -1,9 +1,13 @@
 <template>
   <div id="menu" class="position-fixed d-flex flex-column align-items-center">
     <div id="medals-and-login" class="pb-3">
-      <div class="d-none d-md-block">
+      <component
+        :is="isAnonymous ? 'div' : 'a'"
+        :href="isAnonymous ? undefined : '/profile'"
+        class="pb-3"
+      >
         <player-info v-if="user" :username="user.username" />
-      </div>
+      </component>
       <b-navbar toggleable="md" type="dark" class="d-md-none justify-content-start">
         <b-navbar-toggle target="nav-collapse" class="px-2" />
 
@@ -20,16 +24,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import Index from '@prisma/client'
+import { computed } from '@nuxtjs/composition-api'
+import { userStore } from '~/store/user'
 
-withDefaults(
-  defineProps<{
-    user: Index.player | null
-  }>(),
-  {
-    user: null,
-  }
-)
+const user = computed(() => userStore().user)
+const isAnonymous = computed(() => userStore().isAnonymous)
 </script>
 <style lang="scss">
 $navbar-height: 40px;
@@ -67,6 +66,12 @@ $navbar-height: 40px;
     width: 100%;
     @media (min-width: 767px) {
       border-bottom: 5px solid #eee;
+    }
+
+    a:hover {
+      .username {
+        border-bottom: 1px solid darkgrey;
+      }
     }
 
     #language-navbar {

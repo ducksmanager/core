@@ -1,28 +1,32 @@
 <template>
-  <waiting-for-players
-    v-if="playersUsernames.length"
-    :usernames="playersUsernames"
-    :game-id="gameId"
-    :is-bot-available="isBotAvailableForGame"
-    @start-match="startMatch"
-    @add-bot="addBot"
-  />
+  <div>
+    <alert-not-connected v-if="isAnonymous === true" />
+    <waiting-for-players
+      v-if="playersUsernames.length"
+      :usernames="playersUsernames"
+      :game-id="gameId"
+      :is-bot-available="isBotAvailableForGame"
+      @start-match="startMatch"
+      @add-bot="addBot"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref, useRoute, useRouter } from '@nuxtjs/composition-api'
+import { computed, onMounted, reactive, ref, useRoute, useRouter } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
-import { useI18n } from 'nuxt-i18n-composable'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { MatchDetails } from '~/types/matchDetails'
+import { userStore } from '~/store/user'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
 const playersUsernames = reactive([] as Array<string>)
 const isBotAvailableForGame = ref(null as Boolean | null)
 
 const gameId = parseInt(route.value.params.id)
+
+const isAnonymous = computed(() => userStore().isAnonymous)
 
 const matchmakingSocket = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`, {
   auth: {

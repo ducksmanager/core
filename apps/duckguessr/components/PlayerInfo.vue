@@ -31,10 +31,9 @@ const props = withDefaults(
 
 defineEmits(['click'])
 
-const src =
-  /^bot_/.test(props.username) || props.username === 'potential_bot'
-    ? '/avatars/Little Helper.png'
-    : `/avatars/${props.avatar}.png`
+const isBot = /^bot_/.test(props.username)
+const isPotentialBot = props.username === 'potential_bot'
+const src = isBot || isPotentialBot ? '/avatars/Little Helper.png' : `/avatars/${props.avatar}.png`
 
 const { t } = useI18n()
 </script>
@@ -56,7 +55,9 @@ const { t } = useI18n()
 }
 
 .username {
-  height: 1rem;
+  display: flex;
+  align-items: center;
+  height: 1.5rem;
 }
 
 .opacity50 {

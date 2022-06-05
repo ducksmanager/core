@@ -134,14 +134,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from '@nuxtjs/composition-api'
-import type Index from '@prisma/client'
-import { io } from 'socket.io-client'
+import { computed, ref, watch } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
-import { useCookies } from '@vueuse/integrations/useCookies'
 import { useAxios } from '@vueuse/integrations/useAxios'
 import { BIconCheck, BIconX } from 'bootstrap-vue'
-import { setUserCookieIfNotExists } from '~/composables/user'
+import { userStore } from '~/store/user'
 
 interface DatasetWithDecisionCounts {
   id: number
@@ -170,8 +167,15 @@ const isLoading = ref(false as boolean)
 const currentPage = ref(1 as number)
 const totalRows = ref(10000 as number | null)
 const rowsPerPage = 60
-const user = ref(null as Index.player | null)
-const isAllowed = computed(() => user.value)
+
+const user = computed(() => userStore().user)
+const isAllowed = computed(
+  () =>
+    user.value &&
+    ['brunoperel', 'Wizyx', 'remifanpicsou', 'Alex Puaud', 'GlxbltHugo', 'Picsou22'].includes(
+      user.value.username
+    )
+)
 const decisions: { [key: string]: Decision } = {
   ok: { pressed: false, title: 'OK', variant: 'success' },
   no_drawing: {
@@ -293,18 +297,15 @@ watch(
   }
 )
 
-onMounted(() => {
-  io(`${process.env.SOCKET_URL}/login`, {
-    auth: {
-      cookie: useCookies().getAll(),
-    },
-  }).on('logged', async (loggedInUser) => {
-    user.value = loggedInUser
-    if (isAllowed.value) {
+watch(
+  () => isAllowed.value,
+  async (newValue) => {
+    if (newValue) {
       await loadDatasets()
     }
-  })
-})
+  },
+  { immediate: true }
+)
 
 const submitInvalidations = async () => {
   isLoading.value = true
