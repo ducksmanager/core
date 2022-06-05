@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'nuxt-i18n-composable'
+import { computed } from '@nuxtjs/composition-api'
 
 const props = withDefaults(
   defineProps<{
@@ -33,7 +34,9 @@ defineEmits(['click'])
 
 const isBot = /^bot_/.test(props.username)
 const isPotentialBot = props.username === 'potential_bot'
-const src = isBot || isPotentialBot ? '/avatars/Little Helper.png' : `/avatars/${props.avatar}.png`
+const src = computed(() =>
+  isBot || isPotentialBot ? '/avatars/Little Helper.png' : `/avatars/${props.avatar}.png`
+)
 
 const { t } = useI18n()
 </script>

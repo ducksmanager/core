@@ -64,6 +64,12 @@ export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.
   return player!
 }
 
+export const updatePlayer = async (playerId: number, player: Index.player): Promise<Index.player> =>
+  await prisma.player.update({
+    where: { id: playerId },
+    data: player,
+  })
+
 export const getPlayerStatistics = async (
   player: Index.player,
   gameId: number

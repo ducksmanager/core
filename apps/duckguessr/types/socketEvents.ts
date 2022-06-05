@@ -31,6 +31,7 @@ export interface ClientToServerEvents {
   startMatch: (gameId: number) => void
   guess: (roundId: number, personcode: string | null) => void
   getStats: (gameId: number, callback: Function) => void
+  updateUser: (updatedUser: Index.player, callback: Function) => void
 }
 
 export interface InterServerEvents {}

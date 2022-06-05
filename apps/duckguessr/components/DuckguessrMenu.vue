@@ -6,7 +6,7 @@
         :href="isAnonymous ? undefined : '/profile'"
         class="pb-3"
       >
-        <player-info v-if="user" :username="user.username" />
+        <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
       </component>
       <b-navbar toggleable="md" type="dark" class="d-md-none justify-content-start">
         <b-navbar-toggle target="nav-collapse" class="px-2" />
