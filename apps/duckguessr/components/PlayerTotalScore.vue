@@ -1,22 +1,23 @@
 <template>
   <div class="wrapper d-flex" :class="{ vertical: vertical }">
     <div class="username">
-      <player-info :username="username" :top-player="topPlayer" />
+      <player-info :username="player.username" :avatar="player.avatar" :top-player="topPlayer" />
     </div>
     <div
       :class="`progress bg-success d-inline-flex justify-content-center align-items-center rank-${rank}`"
       :style="{ [vertical ? 'height' : 'width']: `${barSizePct}%` }"
     >
-      {{ score.toFixed(0) }}
+      {{ player.sum_score.toFixed(0) }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { PlayerWithSumScore } from '~/types/playerStats'
+
 const playerTotalScoreProps = withDefaults(
   defineProps<{
-    username: string
-    score: number
+    player: PlayerWithSumScore
     maxScoreAllPlayers: number
     vertical: boolean
     topPlayer: boolean
@@ -27,7 +28,8 @@ const playerTotalScoreProps = withDefaults(
   }
 )
 
-const barSizePct = (100 * playerTotalScoreProps.score) / playerTotalScoreProps.maxScoreAllPlayers
+const barSizePct =
+  (100 * playerTotalScoreProps.player.sum_score) / playerTotalScoreProps.maxScoreAllPlayers
 </script>
 
 <style scoped lang="scss">
@@ -59,6 +61,7 @@ const barSizePct = (100 * playerTotalScoreProps.score) / playerTotalScoreProps.m
   .username {
     width: 100px;
     height: initial;
+    justify-content: center;
   }
 
   &.vertical {

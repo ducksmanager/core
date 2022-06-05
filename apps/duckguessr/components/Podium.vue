@@ -5,8 +5,7 @@
       <player-total-score
         v-for="(player, index) in topPlayers"
         :key="player.username"
-        :score="player.sum_score"
-        :username="player.username"
+        :player="player"
         :max-score-all-players="maxPoints"
         top-player
         vertical
@@ -20,10 +19,9 @@
     </b-row>
     <div class="d-flex flex-row justify-content-center m-5">
       <player-total-score
-        v-for="{ username, sum_score } in otherPlayers"
-        :key="username"
-        :score="sum_score"
-        :username="username"
+        v-for="player in otherPlayers"
+        :key="player.username"
+        :player="player"
         :top-player="false"
         :vertical="false"
         :max-score-all-players="maxPoints"
