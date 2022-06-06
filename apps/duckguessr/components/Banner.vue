@@ -27,7 +27,7 @@
     }
   }
 
-  @media (min-width: 767px) {
+  @media (min-width: 992px) {
     height: 110px;
     width: calc(100% - 320px);
     right: 0;

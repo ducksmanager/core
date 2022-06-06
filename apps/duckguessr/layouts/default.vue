@@ -67,13 +67,13 @@ html {
         min-height: calc(100vh - 140px);
         padding: 120px 1rem 1rem 1rem;
 
-        @media (max-width: 767px) {
+        @media (max-width: 992px) {
           padding: 120px 0.25rem 0.25rem 0.25rem;
         }
       }
     }
 
-    @media (min-width: 767px) {
+    @media (min-width: 992px) {
       padding: 0 0 0 320px;
     }
   }

@@ -4,15 +4,20 @@
       <component
         :is="isAnonymous ? 'div' : 'a'"
         :href="isAnonymous ? undefined : '/profile'"
-        class="pb-3"
+        class="pb-3 d-none d-lg-block"
       >
         <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
       </component>
-      <b-navbar toggleable="md" type="dark" class="d-md-none justify-content-start">
+      <b-navbar toggleable="lg" type="dark" class="d-lg-none justify-content-start">
         <b-navbar-toggle target="nav-collapse" class="px-2" />
 
-        <b-collapse id="nav-collapse" is-nav class="border border-secondary">
-          <player-info v-if="user" :username="user.username" class="border-bottom" />
+        <b-collapse id="nav-collapse" is-nav class="border border-secondary mt-4">
+          <player-info
+            v-if="user"
+            :username="user.username"
+            :avatar="user.avatar"
+            class="border-bottom"
+          />
           <b-navbar-nav class="justify-content-start flex-row">
             <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
           </b-navbar-nav>
@@ -20,7 +25,7 @@
       </b-navbar>
       <language-switch-dropdown />
     </div>
-    <nuxt-link to="/podium" class="d-none d-md-block m-2 align-self-start">Podium</nuxt-link>
+    <nuxt-link to="/podium" class="d-none d-lg-block m-2 align-self-start">Podium</nuxt-link>
   </div>
 </template>
 <script lang="ts" setup>
@@ -40,7 +45,7 @@ $navbar-height: 40px;
   height: 100%;
   border-right: 5px solid #eee;
 
-  @media (max-width: 767px) {
+  @media (max-width: 992px) {
     overflow-y: hidden;
     border-right: none;
     top: 10px;
@@ -64,7 +69,7 @@ $navbar-height: 40px;
 
   #medals-and-login {
     width: 100%;
-    @media (min-width: 767px) {
+    @media (min-width: 992px) {
       border-bottom: 5px solid #eee;
     }
 
@@ -93,7 +98,7 @@ $navbar-height: 40px;
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 992px) {
   .d-flex.d-none {
     display: none !important;
   }

@@ -2,20 +2,23 @@
   <b-dropdown
     id="language-navbar"
     class="position-fixed"
+    menu-class="mt-4"
     variant="outline-secondary"
     boundary="viewport"
   >
     <template #button-content>
       <b-icon-flag-fill />
     </template>
-    <b-dropdown-item
+    <div
       v-for="(title, possibleLocale) in availableLocales"
       :key="possibleLocale"
-      :active="locale === possibleLocale"
-      @click="changeLocale(possibleLocale)"
+      class="mx-2"
+      @click.prevent="changeLocale(possibleLocale)"
     >
-      {{ title }}
-    </b-dropdown-item>
+      <a href="javascript:void(0)" :class="{ active: locale === possibleLocale }">
+        {{ title }}
+      </a>
+    </div>
   </b-dropdown>
 </template>
 <script setup lang="ts">
@@ -40,7 +43,14 @@ const changeLocale = (newLocale: string) => {
 <style lang="scss">
 $navbar-height: 40px;
 
-#language-navbar button {
-  background: #3d4b5f;
+.dropdown-menu {
+  background: #3d4b5f !important;
+
+  a {
+    &.active {
+      pointer-events: none;
+      color: white !important;
+    }
+  }
 }
 </style>

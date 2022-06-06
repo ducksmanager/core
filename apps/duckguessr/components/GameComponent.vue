@@ -22,7 +22,7 @@
         />
       </b-row>
     </b-col>
-    <b-col id="round-scores" cols="2" class="d-none d-md-block">
+    <b-col id="round-scores" cols="2" class="d-none d-md-block px-1">
       <div class="m-1 p-1 border overflow-auto">
         <h3>Round {{ currentRound.round_number }}</h3>
         <round-score
@@ -84,24 +84,25 @@ const roundDuration = ref(
 </script>
 <style lang="scss">
 #image-to-guess {
-  @media (max-width: 767px) {
+  @media (max-width: 992px) {
     height: calc(50% - 15px);
   }
 
   img {
+    max-width: 100%;
     max-height: 100%;
   }
 }
 #author-list-wrapper {
   height: 100%;
-  @media (max-width: 767px) {
+  @media (max-width: 992px) {
     height: calc(50% - 15px);
   }
 }
 
 #author-list {
   height: calc(100% - 50px);
-  @media (max-width: 767px) {
+  @media (max-width: 992px) {
     height: 100%;
   }
 
@@ -111,7 +112,7 @@ const roundDuration = ref(
 }
 
 #round-scores {
-  @media (min-width: 767px) {
+  @media (min-width: 992px) {
     height: 100%;
   }
 }
