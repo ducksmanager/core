@@ -69,11 +69,19 @@ const roundScoresAllPlayers = computed(() =>
           time_spent_guessing: 1000 * (props.availableTime - props.remainingTime),
           player_id: player.id,
           round_id: props.currentRound.id,
+          speed_bonus: 0,
         } as OngoingRoundScore)
     )
     // Correct scores first, then ongoing players, then wrong scores
-    .sort(({ score: score1 }, { score: score2 }) =>
-      score1 === 0 ? 1 : score2 === 0 ? -1 : (score1 || 0) > (score2 || 0) ? -1 : 1
+    .sort(
+      ({ score: score1, speed_bonus: speedBonus1 }, { score: score2, speed_bonus: speedBonus2 }) =>
+        score1 === 0
+          ? 1
+          : score2 === 0
+          ? -1
+          : (score1 || 0) + (speedBonus1 || 0) > (score2 || 0) + (speedBonus2 || 0)
+          ? -1
+          : 1
     )
 )
 

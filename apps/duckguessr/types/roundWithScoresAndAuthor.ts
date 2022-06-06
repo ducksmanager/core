@@ -16,4 +16,5 @@ export interface OngoingRoundScore {
   round_id: number
   score_type_name: null
   score: null
+  speed_bonus: number
 }
