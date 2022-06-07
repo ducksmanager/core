@@ -87,7 +87,7 @@ let signupUsername = $ref(""),
 
 const { r } = l10n(),
   t = useI18n().t,
-  csrfToken = document.getElementById("csrf"),
+  csrfToken = document.getElementById("csrf").value,
   hasErrors = $computed(() => form().hasErrors),
   signup = async () => {
     const { validatePasswords, validateEmail, validateUsername } =
