@@ -16,7 +16,10 @@ export interface ServerToClientEvents {
   playerJoined: (username: string) => void
   matchStarts: (gameId: number) => void
   roundStarts: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
-  roundEnds: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
+  roundEnds: (
+    round: Prisma.PromiseReturnType<typeof getRoundWithScores>,
+    nextRound: Prisma.PromiseReturnType<typeof getRoundWithScores>
+  ) => void
   gameEnds: () => void
   playerGuessed: (guessResponse: GuessResponse) => void
   logged: (player: Index.player) => void
@@ -29,7 +32,7 @@ export interface ClientToServerEvents {
   addBot: (gameId: number) => void
   joinMatch: (gameId: number, callback: Function) => void
   startMatch: (gameId: number) => void
-  guess: (roundId: number, personcode: string | null) => void
+  guess: (personcode: string | null) => void
   getStats: (gameId: number, callback: Function) => void
   updateUser: (updatedUser: Index.player, callback: Function) => void
 }

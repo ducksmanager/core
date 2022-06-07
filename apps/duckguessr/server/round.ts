@@ -1,9 +1,10 @@
 import type Index from '@prisma/client'
 import { GuessRequest, GuessResponse } from '../types/guess'
-import { numberOfRounds } from './game'
+
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+const gameKickoffTime = 3000
 const kickoffTime = 5000
 const roundTime = 10000
 
@@ -17,25 +18,22 @@ export const getRoundWithScores = async (roundId: number) =>
     },
   })
 
-export async function createGameRounds(gameId: number) {
-  const now = new Date(new Date().getTime() + 3000).getTime()
-  return await prisma.$transaction(
-    Array(numberOfRounds)
-      .fill(0)
-      .map((_, roundNumber) =>
-        prisma.round.updateMany({
-          where: {
-            game_id: gameId,
-            round_number: roundNumber + 1,
-            started_at: null,
-          },
-          data: {
-            started_at: new Date(now + roundNumber * (kickoffTime + roundTime)),
-            finished_at: new Date(now + (roundNumber * (kickoffTime + roundTime) + roundTime)),
-          },
-        })
-      )
-  )
+export const setRoundTimes = async (round: Index.round) => {
+  const offset = new Date(
+    new Date().getTime() + (round.round_number === 1 ? gameKickoffTime : kickoffTime)
+  ).getTime()
+  return await prisma.round.update({
+    where: {
+      id: round.id,
+    },
+    include: {
+      round_scores: true,
+    },
+    data: {
+      started_at: new Date(offset),
+      finished_at: new Date(offset + roundTime),
+    },
+  })
 }
 
 export async function guess(
@@ -49,9 +47,6 @@ export async function guess(
       where: {
         player_id: player.id,
         round_id: round.id,
-      },
-      include: {
-        player: true,
       },
     })
   ) {

@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 async function getStartedRound(gameId) {
-  return await prisma.rounds.findFirst({
+  return await prisma.round.findFirst({
     include: {
       round_scores: true,
     },

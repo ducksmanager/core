@@ -8,24 +8,19 @@ interface PredictionResponse {
   predictionProbability: string
 }
 
-export const predict = (
-  roundNumber: number,
-  url: string,
-  dataset: Index.dataset,
-  possibleAuthors: string[]
-) =>
+export const predict = (round: Index.round, dataset: Index.dataset, possibleAuthors: string[]) =>
   new Promise((resolve) => {
     console.log('Possible authors: ' + JSON.stringify(possibleAuthors))
     const startTime = new Date().getTime()
     axios
       .post(process.env.BOT_URL, {
-        url,
+        url: round.sitecode_url,
         dataset: dataset.name,
       })
       .then(({ data: { predicted, predictionProbability } }: { data: PredictionResponse }) => {
         console.log(`Prediction done in ${new Date().getTime() - startTime}ms`)
         console.log(
-          `Round ${roundNumber} - Predicted artist = ${predicted},
+          `Round ${round.round_number} - Predicted artist = ${predicted},
             probability of ${predictionProbability}%`
         )
         if (!possibleAuthors.includes(predicted)) {

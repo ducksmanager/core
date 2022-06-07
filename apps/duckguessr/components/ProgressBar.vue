@@ -1,7 +1,9 @@
 <template>
   <b-progress :variant="progressbarVariant">
     <div class="position-absolute pt-2 w-100">
-      <template v-if="remainingTime"> {{ t('Guess the author!') }} ({{ remainingTime }}) </template>
+      <template v-if="remainingTime && remainingTime !== Math.Infinity">
+        {{ t('Guess the author!') }} ({{ remainingTime }})
+      </template>
     </div>
     <b-progress-bar animated :value="remainingTime * (100 / availableTime)" />
   </b-progress>
@@ -9,12 +11,13 @@
 
 <script setup lang="ts">
 import { useI18n } from 'nuxt-i18n-composable'
-const props2 = defineProps<{
+const progressbarProps = defineProps<{
   availableTime: number
   remainingTime: number
 }>()
 
-const remainingTimePercentage = props2.remainingTime * (100 / props2.availableTime)
+const remainingTimePercentage =
+  progressbarProps.remainingTime * (100 / progressbarProps.availableTime)
 
 let progressbarVariant
 if (remainingTimePercentage <= 20) {

@@ -106,7 +106,6 @@ const createGameMatchmaking = (
       }
 
       console.log(`Game ${gameId} is starting!`)
-      await round.createGameRounds(currentGame!.id)
       createGameSocket(io, (await getGameWithRoundsDatasetPlayers(gameId))!)
       socket.broadcast.emit('matchStarts', currentGame!.id)
       socket.emit('matchStarts', currentGame!.id)

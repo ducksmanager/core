@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, useRoute } from '@nuxtjs/composition-api'
+import { computed, onMounted, ref, useRoute, watch } from '@nuxtjs/composition-api'
 
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
@@ -89,6 +89,13 @@ const currentRound = computed((): RoundWithScoresAndAuthor | null =>
   getRound(currentRoundNumber.value)
 )
 
+watch(
+  () => currentRound.value,
+  () => {
+    console.log(currentRound.value)
+  }
+)
+
 const availableTime = computed(() =>
   !currentRound.value || !currentRound.value.finished_at
     ? Infinity
@@ -116,7 +123,7 @@ const nextRoundStartDate = computed(() => {
 })
 
 const validateGuess = () => {
-  gameSocket!.emit('guess', currentRound.value!.id, chosenAuthor.value)
+  gameSocket!.emit('guess', chosenAuthor.value)
 }
 
 const loadGame = async () => {
@@ -158,9 +165,12 @@ onMounted(async () => {
       Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
       hasUrlLoaded.value = false
     })
-    .on('roundEnds', (round) => {
+    .on('roundEnds', (round, nextRound) => {
       chosenAuthor.value = null
       Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
+      if (nextRound) {
+        Vue.set(game.value!.rounds, currentRoundNumber.value!, nextRound)
+      }
     })
     .on('gameEnds', () => {
       gameIsFinished.value = true
