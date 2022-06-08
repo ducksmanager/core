@@ -1,11 +1,6 @@
-import axios from "axios";
 import { defineStore } from "pinia";
 
-import { coaCache } from "../util/cache";
-
-const coaApi = axios.create({
-  adapter: coaCache.adapter,
-});
+import { cachedCoaApi } from "../util/cache";
 
 const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/LOCALE`;
 const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";
@@ -93,7 +88,7 @@ export const coa = defineStore("coa", {
       if (!this.isLoadingCountryNames && !this.countryNames) {
         this.isLoadingCountryNames = true;
         this.countryNames = (
-          await coaApi.get(
+          await cachedCoaApi.get(
             URL_PREFIX_COUNTRIES.replace(
               "LOCALE",
               localStorage.getItem("locale")
@@ -166,7 +161,7 @@ export const coa = defineStore("coa", {
       if (this.publicationNamesFullCountries.includes(countryCode)) {
         return;
       }
-      return coaApi
+      return cachedCoaApi
         .get(URL_PREFIX_PUBLICATIONS + countryCode)
         .then(({ data }) => {
           this.addPublicationNames({
@@ -259,7 +254,7 @@ export const coa = defineStore("coa", {
 
     async fetchIssueCounts() {
       if (!this.issueCounts) {
-        this.issueCounts = (await coaApi.get(URL_ISSUE_COUNTS)).data;
+        this.issueCounts = (await cachedCoaApi.get(URL_ISSUE_COUNTS)).data;
       }
     },
 
@@ -267,7 +262,7 @@ export const coa = defineStore("coa", {
       const issueCode = `${publicationCode} ${issueNumber}`;
       if (!this.issueDetails[issueCode]) {
         let issueDetails = (
-          await coaApi.get(
+          await cachedCoaApi.get(
             `${URL_PREFIX_URLS + publicationCode}/${issueNumber}`
           )
         ).data;
@@ -297,8 +292,8 @@ export const coa = defineStore("coa", {
               await acc
             ).concat(
               await (method === "get"
-                ? coaApi.get(`${url}${codeChunk.join(",")}`)
-                : coaApi.request({
+                ? cachedCoaApi.get(`${url}${codeChunk.join(",")}`)
+                : cachedCoaApi.request({
                     method,
                     url,
                     data: { [parameterName]: codeChunk.join(",") },

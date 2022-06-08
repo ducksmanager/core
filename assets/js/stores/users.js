@@ -1,11 +1,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 
-import { userCache } from "../util/cache";
-
-const api = axios.create({
-  adapter: userCache.adapter,
-});
+import { cachedUserApi } from "../util/cache";
 
 export const users = defineStore("users", {
   state: () => ({
@@ -19,7 +15,9 @@ export const users = defineStore("users", {
   actions: {
     async fetchCount() {
       if (!this.count) {
-        this.count = (await api.get("/global-stats/user/count")).data.count;
+        this.count = (
+          await cachedUserApi.get("/global-stats/user/count")
+        ).data.count;
       }
     },
     async fetchStats(userIds, clearCacheEntry = true) {
@@ -33,7 +31,8 @@ export const users = defineStore("users", {
         .sort((a, b) => (a < b ? -1 : 1))
         .join(",")}`;
 
-      const data = (await api.get(url, { clearCacheEntry })).data;
+      const data = (await cachedUserApi.get(url, { cache: !clearCacheEntry }))
+        .data;
       this.points = {
         ...this.points,
         ...data.points.reduce(
@@ -65,10 +64,9 @@ export const users = defineStore("users", {
     },
 
     async fetchEvents(clearCacheEntry = true) {
-      const {
-        data,
-        request: { fromCache },
-      } = await api.get("/events", { clearCacheEntry });
+      const { data, cached } = await cachedUserApi.get("/events", {
+        cache: !clearCacheEntry,
+      });
       this.events = (data || [])
         .map((event) => {
           if (event.exampleIssue) {
@@ -101,7 +99,7 @@ export const users = defineStore("users", {
         )
         .filter((_, index) => index < 50);
 
-      return !fromCache;
+      return !cached;
     },
   },
 });

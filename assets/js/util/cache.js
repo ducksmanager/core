@@ -1,5 +1,7 @@
-import { setupCache } from "axios-cache-adapter";
-import localforage from "localforage";
+import axios from "axios";
+import { buildWebStorage, setupCache } from "axios-cache-interceptor";
+
+const customStorage = buildWebStorage(sessionStorage);
 
 const now = new Date();
 let inAnHour = new Date();
@@ -17,43 +19,26 @@ coaCacheExpiration.setMinutes(0);
 coaCacheExpiration.setSeconds(0);
 coaCacheExpiration.setMilliseconds(0);
 
-const appCache = setupCache({
-  maxAge: inAMonth - now,
-  store: localforage,
-  exclude: {
-    query: false,
-  },
+const commonCacheOptions = {
+  etag: false,
+  modifiedSince: false,
+  interpretHeader: false,
+  storage: customStorage,
+};
+
+const cachedL10nApi = setupCache(axios.create(), {
+  ...commonCacheOptions,
+  ttl: inAMonth - now,
 });
 
-const userCache = setupCache({
-  maxAge: inAnHour - now,
-  store: localforage,
-  invalidate: async (config, request) => {
-    if (request.clearCacheEntry) {
-      await config.store.removeItem(config.uuid);
-    }
-  },
+const cachedUserApi = setupCache(axios.create(), {
+  ...commonCacheOptions,
+  ttl: inAnHour - now,
 });
 
-const coaCache = setupCache({
-  maxAge: coaCacheExpiration - now,
-  store: localforage,
+const cachedCoaApi = setupCache(axios.create(), {
+  ...commonCacheOptions,
+  ttl: coaCacheExpiration - now,
 });
 
-// Remove infinite cache set by mistake
-localforage.keys((error, keys) => {
-  keys.forEach((key) => {
-    localforage.getItem(key, (error, value) => {
-      if (
-        (typeof value !== "object" && isNaN(value)) ||
-        !value ||
-        !value.expires ||
-        typeof value.expires !== "number"
-      ) {
-        localforage.removeItem(key);
-      }
-    });
-  });
-});
-
-export { appCache, coaCache, userCache };
+export { cachedCoaApi, cachedL10nApi, cachedUserApi };

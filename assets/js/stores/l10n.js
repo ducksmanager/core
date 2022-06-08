@@ -1,11 +1,6 @@
-import axios from "axios";
 import { defineStore } from "pinia";
 
-import { appCache } from "../util/cache";
-
-const appApi = axios.create({
-  adapter: appCache.adapter,
-});
+import { cachedL10nApi } from "../util/cache";
 
 const PATH_REGEX = /{([^:]+)(?::([^}]+))?}/g;
 
@@ -32,7 +27,7 @@ export const l10n = defineStore("l10n", {
       if (!this.isLoading && !this.l10nRoutes) {
         this.isLoading = true;
         this.l10nRoutes = (
-          await appApi.get(`/routes?${localStorage.getItem("commit")}`)
+          await cachedL10nApi.get(`/routes?${localStorage.getItem("commit")}`)
         ).data;
         this.isLoading = false;
       }
