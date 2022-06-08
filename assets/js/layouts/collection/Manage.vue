@@ -140,11 +140,13 @@ watch(
       await fetchPublicationNames(Object.keys(newValue));
       hasPublicationNames = true;
     }
-  }
+  },
+  { immediate: true }
 );
 
 onMounted(() => {
   collection().loadCollection();
+  coa().fetchCountryNames();
 });
 </script>
 

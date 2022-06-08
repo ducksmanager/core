@@ -16,6 +16,7 @@
     <b-button
       v-if="!noButton"
       :disabled="!currentPublicationCode"
+      variant="secondary"
       :href="r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
     >
       {{ $t("OK") }}
@@ -25,6 +26,7 @@
 
 <script setup>
 import { BButton, BFormSelect } from "bootstrap-vue-3";
+import { watch } from "vue";
 
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
@@ -45,8 +47,8 @@ const props = defineProps({
 });
 defineEmits(["input"]);
 
-const currentCountryCode = $computed(() => props.initialCountryCode),
-  currentPublicationCode = $computed(() => props.initialPublicationCode);
+let currentCountryCode = $ref(props.initialCountryCode),
+  currentPublicationCode = $ref(props.initialPublicationCode);
 const coaStore = coa(),
   countryNames = $computed(() => coaStore.countryNames),
   publicationNames = $computed(() => coaStore.publicationNames),
@@ -69,6 +71,19 @@ const coaStore = coa(),
       : []
   ),
   { r } = l10n();
+
+watch(
+  () => currentCountryCode,
+  (newValue) => {
+    if (newValue) {
+      coaStore.fetchPublicationNamesFromCountry(newValue);
+      currentPublicationCode = null;
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <style scoped>

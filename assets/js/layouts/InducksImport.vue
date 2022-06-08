@@ -445,10 +445,6 @@ watch(
     font-size: 14px;
     line-height: 25px;
   }
-
-  a.btn-primary {
-    color: white !important;
-  }
 }
 
 iframe,

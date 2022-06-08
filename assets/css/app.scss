@@ -24,6 +24,14 @@ a {
   &.nav-link.active {
     color: black !important;
   }
+
+  &.btn {
+    color: white !important;
+
+    &.disabled {
+      cursor: not-allowed !important;
+    }
+  }
 }
 
 .dropdown ul li a {

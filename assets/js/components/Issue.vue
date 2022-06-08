@@ -11,7 +11,7 @@
         v-once
         :publicationcode="publicationcode"
         :issuenumber="issuenumber"
-      />
+      />&nbsp;
       <Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname"
