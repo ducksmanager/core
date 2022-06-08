@@ -21,6 +21,8 @@ RUN echo COMMIT=`cat /var/www/html/commit.txt` >> .env.prod.local && rm /var/www
     mv .env.prod.local .env.local && \
     composer install && npm install && npm run build
 
+RUN chmod a+w -R /var/www/html/var/cache
+
 FROM nginx:1.15 AS web
 MAINTAINER Bruno Perel
 
