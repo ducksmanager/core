@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!username" class="container-fluid py-5">
+    <div v-if="!username" id="wrapper" class="container-fluid py-5">
       <p class="col-md-8 fs-4" />
       <div id="dm-loves-inducks">
         <div
@@ -45,10 +45,10 @@
         }}
       </p>
       <p>
-        <b-button size="lg" variant="primary" :href="r('/signup')">
+        <b-button class="mx-2" size="lg" variant="primary" :href="r('/signup')">
           {{ $t("Inscription") }}
         </b-button>
-        <b-button size="lg" variant="primary" :href="r('/login')">
+        <b-button class="mx-2" size="lg" variant="primary" :href="r('/login')">
           {{ $t("Connexion") }}
         </b-button>
       </p>
@@ -93,7 +93,7 @@
           <b-form-group>
             <b-form-textarea id="inducks-collection" v-model="rawData" />
           </b-form-group>
-          <b-button @click="processRawData()" v-text="$t('Importer')" />
+          <b-button @click="processRawData()">{{ $t("Importer") }}</b-button>
         </b-col>
       </b-row>
     </form>
@@ -405,7 +405,7 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.jumbotron {
+#wrapper {
   background: white;
   color: black;
 
@@ -444,6 +444,10 @@ watch(
   p {
     font-size: 14px;
     line-height: 25px;
+  }
+
+  a.btn-primary {
+    color: white !important;
   }
 }
 
