@@ -78,7 +78,7 @@
       <span v-for="(subscriber, index) in event.users" :key="subscriber">
         <template v-if="event.users.length > 1">
           <template v-if="index === event.users.length - 1">
-            {{ $t("et") }}
+            {{ ` ${$t("et")} ` }}
           </template>
           <template v-else-if="index > 0"> , </template>
         </template>
@@ -89,10 +89,10 @@
         />
       </span>
       <template v-if="event.users.length > 1">
-        {{ $t("ont reçu") }}
+        {{ ` ${$t("ont reçu")} ` }}
       </template>
       <template v-else>
-        {{ $t("a reçu") }}
+        {{ ` ${$t("a reçu")} ` }}
       </template>
       <Issue
         v-if="publicationNames[event.publicationCode]"
