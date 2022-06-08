@@ -68,24 +68,12 @@ const publicationNames = $computed(() => coa().publicationNames),
     await fetchStats(eventUserIds, clearCacheEntry);
   };
 
-watch(
-  () => numberOfOngoingAjaxCalls,
-  async (newValue) => {
-    if (newValue === 0) {
-      setTimeout(async () => {
-        if (!hasFreshEvents && numberOfOngoingAjaxCalls === 0) {
-          // Still no ongoing call after 1 second
-          await fetchEventsAndAssociatedData(true);
-          hasFreshEvents = true;
-        }
-      }, 1000);
-    }
-  },
-  { immediate: true }
-);
-
 onMounted(async () => {
   await fetchEventsAndAssociatedData(false);
+  setTimeout(async () => {
+    await fetchEventsAndAssociatedData(true);
+    hasFreshEvents = true;
+  }, 1000);
   isLoaded = true;
 });
 </script>
