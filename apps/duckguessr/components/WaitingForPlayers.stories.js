@@ -1,3 +1,4 @@
+import { useCookies } from '@vueuse/integrations/useCookies'
 import WaitingForPlayers from '~/components/WaitingForPlayers'
 
 export default {
@@ -7,6 +8,10 @@ export default {
 const Template = (args) => ({
   components: { WaitingForPlayers },
   setup() {
+    useCookies().set('duckguessr-user', 'brunoperel', {
+      expires: new Date(new Date().getTime() + 3600000),
+      path: '/',
+    })
     return { args }
   },
   template: '<WaitingForPlayers v-bind="args" />',
@@ -23,4 +28,11 @@ Default.args = {
     'Picsou22',
     'bot_us',
   ],
+}
+
+export const WithPotentialBot = Template.bind({})
+WithPotentialBot.args = {
+  gameId: 123,
+  usernames: ['brunoperel', 'Wizyx', 'remifanpicsou'],
+  isBotAvailable: true,
 }

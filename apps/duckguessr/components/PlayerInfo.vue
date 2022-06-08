@@ -1,15 +1,20 @@
 <template>
   <div
     class="d-flex flex-column align-items-center justify-content-around text-center"
-    :class="{ opacity50: isPotentialBot, pointer: isPotentialBot }"
+    :class="{ opacity50: isPotentialBot, pointer: isPotentialBot || toggleable }"
     style="height: 100px"
-    @click="$emit('click')"
+    @click="toggleable ? $emit('toggle') : () => {}"
   >
     <b-avatar :class="{ 'top-player': topPlayer }" size="4rem" :src="src" />
     <div class="username" :class="{ small: isPotentialBot }">
-      <template v-if="isBot">BOT</template>
-      <template v-else-if="isPotentialBot">{{ t('Click to add a bot to the game') }}</template>
-      <template v-else>{{ username }}</template>
+      <template v-if="isBot">
+        <div>BOT</div>
+        <div v-if="toggleable" class="small">
+          {{ t('Click to remove the bot from the game') }}
+        </div>
+      </template>
+      <div v-else-if="isPotentialBot">{{ t('Click to add a bot to the game') }}</div>
+      <div v-else>{{ username }}</div>
     </div>
   </div>
 </template>
@@ -23,19 +28,23 @@ const props = withDefaults(
     username: string
     topPlayer: boolean
     avatar: string
+    toggleable: boolean
   }>(),
   {
     topPlayer: false,
     avatar: "HDL's father",
+    toggleable: false,
   }
 )
 
-defineEmits(['click'])
+defineEmits(['toggle'])
 
-const isBot = /^bot_/.test(props.username)
-const isPotentialBot = props.username === 'potential_bot'
+const isBot = computed(() => /^bot_/.test(props.username))
+const isPotentialBot = computed(() => props.username === 'potential_bot')
 const src = computed(() =>
-  isBot || isPotentialBot ? '/avatars/Little Helper.png' : `/avatars/${props.avatar}.png`
+  isBot.value || isPotentialBot.value
+    ? '/avatars/Little Helper.png'
+    : `/avatars/${props.avatar}.png`
 )
 
 const { t } = useI18n()
@@ -59,8 +68,13 @@ const { t } = useI18n()
 
 .username {
   display: flex;
+  flex-direction: column;
   align-items: center;
   height: 1.5rem;
+}
+
+.small {
+  color: grey;
 }
 
 .opacity50 {

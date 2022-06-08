@@ -3,10 +3,14 @@
     <h3>{{ t('The game is about to start!') }}</h3>
     <b-row align-h="center">
       <b-card v-for="username in usernames" :key="username" class="player m-3 col-lg-3">
-        <player-info :username="username" />
+        <player-info
+          :username="username"
+          :toggleable="isBot(username)"
+          @toggle="$emit('remove-bot')"
+        />
       </b-card>
       <b-card v-if="isMatchCreator && isBotAvailable && !isBotPlaying" class="player m-3 col-lg-3">
-        <player-info username="potential_bot" @click="$emit('add-bot')" />
+        <player-info username="potential_bot" toggleable @toggle="$emit('add-bot')" />
       </b-card>
     </b-row>
     <b-row align-h="center" class="mt-3">
@@ -53,18 +57,20 @@ export default defineComponent({
   props: {
     usernames: { type: Array as () => Array<string>, required: true },
     gameId: { type: Number, required: true },
-    isBotAvailable: { type: Boolean, require: true },
+    isBotAvailable: { type: Boolean, required: true },
   },
-  emits: ['start-match', 'add-bot'],
+  emits: ['start-match', 'add-bot', 'remove-bot'],
   setup(props) {
     const { t } = useI18n()
     // For some reason vue-i18n's interpolation doesn't work
     const title = computed(() =>
       t("Join {username}'s Duckguessr game!").toString().replace('{username}', props.usernames[0])
     )
-    const gameUrl = `${location.origin}/matchmaking/${props.gameId}`
-    const isMatchCreator = getDuckguessrUsername() === props.usernames[0]
-    const isBotPlaying = computed(() => props.usernames.find((username) => /^bot_/.test(username)))
+    const gameUrl = computed(() => `${location.origin}/matchmaking/${props.gameId}`)
+    const isMatchCreator = computed(() => getDuckguessrUsername() === props.usernames[0])
+    const isBotPlaying = computed(() => props.usernames.find((username) => isBot(username)))
+
+    const isBot = (username: string) => /^bot_/.test(username)
 
     useMeta(() => ({
       title: title.value,
@@ -83,7 +89,7 @@ export default defineComponent({
         },
         {
           property: 'og:url',
-          content: gameUrl,
+          content: gameUrl.value,
         },
         {
           property: 'og:image',
@@ -97,6 +103,7 @@ export default defineComponent({
       t,
       isMatchCreator,
       isBotPlaying,
+      isBot,
     }
   },
   head: {},

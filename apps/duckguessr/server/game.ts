@@ -88,3 +88,12 @@ export async function associatePlayer(gameId: number, player: Index.player) {
     },
   })
 }
+
+export async function disassociatePlayer(gameId: number, player: Index.player) {
+  await prisma.game_player.deleteMany({
+    where: {
+      game_id: gameId,
+      player,
+    },
+  })
+}

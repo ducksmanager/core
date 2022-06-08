@@ -14,7 +14,8 @@ const getRoundWithScores = async (roundId: number) =>
 
 export interface ServerToClientEvents {
   playerJoined: (username: string) => void
-  matchStarts: (gameId: number) => void
+  playerLeft: (username: string) => void
+  matchStarts: () => void
   roundStarts: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
   roundEnds: (
     round: Prisma.PromiseReturnType<typeof getRoundWithScores>,
@@ -29,9 +30,10 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   login: (callback: Function) => void
   createMatch: (dataset: string, callback: Function) => void
-  addBot: (gameId: number) => void
-  joinMatch: (gameId: number, callback: Function) => void
-  startMatch: (gameId: number) => void
+  addBot: () => void
+  removeBot: () => void
+  joinMatch: (callback: Function) => void
+  startMatch: () => void
   guess: (personcode: string | null) => void
   getStats: (gameId: number, callback: Function) => void
   updateUser: (updatedUser: Index.player, callback: Function) => void

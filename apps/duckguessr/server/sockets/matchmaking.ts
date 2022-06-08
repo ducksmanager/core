@@ -51,31 +51,57 @@ const createGameMatchmaking = (
   gameId: number
 ) => {
   io.of(`/matchmaking/${gameId}`).on('connection', async (socket) => {
+    const validateGameForBotAddOrRemove = (
+      game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
+    ) => {
+      if (game === null) {
+        console.error(`Game ${gameId} doesn't exist`)
+        return false
+      }
+      if (user!.id !== game!.game_players[0].player_id) {
+        console.error('Only the player creating the match can add or remove a bot!')
+        return false
+      }
+    }
+
     const user = await getPlayer(socket.handshake.auth.cookie)
     if (!user) {
       console.log(`Can't find user for cookie ${JSON.stringify(socket.handshake.auth.cookie)}`)
       return false
     }
 
-    socket.on('addBot', async (gameId) => {
+    socket.on('removeBot', async () => {
       const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
-      if (currentGame === null) {
-        console.error(`Game ${gameId} doesn't exist`)
-        return false
-      }
-      if (user.id !== currentGame!.game_players[0].player_id) {
-        console.error('Only the player creating the match can add or remote a bot!')
-        return false
-      }
+      validateGameForBotAddOrRemove(currentGame)
 
       const botUsername = `bot_${currentGame!.dataset.name}`
-      await game.associatePlayer(gameId, await getBotUser(botUsername))
 
-      socket.broadcast.emit('playerJoined', botUsername)
-      socket.emit('playerJoined', botUsername)
+      if (!currentGame!.game_players.map(({ player }) => player.username).includes(botUsername)) {
+        console.log(`${botUsername} is not part of the game`)
+      } else {
+        await game.disassociatePlayer(gameId, await getBotUser(botUsername))
+
+        socket.broadcast.emit('playerLeft', botUsername)
+        socket.emit('playerLeft', botUsername)
+      }
     })
 
-    socket.on('joinMatch', async (gameId, callback: Function) => {
+    socket.on('addBot', async () => {
+      const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+      validateGameForBotAddOrRemove(currentGame)
+
+      const botUsername = `bot_${currentGame!.dataset.name}`
+      if (currentGame!.game_players.map(({ player }) => player.username).includes(botUsername)) {
+        console.log(`${botUsername} has already joined the game`)
+      } else {
+        await game.associatePlayer(gameId, await getBotUser(botUsername))
+
+        socket.broadcast.emit('playerJoined', botUsername)
+        socket.emit('playerJoined', botUsername)
+      }
+    })
+
+    socket.on('joinMatch', async (callback: Function) => {
       let currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       if (currentGame === null) {
         console.error(`Game ${gameId} doesn't exist`)
@@ -93,7 +119,7 @@ const createGameMatchmaking = (
       } as MatchDetails)
     })
 
-    socket.on('startMatch', async (gameId) => {
+    socket.on('startMatch', async () => {
       const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
 
       if (currentGame === null) {
@@ -107,8 +133,8 @@ const createGameMatchmaking = (
 
       console.log(`Game ${gameId} is starting!`)
       createGameSocket(io, (await getGameWithRoundsDatasetPlayers(gameId))!)
-      socket.broadcast.emit('matchStarts', currentGame!.id)
-      socket.emit('matchStarts', currentGame!.id)
+      socket.broadcast.emit('matchStarts')
+      socket.emit('matchStarts')
     })
   })
 }

@@ -25,6 +25,15 @@ export const Bot = Template.bind({})
 Bot.args = {
   username: 'bot_us',
 }
+export const BotRemovable = Template.bind({})
+BotRemovable.args = {
+  username: 'bot_us',
+  toggleable: true,
+}
+export const PotentialBot = Template.bind({})
+PotentialBot.args = {
+  username: 'potential_bot',
+}
 
 export const CustomAvatar = Template.bind({})
 CustomAvatar.args = {
