@@ -8,6 +8,7 @@
     >
       <Condition
         v-if="!hideCondition"
+        v-once
         :publicationcode="publicationcode"
         :issuenumber="issuenumber"
       />

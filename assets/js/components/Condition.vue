@@ -21,17 +21,21 @@ import { condition } from "../composables/condition";
 
 const { conditions, getConditionLabel } = condition(),
   { findInCollection } = collection(),
-  issueInCollection = $computed(() =>
-    value ? true : findInCollection(publicationcode, issuenumber)
-  ),
-  currentCondition = $computed(() =>
-    value
-      ? conditions.find(({ value: conditionValue }) => value === conditionValue)
-      : issueInCollection &&
+  currentCondition = $computed(() => {
+    if (value) {
+      return conditions.find(
+        ({ value: conditionValue }) => value === conditionValue
+      );
+    } else {
+      const issueInCollection = findInCollection(publicationcode, issuenumber);
+      return (
+        issueInCollection &&
         conditions.find(
           ({ dbValue }) => dbValue === issueInCollection.condition
         )
-  );
+      );
+    }
+  });
 </script>
 
 <style scoped lang="scss">

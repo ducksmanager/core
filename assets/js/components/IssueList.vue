@@ -107,12 +107,13 @@
             <span>
               <a :name="issueNumber" />
               <b-icon-eye-fill
+                v-once
                 :id="`issue-details-${issueNumber}`"
                 :class="{
                   'mx-2': true,
                   [`can-show-book-${hoveredIssueHasCover}`]: true,
                 }"
-                :alt="$t('Voir')"
+                :alt="viewText"
                 @mouseover="hoveredIssueNumber = issueNumber"
                 @mouseout="
                   hoveredIssueNumber = null;
@@ -125,7 +126,7 @@
                 "
               />
               <span class="issue-text">
-                {{ $t("n°") }}{{ issueNumber }}
+                {{ issueNumberTextPrefix }}{{ issueNumber }}
                 <span class="issue-title">{{ title }}</span>
               </span>
             </span>
@@ -144,7 +145,7 @@
                       purchases.find(({ id }) => id === purchaseId)
                     "
                     class="issue-purchase-date"
-                    :title="`${$t('Acheté le')} ${
+                    :title="`${boughtOnTextPrefix} ${
                       purchases.find(({ id }) => id === purchaseId).date
                     }`"
                   />
@@ -231,6 +232,7 @@ import axios from "axios";
 import { BIconCalendar, BIconEyeFill } from "bootstrap-icons-vue";
 import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 import { condition } from "../composables/condition";
 import { coa } from "../stores/coa";
@@ -252,7 +254,8 @@ const props = defineProps({
   },
 });
 
-const { conditions } = condition();
+const { conditions } = condition(),
+  { t: $t } = useI18n();
 
 let loading = $ref(true),
   publicationNameLoading = $ref(true),
@@ -261,16 +264,19 @@ let loading = $ref(true),
     possessed: true,
   }),
   contextmenu = $ref(null),
-  issues = $ref(null),
-  userIssuesForPublication = $ref(null),
-  userIssuesNotFoundForPublication = $ref([]),
-  selected = $ref([]),
-  preselected = $ref([]),
+  issues = $shallowRef(null),
+  userIssuesForPublication = $shallowRef(null),
+  userIssuesNotFoundForPublication = $shallowRef([]),
+  selected = $shallowRef([]),
+  preselected = $shallowRef([]),
   preselectedIndexStart = $ref(null),
   preselectedIndexEnd = $ref(null),
   hoveredIssueNumber = $ref(null),
   hoveredIssueHasCover = $ref(undefined),
-  currentIssueOpened = $ref(null);
+  currentIssueOpened = $shallowRef(null),
+  issueNumberTextPrefix = $computed(() => $t("n°")),
+  boughtOnTextPrefix = $computed(() => $t("Acheté le")),
+  viewText = $computed(() => $t("Voir"));
 
 const contextMenuKey = "context-menu",
   publicationNames = $computed(() => coa().publicationNames),

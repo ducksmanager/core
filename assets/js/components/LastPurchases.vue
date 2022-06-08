@@ -44,16 +44,15 @@ import Accordion from "./Accordion";
 import Issue from "./Issue";
 
 const publicationNames = $computed(() => coa().publicationNames),
-  collection = $computed(() => collectionStore().collection),
-  purchases = $computed(() => collectionStore().purchases),
   collectionPerPurchaseDate = $computed(
     () =>
-      collection &&
-      purchases &&
-      collection
-        .reduce((acc, issue) => {
+      collectionStore().purchases &&
+      collectionStore()
+        .collection?.reduce((acc, issue) => {
           const purchase = (issue.purchaseId > 0 &&
-            purchases.find(({ id }) => id === issue.purchaseId)) || {
+            collectionStore().purchases.find(
+              ({ id }) => id === issue.purchaseId
+            )) || {
             date: issue.creationDate,
           };
           let purchaseIndex = acc.findIndex(
