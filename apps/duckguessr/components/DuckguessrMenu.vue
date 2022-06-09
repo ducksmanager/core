@@ -44,6 +44,7 @@ $navbar-height: 40px;
   width: 325px;
   height: 100%;
   border-right: 5px solid #eee;
+  z-index: 2;
 
   @media (max-width: 992px) {
     overflow-y: hidden;

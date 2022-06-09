@@ -10,7 +10,7 @@
       <template v-if="isBot">
         <div>BOT</div>
         <div v-if="toggleable" class="small">
-          {{ t('Click to remove the bot from the game') }}
+          {{ t('Click to remove') }}
         </div>
       </template>
       <div v-else-if="isPotentialBot">{{ t('Click to add a bot to the game') }}</div>

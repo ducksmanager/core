@@ -43,9 +43,12 @@ const changeLocale = (newLocale: string) => {
 <style lang="scss">
 $navbar-height: 40px;
 
+#language-navbar button,
 .dropdown-menu {
   background: #3d4b5f !important;
+}
 
+.dropdown-menu {
   a {
     &.active {
       pointer-events: none;
