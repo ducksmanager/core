@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-row v-if="noMedalProgress" class="justify-content-center">
-      Vous n'avez pas obtenu de nouvelles médailles pendant cette partie.
+      {{ t("You haven't won medals during this game.") }}
     </b-row>
     <b-row v-else>
       <b-col v-for="(medalLevelAndProgress, type) in levelsAndProgress" :key="type">
@@ -16,12 +16,15 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'nuxt-i18n-composable'
 import { MedalLevel, MedalLevelAndProgress } from '~/types/playerStats'
 
 const MEDAL_LEVELS: MedalLevel[] = [
   new MedalLevel('fast', [20, 100, 500]),
   new MedalLevel('ultra_fast', [10, 50, 200]),
 ]
+
+const { t } = useI18n()
 
 const props = defineProps({
   stats: {

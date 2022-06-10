@@ -2,28 +2,6 @@
   <div>
     <h3>{{ t('Game summary') }}</h3>
     <b-container>
-      <b-row class="flex-column align-items-center">
-        <template v-if="currentUserHasParticipated">
-          <div>
-            Vous avez trouvé la bonne réponse dans<b>
-              {{ currentUserWonRounds.length }} rounds sur {{ roundsWithPersonUrls.length }}</b
-            >.
-          </div>
-          <div>
-            Vous avez été le plus rapide dans<b>
-              {{ currentUserWonFastestRounds.length }} rounds sur
-              {{ roundsWithPersonUrls.length }}</b
-            >.
-          </div>
-        </template>
-        <div v-else>Vous n'avez pas participé à cette partie.</div>
-      </b-row>
-    </b-container>
-    <template v-if="currentUserHasParticipated && currentUserFastRounds">
-      <h3>Médailles</h3>
-      <medal-list :stats="currentUserFastRounds" />
-    </template>
-    <b-container>
       <b-row class="justify-content-center">
         <RoundResult
           v-for="round in roundsWithPersonUrls"
@@ -32,6 +10,41 @@
         />
       </b-row>
     </b-container>
+    <b-container>
+      <b-row class="flex-column align-items-center">
+        <template v-if="currentUserHasParticipated">
+          <h3 class="mb-3">
+            {{
+              players.find(({ player_id: playerId }) => playerId === winningPlayer.playerId).player
+                .username
+            }}
+            {{ t('won the match!') }}
+          </h3>
+          <div>
+            {{ t('You have found the correct answer in')
+            }}<b>
+              {{ currentUserWonRounds.length }} {{ t('rounds out of') }}
+              {{ roundsWithPersonUrls.length }}</b
+            >.
+          </div>
+          <div>
+            {{ t('You were the fastest in')
+            }}<b>
+              {{ currentUserWonFastestRounds.length }} {{ t('rounds out of') }}
+              {{ roundsWithPersonUrls.length }}</b
+            >.
+          </div>
+        </template>
+        <div v-else>{{ t("Vous n'avez pas participé à cette partie.") }}</div>
+      </b-row>
+    </b-container>
+    <template v-if="currentUserHasParticipated">
+      <h3>{{ t('Medals') }}</h3>
+      <medal-list v-if="currentUserFastRounds" :stats="currentUserFastRounds" />
+      <b-row v-else class="justify-content-center">
+        {{ t("You haven't won medals during this game.") }}
+      </b-row>
+    </template>
     <h3 class="mt-3">Scores</h3>
     <b-table striped dark :items="playersWithScoresAndTotalScore" class="align-items-center">
       <template #head(playerId)="">&nbsp;</template>
@@ -73,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from '@nuxtjs/composition-api'
+import { computed, ref } from '@nuxtjs/composition-api'
 import Index from '@prisma/client'
 import { useI18n } from 'nuxt-i18n-composable'
 import { io } from 'socket.io-client'
@@ -161,6 +174,10 @@ const currentUserScores = gameScoresProps.rounds.map(({ round_scores }) =>
 
 const currentUserWonRounds = currentUserScores.filter(
   (roundScore) => roundScore?.score_type_name === 'Correct author'
+)
+
+const winningPlayer = computed(() =>
+  playersWithScoresAndTotalScore?.find((player) => player._rowVariant === 'success')
 )
 
 const currentUserWonFastestRounds = currentUserWonRounds.filter(

@@ -1,3 +1,4 @@
+import { useCookies } from '@vueuse/integrations/useCookies'
 import GameScores from '~/components/GameScores'
 
 export default {
@@ -7,6 +8,7 @@ export default {
 const Template = (args) => ({
   components: { GameScores },
   setup() {
+    useCookies().set('duckguessr-id', 1)
     return { args }
   },
   template: '<GameScores v-bind="args" />',
