@@ -12,6 +12,7 @@
   <b-container v-else fluid class="d-flex flex-grow-1 p-0">
     <game-component
       :available-time="availableTime"
+      :has-everybody-guessed="hasEverybodyGuessed"
       :chosen-author="chosenAuthor"
       :current-round="currentRound"
       :authors="game.authors"
@@ -30,12 +31,13 @@
       :correct-author="getAuthor(currentRound.personcode)"
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
+      :has-everybody-guessed="hasEverybodyGuessed"
     />
   </b-container>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, useRoute, watch } from '@nuxtjs/composition-api'
+import { computed, onMounted, ref, useRoute } from '@nuxtjs/composition-api'
 
 import type Index from '@prisma/client'
 import { io, Socket } from 'socket.io-client'
@@ -63,6 +65,7 @@ const { t } = useI18n()
 const route = useRoute()
 
 const chosenAuthor = ref(null as string | null)
+const hasEverybodyGuessed = ref(false as boolean)
 const gameIsFinished = ref(false as boolean)
 
 const game = ref(null as GameFull | null)
@@ -89,23 +92,16 @@ const currentRound = computed((): RoundWithScoresAndAuthor | null =>
   getRound(currentRoundNumber.value)
 )
 
-watch(
-  () => currentRound.value,
-  () => {
-    console.log(currentRound.value)
-  }
-)
-
 const availableTime = computed(() =>
-  !currentRound.value || !currentRound.value.finished_at
+  !currentRound.value
     ? Infinity
-    : (new Date(currentRound.value!.finished_at).getTime() -
+    : (new Date(currentRound.value!.finished_at!).getTime() -
         new Date(currentRound.value!.started_at!).getTime()) /
       1000
 )
 
 const remainingTime = computed(() =>
-  !currentRound.value || new Date(currentRound.value!.started_at!).getTime() > now.value
+  !currentRound.value
     ? Infinity
     : Math.floor(
         Math.max(0, (new Date(currentRound.value!.finished_at!).getTime() - now.value) / 1000)
@@ -123,7 +119,9 @@ const nextRoundStartDate = computed(() => {
 })
 
 const validateGuess = () => {
-  gameSocket!.emit('guess', chosenAuthor.value)
+  gameSocket!.emit('guess', chosenAuthor.value, (hasEverybodyGuessedResult: boolean) => {
+    hasEverybodyGuessed.value = hasEverybodyGuessedResult || hasEverybodyGuessed.value
+  })
 }
 
 const loadGame = async () => {
@@ -161,11 +159,13 @@ onMounted(async () => {
   })
   gameSocket
     .on('roundStarts', (round) => {
+      hasEverybodyGuessed.value = false
       currentRoundNumber.value = round!.round_number
       Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
       hasUrlLoaded.value = false
     })
     .on('roundEnds', (round, nextRound) => {
+      hasEverybodyGuessed.value = true
       chosenAuthor.value = null
       Vue.set(game.value!.rounds, currentRoundNumber.value! - 1, round)
       if (nextRound) {

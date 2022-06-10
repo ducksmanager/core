@@ -32,7 +32,11 @@ export const createGameSocket = (
   ) as Index.round
   let currentRoundEndTimeout: NodeJS.Timeout
 
-  const onGuess = async function (this: Socket, user: Index.player, personcode: string | null) {
+  const onGuess = async function (
+    this: Socket,
+    user: Index.player,
+    personcode: string | null
+  ): Promise<boolean> {
     console.log(
       `${user.username} is guessing ${JSON.stringify(personcode)} on round ${currentRound.id}`
     )
@@ -51,11 +55,14 @@ export const createGameSocket = (
           if (haveAllPlayersGuessed) {
             clearTimeout(currentRoundEndTimeout)
             await finishRound(this)
+            return true
           }
         }
       }
+      return false
     } catch (e) {
       console.error(e)
+      return false
     }
   }
 
@@ -153,6 +160,11 @@ export const createGameSocket = (
       startRound(socket)
     }
 
-    socket.on('guess', (personcode) => onGuess.apply(socket, [user!, personcode]))
+    socket.on('guess', async (personcode: string | null, callback: Function) => {
+      const haveAllPlayersGuessed = await onGuess.apply(socket, [user!, personcode])
+      if (haveAllPlayersGuessed) {
+        callback(haveAllPlayersGuessed)
+      }
+    })
   })
 }

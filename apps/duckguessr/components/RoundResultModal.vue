@@ -14,18 +14,18 @@
         <author-card :selectable="true" :author="correctAuthor" />
       </b-row>
     </div>
-    <div v-if="timeBeforeNextRound" class="text-center">
+    <div v-if="initialTimeBeforeNextRound && timeBeforeNextRound" class="text-center">
       <div>{{ t('Round {roundNumber} starts in...', { roundNumber: roundNumber + 1 }) }}</div>
       <circle-progress-bar :total="initialTimeBeforeNextRound" :remaining="timeBeforeNextRound" />
     </div>
-    <div v-else-if="timeBeforeNextRound === null" class="text-center">
-      <div>{{ t('Waiting for all other players to guess the last round...') }}</div>
+    <div v-else-if="!hasEverybodyGuessed && timeBeforeNextRound === null" class="text-center">
+      <div>{{ t('Waiting for the other players to play...') }}</div>
     </div>
   </b-modal>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from '@nuxtjs/composition-api'
+import { computed, onMounted, ref, watch } from '@nuxtjs/composition-api'
 import { BIconStopwatchFill } from 'bootstrap-vue'
 import { useI18n } from 'nuxt-i18n-composable'
 import { defineEmits } from '@vue/runtime-dom'
@@ -37,7 +37,15 @@ const props = defineProps<{
   correctAuthor: Author
   speedBonus: Number | null
   nextRoundStartDate: Date | null
+  hasEverybodyGuessed: boolean
 }>()
+
+const nextRoundStartTime = computed(() => props.nextRoundStartDate?.getTime())
+const time = new Date().getTime()
+const initialTimeBeforeNextRound = computed(() =>
+  nextRoundStartTime.value ? nextRoundStartTime.value - time : null
+)
+const timeBeforeNextRound = ref(null as number | null)
 
 const emit = defineEmits(['next-round'])
 
@@ -54,9 +62,7 @@ onMounted(() => {
   setInterval(updateTimeBeforeNextRound, 1000)
 })
 
-const timeBeforeNextRound = ref(null as number | null)
 updateTimeBeforeNextRound()
-const initialTimeBeforeNextRound = timeBeforeNextRound.value
 
 watch(
   () => timeBeforeNextRound.value,

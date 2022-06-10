@@ -9,7 +9,10 @@
     <b-col id="author-list-wrapper" cols="12" md="5">
       <b-row align-v="center" style="height: 50px" class="d-none d-md-block">
         <b-col class="text-center">
-          <progress-bar :available-time="availableTime" :remaining-time="remainingTime" />
+          <progress-bar
+            :available-time="availableTime"
+            :remaining-time="hasEverybodyGuessed ? 0 : remainingTime"
+          />
         </b-col>
       </b-row>
       <b-row id="author-list">
@@ -51,6 +54,7 @@ defineEmits(['select-author'])
 
 const props = defineProps<{
   currentRound: RoundWithScoresAndAuthor
+  hasEverybodyGuessed: boolean
   availableTime: number
   authors: Author[]
   players: Index.player[]
