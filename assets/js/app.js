@@ -11,11 +11,11 @@ import { createPinia } from "pinia";
 import contextmenu from "v-contextmenu";
 import { createApp, h } from "vue";
 
-import { i18n } from "./i18n";
-import App from "./layouts/App";
+import App from "../../pages/App";
+import { i18n } from "./i18n.mjs";
 import { ongoingRequests } from "./stores/ongoing-requests";
 
-let store = createPinia();
+const store = createPinia();
 
 const useOngoingRequests = ongoingRequests(store);
 axios.interceptors.request.use(

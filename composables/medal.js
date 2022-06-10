@@ -1,0 +1,77 @@
+import { computed } from "vue";
+
+const MEDAL_LEVELS = {
+  Photographe: { 1: 50, 2: 150, 3: 600 },
+  Createur: { 1: 20, 2: 70, 3: 150 },
+  Duckhunter: { 1: 1, 2: 3, 3: 15 },
+};
+
+const RADIUS = 42;
+
+export default function (contribution, userLevelPoints) {
+  const circumference = Math.PI * RADIUS * 2;
+  const currentLevel = computed(() => {
+    if (!contribution) {
+      return null;
+    }
+    const level = MEDAL_LEVELS[contribution];
+    const maxThresholdReached =
+      Object.values(level)
+        .filter((minimumPoints) => userLevelPoints >= minimumPoints)
+        .pop() || 0;
+    return parseInt(
+      Object.keys(level).find((key) => level[key] === maxThresholdReached) || 0
+    );
+  });
+  const currentLevelPoints = computed(() =>
+    currentLevel.value === null
+      ? null
+      : MEDAL_LEVELS[contribution][currentLevel.value] || 0
+  );
+  const currentLevelThreshold = computed(() =>
+    currentLevel.value === null || currentLevel.value === 3
+      ? null
+      : MEDAL_LEVELS[contribution][currentLevel.value + 1]
+  );
+  const pointsDiffNextLevel = computed(() =>
+    currentLevel.value === null || currentLevel.value >= 3
+      ? null
+      : MEDAL_LEVELS[contribution][currentLevel.value + 1] - userLevelPoints
+  );
+  const medalProgressCurrentPercentage = computed(() =>
+    currentLevel.value === null
+      ? null
+      : (100 * (userLevelPoints - currentLevelPoints.value)) /
+        (currentLevelThreshold.value - currentLevelPoints.value)
+  );
+  const levelProgressPercentage = computed(() => {
+    if (pointsDiffNextLevel.value === null) {
+      return null;
+    }
+    const level = MEDAL_LEVELS[contribution];
+    const currentLevelThreshold =
+      currentLevel.value === 0 ? 0 : level[currentLevel.value];
+    const nextLevelThreshold = level[currentLevel.value + 1];
+
+    const levelProgress =
+      (userLevelPoints - currentLevelThreshold) /
+        (nextLevelThreshold - currentLevelThreshold) || 0.01;
+    return (1 - levelProgress) * circumference;
+  });
+  const getLevelProgressPercentage = (extraPoints) =>
+    currentLevelThreshold.value
+      ? 100 *
+        (extraPoints / currentLevelThreshold.value - currentLevelPoints.value)
+      : 0;
+
+  return {
+    radius: RADIUS,
+    currentLevel,
+    currentLevelPoints,
+    currentLevelThreshold,
+    pointsDiffNextLevel,
+    medalProgressCurrentPercentage,
+    levelProgressPercentage,
+    getLevelProgressPercentage,
+  };
+}
