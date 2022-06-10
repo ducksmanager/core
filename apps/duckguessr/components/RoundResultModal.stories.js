@@ -24,28 +24,33 @@ Default.args = {
     personnationality: 'us',
   },
   nextRoundStartDate: futureDate,
+  hasEverybodyGuessed: false,
 }
 
 export const Incorrect = Template.bind({})
 Incorrect.args = {
   status: 'danger',
   roundNumber: 1,
+  speedBonus: 0,
   correctAuthor: {
     personcode: 'CB',
     personfullname: 'Carl Barks',
     personnationality: 'us',
   },
   nextRoundStartDate: futureDate,
+  hasEverybodyGuessed: false,
 }
 
 export const LastRound = Template.bind({})
 LastRound.args = {
   status: 'success',
   roundNumber: 7,
+  speedBonus: 12,
   correctAuthor: {
     personcode: 'CB',
     personfullname: 'Carl Barks',
     personnationality: 'us',
   },
   nextRoundStartDate: null,
+  hasEverybodyGuessed: false,
 }

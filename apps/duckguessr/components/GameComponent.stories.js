@@ -72,4 +72,5 @@ Default.args = {
   ],
   previousPersoncodes: ['CB', 'DR'],
   remainingTime: 5,
+  hasEverybodyGuessed: false,
 }

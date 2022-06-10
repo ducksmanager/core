@@ -28,6 +28,7 @@ Default.args = {
     'Picsou22',
     'bot_us',
   ],
+  isBotAvailable: false,
 }
 
 export const WithPotentialBot = Template.bind({})
