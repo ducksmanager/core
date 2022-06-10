@@ -35,6 +35,7 @@ export const userStore = defineStore('user', {
         .on('loginFailed', () => {
           console.log('loginFailed')
           removeCookie('duckguessr-user')
+          removeCookie('PHPSESSID')
           if (vm.attempts < 1) {
             vm.attempts++
             setUserCookieIfNotExists()
