@@ -41,6 +41,7 @@
           <template v-else-if="index > 0">,</template>
         </template>
         <UserPopover
+          v-if="stats[event.userId]"
           :id="collaborator"
           :stats="stats[collaborator]"
           :points="points[collaborator]"
@@ -83,6 +84,7 @@
           <template v-else-if="index > 0"> , </template>
         </template>
         <UserPopover
+          v-if="stats[event.userId]"
           :id="subscriber"
           :stats="stats[subscriber]"
           :points="points[subscriber]"

@@ -61,7 +61,9 @@ const props = defineProps({
   userLevelPoints: { type: Number, required: true },
   contribution: { type: String, required: true },
 });
-const { currentLevel, pointsDiffNextLevel, levelProgressPercentage } = $(
+const { currentLevel, pointsDiffNextLevel, levelProgressPercentage,
+  radius,
+  circumference } = $(
   medal(props.contribution, props.userLevelPoints)
 );
 const currentLocale = locale();

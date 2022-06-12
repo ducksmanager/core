@@ -19,6 +19,7 @@
           cols="6"
         >
           <Issue
+            v-if="publicationNames[edge.publicationCode]"
             class="issue"
             :publicationname="publicationNames[edge.publicationCode]"
             :publicationcode="edge.publicationCode"
