@@ -11,7 +11,6 @@ import { getBotUser, getPlayer } from '../get-player'
 import { MatchDetails } from '../../types/matchDetails'
 
 const game = require('../game')
-const round = require('../round')
 const { createGameSocket } = require('./game')
 
 const checkAndAssociatePlayer = async (

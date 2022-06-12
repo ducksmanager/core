@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, useRoute, useRouter } from '@nuxtjs/composition-api'
+import { computed, onMounted, ref, useRoute, useRouter } from '@nuxtjs/composition-api'
 import { io } from 'socket.io-client'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { MatchDetails } from '~/types/matchDetails'

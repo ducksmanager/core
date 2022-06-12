@@ -1,5 +1,4 @@
 import Podium from '~/components/Podium'
-import { PlayerWithSumScore } from '~/types/playerStats'
 
 export default {
   title: 'Podium',

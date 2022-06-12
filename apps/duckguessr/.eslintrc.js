@@ -17,6 +17,7 @@ module.exports = {
     'no-console': 'off',
     'node/no-callback-literal': 'off',
     'import/default': 'off',
+    'import/named': 'off',
     'vue/html-self-closing': [
       'error',
       {
@@ -31,6 +32,7 @@ module.exports = {
     ],
     'vue/max-len': [2, { code: 110, tabWidth: 4, ignoreUrls: true, ignoreStrings: true }],
     'vue/multi-word-component-names': 'off',
+    'vue/html-closing-bracket-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
   },
 }
