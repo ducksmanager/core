@@ -11,7 +11,7 @@
     </div>
     <h6>{{ medalTypes[type].title }}</h6>
     <div class="small">{{ medalTypes[type].description }}</div>
-    <div class="small">
+    <div class="small text-white">
       &cross;
       {{ medalLevelAndProgress.currentLevelProgressPoints }}
     </div>

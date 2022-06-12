@@ -13,7 +13,30 @@ const Template = (args) => ({
 })
 export const Default = Template.bind({})
 Default.args = {
+  enabled: true,
   selectable: true,
+  author: {
+    personcode: 'DR',
+    personfullname: 'Don Rosa',
+    personnationality: 'us',
+  },
+}
+
+export const NotEnabled = Template.bind({})
+NotEnabled.args = {
+  enabled: false,
+  selectable: false,
+  author: {
+    personcode: 'DR',
+    personfullname: 'Don Rosa',
+    personnationality: 'us',
+  },
+}
+
+export const NotSelectable = Template.bind({})
+NotSelectable.args = {
+  enabled: true,
+  selectable: false,
   author: {
     personcode: 'DR',
     personfullname: 'Don Rosa',

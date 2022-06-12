@@ -4,7 +4,7 @@ import { GuessRequest, GuessResponse } from '../types/guess'
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-const gameKickoffTime = 3000
+const gameKickoffTime = 10000
 const kickoffTime = 5000
 const roundTime = 10000
 

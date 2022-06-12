@@ -8,8 +8,7 @@
       :game-id="game.id"
     />
   </b-container>
-  <div v-else-if="!game || !currentRoundNumber" class="text-center" />
-  <b-container v-else fluid class="d-flex flex-grow-1 p-0">
+  <b-container v-else-if="currentRoundNumber" fluid class="d-flex flex-grow-1 p-0">
     <game-component
       :available-time="availableTime"
       :has-everybody-guessed="hasEverybodyGuessed"
@@ -34,6 +33,11 @@
       :has-everybody-guessed="hasEverybodyGuessed"
     />
   </b-container>
+  <game-starting-soon-modal
+    v-else-if="game && firstRoundStartDate"
+    :authors="game.authors"
+    :first-round-start-date="firstRoundStartDate"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -49,16 +53,7 @@ import { getDuckguessrId } from '@/composables/user'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
 import { useScoreToVariant } from '~/composables/use-score-to-variant'
-
-interface GamePlayerWithFullPlayer extends Index.game_player {
-  player: Index.player
-}
-
-interface GameFull extends Index.game {
-  authors: Author[]
-  rounds: RoundWithScoresAndAuthor[]
-  game_players: GamePlayerWithFullPlayer[]
-}
+import { GameFull } from '~/types/game'
 
 const duckguessrId = getDuckguessrId()
 const { t } = useI18n()
@@ -67,6 +62,7 @@ const route = useRoute()
 const chosenAuthor = ref(null as string | null)
 const hasEverybodyGuessed = ref(false as boolean)
 const gameIsFinished = ref(false as boolean)
+const firstRoundStartDate = ref(null as Date | null)
 
 const game = ref(null as GameFull | null)
 let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>
@@ -158,6 +154,9 @@ onMounted(async () => {
     },
   })
   gameSocket
+    .on('firstRoundWillStartSoon', (receivedFirstRoundStartDate) => {
+      firstRoundStartDate.value = receivedFirstRoundStartDate
+    })
     .on('roundStarts', (round) => {
       hasEverybodyGuessed.value = false
       currentRoundNumber.value = round!.round_number

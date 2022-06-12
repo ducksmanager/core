@@ -13,7 +13,7 @@
     <b-container>
       <b-row class="flex-column align-items-center">
         <template v-if="currentUserHasParticipated">
-          <h3 class="mb-3">
+          <h3 class="my-3">
             {{
               players.find(({ player_id: playerId }) => playerId === winningPlayer.playerId).player
                 .username

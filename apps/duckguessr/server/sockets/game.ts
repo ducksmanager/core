@@ -84,6 +84,11 @@ export const createGameSocket = (
       currentRound.finished_at!.getTime() - new Date().getTime()
     )
 
+    if (currentRound.round_number === 1) {
+      socket.broadcast.emit('firstRoundWillStartSoon', currentRound.started_at!)
+      socket.emit('firstRoundWillStartSoon', currentRound.started_at!)
+    }
+
     setTimeout(async () => {
       socket.broadcast.emit('roundStarts', { ...currentRound, personcode: null })
       socket.emit('roundStarts', { ...currentRound, personcode: null })

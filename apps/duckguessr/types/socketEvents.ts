@@ -16,6 +16,7 @@ export interface ServerToClientEvents {
   playerJoined: (username: string) => void
   playerLeft: (username: string) => void
   matchStarts: () => void
+  firstRoundWillStartSoon: (firstRoundStartTime: Date) => void
   roundStarts: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
   roundEnds: (
     round: Prisma.PromiseReturnType<typeof getRoundWithScores>,

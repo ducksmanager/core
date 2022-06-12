@@ -11,7 +11,7 @@
     <div class="my-3">
       <div>{{ t('The answer was:') }}</div>
       <b-row class="justify-content-center">
-        <author-card :selectable="true" :author="correctAuthor" />
+        <author-card :enabled="true" :selectable="false" :author="correctAuthor" />
       </b-row>
     </div>
     <div v-if="initialTimeBeforeNextRound && timeBeforeNextRound" class="text-center">

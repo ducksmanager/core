@@ -4,6 +4,7 @@
     :class="{
       author: true,
       selectable,
+      enabled,
       'p-1': true,
     }"
     @click="$emit('select', author.personcode)"
@@ -24,6 +25,7 @@ import { ref, watch } from '@nuxtjs/composition-api'
 import { Author } from '~/types/roundWithScoresAndAuthor'
 const authorCardProps = defineProps<{
   author: Author
+  enabled: Boolean
   selectable: Boolean
 }>()
 
@@ -66,16 +68,18 @@ watch(
     }
   }
 
+  &.enabled {
+    .author-image {
+      opacity: 1;
+    }
+  }
+
   &.selectable {
     cursor: pointer;
     pointer-events: all;
 
     &:hover {
       outline: 1px solid lightgray;
-    }
-
-    .author-image {
-      opacity: 1;
     }
   }
 }

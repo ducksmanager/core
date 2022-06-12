@@ -20,6 +20,7 @@
           v-for="(author, idx) in authors"
           :key="`author-${idx}`"
           :author="author"
+          :enabled="!previousPersoncodes.includes(author.personcode)"
           :selectable="!previousPersoncodes.includes(author.personcode)"
           @select="$emit('select-author', $event)"
         />
