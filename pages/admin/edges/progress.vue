@@ -143,7 +143,7 @@ const getEdgeUrl = (publicationCode, issueNumber) => {
   return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`;
 };
 const open = (publicationCode, issueNumber) => {
-  window.open(getEdgeUrl(publicationCode, issueNumber), "_blank");
+  window?.open(getEdgeUrl(publicationCode, issueNumber), "_blank");
 };
 const issueNumbers = $computed(() => coa().issueNumbers);
 const inducksIssueNumbersNoSpace = $computed(() =>

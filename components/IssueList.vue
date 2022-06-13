@@ -286,7 +286,7 @@ const country = $computed(() => props.publicationcode.split("/")[0]);
 const publicationName = $computed(
   () => publicationNames[props.publicationcode]
 );
-const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
+const isTouchScreen = window?.matchMedia("(pointer: coarse)").matches;
 const filteredIssues = $computed(() =>
   issues?.filter(
     ({ userCopies }) =>

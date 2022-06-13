@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10nRoutes">
+  <div>
     <LeftPanel />
     <SwitchLocale />
     <Banner :classes="{ 'd-none d-md-flex': true }" />
@@ -14,15 +14,7 @@
 </template>
 
 <script setup>
-import Banner from "../components/Banner";
-import Footer from "../components/Footer";
-import LeftPanel from "../components/LeftPanel";
-import SwitchLocale from "../components/SwitchLocale";
-import { l10n } from "../stores/l10n";
-
-const l10nRoutes = $computed(() => l10n().l10nRoutes);
-
-definePageMeta({
+useHead({
   title: "DucksManager",
 });
 </script>

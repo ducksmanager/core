@@ -20,9 +20,8 @@ const props = defineProps({
   path: { type: String, required: true },
   icon: { type: String, required: true },
 });
-const active = $computed(() =>
-  window.location.pathname.split("/").includes(props.path)
-);
+const route = useRoute();
+const active = $computed(() => route.path.split("/").includes(props.path));
 </script>
 
 <style lang="scss" scoped>

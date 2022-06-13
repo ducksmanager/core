@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l10nRoutes">
+  <div>
     <h2 v-if="$slots.header">
       <slot name="header" />
     </h2>
@@ -8,11 +8,7 @@
 </template>
 
 <script setup>
-import { l10n } from "../stores/l10n";
-
-const l10nRoutes = $computed(() => l10n().l10nRoutes);
-
-definePageMeta({
+useHead({
   title: "DucksManager",
 });
 </script>

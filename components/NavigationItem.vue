@@ -15,16 +15,14 @@ const props = defineProps({
   icon: { type: String, default: null },
 });
 const { r } = l10n();
+
+const route = useRoute();
 const active = $computed(
   () =>
     !r(props.path)
       .split("/")
-      .find(
-        (pathPart) => !window.location.pathname.split("/").includes(pathPart)
-      ) &&
-    !/(bibliotheque\/afficher)|(bookcase\/show\/).+$/.test(
-      window.location.pathname
-    )
+      .find((pathPart) => !route.path.split("/").includes(pathPart)) &&
+    !/(bibliotheque\/afficher)|(bookcase\/show\/).+$/.test(route.path)
 );
 </script>
 
