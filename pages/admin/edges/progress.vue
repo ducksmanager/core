@@ -1,113 +1,120 @@
 <template>
-  <div v-if="hasData">
-    <div
-      v-for="mostWantedIssue in mostWanted"
-      :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.issuenumber}`"
-    >
-      <div>
-        <u
-          >{{ mostWantedIssue.numberOfIssues }} utilisateurs possèdent le numéro
-          :</u
+  <div>
+    <NuxtLayout name="bare">
+      <template #title>Edge progress</template>
+      <div v-if="hasData">
+        <div
+          v-for="mostWantedIssue in mostWanted"
+          :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.issuenumber}`"
         >
-      </div>
-      &nbsp;
-      <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`" />
-      {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{
-        mostWantedIssue.issuenumber
-      }}
-    </div>
-    <div
-      v-if="publishedEdges && Object.keys(inducksIssueNumbersNoSpace).length"
-    >
-      <div
-        v-for="(issuenumbers, publicationCode) in publishedEdges"
-        :key="publicationCode"
-        class="publication"
-      >
-        <b-icon-eye-fill
-          v-if="!showEdgesForPublication.includes(publicationCode)"
-          @click="showEdgesForPublication.push(publicationCode)"
-        />
-        <b-icon-eye-slash-fill
-          v-else
-          @click="
-            showEdgesForPublication.splice(
-              showEdgesForPublication.indexOf(publicationCode),
-              1
-            )
+          <div>
+            <u
+              >{{ mostWantedIssue.numberOfIssues }} utilisateurs possèdent le
+              numéro :</u
+            >
+          </div>
+          &nbsp;
+          <img :src="`${imagePath}/flags/${mostWantedIssue.country}.png`" />
+          {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{
+            mostWantedIssue.issuenumber
+          }}
+        </div>
+        <div
+          v-if="
+            publishedEdges && Object.keys(inducksIssueNumbersNoSpace).length
           "
-        />
-        <Publication
-          :publicationcode="publicationCode"
-          :publicationname="publicationNames[publicationCode]"
-        />
-        <div v-if="inducksIssueNumbersNoSpace[publicationCode]">
-          <Bookcase
-            v-if="showEdgesForPublication.includes(publicationCode)"
-            :bookcase-textures="bookcaseTextures"
-            :sorted-bookcase="
-              inducksIssueNumbersNoSpace[publicationCode].map(
-                (issueNumber) => ({
-                  id: `${publicationCode.replace('/', '-')} ${issueNumber}`,
-                  edgeId: issuenumbers.includes(issueNumber) ? 1 : null,
-                  publicationCode,
-                  issueNumber,
-                })
-              )
-            "
-          />
-          <span
-            v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[
-              publicationCode
-            ]"
-            v-else
-            :key="`${publicationCode}-${inducksIssueNumber}`"
+        >
+          <div
+            v-for="(issuenumbers, publicationCode) in publishedEdges"
+            :key="publicationCode"
+            class="publication"
           >
-            <span
-              v-if="!issuenumbers.includes(inducksIssueNumber)"
-              class="num bordered"
-              :title="inducksIssueNumber"
-              >&nbsp;</span
-            >
-            <span
-              v-else-if="!show"
-              class="num bordered available"
-              :title="inducksIssueNumber"
-              @click="open(publicationCode, inducksIssueNumber)"
-              >&nbsp;</span
-            >
-            <img
-              v-else
-              :src="getEdgeUrl(publicationCode, inducksIssueNumber)"
+            <b-icon-eye-fill
+              v-if="!showEdgesForPublication.includes(publicationCode)"
+              @click="showEdgesForPublication.push(publicationCode)"
             />
-          </span>
-        </div>
-        <div v-else>
-          Certaines tranches de cette publication sont prêtes mais la
-          publication n'existe plus sur Inducks :
-          {{ issuenumbers.join(", ") }}
+            <b-icon-eye-slash-fill
+              v-else
+              @click="
+                showEdgesForPublication.splice(
+                  showEdgesForPublication.indexOf(publicationCode),
+                  1
+                )
+              "
+            />
+            <Publication
+              :publicationcode="publicationCode"
+              :publicationname="publicationNames[publicationCode]"
+            />
+            <div v-if="inducksIssueNumbersNoSpace[publicationCode]">
+              <Bookcase
+                v-if="showEdgesForPublication.includes(publicationCode)"
+                :bookcase-textures="bookcaseTextures"
+                :sorted-bookcase="
+                  inducksIssueNumbersNoSpace[publicationCode].map(
+                    (issueNumber) => ({
+                      id: `${publicationCode.replace('/', '-')} ${issueNumber}`,
+                      edgeId: issuenumbers.includes(issueNumber) ? 1 : null,
+                      publicationCode,
+                      issueNumber,
+                    })
+                  )
+                "
+              />
+              <span
+                v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[
+                  publicationCode
+                ]"
+                v-else
+                :key="`${publicationCode}-${inducksIssueNumber}`"
+              >
+                <span
+                  v-if="!issuenumbers.includes(inducksIssueNumber)"
+                  class="num bordered"
+                  :title="inducksIssueNumber"
+                  >&nbsp;</span
+                >
+                <span
+                  v-else-if="!show"
+                  class="num bordered available"
+                  :title="inducksIssueNumber"
+                  @click="open(publicationCode, inducksIssueNumber)"
+                  >&nbsp;</span
+                >
+                <img
+                  v-else
+                  :src="getEdgeUrl(publicationCode, inducksIssueNumber)"
+                />
+              </span>
+            </div>
+            <div v-else>
+              Certaines tranches de cette publication sont prêtes mais la
+              publication n'existe plus sur Inducks :
+              {{ issuenumbers.join(", ") }}
+            </div>
+          </div>
+          <br /><br />
+          <b
+            >{{
+              Object.keys(publishedEdges).reduce(
+                (acc, publicationCode) =>
+                  acc + publishedEdges[publicationCode].length,
+                0
+              )
+            }}
+            tranches prêtes.</b
+          ><br />
+          <br /><br />
+          <u>Légende : </u><br />
+          <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette
+          tranche !<br />
+          <span class="num available">&nbsp;</span> Cette tranche est prête.<br />
         </div>
       </div>
-      <br /><br />
-      <b
-        >{{
-          Object.keys(publishedEdges).reduce(
-            (acc, publicationCode) =>
-              acc + publishedEdges[publicationCode].length,
-            0
-          )
-        }}
-        tranches prêtes.</b
-      ><br />
-      <br /><br />
-      <u>Légende : </u><br />
-      <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette
-      tranche !<br />
-      <span class="num available">&nbsp;</span> Cette tranche est prête.<br />
-    </div>
-  </div>
-  <div v-else>
-    {{ $t("Chargement...") }}
+      <div v-else>
+        {{ $t("Chargement...") }}
+      </div>
+    </NuxtLayout>
   </div>
 </template>
 

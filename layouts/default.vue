@@ -4,39 +4,27 @@
     <SwitchLocale />
     <Banner :classes="{ 'd-none d-md-flex': true }" />
     <div id="logo_zone2">
-      <h2 v-if="innerTitle">
-        {{ innerTitle }}
+      <h2 v-if="$slots.header">
+        <slot name="header" />
       </h2>
-      <component :is="pageComponent" v-bind="attrsWithoutId" />
+      <slot />
     </div>
     <Footer />
   </div>
 </template>
 
 <script setup>
-import { defineAsyncComponent, useAttrs } from "vue";
-
 import Banner from "../components/Banner";
 import Footer from "../components/Footer";
 import LeftPanel from "../components/LeftPanel";
 import SwitchLocale from "../components/SwitchLocale";
 import { l10n } from "../stores/l10n";
 
-const props = defineProps({
-  page: { type: String, required: true },
-  title: { type: String, default: null },
-  innerTitle: { type: String, default: null },
-});
-const attrs = useAttrs();
-const pageComponent = $computed(() =>
-  defineAsyncComponent(() => import(`./${props.page}`))
-);
 const l10nRoutes = $computed(() => l10n().l10nRoutes);
-const attrsWithoutId = $computed(() =>
-  Object.keys(attrs)
-    .filter((attrKey) => attrKey !== "id")
-    .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
-);
+
+definePageMeta({
+  title: "DucksManager",
+});
 </script>
 
 <style scoped lang="scss">

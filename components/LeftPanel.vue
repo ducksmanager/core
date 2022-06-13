@@ -49,15 +49,15 @@
 <script setup>
 import axios from "axios";
 
-import Medal from "../components/Medal";
 import { user } from "../composables/global";
 import { imagePath } from "../composables/imagePath";
+import Navigation from "../pages/Navigation";
+import RecentEvents from "../pages/RecentEvents";
 import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 import { users } from "../stores/users";
 import Banner from "./Banner";
-import Navigation from "./Navigation";
-import RecentEvents from "./RecentEvents";
+import Medal from "./Medal";
 import SwitchLocale from "./SwitchLocale";
 
 const points = $computed(() => users().points);
