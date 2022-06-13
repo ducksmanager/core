@@ -20,86 +20,85 @@ import { collection } from "../../stores/collection";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
 collection().loadCollection();
-const { t: $t } = useI18n(),
-  totalPerPublication = $computed(() => collection().totalPerPublication),
-  publicationNames = $computed(() => coa().publicationNames),
-  smallCountPublications = $computed(() =>
-    !totalPerPublication
-      ? null
-      : Object.keys(totalPerPublication).filter(
-          (publicationCode) =>
-            totalPerPublication[publicationCode] /
-              collection().collection.length <
-            0.01
+const { t: $t } = useI18n();
+const totalPerPublication = $computed(() => collection().totalPerPublication);
+const publicationNames = $computed(() => coa().publicationNames);
+const smallCountPublications = $computed(() =>
+  !totalPerPublication
+    ? null
+    : Object.keys(totalPerPublication).filter(
+        (publicationCode) =>
+          totalPerPublication[publicationCode] /
+            collection().collection.length <
+          0.01
+      )
+);
+const totalPerPublicationGroupSmallCounts = $computed(
+  () =>
+    smallCountPublications && {
+      ...Object.keys(totalPerPublication)
+        .filter(
+          (publicationCode) => !smallCountPublications.includes(publicationCode)
         )
-  ),
-  totalPerPublicationGroupSmallCounts = $computed(
-    () =>
-      smallCountPublications && {
-        ...Object.keys(totalPerPublication)
-          .filter(
-            (publicationCode) =>
-              !smallCountPublications.includes(publicationCode)
-          )
-          .reduce(
-            (acc, publicationCode) => ({
-              ...acc,
-              [publicationCode]: totalPerPublication[publicationCode],
-            }),
-            {}
-          ),
-        [null]: smallCountPublications.reduce(
-          (acc, publicationCode) => acc + totalPerPublication[publicationCode],
-          0
-        ),
-      }
-  ),
-  labels = $computed(
-    () =>
-      hasPublicationNames &&
-      Object.keys(totalPerPublicationGroupSmallCounts)
-        .sort(sortByCount)
         .reduce(
-          (acc, publicationCode) => [
+          (acc, publicationCode) => ({
             ...acc,
-            publicationNames[publicationCode] ||
-              `${$t("Autres")} (${smallCountPublications.length} ${$t(
-                "Publications"
-              ).toLowerCase()})`,
-          ],
-          []
-        )
-  ),
-  values = $computed(() =>
-    Object.values(totalPerPublicationGroupSmallCounts).sort((count1, count2) =>
-      Math.sign(count1 - count2)
-    )
-  ),
-  colors = $computed(
-    () =>
-      totalPerPublicationGroupSmallCounts &&
-      Object.keys(totalPerPublicationGroupSmallCounts)
-        .sort(sortByCount)
-        .map((publicationCode) =>
-          publicationCode === "null" ? "#000" : randomColor()
-        )
-  ),
-  fetchPublicationNames = coa().fetchPublicationNames,
-  randomColor = () =>
-    `rgb(${[
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255),
-    ].join(",")})`,
-  sortByCount = (publicationCode1, publicationCode2) =>
-    Math.sign(
-      totalPerPublicationGroupSmallCounts[publicationCode1] -
-        totalPerPublicationGroupSmallCounts[publicationCode2]
-    );
+            [publicationCode]: totalPerPublication[publicationCode],
+          }),
+          {}
+        ),
+      [null]: smallCountPublications.reduce(
+        (acc, publicationCode) => acc + totalPerPublication[publicationCode],
+        0
+      ),
+    }
+);
+const labels = $computed(
+  () =>
+    hasPublicationNames &&
+    Object.keys(totalPerPublicationGroupSmallCounts)
+      .sort(sortByCount)
+      .reduce(
+        (acc, publicationCode) => [
+          ...acc,
+          publicationNames[publicationCode] ||
+            `${$t("Autres")} (${smallCountPublications.length} ${$t(
+              "Publications"
+            ).toLowerCase()})`,
+        ],
+        []
+      )
+);
+const values = $computed(() =>
+  Object.values(totalPerPublicationGroupSmallCounts).sort((count1, count2) =>
+    Math.sign(count1 - count2)
+  )
+);
+const colors = $computed(
+  () =>
+    totalPerPublicationGroupSmallCounts &&
+    Object.keys(totalPerPublicationGroupSmallCounts)
+      .sort(sortByCount)
+      .map((publicationCode) =>
+        publicationCode === "null" ? "#000" : randomColor()
+      )
+);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const randomColor = () =>
+  `rgb(${[
+    Math.floor(Math.random() * 255),
+    Math.floor(Math.random() * 255),
+    Math.floor(Math.random() * 255),
+  ].join(",")})`;
+const sortByCount = (publicationCode1, publicationCode2) =>
+  Math.sign(
+    totalPerPublicationGroupSmallCounts[publicationCode1] -
+      totalPerPublicationGroupSmallCounts[publicationCode2]
+  );
 
-let hasPublicationNames = $ref(false),
-  chartData = $ref(null),
-  options = $ref({});
+let hasPublicationNames = $ref(false);
+let chartData = $ref(null);
+let options = $ref({});
 
 watch(
   () => totalPerPublicationGroupSmallCounts,
@@ -126,7 +125,7 @@ watch(
           backgroundColor: colors,
         },
       ],
-      labels: labels,
+      labels,
     };
 
     options = {

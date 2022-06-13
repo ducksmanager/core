@@ -48,12 +48,12 @@ const labels = Object.values(props.watchedAuthorsStoryCount).map(
 emit("change-dimension", "width", 250 + 50 * labels.length);
 
 let possessedStories = Object.values(props.watchedAuthorsStoryCount).map(
-    ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
-      storyCount - missingStoryCount
-  ),
-  missingStories = Object.values(props.watchedAuthorsStoryCount).map(
-    ({ missingstorycount: missingStoryCount }) => missingStoryCount
-  );
+  ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
+    storyCount - missingStoryCount
+);
+let missingStories = Object.values(props.watchedAuthorsStoryCount).map(
+  ({ missingstorycount: missingStoryCount }) => missingStoryCount
+);
 
 if (props.unit === "percentage") {
   possessedStories = possessedStories.map((possessedCount, key) =>
@@ -64,54 +64,54 @@ if (props.unit === "percentage") {
   );
 }
 
-const values = [possessedStories, missingStories],
-  chartData = {
-    datasets: [
-      {
-        data: values[0],
-        backgroundColor: "#FF8000",
-        label: $t("Histoires possédées"),
-        legend: $t("Histoires possédées"),
+const values = [possessedStories, missingStories];
+const chartData = {
+  datasets: [
+    {
+      data: values[0],
+      backgroundColor: "#FF8000",
+      label: $t("Histoires possédées"),
+      legend: $t("Histoires possédées"),
+    },
+    {
+      data: values[1],
+      backgroundColor: "#04B404",
+      label: $t("Histoires non possédées"),
+      legend: $t("Histoires non possédées"),
+    },
+  ],
+  labels,
+  legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
+};
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      stacked: true,
+      ticks: {
+        autoSkip: false,
       },
-      {
-        data: values[1],
-        backgroundColor: "#04B404",
-        label: $t("Histoires non possédées"),
-        legend: $t("Histoires non possédées"),
-      },
-    ],
-    labels,
-    legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
+    },
+    y: {
+      stacked: true,
+    },
   },
-  options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        stacked: true,
-        ticks: {
-          autoSkip: false,
-        },
-      },
-      y: {
-        stacked: true,
+  plugins: {
+    title: {
+      display: true,
+      text: $t("Possession des histoires d'auteurs"),
+    },
+    tooltip: {
+      enabled: true,
+      callbacks: {
+        title: ([tooltip]) => tooltip.label,
+        label: ({ dataset, raw }) =>
+          `${dataset.label}: ${raw}${props.unit === "percentage" ? "%" : ""}`,
       },
     },
-    plugins: {
-      title: {
-        display: true,
-        text: $t("Possession des histoires d'auteurs"),
-      },
-      tooltip: {
-        enabled: true,
-        callbacks: {
-          title: ([tooltip]) => tooltip.label,
-          label: ({ dataset, raw }) =>
-            `${dataset.label}: ${raw}${props.unit === "percentage" ? "%" : ""}`,
-        },
-      },
-    },
-  };
+  },
+};
 </script>
 
 <style scoped>

@@ -88,93 +88,93 @@ import { imagePath } from "../../composables/imagePath";
 import { bookcase } from "../../stores/bookcase";
 import { coa } from "../../stores/coa";
 
-const { username } = user(),
-  { t: $t } = useI18n(),
-  bookcaseStore = bookcase(),
-  textures = [
-    "bois/ASH",
-    "bois/BALTIC BIRCH",
-    "bois/BASSWOOD",
-    "bois/BIRDS EYE MAPLE",
-    "bois/BUBINGA",
-    "bois/BURL WALNUT",
-    "bois/CHERRY",
-    "bois/CLEAR PINE",
-    "bois/DURON",
-    "bois/FIDDLEBACK MAKORE",
-    "bois/FIGURED MAKORE",
-    "bois/HICKORY",
-    "bois/HOMOSOTE",
-    "bois/HONDURAN ROSEWOOD",
-    "bois/HONDURAS MAHOGANY",
-    "bois/ITALIAN POPLAR",
-    "bois/KEWAZINGA",
-    "bois/KNOTTY PINE",
-    "bois/KOA",
-    "bois/LACEWOOD",
-    "bois/LAUAN",
-    "bois/NATURAL BIRCH",
-    "bois/NOVA-CORK",
-    "bois/OLIVE ASH BURL",
-    "bois/PLAIN SLICED BEECH",
-    "bois/PLAIN SLICED RED OAK",
-    "bois/PLAIN SLICED WENGE",
-    "bois/POPLAR",
-    "bois/PREFINISHED MAPLE",
-    "bois/PURPLEHEART",
-    "bois/QUARTERSAWN BEECH",
-    "bois/QUARTERSAWN TEAK",
-    "bois/QUARTERSAWN WENGE",
-    "bois/QUARTERSAWN WHITE OAK",
-    "bois/RED BIRCH",
-    "bois/RIBBON STRIPE SAPELE",
-    "bois/ROTARY DOUGLAS FIR",
-    "bois/ROTARY SAPELE",
-    "bois/ROTARY WHITE MAPLE",
-    "bois/SPANISH CEDAR",
-    "bois/TEAK",
-    "bois/VERTICAL GRAIN FIR PLY",
-    "bois/WALNUT",
-    "bois/WHITE BIRCH",
-    "bois/ZEBRAWOOD",
-  ],
-  bookcaseOptions = bookcaseStore.bookcaseOptions,
-  publicationNames = bookcaseStore.publicationNames,
-  textureTypes = () => ({
-    bookcase: $t("Sous-texture"),
-    bookshelf: $t("Sous-texture de l'étagère"),
-  }),
-  bookcaseOrder = $computed(() => bookcaseStore.bookcaseOrder),
-  setBookcaseUsername = bookcase().setBookcaseUsername,
-  setBookcaseOrder = bookcase().setBookcaseOrder,
-  loadBookcaseOptions = bookcase().loadBookcaseOptions,
-  loadBookcaseOrder = bookcase().loadBookcaseOrder,
-  updateBookcaseOptions = bookcase().updateBookcaseOptions,
-  updateBookcaseOrder = bookcase().updateBookcaseOrder,
-  fetchPublicationNames = coa().fetchPublicationNames,
-  loadData = async () => {
-    await loadBookcaseOptions();
-    await loadBookcaseOrder();
+const { username } = user();
+const { t: $t } = useI18n();
+const bookcaseStore = bookcase();
+const textures = [
+  "bois/ASH",
+  "bois/BALTIC BIRCH",
+  "bois/BASSWOOD",
+  "bois/BIRDS EYE MAPLE",
+  "bois/BUBINGA",
+  "bois/BURL WALNUT",
+  "bois/CHERRY",
+  "bois/CLEAR PINE",
+  "bois/DURON",
+  "bois/FIDDLEBACK MAKORE",
+  "bois/FIGURED MAKORE",
+  "bois/HICKORY",
+  "bois/HOMOSOTE",
+  "bois/HONDURAN ROSEWOOD",
+  "bois/HONDURAS MAHOGANY",
+  "bois/ITALIAN POPLAR",
+  "bois/KEWAZINGA",
+  "bois/KNOTTY PINE",
+  "bois/KOA",
+  "bois/LACEWOOD",
+  "bois/LAUAN",
+  "bois/NATURAL BIRCH",
+  "bois/NOVA-CORK",
+  "bois/OLIVE ASH BURL",
+  "bois/PLAIN SLICED BEECH",
+  "bois/PLAIN SLICED RED OAK",
+  "bois/PLAIN SLICED WENGE",
+  "bois/POPLAR",
+  "bois/PREFINISHED MAPLE",
+  "bois/PURPLEHEART",
+  "bois/QUARTERSAWN BEECH",
+  "bois/QUARTERSAWN TEAK",
+  "bois/QUARTERSAWN WENGE",
+  "bois/QUARTERSAWN WHITE OAK",
+  "bois/RED BIRCH",
+  "bois/RIBBON STRIPE SAPELE",
+  "bois/ROTARY DOUGLAS FIR",
+  "bois/ROTARY SAPELE",
+  "bois/ROTARY WHITE MAPLE",
+  "bois/SPANISH CEDAR",
+  "bois/TEAK",
+  "bois/VERTICAL GRAIN FIR PLY",
+  "bois/WALNUT",
+  "bois/WHITE BIRCH",
+  "bois/ZEBRAWOOD",
+];
+const bookcaseOptions = bookcaseStore.bookcaseOptions;
+const publicationNames = bookcaseStore.publicationNames;
+const textureTypes = () => ({
+  bookcase: $t("Sous-texture"),
+  bookshelf: $t("Sous-texture de l'étagère"),
+});
+const bookcaseOrder = $computed(() => bookcaseStore.bookcaseOrder);
+const setBookcaseUsername = bookcase().setBookcaseUsername;
+const setBookcaseOrder = bookcase().setBookcaseOrder;
+const loadBookcaseOptions = bookcase().loadBookcaseOptions;
+const loadBookcaseOrder = bookcase().loadBookcaseOrder;
+const updateBookcaseOptions = bookcase().updateBookcaseOptions;
+const updateBookcaseOrder = bookcase().updateBookcaseOrder;
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadData = async () => {
+  await loadBookcaseOptions();
+  await loadBookcaseOrder();
+  loading = false;
+};
+const submit = async () => {
+  error = false;
+  loading = true;
+  try {
+    await updateBookcaseOptions();
+    await updateBookcaseOrder();
+    await loadData();
+  } catch {
+    error = true;
+  } finally {
     loading = false;
-  },
-  submit = async () => {
-    error = false;
-    loading = true;
-    try {
-      await updateBookcaseOptions();
-      await updateBookcaseOrder();
-      await loadData();
-    } catch {
-      error = true;
-    } finally {
-      loading = false;
-    }
-  },
-  textureWithoutSuperType = (texture) => texture.replace(/^[^/]+\//, "");
+  }
+};
+const textureWithoutSuperType = (texture) => texture.replace(/^[^/]+\//, "");
 
-let error = $ref(false),
-  loading = $ref(true),
-  hasPublicationNames = $ref(false);
+let error = $ref(false);
+let loading = $ref(true);
+let hasPublicationNames = $ref(false);
 
 onMounted(async () => {
   setBookcaseUsername(username);

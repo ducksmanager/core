@@ -31,59 +31,57 @@ Chart.register(
 
 collection().loadCollection();
 const { unit } = defineProps({
-    unit: {
-      type: String,
-      required: true,
-    },
-  }),
-  { t: $t } = useI18n(),
-  emit = defineEmits(["change-dimension"]),
-  purchases = $computed(() => collection().purchases),
-  totalPerPublication = $computed(() => collection().totalPerPublication),
-  publicationNames = $computed(() => coa().publicationNames),
-  labels = $computed(
-    () =>
-      collectionWithDates &&
-      [...new Set(collectionWithDates.map(({ date }) => date))].sort(
-        compareDates
-      )
-  ),
-  collectionWithDates = $computed(
-    () =>
-      purchasesById &&
-      collection().collection?.map((issue) => ({
-        ...issue,
-        date: getIssueMonth(issue),
-      }))
-  ),
-  ready = $computed(() => labels && hasPublicationNames),
-  fetchPublicationNames = coa().fetchPublicationNames,
-  loadPurchases = collection().loadPurchases,
-  compareDates = (a, b) =>
-    Math.sign(
-      new Date(a === "?" ? "0001-01-01" : a) -
-        new Date(b === "?" ? "0001-01-01" : b)
-    ),
-  randomColor = () =>
-    `rgb(${[
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255),
-    ].join(",")})`,
-  getIssueMonth = (issue) =>
-    getMonthFromDate(
-      issue.purchaseId
-        ? (purchasesById[issue.purchaseId] || { date: "?" }).date
-        : issue.creationDate && new Date(issue.creationDate)
-        ? getMonthFromDate(issue.creationDate)
-        : "?"
-    ),
-  getMonthFromDate = (date) => date.match(/^\?|([^-]+-[^-]+)/)[0];
+  unit: {
+    type: String,
+    required: true,
+  },
+});
+const { t: $t } = useI18n();
+const emit = defineEmits(["change-dimension"]);
+const purchases = $computed(() => collection().purchases);
+const totalPerPublication = $computed(() => collection().totalPerPublication);
+const publicationNames = $computed(() => coa().publicationNames);
+const labels = $computed(
+  () =>
+    collectionWithDates &&
+    [...new Set(collectionWithDates.map(({ date }) => date))].sort(compareDates)
+);
+const collectionWithDates = $computed(
+  () =>
+    purchasesById &&
+    collection().collection?.map((issue) => ({
+      ...issue,
+      date: getIssueMonth(issue),
+    }))
+);
+const ready = $computed(() => labels && hasPublicationNames);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadPurchases = collection().loadPurchases;
+const compareDates = (a, b) =>
+  Math.sign(
+    new Date(a === "?" ? "0001-01-01" : a) -
+      new Date(b === "?" ? "0001-01-01" : b)
+  );
+const randomColor = () =>
+  `rgb(${[
+    Math.floor(Math.random() * 255),
+    Math.floor(Math.random() * 255),
+    Math.floor(Math.random() * 255),
+  ].join(",")})`;
+const getIssueMonth = (issue) =>
+  getMonthFromDate(
+    issue.purchaseId
+      ? (purchasesById[issue.purchaseId] || { date: "?" }).date
+      : issue.creationDate && new Date(issue.creationDate)
+      ? getMonthFromDate(issue.creationDate)
+      : "?"
+  );
+const getMonthFromDate = (date) => date.match(/^\?|([^-]+-[^-]+)/)[0];
 
-let hasPublicationNames = $ref(false),
-  purchasesById = $ref(null),
-  chartData = $ref(null),
-  options = $ref({});
+let hasPublicationNames = $ref(false);
+let purchasesById = $ref(null);
+let chartData = $ref(null);
+let options = $ref({});
 
 watch(
   () => totalPerPublication,
@@ -124,7 +122,10 @@ watch(
         {}
       );
 
-      let accDate = labels.reduce((acc, value) => ({ ...acc, [value]: 0 }), {});
+      const accDate = labels.reduce(
+        (acc, value) => ({ ...acc, [value]: 0 }),
+        {}
+      );
       const values = collectionWithDates
         .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
         .reduce((acc, { date, publicationCode }) => {
@@ -171,7 +172,7 @@ watch(
 
       chartData = {
         datasets,
-        labels: labels,
+        labels,
       };
 
       options = {

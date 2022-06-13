@@ -100,46 +100,46 @@ import Subscription from "../../components/Subscription";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
 
-let hasPublicationNames = $ref(false),
-  currentAssociatedPublications = $ref([]),
-  associatedPublications = $ref([
-    {
-      referencePublicationcode: "fr/JM",
-      publicationcode: "fr/JMS",
-    },
-  ]),
-  editedSubscriptionId = $ref(undefined),
-  newSubscription = $ref(null);
+let hasPublicationNames = $ref(false);
+let currentAssociatedPublications = $ref([]);
+const associatedPublications = $ref([
+  {
+    referencePublicationcode: "fr/JM",
+    publicationcode: "fr/JMS",
+  },
+]);
+let editedSubscriptionId = $ref(undefined);
+let newSubscription = $ref(null);
 
-const publicationNames = $computed(() => coa().publicationNames),
-  subscriptions = $computed(() => collection().subscriptions),
-  fetchPublicationNames = coa().fetchPublicationNames,
-  loadSubscriptions = collection().loadSubscriptions,
-  createAssociatedPublicationSubscription = (
-    existingSubscription,
-    { publicationcode: associatedPublicationcode }
-  ) => {
-    newSubscription = {
-      ...existingSubscription,
-      publicationCode: associatedPublicationcode,
-    };
-    createSubscription(newSubscription);
-  },
-  createSubscription = async (data) => {
-    await axios.put(`/api/collection/subscriptions`, data);
-    await loadSubscriptions(true);
-    editedSubscriptionId = undefined;
-  },
-  editSubscription = async (id, data) => {
-    await axios.post(`/api/collection/subscriptions/${id}`, data);
-    await loadSubscriptions(true);
-    editedSubscriptionId = undefined;
-  },
-  deleteSubscription = async (id) => {
-    await axios.delete(`/api/collection/subscriptions/${id}`);
-    await loadSubscriptions(true);
-    editedSubscriptionId = undefined;
+const publicationNames = $computed(() => coa().publicationNames);
+const subscriptions = $computed(() => collection().subscriptions);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadSubscriptions = collection().loadSubscriptions;
+const createAssociatedPublicationSubscription = (
+  existingSubscription,
+  { publicationcode: associatedPublicationcode }
+) => {
+  newSubscription = {
+    ...existingSubscription,
+    publicationCode: associatedPublicationcode,
   };
+  createSubscription(newSubscription);
+};
+const createSubscription = async (data) => {
+  await axios.put(`/api/collection/subscriptions`, data);
+  await loadSubscriptions(true);
+  editedSubscriptionId = undefined;
+};
+const editSubscription = async (id, data) => {
+  await axios.post(`/api/collection/subscriptions/${id}`, data);
+  await loadSubscriptions(true);
+  editedSubscriptionId = undefined;
+};
+const deleteSubscription = async (id) => {
+  await axios.delete(`/api/collection/subscriptions/${id}`);
+  await loadSubscriptions(true);
+  editedSubscriptionId = undefined;
+};
 
 watch(
   () => subscriptions,

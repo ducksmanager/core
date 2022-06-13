@@ -37,20 +37,20 @@ import { users } from "../../stores/users";
 const usersStore = users();
 
 let loading = $ref(true);
-const bookcaseContributors = $computed(() => usersStore.bookcaseContributors),
-  stats = $computed(() => usersStore.stats),
-  points = $computed(() => usersStore.points),
-  fetchStats = $computed(() => usersStore.fetchStats),
-  fetchBookcaseContributors = $computed(
-    () => usersStore.fetchBookcaseContributors
-  ),
-  bookcaseContributorsSorted = $computed(
-    () =>
-      !loading &&
-      [...bookcaseContributors].sort(({ name: name1 }, { name: name2 }) =>
-        name1.toLowerCase() < name2.toLowerCase() ? -1 : 1
-      )
-  );
+const bookcaseContributors = $computed(() => usersStore.bookcaseContributors);
+const stats = $computed(() => usersStore.stats);
+const points = $computed(() => usersStore.points);
+const fetchStats = $computed(() => usersStore.fetchStats);
+const fetchBookcaseContributors = $computed(
+  () => usersStore.fetchBookcaseContributors
+);
+const bookcaseContributorsSorted = $computed(
+  () =>
+    !loading &&
+    [...bookcaseContributors].sort(({ name: name1 }, { name: name2 }) =>
+      name1.toLowerCase() < name2.toLowerCase() ? -1 : 1
+    )
+);
 
 onMounted(async () => {
   await fetchBookcaseContributors();

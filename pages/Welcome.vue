@@ -205,8 +205,8 @@ import { user } from "../composables/global";
 import { imagePath } from "../composables/imagePath";
 import { l10n } from "../stores/l10n";
 
-const { r } = l10n(),
-  { username } = user();
+const { r } = l10n();
+const { username } = user();
 </script>
 
 <style scoped lang="scss">

@@ -48,32 +48,32 @@ import { useI18n } from "vue-i18n";
 import { imagePath } from "../composables/imagePath";
 import { l10n } from "../stores/l10n";
 
-const { t: $t } = useI18n(),
-  types = [
-    {
-      link: "classic",
-      name: $t("la liste classique"),
-      description: $t(
-        "Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez."
+const { t: $t } = useI18n();
+const types = [
+  {
+    link: "classic",
+    name: $t("la liste classique"),
+    description: $t(
+      "Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez."
+    ),
+    details: [
+      $t("Ce type de liste est plus adapté pour les petites collections."),
+      $t(
+        "Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros."
       ),
-      details: [
-        $t("Ce type de liste est plus adapté pour les petites collections."),
-        $t(
-          "Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros."
-        ),
-      ],
-    },
-    {
-      link: "collectable",
-      name: $t("CollecTable"),
-      exclusive: true,
-      description: $t(
-        "Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !"
-      ),
-      details: [$t("Adaptée pour les grandes collections.")],
-    },
-  ],
-  { r } = l10n();
+    ],
+  },
+  {
+    link: "collectable",
+    name: $t("CollecTable"),
+    exclusive: true,
+    description: $t(
+      "Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !"
+    ),
+    details: [$t("Adaptée pour les grandes collections.")],
+  },
+];
+const { r } = l10n();
 </script>
 
 <style lang="scss" scoped>

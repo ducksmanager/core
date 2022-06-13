@@ -164,29 +164,30 @@ import { coa } from "../../stores/coa";
 import { collection as collectionStore } from "../../stores/collection";
 import { users } from "../../stores/users";
 
-const collection = collectionStore();
 const { getConditionLabel } = condition();
 
-const { t: $t } = useI18n(),
-  currentPage = 1,
-  count = $computed(() => users().count),
-  publicationNames = $computed(() => coa().publicationNames),
-  totalPerPublication = $computed(() => collectionStore().totalPerPublication),
-  quotedIssues = $computed(() => collectionStore().quotedIssues),
-  quotationSum = $computed(() => collectionStore().quotationSum),
-  quotationFields = [
-    { key: "issue", label: $t("Numéro") },
-    { key: "condition", label: $t("Etat") },
-    { key: "estimation", label: $t("Estimation") },
-    {
-      key: "estimationGivenCondition",
-      label: $t("Estimation ajustée de l'état"),
-    },
-  ];
+const { t: $t } = useI18n();
+const currentPage = 1;
+const count = $computed(() => users().count);
+const publicationNames = $computed(() => coa().publicationNames);
+const totalPerPublication = $computed(
+  () => collectionStore().totalPerPublication
+);
+const quotedIssues = $computed(() => collectionStore().quotedIssues);
+const quotationSum = $computed(() => collectionStore().quotationSum);
+const quotationFields = [
+  { key: "issue", label: $t("Numéro") },
+  { key: "condition", label: $t("Etat") },
+  { key: "estimation", label: $t("Estimation") },
+  {
+    key: "estimationGivenCondition",
+    label: $t("Estimation ajustée de l'état"),
+  },
+];
 
-let rarityValue = $ref(null),
-  rarityTotal = $ref(null),
-  hasPublicationNames = $ref(false);
+let rarityValue = $ref(null);
+let rarityTotal = $ref(null);
+let hasPublicationNames = $ref(false);
 
 watch(
   () => totalPerPublication,

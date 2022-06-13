@@ -37,15 +37,13 @@ const { items, rootPath } = defineProps({
     required: true,
   },
 });
-const { r } = l10n(),
-  activeTabIndex = $ref(
-    items.findIndex(
-      ({ path }) => window.location.pathname === r(rootPath + path)
-    )
-  ),
-  onTabClick = ({ path }) => {
-    window.location.replace(r(rootPath + path));
-  };
+const { r } = l10n();
+const activeTabIndex = $ref(
+  items.findIndex(({ path }) => window.location.pathname === r(rootPath + path))
+);
+const onTabClick = ({ path }) => {
+  window.location.replace(r(rootPath + path));
+};
 </script>
 
 <style scoped lang="scss">

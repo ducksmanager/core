@@ -22,23 +22,23 @@ defineProps({
   },
 });
 const locales = [
-    {
-      key: "en",
-      name: "English",
-      flagName: "uk",
-    },
-    {
-      key: "fr",
-      name: "Français",
-      flagName: "fr",
-    },
-  ],
-  reloadWithLocale = ({ key }) => {
-    if (process.client) {
-      localStorage.setItem("locale", key);
-      useI18n().locale = key;
-    }
-  };
+  {
+    key: "en",
+    name: "English",
+    flagName: "uk",
+  },
+  {
+    key: "fr",
+    name: "Français",
+    flagName: "fr",
+  },
+];
+const reloadWithLocale = ({ key }) => {
+  if (process.client) {
+    localStorage.setItem("locale", key);
+    useI18n().locale = key;
+  }
+};
 </script>
 <style scoped lang="scss">
 #flags {

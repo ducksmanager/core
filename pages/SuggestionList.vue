@@ -84,30 +84,30 @@ import StoryList from "../components/StoryList";
 import { collection } from "../stores/collection";
 
 const props = defineProps({
-    countrycode: {
-      type: String,
-      default: null,
-    },
-    sinceLastVisit: {
-      type: Boolean,
-      default: false,
-    },
-  }),
-  { t: $t } = useI18n(),
-  suggestions = $computed(() => collection().suggestions),
-  hasSuggestions = $computed(() => collection().hasSuggestions),
-  suggestionSorts = () => ({
-    oldestdate: $t("Trier par date de parution"),
-    score: $t("Trier par score"),
-  }),
-  loadSuggestions = collection().loadSuggestions,
-  getImportance = (score) => {
-    const { minScore, maxScore } = suggestions;
-    return maxScore === score ? 1 : minScore === score ? 3 : 2;
-  };
+  countrycode: {
+    type: String,
+    default: null,
+  },
+  sinceLastVisit: {
+    type: Boolean,
+    default: false,
+  },
+});
+const { t: $t } = useI18n();
+const suggestions = $computed(() => collection().suggestions);
+const hasSuggestions = $computed(() => collection().hasSuggestions);
+const suggestionSorts = () => ({
+  oldestdate: $t("Trier par date de parution"),
+  score: $t("Trier par score"),
+});
+const loadSuggestions = collection().loadSuggestions;
+const getImportance = (score) => {
+  const { minScore, maxScore } = suggestions;
+  return maxScore === score ? 1 : minScore === score ? 3 : 2;
+};
 
-let loading = $ref(true),
-  suggestionSortCurrent = $ref("score");
+let loading = $ref(true);
+const suggestionSortCurrent = $ref("score");
 
 watch(
   () => props.countrycode,

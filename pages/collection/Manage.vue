@@ -116,7 +116,6 @@ defineProps({
 const suggestionsNumber = $ref(0);
 let hasPublicationNames = $ref(false);
 const username = user().username;
-const publicationNames = $computed(() => coa().publicationNames);
 const total = $computed(() => collection().total);
 const totalPerPublication = $computed(() => collection().totalPerPublication);
 const mostPossessedPublication = $computed(

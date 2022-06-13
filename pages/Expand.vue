@@ -72,24 +72,22 @@ import { collection as collectionStore } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 import SuggestionList from "./SuggestionList";
 
-let countryCode = $ref("ALL");
-const { t: $t } = useI18n(),
-  t = $t,
-  { r } = l10n(),
-  collection = $computed(() => collectionStore().collection),
-  watchedAuthors = $computed(() => collectionStore().watchedAuthors),
-  suggestions = $computed(() => collectionStore().suggestions),
-  countryNames = $computed(() => coa().countryNames),
-  countryNamesWithAllCountriesOption = $computed(
-    () =>
-      countryNames && {
-        ALL: $t("Tous les pays"),
-        ...countryNames,
-      }
-  ),
-  watchedAuthorsWithNotation = $computed(() =>
-    watchedAuthors?.filter(({ notation }) => notation > 0)
-  );
+const countryCode = $ref("ALL");
+const { t: $t } = useI18n();
+const { r } = l10n();
+const collection = $computed(() => collectionStore().collection);
+const watchedAuthors = $computed(() => collectionStore().watchedAuthors);
+const countryNames = $computed(() => coa().countryNames);
+const countryNamesWithAllCountriesOption = $computed(
+  () =>
+    countryNames && {
+      ALL: $t("Tous les pays"),
+      ...countryNames,
+    }
+);
+const watchedAuthorsWithNotation = $computed(() =>
+  watchedAuthors?.filter(({ notation }) => notation > 0)
+);
 
 watch(
   () => watchedAuthors,

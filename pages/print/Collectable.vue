@@ -112,58 +112,60 @@ import { imagePath } from "../../composables/imagePath";
 import { coa } from "../../stores/coa";
 import { collection as collectionStore } from "../../stores/collection";
 
-const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/,
-  lines = 2,
-  numbersPerRow = 100 / lines,
-  countryNames = $computed(() => coa().countryNames),
-  publicationNames = $computed(() => coa().publicationNames),
-  collection = $computed(() => collectionStore().collection),
-  totalPerPublication = $computed(() => collectionStore().totalPerPublication),
-  ready = $computed(
-    () => issuesPerCell && countryNames && Object.keys(publicationNames).length
-  ),
-  maxLetter = $computed(() =>
-    !issuesPerCell
-      ? null
-      : numberToLetter(
-          [
-            ...new Set(
-              JSON.stringify(issuesPerCell)
-                .match(/"[a-zA-Z]+"/g)
-                .map((letter) => letter.replace(/"/g, ""))
-            ),
-          ]
-            .map(letterToNumber)
-            .sort((a, b) => b - a)[0]
-        )
-  ),
-  { t: $t } = useI18n(),
-  issueCountTitle = $computed(() => {
-    const issueCountString = $t("numéro | numéros", 2);
-    return (
-      issueCountString[0].toUpperCase() +
-      issueCountString.substring(1, issueCountString.length).toLowerCase()
-    );
-  }),
-  fetchCountryNames = coa().fetchCountryNames,
-  fetchPublicationNames = coa().fetchPublicationNames,
-  loadCollection = collectionStore().loadCollection,
-  loadPurchases = collectionStore().loadPurchases,
-  numberToLetter = (number) =>
-    String.fromCharCode(
-      (number < 26 ? "a".charCodeAt() : "A".charCodeAt() - 26) + number
-    ),
-  letterToNumber = (letter) =>
-    letter >= "a"
-      ? letter.charCodeAt() - "a".charCodeAt()
-      : 26 + letter.charCodeAt() - "A".charCodeAt(),
-  groupsInRange = (range) => {
-    let groups = [];
-    for (let group = 6 * range; group < 6 * (range + 1); group++) {
-      groups.push(group);
-    }
-    return groups;
-  };
+const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/;
+const lines = 2;
+const numbersPerRow = 100 / lines;
+const countryNames = $computed(() => coa().countryNames);
+const publicationNames = $computed(() => coa().publicationNames);
+const collection = $computed(() => collectionStore().collection);
+const totalPerPublication = $computed(
+  () => collectionStore().totalPerPublication
+);
+const ready = $computed(
+  () => issuesPerCell && countryNames && Object.keys(publicationNames).length
+);
+const maxLetter = $computed(() =>
+  !issuesPerCell
+    ? null
+    : numberToLetter(
+        [
+          ...new Set(
+            JSON.stringify(issuesPerCell)
+              .match(/"[a-zA-Z]+"/g)
+              .map((letter) => letter.replace(/"/g, ""))
+          ),
+        ]
+          .map(letterToNumber)
+          .sort((a, b) => b - a)[0]
+      )
+);
+const { t: $t } = useI18n();
+const issueCountTitle = $computed(() => {
+  const issueCountString = $t("numéro | numéros", 2);
+  return (
+    issueCountString[0].toUpperCase() +
+    issueCountString.substring(1, issueCountString.length).toLowerCase()
+  );
+});
+const fetchCountryNames = coa().fetchCountryNames;
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadCollection = collectionStore().loadCollection;
+const loadPurchases = collectionStore().loadPurchases;
+const numberToLetter = (number) =>
+  String.fromCharCode(
+    (number < 26 ? "a".charCodeAt() : "A".charCodeAt() - 26) + number
+  );
+const letterToNumber = (letter) =>
+  letter >= "a"
+    ? letter.charCodeAt() - "a".charCodeAt()
+    : 26 + letter.charCodeAt() - "A".charCodeAt();
+const groupsInRange = (range) => {
+  const groups = [];
+  for (let group = 6 * range; group < 6 * (range + 1); group++) {
+    groups.push(group);
+  }
+  return groups;
+};
 
 let issuesPerCell = $ref(null);
 

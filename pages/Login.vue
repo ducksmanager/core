@@ -48,8 +48,8 @@ defineProps({
   lastUsername: { type: String, default: null },
 });
 
-const csrfToken = document.getElementById("csrf").value,
-  { r } = l10n();
+const csrfToken = document.getElementById("csrf").value;
+const { r } = l10n();
 </script>
 
 <style scoped>

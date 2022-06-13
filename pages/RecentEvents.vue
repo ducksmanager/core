@@ -17,62 +17,50 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from "vue";
+import { onMounted } from "vue";
 
 import Ago from "../components/Ago";
 import Event from "../components/Event";
 import { coa } from "../stores/coa";
-import { ongoingRequests } from "../stores/ongoing-requests";
 import { users } from "../stores/users";
 
-let isLoaded = $ref(false),
-  hasFreshEvents = $ref(false);
-const publicationNames = $computed(() => coa().publicationNames),
-  stats = $computed(() => users().stats),
-  points = $computed(() => users().points),
-  events = $computed(() => users().events),
-  numberOfOngoingAjaxCalls = $computed(
-    () => ongoingRequests().numberOfOngoingAjaxCalls
-  ),
-  eventUserIds = $computed(() =>
+let isLoaded = $ref(false);
+const events = $computed(() => users().events);
+const eventUserIds = $computed(() =>
+  events
+    ?.reduce(
+      (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
+      []
+    )
+    .filter((userId) => !!userId)
+);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const fetchStats = users().fetchStats;
+const fetchEventsAndAssociatedData = async (clearCacheEntry) => {
+  await fetchPublicationNames(
     events
-      ?.reduce(
-        (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
-        []
+      .filter(({ publicationCode }) => publicationCode)
+      .map(({ publicationCode }) => publicationCode)
+      .concat(
+        events
+          .filter(({ edges }) => edges)
+          .reduce(
+            (acc, { edges }) => [
+              ...acc,
+              ...edges.map(({ publicationCode }) => publicationCode),
+            ],
+            []
+          )
       )
-      .filter((userId) => !!userId)
-  ),
-  fetchPublicationNames = coa().fetchPublicationNames,
-  fetchEvents = users().fetchEvents,
-  fetchStats = users().fetchStats,
-  fetchEventsAndAssociatedData = async (clearCacheEntry) => {
-    hasFreshEvents = await fetchEvents(clearCacheEntry);
+  );
 
-    await fetchPublicationNames(
-      events
-        .filter(({ publicationCode }) => publicationCode)
-        .map(({ publicationCode }) => publicationCode)
-        .concat(
-          events
-            .filter(({ edges }) => edges)
-            .reduce(
-              (acc, { edges }) => [
-                ...acc,
-                ...edges.map(({ publicationCode }) => publicationCode),
-              ],
-              []
-            )
-        )
-    );
-
-    await fetchStats(eventUserIds, clearCacheEntry);
-  };
+  await fetchStats(eventUserIds, clearCacheEntry);
+};
 
 onMounted(async () => {
   await fetchEventsAndAssociatedData(false);
   setTimeout(async () => {
     await fetchEventsAndAssociatedData(true);
-    hasFreshEvents = true;
   }, 1000);
   isLoaded = true;
 });

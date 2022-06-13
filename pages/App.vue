@@ -9,11 +9,11 @@ import { l10n } from "../stores/l10n";
 let componentName = $ref(null);
 
 const component = $computed(() =>
-    componentName
-      ? defineAsyncComponent(() => import(`./${componentName}`))
-      : null
-  ),
-  props = $ref({});
+  componentName
+    ? defineAsyncComponent(() => import(`./${componentName}`))
+    : null
+);
+const props = $ref({});
 
 onMounted(() => {
   for (const { name, value } of document.getElementById("app").attributes) {

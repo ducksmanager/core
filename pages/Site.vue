@@ -23,20 +23,20 @@ import LeftPanel from "./LeftPanel";
 import SwitchLocale from "./SwitchLocale";
 
 const props = defineProps({
-    page: { type: String, required: true },
-    title: { type: String, default: null },
-    innerTitle: { type: String, default: null },
-  }),
-  attrs = useAttrs(),
-  pageComponent = $computed(() =>
-    defineAsyncComponent(() => import(`./${props.page}`))
-  ),
-  l10nRoutes = $computed(() => l10n().l10nRoutes),
-  attrsWithoutId = $computed(() =>
-    Object.keys(attrs)
-      .filter((attrKey) => attrKey !== "id")
-      .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
-  );
+  page: { type: String, required: true },
+  title: { type: String, default: null },
+  innerTitle: { type: String, default: null },
+});
+const attrs = useAttrs();
+const pageComponent = $computed(() =>
+  defineAsyncComponent(() => import(`./${props.page}`))
+);
+const l10nRoutes = $computed(() => l10n().l10nRoutes);
+const attrsWithoutId = $computed(() =>
+  Object.keys(attrs)
+    .filter((attrKey) => attrKey !== "id")
+    .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
+);
 </script>
 
 <style scoped lang="scss">

@@ -17,56 +17,56 @@ import { condition } from "../../composables/condition";
 import { collection as collectionStore } from "../../stores/collection";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
-let conditions;
-
-conditions = condition().conditions;
+const conditions = condition().conditions;
 collection();
 const numberPerCondition = $computed(() =>
-    collectionStore().collection.reduce(
-      (acc, { condition }) => ({
-        ...acc,
-        [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
-      }),
-      {}
-    )
-  ),
-  conditionsWithoutMissing = conditions.filter(
-    ({ value }) => value !== "missing"
-  ),
-  values = $computed(() =>
-    Object.values(conditionsWithoutMissing).map(
-      ({ dbValue }) => numberPerCondition[dbValue]
-    )
-  ),
-  colors = Object.values(conditionsWithoutMissing.map(({ color }) => color)),
-  chartData = $computed(() => ({
-    labels: Object.values(conditionsWithoutMissing).map(({ text }) => text),
-    datasets: [
-      {
-        data: values,
-        backgroundColor: colors,
-      },
-    ],
-  })),
-  options = $computed(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem) => {
-            const { dataset, parsed: currentValue } = tooltipItem;
-            const total = dataset.data.reduce((acc, value) => acc + value, 0);
-            const percentage = parseFloat(
-              ((currentValue / total) * 100).toFixed(1)
-            );
-            return `${currentValue} (${percentage}%)`;
-          },
-          title: ([tooltipItem]) => chartData.labels[tooltipItem.dataIndex],
+  collectionStore().collection.reduce(
+    (acc, { condition }) => ({
+      ...acc,
+      [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
+    }),
+    {}
+  )
+);
+const conditionsWithoutMissing = conditions.filter(
+  ({ value }) => value !== "missing"
+);
+const values = $computed(() =>
+  Object.values(conditionsWithoutMissing).map(
+    ({ dbValue }) => numberPerCondition[dbValue]
+  )
+);
+const colors = Object.values(
+  conditionsWithoutMissing.map(({ color }) => color)
+);
+const chartData = $computed(() => ({
+  labels: Object.values(conditionsWithoutMissing).map(({ text }) => text),
+  datasets: [
+    {
+      data: values,
+      backgroundColor: colors,
+    },
+  ],
+}));
+const options = $computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: (tooltipItem) => {
+          const { dataset, parsed: currentValue } = tooltipItem;
+          const total = dataset.data.reduce((acc, value) => acc + value, 0);
+          const percentage = parseFloat(
+            ((currentValue / total) * 100).toFixed(1)
+          );
+          return `${currentValue} (${percentage}%)`;
         },
+        title: ([tooltipItem]) => chartData.labels[tooltipItem.dataIndex],
       },
     },
-  }));
+  },
+}));
 </script>
 
 <style scoped>

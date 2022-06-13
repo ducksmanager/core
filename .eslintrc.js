@@ -15,6 +15,7 @@ module.exports = {
     "vue/no-multiple-template-root": "off",
     "vue/no-setup-props-destructure": "off",
     "vue/no-v-model-argument": "off",
+    "vue/no-v-text-v-html-on-component": "off",
     "vue/multi-word-component-names": "off",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",

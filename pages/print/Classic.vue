@@ -22,50 +22,48 @@ import { coa } from "../../stores/coa";
 import { collection as collectionStore } from "../../stores/collection";
 
 let hasPublicationNames = $ref(false);
-let countryNames = $computed(() => coa().countryNames),
-  publicationNames = $computed(() => coa().publicationNames),
-  collection = $computed(() => collectionStore().collection),
-  countryCodes = $computed(
-    () => collection && [...new Set(collection.map((i) => i.country))]
-  ),
-  countryCodesSortedByName = $computed(
-    () =>
-      countryCodes &&
-      countryNames &&
-      [...countryCodes].sort(
-        (countryCodeA, countryCodeB) =>
-          countryNames[countryCodeA] &&
-          countryNames[countryCodeA].localeCompare(countryNames[countryCodeB])
-      )
-  ),
-  publicationCodes = $computed(
-    () =>
-      collection && [
-        ...new Set(collection.map((i) => `${i.country}/${i.magazine}`)),
-      ]
-  );
-const fetchCountryNames = coa().fetchCountryNames,
-  fetchPublicationNames = coa().fetchPublicationNames,
-  loadCollection = collectionStore().loadCollection,
-  publicationCodesOfCountry = (countryCode) =>
-    publicationCodes
-      .filter(
-        (publicationCode) => publicationCode.split("/")[0] === countryCode
-      )
-      .sort((a, b) =>
-        !publicationNames[b]
-          ? 1
-          : publicationNames[a] < publicationNames[b]
-          ? -1
-          : publicationNames[a] > publicationNames[b]
-          ? 1
-          : 0
-      ),
-  issuesOfPublicationCode = (publicationCode) =>
-    collection
-      .filter((i) => publicationCode === `${i.country}/${i.magazine}`)
-      .map(({ issueNumber }) => issueNumber)
-      .join(", ");
+const countryNames = $computed(() => coa().countryNames);
+const publicationNames = $computed(() => coa().publicationNames);
+const collection = $computed(() => collectionStore().collection);
+const countryCodes = $computed(
+  () => collection && [...new Set(collection.map((i) => i.country))]
+);
+const countryCodesSortedByName = $computed(
+  () =>
+    countryCodes &&
+    countryNames &&
+    [...countryCodes].sort(
+      (countryCodeA, countryCodeB) =>
+        countryNames[countryCodeA] &&
+        countryNames[countryCodeA].localeCompare(countryNames[countryCodeB])
+    )
+);
+const publicationCodes = $computed(
+  () =>
+    collection && [
+      ...new Set(collection.map((i) => `${i.country}/${i.magazine}`)),
+    ]
+);
+const fetchCountryNames = coa().fetchCountryNames;
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadCollection = collectionStore().loadCollection;
+const publicationCodesOfCountry = (countryCode) =>
+  publicationCodes
+    .filter((publicationCode) => publicationCode.split("/")[0] === countryCode)
+    .sort((a, b) =>
+      !publicationNames[b]
+        ? 1
+        : publicationNames[a] < publicationNames[b]
+        ? -1
+        : publicationNames[a] > publicationNames[b]
+        ? 1
+        : 0
+    );
+const issuesOfPublicationCode = (publicationCode) =>
+  collection
+    .filter((i) => publicationCode === `${i.country}/${i.magazine}`)
+    .map(({ issueNumber }) => issueNumber)
+    .join(", ");
 watch(
   () => publicationCodes,
   (newValue) => {

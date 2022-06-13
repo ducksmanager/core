@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import * as axios from "axios";
+import axios from "axios";
 import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
@@ -80,44 +80,40 @@ defineProps({
   lastUsername: { type: String, default: null },
 });
 
-let signupUsername = $ref(""),
-  email = $ref(""),
-  password = $ref(""),
-  password2 = $ref("");
+let signupUsername = $ref("");
+const email = $ref("");
+const password = $ref("");
+const password2 = $ref("");
 
-const { r } = l10n(),
-  t = useI18n().t,
-  csrfToken = document.getElementById("csrf").value,
-  hasErrors = $computed(() => form().hasErrors),
-  signup = async () => {
-    const { validatePasswords, validateEmail, validateUsername } =
-      validation(t);
+const t = useI18n().t;
+const csrfToken = document.getElementById("csrf").value;
+const hasErrors = $computed(() => form().hasErrors);
+const signup = async () => {
+  const { validatePasswords, validateEmail, validateUsername } = validation(t);
 
-    form().clearErrors();
-    validatePasswords(password, password2);
-    validateEmail(email);
-    validateUsername(signupUsername);
+  form().clearErrors();
+  validatePasswords(password, password2);
+  validateEmail(email);
+  validateUsername(signupUsername);
 
-    if (hasErrors) {
-      return;
-    }
-    try {
-      await axios.put("/signup", {
-        username: signupUsername,
-        password: password,
-        password2: password2,
-        email: email,
-        _csrf_token: csrfToken,
-      });
-      window.location.replace(l10n().r("/collection/show"));
-    } catch (e) {
-      form().addErrors({
-        username: $t(
-          "Ce nom d'utilisateur ou cette adresse e-mail existe déjà."
-        ),
-      });
-    }
-  };
+  if (hasErrors) {
+    return;
+  }
+  try {
+    await axios.put("/signup", {
+      username: signupUsername,
+      password,
+      password2,
+      email,
+      _csrf_token: csrfToken,
+    });
+    window.location.replace(l10n().r("/collection/show"));
+  } catch (e) {
+    form().addErrors({
+      username: $t("Ce nom d'utilisateur ou cette adresse e-mail existe déjà."),
+    });
+  }
+};
 
 onMounted(() => {
   signupUsername = lastUsername;

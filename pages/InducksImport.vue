@@ -285,82 +285,84 @@ import { collection as collectionStore } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 const { findInCollection } = collection();
 
-let step = $ref(1),
-  rawData = $ref(""),
-  expandedPublicationAccordion = $ref(null),
-  expandedNotImportableAccordion = $ref(null),
-  hasPublicationNames = $ref(false),
-  hasIssueNumbers = $ref(false),
-  issueDefaultCondition = $ref("bon"),
-  issuesToImport = $ref(null),
-  issuesNotReferenced = $ref(null),
-  issuesAlreadyInCollection = $ref(null),
-  issuesImportable = $ref(null),
-  importProgress = $ref(0);
+let step = $ref(1);
+const rawData = $ref("");
+const expandedPublicationAccordion = $ref(null);
+const expandedNotImportableAccordion = $ref(null);
+let hasPublicationNames = $ref(false);
+let hasIssueNumbers = $ref(false);
+const issueDefaultCondition = $ref("bon");
+let issuesToImport = $ref(null);
+let issuesNotReferenced = $ref(null);
+let issuesAlreadyInCollection = $ref(null);
+let issuesImportable = $ref(null);
+let importProgress = $ref(0);
 
-const { t: $t } = useI18n(),
-  { username } = user(),
-  publicationNames = $computed(() => coa().publicationNames),
-  issueNumbers = $computed(() => coa().issueNumbers),
-  issueCodeDetails = $computed(() => coa().issueCodeDetails),
-  conditions = {
-    mauvais: $t("En mauvais état"),
-    bon: $t("En bon état"),
-  },
-  importDataReady = $computed(
-    () => issuesToImport && collectionStore().collection && hasIssueNumbers
-  ),
-  { r } = l10n(),
-  fetchPublicationNames = coa().fetchPublicationNames,
-  fetchIssueNumbers = coa().fetchIssueNumbers,
-  fetchIssueCodesDetails = coa().fetchIssueCodesDetails,
-  processRawData = async () => {
-    const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
-    const issueCodes = rawData
-      .split("\n")
-      .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
-      .map((row) => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
-    await fetchIssueCodesDetails(issueCodes);
+const { t: $t } = useI18n();
+const { username } = user();
+const publicationNames = $computed(() => coa().publicationNames);
+const issueNumbers = $computed(() => coa().issueNumbers);
+const issueCodeDetails = $computed(() => coa().issueCodeDetails);
+const conditions = {
+  mauvais: $t("En mauvais état"),
+  bon: $t("En bon état"),
+};
+const importDataReady = $computed(
+  () => issuesToImport && collectionStore().collection && hasIssueNumbers
+);
+const { r } = l10n();
+const fetchPublicationNames = coa().fetchPublicationNames;
+const fetchIssueNumbers = coa().fetchIssueNumbers;
+const fetchIssueCodesDetails = coa().fetchIssueCodesDetails;
+const processRawData = async () => {
+  const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
+  const issueCodes = rawData
+    .split("\n")
+    .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
+    .map((row) => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
+  await fetchIssueCodesDetails(issueCodes);
 
-    const issues = issueCodes
-      .filter((issueCode) => issueCodeDetails[issueCode])
-      .reduce((acc, issueCode) => [...acc, issueCodeDetails[issueCode]], []);
-    if (issues.length) {
-      issuesToImport = issues;
-      step = 2;
+  const issues = issueCodes
+    .filter((issueCode) => issueCodeDetails[issueCode])
+    .reduce((acc, issueCode) => [...acc, issueCodeDetails[issueCode]], []);
+  if (issues.length) {
+    issuesToImport = issues;
+    step = 2;
+  }
+};
+const groupByPublicationCode = (issues) =>
+  issues?.reduce(
+    (acc, { publicationcode, issuenumber }) => ({
+      ...acc,
+      [publicationcode]: [
+        ...new Set([
+          ...(acc[publicationcode] || []),
+          issuenumber.replace(" ", ""),
+        ]),
+      ],
+    }),
+    {}
+  );
+const importIssues = async () => {
+  const importableIssuesByPublicationCode =
+    groupByPublicationCode(issuesImportable);
+  for (const publicationCode in importableIssuesByPublicationCode) {
+    if (
+      Object.keys(importableIssuesByPublicationCode).includes(publicationCode)
+    ) {
+      await axios.post("/api/collection/issues", {
+        publicationCode,
+        issueNumbers: importableIssuesByPublicationCode[publicationCode],
+        condition: issueDefaultCondition,
+        istosell: "do_not_change",
+        purchaseId: "do_not_change",
+      });
+      importProgress +=
+        100 / Object.keys(importableIssuesByPublicationCode).length;
     }
-  },
-  groupByPublicationCode = (issues) =>
-    issues?.reduce(
-      (acc, { publicationcode, issuenumber }) => ({
-        ...acc,
-        [publicationcode]: [
-          ...new Set([
-            ...(acc[publicationcode] || []),
-            issuenumber.replace(" ", ""),
-          ]),
-        ],
-      }),
-      {}
-    ),
-  importIssues = async () => {
-    const importableIssuesByPublicationCode =
-      groupByPublicationCode(issuesImportable);
-    for (let publicationCode in importableIssuesByPublicationCode) {
-      if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
-        await axios.post("/api/collection/issues", {
-          publicationCode: publicationCode,
-          issueNumbers: importableIssuesByPublicationCode[publicationCode],
-          condition: issueDefaultCondition,
-          istosell: "do_not_change",
-          purchaseId: "do_not_change",
-        });
-        importProgress +=
-          100 / Object.keys(importableIssuesByPublicationCode).length;
-      }
-    }
-    window.location.replace(r("/collection/show"));
-  };
+  }
+  window.location.replace(r("/collection/show"));
+};
 
 watch(
   () => importDataReady,

@@ -32,52 +32,50 @@ Chart.register(
   ArcElement
 );
 const { unit } = defineProps({
-    unit: {
-      type: String,
-      required: true,
-    },
-  }),
-  emit = defineEmits(["change-dimension"]);
+  unit: {
+    type: String,
+    required: true,
+  },
+});
+const emit = defineEmits(["change-dimension"]);
 collection();
 
-const { t: $t } = useI18n(),
-  totalPerPublicationUniqueIssueNumbers = $computed(
-    () => collectionStore().totalPerPublicationUniqueIssueNumbers
-  ),
-  countryNames = $computed(() => coa().countryNames),
-  issueCounts = $computed(() => coa().issueCounts),
-  publicationNames = $computed(() => coa().publicationNames),
-  labels = $computed(() => Object.keys(totalPerPublicationUniqueIssueNumbers)),
-  values = $computed(() => {
-    if (
-      !(totalPerPublicationUniqueIssueNumbers && issueCounts && countryNames)
-    ) {
-      return null;
-    }
-    let possessedIssues = Object.values(totalPerPublicationUniqueIssueNumbers);
-    let missingIssues = Object.keys(totalPerPublicationUniqueIssueNumbers).map(
-      (publicationCode) =>
-        issueCounts[publicationCode] -
-        totalPerPublicationUniqueIssueNumbers[publicationCode]
+const { t: $t } = useI18n();
+const totalPerPublicationUniqueIssueNumbers = $computed(
+  () => collectionStore().totalPerPublicationUniqueIssueNumbers
+);
+const countryNames = $computed(() => coa().countryNames);
+const issueCounts = $computed(() => coa().issueCounts);
+const publicationNames = $computed(() => coa().publicationNames);
+const labels = $computed(() =>
+  Object.keys(totalPerPublicationUniqueIssueNumbers)
+);
+const values = $computed(() => {
+  if (!(totalPerPublicationUniqueIssueNumbers && issueCounts && countryNames)) {
+    return null;
+  }
+  let possessedIssues = Object.values(totalPerPublicationUniqueIssueNumbers);
+  let missingIssues = Object.keys(totalPerPublicationUniqueIssueNumbers).map(
+    (publicationCode) =>
+      issueCounts[publicationCode] -
+      totalPerPublicationUniqueIssueNumbers[publicationCode]
+  );
+  if (unit === "percentage") {
+    possessedIssues = possessedIssues.map((possessedCount, key) =>
+      Math.round(possessedCount * (100 / (possessedCount + missingIssues[key])))
     );
-    if (unit === "percentage") {
-      possessedIssues = possessedIssues.map((possessedCount, key) =>
-        Math.round(
-          possessedCount * (100 / (possessedCount + missingIssues[key]))
-        )
-      );
-      missingIssues = possessedIssues.map(
-        (possessedCount) => 100 - possessedCount
-      );
-    }
-    return [possessedIssues, missingIssues];
-  }),
-  fetchCountryNames = coa().fetchCountryNames,
-  fetchPublicationNames = coa().fetchPublicationNames,
-  fetchIssueCounts = coa().fetchIssueCounts;
+    missingIssues = possessedIssues.map(
+      (possessedCount) => 100 - possessedCount
+    );
+  }
+  return [possessedIssues, missingIssues];
+});
+const fetchCountryNames = coa().fetchCountryNames;
+const fetchPublicationNames = coa().fetchPublicationNames;
+const fetchIssueCounts = coa().fetchIssueCounts;
 
-let chartData = $ref(null),
-  options = $ref({});
+let chartData = $ref(null);
+let options = $ref({});
 
 watch(
   () => totalPerPublicationUniqueIssueNumbers,
@@ -91,7 +89,7 @@ watch(
 
 watch(
   () => labels,
-  async (newValue) => {
+  (newValue) => {
     emit("change-dimension", "height", 100 + 30 * newValue.length);
     emit("change-dimension", "width", 500);
   },
@@ -100,7 +98,7 @@ watch(
 
 watch(
   () => values,
-  async (newValue) => {
+  (newValue) => {
     if (newValue) {
       chartData = {
         datasets: [
@@ -117,7 +115,7 @@ watch(
             legend: $t("Numéros référencés non-possédés"),
           },
         ],
-        labels: labels,
+        labels,
         legends: [
           $t("Numéros possédés"),
           $t("Numéros référencés non-possédés"),

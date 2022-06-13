@@ -17,13 +17,11 @@ import { onMounted, watch } from "vue";
 import IssueList from "../../components/IssueList";
 import { coa } from "../../stores/coa";
 import { collection } from "../../stores/collection";
-let hasPublicationNames = $ref(false),
-  issueNumbersByPublicationCode = $ref(null);
-const total = $computed(() => collection().total),
-  duplicateIssues = $computed(() => collection().duplicateIssues),
-  publicationNames = $computed(() => coa().publicationNames),
-  fetchPublicationNames = coa().fetchPublicationNames,
-  loadCollection = collection().loadCollection;
+let hasPublicationNames = $ref(false);
+let issueNumbersByPublicationCode = $ref(null);
+const duplicateIssues = $computed(() => collection().duplicateIssues);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadCollection = collection().loadCollection;
 
 watch(
   () => duplicateIssues,

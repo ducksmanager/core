@@ -90,8 +90,8 @@ const props = defineProps({
   errors: { type: String, default: "" },
 });
 
-const isSuccess = props.success === null ? null : parseInt(props.success) === 1,
-  parsedErrors = JSON.parse(props.errors);
+const isSuccess = props.success === null ? null : parseInt(props.success) === 1;
+const parsedErrors = JSON.parse(props.errors);
 
 form().addErrors(parsedErrors);
 </script>

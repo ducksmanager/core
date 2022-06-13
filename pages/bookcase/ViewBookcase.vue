@@ -162,111 +162,110 @@ const { bookcaseUsername } = defineProps({
   bookcaseUsername: { type: String, required: true },
 });
 
-const { r } = l10n(),
-  collection = collectionStore(),
-  coa = coaStore(),
-  bookcase = bookcaseStore(),
-  { userId, username } = user(),
-  isShareEnabled = $computed(() => collection.user?.isShareEnabled),
-  lastPublishedEdgesForCurrentUser = $computed(
-    () => collection.lastPublishedEdgesForCurrentUser
-  ),
-  popularIssuesInCollectionWithoutEdge = $computed(
-    () => collection.popularIssuesInCollectionWithoutEdge
-  ),
-  publicationNames = $computed(() => coa.publicationNames),
-  issueNumbers = $computed(() => coa.issueNumbers),
-  bookcaseOptions = $computed(() => bookcase.bookcaseOptions),
-  bookcaseOrder = $computed(() => bookcase.bookcaseOrder),
-  isPrivateBookcase = $computed(() => bookcase.isPrivateBookcase),
-  isUserNotExisting = $computed(() => bookcase.isUserNotExisting),
-  isSharedBookcase = $computed(() => users().isSharedBookcase),
-  bookcaseUrl = $computed(
-    () =>
-      !isPrivateBookcase &&
-      `${window.location.origin}/bookcase/show/${username}`
-  ),
-  loading = $computed(
-    () =>
-      !isPrivateBookcase &&
-      !isUserNotExisting &&
-      !(sortedBookcase && bookcaseOptions && edgesUsingSprites)
-  ),
-  userPoints = $computed(() => users().points[userId]),
-  percentVisible = $computed(() =>
-    bookcase.bookcase?.length
-      ? parseInt(
-          (100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length) /
-            bookcase.bookcase.length
-        )
-      : null
-  ),
-  mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
-    [...popularIssuesInCollectionWithoutEdge]
-      ?.sort(
-        ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 - popularity1
+const { r } = l10n();
+const collection = collectionStore();
+const coa = coaStore();
+const bookcase = bookcaseStore();
+const { userId, username } = user();
+const isShareEnabled = $computed(() => collection.user?.isShareEnabled);
+const lastPublishedEdgesForCurrentUser = $computed(
+  () => collection.lastPublishedEdgesForCurrentUser
+);
+const popularIssuesInCollectionWithoutEdge = $computed(
+  () => collection.popularIssuesInCollectionWithoutEdge
+);
+const publicationNames = $computed(() => coa.publicationNames);
+const issueNumbers = $computed(() => coa.issueNumbers);
+const bookcaseOptions = $computed(() => bookcase.bookcaseOptions);
+const bookcaseOrder = $computed(() => bookcase.bookcaseOrder);
+const isPrivateBookcase = $computed(() => bookcase.isPrivateBookcase);
+const isUserNotExisting = $computed(() => bookcase.isUserNotExisting);
+const isSharedBookcase = $computed(() => users().isSharedBookcase);
+const bookcaseUrl = $computed(
+  () =>
+    !isPrivateBookcase && `${window.location.origin}/bookcase/show/${username}`
+);
+const loading = $computed(
+  () =>
+    !isPrivateBookcase &&
+    !isUserNotExisting &&
+    !(sortedBookcase && bookcaseOptions && edgesUsingSprites)
+);
+const userPoints = $computed(() => users().points[userId]);
+const percentVisible = $computed(() =>
+  bookcase.bookcase?.length
+    ? parseInt(
+        (100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length) /
+          bookcase.bookcase.length
       )
-      .filter((_, index) => index < 10)
-  ),
-  sortedBookcase = $computed(
-    () =>
-      bookcase.bookcase &&
-      bookcaseOrder &&
-      hasIssueNumbers &&
-      [
-        ...bookcase.bookcase.map((edge) => ({
-          ...edge,
-          publicationCode: `${edge.countryCode}/${edge.magazineCode}`,
-        })),
-      ].sort(
-        (
-          {
-            countryCode: countryCode1,
-            magazineCode: magazineCode1,
-            issueNumber: issueNumber1,
-          },
-          {
-            countryCode: countryCode2,
-            magazineCode: magazineCode2,
-            issueNumber: issueNumber2,
-          }
-        ) => {
-          const publicationCode1 = `${countryCode1}/${magazineCode1}`;
-          const publicationCode2 = `${countryCode2}/${magazineCode2}`;
-          const publicationOrderSign = Math.sign(
-            bookcaseOrder.indexOf(publicationCode1) -
-              bookcaseOrder.indexOf(publicationCode2)
-          );
-          return (
-            publicationOrderSign ||
-            (!issueNumbers[publicationCode1] && -1) ||
-            Math.sign(
-              issueNumbers[publicationCode1].indexOf(
-                issueNumber1.replace(/ /g, "")
-              ) -
-                issueNumbers[publicationCode1].indexOf(
-                  issueNumber2.replace(/ /g, "")
-                )
-            )
-          );
+    : null
+);
+const mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
+  [...popularIssuesInCollectionWithoutEdge]
+    ?.sort(
+      ({ popularity: popularity1 }, { popularity: popularity2 }) =>
+        popularity2 - popularity1
+    )
+    .filter((_, index) => index < 10)
+);
+const sortedBookcase = $computed(
+  () =>
+    bookcase.bookcase &&
+    bookcaseOrder &&
+    hasIssueNumbers &&
+    [
+      ...bookcase.bookcase.map((edge) => ({
+        ...edge,
+        publicationCode: `${edge.countryCode}/${edge.magazineCode}`,
+      })),
+    ].sort(
+      (
+        {
+          countryCode: countryCode1,
+          magazineCode: magazineCode1,
+          issueNumber: issueNumber1,
+        },
+        {
+          countryCode: countryCode2,
+          magazineCode: magazineCode2,
+          issueNumber: issueNumber2,
         }
-      )
-  ),
-  highlightIssue = (issue) => {
-    currentEdgeHighlighted = bookcase.bookcase.find(
-      (issueInCollection) =>
-        issue.publicationcode === issueInCollection.publicationCode &&
-        issue.issuenumber === issueInCollection.issueNumber
-    ).id;
-  };
+      ) => {
+        const publicationCode1 = `${countryCode1}/${magazineCode1}`;
+        const publicationCode2 = `${countryCode2}/${magazineCode2}`;
+        const publicationOrderSign = Math.sign(
+          bookcaseOrder.indexOf(publicationCode1) -
+            bookcaseOrder.indexOf(publicationCode2)
+        );
+        return (
+          publicationOrderSign ||
+          (!issueNumbers[publicationCode1] && -1) ||
+          Math.sign(
+            issueNumbers[publicationCode1].indexOf(
+              issueNumber1.replace(/ /g, "")
+            ) -
+              issueNumbers[publicationCode1].indexOf(
+                issueNumber2.replace(/ /g, "")
+              )
+          )
+        );
+      }
+    )
+);
+const highlightIssue = (issue) => {
+  currentEdgeHighlighted = bookcase.bookcase.find(
+    (issueInCollection) =>
+      issue.publicationcode === issueInCollection.publicationCode &&
+      issue.issuenumber === issueInCollection.issueNumber
+  ).id;
+};
 
-let edgesUsingSprites = $ref({}),
-  currentEdgeOpened = $ref(null),
-  currentEdgeHighlighted = $ref(null),
-  hasPublicationNames = $ref(false),
-  hasIssueNumbers = $ref(false),
-  showShareButtons = $ref(false);
+let edgesUsingSprites = $ref({});
+const currentEdgeOpened = $ref(null);
+let currentEdgeHighlighted = $ref(null);
+let hasPublicationNames = $ref(false);
+let hasIssueNumbers = $ref(false);
+const showShareButtons = $ref(false);
 
 watch(
   () => bookcaseOrder,

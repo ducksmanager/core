@@ -159,7 +159,7 @@
 <script setup>
 import axios from "axios";
 import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-3";
-import { defineAsyncComponent, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AuthorList from "../components/AuthorList";
@@ -181,34 +181,33 @@ const { tab } = defineProps({
     required: true,
   },
 });
-const { t: $t } = useI18n(),
-  component = $computed(() => defineAsyncComponent(() => import(`./${tab}`))),
-  currentLocale = locale(),
-  purchases = $computed(() => collectionStore().purchases),
-  watchedAuthors = $computed(() => collectionStore().watchedAuthors),
-  collection = $computed(() => collectionStore().collection),
-  unitTypes = {
-    number: $t("Afficher en valeurs réelles"),
-    percentage: $t("Afficher en pourcentages"),
-  },
-  purchaseTypes = {
-    new: $t("Afficher les nouvelles acquisitions"),
-    total: $t("Afficher les possessions totales"),
-  },
-  { r } = l10n(),
-  changeDimension = (dimension, value) => {
-    if (dimension === "width") {
-      width = `${value}px`;
-    } else {
-      height = `${value}px`;
-    }
-  };
+const { t: $t } = useI18n();
+const currentLocale = locale();
+const purchases = $computed(() => collectionStore().purchases);
+const watchedAuthors = $computed(() => collectionStore().watchedAuthors);
+const collection = $computed(() => collectionStore().collection);
+const unitTypes = {
+  number: $t("Afficher en valeurs réelles"),
+  percentage: $t("Afficher en pourcentages"),
+};
+const purchaseTypes = {
+  new: $t("Afficher les nouvelles acquisitions"),
+  total: $t("Afficher les possessions totales"),
+};
+const { r } = l10n();
+const changeDimension = (dimension, value) => {
+  if (dimension === "width") {
+    width = `${value}px`;
+  } else {
+    height = `${value}px`;
+  }
+};
 
-let width = $ref(null),
-  height = $ref(null),
-  unitTypeCurrent = $ref("number"),
-  purchaseTypeCurrent = $ref("new"),
-  watchedAuthorsStoryCount = $ref(null);
+let width = $ref(null);
+let height = $ref(null);
+const unitTypeCurrent = $ref("number");
+const purchaseTypeCurrent = $ref("new");
+let watchedAuthorsStoryCount = $ref(null);
 
 onMounted(async () => {
   await collectionStore().loadCollection();
