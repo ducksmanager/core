@@ -65,7 +65,9 @@ export const users = defineStore("users", {
 
     async fetchEvents(clearCacheEntry = true) {
       const { data, cached } = await cachedUserApi.get("/events", {
-        cache: !clearCacheEntry,
+        cache: {
+          override: clearCacheEntry,
+        },
       });
       this.events = (data || [])
         .map((event) => {

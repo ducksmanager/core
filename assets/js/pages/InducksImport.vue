@@ -250,7 +250,7 @@
         </b-progress>
         <b-button v-else @click="importIssues">
           {{ $t("Importer") }} {{ issuesImportable.length }}
-          {{ $tc("numéro | numéros", issuesImportable.length) }}
+          {{ $t("numéro | numéros", issuesImportable.length) }}
         </b-button>
       </template>
     </template>

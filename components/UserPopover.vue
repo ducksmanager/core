@@ -24,11 +24,11 @@
           <div class="clearfix" />
           <div>
             {{ stats.numberOfIssues }}
-            {{ $tc("numéro | numéros", stats.numberOfIssues) }}<br />
+            {{ $t("numéro | numéros", stats.numberOfIssues) }}<br />
             {{ stats.numberOfPublications }}
-            {{ $tc("magazine | magazines", stats.numberOfPublications) }}<br />
+            {{ $t("magazine | magazines", stats.numberOfPublications) }}<br />
             {{ stats.numberOfCountries }}
-            {{ $tc("pays | pays", stats.numberOfCountries) }}
+            {{ $t("pays | pays", stats.numberOfCountries) }}
           </div>
           <div v-if="bookcaseShared" class="bookcase-link">
             <img :src="`${imagePath}/icons/bookcase.png`" />&nbsp;

@@ -21,7 +21,7 @@
           <b>{{ purchase.date }}</b
           >&nbsp;<i v-if="purchase.description"
             >{{ purchase.description }}&nbsp;</i
-          >{{ issues.length }} {{ $tc("numéro | numéros", issues.length) }}
+          >{{ issues.length }} {{ $t("numéro | numéros", issues.length) }}
         </template>
         <template #content>
           <Issue

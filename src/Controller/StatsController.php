@@ -7,23 +7,9 @@ use App\Service\BookcaseService;
 use App\Service\CollectionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 
 class StatsController extends AbstractController
 {
-    /**
-     * @Route(
-     *     methods={"GET"},
-     *     path="/global-stats/user/count"
-     * )
-     */
-    public function getUserCount(ApiService $apiService): JsonResponse
-    {
-        return new JsonResponse([
-            'count' => $apiService->call('/ducksmanager/users/count', 'ducksmanager')['count']
-        ]);
-    }
-
     /**
      * @Route(
      *     methods={"GET"},

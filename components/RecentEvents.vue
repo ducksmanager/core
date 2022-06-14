@@ -36,7 +36,10 @@ const eventUserIds = $computed(() =>
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchStats = users().fetchStats;
+const fetchEvents = users().fetchEvents;
 const fetchEventsAndAssociatedData = async (clearCacheEntry) => {
+  isLoaded = false;
+  await fetchEvents(clearCacheEntry);
   await fetchPublicationNames(
     events
       .filter(({ publicationCode }) => publicationCode)
@@ -55,14 +58,14 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry) => {
   );
 
   await fetchStats(eventUserIds, clearCacheEntry);
+  isLoaded = true;
 };
 
 onMounted(async () => {
-  await fetchEventsAndAssociatedData(false);
-  setTimeout(async () => {
-    await fetchEventsAndAssociatedData(true);
-  }, 1000);
-  isLoaded = true;
+  // await fetchEventsAndAssociatedData(false);
+  // setTimeout(async () => {
+  await fetchEventsAndAssociatedData(true);
+  // }, 1000);
 });
 </script>
 
