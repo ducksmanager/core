@@ -1,8 +1,14 @@
+:root {
+  --bs-body-font-family: verdana, arial, sans-serif !important;
+  --bs-body-line-height: 15px !important;
+}
+
 html, body {
   margin: 0;
   height: 100%;
-  font: 11px verdana, arial, sans-serif;
-  line-height: 15px;
+  font-size: 11px;
+  font-family: var(--bs-body-font-family);
+  line-height: var(--bs-body-line-height);
 }
 
 a {

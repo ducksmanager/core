@@ -2,9 +2,9 @@ import { defineNuxtConfig } from "nuxt";
 import eslintPlugin from "vite-plugin-eslint";
 
 export default defineNuxtConfig({
-  modules: ["@nuxt/ui", "@pinia/nuxt"],
+  modules: ["@pinia/nuxt"],
   css: [
-    "@/assets/css/app.scss",
+    "~/assets/css/app.scss",
     "bootstrap/dist/css/bootstrap.css",
     "bootstrap-vue-3/dist/bootstrap-vue-3.css",
   ],

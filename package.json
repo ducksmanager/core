@@ -12,7 +12,6 @@
         "@bperel/vue3-popper-teleport": "^1.4.2",
         "@intlify/nuxt3": "^0.2.2",
         "@mapbox/mapbox-gl-geocoder": "^5.0.1",
-        "@nuxt/ui": "^0.1.0",
         "@nuxtjs/eslint-config-typescript": "^10.0.0",
         "@pinia/nuxt": "^0.1.9",
         "@popperjs/core": "^2.11.5",
