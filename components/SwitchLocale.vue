@@ -6,6 +6,7 @@
       class="flag"
       :src="`${imagePath}/flags/xl/${locale.flagName}.png`"
       :alt="locale.name"
+      :title="locale.name"
       @click="reloadWithLocale(locale)"
     />
   </div>
@@ -15,6 +16,7 @@ import { useI18n } from "vue-i18n";
 
 import { imagePath } from "../composables/imagePath";
 
+const i18n = useI18n();
 defineProps({
   fixed: {
     type: Boolean,
@@ -36,7 +38,7 @@ const locales = [
 const reloadWithLocale = ({ key }) => {
   if (process.client) {
     localStorage.setItem("locale", key);
-    useI18n().locale = key;
+    i18n.locale = key;
   }
 };
 </script>

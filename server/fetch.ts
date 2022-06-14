@@ -4,13 +4,17 @@ export const runQuery = (
   query: string,
   db: string,
   parameters: { [string]: never } = {}
-) => {
-  const requestParameters = new URLSearchParams();
-  requestParameters.append("query", query.trim());
-  requestParameters.append("parameters", JSON.stringify(parameters));
-  requestParameters.append("db", db);
-  return fetch("/rawsql", "rawsql", requestParameters, "POST");
-};
+) =>
+  fetch(
+    "/rawsql",
+    "rawsql",
+    {
+      query: query.trim(),
+      parameters: JSON.stringify(parameters),
+      db,
+    },
+    "POST"
+  );
 
 export const fetch = async (
   path: string,
@@ -28,13 +32,13 @@ export const fetch = async (
       data: parameters,
       method,
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
         "Cache-Control": "no-cache",
         "x-dm-version": "1.0",
         // ...getUserCredentials(useRequestHeaders(["cookie"])),
       },
     })
     .catch((e) => {
-      console.error(e);
+      // console.error(e);
       throw e;
     });

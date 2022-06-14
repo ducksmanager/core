@@ -4,8 +4,8 @@
     <SwitchLocale />
     <Banner :classes="{ 'd-none d-md-flex': true }" />
     <div id="logo_zone2">
-      <h2 v-if="$slots.header">
-        <slot name="header" />
+      <h2 v-if="$slots['inner-title']">
+        <slot name="inner-title" />
       </h2>
       <slot />
     </div>
@@ -14,8 +14,9 @@
 </template>
 
 <script setup>
+const slots = useSlots();
 useHead({
-  title: "DucksManager",
+  title: slots.title || "DucksManager",
 });
 </script>
 

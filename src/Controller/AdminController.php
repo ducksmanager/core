@@ -66,19 +66,6 @@ class AdminController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/admin/edges/wanted/data"
-     * )
-     */
-    public function getEdgeProgressData(ApiService $apiService): Response
-    {
-        return new JsonResponse(
-            $apiService->call('/edges/wanted', 'ducksmanager')
-        );
-    }
-
-    /**
-     * @Route(
-     *     methods={"GET"},
      *     path="/admin/edges/published/data"
      * )
      */

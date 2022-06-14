@@ -13,7 +13,7 @@ html, body {
 
 a {
   color: darkgrey !important;
-  text-decoration: none;
+  text-decoration: none !important;
   border-bottom: 1px solid darkgray;
 
   &[href='#'] {

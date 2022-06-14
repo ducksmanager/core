@@ -9,6 +9,7 @@ const i18n = createI18n({
   fallbackLocale: "fr",
   messages: {
     en,
+    fr: Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {}),
   },
 });
 
