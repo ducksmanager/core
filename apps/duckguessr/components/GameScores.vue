@@ -14,10 +14,7 @@
       <b-row class="flex-column align-items-center">
         <template v-if="currentUserHasParticipated">
           <h3 class="my-3">
-            {{
-              players.find(({ player_id: playerId }) => playerId === winningPlayer.playerId).player
-                .username
-            }}
+            {{ winningPlayer.username }}
             {{ t('won the match!') }}
           </h3>
           <div>
@@ -40,7 +37,7 @@
     </b-container>
     <template v-if="currentUserHasParticipated">
       <h3>{{ t('Medals') }}</h3>
-      <medal-list v-if="currentUserFastRounds" :stats="currentUserFastRounds" />
+      <medal-list v-if="currentUserStats" :stats="currentUserStats" :dataset-id="datasetId" />
       <b-row v-else class="justify-content-center">
         {{ t("You haven't won medals during this game.") }}
       </b-row>
@@ -100,6 +97,7 @@ interface GamePlayerWithFullPlayer extends Index.game_player {
 
 const gameScoresProps = defineProps<{
   gameId: Number
+  datasetId: Number
   rounds: Array<RoundWithScoresAndAuthor>
   players: Array<GamePlayerWithFullPlayer>
   authors: Array<Author>
@@ -176,8 +174,15 @@ const currentUserWonRounds = currentUserScores.filter(
   (roundScore) => roundScore?.score_type_name === 'Correct author'
 )
 
-const winningPlayer = computed(() =>
+const winningPlayerScores = computed(() =>
   playersWithScoresAndTotalScore?.find((player) => player._rowVariant === 'success')
+)
+
+const winningPlayer = computed(
+  () =>
+    gameScoresProps.players.find(
+      ({ player_id: playerId }) => playerId === winningPlayerScores.value?.playerId
+    )!.player
 )
 
 const currentUserWonFastestRounds = currentUserWonRounds.filter(
@@ -190,7 +195,7 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
     )
 )
 
-const currentUserFastRounds = ref(null as { [key: string]: number } | null)
+const currentUserStats = ref(null as { [key: string]: number } | null)
 
 if (currentUserHasParticipated) {
   io(`${process.env.SOCKET_URL}/login`, {
@@ -198,7 +203,10 @@ if (currentUserHasParticipated) {
       cookie: useCookies().getAll(),
     },
   }).emit('getStats', gameScoresProps.gameId, (stats: { [key: string]: number }) => {
-    currentUserFastRounds.value = stats
+    currentUserStats.value = {
+      ...stats,
+      dataset_current_game: winningPlayer.value?.id === duckguessrId ? 1 : 0,
+    }
   })
 }
 

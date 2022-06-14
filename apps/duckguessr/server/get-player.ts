@@ -84,17 +84,27 @@ export const getPlayerStatistics = async (
             FROM round_score
             WHERE player_id = ${player.id}
               AND time_spent_guessing < 5000)
-                                           AS fast,
-        (SELECT COUNT(*)
+                                              AS fast
+      ,
+           (SELECT COUNT(*)
+            FROM game_scores
+                   INNER JOIN game g ON game_scores.game_id = g.id
+            WHERE player_id = ${player.id}
+              AND g.dataset_id = (SELECT dataset_id FROM game thisgame WHERE thisgame.id = ${gameId}))
+                                              AS dataset
+      ,
+           (SELECT COUNT(*)
             FROM round_score
-            INNER JOIN round ON round_score.round_id = round.id
-            WHERE player_id = ${player.id} AND round.game_id=${gameId}
+                   INNER JOIN round ON round_score.round_id = round.id
+            WHERE player_id = ${player.id}
+              AND round.game_id = ${gameId}
               AND time_spent_guessing < 2000) AS ultra_fast_current_game
       ,
            (SELECT COUNT(*)
             FROM round_score
-            INNER JOIN round ON round_score.round_id = round.id
-            WHERE player_id = ${player.id} AND round.game_id=${gameId}
+                   INNER JOIN round ON round_score.round_id = round.id
+            WHERE player_id = ${player.id}
+              AND round.game_id = ${gameId}
               AND time_spent_guessing < 5000)
-                                           AS fast_current_game
+                                              AS fast_current_game
   `

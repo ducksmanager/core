@@ -3,9 +3,10 @@
     <div class="position-relative medal" :style="{ backgroundImage: medalUrl }">
       <div
         class="position-absolute overlay"
+        :class="{ saturated: medalLevelAndProgress.level === 0 }"
         :style="{
-          backgroundImage: medalUrl,
-          width: `${100 - medalLevelAndProgress.levelPercentage - currentLevelPercentageProgress}%`,
+          backgroundImage: previousMedalUrl,
+          width: `${100 - shownLevelPercentage - currentLevelPercentageProgress}%`,
         }"
       />
     </div>
@@ -24,14 +25,14 @@ import { useI18n } from 'nuxt-i18n-composable'
 import { MedalLevelAndProgress } from '~/types/playerStats'
 
 const { t } = useI18n()
-const medalTypes = {
+const medalTypes = computed(() => ({
   Americain: { title: t('US Expert'), description: t('You won a game guessing American authors') },
   Francais: { title: t('French Expert'), description: t('You won a game guessing French authors') },
   Italien: {
     title: t('Italian Expert'),
     description: t('You won a game guessing Italian authors'),
   },
-  Magazine_Francais: {
+  published_fr_recent: {
     title: t('French Publications Expert'),
     description: t('You won a game guessing authors from French publications'),
   },
@@ -40,31 +41,33 @@ const medalTypes = {
     title: t('Super Fast'),
     description: t('You guessed a drawing in less than 2 seconds'),
   },
-}
+}))
 
 const props = defineProps({
   type: {
     type: String,
     required: true,
   },
-  medalLevelAndProgress: { type: Object as () => MedalLevelAndProgress, required: true },
+  medalLevelAndProgress: { type: MedalLevelAndProgress, required: true },
 })
 
-const currentLevelPercentageProgress = ref(0)
-const currentLevelPercentageProgressGoingUp = ref(true)
-
-const fileName = computed(
-  () =>
-    `${props.type} ${
-      props.medalLevelAndProgress.level === 0
-        ? 'BRONZE'
-        : props.medalLevelAndProgress.level === 1
-        ? 'SILVER'
-        : 'GOLD'
-    }.png`
+const shownLevelPercentage = computed(
+  () => (props.medalLevelAndProgress.levelPercentage + 10) * 0.8
 )
 
-const medalUrl = computed(() => `url('${process.env.NUXT_URL}/medals/256px/${fileName.value}'`)
+const currentLevelPercentageProgress = ref(0)
+const isCurrentLevelPercentageProgressGoingUp = ref(true)
+
+const medalColors = ['BRONZE', 'SILVER', 'GOLD']
+
+const getMedalUrl = (level: number) =>
+  `url('${process.env.NUXT_URL}/medals/256px/${props.type} ${medalColors[level]}.png')`
+
+const medalUrl = computed(() => getMedalUrl(props.medalLevelAndProgress.level))
+
+const previousMedalUrl = computed(() =>
+  getMedalUrl(Math.max(0, props.medalLevelAndProgress.level - 1))
+)
 
 if (props.medalLevelAndProgress.levelPercentageProgress) {
   onMounted(() => {
@@ -74,10 +77,11 @@ if (props.medalLevelAndProgress.levelPercentageProgress) {
         currentLevelPercentageProgress.value < 0 ||
         currentLevelPercentageProgress.value >= props.medalLevelAndProgress.levelPercentageProgress
       ) {
-        currentLevelPercentageProgressGoingUp.value = !currentLevelPercentageProgressGoingUp.value
+        isCurrentLevelPercentageProgressGoingUp.value =
+          !isCurrentLevelPercentageProgressGoingUp.value
       }
       currentLevelPercentageProgress.value +=
-        increment * (currentLevelPercentageProgressGoingUp.value ? 1 : -1)
+        increment * (isCurrentLevelPercentageProgressGoingUp.value ? 1 : -1)
     }, 50)
   })
 }
@@ -95,11 +99,14 @@ if (props.medalLevelAndProgress.levelPercentageProgress) {
 
     .overlay {
       height: 100%;
-      filter: saturate(0%);
       background-position-x: right;
       background-size: cover;
       background-repeat: no-repeat;
       right: 0;
+
+      &.saturated {
+        filter: saturate(0%);
+      }
     }
   }
 }
