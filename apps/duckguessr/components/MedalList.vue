@@ -20,7 +20,7 @@ import { useI18n } from 'nuxt-i18n-composable'
 import { MedalLevel, MedalLevelAndProgress } from '~/types/playerStats'
 
 const MEDAL_LEVELS: MedalLevel[] = [
-  new MedalLevel('fast', [20, 100, 500]),
+  new MedalLevel('fast', [25, 150, 500]),
   new MedalLevel('ultra_fast', [10, 50, 200]),
 ]
 
