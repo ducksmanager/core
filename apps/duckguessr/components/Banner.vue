@@ -1,9 +1,9 @@
 <template>
   <div
     id="logo-zone"
-    class="position-absolute p-2 px-5 d-flex align-items-center flex-column align-items-center"
+    class="position-absolute d-flex align-items-center flex-column align-items-center"
   >
-    <a class="px-5" href="/">
+    <a href="/">
       <b-img src="/logo.png" />
       <div class="small">by DucksManager</div>
     </a>
@@ -15,6 +15,7 @@
   width: 100%;
   height: 100px;
   justify-content: center;
+  padding: 2rem 6rem;
 
   a {
     z-index: 2;

@@ -1,6 +1,6 @@
 <template>
   <div id="menu" class="position-fixed d-flex flex-column align-items-center">
-    <div id="medals-and-login" class="pb-3">
+    <div id="medals-and-login" class="pb-3 mb-2">
       <component
         :is="isAnonymous ? 'div' : 'a'"
         :href="isAnonymous ? undefined : '/profile'"
@@ -18,14 +18,26 @@
             :avatar="user.avatar"
             class="border-bottom"
           />
-          <b-navbar-nav class="justify-content-start flex-row">
-            <nuxt-link to="/podium" class="m-2 align-self-start">Podium</nuxt-link>
+          <b-navbar-nav class="justify-content-start flex-column">
+            <nuxt-link to="/" class="mx-2 align-self-start">{{ $t('Home') }}</nuxt-link>
+            <nuxt-link to="/podium" class="mx-2 align-self-start">
+              {{ $t('Podium') }}
+            </nuxt-link>
+            <nuxt-link v-if="!isAnonymous" to="/profile" class="mx-2 align-self-start">
+              {{ $t('My profile') }}
+            </nuxt-link>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
       <language-switch-dropdown />
     </div>
-    <nuxt-link to="/podium" class="d-none d-lg-block m-2 align-self-start">Podium</nuxt-link>
+    <nuxt-link to="/" class="d-none d-lg-block mx-2 align-self-start">
+      {{ $t('Home') }}
+    </nuxt-link>
+    <nuxt-link to="/podium" class="d-none d-lg-block mx-2 align-self-start">
+      {{ $t('Podium') }}
+    </nuxt-link>
+    <nuxt-link v-if="!isAnonymous" to="/profile" class="d-none d-lg-block mx-2 align-self-start" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -65,6 +77,11 @@ $navbar-height: 40px;
       border-radius: 5px;
       background: #3d4b5f !important;
       margin-top: 10px;
+    }
+
+    .navbar-nav {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
     }
   }
 
