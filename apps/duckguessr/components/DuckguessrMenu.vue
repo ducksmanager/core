@@ -37,7 +37,9 @@
     <nuxt-link to="/podium" class="d-none d-lg-block mx-2 align-self-start">
       {{ $t('Podium') }}
     </nuxt-link>
-    <nuxt-link v-if="!isAnonymous" to="/profile" class="d-none d-lg-block mx-2 align-self-start" />
+    <nuxt-link v-if="!isAnonymous" to="/profile" class="d-none d-lg-block mx-2 align-self-start">
+      {{ $t('My profile') }}
+    </nuxt-link>
   </div>
 </template>
 <script lang="ts" setup>
@@ -92,6 +94,7 @@ $navbar-height: 40px;
     }
 
     a:hover {
+      border-bottom: 0;
       .username {
         border-bottom: 1px solid darkgrey;
       }
