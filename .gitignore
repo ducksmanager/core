@@ -1,2 +1,4 @@
-.nuxt
+/.env.prod.local
+/.idea/
+/.nuxt
 node_modules
