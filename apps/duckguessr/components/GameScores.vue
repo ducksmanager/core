@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="text-center">
     <h3>{{ t('Game summary') }}</h3>
     <b-container>
       <b-row class="justify-content-center">
@@ -218,6 +218,9 @@ const columnToRound = (column: string) =>
 </script>
 
 <style scoped lang="scss">
+h3 {
+  margin-top: 2rem;
+}
 ::v-deep tr {
   height: 100px;
 

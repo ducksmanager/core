@@ -1,6 +1,6 @@
 <template>
   <b-progress :variant="progressbarVariant">
-    <div class="position-absolute pt-2 w-100">
+    <div class="position-absolute pt-2 w-100 progress-text">
       <template v-if="remainingTime && remainingTime !== Math.Infinity">
         {{ t('Guess the author!') }} ({{ remainingTime }})
       </template>
@@ -30,4 +30,8 @@ if (remainingTimePercentage <= 20) {
 const { t } = useI18n()
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.progress-text {
+  left: 0;
+}
+</style>
