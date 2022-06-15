@@ -22,7 +22,7 @@
       />
     </b-row>
     <div class="text-center">
-      <div>{{ t('Round 1 starts in...') }}</div>
+      <div>{{ t('Round {roundNumber} starts in...', { roundNumber: 1 }) }}</div>
       <circle-progress-bar :total="initialTimeBeforeFirstRound" :remaining="timeBeforeFirstRound" />
     </div>
   </b-modal>
