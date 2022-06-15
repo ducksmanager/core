@@ -143,11 +143,11 @@ img {
 
 .avatar {
   border-radius: 100%;
-  outline: 10px solid lightgrey;
+  outline: 0.5vw solid lightgrey;
   cursor: pointer;
 
   &.selected {
-    outline: 10px solid darkgrey;
+    outline: 0.5vw solid darkgrey;
   }
 }
 </style>
