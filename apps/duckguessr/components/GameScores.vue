@@ -42,7 +42,7 @@
         {{ t("You haven't won medals during this game.") }}
       </b-row>
     </template>
-    <h3 class="mt-3">Scores</h3>
+    <h3 class="mt-3">{{ t('Scores') }}</h3>
     <b-table striped dark :items="playersWithScoresAndTotalScore" class="align-items-center">
       <template #head(playerId)="">&nbsp;</template>
       <template #head(totalScore)="">&nbsp;</template>

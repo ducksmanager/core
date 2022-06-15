@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <h3 class="text-center mb-5">Podium</h3>
+    <h3 class="text-center mb-5">{{ t('Podium') }}</h3>
     <div v-if="topPlayers.length" class="d-flex flex-row justify-content-center">
       <player-total-score
         v-for="(player, index) in topPlayers"
