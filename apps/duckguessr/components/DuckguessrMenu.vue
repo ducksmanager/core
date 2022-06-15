@@ -1,10 +1,10 @@
 <template>
   <div id="menu" class="position-fixed d-flex flex-column align-items-center">
-    <div id="medals-and-login" class="pb-3 mb-2">
+    <div id="medals-and-login" class="py-2 d-flex flex-column">
       <component
         :is="isAnonymous ? 'div' : 'a'"
         :href="isAnonymous ? undefined : '/profile'"
-        class="pb-3 d-none d-lg-block"
+        class="d-none d-lg-block"
       >
         <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
       </component>
