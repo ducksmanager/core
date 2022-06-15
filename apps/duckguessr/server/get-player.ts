@@ -3,10 +3,10 @@ import Index, { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export const getBotUser = async (botUsername: string): Promise<Index.player> =>
+export const getUser = async (username: string): Promise<Index.player> =>
   (await prisma.player.findFirst({
     where: {
-      username: botUsername,
+      username,
     },
   }))!
 

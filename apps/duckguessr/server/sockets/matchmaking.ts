@@ -7,7 +7,7 @@ import {
   SocketData,
 } from '../../types/socketEvents'
 import { getGameWithRoundsDatasetPlayers } from '../game'
-import { getBotUser, getPlayer } from '../get-player'
+import { getUser, getPlayer } from '../get-player'
 import { MatchDetails } from '../../types/matchDetails'
 
 const game = require('../game')
@@ -63,6 +63,20 @@ const createGameMatchmaking = (
       }
     }
 
+    const removePlayer = async (
+      currentGame: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>,
+      user: Index.player
+    ) => {
+      if (!currentGame!.game_players.map(({ player }) => player.username).includes(user.username)) {
+        console.log(`${user.username} is not part of the game`)
+      } else {
+        await game.disassociatePlayer(gameId, user)
+
+        socket.broadcast.emit('playerLeft', user.username)
+        socket.emit('playerLeft', user.username)
+      }
+    }
+
     const user = await getPlayer(socket.handshake.auth.cookie)
     if (!user) {
       console.log(`Can't find user for cookie ${JSON.stringify(socket.handshake.auth.cookie)}`)
@@ -72,17 +86,7 @@ const createGameMatchmaking = (
     socket.on('removeBot', async () => {
       const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       validateGameForBotAddOrRemove(currentGame)
-
-      const botUsername = `bot_${currentGame!.dataset.name}`
-
-      if (!currentGame!.game_players.map(({ player }) => player.username).includes(botUsername)) {
-        console.log(`${botUsername} is not part of the game`)
-      } else {
-        await game.disassociatePlayer(gameId, await getBotUser(botUsername))
-
-        socket.broadcast.emit('playerLeft', botUsername)
-        socket.emit('playerLeft', botUsername)
-      }
+      await removePlayer(currentGame, await getUser(`bot_${currentGame!.dataset.name}`))
     })
 
     socket.on('addBot', async () => {
@@ -90,14 +94,10 @@ const createGameMatchmaking = (
       validateGameForBotAddOrRemove(currentGame)
 
       const botUsername = `bot_${currentGame!.dataset.name}`
-      if (currentGame!.game_players.map(({ player }) => player.username).includes(botUsername)) {
-        console.log(`${botUsername} has already joined the game`)
-      } else {
-        await game.associatePlayer(gameId, await getBotUser(botUsername))
+      await checkAndAssociatePlayer(await getUser(botUsername), currentGame)
 
-        socket.broadcast.emit('playerJoined', botUsername)
-        socket.emit('playerJoined', botUsername)
-      }
+      socket.broadcast.emit('playerJoined', botUsername)
+      socket.emit('playerJoined', botUsername)
     })
 
     socket.on('joinMatch', async (callback: Function) => {
@@ -134,6 +134,13 @@ const createGameMatchmaking = (
       createGameSocket(io, (await getGameWithRoundsDatasetPlayers(gameId))!)
       socket.broadcast.emit('matchStarts')
       socket.emit('matchStarts')
+    })
+
+    socket.on('disconnect', async (reason: string) => {
+      if (reason !== 'client namespace disconnect') {
+        const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+        await removePlayer(currentGame, user)
+      }
     })
   })
 }
