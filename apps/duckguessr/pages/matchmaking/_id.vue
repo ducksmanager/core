@@ -57,7 +57,6 @@ watch(
   () => userStore().user,
   (value) => {
     if (value) {
-      console.log(useCookies().getAll())
       matchmakingSocket.value = io(`${process.env.SOCKET_URL}/matchmaking/${gameId}`, {
         auth: {
           cookie: useCookies().getAll(),

@@ -38,8 +38,6 @@ const props = defineProps<{
   firstRoundStartDate: Date
 }>()
 
-console.log(props.firstRoundStartDate)
-
 const timeBeforeFirstRound = ref(null as number | null)
 
 const { t } = useI18n()
