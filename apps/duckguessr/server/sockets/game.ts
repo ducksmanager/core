@@ -21,8 +21,8 @@ export const createGameSocket = (
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
   game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
 ) => {
-  if (game === null) {
-    console.error('game is null')
+  if (!game?.rounds) {
+    console.error('game is null or no rounds in game')
     return
   }
 
@@ -85,8 +85,10 @@ export const createGameSocket = (
     )
 
     if (currentRound.round_number === 1) {
-      socket.broadcast.emit('firstRoundWillStartSoon', currentRound.started_at!)
-      socket.emit('firstRoundWillStartSoon', currentRound.started_at!)
+      setTimeout(() => {
+        socket.broadcast.emit('firstRoundWillStartSoon', currentRound.started_at!)
+        socket.emit('firstRoundWillStartSoon', currentRound.started_at!)
+      }, 200)
     }
 
     setTimeout(async () => {
@@ -157,9 +159,7 @@ export const createGameSocket = (
       return
     }
 
-    if (isFirstRoundStarted) {
-      socket.emit('roundStarts', { ...currentRound, personcode: null })
-    } else {
+    if (!isFirstRoundStarted) {
       isFirstRoundStarted = true
       currentRound = await setRoundTimes(currentRound)
       startRound(socket)
