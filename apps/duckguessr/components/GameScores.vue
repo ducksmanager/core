@@ -12,11 +12,11 @@
     </b-container>
     <b-container>
       <b-row class="flex-column align-items-center">
+        <h3 class="my-3">
+          {{ getShownUsername(winningPlayer.username) }}
+          {{ t('won the match!') }}
+        </h3>
         <template v-if="currentUserHasParticipated">
-          <h3 class="my-3">
-            {{ winningPlayer.username }}
-            {{ t('won the match!') }}
-          </h3>
           <div>
             {{ t('You have found the correct answer in')
             }}<b>
@@ -89,7 +89,7 @@ import { useI18n } from 'nuxt-i18n-composable'
 import { io } from 'socket.io-client'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
-import { getDuckguessrId } from '@/composables/user'
+import { getDuckguessrId, getShownUsername } from '@/composables/user'
 
 interface GamePlayerWithFullPlayer extends Index.game_player {
   player: Index.player

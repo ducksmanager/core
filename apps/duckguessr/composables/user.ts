@@ -25,4 +25,9 @@ export const setDuckguessrUserData = ({ id, username }: Index.player) => {
   setCookie('duckguessr-user', `${username}`)
 }
 
+export const isBot = (username: string) => /^bot_/.test(username)
+export const isPotentialBot = (username: string) => username === 'potential_bot'
+
+export const getShownUsername = (username: string) => (isBot(username) ? 'BOT' : username)
+
 export default () => {}

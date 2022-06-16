@@ -1,19 +1,22 @@
 <template>
   <div
     class="d-flex flex-column align-items-center justify-content-around text-center"
-    :class="{ opacity50: isPotentialBot, pointer: isPotentialBot || toggleable }"
+    :class="{
+      opacity50: isPotentialBot(username),
+      pointer: isPotentialBot(username) || toggleable,
+    }"
     style="height: 100px"
     @click="toggleable ? $emit('toggle') : () => {}"
   >
     <b-avatar :class="{ 'top-player': topPlayer }" size="4rem" :src="src" />
-    <div class="username" :class="{ small: isPotentialBot }">
-      <template v-if="isBot">
+    <div class="username" :class="{ small: isPotentialBot(username) }">
+      <template v-if="isBot(username)">
         <div>BOT</div>
         <div v-if="toggleable" class="small">
           {{ t('Click to remove') }}
         </div>
       </template>
-      <div v-else-if="isPotentialBot">{{ t('Click to add a bot to the game') }}</div>
+      <div v-else-if="isPotentialBot(username)">{{ t('Click to add a bot to the game') }}</div>
       <div v-else>{{ username }}</div>
     </div>
   </div>
@@ -22,6 +25,7 @@
 <script setup lang="ts">
 import { useI18n } from 'nuxt-i18n-composable'
 import { computed } from '@nuxtjs/composition-api'
+import { isBot, isPotentialBot } from '~/composables/user'
 
 const props = withDefaults(
   defineProps<{
@@ -39,10 +43,8 @@ const props = withDefaults(
 
 defineEmits(['toggle'])
 
-const isBot = computed(() => /^bot_/.test(props.username))
-const isPotentialBot = computed(() => props.username === 'potential_bot')
 const src = computed(() =>
-  isBot.value || isPotentialBot.value
+  isBot(props.username) || isPotentialBot(props.username)
     ? '/avatars/Little Helper.png'
     : `/avatars/${props.avatar}.png`
 )
