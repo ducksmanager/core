@@ -176,7 +176,7 @@ onMounted(async () => {
       gameIsFinished.value = true
     })
     .on('playerGuessed', ({ roundScore, answer }) => {
-      if (answer) {
+      if (roundScore.player_id === duckguessrId) {
         Vue.set(game.value!.rounds[currentRoundNumber.value! - 1], 'personcode', answer)
       }
       game.value!.rounds[currentRoundNumber.value! - 1].round_scores.push(roundScore)
