@@ -67,6 +67,7 @@
   "You won a game guessing Italian authors": "Vous avez gagné un match en devinant des auteurs italiens",
   "You won a game guessing authors from French publications": "Vous avez gagné un match d'auteurs publiés dans des magazines français",
   "authors": "auteurs",
+  "by DucksManager": "par DucksManager",
   "rounds out of": "rounds sur",
   "won the match!": "a remporté la partie !",
   "{validated} images from this dataset can currently be seen on Duckguessr, {notValidated} are left to maintain.": "{validated} images de ce jeu de données sont jouables sur Duckguessr, {notValidated} images doivent être maintenues."

@@ -5,11 +5,15 @@
   >
     <a href="/">
       <b-img src="/logo.png" />
-      <div class="small">by DucksManager</div>
+      <div class="small">{{ t('by DucksManager') }}</div>
     </a>
   </div>
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useI18n } from 'nuxt-i18n-composable'
+
+const { t } = useI18n()
+</script>
 <style lang="scss">
 #logo-zone {
   width: 100%;
