@@ -9,7 +9,11 @@
   >
     <template #modal-title> {{ t('The game is about to start!') }} </template>
     <div>
-      {{ t('During each round, be the fastest to guess which of these artists drew the drawing shown on the screen.)' }}
+      {{
+        t(
+          'During each round, be the fastest to guess which of these artists drew the drawing shown on the screen.'
+        )
+      }}
     </div>
     <b-row id="author-list" class="my-2">
       <author-card
