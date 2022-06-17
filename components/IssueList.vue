@@ -105,7 +105,7 @@
             "
           >
             <span>
-              <a :name="issueNumber" />
+              <NuxtLink :name="issueNumber" />
               <b-icon-eye-fill
                 v-once
                 :id="`issue-details-${issueNumber}`"
@@ -234,7 +234,6 @@ import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { condition } from "../composables/condition";
 import { coa } from "../stores/coa";
 import { collection as collectionStore } from "../stores/collection";
 import Book from "./Book";

@@ -17,7 +17,7 @@
         :publicationname="publicationname"
       />&nbsp;{{ issuenumber }}
       <slot name="title-suffix" />
-    </a>
+    </NuxtLink>
     <slot />
   </div>
 </template>

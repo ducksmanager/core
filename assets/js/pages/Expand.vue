@@ -2,9 +2,9 @@
   <div v-if="collection">
     <b-alert variant="info" show>
       {{ $t("DucksManager se base sur les") }}
-      <a :href="r('/stats/authors')">{{
+      <NuxtLink :href="r('/stats/authors')">{{
         $t("notes que vous attribuez à vos auteurs préférés")
-      }}</a>
+      }}</NuxtLink>
       {{
         $t("pour vous proposer des magazines susceptibles de vous intéresser.")
       }}
@@ -47,9 +47,9 @@
       <span
         v-html="
           $t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
-            `<a :href='${r('/stats/authors')}'>${$t(
+            `<NuxtLink :href='${r('/stats/authors')}'>${$t(
               `Statistiques sur les auteurs`
-            )}</a>`,
+            )}</NuxtLink>`,
           ])
         "
       />

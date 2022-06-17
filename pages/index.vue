@@ -2,7 +2,7 @@
   <div>
     <NuxtLayout name="default">
       <template #title>Welcome!</template>
-      <a href="https://discord.gg/ruk3FsD" target="_blank">
+      <NuxtLink href="https://discord.gg/ruk3FsD" target="_blank">
         <div
           id="discord"
           class="mb-4 pt-3"
@@ -10,7 +10,7 @@
         >
           {{ $t("Rejoignez la communauté sur") }}
         </div>
-      </a>
+      </NuxtLink>
       <div class="showcase">
         <h2>{{ $t("Bienvenue sur DucksManager !") }}</h2>
         <h5>
@@ -206,8 +206,6 @@
 <script setup>
 import { BButton, BCol, BRow } from "bootstrap-vue-3";
 
-import { user } from "../composables/global";
-import { imagePath } from "../composables/imagePath";
 import { l10n } from "../stores/l10n";
 
 const { r } = l10n();

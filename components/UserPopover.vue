@@ -51,7 +51,6 @@
 import Popper from "@bperel/vue3-popper-teleport";
 import { BButton, BCard, BCardBody, BCardHeader } from "bootstrap-vue-3";
 
-import { imagePath } from "../composables/imagePath";
 import { l10n } from "../stores/l10n";
 import Medal from "./Medal";
 

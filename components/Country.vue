@@ -12,8 +12,6 @@
 </template>
 
 <script setup>
-import { imagePath } from "../composables/imagePath";
-
 const { country, publicationCode } = defineProps({
   country: {
     type: String,

@@ -49,7 +49,6 @@
 <script setup>
 import { BButton, BPopover } from "bootstrap-vue-3";
 
-import { user } from "../composables/global";
 import { bookcase } from "../stores/bookcase";
 import { users } from "../stores/users";
 import MedalProgress from "./MedalProgress";

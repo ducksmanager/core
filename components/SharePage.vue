@@ -5,7 +5,7 @@
       :data-a2a-url="url"
       :data-a2a-title="title"
     >
-      <a class="a2a_dd" href="https://www.addtoany.com/share" />
+      <NuxtLink class="a2a_dd" href="https://www.addtoany.com/share" />
       <a
         v-for="platform in platforms"
         :key="platform"

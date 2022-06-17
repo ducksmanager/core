@@ -25,9 +25,9 @@
           $t(
             'Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page {0}.',
             [
-              `<a href='${r('/bookcase/options')}'>${$t(
+              `<NuxtLink href='${r('/bookcase/options')}'>${$t(
                 'Options de la bibliothèque'
-              )}</a>`,
+              )}</NuxtLink>`,
             ]
           )
         "
@@ -42,7 +42,11 @@
           v-html="
             $t(
               'Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page {0}.',
-              [`<a href='${r('/collection/account')}'>${$t('Mon compte')}</a>`]
+              [
+                `<NuxtLink href='${r('/collection/account')}'>${$t(
+                  'Mon compte'
+                )}</NuxtLink>`,
+              ]
             )
           "
         />
@@ -66,7 +70,11 @@
         v-html="
           $t(
             'Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page {0}.',
-            [`<a href='${r('/collection/account')}'>${$t('Mon compte')}</a>`]
+            [
+              `<NuxtLink href='${r('/collection/account')}'>${$t(
+                'Mon compte'
+              )}</NuxtLink>`,
+            ]
           )
         "
       />

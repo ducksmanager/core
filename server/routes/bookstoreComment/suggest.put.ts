@@ -3,11 +3,10 @@ import { fetch } from "~/server/fetch";
 export default defineEventHandler(
   async (event) =>
     (
-      await fetch(
-        "/ducksmanager/bookstoreComment/suggest",
-        "ducksmanager",
-        await useBody(event),
-        "POST"
-      )
+      await fetch({
+        path: "/ducksmanager/bookstoreComment/suggest",
+        parameters: await useBody(event),
+        method: "POST",
+      })
     ).data
 );

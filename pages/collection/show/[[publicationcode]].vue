@@ -1,21 +1,5 @@
 <template>
-  <div v-if="publicationcode === 'new'">
-    {{
-      $t(
-        "Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros."
-      )
-    }}
-    <PublicationSelect />
-    <br />
-    <br />
-    {{
-      $t(
-        "... ou recherchez un magazine à partir d'une histoire qui le contient :"
-      )
-    }}
-    <IssueSearch />
-  </div>
-  <div v-else-if="hasPublicationNames">
+  <div v-if="hasPublicationNames">
     <Accordion
       v-if="suggestionsNumber"
       id="suggestions"
@@ -46,9 +30,9 @@
       </template>
       <template #footer>
         <div>
-          <a :href="r('/expand')">{{
+          <NuxtLink :href="r('/expand')">{{
             $t("Voir toutes les suggestions d'achat pour ma collection")
-          }}</a>
+          }}</NuxtLink>
         </div>
       </template>
     </Accordion>
@@ -92,31 +76,15 @@
 <script setup>
 import { onMounted, watch } from "vue";
 
-import Accordion from "../../../../components/Accordion";
-import IssueList from "../../../../components/IssueList";
-import IssueSearch from "../../../../components/IssueSearch";
-import LastPublishedEdges from "../../../../components/LastPublishedEdges";
-import LastPurchases from "../../../../components/LastPurchases";
-import PublicationList from "../../../../components/PublicationList";
-import PublicationSelect from "../../../../components/PublicationSelect";
-import ShortStats from "../../../../components/ShortStats";
-import { user } from "../../../../composables/global";
-import { coa } from "../../../../stores/coa";
-import { collection } from "../../../../stores/collection";
-import { l10n } from "../../../../stores/l10n";
-import SuggestionList from "../SuggestionList";
+import { coa } from "../../../stores/coa";
+import { collection } from "../../../stores/collection";
+import { l10n } from "../../../stores/l10n";
 
-defineProps({
-  publicationcode: {
-    type: String,
-    required: true,
-  },
-});
+const publicationcode = useRoute().params.publicationcode;
 
 const suggestionsNumber = $ref(0);
 let hasPublicationNames = $ref(false);
 const username = user().username;
-const publicationNames = $computed(() => coa().publicationNames);
 const total = $computed(() => collection().total);
 const totalPerPublication = $computed(() => collection().totalPerPublication);
 const mostPossessedPublication = $computed(
@@ -130,14 +98,13 @@ const mostPossessedPublication = $computed(
       null
     )
 );
-const fetchPublicationNames = coa().fetchPublicationNames;
 const { r } = l10n();
 
 watch(
   () => totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await fetchPublicationNames(Object.keys(newValue));
+      await coa().fetchPublicationNames(Object.keys(newValue));
       hasPublicationNames = true;
     }
   },
@@ -151,8 +118,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import "../../../css/app";
-
 #demo-intro {
   border: 1px solid white;
   margin-bottom: 20px;

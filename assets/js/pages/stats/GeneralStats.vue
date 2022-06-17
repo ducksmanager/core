@@ -114,8 +114,8 @@
               $t(
                 'Les cotes utilisées proviennent des sites Internet {0} et {1}.',
                 [
-                  `<a href='https://bedetheque.com'>Bédéthèque</a>`,
-                  `<a href='http://comicsmania.gr'>ComicsMania</a>`,
+                  `<NuxtLink href='https://bedetheque.com'>Bédéthèque</NuxtLink>`,
+                  `<NuxtLink href='http://comicsmania.gr'>ComicsMania</NuxtLink>`,
                 ]
               )
             "
@@ -136,7 +136,7 @@
               $t(
                 `Une cote présente sur les sites indiqués ci-dessus n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`,
                 [
-                  `<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`,
+                  `<NuxtLink href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</NuxtLink>`,
                 ]
               )
             "

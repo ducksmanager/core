@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-import { imagePath } from "../composables/imagePath";
 const props = defineProps({
   publicationcode: {
     type: String,

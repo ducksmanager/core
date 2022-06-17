@@ -15,9 +15,9 @@
       }}
       <br /><br />
       {{ $t("Ce site se base en partie sur les données du site Inducks.") }}
-      <a target="_blank" href="http://coa.inducks.org/inducks/COPYING">{{
+      <NuxtLink target="_blank" href="http://coa.inducks.org/inducks/COPYING">{{
         $t("Cliquez ici pour lire la licence Inducks.")
-      }}</a>
+      }}</NuxtLink>
       <br />
       {{
         $t(

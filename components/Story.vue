@@ -12,7 +12,7 @@
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
     >
       {{ $t("Détails de l'histoire") }}
-    </a>
+    </NuxtLink>
   </span>
 </template>
 <script setup>

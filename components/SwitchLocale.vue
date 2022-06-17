@@ -14,8 +14,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
-import { imagePath } from "../composables/imagePath";
-
 const i18n = useI18n();
 defineProps({
   fixed: {

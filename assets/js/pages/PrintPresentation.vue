@@ -33,7 +33,7 @@
             }}
           </li>
         </ul>
-        <a :href="r(`/print/{currentType:${type.link}}`)" target="_blank"
+        <NuxtLink :href="r(`/print/{currentType:${type.link}}`)" target="_blank"
           >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</a
         >
         <br />
@@ -45,7 +45,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
-import { imagePath } from "../../../composables/imagePath";
 import { l10n } from "../../../stores/l10n";
 
 const { t: $t } = useI18n();

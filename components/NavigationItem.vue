@@ -1,9 +1,9 @@
 <template>
   <li :class="{ 'non-empty': true, 'no-icon': !icon, active }">
-    <a :href="r(path)">
+    <NuxtLink :href="r(path)">
       <i :class="{ [icon]: true }" />
       <slot />
-    </a>
+    </NuxtLink>
   </li>
 </template>
 

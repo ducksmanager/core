@@ -35,7 +35,6 @@
 <script setup>
 import { BCol, BPopover, BRow } from "bootstrap-vue-3";
 
-import Issue from "../components/Issue";
 import { coa } from "../stores/coa";
 import Bookcase from "./Bookcase";
 

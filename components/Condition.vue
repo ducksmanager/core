@@ -11,8 +11,6 @@
 </template>
 
 <script setup>
-import { collection } from "../composables/collection";
-import { condition } from "../composables/condition";
 const { publicationcode, issuenumber, value } = defineProps({
   publicationcode: { type: String, default: null },
   issuenumber: { type: String, default: null },

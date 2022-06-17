@@ -27,12 +27,12 @@
           class="table-of-contents d-none d-md-block"
         >
           <template #header>
-            <a :href="inducksLink" target="_blank" class="inducks-link"
+            <NuxtLink :href="inducksLink" target="_blank" class="inducks-link"
               ><img
                 :src="`${imagePath}/coafoot.png`"
                 :title="`Voir ${publicationNames[publicationCode]} ${issueNumber} sur Inducks`"
                 alt="Inducks"
-            /></a>
+            /></NuxtLink>
             <Issue
               :publicationcode="publicationCode"
               :publicationname="publicationNames[publicationCode]"
@@ -103,7 +103,6 @@ import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
 import { PageFlip } from "page-flip";
 import { watch } from "vue";
 
-import { imagePath } from "../composables/imagePath";
 import { coa } from "../stores/coa";
 import Issue from "./Issue";
 import Story from "./Story";

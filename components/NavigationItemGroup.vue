@@ -4,11 +4,11 @@
     :data-target="`#${path}`"
     :class="{ collapsed: true, active }"
   >
-    <a href="#"
+    <NuxtLink href="#"
       ><i :class="{ [icon]: true }" />
       <slot name="text" />
       <span class="arrow"
-    /></a>
+    /></NuxtLink>
     <ul :id="path" class="sub-menu collapse in show">
       <slot name="items" />
     </ul>

@@ -65,5 +65,8 @@
         "dev": "nuxi dev",
         "start": "nuxi preview",
         "lint": "node_modules/eslint/bin/eslint.js --fix --ext .vue --ext .js --ext .ts components/** composables/** pages/** server/** stores/**"
+    },
+    "dependencies": {
+        "jsonwebtoken": "^8.5.1"
     }
 }

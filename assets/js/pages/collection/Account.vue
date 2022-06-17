@@ -143,7 +143,7 @@ onMounted(async () => {
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await axios.delete(`/collection`);
-    window.location.replace(r("/collection/show"));
+    navigateTo({ path: "/collection/show" });
   }
 };
 
@@ -156,7 +156,7 @@ const deleteAccount = async () => {
     )
   ) {
     await axios.post(`/collection/empty`);
-    window.location.replace(r("/logout"));
+    navigateTo({ path: "/logout" });
   }
 };
 </script>

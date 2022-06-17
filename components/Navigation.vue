@@ -75,8 +75,6 @@ import {
   BIconXSquareFill,
 } from "bootstrap-icons-vue";
 
-import { user } from "../composables/global";
-import { imagePath } from "../composables/imagePath";
 import NavigationItem from "./NavigationItem";
 import NavigationItemGroup from "./NavigationItemGroup";
 

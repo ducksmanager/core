@@ -1,14 +1,12 @@
 <template>
   <div :class="{ ...classes, small }">
-    <a :href="username ? r('/collection/show') : '/'">
+    <NuxtLink :href="username ? r('/collection/show') : '/'">
       <img :src="`${imagePath}/logo_small.png`" alt="DucksManager" />
-    </a>
+    </NuxtLink>
   </div>
 </template>
 
 <script setup>
-import { user } from "../composables/global";
-import { imagePath } from "../composables/imagePath";
 import { l10n } from "../stores/l10n";
 
 defineProps({

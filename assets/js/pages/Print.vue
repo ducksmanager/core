@@ -3,9 +3,9 @@
     <table>
       <tr>
         <td>
-          <a :href="r('/collection/show')"
+          <NuxtLink :href="r('/collection/show')"
             ><img id="logo" alt="logo" :src="`${imagePath}/logo_small.png`"
-          /></a>
+          /></NuxtLink>
         </td>
         <td>{{ $t("Collection DucksManager de") }} {{ username }}</td>
       </tr>
@@ -16,7 +16,6 @@
 </template>
 
 <script setup>
-import { user } from "../../../composables/global";
 import { imagePath } from "../../../composables/imagePath";
 import { l10n } from "../../../stores/l10n";
 import Classic from "./print/Classic";

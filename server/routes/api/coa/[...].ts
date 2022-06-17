@@ -5,9 +5,8 @@ export default defineEventHandler(
     (
       await fetch({
         path: `/${event.context.params._}`,
-        role: "ducksmanager",
+        role: "coa",
         method: event.context.method,
-        user: event.context.user,
       })
     ).data
 );

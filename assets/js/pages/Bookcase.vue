@@ -32,9 +32,7 @@
 <script setup>
 import { defineAsyncComponent, useAttrs } from "vue";
 
-import { user } from "../../../composables/global";
-import ViewBookcase from "./bookcase/ViewBookcase";
-import Menu from "./Menu";
+navigateToimport ViewBookcase from "./bookcase/ViewBookcase";
 
 const { username } = user();
 const attrs = useAttrs();

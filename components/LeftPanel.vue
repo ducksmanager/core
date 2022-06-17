@@ -10,9 +10,12 @@
         />
       </div>
       <div id="login">
-        <a id="logo_small" :href="username ? r('/collection/show') : '/'">
+        <NuxtLink
+          id="logo_small"
+          :href="username ? r('/collection/show') : '/'"
+        >
           <img :src="`${imagePath}/logo_name.jpg`" />
-        </a>
+        </NuxtLink>
 
         <div v-if="username" id="login_status">
           <img alt="O" :src="`${imagePath}/icons/green.png`" />&nbsp;
@@ -36,10 +39,10 @@
         >
           <span class="navbar-toggler-icon" />
         </button>
-        <a class="navbar-brand" href="#">
+        <NuxtLink class="navbar-brand" href="#">
           <SwitchLocale fixed />
           <Banner small
-        /></a>
+        /></NuxtLink>
       </div>
     </nav>
     <RecentEvents />
@@ -49,8 +52,6 @@
 <script setup>
 import axios from "axios";
 
-import { user } from "../composables/global";
-import { imagePath } from "../composables/imagePath";
 import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 import { users } from "../stores/users";

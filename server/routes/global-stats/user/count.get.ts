@@ -1,5 +1,5 @@
 import { fetch } from "~/server/fetch";
 
 export default defineEventHandler(
-  async () => (await fetch("/ducksmanager/users/count", "ducksmanager")).data
+  async () => (await fetch({ path: "/ducksmanager/users/count" })).data
 );

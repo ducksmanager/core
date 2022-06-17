@@ -16,7 +16,7 @@
     <template v-if="event.type === 'bookstore_comment'">
       {{ $t("a visité la bouquinerie") }}
       <i
-        ><a :href="r('/bookstores')">{{ event.name }}</a></i
+        ><NuxtLink :href="r('/bookstores')">{{ event.name }}</NuxtLink></i
       >
     </template>
     <template v-if="event.type === 'collection_update'"
@@ -117,9 +117,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
-import Issue from "../components/Issue";
-import OtherIssues from "../components/OtherIssues";
-import UserPopover from "../components/UserPopover";
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
 import { users } from "../stores/users";

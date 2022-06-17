@@ -26,9 +26,9 @@
             "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous"
           )
         }}
-        <a :href="r('/expand')">{{
+        <NuxtLink :href="r('/expand')">{{
           $t("suggérer des numéros en fonction de vos préférences.")
-        }}</a>
+        }}</NuxtLink>
       </p>
       <div v-if="personNames">
         <b-row

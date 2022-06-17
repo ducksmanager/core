@@ -48,7 +48,6 @@
 <script setup>
 import { onMounted } from "vue";
 
-import { imagePath } from "../composables/imagePath";
 import Edge from "./Edge";
 
 const { bookcaseTextures, sortedBookcase } = defineProps({

@@ -49,10 +49,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
-import { locale } from "../composables/global";
-import { imagePath } from "../composables/imagePath";
-import medal from "../composables/medal";
-
 const { t: $t } = useI18n();
 const props = defineProps({
   small: { type: Boolean, default: false },

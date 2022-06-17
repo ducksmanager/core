@@ -79,7 +79,6 @@ import { BButton, BButtonGroup } from "bootstrap-vue-3";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import Issue from "../../../components/Issue";
 import StoryList from "../../../components/StoryList";
 import { collection } from "../../../stores/collection";
 

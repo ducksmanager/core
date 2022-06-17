@@ -15,7 +15,7 @@
     />
     <b-alert v-if="!collection.length" variant="info">
       {{ $t("Vous ne possédez aucun numéro ! Cliquez") }}
-      <a :href="r('/collection/show')">{{ $t("ici") }}</a>
+      <NuxtLink :href="r('/collection/show')">{{ $t("ici") }}</NuxtLink>
       {{ $t("pour en ajouter à votre collection !") }}
     </b-alert>
     <GeneralStats v-if="tab === 'general'" />
@@ -111,21 +111,21 @@
             $t(
               `Afin de retracer l'évolution de votre collection, renseignez les dates d'achat de vos numéros dans la page {0}, puis revenez ici ! Si une date d'achat n'a pas été indiquée pour un numéro, sa date d'ajout dans la collection est utilisée`,
               [
-                `<a href='${r('/collection/show')}'>${$t(
+                `<NuxtLink href='${r('/collection/show')}'>${$t(
                   'Gérer ma collection'
-                )}</a>`,
+                )}</NuxtLink>`,
               ]
             )
           "
         />
         <div v-if="purchases && !purchases.length">
-          <a :href="r('/collection/show')">
+          <NuxtLink :href="r('/collection/show')">
             <img
               style="height: 300px"
               alt="demo"
               :src="`${imagePath}/demo_selection_achat_${currentLocale}.png`"
             />
-          </a>
+          </NuxtLink>
         </div>
       </b-alert>
       <div v-if="purchases?.length">
@@ -162,12 +162,10 @@ import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-3";
 import { defineAsyncComponent, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
-import AuthorList from "../../../components/AuthorList";
-import { locale } from "../../../composables/global";
+import Menu from "../../../components/Menu";
 import { imagePath } from "../../../composables/imagePath";
 import { collection as collectionStore } from "../../../stores/collection";
 import { l10n } from "../../../stores/l10n";
-import Menu from "./Menu";
 import AuthorStats from "./stats/AuthorStats";
 import ConditionStats from "./stats/ConditionStats";
 import GeneralStats from "./stats/GeneralStats";

@@ -236,7 +236,6 @@ import { BAlert, BNavItem, BTab, BTabs } from "bootstrap-vue-3";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { condition } from "../composables/condition";
 import { collection } from "../stores/collection";
 import Condition from "./Condition";
 

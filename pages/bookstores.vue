@@ -160,7 +160,6 @@
 </template>
 <script setup>
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import axios from "axios";
 import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
@@ -213,7 +212,10 @@ const suggestComment = async (bookstore) => {
     );
     return false;
   }
-  await axios.put("/bookstoreComment/suggest", bookstore);
+  await useFetch("/bookstoreComment/suggest", {
+    method: "PUT",
+    data: bookstore,
+  });
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;

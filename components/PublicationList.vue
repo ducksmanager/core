@@ -12,9 +12,9 @@
     >
       <span class="navbar-toggler-icon" />
     </button>
-    <a class="navbar-brand" href="#">
+    <NuxtLink class="navbar-brand" href="#">
       {{ $t("Collection") }}
-    </a>
+    </NuxtLink>
     <div id="nav-publications" class="collapse navbar-collapse">
       <ul class="navbar-nav">
         <li
@@ -34,7 +34,7 @@
                 {{ props.countryName }}
               </template>
             </Country>
-          </a>
+          </NuxtLink>
           <ul class="dropdown-menu">
             <li
               v-for="publicationCode in getSortedPublications(country)"
@@ -50,7 +50,7 @@
                   publicationNames[publicationCode] ||
                   publicationCode.split("/")[1]
                 }}
-              </a>
+              </NuxtLink>
             </li>
           </ul>
         </li>

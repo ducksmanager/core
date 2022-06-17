@@ -1,4 +1,6 @@
 /.env.prod.local
 /.idea/
 /.nuxt
+/var/cache/dev/
+/vendor/
 node_modules
