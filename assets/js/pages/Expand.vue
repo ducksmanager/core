@@ -67,10 +67,10 @@ import { BAlert, BFormSelect } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import SuggestionList from "../../../components/SuggestionList";
 import { coa } from "../../../stores/coa";
 import { collection as collectionStore } from "../../../stores/collection";
 import { l10n } from "../../../stores/l10n";
-import SuggestionList from "./SuggestionList";
 
 const countryCode = $ref("ALL");
 const { t: $t } = useI18n();

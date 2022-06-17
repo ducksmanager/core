@@ -79,8 +79,7 @@ import { BButton, BButtonGroup } from "bootstrap-vue-3";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import StoryList from "../../../components/StoryList";
-import { collection } from "../../../stores/collection";
+import { collection } from "../stores/collection";
 
 const props = defineProps({
   countrycode: {
@@ -92,6 +91,9 @@ const props = defineProps({
     default: false,
   },
 });
+
+const emit = defineEmits(["on-suggestions-data"]);
+
 const { t: $t } = useI18n();
 const suggestions = $computed(() => collection().suggestions);
 const hasSuggestions = $computed(() => collection().hasSuggestions);
@@ -131,6 +133,15 @@ watch(
       sinceLastVisit: props.sinceLastVisit,
     });
     loading = false;
+  }
+);
+
+watch(
+  () => loading,
+  (newValue) => {
+    if (!newValue) {
+      emit("on-suggestions-data");
+    }
   }
 );
 </script>

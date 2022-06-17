@@ -122,9 +122,6 @@
 import { BIconEyeFill, BIconEyeSlashFill } from "bootstrap-icons-vue";
 import { onMounted } from "vue";
 
-import Bookcase from "~/components/Bookcase";
-import Publication from "~/components/Publication";
-import { imagePath } from "~/composables/imagePath";
 import { coa } from "~/stores/coa";
 
 let hasData = $ref(false);
@@ -136,12 +133,11 @@ const bookcaseTextures = $ref({
 });
 
 const publicationNames = $computed(() => coa().publicationNames);
-const fetchPublicationNames = coa().fetchPublicationNames;
-const fetchIssueNumbers = coa().fetchIssueNumbers;
-const getEdgeUrl = (publicationCode, issueNumber) => {
-  const [country, magazine] = publicationCode.split("/");
-  return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`;
-};
+const getEdgeUrl = (publicationCode, issueNumber) =>
+  `https://edges.ducksmanager.net/edges/${publicationCode.replace(
+    "/",
+    "/gen/"
+  )}.${issueNumber}.png`;
 const open = (publicationCode, issueNumber) => {
   window?.open(getEdgeUrl(publicationCode, issueNumber), "_blank");
 };
@@ -180,12 +176,12 @@ const publishedEdges = (
 );
 
 onMounted(async () => {
-  await fetchPublicationNames([
+  await coa().fetchPublicationNames([
     ...mostWanted.map((mostWantedIssue) => mostWantedIssue.publicationcode),
     ...Object.keys(publishedEdges),
   ]);
 
-  await fetchIssueNumbers(Object.keys(publishedEdges));
+  await coa().fetchIssueNumbers(Object.keys(publishedEdges));
   hasData = true;
 });
 </script>

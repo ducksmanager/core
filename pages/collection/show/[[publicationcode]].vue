@@ -21,7 +21,7 @@
         <SuggestionList
           countrycode="ALL"
           since-last-visit
-          @has-suggestions-data="
+          @on-suggestions-data="
             (e) => {
               suggestionsNumber = e;
             }
