@@ -58,6 +58,7 @@ $navbar-height: 40px;
   width: 325px;
   height: 100%;
   border-right: 5px solid #eee;
+  background-color: #3d4b5f !important;
   z-index: 2;
 
   @media (max-width: 992px) {
