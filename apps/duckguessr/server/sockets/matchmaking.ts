@@ -113,7 +113,9 @@ const createGameMatchmaking = (
 
       // eslint-disable-next-line n/no-callback-literal
       callback({
-        isBotAvailable: currentGame.dataset.name === 'published-fr-recent',
+        isBotAvailable: ['published-fr-recent', 'published-fr-simple'].includes(
+          currentGame.dataset.name
+        ),
         players: currentGame.game_players.map(({ player }) => player),
       } as MatchDetails)
     })
