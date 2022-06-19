@@ -141,7 +141,9 @@ const createGameMatchmaking = (
     socket.on('disconnect', async (reason: string) => {
       if (reason !== 'client namespace disconnect') {
         const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
-        await removePlayer(currentGame, user)
+        if (currentGame!.game_players.findIndex(({ player }) => player.id === user.id) > 0) {
+          await removePlayer(currentGame, user)
+        }
       }
     })
   })
