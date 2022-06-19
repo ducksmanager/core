@@ -1,11 +1,12 @@
+import { H3Error } from "h3";
 import jwt from "jsonwebtoken";
 
 export default defineEventHandler((event) => {
-  console.log(event.req.headers);
-  const authHeaderMatch = /^authStateStorage=(?<token>.*?)[;$]/.exec(
+  const authHeaderMatch = /authStateStorage=(?<token>.+?)(?:;|$)/.exec(
     event.req.headers.cookie
   );
-  const token = authHeaderMatch?.groups.token;
+  const token = JSON.parse(decodeURIComponent(authHeaderMatch?.groups.token))
+    ?.user?.data?.token;
 
   if (token) {
     try {
@@ -13,13 +14,13 @@ export default defineEventHandler((event) => {
       if (payload && typeof payload === "object") {
         event.context.user = payload;
       } else {
-        abortNavigation("403");
+        throw new H3Error("Payload is not an object");
       }
     } catch (e) {
       if (!(e instanceof jwt.JsonWebTokenError)) {
         throw e;
       }
-      abortNavigation("403");
+      throw new H3Error("JWT is invalid");
     }
   }
 });

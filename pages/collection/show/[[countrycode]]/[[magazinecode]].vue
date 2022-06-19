@@ -76,11 +76,12 @@
 <script setup>
 import { onMounted, watch } from "vue";
 
-import { coa } from "../../../stores/coa";
-import { collection } from "../../../stores/collection";
-import { l10n } from "../../../stores/l10n";
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
 
-const publicationcode = useRoute().params.publicationcode;
+const route = useRoute();
+const publicationcode = `${route.params.countrycode}/${route.params.magazinecode}`;
 
 const suggestionsNumber = $ref(0);
 let hasPublicationNames = $ref(false);

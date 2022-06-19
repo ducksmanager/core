@@ -16,8 +16,8 @@ export default defineEventHandler(async (event) => {
 
   const shaPassword = crypto.createHash("sha1");
   shaPassword.update(body.password);
-
   const passwordHash = shaPassword.digest("hex");
+
   const roles = (
     await fetch({
       path: "/collection/privileges",

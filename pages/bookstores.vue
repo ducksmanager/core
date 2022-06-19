@@ -160,10 +160,18 @@
 </template>
 <script setup>
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
+import {
+  BAlert,
+  BButton,
+  BFormInput,
+  BFormTextarea,
+  useToast,
+} from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
+
+const toast = useToast();
 
 let bookstores = $ref([]);
 let existingBookstore = $ref(null);
@@ -205,7 +213,7 @@ const fetchBookstores = async () => {
 };
 const suggestComment = async (bookstore) => {
   if (!bookstore.id && !bookstore.coordX) {
-    window.alert(
+    toast.show(
       $t(
         'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'
       )
@@ -241,9 +249,13 @@ onMounted(async () => {
     enableEventLogging: false,
   });
   geocoder.addTo("#address");
-  window.document.querySelector(
-    ".mapboxgl-ctrl-geocoder--input"
-  ).attributes.required = true;
+
+  if (window) {
+    window.document.querySelector(
+      ".mapboxgl-ctrl-geocoder--input"
+    ).attributes.required = true;
+  }
+
   geocoder.on("result", ({ result: { place_name: placeName, center } }) => {
     newBookstore.address = placeName;
     [newBookstore.coordY, newBookstore.coordX] = center;

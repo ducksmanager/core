@@ -23,6 +23,8 @@ import { BTab, BTabs } from "bootstrap-vue-3";
 
 import { l10n } from "../stores/l10n";
 
+const route = useRoute();
+
 const { items, rootPath } = defineProps({
   title: {
     type: String,
@@ -39,7 +41,7 @@ const { items, rootPath } = defineProps({
 });
 const { r } = l10n();
 const activeTabIndex = $ref(
-  items.findIndex(({ path }) => window.location.pathname === r(rootPath + path))
+  items.findIndex(({ path }) => route.path === r(rootPath + path))
 );
 const onTabClick = ({ path }) => {
   navigateTo({ path: rootPath + path });

@@ -49,8 +49,8 @@ export const fetch = async ({
         ...headers,
         ...(user
           ? {
-              "x-dm-user": user?.username,
-              "x-dm-pass": user?.passwordHash,
+              "x-dm-user": user.username,
+              "x-dm-pass": user.passwordHash,
             }
           : {}),
       },
