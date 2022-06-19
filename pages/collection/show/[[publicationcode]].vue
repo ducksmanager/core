@@ -151,7 +151,7 @@ onMounted(() => {
 
 @media (max-width: 767px) {
   #publication-list {
-    top: $navbar-height;
+    top: 40px;
   }
 }
 </style>

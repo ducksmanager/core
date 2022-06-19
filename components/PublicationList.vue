@@ -22,7 +22,7 @@
           :key="country"
           class="nav-item dropdown"
         >
-          <a
+          <NuxtLink
             id="navbarDropdown"
             class="nav-link dropdown-toggle"
             href="#"
@@ -40,7 +40,7 @@
               v-for="publicationCode in getSortedPublications(country)"
               :key="publicationCode"
             >
-              <a
+              <NuxtLink
                 class="dropdown-item"
                 :href="
                   r(`/collection/show/{publicationCode:${publicationCode}}`)
@@ -55,10 +55,10 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a
+          <NuxtLink
             class="nav-link"
             :href="r('/collection/show/{publicationCode:new}')"
-            >{{ $t("Nouveau magazine") }}</a
+            >{{ $t("Nouveau magazine") }}</NuxtLink
           >
         </li>
       </ul>

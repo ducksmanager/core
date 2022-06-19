@@ -6,7 +6,7 @@
       :data-a2a-title="title"
     >
       <NuxtLink class="a2a_dd" href="https://www.addtoany.com/share" />
-      <a
+      <NuxtLink
         v-for="platform in platforms"
         :key="platform"
         :class="{ [`a2a_button_${platform}`]: true }"

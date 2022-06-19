@@ -84,11 +84,11 @@
                       {{ $t("Annuler") }}
                     </b-button>
                   </form>
-                  <a
+                  <NuxtLink
                     v-else
                     href="javascript:void(0)"
                     @click="existingBookstore = bookstore"
-                    >{{ $t("Ajouter un commentaire") }}</a
+                    >{{ $t("Ajouter un commentaire") }}</NuxtLink
                   >
                 </div>
               </div>

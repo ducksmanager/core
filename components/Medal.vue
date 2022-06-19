@@ -49,6 +49,8 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
+const i18n = useI18n();
+
 const { t: $t } = useI18n();
 const props = defineProps({
   small: { type: Boolean, default: false },
@@ -64,7 +66,7 @@ const {
   radius,
   circumference,
 } = $(medal(props.contribution, props.userLevelPoints));
-const currentLocale = locale();
+const currentLocale = i18n.locale;
 const medalColors = ["bronze", "argent", "or"];
 const level = $computed(() =>
   props.nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel

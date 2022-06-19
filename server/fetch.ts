@@ -47,8 +47,12 @@ export const fetch = async ({
         "Cache-Control": "no-cache",
         "x-dm-version": "1.0",
         ...headers,
-        "x-dm-user": user?.username,
-        "x-dm-pass": user?.passwordHash,
+        ...(user
+          ? {
+              "x-dm-user": user?.username,
+              "x-dm-pass": user?.passwordHash,
+            }
+          : {}),
       },
     })
     .catch((e) => {

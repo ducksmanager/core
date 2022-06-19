@@ -176,9 +176,9 @@
                 $t(
                   "Gardez votre collection en poche où que vous soyez, et ajoutez des numéros à votre collection simplement en photographiant leur couverture avec"
                 )
-              }}&nbsp;<a
+              }}&nbsp;<NuxtLink
                 href="https://play.google.com/store/apps/details?id=net.ducksmanager.whattheduck"
-                ><b>What The Duck</b></a
+                ><b>What The Duck</b></NuxtLink
               >{{ $t(", l'application mobile de DucksManager !") }}
             </div>
             {{

@@ -1,6 +1,6 @@
 <template>
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
-    <a
+    <NuxtLink
       :class="{ clickable, flex }"
       :href="`${r(
         `/collection/show/{publicationCode:${publicationcode}}`

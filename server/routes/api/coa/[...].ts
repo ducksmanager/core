@@ -4,7 +4,7 @@ export default defineEventHandler(
   async (event) =>
     (
       await fetch({
-        path: `/${event.context.params._}`,
+        path: `/coa/${event.context.params._}`,
         role: "coa",
         method: event.context.method,
       })

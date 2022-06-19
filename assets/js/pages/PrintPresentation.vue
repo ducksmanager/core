@@ -21,10 +21,10 @@
             {{ detail }}
           </li>
           <li v-if="type.link === 'collectable'">
-            <a
+            <NuxtLink
               href="http://www.youtube.com/watch?v=PAg-g1cF148&hd=1"
               target="_blank"
-              >{{ $t("Cliquez ici") }}</a
+              >{{ $t("Cliquez ici") }}</NuxtLink
             >
             {{
               $t(
@@ -34,7 +34,7 @@
           </li>
         </ul>
         <NuxtLink :href="r(`/print/{currentType:${type.link}}`)" target="_blank"
-          >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</a
+          >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</NuxtLink
         >
         <br />
       </li>

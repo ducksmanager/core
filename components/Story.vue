@@ -6,7 +6,7 @@
     {{ title || $t("Sans titre")
     }}<template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
     <small>{{ comment }}</small>
-    &nbsp;<a
+    &nbsp;<NuxtLink
       v-if="!noLink"
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"

@@ -13,10 +13,10 @@
       Service, You agree to the collection and use of information in accordance
       with this Privacy Policy. This Privacy Policy has been created with the
       help of the
-      <a
+      <NuxtLink
         href="https://www.termsfeed.com/privacy-policy-generator/"
         target="_blank"
-        >Privacy Policy Generator</a
+        >Privacy Policy Generator</NuxtLink
       >.
     </p>
     <h1>Interpretation and Definitions</h1>
@@ -107,11 +107,11 @@
       <li>
         <p>
           <strong>Website</strong> refers to DucksManager, accessible from
-          <a
+          <NuxtLink
             href="https://ducksmanager.net"
             rel="external nofollow noopener"
             target="_blank"
-            >https://ducksmanager.net</a
+            >https://ducksmanager.net</NuxtLink
           >
         </p>
       </li>
@@ -205,11 +205,11 @@
         Cookies. For more information on how You can delete Flash Cookies,
         please read &quot;Where can I change the settings for disabling, or
         deleting local shared objects?&quot; available at
-        <a
+        <NuxtLink
           href="https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_"
           rel="external nofollow noopener"
           target="_blank"
-          >https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_</a
+          >https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_</NuxtLink
         >
       </li>
       <li>
@@ -227,10 +227,10 @@
       Persistent Cookies remain on Your personal computer or mobile device when
       You go offline, while Session Cookies are deleted as soon as You close
       Your web browser. You can learn more about cookies here:
-      <a
+      <NuxtLink
         href="https://www.termsfeed.com/privacy-policy-generator/#faq-8"
         target="_blank"
-        >Cookies by TermsFeed Generator</a
+        >Cookies by TermsFeed Generator</NuxtLink
       >.
     </p>
     <p>

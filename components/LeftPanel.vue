@@ -136,7 +136,7 @@ if (userId) {
   }
 
   .navbar {
-    height: $navbar-height;
+    height: 40px;
 
     .navbar-brand {
       position: fixed;
