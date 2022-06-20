@@ -10,7 +10,12 @@ export const removeCookie = (name: string) => {
 export const setUserCookieIfNotExists = () => {
   const cookies = useCookies().getAll()
   if (!cookies['duckguessr-user']) {
-    setCookie('duckguessr-user', `user${Math.random().toString().replace('0.', '')}`)
+    setCookie(
+      'duckguessr-user',
+      `user${Math.random()
+        .toString()
+        .replace(/^.+(\d{9})$/, '$1')}`
+    )
   }
 }
 

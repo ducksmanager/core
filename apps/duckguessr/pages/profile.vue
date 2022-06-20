@@ -5,7 +5,19 @@
       {{ t('Log in on DucksManager then refresh this page to be able to choose your avatar :-)') }}
     </b-alert>
   </div>
-  <div v-else class="d-flex justify-content-center flex-column">
+  <div v-else class="d-flex justify-content-center flex-column text-center">
+    <h3>{{ t('Medals') }}</h3>
+    <template v-if="currentUserStats">
+      <medal-list v-if="hasMedals" with-details />
+      <b-row v-else class="justify-content-center">
+        <b-col cols="9" class="d-flex justify-content-center">
+          <b-alert show variant="info">
+            {{ t("You haven't earned medals yet. Play Duckguessr to unlock medals!") }}
+          </b-alert>
+        </b-col>
+      </b-row>
+    </template>
+    <h3 class="mt-2">{{ t('Avatar') }}</h3>
     <b-row class="justify-content-center">
       <b-col cols="9" class="d-flex justify-content-center">
         <b-alert show variant="info" class="text-center">
@@ -70,6 +82,13 @@ const treeImageNaturalWidth = ref(null as number | null)
 interface AvatarWithLocalPosition extends Avatar {
   localPosition: number[] | null
 }
+
+const currentUserStats = computed(() => userStore().stats)
+const hasMedals = computed(
+  () =>
+    currentUserStats.value &&
+    Object.values(currentUserStats.value).filter((score) => score > 0).length
+)
 
 const currentAvatar = ref(null as AvatarWithLocalPosition | null)
 const closestAvatar = ref(null as AvatarWithLocalPosition | null)

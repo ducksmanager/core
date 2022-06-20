@@ -6,7 +6,12 @@ import {
   ServerToClientEvents,
   SocketData,
 } from '../../types/socketEvents'
-import { getPlayer, getPlayerStatistics, updatePlayer } from '../get-player'
+import {
+  getPlayer,
+  getPlayerGameStatistics,
+  getPlayerStatistics,
+  updatePlayer,
+} from '../get-player'
 
 export function createPlayerSocket(
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
@@ -22,8 +27,12 @@ export function createPlayerSocket(
         callback(player)
       })
 
-      socket.on('getStats', async (gameId, callback) => {
-        callback((await getPlayerStatistics(player!, gameId))[0])
+      socket.on('getStats', async (callback) => {
+        callback((await getPlayerStatistics(player!))[0])
+      })
+
+      socket.on('getGameStats', async (gameId, callback) => {
+        callback((await getPlayerGameStatistics(player!, gameId))[0])
       })
     } else {
       socket.emit('loginFailed')

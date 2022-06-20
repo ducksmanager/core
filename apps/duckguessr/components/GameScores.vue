@@ -32,15 +32,12 @@
             >.
           </div>
         </template>
-        <div v-else>{{ t("Vous n'avez pas participé à cette partie.") }}</div>
+        <div v-else>{{ t("You haven't participated to this game.") }}</div>
       </b-row>
     </b-container>
     <template v-if="currentUserHasParticipated">
       <h3>{{ t('Medals') }}</h3>
-      <medal-list v-if="currentUserStats" :stats="currentUserStats" :dataset-id="datasetId" />
-      <b-row v-else class="justify-content-center">
-        {{ t("You haven't won medals during this game.") }}
-      </b-row>
+      <medal-list v-if="currentUserAllStats" :dataset="game.dataset" with-details />
     </template>
     <h3 class="mt-3">{{ t('Scores') }}</h3>
     <b-table striped dark :items="playersWithScoresAndTotalScore" class="align-items-center">
@@ -64,7 +61,7 @@
         </tr>
       </template>
       <template #cell(playerId)="{ value: playerId, index }">
-        <player-info :username="playerNames[playerId]" :top-player="index === 0" />
+        <b-card><player-info :username="playerNames[playerId]" :top-player="index === 0" /></b-card>
       </template>
       <template #cell(totalScore)="{ value: totalScore }">
         <div>{{ totalScore }} points</div>
@@ -74,7 +71,7 @@
           v-for="score in playerRoundScores"
           :key="`round-${score.round_id}-player-${score.player_id}`"
           class="text-center"
-          :players="players.map(({ player }) => player)"
+          :players="game.game_players.map(({ player }) => player)"
           :score="score"
         />
       </template>
@@ -83,36 +80,28 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from '@nuxtjs/composition-api'
-import Index from '@prisma/client'
+import { computed, ref, watch } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
-import { io } from 'socket.io-client'
-import { useCookies } from '@vueuse/integrations/useCookies'
-import { Author, RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
+import { RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
 import { getDuckguessrId, getShownUsername } from '@/composables/user'
 
-interface GamePlayerWithFullPlayer extends Index.game_player {
-  player: Index.player
-}
+import { userStore } from '~/store/user'
+import { GameFull } from '~/types/game'
 
 const gameScoresProps = defineProps<{
-  gameId: Number
-  datasetId: Number
-  rounds: Array<RoundWithScoresAndAuthor>
-  players: Array<GamePlayerWithFullPlayer>
-  authors: Array<Author>
+  game: GameFull
 }>()
 
 const duckguessrId = getDuckguessrId()
-const playerIds = gameScoresProps.players.map(({ player_id: playerId }) => playerId)
-const playerNames = gameScoresProps.players.reduce(
+const playerIds = gameScoresProps.game.game_players.map(({ player_id: playerId }) => playerId)
+const playerNames = gameScoresProps.game.game_players.reduce(
   (acc, { player }) => ({ ...acc, [player.id]: player.username }),
   {}
 )
 const roundsWithPersonUrls = ref(
-  gameScoresProps.rounds.map((roundScore) => ({
+  gameScoresProps.game.rounds.map((roundScore) => ({
     ...roundScore,
-    ...gameScoresProps.authors.find(({ personcode }) => personcode === roundScore.personcode),
+    ...gameScoresProps.game.authors.find(({ personcode }) => personcode === roundScore.personcode),
     personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
   }))
 )
@@ -162,11 +151,11 @@ const playersWithScoresAndTotalScore = playerIds
     _rowVariant: idx === 0 ? 'success' : '',
   }))
 
-const currentUserHasParticipated = gameScoresProps.players
-  .map(({ player_id }) => player_id)
-  .includes(duckguessrId)
+const currentUserHasParticipated = computed(() =>
+  gameScoresProps.game.game_players.map(({ player_id }) => player_id).includes(duckguessrId)
+)
 
-const currentUserScores = gameScoresProps.rounds.map(({ round_scores }) =>
+const currentUserScores = gameScoresProps.game.rounds.map(({ round_scores }) =>
   round_scores.find(({ player_id }) => player_id === duckguessrId)
 )
 
@@ -180,7 +169,7 @@ const winningPlayerScores = computed(() =>
 
 const winningPlayer = computed(
   () =>
-    gameScoresProps.players.find(
+    gameScoresProps.game.game_players.find(
       ({ player_id: playerId }) => playerId === winningPlayerScores.value?.playerId
     )!.player
 )
@@ -189,32 +178,37 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
   (roundScore) =>
     roundScore!.speed_bonus ===
     Math.max(
-      ...gameScoresProps.rounds
+      ...gameScoresProps.game.rounds
         .find((score) => score.id === roundScore!.round_id)!
         .round_scores.map((otherPlayerRoundScore) => otherPlayerRoundScore!.speed_bonus || 0)
     )
 )
 
-const currentUserStats = ref(null as { [key: string]: number } | null)
+const currentUserAllStats = computed(
+  () =>
+    userStore().stats && userStore().gameStats && { ...userStore().stats, ...userStore().gameStats }
+)
 
-if (currentUserHasParticipated) {
-  io(`${process.env.SOCKET_URL}/login`, {
-    auth: {
-      cookie: useCookies().getAll(),
-    },
-  }).emit('getStats', gameScoresProps.gameId, (stats: { [key: string]: number }) => {
-    currentUserStats.value = {
-      ...stats,
-      dataset_current_game: winningPlayer.value?.id === duckguessrId ? 1 : 0,
+watch(
+  () => userStore().loginSocket && currentUserHasParticipated.value,
+  (loggedInAndParticipated) => {
+    if (loggedInAndParticipated) {
+      userStore().loadStats()
+      userStore().loadGameStats(
+        gameScoresProps.game.id!,
+        gameScoresProps.game.dataset.name,
+        winningPlayer.value?.id === duckguessrId
+      )
     }
-  })
-}
+  },
+  { immediate: true }
+)
 
 const { t } = useI18n()
 const imageUrl = ({ sitecode_url: url }: RoundWithScoresAndAuthor) =>
   `${process.env.CLOUDINARY_URL_ROOT}/${url}`
 const columnToRound = (column: string) =>
-  gameScoresProps.rounds[parseInt(column.replace('round', '')) - 1]
+  gameScoresProps.game.rounds[parseInt(column.replace('round', '')) - 1]
 </script>
 
 <style scoped lang="scss">
@@ -241,5 +235,8 @@ h3 {
       text-align: center;
     }
   }
+}
+.card {
+  color: black;
 }
 </style>

@@ -1,16 +1,23 @@
 <template>
-  <b-container v-if="levelsAndProgress">
-    <b-row v-if="noMedalProgress" class="justify-content-center">
+  <b-container v-if="levelsAndProgress" class="d-flex flex-column align-items-center">
+    <b-row v-if="dataset && noMedalProgress" class="justify-content-center">
       {{ t("You haven't won medals during this game.") }}
     </b-row>
-    <b-row v-else class="justify-content-center">
-      <template v-for="(medalLevelAndProgress, type) in levelsAndProgress">
+    <b-row v-else class="justify-content-center w-100">
+      <template v-for="type in statsMatchingMedals">
         <b-col
-          v-if="medalLevelAndProgress.currentLevelProgressPoints"
+          v-if="!dataset || levelsAndProgress[type].currentLevelProgressPoints"
           :key="type"
           class="flex-grow-0"
+          :class="{ 'px-0': !dataset }"
+          cols="3"
         >
-          <Medal :type="type" :medal-level-and-progress="medalLevelAndProgress" />
+          <Medal
+            :type="type"
+            :medal-level-and-progress="levelsAndProgress[type]"
+            :with-game-data="!!dataset"
+            :with-details="withDetails"
+          />
         </b-col>
       </template>
     </b-row>
@@ -18,86 +25,39 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from '@nuxtjs/composition-api'
+import { computed } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
-import { MedalLevel, MedalLevelAndProgress } from '~/types/playerStats'
+import Index from '@prisma/client'
+import { userStore } from '~/store/user'
 
-const MEDAL_LEVELS: MedalLevel[] = [
-  new MedalLevel('fast', [25, 150, 500]),
-  new MedalLevel('ultra_fast', [10, 50, 200]),
-  new MedalLevel('published_fr_recent', [10, 75, 300]),
-]
-
-const DATASET_WITH_MEDALS: { [key: number]: string } = {
-  1: 'published_fr_recent',
-}
+const DATASET_WITH_MEDALS: string[] = ['published-fr-recent']
 
 const { t } = useI18n()
 
-const props = defineProps({
-  stats: {
-    type: Object as () => { [key: string]: number },
-    required: true,
-  },
-  datasetId: {
-    type: Number,
-    required: true,
-  },
-})
+const props = defineProps<{
+  dataset?: Index.dataset
+  withDetails: boolean
+}>()
+
+const statsToConsider = computed(() => (props.dataset ? userStore().gameStats : userStore().stats))
 
 const statsMatchingMedals = computed(
   () =>
-    Object.keys(props.stats).reduce((acc, medalType) => {
-      if (/^(ultra_)?fast/.test(medalType)) {
-        return { ...acc, [medalType]: props.stats[medalType] }
-      } else if (/^dataset/.test(medalType) && DATASET_WITH_MEDALS[props.datasetId]) {
-        return {
-          ...acc,
-          [medalType.replace('dataset', DATASET_WITH_MEDALS[props.datasetId])]:
-            props.stats[medalType],
-        }
+    statsToConsider.value &&
+    (Object.keys(statsToConsider.value).reduce((acc, medalType) => {
+      if (
+        statsToConsider.value![medalType] &&
+        (/^(ultra_)?fast/.test(medalType) ||
+          !props.dataset ||
+          DATASET_WITH_MEDALS.includes(props.dataset.name))
+      ) {
+        acc.push(medalType)
       }
       return acc
-    }, {}) as { [key: string]: number }
+    }, [] as string[]) as string[])
 )
 
-const levelsAndProgress = computed(
-  () =>
-    MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
-      const level =
-        ([...levels]!
-          .reverse()
-          .findIndex(
-            (levelThreshold: number) => statsMatchingMedals.value[medalType] > levelThreshold
-          ) || -1) + 1
-      if (level === 3) {
-        return {
-          ...acc,
-          [medalType]: new MedalLevelAndProgress(level, 100, 0, 100, 0),
-        }
-      }
-      const currentLevelThreshold = level === 0 ? 0 : levels[level - 1]
-      const nextLevelThreshold = levels[level]
-      const totalPointsToReachNextLevel = nextLevelThreshold - currentLevelThreshold
-
-      const currentLevelPoints = statsMatchingMedals.value[medalType] - currentLevelThreshold
-      const levelPercentage = (100 * currentLevelPoints) / totalPointsToReachNextLevel
-
-      const currentLevelProgressPoints = statsMatchingMedals.value[`${medalType}_current_game`]
-      const levelPercentageProgress =
-        (100 * currentLevelProgressPoints) / totalPointsToReachNextLevel
-      return {
-        ...acc,
-        [medalType]: new MedalLevelAndProgress(
-          level,
-          currentLevelPoints,
-          currentLevelProgressPoints,
-          levelPercentage,
-          levelPercentageProgress
-        ),
-      }
-    }, {}) as { [key: string]: MedalLevelAndProgress }
-)
+const levelsAndProgress = computed(() => userStore().levelsAndProgress)
 
 const noMedalProgress = computed(
   () =>
@@ -108,4 +68,4 @@ const noMedalProgress = computed(
 )
 </script>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

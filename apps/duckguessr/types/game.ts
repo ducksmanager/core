@@ -9,4 +9,5 @@ export interface GameFull extends Index.game {
   authors: Author[]
   rounds: RoundWithScoresAndAuthor[]
   game_players: GamePlayerWithFullPlayer[]
+  dataset: Index.dataset
 }

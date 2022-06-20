@@ -26,6 +26,7 @@ export default async (req, res) => {
               round_scores: true,
             },
           },
+          dataset: true,
         },
         where: {
           id: gameId,

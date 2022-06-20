@@ -1,23 +1,20 @@
 <template>
   <div id="menu" class="position-fixed d-flex flex-column align-items-center">
     <div id="medals-and-login" class="py-2 d-flex flex-column">
-      <component
-        :is="isAnonymous ? 'div' : 'a'"
-        :href="isAnonymous ? undefined : '/profile'"
-        class="d-none d-lg-block"
-      >
-        <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
-      </component>
+      <div class="d-none d-lg-block">
+        <component :is="isAnonymous ? 'div' : 'a'" :href="isAnonymous ? undefined : '/profile'">
+          <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
+        </component>
+        <medal-list v-if="currentUserStats" :with-details="false" />
+      </div>
       <b-navbar toggleable="lg" type="dark" class="d-lg-none justify-content-start">
         <b-navbar-toggle target="nav-collapse" class="px-2" />
 
         <b-collapse id="nav-collapse" is-nav class="border border-secondary mt-4">
-          <player-info
-            v-if="user"
-            :username="user.username"
-            :avatar="user.avatar"
-            class="border-bottom"
-          />
+          <div class="border-bottom">
+            <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
+            <medal-list v-if="currentUserStats" :with-details="false" />
+          </div>
           <b-navbar-nav class="justify-content-start flex-column">
             <nuxt-link to="/" class="mx-2 align-self-start">{{ $t('Home') }}</nuxt-link>
             <nuxt-link to="/podium" class="mx-2 align-self-start">
@@ -43,11 +40,23 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from '@nuxtjs/composition-api'
+import { computed, watch } from '@nuxtjs/composition-api'
 import { userStore } from '~/store/user'
 
 const user = computed(() => userStore().user)
 const isAnonymous = computed(() => userStore().isAnonymous)
+
+const currentUserStats = computed(() => userStore().stats)
+
+watch(
+  () => isAnonymous.value === false,
+  (userIsNotAnonymous: boolean) => {
+    if (userIsNotAnonymous) {
+      userStore().loadStats()
+    }
+  },
+  { immediate: true }
+)
 </script>
 <style lang="scss">
 $navbar-height: 40px;
