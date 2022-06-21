@@ -5,7 +5,9 @@
   >
     <a href="/">
       <b-img src="/logo.png" />
-      <div class="small">{{ t('by DucksManager') }}</div>
+      <div class="small">
+        <a href="https://ducksmanager.net">{{ t('by DucksManager') }}</a>
+      </div>
     </a>
   </div>
 </template>
