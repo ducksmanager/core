@@ -5,7 +5,7 @@
         <component :is="isAnonymous ? 'div' : 'a'" :href="isAnonymous ? undefined : '/profile'">
           <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
         </component>
-        <medal-list v-if="currentUserStats" :with-details="false" />
+        <medal-list v-if="!isAnonymous && currentUserStats" :with-details="false" />
       </div>
       <b-navbar toggleable="lg" type="dark" class="d-lg-none justify-content-start">
         <b-navbar-toggle target="nav-collapse" class="px-2" />
@@ -13,7 +13,7 @@
         <b-collapse id="nav-collapse" is-nav class="border border-secondary mt-4">
           <div class="border-bottom">
             <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
-            <medal-list v-if="currentUserStats" :with-details="false" />
+            <medal-list v-if="!isAnonymous && currentUserStats" :with-details="false" />
           </div>
           <b-navbar-nav class="justify-content-start flex-column">
             <nuxt-link to="/" class="mx-2 align-self-start">{{ $t('Home') }}</nuxt-link>

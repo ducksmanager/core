@@ -29,40 +29,42 @@ export const userStore = defineStore('user', {
     isAnonymous: (state) => state.user && isAnonymousNative(state.user.username),
 
     levelsAndProgress: (state): { [key: string]: MedalLevelAndProgress } =>
-      MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
-        const level =
-          ([...levels]!
-            .reverse()
-            .findIndex((levelThreshold: number) => state.stats![medalType] > levelThreshold) ||
-            -1) + 1
-        if (level === 3) {
-          return {
-            ...acc,
-            [medalType]: new MedalLevelAndProgress(level, 100, 0, 100, 0),
-          }
-        }
-        const currentLevelThreshold = level === 0 ? 0 : levels[level - 1]
-        const nextLevelThreshold = levels[level]
-        const totalPointsToReachNextLevel = nextLevelThreshold - currentLevelThreshold
+      !state.stats
+        ? {}
+        : MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
+            const level =
+              ([...levels]!
+                .reverse()
+                .findIndex((levelThreshold: number) => state.stats![medalType] > levelThreshold) ||
+                -1) + 1
+            if (level === 3) {
+              return {
+                ...acc,
+                [medalType]: new MedalLevelAndProgress(level, 100, 0, 100, 0),
+              }
+            }
+            const currentLevelThreshold = level === 0 ? 0 : levels[level - 1]
+            const nextLevelThreshold = levels[level]
+            const totalPointsToReachNextLevel = nextLevelThreshold - currentLevelThreshold
 
-        const currentLevelPoints = state.stats![medalType] - currentLevelThreshold
-        const levelPercentage = (100 * currentLevelPoints) / totalPointsToReachNextLevel
+            const currentLevelPoints = state.stats![medalType] - currentLevelThreshold
+            const levelPercentage = (100 * currentLevelPoints) / totalPointsToReachNextLevel
 
-        const currentLevelProgressPoints = state.gameStats ? state.gameStats![medalType] : 0
-        const levelPercentageProgress = state.gameStats
-          ? (100 * currentLevelProgressPoints) / totalPointsToReachNextLevel
-          : 0
-        return {
-          ...acc,
-          [medalType]: new MedalLevelAndProgress(
-            level,
-            currentLevelPoints,
-            currentLevelProgressPoints,
-            levelPercentage,
-            levelPercentageProgress
-          ),
-        }
-      }, {}),
+            const currentLevelProgressPoints = state.gameStats ? state.gameStats![medalType] : 0
+            const levelPercentageProgress = state.gameStats
+              ? (100 * currentLevelProgressPoints) / totalPointsToReachNextLevel
+              : 0
+            return {
+              ...acc,
+              [medalType]: new MedalLevelAndProgress(
+                level,
+                currentLevelPoints,
+                currentLevelProgressPoints,
+                levelPercentage,
+                levelPercentageProgress
+              ),
+            }
+          }, {}),
   },
   actions: {
     login() {

@@ -37,7 +37,7 @@
     </b-container>
     <template v-if="currentUserHasParticipated">
       <h3>{{ t('Medals') }}</h3>
-      <medal-list v-if="currentUserAllStats" :dataset="game.dataset" with-details />
+      <medal-list v-if="!isAnonymous && currentUserAllStats" :dataset="game.dataset" with-details />
     </template>
     <h3 class="mt-3">{{ t('Scores') }}</h3>
     <b-table striped dark :items="playersWithScoresAndTotalScore" class="align-items-center">
@@ -93,6 +93,8 @@ const gameScoresProps = defineProps<{
 }>()
 
 const duckguessrId = getDuckguessrId()
+const isAnonymous = computed(() => userStore().isAnonymous)
+
 const playerIds = gameScoresProps.game.game_players.map(({ player_id: playerId }) => playerId)
 const playerNames = gameScoresProps.game.game_players.reduce(
   (acc, { player }) => ({ ...acc, [player.id]: player.username }),
