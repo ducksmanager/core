@@ -13,6 +13,7 @@ const getRoundWithScores = async (roundId: number) =>
   })
 
 export interface ServerToClientEvents {
+  playerConnectedToMatch: () => void
   playerJoined: (username: string) => void
   playerLeft: (username: string) => void
   matchStarts: () => void

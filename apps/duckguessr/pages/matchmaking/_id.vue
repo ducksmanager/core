@@ -62,27 +62,35 @@ watch(
           cookie: useCookies().getAll(),
         },
       })
-        .on('playerJoined', (username: string) => {
-          console.debug(`${username} is also ready`)
-          addPlayer(username)
+        .on('playerConnectedToMatch', () => {
+          matchmakingSocket.value!.emit(
+            'joinMatch',
+            ({ players, isBotAvailable }: MatchDetails) => {
+              isBotAvailableForGame.value = isBotAvailable
+              for (const player of players) {
+                addPlayer(player.username)
+              }
+            }
+          )
         })
-        .on('playerLeft', (username: string) => {
-          console.debug(`${username} has left`)
-          removePlayer(username)
-        })
-        .on('matchStarts', () => {
-          setTimeout(() => {
-            // Leave time for the joinMatch callback to be called
-            console.debug(`Match starts on game ${gameId}`)
-            matchmakingSocket.value!.close()
-            router.replace(`/game/${gameId}`)
-          }, 200)
-        })
-        .emit('joinMatch', ({ players, isBotAvailable }: MatchDetails) => {
-          isBotAvailableForGame.value = isBotAvailable
-          for (const player of players) {
-            addPlayer(player.username)
-          }
+        .on('connect', () => {
+          matchmakingSocket
+            .value!.on('playerJoined', (username: string) => {
+              console.debug(`${username} is also ready`)
+              addPlayer(username)
+            })
+            .on('playerLeft', (username: string) => {
+              console.debug(`${username} has left`)
+              removePlayer(username)
+            })
+            .on('matchStarts', () => {
+              setTimeout(() => {
+                // Leave time for the joinMatch callback to be called
+                console.debug(`Match starts on game ${gameId}`)
+                matchmakingSocket.value!.close()
+                router.replace(`/game/${gameId}`)
+              }, 200)
+            })
         })
     }
   },

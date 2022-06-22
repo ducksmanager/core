@@ -83,6 +83,8 @@ const createGameMatchmaking = (
       return false
     }
 
+    socket.emit('playerConnectedToMatch')
+
     socket.on('removeBot', async () => {
       const currentGame = await getGameWithRoundsDatasetPlayers(gameId)
       validateGameForBotAddOrRemove(currentGame)
