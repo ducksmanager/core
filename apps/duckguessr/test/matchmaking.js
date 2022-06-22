@@ -1,43 +1,24 @@
 Feature('matchmaking')
 
-function join(I, username) {
+async function createMatch(I) {
   I.amOnPage('/')
-  I.fillField('Username', username)
-  I.click('OK')
+  I.click('.card-title')
+  I.seeElement('.card.player')
+  return await I.grabCurrentUrl()
 }
 
-async function joinMultiple(I, usernames) {
-  for (const sessionName of usernames) {
-    await session(sessionName, () => {
-      join(I, sessionName)
-    })
-  }
+function joinMatch(I, page) {
+  I.amOnPage(page)
+  I.seeElement('.card.player')
 }
 
-Scenario('Create match between multiple users', async ({ I }) => {
-  const seeAllUsernames = (I, allUsernames) => {
-    for (const username of allUsernames) {
-      I.seeElement(`//div[contains(., "${username}")]`)
-    }
-  }
-
-  const mainUsername = 'user1'
-  const otherUsernames = ['user2', 'user3']
-  const allUsernames = [mainUsername, ...otherUsernames]
-  join(I, mainUsername)
-  await joinMultiple(I, otherUsernames)
-
-  seeAllUsernames(I, allUsernames)
-  for (const sessionName of otherUsernames) {
-    await session(sessionName, () => {
-      seeAllUsernames(I, allUsernames)
+Scenario('Create match between multiple users and start game', async ({ I }) => {
+  const url = await createMatch(I)
+  for (let i = 0; i < 2; i++) {
+    await session(`user ${i}`, () => {
+      joinMatch(I, url)
     })
   }
-})
-
-Scenario('Create match between multiple users and start game', ({ I }) => {
-  const mainUsername = 'user1'
-  const otherUsernames = ['user2', 'user3', 'user4']
-  join(I, mainUsername)
-  joinMultiple(I, otherUsernames)
+  I.click('.btn-success')
+  I.amOnPage(url.replace('matchmaking', 'game'))
 })
