@@ -1,5 +1,18 @@
 <template>
-  <div>
+  <b-container class="d-flex flex-column align-items-center">
+    <h3>{{ t('Welcome to Duckguessr!') }}</h3>
+    <b-container class="d-flex flex-column align-items-center my-3">
+      <iframe
+        width="560"
+        height="315"
+        :src="`https://www.youtube.com/embed/${youtubeVideoId}?controls=0&autohide=1`"
+        title="Duckguessr trailer"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      />
+    </b-container>
+    <h3>{{ t('Create a game') }}</h3>
     <alert-not-connected v-if="isAnonymous === true" />
     <b-card-group deck>
       <b-card
@@ -19,7 +32,7 @@
         </b-card-footer>
       </b-card>
     </b-card-group>
-  </div>
+  </b-container>
 </template>
 
 <script lang="ts" setup>
@@ -31,12 +44,14 @@ import { useCookies } from '@vueuse/integrations/useCookies'
 import { userStore } from '~/store/user'
 const router = useRouter()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const datasets = ref([] as Array<any>)
 
 const isAnonymous = computed(() => userStore().isAnonymous)
 const matchCreationSocket = ref(null as Socket | null)
+
+const youtubeVideoId = computed(() => (locale.value === 'fr' ? '21Zfy5bOQkA' : 'F0j-MMTiT3w'))
 
 const createMatch = (datasetName: string) => {
   matchCreationSocket.value?.emit('createMatch', datasetName, (gameId: number) => {
