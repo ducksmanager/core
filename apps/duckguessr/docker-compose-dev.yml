@@ -4,7 +4,7 @@ services:
     restart: always
     image: mariadb:10.5
     ports:
-      - 33061:3306
+      - "33061:3306"
     volumes:
       - db:/var/lib/mysql
     environment:
@@ -16,3 +16,6 @@ services:
 networks:
   dm-server_db-network:
     external: true
+
+volumes:
+  db:

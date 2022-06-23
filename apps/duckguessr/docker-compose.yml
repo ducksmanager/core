@@ -16,7 +16,6 @@ services:
     image: ghcr.io/bperel/duckguessr-socketio:latest
     restart: always
     volumes:
-      - ./server/datasets:/usr/src/nuxt-app/server/datasets
       - dm_sessions:/tmp/sessions
     networks:
       workspace_global-front-network:
@@ -33,7 +32,6 @@ services:
       - "33061:3306"
     volumes:
       - db:/var/lib/mysql
-      - ./prisma/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql:ro
     environment:
       MYSQL_DATABASE: duckguessr
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
