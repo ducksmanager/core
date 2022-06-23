@@ -10,10 +10,15 @@
 
 <script lang="ts" setup>
 import { onMounted } from '@nuxtjs/composition-api'
+import { useI18n } from 'nuxt-i18n-composable'
 import { userStore } from '~/store/user'
 
 onMounted(() => {
   userStore().login()
+  const storedLocale = window.localStorage?.getItem('locale')
+  if (storedLocale) {
+    useI18n().locale.value = storedLocale
+  }
 })
 </script>
 
