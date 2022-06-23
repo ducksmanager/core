@@ -106,7 +106,10 @@ const getMedalUrl = (level: number) =>
     level
   ].toUpperCase()}.png')`
 
-const medalUrl = computed(() => getMedalUrl(props.medalLevelAndProgress.level))
+const medalUrl = computed(() => {
+  console.log(`Current level and progress: ${JSON.stringify(props.medalLevelAndProgress)}`)
+  return getMedalUrl(props.medalLevelAndProgress.level)
+})
 
 const previousMedalUrl = computed(() =>
   getMedalUrl(Math.max(0, props.medalLevelAndProgress.level - 1))
