@@ -111,9 +111,9 @@ const medalTitle = computed(() => {
   if (props.medalLevelAndProgress.level < 3) {
     const nextLevel = props.medalLevelAndProgress.level
     const pointsToNextThreshold =
-      MEDAL_LEVELS.find((medalLevel) => medalLevel.medalType === props.type!)!.levels[nextLevel] -
-      props.medalLevelAndProgress.currentLevelPoints -
-      props.medalLevelAndProgress.currentLevelProgressPoints
+      totalPointsToReachNextLevel.value -
+      (props.medalLevelAndProgress.currentLevelPoints +
+        props.medalLevelAndProgress.currentLevelProgressPoints)
     title += t(`Earn {pointsToNextThreshold} more points to get the {nextMedal} medal`, {
       pointsToNextThreshold,
       nextMedal: t(medalColors[nextLevel]),

@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from '@nuxtjs/composition-api'
+import { computed, onMounted } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
 import Index from '@prisma/client'
 import { userStore } from '~/store/user'
@@ -31,24 +31,21 @@ const { t } = useI18n()
 const props = defineProps<{
   dataset?: Index.dataset
   withDetails: boolean
+  statsOverride?: { [key: string]: number }
 }>()
 
-const statsToConsider = computed(() => (props.dataset ? userStore().gameStats : userStore().stats))
+const stats = computed(() => (props.dataset ? userStore().gameStats : userStore().stats))
 
 const statsMatchingMedals = computed(
   () =>
-    statsToConsider.value &&
-    (Object.keys(statsToConsider.value).reduce((acc, medalType) => {
-      if (
-        statsToConsider.value![medalType] &&
+    stats.value &&
+    Object.keys(stats.value).filter(
+      (medalType) =>
+        stats.value![medalType] &&
         (/^(ultra_)?fast/.test(medalType) ||
           !props.dataset ||
           DATASET_WITH_MEDALS.includes(props.dataset.name))
-      ) {
-        acc.push(medalType)
-      }
-      return acc
-    }, [] as string[]) as string[])
+    )
 )
 
 const levelsAndProgress = computed(() => userStore().levelsAndProgress)
@@ -60,6 +57,12 @@ const noMedalProgress = computed(
       ({ currentLevelProgressPoints }) => currentLevelProgressPoints > 0
     )
 )
+
+onMounted(() => {
+  if (props.statsOverride) {
+    userStore().stats = props.statsOverride
+  }
+})
 </script>
 
 <style scoped lang="scss"></style>

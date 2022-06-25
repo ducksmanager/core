@@ -32,11 +32,15 @@ export const userStore = defineStore('user', {
       !state.stats
         ? {}
         : MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
-            const level =
-              ([...levels]!
+            let level =
+              levels.length -
+              [...levels]!
                 .reverse()
-                .findIndex((levelThreshold: number) => state.stats![medalType] > levelThreshold) ||
-                -1) + 1
+                .findIndex((levelThreshold: number) => state.stats![medalType] >= levelThreshold)
+
+            if (level === 4) {
+              level = 0
+            }
             if (level === 3) {
               return {
                 ...acc,
