@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper d-flex" :class="{ vertical: vertical }">
+    <div v-if="rank >= 3">{{ rank + 1 }}.</div>
     <div class="username">
       <player-info :username="player.username" :avatar="player.avatar" :top-player="topPlayer" />
     </div>

@@ -36,5 +36,10 @@ Default.args = {
       username: 'demo',
       sum_score: 10,
     },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 1,
+    },
   ],
 }

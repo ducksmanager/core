@@ -17,13 +17,14 @@
         {{ t("There aren't enough players to show the podium") }}
       </b-alert>
     </b-row>
-    <div class="d-flex flex-row justify-content-center m-5">
+    <div class="d-flex flex-column align-items-center m-5">
       <player-total-score
-        v-for="player in otherPlayers"
+        v-for="(player, idx) in otherPlayers"
         :key="player.username"
         :player="player"
         :top-player="false"
         :vertical="false"
+        :rank="idx + 3"
         :max-score-all-players="maxPoints"
       />
     </div>
