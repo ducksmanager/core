@@ -136,7 +136,11 @@ const currentMedalUrl = computed(() => getMedalUrl(Math.max(0, props.medalLevelA
 const nextMedalUrl = computed(() => getMedalUrl(Math.min(3, props.medalLevelAndProgress.level + 1)))
 
 onMounted(() => {
-  console.log(`Current level and progress: ${JSON.stringify(props.medalLevelAndProgress)}`)
+  console.log(
+    `Type: ${props.type}, Current level and progress: ${JSON.stringify(
+      props.medalLevelAndProgress
+    )}`
+  )
   setInterval(() => {
     if (!props.withGameData) {
       currentLevelPercentageProgress.value = levelPercentageProgress.value
