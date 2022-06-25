@@ -14,21 +14,11 @@ export class MedalLevelAndProgress {
   level: number
   currentLevelPoints: number
   currentLevelProgressPoints: number
-  levelPercentage: number
-  levelPercentageProgress: number
 
-  constructor(
-    level: number,
-    currentLevelPoints: number,
-    currentLevelProgressPoints: number,
-    levelPercentage: number,
-    levelPercentageProgress: number
-  ) {
+  constructor(level: number, currentLevelPoints: number, currentLevelProgressPoints: number) {
     this.level = level
     this.currentLevelPoints = currentLevelPoints
     this.currentLevelProgressPoints = currentLevelProgressPoints
-    this.levelPercentage = levelPercentage
-    this.levelPercentageProgress = levelPercentageProgress
   }
 }
 

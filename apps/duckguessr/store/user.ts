@@ -40,29 +40,21 @@ export const userStore = defineStore('user', {
             if (level === 3) {
               return {
                 ...acc,
-                [medalType]: new MedalLevelAndProgress(level, 100, 0, 100, 0),
+                [medalType]: new MedalLevelAndProgress(level, 0, 0),
               }
             }
             const currentLevelThreshold = level === 0 ? 0 : levels[level - 1]
-            const nextLevelThreshold = levels[level]
-            const totalPointsToReachNextLevel = nextLevelThreshold - currentLevelThreshold
-
             const currentLevelPoints = state.stats![medalType] - currentLevelThreshold
-            const levelPercentage = (100 * currentLevelPoints) / totalPointsToReachNextLevel
-
             const currentLevelProgressPoints = state.gameStats ? state.gameStats![medalType] : 0
-            const levelPercentageProgress = state.gameStats
-              ? (100 * currentLevelProgressPoints) / totalPointsToReachNextLevel
-              : 0
+
+            const medalLevelAndProgress = new MedalLevelAndProgress(
+              level,
+              currentLevelPoints,
+              currentLevelProgressPoints
+            )
             return {
               ...acc,
-              [medalType]: new MedalLevelAndProgress(
-                level,
-                currentLevelPoints,
-                currentLevelProgressPoints,
-                levelPercentage,
-                levelPercentageProgress
-              ),
+              [medalType]: medalLevelAndProgress,
             }
           }, {}),
   },

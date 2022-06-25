@@ -1,11 +1,16 @@
 <template>
   <div class="wrapper d-flex flex-column text-center" :class="{ simple: !withDetails }">
-    <div class="position-relative medal" :style="{ backgroundImage: medalUrl }" :title="medalTitle">
+    <div
+      class="position-relative medal"
+      :style="{ backgroundImage: nextMedalUrl }"
+      :title="medalTitle"
+    >
       <div
         class="position-absolute overlay"
         :class="{ desaturated: medalLevelAndProgress.level === 0 }"
+        :title="medalTitle"
         :style="{
-          backgroundImage: previousMedalUrl,
+          backgroundImage: currentMedalUrl,
           width: `${100 - shownLevelPercentage - currentLevelPercentageProgress}%`,
         }"
       />
@@ -66,8 +71,29 @@ const props = defineProps({
   medalLevelAndProgress: { type: MedalLevelAndProgress, required: true },
 })
 
-const shownLevelPercentage = computed(
-  () => (props.medalLevelAndProgress.levelPercentage + 15) / 1.5
+const levels = computed(
+  () => MEDAL_LEVELS.find(({ medalType }) => medalType === props.type!)!.levels
+)
+
+const currentLevelThreshold = computed(() =>
+  props.medalLevelAndProgress.level === 0 ? 0 : levels.value[props.medalLevelAndProgress.level - 1]
+)
+const nextLevelThreshold = computed(() => levels.value[props.medalLevelAndProgress.level])
+
+const totalPointsToReachNextLevel = computed(
+  () => nextLevelThreshold.value - currentLevelThreshold.value
+)
+
+const levelPercentage = computed(
+  () => (100 * props.medalLevelAndProgress.currentLevelPoints) / totalPointsToReachNextLevel.value
+)
+
+const shownLevelPercentage = computed(() => (levelPercentage.value + 15) / 1.5)
+
+const levelPercentageProgress = computed(
+  () =>
+    (100 * props.medalLevelAndProgress.currentLevelProgressPoints) /
+    totalPointsToReachNextLevel.value
 )
 
 const medalTitle = computed(() => {
@@ -103,27 +129,22 @@ const medalColors = ['Bronze', 'Silver', 'Gold']
 
 const getMedalUrl = (level: number) =>
   `url('${process.env.NUXT_URL}/medals/256px/${props.type} ${medalColors[
-    level
+    Math.max(0, level - 1)
   ].toUpperCase()}.png')`
 
-const medalUrl = computed(() => {
-  console.log(`Current level and progress: ${JSON.stringify(props.medalLevelAndProgress)}`)
-  return getMedalUrl(props.medalLevelAndProgress.level)
-})
-
-const previousMedalUrl = computed(() =>
-  getMedalUrl(Math.max(0, props.medalLevelAndProgress.level - 1))
-)
+const currentMedalUrl = computed(() => getMedalUrl(Math.max(0, props.medalLevelAndProgress.level)))
+const nextMedalUrl = computed(() => getMedalUrl(Math.min(3, props.medalLevelAndProgress.level + 1)))
 
 onMounted(() => {
+  console.log(`Current level and progress: ${JSON.stringify(props.medalLevelAndProgress)}`)
   setInterval(() => {
     if (!props.withGameData) {
-      currentLevelPercentageProgress.value = props.medalLevelAndProgress.levelPercentageProgress
-    } else if (props.medalLevelAndProgress.levelPercentageProgress) {
-      const increment = props.medalLevelAndProgress.levelPercentageProgress / 20
+      currentLevelPercentageProgress.value = levelPercentageProgress.value
+    } else if (levelPercentageProgress.value) {
+      const increment = levelPercentageProgress.value / 20
       if (
         currentLevelPercentageProgress.value < 0 ||
-        currentLevelPercentageProgress.value >= props.medalLevelAndProgress.levelPercentageProgress
+        currentLevelPercentageProgress.value >= levelPercentageProgress.value
       ) {
         isCurrentLevelPercentageProgressGoingUp.value =
           !isCurrentLevelPercentageProgressGoingUp.value

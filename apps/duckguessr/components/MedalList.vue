@@ -5,13 +5,7 @@
     </b-row>
     <b-row v-else class="justify-content-center w-100">
       <template v-for="type in statsMatchingMedals">
-        <b-col
-          v-if="!dataset || levelsAndProgress[type].currentLevelProgressPoints"
-          :key="type"
-          class="flex-grow-0"
-          :class="{ 'px-0': !dataset }"
-          cols="3"
-        >
+        <b-col :key="type" class="flex-grow-0" :class="{ 'px-0': !dataset }" cols="3">
           <Medal
             :type="type"
             :medal-level-and-progress="levelsAndProgress[type]"
@@ -63,7 +57,7 @@ const noMedalProgress = computed(
   () =>
     levelsAndProgress.value &&
     !Object.values(levelsAndProgress.value).some(
-      ({ levelPercentageProgress }) => levelPercentageProgress > 0
+      ({ currentLevelProgressPoints }) => currentLevelProgressPoints > 0
     )
 )
 </script>
