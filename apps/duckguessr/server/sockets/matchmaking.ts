@@ -72,8 +72,8 @@ const createGameMatchmaking = (
       } else {
         await game.disassociatePlayer(gameId, user)
 
-        socket.broadcast.emit('playerLeft', user.username)
-        socket.emit('playerLeft', user.username)
+        socket.broadcast.emit('playerLeft', user)
+        socket.emit('playerLeft', user)
       }
     }
 
@@ -96,10 +96,11 @@ const createGameMatchmaking = (
       validateGameForBotAddOrRemove(currentGame)
 
       const botUsername = `bot_${currentGame!.dataset.name}`
-      await checkAndAssociatePlayer(await getUser(botUsername), currentGame)
+      const botPlayer = await getUser(botUsername)
+      await checkAndAssociatePlayer(await botPlayer, currentGame)
 
-      socket.broadcast.emit('playerJoined', botUsername)
-      socket.emit('playerJoined', botUsername)
+      socket.broadcast.emit('playerJoined', botPlayer)
+      socket.emit('playerJoined', botPlayer)
     })
 
     socket.on('joinMatch', async (callback: Function) => {
@@ -111,7 +112,7 @@ const createGameMatchmaking = (
       const player = await checkAndAssociatePlayer(user, currentGame)
       currentGame = (await getGameWithRoundsDatasetPlayers(gameId))!
 
-      socket.broadcast.emit('playerJoined', player.username)
+      socket.broadcast.emit('playerJoined', player)
 
       // eslint-disable-next-line n/no-callback-literal
       callback({

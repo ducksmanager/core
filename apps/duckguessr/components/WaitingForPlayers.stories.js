@@ -19,14 +19,14 @@ const Template = (args) => ({
 export const Default = Template.bind({})
 Default.args = {
   gameId: 123,
-  usernames: [
-    'brunoperel',
-    'Wizyx',
-    'remifanpicsou',
-    'Alex Puaud',
-    'GlxbltHugo',
-    'Picsou22',
-    'bot_us',
+  players: [
+    { username: 'brunoperel', avatar: 'DD' },
+    { username: 'Wizyx', avatar: 'DD' },
+    { username: 'remifanpicsou', avatar: 'DD' },
+    { username: 'Alex Puaud', avatar: 'DD' },
+    { username: 'GlxbltHugo', avatar: 'DD' },
+    { username: 'Picsou22', avatar: 'DD' },
+    { username: 'bot_us', avatar: 'DD' },
   ],
   isBotAvailable: false,
 }
@@ -34,6 +34,10 @@ Default.args = {
 export const WithPotentialBot = Template.bind({})
 WithPotentialBot.args = {
   gameId: 123,
-  usernames: ['brunoperel', 'Wizyx', 'remifanpicsou'],
+  players: [
+    { username: 'brunoperel', avatar: 'US' },
+    { username: 'Wizyx', avatar: 'US' },
+    { username: 'remifanpicsou', avatar: 'US' },
+  ],
   isBotAvailable: true,
 }

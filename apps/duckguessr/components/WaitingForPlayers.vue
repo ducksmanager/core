@@ -2,9 +2,10 @@
   <b-container align="center">
     <h3>{{ t('The game is about to start!') }}</h3>
     <b-row align-h="center">
-      <b-card v-for="username in usernames" :key="username" class="player m-3 col-lg-3">
+      <b-card v-for="{ username, avatar } in players" :key="username" class="player m-3 col-lg-3">
         <player-info
           :username="username"
+          :avatar="avatar"
           :toggleable="isBot(username)"
           @toggle="$emit('remove-bot')"
         />
@@ -39,7 +40,7 @@
     </b-row>
     <b-button
       v-if="isMatchCreator"
-      :disabled="usernames.length < 2"
+      :disabled="players.length < 2"
       variant="success"
       @click="$emit('start-match')"
     >
@@ -51,11 +52,12 @@
 <script lang="ts">
 import { computed, defineComponent, useMeta } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
+import Index from '@prisma/client'
 import { getDuckguessrUsername } from '~/composables/user'
 
 export default defineComponent({
   props: {
-    usernames: { type: Array as () => Array<string>, required: true },
+    players: { type: Array as () => Array<Index.player>, required: true },
     gameId: { type: Number, required: true },
     isBotAvailable: { type: Boolean, required: true },
   },
@@ -64,11 +66,13 @@ export default defineComponent({
     const { t } = useI18n()
     // For some reason vue-i18n's interpolation doesn't work
     const title = computed(() =>
-      t("Join {username}'s Duckguessr game!").toString().replace('{username}', props.usernames[0])
+      t("Join {username}'s Duckguessr game!")
+        .toString()
+        .replace('{username}', props.players[0].username)
     )
     const gameUrl = computed(() => `${location.origin}/matchmaking/${props.gameId}`)
-    const isMatchCreator = computed(() => getDuckguessrUsername() === props.usernames[0])
-    const isBotPlaying = computed(() => props.usernames.find((username) => isBot(username)))
+    const isMatchCreator = computed(() => getDuckguessrUsername() === props.players[0].username)
+    const isBotPlaying = computed(() => props.players.find(({ username }) => isBot(username)))
 
     const isBot = (username: string) => /^bot_/.test(username)
 

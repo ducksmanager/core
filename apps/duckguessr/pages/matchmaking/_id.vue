@@ -2,8 +2,8 @@
   <div>
     <alert-not-connected v-if="isAnonymous === true" />
     <waiting-for-players
-      v-if="playersUsernames.length"
-      :usernames="playersUsernames"
+      v-if="players.length"
+      :players="players"
       :game-id="gameId"
       :is-bot-available="isBotAvailableForGame"
       @start-match="startMatch"
@@ -14,6 +14,7 @@
 </template>
 
 <script lang="ts" setup>
+import Index from '@prisma/client'
 import { computed, ref, useRoute, useRouter, watch } from '@nuxtjs/composition-api'
 import { io, Socket } from 'socket.io-client'
 import { useCookies } from '@vueuse/integrations/useCookies'
@@ -22,7 +23,7 @@ import { userStore } from '~/store/user'
 
 const router = useRouter()
 const route = useRoute()
-const playersUsernames = ref([] as Array<string>)
+const players = ref([] as Array<Index.player>)
 const isBotAvailableForGame = ref(null as Boolean | null)
 
 const gameId = parseInt(route.value.params.id)
@@ -31,14 +32,14 @@ const isAnonymous = computed(() => userStore().isAnonymous)
 
 const matchmakingSocket = ref(null as Socket | null)
 
-const addPlayer = (username: string) => {
-  if (!playersUsernames.value.includes(username)) {
-    playersUsernames.value.push(username)
+const addPlayer = (player: Index.player) => {
+  if (!players.value.find(({ username }) => username === player.username)) {
+    players.value.push(player)
   }
 }
 
-const removePlayer = (username: string) => {
-  playersUsernames.value = playersUsernames.value.filter((item) => item !== username)
+const removePlayer = (player: Index.player) => {
+  players.value = players.value.filter(({ username }) => username !== player.username)
 }
 
 const startMatch = () => {
@@ -68,20 +69,20 @@ watch(
             ({ players, isBotAvailable }: MatchDetails) => {
               isBotAvailableForGame.value = isBotAvailable
               for (const player of players) {
-                addPlayer(player.username)
+                addPlayer(player)
               }
             }
           )
         })
         .on('connect', () => {
           matchmakingSocket
-            .value!.on('playerJoined', (username: string) => {
-              console.debug(`${username} is also ready`)
-              addPlayer(username)
+            .value!.on('playerJoined', (player: Index.player) => {
+              console.debug(`${player.username} is also ready`)
+              addPlayer(player)
             })
-            .on('playerLeft', (username: string) => {
-              console.debug(`${username} has left`)
-              removePlayer(username)
+            .on('playerLeft', (player: Index.player) => {
+              console.debug(`${player.username} has left`)
+              removePlayer(player)
             })
             .on('matchStarts', () => {
               setTimeout(() => {

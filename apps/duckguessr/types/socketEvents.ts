@@ -14,8 +14,8 @@ const getRoundWithScores = async (roundId: number) =>
 
 export interface ServerToClientEvents {
   playerConnectedToMatch: () => void
-  playerJoined: (username: string) => void
-  playerLeft: (username: string) => void
+  playerJoined: (player: Index.player) => void
+  playerLeft: (player: Index.player) => void
   matchStarts: () => void
   firstRoundWillStartSoon: (firstRoundStartTime: Date) => void
   roundStarts: (round: Prisma.PromiseReturnType<typeof getRoundWithScores>) => void
