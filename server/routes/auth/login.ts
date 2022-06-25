@@ -3,7 +3,7 @@ import { useBody } from "h3";
 import jwt from "jsonwebtoken";
 
 import { fetch } from "~/server/fetch";
-import { User } from "~/server/user";
+import { User, UserCredentials } from "~/server/user";
 
 export default defineEventHandler(async (event) => {
   const body = await useBody(event);
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   shaPassword.update(body.password);
   const passwordHash = shaPassword.digest("hex");
 
-  const user = {
+  const userCredentials: UserCredentials = {
     username: body.username,
     passwordHash,
   };
@@ -20,13 +20,14 @@ export default defineEventHandler(async (event) => {
     await fetch({
       path: "/collection/privileges",
       method: "GET",
-      user,
+      userCredentials,
     })
   ).data;
 
   const fullUser: User = {
-    ...user,
+    ...userCredentials,
     roles,
+    id: 117,
   };
   const token = jwt.sign(fullUser, process.env.JWT_SECRET);
 

@@ -5,8 +5,10 @@ export default defineEventHandler((event) => {
   const authHeaderMatch = /authStateStorage=(?<token>.+?)(?:;|$)/.exec(
     event.req.headers.cookie
   );
-  const token = JSON.parse(decodeURIComponent(authHeaderMatch?.groups.token))
-    ?.user?.data?.token;
+  const token =
+    authHeaderMatch?.groups &&
+    JSON.parse(decodeURIComponent(authHeaderMatch?.groups.token))?.user?.data
+      ?.token;
 
   if (token) {
     try {

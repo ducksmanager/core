@@ -151,6 +151,9 @@
           type="text"
           :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
         />
+        <b-alert v-for="error in errors" :key="error" variant="error" show>{{
+          error
+        }}</b-alert>
         <b-button type="submit">
           {{ $t("Ajouter la bouquinerie") }}
         </b-button>
@@ -160,18 +163,12 @@
 </template>
 <script setup>
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import {
-  BAlert,
-  BButton,
-  BFormInput,
-  BFormTextarea,
-  useToast,
-} from "bootstrap-vue-3";
+import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
-const toast = useToast();
+const errors = $ref([]);
 
 let bookstores = $ref([]);
 let existingBookstore = $ref(null);
@@ -213,7 +210,7 @@ const fetchBookstores = async () => {
 };
 const suggestComment = async (bookstore) => {
   if (!bookstore.id && !bookstore.coordX) {
-    toast.show(
+    errors.push(
       $t(
         'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'
       )

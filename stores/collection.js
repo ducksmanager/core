@@ -7,7 +7,7 @@ import { coa } from "./coa";
 export const collection = defineStore("collection", {
   state: () => ({
     collection: null,
-    purchases: null,
+    purchases: [],
     watchedAuthors: null,
     suggestions: null,
     subscriptions: null,

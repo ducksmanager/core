@@ -99,7 +99,7 @@
   </div>
 </template>
 <script setup>
-import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
+import { BCard, BTab, BTabs } from "bootstrap-vue-3";
 import { PageFlip } from "page-flip";
 import { watch } from "vue";
 
@@ -124,7 +124,6 @@ const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
 
-const toast = useToast();
 let edgeWidth = $ref(null);
 let coverHeight = $ref(null);
 const coverRatio = $ref(null);
@@ -270,19 +269,12 @@ watch(
   () => pagesWithUrl,
   (newValue) => {
     if (newValue && !newValue.length) {
-      toast.show(
-        $t(
-          "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !"
-        ),
-        {
-          autoHideDelay: 5000,
-          noCloseButton: true,
-          solid: true,
-          title: $t("Pas d'informations sur le contenu du livre"),
-          toaster: "b-toaster-top-center",
-          variant: "warning",
-        }
-      );
+      window &&
+        window.alert(
+          $t(
+            "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !"
+          )
+        );
       emit("close-book");
     }
   },

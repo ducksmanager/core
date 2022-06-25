@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { User } from "~/server/user";
+import { UserCredentials } from "~/server/user";
 
 export const runQuery = (
   query: string,
@@ -24,14 +24,14 @@ export const fetch = async ({
   parameters = {},
   method = "GET",
   headers = {},
-  user = null,
+  userCredentials = null,
 }: {
   path: string;
   role?: string;
   parameters?: { [string]: never };
   method?: string;
   headers?: { [string]: never };
-  user?: User;
+  userCredentials?: UserCredentials;
 }) =>
   await axios
     .request({
@@ -47,10 +47,10 @@ export const fetch = async ({
         "Cache-Control": "no-cache",
         "x-dm-version": "1.0",
         ...headers,
-        ...(user
+        ...(userCredentials
           ? {
-              "x-dm-user": user.username,
-              "x-dm-pass": user.passwordHash,
+              "x-dm-user": userCredentials.username,
+              "x-dm-pass": userCredentials.passwordHash,
             }
           : {}),
       },

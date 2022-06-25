@@ -7,7 +7,7 @@ export default defineEventHandler(
         path: `/${event.context.params._}`,
         role: "ducksmanager",
         method: event.context.method,
-        user: event.context.user,
+        userCredentials: event.context.user,
       })
     ).data
 );

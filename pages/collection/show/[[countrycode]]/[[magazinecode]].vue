@@ -81,7 +81,11 @@ import { collection } from "~/stores/collection";
 import { l10n } from "~/stores/l10n";
 
 const route = useRoute();
-const publicationcode = `${route.params.countrycode}/${route.params.magazinecode}`;
+const publicationcode = computed(() =>
+  route.params.magazinecode
+    ? `${route.params.countrycode}/${route.params.magazinecode}`
+    : null
+);
 
 const suggestionsNumber = $ref(0);
 let hasPublicationNames = $ref(false);

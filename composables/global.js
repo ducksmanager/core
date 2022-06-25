@@ -1,4 +1,7 @@
+// const authState = useAuthState();
+
 export function user() {
+  // return authState.value?.user;
   if (process.client) {
     return {
       userId: localStorage.getItem("userId") || undefined,

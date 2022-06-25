@@ -5,6 +5,8 @@
       :publicationcode="publicationcode"
       :publicationname="publicationName"
     />
+    {{ issues && issues.length }}
+    {{ purchases ? "purchases" : "no purchases" }}
     <div v-if="issues && purchases">
       <div v-if="!duplicatesOnly" v-once class="issue-filter">
         <table>
@@ -263,16 +265,17 @@ const filter = $ref({
   possessed: true,
 });
 const contextmenu = $ref(null);
-let issues = $shallowRef(null);
+const issues = $shallowRef(null);
 let userIssuesForPublication = $shallowRef(null);
-let userIssuesNotFoundForPublication = $shallowRef([]);
+const userIssuesNotFoundForPublication = $shallowRef([]);
 let selected = $shallowRef([]);
 let preselected = $shallowRef([]);
 let preselectedIndexStart = $ref(null);
 let preselectedIndexEnd = $ref(null);
 const hoveredIssueNumber = $ref(null);
 const hoveredIssueHasCover = $ref(undefined);
-const currentIssueOpened = $shallowRef(null);
+// eslint-disable-next-line prefer-const
+let currentIssueOpened = $shallowRef(null);
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const viewText = $computed(() => $t("Voir"));
@@ -380,29 +383,29 @@ watch(
           ).value,
         }));
 
-      const issuesWithTitles = (
-        await axios.get(
-          `/api/coa/list/issues/withTitle/asArray/${props.publicationcode}`
-        )
-      ).data;
+      // const issuesWithTitles = (
+      await axios.get(
+        `/api/coa/list/issues/withTitle/asArray/${props.publicationcode}`
+      );
+      // ).data;
 
-      issues = issuesWithTitles
-        .map((issue) => ({
-          ...issue,
-          userCopies: userIssuesForPublication.filter(
-            ({ issueNumber: userIssueNumber }) =>
-              userIssueNumber === issue.issueNumber
-          ),
-        }))
-        .filter(
-          ({ userCopies }) => !props.duplicatesOnly || userCopies.length > 1
-        );
-      const coaIssueNumbers = issuesWithTitles.map(
-        ({ issueNumber }) => issueNumber
-      );
-      userIssuesNotFoundForPublication = userIssuesForPublication.filter(
-        ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
-      );
+      // issues = issuesWithTitles
+      //   .map((issue) => ({
+      //     ...issue,
+      //     userCopies: userIssuesForPublication.filter(
+      //       ({ issueNumber: userIssueNumber }) =>
+      //         userIssueNumber === issue.issueNumber
+      //     ),
+      //   }))
+      //   .filter(
+      //     ({ userCopies }) => !props.duplicatesOnly || userCopies.length > 1
+      //   );
+      // const coaIssueNumbers = issuesWithTitles.map(
+      //   ({ issueNumber }) => issueNumber
+      // );
+      // userIssuesNotFoundForPublication = userIssuesForPublication.filter(
+      //   ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
+      // );
       loading = false;
     }
   },
@@ -410,7 +413,7 @@ watch(
 );
 
 onMounted(async () => {
-  await loadPurchases();
+  // await loadPurchases();
   await fetchPublicationNames([props.publicationcode]);
   publicationNameLoading = false;
 });
