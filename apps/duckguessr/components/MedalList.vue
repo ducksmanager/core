@@ -5,7 +5,17 @@
     </b-row>
     <b-row v-else class="justify-content-center w-100">
       <template v-for="type in statsMatchingMedals">
-        <b-col :key="type" class="flex-grow-0" :class="{ 'px-0': !dataset }" cols="3">
+        <b-col
+          :key="type"
+          class="flex-grow-0"
+          :class="{
+            'px-0': !dataset,
+            'd-flex': withDetails,
+            'justify-content-center': withDetails,
+          }"
+          :cols="withDetails ? 12 : 4"
+          lg="4"
+        >
           <Medal
             :type="type"
             :medal-level-and-progress="levelsAndProgress[type]"

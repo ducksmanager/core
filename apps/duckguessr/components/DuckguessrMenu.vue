@@ -75,7 +75,7 @@ $navbar-height: 40px;
     border-right: none;
     top: 10px;
     left: 0;
-    width: 300px;
+    width: auto;
     height: auto;
     padding: 12px;
     z-index: 1;
