@@ -1,6 +1,6 @@
 const { renameSync } = require('fs')
 const sharp = require('sharp')
-const { avatars, avatarDiskDiameter } = require('./types/avatars')
+const { avatars, avatarDiskDiameter } = require('./types/avatar')
 
 const tree = sharp('static/Donald_Duck_Family_Tree.webp')
 

@@ -68,13 +68,13 @@
 import { computed, ref, watch } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
 import Index from '@prisma/client'
-import { Avatar } from '~/types/avatars'
+import { Avatar } from '~/types/avatar'
 import { userStore } from '~/store/user'
 const { t } = useI18n()
 
 const isAnonymous = computed(() => userStore().isAnonymous)
 
-const { avatars, avatarDiskDiameter } = require('~/types/avatars.ts')
+const { avatars, avatarDiskDiameter } = require('~/types/avatar.ts')
 const tree = ref(null as any | null)
 
 const treeImageNaturalWidth = ref(null as number | null)

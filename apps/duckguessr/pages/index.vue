@@ -16,19 +16,19 @@
     <alert-not-connected v-if="isAnonymous === true" />
     <b-card-group deck>
       <b-card
-        v-for="{ title, description, name, images, authors } in datasets"
-        :key="name"
-        :title="t(title)"
+        v-for="dataset in datasets"
+        :key="dataset.name"
+        :title="t(dataset.title)"
         img-top
         align="center"
         :style="matchCreationSocket ? '' : 'pointer-events: none'"
-        @click="createMatch(name)"
+        @click="createMatch(dataset.name)"
       >
         <b-card-header class="my-2 bg-transparent border-0 small">
-          {{ t(description) }}
+          {{ t(dataset.description) }}
         </b-card-header>
         <b-card-footer>
-          {{ t('Images') }}: {{ images }}, {{ t('authors') }}: {{ authors }}
+          {{ t('Images') }}: {{ dataset.images }}, {{ t('authors') }}: {{ dataset.authors }}
         </b-card-footer>
       </b-card>
     </b-card-group>
@@ -42,11 +42,12 @@ import { useAxios } from '@vueuse/integrations/useAxios'
 import { io, Socket } from 'socket.io-client'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { userStore } from '~/store/user'
+import { DatasetWithCounts } from '~/types/dataset'
 const router = useRouter()
 
 const { t, locale } = useI18n()
 
-const datasets = ref([] as Array<any>)
+const datasets = ref([] as Array<DatasetWithCounts>)
 
 const isAnonymous = computed(() => userStore().isAnonymous)
 const matchCreationSocket = ref(null as Socket | null)
