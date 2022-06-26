@@ -15,7 +15,7 @@
       class="mx-2"
       @click.prevent="changeLocale(possibleLocale)"
     >
-      <a href="javascript:void(0)" :class="{ active: locale === possibleLocale }">
+      <a href="javascript:void(0)" :class="{ active: i18n.locale.value === possibleLocale }">
         {{ title }}
       </a>
     </div>
@@ -28,15 +28,16 @@ import { BIconFlagFill } from 'bootstrap-vue'
 const availableLocales = {
   fr: 'Français',
   en: 'English',
+  es: 'Español',
 }
 
-const { locale } = useI18n()
+const i18n = useI18n()
 if (localStorage.getItem('locale')) {
-  locale.value = localStorage.getItem('locale')!
+  i18n.locale.value = localStorage.getItem('locale')!
 }
 
 const changeLocale = (newLocale: string) => {
-  locale.value = newLocale
+  i18n.locale.value = newLocale
   window.localStorage.setItem('locale', newLocale)
 }
 </script>

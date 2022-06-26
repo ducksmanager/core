@@ -48,7 +48,6 @@ export default {
     [
       '@nuxtjs/i18n',
       {
-        lazy: true,
         langDir: 'locales/',
         defaultLocale: 'fr',
         fallbackLocale: 'en',
@@ -57,7 +56,7 @@ export default {
           {
             code: 'fr',
             name: 'Français',
-            iso: 'fr-FR',
+            iso: 'fr',
             file: 'fr-FR.json',
           },
           {
@@ -65,6 +64,12 @@ export default {
             name: 'English',
             iso: 'en-US',
             file: 'en-US.js',
+          },
+          {
+            code: 'es',
+            name: 'Español',
+            iso: 'es',
+            file: 'es.json',
           },
         ],
       },
