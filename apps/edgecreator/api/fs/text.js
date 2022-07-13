@@ -2,7 +2,7 @@ import axios from 'axios'
 import { addAxiosInterceptor, checkUserRoles } from '../api'
 const cloudinary = require('cloudinary').v2
 
-const fontHashes = {}
+const sessionHashes = {}
 
 addAxiosInterceptor()
 
@@ -47,16 +47,23 @@ export default async function (req, res) {
     })
 }
 
-const generateImage = (req, parameters) => {
-  return axios
-    .get(`${process.env.FONT_DATA_BASE_URL}${parameters.font}`)
+const generateImage = (req, parameters) =>
+  axios
+    .get(`${process.env.FONT_BASE_URL}${parameters.font}`)
     .then(({ data }) => {
-      fontHashes[parameters.font] = data.family.styles[0].MD5hash
+      const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/)
+      if (sessionHashMatch) {
+        sessionHashes[parameters.font] = sessionHashMatch[0]
+      } else {
+        throw new Error(
+          `No session ID found in URL ${process.env.FONT_BASE_URL}${parameters.font}`
+        )
+      }
     })
-    .then(() => {
-      return cloudinary.uploader.upload(
+    .then(() =>
+      cloudinary.uploader.upload(
         `${process.env.FONT_IMAGE_GEN_URL}?${new URLSearchParams({
-          id: fontHashes[parameters.font],
+          id: sessionHashes[parameters.font],
           rbe: 'fixed',
           rt: parameters.text,
           fg: parameters.color,
@@ -76,5 +83,4 @@ const generateImage = (req, parameters) => {
           return new Promise((resolve) => resolve({ width, height, url }))
         }
       )
-    })
-}
+    )
