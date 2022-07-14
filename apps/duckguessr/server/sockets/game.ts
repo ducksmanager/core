@@ -176,8 +176,8 @@ export const createGameSocket = async (
           ({ round_number }: Index.round) => round_number === currentRound.round_number! + 1
         ) as Index.round
       )
-      socket.broadcast.emit('roundEnds', roundWithScores, currentRound)
-      socket.emit('roundEnds', roundWithScores, currentRound)
+      socket.broadcast.emit('roundEnds', roundWithScores, { ...currentRound, personcode: null })
+      socket.emit('roundEnds', roundWithScores, { ...currentRound, personcode: null })
       startRound(socket)
     }
   }
