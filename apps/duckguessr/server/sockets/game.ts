@@ -1,36 +1,66 @@
-import type Index from '@prisma/client'
 import { Server, Socket } from 'socket.io'
-import { PrismaClient, Prisma } from '@prisma/client'
+import Index, { PrismaClient } from '@prisma/client'
 import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
 } from '../../types/socketEvents'
-import { GuessResponse } from '../../types/guess'
 import { getGameWithRoundsDatasetPlayers, numberOfRounds } from '../game'
-import { predict } from '../predict'
+import { getUser, getPlayer } from '../get-player'
+import { MatchDetails } from '../../types/matchDetails'
 import { getRoundWithScores, setRoundTimes } from '../round'
-import { getPlayer } from '../get-player'
-
+import { GuessResponse } from '../../types/guess'
+import { predict } from '../predict'
 const round = require('../../server/round')
+
+const game = require('../game')
 
 const prisma = new PrismaClient()
 
-export const createGameSocket = (
+export function createMatchmakingSocket(
+  io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
+) {
+  io.of('/match').on('connection', async (socket) => {
+    const user = await getPlayer(socket.handshake.auth.cookie)
+    if (!user) {
+      console.log(`Can't find user for cookie ${JSON.stringify(socket.handshake.auth.cookie)}`)
+      return false
+    }
+
+    socket.on('createMatch', async (dataset, callback) => {
+      console.log(`${user.username} is creating a match`)
+      const newGame = await game.create(dataset)
+      await createGameSocket(io, newGame.id)
+      callback(newGame.id)
+    })
+  })
+}
+
+export const createGameSocket = async (
   io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-  game: Prisma.PromiseReturnType<typeof getGameWithRoundsDatasetPlayers>
+  gameId: number
 ) => {
-  if (!game?.rounds) {
-    console.error('game is null or no rounds in game')
+  let currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+  if (!currentGame) {
+    console.error(`Game not found for ID ${gameId}`)
     return
   }
-
-  let isFirstRoundStarted = false
-  let currentRound: Index.round = game.rounds.find(
-    ({ round_number }) => round_number === 1
+  let currentRound: Index.round = currentGame.rounds.find(
+    ({ round_number }: Index.round) => round_number === 1
   ) as Index.round
   let currentRoundEndTimeout: NodeJS.Timeout
+
+  const checkAndAssociatePlayer = async (player: Index.player) => {
+    console.log(currentGame)
+    if (currentGame!.game_players.find(({ player_id }) => player_id === player.id)) {
+      console.info(`Player ${player.username} is already associated with game ${currentGame!.id}`)
+    } else {
+      await game.associatePlayer(currentGame!.id, player)
+      console.log(`${player.username} is ready in game ${currentGame!.id}`)
+    }
+    return player
+  }
 
   const onGuess = async function (
     this: Socket,
@@ -68,15 +98,15 @@ export const createGameSocket = (
 
   const getPlayersMissingRoundScore = async (): Promise<Index.player[]> =>
     await prisma.$queryRaw`
-      SELECT DISTINCT username
-      FROM game_player
-             INNER JOIN player ON game_player.player_id = player.id
-      WHERE game_player.game_id = ${currentRound.game_id}
-        AND player_id NOT IN (SELECT player_id
-                              FROM round_score
-                              WHERE round_id = ${currentRound.id})
-      GROUP BY username
-    `
+        SELECT DISTINCT username
+        FROM game_player
+               INNER JOIN player ON game_player.player_id = player.id
+        WHERE game_player.game_id = ${currentRound.game_id}
+          AND player_id NOT IN (SELECT player_id
+                                FROM round_score
+                                WHERE round_id = ${currentRound.id})
+        GROUP BY username
+      `
 
   const startRound = (socket: Socket) => {
     currentRoundEndTimeout = setTimeout(
@@ -111,13 +141,13 @@ export const createGameSocket = (
         })
       )?.player
       if (botPlayer) {
-        const possibleAuthors = game!.rounds
+        const possibleAuthors = currentGame!.rounds
           .filter(
-            ({ round_number: roundNumber }) =>
+            ({ round_number: roundNumber }: Index.round) =>
               roundNumber === null || roundNumber >= currentRound.round_number!
           )
-          .map(({ personcode }) => personcode)
-        predict(currentRound, game!.dataset, possibleAuthors).then((personcode: any) =>
+          .map(({ personcode }: Index.round) => personcode)
+        predict(currentRound, currentGame!.dataset, possibleAuthors).then((personcode: any) =>
           onGuess.apply(socket, [botPlayer!, personcode])
         )
       }
@@ -142,8 +172,8 @@ export const createGameSocket = (
       socket.emit('gameEnds')
     } else {
       currentRound = await setRoundTimes(
-        game.rounds.find(
-          ({ round_number }) => round_number === currentRound.round_number! + 1
+        currentGame!.rounds.find(
+          ({ round_number }: Index.round) => round_number === currentRound.round_number! + 1
         ) as Index.round
       )
       socket.broadcast.emit('roundEnds', roundWithScores, currentRound)
@@ -152,23 +182,96 @@ export const createGameSocket = (
     }
   }
 
-  return io.of(`/game/${game!.id}`).on('connection', async (socket: Socket) => {
+  io.of(`/game/${gameId}`).on('connection', async (socket) => {
     const user = await getPlayer(socket.handshake.auth.cookie)
-
     if (!user) {
-      return
+      console.log(`Can't find user for cookie ${JSON.stringify(socket.handshake.auth.cookie)}`)
+      return false
     }
 
-    if (!isFirstRoundStarted) {
-      isFirstRoundStarted = true
+    const validateGameForBotAddOrRemove = () => {
+      if (user!.id !== currentGame!.game_players[0].player_id) {
+        console.error('Only the player creating the match can add or remove a bot!')
+        return false
+      }
+    }
+
+    const removePlayer = async (user: Index.player) => {
+      if (!currentGame!.game_players.map(({ player }) => player.username).includes(user.username)) {
+        console.log(`${user.username} is not part of the game`)
+      } else {
+        await game.disassociatePlayer(gameId, user)
+
+        socket.broadcast.emit('playerLeft', user)
+        socket.emit('playerLeft', user)
+      }
+    }
+
+    socket.emit('playerConnectedToMatch')
+
+    socket.on('removeBot', async () => {
+      validateGameForBotAddOrRemove()
+      await removePlayer(await getUser(`bot_${currentGame!.dataset.name}`))
+      currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+    })
+
+    socket.on('addBot', async () => {
+      validateGameForBotAddOrRemove()
+
+      const botUsername = `bot_${currentGame!.dataset.name}`
+      const botPlayer = await getUser(botUsername)
+      await checkAndAssociatePlayer(botPlayer)
+      currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+
+      socket.broadcast.emit('playerJoined', botPlayer)
+      socket.emit('playerJoined', botPlayer)
+    })
+
+    socket.on('joinMatch', async (callback: Function) => {
+      const player = await checkAndAssociatePlayer(user)
+      currentGame = (await getGameWithRoundsDatasetPlayers(gameId))!
+
+      socket.broadcast.emit('playerJoined', player)
+
+      // eslint-disable-next-line n/no-callback-literal
+      callback({
+        isBotAvailable: ['published-fr-recent', 'published-fr-small'].includes(
+          currentGame.dataset.name
+        ),
+        players: currentGame.game_players.map(({ player }) => player),
+      } as MatchDetails)
+    })
+
+    socket.on('startMatch', async () => {
+      if (user.id !== currentGame!.game_players[0].player_id) {
+        console.error('The player starting the match must be the one who created it!')
+        return false
+      }
+
+      console.log(`Game ${gameId} is starting!`)
+
       currentRound = await setRoundTimes(currentRound)
       startRound(socket)
-    }
+
+      currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+
+      socket.broadcast.emit('matchStarts')
+      socket.emit('matchStarts')
+    })
 
     socket.on('guess', async (personcode: string | null, callback: Function) => {
       const haveAllPlayersGuessed = await onGuess.apply(socket, [user!, personcode])
       if (haveAllPlayersGuessed) {
         callback(haveAllPlayersGuessed)
+      }
+    })
+
+    socket.on('disconnect', async (reason: string) => {
+      if (reason !== 'client namespace disconnect') {
+        if (currentGame!.game_players.findIndex(({ player }) => player.id === user.id) > 0) {
+          await removePlayer(user)
+          currentGame = await getGameWithRoundsDatasetPlayers(gameId)
+        }
       }
     })
   })

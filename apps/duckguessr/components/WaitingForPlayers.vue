@@ -1,5 +1,6 @@
 <template>
   <b-container align="center">
+    <alert-not-connected v-if="isAnonymous === true" />
     <h3>{{ t('The game is about to start!') }}</h3>
     <b-row align-h="center">
       <b-card v-for="{ username, avatar } in players" :key="username" class="player m-3 col-lg-3">
@@ -54,6 +55,7 @@ import { computed, defineComponent, useMeta } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
 import Index from '@prisma/client'
 import { getDuckguessrUsername } from '~/composables/user'
+import { userStore } from '~/store/user'
 
 export default defineComponent({
   props: {
@@ -70,11 +72,13 @@ export default defineComponent({
         .toString()
         .replace('{username}', props.players[0].username)
     )
-    const gameUrl = computed(() => `${location.origin}/matchmaking/${props.gameId}`)
+    const gameUrl = computed(() => `${location.origin}/game/${props.gameId}`)
     const isMatchCreator = computed(() => getDuckguessrUsername() === props.players[0].username)
     const isBotPlaying = computed(() => props.players.find(({ username }) => isBot(username)))
 
     const isBot = (username: string) => /^bot_/.test(username)
+
+    const isAnonymous = computed(() => userStore().isAnonymous)
 
     useMeta(() => ({
       title: title.value,
@@ -104,6 +108,7 @@ export default defineComponent({
 
     return {
       gameUrl,
+      isAnonymous,
       t,
       isMatchCreator,
       isBotPlaying,

@@ -7,6 +7,7 @@ import {
   SocketData,
 } from '../types/socketEvents'
 import { createPlayerSocket } from './sockets/player'
+import { createGameSocket } from './sockets/game'
 require('dotenv').config({ path: '../.env' })
 
 const http = require('http')
@@ -15,11 +16,9 @@ const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 const express = require('express')
-const { createMatchmakingSocket } = require('./sockets/matchmaking')
+const { createMatchmakingSocket } = require('./sockets/game')
 const app = express()
 const server = http.createServer(app)
-
-const { createGameSocket } = require('./sockets/game')
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
   server,
@@ -45,10 +44,10 @@ prisma.game
       },
     },
   })
-  .then((pendingGames: Index.game[]) => {
+  .then(async (pendingGames: Index.game[]) => {
     for (const pendingGame of pendingGames) {
       console.debug(`Creating socket for unfinished game with ID ${pendingGame.id}`)
-      createGameSocket(io, pendingGame)
+      await createGameSocket(io, pendingGame.id)
     }
   })
 

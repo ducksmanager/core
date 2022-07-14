@@ -33,6 +33,12 @@
     :authors="game.authors"
     :first-round-start-date="firstRoundStartDate"
   />
+  <matchmaking
+    v-else-if="isConnectedToSocket"
+    :game-id="gameId"
+    :game-socket="gameSocket"
+    @start-match="loadGame()"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -54,15 +60,21 @@ const duckguessrId = getDuckguessrId()
 const { t } = useI18n()
 const route = useRoute()
 
+const gameId = parseInt(route.value.params.id)
+
+const isConnectedToSocket = ref(false as boolean)
+
 const chosenAuthor = ref(null as string | null)
 const hasEverybodyGuessed = ref(false as boolean)
 const gameIsFinished = ref(false as boolean)
 const firstRoundStartDate = ref(null as Date | null)
 
 const game = ref(null as GameFull | null)
-let gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>
+const gameSocket = ref(null as Socket<ServerToClientEvents, ClientToServerEvents> | null)
 
 const currentRoundNumber = ref(null as number | null)
+
+const scoreToVariant = useScoreToVariant
 
 const players = computed(
   (): Array<Index.player> => (game.value ? game.value.game_players.map(({ player }) => player) : [])
@@ -110,13 +122,13 @@ const nextRoundStartDate = computed(() => {
 })
 
 const validateGuess = () => {
-  gameSocket!.emit('guess', chosenAuthor.value, (hasEverybodyGuessedResult: boolean) => {
+  gameSocket.value!.emit('guess', chosenAuthor.value, (hasEverybodyGuessedResult: boolean) => {
     hasEverybodyGuessed.value = hasEverybodyGuessedResult || hasEverybodyGuessed.value
   })
 }
 
 const loadGame = async () => {
-  game.value = (await useAxios(`/api/game/${route.value.params.id}`)).data.value
+  game.value = (await useAxios(`/api/game/${gameId}`)).data.value
   if (game.value) {
     const now = new Date().toISOString()
     gameIsFinished.value = game.value.rounds.every(
@@ -138,17 +150,20 @@ const currentRoundPlayerScore = computed(() =>
 const getAuthor = (personcode2: string): Author =>
   game.value!.authors.find(({ personcode }) => personcode2 === personcode)!
 
-const scoreToVariant = useScoreToVariant
-
 onMounted(async () => {
   await loadGame()
-
-  gameSocket = io(`${process.env.SOCKET_URL}/game/${route.value.params.id}`, {
+  if (game.value && gameIsFinished.value) {
+    return
+  }
+  gameSocket.value = io(`${process.env.SOCKET_URL}/game/${gameId}`, {
     auth: {
       cookie: useCookies().getAll(),
     },
   })
-  gameSocket
+  gameSocket.value
+    .on('connect', () => {
+      isConnectedToSocket.value = true
+    })
     .on('firstRoundWillStartSoon', (receivedFirstRoundStartDate) => {
       firstRoundStartDate.value = receivedFirstRoundStartDate
     })
