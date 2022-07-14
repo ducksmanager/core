@@ -5,10 +5,10 @@
       opacity50: isPotentialBot(username),
       pointer: isPotentialBot(username) || toggleable,
     }"
-    style="height: 100px"
+    :style="{ height: `${size}rem`, 'font-size': `${1 - 0.1 * (4 - size)}rem` }"
     @click="toggleable ? $emit('toggle') : () => {}"
   >
-    <b-avatar :class="{ 'top-player': topPlayer }" size="4rem" :src="src" />
+    <b-avatar :class="{ 'top-player': topPlayer }" :size="`${size}rem`" :src="src" />
     <div class="username" :class="{ small: isPotentialBot(username) }">
       <template v-if="isBot(username)">
         <div>BOT</div>
@@ -33,11 +33,13 @@ const props = withDefaults(
     topPlayer: boolean
     avatar: string
     toggleable: boolean
+    size: number
   }>(),
   {
     topPlayer: false,
     avatar: "HDL's father",
     toggleable: false,
+    size: 4,
   }
 )
 

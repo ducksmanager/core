@@ -1,8 +1,19 @@
 <template>
-  <div class="wrapper d-flex" :class="{ vertical: vertical }">
-    <div v-if="rank >= 3">{{ rank + 1 }}.</div>
+  <div
+    class="wrapper d-flex"
+    :class="{ vertical: vertical }"
+    :style="vertical ? {} : { height: `${size * 1.75}rem` }"
+  >
+    <div v-if="rank >= 3" :style="{ 'font-size': `${1 - 0.1 * (4 - size)}rem` }">
+      {{ rank + 1 }}.
+    </div>
     <div class="username">
-      <player-info :username="player.username" :avatar="player.avatar" :top-player="topPlayer" />
+      <player-info
+        :size="size"
+        :username="player.username"
+        :avatar="player.avatar"
+        :top-player="topPlayer"
+      />
     </div>
     <div
       :class="`progress bg-success d-inline-flex justify-content-center align-items-center rank-${rank}`"
@@ -14,23 +25,30 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from '@nuxtjs/composition-api'
 import { PlayerWithSumScore } from '~/types/playerStats'
 
-const playerTotalScoreProps = withDefaults(
-  defineProps<{
-    player: PlayerWithSumScore
-    maxScoreAllPlayers: number
-    vertical: boolean
-    topPlayer: boolean
-    rank: number | null
-  }>(),
-  {
-    rank: null,
-  }
+const playerTotalScoreProps = defineProps<{
+  player: PlayerWithSumScore
+  maxScoreAllPlayers: number
+  vertical: boolean
+  topPlayer: boolean
+  rank: number
+}>()
+
+const barSizePct = computed(
+  () => (100 * playerTotalScoreProps.player.sum_score) / playerTotalScoreProps.maxScoreAllPlayers
 )
 
-const barSizePct =
-  (100 * playerTotalScoreProps.player.sum_score) / playerTotalScoreProps.maxScoreAllPlayers
+const size = computed(() =>
+  playerTotalScoreProps.rank < 3
+    ? 4
+    : playerTotalScoreProps.rank < 10
+    ? 3
+    : playerTotalScoreProps.rank < 20
+    ? 2
+    : 1
+)
 </script>
 
 <style scoped lang="scss">
@@ -38,7 +56,7 @@ const barSizePct =
   align-items: center;
   justify-content: center;
 
-  height: 110px;
+  height: 80px;
   width: 250px;
 
   .progress {

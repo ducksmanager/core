@@ -34,12 +34,92 @@ Default.args = {
     {
       id: 999,
       username: 'demo',
+      sum_score: 19,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 18,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 17,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 16,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 15,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 14,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 13,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 12,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 11,
+    },
+    {
+      id: 123,
+      username: 'loser',
       sum_score: 10,
     },
     {
       id: 123,
       username: 'loser',
-      sum_score: 1,
+      sum_score: 9,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 8,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 7,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 6,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 5,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 4,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 3,
+    },
+    {
+      id: 123,
+      username: 'loser',
+      sum_score: 2,
     },
   ],
 }
