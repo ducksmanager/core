@@ -2,7 +2,7 @@
   <div
     class="wrapper d-flex"
     :class="{ vertical: vertical }"
-    :style="vertical ? {} : { height: `${size * 1.75}rem` }"
+    :style="vertical ? {} : { 'min-height': `${size * 1.75}rem` }"
   >
     <div v-if="rank >= 3" :style="{ 'font-size': `${1 - 0.1 * (4 - size)}rem` }">
       {{ rank + 1 }}.
