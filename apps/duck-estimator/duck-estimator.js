@@ -7,7 +7,8 @@ const { exec } = require('child_process')
 const scrapes = {
   bedetheque: require('./scrapes/bedetheque'),
   comicsmania: require('./scrapes/comicsmania'),
-  seriesam: require('./scrapes/seriesam')
+  seriesam: require('./scrapes/seriesam'),
+  gocollect: require('./scrapes/gocollect')
 }
 dbConnect().then(async () => {
   await truncateQuotations()
