@@ -114,6 +114,15 @@ const medalTitle = computed(() => {
       totalPointsToReachNextLevel.value -
       (props.medalLevelAndProgress.currentLevelPoints +
         props.medalLevelAndProgress.currentLevelProgressPoints)
+    if (isNaN(pointsToNextThreshold)) {
+      console.error(
+        JSON.stringify({
+          totalPointsToReachNextLevel: totalPointsToReachNextLevel.value,
+          currentLevelPoints: props.medalLevelAndProgress.currentLevelPoints,
+          currentLevelProgressPoints: props.medalLevelAndProgress.currentLevelProgressPoints,
+        })
+      )
+    }
     title += t(`Earn {pointsToNextThreshold} more points to get the {nextMedal} medal`, {
       pointsToNextThreshold,
       nextMedal: t(medalColors[nextLevel]),
