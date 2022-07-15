@@ -5,7 +5,7 @@
       opacity50: isPotentialBot(username),
       pointer: isPotentialBot(username) || toggleable,
     }"
-    :style="{ height: `${size}rem`, 'font-size': `${1 - 0.1 * (4 - size)}rem` }"
+    :style="{ height: `${size + 1}rem`, 'font-size': `${1 - 0.1 * (4 - size)}rem` }"
     @click="toggleable ? $emit('toggle') : () => {}"
   >
     <b-avatar :class="{ 'top-player': topPlayer }" :size="`${size}rem`" :src="src" />

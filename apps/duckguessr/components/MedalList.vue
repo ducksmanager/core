@@ -33,6 +33,7 @@ import { computed, onMounted } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
 import Index from '@prisma/client'
 import { userStore } from '~/store/user'
+import { MedalLevelAndProgress } from '~/types/playerStats'
 
 const DATASET_WITH_MEDALS: string[] = ['published-fr-recent']
 
@@ -58,7 +59,9 @@ const statsMatchingMedals = computed(
     )
 )
 
-const levelsAndProgress = computed(() => userStore().levelsAndProgress)
+const levelsAndProgress = computed(
+  (): { [key: string]: MedalLevelAndProgress } => userStore().levelsAndProgress
+)
 
 const noMedalProgress = computed(
   () =>

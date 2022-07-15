@@ -83,7 +83,7 @@ interface AvatarWithLocalPosition extends Avatar {
   localPosition: number[] | null
 }
 
-const currentUserStats = computed(() => userStore().stats)
+const currentUserStats = computed((): { [key: string]: number } | null => userStore().stats)
 const hasMedals = computed(
   () =>
     currentUserStats.value &&
