@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "files": [
         "assets/js/components/**.vue",
-        "assets/js/mixins/**.js",
         "assets/js/composables/**.js",
         "assets/js/stores/**.js",
         "assets/js/util/**.js"
