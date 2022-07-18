@@ -59,3 +59,5 @@ CREATE TABLE utilisateurs_publications_suggerees
         FOREIGN KEY (ID_User) REFERENCES auteurs_pseudos (ID_User)
 );
 CREATE INDEX suggested_issue_user ON utilisateurs_publications_suggerees (ID_User);
+
+SHOW WARNINGS;
