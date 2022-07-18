@@ -1,10 +1,5 @@
 <template>
   <ion-menu menu-id="app-menu" content-id="main-content">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Welcome!</ion-title>
-      </ion-toolbar>
-    </ion-header>
     <ion-content>
       <ion-list>
         <ion-item button @click="menuNavigation('/collection')">
@@ -17,20 +12,14 @@
     </ion-content>
   </ion-menu>
 </template>
-<script>
+<script setup lang="ts">
 import {
-  IonMenu,IonHeader,IonContent,IonToolbar,IonTitle,IonItem,IonList,IonLabel,
-  menuController
+  IonMenu, IonContent, IonItem, IonList, IonLabel, useIonRouter, menuController,
 } from "@ionic/vue";
-export default {
-  components: {
-    IonMenu,IonHeader,IonContent,IonToolbar,IonTitle,IonItem,IonList,IonLabel,
-  },
-  methods:{
-    menuNavigation(url){
-      menuController.close("app-menu");
-      this.$router.push(url);
-    }
-  }
-};
+
+const router = useIonRouter();
+const menuNavigation = (url: string) => {
+  menuController.close("app-menu");
+  router.push(url);
+}
 </script>

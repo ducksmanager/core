@@ -1,9 +1,7 @@
 <template>
-  <master-layout pageTitle="About Page">
-    <div>Welcome About Page!</div>
-  </master-layout>
+  <main-layout :title="title"><strong class="capitalize">{{ title }}</strong></main-layout>
 </template>
-<script>
-export default {
-};
+<script setup lang="ts">
+import MainLayout from "@/layouts/MainLayout.vue";
+const title ='About'
 </script>
