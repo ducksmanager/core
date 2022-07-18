@@ -12,6 +12,7 @@ model dataset {
   name             String             @unique(map: "dataset_name_uindex") @db.VarChar(30)
   title            String?            @db.VarChar(100)
   description      String?            @db.Text
+  active           Boolean            @default(false)
   dataset_entryurl dataset_entryurl[]
   games            game[]
 }
