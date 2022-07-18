@@ -15,6 +15,8 @@ export const MEDAL_LEVELS: MedalLevel[] = [
   new MedalLevel('fast', [25, 150, 500]),
   new MedalLevel('ultra_fast', [10, 50, 200]),
   new MedalLevel('published-fr-recent', [10, 75, 300]),
+  new MedalLevel('it', [10, 75, 300]),
+  new MedalLevel('us', [10, 75, 300]),
 ]
 
 export const userStore = defineStore('user', {

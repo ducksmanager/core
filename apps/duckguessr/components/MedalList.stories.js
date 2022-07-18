@@ -17,7 +17,9 @@ WithoutDataset.args = {
   statsOverride: {
     'published-fr-recent': 143,
     fast: 150,
+    it: 100,
     ultra_fast: 48,
+    us: 48,
   },
 }
 export const WithoutDatasetLowPoints = Template.bind({})
@@ -26,7 +28,9 @@ WithoutDatasetLowPoints.args = {
   withDetails: false,
   statsOverride: {
     fast: 5,
-    'published-fr-recent': 183,
+    it: 10,
+    'published-fr-recent': 10,
     ultra_fast: 1,
+    us: 10,
   },
 }

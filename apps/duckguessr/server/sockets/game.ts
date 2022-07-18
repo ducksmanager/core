@@ -52,7 +52,6 @@ export const createGameSocket = async (
   let currentRoundEndTimeout: NodeJS.Timeout
 
   const checkAndAssociatePlayer = async (player: Index.player) => {
-    console.log(currentGame)
     if (currentGame!.game_players.find(({ player_id }) => player_id === player.id)) {
       console.info(`Player ${player.username} is already associated with game ${currentGame!.id}`)
     } else {

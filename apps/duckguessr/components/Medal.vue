@@ -38,9 +38,8 @@ import { MEDAL_LEVELS } from '~/store/user'
 
 const { t } = useI18n()
 const medalTypes = computed((): { [key: string]: any } => ({
-  Americain: { title: t('US Expert'), description: t('You won a game guessing American authors') },
   Francais: { title: t('French Expert'), description: t('You won a game guessing French authors') },
-  Italien: {
+  it: {
     title: t('Italian Expert'),
     description: t('You won a game guessing Italian authors'),
   },
@@ -53,6 +52,7 @@ const medalTypes = computed((): { [key: string]: any } => ({
     title: t('Super Fast'),
     description: t('You guessed a drawing in less than 2 seconds'),
   },
+  us: { title: t('US Expert'), description: t('You won a game guessing American authors') },
 }))
 
 const props = defineProps({

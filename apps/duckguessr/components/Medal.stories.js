@@ -22,6 +22,16 @@ Gold.args = {
   medalLevelAndProgress: new MedalLevelAndProgress(3, 0, 0),
   type: 'published-fr-recent',
 }
+export const GoldItalian = Template.bind({})
+GoldItalian.args = {
+  medalLevelAndProgress: new MedalLevelAndProgress(3, 0, 0),
+  type: 'it',
+}
+export const GoldAmerican = Template.bind({})
+GoldAmerican.args = {
+  medalLevelAndProgress: new MedalLevelAndProgress(3, 0, 0),
+  type: 'us',
+}
 export const SilverPlus10Points = Template.bind({})
 SilverPlus10Points.args = {
   medalLevelAndProgress: new MedalLevelAndProgress(2, 10, 0),

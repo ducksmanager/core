@@ -35,7 +35,7 @@ import Index from '@prisma/client'
 import { userStore } from '~/store/user'
 import { MedalLevelAndProgress } from '~/types/playerStats'
 
-const DATASET_WITH_MEDALS: string[] = ['published-fr-recent']
+const DATASET_WITH_MEDALS: string[] = ['published-fr-recent', 'it', 'us']
 
 const { t } = useI18n()
 
