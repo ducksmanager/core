@@ -4,11 +4,11 @@ sh_dir=/home/scripts
 csv_results_dir=${sh_dir}/csv_results
 
 envvars=(\
-  MYSQL_DM_HOST \
+  MYSQL_HOST \
   MYSQL_DM_DATABASE \
-  MYSQL_DM_STATS_HOST \
+  MYSQL_HOST \
   MYSQL_DM_STATS_DATABASE \
-  MYSQL_COA_HOST \
+  MYSQL_HOST \
   MYSQL_COA_DATABASE \
   MYSQL_PASSWORD \
   csv_results_dir \
