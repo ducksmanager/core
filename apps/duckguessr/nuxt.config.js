@@ -71,6 +71,12 @@ export default {
             iso: 'es',
             file: 'es.json',
           },
+          {
+            code: 'de',
+            name: 'Deutsch',
+            iso: 'de',
+            file: 'de.json',
+          },
         ],
       },
     ],

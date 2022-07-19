@@ -29,6 +29,7 @@ const availableLocales = {
   fr: 'Français',
   en: 'English',
   es: 'Español',
+  de: 'Deutsch',
 }
 
 const i18n = useI18n()
