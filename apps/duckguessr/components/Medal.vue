@@ -11,7 +11,9 @@
         :title="medalTitle"
         :style="{
           backgroundImage: currentMedalUrl,
-          width: `${100 - shownLevelPercentage - currentLevelPercentageProgress}%`,
+          'clip-path': `inset(0px 0px 0px ${
+            shownLevelPercentage + currentLevelPercentageProgress
+          }%)`,
         }"
       />
     </div>
@@ -181,19 +183,24 @@ onMounted(() => {
       width: 100%;
       height: 0;
       padding-bottom: 100%;
+
+      .overlay {
+        height: 100%;
+      }
     }
   }
 
   .medal {
     width: 100%;
     height: 192px;
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
 
     .overlay {
-      height: 100%;
+      width: 100%;
+      height: 192px;
       background-position-x: right;
-      background-size: cover;
+      background-size: contain;
       background-repeat: no-repeat;
       right: 0;
 

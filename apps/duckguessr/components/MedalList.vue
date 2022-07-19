@@ -13,8 +13,8 @@
             'd-flex': withDetails,
             'justify-content-center': withDetails,
           }"
-          :cols="withDetails ? 12 : 4"
-          lg="4"
+          :cols="withDetails ? 12 : 3"
+          lg="3"
         >
           <Medal
             :type="type"
