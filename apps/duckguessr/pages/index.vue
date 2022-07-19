@@ -84,5 +84,11 @@ onMounted(async () => {
 .card {
   color: black;
   cursor: pointer;
+  padding-bottom: 20px;
+
+  .card-footer {
+    position: absolute;
+    bottom: 0;
+  }
 }
 </style>
