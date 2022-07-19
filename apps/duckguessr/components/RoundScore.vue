@@ -12,10 +12,7 @@
       "
       max="100"
     />
-    <b-col cols="6" class="px-0 d-flex align-items-center justify-content-center">
-      <player-info :username="player.username" :top-player="false" />
-    </b-col>
-    <b-col cols="6" class="d-flex align-items-center justify-content-center">
+    <player-info :username="player.username" :top-player="false">
       <div
         v-if="score.score_type_name"
         class="text-center p-1 border border-dark"
@@ -23,7 +20,7 @@
       >
         {{ score.score_type_name }}
       </div>
-    </b-col>
+    </player-info>
   </b-progress>
   <div v-else>
     <h6>{{ score.score_type_name }}</h6>

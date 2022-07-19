@@ -3,7 +3,13 @@
     <div id="medals-and-login" class="py-2 d-flex flex-column">
       <div class="d-none d-lg-block">
         <component :is="isAnonymous ? 'div' : 'a'" :href="isAnonymous ? undefined : '/profile'">
-          <player-info v-if="user" :username="user.username" :avatar="user.avatar" />
+          <player-info
+            v-if="user"
+            class="mb-2"
+            :username="user.username"
+            :avatar="user.avatar"
+            no-right-panel
+          />
         </component>
         <medal-list v-if="!isAnonymous && currentUserStats" :with-details="false" />
       </div>

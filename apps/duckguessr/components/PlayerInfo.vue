@@ -1,6 +1,6 @@
 <template>
-  <div
-    class="d-flex flex-column align-items-center justify-content-around text-center"
+  <b-row
+    class="flex-row align-items-center justify-content-around text-center flex-grow-1"
     :class="{
       opacity50: isPotentialBot(username),
       pointer: isPotentialBot(username) || toggleable,
@@ -8,18 +8,25 @@
     :style="{ height: `${size + 1}rem`, 'font-size': `${1 - 0.1 * (4 - size)}rem` }"
     @click="toggleable ? $emit('toggle') : () => {}"
   >
-    <b-avatar :class="{ 'top-player': topPlayer }" :size="`${size}rem`" :src="src" />
-    <div class="username" :class="{ small: isPotentialBot(username) }">
-      <template v-if="isBot(username)">
-        <div>BOT</div>
-        <div v-if="toggleable" class="small">
-          {{ t('Click to remove') }}
-        </div>
-      </template>
+    <b-col cols="6" class="px-0 d-flex flex-column align-items-center justify-content-center">
+      <b-avatar :class="{ 'top-player': topPlayer }" :size="`${size}rem`" :src="src" />
+      <div class="username">
+        <div v-if="isBot(username) || isPotentialBot(username)">BOT</div>
+        <div v-else>{{ username }}</div>
+      </div>
+    </b-col>
+    <b-col
+      v-if="!noRightPanel"
+      cols="6"
+      class="px-0 d-flex align-items-center justify-content-center"
+    >
+      <div v-if="isBot(username) && toggleable">
+        {{ t('Click to remove the bot') }}
+      </div>
       <div v-else-if="isPotentialBot(username)">{{ t('Click to add a bot to the game') }}</div>
-      <div v-else>{{ username }}</div>
-    </div>
-  </div>
+      <slot v-else />
+    </b-col>
+  </b-row>
 </template>
 
 <script setup lang="ts">
@@ -34,12 +41,14 @@ const props = withDefaults(
     avatar: string
     toggleable: boolean
     size: number
+    noRightPanel: boolean
   }>(),
   {
     topPlayer: false,
     avatar: "HDL's father",
     toggleable: false,
     size: 4,
+    noRightPanel: false,
   }
 )
 
@@ -73,12 +82,14 @@ const { t } = useI18n()
 .username {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  max-width: 100%;
+  overflow: auto;
+  align-items: stretch;
   height: 1.5rem;
-}
 
-.small {
-  color: grey;
+  div {
+    white-space: nowrap;
+  }
 }
 
 .opacity50 {

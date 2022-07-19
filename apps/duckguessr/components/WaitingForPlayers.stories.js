@@ -23,7 +23,7 @@ Default.args = {
     { username: 'brunoperel', avatar: 'DD' },
     { username: 'Wizyx', avatar: 'DD' },
     { username: 'remifanpicsou', avatar: 'DD' },
-    { username: 'Alex Puaud', avatar: 'DD' },
+    { username: 'A very long username', avatar: 'DD' },
     { username: 'GlxbltHugo', avatar: 'DD' },
     { username: 'Picsou22', avatar: 'DD' },
     { username: 'bot_us', avatar: 'DD' },
