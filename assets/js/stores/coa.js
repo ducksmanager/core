@@ -1,11 +1,7 @@
 import Vue from "vue";
-import axios from "axios";
-import { coaCache } from "../util/cache";
-import { defineStore } from "pinia";
+import { cachedCoaApi as coaApi } from "../util/cache";
 
-const coaApi = axios.create({
-  adapter: coaCache.adapter
-});
+import { defineStore } from "pinia";
 
 const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/LOCALE`;
 const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";

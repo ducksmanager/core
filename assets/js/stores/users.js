@@ -1,10 +1,5 @@
-import axios from "axios";
-import { userCache } from "../util/cache";
+import { cachedUserApi as api } from "../util/cache";
 import { defineStore } from "pinia";
-
-const api = axios.create({
-  adapter: userCache.adapter,
-})
 
 export const users = defineStore('users', {
   state: () => ({
@@ -29,7 +24,8 @@ export const users = defineStore('users', {
       }
       const url = `/global-stats/user/${missingUserIds.sort((a, b) => a < b ? -1 : 1).join(',')}`
 
-      const data = (await api.get(url, {clearCacheEntry})).data;
+      const data = (await api.get(url, {
+        cache: !clearCacheEntry})).data;
       this.points = {
         ...this.points, ...data.points.reduce((acc, data) =>
           ({
@@ -55,7 +51,9 @@ export const users = defineStore('users', {
     },
 
     async fetchEvents(clearCacheEntry = true) {
-      const {data, request: {fromCache}} = await api.get("/events", {clearCacheEntry})
+      const {data, cached} = await api.get("/events", {
+        cache: !clearCacheEntry
+      })
       this.events = (data || []).map(event => {
         if (event.exampleIssue) {
           const [publicationCode, issueNumber] = event.exampleIssue.split(/\/(?=[^/]+$)/);
@@ -79,7 +77,7 @@ export const users = defineStore('users', {
       }).sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) => Math.sign(timestamp2 - timestamp1))
         .filter((_, index) => index < 50);
 
-      return !fromCache
+      return !cached;
     }
   }
 })

@@ -1,11 +1,5 @@
-import axios from "axios";
 import { defineStore } from 'pinia'
-
-import {appCache} from "../util/cache"
-
-const appApi = axios.create({
-  adapter: appCache.adapter,
-})
+import { cachedL10nApi as appApi } from "../util/cache";
 
 export const l10n = defineStore('l10n', {
   state: () => ({
