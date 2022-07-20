@@ -6,6 +6,12 @@
       :stats="stats[event.userId]"
       :points="points[event.userId]"
     />
+    <span
+      v-else-if="event.userId === null"
+      class="text-capitalize"
+    >
+      {{ $t('un visiteur anonyme') }}
+    </span>
     <template v-if="event.type === 'signup'">
       {{ $t("a commencé sa collection sur DucksManager. Bienvenue !") }}
     </template>
