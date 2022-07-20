@@ -1,6 +1,13 @@
-FROM alpine
+FROM node:16
 MAINTAINER Bruno Perel
 
-COPY scripts /home/scripts
+WORKDIR /home
 
-CMD ["ts-node", "/home/scripts/index.ts"]
+COPY package*.json ./
+RUN npm install
+
+COPY db.ts index.ts ./
+COPY sql ./sql
+COPY .env.prod ./.env
+
+CMD ["node_modules/.bin/ts-node", "/home/index.ts"]
