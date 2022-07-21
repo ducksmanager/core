@@ -54,6 +54,17 @@ jobs:
           tags: |
             ghcr.io/bperel/ducksmanager-php:latest
 
+      - name: Upload docker-compose.yml config
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: upload
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: docker-compose.yml
+          target: /home/bperel/workspace/EdgeCreator/docker-compose.yml
+
       - name: Recreate container
         uses: appleboy/ssh-action@v0.1.4
         env:
