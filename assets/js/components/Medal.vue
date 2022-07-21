@@ -61,9 +61,13 @@ const { t: $t } = useI18n(),
     userLevelPoints: { type: Number, required: true },
     contribution: { type: String, required: true },
   }),
-  { currentLevel, pointsDiffNextLevel, levelProgressPercentage } = $(
-    medal(props.contribution, props.userLevelPoints)
-  ),
+  {
+    currentLevel,
+    pointsDiffNextLevel,
+    levelProgressPercentage,
+    radius,
+    circumference,
+  } = $(medal(props.contribution, props.userLevelPoints)),
   currentLocale = locale(),
   medalColors = ["bronze", "argent", "or"],
   level = $computed(() =>

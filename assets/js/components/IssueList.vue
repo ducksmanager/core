@@ -153,7 +153,7 @@
                     v-if="copyCondition"
                     :publicationcode="publicationcode"
                     :issuenumber="issueNumber"
-                    :value="copyCondition.value"
+                    :value="copyCondition"
                   />
                 </div>
               </div>
@@ -372,11 +372,11 @@ watch(
         )
         .map((issue) => ({
           ...issue,
-          condition: conditions.find(
-            ({ dbValue }) => dbValue === issue.condition
-          ) || {
-            value: "possessed",
-          },
+          condition: (
+            conditions.find(({ dbValue }) => dbValue === issue.condition) || {
+              value: "possessed",
+            }
+          ).value,
         }));
 
       const issuesWithTitles = (

@@ -13,34 +13,32 @@
       class="text-center m-0"
       show
       variant="danger"
-      v-html="
-        $t(
-          'Vous allez retirer tous les exemplaires<br />des numéros sélectionnés'
-        )
-      "
-    />
+      >{{
+        $t("Vous allez retirer tous les exemplaires\ndes numéros sélectionnés")
+      }}</b-alert
+    >
     <b-alert
       v-if="copies.length && !isSingleIssueSelected"
       class="text-center m-0"
       show
       variant="warning"
-      v-html="
+      >{{
         $t(
-          'Vous possédez certains numéros sélectionnés<br />en plusieurs exemplaires.<br />Seul le premier exemplaire sera modifié.'
+          "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié."
         )
-      "
-    />
+      }}</b-alert
+    >
     <b-alert
       v-if="!selectedIssues.length"
       class="text-center m-0"
       show
       variant="warning"
-      v-html="
+      >{{
         $t(
-          'Sélectionnez un ou plusieurs numéros dans la liste<br />pour les ajouter, modifier ou supprimer de votre collection.'
+          "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection."
         )
-      "
-    />
+      }}</b-alert
+    >
     <template v-else>
       <b-tabs
         v-model="currentCopyIndex"
