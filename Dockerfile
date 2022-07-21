@@ -19,7 +19,7 @@ COPY .git/refs/remotes/origin/vue-3-new--bootstrap /var/www/html/commit.txt
 RUN mkdir -p /var/www/html/public/build && chmod a+w -R /var/www/html/public
 RUN echo COMMIT=`cat /var/www/html/commit.txt` >> .env.prod.local && rm /var/www/html/commit.txt && \
     mv .env.prod.local .env.local && \
-    composer install && npm install && npm run build
+    composer install && npm install --force && npm run build
 
 RUN chmod a+w -R /var/www/html/var/cache
 

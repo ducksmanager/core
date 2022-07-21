@@ -8,22 +8,15 @@
       "
     />
     <div>
-      {{
-        $t(
-          "Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm."
-        )
-      }}
-      <br /><br />
-      {{ $t("Ce site se base en partie sur les données du site Inducks.") }}
-      <a target="_blank" href="http://coa.inducks.org/inducks/COPYING">{{
-        $t("Cliquez ici pour lire la licence Inducks.")
-      }}</a>
-      <br />
-      {{
-        $t(
-          "Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company."
-        )
-      }}
+      {{ $t('Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.') }}
+      <br><br>
+      {{ $t('Ce site se base en partie sur les données du site Inducks.') }}
+      <a
+        target="_blank"
+        href="https://inducks.org/inducks/COPYING"
+      >{{ $t('Cliquez ici pour lire la licence Inducks.') }}</a>
+      <br>
+      {{ $t('Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company.') }}
     </div>
   </div>
 </template>
