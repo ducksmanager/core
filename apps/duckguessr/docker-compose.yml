@@ -5,7 +5,7 @@ services:
     image: ghcr.io/bperel/duckguessr-web:latest
     restart: always
     networks:
-      workspace_global-front-network:
+      public-network:
         aliases:
           - duckguessr
       duckguessr-network:
@@ -18,7 +18,7 @@ services:
     volumes:
       - dm_sessions:/tmp/sessions
     networks:
-      workspace_global-front-network:
+      public-network:
         aliases:
           - duckguessr-socketio
       duckguessr-network:
@@ -40,7 +40,7 @@ services:
 
 networks:
   duckguessr-network:
-  workspace_global-front-network:
+  public-network:
     external: true
   ducksmanager-flex_dm-network:
     external: true
