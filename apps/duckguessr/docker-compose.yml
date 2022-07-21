@@ -37,6 +37,8 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
       duckguessr-network:
+        aliases:
+          - duckguessr-db
 
 networks:
   duckguessr-network:
