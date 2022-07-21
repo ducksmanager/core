@@ -21,7 +21,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/edgecreator-next/.env.prod
+          source: /home/bperel/workspace/EdgeCreator/.env.prod
           target: .env.prod
 
       - name: Set up Docker Buildx
@@ -54,6 +54,6 @@ jobs:
           command_timeout: 2m
           envs: DOCKER_REGISTRY_TOKEN
           script: |
-            cd workspace/edgecreator-next
+            cd workspace/EdgeCreator
             echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
-            docker-compose pull && docker-compose up -d --force-recreate
+            docker compose pull && docker compose up -d --force-recreate
