@@ -10,7 +10,7 @@ services:
           - duckguessr
       duckguessr-network:
       dm-server_db-network:
-      ducksmanager-flex_dm-network:
+      ducksmanager_dm-network:
   socketio:
     container_name: duckguessr-socketio
     image: ghcr.io/bperel/duckguessr-socketio:latest
@@ -42,7 +42,7 @@ networks:
   duckguessr-network:
   public-network:
     external: true
-  ducksmanager-flex_dm-network:
+  ducksmanager_dm-network:
     external: true
   dm-server_db-network:
     external: true

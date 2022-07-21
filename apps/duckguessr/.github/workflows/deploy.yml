@@ -67,4 +67,4 @@ jobs:
           script: |
             cd workspace/duckguessr
             echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
-            docker-compose pull && docker-compose up -d --force-recreate
+            docker compose pull && docker compose up -d --force-recreate
