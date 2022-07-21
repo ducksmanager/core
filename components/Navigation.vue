@@ -36,7 +36,7 @@
             <b-icon-printer-fill />
             {{ $t("Imprimer ma collection") }}
           </NavigationItem>
-          <NavigationItem path="/logout">
+          <NavigationItem @click="logout()">
             <b-icon-x-square-fill />
             {{ $t("Déconnexion") }}
           </NavigationItem>
@@ -78,7 +78,12 @@ import {
 import NavigationItem from "./NavigationItem";
 import NavigationItemGroup from "./NavigationItemGroup";
 
-const { username } = user();
+const authState = useAuthState();
+const username = authState.value.user?.data.username;
+
+const logout = () => {
+  useCookie("authStateStorage").value = undefined;
+};
 </script>
 
 <style lang="scss" scoped>

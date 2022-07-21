@@ -1,3 +1,4 @@
+import { deleteCookie } from "h3";
 import { Ref } from "vue";
 
 import { useCookie } from "#app";

@@ -32,6 +32,7 @@ export default defineEventHandler(async (event) => {
   const token = jwt.sign(fullUser, process.env.JWT_SECRET);
 
   return {
+    username: body.username,
     roles,
     token,
   };

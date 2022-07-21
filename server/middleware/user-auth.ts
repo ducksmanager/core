@@ -5,10 +5,11 @@ export default defineEventHandler((event) => {
   const authHeaderMatch = /authStateStorage=(?<token>.+?)(?:;|$)/.exec(
     event.req.headers.cookie
   );
+  const tokenHeader = decodeURIComponent(authHeaderMatch?.groups.token);
   const token =
-    authHeaderMatch?.groups &&
-    JSON.parse(decodeURIComponent(authHeaderMatch?.groups.token))?.user?.data
-      ?.token;
+    tokenHeader &&
+    tokenHeader !== "undefined" &&
+    JSON.parse(tokenHeader)?.user?.data?.token;
 
   if (token) {
     try {
