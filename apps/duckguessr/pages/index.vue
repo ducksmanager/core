@@ -21,17 +21,33 @@
         :title="t(dataset.title)"
         img-top
         align="center"
+        body-class="d-flex flex-column"
         :style="matchCreationSocket ? '' : 'pointer-events: none'"
         @click="createMatch(dataset.name)"
       >
-        <b-card-header class="my-2 bg-transparent border-0 small">
+        <b-card-body class="d-flex align-items-end my-2 p-1 bg-transparent border-0 small">
           {{ t(dataset.description) }}
-        </b-card-header>
+        </b-card-body>
         <b-card-footer>
           {{ t('Images') }}: {{ dataset.images }}, {{ t('authors') }}: {{ dataset.authors }}
         </b-card-footer>
       </b-card>
     </b-card-group>
+    <hr />
+    <b-card-footer class="small">
+      <div>{{ t("Duckguessr's medal pictures are made by artist") }} <b>Timothée Rouxel</b>.</div>
+      <div>{{ t('The translation in Spanish is made by') }} <b>Rémi Barnault</b>.</div>
+      <div>{{ t('The translation in German is made by') }} <b>Rémi TheBear</b>.</div>
+      <div>
+        {{ t("Part of this website's content is based on Inducks data.") }}
+        <a href="https://inducks.org/inducks/COPYING">{{
+          t('Click here to read the Inducks licence.')
+        }}</a>
+      </div>
+      <div>
+        {{ t('All the Disney characters and products are © The Walt Disney Company.') }}
+      </div>
+    </b-card-footer>
   </b-container>
 </template>
 
@@ -89,6 +105,15 @@ onMounted(async () => {
   .card-footer {
     position: absolute;
     bottom: 0;
+  }
+}
+
+hr + .card-footer {
+  text-align: center;
+  width: calc(100vw - 325px);
+
+  @media (max-width: 992px) {
+    width: 100vw;
   }
 }
 </style>
