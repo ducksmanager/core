@@ -63,7 +63,7 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: docker-compose.yml
-          target: /home/bperel/workspace/EdgeCreator/docker-compose.yml
+          target: /home/bperel/workspace/duckguessr/docker-compose.yml
 
       - name: Recreate container
         uses: appleboy/ssh-action@v0.1.4
