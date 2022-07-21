@@ -11,12 +11,12 @@ services:
       dm-server_front-network:
         aliases:
           - edgecreator-v3
-      workspace_global-front-network:
+      public-network:
         aliases:
           - edgecreator-v3
 
 networks:
-  workspace_global-front-network:
+  public-network:
     external: true
   dm-server_front-network:
     external: true
