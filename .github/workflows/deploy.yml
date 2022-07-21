@@ -21,7 +21,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager-flex/.env.prod.local
+          source: /home/bperel/workspace/DucksManager/.env.prod.local
           target: .env.prod.local
 
       - name: Set up Docker Buildx
@@ -65,6 +65,6 @@ jobs:
           command_timeout: 2m
           envs: DOCKER_REGISTRY_TOKEN_DM
           script: |
-            cd workspace/DucksManager-flex
+            cd workspace/DucksManager
             echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
-            docker-compose pull && docker-compose up -d --force-recreate
+            docker compose pull && docker compose up -d --force-recreate
