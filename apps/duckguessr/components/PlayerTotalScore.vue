@@ -9,6 +9,8 @@
     </div>
     <div class="username">
       <player-info
+        no-right-panel
+        :nowrap="false"
         :size="size"
         :username="player.username"
         :avatar="player.avatar"

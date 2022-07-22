@@ -10,9 +10,11 @@
   >
     <b-col cols="6" class="px-0 d-flex flex-column align-items-center justify-content-center">
       <b-avatar :class="{ 'top-player': topPlayer }" :size="`${size}rem`" :src="src" />
-      <div class="username">
-        <div v-if="isBot(username) || isPotentialBot(username)">BOT</div>
-        <div v-else>{{ username }}</div>
+      <div class="username" :style="nowrap ? 'overflow: auto' : ''">
+        <div v-if="isBot(username) || isPotentialBot(username)" :class="{ 'text-nowrap': nowrap }">
+          BOT
+        </div>
+        <div v-else :class="{ 'text-nowrap': nowrap }">{{ username }}</div>
       </div>
     </b-col>
     <b-col
@@ -42,6 +44,7 @@ const props = withDefaults(
     toggleable: boolean
     size: number
     noRightPanel: boolean
+    nowrap: boolean
   }>(),
   {
     topPlayer: false,
@@ -49,6 +52,7 @@ const props = withDefaults(
     toggleable: false,
     size: 4,
     noRightPanel: false,
+    nowrap: true,
   }
 )
 
@@ -83,13 +87,9 @@ const { t } = useI18n()
   display: flex;
   flex-direction: column;
   max-width: 100%;
-  overflow: auto;
   align-items: stretch;
   height: 1.5rem;
-
-  div {
-    white-space: nowrap;
-  }
+  font-size: small;
 }
 
 .opacity50 {

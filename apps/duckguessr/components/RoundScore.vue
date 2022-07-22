@@ -2,7 +2,7 @@
   <b-progress
     v-if="inGame"
     :key="`score-${player.id}`"
-    class="position-relative d-flex flex-row align-items-center justify-content-between mb-1"
+    class="position-relative d-flex flex-row align-items-center justify-content-between mb-1 small"
   >
     <b-progress-bar
       class="position-absolute"
@@ -63,6 +63,10 @@ const { t } = useI18n()
   color: #555;
   height: 100px;
   line-height: 15px;
+
+  * {
+    font-size: small !important;
+  }
 
   &.progress-bar {
     border-radius: 0.25rem;
