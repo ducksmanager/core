@@ -236,7 +236,7 @@ export const createGameSocket = async (
 
       // eslint-disable-next-line n/no-callback-literal
       callback({
-        isBotAvailable: ['published-fr-recent', 'published-fr-small'].includes(
+        isBotAvailable: ['published-fr-recent', 'published-fr-small', 'it'].includes(
           currentGame.dataset.name
         ),
         players,
