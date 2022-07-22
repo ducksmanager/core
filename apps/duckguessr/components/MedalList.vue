@@ -66,6 +66,7 @@ const props = withDefaults(
   {
     dataset: null,
     statsOverride: null,
+    cols: null,
     colsLg: 3,
   }
 )
@@ -79,8 +80,7 @@ const statsMatchingMedals = computed(() =>
     ?.filter(
       ({ medal_type: medalType, player_id, points }) =>
         points > 0 &&
-        !props.statsOverride &&
-        duckguessrId === player_id &&
+        (props.statsOverride || duckguessrId === player_id) &&
         (/^(ultra_)?fast/.test(medalType) ||
           !props.dataset ||
           DATASET_WITH_MEDALS.includes(props.dataset.name))

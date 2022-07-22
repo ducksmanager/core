@@ -14,12 +14,7 @@
           :toggleable="isBot(username)"
           @toggle="$emit('remove-bot')"
         >
-          <medal-list
-            :with-details="false"
-            :stats-override="getGamePlayerStats(id)"
-            :cols="null"
-            :cols-lg="null"
-          />
+          <medal-list :with-details="false" :stats-override="getGamePlayerStats(id)" />
         </player-info>
       </b-card>
       <b-card v-if="isMatchCreator && isBotAvailable && !isBotPlaying" class="player m-3 col-lg-3">
