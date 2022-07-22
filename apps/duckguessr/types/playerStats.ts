@@ -25,3 +25,16 @@ export class MedalLevelAndProgress {
 export interface PlayerWithSumScore extends Index.player {
   sum_score: number
 }
+
+export interface UserMedalPoints {
+  medal_type: string
+  player_id: number
+  points: number
+}
+
+export interface UserGameMedalPoints {
+  medal_type: string
+  player_id: number
+  game_id: number
+  points: number
+}

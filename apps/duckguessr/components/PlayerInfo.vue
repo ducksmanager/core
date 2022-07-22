@@ -18,7 +18,7 @@
     <b-col
       v-if="!noRightPanel"
       cols="6"
-      class="px-0 d-flex align-items-center justify-content-center"
+      class="px-0 d-flex align-items-center justify-content-center h-100"
     >
       <div v-if="isBot(username) && toggleable">
         {{ t('Click to remove the bot') }}

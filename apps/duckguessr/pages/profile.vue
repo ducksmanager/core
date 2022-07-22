@@ -8,7 +8,7 @@
   <div v-else class="d-flex justify-content-center flex-column text-center">
     <h3>{{ t('Medals') }}</h3>
     <template v-if="currentUserStats">
-      <medal-list v-if="hasMedals" with-details />
+      <medal-list v-if="hasMedals" with-details :cols="12" />
       <b-row v-else class="justify-content-center">
         <b-col cols="9" class="d-flex justify-content-center">
           <b-alert show variant="info">
@@ -70,6 +70,7 @@ import { useI18n } from 'nuxt-i18n-composable'
 import Index from '@prisma/client'
 import { Avatar } from '~/types/avatar'
 import { userStore } from '~/store/user'
+import { UserMedalPoints } from '~/types/playerStats'
 const { t } = useI18n()
 
 const isAnonymous = computed(() => userStore().isAnonymous)
@@ -83,11 +84,11 @@ interface AvatarWithLocalPosition extends Avatar {
   localPosition: number[] | null
 }
 
-const currentUserStats = computed((): { [key: string]: number } | null => userStore().stats)
+const currentUserStats = computed((): UserMedalPoints[] | null => userStore().stats)
 const hasMedals = computed(
   () =>
     currentUserStats.value &&
-    Object.values(currentUserStats.value).filter((score) => score > 0).length
+    Object.values(currentUserStats.value).filter(({ points }) => points > 0).length
 )
 
 const currentAvatar = ref(null as AvatarWithLocalPosition | null)

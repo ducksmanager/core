@@ -37,7 +37,7 @@ export interface ClientToServerEvents {
   joinMatch: (callback: Function) => void
   startMatch: () => void
   guess: (personcode: string | null, callback: Function) => void
-  getStats: (callback: Function) => void
+  getStats: (gameId: number | null, callback: Function) => void
   getGameStats: (gameId: number, callback: Function) => void
   updateUser: (updatedUser: Index.player, callback: Function) => void
 }

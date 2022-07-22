@@ -2,6 +2,7 @@
   <waiting-for-players
     v-if="players.length"
     :players="players"
+    :game-players-stats="gamePlayersStats"
     :game-id="gameId"
     :is-bot-available="isBotAvailableForGame"
     @start-match="startMatch"
@@ -17,8 +18,10 @@ import { Socket } from 'socket.io-client'
 import { MatchDetails } from '~/types/matchDetails'
 import { userStore } from '~/store/user'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
+import { UserMedalPoints } from '~/types/playerStats'
 
-const players = ref([] as Array<Index.player>)
+const players = ref([] as Index.player[])
+const gamePlayersStats = ref(null as UserMedalPoints[] | null)
 const isBotAvailableForGame = ref(null as Boolean | null)
 
 const matchmakingProps = defineProps<{
@@ -58,8 +61,9 @@ watch(
         .on('playerConnectedToMatch', () => {
           matchmakingProps.gameSocket.emit(
             'joinMatch',
-            ({ players, isBotAvailable }: MatchDetails) => {
+            ({ players, isBotAvailable, playerStats }: MatchDetails) => {
               isBotAvailableForGame.value = isBotAvailable
+              gamePlayersStats.value = playerStats
               for (const player of players) {
                 addPlayer(player)
               }

@@ -37,7 +37,12 @@
     </b-container>
     <template v-if="currentUserHasParticipated">
       <h3>{{ t('Medals') }}</h3>
-      <medal-list v-if="!isAnonymous && currentUserAllStats" :dataset="game.dataset" with-details />
+      <medal-list
+        v-if="!isAnonymous && hasUserStats"
+        :dataset="game.dataset"
+        with-details
+        :cols="12"
+      />
     </template>
     <h3 class="mt-3">{{ t('Scores') }}</h3>
     <b-table striped dark :items="playersWithScoresAndTotalScore" class="align-items-center">
@@ -61,7 +66,9 @@
         </tr>
       </template>
       <template #cell(playerId)="{ value: playerId, index }">
-        <b-card><player-info :username="playerNames[playerId]" :top-player="index === 0" /></b-card>
+        <b-card :style="{ width: '12rem' }">
+          <player-info :username="playerNames[playerId]" :top-player="index === 0" no-right-panel />
+        </b-card>
       </template>
       <template #cell(totalScore)="{ value: totalScore }">
         <div>{{ totalScore }} points</div>
@@ -186,10 +193,7 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
     )
 )
 
-const currentUserAllStats = computed(
-  () =>
-    userStore().stats && userStore().gameStats && { ...userStore().stats, ...userStore().gameStats }
-)
+const hasUserStats = computed(() => userStore().stats && userStore().gameStats)
 
 watch(
   () => userStore().loginSocket && currentUserHasParticipated.value,

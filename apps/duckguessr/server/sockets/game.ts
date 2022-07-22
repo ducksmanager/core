@@ -7,7 +7,7 @@ import {
   SocketData,
 } from '../../types/socketEvents'
 import { getGameWithRoundsDatasetPlayers, numberOfRounds } from '../game'
-import { getUser, getPlayer } from '../get-player'
+import { getUser, getPlayer, getPlayerStatistics } from '../get-player'
 import { MatchDetails } from '../../types/matchDetails'
 import { getRoundWithScores, setRoundTimes } from '../round'
 import { GuessResponse } from '../../types/guess'
@@ -232,12 +232,15 @@ export const createGameSocket = async (
 
       socket.broadcast.emit('playerJoined', player)
 
+      const players = currentGame.game_players.map(({ player }) => player)
+
       // eslint-disable-next-line n/no-callback-literal
       callback({
         isBotAvailable: ['published-fr-recent', 'published-fr-small'].includes(
           currentGame.dataset.name
         ),
-        players: currentGame.game_players.map(({ player }) => player),
+        players,
+        playerStats: await getPlayerStatistics(players.map(({ id }) => id)),
       } as MatchDetails)
     })
 

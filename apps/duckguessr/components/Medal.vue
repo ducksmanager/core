@@ -3,12 +3,12 @@
     <div
       class="position-relative medal"
       :style="{ backgroundImage: nextMedalUrl }"
-      :title="medalTitle"
+      :title="withTitle ? medalTitle : ''"
     >
       <div
         class="position-absolute overlay"
         :class="{ desaturated: medalLevelAndProgress.level === 0 }"
-        :title="medalTitle"
+        :title="withTitle ? medalTitle : ''"
         :style="{
           backgroundImage: currentMedalUrl,
           'clip-path': `inset(0px 0px 0px ${
@@ -69,6 +69,10 @@ const props = defineProps({
   withDetails: {
     type: Boolean,
     default: false,
+  },
+  withTitle: {
+    type: Boolean,
+    default: true,
   },
   medalLevelAndProgress: { type: MedalLevelAndProgress, required: true },
 })

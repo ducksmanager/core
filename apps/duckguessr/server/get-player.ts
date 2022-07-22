@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'fs'
 import Index, { PrismaClient } from '@prisma/client'
+import { UserGameMedalPoints, UserMedalPoints } from '../types/playerStats'
 
 const prisma = new PrismaClient()
 
@@ -70,68 +71,19 @@ export const updatePlayer = async (playerId: number, player: Index.player): Prom
     data: player,
   })
 
-export const getPlayerGameStatistics = async (
-  player: Index.player,
-  gameId: number
-): Promise<{ [key: string]: number }[]> =>
+export const getPlayerGameStatistics = async (gameId: number): Promise<UserGameMedalPoints[]> =>
   await prisma.$queryRaw`
-    SELECT (SELECT COUNT(*)
-            FROM round_score
-                   INNER JOIN round ON round_score.round_id = round.id
-            WHERE player_id = ${player.id}
-              AND round.game_id = ${gameId}
-              AND time_spent_guessing < 2000) AS ultra_fast
-      ,
-           (SELECT COUNT(*)
-            FROM round_score
-                   INNER JOIN round ON round_score.round_id = round.id
-            WHERE player_id = ${player.id}
-              AND round.game_id = ${gameId}
-              AND time_spent_guessing < 5000)
-                                              AS fast
+    SELECT *
+    FROM user_medals_game
+    WHERE game_id = ${gameId}
+      AND medal_type NOT IN ('published-fr-small')
   `
 
-export const getPlayerStatistics = async (
-  player: Index.player
-): Promise<{ [key: string]: number }[]> =>
+export const getPlayerStatistics = async (playerIds: number[]): Promise<UserMedalPoints[]> =>
   await prisma.$queryRaw`
-    SELECT (SELECT COUNT(*)
-            FROM game_scores
-                   INNER JOIN game g ON game_scores.game_id = g.id
-            WHERE player_id = ${player.id}
-              AND game_score = (SELECT MAX(game_score)
-                                FROM game_scores game_scores2
-                                WHERE game_scores.game_id = game_scores2.game_id)
-              AND g.dataset_id = (SELECT id FROM dataset WHERE name = 'published-fr-recent'))
-                      AS "published-fr-recent",
-           (SELECT COUNT(*)
-            FROM game_scores
-                   INNER JOIN game g ON game_scores.game_id = g.id
-            WHERE player_id = ${player.id}
-              AND game_score = (SELECT MAX(game_score)
-                                FROM game_scores game_scores2
-                                WHERE game_scores.game_id = game_scores2.game_id)
-              AND g.dataset_id = (SELECT id FROM dataset WHERE name = 'it'))
-                      AS "it",
-           (SELECT COUNT(*)
-            FROM game_scores
-                   INNER JOIN game g ON game_scores.game_id = g.id
-            WHERE player_id = ${player.id}
-              AND game_score = (SELECT MAX(game_score)
-                                FROM game_scores game_scores2
-                                WHERE game_scores.game_id = game_scores2.game_id)
-              AND g.dataset_id = (SELECT id FROM dataset WHERE name = 'us'))
-                      AS "us",
-           (SELECT COUNT(*)
-            FROM round_score
-            WHERE player_id = ${player.id}
-              AND time_spent_guessing
-              < 2000) AS ultra_fast
-      ,
-           (SELECT COUNT(*)
-            FROM round_score
-            WHERE player_id = ${player.id}
-              AND time_spent_guessing
-              < 5000)
-                      AS fast
+    SELECT *
+    FROM user_medals
+    WHERE player_id IN (${playerIds.join(',')})
+      AND medal_type NOT IN ('published-fr-small')
+
   `

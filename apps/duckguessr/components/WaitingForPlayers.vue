@@ -3,13 +3,24 @@
     <alert-not-connected v-if="isAnonymous === true" />
     <h3>{{ t('The game is about to start!') }}</h3>
     <b-row align-h="center">
-      <b-card v-for="{ username, avatar } in players" :key="username" class="player m-3 col-lg-3">
+      <b-card
+        v-for="{ username, avatar, id } in players"
+        :key="username"
+        class="player m-3 col-lg-3"
+      >
         <player-info
           :username="username"
           :avatar="avatar"
           :toggleable="isBot(username)"
           @toggle="$emit('remove-bot')"
-        />
+        >
+          <medal-list
+            :with-details="false"
+            :stats-override="getGamePlayerStats(id)"
+            :cols="null"
+            :cols-lg="null"
+          />
+        </player-info>
       </b-card>
       <b-card v-if="isMatchCreator && isBotAvailable && !isBotPlaying" class="player m-3 col-lg-3">
         <player-info username="potential_bot" toggleable @toggle="$emit('add-bot')" />
@@ -56,10 +67,15 @@ import { useI18n } from 'nuxt-i18n-composable'
 import Index from '@prisma/client'
 import { getDuckguessrUsername } from '~/composables/user'
 import { userStore } from '~/store/user'
+import { UserMedalPoints } from '~/types/playerStats'
 
 export default defineComponent({
   props: {
-    players: { type: Array as () => Array<Index.player>, required: true },
+    players: { type: Array as () => Index.player[], required: true },
+    gamePlayersStats: {
+      type: Array as () => UserMedalPoints[],
+      required: true,
+    },
     gameId: { type: Number, required: true },
     isBotAvailable: { type: Boolean, required: true },
   },
@@ -79,6 +95,9 @@ export default defineComponent({
     const isBot = (username: string) => /^bot_/.test(username)
 
     const isAnonymous = computed(() => userStore().isAnonymous)
+
+    const getGamePlayerStats = (playerId: number) =>
+      props.gamePlayersStats.filter(({ player_id }) => player_id === playerId)
 
     useMeta(() => ({
       title: title.value,
@@ -113,6 +132,7 @@ export default defineComponent({
       isMatchCreator,
       isBotPlaying,
       isBot,
+      getGamePlayerStats,
     }
   },
   head: {},

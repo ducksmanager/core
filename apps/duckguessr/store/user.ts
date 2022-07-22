@@ -9,7 +9,7 @@ import {
   setUserCookieIfNotExists,
 } from '~/composables/user'
 import { ClientToServerEvents, ServerToClientEvents } from '~/types/socketEvents'
-import { MedalLevel, MedalLevelAndProgress } from '~/types/playerStats'
+import { MedalLevel, UserGameMedalPoints, UserMedalPoints } from '~/types/playerStats'
 
 export const MEDAL_LEVELS: MedalLevel[] = [
   new MedalLevel('fast', [25, 150, 500]),
@@ -23,46 +23,12 @@ export const userStore = defineStore('user', {
   state: () => ({
     loginSocket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
     user: null as Index.player | null,
-    stats: null as { [key: string]: number } | null,
-    gameStats: null as { [key: string]: number } | null,
+    stats: null as UserMedalPoints[] | null,
+    gameStats: null as UserGameMedalPoints[] | null,
     attempts: 0 as number,
   }),
   getters: {
     isAnonymous: (state) => state.user && isAnonymousNative(state.user.username),
-
-    levelsAndProgress: (state): { [key: string]: MedalLevelAndProgress } =>
-      !state.stats
-        ? {}
-        : MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
-            let level =
-              levels.length -
-              [...levels]!
-                .reverse()
-                .findIndex((levelThreshold: number) => state.stats![medalType] >= levelThreshold)
-
-            if (level === 4) {
-              level = 0
-            }
-            if (level === 3) {
-              return {
-                ...acc,
-                [medalType]: new MedalLevelAndProgress(level, 0, 0),
-              }
-            }
-            const currentLevelThreshold = level === 0 ? 0 : levels[level - 1]
-            const currentLevelPoints = state.stats![medalType] - currentLevelThreshold
-            const currentLevelProgressPoints = state.gameStats ? state.gameStats![medalType] : 0
-
-            const medalLevelAndProgress = new MedalLevelAndProgress(
-              level,
-              currentLevelPoints,
-              currentLevelProgressPoints
-            )
-            return {
-              ...acc,
-              [medalType]: medalLevelAndProgress,
-            }
-          }, {}),
   },
   actions: {
     login() {
@@ -91,7 +57,7 @@ export const userStore = defineStore('user', {
 
     loadStats() {
       const vm = this
-      this.loginSocket!.emit('getStats', (stats: typeof vm.stats) => {
+      this.loginSocket!.emit('getStats', null, (stats: typeof vm.stats) => {
         vm.stats = stats
       })
     },
@@ -101,7 +67,12 @@ export const userStore = defineStore('user', {
       this.loginSocket!.emit('getGameStats', gameId, (stats: typeof vm.gameStats) => {
         vm.gameStats = stats
         if (currentGameDatasetName) {
-          vm.gameStats![currentGameDatasetName] = isWinningPlayer ? 1 : 0
+          vm.gameStats!.push({
+            medal_type: currentGameDatasetName,
+            game_id: gameId,
+            player_id: vm.user!.id,
+            points: isWinningPlayer ? 1 : 0,
+          })
         }
       })
     },
