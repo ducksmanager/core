@@ -54,6 +54,17 @@ jobs:
           tags: |
             ghcr.io/bperel/duckguessr-socketio:latest
 
+      - name: Upload docker-compose.yml config
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: upload
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: docker-compose.yml
+          target: /home/bperel/workspace/duckguessr/docker-compose.yml
+
       - name: Recreate container
         uses: appleboy/ssh-action@v0.1.4
         env:
@@ -67,4 +78,4 @@ jobs:
           script: |
             cd workspace/duckguessr
             echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
-            docker-compose pull && docker-compose up -d --force-recreate
+            docker compose pull && docker compose up -d --force-recreate
