@@ -139,16 +139,27 @@
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
-                  <b-icon-calendar
+                  <svg
                     v-if="
                       purchaseId &&
                       purchases.find(({ id }) => id === purchaseId)
                     "
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    role="img"
+                    focusable="false"
                     class="issue-purchase-date"
-                    :title="`${boughtOnTextPrefix} ${
-                      purchases.find(({ id }) => id === purchaseId).date
-                    }`"
-                  />
+                  >
+                    <title :id="`purchase-${purchaseId}`">
+                      {{ boughtOnTextPrefix }}
+                      {{ purchases.find(({ id }) => id === purchaseId).date }}
+                    </title>
+                    <path
+                      d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
+                    ></path>
+                  </svg>
                   <Condition
                     v-if="copyCondition"
                     :publicationcode="publicationcode"
@@ -229,7 +240,7 @@
 
 <script setup>
 import axios from "axios";
-import { BIconCalendar, BIconEyeFill } from "bootstrap-icons-vue";
+import { BIconEyeFill } from "bootstrap-icons-vue";
 import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
