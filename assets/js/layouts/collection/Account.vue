@@ -112,6 +112,7 @@
 import axios from "axios";
 import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
 import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 
 import Errorable from "../../components/Errorable";
 import { collection } from "../../stores/collection";
@@ -133,6 +134,8 @@ const hasRequestedPresentationSentence = $computed(() =>
     : parseInt(props.hasrequestedpresentationsentence) === 1
 );
 
+const { t: $t } = useI18n(),
+  t = $t;
 const { r } = l10n();
 
 onMounted(async () => {
