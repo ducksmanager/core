@@ -1,7 +1,6 @@
-import Vue from "vue";
-import { cachedCoaApi as coaApi } from "../util/cache";
-
 import { defineStore } from "pinia";
+
+import { cachedCoaApi as coaApi } from "../util/cache";
 
 const URL_PREFIX_COUNTRIES = `/api/coa/list/countries/LOCALE`;
 const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";
@@ -89,7 +88,7 @@ export const coa = defineStore("coa", {
       if (!this.isLoadingCountryNames && !this.countryNames) {
         this.isLoadingCountryNames = true;
         this.countryNames = (
-          await cachedCoaApi.get(
+          await coaApi.get(
             URL_PREFIX_COUNTRIES.replace(
               "LOCALE",
               localStorage.getItem("locale")
@@ -162,7 +161,7 @@ export const coa = defineStore("coa", {
       if (this.publicationNamesFullCountries.includes(countryCode)) {
         return;
       }
-      return cachedCoaApi
+      return coaApi
         .get(URL_PREFIX_PUBLICATIONS + countryCode)
         .then(({ data }) => {
           this.addPublicationNames({
@@ -255,7 +254,7 @@ export const coa = defineStore("coa", {
 
     async fetchIssueCounts() {
       if (!this.issueCounts) {
-        this.issueCounts = (await cachedCoaApi.get(URL_ISSUE_COUNTS)).data;
+        this.issueCounts = (await coaApi.get(URL_ISSUE_COUNTS)).data;
       }
     },
 
@@ -263,7 +262,7 @@ export const coa = defineStore("coa", {
       const issueCode = `${publicationCode} ${issueNumber}`;
       if (!this.issueDetails[issueCode]) {
         let issueDetails = (
-          await cachedCoaApi.get(
+          await coaApi.get(
             `${URL_PREFIX_URLS + publicationCode}/${issueNumber}`
           )
         ).data;
@@ -293,8 +292,8 @@ export const coa = defineStore("coa", {
               await acc
             ).concat(
               await (method === "get"
-                ? cachedCoaApi.get(`${url}${codeChunk.join(",")}`)
-                : cachedCoaApi.request({
+                ? coaApi.get(`${url}${codeChunk.join(",")}`)
+                : coaApi.request({
                     method,
                     url,
                     data: { [parameterName]: codeChunk.join(",") },

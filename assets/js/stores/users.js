@@ -1,7 +1,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 
-import { cachedUserApi } from "../util/cache";
+import { cachedUserApi as userApi } from "../util/cache";
 
 export const users = defineStore("users", {
   state: () => ({
@@ -15,9 +15,7 @@ export const users = defineStore("users", {
   actions: {
     async fetchCount() {
       if (!this.count) {
-        this.count = (
-          await cachedUserApi.get("/global-stats/user/count")
-        ).data.count;
+        this.count = (await userApi.get("/global-stats/user/count")).data.count;
       }
     },
     async fetchStats(userIds, clearCacheEntry = true) {
@@ -31,8 +29,7 @@ export const users = defineStore("users", {
         .sort((a, b) => (a < b ? -1 : 1))
         .join(",")}`;
 
-      const data = (await cachedUserApi.get(url, { cache: !clearCacheEntry }))
-        .data;
+      const data = (await userApi.get(url, { cache: !clearCacheEntry })).data;
       this.points = {
         ...this.points,
         ...data.points.reduce(
@@ -64,7 +61,7 @@ export const users = defineStore("users", {
     },
 
     async fetchEvents(clearCacheEntry = true) {
-      const { data, cached } = await cachedUserApi.get("/events", {
+      const { data, cached } = await userApi.get("/events", {
         cache: !clearCacheEntry,
       });
       this.events = (data || [])

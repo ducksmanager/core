@@ -41,13 +41,15 @@
     </h5>
 
     <SlickList
-      v-model="bookcaseOrder"
+      v-if="bookcaseOrder"
+      v-model:list="bookcaseOrder"
       class="publication-order"
       helper-class="dragging"
+      @update:list="setBookcaseOrder(bookcaseOrder)"
     >
       <SlickItem
         v-for="(publicationCode, index) in bookcaseOrder"
-        :key="index"
+        :key="publicationCode"
         :index="index"
       >
         <Publication
@@ -78,7 +80,7 @@ import {
   BDropdownItem,
   BFormCheckbox,
 } from "bootstrap-vue-3";
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { SlickItem, SlickList } from "vue-slicksort";
 
@@ -138,19 +140,18 @@ const { username } = user(),
     "bois/WHITE BIRCH",
     "bois/ZEBRAWOOD",
   ],
-  bookcaseOptions = bookcaseStore.bookcaseOptions,
-  publicationNames = bookcaseStore.publicationNames,
-  textureTypes = () => ({
+  bookcaseOptions = $computed(() => bookcaseStore.bookcaseOptions),
+  publicationNames = $computed(() => coa().publicationNames),
+  textureTypes = $computed(() => ({
     bookcase: $t("Sous-texture"),
     bookshelf: $t("Sous-texture de l'étagère"),
-  }),
-  bookcaseOrder = $computed(() => bookcaseStore.bookcaseOrder),
-  setBookcaseUsername = bookcase().setBookcaseUsername,
-  setBookcaseOrder = bookcase().setBookcaseOrder,
-  loadBookcaseOptions = bookcase().loadBookcaseOptions,
-  loadBookcaseOrder = bookcase().loadBookcaseOrder,
-  updateBookcaseOptions = bookcase().updateBookcaseOptions,
-  updateBookcaseOrder = bookcase().updateBookcaseOrder,
+  })),
+  setBookcaseUsername = bookcaseStore.setBookcaseUsername,
+  setBookcaseOrder = bookcaseStore.setBookcaseOrder,
+  loadBookcaseOptions = bookcaseStore.loadBookcaseOptions,
+  loadBookcaseOrder = bookcaseStore.loadBookcaseOrder,
+  updateBookcaseOptions = bookcaseStore.updateBookcaseOptions,
+  updateBookcaseOrder = bookcaseStore.updateBookcaseOrder,
   fetchPublicationNames = coa().fetchPublicationNames,
   loadData = async () => {
     await loadBookcaseOptions();
@@ -174,16 +175,16 @@ const { username } = user(),
 
 let error = $ref(false),
   loading = $ref(true),
-  hasPublicationNames = $ref(false);
+  hasPublicationNames = $ref(false),
+  bookcaseOrder = $ref(null);
 
 onMounted(async () => {
   setBookcaseUsername(username);
   await loadData();
+  bookcaseOrder = bookcaseStore.bookcaseOrder;
   await fetchPublicationNames(bookcaseOrder);
-  setBookcaseOrder(
-    bookcaseOrder.filter((publicationCode) =>
-      Object.keys(publicationNames).includes(publicationCode)
-    )
+  bookcaseOrder = bookcaseOrder.filter((publicationCode) =>
+    Object.keys(publicationNames).includes(publicationCode)
   );
   hasPublicationNames = true;
 });
