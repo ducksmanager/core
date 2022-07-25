@@ -205,7 +205,7 @@
   "Le nom d'utilisateur est invalide. Choisissez un nom d'utilisateur d'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.": "Invalid username. Choose a username with at least 3 characters and containing only letters, digits and dashes.",
   "Le site Internet de référence des collectionneurs de bandes dessinées Disney": "The reference website for Disney comic book collectors",
   "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !": "The calculations have not been done yet. The stats are generated every day, come back tomorrow!",
-  "Les cotes utilisées proviennent des sites Internet {0}, {1} et {2}.": "The quotations come from the websites {0}, {1} and {2}.",
+  "Les cotes utilisées proviennent des sites Internet {0}, {1}, {2} et {3}.": "The quotations come from the websites {0}, {1}, {2} and {3}.",
   "Les deux mots de passe ne correspondent pas !": "The two passwords are different!",
   "Les identifiants que vous avez entré sont invalides, veuillez réessayer.": "These credentials are invalid, please try again.",
   "Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.": "The DucksManager and WhatTheDuck logos are drawn by enigm.",

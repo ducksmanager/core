@@ -110,7 +110,7 @@
             }}
           </div>
           <div
-            v-html="$t('Les cotes utilisées proviennent des sites Internet {0}, {1} et {2}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`, `<a href='http://comicsmania.gr'>ComicsMania</a>`, `<a href='https://seriesam.com'>Seriesam</a>`])"
+            v-html="$t('Les cotes utilisées proviennent des sites Internet {0}, {1}, {2} et {3}.', [`<a href='https://bedetheque.com'>Bédéthèque</a>`, `<a href='http://comicsmania.gr'>ComicsMania</a>`, `<a href='https://seriesam.com'>Seriesam</a>`, `<a href='https://gocollect.com'>Gocollect</a>`])"
           />
           {{
             $t(

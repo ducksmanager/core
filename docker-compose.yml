@@ -7,7 +7,7 @@ services:
       - php-flex
     restart: always
     networks:
-      - workspace_global-front-network
+      - public-network
       - dm-network
 
   php-flex:
@@ -27,12 +27,12 @@ services:
     volumes:
       - ./config/sentry-relay:/work/.relay
     networks:
-      - workspace_global-front-network
+      - public-network
 
 
 networks:
   dm-network:
-  workspace_global-front-network:
+  public-network:
     external: true
   dm-server_front-network:
     external: true
