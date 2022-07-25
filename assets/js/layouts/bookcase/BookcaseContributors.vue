@@ -48,7 +48,7 @@ const bookcaseContributors = $computed(() => usersStore.bookcaseContributors),
     () =>
       !loading &&
       [...bookcaseContributors].sort(({ name: name1 }, { name: name2 }) =>
-        name1.toLowerCase() < name2.toLowerCase() ? -1 : 1
+        Math.sign(name1.toLowerCase() - name2.toLowerCase())
       )
   );
 

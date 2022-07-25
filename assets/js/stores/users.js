@@ -26,7 +26,7 @@ export const users = defineStore("users", {
         return;
       }
       const url = `/global-stats/user/${missingUserIds
-        .sort((a, b) => (a < b ? -1 : 1))
+        .sort((a, b) => Math.sign(a - b))
         .join(",")}`;
 
       const data = (await userApi.get(url, { cache: !clearCacheEntry })).data;
