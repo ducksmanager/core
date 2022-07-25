@@ -48,10 +48,15 @@ const { t: $t } = useI18n(),
             }),
             {}
           ),
-        [null]: smallCountPublications.reduce(
-          (acc, publicationCode) => acc + totalPerPublication[publicationCode],
-          0
-        ),
+        ...(!smallCountPublications.length
+          ? {}
+          : {
+              [null]: smallCountPublications.reduce(
+                (acc, publicationCode) =>
+                  acc + totalPerPublication[publicationCode],
+                0
+              ),
+            }),
       }
   ),
   labels = $computed(
