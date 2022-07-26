@@ -3,14 +3,12 @@
 namespace App\Controller;
 
 use App\Service\ApiService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class AdminController extends AbstractController
+class AdminController extends PageSiteController
 {
     /**
      * @Route(
@@ -20,12 +18,7 @@ class AdminController extends AbstractController
      */
     public function showEdgeProgress(): Response
     {
-        return $this->render("bare.twig", [
-            'commit' => $_ENV['COMMIT'],
-            'vueProps' => [
-                'component' => 'EdgeProgress'
-            ]
-        ]);
+        return $this->renderBarePage('admin/EdgeProgress', 'Edge progress');
     }
 
     /**
@@ -36,12 +29,7 @@ class AdminController extends AbstractController
      */
     public function showBookstoresAdmin(): Response
     {
-        return $this->render("bare.twig", [
-            'commit' => $_ENV['COMMIT'],
-            'vueProps' => [
-                'component' => 'BookstoresAdmin'
-            ]
-        ]);
+        return $this->renderBarePage('admin/BookstoresAdmin', 'Bookstores admin');
     }
 
     /**

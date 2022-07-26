@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Account;
 use App\Entity\PasswordChange;
-use App\Security\ApiUserProvider;
 use App\Security\User;
 use App\Service\ApiService;
 use Psr\Log\LoggerInterface;
@@ -95,6 +94,21 @@ class PageSiteController extends AbstractController
                 'routes' => json_encode($this->getRouteTranslations()),
                 'page' => $page
             ] + $vueProps
+        ]);
+    }
+
+    protected function renderBarePage(string $page, string $title): Response
+    {
+        return $this->render("bare.twig", [
+            'title' => $title,
+            'innerTitle' => null,
+            'commit' => $_ENV['COMMIT'],
+            'vueProps' => [
+                'component' => 'Site',
+                'bare' => true,
+                'routes' => json_encode($this->getRouteTranslations()),
+                'page' => $page
+            ]
         ]);
     }
 

@@ -56,10 +56,16 @@ input.form-control {
   }
 
   body {
-    padding: 0 0 0 320px;
-
+    &.bare {
+      background: white;
+      margin: 2rem;
+    }
     &.no-padding {
       padding: 0;
+    }
+
+    &:not(.bare) {
+      padding: 0 0 0 320px;
     }
   }
 }

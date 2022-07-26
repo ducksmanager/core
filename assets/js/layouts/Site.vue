@@ -1,5 +1,6 @@
 <template>
-  <div v-if="l10nRoutes">
+  <component :is="pageComponent" v-if="isBare" v-bind="attrsWithoutId" />
+  <div v-else-if="l10nRoutes" :class="{ full: !isBare }">
     <LeftPanel />
     <SwitchLocale />
     <Banner :classes="{ 'd-none d-md-flex': true }" />
@@ -14,7 +15,7 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent, useAttrs } from "vue";
+import { defineAsyncComponent, onMounted, useAttrs } from "vue";
 
 import { l10n } from "../stores/l10n";
 import Banner from "./Banner";
@@ -26,23 +27,33 @@ const props = defineProps({
     page: { type: String, required: true },
     title: { type: String, default: null },
     innerTitle: { type: String, default: null },
+    bare: { type: String, default: "0" },
   }),
   attrs = useAttrs(),
   pageComponent = $computed(() =>
     defineAsyncComponent(() => import(`./${props.page}`))
   ),
+  isBare = $computed(() => props.bare === "1"),
   l10nRoutes = $computed(() => l10n().l10nRoutes),
   attrsWithoutId = $computed(() =>
     Object.keys(attrs)
       .filter((attrKey) => attrKey !== "id")
       .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
   );
+
+onMounted(() => {
+  if (isBare) {
+    document.body.className = "bare";
+  }
+});
 </script>
 
 <style scoped lang="scss">
-* {
-  color: white;
-  background-color: rgb(61, 75, 95) !important;
+.full {
+  * {
+    color: white;
+    background-color: rgb(61, 75, 95) !important;
+  }
 }
 
 #logo_zone2 {
