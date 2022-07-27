@@ -1,7 +1,7 @@
 <template>
   <b-popover
     :target="id"
-    placement="auto top"
+    placement="top"
     boundary="viewport"
     triggers="hover focus"
     :delay="0"

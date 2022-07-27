@@ -8,7 +8,6 @@
   >
     <Edge
       v-for="(edge, edgeId) in edgesToLoad"
-      v-once
       :id="`edge-${edgeId}`"
       :key="`edge-${edgeId}`"
       :publication-code="edge.publicationCode"
