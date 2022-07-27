@@ -13,4 +13,3 @@ from coa.inducks_storyjob sj
        inner join coa.inducks_issue i on e.issuecode = i.issuecode
 where sj.personcode in (select distinct a_p.NomAuteurAbrege
                         from dm.auteurs_pseudos a_p)
-  and sv.storycode = 'ARC GCA   4B'
