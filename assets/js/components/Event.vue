@@ -23,8 +23,8 @@
       >
     </template>
     <template v-if="event.type === 'collection_update'"
-      >&nbsp;{{ $t("a ajouté") }}
-      <Issue
+      >&nbsp;{{ $t("a ajouté")
+      }}<Issue
         v-if="publicationNames[event.publicationCode]"
         :publicationname="publicationNames[event.publicationCode]"
         :publicationcode="event.publicationCode"
@@ -83,7 +83,7 @@
           <template v-if="index === event.users.length - 1">
             {{ ` ${$t("et")} ` }}
           </template>
-          <template v-else-if="index > 0"> , </template>
+          <template v-else-if="index > 0">, </template>
         </template>
         <UserPopover
           v-if="stats[userId]"
