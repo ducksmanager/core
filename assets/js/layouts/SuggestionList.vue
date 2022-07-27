@@ -42,8 +42,12 @@
             class="d-flex align-items-center issue importance"
             :title="`${$t('Score')} : ${score}`"
           >
-            <div class="mr-3 d-flex justify-content-center importance-bills">
-              <b-icon-cash v-for="i in 4 - getImportance(score)" :key="i" />
+            <div class="d-flex justify-content-center importance-bills">
+              <b-icon-cash
+                v-for="i in 4 - getImportance(score)"
+                :key="i"
+                class="me-1"
+              />
             </div>
             <div>
               <Issue
@@ -55,7 +59,7 @@
                 no-wrap
               >
                 <template #title-suffix>
-                  <div class="release-date mt-2">
+                  <div class="release-date mt-2 ms-1">
                     {{ $t("Sortie :") }} {{ oldestdate }}
                   </div>
                 </template>
@@ -84,16 +88,16 @@ import StoryList from "../components/StoryList";
 import { collection } from "../stores/collection";
 
 const { countrycode, sinceLastVisit } = defineProps({
-    countrycode: {
-      type: String,
-      default: null,
-    },
-    sinceLastVisit: {
-      type: Boolean,
-      default: false,
-    },
-  }),
-  { t: $t } = useI18n(),
+  countrycode: {
+    type: String,
+    default: null,
+  },
+  sinceLastVisit: {
+    type: Boolean,
+    default: false,
+  },
+});
+const { t: $t } = useI18n(),
   suggestions = $computed(() => collection().suggestions),
   hasSuggestions = $computed(() => collection().hasSuggestions),
   suggestionSorts = () => ({
