@@ -211,11 +211,11 @@ const { r } = l10n(),
   ),
   sortedBookcase = $computed(
     () =>
-      bookcase.bookcase &&
+      bookcase.bookcaseWithPopularities &&
       bookcaseOrder &&
       hasIssueNumbers &&
       [
-        ...bookcase.bookcase.map((edge) => ({
+        ...bookcase.bookcaseWithPopularities.map((edge) => ({
           ...edge,
           publicationCode: `${edge.countryCode}/${edge.magazineCode}`,
         })),

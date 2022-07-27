@@ -254,7 +254,7 @@ import ContextMenu from "./ContextMenu";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Publication from "./Publication";
 
-const props = defineProps({
+const { duplicatesOnly, publicationcode } = defineProps({
   publicationcode: {
     type: String,
     required: true,
@@ -293,8 +293,8 @@ const contextMenuKey = "context-menu",
   publicationNames = $computed(() => coa().publicationNames),
   userIssues = $computed(() => collectionStore().collection),
   purchases = $computed(() => collectionStore().purchases),
-  country = $computed(() => props.publicationcode.split("/")[0]),
-  publicationName = $computed(() => publicationNames[props.publicationcode]),
+  country = $computed(() => publicationcode.split("/")[0]),
+  publicationName = $computed(() => publicationNames[publicationcode]),
   isTouchScreen = window.matchMedia("(pointer: coarse)").matches,
   filteredIssues = $computed(() =>
     issues?.filter(
@@ -341,7 +341,7 @@ const contextMenuKey = "context-menu",
   },
   deletePublicationIssues = async (issuesToDelete) =>
     await updateIssues({
-      publicationCode: props.publicationcode,
+      publicationCode: publicationcode,
       issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
       condition: conditions.find(({ value }) => value === "missing").dbValue,
       istosell: false,
@@ -378,8 +378,7 @@ watch(
     if (newValue) {
       userIssuesForPublication = newValue
         .filter(
-          (issue) =>
-            `${issue.country}/${issue.magazine}` === props.publicationcode
+          (issue) => `${issue.country}/${issue.magazine}` === publicationcode
         )
         .map((issue) => ({
           ...issue,
@@ -392,7 +391,7 @@ watch(
 
       const issuesWithTitles = (
         await axios.get(
-          `/api/coa/list/issues/withTitle/asArray/${props.publicationcode}`
+          `/api/coa/list/issues/withTitle/asArray/${publicationcode}`
         )
       ).data;
 
@@ -404,9 +403,7 @@ watch(
               userIssueNumber === issue.issueNumber
           ),
         }))
-        .filter(
-          ({ userCopies }) => !props.duplicatesOnly || userCopies.length > 1
-        );
+        .filter(({ userCopies }) => !duplicatesOnly || userCopies.length > 1);
       const coaIssueNumbers = issuesWithTitles.map(
         ({ issueNumber }) => issueNumber
       );
@@ -421,7 +418,7 @@ watch(
 
 onMounted(async () => {
   await loadPurchases();
-  await fetchPublicationNames([props.publicationcode]);
+  await fetchPublicationNames([publicationcode]);
   publicationNameLoading = false;
 });
 </script>

@@ -104,9 +104,9 @@ const { r } = l10n(),
     try {
       await axios.put("/signup", {
         username: signupUsername,
-        password: password,
-        password2: password2,
-        email: email,
+        password,
+        password2,
+        email,
         _csrf_token: csrfToken,
       });
       window.location.replace(l10n().r("/collection/show"));

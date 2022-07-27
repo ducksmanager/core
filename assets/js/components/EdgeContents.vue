@@ -47,6 +47,16 @@ const { id, issueNumber, publicationCode, spritePath } = defineProps({
     type: String,
     required: true,
   },
+  publicationCode: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  issueNumber: {
+    type: String,
+    required: false,
+    default: null,
+  },
   src: {
     type: String,
     required: true,
@@ -70,7 +80,7 @@ const { id, issueNumber, publicationCode, spritePath } = defineProps({
 });
 const emit = defineEmits(["loaded", "open-book"]);
 
-const loadedSprites = $computed(() => bookcase().bookcase),
+const loadedSprites = $computed(() => bookcase().loadedSprites),
   spriteClass = $computed(() =>
     id && spritePath
       ? `edges-${publicationCode.replace(/\//g, "-")}-${issueNumber}`
@@ -91,7 +101,10 @@ const loadedSprites = $computed(() => bookcase().bookcase),
           style.textContent = css;
           document.head.append(style);
 
-          bookcase().addLoadedSprite({ spritePath: spritePath, css });
+          bookcase().addLoadedSprite({
+            spritePath,
+            css,
+          });
           loadEdgeFromSprite();
         } catch (_) {
           ignoreSprite = true;

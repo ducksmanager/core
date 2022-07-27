@@ -10,14 +10,14 @@
 <script setup>
 import { l10n } from "../stores/l10n";
 
-const props = defineProps({
-    path: { type: String, required: true },
-    icon: { type: String, default: null },
-  }),
-  { r } = l10n(),
+const { path } = defineProps({
+  path: { type: String, required: true },
+  icon: { type: String, default: null },
+});
+const { r } = l10n(),
   active = $computed(
     () =>
-      !r(props.path)
+      !r(path)
         .split("/")
         .find(
           (pathPart) => !window.location.pathname.split("/").includes(pathPart)

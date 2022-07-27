@@ -240,7 +240,7 @@ import { collection } from "../stores/collection";
 import { l10n } from "../stores/l10n";
 import Condition from "./Condition";
 
-const props = defineProps({
+const { copies, publicationCode, selectedIssues } = defineProps({
     publicationCode: {
       type: String,
       required: true,
@@ -295,15 +295,15 @@ let defaultState = $ref({
     link: $t("Associer avec une date d'achat"),
     unlink: $t("Désassocier de la date d'achat"),
   })),
-  isSingleIssueSelected = $computed(() => props.selectedIssues.length === 1),
+  isSingleIssueSelected = $computed(() => selectedIssues.length === 1),
   hasNoCopies = $computed(() => !editingCopies.length),
   hasMaxCopies = $computed(() => editingCopies.length >= 3),
   r = l10n().r,
   formatDate = (value) => (/\d{4}-\d{2}-\d{2}/.test(value) ? value : today),
   updateEditingCopies = () => {
-    if (props.selectedIssues.length === 1) {
-      if (props.copies.length) {
-        editingCopies = JSON.parse(JSON.stringify(props.copies));
+    if (selectedIssues.length === 1) {
+      if (copies.length) {
+        editingCopies = JSON.parse(JSON.stringify(copies));
       } else {
         editingCopies = [{ ...defaultState, condition: "missing" }];
       }
@@ -333,8 +333,8 @@ let defaultState = $ref({
     }
 
     emit("update-issues", {
-      publicationCode: props.publicationCode,
-      issueNumbers: props.selectedIssues,
+      publicationCode,
+      issueNumbers: selectedIssues,
       ...issueDetails,
     });
   },
@@ -345,12 +345,12 @@ let defaultState = $ref({
     });
 
 watch(
-  () => props.selectedIssues,
+  () => selectedIssues,
   () => updateEditingCopies(),
   { immediate: true }
 );
 watch(
-  () => props.copies,
+  () => copies,
   () => updateEditingCopies(),
   { immediate: true }
 );

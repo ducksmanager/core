@@ -17,7 +17,7 @@ import { useI18n } from "vue-i18n";
 import { collection } from "../stores/collection";
 import Menu from "./Menu";
 
-const props = defineProps({
+const { tab } = defineProps({
   tab: {
     type: String,
     required: true,
@@ -25,9 +25,7 @@ const props = defineProps({
 });
 const component = $computed(() =>
     defineAsyncComponent(() =>
-      import(
-        `./collection/${props.tab[0].toUpperCase() + props.tab.substring(1)}`
-      )
+      import(`./collection/${tab[0].toUpperCase() + tab.substring(1)}`)
     )
   ),
   attrs = useAttrs(),

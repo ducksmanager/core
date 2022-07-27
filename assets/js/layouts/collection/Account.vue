@@ -118,7 +118,7 @@ import Errorable from "../../components/Errorable";
 import { collection } from "../../stores/collection";
 import { form } from "../../stores/form";
 import { l10n } from "../../stores/l10n";
-const props = defineProps({
+const { errors, hasrequestedpresentationsentence, success } = defineProps({
   errors: { type: String, default: "" },
   success: { type: String, default: null },
   hasrequestedpresentationsentence: { type: String, default: null },
@@ -126,12 +126,12 @@ const props = defineProps({
 
 const user = $computed(() => collection().user);
 const isSuccess = $computed(() =>
-  props.success === null ? null : parseInt(props.success) === 1
+  success === null ? null : parseInt(success) === 1
 );
 const hasRequestedPresentationSentence = $computed(() =>
-  props.hasrequestedpresentationsentence === null
+  hasrequestedpresentationsentence === null
     ? null
-    : parseInt(props.hasrequestedpresentationsentence) === 1
+    : parseInt(hasrequestedpresentationsentence) === 1
 );
 
 const { t: $t } = useI18n(),
@@ -140,7 +140,7 @@ const { r } = l10n();
 
 onMounted(async () => {
   await collection().loadUser();
-  form().addErrors(JSON.parse(props.errors));
+  form().addErrors(JSON.parse(errors));
 });
 
 const emptyCollection = async () => {

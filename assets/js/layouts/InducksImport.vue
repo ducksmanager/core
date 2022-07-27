@@ -349,7 +349,7 @@ const { t: $t } = useI18n(),
     for (let publicationCode in importableIssuesByPublicationCode) {
       if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
         await axios.post("/api/collection/issues", {
-          publicationCode: publicationCode,
+          publicationCode,
           issueNumbers: importableIssuesByPublicationCode[publicationCode],
           condition: issueDefaultCondition,
           istosell: "do_not_change",

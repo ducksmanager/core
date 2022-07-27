@@ -31,7 +31,7 @@ import { watch } from "vue";
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
 
-const props = defineProps({
+const { initialCountryCode, initialPublicationCode } = defineProps({
   noButton: {
     type: Boolean,
     default: false,
@@ -47,8 +47,8 @@ const props = defineProps({
 });
 defineEmits(["input"]);
 
-let currentCountryCode = $ref(props.initialCountryCode),
-  currentPublicationCode = $ref(props.initialPublicationCode);
+let currentCountryCode = $ref(initialCountryCode),
+  currentPublicationCode = $ref(initialPublicationCode);
 const coaStore = coa(),
   countryNames = $computed(() => coaStore.countryNames),
   publicationNames = $computed(() => coaStore.publicationNames),

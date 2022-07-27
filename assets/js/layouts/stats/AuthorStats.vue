@@ -27,7 +27,7 @@ Chart.register(
   Title
 );
 
-const props = defineProps({
+const { unit, watchedAuthorsStoryCount } = defineProps({
   unit: {
     type: String,
     required: true,
@@ -42,20 +42,20 @@ const emit = defineEmits(["change-dimension"]);
 const { t: $t } = useI18n();
 collection();
 
-const labels = Object.values(props.watchedAuthorsStoryCount).map(
+const labels = Object.values(watchedAuthorsStoryCount).map(
   ({ fullname: fullName }) => fullName
 );
 emit("change-dimension", "width", 250 + 50 * labels.length);
 
-let possessedStories = Object.values(props.watchedAuthorsStoryCount).map(
+let possessedStories = Object.values(watchedAuthorsStoryCount).map(
     ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
       storyCount - missingStoryCount
   ),
-  missingStories = Object.values(props.watchedAuthorsStoryCount).map(
+  missingStories = Object.values(watchedAuthorsStoryCount).map(
     ({ missingstorycount: missingStoryCount }) => missingStoryCount
   );
 
-if (props.unit === "percentage") {
+if (unit === "percentage") {
   possessedStories = possessedStories.map((possessedCount, key) =>
     Math.round(possessedCount * (100 / (possessedCount + missingStories[key])))
   );
@@ -107,7 +107,7 @@ const values = [possessedStories, missingStories],
         callbacks: {
           title: ([tooltip]) => tooltip.label,
           label: ({ dataset, raw }) =>
-            `${dataset.label}: ${raw}${props.unit === "percentage" ? "%" : ""}`,
+            `${dataset.label}: ${raw}${unit === "percentage" ? "%" : ""}`,
         },
       },
     },

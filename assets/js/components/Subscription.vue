@@ -79,34 +79,33 @@ import Publication from "./Publication";
 import PublicationSelect from "./PublicationSelect";
 
 defineEmits(["delete", "edit", "start-edit", "cancel-edit"]);
-const props = defineProps({
-    id: {
-      default: null,
-      type: Number,
-    },
-    isEdit: {
-      required: true,
-      type: Boolean,
-    },
-    publicationCode: {
-      default: null,
-      type: String,
-    },
-    startDate: {
-      default: null,
-      type: String,
-    },
-    endDate: {
-      default: null,
-      type: String,
-    },
-  }),
-  editSubscription = {
-    publicationCode: props.publicationCode,
-    startDate: props.startDate,
-    endDate: props.endDate,
+const { endDate, publicationCode, startDate } = defineProps({
+  id: {
+    default: null,
+    type: Number,
   },
-  editedSubscriptionId = null,
+  isEdit: {
+    required: true,
+    type: Boolean,
+  },
+  publicationCode: {
+    default: null,
+    type: String,
+  },
+  startDate: {
+    default: null,
+    type: String,
+  },
+  endDate: {
+    default: null,
+    type: String,
+  },
+});
+const editSubscription = {
+    publicationCode,
+    startDate,
+    endDate,
+  },
   publicationNames = $computed(() => coa().publicationNames);
 </script>
 

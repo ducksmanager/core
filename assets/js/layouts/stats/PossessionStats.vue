@@ -117,7 +117,7 @@ watch(
             legend: $t("Numéros référencés non-possédés"),
           },
         ],
-        labels: labels,
+        labels,
         legends: [
           $t("Numéros possédés"),
           $t("Numéros référencés non-possédés"),

@@ -55,12 +55,12 @@ import { imagePath } from "../composables/imagePath";
 import { l10n } from "../stores/l10n";
 import Medal from "./Medal";
 
-const props = defineProps({
-    id: { type: Number, required: true },
-    points: { type: Object, required: true },
-    stats: { type: Object, required: true },
-  }),
-  { r } = l10n(),
+defineProps({
+  id: { type: Number, required: true },
+  points: { type: Object, required: true },
+  stats: { type: Object, required: true },
+});
+const { r } = l10n(),
   bookcaseShared = true,
   closeDelay = 500,
   forceClosePopup = () => {

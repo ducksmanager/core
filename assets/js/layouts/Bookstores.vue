@@ -231,7 +231,7 @@ const { t: $t } = useI18n(),
 onMounted(async () => {
   await fetchBookstores();
   const geocoder = new MapboxGeocoder({
-    accessToken: accessToken,
+    accessToken,
     placeholder: $t("Adresse"),
     types: "address",
     proximity: { latitude: 46.754917, longitude: 1.73584 },

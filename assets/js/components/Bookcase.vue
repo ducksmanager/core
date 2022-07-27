@@ -88,6 +88,7 @@ let currentEdgeIndex = $ref(0),
 
 const loadNextEdge = () => {
   const nextEdge = sortedBookcase[++currentEdgeIndex];
+  console.log(`nextEdge=` + JSON.stringify(nextEdge));
   if (nextEdge) {
     edgesToLoad.push(nextEdge);
   }

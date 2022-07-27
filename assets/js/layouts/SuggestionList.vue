@@ -83,7 +83,7 @@ import Issue from "../components/Issue";
 import StoryList from "../components/StoryList";
 import { collection } from "../stores/collection";
 
-const props = defineProps({
+const { countrycode, sinceLastVisit } = defineProps({
     countrycode: {
       type: String,
       default: null,
@@ -110,13 +110,13 @@ let loading = $ref(true),
   suggestionSortCurrent = $ref("score");
 
 watch(
-  () => props.countrycode,
+  () => countrycode,
   async (newValue) => {
     loading = true;
     await loadSuggestions({
       countryCode: newValue,
       sort: suggestionSortCurrent,
-      sinceLastVisit: props.sinceLastVisit,
+      sinceLastVisit,
     });
     loading = false;
   },
@@ -127,9 +127,9 @@ watch(
   async (newValue) => {
     loading = true;
     await loadSuggestions({
-      countryCode: props.countrycode,
+      countryCode: countrycode,
       sort: newValue,
-      sinceLastVisit: props.sinceLastVisit,
+      sinceLastVisit,
     });
     loading = false;
   }

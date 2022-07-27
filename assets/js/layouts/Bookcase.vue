@@ -39,7 +39,7 @@ import Menu from "./Menu";
 const { username } = user();
 const attrs = useAttrs();
 
-const props = defineProps({
+const { tab } = defineProps({
   tab: {
     type: String,
     required: true,
@@ -47,9 +47,7 @@ const props = defineProps({
 });
 
 const component = $computed(() =>
-    props.tab
-      ? defineAsyncComponent(() => import(`./bookcase/${props.tab}`))
-      : null
+    tab ? defineAsyncComponent(() => import(`./bookcase/${tab}`)) : null
   ),
   attrsWithoutTab = $computed(() =>
     Object.keys(attrs)

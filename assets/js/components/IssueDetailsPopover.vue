@@ -35,7 +35,7 @@ import { BPopover } from "bootstrap-vue-3";
 import { coa } from "../stores/coa";
 import Issue from "./Issue";
 
-const props = defineProps({
+const { issueNumber, publicationCode } = defineProps({
   publicationCode: {
     type: String,
     required: true,
@@ -54,12 +54,9 @@ const cloudinaryBaseUrl =
   publicationNames = $computed(() => coa().publicationNames),
   issueDetails = $computed(() => coa().issueDetails),
   id = $computed(
-    () =>
-      `issue-details-${props.publicationCode.replace("/", "-")}-${
-        props.issueNumber
-      }`
+    () => `issue-details-${publicationCode.replace("/", "-")}-${issueNumber}`
   ),
-  issueCode = $computed(() => `${props.publicationCode} ${props.issueNumber}`),
+  issueCode = $computed(() => `${publicationCode} ${issueNumber}`),
   coverUrl = $computed(() => {
     const cover = issueDetails?.[issueCode].entries.find(
       ({ position }) => !/^p/.test(position)
@@ -72,8 +69,8 @@ const cloudinaryBaseUrl =
   loadIssueUrls = async () => {
     isCoverLoading = true;
     await fetchIssueUrls({
-      publicationCode: props.publicationCode,
-      issueNumber: props.issueNumber,
+      publicationCode,
+      issueNumber,
     });
     isCoverLoading = false;
   };

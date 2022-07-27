@@ -39,7 +39,7 @@ import { BProgress, BProgressBar } from "bootstrap-vue-3";
 import medal from "../composables/medal";
 import Medal from "./Medal";
 
-const props = defineProps({
+const { contribution, userLevelPoints } = defineProps({
   contribution: {
     type: String,
     default: "Photographe",
@@ -55,7 +55,7 @@ const props = defineProps({
 });
 
 const { medalProgressCurrentPercentage, getLevelProgressPercentage } = $(
-  medal(props.contribution, props.userLevelPoints)
+  medal(contribution, userLevelPoints)
 );
 </script>
 

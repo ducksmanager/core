@@ -20,41 +20,41 @@ import { BBadge } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
 const { t: $t } = useI18n();
-const props = defineProps({
-    storycode: {
-      type: String,
-      required: true,
-    },
-    kind: {
-      type: String,
-      default: null,
-    },
-    title: {
-      type: String,
-      default: null,
-    },
-    part: {
-      type: Number,
-      default: null,
-    },
-    comment: {
-      type: String,
-      default: null,
-    },
-    noLink: {
-      type: Boolean,
-      default: false,
-    },
-    dark: {
-      type: Boolean,
-      default: false,
-    },
-  }),
-  urlEncodedStorycode = $computed(
-    () => props.storycode && encodeURIComponent(props.storycode)
+const { kind, storycode } = defineProps({
+  storycode: {
+    type: String,
+    required: true,
+  },
+  kind: {
+    type: String,
+    default: null,
+  },
+  title: {
+    type: String,
+    default: null,
+  },
+  part: {
+    type: Number,
+    default: null,
+  },
+  comment: {
+    type: String,
+    default: null,
+  },
+  noLink: {
+    type: Boolean,
+    default: false,
+  },
+  dark: {
+    type: Boolean,
+    default: false,
+  },
+});
+const urlEncodedStorycode = $computed(
+    () => storycode && encodeURIComponent(storycode)
   ),
   storyTypeText = $computed(() => {
-    switch (props.kind.toUpperCase()) {
+    switch (kind.toUpperCase()) {
       case "A":
         return $t("article");
       case "C":

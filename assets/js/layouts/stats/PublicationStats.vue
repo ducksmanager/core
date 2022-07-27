@@ -131,7 +131,7 @@ watch(
           backgroundColor: colors,
         },
       ],
-      labels: labels,
+      labels,
     };
 
     options = {

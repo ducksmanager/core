@@ -7,21 +7,21 @@
 
 <script setup>
 import { imagePath } from "../composables/imagePath";
-const props = defineProps({
-    publicationcode: {
-      type: String,
-      required: true,
-    },
-    publicationname: {
-      type: String,
-      required: true,
-    },
-    size: {
-      type: String,
-      default: "md",
-    },
-  }),
-  countrycode = $computed(() => props.publicationcode.split("/")[0]);
+const { publicationcode } = defineProps({
+  publicationcode: {
+    type: String,
+    required: true,
+  },
+  publicationname: {
+    type: String,
+    required: true,
+  },
+  size: {
+    type: String,
+    default: "md",
+  },
+});
+const countrycode = $computed(() => publicationcode.split("/")[0]);
 </script>
 
 <style scoped lang="scss">

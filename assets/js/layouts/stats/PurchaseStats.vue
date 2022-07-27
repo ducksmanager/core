@@ -171,7 +171,7 @@ watch(
 
       chartData = {
         datasets,
-        labels: labels,
+        labels,
       };
 
       options = {

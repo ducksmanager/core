@@ -171,8 +171,8 @@ let edgeWidth = $ref(null),
 
 const loadBookPages = async () => {
   await coa().fetchIssueUrls({
-    publicationCode: publicationCode,
-    issueNumber: issueNumber,
+    publicationCode,
+    issueNumber,
   });
 };
 

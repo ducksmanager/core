@@ -54,27 +54,27 @@ import { imagePath } from "../composables/imagePath";
 import medal from "../composables/medal";
 
 const { t: $t } = useI18n(),
-  props = defineProps({
+  { contribution, nextLevel, userLevelPoints } = defineProps({
     small: { type: Boolean, default: false },
     xSmall: { type: Boolean, default: false },
     nextLevel: { type: Boolean, default: false },
     userLevelPoints: { type: Number, required: true },
     contribution: { type: String, required: true },
-  }),
-  {
+  });
+const {
     currentLevel,
     pointsDiffNextLevel,
     levelProgressPercentage,
     radius,
     circumference,
-  } = $(medal(props.contribution, props.userLevelPoints)),
+  } = $(medal(contribution, userLevelPoints)),
   currentLocale = locale(),
   medalColors = ["bronze", "argent", "or"],
   level = $computed(() =>
-    props.nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
+    nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
   ),
   medalTitle = $computed(() => {
-    switch (props.contribution.toUpperCase()) {
+    switch (contribution.toUpperCase()) {
       case "CREATEUR":
         return $t("Concepteur de tranches");
       case "PHOTOGRAPHE":
@@ -87,7 +87,7 @@ const { t: $t } = useI18n(),
   medalDescription = $computed(() => {
     let textTemplate;
     if (currentLevel === 3) {
-      switch (props.contribution.toUpperCase()) {
+      switch (contribution.toUpperCase()) {
         case "CREATEUR":
           textTemplate = "Vous avez {0} points Concepteur de tranches";
           break;
@@ -97,9 +97,9 @@ const { t: $t } = useI18n(),
         case "DUCKHUNTER":
           textTemplate = "Vous avez signalé {0} bouquineries";
       }
-      return $t(textTemplate, [props.userLevelPoints]);
+      return $t(textTemplate, [userLevelPoints]);
     } else {
-      switch (props.contribution.toUpperCase()) {
+      switch (contribution.toUpperCase()) {
         case "CREATEUR":
           textTemplate =
             "Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !";
@@ -113,7 +113,7 @@ const { t: $t } = useI18n(),
             "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!";
       }
       return $t(textTemplate, [
-        props.userLevelPoints,
+        userLevelPoints,
         pointsDiffNextLevel,
         $t(medalColors[currentLevel]),
       ]);

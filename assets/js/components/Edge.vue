@@ -3,6 +3,8 @@
     v-if="embedded"
     :id="id"
     :src="src"
+    :publication-code="publicationCode"
+    :issue-number="issueNumber"
     :sprite-path="spritePath"
     :load="load"
     :invisible="invisible"
@@ -26,6 +28,8 @@
     <EdgeContents
       :id="id"
       :src="src"
+      :publication-code="publicationCode"
+      :issue-number="issueNumber"
       :sprite-path="spritePath"
       :load="load"
       :invisible="invisible"

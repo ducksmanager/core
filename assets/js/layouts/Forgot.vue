@@ -84,14 +84,14 @@
 <script setup>
 import { form } from "../stores/form";
 
-const props = defineProps({
+const { errors, success } = defineProps({
   success: { type: String, default: null },
   token: { type: String, default: null },
   errors: { type: String, default: "" },
 });
 
-const isSuccess = props.success === null ? null : parseInt(props.success) === 1,
-  parsedErrors = JSON.parse(props.errors);
+const isSuccess = success === null ? null : parseInt(success) === 1,
+  parsedErrors = JSON.parse(errors);
 
 form().addErrors(parsedErrors);
 </script>

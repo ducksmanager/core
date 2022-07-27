@@ -23,17 +23,17 @@ import Footer from "./Footer";
 import LeftPanel from "./LeftPanel";
 import SwitchLocale from "./SwitchLocale";
 
-const props = defineProps({
-    page: { type: String, required: true },
-    title: { type: String, default: null },
-    innerTitle: { type: String, default: null },
-    bare: { type: String, default: "0" },
-  }),
-  attrs = useAttrs(),
+const { bare, page } = defineProps({
+  page: { type: String, required: true },
+  title: { type: String, default: null },
+  innerTitle: { type: String, default: null },
+  bare: { type: String, default: "0" },
+});
+const attrs = useAttrs(),
   pageComponent = $computed(() =>
-    defineAsyncComponent(() => import(`./${props.page}`))
+    defineAsyncComponent(() => import(`./${page}`))
   ),
-  isBare = $computed(() => props.bare === "1"),
+  isBare = $computed(() => bare === "1"),
   l10nRoutes = $computed(() => l10n().l10nRoutes),
   attrsWithoutId = $computed(() =>
     Object.keys(attrs)
