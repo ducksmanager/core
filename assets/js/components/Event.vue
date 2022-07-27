@@ -6,11 +6,8 @@
       :stats="stats[event.userId]"
       :points="points[event.userId]"
     />
-    <span
-      v-else-if="event.userId === null"
-      class="text-capitalize"
-    >
-      {{ $t('un visiteur anonyme') }}
+    <span v-else-if="event.userId === null" class="text-capitalize">
+      {{ $t("un visiteur anonyme") }}
     </span>
     <template v-if="event.type === 'signup'">
       {{ $t("a commencé sa collection sur DucksManager. Bienvenue !") }}
@@ -39,25 +36,25 @@
       {{ $t("à sa collection") }}
     </template>
     <template v-if="event.type === 'edge'">
-      <span v-for="(collaborator, index) in event.users" :key="collaborator">
+      <span v-for="(userId, index) in event.users" :key="userId">
         <template v-if="event.users.length > 1">
           <template v-if="index === event.users.length - 1">
-            {{ $t("et") }}
+            {{ ` ${$t("et")} ` }}
           </template>
           <template v-else-if="index > 0">,</template>
         </template>
         <UserPopover
-          v-if="stats[event.userId]"
-          :id="collaborator"
-          :stats="stats[collaborator]"
-          :points="points[collaborator]"
+          v-if="stats[userId]"
+          :id="userId"
+          :stats="stats[userId]"
+          :points="points[userId]"
         />
       </span>
       <template v-if="event.users.length > 1"
         >&nbsp;{{ $t("ont créé la tranche") }}
       </template>
       <template v-else>&nbsp;{{ $t("a créé la tranche") }} </template
-      >&nbsp;<span
+      ><span
         :id="`event-edges-${event.timestamp}`"
         class="fw-bold"
         style="cursor: help"
@@ -78,11 +75,10 @@
       <BookcasePopover
         :id="`event-edges-${event.timestamp}`"
         :edges="event.edges"
-      />
-      {{ $t("pour la bibliothèque DucksManager") }}
+      />{{ $t("pour la bibliothèque DucksManager") }}
     </template>
     <template v-if="event.type === 'subscription_additions'">
-      <span v-for="(subscriber, index) in event.users" :key="subscriber">
+      <span v-for="(userId, index) in event.users" :key="userId">
         <template v-if="event.users.length > 1">
           <template v-if="index === event.users.length - 1">
             {{ ` ${$t("et")} ` }}
@@ -90,17 +86,17 @@
           <template v-else-if="index > 0"> , </template>
         </template>
         <UserPopover
-          v-if="stats[event.userId]"
-          :id="subscriber"
-          :stats="stats[subscriber]"
-          :points="points[subscriber]"
+          v-if="stats[userId]"
+          :id="userId"
+          :stats="stats[userId]"
+          :points="points[userId]"
         />
       </span>
       <template v-if="event.users.length > 1">
-        {{ ` ${$t("ont reçu")} ` }}
+        {{ ` ${$t("ont reçu")}` }}
       </template>
       <template v-else>
-        {{ ` ${$t("a reçu")} ` }}
+        {{ ` ${$t("a reçu")}` }}
       </template>
       <Issue
         v-if="publicationNames[event.publicationCode]"

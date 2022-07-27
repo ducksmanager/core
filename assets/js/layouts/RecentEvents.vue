@@ -17,12 +17,11 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from "vue";
+import { onMounted } from "vue";
 
 import Ago from "../components/Ago";
 import Event from "../components/Event";
 import { coa } from "../stores/coa";
-import { ongoingRequests } from "../stores/ongoing-requests";
 import { users } from "../stores/users";
 
 let isLoaded = $ref(false),
@@ -31,9 +30,6 @@ const publicationNames = $computed(() => coa().publicationNames),
   stats = $computed(() => users().stats),
   points = $computed(() => users().points),
   events = $computed(() => users().events),
-  numberOfOngoingAjaxCalls = $computed(
-    () => ongoingRequests().numberOfOngoingAjaxCalls
-  ),
   eventUserIds = $computed(() =>
     events
       ?.reduce(
@@ -48,22 +44,20 @@ const publicationNames = $computed(() => coa().publicationNames),
   fetchEventsAndAssociatedData = async (clearCacheEntry) => {
     hasFreshEvents = await fetchEvents(clearCacheEntry);
 
-    await fetchPublicationNames(
-      events
+    await fetchPublicationNames([
+      ...events
         .filter(({ publicationCode }) => publicationCode)
-        .map(({ publicationCode }) => publicationCode)
-        .concat(
-          events
-            .filter(({ edges }) => edges)
-            .reduce(
-              (acc, { edges }) => [
-                ...acc,
-                ...edges.map(({ publicationCode }) => publicationCode),
-              ],
-              []
-            )
-        )
-    );
+        .map(({ publicationCode }) => publicationCode),
+      ...events
+        .filter(({ edges }) => edges)
+        .reduce(
+          (acc, { edges }) => [
+            ...acc,
+            ...edges.map(({ publicationCode }) => publicationCode),
+          ],
+          []
+        ),
+    ]);
 
     await fetchStats(eventUserIds, clearCacheEntry);
   };
