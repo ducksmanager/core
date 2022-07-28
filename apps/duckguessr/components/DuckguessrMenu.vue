@@ -13,7 +13,7 @@
         </component>
         <medal-list v-if="!isAnonymous && currentUserStats" :with-details="false" :cols="3" />
       </div>
-      <b-navbar toggleable="lg" type="dark" class="d-lg-none justify-content-start">
+      <b-navbar toggleable="lg" type="dark" class="d-lg-none justify-content-start pt-0">
         <b-navbar-toggle target="nav-collapse" class="px-2" />
 
         <b-collapse id="nav-collapse" is-nav class="border border-secondary mt-4">

@@ -7,7 +7,7 @@
     boundary="viewport"
   >
     <template #button-content>
-      <b-icon-flag-fill />
+      <b-icon-globe2 />
     </template>
     <div
       v-for="(title, possibleLocale) in availableLocales"
@@ -23,7 +23,7 @@
 </template>
 <script setup lang="ts">
 import { useI18n } from 'nuxt-i18n-composable'
-import { BIconFlagFill } from 'bootstrap-vue'
+import { BIconGlobe2 } from 'bootstrap-vue'
 
 const availableLocales = {
   fr: 'Français',
