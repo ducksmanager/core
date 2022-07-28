@@ -2,7 +2,7 @@
   <div :class="{ event: true, [`event_${event.type}`]: true }">
     <UserPopover
       v-if="event.userId && stats[event.userId]"
-      :id="event.userId"
+      :id="`event-${event.timestamp}-user-${event.userId}`"
       :stats="stats[event.userId]"
       :points="points[event.userId]"
     />
@@ -45,7 +45,7 @@
         </template>
         <UserPopover
           v-if="stats[userId]"
-          :id="userId"
+          :id="`event-${event.timestamp}-user-${userId}`"
           :stats="stats[userId]"
           :points="points[userId]"
         />
@@ -87,7 +87,7 @@
         </template>
         <UserPopover
           v-if="stats[userId]"
-          :id="userId"
+          :id="`event-${event.timestamp}-user-${userId}`"
           :stats="stats[userId]"
           :points="points[userId]"
         />

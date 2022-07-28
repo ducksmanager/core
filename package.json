@@ -8,7 +8,6 @@
         "assets/js/util/**.js"
     ],
     "devDependencies": {
-        "@bperel/vue3-popper-teleport": "^1.4.2",
         "@mapbox/mapbox-gl-geocoder": "^5.0.1",
         "@popperjs/core": "^2.11.5",
         "@sentry/tracing": "^7.7.0",
