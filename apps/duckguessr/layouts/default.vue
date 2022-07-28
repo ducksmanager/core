@@ -9,17 +9,26 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from '@nuxtjs/composition-api'
+import { onMounted, useRoute, watch } from '@nuxtjs/composition-api'
 import { useI18n } from 'nuxt-i18n-composable'
 import { userStore } from '~/store/user'
 
+const route = useRoute()
+const i18n = useI18n()
+
 onMounted(() => {
   userStore().login()
-  const storedLocale = window.localStorage?.getItem('locale')
-  if (storedLocale) {
-    useI18n().locale.value = storedLocale
-  }
 })
+watch(
+  () => route.value,
+  () => {
+    const storedLocale = window.localStorage?.getItem('locale')
+    if (storedLocale) {
+      i18n.locale.value = storedLocale
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="scss">
