@@ -56,5 +56,8 @@
         "watch": "NODE_ENV=development encore dev-server --hot",
         "build": "encore production --progress",
         "lint": "node_modules/eslint/bin/eslint.js --fix assets"
+    },
+    "dependencies": {
+        "@bperel/vue3-popper-teleport": "^1.4.3"
     }
 }
