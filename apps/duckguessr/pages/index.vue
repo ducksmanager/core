@@ -37,7 +37,7 @@
     <b-card-footer class="small">
       <div>{{ t("Duckguessr's medal pictures are made by artist") }} <b>Timothée Rouxel</b>.</div>
       <div>{{ t('The translation in Spanish is made by') }} <b>Rémi Barnault</b>.</div>
-      <div>{{ t('The translation in German is made by') }} <b>Rémi TheBear</b>.</div>
+      <div>{{ t('The translation in German is made by') }} <b>TheBear</b>.</div>
       <div>
         {{ t("Part of this website's content is based on Inducks data.") }}
         <a href="https://inducks.org/inducks/COPYING">{{
