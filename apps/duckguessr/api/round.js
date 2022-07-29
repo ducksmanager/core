@@ -1,3 +1,5 @@
+import { getUrl } from '~/composables/url'
+
 const request = require('request').defaults({ encoding: null })
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
@@ -43,7 +45,7 @@ export default async (req, res) => {
             )
             return
           }
-          const cloudinaryUrl = `${process.env.CLOUDINARY_URL_ROOT}${round.sitecode_url}`
+          const cloudinaryUrl = getUrl(round.sitecode_url)
           request.get(cloudinaryUrl, function (error, response, body) {
             if (!error && response.statusCode === 200) {
               try {

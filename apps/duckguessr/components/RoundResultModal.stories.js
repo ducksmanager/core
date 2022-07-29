@@ -18,6 +18,7 @@ Default.args = {
   status: 'success',
   roundNumber: 1,
   speedBonus: 65,
+  roundUrl: 'thumbnails3/webusers/2014/04/hu_mm1992_07e_001.jpg',
   correctAuthor: {
     personcode: 'DR',
     personfullname: 'Don Rosa',
@@ -32,6 +33,7 @@ Incorrect.args = {
   status: 'danger',
   roundNumber: 1,
   speedBonus: 0,
+  roundUrl: 'thumbnails3/webusers/2017/03/it_om_1341g_001.jpg',
   correctAuthor: {
     personcode: 'CB',
     personfullname: 'Carl Barks',
@@ -46,6 +48,7 @@ LastRound.args = {
   status: 'success',
   roundNumber: 7,
   speedBonus: 12,
+  roundUrl: 'webusers/webusers-auth/rsc_ommi0o.png',
   correctAuthor: {
     personcode: 'CB',
     personfullname: 'Carl Barks',

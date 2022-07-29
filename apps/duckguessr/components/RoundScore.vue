@@ -43,7 +43,7 @@ const props = withDefaults(
     inGame: boolean
     players: Index.player[]
     score: Index.round_score | OngoingRoundScore
-    roundDuration: Number | null
+    roundDuration: number | null
   }>(),
   {
     inGame: false,

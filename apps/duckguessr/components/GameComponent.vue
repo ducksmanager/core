@@ -50,6 +50,7 @@ import {
   OngoingRoundScore,
   RoundWithScoresAndAuthor,
 } from '~/types/roundWithScoresAndAuthor'
+import { getUrl } from '~/composables/url'
 
 defineEmits(['select-author'])
 
@@ -63,7 +64,7 @@ const props = defineProps<{
   remainingTime: number
 }>()
 
-const url = computed(() => `${process.env.CLOUDINARY_URL_ROOT}${props.currentRound.sitecode_url}`)
+const url = computed(() => getUrl(props.currentRound.sitecode_url))
 
 const roundScoresAllPlayers = computed(() =>
   props.players

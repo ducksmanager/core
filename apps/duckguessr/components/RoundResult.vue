@@ -25,6 +25,7 @@
 import { ref } from '@nuxtjs/composition-api'
 
 import { RoundWithScoresAndAuthor } from '~/types/roundWithScoresAndAuthor'
+import { getUrl } from '~/composables/url'
 
 const roundResultProps = defineProps<{
   round: RoundWithScoresAndAuthor
@@ -37,7 +38,7 @@ const setDefaultAuthorUrl = () => {
   personUrl.value =
     'https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg'
 }
-const imageUrl = `${process.env.CLOUDINARY_URL_ROOT}/${roundResultProps.round.sitecode_url}`
+const imageUrl = getUrl(`/${roundResultProps.round.sitecode_url}`)
 </script>
 
 <style scoped lang="scss">

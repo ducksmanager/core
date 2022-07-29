@@ -94,6 +94,7 @@ import { getDuckguessrId, getShownUsername } from '@/composables/user'
 
 import { userStore } from '~/store/user'
 import { GameFull } from '~/types/game'
+import { getUrl } from '~/composables/url'
 
 const gameScoresProps = defineProps<{
   game: GameFull
@@ -211,8 +212,7 @@ watch(
 )
 
 const { t } = useI18n()
-const imageUrl = ({ sitecode_url: url }: RoundWithScoresAndAuthor) =>
-  `${process.env.CLOUDINARY_URL_ROOT}/${url}`
+const imageUrl = ({ sitecode_url: url }: RoundWithScoresAndAuthor) => getUrl(`/${url}`)
 const columnToRound = (column: string) =>
   gameScoresProps.game.rounds[parseInt(column.replace('round', '')) - 1]
 </script>

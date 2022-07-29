@@ -23,6 +23,7 @@
       :status="scoreToVariant(currentRoundPlayerScore)"
       :speed-bonus="currentRoundPlayerScore.speed_bonus"
       :correct-author="getAuthor(currentRound.personcode)"
+      :round-url="currentRound.sitecode_url"
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
       :has-everybody-guessed="hasEverybodyGuessed"

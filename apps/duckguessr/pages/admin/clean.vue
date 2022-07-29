@@ -139,6 +139,7 @@ import { useI18n } from 'nuxt-i18n-composable'
 import { useAxios } from '@vueuse/integrations/useAxios'
 import { BIconCheck, BIconX } from 'bootstrap-vue'
 import { userStore } from '~/store/user'
+import { getUrl } from '~/composables/url'
 
 interface DatasetWithDecisionCounts {
   id: number
@@ -250,7 +251,7 @@ const loadImagesToMaintain = async (
   entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map((data: any) => ({
     ...data,
     decision: data.entryurl_details.decision || 'ok',
-    url: `${process.env.CLOUDINARY_URL_ROOT}${data.sitecode_url}`,
+    url: getUrl(data.sitecode_url),
   }))
 
   const datasetsAndDecisions = datasetsGroupedByDecision.value[datasetName].decisions

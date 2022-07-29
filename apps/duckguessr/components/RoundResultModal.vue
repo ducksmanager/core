@@ -10,7 +10,10 @@
     <div v-else>{{ t('Incorrect.') }}</div>
     <div class="my-3">
       <div>{{ t('The answer was:') }}</div>
-      <b-row class="justify-content-center">
+      <b-row class="justify-content-center align-items-center">
+        <b-col id="image-to-guess" cols="6" class="d-flex p-2 align-items-center">
+          <b-img center :src="url" />
+        </b-col>
         <author-card :enabled="true" :selectable="false" :author="correctAuthor" />
       </b-row>
     </div>
@@ -30,12 +33,14 @@ import { BIconStopwatchFill } from 'bootstrap-vue'
 import { useI18n } from 'nuxt-i18n-composable'
 import { defineEmits } from '@vue/runtime-dom'
 import { Author } from '~/types/roundWithScoresAndAuthor'
+import { getUrl } from '~/composables/url'
 
 const props = defineProps<{
-  status: String
-  roundNumber: Number
+  status: string
+  roundNumber: number
+  roundUrl: string
   correctAuthor: Author
-  speedBonus: Number | null
+  speedBonus: number | null
   nextRoundStartDate: Date | null
   hasEverybodyGuessed: boolean
 }>()
@@ -51,11 +56,13 @@ const emit = defineEmits(['next-round'])
 
 const { t } = useI18n()
 
+const url = computed(() => getUrl(props.roundUrl))
+
 const updateTimeBeforeNextRound = () => {
   timeBeforeNextRound.value =
     props.nextRoundStartDate === null
       ? null
-      : Math.ceil((props.nextRoundStartDate.getTime() - new Date().getTime()) / 1000)
+      : Math.max(0, Math.ceil((props.nextRoundStartDate.getTime() - new Date().getTime()) / 1000))
 }
 
 onMounted(() => {
