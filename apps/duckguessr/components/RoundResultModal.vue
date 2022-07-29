@@ -40,7 +40,7 @@ const props = defineProps<{
   roundNumber: number
   roundUrl: string
   correctAuthor: Author
-  speedBonus: number | null
+  speedBonus?: number | null
   nextRoundStartDate: Date | null
   hasEverybodyGuessed: boolean
 }>()
