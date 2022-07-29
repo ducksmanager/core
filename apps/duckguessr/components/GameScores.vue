@@ -67,7 +67,12 @@
       </template>
       <template #cell(playerId)="{ value: playerId, index }">
         <b-card :style="{ width: '12rem' }">
-          <player-info :username="playerNames[playerId]" :top-player="index === 0" no-right-panel />
+          <player-info
+            :username="players[playerId].username"
+            :avatar="players[playerId].avatar"
+            :top-player="index === 0"
+            no-right-panel
+          />
         </b-card>
       </template>
       <template #cell(totalScore)="{ value: totalScore }">
@@ -104,8 +109,8 @@ const duckguessrId = getDuckguessrId()
 const isAnonymous = computed(() => userStore().isAnonymous)
 
 const playerIds = gameScoresProps.game.game_players.map(({ player_id: playerId }) => playerId)
-const playerNames = gameScoresProps.game.game_players.reduce(
-  (acc, { player }) => ({ ...acc, [player.id]: player.username }),
+const players = gameScoresProps.game.game_players.reduce(
+  (acc, { player }) => ({ ...acc, [player.id]: player }),
   {}
 )
 const roundsWithPersonUrls = ref(
