@@ -106,25 +106,26 @@
           >
             <span>
               <a :name="issueNumber" />
-              <b-icon-eye-fill
-                v-once
-                :id="`issue-details-${issueNumber}`"
-                :class="{
-                  'mx-2': true,
-                  [`can-show-book-${hoveredIssueHasCover}`]: true,
-                }"
-                :alt="viewText"
-                @mouseover="hoveredIssueNumber = issueNumber"
-                @mouseout="
-                  hoveredIssueNumber = null;
-                  hoveredIssueHasCover = undefined;
-                "
-                @click.prevent="
-                  currentIssueOpened = hoveredIssueHasCover
-                    ? { publicationcode, issueNumber }
-                    : null
-                "
-              />
+              <IssueDetailsPopover
+                :publication-code="publicationcode"
+                :issue-number="issueNumber"
+                @cover-loaded="hoveredIssueHasCover = $event"
+              >
+                <b-icon-eye-fill
+                  v-once
+                  :id="`issue-details-${issueNumber}`"
+                  :class="{
+                    'mx-2': true,
+                    [`can-show-book-${hoveredIssueHasCover}`]: true,
+                  }"
+                  :alt="viewText"
+                  @click.prevent="
+                    currentIssueOpened = hoveredIssueHasCover
+                      ? { publicationcode, issueNumber }
+                      : null
+                  "
+              /></IssueDetailsPopover>
+
               <span class="issue-text">
                 {{ issueNumberTextPrefix }}{{ issueNumber }}
                 <span class="issue-title">{{ title }}</span>
@@ -178,13 +179,6 @@
               </div>
             </div>
           </div>
-          <IssueDetailsPopover
-            v-if="hoveredIssueNumber"
-            :publication-code="publicationcode"
-            :issue-number="hoveredIssueNumber"
-            placement="right"
-            @cover-loaded="hoveredIssueHasCover = $event"
-          />
         </div>
       </div>
     </div>
@@ -467,10 +461,16 @@ onMounted(async () => {
     cursor: default;
     min-height: 20px;
 
+    .popper {
+      display: none;
+    }
+
     &:hover {
-      opacity: 0.7;
-      filter: alpha(opacity=70);
-      -moz-opacity: 0.7;
+      background-color: #333;
+
+      .popper {
+        display: initial;
+      }
     }
 
     &.preselected {
@@ -486,10 +486,18 @@ onMounted(async () => {
 
     &.issue-possessed {
       background-color: rgb(200, 137, 100);
+
+      &:hover {
+        background-color: rgb(162, 133, 117);
+      }
+    }
+
+    .issue-text {
+      font-weight: bold;
     }
 
     .issue-title {
-      color: #aaa;
+      font-weight: normal;
     }
 
     .issue-details-wrapper {

@@ -1,15 +1,10 @@
 <template>
-  <span>
-    <span :id="id">
+  <Popover>
+    <span>
       <slot />
     </span>
-    <b-popover
-      :target="id"
-      placement="top"
-      :delay="0"
-      triggers="hover focus manual"
-    >
-      <template #title><slot name="title" /></template>
+    <template #header><slot name="title" /></template>
+    <template #content>
       <div>
         {{ $t("Cliquez sur la tranche pour découvrir sa couverture") }}.
         <div v-if="!hasEdge" class="has-no-edge">
@@ -42,25 +37,22 @@
           </div>
         </div>
       </div>
-    </b-popover>
-  </span>
+    </template>
+  </Popover>
 </template>
 
 <script setup>
-import { BButton, BPopover } from "bootstrap-vue-3";
+import { BButton } from "bootstrap-vue-3";
 
 import { user } from "../composables/global";
 import { bookcase } from "../stores/bookcase";
 import { users } from "../stores/users";
 import MedalProgress from "./MedalProgress";
+import Popover from "./Popover";
 
 const { userId } = user();
 
 defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
   hasEdge: {
     type: Boolean,
     required: true,

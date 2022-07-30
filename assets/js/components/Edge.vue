@@ -14,7 +14,6 @@
   />
   <IssueEdgePopover
     v-else-if="publicationNames"
-    :id="`${id}-popover`"
     :has-edge="existing"
     :extra-points="popularity"
   >

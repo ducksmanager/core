@@ -1,17 +1,11 @@
 <template>
-  <b-popover
-    :target="id"
-    placement="top"
-    boundary="viewport"
-    triggers="hover focus"
-    :delay="0"
-  >
-    <Bookcase
-      :bookcase-textures="bookcaseTextures"
-      :sorted-bookcase="edges"
-      embedded
-    />
-    <slot name="footer">
+  <Popover>
+    <slot />
+    <template #content>
+      <Bookcase
+        :bookcase-textures="bookcaseTextures"
+        :sorted-bookcase="edges"
+        embedded />
       <b-row>
         <b-col
           v-for="(edge, edgeId) in edges"
@@ -27,10 +21,9 @@
             hide-condition
             :flex="false"
           />
-        </b-col>
-      </b-row>
-    </slot>
-  </b-popover>
+        </b-col> </b-row
+    ></template>
+  </Popover>
 </template>
 <script setup>
 import { BCol, BPopover, BRow } from "bootstrap-vue-3";
@@ -38,6 +31,7 @@ import { BCol, BPopover, BRow } from "bootstrap-vue-3";
 import Issue from "../components/Issue";
 import { coa } from "../stores/coa";
 import Bookcase from "./Bookcase";
+import Popover from "./Popover";
 
 defineProps({
   id: {
@@ -58,23 +52,23 @@ const bookcaseTextures = {
 const publicationNames = $computed(() => coa().publicationNames);
 </script>
 
-<style lang="scss" scoped>
-.popover {
+<style lang="scss">
+.popper {
   max-width: 25vw;
   max-height: 90vh;
   overflow: auto;
 
-  .popover-body {
+  > .card {
     padding-top: 0;
     padding-right: 0;
     padding-left: 0;
   }
 
-  :deep(.bookcase) {
+  .bookcase {
     margin-top: 0 !important;
   }
 
-  :deep(.issue) {
+  .issue {
     padding: 0 10px;
   }
 }

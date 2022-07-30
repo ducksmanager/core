@@ -53,29 +53,28 @@
       <template v-if="event.users.length > 1"
         >&nbsp;{{ $t("ont créé la tranche") }}
       </template>
-      <template v-else>&nbsp;{{ $t("a créé la tranche") }} </template
-      ><span
-        :id="`event-edges-${event.timestamp}`"
-        class="fw-bold"
-        style="cursor: help"
-      >
-        <Issue
-          v-if="publicationNames[event.edges[0].publicationCode]"
-          :publicationname="publicationNames[event.edges[0].publicationCode]"
-          :publicationcode="event.edges[0].publicationCode"
-          :issuenumber="event.edges[0].issueNumber"
-          hide-condition
-          :flex="false"
-        />&nbsp;<OtherIssues
-          :number="event.edges.length"
-          :text-single="$t('autre tranche')"
-          :text-multiple="$t('autres tranches')"
-        />
-      </span>
+      <template v-else>&nbsp;{{ $t("a créé la tranche") }} </template>
       <BookcasePopover
         :id="`event-edges-${event.timestamp}`"
         :edges="event.edges"
-      />{{ $t("pour la bibliothèque DucksManager") }}
+        ><span
+          :id="`event-edges-${event.timestamp}`"
+          class="fw-bold"
+          style="cursor: help"
+        >
+          <Issue
+            v-if="publicationNames[event.edges[0].publicationCode]"
+            :publicationname="publicationNames[event.edges[0].publicationCode]"
+            :publicationcode="event.edges[0].publicationCode"
+            :issuenumber="event.edges[0].issueNumber"
+            hide-condition
+            :flex="true"
+          />&nbsp;<OtherIssues
+            :number="event.edges.length"
+            :text-single="$t('autre tranche')"
+            :text-multiple="$t('autres tranches')"
+          /> </span></BookcasePopover
+      >{{ $t("pour la bibliothèque DucksManager") }}
     </template>
     <template v-if="event.type === 'subscription_additions'">
       <span v-for="(userId, index) in event.users" :key="userId">

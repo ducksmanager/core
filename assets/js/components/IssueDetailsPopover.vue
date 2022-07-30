@@ -1,39 +1,37 @@
 <template>
-  <b-popover
-    :target="`issue-details-${issueNumber}`"
-    placement="right"
-    triggers="manual"
-    show
-    @show="loadIssueUrls"
-  >
-    <template #title>
+  <Popover placement="right" @open:popper="loadIssueUrls">
+    <slot />
+    <template #header>
       <Issue
         :publicationcode="publicationCode"
         :issuenumber="issueNumber"
         :publicationname="publicationNames[publicationCode]"
         hide-condition
+        :flex="false"
+        no-wrap
       />
     </template>
-    <div v-if="isCoverLoading" class="flex-grow-1">
-      {{ $t("Chargement...") }}
-    </div>
-    <img
-      v-else-if="coverUrl"
-      :alt="issueNumber"
-      :src="coverUrl"
-      class="cover"
-    />
-    <span v-else>{{
-      $t("La couverture de ce numéro n'est pas disponible")
-    }}</span>
-  </b-popover>
+    <template #content>
+      <div v-if="isCoverLoading" class="flex-grow-1">
+        {{ $t("Chargement...") }}
+      </div>
+      <img
+        v-else-if="coverUrl"
+        :alt="issueNumber"
+        :src="coverUrl"
+        class="cover"
+      />
+      <span v-else>{{
+        $t("La couverture de ce numéro n'est pas disponible")
+      }}</span></template
+    >
+  </Popover>
 </template>
 
 <script setup>
-import { BPopover } from "bootstrap-vue-3";
-
 import { coa } from "../stores/coa";
 import Issue from "./Issue";
+import Popover from "./Popover";
 
 const { issueNumber, publicationCode } = defineProps({
   publicationCode: {
@@ -58,10 +56,10 @@ const cloudinaryBaseUrl =
   ),
   issueCode = $computed(() => `${publicationCode} ${issueNumber}`),
   coverUrl = $computed(() => {
-    const cover = issueDetails?.[issueCode].entries.find(
+    const cover = issueDetails?.[issueCode]?.entries?.find(
       ({ position }) => !/^p/.test(position)
     );
-    const hasCover = cover && !!cover.url;
+    const hasCover = cover?.url;
     emit("cover-loaded", hasCover);
     return hasCover ? cloudinaryBaseUrl + cover.url : null;
   }),
@@ -77,10 +75,10 @@ const cloudinaryBaseUrl =
 </script>
 
 <style scoped lang="scss">
-.popover {
+:deep(.popper) {
   width: 150px;
 
-  :deep(.popover-body) {
+  .card-body {
     padding: 0;
 
     .cover {

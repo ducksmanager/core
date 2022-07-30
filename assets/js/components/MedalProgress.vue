@@ -94,7 +94,6 @@ const { medalProgressCurrentPercentage, getLevelProgressPercentage } = $(
     .progress-extra-text {
       position: absolute;
       left: 5px;
-      top: 8px;
       display: inline-block;
       font-weight: bold;
       color: #222;
