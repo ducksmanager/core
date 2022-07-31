@@ -61,7 +61,7 @@ const { medalProgressCurrentPercentage, getLevelProgressPercentage } = $(
 
 <style lang="scss">
 .progress-wrapper {
-  margin: 12px 0;
+  margin: 20px 0;
 
   .progress {
     position: relative;

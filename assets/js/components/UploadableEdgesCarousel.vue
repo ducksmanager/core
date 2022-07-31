@@ -2,10 +2,11 @@
   <div>
     <slot name="header" />
     <div>
-      <b-carousel controls indicators>
+      <b-carousel v-model="currentSlide" controls>
         <b-carousel-slide
-          v-for="popularIssueWithoutEdge in issues"
+          v-for="(popularIssueWithoutEdge, index) in issues"
           :key="popularIssueWithoutEdge.issueCode"
+          :active="currentSlide === index"
         >
           <Issue
             :publicationcode="popularIssueWithoutEdge.publicationCode"
@@ -37,6 +38,8 @@ defineProps({
   userPoints: { type: Number, required: true },
   publicationNames: { type: Object, required: true },
 });
+
+const currentSlide = $ref(0);
 </script>
 
 <style scoped lang="scss">
@@ -47,26 +50,17 @@ defineProps({
 
   .carousel-inner {
     height: 100%;
+    padding: 0 10px;
+
+    > div {
+      background: initial !important;
+    }
   }
 
   .carousel-caption {
     position: initial;
     padding-left: 48px;
     padding-right: 42px;
-  }
-
-  ol.carousel-indicators {
-    top: 0;
-    bottom: initial;
-
-    li {
-      width: 5px;
-      height: 5px;
-      border: 5px solid white;
-      border-radius: 8px;
-      padding: 0;
-      background: white;
-    }
   }
 }
 </style>
