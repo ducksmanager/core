@@ -10,14 +10,14 @@
       {{ $t("un visiteur anonyme") }}
     </span>
     <template v-if="event.type === 'signup'">
-      {{ $t("a commencé sa collection sur DucksManager. Bienvenue !") }}
+      &nbsp;{{ $t("a commencé sa collection sur DucksManager. Bienvenue !") }}
     </template>
     <template v-if="event.type === 'medal'">
-      {{ $t('a obtenu la médaille <b>{0} niveau {1}</b>',
+      &nbsp;{{ $t('a obtenu la médaille <b>{0} niveau {1}</b>',
       [getMedalTitle(event.contribution), event.niveau]) }}
     </template>
     <template v-if="event.type === 'bookstore_comment'">
-      {{ $t("a visité la bouquinerie") }}
+      &nbsp;{{ $t("a visité la bouquinerie") }}
       <i
         ><a :href="r('/bookstores')">{{ event.name }}</a></i
       >
