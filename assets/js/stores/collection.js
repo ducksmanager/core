@@ -47,6 +47,9 @@ export const collection = defineStore("collection", {
       }
     },
 
+    issuesInToReadStack: ({ collection }) =>
+      collection && collection.filter(({ isToRead }) => isToRead),
+
     totalUniqueIssues: ({ collection, duplicateIssues }) =>
       duplicateIssues &&
       collection?.length -

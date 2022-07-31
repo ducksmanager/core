@@ -6,7 +6,7 @@
       :publicationname="publicationName"
     />
     <div v-if="issues && purchases">
-      <div v-if="!duplicatesOnly" v-once class="issue-filter">
+      <div v-if="!duplicatesOnly && !readStackOnly" v-once class="issue-filter">
         <table>
           <tr
             v-for="conditionFilter in ['possessed', 'missing']"
@@ -66,7 +66,13 @@
             </li>
           </ul>
         </b-alert>
-        <b-alert v-if="!duplicatesOnly" v-once show variant="info" class="mb-0">
+        <b-alert
+          v-if="!duplicatesOnly && !readStackOnly"
+          v-once
+          show
+          variant="info"
+          class="mb-0"
+        >
           {{
             $t(
               "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
@@ -131,7 +137,8 @@
               <div class="issue-copies">
                 <div
                   v-for="(
-                    { condition: copyCondition, purchaseId }, copyIndex
+                    { condition: copyCondition, isToRead, purchaseId },
+                    copyIndex
                   ) in userCopies"
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
@@ -157,6 +164,10 @@
                       d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
                     ></path>
                   </svg>
+                  <b-icon-bookmark-check
+                    v-if="isToRead"
+                    class="issue-to-read"
+                  />
                   <Condition
                     v-if="copyCondition"
                     :publicationcode="publicationcode"
@@ -230,7 +241,7 @@
 
 <script setup>
 import axios from "axios";
-import { BIconEyeFill } from "bootstrap-icons-vue";
+import { BIconBookmarkCheck, BIconEyeFill } from "bootstrap-icons-vue";
 import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -244,12 +255,16 @@ import ContextMenu from "./ContextMenu";
 import IssueDetailsPopover from "./IssueDetailsPopover";
 import Publication from "./Publication";
 
-const { duplicatesOnly, publicationcode } = defineProps({
+const { duplicatesOnly, readStackOnly, publicationcode } = defineProps({
   publicationcode: {
     type: String,
     required: true,
   },
   duplicatesOnly: {
+    type: Boolean,
+    default: false,
+  },
+  readStackOnly: {
     type: Boolean,
     default: false,
   },
@@ -397,7 +412,12 @@ watch(
               userIssueNumber === issue.issueNumber
           ),
         }))
-        .filter(({ userCopies }) => !duplicatesOnly || userCopies.length > 1);
+        .filter(({ userCopies }) => !duplicatesOnly || userCopies.length > 1)
+        .filter(
+          ({ userCopies }) =>
+            !readStackOnly ||
+            userCopies.filter(({ isToRead }) => isToRead).length
+        );
       const coaIssueNumbers = issuesWithTitles.map(
         ({ issueNumber }) => issueNumber
       );
@@ -522,7 +542,8 @@ onMounted(async () => {
           padding: 1px;
 
           .issue-purchase-date,
-          .issue-condition {
+          .issue-condition,
+          .issue-to-read {
             width: 14px;
             height: 14px;
             margin-right: 8px;

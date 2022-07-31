@@ -47,6 +47,13 @@ const component = $computed(() =>
           : $t("Mes numéros en double ({0})", [total - totalUniqueIssues]),
     },
     {
+      path: "/to-read",
+      text:
+        issuesInToReadStack == null
+          ? $t("Mes numéros à lire")
+          : $t("Mes numéros à lire ({0})", [issuesInToReadStack.length]),
+    },
+    {
       path: "/subscriptions",
       text:
         subscriptions == null
@@ -56,6 +63,7 @@ const component = $computed(() =>
     { path: "/account", text: $t("Mon compte"), disabled: username === "demo" },
   ]),
   subscriptions = $computed(() => collection().subscriptions),
+  issuesInToReadStack = $computed(() => collection().issuesInToReadStack),
   total = $computed(() => collection().total),
   totalUniqueIssues = $computed(() => collection().totalUniqueIssues),
   attrsWithoutTab = $computed(() =>

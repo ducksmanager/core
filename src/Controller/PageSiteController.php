@@ -440,6 +440,24 @@ class PageSiteController extends AbstractController
         );
     }
 
+    /**
+     * @Route({
+     *     "en": "/collection/to-read",
+     *     "fr": "/collection/a-lire"
+     * },
+     *     methods={"GET"}
+     * )
+     */
+    public function showIssuesInToReadStack(): Response
+    {
+        return $this->renderSitePage(
+            'Collection',
+            'Mes numéros à lire',
+            null,
+            ['tab' => 'ToReadStack']
+        );
+    }
+
 
     /**
      * @Route({

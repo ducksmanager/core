@@ -69,9 +69,40 @@
             >
               <Condition :value="id" />&nbsp;{{ text }}
             </v-contextmenu-item>
-            <v-contextmenu-divider />
+            <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
           </v-contextmenu-group>
-          <v-contextmenu-group :title="$t('Date d\'achat')">
+          <v-contextmenu-group
+            v-show="copy.condition !== 'missing'"
+            :title="$t('Pile de lecture')"
+          >
+            {{ editingCopies }}
+            <v-contextmenu-item
+              v-for="(toReadStateText, toReadStateId) in toReadStates"
+              :key="`copy-${copyIndex}-to-read-state-${toReadStateId}`"
+              :hide-on-click="false"
+              :class="{
+                clickable: true,
+                selected: String(copy.isToRead) === toReadStateId,
+                'read-state': true,
+                [toReadStateId]: true,
+              }"
+              @click="
+                copy.isToRead =
+                  toReadStateId === 'do_not_change'
+                    ? null
+                    : toReadStateId === 'true'
+              "
+            >
+              <b-icon-bookmark-check v-if="toReadStateId === 'true'" />
+              <b-icon-bookmark-x v-if="toReadStateId === 'false'" />
+              {{ toReadStateText }}
+            </v-contextmenu-item>
+            <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
+          </v-contextmenu-group>
+          <v-contextmenu-group
+            v-show="copy.condition !== 'missing'"
+            :title="$t('Date d\'achat')"
+          >
             <template
               v-for="(purchaseStateText, purchaseStateId) in purchaseStates"
               :key="`copy-${copyIndex}-purchase-state-${purchaseStateId}`"
@@ -225,6 +256,8 @@
 
 <script setup>
 import {
+  BIconBookmarkCheck,
+  BIconBookmarkX,
   BIconCalendar,
   BIconCalendarX,
   BIconCheck,
@@ -266,6 +299,7 @@ let defaultState = $ref({
     condition: "do_not_change",
     isToSell: "do_not_change",
     purchaseId: "do_not_change",
+    isToRead: "do_not_change",
   }),
   today = new Date().toISOString().slice(0, 10),
   { t: $t } = useI18n(),
@@ -295,6 +329,15 @@ let defaultState = $ref({
     link: $t("Associer avec une date d'achat"),
     unlink: $t("Désassocier de la date d'achat"),
   })),
+  toReadStates = $computed(() => ({
+    ...(isSingleIssueSelected
+      ? {}
+      : {
+          do_not_change: $t("Conserver la pile de lecture"),
+        }),
+    true: $t("Inclus dans la pile de lecture"),
+    false: $t("Exclus de la pile de lecture"),
+  })),
   isSingleIssueSelected = $computed(() => selectedIssues.length === 1),
   hasNoCopies = $computed(() => !editingCopies.length),
   hasMaxCopies = $computed(() => editingCopies.length >= 3),
@@ -319,6 +362,7 @@ let defaultState = $ref({
       condition: editingCopies.map(({ condition }) =>
         convertConditionToDbValue(condition)
       ),
+      istoread: editingCopies.map(({ isToRead }) => isToRead),
       istosell: editingCopies.map(({ isToSell }) => isToSell),
       purchaseId: editingCopies.map(({ purchaseId }) => purchaseId),
     };
