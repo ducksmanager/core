@@ -152,15 +152,11 @@ export const main = defineStore('main', {
           )
 
       if (issuesBefore.length) {
-        this.edgesBefore = {
-          edges: await getEdgePublicationStates(issuesBefore),
-        }
+        this.edgesBefore = await getEdgePublicationStates(issuesBefore)
       }
 
       if (issuesAfter.length) {
-        this.edgesAfter = {
-          edges: await getEdgePublicationStates(issuesAfter),
-        }
+        this.edgesAfter = await getEdgePublicationStates(issuesAfter)
       }
     },
 
