@@ -14,6 +14,7 @@
 import { defineAsyncComponent, onMounted, useAttrs } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { user } from "../composables/global";
 import { collection } from "../stores/collection";
 import Menu from "./Menu";
 
@@ -23,6 +24,8 @@ const { tab } = defineProps({
     required: true,
   },
 });
+const { username } = user();
+
 const component = $computed(() =>
     defineAsyncComponent(() =>
       import(`./collection/${tab[0].toUpperCase() + tab.substring(1)}`)
@@ -50,7 +53,7 @@ const component = $computed(() =>
           ? $t("Mes abonnements")
           : $t("Mes abonnements ({0})", [subscriptions.length]),
     },
-    { path: "/account", text: $t("Mon compte") },
+    { path: "/account", text: $t("Mon compte"), disabled: username === "demo" },
   ]),
   subscriptions = $computed(() => collection().subscriptions),
   total = $computed(() => collection().total),

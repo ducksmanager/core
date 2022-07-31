@@ -8,6 +8,7 @@
         v-for="item in items"
         :key="JSON.stringify(item)"
         no-body
+        :disabled="item.disabled"
         @click.stop="onTabClick(item)"
       >
         <template #title>
@@ -50,9 +51,12 @@ const { r } = l10n(),
 
 <style scoped lang="scss">
 :deep(.nav-link) {
-  color: darkgrey !important;
+  color: white !important;
   &.active {
     color: black !important;
+  }
+  &.disabled {
+    color: darkgrey !important;
   }
 }
 </style>
