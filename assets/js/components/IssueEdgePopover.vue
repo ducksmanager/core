@@ -6,7 +6,7 @@
     <template #header><slot name="title" /></template>
     <template #content>
       <div>
-        {{ $t("Cliquez sur la tranche pour découvrir sa couverture") }}.
+        {{ $t("Cliquez sur la tranche pour parcourir ce numéro") }}.
         <div v-if="!hasEdge" class="has-no-edge">
           {{
             $t(
