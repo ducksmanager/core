@@ -26,7 +26,7 @@
 
 <script setup>
 import { BButton, BFormSelect } from "bootstrap-vue-3";
-import { watch } from "vue";
+import { onMounted, watch } from "vue";
 
 import { coa } from "../stores/coa";
 import { l10n } from "../stores/l10n";
@@ -84,6 +84,10 @@ watch(
     immediate: true,
   }
 );
+
+onMounted(async () => {
+  await coaStore.fetchCountryNames();
+});
 </script>
 
 <style scoped>
