@@ -88,6 +88,7 @@
         <div v-contextmenu:contextmenu>
           <div
             v-for="({ issueNumber, title, userCopies }, idx) in filteredIssues"
+            :id="issueNumber"
             :key="issueNumber"
             :class="{
               issue: true,
@@ -95,7 +96,6 @@
               preselected: preselected.includes(issueNumber),
               selected: selected.includes(issueNumber),
             }"
-            :name="issueNumber"
             @mousedown.self.left="
               preselectedIndexStart = preselectedIndexEnd = idx
             "
@@ -105,25 +105,21 @@
             "
           >
             <span>
-              <a :name="issueNumber" />
               <IssueDetailsPopover
                 :publication-code="publicationcode"
                 :issue-number="issueNumber"
-                @cover-loaded="hoveredIssueHasCover = $event"
+                @click="openBook(issueNumber)"
               >
                 <b-icon-eye-fill
-                  v-once
                   :id="`issue-details-${issueNumber}`"
                   :class="{
                     'mx-2': true,
-                    [`can-show-book-${hoveredIssueHasCover}`]: true,
+                    [`can-show-book-${
+                      !coverUrls[issueNumber] ? coverUrls[issueNumber] : true
+                    }`]: true,
                   }"
                   :alt="viewText"
-                  @click.prevent="
-                    currentIssueOpened = hoveredIssueHasCover
-                      ? { publicationcode, issueNumber }
-                      : null
-                  "
+                  @click.prevent="openBook(issueNumber)"
               /></IssueDetailsPopover>
 
               <span class="issue-text">
@@ -276,8 +272,6 @@ let loading = $ref(true),
   preselected = $shallowRef([]),
   preselectedIndexStart = $ref(null),
   preselectedIndexEnd = $ref(null),
-  hoveredIssueNumber = $ref(null),
-  hoveredIssueHasCover = $ref(undefined),
   currentIssueOpened = $shallowRef(null),
   issueNumberTextPrefix = $computed(() => $t("n°")),
   boughtOnTextPrefix = $computed(() => $t("Acheté le")),
@@ -285,6 +279,7 @@ let loading = $ref(true),
 
 const contextMenuKey = "context-menu",
   publicationNames = $computed(() => coa().publicationNames),
+  coverUrls = $computed(() => coa().coverUrls),
   userIssues = $computed(() => collectionStore().collection),
   purchases = $computed(() => collectionStore().purchases),
   country = $computed(() => publicationcode.split("/")[0]),
@@ -357,6 +352,11 @@ const contextMenuKey = "context-menu",
   deletePurchase = async ({ id }) => {
     await axios.delete(`/api/collection/purchases/${id}`);
     await loadPurchases(true);
+  },
+  openBook = (issueNumber) => {
+    currentIssueOpened = coverUrls[issueNumber]
+      ? { publicationcode, issueNumber }
+      : null;
   };
 
 watch(

@@ -42,6 +42,7 @@ function addPartInfo(issueDetails) {
 
 export const coa = defineStore("coa", {
   state: () => ({
+    coverUrls: {},
     countryNames: null,
     publicationNames: {},
     publicationNamesFullCountries: [],
@@ -70,6 +71,9 @@ export const coa = defineStore("coa", {
         }),
         {}
       );
+    },
+    setCoverUrl(issueNumber, url) {
+      this.coverUrls[issueNumber] = url;
     },
     addIssueNumbers(issueNumbers) {
       this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };

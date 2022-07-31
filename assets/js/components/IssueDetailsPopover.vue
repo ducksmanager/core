@@ -15,12 +15,18 @@
       <div v-if="isCoverLoading" class="flex-grow-1">
         {{ $t("Chargement...") }}
       </div>
-      <img
-        v-else-if="coverUrl"
-        :alt="issueNumber"
-        :src="coverUrl"
-        class="cover"
-      />
+      <template v-else-if="coverUrl">
+        <img
+          :alt="issueNumber"
+          :src="coverUrl"
+          class="cover"
+          @error="coverUrl = null"
+          @click="$emit('click')"
+        />
+        <div>
+          {{ $t("Cliquez sur la couverture pour parcourir ce numéro") }}
+        </div>
+      </template>
       <span v-else>{{
         $t("La couverture de ce numéro n'est pas disponible")
       }}</span></template
@@ -29,6 +35,8 @@
 </template>
 
 <script setup>
+import { onMounted, watch } from "vue";
+
 import { coa } from "../stores/coa";
 import Issue from "./Issue";
 import Popover from "./Popover";
@@ -43,9 +51,10 @@ const { issueNumber, publicationCode } = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(["cover-loaded"]);
+defineEmits(["click"]);
 
-let isCoverLoading = $ref(true);
+let isCoverLoading = $ref(true),
+  coverUrl = $ref(null);
 
 const cloudinaryBaseUrl =
     "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/",
@@ -55,14 +64,6 @@ const cloudinaryBaseUrl =
     () => `issue-details-${publicationCode.replace("/", "-")}-${issueNumber}`
   ),
   issueCode = $computed(() => `${publicationCode} ${issueNumber}`),
-  coverUrl = $computed(() => {
-    const cover = issueDetails?.[issueCode]?.entries?.find(
-      ({ position }) => !/^p/.test(position)
-    );
-    const hasCover = cover?.url;
-    emit("cover-loaded", hasCover);
-    return hasCover ? cloudinaryBaseUrl + cover.url : null;
-  }),
   fetchIssueUrls = coa().fetchIssueUrls,
   loadIssueUrls = async () => {
     isCoverLoading = true;
@@ -71,7 +72,19 @@ const cloudinaryBaseUrl =
       issueNumber,
     });
     isCoverLoading = false;
+
+    const possibleCoverUrl = issueDetails?.[issueCode]?.entries?.find(
+      ({ position }) => !/^p/.test(position)
+    )?.url;
+    coverUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
   };
+
+watch(
+  () => coverUrl,
+  (value) => {
+    coa().setCoverUrl(issueNumber, value);
+  }
+);
 </script>
 
 <style scoped lang="scss">
