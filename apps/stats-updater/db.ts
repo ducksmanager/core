@@ -36,6 +36,7 @@ export const disconnect = async () => {
 }
 
 export const runQuery = async (sql: string) => {
+    console.log(new Date().toISOString())
     console.debug(sql)
     await connection.query(sql)
 }
