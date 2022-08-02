@@ -22,7 +22,9 @@ db.connect().then(async () => {
 
     await db.runQuery(fs.readFileSync('sql/create-stories-publications.sql').toString())
     await db.runQuery(fs.readFileSync('sql/create-authors-stories.sql').toString())
-    await db.runQuery(fs.readFileSync('sql/calculate-stats.sql').toString())
+    await db.runQuery(fs.readFileSync('sql/create-users-missing-stories.sql').toString())
+    await db.runQuery(fs.readFileSync('sql/create-users-missing-issues.sql').toString())
+    await db.runQuery(fs.readFileSync('sql/create-users-suggested-issues.sql').toString())
 
     await db.runQuery(`DROP DATABASE IF EXISTS ${dbName}_old`)
     await db.runQuery(`CREATE DATABASE ${dbName}_old`)
