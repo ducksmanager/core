@@ -3,9 +3,8 @@
     <div
       v-show="count"
       id="user-count"
-      v-html="
-        $t('{0} utilisateurs sont inscrits<br />sur DucksManager', [count])
-      "
+      class="pre-wrap"
+      v-html="$t('{0} utilisateurs sont inscrits\nsur DucksManager', [count])"
     />
     <div>
       {{

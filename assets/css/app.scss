@@ -50,6 +50,10 @@ input.form-control {
   margin: 4px 0;
 }
 
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
 @media (min-width: 767px) {
   .mobile-only {
     display: none;

@@ -75,7 +75,6 @@
             v-show="copy.condition !== 'missing'"
             :title="$t('Pile de lecture')"
           >
-            {{ editingCopies }}
             <v-contextmenu-item
               v-for="(toReadStateText, toReadStateId) in toReadStates"
               :key="`copy-${copyIndex}-to-read-state-${toReadStateId}`"

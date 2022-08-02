@@ -57,9 +57,10 @@
     <div v-if="username === 'demo'" id="demo-intro">
       <h2>{{ $t("Bienvenue dans le mode démo !") }}</h2>
       <span
+        class="pre-wrap"
         v-html="
           $t(
-            'Prenez le temps de découvrir les fonctionnalités de DucksManager.<br /><br />Vous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.<br />Si vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.<br />Prochaine remise à zéro dans'
+            'Prenez le temps de découvrir les fonctionnalités de DucksManager.\n\nVous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.\nSi vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.\nProchaine remise à zéro dans'
           )
         "
       />
