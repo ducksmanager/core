@@ -5,19 +5,24 @@
       :id="`event-${event.timestamp}-user-${event.userId}`"
       :stats="stats[event.userId]"
       :points="points[event.userId]"
-    />
-    <span v-else-if="event.userId === null" class="text-capitalize">
-      {{ $t("un visiteur anonyme") }}
-    </span>
-    <template v-if="event.type === 'signup'">
-      &nbsp;{{ $t("a commencé sa collection sur DucksManager. Bienvenue !") }}
-    </template>
-    <template v-if="event.type === 'medal'">
-      &nbsp;{{ $t('a obtenu la médaille <b>{0} niveau {1}</b>',
-      [getMedalTitle(event.contribution), event.niveau]) }}
-    </template>
-    <template v-if="event.type === 'bookstore_comment'">
-      &nbsp;{{ $t("a visité la bouquinerie") }}
+    /><span v-else-if="event.userId === null" class="text-capitalize">
+      {{ $t("un visiteur anonyme") }} </span
+    ><template v-if="event.type === 'signup'">
+      &nbsp;{{
+        $t("a commencé sa collection sur DucksManager. Bienvenue !")
+      }} </template
+    ><span
+      v-if="event.type === 'medal'"
+      v-html="
+        `&nbsp;${$t('a obtenu la médaille <b>{0} niveau {1}</b>', [
+          getMedalTitle(event.contribution),
+          event.niveau,
+        ])}`
+      "
+    >
+    </span
+    ><template v-if="event.type === 'bookstore_comment'"
+      >&nbsp;{{ $t("a visité la bouquinerie") }}
       <i
         ><a :href="r('/bookstores')">{{ event.name }}</a></i
       >
@@ -57,11 +62,7 @@
       <BookcasePopover
         :id="`event-edges-${event.timestamp}`"
         :edges="event.edges"
-        ><span
-          :id="`event-edges-${event.timestamp}`"
-          class="fw-bold"
-          style="cursor: help"
-        >
+        ><span class="fw-bold" style="cursor: help">
           <Issue
             v-if="publicationNames[event.edges[0].publicationCode]"
             :publicationname="publicationNames[event.edges[0].publicationCode]"
@@ -73,7 +74,8 @@
             :number="event.edges.length"
             :text-single="$t('autre tranche')"
             :text-multiple="$t('autres tranches')"
-          /> </span></BookcasePopover
+          />&nbsp;</span
+        ></BookcasePopover
       >{{ $t("pour la bibliothèque DucksManager") }}
     </template>
     <template v-if="event.type === 'subscription_additions'">
@@ -149,5 +151,13 @@ const publicationNames = $computed(() => coa().publicationNames),
 <style scoped lang="scss">
 .event {
   margin-top: 12px;
+
+  &.event_edge > :nth-child(3) {
+    display: inline;
+
+    :deep(> div) {
+      display: inline;
+    }
+  }
 }
 </style>
