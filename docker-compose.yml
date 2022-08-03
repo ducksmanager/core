@@ -1,8 +1,10 @@
 version: '2.4'
 services:
   front:
-    container_name: ducksmanager-web-vue3
-    image: ghcr.io/bperel/ducksmanager-web:latest
+    container_name: ducksmanager-web
+    build:
+      context: .
+      target: web
     depends_on:
       - php-flex
     restart: always
@@ -11,8 +13,10 @@ services:
       - dm-network
 
   php-flex:
-    container_name: ducksmanager-php-vue3
-    image: ghcr.io/bperel/ducksmanager-php:latest
+    container_name: ducksmanager-php
+    build:
+      context: .
+      target: app
     restart: always
     volumes:
       - dm_sessions:/tmp/sessions
@@ -23,7 +27,7 @@ services:
   sentry-relay:
     image: getsentry/relay
     restart: always
-    container_name: sentry-vue3
+    container_name: sentry
     volumes:
       - ./config/sentry-relay:/work/.relay
     networks:
