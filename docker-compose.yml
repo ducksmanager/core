@@ -2,9 +2,7 @@ version: '2.4'
 services:
   front:
     container_name: ducksmanager-web
-    build:
-      context: .
-      target: web
+    image: ghcr.io/bperel/ducksmanager-web
     depends_on:
       - php-flex
     restart: always
@@ -14,9 +12,7 @@ services:
 
   php-flex:
     container_name: ducksmanager-php
-    build:
-      context: .
-      target: app
+    image: ghcr.io/bperel/ducksmanager-php
     restart: always
     volumes:
       - dm_sessions:/tmp/sessions
