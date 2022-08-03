@@ -10,7 +10,7 @@
       $emit('@open:popper', $event);
     "
   >
-    <span @mouseenter="isOverPopupText = true" @mouseleave="closePopupSoon"
+    <span @mouseover="isOverPopupText = true" @mouseout.prevent="closePopupSoon"
       ><slot
     /></span>
     <template #content>
@@ -43,8 +43,8 @@ defineProps({
 });
 
 const { r } = l10n(),
-  closeDelay = 300,
-  closePopupSoon = () => {
+  closeDelay = 2000,
+  closePopupSoon = (e) => {
     setTimeout(() => {
       isOverPopupText = false;
     }, closeDelay);
