@@ -233,14 +233,19 @@ const { r } = l10n(),
           }
         ) => {
           const publicationCode1 = `${countryCode1}/${magazineCode1}`;
+          if (!issueNumbers[publicationCode1]) {
+            return -1;
+          }
           const publicationCode2 = `${countryCode2}/${magazineCode2}`;
+          if (!issueNumbers[publicationCode2]) {
+            return 1;
+          }
           const publicationOrderSign = Math.sign(
             bookcaseOrder.indexOf(publicationCode1) -
               bookcaseOrder.indexOf(publicationCode2)
           );
           return (
             publicationOrderSign ||
-            (!issueNumbers[publicationCode1] && -1) ||
             Math.sign(
               issueNumbers[publicationCode1].indexOf(
                 issueNumber1.replace(/ /g, "")
@@ -278,8 +283,12 @@ watch(
       const nonObviousPublicationIssueNumbers = newValue.filter(
         (publicationCode) =>
           bookcase.bookcase.filter(
-            ({ publicationCode: issuePublicationCode, issueNumber }) =>
-              issuePublicationCode === publicationCode &&
+            ({
+              countryCode: issueCountryCode,
+              magazineCode: issueMagazineCode,
+              issueNumber,
+            }) =>
+              `${issueCountryCode}/${issueMagazineCode}` === publicationCode &&
               !/^[0-9]$/.test(issueNumber)
           ).length
       );
