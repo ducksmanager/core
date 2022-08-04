@@ -21,21 +21,15 @@
       </div>
     </div>
     <Navigation v-once class="d-none d-md-block" />
-    <div id="navbar-toggle-collapse" class="collapse">
-      <div class="bg-dark p-4">
-        <Navigation />
-      </div>
-    </div>
     <nav v-once class="navbar navbar-dark d-block d-md-none">
       <div class="container-fluid">
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbar-toggle-collapse"
-        >
-          <span class="navbar-toggler-icon" />
-        </button>
+        <Popper placement="bottom" teleport="body">
+          <template #content><Navigation /></template>
+          <button class="navbar-toggler" type="button">
+            <span class="navbar-toggler-icon" />
+          </button>
+        </Popper>
+
         <a class="navbar-brand" href="#">
           <SwitchLocale fixed />
           <Banner small
@@ -47,6 +41,7 @@
 </template>
 
 <script setup>
+import Popper from "@bperel/vue3-popper-teleport";
 import axios from "axios";
 
 import Medal from "../components/Medal";
@@ -145,19 +140,6 @@ if (userId) {
 
     .navbar-toggler {
       border-color: rgba(255, 255, 255, 0.5);
-    }
-
-    .navbar-collapse {
-      .menu-content {
-        position: fixed;
-        left: 0;
-        top: 40px;
-        width: 100%;
-
-        li {
-          padding-right: 30px;
-        }
-      }
     }
   }
 

@@ -74,6 +74,22 @@ input.form-control {
   }
 }
 
+@media (max-width: 767px) {
+  .popper {
+    .menu-content {
+      border: 2px solid #999;
+      margin-top: -8px;
+      height: initial !important;
+      overflow: visible;
+      color: white;
+
+      ul li {
+        padding-right: 2rem !important;
+      }
+    }
+  }
+}
+
 .popper {
   z-index: 999 !important;
   font-size: 1rem;
