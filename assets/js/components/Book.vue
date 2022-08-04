@@ -102,6 +102,7 @@
 import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
 import { PageFlip } from "page-flip";
 import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 import { imagePath } from "../composables/imagePath";
 import { coa } from "../stores/coa";
@@ -167,7 +168,8 @@ let edgeWidth = $ref(null),
   inducksLink = $computed(() => {
     const [country, magazine] = publicationCode.split("/");
     return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issueNumber}`;
-  });
+  }),
+  { t: $t } = useI18n();
 
 const loadBookPages = async () => {
   await coa().fetchIssueUrls({
