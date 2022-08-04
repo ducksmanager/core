@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - 'master'
-      - 'vue-3-new--bootstrap'
 jobs:
   deploy:
     runs-on: ubuntu-latest
