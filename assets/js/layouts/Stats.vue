@@ -86,7 +86,7 @@
       </div>
     </div>
     <div v-else-if="tab === 'purchases'">
-      <b-alert variant="info">
+      <b-alert variant="info" show>
         <div>
           {{
             $t(
@@ -118,17 +118,8 @@
             )
           "
         />
-        <div v-if="purchases && !purchases.length">
-          <a :href="r('/collection/show')">
-            <img
-              style="height: 300px"
-              alt="demo"
-              :src="`${imagePath}/demo_selection_achat_${currentLocale}.png`"
-            />
-          </a>
-        </div>
       </b-alert>
-      <div v-if="purchases?.length">
+      <div v-if="purchases">
         <b-button-group>
           <b-button
             v-for="(text, purchaseType) in purchaseTypes"
@@ -183,7 +174,6 @@ const { tab } = defineProps({
 });
 const { t: $t } = useI18n(),
   component = $computed(() => defineAsyncComponent(() => import(`./${tab}`))),
-  currentLocale = locale(),
   purchases = $computed(() => collectionStore().purchases),
   watchedAuthors = $computed(() => collectionStore().watchedAuthors),
   collection = $computed(() => collectionStore().collection),
