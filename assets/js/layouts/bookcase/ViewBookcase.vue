@@ -180,7 +180,7 @@ const { r } = l10n(),
   bookcaseOrder = $computed(() => bookcase.bookcaseOrder),
   isPrivateBookcase = $computed(() => bookcase.isPrivateBookcase),
   isUserNotExisting = $computed(() => bookcase.isUserNotExisting),
-  isSharedBookcase = $computed(() => users().isSharedBookcase),
+  isSharedBookcase = $computed(() => bookcase.isSharedBookcase),
   bookcaseUrl = $computed(
     () =>
       !isPrivateBookcase &&
@@ -192,7 +192,6 @@ const { r } = l10n(),
       !isUserNotExisting &&
       !(sortedBookcase && bookcaseOptions && edgesUsingSprites)
   ),
-  userPoints = $computed(() => users().points[userId]),
   percentVisible = $computed(() =>
     bookcase.bookcase?.length
       ? parseInt(
@@ -271,7 +270,8 @@ let edgesUsingSprites = $ref({}),
   currentEdgeHighlighted = $ref(null),
   hasPublicationNames = $ref(false),
   hasIssueNumbers = $ref(false),
-  showShareButtons = $ref(false);
+  showShareButtons = $ref(false),
+  userPoints = $ref(null);
 
 watch(
   () => bookcaseOrder,
@@ -323,7 +323,6 @@ watch(
     if (newValue) {
       await bookcase.loadBookcaseOptions();
       await bookcase.loadBookcaseOrder();
-      await users().fetchStats([userId]);
 
       const usableSpritesBySpriteId = newValue
         .filter(({ sprites }) => sprites)
@@ -363,6 +362,15 @@ watch(
 );
 
 watch(
+  () => bookcase.bookcase && !isSharedBookcase,
+  async (hasNonSharedBookcase) => {
+    if (hasNonSharedBookcase) {
+      await users().fetchStats([userId]);
+    }
+  }
+);
+
+watch(
   () => currentEdgeHighlighted,
   (newValue) => {
     const element = document.getElementById(`edge-${newValue}`);
@@ -379,6 +387,7 @@ onMounted(async () => {
     await collection.loadPopularIssuesInCollection();
     await collection.loadLastPublishedEdgesForCurrentUser();
     await collection.loadUser();
+    userPoints = users().points[userId];
   }
 });
 </script>

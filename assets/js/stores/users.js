@@ -19,8 +19,9 @@ export const users = defineStore("users", {
       }
     },
     async fetchStats(userIds, clearCacheEntry = true) {
+      const points = this.points;
       const missingUserIds = [...new Set(userIds)].filter(
-        (userId) => !Object.keys(this.points).includes(userId)
+        (userId) => !Object.keys(points).includes(userId)
       );
       if (!missingUserIds.length) {
         return;
