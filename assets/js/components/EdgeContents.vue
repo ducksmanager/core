@@ -156,6 +156,9 @@ watch(
   () => ignoreSprite,
   (value) => {
     if (value) {
+      console.error(
+        `Could not load sprite for edge ${publicationCode} ${issueNumber}: ${spritePath}`
+      );
       emit("ignore-sprite");
     }
   }
