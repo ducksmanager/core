@@ -11,6 +11,7 @@
     :highlighted="highlighted"
     @loaded="$emit('loaded')"
     @open-book="$emit('open-book')"
+    @ignore-sprite="ignoreSprite = true"
   />
   <IssueEdgePopover
     v-else-if="publicationNames"
@@ -35,6 +36,7 @@
       :highlighted="highlighted"
       @loaded="$emit('loaded')"
       @open-book="$emit('open-book')"
+      @ignore-sprite="ignoreSprite = true"
     />
   </IssueEdgePopover>
 </template>

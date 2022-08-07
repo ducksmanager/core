@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div
     :id="id"
     ref="edge"
@@ -38,6 +38,7 @@
 </template>
 <script setup>
 import * as axios from "axios";
+import { watch } from "vue";
 
 import { bookcase } from "../stores/bookcase";
 
@@ -78,7 +79,7 @@ const { id, issueNumber, publicationCode, spritePath } = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["loaded", "open-book"]);
+const emit = defineEmits(["loaded", "open-book", "ignore-sprite"]);
 
 const loadedSprites = $computed(() => bookcase().loadedSprites),
   spriteClass = $computed(() =>
@@ -150,6 +151,15 @@ let edge = $ref(null),
   ignoreSprite = $ref(false),
   width = $ref(null),
   height = $ref(null);
+
+watch(
+  () => ignoreSprite,
+  (value) => {
+    if (value) {
+      emit("ignore-sprite");
+    }
+  }
+);
 </script>
 <style scoped lang="scss">
 .temp-image {
