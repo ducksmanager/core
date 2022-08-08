@@ -12,12 +12,12 @@
   "dependencies": {
     "@angular/core": "^14.1.0",
     "@awesome-cordova-plugins/camera-preview": "^5.44.0",
-    "@capacitor/android": "3.6.0",
-    "@capacitor/app": "1.1.1",
-    "@capacitor/core": "3.6.0",
-    "@capacitor/haptics": "1.1.4",
-    "@capacitor/keyboard": "1.2.3",
-    "@capacitor/status-bar": "1.0.8",
+    "@capacitor/android": "^4.0.1",
+    "@capacitor/app": "^4.0.1",
+    "@capacitor/core": "^4.0.1",
+    "@capacitor/haptics": "^4.0.1",
+    "@capacitor/keyboard": "^4.0.1",
+    "@capacitor/status-bar": "^4.0.1",
     "@ionic/vue": "^6.0.0",
     "@ionic/vue-router": "^6.0.0",
     "cordova-plugin-camera-preview": "^0.12.3",
@@ -27,7 +27,7 @@
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
-    "@capacitor/cli": "3.6.0",
+    "@capacitor/cli": "^4.0.0",
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
