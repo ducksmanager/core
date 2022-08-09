@@ -1,8 +1,8 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router';
 
-import { IonicVue } from '@ionic/vue';
+import {IonicVue} from '@ionic/vue';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -22,11 +22,37 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import {createPinia} from "pinia";
+import axios from "axios";
 
-const app = createApp(App)
-  .use(IonicVue)
-  .use(router);
-  
-router.isReady().then(() => {
-  app.mount('#app');
+const pinia = createPinia()
+
+async function sha1(str: string) {
+  const buffer = new TextEncoder().encode(str);
+  return crypto.subtle.digest('SHA-1', buffer).then(hash => {
+    const hexCodes = [];
+    const view = new DataView(hash);
+    for (let i = 0; i < view.byteLength; i++) {
+      const byte = view.getUint8(i).toString(16).padEnd(2, '0')
+      hexCodes.push(byte);
+    }
+    return hexCodes.join('');
+  })
+}
+
+sha1(process.env.VUE_APP_USER_PASSWORD).then((passwordHash: string) => {
+  axios.defaults.baseURL = process.env.VUE_APP_API_BASE_URL;
+  axios.defaults.headers.common['Authorization'] = `Basic ${btoa(`${process.env.VUE_APP_ROLE_NAME}:${process.env.VUE_APP_ROLE_PASSWORD}`)}`;
+  axios.defaults.headers.common['x-dm-version'] = `1.0.0`;
+  axios.defaults.headers.common['x-dm-user'] = `demo`;
+  axios.defaults.headers.common['x-dm-pass'] = passwordHash
+
+  const app = createApp(App)
+    .use(IonicVue)
+    .use(router)
+    .use(pinia);
+
+  router.isReady().then(() => {
+    app.mount('#app');
+  });
 });

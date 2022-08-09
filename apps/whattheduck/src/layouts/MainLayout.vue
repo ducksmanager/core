@@ -17,7 +17,6 @@
   </ion-page>
 </template>
 <script setup lang="ts">
-import { defineProps } from "vue"; //Docs say this is not needed, but it throws an error without it
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
 defineProps<{
   title: string

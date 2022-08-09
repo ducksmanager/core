@@ -5,17 +5,7 @@
   </ion-app>
 </template>
 
-<script>
+<script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { defineComponent } from 'vue';
 import Drawer from './components/Drawer.vue';
-
-export default defineComponent({
-  name: 'App',
-  components: {
-    IonApp,
-    IonRouterOutlet,
-    Drawer
-  }
-});
 </script>
