@@ -61,8 +61,6 @@
             <b-table
               striped
               :items="quotedIssues"
-              sort-by="estimationGivenCondition"
-              sort-desc
               :per-page="50"
               :current-page="currentPage"
               :fields="quotationFields"
@@ -174,7 +172,14 @@ const { t: $t } = useI18n(),
   count = $computed(() => users().count),
   publicationNames = $computed(() => coa().publicationNames),
   totalPerPublication = $computed(() => collectionStore().totalPerPublication),
-  quotedIssues = $computed(() => collectionStore().quotedIssues),
+  quotedIssues = $computed(() =>
+    collectionStore().quotedIssues?.sort(
+      (
+        { estimationGivenCondition: estimation1 },
+        { estimationGivenCondition: estimation2 }
+      ) => Math.sign(estimation2 - estimation1)
+    )
+  ),
   quotationSum = $computed(() => collectionStore().quotationSum),
   quotationFields = [
     { key: "issue", label: $t("Numéro") },
@@ -201,7 +206,7 @@ watch(
 watch(
   () => quotedIssues,
   async (newValue) => {
-    if (newValue !== null) {
+    if (newValue) {
       await coa().fetchPublicationNames(
         newValue.map(({ publicationCode }) => publicationCode)
       );
