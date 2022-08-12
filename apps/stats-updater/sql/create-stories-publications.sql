@@ -1,6 +1,6 @@
 USE dm_stats_new;
 
-INSERT INTO histoires_publications
+INSERT IGNORE INTO histoires_publications
   (storycode, publicationcode, issuenumber, issuecode, oldestdate)
 select distinct sv.storycode,
                 i.publicationcode,

@@ -1,3 +1,5 @@
+USE dm_stats_new;
+
 insert ignore into utilisateurs_publications_manquantes(ID_User, personcode, storycode, publicationcode, issuenumber,
                                                         oldestdate, Notation)
 select distinct u_h_m.ID_User,
