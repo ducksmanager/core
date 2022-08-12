@@ -1,7 +1,2 @@
 node_modules
-tests
-var
-vendor
-.env.test
 Dockerfile*
-phpunit.*

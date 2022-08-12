@@ -1,7 +1,0 @@
-{% extends 'base.twig' %}
-
-{% block title %}{{ title ?? 'Log in' }}{% endblock %}
-
-{% block content %}
-    <input id="csrf" type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-{% endblock %}

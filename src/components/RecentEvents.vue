@@ -1,0 +1,92 @@
+<template>
+  <div id="recently">
+    <h4>{{ $t("Récemment sur DucksManager...") }}</h4>
+    <div id="events">
+      <template v-if="isLoaded">
+        <Event
+          v-for="event in events"
+          :key="JSON.stringify(event)"
+          :event="event"
+        >
+          <Ago :timestamp="event.timestamp" />
+        </Event>
+      </template>
+      <span v-else>{{ $t("Chargement...") }}</span>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { onMounted } from 'vue'
+
+import { coa } from '~/stores/coa'
+import { users } from '~/stores/users'
+
+let isLoaded = $ref(false)
+let hasFreshEvents = $ref(false)
+const publicationNames = $computed(() => coa().publicationNames)
+const stats = $computed(() => users().stats)
+const points = $computed(() => users().points)
+const events = $computed(() => users().events)
+const eventUserIds = $computed(() =>
+  events
+    ?.reduce(
+      (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
+      [],
+    )
+    .filter(userId => !!userId),
+)
+const fetchPublicationNames = coa().fetchPublicationNames
+const fetchEvents = users().fetchEvents
+const fetchStats = users().fetchStats
+const fetchEventsAndAssociatedData = async (clearCacheEntry) => {
+  hasFreshEvents = await fetchEvents(clearCacheEntry)
+
+  await fetchPublicationNames([
+    ...events
+      .filter(({ publicationCode }) => publicationCode)
+      .map(({ publicationCode }) => publicationCode),
+    ...events
+      .filter(({ edges }) => edges)
+      .reduce(
+        (acc, { edges }) => [
+          ...acc,
+          ...edges.map(({ publicationCode }) => publicationCode),
+        ],
+        [],
+      ),
+  ])
+
+  await fetchStats(eventUserIds, clearCacheEntry)
+}
+
+onMounted(async () => {
+  await fetchEventsAndAssociatedData(false)
+  setTimeout(async () => {
+    await fetchEventsAndAssociatedData(true)
+    hasFreshEvents = true
+  }, 1000)
+  isLoaded = true
+})
+</script>
+
+<style scoped lang="scss">
+#recently {
+  position: absolute;
+  top: 450px;
+  padding: 5px 5px 20px 5px;
+  border-top: 1px solid #23282e;
+
+  h4 {
+    margin-left: 15px;
+    margin-top: 0;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 767px) {
+  #recently {
+    display: none;
+  }
+}
+</style>
