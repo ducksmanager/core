@@ -7,14 +7,14 @@ export const getEvents = async () => {
     ...(await retrieveCollectionSubscriptionAdditions()),
     ...(await retrieveBookstoreCreations()),
     ...(await retrieveEdgeCreations()),
-    ...(await retrieveNewMedals())
+    ...(await retrieveNewMedals()),
   ];
 };
 
 const MEDAL_LEVELS = {
   Photographe: { 1: 50, 2: 150, 3: 600 },
   Createur: { 1: 20, 2: 70, 3: 150 },
-  Duckhunter: { 1: 1, 2: 3, 3: 5 }
+  Duckhunter: { 1: 1, 2: 3, 3: 5 },
 };
 
 const retrieveSignups = async () =>

@@ -1,8 +1,8 @@
 import { runQuery } from "../rawsql";
 
 export const getUsersQuickStats = async (userIds: number[]) => {
-  console.log(userIds)
-  const userQuickStats = await runQuery(`
+  const userQuickStats = await runQuery(
+    `
       select u.ID                                        AS userId,
              u.username,
              u.TextePresentation                         as presentationSentence,
@@ -13,20 +13,22 @@ export const getUsersQuickStats = async (userIds: number[]) => {
       from dm.users u
                left join dm.numeros on numeros.ID_Utilisateur = u.ID
       where u.ID IN (:userIds)
-      group by u.ID`, { userIds });
+      group by u.ID`,
+    { userIds }
+  );
 
   return userQuickStats.map((result: { [key: string]: any }) => ({
     ...result,
     userId: parseInt(result["userId"]),
     numberOfCountries: parseInt(result["numberOfCountries"]),
     numberOfPublications: parseInt(result["numberOfPublications"]),
-    numberOfIssues: parseInt(result["numberOfIssues"])
+    numberOfIssues: parseInt(result["numberOfIssues"]),
   }));
-
-}
+};
 
 export const getUsersPoints = async (userIds: number[]) => {
-    const userPoints = await runQuery(`
+  const userPoints = await runQuery(
+    `
                 select type_contribution.contribution,
                        ids_users.ID_User,
                        ifnull(contributions_utilisateur.points_total, 0) as points_total
@@ -42,11 +44,12 @@ export const getUsersPoints = async (userIds: number[]) => {
                                     FROM dm.users_contributions uc
                                     GROUP BY uc.ID_User, uc.contribution) as contributions_utilisateur
                                    ON type_contribution.contribution = contributions_utilisateur.contribution
-                                       AND ids_users.ID_User = contributions_utilisateur.ID_user`
-      , { userIds });
-    return userPoints.map((result: { [key: string]: any }) => ({
-      ...result,
-      points_total: parseInt(result["points_total"]),
-      ID_User: parseInt(result["ID_User"])
-    }));
-  }
+                                       AND ids_users.ID_User = contributions_utilisateur.ID_user`,
+    { userIds }
+  );
+  return userPoints.map((result: { [key: string]: any }) => ({
+    ...result,
+    points_total: parseInt(result["points_total"]),
+    ID_User: parseInt(result["ID_User"]),
+  }));
+};

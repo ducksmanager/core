@@ -5,8 +5,10 @@ module.exports = {
     "plugin:vue/vue3-recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
-    // 'plugin:vue/recommended' // Use this if you are using Vue.js 2.x.
+    "plugin:@typescript-eslint/recommended",
   ],
+  parser: "@typescript-eslint/parser",
+  root: true,
   rules: {
     "vue/no-v-html": "off",
     "vue/no-setup-props-destructure": "off",
@@ -14,5 +16,5 @@ module.exports = {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
   },
-  plugins: ["simple-import-sort"],
+  plugins: ["simple-import-sort", "@typescript-eslint"],
 };
