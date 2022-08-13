@@ -17,30 +17,30 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted } from "vue";
 
-import { coa } from '~/stores/coa'
-import { users } from '~/stores/users'
+import { coa } from "~/stores/coa";
+import { users } from "~/stores/users";
 
-let isLoaded = $ref(false)
-let hasFreshEvents = $ref(false)
-const publicationNames = $computed(() => coa().publicationNames)
-const stats = $computed(() => users().stats)
-const points = $computed(() => users().points)
-const events = $computed(() => users().events)
+let isLoaded = $ref(false);
+let hasFreshEvents = $ref(false);
+const publicationNames = $computed(() => coa().publicationNames);
+const stats = $computed(() => users().stats);
+const points = $computed(() => users().points);
+const events = $computed(() => users().events);
 const eventUserIds = $computed(() =>
   events
     ?.reduce(
       (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
-      [],
+      []
     )
-    .filter(userId => !!userId),
-)
-const fetchPublicationNames = coa().fetchPublicationNames
-const fetchEvents = users().fetchEvents
-const fetchStats = users().fetchStats
+    .filter((userId) => !!userId)
+);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const fetchEvents = users().fetchEvents;
+const fetchStats = users().fetchStats;
 const fetchEventsAndAssociatedData = async (clearCacheEntry) => {
-  hasFreshEvents = await fetchEvents(clearCacheEntry)
+  hasFreshEvents = await fetchEvents(clearCacheEntry);
 
   await fetchPublicationNames([
     ...events
@@ -53,21 +53,21 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry) => {
           ...acc,
           ...edges.map(({ publicationCode }) => publicationCode),
         ],
-        [],
+        []
       ),
-  ])
+  ]);
 
-  await fetchStats(eventUserIds, clearCacheEntry)
-}
+  await fetchStats(eventUserIds, clearCacheEntry);
+};
 
 onMounted(async () => {
-  await fetchEventsAndAssociatedData(false)
+  await fetchEventsAndAssociatedData(false);
   setTimeout(async () => {
-    await fetchEventsAndAssociatedData(true)
-    hasFreshEvents = true
-  }, 1000)
-  isLoaded = true
-})
+    await fetchEventsAndAssociatedData(true);
+    hasFreshEvents = true;
+  }, 1000);
+  isLoaded = true;
+});
 </script>
 
 <style scoped lang="scss">

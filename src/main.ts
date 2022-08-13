@@ -32,6 +32,9 @@ const router = createRouter({
 const store = createPinia()
 
 const useOngoingRequests = ongoingRequests(store)
+
+console.log(import.meta.env.VITE_GATEWAY_URL)
+axios.defaults.baseURL = import.meta.env.VITE_GATEWAY_URL;
 axios.interceptors.request.use(
   (config) => {
     if (useOngoingRequests.numberOfOngoingAjaxCalls === null)

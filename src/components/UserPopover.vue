@@ -21,9 +21,9 @@
         <div class="clearfix" />
         <div>
           {{ stats.numberOfIssues }}
-          {{ $tc("numéro | numéros", stats.numberOfIssues) }}<br>
+          {{ $tc("numéro | numéros", stats.numberOfIssues) }}<br />
           {{ stats.numberOfPublications }}
-          {{ $tc("magazine | magazines", stats.numberOfPublications) }}<br>
+          {{ $tc("magazine | magazines", stats.numberOfPublications) }}<br />
           {{ stats.numberOfCountries }}
           {{ $tc("pays | pays", stats.numberOfCountries) }}
         </div>
@@ -34,10 +34,7 @@
             target="_blank"
             :href="r(`/bookcase/show/{username:${stats.username}}`)"
           >
-            <img
-              style="height: 16px"
-              src="/images/icons/bookcase.png"
-            >&nbsp;
+            <img style="height: 16px" src="/images/icons/bookcase.png" />&nbsp;
             {{ $t("Voir la bibliothèque") }}
           </BButton>
         </div>
@@ -47,15 +44,17 @@
 </template>
 
 <script setup>
-import { BButton } from 'bootstrap-vue-3'
+import { BButton } from "bootstrap-vue-3";
+import { useI18n } from "vue-i18n";
 
-import { l10n } from '~/stores/l10n'
+import { l10n } from "~/stores/l10n";
 
 defineProps({
   points: { type: Object, required: true },
   stats: { type: Object, required: true },
-})
-const { r } = l10n()
+});
+const { r } = l10n();
+const { t: $tc } = useI18n();
 </script>
 
 <style scoped lang="scss">

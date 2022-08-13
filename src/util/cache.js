@@ -1,5 +1,5 @@
-import axios from "axios";
-import { buildWebStorage, setupCache } from "axios-cache-interceptor";
+import axios from 'axios';
+import { buildWebStorage, setupCache } from 'axios-cache-interceptor';
 
 const customStorage = buildWebStorage(sessionStorage);
 
@@ -27,19 +27,34 @@ const commonCacheOptions = {
   storage: customStorage,
 };
 
-const cachedL10nApi = setupCache(axios.create(), {
-  ...commonCacheOptions,
-  ttl: inAMonth - now,
-});
+const cachedL10nApi = setupCache(
+  axios.create({
+    baseURL: import.meta.env.VITE_GATEWAY_URL,
+  }),
+  {
+    ...commonCacheOptions,
+    ttl: inAMonth - now,
+  }
+);
 
-const cachedUserApi = setupCache(axios.create(), {
-  ...commonCacheOptions,
-  ttl: inAnHour - now,
-});
+const cachedUserApi = setupCache(
+  axios.create({
+    baseURL: import.meta.env.VITE_GATEWAY_URL,
+  }),
+  {
+    ...commonCacheOptions,
+    ttl: inAnHour - now,
+  }
+);
 
-const cachedCoaApi = setupCache(axios.create(), {
-  ...commonCacheOptions,
-  ttl: coaCacheExpiration - now,
-});
+const cachedCoaApi = setupCache(
+  axios.create({
+    baseURL: import.meta.env.VITE_GATEWAY_URL,
+  }),
+  {
+    ...commonCacheOptions,
+    ttl: coaCacheExpiration - now,
+  }
+);
 
 export { cachedCoaApi, cachedL10nApi, cachedUserApi };
