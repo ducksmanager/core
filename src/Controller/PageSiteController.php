@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -245,17 +246,21 @@ class PageSiteController extends AbstractController
      *     "en": "/signup",
      *     "fr": "/inscription"
      * },
-     *     methods={"GET", "POST"}
+     *     methods={"GET", "POST"},
+     *     name="app_signup"
      * )
      */
-    public function showSignupPage(): Response
+    public function showSignupPage(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
     {
+        $error = $authenticationUtils->getLastAuthenticationError();
+
         return $this->render('security/login.twig', [
             'commit' => $_ENV['COMMIT'],
             'title'=> 'Inscription',
             'vueProps' => [
                 'component' => 'Site',
                 'page' => 'Signup',
+                'error' => $error,
             ]
         ]);
     }

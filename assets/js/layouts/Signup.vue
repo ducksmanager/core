@@ -1,5 +1,12 @@
 <template>
-  <form method="post" @submit.prevent="signup">
+  <form method="post">
+    <b-alert v-if="error" show variant="danger">
+      {{
+        $t(
+          "Une erreur s'est produite. Assurez vous que le nom d'utilisateur et l'adresse e-mail entrés ne correspondent pas à un utilisateur existant."
+        )
+      }}
+    </b-alert>
     <input type="hidden" name="_csrf_token" :value="csrfToken" />
     <b-row>
       <b-col lg="4">
@@ -66,18 +73,17 @@
 </template>
 
 <script setup>
-import * as axios from "axios";
 import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Errorable from "../components/Errorable";
-import { validation } from "../composables/validation";
 import { form } from "../stores/form";
 import { l10n } from "../stores/l10n";
 
-defineProps({
+const signupProps = defineProps({
   lastUsername: { type: String, default: null },
+  error: { type: String, default: null },
 });
 
 let signupUsername = $ref(""),
@@ -86,41 +92,12 @@ let signupUsername = $ref(""),
   password2 = $ref("");
 
 const { r } = l10n(),
-  t = useI18n().t,
+  { t: $t } = useI18n(),
   csrfToken = document.getElementById("csrf").value,
-  hasErrors = $computed(() => form().hasErrors),
-  signup = async () => {
-    const { validatePasswords, validateEmail, validateUsername } =
-      validation(t);
-
-    form().clearErrors();
-    validatePasswords(password, password2);
-    validateEmail(email);
-    validateUsername(signupUsername);
-
-    if (hasErrors) {
-      return;
-    }
-    try {
-      await axios.put("/signup", {
-        username: signupUsername,
-        password,
-        password2,
-        email,
-        _csrf_token: csrfToken,
-      });
-      window.location.replace(l10n().r("/collection/show"));
-    } catch (e) {
-      form().addErrors({
-        username: $t(
-          "Ce nom d'utilisateur ou cette adresse e-mail existe déjà."
-        ),
-      });
-    }
-  };
+  hasErrors = $computed(() => form().hasErrors);
 
 onMounted(() => {
-  signupUsername = lastUsername;
+  signupUsername = signupProps.lastUsername;
 });
 </script>
 
