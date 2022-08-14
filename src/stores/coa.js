@@ -1,15 +1,15 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import { cachedCoaApi as coaApi } from '~/util/cache';
+import { cachedCoaApi as coaApi } from "~/util/cache";
 
-const URL_PREFIX_COUNTRIES = '/api/coa/list/countries/LOCALE';
-const URL_PREFIX_PUBLICATIONS = '/api/coa/list/publications/';
-const URL_PREFIX_ISSUES = '/api/coa/list/issues/multiple/';
-const URL_PREFIX_AUTHORS = '/api/coa/authorsfullnames/';
-const URL_PREFIX_URLS = '/api/coa/list/details/';
-const URL_PREFIX_ISSUE_QUOTATIONS = '/api/coa/quotations/';
-const URL_ISSUE_COUNTS = '/api/coa/list/issues/count';
-const URL_ISSUE_DECOMPOSE = '/api/coa/issues/decompose';
+const URL_PREFIX_COUNTRIES = "/api/coa/list/countries/LOCALE";
+const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";
+const URL_PREFIX_ISSUES = "/api/coa/list/issues/multiple/";
+const URL_PREFIX_AUTHORS = "/api/coa/authorsfullnames/";
+const URL_PREFIX_URLS = "/api/coa/list/details/";
+const URL_PREFIX_ISSUE_QUOTATIONS = "/api/coa/quotations/";
+const URL_ISSUE_COUNTS = "/api/coa/list/issues/count";
+const URL_ISSUE_DECOMPOSE = "/api/coa/issues/decompose";
 
 function addPartInfo(issueDetails) {
   const storyPartCounter = Object.entries(
@@ -40,7 +40,7 @@ function addPartInfo(issueDetails) {
   };
 }
 
-export const coa = defineStore('coa', {
+export const coa = defineStore("coa", {
   state: () => ({
     coverUrls: {},
     countryNames: null,
@@ -94,8 +94,8 @@ export const coa = defineStore('coa', {
         this.countryNames = (
           await coaApi.get(
             URL_PREFIX_COUNTRIES.replace(
-              'LOCALE',
-              localStorage.getItem('locale')
+              "LOCALE",
+              localStorage.getItem("locale")
             )
           )
         ).data;
@@ -240,8 +240,8 @@ export const coa = defineStore('coa', {
             url: URL_ISSUE_DECOMPOSE,
             valuesToChunk: newIssueCodes,
             chunkSize: 50,
-            method: 'post',
-            parameterName: 'issueCodes',
+            method: "post",
+            parameterName: "issueCodes",
           }).then((data) =>
             data.reduce(
               (acc, result) => ({
@@ -280,7 +280,7 @@ export const coa = defineStore('coa', {
       url,
       valuesToChunk,
       chunkSize,
-      method = 'get',
+      method = "get",
       parameterName = null,
     }) {
       return await Promise.all(
@@ -293,12 +293,12 @@ export const coa = defineStore('coa', {
             (
               await acc
             ).concat(
-              await (method === 'get'
-                ? coaApi.get(`${url}${codeChunk.join(',')}`)
+              await (method === "get"
+                ? coaApi.get(`${url}${codeChunk.join(",")}`)
                 : coaApi.request({
                     method,
                     url,
-                    data: { [parameterName]: codeChunk.join(',') },
+                    data: { [parameterName]: codeChunk.join(",") },
                   }))
             ),
           Promise.resolve([])

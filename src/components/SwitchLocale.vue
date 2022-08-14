@@ -36,7 +36,7 @@ const locales = [
 ]
 const reloadWithLocale = ({ key }) => {
   localStorage.setItem('locale', key)
-  i18n.locale = key
+  i18n.locale.value = key
 }
 </script>
 

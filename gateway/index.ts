@@ -5,6 +5,7 @@ import express from "express";
 
 import { call } from "./call-api";
 import auth from "./services/auth";
+import collection from "./services/collection";
 import { getEvents } from "./services/events";
 import { getUsersPoints, getUsersQuickStats } from "./services/global-stats";
 
@@ -19,6 +20,7 @@ app.use(
 app.use(cookieParser());
 
 auth.addRoutes(app);
+collection.addRoutes(app);
 
 app.all(/^\/api\/coa\/(.+)/, async (req, res) => {
   const path = req.params[0];

@@ -9,10 +9,43 @@ import { call } from "../call-api";
 const csrfProtection = csrf({ cookie: true });
 const parseForm = bodyParser.json();
 
-const generateAccessToken = (payload: { [key: string]: any }) =>
+interface User {
+  username: string;
+  hashedPassword: string;
+  privileges: { [key: string]: string };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare namespace Express {
+  export interface Request {
+    user: User;
+  }
+  export interface Response {
+    user: User;
+  }
+}
+const generateAccessToken = (payload: User) =>
   jwt.sign(payload, process.env.TOKEN_SECRET, {
     expiresIn: `${60 * 24 * 14}m`,
   });
+
+export const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(
+    token,
+    process.env.TOKEN_SECRET as string,
+    (err: any, user: any) => {
+      console.log(err);
+      if (err) return res.sendStatus(403);
+      req.user = user;
+      next();
+    }
+  );
+};
 
 export default {
   addRoutes: (app: Express) => {
@@ -22,13 +55,21 @@ export default {
 
     app.post("/login", parseForm, async (req, res) => {
       const { username, password } = req.body;
+      const hashedPassword = crypto
+        .createHash("sha1")
+        .update(password)
+        .digest("hex");
       const privileges = (
         await call("/collection/privileges", "ducksmanager", {}, "GET", true, {
           username,
-          password: crypto.createHash("sha1").update(password).digest("hex"),
+          password: hashedPassword,
         })
       ).data;
-      const token = generateAccessToken({ username, privileges });
+      const token = generateAccessToken({
+        username,
+        hashedPassword,
+        privileges,
+      });
 
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ token }));

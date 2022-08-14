@@ -44,8 +44,8 @@ alias: [/connexion]
 <script setup>
 import axios from "axios";
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
-import Cookies from 'js-cookie'
 import { l10n } from "~/stores/l10n";
+import { collection } from "~/stores/collection";
 
 let router = useRouter();
 defineProps({
@@ -62,9 +62,10 @@ onMounted(async () => {
 
 const login = async () => {
   try {
-    Cookies.set('token', (await axios.post("/login", {
+    let token = (await axios.post("/login", {
       username, password
-    })).data.token, { expires: 14 })
+    })).data.token;
+    collection().setToken(token)
     await router.push('/collection')
   }
   catch(e) {
