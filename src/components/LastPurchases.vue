@@ -18,7 +18,7 @@
         :visible="false"
       >
         <template #header>
-          <b>{{ purchase.date }}</b>&nbsp;<i v-if="purchase.description">{{ purchase.description }}&nbsp;</i>{{ issues.length }} {{ $tc("numéro | numéros", issues.length) }}
+          <b>{{ purchase.date }}</b>&nbsp;<i v-if="purchase.description">{{ purchase.description }}&nbsp;</i>{{ issues.length }} {{ t("numéro | numéros", issues.length) }}
         </template>
         <template #content>
           <Issue
@@ -38,7 +38,9 @@
 <script setup>
 import { coa } from '~/stores/coa'
 import { collection as collectionStore } from '~/stores/collection'
+import { useI18n } from "vue-i18n";
 
+const {t} = useI18n()
 const publicationNames = $computed(() => coa().publicationNames)
 const collectionPerPurchaseDate = $computed(
   () =>

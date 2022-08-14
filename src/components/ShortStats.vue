@@ -2,9 +2,9 @@
   <div v-if="total > 0">
     <div>
       {{ $t("Vous possédez") }} <b>{{ total }}</b>
-      {{ $tc("numéro | numéros", total) }}, {{ $t("dont") }}
+      {{ t("numéro | numéros", total) }}, {{ $t("dont") }}
       {{ totalUniqueIssues }}
-      {{ $tc("numéro unique | numéros uniques", totalUniqueIssues) }}.
+      {{ t("numéro unique | numéros uniques", totalUniqueIssues) }}.
     </div>
     <div>
       {{ $t("Votre collection est composée de") }}
@@ -12,7 +12,7 @@
       {{ $t("magazines différents issus de") }}
       <span
         v-html="
-          $tc(
+          t(
             '{countries} pays | {countries} pays',
             Object.keys(totalPerCountry).length,
             { countries: `<b>${Object.keys(totalPerCountry).length}</b>` },
@@ -30,12 +30,15 @@
 
 <script setup>
 import { collection } from '~/stores/collection'
+import { useI18n } from "vue-i18n";
 const hasPublicationNames = $ref(false)
 const collectionStore = collection()
 const total = $computed(() => collectionStore.total)
 const totalUniqueIssues = $computed(() => collectionStore.totalUniqueIssues)
 const totalPerCountry = $computed(() => collectionStore.totalPerCountry)
 const totalPerPublication = $computed(() => collectionStore.totalPerPublication)
+
+const {t} = useI18n()
 </script>
 
 <style scoped>
