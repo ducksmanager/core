@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import { cachedCoaApi as coaApi } from "~/util/cache";
+import { cachedCoaApi as coaApi } from "~/util/api";
 
 const URL_PREFIX_COUNTRIES = "/api/coa/list/countries/LOCALE";
 const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";

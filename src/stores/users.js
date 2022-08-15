@@ -1,7 +1,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 
-import { cachedUserApi as userApi } from "~/util/cache";
+import { cachedUserApi as userApi } from "~/util/api";
 
 export const users = defineStore("users", {
   state: () => ({

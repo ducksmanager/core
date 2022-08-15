@@ -2,7 +2,7 @@
   <v-contextmenu-group>
     <li class="header">
       {{
-        $tc(
+        $t(
           "{count} numéro sélectionné|{count} numéros sélectionnés",
           selectedIssues.length,
         )

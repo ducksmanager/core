@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import { cachedL10nApi as l10nApi } from "~/util/cache";
+import { cachedL10nApi as l10nApi } from "~/util/api";
 
 const PATH_REGEX = /{([^:]+)(?::([^}]+))?}/g;
 
