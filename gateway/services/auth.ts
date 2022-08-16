@@ -10,20 +10,21 @@ const csrfProtection = csrf({ cookie: true });
 const parseForm = bodyParser.json();
 
 interface User {
+  id: number;
   username: string;
   hashedPassword: string;
   privileges: { [key: string]: string };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace Express {
-  export interface Request {
-    user: User;
-  }
-  export interface Response {
-    user: User;
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user: User;
+    }
   }
 }
+
 const generateAccessToken = (payload: User) =>
   jwt.sign(payload, process.env.TOKEN_SECRET, {
     expiresIn: `${60 * 24 * 14}m`,
@@ -66,6 +67,7 @@ export default {
         })
       ).data;
       const token = generateAccessToken({
+        id: 117, // TODO
         username,
         hashedPassword,
         privileges,
