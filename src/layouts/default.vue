@@ -18,6 +18,7 @@
 
 <script setup>
 import { useHead } from '@vueuse/head'
+import { collection } from "~/stores/collection";
 const route = useRoute()
 const topMenu = $computed(() => route.path.match(/\/([^/]+)/)?.[1])
 
@@ -25,6 +26,8 @@ const slots = useSlots()
 useHead({
   title: slots.title || 'DucksManager',
 })
+
+collection().initApi()
 </script>
 
 <style scoped lang="scss">

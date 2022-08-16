@@ -11,6 +11,7 @@ let collectionApi = axios.create({
     Authorization: `Bearer ${Cookies.get("token")}`,
   },
 });
+console.log(collectionApi);
 
 export const collection = defineStore("collection", {
   state: () => ({
@@ -32,7 +33,7 @@ export const collection = defineStore("collection", {
     user: null,
     previousVisit: null,
 
-    token: null,
+    collectionApi: null,
   }),
 
   getters: {
@@ -172,13 +173,14 @@ export const collection = defineStore("collection", {
   },
 
   actions: {
-    setToken(token) {
-      this.token = token;
-      Cookies.set("token", token, { expires: 14 });
-      collectionApi.defaults.headers = {
-        ...collectionApi.defaults.headers,
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      };
+    initApi() {
+      const baseURL = import.meta.env.VITE_GATEWAY_URL;
+      this.collectionApi = axios.create({
+        baseURL,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
     },
     setPreviousVisit(previousVisit) {
       this.previousVisit = previousVisit;
@@ -187,7 +189,7 @@ export const collection = defineStore("collection", {
       if (afterUpdate || (!this.isLoadingCollection && !this.collection)) {
         this.isLoadingCollection = true;
         this.collection = (
-          await collectionApi.get("/api/collection/issues")
+          await this.collectionApi.get("/api/collection/issues")
         ).data.map((issue) => ({
           ...issue,
           publicationCode: `${issue.country}/${issue.magazine}`,
@@ -199,7 +201,7 @@ export const collection = defineStore("collection", {
       if (afterUpdate || (!this.isLoadingPurchases && !this.purchases)) {
         this.isLoadingPurchases = true;
         this.purchases = (
-          await collectionApi.get("/api/collection/purchases")
+          await this.collectionApi.get("/api/collection/purchases")
         ).data;
         this.isLoadingPurchases = false;
       }
@@ -211,7 +213,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingWatchedAuthors = true;
         this.watchedAuthors = (
-          await collectionApi.get("/api/collection/authors/watched")
+          await this.collectionApi.get("/api/collection/authors/watched")
         ).data;
         this.isLoadingWatchedAuthors = false;
       }
@@ -220,7 +222,7 @@ export const collection = defineStore("collection", {
       if (!this.isLoadingSuggestions) {
         this.isLoadingSuggestions = true;
         this.suggestions = (
-          await collectionApi.get(
+          await this.collectionApi.get(
             `/api/collection/stats/suggestedissues/${[
               countryCode || "ALL",
               sinceLastVisit ? "since_previous_visit" : "_",
@@ -239,7 +241,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingSubscriptions = true;
         this.subscriptions = (
-          await collectionApi.get("/api/collection/subscriptions")
+          await this.collectionApi.get("/api/collection/subscriptions")
         ).data;
         this.isLoadingSubscriptions = false;
       }
@@ -247,7 +249,7 @@ export const collection = defineStore("collection", {
     async loadPopularIssuesInCollection() {
       if (!this.popularIssuesInCollection) {
         this.popularIssuesInCollection = (
-          await collectionApi.get("/api/collection/popular")
+          await this.collectionApi.get("/api/collection/popular")
         ).data.reduce(
           (acc, issue) => ({
             ...acc,
@@ -261,7 +263,7 @@ export const collection = defineStore("collection", {
     async loadLastPublishedEdgesForCurrentUser() {
       if (!this.lastPublishedEdgesForCurrentUser) {
         this.lastPublishedEdgesForCurrentUser = (
-          await collectionApi.get("/api/collection/edges/lastPublished")
+          await this.collectionApi.get("/api/collection/edges/lastPublished")
         ).data.map((edge) => ({
           ...edge,
           timestamp: Date.parse(edge.creationDate) / 1000,
@@ -272,7 +274,7 @@ export const collection = defineStore("collection", {
     async loadUser(afterUpdate = false) {
       if (afterUpdate || !this.user) {
         this.user = Object.entries(
-          (await collectionApi.get(`/api/collection/user`)).data
+          (await this.collectionApi.get(`/api/collection/user`)).data
         ).reduce((acc, [key, value]) => {
           switch (key) {
             case "accepterpartage":

@@ -46,6 +46,7 @@ import axios from "axios";
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { l10n } from "~/stores/l10n";
 import { collection } from "~/stores/collection";
+import Cookies from "js-cookie";
 
 let router = useRouter();
 defineProps({
@@ -62,10 +63,10 @@ onMounted(async () => {
 
 const login = async () => {
   try {
-    let token = (await axios.post("/login", {
+    Cookies.set('token', (await axios.post("/login", {
       username, password
-    })).data.token;
-    collection().setToken(token)
+    })).data.token);
+    collection().initApi()
     await router.push('/collection')
   }
   catch(e) {

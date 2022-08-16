@@ -182,7 +182,7 @@ onMounted(async () => {
     case "authors":
       await collectionStore().loadWatchedAuthors();
       watchedAuthorsStoryCount = (
-        await axios.get("/api/collection/stats/watchedauthorsstorycount")
+        await collection().collectionApi.get("/api/collection/stats/watchedauthorsstorycount")
       ).data;
       if (!watchedAuthorsStoryCount) watchedAuthorsStoryCount = {};
 

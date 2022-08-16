@@ -43,7 +43,6 @@
 
 <script setup>
 import Popper from '@bperel/vue3-popper-teleport'
-import axios from 'axios'
 
 import { collection } from '~/stores/collection'
 import { l10n } from '~/stores/l10n'
@@ -55,7 +54,7 @@ const { userId, username } = user()
 const { r } = l10n()
 
 if (userId) {
-  axios
+  collection().collectionApi
     .post('/api/collection/lastvisit')
     .then(data => collection().setPreviousVisit(data))
   users().fetchStats([userId])

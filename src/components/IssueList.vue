@@ -345,19 +345,19 @@ const deletePublicationIssues = async issuesToDelete =>
   })
 const updateIssues = async (data) => {
   contextmenu.hide()
-  await axios.post('/api/collection/issues', data)
+  await collectionStore().collectionApi.post('/api/collection/issues', data)
   await loadCollection(true)
   selected = []
 }
 const createPurchase = async ({ date, description }) => {
-  await axios.post('/api/collection/purchases', {
+  await collectionStore().collectionApi.post('/api/collection/purchases', {
     date,
     description,
   })
   await loadPurchases(true)
 }
 const deletePurchase = async ({ id }) => {
-  await axios.delete(`/api/collection/purchases/${id}`)
+  await collectionStore().collectionApi.delete(`/api/collection/purchases/${id}`)
   await loadPurchases(true)
 }
 const openBook = (issueNumber) => {
