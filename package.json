@@ -3,7 +3,7 @@
 	"packageManager": "pnpm@7.4.0",
 	"scripts": {
 		"build": "vite build",
-		"dev": "concurrently \"vite --port 3333\" \"cd gateway && pnpm run dev\"",
+		"dev": "concurrently \"vite --port 8001\" \"cd gateway && pnpm run dev\"",
 		"lint": "eslint .",
 		"typecheck": "vue-tsc --noEmit",
 		"preview": "vite preview",

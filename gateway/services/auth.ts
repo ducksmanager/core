@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import crypto from "crypto";
 import csrf from "csurf";
-import { Express } from "express";
+import { Express, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import { call } from "../call-api";
@@ -26,11 +26,15 @@ declare global {
 }
 
 const generateAccessToken = (payload: User) =>
-  jwt.sign(payload, process.env.TOKEN_SECRET, {
+  jwt.sign(payload, process.env.TOKEN_SECRET!, {
     expiresIn: `${60 * 24 * 14}m`,
   });
 
-export const authenticateToken = (req, res, next) => {
+export const authenticateToken = (
+  req: Request,
+  res: Response,
+  next: CallableFunction
+) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
