@@ -13,6 +13,10 @@ async function upsertSubscription(req: Request) {
     startDate: new Date(Date.parse(req.body.startDate)),
     endDate: new Date(Date.parse(req.body.endDate)),
   };
+  const id = parseInt(req.params.id);
+  if (!id) {
+    return null;
+  }
   await prisma.abonnements.upsert({
     update: dates,
     create: {
@@ -24,7 +28,7 @@ async function upsertSubscription(req: Request) {
       ...dates,
     },
     where: {
-      id: req.params[0] ? parseInt(req.params[0]) : -1,
+      id,
     },
   });
 }
@@ -33,19 +37,35 @@ export default {
   addRoutes: (app: Express) => {
     app.all(/^\/api\/collection\/(.+)/, authenticateToken);
     app.post(
-      /^\/api\/collection\/subscriptions\/(.+)$/,
+      "/api/collection/subscriptions/:id",
       parseForm,
       async (req, res) => {
         await upsertSubscription(req);
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.writeHead(200);
         res.end();
       }
     );
     app.put("/api/collection/subscriptions", parseForm, async (req, res) => {
       await upsertSubscription(req);
-      res.writeHead(200, { "Content-Type": "application/json" });
+      res.writeHead(200);
       res.end();
     });
+    app.delete(
+      "/api/collection/subscriptions/:id",
+      parseForm,
+      async (req, res) => {
+        await prisma.abonnements.deleteMany({
+          where: {
+            id: parseInt(req.params.id) || -1,
+            users: {
+              ID: req.user.id,
+            },
+          },
+        });
+        res.writeHead(204);
+        res.end();
+      }
+    );
     app.get("/api/collection/subscriptions", async (req, res) => {
       const subscriptions = await prisma.abonnements.findMany({
         where: {
