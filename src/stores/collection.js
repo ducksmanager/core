@@ -242,7 +242,11 @@ export const collection = defineStore("collection", {
         this.isLoadingSubscriptions = true;
         this.subscriptions = (
           await this.collectionApi.get("/api/collection/subscriptions")
-        ).data;
+        ).data.map((subscription) => ({
+          ...subscription,
+          startDate: new Date(Date.parse(subscription.startDate)),
+          endDate: new Date(Date.parse(subscription.endDate)),
+        }));
         this.isLoadingSubscriptions = false;
       }
     },

@@ -32,7 +32,7 @@
           type="date"
         >
         <template v-else>
-          {{ startDate }}
+          {{ editSubscription.startDate }}
         </template>
         {{ $t("au") }}
         <input
@@ -44,7 +44,7 @@
           type="date"
         >
         <template v-else>
-          {{ endDate }}
+          {{ editSubscription.endDate }}
         </template>
       </BCol>
       <BCol sm="3" md="1" class="text-center m-2">
@@ -91,18 +91,18 @@ const { endDate, publicationCode, startDate } = defineProps({
   },
   startDate: {
     default: null,
-    type: String,
+    type: Date,
   },
   endDate: {
     default: null,
-    type: String,
+    type: Date,
   },
 })
 defineEmits(['delete', 'edit', 'start-edit', 'cancel-edit'])
 const editSubscription = {
   publicationCode,
-  startDate,
-  endDate,
+  startDate: startDate && startDate.toISOString().split('T')[0],
+  endDate: endDate && endDate.toISOString().split('T')[0],
 }
 const publicationNames = $computed(() => coa().publicationNames)
 </script>

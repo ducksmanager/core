@@ -9,16 +9,16 @@ datasource db {
 }
 
 model abonnements {
-  ID             Int      @id @default(autoincrement())
-  ID_Utilisateur Int
-  Pays           String   @db.VarChar(3)
-  Magazine       String   @db.VarChar(6)
-  Date_debut     DateTime @db.Date
-  Date_fin       DateTime @db.Date
-  users          users    @relation(fields: [ID_Utilisateur], references: [ID], onDelete: Cascade, map: "abonnements_users_ID_fk")
+  id             Int      @id @default(autoincrement()) @map("ID")
+  userId         Int      @map("ID_Utilisateur")
+  country        String   @db.VarChar(3) @map("Pays")
+  magazine       String   @db.VarChar(6) @map("Magazine")
+  startDate      DateTime @db.Date @map("Date_debut")
+  endDate        DateTime @db.Date @map("Date_fin")
+  users          users    @relation(fields: [userId], references: [ID], onDelete: Cascade, map: "abonnements_users_ID_fk")
 
-  @@unique([Pays, Magazine, ID_Utilisateur, Date_debut, Date_fin], map: "abonnements_unique")
-  @@index([ID_Utilisateur], map: "abonnements_users_ID_fk")
+  @@unique([country, magazine, userId, startDate, endDate], map: "abonnements_unique")
+  @@index([userId], map: "abonnements_users_ID_fk")
 }
 
 model abonnements_sorties {
