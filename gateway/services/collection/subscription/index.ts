@@ -1,8 +1,7 @@
 import bodyParser from "body-parser";
 import { Express, Request } from "express";
 
-import { abonnements, PrismaClient } from "../prisma/generated/client_dm";
-import { authenticateToken } from "./auth";
+import { abonnements, PrismaClient } from "../../../prisma/generated/client_dm";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -35,7 +34,6 @@ async function upsertSubscription(req: Request) {
 
 export default {
   addRoutes: (app: Express) => {
-    app.all(/^\/api\/collection\/(.+)/, authenticateToken);
     app.post(
       "/api/collection/subscriptions/:id",
       parseForm,
