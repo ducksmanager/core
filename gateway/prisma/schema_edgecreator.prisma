@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client_edgecreator"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_EDGECREATOR")
+}
+
+model edgecreator_intervalles {
+  ID           Int    @id @default(autoincrement())
+  ID_Valeur    Int
+  Numero_debut String @db.VarChar(10)
+  Numero_fin   String @db.VarChar(10)
+  username     String @db.VarChar(25)
+
+  @@index([ID_Valeur, Numero_debut, Numero_fin, username], map: "index_intervalles")
+}
+
+model edgecreator_modeles2 {
+  ID           Int     @id @default(autoincrement())
+  Pays         String  @db.VarChar(3)
+  Magazine     String  @db.VarChar(6)
+  Ordre        Int
+  Nom_fonction String  @db.VarChar(30)
+  Option_nom   String? @db.VarChar(20)
+}
+
+model edgecreator_valeurs {
+  ID            Int     @id @default(autoincrement())
+  ID_Option     Int?
+  Option_valeur String? @db.VarChar(200)
+}
+
+model images_myfonts {
+  ID         Int     @id @default(autoincrement())
+  Font       String? @db.VarChar(150)
+  Color      String? @db.VarChar(10)
+  ColorBG    String? @db.VarChar(10)
+  Width      String? @db.VarChar(7)
+  Texte      String? @db.VarChar(150)
+  Precision_ String? @db.VarChar(5)
+}
+
+model images_tranches {
+  ID             Int       @id @default(autoincrement())
+  ID_Utilisateur Int?
+  Hash           String?   @unique(map: "images_tranches_Hash_uindex") @db.VarChar(40)
+  DateHeure      DateTime? @db.DateTime(0)
+  NomFichier     String    @db.VarChar(255)
+}
+
+model tranches_en_cours_modeles {
+  ID                 Int     @id @default(autoincrement())
+  Pays               String  @db.VarChar(3)
+  Magazine           String  @db.VarChar(6)
+  Numero             String  @db.VarChar(10)
+  username           String? @db.VarChar(25)
+  NomPhotoPrincipale String? @db.VarChar(60)
+  photographes       String? @db.Text
+  createurs          String? @db.Text
+  Active             Boolean
+
+  @@unique([Pays, Magazine, Numero, username], map: "tranches_en_cours_modeles__numero")
+}

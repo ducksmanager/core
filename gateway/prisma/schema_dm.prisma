@@ -1,0 +1,338 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client_dm"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_DM")
+}
+
+model abonnements {
+  ID             Int      @id @default(autoincrement())
+  ID_Utilisateur Int
+  Pays           String   @db.VarChar(3)
+  Magazine       String   @db.VarChar(6)
+  Date_debut     DateTime @db.Date
+  Date_fin       DateTime @db.Date
+  users          users    @relation(fields: [ID_Utilisateur], references: [ID], onDelete: Cascade, map: "abonnements_users_ID_fk")
+
+  @@unique([Pays, Magazine, ID_Utilisateur, Date_debut, Date_fin], map: "abonnements_unique")
+  @@index([ID_Utilisateur], map: "abonnements_users_ID_fk")
+}
+
+model abonnements_sorties {
+  Pays            String   @db.VarChar(3)
+  Magazine        String   @db.VarChar(6)
+  Numero          String   @db.VarChar(8)
+  Date_sortie     DateTime @db.Date
+  Numeros_ajoutes Boolean  @default(false)
+
+  @@id([Pays, Magazine, Numero])
+}
+
+model achats {
+  ID_Acquisition Int      @id @default(autoincrement())
+  ID_User        Int
+  Date           DateTime @db.Date
+  Description    String   @db.VarChar(100)
+
+  @@unique([ID_User, Date, Description], map: "user_date_description_unique")
+}
+
+model auteurs_pseudos {
+  ID              Int    @id @default(autoincrement())
+  NomAuteurAbrege String @db.VarChar(79)
+  ID_user         Int
+  Notation        Int    @default(-1)
+
+  @@unique([ID_user, NomAuteurAbrege], map: "auteurs_pseudos_uindex")
+  @@index([ID_user], map: "auteurs_pseudos_ID_user_index")
+  @@index([NomAuteurAbrege], map: "auteurs_pseudos_NomAuteurAbrege_index")
+}
+
+model bibliotheque_contributeurs {
+  ID    Int     @id @default(autoincrement())
+  Nom   String? @db.VarChar(30)
+  Texte String? @db.Text
+}
+
+model bibliotheque_ordre_magazines {
+  ID              Int    @id @default(autoincrement())
+  ID_Utilisateur  Int
+  publicationcode String @db.VarChar(12)
+  Ordre           Int
+
+  @@unique([ID_Utilisateur, publicationcode], map: "bibliotheque_ordre_magazines_uindex")
+}
+
+model bouquineries {
+  ID                        Int                         @id @default(autoincrement())
+  Nom                       String                      @db.VarChar(25)
+  AdresseComplete           String                      @db.Text
+  CoordX                    Float
+  CoordY                    Float
+  bouquineries_commentaires bouquineries_commentaires[]
+  users_contributions       users_contributions[]
+}
+
+model bouquineries_commentaires {
+  ID                  Int                   @id @default(autoincrement())
+  ID_Utilisateur      Int?
+  Commentaire         String                @db.Text
+  DateAjout           DateTime              @default(now()) @db.Timestamp(0)
+  Actif               Boolean               @default(false)
+  ID_Bouquinerie      Int
+  bouquineries        bouquineries          @relation(fields: [ID_Bouquinerie], references: [ID], onUpdate: Restrict, map: "bouquineries_commentaires_bouquineries_ID_fk")
+  users               users?                @relation(fields: [ID_Utilisateur], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "bouquineries_commentaires_users_ID_fk")
+  users_contributions users_contributions[]
+
+  @@index([ID_Bouquinerie], map: "bouquineries_commentaires_bouquineries_ID_fk")
+  @@index([ID_Utilisateur], map: "bouquineries_commentaires_users_ID_fk")
+}
+
+model demo {
+  ID              Int      @id @default(1)
+  DateDernierInit DateTime @db.DateTime(0)
+}
+
+model magazines {
+  PaysAbrege     String   @db.VarChar(4)
+  NomAbrege      String   @db.VarChar(7)
+  NomComplet     String   @db.VarChar(70)
+  RedirigeDepuis String   @db.VarChar(7)
+  NeParaitPlus   Boolean?
+
+  @@id([PaysAbrege, NomAbrege, RedirigeDepuis])
+}
+
+model numeros {
+  ID             Int          @id @default(autoincrement())
+  Pays           String       @db.VarChar(3)
+  Magazine       String       @db.VarChar(10)
+  Numero         String       @db.VarChar(12)
+  Numero_nospace String?      @db.VarChar(12)
+  Etat           numeros_Etat @default(indefini)
+  ID_Acquisition Int          @default(-1)
+  AV             Boolean
+  A_Lire         Boolean      @default(false)
+  Abonnement     Int          @default(0) @db.TinyInt
+  ID_Utilisateur Int
+  DateAjout      DateTime     @default(now()) @db.Timestamp(0)
+  issuecode      String?      @db.VarChar(25)
+
+  @@index([Pays, Magazine, Numero, ID_Utilisateur], map: "Numero_Utilisateur")
+  @@index([Pays, Magazine, Numero_nospace, ID_Utilisateur], map: "Numero_nospace_Utilisateur")
+  @@index([Pays, Magazine, Numero], map: "Pays_Magazine_Numero")
+  @@index([DateAjout, Pays, Magazine, Numero], map: "Pays_Magazine_Numero_DateAjout")
+  @@index([ID_Utilisateur], map: "Utilisateur")
+  @@index([issuecode, ID_Utilisateur], map: "numeros_issuecode_ID_Utilisateur_index")
+  @@index([issuecode], map: "numeros_issuecode_index")
+}
+
+model numeros_popularite {
+  Pays       String @db.VarChar(3)
+  Magazine   String @db.VarChar(6)
+  Numero     String @db.VarChar(12)
+  Popularite Int
+  ID         Int    @id @default(autoincrement())
+
+  @@unique([Pays, Magazine, Numero], map: "numeros_popularite_unique")
+}
+
+model tranches_doublons {
+  ID               Int    @id @default(autoincrement())
+  Pays             String @db.VarChar(3)
+  Magazine         String @db.VarChar(6)
+  Numero           String @db.VarChar(12)
+  NumeroReference  String @db.VarChar(12)
+  TrancheReference Int?
+
+  @@unique([Pays, Magazine, Numero], map: "tranches_doublons_Pays_Magazine_Numero_uindex")
+  @@index([TrancheReference], map: "tranches_doublons_tranches_pretes_ID_fk")
+}
+
+model tranches_pretes {
+  ID                  Int                   @id @default(autoincrement())
+  publicationcode     String                @db.VarChar(12)
+  issuenumber         String                @db.VarChar(12)
+  dateajout           DateTime              @default(now()) @db.Timestamp(0)
+  points              Int?
+  slug                String?               @db.VarChar(30)
+  issuecode           String?               @unique(map: "tranches_pretes_issuecode_uindex") @db.VarChar(23)
+  users_contributions users_contributions[]
+
+  @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
+  @@index([dateajout], map: "tranches_pretes_dateajout_index")
+}
+
+model tranches_pretes_contributeurs {
+  publicationcode String                                     @db.VarChar(15)
+  issuenumber     String                                     @db.VarChar(30)
+  contributeur    Int
+  contribution    tranches_pretes_contributeurs_contribution @default(createur)
+
+  @@id([publicationcode, issuenumber, contributeur, contribution])
+  @@index([contributeur], map: "tranches_pretes_contributeurs_contributeur_index")
+  @@index([publicationcode, issuenumber], map: "tranches_pretes_contributeurs_publicationcode_issuenumber_index")
+}
+
+model tranches_pretes_contributions {
+  ID           Int                                        @id @default(autoincrement())
+  ID_tranche   Int
+  ID_user      Int
+  dateajout    DateTime                                   @default(now()) @db.Timestamp(0)
+  contribution tranches_pretes_contributions_contribution
+  points_new   Int
+  points_total Int
+
+  @@index([ID_user, contribution], map: "tranches_pretes_contributions_ID_user_contribution_index")
+}
+
+model tranches_pretes_sprites {
+  ID          Int    @id @default(autoincrement())
+  ID_Tranche  Int
+  Sprite_name String @db.VarChar(25)
+  Sprite_size Int?
+
+  @@unique([ID_Tranche, Sprite_name], map: "tranches_pretes_sprites_unique")
+}
+
+model tranches_pretes_sprites_size {
+  ID          Int     @id @default(autoincrement())
+  sprite_name String? @db.VarChar(25)
+  size        Int?
+}
+
+model tranches_pretes_sprites_urls {
+  ID          Int    @id @default(autoincrement())
+  Sprite_name String @db.VarChar(25)
+  Version     String @db.VarChar(12)
+
+  @@unique([Sprite_name, Version], map: "tranches_pretes_sprites_urls_unique")
+}
+
+model users {
+  ID                           Int                         @id @default(autoincrement())
+  username                     String                      @unique(map: "username") @db.VarChar(25)
+  password                     String                      @db.VarChar(40)
+  AccepterPartage              Boolean                     @default(true)
+  DateInscription              DateTime                    @db.Date
+  EMail                        String                      @db.VarChar(50)
+  RecommandationsListeMags     Boolean                     @default(true)
+  BetaUser                     Boolean                     @default(false)
+  AfficherVideo                Boolean                     @default(true)
+  Bibliotheque_AfficherDoubles Int?                        @default(1) @db.TinyInt
+  Bibliotheque_Texture1        String                      @default("bois") @db.VarChar(20)
+  Bibliotheque_Sous_Texture1   String                      @default("HONDURAS MAHOGANY") @db.VarChar(50)
+  Bibliotheque_Texture2        String                      @default("bois") @db.VarChar(20)
+  Bibliotheque_Sous_Texture2   String                      @default("KNOTTY PINE") @db.VarChar(50)
+  TextePresentation            String?                     @db.VarChar(100)
+  DernierAcces                 DateTime?                   @db.DateTime(0)
+  PrecedentAcces               DateTime?                   @db.DateTime(0)
+  abonnements                  abonnements[]
+  bouquineries_commentaires    bouquineries_commentaires[]
+  users_contributions          users_contributions[]
+  users_options                users_options[]
+}
+
+model users_contributions {
+  ID                        Int                        @id @default(autoincrement())
+  ID_user                   Int
+  date                      DateTime                   @default(now()) @db.DateTime(0)
+  contribution              String                     @db.VarChar(255)
+  points_new                Int
+  points_total              Int
+  emails_sent               Boolean
+  ID_tranche                Int?
+  ID_bookstore              Int?
+  ID_bookstore_comment      Int?
+  tranches_pretes           tranches_pretes?           @relation(fields: [ID_tranche], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
+  bouquineries              bouquineries?              @relation(fields: [ID_bookstore], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F3A5778B6C")
+  users                     users                      @relation(fields: [ID_user], references: [ID], onUpdate: Restrict, map: "users_contributions___fk_user")
+  bouquineries_commentaires bouquineries_commentaires? @relation(fields: [ID_bookstore_comment], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "users_contributions_bouquineries_commentaires_ID_fk")
+
+  @@index([ID_tranche], map: "IDX_7FDC16F375567043")
+  @@index([ID_bookstore], map: "IDX_7FDC16F3A5778B6C")
+  @@index([ID_user, contribution], map: "users_contributions__user_contribution")
+  @@index([ID_bookstore_comment], map: "users_contributions_bouquineries_commentaires_ID_fk")
+}
+
+model users_options {
+  ID            Int                      @id @default(autoincrement())
+  ID_User       Int
+  Option_nom    users_options_Option_nom
+  Option_valeur String                   @db.VarChar(50)
+  users         users                    @relation(fields: [ID_User], references: [ID], onUpdate: Restrict, map: "users_options_users_ID_fk")
+
+  @@unique([ID_User, Option_nom, Option_valeur], map: "users_options__unique")
+  @@index([ID_User, Option_nom], map: "users_options__user_option")
+}
+
+model users_password_tokens {
+  ID      Int    @id @default(autoincrement())
+  ID_User Int
+  Token   String @db.VarChar(16)
+
+  @@unique([ID_User, Token], map: "users_password_tokens_unique")
+}
+
+model users_permissions {
+  ID        Int                         @id @default(autoincrement())
+  username  String                      @db.VarChar(25)
+  role      String                      @db.VarChar(20)
+  privilege users_permissions_privilege
+
+  @@unique([username, role, privilege], map: "permission_username_role")
+}
+
+model users_points {
+  ID               Int                           @id @default(autoincrement())
+  ID_Utilisateur   Int
+  TypeContribution users_points_TypeContribution
+  NbPoints         Int?                          @default(0)
+}
+
+model users_suggestions_notifications {
+  ID        Int       @id @default(autoincrement())
+  ID_User   Int
+  issuecode String    @db.VarChar(12)
+  text      String?   @db.Text
+  date      DateTime? @default(now()) @db.DateTime(0)
+
+  @@unique([ID_User, issuecode], map: "users_notifications__index_user_issue")
+}
+
+enum users_options_Option_nom {
+  suggestion_notification_country
+  sales_notification_publications
+}
+
+enum users_points_TypeContribution {
+  photographe
+  createur
+  duckhunter
+}
+
+enum users_permissions_privilege {
+  Admin
+  Edition
+  Affichage
+}
+
+enum tranches_pretes_contributeurs_contribution {
+  photographe
+  createur
+}
+
+enum tranches_pretes_contributions_contribution {
+  photographe
+  createur
+}
+
+enum numeros_Etat {
+  mauvais
+  moyen
+  bon
+  indefini
+}

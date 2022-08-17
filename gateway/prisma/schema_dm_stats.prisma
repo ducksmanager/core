@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client_dm_stats"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_DM_STATS")
+}
+
+model auteurs_histoires {
+  ID         Int    @id @default(autoincrement())
+  personcode String @db.VarChar(79)
+  storycode  String @db.VarChar(19)
+
+  @@unique([personcode, storycode], map: "unique_index")
+  @@index([storycode], map: "index_storycode")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model auteurs_histoires_publications {
+  ID              Int?
+  personcode      String?   @db.VarChar(79)
+  storycode       String?   @db.VarChar(19)
+  publicationcode String?   @db.VarChar(12)
+  issuenumber     String?   @db.VarChar(12)
+  issuecode       String?   @db.VarChar(25)
+  oldestdate      DateTime? @db.Date
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model utilisateurs_histoires_manquantes {
+  ID         Int?
+  ID_User    Int?
+  personcode String? @db.VarChar(79)
+  storycode  String? @db.VarChar(19)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model utilisateurs_publications_manquantes {
+  ID              Int?
+  ID_User         Int?
+  personcode      String?   @db.VarChar(79)
+  storycode       String?   @db.VarChar(19)
+  publicationcode String?   @db.VarChar(12)
+  issuenumber     String?   @db.VarChar(12)
+  oldestdate      DateTime? @db.Date
+  Notation        Int?      @db.TinyInt
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model utilisateurs_publications_suggerees {
+  ID              Int?
+  ID_User         Int?
+  publicationcode String?   @db.VarChar(12)
+  issuenumber     String?   @db.VarChar(12)
+  oldestdate      DateTime? @db.Date
+  Score           Int?
+
+  @@ignore
+}

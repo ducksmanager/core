@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client_cover_info"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_COVER_INFO")
+}
+
+model cover_imports {
+  coverid      Int       @id @default(autoincrement())
+  imported     DateTime? @db.DateTime(0)
+  import_error String?   @db.VarChar(200)
+
+  @@unique([coverid, imported, import_error], map: "uniquefieldset_cover_imports")
+}
+
+model covers {
+  ID        Int    @id @default(autoincrement())
+  issuecode String @db.VarChar(17)
+  sitecode  String @db.VarChar(11)
+  url       String @db.VarChar(98)
+
+  @@unique([issuecode, url], map: "uniquefieldset_covers")
+}
