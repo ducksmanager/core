@@ -36,6 +36,7 @@ specifiers:
   pinia: ^2.0.13
   pnpm: ^7.6.0
   prettier: ^2.7.1
+  prettier-plugin-prisma: ^4.1.0
   sass: ^1.54.4
   taze: ^0.7.6
   timeago.js: ^4.0.2
@@ -105,6 +106,7 @@ devDependencies:
   jsdom: 20.0.0
   pnpm: 7.6.0
   prettier: 2.7.1
+  prettier-plugin-prisma: 4.1.0_prettier@2.7.1
   sass: 1.54.4
   taze: 0.7.6
   typescript: 4.7.4
@@ -630,6 +632,10 @@ packages:
   /@popperjs/core/2.11.6:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: false
+
+  /@prisma/prisma-fmt-wasm/4.1.0-12.09f9659a3d73d5ed2aac8298e2856b8be910cd66:
+    resolution: {integrity: sha512-92cZ5P1IcJex6aIxFptU3HNv8g53b/eP0AhqmVGCiyzcTbwCQcbCMUycDuEoHjIuIR0o7XXdHIrXnbiQQMhEGg==}
+    dev: true
 
   /@rollup/pluginutils/4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
@@ -4402,6 +4408,16 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       fast-diff: 1.2.0
+    dev: true
+
+  /prettier-plugin-prisma/4.1.0_prettier@2.7.1:
+    resolution: {integrity: sha512-bGh1pEzEjSVky3T1uznlZlWgPzyJykEbkg8iFjsBKWMMrkEDRT+5iDJD0CSFjR3bI6r9KkQQJcRvUa5oUR6hwA==}
+    engines: {node: '>=12', npm: '>=7'}
+    peerDependencies:
+      prettier: '>=2'
+    dependencies:
+      '@prisma/prisma-fmt-wasm': 4.1.0-12.09f9659a3d73d5ed2aac8298e2856b8be910cd66
+      prettier: 2.7.1
     dev: true
 
   /prettier/2.7.1:

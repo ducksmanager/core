@@ -467,8 +467,8 @@ model inducks_person {
   photosource            String?                             @db.VarChar(67)
   personrefs             String?                             @db.VarChar(179)
 
-  @@index([nationalitycountrycode], map: "fk_inducks_person0")
   // @@index([fullname, birthname], map: "fulltext_inducks_person")
+  @@index([nationalitycountrycode], map: "fk_inducks_person0")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
@@ -506,9 +506,9 @@ model inducks_publication {
   inputfilecode       Int?
   maintenanceteamcode String?                             @db.VarChar(9)
 
+  // @@index([title], map: "fulltext_inducks_publication")
   @@index([countrycode], map: "fk_inducks_publication0")
   @@index([languagecode], map: "fk_inducks_publication1")
-  // @@index([title], map: "fulltext_inducks_publication")
 }
 
 model inducks_publicationcategory {
@@ -648,9 +648,9 @@ model inducks_story {
   maintenanceteamcode      String?               @db.VarChar(10)
   storyheadercode          String?               @db.VarChar(3)
 
+  // @@index([title, repcountrysummary], map: "fulltext_inducks_story")
   @@index([originalstoryversioncode], map: "fk_inducks_story0")
   @@index([firstpublicationdate], map: "fk_inducks_story1")
-  // @@index([title, repcountrysummary], map: "fulltext_inducks_story")
 }
 
 model inducks_storycodes {
@@ -743,8 +743,8 @@ model inducks_storyversion {
   keywordsummary        String?                                     @db.Text
   estimatedpanels       Int?
 
-  @@index([storycode], map: "fk_inducks_storyversion1")
   // @@index([appsummary, plotsummary, writsummary, artsummary, inksummary, creatorrefsummary, keywordsummary], map: "fulltext_inducks_storyversion")
+  @@index([storycode], map: "fk_inducks_storyversion1")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.

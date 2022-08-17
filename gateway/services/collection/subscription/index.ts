@@ -22,7 +22,7 @@ async function upsertSubscription(req: Request) {
       country: publicationCodeParts[0],
       magazine: publicationCodeParts[1],
       users: {
-        connect: { ID: req.user.id },
+        connect: { id: req.user.id },
       },
       ...dates,
     },
@@ -56,7 +56,7 @@ export default {
           where: {
             id: parseInt(req.params.id) || -1,
             users: {
-              ID: req.user.id,
+              id: req.user.id,
             },
           },
         });
@@ -68,7 +68,7 @@ export default {
       const subscriptions = await prisma.abonnements.findMany({
         where: {
           users: {
-            ID: req.user.id,
+            id: req.user.id,
           },
         },
       });
