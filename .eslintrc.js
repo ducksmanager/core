@@ -17,4 +17,9 @@ module.exports = {
     "simple-import-sort/exports": "error",
   },
   plugins: ["simple-import-sort", "@typescript-eslint"],
+  ignorePatterns: [
+    "**/node_modules",
+    "gateway/dist",
+    "gateway/prisma/generated",
+  ],
 };

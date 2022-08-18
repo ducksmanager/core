@@ -17,7 +17,7 @@
       v-if="!noButton"
       :disabled="!currentPublicationCode"
       variant="secondary"
-      :href="r(`/collection/show/{publicationCode:${currentPublicationCode}}`)"
+      :href="r(`/collection/show/${currentPublicationCode}`)"
     >
       {{ $t("OK") }}
     </BButton>

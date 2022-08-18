@@ -8,7 +8,7 @@ datasource db {
   url      = env("DATABASE_URL_DM")
 }
 
-model abonnements {
+model subscription {
   id        Int      @id @default(autoincrement()) @map("ID")
   userId    Int      @map("ID_Utilisateur")
   country   String   @map("Pays") @db.VarChar(3)
@@ -19,6 +19,7 @@ model abonnements {
 
   @@unique([country, magazine, userId, startDate, endDate], map: "abonnements_unique")
   @@index([userId], map: "abonnements_users_ID_fk")
+  @@map("abonnements")
 }
 
 model abonnements_sorties {
@@ -31,13 +32,14 @@ model abonnements_sorties {
   @@id([Pays, Magazine, Numero])
 }
 
-model achats {
-  ID_Acquisition Int      @id @default(autoincrement())
-  ID_User        Int
-  Date           DateTime @db.Date
-  Description    String   @db.VarChar(100)
+model purchase {
+  id            Int      @id @default(autoincrement()) @map("ID_Acquisition")
+  userId        Int                                    @map("ID_User")
+  date          DateTime @db.Date                      @map("Date")
+  description   String   @db.VarChar(100)              @map("Description")
 
-  @@unique([ID_User, Date, Description], map: "user_date_description_unique")
+  @@unique([userId, date, description], map: "user_date_description_unique")
+  @@map("achats")
 }
 
 model auteurs_pseudos {
@@ -106,20 +108,20 @@ model magazines {
   @@id([PaysAbrege, NomAbrege, RedirigeDepuis])
 }
 
-model numeros {
-  id                 Int          @id @default(autoincrement()) @map("ID")
-  country            String       @map("Pays") @db.VarChar(3)
-  magazine           String       @map("Magazine") @db.VarChar(10)
-  issueNumber        String       @map("Numero") @db.VarChar(12)
-  issueNumberNoSpace String?      @map("Numero_nospace") @db.VarChar(12)
-  condition          numeros_Etat @default(indefini) @map("Etat")
-  purchaseId         Int          @default(-1) @map("ID_Acquisition")
-  isOnSale           Boolean      @map("AV")
-  isToRead           Boolean      @default(false) @map("A_Lire")
-  isSubscription     Int          @default(0) @map("Abonnement") @db.TinyInt
-  userId             Int          @map("ID_Utilisateur")
-  creationDate       DateTime     @default(now()) @map("DateAjout") @db.Timestamp(0)
-  issuecode          String?      @db.VarChar(25)
+model issue {
+  id                 Int             @id @default(autoincrement()) @map("ID")
+  country            String          @map("Pays") @db.VarChar(3)
+  magazine           String          @map("Magazine") @db.VarChar(10)
+  issueNumber        String          @map("Numero") @db.VarChar(12)
+  issueNumberNoSpace String?         @map("Numero_nospace") @db.VarChar(12)
+  condition          issue_condition @default(indefini) @map("Etat")
+  purchaseId         Int             @default(-1) @map("ID_Acquisition")
+  isOnSale           Boolean         @map("AV")
+  isToRead           Boolean         @default(false) @map("A_Lire")
+  isSubscription     Int             @default(0) @map("Abonnement") @db.TinyInt
+  userId             Int             @map("ID_Utilisateur")
+  creationDate       DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
+  issuecode          String?         @db.VarChar(25)
 
   @@index([country, magazine, issueNumber, userId], map: "Numero_Utilisateur")
   @@index([country, magazine, issueNumberNoSpace, userId], map: "Numero_nospace_Utilisateur")
@@ -128,6 +130,8 @@ model numeros {
   @@index([userId], map: "Utilisateur")
   @@index([issuecode, userId], map: "numeros_issuecode_ID_Utilisateur_index")
   @@index([issuecode], map: "numeros_issuecode_index")
+
+  @@map("numeros")
 }
 
 model numeros_popularite {
@@ -230,7 +234,7 @@ model users {
   presentationText          String?                     @map("TextePresentation") @db.VarChar(100)
   lastAccess                DateTime?                   @map("DernierAcces") @db.DateTime(0)
   previousAccess            DateTime?                   @map("PrecedentAcces") @db.DateTime(0)
-  abonnements               abonnements[]
+  abonnements               subscription[]
   bouquineries_commentaires bouquineries_commentaires[]
   users_contributions       users_contributions[]
   users_options             users_options[]
@@ -330,7 +334,7 @@ enum tranches_pretes_contributions_contribution {
   createur
 }
 
-enum numeros_Etat {
+enum issue_condition {
   mauvais
   moyen
   bon

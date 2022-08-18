@@ -5,14 +5,6 @@ import { defineStore } from "pinia";
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
 
-let collectionApi = axios.create({
-  baseURL: import.meta.env.VITE_GATEWAY_URL,
-  headers: {
-    Authorization: `Bearer ${Cookies.get("token")}`,
-  },
-});
-console.log(collectionApi);
-
 export const collection = defineStore("collection", {
   state: () => ({
     collection: null,

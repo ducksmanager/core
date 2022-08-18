@@ -43,7 +43,7 @@
               <a
                 class="dropdown-item"
                 :href="
-                  r(`/collection/show/{publicationCode:${publicationCode}}`)
+                  r(`/collection/show/${publicationCode}`)
                 "
               >
                 {{
@@ -57,7 +57,7 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            :href="r('/collection/show/{publicationCode:new}')"
+            :href="r('/collection/show/new')"
           >{{ $t("Nouveau magazine") }}</a>
         </li>
       </ul>

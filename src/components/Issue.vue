@@ -3,7 +3,7 @@
     <a
       :class="{ clickable, flex }"
       :href="`${r(
-        `/collection/show/{publicationCode:${publicationcode}}`,
+        `/collection/show/${publicationcode}`,
       )}#${issuenumber}`"
     >
       <Condition

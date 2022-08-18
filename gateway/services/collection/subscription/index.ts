@@ -1,7 +1,10 @@
 import bodyParser from "body-parser";
 import { Express, Request } from "express";
 
-import { abonnements, PrismaClient } from "../../../prisma/generated/client_dm";
+import {
+  PrismaClient,
+  subscription,
+} from "../../../prisma/generated/client_dm";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -16,7 +19,7 @@ async function upsertSubscription(req: Request) {
   if (!id) {
     return null;
   }
-  await prisma.abonnements.upsert({
+  await prisma.subscription.upsert({
     update: dates,
     create: {
       country: publicationCodeParts[0],
@@ -52,7 +55,7 @@ export default {
       "/api/collection/subscriptions/:id",
       parseForm,
       async (req, res) => {
-        await prisma.abonnements.deleteMany({
+        await prisma.subscription.deleteMany({
           where: {
             id: parseInt(req.params.id) || -1,
             users: {
@@ -65,7 +68,7 @@ export default {
       }
     );
     app.get("/api/collection/subscriptions", async (req, res) => {
-      const subscriptions = await prisma.abonnements.findMany({
+      const subscriptions = await prisma.subscription.findMany({
         where: {
           users: {
             id: req.user.id,
@@ -75,7 +78,7 @@ export default {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
         JSON.stringify(
-          subscriptions.map((subscription: abonnements) => ({
+          subscriptions.map((subscription: subscription) => ({
             id: subscription.id,
             publicationCode: `${subscription.country}/${subscription.magazine}`,
             startDate: subscription.startDate.toISOString(),
