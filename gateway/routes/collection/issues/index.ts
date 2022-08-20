@@ -210,7 +210,6 @@ export const post = [
     const publication = req.body.publicationCode;
     const issueNumbers = req.body.issueNumbers;
     let condition = req.body.condition;
-    console.log(condition.keys);
     const userId = req.user.id;
 
     if (typeof condition !== "string" && issueNumbers.length > 1) {

@@ -157,18 +157,19 @@ model tranches_doublons {
   @@index([TrancheReference], map: "tranches_doublons_tranches_pretes_ID_fk")
 }
 
-model tranches_pretes {
-  ID                  Int                   @id @default(autoincrement())
+model edge {
+  id                  Int                   @id @default(autoincrement())       @map("ID")
   publicationcode     String                @db.VarChar(12)
   issuenumber         String                @db.VarChar(12)
-  dateajout           DateTime              @default(now()) @db.Timestamp(0)
+  creationDate        DateTime              @default(now()) @db.Timestamp(0)    @map("dateajout")
   points              Int?
   slug                String?               @db.VarChar(30)
   issuecode           String?               @unique(map: "tranches_pretes_issuecode_uindex") @db.VarChar(23)
   users_contributions users_contributions[]
 
   @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
-  @@index([dateajout], map: "tranches_pretes_dateajout_index")
+  @@index([creationDate], map: "tranches_pretes_dateajout_index")
+  @@map("tranches_pretes")
 }
 
 model tranches_pretes_contributeurs {
@@ -252,7 +253,7 @@ model users_contributions {
   ID_tranche                Int?
   ID_bookstore              Int?
   ID_bookstore_comment      Int?
-  tranches_pretes           tranches_pretes?           @relation(fields: [ID_tranche], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
+  tranches_pretes           edge?                      @relation(fields: [ID_tranche], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
   bouquineries              bouquineries?              @relation(fields: [ID_bookstore], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F3A5778B6C")
   users                     users                      @relation(fields: [ID_user], references: [id], onUpdate: Restrict, map: "users_contributions___fk_user")
   bouquineries_commentaires bouquineries_commentaires? @relation(fields: [ID_bookstore_comment], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "users_contributions_bouquineries_commentaires_ID_fk")
