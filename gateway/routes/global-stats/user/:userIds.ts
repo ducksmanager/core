@@ -1,6 +1,24 @@
-import { runQuery } from "../rawsql";
+import { Handler } from "express";
 
-export const getUsersQuickStats = async (userIds: number[]) => {
+import { runQuery } from "../../../rawsql";
+
+export const get: Handler = async (req, res) => {
+  const userIds = req.params.userIds
+    .split(",")
+    .map((userId) => parseInt(userId))
+    .filter((userId) => !isNaN(userId));
+  let data = {};
+  if (userIds.length) {
+    data = {
+      points: await getUsersPoints(userIds),
+      stats: await getUsersQuickStats(userIds),
+    };
+  }
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify(data));
+};
+
+const getUsersQuickStats = async (userIds: number[]) => {
   const userQuickStats = await runQuery(
     `
       select u.ID                                        AS userId,
@@ -26,7 +44,7 @@ export const getUsersQuickStats = async (userIds: number[]) => {
   }));
 };
 
-export const getUsersPoints = async (userIds: number[]) => {
+const getUsersPoints = async (userIds: number[]) => {
   const userPoints = await runQuery(
     `
                 select type_contribution.contribution,

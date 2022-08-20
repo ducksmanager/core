@@ -1,6 +1,14 @@
-import { runQuery } from "../rawsql";
+import type { Handler } from "express";
 
-export const getEvents = async () => {
+import { runQuery } from "../../rawsql";
+
+export const get: Handler = async (req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  const events = await getEvents();
+  res.end(JSON.stringify(events));
+};
+
+const getEvents = async () => {
   return [
     ...(await retrieveSignups()),
     ...(await retrieveCollectionUpdates()),

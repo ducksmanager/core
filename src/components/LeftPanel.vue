@@ -55,7 +55,7 @@ const { r } = l10n()
 
 if (userId) {
   collection().collectionApi
-    .post('/api/collection/lastvisit')
+    .post('/collection/lastvisit')
     .then(data => collection().setPreviousVisit(data))
   users().fetchStats([userId])
 }

@@ -55,7 +55,7 @@ export const bookcase = defineStore("bookcase", {
       if (!this.bookcase) {
         try {
           this.bookcase = (
-            await axios.get(`/api/bookcase/${this.bookcaseUsername}`)
+            await axios.get(`/bookcase/${this.bookcaseUsername}`)
           ).data;
         } catch (e) {
           switch (e.response.status) {
@@ -72,23 +72,23 @@ export const bookcase = defineStore("bookcase", {
     async loadBookcaseOptions() {
       if (!this.bookcaseOptions) {
         this.bookcaseOptions = (
-          await axios.get(`/api/bookcase/${this.bookcaseUsername}/options`)
+          await axios.get(`/bookcase/${this.bookcaseUsername}/options`)
         ).data;
       }
     },
     async updateBookcaseOptions() {
-      await axios.post(`/api/bookcase/options`, this.bookcaseOptions);
+      await axios.post(`/bookcase/options`, this.bookcaseOptions);
     },
 
     async loadBookcaseOrder() {
       if (!this.bookcaseOrder) {
         this.bookcaseOrder = (
-          await axios.get(`/api/bookcase/${this.bookcaseUsername}/sort`)
+          await axios.get(`/bookcase/${this.bookcaseUsername}/sort`)
         ).data;
       }
     },
     async updateBookcaseOrder() {
-      await axios.post(`/api/bookcase/sort`, { sorts: this.bookcaseOrder });
+      await axios.post(`/bookcase/sort`, { sorts: this.bookcaseOrder });
     },
   },
 });

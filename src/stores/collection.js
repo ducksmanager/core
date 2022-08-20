@@ -181,7 +181,7 @@ export const collection = defineStore("collection", {
       if (afterUpdate || (!this.isLoadingCollection && !this.collection)) {
         this.isLoadingCollection = true;
         this.collection = (
-          await this.collectionApi.get("/api/collection/issues")
+          await this.collectionApi.get("/collection/issues")
         ).data.map((issue) => ({
           ...issue,
           publicationCode: `${issue.country}/${issue.magazine}`,
@@ -193,7 +193,7 @@ export const collection = defineStore("collection", {
       if (afterUpdate || (!this.isLoadingPurchases && !this.purchases)) {
         this.isLoadingPurchases = true;
         this.purchases = (
-          await this.collectionApi.get("/api/collection/purchases")
+          await this.collectionApi.get("/collection/purchases")
         ).data;
         this.isLoadingPurchases = false;
       }
@@ -205,7 +205,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingWatchedAuthors = true;
         this.watchedAuthors = (
-          await this.collectionApi.get("/api/collection/authors/watched")
+          await this.collectionApi.get("/collection/authors/watched")
         ).data;
         this.isLoadingWatchedAuthors = false;
       }
@@ -215,7 +215,7 @@ export const collection = defineStore("collection", {
         this.isLoadingSuggestions = true;
         this.suggestions = (
           await this.collectionApi.get(
-            `/api/collection/stats/suggestedissues/${[
+            `/collection/stats/suggestedissues/${[
               countryCode || "ALL",
               sinceLastVisit ? "since_previous_visit" : "_",
               sort,
@@ -233,7 +233,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingSubscriptions = true;
         this.subscriptions = (
-          await this.collectionApi.get("/api/collection/subscriptions")
+          await this.collectionApi.get("/collection/subscriptions")
         ).data.map((subscription) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
@@ -245,7 +245,7 @@ export const collection = defineStore("collection", {
     async loadPopularIssuesInCollection() {
       if (!this.popularIssuesInCollection) {
         this.popularIssuesInCollection = (
-          await this.collectionApi.get("/api/collection/popular")
+          await this.collectionApi.get("/collection/popular")
         ).data.reduce(
           (acc, issue) => ({
             ...acc,
@@ -259,7 +259,7 @@ export const collection = defineStore("collection", {
     async loadLastPublishedEdgesForCurrentUser() {
       if (!this.lastPublishedEdgesForCurrentUser) {
         this.lastPublishedEdgesForCurrentUser = (
-          await this.collectionApi.get("/api/collection/edges/lastPublished")
+          await this.collectionApi.get("/collection/edges/lastPublished")
         ).data.map((edge) => ({
           ...edge,
           timestamp: Date.parse(edge.creationDate) / 1000,
@@ -270,7 +270,7 @@ export const collection = defineStore("collection", {
     async loadUser(afterUpdate = false) {
       if (afterUpdate || !this.user) {
         this.user = Object.entries(
-          (await this.collectionApi.get(`/api/collection/user`)).data
+          (await this.collectionApi.get(`/collection/user`)).data
         ).reduce((acc, [key, value]) => {
           switch (key) {
             case "accepterpartage":

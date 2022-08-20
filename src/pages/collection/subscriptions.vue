@@ -129,17 +129,17 @@ const createAssociatedPublicationSubscription = (
   createSubscription(newSubscription)
 }
 const createSubscription = async (data) => {
-  await collection().collectionApi.put('/api/collection/subscriptions', data)
+  await collection().collectionApi.put('/collection/subscriptions', data)
   await loadSubscriptions(true)
   editedSubscriptionId = undefined
 }
 const editSubscription = async (id, data) => {
-  await collection().collectionApi.post(`/api/collection/subscriptions/${id}`, data)
+  await collection().collectionApi.post(`/collection/subscriptions/${id}`, data)
   await loadSubscriptions(true)
   editedSubscriptionId = undefined
 }
 const deleteSubscription = async (id) => {
-  await collection().collectionApi.delete(`/api/collection/subscriptions/${id}`)
+  await collection().collectionApi.delete(`/collection/subscriptions/${id}`)
   await loadSubscriptions(true)
   editedSubscriptionId = undefined
 }

@@ -2,14 +2,14 @@ import { defineStore } from "pinia";
 
 import { cachedCoaApi as coaApi } from "~/util/api";
 
-const URL_PREFIX_COUNTRIES = "/api/coa/list/countries/LOCALE";
-const URL_PREFIX_PUBLICATIONS = "/api/coa/list/publications/";
-const URL_PREFIX_ISSUES = "/api/coa/list/issues/multiple/";
-const URL_PREFIX_AUTHORS = "/api/coa/authorsfullnames/";
-const URL_PREFIX_URLS = "/api/coa/list/details/";
-const URL_PREFIX_ISSUE_QUOTATIONS = "/api/coa/quotations/";
-const URL_ISSUE_COUNTS = "/api/coa/list/issues/count";
-const URL_ISSUE_DECOMPOSE = "/api/coa/issues/decompose";
+const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
+const URL_PREFIX_PUBLICATIONS = "/coa/list/publications/";
+const URL_PREFIX_ISSUES = "/coa/list/issues/multiple/";
+const URL_PREFIX_AUTHORS = "/coa/authorsfullnames/";
+const URL_PREFIX_URLS = "/coa/list/details/";
+const URL_PREFIX_ISSUE_QUOTATIONS = "/coa/quotations/";
+const URL_ISSUE_COUNTS = "/coa/list/issues/count";
+const URL_ISSUE_DECOMPOSE = "/coa/issues/decompose";
 
 function addPartInfo(issueDetails) {
   const storyPartCounter = Object.entries(

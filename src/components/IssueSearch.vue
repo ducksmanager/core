@@ -131,7 +131,7 @@ const runSearch = async (value) => {
     if (isSearchByCode) {
       searchResults = (
         await axios.get(
-            `/api/coa/list/issues/withStoryVersionCode/${value.replace(
+            `/coa/list/issues/withStoryVersionCode/${value.replace(
               /^code=/,
               '',
             )}`,
@@ -146,7 +146,7 @@ const runSearch = async (value) => {
     }
     else {
       searchResults = (
-        await axios.post('/api/coa/stories/search/withIssues', {
+        await axios.post('/coa/stories/search/withIssues', {
           keywords: value,
         })
       ).data
