@@ -16,7 +16,18 @@ async function upsertSubscription(req: Request) {
     endDate: new Date(Date.parse(req.body.endDate)),
   };
   const id = parseInt(req.params.id);
-  if (!id) {
+  const userId = req.user.id;
+  if (
+    id &&
+    !(await prisma.subscription.count({
+      where: {
+        id,
+        users: {
+          id: userId,
+        },
+      },
+    }))
+  ) {
     return null;
   }
   await prisma.subscription.upsert({
@@ -25,7 +36,7 @@ async function upsertSubscription(req: Request) {
       country: publicationCodeParts[0],
       magazine: publicationCodeParts[1],
       users: {
-        connect: { id: req.user.id },
+        connect: { id: userId },
       },
       ...dates,
     },
