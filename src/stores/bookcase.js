@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
 import { collection } from "./collection";
@@ -55,7 +56,13 @@ export const bookcase = defineStore("bookcase", {
       if (!this.bookcase) {
         try {
           this.bookcase = (
-            await axios.get(`/bookcase/${this.bookcaseUsername}`)
+            await axios.get(`/bookcase/${this.bookcaseUsername}`, {
+              headers: Cookies.get("token")
+                ? {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  }
+                : {},
+            })
           ).data;
         } catch (e) {
           switch (e.response.status) {

@@ -16,7 +16,7 @@ model subscription {
   magazine  String   @map("Magazine") @db.VarChar(6)
   startDate DateTime @map("Date_debut") @db.Date
   endDate   DateTime @map("Date_fin") @db.Date
-  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "abonnements_users_ID_fk")
+  users     user    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "abonnements_users_ID_fk")
 
   @@unique([country, magazine, userId, startDate, endDate], map: "abonnements_unique")
   @@index([userId], map: "abonnements_users_ID_fk")
@@ -88,7 +88,7 @@ model bouquineries_commentaires {
   Actif               Boolean               @default(false)
   ID_Bouquinerie      Int
   bouquineries        bouquineries          @relation(fields: [ID_Bouquinerie], references: [ID], onUpdate: Restrict, map: "bouquineries_commentaires_bouquineries_ID_fk")
-  users               users?                @relation(fields: [ID_Utilisateur], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "bouquineries_commentaires_users_ID_fk")
+  users               user?                @relation(fields: [ID_Utilisateur], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "bouquineries_commentaires_users_ID_fk")
   users_contributions users_contributions[]
 
   @@index([ID_Bouquinerie], map: "bouquineries_commentaires_bouquineries_ID_fk")
@@ -219,7 +219,7 @@ model tranches_pretes_sprites_urls {
   @@unique([Sprite_name, Version], map: "tranches_pretes_sprites_urls_unique")
 }
 
-model users {
+model user {
   id                        Int                         @id @default(autoincrement())             @map("ID")
   username                  String                      @unique(map: "username") @db.VarChar(25)
   password                  String                      @db.VarChar(40)
@@ -241,6 +241,8 @@ model users {
   bouquineries_commentaires bouquineries_commentaires[]
   users_contributions       users_contributions[]
   users_options             users_options[]
+
+  @@map("users")
 }
 
 model users_contributions {
@@ -256,7 +258,7 @@ model users_contributions {
   ID_bookstore_comment      Int?
   tranches_pretes           edge?                      @relation(fields: [ID_tranche], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
   bouquineries              bouquineries?              @relation(fields: [ID_bookstore], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F3A5778B6C")
-  users                     users                      @relation(fields: [ID_user], references: [id], onUpdate: Restrict, map: "users_contributions___fk_user")
+  users                     user                      @relation(fields: [ID_user], references: [id], onUpdate: Restrict, map: "users_contributions___fk_user")
   bouquineries_commentaires bouquineries_commentaires? @relation(fields: [ID_bookstore_comment], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "users_contributions_bouquineries_commentaires_ID_fk")
 
   @@index([ID_tranche], map: "IDX_7FDC16F375567043")
@@ -270,7 +272,7 @@ model users_options {
   ID_User       Int
   Option_nom    users_options_Option_nom
   Option_valeur String                   @db.VarChar(50)
-  users         users                    @relation(fields: [ID_User], references: [id], onUpdate: Restrict, map: "users_options_users_ID_fk")
+  users         user                    @relation(fields: [ID_User], references: [id], onUpdate: Restrict, map: "users_options_users_ID_fk")
 
   @@unique([ID_User, Option_nom, Option_valeur], map: "users_options__unique")
   @@index([ID_User, Option_nom], map: "users_options__user_option")

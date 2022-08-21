@@ -41,11 +41,40 @@ export const authenticateToken = (
     token,
     process.env.TOKEN_SECRET as string,
     (err: any, user: any) => {
-      if (err) return res.sendStatus(403);
+      if (err) {
+        return res.sendStatus(403);
+      }
       req.user = user;
       next();
     }
   );
+};
+
+export const injectTokenIfValid = (
+  req: Request,
+  res: Response,
+  next: CallableFunction
+) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token == null) {
+    next();
+  } else {
+    jwt.verify(
+      token,
+      process.env.TOKEN_SECRET as string,
+      (err: any, user: any) => {
+        if (user) {
+          req.user = user;
+          console.log("valid token");
+        } else {
+          console.log("Invalid token");
+        }
+        next();
+      }
+    );
+  }
 };
 
 export const post = [

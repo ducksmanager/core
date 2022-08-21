@@ -5,7 +5,7 @@ import express from "express";
 import { router } from "express-file-routing";
 
 import { call } from "./call-api";
-import { authenticateToken } from "./routes/login";
+import { authenticateToken, injectTokenIfValid } from "./routes/login";
 
 const port = 3000;
 
@@ -18,6 +18,7 @@ app.use(
 app.use(cookieParser());
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
+app.all(/^\/bookcase\/(.+)/, injectTokenIfValid);
 
 app.all(/^\/coa\/(.+)/, async (req, res) => {
   const path = req.params[0];

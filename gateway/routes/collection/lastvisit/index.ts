@@ -3,7 +3,7 @@ import { Handler, Request } from "express";
 import { PrismaClient } from "../../../prisma/generated/client_dm";
 
 const getUser = async (req: Request) =>
-  await prisma.users.findUnique({
+  await prisma.user.findUnique({
     where: { id: req.user.id },
   });
 
@@ -30,7 +30,7 @@ export const post: Handler = async (req, res) => {
     return;
   }
   user.lastAccess = new Date();
-  prisma.users.update({
+  prisma.user.update({
     data: user,
     where: {
       id: req.user.id,
