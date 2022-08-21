@@ -228,7 +228,7 @@
             v-if="isSingleIssueSelected || hasNoCopies"
             class="p-0"
             role="presentation"
-            @click="editingCopies.push({ ...defaultState })"
+            @click.prevent="editingCopies.push({ ...defaultState })"
           >
             {{ $t("Ajouter un exemplaire") }}
           </b-nav-item>
