@@ -34,8 +34,8 @@ export const users = defineStore("users", {
         ...data.points.reduce(
           (acc, data) => ({
             ...acc,
-            [data.ID_User]: {
-              ...(acc[data.ID_User] || {}),
+            [data.userId]: {
+              ...(acc[data.userId] || {}),
               [data.contribution]: data.points_total,
             },
           }),

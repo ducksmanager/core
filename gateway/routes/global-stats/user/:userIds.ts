@@ -1,6 +1,8 @@
 import { Handler } from "express";
 
-import { runQuery } from "../../../rawsql";
+import { Prisma, PrismaClient } from "../../../prisma/generated/client_dm";
+
+const prisma = new PrismaClient();
 
 export const get: Handler = async (req, res) => {
   const userIds = req.params.userIds
@@ -15,12 +17,15 @@ export const get: Handler = async (req, res) => {
     };
   }
   res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(data));
+  res.end(
+    JSON.stringify(data, (key, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
 };
 
-const getUsersQuickStats = async (userIds: number[]) => {
-  const userQuickStats = await runQuery(
-    `
+const getUsersQuickStats = async (userIds: number[]) =>
+  (await prisma.$queryRaw`
       select u.ID                                        AS userId,
              u.username,
              u.TextePresentation                         as presentationSentence,
@@ -28,27 +33,15 @@ const getUsersQuickStats = async (userIds: number[]) => {
              count(distinct Pays)                        AS numberOfCountries,
              count(distinct concat(Pays, '/', Magazine)) as numberOfPublications,
              count(Numero)                               as numberOfIssues
-      from dm.users u
-               left join dm.numeros on numeros.ID_Utilisateur = u.ID
-      where u.ID IN (:userIds)
-      group by u.ID`,
-    { userIds }
-  );
+      from users u
+               left join numeros on numeros.ID_Utilisateur = u.ID
+      where u.ID IN (${Prisma.join(userIds)})
+      group by u.ID`) as { [key: string]: number | boolean | string }[];
 
-  return userQuickStats.map((result: { [key: string]: any }) => ({
-    ...result,
-    userId: parseInt(result["userId"]),
-    numberOfCountries: parseInt(result["numberOfCountries"]),
-    numberOfPublications: parseInt(result["numberOfPublications"]),
-    numberOfIssues: parseInt(result["numberOfIssues"]),
-  }));
-};
-
-const getUsersPoints = async (userIds: number[]) => {
-  const userPoints = await runQuery(
-    `
+const getUsersPoints = async (userIds: number[]) =>
+  (await prisma.$queryRaw`
                 select type_contribution.contribution,
-                       ids_users.ID_User,
+                       ids_users.ID_User AS userId,
                        ifnull(contributions_utilisateur.points_total, 0) as points_total
                 from (select 'Photographe' as contribution
                       union
@@ -56,18 +49,14 @@ const getUsersPoints = async (userIds: number[]) => {
                       union
                       select 'Duckhunter' as contribution) as type_contribution
                          join (SELECT ID AS ID_User
-                               FROM dm.users
-                               WHERE ID IN (:userIds)) AS ids_users
+                               FROM users
+                               WHERE ID IN (${Prisma.join(
+                                 userIds
+                               )})) AS ids_users
                          left join (SELECT uc.ID_User, uc.contribution, sum(points_new) as points_total
-                                    FROM dm.users_contributions uc
+                                    FROM users_contributions uc
                                     GROUP BY uc.ID_User, uc.contribution) as contributions_utilisateur
                                    ON type_contribution.contribution = contributions_utilisateur.contribution
-                                       AND ids_users.ID_User = contributions_utilisateur.ID_user`,
-    { userIds }
-  );
-  return userPoints.map((result: { [key: string]: any }) => ({
-    ...result,
-    points_total: parseInt(result["points_total"]),
-    ID_User: parseInt(result["ID_User"]),
-  }));
-};
+                                       AND ids_users.ID_User = contributions_utilisateur.ID_user`) as {
+    [key: string]: string | number;
+  }[];

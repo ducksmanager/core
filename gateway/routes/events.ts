@@ -1,11 +1,17 @@
 import type { Handler } from "express";
 
-import { runQuery } from "../../rawsql";
+import { PrismaClient } from "../prisma/generated/client_dm";
+
+const prisma = new PrismaClient();
 
 export const get: Handler = async (req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
   const events = await getEvents();
-  res.end(JSON.stringify(events));
+  res.end(
+    JSON.stringify(events, (key, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
 };
 
 const getEvents = async () => {
@@ -26,8 +32,7 @@ const MEDAL_LEVELS = {
 };
 
 const retrieveSignups = async () =>
-  await runQuery(
-    `
+  (await prisma.$queryRaw`
         SELECT 'signup' as type, users.ID as userId, UNIX_TIMESTAMP(DateInscription) AS timestamp
         FROM dm.users
         WHERE EXISTS(
@@ -35,12 +40,12 @@ const retrieveSignups = async () =>
             )
           AND DateInscription > date_add(now(), interval -1 month)
           AND users.username NOT LIKE 'test%'
-    `
-  );
+    `) as {
+    [key: string]: string | number;
+  }[];
 
 const retrieveCollectionUpdates = async () =>
-  await runQuery(
-    `
+  (await prisma.$queryRaw`
         SELECT 'collection_update'       as type,
                users.ID                  AS userId,
                UNIX_TIMESTAMP(DateAjout) AS timestamp,
@@ -57,12 +62,12 @@ const retrieveCollectionUpdates = async () =>
           AND numeros.Abonnement = 0
         GROUP BY users.ID, DATE(DateAjout)
         HAVING COUNT(Numero) > 0
-    `
-  );
+    `) as {
+    [key: string]: string | number;
+  }[];
 
 const retrieveCollectionSubscriptionAdditions = async () =>
-  await runQuery(
-    `
+  (await prisma.$queryRaw`
         SELECT 'subscription_additions'                    as type,
                CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationCode,
                numeros.Numero                              AS issueNumber,
@@ -72,12 +77,12 @@ const retrieveCollectionSubscriptionAdditions = async () =>
         WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
           AND numeros.Abonnement = 1
         GROUP BY DATE(DateAjout), numeros.Pays, numeros.Magazine, numeros.Numero
-    `
-  );
+    `) as {
+    [key: string]: string | number;
+  }[];
 
 const retrieveBookstoreCreations = async () =>
-  await runQuery(
-    `
+  (await prisma.$queryRaw`
         SELECT 'bookstore_comment'                                 as type,
                uc.ID_user                                          AS userId,
                bouquineries.Nom                                    AS name,
@@ -87,12 +92,12 @@ const retrieveBookstoreCreations = async () =>
                  INNER JOIN dm.users_contributions uc ON bouquineries_commentaires.ID = uc.ID_bookstore_comment
         WHERE bouquineries_commentaires.Actif = 1
           AND bouquineries_commentaires.DateAjout > date_add(now(), interval -1 month)
-    `
-  );
+    `) as {
+    [key: string]: string | number;
+  }[];
 
 const retrieveEdgeCreations = async () =>
-  await runQuery(
-    `
+  (await prisma.$queryRaw`
         select 'edge'                       as type,
                CONCAT('[', GROUP_CONCAT(json_object(
                        'publicationCode',
@@ -114,28 +119,31 @@ const retrieveEdgeCreations = async () =>
                 AND NOT (tp.publicationcode = 'it/TL')
               GROUP BY tp.ID) as edges_and_collaborators
         group by DATE_FORMAT(creationDate, '%Y-%m-%d %H:00:00'), edges_and_collaborators.users
-    `
-  );
+    `) as {
+    [key: string]: string | number;
+  }[];
 
 const retrieveNewMedals = async () =>
-  await runQuery(
+  (await prisma.$queryRawUnsafe(
     Object.entries(MEDAL_LEVELS)
       .map(([medalType, niveaux]) =>
         Object.values(niveaux)
           .map(
             (niveau: number) => `
-                select 'medal'                   as type,
-                       ID_User                   AS userId,
-                       contribution,
-                       ${niveau}                 as niveau,
-                       UNIX_TIMESTAMP(date) - 60 AS timestamp
-                from dm.users_contributions
-                where contribution = '${medalType.toLowerCase()}'
-                  and points_total >= ${niveau}
-                  and points_total - points_new < ${niveau}
-                  and date > DATE_ADD(NOW(), INTERVAL -1 MONTH)`
+              select 'medal'                   as type,
+                     ID_User                   AS userId,
+                     contribution,
+                     ${niveau}                 as niveau,
+                     UNIX_TIMESTAMP(date) - 60 AS timestamp
+              from dm.users_contributions
+              where contribution = '${medalType.toLowerCase()}'
+                and points_total >= ${niveau}
+                and points_total - points_new < ${niveau}
+                and date > DATE_ADD(NOW(), INTERVAL -1 MONTH)`
           )
           .join(" UNION ")
       )
       .join(" UNION ")
-  );
+  )) as {
+    [key: string]: string | number;
+  }[];
