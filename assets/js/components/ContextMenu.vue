@@ -41,7 +41,7 @@
     >
     <template v-else>
       <b-tabs
-        v-model="currentCopyIndex"
+        v-model.number="currentCopyIndex"
         nav-class="copies-tabs"
         @changed="
           (newTabs) => {
@@ -295,7 +295,7 @@ const { copies, publicationCode, selectedIssues } = defineProps({
   { conditions } = condition();
 
 let defaultState = $ref({
-    condition: "do_not_change",
+    condition: "possessed",
     isToSell: "do_not_change",
     purchaseId: "do_not_change",
     isToRead: "do_not_change",
@@ -396,6 +396,13 @@ watch(
   () => copies,
   () => updateEditingCopies(),
   { immediate: true }
+);
+
+watch(
+  () => editingCopies.length,
+  (newValue) => {
+    currentCopyIndex = newValue - 1;
+  }
 );
 </script>
 
