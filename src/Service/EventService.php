@@ -96,7 +96,7 @@ class EventService
                INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
             WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
               AND NOT (tp.publicationcode = 'fr/JM' AND tp.issuenumber REGEXP '^[0-9]+$')
-              AND NOT (tp.publicationcode IN ('be/MMN', 'it/TL', 'us/DD', 'us/US', 'us/USA', 'us/WDC'))
+              AND NOT (tp.publicationcode IN ('be/MMN', 'be/DK', 'it/TL', 'us/DD', 'us/US', 'us/USA', 'us/WDC'))
             GROUP BY tp.ID) as edges_and_collaborators
         group by DATE_FORMAT(creationDate, '%Y-%m-%d %H:00:00'), edges_and_collaborators.users
         SQL, 'dm');
