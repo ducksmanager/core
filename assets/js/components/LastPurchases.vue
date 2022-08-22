@@ -44,20 +44,19 @@ import Accordion from "./Accordion";
 import Issue from "./Issue";
 
 const publicationNames = $computed(() => coa().publicationNames),
-  collectionPerPurchaseDate = $computed(
-    () =>
-      collectionStore().purchases &&
+  collectionPerPurchaseDate = $computed(() => {
+    const purchases = collectionStore().purchases;
+    return (
+      purchases &&
       collectionStore()
         .collection?.reduce((acc, issue) => {
           const purchase = (issue.purchaseId > 0 &&
-            collectionStore().purchases.find(
-              ({ id }) => id === issue.purchaseId
-            )) || {
+            purchases.find(({ id }) => id === issue.purchaseId)) || {
             date: issue.creationDate,
           };
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>
-              JSON.stringify(currentPurchase) === JSON.stringify(purchase)
+              currentPurchase.date === purchase.date
           );
           if (purchaseIndex === -1) {
             acc.push({ purchase, issues: [] });
@@ -70,7 +69,8 @@ const publicationNames = $computed(() => coa().publicationNames),
           purchase1.date < purchase2.date ? 1 : -1
         )
         .slice(0, 5)
-  );
+    );
+  });
 </script>
 
 <style scoped lang="scss">

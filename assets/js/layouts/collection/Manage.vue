@@ -145,9 +145,9 @@ watch(
   { immediate: true }
 );
 
-onMounted(() => {
-  collection().loadCollection();
-  coa().fetchCountryNames();
+onMounted(async () => {
+  await collection().loadCollection();
+  await coa().fetchCountryNames();
 });
 </script>
 
