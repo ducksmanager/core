@@ -33,10 +33,7 @@ export const get: Handler = async (req, res) => {
       },
       distinct: ["country", "magazine"],
       where: { userId },
-      orderBy: {
-        country: "asc",
-        magazine: "asc",
-      },
+      orderBy: [{ country: "asc" }, { magazine: "asc" }],
     });
     const missingPublicationCodesInOrder = userPublicationcodes
       .map(({ country, magazine }) => `${country}/${magazine}`)
@@ -64,7 +61,7 @@ export const get: Handler = async (req, res) => {
           await prisma.bookcasePublicationOrder.findMany({
             select: { publicationcode: true },
             where: { userId },
-            orderBy: { publicationcode: "asc" },
+            orderBy: { order: "asc" },
           })
         ).map(({ publicationcode }) => publicationcode)
       )

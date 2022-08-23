@@ -68,6 +68,7 @@ model bookcasePublicationOrder {
   order           Int                                  @map("Ordre")
 
   @@unique([userId, publicationcode], map: "bibliotheque_ordre_magazines_uindex")
+  @@map("bibliotheque_ordre_magazines")
 }
 
 model bouquineries {
