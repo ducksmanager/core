@@ -39,10 +39,11 @@ const getUsersQuickStats = async (userIds: number[]) =>
       group by u.ID`) as { [key: string]: number | boolean | string }[];
 
 const getUsersPoints = async (userIds: number[]) =>
-  (await prisma.$queryRaw`
+  (
+    (await prisma.$queryRaw`
                 select type_contribution.contribution,
                        ids_users.ID_User AS userId,
-                       ifnull(contributions_utilisateur.points_total, 0) as points_total
+                       ifnull(contributions_utilisateur.points_total, 0) as totalPoints
                 from (select 'Photographe' as contribution
                       union
                       select 'Createur' as contribution
@@ -58,5 +59,8 @@ const getUsersPoints = async (userIds: number[]) =>
                                     GROUP BY uc.ID_User, uc.contribution) as contributions_utilisateur
                                    ON type_contribution.contribution = contributions_utilisateur.contribution
                                        AND ids_users.ID_User = contributions_utilisateur.ID_user`) as {
-    [key: string]: string | number;
-  }[];
+      contribution: string;
+      userId: number;
+      totalPoints: string;
+    }[]
+  ).map((value) => ({ ...value, totalPoints: parseInt(value.totalPoints) }));

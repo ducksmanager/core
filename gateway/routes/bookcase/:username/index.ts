@@ -1,10 +1,11 @@
 import { Handler } from "express";
+import { Request, Response } from "express";
 
-import { PrismaClient } from "../../prisma/generated/client_dm";
+import { PrismaClient } from "../../../prisma/generated/client_dm";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+export const checkValidBookcaseUser = async (req: Request, res: Response) => {
   const username = req.params.username;
   const user = await prisma.user.findFirst({
     where: { username },
@@ -19,6 +20,14 @@ export const get: Handler = async (req, res) => {
     res.writeHead(403);
     res.end();
   } else {
+    return user;
+  }
+  return null;
+};
+
+export const get: Handler = async (req, res) => {
+  const user = await checkValidBookcaseUser(req, res);
+  if (user !== null) {
     const groupBy = user.showDuplicatesInBookcase
       ? "numeros.ID"
       : "numeros.issuecode";

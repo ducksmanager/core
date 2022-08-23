@@ -36,7 +36,7 @@ export const users = defineStore("users", {
             ...acc,
             [data.userId]: {
               ...(acc[data.userId] || {}),
-              [data.contribution]: data.points_total,
+              [data.contribution]: data.totalPoints,
             },
           }),
           {}

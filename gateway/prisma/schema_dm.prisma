@@ -61,13 +61,13 @@ model bibliotheque_contributeurs {
   Texte String? @db.Text
 }
 
-model bibliotheque_ordre_magazines {
-  ID              Int    @id @default(autoincrement())
-  ID_Utilisateur  Int
+model bookcasePublicationOrder {
+  id              Int    @id @default(autoincrement()) @map("ID")
+  userId          Int                                  @map("ID_Utilisateur")
   publicationcode String @db.VarChar(12)
-  Ordre           Int
+  order           Int                                  @map("Ordre")
 
-  @@unique([ID_Utilisateur, publicationcode], map: "bibliotheque_ordre_magazines_uindex")
+  @@unique([userId, publicationcode], map: "bibliotheque_ordre_magazines_uindex")
 }
 
 model bouquineries {

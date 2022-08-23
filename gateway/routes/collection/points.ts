@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const getMedalPoints = async (userIds: number[]) =>
   (
     (await prisma.$queryRaw`
-    select contributionType.contribution_external_name,
+    select contributionType.contribution_external_name as contribution,
            userIds.userId,
            ifnull(userContributions.totalPoints, 0) as totalPoints
     from (select 'Photographe' as contribution, 'edge_photographer' as contribution_external_name
@@ -23,11 +23,17 @@ const getMedalPoints = async (userIds: number[]) =>
                        ON contributionType.contribution = userContributions.contribution
                            AND userIds.userId = userContributions.userId
 `) as {
-      contribution_external_name: string;
+      contribution: string;
       userId: number;
-      total_points: number;
+      totalPoints: string;
     }[]
-  ).reduce((acc, value) => ({ ...acc, [value.userId]: value }), {});
+  ).reduce(
+    (acc, value) => ({
+      ...acc,
+      [value.userId]: { ...value, totalPoints: parseInt(value.totalPoints) },
+    }),
+    {}
+  );
 
 export const get: Handler = async (req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });

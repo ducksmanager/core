@@ -46,6 +46,7 @@ import axios from "axios";
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { l10n } from "~/stores/l10n";
 import { collection } from "~/stores/collection";
+import { bookcase } from "~/stores/bookcase";
 import Cookies from "js-cookie";
 
 let router = useRouter();
@@ -67,6 +68,7 @@ const login = async () => {
       username, password
     })).data.token);
     collection().initApi()
+    bookcase().initApi()
     await router.push('/collection')
   }
   catch(e) {

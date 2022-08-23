@@ -19,6 +19,7 @@
 <script setup>
 import { useHead } from '@vueuse/head'
 import { collection } from "~/stores/collection";
+import { bookcase } from "~/stores/bookcase";
 const route = useRoute()
 const topMenu = $computed(() => route.path.match(/\/([^/]+)/)?.[1])
 
@@ -28,6 +29,7 @@ useHead({
 })
 
 collection().initApi()
+bookcase().initApi()
 </script>
 
 <style scoped lang="scss">

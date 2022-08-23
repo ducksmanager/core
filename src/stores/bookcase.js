@@ -6,6 +6,8 @@ import { collection } from "./collection";
 
 export const bookcase = defineStore("bookcase", {
   state: () => ({
+    bookcaseApi: null,
+
     loadedSprites: {},
 
     isPrivateBookcase: false,
@@ -39,6 +41,15 @@ export const bookcase = defineStore("bookcase", {
   },
 
   actions: {
+    initApi() {
+      const baseURL = import.meta.env.VITE_GATEWAY_URL;
+      this.bookcaseApi = axios.create({
+        baseURL,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+    },
     addLoadedSprite({ spritePath, css }) {
       this.loadedSprites = {
         ...this.loadedSprites,
@@ -56,13 +67,7 @@ export const bookcase = defineStore("bookcase", {
       if (!this.bookcase) {
         try {
           this.bookcase = (
-            await axios.get(`/bookcase/${this.bookcaseUsername}`, {
-              headers: Cookies.get("token")
-                ? {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  }
-                : {},
-            })
+            await this.bookcaseApi.get(`/bookcase/${this.bookcaseUsername}`)
           ).data;
         } catch (e) {
           switch (e.response.status) {
@@ -79,23 +84,27 @@ export const bookcase = defineStore("bookcase", {
     async loadBookcaseOptions() {
       if (!this.bookcaseOptions) {
         this.bookcaseOptions = (
-          await axios.get(`/bookcase/${this.bookcaseUsername}/options`)
+          await this.bookcaseApi.get(
+            `/bookcase/${this.bookcaseUsername}/options`
+          )
         ).data;
       }
     },
     async updateBookcaseOptions() {
-      await axios.post(`/bookcase/options`, this.bookcaseOptions);
+      await this.bookcaseApi.post(`/bookcase/options`, this.bookcaseOptions);
     },
 
     async loadBookcaseOrder() {
       if (!this.bookcaseOrder) {
         this.bookcaseOrder = (
-          await axios.get(`/bookcase/${this.bookcaseUsername}/sort`)
+          await this.bookcaseApi.get(`/bookcase/${this.bookcaseUsername}/sort`)
         ).data;
       }
     },
     async updateBookcaseOrder() {
-      await axios.post(`/bookcase/sort`, { sorts: this.bookcaseOrder });
+      await this.bookcaseApi.post(`/bookcase/sort`, {
+        sorts: this.bookcaseOrder,
+      });
     },
   },
 });
