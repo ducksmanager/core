@@ -136,14 +136,15 @@ model issue {
   @@map("numeros")
 }
 
-model numeros_popularite {
-  Pays       String @db.VarChar(3)
-  Magazine   String @db.VarChar(6)
-  Numero     String @db.VarChar(12)
-  Popularite Int
-  ID         Int    @id @default(autoincrement())
+model issuePopularity {
+  country     String @db.VarChar(3)                @map("Pays")
+  magazine    String @db.VarChar(6)                @map("Magazine")
+  issueNumber String @db.VarChar(12)               @map("Numero")
+  popularity  Int                                  @map("Popularite")
+  id          Int    @id @default(autoincrement()) @map("ID")
 
-  @@unique([Pays, Magazine, Numero], map: "numeros_popularite_unique")
+  @@unique([country, magazine, issueNumber], map: "numeros_popularite_unique")
+  @@map("numeros_popularite")
 }
 
 model tranches_doublons {
