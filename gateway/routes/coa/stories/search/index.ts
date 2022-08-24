@@ -68,14 +68,14 @@ export const getStoriesByKeywords = async (
 
 export const post = [
   parseForm,
-  ((req, res) => {
+  (async (req, res) => {
     if (!req.body.keywords) {
       res.writeHead(400, { "Content-Type": "application/text" });
       res.end();
     } else {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
-        JSON.stringify(getStoriesByKeywords(req.body.keywords.split(",")))
+        JSON.stringify(await getStoriesByKeywords(req.body.keywords.split(",")))
       );
     }
   }) as Handler,
