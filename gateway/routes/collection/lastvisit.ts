@@ -1,6 +1,6 @@
 import { Handler, Request } from "express";
 
-import { PrismaClient } from "../../../prisma/generated/client_dm";
+import { PrismaClient } from "../../prisma/generated/client_dm";
 
 const getUser = async (req: Request) =>
   await prisma.user.findUnique({

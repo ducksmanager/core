@@ -242,7 +242,7 @@ model user {
   abonnements               subscription[]
   bouquineries_commentaires bouquineries_commentaires[]
   users_contributions       users_contributions[]
-  users_options             users_options[]
+  users_options             userOption[]
 
   @@map("users")
 }
@@ -269,15 +269,16 @@ model users_contributions {
   @@index([ID_bookstore_comment], map: "users_contributions_bouquineries_commentaires_ID_fk")
 }
 
-model users_options {
-  ID            Int                      @id @default(autoincrement())
-  ID_User       Int
-  Option_nom    users_options_Option_nom
-  Option_valeur String                   @db.VarChar(50)
-  users         user                    @relation(fields: [ID_User], references: [id], onUpdate: Restrict, map: "users_options_users_ID_fk")
+model userOption {
+  id            Int                      @id @default(autoincrement()) @map("ID")
+  userId        Int                                                    @map("ID_User")
+  optionName    users_options_Option_nom                               @map("Option_nom")
+  optionValue   String                   @db.VarChar(50)               @map("Option_valeur")
+  users         user                    @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "users_options_users_ID_fk")
 
-  @@unique([ID_User, Option_nom, Option_valeur], map: "users_options__unique")
-  @@index([ID_User, Option_nom], map: "users_options__user_option")
+  @@unique([userId, optionName, optionValue], map: "users_options__unique")
+  @@index([userId, optionName], map: "users_options__user_option")
+  @@map("users_options")
 }
 
 model users_password_tokens {

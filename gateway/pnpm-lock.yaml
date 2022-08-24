@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@prisma/client': ^4.2.1
+  '@pusher/push-notifications-server': ^1.2.5
   '@types/body-parser': ^1.19.2
   '@types/cookie-parser': ^1.4.3
   '@types/cors': ^2.8.12
@@ -26,6 +27,7 @@ specifiers:
 
 dependencies:
   '@prisma/client': 4.2.1_prisma@4.2.1
+  '@pusher/push-notifications-server': 1.2.5
   axios: 0.27.2
   body-parser: 1.20.0
   cookie-parser: 1.4.6
@@ -101,6 +103,12 @@ packages:
   /@prisma/engines/4.2.1:
     resolution: {integrity: sha512-0KqBwREUOjBiHwITsQzw2DWfLHjntvbqzGRawj4sBMnIiL5CXwyDUKeHOwXzKMtNr1rEjxEsypM14g0CzLRK3g==}
     requiresBuild: true
+
+  /@pusher/push-notifications-server/1.2.5:
+    resolution: {integrity: sha512-GCnUsufoiumbWDh0+892SQFV9dxTMbXGWgYGiEKbaUZJWQiNdYyoe/FsesUWdmHPWq2jWTHNBLgdDo/BYhRX2g==}
+    dependencies:
+      jsonwebtoken: 8.5.1
+    dev: false
 
   /@tsconfig/node10/1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
