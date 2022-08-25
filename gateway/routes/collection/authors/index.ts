@@ -21,6 +21,14 @@ const upsertAuthorUser = async (req: Request) => {
   ) {
     return null;
   }
+  if (
+    !id &&
+    (await prisma.authorUser.count({
+      where: { userId },
+    })) >= 5
+  ) {
+    throw new Error("429");
+  }
   await prisma.authorUser.upsert({
     update: {
       notation,
@@ -28,19 +36,15 @@ const upsertAuthorUser = async (req: Request) => {
     create: {
       personcode,
       userId,
-      ...notation,
+      notation: 5,
     },
-    where: {
-      id,
-    },
+    where: { id },
   });
 };
 
 export const get: Handler = async (req, res) => {
   const authorsUsers = await prisma.authorUser.findMany({
-    where: {
-      userId: req.user.id,
-    },
+    where: { userId: req.user.id },
   });
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify(authorsUsers));
@@ -49,8 +53,13 @@ export const get: Handler = async (req, res) => {
 export const put = [
   parseForm,
   (async (req, res) => {
-    await upsertAuthorUser(req);
-    res.writeHead(200);
-    res.end();
+    try {
+      await upsertAuthorUser(req);
+      res.writeHead(200);
+      res.end();
+    } catch (e) {
+      res.writeHead(parseInt(e as string));
+      res.end();
+    }
   }) as Handler,
 ];

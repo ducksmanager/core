@@ -51,7 +51,7 @@ const collectionPerPurchaseDate = $computed(
             && collectionStore().purchases.find(
               ({ id }) => id === issue.purchaseId,
             )) || {
-            date: issue.creationDate,
+            date: (issue.creationDate || '0001-01-01T00:00:00').split('T')[0],
           }
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>

@@ -5,7 +5,7 @@ import { constants } from "http2";
 import {
   issue_condition,
   PrismaClient,
-} from "../../../prisma/generated/client_dm";
+} from "../../prisma/generated/client_dm";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
