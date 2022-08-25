@@ -1,6 +1,6 @@
 import { Handler } from "express";
 
-import { PrismaClient } from "../../prisma/generated/client_dm";
+import { PrismaClient } from "../../../prisma/generated/client_dm";
 
 const prisma = new PrismaClient();
 export const get: Handler = async (req, res) => {

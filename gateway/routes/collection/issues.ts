@@ -10,7 +10,7 @@ import {
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-const getUserPurchase = async (id: number | null, userId: number) =>
+export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null
     ? null
     : (
