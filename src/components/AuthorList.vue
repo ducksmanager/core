@@ -88,7 +88,7 @@
                   @click="
                     isAuthorWatched(personCode)
                       ? () => {}
-                      : createRating(personCode)
+                      : createRating({personCode})
                   "
                 >
                   {{ fullName }}
@@ -149,19 +149,15 @@ const isAuthorWatched = personCode =>
   watchedAuthors.some(
     ({ personCode: watchedPersonCode }) => personCode === watchedPersonCode,
   )
-const createRating = async (personCode) => {
-  await collection().collectionApi.put('/collection/authors/watched', { personCode })
+const createRating = async (author) => {
+  await collection().collectionApi.put('/collection/authors/watched', author)
   await loadWatchedAuthors(true)
 }
 const updateRating = async (author) => {
   await collection().collectionApi.post('/collection/authors/watched', author)
 }
 const deleteAuthor = async (author) => {
-  await collection().collectionApi.delete('/collection/authors/watched', {
-    params: {
-      personCode: author.personCode,
-    },
-  })
+  await collection().collectionApi.delete('/collection/authors/watched', author)
   await loadWatchedAuthors(true)
 }
 const runSearch = async (value) => {

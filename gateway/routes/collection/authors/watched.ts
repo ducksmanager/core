@@ -6,39 +6,33 @@ import { PrismaClient } from "../../../prisma/generated/client_dm";
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
+const maxWatchedAuthors = 5;
+
 const upsertAuthorUser = async (req: Request) => {
   const { personcode, notation } = req.body;
-  const id = parseInt(req.params.id);
   const userId = req.user.id;
+  const criteria = {
+    personcode,
+    userId,
+  };
+  const existingAuthorUser = await prisma.authorUser.findFirst({
+    where: criteria,
+  });
   if (
-    id &&
-    !(await prisma.authorUser.count({
-      where: {
-        id,
-        userId,
-      },
-    }))
-  ) {
-    return null;
-  }
-  if (
-    !id &&
+    existingAuthorUser &&
     (await prisma.authorUser.count({
       where: { userId },
-    })) >= 5
+    })) >= maxWatchedAuthors
   ) {
     throw new Error("429");
   }
   await prisma.authorUser.upsert({
-    update: {
-      notation,
-    },
+    update: { notation },
     create: {
-      personcode,
-      userId,
+      ...criteria,
       notation: 5,
     },
-    where: { id },
+    where: { id: existingAuthorUser?.id },
   });
 };
 
@@ -61,5 +55,29 @@ export const put = [
       res.writeHead(parseInt(e as string));
       res.end();
     }
+  }) as Handler,
+];
+
+export const post = [
+  parseForm,
+  (async (req, res) => {
+    await upsertAuthorUser(req);
+    res.writeHead(200);
+    res.end();
+  }) as Handler,
+];
+
+export const del = [
+  parseForm,
+  (async (req, res) => {
+    const { personcode } = req.body;
+    await prisma.authorUser.deleteMany({
+      where: {
+        personcode,
+        userId: req.user.id,
+      },
+    });
+    res.writeHead(204);
+    res.end();
   }) as Handler,
 ];
