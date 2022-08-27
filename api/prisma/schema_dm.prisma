@@ -71,29 +71,33 @@ model bookcasePublicationOrder {
   @@map("bibliotheque_ordre_magazines")
 }
 
-model bouquineries {
-  ID                        Int                         @id @default(autoincrement())
-  Nom                       String                      @db.VarChar(25)
-  AdresseComplete           String                      @db.Text
-  CoordX                    Float
-  CoordY                    Float
-  bouquineries_commentaires bouquineries_commentaires[]
-  users_contributions       users_contributions[]
+model bookstore {
+  id                        Int                         @id @default(autoincrement()) @map("ID")
+  name                      String                      @db.VarChar(25)               @map("Nom")
+  address                   String                      @db.Text                      @map("AdresseComplete")
+  coordX                    Float                                                     @map("CoordX")
+  coordY                    Float                                                     @map("CoordY")
+  bouquineries_commentaires bookstoreComment[]
+  users_contributions       userContribution[]
+
+  @@map("bouquineries")
 }
 
-model bouquineries_commentaires {
-  ID                  Int                   @id @default(autoincrement())
-  ID_Utilisateur      Int?
-  Commentaire         String                @db.Text
-  DateAjout           DateTime              @default(now()) @db.Timestamp(0)
-  Actif               Boolean               @default(false)
-  ID_Bouquinerie      Int
-  bouquineries        bouquineries          @relation(fields: [ID_Bouquinerie], references: [ID], onUpdate: Restrict, map: "bouquineries_commentaires_bouquineries_ID_fk")
-  users               user?                @relation(fields: [ID_Utilisateur], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "bouquineries_commentaires_users_ID_fk")
-  users_contributions users_contributions[]
+model bookstoreComment {
+  id                  Int                 @id @default(autoincrement())    @map("ID")
+  userId              Int?                                                 @map("ID_Utilisateur")
+  comment             String              @db.Text                         @map("Commentaire")
+  creationDate        DateTime            @default(now()) @db.Timestamp(0) @map("DateAjout")
+  isActive            Boolean             @default(false)                  @map("Actif")
+  bookstoreId         Int                                                  @map("ID_Bouquinerie")
+  bouquineries        bookstore          @relation(fields: [bookstoreId], references: [id], onUpdate: Restrict, map: "bouquineries_commentaires_bouquineries_ID_fk")
+  users               user?              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "bouquineries_commentaires_users_ID_fk")
+  users_contributions userContribution[]
 
-  @@index([ID_Bouquinerie], map: "bouquineries_commentaires_bouquineries_ID_fk")
-  @@index([ID_Utilisateur], map: "bouquineries_commentaires_users_ID_fk")
+  @@index([bookstoreId], map: "bouquineries_commentaires_bouquineries_ID_fk")
+  @@index([userId], map: "bouquineries_commentaires_users_ID_fk")
+
+  @@map("bouquineries_commentaires")
 }
 
 model demo {
@@ -140,11 +144,11 @@ model issue {
 model issuePopularity {
   country     String @db.VarChar(3)                @map("Pays")
   magazine    String @db.VarChar(6)                @map("Magazine")
-  issueNumber String @db.VarChar(12)               @map("Numero")
+  issuenumber String @db.VarChar(12)               @map("Numero")
   popularity  Int                                  @map("Popularite")
   id          Int    @id @default(autoincrement()) @map("ID")
 
-  @@unique([country, magazine, issueNumber], map: "numeros_popularite_unique")
+  @@unique([country, magazine, issuenumber], map: "numeros_popularite_unique")
   @@map("numeros_popularite")
 }
 
@@ -166,9 +170,9 @@ model edge {
   issuenumber         String                @db.VarChar(12)
   creationDate        DateTime              @default(now()) @db.Timestamp(0)    @map("dateajout")
   points              Int?
-  slug                String                @db.VarChar(30)
+  slug                String?               @db.VarChar(30)
   issuecode           String?               @unique(map: "tranches_pretes_issuecode_uindex") @db.VarChar(23)
-  users_contributions users_contributions[]
+  users_contributions userContribution[]
 
   @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
   @@index([creationDate], map: "tranches_pretes_dateajout_index")
@@ -246,33 +250,35 @@ model user {
   lastAccess                DateTime?                   @map("DernierAcces") @db.DateTime(0)
   previousAccess            DateTime?                   @map("PrecedentAcces") @db.DateTime(0)
   abonnements               subscription[]
-  bouquineries_commentaires bouquineries_commentaires[]
-  users_contributions       users_contributions[]
+  bouquineries_commentaires bookstoreComment[]
+  users_contributions       userContribution[]
   users_options             userOption[]
 
   @@map("users")
 }
 
-model users_contributions {
-  ID                        Int                        @id @default(autoincrement())
-  ID_user                   Int
-  date                      DateTime                   @default(now()) @db.DateTime(0)
-  contribution              String                     @db.VarChar(255)
-  points_new                Int
-  points_total              Int
-  emails_sent               Boolean
-  ID_tranche                Int?
-  ID_bookstore              Int?
-  ID_bookstore_comment      Int?
-  tranches_pretes           edge?                      @relation(fields: [ID_tranche], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
-  bouquineries              bouquineries?              @relation(fields: [ID_bookstore], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F3A5778B6C")
-  users                     user                      @relation(fields: [ID_user], references: [id], onUpdate: Restrict, map: "users_contributions___fk_user")
-  bouquineries_commentaires bouquineries_commentaires? @relation(fields: [ID_bookstore_comment], references: [ID], onDelete: Restrict, onUpdate: Restrict, map: "users_contributions_bouquineries_commentaires_ID_fk")
+model userContribution {
+  id                         Int               @id @default(autoincrement())   @map("ID")
+  userId                     Int                                               @map("ID_user")
+  date                       DateTime          @default(now()) @db.DateTime(0)
+  contribution               String            @db.VarChar(255)
+  newPoints                  Int                                               @map("points_new")
+  totalPoints                Int                                               @map("points_total")
+  isEmailSent                Boolean                                           @map("emails_sent")
+  edgeId                     Int?                                              @map("ID_tranche")
+  bookstoreId                Int?                                              @map("ID_bookstore")
+  bookstoreCommentId         Int?                                              @map("ID_bookstore_comment")
+  tranches_pretes            edge?             @relation(fields: [edgeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
+  bouquineries               bookstore?     @relation(fields: [bookstoreId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F3A5778B6C")
+  users                      user              @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "users_contributions___fk_user")
+  bouquineries_commentaires  bookstoreComment? @relation(fields: [bookstoreCommentId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "users_contributions_bouquineries_commentaires_ID_fk")
 
-  @@index([ID_tranche], map: "IDX_7FDC16F375567043")
-  @@index([ID_bookstore], map: "IDX_7FDC16F3A5778B6C")
-  @@index([ID_user, contribution], map: "users_contributions__user_contribution")
-  @@index([ID_bookstore_comment], map: "users_contributions_bouquineries_commentaires_ID_fk")
+  @@index([edgeId], map: "IDX_7FDC16F375567043")
+  @@index([bookstoreId], map: "IDX_7FDC16F3A5778B6C")
+  @@index([userId, contribution], map: "users_contributions__user_contribution")
+  @@index([bookstoreCommentId], map: "users_contributions_bouquineries_commentaires_ID_fk")
+
+  @@map("users_contributions")
 }
 
 model userOption {

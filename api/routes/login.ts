@@ -23,7 +23,6 @@ declare global {
 }
 
 const generateAccessToken = (payload: User) =>
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   jwt.sign(payload, process.env.TOKEN_SECRET!, {
     expiresIn: `${60 * 24 * 14}m`,
   });

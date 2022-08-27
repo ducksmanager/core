@@ -10,16 +10,13 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   root: true,
   rules: {
-    "vue/no-v-html": "off",
-    "vue/no-setup-props-destructure": "off",
-    "vue/multi-word-component-names": "off",
-    "simple-import-sort/imports": "error",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "simple-import-sort/exports": "error",
+    "simple-import-sort/imports": "error",
+    "vue/multi-word-component-names": "off",
+    "vue/no-setup-props-destructure": "off",
+    "vue/no-v-html": "off",
   },
   plugins: ["simple-import-sort", "@typescript-eslint"],
-  ignorePatterns: [
-    "**/node_modules",
-    "gateway/dist",
-    "gateway/prisma/generated",
-  ],
+  ignorePatterns: ["**/node_modules", "api/dist", "api/prisma/generated"],
 };

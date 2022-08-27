@@ -8,5 +8,5 @@ node_modules
 .idea/
 *.log
 /edges/
-/gateway/prisma/generated
+/api/prisma/generated
 /public/build/

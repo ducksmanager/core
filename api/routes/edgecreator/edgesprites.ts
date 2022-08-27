@@ -76,7 +76,7 @@ const updateTags = async (edges: edge[]) => {
       if (!tagsToAdd[spriteName]) {
         tagsToAdd[spriteName] = { slugs: [], spriteSize: actualSpriteSize };
       }
-      tagsToAdd[spriteName].slugs.push(edge.slug);
+      tagsToAdd[spriteName].slugs.push(edge.slug!);
       insertOperations.push(
         prisma.edgeSprite.create({
           data: {

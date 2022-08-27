@@ -33,10 +33,15 @@ app.all(/^\/(edgecreator\/(publish|edgesprites)|notifications)\/(.+)/, [
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all(/^\/bookcase\/(.+)/, injectTokenIfValid);
 
-app.all(/^\/coa\/(.+)/, async (req, res) => {
+app.all(/^\/coa\/list\/(.+)/, async (req, res) => {
   const path = req.params[0];
   try {
-    const response = await call(`/coa/${path}`, "coa", req.body, req.method);
+    const response = await call(
+      `/coa/list/${path}`,
+      "coa",
+      req.body,
+      req.method
+    );
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(response.data));
   } catch (e: any) {
@@ -50,5 +55,5 @@ app.all(/^\/coa\/(.+)/, async (req, res) => {
 app.use("/", router());
 
 app.listen(port, () => {
-  console.log(`Gateway listening on port ${port}`);
+  console.log(`API listening on port ${port}`);
 });
