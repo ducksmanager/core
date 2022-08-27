@@ -23,6 +23,7 @@ declare global {
 }
 
 const generateAccessToken = (payload: User) =>
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   jwt.sign(payload, process.env.TOKEN_SECRET!, {
     expiresIn: `${60 * 24 * 14}m`,
   });
@@ -33,7 +34,7 @@ export const authenticateToken = (
   next: CallableFunction
 ) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = authHeader?.split(" ")?.[1];
 
   if (token == null) return res.sendStatus(401);
 
@@ -48,6 +49,30 @@ export const authenticateToken = (
       next();
     }
   );
+};
+
+export const checkUserIsEdgeCreatorEditor = (
+  req: Request,
+  res: Response,
+  next: CallableFunction
+) => {
+  if (["Edition", "Admin"].includes(req.user?.privileges?.["EdgeCreator"])) {
+    return res.sendStatus(403);
+  }
+  next();
+};
+
+export const authenticateTokenAsAdmin = (
+  req: Request,
+  res: Response,
+  next: CallableFunction
+) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token !== process.env.ROLE_PASSWORD_ADMIN) {
+    return res.sendStatus(403);
+  }
+  next();
 };
 
 export const injectTokenIfValid = (

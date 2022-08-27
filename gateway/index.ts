@@ -5,7 +5,12 @@ import express from "express";
 import { router } from "express-file-routing";
 
 import { call } from "./call-api";
-import { authenticateToken, injectTokenIfValid } from "./routes/login";
+import {
+  authenticateToken,
+  authenticateTokenAsAdmin,
+  checkUserIsEdgeCreatorEditor,
+  injectTokenIfValid,
+} from "./routes/login";
 
 const port = 3000;
 
@@ -16,6 +21,14 @@ app.use(
   })
 );
 app.use(cookieParser());
+
+app.all(/^\/edgecreator\/(.+)/, [
+  authenticateToken,
+  checkUserIsEdgeCreatorEditor,
+]);
+app.all(/^\/(edgecreator\/(publish|edgesprites)|notifications)\/(.+)/, [
+  authenticateTokenAsAdmin,
+]);
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all(/^\/bookcase\/(.+)/, injectTokenIfValid);

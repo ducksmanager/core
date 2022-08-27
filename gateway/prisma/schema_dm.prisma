@@ -166,7 +166,7 @@ model edge {
   issuenumber         String                @db.VarChar(12)
   creationDate        DateTime              @default(now()) @db.Timestamp(0)    @map("dateajout")
   points              Int?
-  slug                String?               @db.VarChar(30)
+  slug                String                @db.VarChar(30)
   issuecode           String?               @unique(map: "tranches_pretes_issuecode_uindex") @db.VarChar(23)
   users_contributions users_contributions[]
 
@@ -198,27 +198,33 @@ model tranches_pretes_contributions {
   @@index([ID_user, contribution], map: "tranches_pretes_contributions_ID_user_contribution_index")
 }
 
-model tranches_pretes_sprites {
-  ID          Int    @id @default(autoincrement())
-  ID_Tranche  Int
-  Sprite_name String @db.VarChar(25)
-  Sprite_size Int?
+model edgeSprite {
+  id         Int    @id @default(autoincrement()) @map("ID")
+  edgeId     Int                                  @map("ID_Tranche")
+  spriteName String @db.VarChar(25)               @map("Sprite_name")
+  spriteSize Int?                                 @map("Sprite_size")
 
-  @@unique([ID_Tranche, Sprite_name], map: "tranches_pretes_sprites_unique")
+  @@unique([edgeId, spriteName], map: "tranches_pretes_sprites_unique")
+
+  @@map("tranches_pretes_sprites")
 }
 
-model tranches_pretes_sprites_size {
-  ID          Int     @id @default(autoincrement())
-  sprite_name String? @db.VarChar(25)
-  size        Int?
+model edgeSpriteSize {
+  id         Int     @id @default(autoincrement()) @map("ID")
+  spriteName String? @db.VarChar(25)               @map("sprite_name")
+  size       Int?
+
+  @@map("tranches_pretes_sprites_size")
 }
 
-model tranches_pretes_sprites_urls {
-  ID          Int    @id @default(autoincrement())
-  Sprite_name String @db.VarChar(25)
-  Version     String @db.VarChar(12)
+model edgeSpriteUrl {
+  id         Int    @id @default(autoincrement()) @map("ID")
+  spriteName String @db.VarChar(25)               @map("Sprite_name")
+  version    String @db.VarChar(12)               @map("Version")
 
-  @@unique([Sprite_name, Version], map: "tranches_pretes_sprites_urls_unique")
+  @@unique([spriteName, version], map: "tranches_pretes_sprites_urls_unique")
+
+  @@map("tranches_pretes_sprites_urls")
 }
 
 model user {
