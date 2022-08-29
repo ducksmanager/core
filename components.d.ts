@@ -9,7 +9,6 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Accordion: typeof import('./src/components/Accordion.vue')['default']
     Ago: typeof import('./src/components/Ago.vue')['default']
-    App: typeof import('./src/layouts/App.vue')['default']
     AuthorList: typeof import('./src/components/AuthorList.vue')['default']
     Banner: typeof import('./src/components/Banner.vue')['default']
     Bare: typeof import('./src/layouts/bare.vue')['default']
@@ -38,7 +37,6 @@ declare module '@vue/runtime-core' {
     LastPublishedEdges: typeof import('./src/components/LastPublishedEdges.vue')['default']
     LastPurchases: typeof import('./src/components/LastPurchases.vue')['default']
     LeftPanel: typeof import('./src/components/LeftPanel.vue')['default']
-    Login: typeof import('./src/layouts/Login.vue')['default']
     Manage: typeof import('./src/layouts/collection/Manage.vue')['default']
     Medal: typeof import('./src/components/Medal.vue')['default']
     MedalProgress: typeof import('./src/components/MedalProgress.vue')['default']

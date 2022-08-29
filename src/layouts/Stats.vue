@@ -135,7 +135,6 @@
 </template>
 
 <script setup>
-import axios from "axios";
 import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-3";
 import { defineAsyncComponent, onMounted } from "vue";
 import { useI18n } from "vue-i18n";

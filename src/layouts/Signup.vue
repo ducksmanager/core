@@ -77,10 +77,6 @@ import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
-import Errorable from "../components/Errorable";
-import { form } from "../stores/form";
-import { l10n } from "../stores/l10n";
-
 const signupProps = defineProps({
   lastUsername: { type: String, default: null },
   error: { type: String, default: null },

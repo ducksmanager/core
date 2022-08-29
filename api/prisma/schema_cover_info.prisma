@@ -9,19 +9,23 @@ datasource db {
   url      = env("DATABASE_URL_COVER_INFO")
 }
 
-model cover_imports {
-  coverid      Int       @id @default(autoincrement())
-  imported     DateTime? @db.DateTime(0)
-  import_error String?   @db.VarChar(200)
+model coverImport {
+  coverId     Int       @id @default(autoincrement()) @map("coverid")
+  importedAt  DateTime? @db.DateTime(0)               @map("imported")
+  importError String?   @db.VarChar(200)              @map("import_error")
 
-  @@unique([coverid, imported, import_error], map: "uniquefieldset_cover_imports")
+  @@unique([coverId, importedAt, importError], map: "uniquefieldset_cover_imports")
+
+  @@map("cover_imports")
 }
 
-model covers {
-  ID        Int    @id @default(autoincrement())
+model cover {
+  id        Int    @id @default(autoincrement()) @map("ID")
   issuecode String @db.VarChar(17)
   sitecode  String @db.VarChar(11)
   url       String @db.VarChar(98)
 
   @@unique([issuecode, url], map: "uniquefieldset_covers")
+
+  @@map("covers")
 }

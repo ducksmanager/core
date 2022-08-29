@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/node";
 import { AxiosError } from "axios";
+import busboy from "connect-busboy";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -31,6 +32,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(busboy({ immediate: true }));
 
 app.all(/^\/edgecreator\/(.+)/, [
   authenticateToken,

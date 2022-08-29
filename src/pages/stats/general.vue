@@ -167,16 +167,16 @@ const { t: $t } = useI18n()
 const currentPage = 1
 const count = $computed(() => users().count)
 const publicationNames = $computed(() => coa().publicationNames)
-const totalPerPublication = $computed(() => collectionStore().totalPerPublication)
+const totalPerPublication = $computed(() => collection.totalPerPublication)
 const quotedIssues = $computed(() =>
-  collectionStore().quotedIssues?.sort(
+  collection.quotedIssues?.sort(
     (
       { estimationGivenCondition: estimation1 },
       { estimationGivenCondition: estimation2 },
     ) => Math.sign(estimation2 - estimation1),
   ),
 )
-const quotationSum = $computed(() => collectionStore().quotationSum)
+const quotationSum = $computed(() => collection.quotationSum)
 const quotationFields = [
   { key: 'issue', label: $t('Numéro') },
   { key: 'condition', label: $t('Etat') },

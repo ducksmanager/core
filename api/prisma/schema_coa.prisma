@@ -1,12 +1,18 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "./generated/client_coa"
+  provider      = "prisma-client-js"
+  output        = "./generated/client_coa"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL_COA")
+}
+
+model datasets_entryurls {
+  id           Int    @id @default(autoincrement())
+  dataset_id   Int
+  sitecode_url String @db.VarChar(99)
 }
 
 model inducks_appearance {
@@ -110,13 +116,13 @@ model inducks_currencyname {
 model inducks_entry {
   entrycode               String                                 @id @db.VarChar(22)
   issuecode               String?                                @db.VarChar(17)
-  storyversioncode        String?                                @db.VarChar(19)
+  storyversioncode        String?                                @db.VarChar(20)
   languagecode            String?                                @db.VarChar(7)
   includedinentrycode     String?                                @db.VarChar(19)
   position                String?                                @db.VarChar(9)
   printedcode             String?                                @db.VarChar(88)
   guessedcode             String?                                @db.VarChar(39)
-  title                   String?                                @db.VarChar(284)
+  title                   String?                                @db.VarChar(265)
   reallytitle             inducks_entry_reallytitle?
   printedhero             String?                                @db.VarChar(96)
   changes                 String?                                @db.VarChar(628)
@@ -128,9 +134,9 @@ model inducks_entry {
   startdate               String?                                @db.VarChar(10)
   enddate                 String?                                @db.VarChar(10)
   identificationuncertain inducks_entry_identificationuncertain?
-  alsoreprint             String?                                @db.VarChar(164)
+  alsoreprint             String?                                @db.VarChar(101)
   part                    String?                                @db.VarChar(5)
-  entrycomment            String?                                @db.VarChar(2009)
+  entrycomment            String?                                @db.VarChar(1715)
   error                   inducks_entry_error?
 
   @@index([title], map: "entryTitleFullText")
@@ -141,9 +147,8 @@ model inducks_entry {
   @@index([position], map: "fk_inducks_entry4")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model inducks_entry_nofulltext {
-  entrycode               String?                                           @db.VarChar(22)
+  entrycode               String                                            @id @db.VarChar(22)
   issuecode               String?                                           @db.VarChar(17)
   storyversioncode        String?                                           @db.VarChar(19)
   languagecode            String?                                           @db.VarChar(7)
@@ -174,7 +179,6 @@ model inducks_entry_nofulltext {
   @@index([includedinentrycode], map: "fk3")
   @@index([position], map: "fk4")
   @@index([entrycode], map: "pk0")
-  @@ignore
 }
 
 model inducks_entrycharactername {
@@ -213,7 +217,7 @@ model inducks_entryurl {
 }
 
 model inducks_equiv {
-  issuecode    String  @db.VarChar(15)
+  issuecode    String  @db.VarChar(31)
   equivid      Int
   equivcomment String? @db.VarChar(3)
 
@@ -237,7 +241,7 @@ model inducks_inputfile {
   filename            String?                      @db.VarChar(22)
   layout              String?                      @db.VarChar(10)
   locked              inducks_inputfile_locked?
-  maintenanceteamcode String?                      @db.VarChar(10)
+  maintenanceteamcode String?                      @db.VarChar(8)
   countrycode         String?                      @db.VarChar(2)
   languagecode        String?                      @db.VarChar(7)
   producercode        String?                      @db.VarChar(15)
@@ -288,7 +292,7 @@ model inducks_issuedate {
 
 model inducks_issuejob {
   issuecode       String                  @db.VarChar(17)
-  personcode      String                  @db.VarChar(48)
+  personcode      String                  @db.VarChar(49)
   inxtransletcol  String                  @db.VarChar(1)
   issuejobcomment String?                 @db.VarChar(32)
   doubt           inducks_issuejob_doubt?
@@ -307,25 +311,24 @@ model inducks_issueprice {
   @@id([issuecode, amount])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model inducks_issuequotation {
-  ID              Int?
-  publicationcode String?   @db.VarChar(15)
-  issuenumber     String?   @db.VarChar(12)
+  ID              Int       @id @default(autoincrement())
+  publicationcode String    @db.VarChar(15)
+  issuenumber     String    @db.VarChar(12)
   estimationmin   Float?    @db.Float
   estimationmax   Float?    @db.Float
   scrapedate      DateTime? @db.DateTime(0)
-  source          String?   @db.VarChar(15)
-  issuecode       String?   @db.VarChar(28)
+  source          String    @db.VarChar(15)
+  issuecode       String?   @unique(map: "inducks_issuequotation__uindex_issuecode") @db.VarChar(28)
 
-  @@ignore
+  @@index([publicationcode], map: "inducks_issuequotation__index_publication")
 }
 
 model inducks_issuerange {
   issuerangecode    String                             @id @db.VarChar(15)
   publicationcode   String?                            @db.VarChar(9)
   title             String?                            @db.VarChar(228)
-  circulation       String?                            @db.VarChar(6)
+  circulation       String?                            @db.VarChar(25)
   issuerangecomment String?                            @db.VarChar(468)
   numbersarefake    inducks_issuerange_numbersarefake?
   error             inducks_issuerange_error?
@@ -361,7 +364,7 @@ model inducks_languagename {
 
 model inducks_log {
   number              Int                 @id
-  logkey              String?             @db.VarChar(53)
+  logkey              String?             @db.VarChar(41)
   storycode           String?             @db.VarChar(39)
   logid               String?             @db.VarChar(4)
   logtype             String?             @db.VarChar(1)
@@ -391,30 +394,29 @@ model inducks_logocharacter {
 }
 
 model inducks_movie {
-  moviecode           String                   @id @db.VarChar(14)
-  title               String?                  @db.Text
-  moviecomment        String?                  @db.Text
-  appsummary          String?                  @db.Text
-  moviejobsummary     String?                  @db.Text
+  moviecode           String                @id @db.VarChar(14)
+  title               String?               @db.Text
+  moviecomment        String?               @db.Text
+  appsummary          String?               @db.Text
+  moviejobsummary     String?               @db.Text
   locked              inducks_movie_locked?
   inputfilecode       Int?
-  maintenanceteamcode String?                  @db.VarChar(7)
-  appisxapp           inducks_movie_appisxapp?
-  aka                 String?                  @db.VarChar(81)
-  creationdate        String?                  @db.VarChar(10)
-  moviedescription    String?                  @db.Text
-  distributor         String?                  @db.VarChar(50)
-  genre               String?                  @db.VarChar(3)
-  orderer             String?                  @db.VarChar(178)
-  publicationdate     String?                  @db.VarChar(10)
-  source              String?                  @db.VarChar(91)
-  tim                 String?                  @db.VarChar(6)
+  maintenanceteamcode String?               @db.VarChar(7)
+  aka                 String?               @db.VarChar(81)
+  creationdate        String?               @db.VarChar(10)
+  moviedescription    String?               @db.Text
+  distributor         String?               @db.VarChar(50)
+  genre               String?               @db.VarChar(3)
+  orderer             String?               @db.VarChar(178)
+  publicationdate     String?               @db.VarChar(10)
+  source              String?               @db.VarChar(91)
+  tim                 String?               @db.VarChar(6)
 
   // @@index([title, moviecomment, appsummary, moviejobsummary, moviedescription], map: "fulltext_inducks_movie")
 }
 
 model inducks_moviecharacter {
-  moviecode        String                                   @db.VarChar(14)
+  moviecode        String                                   @db.VarChar(13)
   charactercode    String                                   @db.VarChar(36)
   istitlecharacter inducks_moviecharacter_istitlecharacter?
 
@@ -468,19 +470,7 @@ model inducks_person {
   photosource            String?                             @db.VarChar(67)
   personrefs             String?                             @db.VarChar(179)
 
-  // @@index([fullname, birthname], map: "fulltext_inducks_person")
   @@index([nationalitycountrycode], map: "fk_inducks_person0")
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model inducks_personalias {
-  personcode String?                       @db.VarChar(31)
-  surname    String?                       @db.VarChar(48)
-  givenname  String?                       @db.VarChar(31)
-  official   inducks_personalias_official?
-
-  @@index([personcode], map: "fk_inducks_personalias0")
-  @@ignore
 }
 
 model inducks_personurl {
@@ -591,7 +581,7 @@ model inducks_statcharacterstory {
   charactercode   String  @db.VarChar(58)
   storyheadercode String  @db.VarChar(3)
   total           Int?
-  yearrange       String? @db.VarChar(118)
+  yearrange       String? @db.VarChar(107)
 
   @@id([charactercode, storyheadercode])
 }
@@ -646,7 +636,7 @@ model inducks_story {
   locked                   inducks_story_locked?
   inputfilecode            Int?
   issuecodeofstoryitem     String?               @db.VarChar(14)
-  maintenanceteamcode      String?               @db.VarChar(10)
+  maintenanceteamcode      String?               @db.VarChar(8)
   storyheadercode          String?               @db.VarChar(3)
 
   // @@index([title, repcountrysummary], map: "fulltext_inducks_story")
@@ -684,7 +674,7 @@ model inducks_storyheader {
 }
 
 model inducks_storyjob {
-  storyversioncode String                     @db.VarChar(19)
+  storyversioncode String                     @db.VarChar(20)
   personcode       String                     @db.VarChar(79)
   plotwritartink   String                     @db.VarChar(1)
   storyjobcomment  String?                    @db.VarChar(141)
@@ -717,14 +707,14 @@ model inducks_storysubseries {
 model inducks_storyurl {
   storycode String  @db.VarChar(13)
   sitecode  String  @db.VarChar(15)
-  url       String? @db.VarChar(43)
+  url       String? @db.VarChar(40)
 
   @@id([storycode, sitecode])
   @@index([sitecode], map: "fk_inducks_storyurl0")
 }
 
 model inducks_storyversion {
-  storyversioncode      String                                      @id @db.VarChar(19)
+  storyversioncode      String                                      @id @db.VarChar(20)
   storycode             String?                                     @db.VarChar(19)
   entirepages           Int?
   brokenpagenumerator   Int?
@@ -748,9 +738,8 @@ model inducks_storyversion {
   @@index([storycode], map: "fk_inducks_storyversion1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model inducks_storyversion_nofulltext {
-  storyversioncode      String?                                                @db.VarChar(19)
+  storyversioncode      String                                                 @id @db.VarChar(19)
   storycode             String?                                                @db.VarChar(19)
   entirepages           Int?
   brokenpagenumerator   Int?
@@ -772,7 +761,6 @@ model inducks_storyversion_nofulltext {
 
   @@index([storycode], map: "fk1")
   @@index([storyversioncode], map: "pk0")
-  @@ignore
 }
 
 model inducks_studio {
@@ -799,8 +787,8 @@ model inducks_studiowork {
 }
 
 model inducks_subseries {
-  subseriescode     String                      @id @db.VarChar(50)
-  subseriesname     String?                     @db.VarChar(54)
+  subseriescode     String                      @id @db.VarChar(95)
+  subseriesname     String?                     @db.VarChar(95)
   official          inducks_subseries_official?
   subseriescomment  String?                     @db.VarChar(285)
   subseriescategory String?                     @db.VarChar(46)
@@ -823,7 +811,7 @@ model inducks_substory {
   superstorycode           String?                  @db.VarChar(13)
   part                     String?                  @db.VarChar(3)
   firstpublicationdate     String?                  @db.VarChar(10)
-  title                    String?                  @db.VarChar(101)
+  title                    String?                  @db.VarChar(81)
   substorycomment          String?                  @db.VarChar(607)
   error                    inducks_substory_error?
   locked                   inducks_substory_locked?
@@ -835,7 +823,7 @@ model inducks_substory {
 
 model inducks_team {
   teamcode            String  @id @db.VarChar(13)
-  teamdescriptionname String? @db.VarChar(25)
+  teamdescriptionname String? @db.VarChar(33)
   teamshortname       String? @db.VarChar(7)
 }
 
@@ -877,22 +865,17 @@ model numeros_cpt {
   @@index([publicationcode], map: "numeros_cpt_Pays_Magazine_uindex")
 }
 
-enum inducks_moviecharacter_istitlecharacter {
-  Y
-  N
-}
-
 enum inducks_logocharacter_reallyintitle {
   Y
   N
 }
 
-enum inducks_characterreference_isgroupofcharacters {
+enum inducks_site_images {
   Y
   N
 }
 
-enum inducks_subseries_official {
+enum inducks_moviecharacter_istitlecharacter {
   Y
   N
 }
@@ -902,7 +885,22 @@ enum inducks_character_official {
   N
 }
 
-enum inducks_site_images {
+enum inducks_subseries_official {
+  Y
+  N
+}
+
+enum inducks_characterreference_isgroupofcharacters {
+  Y
+  N
+}
+
+enum inducks_person_official {
+  Y
+  N
+}
+
+enum inducks_subseriesname_preferred {
   Y
   N
 }
@@ -917,16 +915,6 @@ enum inducks_issuedate_doubt {
   N
 }
 
-enum inducks_personalias_official {
-  Y
-  N
-}
-
-enum inducks_person_official {
-  Y
-  N
-}
-
 enum inducks_charactername_preferred {
   Y
   N
@@ -937,17 +925,7 @@ enum inducks_moviereference_frommovietostory {
   N
 }
 
-enum inducks_subseriesname_preferred {
-  Y
-  N
-}
-
 enum inducks_character_onetime {
-  Y
-  N
-}
-
-enum inducks_appearance_doubt {
   Y
   N
 }
@@ -958,6 +936,16 @@ enum inducks_issuejob_doubt {
 }
 
 enum inducks_entryjob_doubt {
+  Y
+  N
+}
+
+enum inducks_moviejob_indirect {
+  Y
+  N
+}
+
+enum inducks_appearance_doubt {
   Y
   N
 }
@@ -977,37 +965,12 @@ enum inducks_character_heroonly {
   N
 }
 
-enum inducks_moviejob_indirect {
-  Y
-  N
-}
-
-enum inducks_storyjob_doubt {
-  Y
-  N
-}
-
 enum inducks_person_unknownstudiomember {
   Y
   N
 }
 
-enum inducks_issuerange_numbersarefake {
-  Y
-  N
-}
-
-enum inducks_storyversion_brokenpageunspecified {
-  Y
-  N
-}
-
 enum inducks_storyversion_nofulltext_brokenpageunspecified {
-  Y
-  N
-}
-
-enum inducks_movie_locked {
   Y
   N
 }
@@ -1018,6 +981,26 @@ enum inducks_entryurl_public {
 }
 
 enum inducks_moviejob_doubt {
+  Y
+  N
+}
+
+enum inducks_storyversion_brokenpageunspecified {
+  Y
+  N
+}
+
+enum inducks_storyjob_doubt {
+  Y
+  N
+}
+
+enum inducks_movie_locked {
+  Y
+  N
+}
+
+enum inducks_issuerange_numbersarefake {
   Y
   N
 }
@@ -1042,11 +1025,6 @@ enum inducks_substory_error {
   N
 }
 
-enum inducks_log_marked {
-  Y
-  N
-}
-
 enum inducks_publication_error {
   Y
   N
@@ -1062,12 +1040,17 @@ enum inducks_story_error {
   N
 }
 
-enum inducks_movie_appisxapp {
+enum inducks_log_marked {
   Y
   N
 }
 
 enum inducks_publication_locked {
+  Y
+  N
+}
+
+enum inducks_storyversion_nofulltext_appisxapp {
   Y
   N
 }
@@ -1082,17 +1065,12 @@ enum inducks_storyversion_appisxapp {
   N
 }
 
-enum inducks_inputfile_secundary {
-  Y
-  N
-}
-
-enum inducks_storyversion_nofulltext_appisxapp {
-  Y
-  N
-}
-
 enum inducks_entry_reallytitle {
+  Y
+  N
+}
+
+enum inducks_inputfile_secundary {
   Y
   N
 }
