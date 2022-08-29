@@ -1,24 +1,21 @@
 version: '2.4'
 services:
-  front:
-    container_name: ducksmanager-web
-    image: ghcr.io/bperel/ducksmanager-web
+  app:
+    container_name: ducksmanager-app
+    image: ghcr.io/bperel/ducksmanager-app
     depends_on:
-      - php-flex
+      - api
     restart: always
     networks:
       - public-network
-      - dm-network
+      - dm2-network
 
-  php-flex:
-    container_name: ducksmanager-php
-    image: ghcr.io/bperel/ducksmanager-php
+  api:
+    container_name: ducksmanager-api
+    image: ghcr.io/bperel/ducksmanager-api
     restart: always
-    volumes:
-      - dm_sessions:/tmp/sessions
     networks:
-      - dm-network
-      - dm-server_front-network
+      - dm2-network
 
   sentry-relay:
     image: getsentry/relay
@@ -31,12 +28,6 @@ services:
 
 
 networks:
-  dm-network:
+  dm2-network:
   public-network:
-    external: true
-  dm-server_front-network:
-    external: true
-
-volumes:
-  dm_sessions:
     external: true

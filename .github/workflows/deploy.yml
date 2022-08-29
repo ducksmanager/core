@@ -41,7 +41,7 @@ jobs:
           context: .
           platforms: linux/x86_64
           push: true
-          target: web
+          target: app
           tags: |
             ghcr.io/bperel/ducksmanager-app:latest
 
@@ -51,7 +51,7 @@ jobs:
           context: .
           platforms: linux/x86_64
           push: true
-          target: app
+          target: api
           tags: |
             ghcr.io/bperel/ducksmanager-api:latest
 

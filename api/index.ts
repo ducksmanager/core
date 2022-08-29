@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { AxiosError } from "axios";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -14,7 +15,16 @@ import {
 
 const port = 3000;
 
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+});
+
 const app = express();
+app.use(
+  Sentry.Handlers.requestHandler({
+    user: ["id", "username"],
+  }) as express.RequestHandler
+);
 app.use(
   cors({
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -53,6 +63,8 @@ app.all(/^\/coa\/list\/(.+)/, async (req, res) => {
 });
 
 app.use("/", router());
+
+app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
 app.listen(port, () => {
   console.log(`API listening on port ${port}`);
