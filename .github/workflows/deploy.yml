@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - 'symfony-to-vite'
       - 'master'
 jobs:
   deploy:
@@ -34,7 +35,7 @@ jobs:
           username: bperel
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
 
-      - name: Build and push web
+      - name: Build and push app
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -42,9 +43,9 @@ jobs:
           push: true
           target: web
           tags: |
-            ghcr.io/bperel/ducksmanager-web:latest
+            ghcr.io/bperel/ducksmanager-app:latest
 
-      - name: Build and push php
+      - name: Build and push api
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -52,30 +53,30 @@ jobs:
           push: true
           target: app
           tags: |
-            ghcr.io/bperel/ducksmanager-php:latest
+            ghcr.io/bperel/ducksmanager-api:latest
 
-      - name: Upload docker-compose.yml file
-        uses: nicklasfrahm/scp-action@main
-        with:
-          direction: upload
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: docker-compose.yml
-          target: /home/bperel/workspace/DucksManager/docker-compose.yml
+#      - name: Upload docker-compose.yml file
+#        uses: nicklasfrahm/scp-action@main
+#        with:
+#          direction: upload
+#          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+#          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+#          username: ${{ secrets.PRODUCTION_SSH_USER }}
+#          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+#          source: docker-compose.yml
+#          target: /home/bperel/workspace/DucksManager/docker-compose.yml
 
-      - name: Recreate container
-        uses: appleboy/ssh-action@v0.1.4
-        env:
-          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 2m
-          envs: DOCKER_REGISTRY_TOKEN_DM
-          script: |
-            cd workspace/DucksManager
-            echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
-            docker compose pull && docker compose up -d --force-recreate
+#      - name: Recreate container
+#        uses: appleboy/ssh-action@v0.1.4
+#        env:
+#          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+#        with:
+#          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+#          username: ${{ secrets.PRODUCTION_SSH_USER }}
+#          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+#          command_timeout: 2m
+#          envs: DOCKER_REGISTRY_TOKEN_DM
+#          script: |
+#            cd workspace/DucksManager
+#            echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
+#            docker compose pull && docker compose up -d --force-recreate

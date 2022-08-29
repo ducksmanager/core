@@ -4,11 +4,25 @@ MAINTAINER Bruno Perel
 RUN npm i -g pnpm
 
 WORKDIR /app
-COPY . .
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm i
+
+COPY . .
 RUN pnpm run build
 
-FROM nginx:1.15 AS web
+FROM node:16 as api
 MAINTAINER Bruno Perel
 
-COPY --from=app /app/dist /usr/share/nginx/html
+RUN npm i -g pnpm
+
+WORKDIR /app
+
+COPY api/package.json ./api/pnpm-lock.yaml ./
+RUN pnpm i
+
+COPY api .
+RUN pnpm run build
+
+EXPOSE 3000
+
+CMD ["node", "build/index.js"]
