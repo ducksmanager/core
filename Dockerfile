@@ -19,6 +19,7 @@ WORKDIR /app
 
 COPY api/package.json ./api/pnpm-lock.yaml ./
 RUN pnpm i
+RUN pnpm run prisma:generate
 
 COPY api .
 RUN pnpm run build
