@@ -17,8 +17,10 @@ RUN npm i -g pnpm
 
 WORKDIR /app
 
-COPY api/package.json ./api/pnpm-lock.yaml ./
+COPY ./api/package.json ./api/pnpm-lock.yaml ./
 RUN pnpm i
+
+COPY ./api/prisma ./prisma
 RUN pnpm run prisma:generate
 
 COPY api .
