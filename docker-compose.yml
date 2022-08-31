@@ -16,11 +16,12 @@ services:
     restart: always
     networks:
       - dm2-network
+      - dm-server_db-network
 
   sentry-relay:
     image: getsentry/relay
     restart: always
-    container_name: sentry
+    container_name: sentry2
     volumes:
       - ./config/sentry-relay:/work/.relay
     networks:
@@ -30,4 +31,6 @@ services:
 networks:
   dm2-network:
   public-network:
+    external: true
+  dm-server_db-network:
     external: true

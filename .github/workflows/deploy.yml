@@ -22,7 +22,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager/.env.prod.local
+          source: /home/bperel/workspace/DucksManager2/.env.prod.local
           target: .env.prod.local
 
       - name: Set up Docker Buildx
@@ -55,28 +55,28 @@ jobs:
           tags: |
             ghcr.io/bperel/ducksmanager-api:latest
 
-#      - name: Upload docker-compose.yml file
-#        uses: nicklasfrahm/scp-action@main
-#        with:
-#          direction: upload
-#          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-#          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
-#          username: ${{ secrets.PRODUCTION_SSH_USER }}
-#          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-#          source: docker-compose.yml
-#          target: /home/bperel/workspace/DucksManager/docker-compose.yml
+      - name: Upload docker-compose.yml file
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: upload
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: docker-compose.yml
+          target: /home/bperel/workspace/DucksManager2/docker-compose.yml
 
-#      - name: Recreate container
-#        uses: appleboy/ssh-action@v0.1.4
-#        env:
-#          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
-#        with:
-#          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-#          username: ${{ secrets.PRODUCTION_SSH_USER }}
-#          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-#          command_timeout: 2m
-#          envs: DOCKER_REGISTRY_TOKEN_DM
-#          script: |
-#            cd workspace/DucksManager
-#            echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
-#            docker compose pull && docker compose up -d --force-recreate
+      - name: Recreate container
+        uses: appleboy/ssh-action@v0.1.4
+        env:
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 2m
+          envs: DOCKER_REGISTRY_TOKEN_DM
+          script: |
+            cd workspace/DucksManager2
+            echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
+            docker compose pull && docker compose up -d --force-recreate
