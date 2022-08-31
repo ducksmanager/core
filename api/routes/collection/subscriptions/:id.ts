@@ -1,7 +1,8 @@
 import bodyParser from "body-parser";
 import { Handler } from "express";
 
-import { PrismaClient } from "../../../prisma/generated/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
+
 import { put } from "./index";
 
 const prisma = new PrismaClient();

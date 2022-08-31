@@ -2,7 +2,7 @@ import { Handler } from "express";
 import * as fs from "fs";
 import https from "https";
 
-import { PrismaClient } from "../../prisma/generated/client_cover_info";
+import { PrismaClient } from "~prisma_clients/client_cover_info";
 
 const prisma = new PrismaClient();
 

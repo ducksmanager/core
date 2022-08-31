@@ -1,7 +1,7 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
 import { Handler } from "express";
 
-import { edge, PrismaClient } from "../../prisma/generated/client_dm";
+import { edge, PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 

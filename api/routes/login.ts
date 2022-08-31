@@ -3,9 +3,7 @@ import crypto from "crypto";
 import { Handler, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import {
-  PrismaClient,
-} from "../prisma/generated/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 
@@ -117,15 +115,17 @@ export const post = [
     const user = await prisma.user.findFirst({
       where: {
         username,
-        password: hashedPassword
-      }
-    })
+        password: hashedPassword,
+      },
+    });
     if (user) {
-      const privileges = (await prisma.userPermission.findMany({
-        where: {
-          username
-        }
-      })).groupByMapToScalar('role', 'privilege')
+      const privileges = (
+        await prisma.userPermission.findMany({
+          where: {
+            username,
+          },
+        })
+      ).groupByMapToScalar("role", "privilege");
       const token = generateAccessToken({
         id: user.id,
         username,
@@ -135,8 +135,7 @@ export const post = [
 
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ token }));
-    }
-    else {
+    } else {
       res.writeHead(401, { "Content-Type": "application/text" });
       res.end();
     }

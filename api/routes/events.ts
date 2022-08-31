@@ -1,6 +1,6 @@
 import type { Handler } from "express";
 
-import { PrismaClient } from "../prisma/generated/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 

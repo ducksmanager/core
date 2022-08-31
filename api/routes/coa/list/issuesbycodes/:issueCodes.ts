@@ -3,12 +3,12 @@ import { Handler } from "express";
 import {
   Prisma as PrismaCoa,
   PrismaClient as PrismaClientCoa,
-} from "../../../../prisma/generated/client_coa";
+} from "~prisma_clients/client_coa";
 import {
   cover,
   PrismaClient as PrismaClientCoverInfo,
-} from "../../../../prisma/generated/client_cover_info";
-import { PrismaClient as PrismaClientDm } from "../../../../prisma/generated/client_dm";
+} from "~prisma_clients/client_cover_info";
+import { PrismaClient as PrismaClientDm } from "~prisma_clients/client_dm";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaCoverInfo = new PrismaClientCoverInfo();
@@ -18,7 +18,7 @@ const getIssueQuotations = async (issueCodes: string[]) =>
   prismaCoa.inducks_issuequotation.findMany({
     where: {
       issuecode: {
-        in: issueCodes,
+        in: issueCodes.map((issueCode) => issueCode.replace(/ +/, " ")),
       },
       estimationmin: {
         not: null,
@@ -29,7 +29,10 @@ const getIssueQuotations = async (issueCodes: string[]) =>
 declare global {
   interface Array<T> {
     groupBy(fieldName: string): { [key: string]: T };
-    groupByMapToScalar(fieldName: string, valueFieldName: string): { [key: string]: any };
+    groupByMapToScalar(
+      fieldName: string,
+      valueFieldName: string
+    ): { [key: string]: any };
   }
 }
 
@@ -45,7 +48,10 @@ Array.prototype.groupBy = function (fieldName: string): {
   );
 };
 
-Array.prototype.groupByMapToScalar = function (fieldName: string, valueFieldName: string): {
+Array.prototype.groupByMapToScalar = function (
+  fieldName: string,
+  valueFieldName: string
+): {
   [key: string]: never;
 } {
   return this.reduce(

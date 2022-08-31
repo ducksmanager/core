@@ -7,7 +7,7 @@ import {
   PrismaClient,
   user,
   userContribution,
-} from "../../../../../prisma/generated/client_dm";
+} from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
