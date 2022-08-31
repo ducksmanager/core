@@ -222,9 +222,10 @@ export const post = [
     let isToRead = req.body.istoread;
     if (typeof isToRead === "undefined" || isToRead === "do_not_change") {
       isToRead = null;
-    } else if (isToRead === ["do_not_change"]) {
-      isToRead = [null];
     }
+    // else if (isToRead === ["do_not_change"]) {
+    //   isToRead = [null];
+    // }
 
     const purchaseIds =
       typeof req.body.purchaseId === "object"
