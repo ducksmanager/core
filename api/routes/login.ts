@@ -3,7 +3,12 @@ import crypto from "crypto";
 import { Handler, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { call } from "../call-api";
+import {
+  PrismaClient,
+} from "../prisma/generated/client_dm";
+
+const prisma = new PrismaClient();
+
 const parseForm = bodyParser.json();
 
 interface User {
@@ -109,20 +114,31 @@ export const post = [
       .createHash("sha1")
       .update(password)
       .digest("hex");
-    const privileges = (
-      await call("/collection/privileges", "ducksmanager", {}, "GET", true, {
+    const user = await prisma.user.findFirst({
+      where: {
         username,
-        password: hashedPassword,
-      })
-    ).data;
-    const token = generateAccessToken({
-      id: 117, // TODO
-      username,
-      hashedPassword,
-      privileges,
-    });
+        password: hashedPassword
+      }
+    })
+    if (user) {
+      const privileges = (await prisma.userPermission.findMany({
+        where: {
+          username
+        }
+      })).groupByMapToScalar('role', 'privilege')
+      const token = generateAccessToken({
+        id: user.id,
+        username,
+        hashedPassword,
+        privileges,
+      });
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ token }));
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ token }));
+    }
+    else {
+      res.writeHead(401, { "Content-Type": "application/text" });
+      res.end();
+    }
   }) as Handler,
 ];

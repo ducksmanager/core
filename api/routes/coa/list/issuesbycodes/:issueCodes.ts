@@ -29,6 +29,7 @@ const getIssueQuotations = async (issueCodes: string[]) =>
 declare global {
   interface Array<T> {
     groupBy(fieldName: string): { [key: string]: T };
+    groupByMapToScalar(fieldName: string, valueFieldName: string): { [key: string]: any };
   }
 }
 
@@ -39,6 +40,18 @@ Array.prototype.groupBy = function (fieldName: string): {
     (acc, object) => ({
       ...acc,
       [object[fieldName]]: object,
+    }),
+    {}
+  );
+};
+
+Array.prototype.groupByMapToScalar = function (fieldName: string, valueFieldName: string): {
+  [key: string]: never;
+} {
+  return this.reduce(
+    (acc, object) => ({
+      ...acc,
+      [object[fieldName]]: object[valueFieldName] || undefined,
     }),
     {}
   );

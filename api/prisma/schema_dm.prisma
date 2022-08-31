@@ -301,13 +301,15 @@ model users_password_tokens {
   @@unique([ID_User, Token], map: "users_password_tokens_unique")
 }
 
-model users_permissions {
-  ID        Int                         @id @default(autoincrement())
+model userPermission {
+  id        Int                         @id @default(autoincrement()) @map("ID")
   username  String                      @db.VarChar(25)
   role      String                      @db.VarChar(20)
   privilege users_permissions_privilege
 
   @@unique([username, role, privilege], map: "permission_username_role")
+
+  @@map("users_permissions")
 }
 
 model users_points {
