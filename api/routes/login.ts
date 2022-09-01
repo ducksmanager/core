@@ -125,7 +125,7 @@ export const post = [
             username,
           },
         })
-      ).groupByMapToScalar("role", "privilege");
+      ).groupBy("role", "privilege");
       const token = generateAccessToken({
         id: user.id,
         username,
