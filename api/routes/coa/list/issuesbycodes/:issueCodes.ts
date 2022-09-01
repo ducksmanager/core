@@ -26,38 +26,24 @@ const getIssueQuotations = async (issueCodes: string[]) =>
     },
   });
 
+type ReturnType<FieldValue, T> = FieldValue extends string ? never : T;
+
 declare global {
   interface Array<T> {
-    groupBy(fieldName: string): { [key: string]: T };
-    groupByMapToScalar(
+    groupBy<FieldValue>(
       fieldName: string,
-      valueFieldName: string
-    ): { [key: string]: any };
+      valueFieldName?: FieldValue
+    ): { [key: string]: ReturnType<FieldValue, T> };
   }
 }
 
-Array.prototype.groupBy = function (fieldName: string): {
-  [key: string]: never;
-} {
+Array.prototype.groupBy = function (fieldName, valueFieldName?) {
   return this.reduce(
     (acc, object) => ({
       ...acc,
-      [object[fieldName]]: object,
-    }),
-    {}
-  );
-};
-
-Array.prototype.groupByMapToScalar = function (
-  fieldName: string,
-  valueFieldName: string
-): {
-  [key: string]: never;
-} {
-  return this.reduce(
-    (acc, object) => ({
-      ...acc,
-      [object[fieldName]]: object[valueFieldName] || undefined,
+      [object[fieldName]]: valueFieldName
+        ? object[valueFieldName] || undefined
+        : object,
     }),
     {}
   );

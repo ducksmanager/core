@@ -44,6 +44,7 @@ app.all(/^\/(edgecreator\/(publish|edgesprites)|notifications)\/(.+)/, [
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all(/^\/bookcase\/(.+)/, injectTokenIfValid);
+app.all("/global-stats/user/collection/rarity", authenticateToken);
 
 app.all(/^\/coa\/list\/(.+)/, async (req, res) => {
   const path = req.params[0];

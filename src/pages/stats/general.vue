@@ -159,6 +159,7 @@ import { coa } from '~/stores/coa'
 import { collection as collectionStore } from '~/stores/collection'
 import { users } from '~/stores/users'
 import { condition } from '~/composables/condition'
+import Cookies from "js-cookie";
 
 const collection = collectionStore()
 const { getConditionLabel } = condition()
@@ -215,7 +216,11 @@ watch(
 onMounted(async () => {
   await users().fetchCount()
   const { userScores, myScore } = (
-    await axios.get('/global-stats/user/collection/rarity')
+    await axios.get('/global-stats/user/collection/rarity', {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    })
   ).data
   rarityValue = userScores.length - userScores.indexOf(myScore)
   rarityTotal = count
