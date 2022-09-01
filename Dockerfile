@@ -1,4 +1,4 @@
-FROM node:16 AS app
+FROM node:16 AS app-build
 MAINTAINER Bruno Perel
 
 RUN npm i -g pnpm
@@ -10,7 +10,7 @@ RUN pnpm i
 COPY . .
 RUN pnpm run build
 
-FROM node:16 as api
+FROM node:16 as api-build
 MAINTAINER Bruno Perel
 
 RUN npm i -g pnpm
@@ -26,6 +26,17 @@ RUN pnpm run prisma:generate
 COPY api .
 RUN pnpm run build
 
+
+FROM nginx AS app
+MAINTAINER Bruno Perel
+
+COPY --from=app-build /app/dist /usr/share/nginx/html
+
+FROM node:16 AS api
+MAINTAINER Bruno Perel
+
+COPY --from=api-build /app/dist /app
+
 EXPOSE 3000
 
-CMD ["node", "build/index.js"]
+CMD ["node", "dist/index.js"]
