@@ -15,6 +15,7 @@ services:
     image: ghcr.io/bperel/ducksmanager-api
     restart: always
     networks:
+      - public-network
       - dm2-network
       - dm-server_db-network
 

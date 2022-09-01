@@ -37,7 +37,7 @@ COPY --from=app-build /app/dist /usr/share/nginx/html
 FROM node:16 AS api
 MAINTAINER Bruno Perel
 
-COPY --from=api-build /app/dist /app
+COPY --from=api-build /app/node_modules /app/dist /app/
 
 EXPOSE 3000
 
