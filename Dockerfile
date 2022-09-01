@@ -8,6 +8,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm i
 
 COPY . .
+COPY ./.env.prod.local ./.env
 RUN pnpm run build
 
 FROM node:16 as api-build
@@ -20,6 +21,7 @@ WORKDIR /app
 COPY ./api/package.json ./api/pnpm-lock.yaml ./
 RUN pnpm i
 
+COPY ./.env.prod.local ./.env
 COPY ./api/prisma ./prisma
 RUN pnpm run prisma:generate
 
@@ -39,4 +41,5 @@ COPY --from=api-build /app/dist /app
 
 EXPOSE 3000
 
-CMD ["node", "dist/index.js"]
+WORKDIR /app
+CMD ["node", "index.js"]

@@ -1,5 +1,9 @@
+.idea
+.git
+api/prisma/generated
+dist
 Dockerfile*
 edges
-node_modules
+**/node_modules
 var
 vendor
