@@ -24,6 +24,11 @@ const getSpriteRange = (issueNumber: string, rangeWidth: number) => {
   ].join("-");
 };
 
+interface Tag {
+  slugs: string[];
+  spriteSize: number;
+}
+
 const updateTags = async (edges: edge[]) => {
   await prisma.edgeSprite.deleteMany({
     where: {
@@ -32,11 +37,6 @@ const updateTags = async (edges: edge[]) => {
       },
     },
   });
-
-  interface Tag {
-    slugs: string[];
-    spriteSize: number;
-  }
 
   const tagsToAdd: { [key: string]: Tag } = {};
   const insertOperations = [];
@@ -54,9 +54,7 @@ const updateTags = async (edges: edge[]) => {
       let actualSpriteSize;
       if (spriteSize === "full") {
         actualSpriteSize = await prisma.edge.count({
-          where: {
-            publicationcode,
-          },
+          where: { publicationcode },
         });
         if (actualSpriteSize > MAX_SPRITE_SIZE) {
           console.log(
@@ -67,9 +65,7 @@ const updateTags = async (edges: edge[]) => {
       } else {
         actualSpriteSize =
           (await prisma.edgeSprite.count({
-            where: {
-              spriteName,
-            },
+            where: { spriteName },
           })) + 1;
       }
       console.log(`Adding tag ${spriteName} on ${edge.slug}`);
@@ -96,12 +92,8 @@ const updateTags = async (edges: edge[]) => {
 
     updateOperations.push(
       prisma.edgeSprite.updateMany({
-        data: {
-          spriteSize,
-        },
-        where: {
-          spriteName,
-        },
+        data: { spriteSize },
+        where: { spriteName },
       })
     );
   }

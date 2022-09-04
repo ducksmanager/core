@@ -9,6 +9,15 @@ datasource db {
   url      = env("DATABASE_URL_DM_STATS")
 }
 
+model auteurs_histoires {
+  ID         Int    @id @default(autoincrement())
+  personcode String @db.VarChar(79)
+  storycode  String @db.VarChar(19)
+
+  @@unique([personcode, storycode], map: "unique_index")
+  @@index([storycode], map: "index_storycode")
+}
+
 model authorUser {
   id              Int    @id @default(autoincrement())  @map("ID")
   personcode      String @db.VarChar(79)                @map("NomAuteurAbrege")
@@ -17,7 +26,6 @@ model authorUser {
 
   @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
   @@index([userId], map: "auteurs_pseudos_ID_user_index")
-  @@index([personcode], map: "auteurs_pseudos_NomAuteurAbrege_index")
   @@map("auteurs_pseudos")
 }
 
@@ -26,10 +34,11 @@ model histoires_publications {
   storycode       String    @db.VarChar(19)
   publicationcode String    @db.VarChar(12)
   issuenumber     String    @db.VarChar(12)
+  issuecode       String    @db.VarChar(25)
   oldestdate      DateTime? @db.Date
 
-  @@unique([publicationcode, issuenumber, storycode], map: "unique_index")
-  @@index([publicationcode, issuenumber], map: "index_issue")
+  @@unique([issuecode, storycode], map: "unique_index")
+  @@index([issuecode], map: "index_issue")
   @@index([oldestdate], map: "index_oldestdate")
   @@index([storycode], map: "index_story")
 }
@@ -47,7 +56,7 @@ model missingStoryForUser {
 model utilisateurs_publications_manquantes {
   ID              Int       @id @default(autoincrement())
   ID_User         Int
-  personcode      String    @db.VarChar(22)
+  personcode      String    @db.VarChar(79)
   storycode       String    @db.VarChar(19)
   publicationcode String    @db.VarChar(12)
   issuenumber     String    @db.VarChar(12)
@@ -61,13 +70,12 @@ model utilisateurs_publications_manquantes {
 }
 
 model utilisateurs_publications_suggerees {
-  ID              Int             @id @default(autoincrement())
+  ID              Int       @id @default(autoincrement())
   ID_User         Int
-  publicationcode String          @db.VarChar(12)
-  issuenumber     String          @db.VarChar(12)
-  oldestdate      DateTime?       @db.Date
+  publicationcode String    @db.VarChar(12)
+  issuenumber     String    @db.VarChar(12)
+  oldestdate      DateTime? @db.Date
   Score           Int
-  auteurs_pseudos authorUser      @relation(fields: [ID_User], references: [userId], onUpdate: Restrict, map: "utilisateurs_publications_suggerees_pseudos_fk")
 
   @@unique([ID_User, publicationcode, issuenumber], map: "suggested_issue_for_user")
   @@index([ID_User], map: "suggested_issue_user")

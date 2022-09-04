@@ -9,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL_EDGECREATOR")
 }
 
-model interval {
+model optionInterval {
   id               Int    @id @default(autoincrement()) @map("ID")
   valueId          Int                                  @map("ID_Valeur")
   issueNumberStart String @db.VarChar(10)               @map("Numero_debut")
@@ -20,7 +20,7 @@ model interval {
   @@map("edgecreator_intervalles")
 }
 
-model edgecreator_modeles2 {
+model edgeModelOld {
   id           Int     @id @default(autoincrement()) @map("ID")
   country      String  @db.VarChar(3)                @map("Pays")
   magazine     String  @db.VarChar(6)                @map("Magazine")
@@ -30,7 +30,7 @@ model edgecreator_modeles2 {
   @@map("edgecreator_modeles2")
 }
 
-model value {
+model optionValue {
   id       Int     @id @default(autoincrement()) @map("ID")
   optionId Int?                                  @map("ID_Option")
   value    String? @db.VarChar(200)              @map("Option_valeur")
@@ -44,8 +44,8 @@ model myfontsImage {
   backgroundColor String? @db.VarChar(10)               @map("ColorBG")
   width           String? @db.VarChar(7)                @map("Width")
   text            String? @db.VarChar(150)              @map("Texte")
-  _precision      String? @db.VarChar(5)                @map("Precision_")
-  @@map("edgecreator_valeurs")
+  precision      String? @db.VarChar(5)                @map("Precision_")
+  @@map("images_myfonts")
 }
 
 model elementImage {
@@ -68,6 +68,6 @@ model edgeModel {
   creators      String? @db.Text                      @map("createurs")
   isActive      Boolean                               @map("Active")
 
-  @@unique([Pays, Magazine, Numero, username], map: "tranches_en_cours_modeles__numero")
+  @@unique([country, magazine, issueNumber, username], map: "tranches_en_cours_modeles__numero")
   @@map("tranches_en_cours_modeles")
 }
