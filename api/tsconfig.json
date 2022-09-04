@@ -16,7 +16,7 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "paths": {
-      "~prisma_clients/*": ["prisma/generated/*"]
+      "~prisma_clients/*": ["dist/prisma/*"]
     }
   },
   "exclude": ["node_modules"],
