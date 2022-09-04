@@ -1,7 +1,7 @@
 .idea
 .git
 api/prisma/generated
-dist
+**/dist
 Dockerfile*
 edges
 **/node_modules
