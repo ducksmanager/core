@@ -9,59 +9,65 @@ datasource db {
   url      = env("DATABASE_URL_EDGECREATOR")
 }
 
-model edgecreator_intervalles {
-  ID           Int    @id @default(autoincrement())
-  ID_Valeur    Int
-  Numero_debut String @db.VarChar(10)
-  Numero_fin   String @db.VarChar(10)
-  username     String @db.VarChar(25)
+model interval {
+  id               Int    @id @default(autoincrement()) @map("ID")
+  valueId          Int                                  @map("ID_Valeur")
+  issueNumberStart String @db.VarChar(10)               @map("Numero_debut")
+  issueNumberEnd   String @db.VarChar(10)               @map("Numero_fin")
+  username         String @db.VarChar(25)
 
-  @@index([ID_Valeur, Numero_debut, Numero_fin, username], map: "index_intervalles")
+  @@index([valueId, issueNumberStart, issueNumberEnd, username], map: "index_intervalles")
+  @@map("edgecreator_intervalles")
 }
 
 model edgecreator_modeles2 {
-  ID           Int     @id @default(autoincrement())
-  Pays         String  @db.VarChar(3)
-  Magazine     String  @db.VarChar(6)
-  Ordre        Int
-  Nom_fonction String  @db.VarChar(30)
-  Option_nom   String? @db.VarChar(20)
+  id           Int     @id @default(autoincrement()) @map("ID")
+  country      String  @db.VarChar(3)                @map("Pays")
+  magazine     String  @db.VarChar(6)                @map("Magazine")
+  order        Int                                   @map("Ordre")
+  functionName String  @db.VarChar(30)               @map("Nom_fonction")
+  optionName   String? @db.VarChar(20)               @map("Option_nom")
+  @@map("edgecreator_modeles2")
 }
 
-model edgecreator_valeurs {
-  ID            Int     @id @default(autoincrement())
-  ID_Option     Int?
-  Option_valeur String? @db.VarChar(200)
+model value {
+  id       Int     @id @default(autoincrement()) @map("ID")
+  optionId Int?                                  @map("ID_Option")
+  value    String? @db.VarChar(200)              @map("Option_valeur")
+  @@map("edgecreator_valeurs")
 }
 
-model images_myfonts {
-  ID         Int     @id @default(autoincrement())
-  Font       String? @db.VarChar(150)
-  Color      String? @db.VarChar(10)
-  ColorBG    String? @db.VarChar(10)
-  Width      String? @db.VarChar(7)
-  Texte      String? @db.VarChar(150)
-  Precision_ String? @db.VarChar(5)
+model myfontsImage {
+  id              Int     @id @default(autoincrement()) @map("ID")
+  font            String? @db.VarChar(150)              @map("Font")
+  color           String? @db.VarChar(10)               @map("Color")
+  backgroundColor String? @db.VarChar(10)               @map("ColorBG")
+  width           String? @db.VarChar(7)                @map("Width")
+  text            String? @db.VarChar(150)              @map("Texte")
+  _precision      String? @db.VarChar(5)                @map("Precision_")
+  @@map("edgecreator_valeurs")
 }
 
-model images_tranches {
-  ID             Int       @id @default(autoincrement())
-  ID_Utilisateur Int?
-  Hash           String?   @unique(map: "images_tranches_Hash_uindex") @db.VarChar(40)
-  DateHeure      DateTime? @db.DateTime(0)
-  NomFichier     String    @db.VarChar(255)
+model elementImage {
+  id        Int       @id @default(autoincrement())                               @map("ID")
+  userId    Int?                                                                  @map("ID_Utilisateur")
+  hash      String?   @unique(map: "images_tranches_Hash_uindex") @db.VarChar(40) @map("Hash")
+  createdAt DateTime? @db.DateTime(0)                                             @map("DateHeure")
+  fileName  String    @db.VarChar(255)                                            @map("NomFichier")
+  @@map("images_tranches")
 }
 
-model tranches_en_cours_modeles {
-  ID                 Int     @id @default(autoincrement())
-  Pays               String  @db.VarChar(3)
-  Magazine           String  @db.VarChar(6)
-  Numero             String  @db.VarChar(10)
-  username           String? @db.VarChar(25)
-  NomPhotoPrincipale String? @db.VarChar(60)
-  photographes       String? @db.Text
-  createurs          String? @db.Text
-  Active             Boolean
+model edgeModel {
+  id            Int     @id @default(autoincrement()) @map("ID")
+  country       String  @db.VarChar(3)                @map("Pays")
+  magazine      String  @db.VarChar(6)                @map("Magazine")
+  issueNumber   String  @db.VarChar(10)               @map("Numero")
+  username      String? @db.VarChar(25)
+  mainPhotoName String? @db.VarChar(60)               @map("NomPhotoPrincipale")
+  photographs   String? @db.Text                      @map("photographes")
+  creators      String? @db.Text                      @map("createurs")
+  isActive      Boolean                               @map("Active")
 
   @@unique([Pays, Magazine, Numero, username], map: "tranches_en_cours_modeles__numero")
+  @@map("tranches_en_cours_modeles")
 }

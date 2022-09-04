@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../dist/prisma/client_dm_stats"
+  provider      = "prisma-client-js"
+  output        = "../dist/prisma/client_dm_stats"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
@@ -9,60 +9,66 @@ datasource db {
   url      = env("DATABASE_URL_DM_STATS")
 }
 
-model auteurs_histoires {
-  ID         Int    @id @default(autoincrement())
-  personcode String @db.VarChar(79)
+model authorUser {
+  id              Int    @id @default(autoincrement())  @map("ID")
+  personcode      String @db.VarChar(79)                @map("NomAuteurAbrege")
+  userId          Int                                   @map("ID_user")
+  notation        Int    @default(-1)                   @map("Notation")
+
+  @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
+  @@index([userId], map: "auteurs_pseudos_ID_user_index")
+  @@index([personcode], map: "auteurs_pseudos_NomAuteurAbrege_index")
+  @@map("auteurs_pseudos")
+}
+
+model histoires_publications {
+  ID              Int       @id @default(autoincrement())
+  storycode       String    @db.VarChar(19)
+  publicationcode String    @db.VarChar(12)
+  issuenumber     String    @db.VarChar(12)
+  oldestdate      DateTime? @db.Date
+
+  @@unique([publicationcode, issuenumber, storycode], map: "unique_index")
+  @@index([publicationcode, issuenumber], map: "index_issue")
+  @@index([oldestdate], map: "index_oldestdate")
+  @@index([storycode], map: "index_story")
+}
+
+model missingStoryForUser {
+  id         Int    @id @default(autoincrement()) @map("ID")
+  userId     Int                                  @map("ID_User")
+  personcode String @db.VarChar(22)
   storycode  String @db.VarChar(19)
 
-  @@unique([personcode, storycode], map: "unique_index")
-  @@index([storycode], map: "index_storycode")
+  @@unique([userId, personcode, storycode], map: "missing_issue_for_user")
+  @@map("utilisateurs_histoires_manquantes")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model auteurs_histoires_publications {
-  ID              Int?
-  personcode      String?   @db.VarChar(79)
-  storycode       String?   @db.VarChar(19)
-  publicationcode String?   @db.VarChar(12)
-  issuenumber     String?   @db.VarChar(12)
-  issuecode       String?   @db.VarChar(25)
-  oldestdate      DateTime? @db.Date
-
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model utilisateurs_histoires_manquantes {
-  ID         Int?
-  ID_User    Int?
-  personcode String? @db.VarChar(79)
-  storycode  String? @db.VarChar(19)
-
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model utilisateurs_publications_manquantes {
-  ID              Int?
-  ID_User         Int?
-  personcode      String?   @db.VarChar(79)
-  storycode       String?   @db.VarChar(19)
-  publicationcode String?   @db.VarChar(12)
-  issuenumber     String?   @db.VarChar(12)
+  ID              Int       @id @default(autoincrement())
+  ID_User         Int
+  personcode      String    @db.VarChar(22)
+  storycode       String    @db.VarChar(19)
+  publicationcode String    @db.VarChar(12)
+  issuenumber     String    @db.VarChar(12)
   oldestdate      DateTime? @db.Date
-  Notation        Int?      @db.TinyInt
+  Notation        Int       @db.UnsignedTinyInt
 
-  @@ignore
+  @@unique([ID_User, personcode, storycode, publicationcode, issuenumber], map: "unique_index")
+  @@index([ID_User, publicationcode, issuenumber], map: "missing_user_issue")
+  @@index([ID_User, publicationcode, issuenumber, oldestdate], map: "suggested")
+  @@index([ID_User, personcode, storycode], map: "user_stories")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model utilisateurs_publications_suggerees {
-  ID              Int?
-  ID_User         Int?
-  publicationcode String?   @db.VarChar(12)
-  issuenumber     String?   @db.VarChar(12)
-  oldestdate      DateTime? @db.Date
-  Score           Int?
+  ID              Int             @id @default(autoincrement())
+  ID_User         Int
+  publicationcode String          @db.VarChar(12)
+  issuenumber     String          @db.VarChar(12)
+  oldestdate      DateTime?       @db.Date
+  Score           Int
+  auteurs_pseudos authorUser      @relation(fields: [ID_User], references: [userId], onUpdate: Restrict, map: "utilisateurs_publications_suggerees_pseudos_fk")
 
-  @@ignore
+  @@unique([ID_User, publicationcode, issuenumber], map: "suggested_issue_for_user")
+  @@index([ID_User], map: "suggested_issue_user")
 }
