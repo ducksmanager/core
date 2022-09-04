@@ -18,11 +18,11 @@ RUN npm i -g pnpm
 
 WORKDIR /app
 
-COPY ./api/package.json ./api/pnpm-lock.yaml ./
+COPY api/package.json api/pnpm-lock.yaml ./
 RUN pnpm i
 
-COPY ./.env.prod.local ./.env
-COPY ./api/prisma ./prisma
+COPY .env.prod.local ./.env
+COPY api/prisma ./prisma
 RUN pnpm run prisma:generate
 
 COPY api .
@@ -37,9 +37,15 @@ COPY --from=app-build /app/dist /usr/share/nginx/html
 FROM node:16 AS api
 MAINTAINER Bruno Perel
 
-COPY --from=api-build /app/node_modules /app/dist /app/
+RUN npm i -g pnpm
+
+WORKDIR /app
+
+COPY --from=api-build /app/package*.json /app/
+RUN pnpm install --production
+
+COPY --from=api-build /app/dist /app/
 
 EXPOSE 3000
 
-WORKDIR /app
 CMD ["node", "index.js"]
