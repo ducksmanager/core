@@ -45,6 +45,7 @@ COPY --from=api-build /app/package*.json /app/
 RUN pnpm install --production
 
 COPY --from=api-build /app/dist /app/
+RUN rm -rf dist && mkdir dist && mv prisma dist
 
 EXPOSE 3000
 

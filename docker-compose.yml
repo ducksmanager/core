@@ -18,7 +18,7 @@ services:
       - public-network
       - dm2-network
       - dm-server_db-network
-      - cover-id-network
+      - dm-server_cover-id-network
 
   sentry-relay:
     image: getsentry/relay
@@ -36,5 +36,5 @@ networks:
     external: true
   dm-server_db-network:
     external: true
-  cover-id-network:
+  dm-server_cover-id-network:
     external: true
