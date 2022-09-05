@@ -32,6 +32,7 @@ RUN pnpm run build
 FROM nginx AS app
 MAINTAINER Bruno Perel
 
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=app-build /app/dist /usr/share/nginx/html
 
 FROM node:16 AS api
