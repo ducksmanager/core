@@ -1,9 +1,10 @@
-.idea
-.git
-api/dist/prisma
 **/dist
-Dockerfile*
-edges
 **/node_modules
+.git
+.idea
+Dockerfile*
+api/.env
+api/dist/prisma
+edges
 var
 vendor

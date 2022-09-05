@@ -8,7 +8,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm i
 
 COPY . .
-COPY ./.env.prod.local ./.env
+COPY .env.prod.local ./.env
 RUN pnpm run build
 
 FROM node:16 as api-build
