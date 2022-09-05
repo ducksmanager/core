@@ -41,7 +41,7 @@ RUN npm i -g pnpm
 
 WORKDIR /app
 
-COPY --from=api-build /app/package*.json /app/
+COPY --from=api-build /app/package*.json /app/.env /app/
 RUN pnpm install --production
 
 COPY --from=api-build /app/dist /app/
