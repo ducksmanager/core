@@ -151,7 +151,7 @@ const inducksIssueNumbersNoSpace = $computed(() =>
 )
 
 onMounted(async () => {
-  mostWanted = (await axios.get('/admin/edges/wanted/data')).data.map(
+  mostWanted = (await axios.get('/edges/wanted/data')).data.map(
     mostWantedIssue => ({
       ...mostWantedIssue,
       country: mostWantedIssue.publicationcode.split('/')[0],
@@ -159,7 +159,7 @@ onMounted(async () => {
     }),
   )
 
-  publishedEdges = (await axios.get('/admin/edges/published/data')).data.reduce(
+  publishedEdges = (await axios.get('/edges/published/data')).data.reduce(
     (acc, value) => ({
       ...acc,
       [value.publicationcode]: [

@@ -38,9 +38,10 @@ app.all(/^\/edgecreator\/(.+)/, [
   authenticateToken,
   checkUserIsEdgeCreatorEditor,
 ]);
-app.all(/^\/(edgecreator\/(publish|edgesprites)|notifications)\/(.+)/, [
-  authenticateTokenAsAdmin,
-]);
+app.all(
+  /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(wanted|published))\/(.+)/,
+  [authenticateTokenAsAdmin]
+);
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all(/^\/bookcase\/(.+)/, injectTokenIfValid);
