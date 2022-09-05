@@ -42,6 +42,8 @@ jobs:
           platforms: linux/x86_64
           push: true
           target: app
+          cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-app:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-app:buildcache,mode=max
           tags: |
             ghcr.io/bperel/ducksmanager-app:latest
 
@@ -52,6 +54,8 @@ jobs:
           platforms: linux/x86_64
           push: true
           target: api
+          cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-api:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-api:buildcache,mode=max
           tags: |
             ghcr.io/bperel/ducksmanager-api:latest
 
