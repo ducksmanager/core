@@ -112,15 +112,21 @@ const generateSprites = async () => {
 
   const insertOperations = [];
   for (const spriteName of spritesWithNoUrl) {
-    const { version } = await cloudinaryV2.uploader.generate_sprite(spriteName);
-    insertOperations.push(
-      prisma.edgeSpriteUrl.create({
-        data: {
-          version,
-          spriteName,
-        },
-      })
-    );
+    try {
+      const { version } = await cloudinaryV2.uploader.generate_sprite(
+        spriteName
+      );
+      insertOperations.push(
+        prisma.edgeSpriteUrl.create({
+          data: {
+            version,
+            spriteName,
+          },
+        })
+      );
+    } catch (err: any) {
+      console.error(err);
+    }
   }
   await prisma.$transaction(insertOperations);
 };
