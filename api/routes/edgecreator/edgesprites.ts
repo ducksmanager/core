@@ -119,7 +119,7 @@ const generateSprites = async () => {
       insertOperations.push(
         prisma.edgeSpriteUrl.create({
           data: {
-            version,
+            version: String(version),
             spriteName,
           },
         })
@@ -131,7 +131,8 @@ const generateSprites = async () => {
   await prisma.$transaction(insertOperations);
 };
 
-export const put: Handler = async () => {
+export const put: Handler = async (req) => {
+  req.setTimeout(300_000);
   const edgeIdsWithSprites = (
     await prisma.edgeSprite.findMany({
       select: { id: true },
