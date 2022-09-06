@@ -12,7 +12,7 @@ import axios from 'axios'
 
 let bookstores = $ref(null)
 
-const generateSprites = async ({ id }) => {
+const generateSprites = async () => {
   await axios.post('/edgecreator/edgesprites')
 }
 
