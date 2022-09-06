@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 let bookstores = $ref(null)
 
 const generateSprites = async () => {
-  await axios.post('/edgecreator/edgesprites', {
+  await axios.put('/edgecreator/edgesprites', null, {
     headers: {
       Authorization: `Bearer ${Cookies.get("token")}`,
     },

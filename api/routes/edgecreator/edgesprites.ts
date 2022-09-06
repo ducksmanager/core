@@ -126,9 +126,11 @@ const generateSprites = async () => {
 };
 
 export const put: Handler = async () => {
-  const edgeIdsWithSprites = (await prisma.edgeSprite.findMany()).map(
-    ({ id }) => id
-  );
+  const edgeIdsWithSprites = (
+    await prisma.edgeSprite.findMany({
+      select: { id: true },
+    })
+  ).map(({ id }) => id);
 
   const edgesWithoutSprites = await prisma.edge.findMany({
     where: {

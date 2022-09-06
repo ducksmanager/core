@@ -58,20 +58,18 @@ export const checkUserIsEdgeCreatorEditor = (
   res: Response,
   next: CallableFunction
 ) => {
-  if (["Edition", "Admin"].includes(req.user?.privileges?.["EdgeCreator"])) {
+  if (!["Edition", "Admin"].includes(req.user?.privileges?.["EdgeCreator"])) {
     return res.sendStatus(403);
   }
   next();
 };
 
-export const authenticateTokenAsAdmin = (
+export const checkUserIsAdmin = (
   req: Request,
   res: Response,
   next: CallableFunction
 ) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token !== process.env.ROLE_PASSWORD_ADMIN) {
+  if (!["Admin"].includes(req.user?.privileges?.["DucksManager"])) {
     return res.sendStatus(403);
   }
   next();
@@ -96,7 +94,7 @@ export const injectTokenIfValid = (
           req.user = user;
           console.log("valid token");
         } else {
-          console.log("Invalid token");
+          console.log(`Invalid token: ${err}`);
         }
         next();
       }

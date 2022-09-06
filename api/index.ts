@@ -9,7 +9,7 @@ import { router } from "express-file-routing";
 import { call } from "./call-api";
 import {
   authenticateToken,
-  authenticateTokenAsAdmin,
+  checkUserIsAdmin,
   checkUserIsEdgeCreatorEditor,
   injectTokenIfValid,
 } from "./routes/login";
@@ -34,17 +34,18 @@ app.use(
 app.use(cookieParser());
 app.use(busboy({ immediate: true }));
 
+app.all(/^.+$/, injectTokenIfValid);
+app.all(
+  /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(wanted|published))/,
+  [checkUserIsAdmin]
+);
+
 app.all(/^\/edgecreator\/(.+)/, [
   authenticateToken,
   checkUserIsEdgeCreatorEditor,
 ]);
-app.all(
-  /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(wanted|published))\/(.+)/,
-  [authenticateTokenAsAdmin]
-);
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
-app.all(/^\/bookcase\/(.+)/, injectTokenIfValid);
 app.all("/global-stats/user/collection/rarity", authenticateToken);
 
 app.all(/^\/coa\/list\/(.+)/, async (req, res) => {
