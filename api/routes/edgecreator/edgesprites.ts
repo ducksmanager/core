@@ -133,6 +133,46 @@ const generateSprites = async () => {
 
 export const put: Handler = async (req) => {
   req.setTimeout(300_000);
+
+  try {
+    let nextCursor = undefined
+    while (true) {
+      const results: any = (await cloudinaryV2.search
+        .expression('edges-*')
+        .sort_by('public_id', 'desc')
+        .max_results(100)
+        .next_cursor(nextCursor)
+        .execute())
+
+      console.log(`Rate limit remaining: ${results.rate_limit_remaining}`)
+
+      const edgesNotInCloudinary = await prisma.edge.findMany({
+        where: {
+          slug: {
+            notIn: results.resources.map((edge: { public_id: string }) => edge.public_id),
+          },
+        },
+      });
+
+      for (const edgeNotInCloudinary of edgesNotInCloudinary) {
+        const [countryCode, magazineCode] = edgeNotInCloudinary.publicationcode.split('/')
+
+        console.log(`Uploading edge with ID ${edgeNotInCloudinary.id} and slug ${edgeNotInCloudinary.slug}...`);
+        await cloudinaryV2.uploader.upload(`${process.env.EDGES_ROOT}/${countryCode}/gen/${magazineCode}.${edgeNotInCloudinary.issuenumber}.png`, {
+          public_id: edgeNotInCloudinary.slug!
+        });
+      }
+
+      nextCursor = results.next_cursor
+      if (!nextCursor) {
+        break;
+      }
+    }
+  }
+  catch(e) {
+    console.error(e)
+  }
+
   const edgeIdsWithSprites = (
     await prisma.edgeSprite.findMany({
       select: { id: true },
