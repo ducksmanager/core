@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { watch } from 'vue'
 
 import { coa } from '~/stores/coa'
 

@@ -41,22 +41,21 @@ import { collection as collectionStore } from '~/stores/collection'
 import { useI18n } from "vue-i18n";
 
 const {t} = useI18n()
-const publicationNames = $computed(() => coa().publicationNames)
-const collectionPerPurchaseDate = $computed(
-  () =>
-    collectionStore().purchases
-      && collectionStore()
+const publicationNames = $computed(() => coa().publicationNames),
+  collectionPerPurchaseDate = $computed(() => {
+    const purchases = collectionStore().purchases;
+    return (
+      purchases &&
+      collectionStore()
         .collection?.reduce((acc, issue) => {
-          const purchase = (issue.purchaseId > 0
-            && collectionStore().purchases.find(
-              ({ id }) => id === issue.purchaseId,
-            )) || {
+          const purchase = (issue.purchaseId > 0 &&
+            purchases.find(({ id }) => id === issue.purchaseId)) || {
             date: (issue.creationDate || '0001-01-01T00:00:00').split('T')[0],
-          }
+          };
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>
-              JSON.stringify(currentPurchase) === JSON.stringify(purchase),
-          )
+              currentPurchase.date === purchase.date
+          );
           if (purchaseIndex === -1) {
             acc.push({ purchase, issues: [] })
             purchaseIndex = acc.length - 1
@@ -67,8 +66,9 @@ const collectionPerPurchaseDate = $computed(
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
           purchase1.date < purchase2.date ? 1 : -1,
         )
-        .slice(0, 5),
-)
+        .slice(0, 5)
+    );
+  });
 </script>
 
 <style scoped lang="scss">

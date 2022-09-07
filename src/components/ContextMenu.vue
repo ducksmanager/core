@@ -44,7 +44,7 @@
     </BAlert>
     <template v-else>
       <BTabs
-        v-model="currentCopyIndex"
+        v-model.number="currentCopyIndex"
         nav-class="copies-tabs"
         @changed="
           (newTabs) => {
@@ -291,7 +291,7 @@ const emit = defineEmits([
 const { conditions } = condition()
 
 const defaultState = $ref({
-  condition: 'do_not_change',
+  condition: 'possessed',
   isToSell: 'do_not_change',
   purchaseId: 'do_not_change',
   isToRead: 'do_not_change',
@@ -391,8 +391,15 @@ watch(
 watch(
   () => copies,
   () => updateEditingCopies(),
-  { immediate: true },
-)
+  { immediate: true }
+);
+
+watch(
+  () => editingCopies.length,
+  (newValue) => {
+    currentCopyIndex = newValue - 1;
+  }
+);
 </script>
 
 <style lang="scss">
