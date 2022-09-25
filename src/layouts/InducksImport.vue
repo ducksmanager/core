@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!username" id="wrapper" class="container-fluid py-5">
+    <div v-if="!user" id="wrapper" class="container-fluid py-5">
       <p class="col-md-8 fs-4" />
       <div id="dm-loves-inducks">
         <div
@@ -280,7 +280,6 @@ import { useI18n } from 'vue-i18n'
 import { coa } from '~/stores/coa'
 import { collection as collectionStore } from '~/stores/collection'
 import { l10n } from '~/stores/l10n'
-import { user } from '~/composables/global'
 import { collection } from '~/composables/collection'
 const { findInCollection } = collection()
 
@@ -298,7 +297,7 @@ let issuesImportable = $ref(null)
 let importProgress = $ref(0)
 
 const { t: $t } = useI18n()
-const { username } = user()
+const user = $computed(() => collection().user)
 const publicationNames = $computed(() => coa().publicationNames)
 const issueNumbers = $computed(() => coa().issueNumbers)
 const issueCodeDetails = $computed(() => coa().issueCodeDetails)

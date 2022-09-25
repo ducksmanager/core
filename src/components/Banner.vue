@@ -1,6 +1,6 @@
 <template>
   <div :class="{ ...classes, small }">
-    <a :href="username ? r('/collection/show') : '/'">
+    <a :href="user ? r('/collection/show') : '/'">
       <img src="/images/logo_small.png" alt="DucksManager">
     </a>
   </div>
@@ -8,7 +8,8 @@
 
 <script setup>
 import { l10n } from '~/stores/l10n'
-import { user } from '~/composables/global'
+
+import { collection } from '~/stores/collection'
 
 defineProps({
   classes: {
@@ -21,7 +22,7 @@ defineProps({
   },
 })
 const { r } = l10n()
-const { username } = user()
+const user = $computed(() => collection().user)
 </script>
 
 <style scoped lang="scss">

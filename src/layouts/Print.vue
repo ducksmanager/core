@@ -7,7 +7,7 @@
             ><img id="logo" alt="logo" src="/images/logo_small.png"
           /></a>
         </td>
-        <td>{{ $t("Collection DucksManager de") }} {{ username }}</td>
+        <td>{{ $t("Collection DucksManager de") }} {{ user?.username }}</td>
       </tr>
     </table>
     <Collectable v-if="currentType === 'collectable'" />
@@ -16,14 +16,13 @@
 </template>
 
 <script setup>
-import { user } from "~/composables/global";
 import { l10n } from "~/stores/l10n";
 defineProps({
   currentType: { type: String, required: true },
 });
 const { r } = l10n();
 const l10nRoutes = $computed(() => l10n().l10nRoutes);
-const { username } = user();
+const user = $computed(() => collection().user)
 </script>
 
 <style lang="scss" scoped>

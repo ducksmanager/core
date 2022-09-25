@@ -84,15 +84,14 @@ import {
   BDropdownItem,
   BFormCheckbox,
 } from 'bootstrap-vue-3'
-import { onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SlickItem, SlickList } from 'vue-slicksort'
 
 import { bookcase } from '~/stores/bookcase'
 import { coa } from '~/stores/coa'
-import { user } from '~/composables/global'
 
-const { username } = user()
+const user = $computed(() => collection().user)
 const { t: $t } = useI18n()
 const bookcaseStore = bookcase()
 const textures = [
@@ -183,7 +182,7 @@ let hasPublicationNames = $ref(false)
 let bookcaseOrder = $ref(null)
 
 onMounted(async () => {
-  setBookcaseUsername(username)
+  setBookcaseUsername(user.username)
   await loadData()
   bookcaseOrder = bookcaseStore.bookcaseOrder
   await fetchPublicationNames(bookcaseOrder)

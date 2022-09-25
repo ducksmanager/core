@@ -48,7 +48,6 @@ import { BButton } from 'bootstrap-vue-3'
 
 import { bookcase } from '~/stores/bookcase'
 import { users } from '~/stores/users'
-import { user } from '~/composables/global'
 
 defineProps({
   hasEdge: {
@@ -61,11 +60,10 @@ defineProps({
   },
 })
 
-const { userId } = user()
-
 const contribution = 'Photographe'
 const isSharedBookcase = bookcase().isSharedBookcase
-const points = $computed(() => users().points?.[userId][contribution])
+const user = $computed(() => collection().user)
+const points = $computed(() => user && users().points?.[user.id][contribution])
 </script>
 
 <style scoped lang="scss">

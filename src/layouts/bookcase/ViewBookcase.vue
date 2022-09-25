@@ -33,7 +33,7 @@
         "
       />
       <div
-        v-if="isShareEnabled && username !== 'demo' && sortedBookcase?.length"
+        v-if="isShareEnabled && user.username !== 'demo' && sortedBookcase?.length"
         class="mb-4"
       >
         <BAlert
@@ -60,7 +60,7 @@
         </BButton>
       </div>
       <BAlert
-        v-else-if="isShareEnabled === false && username !== 'demo'"
+        v-else-if="isShareEnabled === false && user.username !== 'demo'"
         show
         variant="warning"
         v-html="
@@ -150,7 +150,6 @@ import { coa as coaStore } from '~/stores/coa'
 import { collection as collectionStore } from '~/stores/collection'
 import { l10n } from '~/stores/l10n'
 import { users } from '~/stores/users'
-import { user } from '~/composables/global'
 
 const route = useRoute()
 
@@ -158,8 +157,8 @@ const { r } = l10n()
 const collection = collectionStore()
 const coa = coaStore()
 const bookcase = bookcaseStore()
-const { userId, username } = user()
-const bookcaseUsername = $computed(() => route.params.username || username)
+const user = $computed(() => collection().user)
+const bookcaseUsername = $computed(() => route.params.username || user.username)
 const isShareEnabled = $computed(() => collection.user?.isShareEnabled)
 const lastPublishedEdgesForCurrentUser = $computed(
   () => collection.lastPublishedEdgesForCurrentUser,
@@ -177,7 +176,7 @@ const isSharedBookcase = $computed(() => bookcase.isSharedBookcase)
 const bookcaseUrl = $computed(
   () =>
     !isPrivateBookcase
-      && `${window.location.origin}/bookcase/show/${username}`,
+      && `${window.location.origin}/bookcase/show/${user.username}`,
 )
 const loading = $computed(
   () =>
@@ -357,7 +356,7 @@ watch(
   () => bookcase.bookcase && !isSharedBookcase,
   async (hasNonSharedBookcase) => {
     if (hasNonSharedBookcase)
-      await users().fetchStats([userId])
+      await users().fetchStats([user.id])
   },
 )
 
@@ -377,7 +376,7 @@ onMounted(async () => {
     await collection.loadPopularIssuesInCollection()
     await collection.loadLastPublishedEdgesForCurrentUser()
     await collection.loadUser()
-    userPoints = users().points[userId]
+    userPoints = users().points[user.id]
   }
 })
 </script>

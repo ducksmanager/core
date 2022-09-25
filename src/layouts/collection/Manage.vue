@@ -54,7 +54,7 @@
     </Accordion>
     <LastPurchases v-if="total > 0 && hasPublicationNames" />
     <LastPublishedEdges />
-    <div v-if="username === 'demo'" id="demo-intro">
+    <div v-if="user?.username === 'demo'" id="demo-intro">
       <h2>{{ $t("Bienvenue dans le mode démo !") }}</h2>
       <span
         class="pre-wrap"
@@ -96,7 +96,6 @@ import { onMounted, watch } from 'vue'
 import { coa } from '~/stores/coa'
 import { collection } from '~/stores/collection'
 import { l10n } from '~/stores/l10n'
-import { user } from '~/composables/global'
 
 defineProps({
   publicationcode: {
@@ -107,7 +106,7 @@ defineProps({
 
 const suggestionsNumber = $ref(0)
 let hasPublicationNames = $ref(false)
-const username = user().username
+const user= $computed(() => collection().user)
 const publicationNames = $computed(() => coa().publicationNames)
 const total = $computed(() => collection().total)
 const totalPerPublication = $computed(() => collection().totalPerPublication)

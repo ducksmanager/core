@@ -1,22 +1,22 @@
 <template>
   <div id="menu">
     <div id="medals_and_login">
-      <div v-if="points[userId]" id="medals">
+      <div v-if="user && points[user.id]" id="medals">
         <Medal
-          v-for="(numberOfPoints, contribution) in points[userId] || {}"
+          v-for="(numberOfPoints, contribution) in points[user.id] || {}"
           :key="contribution"
           :contribution="contribution"
           :user-level-points="numberOfPoints"
         />
       </div>
       <div id="login">
-        <a id="logo_small" :href="username ? r('/collection/show') : '/'">
+        <a id="logo_small" :href="user ? r('/collection/show') : '/'">
           <img src="/images/logo_name.jpg">
         </a>
 
-        <div v-if="username" id="login_status">
+        <div v-if="user" id="login_status">
           <img alt="O" src="/images/icons/green.png">&nbsp;
-          <span>{{ username }}</span>
+          <span>{{ user.username }}</span>
         </div>
       </div>
     </div>
@@ -47,18 +47,19 @@ import Popper from '@bperel/vue3-popper-teleport'
 import { collection } from '~/stores/collection'
 import { l10n } from '~/stores/l10n'
 import { users } from '~/stores/users'
-import { user } from '~/composables/global'
 
 const points = $computed(() => users().points)
-const { userId, username } = user()
+const user = $computed(() => collection().user)
 const { r } = l10n()
 
-if (userId) {
-  collection().collectionApi
-    .post('/collection/lastvisit')
-    .then(data => collection().setPreviousVisit(data))
-  users().fetchStats([userId])
-}
+watch($$(user), newValue => {
+  if (newValue) {
+    collection().collectionApi
+      .post('/collection/lastvisit')
+      .then(data => collection().setPreviousVisit(data))
+    users().fetchStats([newValue.id])
+  }
+}, {immediate: true})
 </script>
 
 <style scoped lang="scss">

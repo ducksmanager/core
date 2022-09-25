@@ -4,19 +4,19 @@
     root-path="collection"
     default-path="/show"
     :items="items"
+    v-if="user"
   />
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { collection } from '~/stores/collection'
-import { user } from '~/composables/global'
 
-const { username } = user()
+const user = $computed(() => collection().user)
 
 const { t: $t } = useI18n()
+const router = useRouter()
 const items = $computed(() => [
   {
     path: '/show',
@@ -44,7 +44,7 @@ const items = $computed(() => [
           ? $t('Mes abonnements')
           : $t('Mes abonnements ({0})', [subscriptions.length]),
   },
-  { path: '/account', text: $t('Mon compte'), disabled: username === 'demo' },
+  { path: '/account', text: $t('Mon compte'), disabled: user?.username === 'demo' },
 ])
 const subscriptions = $computed(() => collection().subscriptions)
 const issuesInToReadStack = $computed(() => collection().issuesInToReadStack)
@@ -52,7 +52,12 @@ const total = $computed(() => collection().total)
 const totalUniqueIssues = $computed(() => collection().totalUniqueIssues)
 const loadSubscriptions = collection().loadSubscriptions
 
-onMounted(() => {
-  loadSubscriptions()
-})
+watch($$(user), newValue => {
+  if (newValue) {
+    loadSubscriptions()
+  }
+  else if (newValue === null) {
+    router.push('/login')
+  }
+}, {immediate: true})
 </script>

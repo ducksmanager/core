@@ -183,7 +183,7 @@
           }}
         </BCol>
       </BRow>
-      <div v-if="!username" id="sign-up-prompt">
+      <div v-if="!user" id="sign-up-prompt">
         <BButton
           size="lg"
           variant="success"
@@ -202,10 +202,9 @@ import { useHead } from '@vueuse/head'
 import { BButton, BCol, BRow } from 'bootstrap-vue-3'
 
 import { l10n } from '~/stores/l10n'
-import { user } from '~/composables/global'
 
 const { r } = l10n()
-const { username } = user()
+const user = $computed(() => collection().user)
 
 useHead({
   title: 'Bienvenue sur DucksManager !',

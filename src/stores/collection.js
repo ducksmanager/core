@@ -16,13 +16,14 @@ export const collection = defineStore("collection", {
     popularIssuesInCollection: null,
     lastPublishedEdgesForCurrentUser: null,
 
+    isLoadingUser: false,
     isLoadingCollection: false,
     isLoadingPurchases: false,
     isLoadingWatchedAuthors: false,
     isLoadingSuggestions: false,
     isLoadingSubscriptions: false,
 
-    user: null,
+    user: undefined,
     previousVisit: null,
 
     collectionApi: null,
@@ -268,26 +269,33 @@ export const collection = defineStore("collection", {
     },
 
     async loadUser(afterUpdate = false) {
-      if (afterUpdate || !this.user) {
-        this.user = Object.entries(
-          (await this.collectionApi.get(`/collection/user`)).data
-        ).reduce((acc, [key, value]) => {
-          switch (key) {
-            case "accepterpartage":
-              acc.isShareEnabled = value;
-              break;
-            case "affichervideo":
-              acc.isVideoShown = value;
-              break;
-            case "email":
-              acc.email = value;
-              break;
-            case "presentationSentence":
-              acc.presentationSentence = value;
-              break;
-          }
-          return acc;
-        }, {});
+      if (!this.isLoadingUser && (afterUpdate || !this.user)) {
+        this.isLoadingUser = true;
+        try {
+          this.user = Object.entries(
+            (await this.collectionApi.get(`/collection/user`)).data
+          ).reduce((acc, [key, value]) => {
+            switch (key) {
+              case "accepterpartage":
+                acc.isShareEnabled = value;
+                break;
+              case "affichervideo":
+                acc.isVideoShown = value;
+                break;
+              case "presentationSentence":
+                acc.presentationSentence = value;
+                break;
+              default:
+                acc[key] = value;
+                break;
+            }
+            return acc;
+          }, {});
+        } catch (e) {
+          this.user = null;
+        } finally {
+          this.isLoadingUser = false;
+        }
       }
     },
   },

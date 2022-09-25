@@ -2,8 +2,7 @@ import { computed, onMounted } from "vue";
 
 import { collection as collectionStore } from "~/stores/collection";
 
-import { user } from "./global";
-const { username } = user();
+const user = $computed(() => collection().user);
 
 export const collection = () => {
   const userCollection = computed(() => collectionStore().collection);
@@ -12,7 +11,7 @@ export const collection = () => {
     () => collectionStore().totalPerPublication
   );
   const loadCollection = collectionStore().loadCollection;
-  const load = async () => username && (await loadCollection());
+  const load = async () => user && (await loadCollection());
   const findInCollection = (publicationCode, issueNumber) =>
     userCollection.value?.find(
       ({ country, magazine, issueNumber: collectionIssueNumber }) =>

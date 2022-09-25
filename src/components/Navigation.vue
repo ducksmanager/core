@@ -75,9 +75,15 @@ import {
   BIconXSquareFill,
 } from 'bootstrap-icons-vue'
 
-import { user } from '~/composables/global'
+import { onMounted } from "vue";
+import { collection } from "~/stores/collection";
 
-const { username } = user()
+let username = $ref(null)
+
+onMounted(async () => {
+  await collection().loadUser()
+  username = collection().user?.username
+})
 </script>
 
 <style lang="scss" scoped>
