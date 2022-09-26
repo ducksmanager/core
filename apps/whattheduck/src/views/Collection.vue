@@ -8,6 +8,20 @@
       placeholder="Filter"
     ></ion-searchbar>
     <div v-if="shownItems">
+      <template v-if="itemType === 'Country'">
+        <ion-segment-button
+          :key="item"
+          v-for="item in collectionStore.ownedCountries"
+          @click="appStore.currentNavigationItem = item"
+          ><Country :value="item" /></ion-segment-button
+      ></template>
+      <template v-if="itemType === 'Publication'">
+        <ion-segment-button
+          :key="item"
+          v-for="item in collectionStore.ownedPublications"
+          @click="appStore.currentNavigationItem = item"
+          ><Publication :value="item" /></ion-segment-button
+      ></template>
       <template v-if="itemType === 'Issue'">
         <ion-segment-button :key="item" v-for="item in shownItems"
           ><Issue :value="item" /></ion-segment-button
@@ -17,6 +31,8 @@
 </template>
 <script setup lang="ts">
 import MainLayout from "@/layouts/MainLayout.vue";
+import Country from "@/components/Country";
+import Publication from "@/components/Publication";
 import Issue from "@/components/Issue";
 import Navigation from "@/components/Navigation";
 import { computed, onMounted, ref, watch } from "vue";
@@ -25,11 +41,22 @@ import { app } from "@/stores/app";
 import { IonSearchbar, IonSegmentButton } from "@ionic/vue";
 import { IssueWithPublicationCode } from "@/types/IssueWithPublicationCode";
 
+defineEmits(["click"]);
+
 const collectionStore = collection();
 const appStore = app();
 const filterText = ref("" as string);
 const items = ref(null as IssueWithPublicationCode[] | null);
-const itemType = ref("Issue" as string);
+const itemType = computed(() => {
+  switch (appStore.currentNavigationItem?.indexOf("/")) {
+    case undefined:
+      return "Country";
+    case -1:
+      return "Publication";
+    default:
+      return "Issue";
+  }
+});
 
 const shownItems = computed(() =>
   items.value?.filter(
@@ -46,21 +73,25 @@ const title = computed(() =>
 
 onMounted(async () => {
   await collectionStore.loadCollection();
-  appStore.currentCountry = "fr";
-  appStore.currentPublication = "fr/MP";
+  appStore.currentNavigationItem = "fr/MP";
 });
 
 watch(
-  () => collectionStore.collection && appStore.currentPublication,
+  () => collectionStore.collection && appStore.currentNavigationItem,
   (isReady) => {
     if (isReady) {
       items.value =
         collectionStore.collection?.filter(
           ({ publicationCode }) =>
-            publicationCode === appStore.currentPublication
+            publicationCode === appStore.currentNavigationItem
         ) || null;
     }
   },
   { immediate: true }
 );
 </script>
+<style lang="scss">
+ion-segment-button {
+  text-transform: none;
+}
+</style>

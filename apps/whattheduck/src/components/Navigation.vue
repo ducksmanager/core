@@ -1,5 +1,8 @@
 <template>
-  <ion-segment :value="selected" @ionChange="selected = $event.detail.value">
+  <ion-segment
+    :value="appStore.currentNavigationItem"
+    @ionChange="appStore.currentNavigationItem = $event.detail.value || null"
+  >
     <ion-segment-button :key="key" v-for="{ key, text } in parts" :value="key">
       <ion-label>{{ text }}</ion-label>
     </ion-segment-button>
@@ -8,31 +11,35 @@
 
 <script setup>
 import { IonSegment, IonSegmentButton, IonLabel } from "@ionic/vue";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, computed } from "vue";
 import { collection } from "@/stores/collection";
 import { app } from "@/stores/app";
 
 const collectionStore = collection();
 const appStore = app();
 
-const parts = computed(() => [
-  {
-    key: "allCountries",
-    text: "All countries",
-  },
-  {
-    key: appStore.currentCountry,
-    text: appStore.currentCountry,
-  },
-  {
-    key: appStore.currentPublication,
-    text: appStore.currentPublication,
-  },
-]);
-
-const selected = ref(
-  appStore.currentPublication || appStore.currentCountry || "allCountries"
-);
+const parts = computed(() => {
+  const parts = [
+    {
+      key: null,
+      text: "All countries",
+    },
+  ];
+  if (appStore.currentNavigationItem) {
+    const publicationParts = appStore.currentNavigationItem.split("/");
+    parts.push({
+      key: publicationParts[0],
+      text: publicationParts[0],
+    });
+    if (publicationParts.length === 2) {
+      parts.push({
+        key: appStore.currentNavigationItem,
+        text: appStore.currentNavigationItem,
+      });
+    }
+  }
+  return parts;
+});
 
 onMounted(async () => {
   await collectionStore.loadCollection();
@@ -40,6 +47,10 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+ion-segment {
+  justify-content: start;
+}
+
 ion-segment-button {
   width: 33.333%;
   max-width: 33.333%;
