@@ -1,26 +1,31 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import {IssueWithPublicationCode} from "@/types/IssueWithPublicationCode";
-import {Purchase} from "@/types/Purchase";
-import {Author} from "@/types/Author";
-import {SuggestionList} from "@/types/SuggestionList";
-import {Subscription} from "@/types/Subscription";
-import {IssuePopularity} from "@/types/IssuePopularity";
-import {EdgePublishedRecently, EdgePublishedRecentlyWithTimestamp} from "@/types/EdgePublishedRecently";
-import {User} from "@/types/User";
-import {PreviousVisit} from "@/types/PreviousVisit";
-import {Issue} from "@/types/Issue";
+import { IssueWithPublicationCode } from "@/types/IssueWithPublicationCode";
+import { Purchase } from "@/types/Purchase";
+import { Author } from "@/types/Author";
+import { SuggestionList } from "@/types/SuggestionList";
+import { Subscription } from "@/types/Subscription";
+import { IssuePopularity } from "@/types/IssuePopularity";
+import {
+  EdgePublishedRecently,
+  EdgePublishedRecentlyWithTimestamp,
+} from "@/types/EdgePublishedRecently";
+import { User } from "@/types/User";
+import { PreviousVisit } from "@/types/PreviousVisit";
+import { Issue } from "@/types/Issue";
 
 export const collection = defineStore("collection", {
   state: () => ({
-    collection: null as IssueWithPublicationCode[]|null,
-    purchases: null as Purchase[]|null,
-    watchedAuthors: null as Author[]|null,
-    suggestions: null as SuggestionList|null,
-    subscriptions: null as Subscription[]|null,
+    collection: null as IssueWithPublicationCode[] | null,
+    purchases: null as Purchase[] | null,
+    watchedAuthors: null as Author[] | null,
+    suggestions: null as SuggestionList | null,
+    subscriptions: null as Subscription[] | null,
 
     popularIssuesInCollection: null as { [key: string]: number } | null,
-    lastPublishedEdgesForCurrentUser: null as EdgePublishedRecentlyWithTimestamp[]|null,
+    lastPublishedEdgesForCurrentUser: null as
+      | EdgePublishedRecentlyWithTimestamp[]
+      | null,
 
     isLoadingCollection: false,
     isLoadingPurchases: false,
@@ -28,14 +33,16 @@ export const collection = defineStore("collection", {
     isLoadingSuggestions: false,
     isLoadingSubscriptions: false,
 
-    user: null as User|null,
-    previousVisit: null as PreviousVisit|null,
+    user: null as User | null,
+    previousVisit: null as PreviousVisit | null,
   }),
 
   getters: {
     total: ({ collection }) => collection?.length,
 
-    duplicateIssues: ({ collection }): { [key: string]: IssueWithPublicationCode[] }|null => {
+    duplicateIssues: ({
+      collection,
+    }): { [key: string]: IssueWithPublicationCode[] } | null => {
       if (collection) {
         const issuesByIssueCode = collection.reduce((acc, issue) => {
           const issuecode = `${issue.publicationCode} ${issue.issueNumber}`;
@@ -52,7 +59,7 @@ export const collection = defineStore("collection", {
           return issues.length > 1 ? { ...acc, [issuecode]: issues } : acc;
         }, {});
       }
-      return null
+      return null;
     },
 
     issuesInToReadStack: ({ collection }) =>
@@ -72,10 +79,12 @@ export const collection = defineStore("collection", {
           ...acc,
           [issue.country]: (acc[issue.country] || 0) + 1,
         }),
-        {} as { [key: string]: number}
+        {} as { [key: string]: number }
       ),
 
-    totalPerPublication: ({ collection }): { [key: string]: number }|undefined =>
+    totalPerPublication: ({
+      collection,
+    }): { [key: string]: number } | undefined =>
       collection?.reduce((acc, issue) => {
         const publicationCode = `${issue.country}/${issue.magazine}`;
         return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
@@ -84,7 +93,9 @@ export const collection = defineStore("collection", {
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,
 
-    issueNumbersPerPublication: ({ collection }): { [key: string]: string[] }|undefined =>
+    issueNumbersPerPublication: ({
+      collection,
+    }): { [key: string]: string[] } | undefined =>
       collection?.reduce(
         (acc, { country, issueNumber, magazine }) => ({
           ...acc,
@@ -110,7 +121,7 @@ export const collection = defineStore("collection", {
   },
 
   actions: {
-    setPreviousVisit(previousVisit: PreviousVisit|null) {
+    setPreviousVisit(previousVisit: PreviousVisit | null) {
       this.previousVisit = previousVisit;
     },
     async loadCollection(afterUpdate = false) {
@@ -144,10 +155,15 @@ export const collection = defineStore("collection", {
         this.isLoadingWatchedAuthors = false;
       }
     },
-    async loadSuggestions(
-        { countryCode, sort, sinceLastVisit }:
-            {countryCode: string|null, sort: string|null, sinceLastVisit: boolean}
-    ) {
+    async loadSuggestions({
+      countryCode,
+      sort,
+      sinceLastVisit,
+    }: {
+      countryCode: string | null;
+      sort: string | null;
+      sinceLastVisit: boolean;
+    }) {
       if (!this.isLoadingSuggestions) {
         this.isLoadingSuggestions = true;
         this.suggestions = (
@@ -178,8 +194,8 @@ export const collection = defineStore("collection", {
     async loadPopularIssuesInCollection() {
       if (!this.popularIssuesInCollection) {
         this.popularIssuesInCollection = (
-          ((await axios.get("/collection/popular"))
-        ).data as IssuePopularity[]).reduce(
+          (await axios.get("/collection/popular")).data as IssuePopularity[]
+        ).reduce(
           (acc, issue) => ({
             ...acc,
             [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]:

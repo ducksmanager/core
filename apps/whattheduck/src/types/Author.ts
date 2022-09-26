@@ -1,4 +1,4 @@
 export interface Author {
-    personCode: string;
-    notation:   number;
+  personCode: string;
+  notation: number;
 }

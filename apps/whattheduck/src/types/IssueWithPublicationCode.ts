@@ -1,5 +1,5 @@
-import {Issue} from "@/types/Issue";
+import { Issue } from "@/types/Issue";
 
 export interface IssueWithPublicationCode extends Issue {
-    publicationCode: string;
+  publicationCode: string;
 }

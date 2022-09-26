@@ -10,17 +10,23 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <div id="container">
-        <slot></slot>
-      </div>
+      <slot></slot>
     </ion-content>
   </ion-page>
 </template>
 <script setup lang="ts">
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import {
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonMenuButton,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/vue";
 defineProps<{
-  title: string
-}>()
+  title: string;
+}>();
 </script>
 <style scoped lang="scss">
 #container {

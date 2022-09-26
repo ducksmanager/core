@@ -1,3 +1,3 @@
 export interface PreviousVisit {
-    previousVisit: string|null;
+  previousVisit: string | null;
 }
