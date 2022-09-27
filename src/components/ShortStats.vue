@@ -10,15 +10,8 @@
       {{ $t("Votre collection est composée de") }}
       <b>{{ Object.keys(totalPerPublication).length }}</b>
       {{ $t("magazines différents issus de") }}
-      <span
-        v-html="
-          t(
-            '{countries} pays | {countries} pays',
-            Object.keys(totalPerCountry).length,
-            { countries: `<b>${Object.keys(totalPerCountry).length}</b>` },
-          )
-        "
-      />.
+      <b>{{Object.keys(totalPerCountry).length}}</b>
+      {{ t("pays | pays", Object.keys(totalPerCountry).length) }}.
     </div>
     <slot name="non-empty-collection" />
   </div>
