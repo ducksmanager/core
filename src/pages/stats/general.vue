@@ -1,13 +1,13 @@
 <template>
   <div>
-    <ShortStats v-if="rarityTotal !== null" id="short-stats">
+    <ShortStats v-if="userCount !== null" id="short-stats">
       <template #non-empty-collection>
         <div>
           <span
             v-html="
               $t(
                 'Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.',
-                [rarityValue, rarityTotal],
+                [rarityValue, userCount],
               )
             "
           /><br>
@@ -166,9 +166,8 @@ const { getConditionLabel } = condition()
 
 const { t: $t } = useI18n()
 const currentPage = 1
-const count = $computed(() => users().count)
+const userCount = $computed(() => users().count)
 const publicationNames = $computed(() => coa().publicationNames)
-const totalPerPublication = $computed(() => collection.totalPerPublication)
 const quotedIssues = $computed(() =>
   collection.quotedIssues?.sort(
     (
@@ -189,15 +188,13 @@ const quotationFields = [
 ]
 
 let rarityValue = $ref(null)
-let rarityTotal = $ref(null)
 let hasPublicationNames = $ref(false)
 
 watch(
-  () => totalPerPublication,
-  async () => {
-    await coa().fetchIssueQuotations(Object.keys(totalPerPublication))
+  () => collection.totalPerPublication,
+  async (newValue) => {
+    await coa().fetchIssueQuotations(Object.keys(newValue))
   },
-  { immediate: true },
 )
 
 watch(
@@ -214,16 +211,16 @@ watch(
 )
 
 onMounted(async () => {
+  await collection.loadCollection();
   await users().fetchCount()
-  const { userScores, myScore } = (
+  const { userScores } = (
     await axios.get('/global-stats/user/collection/rarity', {
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
     })
   ).data
-  rarityValue = userScores.length - userScores.indexOf(myScore)
-  rarityTotal = count
+  rarityValue = userScores.length - userScores.findIndex(({ userId }) => userId === collection.user.id)
 })
 </script>
 

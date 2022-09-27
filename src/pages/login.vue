@@ -69,12 +69,17 @@ const login = async () => {
     })).data.token);
     collection().initApi()
     bookcase().initApi()
-    await router.push('/collection')
   }
   catch(e) {
     console.error(e)
   }
 }
+
+watch(() => collection().user, async (newValue) => {
+  if (newValue) {
+    await router.push('/collection')
+  }
+}, {immediate: true})
 const { r } = l10n();
 </script>
 
