@@ -1,4 +1,14 @@
 <template>
+    <BButtonGroup>
+      <BButton
+        v-for="(text, unitType) in unitTypes"
+        :key="unitType"
+        :pressed="unitTypeCurrent === unitType"
+        @click="unitTypeCurrent = unitType"
+      >
+        {{ text }}
+      </BButton>
+    </BButtonGroup>
   <BarChart v-if="chartData" :chart-data="chartData" :options="options" />
 </template>
 
@@ -14,7 +24,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { watch } from "vue";
+import { onMounted, watch } from "vue";
 import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
 
@@ -31,23 +41,22 @@ Chart.register(
   Title,
   ArcElement
 );
-const { unit } = defineProps({
-    unit: {
-      type: String,
-      required: true,
-    },
-  }),
-  emit = defineEmits(["change-dimension"]);
+
+const emit = defineEmits(["change-dimension"]);
 collection();
 
 const { t: $t } = useI18n(),
   totalPerPublicationUniqueIssueNumbers = $computed(
     () => collectionStore().totalPerPublicationUniqueIssueNumbers
   ),
+unitTypes = {
+  number: $t("Afficher en valeurs réelles"),
+  percentage: $t("Afficher en pourcentages"),
+},
   countryNames = $computed(() => coa().countryNames),
   issueCounts = $computed(() => coa().issueCounts),
   publicationNames = $computed(() => coa().publicationNames),
-  labels = $computed(() => Object.keys(totalPerPublicationUniqueIssueNumbers)),
+  labels = $computed(() => totalPerPublicationUniqueIssueNumbers && Object.keys(totalPerPublicationUniqueIssueNumbers)),
   values = $computed(() => {
     if (
       !(totalPerPublicationUniqueIssueNumbers && issueCounts && countryNames)
@@ -60,7 +69,7 @@ const { t: $t } = useI18n(),
         issueCounts[publicationCode] -
         totalPerPublicationUniqueIssueNumbers[publicationCode]
     );
-    if (unit === "percentage") {
+    if (unitTypeCurrent === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>
         Math.round(
           possessedCount * (100 / (possessedCount + missingIssues[key]))
@@ -77,11 +86,15 @@ const { t: $t } = useI18n(),
   fetchIssueCounts = coa().fetchIssueCounts;
 
 let chartData = $ref(null),
+  unitTypeCurrent = $ref('number'),
   options = $ref({});
 
 watch(
   () => totalPerPublicationUniqueIssueNumbers,
   async (newValue) => {
+    if (!newValue) {
+      return
+    }
     await fetchCountryNames();
     await fetchPublicationNames(Object.keys(newValue));
     await fetchIssueCounts();
@@ -92,6 +105,9 @@ watch(
 watch(
   () => labels,
   async (newValue) => {
+    if (!newValue) {
+      return
+    }
     emit("change-dimension", "height", 100 + 30 * newValue.length);
     emit("change-dimension", "width", 500);
   },
@@ -131,12 +147,12 @@ watch(
         scales: {
           x: {
             min: 0,
-            max: unit === "percentage" ? 100 : undefined,
+            max: unitTypeCurrent === "percentage" ? 100 : undefined,
             stacked: true,
             ticks: {
               stepSize: 1,
               callback: (value) =>
-                unit === "percentage" ? `${value}%` : value,
+                unitTypeCurrent === "percentage" ? `${value}%` : value,
             },
           },
           y: {
@@ -166,7 +182,7 @@ watch(
               },
               label: (tooltipItem) =>
                 `${tooltipItem.dataset.label}: ${tooltipItem.raw}${
-                  unit === "percentage" ? "%" : ""
+                  unitTypeCurrent === "percentage" ? "%" : ""
                 }`,
             },
           },
@@ -176,6 +192,10 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(async () => {
+  await collectionStore().loadCollection();
+})
 </script>
 
 <style scoped>

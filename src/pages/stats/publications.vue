@@ -35,7 +35,7 @@ const smallCountPublications = $computed(() =>
 )
 const totalPerPublicationGroupSmallCounts = $computed(
   () =>
-    smallCountPublications && {
+    smallCountPublications && totalPerPublication && {
       ...Object.keys(totalPerPublication)
         .filter(
           publicationCode =>
@@ -62,10 +62,10 @@ const totalPerPublicationGroupSmallCounts = $computed(
 const labels = $computed(
   () =>
     hasPublicationNames
-      && Object.keys(totalPerPublicationGroupSmallCounts)
+      && Object.entries(totalPerPublicationGroupSmallCounts)
         .sort(sortByCount)
         .reduce(
-          (acc, publicationCode) => [
+          (acc, [publicationCode]) => [
             ...acc,
             publicationNames[publicationCode]
               || `${$t('Autres')} (${smallCountPublications.length} ${$t(
@@ -83,9 +83,9 @@ const values = $computed(() =>
 const colors = $computed(
   () =>
     totalPerPublicationGroupSmallCounts
-      && Object.keys(totalPerPublicationGroupSmallCounts)
+      && Object.entries(totalPerPublicationGroupSmallCounts)
         .sort(sortByCount)
-        .map(publicationCode =>
+        .map(([publicationCode]) =>
           publicationCode === 'null' ? '#000' : randomColor(),
         ),
 )
@@ -96,7 +96,7 @@ const randomColor = () =>
       Math.floor(Math.random() * 255),
       Math.floor(Math.random() * 255),
     ].join(',')})`
-const sortByCount = (publicationCode1, publicationCode2) =>
+const sortByCount = ([publicationCode1], [publicationCode2]) =>
   Math.sign(
     totalPerPublicationGroupSmallCounts[publicationCode1]
         - totalPerPublicationGroupSmallCounts[publicationCode2],
@@ -122,8 +122,11 @@ watch(
 )
 
 watch(
-  () => labels,
-  () => {
+  () => labels && values && colors,
+  (newValue) => {
+    if (!newValue) {
+      return
+    }
     chartData = {
       datasets: [
         {
