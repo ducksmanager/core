@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 
+import { InducksIssueDetails } from "~/types/InducksIssueDetails";
+import { InducksIssueQuotationSimple } from "~/types/InducksIssueQuotationSimple";
 import { cachedCoaApi as coaApi } from "~/util/api";
+import { inducks_issue, inducks_issuequotation } from "~db_types/client_coa";
 
 const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
 const URL_PREFIX_PUBLICATIONS = "/coa/list/publications/";
@@ -11,14 +14,14 @@ const URL_PREFIX_ISSUE_QUOTATIONS = "/coa/quotations/";
 const URL_ISSUE_COUNTS = "/coa/list/issues/count";
 const URL_ISSUE_DECOMPOSE = "/coa/issues/decompose";
 
-function addPartInfo(issueDetails) {
+function addPartInfo(issueDetails: InducksIssueDetails) {
   const storyPartCounter = Object.entries(
     issueDetails.entries.reduce(
       (acc, { storycode }) => ({
         ...acc,
         [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
       }),
-      {}
+      {} as { [key: string]: number }
     )
   )
     .filter(([, occurrences]) => occurrences > 1)
@@ -28,7 +31,7 @@ function addPartInfo(issueDetails) {
         [storycode]: 1,
       }),
       {}
-    );
+    ) as { [key: string]: number };
   return {
     ...issueDetails,
     entries: issueDetails.entries.map((entry) => ({
@@ -42,28 +45,30 @@ function addPartInfo(issueDetails) {
 
 export const coa = defineStore("coa", {
   state: () => ({
-    coverUrls: {},
-    countryNames: null,
-    publicationNames: {},
-    publicationNamesFullCountries: [],
-    personNames: null,
-    issueNumbers: {},
-    issueDetails: {},
+    coverUrls: {} as { [key: string]: string },
+    countryNames: null as { [key: string]: string } | null,
+    publicationNames: {} as { [key: string]: string },
+    publicationNamesFullCountries: [] as string[],
+    personNames: null as { [key: string]: string } | null,
+    issueNumbers: {} as { [key: string]: string },
+    issueDetails: {} as { [key: string]: InducksIssueDetails },
     isLoadingCountryNames: false,
     issueCounts: null,
-    issueCodeDetails: null,
-    issueQuotations: null,
+    issueCodeDetails: null as { [key: string]: inducks_issue } | null,
+    issueQuotations: null as {
+      [key: string]: InducksIssueQuotationSimple;
+    } | null,
     loadingIssueDetails: {},
   }),
 
   actions: {
-    addPublicationNames(publicationNames) {
+    addPublicationNames(publicationNames: { [key: string]: string }) {
       this.publicationNames = {
         ...this.publicationNames,
         ...publicationNames,
       };
     },
-    setPersonNames(personNames) {
+    setPersonNames(personNames: { [key: string]: string }) {
       this.personNames = Object.keys(personNames).reduce(
         (acc, personCode) => ({
           ...acc,
@@ -72,16 +77,18 @@ export const coa = defineStore("coa", {
         {}
       );
     },
-    setCoverUrl(issueNumber, url) {
+    setCoverUrl(issueNumber: string, url: string) {
       this.coverUrls[issueNumber] = url;
     },
-    addIssueNumbers(issueNumbers) {
+    addIssueNumbers(issueNumbers: { [key: string]: string }) {
       this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };
     },
-    addIssueCodeDetails(issueCodeDetails) {
+    addIssueCodeDetails(issueCodeDetails: { [key: string]: inducks_issue }) {
       this.issueCodeDetails = { ...this.issueCodeDetails, ...issueCodeDetails };
     },
-    addIssueQuotations(issueQuotations) {
+    addIssueQuotations(issueQuotations: {
+      [key: string]: InducksIssueQuotationSimple;
+    }) {
       this.issueQuotations = {
         ...(this.issueQuotations || {}),
         ...issueQuotations,
@@ -95,14 +102,14 @@ export const coa = defineStore("coa", {
           await coaApi.get(
             URL_PREFIX_COUNTRIES.replace(
               "LOCALE",
-              localStorage.getItem("locale")
+              localStorage.getItem("locale") || "en"
             )
           )
         ).data;
         this.isLoadingCountryNames = false;
       }
     },
-    async fetchPublicationNames(publicationCodes) {
+    async fetchPublicationNames(publicationCodes: string[]) {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
@@ -119,12 +126,15 @@ export const coa = defineStore("coa", {
             valuesToChunk: newPublicationCodes,
             chunkSize: 20,
           }).then((data) =>
-            data.reduce((acc, result) => ({ ...acc, ...result.data }), {})
+            data.reduce(
+              (acc, { data }: { data: any }) => ({ ...acc, ...data }),
+              {}
+            )
           )
         )
       );
     },
-    async fetchIssueQuotations(publicationCodes) {
+    async fetchIssueQuotations(publicationCodes: string[]) {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
@@ -136,15 +146,15 @@ export const coa = defineStore("coa", {
       return (
         newPublicationCodes.length &&
         this.addIssueQuotations(
-          await this.getChunkedRequests({
+          (await this.getChunkedRequests({
             url: URL_PREFIX_ISSUE_QUOTATIONS,
             valuesToChunk: newPublicationCodes,
             chunkSize: 10,
           }).then((data) =>
             data.reduce(
-              (acc, result) => ({
+              (acc, { data }: { data: inducks_issuequotation[] }) => ({
                 ...acc,
-                ...result.data.reduce(
+                ...data.reduce(
                   (issueAcc, issue) => ({
                     ...issueAcc,
                     [`${issue.publicationcode} ${issue.issuenumber}`]: {
@@ -152,21 +162,23 @@ export const coa = defineStore("coa", {
                       max: issue.estimationmax,
                     },
                   }),
-                  {}
+                  {} as { [key: string]: InducksIssueQuotationSimple }
                 ),
               }),
               []
             )
-          )
+          )) as {
+            [key: string]: InducksIssueQuotationSimple;
+          }
         )
       );
     },
-    async fetchPublicationNamesFromCountry(countryCode) {
+    async fetchPublicationNamesFromCountry(countryCode: string) {
       if (this.publicationNamesFullCountries.includes(countryCode)) return;
 
       return coaApi
         .get(URL_PREFIX_PUBLICATIONS + countryCode)
-        .then(({ data }) => {
+        .then(({ data }: { data: any }) => {
           this.addPublicationNames({
             ...(this.publicationNames || {}),
             ...data,
@@ -177,7 +189,7 @@ export const coa = defineStore("coa", {
           ];
         });
     },
-    async fetchPersonNames(personCodes) {
+    async fetchPersonNames(personCodes: string[]) {
       const newPersonNames = [
         ...new Set(
           personCodes.filter(
@@ -195,13 +207,16 @@ export const coa = defineStore("coa", {
             valuesToChunk: newPersonNames,
             chunkSize: 10,
           }).then((data) =>
-            data.reduce((acc, result) => ({ ...acc, ...result.data }), {})
+            data.reduce(
+              (acc, { data }: { data: any }) => ({ ...acc, ...data }),
+              {}
+            )
           )),
         })
       );
     },
 
-    async fetchIssueNumbers(publicationCodes) {
+    async fetchIssueNumbers(publicationCodes: string[]) {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
@@ -218,13 +233,16 @@ export const coa = defineStore("coa", {
             valuesToChunk: newPublicationCodes,
             chunkSize: 10,
           }).then((data) =>
-            data.reduce((acc, result) => ({ ...acc, ...result.data }), {})
+            data.reduce(
+              (acc, { data }: { data: any }) => ({ ...acc, ...data }),
+              {}
+            )
           )
         )
       );
     },
 
-    async fetchIssueCodesDetails(issueCodes) {
+    async fetchIssueCodesDetails(issueCodes: string[]) {
       const newIssueCodes = [
         ...new Set(
           issueCodes.filter(
@@ -244,9 +262,9 @@ export const coa = defineStore("coa", {
             parameterName: "issueCodes",
           }).then((data) =>
             data.reduce(
-              (acc, result) => ({
+              (acc, { data }: { data: any }) => ({
                 ...acc,
-                ...result.data,
+                ...data,
               }),
               {}
             )
@@ -260,7 +278,13 @@ export const coa = defineStore("coa", {
         this.issueCounts = (await coaApi.get(URL_ISSUE_COUNTS)).data;
     },
 
-    async fetchIssueUrls({ publicationCode, issueNumber }) {
+    async fetchIssueUrls({
+      publicationCode,
+      issueNumber,
+    }: {
+      publicationCode: string;
+      issueNumber: string;
+    }) {
       const issueCode = `${publicationCode} ${issueNumber}`;
       if (!this.issueDetails[issueCode]) {
         const issueDetails = (
@@ -281,7 +305,13 @@ export const coa = defineStore("coa", {
       valuesToChunk,
       chunkSize,
       method = "get",
-      parameterName = null,
+      parameterName = "null",
+    }: {
+      url: string;
+      valuesToChunk: string[];
+      chunkSize: number;
+      method?: string;
+      parameterName?: string;
     }) {
       return await Promise.all(
         await Array.from(

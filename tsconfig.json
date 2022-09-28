@@ -19,7 +19,8 @@
       "vite-plugin-pages/client"
     ],
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "~db_types/*": ["api/dist/prisma/*"]
     }
   },
   "exclude": ["dist", "node_modules"]

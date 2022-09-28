@@ -9,6 +9,7 @@
 		"lint": "eslint --fix",
 		"typecheck": "vue-tsc --noEmit",
 		"preview": "vite preview",
+		"publish": "cp package.json package-real.json && mv package-publish.json package.json && pnpm publish --no-git-checks; mv package.json package-publish.json && mv package-real.json package.json",
 		"test": "vitest",
 		"up": "taze major -I"
 	},

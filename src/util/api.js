@@ -1,6 +1,5 @@
 import axios from "axios";
 import { buildWebStorage, setupCache } from "axios-cache-interceptor";
-import Cookies from "js-cookie";
 
 const customStorage = buildWebStorage(sessionStorage);
 
