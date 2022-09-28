@@ -1,4 +1,4 @@
-import { InducksEntryDetails } from "~/types/InducksEntryDetails";
+import { InducksEntryDetails } from "./InducksEntryDetails";
 
 export interface InducksIssueDetails {
   entries: InducksEntryDetails[];
