@@ -25,6 +25,7 @@
     "cordova-plugin-camera-preview": "^0.12.3",
     "cordova-sqlite-storage": "^6.0.0",
     "core-js": "^3.6.5",
+    "ducksmanager": "^0.0.6",
     "ionicons": "^6.0.2",
     "localforage-cordovasqlitedriver": "^1.8.0",
     "pinia": "^2.0.17",

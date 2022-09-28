@@ -18,7 +18,9 @@
     "paths": {
       "@/*": [
         "src/*"
-      ]
+      ],
+      "~db_types/*": ["node_modules/ducksmanager/api/dist/prisma/*"],
+      "~derived_types/*": ["node_modules/ducksmanager/src/types/*"]
     },
     "lib": [
       "esnext",
