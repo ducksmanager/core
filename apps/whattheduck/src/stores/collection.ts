@@ -90,13 +90,11 @@ export const collection = defineStore("collection", {
         {} as { [key: string]: number }
       ),
 
-    totalPerPublication: ({
-      collection,
-    }): { [key: string]: number } | undefined =>
+    totalPerPublication: ({ collection }): { [key: string]: number } =>
       collection?.reduce((acc, issue) => {
         const publicationCode = `${issue.country}/${issue.magazine}`;
         return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
-      }, {} as { [key: string]: number }),
+      }, {} as { [key: string]: number }) || {},
 
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,

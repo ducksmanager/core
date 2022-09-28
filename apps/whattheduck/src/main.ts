@@ -38,7 +38,6 @@ const storage = new Storage({
 storage.defineDriver(CordovaSQLiteDriver).then(async () => {
   await storage.create();
   await storage.set("token", process.env.VUE_APP_TOKEN);
-  console.log(await storage.get("a"));
 
   axios.defaults.baseURL = process.env.VUE_APP_API_BASE_URL;
   axios.defaults.headers.common["Authorization"] = `Basic ${await storage.get(
