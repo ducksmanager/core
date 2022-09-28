@@ -1,12 +1,10 @@
 <template>
-  {{ value.issueNumber }}
+  {{ value }}
 </template>
 
 <script setup lang="ts">
-import { IssueWithPublicationCode } from "@/types/IssueWithPublicationCode";
-
 defineProps<{
-  value: IssueWithPublicationCode;
+  value: string;
 }>();
 </script>
 

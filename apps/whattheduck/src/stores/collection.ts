@@ -38,14 +38,14 @@ export const collection = defineStore("collection", {
   }),
 
   getters: {
-    ownedCountries: ({ collection }) => [
-      ...new Set((collection || []).map(({ country }) => country)),
-    ],
-    ownedPublications: ({ collection }) => [
-      ...new Set(
-        (collection || []).map(({ publicationCode }) => publicationCode)
-      ),
-    ],
+    ownedCountries: ({ collection }) =>
+      [...new Set((collection || []).map(({ country }) => country))].sort(),
+    ownedPublications: ({ collection }) =>
+      [
+        ...new Set(
+          (collection || []).map(({ publicationCode }) => publicationCode)
+        ),
+      ].sort(),
     total: ({ collection }) => collection?.length,
 
     duplicateIssues: ({

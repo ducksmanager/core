@@ -18,7 +18,7 @@
       <template v-if="itemType === 'Publication'">
         <ion-segment-button
           :key="item"
-          v-for="item in collectionStore.ownedPublications"
+          v-for="item in shownItems"
           @click="appStore.currentNavigationItem = item"
           ><Publication :value="item" /></ion-segment-button
       ></template>
@@ -35,18 +35,35 @@ import Country from "@/components/Country";
 import Publication from "@/components/Publication";
 import Issue from "@/components/Issue";
 import Navigation from "@/components/Navigation";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { collection } from "@/stores/collection";
 import { app } from "@/stores/app";
 import { IonSearchbar, IonSegmentButton } from "@ionic/vue";
-import { IssueWithPublicationCode } from "@/types/IssueWithPublicationCode";
 
 defineEmits(["click"]);
 
 const collectionStore = collection();
 const appStore = app();
 const filterText = ref("" as string);
-const items = ref(null as IssueWithPublicationCode[] | null);
+const items = computed(() => {
+  switch (itemType.value) {
+    case "Country":
+      return collectionStore.ownedCountries;
+    case "Publication":
+      return collectionStore.ownedPublications.filter(
+        (publication) =>
+          publication.indexOf(`${appStore.currentNavigationItem}/`) === 0
+      );
+    case "Issue":
+      return (collectionStore.collection || [])
+        .filter(
+          (issue) => issue.publicationCode === appStore.currentNavigationItem
+        )
+        .map(({ issueNumber }) => issueNumber);
+  }
+  return [];
+});
+
 const itemType = computed(() => {
   switch (appStore.currentNavigationItem?.indexOf("/")) {
     case undefined:
@@ -58,11 +75,11 @@ const itemType = computed(() => {
   }
 });
 
-const shownItems = computed(() =>
-  items.value?.filter(
-    (item) => item.issueNumber.toLowerCase().indexOf(filterText.value) !== -1
-  )
-);
+const shownItems = computed(() => {
+  return items.value.filter(
+    (item) => item.toLowerCase().indexOf(filterText.value) !== -1
+  );
+});
 const showFilter = computed(() => true);
 
 const title = computed(() =>
@@ -75,20 +92,6 @@ onMounted(async () => {
   await collectionStore.loadCollection();
   appStore.currentNavigationItem = "fr/MP";
 });
-
-watch(
-  () => collectionStore.collection && appStore.currentNavigationItem,
-  (isReady) => {
-    if (isReady) {
-      items.value =
-        collectionStore.collection?.filter(
-          ({ publicationCode }) =>
-            publicationCode === appStore.currentNavigationItem
-        ) || null;
-    }
-  },
-  { immediate: true }
-);
 </script>
 <style lang="scss">
 ion-segment-button {
