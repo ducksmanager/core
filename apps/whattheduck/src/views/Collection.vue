@@ -160,7 +160,8 @@ watch(
         break;
     }
     hasCoaData.value = true;
-  }
+  },
+  { immediate: true }
 );
 
 onMounted(async () => {
@@ -168,6 +169,5 @@ onMounted(async () => {
   // await coaStore.fetchPublicationNames(
   //   Object.keys(collectionStore.totalPerPublication)
   // );
-  appStore.currentNavigationItem = "fr/MP";
 });
 </script>
