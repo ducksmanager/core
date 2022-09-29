@@ -1,5 +1,16 @@
 <template>
-  <BarChart v-if="chartData" :chart-data="chartData" :options="options" />
+  <BButtonGroup>
+    <BButton
+      v-for="(text, purchaseType) in purchaseTypes"
+      :key="purchaseType"
+      :pressed="purchaseTypeCurrent === purchaseType"
+      @click="purchaseTypeCurrent = purchaseType"
+    >
+      {{ text }}
+    </BButton>
+  </BButtonGroup>
+  <BarChart v-if="chartData" :chart-data="chartData" :options="options"
+            :style="{ width, height }" />
 </template>
 <script setup>
 import {
@@ -30,17 +41,20 @@ Chart.register(
 );
 
 collection().loadCollection();
-const { unit } = defineProps({
-    unit: {
-      type: String,
-      required: true,
-    },
-  }),
+const
   { t: $t } = useI18n(),
+  purchaseTypes = {
+    new: $t("Afficher les nouvelles acquisitions"),
+    total: $t("Afficher les possessions totales"),
+  },
   emit = defineEmits(["change-dimension"]),
   purchases = $computed(() => collection().purchases),
   totalPerPublication = $computed(() => collection().totalPerPublication),
   publicationNames = $computed(() => coa().publicationNames),
+  changeDimension = (dimension, value) => {
+    if (dimension === "width") width = `${value}px`;
+    else height = `${value}px`;
+  },
   labels = $computed(
     () =>
       collectionWithDates &&
@@ -83,7 +97,10 @@ const { unit } = defineProps({
 let hasPublicationNames = $ref(false),
   purchasesById = $ref(null),
   chartData = $ref(null),
-  options = $ref({});
+  options = $ref({}),
+  width = $ref(null),
+  height = $ref(null),
+  purchaseTypeCurrent = $ref('new');
 
 watch(
   () => totalPerPublication,
@@ -141,17 +158,16 @@ watch(
         0
       );
 
-      emit(
-        "change-dimension",
+      changeDimension(
         "height",
         Math.max(document.body.offsetHeight, maxPerDate / 4)
       );
 
-      emit("change-dimension", "width", 250 + 30 * labels.length);
+      changeDimension("width", 250 + 30 * labels.length);
 
       const datasets = Object.keys(values).map((publicationCode) => {
         let data = values[publicationCode];
-        if (unit === "total") {
+        if (purchaseTypeCurrent === "total") {
           data = labels.reduce(
             (acc, currentDate) => ({
               ...acc,
@@ -209,7 +225,7 @@ watch(
               beforeTitle: ([tooltipItem]) =>
                 (tooltipItem.label !== "?"
                   ? `${
-                      unit === "total"
+                      purchaseTypeCurrent === "total"
                         ? $t("Taille de la collection pour le mois")
                         : $t("Nouvelles acquisitions pour le mois")
                     } ${tooltipItem.label}`
