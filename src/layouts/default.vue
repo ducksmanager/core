@@ -28,8 +28,6 @@ useHead({
   title: slots.title || 'DucksManager',
 })
 
-collection().initApi()
-bookcase().initApi()
 </script>
 
 <style scoped lang="scss">

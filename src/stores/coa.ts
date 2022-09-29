@@ -14,7 +14,7 @@ const URL_PREFIX_PUBLICATION_QUOTATIONS = "/coa/quotations/publications";
 const URL_ISSUE_COUNTS = "/coa/list/issues/count";
 const URL_ISSUE_DECOMPOSE = "/coa/issues/decompose";
 
-function addPartInfo(issueDetails: InducksIssueDetails) {
+const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
     issueDetails.entries.reduce(
       (acc, { storycode }) => ({
@@ -41,7 +41,7 @@ function addPartInfo(issueDetails: InducksIssueDetails) {
         : null,
     })),
   };
-}
+};
 
 export const coa = defineStore("coa", {
   state: () => ({

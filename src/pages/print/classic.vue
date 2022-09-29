@@ -1,8 +1,11 @@
 <route lang="yaml">
 alias: [/impression/classique]
+meta:
+  layout: bare
 </route>
 
 <template>
+  <print-header />
   <div v-if="collection && countryNames && hasPublicationNames" class="list">
     <div v-for="country in countryCodesSortedByName" :key="country">
       <div class="country">

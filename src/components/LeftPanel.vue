@@ -47,6 +47,7 @@ import Popper from '@bperel/vue3-popper-teleport'
 import { collection } from '~/stores/collection'
 import { l10n } from '~/stores/l10n'
 import { users } from '~/stores/users'
+import axios from "axios";
 
 const points = $computed(() => users().points)
 const user = $computed(() => collection().user)
@@ -54,7 +55,7 @@ const { r } = l10n()
 
 watch($$(user), newValue => {
   if (newValue) {
-    collection().collectionApi
+    axios
       .post('/collection/lastvisit')
       .then(data => collection().setPreviousVisit(data))
     users().fetchStats([newValue.id])

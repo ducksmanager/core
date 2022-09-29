@@ -346,7 +346,7 @@ const importIssues = async () => {
       = groupByPublicationCode(issuesImportable)
   for (const publicationCode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
-      await collection().collectionApi.post('/collection/issues', {
+      await axios.post('/collection/issues', {
         publicationCode,
         issueNumbers: importableIssuesByPublicationCode[publicationCode],
         condition: issueDefaultCondition,

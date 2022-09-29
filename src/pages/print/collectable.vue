@@ -1,9 +1,12 @@
 <route lang="yaml">
 alias: [/impression/collectable]
+meta:
+  layout: bare
 </route>
 
 <template>
   <div v-if="ready">
+    <print-header />
     <table class="collectable">
       <tr v-for="line in lines" :key="line">
         <td />

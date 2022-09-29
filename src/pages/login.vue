@@ -67,8 +67,6 @@ const login = async () => {
     Cookies.set('token', (await axios.post("/login", {
       username, password
     })).data.token);
-    collection().initApi()
-    bookcase().initApi()
   }
   catch(e) {
     console.error(e)

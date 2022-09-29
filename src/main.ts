@@ -8,6 +8,7 @@ import * as Sentry from "@sentry/vue";
 import { createHead } from "@vueuse/head";
 import axios from "axios";
 import BootstrapVue3, { BToastPlugin } from "bootstrap-vue-3";
+import Cookies from "js-cookie";
 import { createPinia } from "pinia";
 import contextmenu from "v-contextmenu";
 import { setupLayouts } from "virtual:generated-layouts";
@@ -34,6 +35,9 @@ const useOngoingRequests = ongoingRequests(store);
 axios.defaults.baseURL = import.meta.env.VITE_GATEWAY_URL;
 axios.interceptors.request.use(
   (config) => {
+    if (config.headers) {
+      config.headers.Authorization = `Bearer ${Cookies.get("token")}`;
+    }
     if (useOngoingRequests.numberOfOngoingAjaxCalls === null)
       useOngoingRequests.numberOfOngoingAjaxCalls = 1;
     else useOngoingRequests.numberOfOngoingAjaxCalls++;

@@ -47,6 +47,7 @@ declare module '@vue/runtime-core' {
     OtherIssues: typeof import('./src/components/OtherIssues.vue')['default']
     Popover: typeof import('./src/components/Popover.vue')['default']
     Print: typeof import('./src/layouts/Print.vue')['default']
+    PrintHeader: typeof import('./src/components/PrintHeader.vue')['default']
     PrintPresentation: typeof import('./src/layouts/PrintPresentation.vue')['default']
     Privacy: typeof import('./src/layouts/Privacy.vue')['default']
     Publication: typeof import('./src/components/Publication.vue')['default']

@@ -199,7 +199,7 @@ watch(
         },
         responsiveAnimationDuration: 0,
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             stacked: true,

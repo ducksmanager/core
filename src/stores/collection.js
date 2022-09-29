@@ -25,8 +25,6 @@ export const collection = defineStore("collection", {
 
     user: undefined,
     previousVisit: null,
-
-    collectionApi: null,
   }),
 
   getters: {
@@ -166,36 +164,25 @@ export const collection = defineStore("collection", {
   },
 
   actions: {
-    initApi() {
-      const baseURL = import.meta.env.VITE_GATEWAY_URL;
-      this.collectionApi = axios.create({
-        baseURL,
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
-    },
     setPreviousVisit(previousVisit) {
       this.previousVisit = previousVisit;
     },
     async loadCollection(afterUpdate = false) {
       if (afterUpdate || (!this.isLoadingCollection && !this.collection)) {
         this.isLoadingCollection = true;
-        this.collection = (
-          await this.collectionApi.get("/collection/issues")
-        ).data.map((issue) => ({
-          ...issue,
-          publicationCode: `${issue.country}/${issue.magazine}`,
-        }));
+        this.collection = (await axios.get("/collection/issues")).data.map(
+          (issue) => ({
+            ...issue,
+            publicationCode: `${issue.country}/${issue.magazine}`,
+          })
+        );
         this.isLoadingCollection = false;
       }
     },
     async loadPurchases(afterUpdate = false) {
       if (afterUpdate || (!this.isLoadingPurchases && !this.purchases)) {
         this.isLoadingPurchases = true;
-        this.purchases = (
-          await this.collectionApi.get("/collection/purchases")
-        ).data;
+        this.purchases = (await axios.get("/collection/purchases")).data;
         this.isLoadingPurchases = false;
       }
     },
@@ -206,7 +193,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingWatchedAuthors = true;
         this.watchedAuthors = (
-          await this.collectionApi.get("/collection/authors/watched")
+          await axios.get("/collection/authors/watched")
         ).data;
         this.isLoadingWatchedAuthors = false;
       }
@@ -215,7 +202,7 @@ export const collection = defineStore("collection", {
       if (!this.isLoadingSuggestions) {
         this.isLoadingSuggestions = true;
         this.suggestions = (
-          await this.collectionApi.get(
+          await axios.get(
             `/collection/stats/suggestedissues/${[
               countryCode || "ALL",
               sinceLastVisit ? "since_previous_visit" : "_",
@@ -234,7 +221,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingSubscriptions = true;
         this.subscriptions = (
-          await this.collectionApi.get("/collection/subscriptions")
+          await axios.get("/collection/subscriptions")
         ).data.map((subscription) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
@@ -246,7 +233,7 @@ export const collection = defineStore("collection", {
     async loadPopularIssuesInCollection() {
       if (!this.popularIssuesInCollection) {
         this.popularIssuesInCollection = (
-          await this.collectionApi.get("/collection/popular")
+          await axios.get("/collection/popular")
         ).data.reduce(
           (acc, issue) => ({
             ...acc,
@@ -260,7 +247,7 @@ export const collection = defineStore("collection", {
     async loadLastPublishedEdgesForCurrentUser() {
       if (!this.lastPublishedEdgesForCurrentUser) {
         this.lastPublishedEdgesForCurrentUser = (
-          await this.collectionApi.get("/collection/edges/lastPublished")
+          await axios.get("/collection/edges/lastPublished")
         ).data.map((edge) => ({
           ...edge,
           timestamp: Date.parse(edge.creationDate) / 1000,
@@ -273,7 +260,7 @@ export const collection = defineStore("collection", {
         this.isLoadingUser = true;
         try {
           this.user = Object.entries(
-            (await this.collectionApi.get(`/collection/user`)).data
+            (await axios.get(`/collection/user`)).data
           ).reduce((acc, [key, value]) => {
             switch (key) {
               case "accepterpartage":

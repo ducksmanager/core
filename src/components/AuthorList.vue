@@ -150,14 +150,14 @@ const isAuthorWatched = personCode =>
     ({ personCode: watchedPersonCode }) => personCode === watchedPersonCode,
   )
 const createRating = async (author) => {
-  await collection().collectionApi.put('/collection/authors/watched', author)
+  await axios.put('/collection/authors/watched', author)
   await loadWatchedAuthors(true)
 }
 const updateRating = async (author) => {
-  await collection().collectionApi.post('/collection/authors/watched', author)
+  await axios.post('/collection/authors/watched', author)
 }
 const deleteAuthor = async (author) => {
-  await collection().collectionApi.delete('/collection/authors/watched', author)
+  await axios.delete('/collection/authors/watched', author)
   await loadWatchedAuthors(true)
 }
 const runSearch = async (value) => {
