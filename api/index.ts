@@ -46,7 +46,7 @@ app.all(/^\/edgecreator\/(.+)/, [
 ]);
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
-app.all("^/global-stats/user/collection/rarity$", authenticateToken);
+app.all("/global-stats/user/collection/rarity", authenticateToken);
 
 app.all(/^\/coa\/list\/(.+)/, async (req, res) => {
   const path = req.params[0];

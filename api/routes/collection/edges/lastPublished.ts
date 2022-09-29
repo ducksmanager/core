@@ -18,7 +18,7 @@ export const get: Handler = async (req, res) => {
       },
     })
   ).map(({ issuecode }) => issuecode) as string[];
-  res.writeHead(200);
+  res.writeHead(200, { "Content-Type": "application/json" });
   res.end(
     JSON.stringify(
       await prisma.edge.findMany({

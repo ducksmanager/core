@@ -10,7 +10,7 @@ const URL_PREFIX_PUBLICATIONS = "/coa/list/publications/";
 const URL_PREFIX_ISSUES = "/coa/list/issues/multiple/";
 const URL_PREFIX_AUTHORS = "/coa/authorsfullnames/";
 const URL_PREFIX_URLS = "/coa/list/details/";
-const URL_PREFIX_ISSUE_QUOTATIONS = "/coa/quotations/";
+const URL_PREFIX_PUBLICATION_QUOTATIONS = "/coa/quotations/publications";
 const URL_ISSUE_COUNTS = "/coa/list/issues/count";
 const URL_ISSUE_DECOMPOSE = "/coa/issues/decompose";
 
@@ -147,9 +147,11 @@ export const coa = defineStore("coa", {
         newPublicationCodes.length &&
         this.addIssueQuotations(
           (await this.getChunkedRequests({
-            url: URL_PREFIX_ISSUE_QUOTATIONS,
+            url: URL_PREFIX_PUBLICATION_QUOTATIONS,
             valuesToChunk: newPublicationCodes,
-            chunkSize: 10,
+            chunkSize: 50,
+            chunkOnQueryParam: true,
+            parameterName: "publicationCodes",
           }).then((data) =>
             data.reduce(
               (acc, { data }: { data: inducks_issuequotation[] }) => ({
@@ -304,12 +306,14 @@ export const coa = defineStore("coa", {
       url,
       valuesToChunk,
       chunkSize,
+      chunkOnQueryParam = false,
       method = "get",
       parameterName = "null",
     }: {
       url: string;
       valuesToChunk: string[];
       chunkSize: number;
+      chunkOnQueryParam?: boolean;
       method?: string;
       parameterName?: string;
     }) {
@@ -324,7 +328,11 @@ export const coa = defineStore("coa", {
               await acc
             ).concat(
               await (method === "get"
-                ? coaApi.get(`${url}${codeChunk.join(",")}`)
+                ? coaApi.get(
+                    `${url}${
+                      chunkOnQueryParam ? `?${parameterName}=` : ""
+                    }${codeChunk.join(",")}`
+                  )
                 : coaApi.request({
                     method,
                     url,
