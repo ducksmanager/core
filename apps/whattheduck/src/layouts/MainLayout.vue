@@ -7,6 +7,7 @@
         </ion-buttons>
         <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
+      <Navigation />
     </ion-header>
 
     <ion-content :fullscreen="true">
@@ -24,6 +25,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/vue";
+import Navigation from "@/components/Navigation";
 defineProps<{
   title: string;
 }>();

@@ -1,5 +1,6 @@
 <template>
   <ion-segment
+    v-if="coaStore.countryNames"
     :value="appStore.currentNavigationItem"
     @ionChange="appStore.currentNavigationItem = $event.detail.value || null"
   >
@@ -14,9 +15,11 @@ import { IonSegment, IonSegmentButton, IonLabel } from "@ionic/vue";
 import { onMounted, computed } from "vue";
 import { collection } from "@/stores/collection";
 import { app } from "@/stores/app";
+import { coa } from "@/stores/coa";
 
 const collectionStore = collection();
 const appStore = app();
+const coaStore = coa();
 
 const parts = computed(() => {
   const parts = [
@@ -29,7 +32,7 @@ const parts = computed(() => {
     const publicationParts = appStore.currentNavigationItem.split("/");
     parts.push({
       key: publicationParts[0],
-      text: publicationParts[0],
+      text: coaStore.countryNames[publicationParts[0]],
     });
     if (publicationParts.length === 2) {
       parts.push({
@@ -56,6 +59,7 @@ ion-segment-button {
   max-width: 33.333%;
   align-items: center;
   text-transform: none;
+  background-color: var(--ion-background-color);
 
   ion-label {
     width: 100%;
