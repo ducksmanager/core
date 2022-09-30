@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
 import { bookcase } from "./bookcase";

@@ -49,7 +49,7 @@ alias: [/bibliotheque/options]
       v-model:list="bookcaseOrder"
       class="publication-order"
       helper-class="dragging"
-      @update:list="setBookcaseOrder(bookcaseOrder)"
+      @update:list="bookcaseStore.bookcaseOrder = bookcaseOrder"
     >
       <SlickItem
         v-for="(publicationCode, index) in bookcaseOrder"
@@ -147,8 +147,6 @@ const textureTypes = $computed(() => ({
   bookcase: $t('Sous-texture'),
   bookshelf: $t('Sous-texture de l\'étagère'),
 }))
-const setBookcaseUsername = bookcaseStore.setBookcaseUsername
-const setBookcaseOrder = bookcaseStore.setBookcaseOrder
 const loadBookcaseOptions = bookcaseStore.loadBookcaseOptions
 const loadBookcaseOrder = bookcaseStore.loadBookcaseOrder
 const updateBookcaseOptions = bookcaseStore.updateBookcaseOptions
@@ -182,7 +180,7 @@ let hasPublicationNames = $ref(false)
 let bookcaseOrder = $ref(null)
 
 onMounted(async () => {
-  setBookcaseUsername(user.username)
+  bookcaseStore.bookcaseUsername = user.username
   await loadData()
   bookcaseOrder = bookcaseStore.bookcaseOrder
   await fetchPublicationNames(bookcaseOrder)

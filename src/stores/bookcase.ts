@@ -1,55 +1,64 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
 import { collection } from "./collection";
+
+interface BookcaseEdge {
+  id: number;
+  countryCode: string;
+  magazineCode: string;
+  issueNumber: string;
+  issueNumberReference: string;
+  edgeId: number;
+  creationDate: Date;
+  sprites: string;
+}
 
 export const bookcase = defineStore("bookcase", {
   state: () => ({
     loadedSprites: {},
 
-    isPrivateBookcase: false,
-    isUserNotExisting: false,
-    bookcaseUsername: null,
-    bookcase: null,
+    isPrivateBookcase: false as boolean,
+    isUserNotExisting: false as boolean,
+    bookcaseUsername: null as string | null,
+    bookcase: null as BookcaseEdge[] | null,
     bookcaseOptions: null,
     bookcaseOrder: null,
 
-    edgeIndexToLoad: 0,
+    edgeIndexToLoad: 0 as number,
   }),
 
   getters: {
-    isSharedBookcase: ({ bookcaseUsername }) =>
-      localStorage.getItem("username") !== bookcaseUsername,
+    isSharedBookcase: ({ bookcaseUsername }): boolean =>
+      collection().user?.username !== bookcaseUsername,
 
-    bookcaseWithPopularities: ({ bookcase, isSharedBookcase }) =>
-      (isSharedBookcase ? true : collection().popularIssuesInCollection) &&
-      bookcase?.map((issue) => {
-        const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
-        const issueCode = `${publicationCode} ${issue.issueNumber}`;
-        return {
-          ...issue,
-          publicationCode,
-          issueCode,
-          popularity: isSharedBookcase
-            ? null
-            : collection().popularIssuesInCollection[issueCode] || 0,
-        };
-      }),
+    bookcaseWithPopularities({ bookcase }) {
+      return (
+        (this.isSharedBookcase
+          ? true
+          : collection().popularIssuesInCollection) &&
+        bookcase?.map((issue) => {
+          const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
+          const issueCode = `${publicationCode} ${issue.issueNumber}`;
+          return {
+            ...issue,
+            publicationCode,
+            issueCode,
+            popularity: this.isSharedBookcase
+              ? null
+              : collection().popularIssuesInCollection[issueCode] || 0,
+          };
+        })
+      );
+    },
   },
 
   actions: {
-    addLoadedSprite({ spritePath, css }) {
+    addLoadedSprite({ spritePath, css }: { spritePath: string; css: string }) {
       this.loadedSprites = {
         ...this.loadedSprites,
         [spritePath]: css,
       };
-    },
-    setBookcaseOrder(bookcaseOrder) {
-      this.bookcaseOrder = bookcaseOrder;
-    },
-    setBookcaseUsername(bookcaseUsername) {
-      this.bookcaseUsername = bookcaseUsername;
     },
 
     async loadBookcase() {

@@ -157,8 +157,8 @@ const { r } = l10n()
 const collection = collectionStore()
 const coa = coaStore()
 const bookcase = bookcaseStore()
-const user = $computed(() => collection().user)
-const bookcaseUsername = $computed(() => route.params.username || user.username)
+const user = $computed(() => collection.user)
+const bookcaseUsername = $computed(() => route.params.username || user?.username)
 const isShareEnabled = $computed(() => collection.user?.isShareEnabled)
 const lastPublishedEdgesForCurrentUser = $computed(
   () => collection.lastPublishedEdgesForCurrentUser,
@@ -369,16 +369,19 @@ watch(
   },
 )
 
-onMounted(async () => {
-  bookcase.setBookcaseUsername(bookcaseUsername)
-  await bookcase.loadBookcase()
-  if (!isSharedBookcase) {
-    await collection.loadPopularIssuesInCollection()
-    await collection.loadLastPublishedEdgesForCurrentUser()
-    await collection.loadUser()
-    userPoints = users().points[user.id]
+watch(() => bookcaseUsername, async (newValue) => {
+  if (newValue) {
+    bookcase.bookcaseUsername = newValue
+    await bookcase.loadBookcase()
+    if (!isSharedBookcase) {
+      await collection.loadPopularIssuesInCollection()
+      await collection.loadLastPublishedEdgesForCurrentUser()
+      await collection.loadUser()
+      userPoints = users().points[user.id]
+    }
   }
-})
+}, {immediate: true})
+
 </script>
 
 <style lang="scss" scoped>

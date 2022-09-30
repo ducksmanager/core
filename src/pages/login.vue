@@ -46,7 +46,6 @@ import axios from "axios";
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { l10n } from "~/stores/l10n";
 import { collection } from "~/stores/collection";
-import { bookcase } from "~/stores/bookcase";
 import Cookies from "js-cookie";
 
 let router = useRouter();

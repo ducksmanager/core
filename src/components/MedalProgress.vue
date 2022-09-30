@@ -37,8 +37,6 @@
 <script setup>
 import { BProgress, BProgressBar } from 'bootstrap-vue-3'
 
-import medal from '~/composables/medal'
-
 const { contribution, userLevelPoints } = defineProps({
   contribution: {
     type: String,
