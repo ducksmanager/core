@@ -71,12 +71,12 @@ model utilisateurs_publications_manquantes {
 
 model utilisateurs_publications_suggerees {
   ID              Int       @id @default(autoincrement())
-  ID_User         Int
+  userId          Int       @map("ID_User")
   publicationcode String    @db.VarChar(12)
   issuenumber     String    @db.VarChar(12)
   oldestdate      DateTime? @db.Date
-  Score           Int
+  score           Int       @map("Score")
 
-  @@unique([ID_User, publicationcode, issuenumber], map: "suggested_issue_for_user")
-  @@index([ID_User], map: "suggested_issue_user")
+  @@unique([userId, publicationcode, issuenumber], map: "suggested_issue_for_user")
+  @@index([userId], map: "suggested_issue_user")
 }
