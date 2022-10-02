@@ -5,7 +5,7 @@
         <BIconHouseFill />
         {{ $t("Collection") }}
       </template>
-      <template #items>
+      <template #items v-if="username !== undefined">
         <template v-if="username">
           <NavigationItem path="/bookcase/show">
             <BIconBookHalf />
@@ -78,7 +78,7 @@ import {
 import { onMounted } from "vue";
 import { collection } from "~/stores/collection";
 
-let username = $ref(null)
+let username = $ref(undefined)
 
 onMounted(async () => {
   await collection().loadUser()
