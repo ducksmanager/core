@@ -11,5 +11,4 @@ select distinct u_h_m.ID_User,
                 a_p.Notation
 from utilisateurs_histoires_manquantes u_h_m
        inner join histoires_publications h_p on u_h_m.storycode = h_p.storycode
-       inner join dm.auteurs_pseudos a_p on u_h_m.ID_User = a_p.ID_User and u_h_m.personcode = a_p.NomAuteurAbrege
-order by h_p.publicationcode, h_p.issuenumber;
+       inner join dm.auteurs_pseudos a_p on u_h_m.ID_User = a_p.ID_User and u_h_m.personcode = a_p.NomAuteurAbrege;
