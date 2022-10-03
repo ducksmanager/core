@@ -57,8 +57,8 @@
                 no-wrap
               >
                 <template #title-suffix>
-                  <div class="release-date mt-2 ms-1">
-                    {{ $t("Sortie :") }} {{ oldestdate }}
+                  <div class="release-date mt-2 ms-1" v-if="oldestdate?.split('T')?.[0]">
+                    {{ $t("Sortie :") }} {{ oldestdate.split('T')[0] }}
                   </div>
                 </template>
               </Issue>
