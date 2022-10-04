@@ -51,10 +51,11 @@ const { contribution, userLevelPoints } = defineProps({
     required: true,
   },
 })
-//
-// const { medalProgressCurrentPercentage, getLevelProgressPercentage } = $(
-//   medal(contribution, userLevelPoints),
-// )
+
+const medalData = medal(contribution, userLevelPoints)
+
+const medalProgressCurrentPercentage = medalData.medalProgressCurrentPercentage
+const getLevelProgressPercentage = medalData.getLevelProgressPercentage
 </script>
 
 <style lang="scss">
