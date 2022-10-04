@@ -3,7 +3,7 @@ alias: [/connexion]
 </route>
 
 <template>
-  <form method="post" @submit.prevent="login">
+  <form method="post" @submit.prevent="login"  v-if="collectionStore.user === null">
     <BRow>
       <BCol lg="6">
         <h1 class="h3 mb-3 fw-normal">
@@ -48,6 +48,8 @@ import { l10n } from "~/stores/l10n";
 import { collection } from "~/stores/collection";
 import Cookies from "js-cookie";
 
+const collectionStore = collection()
+
 let router = useRouter();
 defineProps({
   error: { type: String, default: null }
@@ -72,7 +74,7 @@ const login = async () => {
   }
 }
 
-watch(() => collection().user, async (newValue) => {
+watch(() => collectionStore.user, async (newValue) => {
   if (newValue) {
     await router.push('/collection')
   }
