@@ -216,6 +216,11 @@ export const post = [
     }
 
     let isToSell = req.body.istosell;
+    if (typeof isToSell === "undefined" || isToSell === "do_not_change") {
+      isToSell = null;
+    } else if (JSON.stringify(isToSell) === JSON.stringify(["do_not_change"])) {
+      isToSell = [null];
+    }
     let isToRead = req.body.istoread;
     if (typeof isToRead === "undefined" || isToRead === "do_not_change") {
       isToRead = null;
@@ -236,7 +241,7 @@ export const post = [
     if (typeof condition !== "string" && condition.length === 1) {
       condition = condition[0];
       isToRead = isToRead[0];
-      isToSell = false;
+      isToSell = isToSell[0];
     }
     if (typeof condition !== "string") {
       output = addOrChangeCopies(
