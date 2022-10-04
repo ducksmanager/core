@@ -14,16 +14,11 @@
 <script setup lang="ts">
 
 import { l10n } from "~/stores/l10n";
-import { onMounted } from "vue";
 import { collection } from "~/stores/collection";
 
 const { r } = l10n();
-let username = $ref(null)
 
-onMounted(async () => {
-  await collection().loadUser()
-  username = collection().user?.username
-})
+let username = $computed(() => collection().user?.username)
 </script>
 
 <style lang="scss" scoped>

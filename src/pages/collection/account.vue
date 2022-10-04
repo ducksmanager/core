@@ -144,7 +144,6 @@ const t = $t
 const { r } = l10n()
 
 onMounted(async () => {
-  await collection().loadUser()
   form().addErrors(JSON.parse(errors))
 })
 
