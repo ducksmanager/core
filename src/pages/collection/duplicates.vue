@@ -34,8 +34,7 @@ watch(
   async (duplicateIssues) => {
     if (duplicateIssues) {
       issueNumbersByPublicationCode = {}
-      Object.keys(duplicateIssues).forEach((issuecode) => {
-        const [publicationcode, issuenumber] = issuecode.split(' ')
+      Object.keys(duplicateIssues).forEach(({publicationcode, issuenumber}) => {
         if (!issueNumbersByPublicationCode[publicationcode])
           issueNumbersByPublicationCode[publicationcode] = []
 

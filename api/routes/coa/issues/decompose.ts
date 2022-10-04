@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export const get = [
+export const post = [
   parseForm,
   (async (req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -17,7 +17,7 @@ export const get = [
           await prisma.inducks_issue.findMany({
             where: {
               issuecode: {
-                in: req.body.issuecodes.split(","),
+                in: req.body.issueCodes.split(","),
               },
             },
           })

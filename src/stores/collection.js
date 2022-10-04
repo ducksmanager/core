@@ -249,6 +249,7 @@ export const collection = defineStore("collection", {
           await axios.get("/collection/edges/lastPublished")
         ).data.map((edge) => ({
           ...edge,
+          issuecode: `${edge.country}/${edge.magazine} ${edge.issueNumber}`,
           timestamp: Date.parse(edge.creationDate) / 1000,
         }));
       }

@@ -14,7 +14,9 @@ export const get: Handler = async (req, res) => {
         userId,
       },
       select: {
-        issuecode: true,
+        country: true,
+        magazine: true,
+        issueNumber: true,
       },
     })
   ).map(({ issuecode }) => issuecode) as string[];

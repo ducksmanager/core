@@ -120,7 +120,7 @@ model issue {
   country            String          @map("Pays") @db.VarChar(3)
   magazine           String          @map("Magazine") @db.VarChar(10)
   issueNumber        String          @map("Numero") @db.VarChar(12)
-  issueNumberNoSpace String?         @map("Numero_nospace") @db.VarChar(12)
+  // issueNumberNoSpace String?         @map("Numero_nospace") @db.VarChar(12) @ignored
   condition          issue_condition @default(indefini) @map("Etat")
   purchaseId         Int             @default(-1) @map("ID_Acquisition")
   isOnSale           Boolean         @map("AV")
@@ -128,15 +128,15 @@ model issue {
   isSubscription     Int             @default(0) @map("Abonnement") @db.TinyInt
   userId             Int             @map("ID_Utilisateur")
   creationDate       DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
-  issuecode          String?         @db.VarChar(25)
+  // issuecode          String?         @db.VarChar(25)
 
   @@index([country, magazine, issueNumber, userId], map: "Numero_Utilisateur")
-  @@index([country, magazine, issueNumberNoSpace, userId], map: "Numero_nospace_Utilisateur")
+  // @@index([country, magazine, issueNumberNoSpace, userId], map: "Numero_nospace_Utilisateur")
   @@index([country, magazine, issueNumber], map: "Pays_Magazine_Numero")
   @@index([creationDate, country, magazine, issueNumber], map: "Pays_Magazine_Numero_DateAjout")
   @@index([userId], map: "Utilisateur")
-  @@index([issuecode, userId], map: "numeros_issuecode_ID_Utilisateur_index")
-  @@index([issuecode], map: "numeros_issuecode_index")
+  // @@index([issuecode, userId], map: "numeros_issuecode_ID_Utilisateur_index")
+  // @@index([issuecode], map: "numeros_issuecode_index")
 
   @@map("numeros")
 }
