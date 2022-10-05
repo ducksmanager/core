@@ -9,8 +9,14 @@
       {{ text }}
     </BButton>
   </BButtonGroup>
-  <BarChart v-if="chartData" :chart-data="chartData" :options="options"
-            :style="{ width, height }" />
+  <div class="wrapper">
+  <BarChart
+    v-if="chartData"
+    :chart-data="chartData"
+    :options="options"
+    :style="{ width, height }"
+  />
+  </div>
 </template>
 <script setup>
 import {
@@ -41,26 +47,23 @@ Chart.register(
 );
 
 collection().loadCollection();
-const
-  { t: $t } = useI18n(),
+const { t: $t } = useI18n(),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),
     total: $t("Afficher les possessions totales"),
   },
   emit = defineEmits(["change-dimension"]),
   purchases = $computed(() => collection().purchases),
-  totalPerPublication = $computed(() => collection().totalPerPublication),
   publicationNames = $computed(() => coa().publicationNames),
   changeDimension = (dimension, value) => {
     if (dimension === "width") width = `${value}px`;
     else height = `${value}px`;
   },
-  labels = $computed(
-    () =>
-      collectionWithDates &&
-      [...new Set(collectionWithDates.map(({ date }) => date))].sort(
-        compareDates
-      )
+  publicationCodesWithOther = $computed(() =>
+    collection().totalPerPublication && Object.entries(collection().totalPerPublication)
+      .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
+      .filter((_entry, idx) => idx < 20)
+      .map(([publicationcode]) => publicationcode).concat(['Other'])
   ),
   collectionWithDates = $computed(
     () =>
@@ -69,6 +72,13 @@ const
         ...issue,
         date: getIssueMonth(issue),
       }))
+  ),
+  labels = $computed(
+    () =>
+      collectionWithDates &&
+      [...new Set(collectionWithDates.map(({ date }) => date))].sort(
+        compareDates
+      )
   ),
   ready = $computed(() => labels && hasPublicationNames),
   fetchPublicationNames = coa().fetchPublicationNames,
@@ -100,13 +110,13 @@ let hasPublicationNames = $ref(false),
   options = $ref({}),
   width = $ref(null),
   height = $ref(null),
-  purchaseTypeCurrent = $ref('new');
+  purchaseTypeCurrent = $ref("new");
 
 watch(
-  () => totalPerPublication,
+  () => publicationCodesWithOther,
   async (newValue) => {
     if (newValue) {
-      await fetchPublicationNames(Object.keys(newValue));
+      await fetchPublicationNames(newValue.filter(publicationcodeOrOther => publicationcodeOrOther !== 'Other'));
       hasPublicationNames = true;
     }
   },
@@ -130,7 +140,7 @@ watch(
 );
 
 watch(
-  () => ready,
+  () => ready && purchaseTypeCurrent,
   (newValue) => {
     if (newValue) {
       const dateAssoc = labels.reduce(
@@ -145,6 +155,9 @@ watch(
       const values = collectionWithDates
         .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
         .reduce((acc, { date, publicationCode }) => {
+          if (!publicationCodesWithOther.includes(publicationCode)) {
+            publicationCode = 'Other'
+          }
           if (!acc[publicationCode]) {
             acc[publicationCode] = { ...dateAssoc };
           }
@@ -180,7 +193,7 @@ watch(
         }
         return {
           data: Object.values(data),
-          label: publicationNames[publicationCode],
+          label: publicationCode === 'Other' ? $t('Autres') : publicationNames[publicationCode],
           backgroundColor: randomColor(),
         };
       });
@@ -255,6 +268,8 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.wrapper {
+  background: #333;
+}
 </style>
