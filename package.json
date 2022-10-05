@@ -20,7 +20,7 @@
 		"@sentry/tracing": "^7.14.1",
 		"@sentry/vue": "^7.14.1",
 		"@vueuse/core": "^9.3.0",
-		"@vueuse/head": "^0.8.2",
+		"@vueuse/head": "^0.9.6",
 		"axios": "^0.27.2",
 		"axios-cache-interceptor": "^0.10.7",
 		"bootstrap": "^5.2.2",
