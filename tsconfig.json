@@ -20,6 +20,7 @@
     ],
     "paths": {
       "~/*": ["src/*"],
+      "~types/*": ["types/*"],
       "~db_types/*": ["api/dist/prisma/*"]
     }
   },

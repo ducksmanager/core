@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 
-import { InducksIssueDetails } from "~/types/InducksIssueDetails";
-import { InducksIssueQuotationSimple } from "~/types/InducksIssueQuotationSimple";
 import { cachedCoaApi as coaApi } from "~/util/api";
 import { inducks_issue, inducks_issuequotation } from "~db_types/client_coa";
+import { InducksIssueDetails } from "~types/InducksIssueDetails";
+import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 
 const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
 const URL_PREFIX_PUBLICATIONS = "/coa/list/publications/";

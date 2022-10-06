@@ -214,11 +214,7 @@ onMounted(async () => {
   await collection.loadCollection();
   await users().fetchCount()
   const { userScores } = (
-    await axios.get('/global-stats/user/collection/rarity', {
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-    })
+    await axios.get('/global-stats/user/collection/rarity')
   ).data
   rarityValue = userScores.length - userScores.findIndex(({ userId }) => userId === collection.user.id)
 })

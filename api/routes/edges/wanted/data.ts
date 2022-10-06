@@ -1,6 +1,7 @@
 import { Handler } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { WantedEdge } from "~types/WantedEdge";
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,7 @@ export const get: Handler = async (req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(
     JSON.stringify(
-      await prisma.$queryRaw`
+      (await prisma.$queryRaw`
           SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber
           FROM numeros
           WHERE NOT EXISTS(
@@ -20,7 +21,7 @@ export const get: Handler = async (req, res) => {
           GROUP BY Pays, Magazine, Numero
           ORDER BY numberOfIssues DESC, Pays, Magazine, Numero
           LIMIT 20
-      `,
+      `) as WantedEdge[],
       (key, value) => (typeof value === "bigint" ? Number(value) : value)
     )
   );

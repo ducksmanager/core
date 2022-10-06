@@ -17,6 +17,7 @@
     "outDir": "./dist",
     "paths": {
       "~/*": ["*"],
+      "~types/*": ["../types/*"],
       "~prisma_clients/*": ["dist/prisma/*"]
     }
   },
