@@ -1,5 +1,6 @@
 <template>
   <div>
+    <LinkToCollectionIfNoIssue />
     <ShortStats v-if="userCount !== null" id="short-stats">
       <template #non-empty-collection>
         <div>
@@ -159,7 +160,6 @@ import { coa } from '~/stores/coa'
 import { collection as collectionStore } from '~/stores/collection'
 import { users } from '~/stores/users'
 import { condition } from '~/composables/condition'
-import Cookies from "js-cookie";
 
 const collection = collectionStore()
 const { getConditionLabel } = condition()

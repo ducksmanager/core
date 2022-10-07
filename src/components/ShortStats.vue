@@ -15,10 +15,6 @@
     </div>
     <slot name="non-empty-collection" />
   </div>
-  <div v-else>
-    {{ $t("Votre collection est vide.") }}
-    <slot name="empty-collection" />
-  </div>
 </template>
 
 <script setup>

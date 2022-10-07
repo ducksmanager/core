@@ -1,4 +1,5 @@
 <template>
+  <LinkToCollectionIfNoIssue />
   <PieChart :chart-data="chartData" :options="options" />
 </template>
 

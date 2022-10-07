@@ -19,7 +19,9 @@ export const get: Handler = async (req, res) => {
         issueNumber: true,
       },
     })
-  ).map(({ issuecode }) => issuecode) as string[];
+  ).map(
+    (issue) => `${issue.country}/${issue.magazine} ${issue.issueNumber}`
+  ) as string[];
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(
     JSON.stringify(

@@ -1,4 +1,36 @@
 <template>
+  <LinkToCollectionIfNoIssue />
+  <BAlert variant="info" show>
+    <div>
+      {{
+        $t(
+          "Ce graphique vous permet de retracer l'évolution de votre collection dans le temps."
+        )
+      }}
+    </div>
+    <div
+      v-html="
+        $t(
+          'A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?'
+        )
+      "
+    />
+    <div>
+      {{ $t("Quand avez-vous acheté le plus de magazines dans le passé ?") }}
+    </div>
+    <div
+      v-html="
+        $t(
+          `Afin de retracer l'évolution de votre collection, renseignez les dates d'achat de vos numéros dans la page {0}, puis revenez ici ! Si une date d'achat n'a pas été indiquée pour un numéro, sa date d'ajout dans la collection est utilisée`,
+          [
+            `<a href='${r('/collection/show')}'>${$t(
+              'Gérer ma collection'
+            )}</a>`,
+          ]
+        )
+      "
+    />
+  </BAlert>
   <BButtonGroup>
     <BButton
       v-for="(text, purchaseType) in purchaseTypes"
@@ -10,12 +42,12 @@
     </BButton>
   </BButtonGroup>
   <div class="wrapper">
-  <BarChart
-    v-if="chartData"
-    :chart-data="chartData"
-    :options="options"
-    :style="{ width, height }"
-  />
+    <BarChart
+      v-if="chartData"
+      :chart-data="chartData"
+      :options="options"
+      :style="{ width, height }"
+    />
   </div>
 </template>
 <script setup>
@@ -35,6 +67,7 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
 
 Chart.register(
   Legend,
@@ -47,6 +80,7 @@ Chart.register(
 );
 
 collection().loadCollection();
+const { r } = l10n()
 const { t: $t } = useI18n(),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),
@@ -59,11 +93,14 @@ const { t: $t } = useI18n(),
     if (dimension === "width") width = `${value}px`;
     else height = `${value}px`;
   },
-  publicationCodesWithOther = $computed(() =>
-    collection().totalPerPublication && Object.entries(collection().totalPerPublication)
-      .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
-      .filter((_entry, idx) => idx < 20)
-      .map(([publicationcode]) => publicationcode).concat(['Other'])
+  publicationCodesWithOther = $computed(
+    () =>
+      collection().totalPerPublication &&
+      Object.entries(collection().totalPerPublication)
+        .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
+        .filter((_entry, idx) => idx < 20)
+        .map(([publicationcode]) => publicationcode)
+        .concat(["Other"])
   ),
   collectionWithDates = $computed(
     () =>
@@ -116,7 +153,11 @@ watch(
   () => publicationCodesWithOther,
   async (newValue) => {
     if (newValue) {
-      await fetchPublicationNames(newValue.filter(publicationcodeOrOther => publicationcodeOrOther !== 'Other'));
+      await fetchPublicationNames(
+        newValue.filter(
+          (publicationcodeOrOther) => publicationcodeOrOther !== "Other"
+        )
+      );
       hasPublicationNames = true;
     }
   },
@@ -156,7 +197,7 @@ watch(
         .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
         .reduce((acc, { date, publicationCode }) => {
           if (!publicationCodesWithOther.includes(publicationCode)) {
-            publicationCode = 'Other'
+            publicationCode = "Other";
           }
           if (!acc[publicationCode]) {
             acc[publicationCode] = { ...dateAssoc };
@@ -193,7 +234,10 @@ watch(
         }
         return {
           data: Object.values(data),
-          label: publicationCode === 'Other' ? $t('Autres') : publicationNames[publicationCode],
+          label:
+            publicationCode === "Other"
+              ? $t("Autres")
+              : publicationNames[publicationCode],
           backgroundColor: randomColor(),
         };
       });
@@ -271,5 +315,11 @@ onMounted(async () => {
 <style scoped lang="scss">
 .wrapper {
   background: #333;
+}
+
+:deep(.btn) {
+  &:focus {
+    box-shadow: none !important;
+  }
 }
 </style>

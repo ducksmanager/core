@@ -50,7 +50,7 @@ export const coa = defineStore("coa", {
     publicationNames: {} as { [key: string]: string },
     publicationNamesFullCountries: [] as string[],
     personNames: null as { [key: string]: string } | null,
-    issueNumbers: {} as { [key: string]: string },
+    issueNumbers: {} as { [key: string]: string[] },
     issueDetails: {} as { [key: string]: InducksIssueDetails },
     isLoadingCountryNames: false,
     issueCounts: null,
@@ -80,7 +80,7 @@ export const coa = defineStore("coa", {
     setCoverUrl(issueNumber: string, url: string) {
       this.coverUrls[issueNumber] = url;
     },
-    addIssueNumbers(issueNumbers: { [key: string]: string }) {
+    addIssueNumbers(issueNumbers: { [key: string]: string[] }) {
       this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };
     },
     addIssueCodeDetails(issueCodeDetails: { [key: string]: inducks_issue }) {

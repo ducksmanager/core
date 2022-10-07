@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "tsc && tsc-alias",
+    "build": "rm -rf dist/api dist/types && tsc && tsc-alias",
     "start": "ts-node -r tsconfig-paths/register index.ts",
     "dev": "nodemon",
     "prisma:pull": "ls prisma/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",

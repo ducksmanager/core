@@ -1,14 +1,15 @@
 <template>
-    <BButtonGroup>
-      <BButton
-        v-for="(text, unitType) in unitTypes"
-        :key="unitType"
-        :pressed="unitTypeCurrent === unitType"
-        @click="unitTypeCurrent = unitType"
-      >
-        {{ text }}
-      </BButton>
-    </BButtonGroup>
+  <LinkToCollectionIfNoIssue />
+  <BButtonGroup>
+    <BButton
+      v-for="(text, unitType) in unitTypes"
+      :key="unitType"
+      :pressed="unitTypeCurrent === unitType"
+      @click="unitTypeCurrent = unitType"
+    >
+      {{ text }}
+    </BButton>
+  </BButtonGroup>
   <BarChart v-if="chartData" :chart-data="chartData" :options="options" />
 </template>
 
@@ -49,14 +50,18 @@ const { t: $t } = useI18n(),
   totalPerPublicationUniqueIssueNumbers = $computed(
     () => collectionStore().totalPerPublicationUniqueIssueNumbers
   ),
-unitTypes = {
-  number: $t("Afficher en valeurs réelles"),
-  percentage: $t("Afficher en pourcentages"),
-},
+  unitTypes = {
+    number: $t("Afficher en valeurs réelles"),
+    percentage: $t("Afficher en pourcentages"),
+  },
   countryNames = $computed(() => coa().countryNames),
   issueCounts = $computed(() => coa().issueCounts),
   publicationNames = $computed(() => coa().publicationNames),
-  labels = $computed(() => totalPerPublicationUniqueIssueNumbers && Object.keys(totalPerPublicationUniqueIssueNumbers)),
+  labels = $computed(
+    () =>
+      totalPerPublicationUniqueIssueNumbers &&
+      Object.keys(totalPerPublicationUniqueIssueNumbers)
+  ),
   values = $computed(() => {
     if (
       !(totalPerPublicationUniqueIssueNumbers && issueCounts && countryNames)
@@ -86,14 +91,14 @@ unitTypes = {
   fetchIssueCounts = coa().fetchIssueCounts;
 
 let chartData = $ref(null),
-  unitTypeCurrent = $ref('number'),
+  unitTypeCurrent = $ref("number"),
   options = $ref({});
 
 watch(
   () => totalPerPublicationUniqueIssueNumbers,
   async (newValue) => {
     if (!newValue) {
-      return
+      return;
     }
     await fetchCountryNames();
     await fetchPublicationNames(Object.keys(newValue));
@@ -106,7 +111,7 @@ watch(
   () => labels,
   async (newValue) => {
     if (!newValue) {
-      return
+      return;
     }
     emit("change-dimension", "height", 100 + 30 * newValue.length);
     emit("change-dimension", "width", 500);
@@ -195,8 +200,13 @@ watch(
 
 onMounted(async () => {
   await collectionStore().loadCollection();
-})
+});
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+:deep(.btn) {
+  &:focus {
+    box-shadow: none !important;
+  }
+}
 </style>

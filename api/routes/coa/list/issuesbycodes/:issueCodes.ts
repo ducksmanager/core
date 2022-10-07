@@ -8,23 +8,14 @@ import {
   cover,
   PrismaClient as PrismaClientCoverInfo,
 } from "~prisma_clients/client_cover_info";
-import { PrismaClient as PrismaClientDm } from "~prisma_clients/client_dm";
+import {
+  Prisma,
+  PrismaClient as PrismaClientDm,
+} from "~prisma_clients/client_dm";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaCoverInfo = new PrismaClientCoverInfo();
 const prismaDm = new PrismaClientDm();
-
-const getIssueQuotations = async (issueCodes: string[]) =>
-  prismaCoa.inducks_issuequotation.findMany({
-    where: {
-      issuecode: {
-        in: issueCodes.map((issueCode) => issueCode.replace(/ +/, " ")),
-      },
-      estimationmin: {
-        not: null,
-      },
-    },
-  });
 
 type ReturnType<FieldValue, T> = FieldValue extends string ? never : T;
 
@@ -104,23 +95,22 @@ export const get: Handler = async (req, res) => {
     {}
   );
 
-  const quotations = await getIssueQuotations(issueCodes);
-  console.log(quotations);
-  const popularities = await prismaDm.issue.groupBy({
-    by: ["issuecode"],
-    where: {
-      issuecode: {
-        in: Object.values(shortIssueCodes),
-      },
-    },
-    _count: {
-      userId: true,
-    },
-  });
-  for (const popularity of popularities) {
+  // const quotations = await getIssueQuotations(issueCodes);
+
+  const popularities = (await prismaDm.$queryRaw`
+    SELECT issuecode, COUNT(DISTINCT ID_Utilisateur) AS userCount
+    FROM numeros
+    WHERE issuecode IN (${Prisma.join(Object.values(shortIssueCodes))})
+    GROUP BY issuecode
+  `) as { issuecode: string; userCount: number }[];
+
+  for (const { issuecode, userCount } of popularities) {
     const longIssueCode: string = Object.entries(shortIssueCodes).find(
-      ([, shortIssueCode]) => shortIssueCode === popularity.issuecode
+      ([, shortIssueCode]) => shortIssueCode === issuecode
     )![0];
-    issues[longIssueCode].popularity = popularity._count.userId;
+    issues[longIssueCode].popularity = userCount;
   }
+
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify(issues));
 };

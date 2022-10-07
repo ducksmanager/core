@@ -1,5 +1,45 @@
 <template>
-  <BarChart :chart-data="chartData" :options="options" />
+  <div v-if="watchedAuthors">
+    <BAlert v-if="!watchedAuthors.length" show variant="warning">
+      {{
+        $t(
+          "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez."
+        )
+      }}
+    </BAlert>
+    <div v-else>
+      <template v-if="!watchedAuthorsStoryCount">
+        {{ $t("Chargement...") }}
+      </template>
+      <BAlert v-else-if="!Object.keys(watchedAuthorsStoryCount).length" show>
+        {{
+          $t(
+            "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !"
+          )
+        }}
+      </BAlert>
+      <div v-else>
+        <BButtonGroup>
+          <BButton
+            v-for="(text, unitType) in unitTypes"
+            :key="unitType"
+            :pressed="unitTypeCurrent === unitType"
+            @click="unitTypeCurrent = unitType"
+          >
+            {{ text }}
+          </BButton>
+        </BButtonGroup>
+        <BarChart
+          :chart-data="chartData"
+          :options="options"
+          :style="{ width, height }"
+        />
+        {{ $t("Les statistiques sont mises à jour quotidiennement.") }}
+      </div>
+      <hr />
+    </div>
+    <AuthorList :watched-authors="watchedAuthors" />
+  </div>
 </template>
 
 <script setup>
@@ -12,23 +52,13 @@ import {
   LinearScale,
   Title,
   Tooltip,
-} from 'chart.js'
-import { BarChart } from 'vue-chart-3'
-import { useI18n } from 'vue-i18n'
+} from "chart.js";
+import { BarChart } from "vue-chart-3";
+import { useI18n } from "vue-i18n";
 
-import { collection } from '~/composables/collection'
-const { unit, watchedAuthorsStoryCount } = defineProps({
-  unit: {
-    type: String,
-    required: true,
-  },
-  watchedAuthorsStoryCount: {
-    type: Object,
-    required: true,
-  },
-})
-
-const emit = defineEmits(['change-dimension'])
+import { collection as collectionStore } from "~/stores/collection";
+import axios from "axios";
+import { watch } from "vue";
 
 Chart.register(
   Legend,
@@ -37,84 +67,119 @@ Chart.register(
   LinearScale,
   BarController,
   Tooltip,
-  Title,
-)
+  Title
+);
 
-const { t: $t } = useI18n()
-collection()
+const { t: $t } = useI18n();
 
-const labels = Object.values(watchedAuthorsStoryCount).map(
-  ({ fullname: fullName }) => fullName,
-)
-emit('change-dimension', 'width', 250 + 50 * labels.length)
+const watchedAuthors = $computed(() => collectionStore().watchedAuthors);
+const unitTypes = {
+  number: $t("Afficher en valeurs réelles"),
+  percentage: $t("Afficher en pourcentages"),
+};
 
-let possessedStories = Object.values(watchedAuthorsStoryCount).map(
-  ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
-    storyCount - missingStoryCount,
-)
-let missingStories = Object.values(watchedAuthorsStoryCount).map(
-  ({ missingstorycount: missingStoryCount }) => missingStoryCount,
-)
+let watchedAuthorsStoryCount = $ref(null);
+let unitTypeCurrent = $ref("new");
+let width = $ref(null),
+  height = $ref(null),
+  chartData = $ref(null),
+  options = $ref({});
 
-if (unit === 'percentage') {
-  possessedStories = possessedStories.map((possessedCount, key) =>
-    Math.round(possessedCount * (100 / (possessedCount + missingStories[key]))),
+const labels = $computed(() =>
+  watchedAuthorsStoryCount && Object.values(watchedAuthorsStoryCount).map(
+    ({ fullname: fullName }) => fullName
   )
-  missingStories = possessedStories.map(
-    possessedCount => 100 - possessedCount,
-  )
-}
+);
 
-const values = [possessedStories, missingStories]
-const chartData = {
-  datasets: [
-    {
-      data: values[0],
-      backgroundColor: '#FF8000',
-      label: $t('Histoires possédées'),
-      legend: $t('Histoires possédées'),
-    },
-    {
-      data: values[1],
-      backgroundColor: '#04B404',
-      label: $t('Histoires non possédées'),
-      legend: $t('Histoires non possédées'),
-    },
-  ],
-  labels,
-  legends: [$t('Histoires possédées'), $t('Histoires non possédées')],
-}
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    x: {
-      stacked: true,
-      ticks: {
-        autoSkip: false,
-      },
-    },
-    y: {
-      stacked: true,
-    },
+const changeDimension = (dimension, value) => {
+  if (dimension === "width") width = `${value}px`;
+  else height = `${value}px`;
+};
+
+watch(
+  () => labels && unitTypeCurrent,
+  (newValue) => {
+    if (newValue) {
+
+      let possessedStories = Object.values(watchedAuthorsStoryCount).map(
+        ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
+          storyCount - missingStoryCount
+      );
+      let missingStories = Object.values(watchedAuthorsStoryCount).map(
+        ({ missingstorycount: missingStoryCount }) => missingStoryCount
+      );
+
+      if (unitTypeCurrent === "percentage") {
+        possessedStories = possessedStories.map((possessedCount, key) =>
+          Math.round(possessedCount * (100 / (possessedCount + missingStories[key])))
+        );
+        missingStories = possessedStories.map(
+          (possessedCount) => 100 - possessedCount
+        );
+      }
+
+      const values = [possessedStories, missingStories];
+
+      changeDimension("width", 250 + 30 * labels.length);
+      chartData = {
+        datasets: [
+          {
+            data: values[0],
+            backgroundColor: "#FF8000",
+            label: $t("Histoires possédées"),
+            legend: $t("Histoires possédées"),
+          },
+          {
+            data: values[1],
+            backgroundColor: "#04B404",
+            label: $t("Histoires non possédées"),
+            legend: $t("Histoires non possédées"),
+          },
+        ],
+        labels,
+        legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
+      };
+      options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            ticks: {
+              autoSkip: false,
+            },
+          },
+          y: {
+            stacked: true,
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: $t("Possession des histoires d'auteurs"),
+          },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              title: ([tooltip]) => tooltip.label,
+              label: ({ dataset, raw }) =>
+                `${dataset.label}: ${raw}${unitTypeCurrent === "percentage" ? "%" : ""}`,
+            },
+          },
+        },
+      };
+    }
   },
-  plugins: {
-    title: {
-      display: true,
-      text: $t('Possession des histoires d\'auteurs'),
-    },
-    tooltip: {
-      enabled: true,
-      callbacks: {
-        title: ([tooltip]) => tooltip.label,
-        label: ({ dataset, raw }) =>
-            `${dataset.label}: ${raw}${unit === 'percentage' ? '%' : ''}`,
-      },
-    },
-  },
-}
+  { immediate: true }
+);
+
+onMounted(async () => {
+  await collectionStore().loadWatchedAuthors();
+  watchedAuthorsStoryCount = (
+    await axios.get("/collection/stats/watchedauthorsstorycount")
+  ).data;
+  if (!watchedAuthorsStoryCount) watchedAuthorsStoryCount = {};
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
