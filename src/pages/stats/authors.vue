@@ -79,7 +79,7 @@ const unitTypes = {
 };
 
 let watchedAuthorsStoryCount = $ref(null);
-let unitTypeCurrent = $ref("new");
+let unitTypeCurrent = $ref("number");
 let width = $ref(null),
   height = $ref(null),
   chartData = $ref(null),
@@ -101,7 +101,7 @@ watch(
   (newValue) => {
     if (newValue) {
 
-      let possessedStories = Object.values(watchedAuthorsStoryCount).map(
+      let ownedStories = Object.values(watchedAuthorsStoryCount).map(
         ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
           storyCount - missingStoryCount
       );
@@ -110,15 +110,16 @@ watch(
       );
 
       if (unitTypeCurrent === "percentage") {
-        possessedStories = possessedStories.map((possessedCount, key) =>
+        ownedStories = ownedStories.map((possessedCount, key) =>
           Math.round(possessedCount * (100 / (possessedCount + missingStories[key])))
         );
-        missingStories = possessedStories.map(
+        missingStories = ownedStories.map(
           (possessedCount) => 100 - possessedCount
         );
       }
 
-      const values = [possessedStories, missingStories];
+      const values = [ownedStories, missingStories];
+      console.log(values)
 
       changeDimension("width", 250 + 30 * labels.length);
       chartData = {
@@ -182,4 +183,9 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+
+.btn-group+div {
+  background: #ddd;
+}
+</style>

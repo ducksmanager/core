@@ -18,22 +18,26 @@ const upsertAuthorUser = async (req: Request) => {
   const existingAuthorUser = await prisma.authorUser.findFirst({
     where: criteria,
   });
-  if (
-    existingAuthorUser &&
-    (await prisma.authorUser.count({
-      where: { userId },
-    })) >= maxWatchedAuthors
-  ) {
-    throw new Error("429");
+  if (existingAuthorUser) {
+    if (
+      (await prisma.authorUser.count({
+        where: { userId },
+      })) >= maxWatchedAuthors
+    ) {
+      throw new Error("429");
+    }
+    await prisma.authorUser.update({
+      data: { notation },
+      where: { id: existingAuthorUser?.id },
+    });
+  } else {
+    await prisma.authorUser.create({
+      data: {
+        ...criteria,
+        notation: 5,
+      },
+    });
   }
-  await prisma.authorUser.upsert({
-    update: { notation },
-    create: {
-      ...criteria,
-      notation: 5,
-    },
-    where: { id: existingAuthorUser?.id },
-  });
 };
 
 export const get: Handler = async (req, res) => {
@@ -52,6 +56,7 @@ export const put = [
       res.writeHead(200);
       res.end();
     } catch (e) {
+      console.log(e);
       res.writeHead(parseInt(e as string));
       res.end();
     }
@@ -61,9 +66,14 @@ export const put = [
 export const post = [
   parseForm,
   (async (req, res) => {
-    await upsertAuthorUser(req);
-    res.writeHead(200);
-    res.end();
+    try {
+      await upsertAuthorUser(req);
+      res.writeHead(200);
+      res.end();
+    } catch (e) {
+      res.writeHead(parseInt(e as string));
+      res.end();
+    }
   }) as Handler,
 ];
 
@@ -71,6 +81,11 @@ export const del = [
   parseForm,
   (async (req, res) => {
     const { personcode } = req.body;
+    if (!personcode) {
+      res.writeHead(400);
+      res.end();
+      return;
+    }
     await prisma.authorUser.deleteMany({
       where: {
         personcode,

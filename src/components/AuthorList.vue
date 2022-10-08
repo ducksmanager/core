@@ -33,17 +33,17 @@
       <div v-if="personNames">
         <BRow
           v-for="author in watchedAuthors"
-          :key="author.personCode"
+          :key="author.personcode"
           align-v="center"
+          class="mb-2"
         >
           <BCol lg="1">
-            {{ personNames[author.personCode] }}
+            {{ personNames[author.personcode] }}
           </BCol>
           <BCol lg="2">
             <StarRating
               v-model:rating="author.notation"
               :max-rating="10"
-              :star-size="20"
               @update:rating="updateRating(author)"
             />
           </BCol>
@@ -82,13 +82,13 @@
                   {{ $t("Aucun résultat.") }}
                 </option>
                 <option
-                  v-for="(fullName, personCode) in searchResults"
-                  :key="personCode"
-                  :disabled="isAuthorWatched(personCode)"
+                  v-for="(fullName, personcode) in searchResults"
+                  :key="personcode"
+                  :disabled="isAuthorWatched(personcode)"
                   @click="
-                    isAuthorWatched(personCode)
+                    isAuthorWatched(personcode)
                       ? () => {}
-                      : createRating({personCode})
+                      : createRating({personcode})
                   "
                 >
                   {{ fullName }}
@@ -106,7 +106,6 @@
 import axios from 'axios'
 import { BAlert, BCol, BFormInput, BRow } from 'bootstrap-vue-3'
 import { watch } from 'vue'
-import StarRating from 'vue-star-rating'
 
 import { coa } from '~/stores/coa'
 import { collection } from '~/stores/collection'
@@ -139,15 +138,17 @@ watch(
 watch(
   () => watchedAuthors,
   async (newValue) => {
-    await coa().fetchPersonNames(newValue.map(({ personCode }) => personCode))
+    if (watchedAuthors?.length) {
+      await coa().fetchPersonNames(newValue.map(({ personcode }) => personcode))
+    }
   },
   { immediate: true },
 )
 const { r } = l10n()
 const { loadWatchedAuthors } = collection()
-const isAuthorWatched = personCode =>
+const isAuthorWatched = personcode =>
   watchedAuthors.some(
-    ({ personCode: watchedPersonCode }) => personCode === watchedPersonCode,
+    ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode,
   )
 const createRating = async (author) => {
   await axios.put('/collection/authors/watched', author)

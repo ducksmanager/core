@@ -9,13 +9,14 @@ datasource db {
   url      = env("DATABASE_URL_DM_STATS")
 }
 
-model auteurs_histoires {
-  ID         Int    @id @default(autoincrement())
+model authorStory {
+  id         Int    @id @default(autoincrement())  @map("ID")
   personcode String @db.VarChar(79)
   storycode  String @db.VarChar(19)
 
   @@unique([personcode, storycode], map: "unique_index")
   @@index([storycode], map: "index_storycode")
+  @@map("auteurs_histoires")
 }
 
 model authorUser {

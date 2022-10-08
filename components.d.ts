@@ -60,6 +60,7 @@ declare module '@vue/runtime-core' {
     ShortStats: typeof import('./src/components/ShortStats.vue')['default']
     Signup: typeof import('./src/layouts/Signup.vue')['default']
     Site: typeof import('./src/layouts/Site.vue')['default']
+    StarRating: typeof import('./src/components/StarRating.vue')['default']
     StatsMenu: typeof import('./src/components/menus/StatsMenu.vue')['default']
     Story: typeof import('./src/components/Story.vue')['default']
     StoryList: typeof import('./src/components/StoryList.vue')['default']
