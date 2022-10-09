@@ -16,7 +16,7 @@ MAINTAINER Bruno Perel
 
 RUN npm i -g pnpm
 
-WORKDIR /app
+WORKDIR /home/api
 
 COPY api/package.json api/pnpm-lock.yaml ./
 RUN pnpm i
@@ -24,6 +24,8 @@ RUN pnpm i
 COPY .env.prod.local ./.env
 COPY api/prisma ./prisma
 RUN pnpm run prisma:generate
+
+COPY types /home/types
 
 COPY api .
 RUN pnpm run build
