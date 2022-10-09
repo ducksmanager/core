@@ -59,7 +59,7 @@ app.all(/^\/coa\/list\/(.+)/, async (req, res) => {
     );
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(response.data));
-  } catch (e: any) {
+  } catch (e: unknown) {
     const error = e as AxiosError;
     res.statusCode = error.response?.status || 500;
     console.error(error.message);

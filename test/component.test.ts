@@ -1,22 +1,23 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import Counter from '~/src/components/Counter.vue'
+import { mount } from "@vue/test-utils";
+import { describe, expect, it } from "vitest";
 
-describe('Counter.vue', () => {
-  it('should render', () => {
-    const wrapper = mount(Counter, { props: { initial: 10 } })
-    expect(wrapper.text()).toContain('10')
-    expect(wrapper.html()).toMatchSnapshot()
-  })
+import Counter from "~/src/components/Counter.vue";
 
-  it('should be interactive', async () => {
-    const wrapper = mount(Counter, { props: { initial: 0 } })
-    expect(wrapper.text()).toContain('0')
+describe("Counter.vue", () => {
+  it("should render", () => {
+    const wrapper = mount(Counter, { props: { initial: 10 } });
+    expect(wrapper.text()).toContain("10");
+    expect(wrapper.html()).toMatchSnapshot();
+  });
 
-    expect(wrapper.find('.inc').exists()).toBe(true)
+  it("should be interactive", async () => {
+    const wrapper = mount(Counter, { props: { initial: 0 } });
+    expect(wrapper.text()).toContain("0");
 
-    await wrapper.get('button').trigger('click')
+    expect(wrapper.find(".inc").exists()).toBe(true);
 
-    expect(wrapper.text()).toContain('1')
-  })
-})
+    await wrapper.get("button").trigger("click");
+
+    expect(wrapper.text()).toContain("1");
+  });
+});

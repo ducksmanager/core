@@ -10,6 +10,7 @@
       <BookcaseMenu v-if="topMenu === 'bookcase'" />
       <CollectionMenu v-if="topMenu === 'collection'" />
       <StatsMenu v-if="topMenu === 'stats'" />
+      <div v-html="'<span></span>'"></div>
       <router-view />
     </div>
     <Footer />
@@ -24,7 +25,8 @@ const topMenu = $computed(() => route.path.match(/\/([^/]+)/)?.[1])
 
 const slots = useSlots()
 useHead({
-  title: slots.title || 'DucksManager',
+  title: slots.title
+    || 'DucksManager',
 })
 
 </script>

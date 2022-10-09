@@ -41,7 +41,7 @@ export const l10n = defineStore("l10n", {
       if (!routeL10n) return route;
 
       let finalRoute = routeL10n[localStorage.getItem("locale")];
-      [...matchAll(route, PATH_REGEX)].forEach(([_, key, value]) => {
+      [...matchAll(route, PATH_REGEX)].forEach(([, key, value]) => {
         finalRoute = finalRoute.replace(`{${key}}`, value);
       });
 

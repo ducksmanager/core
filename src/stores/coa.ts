@@ -127,7 +127,10 @@ export const coa = defineStore("coa", {
             chunkSize: 20,
           }).then((data) =>
             data.reduce(
-              (acc, { data }: { data: any }) => ({ ...acc, ...data }),
+              (acc, { data }: { data: { [_: string]: string } }) => ({
+                ...acc,
+                ...data,
+              }),
               {}
             )
           )
@@ -180,7 +183,7 @@ export const coa = defineStore("coa", {
 
       return coaApi
         .get(URL_PREFIX_PUBLICATIONS + countryCode)
-        .then(({ data }: { data: any }) => {
+        .then(({ data }: { data: { [_: string]: string } }) => {
           this.addPublicationNames({
             ...(this.publicationNames || {}),
             ...data,
@@ -210,7 +213,10 @@ export const coa = defineStore("coa", {
             chunkSize: 10,
           }).then((data) =>
             data.reduce(
-              (acc, { data }: { data: any }) => ({ ...acc, ...data }),
+              (acc, { data }: { data: { [_: string]: string } }) => ({
+                ...acc,
+                ...data,
+              }),
               {}
             )
           )),
@@ -236,7 +242,10 @@ export const coa = defineStore("coa", {
             chunkSize: 10,
           }).then((data) =>
             data.reduce(
-              (acc, { data }: { data: any }) => ({ ...acc, ...data }),
+              (acc, { data }: { data: { [_: string]: string[] } }) => ({
+                ...acc,
+                ...data,
+              }),
               {}
             )
           )
@@ -264,7 +273,7 @@ export const coa = defineStore("coa", {
             parameterName: "issueCodes",
           }).then((data) =>
             data.reduce(
-              (acc, { data }: { data: any }) => ({
+              (acc, { data }: { data: { [_: string]: string } }) => ({
                 ...acc,
                 ...data,
               }),

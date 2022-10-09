@@ -43,11 +43,11 @@ export const authenticateToken = (
   jwt.verify(
     token,
     process.env.TOKEN_SECRET as string,
-    (err: any, user: any) => {
+    (err: unknown, user: unknown) => {
       if (err) {
         return res.sendStatus(403);
       }
-      req.user = user;
+      req.user = user as User;
       next();
     }
   );
@@ -89,9 +89,9 @@ export const injectTokenIfValid = (
     jwt.verify(
       token,
       process.env.TOKEN_SECRET as string,
-      (err: any, user: any) => {
+      (err: unknown, user: unknown) => {
         if (user) {
-          req.user = user;
+          req.user = user as User;
           console.log("valid token");
         } else {
           console.log(`Invalid token: ${err}`);

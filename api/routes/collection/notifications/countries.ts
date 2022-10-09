@@ -47,5 +47,8 @@ export const post = [
         })
       )
     );
+
+    res.writeHead(200);
+    res.end();
   }) as Handler,
 ];

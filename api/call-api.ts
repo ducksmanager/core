@@ -32,8 +32,7 @@ export const call = async (
   parameters: never[] | { [key: string]: never } = [],
   method = "GET",
   doNotChunk = false,
-  userCredentials: { [key: string]: string } = {},
-  noParse = false
+  userCredentials: { [key: string]: string } = {}
 ): Promise<AxiosResponse> => {
   addAxiosInterceptor(role);
   if (!doNotChunk && CHUNKABLE_URLS[url]) {

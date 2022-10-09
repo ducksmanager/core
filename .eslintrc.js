@@ -18,5 +18,5 @@ module.exports = {
     "vue/no-v-html": "off",
   },
   plugins: ["simple-import-sort", "@typescript-eslint"],
-  ignorePatterns: ["**/node_modules", "api/dist"],
+  ignorePatterns: ["**/node_modules", "**/dist", "shims.d.ts", "vendor"],
 };
