@@ -17,6 +17,7 @@ interface simple_story {
   storycode: string;
   title: string;
   score: number;
+  issues: simple_issue[] | null;
 }
 
 const listIssuesFromStoryCode = async (storycode: string) =>
@@ -53,15 +54,16 @@ export const getStoriesByKeywords = async (
   const hasMore = results.length > limit;
   results = results.slice(0, limit);
 
+  if (withIssues) {
+    for (const idx of results.keys()) {
+      results[idx].issues = await listIssuesFromStoryCode(
+        results[idx].storycode
+      );
+    }
+  }
+
   return {
-    results: results.map((result) => ({
-      ...result,
-      ...(withIssues
-        ? {
-            issues: listIssuesFromStoryCode(result.storycode),
-          }
-        : {}),
-    })),
+    results,
     hasMore,
   };
 };
@@ -70,7 +72,7 @@ export const post = [
   parseForm,
   (async (req, res) => {
     if (!req.body.keywords) {
-      res.writeHead(400, { "Content-Type": "application/text" });
+      res.writeHead(400);
       res.end();
     } else {
       res.writeHead(200, { "Content-Type": "application/json" });

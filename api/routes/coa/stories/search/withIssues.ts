@@ -15,10 +15,7 @@ export const post = [
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
         JSON.stringify(
-          await getStoriesByKeywords(
-            req.body.keywords.split(","),
-            req.params.withIssues === "withIssues"
-          )
+          await getStoriesByKeywords(req.body.keywords.split(","), true)
         )
       );
     }

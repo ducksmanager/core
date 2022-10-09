@@ -40,7 +40,7 @@
             </option>
             <option
               v-for="searchResult in searchResults.results"
-              :key="searchResult.code"
+              :key="searchResult.storycode"
               class="d-flex align-items-center"
               @click="selectSearchResult(searchResult)"
             >
@@ -75,10 +75,11 @@
 <script setup>
 import axios from 'axios'
 import { BDropdown, BDropdownItem, BFormInput } from 'bootstrap-vue-3'
-import { watch } from 'vue'
+import { onMounted, watch } from "vue";
 import { useI18n } from 'vue-i18n'
 
 import { coa } from '~/stores/coa'
+import { collection as collectionStore } from '~/stores/collection'
 import { collection } from '~/composables/collection'
 import { condition } from '~/composables/condition'
 
@@ -122,7 +123,7 @@ const selectSearchResult = (searchResult) => {
   }
   else {
     searchContext = 'storycode'
-    search = searchResult.code
+    search = searchResult.storycode
   }
 }
 const runSearch = async (value) => {
@@ -152,7 +153,7 @@ const runSearch = async (value) => {
       ).data
       searchResults.results = searchResults.results.map(story => ({
         ...story,
-        collectionIssue: collection().collection.find(
+        collectionIssue: collectionStore().collection.find(
           ({
             publicationCode: collectionPublicationCode,
             issueNumber: collectionIssueNumber,
@@ -186,13 +187,19 @@ let searchContext = $ref('story')
 watch(
   () => search,
   async (newValue) => {
-    if (newValue !== '') {
+    if (newValue) {
       pendingSearch = newValue
       if (!isSearching)
         await runSearch(newValue)
     }
   },
 )
+
+
+onMounted(async () => {
+  await collectionStore().loadCollection();
+  await coa().fetchCountryNames();
+});
 </script>
 
 <style scoped lang="scss">
@@ -231,7 +238,7 @@ watch(
         display: block;
         position: absolute;
         background: #eee;
-        width: 100%;
+        min-width: 275px;
         top: 36px;
         padding-left: 0;
 
