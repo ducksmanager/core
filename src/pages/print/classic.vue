@@ -6,7 +6,7 @@ meta:
 
 <template>
   <print-header />
-  <div v-if="collection && countryNames && hasPublicationNames" class="list">
+  <div v-if="ownedIssueNumbers" class="list">
     <div v-for="country in countryCodesSortedByName" :key="country">
       <div class="country">
         {{ countryNames[country] }}
@@ -16,79 +16,108 @@ meta:
         :key="publicationCode"
       >
         <u>{{ publicationNames[publicationCode] || publicationCode }}</u>
-        {{ issuesOfPublicationCode(publicationCode) }}
-        <br>
+        {{ ownedIssueNumbers[publicationCode] }}
+        <br />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection as collectionStore } from '~/stores/collection'
+import { coa } from "~/stores/coa";
+import { collection as collectionStore } from "~/stores/collection";
 
-let hasPublicationNames = $ref(false)
-const countryNames = $computed(() => coa().countryNames)
-const publicationNames = $computed(() => coa().publicationNames)
-const collection = $computed(() => collectionStore().collection)
+let hasPublicationNames = $ref(false);
+let ownedIssueNumbers = $ref(null);
+
+const countryNames = $computed(() => coa().countryNames);
+const publicationNames = $computed(() => coa().publicationNames);
+const issueNumbers = $computed(() => coa().issueNumbers);
+const collection = $computed(() => collectionStore().collection);
 const countryCodes = $computed(
-  () => collection && [...new Set(collection.map(i => i.country))],
-)
+  () => collection && [...new Set(collection.map((i) => i.country))]
+);
 const countryCodesSortedByName = $computed(
   () =>
-    countryCodes
-      && countryNames
-      && [...countryCodes].sort(
-        (countryCodeA, countryCodeB) =>
-          countryNames[countryCodeA]
-          && countryNames[countryCodeA].localeCompare(countryNames[countryCodeB]),
-      ),
-)
+    countryCodes &&
+    countryNames &&
+    [...countryCodes].sort(
+      (countryCodeA, countryCodeB) =>
+        countryNames[countryCodeA] &&
+        countryNames[countryCodeA].localeCompare(countryNames[countryCodeB])
+    )
+);
 const publicationCodes = $computed(
   () =>
     collection && [
-      ...new Set(collection.map(i => `${i.country}/${i.magazine}`)),
-    ],
-)
-const fetchCountryNames = coa().fetchCountryNames
-const fetchPublicationNames = coa().fetchPublicationNames
-const loadCollection = collectionStore().loadCollection
-const publicationCodesOfCountry = countryCode =>
+      ...new Set(collection.map((i) => `${i.country}/${i.magazine}`)),
+    ]
+);
+const publicationCodesOfCountry = (countryCode) =>
   publicationCodes
-    .filter(
-      publicationCode => publicationCode.split('/')[0] === countryCode,
-    )
+    .filter((publicationCode) => publicationCode.split("/")[0] === countryCode)
     .sort((a, b) =>
       !publicationNames[b]
         ? 1
         : publicationNames[a] < publicationNames[b]
-          ? -1
-          : publicationNames[a] > publicationNames[b]
-            ? 1
-            : 0,
-    )
-const issuesOfPublicationCode = publicationCode =>
-  collection
-    .filter(i => publicationCode === `${i.country}/${i.magazine}`)
-    .map(({ issueNumber }) => issueNumber)
-    .join(', ')
+        ? -1
+        : publicationNames[a] > publicationNames[b]
+        ? 1
+        : 0
+    );
+
 watch(
   () => publicationCodes,
   (newValue) => {
     if (newValue) {
-      fetchPublicationNames(newValue)
-      hasPublicationNames = true
+      coa().fetchPublicationNames(publicationCodes);
+      coa().fetchIssueNumbers(publicationCodes);
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
+
+watch(
+  () => Object.keys(issueNumbers).length && collection,
+  (newValue) => {
+    if (newValue) {
+      const collectionWithPublicationcodes = collection
+        .map(({ country, magazine, issueNumber }) => ({
+          publicationcode: `${country}/${magazine}`,
+          issueNumber,
+        }))
+        .reduce(
+          (acc, { publicationcode, issueNumber }) => ({
+            ...acc,
+            [publicationcode]: [...(acc[publicationcode] || []), issueNumber],
+          }),
+          {}
+        );
+      ownedIssueNumbers = Object.entries(issueNumbers).reduce(
+        (acc, [publicationcode, indexedIssueNumbers]) => ({
+          ...acc,
+          [publicationcode]: indexedIssueNumbers
+            .filter((indexedIssueNumber) =>
+              collectionWithPublicationcodes[publicationcode].includes(
+                indexedIssueNumber
+              )
+            )
+            .join(", "),
+        }),
+        {}
+      );
+    }
+  },
+  { immediate: true }
+);
 
 onMounted(async () => {
-  await fetchCountryNames()
-  await loadCollection()
-})
+  await coa().fetchCountryNames();
+  await collectionStore().loadCollection();
+});
 </script>
 
 <style>
