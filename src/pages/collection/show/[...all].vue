@@ -4,7 +4,5 @@ alias:
   - /collection/show
 </route>
 <template>
-  <Manage
-    :publicationcode="$route.params.all || null"
-  />
+  <Manage :publicationcode="$route.params.all || null" />
 </template>

@@ -10,7 +10,9 @@
       $emit('@open:popper', $event);
     "
   >
-    <span @mouseover="isOverPopupText = true" @mouseout.prevent="closePopupSoon"><slot /></span>
+    <span @mouseover="isOverPopupText = true" @mouseout.prevent="closePopupSoon"
+      ><slot
+    /></span>
     <template #content>
       <b-card
         body-class="p-0"
@@ -27,33 +29,30 @@
 </template>
 
 <script setup>
-import Popper from '@bperel/vue3-popper-teleport'
-
-import { l10n } from '~/stores/l10n'
+import Popper from "@bperel/vue3-popper-teleport";
 
 defineProps({
   placement: {
     type: String,
-    default: 'top',
+    default: "top",
   },
-})
+});
 
-defineEmits(['@open:popper'])
+defineEmits(["@open:popper"]);
 
-const { r } = l10n()
-const closeDelay = 2000
-const closePopupSoon = (e) => {
+const closeDelay = 2000;
+const closePopupSoon = () => {
   setTimeout(() => {
-    isOverPopupText = false
-  }, closeDelay)
-}
-const isOverPopup = $ref(false)
-let isOverPopupText = $ref(false)
+    isOverPopupText = false;
+  }, closeDelay);
+};
+const isOverPopup = $ref(false);
+let isOverPopupText = $ref(false);
 
 const onOpen = () => {
-  for (const element of document.getElementsByClassName('popper'))
-    element.style.display = 'none'
-}
+  for (const element of document.getElementsByClassName("popper"))
+    element.style.display = "none";
+};
 </script>
 
 <style scoped lang="scss">

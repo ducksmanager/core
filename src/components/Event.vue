@@ -6,11 +6,12 @@
       :stats="stats[event.userId]"
       :points="points[event.userId]"
     /><span v-else-if="event.userId === null" class="text-capitalize">
-      {{ $t("un visiteur anonyme") }} </span><template v-if="event.type === 'signup'">
+      {{ $t("un visiteur anonyme") }} </span
+    ><template v-if="event.type === 'signup'">
       &nbsp;{{
         $t("a commencé sa collection sur DucksManager. Bienvenue !")
-      }}
-    </template><span
+      }} </template
+    ><span
       v-if="event.type === 'medal'"
       v-html="
         `&nbsp;${$t('a obtenu la médaille <b>{0} niveau {1}</b>', [
@@ -20,18 +21,20 @@
       "
     /><template v-if="event.type === 'bookstore_comment'">
       &nbsp;{{ $t("a visité la bouquinerie") }}
-      <i><a :href="r('/bookstores')">{{ event.name }}</a></i>
+      <i
+        ><a :href="r('/bookstores')">{{ event.name }}</a></i
+      >
     </template>
     <template v-if="event.type === 'collection_update'">
       &nbsp;{{ $t("a ajouté")
-            }}<Issue
-              v-if="publicationNames[event.publicationCode]"
-              :publicationname="publicationNames[event.publicationCode]"
-              :publicationcode="event.publicationCode"
-              :issuenumber="event.issueNumber"
-              hide-condition
-              :flex="false"
-            />
+      }}<Issue
+        v-if="publicationNames[event.publicationCode]"
+        :publicationname="publicationNames[event.publicationCode]"
+        :publicationcode="event.publicationCode"
+        :issuenumber="event.issueNumber"
+        hide-condition
+        :flex="false"
+      />
       <OtherIssues :number="event.numberOfIssues" />
       {{ $t("à sa collection") }}
     </template>
@@ -53,9 +56,7 @@
       <template v-if="event.users.length > 1">
         &nbsp;{{ $t("ont créé la tranche") }}
       </template>
-      <template v-else>
-        &nbsp;{{ $t("a créé la tranche") }}
-      </template>
+      <template v-else> &nbsp;{{ $t("a créé la tranche") }} </template>
       <BookcasePopover
         :id="`event-edges-${event.timestamp}`"
         :edges="event.edges"
@@ -72,8 +73,9 @@
             :number="event.edges.length"
             :text-single="$t('autre tranche')"
             :text-multiple="$t('autres tranches')"
-          />&nbsp;</span>
-      </BookcasePopover>{{ $t("pour la bibliothèque DucksManager") }}
+          />&nbsp;</span
+        > </BookcasePopover
+      >{{ $t("pour la bibliothèque DucksManager") }}
     </template>
     <template v-if="event.type === 'subscription_additions'">
       <span v-for="(userId, index) in event.users" :key="userId">
@@ -116,31 +118,31 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
-import { coa } from '~/stores/coa'
-import { l10n } from '~/stores/l10n'
-import { users } from '~/stores/users'
+import { coa } from "~/stores/coa";
+import { l10n } from "~/stores/l10n";
+import { users } from "~/stores/users";
 
 defineProps({
   event: { type: Object, required: true },
-})
+});
 
-const publicationNames = $computed(() => coa().publicationNames)
-const stats = $computed(() => users().stats)
-const points = $computed(() => users().points)
-const { r } = l10n()
-const { t: $t } = useI18n()
+const publicationNames = $computed(() => coa().publicationNames);
+const stats = $computed(() => users().stats);
+const points = $computed(() => users().points);
+const { r } = l10n();
+const { t: $t } = useI18n();
 const getMedalTitle = (contribution) => {
   switch (contribution.toUpperCase()) {
-    case 'CREATEUR':
-      return $t('Concepteur de tranches')
-    case 'PHOTOGRAPHE':
-      return $t('Photographe de tranches')
-    case 'DUCKHUNTER':
-      return $t('Duckhunter')
+    case "CREATEUR":
+      return $t("Concepteur de tranches");
+    case "PHOTOGRAPHE":
+      return $t("Photographe de tranches");
+    case "DUCKHUNTER":
+      return $t("Duckhunter");
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

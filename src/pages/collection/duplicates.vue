@@ -17,40 +17,40 @@ alias: [/collection/doubles]
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection } from '~/stores/collection'
-let hasPublicationNames = $ref(false)
-let issueNumbersByPublicationCode = $ref(null)
-const total = $computed(() => collection().total)
-const duplicateIssues = $computed(() => collection().duplicateIssues)
-const publicationNames = $computed(() => coa().publicationNames)
-const fetchPublicationNames = coa().fetchPublicationNames
-const loadCollection = collection().loadCollection
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+let hasPublicationNames = $ref(false);
+let issueNumbersByPublicationCode = $ref(null);
+const duplicateIssues = $computed(() => collection().duplicateIssues);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadCollection = collection().loadCollection;
 
 watch(
   () => duplicateIssues,
   async (duplicateIssues) => {
     if (duplicateIssues) {
-      issueNumbersByPublicationCode = {}
-      Object.keys(duplicateIssues).forEach(({publicationcode, issuenumber}) => {
-        if (!issueNumbersByPublicationCode[publicationcode])
-          issueNumbersByPublicationCode[publicationcode] = []
+      issueNumbersByPublicationCode = {};
+      Object.keys(duplicateIssues).forEach(
+        ({ publicationcode, issuenumber }) => {
+          if (!issueNumbersByPublicationCode[publicationcode])
+            issueNumbersByPublicationCode[publicationcode] = [];
 
-        issueNumbersByPublicationCode[publicationcode].push(issuenumber)
-      })
+          issueNumbersByPublicationCode[publicationcode].push(issuenumber);
+        }
+      );
 
-      await fetchPublicationNames(Object.keys(issueNumbersByPublicationCode))
-      hasPublicationNames = true
+      await fetchPublicationNames(Object.keys(issueNumbersByPublicationCode));
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 onMounted(() => {
-  loadCollection()
-})
+  loadCollection();
+});
 </script>
 
 <style scoped>

@@ -42,23 +42,20 @@
             >
               <a
                 class="dropdown-item"
-                :href="
-                  r(`/collection/show/${publicationCode}`)
-                "
+                :href="r(`/collection/show/${publicationCode}`)"
               >
                 {{
-                  publicationNames[publicationCode]
-                    || publicationCode.split("/")[1]
+                  publicationNames[publicationCode] ||
+                  publicationCode.split("/")[1]
                 }}
               </a>
             </li>
           </ul>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link"
-            :href="r('/collection/show/new')"
-          >{{ $t("Nouveau magazine") }}</a>
+          <a class="nav-link" :href="r('/collection/show/new')">{{
+            $t("Nouveau magazine")
+          }}</a>
         </li>
       </ul>
     </div>
@@ -74,62 +71,62 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection } from '~/stores/collection'
-import { l10n } from '~/stores/l10n'
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
 
-let hasPublicationNames = $ref(false)
-const totalPerCountry = $computed(() => collection().totalPerCountry)
-const totalPerPublication = $computed(() => collection().totalPerPublication)
-const countryNames = $computed(() => coa().countryNames)
-const publicationNames = $computed(() => coa().publicationNames)
+let hasPublicationNames = $ref(false);
+const totalPerCountry = $computed(() => collection().totalPerCountry);
+const totalPerPublication = $computed(() => collection().totalPerPublication);
+const countryNames = $computed(() => coa().countryNames);
+const publicationNames = $computed(() => coa().publicationNames);
 const sortedCountries = $computed(
   () =>
-    totalPerCountry
-      && Object.keys(totalPerCountry).sort((countryCode1, countryCode2) =>
-        countryNames[countryCode1].localeCompare(countryNames[countryCode2]),
-      ),
-)
+    totalPerCountry &&
+    Object.keys(totalPerCountry).sort((countryCode1, countryCode2) =>
+      countryNames[countryCode1].localeCompare(countryNames[countryCode2])
+    )
+);
 const publicationsPerCountry = $computed(
   () =>
-    totalPerCountry
-      && hasPublicationNames
-      && Object.keys(totalPerCountry).reduce(
-        (acc, country) => ({
-          ...acc,
-          [country]: Object.keys(totalPerPublication).filter(
-            publicationCode => publicationCode.split('/')[0] === country,
-          ),
-        }),
-        {},
-      ),
-)
-const { r } = l10n()
-const fetchCountryNames = coa().fetchCountryNames
-const fetchPublicationNames = coa().fetchPublicationNames
-const getSortedPublications = country =>
+    totalPerCountry &&
+    hasPublicationNames &&
+    Object.keys(totalPerCountry).reduce(
+      (acc, country) => ({
+        ...acc,
+        [country]: Object.keys(totalPerPublication).filter(
+          (publicationCode) => publicationCode.split("/")[0] === country
+        ),
+      }),
+      {}
+    )
+);
+const { r } = l10n();
+const fetchCountryNames = coa().fetchCountryNames;
+const fetchPublicationNames = coa().fetchPublicationNames;
+const getSortedPublications = (country) =>
   publicationsPerCountry?.[country].sort(
     (a, b) =>
-      publicationNames[a]
-        && publicationNames[a].localeCompare(publicationNames[b]),
-  )
+      publicationNames[a] &&
+      publicationNames[a].localeCompare(publicationNames[b])
+  );
 
 watch(
   () => totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await fetchPublicationNames(Object.keys(newValue))
-      hasPublicationNames = true
+      await fetchPublicationNames(Object.keys(newValue));
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 onMounted(async () => {
-  await fetchCountryNames()
-})
+  await fetchCountryNames();
+});
 </script>
 
 <style scoped lang="scss">

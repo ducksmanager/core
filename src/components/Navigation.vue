@@ -5,7 +5,7 @@
         <BIconHouseFill />
         {{ $t("Collection") }}
       </template>
-      <template #items v-if="username !== undefined">
+      <template v-if="username !== undefined" #items>
         <template v-if="username">
           <NavigationItem path="/bookcase/show">
             <BIconBookHalf />
@@ -73,12 +73,11 @@ import {
   BIconList,
   BIconPrinterFill,
   BIconXSquareFill,
-} from 'bootstrap-icons-vue'
+} from "bootstrap-icons-vue";
 
 import { collection } from "~/stores/collection";
 
-let username = $computed(() => collection().user?.username)
-
+let username = $computed(() => collection().user?.username);
 </script>
 
 <style lang="scss" scoped>

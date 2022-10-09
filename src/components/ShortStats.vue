@@ -10,7 +10,7 @@
       {{ $t("Votre collection est composée de") }}
       <b>{{ Object.keys(totalPerPublication).length }}</b>
       {{ $t("magazines différents issus de") }}
-      <b>{{Object.keys(totalPerCountry).length}}</b>
+      <b>{{ Object.keys(totalPerCountry).length }}</b>
       {{ t("pays | pays", Object.keys(totalPerCountry).length) }}.
     </div>
     <slot name="non-empty-collection" />
@@ -18,16 +18,18 @@
 </template>
 
 <script setup>
-import { collection } from '~/stores/collection'
 import { useI18n } from "vue-i18n";
-const hasPublicationNames = $ref(false)
-const collectionStore = collection()
-const total = $computed(() => collectionStore.total)
-const totalUniqueIssues = $computed(() => collectionStore.totalUniqueIssues)
-const totalPerCountry = $computed(() => collectionStore.totalPerCountry)
-const totalPerPublication = $computed(() => collectionStore.totalPerPublication)
 
-const {t} = useI18n()
+import { collection } from "~/stores/collection";
+const collectionStore = collection();
+const total = $computed(() => collectionStore.total);
+const totalUniqueIssues = $computed(() => collectionStore.totalUniqueIssues);
+const totalPerCountry = $computed(() => collectionStore.totalPerCountry);
+const totalPerPublication = $computed(
+  () => collectionStore.totalPerPublication
+);
+
+const { t } = useI18n();
 </script>
 
 <style scoped>

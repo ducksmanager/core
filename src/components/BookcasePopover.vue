@@ -29,9 +29,9 @@
 </template>
 
 <script setup>
-import { BCol, BRow } from 'bootstrap-vue-3'
+import { BCol, BRow } from "bootstrap-vue-3";
 
-import { coa } from '~/stores/coa'
+import { coa } from "~/stores/coa";
 
 defineProps({
   id: {
@@ -42,14 +42,14 @@ defineProps({
     type: Array,
     required: true,
   },
-})
+});
 
 const bookcaseTextures = {
-  bookcase: 'bois/HONDURAS MAHOGANY',
-  bookshelf: 'bois/KNOTTY PINE',
-}
+  bookcase: "bois/HONDURAS MAHOGANY",
+  bookshelf: "bois/KNOTTY PINE",
+};
 
-const publicationNames = $computed(() => coa().publicationNames)
+const publicationNames = $computed(() => coa().publicationNames);
 </script>
 
 <style lang="scss">

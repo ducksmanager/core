@@ -18,17 +18,15 @@
 </template>
 
 <script setup>
-import { useHead } from '@vueuse/head'
-import { bookcase } from "~/stores/bookcase";
-const route = useRoute()
-const topMenu = $computed(() => route.path.match(/\/([^/]+)/)?.[1])
+import { useHead } from "@vueuse/head";
 
-const slots = useSlots()
+const route = useRoute();
+const topMenu = $computed(() => route.path.match(/\/([^/]+)/)?.[1]);
+
+const slots = useSlots();
 useHead({
-  title: slots.title
-    || 'DucksManager',
-})
-
+  title: slots.title || "DucksManager",
+});
 </script>
 
 <style scoped lang="scss">

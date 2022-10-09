@@ -11,7 +11,7 @@
             publishedEdgesSincePreviousVisit.length > 1
               ? 'Depuis votre dernière visite, {0} nouvelles tranches appartenant à votre collection a été conçue pour la bibliothèque DucksManager'
               : 'Depuis votre dernière visite, {0} nouvelle tranche appartenant à votre collection a été conçue pour la bibliothèque DucksManager',
-            [publishedEdgesSincePreviousVisit.length],
+            [publishedEdgesSincePreviousVisit.length]
           )
         "
       />
@@ -37,7 +37,7 @@
           $t(
             publishedEdgesSincePreviousVisit.length > 1
               ? `Accédez à <a href='/bookcase'>votre bibliothèque</a> pour les voir.`
-              : `Accédez à <a href='/bookcase'>votre bibliothèque</a> pour la voir.`,
+              : `Accédez à <a href='/bookcase'>votre bibliothèque</a> pour la voir.`
           )
         "
       />
@@ -46,27 +46,27 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection as collectionStore } from '~/stores/collection'
+import { coa } from "~/stores/coa";
+import { collection as collectionStore } from "~/stores/collection";
 
-const publicationNames = $computed(() => coa().publicationNames)
-const previousVisit = $computed(() => collectionStore().previousVisit)
-const lastPublishedEdgesForCurrentUser
-    = collectionStore().lastPublishedEdgesForCurrentUser
+const publicationNames = $computed(() => coa().publicationNames);
+const previousVisit = $computed(() => collectionStore().previousVisit);
+const lastPublishedEdgesForCurrentUser =
+  collectionStore().lastPublishedEdgesForCurrentUser;
 const publishedEdgesSincePreviousVisit = () =>
   lastPublishedEdgesForCurrentUser?.filter(
-    ({ creationDate }) => creationDate >= previousVisit,
-  )
+    ({ creationDate }) => creationDate >= previousVisit
+  );
 const hasPublicationNames = () =>
   publishedEdgesSincePreviousVisit?.every(
-    ({ publicationcode }) => publicationNames[publicationcode],
-  )
+    ({ publicationcode }) => publicationNames[publicationcode]
+  );
 
 onMounted(async () => {
-  await collectionStore().loadLastPublishedEdgesForCurrentUser()
-})
+  await collectionStore().loadLastPublishedEdgesForCurrentUser();
+});
 </script>
 
 <style scoped>

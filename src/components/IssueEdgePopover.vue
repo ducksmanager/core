@@ -12,11 +12,11 @@
         <div v-if="!hasEdge" class="has-no-edge">
           {{
             $t(
-              "Cette tranche n'est pas visible car nous n'en possédons pas de photographie...",
+              "Cette tranche n'est pas visible car nous n'en possédons pas de photographie..."
             )
-          }}<br>
+          }}<br />
           <div v-if="!isSharedBookcase">
-            {{ $t("Vous pouvez photographier cette tranche ?") }}<br>
+            {{ $t("Vous pouvez photographier cette tranche ?") }}<br />
             <div class="medal-progress-wrapper">
               <MedalProgress
                 contribution="Photographe"
@@ -28,7 +28,7 @@
               {{ $t("Envoyez-nous une photo et gagnez") }}
               <span>{{ extraPoints }}</span> {{ $t("Points") }} !
             </div>
-            <br>
+            <br />
             <BButton
               variant="info"
               href="https://edgecreator.ducksmanager.net"
@@ -44,10 +44,10 @@
 </template>
 
 <script setup>
-import { BButton } from 'bootstrap-vue-3'
+import { BButton } from "bootstrap-vue-3";
 
-import { bookcase } from '~/stores/bookcase'
-import { users } from '~/stores/users'
+import { bookcase } from "~/stores/bookcase";
+import { users } from "~/stores/users";
 
 defineProps({
   hasEdge: {
@@ -58,12 +58,12 @@ defineProps({
     type: Number,
     default: null,
   },
-})
+});
 
-const contribution = 'Photographe'
-const isSharedBookcase = bookcase().isSharedBookcase
-const user = $computed(() => collection().user)
-const points = $computed(() => user && users().points?.[user.id][contribution])
+const contribution = "Photographe";
+const isSharedBookcase = bookcase().isSharedBookcase;
+const user = $computed(() => collection().user);
+const points = $computed(() => user && users().points?.[user.id][contribution]);
 </script>
 
 <style scoped lang="scss">

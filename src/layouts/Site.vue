@@ -15,32 +15,31 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent, onMounted, useAttrs } from 'vue'
+import { defineAsyncComponent, onMounted, useAttrs } from "vue";
 
-import { l10n } from '~/stores/l10n.js'
+import { l10n } from "~/stores/l10n.js";
 
 const { bare, page } = defineProps({
   page: { type: String, required: true },
   title: { type: String, default: null },
   innerTitle: { type: String, default: null },
-  bare: { type: String, default: '0' },
-})
-const attrs = useAttrs()
+  bare: { type: String, default: "0" },
+});
+const attrs = useAttrs();
 const pageComponent = $computed(() =>
-  defineAsyncComponent(() => import(`./${page}`)),
-)
-const isBare = $computed(() => bare === '1')
-const l10nRoutes = $computed(() => l10n().l10nRoutes)
+  defineAsyncComponent(() => import(`./${page}`))
+);
+const isBare = $computed(() => bare === "1");
+const l10nRoutes = $computed(() => l10n().l10nRoutes);
 const attrsWithoutId = $computed(() =>
   Object.keys(attrs)
-    .filter(attrKey => attrKey !== 'id')
-    .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {}),
-)
+    .filter((attrKey) => attrKey !== "id")
+    .reduce((acc, attrKey) => ({ ...acc, [attrKey]: attrs[attrKey] }), {})
+);
 
 onMounted(() => {
-  if (isBare)
-    document.body.className = 'bare'
-})
+  if (isBare) document.body.className = "bare";
+});
 </script>
 
 <style scoped lang="scss">

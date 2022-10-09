@@ -29,15 +29,15 @@
 </template>
 
 <script setup>
-import { BCarousel, BCarouselSlide } from 'bootstrap-vue-3'
+import { BCarousel, BCarouselSlide } from "bootstrap-vue-3";
 
 defineProps({
   issues: { type: Array, required: true },
   userPoints: { type: Number, required: true },
   publicationNames: { type: Object, required: true },
-})
+});
 
-const currentSlide = $ref(0)
+const currentSlide = $ref(0);
 </script>
 
 <style scoped lang="scss">

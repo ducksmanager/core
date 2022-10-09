@@ -2,7 +2,7 @@
   <BForm ref="form" method="post">
     <BRow class="mt-3 align-items-center">
       <BCol sm="3" md="2">
-        {{ $t("Abonnement au magazine") }}<br>
+        {{ $t("Abonnement au magazine") }}<br />
         <template v-if="isEdit">
           <PublicationSelect
             no-button
@@ -30,7 +30,7 @@
           required
           class="form-control"
           type="date"
-        >
+        />
         <template v-else>
           {{ editSubscription.startDate }}
         </template>
@@ -42,7 +42,7 @@
           required
           class="form-control"
           type="date"
-        >
+        />
         <template v-else>
           {{ editSubscription.endDate }}
         </template>
@@ -72,9 +72,9 @@
 </template>
 
 <script setup>
-import { BButton, BCol, BForm, BRow } from 'bootstrap-vue-3'
+import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
 
-import { coa } from '~/stores/coa'
+import { coa } from "~/stores/coa";
 
 const { endDate, publicationCode, startDate } = defineProps({
   id: {
@@ -97,14 +97,14 @@ const { endDate, publicationCode, startDate } = defineProps({
     default: null,
     type: Date,
   },
-})
-defineEmits(['delete', 'edit', 'start-edit', 'cancel-edit'])
+});
+defineEmits(["delete", "edit", "start-edit", "cancel-edit"]);
 const editSubscription = {
   publicationCode,
-  startDate: startDate && startDate.toISOString().split('T')[0],
-  endDate: endDate && endDate.toISOString().split('T')[0],
-}
-const publicationNames = $computed(() => coa().publicationNames)
+  startDate: startDate && startDate.toISOString().split("T")[0],
+  endDate: endDate && endDate.toISOString().split("T")[0],
+};
+const publicationNames = $computed(() => coa().publicationNames);
 </script>
 
 <style scoped>

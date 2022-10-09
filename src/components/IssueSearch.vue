@@ -30,8 +30,8 @@
               searchContext === 'story'
                 ? $t('Rechercher une histoire')
                 : $t(
-                  `Rechercher les publications d'une histoire à partir d'un code histoire`,
-                )
+                    `Rechercher les publications d'une histoire à partir d'un code histoire`
+                  )
             "
           />
           <datalist v-if="searchResults.results && !isSearching">
@@ -50,7 +50,7 @@
                   :value="
                     conditions.find(
                       ({ dbValue }) =>
-                        dbValue === searchResult.collectionIssue.condition,
+                        dbValue === searchResult.collectionIssue.condition
                     )
                   "
                 />&nbsp;{{ searchResult.title }}
@@ -73,15 +73,14 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import { BDropdown, BDropdownItem, BFormInput } from 'bootstrap-vue-3'
+import axios from "axios";
+import { BDropdown, BDropdownItem, BFormInput } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
-import { coa } from '~/stores/coa'
-import { collection as collectionStore } from '~/stores/collection'
-import { collection } from '~/composables/collection'
-import { condition } from '~/composables/condition'
+import { condition } from "~/composables/condition";
+import { coa } from "~/stores/coa";
+import { collection as collectionStore } from "~/stores/collection";
 
 defineProps({
   withTitle: {
@@ -92,66 +91,60 @@ defineProps({
     type: Boolean,
     default: true,
   },
-})
-const emit = defineEmits(['issue-selected'])
-const { findInCollection } = collection()
-const { conditions } = condition()
-const publicationNames = $computed(() => coa().publicationNames)
-const { t: $t } = useI18n()
-const fetchPublicationNames = coa().fetchPublicationNames
-const isInCollection = issue =>
-  findInCollection(issue.publicationcode, issue.issuenumber)
+});
+const emit = defineEmits(["issue-selected"]);
+const { conditions } = condition();
+const publicationNames = $computed(() => coa().publicationNames);
+const { t: $t } = useI18n();
+const fetchPublicationNames = coa().fetchPublicationNames;
+const isInCollection = (issue) =>
+  collectionStore().findInCollection(issue.publicationcode, issue.issuenumber);
 const searchContexts = {
-  story: $t('titre d\'histoire'),
-  storycode: $t('code histoire'),
-}
+  story: $t("titre d'histoire"),
+  storycode: $t("code histoire"),
+};
 const searchContextsWithoutCurrent = $computed(() =>
   Object.keys(searchContexts)
-    .filter(currentSearchContext => currentSearchContext !== searchContext)
+    .filter((currentSearchContext) => currentSearchContext !== searchContext)
     .reduce(
       (acc, currentSearchContext) => ({
         ...acc,
         [currentSearchContext]: searchContexts[currentSearchContext],
       }),
-      {},
-    ),
-)
-const isSearchByCode = $computed(() => searchContext === 'storycode')
+      {}
+    )
+);
+const isSearchByCode = $computed(() => searchContext === "storycode");
 const selectSearchResult = (searchResult) => {
   if (isSearchByCode) {
-    emit('issue-selected', searchResult)
+    emit("issue-selected", searchResult);
+  } else {
+    searchContext = "storycode";
+    search = searchResult.storycode;
   }
-  else {
-    searchContext = 'storycode'
-    search = searchResult.storycode
-  }
-}
+};
 const runSearch = async (value) => {
-  isSearching = true
+  isSearching = true;
   try {
     if (isSearchByCode) {
       searchResults = (
         await axios.get(
-            `/coa/list/issues/withStoryVersionCode/${value.replace(
-              /^code=/,
-              '',
-            )}`,
+          `/coa/list/issues/withStoryVersionCode/${value.replace(/^code=/, "")}`
         )
-      ).data
+      ).data;
       searchResults.results = searchResults.results.sort((issue1, issue2) =>
-        Math.sign(!!isInCollection(issue2) - !!isInCollection(issue1)),
-      )
+        Math.sign(!!isInCollection(issue2) - !!isInCollection(issue1))
+      );
       await fetchPublicationNames(
-        searchResults.results.map(({ publicationcode }) => publicationcode),
-      )
-    }
-    else {
+        searchResults.results.map(({ publicationcode }) => publicationcode)
+      );
+    } else {
       searchResults = (
-        await axios.post('/coa/stories/search/withIssues', {
+        await axios.post("/coa/stories/search/withIssues", {
           keywords: value,
         })
-      ).data
-      searchResults.results = searchResults.results.map(story => ({
+      ).data;
+      searchResults.results = searchResults.results.map((story) => ({
         ...story,
         collectionIssue: collectionStore().collection.find(
           ({
@@ -161,40 +154,34 @@ const runSearch = async (value) => {
             story.issues
               .map(
                 ({ publicationcode, issuenumber }) =>
-                    `${publicationcode}-${issuenumber}`,
+                  `${publicationcode}-${issuenumber}`
               )
-              .includes(
-                  `${collectionPublicationCode}-${collectionIssueNumber}`,
-              ),
+              .includes(`${collectionPublicationCode}-${collectionIssueNumber}`)
         ),
-      }))
+      }));
     }
-  }
-  finally {
-    isSearching = false
+  } finally {
+    isSearching = false;
     // The input value as changed since the beginning of the search, searching again
-    if (value !== pendingSearch)
-      await runSearch(pendingSearch)
+    if (value !== pendingSearch) await runSearch(pendingSearch);
   }
-}
+};
 
-let isSearching = $ref(false)
-let pendingSearch = $ref(null)
-let search = $ref('')
-let searchResults = $ref([])
-let searchContext = $ref('story')
+let isSearching = $ref(false);
+let pendingSearch = $ref(null);
+let search = $ref("");
+let searchResults = $ref([]);
+let searchContext = $ref("story");
 
 watch(
   () => search,
   async (newValue) => {
     if (newValue) {
-      pendingSearch = newValue
-      if (!isSearching)
-        await runSearch(newValue)
+      pendingSearch = newValue;
+      if (!isSearching) await runSearch(newValue);
     }
-  },
-)
-
+  }
+);
 
 onMounted(async () => {
   await collectionStore().loadCollection();

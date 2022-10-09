@@ -1,5 +1,5 @@
 <template>
-  <div @mouseout="currentRating=rating">
+  <div @mouseout="currentRating = rating">
     <span
       v-for="index in maxRating"
       :key="index"
@@ -14,7 +14,10 @@
 
 <script setup>
 import { BIconStar, BIconStarFill } from "bootstrap-icons-vue";
-const props = defineProps({ rating: Number, maxRating: Number });
+const props = defineProps({
+  rating: { type: Number, required: true },
+  maxRating: { type: Number, required: true },
+});
 const emit = defineEmits(["update:rating"]);
 
 const currentRating = $ref(props.rating);

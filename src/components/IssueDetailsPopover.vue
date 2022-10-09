@@ -22,7 +22,7 @@
           class="cover"
           @error="coverUrl = null"
           @click="$emit('click')"
-        >
+        />
         <div>
           {{ $t("Cliquez sur la couverture pour parcourir ce numéro") }}
         </div>
@@ -35,9 +35,9 @@
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { watch } from "vue";
 
-import { coa } from '~/stores/coa'
+import { coa } from "~/stores/coa";
 
 const { issueNumber, publicationCode } = defineProps({
   publicationCode: {
@@ -48,41 +48,38 @@ const { issueNumber, publicationCode } = defineProps({
     type: String,
     required: true,
   },
-})
-defineEmits(['click'])
+});
+defineEmits(["click"]);
 
-let isCoverLoading = $ref(true)
-let coverUrl = $ref(null)
+let isCoverLoading = $ref(true);
+let coverUrl = $ref(null);
 
-const cloudinaryBaseUrl
-    = 'https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/'
-const publicationNames = $computed(() => coa().publicationNames)
-const issueDetails = $computed(() => coa().issueDetails)
-const id = $computed(
-  () => `issue-details-${publicationCode.replace('/', '-')}-${issueNumber}`,
-)
-const issueCode = $computed(() => `${publicationCode} ${issueNumber}`)
-const fetchIssueUrls = coa().fetchIssueUrls
+const cloudinaryBaseUrl =
+  "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
+const publicationNames = $computed(() => coa().publicationNames);
+const issueDetails = $computed(() => coa().issueDetails);
+const issueCode = $computed(() => `${publicationCode} ${issueNumber}`);
+const fetchIssueUrls = coa().fetchIssueUrls;
 const loadIssueUrls = async () => {
-  isCoverLoading = true
+  isCoverLoading = true;
   await fetchIssueUrls({
     publicationCode,
     issueNumber,
-  })
-  isCoverLoading = false
+  });
+  isCoverLoading = false;
 
   const possibleCoverUrl = issueDetails?.[issueCode]?.entries?.find(
-    ({ position }) => !/^p/.test(position),
-  )?.url
-  coverUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null
-}
+    ({ position }) => !/^p/.test(position)
+  )?.url;
+  coverUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
+};
 
 watch(
   () => coverUrl,
   (value) => {
-    coa().setCoverUrl(issueNumber, value)
-  },
-)
+    coa().setCoverUrl(issueNumber, value);
+  }
+);
 </script>
 
 <style scoped lang="scss">

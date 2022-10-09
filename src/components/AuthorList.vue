@@ -9,12 +9,12 @@
       {{ $t("Aucun auteur noté.") }}
       {{
         $t(
-          "Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez.",
+          "Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez."
         )
       }}
       {{
         $t(
-          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.",
+          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."
         )
       }}
     </BAlert>
@@ -23,7 +23,7 @@
       <p>
         {{
           $t(
-            "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous",
+            "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous"
           )
         }}
         <a :href="r('/expand')">{{
@@ -60,7 +60,7 @@
       <BAlert v-if="watchedAuthors.length >= 5" variant="warning" show>
         {{
           $t(
-            "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres.",
+            "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres."
           )
         }}
       </BAlert>
@@ -88,7 +88,7 @@
                   @click="
                     isAuthorWatched(personcode)
                       ? () => {}
-                      : createRating({personcode})
+                      : createRating({ personcode })
                   "
                 >
                   {{ fullName }}
@@ -103,80 +103,78 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import { BAlert, BCol, BFormInput, BRow } from 'bootstrap-vue-3'
-import { watch } from 'vue'
+import axios from "axios";
+import { BAlert, BCol, BFormInput, BRow } from "bootstrap-vue-3";
+import { watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection } from '~/stores/collection'
-import { l10n } from '~/stores/l10n'
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
 
 const { watchedAuthors } = defineProps({
   watchedAuthors: {
     type: Array,
     required: true,
   },
-})
+});
 
-let isSearching = $ref(false)
-let pendingSearch = $ref(null)
-const search = $ref('')
-let searchResults = $ref(null)
+let isSearching = $ref(false);
+let pendingSearch = $ref(null);
+const search = $ref("");
+let searchResults = $ref(null);
 
-const personNames = $computed(() => coa().personNames)
+const personNames = $computed(() => coa().personNames);
 
 watch(
   () => search,
   async (newValue) => {
-    if (newValue !== '') {
-      pendingSearch = newValue
-      if (!isSearching)
-        await runSearch(newValue)
+    if (newValue !== "") {
+      pendingSearch = newValue;
+      if (!isSearching) await runSearch(newValue);
     }
-  },
-)
+  }
+);
 watch(
   () => watchedAuthors,
   async (newValue) => {
     if (watchedAuthors?.length) {
-      await coa().fetchPersonNames(newValue.map(({ personcode }) => personcode))
+      await coa().fetchPersonNames(
+        newValue.map(({ personcode }) => personcode)
+      );
     }
   },
-  { immediate: true },
-)
-const { r } = l10n()
-const { loadWatchedAuthors } = collection()
-const isAuthorWatched = personcode =>
+  { immediate: true }
+);
+const { r } = l10n();
+const { loadWatchedAuthors } = collection();
+const isAuthorWatched = (personcode) =>
   watchedAuthors.some(
-    ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode,
-  )
+    ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
+  );
 const createRating = async (author) => {
-  await axios.put('/collection/authors/watched', author)
-  await loadWatchedAuthors(true)
-}
+  await axios.put("/collection/authors/watched", author);
+  await loadWatchedAuthors(true);
+};
 const updateRating = async (author) => {
-  await axios.post('/collection/authors/watched', author)
-}
+  await axios.post("/collection/authors/watched", author);
+};
 const deleteAuthor = async (author) => {
-  await axios.delete('/collection/authors/watched', author)
-  await loadWatchedAuthors(true)
-}
+  await axios.delete("/collection/authors/watched", author);
+  await loadWatchedAuthors(true);
+};
 const runSearch = async (value) => {
   if (!isSearching) {
     try {
-      isSearching = true
-      searchResults = (
-        await axios.get(`/coa/authorsfullnames/search/${value}`)
-      ).data
-    }
-    finally {
-      isSearching = false
+      isSearching = true;
+      searchResults = (await axios.get(`/coa/authorsfullnames/search/${value}`))
+        .data;
+    } finally {
+      isSearching = false;
       // The input value has changed since the beginning of the search, searching again
-      if (value !== pendingSearch)
-        await runSearch(pendingSearch)
+      if (value !== pendingSearch) await runSearch(pendingSearch);
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

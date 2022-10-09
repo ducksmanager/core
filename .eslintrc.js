@@ -7,7 +7,13 @@ module.exports = {
     "prettier",
     "plugin:@typescript-eslint/recommended",
   ],
-  parser: "@typescript-eslint/parser",
+  parser: "vue-eslint-parser",
+  parserOptions: { parser: "@typescript-eslint/parser" },
+  overrides: [
+    {
+      files: ["*.js", "*.ts", "*.vue"],
+    },
+  ],
   root: true,
   rules: {
     "@typescript-eslint/no-non-null-assertion": "off",

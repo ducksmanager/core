@@ -8,24 +8,24 @@
 </template>
 
 <script setup>
-import { l10n } from '~/stores/l10n'
+import { l10n } from "~/stores/l10n";
 
 const { path } = defineProps({
   path: { type: String, required: true },
   icon: { type: String, default: null },
-})
-const { r } = l10n()
+});
+const { r } = l10n();
 const active = $computed(
   () =>
     !r(path)
-      .split('/')
+      .split("/")
       .find(
-        pathPart => !window.location.pathname.split('/').includes(pathPart),
-      )
-      && !/(bibliotheque\/afficher)|(bookcase\/show\/).+$/.test(
-        window.location.pathname,
-      ),
-)
+        (pathPart) => !window.location.pathname.split("/").includes(pathPart)
+      ) &&
+    !/(bibliotheque\/afficher)|(bookcase\/show\/).+$/.test(
+      window.location.pathname
+    )
+);
 </script>
 
 <style scoped lang="scss">

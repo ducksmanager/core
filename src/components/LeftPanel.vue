@@ -11,11 +11,11 @@
       </div>
       <div id="login">
         <a id="logo_small" :href="user ? r('/collection/show') : '/'">
-          <img src="/images/logo_name.jpg">
+          <img src="/images/logo_name.jpg" />
         </a>
 
         <div v-if="user" id="login_status">
-          <img alt="O" src="/images/icons/green.png">&nbsp;
+          <img alt="O" src="/images/icons/green.png" />&nbsp;
           <span>{{ user.username }}</span>
         </div>
       </div>
@@ -34,7 +34,8 @@
 
         <a class="navbar-brand" href="#">
           <SwitchLocale fixed />
-          <Banner small /></a>
+          <Banner small
+        /></a>
       </div>
     </nav>
     <RecentEvents />
@@ -42,25 +43,29 @@
 </template>
 
 <script setup>
-import Popper from '@bperel/vue3-popper-teleport'
-
-import { collection } from '~/stores/collection'
-import { l10n } from '~/stores/l10n'
-import { users } from '~/stores/users'
+import Popper from "@bperel/vue3-popper-teleport";
 import axios from "axios";
 
-const points = $computed(() => users().points)
-const user = $computed(() => collection().user)
-const { r } = l10n()
+import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
+import { users } from "~/stores/users";
 
-watch($$(user), newValue => {
-  if (newValue) {
-    axios
-      .post('/collection/lastvisit')
-      .then(data => collection().setPreviousVisit(data))
-    users().fetchStats([newValue.id])
-  }
-}, {immediate: true})
+const points = $computed(() => users().points);
+const user = $computed(() => collection().user);
+const { r } = l10n();
+
+watch(
+  $$(user),
+  (newValue) => {
+    if (newValue) {
+      axios
+        .post("/collection/lastvisit")
+        .then((data) => collection().setPreviousVisit(data));
+      users().fetchStats([newValue.id]);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss">

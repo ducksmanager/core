@@ -35,12 +35,12 @@
 </template>
 
 <script setup>
-import { BProgress, BProgressBar } from 'bootstrap-vue-3'
+import { BProgress, BProgressBar } from "bootstrap-vue-3";
 
 const { contribution, userLevelPoints } = defineProps({
   contribution: {
     type: String,
-    default: 'Photographe',
+    default: "Photographe",
   },
   userLevelPoints: {
     type: Number,
@@ -50,12 +50,12 @@ const { contribution, userLevelPoints } = defineProps({
     type: Number,
     required: true,
   },
-})
+});
 
-const medalData = medal(contribution, userLevelPoints)
+const medalData = medal(contribution, userLevelPoints);
 
-const medalProgressCurrentPercentage = medalData.medalProgressCurrentPercentage
-const getLevelProgressPercentage = medalData.getLevelProgressPercentage
+const medalProgressCurrentPercentage = medalData.medalProgressCurrentPercentage;
+const getLevelProgressPercentage = medalData.getLevelProgressPercentage;
 </script>
 
 <style lang="scss">

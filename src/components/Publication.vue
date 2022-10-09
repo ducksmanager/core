@@ -1,6 +1,6 @@
 <template>
   <span :class="{ [size]: true }">
-    <img :alt="countrycode" :src="`/images/flags/${countrycode}.png`">
+    <img :alt="countrycode" :src="`/images/flags/${countrycode}.png`" />
     {{ publicationname }}
   </span>
 </template>
@@ -17,10 +17,10 @@ const { publicationcode } = defineProps({
   },
   size: {
     type: String,
-    default: 'md',
+    default: "md",
   },
-})
-const countrycode = $computed(() => publicationcode.split('/')[0])
+});
+const countrycode = $computed(() => publicationcode.split("/")[0]);
 </script>
 
 <style scoped lang="scss">

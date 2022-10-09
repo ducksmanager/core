@@ -6,7 +6,7 @@
     <div v-else-if="!hasSuggestions">
       {{
         $t(
-          "Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné.",
+          "Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné."
         )
       }}
     </div>
@@ -32,7 +32,8 @@
         :key="`${publicationcode} ${issuenumber}`"
       >
         <div
-          class="suggestions pt-2" :class="{
+          class="suggestions pt-2"
+          :class="{
             'since-last-visit': sinceLastVisit,
           }"
         >
@@ -57,8 +58,11 @@
                 no-wrap
               >
                 <template #title-suffix>
-                  <div class="release-date mt-2 ms-1" v-if="oldestdate?.split('T')?.[0]">
-                    {{ $t("Sortie :") }} {{ oldestdate.split('T')[0] }}
+                  <div
+                    v-if="oldestdate?.split('T')?.[0]"
+                    class="release-date mt-2 ms-1"
+                  >
+                    {{ $t("Sortie :") }} {{ oldestdate.split("T")[0] }}
                   </div>
                 </template>
               </Issue>
@@ -77,12 +81,12 @@
 </template>
 
 <script setup>
-import { BIconCash } from 'bootstrap-icons-vue'
-import { BButton, BButtonGroup } from 'bootstrap-vue-3'
-import { watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { BIconCash } from "bootstrap-icons-vue";
+import { BButton, BButtonGroup } from "bootstrap-vue-3";
+import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { collection } from '~/stores/collection'
+import { collection } from "~/stores/collection";
 
 const { countrycode, sinceLastVisit } = defineProps({
   countrycode: {
@@ -93,48 +97,48 @@ const { countrycode, sinceLastVisit } = defineProps({
     type: Boolean,
     default: false,
   },
-})
-const { t: $t } = useI18n()
-const suggestions = $computed(() => collection().suggestions)
-const hasSuggestions = $computed(() => collection().hasSuggestions)
+});
+const { t: $t } = useI18n();
+const suggestions = $computed(() => collection().suggestions);
+const hasSuggestions = $computed(() => collection().hasSuggestions);
 const suggestionSorts = () => ({
-  oldestdate: $t('Trier par date de parution'),
-  score: $t('Trier par score'),
-})
-const loadSuggestions = collection().loadSuggestions
+  oldestdate: $t("Trier par date de parution"),
+  score: $t("Trier par score"),
+});
+const loadSuggestions = collection().loadSuggestions;
 const getImportance = (score) => {
-  const { minScore, maxScore } = suggestions
-  return maxScore === score ? 1 : minScore === score ? 3 : 2
-}
+  const { minScore, maxScore } = suggestions;
+  return maxScore === score ? 1 : minScore === score ? 3 : 2;
+};
 
-let loading = $ref(true)
-const suggestionSortCurrent = $ref('score')
+let loading = $ref(true);
+const suggestionSortCurrent = $ref("score");
 
 watch(
   () => countrycode,
   async (newValue) => {
-    loading = true
+    loading = true;
     await loadSuggestions({
       countryCode: newValue,
       sort: suggestionSortCurrent,
       sinceLastVisit,
-    })
-    loading = false
+    });
+    loading = false;
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 watch(
   () => suggestionSortCurrent,
   async (newValue) => {
-    loading = true
+    loading = true;
     await loadSuggestions({
       countryCode: countrycode,
       sort: newValue,
       sinceLastVisit,
-    })
-    loading = false
-  },
-)
+    });
+    loading = false;
+  }
+);
 </script>
 
 <style scoped lang="scss">

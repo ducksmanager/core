@@ -25,11 +25,11 @@
 </template>
 
 <script setup>
-import { BButton, BFormSelect } from 'bootstrap-vue-3'
-import { onMounted, watch } from 'vue'
+import { BButton, BFormSelect } from "bootstrap-vue-3";
+import { onMounted, watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { l10n } from '~/stores/l10n'
+import { coa } from "~/stores/coa";
+import { l10n } from "~/stores/l10n";
 
 const { initialCountryCode, initialPublicationCode } = defineProps({
   noButton: {
@@ -44,50 +44,48 @@ const { initialCountryCode, initialPublicationCode } = defineProps({
     type: String,
     default: null,
   },
-})
-defineEmits(['input'])
+});
+defineEmits(["input"]);
 
-const currentCountryCode = $ref(initialCountryCode)
-let currentPublicationCode = $ref(initialPublicationCode)
-const coaStore = coa()
-const countryNames = $computed(() => coaStore.countryNames)
-const publicationNames = $computed(() => coaStore.publicationNames)
+const currentCountryCode = $ref(initialCountryCode);
+let currentPublicationCode = $ref(initialPublicationCode);
+const coaStore = coa();
+const countryNames = $computed(() => coaStore.countryNames);
+const publicationNames = $computed(() => coaStore.publicationNames);
 const publicationNamesFullCountries = $computed(
-  () => coaStore.publicationNamesFullCountries,
-)
+  () => coaStore.publicationNamesFullCountries
+);
 const publicationNamesForCurrentCountry = $computed(() =>
   publicationNamesFullCountries.includes(currentCountryCode)
     ? Object.keys(publicationNames)
-      .filter(publicationCode =>
-        new RegExp(`^${currentCountryCode}/`).test(publicationCode),
-      )
-      .map(publicationCode => ({
-        text: publicationNames[publicationCode],
-        value: publicationCode,
-      }))
-      .sort(({ text: text1 }, { text: text2 }) =>
-        text1.localeCompare(text2),
-      )
-    : [],
-)
-const { r } = l10n()
+        .filter((publicationCode) =>
+          new RegExp(`^${currentCountryCode}/`).test(publicationCode)
+        )
+        .map((publicationCode) => ({
+          text: publicationNames[publicationCode],
+          value: publicationCode,
+        }))
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2))
+    : []
+);
+const { r } = l10n();
 
 watch(
   () => currentCountryCode,
   (newValue) => {
     if (newValue) {
-      coaStore.fetchPublicationNamesFromCountry(newValue)
-      currentPublicationCode = null
+      coaStore.fetchPublicationNamesFromCountry(newValue);
+      currentPublicationCode = null;
     }
   },
   {
     immediate: true,
-  },
-)
+  }
+);
 
 onMounted(async () => {
-  await coaStore.fetchCountryNames()
-})
+  await coaStore.fetchCountryNames();
+});
 </script>
 
 <style scoped>

@@ -9,18 +9,18 @@
     <div>
       {{
         $t(
-          "Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.",
+          "Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm."
         )
       }}
-      <br><br>
+      <br /><br />
       {{ $t("Ce site se base en partie sur les données du site Inducks.") }}
       <a target="_blank" href="https://inducks.org/inducks/COPYING">{{
         $t("Cliquez ici pour lire la licence Inducks.")
       }}</a>
-      <br>
+      <br />
       {{
         $t(
-          "Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company.",
+          "Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company."
         )
       }}
     </div>
@@ -28,16 +28,16 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted } from "vue";
 
-import { users } from '~/stores/users'
+import { users } from "~/stores/users";
 
-const count = $computed(() => users().count)
-const fetchCount = users().fetchCount
+const count = $computed(() => users().count);
+const fetchCount = users().fetchCount;
 
 onMounted(async () => {
-  await fetchCount()
-})
+  await fetchCount();
+});
 </script>
 
 <style scoped lang="scss">

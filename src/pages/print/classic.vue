@@ -29,7 +29,6 @@ import { onMounted, watch } from "vue";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 
-let hasPublicationNames = $ref(false);
 let ownedIssueNumbers = $ref(null);
 
 const countryNames = $computed(() => coa().countryNames);
@@ -74,7 +73,6 @@ watch(
     if (newValue) {
       coa().fetchPublicationNames(publicationCodes);
       coa().fetchIssueNumbers(publicationCodes);
-      hasPublicationNames = true;
     }
   },
   { immediate: true }

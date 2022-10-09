@@ -8,17 +8,18 @@
             v-html="
               $t(
                 'Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.',
-                [rarityValue, userCount],
+                [rarityValue, userCount]
               )
             "
-          /><br>
+          /><br />
           <BAlert variant="info" show size="sm" class="d-inline-block mt-3">
             <small>
               {{
                 $t(
-                  "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.",
+                  "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection."
                 )
-              }}</small>
+              }}</small
+            >
           </BAlert>
         </div>
       </template>
@@ -103,7 +104,7 @@
           <div>
             {{
               $t(
-                "Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.",
+                "Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative."
               )
             }}
           </div>
@@ -116,13 +117,13 @@
                   `<a href='http://comicsmania.gr'>ComicsMania</a>`,
                   `<a href='https://seriesam.com'>Seriesam</a>`,
                   `<a href='https://gocollect.com'>Gocollect</a>`,
-                ],
+                ]
               )
             "
           />
           {{
             $t(
-              "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :",
+              "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :"
             )
           }}
           <ul>
@@ -137,7 +138,7 @@
                 `Une cote présente sur les sites indiqués ci-dessus n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`,
                 [
                   `<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`,
-                ],
+                ]
               )
             "
           />
@@ -151,73 +152,75 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import { BAlert, BPagination, BTable } from 'bootstrap-vue-3'
-import { onMounted, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import axios from "axios";
+import { BAlert, BPagination, BTable } from "bootstrap-vue-3";
+import { onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { coa } from '~/stores/coa'
-import { collection as collectionStore } from '~/stores/collection'
-import { users } from '~/stores/users'
-import { condition } from '~/composables/condition'
+import { condition } from "~/composables/condition";
+import { coa } from "~/stores/coa";
+import { collection as collectionStore } from "~/stores/collection";
+import { users } from "~/stores/users";
 
-const collection = collectionStore()
-const { getConditionLabel } = condition()
+const collection = collectionStore();
+const { getConditionLabel } = condition();
 
-const { t: $t } = useI18n()
-const currentPage = 1
-const userCount = $computed(() => users().count)
-const publicationNames = $computed(() => coa().publicationNames)
+const { t: $t } = useI18n();
+const currentPage = 1;
+const userCount = $computed(() => users().count);
+const publicationNames = $computed(() => coa().publicationNames);
 const quotedIssues = $computed(() =>
   collection.quotedIssues?.sort(
     (
       { estimationGivenCondition: estimation1 },
-      { estimationGivenCondition: estimation2 },
-    ) => Math.sign(estimation2 - estimation1),
-  ),
-)
-const quotationSum = $computed(() => collection.quotationSum)
+      { estimationGivenCondition: estimation2 }
+    ) => Math.sign(estimation2 - estimation1)
+  )
+);
+const quotationSum = $computed(() => collection.quotationSum);
 const quotationFields = [
-  { key: 'issue', label: $t('Numéro') },
-  { key: 'condition', label: $t('Etat') },
-  { key: 'estimation', label: $t('Estimation') },
+  { key: "issue", label: $t("Numéro") },
+  { key: "condition", label: $t("Etat") },
+  { key: "estimation", label: $t("Estimation") },
   {
-    key: 'estimationGivenCondition',
-    label: $t('Estimation ajustée de l\'état'),
+    key: "estimationGivenCondition",
+    label: $t("Estimation ajustée de l'état"),
   },
-]
+];
 
-let rarityValue = $ref(null)
-let hasPublicationNames = $ref(false)
+let rarityValue = $ref(null);
+let hasPublicationNames = $ref(false);
 
 watch(
   () => collection.totalPerPublication,
   async (newValue) => {
-    await coa().fetchIssueQuotations(Object.keys(newValue))
-  },
-)
+    await coa().fetchIssueQuotations(Object.keys(newValue));
+  }
+);
 
 watch(
   () => quotedIssues,
   async (newValue) => {
     if (newValue) {
       await coa().fetchPublicationNames(
-        newValue.map(({ publicationCode }) => publicationCode),
-      )
-      hasPublicationNames = true
+        newValue.map(({ publicationCode }) => publicationCode)
+      );
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 onMounted(async () => {
   await collection.loadCollection();
-  await users().fetchCount()
+  await users().fetchCount();
   const { userScores } = (
-    await axios.get('/global-stats/user/collection/rarity')
-  ).data
-  rarityValue = userScores.length - userScores.findIndex(({ userId }) => userId === collection.user.id)
-})
+    await axios.get("/global-stats/user/collection/rarity")
+  ).data;
+  rarityValue =
+    userScores.length -
+    userScores.findIndex(({ userId }) => userId === collection.user.id);
+});
 </script>
 
 <style scoped lang="scss">

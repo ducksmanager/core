@@ -43,6 +43,7 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import {
   BarController,
   BarElement,
@@ -53,12 +54,11 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { watch } from "vue";
 import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";
-import axios from "axios";
-import { watch } from "vue";
 
 Chart.register(
   Legend,
@@ -85,10 +85,12 @@ let width = $ref(null),
   chartData = $ref(null),
   options = $ref({});
 
-const labels = $computed(() =>
-  watchedAuthorsStoryCount && Object.values(watchedAuthorsStoryCount).map(
-    ({ fullname: fullName }) => fullName
-  )
+const labels = $computed(
+  () =>
+    watchedAuthorsStoryCount &&
+    Object.values(watchedAuthorsStoryCount).map(
+      ({ fullname: fullName }) => fullName
+    )
 );
 
 const changeDimension = (dimension, value) => {
@@ -100,7 +102,6 @@ watch(
   () => labels && unitTypeCurrent,
   (newValue) => {
     if (newValue) {
-
       let ownedStories = Object.values(watchedAuthorsStoryCount).map(
         ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
           storyCount - missingStoryCount
@@ -111,7 +112,9 @@ watch(
 
       if (unitTypeCurrent === "percentage") {
         ownedStories = ownedStories.map((possessedCount, key) =>
-          Math.round(possessedCount * (100 / (possessedCount + missingStories[key])))
+          Math.round(
+            possessedCount * (100 / (possessedCount + missingStories[key]))
+          )
         );
         missingStories = ownedStories.map(
           (possessedCount) => 100 - possessedCount
@@ -119,7 +122,7 @@ watch(
       }
 
       const values = [ownedStories, missingStories];
-      console.log(values)
+      console.log(values);
 
       changeDimension("width", 250 + 30 * labels.length);
       chartData = {
@@ -164,7 +167,9 @@ watch(
             callbacks: {
               title: ([tooltip]) => tooltip.label,
               label: ({ dataset, raw }) =>
-                `${dataset.label}: ${raw}${unitTypeCurrent === "percentage" ? "%" : ""}`,
+                `${dataset.label}: ${raw}${
+                  unitTypeCurrent === "percentage" ? "%" : ""
+                }`,
             },
           },
         },
@@ -184,8 +189,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-
-.btn-group+div {
+.btn-group + div {
   background: #ddd;
 }
 </style>

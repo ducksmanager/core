@@ -7,7 +7,7 @@ alias: [/collection/abonnements]
     <BAlert variant="info" show>
       {{
         $t(
-          "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie.",
+          "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie."
         )
       }}
     </BAlert>
@@ -36,7 +36,7 @@ alias: [/collection/abonnements]
             ],
             publicationNames[currentAssociatedPublication.publicationcode],
             publicationNames[currentAssociatedPublication.publicationcode],
-          ],
+          ]
         )
       }}
       <p>
@@ -45,10 +45,10 @@ alias: [/collection/abonnements]
             createAssociatedPublicationSubscription(
               subscriptions.find(
                 ({ publicationCode }) =>
-                  publicationCode
-                  === currentAssociatedPublication.referencePublicationcode,
+                  publicationCode ===
+                  currentAssociatedPublication.referencePublicationcode
               ),
-              currentAssociatedPublication,
+              currentAssociatedPublication
             )
           "
         >
@@ -97,52 +97,52 @@ alias: [/collection/abonnements]
 </template>
 
 <script setup>
-import { BAlert, BButton, BCol, BRow } from 'bootstrap-vue-3'
-import { onMounted, watch } from 'vue'
+import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-3";
+import { onMounted, watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection } from '~/stores/collection'
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
 
-let hasPublicationNames = $ref(false)
-let currentAssociatedPublications = $ref([])
+let hasPublicationNames = $ref(false);
+let currentAssociatedPublications = $ref([]);
 const associatedPublications = $ref([
   {
-    referencePublicationcode: 'fr/JM',
-    publicationcode: 'fr/JMS',
+    referencePublicationcode: "fr/JM",
+    publicationcode: "fr/JMS",
   },
-])
-let editedSubscriptionId = $ref(undefined)
-let newSubscription = $ref(null)
+]);
+let editedSubscriptionId = $ref(undefined);
+let newSubscription = $ref(null);
 
-const publicationNames = $computed(() => coa().publicationNames)
-const subscriptions = $computed(() => collection().subscriptions)
-const fetchPublicationNames = coa().fetchPublicationNames
-const loadSubscriptions = collection().loadSubscriptions
+const publicationNames = $computed(() => coa().publicationNames);
+const subscriptions = $computed(() => collection().subscriptions);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadSubscriptions = collection().loadSubscriptions;
 const createAssociatedPublicationSubscription = (
   existingSubscription,
-  { publicationcode: associatedPublicationcode },
+  { publicationcode: associatedPublicationcode }
 ) => {
   newSubscription = {
     ...existingSubscription,
     publicationCode: associatedPublicationcode,
-  }
-  createSubscription(newSubscription)
-}
+  };
+  createSubscription(newSubscription);
+};
 const createSubscription = async (data) => {
-  await axios.put('/collection/subscriptions', data)
-  await loadSubscriptions(true)
-  editedSubscriptionId = undefined
-}
+  await axios.put("/collection/subscriptions", data);
+  await loadSubscriptions(true);
+  editedSubscriptionId = undefined;
+};
 const editSubscription = async (id, data) => {
-  await axios.post(`/collection/subscriptions/${id}`, data)
-  await loadSubscriptions(true)
-  editedSubscriptionId = undefined
-}
+  await axios.post(`/collection/subscriptions/${id}`, data);
+  await loadSubscriptions(true);
+  editedSubscriptionId = undefined;
+};
 const deleteSubscription = async (id) => {
-  await axios.delete(`/collection/subscriptions/${id}`)
-  await loadSubscriptions(true)
-  editedSubscriptionId = undefined
-}
+  await axios.delete(`/collection/subscriptions/${id}`);
+  await loadSubscriptions(true);
+  editedSubscriptionId = undefined;
+};
 
 watch(
   () => subscriptions,
@@ -155,26 +155,26 @@ watch(
         }) =>
           newValue.find(
             ({ publicationCode }) =>
-              referencePublicationcode === publicationCode,
-          )
-          && !newValue.find(
+              referencePublicationcode === publicationCode
+          ) &&
+          !newValue.find(
             ({ publicationCode }) =>
-              associatedPublicationcode === publicationCode,
-          ),
-      )
+              associatedPublicationcode === publicationCode
+          )
+      );
       await fetchPublicationNames([
         ...associatedPublications.map(({ publicationcode }) => publicationcode),
         ...subscriptions.map(({ publicationCode }) => publicationCode),
-      ])
-      hasPublicationNames = true
+      ]);
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 onMounted(() => {
-  loadSubscriptions()
-})
+  loadSubscriptions();
+});
 </script>
 
 <style scoped>

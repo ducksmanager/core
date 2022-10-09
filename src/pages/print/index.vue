@@ -6,7 +6,7 @@ alias: [/impression]
   <div>
     {{
       $t(
-        "DucksManager propose l'impression de votre liste sous deux formats différents :",
+        "DucksManager propose l'impression de votre liste sous deux formats différents :"
       )
     }}
     <ul>
@@ -28,52 +28,55 @@ alias: [/impression]
             <a
               href="http://www.youtube.com/watch?v=PAg-g1cF148&hd=1"
               target="_blank"
-            >{{ $t("Cliquez ici") }}</a>
+              >{{ $t("Cliquez ici") }}</a
+            >
             {{
               $t(
-                "pour visionner notre vidéo d'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !",
+                "pour visionner notre vidéo d'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !"
               )
             }}
           </li>
         </ul>
-        <a :href="r(`/print/${type.link}`)" target="_blank">{{ $t("Imprimer ma collection avec") }} {{ type.name }}</a>
-        <br>
+        <a :href="r(`/print/${type.link}`)" target="_blank"
+          >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</a
+        >
+        <br />
       </li>
     </ul>
   </div>
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
-import { l10n } from '~/stores/l10n'
+import { l10n } from "~/stores/l10n";
 
-const { t: $t } = useI18n()
+const { t: $t } = useI18n();
 const types = [
   {
-    link: 'classic',
-    name: $t('la liste classique'),
+    link: "classic",
+    name: $t("la liste classique"),
     description: $t(
-      'Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez.',
+      "Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez."
     ),
     details: [
-      $t('Ce type de liste est plus adapté pour les petites collections.'),
+      $t("Ce type de liste est plus adapté pour les petites collections."),
       $t(
-        'Facile à lire, cette liste devient vite illisible lorsqu\'il s\'agit d\'ajouter des numéros.',
+        "Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros."
       ),
     ],
   },
   {
-    link: 'collectable',
-    name: $t('CollecTable'),
+    link: "collectable",
+    name: $t("CollecTable"),
     exclusive: true,
     description: $t(
-      'Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d\'entraînement !',
+      "Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !"
     ),
-    details: [$t('Adaptée pour les grandes collections.')],
+    details: [$t("Adaptée pour les grandes collections.")],
   },
-]
-const { r } = l10n()
+];
+const { r } = l10n();
 </script>
 
 <style lang="scss" scoped>

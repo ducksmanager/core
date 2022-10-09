@@ -18,7 +18,10 @@
         :visible="false"
       >
         <template #header>
-          <b>{{ purchase.date }}</b>&nbsp;<i v-if="purchase.description">{{ purchase.description }}&nbsp;</i>{{ issues.length }} {{ t("numéro | numéros", issues.length) }}
+          <b>{{ purchase.date }}</b
+          >&nbsp;<i v-if="purchase.description"
+            >{{ purchase.description }}&nbsp;</i
+          >{{ issues.length }} {{ t("numéro | numéros", issues.length) }}
         </template>
         <template #content>
           <Issue
@@ -36,11 +39,12 @@
 </template>
 
 <script setup>
-import { coa } from '~/stores/coa'
-import { collection as collectionStore } from '~/stores/collection'
 import { useI18n } from "vue-i18n";
 
-const {t} = useI18n()
+import { coa } from "~/stores/coa";
+import { collection as collectionStore } from "~/stores/collection";
+
+const { t } = useI18n();
 const publicationNames = $computed(() => coa().publicationNames),
   collectionPerPurchaseDate = $computed(() => {
     const purchases = collectionStore().purchases;
@@ -50,21 +54,21 @@ const publicationNames = $computed(() => coa().publicationNames),
         .collection?.reduce((acc, issue) => {
           const purchase = (issue.purchaseId > 0 &&
             purchases.find(({ id }) => id === issue.purchaseId)) || {
-            date: (issue.creationDate || '0001-01-01T00:00:00').split('T')[0],
+            date: (issue.creationDate || "0001-01-01T00:00:00").split("T")[0],
           };
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>
               currentPurchase.date === purchase.date
           );
           if (purchaseIndex === -1) {
-            acc.push({ purchase, issues: [] })
-            purchaseIndex = acc.length - 1
+            acc.push({ purchase, issues: [] });
+            purchaseIndex = acc.length - 1;
           }
-          acc[purchaseIndex].issues.push(issue)
-          return acc
+          acc[purchaseIndex].issues.push(issue);
+          return acc;
         }, [])
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
-          purchase1.date < purchase2.date ? 1 : -1,
+          purchase1.date < purchase2.date ? 1 : -1
         )
         .slice(0, 5)
     );

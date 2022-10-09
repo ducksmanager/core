@@ -9,12 +9,12 @@
         {{
           suggestionsNumber === 1
             ? $t(
-              "Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !",
-            )
+                "Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !"
+              )
             : $t(
-              "Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !",
-              suggestionsNumber,
-            )
+                "Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !",
+                suggestionsNumber
+              )
         }}
       </template>
       <template #content>
@@ -44,7 +44,7 @@
         class="pre-wrap"
         v-html="
           $t(
-            'Prenez le temps de découvrir les fonctionnalités de DucksManager.\n\nVous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.\nSi vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.\nProchaine remise à zéro dans',
+            'Prenez le temps de découvrir les fonctionnalités de DucksManager.\n\nVous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.\nSi vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.\nProchaine remise à zéro dans'
           )
         "
       />
@@ -55,7 +55,7 @@
         <div class="mb-3">
           {{
             $t(
-              'Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.',
+              'Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.'
             )
           }}
         </div>
@@ -75,49 +75,48 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection } from '~/stores/collection'
-import { l10n } from '~/stores/l10n'
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
 
 defineProps({
   publicationcode: {
     type: String,
     default: null,
   },
-})
+});
 
-const suggestionsNumber = $ref(0)
-let hasPublicationNames = $ref(false)
-const user= $computed(() => collection().user)
-const publicationNames = $computed(() => coa().publicationNames)
-const total = $computed(() => collection().total)
-const totalPerPublication = $computed(() => collection().totalPerPublication)
+const suggestionsNumber = $ref(0);
+let hasPublicationNames = $ref(false);
+const user = $computed(() => collection().user);
+const total = $computed(() => collection().total);
+const totalPerPublication = $computed(() => collection().totalPerPublication);
 const mostPossessedPublication = $computed(
   () =>
-    totalPerPublication
-      && Object.keys(totalPerPublication).reduce(
-        (acc, publicationCode) =>
-          totalPerPublication[acc] > totalPerPublication[publicationCode]
-            ? acc
-            : publicationCode,
-        null,
-      ),
-)
-const fetchPublicationNames = coa().fetchPublicationNames
-const { r } = l10n()
+    totalPerPublication &&
+    Object.keys(totalPerPublication).reduce(
+      (acc, publicationCode) =>
+        totalPerPublication[acc] > totalPerPublication[publicationCode]
+          ? acc
+          : publicationCode,
+      null
+    )
+);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const { r } = l10n();
 
 watch(
   () => totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await fetchPublicationNames(Object.keys(newValue))
-      hasPublicationNames = true
+      await fetchPublicationNames(Object.keys(newValue));
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 onMounted(async () => {
   await collection().loadCollection();

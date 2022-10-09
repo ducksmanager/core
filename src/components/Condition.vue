@@ -1,7 +1,8 @@
 <template>
   <span
     v-if="currentCondition"
-    class="issue-condition" :class="{
+    class="issue-condition"
+    :class="{
       [`issue-condition-${currentCondition.value}`]: true,
     }"
     :style="{ backgroundColor: currentCondition.color }"
@@ -10,32 +11,31 @@
 </template>
 
 <script setup>
-import { collection } from '~/composables/collection'
-import { condition } from '~/composables/condition'
+import { condition } from "~/composables/condition";
+import { collection } from "~/stores/collection";
 const { publicationcode, issuenumber, value } = defineProps({
   publicationcode: { type: String, default: null },
   issuenumber: { type: String, default: null },
   value: { type: String, default: null },
-})
+});
 
-const { conditions, getConditionLabel } = condition()
-const { findInCollection } = collection()
+const { conditions, getConditionLabel } = condition();
 const currentCondition = $computed(() => {
   if (value) {
     return conditions.find(
-      ({ value: conditionValue }) => value === conditionValue,
-    )
-  }
-  else {
-    const issueInCollection = findInCollection(publicationcode, issuenumber)
+      ({ value: conditionValue }) => value === conditionValue
+    );
+  } else {
+    const issueInCollection = collection().findInCollection(
+      publicationcode,
+      issuenumber
+    );
     return (
-      issueInCollection
-        && conditions.find(
-          ({ dbValue }) => dbValue === issueInCollection.condition,
-        )
-    )
+      issueInCollection &&
+      conditions.find(({ dbValue }) => dbValue === issueInCollection.condition)
+    );
   }
-})
+});
 </script>
 
 <style scoped lang="scss">

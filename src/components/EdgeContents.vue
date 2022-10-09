@@ -2,18 +2,19 @@
   <div
     :id="id"
     ref="edge"
-    class="edge" :class="{
+    class="edge"
+    :class="{
       visible: !invisible && (imageLoaded || spriteLoaded),
       [spriteClass]: true,
     }"
     :style="
       load && imageLoaded
         ? {
-          backgroundImage: `url(${src})`,
-          backgroundSize: `${width}px ${height}px`,
-          width: `${width}px`,
-          height: `${height}px`,
-        }
+            backgroundImage: `url(${src})`,
+            backgroundSize: `${width}px ${height}px`,
+            width: `${width}px`,
+            height: `${height}px`,
+          }
         : {}
     "
     @click="emit('open-book')"
@@ -32,15 +33,15 @@
       :src="src"
       @load="onImageLoad"
       @error="onImageError"
-    >
+    />
   </div>
 </template>
 
 <script setup>
-import * as axios from 'axios'
-import { watch } from 'vue'
+import * as axios from "axios";
+import { watch } from "vue";
 
-import { bookcase } from '~/stores/bookcase'
+import { bookcase } from "~/stores/bookcase";
 
 const { id, issueNumber, publicationCode, spritePath } = defineProps({
   id: {
@@ -77,94 +78,88 @@ const { id, issueNumber, publicationCode, spritePath } = defineProps({
     type: Boolean,
     default: false,
   },
-})
-const emit = defineEmits(['loaded', 'open-book', 'ignore-sprite'])
-const SPRITES_ROOT = 'https://res.cloudinary.com/dl7hskxab/image/sprite/'
-const loadedSprites = $computed(() => bookcase().loadedSprites)
+});
+const emit = defineEmits(["loaded", "open-book", "ignore-sprite"]);
+const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
+const loadedSprites = $computed(() => bookcase().loadedSprites);
 const spriteClass = $computed(() =>
   id && spritePath
-    ? `edges-${publicationCode.replace(/\//g, '-')}-${issueNumber}`
-    : '',
-)
+    ? `edges-${publicationCode.replace(/\//g, "-")}-${issueNumber}`
+    : ""
+);
 const onImageLoad = async ({ target }) => {
   if (spritePath && !ignoreSprite) {
     if (loadedSprites[spritePath]) {
-      loadEdgeFromSprite()
-    }
-    else {
+      loadEdgeFromSprite();
+    } else {
       try {
         const css = (
           await axios.get(
-              `${SPRITES_ROOT}${spritePath.replace('f_auto/', '')}.css`,
+            `${SPRITES_ROOT}${spritePath.replace("f_auto/", "")}.css`
           )
-        ).data
-        const style = document.createElement('style')
-        style.textContent = css
-        document.head.append(style)
+        ).data;
+        const style = document.createElement("style");
+        style.textContent = css;
+        document.head.append(style);
 
         bookcase().addLoadedSprite({
           spritePath,
           css,
-        })
-        loadEdgeFromSprite()
-      }
-      catch (_) {
-        ignoreSprite = true
+        });
+        loadEdgeFromSprite();
+      } catch (_) {
+        ignoreSprite = true;
       }
     }
+  } else {
+    width = target.naturalWidth;
+    height = target.naturalHeight;
+    imageLoaded = true;
+    emit("loaded", [id]);
   }
-  else {
-    width = target.naturalWidth
-    height = target.naturalHeight
-    imageLoaded = true
-    emit('loaded', [id])
-  }
-}
+};
 const loadEdgeFromSprite = () => {
   if (!loadedSprites[spritePath].includes(`.${spriteClass} {`)) {
-    ignoreSprite = true
-    return
+    ignoreSprite = true;
+    return;
   }
-  const retries = 0
+  const retries = 0;
   const checkWidthInterval = setInterval(() => {
     if (edge.clientWidth > 0) {
-      spriteLoaded = true
-      width = edge.clientWidth
-      height = edge.clientHeight
-      emit('loaded', [id])
-      clearInterval(checkWidthInterval)
+      spriteLoaded = true;
+      width = edge.clientWidth;
+      height = edge.clientHeight;
+      emit("loaded", [id]);
+      clearInterval(checkWidthInterval);
+    } else if (retries > 100) {
+      ignoreSprite = true;
+      clearInterval(checkWidthInterval);
     }
-    else if (retries > 100) {
-      ignoreSprite = true
-      clearInterval(checkWidthInterval)
-    }
-  }, 5)
-}
+  }, 5);
+};
 const onImageError = () => {
-  if (spritePath && !ignoreSprite)
-    ignoreSprite = true
-  else
-    emit('loaded', [id])
-}
+  if (spritePath && !ignoreSprite) ignoreSprite = true;
+  else emit("loaded", [id]);
+};
 
-let edge = $ref(null)
-let imageLoaded = $ref(false)
-let spriteLoaded = $ref(false)
-let ignoreSprite = $ref(false)
-let width = $ref(null)
-let height = $ref(null)
+let edge = $ref(null);
+let imageLoaded = $ref(false);
+let spriteLoaded = $ref(false);
+let ignoreSprite = $ref(false);
+let width = $ref(null);
+let height = $ref(null);
 
 watch(
   () => ignoreSprite,
   (value) => {
     if (value) {
       console.error(
-        `Could not load sprite for edge ${publicationCode} ${issueNumber}: ${spritePath}`,
-      )
-      emit('ignore-sprite')
+        `Could not load sprite for edge ${publicationCode} ${issueNumber}: ${spritePath}`
+      );
+      emit("ignore-sprite");
     }
-  },
-)
+  }
+);
 </script>
 
 <style scoped lang="scss">

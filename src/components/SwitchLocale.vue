@@ -7,37 +7,37 @@
       :src="`/images/flags/xl/${locale.flagName}.png`"
       :alt="locale.name"
       @click="reloadWithLocale(locale)"
-    >
+    />
   </div>
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 defineProps({
   fixed: {
     type: Boolean,
     default: false,
   },
-})
+});
 
-const i18n = useI18n()
+const i18n = useI18n();
 
 const locales = [
   {
-    key: 'en',
-    name: 'English',
-    flagName: 'uk',
+    key: "en",
+    name: "English",
+    flagName: "uk",
   },
   {
-    key: 'fr',
-    name: 'Français',
-    flagName: 'fr',
+    key: "fr",
+    name: "Français",
+    flagName: "fr",
   },
-]
+];
 const reloadWithLocale = ({ key }) => {
-  localStorage.setItem('locale', key)
-  i18n.locale.value = key
-}
+  localStorage.setItem("locale", key);
+  i18n.locale.value = key;
+};
 </script>
 
 <style scoped lang="scss">

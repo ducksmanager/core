@@ -1,15 +1,14 @@
 <template>
   <div :class="{ ...classes, small }">
     <a :href="user ? r('/collection/show') : '/'">
-      <img src="/images/logo_small.png" alt="DucksManager">
+      <img src="/images/logo_small.png" alt="DucksManager" />
     </a>
   </div>
 </template>
 
 <script setup>
-import { l10n } from '~/stores/l10n'
-
-import { collection } from '~/stores/collection'
+import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
 
 defineProps({
   classes: {
@@ -20,9 +19,9 @@ defineProps({
     type: Boolean,
     default: false,
   },
-})
-const { r } = l10n()
-const user = $computed(() => collection().user)
+});
+const { r } = l10n();
+const user = $computed(() => collection().user);
 </script>
 
 <style scoped lang="scss">

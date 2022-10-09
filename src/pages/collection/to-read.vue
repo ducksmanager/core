@@ -17,17 +17,15 @@ alias: [/collection/a-lire]
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch } from "vue";
 
-import { coa } from '~/stores/coa'
-import { collection } from '~/stores/collection'
-let hasPublicationNames = $ref(false)
-let publicationCodes = $ref(null)
-const total = $computed(() => collection().total)
-const issuesInToReadStack = $computed(() => collection().issuesInToReadStack)
-const publicationNames = $computed(() => coa().publicationNames)
-const fetchPublicationNames = coa().fetchPublicationNames
-const loadCollection = collection().loadCollection
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+let hasPublicationNames = $ref(false);
+let publicationCodes = $ref(null);
+const issuesInToReadStack = $computed(() => collection().issuesInToReadStack);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadCollection = collection().loadCollection;
 
 watch(
   () => issuesInToReadStack,
@@ -35,20 +33,20 @@ watch(
     if (issuesInToReadStack) {
       publicationCodes = [
         ...new Set(
-          issuesInToReadStack.map(({ publicationCode }) => publicationCode),
+          issuesInToReadStack.map(({ publicationCode }) => publicationCode)
         ),
-      ]
+      ];
 
-      await fetchPublicationNames(publicationCodes)
-      hasPublicationNames = true
+      await fetchPublicationNames(publicationCodes);
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 onMounted(() => {
-  loadCollection()
-})
+  loadCollection();
+});
 </script>
 
 <style scoped>

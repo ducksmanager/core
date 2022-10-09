@@ -8,7 +8,7 @@
           coverHeight = target.naturalHeight;
         }
       "
-    >
+    />
     <img
       v-if="pages?.length"
       :src="cloudinaryBaseUrl + pages[0].url"
@@ -17,7 +17,7 @@
           coverRatio = target.naturalHeight / target.naturalWidth;
         }
       "
-    >
+    />
 
     <div class="container" @click.self="closeBook()">
       <div id="book" class="flip-book" @click.self="closeBook()">
@@ -27,19 +27,18 @@
           class="table-of-contents d-none d-md-block"
         >
           <template #header>
-            <a :href="inducksLink" target="_blank" class="inducks-link"><img
-              src="/images/coafoot.png"
-              :title="`Voir ${publicationNames[publicationCode]} ${issueNumber} sur Inducks`"
-              alt="Inducks"
-            ></a>
+            <a :href="inducksLink" target="_blank" class="inducks-link"
+              ><img
+                src="/images/coafoot.png"
+                :title="`Voir ${publicationNames[publicationCode]} ${issueNumber} sur Inducks`"
+                alt="Inducks"
+            /></a>
             <Issue
               :publicationcode="publicationCode"
               :publicationname="publicationNames[publicationCode]"
               :issuenumber="issueNumber"
             />
-            <h6 v-if="releaseDate">
-              {{ $t("Sortie :") }} {{ releaseDate }}
-            </h6>
+            <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
           </template>
           <BTabs v-if="pages" v-model="currentTabIndex" pills card vertical>
@@ -74,11 +73,13 @@
         <div
           v-for="({ position, url }, index) in pagesWithUrl"
           :key="`page-${position}`"
-          class="page" :class="{ single: isSinglePageWithUrl }"
+          class="page"
+          :class="{ single: isSinglePageWithUrl }"
         >
           <div
             v-if="index === 0"
-            class="edge" :class="{ closed: opening || opened }"
+            class="edge"
+            :class="{ closed: opening || opened }"
             :style="{
               backgroundImage: `url(${edgeUrl})`,
               width: `${edgeWidth}px`,
@@ -86,7 +87,8 @@
           />
           <div class="page-content" :class="{ 'first-page': index === 0 }">
             <div
-              class="page-image" :class="{ opened: opening || opened }"
+              class="page-image"
+              :class="{ opened: opening || opened }"
               :style="{
                 backgroundImage: `url(${cloudinaryBaseUrl + url})`,
                 marginLeft: opening || opened ? '0' : `${edgeWidth}px`,
@@ -101,12 +103,12 @@
 </template>
 
 <script setup>
-import { BCard, BTab, BTabs, useToast } from 'bootstrap-vue-3'
-import { PageFlip } from 'page-flip'
-import { watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
+import { PageFlip } from "page-flip";
+import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { coa } from '~/stores/coa'
+import { coa } from "~/stores/coa";
 
 const { issueNumber, publicationCode } = defineProps({
   publicationCode: {
@@ -117,166 +119,155 @@ const { issueNumber, publicationCode } = defineProps({
     type: String,
     required: true,
   },
-})
-const emit = defineEmits(['close-book'])
+});
+const emit = defineEmits(["close-book"]);
 
-const EDGES_BASE_URL = 'https://edges.ducksmanager.net/edges/'
-const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/
-const cloudinaryBaseUrl
-    = 'https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/'
+const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/";
+const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
+const cloudinaryBaseUrl =
+  "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
 
-const toast = useToast()
-let edgeWidth = $ref(null)
-let coverHeight = $ref(null)
-const coverRatio = $ref(null)
-let opening = $ref(false)
-let opened = $ref(false)
-let closing = $ref(false)
-let closed = $ref(false)
-let book = $ref(null)
-let currentPage = $ref(0)
-const currentTabIndex = $ref(0)
-let currentState = $ref(null)
-const publicationNames = $computed(() => coa().publicationNames)
-const issueDetails = $computed(() => coa().issueDetails)
-const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1)
+const toast = useToast();
+let edgeWidth = $ref(null);
+let coverHeight = $ref(null);
+const coverRatio = $ref(null);
+let opening = $ref(false);
+let opened = $ref(false);
+let closing = $ref(false);
+let book = $ref(null);
+let currentPage = $ref(0);
+const currentTabIndex = $ref(0);
+const publicationNames = $computed(() => coa().publicationNames);
+const issueDetails = $computed(() => coa().issueDetails);
+const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
 const edgeUrl = $computed(
   () =>
-      `${EDGES_BASE_URL}${publicationCode.replace(
-        '/',
-        '/gen/',
-      )}.${issueNumber}.png`,
-)
-const coverWidth = $computed(() => coverRatio && coverHeight / coverRatio)
-const state = $computed(() => book?.getState())
+    `${EDGES_BASE_URL}${publicationCode.replace(
+      "/",
+      "/gen/"
+    )}.${issueNumber}.png`
+);
+const coverWidth = $computed(() => coverRatio && coverHeight / coverRatio);
 const currentIssueDetails = $computed(
-  () => issueDetails?.[`${publicationCode} ${issueNumber}`],
-)
-const pages = $computed(() => currentIssueDetails?.entries)
-let pagesWithUrl = $computed(() => pages?.filter(({ url }) => !!url))
+  () => issueDetails?.[`${publicationCode} ${issueNumber}`]
+);
+const pages = $computed(() => currentIssueDetails?.entries);
+let pagesWithUrl = $computed(() => pages?.filter(({ url }) => !!url));
 const releaseDate = $computed(() => {
-  if (!currentIssueDetails?.releaseDate)
-    return null
+  if (!currentIssueDetails?.releaseDate) return null;
 
-  const parsedDate
-      = currentIssueDetails.releaseDate.match(RELEASE_DATE_REGEX)
-  return parsedDate?.[0]?.split('-').reverse().join('/')
-})
-const isReadyToOpen = $computed(() => coverWidth && edgeWidth && pages && true)
-const showTableOfContents = $computed(() => currentPage > 0 || opened)
+  const parsedDate = currentIssueDetails.releaseDate.match(RELEASE_DATE_REGEX);
+  return parsedDate?.[0]?.split("-").reverse().join("/");
+});
+const isReadyToOpen = $computed(() => coverWidth && edgeWidth && pages && true);
+const showTableOfContents = $computed(() => currentPage > 0 || opened);
 const inducksLink = $computed(() => {
-  const [country, magazine] = publicationCode.split('/')
-  return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issueNumber}`
-})
-const { t: $t } = useI18n()
+  const [country, magazine] = publicationCode.split("/");
+  return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issueNumber}`;
+});
+const { t: $t } = useI18n();
 
 const loadBookPages = async () => {
   await coa().fetchIssueUrls({
     publicationCode,
     issueNumber,
-  })
-}
+  });
+};
 
 const onEndOpenCloseTransition = () => {
   if (opening) {
-    opening = false
-    opened = true
+    opening = false;
+    opened = true;
   }
   if (closing) {
-    closing = false
-    closed = true
-    emit('close-book')
+    closing = false;
+    emit("close-book");
   }
-}
+};
 
 const closeBook = () => {
   if (currentPage === 0) {
-    opened = false
-    closing = true
+    opened = false;
+    closing = true;
+  } else {
+    book.on("flip", () => {
+      opened = false;
+      closing = true;
+    });
+    book.flip(0);
   }
-  else {
-    book.on('flip', () => {
-      opened = false
-      closing = true
-    })
-    book.flip(0)
-  }
-}
+};
 
 watch(
   () => currentTabIndex,
   (newValue) => {
     currentPage = pagesWithUrl.findIndex(
-      page => page.storycode === pages[newValue].storycode,
-    )
-  },
-)
+      (page) => page.storycode === pages[newValue].storycode
+    );
+  }
+);
 
 watch(
   () => coverWidth,
   (newValue) => {
-    const availableWidthPerPage = document.body.clientWidth / 2 - 15
+    const availableWidthPerPage = document.body.clientWidth / 2 - 15;
     if (newValue > availableWidthPerPage) {
-      edgeWidth /= newValue / availableWidthPerPage
-      coverHeight /= newValue / availableWidthPerPage
+      edgeWidth /= newValue / availableWidthPerPage;
+      coverHeight /= newValue / availableWidthPerPage;
     }
-  },
-)
+  }
+);
 watch(
   () => isReadyToOpen,
   (newValue) => {
     if (newValue) {
-      console.log('Creating book')
-      book = new PageFlip(document.getElementById('book'), {
+      console.log("Creating book");
+      book = new PageFlip(document.getElementById("book"), {
         width: coverWidth,
         height: coverHeight,
 
-        size: 'fixed',
+        size: "fixed",
 
         maxShadowOpacity: 0.5,
         showCover: true,
         usePortrait: false,
         mobileScrollSupport: false,
-      })
-      book.loadFromHTML(document.querySelectorAll('.page'))
+      });
+      book.loadFromHTML(document.querySelectorAll(".page"));
 
-      book
-        .on('flip', ({ data }) => {
-          currentPage = data
-        })
-        .on('changeState', ({ data }) => {
-          currentState = data
-        })
+      book.on("flip", ({ data }) => {
+        currentPage = data;
+      });
 
       setTimeout(() => {
-        opening = true
-      }, 50)
+        opening = true;
+      }, 50);
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 watch(
   () => currentPage,
   (newValue) => {
-    book.flip(newValue)
-  },
-)
+    book.flip(newValue);
+  }
+);
 
 watch(
   () => publicationCode,
   async () => {
-    await loadBookPages()
+    await loadBookPages();
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 watch(
   () => issueNumber,
   async () => {
-    await loadBookPages()
-  },
-)
+    await loadBookPages();
+  }
+);
 
 watch(
   () => pagesWithUrl,
@@ -284,22 +275,22 @@ watch(
     if (newValue && !newValue.length) {
       toast.show(
         $t(
-          'DucksManager n\'a pas pu trouver d\'informations sur le contenu de ce livre. Essayez-en un autre !',
+          "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !"
         ),
         {
           autoHideDelay: 5000,
           noCloseButton: true,
           solid: true,
-          title: $t('Pas d\'informations sur le contenu du livre'),
-          toaster: 'b-toaster-top-center',
-          variant: 'warning',
-        },
-      )
-      emit('close-book')
+          title: $t("Pas d'informations sur le contenu du livre"),
+          toaster: "b-toaster-top-center",
+          variant: "warning",
+        }
+      );
+      emit("close-book");
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss">

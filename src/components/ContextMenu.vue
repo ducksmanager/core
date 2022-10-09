@@ -4,7 +4,7 @@
       {{
         $t(
           "{count} numéro sélectionné|{count} numéros sélectionnés",
-          selectedIssues.length,
+          selectedIssues.length
         )
       }}
     </li>
@@ -26,7 +26,7 @@
     >
       {{
         $t(
-          "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié.",
+          "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié."
         )
       }}
     </BAlert>
@@ -38,7 +38,7 @@
     >
       {{
         $t(
-          "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection.",
+          "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection."
         )
       }}
     </BAlert>
@@ -67,7 +67,8 @@
               v-for="(text, id) in conditionStates"
               :key="`condition-${id}`"
               :hide-on-click="false"
-              class="clickable" :class="{ selected: copy.condition === id }"
+              class="clickable"
+              :class="{ selected: copy.condition === id }"
               @click="copy.condition = id"
             >
               <Condition :value="id" />&nbsp;{{ text }}
@@ -82,13 +83,14 @@
               v-for="(toReadStateText, toReadStateId) in toReadStates"
               :key="`copy-${copyIndex}-to-read-state-${toReadStateId}`"
               :hide-on-click="false"
-              class="clickable read-state" :class="{
+              class="clickable read-state"
+              :class="{
                 selected: String(copy.isToRead) === toReadStateId,
                 [toReadStateId]: true,
               }"
               @click="
-                copy.isToRead
-                  = toReadStateId === 'do_not_change'
+                copy.isToRead =
+                  toReadStateId === 'do_not_change'
                     ? null
                     : toReadStateId === 'true'
               "
@@ -110,8 +112,9 @@
               <v-contextmenu-item
                 v-if="purchaseStateId !== 'link'"
                 :hide-on-click="false"
-                class="clickable purchase-state" :class="{
-                  'selected': copy.purchaseId === purchaseStateId,
+                class="clickable purchase-state"
+                :class="{
+                  selected: copy.purchaseId === purchaseStateId,
                   'v-context__sub': purchaseStateId === 'link',
                   [purchaseStateId]: true,
                 }"
@@ -166,7 +169,7 @@
                       maxlength="30"
                       :placeholder="$t('Description')"
                       @click.stop="() => {}"
-                    >
+                    />
                     <b-button
                       variant="success"
                       class="btn-sm"
@@ -194,7 +197,8 @@
                     v-for="{ id: purchaseId, date, description } in purchases"
                     :key="`copy-${copyIndex}-purchase-${purchaseId}`"
                     :hide-on-click="false"
-                    class="clickable purchase-date" :class="{
+                    class="clickable purchase-date"
+                    :class="{
                       selected: copy.purchaseId === purchaseId,
                     }"
                     @click.stop="copy.purchaseId = purchaseId"
@@ -235,7 +239,7 @@
             role="presentation"
             :title="
               $t(
-                `Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`,
+                `Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`
               )
             "
           >
@@ -259,14 +263,13 @@ import {
   BIconCheck,
   BIconTrash,
   BIconX,
-} from 'bootstrap-icons-vue'
-import { BAlert, BNavItem, BTab, BTabs } from 'bootstrap-vue-3'
-import { watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+} from "bootstrap-icons-vue";
+import { BAlert, BNavItem, BTab, BTabs } from "bootstrap-vue-3";
+import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { collection } from '~/stores/collection'
-import { l10n } from '~/stores/l10n'
-import { condition } from '~/composables/condition'
+import { condition } from "~/composables/condition";
+import { collection } from "~/stores/collection";
 
 const { copies, publicationCode, selectedIssues } = defineProps({
   publicationCode: {
@@ -281,113 +284,109 @@ const { copies, publicationCode, selectedIssues } = defineProps({
     type: Array,
     required: true,
   },
-})
+});
 const emit = defineEmits([
-  'update-issues',
-  'create-purchase',
-  'delete-purchase',
-  'close',
-])
-const { conditions } = condition()
+  "update-issues",
+  "create-purchase",
+  "delete-purchase",
+  "close",
+]);
+const { conditions } = condition();
 
 const defaultState = $ref({
-  condition: 'possessed',
-  isToSell: 'do_not_change',
-  purchaseId: 'do_not_change',
-  isToRead: 'do_not_change',
-})
-const today = new Date().toISOString().slice(0, 10)
-const { t: $t } = useI18n()
-const newPurchaseDescription = $ref('')
-const newPurchaseDate = $ref(today)
-let editingCopies = $ref([])
-const currentCopyIndex = $ref(0)
-const purchases = $computed(() => collection().purchases)
+  condition: "possessed",
+  isToSell: "do_not_change",
+  purchaseId: "do_not_change",
+  isToRead: "do_not_change",
+});
+const today = new Date().toISOString().slice(0, 10);
+const { t: $t } = useI18n();
+const newPurchaseDescription = $ref("");
+const newPurchaseDate = $ref(today);
+let editingCopies = $ref([]);
+const currentCopyIndex = $ref(0);
+const purchases = $computed(() => collection().purchases);
 const conditionStates = $computed(() => ({
   ...(isSingleIssueSelected
     ? {}
     : {
-        do_not_change: $t('Conserver l\'état actuel'),
+        do_not_change: $t("Conserver l'état actuel"),
       }),
-  missing: $t('Marquer comme non-possédé(s)'),
-  possessed: $t('Marquer comme possédé(s)'),
-  bad: $t('Marquer comme en mauvais état'),
-  notsogood: $t('Marquer comme en état moyen'),
-  good: $t('Marquer comme en bon état'),
-}))
+  missing: $t("Marquer comme non-possédé(s)"),
+  possessed: $t("Marquer comme possédé(s)"),
+  bad: $t("Marquer comme en mauvais état"),
+  notsogood: $t("Marquer comme en état moyen"),
+  good: $t("Marquer comme en bon état"),
+}));
 const purchaseStates = $computed(() => ({
   ...(isSingleIssueSelected
     ? {}
     : {
-        do_not_change: $t('Conserver la date d\'achat'),
+        do_not_change: $t("Conserver la date d'achat"),
       }),
-  link: $t('Associer avec une date d\'achat'),
-  unlink: $t('Désassocier de la date d\'achat'),
-}))
+  link: $t("Associer avec une date d'achat"),
+  unlink: $t("Désassocier de la date d'achat"),
+}));
 const toReadStates = $computed(() => ({
   ...(isSingleIssueSelected
     ? {}
     : {
-        do_not_change: $t('Conserver la pile de lecture'),
+        do_not_change: $t("Conserver la pile de lecture"),
       }),
-  true: $t('Inclus dans la pile de lecture'),
-  false: $t('Exclus de la pile de lecture'),
-}))
-let isSingleIssueSelected = $computed(() => selectedIssues.length === 1)
-const hasNoCopies = $computed(() => !editingCopies.length)
-const hasMaxCopies = $computed(() => editingCopies.length >= 3)
-const r = l10n().r
-const formatDate = value => (/\d{4}-\d{2}-\d{2}/.test(value) ? value : today)
+  true: $t("Inclus dans la pile de lecture"),
+  false: $t("Exclus de la pile de lecture"),
+}));
+let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
+const hasNoCopies = $computed(() => !editingCopies.length);
+const hasMaxCopies = $computed(() => editingCopies.length >= 3);
+const formatDate = (value) => (/\d{4}-\d{2}-\d{2}/.test(value) ? value : today);
 const updateEditingCopies = () => {
   if (selectedIssues.length === 1) {
-    if (copies.length)
-      editingCopies = JSON.parse(JSON.stringify(copies))
-    else
-      editingCopies = [{ ...defaultState, condition: 'missing' }]
+    if (copies.length) editingCopies = JSON.parse(JSON.stringify(copies));
+    else editingCopies = [{ ...defaultState, condition: "missing" }];
+  } else {
+    editingCopies = [{ ...defaultState }];
   }
-  else {
-    editingCopies = [{ ...defaultState }]
-  }
-}
-const convertConditionToDbValue = condition =>
+};
+const convertConditionToDbValue = (condition) =>
   (conditions.find(({ value }) => value === condition) || { dbValue: null })
-    .dbValue
+    .dbValue;
 const updateSelectedIssues = async () => {
   let issueDetails = {
     condition: editingCopies.map(({ condition }) =>
-      convertConditionToDbValue(condition),
+      convertConditionToDbValue(condition)
     ),
     istoread: editingCopies.map(({ isToRead }) => isToRead),
     istosell: editingCopies.map(({ isToSell }) => isToSell),
     purchaseId: editingCopies.map(({ purchaseId }) => purchaseId),
-  }
+  };
   if (!isSingleIssueSelected) {
     issueDetails = Object.keys(issueDetails).reduce(
       (acc, detailKey) => ({
         ...acc,
         [detailKey]: issueDetails[detailKey][0],
       }),
-      {},
-    )
+      {}
+    );
   }
 
-  emit('update-issues', {
+  emit("update-issues", {
     publicationCode,
     issueNumbers: selectedIssues,
     ...issueDetails,
-  })
-}
+  });
+};
 const createPurchaseDate = async () =>
-  emit('create-purchase', {
+  emit("create-purchase", {
     date: newPurchaseDate,
     description: newPurchaseDescription,
-  })
+  });
 
 watch(
   () => selectedIssues,
   () => updateEditingCopies(),
-  { immediate: true },
-)
+  { immediate: true }
+);
 watch(
   () => copies,
   () => updateEditingCopies(),

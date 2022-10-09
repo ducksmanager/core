@@ -10,7 +10,7 @@ alias: [/bibliotheque/contributeurs]
     <h2>
       {{
         $t(
-          "La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de :",
+          "La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de :"
         )
       }}
     </h2>
@@ -33,37 +33,37 @@ alias: [/bibliotheque/contributeurs]
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted } from "vue";
 
-import { users } from '~/stores/users'
+import { users } from "~/stores/users";
 
-const usersStore = users()
+const usersStore = users();
 
-let loading = $ref(true)
-const bookcaseContributors = $computed(() => usersStore.bookcaseContributors)
-const stats = $computed(() => usersStore.stats)
-const points = $computed(() => usersStore.points)
-const fetchStats = $computed(() => usersStore.fetchStats)
+let loading = $ref(true);
+const bookcaseContributors = $computed(() => usersStore.bookcaseContributors);
+const stats = $computed(() => usersStore.stats);
+const points = $computed(() => usersStore.points);
+const fetchStats = $computed(() => usersStore.fetchStats);
 const fetchBookcaseContributors = $computed(
-  () => usersStore.fetchBookcaseContributors,
-)
+  () => usersStore.fetchBookcaseContributors
+);
 const bookcaseContributorsSorted = $computed(
   () =>
-    !loading
-        && [...bookcaseContributors].sort(({ name: name1 }, { name: name2 }) =>
-          Math.sign(name1.toLowerCase() - name2.toLowerCase()),
-        ),
-)
+    !loading &&
+    [...bookcaseContributors].sort(({ name: name1 }, { name: name2 }) =>
+      Math.sign(name1.toLowerCase() - name2.toLowerCase())
+    )
+);
 
 onMounted(async () => {
-  await fetchBookcaseContributors()
+  await fetchBookcaseContributors();
   await fetchStats(
     bookcaseContributors
       .filter(({ userId }) => !!userId)
-      .map(({ userId }) => userId),
-  )
-  loading = false
-})
+      .map(({ userId }) => userId)
+  );
+  loading = false;
+});
 </script>
 
 <style lang="scss" scoped>

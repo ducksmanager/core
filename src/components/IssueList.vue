@@ -17,14 +17,15 @@
                 :id="`show-${conditionFilter}`"
                 v-model="filter[conditionFilter]"
                 type="checkbox"
-              >
+              />
             </td>
             <td>
               <label :for="`show-${conditionFilter}`">
                 <template v-if="conditionFilter === 'possessed'">{{
                   $t("Afficher les numéros possédés")
                 }}</template>
-                <template v-else-if="conditionFilter === 'missing'">{{ $t("Afficher les numéros manquants") }}
+                <template v-else-if="conditionFilter === 'missing'"
+                  >{{ $t("Afficher les numéros manquants") }}
                 </template>
                 ({{
                   conditionFilter === "possessed"
@@ -47,7 +48,7 @@
         >
           {{
             $t(
-              "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous.",
+              "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous."
             )
           }}
           <ul>
@@ -74,7 +75,7 @@
         >
           {{
             $t(
-              "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,",
+              "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
             )
           }}
           <span v-if="isTouchScreen">{{
@@ -95,7 +96,8 @@
             v-for="({ issueNumber, title, userCopies }, idx) in filteredIssues"
             :id="issueNumber"
             :key="issueNumber"
-            class="issue" :class="{
+            class="issue"
+            :class="{
               [`issue-${userCopies.length ? 'possessed' : 'missing'}`]: true,
               preselected: preselected.includes(issueNumber),
               selected: selected.includes(issueNumber),
@@ -116,14 +118,15 @@
               >
                 <BIconEyeFill
                   :id="`issue-details-${issueNumber}`"
-                  class="mx-2" :class="{
+                  class="mx-2"
+                  :class="{
                     [`can-show-book-${
                       !coverUrls[issueNumber] ? coverUrls[issueNumber] : true
                     }`]: true,
                   }"
                   :alt="viewText"
                   @click.prevent="openBook(issueNumber)"
-                /></IssueDetailsPopover>
+              /></IssueDetailsPopover>
 
               <span class="issue-text">
                 {{ issueNumberTextPrefix }}{{ issueNumber }}
@@ -142,8 +145,8 @@
                 >
                   <svg
                     v-if="
-                      purchaseId
-                        && purchases.find(({ id }) => id === purchaseId)
+                      purchaseId &&
+                      purchases.find(({ id }) => id === purchaseId)
                     "
                     width="1em"
                     height="1em"
@@ -161,10 +164,7 @@
                       d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
                     />
                   </svg>
-                  <BIconBookmarkCheck
-                    v-if="isToRead"
-                    class="issue-to-read"
-                  />
+                  <BIconBookmarkCheck v-if="isToRead" class="issue-to-read" />
                   <Condition
                     v-if="copyCondition"
                     :publicationcode="publicationcode"
@@ -179,7 +179,7 @@
                   disabled
                   :checked="selected.includes(issueNumber)"
                   @click.prevent="false"
-                >
+                />
               </div>
             </div>
           </div>
@@ -200,7 +200,7 @@
       <div v-if="userIssuesForPublication.length">
         {{
           $t(
-            "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :",
+            "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :"
           )
         }}
         <ul>
@@ -237,15 +237,15 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import { BIconBookmarkCheck, BIconEyeFill } from 'bootstrap-icons-vue'
-import { BAlert } from 'bootstrap-vue-3'
-import { onMounted, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import axios from "axios";
+import { BIconBookmarkCheck, BIconEyeFill } from "bootstrap-icons-vue";
+import { BAlert } from "bootstrap-vue-3";
+import { onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { coa } from '~/stores/coa'
-import { collection as collectionStore } from '~/stores/collection'
-import { condition } from '~/composables/condition'
+import { condition } from "~/composables/condition";
+import { coa } from "~/stores/coa";
+import { collection as collectionStore } from "~/stores/collection";
 
 const { duplicatesOnly, readStackOnly, publicationcode } = defineProps({
   publicationcode: {
@@ -260,118 +260,118 @@ const { duplicatesOnly, readStackOnly, publicationcode } = defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-const { conditions } = condition()
-const { t: $t } = useI18n()
+const { conditions } = condition();
+const { t: $t } = useI18n();
 
-let loading = $ref(true)
-let publicationNameLoading = $ref(true)
+let loading = $ref(true);
+let publicationNameLoading = $ref(true);
 const filter = $ref({
   missing: true,
   possessed: true,
-})
-const contextmenu = $ref(null)
-let issues = $shallowRef(null)
-let userIssuesForPublication = $shallowRef(null)
-let userIssuesNotFoundForPublication = $shallowRef([])
-let selected = $shallowRef([])
-let preselected = $shallowRef([])
-let preselectedIndexStart = $ref(null)
-let preselectedIndexEnd = $ref(null)
-let currentIssueOpened = $shallowRef(null)
-const issueNumberTextPrefix = $computed(() => $t('n°'))
-const boughtOnTextPrefix = $computed(() => $t('Acheté le'))
-const viewText = $computed(() => $t('Voir'))
+});
+const contextmenu = $ref(null);
+let issues = $shallowRef(null);
+let userIssuesForPublication = $shallowRef(null);
+let userIssuesNotFoundForPublication = $shallowRef([]);
+let selected = $shallowRef([]);
+let preselected = $shallowRef([]);
+let preselectedIndexStart = $ref(null);
+let preselectedIndexEnd = $ref(null);
+let currentIssueOpened = $shallowRef(null);
+const issueNumberTextPrefix = $computed(() => $t("n°"));
+const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
+const viewText = $computed(() => $t("Voir"));
 
-const contextMenuKey = 'context-menu'
-const publicationNames = $computed(() => coa().publicationNames)
-const coverUrls = $computed(() => coa().coverUrls)
-const userIssues = $computed(() => collectionStore().collection)
-const purchases = $computed(() => collectionStore().purchases)
-const country = $computed(() => publicationcode.split('/')[0])
-const publicationName = $computed(() => publicationNames[publicationcode])
-const isTouchScreen = window.matchMedia('(pointer: coarse)').matches
+const contextMenuKey = "context-menu";
+const publicationNames = $computed(() => coa().publicationNames);
+const coverUrls = $computed(() => coa().coverUrls);
+const userIssues = $computed(() => collectionStore().collection);
+const purchases = $computed(() => collectionStore().purchases);
+const country = $computed(() => publicationcode.split("/")[0]);
+const publicationName = $computed(() => publicationNames[publicationcode]);
+const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const filteredIssues = $computed(() =>
   issues?.filter(
     ({ userCopies }) =>
-      (filter.possessed && userCopies.length)
-        || (filter.missing && !userCopies.length),
-  ),
-)
+      (filter.possessed && userCopies.length) ||
+      (filter.missing && !userCopies.length)
+  )
+);
 const selectedIssuesCopies = $computed(() =>
   userIssuesForPublication.filter(
     ({ issueNumber }, idx) =>
-      selected.includes(issueNumber)
-        && (selected.length === 1
-          || userIssuesForPublication.some(
-            ({ issueNumber: issueNumber2 }, idx2) =>
-              issueNumber2 === issueNumber && idx !== idx2,
-          )),
-  ),
-)
+      selected.includes(issueNumber) &&
+      (selected.length === 1 ||
+        userIssuesForPublication.some(
+          ({ issueNumber: issueNumber2 }, idx2) =>
+            issueNumber2 === issueNumber && idx !== idx2
+        ))
+  )
+);
 const ownedIssuesCount = $computed(() =>
-  issues.reduce((acc, { userCopies }) => acc + (userCopies.length ? 1 : 0), 0),
-)
-const fetchPublicationNames = coa().fetchPublicationNames
-const loadCollection = collectionStore().loadCollection
-const loadPurchases = collectionStore().loadPurchases
+  issues.reduce((acc, { userCopies }) => acc + (userCopies.length ? 1 : 0), 0)
+);
+const fetchPublicationNames = coa().fetchPublicationNames;
+const loadCollection = collectionStore().loadCollection;
+const loadPurchases = collectionStore().loadPurchases;
 const getPreselected = () =>
   [preselectedIndexStart, preselectedIndexEnd].includes(null)
     ? preselected
     : filteredIssues
-      .map(({ issueNumber }) => issueNumber)
-      .filter(
-        (issueNumber, index) =>
-          index >= preselectedIndexStart && index <= preselectedIndexEnd,
-      )
+        .map(({ issueNumber }) => issueNumber)
+        .filter(
+          (issueNumber, index) =>
+            index >= preselectedIndexStart && index <= preselectedIndexEnd
+        );
 const updateSelected = () => {
   selected = issues
     .map(({ issueNumber }) => issueNumber)
     .filter(
-      issueNumber =>
-        selected.includes(issueNumber) !== preselected.includes(issueNumber),
-    )
-  preselectedIndexStart = preselectedIndexEnd = null
-  preselected = []
-}
-const deletePublicationIssues = async issuesToDelete =>
+      (issueNumber) =>
+        selected.includes(issueNumber) !== preselected.includes(issueNumber)
+    );
+  preselectedIndexStart = preselectedIndexEnd = null;
+  preselected = [];
+};
+const deletePublicationIssues = async (issuesToDelete) =>
   await updateIssues({
     publicationCode: publicationcode,
     issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
-    condition: conditions.find(({ value }) => value === 'missing').dbValue,
+    condition: conditions.find(({ value }) => value === "missing").dbValue,
     istosell: false,
     purchaseId: null,
-  })
+  });
 const updateIssues = async (data) => {
-  contextmenu.hide()
-  await collectionStore().collectionApi.post('/collection/issues', data)
-  await loadCollection(true)
-  selected = []
-}
+  contextmenu.hide();
+  await collectionStore().collectionApi.post("/collection/issues", data);
+  await loadCollection(true);
+  selected = [];
+};
 const createPurchase = async ({ date, description }) => {
-  await collectionStore().collectionApi.post('/collection/purchases', {
+  await collectionStore().collectionApi.post("/collection/purchases", {
     date,
     description,
-  })
-  await loadPurchases(true)
-}
+  });
+  await loadPurchases(true);
+};
 const deletePurchase = async ({ id }) => {
-  await collectionStore().collectionApi.delete(`/collection/purchases/${id}`)
-  await loadPurchases(true)
-}
+  await collectionStore().collectionApi.delete(`/collection/purchases/${id}`);
+  await loadPurchases(true);
+};
 const openBook = (issueNumber) => {
   currentIssueOpened = coverUrls[issueNumber]
     ? { publicationcode, issueNumber }
-    : null
-}
+    : null;
+};
 
 watch(
   () => preselectedIndexEnd,
   () => {
-    preselected = getPreselected()
-  },
-)
+    preselected = getPreselected();
+  }
+);
 
 watch(
   () => userIssues,
@@ -379,54 +379,52 @@ watch(
     if (newValue) {
       userIssuesForPublication = newValue
         .filter(
-          issue => `${issue.country}/${issue.magazine}` === publicationcode,
+          (issue) => `${issue.country}/${issue.magazine}` === publicationcode
         )
-        .map(issue => ({
+        .map((issue) => ({
           ...issue,
           condition: (
             conditions.find(({ dbValue }) => dbValue === issue.condition) || {
-              value: 'possessed',
+              value: "possessed",
             }
           ).value,
-        }))
+        }));
 
       const issuesWithTitles = (
-        await axios.get(
-          `/coa/list/issues/withTitle/asArray/${publicationcode}`,
-        )
-      ).data
+        await axios.get(`/coa/list/issues/withTitle/asArray/${publicationcode}`)
+      ).data;
 
       issues = issuesWithTitles
-        .map(issue => ({
+        .map((issue) => ({
           ...issue,
           userCopies: userIssuesForPublication.filter(
             ({ issueNumber: userIssueNumber }) =>
-              userIssueNumber === issue.issueNumber,
+              userIssueNumber === issue.issueNumber
           ),
         }))
         .filter(({ userCopies }) => !duplicatesOnly || userCopies.length > 1)
         .filter(
           ({ userCopies }) =>
-            !readStackOnly
-            || userCopies.filter(({ isToRead }) => isToRead).length,
-        )
+            !readStackOnly ||
+            userCopies.filter(({ isToRead }) => isToRead).length
+        );
       const coaIssueNumbers = issuesWithTitles.map(
-        ({ issueNumber }) => issueNumber,
-      )
+        ({ issueNumber }) => issueNumber
+      );
       userIssuesNotFoundForPublication = userIssuesForPublication.filter(
-        ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber),
-      )
-      loading = false
+        ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
+      );
+      loading = false;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 onMounted(async () => {
-  await loadPurchases()
-  await fetchPublicationNames([publicationcode])
-  publicationNameLoading = false
-})
+  await loadPurchases();
+  await fetchPublicationNames([publicationcode]);
+  publicationNameLoading = false;
+});
 </script>
 
 <style scoped lang="scss">

@@ -24,9 +24,6 @@ import { users } from "~/stores/users";
 
 let isLoaded = $ref(false);
 let hasFreshEvents = $ref(false);
-const publicationNames = $computed(() => coa().publicationNames);
-const stats = $computed(() => users().stats);
-const points = $computed(() => users().points);
 const events = $computed(() => users().events);
 const eventUserIds = $computed(() =>
   events

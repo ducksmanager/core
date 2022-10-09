@@ -2,9 +2,7 @@
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
     <a
       :class="{ clickable, flex }"
-      :href="`${r(
-        `/collection/show/${publicationcode}`,
-      )}#${issuenumber}`"
+      :href="`${r(`/collection/show/${publicationcode}`)}#${issuenumber}`"
     >
       <Condition
         v-if="!hideCondition"
@@ -23,7 +21,7 @@
 </template>
 
 <script setup>
-import { l10n } from '~/stores/l10n'
+import { l10n } from "~/stores/l10n";
 
 defineProps({
   publicationcode: { type: String, required: true },
@@ -33,9 +31,9 @@ defineProps({
   hideCondition: { type: Boolean, default: false },
   noWrap: { type: Boolean, default: true },
   flex: { type: Boolean, default: true },
-})
+});
 
-const { r } = l10n()
+const { r } = l10n();
 </script>
 
 <style scoped lang="scss">

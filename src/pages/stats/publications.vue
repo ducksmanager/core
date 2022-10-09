@@ -11,43 +11,43 @@ import {
   PieController,
   Title,
   Tooltip,
-} from 'chart.js'
-import { watch } from 'vue'
-import { PieChart } from 'vue-chart-3'
-import { useI18n } from 'vue-i18n'
+} from "chart.js";
+import { watch } from "vue";
+import { PieChart } from "vue-chart-3";
+import { useI18n } from "vue-i18n";
 
-import { coa } from '~/stores/coa'
-import { collection } from '~/stores/collection'
-Chart.register(Legend, PieController, Tooltip, Title, ArcElement)
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
-collection().loadCollection()
-const { t: $t } = useI18n()
-const totalPerPublication = $computed(() => collection().totalPerPublication)
-const publicationNames = $computed(() => coa().publicationNames)
+collection().loadCollection();
+const { t: $t } = useI18n();
+const totalPerPublication = $computed(() => collection().totalPerPublication);
+const publicationNames = $computed(() => coa().publicationNames);
 const smallCountPublications = $computed(() =>
   !totalPerPublication
     ? null
     : Object.keys(totalPerPublication).filter(
-      publicationCode =>
-        totalPerPublication[publicationCode]
-              / collection().collection.length
-            < 0.01,
-    ),
-)
+        (publicationCode) =>
+          totalPerPublication[publicationCode] /
+            collection().collection.length <
+          0.01
+      )
+);
 const totalPerPublicationGroupSmallCounts = $computed(
   () =>
-    smallCountPublications && totalPerPublication && {
+    smallCountPublications &&
+    totalPerPublication && {
       ...Object.keys(totalPerPublication)
         .filter(
-          publicationCode =>
-            !smallCountPublications.includes(publicationCode),
+          (publicationCode) => !smallCountPublications.includes(publicationCode)
         )
         .reduce(
           (acc, publicationCode) => ({
             ...acc,
             [publicationCode]: totalPerPublication[publicationCode],
           }),
-          {},
+          {}
         ),
       ...(!smallCountPublications.length
         ? {}
@@ -55,57 +55,57 @@ const totalPerPublicationGroupSmallCounts = $computed(
             [null]: smallCountPublications.reduce(
               (acc, publicationCode) =>
                 acc + totalPerPublication[publicationCode],
-              0,
+              0
             ),
           }),
-    },
-)
+    }
+);
 const labels = $computed(
   () =>
-    hasPublicationNames
-      && Object.entries(totalPerPublicationGroupSmallCounts)
-        .sort(sortByCount)
-        .reduce(
-          (acc, [publicationCode]) => [
-            ...acc,
-            publicationNames[publicationCode]
-              || `${$t('Autres')} (${smallCountPublications.length} ${$t(
-                'Publications',
-              ).toLowerCase()})`,
-          ],
-          [],
-        ),
-)
+    hasPublicationNames &&
+    Object.entries(totalPerPublicationGroupSmallCounts)
+      .sort(sortByCount)
+      .reduce(
+        (acc, [publicationCode]) => [
+          ...acc,
+          publicationNames[publicationCode] ||
+            `${$t("Autres")} (${smallCountPublications.length} ${$t(
+              "Publications"
+            ).toLowerCase()})`,
+        ],
+        []
+      )
+);
 const values = $computed(() =>
   Object.values(totalPerPublicationGroupSmallCounts).sort((count1, count2) =>
-    Math.sign(count1 - count2),
-  ),
-)
+    Math.sign(count1 - count2)
+  )
+);
 const colors = $computed(
   () =>
-    totalPerPublicationGroupSmallCounts
-      && Object.entries(totalPerPublicationGroupSmallCounts)
-        .sort(sortByCount)
-        .map(([publicationCode]) =>
-          publicationCode === 'null' ? '#000' : randomColor(),
-        ),
-)
-const fetchPublicationNames = coa().fetchPublicationNames
+    totalPerPublicationGroupSmallCounts &&
+    Object.entries(totalPerPublicationGroupSmallCounts)
+      .sort(sortByCount)
+      .map(([publicationCode]) =>
+        publicationCode === "null" ? "#000" : randomColor()
+      )
+);
+const fetchPublicationNames = coa().fetchPublicationNames;
 const randomColor = () =>
-    `rgb(${[
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255),
-    ].join(',')})`
+  `rgb(${[
+    Math.floor(Math.random() * 255),
+    Math.floor(Math.random() * 255),
+    Math.floor(Math.random() * 255),
+  ].join(",")})`;
 const sortByCount = ([publicationCode1], [publicationCode2]) =>
   Math.sign(
-    totalPerPublicationGroupSmallCounts[publicationCode1]
-        - totalPerPublicationGroupSmallCounts[publicationCode2],
-  )
+    totalPerPublicationGroupSmallCounts[publicationCode1] -
+      totalPerPublicationGroupSmallCounts[publicationCode2]
+  );
 
-let hasPublicationNames = $ref(false)
-let chartData = $ref(null)
-let options = $ref({})
+let hasPublicationNames = $ref(false);
+let chartData = $ref(null);
+let options = $ref({});
 
 watch(
   () => totalPerPublicationGroupSmallCounts,
@@ -113,20 +113,20 @@ watch(
     if (newValue) {
       fetchPublicationNames(
         Object.keys(totalPerPublicationGroupSmallCounts).filter(
-          publicationCode => publicationCode !== 'null',
-        ),
-      )
-      hasPublicationNames = true
+          (publicationCode) => publicationCode !== "null"
+        )
+      );
+      hasPublicationNames = true;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 watch(
   () => labels && values && colors,
   (newValue) => {
     if (!newValue) {
-      return
+      return;
     }
     chartData = {
       datasets: [
@@ -136,7 +136,7 @@ watch(
         },
       ],
       labels,
-    }
+    };
 
     options = {
       responsive: true,
@@ -145,21 +145,21 @@ watch(
         tooltip: {
           callbacks: {
             label: (tooltipItem) => {
-              const { dataset, parsed: currentValue } = tooltipItem
-              const total = dataset.data.reduce((acc, value) => acc + value, 0)
+              const { dataset, parsed: currentValue } = tooltipItem;
+              const total = dataset.data.reduce((acc, value) => acc + value, 0);
               const percentage = parseFloat(
-                ((currentValue / total) * 100).toFixed(1),
-              )
-              return `${currentValue} (${percentage}%)`
+                ((currentValue / total) * 100).toFixed(1)
+              );
+              return `${currentValue} (${percentage}%)`;
             },
             title: ([tooltipItem]) => chartData.labels[tooltipItem.dataIndex],
           },
         },
       },
-    }
+    };
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 </script>
 
 <style scoped>

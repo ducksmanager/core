@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted } from "vue";
 
 const { bookcaseTextures, sortedBookcase } = defineProps({
   embedded: {
@@ -77,29 +77,28 @@ const { bookcaseTextures, sortedBookcase } = defineProps({
     type: Array,
     required: true,
   },
-})
+});
 
-defineEmits(['open-book'])
-let currentEdgeIndex = $ref(0)
-let edgesToLoad = $ref([])
+defineEmits(["open-book"]);
+let currentEdgeIndex = $ref(0);
+let edgesToLoad = $ref([]);
 
 const loadNextEdge = () => {
-  const nextEdge = sortedBookcase[++currentEdgeIndex]
-  if (nextEdge)
-    edgesToLoad.push(nextEdge)
-}
+  const nextEdge = sortedBookcase[++currentEdgeIndex];
+  if (nextEdge) edgesToLoad.push(nextEdge);
+};
 
 onMounted(() => {
-  if (!document.querySelector('style#bookshelves')) {
-    const { bookshelf: bookshelfTexture } = bookcaseTextures
-    const bookshelfTextureUrl = `/images/textures/${bookshelfTexture}.jpg`
-    const style = document.createElement('style')
-    style.id = 'bookshelves'
-    style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`
-    document.head.append(style)
+  if (!document.querySelector("style#bookshelves")) {
+    const { bookshelf: bookshelfTexture } = bookcaseTextures;
+    const bookshelfTextureUrl = `/images/textures/${bookshelfTexture}.jpg`;
+    const style = document.createElement("style");
+    style.id = "bookshelves";
+    style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
+    document.head.append(style);
   }
-  edgesToLoad = [sortedBookcase[0]]
-})
+  edgesToLoad = [sortedBookcase[0]];
+});
 </script>
 
 <style lang="scss" scoped>

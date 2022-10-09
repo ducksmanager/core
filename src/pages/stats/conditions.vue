@@ -11,36 +11,36 @@ import {
   PieController,
   Title,
   Tooltip,
-} from 'chart.js'
-import { PieChart } from 'vue-chart-3'
+} from "chart.js";
+import { PieChart } from "vue-chart-3";
 
-import { collection as collectionStore } from '~/stores/collection'
-import { collection } from '~/composables/collection'
-import { condition } from '~/composables/condition'
-Chart.register(Legend, PieController, Tooltip, Title, ArcElement)
+import { condition } from "~/composables/condition";
+import { collection as collectionStore } from "~/stores/collection";
+Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
-let conditions
+let conditions;
 
-conditions = condition().conditions
-collection()
+conditions = condition().conditions;
 const numberPerCondition = $computed(() =>
   collectionStore().collection.reduce(
     (acc, { condition }) => ({
       ...acc,
-      [condition || 'indefini']: (acc[condition || 'indefini'] || 0) + 1,
+      [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
     }),
-    {},
-  ),
-)
+    {}
+  )
+);
 const conditionsWithoutMissing = conditions.filter(
-  ({ value }) => value !== 'missing',
-)
+  ({ value }) => value !== "missing"
+);
 const values = $computed(() =>
   Object.values(conditionsWithoutMissing).map(
-    ({ dbValue }) => numberPerCondition[dbValue],
-  ),
-)
-const colors = Object.values(conditionsWithoutMissing.map(({ color }) => color))
+    ({ dbValue }) => numberPerCondition[dbValue]
+  )
+);
+const colors = Object.values(
+  conditionsWithoutMissing.map(({ color }) => color)
+);
 const chartData = $computed(() => ({
   labels: Object.values(conditionsWithoutMissing).map(({ text }) => text),
   datasets: [
@@ -49,7 +49,7 @@ const chartData = $computed(() => ({
       backgroundColor: colors,
     },
   ],
-}))
+}));
 const options = $computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
@@ -57,18 +57,22 @@ const options = $computed(() => ({
     tooltip: {
       callbacks: {
         label: (tooltipItem) => {
-          const { dataset, parsed: currentValue } = tooltipItem
-          const total = dataset.data.reduce((acc, value) => acc + value, 0)
+          const { dataset, parsed: currentValue } = tooltipItem;
+          const total = dataset.data.reduce((acc, value) => acc + value, 0);
           const percentage = parseFloat(
-            ((currentValue / total) * 100).toFixed(1),
-          )
-          return `${currentValue} (${percentage}%)`
+            ((currentValue / total) * 100).toFixed(1)
+          );
+          return `${currentValue} (${percentage}%)`;
         },
         title: ([tooltipItem]) => chartData.labels[tooltipItem.dataIndex],
       },
     },
   },
-}))
+}));
+
+onMounted(async () => {
+  await collectionStore().loadCollection();
+});
 </script>
 
 <style scoped>

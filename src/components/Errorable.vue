@@ -8,18 +8,18 @@
 </template>
 
 <script setup>
-import { BAlert } from 'bootstrap-vue-3'
+import { BAlert } from "bootstrap-vue-3";
 
-import { form } from '~/stores/form'
+import { form } from "~/stores/form";
 
 defineProps({
   id: {
     type: String,
     required: true,
   },
-})
+});
 
-const errors = $computed(() => form().errors)
+const errors = $computed(() => form().errors);
 </script>
 
 <style scoped lang="scss">

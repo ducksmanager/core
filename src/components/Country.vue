@@ -4,7 +4,7 @@
       class="flag"
       :alt="countryCode"
       :src="`/images/flags/${countryCode}.png`"
-    >&nbsp;
+    />&nbsp;
     <slot v-if="countryName" :country-name="countryName">
       {{ countryName }}
     </slot>
@@ -25,9 +25,9 @@ const { country, publicationCode } = defineProps({
     type: String,
     default: null,
   },
-})
+});
 
-const countryCode = $computed(() => country || publicationCode.split('/')[0])
+const countryCode = $computed(() => country || publicationCode.split("/")[0]);
 </script>
 
 <style scoped>

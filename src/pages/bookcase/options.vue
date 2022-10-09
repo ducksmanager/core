@@ -65,12 +65,7 @@ alias: [/bibliotheque/options]
     <BAlert variant="danger" :show="error">
       {{ $t("Une erreur s'est produite.") }}
     </BAlert>
-    <BButton
-      class="mt-4"
-      variant="success"
-      :disabled="loading"
-      @click="submit"
-    >
+    <BButton class="mt-4" variant="success" :disabled="loading" @click="submit">
       {{ $t("Valider") }}
     </BButton>
   </div>
@@ -83,112 +78,110 @@ import {
   BDropdown,
   BDropdownItem,
   BFormCheckbox,
-} from 'bootstrap-vue-3'
-import { onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { SlickItem, SlickList } from 'vue-slicksort'
+} from "bootstrap-vue-3";
+import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { SlickItem, SlickList } from "vue-slicksort";
 
-import { bookcase } from '~/stores/bookcase'
-import { coa } from '~/stores/coa'
+import { bookcase } from "~/stores/bookcase";
+import { coa } from "~/stores/coa";
 
-const user = $computed(() => collection().user)
-const { t: $t } = useI18n()
-const bookcaseStore = bookcase()
+const user = $computed(() => collection().user);
+const { t: $t } = useI18n();
+const bookcaseStore = bookcase();
 const textures = [
-  'bois/ASH',
-  'bois/BALTIC BIRCH',
-  'bois/BASSWOOD',
-  'bois/BIRDS EYE MAPLE',
-  'bois/BUBINGA',
-  'bois/BURL WALNUT',
-  'bois/CHERRY',
-  'bois/CLEAR PINE',
-  'bois/DURON',
-  'bois/FIDDLEBACK MAKORE',
-  'bois/FIGURED MAKORE',
-  'bois/HICKORY',
-  'bois/HOMOSOTE',
-  'bois/HONDURAN ROSEWOOD',
-  'bois/HONDURAS MAHOGANY',
-  'bois/ITALIAN POPLAR',
-  'bois/KEWAZINGA',
-  'bois/KNOTTY PINE',
-  'bois/KOA',
-  'bois/LACEWOOD',
-  'bois/LAUAN',
-  'bois/NATURAL BIRCH',
-  'bois/NOVA-CORK',
-  'bois/OLIVE ASH BURL',
-  'bois/PLAIN SLICED BEECH',
-  'bois/PLAIN SLICED RED OAK',
-  'bois/PLAIN SLICED WENGE',
-  'bois/POPLAR',
-  'bois/PREFINISHED MAPLE',
-  'bois/PURPLEHEART',
-  'bois/QUARTERSAWN BEECH',
-  'bois/QUARTERSAWN TEAK',
-  'bois/QUARTERSAWN WENGE',
-  'bois/QUARTERSAWN WHITE OAK',
-  'bois/RED BIRCH',
-  'bois/RIBBON STRIPE SAPELE',
-  'bois/ROTARY DOUGLAS FIR',
-  'bois/ROTARY SAPELE',
-  'bois/ROTARY WHITE MAPLE',
-  'bois/SPANISH CEDAR',
-  'bois/TEAK',
-  'bois/VERTICAL GRAIN FIR PLY',
-  'bois/WALNUT',
-  'bois/WHITE BIRCH',
-  'bois/ZEBRAWOOD',
-]
-const bookcaseOptions = $computed(() => bookcaseStore.bookcaseOptions)
-const publicationNames = $computed(() => coa().publicationNames)
+  "bois/ASH",
+  "bois/BALTIC BIRCH",
+  "bois/BASSWOOD",
+  "bois/BIRDS EYE MAPLE",
+  "bois/BUBINGA",
+  "bois/BURL WALNUT",
+  "bois/CHERRY",
+  "bois/CLEAR PINE",
+  "bois/DURON",
+  "bois/FIDDLEBACK MAKORE",
+  "bois/FIGURED MAKORE",
+  "bois/HICKORY",
+  "bois/HOMOSOTE",
+  "bois/HONDURAN ROSEWOOD",
+  "bois/HONDURAS MAHOGANY",
+  "bois/ITALIAN POPLAR",
+  "bois/KEWAZINGA",
+  "bois/KNOTTY PINE",
+  "bois/KOA",
+  "bois/LACEWOOD",
+  "bois/LAUAN",
+  "bois/NATURAL BIRCH",
+  "bois/NOVA-CORK",
+  "bois/OLIVE ASH BURL",
+  "bois/PLAIN SLICED BEECH",
+  "bois/PLAIN SLICED RED OAK",
+  "bois/PLAIN SLICED WENGE",
+  "bois/POPLAR",
+  "bois/PREFINISHED MAPLE",
+  "bois/PURPLEHEART",
+  "bois/QUARTERSAWN BEECH",
+  "bois/QUARTERSAWN TEAK",
+  "bois/QUARTERSAWN WENGE",
+  "bois/QUARTERSAWN WHITE OAK",
+  "bois/RED BIRCH",
+  "bois/RIBBON STRIPE SAPELE",
+  "bois/ROTARY DOUGLAS FIR",
+  "bois/ROTARY SAPELE",
+  "bois/ROTARY WHITE MAPLE",
+  "bois/SPANISH CEDAR",
+  "bois/TEAK",
+  "bois/VERTICAL GRAIN FIR PLY",
+  "bois/WALNUT",
+  "bois/WHITE BIRCH",
+  "bois/ZEBRAWOOD",
+];
+const bookcaseOptions = $computed(() => bookcaseStore.bookcaseOptions);
+const publicationNames = $computed(() => coa().publicationNames);
 const textureTypes = $computed(() => ({
-  bookcase: $t('Sous-texture'),
-  bookshelf: $t('Sous-texture de l\'étagère'),
-}))
-const loadBookcaseOptions = bookcaseStore.loadBookcaseOptions
-const loadBookcaseOrder = bookcaseStore.loadBookcaseOrder
-const updateBookcaseOptions = bookcaseStore.updateBookcaseOptions
-const updateBookcaseOrder = bookcaseStore.updateBookcaseOrder
-const fetchPublicationNames = coa().fetchPublicationNames
+  bookcase: $t("Sous-texture"),
+  bookshelf: $t("Sous-texture de l'étagère"),
+}));
+const loadBookcaseOptions = bookcaseStore.loadBookcaseOptions;
+const loadBookcaseOrder = bookcaseStore.loadBookcaseOrder;
+const updateBookcaseOptions = bookcaseStore.updateBookcaseOptions;
+const updateBookcaseOrder = bookcaseStore.updateBookcaseOrder;
+const fetchPublicationNames = coa().fetchPublicationNames;
 const loadData = async () => {
-  await loadBookcaseOptions()
-  await loadBookcaseOrder()
-  loading = false
-}
+  await loadBookcaseOptions();
+  await loadBookcaseOrder();
+  loading = false;
+};
 const submit = async () => {
-  error = false
-  loading = true
+  error = false;
+  loading = true;
   try {
-    await updateBookcaseOptions()
-    await updateBookcaseOrder()
-    await loadData()
+    await updateBookcaseOptions();
+    await updateBookcaseOrder();
+    await loadData();
+  } catch {
+    error = true;
+  } finally {
+    loading = false;
   }
-  catch {
-    error = true
-  }
-  finally {
-    loading = false
-  }
-}
-const textureWithoutSuperType = texture => texture.replace(/^[^/]+\//, '')
+};
+const textureWithoutSuperType = (texture) => texture.replace(/^[^/]+\//, "");
 
-let error = $ref(false)
-let loading = $ref(true)
-let hasPublicationNames = $ref(false)
-let bookcaseOrder = $ref(null)
+let error = $ref(false);
+let loading = $ref(true);
+let hasPublicationNames = $ref(false);
+let bookcaseOrder = $ref(null);
 
 onMounted(async () => {
-  bookcaseStore.bookcaseUsername = user.username
-  await loadData()
-  bookcaseOrder = bookcaseStore.bookcaseOrder
-  await fetchPublicationNames(bookcaseOrder)
-  bookcaseOrder = bookcaseOrder.filter(publicationCode =>
-    Object.keys(publicationNames).includes(publicationCode),
-  )
-  hasPublicationNames = true
-})
+  bookcaseStore.bookcaseUsername = user.username;
+  await loadData();
+  bookcaseOrder = bookcaseStore.bookcaseOrder;
+  await fetchPublicationNames(bookcaseOrder);
+  bookcaseOrder = bookcaseOrder.filter((publicationCode) =>
+    Object.keys(publicationNames).includes(publicationCode)
+  );
+  hasPublicationNames = true;
+});
 </script>
 
 <style lang="scss">

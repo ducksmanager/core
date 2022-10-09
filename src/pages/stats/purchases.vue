@@ -79,14 +79,13 @@ Chart.register(
   Title
 );
 
-collection().loadCollection();
-const { r } = l10n()
+defineEmits(["change-dimension"]), collection().loadCollection();
+const { r } = l10n();
 const { t: $t } = useI18n(),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),
     total: $t("Afficher les possessions totales"),
   },
-  emit = defineEmits(["change-dimension"]),
   purchases = $computed(() => collection().purchases),
   publicationNames = $computed(() => coa().publicationNames),
   changeDimension = (dimension, value) => {

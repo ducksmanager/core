@@ -3,7 +3,11 @@ alias: [/connexion]
 </route>
 
 <template>
-  <form method="post" @submit.prevent="login"  v-if="collectionStore.user === null">
+  <form
+    v-if="collectionStore.user === null"
+    method="post"
+    @submit.prevent="login"
+  >
     <BRow>
       <BCol lg="6">
         <h1 class="h3 mb-3 fw-normal">
@@ -14,23 +18,28 @@ alias: [/connexion]
         </BAlert>
         <BFormInput
           id="username"
+          v-model="username"
           name="username"
           type="text"
           required
           autofocus
-          v-model="username"
           :placeholder="$t(`Nom d'utilisateur`)"
         />
         <BFormInput
           id="password"
+          v-model="password"
           name="password"
           type="password"
-          v-model="password"
           required
           :placeholder="$t('Mot de passe')"
         />
 
-        <BButton variant="primary" size="xl" type="submit" :disabled="!csrfToken">
+        <BButton
+          variant="primary"
+          size="xl"
+          type="submit"
+          :disabled="!csrfToken"
+        >
           {{ $t("Connexion") }}
         </BButton>
         <div>
@@ -44,20 +53,21 @@ alias: [/connexion]
 <script setup>
 import axios from "axios";
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
-import { l10n } from "~/stores/l10n";
-import { collection } from "~/stores/collection";
 import Cookies from "js-cookie";
 
-const collectionStore = collection()
+import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
+
+const collectionStore = collection();
 
 let router = useRouter();
 defineProps({
-  error: { type: String, default: null }
+  error: { type: String, default: null },
 });
 
 let csrfToken = $ref(null);
-let username = $ref('');
-let password = $ref('');
+let username = $ref("");
+let password = $ref("");
 
 onMounted(async () => {
   csrfToken = (await axios.get("/csrf")).data?.csrfToken;
@@ -65,20 +75,29 @@ onMounted(async () => {
 
 const login = async () => {
   try {
-    Cookies.set('token', (await axios.post("/login", {
-      username, password
-    })).data.token);
+    Cookies.set(
+      "token",
+      (
+        await axios.post("/login", {
+          username,
+          password,
+        })
+      ).data.token
+    );
+  } catch (e) {
+    console.error(e);
   }
-  catch(e) {
-    console.error(e)
-  }
-}
+};
 
-watch(() => collectionStore.user, async (newValue) => {
-  if (newValue) {
-    await router.push('/collection')
-  }
-}, {immediate: true})
+watch(
+  () => collectionStore.user,
+  async (newValue) => {
+    if (newValue) {
+      await router.push("/collection");
+    }
+  },
+  { immediate: true }
+);
 const { r } = l10n();
 </script>
 

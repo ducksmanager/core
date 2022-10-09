@@ -4,9 +4,7 @@ alias: [/collection/compte]
 
 <template>
   <form v-if="user" method="post">
-    <BAlert v-if="isSuccess" variant="success">
-      {{ $t("OK") }} !
-    </BAlert>
+    <BAlert v-if="isSuccess" variant="success"> {{ $t("OK") }} ! </BAlert>
 
     <h5>{{ $t("Adresse e-mail") }}</h5>
     <Errorable id="email">
@@ -26,14 +24,14 @@ alias: [/collection/compte]
       <template v-if="hasRequestedPresentationSentence">
         {{
           $t(
-            "Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu'elle sera validée.",
+            "Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu'elle sera validée."
           )
         }}
       </template>
       <template v-else>
         {{
           $t(
-            "Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés.",
+            "Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés."
           )
         }}
       </template>
@@ -115,57 +113,57 @@ alias: [/collection/compte]
 </template>
 
 <script setup>
-import axios from 'axios'
-import { BAlert, BButton, BFormCheckbox, BFormInput } from 'bootstrap-vue-3'
-import { onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
+import axios from "axios";
+import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
+import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { collection } from '~/stores/collection'
-import { form } from '~/stores/form'
-import { l10n } from '~/stores/l10n'
+import { collection } from "~/stores/collection";
+import { form } from "~/stores/form";
+import { l10n } from "~/stores/l10n";
 const { errors, hasrequestedpresentationsentence, success } = defineProps({
-  errors: { type: String, default: '' },
+  errors: { type: String, default: "" },
   success: { type: String, default: null },
   hasrequestedpresentationsentence: { type: String, default: null },
-})
+});
 
-const user = $computed(() => collection().user)
+const user = $computed(() => collection().user);
 const isSuccess = $computed(() =>
-  success === null ? null : parseInt(success) === 1,
-)
+  success === null ? null : parseInt(success) === 1
+);
 const hasRequestedPresentationSentence = $computed(() =>
   hasrequestedpresentationsentence === null
     ? null
-    : parseInt(hasrequestedpresentationsentence) === 1,
-)
+    : parseInt(hasrequestedpresentationsentence) === 1
+);
 
-const { t: $t } = useI18n()
-const t = $t
-const { r } = l10n()
+const { t: $t } = useI18n();
+const t = $t;
+const { r } = l10n();
 
 onMounted(async () => {
-  form().addErrors(JSON.parse(errors))
-})
+  form().addErrors(JSON.parse(errors));
+});
 
 const emptyCollection = async () => {
-  if (confirm(t('Votre collection va être vidée. Continuer ?'))) {
-    await axios.delete('/collection/empty')
-    window.location.replace(r('/collection/show'))
+  if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
+    await axios.delete("/collection/empty");
+    window.location.replace(r("/collection/show"));
   }
-}
+};
 
 const deleteAccount = async () => {
   if (
     confirm(
       t(
-        'Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?',
-      ),
+        "Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?"
+      )
     )
   ) {
-    await axios.post('/collection')
-    window.location.replace(r('/logout'))
+    await axios.post("/collection");
+    window.location.replace(r("/logout"));
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

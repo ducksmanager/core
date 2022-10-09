@@ -3,11 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import {collection} from "~/stores/collection";
+import { collection } from "~/stores/collection";
 
 onMounted(async () => {
-  await collection().loadUser()
-})
+  await collection().loadUser();
+});
 </script>
 
 <style lang="scss">

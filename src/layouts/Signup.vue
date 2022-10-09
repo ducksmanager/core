@@ -87,10 +87,8 @@ let signupUsername = $ref(""),
   password = $ref(""),
   password2 = $ref("");
 
-const { r } = l10n(),
-  { t: $t } = useI18n(),
-  csrfToken = document.getElementById("csrf").value,
-  hasErrors = $computed(() => form().hasErrors);
+const { t: $t } = useI18n(),
+  csrfToken = document.getElementById("csrf").value;
 
 onMounted(() => {
   signupUsername = signupProps.lastUsername;

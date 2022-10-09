@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { BBadge } from 'bootstrap-vue-3'
+import { BBadge } from "bootstrap-vue-3";
 
 defineProps({
   stories: {
@@ -29,7 +29,7 @@ defineProps({
     type: Object,
     required: true,
   },
-})
+});
 </script>
 
 <style scoped lang="scss">

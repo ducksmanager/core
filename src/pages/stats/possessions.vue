@@ -29,7 +29,6 @@ import { onMounted, watch } from "vue";
 import { BarChart } from "vue-chart-3";
 import { useI18n } from "vue-i18n";
 
-import { collection } from "~/composables/collection";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 Chart.register(
@@ -44,7 +43,6 @@ Chart.register(
 );
 
 const emit = defineEmits(["change-dimension"]);
-collection();
 
 const { t: $t } = useI18n(),
   totalPerPublicationUniqueIssueNumbers = $computed(

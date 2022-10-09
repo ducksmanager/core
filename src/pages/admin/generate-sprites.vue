@@ -4,14 +4,13 @@ meta:
 </route>
 
 <template>
-  <a @click="generateSprites()" href="javascript:void(0)">Generate sprites</a>
+  <a href="javascript:void(0)" @click="generateSprites()">Generate sprites</a>
 </template>
 
 <script setup lang="ts">
-import axios from 'axios'
+import axios from "axios";
 
 const generateSprites = async () => {
-  await axios.put('/edgecreator/edgesprites')
-}
-
+  await axios.put("/edgecreator/edgesprites");
+};
 </script>

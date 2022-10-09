@@ -163,6 +163,13 @@ export const collection = defineStore("collection", {
   },
 
   actions: {
+    findInCollection(publicationCode, issueNumber) {
+      return this.collection?.find(
+        ({ country, magazine, issueNumber: collectionIssueNumber }) =>
+          publicationCode === `${country}/${magazine}` &&
+          collectionIssueNumber === issueNumber
+      );
+    },
     setPreviousVisit(previousVisit) {
       this.previousVisit = previousVisit;
     },

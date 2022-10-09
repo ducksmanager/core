@@ -20,9 +20,9 @@
 </template>
 
 <script setup>
-import { BTab, BTabs } from 'bootstrap-vue-3'
+import { BTab, BTabs } from "bootstrap-vue-3";
 
-import { l10n } from '~/stores/l10n'
+import { l10n } from "~/stores/l10n";
 
 const { items, rootPath } = defineProps({
   title: {
@@ -31,23 +31,23 @@ const { items, rootPath } = defineProps({
   },
   rootPath: {
     type: String,
-    default: '/',
+    default: "/",
   },
   items: {
     type: Array,
     required: true,
   },
-})
-const { r } = l10n()
-const routeName = useRoute().name
+});
+const { r } = l10n();
+const routeName = useRoute().name;
 const activeTabIndex = $ref(
   items.findIndex(
-    ({ path }) => routeName === r(rootPath + path).replace(/\//g, '-'),
-  ),
-)
+    ({ path }) => routeName === r(rootPath + path).replace(/\//g, "-")
+  )
+);
 const onTabClick = ({ path }) => {
-  window.location.replace(`/${r(rootPath + path)}`)
-}
+  window.location.replace(`/${r(rootPath + path)}`);
+};
 </script>
 
 <style scoped lang="scss">

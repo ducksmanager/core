@@ -21,7 +21,8 @@
           />
           <circle
             transform="rotate(270,0,0)"
-            class="bar" :class="{ [medalColors[level]]: true }"
+            class="bar"
+            :class="{ [medalColors[level]]: true }"
             cx="-50"
             cy="50"
             :r="radius"
@@ -39,19 +40,19 @@
       :src="`/images/medals/${contribution}_${level}_${
         xSmall ? 'fond' : currentLocale
       }.png`"
-    >
+    />
     <b v-if="small">
       {{ medalTitle }}
-      <br>{{ $t("niveau") }} {{ level }}
+      <br />{{ $t("niveau") }} {{ level }}
     </b>
   </span>
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
-import { locale } from '~/composables/global'
-import medal from '~/composables/medal'
+import { locale } from "~/composables/global";
+import medal from "~/composables/medal";
 
 const { contribution, nextLevel, userLevelPoints } = defineProps({
   small: { type: Boolean, default: false },
@@ -59,67 +60,66 @@ const { contribution, nextLevel, userLevelPoints } = defineProps({
   nextLevel: { type: Boolean, default: false },
   userLevelPoints: { type: Number, required: true },
   contribution: { type: String, required: true },
-})
-const { t: $t } = useI18n()
+});
+const { t: $t } = useI18n();
 const {
   currentLevel,
   pointsDiffNextLevel,
   levelProgressPercentage,
   radius,
   circumference,
-} = $(medal(contribution, userLevelPoints))
-const currentLocale = locale()
-const medalColors = ['bronze', 'argent', 'or']
+} = $(medal(contribution, userLevelPoints));
+const currentLocale = locale();
+const medalColors = ["bronze", "argent", "or"];
 const level = $computed(() =>
-  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel,
-)
+  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
+);
 const medalTitle = $computed(() => {
   switch (contribution.toUpperCase()) {
-    case 'CREATEUR':
-      return $t('Concepteur de tranches')
-    case 'PHOTOGRAPHE':
-      return $t('Photographe de tranches')
-    case 'DUCKHUNTER':
-      return $t('Duckhunter')
+    case "CREATEUR":
+      return $t("Concepteur de tranches");
+    case "PHOTOGRAPHE":
+      return $t("Photographe de tranches");
+    case "DUCKHUNTER":
+      return $t("Duckhunter");
   }
-  return ''
-})
+  return "";
+});
 const medalDescription = $computed(() => {
-  let textTemplate
+  let textTemplate;
   if (currentLevel === 3) {
     switch (contribution.toUpperCase()) {
-      case 'CREATEUR':
-        textTemplate = 'Vous avez {0} points Concepteur de tranches'
-        break
-      case 'PHOTOGRAPHE':
-        textTemplate = 'Vous avez {0} points Photographe de tranches'
-        break
-      case 'DUCKHUNTER':
-        textTemplate = 'Vous avez signalé {0} bouquineries'
+      case "CREATEUR":
+        textTemplate = "Vous avez {0} points Concepteur de tranches";
+        break;
+      case "PHOTOGRAPHE":
+        textTemplate = "Vous avez {0} points Photographe de tranches";
+        break;
+      case "DUCKHUNTER":
+        textTemplate = "Vous avez signalé {0} bouquineries";
     }
-    return $t(textTemplate, [userLevelPoints])
-  }
-  else {
+    return $t(textTemplate, [userLevelPoints]);
+  } else {
     switch (contribution.toUpperCase()) {
-      case 'CREATEUR':
-        textTemplate
-            = 'Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !'
-        break
-      case 'PHOTOGRAPHE':
-        textTemplate
-            = 'Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !'
-        break
-      case 'DUCKHUNTER':
-        textTemplate
-            = 'Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!'
+      case "CREATEUR":
+        textTemplate =
+          "Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !";
+        break;
+      case "PHOTOGRAPHE":
+        textTemplate =
+          "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
+        break;
+      case "DUCKHUNTER":
+        textTemplate =
+          "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!";
     }
     return $t(textTemplate, [
       userLevelPoints,
       pointsDiffNextLevel,
       $t(medalColors[currentLevel]),
-    ])
+    ]);
   }
-})
+});
 </script>
 
 <style scoped lang="scss">

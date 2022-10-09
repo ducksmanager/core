@@ -3,7 +3,7 @@
     <tr>
       <td>
         <a :href="r('/collection/show')"
-        ><img id="logo" alt="logo" src="/images/logo_small.png"
+          ><img id="logo" alt="logo" src="/images/logo_small.png"
         /></a>
       </td>
       <td>{{ $t("Collection DucksManager de") }} {{ username }}</td>
@@ -12,13 +12,12 @@
 </template>
 
 <script setup lang="ts">
-
-import { l10n } from "~/stores/l10n";
 import { collection } from "~/stores/collection";
+import { l10n } from "~/stores/l10n";
 
 const { r } = l10n();
 
-let username = $computed(() => collection().user?.username)
+let username = $computed(() => collection().user?.username);
 </script>
 
 <style lang="scss" scoped>
