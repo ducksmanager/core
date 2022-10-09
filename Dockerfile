@@ -26,7 +26,6 @@ COPY api/prisma ./prisma
 RUN pnpm run prisma:generate
 
 COPY types /home/types
-
 COPY api .
 RUN pnpm run build
 
@@ -44,10 +43,10 @@ RUN npm i -g pnpm
 
 WORKDIR /app
 
-COPY --from=api-build /app/package*.json /app/.env /app/
+COPY --from=api-build /home/api/package*.json /home/api/.env /app/
 RUN pnpm install --production
 
-COPY --from=api-build /app/dist /app/
+COPY --from=api-build /home/api/dist /app/
 RUN rm -rf dist && mkdir dist && mv prisma dist
 
 EXPOSE 3000
