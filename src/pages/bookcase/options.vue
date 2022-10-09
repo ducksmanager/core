@@ -76,7 +76,7 @@ alias: [/bibliotheque/options]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   BAlert,
   BButton,

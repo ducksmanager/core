@@ -1,3 +1,7 @@
+<route lang="yaml">
+meta:
+  layout: bare
+</route>
 <template>
   <div>
     <h1>Privacy Policy</h1>
