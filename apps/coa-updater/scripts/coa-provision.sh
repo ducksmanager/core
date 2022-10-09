@@ -69,3 +69,5 @@ mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE_NEW} -sN
   done
 
 mysql -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -e "drop database ${MYSQL_DATABASE_NEW}"
+
+mysqlcheck -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -v ${MYSQL_DATABASE}
