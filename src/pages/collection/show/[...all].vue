@@ -5,6 +5,6 @@ alias:
 </route>
 <template>
   <Manage
-    :publicationcode="$route.params.all"
+    :publicationcode="$route.params.all || null"
   />
 </template>

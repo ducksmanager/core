@@ -1,21 +1,5 @@
 <template>
-  <div v-if="publicationcode === 'new'">
-    {{
-      $t(
-        "Remplissez les informations ci-dessous pour que DucksManager détermine le nouveau magazine pour lequel vous souhaitez ajouter des numéros.",
-      )
-    }}
-    <PublicationSelect />
-    <br>
-    <br>
-    {{
-      $t(
-        "... ou recherchez un magazine à partir d'une histoire qui le contient :",
-      )
-    }}
-    <IssueSearch />
-  </div>
-  <div v-else-if="hasPublicationNames">
+  <div v-if="hasPublicationNames">
     <Accordion
       v-if="suggestionsNumber"
       id="suggestions"
