@@ -1,3 +1,9 @@
+<route lang="yaml">
+alias:
+  - logout
+  - deconnexion
+</route>
+
 <template>
   <div>
     <a href="https://discord.gg/ruk3FsD" target="_blank">
@@ -193,10 +199,17 @@
 <script setup>
 import { useHead } from "@vueuse/head";
 import { BButton, BCol, BRow } from "bootstrap-vue-3";
+import Cookies from "js-cookie";
 
+import { collection } from "~/stores/collection";
 import { l10n } from "~/stores/l10n";
 
 const { r } = l10n();
+const route = useRoute();
+
+if (["/logout", "/deconnexion"].includes(route.path)) {
+  Cookies.remove("token");
+}
 const user = $computed(() => collection().user);
 
 useHead({

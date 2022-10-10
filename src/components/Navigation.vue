@@ -77,7 +77,7 @@ import {
 
 import { collection } from "~/stores/collection";
 
-let username = $computed(() => collection().user?.username);
+let username = $computed(() => collection().user?.username || null);
 </script>
 
 <style lang="scss" scoped>

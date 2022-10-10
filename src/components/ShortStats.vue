@@ -15,6 +15,7 @@
     </div>
     <slot name="non-empty-collection" />
   </div>
+  <slot v-else name="empty-collection" />
 </template>
 
 <script setup>

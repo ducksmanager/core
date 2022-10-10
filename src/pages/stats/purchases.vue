@@ -1,3 +1,7 @@
+<route lang="yaml">
+alias: [/achats]
+</route>
+
 <template>
   <LinkToCollectionIfNoIssue />
   <BAlert variant="info" show>

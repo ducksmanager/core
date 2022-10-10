@@ -1,3 +1,7 @@
+<route lang="yaml">
+alias: [/auteurs]
+</route>
+
 <template>
   <div v-if="watchedAuthors">
     <BAlert v-if="!watchedAuthors.length" show variant="warning">

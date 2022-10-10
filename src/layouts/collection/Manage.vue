@@ -52,13 +52,14 @@
     </div>
     <ShortStats>
       <template #empty-collection>
-        <div class="mb-3">
+        <b-alert show variant="info" class="mb-3">
+          {{ $t("Votre collection est vide.") }}
           {{
             $t(
               'Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.'
             )
           }}
-        </div>
+        </b-alert>
       </template>
       <template #non-empty-collection>
         <div class="mb-3">

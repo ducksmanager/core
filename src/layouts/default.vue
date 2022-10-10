@@ -19,6 +19,9 @@
 
 <script setup>
 import { useHead } from "@vueuse/head";
+import Cookies from "js-cookie";
+
+import { collection } from "~/stores/collection";
 
 const route = useRoute();
 const topMenu = $computed(() => route.path.match(/\/([^/]+)/)?.[1]);
@@ -27,6 +30,10 @@ const slots = useSlots();
 useHead({
   title: slots.title || "DucksManager",
 });
+
+if (!Cookies.get("token")) {
+  collection().user = null;
+}
 </script>
 
 <style scoped lang="scss">
