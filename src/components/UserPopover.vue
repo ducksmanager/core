@@ -3,8 +3,8 @@
     <span class="username fw-bold">{{ stats.username }}</span>
     <template #header>
       <h4>{{ stats.username }}</h4>
-      <div v-if="stats.presentationSentence">
-        {{ stats.presentationSentence }}
+      <div v-if="stats.presentationText">
+        {{ stats.presentationText }}
       </div>
     </template>
     <template #content>
@@ -27,7 +27,7 @@
           {{ stats.numberOfCountries }}
           {{ $tc("pays | pays", stats.numberOfCountries) }}
         </div>
-        <div v-if="stats.shared === '1'" class="bookcase-link">
+        <div v-if="stats.allowSharing === '1'" class="bookcase-link">
           <BButton
             size="xs"
             variant="outline-secondary"

@@ -1,6 +1,21 @@
 import type { Handler } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { AbstractEvent, AbstractEventRaw } from "~types/events/AbstractEvent";
+import { BookstoreCreationEvent } from "~types/events/BookstoreCreationEvent";
+import {
+  CollectionSubscriptionAdditionEvent,
+  CollectionSubscriptionAdditionEventRaw,
+} from "~types/events/CollectionSubscriptionAdditionEvent";
+import {
+  CollectionUpdateEvent,
+  CollectionUpdateEventRaw,
+} from "~types/events/CollectionUpdateEvent";
+import {
+  EdgeCreationEvent,
+  EdgeCreationEventRaw,
+} from "~types/events/EdgeCreationEvent";
+import { SignupEvent } from "~types/events/SignupEvent";
 
 const prisma = new PrismaClient();
 
@@ -14,16 +29,14 @@ export const get: Handler = async (req, res) => {
   );
 };
 
-const getEvents = async () => {
-  return [
-    ...(await retrieveSignups()),
-    ...(await retrieveCollectionUpdates()),
-    ...(await retrieveCollectionSubscriptionAdditions()),
-    ...(await retrieveBookstoreCreations()),
-    ...(await retrieveEdgeCreations()),
-    ...(await retrieveNewMedals()),
-  ];
-};
+const getEvents = async () => [
+  ...(await retrieveSignups()),
+  ...(await retrieveCollectionUpdates()),
+  ...(await retrieveCollectionSubscriptionAdditions()),
+  ...(await retrieveBookstoreCreations()),
+  ...(await retrieveEdgeCreations()),
+  ...(await retrieveNewMedals()),
+];
 
 const MEDAL_LEVELS = {
   Photographe: { 1: 50, 2: 150, 3: 600 },
@@ -31,8 +44,18 @@ const MEDAL_LEVELS = {
   Duckhunter: { 1: 1, 2: 3, 3: 5 },
 };
 
-const retrieveSignups = async () =>
-  (await prisma.$queryRaw`
+const mapUsers = <T extends AbstractEvent>(event: AbstractEventRaw): T =>
+  ({
+    ...event,
+    users:
+      event.users?.split(",")?.map(parseInt) ||
+      (event.userId && [event.userId]) ||
+      [],
+  } as T);
+
+const retrieveSignups = async (): Promise<SignupEvent[]> =>
+  (
+    (await prisma.$queryRaw`
         SELECT 'signup' as type, users.ID as userId, UNIX_TIMESTAMP(DateInscription) AS timestamp
         FROM dm.users
         WHERE EXISTS(
@@ -40,12 +63,12 @@ const retrieveSignups = async () =>
             )
           AND DateInscription > date_add(now(), interval -1 month)
           AND users.username NOT LIKE 'test%'
-    `) as {
-    [key: string]: string | number;
-  }[];
+    `) as AbstractEventRaw[]
+  ).map(mapUsers<SignupEvent>);
 
-const retrieveCollectionUpdates = async () =>
-  (await prisma.$queryRaw`
+const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
+  (
+    (await prisma.$queryRaw`
         SELECT 'collection_update'       as type,
                users.ID                  AS userId,
                UNIX_TIMESTAMP(DateAjout) AS timestamp,
@@ -62,12 +85,23 @@ const retrieveCollectionUpdates = async () =>
           AND numeros.Abonnement = 0
         GROUP BY users.ID, DATE(DateAjout)
         HAVING COUNT(Numero) > 0
-    `) as {
-    [key: string]: string | number;
-  }[];
+    `) as CollectionUpdateEventRaw[]
+  ).map((event) => {
+    const [publicationCode, issueNumber] =
+      event.exampleIssue.split(/\/(?=[^/]+$)/);
+    return {
+      ...mapUsers<CollectionUpdateEvent>(event),
+      numberOfIssues: event.numberOfIssues,
+      publicationCode: publicationCode || "",
+      issueNumber: issueNumber || "",
+    } as CollectionUpdateEvent;
+  });
 
-const retrieveCollectionSubscriptionAdditions = async () =>
-  (await prisma.$queryRaw`
+const retrieveCollectionSubscriptionAdditions = async (): Promise<
+  CollectionSubscriptionAdditionEvent[]
+> =>
+  (
+    (await prisma.$queryRaw`
         SELECT 'subscription_additions'                    as type,
                CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationCode,
                numeros.Numero                              AS issueNumber,
@@ -77,12 +111,14 @@ const retrieveCollectionSubscriptionAdditions = async () =>
         WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
           AND numeros.Abonnement = 1
         GROUP BY DATE(DateAjout), numeros.Pays, numeros.Magazine, numeros.Numero
-    `) as {
-    [key: string]: string | number;
-  }[];
+    `) as CollectionSubscriptionAdditionEventRaw[]
+  ).map(mapUsers<CollectionSubscriptionAdditionEvent>);
 
-const retrieveBookstoreCreations = async () =>
-  (await prisma.$queryRaw`
+const retrieveBookstoreCreations = async (): Promise<
+  BookstoreCreationEvent[]
+> =>
+  (
+    (await prisma.$queryRaw`
         SELECT 'bookstore_comment'                                 as type,
                uc.ID_user                                          AS userId,
                bouquineries.Nom                                    AS name,
@@ -92,12 +128,12 @@ const retrieveBookstoreCreations = async () =>
                  INNER JOIN dm.users_contributions uc ON bouquineries_commentaires.ID = uc.ID_bookstore_comment
         WHERE bouquineries_commentaires.Actif = 1
           AND bouquineries_commentaires.DateAjout > date_add(now(), interval -1 month)
-    `) as {
-    [key: string]: string | number;
-  }[];
+    `) as AbstractEventRaw[]
+  ).map(mapUsers<BookstoreCreationEvent>);
 
-const retrieveEdgeCreations = async () =>
-  (await prisma.$queryRaw`
+const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
+  (
+    (await prisma.$queryRaw`
         select 'edge'                       as type,
                CONCAT('[', GROUP_CONCAT(json_object(
                        'publicationCode',
@@ -119,9 +155,11 @@ const retrieveEdgeCreations = async () =>
                 AND NOT (tp.publicationcode = 'it/TL')
               GROUP BY tp.ID) as edges_and_collaborators
         group by DATE_FORMAT(creationDate, '%Y-%m-%d %H:00:00'), edges_and_collaborators.users
-    `) as {
-    [key: string]: string | number;
-  }[];
+    `) as EdgeCreationEventRaw[]
+  ).map((event) => ({
+    ...mapUsers<EdgeCreationEvent>(event),
+    edges: JSON.parse(event.edges),
+  }));
 
 const retrieveNewMedals = async () =>
   (await prisma.$queryRawUnsafe(

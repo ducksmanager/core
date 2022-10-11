@@ -32,7 +32,7 @@ alias: [/bibliotheque/contributeurs]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from "vue";
 
 import { users } from "~/stores/users";
@@ -50,7 +50,7 @@ const fetchBookcaseContributors = $computed(
 const bookcaseContributorsSorted = $computed(
   () =>
     !loading &&
-    [...bookcaseContributors].sort(({ name: name1 }, { name: name2 }) =>
+    [...bookcaseContributors!].sort(({ name: name1 }, { name: name2 }) =>
       Math.sign(name1.toLowerCase() - name2.toLowerCase())
     )
 );
@@ -58,7 +58,7 @@ const bookcaseContributorsSorted = $computed(
 onMounted(async () => {
   await fetchBookcaseContributors();
   await fetchStats(
-    bookcaseContributors
+    bookcaseContributors!
       .filter(({ userId }) => !!userId)
       .map(({ userId }) => userId)
   );
