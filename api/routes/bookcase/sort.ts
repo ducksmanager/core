@@ -14,7 +14,6 @@ export const post = [
     const sorts = req.body.sorts;
     if (sorts.length) {
       const userId = req.user.id;
-      console.log(userId);
       await prisma.bookcasePublicationOrder.deleteMany({
         where: { userId: userId },
       });

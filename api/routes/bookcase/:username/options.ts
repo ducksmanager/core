@@ -12,7 +12,7 @@ export const get: Handler = async (req, res) => {
           bookcase: `${user.bookcaseTexture1}/${user.bookcaseSubTexture1}`,
           bookshelf: `${user.bookcaseTexture2}/${user.bookcaseSubTexture2}`,
         },
-        showAllCopies: user.showDuplicatesInBookcase === 1,
+        showAllCopies: user.showDuplicatesInBookcase,
       })
     );
   }

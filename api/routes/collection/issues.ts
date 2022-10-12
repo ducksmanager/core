@@ -2,6 +2,7 @@ import bodyParser from "body-parser";
 import { Handler } from "express";
 import { constants } from "http2";
 
+import { resetDemo } from "~/routes/demo/_reset";
 import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
@@ -19,7 +20,7 @@ export const getUserPurchase = async (id: number | null, userId: number) =>
         })
       )?.[0];
 
-const conditionToEnum = (condition: string | null): issue_condition => {
+export const conditionToEnum = (condition: string | null): issue_condition => {
   switch (condition) {
     case "mauvais":
     case "moyen":
@@ -189,6 +190,9 @@ const checkPurchaseIdsBelongToUser = async (
 };
 
 export const get: Handler = async (req, res) => {
+  if (req.user.username === "demo") {
+    await resetDemo();
+  }
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(
     JSON.stringify(

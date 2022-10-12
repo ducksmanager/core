@@ -209,6 +209,7 @@ const route = useRoute();
 
 if (["/logout", "/deconnexion"].includes(route.path)) {
   Cookies.remove("token");
+  collection().user = null;
 }
 const user = $computed(() => collection().user);
 

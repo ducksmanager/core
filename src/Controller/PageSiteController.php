@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -114,24 +113,6 @@ class PageSiteController extends AbstractController
     }
 
     /**
-     * @Route("/{locale}",
-     *     defaults={"locale"=null},
-     *     requirements={"locale"="^fr|en$"},
-     *     methods={"GET"}
-     * )
-     */
-    public function showWelcome(Request $request, ?string $locale): Response
-    {
-        if (!is_null($locale) && in_array($locale, ['en', 'fr'])) {
-            $this->switchLocale($request, $locale);
-        }
-        return $this->renderSitePage(
-            'Welcome',
-            'Bienvenue sur DucksManager !'
-        );
-    }
-
-    /**
      * @Route({
      *     "en": "/bookcase/show/{username}",
      *     "fr": "/bibliotheque/afficher/{username}"
@@ -152,133 +133,6 @@ class PageSiteController extends AbstractController
             [
                 'tab' => 'ViewBookcase',
                 'bookcase-username' => $username ?? $this->getUser()->getUsername(),
-            ]
-        );
-    }
-
-    /**
-     * @Route(
-     *     methods={"GET", "POST"},
-     *     path="/bookcase/options"
-     * )
-     */
-    public function showBookcaseOptionsPage(): Response
-    {
-        return $this->renderSitePage(
-            'Bookcase',
-            'Options de la bibliothèque',
-            null,
-            [
-                'tab' => 'BookcaseOptions'
-            ]
-        );
-    }
-
-    /**
-     * @Route({
-     *     "en": "/bookcase/contributors",
-     *     "fr": "/bibliotheque/contributeurs"
-     * },
-     *     methods={"GET"}
-     * )
-     */
-    public function showBookcaseContributorsPage(): Response
-    {
-        return $this->renderSitePage(
-            'Bookcase',
-            'Contributeurs',
-            null, [
-                'tab' => 'BookcaseContributors'
-            ]
-        );
-    }
-
-    /**
-     * @Route({
-     *     "en": "/expand",
-     *     "fr": "/agrandir"
-     * },
-     *     methods={"GET"}
-     * )
-     */
-    public function showExpandPage(): Response
-    {
-        return $this->renderSitePage(
-            'Expand',
-            'Agrandir ma collection',
-            'Agrandir ma collection',
-        );
-    }
-
-    /**
-     * @Route(
-     *     methods={"GET", "POST"},
-     *     path="/inducks/import"
-     * )
-     */
-    public function showImportPage(): Response
-    {
-        return $this->renderSitePage(
-            'InducksImport',
-            'Importer ma collection Inducks',
-            'Importer ma collection Inducks',
-        );
-    }
-
-    /**
-     * @Route({
-     *     "en": "/print",
-     *     "fr": "/impression"
-     * },
-     *     methods={"GET"}
-     * )
-     */
-    public function showPrintPresentationPage(): Response
-    {
-        return $this->renderSitePage(
-            'PrintPresentation',
-            'Impression de la collection',
-        );
-    }
-
-    /**
-     * @Route({
-     *     "en": "/signup",
-     *     "fr": "/inscription"
-     * },
-     *     methods={"GET", "POST"},
-     *     name="app_signup"
-     * )
-     */
-    public function showSignupPage(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
-    {
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        return $this->render('security/login.twig', [
-            'commit' => $_ENV['COMMIT'],
-            'title'=> 'Inscription',
-            'vueProps' => [
-                'component' => 'Site',
-                'page' => 'Signup',
-                'error' => $error,
-            ]
-        ]);
-    }
-
-    /**
-     * @Route(
-     *     methods={"GET", "POST"},
-     *     path="/stats/{type}"
-     * )
-     */
-    public function showStatsPage(string $type): Response
-    {
-        return $this->renderSitePage(
-            'Stats',
-            'Statistiques de ma collection',
-            null,
-            [
-                'tab' => $type
             ]
         );
     }
@@ -333,34 +187,6 @@ class PageSiteController extends AbstractController
 
     /**
      * @Route({
-     *     "en": "/collection/show/{publicationCode}",
-     *     "fr": "/collection/afficher/{publicationCode}"
-     * },
-     *     methods={"GET"},
-     *     name="app_collection_show",
-     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)|new$"},
-     *     defaults={"publicationCode"=null})
-     * )
-     */
-    public function showCollection(LoggerInterface $logger, Request $request, ApiService $apiService, ?string $publicationCode): Response
-    {
-        $username = $this->getUser()->getUsername();
-        if ($username === 'demo') {
-            $apiService->call('/ducksmanager/resetDemo', 'admin', [], 'POST');
-        }
-        $logger->info($request->getLocale());
-        return $this->renderSitePage(
-            'Collection',
-            'Collection',
-            null, [
-                'tab' => 'Manage',
-                'publicationcode' => $publicationCode
-            ]
-        );
-    }
-
-    /**
-     * @Route({
      *     "en": "/collection/account",
      *     "fr": "/collection/compte"
      * },
@@ -406,85 +232,6 @@ class PageSiteController extends AbstractController
             null,
             (is_null($success) ? [] : compact('success', 'hasRequestedPresentationSentence'))
             + ['tab' => 'account', 'errors' => json_encode($errors)]
-        );
-    }
-
-    /**
-     * @Route({
-     *     "en": "/collection/subscriptions",
-     *     "fr": "/collection/abonnements"
-     * },
-     *     methods={"GET"}
-     * )
-     */
-    public function showSubscriptions(): Response
-    {
-        return $this->renderSitePage(
-            'Collection',
-            'Abonnements',
-            null,
-            ['tab' => 'subscriptions']
-        );
-    }
-
-    /**
-     * @Route({
-     *     "en": "/collection/duplicates",
-     *     "fr": "/collection/doubles"
-     * },
-     *     methods={"GET"}
-     * )
-     */
-    public function showDuplicateIssues(): Response
-    {
-        return $this->renderSitePage(
-            'Collection',
-            'Mes numéros en double',
-            null,
-            ['tab' => 'Duplicates']
-        );
-    }
-
-    /**
-     * @Route({
-     *     "en": "/collection/to-read",
-     *     "fr": "/collection/a-lire"
-     * },
-     *     methods={"GET"}
-     * )
-     */
-    public function showIssuesInToReadStack(): Response
-    {
-        return $this->renderSitePage(
-            'Collection',
-            'Mes numéros à lire',
-            null,
-            ['tab' => 'ToReadStack']
-        );
-    }
-
-
-    /**
-     * @Route({
-     *     "en": "/bookstores",
-     *     "fr": "/bouquineries"
-     * },
-     *     methods={"GET", "PUT"}
-     * )
-     */
-    public function showBookstoreListPage(Request $request, ApiService $apiService): Response
-    {
-        $success = null;
-        if ($request->getMethod() === 'PUT') {
-            $data = (json_decode($request->getContent(), true) ?? []) + $request->query->all();
-            $apiResponse = $apiService->call('/ducksmanager/bookstoreComment/suggest', 'ducksmanager', $data, 'PUT');
-            $success = !is_null($apiResponse);
-        }
-        return $this->renderSitePage(
-            'Bookstores',
-            'Liste des bouquineries',
-            'Liste des bouquineries',
-            compact('success')
         );
     }
 }

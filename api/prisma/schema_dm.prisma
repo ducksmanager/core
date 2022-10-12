@@ -101,8 +101,8 @@ model bookstoreComment {
 }
 
 model demo {
-  ID              Int      @id @default(1)
-  DateDernierInit DateTime @db.DateTime(0)
+  id        Int      @id @default(1) @map("ID")
+  lastReset DateTime @db.DateTime(0) @map("DateDernierInit")
 }
 
 model magazines {
@@ -241,7 +241,7 @@ model user {
   showRecommendations       Boolean                     @default(true) @map("RecommandationsListeMags")
   isBetaUser                Boolean                     @default(false) @map("BetaUser")
   showPresentationVideo     Boolean                     @default(true) @map("AfficherVideo")
-  showDuplicatesInBookcase  Int?                        @default(1) @map("Bibliotheque_AfficherDoubles") @db.TinyInt
+  showDuplicatesInBookcase  Boolean                     @default(true) @map("Bibliotheque_AfficherDoubles") @db.TinyInt
   bookcaseTexture1          String                      @default("bois") @map("Bibliotheque_Texture1") @db.VarChar(20)
   bookcaseSubTexture1       String                      @default("HONDURAS MAHOGANY") @map("Bibliotheque_Sous_Texture1") @db.VarChar(50)
   bookcaseTexture2          String                      @default("bois") @map("Bibliotheque_Texture2") @db.VarChar(20)

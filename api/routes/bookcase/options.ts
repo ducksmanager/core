@@ -22,7 +22,7 @@ export const post = [
 
     user.bookcaseSubTexture1 = bookcaseTexture;
     user.bookcaseSubTexture2 = bookshelfTexture;
-    user.showDuplicatesInBookcase = showAllCopies || true ? 1 : 0;
+    user.showDuplicatesInBookcase = showAllCopies;
     await prisma.user.update({
       data: user,
       where: { id: user.id },

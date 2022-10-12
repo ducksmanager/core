@@ -3,7 +3,6 @@ alias: [/connexion]
 </route>
 
 <template>
-  <h2>{{ $t("Connexion") }}</h2>
   <form
     v-if="collectionStore.user === null"
     method="post"

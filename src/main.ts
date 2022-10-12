@@ -35,8 +35,9 @@ const useOngoingRequests = ongoingRequests(store);
 axios.defaults.baseURL = import.meta.env.VITE_GATEWAY_URL;
 axios.interceptors.request.use(
   (config) => {
-    if (config.headers) {
-      config.headers.Authorization = `Bearer ${Cookies.get("token")}`;
+    const token = Cookies.get("token");
+    if (config.headers && token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     if (useOngoingRequests.numberOfOngoingAjaxCalls === null)
       useOngoingRequests.numberOfOngoingAjaxCalls = 1;

@@ -44,22 +44,6 @@ class SecurityController extends PageSiteController
     }
 
     /**
-     * @Route(
-     *     methods={"GET"},
-     *     path="/demo"
-     * )
-     */
-    public function demo(Request $request,  UserAuthenticatorInterface $authenticatorInterface, UserAuthenticator $authenticator): Response
-    {
-        $demoUser = new User(999, 'demo', sha1($_ENV['DEMO_PASSWORD']), ['ROLE_USER']);
-        return $authenticatorInterface->authenticateUser(
-            $demoUser,
-            $authenticator,
-            $request
-        );
-    }
-
-    /**
      * @Route({
      *     "en": "/logout",
      *     "fr": "/deconnexion"

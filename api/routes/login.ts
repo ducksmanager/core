@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { Handler, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { PrismaClient, user } from "~prisma_clients/client_dm";
 import { User } from "~types/SessionUser";
 
 const prisma = new PrismaClient();
@@ -87,14 +87,28 @@ export const injectTokenIfValid = (
   }
 };
 
+export const loginAs = async (user: user, hashedPassword: string) =>
+  generateAccessToken({
+    id: user.id,
+    username: user.username,
+    hashedPassword,
+    privileges: (
+      await prisma.userPermission.findMany({
+        where: {
+          username: user.username,
+        },
+      })
+    ).groupBy("role", "privilege"),
+  });
+
+export const getHashedPassword = (password: string) =>
+  crypto.createHash("sha1").update(password).digest("hex");
+
 export const post = [
   parseForm,
   (async (req, res) => {
     const { username, password } = req.body;
-    const hashedPassword = crypto
-      .createHash("sha1")
-      .update(password)
-      .digest("hex");
+    const hashedPassword = getHashedPassword(password);
     const user = await prisma.user.findFirst({
       where: {
         username,
@@ -102,19 +116,7 @@ export const post = [
       },
     });
     if (user) {
-      const privileges = (
-        await prisma.userPermission.findMany({
-          where: {
-            username,
-          },
-        })
-      ).groupBy("role", "privilege");
-      const token = generateAccessToken({
-        id: user.id,
-        username,
-        hashedPassword,
-        privileges,
-      });
+      const token = await loginAs(user, hashedPassword);
 
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ token }));
