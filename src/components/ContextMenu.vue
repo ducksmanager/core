@@ -376,6 +376,7 @@ const updateSelectedIssues = async () => {
     ...issueDetails,
   });
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createPurchaseDate = async () =>
   emit("create-purchase", {
     date: newPurchaseDate,

@@ -6,12 +6,13 @@
 		"dev": "concurrently -n front,back \"pnpm run start:front\" \"pnpm run start:back\"",
 		"start:front": "vite --port 8001",
 		"start:back": "cd api && pnpm run dev",
-		"lint": "eslint --fix",
+		"lint": "eslint --fix --cache .",
 		"typecheck": "vue-tsc --noEmit",
 		"preview": "vite preview",
 		"publish": "cp package.json package-real.json && mv package-publish.json package.json && pnpm publish --no-git-checks; mv package.json package-publish.json && mv package-real.json package.json",
 		"test": "vitest",
-		"up": "taze major -I"
+		"up": "taze major -I",
+		"prepare": "husky install"
 	},
 	"dependencies": {
 		"@bperel/vue3-popper-teleport": "^1.4.3",
@@ -21,11 +22,11 @@
 		"@sentry/vue": "^7.15.0",
 		"@vueuse/core": "^9.3.0",
 		"@vueuse/head": "^0.9.8",
-		"axios": "^0.27.2",
+		"axios": "^1.1.2",
 		"axios-cache-interceptor": "^0.10.7",
 		"bootstrap": "^5.2.2",
 		"bootstrap-icons-vue": "^1.8.1",
-		"bootstrap-vue-3": "^0.3.11",
+		"bootstrap-vue-3": "^0.3.12",
 		"chart.js": "^3.9.1",
 		"concurrently": "^7.4.0",
 		"core-js": "^3.25.5",
@@ -36,7 +37,7 @@
 		"pinia": "^2.0.23",
 		"timeago.js": "^4.0.2",
 		"v-contextmenu": "^3.0.0",
-		"vue": "^3.2.40",
+		"vue": "^3.2.41",
 		"vue-chart-3": "^3.1.8",
 		"vue-i18n": "^9.2.2",
 		"vue-i18n-extract": "^2.0.7",
@@ -48,7 +49,7 @@
 		"@antfu/eslint-config": "^0.27.0",
 		"@intlify/vite-plugin-vue-i18n": "^6.0.3",
 		"@types/js-cookie": "^3.0.2",
-		"@types/node": "^18.8.4",
+		"@types/node": "^18.11.0",
 		"@typescript-eslint/eslint-plugin": "^5.40.0",
 		"@typescript-eslint/parser": "^5.40.0",
 		"@vitejs/plugin-vue": "^3.1.2",
@@ -67,10 +68,11 @@
 		"typescript": "^4.8.4",
 		"unplugin-auto-import": "^0.11.2",
 		"unplugin-vue-components": "^0.22.8",
-		"vite": "^3.1.7",
+		"vite": "^3.1.8",
 		"vite-plugin-pages": "^0.26.0",
 		"vite-plugin-vue-layouts": "^0.7.0",
-		"vitest": "^0.23.4"
+		"vitest": "^0.23.4",
+		"husky": "^8.0.0"
 	},
 	"eslintConfig": {
 		"extends": "@antfu"

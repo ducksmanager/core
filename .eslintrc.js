@@ -22,6 +22,7 @@ module.exports = {
     "vue/multi-word-component-names": "off",
     "vue/no-setup-props-destructure": "off",
     "vue/no-v-html": "off",
+    "vue/no-v-text-v-html-on-component": "off",
   },
   plugins: ["simple-import-sort", "@typescript-eslint"],
   ignorePatterns: ["**/node_modules", "**/dist", "shims.d.ts", "vendor"],

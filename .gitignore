@@ -10,3 +10,4 @@ node_modules
 /edges/
 /public/build/
 /vendor/
+.eslintcache

@@ -47,7 +47,6 @@ declare module "@vue/runtime-core" {
     OtherIssues: typeof import("./src/components/OtherIssues.vue")["default"];
     Popover: typeof import("./src/components/Popover.vue")["default"];
     PrintHeader: typeof import("./src/components/PrintHeader.vue")["default"];
-    PrintPresentation: typeof import("./src/layouts/PrintPresentation.vue")["default"];
     Publication: typeof import("./src/components/Publication.vue")["default"];
     PublicationList: typeof import("./src/components/PublicationList.vue")["default"];
     PublicationSelect: typeof import("./src/components/PublicationSelect.vue")["default"];
@@ -56,7 +55,6 @@ declare module "@vue/runtime-core" {
     RouterView: typeof import("vue-router")["RouterView"];
     SharePage: typeof import("./src/components/SharePage.vue")["default"];
     ShortStats: typeof import("./src/components/ShortStats.vue")["default"];
-    Signup: typeof import("./src/layouts/Signup.vue")["default"];
     Site: typeof import("./src/layouts/Site.vue")["default"];
     StarRating: typeof import("./src/components/StarRating.vue")["default"];
     StatsMenu: typeof import("./src/components/menus/StatsMenu.vue")["default"];

@@ -23,6 +23,7 @@ import { coa } from "~/stores/coa";
 import { users } from "~/stores/users";
 
 let isLoaded = $ref(false);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let hasFreshEvents = $ref(false);
 const events = $computed(() => users().events);
 const eventUserIds = $computed(() =>
