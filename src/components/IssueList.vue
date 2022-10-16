@@ -390,12 +390,10 @@ watch(
           ).value,
         }));
 
-      const issuesWithTitles = (
-        await axios.get(`/coa/list/issues/withTitle/asArray/${publicationcode}`)
-      ).data;
+      await coa().fetchIssueNumbersWithTitles(publicationcode);
 
-      issues = issuesWithTitles
-        .map((issue) => ({
+      issues = coa()
+        .issuesWithTitles.map((issue) => ({
           ...issue,
           userCopies: userIssuesForPublication.filter(
             ({ issueNumber: userIssueNumber }) =>

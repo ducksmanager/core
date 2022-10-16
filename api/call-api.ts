@@ -13,15 +13,15 @@ const CHUNKABLE_URLS: { [key: string]: number } = {
 const addAxiosInterceptor = (role: string) => {
   const auth = {
     username: role,
-    password: process.env[`ROLE_PASSWORD_${role.toUpperCase()}`],
+    password: process.env[`ROLE_PASSWORD_${role.toUpperCase()}`]!,
   };
   axios.interceptors.request.use((config) => ({
     ...config,
     auth,
     headers: {
-      ...config.headers,
-      "x-dm-version": "1.0.0",
-      "Content-Type": "application/json",
+      ...(config.headers || {}),
+      // "x-dm-version": "1.0.0",
+      // "Content-Type": "application/json",
     },
   }));
 };

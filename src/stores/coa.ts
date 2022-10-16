@@ -6,10 +6,10 @@ import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 
 const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
-const URL_PREFIX_PUBLICATIONS = "/coa/list/publications/";
-const URL_PREFIX_ISSUES = "/coa/list/issues/multiple/";
+const URL_PREFIX_PUBLICATIONS = "/coa/list/publications";
+const URL_PREFIX_ISSUES = "/coa/list/issues";
 const URL_PREFIX_AUTHORS = "/coa/authorsfullnames/";
-const URL_PREFIX_URLS = "/coa/list/details/";
+const URL_PREFIX_URLS = "/coa/list/issues/details";
 const URL_PREFIX_PUBLICATION_QUOTATIONS = "/coa/quotations/publications";
 const URL_ISSUE_COUNTS = "/coa/list/issues/count";
 const URL_ISSUE_DECOMPOSE = "/coa/issues/decompose";
@@ -51,6 +51,7 @@ export const coa = defineStore("coa", {
     publicationNamesFullCountries: [] as string[],
     personNames: null as { [key: string]: string } | null,
     issueNumbers: {} as { [key: string]: string[] },
+    issuesWithTitles: null as { issuenumber: string; title: string }[] | null,
     issueDetails: {} as { [key: string]: InducksIssueDetails },
     isLoadingCountryNames: false,
     issueCounts: null,
@@ -106,6 +107,7 @@ export const coa = defineStore("coa", {
             )
           )
         ).data;
+        console.log(this.countryNames);
         this.isLoadingCountryNames = false;
       }
     },
@@ -125,6 +127,8 @@ export const coa = defineStore("coa", {
             url: URL_PREFIX_PUBLICATIONS,
             valuesToChunk: newPublicationCodes,
             chunkSize: 20,
+            chunkOnQueryParam: true,
+            parameterName: "publicationCodes",
           }).then((data) =>
             data.reduce(
               (acc, { data }: { data: { [_: string]: string } }) => ({
@@ -182,7 +186,7 @@ export const coa = defineStore("coa", {
       if (this.publicationNamesFullCountries.includes(countryCode)) return;
 
       return coaApi
-        .get(URL_PREFIX_PUBLICATIONS + countryCode)
+        .get(`${URL_PREFIX_PUBLICATIONS}/${countryCode}`)
         .then(({ data }: { data: { [_: string]: string } }) => {
           this.addPublicationNames({
             ...(this.publicationNames || {}),
@@ -224,6 +228,14 @@ export const coa = defineStore("coa", {
       );
     },
 
+    async fetchIssueNumbersWithTitles(publicationcode: string) {
+      this.issuesWithTitles = (
+        await coaApi.get(
+          `/coa/list/issues/withTitle?publicationcode=${publicationcode}`
+        )
+      ).data;
+    },
+
     async fetchIssueNumbers(publicationCodes: string[]) {
       const newPublicationCodes = [
         ...new Set(
@@ -239,7 +251,9 @@ export const coa = defineStore("coa", {
           await this.getChunkedRequests({
             url: URL_PREFIX_ISSUES,
             valuesToChunk: newPublicationCodes,
-            chunkSize: 10,
+            chunkSize: 50,
+            chunkOnQueryParam: true,
+            parameterName: "publicationCodes",
           }).then((data) =>
             data.reduce(
               (acc, { data }: { data: { [_: string]: string[] } }) => ({
@@ -300,7 +314,7 @@ export const coa = defineStore("coa", {
       if (!this.issueDetails[issueCode]) {
         const issueDetails = (
           await coaApi.get(
-            `${URL_PREFIX_URLS + publicationCode}/${issueNumber}`
+            `${URL_PREFIX_URLS}?publicationcode=${publicationCode}&issuenumber=${issueNumber}`
           )
         ).data;
 

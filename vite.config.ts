@@ -52,4 +52,9 @@ export default defineConfig({
   test: {
     environment: "jsdom",
   },
+  server: {
+    watch: {
+      ignored: ["api/**"],
+    },
+  },
 });

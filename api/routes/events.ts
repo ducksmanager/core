@@ -39,9 +39,9 @@ const getEvents = async () => [
 ];
 
 const MEDAL_LEVELS = {
-  Photographe: { 1: 50, 2: 150, 3: 600 },
-  Createur: { 1: 20, 2: 70, 3: 150 },
-  Duckhunter: { 1: 1, 2: 3, 3: 5 },
+  edge_photographer: { 1: 50, 2: 150, 3: 600 },
+  edge_designer: { 1: 20, 2: 70, 3: 150 },
+  duckhunter: { 1: 1, 2: 3, 3: 5 },
 };
 
 const mapUsers = <T extends AbstractEvent>(event: AbstractEventRaw): T =>

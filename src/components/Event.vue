@@ -134,12 +134,12 @@ const points = $computed(() => users().points);
 const { r } = l10n();
 const { t: $t } = useI18n();
 const getMedalTitle = (contribution) => {
-  switch (contribution.toUpperCase()) {
-    case "CREATEUR":
+  switch (contribution) {
+    case "edge_photographer":
       return $t("Concepteur de tranches");
-    case "PHOTOGRAPHE":
+    case "edge_designer":
       return $t("Photographe de tranches");
-    case "DUCKHUNTER":
+    case "duckhunter":
       return $t("Duckhunter");
   }
 };

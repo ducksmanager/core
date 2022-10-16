@@ -75,12 +75,12 @@ const level = $computed(() =>
   nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
 );
 const medalTitle = $computed(() => {
-  switch (contribution.toUpperCase()) {
-    case "CREATEUR":
+  switch (contribution) {
+    case "edge_photographer":
       return $t("Concepteur de tranches");
-    case "PHOTOGRAPHE":
+    case "edge_designer":
       return $t("Photographe de tranches");
-    case "DUCKHUNTER":
+    case "duckhunter":
       return $t("Duckhunter");
   }
   return "";
@@ -88,28 +88,28 @@ const medalTitle = $computed(() => {
 const medalDescription = $computed(() => {
   let textTemplate;
   if (currentLevel === 3) {
-    switch (contribution.toUpperCase()) {
-      case "CREATEUR":
+    switch (contribution) {
+      case "edge_photographer":
         textTemplate = "Vous avez {0} points Concepteur de tranches";
         break;
-      case "PHOTOGRAPHE":
+      case "edge_designer":
         textTemplate = "Vous avez {0} points Photographe de tranches";
         break;
-      case "DUCKHUNTER":
+      case "duckhunter":
         textTemplate = "Vous avez signalé {0} bouquineries";
     }
     return $t(textTemplate, [userLevelPoints]);
   } else {
-    switch (contribution.toUpperCase()) {
-      case "CREATEUR":
+    switch (contribution) {
+      case "edge_photographer":
         textTemplate =
           "Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !";
         break;
-      case "PHOTOGRAPHE":
+      case "edge_designer":
         textTemplate =
           "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
         break;
-      case "DUCKHUNTER":
+      case "duckhunter":
         textTemplate =
           "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!";
     }

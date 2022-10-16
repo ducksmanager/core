@@ -129,7 +129,7 @@ const runSearch = async (value) => {
     if (isSearchByCode) {
       searchResults = (
         await axios.get(
-          `/coa/list/issues/withStoryVersionCode/${value.replace(/^code=/, "")}`
+          `/coa/list/issues?storycode=${value.replace(/^code=/, "")}`
         )
       ).data;
       searchResults.results = searchResults.results.sort((issue1, issue2) =>

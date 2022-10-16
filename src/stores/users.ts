@@ -50,16 +50,7 @@ export const users = defineStore("users", {
       ).data;
       this.points = {
         ...this.points,
-        ...(data.points as UserPointsData[]).reduce(
-          (acc, data) => ({
-            ...acc,
-            [data.userId]: {
-              ...(acc[data.userId] || {}),
-              [data.contribution]: data.totalPoints,
-            },
-          }),
-          {} as { [key: number]: { [key: string]: number } }
-        ),
+        ...data.points,
       };
       this.stats = {
         ...this.stats,

@@ -1,6 +1,6 @@
 import { Handler } from "express";
 
-import { getPublicationTitlesFromCodes } from "~/routes/coa/list/publications/:publicationCodes";
+import { getPublicationTitlesFromCodes } from "~/routes/coa/list/publications";
 import {
   inducks_publication,
   PrismaClient as PrismaClientCoa,

@@ -1,7 +1,7 @@
 import { Handler } from "express";
 
+import { getMedalPoints } from "~/routes/collection/points";
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
-import { UserPointsData } from "~types/UserPointsData";
 
 const prisma = new PrismaClient();
 
@@ -13,7 +13,7 @@ export const get: Handler = async (req, res) => {
   let data = {};
   if (userIds.length) {
     data = {
-      points: await getUsersPoints(userIds),
+      points: await getMedalPoints(userIds),
       stats: await getUsersQuickStats(userIds),
     };
   }
@@ -55,22 +55,3 @@ const getUsersQuickStats = async (userIds: number[]) =>
            left join numeros on numeros.ID_Utilisateur = u.ID
     where u.ID IN (${Prisma.join(userIds)})
     group by u.ID`) as SimpleUserWithQuickStats[];
-
-const getUsersPoints = async (userIds: number[]): Promise<UserPointsData[]> =>
-  await prisma.$queryRaw`
-      select type_contribution.contribution,
-             ids_users.ID_User                                 AS userId,
-             ifnull(contributions_utilisateur.points_total, 0) as totalPoints
-      from (select 'Photographe' as contribution
-            union
-            select 'Createur' as contribution
-            union
-            select 'Duckhunter' as contribution) as type_contribution
-             join (SELECT ID AS ID_User
-                   FROM users
-                   WHERE ID IN (${Prisma.join(userIds)})) AS ids_users
-             left join (SELECT uc.ID_User, uc.contribution, sum(points_new) as points_total
-                        FROM users_contributions uc
-                        GROUP BY uc.ID_User, uc.contribution) as contributions_utilisateur
-                       ON type_contribution.contribution = contributions_utilisateur.contribution
-                         AND ids_users.ID_User = contributions_utilisateur.ID_user`;
