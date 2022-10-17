@@ -7,34 +7,6 @@ import { getUserPurchase } from "../issues";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
-export const post = [
-  parseForm,
-  (async (req, res) => {
-    const { date, description } = req.body;
-
-    const criteria = {
-      userId: req.user.id,
-      date: new Date(date),
-      description,
-    };
-    if (
-      (await prisma.purchase.count({
-        where: criteria,
-      })) > 0
-    ) {
-      res.writeHead(409);
-      res.end();
-      return;
-    }
-
-    await prisma.purchase.create({
-      data: criteria,
-    });
-
-    res.writeHead(200);
-    res.end();
-  }) as Handler,
-];
 
 export const del = [
   parseForm,

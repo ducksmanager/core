@@ -43,7 +43,6 @@ export const get: Handler = async (req, res) => {
       },
     },
   });
-  console.log(data);
   res.end(
     JSON.stringify(
       data.reduce(

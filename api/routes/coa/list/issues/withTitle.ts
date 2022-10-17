@@ -24,7 +24,7 @@ export const get: Handler = async (req, res) => {
   res.end(
     JSON.stringify(
       data.map(
-        ({ issuenumber, title }: { issuenumber: string; title: string }) => ({
+        ({ issuenumber, title }) => ({
           issueNumber: issuenumber!.replace(/ +/g, " "),
           title,
         }),

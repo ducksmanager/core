@@ -126,7 +126,6 @@ watch(
       }
 
       const values = [ownedStories, missingStories];
-      console.log(values);
 
       changeDimension("width", 250 + 30 * labels.length);
       chartData = {

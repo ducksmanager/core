@@ -107,7 +107,6 @@ export const coa = defineStore("coa", {
             )
           )
         ).data;
-        console.log(this.countryNames);
         this.isLoadingCountryNames = false;
       }
     },

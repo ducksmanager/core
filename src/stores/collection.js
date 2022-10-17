@@ -163,6 +163,24 @@ export const collection = defineStore("collection", {
   },
 
   actions: {
+    async updateCollection(data) {
+      await axios.post("/collection/issues", data);
+      await this.loadCollection(true);
+    },
+
+    async createPurchase(date, description) {
+      await axios.put("/collection/purchases", {
+        date,
+        description,
+      });
+      await this.loadPurchases(true);
+    },
+
+    async deletePurchase(id) {
+      await axios.delete(`/collection/purchases/${id}`);
+      await this.loadPurchases(true);
+    },
+
     findInCollection(publicationCode, issueNumber) {
       return this.collection?.find(
         ({ country, magazine, issueNumber: collectionIssueNumber }) =>

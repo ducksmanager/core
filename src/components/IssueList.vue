@@ -314,7 +314,6 @@ const ownedIssuesCount = $computed(() =>
   issues.reduce((acc, { userCopies }) => acc + (userCopies.length ? 1 : 0), 0)
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
-const loadCollection = collectionStore().loadCollection;
 const loadPurchases = collectionStore().loadPurchases;
 const getPreselected = () =>
   [preselectedIndexStart, preselectedIndexEnd].includes(null)
@@ -345,20 +344,14 @@ const deletePublicationIssues = async (issuesToDelete) =>
   });
 const updateIssues = async (data) => {
   contextmenu.hide();
-  await collectionStore().collectionApi.post("/collection/issues", data);
-  await loadCollection(true);
+  await collectionStore().updateCollection(data);
   selected = [];
 };
 const createPurchase = async ({ date, description }) => {
-  await collectionStore().collectionApi.post("/collection/purchases", {
-    date,
-    description,
-  });
-  await loadPurchases(true);
+  await collectionStore().createPurchase(date, description);
 };
 const deletePurchase = async ({ id }) => {
-  await collectionStore().collectionApi.delete(`/collection/purchases/${id}`);
-  await loadPurchases(true);
+  await collectionStore().deletePurchase(id);
 };
 const openBook = (issueNumber) => {
   currentIssueOpened = coverUrls[issueNumber]
@@ -406,7 +399,7 @@ watch(
             !readStackOnly ||
             userCopies.filter(({ isToRead }) => isToRead).length
         );
-      const coaIssueNumbers = issuesWithTitles.map(
+      const coaIssueNumbers = coa().issuesWithTitles.map(
         ({ issueNumber }) => issueNumber
       );
       userIssuesNotFoundForPublication = userIssuesForPublication.filter(
