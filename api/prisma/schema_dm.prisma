@@ -293,12 +293,13 @@ model userOption {
   @@map("users_options")
 }
 
-model users_password_tokens {
-  ID      Int    @id @default(autoincrement())
-  ID_User Int
-  Token   String @db.VarChar(16)
+model userPasswordToken {
+  id      Int    @id @default(autoincrement())  @map("ID")
+  userId  Int    @map("ID_User")
+  token   String @db.VarChar(16) @map("Token")
 
-  @@unique([ID_User, Token], map: "users_password_tokens_unique")
+  @@unique([userId, token], map: "users_password_tokens_unique")
+  @@map("users_password_tokens")
 }
 
 model userPermission {

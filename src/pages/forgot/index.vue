@@ -1,0 +1,66 @@
+<template>
+  <div>
+    <b-alert v-if="token" show variant="info">{{
+      $t(
+        `Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient
+      d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`
+      )
+    }}</b-alert>
+    <form v-else method="post" @submit.prevent="sendPasswordToken">
+      <b-alert v-if="error" show variant="danger">{{ error }}</b-alert>
+      <div>
+        {{
+          $t(
+            "Un lien vous permettant de réinitialiser votre mot de passe va être envoyé à l'adresse que vous indiquerez ci-dessous."
+          )
+        }}
+        <b-form-row>
+          <b-col sm="6">
+            <b-form-input
+              id="email"
+              v-model="email"
+              type="text"
+              required
+              autofocus
+              :placeholder="$t('Adresse e-mail')"
+            />
+          </b-col>
+        </b-form-row>
+      </div>
+      <b-form-row>
+        <b-col sm="4">
+          <b-button type="submit">
+            {{ $t("Envoyer") }}
+          </b-button>
+        </b-col>
+      </b-form-row>
+    </form>
+  </div>
+</template>
+
+<script setup>
+import axios from "axios";
+import { useI18n } from "vue-i18n";
+
+let error = $ref(null);
+
+const email = $ref("");
+let token = $ref("");
+const { t: $t } = useI18n();
+
+const sendPasswordToken = async () => {
+  try {
+    token = (
+      await axios.post("/auth/forgot", {
+        email,
+      })
+    ).data.token;
+  } catch (e) {
+    error = e?.response?.data || "Error";
+  }
+};
+</script>
+
+<style scoped>
+
+</style>

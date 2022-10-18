@@ -3,17 +3,13 @@ import crypto from "crypto";
 import { Handler, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { loginAs } from "~/routes/auth/util";
+import { PrismaClient } from "~prisma_clients/client_dm";
 import { User } from "~types/SessionUser";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
-
-const generateAccessToken = (payload: User) =>
-  jwt.sign(payload, process.env.TOKEN_SECRET!, {
-    expiresIn: `${60 * 24 * 14}m`,
-  });
 
 export const authenticateToken = (
   req: Request,
@@ -86,20 +82,6 @@ export const injectTokenIfValid = (
     );
   }
 };
-
-export const loginAs = async (user: user, hashedPassword: string) =>
-  generateAccessToken({
-    id: user.id,
-    username: user.username,
-    hashedPassword,
-    privileges: (
-      await prisma.userPermission.findMany({
-        where: {
-          username: user.username,
-        },
-      })
-    ).groupBy("role", "privilege"),
-  });
 
 export const getHashedPassword = (password: string) =>
   crypto.createHash("sha1").update(password).digest("hex");

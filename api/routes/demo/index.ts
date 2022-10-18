@@ -1,7 +1,8 @@
 import { Handler } from "express";
 
 import { PrismaClient } from "~/dist/prisma/client_dm";
-import { getHashedPassword, loginAs } from "~/routes/login";
+import { loginAs } from "~/routes/auth/util";
+import { getHashedPassword } from "~/routes/login";
 const prisma = new PrismaClient();
 
 export const post: Handler = async (req, res) => {
