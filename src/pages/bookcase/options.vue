@@ -79,12 +79,12 @@ import {
   BDropdownItem,
   BFormCheckbox,
 } from "bootstrap-vue-3";
-import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { SlickItem, SlickList } from "vue-slicksort";
 
 import { bookcase } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
 
 const user = $computed(() => collection().user);
 const { t: $t } = useI18n();
@@ -172,16 +172,21 @@ let loading = $ref(true);
 let hasPublicationNames = $ref(false);
 let bookcaseOrder = $ref(null);
 
-onMounted(async () => {
-  bookcaseStore.bookcaseUsername = user.username;
-  await loadData();
-  bookcaseOrder = bookcaseStore.bookcaseOrder;
-  await fetchPublicationNames(bookcaseOrder);
-  bookcaseOrder = bookcaseOrder.filter((publicationCode) =>
-    Object.keys(publicationNames).includes(publicationCode)
-  );
-  hasPublicationNames = true;
-});
+watch(
+  () => user,
+  async (value) => {
+    if (value) {
+      bookcaseStore.bookcaseUsername = user.username;
+      await loadData();
+      bookcaseOrder = bookcaseStore.bookcaseOrder;
+      await fetchPublicationNames(bookcaseOrder);
+      bookcaseOrder = bookcaseOrder.filter((publicationCode) =>
+        Object.keys(publicationNames).includes(publicationCode)
+      );
+      hasPublicationNames = true;
+    }
+  }
+);
 </script>
 
 <style lang="scss">
