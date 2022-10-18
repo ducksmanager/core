@@ -34,7 +34,7 @@ export const get: Handler = async (req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(
       JSON.stringify(
-        (await prisma.$queryRaw`
+        (await prisma.$queryRawUnsafe(`
             SELECT numeros.ID                                                AS id,
                    numeros.Pays                                              AS countryCode,
                    numeros.Magazine                                          AS magazineCode,
@@ -63,7 +63,7 @@ export const get: Handler = async (req, res) => {
                                ON sprites.ID_Tranche = tp.ID
             WHERE ID_Utilisateur = ${user.id}
             GROUP BY ${groupBy}
-        `) as { [key: string]: number | Date | string }[],
+        `)) as { [key: string]: number | Date | string }[],
         (key, value) => (typeof value === "bigint" ? Number(value) : value)
       )
     );

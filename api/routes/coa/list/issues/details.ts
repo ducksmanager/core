@@ -5,7 +5,7 @@ import { PrismaClient } from "~prisma_clients/client_coa";
 const prisma = new PrismaClient();
 
 export const get: Handler = async (req, res) => {
-  const { publicationcode, issuenumber } = req.params;
+  const { publicationcode, issuenumber } = req.query;
 
   const releaseDate = (
     (await prisma.$queryRaw`
@@ -15,7 +15,7 @@ export const get: Handler = async (req, res) => {
         AND REPLACE(issue.issuenumber, ' ', '') = ${issuenumber}`) as {
       oldestdate: string;
     }[]
-  )[0];
+  )[0]?.oldestdate;
 
   const entries = (await prisma.$queryRaw`
       SELECT sv.storycode,
