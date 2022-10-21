@@ -47,8 +47,9 @@ COPY --from=api-build /home/api/package*.json /home/api/.env /app/
 RUN pnpm install --production
 
 COPY --from=api-build /home/api/dist /app/
-RUN rm -rf dist && mkdir dist && mv prisma dist
+RUN rm -rf dist && mkdir dist && mv prisma api/dist
 
 EXPOSE 3000
 
+WORKDIR /app/api
 CMD ["node", "index.js"]
