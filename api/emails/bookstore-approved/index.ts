@@ -2,10 +2,18 @@ import { user } from "~/dist/prisma/client_dm";
 import { Email, i18n } from "~/emails";
 
 export default class extends Email {
-  data: { user: user; token: string };
+  data: {
+    user: user;
+    locale: string;
+    newMedalLevel: number | null;
+  };
   templatePath = __dirname;
 
-  constructor(data: { user: user; token: string }) {
+  constructor(data: {
+    user: user;
+    locale: string;
+    newMedalLevel: number | null;
+  }) {
     super();
     this.data = data;
   }
@@ -14,7 +22,6 @@ export default class extends Email {
   getFromName = () => process.env.SMTP_FRIENDLYNAME!;
   getTo = () => this.data.user.email;
   getToName = () => this.data.user.username;
-  getSubject = () =>
-    i18n.__("Vous avez oublié votre mot de passe sur DucksManager ?");
+  getSubject = () => i18n.__("Votre revue de bouquinerie a été approuvée !");
   getTextBody = () => "";
 }

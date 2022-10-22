@@ -1,23 +1,24 @@
+import dotenv from "dotenv";
 import * as ejs from "ejs";
 import { I18n } from "i18n";
-import { Transporter } from "nodemailer";
+import { Transporter, TransportOptions } from "nodemailer";
 import nodemailer from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 import path from "path";
 
+dotenv.config({
+  path: "../.env",
+});
+
+import en from "../../src/translations/messages.en.json";
+const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
 export const i18n = new I18n({
   locales: ["fr", "en"],
 
   defaultLocale: "en",
   staticCatalog: {
-    en: require(path.join(
-      __dirname,
-      "..",
-      "..",
-      "src",
-      "translations",
-      "messages.en.json"
-    )),
+    en,
+    fr,
   },
 });
 
@@ -28,33 +29,50 @@ export abstract class Email {
   data?: { [key: string]: unknown };
 
   protected constructor() {
-    if (Email.transporter === null) {
+    if (!Email.transporter) {
       Email.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
-        port: 587,
-        secure: true,
+        port: process.env.SMTP_PORT,
+        secure: false,
         auth: {
           user: process.env.SMTP_USERNAME,
           pass: process.env.SMTP_PASSWORD,
         },
-      });
+      } as TransportOptions);
     }
   }
 
   send = async () => {
-    const options: Mail.Options = {};
-    options.from = (options.from as string).replace(/ /g, "__");
-    options.to = (options.to as string).replace(/ /g, "__");
-    options.subject = this.getSubject();
+    const options: Mail.Options = {
+      from: {
+        name: this.getFromName(),
+        address: this.getFrom().replace(/ /g, "__"),
+      },
+      to: {
+        name: this.getToName(),
+        address: this.getTo().replace(/ /g, "__"),
+      },
+      html: await this.getHtmlBody(),
+      text: this.getTextBody(),
+      subject: this.getSubject(),
+    };
 
-    console.log(`Sending email of type ${typeof this} to ${options.to}`);
+    console.log(
+      `Sending email of type ${this.getTemplateDirName()} to ${
+        (options.to as Mail.Address).address
+      }`
+    );
 
     try {
       await Email.transporter.sendMail(options);
       if (options.to !== process.env.SMTP_USERNAME) {
-        options.subject = `[Sent to ${options.to}] ${options.subject}`;
+        options.subject = `[Sent to ${(options.to as Mail.Address).address}] ${
+          options.subject
+        }`;
         options.to = process.env.SMTP_USERNAME;
-        console.log(`Sending email of type ${typeof this} to ${options.to}`);
+        console.log(
+          `Sending email of type ${this.getTemplateDirName()} to ${options.to}`
+        );
         try {
           await Email.transporter.sendMail(options);
         } catch (e) {
@@ -70,17 +88,20 @@ export abstract class Email {
     }
   };
 
-  abstract getFrom(): string;
-  abstract getFromName(): string;
-  abstract getTo(): string;
-  abstract getToName(): string;
-  abstract getSubject(): string;
-  abstract getTextBody(): string;
-
   getHtmlBody = async () =>
     await ejs.renderFile(
       path.join(this.templatePath, "template.ejs"),
       { __: i18n.__, ...this.data },
       {}
     );
+
+  getTemplateDirName = (): string =>
+    this.templatePath.match(/(?<=\/)[^/]+$/)![0];
+
+  abstract getFrom(): string;
+  abstract getFromName(): string;
+  abstract getTo(): string;
+  abstract getToName(): string;
+  abstract getSubject(): string;
+  abstract getTextBody(): string;
 }

@@ -37,7 +37,7 @@ declare module "@vue/runtime-core" {
     LastPurchases: typeof import("./src/components/LastPurchases.vue")["default"];
     LeftPanel: typeof import("./src/components/LeftPanel.vue")["default"];
     LinkToCollectionIfNoIssue: typeof import("./src/components/LinkToCollectionIfNoIssue.vue")["default"];
-    Manage: typeof import("./src/layouts/collection/Manage.vue")["default"];
+    Manage: typeof import("./src/components/Manage.vue")["default"];
     Medal: typeof import("./src/components/Medal.vue")["default"];
     MedalProgress: typeof import("./src/components/MedalProgress.vue")["default"];
     Menu: typeof import("./src/components/Menu.vue")["default"];
@@ -65,7 +65,7 @@ declare module "@vue/runtime-core" {
     SwitchLocale: typeof import("./src/components/SwitchLocale.vue")["default"];
     UploadableEdgesCarousel: typeof import("./src/components/UploadableEdgesCarousel.vue")["default"];
     UserPopover: typeof import("./src/components/UserPopover.vue")["default"];
-    ViewBookcase: typeof import("./src/layouts/bookcase/ViewBookcase.vue")["default"];
+    ViewBookcase: typeof import("./src/components/ViewBookcase.vue")["default"];
     ViewCoverIcon: typeof import("./src/components/ViewCoverIcon.vue")["default"];
   }
 }

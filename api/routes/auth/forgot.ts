@@ -3,6 +3,7 @@ import { Handler } from "express";
 import jwt from "jsonwebtoken";
 
 import { PrismaClient } from "~/dist/prisma/client_dm";
+import ResetPassword from "~/emails/reset-password";
 import { isValidEmail } from "~/routes/auth/util";
 
 const prisma = new PrismaClient();
@@ -50,7 +51,7 @@ export const post = [
           data: { userId: user.id, token },
         });
 
-        //TODO send email
+        await new ResetPassword({ user, token }).send();
       } else {
         console.log(
           `A visitor requested to reset a password for an invalid e-mail: ${email}`

@@ -1,0 +1,14 @@
+<%= __("Bonjour {{username}},", { username: user.username}) %><br />
+<%= __('La bouquinerie que vous avez proposée est maintenant visible par tous les utilisateurs de DucksManager.') %><br />
+<% if (newMedalLevel) { %>
+<p style="text-align: center">
+    <img width="100" src="<%= process.env.ASSETS_MEDALS_PICTURES_ROOT %>duckhunter_<%= newMedalLevel %>_<%= locale %>.png" />
+    <br />
+    <%= __('Vous avez remporté la médaille "Duckhunter {{medalLevel}}" grâce à vos contributions !',  {medalLevel: newMedalLevel}) %>
+</p>
+
+<% } %>
+<br />
+<%= __('Bravo à vous et merci pour votre contribution : nous sommes heureux de vous accueillir parmi la communauté active de DucksManager !') %><br />
+
+<%- include('../footer'); %>
