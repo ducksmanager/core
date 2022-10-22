@@ -1,6 +1,6 @@
 import { createI18n } from "vue-i18n";
 
-import en from "./translations/messages.en.json";
+import en from "../translations/messages.en.json";
 
 const fallbackLocale = "fr";
 let locale = localStorage.getItem("locale");
