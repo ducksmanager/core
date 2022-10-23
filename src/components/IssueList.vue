@@ -237,7 +237,6 @@
 </template>
 
 <script setup>
-import axios from "axios";
 import { BIconBookmarkCheck, BIconEyeFill } from "bootstrap-icons-vue";
 import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";

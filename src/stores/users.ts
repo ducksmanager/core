@@ -7,7 +7,6 @@ import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSub
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-import { UserPointsData } from "~types/UserPointsData";
 
 export const users = defineStore("users", {
   state: () => ({

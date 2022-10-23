@@ -50,7 +50,18 @@ defineEmits(["input"]);
 const currentCountryCode = $ref(initialCountryCode);
 let currentPublicationCode = $ref(initialPublicationCode);
 const coaStore = coa();
-const countryNames = $computed(() => coaStore.countryNames);
+const countryNames = $computed(
+  () =>
+    coaStore.countryNames &&
+    Object.entries(coaStore.countryNames)
+      .map(([countrycode, countryName]) => ({
+        text: countryName,
+        value: countrycode,
+      }))
+      .sort(({ text: text1 }, { text: text2 }) =>
+        (text1 || "").localeCompare(text2)
+      )
+);
 const publicationNames = $computed(() => coaStore.publicationNames);
 const publicationNamesFullCountries = $computed(
   () => coaStore.publicationNamesFullCountries

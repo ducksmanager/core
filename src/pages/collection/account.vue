@@ -140,6 +140,7 @@ const hasRequestedPresentationSentence = $computed(() =>
 const { t: $t } = useI18n();
 const t = $t;
 const { r } = l10n();
+const router = useRouter();
 
 onMounted(async () => {
   form().addErrors(JSON.parse(errors));
@@ -148,7 +149,7 @@ onMounted(async () => {
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await axios.delete("/collection/empty");
-    window.location.replace(r("/collection/show"));
+    await router.push("/collection/show");
   }
 };
 
@@ -161,7 +162,7 @@ const deleteAccount = async () => {
     )
   ) {
     await axios.post("/collection");
-    window.location.replace(r("/logout"));
+    await router.push("/logout");
   }
 };
 </script>
