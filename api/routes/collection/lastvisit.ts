@@ -13,7 +13,7 @@ export const post: Handler = async (req, res) => {
     return;
   }
   if (!user.lastAccess) {
-    console.log(`"Initializing last access for user ${req.user.id}`);
+    console.log(`Initializing last access for user ${req.user.id}`);
   } else if (!user.previousAccess || user.lastAccess < user.previousAccess) {
     console.log(`"Updating last access for user ${req.user.id}`);
     user.previousAccess = user.lastAccess;
