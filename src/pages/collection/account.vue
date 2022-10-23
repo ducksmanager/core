@@ -161,7 +161,7 @@ const deleteAccount = async () => {
       )
     )
   ) {
-    await axios.post("/collection");
+    await axios.delete("/collection/user");
     await router.push("/logout");
   }
 };

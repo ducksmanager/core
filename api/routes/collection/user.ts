@@ -40,6 +40,9 @@ export const del: Handler = async (req, res) => {
   await prisma.userOption.deleteMany({
     where: { userId },
   });
+  await prisma.user.delete({
+    where: { id: userId },
+  });
 
   res.writeHead(200);
   res.end();
