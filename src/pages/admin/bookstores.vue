@@ -29,12 +29,12 @@ import { onMounted } from "vue";
 let bookstores = $ref(null);
 
 const validateBookstoreComment = async ({ id }) => {
-  await axios.post("/admin/bookstoreComment/approve", { id });
-  bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
+  await axios.post("/bookstores/approve", { id });
+  bookstores = (await axios.get("/bookstores")).data;
 };
 
 onMounted(async () => {
-  bookstores = (await axios.get("/admin/bookstoreComment/list")).data;
+  bookstores = (await axios.get("/bookstores")).data;
 });
 </script>
 

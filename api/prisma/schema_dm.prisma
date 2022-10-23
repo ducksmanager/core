@@ -77,7 +77,7 @@ model bookstore {
   address                   String                      @db.Text                      @map("AdresseComplete")
   coordX                    Float                                                     @map("CoordX")
   coordY                    Float                                                     @map("CoordY")
-  bouquineries_commentaires bookstoreComment[]
+  comments                  bookstoreComment[]
   users_contributions       userContribution[]
 
   @@map("bouquineries")
@@ -91,7 +91,7 @@ model bookstoreComment {
   isActive            Boolean             @default(false)                  @map("Actif")
   bookstoreId         Int                                                  @map("ID_Bouquinerie")
   bouquineries        bookstore          @relation(fields: [bookstoreId], references: [id], onUpdate: Restrict, map: "bouquineries_commentaires_bouquineries_ID_fk")
-  users               user?              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "bouquineries_commentaires_users_ID_fk")
+  user                user?              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "bouquineries_commentaires_users_ID_fk")
   users_contributions userContribution[]
 
   @@index([bookstoreId], map: "bouquineries_commentaires_bouquineries_ID_fk")
@@ -316,7 +316,7 @@ model userPermission {
 model users_points {
   ID               Int                           @id @default(autoincrement())
   ID_Utilisateur   Int
-  TypeContribution users_points_TypeContribution
+  TypeContribution userContributionType
   NbPoints         Int?                          @default(0)
 }
 
@@ -335,7 +335,7 @@ enum users_options_Option_nom {
   sales_notification_publications
 }
 
-enum users_points_TypeContribution {
+enum userContributionType {
   photographe
   createur
   duckhunter

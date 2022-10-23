@@ -191,7 +191,7 @@ const decodeText = (object, field) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await axios.get("/bookstoreComment/list")).data
+  bookstores = (await axios.get("/bookstores")).data
     .map((bookstore) => {
       ["name", "address"].forEach((field) => {
         bookstore[field] = decodeText(bookstore, field);
@@ -214,7 +214,7 @@ const suggestComment = async (bookstore) => {
     );
     return false;
   }
-  await axios.put("/bookstoreComment/suggest", bookstore);
+  await axios.put("/bookstores", bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;
