@@ -103,11 +103,11 @@ const medalDescription = $computed(() => {
     switch (contribution) {
       case "edge_photographer":
         textTemplate =
-          "Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !";
+          "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
         break;
       case "edge_designer":
         textTemplate =
-          "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
+          "Vous avez {0} points Concepteur de tranches, obtenez-en {1} de plus pour recevoir le badge {2} !";
         break;
       case "duckhunter":
         textTemplate =

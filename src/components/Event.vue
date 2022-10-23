@@ -136,9 +136,9 @@ const { t: $t } = useI18n();
 const getMedalTitle = (contribution) => {
   switch (contribution) {
     case "edge_photographer":
-      return $t("Concepteur de tranches");
-    case "edge_designer":
       return $t("Photographe de tranches");
+    case "edge_designer":
+      return $t("Concepteur de tranches");
     case "duckhunter":
       return $t("Duckhunter");
   }
