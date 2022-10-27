@@ -284,8 +284,8 @@ model userContribution {
 model userOption {
   id            Int                      @id @default(autoincrement()) @map("ID")
   userId        Int                                                    @map("ID_User")
-  optionName    users_options_Option_nom                               @map("Option_nom")
-  optionValue   String                   @db.VarChar(50)               @map("Option_valeur")
+  optionName    userOptionType                                         @map("Option_nom")
+  optionValue   String                  @db.VarChar(50)                @map("Option_valeur")
   users         user                    @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "users_options_users_ID_fk")
 
   @@unique([userId, optionName, optionValue], map: "users_options__unique")
@@ -330,7 +330,7 @@ model users_suggestions_notifications {
   @@unique([ID_User, issuecode], map: "users_notifications__index_user_issue")
 }
 
-enum users_options_Option_nom {
+enum userOptionType {
   suggestion_notification_country
   sales_notification_publications
 }

@@ -2,11 +2,16 @@
   <div v-if="publicationName" class="mt-4">
     <Publication
       size="xl"
-      :publicationcode="publicationcode"
+      :publicationcode="props.publicationcode"
       :publicationname="publicationName"
     />
+    <Watch
+      v-if="showFilter !== null"
+      class="ml-2"
+      :publicationcode="props.publicationcode"
+    />
     <div v-if="issues && purchases">
-      <div v-if="!duplicatesOnly && !readStackOnly" v-once class="issue-filter">
+      <div v-if="showFilter" v-once class="issue-filter">
         <table>
           <tr
             v-for="conditionFilter in ['possessed', 'missing']"
@@ -66,13 +71,7 @@
             </li>
           </ul>
         </BAlert>
-        <BAlert
-          v-if="!duplicatesOnly && !readStackOnly"
-          v-once
-          show
-          variant="info"
-          class="mb-0"
-        >
+        <BAlert v-if="showFilter" v-once show variant="info" class="mb-0">
           {{
             $t(
               "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
@@ -112,7 +111,7 @@
           >
             <span>
               <IssueDetailsPopover
-                :publication-code="publicationcode"
+                :publication-code="props.publicationcode"
                 :issue-number="issueNumber"
                 @click="openBook(issueNumber)"
               >
@@ -167,11 +166,16 @@
                   <BIconBookmarkCheck v-if="isToRead" class="issue-to-read" />
                   <Condition
                     v-if="copyCondition"
-                    :publicationcode="publicationcode"
+                    :publicationcode="props.publicationcode"
                     :issuenumber="issueNumber"
                     :value="copyCondition"
                   />
                 </div>
+                <Watch
+                  v-if="!userCopies.length"
+                  :publicationcode="publicationcode"
+                  :issuenumber="issueNumber"
+                />
               </div>
               <div class="issue-check">
                 <input
@@ -194,8 +198,10 @@
     <BAlert variant="danger" show>
       <div class="mb-4">
         {{ $t("Aucun numéro n'est répertorié pour") }}
-        {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
-        {{ country }})
+        {{ props.publicationcode.split("/")[1] }} ({{
+          $t("Pays de publication")
+        }}
+        : {{ country }})
       </div>
       <div v-if="userIssuesForPublication.length">
         {{
@@ -225,7 +231,7 @@
     <ContextMenu
       ref="contextMenu"
       :key="contextMenuKey"
-      :publication-code="publicationcode"
+      :publication-code="props.publicationcode"
       :selected-issues="selected"
       :copies="selectedIssuesCopies"
       @update-issues="updateIssues"
@@ -246,7 +252,7 @@ import { condition } from "~/composables/condition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 
-const { duplicatesOnly, readStackOnly, publicationcode } = defineProps({
+const props = defineProps({
   publicationcode: {
     type: String,
     required: true,
@@ -256,6 +262,10 @@ const { duplicatesOnly, readStackOnly, publicationcode } = defineProps({
     default: false,
   },
   readStackOnly: {
+    type: Boolean,
+    default: false,
+  },
+  onSaleStackOnly: {
     type: Boolean,
     default: false,
   },
@@ -282,14 +292,19 @@ let currentIssueOpened = $shallowRef(null);
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const viewText = $computed(() => $t("Voir"));
+const showFilter = $computed(
+  () => !props.duplicatesOnly && !props.readStackOnly && !props.onSaleStackOnly
+);
 
 const contextMenuKey = "context-menu";
 const publicationNames = $computed(() => coa().publicationNames);
 const coverUrls = $computed(() => coa().coverUrls);
 const userIssues = $computed(() => collectionStore().collection);
 const purchases = $computed(() => collectionStore().purchases);
-const country = $computed(() => publicationcode.split("/")[0]);
-const publicationName = $computed(() => publicationNames[publicationcode]);
+const country = $computed(() => props.publicationcode.split("/")[0]);
+const publicationName = $computed(
+  () => publicationNames[props.publicationcode]
+);
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const filteredIssues = $computed(() =>
   issues?.filter(
@@ -335,7 +350,7 @@ const updateSelected = () => {
 };
 const deletePublicationIssues = async (issuesToDelete) =>
   await updateIssues({
-    publicationCode: publicationcode,
+    publicationCode: props.publicationcode,
     issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
     condition: conditions.find(({ value }) => value === "missing").dbValue,
     istosell: false,
@@ -354,7 +369,7 @@ const deletePurchase = async ({ id }) => {
 };
 const openBook = (issueNumber) => {
   currentIssueOpened = coverUrls[issueNumber]
-    ? { publicationcode, issueNumber }
+    ? { publicationcode: props.publicationcode, issueNumber }
     : null;
 };
 
@@ -371,7 +386,8 @@ watch(
     if (newValue) {
       userIssuesForPublication = newValue
         .filter(
-          (issue) => `${issue.country}/${issue.magazine}` === publicationcode
+          (issue) =>
+            `${issue.country}/${issue.magazine}` === props.publicationcode
         )
         .map((issue) => ({
           ...issue,
@@ -382,7 +398,7 @@ watch(
           ).value,
         }));
 
-      await coa().fetchIssueNumbersWithTitles(publicationcode);
+      await coa().fetchIssueNumbersWithTitles(props.publicationcode);
 
       issues = coa()
         .issuesWithTitles.map((issue) => ({
@@ -392,11 +408,15 @@ watch(
               userIssueNumber === issue.issueNumber
           ),
         }))
-        .filter(({ userCopies }) => !duplicatesOnly || userCopies.length > 1)
         .filter(
-          ({ userCopies }) =>
-            !readStackOnly ||
-            userCopies.filter(({ isToRead }) => isToRead).length
+          ({ userCopies }) => !props.duplicatesOnly || userCopies.length > 1
+        )
+        .filter(({ userCopies }) =>
+          props.readStackOnly
+            ? userCopies.filter(({ isToRead }) => isToRead).length
+            : props.onSaleStackOnly
+            ? userCopies.filter(({ isOnSale }) => isOnSale).length
+            : true
         );
       const coaIssueNumbers = coa().issuesWithTitles.map(
         ({ issueNumber }) => issueNumber
@@ -412,7 +432,7 @@ watch(
 
 onMounted(async () => {
   await loadPurchases();
-  await fetchPublicationNames([publicationcode]);
+  await fetchPublicationNames([props.publicationcode]);
   publicationNameLoading = false;
 });
 </script>

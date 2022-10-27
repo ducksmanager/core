@@ -37,6 +37,13 @@ const items = $computed(() => [
         : $t("Mes numéros à lire ({0})", [issuesInToReadStack.length]),
   },
   {
+    path: "/on-sale",
+    text:
+      issuesInOnSaleStack == null
+        ? $t("Mes numéros à vendre")
+        : $t("Mes numéros à vendre ({0})", [issuesInOnSaleStack.length]),
+  },
+  {
     path: "/subscriptions",
     text:
       subscriptions == null
@@ -51,6 +58,7 @@ const items = $computed(() => [
 ]);
 const subscriptions = $computed(() => collection().subscriptions);
 const issuesInToReadStack = $computed(() => collection().issuesInToReadStack);
+const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
 const total = $computed(() => collection().total);
 const totalUniqueIssues = $computed(() => collection().totalUniqueIssues);
 const loadSubscriptions = collection().loadSubscriptions;

@@ -7,6 +7,7 @@ import { coa } from "./coa";
 export const collection = defineStore("collection", {
   state: () => ({
     collection: null,
+    watchedPublicationsWithSales: null,
     purchases: null,
     watchedAuthors: null,
     suggestions: null,
@@ -17,6 +18,7 @@ export const collection = defineStore("collection", {
 
     isLoadingUser: false,
     isLoadingCollection: false,
+    isLoadingWatchedPublicationsWithSales: false,
     isLoadingPurchases: false,
     isLoadingWatchedAuthors: false,
     isLoadingSuggestions: false,
@@ -50,6 +52,9 @@ export const collection = defineStore("collection", {
 
     issuesInToReadStack: ({ collection }) =>
       collection && collection.filter(({ isToRead }) => isToRead),
+
+    issuesInOnSaleStack: ({ collection }) =>
+      collection && collection.filter(({ isOnSale }) => isOnSale),
 
     totalUniqueIssues: ({ collection, duplicateIssues }) =>
       duplicateIssues &&
@@ -221,6 +226,24 @@ export const collection = defineStore("collection", {
         ).data;
         this.isLoadingWatchedAuthors = false;
       }
+    },
+    async loadWatchedPublicationsWithSales(afterUpdate = false) {
+      if (
+        afterUpdate ||
+        (!this.isLoadingWatchedPublicationsWithSales &&
+          !this.watchedPublicationsWithSales)
+      ) {
+        this.isLoadingWatchedPublicationsWithSales = true;
+        this.watchedPublicationsWithSales = (
+          await axios.get("/collection/options/sales_notification_publications")
+        ).data;
+        this.isLoadingWatchedPublicationsWithSales = false;
+      }
+    },
+    async updateWatchedPublicationsWithSales() {
+      await axios.post("/collection/options/sales_notification_publications", {
+        values: this.watchedPublicationsWithSales,
+      });
     },
     async loadSuggestions({ countryCode, sort, sinceLastVisit }) {
       if (!this.isLoadingSuggestions) {

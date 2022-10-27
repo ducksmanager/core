@@ -61,6 +61,7 @@ import { l10n } from "~/stores/l10n";
 const collectionStore = collection();
 
 let router = useRouter();
+let route = useRoute();
 defineProps({
   error: { type: String, default: null },
 });
@@ -94,7 +95,11 @@ watch(
   () => collectionStore.user,
   async (newValue) => {
     if (newValue) {
-      await router.push("/collection");
+      if (route.query.redirect) {
+        window.location.href = route.query.redirect + "";
+      } else {
+        await router.push("/collection");
+      }
     }
   },
   { immediate: true }

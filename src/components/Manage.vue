@@ -30,7 +30,7 @@
       </template>
       <template #footer>
         <div>
-          <a :href="r('/expand')">{{
+          <a :href="r('/expand/suggestions')">{{
             $t("Voir toutes les suggestions d'achat pour ma collection")
           }}</a>
         </div>

@@ -26,6 +26,7 @@ declare module '@vue/runtime-core' {
     EdgeContents: typeof import('./src/components/EdgeContents.vue')['default']
     Errorable: typeof import('./src/components/Errorable.vue')['default']
     Event: typeof import('./src/components/Event.vue')['default']
+    ExpandMenu: typeof import('./src/components/menus/ExpandMenu.vue')['default']
     Footer: typeof import('./src/components/Footer.vue')['default']
     Forgot: typeof import("./src/layouts/Forgot.vue")["default"]
     Issue: typeof import('./src/components/Issue.vue')['default']
@@ -67,5 +68,6 @@ declare module '@vue/runtime-core' {
     UserPopover: typeof import('./src/components/UserPopover.vue')['default']
     ViewBookcase: typeof import('./src/components/ViewBookcase.vue')['default']
     ViewCoverIcon: typeof import('./src/components/ViewCoverIcon.vue')['default']
+    Watch: typeof import('./src/components/Watch.vue')['default']
   }
 }

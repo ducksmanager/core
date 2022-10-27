@@ -10,6 +10,7 @@
       <BookcaseMenu v-if="topMenu === 'bookcase'" />
       <CollectionMenu v-if="topMenu === 'collection'" />
       <StatsMenu v-if="topMenu === 'stats'" />
+      <ExpandMenu v-if="topMenu === 'expand'" />
       <div v-html="'<span></span>'"></div>
       <router-view />
     </div>
