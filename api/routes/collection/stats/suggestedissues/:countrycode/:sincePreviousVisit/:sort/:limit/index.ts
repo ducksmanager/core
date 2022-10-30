@@ -7,7 +7,7 @@ import {
 } from "~prisma_clients/client_coa";
 import {
   PrismaClient as PrismaClientDm,
-  users_options_Option_nom,
+  userOptionType,
 } from "~prisma_clients/client_dm";
 import {
   Prisma as PrismaDmStats,
@@ -212,7 +212,7 @@ const getSuggestions = async (
   const countriesToNotifyPerUser =
     countrycode === COUNTRY_CODE_OPTION.countries_to_notify
       ? await getOptionValueAllUsers(
-          users_options_Option_nom.suggestion_notification_country
+          userOptionType.suggestion_notification_country
         )
       : null;
 
@@ -321,7 +321,7 @@ const isSuggestionInCountriesToNotify = (
       );
 
 const getOptionValueAllUsers = async (
-  optionName: users_options_Option_nom
+  optionName: userOptionType
 ): Promise<{ [key: number]: string[] }> =>
   (
     await prismaDm.userOption.findMany({
