@@ -19,7 +19,7 @@
             <BIconGraphUp />
             {{ $t("Statistiques de ma collection") }}
           </NavigationItem>
-          <NavigationItem path="/expand">
+          <NavigationItem path="/expand/suggestions">
             <BIconCapslockFill />
             {{ $t("Agrandir ma collection") }}
           </NavigationItem>

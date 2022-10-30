@@ -6,7 +6,7 @@
       :publicationname="publicationName"
     />
     <Watch
-      v-if="showFilter !== null"
+      v-if="showFilter"
       class="ml-2"
       :publicationcode="props.publicationcode"
     />
@@ -401,7 +401,7 @@ watch(
       await coa().fetchIssueNumbersWithTitles(props.publicationcode);
 
       issues = coa()
-        .issuesWithTitles.map((issue) => ({
+        .issuesWithTitles[props.publicationcode].map((issue) => ({
           ...issue,
           userCopies: userIssuesForPublication.filter(
             ({ issueNumber: userIssueNumber }) =>
@@ -418,7 +418,7 @@ watch(
             ? userCopies.filter(({ isOnSale }) => isOnSale).length
             : true
         );
-      const coaIssueNumbers = coa().issuesWithTitles.map(
+      const coaIssueNumbers = coa().issuesWithTitles[props.publicationcode].map(
         ({ issueNumber }) => issueNumber
       );
       userIssuesNotFoundForPublication = userIssuesForPublication.filter(

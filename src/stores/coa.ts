@@ -51,7 +51,9 @@ export const coa = defineStore("coa", {
     publicationNamesFullCountries: [] as string[],
     personNames: null as { [key: string]: string } | null,
     issueNumbers: {} as { [key: string]: string[] },
-    issuesWithTitles: null as { issuenumber: string; title: string }[] | null,
+    issuesWithTitles: {} as {
+      [key: string]: { issuenumber: string; title: string };
+    },
     issueDetails: {} as { [key: string]: InducksIssueDetails },
     isLoadingCountryNames: false,
     issueCounts: null,
@@ -228,7 +230,7 @@ export const coa = defineStore("coa", {
     },
 
     async fetchIssueNumbersWithTitles(publicationcode: string) {
-      this.issuesWithTitles = (
+      this.issuesWithTitles[publicationcode] = (
         await coaApi.get(
           `/coa/list/issues/withTitle?publicationcode=${publicationcode}`
         )
