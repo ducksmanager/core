@@ -269,6 +269,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  ownedOnly: {
+    type: Boolean,
+    default: false,
+  },
+  customIssues: {
+    type: Array,
+    default: null,
+  },
 });
 
 const { conditions } = condition();
@@ -293,13 +301,19 @@ const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const viewText = $computed(() => $t("Voir"));
 const showFilter = $computed(
-  () => !props.duplicatesOnly && !props.readStackOnly && !props.onSaleStackOnly
+  () =>
+    !props.duplicatesOnly &&
+    !props.readStackOnly &&
+    !props.onSaleStackOnly &&
+    !props.ownedOnly
 );
 
 const contextMenuKey = "context-menu";
 const publicationNames = $computed(() => coa().publicationNames);
 const coverUrls = $computed(() => coa().coverUrls);
-const userIssues = $computed(() => collectionStore().collection);
+const userIssues = $computed(
+  () => props.customIssues || collectionStore().collection
+);
 const purchases = $computed(() => collectionStore().purchases);
 const country = $computed(() => props.publicationcode.split("/")[0]);
 const publicationName = $computed(
@@ -309,8 +323,8 @@ const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const filteredIssues = $computed(() =>
   issues?.filter(
     ({ userCopies }) =>
-      (filter.possessed && userCopies.length) ||
-      (filter.missing && !userCopies.length)
+      ((props.ownedOnly || filter.possessed) && userCopies.length) ||
+      (!props.ownedOnly && filter.missing && !userCopies.length)
   )
 );
 const selectedIssuesCopies = $computed(() =>

@@ -3,6 +3,16 @@ alias: [/collection/a-lire]
 </route>
 
 <template>
+  <b-alert
+    variant="info"
+    show
+    v-html="
+      $t(
+        `Sur cette page les numéros que vous avez indiqué comme 'A vendre' sont listés. rendez vous sur la page {1} pour consulter la liste des numéros que les autres utilisateurs DucksManager ont mis en vente.`,
+        [`<a href='/expand/marketplace'>${$t('DucksManager marketplace')}</a>`]
+      )
+    "
+  />
   <div v-if="issuesInOnSaleStack && hasPublicationNames">
     <IssueList
       v-for="publicationcode in publicationCodes"
