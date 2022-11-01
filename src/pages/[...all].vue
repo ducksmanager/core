@@ -198,7 +198,6 @@ alias:
 
 <script setup>
 import { useHead } from "@vueuse/head";
-import { BButton, BCol, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";

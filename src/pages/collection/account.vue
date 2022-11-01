@@ -114,7 +114,6 @@ alias: [/collection/compte]
 
 <script setup>
 import axios from "axios";
-import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 

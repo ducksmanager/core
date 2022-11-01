@@ -14,8 +14,6 @@
 </template>
 
 <script setup>
-import { BBadge } from "bootstrap-vue-3";
-
 defineProps({
   stories: {
     type: Object,

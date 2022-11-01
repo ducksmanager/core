@@ -144,7 +144,6 @@
 </template>
 
 <script setup>
-import { BAlert, BButton } from "bootstrap-vue-3";
 import { watch } from "vue";
 
 import { bookcase as bookcaseStore } from "~/stores/bookcase";

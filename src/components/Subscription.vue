@@ -72,8 +72,6 @@
 </template>
 
 <script setup>
-import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
-
 import { coa } from "~/stores/coa";
 
 const { endDate, publicationCode, startDate } = defineProps({

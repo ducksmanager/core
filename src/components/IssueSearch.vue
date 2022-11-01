@@ -74,7 +74,6 @@
 
 <script setup>
 import axios from "axios";
-import { BDropdown, BDropdownItem, BFormInput } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 

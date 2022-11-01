@@ -35,8 +35,6 @@
 </template>
 
 <script setup>
-import { BProgress, BProgressBar } from "bootstrap-vue-3";
-
 const { contribution, userLevelPoints } = defineProps({
   contribution: {
     type: String,

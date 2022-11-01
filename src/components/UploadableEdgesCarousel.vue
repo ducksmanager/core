@@ -29,8 +29,6 @@
 </template>
 
 <script setup>
-import { BCarousel, BCarouselSlide } from "bootstrap-vue-3";
-
 defineProps({
   issues: { type: Array, required: true },
   userPoints: { type: Number, required: true },

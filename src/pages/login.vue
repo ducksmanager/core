@@ -52,7 +52,6 @@ alias: [/connexion]
 
 <script setup>
 import axios from "axios";
-import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";

@@ -25,7 +25,6 @@
 </template>
 
 <script setup>
-import { BButton, BFormSelect } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";

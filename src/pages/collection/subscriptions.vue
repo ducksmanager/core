@@ -97,7 +97,6 @@ alias: [/collection/abonnements]
 </template>
 
 <script setup>
-import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";

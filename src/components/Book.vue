@@ -103,7 +103,7 @@
 </template>
 
 <script setup>
-import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
+import { useToast } from "bootstrap-vue-3";
 import { PageFlip } from "page-flip";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";

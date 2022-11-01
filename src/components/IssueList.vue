@@ -238,7 +238,6 @@
 
 <script setup>
 import { BIconBookmarkCheck, BIconEyeFill } from "bootstrap-icons-vue";
-import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 

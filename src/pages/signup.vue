@@ -66,7 +66,6 @@ alias: [/inscription]
 
 <script setup>
 import axios from "axios";
-import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";

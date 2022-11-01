@@ -264,7 +264,6 @@ import {
   BIconTrash,
   BIconX,
 } from "bootstrap-icons-vue";
-import { BAlert, BNavItem, BTab, BTabs } from "bootstrap-vue-3";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 

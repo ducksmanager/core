@@ -44,7 +44,6 @@
 </template>
 
 <script setup>
-import { BButton } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
 import { l10n } from "~/stores/l10n";

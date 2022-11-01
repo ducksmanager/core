@@ -67,7 +67,6 @@ alias: [/agrandir]
 </template>
 
 <script setup>
-import { BAlert, BFormSelect } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 

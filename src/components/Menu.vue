@@ -20,8 +20,6 @@
 </template>
 
 <script setup>
-import { BTab, BTabs } from "bootstrap-vue-3";
-
 import { l10n } from "~/stores/l10n";
 
 const { items, rootPath } = defineProps({

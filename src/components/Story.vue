@@ -16,7 +16,6 @@
   </span>
 </template>
 <script setup>
-import { BBadge } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
 const { t: $t } = useI18n();

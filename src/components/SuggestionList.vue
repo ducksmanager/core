@@ -82,7 +82,6 @@
 
 <script setup>
 import { BIconCash } from "bootstrap-icons-vue";
-import { BButton, BButtonGroup } from "bootstrap-vue-3";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 

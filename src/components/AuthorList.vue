@@ -104,7 +104,6 @@
 
 <script setup>
 import axios from "axios";
-import { BAlert, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { watch } from "vue";
 
 import { coa } from "~/stores/coa";

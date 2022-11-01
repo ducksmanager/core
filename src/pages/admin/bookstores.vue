@@ -23,7 +23,6 @@ meta:
 
 <script setup>
 import axios from "axios";
-import { BButton, BTable } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 
 let bookstores = $ref(null);

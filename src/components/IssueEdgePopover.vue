@@ -44,8 +44,6 @@
 </template>
 
 <script setup>
-import { BButton } from "bootstrap-vue-3";
-
 import { bookcase } from "~/stores/bookcase";
 import { users } from "~/stores/users";
 

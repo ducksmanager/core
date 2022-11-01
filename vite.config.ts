@@ -4,6 +4,7 @@ import VueI18n from "@intlify/vite-plugin-vue-i18n";
 import Vue from "@vitejs/plugin-vue";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
+import { BootstrapVue3Resolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Pages from "vite-plugin-pages";
@@ -45,6 +46,11 @@ export default defineConfig({
     Components({
       dirs: ["src/components", "src/components/menus", "src/layouts"],
       dts: true,
+      resolvers: [
+        BootstrapVue3Resolver({
+          directives: true,
+        }),
+      ],
     }),
   ],
 
