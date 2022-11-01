@@ -18,7 +18,7 @@ const prismaCoa = new PrismaClientCoa();
 const prismaDm = new PrismaClientDm();
 const prismaDmStats = new PrismaClientDmStats();
 
-enum COUNTRY_CODE_OPTION {
+export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
   countries_to_notify = "countries_to_notify",
 }
@@ -84,7 +84,7 @@ interface Suggestion
     > {}
 
 interface SuggestionList {
-  storyDetails: { [p: string]: StoryDetail };
+  storyDetails?: { [p: string]: StoryDetail };
   suggestionsPerUser: { [p: number]: IssueSuggestionList };
   publicationTitles: { [p: string]: inducks_publication };
   authors: { [p: string]: string };
@@ -157,7 +157,7 @@ const getStoryDetails = async (
   return stories;
 };
 
-const getSuggestions = async (
+export const getSuggestions = async (
   since: Date | null,
   countrycode: string,
   sort: string,

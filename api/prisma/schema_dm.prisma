@@ -320,14 +320,16 @@ model users_points {
   NbPoints         Int?                          @default(0)
 }
 
-model users_suggestions_notifications {
-  ID        Int       @id @default(autoincrement())
-  ID_User   Int
+model userSuggestionNotification {
+  id        Int       @id @default(autoincrement())   @map("ID")
+  userId    Int                                       @map("ID_User")
   issuecode String    @db.VarChar(12)
   text      String?   @db.Text
   date      DateTime? @default(now()) @db.DateTime(0)
 
-  @@unique([ID_User, issuecode], map: "users_notifications__index_user_issue")
+  @@unique([userId, issuecode], map: "users_notifications__index_user_issue")
+
+  @@map("users_suggestions_notifications")
 }
 
 enum userOptionType {
