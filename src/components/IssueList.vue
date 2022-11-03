@@ -97,7 +97,9 @@
             :key="issueNumber"
             class="issue"
             :class="{
-              [`issue-${userCopies.length ? 'possessed' : 'missing'}`]: true,
+              [`issue-${
+                userCopies.length && !onSaleByOthers ? 'possessed' : 'missing'
+              }`]: true,
               preselected: preselected.includes(issueNumber),
               selected: selected.includes(issueNumber),
             }"
@@ -136,7 +138,7 @@
               <div class="issue-copies">
                 <div
                   v-for="(
-                    { condition: copyCondition, isToRead, purchaseId },
+                    { condition: copyCondition, isToRead, purchaseId, userId },
                     copyIndex
                   ) in userCopies"
                   :key="`${issueNumber}-copy-${copyIndex}`"
@@ -164,6 +166,12 @@
                     />
                   </svg>
                   <BIconBookmarkCheck v-if="isToRead" class="issue-to-read" />
+
+                  <slot
+                    v-if="$slots.onSaleByOther"
+                    name="onSaleByOther"
+                    :user-id="userId"
+                  />
                   <Condition
                     v-if="copyCondition"
                     :publicationcode="props.publicationcode"
@@ -276,6 +284,10 @@ const props = defineProps({
   customIssues: {
     type: Array,
     default: null,
+  },
+  onSaleByOthers: {
+    type: Boolean,
+    default: false,
   },
 });
 

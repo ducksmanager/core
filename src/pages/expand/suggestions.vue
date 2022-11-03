@@ -30,8 +30,8 @@ alias: [/agrandir/suggestions]
           :key="value"
           :value="value"
         >
-          {{ text }} </b-form-select-option
-        >>
+          {{ text }}
+        </b-form-select-option>
       </BFormSelect>
       <SuggestionList :countrycode="countryCode" :since-last-visit="false" />
     </div>
