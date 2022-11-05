@@ -56,7 +56,7 @@
               :disabled="!url"
             >
               <template #title>
-                <Story
+                <InducksStory
                   no-link
                   :kind="`${kind}${
                     kind === 'n' && entirepages < 1 ? '_g' : ''

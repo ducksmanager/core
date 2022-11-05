@@ -1,6 +1,20 @@
 <template>
-  <Popover placement="right" @open:popper="loadIssueUrls">
-    <slot />
+  <Popover
+    v-if="publicationNames[publicationCode]"
+    placement="right"
+    @open:popper="loadIssueUrls"
+  >
+    <BIconEyeFill
+      :id="`issue-details-${issueNumber}`"
+      class="mx-2"
+      :class="{
+        [`can-show-book-${
+          !coverUrls[issueNumber] ? coverUrls[issueNumber] : true
+        }`]: true,
+      }"
+      :alt="$t('Voir')"
+      @click.prevent="$emit('click')"
+    />
     <template #header>
       <Issue
         :publicationcode="publicationCode"
@@ -35,6 +49,7 @@
 </template>
 
 <script setup>
+import { BIconEyeFill } from "bootstrap-icons-vue";
 import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
@@ -59,10 +74,11 @@ const cloudinaryBaseUrl =
 const publicationNames = $computed(() => coa().publicationNames);
 const issueDetails = $computed(() => coa().issueDetails);
 const issueCode = $computed(() => `${publicationCode} ${issueNumber}`);
-const fetchIssueUrls = coa().fetchIssueUrls;
+const coverUrls = $computed(() => coa().coverUrls);
+
 const loadIssueUrls = async () => {
   isCoverLoading = true;
-  await fetchIssueUrls({
+  await coa().fetchIssueUrls({
     publicationCode,
     issueNumber,
   });
@@ -83,6 +99,17 @@ watch(
 </script>
 
 <style scoped lang="scss">
+.can-show-book-undefined {
+  cursor: initial;
+}
+
+.can-show-book-false {
+  cursor: not-allowed;
+}
+
+.can-show-book-true {
+  cursor: pointer;
+}
 :deep(.popper) {
   width: 150px;
 

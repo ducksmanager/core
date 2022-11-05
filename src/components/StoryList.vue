@@ -3,7 +3,7 @@
     <template v-for="(storiesOfAuthor, author) in stories">
       <li v-for="storyCode in storiesOfAuthor" :key="`${author}- ${storyCode}`">
         <BBadge>{{ authors[author] }}</BBadge>
-        <Story
+        <InducksStory
           :storycode="storyCode"
           :title="storyDetails[storyCode].title"
           :comment="storyDetails[storyCode].storycomment"

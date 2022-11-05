@@ -92,16 +92,18 @@
         />
         <div v-contextmenu:contextmenu>
           <div
-            v-for="({ issueNumber, title, userCopies }, idx) in filteredIssues"
-            :id="issueNumber"
-            :key="issueNumber"
+            v-for="(
+              { issueNumber, title, userCopies, key }, idx
+            ) in filteredIssues"
+            :id="key"
+            :key="key"
             class="issue"
             :class="{
               [`issue-${
                 userCopies.length && !onSaleByOthers ? 'possessed' : 'missing'
               }`]: true,
-              preselected: preselected.includes(issueNumber),
-              selected: selected.includes(issueNumber),
+              preselected: preselected.includes(key),
+              selected: selected.includes(key),
             }"
             @mousedown.self.left="
               preselectedIndexStart = preselectedIndexEnd = idx
@@ -116,18 +118,7 @@
                 :publication-code="props.publicationcode"
                 :issue-number="issueNumber"
                 @click="openBook(issueNumber)"
-              >
-                <BIconEyeFill
-                  :id="`issue-details-${issueNumber}`"
-                  class="mx-2"
-                  :class="{
-                    [`can-show-book-${
-                      !coverUrls[issueNumber] ? coverUrls[issueNumber] : true
-                    }`]: true,
-                  }"
-                  :alt="viewText"
-                  @click.prevent="openBook(issueNumber)"
-              /></IssueDetailsPopover>
+              />
 
               <span class="issue-text">
                 {{ issueNumberTextPrefix }}{{ issueNumber }}
@@ -251,7 +242,7 @@
 </template>
 
 <script setup>
-import { BIconBookmarkCheck, BIconEyeFill } from "bootstrap-icons-vue";
+import { BIconBookmarkCheck } from "bootstrap-icons-vue";
 import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -277,10 +268,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  ownedOnly: {
-    type: Boolean,
-    default: false,
-  },
   customIssues: {
     type: Array,
     default: null,
@@ -288,6 +275,10 @@ const props = defineProps({
   onSaleByOthers: {
     type: Boolean,
     default: false,
+  },
+  groupUserCopies: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -311,13 +302,8 @@ let preselectedIndexEnd = $ref(null);
 let currentIssueOpened = $shallowRef(null);
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
-const viewText = $computed(() => $t("Voir"));
 const showFilter = $computed(
-  () =>
-    !props.duplicatesOnly &&
-    !props.readStackOnly &&
-    !props.onSaleStackOnly &&
-    !props.ownedOnly
+  () => !props.duplicatesOnly && !props.readStackOnly && !props.onSaleStackOnly
 );
 
 const contextMenuKey = "context-menu";
@@ -326,7 +312,7 @@ const coverUrls = $computed(() => coa().coverUrls);
 const userIssues = $computed(
   () => props.customIssues || collectionStore().collection
 );
-const purchases = $computed(() => collectionStore().purchases);
+let purchases = $computed(() => collectionStore().purchases);
 const country = $computed(() => props.publicationcode.split("/")[0]);
 const publicationName = $computed(
   () => publicationNames[props.publicationcode]
@@ -335,8 +321,8 @@ const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const filteredIssues = $computed(() =>
   issues?.filter(
     ({ userCopies }) =>
-      ((props.ownedOnly || filter.possessed) && userCopies.length) ||
-      (!props.ownedOnly && filter.missing && !userCopies.length)
+      (filter.possessed && userCopies.length) ||
+      (filter.missing && !userCopies.length)
   )
 );
 const selectedIssuesCopies = $computed(() =>
@@ -359,17 +345,16 @@ const getPreselected = () =>
   [preselectedIndexStart, preselectedIndexEnd].includes(null)
     ? preselected
     : filteredIssues
-        .map(({ issueNumber }) => issueNumber)
+        .map(({ key }) => key)
         .filter(
           (issueNumber, index) =>
             index >= preselectedIndexStart && index <= preselectedIndexEnd
         );
 const updateSelected = () => {
   selected = issues
-    .map(({ issueNumber }) => issueNumber)
+    .map(({ key }) => key)
     .filter(
-      (issueNumber) =>
-        selected.includes(issueNumber) !== preselected.includes(issueNumber)
+      (itemKey) => selected.includes(itemKey) !== preselected.includes(itemKey)
     );
   preselectedIndexStart = preselectedIndexEnd = null;
   preselected = [];
@@ -426,14 +411,44 @@ watch(
 
       await coa().fetchIssueNumbersWithTitles(props.publicationcode);
 
-      issues = coa()
-        .issuesWithTitles[props.publicationcode].map((issue) => ({
+      issues = coa().issuesWithTitles[props.publicationcode];
+      if (props.groupUserCopies) {
+        issues = issues.map((issue) => ({
           ...issue,
           userCopies: userIssuesForPublication.filter(
             ({ issueNumber: userIssueNumber }) =>
               userIssueNumber === issue.issueNumber
           ),
-        }))
+          key: issue.issueNumber,
+        }));
+      } else {
+        const userIssueNumbers = [
+          ...new Set(
+            userIssuesForPublication.map(({ issueNumber }) => issueNumber)
+          ),
+        ];
+        issues = issues
+          .filter(({ issueNumber }) => userIssueNumbers.includes(issueNumber))
+          .map(({ issueNumber }) => issueNumber)
+          .reduce(
+            (acc, issueNumber) => [
+              ...acc,
+              ...userIssuesForPublication
+                .filter(
+                  ({ issueNumber: userIssueNumber }) =>
+                    userIssueNumber === issueNumber
+                )
+                .map((issue) => ({
+                  ...issue,
+                  key: `${issue.issueNumber}-id-${issue.id}`,
+                  userCopies: [issue],
+                })),
+            ],
+            []
+          );
+      }
+
+      issues = issues
         .filter(
           ({ userCopies }) => !props.duplicatesOnly || userCopies.length > 1
         )
@@ -444,6 +459,7 @@ watch(
             ? userCopies.filter(({ isOnSale }) => isOnSale).length
             : true
         );
+
       const coaIssueNumbers = coa().issuesWithTitles[props.publicationcode].map(
         ({ issueNumber }) => issueNumber
       );
@@ -457,25 +473,17 @@ watch(
 );
 
 onMounted(async () => {
-  await loadPurchases();
+  if (props.customIssues) {
+    collectionStore().purchases = [];
+  } else {
+    await loadPurchases();
+  }
   await fetchPublicationNames([props.publicationcode]);
   publicationNameLoading = false;
 });
 </script>
 
 <style scoped lang="scss">
-.can-show-book-undefined {
-  cursor: initial;
-}
-
-.can-show-book-false {
-  cursor: not-allowed;
-}
-
-.can-show-book-true {
-  cursor: pointer;
-}
-
 .issue-list-header {
   border: 0;
   width: 100%;

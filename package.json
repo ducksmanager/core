@@ -6,6 +6,7 @@
 		"dev": "concurrently -n front,back \"pnpm run start:front\" \"pnpm run start:back\"",
 		"start:front": "vite --port 8001",
 		"start:back": "cd api && pnpm run dev",
+	  	"story:dev": "histoire dev",
 		"lint": "eslint --fix --cache .",
 		"typecheck": "vue-tsc --noEmit",
 		"preview": "vite preview",
@@ -47,6 +48,7 @@
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^0.29.2",
+		"@histoire/plugin-vue": "^0.11.6",
 		"@intlify/vite-plugin-vue-i18n": "^6.0.3",
 		"@types/js-cookie": "^3.0.2",
 		"@types/node": "^18.11.9",
@@ -60,6 +62,7 @@
 		"eslint-plugin-prettier-vue": "^4.2.0",
 		"eslint-plugin-simple-import-sort": "^8.0.0",
 		"eslint-plugin-vue": "^9.7.0",
+		"histoire": "^0.11.6",
 		"husky": "^8.0.1",
 		"jsdom": "^20.0.2",
 		"pnpm": "^7.14.1",

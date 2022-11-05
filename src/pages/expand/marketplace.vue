@@ -51,13 +51,12 @@
           ? issues.filter(({ userId }) => userId === userIdFilter)
           : issues
       "
-      owned-only
       on-sale-by-others
+      :group-user-copies="false"
       ><template #onSaleByOther="{ userId }">
         <span class="d-inline-block me-2"
           >{{ $t("En vente par") }}
           <UserPopover
-            id
             :points="points[userId]"
             :stats="stats[userId]" /></span></template
     ></IssueList>
