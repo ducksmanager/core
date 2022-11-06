@@ -4,6 +4,7 @@
     :variant="isWatched ? 'secondary' : 'outline-secondary'"
     class="d-inline-flex xl py-0 px-1 ms-1 me-2"
     :title="buttonTooltipText"
+    :disabled="disabled"
     @click="toggleWatchedPublication()"
   >
     <b-icon-eyeglasses
@@ -32,6 +33,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const { t: $t } = useI18n();
@@ -59,7 +64,9 @@ const buttonTooltipText = $computed(() =>
 );
 
 onMounted(() => {
-  collection().loadWatchedPublicationsWithSales();
+  if (props.publicationcode) {
+    collection().loadWatchedPublicationsWithSales();
+  }
 });
 
 const toggleArrayItem = (a, v) => {

@@ -174,7 +174,8 @@
                       variant="success"
                       class="btn-sm"
                       @click.stop="
-                        $emit('create-purchase', {
+                        $emit('submit', {
+                          action: 'create-purchase',
                           date: copy.newPurchaseDate,
                           description: copy.newPurchaseDescription,
                         });
@@ -211,7 +212,8 @@
                       class="delete-purchase btn-sm"
                       :title="$t('Supprimer')"
                       @click="
-                        $emit('delete-purchase', {
+                        $emit('submit', {
+                          action: 'delete-purchase',
                           id: purchaseId,
                         })
                       "
@@ -271,11 +273,7 @@ import { useI18n } from "vue-i18n";
 import { condition } from "~/composables/condition";
 import { collection } from "~/stores/collection";
 
-const { copies, publicationCode, selectedIssues } = defineProps({
-  publicationCode: {
-    type: String,
-    required: true,
-  },
+const { copies, selectedIssues } = defineProps({
   selectedIssues: {
     type: Array,
     required: true,
@@ -285,12 +283,7 @@ const { copies, publicationCode, selectedIssues } = defineProps({
     required: true,
   },
 });
-const emit = defineEmits([
-  "update-issues",
-  "create-purchase",
-  "delete-purchase",
-  "close",
-]);
+const emit = defineEmits(["submit"]);
 const { conditions } = condition();
 
 const defaultState = $ref({
@@ -301,8 +294,6 @@ const defaultState = $ref({
 });
 const today = new Date().toISOString().slice(0, 10);
 const { t: $t } = useI18n();
-const newPurchaseDescription = $ref("");
-const newPurchaseDate = $ref(today);
 let editingCopies = $ref([]);
 const currentCopyIndex = $ref(0);
 const purchases = $computed(() => collection().purchases);
@@ -370,18 +361,12 @@ const updateSelectedIssues = async () => {
     );
   }
 
-  emit("update-issues", {
-    publicationCode,
+  emit("submit", {
+    action: "update-issues",
     issueNumbers: selectedIssues,
     ...issueDetails,
   });
 };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const createPurchaseDate = async () =>
-  emit("create-purchase", {
-    date: newPurchaseDate,
-    description: newPurchaseDescription,
-  });
 
 watch(
   () => selectedIssues,

@@ -2,14 +2,10 @@
   <div v-if="publicationName" class="mt-4">
     <Publication
       size="xl"
-      :publicationcode="props.publicationcode"
+      :publicationcode="publicationcode"
       :publicationname="publicationName"
     />
-    <Watch
-      v-if="showFilter"
-      class="ml-2"
-      :publicationcode="props.publicationcode"
-    />
+    <Watch v-if="showFilter" class="ml-2" :publicationcode="publicationcode" />
     <div v-if="issues && purchases">
       <div v-if="showFilter" v-once class="issue-filter">
         <table>
@@ -115,7 +111,7 @@
           >
             <span>
               <IssueDetailsPopover
-                :publication-code="props.publicationcode"
+                :publication-code="publicationcode"
                 :issue-number="issueNumber"
                 @click="openBook(issueNumber)"
               />
@@ -165,7 +161,7 @@
                   />
                   <Condition
                     v-if="copyCondition"
-                    :publicationcode="props.publicationcode"
+                    :publicationcode="publicationcode"
                     :issuenumber="issueNumber"
                     :value="copyCondition"
                   />
@@ -197,10 +193,8 @@
     <BAlert variant="danger" show>
       <div class="mb-4">
         {{ $t("Aucun numéro n'est répertorié pour") }}
-        {{ props.publicationcode.split("/")[1] }} ({{
-          $t("Pays de publication")
-        }}
-        : {{ country }})
+        {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
+        {{ country }})
       </div>
       <div v-if="userIssuesForPublication.length">
         {{
@@ -227,15 +221,14 @@
   </div>
 
   <v-contextmenu ref="contextmenu">
-    <ContextMenu
+    <component
+      :is="contextMenuComponent"
       ref="contextMenu"
       :key="contextMenuKey"
-      :publication-code="props.publicationcode"
+      :publication-code="publicationcode"
       :selected-issues="selected"
       :copies="selectedIssuesCopies"
-      @update-issues="updateIssues"
-      @create-purchase="createPurchase"
-      @delete-purchase="deletePurchase"
+      @submit="submitAction"
       @close="contextMenuKey = `context-menu-${Math.random()}`"
     />
   </v-contextmenu>
@@ -250,6 +243,9 @@ import { useI18n } from "vue-i18n";
 import { condition } from "~/composables/condition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
+
+import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
+import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 const props = defineProps({
   publicationcode: {
@@ -280,10 +276,24 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  contextMenuComponentName: {
+    type: String,
+    default: "context-menu-own-collection",
+  },
 });
 
 const { conditions } = condition();
 const { t: $t } = useI18n();
+
+let contextMenuComponent;
+switch (props.contextMenuComponentName) {
+  case "context-menu-on-sale-by-others":
+    contextMenuComponent = ContextMenuOnSaleByOthers;
+    break;
+  default:
+    contextMenuComponent = ContextMenuOwnCollection;
+    break;
+}
 
 let loading = $ref(true);
 let publicationNameLoading = $ref(true);
@@ -367,17 +377,29 @@ const deletePublicationIssues = async (issuesToDelete) =>
     istosell: false,
     purchaseId: null,
   });
+
+const submitAction = async (data) => {
+  switch (data.action) {
+    case "update-issues":
+      contextmenu.hide();
+      data.publicationCode = props.publicationCode;
+      await collectionStore().updateCollection(data);
+      selected = [];
+      break;
+    case "create-purchase":
+      await collectionStore().createPurchase(data.date, data.description);
+      break;
+    case "delete-purchase":
+      await collectionStore().deletePurchase(data.id);
+  }
+};
+
 const updateIssues = async (data) => {
   contextmenu.hide();
   await collectionStore().updateCollection(data);
   selected = [];
 };
-const createPurchase = async ({ date, description }) => {
-  await collectionStore().createPurchase(date, description);
-};
-const deletePurchase = async ({ id }) => {
-  await collectionStore().deletePurchase(id);
-};
+
 const openBook = (issueNumber) => {
   currentIssueOpened = coverUrls[issueNumber]
     ? { publicationcode: props.publicationcode, issueNumber }

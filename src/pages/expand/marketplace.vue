@@ -23,7 +23,11 @@
     >
       {{
         $t(
-          "Aucun numéro que vous ne possédez pas n'est en vente parmi les magazines que vous avez surveillés"
+          "Aucun numéro que vous ne possédez pas n'est en vente parmi les magazines que vous avez surveillés. Cliquez sur "
+        )
+      }}<Watch class="ml-2" publicationcode="" />{{
+        $t(
+          " à côté d'un magazine ou d'un numéro dans la page de gestion de la collection pour voir les numéros en vente."
         )
       }}
     </b-alert>
@@ -53,6 +57,7 @@
       "
       on-sale-by-others
       :group-user-copies="false"
+      context-menu-component-name="context-menu-on-sale-by-others"
       ><template #onSaleByOther="{ userId }">
         <span class="d-inline-block me-2"
           >{{ $t("En vente par") }}
