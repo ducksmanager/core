@@ -54,7 +54,7 @@ export default defineConfig({
   },
   server: {
     watch: {
-      ignored: ["api/**", ".idea/**"],
+      ignored: ["**/api/**", "**/.idea/**"],
     },
   },
 });
