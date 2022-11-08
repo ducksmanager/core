@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/node";
-// import { AxiosError } from "axios";
 import busboy from "connect-busboy";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -7,7 +6,6 @@ import dotenv from "dotenv";
 import express from "express";
 import { router } from "express-file-routing";
 
-// import { call } from "./call-api";
 import {
   authenticateToken,
   checkUserIsAdmin,
@@ -52,25 +50,6 @@ app.all(/^\/edgecreator\/(.+)/, [
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all("/global-stats/user/collection/rarity", authenticateToken);
-
-// app.all(/^\/coa\/list\/(.+)/, async (req, res) => {
-//   const path = req.params[0];
-//   try {
-//     const response = await call(
-//       `/coa/list/${path}`,
-//       "coa",
-//       req.body,
-//       req.method
-//     );
-//     res.writeHead(200, { "Content-Type": "application/json" });
-//     res.end(JSON.stringify(response.data));
-//   } catch (e: unknown) {
-//     const error = e as AxiosError;
-//     res.statusCode = error.response?.status || 500;
-//     console.error(error.message);
-//     res.end();
-//   }
-// });
 
 app.use("/", router());
 
