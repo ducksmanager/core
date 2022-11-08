@@ -37,7 +37,7 @@
     <li
       v-else
       class="footer clickable pre-wrap"
-      @click="submitSelectedIssues"
+      @click="requestIssues({ issueIds })"
       v-html="$t('Je suis intéressé par ces numéros,\ncontacter les vendeurs')"
     />
   </v-contextmenu-group>
@@ -47,22 +47,26 @@
 import { BAlert } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
-const { copies, selectedIssues } = defineProps({
+import { marketplace } from "~/stores/marketplace";
+
+const { selectedIssues } = defineProps({
   selectedIssues: {
     type: Array,
     required: true,
   },
-  copies: {
-    type: Array,
-    required: true,
-  },
 });
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["clear-selection"]);
+
+const issueIds = $computed(() =>
+  selectedIssues.map(
+    (issueNumberAndUser) => issueNumberAndUser.split("-id-")[1]
+  )
+);
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
   Object.entries(
     selectedIssues.reduce((acc, issueNumberAndUser) => {
-      const issueNumber = issueNumberAndUser.split("-id")[0];
+      const issueNumber = issueNumberAndUser.split("-id-")[0];
       return {
         ...acc,
         [issueNumber]: (acc[issueNumber] || 0) + 1,
@@ -77,8 +81,10 @@ const issuesWithMultipleCopiesSelected = $computed(() =>
 );
 
 const { t: $t } = useI18n();
-const submitSelectedIssues = async () => {
-  console.log("submit");
+
+const requestIssues = async (data) => {
+  await marketplace().requestIssues(data.issueIds);
+  emit("clear-selection");
 };
 </script>
 

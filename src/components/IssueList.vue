@@ -125,7 +125,13 @@
               <div class="issue-copies">
                 <div
                   v-for="(
-                    { condition: copyCondition, isToRead, purchaseId, userId },
+                    {
+                      condition: copyCondition,
+                      isToRead,
+                      purchaseId,
+                      userId,
+                      id,
+                    },
                     copyIndex
                   ) in userCopies"
                   :key="`${issueNumber}-copy-${copyIndex}`"
@@ -156,6 +162,7 @@
 
                   <slot
                     v-if="$slots.onSaleByOther"
+                    :id="id"
                     name="onSaleByOther"
                     :user-id="userId"
                   />
@@ -225,10 +232,13 @@
       :is="contextMenuComponent"
       ref="contextMenu"
       :key="contextMenuKey"
-      :publication-code="publicationcode"
+      :publicationcode="publicationcode"
       :selected-issues="selected"
       :copies="selectedIssuesCopies"
-      @submit="submitAction"
+      @clear-selection="
+        contextmenu.hide();
+        selected = [];
+      "
       @close="contextMenuKey = `context-menu-${Math.random()}`"
     />
   </v-contextmenu>
@@ -369,34 +379,15 @@ const updateSelected = () => {
   preselectedIndexStart = preselectedIndexEnd = null;
   preselected = [];
 };
-const deletePublicationIssues = async (issuesToDelete) =>
-  await updateIssues({
+const deletePublicationIssues = async (issuesToDelete) => {
+  contextmenu.hide();
+  await collectionStore().updateCollection({
     publicationCode: props.publicationcode,
     issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
     condition: conditions.find(({ value }) => value === "missing").dbValue,
     istosell: false,
     purchaseId: null,
   });
-
-const submitAction = async (data) => {
-  switch (data.action) {
-    case "update-issues":
-      contextmenu.hide();
-      data.publicationCode = props.publicationCode;
-      await collectionStore().updateCollection(data);
-      selected = [];
-      break;
-    case "create-purchase":
-      await collectionStore().createPurchase(data.date, data.description);
-      break;
-    case "delete-purchase":
-      await collectionStore().deletePurchase(data.id);
-  }
-};
-
-const updateIssues = async (data) => {
-  contextmenu.hide();
-  await collectionStore().updateCollection(data);
   selected = [];
 };
 

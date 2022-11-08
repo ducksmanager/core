@@ -174,8 +174,7 @@
                       variant="success"
                       class="btn-sm"
                       @click.stop="
-                        $emit('submit', {
-                          action: 'create-purchase',
+                        createPurchase({
                           date: copy.newPurchaseDate,
                           description: copy.newPurchaseDescription,
                         });
@@ -212,8 +211,7 @@
                       class="delete-purchase btn-sm"
                       :title="$t('Supprimer')"
                       @click="
-                        $emit('submit', {
-                          action: 'delete-purchase',
+                        deletePurchase({
                           id: purchaseId,
                         })
                       "
@@ -271,9 +269,9 @@ import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { condition } from "~/composables/condition";
-import { collection } from "~/stores/collection";
+import { collection, collection as collectionStore } from "~/stores/collection";
 
-const { copies, selectedIssues } = defineProps({
+const { copies, selectedIssues, publicationcode } = defineProps({
   selectedIssues: {
     type: Array,
     required: true,
@@ -282,8 +280,12 @@ const { copies, selectedIssues } = defineProps({
     type: Array,
     required: true,
   },
+  publicationcode: {
+    type: String,
+    required: true,
+  },
 });
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["clear-selection"]);
 const { conditions } = condition();
 
 const defaultState = $ref({
@@ -295,7 +297,7 @@ const defaultState = $ref({
 const today = new Date().toISOString().slice(0, 10);
 const { t: $t } = useI18n();
 let editingCopies = $ref([]);
-const currentCopyIndex = $ref(0);
+let currentCopyIndex = $ref(0);
 const purchases = $computed(() => collection().purchases);
 const conditionStates = $computed(() => ({
   ...(isSingleIssueSelected
@@ -361,11 +363,21 @@ const updateSelectedIssues = async () => {
     );
   }
 
-  emit("submit", {
-    action: "update-issues",
+  await updateIssues({
     issueNumbers: selectedIssues,
     ...issueDetails,
   });
+};
+
+const updateIssues = async (data) => {
+  await collectionStore().updateCollection({ ...data, publicationcode });
+  emit("clear-selection");
+};
+const createPurchase = async (data) => {
+  await collectionStore().createPurchase(data.date, data.description);
+};
+const deletePurchase = async (data) => {
+  await collectionStore().deletePurchase(data.id);
 };
 
 watch(

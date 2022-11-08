@@ -12,8 +12,6 @@ export const collection = defineStore("collection", {
     watchedAuthors: null,
 
     suggestions: null,
-    issuesOnSaleByOthers: null,
-
     subscriptions: null,
 
     popularIssuesInCollection: null,
@@ -229,11 +227,6 @@ export const collection = defineStore("collection", {
         ).data;
         this.isLoadingWatchedAuthors = false;
       }
-    },
-    async loadIssuesOnSaleByOthers() {
-      this.issuesOnSaleByOthers = (
-        await axios.get("/collection/on-sale-by-others")
-      ).data;
     },
     async loadWatchedPublicationsWithSales(afterUpdate = false) {
       if (

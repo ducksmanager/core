@@ -15,7 +15,44 @@
       {{ $t("Les messages sont envoyés aux vendeurs une fois par jour.") }}
     </div>
   </b-alert>
-  <div v-if="issuesOnSaleByOthers && hasPublicationNames">
+  <b-alert
+    v-if="hasPublicationNames && pendingRequestIssueIds.length"
+    show
+    variant="info"
+  >
+    <div>Les e-mails suivants seront envoyés demain à 8h00:</div>
+    <Accordion
+      v-for="(issueIds, userId) in pendingRequestIssueIdsBySellerId"
+      :id="`email-for-user-${userId}`"
+      :key="`email-for-user-${userId}`"
+      :accordion-group-id="`email-for-user-${userId}`"
+    >
+      <template #header
+        >{{ $t("E-mail à") }} {{ stats[userId].username }}</template
+      >
+      <template #content
+        ><div>{{ $t("Bonjour ") }}{{ stats[userId].username }},</div>
+        {{
+          $t(
+            "Je suis intéressé par les numéros suivants que vous avez mis en vente :"
+          )
+        }}:
+        <ul>
+          <li v-for="issueId of issueIds" :key="issueId">
+            <Issue
+              :publicationcode="issuesOnSaleById[issueId].publicationcode"
+              :issuenumber="issuesOnSaleById[issueId].issueNumber"
+              :publicationname="
+                publicationNames[issuesOnSaleById[issueId].publicationcode]
+              "
+            />
+          </li>
+        </ul>
+        {{ $t("Pourriez-vous me proposer un prix ?") }}</template
+      >
+    </Accordion>
+  </b-alert>
+  <div v-if="issuesOnSaleByOthers && issueRequests && hasPublicationNames">
     <b-alert
       v-if="!Object.keys(issuesOnSaleByOthers).length"
       show
@@ -58,10 +95,22 @@
       on-sale-by-others
       :group-user-copies="false"
       context-menu-component-name="context-menu-on-sale-by-others"
-      ><template #onSaleByOther="{ userId }">
-        <span class="d-inline-block me-2"
-          >{{ $t("En vente par") }}
-          <UserPopover
+      ><template #onSaleByOther="{ userId, id }">
+        <span
+          class="d-inline-block me-2"
+          :class="{
+            'issue-request':
+              pendingRequestIssueIds.includes(id) ||
+              sentRequestIssueIds.includes(id),
+          }"
+          ><template v-if="pendingRequestIssueIds.includes(id)">{{
+            $t("E-mail bientôt envoyé à")
+          }}</template
+          ><template v-else-if="sentRequestIssueIds.includes(id)">{{
+            $t("E-mail envoyé à")
+          }}</template
+          ><template v-else>{{ $t("En vente par") }}</template
+          >&nbsp;<UserPopover
             :points="points[userId]"
             :stats="stats[userId]" /></span></template
     ></IssueList>
@@ -72,12 +121,28 @@
 </template>
 
 <script setup>
+import Accordion from "~/components/Accordion.vue";
 import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
+import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
-const issuesOnSaleByOthers = $computed(() => collection().issuesOnSaleByOthers);
+
+const issuesOnSaleByOthers = $computed(
+  () => marketplace().issuesOnSaleByOthers
+);
+const pendingRequestIssueIds = $computed(
+  () => marketplace().pendingRequestIssueIds
+);
+const pendingRequestIssueIdsBySellerId = $computed(
+  () => marketplace().pendingRequestIssueIdsBySellerId
+);
+const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
+const sentRequestIssueIds = $computed(() => marketplace().sentRequestIssueIds);
+const issueRequests = $computed(() => marketplace().issueRequests);
+
+const publicationNames = $computed(() => coa().publicationNames);
+
 const stats = $computed(() => users().stats);
 const points = $computed(() => users().points);
 
@@ -86,7 +151,9 @@ let userIdFilter = $ref(null);
 let sellingUserNames = $ref([]);
 
 onMounted(async () => {
-  await collection().loadIssuesOnSaleByOthers();
+  await marketplace().loadIssuesOnSaleByOthers();
+  await marketplace().loadIssueRequests();
+
   const sellingUserIds = [
     ...new Set(
       Object.values(issuesOnSaleByOthers).reduce(
@@ -111,4 +178,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+.issue-request {
+  color: cyan;
+}
 </style>
