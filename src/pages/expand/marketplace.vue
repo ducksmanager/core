@@ -32,8 +32,16 @@ alias: [/agrandir/marketplace]
       :accordion-group-id="`email-for-user-${userId}`"
     >
       <template #header
-        >{{ $t("E-mail à") }} {{ stats[userId].username }}</template
-      >
+        >{{ $t("E-mail à") }} {{ stats[userId].username }}
+        <b-button
+          variant="warning"
+          pill
+          class="small d-inline-flex align-items-center"
+          style="height: 20px"
+          @click.prevent="deleteRequestsToSeller(userId)"
+          >{{ $t("Annuler l'envoi") }}</b-button
+        >
+      </template>
       <template #content
         ><div>{{ $t("Bonjour ") }}{{ stats[userId].username }},</div>
         {{
@@ -153,6 +161,11 @@ const points = $computed(() => users().points);
 let hasPublicationNames = $ref(false);
 let userIdFilter = $ref(null);
 let sellingUserNames = $ref([]);
+
+const deleteRequestsToSeller = async (sellerId) => {
+  await marketplace().deleteRequestsToSeller(parseInt(sellerId));
+  await marketplace().loadIssueRequests();
+};
 
 onMounted(async () => {
   await marketplace().loadIssuesOnSaleByOthers();

@@ -1,7 +1,8 @@
 <template>
-  <span :class="{ [size]: true }">
+  <span :class="{ [size]: true }" class="d-inline-flex align-items-center">
     <img :alt="countrycode" :src="`/images/flags/${countrycode}.png`" />
-    {{ publicationname }}
+    <span class="mx-1">{{ publicationname }}</span>
+    <slot />
   </span>
 </template>
 

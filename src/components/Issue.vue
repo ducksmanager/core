@@ -13,7 +13,7 @@
       <Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname"
-      />&nbsp;{{ issuenumber }}
+      />{{ issuenumber }}
       <slot name="title-suffix" />
     </a>
     <slot />

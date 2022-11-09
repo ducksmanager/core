@@ -366,7 +366,7 @@
   "Vous avez remporté la médaille \"Créateur DucksManager {{medalLevel}}\" grâce à vos contributions !": "You received the \"DucksManager designer level {{medalLevel}} thanks to your contribution!",
   "Vous avez remporté la médaille \"Duckhunter {{medalLevel}}\" grâce à vos contributions !": "You received the \"Duckhunter level {{medalLevel}} thanks to your contribution!\"",
   "Vous avez remporté la médaille \"Photographe DucksManager {{medalLevel}}\" grâce à vos contributions !": "You received the \"DucksManager Photographer level {{medalLevel}}\" medal thanks to your contribution!",
-  "Vous avez sélectionné {0} fois le numéro {1}. Assurez-vous de ne pas acheter plusieurs fois le même numéro !": "You selected issue #{1} {0} times. Ensure that you don't buy the same issue multiple times!",
+  "Vous avez sélectionné {0} fois le numéro {1}.\nAssurez-vous de ne pas acheter plusieurs fois le même numéro !": "You selected issue #{1} {0} times.\nEnsure that you don't buy the same issue multiple times!",
   "Vous avez signalé {0} bouquineries": "You have pinned {0} second-hand bookshops",
   "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!": "You have pinned {0} second-hand bookshops, pin {1} more to receive the {2} badge!",
   "Vous avez {0} points Concepteur de tranches": "You have {0} Edge designer points",

@@ -11,13 +11,13 @@
     <BAlert
       v-for="(count, issueNumber) in issuesWithMultipleCopiesSelected"
       :key="issueNumber"
-      class="text-center m-0"
+      class="two-lines pre-wrap text-center m-0"
       show
       variant="warning"
     >
       {{
         $t(
-          "Vous avez sélectionné {0} fois le numéro {1}. Assurez-vous de ne pas acheter plusieurs fois le même numéro !",
+          "Vous avez sélectionné {0} fois le numéro {1}.\nAssurez-vous de ne pas acheter plusieurs fois le même numéro !",
           [count, issueNumber]
         )
       }}

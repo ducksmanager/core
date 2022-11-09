@@ -4,8 +4,9 @@
       size="xl"
       :publicationcode="publicationcode"
       :publicationname="publicationName"
-    />
-    <Watch v-if="showFilter" class="ml-2" :publicationcode="publicationcode" />
+    >
+      <Watch v-if="showFilter" class="ml-2" :publicationcode="publicationcode"
+    /></Publication>
     <div v-if="issues && purchases">
       <div v-if="showFilter" v-once class="issue-filter">
         <table>
@@ -174,16 +175,17 @@
                   />
                 </div>
                 <Watch
-                  v-if="!userCopies.length"
+                  v-if="!userCopies.length || onSaleByOthers"
                   :publicationcode="publicationcode"
                   :issuenumber="issueNumber"
+                  :constant-width="onSaleByOthers"
                 />
               </div>
               <div class="issue-check">
                 <input
                   type="checkbox"
                   disabled
-                  :checked="selected.includes(issueNumber)"
+                  :checked="selected.includes(key)"
                   @click.prevent="false"
                 />
               </div>
@@ -526,7 +528,7 @@ onMounted(async () => {
     width: 100%;
     background-color: black;
     cursor: default;
-    min-height: 20px;
+    min-height: 21px;
 
     .popper {
       display: none;
@@ -579,13 +581,15 @@ onMounted(async () => {
       }
 
       .issue-copies {
+        display: flex;
+        align-items: center;
         margin-right: 10px;
 
         .issue-copy {
-          display: flex;
+          display: inline-flex;
           justify-content: flex-end;
           align-items: center;
-          height: 20px;
+          height: 21px;
           padding: 1px;
 
           .issue-purchase-date,

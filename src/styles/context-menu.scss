@@ -30,9 +30,10 @@
 
     &.clickable {
       &.two-lines {
+        padding: 0 5px !important;
         height: 60px !important;
       }
-      :hover {
+      &:hover {
         background-color: #4f5b69 !important;
         color: #fff;
         cursor: pointer;

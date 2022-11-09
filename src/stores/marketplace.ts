@@ -74,5 +74,12 @@ export const marketplace = defineStore("marketplace", {
         await axios.get("/collection/on-sale-by-others")
       ).data;
     },
+    async deleteRequestsToSeller(sellerId: number) {
+      await axios.delete("/collection/on-sale-by-others/requests", {
+        data: {
+          sellerId,
+        },
+      });
+    },
   },
 });

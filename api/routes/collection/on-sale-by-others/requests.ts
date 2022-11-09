@@ -45,11 +45,57 @@ export const put = [
       );
       return;
     }
+    const alreadyRequestedIssueIds = (
+      await prisma.requestedIssue.findMany({
+        select: {
+          issueId: true,
+        },
+        where: {
+          buyerId: req.user.id,
+          issueId: { in: issueIds.map((issueId: string) => parseInt(issueId)) },
+        },
+      })
+    ).map(({ issueId }) => issueId);
+    const newlyRequestedIssueIds = issueIds.filter(
+      (issueId: string) => !alreadyRequestedIssueIds.includes(parseInt(issueId))
+    );
     await prisma.requestedIssue.createMany({
-      data: issueIds.map((issueId: string) => ({
+      data: newlyRequestedIssueIds.map((issueId: string) => ({
         buyerId: req.user.id,
         issueId: parseInt(issueId),
       })),
+    });
+    res.writeHead(200);
+    res.end();
+  }) as Handler,
+];
+
+export const del = [
+  parseForm,
+  (async (req, res) => {
+    const { sellerId } = req.body;
+
+    const requestedIssues = await prisma.requestedIssue.findMany({
+      where: {
+        buyerId: req.user.id,
+        isEmailSent: false,
+      },
+    });
+    const requestedIssuesBelongingToSeller = await prisma.issue.findMany({
+      where: {
+        userId: sellerId,
+        id: {
+          in: requestedIssues.map(({ issueId }) => issueId),
+        },
+      },
+    });
+    await prisma.requestedIssue.deleteMany({
+      where: {
+        buyerId: req.user.id,
+        issueId: {
+          in: requestedIssuesBelongingToSeller.map(({ id }) => id),
+        },
+      },
     });
     res.writeHead(200);
     res.end();

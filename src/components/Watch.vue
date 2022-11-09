@@ -1,30 +1,39 @@
 <template>
-  <b-button
-    pill
-    :variant="isWatched ? 'secondary' : 'outline-secondary'"
-    class="d-inline-flex xl py-0 px-1 ms-2 me-2"
-    :class="{ 'soft-disabled': isPublicationWatchedButNotIssueNumber }"
-    :title="buttonTooltipText"
-    @click="
-      !isPublicationWatchedButNotIssueNumber && toggleWatchedPublication()
-    "
+  <span
+    class="wrapper d-inline-flex align-items-center justify-content-center"
+    :class="{
+      'constant-width': constantWidth,
+    }"
   >
-    <b-icon-eyeglasses
-      :variant="isWatched ? 'light' : 'secondary'"
-      class="mx-1"
-    />
-    <span v-if="isWatched" class="text-light">{{ $t("Surveillé") }}</span>
-    <span v-else class="text-tertiary on-icon-hover">{{
-      $t("Surveiller")
-    }}</span>
-  </b-button>
+    <b-button
+      pill
+      :variant="isWatched ? 'secondary' : 'outline-secondary'"
+      class="d-inline-flex xl py-0 px-1 ms-2 me-2"
+      :class="{
+        'soft-disabled': isPublicationWatchedButNotIssueNumber,
+      }"
+      :title="buttonTooltipText"
+      @click="
+        !isPublicationWatchedButNotIssueNumber && toggleWatchedPublication()
+      "
+    >
+      <b-icon-eyeglasses
+        :variant="isWatched ? 'light' : 'secondary'"
+        class="mx-1"
+      />
+      <span v-if="isWatched" class="text-light">{{ $t("Surveillé") }}</span>
+      <span v-else class="text-tertiary on-icon-hover">{{
+        $t("Surveiller")
+      }}</span>
+    </b-button></span
+  >
 </template>
 <script setup>
 import { BIconEyeglasses } from "bootstrap-icons-vue";
 import { BButton } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
-import { collection, collection as collectionStore } from "~/stores/collection";
+import { collection } from "~/stores/collection";
 
 const props = defineProps({
   publicationcode: {
@@ -34,6 +43,10 @@ const props = defineProps({
   issuenumber: {
     type: String,
     default: null,
+  },
+  constantWidth: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -85,6 +98,11 @@ const toggleWatchedPublication = async () => {
 };
 </script>
 <style scoped lang="scss">
+.wrapper {
+  &.constant-width {
+    width: 90px;
+  }
+}
 .btn {
   line-height: 15px;
   vertical-align: super;
