@@ -12,9 +12,10 @@ export const get: Handler = async (req, res) => {
   >`
       SELECT issue.ID AS id
       FROM numeros issue
-               INNER JOIN users_options ON Option_valeur IN (CONCAT(issue.Pays, '/', issue.Magazine),
+               LEFT JOIN users_options ON Option_valeur IN (CONCAT(issue.Pays, '/', issue.Magazine),
                                                              CONCAT(issue.Pays, '/', issue.Magazine, ' ', issue.Numero))
-      WHERE users_options.Option_nom = 'sales_notification_publications'
+      LEFT JOIN numeros_demandes requested_issue ON issue.ID = requested_issue.ID_Numero
+      WHERE (users_options.Option_nom = 'sales_notification_publications' OR requested_issue.ID IS NOT NULL)
         AND AV = 1
         AND ID_Utilisateur != ${req.user.id}
         AND NOT EXISTS

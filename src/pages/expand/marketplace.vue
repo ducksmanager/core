@@ -1,8 +1,12 @@
+<route lang="yaml">
+alias: [/agrandir/marketplace]
+</route>
+
 <template>
   <b-alert show variant="info"
     >{{
       $t(
-        "Cette page indique les numéros que d'autres utilisateurs sur DucksManager proposent à la vente. Cliquez sur le ou les numéros qui vous intéressent,"
+        "Cette page indique les numéros que d'autres utilisateurs sur DucksManager proposent à la vente et que vous surveillez. Cliquez sur le ou les numéros qui vous intéressent,"
       )
     }}
     <span v-if="isTouchScreen">{{
