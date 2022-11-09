@@ -208,8 +208,7 @@ export const get: Handler = async (req, res) => {
 export const post = [
   parseForm,
   (async (req, res) => {
-    const publication = req.body.publicationCode;
-    const issueNumbers = req.body.issueNumbers;
+    const { publicationcode, issueNumbers } = req.body;
     let condition = req.body.condition;
     const userId = req.user.id;
 
@@ -250,7 +249,7 @@ export const post = [
     if (typeof condition !== "string") {
       output = addOrChangeCopies(
         userId,
-        publication,
+        publicationcode,
         issueNumbers[0],
         condition ?? [],
         isToSell ?? [],
@@ -259,13 +258,13 @@ export const post = [
       );
     } else {
       if (["non_possede", "missing"].includes(condition)) {
-        await deleteIssues(userId, publication, issueNumbers);
+        await deleteIssues(userId, publicationcode, issueNumbers);
         res.statusCode = constants.HTTP_STATUS_OK;
         res.end(JSON.stringify({}));
       }
       output = addOrChangeIssues(
         userId,
-        publication,
+        publicationcode,
         issueNumbers,
         condition,
         isToSell,
