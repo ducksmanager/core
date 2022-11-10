@@ -184,7 +184,7 @@ export const getSuggestions = async (
              suggested.Score   AS score,
              suggested.publicationcode,
              suggested.issuenumber,
-             suggested.oldestdate,
+             replace(suggested.oldestdate,'-00', '-01') AS oldestdate,
              missing.personcode,
              missing.storycode
       FROM utilisateurs_publications_suggerees as suggested
