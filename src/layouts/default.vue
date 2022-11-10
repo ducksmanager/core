@@ -4,13 +4,10 @@
     <SwitchLocale />
     <Banner :classes="{ 'd-none d-md-flex': true }" />
     <div id="logo_zone2">
-      <h2 v-if="$slots['inner-title']">
-        <slot name="inner-title" />
-      </h2>
-      <BookcaseMenu v-if="topMenu === 'bookcase'" />
-      <CollectionMenu v-if="topMenu === 'collection'" />
-      <StatsMenu v-if="topMenu === 'stats'" />
-      <ExpandMenu v-if="topMenu === 'expand'" />
+      <BookcaseMenu v-if="firstPathPart === 'bookcase'" />
+      <CollectionMenu v-if="firstPathPart === 'collection'" />
+      <StatsMenu v-if="firstPathPart === 'stats'" />
+      <ExpandMenu v-if="firstPathPart === 'expand'" />
       <div v-html="'<span></span>'"></div>
       <router-view />
     </div>
@@ -18,14 +15,26 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useHead } from "@vueuse/head";
 import Cookies from "js-cookie";
+import { useRouter } from "vue-router";
 
 import { collection } from "~/stores/collection";
 
 const route = useRoute();
-const topMenu = $computed(() => route.path.match(/\/([^/]+)/)?.[1]);
+console.log(route.path);
+const router = useRouter();
+
+const firstPathPart = $computed(
+  () =>
+    (
+      router.getRoutes().find(({ path }) => path === route.path)?.aliasOf ||
+      route
+    ).path.match(/\/([^/]+)/)?.[1]
+);
+
+console.log(useRouter());
 
 const slots = useSlots();
 useHead({
