@@ -73,7 +73,6 @@ export const injectTokenIfValid = (
       (err: unknown, user: unknown) => {
         if (user) {
           req.user = user as User;
-          console.log("valid token");
         } else {
           console.log(`Invalid token: ${err}`);
         }
