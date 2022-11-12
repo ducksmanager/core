@@ -44,6 +44,9 @@ declare module "@vue/runtime-core" {
     LeftPanel: typeof import("./src/components/LeftPanel.vue")["default"];
     LinkToCollectionIfNoIssue: typeof import("./src/components/LinkToCollectionIfNoIssue.vue")["default"];
     Manage: typeof import("./src/components/Manage.vue")["default"];
+    MarketplaceBuyerInfo: typeof import("./src/components/MarketplaceBuyerInfo.vue")["default"];
+    MarketplaceInfo: typeof import("./src/components/MarketplaceInfo.vue")["default"];
+    MarketplaceSellerInfo: typeof import("./src/components/MarketplaceSellerInfo.vue")["default"];
     Medal: typeof import("./src/components/Medal.vue")["default"];
     MedalProgress: typeof import("./src/components/MedalProgress.vue")["default"];
     Menu: typeof import("./src/components/Menu.vue")["default"];

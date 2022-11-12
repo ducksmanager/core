@@ -1,5 +1,8 @@
 <template>
-  <span :class="{ [size]: true }" class="d-inline-flex align-items-center">
+  <span
+    :class="{ [size]: true, [displayClass]: true }"
+    class="align-items-center"
+  >
     <img :alt="countrycode" :src="`/images/flags/${countrycode}.png`" />
     <span class="mx-1">{{ publicationname }}</span>
     <slot />
@@ -19,6 +22,10 @@ const { publicationcode } = defineProps({
   size: {
     type: String,
     default: "md",
+  },
+  displayClass: {
+    type: String,
+    default: "d-inline-flex",
   },
 });
 const countrycode = $computed(() => publicationcode.split("/")[0]);

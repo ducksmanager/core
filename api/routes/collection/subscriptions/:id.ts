@@ -12,7 +12,7 @@ export const post = [
   parseForm,
   (async (req, res, next) => {
     await put[0](req, res, next);
-    res.writeHead(200);
+    res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
   }) as Handler,
 ];

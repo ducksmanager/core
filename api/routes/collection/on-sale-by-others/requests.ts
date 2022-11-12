@@ -7,20 +7,6 @@ const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export const get: Handler = async (req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      await prisma.requestedIssue.findMany({
-        where: {
-          buyerId: req.user.id,
-          isEmailSent: false,
-        },
-      })
-    )
-  );
-};
-
 export const put = [
   parseForm,
   (async (req, res) => {
@@ -65,7 +51,7 @@ export const put = [
         issueId: parseInt(issueId),
       })),
     });
-    res.writeHead(200);
+    res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
   }) as Handler,
 ];
@@ -97,7 +83,7 @@ export const del = [
         },
       },
     });
-    res.writeHead(200);
+    res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
   }) as Handler,
 ];

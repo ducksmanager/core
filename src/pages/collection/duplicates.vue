@@ -21,11 +21,11 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { marketplace } from "~/stores/marketplace";
+import { users } from "~/stores/users";
 let hasPublicationNames = $ref(false);
 let issueNumbersByPublicationCode = $ref(null);
 const duplicateIssues = $computed(() => collection().duplicateIssues);
-const fetchPublicationNames = coa().fetchPublicationNames;
-const loadCollection = collection().loadCollection;
 
 watch(
   () => duplicateIssues,
@@ -41,15 +41,22 @@ watch(
         }
       );
 
-      await fetchPublicationNames(Object.keys(issueNumbersByPublicationCode));
+      await coa().fetchPublicationNames(
+        Object.keys(issueNumbersByPublicationCode)
+      );
       hasPublicationNames = true;
     }
   },
   { immediate: true }
 );
 
-onMounted(() => {
-  loadCollection();
+onMounted(async () => {
+  await collection().loadCollection();
+
+  await marketplace().loadIssuesOnSaleByOthers();
+  await marketplace().loadIssueRequestsAsSeller();
+
+  await users().fetchStats(marketplace().buyerUserIds);
 });
 </script>
 

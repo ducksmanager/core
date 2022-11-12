@@ -53,7 +53,7 @@ export const put = [
   (async (req, res) => {
     try {
       await upsertAuthorUser(req);
-      res.writeHead(200);
+      res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     } catch (e) {
       console.log(e);
@@ -68,7 +68,7 @@ export const post = [
   (async (req, res) => {
     try {
       await upsertAuthorUser(req);
-      res.writeHead(200);
+      res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     } catch (e) {
       res.writeHead(parseInt(e as string));

@@ -44,6 +44,6 @@ export const del: Handler = async (req, res) => {
     where: { id: userId },
   });
 
-  res.writeHead(200);
+  res.writeHead(200, { "Content-Type": "application/text" });
   res.end();
 };

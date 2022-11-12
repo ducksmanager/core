@@ -34,6 +34,6 @@ export const post: Handler = async (req, res) => {
     },
   });
 
-  res.writeHead(200);
+  res.writeHead(200, { "Content-Type": "application/text" });
   res.end();
 };

@@ -4,15 +4,16 @@
       :class="{ clickable, flex }"
       :href="`${r(`/collection/show/${publicationcode}`)}#${issuenumber}`"
     >
-      <Condition
-        v-if="!hideCondition"
-        v-once
-        :publicationcode="publicationcode"
-        :issuenumber="issuenumber"
-      />&nbsp;
+      <span v-if="!hideCondition" class="me-1"
+        ><Condition
+          v-once
+          :publicationcode="publicationcode"
+          :issuenumber="issuenumber"
+      /></span>
       <Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname"
+        display-class="d-inline"
       />{{ issuenumber }}
       <slot name="title-suffix" />
     </a>

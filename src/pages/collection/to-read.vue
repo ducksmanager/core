@@ -21,11 +21,11 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { marketplace } from "~/stores/marketplace";
+import { users } from "~/stores/users";
 let hasPublicationNames = $ref(false);
 let publicationCodes = $ref(null);
 const issuesInToReadStack = $computed(() => collection().issuesInToReadStack);
-const fetchPublicationNames = coa().fetchPublicationNames;
-const loadCollection = collection().loadCollection;
 
 watch(
   () => issuesInToReadStack,
@@ -37,15 +37,20 @@ watch(
         ),
       ];
 
-      await fetchPublicationNames(publicationCodes);
+      await coa().fetchPublicationNames(publicationCodes);
       hasPublicationNames = true;
     }
   },
   { immediate: true }
 );
 
-onMounted(() => {
-  loadCollection();
+onMounted(async () => {
+  await collection().loadCollection();
+
+  await marketplace().loadIssuesOnSaleByOthers();
+  await marketplace().loadIssueRequestsAsSeller();
+
+  await users().fetchStats(marketplace().buyerUserIds);
 });
 </script>
 

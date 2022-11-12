@@ -27,7 +27,7 @@ export const get: Handler = async (req, res) => {
              AND user_collection.ID_Utilisateur = ${req.user.id}
           )`;
 
-  res.writeHead(200);
+  res.writeHead(200, { "Content-Type": "application/text" });
   res.end(
     JSON.stringify(
       (

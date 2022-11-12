@@ -23,7 +23,6 @@ import { useRouter } from "vue-router";
 import { collection } from "~/stores/collection";
 
 const route = useRoute();
-console.log(route.path);
 const router = useRouter();
 
 const firstPathPart = $computed(
@@ -33,8 +32,6 @@ const firstPathPart = $computed(
       route
     ).path.match(/\/([^/]+)/)?.[1]
 );
-
-console.log(useRouter());
 
 const slots = useSlots();
 useHead({

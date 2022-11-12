@@ -16,7 +16,11 @@ alias: [/agrandir/marketplace]
       $t("puis faites un clic droit pour contacter le vendeur.")
     }}</span>
     <div>
-      {{ $t("Les messages sont envoyés aux vendeurs une fois par jour.") }}
+      {{
+        $t(
+          "Les messages de demande sont envoyés aux vendeurs une fois par jour à 8h00. Si l'utilisateur est intéressé, il vous contactera par e-mail."
+        )
+      }}
     </div>
   </b-alert>
   <b-alert
@@ -24,31 +28,25 @@ alias: [/agrandir/marketplace]
     show
     variant="info"
   >
-    <div>Les e-mails suivants seront envoyés demain à 8h00:</div>
+    <div>{{ $t("Demandes en cours :") }}</div>
     <Accordion
-      v-for="(issueIds, userId) in pendingRequestIssueIdsBySellerId"
+      v-for="(issueIds, userId) in requestIssueIdsBySellerId"
       :id="`email-for-user-${userId}`"
       :key="`email-for-user-${userId}`"
       :accordion-group-id="`email-for-user-${userId}`"
     >
       <template #header
-        >{{ $t("E-mail à") }} {{ stats[userId].username }}
+        >{{ $t("Demande à") }} {{ stats[userId].username }}
         <b-button
           variant="warning"
           pill
           class="small d-inline-flex align-items-center"
           style="height: 20px"
           @click.prevent="deleteRequestsToSeller(userId)"
-          >{{ $t("Annuler l'envoi") }}</b-button
+          >{{ $t("Annuler la demande") }}</b-button
         >
       </template>
-      <template #content
-        ><div>{{ $t("Bonjour ") }}{{ stats[userId].username }},</div>
-        {{
-          $t(
-            "Je suis intéressé par les numéros suivants que vous avez mis en vente :"
-          )
-        }}:
+      <template #content>
         <ul>
           <li v-for="issueId of issueIds" :key="issueId">
             <Issue
@@ -58,13 +56,13 @@ alias: [/agrandir/marketplace]
                 publicationNames[issuesOnSaleById[issueId].publicationcode]
               "
             />
-          </li>
-        </ul>
-        {{ $t("Pourriez-vous me proposer un prix ?") }}</template
-      >
+          </li></ul
+      ></template>
     </Accordion>
   </b-alert>
-  <div v-if="issuesOnSaleByOthers && issueRequests && hasPublicationNames">
+  <div
+    v-if="issuesOnSaleByOthers && issueRequestsAsBuyer && hasPublicationNames"
+  >
     <b-alert
       v-if="!Object.keys(issuesOnSaleByOthers).length"
       show
@@ -87,7 +85,7 @@ alias: [/agrandir/marketplace]
           {{ $t("Tous les utilisateurs") }}
         </b-form-select-option>
         <b-form-select-option
-          v-for="{ text, value } in sellingUserNames"
+          v-for="{ text, value } in sellerUserNames"
           :key="value"
           :value="value"
         >
@@ -107,25 +105,7 @@ alias: [/agrandir/marketplace]
       on-sale-by-others
       :group-user-copies="false"
       context-menu-component-name="context-menu-on-sale-by-others"
-      ><template #onSaleByOther="{ userId, id }">
-        <span
-          class="d-inline-block me-2"
-          :class="{
-            'issue-request':
-              pendingRequestIssueIds.includes(id) ||
-              sentRequestIssueIds.includes(id),
-          }"
-          ><template v-if="pendingRequestIssueIds.includes(id)">{{
-            $t("E-mail bientôt envoyé à")
-          }}</template
-          ><template v-else-if="sentRequestIssueIds.includes(id)">{{
-            $t("E-mail envoyé à")
-          }}</template
-          ><template v-else>{{ $t("En vente par") }}</template
-          >&nbsp;<UserPopover
-            :points="points[userId]"
-            :stats="stats[userId]" /></span></template
-    ></IssueList>
+    />
   </div>
   <div v-else>
     {{ $t("Chargement...") }}
@@ -146,56 +126,32 @@ const issuesOnSaleByOthers = $computed(
 const pendingRequestIssueIds = $computed(
   () => marketplace().pendingRequestIssueIds
 );
-const pendingRequestIssueIdsBySellerId = $computed(
-  () => marketplace().pendingRequestIssueIdsBySellerId
+const requestIssueIdsBySellerId = $computed(
+  () => marketplace().requestIssueIdsBySellerId
 );
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
-const sentRequestIssueIds = $computed(() => marketplace().sentRequestIssueIds);
-const issueRequests = $computed(() => marketplace().issueRequests);
+const issueRequestsAsBuyer = $computed(
+  () => marketplace().issueRequestsAsBuyer
+);
+const sellerUserNames = $computed(() => marketplace().sellerUserNames);
 
 const publicationNames = $computed(() => coa().publicationNames);
 
 const stats = $computed(() => users().stats);
-const points = $computed(() => users().points);
 
 let hasPublicationNames = $ref(false);
 let userIdFilter = $ref(null);
-let sellingUserNames = $ref([]);
 
 const deleteRequestsToSeller = async (sellerId) => {
   await marketplace().deleteRequestsToSeller(parseInt(sellerId));
-  await marketplace().loadIssueRequests();
+  await marketplace().loadIssueRequestsAsBuyer();
 };
-
 onMounted(async () => {
   await marketplace().loadIssuesOnSaleByOthers();
-  await marketplace().loadIssueRequests();
+  await marketplace().loadIssueRequestsAsBuyer();
 
-  const sellingUserIds = [
-    ...new Set(
-      Object.values(issuesOnSaleByOthers).reduce(
-        (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
-        []
-      )
-    ),
-  ];
-  await users().fetchStats(sellingUserIds);
-  sellingUserNames = sellingUserIds
-    .reduce(
-      (acc, userId) => [
-        ...acc,
-        { value: userId, text: stats[userId].username },
-      ],
-      []
-    )
-    .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2));
+  await users().fetchStats(marketplace().sellerUserIds);
   await coa().fetchPublicationNames(Object.keys(issuesOnSaleByOthers));
   hasPublicationNames = true;
 });
 </script>
-
-<style scoped lang="scss">
-.issue-request {
-  color: cyan;
-}
-</style>

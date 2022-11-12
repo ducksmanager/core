@@ -25,7 +25,7 @@ export const del = [
       where: criteria,
     });
 
-    res.writeHead(200);
+    res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
   }) as Handler,
 ];

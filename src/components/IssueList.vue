@@ -126,18 +126,13 @@
               <div class="issue-copies">
                 <div
                   v-for="(
-                    {
-                      condition: copyCondition,
-                      isToRead,
-                      purchaseId,
-                      userId,
-                      id,
-                    },
+                    { condition: copyCondition, isToRead, purchaseId, id },
                     copyIndex
                   ) in userCopies"
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
+                  <MarketplaceSellerInfo :issue-id="id" />
                   <svg
                     v-if="
                       purchaseId &&
@@ -161,12 +156,6 @@
                   </svg>
                   <BIconBookmarkCheck v-if="isToRead" class="issue-to-read" />
 
-                  <slot
-                    v-if="$slots.onSaleByOther"
-                    :id="id"
-                    name="onSaleByOther"
-                    :user-id="userId"
-                  />
                   <Condition
                     v-if="copyCondition"
                     :publicationcode="publicationcode"
@@ -174,12 +163,17 @@
                     :value="copyCondition"
                   />
                 </div>
-                <Watch
-                  v-if="!userCopies.length || onSaleByOthers"
-                  :publicationcode="publicationcode"
-                  :issuenumber="issueNumber"
-                  :constant-width="onSaleByOthers"
-                />
+                <template v-if="!userCopies.length || onSaleByOthers">
+                  <MarketplaceBuyerInfo
+                    :publicationcode="publicationcode"
+                    :issuenumber="issueNumber"
+                  />
+                  <Watch
+                    :publicationcode="publicationcode"
+                    :issuenumber="issueNumber"
+                    :constant-width="onSaleByOthers"
+                  />
+                </template>
               </div>
               <div class="issue-check">
                 <input

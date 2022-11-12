@@ -60,6 +60,6 @@ export const get: Handler = async (req, res) => {
     res.end("Some COA tables are empty: " + emptyCoaTables.join(","));
   }
 
-  res.writeHead(200);
+  res.writeHead(200, { "Content-Type": "application/text" });
   res.end("All databases OK");
 };

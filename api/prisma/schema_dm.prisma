@@ -325,10 +325,11 @@ model userSuggestionNotification {
 }
 
 model requestedIssue {
-   id          Int     @id @default(autoincrement()) @map("ID")
-   issueId     Int @map("ID_Numero")
-   buyerId     Int @map("ID_Acheteur")
-   isEmailSent Boolean @default(false) @map("email_envoye")
+   id                Int     @id @default(autoincrement()) @map("ID")
+   issueId           Int @map("ID_Numero")
+   buyerId           Int @map("ID_Acheteur")
+   isEmailSent       Boolean @default(false) @map("email_envoye")
+   isReserved        Boolean @default(false) @map("est_reserve")
 
   @@unique([issueId, buyerId], map: "numeros_demandes_ID_Numero_ID_Acheteur_uindex")
   @@index([buyerId], map: "numeros_demandes_users_ID_fk")

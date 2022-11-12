@@ -25,7 +25,7 @@ export const get = (async (req, res) => {
         res.writeHead(400, { "Content-Type": "application/text" });
         res.end("Invalid token");
       }
-      res.writeHead(200);
+      res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     }
   );

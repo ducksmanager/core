@@ -81,6 +81,8 @@ import { onMounted, watch } from "vue";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { l10n } from "~/stores/l10n";
+import { marketplace } from "~/stores/marketplace";
+import { users } from "~/stores/users";
 
 defineProps({
   publicationcode: {
@@ -122,6 +124,13 @@ watch(
 onMounted(async () => {
   await collection().loadCollection();
   await coa().fetchCountryNames();
+
+  await marketplace().loadIssuesOnSaleByOthers();
+  await marketplace().loadIssueRequestsAsBuyer();
+  await marketplace().loadIssueRequestsAsSeller();
+
+  await users().fetchStats(marketplace().buyerUserIds);
+  await users().fetchStats(marketplace().sellerUserIds);
 });
 </script>
 
