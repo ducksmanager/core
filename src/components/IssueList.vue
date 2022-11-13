@@ -229,7 +229,7 @@
       ref="contextMenu"
       :key="contextMenuKey"
       :publicationcode="publicationcode"
-      :selected-issues="selected"
+      :selected-issues-by-id="selectedIssuesById"
       :copies="selectedIssuesCopies"
       @clear-selection="
         contextmenu.hide();
@@ -312,6 +312,26 @@ let issues = $shallowRef(null);
 let userIssuesForPublication = $shallowRef(null);
 let userIssuesNotFoundForPublication = $shallowRef([]);
 let selected = $shallowRef([]);
+const filteredUserCopies = $computed(() =>
+  filteredIssues.reduce((acc, { userCopies }) => [...acc, ...userCopies], [])
+);
+const selectedIssuesById = $computed(() =>
+  selected.reduce(
+    (acc, issueNumber) => ({
+      ...acc,
+      ...filteredUserCopies
+        .filter(
+          ({ issueNumber: copyIssueNumber }) => issueNumber === copyIssueNumber
+        )
+        .reduce(
+          (acc2, { id, issueNumber }) => ({ ...acc2, [id]: issueNumber }),
+          {},
+          {}
+        ),
+    }),
+    {}
+  )
+);
 let preselected = $shallowRef([]);
 let preselectedIndexStart = $ref(null);
 let preselectedIndexEnd = $ref(null);

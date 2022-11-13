@@ -20,8 +20,8 @@
 
   li {
     &.disabled {
-      a {
-        background: initial;
+      a, & {
+        background: initial !important;
         border: initial;
         color: inherit;
         cursor: not-allowed;

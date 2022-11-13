@@ -41,6 +41,15 @@ export const marketplace = defineStore("marketplace", {
         ...new Set(issueRequestsAsSeller.map((issue) => issue.buyerId)),
       ],
 
+    buyerUserNamesById: ({ buyerUserIds }) =>
+      buyerUserIds?.reduce(
+        (acc, userId) => ({
+          ...acc,
+          [userId]: users().stats[userId]?.username,
+        }),
+        {}
+      ),
+
     sellerUserNames: ({ sellerUserIds }) =>
       sellerUserIds
         ?.reduce(

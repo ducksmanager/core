@@ -50,6 +50,10 @@ a {
   white-space: pre-wrap;
 }
 
+.cursor-help * {
+  cursor: help
+}
+
 input.form-control {
   margin: 4px 0;
 }

@@ -119,7 +119,7 @@
   "DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.": "DucksManager uses the Inducks database to list the referenced issues of each Disney publication.",
   "Déconnexion": "Log out",
   "Définissez les options d'affichage de votre bibliothèque": "Allows you to set up options for the display of your bookcase",
-  "Désassocier de la date d'achat": "Unlink from purchase date",
+  "Ne pas associer avec une date d'achat": "Do not link with a purchase date",
   "Détails de l'histoire": "Story details",
   "Détails": "Details",
   "E-mail à": "E-mail to",

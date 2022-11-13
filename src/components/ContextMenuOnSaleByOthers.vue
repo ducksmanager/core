@@ -4,7 +4,7 @@
       {{
         $t(
           "{count} numéro sélectionné|{count} numéros sélectionnés",
-          selectedIssues.length
+          Object.keys(selectedIssuesById).length
         )
       }}
     </li>
@@ -23,7 +23,7 @@
       }}
     </BAlert>
     <BAlert
-      v-if="!selectedIssues.length"
+      v-if="!Object.keys(selectedIssuesById).length"
       class="text-center m-0"
       show
       variant="warning"
@@ -49,23 +49,23 @@ import { useI18n } from "vue-i18n";
 
 import { marketplace } from "~/stores/marketplace";
 
-const { selectedIssues } = defineProps({
-  selectedIssues: {
-    type: Array,
+const { selectedIssuesById } = defineProps({
+  selectedIssuesById: {
+    type: Object,
     required: true,
   },
 });
 const emit = defineEmits(["clear-selection"]);
 
 const issueIds = $computed(() =>
-  selectedIssues.map(
+  Object.values(selectedIssuesById).map(
     (issueNumberAndUser) => issueNumberAndUser.split("-id-")[1]
   )
 );
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
   Object.entries(
-    selectedIssues.reduce((acc, issueNumberAndUser) => {
+    Object.values(selectedIssuesById).reduce((acc, issueNumberAndUser) => {
       const issueNumber = issueNumberAndUser.split("-id-")[0];
       return {
         ...acc,

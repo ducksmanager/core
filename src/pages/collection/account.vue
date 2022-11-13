@@ -139,7 +139,6 @@ const hasRequestedPresentationSentence = $computed(() =>
 
 const { t: $t } = useI18n();
 const t = $t;
-const { r } = l10n();
 const router = useRouter();
 
 onMounted(async () => {
