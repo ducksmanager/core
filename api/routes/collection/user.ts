@@ -1,4 +1,3 @@
-import { decompressFromBase64 } from "@prisma/client/runtime";
 import bodyParser from "body-parser";
 import crypto from "crypto";
 import { Handler, Request, Response } from "express";
@@ -6,6 +5,7 @@ import { Handler, Request, Response } from "express";
 import PresentationSentenceRequested from "~/emails/presentation-sentence-requested";
 import { generateAccessToken, isValidEmail } from "~/routes/auth/util";
 import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { ScopedError } from "~types/ScopedError";
 
 const parseForm = bodyParser.json();
 const prisma = new PrismaClient();
@@ -60,10 +60,8 @@ export const post = [
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
     let validators = [validateEmail, validatePresentationText];
-    if (req.body.newPassword) {
+    if (req.body.password) {
       input.userId = req.user.id;
-      input.password = input.newPassword;
-      input.password2 = input.newPassword2;
       validators = [
         ...validators,
         validatePasswords,
@@ -72,10 +70,10 @@ export const post = [
       ];
     }
     if (await validate(input, res, validators)) {
-      if (req.body.newPassword) {
+      if (req.body.password) {
         await prisma.user.update({
           data: {
-            password: getHashedPassword(input.newPassword),
+            password: getHashedPassword(input.password),
           },
           where: {
             id: req.user.id,
@@ -116,8 +114,8 @@ const validate = async (
     try {
       await validator(input);
     } catch (e) {
-      res.writeHead(400, { "Content-Type": "application/text" });
-      res.end(decompressFromBase64(e as Error).toString());
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(e));
       return false;
     }
   }
@@ -169,7 +167,10 @@ export const put = [
 const validateUsername = ({ username }: { [_: string]: unknown }) => {
   const USERNAME_REGEX = /^[-_A-Za-z0-9]{3,15}$/;
   if (!USERNAME_REGEX.test(username as string)) {
-    throw new Error("Invalid username");
+    throw {
+      message: "Invalid username",
+      selector: "#username",
+    } as ScopedError;
   }
 };
 
@@ -179,19 +180,28 @@ const validateUsernameCreation = async ({
   [_: string]: unknown;
 }) => {
   if (await prisma.user.count({ where: { username: username as string } })) {
-    throw new Error("This username is already taken");
+    throw {
+      message: "This username is already taken",
+      selector: "#username",
+    } as ScopedError;
   }
 };
 
 const validateEmailCreation = async ({ email }: { [_: string]: unknown }) => {
   if (await prisma.user.count({ where: { email: email as string } })) {
-    throw new Error("This email is already used in another account");
+    throw {
+      message: "This email is already used in another account",
+      selector: "#email",
+    } as ScopedError;
   }
 };
 
 const validateEmail = ({ email }: { [_: string]: unknown }) => {
   if (!isValidEmail(email as string)) {
-    throw new Error("Invalid email");
+    throw {
+      message: "Invalid email",
+      selector: "#email",
+    } as ScopedError;
   }
 };
 
@@ -202,28 +212,32 @@ const validatePasswords = ({
   [_: string]: unknown;
 }) => {
   if ((password as string).length < 6) {
-    throw new Error("Your password should be at least 6 characters long");
+    throw {
+      message: "Your password should be at least 6 characters long",
+      selector: "#password",
+    } as ScopedError;
   } else if (password !== password2) {
-    throw new Error("The two passwords should be identical");
+    throw {
+      message: "The two passwords should be identical",
+      selector: "#password",
+    } as ScopedError;
   }
 };
 
 const validatePasswordUpdate = ({
   oldPassword,
-  newPassword,
+  password,
 }: {
   [_: string]: unknown;
 }) => {
-  if (!oldPassword || !newPassword) {
-    throw new Error(
-      "Both the old and the new password need to be filled if you want to change your password. If you don't want to change your password, leave both old and new passwords empty."
-    );
+  if (!oldPassword || !password) {
+    throw {
+      selector: "#password",
+      message:
+        "Both the old and the new password need to be filled if you want to change your password. If you don't want to change your password, leave both old and new passwords empty.",
+    };
   }
 };
-
-function getHashedPassword(password: string) {
-  return crypto.createHash("sha1").update(password).digest("hex");
-}
 
 const validateOldPassword = async ({
   userId,
@@ -237,7 +251,10 @@ const validateOldPassword = async ({
       where: { id: userId as number, password: hashedPassword },
     }))
   ) {
-    throw new Error("L'ancien mot de passe est invalide.");
+    throw {
+      message: "L'ancien mot de passe est invalide.",
+      selector: "#oldPassword",
+    } as ScopedError;
   }
 };
 
@@ -247,8 +264,13 @@ const validatePresentationText = ({
   [_: string]: unknown | null;
 }) => {
   if (!presentationText || String(presentationText).length > 100) {
-    throw new Error(
-      "The presentation text should be between 1 and 100 characters"
-    );
+    throw {
+      message: "The presentation text should be between 1 and 100 characters",
+      selector: "#presentationText",
+    } as ScopedError;
   }
 };
+
+function getHashedPassword(password: string) {
+  return crypto.createHash("sha1").update(password).digest("hex");
+}
