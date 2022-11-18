@@ -15,13 +15,6 @@ alias: [/agrandir/marketplace]
     <span v-else>{{
       $t("puis faites un clic droit pour contacter le vendeur.")
     }}</span>
-    <div>
-      {{
-        $t(
-          "Les messages de demande sont envoyés aux vendeurs une fois par jour à 8h00. Si l'utilisateur est intéressé, il vous contactera par e-mail."
-        )
-      }}
-    </div>
   </b-alert>
   <b-alert
     v-if="hasPublicationNames && pendingRequestIssueIds.length"

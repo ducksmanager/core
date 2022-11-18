@@ -13,7 +13,24 @@ alias: [/collection/a-lire]
       )
     "
   />
-  <div v-if="issuesInOnSaleStack && hasPublicationNames">
+  <div
+    v-if="
+      issuesInOnSaleStack && marketplaceContactMethods && hasPublicationNames
+    "
+  >
+    <BAlert
+      variant="warning"
+      :show="issuesInOnSaleStack.length && !marketplaceContactMethods.length"
+      >{{
+        $t(
+          "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
+        )
+      }}<br /><a href="/collection/account">{{
+        $t(
+          "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
+        )
+      }}</a></BAlert
+    >
     <IssueList
       v-for="publicationcode in publicationCodes"
       :key="publicationcode"
@@ -36,6 +53,9 @@ import { users } from "~/stores/users";
 let hasPublicationNames = $ref(false);
 let publicationCodes = $ref(null);
 const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
+const marketplaceContactMethods = $computed(
+  () => collection().marketplaceContactMethods
+);
 
 watch(
   () => issuesInOnSaleStack,
@@ -56,6 +76,7 @@ watch(
 
 onMounted(async () => {
   await collection().loadCollection();
+  await collection().loadMarketplaceContactMethods();
 
   await marketplace().loadIssuesOnSaleByOthers();
   await marketplace().loadIssueRequestsAsSeller();

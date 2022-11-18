@@ -1,5 +1,22 @@
 <template>
-  <div v-if="hasPublicationNames">
+  <div
+    v-if="
+      hasPublicationNames && issuesInOnSaleStack && marketplaceContactMethods
+    "
+  >
+    <BAlert
+      variant="warning"
+      :show="issuesInOnSaleStack.length && !marketplaceContactMethods.length"
+      >{{
+        $t(
+          "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
+        )
+      }}<br /><a href="/collection/account">{{
+        $t(
+          "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
+        )
+      }}</a></BAlert
+    >
     <Accordion
       v-if="suggestionsNumber"
       id="suggestions"
@@ -93,6 +110,10 @@ defineProps({
 
 const suggestionsNumber = $ref(0);
 let hasPublicationNames = $ref(false);
+const marketplaceContactMethods = $computed(
+  () => collection().marketplaceContactMethods
+);
+const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
 const user = $computed(() => collection().user);
 const total = $computed(() => collection().total);
 const totalPerPublication = $computed(() => collection().totalPerPublication);
@@ -123,6 +144,7 @@ watch(
 
 onMounted(async () => {
   await collection().loadCollection();
+  await collection().loadMarketplaceContactMethods();
   await coa().fetchCountryNames();
 
   await marketplace().loadIssuesOnSaleByOthers();

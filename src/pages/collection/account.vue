@@ -7,11 +7,21 @@ alias: [/collection/compte]
     v-if="user && marketplaceContactMethods"
     @submit.prevent="updateAccount"
   >
-    <BAlert variant="warning" :show="!marketplaceContactMethods.length">{{
-      $t(
-        "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros. Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
-      )
-    }}</BAlert>
+    <b-row>
+      <b-col id="email" cols="12" md="6">
+        <BAlert variant="warning" :show="!marketplaceContactMethods.length"
+          >{{
+            $t(
+              "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
+            )
+          }}<br />{{
+            $t(
+              "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
+            )
+          }}</BAlert
+        >
+      </b-col>
+    </b-row>
     <Teleport :disabled="!error?.selector" :to="error?.selector">
       <BAlert v-if="error?.message" show variant="danger">
         {{ error?.message }}
