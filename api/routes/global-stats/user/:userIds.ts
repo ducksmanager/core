@@ -46,8 +46,8 @@ const getUsersQuickStats = async (userIds: number[]) =>
   (await prisma.$queryRaw`
     select u.ID                                        AS userId,
            u.username,
-           u.TextePresentation                         as presentationSentence,
-           u.AccepterPartage                           as shared,
+           u.TextePresentation                         as presentationText,
+           u.AccepterPartage                           as allowSharing,
            count(distinct Pays)                        AS numberOfCountries,
            count(distinct concat(Pays, '/', Magazine)) as numberOfPublications,
            count(Numero)                               as numberOfIssues

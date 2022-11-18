@@ -4,10 +4,11 @@ import { Email, i18n } from "~/emails";
 export default class extends Email {
   data: {
     user: user;
+    presentationText: string;
   };
   templatePath = __dirname;
 
-  constructor(data: { user: user }) {
+  constructor(data: { user: user; presentationText: string }) {
     super();
     this.data = data;
   }

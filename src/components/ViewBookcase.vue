@@ -34,7 +34,7 @@
       />
       <div
         v-if="
-          isShareEnabled && user.username !== 'demo' && sortedBookcase?.length
+          allowSharing && user.username !== 'demo' && sortedBookcase?.length
         "
         class="mb-4"
       >
@@ -62,7 +62,7 @@
         </BButton>
       </div>
       <BAlert
-        v-else-if="isShareEnabled === false && user.username !== 'demo'"
+        v-else-if="allowSharing === false && user.username !== 'demo'"
         show
         variant="warning"
         v-html="
@@ -163,7 +163,7 @@ const user = $computed(() => collection.user);
 const bookcaseUsername = $computed(
   () => route.params.username || user?.username
 );
-const isShareEnabled = $computed(() => collection.user?.isShareEnabled);
+const allowSharing = $computed(() => collection.user?.allowSharing);
 const lastPublishedEdgesForCurrentUser = $computed(
   () => collection.lastPublishedEdgesForCurrentUser
 );

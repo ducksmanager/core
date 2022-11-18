@@ -3,7 +3,7 @@ import * as ejs from "ejs";
 import { I18n } from "i18n";
 import { Transporter, TransportOptions } from "nodemailer";
 import nodemailer from "nodemailer";
-import Mail from "nodemailer/lib/mailer";
+import Mail, { Address } from "nodemailer/lib/mailer";
 import path from "path";
 
 dotenv.config({
@@ -57,18 +57,15 @@ export abstract class Email {
       subject: this.getSubject(),
     };
 
+    const to = options.to as Mail.Address;
     console.log(
-      `Sending email of type ${this.getTemplateDirName()} to ${
-        (options.to as Mail.Address).address
-      }`
+      `Sending email of type ${this.getTemplateDirName()} to ${to.address}`
     );
 
     try {
       await Email.transporter.sendMail(options);
-      if (options.to !== process.env.SMTP_USERNAME) {
-        options.subject = `[Sent to ${(options.to as Mail.Address).address}] ${
-          options.subject
-        }`;
+      if ((options.to as Address).address !== process.env.SMTP_USERNAME) {
+        options.subject = `[Sent to ${to.address}] ${options.subject}`;
         options.to = process.env.SMTP_USERNAME;
         console.log(
           `Sending email of type ${this.getTemplateDirName()} to ${options.to}`

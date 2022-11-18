@@ -1,3 +1,3 @@
 <% for (const decision of ['approve', 'refuse'] ) { %>
-    <a href="<%= process.env.WEBSITE_ROOT %>/admin/presentationSentence/<%= decision %>/?userId=<%= user.id %>&sentence=<%= encodeURIComponent(sentence) %>"><%= decision %>%></a>
+    <a href="<%= process.env.WEBSITE_ROOT %>/admin/presentation-text/<%= decision %>?userId=<%= user.id %>&sentence=<%= encodeURIComponent(presentationText) %>"><%= decision %>%></a>
 <% } %>

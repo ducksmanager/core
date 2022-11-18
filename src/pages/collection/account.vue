@@ -3,25 +3,20 @@ alias: [/collection/compte]
 </route>
 
 <template>
-  <form v-if="user" method="post">
-    <BAlert v-if="isSuccess" variant="success"> {{ $t("OK") }} ! </BAlert>
+  <form v-if="user" @submit.prevent="updateAccount">
+    <BAlert v-if="error" variant="error"> {{ error }} ! </BAlert>
+    <BAlert v-else-if="error === null" variant="success">
+      {{ $t("OK") }} !
+    </BAlert>
 
     <h5>{{ $t("Adresse e-mail") }}</h5>
-    <Errorable id="email">
-      <BFormInput
-        id="email"
-        v-model="user.email"
-        name="email"
-        required
-        autofocus
-      />
-    </Errorable>
+    <BFormInput id="email" v-model="user.email" required autofocus />
 
     <h5>
-      {{ $t("Phrase de présentation") }} <sup>{{ $t("Nouveau !") }}</sup>
+      {{ $t("Texte de présentation") }}
     </h5>
     <BAlert variant="info" show class="mb-0">
-      <template v-if="hasRequestedPresentationSentence">
+      <template v-if="hasRequestedPresentationSentenceUpdate">
         {{
           $t(
             "Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu'elle sera validée."
@@ -36,59 +31,40 @@ alias: [/collection/compte]
         }}
       </template>
     </BAlert>
-    <Errorable id="presentationSentenceRequest">
-      <BFormInput
-        id="presentationSentenceRequest"
-        v-model="user.presentationSentence"
-        class="mt-0"
-        name="presentationSentenceRequest"
-        maxlength="100"
-        :placeholder="
-          $t('Présentez-vous en quelques mots (100 caractères maximum)')
-        "
-        @input="user.presentationSentenceRequest = $event"
-      />
-    </Errorable>
+    <BFormInput
+      v-model="user.presentationText"
+      class="mt-0"
+      maxlength="100"
+      :placeholder="
+        $t('Présentez-vous en quelques mots (100 caractères maximum)')
+      "
+    />
     <h5>{{ $t("Changement de mot de passe") }}</h5>
-    <Errorable id="password">
-      <BFormInput
-        id="password"
-        name="password"
-        type="password"
-        :placeholder="$t('Mot de passe actuel')"
-      />
-    </Errorable>
-    <Errorable id="passwordNew">
-      <BFormInput
-        id="passwordNew"
-        name="passwordNew"
-        type="password"
-        :placeholder="$t('Nouveau mot de passe')"
-      />
-    </Errorable>
-    <Errorable id="passwordNewConfirmation">
-      <BFormInput
-        id="passwordNewConfirmation"
-        name="passwordNewConfirmation"
-        type="password"
-        :placeholder="$t('Nouveau mot de passe (confirmation)')"
-      />
-    </Errorable>
+    <BFormInput
+      id="password"
+      v-model="oldPassword"
+      type="password"
+      :placeholder="$t('Mot de passe actuel')"
+    />
+    <BFormInput
+      id="passwordNew"
+      v-model="newPassword"
+      type="password"
+      :placeholder="$t('Nouveau mot de passe')"
+    />
+    <BFormInput
+      id="passwordNewConfirmation"
+      v-model="newPassword2"
+      type="password"
+      :placeholder="$t('Nouveau mot de passe (confirmation)')"
+    />
 
     <h5>{{ $t("Options") }}</h5>
-    <BFormCheckbox
-      id="share-enabled"
-      v-model="user.isShareEnabled"
-      name="isShareEnabled"
-    >
+    <BFormCheckbox id="share-enabled" v-model="user.allowSharing">
       {{ $t("Activer le partage de ma collection") }}
     </BFormCheckbox>
 
-    <BFormCheckbox
-      id="show-video"
-      v-model="user.isVideoShown"
-      name="isVideoShown"
-    >
+    <BFormCheckbox id="show-video" v-model="user.showPresentationVideo">
       {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
     </BFormCheckbox>
 
@@ -115,40 +91,42 @@ alias: [/collection/compte]
 <script setup>
 import axios from "axios";
 import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
-import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
-import { form } from "~/stores/form";
-import { l10n } from "~/stores/l10n";
-const { errors, hasrequestedpresentationsentence, success } = defineProps({
-  errors: { type: String, default: "" },
-  success: { type: String, default: null },
-  hasrequestedpresentationsentence: { type: String, default: null },
-});
 
 const user = $computed(() => collection().user);
-const isSuccess = $computed(() =>
-  success === null ? null : parseInt(success) === 1
-);
-const hasRequestedPresentationSentence = $computed(() =>
-  hasrequestedpresentationsentence === null
-    ? null
-    : parseInt(hasrequestedpresentationsentence) === 1
-);
+
+let hasRequestedPresentationSentenceUpdate = $ref(false);
+const oldPassword = $ref("");
+const newPassword = $ref("");
+const newPassword2 = $ref("");
+let error = $ref("");
 
 const { t: $t } = useI18n();
 const t = $t;
 const router = useRouter();
 
-onMounted(async () => {
-  form().addErrors(JSON.parse(errors));
-});
-
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await axios.delete("/collection/empty");
     await router.push("/collection/show");
+  }
+};
+
+const updateAccount = async () => {
+  try {
+    error = "";
+    const response = (
+      await axios.post("/collection/user", {
+        ...user,
+      })
+    ).data;
+    hasRequestedPresentationSentenceUpdate =
+      response.hasRequestedPresentationSentenceUpdate;
+    error = null;
+  } catch (e) {
+    error = e;
   }
 };
 

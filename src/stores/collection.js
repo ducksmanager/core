@@ -310,23 +310,13 @@ export const collection = defineStore("collection", {
         try {
           this.user = Object.entries(
             (await axios.get(`/collection/user`)).data
-          ).reduce((acc, [key, value]) => {
-            switch (key) {
-              case "accepterpartage":
-                acc.isShareEnabled = value;
-                break;
-              case "affichervideo":
-                acc.isVideoShown = value;
-                break;
-              case "presentationSentence":
-                acc.presentationSentence = value;
-                break;
-              default:
-                acc[key] = value;
-                break;
-            }
-            return acc;
-          }, {});
+          ).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: value,
+            }),
+            {}
+          );
         } catch (e) {
           this.user = null;
         } finally {

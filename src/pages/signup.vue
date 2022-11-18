@@ -94,7 +94,7 @@ const signup = async () => {
     Cookies.set(
       "token",
       (
-        await axios.post("/signup", {
+        await axios.put("/collection/user", {
           username,
           password,
           password2,
