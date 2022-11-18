@@ -10,6 +10,7 @@ export const collection = defineStore("collection", {
     watchedPublicationsWithSales: null,
     purchases: null,
     watchedAuthors: null,
+    marketplaceContactMethods: null,
 
     suggestions: null,
     subscriptions: null,
@@ -20,6 +21,7 @@ export const collection = defineStore("collection", {
     isLoadingUser: false,
     isLoadingCollection: false,
     isLoadingWatchedPublicationsWithSales: false,
+    isLoadingMarketplaceContactMethods: false,
     isLoadingPurchases: false,
     isLoadingWatchedAuthors: false,
     isLoadingSuggestions: false,
@@ -240,6 +242,24 @@ export const collection = defineStore("collection", {
         ).data;
         this.isLoadingWatchedPublicationsWithSales = false;
       }
+    },
+    async loadMarketplaceContactMethods(afterUpdate = false) {
+      if (
+        afterUpdate ||
+        (!this.isLoadingMarketplaceContactMethods &&
+          !this.marketplaceContactMethods)
+      ) {
+        this.isLoadingMarketplaceContactMethods = true;
+        this.marketplaceContactMethods = (
+          await axios.get("/collection/options/marketplace_contact_methods")
+        ).data;
+        this.isLoadingMarketplaceContactMethods = false;
+      }
+    },
+    async updateMarketplaceContactMethods() {
+      await axios.post("/collection/options/marketplace_contact_methods", {
+        values: this.marketplaceContactMethods,
+      });
     },
     async updateWatchedPublicationsWithSales() {
       await axios.post("/collection/options/sales_notification_publications", {

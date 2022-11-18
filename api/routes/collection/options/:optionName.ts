@@ -12,6 +12,7 @@ export const optionNameToEnum = (
   switch (optionName) {
     case "suggestion_notification_country":
     case "sales_notification_publications":
+    case "marketplace_contact_methods":
       return userOptionType[optionName];
     default:
       return null;

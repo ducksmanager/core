@@ -233,6 +233,7 @@ model user {
   allowSharing              Boolean            @default(true) @map("AccepterPartage")
   signupDate                DateTime           @map("DateInscription") @db.Date
   email                     String             @map("EMail") @db.VarChar(50)
+  discordId                 Int?               @map("ID_Discord")
   showRecommendations       Boolean            @default(true) @map("RecommandationsListeMags")
   isBetaUser                Boolean            @default(false) @map("BetaUser")
   showPresentationVideo     Boolean            @default(true) @map("AfficherVideo")
@@ -339,6 +340,7 @@ model requestedIssue {
 enum userOptionType {
   suggestion_notification_country
   sales_notification_publications
+  marketplace_contact_methods
 }
 
 enum userContributionType {
