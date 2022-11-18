@@ -401,7 +401,7 @@ const deletePublicationIssues = async (issuesToDelete) => {
     publicationCode: props.publicationcode,
     issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
     condition: conditions.find(({ value }) => value === "missing").dbValue,
-    istosell: false,
+    isOnSale: false,
     purchaseId: null,
   });
   selected = [];

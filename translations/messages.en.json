@@ -458,5 +458,7 @@
   "à sa collection": "to their collection",
   "à": "at",
   "• 1 nouvelle histoire de {{authorName}}": "• 1 new story from {{authorName}}",
-  "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}"
+  "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}",
+  "Transfert de numéros": "Issue transfer",
+  "Les numéros sélectionnés vont être transférés à {0} et n'apparaitront plus dans votre collection.": "The selected issues will be transferred to {0} and won't show in your collection anymore."
 }

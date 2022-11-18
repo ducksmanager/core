@@ -209,6 +209,9 @@ export const post = [
   parseForm,
   (async (req, res) => {
     const { publicationcode, issueNumbers } = req.body;
+
+    const [country, magazine] = publicationcode.split("/");
+
     let condition = req.body.condition;
     const userId = req.user.id;
 
@@ -218,11 +221,11 @@ export const post = [
       res.end();
     }
 
-    let isToSell = req.body.istosell;
-    if (typeof isToSell === "undefined" || isToSell === "do_not_change") {
-      isToSell = null;
-    } else if (JSON.stringify(isToSell) === JSON.stringify(["do_not_change"])) {
-      isToSell = [null];
+    let isOnSale = req.body.isOnSale;
+    if (typeof isOnSale === "undefined" || isOnSale === "do_not_change") {
+      isOnSale = null;
+    } else if (JSON.stringify(isOnSale) === JSON.stringify(["do_not_change"])) {
+      isOnSale = [null];
     }
     let isToRead = req.body.istoread;
     if (typeof isToRead === "undefined" || isToRead === "do_not_change") {
@@ -244,7 +247,92 @@ export const post = [
     if (typeof condition !== "string" && condition.length === 1) {
       condition = condition[0];
       isToRead = isToRead[0];
-      isToSell = isToSell[0];
+      isOnSale = isOnSale[0];
+    }
+
+    let issueIds: number[];
+    if (isOnSale !== "do_not_change") {
+      issueIds = (
+        await prisma.issue.findMany({
+          where: {
+            userId,
+            country,
+            magazine,
+            issueNumber: { in: issueNumbers },
+          },
+        })
+      ).map(({ id }) => id);
+      if (typeof isOnSale === "string") {
+        // Marketplace actions
+        const [action, buyerId] = isOnSale.split("-");
+        const requestedIssues = await prisma.requestedIssue.findMany({
+          where: {
+            buyerId: parseInt(buyerId),
+            issueId: { in: issueIds },
+          },
+        });
+        if (requestedIssues.length !== issueNumbers.length) {
+          res.writeHead(400);
+          res.end();
+          return;
+        }
+        switch (action) {
+          case "transfer":
+            const issueCount = await prisma.issue.count({
+              where: {
+                id: { in: issueIds },
+                userId,
+              },
+            });
+            if (issueCount !== issueIds.length) {
+              res.writeHead(400);
+              res.end();
+              return;
+            }
+            await prisma.issue.updateMany({
+              data: {
+                purchaseId: -1,
+                isOnSale: false,
+                isToRead: true,
+                isSubscription: 0,
+                creationDate: new Date(),
+              },
+              where: {
+                id: { in: issueIds },
+              },
+            });
+            await prisma.requestedIssue.deleteMany({
+              where: {
+                buyerId: parseInt(buyerId),
+                issueId: { in: issueIds },
+              },
+            });
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ transferred: issueNumbers }));
+            break;
+          case "setAside":
+            await prisma.requestedIssue.updateMany({
+              data: {
+                isBooked: true,
+              },
+              where: {
+                buyerId: parseInt(buyerId),
+                issueId: { in: issueIds },
+              },
+            });
+            isOnSale = true;
+            break;
+        }
+      } else {
+        await prisma.requestedIssue.updateMany({
+          data: {
+            isBooked: false,
+          },
+          where: {
+            issueId: { in: issueIds },
+          },
+        });
+      }
     }
     if (typeof condition !== "string") {
       output = addOrChangeCopies(
@@ -252,7 +340,7 @@ export const post = [
         publicationcode,
         issueNumbers[0],
         condition ?? [],
-        isToSell ?? [],
+        isOnSale ?? [],
         isToRead ?? [],
         purchaseIds ?? []
       );
@@ -267,12 +355,12 @@ export const post = [
         publicationcode,
         issueNumbers,
         condition,
-        isToSell,
+        isOnSale,
         isToRead,
         checkedPurchaseIds[0]
       );
     }
-    res.statusCode = constants.HTTP_STATUS_OK;
+    res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(output));
   }) as Handler,
 ];

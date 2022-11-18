@@ -343,7 +343,7 @@ const importIssues = async () => {
         publicationCode,
         issueNumbers: importableIssuesByPublicationCode[publicationCode],
         condition: issueDefaultCondition,
-        istosell: "do_not_change",
+        isOnSale: "do_not_change",
         purchaseId: "do_not_change",
       });
       importProgress +=

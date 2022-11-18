@@ -78,6 +78,16 @@
       padding: 0.2em;
     }
 
+    .v-contextmenu-submenu, .v-contextmenu-item {
+
+      &.selected {
+        &, > .v-contextmenu-item {
+          background-color: #a52a2a;
+          color: white !important;
+        }
+      }
+    }
+
     .v-contextmenu-item {
       display: flex;
       align-items: center;
@@ -85,11 +95,6 @@
       line-height: 25px;
       background-position: left center;
       padding: 0 12px !important;
-
-      &.selected {
-        background-color: #a52a2a;
-        color: white;
-      }
 
       &.purchase-state {
         &.link {

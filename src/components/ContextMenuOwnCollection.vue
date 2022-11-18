@@ -1,316 +1,337 @@
 <template>
-  <v-contextmenu-group>
-    <li class="header">
-      {{
-        $t(
-          "{count} numéro sélectionné|{count} numéros sélectionnés",
-          Object.keys(selectedIssuesById).length
-        )
-      }}
-    </li>
-    <BAlert
-      v-if="!editingCopies.length"
-      class="text-center m-0"
-      show
-      variant="danger"
-    >
-      {{
-        $t("Vous allez retirer tous les exemplaires\ndes numéros sélectionnés")
-      }}
-    </BAlert>
-    <BAlert
-      v-if="copies.length && !isSingleIssueSelected"
-      class="text-center m-0"
-      show
-      variant="warning"
-    >
-      {{
-        $t(
-          "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié."
-        )
-      }}
-    </BAlert>
-    <BAlert
-      v-if="!Object.keys(selectedIssuesById).length"
-      class="text-center m-0"
-      show
-      variant="warning"
-    >
-      {{
-        $t(
-          "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection."
-        )
-      }}
-    </BAlert>
-    <template v-else>
-      <BTabs
-        v-model.number="currentCopyIndex"
-        nav-class="copies-tabs"
-        @changed="
-          (newTabs) => {
-            currentCopyIndex = newTabs.length - 1;
-          }
-        "
+  <div>
+    <v-contextmenu-group>
+      <li class="header">
+        {{
+          $t(
+            "{count} numéro sélectionné|{count} numéros sélectionnés",
+            Object.keys(selectedIssuesById).length
+          )
+        }}
+      </li>
+      <BAlert
+        v-if="!editingCopies.length"
+        class="text-center m-0"
+        show
+        variant="danger"
       >
-        <BTab
-          v-for="(copy, copyIndex) in editingCopies"
-          :key="`copy-${copyIndex}`"
+        {{
+          $t(
+            "Vous allez retirer tous les exemplaires\ndes numéros sélectionnés"
+          )
+        }}
+      </BAlert>
+      <BAlert
+        v-if="copies.length && !isSingleIssueSelected"
+        class="text-center m-0"
+        show
+        variant="warning"
+      >
+        {{
+          $t(
+            "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié."
+          )
+        }}
+      </BAlert>
+      <BAlert
+        v-if="!Object.keys(selectedIssuesById).length"
+        class="text-center m-0"
+        show
+        variant="warning"
+      >
+        {{
+          $t(
+            "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection."
+          )
+        }}
+      </BAlert>
+      <template v-else>
+        <BTabs
+          v-model.number="currentCopyIndex"
+          nav-class="copies-tabs"
+          @changed="
+            (newTabs) => {
+              currentCopyIndex = newTabs.length - 1;
+            }
+          "
         >
-          <template #title>
-            {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
-            <BIconTrash
-              @click.stop.prevent="editingCopies.splice(copyIndex, 1)"
-            />
-          </template>
-          <v-contextmenu-group :title="$t('Etat')">
-            <v-contextmenu-item
-              v-for="(stateText, stateId) in conditionStates"
-              :key="`condition-${stateId}`"
-              :hide-on-click="false"
-              class="clickable"
-              :class="{ selected: copy.condition === stateId }"
-              @click="copy.condition = stateId"
-            >
-              <Condition :value="stateId" />&nbsp;{{ stateText }}
-            </v-contextmenu-item>
-            <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
-          </v-contextmenu-group>
-          <v-contextmenu-group
-            v-show="copy.condition !== 'missing'"
-            :title="$t('Pile de lecture')"
+          <BTab
+            v-for="(copy, copyIndex) in editingCopies"
+            :key="`copy-${copyIndex}`"
           >
-            <v-contextmenu-item
-              v-for="(stateText, stateId) in toReadStates"
-              :key="`copy-${copyIndex}-to-read-state-${stateId}`"
-              :hide-on-click="false"
-              class="clickable read-state"
-              :class="{
-                selected: String(copy.isToRead) === stateId,
-                [stateId]: true,
-              }"
-              @click="
-                copy.isToRead =
-                  stateId === 'do_not_change' ? null : stateId === 'true'
-              "
-            >
-              <BIconBookmarkCheck v-if="stateId === 'true'" />
-              <BIconBookmarkX v-if="stateId === 'false'" />
-              {{ stateText }}
-            </v-contextmenu-item>
-            <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
-          </v-contextmenu-group>
-          <template v-if="copy.condition !== 'missing'">
-            <v-contextmenu-group :title="$t('Date d\'achat')">
-              <template
-                v-for="(stateText, stateId) in purchaseStates"
-                :key="`copy-${copyIndex}-purchase-state-${stateId}`"
+            <template #title>
+              {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
+              <BIconTrash
+                @click.stop.prevent="editingCopies.splice(copyIndex, 1)"
+              />
+            </template>
+            <v-contextmenu-group :title="$t('Etat')">
+              <v-contextmenu-item
+                v-for="(stateText, stateId) in conditionStates"
+                :key="`condition-${stateId}`"
+                :hide-on-click="false"
+                class="clickable"
+                :class="{ selected: copy.condition === stateId }"
+                @click="copy.condition = stateId"
               >
-                <v-contextmenu-item
-                  v-if="stateId !== 'link'"
-                  :hide-on-click="false"
-                  class="clickable purchase-state"
-                  :class="{
-                    selected: copy.purchaseId === stateId,
-                    'v-context__sub': stateId === 'link',
-                    [stateId]: true,
-                  }"
-                  @click="copy.purchaseId = stateId"
-                >
-                  <BIconCalendarX v-if="stateId === 'unlink'" />
-                  {{ stateText }}
-                </v-contextmenu-item>
-                <v-contextmenu-submenu
-                  v-else
-                  :title="$t(`Date d'achat`)"
-                  @mouseleave.prevent="() => {}"
-                >
-                  <template #title>
-                    <BIconCalendar v-if="stateId === 'link'" />
-                    {{ stateText }}
-                  </template>
-                  <v-contextmenu-group :title="$t('Date d\'achat')">
-                    <v-contextmenu-item
-                      v-if="!copy.newPurchaseContext"
-                      :hide-on-click="false"
-                      class="clickable"
-                      @click.stop="
-                        copy.newPurchaseContext = !copy.newPurchaseContext;
-                        copy.newPurchaseDate = today;
-                      "
-                    >
-                      <b>{{ $t("Nouvelle date d'achat...") }}</b>
-                    </v-contextmenu-item>
-                    <v-contextmenu-item
-                      v-else
-                      class="purchase-date"
-                      @click.stop="() => {}"
-                    >
-                      <b-form-input
-                        v-model="copy.newPurchaseDate"
-                        type="text"
-                        lazy-formatter
-                        :formatter="formatDate"
-                        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-                        required
-                        class="form-control date px-0"
-                        maxlength="10"
-                        :placeholder="$t(`Date d'achat`)"
-                        @click.stop="() => {}"
-                      />
-                      <input
-                        v-model="copy.newPurchaseDescription"
-                        required
-                        type="text"
-                        class="form-control text-center"
-                        maxlength="30"
-                        :placeholder="$t('Description')"
-                        @click.stop="() => {}"
-                      />
-                      <b-button
-                        variant="success"
-                        class="btn-sm"
-                        @click.stop="
-                          createPurchase({
-                            date: copy.newPurchaseDate,
-                            description: copy.newPurchaseDescription,
-                          });
-                          copy.newPurchaseDescription = '';
-                          copy.newPurchaseDate = today;
-                          copy.newPurchaseContext = false;
-                        "
-                      >
-                        <BIconCheck icon="check" />
-                      </b-button>
-                      <b-button
-                        variant="warning"
-                        class="btn-sm"
-                        @click.stop="copy.newPurchaseContext = false"
-                      >
-                        <BIconX icon="x" />
-                      </b-button>
-                    </v-contextmenu-item>
-                    <v-contextmenu-item
-                      v-for="{ id: purchaseId, date, description } in purchases"
-                      :key="`copy-${copyIndex}-purchase-${purchaseId}`"
-                      :hide-on-click="false"
-                      class="clickable purchase-date"
-                      :class="{
-                        selected: copy.purchaseId === purchaseId,
-                      }"
-                      @click.stop="copy.purchaseId = purchaseId"
-                    >
-                      <small class="date">{{ date }}</small>
-                      <div class="mx-2">
-                        {{ description }}
-                      </div>
-                      <b-button
-                        class="delete-purchase btn-sm"
-                        :title="$t('Supprimer')"
-                        @click="
-                          deletePurchase({
-                            id: purchaseId,
-                          })
-                        "
-                      >
-                        <BIconTrash />
-                      </b-button>
-                    </v-contextmenu-item>
-                  </v-contextmenu-group>
-                </v-contextmenu-submenu>
-              </template>
+                <Condition :value="stateId" />&nbsp;{{ stateText }}
+              </v-contextmenu-item>
+              <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
             </v-contextmenu-group>
-            <v-contextmenu-group :title="$t('Marketplace')">
-              <template
-                v-for="(
-                  { text: stateText, tooltip, isSaleDisabled }, stateId
-                ) in marketplaceStates"
-                :key="`copy-${copyIndex}-marketplace-state-${stateId}`"
+            <v-contextmenu-group
+              v-show="copy.condition !== 'missing'"
+              :title="$t('Pile de lecture')"
+            >
+              <v-contextmenu-item
+                v-for="(stateText, stateId) in toReadStates"
+                :key="`copy-${copyIndex}-to-read-state-${stateId}`"
+                :hide-on-click="false"
+                class="clickable read-state"
+                :class="{
+                  selected: String(copy.isToRead) === stateId,
+                  [stateId]: true,
+                }"
+                @click="
+                  copy.isToRead =
+                    stateId === 'do_not_change' ? null : stateId === 'true'
+                "
               >
-                <v-contextmenu-item
-                  v-if="
-                    ['true', 'false', 'do_not_change'].includes(stateId) ||
-                    isSaleDisabled
-                  "
-                  :hide-on-click="false"
-                  class="marketplace-state"
-                  :class="{
-                    clickable: ['true', 'false', 'do_not_change'].includes(
-                      stateId
-                    ),
-                    disabled: isSaleDisabled,
-                    selected: String(copy.isOnSale) === stateId,
-                    [stateId]: true,
-                  }"
-                  @click="
-                    copy.isOnSale = isSaleDisabled
-                      ? copy.isOnSale
-                      : stateId === 'do_not_change'
-                      ? null
-                      : stateId === 'true'
-                  "
+                <BIconBookmarkCheck v-if="stateId === 'true'" />
+                <BIconBookmarkX v-if="stateId === 'false'" />
+                {{ stateText }}
+              </v-contextmenu-item>
+              <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
+            </v-contextmenu-group>
+            <template v-if="copy.condition !== 'missing'">
+              <v-contextmenu-group :title="$t('Date d\'achat')">
+                <template
+                  v-for="(stateText, stateId) in purchaseStates"
+                  :key="`copy-${copyIndex}-purchase-state-${stateId}`"
                 >
-                  <BIconCart v-if="stateId === 'true'" />
-                  <BIconCartX v-if="stateId === 'false'" />
-                  <BIconLock v-if="stateId === 'setAside'" />
-                  <BIconArrowBarRight v-if="stateId === 'transfer'" />
-                  <BIconChat v-if="stateId === 'contact'" />
-
-                  <span :title="tooltip">{{ stateText }}</span>
-                </v-contextmenu-item>
-                <v-contextmenu-submenu
-                  v-else
-                  :title="stateText"
-                  class="cursor-help"
-                  @mouseleave.prevent="() => {}"
+                  <v-contextmenu-item
+                    v-if="stateId !== 'link'"
+                    :hide-on-click="false"
+                    class="clickable purchase-state"
+                    :class="{
+                      selected: copy.purchaseId === stateId,
+                      'v-context__sub': stateId === 'link',
+                      [stateId]: true,
+                    }"
+                    @click="copy.purchaseId = stateId"
+                  >
+                    <BIconCalendarX v-if="stateId === 'unlink'" />
+                    {{ stateText }}
+                  </v-contextmenu-item>
+                  <v-contextmenu-submenu
+                    v-else
+                    :title="$t(`Date d'achat`)"
+                    @mouseleave.prevent="() => {}"
+                  >
+                    <template #title>
+                      <BIconCalendar v-if="stateId === 'link'" />
+                      {{ stateText }}
+                    </template>
+                    <v-contextmenu-group :title="$t('Date d\'achat')">
+                      <v-contextmenu-item
+                        v-if="!copy.newPurchaseContext"
+                        :hide-on-click="false"
+                        class="clickable"
+                        @click.stop="
+                          copy.newPurchaseContext = !copy.newPurchaseContext;
+                          copy.newPurchaseDate = today;
+                        "
+                      >
+                        <b>{{ $t("Nouvelle date d'achat...") }}</b>
+                      </v-contextmenu-item>
+                      <v-contextmenu-item
+                        v-else
+                        class="purchase-date"
+                        @click.stop="() => {}"
+                      >
+                        <b-form-input
+                          v-model="copy.newPurchaseDate"
+                          type="text"
+                          lazy-formatter
+                          :formatter="formatDate"
+                          pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                          required
+                          class="form-control date px-0"
+                          maxlength="10"
+                          :placeholder="$t(`Date d'achat`)"
+                          @click.stop="() => {}"
+                        />
+                        <input
+                          v-model="copy.newPurchaseDescription"
+                          required
+                          type="text"
+                          class="form-control text-center"
+                          maxlength="30"
+                          :placeholder="$t('Description')"
+                          @click.stop="() => {}"
+                        />
+                        <b-button
+                          variant="success"
+                          class="btn-sm"
+                          @click.stop="
+                            createPurchase({
+                              date: copy.newPurchaseDate,
+                              description: copy.newPurchaseDescription,
+                            });
+                            copy.newPurchaseDescription = '';
+                            copy.newPurchaseDate = today;
+                            copy.newPurchaseContext = false;
+                          "
+                        >
+                          <BIconCheck icon="check" />
+                        </b-button>
+                        <b-button
+                          variant="warning"
+                          class="btn-sm"
+                          @click.stop="copy.newPurchaseContext = false"
+                        >
+                          <BIconX icon="x" />
+                        </b-button>
+                      </v-contextmenu-item>
+                      <v-contextmenu-item
+                        v-for="{
+                          id: purchaseId,
+                          date,
+                          description,
+                        } in purchases"
+                        :key="`copy-${copyIndex}-purchase-${purchaseId}`"
+                        :hide-on-click="false"
+                        class="clickable purchase-date"
+                        :class="{
+                          selected: copy.purchaseId === purchaseId,
+                        }"
+                        @click.stop="copy.purchaseId = purchaseId"
+                      >
+                        <small class="date">{{ date }}</small>
+                        <div class="mx-2">
+                          {{ description }}
+                        </div>
+                        <b-button
+                          class="delete-purchase btn-sm"
+                          :title="$t('Supprimer')"
+                          @click="
+                            deletePurchase({
+                              id: purchaseId,
+                            })
+                          "
+                        >
+                          <BIconTrash />
+                        </b-button>
+                      </v-contextmenu-item>
+                    </v-contextmenu-group>
+                  </v-contextmenu-submenu>
+                </template>
+              </v-contextmenu-group>
+              <v-contextmenu-group :title="$t('Marketplace')">
+                <template
+                  v-for="(
+                    { text: stateText, tooltip, isSaleDisabled }, stateId
+                  ) in marketplaceStates"
+                  :key="`copy-${copyIndex}-marketplace-state-${stateId}`"
                 >
-                  <template #title>
+                  <v-contextmenu-item
+                    v-if="
+                      ['true', 'false', 'do_not_change'].includes(stateId) ||
+                      isSaleDisabled
+                    "
+                    :hide-on-click="false"
+                    class="marketplace-state"
+                    :class="{
+                      clickable: ['true', 'false', 'do_not_change'].includes(
+                        stateId
+                      ),
+                      disabled: isSaleDisabled,
+                      selected: String(copy.isOnSale) === stateId,
+                      [stateId]: true,
+                    }"
+                    @click="
+                      copy.isOnSale = isSaleDisabled
+                        ? copy.isOnSale
+                        : stateId === 'do_not_change'
+                        ? null
+                        : stateId === 'true'
+                    "
+                  >
+                    <BIconCart v-if="stateId === 'true'" />
+                    <BIconCartX v-if="stateId === 'false'" />
                     <BIconLock v-if="stateId === 'setAside'" />
                     <BIconArrowBarRight v-if="stateId === 'transfer'" />
                     <BIconChat v-if="stateId === 'contact'" />
+
                     <span :title="tooltip">{{ stateText }}</span>
-                  </template>
-                  <v-contextmenu-group :title="stateText">
-                    <v-contextmenu-item
-                      v-for="userId in userIdsWhoSentRequestsForAllSelected"
-                      :key="`copy-${copyIndex}-user-id-${userId}`"
-                      :hide-on-click="false"
-                      class="clickable"
-                      >{{ buyerUserNamesById?.[userId] }}</v-contextmenu-item
-                    >
-                  </v-contextmenu-group>
-                </v-contextmenu-submenu></template
-              >
-            </v-contextmenu-group></template
-          >
-        </BTab>
-        <template v-if="!hasMaxCopies" #tabs-end>
-          <BNavItem
-            v-if="isSingleIssueSelected || hasNoCopies"
-            class="p-0"
-            role="presentation"
-            @click.prevent="editingCopies.push({ ...defaultState })"
-          >
-            {{ $t("Ajouter un exemplaire") }}
-          </BNavItem>
-          <BNavItem
-            v-else
-            class="p-0 disabled text-secondary"
-            role="presentation"
-            :title="
-              $t(
-                `Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`
-              )
-            "
-          >
-            {{ $t("Ajouter un exemplaire") }}
-          </BNavItem>
-        </template>
-      </BTabs>
-      <li class="footer clickable" @click="updateSelectedIssues">
-        {{ $t("Enregistrer les changements") }}
-      </li>
-    </template>
-  </v-contextmenu-group>
+                  </v-contextmenu-item>
+                  <v-contextmenu-submenu
+                    v-else
+                    :title="stateText"
+                    class="cursor-help"
+                    :class="{
+                      clickable: true,
+                      selected: String(copy.isOnSale).indexOf(stateId) === 0,
+                    }"
+                    @mouseleave.prevent="() => {}"
+                  >
+                    <template #title>
+                      <BIconLock v-if="stateId === 'setAside'" />
+                      <BIconArrowBarRight v-if="stateId === 'transfer'" />
+                      <BIconChat v-if="stateId === 'contact'" />
+                      <div :title="tooltip">{{ stateText }}</div>
+                    </template>
+                    <v-contextmenu-group :title="stateText">
+                      <v-contextmenu-item
+                        v-for="userId in userIdsWhoSentRequestsForAllSelected"
+                        :key="`copy-${copyIndex}-user-id-${userId}`"
+                        :hide-on-click="false"
+                        class="clickable"
+                        :class="{
+                          selected: copy.isOnSale === `${stateId}-${userId}`,
+                        }"
+                        @click.prevent="
+                          copy.isOnSale =
+                            stateId === 'contact'
+                              ? copy.isOnSale
+                              : `${stateId}-${userId}`
+                        "
+                        >{{ buyerUserNamesById?.[userId] }}</v-contextmenu-item
+                      >
+                    </v-contextmenu-group>
+                  </v-contextmenu-submenu></template
+                >
+              </v-contextmenu-group></template
+            >
+          </BTab>
+          <template v-if="!hasMaxCopies" #tabs-end>
+            <BNavItem
+              v-if="isSingleIssueSelected || hasNoCopies"
+              class="p-0"
+              role="presentation"
+              @click.prevent="editingCopies.push({ ...defaultState })"
+            >
+              {{ $t("Ajouter un exemplaire") }}
+            </BNavItem>
+            <BNavItem
+              v-else
+              class="p-0 disabled text-secondary"
+              role="presentation"
+              :title="
+                $t(
+                  `Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`
+                )
+              "
+            >
+              {{ $t("Ajouter un exemplaire") }}
+            </BNavItem>
+          </template>
+        </BTabs>
+        <li class="footer clickable" @click="updateSelectedIssues(false)">
+          {{ $t("Enregistrer les changements") }}
+        </li>
+      </template>
+    </v-contextmenu-group>
+  </div>
 </template>
 
 <script setup>
@@ -355,7 +376,7 @@ const { conditions } = condition();
 
 const defaultState = $ref({
   condition: "possessed",
-  isToSell: "do_not_change",
+  isOnSale: "do_not_change",
   purchaseId: "do_not_change",
   isToRead: "do_not_change",
 });
@@ -488,20 +509,32 @@ const buyerUserNamesById = $computed(() => marketplace().buyerUserNamesById);
 
 const receivedRequests = $computed(() =>
   marketplace().issueRequestsAsSeller?.filter(
-    ({ issueId }) => issueId === copies[0].id
+    ({ issueId }) => issueId === copies?.[0]?.id
   )
 );
 
 const convertConditionToDbValue = (condition) =>
   (conditions.find(({ value }) => value === condition) || { dbValue: null })
     .dbValue;
-const updateSelectedIssues = async () => {
+const updateSelectedIssues = async (force = false) => {
+  if (!force && String(editingCopies[0].isOnSale).indexOf("transfer-") === 0) {
+    const transferToUser = editingCopies[0].isOnSale.split("transfer-")[1];
+    const isConfirmed = confirm(
+      $t(
+        "Les numéros sélectionnés vont être transférés à {0} et n'apparaitront plus dans votre collection.",
+        [buyerUserNamesById?.[parseInt(transferToUser)]]
+      )
+    );
+    if (!isConfirmed) {
+      return;
+    }
+  }
   let issueDetails = {
     condition: editingCopies.map(({ condition }) =>
       convertConditionToDbValue(condition)
     ),
     istoread: editingCopies.map(({ isToRead }) => isToRead),
-    istosell: editingCopies.map(({ isToSell }) => isToSell),
+    isOnSale: editingCopies.map(({ isOnSale }) => isOnSale),
     purchaseId: editingCopies.map(({ purchaseId }) => purchaseId),
   };
   if (!isSingleIssueSelected) {
@@ -522,6 +555,9 @@ const updateSelectedIssues = async () => {
 
 const updateIssues = async (data) => {
   await collectionStore().updateCollection({ ...data, publicationcode });
+
+  await marketplace().loadIssuesOnSaleByOthers(true);
+  await marketplace().loadIssueRequestsAsSeller(true);
   emit("clear-selection");
 };
 const createPurchase = async (data) => {

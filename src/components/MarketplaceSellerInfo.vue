@@ -1,10 +1,13 @@
 <template>
   <div
-    v-for="{ buyerId } in receivedRequests || []"
+    v-for="{ buyerId, isBooked } in receivedRequests || []"
     :key="buyerId"
     class="d-inline-block me-2"
+    :class="{ setAside: isBooked }"
   >
-    {{ $t("Demandé par") }}&nbsp;<UserPopover
+    <template v-if="isBooked">{{ $t("Réservé pour") }}</template
+    ><template v-else>{{ $t("Demandé par") }}</template
+    >&nbsp;<UserPopover
       v-if="buyerPoints?.[buyerId] && buyerStats?.[buyerId]"
       :points="buyerPoints[buyerId]"
       :stats="buyerStats[buyerId]"
@@ -45,10 +48,17 @@ const buyerStats = $computed(() =>
 </script>
 
 <style scoped lang="scss">
-div {
-  color: cyan;
+div,
+* {
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  color: yellow;
+
+  &.setAside {
+    &,
+    * {
+      color: blue;
+    }
+  }
 }
 </style>
