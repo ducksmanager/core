@@ -17,11 +17,11 @@ alias: [/agrandir/marketplace]
     }}</span>
   </b-alert>
   <b-alert
-    v-if="hasPublicationNames && pendingRequestIssueIds.length"
+    v-if="hasPublicationNames && sentRequestIssueIds.length"
     show
     variant="info"
   >
-    <div>{{ $t("Demandes en cours :") }}</div>
+    <div>{{ $t("Demandes envoyées :") }}</div>
     <Accordion
       v-for="(issueIds, userId) in requestIssueIdsBySellerId"
       :id="`email-for-user-${userId}`"
@@ -116,9 +116,7 @@ const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const issuesOnSaleByOthers = $computed(
   () => marketplace().issuesOnSaleByOthers
 );
-const pendingRequestIssueIds = $computed(
-  () => marketplace().pendingRequestIssueIds
-);
+const sentRequestIssueIds = $computed(() => marketplace().sentRequestIssueIds);
 const requestIssueIdsBySellerId = $computed(
   () => marketplace().requestIssueIdsBySellerId
 );

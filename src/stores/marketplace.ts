@@ -14,18 +14,13 @@ export const marketplace = defineStore("marketplace", {
     isLoadingIssueRequestsAsBuyer: false,
     isLoadingIssueRequestsAsSeller: false,
     isLoadingIssuesOnSaleByOthers: false,
+
+    contactMethods: {} as { [key: number]: { [key: string]: never } },
   }),
 
   getters: {
-    pendingRequestIssueIds: ({ issueRequestsAsBuyer }) =>
-      issueRequestsAsBuyer
-        ?.filter(({ isEmailSent }) => !isEmailSent)
-        .map(({ issueId }) => issueId),
-
     sentRequestIssueIds: ({ issueRequestsAsBuyer }) =>
-      issueRequestsAsBuyer
-        ?.filter(({ isEmailSent }) => isEmailSent)
-        .map(({ issueId }) => issueId),
+      issueRequestsAsBuyer?.map(({ issueId }) => issueId),
 
     sellerUserIds: ({ issuesOnSaleByOthers }) =>
       issuesOnSaleByOthers && [
@@ -101,6 +96,14 @@ export const marketplace = defineStore("marketplace", {
         issueIds,
       });
       await this.loadIssueRequestsAsBuyer();
+    },
+
+    async loadContactMethods(userId: number) {
+      this.contactMethods[userId] = (
+        await axios.get(
+          `/collection/on-sale-by-others/contact-methods/${userId}`
+        )
+      ).data;
     },
 
     async loadIssueRequestsAsBuyer(afterUpdate = false) {

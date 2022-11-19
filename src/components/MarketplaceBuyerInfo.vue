@@ -1,10 +1,6 @@
 <template>
-  <span v-if="pendingOrSentRequest" class="d-inline-block me-2"
-    ><template v-if="pendingRequest">{{
-      $t("Demande bientôt envoyée à")
-    }}</template
-    ><template v-else-if="sentRequest">{{ $t("Demande envoyée à") }}</template
-    >&nbsp;<UserPopover
+  <span v-if="sentRequest" class="d-inline-block me-2"
+    >{{ $t("Demande envoyée à") }}&nbsp;<UserPopover
       v-if="sellerPoints && sellerStats"
       :points="sellerPoints"
       :stats="sellerStats"
@@ -28,18 +24,10 @@ const props = defineProps({
 });
 
 const sellerPoints = $computed(
-  () => pendingOrSentRequest && users().points[pendingOrSentRequest.userId]
+  () => sentRequest && users().points[sentRequest.userId]
 );
 const sellerStats = $computed(
-  () => pendingOrSentRequest && users().stats[pendingOrSentRequest.userId]
-);
-
-const pendingOrSentRequest = $computed(() => pendingRequest || sentRequest);
-
-const pendingRequest = $computed(() =>
-  issuesOnSaleByOthers.find(({ id }) =>
-    marketplace().pendingRequestIssueIds?.includes(id)
-  )
+  () => sentRequest && users().stats[sentRequest.userId]
 );
 
 const sentRequest = $computed(() =>

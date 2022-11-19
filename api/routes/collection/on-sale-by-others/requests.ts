@@ -64,7 +64,6 @@ export const del = [
     const requestedIssues = await prisma.requestedIssue.findMany({
       where: {
         buyerId: req.user.id,
-        isEmailSent: false,
       },
     });
     const requestedIssuesBelongingToSeller = await prisma.issue.findMany({

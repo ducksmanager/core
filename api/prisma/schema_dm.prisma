@@ -329,7 +329,6 @@ model requestedIssue {
    id                Int     @id @default(autoincrement()) @map("ID")
    issueId           Int @map("ID_Numero")
    buyerId           Int @map("ID_Acheteur")
-   isEmailSent       Boolean @default(false) @map("email_envoye")
    isBooked          Boolean @default(false) @map("est_reserve")
 
   @@unique([issueId, buyerId], map: "numeros_demandes_ID_Numero_ID_Acheteur_uindex")

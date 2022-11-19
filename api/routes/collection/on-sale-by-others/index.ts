@@ -5,6 +5,14 @@ import { issue, PrismaClient } from "~prisma_clients/client_dm";
 const prisma = new PrismaClient();
 
 export const get: Handler = async (req, res) => {
+  const issuesForSale = await getIssuesForSale(req.user.id);
+  res.writeHead(200, { "Content-Type": "application/text" });
+  res.end(JSON.stringify(issuesForSale));
+};
+
+export const getIssuesForSale: (
+  buyerId: number
+) => Promise<{ [p: string]: issue[] }> = async (buyerId: number) => {
   const forSale = await prisma.$queryRaw<
     {
       id: number;
@@ -24,10 +32,10 @@ export const get: Handler = async (req, res) => {
           ON issue.ID = requested_issue.ID_Numero
       WHERE
         AV = 1
-        AND ID_Utilisateur != ${req.user.id}
+        AND ID_Utilisateur != ${buyerId}
         AND EXISTS(
           SELECT 1 FROM users_options uo
-          WHERE uo.ID_User = ${req.user.id}
+          WHERE uo.ID_User = ${buyerId}
             AND uo.Option_nom = 'sales_notification_publications'
             AND uo.Option_valeur IN (CONCAT(issue.Pays, '/', issue.Magazine),
                                      CONCAT(issue.Pays, '/', issue.Magazine, ' ', issue.Numero))
@@ -38,26 +46,21 @@ export const get: Handler = async (req, res) => {
            WHERE user_collection.Pays = issue.Pays
              AND user_collection.Magazine = issue.Magazine
              AND user_collection.Numero = issue.Numero
-             AND user_collection.ID_Utilisateur = ${req.user.id}
+             AND user_collection.ID_Utilisateur = ${buyerId}
           )`;
 
-  res.writeHead(200, { "Content-Type": "application/text" });
-  res.end(
-    JSON.stringify(
-      (
-        (await prisma.issue.findMany({
-          where: { id: { in: forSale.map(({ id }) => id) } },
-        })) as issue[]
-      ).reduce(
-        (acc, issue) => ({
-          ...acc,
-          [`${issue.country}/${issue.magazine}`]: [
-            ...(acc[`${issue.country}/${issue.magazine}`] || []),
-            issue,
-          ],
-        }),
-        {} as { [key: string]: issue[] }
-      )
-    )
+  return (
+    (await prisma.issue.findMany({
+      where: { id: { in: forSale.map(({ id }) => id) } },
+    })) as issue[]
+  ).reduce(
+    (acc, issue) => ({
+      ...acc,
+      [`${issue.country}/${issue.magazine}`]: [
+        ...(acc[`${issue.country}/${issue.magazine}`] || []),
+        issue,
+      ],
+    }),
+    {} as { [key: string]: issue[] }
   );
 };
