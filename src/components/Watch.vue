@@ -11,6 +11,7 @@
       class="d-inline-flex xl py-0 px-1 ms-2 me-2"
       :class="{
         'soft-disabled': isPublicationWatchedButNotIssueNumber,
+        disabled: !publicationcode,
       }"
       :title="buttonTooltipText"
       @click="
@@ -38,7 +39,7 @@ import { collection } from "~/stores/collection";
 const props = defineProps({
   publicationcode: {
     type: String,
-    required: true,
+    default: null,
   },
   issuenumber: {
     type: String,
@@ -116,7 +117,8 @@ const toggleWatchedPublication = async () => {
     cursor: not-allowed;
   }
 
-  &:not(.soft-disabled):hover {
+  &:not(.soft-disabled):hover,
+  &:not(.disabled):hover {
     color: white !important;
 
     .on-icon-hover {

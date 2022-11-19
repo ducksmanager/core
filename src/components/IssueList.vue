@@ -317,11 +317,12 @@ const filteredUserCopies = $computed(() =>
 );
 const selectedIssuesById = $computed(() =>
   selected.reduce(
-    (acc, issueNumber) => ({
+    (acc, issueKey) => ({
       ...acc,
       ...filteredUserCopies
         .filter(
-          ({ issueNumber: copyIssueNumber }) => issueNumber === copyIssueNumber
+          ({ issueNumber: copyIssueNumber }) =>
+            issueKey.split("-id-")[0] === copyIssueNumber
         )
         .reduce(
           (acc2, { id, issueNumber }) => ({ ...acc2, [id]: issueNumber }),

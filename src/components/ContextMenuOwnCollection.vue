@@ -533,7 +533,7 @@ const updateSelectedIssues = async (force = false) => {
     condition: editingCopies.map(({ condition }) =>
       convertConditionToDbValue(condition)
     ),
-    istoread: editingCopies.map(({ isToRead }) => isToRead),
+    isToRead: editingCopies.map(({ isToRead }) => isToRead),
     isOnSale: editingCopies.map(({ isOnSale }) => isOnSale),
     purchaseId: editingCopies.map(({ purchaseId }) => purchaseId),
   };

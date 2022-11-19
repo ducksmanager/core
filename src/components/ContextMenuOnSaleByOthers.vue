@@ -38,7 +38,7 @@
       v-else
       class="footer clickable two-lines pre-wrap"
       @click="requestIssues({ issueIds })"
-      v-html="$t('Je suis intéressé par ces numéros,\ncontacter les vendeurs')"
+      v-html="$t('Je suis intéressé par ces numéros,\ncontacter le vendeur')"
     />
   </v-contextmenu-group>
 </template>
@@ -57,21 +57,17 @@ const { selectedIssuesById } = defineProps({
 });
 const emit = defineEmits(["clear-selection"]);
 
-const issueIds = $computed(() =>
-  Object.values(selectedIssuesById).map(
-    (issueNumberAndUser) => issueNumberAndUser.split("-id-")[1]
-  )
-);
+const issueIds = $computed(() => Object.keys(selectedIssuesById).map(parseInt));
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
   Object.entries(
-    Object.values(selectedIssuesById).reduce((acc, issueNumberAndUser) => {
-      const issueNumber = issueNumberAndUser.split("-id-")[0];
-      return {
+    Object.values(selectedIssuesById).reduce(
+      (acc, issueNumber) => ({
         ...acc,
         [issueNumber]: (acc[issueNumber] || 0) + 1,
-      };
-    }, {})
+      }),
+      {}
+    )
   )
     .filter(([, count]) => count > 1)
     .reduce(
@@ -84,6 +80,7 @@ const { t: $t } = useI18n();
 
 const requestIssues = async (data) => {
   await marketplace().requestIssues(data.issueIds);
+  await marketplace().loadIssueRequestsAsBuyer(true);
   emit("clear-selection");
 };
 </script>

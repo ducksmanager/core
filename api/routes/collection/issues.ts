@@ -227,7 +227,7 @@ export const post = [
     } else if (JSON.stringify(isOnSale) === JSON.stringify(["do_not_change"])) {
       isOnSale = [null];
     }
-    let isToRead = req.body.istoread;
+    let isToRead = req.body.isToRead;
     if (typeof isToRead === "undefined" || isToRead === "do_not_change") {
       isToRead = null;
     } else if (JSON.stringify(isToRead) === JSON.stringify(["do_not_change"])) {

@@ -35,7 +35,7 @@ alias: [/agrandir/marketplace]
           pill
           class="small d-inline-flex align-items-center"
           style="height: 20px"
-          @click.prevent="deleteRequestsToSeller(userId)"
+          @click.exact="deleteRequestsToSeller(userId)"
           >{{ $t("Annuler la demande") }}</b-button
         >
       </template>
@@ -63,11 +63,11 @@ alias: [/agrandir/marketplace]
     >
       {{
         $t(
-          "Aucun numéro que vous ne possédez pas n'est en vente parmi les magazines que vous avez surveillés. Cliquez sur "
+          "Aucun numéro que vous ne possédez pas n'est en vente parmi les magazines que vous avez surveillés. Cliquez sur"
         )
-      }}<Watch class="ml-2" publicationcode="" />{{
+      }}<Watch />{{
         $t(
-          " à côté d'un magazine ou d'un numéro dans la page de gestion de la collection pour voir les numéros en vente."
+          "à côté d'un magazine ou d'un numéro dans la page de gestion de la collection pour voir les numéros en vente sur cette page."
         )
       }}
     </b-alert>
@@ -137,7 +137,7 @@ let userIdFilter = $ref(null);
 
 const deleteRequestsToSeller = async (sellerId) => {
   await marketplace().deleteRequestsToSeller(parseInt(sellerId));
-  await marketplace().loadIssueRequestsAsBuyer();
+  await marketplace().loadIssueRequestsAsBuyer(true);
 };
 onMounted(async () => {
   await marketplace().loadIssuesOnSaleByOthers();
