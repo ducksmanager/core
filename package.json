@@ -19,8 +19,8 @@
 		"@bperel/vue3-popper-teleport": "^1.4.3",
 		"@mapbox/mapbox-gl-geocoder": "^5.0.1",
 		"@popperjs/core": "^2.11.6",
-		"@sentry/tracing": "^7.19.0",
-		"@sentry/vue": "^7.19.0",
+		"@sentry/tracing": "^7.20.0",
+		"@sentry/vue": "^7.20.0",
 		"@vueuse/core": "^9.5.0",
 		"@vueuse/head": "^1.0.16",
 		"axios": "^1.1.3",
@@ -44,7 +44,7 @@
 		"vue-i18n-extract": "^2.0.7",
 		"vue-mapbox-ts": "^0.8.1",
 		"vue-router": "^4.1.6",
-		"vue-slicksort": "^2.0.0-alpha.5"
+		"vue-slicksort": "^2.0.2"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^0.31.0",
@@ -57,7 +57,7 @@
 		"@vitejs/plugin-vue": "^3.2.0",
 		"@vue/test-utils": "^2.2.3",
 		"ejs-lint": "^2.0.0",
-		"eslint": "^8.27.0",
+		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-prettier-vue": "^4.2.0",
 		"eslint-plugin-simple-import-sort": "^8.0.0",

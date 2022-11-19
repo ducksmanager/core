@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@prisma/client': ^4.6.1
   '@pusher/push-notifications-server': ^1.2.6
-  '@sentry/node': ^7.19.0
+  '@sentry/node': ^7.20.0
   '@swc/core': ^1.3.14
   '@types/body-parser': ^1.19.2
   '@types/connect-busboy': ^1.0.0
@@ -38,12 +38,12 @@ specifiers:
   ts-node: ^10.9.1
   tsc-alias: ^1.7.1
   tsconfig-paths: ^4.1.0
-  typescript: ^4.8.4
+  typescript: ^4.9.3
 
 dependencies:
   '@prisma/client': 4.6.1_prisma@4.6.1
   '@pusher/push-notifications-server': 1.2.6
-  '@sentry/node': 7.19.0
+  '@sentry/node': 7.20.0
   axios: 1.1.3
   body-parser: 1.20.1
   cloudinary: 1.32.0
@@ -62,7 +62,7 @@ dependencies:
   mariadb: 3.0.2
   nodemailer: 6.8.0
   nodemon: 2.0.20
-  ts-node: 10.9.1_uusaoo756f3l7x5w4ayk4pz43y
+  ts-node: 10.9.1_b7y2sroehwdm6smfh4myvg7fsa
 
 devDependencies:
   '@swc/core': 1.3.14
@@ -80,7 +80,7 @@ devDependencies:
   prisma: 4.6.1
   tsc-alias: 1.7.1
   tsconfig-paths: 4.1.0
-  typescript: 4.8.4
+  typescript: 4.9.3
 
 packages:
 
@@ -187,22 +187,22 @@ packages:
       jsonwebtoken: 8.5.1
     dev: false
 
-  /@sentry/core/7.19.0:
-    resolution: {integrity: sha512-YF9cTBcAnO4R44092BJi5Wa2/EO02xn2ziCtmNgAVTN2LD31a/YVGxGBt/FDr4Y6yeuVehaqijVVvtpSmXrGJw==}
+  /@sentry/core/7.20.0:
+    resolution: {integrity: sha512-8dIHk8niyEyVayUQpgECHnV2p444nPBjIyuQrtkdTxL7sBLC5+Y0DhRjxg9cJyZe/bZnXVerGkgcA7niKW4W8A==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.19.0
-      '@sentry/utils': 7.19.0
+      '@sentry/types': 7.20.0
+      '@sentry/utils': 7.20.0
       tslib: 1.14.1
     dev: false
 
-  /@sentry/node/7.19.0:
-    resolution: {integrity: sha512-yG7Tx32WqOkEHVotFLrumCcT9qlaSDTkFNZ+yLSvZXx74ifsE781DzBA9W7K7bBdYO3op+p2YdsOKzf3nPpAyQ==}
+  /@sentry/node/7.20.0:
+    resolution: {integrity: sha512-aB0VSueCiWPg53DIevnKNYSu2OGsPweWO1eKhMhu1uJNbL+ZYAFRczdcLdkWCqa38X5jjqO82GKuIZYpXUGX+A==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.19.0
-      '@sentry/types': 7.19.0
-      '@sentry/utils': 7.19.0
+      '@sentry/core': 7.20.0
+      '@sentry/types': 7.20.0
+      '@sentry/utils': 7.20.0
       cookie: 0.4.2
       https-proxy-agent: 5.0.1
       lru_map: 0.3.3
@@ -211,16 +211,16 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/types/7.19.0:
-    resolution: {integrity: sha512-oGRAT6lfzoKrxO1mvxiSj0XHxWPd6Gd1wpPGuu6iJo03xgWDS+MIlD1h2unqL4N5fAzLjzmbC2D2lUw50Kn2pA==}
+  /@sentry/types/7.20.0:
+    resolution: {integrity: sha512-x17ddduGWqW95neBFVvxzmInb5WXVw+2PcNASHXpGFhi7v2gz2a7/w2CcIKxsqODNnc+z/k1t0Y+uy9B6aH6ag==}
     engines: {node: '>=8'}
     dev: false
 
-  /@sentry/utils/7.19.0:
-    resolution: {integrity: sha512-2L6lq+c9Ol2uiRxQDdcgoapmHJp24MhMN0gIkn2alSfMJ+ls6bGXzQHx6JAIdoOiwFQXRZHKL9ecfAc8O+vItA==}
+  /@sentry/utils/7.20.0:
+    resolution: {integrity: sha512-4lc122TFgkaCAvoPRy+uc5vgOCumTa/2nPkzCSxVsezQs+ebHxyMJQK7GWBLI6P+EzKfEjlgyMzRWaPJ3iJatA==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.19.0
+      '@sentry/types': 7.20.0
       tslib: 1.14.1
     dev: false
 
@@ -1968,7 +1968,7 @@ packages:
       nopt: 1.0.10
     dev: false
 
-  /ts-node/10.9.1_uusaoo756f3l7x5w4ayk4pz43y:
+  /ts-node/10.9.1_b7y2sroehwdm6smfh4myvg7fsa:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -1995,7 +1995,7 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.8.4
+      typescript: 4.9.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: false
@@ -2051,8 +2051,8 @@ packages:
       mime-types: 2.1.35
     dev: false
 
-  /typescript/4.8.4:
-    resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
+  /typescript/4.9.3:
+    resolution: {integrity: sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
 
