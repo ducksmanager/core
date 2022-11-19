@@ -5,7 +5,7 @@ alias: [/collection/doubles]
 <template>
   <div v-if="duplicateIssues && hasPublicationNames">
     <IssueList
-      v-for="publicationcode in Object.keys(issueNumbersByPublicationCode)"
+      v-for="publicationcode in publicationCodes"
       :key="publicationcode"
       :publicationcode="publicationcode"
       duplicates-only
@@ -24,26 +24,26 @@ import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 let hasPublicationNames = $ref(false);
-let issueNumbersByPublicationCode = $ref(null);
+let publicationCodes = $ref(null);
 const duplicateIssues = $computed(() => collection().duplicateIssues);
 
 watch(
   () => duplicateIssues,
   async (duplicateIssues) => {
     if (duplicateIssues) {
-      issueNumbersByPublicationCode = {};
-      Object.keys(duplicateIssues).forEach(
-        ({ publicationcode, issuenumber }) => {
-          if (!issueNumbersByPublicationCode[publicationcode])
-            issueNumbersByPublicationCode[publicationcode] = [];
+      publicationCodes = [
+        ...new Set(
+          Object.values(duplicateIssues).reduce(
+            (acc, issues) => [
+              ...acc,
+              ...issues.map(({ publicationCode }) => publicationCode),
+            ],
+            []
+          )
+        ),
+      ];
 
-          issueNumbersByPublicationCode[publicationcode].push(issuenumber);
-        }
-      );
-
-      await coa().fetchPublicationNames(
-        Object.keys(issueNumbersByPublicationCode)
-      );
+      await coa().fetchPublicationNames(publicationCodes);
       hasPublicationNames = true;
     }
   },

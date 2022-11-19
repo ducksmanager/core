@@ -463,7 +463,7 @@ const isSaleDisabled = $computed(
 );
 
 let isSingleIssueSelected = $computed(
-  () => Object.keys(selectedIssuesById).length === 1
+  () => [...new Set(Object.values(selectedIssuesById))].length === 1
 );
 const hasNoCopies = $computed(() => !editingCopies.length);
 const hasMaxCopies = $computed(() => editingCopies.length >= 3);

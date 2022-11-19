@@ -600,7 +600,8 @@ onMounted(async () => {
 
       .issue-copies {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        align-items: end;
         margin-right: 10px;
 
         .issue-copy {
