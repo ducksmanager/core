@@ -7,12 +7,12 @@
       :contribution="contribution"
       target-level
     />
-    <BProgress>
-      <BProgressBar
+    <b-progress>
+      <b-progress-bar
         class="progress-current"
         :style="{ width: `${medalProgressCurrentPercentage}%` }"
       />
-      <BProgressBar
+      <b-progress-bar
         class="progress-extra"
         striped
         animated
@@ -22,7 +22,7 @@
       <div class="progress-extra-text">
         + {{ extraPoints }} {{ $t("Points") }}
       </div>
-    </BProgress>
+    </b-progress>
     <Medal
       class="right"
       x-small

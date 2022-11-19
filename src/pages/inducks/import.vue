@@ -44,16 +44,16 @@
       }}
     </p>
     <p>
-      <BButton class="mx-2" size="lg" variant="primary" :href="r('/signup')">
+      <b-button class="mx-2" size="lg" variant="primary" :href="r('/signup')">
         {{ $t("Inscription") }}
-      </BButton>
-      <BButton class="mx-2" size="lg" variant="primary" :href="r('/login')">
+      </b-button>
+      <b-button class="mx-2" size="lg" variant="primary" :href="r('/login')">
         {{ $t("Connexion") }}
-      </BButton>
+      </b-button>
     </p>
   </div>
   <form v-else-if="step === 1" id="inducks-import" method="post" action="">
-    <BAlert show variant="info">
+    <b-alert show variant="info">
       <div>
         {{
           $t(
@@ -83,23 +83,23 @@
           {{ $t(`Cliquez sur le bouton "Importer" en bas de la page.`) }}
         </li>
       </ol>
-    </BAlert>
-    <BRow class="justify-content-center">
-      <BCol sm="6">
+    </b-alert>
+    <b-row class="justify-content-center">
+      <b-col sm="6">
         <iframe src="https://inducks.org/collection.php?rawOutput=1" />
-      </BCol>
-      <BCol sm="6">
-        <BFormGroup>
-          <BFormTextarea id="inducks-collection" v-model="rawData" />
-        </BFormGroup>
-        <BButton @click="processRawData()">
+      </b-col>
+      <b-col sm="6">
+        <b-form-group>
+          <b-form-textarea id="inducks-collection" v-model="rawData" />
+        </b-form-group>
+        <b-button @click="processRawData()">
           {{ $t("Importer") }}
-        </BButton>
-      </BCol>
-    </BRow>
+        </b-button>
+      </b-col>
+    </b-row>
   </form>
   <template v-else-if="step === 2">
-    <BAlert v-if="issuesImportable" show variant="info">
+    <b-alert v-if="issuesImportable" show variant="info">
       <div>
         {{ issuesImportable.length }}
         {{ $t("numéros peuvent être importés.") }}
@@ -128,10 +128,10 @@
             </div>
           </template>
         </Accordion>
-        <BCollapse visible />
+        <b-collapse visible />
       </div>
-    </BAlert>
-    <BAlert
+    </b-alert>
+    <b-alert
       v-if="issuesNotReferenced?.length || issuesAlreadyInCollection?.length"
       show
       variant="warning"
@@ -213,42 +213,42 @@
           </template>
         </Accordion>
       </template>
-    </BAlert>
+    </b-alert>
     <template v-if="issuesImportable?.length">
-      <BFormGroup>
+      <b-form-group>
         <label for="condition">{{ $t("Etat") }}</label>
-        <BFormSelect
+        <b-form-select
           id="condition"
           v-model="issueDefaultCondition"
           class="mb-3"
         >
           <template #first>
-            <BFormSelectOption :value="null" disabled>
+            <b-form-select-option :value="null" disabled>
               {{
                 $t("Choisissez un état par défaut pour les nouveaux numéros")
               }}
-            </BFormSelectOption>
+            </b-form-select-option>
           </template>
 
-          <BFormSelectOption
+          <b-form-select-option
             v-for="(conditionText, conditionValue) in conditions"
             :key="conditionValue"
             :value="conditionValue"
           >
             {{ conditionText }}
-          </BFormSelectOption>
-        </BFormSelect>
-      </BFormGroup>
-      <BProgress v-if="importProgress" height="2rem">
-        <BProgressBar
+          </b-form-select-option>
+        </b-form-select>
+      </b-form-group>
+      <b-progress v-if="importProgress" height="2rem">
+        <b-progress-bar
           :value="importProgress"
           :label="`${parseInt(importProgress)}%`"
         />
-      </BProgress>
-      <BButton v-else @click="importIssues">
+      </b-progress>
+      <b-button v-else @click="importIssues">
         {{ $t("Importer") }} {{ issuesImportable.length }}
         {{ $t("numéro | numéros", issuesImportable.length) }}
-      </BButton>
+      </b-button>
     </template>
   </template>
 </template>

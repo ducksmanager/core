@@ -18,7 +18,7 @@
           />
         </div>
       </div>
-      <BAlert
+      <b-alert
         variant="info"
         show
         v-html="
@@ -38,7 +38,7 @@
         "
         class="mb-4"
       >
-        <BAlert
+        <b-alert
           variant="info"
           show
           v-html="
@@ -53,15 +53,15 @@
           :title="`${$t('Bibliothèque DucksManager de')} ${bookcaseUsername}`"
           :url="bookcaseUrl"
         />
-        <BButton v-else size="sm" @click="showShareButtons = true">
+        <b-button v-else size="sm" @click="showShareButtons = true">
           {{
             $t(
               "Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !"
             )
           }}
-        </BButton>
+        </b-button>
       </div>
-      <BAlert
+      <b-alert
         v-else-if="allowSharing === false && user.username !== 'demo'"
         show
         variant="warning"
@@ -80,12 +80,12 @@
     <div v-if="loading">
       {{ $t("Chargement...") }}
     </div>
-    <BAlert v-else-if="isPrivateBookcase" variant="warning" show>
+    <b-alert v-else-if="isPrivateBookcase" variant="warning" show>
       {{ $t("La bibliothèque de cet utilisateur est privée.") }}
-    </BAlert>
-    <BAlert v-else-if="isUserNotExisting" variant="warning" show>
+    </b-alert>
+    <b-alert v-else-if="isUserNotExisting" variant="warning" show>
       {{ $t("Cet utilisateur n'existe pas.") }}
-    </BAlert>
+    </b-alert>
     <div v-else>
       <div v-if="!isSharedBookcase && hasPublicationNames">
         <UploadableEdgesCarousel
@@ -103,14 +103,14 @@
             }}
           </template>
           <template #footer>
-            <BButton
+            <b-button
               class="mt-3"
               variant="info"
               href="https://edgecreator.ducksmanager.net"
               target="_blank"
             >
               {{ $t("Envoyer des photos de tranches") }}
-            </BButton>
+            </b-button>
           </template>
         </UploadableEdgesCarousel>
         <IssueSearch
@@ -136,9 +136,9 @@
         :sorted-bookcase="sortedBookcase"
         @open-book="(edge) => (currentEdgeOpened = edge)"
       />
-      <BAlert v-else show variant="warning">
+      <b-alert v-else show variant="warning">
         {{ $t("Cette bibliothèque est vide.") }}
-      </BAlert>
+      </b-alert>
     </div>
   </div>
 </template>

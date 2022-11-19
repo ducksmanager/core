@@ -6,8 +6,8 @@
       @mouseover="currentRating = index"
       @click="emit('update:rating', currentRating)"
     >
-      <BIconStarFill v-if="index <= currentRating" />
-      <BIconStar v-else />
+      <b-icon-star-fill v-if="index <= currentRating" />
+      <b-icon-star v-else />
     </span>
   </div>
 </template>

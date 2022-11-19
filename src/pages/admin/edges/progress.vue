@@ -29,11 +29,11 @@ meta:
         :key="publicationCode"
         class="publication"
       >
-        <BIconEyeFill
+        <b-icon-eye-fill
           v-if="!showEdgesForPublication.includes(publicationCode)"
           @click="showEdgesForPublication.push(publicationCode)"
         />
-        <BIconEyeSlashFill
+        <b-icon-eye-slash-fill
           v-else
           @click="
             showEdgesForPublication.splice(

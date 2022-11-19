@@ -4,21 +4,21 @@ meta:
 </route>
 
 <template>
-  <BTable v-if="bookstores" :items="bookstores">
+  <b-table v-if="bookstores" :items="bookstores">
     <template #cell(comments)="{ value }">
       <div v-for="comment in value" :key="`comment-${comment.id}`">
         <u>{{ comment.username }} on {{ comment.creationDate }}</u
         >: {{ comment.comment }}
-        <BButton
+        <b-button
           v-if="!comment.active"
           show
           @click="validateBookstoreComment(comment)"
         >
           {{ $t("Valider") }}
-        </BButton>
+        </b-button>
       </div>
     </template>
-  </BTable>
+  </b-table>
 </template>
 
 <script setup>

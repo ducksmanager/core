@@ -9,7 +9,7 @@ alias: [/collection/compte]
   >
     <b-row>
       <b-col id="email" cols="12" md="6">
-        <BAlert variant="warning" :show="!marketplaceContactMethods.length"
+        <b-alert variant="warning" :show="!marketplaceContactMethods.length"
           >{{
             $t(
               "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
@@ -18,30 +18,30 @@ alias: [/collection/compte]
             $t(
               "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
             )
-          }}</BAlert
+          }}</b-alert
         >
       </b-col>
     </b-row>
     <Teleport :disabled="!error?.selector" :to="error?.selector">
-      <BAlert v-if="error?.message" show variant="danger">
+      <b-alert v-if="error?.message" show variant="danger">
         {{ error?.message }}
-      </BAlert>
+      </b-alert>
     </Teleport>
 
     <h5>{{ $t("Adresse e-mail") }}</h5>
     <b-row>
       <b-col id="email" cols="12" md="6">
-        <BFormInput id="email" v-model="user.email" required autofocus />
+        <b-form-input id="email" v-model="user.email" required autofocus />
       </b-col>
     </b-row>
     <b-row>
       <b-col id="showEmailToBuyers" cols="12" md="6">
-        <BFormCheckbox v-model="hasEmailContactMethod" required autofocus>
+        <b-form-checkbox v-model="hasEmailContactMethod" required autofocus>
           {{
             $t(
               "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre "
             )
-          }}</BFormCheckbox
+          }}</b-form-checkbox
         >
       </b-col>
     </b-row>
@@ -49,17 +49,17 @@ alias: [/collection/compte]
     <h5>{{ $t("Identifiant de profil Discord") }}</h5>
     <b-row id="discordId">
       <b-col cols="12" md="6">
-        <BFormInput v-model="user.discordId" />
+        <b-form-input v-model="user.discordId" />
       </b-col>
     </b-row>
     <b-row>
       <b-col id="showDiscordIfToBuyers" cols="12" md="6">
-        <BFormCheckbox v-model="hasDiscordContactMethod" required autofocus>
+        <b-form-checkbox v-model="hasDiscordContactMethod" required autofocus>
           {{
             $t(
               "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre "
             )
-          }}</BFormCheckbox
+          }}</b-form-checkbox
         >
       </b-col>
     </b-row>
@@ -69,7 +69,7 @@ alias: [/collection/compte]
     </h5>
     <b-row id="presentationText">
       <b-col cols="12" md="6">
-        <BAlert variant="info" show class="mb-0">
+        <b-alert variant="info" show class="mb-0">
           <template v-if="hasRequestedPresentationSentenceUpdate">
             {{
               $t(
@@ -84,8 +84,8 @@ alias: [/collection/compte]
               )
             }}
           </template>
-        </BAlert>
-        <BFormInput
+        </b-alert>
+        <b-form-input
           v-model="user.presentationText"
           class="mt-0"
           maxlength="100"
@@ -97,7 +97,7 @@ alias: [/collection/compte]
     <h5>{{ $t("Changement de mot de passe") }}</h5>
     <b-row id="oldPassword">
       <b-col cols="12" md="6">
-        <BFormInput
+        <b-form-input
           v-model="oldPassword"
           type="password"
           :placeholder="$t('Mot de passe actuel')"
@@ -105,7 +105,7 @@ alias: [/collection/compte]
     ></b-row>
     <b-row id="password">
       <b-col cols="12" md="6">
-        <BFormInput
+        <b-form-input
           v-model="password"
           type="password"
           :placeholder="$t('Nouveau mot de passe')"
@@ -113,7 +113,7 @@ alias: [/collection/compte]
     ></b-row>
     <b-row id="password2">
       <b-col cols="12" md="6">
-        <BFormInput
+        <b-form-input
           v-model="password2"
           type="password"
           :placeholder="$t('Nouveau mot de passe (confirmation)')"
@@ -121,33 +121,33 @@ alias: [/collection/compte]
     ></b-row>
 
     <h5>{{ $t("Options") }}</h5>
-    <BFormCheckbox v-model="user.allowSharing">
+    <b-form-checkbox v-model="user.allowSharing">
       {{ $t("Activer le partage de ma collection") }}
-    </BFormCheckbox>
+    </b-form-checkbox>
 
-    <BFormCheckbox v-model="user.showPresentationVideo">
+    <b-form-checkbox v-model="user.showPresentationVideo">
       {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
-    </BFormCheckbox>
+    </b-form-checkbox>
 
-    <BButton variant="success" size="xl" type="submit">
+    <b-button variant="success" size="xl" type="submit">
       {{ $t("Valider") }}
-    </BButton>
-    <BAlert v-if="error === null" show variant="success">
+    </b-button>
+    <b-alert v-if="error === null" show variant="success">
       {{ $t("OK") }} !
-    </BAlert>
+    </b-alert>
 
     <h5 class="mt-5">
       {{ $t("Zone danger") }}
     </h5>
     <div>
-      <BButton variant="danger" @click="emptyCollection">
+      <b-button variant="danger" @click="emptyCollection">
         {{ $t("Vider ma liste de numéros") }}
-      </BButton>
+      </b-button>
     </div>
     <div>
-      <BButton variant="danger" @click="deleteAccount">
+      <b-button variant="danger" @click="deleteAccount">
         {{ $t("Supprimer mon compte DucksManager") }}
-      </BButton>
+      </b-button>
     </div>
   </form>
 </template>

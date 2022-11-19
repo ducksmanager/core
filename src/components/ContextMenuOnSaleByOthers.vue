@@ -7,7 +7,7 @@
       )
     }}
   </li>
-  <BAlert
+  <b-alert
     v-for="(count, issueNumber) in issuesWithMultipleCopiesSelected"
     :key="issueNumber"
     class="two-lines pre-wrap text-center m-0"
@@ -20,8 +20,8 @@
         [count, issueNumber]
       )
     }}
-  </BAlert>
-  <BAlert
+  </b-alert>
+  <b-alert
     v-if="selectedIssuesBuyerIds.length === 0"
     class="text-center m-0"
     show
@@ -32,8 +32,8 @@
         "Sélectionnez un ou plusieurs numéros dans la liste\npour contacter leurs vendeurs et les ajouter à votre collection."
       )
     }}
-  </BAlert>
-  <BAlert
+  </b-alert>
+  <b-alert
     v-else-if="selectedIssuesBuyerIds.length > 1"
     class="text-center m-0"
     show
@@ -44,7 +44,7 @@
         "Vous avez sélectionner des numéros en vente par des auteurs différents. Sélectionnez des numéros en vente par un seul auteur."
       )
     }}
-  </BAlert>
+  </b-alert>
   <v-contextmenu-submenu
     v-else-if="contactMethods[selectedIssuesBuyerIds[0]]"
     style="padding: 0 1rem !important"

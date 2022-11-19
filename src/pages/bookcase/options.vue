@@ -9,7 +9,7 @@ alias: [/bibliotheque/options]
   <div v-else class="bookcase-options">
     <div v-for="(textureText, textureType) in textureTypes" :key="textureType">
       <h5>{{ textureText }}</h5>
-      <BDropdown v-model="bookcaseOptions.textures[textureType]">
+      <b-dropdown v-model="bookcaseOptions.textures[textureType]">
         <template #button-content>
           <div
             class="selected"
@@ -20,7 +20,7 @@ alias: [/bibliotheque/options]
             {{ textureWithoutSuperType(bookcaseOptions.textures[textureType]) }}
           </div>
         </template>
-        <BDropdownItem
+        <b-dropdown-item
           v-for="texture in textures"
           :key="texture"
           :style="{
@@ -29,29 +29,29 @@ alias: [/bibliotheque/options]
           @click="bookcaseOptions.textures[textureType] = texture"
         >
           {{ textureWithoutSuperType(texture) }}
-        </BDropdownItem>
-      </BDropdown>
+        </b-dropdown-item>
+      </b-dropdown>
     </div>
 
     <h5 class="mt-4 mb-3">
       {{ $t("Affichage des exemplaires multiples") }}
     </h5>
-    <BFormCheckbox v-model="bookcaseOptions.showAllCopies">
+    <b-form-checkbox v-model="bookcaseOptions.showAllCopies">
       {{ $t("Afficher les doubles de ma collection dans la bibliothèque") }}
-    </BFormCheckbox>
+    </b-form-checkbox>
 
     <h5 v-if="Object.keys(bookcaseOrder).length" class="mt-4 mb-3">
       {{ $t("Ordre des magazines") }}
     </h5>
 
-    <SlickList
+    <slick-list
       v-if="bookcaseOrder"
       v-model:list="bookcaseOrder"
       class="publication-order"
       helper-class="dragging"
       @update:list="bookcaseStore.bookcaseOrder = bookcaseOrder"
     >
-      <SlickItem
+      <slick-item
         v-for="(publicationCode, index) in bookcaseOrder"
         :key="publicationCode"
         :index="index"
@@ -60,14 +60,19 @@ alias: [/bibliotheque/options]
           :publicationcode="publicationCode"
           :publicationname="publicationNames[publicationCode]"
         />
-      </SlickItem>
-    </SlickList>
-    <BAlert variant="danger" :show="error">
+      </slick-item>
+    </slick-list>
+    <b-alert variant="danger" :show="error">
       {{ $t("Une erreur s'est produite.") }}
-    </BAlert>
-    <BButton class="mt-4" variant="success" :disabled="loading" @click="submit">
+    </b-alert>
+    <b-button
+      class="mt-4"
+      variant="success"
+      :disabled="loading"
+      @click="submit"
+    >
       {{ $t("Valider") }}
-    </BButton>
+    </b-button>
   </div>
 </template>
 

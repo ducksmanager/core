@@ -1,7 +1,7 @@
 <template>
-  <BForm ref="form" method="post">
-    <BRow class="mt-3 align-items-center">
-      <BCol sm="3" md="2">
+  <b-form ref="form" method="post">
+    <b-row class="mt-3 align-items-center">
+      <b-col sm="3" md="2">
         {{ $t("Abonnement au magazine") }}<br />
         <template v-if="isEdit">
           <PublicationSelect
@@ -20,8 +20,8 @@
           :publicationname="publicationNames[publicationCode]"
           :publicationcode="publicationCode"
         />
-      </BCol>
-      <BCol sm="3" md="2">
+      </b-col>
+      <b-col sm="3" md="2">
         {{ $t("du") }}
         <input
           v-if="isEdit"
@@ -46,29 +46,29 @@
         <template v-else>
           {{ editSubscription.endDate }}
         </template>
-      </BCol>
-      <BCol sm="3" md="1" class="text-center m-2">
-        <BButton
+      </b-col>
+      <b-col sm="3" md="1" class="text-center m-2">
+        <b-button
           v-if="isEdit"
           size="sm"
           @click="$emit('edit', editSubscription)"
         >
           {{ $t("OK") }}
-        </BButton>
-        <BButton v-else size="sm" @click="$emit('start-edit')">
+        </b-button>
+        <b-button v-else size="sm" @click="$emit('start-edit')">
           {{ $t("Modifier") }}
-        </BButton>
-      </BCol>
-      <BCol sm="3" md="1" class="text-center m-2">
-        <BButton v-if="isEdit" size="sm" @click="$emit('cancel-edit')">
+        </b-button>
+      </b-col>
+      <b-col sm="3" md="1" class="text-center m-2">
+        <b-button v-if="isEdit" size="sm" @click="$emit('cancel-edit')">
           {{ $t("Annuler") }}
-        </BButton>
-        <BButton v-else size="sm" @click="$emit('delete')">
+        </b-button>
+        <b-button v-else size="sm" @click="$emit('delete')">
           {{ $t("Supprimer") }}
-        </BButton>
-      </BCol>
-    </BRow>
-  </BForm>
+        </b-button>
+      </b-col>
+    </b-row>
+  </b-form>
 </template>
 
 <script setup>

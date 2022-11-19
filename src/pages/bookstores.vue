@@ -14,20 +14,20 @@ alias: [/bouquineries]
       {{ $t("Chargement...") }}
     </div>
     <div v-else id="map">
-      <MapboxMap
+      <mapbox-map
         :access-token="accessToken"
         map-style="mapbox://styles/mapbox/light-v10"
         :center="mapCenter"
         :zoom="4"
       >
-        <MapboxMarker
+        <mapbox-marker
           v-for="bookstore in bookstores"
           :key="bookstore.id"
           :lng-lat="[bookstore.coordY, bookstore.coordX]"
           anchor="bottom"
           :offset="[0, 6]"
         >
-          <MapboxPopup anchor="top">
+          <mapbox-popup anchor="top">
             <div>
               <h2>{{ bookstore.name }}</h2>
               <div>
@@ -52,7 +52,7 @@ alias: [/bouquineries]
                     {{ comment }}
                   </blockquote>
                 </div>
-                <BAlert v-if="existingBookstoreSent" variant="success" show>
+                <b-alert v-if="existingBookstoreSent" variant="success" show>
                   {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
                   {{
                     $t(
@@ -60,13 +60,13 @@ alias: [/bouquineries]
                     )
                   }}
                   {{ $t("Merci pour votre contribution !") }}
-                </BAlert>
+                </b-alert>
                 <form
                   v-else-if="existingBookstore"
                   class="mb-2"
                   @submit.prevent="suggestComment(bookstore)"
                 >
-                  <BFormTextarea
+                  <b-form-textarea
                     v-model="bookstore.comment"
                     required
                     cols="41"
@@ -78,12 +78,12 @@ alias: [/bouquineries]
                       $t('Commentaires (ambiance, exemples de prix,...)')
                     "
                   />
-                  <BButton type="submit">
+                  <b-button type="submit">
                     {{ $t("Ajouter un commentaire") }}
-                  </BButton>
-                  <BButton @click="existingBookstore = null">
+                  </b-button>
+                  <b-button @click="existingBookstore = null">
                     {{ $t("Annuler") }}
-                  </BButton>
+                  </b-button>
                 </form>
                 <a
                   v-else
@@ -93,9 +93,9 @@ alias: [/bouquineries]
                 >
               </div>
             </div>
-          </MapboxPopup>
-        </MapboxMarker>
-      </MapboxMap>
+          </mapbox-popup>
+        </mapbox-marker>
+      </mapbox-map>
     </div>
     <br />
     <br />
@@ -121,7 +121,7 @@ alias: [/bouquineries]
     }}
     <br />
     <br />
-    <BAlert v-if="newBookstoreSent" variant="success" show>
+    <b-alert v-if="newBookstoreSent" variant="success" show>
       {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
       {{
         $t(
@@ -129,11 +129,11 @@ alias: [/bouquineries]
         )
       }}
       {{ $t("Merci pour votre contribution !") }}
-    </BAlert>
+    </b-alert>
     <form v-else @submit.prevent="suggestComment(newBookstore)">
       <input v-model="newBookstore.coordX" type="hidden" />
       <input v-model="newBookstore.coordY" type="hidden" />
-      <BFormInput
+      <b-form-input
         v-model="newBookstore.name"
         required
         maxlength="25"
@@ -142,7 +142,7 @@ alias: [/bouquineries]
       />
 
       <div id="address" class="mb-2" />
-      <BFormTextarea
+      <b-form-textarea
         v-model="newBookstore.comment"
         required
         cols="41"
@@ -152,9 +152,9 @@ alias: [/bouquineries]
         type="text"
         :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
       />
-      <BButton type="submit">
+      <b-button type="submit">
         {{ $t("Ajouter la bouquinerie") }}
-      </BButton>
+      </b-button>
     </form>
   </div>
 </template>

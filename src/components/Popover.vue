@@ -1,5 +1,5 @@
 <template>
-  <Popper
+  <popper
     ref="popper"
     :placement="placement"
     arrow
@@ -25,7 +25,7 @@
         <slot name="content" />
       </b-card>
     </template>
-  </Popper>
+  </popper>
 </template>
 
 <script setup>

@@ -10,7 +10,7 @@
       {{ text }}
     </BButton>
   </BButtonGroup>
-  <BarChart v-if="chartData" :chart-data="chartData" :options="options" />
+  <bar-chart v-if="chartData" :chart-data="chartData" :options="options" />
 </template>
 
 <script setup>

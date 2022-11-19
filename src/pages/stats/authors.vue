@@ -33,7 +33,7 @@ alias: [/auteurs]
             {{ text }}
           </BButton>
         </BButtonGroup>
-        <BarChart
+        <bar-chart
           :chart-data="chartData"
           :options="options"
           :style="{ width, height }"

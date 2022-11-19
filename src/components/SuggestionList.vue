@@ -11,16 +11,16 @@
       }}
     </div>
     <template v-else>
-      <BButtonGroup>
-        <BButton
+      <b-button-group>
+        <b-button
           v-for="(suggestionText, suggestionSort) in suggestionSorts"
           :key="suggestionSort"
           :pressed="suggestionSortCurrent === suggestionSort"
           @click="suggestionSortCurrent = suggestionSort"
         >
           {{ suggestionText }}
-        </BButton>
-      </BButtonGroup>
+        </b-button>
+      </b-button-group>
       <div
         v-for="{
           publicationcode,
@@ -42,7 +42,7 @@
             :title="`${$t('Score')} : ${score}`"
           >
             <div class="d-flex justify-content-center importance-bills">
-              <BIconCash
+              <b-icon-cash
                 v-for="i in 4 - getImportance(score)"
                 :key="i"
                 class="me-1"

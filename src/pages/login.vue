@@ -8,15 +8,15 @@ alias: [/connexion]
     method="post"
     @submit.prevent="login"
   >
-    <BRow>
-      <BCol lg="6">
+    <b-row>
+      <b-col lg="6">
         <h1 class="h3 mb-3 fw-normal">
           {{ $t("Connexion") }}
         </h1>
-        <BAlert v-if="error" show variant="danger">
+        <b-alert v-if="error" show variant="danger">
           {{ error }}
-        </BAlert>
-        <BFormInput
+        </b-alert>
+        <b-form-input
           id="username"
           v-model="username"
           name="username"
@@ -25,7 +25,7 @@ alias: [/connexion]
           autofocus
           :placeholder="$t(`Nom d'utilisateur`)"
         />
-        <BFormInput
+        <b-form-input
           id="password"
           v-model="password"
           name="password"
@@ -34,19 +34,19 @@ alias: [/connexion]
           :placeholder="$t('Mot de passe')"
         />
 
-        <BButton
+        <b-button
           variant="primary"
           size="xl"
           type="submit"
           :disabled="!csrfToken"
         >
           {{ $t("Connexion") }}
-        </BButton>
+        </b-button>
         <div>
           <a :href="r('/forgot')">{{ $t("Mot de passe oublié ?") }}</a>
         </div>
-      </BCol>
-    </BRow>
+      </b-col>
+    </b-row>
   </form>
 </template>
 

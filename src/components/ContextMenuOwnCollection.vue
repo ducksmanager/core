@@ -9,7 +9,7 @@
           )
         }}
       </li>
-      <BAlert
+      <b-alert
         v-if="!editingCopies.length"
         class="text-center m-0"
         show
@@ -20,8 +20,8 @@
             "Vous allez retirer tous les exemplaires\ndes numéros sélectionnés"
           )
         }}
-      </BAlert>
-      <BAlert
+      </b-alert>
+      <b-alert
         v-if="copies.length && !isSingleIssueSelected"
         class="text-center m-0"
         show
@@ -32,8 +32,8 @@
             "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié."
           )
         }}
-      </BAlert>
-      <BAlert
+      </b-alert>
+      <b-alert
         v-if="!Object.keys(selectedIssuesById).length"
         class="text-center m-0"
         show
@@ -44,9 +44,9 @@
             "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection."
           )
         }}
-      </BAlert>
+      </b-alert>
       <template v-else>
-        <BTabs
+        <b-tabs
           v-model.number="currentCopyIndex"
           nav-class="copies-tabs"
           @changed="
@@ -55,13 +55,13 @@
             }
           "
         >
-          <BTab
+          <b-tab
             v-for="(copy, copyIndex) in editingCopies"
             :key="`copy-${copyIndex}`"
           >
             <template #title>
               {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
-              <BIconTrash
+              <b-icon-trash
                 @click.stop.prevent="editingCopies.splice(copyIndex, 1)"
               />
             </template>
@@ -96,8 +96,8 @@
                     stateId === 'do_not_change' ? null : stateId === 'true'
                 "
               >
-                <BIconBookmarkCheck v-if="stateId === 'true'" />
-                <BIconBookmarkX v-if="stateId === 'false'" />
+                <b-icon-bookmark-check v-if="stateId === 'true'" />
+                <b-icon-bookmark-x v-if="stateId === 'false'" />
                 {{ stateText }}
               </v-contextmenu-item>
               <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
@@ -119,7 +119,7 @@
                     }"
                     @click="copy.purchaseId = stateId"
                   >
-                    <BIconCalendarX v-if="stateId === 'unlink'" />
+                    <b-icon-calendar-x v-if="stateId === 'unlink'" />
                     {{ stateText }}
                   </v-contextmenu-item>
                   <v-contextmenu-submenu
@@ -128,7 +128,7 @@
                     @mouseleave.prevent="() => {}"
                   >
                     <template #title>
-                      <BIconCalendar v-if="stateId === 'link'" />
+                      <b-icon-calendar v-if="stateId === 'link'" />
                       {{ stateText }}
                     </template>
                     <v-contextmenu-group :title="$t('Date d\'achat')">
@@ -182,14 +182,14 @@
                             copy.newPurchaseContext = false;
                           "
                         >
-                          <BIconCheck icon="check" />
+                          <b-icon-check icon="check" />
                         </b-button>
                         <b-button
                           variant="warning"
                           class="btn-sm"
                           @click.stop="copy.newPurchaseContext = false"
                         >
-                          <BIconX icon="x" />
+                          <b-icon-x icon="x" />
                         </b-button>
                       </v-contextmenu-item>
                       <v-contextmenu-item
@@ -219,7 +219,7 @@
                             })
                           "
                         >
-                          <BIconTrash />
+                          <b-icon-trash />
                         </b-button>
                       </v-contextmenu-item>
                     </v-contextmenu-group>
@@ -256,11 +256,11 @@
                         : stateId === 'true'
                     "
                   >
-                    <BIconCart v-if="stateId === 'true'" />
-                    <BIconCartX v-if="stateId === 'false'" />
-                    <BIconLock v-if="stateId === 'setAside'" />
-                    <BIconArrowBarRight v-if="stateId === 'transfer'" />
-                    <BIconChat v-if="stateId === 'contact'" />
+                    <b-icon-cart v-if="stateId === 'true'" />
+                    <b-icon-cart-x v-if="stateId === 'false'" />
+                    <b-icon-lock v-if="stateId === 'setAside'" />
+                    <b-icon-arrow-bar-right v-if="stateId === 'transfer'" />
+                    <b-icon-chat v-if="stateId === 'contact'" />
 
                     <span :title="tooltip">{{ stateText }}</span>
                   </v-contextmenu-item>
@@ -275,9 +275,9 @@
                     @mouseleave.prevent="() => {}"
                   >
                     <template #title>
-                      <BIconLock v-if="stateId === 'setAside'" />
-                      <BIconArrowBarRight v-if="stateId === 'transfer'" />
-                      <BIconChat v-if="stateId === 'contact'" />
+                      <b-icon-lock v-if="stateId === 'setAside'" />
+                      <b-icon-arrow-bar-right v-if="stateId === 'transfer'" />
+                      <b-icon-chat v-if="stateId === 'contact'" />
                       <div :title="tooltip">{{ stateText }}</div>
                     </template>
                     <v-contextmenu-group :title="stateText">
@@ -302,17 +302,17 @@
                 >
               </v-contextmenu-group></template
             >
-          </BTab>
+          </b-tab>
           <template v-if="!hasMaxCopies" #tabs-end>
-            <BNavItem
+            <b-nav-item
               v-if="isSingleIssueSelected || hasNoCopies"
               class="p-0"
               role="presentation"
               @click.prevent="editingCopies.push({ ...defaultState })"
             >
               {{ $t("Ajouter un exemplaire") }}
-            </BNavItem>
-            <BNavItem
+            </b-nav-item>
+            <b-nav-item
               v-else
               class="p-0 disabled text-secondary"
               role="presentation"
@@ -323,9 +323,9 @@
               "
             >
               {{ $t("Ajouter un exemplaire") }}
-            </BNavItem>
+            </b-nav-item>
           </template>
-        </BTabs>
+        </b-tabs>
         <li class="footer clickable" @click="updateSelectedIssues(false)">
           {{ $t("Enregistrer les changements") }}
         </li>

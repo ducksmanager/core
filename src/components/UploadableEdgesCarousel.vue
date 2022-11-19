@@ -2,8 +2,8 @@
   <div>
     <slot name="header" />
     <div>
-      <BCarousel v-model="currentSlide" controls>
-        <BCarouselSlide
+      <b-carousel v-model="currentSlide" controls>
+        <b-carousel-slide
           v-for="(popularIssueWithoutEdge, index) in issues"
           :key="popularIssueWithoutEdge.issueCode"
           :active="currentSlide === index"
@@ -22,8 +22,8 @@
             :extra-points="popularIssueWithoutEdge.popularity"
           />
           <slot name="footer" />
-        </BCarouselSlide>
-      </BCarousel>
+        </b-carousel-slide>
+      </b-carousel>
     </div>
   </div>
 </template>

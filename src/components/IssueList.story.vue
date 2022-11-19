@@ -1,7 +1,7 @@
 <template>
   <Story>
     <Variant title="Custom issues on sale by others">
-      <IssueList
+      <issue-list
         publicationcode="fr/MP"
         :custom-issues="customIssues"
         :group-user-copies="false"

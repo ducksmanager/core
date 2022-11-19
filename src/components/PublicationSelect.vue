@@ -1,11 +1,11 @@
 <template>
   <div>
-    <BFormSelect
+    <b-form-select
       v-model="currentCountryCode"
       :options="countryNames"
       required
     />
-    <BFormSelect
+    <b-form-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
       name="publicationCode"
@@ -13,14 +13,14 @@
       :options="publicationNamesForCurrentCountry"
       @input="$emit('input', currentPublicationCode)"
     />
-    <BButton
+    <b-button
       v-if="!noButton"
       :disabled="!currentPublicationCode"
       variant="secondary"
       :href="r(`/collection/show/${currentPublicationCode}`)"
     >
       {{ $t("OK") }}
-    </BButton>
+    </b-button>
   </div>
 </template>
 

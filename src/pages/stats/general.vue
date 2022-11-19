@@ -12,7 +12,7 @@
               )
             "
           /><br />
-          <BAlert variant="info" show size="sm" class="d-inline-block mt-3">
+          <b-alert variant="info" show size="sm" class="d-inline-block mt-3">
             <small>
               {{
                 $t(
@@ -20,7 +20,7 @@
                 )
               }}</small
             >
-          </BAlert>
+          </b-alert>
         </div>
       </template>
     </ShortStats>
@@ -29,11 +29,11 @@
     </div>
     <h2>{{ $t("Valeur de la collection") }}</h2>
     <template v-if="quotedIssues !== null && hasPublicationNames">
-      <BAlert v-if="quotationSum === 0" show variant="info">
+      <b-alert v-if="quotationSum === 0" show variant="info">
         <small>{{
           $t("Votre collection ne contient pas de magazines cotés.")
         }}</small>
-      </BAlert>
+      </b-alert>
       <div v-else>
         <div
           class="my-3"
@@ -59,7 +59,7 @@
                 ])
               }}
             </div>
-            <BTable
+            <b-table
               striped
               :items="quotedIssues"
               :per-page="50"
@@ -82,8 +82,8 @@
               <template #cell(estimationGivenCondition)="{ item }">
                 {{ item.estimationGivenCondition }}€
               </template>
-            </BTable>
-            <BPagination
+            </b-table>
+            <b-pagination
               v-model="currentPage"
               :total-rows="quotedIssues.length"
               :per-page="50"

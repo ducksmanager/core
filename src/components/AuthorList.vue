@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BAlert
+    <b-alert
       v-if="!watchedAuthors.length"
       show
       variant="warning"
@@ -17,7 +17,7 @@
           "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."
         )
       }}
-    </BAlert>
+    </b-alert>
     <div v-else class="section">
       <h5>{{ $t("Auteurs suivis") }}</h5>
       <p>
@@ -31,44 +31,44 @@
         }}</a>
       </p>
       <div v-if="personNames">
-        <BRow
+        <b-row
           v-for="author in watchedAuthors"
           :key="author.personcode"
           align-v="center"
           class="mb-2"
         >
-          <BCol lg="1">
+          <b-col lg="1">
             {{ personNames[author.personcode] }}
-          </BCol>
-          <BCol lg="2">
+          </b-col>
+          <b-col lg="2">
             <StarRating
               v-model:rating="author.notation"
               :max-rating="10"
               @update:rating="updateRating(author)"
             />
-          </BCol>
-          <BCol lg="2">
+          </b-col>
+          <b-col lg="2">
             <b-button size="sm" @click="deleteAuthor(author)">
               {{ $t("Supprimer") }}
             </b-button>
-          </BCol>
-        </BRow>
+          </b-col>
+        </b-row>
       </div>
     </div>
     <div>
       <h5>{{ $t("Ajouter un auteur") }}</h5>
-      <BAlert v-if="watchedAuthors.length >= 5" variant="warning" show>
+      <b-alert v-if="watchedAuthors.length >= 5" variant="warning" show>
         {{
           $t(
             "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres."
           )
         }}
-      </BAlert>
-      <BRow v-else>
-        <BCol sm="4">
+      </b-alert>
+      <b-row v-else>
+        <b-col sm="4">
           <nav class="navbar">
             <ul class="navbar-nav">
-              <BFormInput
+              <b-form-input
                 v-model="search"
                 list="search"
                 :placeholder="$t('Auteur')"
@@ -96,8 +96,8 @@
               </datalist>
             </ul>
           </nav>
-        </BCol>
-      </BRow>
+        </b-col>
+      </b-row>
     </div>
   </div>
 </template>

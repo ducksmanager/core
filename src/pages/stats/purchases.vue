@@ -46,7 +46,7 @@ alias: [/achats]
     </BButton>
   </BButtonGroup>
   <div class="wrapper">
-    <BarChart
+    <bar-chart
       v-if="chartData"
       :chart-data="chartData"
       :options="options"

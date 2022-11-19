@@ -23,6 +23,14 @@ module.exports = {
     "vue/no-setup-props-destructure": "off",
     "vue/no-v-html": "off",
     "vue/no-v-text-v-html-on-component": "off",
+    "vue/component-name-in-template-casing": [
+      "error",
+      "kebab-case",
+      {
+        registeredComponentsOnly: true,
+        ignores: [],
+      },
+    ],
   },
   plugins: ["simple-import-sort", "@typescript-eslint"],
   ignorePatterns: ["**/node_modules", "**/dist", "shims.d.ts", "vendor"],

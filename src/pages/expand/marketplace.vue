@@ -22,7 +22,7 @@ alias: [/agrandir/marketplace]
     variant="info"
   >
     <div>{{ $t("Demandes envoyées :") }}</div>
-    <Accordion
+    <accordion
       v-for="(issueIds, userId) in requestIssueIdsBySellerId"
       :id="`email-for-user-${userId}`"
       :key="`email-for-user-${userId}`"
@@ -51,7 +51,7 @@ alias: [/agrandir/marketplace]
             />
           </li></ul
       ></template>
-    </Accordion>
+    </accordion>
   </b-alert>
   <div
     v-if="issuesOnSaleByOthers && issueRequestsAsBuyer && hasPublicationNames"

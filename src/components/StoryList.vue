@@ -2,7 +2,7 @@
   <ul>
     <template v-for="(storiesOfAuthor, author) in stories">
       <li v-for="storyCode in storiesOfAuthor" :key="`${author}- ${storyCode}`">
-        <BBadge>{{ authors[author] }}</BBadge>
+        <b-badge>{{ authors[author] }}</b-badge>
         <InducksStory
           :storycode="storyCode"
           :title="storyDetails[storyCode].title"

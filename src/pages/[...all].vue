@@ -24,11 +24,11 @@ alias:
           )
         }}
       </h5>
-      <BRow>
-        <BCol offset-md="1" lg="5">
+      <b-row>
+        <b-col offset-md="1" lg="5">
           <img src="/images/demos/montage_small.jpg" alt="logo" />
-        </BCol>
-        <BCol lg="5">
+        </b-col>
+        <b-col lg="5">
           <div>
             {{
               $t(
@@ -46,11 +46,11 @@ alias:
           <div>
             {{ $t("DucksManager est gratuit et sans limite d'utilisation.") }}
           </div>
-        </BCol>
-      </BRow>
+        </b-col>
+      </b-row>
       <hr />
-      <BRow>
-        <BCol offset-md="1" lg="5">
+      <b-row>
+        <b-col offset-md="1" lg="5">
           <h3>
             {{
               $t(
@@ -79,17 +79,17 @@ alias:
               )
             }}
           </div>
-        </BCol>
-        <BCol lg="5">
+        </b-col>
+        <b-col lg="5">
           <img src="/images/demos/manage.jpg" alt="demo_gerer" />
-        </BCol>
-      </BRow>
+        </b-col>
+      </b-row>
       <hr />
-      <BRow>
-        <BCol offset-md="1" lg="5">
+      <b-row>
+        <b-col offset-md="1" lg="5">
           <video src="/images/demos/bookcase.mp4?new" autoplay muted loop />
-        </BCol>
-        <BCol lg="5">
+        </b-col>
+        <b-col lg="5">
           <h3>{{ $t("Votre bibliothèque, comme si vous étiez devant !") }}</h3>
           <div>
             {{
@@ -112,11 +112,11 @@ alias:
               )
             }}
           </div>
-        </BCol>
-      </BRow>
+        </b-col>
+      </b-row>
       <hr />
-      <BRow>
-        <BCol offset-md="1" lg="5">
+      <b-row>
+        <b-col offset-md="1" lg="5">
           <h3>
             {{
               $t(
@@ -145,14 +145,14 @@ alias:
               )
             }}
           </div>
-        </BCol>
-        <BCol lg="5">
+        </b-col>
+        <b-col lg="5">
           <img src="/images/demos/author_stats.png" alt="demo_stats_auteur" />
-        </BCol>
-      </BRow>
+        </b-col>
+      </b-row>
       <hr />
-      <BRow>
-        <BCol offset-md="1" lg="5">
+      <b-row>
+        <b-col offset-md="1" lg="5">
           <video
             src="/images/demos/whattheduck.mp4?new"
             autoplay
@@ -160,8 +160,8 @@ alias:
             loop
             height="360"
           />
-        </BCol>
-        <BCol lg="5">
+        </b-col>
+        <b-col lg="5">
           <h3>
             {{ $t("Votre collection Disney en poche, où que vous soyez") }}
           </h3>
@@ -180,17 +180,17 @@ alias:
               "Disponible gratuitement sur les téléphones et tablettes Android."
             )
           }}
-        </BCol>
-      </BRow>
+        </b-col>
+      </b-row>
       <div v-if="!user" id="sign-up-prompt">
-        <BButton
+        <b-button
           size="lg"
           variant="success"
           class="no-border"
           :href="r('/signup')"
         >
           {{ $t("Cliquez ici pour vous inscrire !") }}
-        </BButton>
+        </b-button>
       </div>
     </div>
   </div>

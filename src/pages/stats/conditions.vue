@@ -1,6 +1,6 @@
 <template>
   <LinkToCollectionIfNoIssue />
-  <PieChart :chart-data="chartData" :options="options" />
+  <pie-chart :chart-data="chartData" :options="options" />
 </template>
 
 <script setup>

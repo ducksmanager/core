@@ -28,7 +28,7 @@
           {{ $tc("pays | pays", stats.numberOfCountries) }}
         </div>
         <div v-if="stats.allowSharing === '1'" class="bookcase-link">
-          <BButton
+          <b-button
             size="xs"
             variant="outline-secondary"
             target="_blank"
@@ -36,7 +36,7 @@
           >
             <img style="height: 16px" src="/images/icons/bookcase.png" />&nbsp;
             {{ $t("Voir la bibliothèque") }}
-          </BButton>
+          </b-button>
         </div>
       </div>
     </template>

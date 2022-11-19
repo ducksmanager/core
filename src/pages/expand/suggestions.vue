@@ -4,7 +4,7 @@ alias: [/agrandir/suggestions]
 
 <template>
   <div v-if="collection">
-    <BAlert variant="info" show>
+    <b-alert variant="info" show>
       {{ $t("DucksManager se base sur les") }}
       <a :href="r('/stats/authors')">{{
         $t("notes que vous attribuez à vos auteurs préférés")
@@ -14,13 +14,13 @@ alias: [/agrandir/suggestions]
       }}
       <br /><br />
       {{ $t("Les suggestions d'achat sont mises à jour quotidiennement.") }}
-    </BAlert>
+    </b-alert>
     <div v-if="!watchedAuthors">
       {{ $t("Chargement...") }}
     </div>
     <div v-else-if="watchedAuthors.length && watchedAuthorsWithNotation.length">
       {{ $t("Montrer les magazines de") }}
-      <BFormSelect
+      <b-form-select
         v-if="countryNamesWithAllCountriesOption"
         v-model="countryCode"
         size="sm"
@@ -32,10 +32,10 @@ alias: [/agrandir/suggestions]
         >
           {{ text }}
         </b-form-select-option>
-      </BFormSelect>
+      </b-form-select>
       <SuggestionList :countrycode="countryCode" :since-last-visit="false" />
     </div>
-    <BAlert
+    <b-alert
       v-else-if="!watchedAuthorsWithNotation.length"
       show
       variant="warning"
@@ -45,8 +45,8 @@ alias: [/agrandir/suggestions]
           "Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection."
         )
       }}
-    </BAlert>
-    <BAlert v-else show variant="warning">
+    </b-alert>
+    <b-alert v-else show variant="warning">
       {{ $t("Aucun auteur noté.") }}
       <span
         v-html="
@@ -62,7 +62,7 @@ alias: [/agrandir/suggestions]
           "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."
         )
       }}
-    </BAlert>
+    </b-alert>
   </div>
 </template>
 

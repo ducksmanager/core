@@ -21,7 +21,7 @@
 
     <div class="container" @click.self="closeBook()">
       <div id="book" class="flip-book" @click.self="closeBook()">
-        <BCard
+        <b-card
           v-if="showTableOfContents"
           no-body
           class="table-of-contents d-none d-md-block"
@@ -41,8 +41,8 @@
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
           </template>
-          <BTabs v-if="pages" v-model="currentTabIndex" pills card vertical>
-            <BTab
+          <b-tabs v-if="pages" v-model="currentTabIndex" pills card vertical>
+            <b-tab
               v-for="{
                 storycode,
                 kind,
@@ -67,9 +67,9 @@
                   :dark="!!url"
                 />
               </template>
-            </BTab>
-          </BTabs>
-        </BCard>
+            </b-tab>
+          </b-tabs>
+        </b-card>
         <div
           v-for="({ position, url }, index) in pagesWithUrl"
           :key="`page-${position}`"

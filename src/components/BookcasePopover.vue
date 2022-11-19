@@ -7,8 +7,8 @@
         :sorted-bookcase="edges"
         embedded
       />
-      <BRow>
-        <BCol
+      <b-row>
+        <b-col
           v-for="(edge, edgeId) in edges"
           :key="`bookcase-${id}-issue-${edgeId}`"
           cols="6"
@@ -22,8 +22,8 @@
             hide-condition
             :flex="false"
           />
-        </BCol>
-      </BRow>
+        </b-col>
+      </b-row>
     </template>
   </Popover>
 </template>

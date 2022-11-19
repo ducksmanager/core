@@ -2,25 +2,25 @@
   <ul id="menu-content" class="menu-content collapse show">
     <NavigationItemGroup path="collection" icon="glyphicon-home">
       <template #text>
-        <BIconHouseFill />
+        <b-icon-house-fill />
         {{ $t("Collection") }}
       </template>
       <template v-if="username !== undefined" #items>
         <template v-if="username">
           <NavigationItem path="/bookcase/show">
-            <BIconBookHalf />
+            <b-icon-book-half />
             {{ $t("Ma bibliothèque") }}
           </NavigationItem>
           <NavigationItem path="/collection/show">
-            <BIconList />
+            <b-icon-list />
             {{ $t("Gérer ma collection") }}
           </NavigationItem>
           <NavigationItem path="/stats/general">
-            <BIconGraphUp />
+            <b-icon-graph-up />
             {{ $t("Statistiques de ma collection") }}
           </NavigationItem>
           <NavigationItem path="/expand/suggestions">
-            <BIconCapslockFill />
+            <b-icon-capslock-fill />
             {{ $t("Agrandir ma collection") }}
           </NavigationItem>
           <NavigationItem path="/inducks/import">
@@ -33,11 +33,11 @@
             {{ $t("Collection Inducks") }}
           </NavigationItem>
           <NavigationItem path="/print">
-            <BIconPrinterFill />
+            <b-icon-printer-fill />
             {{ $t("Imprimer ma collection") }}
           </NavigationItem>
           <NavigationItem path="/logout">
-            <BIconXSquareFill />
+            <b-icon-x-square-fill />
             {{ $t("Déconnexion") }}
           </NavigationItem>
         </template>

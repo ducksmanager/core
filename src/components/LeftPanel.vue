@@ -23,14 +23,14 @@
     <Navigation v-once class="d-none d-md-block" />
     <nav v-once class="navbar navbar-dark d-block d-md-none">
       <div class="container-fluid">
-        <Popper placement="bottom" teleport="body">
+        <popper placement="bottom" teleport="body">
           <template #content>
             <Navigation />
           </template>
           <button class="navbar-toggler" type="button">
             <span class="navbar-toggler-icon" />
           </button>
-        </Popper>
+        </popper>
 
         <a class="navbar-brand" href="#">
           <SwitchLocale fixed />

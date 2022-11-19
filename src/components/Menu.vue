@@ -3,8 +3,8 @@
     <h3 v-if="title">
       {{ title }}
     </h3>
-    <BTabs v-if="items.length" v-model="activeTabIndex" class="my-4">
-      <BTab
+    <b-tabs v-if="items.length" v-model="activeTabIndex" class="my-4">
+      <b-tab
         v-for="item in items"
         :key="JSON.stringify(item)"
         no-body
@@ -14,8 +14,8 @@
         <template #title>
           {{ item.text }}
         </template>
-      </BTab>
-    </BTabs>
+      </b-tab>
+    </b-tabs>
   </div>
 </template>
 

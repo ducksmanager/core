@@ -1,6 +1,6 @@
 <template>
   <LinkToCollectionIfNoIssue />
-  <PieChart v-if="chartData" :chart-data="chartData" :options="options" />
+  <pie-chart v-if="chartData" :chart-data="chartData" :options="options" />
 </template>
 
 <script setup>

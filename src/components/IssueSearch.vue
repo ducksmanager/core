@@ -6,11 +6,11 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
-          <BDropdown
+          <b-dropdown
             class="dropdown search-type"
             :text="searchContexts[searchContext]"
           >
-            <BDropdownItem
+            <b-dropdown-item
               v-for="(
                 l10nKey, alternativeSearchContext
               ) in searchContextsWithoutCurrent"
@@ -21,9 +21,9 @@
               "
             >
               {{ l10nKey }}
-            </BDropdownItem>
-          </BDropdown>
-          <BFormInput
+            </b-dropdown-item>
+          </b-dropdown>
+          <b-form-input
             v-model="search"
             list="search"
             :placeholder="

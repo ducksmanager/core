@@ -43,7 +43,7 @@
         class="issue-list"
         @contextmenu.prevent="openContextMenuIfBookNotOpen"
       >
-        <BAlert
+        <b-alert
           v-if="userIssuesNotFoundForPublication.length"
           show
           variant="warning"
@@ -67,8 +67,8 @@
               </b-button>
             </li>
           </ul>
-        </BAlert>
-        <BAlert v-if="showFilter" v-once show variant="info" class="mb-0">
+        </b-alert>
+        <b-alert v-if="showFilter" v-once show variant="info" class="mb-0">
           {{
             $t(
               "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
@@ -80,7 +80,7 @@
           <span v-else>{{
             $t("puis faites un clic droit pour indiquer son état et validez.")
           }}</span>
-        </BAlert>
+        </b-alert>
         <Book
           v-if="currentIssueOpened"
           :publication-code="currentIssueOpened.publicationcode"
@@ -154,7 +154,10 @@
                       d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
                     />
                   </svg>
-                  <BIconBookmarkCheck v-if="isToRead" class="issue-to-read" />
+                  <b-icon-bookmark-check
+                    v-if="isToRead"
+                    class="issue-to-read"
+                  />
 
                   <Condition
                     v-if="copyCondition"
@@ -193,7 +196,7 @@
     </div>
   </div>
   <div v-else-if="!publicationNameLoading && issues && !issues.length">
-    <BAlert variant="danger" show>
+    <b-alert variant="danger" show>
       <div class="mb-4">
         {{ $t("Aucun numéro n'est répertorié pour") }}
         {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
@@ -220,7 +223,7 @@
           {{ $t("Supprimer") }}
         </b-button>
       </div>
-    </BAlert>
+    </b-alert>
   </div>
 
   <v-contextmenu ref="contextmenu">

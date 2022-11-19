@@ -4,7 +4,7 @@
     placement="right"
     @open:popper="loadIssueUrls"
   >
-    <BIconEyeFill
+    <b-icon-eye-fill
       :id="`issue-details-${issueNumber}`"
       class="mx-2"
       :class="{

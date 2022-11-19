@@ -1,8 +1,8 @@
 <template>
   <div>
-    <BAlert v-if="errors[id]" show variant="danger">
+    <b-alert v-if="errors[id]" show variant="danger">
       {{ $t(errors[id]) }}
-    </BAlert>
+    </b-alert>
     <slot />
   </div>
 </template>

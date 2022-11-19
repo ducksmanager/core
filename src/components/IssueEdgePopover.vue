@@ -29,13 +29,13 @@
               <span>{{ extraPoints }}</span> {{ $t("Points") }} !
             </div>
             <br />
-            <BButton
+            <b-button
               variant="info"
               href="https://edgecreator.ducksmanager.net"
               target="_blank"
             >
               {{ $t("Envoyer une photo de tranche") }}
-            </BButton>
+            </b-button>
           </div>
         </div>
       </div>

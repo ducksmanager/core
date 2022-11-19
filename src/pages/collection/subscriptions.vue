@@ -4,22 +4,22 @@ alias: [/collection/abonnements]
 
 <template>
   <div v-if="subscriptions && hasPublicationNames">
-    <BAlert variant="info" show>
+    <b-alert variant="info" show>
       {{
         $t(
           "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie."
         )
       }}
-    </BAlert>
-    <BRow>
-      <BCol sm="8" md="4">
+    </b-alert>
+    <b-row>
+      <b-col sm="8" md="4">
         <h4>{{ $t("Mes abonnements") }}</h4>
-      </BCol>
-    </BRow>
+      </b-col>
+    </b-row>
     <div v-if="!subscriptions.length">
       {{ $t("Aucun abonnement") }}
     </div>
-    <BAlert
+    <b-alert
       v-for="(
         currentAssociatedPublication, idx
       ) in currentAssociatedPublications"
@@ -40,7 +40,7 @@ alias: [/collection/abonnements]
         )
       }}
       <p>
-        <BButton
+        <b-button
           @click="
             createAssociatedPublicationSubscription(
               subscriptions.find(
@@ -53,12 +53,12 @@ alias: [/collection/abonnements]
           "
         >
           {{ $t("Oui") }}
-        </BButton>
-        <BButton @click="currentAssociatedPublications.splice(idx, 1)">
+        </b-button>
+        <b-button @click="currentAssociatedPublications.splice(idx, 1)">
           {{ $t("Non") }}
-        </BButton>
+        </b-button>
       </p>
-    </BAlert>
+    </b-alert>
     <Subscription
       v-for="subscription in subscriptions"
       :id="subscription.id"
@@ -72,17 +72,17 @@ alias: [/collection/abonnements]
       @edit="editSubscription(subscription.id, $event)"
       @delete="deleteSubscription(subscription.id)"
     />
-    <BRow v-if="editedSubscriptionId !== null" class="mt-3 align-items-center">
-      <BCol>
-        <BButton
+    <b-row v-if="editedSubscriptionId !== null" class="mt-3 align-items-center">
+      <b-col>
+        <b-button
           class="mt-4"
           :disabled="editedSubscriptionId !== undefined"
           @click="editedSubscriptionId = null"
         >
           {{ $t("Ajouter un abonnement") }}
-        </BButton>
-      </BCol>
-    </BRow>
+        </b-button>
+      </b-col>
+    </b-row>
     <Subscription
       v-if="editedSubscriptionId === null"
       :is-edit="editedSubscriptionId === null"
