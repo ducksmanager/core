@@ -98,7 +98,68 @@ alias: [/agrandir/marketplace]
       on-sale-by-others
       :group-user-copies="false"
       context-menu-component-name="context-menu-on-sale-by-others"
+      @launch-modal="launchModal"
     />
+    <b-modal
+      v-if="issuesOnSaleById && contactMethods && stats?.[modalContactId]"
+      v-model="showModal"
+      no-fade
+      :ok-title="
+        $t(
+          modalContactMethod === 'email'
+            ? 'J\'ai envoyé l\'e-mail'
+            : 'J\'ai envoyé le message'
+        )
+      "
+      :cancel-title="$t('Annuler')"
+      @ok="requestIssues({ issueIds: modalIssueIds })"
+      ><template #title
+        >{{ $t("Contacter") }} {{ stats[modalContactId].username }}</template
+      >
+      <header>
+        Pour contacter {{ stats[modalContactId].username }},
+        <template v-if="modalContactMethod === 'email'"
+          >envoyez-lui un e-mail à l'adresse
+          <a :href="`mailto:${contactMethods[modalContactId].email}`">{{
+            contactMethods[modalContactId].email
+          }}</a
+          >. Voici un modèle d'e-mail possible:</template
+        ><template v-if="modalContactMethod === 'discordId'"
+          >contactez cet utilisateur en lui envoyant un message en cliquant sur
+          <a
+            target="_blank"
+            :href="`https://discord.com/users/${contactMethods[modalContactId].discordId}`"
+            >ce lien</a
+          >. Voici un modèle de message possible:</template
+        >
+      </header>
+      <blockquote class="m-3 p-4 border border-1 border-secondary">
+        <p>
+          {{ $t("Bonjour") }}&nbsp;{{ stats[modalContactId].username }}
+          !
+        </p>
+        <p>
+          {{
+            $t(
+              "Les numéros suivants que vous avez mis en vente sur DucksManager m'intéressent. Sont-ils toujours disponibles et, si oui, quel prix souhaiteriez-vous ?"
+            )
+          }}
+        </p>
+        <div v-for="issueId of modalIssueIds" :key="issueId">
+          <issue
+            :publicationcode="issuesOnSaleById[issueId].publicationcode"
+            :publicationname="
+              publicationNames[issuesOnSaleById[issueId].publicationcode]
+            "
+            :issuenumber="issuesOnSaleById[issueId].issueNumber"
+          />
+        </div>
+        <p class="mt-4">
+          {{ $t("Merci d'avance pour votre réponse !") }}
+        </p>
+        <p>{{ user.username }}</p>
+      </blockquote>
+    </b-modal>
   </div>
   <div v-else>
     {{ $t("Chargement...") }}
@@ -108,10 +169,19 @@ alias: [/agrandir/marketplace]
 <script setup>
 import Accordion from "~/components/Accordion.vue";
 import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
+
+let showModal = $ref(false);
+let modalContactId = $ref(null);
+let modalContactMethod = $ref(null);
+let modalIssueIds = $ref(null);
+
+const user = $computed(() => collection().user);
+const contactMethods = $computed(() => marketplace().contactMethods);
 
 const issuesOnSaleByOthers = $computed(
   () => marketplace().issuesOnSaleByOthers
@@ -137,6 +207,19 @@ const deleteRequestsToSeller = async (sellerId) => {
   await marketplace().deleteRequestsToSeller(parseInt(sellerId));
   await marketplace().loadIssueRequestsAsBuyer(true);
 };
+
+const launchModal = (e) => {
+  showModal = true;
+  modalContactId = e.sellerId;
+  modalContactMethod = e.contactMethod;
+  modalIssueIds = e.selectedIssueIds;
+};
+
+const requestIssues = async ({ issueIds }) => {
+  await marketplace().requestIssues(issueIds);
+  await marketplace().loadIssueRequestsAsBuyer(true);
+};
+
 onMounted(async () => {
   await marketplace().loadIssuesOnSaleByOthers();
   await marketplace().loadIssueRequestsAsBuyer();

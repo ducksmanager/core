@@ -132,6 +132,11 @@
                   :key="`${issueNumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
+                  <MarketplaceBuyerInfo
+                    v-if="!userCopies.length || onSaleByOthers"
+                    :publicationcode="publicationcode"
+                    :issuenumber="issueNumber"
+                  />
                   <MarketplaceSellerInfo :issue-id="id" />
                   <svg
                     v-if="
@@ -166,18 +171,13 @@
                     :value="copyCondition"
                   />
                 </div>
-                <template v-if="!userCopies.length || onSaleByOthers">
-                  <MarketplaceBuyerInfo
-                    :publicationcode="publicationcode"
-                    :issuenumber="issueNumber"
-                  />
-                  <Watch
-                    :publicationcode="publicationcode"
-                    :issuenumber="issueNumber"
-                    :constant-width="onSaleByOthers"
-                  />
-                </template>
               </div>
+              <Watch
+                v-if="!userCopies.length || onSaleByOthers"
+                :publicationcode="publicationcode"
+                :issuenumber="issueNumber"
+                :constant-width="onSaleByOthers"
+              />
               <div class="issue-check">
                 <input
                   type="checkbox"
@@ -238,7 +238,11 @@
         contextmenu.hide();
         selected = [];
       "
-      @close="contextMenuKey = `context-menu-${Math.random()}`"
+      @close="
+        contextMenuKey = `context-menu-${Math.random()}`;
+        contextmenu.hide();
+      "
+      @launch-modal="emit('launch-modal', $event)"
     />
   </v-contextmenu>
 </template>
@@ -293,6 +297,8 @@ const props = defineProps({
 
 const { conditions } = condition();
 const { t: $t } = useI18n();
+
+const emit = defineEmits(["launch-modal"]);
 
 let contextMenuComponent;
 switch (props.contextMenuComponentName) {

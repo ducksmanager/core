@@ -45,34 +45,51 @@
       )
     }}
   </b-alert>
-  <v-contextmenu-submenu
-    v-else-if="contactMethods[selectedIssuesBuyerIds[0]]"
-    style="padding: 0 1rem !important"
-    @mouseleave.prevent="() => {}"
-  >
-    <template #title>
-      {{ $t("Je suis intéressé(e) par ces numéros") }}
-    </template>
-    <v-contextmenu-group
-      :title="`Contacter ${stats[selectedIssuesBuyerIds[0]].username}`"
+  <template v-else-if="contactMethods[selectedIssuesBuyerIds[0]]">
+    <v-contextmenu-submenu
+      class="contact"
+      :title="$t('Je suis intéressé(e) par ces numéros')"
+      @mouseleave.prevent="() => {}"
     >
-      <v-contextmenu-item
-        v-for="(value, contactMethod) in contactMethods[
-          selectedIssuesBuyerIds[0]
-        ]"
-        :key="`contact-method-${contactMethod}`"
-        :hide-on-click="false"
-        class="clickable"
-        @click.prevent="requestIssues({ issueIds })"
-        ><template v-if="contactMethod === 'email'">{{
-          $t("Par email")
-        }}</template
-        ><template v-if="contactMethod === 'discordId'">{{
-          $t("Via Discord")
-        }}</template></v-contextmenu-item
+      <v-contextmenu-group
+        :title="`${$t('Contacter')} ${
+          stats[selectedIssuesBuyerIds[0]].username
+        }`"
       >
-    </v-contextmenu-group>
-  </v-contextmenu-submenu>
+        <v-contextmenu-item
+          v-for="contactMethod in Object.keys(
+            contactMethods[selectedIssuesBuyerIds[0]]
+          )"
+          :key="`contact-method-${contactMethod}`"
+          :hide-on-click="false"
+          class="clickable"
+          ><span
+            v-if="contactMethod === 'email'"
+            @click="
+              emit('close');
+              emit('launch-modal', {
+                contactMethod: 'email',
+                sellerId: selectedIssuesBuyerIds[0],
+                selectedIssueIds: Object.keys(selectedIssuesById),
+              });
+            "
+            >{{ $t("Par email") }}</span
+          ><span
+            v-if="contactMethod === 'discordId'"
+            @click="
+              emit('close');
+              emit('launch-modal', {
+                contactMethod: 'discordId',
+                sellerId: selectedIssuesBuyerIds[0],
+                selectedIssueIds: Object.keys(selectedIssuesById),
+              });
+            "
+            >{{ $t("Via Discord") }}</span
+          ></v-contextmenu-item
+        >
+      </v-contextmenu-group>
+    </v-contextmenu-submenu>
+  </template>
 </template>
 
 <script setup>
@@ -88,7 +105,7 @@ const { selectedIssuesById } = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(["clear-selection"]);
+const emit = defineEmits(["clear-selection", "close"]);
 
 const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
@@ -122,12 +139,6 @@ const issuesWithMultipleCopiesSelected = $computed(() =>
 );
 
 const { t: $t } = useI18n();
-
-const requestIssues = async (data) => {
-  await marketplace().requestIssues(data.issueIds);
-  await marketplace().loadIssueRequestsAsBuyer(true);
-  emit("clear-selection");
-};
 
 onMounted(async () => {
   await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);

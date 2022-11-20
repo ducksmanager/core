@@ -49,11 +49,28 @@ alias: [/collection/compte]
     <h5>{{ $t("Identifiant de profil Discord") }}</h5>
     <b-row id="discordId">
       <b-col cols="12" md="6">
-        <b-form-input v-model="user.discordId" />
+        <b-form-input v-model="user.discordId" type="number" />
       </b-col>
     </b-row>
     <b-row>
       <b-col id="showDiscordIfToBuyers" cols="12" md="6">
+        <accordion id="discord-id" accordion-group-id="discord-id">
+          <template #header
+            >Comment trouver mon identifiant de profil Discord ?</template
+          >
+          <template #content
+            ><div class="text-black mb-2">
+              Vous pouvez trouver votre identifiant de profil Discord en vous
+              rendant dans le menu "Paramètres utilisateur" > "Mon compte".
+              Faites un clic droit sur "..." puis cliquez sur "Copier
+              l'identifiant".
+            </div>
+            <img
+              :src="`/images/discord-id/${locale.value}.png`"
+              class="w-100"
+            />
+          </template>
+        </accordion>
         <b-form-checkbox v-model="hasDiscordContactMethod" required autofocus>
           {{
             $t(
@@ -158,6 +175,7 @@ import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
+import Accordion from "~/components/Accordion.vue";
 import { collection } from "~/stores/collection";
 import { ScopedError } from "~types/ScopedError";
 
@@ -165,6 +183,10 @@ const user = $computed(() => collection().user);
 let marketplaceContactMethods = $computed(
   () => collection().marketplaceContactMethods
 );
+
+const i18n = useI18n();
+
+const locale = $computed(() => i18n.locale);
 
 let hasRequestedPresentationSentenceUpdate = $ref(false as boolean);
 const oldPassword = $ref("" as string);

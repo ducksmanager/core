@@ -260,7 +260,6 @@
                     <b-icon-cart-x v-if="stateId === 'false'" />
                     <b-icon-lock v-if="stateId === 'setAside'" />
                     <b-icon-arrow-bar-right v-if="stateId === 'transfer'" />
-                    <b-icon-chat v-if="stateId === 'contact'" />
 
                     <span :title="tooltip">{{ stateText }}</span>
                   </v-contextmenu-item>
@@ -277,7 +276,6 @@
                     <template #title>
                       <b-icon-lock v-if="stateId === 'setAside'" />
                       <b-icon-arrow-bar-right v-if="stateId === 'transfer'" />
-                      <b-icon-chat v-if="stateId === 'contact'" />
                       <div :title="tooltip">{{ stateText }}</div>
                     </template>
                     <v-contextmenu-group :title="stateText">
@@ -289,12 +287,7 @@
                         :class="{
                           selected: copy.isOnSale === `${stateId}-${userId}`,
                         }"
-                        @click.prevent="
-                          copy.isOnSale =
-                            stateId === 'contact'
-                              ? copy.isOnSale
-                              : `${stateId}-${userId}`
-                        "
+                        @click.prevent="copy.isOnSale = `${stateId}-${userId}`"
                         >{{ buyerUserNamesById?.[userId] }}</v-contextmenu-item
                       >
                     </v-contextmenu-group>
@@ -423,17 +416,6 @@ const marketplaceStates = $computed(() => ({
       }),
   false: { text: $t("Ne pas marquer comme à vendre") },
   true: { text: $t("Marquer comme à vendre") },
-  contact: {
-    text: $t("Contacter"),
-    isSaleDisabled,
-    tooltip: isSaleDisabled
-      ? $t(
-          "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
-        )
-      : $t(
-          "Contactez un utilisateur pour négocier la vente ou l'échange des numéros qui l'intéressent"
-        ),
-  },
   setAside: {
     text: $t("Réserver pour"),
     isSaleDisabled,
