@@ -3,7 +3,7 @@
     {{
       $t(
         "{count} numéro sélectionné|{count} numéros sélectionnés",
-        Object.keys(selectedIssuesById).length
+        selectedIssues.length
       )
     }}
   </li>
@@ -41,14 +41,18 @@
   >
     {{
       $t(
-        "Vous avez sélectionné des numéros en vente par des auteurs différents. Sélectionnez des numéros en vente par un seul auteur."
+        "Vous avez sélectionné des numéros en vente par des vendeurs différents. Sélectionnez des numéros en vente par un seul vendeur à la fois"
       )
     }}
   </b-alert>
   <template v-else-if="contactMethods[selectedIssuesBuyerIds[0]]">
     <v-contextmenu-submenu
       class="contact"
-      :title="$t('Je suis intéressé(e) par ces numéros')"
+      :title="
+        selectedIssues.length > 1
+          ? $t('Je suis intéressé(e) par ces numéros')
+          : $t('Je suis intéressé(e) par ce numéro')
+      "
       @mouseleave.prevent="() => {}"
     >
       <v-contextmenu-group
@@ -84,7 +88,7 @@
                 selectedIssueIds: Object.keys(selectedIssuesById),
               });
             "
-            >{{ $t("Via Discord") }}</span
+            >{{ $t("Sur Discord") }}</span
           ></v-contextmenu-item
         >
       </v-contextmenu-group>
@@ -99,7 +103,11 @@ import { useI18n } from "vue-i18n";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const { selectedIssuesById } = defineProps({
+const props = defineProps({
+  selectedIssues: {
+    type: Array,
+    required: true,
+  },
   selectedIssuesById: {
     type: Object,
     required: true,
@@ -109,7 +117,9 @@ const emit = defineEmits(["clear-selection", "close"]);
 
 const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
-const issueIds = $computed(() => Object.keys(selectedIssuesById).map(parseInt));
+const issueIds = $computed(() =>
+  Object.keys(props.selectedIssuesById).map((id) => parseInt(id))
+);
 const stats = $computed(() => users().stats);
 
 const selectedIssuesBuyerIds = $computed(() => [
@@ -123,7 +133,7 @@ const selectedIssuesBuyerIds = $computed(() => [
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
   Object.entries(
-    Object.values(selectedIssuesById).reduce(
+    Object.values(props.selectedIssuesById).reduce(
       (acc, issueNumber) => ({
         ...acc,
         [issueNumber]: (acc[issueNumber] || 0) + 1,

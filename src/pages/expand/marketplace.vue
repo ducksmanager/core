@@ -29,15 +29,7 @@ alias: [/agrandir/marketplace]
       :accordion-group-id="`email-for-user-${userId}`"
     >
       <template #header
-        >{{ $t("Demande à") }} {{ stats[userId].username }}
-        <b-button
-          variant="warning"
-          pill
-          class="small d-inline-flex align-items-center"
-          style="height: 20px"
-          @click.exact="deleteRequestsToSeller(userId)"
-          >{{ $t("Annuler la demande") }}</b-button
-        >
+        >{{ $t("Demandes à") }} {{ stats[userId].username }}
       </template>
       <template #content>
         <ul>
@@ -49,8 +41,17 @@ alias: [/agrandir/marketplace]
                 publicationNames[issuesOnSaleById[issueId].publicationcode]
               "
             />
-          </li></ul
-      ></template>
+            <b-button
+              variant="warning"
+              pill
+              class="small d-inline-flex align-items-center"
+              style="height: 14px"
+              @click.exact="deleteRequestToSeller(issueId)"
+              >{{ $t("Annuler la demande") }}</b-button
+            >
+          </li>
+        </ul></template
+      >
     </accordion>
   </b-alert>
   <div
@@ -107,8 +108,8 @@ alias: [/agrandir/marketplace]
       :ok-title="
         $t(
           modalContactMethod === 'email'
-            ? 'J\'ai envoyé l\'e-mail'
-            : 'J\'ai envoyé le message'
+            ? 'J\'ai envoyé l\'e-mail au vendeur'
+            : 'J\'ai envoyé le message au vendeur'
         )
       "
       :cancel-title="$t('Annuler')"
@@ -117,20 +118,24 @@ alias: [/agrandir/marketplace]
         >{{ $t("Contacter") }} {{ stats[modalContactId].username }}</template
       >
       <header>
-        Pour contacter {{ stats[modalContactId].username }},
+        {{ $t("Pour contacter") }} {{ stats[modalContactId].username }},
         <template v-if="modalContactMethod === 'email'"
-          >envoyez-lui un e-mail à l'adresse
+          >{{ $t("envoyez-lui un e-mail à l'adresse") }}
           <a :href="`mailto:${contactMethods[modalContactId].email}`">{{
             contactMethods[modalContactId].email
           }}</a
-          >. Voici un modèle d'e-mail possible:</template
+          >. {{ $t("Voici un modèle d'e-mail possible :") }}</template
         ><template v-if="modalContactMethod === 'discordId'"
-          >contactez cet utilisateur en lui envoyant un message en cliquant sur
+          >{{
+            $t(
+              "contactez cet utilisateur en lui envoyant un message sur Discord en cliquant sur"
+            )
+          }}
           <a
             target="_blank"
             :href="`https://discord.com/users/${contactMethods[modalContactId].discordId}`"
-            >ce lien</a
-          >. Voici un modèle de message possible:</template
+            >{{ $t("ce lien") }}</a
+          >. {{ $t("Voici un modèle de message possible :") }}</template
         >
       </header>
       <blockquote class="m-3 p-4 border border-1 border-secondary">
@@ -203,8 +208,8 @@ const stats = $computed(() => users().stats);
 let hasPublicationNames = $ref(false);
 let userIdFilter = $ref(null);
 
-const deleteRequestsToSeller = async (sellerId) => {
-  await marketplace().deleteRequestsToSeller(parseInt(sellerId));
+const deleteRequestToSeller = async (issueId) => {
+  await marketplace().deleteRequestToSeller(parseInt(issueId));
   await marketplace().loadIssueRequestsAsBuyer(true);
 };
 

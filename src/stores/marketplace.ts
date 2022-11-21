@@ -145,10 +145,10 @@ export const marketplace = defineStore("marketplace", {
       ).data;
       this.isLoadingIssuesOnSaleByOthers = false;
     },
-    async deleteRequestsToSeller(sellerId: number) {
+    async deleteRequestToSeller(issueId: number) {
       await axios.delete("/collection/on-sale-by-others/requests", {
         data: {
-          sellerId,
+          issueId,
         },
       });
     },

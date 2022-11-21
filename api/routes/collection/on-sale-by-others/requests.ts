@@ -59,27 +59,12 @@ export const put = [
 export const del = [
   parseForm,
   (async (req, res) => {
-    const { sellerId } = req.body;
+    const { issueId } = req.body;
 
-    const requestedIssues = await prisma.requestedIssue.findMany({
-      where: {
-        buyerId: req.user.id,
-      },
-    });
-    const requestedIssuesBelongingToSeller = await prisma.issue.findMany({
-      where: {
-        userId: sellerId,
-        id: {
-          in: requestedIssues.map(({ issueId }) => issueId),
-        },
-      },
-    });
     await prisma.requestedIssue.deleteMany({
       where: {
         buyerId: req.user.id,
-        issueId: {
-          in: requestedIssuesBelongingToSeller.map(({ id }) => id),
-        },
+        issueId,
       },
     });
     res.writeHead(200, { "Content-Type": "application/text" });

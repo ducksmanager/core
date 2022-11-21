@@ -19,7 +19,7 @@ declare module '@vue/runtime-core' {
     CollectionMenu: typeof import('./src/components/menus/CollectionMenu.vue')['default']
     Condition: typeof import('./src/components/Condition.vue')['default']
     ContextMenu: typeof import("./src/components/ContextMenu.vue")["default"]
-    ContextMenuHeader: typeof import('./src/components/ContextMenuHeader.vue')['default']
+    ContextMenuHeader: typeof import("./src/components/ContextMenuHeader.vue")["default"]
     ContextMenuOnSaleByOthers: typeof import('./src/components/ContextMenuOnSaleByOthers.vue')['default']
     ContextMenuOwnCollection: typeof import('./src/components/ContextMenuOwnCollection.vue')['default']
     Counter: typeof import('./src/components/Counter.vue')['default']
