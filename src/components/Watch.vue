@@ -1,6 +1,6 @@
 <template>
   <span
-    class="wrapper d-inline-flex align-items-center justify-content-center"
+    class="watch wrapper d-inline-flex align-items-center justify-content-center"
     :class="{
       'constant-width': constantWidth,
     }"

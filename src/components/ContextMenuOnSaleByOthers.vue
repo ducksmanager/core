@@ -41,7 +41,7 @@
   >
     {{
       $t(
-        "Vous avez sélectionner des numéros en vente par des auteurs différents. Sélectionnez des numéros en vente par un seul auteur."
+        "Vous avez sélectionné des numéros en vente par des auteurs différents. Sélectionnez des numéros en vente par un seul auteur."
       )
     }}
   </b-alert>

@@ -1,9 +1,17 @@
 <template>
-  <span v-if="sentRequest" class="d-inline-block me-2"
-    >{{ $t("Demande envoyée à") }}&nbsp;<UserPopover
-      v-if="sellerPoints && sellerStats"
-      :points="sellerPoints"
-      :stats="sellerStats"
+  <span
+    v-for="issueOnSale of issuesOnSaleByOthers"
+    :key="issueOnSale.id"
+    class="d-inline-block me-2"
+  >
+    <template v-if="sentRequests.includes(issueOnSale.id)">{{
+      $t("Demande envoyée à")
+    }}</template
+    ><template v-else>{{ $t("En vente par") }}</template
+    >&nbsp;<UserPopover
+      v-if="points[issueOnSale.userId] && stats[issueOnSale.userId]"
+      :points="points[issueOnSale.userId]"
+      :stats="stats[issueOnSale.userId]"
     />
   </span>
 </template>
@@ -23,17 +31,13 @@ const props = defineProps({
   },
 });
 
-const sellerPoints = $computed(
-  () => sentRequest && users().points[sentRequest.userId]
-);
-const sellerStats = $computed(
-  () => sentRequest && users().stats[sentRequest.userId]
-);
+const points = $computed(() => users().points);
+const stats = $computed(() => users().stats);
 
-const sentRequest = $computed(() =>
-  issuesOnSaleByOthers.find(({ id }) =>
-    marketplace().sentRequestIssueIds?.includes(id)
-  )
+const sentRequests = $computed(() =>
+  issuesOnSaleByOthers
+    .filter(({ id }) => marketplace().sentRequestIssueIds?.includes(id))
+    .map(({ id }) => id)
 );
 
 const issuesOnSaleByOthers = $computed(() =>

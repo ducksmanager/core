@@ -123,6 +123,11 @@
               </span>
             </span>
             <div class="issue-details-wrapper">
+              <MarketplaceBuyerInfo
+                v-if="!userCopies.length"
+                :publicationcode="publicationcode"
+                :issuenumber="issueNumber"
+              />
               <div class="issue-copies">
                 <div
                   v-for="(
@@ -133,7 +138,7 @@
                   class="issue-copy"
                 >
                   <MarketplaceBuyerInfo
-                    v-if="!userCopies.length || onSaleByOthers"
+                    v-if="onSaleByOthers"
                     :publicationcode="publicationcode"
                     :issuenumber="issueNumber"
                   />
@@ -233,6 +238,7 @@
       :key="contextMenuKey"
       :publicationcode="publicationcode"
       :selected-issues-by-id="selectedIssuesById"
+      :selected-issues="selected"
       :copies="selectedIssuesCopies"
       @clear-selection="
         contextmenu.hide();
@@ -597,6 +603,10 @@ onMounted(async () => {
       display: flex;
       align-items: center;
       padding-right: 20px;
+
+      :deep(.watch) {
+        margin-right: 11px;
+      }
 
       .issue-check {
         width: 15px;
