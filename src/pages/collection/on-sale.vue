@@ -8,7 +8,7 @@ alias: [/collection/a-lire]
     show
     v-html="
       $t(
-        `Sur cette page les numéros que vous avez indiqué comme 'A vendre' sont listés. rendez vous sur la page {1} pour consulter la liste des numéros que les autres utilisateurs DucksManager ont mis en vente.`,
+        `Sur cette page les numéros que vous avez indiqué comme 'A vendre' sont listés. Rendez vous sur la page {0} pour consulter la liste des numéros que les autres utilisateurs DucksManager ont mis en vente.`,
         [`<a href='/expand/marketplace'>${$t('DucksManager marketplace')}</a>`]
       )
     "
