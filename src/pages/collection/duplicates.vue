@@ -9,6 +9,7 @@ alias: [/collection/doubles]
       :key="publicationcode"
       :publicationcode="publicationcode"
       duplicates-only
+      :group-user-copies="false"
     />
   </div>
   <div v-else>

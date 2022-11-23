@@ -493,17 +493,32 @@ watch(
           );
       }
 
-      issues = issues
-        .filter(
-          ({ userCopies }) => !props.duplicatesOnly || userCopies.length > 1
-        )
-        .filter(({ userCopies }) =>
-          props.readStackOnly
-            ? userCopies.filter(({ isToRead }) => isToRead).length
-            : props.onSaleStackOnly
-            ? userCopies.filter(({ isOnSale }) => isOnSale).length
-            : true
+      if (props.duplicatesOnly) {
+        const countPerIssueNumber = issues.reduce(
+          (acc, { userCopies }) => ({
+            ...acc,
+            [userCopies[0].issueNumber]:
+              (acc[userCopies[0].issueNumber] || 0) + 1,
+          }),
+          {}
         );
+        issues = issues.filter(
+          ({ issueNumber }) => countPerIssueNumber[issueNumber] > 1
+        );
+      }
+
+      if (props.readStackOnly) {
+        issues = issues.filter(
+          ({ userCopies }) =>
+            userCopies.filter(({ isToRead }) => isToRead).length
+        );
+      }
+      if (props.onSaleStackOnly) {
+        issues = issues.filter(
+          ({ userCopies }) =>
+            userCopies.filter(({ isOnSale }) => isOnSale).length
+        );
+      }
 
       const coaIssueNumbers = coa().issuesWithTitles[props.publicationcode].map(
         ({ issueNumber }) => issueNumber
