@@ -59,9 +59,13 @@ export const post = [
   (async (req, res) => {
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
-    let validators = [validateEmail, validatePresentationText];
+    let validators = [
+      validateEmail,
+      validateEmailUpdate,
+      validatePresentationText,
+    ];
+    input.userId = req.user.id;
     if (req.body.password) {
-      input.userId = req.user.id;
       validators = [
         ...validators,
         validatePasswords,
@@ -82,6 +86,7 @@ export const post = [
       }
       const updatedUser = await prisma.user.update({
         data: {
+          discordId: parseInt(input.discordId) || null,
           email: input.email,
           allowSharing: input.allowSharing,
           showPresentationVideo: input.showPresentationVideo,
@@ -115,6 +120,7 @@ const validate = async (
       await validator(input);
     } catch (e) {
       res.writeHead(400, { "Content-Type": "application/json" });
+      console.log(e);
       res.end(JSON.stringify(e));
       return false;
     }
@@ -189,6 +195,38 @@ const validateUsernameCreation = async ({
 
 const validateEmailCreation = async ({ email }: { [_: string]: unknown }) => {
   if (await prisma.user.count({ where: { email: email as string } })) {
+    throw {
+      message: "This email is already used in another account",
+      selector: "#email",
+    } as ScopedError;
+  }
+};
+
+const validateEmailUpdate = async ({
+  email,
+  userId,
+}: {
+  [_: string]: unknown;
+}) => {
+  const currentEmail = (
+    await prisma.user.findUniqueOrThrow({
+      select: {
+        email: true,
+      },
+      where: { id: userId as number },
+    })
+  ).email;
+  if (
+    currentEmail !== currentEmail &&
+    (await prisma.user.count({
+      where: {
+        email: email as string,
+        id: {
+          notIn: [userId as number],
+        },
+      },
+    }))
+  ) {
     throw {
       message: "This email is already used in another account",
       selector: "#email",

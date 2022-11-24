@@ -36,13 +36,25 @@ alias: [/collection/compte]
     </b-row>
     <b-row>
       <b-col id="showEmailToBuyers" cols="12" md="6">
-        <b-form-checkbox v-model="hasEmailContactMethod" required autofocus>
+        <b-form-checkbox
+          v-model="hasEmailContactMethod"
+          required
+          autofocus
+          :disabled="!user.email"
+        >
           {{
             $t(
-              "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre "
+              "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre"
             )
-          }}</b-form-checkbox
-        >
+          }}
+          <template v-if="!user.email"
+            >({{
+              $t(
+                "Vous devez spécifier une adresse e-mail pour activer cette option"
+              )
+            }})</template
+          >
+        </b-form-checkbox>
       </b-col>
     </b-row>
 
@@ -55,15 +67,16 @@ alias: [/collection/compte]
     <b-row>
       <b-col id="showDiscordIfToBuyers" cols="12" md="6">
         <accordion id="discord-id" accordion-group-id="discord-id">
-          <template #header
-            >Comment trouver mon identifiant de profil Discord ?</template
-          >
+          <template #header>{{
+            $t("Comment trouver mon identifiant de profil Discord ?")
+          }}</template>
           <template #content
             ><div class="text-black mb-2">
-              Vous pouvez trouver votre identifiant de profil Discord en vous
-              rendant dans le menu "Paramètres utilisateur" > "Mon compte".
-              Faites un clic droit sur "..." puis cliquez sur "Copier
-              l'identifiant".
+              {{
+                $t(
+                  'Vous pouvez trouver votre identifiant de profil Discord en vous rendant dans le menu "Paramètres utilisateur" > "Mon compte". Faites un clic droit sur "..." puis cliquez sur "Copier l\'identifiant".'
+                )
+              }}
             </div>
             <img
               :src="`/images/discord-id/${locale.value}.png`"
@@ -71,12 +84,24 @@ alias: [/collection/compte]
             />
           </template>
         </accordion>
-        <b-form-checkbox v-model="hasDiscordContactMethod" required autofocus>
+        <b-form-checkbox
+          v-model="hasDiscordContactMethod"
+          required
+          autofocus
+          :disabled="!user.discordId"
+        >
           {{
             $t(
-              "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre "
+              "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre"
             )
-          }}</b-form-checkbox
+          }}
+          <template v-if="!user.discordId"
+            >({{
+              $t(
+                "Vous devez spécifier un identifiant de profil Discord pour activer cette option"
+              )
+            }})</template
+          ></b-form-checkbox
         >
       </b-col>
     </b-row>

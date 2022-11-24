@@ -486,5 +486,11 @@
   "à côté d'un magazine ou d'un numéro dans la page de gestion de la collection pour voir les numéros en vente sur cette page.": "next to a publication name or an issue number on the 'Manage my collection' page in order to see the issues for sale here.",
   "à sa collection": "to their collection",
   "• 1 nouvelle histoire de {{authorName}}": "• 1 new story from {{authorName}}",
-  "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}"
+  "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}",
+  "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre": "Show my email address to users who want to contact me to buy issues that I put for sale",
+  "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre": "Show my Discord ID to users who want to contact me to buy issues that I put for sale",
+  "Vous pouvez trouver votre identifiant de profil Discord en vous rendant dans le menu \"Paramètres utilisateur\" > \"Mon compte\". Faites un clic droit sur \"...\" puis cliquez sur \"Copier l'identifiant\".": "You can find your Discord profile ID by going in the \"User settings\" > \"My account\" menu. Right click on \"...\" then click on \"Copy ID\".",
+  "Comment trouver mon identifiant de profil Discord ?": "How can I find my Discord profile ID?",
+  "Vous devez spécifier une adresse e-mail pour activer cette option": "You need to set an email address to activate this option",
+  "Vous devez spécifier un identifiant de profil Discord pour activer cette option": "You need to set a Discord profile ID to activate this option"
 }
