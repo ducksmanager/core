@@ -24,7 +24,7 @@ alias: [/collection/compte]
     </b-row>
     <Teleport :disabled="!error?.selector" :to="error?.selector">
       <b-alert v-if="error?.message" show variant="danger">
-        {{ error?.message }}
+        {{ $t(error?.message) }}
       </b-alert>
     </Teleport>
 
