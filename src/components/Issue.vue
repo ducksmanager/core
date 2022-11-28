@@ -1,8 +1,8 @@
 <template>
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
-    <a
+    <router-link
       :class="{ clickable, flex }"
-      :href="`${r(`/collection/show/${publicationcode}`)}#${issuenumber}`"
+      :to="`/collection/show/${publicationcode}#${issuenumber}`"
     >
       <span v-if="!hideCondition" class="me-1"
         ><Condition
@@ -16,14 +16,12 @@
         display-class="d-inline"
       />{{ issuenumber }}
       <slot name="title-suffix" />
-    </a>
+    </router-link>
     <slot />
   </div>
 </template>
 
 <script setup>
-import { l10n } from "~/stores/l10n";
-
 defineProps({
   publicationcode: { type: String, required: true },
   publicationname: { type: String, required: true },
@@ -33,8 +31,6 @@ defineProps({
   noWrap: { type: Boolean, default: true },
   flex: { type: Boolean, default: true },
 });
-
-const { r } = l10n();
 </script>
 
 <style scoped lang="scss">

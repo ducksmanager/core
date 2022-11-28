@@ -25,9 +25,9 @@
           $t(
             'Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page {0}.',
             [
-              `<a href='${r('/bookcase/options')}'>${$t(
+              `<router-link to='/bookcase/options'>${$t(
                 'Options de la bibliothèque'
-              )}</a>`,
+              )}</router-link>`,
             ]
           )
         "
@@ -44,7 +44,11 @@
           v-html="
             $t(
               'Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page {0}.',
-              [`<a href='${r('/collection/account')}'>${$t('Mon compte')}</a>`]
+              [
+                `<router-link to='/collection/account'>${$t(
+                  'Mon compte'
+                )}</router-link>`,
+              ]
             )
           "
         />
@@ -68,7 +72,11 @@
         v-html="
           $t(
             'Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page {0}.',
-            [`<a href='${r('/collection/account')}'>${$t('Mon compte')}</a>`]
+            [
+              `<router-link a='/collection/account'>${$t(
+                'Mon compte'
+              )}</router-link>`,
+            ]
           )
         "
       />
@@ -150,12 +158,10 @@ import { watch } from "vue";
 import { bookcase as bookcaseStore } from "~/stores/bookcase";
 import { coa as coaStore } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 import { users } from "~/stores/users";
 
 const route = useRoute();
 
-const { r } = l10n();
 const collection = collectionStore();
 const coa = coaStore();
 const bookcase = bookcaseStore();

@@ -10,9 +10,9 @@
         />
       </div>
       <div id="login">
-        <a id="logo_small" :href="user ? r('/collection/show') : '/'">
+        <router-link id="logo_small" :to="user ? '/collection/show' : '/'">
           <img src="/images/logo_name.jpg" />
-        </a>
+        </router-link>
 
         <div v-if="user" id="login_status">
           <img alt="O" src="/images/icons/green.png" />&nbsp;
@@ -47,12 +47,10 @@ import Popper from "@bperel/vue3-popper-teleport";
 import axios from "axios";
 
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 import { users } from "~/stores/users";
 
 const points = $computed(() => users().points);
 const user = $computed(() => collection().user);
-const { r } = l10n();
 
 watch(
   $$(user),

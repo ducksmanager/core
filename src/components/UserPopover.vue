@@ -28,15 +28,25 @@
           {{ $tc("pays | pays", stats.numberOfCountries) }}
         </div>
         <div v-if="stats.allowSharing === '1'" class="bookcase-link">
-          <b-button
-            size="xs"
-            variant="outline-secondary"
-            target="_blank"
-            :href="r(`/bookcase/show/{username:${stats.username}}`)"
+          <router-link
+            v-slot="{ href, navigate }"
+            :to="`/bookcase/show/${stats.username}`"
+            custom
           >
-            <img style="height: 16px" src="/images/icons/bookcase.png" />&nbsp;
-            {{ $t("Voir la bibliothèque") }}
-          </b-button>
+            <b-button
+              size="xs"
+              variant="outline-secondary"
+              target="_blank"
+              :href="href"
+              @click="navigate"
+            >
+              <img
+                style="height: 16px"
+                src="/images/icons/bookcase.png"
+              />&nbsp;
+              {{ $t("Voir la bibliothèque") }}
+            </b-button>
+          </router-link>
         </div>
       </div>
     </template>
@@ -47,13 +57,10 @@
 import { BButton } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
-import { l10n } from "~/stores/l10n";
-
 defineProps({
   points: { type: Object, required: true },
   stats: { type: Object, required: true },
 });
-const { r } = l10n();
 const { t: $tc } = useI18n();
 </script>
 

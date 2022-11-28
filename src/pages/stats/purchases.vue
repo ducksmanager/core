@@ -27,9 +27,9 @@ alias: [/achats]
         $t(
           `Afin de retracer l'évolution de votre collection, renseignez les dates d'achat de vos numéros dans la page {0}, puis revenez ici ! Si une date d'achat n'a pas été indiquée pour un numéro, sa date d'ajout dans la collection est utilisée`,
           [
-            `<a href='${r('/collection/show')}'>${$t(
+            `<router-link to='/collection/show'>${$t(
               'Gérer ma collection'
-            )}</a>`,
+            )}</router-link>`,
           ]
         )
       "
@@ -71,7 +71,6 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
 Chart.register(
   Legend,
@@ -84,7 +83,6 @@ Chart.register(
 );
 
 defineEmits(["change-dimension"]), collection().loadCollection();
-const { r } = l10n();
 const { t: $t } = useI18n(),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),

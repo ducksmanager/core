@@ -44,12 +44,28 @@
       }}
     </p>
     <p>
-      <b-button class="mx-2" size="lg" variant="primary" :href="r('/signup')">
-        {{ $t("Inscription") }}
-      </b-button>
-      <b-button class="mx-2" size="lg" variant="primary" :href="r('/login')">
-        {{ $t("Connexion") }}
-      </b-button>
+      <router-link v-slot="{ href, navigate }" to="/signup" custom
+        ><b-button
+          class="mx-2"
+          size="lg"
+          variant="primary"
+          :href="href"
+          @click="navigate"
+        >
+          {{ $t("Inscription") }}
+        </b-button>
+      </router-link>
+      <router-link v-slot="{ href, navigate }" to="/login" custom>
+        <b-button
+          class="mx-2"
+          size="lg"
+          variant="primary"
+          :href="href"
+          @click="navigate"
+        >
+          {{ $t("Connexion") }}
+        </b-button></router-link
+      >
     </p>
   </div>
   <form v-else-if="step === 1" id="inducks-import" method="post" action="">
@@ -273,7 +289,6 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
 let step = $ref(1);
 const rawData = $ref("");
@@ -301,7 +316,6 @@ const importDataReady = $computed(
   () => issuesToImport && collectionStore().collection && hasIssueNumbers
 );
 const router = useRouter();
-const { r } = l10n();
 const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchIssueNumbers = coa().fetchIssueNumbers;
 const fetchIssueCodesDetails = coa().fetchIssueCodesDetails;

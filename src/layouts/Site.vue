@@ -1,6 +1,6 @@
 <template>
   <component :is="pageComponent" v-if="isBare" v-bind="attrsWithoutId" />
-  <div v-else-if="l10nRoutes" :class="{ full: !isBare }">
+  <div v-else :class="{ full: !isBare }">
     <LeftPanel />
     <SwitchLocale />
     <Banner :classes="{ 'd-none d-md-flex': true }" />
@@ -17,8 +17,6 @@
 <script setup>
 import { defineAsyncComponent, onMounted, useAttrs } from "vue";
 
-import { l10n } from "~/stores/l10n.js";
-
 const { bare, page } = defineProps({
   page: { type: String, required: true },
   title: { type: String, default: null },
@@ -30,7 +28,6 @@ const pageComponent = $computed(() =>
   defineAsyncComponent(() => import(`./${page}`))
 );
 const isBare = $computed(() => bare === "1");
-const l10nRoutes = $computed(() => l10n().l10nRoutes);
 const attrsWithoutId = $computed(() =>
   Object.keys(attrs)
     .filter((attrKey) => attrKey !== "id")

@@ -9,7 +9,7 @@
         :key="JSON.stringify(item)"
         no-body
         :disabled="item.disabled"
-        @click.stop="onTabClick(item)"
+        @click.stop="router.push(rootPath + item.path)"
       >
         <template #title>
           {{ item.text }}
@@ -21,8 +21,6 @@
 
 <script setup>
 import { BTab, BTabs } from "bootstrap-vue-3";
-
-import { l10n } from "~/stores/l10n";
 
 const { items, rootPath } = defineProps({
   title: {
@@ -38,16 +36,13 @@ const { items, rootPath } = defineProps({
     required: true,
   },
 });
-const { r } = l10n();
+const router = useRouter();
 const routeName = useRoute().name;
 const activeTabIndex = $ref(
   items.findIndex(
-    ({ path }) => routeName === r(rootPath + path).replace(/\//g, "-")
+    ({ path }) => routeName === (rootPath + path).replace(/\//g, "-")
   )
 );
-const onTabClick = ({ path }) => {
-  window.location.replace(`/${r(rootPath + path)}`);
-};
 </script>
 
 <style scoped lang="scss">

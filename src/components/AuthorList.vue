@@ -26,9 +26,9 @@
             "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous"
           )
         }}
-        <a :href="r('/expand/suggestions')">{{
+        <router-link to="/expand/suggestions">{{
           $t("suggérer des numéros en fonction de vos préférences.")
-        }}</a>
+        }}</router-link>
       </p>
       <div v-if="personNames">
         <b-row
@@ -109,7 +109,6 @@ import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
 const { watchedAuthors } = defineProps({
   watchedAuthors: {
@@ -145,7 +144,6 @@ watch(
   },
   { immediate: true }
 );
-const { r } = l10n();
 const { loadWatchedAuthors } = collection();
 const isAuthorWatched = (personcode) =>
   watchedAuthors.some(

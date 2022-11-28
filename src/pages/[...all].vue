@@ -183,14 +183,17 @@ alias:
         </b-col>
       </b-row>
       <div v-if="!user" id="sign-up-prompt">
-        <b-button
-          size="lg"
-          variant="success"
-          class="no-border"
-          :href="r('/signup')"
+        <router-link v-slot="{ href, navigate }" to="/signup" custom>
+          <b-button
+            size="lg"
+            variant="success"
+            class="no-border"
+            :href="href"
+            @click="navigate"
+          >
+            {{ $t("Cliquez ici pour vous inscrire !") }}
+          </b-button></router-link
         >
-          {{ $t("Cliquez ici pour vous inscrire !") }}
-        </b-button>
       </div>
     </div>
   </div>
@@ -202,9 +205,7 @@ import { BButton, BCol, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
-const { r } = l10n();
 const route = useRoute();
 
 if (["/logout", "/deconnexion"].includes(route.path)) {

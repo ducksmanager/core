@@ -37,8 +37,8 @@ alias: [/impression]
             }}
           </li>
         </ul>
-        <a :href="r(`/print/${type.link}`)" target="_blank"
-          >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</a
+        <router-link :to="`/print/${type.link}`" target="_blank"
+          >{{ $t("Imprimer ma collection avec") }} {{ type.name }}</router-link
         >
         <br />
       </li>
@@ -48,8 +48,6 @@ alias: [/impression]
 
 <script setup>
 import { useI18n } from "vue-i18n";
-
-import { l10n } from "~/stores/l10n";
 
 const { t: $t } = useI18n();
 const types = [
@@ -76,7 +74,6 @@ const types = [
     details: [$t("Adaptée pour les grandes collections.")],
   },
 ];
-const { r } = l10n();
 </script>
 
 <style lang="scss" scoped>

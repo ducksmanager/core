@@ -13,14 +13,21 @@
       :options="publicationNamesForCurrentCountry"
       @input="$emit('input', currentPublicationCode)"
     />
-    <b-button
+    <router-link
       v-if="!noButton"
-      :disabled="!currentPublicationCode"
-      variant="secondary"
-      :href="r(`/collection/show/${currentPublicationCode}`)"
+      v-slot="{ href, navigate }"
+      :to="`/collection/show/${currentPublicationCode}`"
+      custom
     >
-      {{ $t("OK") }}
-    </b-button>
+      <b-button
+        :href="href"
+        :disabled="!currentPublicationCode"
+        variant="secondary"
+        @click="navigate"
+      >
+        {{ $t("OK") }}
+      </b-button>
+    </router-link>
   </div>
 </template>
 
@@ -29,7 +36,6 @@ import { BButton, BFormSelect } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
-import { l10n } from "~/stores/l10n";
 
 const { initialCountryCode, initialPublicationCode } = defineProps({
   noButton: {
@@ -79,7 +85,6 @@ const publicationNamesForCurrentCountry = $computed(() =>
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2))
     : []
 );
-const { r } = l10n();
 
 watch(
   () => currentCountryCode,

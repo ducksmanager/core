@@ -43,7 +43,9 @@ alias: [/connexion]
           {{ $t("Connexion") }}
         </b-button>
         <div>
-          <a :href="r('/forgot')">{{ $t("Mot de passe oublié ?") }}</a>
+          <router-link to="/forgot">{{
+            $t("Mot de passe oublié ?")
+          }}</router-link>
         </div>
       </b-col>
     </b-row>
@@ -56,7 +58,6 @@ import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
 const collectionStore = collection();
 
@@ -104,7 +105,6 @@ watch(
   },
   { immediate: true }
 );
-const { r } = l10n();
 </script>
 
 <style scoped>

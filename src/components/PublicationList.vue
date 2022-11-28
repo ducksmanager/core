@@ -40,22 +40,22 @@
               v-for="publicationCode in getSortedPublications(country)"
               :key="publicationCode"
             >
-              <a
+              <router-link
                 class="dropdown-item"
-                :href="r(`/collection/show/${publicationCode}`)"
+                :to="`/collection/show/${publicationCode}`"
               >
                 {{
                   publicationNames[publicationCode] ||
                   publicationCode.split("/")[1]
                 }}
-              </a>
+              </router-link>
             </li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" :href="r('/collection/show/new')">{{
+          <router-link class="nav-link" :to="'/collection/show/new'">{{
             $t("Nouveau magazine")
-          }}</a>
+          }}</router-link>
         </li>
       </ul>
     </div>
@@ -75,7 +75,6 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
 let hasPublicationNames = $ref(false);
 const totalPerCountry = $computed(() => collection().totalPerCountry);
@@ -103,7 +102,6 @@ const publicationsPerCountry = $computed(
       {}
     )
 );
-const { r } = l10n();
 const fetchCountryNames = coa().fetchCountryNames;
 const fetchPublicationNames = coa().fetchPublicationNames;
 const getSortedPublications = (country) =>

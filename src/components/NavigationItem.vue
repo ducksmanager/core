@@ -1,6 +1,6 @@
 <template>
   <li class="non-empty" :class="{ 'no-icon': !icon, active }">
-    <a :href="r(path)">
+    <a :to="path">
       <i :class="{ [icon]: true }" />
       <slot />
     </a>
@@ -8,16 +8,13 @@
 </template>
 
 <script setup>
-import { l10n } from "~/stores/l10n";
-
-const { path } = defineProps({
+const props = defineProps({
   path: { type: String, required: true },
   icon: { type: String, default: null },
 });
-const { r } = l10n();
 const active = $computed(
   () =>
-    !r(path)
+    !props.path
       .split("/")
       .find(
         (pathPart) => !window.location.pathname.split("/").includes(pathPart)

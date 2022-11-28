@@ -6,9 +6,9 @@ alias: [/agrandir/suggestions]
   <div v-if="collection">
     <b-alert variant="info" show>
       {{ $t("DucksManager se base sur les") }}
-      <a :href="r('/stats/authors')">{{
+      <router-link to="/stats/authors">{{
         $t("notes que vous attribuez à vos auteurs préférés")
-      }}</a>
+      }}</router-link>
       {{
         $t("pour vous proposer des magazines susceptibles de vous intéresser.")
       }}
@@ -51,9 +51,9 @@ alias: [/agrandir/suggestions]
       <span
         v-html="
           $t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
-            `<a :href='${r('/stats/authors')}'>${$t(
+            `<router-link to='/stats/authors'>${$t(
               `Statistiques sur les auteurs`
-            )}</a>`,
+            )}</router-link>`,
           ])
         "
       />
@@ -73,11 +73,9 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
 const countryCode = $ref("ALL");
 const { t: $t } = useI18n();
-const { r } = l10n();
 const collection = $computed(() => collectionStore().collection);
 const watchedAuthors = $computed(() => collectionStore().watchedAuthors);
 const countryNames = $computed(() => coa().countryNames);

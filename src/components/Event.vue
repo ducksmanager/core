@@ -22,7 +22,7 @@
     /><template v-if="event.type === 'bookstore_comment'">
       &nbsp;{{ $t("a visité la bouquinerie") }}
       <i
-        ><a :href="r('/bookstores')">{{ event.name }}</a></i
+        ><router-link to="/bookstores">{{ event.name }}</router-link></i
       >
     </template>
     <template v-if="event.type === 'collection_update'">
@@ -121,7 +121,6 @@
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
-import { l10n } from "~/stores/l10n";
 import { users } from "~/stores/users";
 
 defineProps({
@@ -131,7 +130,6 @@ defineProps({
 const publicationNames = $computed(() => coa().publicationNames);
 const stats = $computed(() => users().stats);
 const points = $computed(() => users().points);
-const { r } = l10n();
 const { t: $t } = useI18n();
 const getMedalTitle = (contribution) => {
   switch (contribution) {

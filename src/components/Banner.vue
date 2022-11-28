@@ -1,14 +1,13 @@
 <template>
   <div :class="{ ...classes, small }">
-    <a :href="user ? r('/collection/show') : '/'">
+    <router-link :to="user ? '/collection/show' : '/'">
       <img src="/images/logo_small.png" alt="DucksManager" />
-    </a>
+    </router-link>
   </div>
 </template>
 
 <script setup>
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 
 defineProps({
   classes: {
@@ -20,7 +19,6 @@ defineProps({
     default: false,
   },
 });
-const { r } = l10n();
 const user = $computed(() => collection().user);
 </script>
 

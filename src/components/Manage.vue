@@ -47,9 +47,9 @@
       </template>
       <template #footer>
         <div>
-          <a :href="r('/expand/suggestions')">{{
+          <router-link to="/expand/suggestions">{{
             $t("Voir toutes les suggestions d'achat pour ma collection")
-          }}</a>
+          }}</router-link>
         </div>
       </template>
     </Accordion>
@@ -97,7 +97,6 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
-import { l10n } from "~/stores/l10n";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
@@ -129,7 +128,6 @@ const mostPossessedPublication = $computed(
     )
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
-const { r } = l10n();
 
 watch(
   () => totalPerPublication,
