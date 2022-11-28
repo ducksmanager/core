@@ -35,7 +35,7 @@
 		"js-yaml": "^4.1.0",
 		"mapbox-gl": "^2.11.0",
 		"page-flip": "^2.0.7",
-		"pinia": "^2.0.26",
+		"pinia": "^2.0.27",
 		"timeago.js": "^4.0.2",
 		"v-contextmenu": "^3.0.0",
 		"vue": "^3.2.45",
@@ -44,7 +44,7 @@
 		"vue-i18n-extract": "^2.0.7",
 		"vue-mapbox-ts": "^0.8.1",
 		"vue-router": "^4.1.6",
-		"vue-slicksort": "^2.0.2"
+		"vue-slicksort": "^2.0.3"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^0.31.0",
@@ -65,7 +65,7 @@
 		"histoire": "^0.11.7",
 		"husky": "^8.0.2",
 		"jsdom": "^20.0.3",
-		"pnpm": "^7.17.0",
+		"pnpm": "^7.17.1",
 		"prettier": "^2.8.0",
 		"prettier-plugin-prisma": "^4.4.0",
 		"sass": "^1.56.1",
