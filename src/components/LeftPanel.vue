@@ -56,9 +56,7 @@ watch(
   $$(user),
   (newValue) => {
     if (newValue) {
-      axios
-        .post("/collection/lastvisit")
-        .then((data) => collection().setPreviousVisit(data));
+      collection().loadPreviousVisit();
       users().fetchStats([newValue.id]);
     }
   },

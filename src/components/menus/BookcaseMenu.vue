@@ -1,7 +1,7 @@
 <template>
   <Menu
     :title="$t('Ma bibliothèque')"
-    root-path="bookcase"
+    root-path="/bookcase"
     default-path="/show"
     :items="[
       { path: '/show', text: $t('Ma bibliothèque') },

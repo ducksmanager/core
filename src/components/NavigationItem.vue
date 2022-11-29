@@ -1,9 +1,9 @@
 <template>
   <li class="non-empty" :class="{ 'no-icon': !icon, active }">
-    <a :to="path">
+    <router-link :to="path">
       <i :class="{ [icon]: true }" />
       <slot />
-    </a>
+    </router-link>
   </li>
 </template>
 

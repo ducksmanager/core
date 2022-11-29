@@ -14,6 +14,12 @@ interface BookcaseEdge {
   sprites: string;
 }
 
+interface BookcaseEdgeWithPopularity extends BookcaseEdge {
+  publicationCode: string;
+  issueCode: string;
+  popularity: number | null;
+}
+
 export const bookcase = defineStore("bookcase", {
   state: () => ({
     loadedSprites: {},
@@ -32,11 +38,11 @@ export const bookcase = defineStore("bookcase", {
     isSharedBookcase: ({ bookcaseUsername }): boolean =>
       collection().user?.username !== bookcaseUsername,
 
-    bookcaseWithPopularities({ bookcase }) {
-      return (
-        (this.isSharedBookcase
-          ? true
-          : collection().popularIssuesInCollection) &&
+    bookcaseWithPopularities: ({
+      bookcase,
+      isSharedBookcase,
+    }): BookcaseEdgeWithPopularity[] | null =>
+      ((isSharedBookcase ? true : collection().popularIssuesInCollection) &&
         bookcase?.map((issue) => {
           const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
           const issueCode = `${publicationCode} ${issue.issueNumber}`;
@@ -44,13 +50,12 @@ export const bookcase = defineStore("bookcase", {
             ...issue,
             publicationCode,
             issueCode,
-            popularity: this.isSharedBookcase
+            popularity: isSharedBookcase
               ? null
-              : collection().popularIssuesInCollection[issueCode] || 0,
+              : collection().popularIssuesInCollection?.[issueCode] || 0,
           };
-        })
-      );
-    },
+        })) ||
+      null,
   },
 
   actions: {

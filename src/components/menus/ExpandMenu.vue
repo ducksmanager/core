@@ -1,7 +1,7 @@
 <template>
   <Menu
     :title="$t('Agrandir ma collection')"
-    root-path="expand"
+    root-path="/expand"
     default-path="/suggestions"
     :items="[
       { path: '/suggestions', text: $t('Suggestions') },

@@ -1,57 +1,92 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 
+import { inducks_publication } from "~db_types/client_coa";
+import {
+  authorUser,
+  edge,
+  issue,
+  issue_condition,
+  purchase,
+  user,
+} from "~db_types/client_dm";
+import { CollectionUpdate } from "~types/CollectionUpdate";
+import { exclude } from "~types/exclude";
+import { IssueSuggestion } from "~types/IssueSuggestion";
+import { PopularIssue } from "~types/PopularIssue";
+import { StoryDetail } from "~types/StoryDetail";
+
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
 
 export const collection = defineStore("collection", {
   state: () => ({
-    collection: null,
-    watchedPublicationsWithSales: null,
-    purchases: null,
-    watchedAuthors: null,
-    marketplaceContactMethods: null,
+    collection: null as (issue & { publicationCode: string })[] | null,
+    watchedPublicationsWithSales: null as string[] | null,
+    purchases: null as (purchase & { date: string })[] | null,
+    watchedAuthors: null as authorUser[] | null,
+    marketplaceContactMethods: null as string[] | null,
 
-    suggestions: null,
-    subscriptions: null,
+    suggestions: null as {
+      issues: { [key: string]: IssueSuggestion };
+      minScore: number;
+      maxScore: number;
+      authors: { [p: string]: string };
+      storyDetails: { [p: string]: StoryDetail } | undefined;
+      publicationTitles: { [p: string]: inducks_publication };
+    } | null,
+    subscriptions: null as
+      | {
+          id: number;
+          publicationCode: string;
+          startDate: Date;
+          endDate: Date;
+        }[]
+      | null,
 
-    popularIssuesInCollection: null,
-    lastPublishedEdgesForCurrentUser: null,
+    popularIssuesInCollection: null as { [key: string]: number } | null,
+    lastPublishedEdgesForCurrentUser: null as edge[] | null,
 
-    isLoadingUser: false,
-    isLoadingCollection: false,
-    isLoadingWatchedPublicationsWithSales: false,
-    isLoadingMarketplaceContactMethods: false,
-    isLoadingPurchases: false,
-    isLoadingWatchedAuthors: false,
-    isLoadingSuggestions: false,
-    isLoadingSubscriptions: false,
+    isLoadingUser: false as boolean,
+    isLoadingCollection: false as boolean,
+    isLoadingWatchedPublicationsWithSales: false as boolean,
+    isLoadingMarketplaceContactMethods: false as boolean,
+    isLoadingPurchases: false as boolean,
+    isLoadingWatchedAuthors: false as boolean,
+    isLoadingSuggestions: false as boolean,
+    isLoadingSubscriptions: false as boolean,
 
-    user: undefined,
-    previousVisit: null,
+    user: undefined as user | undefined | null,
+    previousVisit: null as Date | null,
   }),
 
   getters: {
     total: ({ collection }) => collection?.length,
 
-    duplicateIssues: ({ collection }) => {
-      if (collection) {
-        const issuesByIssueCode = collection.reduce((acc, issue) => {
-          const issuecode = `${issue.publicationCode} ${issue.issueNumber}`;
-          if (!acc[issuecode]) {
-            acc[issuecode] = [];
-          }
-          return {
-            ...acc,
-            [issuecode]: [...acc[issuecode], issue],
-          };
-        }, {});
-        return Object.keys(issuesByIssueCode).reduce((acc, issuecode) => {
-          let issues = issuesByIssueCode[issuecode];
-          return issues.length > 1 ? { ...acc, [issuecode]: issues } : acc;
-        }, {});
-      }
-    },
+    issuesByIssueCode: ({ collection }) =>
+      collection?.reduce((acc, issue) => {
+        const issuecode = `${issue.publicationCode} ${issue.issueNumber}`;
+        if (!acc[issuecode]) {
+          acc[issuecode] = [];
+        }
+        return {
+          ...acc,
+          [issuecode]: [...acc[issuecode], issue],
+        };
+      }, {} as { [key: string]: issue[] }),
+
+    duplicateIssues: ({ issuesByIssueCode }) =>
+      issuesByIssueCode &&
+      Object.keys(issuesByIssueCode).reduce(
+        (acc, issuecode) =>
+          issuesByIssueCode[issuecode].length > 1
+            ? {
+                ...acc,
+                [issuecode]: issuesByIssueCode[issuecode],
+              }
+            : acc,
+        {}
+      ),
 
     issuesInToReadStack: ({ collection }) =>
       collection && collection.filter(({ isToRead }) => isToRead),
@@ -61,11 +96,13 @@ export const collection = defineStore("collection", {
 
     totalUniqueIssues: ({ collection, duplicateIssues }) =>
       duplicateIssues &&
-      collection?.length -
-        Object.values(duplicateIssues).reduce(
-          (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-          0
-        ),
+      (!collection?.length
+        ? 0
+        : collection?.length -
+          Object.values(duplicateIssues).reduce(
+            (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
+            0
+          )),
 
     totalPerCountry: ({ collection }) =>
       collection?.reduce(
@@ -73,14 +110,14 @@ export const collection = defineStore("collection", {
           ...acc,
           [issue.country]: (acc[issue.country] || 0) + 1,
         }),
-        {}
+        {} as { [key: string]: number }
       ),
 
     totalPerPublication: ({ collection }) =>
       collection?.reduce((acc, issue) => {
         const publicationCode = `${issue.country}/${issue.magazine}`;
         return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
-      }, {}),
+      }, {} as { [key: string]: number }),
 
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,
@@ -94,7 +131,7 @@ export const collection = defineStore("collection", {
             issueNumber,
           ],
         }),
-        {}
+        {} as { [key: string]: string[] }
       ),
 
     totalPerPublicationUniqueIssueNumbers: ({ issueNumbersPerPublication }) =>
@@ -110,29 +147,38 @@ export const collection = defineStore("collection", {
       ),
 
     popularIssuesInCollectionWithoutEdge: () =>
-      bookcase().bookcaseWithPopularities &&
       bookcase()
-        .bookcaseWithPopularities.filter(
-          ({ edgeId, popularity }) => !edgeId && popularity > 0
+        .bookcaseWithPopularities?.filter(
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
         )
-        .sort(
-          ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-            popularity2 - popularity1
+        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0
         ),
 
-    quotedIssues: ({ collection }) => {
+    quotedIssues: ({
+      collection,
+    }):
+      | {
+          publicationCode: string;
+          issueNumber: string;
+          condition: issue_condition;
+          estimation: number;
+          estimationGivenCondition: number;
+        }[]
+      | null => {
       const issueQuotations = coa().issueQuotations;
       if (issueQuotations === null) {
         return null;
       }
-      const getEstimation = (publicationCode, issueNumber) => {
+      const getEstimation = (publicationCode: string, issueNumber: string) => {
         const estimationData =
           issueQuotations[`${publicationCode} ${issueNumber}`];
         return (
-          estimationData &&
-          (estimationData.max
-            ? (estimationData.min + estimationData.max) / 2
-            : estimationData.min)
+          (estimationData &&
+            (estimationData.max
+              ? ((estimationData.min || 0) + estimationData.max) / 2
+              : estimationData.min)) ||
+          0
         );
       };
       const CONDITION_TO_ESTIMATION_PCT = {
@@ -142,22 +188,24 @@ export const collection = defineStore("collection", {
         indefini: 0.7,
         "": 0.7,
       };
-      return collection
-        ?.filter(({ publicationCode, issueNumber }) =>
-          getEstimation(publicationCode, issueNumber)
-        )
-        .map(({ publicationCode, issueNumber, condition }) => {
-          const estimation = getEstimation(publicationCode, issueNumber);
-          return {
-            publicationCode,
-            issueNumber,
-            condition,
-            estimation,
-            estimationGivenCondition: parseFloat(
-              (CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(1)
-            ),
-          };
-        });
+      return (
+        collection
+          ?.filter(({ publicationCode, issueNumber }) =>
+            getEstimation(publicationCode, issueNumber)
+          )
+          .map(({ publicationCode, issueNumber, condition }) => {
+            const estimation = getEstimation(publicationCode, issueNumber);
+            return {
+              publicationCode,
+              issueNumber,
+              condition,
+              estimation,
+              estimationGivenCondition: parseFloat(
+                (CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(1)
+              ),
+            };
+          }) || null
+      );
     },
 
     quotationSum: ({ quotedIssues }) =>
@@ -171,12 +219,12 @@ export const collection = defineStore("collection", {
   },
 
   actions: {
-    async updateCollection(data) {
+    async updateCollection(data: CollectionUpdate) {
       await axios.post("/collection/issues", data);
       await this.loadCollection(true);
     },
 
-    async createPurchase(date, description) {
+    async createPurchase(date: string, description: string) {
       await axios.put("/collection/purchases", {
         date,
         description,
@@ -184,30 +232,30 @@ export const collection = defineStore("collection", {
       await this.loadPurchases(true);
     },
 
-    async deletePurchase(id) {
+    async deletePurchase(id: number) {
       await axios.delete(`/collection/purchases/${id}`);
       await this.loadPurchases(true);
     },
 
-    findInCollection(publicationCode, issueNumber) {
+    findInCollection(publicationCode: string, issueNumber: string) {
       return this.collection?.find(
         ({ country, magazine, issueNumber: collectionIssueNumber }) =>
           publicationCode === `${country}/${magazine}` &&
           collectionIssueNumber === issueNumber
       );
     },
-    setPreviousVisit(previousVisit) {
-      this.previousVisit = previousVisit;
+    async loadPreviousVisit() {
+      this.previousVisit = (await axios.post("/collection/lastvisit")).data;
     },
     async loadCollection(afterUpdate = false) {
       if (afterUpdate || (!this.isLoadingCollection && !this.collection)) {
         this.isLoadingCollection = true;
-        this.collection = (await axios.get("/collection/issues")).data.map(
-          (issue) => ({
-            ...issue,
-            publicationCode: `${issue.country}/${issue.magazine}`,
-          })
-        );
+        this.collection = (
+          (await axios.get("/collection/issues")).data as issue[]
+        ).map((issue) => ({
+          ...issue,
+          publicationCode: `${issue.country}/${issue.magazine}`,
+        }));
         this.isLoadingCollection = false;
       }
     },
@@ -266,7 +314,15 @@ export const collection = defineStore("collection", {
         values: this.watchedPublicationsWithSales,
       });
     },
-    async loadSuggestions({ countryCode, sort, sinceLastVisit }) {
+    async loadSuggestions({
+      countryCode,
+      sort,
+      sinceLastVisit,
+    }: {
+      countryCode: string;
+      sort: string;
+      sinceLastVisit: boolean;
+    }) {
       if (!this.isLoadingSuggestions) {
         this.isLoadingSuggestions = true;
         this.suggestions = (
@@ -289,8 +345,13 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingSubscriptions = true;
         this.subscriptions = (
-          await axios.get("/collection/subscriptions")
-        ).data.map((subscription) => ({
+          (await axios.get("/collection/subscriptions")).data as {
+            id: number;
+            publicationCode: string;
+            startDate: string;
+            endDate: string;
+          }[]
+        ).map((subscription) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
           endDate: new Date(Date.parse(subscription.endDate)),
@@ -301,8 +362,8 @@ export const collection = defineStore("collection", {
     async loadPopularIssuesInCollection() {
       if (!this.popularIssuesInCollection) {
         this.popularIssuesInCollection = (
-          await axios.get("/collection/popular")
-        ).data.reduce(
+          (await axios.get("/collection/popular")).data as PopularIssue[]
+        ).reduce(
           (acc, issue) => ({
             ...acc,
             [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]:
@@ -315,11 +376,11 @@ export const collection = defineStore("collection", {
     async loadLastPublishedEdgesForCurrentUser() {
       if (!this.lastPublishedEdgesForCurrentUser) {
         this.lastPublishedEdgesForCurrentUser = (
-          await axios.get("/collection/edges/lastPublished")
-        ).data.map((edge) => ({
+          (await axios.get("/collection/edges/lastPublished")).data as edge[]
+        ).map((edge) => ({
           ...edge,
-          issuecode: `${edge.country}/${edge.magazine} ${edge.issueNumber}`,
-          timestamp: Date.parse(edge.creationDate) / 1000,
+          issuecode: `${edge.publicationcode} ${edge.issuenumber}`,
+          timestamp: edge.creationDate.getTime() / 1000,
         }));
       }
     },
@@ -328,15 +389,7 @@ export const collection = defineStore("collection", {
       if (!this.isLoadingUser && (afterUpdate || !this.user)) {
         this.isLoadingUser = true;
         try {
-          this.user = Object.entries(
-            (await axios.get(`/collection/user`)).data
-          ).reduce(
-            (acc, [key, value]) => ({
-              ...acc,
-              [key]: value,
-            }),
-            {}
-          );
+          this.user = (await axios.get(`/collection/user`)).data;
         } catch (e) {
           this.user = null;
         } finally {

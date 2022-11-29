@@ -9,7 +9,11 @@ alias: [/collection/a-lire]
     v-html="
       $t(
         `Sur cette page les numéros que vous avez indiqué comme 'A vendre' sont listés. Rendez vous sur la page {0} pour consulter la liste des numéros que les autres utilisateurs DucksManager ont mis en vente.`,
-        [`<a href='/expand/marketplace'>${$t('DucksManager marketplace')}</a>`]
+        [
+          `<router-link to='/expand/marketplace'>${$t(
+            'DucksManager marketplace'
+          )}</router-link>`,
+        ]
       )
     "
   />
@@ -25,11 +29,11 @@ alias: [/collection/a-lire]
         $t(
           "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
         )
-      }}<br /><a href="/collection/account">{{
+      }}<br /><router-link to="/collection/account">{{
         $t(
           "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
         )
-      }}</a></BAlert
+      }}</router-link></BAlert
     >
     <IssueList
       v-for="publicationcode in publicationCodes"

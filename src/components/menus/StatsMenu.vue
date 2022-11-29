@@ -1,7 +1,7 @@
 <template>
   <Menu
     :title="$t('Statistiques de ma collection')"
-    root-path="stats"
+    root-path="/stats"
     default-path="/general"
     :items="[
       { path: '/general', text: $t('Général') },

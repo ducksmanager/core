@@ -9,10 +9,13 @@
         :key="JSON.stringify(item)"
         no-body
         :disabled="item.disabled"
-        @click.stop="router.push(rootPath + item.path)"
+        @click.stop="router.push(`${rootPath}${item.path}`)"
       >
         <template #title>
-          {{ item.text }}
+          <router-link v-if="!item.disabled" :to="`${rootPath}${item.path}`">{{
+            item.text
+          }}</router-link>
+          <template v-else>{{ item.text }}</template>
         </template>
       </b-tab>
     </b-tabs>
@@ -46,13 +49,20 @@ const activeTabIndex = $ref(
 </script>
 
 <style scoped lang="scss">
-:deep(.nav-link) {
+:deep(button) {
   color: white !important;
+  a {
+    border-bottom: 0;
+  }
   &.active {
-    color: black !important;
+    a {
+      color: black !important;
+    }
   }
   &.disabled {
-    color: darkgrey !important;
+    a {
+      color: darkgrey !important;
+    }
   }
 }
 </style>

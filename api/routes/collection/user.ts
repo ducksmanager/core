@@ -5,23 +5,11 @@ import { Handler, Request, Response } from "express";
 import PresentationSentenceRequested from "~/emails/presentation-sentence-requested";
 import { generateAccessToken, isValidEmail } from "~/routes/auth/util";
 import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { exclude } from "~types/exclude";
 import { ScopedError } from "~types/ScopedError";
 
 const parseForm = bodyParser.json();
 const prisma = new PrismaClient();
-
-const exclude = <Key extends keyof user>(
-  user: user | null,
-  ...keys: Key[]
-): Omit<user, Key> | null => {
-  if (!user) {
-    return user;
-  }
-  for (const key of keys) {
-    delete user[key];
-  }
-  return user;
-};
 
 export const getUser = async (req: Request) =>
   await prisma.user.findUnique({
@@ -29,7 +17,9 @@ export const getUser = async (req: Request) =>
   });
 export const get: Handler = async (req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(exclude(await getUser(req), "password")));
+  res.end(
+    JSON.stringify(exclude<user, "password">(await getUser(req), "password"))
+  );
 };
 
 export const del: Handler = async (req, res) => {

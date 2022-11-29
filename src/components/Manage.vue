@@ -11,11 +11,11 @@
         $t(
           "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
         )
-      }}<br /><a href="/collection/account">{{
+      }}<br /><router-link to="/collection/account">{{
         $t(
           "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
         )
-      }}</a></BAlert
+      }}</router-link></BAlert
     >
     <Accordion
       v-if="suggestionsNumber"

@@ -4,6 +4,8 @@ import { constants } from "http2";
 
 import { resetDemo } from "~/routes/demo/_reset";
 import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
+import { CollectionUpdate } from "~types/CollectionUpdate";
+import { User } from "~types/SessionUser";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -208,26 +210,23 @@ export const get: Handler = async (req, res) => {
 export const post = [
   parseForm,
   (async (req, res) => {
-    const { publicationcode, issueNumbers } = req.body;
+    const { body, user }: { body: CollectionUpdate; user: User } = req;
+    const { publicationcode, issueNumbers, purchaseId } = body;
 
     const [country, magazine] = publicationcode.split("/");
-
-    let condition = req.body.condition;
-    const userId = req.user.id;
+    let { isOnSale, condition, isToRead } = body;
+    const userId = user.id;
 
     if (typeof condition !== "string" && issueNumbers.length > 1) {
       res.statusCode = constants.HTTP_STATUS_BAD_REQUEST;
       console.error("Can't update copies of multiple issues at once");
       res.end();
     }
-
-    let isOnSale = req.body.isOnSale;
     if (typeof isOnSale === "undefined" || isOnSale === "do_not_change") {
       isOnSale = null;
     } else if (JSON.stringify(isOnSale) === JSON.stringify(["do_not_change"])) {
       isOnSale = [null];
     }
-    let isToRead = req.body.isToRead;
     if (typeof isToRead === "undefined" || isToRead === "do_not_change") {
       isToRead = null;
     } else if (JSON.stringify(isToRead) === JSON.stringify(["do_not_change"])) {
@@ -235,23 +234,21 @@ export const post = [
     }
 
     const purchaseIds =
-      typeof req.body.purchaseId === "object"
-        ? req.body.purchaseId
-        : [req.body.purchaseId];
+      typeof purchaseId === "object" ? purchaseId : [purchaseId];
     const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
-      purchaseIds,
+      purchaseIds as string[] | number[],
       userId
     );
 
     let output;
     if (typeof condition !== "string" && condition.length === 1) {
       condition = condition[0];
-      isToRead = isToRead[0];
-      isOnSale = isOnSale[0];
+      isToRead = (isToRead as boolean[])[0];
+      isOnSale = (isOnSale as boolean[])[0];
     }
 
     let issueIds: number[];
-    if (isOnSale !== "do_not_change") {
+    if (typeof isOnSale !== "string") {
       issueIds = (
         await prisma.issue.findMany({
           where: {
@@ -262,77 +259,14 @@ export const post = [
           },
         })
       ).map(({ id }) => id);
-      if (typeof isOnSale === "string") {
-        // Marketplace actions
-        const [action, buyerId] = isOnSale.split("-");
-        const requestedIssues = await prisma.requestedIssue.findMany({
-          where: {
-            buyerId: parseInt(buyerId),
-            issueId: { in: issueIds },
-          },
-        });
-        if (requestedIssues.length !== issueNumbers.length) {
-          res.writeHead(400);
-          res.end();
-          return;
-        }
-        switch (action) {
-          case "transfer":
-            const issueCount = await prisma.issue.count({
-              where: {
-                id: { in: issueIds },
-                userId,
-              },
-            });
-            if (issueCount !== issueIds.length) {
-              res.writeHead(400);
-              res.end();
-              return;
-            }
-            await prisma.issue.updateMany({
-              data: {
-                purchaseId: -1,
-                isOnSale: false,
-                isToRead: true,
-                isSubscription: 0,
-                creationDate: new Date(),
-              },
-              where: {
-                id: { in: issueIds },
-              },
-            });
-            await prisma.requestedIssue.deleteMany({
-              where: {
-                buyerId: parseInt(buyerId),
-                issueId: { in: issueIds },
-              },
-            });
-            res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ transferred: issueNumbers }));
-            break;
-          case "setAside":
-            await prisma.requestedIssue.updateMany({
-              data: {
-                isBooked: true,
-              },
-              where: {
-                buyerId: parseInt(buyerId),
-                issueId: { in: issueIds },
-              },
-            });
-            isOnSale = true;
-            break;
-        }
-      } else {
-        await prisma.requestedIssue.updateMany({
-          data: {
-            isBooked: false,
-          },
-          where: {
-            issueId: { in: issueIds },
-          },
-        });
-      }
+      await prisma.requestedIssue.updateMany({
+        data: {
+          isBooked: false,
+        },
+        where: {
+          issueId: { in: issueIds },
+        },
+      });
     }
     if (typeof condition !== "string") {
       output = addOrChangeCopies(
@@ -340,9 +274,9 @@ export const post = [
         publicationcode,
         issueNumbers[0],
         condition ?? [],
-        isOnSale ?? [],
-        isToRead ?? [],
-        purchaseIds ?? []
+        (isOnSale as boolean[]) ?? [],
+        (isToRead as boolean[]) ?? [],
+        (purchaseIds as number[]) ?? []
       );
     } else {
       if (["non_possede", "missing"].includes(condition)) {
@@ -355,8 +289,8 @@ export const post = [
         publicationcode,
         issueNumbers,
         condition,
-        isOnSale,
-        isToRead,
+        isOnSale as boolean | null,
+        isToRead as boolean | null,
         checkedPurchaseIds[0]
       );
     }

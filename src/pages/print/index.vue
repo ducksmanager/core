@@ -26,7 +26,7 @@ alias: [/impression]
           </li>
           <li v-if="type.link === 'collectable'">
             <a
-              href="http://www.youtube.com/watch?v=PAg-g1cF148&hd=1"
+              href="https://www.youtube.com/watch?v=PAg-g1cF148&hd=1"
               target="_blank"
               >{{ $t("Cliquez ici") }}</a
             >

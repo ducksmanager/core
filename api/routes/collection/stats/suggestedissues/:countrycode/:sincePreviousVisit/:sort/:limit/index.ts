@@ -13,6 +13,9 @@ import {
   Prisma as PrismaDmStats,
   PrismaClient as PrismaClientDmStats,
 } from "~prisma_clients/client_dm_stats";
+import { IssueSuggestion } from "~types/IssueSuggestion";
+import { IssueSuggestionList } from "~types/IssueSuggestionList";
+import { StoryDetail } from "~types/StoryDetail";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaDm = new PrismaClientDm();
@@ -88,28 +91,6 @@ interface SuggestionList {
   suggestionsPerUser: { [p: number]: IssueSuggestionList };
   publicationTitles: { [p: string]: inducks_publication };
   authors: { [p: string]: string };
-}
-
-interface IssueSuggestion {
-  issuecode: string;
-  score: number;
-  stories: { [key: string]: string[] };
-  publicationcode: string;
-  issuenumber: string;
-  oldestdate: Date;
-}
-
-class IssueSuggestionList {
-  issues: { [key: string]: IssueSuggestion } = {};
-  minScore = 0;
-  maxScore = 0;
-}
-
-interface StoryDetail {
-  personcode: string | null;
-  storycode: string;
-  storycomment: string;
-  title: string;
 }
 
 const getStoryDetails = async (

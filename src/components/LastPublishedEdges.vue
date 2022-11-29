@@ -36,8 +36,8 @@
         v-html="
           $t(
             publishedEdgesSincePreviousVisit.length > 1
-              ? `Accédez à <a href='/bookcase'>votre bibliothèque</a> pour les voir.`
-              : `Accédez à <a href='/bookcase'>votre bibliothèque</a> pour la voir.`
+              ? `Accédez à <router-link to='/bookcase'>votre bibliothèque</router-link> pour les voir.`
+              : `Accédez à <router-link to='/bookcase'>votre bibliothèque</router-link> pour la voir.`
           )
         "
       />

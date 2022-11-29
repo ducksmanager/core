@@ -2,7 +2,7 @@
   <Menu
     v-if="user"
     :title="$t('Gérer ma collection')"
-    root-path="collection"
+    root-path="/collection"
     default-path="/show"
     :items="items"
   />

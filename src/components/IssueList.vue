@@ -429,6 +429,96 @@ const openBook = (issueNumber) => {
     : null;
 };
 
+const loadIssues = async () => {
+  if (userIssues) {
+    userIssuesForPublication = userIssues
+      .filter(
+        (issue) =>
+          `${issue.country}/${issue.magazine}` === props.publicationcode
+      )
+      .map((issue) => ({
+        ...issue,
+        condition: (
+          conditions.find(({ dbValue }) => dbValue === issue.condition) || {
+            value: "possessed",
+          }
+        ).value,
+      }));
+
+    await coa().fetchIssueNumbersWithTitles(props.publicationcode);
+
+    issues = coa().issuesWithTitles[props.publicationcode];
+    if (props.groupUserCopies) {
+      issues = issues.map((issue) => ({
+        ...issue,
+        userCopies: userIssuesForPublication.filter(
+          ({ issueNumber: userIssueNumber }) =>
+            userIssueNumber === issue.issueNumber
+        ),
+        key: issue.issueNumber,
+      }));
+    } else {
+      const userIssueNumbers = [
+        ...new Set(
+          userIssuesForPublication.map(({ issueNumber }) => issueNumber)
+        ),
+      ];
+      issues = issues
+        .filter(({ issueNumber }) => userIssueNumbers.includes(issueNumber))
+        .map(({ issueNumber }) => issueNumber)
+        .reduce(
+          (acc, issueNumber) => [
+            ...acc,
+            ...userIssuesForPublication
+              .filter(
+                ({ issueNumber: userIssueNumber }) =>
+                  userIssueNumber === issueNumber
+              )
+              .map((issue) => ({
+                ...issue,
+                key: `${issue.issueNumber}-id-${issue.id}`,
+                userCopies: [issue],
+              })),
+          ],
+          []
+        );
+    }
+
+    if (props.duplicatesOnly) {
+      const countPerIssueNumber = issues.reduce(
+        (acc, { userCopies }) => ({
+          ...acc,
+          [userCopies[0].issueNumber]:
+            (acc[userCopies[0].issueNumber] || 0) + 1,
+        }),
+        {}
+      );
+      issues = issues.filter(
+        ({ issueNumber }) => countPerIssueNumber[issueNumber] > 1
+      );
+    }
+
+    if (props.readStackOnly) {
+      issues = issues.filter(
+        ({ userCopies }) => userCopies.filter(({ isToRead }) => isToRead).length
+      );
+    }
+    if (props.onSaleStackOnly) {
+      issues = issues.filter(
+        ({ userCopies }) => userCopies.filter(({ isOnSale }) => isOnSale).length
+      );
+    }
+
+    const coaIssueNumbers = coa().issuesWithTitles[props.publicationcode].map(
+      ({ issueNumber }) => issueNumber
+    );
+    userIssuesNotFoundForPublication = userIssuesForPublication.filter(
+      ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
+    );
+    loading = false;
+  }
+};
+
 watch(
   () => preselectedIndexEnd,
   () => {
@@ -437,97 +527,16 @@ watch(
 );
 
 watch(
+  () => props.publicationcode,
+  async () => {
+    await loadIssues();
+  }
+);
+
+watch(
   () => userIssues,
-  async (newValue) => {
-    if (newValue) {
-      userIssuesForPublication = newValue
-        .filter(
-          (issue) =>
-            `${issue.country}/${issue.magazine}` === props.publicationcode
-        )
-        .map((issue) => ({
-          ...issue,
-          condition: (
-            conditions.find(({ dbValue }) => dbValue === issue.condition) || {
-              value: "possessed",
-            }
-          ).value,
-        }));
-
-      await coa().fetchIssueNumbersWithTitles(props.publicationcode);
-
-      issues = coa().issuesWithTitles[props.publicationcode];
-      if (props.groupUserCopies) {
-        issues = issues.map((issue) => ({
-          ...issue,
-          userCopies: userIssuesForPublication.filter(
-            ({ issueNumber: userIssueNumber }) =>
-              userIssueNumber === issue.issueNumber
-          ),
-          key: issue.issueNumber,
-        }));
-      } else {
-        const userIssueNumbers = [
-          ...new Set(
-            userIssuesForPublication.map(({ issueNumber }) => issueNumber)
-          ),
-        ];
-        issues = issues
-          .filter(({ issueNumber }) => userIssueNumbers.includes(issueNumber))
-          .map(({ issueNumber }) => issueNumber)
-          .reduce(
-            (acc, issueNumber) => [
-              ...acc,
-              ...userIssuesForPublication
-                .filter(
-                  ({ issueNumber: userIssueNumber }) =>
-                    userIssueNumber === issueNumber
-                )
-                .map((issue) => ({
-                  ...issue,
-                  key: `${issue.issueNumber}-id-${issue.id}`,
-                  userCopies: [issue],
-                })),
-            ],
-            []
-          );
-      }
-
-      if (props.duplicatesOnly) {
-        const countPerIssueNumber = issues.reduce(
-          (acc, { userCopies }) => ({
-            ...acc,
-            [userCopies[0].issueNumber]:
-              (acc[userCopies[0].issueNumber] || 0) + 1,
-          }),
-          {}
-        );
-        issues = issues.filter(
-          ({ issueNumber }) => countPerIssueNumber[issueNumber] > 1
-        );
-      }
-
-      if (props.readStackOnly) {
-        issues = issues.filter(
-          ({ userCopies }) =>
-            userCopies.filter(({ isToRead }) => isToRead).length
-        );
-      }
-      if (props.onSaleStackOnly) {
-        issues = issues.filter(
-          ({ userCopies }) =>
-            userCopies.filter(({ isOnSale }) => isOnSale).length
-        );
-      }
-
-      const coaIssueNumbers = coa().issuesWithTitles[props.publicationcode].map(
-        ({ issueNumber }) => issueNumber
-      );
-      userIssuesNotFoundForPublication = userIssuesForPublication.filter(
-        ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
-      );
-      loading = false;
-    }
+  async () => {
+    await loadIssues();
   },
   { immediate: true }
 );
