@@ -203,10 +203,12 @@ alias:
 import { useHead } from "@vueuse/head";
 import { BButton, BCol, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
+import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
 
 const route = useRoute();
+const { t: $t } = useI18n();
 
 if (["/logout", "/deconnexion"].includes(route.path)) {
   Cookies.remove("token");
@@ -215,7 +217,7 @@ if (["/logout", "/deconnexion"].includes(route.path)) {
 const user = $computed(() => collection().user);
 
 useHead({
-  title: "Bienvenue sur DucksManager !",
+  title: $t("Bienvenue sur DucksManager !"),
 });
 </script>
 

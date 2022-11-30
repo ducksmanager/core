@@ -47,6 +47,7 @@
 import { BButton } from "bootstrap-vue-3";
 
 import { bookcase } from "~/stores/bookcase";
+import { collection } from "~/stores/collection";
 import { users } from "~/stores/users";
 
 defineProps({
