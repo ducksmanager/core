@@ -10,7 +10,9 @@
       {{ text }}
     </BButton>
   </BButtonGroup>
-  <bar-chart v-if="chartData" :chart-data="chartData" :options="options" />
+  <div class="wrapper">
+    <bar-chart v-if="chartData" :chart-data="chartData" :options="options" />
+  </div>
 </template>
 
 <script setup>
@@ -42,7 +44,7 @@ Chart.register(
   ArcElement
 );
 
-const emit = defineEmits(["change-dimension"]);
+let height = $ref(400);
 
 const { t: $t } = useI18n(),
   totalPerPublicationUniqueIssueNumbers = $computed(
@@ -111,8 +113,7 @@ watch(
     if (!newValue) {
       return;
     }
-    emit("change-dimension", "height", 100 + 30 * newValue.length);
-    emit("change-dimension", "width", 500);
+    height = `${100 + 30 * newValue.length}px`;
   },
   { immediate: true }
 );
@@ -144,7 +145,6 @@ watch(
       };
 
       options = {
-        responsive: true,
         indexAxis: "y",
         maintainAspectRatio: false,
         scales: {
@@ -205,6 +205,14 @@ onMounted(async () => {
 :deep(.btn) {
   &:focus {
     box-shadow: none !important;
+  }
+}
+.wrapper {
+  height: v-bind(height);
+
+  :deep(canvas) {
+    width: 100% !important;
+    height: 100% !important;
   }
 }
 </style>
