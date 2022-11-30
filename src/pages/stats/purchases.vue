@@ -82,7 +82,7 @@ Chart.register(
   Title
 );
 
-defineEmits(["change-dimension"]), collection().loadCollection();
+collection().loadCollection();
 const { t: $t } = useI18n(),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),
