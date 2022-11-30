@@ -63,7 +63,9 @@ export const get: Handler = async (req, res) => {
           ...acc,
           [personcode]: {
             missingstorycount: missingStoryCountPerAuthor[personcode],
-            storycount: storyCountPerAuthor[personcode],
+            storycount:
+              storyCountPerAuthor[personcode] ||
+              missingStoryCountPerAuthor[personcode],
             fullname: personNames[personcode],
           },
         }),
