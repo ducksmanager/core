@@ -41,9 +41,10 @@ const { items, rootPath } = defineProps({
 });
 const router = useRouter();
 const routeName = useRoute().name;
-const activeTabIndex = $ref(
+const activeTabIndex = $computed(() =>
   items.findIndex(
-    ({ path }) => routeName === (rootPath + path).replace(/\//g, "-")
+    ({ path }) =>
+      routeName === (rootPath + path).replace(/\//g, "-").replace(/^-/, "")
   )
 );
 </script>
