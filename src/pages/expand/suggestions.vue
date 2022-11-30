@@ -26,7 +26,7 @@ alias: [/agrandir/suggestions]
         size="sm"
       >
         <b-form-select-option
-          v-for="(text, value) in countryNamesWithAllCountriesOption"
+          v-for="{ text, value } in countryNamesWithAllCountriesOption"
           :key="value"
           :value="value"
         >
@@ -81,10 +81,15 @@ const watchedAuthors = $computed(() => collectionStore().watchedAuthors);
 const countryNames = $computed(() => coa().countryNames);
 const countryNamesWithAllCountriesOption = $computed(
   () =>
-    countryNames && {
-      ALL: $t("Tous les pays"),
-      ...countryNames,
-    }
+    countryNames && [
+      {
+        value: "ALL",
+        text: $t("Tous les pays"),
+      },
+      ...Object.entries(countryNames)
+        .map(([value, text]) => ({ text, value }))
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
+    ]
 );
 const watchedAuthorsWithNotation = $computed(() =>
   watchedAuthors?.filter(({ notation }) => notation > 0)
