@@ -32,15 +32,20 @@
       </div>
     </template>
     <template #footer>
-      <div
-        v-html="
-          $t(
-            publishedEdgesSincePreviousVisit.length > 1
-              ? `Accédez à <router-link to='/bookcase'>votre bibliothèque</router-link> pour les voir.`
-              : `Accédez à <router-link to='/bookcase'>votre bibliothèque</router-link> pour la voir.`
-          )
+      <i18n-t
+        :keypath="
+          publishedEdgesSincePreviousVisit.length > 1
+            ? 'Accédez à {link_to_bookcase} pour les voir'
+            : 'Accédez à {link_to_bookcase} pour la voir'
         "
-      />
+        tag="div"
+      >
+        <template #link_to_bookcase>
+          <router-link to="/bookcase">{{
+            $t("votre bibliothèque")
+          }}</router-link>
+        </template>
+      </i18n-t>
     </template>
   </Accordion>
 </template>

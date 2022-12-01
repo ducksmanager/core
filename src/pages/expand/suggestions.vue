@@ -48,15 +48,14 @@ alias: [/agrandir/suggestions]
     </b-alert>
     <b-alert v-else show variant="warning">
       {{ $t("Aucun auteur noté.") }}
-      <span
-        v-html="
-          $t('Rendez vous sur la page {0} pour noter vos auteurs préférés.', [
-            `<router-link to='/stats/authors'>${$t(
-              `Statistiques sur les auteurs`
-            )}</router-link>`,
-          ])
-        "
-      />
+      <i18n-t
+        keypath="Rendez vous sur la page {link_to_author_stats} pour noter vos auteurs préférés."
+        ><template #link_to_author_stats
+          ><router-link to="/stats/authors">{{
+            $t(`Statistiques sur les auteurs`)
+          }}</router-link>
+        </template>
+      </i18n-t>
       {{
         $t(
           "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."

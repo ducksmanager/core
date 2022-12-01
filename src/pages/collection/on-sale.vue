@@ -3,20 +3,17 @@ alias: [/collection/a-lire]
 </route>
 
 <template>
-  <b-alert
-    variant="info"
-    show
-    v-html="
-      $t(
-        `Sur cette page les numéros que vous avez indiqué comme 'A vendre' sont listés. Rendez vous sur la page {0} pour consulter la liste des numéros que les autres utilisateurs DucksManager ont mis en vente.`,
-        [
-          `<router-link to='/expand/marketplace'>${$t(
-            'DucksManager marketplace'
-          )}</router-link>`,
-        ]
-      )
-    "
-  />
+  <b-alert variant="info" show
+    ><i18n-t
+      keypath="Sur cette page les numéros que vous avez indiqué comme 'A vendre' sont listés. Rendez vous sur la page {link_to_marketplace} pour consulter la liste des numéros que les autres utilisateurs DucksManager ont mis en vente."
+      ><template #link_to_marketplace
+        ><router-link to="/expand/marketplace">{{
+          $t("DucksManager marketplace")
+        }}</router-link></template
+      ></i18n-t
+    >
+  </b-alert>
+
   <div
     v-if="
       issuesInOnSaleStack && marketplaceContactMethods && hasPublicationNames

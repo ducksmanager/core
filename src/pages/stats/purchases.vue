@@ -22,18 +22,15 @@ alias: [/achats]
     <div>
       {{ $t("Quand avez-vous acheté le plus de magazines dans le passé ?") }}
     </div>
-    <div
-      v-html="
-        $t(
-          `Afin de retracer l'évolution de votre collection, renseignez les dates d'achat de vos numéros dans la page {0}, puis revenez ici ! Si une date d'achat n'a pas été indiquée pour un numéro, sa date d'ajout dans la collection est utilisée`,
-          [
-            `<router-link to='/collection/show'>${$t(
-              'Gérer ma collection'
-            )}</router-link>`,
-          ]
-        )
-      "
-    />
+    <i18n-t
+      tag="div"
+      keypath="Afin de retracer l'évolution de votre collection, renseignez les dates d'achat de vos numéros dans la page {link_to_collection}, puis revenez ici ! Si une date d'achat n'a pas été indiquée pour un numéro, sa date d'ajout dans la collection est utilisée"
+      ><template #link_to_collection
+        ><router-link to="/collection/show">{{
+          $t("Gérer ma collection")
+        }}</router-link></template
+      ></i18n-t
+    >
   </BAlert>
   <BButtonGroup>
     <BButton

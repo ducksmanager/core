@@ -8,7 +8,6 @@
       <CollectionMenu v-if="firstPathPart === 'collection'" />
       <StatsMenu v-if="firstPathPart === 'stats'" />
       <ExpandMenu v-if="firstPathPart === 'expand'" />
-      <div v-html="'<span></span>'"></div>
       <router-view />
     </div>
     <Footer />

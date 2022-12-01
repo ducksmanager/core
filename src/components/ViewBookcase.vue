@@ -18,40 +18,34 @@
           />
         </div>
       </div>
-      <b-alert
-        variant="info"
-        show
-        v-html="
-          $t(
-            'Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page {0}.',
-            [
-              `<router-link to='/bookcase/options'>${$t(
-                'Options de la bibliothèque'
-              )}</router-link>`,
-            ]
-          )
-        "
-      />
+      <b-alert variant="info" show
+        ><i18n-t
+          keypath="Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page {link_to_bookcase_options}."
+        >
+          <template #link_to_bookcase_options>
+            <router-link to="/bookcase/options">{{
+              $t("Options de la bibliothèque")
+            }}</router-link>
+          </template>
+        </i18n-t>
+      </b-alert>
       <div
         v-if="
           allowSharing && user.username !== 'demo' && sortedBookcase?.length
         "
         class="mb-4"
       >
-        <b-alert
-          variant="info"
-          show
-          v-html="
-            $t(
-              'Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page {0}.',
-              [
-                `<router-link to='/collection/account'>${$t(
-                  'Mon compte'
-                )}</router-link>`,
-              ]
-            )
-          "
-        />
+        <b-alert variant="info" show
+          ><i18n-t
+            keypath="Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page {link_to_my_account}."
+          >
+            <template #link_to_my_account>
+              <router-link to="/collection/account">{{
+                $t("Mon compte")
+              }}</router-link>
+            </template>
+          </i18n-t>
+        </b-alert>
         <SharePage
           v-if="showShareButtons"
           :title="`${$t('Bibliothèque DucksManager de')} ${bookcaseUsername}`"
@@ -69,17 +63,15 @@
         v-else-if="allowSharing === false && user.username !== 'demo'"
         show
         variant="warning"
-        v-html="
-          $t(
-            'Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page {0}.',
-            [
-              `<router-link a='/collection/account'>${$t(
-                'Mon compte'
-              )}</router-link>`,
-            ]
-          )
-        "
-      />
+        ><i18n-t
+          keypath="Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page {link_to_my_account}."
+          ><template #link_to_my_account>
+            `<router-link to="/collection/account">{{
+              $t("Mon compte")
+            }}</router-link>
+          </template>
+        </i18n-t>
+      </b-alert>
     </div>
     <div v-if="percentVisible !== null">
       {{ percentVisible

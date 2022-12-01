@@ -4,14 +4,14 @@
     <ShortStats v-if="userCount !== null" id="short-stats">
       <template #non-empty-collection>
         <div>
-          <span
-            v-html="
-              $t(
-                'Le contenu de votre collection est <b>n°{0} / {1}</b> en terme de rareté sur DucksManager.',
-                [rarityValue, userCount]
-              )
-            "
-          /><br />
+          <i18n-t
+            tag="span"
+            keypath="Le contenu de votre collection est {rank} en terme de rareté sur DucksManager."
+            ><template #rank>
+              <b>{{ $t("n°{0} / {1}", [rarityValue, userCount]) }}</b>
+            </template></i18n-t
+          >
+          <br />
           <b-alert variant="info" show size="sm" class="d-inline-block mt-3">
             <small>
               {{

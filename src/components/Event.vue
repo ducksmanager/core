@@ -11,15 +11,23 @@
       &nbsp;{{
         $t("a commencé sa collection sur DucksManager. Bienvenue !")
       }} </template
-    ><span
+    ><i18n-t
       v-if="event.type === 'medal'"
-      v-html="
-        `&nbsp;${$t('a obtenu la médaille <b>{0} niveau {1}</b>', [
-          getMedalTitle(event.contribution),
-          event.niveau,
-        ])}`
-      "
-    /><template v-if="event.type === 'bookstore_comment'">
+      tag="span"
+      keypath="a obtenu la médaille {medal_and_level}"
+    >
+      <template #medal_and_level
+        ><b>
+          {{
+            $t("{medal} niveau {level}", {
+              medal: getMedalTitle(event.contribution),
+              level: event.niveau,
+            })
+          }}</b
+        >
+      </template>
+    </i18n-t>
+    <template v-if="event.type === 'bookstore_comment'">
       &nbsp;{{ $t("a visité la bouquinerie") }}
       <i
         ><router-link to="/bookstores">{{ event.name }}</router-link></i
