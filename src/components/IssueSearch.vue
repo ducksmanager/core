@@ -51,7 +51,7 @@
                     conditions.find(
                       ({ dbValue }) =>
                         dbValue === searchResult.collectionIssue.condition
-                    )
+                    )?.value || null
                   "
                 />&nbsp;{{ searchResult.title }}
               </template>
@@ -132,9 +132,11 @@ const runSearch = async (value) => {
           `/coa/list/issues?storycode=${value.replace(/^code=/, "")}`
         )
       ).data;
-      searchResults.results = searchResults.results.sort((issue1, issue2) =>
-        Math.sign(!!isInCollection(issue2) - !!isInCollection(issue1))
-      );
+      searchResults = {
+        results: searchResults.sort((issue1, issue2) =>
+          Math.sign(!!isInCollection(issue2) - !!isInCollection(issue1))
+        ),
+      };
       await fetchPublicationNames(
         searchResults.results.map(({ publicationcode }) => publicationcode)
       );

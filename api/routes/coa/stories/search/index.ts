@@ -77,7 +77,9 @@ export const post = [
     } else {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
-        JSON.stringify(await getStoriesByKeywords(req.body.keywords.split(",")))
+        JSON.stringify({
+          results: await getStoriesByKeywords(req.body.keywords.split(",")),
+        })
       );
     }
   }) as Handler,

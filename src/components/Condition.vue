@@ -13,7 +13,7 @@
 <script setup>
 import { condition } from "~/composables/condition";
 import { collection } from "~/stores/collection";
-const { publicationcode, issuenumber, value } = defineProps({
+const props = defineProps({
   publicationcode: { type: String, default: null },
   issuenumber: { type: String, default: null },
   value: { type: String, default: null },
@@ -21,14 +21,14 @@ const { publicationcode, issuenumber, value } = defineProps({
 
 const { conditions, getConditionLabel } = condition();
 const currentCondition = $computed(() => {
-  if (value) {
+  if (props.value) {
     return conditions.find(
-      ({ value: conditionValue }) => value === conditionValue
+      ({ value: conditionValue }) => props.value === conditionValue
     );
   } else {
     const issueInCollection = collection().findInCollection(
-      publicationcode,
-      issuenumber
+      props.publicationcode,
+      props.issuenumber
     );
     return (
       issueInCollection &&
