@@ -63,7 +63,7 @@ export const get: Handler = async (req, res) => {
                                ON sprites.ID_Tranche = tp.ID
             WHERE ID_Utilisateur = ${user.id}
             GROUP BY ${groupBy}
-        `)) as { [key: string]: number | Date | string }[],
+        `)) as { [field: string]: number | Date | string }[],
         (key, value) => (typeof value === "bigint" ? Number(value) : value)
       )
     );

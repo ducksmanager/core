@@ -8,11 +8,21 @@ import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
 
+type SimpleUserWithQuickStats = {
+  userId: number;
+  username: string;
+  presentationText: string;
+  allowSharing: boolean;
+  numberOfCountries: number;
+  numberOfPublications: number;
+  numberOfIssues: number;
+};
+
 export const users = defineStore("users", {
   state: () => ({
     count: null as number | null,
-    stats: {},
-    points: {},
+    stats: {} as { [userId: number]: SimpleUserWithQuickStats },
+    points: {} as { [userId: number]: { [contribution: string]: number } },
     events: [] as (
       | BookstoreCreationEvent
       | CollectionSubscriptionAdditionEvent
@@ -46,7 +56,10 @@ export const users = defineStore("users", {
 
       const data = (
         await userApi.get(url, clearCacheEntry ? {} : { cache: false })
-      ).data;
+      ).data as {
+        stats: SimpleUserWithQuickStats[];
+        points: { [userId: number]: { [contribution: string]: number } };
+      };
       this.points = {
         ...this.points,
         ...data.points,
@@ -54,7 +67,10 @@ export const users = defineStore("users", {
       this.stats = {
         ...this.stats,
         ...data.stats.reduce(
-          (acc: { [key: number]: unknown }, data: { userId: number }) => ({
+          (
+            acc: { [userId: number]: SimpleUserWithQuickStats },
+            data: SimpleUserWithQuickStats
+          ) => ({
             ...acc,
             [data.userId]: data,
           }),

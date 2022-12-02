@@ -22,7 +22,7 @@ const prisma = new PrismaClientDm();
 const sendSuggestedIssueNotification = async (
   issuecode: string,
   issueTitle: string,
-  storyCountPerAuthor: { [p: string]: number },
+  storyCountPerAuthor: { [personcode: string]: number },
   userToNotify: user
 ) => {
   const notificationContent = {
@@ -82,7 +82,7 @@ export const post: Handler = async (req, res) => {
 
   const usersById = (await prisma.user.findMany()).reduce(
     (acc, user) => ({ ...acc, [user.id]: user }),
-    {} as { [key: number]: user }
+    {} as { [userId: number]: user }
   );
 
   const allSuggestedIssues = [
@@ -111,7 +111,7 @@ export const post: Handler = async (req, res) => {
         ...new Set(...(acc[notification.userId] || []), notification.issuecode),
       ],
     }),
-    {} as { [key: number]: string[] }
+    {} as { [userId: number]: string[] }
   );
 
   for (const [userId, suggestionsForUser] of Object.entries(

@@ -2,7 +2,7 @@ export interface User {
   id: number;
   username: string;
   hashedPassword: string;
-  privileges: { [key: string]: string };
+  privileges: { [privilegeScope: string]: string };
 }
 
 declare global {

@@ -7,15 +7,17 @@ import { issue, requestedIssue } from "~db_types/client_dm";
 export const marketplace = defineStore("marketplace", {
   state: () => ({
     issuesOnSaleByOthers: null as {
-      [key: string]: issue[];
+      [publicationcode: string]: issue[];
     } | null,
     issueRequestsAsBuyer: null as requestedIssue[] | null,
     issueRequestsAsSeller: null as requestedIssue[] | null,
-    isLoadingIssueRequestsAsBuyer: false,
-    isLoadingIssueRequestsAsSeller: false,
-    isLoadingIssuesOnSaleByOthers: false,
+    isLoadingIssueRequestsAsBuyer: false as boolean,
+    isLoadingIssueRequestsAsSeller: false as boolean,
+    isLoadingIssuesOnSaleByOthers: false as boolean,
 
-    contactMethods: {} as { [key: number]: { [key: string]: never } },
+    contactMethods: {} as {
+      [userId: number]: { [contactMethod: string]: never };
+    },
   }),
 
   getters: {
@@ -68,7 +70,7 @@ export const marketplace = defineStore("marketplace", {
               issueId,
             ],
           }),
-          {} as { [key: number]: number[] }
+          {} as { [userId: number]: number[] }
         ),
 
     issuesOnSaleById: ({ issuesOnSaleByOthers }) =>

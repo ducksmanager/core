@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 const getStoryCountPerAuthor = async (
   personcodes: string[]
-): Promise<{ [key: string]: number }> =>
+): Promise<{ [personcode: string]: number }> =>
   (
     await prisma.authorStory.groupBy({
       by: ["personcode"],
@@ -28,7 +28,7 @@ const getStoryCountPerAuthor = async (
 
 const getMissingStoryCountPerAuthor = async (
   userId: number
-): Promise<{ [key: string]: number }> =>
+): Promise<{ [personcode: string]: number }> =>
   (
     await prisma.missingStoryForUser.groupBy({
       by: ["personcode"],

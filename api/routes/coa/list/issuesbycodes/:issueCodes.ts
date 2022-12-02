@@ -54,7 +54,7 @@ export const get: Handler = async (req, res) => {
     popularity: number | null;
   }
 
-  const covers: { [key: string]: cover } = (
+  const covers: { [issuecode: string]: cover } = (
     await prismaCoverInfo.cover.findMany({
       where: {
         issuecode: {

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export const getAuthorFullNames = async (
   authorPersoncodes: string[]
-): Promise<{ [key: string]: string }> =>
+): Promise<{ [personcode: string]: string }> =>
   (
     await prisma.inducks_person.findMany({
       where: {

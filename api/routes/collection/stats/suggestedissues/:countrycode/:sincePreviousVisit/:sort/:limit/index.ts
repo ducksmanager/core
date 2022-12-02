@@ -87,10 +87,10 @@ interface Suggestion
     > {}
 
 interface SuggestionList {
-  storyDetails?: { [p: string]: StoryDetail };
-  suggestionsPerUser: { [p: number]: IssueSuggestionList };
-  publicationTitles: { [p: string]: inducks_publication };
-  authors: { [p: string]: string };
+  storyDetails?: { [storycode: string]: StoryDetail };
+  suggestionsPerUser: { [userId: number]: IssueSuggestionList };
+  publicationTitles: { [publicationcode: string]: inducks_publication };
+  authors: { [personcode: string]: string };
 }
 
 const getStoryDetails = async (
@@ -121,7 +121,7 @@ const getStoryDetails = async (
       ORDER BY story.storycode
   `)
   ).reduce((acc, story) => ({ ...acc, [story.storycode]: story }), {}) as {
-    [key: string]: StoryDetail;
+    [storycode: string]: StoryDetail;
   };
 
   for (const storycode of storyCodes) {
@@ -197,7 +197,7 @@ export const getSuggestions = async (
         )
       : null;
 
-  const suggestionsPerUser = {} as { [key: number]: IssueSuggestionList };
+  const suggestionsPerUser = {} as { [userId: number]: IssueSuggestionList };
   const referencedIssues = [];
   const referencedStories = [] as Suggestion[];
   for (const suggestedStory of suggestions) {
@@ -264,9 +264,9 @@ export const getSuggestions = async (
   ).reduce(
     (acc, value) => ({ ...acc, [value.personcode]: value.fullname }),
     {}
-  ) as { [key: string]: string };
+  ) as { [personcode: string]: string };
 
-  let storyDetails: { [p: string]: StoryDetail } = {};
+  let storyDetails: { [storycode: string]: StoryDetail } = {};
   if (withStoryDetails) {
     storyDetails = await getStoryDetails(
       referencedStories.map(({ storycode }) => storycode),
@@ -288,7 +288,7 @@ export const getSuggestions = async (
 };
 
 const isSuggestionInCountriesToNotify = (
-  countriesToNotify: { [p: number]: string[] } | null,
+  countriesToNotify: { [userId: number]: string[] } | null,
   userId: number,
   suggestion: Suggestion
 ): boolean =>
@@ -303,7 +303,7 @@ const isSuggestionInCountriesToNotify = (
 
 const getOptionValueAllUsers = async (
   optionName: userOptionType
-): Promise<{ [key: number]: string[] }> =>
+): Promise<{ [userId: number]: string[] }> =>
   (
     await prismaDm.userOption.findMany({
       where: {
@@ -315,5 +315,5 @@ const getOptionValueAllUsers = async (
       ...acc,
       [value.userId]: [...(acc[value.userId] || []), value],
     }),
-    {} as { [key: string]: string[] }
+    {} as { [userId: string]: string[] }
   );

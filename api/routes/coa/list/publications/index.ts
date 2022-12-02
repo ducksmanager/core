@@ -27,7 +27,7 @@ export const get: Handler = async (req, res) => {
 
 const getAllPublicationTitles = async () => await getPublicationTitles({});
 export const getPublicationTitles = async (filter: {
-  [key: string]: string | string[];
+  [operator: string]: string | string[];
 }) =>
   (
     await prisma.inducks_publication.findMany({

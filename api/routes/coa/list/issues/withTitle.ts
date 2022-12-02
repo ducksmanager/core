@@ -23,13 +23,10 @@ export const get: Handler = async (req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(
     JSON.stringify(
-      data.map(
-        ({ issuenumber, title }) => ({
-          issueNumber: issuenumber!.replace(/ +/g, " "),
-          title,
-        }),
-        {} as { [key: string]: { [key: string]: string } }
-      )
+      data.map(({ issuenumber, title }) => ({
+        issueNumber: issuenumber!.replace(/ +/g, " "),
+        title,
+      }))
     )
   );
 };

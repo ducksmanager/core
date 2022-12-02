@@ -53,7 +53,7 @@ export const get: Handler = async (req, res) => {
             issuenumber!.replace(/ +/g, " "),
           ],
         }),
-        {} as { [key: string]: string[] }
+        {} as { [publicationcode: string]: string[] }
       )
     )
   );

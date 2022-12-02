@@ -22,14 +22,20 @@ interface BookcaseEdgeWithPopularity extends BookcaseEdge {
 
 export const bookcase = defineStore("bookcase", {
   state: () => ({
-    loadedSprites: {},
+    loadedSprites: {} as { [key: string]: string },
 
     isPrivateBookcase: false as boolean,
     isUserNotExisting: false as boolean,
     bookcaseUsername: null as string | null,
     bookcase: null as BookcaseEdge[] | null,
-    bookcaseOptions: null,
-    bookcaseOrder: null,
+    bookcaseOptions: null as {
+      textures: {
+        bookcase: string;
+        bookshelf: string;
+      };
+      showAllCopies: boolean;
+    } | null,
+    bookcaseOrder: null as string[] | null,
 
     edgeIndexToLoad: 0 as number,
   }),

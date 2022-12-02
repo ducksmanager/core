@@ -20,7 +20,7 @@ export const get: Handler = async (req, res) => {
           ...acc,
           [publicationcode!]: _count.issuenumber,
         }),
-        {} as { [key: string]: number }
+        {} as { [publicationcode: string]: number }
       )
     )
   );

@@ -35,7 +35,7 @@ export const getMedalPoints = async (userIds: number[]) => {
         [contribution]: parseInt(totalPoints) || 0,
       },
     }),
-    {} as { [key: number]: { [key: string]: number } }
+    {} as { [userId: number]: { [contribution: string]: number } }
   );
 };
 

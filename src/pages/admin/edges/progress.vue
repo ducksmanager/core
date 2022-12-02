@@ -127,7 +127,9 @@ import { WantedEdge } from "~types/WantedEdge";
 let hasData = $ref(false);
 const show = $ref(false);
 let mostWanted = $ref(null as WantedEdge[] | null);
-let publishedEdges = $ref(null as { [key: string]: string[] } | null);
+let publishedEdges = $ref(
+  null as { [publicationcode: string]: string[] } | null
+);
 const showEdgesForPublication = $ref([]);
 const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",

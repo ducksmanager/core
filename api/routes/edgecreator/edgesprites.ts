@@ -38,7 +38,7 @@ const updateTags = async (edges: edge[]) => {
     },
   });
 
-  const tagsToAdd: { [key: string]: Tag } = {};
+  const tagsToAdd: { [spriteName: string]: Tag } = {};
   const insertOperations = [];
 
   for (const edge of edges) {

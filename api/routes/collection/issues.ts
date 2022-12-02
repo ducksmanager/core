@@ -41,7 +41,7 @@ const addOrChangeIssues = async (
   isOnSale: boolean | null,
   isToRead: boolean | null,
   purchaseId: number | null
-): Promise<{ [key: string]: number }> => {
+): Promise<{ [operationType: string]: number }> => {
   const [country, magazine] = publicationCode.split("/");
 
   const conditionNewIssues =
@@ -133,7 +133,7 @@ const addOrChangeCopies = async (
   areOnSale: boolean[],
   areToRead: boolean[] | string[],
   purchaseIds: number[]
-): Promise<{ [key: string]: number }> => {
+): Promise<{ [operationType: string]: number }> => {
   await deleteIssues(userId, publicationCode, [issueNumber]);
   const [country, magazine] = publicationCode.split("/");
 

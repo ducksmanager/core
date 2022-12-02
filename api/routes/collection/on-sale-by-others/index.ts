@@ -12,7 +12,9 @@ export const get: Handler = async (req, res) => {
 
 export const getIssuesForSale: (
   buyerId: number
-) => Promise<{ [p: string]: issue[] }> = async (buyerId: number) => {
+) => Promise<{ [publicationcode: string]: issue[] }> = async (
+  buyerId: number
+) => {
   const forSale = await prisma.$queryRaw<
     {
       id: number;
@@ -61,6 +63,6 @@ export const getIssuesForSale: (
         issue,
       ],
     }),
-    {} as { [key: string]: issue[] }
+    {} as { [publicationcode: string]: issue[] }
   );
 };

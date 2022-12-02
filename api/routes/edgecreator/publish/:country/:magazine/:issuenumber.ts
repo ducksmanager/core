@@ -16,7 +16,7 @@ const isValidPublicationcode = (publicationcode: string) =>
 
 const getUserIdsByUsername = async (
   usernames: string[]
-): Promise<{ [key: string]: number }> =>
+): Promise<{ [username: string]: number }> =>
   (
     await prisma.user.findMany({
       select: {

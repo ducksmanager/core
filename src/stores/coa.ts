@@ -21,7 +21,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
         ...acc,
         [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
       }),
-      {} as { [key: string]: number }
+      {} as { [storycode: string]: number }
     )
   )
     .filter(([, occurrences]) => occurrences > 1)
@@ -31,7 +31,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
         [storycode]: 1,
       }),
       {}
-    ) as { [key: string]: number };
+    ) as { [storycode: string]: number };
   return {
     ...issueDetails,
     entries: issueDetails.entries.map((entry) => ({
@@ -45,37 +45,38 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 
 export const coa = defineStore("coa", {
   state: () => ({
-    coverUrls: {} as { [key: string]: string },
-    countryNames: null as { [key: string]: string } | null,
-    publicationNames: {} as { [key: string]: string },
+    coverUrls: {} as { [issuenumber: string]: string },
+    countryNames: null as { [countrycode: string]: string } | null,
+    publicationNames: {} as { [publicationcode: string]: string },
     publicationNamesFullCountries: [] as string[],
-    personNames: null as { [key: string]: string } | null,
-    issueNumbers: {} as { [key: string]: string[] },
+    personNames: null as { [personcode: string]: string } | null,
+    issueNumbers: {} as { [issuecode: string]: string[] },
     issuesWithTitles: {} as {
-      [key: string]: { issuenumber: string; title: string };
+      [issuenumber: string]: { issuenumber: string; title: string };
     },
-    issueDetails: {} as { [key: string]: InducksIssueDetails },
-    isLoadingCountryNames: false,
-    issueCounts: null,
-    issueCodeDetails: null as { [key: string]: inducks_issue } | null,
+    issueDetails: {} as { [issuecode: string]: InducksIssueDetails },
+    isLoadingCountryNames: false as boolean,
+    issueCounts: null as { [publicationcode: string]: number } | null,
+    issueCodeDetails: null as { [issuecode: string]: inducks_issue } | null,
     issueQuotations: null as {
-      [key: string]: InducksIssueQuotationSimple;
+      [issuecode: string]: InducksIssueQuotationSimple;
     } | null,
-    loadingIssueDetails: {},
   }),
 
   actions: {
-    addPublicationNames(publicationNames: { [key: string]: string }) {
+    addPublicationNames(publicationNames: {
+      [publicationcode: string]: string;
+    }) {
       this.publicationNames = {
         ...this.publicationNames,
         ...publicationNames,
       };
     },
-    setPersonNames(personNames: { [key: string]: string }) {
+    setPersonNames(personNames: { [personcode: string]: string }) {
       this.personNames = Object.keys(personNames).reduce(
-        (acc, personCode) => ({
+        (acc, personcode) => ({
           ...acc,
-          [personCode]: personNames[personCode],
+          [personcode]: personNames[personcode],
         }),
         {}
       );
@@ -83,14 +84,16 @@ export const coa = defineStore("coa", {
     setCoverUrl(issueNumber: string, url: string) {
       this.coverUrls[issueNumber] = url;
     },
-    addIssueNumbers(issueNumbers: { [key: string]: string[] }) {
+    addIssueNumbers(issueNumbers: { [publicationcode: string]: string[] }) {
       this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };
     },
-    addIssueCodeDetails(issueCodeDetails: { [key: string]: inducks_issue }) {
+    addIssueCodeDetails(issueCodeDetails: {
+      [issuecode: string]: inducks_issue;
+    }) {
       this.issueCodeDetails = { ...this.issueCodeDetails, ...issueCodeDetails };
     },
     addIssueQuotations(issueQuotations: {
-      [key: string]: InducksIssueQuotationSimple;
+      [publicationcode: string]: InducksIssueQuotationSimple;
     }) {
       this.issueQuotations = {
         ...(this.issueQuotations || {}),
@@ -172,13 +175,13 @@ export const coa = defineStore("coa", {
                       max: issue.estimationmax,
                     },
                   }),
-                  {} as { [key: string]: InducksIssueQuotationSimple }
+                  {} as { [issuecode: string]: InducksIssueQuotationSimple }
                 ),
               }),
               []
             )
           )) as {
-            [key: string]: InducksIssueQuotationSimple;
+            [issuecode: string]: InducksIssueQuotationSimple;
           }
         )
       );

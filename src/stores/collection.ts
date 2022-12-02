@@ -11,7 +11,6 @@ import {
   user,
 } from "~db_types/client_dm";
 import { CollectionUpdate } from "~types/CollectionUpdate";
-import { exclude } from "~types/exclude";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
 import { StoryDetail } from "~types/StoryDetail";
@@ -28,12 +27,12 @@ export const collection = defineStore("collection", {
     marketplaceContactMethods: null as string[] | null,
 
     suggestions: null as {
-      issues: { [key: string]: IssueSuggestion };
+      issues: { [issuecode: string]: IssueSuggestion };
       minScore: number;
       maxScore: number;
-      authors: { [p: string]: string };
-      storyDetails: { [p: string]: StoryDetail } | undefined;
-      publicationTitles: { [p: string]: inducks_publication };
+      authors: { [personcode: string]: string };
+      storyDetails: { [storycode: string]: StoryDetail } | undefined;
+      publicationTitles: { [publicationcode: string]: inducks_publication };
     } | null,
     subscriptions: null as
       | {
@@ -44,7 +43,7 @@ export const collection = defineStore("collection", {
         }[]
       | null,
 
-    popularIssuesInCollection: null as { [key: string]: number } | null,
+    popularIssuesInCollection: null as { [issuecode: string]: number } | null,
     lastPublishedEdgesForCurrentUser: null as edge[] | null,
 
     isLoadingUser: false as boolean,
@@ -73,7 +72,7 @@ export const collection = defineStore("collection", {
           ...acc,
           [issuecode]: [...acc[issuecode], issue],
         };
-      }, {} as { [key: string]: issue[] }),
+      }, {} as { [issuecode: string]: issue[] }),
 
     duplicateIssues: ({ issuesByIssueCode }) =>
       issuesByIssueCode &&
@@ -110,14 +109,14 @@ export const collection = defineStore("collection", {
           ...acc,
           [issue.country]: (acc[issue.country] || 0) + 1,
         }),
-        {} as { [key: string]: number }
+        {} as { [countrycode: string]: number }
       ),
 
     totalPerPublication: ({ collection }) =>
       collection?.reduce((acc, issue) => {
-        const publicationCode = `${issue.country}/${issue.magazine}`;
-        return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
-      }, {} as { [key: string]: number }),
+        const publicationcode = `${issue.country}/${issue.magazine}`;
+        return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
+      }, {} as { [publicationcode: string]: number }),
 
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,
@@ -131,7 +130,7 @@ export const collection = defineStore("collection", {
             issueNumber,
           ],
         }),
-        {} as { [key: string]: string[] }
+        {} as { [publicationcode: string]: string[] }
       ),
 
     totalPerPublicationUniqueIssueNumbers: ({ issueNumbersPerPublication }) =>
