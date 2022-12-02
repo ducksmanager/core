@@ -24,7 +24,7 @@ const i18n = useI18n();
 
 const locales = [
   {
-    key: "en",
+    key: "en-US",
     name: "English",
     flagName: "uk",
   },

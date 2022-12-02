@@ -31,6 +31,7 @@
 		"chart.js": "^4.0.1",
 		"concurrently": "^7.6.0",
 		"core-js": "^3.26.1",
+		"dayjs": "^1.11.6",
 		"js-cookie": "^3.0.1",
 		"js-yaml": "^4.1.0",
 		"mapbox-gl": "^2.11.0",

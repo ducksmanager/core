@@ -1,7 +1,7 @@
 <template>
   <div>
     <LinkToCollectionIfNoIssue />
-    <ShortStats v-if="userCount !== null" id="short-stats">
+    <ShortStats v-if="userCount !== null">
       <template #non-empty-collection>
         <div>
           <i18n-t
@@ -228,7 +228,7 @@ onMounted(async () => {
   font-size: 16px;
 }
 
-#short-stats :deep(> div) {
+:deep(#short-stats > div) {
   margin-bottom: 32px;
 }
 
