@@ -43,10 +43,10 @@ alias: [/achats]
     </BButton>
   </BButtonGroup>
   <div class="wrapper">
-    <bar-chart
+    <bar
       v-if="chartData"
       :chart-data="chartData"
-      :options="options"
+      :chart-options="options"
       :style="{ width, height }"
     />
   </div>
@@ -63,7 +63,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { onMounted, watch } from "vue";
-import { BarChart } from "vue-chart-3";
+import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
@@ -313,6 +313,11 @@ onMounted(async () => {
 <style scoped lang="scss">
 .wrapper {
   background: #333;
+
+  > div {
+    width: 100% !important;
+    height: 100% !important;
+  }
 }
 
 :deep(.btn) {

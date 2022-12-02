@@ -1,6 +1,6 @@
 <template>
   <LinkToCollectionIfNoIssue />
-  <pie-chart :chart-data="chartData" :options="options" />
+  <pie :chart-data="chartData" :chart-options="options" />
 </template>
 
 <script setup>
@@ -12,7 +12,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { PieChart } from "vue-chart-3";
+import { Pie } from "vue-chartjs";
 
 import { condition } from "~/composables/condition";
 import { collection as collectionStore } from "~/stores/collection";

@@ -33,9 +33,9 @@ alias: [/auteurs]
             {{ text }}
           </BButton>
         </BButtonGroup>
-        <bar-chart
+        <bar
           :chart-data="chartData"
-          :options="options"
+          :chart-options="options"
           :style="{ width, height }"
         />
         {{ $t("Les statistiques sont mises à jour quotidiennement.") }}
@@ -59,7 +59,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { watch } from "vue";
-import { BarChart } from "vue-chart-3";
+import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";

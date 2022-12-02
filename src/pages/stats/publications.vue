@@ -1,6 +1,6 @@
 <template>
   <LinkToCollectionIfNoIssue />
-  <pie-chart v-if="chartData" :chart-data="chartData" :options="options" />
+  <pie v-if="chartData" :chart-data="chartData" :chart-options="options" />
 </template>
 
 <script setup>
@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { watch } from "vue";
-import { PieChart } from "vue-chart-3";
+import { Pie } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";

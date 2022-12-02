@@ -11,7 +11,7 @@
     </BButton>
   </BButtonGroup>
   <div class="wrapper">
-    <bar-chart v-if="chartData" :chart-data="chartData" :options="options" />
+    <bar v-if="chartData" :chart-data="chartData" :chart-options="options" />
   </div>
 </template>
 
@@ -28,7 +28,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { onMounted, watch } from "vue";
-import { BarChart } from "vue-chart-3";
+import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
@@ -209,6 +209,11 @@ onMounted(async () => {
 }
 .wrapper {
   height: v-bind(height);
+
+  > div {
+    width: 100%;
+    height: 100%;
+  }
 
   :deep(canvas) {
     width: 100% !important;
