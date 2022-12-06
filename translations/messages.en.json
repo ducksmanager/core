@@ -472,6 +472,7 @@
   "numéros peuvent être importés.": "issues to be imported.",
   "numéros sélectionnés": "selected issues",
   "n°": "#",
+  "n°{0} / {1}": "#{0} / {1}",
   "ont créé la tranche": "have created the edge of issue",
   "ont reçu": "have received issue",
   "or": "gold",
@@ -493,8 +494,10 @@
   "texte": "text",
   "titre d'histoire": "story title",
   "un visiteur anonyme": "an anonymous visitor",
+  "votre bibliothèque": "your bookcase",
   "{0} utilisateurs sont inscrits\nsur DucksManager": "{0} users have signed up\non DucksManager",
   "{count} numéro sélectionné|{count} numéros sélectionnés": "{count} selected issue|{count} selected issues",
+  "{medal} niveau {level}": "{medal} level {level}",
   "{{issueTitle}} est sorti !": "{{issueTitle}} is out!",
   "{{publicationName}} {{issueNumber}} a été ajouté à votre collection !": "{{publicationName}} {{issueNumber}} has been added to your collection!",
   "à": "at",
@@ -502,7 +505,6 @@
   "à sa collection": "to their collection",
   "• 1 nouvelle histoire de {{authorName}}": "• 1 new story from {{authorName}}",
   "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}",
-  "n°{0} / {1}": "#{0} / {1}",
-  "{medal} niveau {level}": "{medal} level {level}",
-  "votre bibliothèque": "your bookcase"
+  "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros.": "You haven't set any contact method for other users who may be interested in your issues for sole.",
+  "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact.": "If you wish to sell issues, set at least one contact method."
 }

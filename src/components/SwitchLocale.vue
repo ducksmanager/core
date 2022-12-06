@@ -13,6 +13,9 @@
 
 <script setup>
 import { useI18n } from "vue-i18n";
+
+import { availableLocales } from "~/composables/locales";
+
 defineProps({
   fixed: {
     type: Boolean,
@@ -21,19 +24,7 @@ defineProps({
 });
 
 const i18n = useI18n();
-
-const locales = [
-  {
-    key: "en-US",
-    name: "English",
-    flagName: "uk",
-  },
-  {
-    key: "fr",
-    name: "Français",
-    flagName: "fr",
-  },
-];
+const locales = $computed(() => availableLocales);
 const reloadWithLocale = ({ key }) => {
   localStorage.setItem("locale", key);
   i18n.locale.value = key;

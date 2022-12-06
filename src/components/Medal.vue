@@ -38,7 +38,7 @@
       v-if="level <= 3"
       class="medal"
       :src="`/images/medals/${contribution}_${level}_${
-        xSmall ? 'fond' : currentLocale
+        xSmall ? 'fond' : currentLocaleShortKey
       }.png`"
     />
     <b v-if="small">
@@ -51,8 +51,10 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
-import { locale } from "~/composables/global";
+import { availableLocales } from "~/composables/locales";
 import medal from "~/composables/medal";
+
+const i18n = useI18n();
 
 const { contribution, nextLevel, userLevelPoints } = defineProps({
   small: { type: Boolean, default: false },
@@ -69,7 +71,9 @@ const {
   radius,
   circumference,
 } = $(medal(contribution, userLevelPoints));
-const currentLocale = locale();
+const currentLocaleShortKey = $computed(
+  () => availableLocales.find(({ key }) => key === i18n.locale.value).shortKey
+);
 const medalColors = ["bronze", "argent", "or"];
 const level = $computed(() =>
   nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
