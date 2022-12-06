@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { condition } from "~/composables/condition";
+import condition from "~/composables/condition";
 import { collection } from "~/stores/collection";
 const props = defineProps({
   publicationcode: { type: String, default: null },

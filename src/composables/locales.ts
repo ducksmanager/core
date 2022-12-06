@@ -17,3 +17,7 @@ export const availableLocales: {
     flagName: "fr",
   },
 ];
+
+export const getCurrentLocaleShortKey = (locale: string): string => {
+  return availableLocales.find(({ key }) => key === locale)?.shortKey || "en";
+};

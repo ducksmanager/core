@@ -259,7 +259,7 @@ import { BAlert } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { condition } from "~/composables/condition";
+import condition from "~/composables/condition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 

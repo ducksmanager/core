@@ -84,6 +84,7 @@ const publicationNames = $computed(() => coa().publicationNames);
 const sortedCountries = $computed(
   () =>
     totalPerCountry &&
+    countryNames &&
     Object.keys(totalPerCountry).sort((countryCode1, countryCode2) =>
       countryNames[countryCode1].localeCompare(countryNames[countryCode2])
     )

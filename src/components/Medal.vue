@@ -51,12 +51,13 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 
-import { availableLocales } from "~/composables/locales";
+import { getCurrentLocaleShortKey } from "~/composables/locales";
 import medal from "~/composables/medal";
 
 const i18n = useI18n();
+const currentLocaleShortKey = getCurrentLocaleShortKey(i18n.locale.value);
 
-const { contribution, nextLevel, userLevelPoints } = defineProps({
+const props = defineProps({
   small: { type: Boolean, default: false },
   xSmall: { type: Boolean, default: false },
   nextLevel: { type: Boolean, default: false },
@@ -70,16 +71,14 @@ const {
   levelProgressPercentage,
   radius,
   circumference,
-} = $(medal(contribution, userLevelPoints));
-const currentLocaleShortKey = $computed(
-  () => availableLocales.find(({ key }) => key === i18n.locale.value).shortKey
-);
+} = $(medal(props.contribution, props.userLevelPoints));
+
 const medalColors = ["bronze", "argent", "or"];
 const level = $computed(() =>
-  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
+  props.nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
 );
 const medalTitle = $computed(() => {
-  switch (contribution) {
+  switch (props.contribution) {
     case "edge_photographer":
       return $t("Concepteur de tranches");
     case "edge_designer":
@@ -92,7 +91,7 @@ const medalTitle = $computed(() => {
 const medalDescription = $computed(() => {
   let textTemplate;
   if (currentLevel === 3) {
-    switch (contribution) {
+    switch (props.contribution) {
       case "edge_photographer":
         textTemplate = "Vous avez {0} points Concepteur de tranches";
         break;
@@ -102,9 +101,9 @@ const medalDescription = $computed(() => {
       case "duckhunter":
         textTemplate = "Vous avez signalé {0} bouquineries";
     }
-    return $t(textTemplate, [userLevelPoints]);
+    return $t(textTemplate, [props.userLevelPoints]);
   } else {
-    switch (contribution) {
+    switch (props.contribution) {
       case "edge_photographer":
         textTemplate =
           "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
@@ -118,7 +117,7 @@ const medalDescription = $computed(() => {
           "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!";
     }
     return $t(textTemplate, [
-      userLevelPoints,
+      props.userLevelPoints,
       pointsDiffNextLevel,
       $t(medalColors[currentLevel]),
     ]);

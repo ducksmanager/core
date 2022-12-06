@@ -1,8 +1,8 @@
 import { useI18n } from "vue-i18n";
 
-export let condition = function () {
+export default function () {
   const { t: $t } = useI18n();
-  let conditions = [
+  const conditions = [
     {
       value: "missing",
       dbValue: "non_possede",
@@ -40,9 +40,9 @@ export let condition = function () {
   ];
   return {
     conditions,
-    getConditionLabel: (givenDbValue) =>
+    getConditionLabel: (givenDbValue: string) =>
       conditions.find(
         ({ dbValue }) => givenDbValue.toUpperCase() === dbValue.toUpperCase()
       )?.label || "",
   };
-};
+}

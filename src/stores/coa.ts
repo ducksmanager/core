@@ -1,9 +1,12 @@
 import { defineStore } from "pinia";
 
+import { getCurrentLocaleShortKey } from "~/composables/locales";
 import { cachedCoaApi as coaApi } from "~/util/api";
 import { inducks_issue, inducks_issuequotation } from "~db_types/client_coa";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
+
+import { i18n } from "../i18n";
 
 const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
 const URL_PREFIX_PUBLICATIONS = "/coa/list/publications";
@@ -108,7 +111,7 @@ export const coa = defineStore("coa", {
           await coaApi.get(
             URL_PREFIX_COUNTRIES.replace(
               "LOCALE",
-              localStorage.getItem("locale") || "en"
+              getCurrentLocaleShortKey(i18n.global.locale)
             )
           )
         ).data;

@@ -44,7 +44,6 @@
 
 <script setup>
 import Popper from "@bperel/vue3-popper-teleport";
-import axios from "axios";
 
 import { collection } from "~/stores/collection";
 import { users } from "~/stores/users";

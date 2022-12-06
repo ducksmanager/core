@@ -1,6 +1,6 @@
 import { computed } from "vue";
 
-const MEDAL_LEVELS = {
+const MEDAL_LEVELS: { [contribution: string]: { [level: number]: number } } = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },
   edge_designer: { 1: 20, 2: 70, 3: 150 },
   duckhunter: { 1: 1, 2: 3, 3: 15 },
@@ -8,40 +8,36 @@ const MEDAL_LEVELS = {
 
 const RADIUS = 42;
 
-export default function (contribution, userLevelPoints) {
+export default function (contribution: string, userLevelPoints: number) {
   const circumference = Math.PI * RADIUS * 2,
     currentLevel = computed(() => {
-      if (!contribution) {
-        return null;
-      }
       const level = MEDAL_LEVELS[contribution];
       const maxThresholdReached =
         Object.values(level)
           .filter((minimumPoints) => userLevelPoints >= minimumPoints)
           .pop() || 0;
-      return parseInt(
-        Object.keys(level).find((key) => level[key] === maxThresholdReached) ||
-          0
+      return (
+        Object.keys(level)
+          .map((key) => parseInt(key))
+          .find((key) => level[key] === maxThresholdReached) || 0
       );
     }),
-    currentLevelPoints = computed(() =>
-      currentLevel.value === null
-        ? null
-        : MEDAL_LEVELS[contribution][currentLevel.value] || 0
+    currentLevelPoints = computed(
+      () => MEDAL_LEVELS[contribution][currentLevel.value] || 0
     ),
     currentLevelThreshold = computed(() =>
-      currentLevel.value === null || currentLevel.value === 3
+      currentLevel.value === 3
         ? null
         : MEDAL_LEVELS[contribution][currentLevel.value + 1]
     ),
     pointsDiffNextLevel = computed(() =>
-      currentLevel.value === null || currentLevel.value >= 3
+      currentLevel.value >= 3
         ? null
         : MEDAL_LEVELS[contribution][currentLevel.value + 1] - userLevelPoints
     ),
     medalProgressCurrentPercentage = computed(() =>
-      currentLevel.value === null
-        ? null
+      currentLevelThreshold.value === null
+        ? 0
         : (100 * (userLevelPoints - currentLevelPoints.value)) /
           (currentLevelThreshold.value - currentLevelPoints.value)
     ),
@@ -59,7 +55,7 @@ export default function (contribution, userLevelPoints) {
           (nextLevelThreshold - currentLevelThreshold) || 0.01;
       return (1 - levelProgress) * circumference;
     }),
-    getLevelProgressPercentage = (extraPoints) =>
+    getLevelProgressPercentage = (extraPoints: number) =>
       currentLevelThreshold.value
         ? 100 *
           (extraPoints / currentLevelThreshold.value - currentLevelPoints.value)

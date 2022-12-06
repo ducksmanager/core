@@ -11,12 +11,13 @@ declare global {
   const EffectScope: typeof import("vue")["EffectScope"];
   const asyncComputed: typeof import("@vueuse/core")["asyncComputed"];
   const autoResetRef: typeof import("@vueuse/core")["autoResetRef"];
+  const availableLocales: typeof import("./src/composables/locales")["availableLocales"];
   const computed: typeof import("vue")["computed"];
   const computedAsync: typeof import("@vueuse/core")["computedAsync"];
   const computedEager: typeof import("@vueuse/core")["computedEager"];
   const computedInject: typeof import("@vueuse/core")["computedInject"];
   const computedWithControl: typeof import("@vueuse/core")["computedWithControl"];
-  const condition: typeof import("./src/composables/condition.js")["condition"];
+  const condition: typeof import("./src/composables/condition")["default"];
   const controlledComputed: typeof import("@vueuse/core")["controlledComputed"];
   const controlledRef: typeof import("@vueuse/core")["controlledRef"];
   const createApp: typeof import("vue")["createApp"];
@@ -35,6 +36,7 @@ declare global {
   const effectScope: typeof import("vue")["effectScope"];
   const extendRef: typeof import("@vueuse/core")["extendRef"];
   const getCurrentInstance: typeof import("vue")["getCurrentInstance"];
+  const getCurrentLocaleShortKey: typeof import("./src/composables/locales")["getCurrentLocaleShortKey"];
   const getCurrentScope: typeof import("vue")["getCurrentScope"];
   const h: typeof import("vue")["h"];
   const ignorableWatch: typeof import("@vueuse/core")["ignorableWatch"];
@@ -45,10 +47,9 @@ declare global {
   const isReactive: typeof import("vue")["isReactive"];
   const isReadonly: typeof import("vue")["isReadonly"];
   const isRef: typeof import("vue")["isRef"];
-  const locale: typeof import("./src/composables/global.js")["locale"];
   const makeDestructurable: typeof import("@vueuse/core")["makeDestructurable"];
   const markRaw: typeof import("vue")["markRaw"];
-  const medal: typeof import("./src/composables/medal.js")["default"];
+  const medal: typeof import("./src/composables/medal")["default"];
   const nextTick: typeof import("vue")["nextTick"];
   const onActivated: typeof import("vue")["onActivated"];
   const onBeforeMount: typeof import("vue")["onBeforeMount"];
@@ -294,6 +295,9 @@ declare module "vue" {
     readonly autoResetRef: UnwrapRef<
       typeof import("@vueuse/core")["autoResetRef"]
     >;
+    readonly availableLocales: UnwrapRef<
+      typeof import("./src/composables/locales")["availableLocales"]
+    >;
     readonly computed: UnwrapRef<typeof import("vue")["computed"]>;
     readonly computedAsync: UnwrapRef<
       typeof import("@vueuse/core")["computedAsync"]
@@ -308,7 +312,7 @@ declare module "vue" {
       typeof import("@vueuse/core")["computedWithControl"]
     >;
     readonly condition: UnwrapRef<
-      typeof import("./src/composables/condition.js")["condition"]
+      typeof import("./src/composables/condition")["default"]
     >;
     readonly controlledComputed: UnwrapRef<
       typeof import("@vueuse/core")["controlledComputed"]
@@ -356,6 +360,9 @@ declare module "vue" {
     readonly getCurrentInstance: UnwrapRef<
       typeof import("vue")["getCurrentInstance"]
     >;
+    readonly getCurrentLocaleShortKey: UnwrapRef<
+      typeof import("./src/composables/locales")["getCurrentLocaleShortKey"]
+    >;
     readonly getCurrentScope: UnwrapRef<
       typeof import("vue")["getCurrentScope"]
     >;
@@ -372,15 +379,12 @@ declare module "vue" {
     readonly isReactive: UnwrapRef<typeof import("vue")["isReactive"]>;
     readonly isReadonly: UnwrapRef<typeof import("vue")["isReadonly"]>;
     readonly isRef: UnwrapRef<typeof import("vue")["isRef"]>;
-    readonly locale: UnwrapRef<
-      typeof import("./src/composables/global.js")["locale"]
-    >;
     readonly makeDestructurable: UnwrapRef<
       typeof import("@vueuse/core")["makeDestructurable"]
     >;
     readonly markRaw: UnwrapRef<typeof import("vue")["markRaw"]>;
     readonly medal: UnwrapRef<
-      typeof import("./src/composables/medal.js")["default"]
+      typeof import("./src/composables/medal")["default"]
     >;
     readonly nextTick: UnwrapRef<typeof import("vue")["nextTick"]>;
     readonly onActivated: UnwrapRef<typeof import("vue")["onActivated"]>;
