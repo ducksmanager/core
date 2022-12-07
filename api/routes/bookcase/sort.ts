@@ -29,8 +29,7 @@ export const post = [
       );
       await prisma.$transaction(insertOperations);
 
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ max: order - 1 }));
+      return res.json({ max: order - 1 });
     }
   }) as Handler,
 ];

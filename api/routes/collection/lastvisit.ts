@@ -18,13 +18,9 @@ export const post: Handler = async (req, res) => {
     console.log(`"Updating last access for user ${req.user.id}`);
     user.previousAccess = user.lastAccess;
   } else {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        previousVisit: user.previousAccess || new Date(),
-      })
-    );
-    return;
+    return res.json({
+      previousVisit: user.previousAccess || new Date(),
+    });
   }
   user.lastAccess = new Date();
   prisma.user.update({

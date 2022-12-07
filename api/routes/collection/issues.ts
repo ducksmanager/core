@@ -195,15 +195,12 @@ export const get: Handler = async (req, res) => {
   if (req.user.username === "demo") {
     await resetDemo();
   }
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      await prisma.issue.findMany({
-        where: {
-          userId: req.user.id,
-        },
-      })
-    )
+  return res.json(
+    await prisma.issue.findMany({
+      where: {
+        userId: req.user.id,
+      },
+    })
   );
 };
 
@@ -294,7 +291,6 @@ export const post = [
         checkedPurchaseIds[0]
       );
     }
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(output));
+    return res.json(output);
   }) as Handler,
 ];

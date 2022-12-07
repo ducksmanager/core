@@ -75,12 +75,9 @@ export const post = [
       res.writeHead(400);
       res.end();
     } else {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          results: await getStoriesByKeywords(req.body.keywords.split(",")),
-        })
-      );
+      return res.json({
+        results: await getStoriesByKeywords(req.body.keywords.split(",")),
+      });
     }
   }) as Handler,
 ];

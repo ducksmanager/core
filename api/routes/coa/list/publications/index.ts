@@ -13,15 +13,11 @@ export const get: Handler = async (req, res) => {
     (req.query as { [key: string]: string }).publicationCodes?.split(",") || "";
   if (publicationCodes.length > 20) {
     res.writeHead(400);
-    res.end();
+    return res.end();
   } else if (!publicationCodes.length) {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(await getAllPublicationTitles()));
+    return res.json(await getAllPublicationTitles());
   } else {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify(await getPublicationTitlesFromCodes(publicationCodes))
-    );
+    return res.json(await getPublicationTitlesFromCodes(publicationCodes));
   }
 };
 

@@ -40,6 +40,5 @@ export const getMedalPoints = async (userIds: number[]) => {
 };
 
 export const get: Handler = async (req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(await getMedalPoints([req.user.id])));
+  return res.json(await getMedalPoints([req.user.id]));
 };

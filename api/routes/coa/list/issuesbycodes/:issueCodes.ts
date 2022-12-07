@@ -111,6 +111,5 @@ export const get: Handler = async (req, res) => {
     issues[longIssueCode].popularity = userCount;
   }
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(issues));
+  return res.json(issues);
 };

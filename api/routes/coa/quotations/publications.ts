@@ -23,16 +23,13 @@ export const get: Handler = async (req, res) => {
     res.writeHead(429);
     res.end();
   } else {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify(
-        await prisma.inducks_issuequotation.findMany({
-          where: {
-            publicationcode: { in: codes.map(([code]) => code) },
-            estimationmin: { not: { equals: null } },
-          },
-        })
-      )
+    return res.json(
+      await prisma.inducks_issuequotation.findMany({
+        where: {
+          publicationcode: { in: codes.map(([code]) => code) },
+          estimationmin: { not: { equals: null } },
+        },
+      })
     );
   }
 };

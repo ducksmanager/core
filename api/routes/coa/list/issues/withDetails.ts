@@ -12,11 +12,9 @@ export const get: Handler = async (req, res) => {
     res.end();
     return;
   }
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      (
-        (await prisma.$queryRaw`
+  return res.json(
+    (
+      (await prisma.$queryRaw`
       SELECT publicationcode,
              issuenumber,
              title,
@@ -30,18 +28,17 @@ export const get: Handler = async (req, res) => {
       WHERE inducks_issue.publicationcode IN(${Prisma.join(
         publicationCodes
       )})`) as {
-          publicationcode: string;
-          issuenumber: string;
-          title: string;
-          coverUrl: string;
-        }[]
-      ).reduce(
-        (acc, row) => ({
-          ...row,
-          issuenumber: row.issuenumber.replace(/ +/g, " "),
-        }),
-        {}
-      )
+        publicationcode: string;
+        issuenumber: string;
+        title: string;
+        coverUrl: string;
+      }[]
+    ).reduce(
+      (acc, row) => ({
+        ...row,
+        issuenumber: row.issuenumber.replace(/ +/g, " "),
+      }),
+      {}
     )
   );
 };

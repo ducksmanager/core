@@ -47,8 +47,7 @@ export const post = [
           }))!;
           await loginAs(user, hashedPassword);
 
-          res.writeHead(200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ token }));
+          return res.json({ token });
         }
       }
     );

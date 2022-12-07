@@ -6,26 +6,22 @@ import { PrismaClient } from "~prisma_clients/client_dm";
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export const get: Handler = async (req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      (
-        await prisma.purchase.findMany({
-          where: {
-            userId: req.user.id,
-          },
-          orderBy: {
-            date: "desc",
-          },
-        })
-      ).map((purchase) => ({
-        ...purchase,
-        date: purchase.date.toISOString().split("T")[0],
-      }))
-    )
+export const get: Handler = async (req, res) =>
+  res.json(
+    (
+      await prisma.purchase.findMany({
+        where: {
+          userId: req.user.id,
+        },
+        orderBy: {
+          date: "desc",
+        },
+      })
+    ).map((purchase) => ({
+      ...purchase,
+      date: purchase.date.toISOString().split("T")[0],
+    }))
   );
-};
 
 export const put = [
   parseForm,

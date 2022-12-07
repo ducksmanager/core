@@ -17,6 +17,5 @@ export const get: Handler = async (req, res) => {
                            issuePopularity.numero = issue.numero
       where ID_Utilisateur = ${req.user.id}
       order by popularity DESC`) as PopularIssue[];
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(popularities));
+  return res.json(popularities);
 };

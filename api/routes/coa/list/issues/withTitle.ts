@@ -20,13 +20,10 @@ export const get: Handler = async (req, res) => {
       publicationcode,
     },
   });
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      data.map(({ issuenumber, title }) => ({
-        issueNumber: issuenumber!.replace(/ +/g, " "),
-        title,
-      }))
-    )
+  return res.json(
+    data.map(({ issuenumber, title }) => ({
+      issueNumber: issuenumber!.replace(/ +/g, " "),
+      title,
+    }))
   );
 };

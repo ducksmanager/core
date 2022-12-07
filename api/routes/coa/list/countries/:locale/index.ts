@@ -5,6 +5,5 @@ import { getCountryNames } from "~/routes/coa/list/countries/:locale/:countryCod
 export const get: Handler = async (req, res) => {
   const { locale } = req.params;
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(await getCountryNames(locale)));
+  return res.json(await getCountryNames(locale));
 };

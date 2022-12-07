@@ -40,6 +40,5 @@ export const get: Handler = async (req, res) => {
     url: string;
     position: string;
   }[];
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify({ releaseDate, entries }));
+  return res.json({ releaseDate, entries });
 };

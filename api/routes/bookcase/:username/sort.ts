@@ -55,17 +55,14 @@ export const get: Handler = async (req, res) => {
     );
     await prisma.$transaction(insertOperations);
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify(
-        (
-          await prisma.bookcasePublicationOrder.findMany({
-            select: { publicationcode: true },
-            where: { userId },
-            orderBy: { order: "asc" },
-          })
-        ).map(({ publicationcode }) => publicationcode)
-      )
+    return res.json(
+      (
+        await prisma.bookcasePublicationOrder.findMany({
+          select: { publicationcode: true },
+          where: { userId },
+          orderBy: { order: "asc" },
+        })
+      ).map(({ publicationcode }) => publicationcode)
     );
   }
 };

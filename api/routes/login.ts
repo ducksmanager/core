@@ -99,8 +99,7 @@ export const post = [
     if (user) {
       const token = await loginAs(user, hashedPassword);
 
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ token }));
+      return res.json({ token });
     } else {
       res.writeHead(401, { "Content-Type": "application/text" });
       res.end();

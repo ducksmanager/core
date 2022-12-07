@@ -20,11 +20,8 @@ export const get: Handler = async (req, res) => {
   const myScore =
     userScores.find(({ userId }) => userId === req.user.id)?.averageRarity || 0;
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify({
-      userScores,
-      myScore,
-    })
-  );
+  return res.json({
+    userScores,
+    myScore,
+  });
 };

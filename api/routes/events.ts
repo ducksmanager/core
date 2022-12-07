@@ -19,15 +19,7 @@ import { SignupEvent } from "~types/events/SignupEvent";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json" });
-  const events = await getEvents();
-  res.end(
-    JSON.stringify(events, (key, value) =>
-      typeof value === "bigint" ? Number(value) : value
-    )
-  );
-};
+export const get: Handler = async (req, res) => res.json(await getEvents());
 
 const getEvents = async () => [
   ...(await retrieveSignups()),

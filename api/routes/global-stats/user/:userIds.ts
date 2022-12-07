@@ -17,12 +17,7 @@ export const get: Handler = async (req, res) => {
       stats: await getUsersQuickStats(userIds),
     };
   }
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(data, (key, value) =>
-      typeof value === "bigint" ? Number(value) : value
-    )
-  );
+  return res.json(data);
 };
 
 const simpleUserValidator = Prisma.validator<Prisma.userArgs>()({

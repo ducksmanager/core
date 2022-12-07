@@ -7,11 +7,10 @@ const parseForm = bodyParser.json();
 
 export const get = [
   parseForm,
-  (async (req, res) => {
-    const { countrycode } = req.params;
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(await getPublicationTitlesFromCountry(countrycode)));
-  }) as Handler,
+  (async (req, res) =>
+    res.json(
+      await getPublicationTitlesFromCountry(req.params.countrycode)
+    )) as Handler,
 ];
 
 const getPublicationTitlesFromCountry = async (countrycode: string) =>

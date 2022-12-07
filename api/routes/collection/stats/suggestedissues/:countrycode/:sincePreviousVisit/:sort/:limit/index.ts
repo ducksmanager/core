@@ -47,15 +47,12 @@ export const get: Handler = async (req, res) => {
   const suggestionsForUser =
     suggestionsPerUser[req.user.id] || new IssueSuggestionList();
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify({
-      ...suggestionsForUser,
-      authors,
-      storyDetails,
-      publicationTitles,
-    })
-  );
+  return res.json({
+    ...suggestionsForUser,
+    authors,
+    storyDetails,
+    publicationTitles,
+  });
 };
 
 const suggestedPublications =

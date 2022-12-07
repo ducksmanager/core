@@ -22,20 +22,17 @@ export const get: Handler = async (req, res) => {
   ).map(
     (issue) => `${issue.country}/${issue.magazine} ${issue.issueNumber}`
   ) as string[];
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      await prisma.edge.findMany({
-        where: {
-          creationDate: {
-            gt: threeMonthsAgo,
-          },
-          issuecode: {
-            in: userIssues,
-          },
+  return res.json(
+    await prisma.edge.findMany({
+      where: {
+        creationDate: {
+          gt: threeMonthsAgo,
         },
-        take: 5,
-      })
-    )
+        issuecode: {
+          in: userIssues,
+        },
+      },
+      take: 5,
+    })
   );
 };

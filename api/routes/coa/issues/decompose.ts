@@ -9,26 +9,22 @@ const parseForm = bodyParser.json();
 
 export const post = [
   parseForm,
-  (async (req, res) => {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify(
-        (
-          await prisma.inducks_issue.findMany({
-            where: {
-              issuecode: {
-                in: req.body.issueCodes.split(","),
-              },
+  (async (req, res) =>
+    res.json(
+      (
+        await prisma.inducks_issue.findMany({
+          where: {
+            issuecode: {
+              in: req.body.issueCodes.split(","),
             },
-          })
-        ).reduce(
-          (acc, value) => ({
-            ...acc,
-            [value.issuecode]: value,
-          }),
-          {}
-        )
+          },
+        })
+      ).reduce(
+        (acc, value) => ({
+          ...acc,
+          [value.issuecode]: value,
+        }),
+        {}
       )
-    );
-  }) as Handler,
+    )) as Handler,
 ];

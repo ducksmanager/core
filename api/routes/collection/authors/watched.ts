@@ -44,8 +44,7 @@ export const get: Handler = async (req, res) => {
   const authorsUsers = await prisma.authorUser.findMany({
     where: { userId: req.user.id },
   });
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(authorsUsers));
+  return res.json(authorsUsers);
 };
 
 export const put = [

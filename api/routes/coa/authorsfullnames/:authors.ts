@@ -28,6 +28,5 @@ export const get: Handler = async (req, res) => {
 
   const authors = await getAuthorFullNames(authorPersoncodes);
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(authors));
+  return res.json(authors);
 };

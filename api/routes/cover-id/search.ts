@@ -34,14 +34,11 @@ export const put: Handler = (req, res) => {
         return;
       }
       if (!pastecResponse.imageIds.length) {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(
-          JSON.stringify({
-            issues: [],
-            imageIds: [],
-            type: pastecResponse.type,
-          })
-        );
+        return res.json({
+          issues: [],
+          imageIds: [],
+          type: pastecResponse.type,
+        });
         return;
       }
       console.log("Cover ID search: matched cover IDs $coverIds");
@@ -69,13 +66,10 @@ export const put: Handler = (req, res) => {
 
       // TODO sort
 
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          issues: Object.values(issues),
-          imageIds: pastecResponse.imageIds,
-        })
-      );
+      return res.json({
+        issues: Object.values(issues),
+        imageIds: pastecResponse.imageIds,
+      });
     }
   });
 };

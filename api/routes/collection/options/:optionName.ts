@@ -25,18 +25,15 @@ export const get: Handler = async (req, res) => {
     res.writeHead(400);
     res.end();
   } else {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify(
-        (
-          await prisma.userOption.findMany({
-            where: {
-              userId: req.user.id,
-              optionName,
-            },
-          })
-        ).map((option) => option.optionValue)
-      )
+    return res.json(
+      (
+        await prisma.userOption.findMany({
+          where: {
+            userId: req.user.id,
+            optionName,
+          },
+        })
+      ).map((option) => option.optionValue)
     );
   }
 };

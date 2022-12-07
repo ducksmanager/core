@@ -8,8 +8,7 @@ export const get: Handler = async (req, res) => {
   const { locale } = req.params;
   const { countryIds } = req.query as { [key: string]: string };
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(await getCountryNames(locale, countryIds.split(","))));
+  return res.json(await getCountryNames(locale, countryIds.split(",")));
 };
 
 export const getCountryNames = async (

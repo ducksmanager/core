@@ -168,15 +168,12 @@ export const put = [
       issueNumber
     );
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        publicationcode,
-        issueNumber,
-        edgeId,
-        contributors,
-        url: `${process.env.EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issueNumber}.png`,
-      })
-    );
+    return res.json({
+      publicationcode,
+      issueNumber,
+      edgeId,
+      contributors,
+      url: `${process.env.EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issueNumber}.png`,
+    });
   }) as Handler,
 ];

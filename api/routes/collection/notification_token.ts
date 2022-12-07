@@ -7,14 +7,11 @@ export const get: Handler = (req, res) => {
     res.end();
   } else {
     try {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify(
-          new PushNotifications({
-            instanceId: process.env.PUSHER_INSTANCE_ID || "",
-            secretKey: process.env.PUSHER_SECRET_KEY || "",
-          }).generateToken(req.user.username)
-        )
+      return res.json(
+        new PushNotifications({
+          instanceId: process.env.PUSHER_INSTANCE_ID || "",
+          secretKey: process.env.PUSHER_SECRET_KEY || "",
+        }).generateToken(req.user.username)
       );
     } catch (e) {
       console.error(e);

@@ -16,10 +16,7 @@ export const getUser = async (req: Request) =>
     where: { id: req.user.id },
   });
 export const get: Handler = async (req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(exclude<user, "password">(await getUser(req), "password"))
-  );
+  return res.json(exclude<user, "password">(await getUser(req), "password"));
 };
 
 export const del: Handler = async (req, res) => {
@@ -90,12 +87,9 @@ export const post = [
           presentationText: input.presentationText,
         }).send();
       }
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          hasRequestedPresentationSentenceUpdate,
-        })
-      );
+      return res.json({
+        hasRequestedPresentationSentenceUpdate,
+      });
     }
   }) as Handler,
 ];
@@ -154,8 +148,7 @@ export const put = [
         privileges,
       });
 
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ token }));
+      return res.json({ token });
     }
   }) as Handler,
 ];

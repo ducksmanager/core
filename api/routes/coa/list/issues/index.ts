@@ -7,10 +7,8 @@ const prisma = new PrismaClient();
 export const get: Handler = async (req, res) => {
   const { storycode } = req.query;
   if (storycode) {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify(
-        await prisma.$queryRaw`
+    return res.json(
+      await prisma.$queryRaw`
               SELECT issuecode as code,
                      publicationcode,
                      issuenumber
@@ -20,9 +18,7 @@ export const get: Handler = async (req, res) => {
               WHERE sv.storycode = ${storycode}
               GROUP BY publicationcode, issuenumber
               ORDER BY publicationcode`
-      )
     );
-    return;
   }
   const publicationCodes =
     (req.query as { [key: string]: string }).publicationCodes?.split(",") || [];
@@ -31,7 +27,6 @@ export const get: Handler = async (req, res) => {
     res.end();
     return;
   }
-  res.writeHead(200, { "Content-Type": "application/json" });
   const data = await prisma.inducks_issue.findMany({
     select: {
       publicationcode: true,
@@ -43,18 +38,16 @@ export const get: Handler = async (req, res) => {
       },
     },
   });
-  res.end(
-    JSON.stringify(
-      data.reduce(
-        (acc, { publicationcode, issuenumber }) => ({
-          ...acc,
-          [publicationcode!]: [
-            ...(acc[publicationcode!] || []),
-            issuenumber!.replace(/ +/g, " "),
-          ],
-        }),
-        {} as { [publicationcode: string]: string[] }
-      )
+  return res.json(
+    data.reduce(
+      (acc, { publicationcode, issuenumber }) => ({
+        ...acc,
+        [publicationcode!]: [
+          ...(acc[publicationcode!] || []),
+          issuenumber!.replace(/ +/g, " "),
+        ],
+      }),
+      {} as { [publicationcode: string]: string[] }
     )
   );
 };

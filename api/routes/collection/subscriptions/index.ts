@@ -51,16 +51,13 @@ export const get: Handler = async (req, res) => {
       },
     },
   });
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      subscriptions.map((subscription: subscription) => ({
-        id: subscription.id,
-        publicationCode: `${subscription.country}/${subscription.magazine}`,
-        startDate: subscription.startDate.toISOString(),
-        endDate: subscription.endDate.toISOString(),
-      }))
-    )
+  return res.json(
+    subscriptions.map((subscription: subscription) => ({
+      id: subscription.id,
+      publicationCode: `${subscription.country}/${subscription.magazine}`,
+      startDate: subscription.startDate.toISOString(),
+      endDate: subscription.endDate.toISOString(),
+    }))
   );
 };
 

@@ -26,17 +26,14 @@ export const get: Handler = async (req, res) => {
       optionName: userOptionType.marketplace_contact_methods,
     },
   });
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      sellerContactMethods.reduce(
-        (acc, { optionValue: contactMethod }) => ({
-          ...acc,
-          [contactMethod]:
-            contactMethod === "email" ? seller.email : seller.discordId,
-        }),
-        {}
-      )
+  return res.json(
+    sellerContactMethods.reduce(
+      (acc, { optionValue: contactMethod }) => ({
+        ...acc,
+        [contactMethod]:
+          contactMethod === "email" ? seller.email : seller.discordId,
+      }),
+      {}
     )
   );
 };

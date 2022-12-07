@@ -55,22 +55,19 @@ export const get: Handler = async (req, res) => {
   const storyCountPerAuthor = await getStoryCountPerAuthor(personcodes);
   const personNames = await getAuthorFullNames(personcodes);
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      personcodes.reduce(
-        (acc, personcode) => ({
-          ...acc,
-          [personcode]: {
-            missingstorycount: missingStoryCountPerAuthor[personcode],
-            storycount:
-              storyCountPerAuthor[personcode] ||
-              missingStoryCountPerAuthor[personcode],
-            fullname: personNames[personcode],
-          },
-        }),
-        {}
-      )
+  return res.json(
+    personcodes.reduce(
+      (acc, personcode) => ({
+        ...acc,
+        [personcode]: {
+          missingstorycount: missingStoryCountPerAuthor[personcode],
+          storycount:
+            storyCountPerAuthor[personcode] ||
+            missingStoryCountPerAuthor[personcode],
+          fullname: personNames[personcode],
+        },
+      }),
+      {}
     )
   );
 };

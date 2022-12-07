@@ -8,34 +8,30 @@ const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export const get: Handler = async (req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      await prisma.bookstore.findMany({
-        select: {
-          id: true,
-          name: true,
-          address: true,
-          coordX: true,
-          coordY: true,
-          comments: {
-            where: {
-              isActive: true,
-            },
+export const get: Handler = async (req, res) =>
+  res.json(
+    await prisma.bookstore.findMany({
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        coordX: true,
+        coordY: true,
+        comments: {
+          where: {
+            isActive: true,
           },
         },
-        where: {
-          comments: {
-            some: {
-              isActive: true,
-            },
+      },
+      where: {
+        comments: {
+          some: {
+            isActive: true,
           },
         },
-      })
-    )
+      },
+    })
   );
-};
 
 export const put = [
   parseForm,

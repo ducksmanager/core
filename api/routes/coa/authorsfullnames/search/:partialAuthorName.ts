@@ -15,16 +15,13 @@ export const get: Handler = async (req, res) => {
     },
   });
 
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify(
-      authors.reduce(
-        (acc, value) => ({
-          ...acc,
-          [value.personcode]: value.fullname,
-        }),
-        {}
-      )
+  return res.json(
+    authors.reduce(
+      (acc, value) => ({
+        ...acc,
+        [value.personcode]: value.fullname,
+      }),
+      {}
     )
   );
 };
