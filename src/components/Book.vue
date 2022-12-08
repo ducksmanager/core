@@ -102,7 +102,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
 import { PageFlip } from "page-flip";
 import { watch } from "vue";
@@ -110,17 +110,11 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 
-const { issueNumber, publicationCode } = defineProps({
-  publicationCode: {
-    type: String,
-    required: true,
-  },
-  issueNumber: {
-    type: String,
-    required: true,
-  },
-});
-const emit = defineEmits(["close-book"]);
+const { issueNumber, publicationCode } = defineProps<{
+  publicationCode: string;
+  issueNumber: string;
+}>();
+const emit = defineEmits<{ (e: "close-book"): void }>();
 
 const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/";
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
@@ -128,15 +122,15 @@ const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
 
 const toast = useToast();
-let edgeWidth = $ref(null);
-let coverHeight = $ref(null);
-const coverRatio = $ref(null);
-let opening = $ref(false);
-let opened = $ref(false);
-let closing = $ref(false);
-let book = $ref(null);
-let currentPage = $ref(0);
-const currentTabIndex = $ref(0);
+let edgeWidth = $ref(null as number | null);
+let coverHeight = $ref(null as number | null);
+const coverRatio = $ref(null as number | null);
+let opening = $ref(false as boolean);
+let opened = $ref(false as boolean);
+let closing = $ref(false as boolean);
+let book = $ref(null as PageFlip | null);
+let currentPage = $ref(0 as number);
+const currentTabIndex = $ref(0 as number);
 const publicationNames = $computed(() => coa().publicationNames);
 const issueDetails = $computed(() => coa().issueDetails);
 const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
@@ -147,7 +141,9 @@ const edgeUrl = $computed(
       "/gen/"
     )}.${issueNumber}.png`
 );
-const coverWidth = $computed(() => coverRatio && coverHeight / coverRatio);
+const coverWidth = $computed(
+  () => coverRatio && (coverHeight || 0) / coverRatio
+);
 const currentIssueDetails = $computed(
   () => issueDetails?.[`${publicationCode} ${issueNumber}`]
 );
@@ -211,9 +207,9 @@ watch(
   () => coverWidth,
   (newValue) => {
     const availableWidthPerPage = document.body.clientWidth / 2 - 15;
-    if (newValue > availableWidthPerPage) {
-      edgeWidth /= newValue / availableWidthPerPage;
-      coverHeight /= newValue / availableWidthPerPage;
+    if (newValue && newValue > availableWidthPerPage) {
+      edgeWidth! /= newValue / availableWidthPerPage;
+      coverHeight! /= newValue / availableWidthPerPage;
     }
   }
 );
@@ -235,7 +231,7 @@ watch(
       });
       book.loadFromHTML(document.querySelectorAll(".page"));
 
-      book.on("flip", ({ data }) => {
+      book.on("flip", ({ data }: { data: number }) => {
         currentPage = data;
       });
 
@@ -273,16 +269,18 @@ watch(
   () => pagesWithUrl,
   (newValue) => {
     if (newValue && !newValue.length) {
-      toast.show(
-        $t(
-          "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !"
-        ),
+      toast!.show(
         {
-          autoHideDelay: 5000,
-          noCloseButton: true,
-          solid: true,
+          body: $t(
+            "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !"
+          ),
           title: $t("Pas d'informations sur le contenu du livre"),
-          toaster: "b-toaster-top-center",
+        },
+        {
+          autoHide: true,
+          delay: 5000,
+          noCloseButton: true,
+          pos: "top-center",
           variant: "warning",
         }
       );

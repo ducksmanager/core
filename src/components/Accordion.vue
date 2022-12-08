@@ -24,25 +24,14 @@
     </b-collapse>
   </b-card>
 </template>
-<script setup>
+<script setup lang="ts">
 import { BCard, BCardBody, BCardText, BCollapse } from "bootstrap-vue-3";
 
-defineProps({
-  accordionGroupId: {
-    type: String,
-    required: true,
-  },
-  visible: {
-    type: Boolean,
-    default: true,
-  },
-  id: {
-    type: String,
-    required: true,
-  },
-});
-
-defineEmits(["expand"]);
+defineProps<{
+  accordionGroupId: string;
+  visible: boolean;
+  id: string;
+}>();
 </script>
 
 <style scoped lang="scss">

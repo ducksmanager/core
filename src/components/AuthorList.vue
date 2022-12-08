@@ -102,23 +102,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios";
 import { BAlert, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { inducks_person } from "~db_types/client_coa";
 
-const { watchedAuthors } = defineProps({
-  watchedAuthors: {
-    type: Array,
-    required: true,
-  },
-});
+const { watchedAuthors } = defineProps<{
+  watchedAuthors: { personcode: string }[];
+}>();
 
-let isSearching = $ref(false);
-let pendingSearch = $ref(null);
+let isSearching = $ref(false as boolean);
+let pendingSearch = $ref(null as string | null);
 const search = $ref("");
 let searchResults = $ref(null);
 
@@ -145,22 +143,22 @@ watch(
   { immediate: true }
 );
 const { loadWatchedAuthors } = collection();
-const isAuthorWatched = (personcode) =>
+const isAuthorWatched = (personcode: string) =>
   watchedAuthors.some(
     ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
   );
-const createRating = async (author) => {
+const createRating = async (author: inducks_person) => {
   await axios.put("/collection/authors/watched", author);
   await loadWatchedAuthors(true);
 };
-const updateRating = async (author) => {
+const updateRating = async (author: inducks_person) => {
   await axios.post("/collection/authors/watched", author);
 };
-const deleteAuthor = async (author) => {
-  await axios.delete("/collection/authors/watched", author);
+const deleteAuthor = async (author: inducks_person) => {
+  await axios.delete("/collection/authors/watched", { data: author });
   await loadWatchedAuthors(true);
 };
-const runSearch = async (value) => {
+const runSearch = async (value: string) => {
   if (!isSearching) {
     try {
       isSearching = true;
@@ -169,7 +167,7 @@ const runSearch = async (value) => {
     } finally {
       isSearching = false;
       // The input value has changed since the beginning of the search, searching again
-      if (value !== pendingSearch) await runSearch(pendingSearch);
+      if (value !== pendingSearch) await runSearch(pendingSearch!);
     }
   }
 };

@@ -6,19 +6,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { collection } from "~/stores/collection";
 
-defineProps({
-  classes: {
-    type: Object,
-    default: () => ({}),
-  },
-  small: {
-    type: Boolean,
-    default: false,
-  },
-});
+defineProps<{
+  classes: { [key: string]: string };
+  small: boolean;
+}>();
 const user = $computed(() => collection().user);
 </script>
 

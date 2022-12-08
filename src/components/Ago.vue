@@ -1,16 +1,13 @@
 <template>
   <span class="ago pl-2">{{ timeAgo }}</span>
 </template>
-<script setup>
-import * as timeago from "timeago.js";
+<script setup lang="ts">
+import { format as timeAgoFormat } from "timeago.js";
 
-const { timestamp } = defineProps({
-    timestamp: {
-      type: Number,
-      required: true,
-    },
-  }),
-  timeAgo = $computed(() => timeago.format(timestamp * 1000));
+const { timestamp } = defineProps<{
+    timestamp: number;
+  }>(),
+  timeAgo = $computed(() => timeAgoFormat(timestamp * 1000));
 </script>
 <style scoped lang="scss">
 .ago {

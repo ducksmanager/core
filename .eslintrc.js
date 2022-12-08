@@ -23,6 +23,8 @@ module.exports = {
     "vue/no-setup-props-destructure": "off",
     "vue/no-v-html": "off",
     "vue/no-v-text-v-html-on-component": "off",
+    "vue/define-emits-declaration": "error",
+    "vue/define-props-declaration": "error",
     "vue/component-name-in-template-casing": [
       "error",
       "kebab-case",
