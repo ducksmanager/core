@@ -8,7 +8,7 @@
     /><span v-else-if="event.userId === null" class="text-capitalize">
       {{ $t("un visiteur anonyme") }} </span
     ><template v-if="event.type === 'signup'">
-      &nbsp;{{
+      {{
         $t("a commencé sa collection sur DucksManager. Bienvenue !")
       }} </template
     ><i18n-t
@@ -28,14 +28,13 @@
       </template>
     </i18n-t>
     <template v-if="event.type === 'bookstore_comment'">
-      &nbsp;{{ $t("a visité la bouquinerie") }}
+      {{ $t("a visité la bouquinerie") }}
       <i
         ><router-link to="/bookstores">{{ event.name }}</router-link></i
       >
     </template>
-    <template v-if="event.type === 'collection_update'">
-      &nbsp;{{ $t("a ajouté")
-      }}<Issue
+    <template v-if="event.type === 'collection_update'"
+      >&nbsp;{{ $t("a ajouté") }}&nbsp;<Issue
         v-if="publicationNames[event.publicationCode]"
         :publicationname="publicationNames[event.publicationCode]"
         :publicationcode="event.publicationCode"
@@ -62,9 +61,9 @@
         />
       </span>
       <template v-if="event.users.length > 1">
-        &nbsp;{{ $t("ont créé la tranche") }}
+        {{ $t("ont créé la tranche") }}
       </template>
-      <template v-else> &nbsp;{{ $t("a créé la tranche") }} </template>
+      <template v-else> {{ $t("a créé la tranche") }} </template>
       <BookcasePopover
         :id="`event-edges-${event.timestamp}`"
         :edges="event.edges"
@@ -81,9 +80,10 @@
             :number="event.edges.length"
             :text-single="$t('autre tranche')"
             :text-multiple="$t('autres tranches')"
-          />&nbsp;</span
-        > </BookcasePopover
-      >{{ $t("pour la bibliothèque DucksManager") }}
+          />
+        </span>
+      </BookcasePopover>
+      {{ $t("pour la bibliothèque DucksManager") }}
     </template>
     <template v-if="event.type === 'subscription_additions'">
       <span v-for="(userId, index) in event.users" :key="userId">
@@ -100,12 +100,8 @@
           :points="points[userId]"
         />
       </span>
-      <template v-if="event.users.length > 1">
-        {{ ` ${$t("ont reçu")}` }}
-      </template>
-      <template v-else>
-        {{ ` ${$t("a reçu")}` }}
-      </template>
+      <template v-if="event.users.length > 1"> {{ $t("ont reçu") }} </template>
+      <template v-else> {{ $t("a reçu") }} </template>
       <Issue
         v-if="publicationNames[event.publicationCode]"
         :publicationname="publicationNames[event.publicationCode]"

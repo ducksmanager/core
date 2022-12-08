@@ -1,7 +1,7 @@
 <template>
   <div id="recently">
     <h4>{{ $t("Récemment sur DucksManager...") }}</h4>
-    <div id="events">
+    <div>
       <template v-if="isLoaded">
         <Event
           v-for="event in events"

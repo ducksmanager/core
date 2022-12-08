@@ -2,7 +2,12 @@
   <Story>
     <Variant title="Medal">
       <event
-        :event="{ type: 'medal', contribution: 'edge_photographer', niveau: 2 }"
+        :event="{
+          type: 'medal',
+          contribution: 'edge_photographer',
+          niveau: 2,
+          userId: null,
+        }"
       />
     </Variant>
   </Story>
