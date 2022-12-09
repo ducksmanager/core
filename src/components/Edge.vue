@@ -41,69 +41,37 @@
   </IssueEdgePopover>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { coa } from "~/stores/coa";
 
 const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
   SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
-  creationDate,
+  creationDate = null,
   issueNumber,
-  issueNumberReference,
+  issueNumberReference = null,
   publicationCode,
-  spritePath,
-} = defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
-  publicationCode: {
-    type: String,
-    required: true,
-  },
-  issueNumber: {
-    type: String,
-    required: true,
-  },
-  issueNumberReference: {
-    type: String,
-    default: null,
-  },
-  creationDate: {
-    type: String,
-    default: null,
-  },
-  popularity: {
-    type: Number,
-    default: null,
-  },
-  spritePath: {
-    type: String,
-    default: null,
-  },
-  existing: {
-    type: Boolean,
-    required: true,
-  },
-  load: {
-    type: Boolean,
-    required: true,
-  },
-  invisible: {
-    type: Boolean,
-    default: false,
-  },
-  highlighted: {
-    type: Boolean,
-    default: false,
-  },
-  embedded: {
-    type: Boolean,
-    default: false,
-  },
-});
+  spritePath = null,
+  popularity = null,
+  invisible = false,
+  highlighted = false,
+  embedded = false,
+} = defineProps<{
+  id: string;
+  publicationCode: string;
+  issueNumber: string;
+  issueNumberReference: string;
+  creationDate: string;
+  popularity: number;
+  spritePath: string;
+  existing: boolean;
+  load: boolean;
+  invisible: boolean;
+  highlighted: boolean;
+  embedded: boolean;
+}>();
 
-defineEmits(["loaded", "open-book"]);
+defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
 let countryCode = $computed(() => publicationCode.split("/")[0]),
   magazineCode = $computed(() => publicationCode.split("/")[1]),
   src = $computed(() =>
@@ -111,7 +79,7 @@ let countryCode = $computed(() => publicationCode.split("/")[0]),
       ? `${SPRITES_ROOT}${spritePath}.png`
       : `${EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
           issueNumberReference || issueNumber
-        }.png?${new Date(creationDate).getTime()}`
+        }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`
   ),
   ignoreSprite = $ref(false),
   publicationNames = $computed(() => coa().publicationNames);

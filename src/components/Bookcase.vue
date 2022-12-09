@@ -45,39 +45,33 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from "vue";
 
-const { bookcaseTextures, sortedBookcase } = defineProps({
+const { bookcaseTextures, sortedBookcase } = defineProps<{
   embedded: {
-    type: Boolean,
-    default: false,
-  },
+    type: boolean;
+    default: false;
+  };
   withAllCopies: {
-    type: Boolean,
-    default: false,
-  },
-  bookcaseTextures: {
-    type: Object,
-    required: true,
-  },
+    type: boolean;
+    default: false;
+  };
+  bookcaseTextures: Object;
   currentEdgeHighlighted: {
-    type: String,
-    default: null,
-  },
+    type: string;
+    default: null;
+  };
   currentEdgeOpened: {
-    type: Object,
-    default: null,
-  },
+    type: Object;
+    default: null;
+  };
   edgesUsingSprites: {
-    type: Object,
-    default: () => ({}),
-  },
-  sortedBookcase: {
-    type: Array,
-    required: true,
-  },
-});
+    type: Object;
+    default: () => {};
+  };
+  sortedBookcase: Array;
+}>();
 
 defineEmits(["open-book"]);
 let currentEdgeIndex = $ref(0);

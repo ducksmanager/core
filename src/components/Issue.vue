@@ -21,16 +21,21 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  publicationcode: { type: String, required: true },
-  publicationname: { type: String, required: true },
-  issuenumber: { type: String, required: true },
-  clickable: { type: Boolean, default: false },
-  hideCondition: { type: Boolean, default: false },
-  noWrap: { type: Boolean, default: true },
-  flex: { type: Boolean, default: true },
-});
+<script setup lang="ts">
+const {
+  clickable = false,
+  hideCondition = false,
+  noWrap = true,
+  flex = true,
+} = defineProps<{
+  publicationcode: string;
+  publicationname: string;
+  issuenumber: string;
+  clickable: boolean;
+  hideCondition: boolean;
+  noWrap: boolean;
+  flex: boolean;
+}>();
 </script>
 
 <style scoped lang="scss">

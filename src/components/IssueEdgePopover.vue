@@ -43,23 +43,17 @@
   </Popover>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BButton } from "bootstrap-vue-3";
 
 import { bookcase } from "~/stores/bookcase";
 import { collection } from "~/stores/collection";
 import { users } from "~/stores/users";
 
-defineProps({
-  hasEdge: {
-    type: Boolean,
-    required: true,
-  },
-  extraPoints: {
-    type: Number,
-    default: null,
-  },
-});
+const { extraPoints = null } = defineProps<{
+  hasEdge: boolean;
+  extraPoints: number;
+}>();
 
 const contribution = "Photographe";
 const isSharedBookcase = bookcase().isSharedBookcase;

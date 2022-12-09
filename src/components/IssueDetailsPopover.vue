@@ -48,26 +48,20 @@
   </Popover>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BIconEyeFill } from "bootstrap-icons-vue";
 import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 
-const { issueNumber, publicationCode } = defineProps({
-  publicationCode: {
-    type: String,
-    required: true,
-  },
-  issueNumber: {
-    type: String,
-    required: true,
-  },
-});
-defineEmits(["click"]);
+const { issueNumber, publicationCode } = defineProps<{
+  publicationCode: string;
+  issueNumber: string;
+}>();
+defineEmits<{ (e: "click"): void }>();
 
-let isCoverLoading = $ref(true);
-let coverUrl = $ref(null);
+let isCoverLoading = $ref(true as boolean);
+let coverUrl = $ref(null as string | null);
 
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
@@ -93,7 +87,9 @@ const loadIssueUrls = async () => {
 watch(
   () => coverUrl,
   (value) => {
-    coa().setCoverUrl(issueNumber, value);
+    if (value) {
+      coa().setCoverUrl(issueNumber, value);
+    }
   }
 );
 </script>

@@ -121,21 +121,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { users } from "~/stores/users";
 
-defineProps({
-  event: { type: Object, required: true },
-});
+defineProps<{
+  event: any;
+}>();
 
 const publicationNames = $computed(() => coa().publicationNames);
 const stats = $computed(() => users().stats);
 const points = $computed(() => users().points);
 const { t: $t } = useI18n();
-const getMedalTitle = (contribution) => {
+const getMedalTitle = (contribution: string) => {
   switch (contribution) {
     case "edge_photographer":
       return $t("Photographe de tranches");

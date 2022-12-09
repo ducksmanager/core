@@ -15,41 +15,28 @@
     </a>
   </span>
 </template>
-<script setup>
+<script setup lang="ts">
 import { BBadge } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
 const { t: $t } = useI18n();
-const { kind, storycode } = defineProps({
-  storycode: {
-    type: String,
-    required: true,
-  },
-  kind: {
-    type: String,
-    default: null,
-  },
-  title: {
-    type: String,
-    default: null,
-  },
-  part: {
-    type: Number,
-    default: null,
-  },
-  comment: {
-    type: String,
-    default: null,
-  },
-  noLink: {
-    type: Boolean,
-    default: false,
-  },
-  dark: {
-    type: Boolean,
-    default: false,
-  },
-});
+const {
+  kind,
+  storycode,
+  title = null,
+  part = null,
+  comment = null,
+  noLink = false,
+  dark = false,
+} = defineProps<{
+  storycode: string;
+  kind: string;
+  title: string;
+  part: number;
+  comment: string;
+  noLink: string;
+  dark: boolean;
+}>();
 const urlEncodedStorycode = $computed(
     () => storycode && encodeURIComponent(storycode)
   ),

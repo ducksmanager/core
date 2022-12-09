@@ -28,21 +28,15 @@
   </Popover>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BCol, BRow } from "bootstrap-vue-3";
 
 import { coa } from "~/stores/coa";
 
-defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
-  edges: {
-    type: Array,
-    required: true,
-  },
-});
+defineProps<{
+  id: string;
+  edges: Array;
+}>();
 
 const bookcaseTextures = {
   bookcase: "bois/HONDURAS MAHOGANY",

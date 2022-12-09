@@ -10,25 +10,29 @@
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import condition from "~/composables/condition";
 import { collection } from "~/stores/collection";
-const props = defineProps({
-  publicationcode: { type: String, default: null },
-  issuenumber: { type: String, default: null },
-  value: { type: String, default: null },
-});
+const {
+  issuenumber = null,
+  publicationcode = null,
+  value = null,
+} = defineProps<{
+  publicationcode: string;
+  issuenumber: string;
+  value: string;
+}>();
 
 const { conditions, getConditionLabel } = condition();
 const currentCondition = $computed(() => {
-  if (props.value) {
+  if (value) {
     return conditions.find(
-      ({ value: conditionValue }) => props.value === conditionValue
+      ({ value: conditionValue }) => value === conditionValue
     );
-  } else {
+  } else if (publicationcode && issuenumber) {
     const issueInCollection = collection().findInCollection(
-      props.publicationcode,
-      props.issuenumber
+      publicationcode,
+      issuenumber
     );
     return (
       issueInCollection &&

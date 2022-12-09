@@ -11,21 +11,16 @@
   </span>
 </template>
 
-<script setup>
-const { country, publicationCode } = defineProps({
-  country: {
-    type: String,
-    default: null,
-  },
-  publicationCode: {
-    type: String,
-    default: null,
-  },
-  countryName: {
-    type: String,
-    default: null,
-  },
-});
+<script setup lang="ts">
+const {
+  country = null,
+  countryName = null,
+  publicationCode,
+} = defineProps<{
+  country: string;
+  publicationCode: string;
+  countryName: string;
+}>();
 
 const countryCode = $computed(() => country || publicationCode.split("/")[0]);
 </script>

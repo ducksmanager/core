@@ -317,7 +317,7 @@
   </template>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   BIconArrowBarRight,
   BIconBookmarkCheck,
@@ -339,25 +339,15 @@ import condition from "~/composables/condition";
 import { collection, collection as collectionStore } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 
-const props = defineProps({
-  selectedIssues: {
-    type: Array,
-    required: true,
-  },
-  selectedIssuesById: {
-    type: Object,
-    required: true,
-  },
-  copies: {
-    type: Array,
-    required: true,
-  },
-  publicationcode: {
-    type: String,
-    required: true,
-  },
-});
-const emit = defineEmits(["clear-selection", "close", "launch-modal"]);
+const { copies, publicationcode, selectedIssuesById } = defineProps<{
+  selectedIssues: string[];
+  selectedIssuesById: { [key: number]: string };
+  copies: any[];
+  publicationcode: string;
+}>();
+const emit = defineEmits<{
+  (e: "clear-selection"): void;
+}>();
 const { conditions } = condition();
 
 const defaultState = $ref({
@@ -438,15 +428,15 @@ const isSaleDisabled = $computed(
 );
 
 let isSingleIssueSelected = $computed(
-  () => [...new Set(Object.values(props.selectedIssuesById))].length === 1
+  () => [...new Set(Object.values(selectedIssuesById))].length === 1
 );
 const hasNoCopies = $computed(() => !editingCopies.length);
 const hasMaxCopies = $computed(() => editingCopies.length >= 3);
 const formatDate = (value) => (/\d{4}-\d{2}-\d{2}/.test(value) ? value : today);
 const updateEditingCopies = () => {
   if (isSingleIssueSelected) {
-    if (props.copies.length) {
-      editingCopies = JSON.parse(JSON.stringify(props.copies));
+    if (copies.length) {
+      editingCopies = JSON.parse(JSON.stringify(copies));
     } else {
       editingCopies = [{ ...defaultState, condition: "missing" }];
     }
@@ -456,7 +446,7 @@ const updateEditingCopies = () => {
 };
 
 const userIdsWhoSentRequestsForAllSelected = $computed(() =>
-  Object.keys(props.selectedIssuesById).reduce(
+  Object.keys(selectedIssuesById).reduce(
     (acc, issueId, idx) =>
       idx === 0
         ? [
@@ -487,7 +477,7 @@ const buyerUserNamesById = $computed(() => marketplace().buyerUserNamesById);
 
 const receivedRequests = $computed(() =>
   marketplace().issueRequestsAsSeller?.filter(
-    ({ issueId }) => issueId === props.copies?.[0]?.id
+    ({ issueId }) => issueId === copies?.[0]?.id
   )
 );
 
@@ -526,7 +516,7 @@ const updateSelectedIssues = async (force = false) => {
   }
 
   await updateIssues({
-    issueNumbers: Object.values(props.selectedIssuesById),
+    issueNumbers: Object.values(selectedIssuesById),
     ...issueDetails,
   });
 };
@@ -534,7 +524,7 @@ const updateSelectedIssues = async (force = false) => {
 const updateIssues = async (data) => {
   await collectionStore().updateCollection({
     ...data,
-    publicationcode: props.publicationcode,
+    publicationcode: publicationcode,
   });
 
   await marketplace().loadIssuesOnSaleByOthers(true);
@@ -549,12 +539,12 @@ const deletePurchase = async (data) => {
 };
 
 watch(
-  () => props.selectedIssuesById,
+  () => selectedIssuesById,
   () => updateEditingCopies(),
   { immediate: true }
 );
 watch(
-  () => props.copies,
+  () => copies,
   () => updateEditingCopies(),
   { immediate: true }
 );

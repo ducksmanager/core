@@ -96,29 +96,34 @@
   </template>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BAlert } from "bootstrap-vue-3";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const props = defineProps({
-  selectedIssues: {
-    type: Array,
-    required: true,
-  },
-  selectedIssuesById: {
-    type: Object,
-    required: true,
-  },
-});
-const emit = defineEmits(["clear-selection", "close"]);
+const { selectedIssuesById } = defineProps<{
+  selectedIssues: string[];
+  selectedIssuesById: { [key: number]: string };
+}>();
+const emit = defineEmits<{
+  (
+    e: "launch-modal",
+    options: {
+      contactMethod: string;
+      sellerId: number;
+      selectedIssueIds: number[];
+    }
+  ): void;
+  (e: "close"): void;
+}>();
 
 const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
 const issueIds = $computed(() =>
-  Object.keys(props.selectedIssuesById).map((id) => parseInt(id))
+  Object.keys(selectedIssuesById).map((id) => parseInt(id))
 );
 const stats = $computed(() => users().stats);
 
@@ -126,19 +131,19 @@ const selectedIssuesBuyerIds = $computed(() => [
   ...new Set(
     issueIds.reduce(
       (acc, issueId) => [...acc, issuesOnSaleById[issueId].userId],
-      []
+      [] as number[]
     )
   ),
 ]);
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
   Object.entries(
-    Object.values(props.selectedIssuesById).reduce(
+    Object.values(selectedIssuesById).reduce(
       (acc, issueNumber) => ({
         ...acc,
         [issueNumber]: (acc[issueNumber] || 0) + 1,
       }),
-      {}
+      {} as { [key: string]: number }
     )
   )
     .filter(([, count]) => count > 1)
