@@ -31,11 +31,11 @@ const {
 } = defineProps<{
   storycode: string;
   kind: string;
-  title: string;
-  part: number;
-  comment: string;
-  noLink: string;
-  dark: boolean;
+  title?: string;
+  part?: number;
+  comment?: string;
+  noLink?: string;
+  dark?: boolean;
 }>();
 const urlEncodedStorycode = $computed(
     () => storycode && encodeURIComponent(storycode)

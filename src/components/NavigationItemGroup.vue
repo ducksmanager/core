@@ -15,11 +15,11 @@
   </li>
 </template>
 
-<script setup>
-const { path } = defineProps({
-  path: { type: String, required: true },
-  icon: { type: String, required: true },
-});
+<script setup lang="ts">
+const { path } = defineProps<{
+  path: string;
+  icon: string;
+}>();
 const active = $computed(() =>
   window.location.pathname.split("/").includes(path)
 );

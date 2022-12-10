@@ -28,14 +28,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BCarousel, BCarouselSlide } from "bootstrap-vue-3";
 
-defineProps({
-  issues: { type: Array, required: true },
-  userPoints: { type: Number, required: true },
-  publicationNames: { type: Object, required: true },
-});
+defineProps<{
+  issues: Array;
+  userPoints: number;
+  publicationNames: Object;
+}>();
 
 const currentSlide = $ref(0);
 </script>

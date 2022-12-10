@@ -12,15 +12,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BIconStar, BIconStarFill } from "bootstrap-icons-vue";
-const props = defineProps({
-  rating: { type: Number, required: true },
-  maxRating: { type: Number, required: true },
-});
-const emit = defineEmits(["update:rating"]);
+const { rating } = defineProps<{
+  rating: number;
+  maxRating: number;
+}>();
+const emit = defineEmits<{ (e: "update:rating"): void }>();
 
-const currentRating = $ref(props.rating);
+const currentRating = $ref(rating);
 </script>
 
 <style scoped lang="scss">

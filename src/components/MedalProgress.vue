@@ -34,23 +34,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BProgress, BProgressBar } from "bootstrap-vue-3";
 
-const { contribution, userLevelPoints } = defineProps({
-  contribution: {
-    type: String,
-    default: "Photographe",
-  },
-  userLevelPoints: {
-    type: Number,
-    required: true,
-  },
-  extraPoints: {
-    type: Number,
-    required: true,
-  },
-});
+const { contribution = "Photographe", userLevelPoints } = defineProps<{
+  contribution?: string;
+  userLevelPoints: number;
+  extraPoints: number;
+}>();
 
 const medalData = medal(contribution, userLevelPoints);
 

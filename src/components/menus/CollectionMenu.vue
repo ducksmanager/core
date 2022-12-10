@@ -8,7 +8,7 @@
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
@@ -25,7 +25,7 @@ const items = $computed(() => [
   {
     path: "/duplicates",
     text:
-      totalUniqueIssues == null
+      !total || totalUniqueIssues === null
         ? $t("Mes numéros en double")
         : $t("Mes numéros en double ({0})", [total - totalUniqueIssues]),
   },

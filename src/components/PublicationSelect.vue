@@ -31,27 +31,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BButton, BFormSelect } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 
-const { initialCountryCode, initialPublicationCode } = defineProps({
-  noButton: {
-    type: Boolean,
-    default: false,
-  },
-  initialCountryCode: {
-    type: String,
-    default: null,
-  },
-  initialPublicationCode: {
-    type: String,
-    default: null,
-  },
-});
-defineEmits(["input"]);
+const {
+  initialCountryCode = null,
+  initialPublicationCode = null,
+  noButton = false,
+} = defineProps<{
+  noButton?: boolean;
+  initialCountryCode?: string;
+  initialPublicationCode?: string;
+}>();
+defineEmits<{ (e: "input", publicationcode: string): void }>();
 
 const currentCountryCode = $ref(initialCountryCode);
 let currentPublicationCode = $ref(initialPublicationCode);
@@ -73,7 +68,7 @@ const publicationNamesFullCountries = $computed(
   () => coaStore.publicationNamesFullCountries
 );
 const publicationNamesForCurrentCountry = $computed(() =>
-  publicationNamesFullCountries.includes(currentCountryCode)
+  publicationNamesFullCountries.includes(currentCountryCode || "")
     ? Object.keys(publicationNames)
         .filter((publicationCode) =>
           new RegExp(`^${currentCountryCode}/`).test(publicationCode)

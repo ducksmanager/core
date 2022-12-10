@@ -17,9 +17,9 @@ const {
   countryName = null,
   publicationCode,
 } = defineProps<{
-  country: string;
-  publicationCode: string;
-  countryName: string;
+  country?: string;
+  publicationCode?: string;
+  countryName?: string;
 }>();
 
 const countryCode = $computed(() => country || publicationCode.split("/")[0]);

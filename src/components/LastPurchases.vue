@@ -38,11 +38,12 @@
   </Accordion>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
+import { issue } from "~db_types/client_dm";
 
 const { t } = useI18n();
 const publicationNames = $computed(() => coa().publicationNames),
@@ -54,7 +55,9 @@ const publicationNames = $computed(() => coa().publicationNames),
         .collection?.reduce((acc, issue) => {
           const purchase = (issue.purchaseId > 0 &&
             purchases.find(({ id }) => id === issue.purchaseId)) || {
-            date: (issue.creationDate || "0001-01-01T00:00:00").split("T")[0],
+            date: (
+              (issue.creationDate || "0001-01-01T00:00:00") as string
+            ).split("T")[0],
           };
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>
@@ -66,7 +69,7 @@ const publicationNames = $computed(() => coa().publicationNames),
           }
           acc[purchaseIndex].issues.push(issue);
           return acc;
-        }, [])
+        }, [] as { purchase: { date: Date | string }; issues: issue[] }[])
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
           purchase1.date < purchase2.date ? 1 : -1
         )

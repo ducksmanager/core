@@ -10,21 +10,12 @@
   </span>
 </template>
 
-<script setup>
-defineProps({
-  number: {
-    type: Number,
-    required: true,
-  },
-  textSingle: {
-    type: String,
-    default: null,
-  },
-  textMultiple: {
-    type: String,
-    default: null,
-  },
-});
+<script setup lang="ts">
+const { textSingle = null, textMultiple = null } = defineProps<{
+  number: number;
+  textSingle?: string;
+  textMultiple?: string;
+}>();
 </script>
 
 <style scoped>

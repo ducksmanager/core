@@ -1,7 +1,7 @@
 <template>
   <ul>
     <template v-for="(storiesOfAuthor, author) in stories">
-      <li v-for="storyCode in storiesOfAuthor" :key="`${author}- ${storyCode}`">
+      <li v-for="storyCode in storiesOfAuthor" :key="`${author}-${storyCode}`">
         <b-badge>{{ authors[author] }}</b-badge>
         <InducksStory
           :storycode="storyCode"
@@ -13,23 +13,16 @@
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BBadge } from "bootstrap-vue-3";
 
-defineProps({
-  stories: {
-    type: Object,
-    required: true,
-  },
-  authors: {
-    type: Object,
-    required: true,
-  },
-  storyDetails: {
-    type: Object,
-    required: true,
-  },
-});
+import { StoryDetail } from "~types/StoryDetail";
+
+defineProps<{
+  stories: { [storycode: string]: string[] };
+  authors: { [personcode: string]: string };
+  storyDetails: { [storycode: string]: StoryDetail } | undefined;
+}>();
 </script>
 
 <style scoped lang="scss">

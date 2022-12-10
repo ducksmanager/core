@@ -16,20 +16,14 @@
   </span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const props = defineProps({
-  publicationcode: {
-    type: String,
-    required: true,
-  },
-  issuenumber: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<{
+  publicationcode: string;
+  issuenumber: string;
+}>();
 
 const points = $computed(() => users().points);
 const stats = $computed(() => users().stats);

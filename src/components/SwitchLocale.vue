@@ -11,21 +11,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
 import { availableLocales } from "~/composables/locales";
 
-defineProps({
-  fixed: {
-    type: Boolean,
-    default: false,
-  },
-});
+const { fixed = false } = defineProps<{
+  fixed?: boolean;
+}>();
 
 const i18n = useI18n();
 const locales = $computed(() => availableLocales);
-const reloadWithLocale = ({ key }) => {
+const reloadWithLocale = ({ key }: { key: string }) => {
   localStorage.setItem("locale", key);
   i18n.locale.value = key;
 };

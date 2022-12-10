@@ -29,27 +29,22 @@
     </b-button></span
   >
 </template>
-<script setup>
+<script setup lang="ts">
 import { BIconEyeglasses } from "bootstrap-icons-vue";
 import { BButton } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
 
-const props = defineProps({
-  publicationcode: {
-    type: String,
-    default: null,
-  },
-  issuenumber: {
-    type: String,
-    default: null,
-  },
-  constantWidth: {
-    type: Boolean,
-    default: false,
-  },
-});
+const {
+  issuenumber = null,
+  publicationcode = null,
+  constantWidth = false,
+} = defineProps<{
+  publicationcode?: string;
+  issuenumber?: string;
+  constantWidth?: boolean;
+}>();
 
 const { t: $t } = useI18n();
 
@@ -58,22 +53,23 @@ const watchedPublicationsWithSales = $computed(
 );
 
 const key = $computed(
-  () =>
-    props.publicationcode + (props.issuenumber ? ` ${props.issuenumber}` : "")
+  () => publicationcode + (issuenumber ? ` ${issuenumber}` : "")
 );
 
 const isWatched = $computed(() => watchedPublicationsWithSales?.includes(key));
 const isPublicationWatchedButNotIssueNumber = $computed(
   () =>
-    !isWatched && watchedPublicationsWithSales?.includes(props.publicationcode)
+    !isWatched &&
+    publicationcode &&
+    watchedPublicationsWithSales?.includes(publicationcode)
 );
 const buttonTooltipText = $computed(() =>
   $t(
     isWatched
-      ? props.issuenumber === null
+      ? issuenumber === null
         ? "Cliquez ici pour ne plus voir les numéros que vous ne possédez pas de ce magazine qui sont en vente"
         : "Cliquez ici pour ne plus voir les propositions de vente de ce numéro"
-      : props.issuenumber === null
+      : issuenumber === null
       ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
       : isPublicationWatchedButNotIssueNumber
       ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."
@@ -82,20 +78,22 @@ const buttonTooltipText = $computed(() =>
 );
 
 onMounted(() => {
-  if (props.publicationcode) {
+  if (publicationcode) {
     collection().loadWatchedPublicationsWithSales();
   }
 });
 
-const toggleArrayItem = (a, v) => {
+const toggleArrayItem = (a: string[], v: string) => {
   const i = a.indexOf(v);
   if (i === -1) a.push(v);
   else a.splice(i, 1);
 };
 
 const toggleWatchedPublication = async () => {
-  toggleArrayItem(collection().watchedPublicationsWithSales, key);
-  await collection().updateWatchedPublicationsWithSales();
+  if (collection().watchedPublicationsWithSales) {
+    toggleArrayItem(collection().watchedPublicationsWithSales as string[], key);
+    await collection().updateWatchedPublicationsWithSales();
+  }
 };
 </script>
 <style scoped lang="scss">

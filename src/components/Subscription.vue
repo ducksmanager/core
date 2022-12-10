@@ -71,39 +71,40 @@
   </b-form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
 
 import { coa } from "~/stores/coa";
 
-const { endDate, publicationCode, startDate } = defineProps({
-  id: {
-    default: null,
-    type: Number,
-  },
-  isEdit: {
-    required: true,
-    type: Boolean,
-  },
-  publicationCode: {
-    default: null,
-    type: String,
-  },
-  startDate: {
-    default: null,
-    type: Date,
-  },
-  endDate: {
-    default: null,
-    type: Date,
-  },
-});
-defineEmits(["delete", "edit", "start-edit", "cancel-edit"]);
-const editSubscription = {
-  publicationCode,
-  startDate: startDate && startDate.toISOString().split("T")[0],
-  endDate: endDate && endDate.toISOString().split("T")[0],
+const {
+  publicationCode = null,
+  startDate = null,
+  isEdit = null,
+  endDate = null,
+} = defineProps<{
+  isEdit?: boolean;
+  publicationCode?: string;
+  startDate?: Date;
+  endDate?: Date;
+}>();
+
+type EditSubscription = {
+  publicationCode: string;
+  startDate: string | null;
+  endDate: string | null;
 };
+
+defineEmits<{
+  (e: "delete"): void;
+  (e: "edit", editSubscription: EditSubscription): void;
+  (e: "start-edit"): void;
+  (e: "cancel-edit"): void;
+}>();
+const editSubscription = $ref({
+  publicationCode,
+  startDate: startDate?.toISOString().split("T")[0],
+  endDate: endDate?.toISOString().split("T")[0],
+} as EditSubscription);
 const publicationNames = $computed(() => coa().publicationNames);
 </script>
 

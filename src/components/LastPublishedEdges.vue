@@ -50,20 +50,21 @@
   </Accordion>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
-
 const publicationNames = $computed(() => coa().publicationNames);
 const previousVisit = $computed(() => collectionStore().previousVisit);
 const lastPublishedEdgesForCurrentUser =
   collectionStore().lastPublishedEdgesForCurrentUser;
-const publishedEdgesSincePreviousVisit = () =>
-  lastPublishedEdgesForCurrentUser?.filter(
-    ({ creationDate }) => creationDate >= previousVisit
-  );
+const publishedEdgesSincePreviousVisit = $computed(
+  () =>
+    lastPublishedEdgesForCurrentUser?.filter(
+      ({ creationDate }) => previousVisit && creationDate >= previousVisit
+    ) || []
+);
 const hasPublicationNames = () =>
   publishedEdgesSincePreviousVisit?.every(
     ({ publicationcode }) => publicationNames[publicationcode]

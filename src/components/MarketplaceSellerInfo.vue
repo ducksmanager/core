@@ -15,16 +15,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const props = defineProps({
-  issueId: {
-    type: Number,
-    required: true,
-  },
-});
+const props = defineProps<{
+  issueId: number;
+}>();
 
 const receivedRequests = $computed(() =>
   marketplace().issueRequestsAsSeller?.filter(

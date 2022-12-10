@@ -5,7 +5,7 @@
 import { format as timeAgoFormat } from "timeago.js";
 
 const { timestamp } = defineProps<{
-    timestamp: number;
+    timestamp?: number;
   }>(),
   timeAgo = $computed(() => timeAgoFormat(timestamp * 1000));
 </script>

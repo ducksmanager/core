@@ -104,7 +104,7 @@
 
 <script setup lang="ts">
 import { BCard, BTab, BTabs, useToast } from "bootstrap-vue-3";
-import { PageFlip } from "page-flip";
+import { PageFlip, SizeType } from "page-flip";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -216,13 +216,13 @@ watch(
 watch(
   () => isReadyToOpen,
   (newValue) => {
-    if (newValue) {
+    if (newValue && coverWidth && coverHeight) {
       console.log("Creating book");
-      book = new PageFlip(document.getElementById("book"), {
+      book = new PageFlip(document.getElementById("book") as HTMLElement, {
         width: coverWidth,
         height: coverHeight,
 
-        size: "fixed",
+        size: SizeType.FIXED,
 
         maxShadowOpacity: 0.5,
         showCover: true,
@@ -231,8 +231,8 @@ watch(
       });
       book.loadFromHTML(document.querySelectorAll(".page"));
 
-      book.on("flip", ({ data }: { data: number }) => {
-        currentPage = data;
+      book.on("flip", ({ data }) => {
+        currentPage = parseInt(data.toString());
       });
 
       setTimeout(() => {

@@ -80,7 +80,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BIconCash } from "bootstrap-icons-vue";
 import { BButton, BButtonGroup } from "bootstrap-vue-3";
 import { watch } from "vue";
@@ -88,16 +88,10 @@ import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
 
-const { countrycode, sinceLastVisit } = defineProps({
-  countrycode: {
-    type: String,
-    default: null,
-  },
-  sinceLastVisit: {
-    type: Boolean,
-    default: false,
-  },
-});
+const { countrycode = null, sinceLastVisit = false } = defineProps<{
+  countrycode?: string;
+  sinceLastVisit?: boolean;
+}>();
 const { t: $t } = useI18n();
 const suggestions = $computed(() => collection().suggestions);
 const hasSuggestions = $computed(() => collection().hasSuggestions);
@@ -106,10 +100,8 @@ const suggestionSorts = () => ({
   score: $t("Trier par score"),
 });
 const loadSuggestions = collection().loadSuggestions;
-const getImportance = (score) => {
-  const { minScore, maxScore } = suggestions;
-  return maxScore === score ? 1 : minScore === score ? 3 : 2;
-};
+const getImportance = (score: number) =>
+  suggestions?.maxScore === score ? 1 : suggestions?.minScore === score ? 3 : 2;
 
 let loading = $ref(true);
 const suggestionSortCurrent = $ref("score");
@@ -117,6 +109,9 @@ const suggestionSortCurrent = $ref("score");
 watch(
   () => countrycode,
   async (newValue) => {
+    if (!newValue) {
+      return;
+    }
     loading = true;
     await loadSuggestions({
       countryCode: newValue,
@@ -130,6 +125,9 @@ watch(
 watch(
   () => suggestionSortCurrent,
   async (newValue) => {
+    if (!countrycode) {
+      return;
+    }
     loading = true;
     await loadSuggestions({
       countryCode: countrycode,

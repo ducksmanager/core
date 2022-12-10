@@ -60,15 +60,15 @@ const {
   id: string;
   publicationCode: string;
   issueNumber: string;
-  issueNumberReference: string;
-  creationDate: string;
-  popularity: number;
-  spritePath: string;
+  issueNumberReference?: string;
+  creationDate?: string;
+  popularity?: number;
+  spritePath?: string;
   existing: boolean;
   load: boolean;
-  invisible: boolean;
-  highlighted: boolean;
-  embedded: boolean;
+  invisible?: boolean;
+  highlighted?: boolean;
+  embedded?: boolean;
 }>();
 
 defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();

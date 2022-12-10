@@ -52,7 +52,7 @@ import { users } from "~/stores/users";
 
 const { extraPoints = null } = defineProps<{
   hasEdge: boolean;
-  extraPoints: number;
+  extraPoints?: number;
 }>();
 
 const contribution = "Photographe";

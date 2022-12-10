@@ -18,9 +18,9 @@ const {
   publicationcode = null,
   value = null,
 } = defineProps<{
-  publicationcode: string;
-  issuenumber: string;
-  value: string;
+  publicationcode?: string;
+  issuenumber?: string;
+  value?: string;
 }>();
 
 const { conditions, getConditionLabel } = condition();

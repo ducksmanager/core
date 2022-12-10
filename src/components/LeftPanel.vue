@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Popper from "@bperel/vue3-popper-teleport";
 
 import { collection } from "~/stores/collection";
@@ -52,7 +52,7 @@ const points = $computed(() => users().points);
 const user = $computed(() => collection().user);
 
 watch(
-  $$(user),
+  () => user,
   (newValue) => {
     if (newValue) {
       collection().loadPreviousVisit();

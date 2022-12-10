@@ -31,10 +31,10 @@ const {
   publicationcode: string;
   publicationname: string;
   issuenumber: string;
-  clickable: boolean;
-  hideCondition: boolean;
-  noWrap: boolean;
-  flex: boolean;
+  clickable?: boolean;
+  hideCondition?: boolean;
+  noWrap?: boolean;
+  flex?: boolean;
 }>();
 </script>
 

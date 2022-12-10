@@ -9,25 +9,17 @@
   </span>
 </template>
 
-<script setup>
-const { publicationcode } = defineProps({
-  publicationcode: {
-    type: String,
-    required: true,
-  },
-  publicationname: {
-    type: String,
-    required: true,
-  },
-  size: {
-    type: String,
-    default: "md",
-  },
-  displayClass: {
-    type: String,
-    default: "d-inline-flex",
-  },
-});
+<script setup lang="ts">
+const {
+  publicationcode,
+  size = "md",
+  displayClass = "d-inline-flex",
+} = defineProps<{
+  publicationcode: string;
+  publicationname: string;
+  size?: string;
+  displayClass?: string;
+}>();
 const countrycode = $computed(() => publicationcode.split("/")[0]);
 </script>
 

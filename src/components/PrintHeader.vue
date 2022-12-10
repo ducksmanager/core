@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { collection } from "~/stores/collection";
 
-let username = $computed(() => collection().user?.username);
+const username = $computed(() => collection().user?.username);
 </script>
 
 <style lang="scss" scoped>

@@ -7,7 +7,7 @@
     :show="isOverPopup || isOverPopupText"
     @open:popper="
       onOpen();
-      $emit('@open:popper', $event);
+      $emit('@open:popper');
     "
   >
     <span @mouseover="isOverPopupText = true" @mouseout.prevent="closePopupSoon"
@@ -28,17 +28,17 @@
   </popper>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Popper from "@bperel/vue3-popper-teleport";
 
-defineProps({
+defineProps<{
   placement: {
-    type: String,
-    default: "top",
-  },
-});
+    type: string;
+    default: "top";
+  };
+}>();
 
-defineEmits(["@open:popper"]);
+defineEmits<{ (e: "@open:popper"): void }>();
 
 const closeDelay = 2000;
 const closePopupSoon = () => {
@@ -51,7 +51,7 @@ let isOverPopupText = $ref(false);
 
 const onOpen = () => {
   for (const element of document.getElementsByClassName("popper"))
-    element.style.display = "none";
+    (element as HTMLElement).style.display = "none";
 };
 </script>
 

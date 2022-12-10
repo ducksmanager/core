@@ -7,14 +7,14 @@
   </li>
 </template>
 
-<script setup>
-const props = defineProps({
-  path: { type: String, required: true },
-  icon: { type: String, default: null },
-});
+<script setup lang="ts">
+const { path, icon = null } = defineProps<{
+  path: string;
+  icon?: string;
+}>();
 const active = $computed(
   () =>
-    !props.path
+    !path
       .split("/")
       .find(
         (pathPart) => !window.location.pathname.split("/").includes(pathPart)

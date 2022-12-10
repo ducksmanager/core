@@ -143,7 +143,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BAlert, BButton } from "bootstrap-vue-3";
 import { watch } from "vue";
 
@@ -151,6 +151,7 @@ import { bookcase as bookcaseStore } from "~/stores/bookcase";
 import { coa as coaStore } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
+import { simple_issue } from "~types/SimpleIssue";
 
 const route = useRoute();
 
@@ -159,7 +160,7 @@ const coa = coaStore();
 const bookcase = bookcaseStore();
 const user = $computed(() => collection.user);
 const bookcaseUsername = $computed(
-  () => route.params.username || user?.username
+  () => (route.params.username as string) || user?.username || null
 );
 const allowSharing = $computed(() => collection.user?.allowSharing);
 const lastPublishedEdgesForCurrentUser = $computed(
@@ -178,6 +179,7 @@ const isSharedBookcase = $computed(() => bookcase.isSharedBookcase);
 const bookcaseUrl = $computed(
   () =>
     !isPrivateBookcase &&
+    user &&
     `${window.location.origin}/bookcase/show/${user.username}`
 );
 const loading = $computed(
@@ -188,17 +190,17 @@ const loading = $computed(
 );
 const percentVisible = $computed(() =>
   bookcase.bookcase?.length
-    ? parseInt(
+    ? (
         (100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length) /
-          bookcase.bookcase.length
-      )
+        bookcase.bookcase.length
+      ).toFixed(0)
     : null
 );
 const mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
-  [...popularIssuesInCollectionWithoutEdge]
+  [...(popularIssuesInCollectionWithoutEdge || [])]
     ?.sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-        popularity2 - popularity1
+        (popularity2 || 0) - (popularity1 || 0)
     )
     .filter((_, index) => index < 10)
 );
@@ -207,12 +209,7 @@ const sortedBookcase = $computed(
     bookcase.bookcaseWithPopularities &&
     bookcaseOrder &&
     hasIssueNumbers &&
-    [
-      ...bookcase.bookcaseWithPopularities.map((edge) => ({
-        ...edge,
-        publicationCode: `${edge.countryCode}/${edge.magazineCode}`,
-      })),
-    ].sort(
+    [...bookcase.bookcaseWithPopularities].sort(
       (
         {
           countryCode: countryCode1,
@@ -249,20 +246,21 @@ const sortedBookcase = $computed(
       }
     )
 );
-const highlightIssue = (issue) => {
-  currentEdgeHighlighted = bookcase.bookcase.find(
-    (issueInCollection) =>
-      issue.publicationcode === issueInCollection.publicationCode &&
-      issue.issuenumber === issueInCollection.issueNumber
-  ).id;
+const highlightIssue = (issue: simple_issue) => {
+  currentEdgeHighlighted =
+    bookcase.bookcase?.find(
+      (issueInCollection) =>
+        issue.publicationcode === issueInCollection.publicationCode &&
+        issue.issuenumber === issueInCollection.issueNumber
+    )?.id || null;
 };
 
 let edgesUsingSprites = $ref({});
 const currentEdgeOpened = $ref(null);
-let currentEdgeHighlighted = $ref(null);
-let hasPublicationNames = $ref(false);
-let hasIssueNumbers = $ref(false);
-const showShareButtons = $ref(false);
+let currentEdgeHighlighted = $ref(null as number | null);
+let hasPublicationNames = $ref(false as boolean);
+let hasIssueNumbers = $ref(false as boolean);
+const showShareButtons = $ref(false as boolean);
 let userPoints = $ref(null);
 
 watch(
@@ -274,7 +272,7 @@ watch(
 
       const nonObviousPublicationIssueNumbers = newValue.filter(
         (publicationCode) =>
-          bookcase.bookcase.filter(
+          bookcase.bookcase?.filter(
             ({
               countryCode: issueCountryCode,
               magazineCode: issueMagazineCode,
@@ -282,7 +280,7 @@ watch(
             }) =>
               `${issueCountryCode}/${issueMagazineCode}` === publicationCode &&
               !/^[0-9]$/.test(issueNumber)
-          ).length
+          ).length || 0
       );
       coa.addIssueNumbers(
         newValue
@@ -294,10 +292,11 @@ watch(
             (acc, publicationCode) => ({
               ...acc,
               ...{
-                [publicationCode]: bookcase.bookcase.filter(
-                  ({ publicationCode: issuePublicationCode }) =>
-                    issuePublicationCode === publicationCode
-                ),
+                [publicationCode]:
+                  bookcase.bookcase?.filter(
+                    ({ publicationCode: issuePublicationCode }) =>
+                      issuePublicationCode === publicationCode
+                  ) || [],
               },
             }),
             {}
@@ -309,6 +308,13 @@ watch(
   },
   { immediate: true }
 );
+
+type Sprite = {
+  name: string;
+  version: string;
+  size: number;
+};
+
 watch(
   () => bookcase.bookcase,
   async (newValue) => {
@@ -319,14 +325,14 @@ watch(
       const usableSpritesBySpriteId = newValue
         .filter(({ sprites }) => sprites)
         .reduce((acc, { edgeId, sprites }) => {
-          JSON.parse(`[${sprites}]`).forEach((sprite) => {
+          JSON.parse(`[${sprites}]`).forEach((sprite: Sprite) => {
             const { name: spriteId } = sprite;
             if (!acc[spriteId]) acc[spriteId] = { edges: [], ...sprite };
 
             acc[spriteId].edges.push(edgeId);
           });
           return acc;
-        }, {});
+        }, {} as { [spriteId: string]: Sprite & { edges: number[] } });
 
       const usableSprites = Object.values(usableSpritesBySpriteId).map(
         (usableSprite) => ({
@@ -341,10 +347,12 @@ watch(
         .reduce((acc, { name, version, edges, size }) => {
           edges.forEach((edgeId) => {
             acc[edgeId] = `v${version}/${name}`;
-            if (size <= 50) acc[edgeId] = `f_auto/${acc[edgeId]}`;
+            if (size <= 50) {
+              acc[edgeId] = `f_auto/${acc[edgeId]}`;
+            }
           });
           return acc;
-        }, {});
+        }, {} as { [edgeId: number]: string });
     }
   },
   { immediate: true }
@@ -353,7 +361,9 @@ watch(
 watch(
   () => bookcase.bookcase && !isSharedBookcase,
   async (hasNonSharedBookcase) => {
-    if (hasNonSharedBookcase) await users().fetchStats([user.id]);
+    if (hasNonSharedBookcase && user) {
+      await users().fetchStats([user.id]);
+    }
   }
 );
 
@@ -371,7 +381,7 @@ watch(
     if (newValue) {
       bookcase.bookcaseUsername = newValue;
       await bookcase.loadBookcase();
-      if (!isSharedBookcase) {
+      if (user && !isSharedBookcase) {
         await collection.loadPopularIssuesInCollection();
         await collection.loadLastPublishedEdgesForCurrentUser();
         userPoints = users().points[user.id];

@@ -72,7 +72,7 @@
   </nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios";
 import { BDropdown, BDropdownItem, BFormInput } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
@@ -81,28 +81,43 @@ import { useI18n } from "vue-i18n";
 import condition from "~/composables/condition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
+import { simple_issue } from "~types/SimpleIssue";
+import { simple_story } from "~types/SimpleStory";
 
-defineProps({
+defineProps<{
   withTitle: {
-    type: Boolean,
-    default: true,
-  },
+    type: boolean;
+    default: true;
+  };
   withStoryLink: {
-    type: Boolean,
-    default: true,
-  },
-});
-const emit = defineEmits(["issue-selected"]);
+    type: boolean;
+    default: true;
+  };
+}>();
+const emit = defineEmits<{
+  (e: "issue-selected", story: simple_issue): void;
+}>();
 const { conditions } = condition();
+
+let isSearching = $ref(false as boolean);
+let pendingSearch = $ref(null as string | null);
+let search = $ref("" as string);
+let storyResults = $ref({} as { results: simple_story[]; hasMore: boolean });
+let issueResults = $ref({} as { results: simple_issue[] });
+let searchContext = $ref("story" as "story" | "storycode");
+
 const publicationNames = $computed(() => coa().publicationNames);
 const { t: $t } = useI18n();
 const fetchPublicationNames = coa().fetchPublicationNames;
-const isInCollection = (issue) =>
-  collectionStore().findInCollection(issue.publicationcode, issue.issuenumber);
+const isInCollection = (issue: simple_issue) =>
+  collectionStore().findInCollection(
+    issue.publicationcode,
+    issue.issuenumber
+  ) !== undefined;
 const searchContexts = {
   story: $t("titre d'histoire"),
   storycode: $t("code histoire"),
-};
+} as { [contextKey: string]: string };
 const searchContextsWithoutCurrent = $computed(() =>
   Object.keys(searchContexts)
     .filter((currentSearchContext) => currentSearchContext !== searchContext)
@@ -115,46 +130,51 @@ const searchContextsWithoutCurrent = $computed(() =>
     )
 );
 const isSearchByCode = $computed(() => searchContext === "storycode");
-const selectSearchResult = (searchResult) => {
+const searchResults = $computed(() =>
+  isSearchByCode ? issueResults : storyResults
+);
+const selectSearchResult = (searchResult: simple_story | simple_issue) => {
   if (isSearchByCode) {
-    emit("issue-selected", searchResult);
+    emit("issue-selected", searchResult as simple_issue);
   } else {
     searchContext = "storycode";
-    search = searchResult.storycode;
+    search = (searchResult as simple_story).storycode;
   }
 };
-const runSearch = async (value) => {
+const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      searchResults = (
+      const data = (
         await axios.get(
           `/coa/list/issues?storycode=${value.replace(/^code=/, "")}`
         )
-      ).data;
-      searchResults = {
-        results: searchResults.sort((issue1, issue2) =>
-          Math.sign(!!isInCollection(issue2) - !!isInCollection(issue1))
+      ).data as { results: simple_issue[] };
+      issueResults = {
+        results: data.results.sort((issue1, issue2) =>
+          Math.sign(
+            (isInCollection(issue2) ? 1 : 0) - (isInCollection(issue1) ? 1 : 0)
+          )
         ),
       };
       await fetchPublicationNames(
-        searchResults.results.map(({ publicationcode }) => publicationcode)
+        issueResults.results.map(({ publicationcode }) => publicationcode)
       );
     } else {
-      searchResults = (
+      const data = (
         await axios.post("/coa/stories/search/withIssues", {
           keywords: value,
         })
-      ).data;
-      searchResults.results = searchResults.results.map((story) => ({
+      ).data as { results: simple_story[]; hasMore: boolean };
+      storyResults.results = data.results.map((story) => ({
         ...story,
-        collectionIssue: collectionStore().collection.find(
+        collectionIssue: collectionStore().collection!.find(
           ({
             publicationCode: collectionPublicationCode,
             issueNumber: collectionIssueNumber,
           }) =>
-            story.issues
-              .map(
+            story
+              .issues!.map(
                 ({ publicationcode, issuenumber }) =>
                   `${publicationcode}-${issuenumber}`
               )
@@ -165,15 +185,11 @@ const runSearch = async (value) => {
   } finally {
     isSearching = false;
     // The input value as changed since the beginning of the search, searching again
-    if (value !== pendingSearch) await runSearch(pendingSearch);
+    if (value !== pendingSearch && pendingSearch) {
+      await runSearch(pendingSearch);
+    }
   }
 };
-
-let isSearching = $ref(false);
-let pendingSearch = $ref(null);
-let search = $ref("");
-let searchResults = $ref([]);
-let searchContext = $ref("story");
 
 watch(
   () => search,

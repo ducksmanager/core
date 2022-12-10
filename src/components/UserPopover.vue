@@ -53,14 +53,14 @@
   </Popover>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BButton } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
-defineProps({
-  points: { type: Object, required: true },
-  stats: { type: Object, required: true },
-});
+defineProps<{
+  points: Object;
+  stats: Object;
+}>();
 const { t: $tc } = useI18n();
 </script>
 

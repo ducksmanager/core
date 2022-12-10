@@ -22,23 +22,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BTab, BTabs } from "bootstrap-vue-3";
 
-const { items, rootPath } = defineProps({
-  title: {
-    type: String,
-    default: null,
-  },
-  rootPath: {
-    type: String,
-    default: "/",
-  },
-  items: {
-    type: Array,
-    required: true,
-  },
-});
+const {
+  title = null,
+  items,
+  rootPath = "/",
+} = defineProps<{
+  title?: string;
+  rootPath?: string;
+  items: { path: string; text: string }[];
+}>();
 const router = useRouter();
 const routeName = useRoute().name;
 const activeTabIndex = $computed(() =>

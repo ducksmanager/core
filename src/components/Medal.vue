@@ -48,7 +48,7 @@
   </span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
 import { getCurrentLocaleShortKey } from "~/composables/locales";
@@ -57,13 +57,19 @@ import medal from "~/composables/medal";
 const i18n = useI18n();
 const currentLocaleShortKey = getCurrentLocaleShortKey(i18n.locale.value);
 
-const props = defineProps({
-  small: { type: Boolean, default: false },
-  xSmall: { type: Boolean, default: false },
-  nextLevel: { type: Boolean, default: false },
-  userLevelPoints: { type: Number, required: true },
-  contribution: { type: String, required: true },
-});
+const {
+  contribution,
+  nextLevel = false,
+  userLevelPoints,
+  small = false,
+  xSmall = false,
+} = defineProps<{
+  small?: boolean;
+  xSmall?: boolean;
+  nextLevel?: boolean;
+  userLevelPoints: number;
+  contribution: string;
+}>();
 const { t: $t } = useI18n();
 const {
   currentLevel,
@@ -71,14 +77,14 @@ const {
   levelProgressPercentage,
   radius,
   circumference,
-} = $(medal(props.contribution, props.userLevelPoints));
+} = $(medal(contribution, userLevelPoints));
 
 const medalColors = ["bronze", "argent", "or"];
 const level = $computed(() =>
-  props.nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
+  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
 );
 const medalTitle = $computed(() => {
-  switch (props.contribution) {
+  switch (contribution) {
     case "edge_photographer":
       return $t("Concepteur de tranches");
     case "edge_designer":
@@ -91,7 +97,7 @@ const medalTitle = $computed(() => {
 const medalDescription = $computed(() => {
   let textTemplate;
   if (currentLevel === 3) {
-    switch (props.contribution) {
+    switch (contribution) {
       case "edge_photographer":
         textTemplate = "Vous avez {0} points Concepteur de tranches";
         break;
@@ -100,10 +106,13 @@ const medalDescription = $computed(() => {
         break;
       case "duckhunter":
         textTemplate = "Vous avez signalé {0} bouquineries";
+        break;
+      default:
+        return "";
     }
-    return $t(textTemplate, [props.userLevelPoints]);
+    return $t(textTemplate, [userLevelPoints]);
   } else {
-    switch (props.contribution) {
+    switch (contribution) {
       case "edge_photographer":
         textTemplate =
           "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
@@ -115,9 +124,12 @@ const medalDescription = $computed(() => {
       case "duckhunter":
         textTemplate =
           "Vous avez signalé {0} bouquineries, signalez-en {1} de plus pour recevoir le badge {2}!";
+        break;
+      default:
+        return "";
     }
     return $t(textTemplate, [
-      props.userLevelPoints,
+      userLevelPoints,
       pointsDiffNextLevel,
       $t(medalColors[currentLevel]),
     ]);

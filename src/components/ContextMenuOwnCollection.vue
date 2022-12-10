@@ -205,11 +205,7 @@
                     <b-button
                       class="delete-purchase btn-sm"
                       :title="$t('Supprimer')"
-                      @click="
-                        deletePurchase({
-                          id: purchaseId,
-                        })
-                      "
+                      @click="deletePurchase(purchaseId)"
                     >
                       <b-icon-trash />
                     </b-button>
@@ -338,11 +334,18 @@ import { useI18n } from "vue-i18n";
 import condition from "~/composables/condition";
 import { collection, collection as collectionStore } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
+import { issue } from "~db_types/client_dm";
+import { CollectionUpdate } from "~types/CollectionUpdate";
+
+type issueWithPublicationCode = issue & {
+  publicationCode: string;
+  conditionString: string;
+};
 
 const { copies, publicationcode, selectedIssuesById } = defineProps<{
   selectedIssues: string[];
   selectedIssuesById: { [key: number]: string };
-  copies: any[];
+  copies: issueWithPublicationCode[];
   publicationcode: string;
 }>();
 const emit = defineEmits<{
@@ -350,15 +353,15 @@ const emit = defineEmits<{
 }>();
 const { conditions } = condition();
 
-const defaultState = $ref({
+const defaultState = {
   condition: "possessed",
   isOnSale: "do_not_change",
   purchaseId: "do_not_change",
   isToRead: "do_not_change",
-});
+};
 const today = new Date().toISOString().slice(0, 10);
 const { t: $t } = useI18n();
-let editingCopies = $ref([]);
+let editingCopies = $ref([] as issueWithPublicationCode[]);
 let currentCopyIndex = $ref(0);
 const purchases = $computed(() => collection().purchases);
 const conditionStates = $computed(() => ({
@@ -432,7 +435,8 @@ let isSingleIssueSelected = $computed(
 );
 const hasNoCopies = $computed(() => !editingCopies.length);
 const hasMaxCopies = $computed(() => editingCopies.length >= 3);
-const formatDate = (value) => (/\d{4}-\d{2}-\d{2}/.test(value) ? value : today);
+const formatDate = (value: string) =>
+  /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 const updateEditingCopies = () => {
   if (isSingleIssueSelected) {
     if (copies.length) {
@@ -481,7 +485,7 @@ const receivedRequests = $computed(() =>
   )
 );
 
-const convertConditionToDbValue = (condition) =>
+const convertConditionToDbValue = (condition: string) =>
   (conditions.find(({ value }) => value === condition) || { dbValue: null })
     .dbValue;
 const updateSelectedIssues = async (force = false) => {
@@ -521,7 +525,9 @@ const updateSelectedIssues = async (force = false) => {
   });
 };
 
-const updateIssues = async (data) => {
+const updateIssues = async (data: {
+  issueNumbers: string[] & CollectionUpdate;
+}) => {
   await collectionStore().updateCollection({
     ...data,
     publicationcode: publicationcode,
@@ -531,11 +537,11 @@ const updateIssues = async (data) => {
   await marketplace().loadIssueRequestsAsSeller(true);
   emit("clear-selection");
 };
-const createPurchase = async (data) => {
+const createPurchase = async (data: { date: string; description: string }) => {
   await collectionStore().createPurchase(data.date, data.description);
 };
-const deletePurchase = async (data) => {
-  await collectionStore().deletePurchase(data.id);
+const deletePurchase = async (id: number) => {
+  await collectionStore().deletePurchase(id);
 };
 
 watch(

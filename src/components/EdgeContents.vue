@@ -53,12 +53,12 @@ const {
 } = defineProps<{
   id: string;
   publicationCode: string;
-  issueNumber: string;
+  issueNumber?: string;
   src: string;
-  spritePath: string;
+  spritePath?: string;
   load: boolean;
-  invisible: boolean;
-  highlighted: boolean;
+  invisible?: boolean;
+  highlighted?: boolean;
 }>();
 const emit = defineEmits<{
   (e: "loaded", ids: string[]): void;

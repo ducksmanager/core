@@ -16,42 +16,52 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";
 import { users } from "~/stores/users";
+import { AbstractEvent } from "~types/events/AbstractEvent";
+import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
+import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 
-let isLoaded = $ref(false);
+let isLoaded = $ref(false as boolean);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-let hasFreshEvents = $ref(false);
+let hasFreshEvents = $ref(false as boolean);
 const events = $computed(() => users().events);
 const eventUserIds = $computed(() =>
   events
-    ?.reduce(
-      (acc, event) => [...acc, event.userId || null, ...(event.users || [])],
-      []
-    )
+    ?.reduce((acc, event) => [...acc, ...(event.users || [])], [] as number[])
     .filter((userId) => !!userId)
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchEvents = users().fetchEvents;
 const fetchStats = users().fetchStats;
-const fetchEventsAndAssociatedData = async (clearCacheEntry) => {
+
+const isCollectionUpdateEvent = (
+  event: AbstractEvent
+): event is CollectionUpdateEvent => true;
+
+const isEdgeCreationEvent = (
+  event: AbstractEvent
+): event is EdgeCreationEvent => true;
+
+const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
   hasFreshEvents = await fetchEvents(clearCacheEntry);
 
   await fetchPublicationNames([
     ...events
-      .filter(({ publicationCode }) => publicationCode)
-      .map(({ publicationCode }) => publicationCode),
+      .filter((event) => isCollectionUpdateEvent(event))
+      .map((event) => (event as CollectionUpdateEvent).publicationCode || ""),
     ...events
-      .filter(({ edges }) => edges)
+      .filter((event) => isEdgeCreationEvent(event))
+      .map((event) => event as EdgeCreationEvent)
       .reduce(
         (acc, { edges }) => [
           ...acc,
           ...edges.map(({ publicationCode }) => publicationCode),
         ],
-        []
+        [] as string[]
       ),
   ]);
 

@@ -92,7 +92,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
@@ -100,15 +100,15 @@ import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-defineProps({
+defineProps<{
   publicationcode: {
-    type: String,
-    default: null,
-  },
-});
+    type: string;
+    default: null;
+  };
+}>();
 
-const suggestionsNumber = $ref(0);
-let hasPublicationNames = $ref(false);
+const suggestionsNumber = $ref(0 as number);
+let hasPublicationNames = $ref(false as boolean);
 const marketplaceContactMethods = $computed(
   () => collection().marketplaceContactMethods
 );
@@ -121,10 +121,10 @@ const mostPossessedPublication = $computed(
     totalPerPublication &&
     Object.keys(totalPerPublication).reduce(
       (acc, publicationCode) =>
-        totalPerPublication[acc] > totalPerPublication[publicationCode]
+        acc && totalPerPublication[acc] > totalPerPublication[publicationCode]
           ? acc
           : publicationCode,
-      null
+      null as string | null
     )
 );
 const fetchPublicationNames = coa().fetchPublicationNames;

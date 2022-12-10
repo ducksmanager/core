@@ -15,19 +15,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from "vue";
 
-defineProps({
-  url: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-});
+defineProps<{
+  url: string;
+  title: string;
+}>();
 
 const platforms = ["email", "facebook", "twitter", "whatsapp"];
 

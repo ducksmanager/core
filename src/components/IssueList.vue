@@ -295,13 +295,13 @@ const {
   onSaleByOthers = false,
 } = defineProps<{
   publicationcode: string;
-  duplicatesOnly: boolean;
-  readStackOnly: boolean;
-  onSaleStackOnly: boolean;
-  customIssues: issueWithPublicationCode[];
-  onSaleByOthers: boolean;
-  groupUserCopies: boolean;
-  contextMenuComponentName: string;
+  duplicatesOnly?: boolean;
+  readStackOnly?: boolean;
+  onSaleStackOnly?: boolean;
+  customIssues?: issueWithPublicationCode[];
+  onSaleByOthers?: boolean;
+  groupUserCopies?: boolean;
+  contextMenuComponentName?: string;
 }>();
 
 const { conditions } = condition();

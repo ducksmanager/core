@@ -64,7 +64,7 @@
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   BIconBookHalf,
   BIconCapslockFill,
@@ -77,7 +77,7 @@ import {
 
 import { collection } from "~/stores/collection";
 
-let username = $computed(() => collection().user?.username || null);
+const username = $computed(() => collection().user?.username || null);
 </script>
 
 <style lang="scss" scoped>

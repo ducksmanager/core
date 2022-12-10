@@ -70,13 +70,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 
-let hasPublicationNames = $ref(false);
+let hasPublicationNames = $ref(false as boolean);
 const totalPerCountry = $computed(() => collection().totalPerCountry);
 const totalPerPublication = $computed(() => collection().totalPerPublication);
 const countryNames = $computed(() => coa().countryNames);
@@ -100,17 +100,15 @@ const publicationsPerCountry = $computed(
           (publicationCode) => publicationCode.split("/")[0] === country
         ),
       }),
-      {}
+      {} as { [key: string]: string[] }
     )
 );
 const fetchCountryNames = coa().fetchCountryNames;
 const fetchPublicationNames = coa().fetchPublicationNames;
-const getSortedPublications = (country) =>
-  publicationsPerCountry?.[country].sort(
-    (a, b) =>
-      publicationNames[a] &&
-      publicationNames[a].localeCompare(publicationNames[b])
-  );
+const getSortedPublications = (country: string) =>
+  publicationsPerCountry?.[country]?.sort((a, b) =>
+    publicationNames[a]?.localeCompare(publicationNames[b])
+  ) || [];
 
 watch(
   () => totalPerPublication,
