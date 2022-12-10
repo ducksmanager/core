@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import "./styles/main.scss";
 import "./styles/histoire.scss";
 import "v-contextmenu/dist/themes/default.css";
@@ -9,21 +10,13 @@ import { createHead } from "@vueuse/head";
 import axios from "axios";
 import BootstrapVue3, { BToastPlugin } from "bootstrap-vue-3";
 import { createPinia } from "pinia";
+// @ts-ignore
 import contextmenu from "v-contextmenu";
-import { setupLayouts } from "virtual:generated-layouts";
-import generatedRoutes from "virtual:generated-pages";
-import { createRouter, createWebHistory } from "vue-router";
 
 import { i18n } from "./i18n.js";
 
-export const setupVue3 = defineSetupVue3(({ app, story, variant }) => {
+export const setupVue3 = defineSetupVue3(({ app }) => {
   const head = createHead();
-
-  // const routes = setupLayouts(generatedRoutes);
-  // const router = createRouter({
-  //   history: createWebHistory(import.meta.env.BASE_URL),
-  //   routes,
-  // });
 
   const store = createPinia();
   axios.defaults.baseURL = import.meta.env.VITE_GATEWAY_URL;
@@ -33,5 +26,4 @@ export const setupVue3 = defineSetupVue3(({ app, story, variant }) => {
   app.use(BToastPlugin);
   app.use(contextmenu);
   app.use(head);
-  // app.use(router);
 });

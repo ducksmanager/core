@@ -65,7 +65,7 @@ alias: [/agrandir/suggestions]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { BAlert, BFormSelect } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -73,7 +73,7 @@ import { useI18n } from "vue-i18n";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 
-const countryCode = $ref("ALL");
+const countryCode = $ref("ALL" as string);
 const { t: $t } = useI18n();
 const collection = $computed(() => collectionStore().collection);
 const watchedAuthors = $computed(() => collectionStore().watchedAuthors);

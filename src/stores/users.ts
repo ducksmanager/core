@@ -2,13 +2,14 @@ import axios from "axios";
 import { defineStore } from "pinia";
 
 import { cachedUserApi as userApi } from "~/util/api";
+import { AbstractEvent } from "~types/events/AbstractEvent";
 import { BookstoreCreationEvent } from "~types/events/BookstoreCreationEvent";
 import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSubscriptionAdditionEvent";
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
 
-type SimpleUserWithQuickStats = {
+export type SimpleUserWithQuickStats = {
   userId: number;
   username: string;
   presentationText: string;
@@ -23,13 +24,7 @@ export const users = defineStore("users", {
     count: null as number | null,
     stats: {} as { [userId: number]: SimpleUserWithQuickStats },
     points: {} as { [userId: number]: { [contribution: string]: number } },
-    events: [] as (
-      | BookstoreCreationEvent
-      | CollectionSubscriptionAdditionEvent
-      | CollectionUpdateEvent
-      | EdgeCreationEvent
-      | SignupEvent
-    )[],
+    events: [] as AbstractEvent[],
     bookcaseContributors: null as
       | { userId: number; name: string; text: string }[]
       | null,

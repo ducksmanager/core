@@ -46,13 +46,15 @@ alias: [/auteurs]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios";
 import {
   BarController,
   BarElement,
   CategoryScale,
   Chart,
+  ChartData,
+  ChartOptions,
   Legend,
   LinearScale,
   Title,
@@ -82,12 +84,20 @@ const unitTypes = {
   percentage: $t("Afficher en pourcentages"),
 };
 
-let watchedAuthorsStoryCount = $ref(null);
+type WatchedAuthorsStoryCount = {
+  [personcode: string]: {
+    missingstorycount: number;
+    storycount: number;
+    fullname: string;
+  };
+};
+
+let watchedAuthorsStoryCount = $ref(null as WatchedAuthorsStoryCount | null);
 let unitTypeCurrent = $ref("number");
-let width = $ref(null),
-  height = $ref(null),
-  chartData = $ref(null),
-  options = $ref({});
+let width = $ref(null as string | null),
+  height = $ref(null as string | null),
+  chartData = $ref(null as ChartData | null),
+  options = $ref({} as ChartOptions | null);
 
 const labels = $computed(
   () =>
@@ -97,7 +107,7 @@ const labels = $computed(
     )
 );
 
-const changeDimension = (dimension, value) => {
+const changeDimension = (dimension: "width" | "height", value: number) => {
   if (dimension === "width") width = `${value}px`;
   else height = `${value}px`;
 };
@@ -105,7 +115,7 @@ const changeDimension = (dimension, value) => {
 watch(
   () => labels && unitTypeCurrent,
   (newValue) => {
-    if (newValue) {
+    if (newValue && watchedAuthorsStoryCount) {
       let ownedStories = Object.values(watchedAuthorsStoryCount).map(
         ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
           storyCount - missingStoryCount
@@ -127,24 +137,22 @@ watch(
 
       const values = [ownedStories, missingStories];
 
-      changeDimension("width", 250 + 30 * labels.length);
+      changeDimension("width", 250 + 30 * labels!.length);
       chartData = {
         datasets: [
           {
             data: values[0],
             backgroundColor: "#FF8000",
             label: $t("Histoires possédées"),
-            legend: $t("Histoires possédées"),
           },
           {
             data: values[1],
             backgroundColor: "#04B404",
             label: $t("Histoires non possédées"),
-            legend: $t("Histoires non possédées"),
           },
         ],
-        labels,
-        legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
+        labels: labels!,
+        // legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
       };
       options = {
         responsive: true,
@@ -184,10 +192,9 @@ watch(
 
 onMounted(async () => {
   await collectionStore().loadWatchedAuthors();
-  watchedAuthorsStoryCount = (
-    await axios.get("/collection/stats/watchedauthorsstorycount")
-  ).data;
-  if (!watchedAuthorsStoryCount) watchedAuthorsStoryCount = {};
+  watchedAuthorsStoryCount = ((await axios.get(
+    "/collection/stats/watchedauthorsstorycount"
+  )) || {}) as WatchedAuthorsStoryCount;
 });
 </script>
 

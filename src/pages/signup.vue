@@ -64,8 +64,8 @@ alias: [/inscription]
   </form>
 </template>
 
-<script setup>
-import axios from "axios";
+<script setup lang="ts">
+import axios, { AxiosError } from "axios";
 import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 import { onMounted } from "vue";
@@ -76,12 +76,12 @@ import { collection } from "~/stores/collection";
 const collectionStore = collection();
 const router = useRouter();
 
-let csrfToken = $ref(null);
-let username = $ref(""),
-  email = $ref(""),
-  password = $ref(""),
-  password2 = $ref(""),
-  error = $ref("");
+let csrfToken = $ref(null as string | null);
+let username = $ref("" as string),
+  email = $ref("" as string),
+  password = $ref("" as string),
+  password2 = $ref("" as string),
+  error = $ref("" as string | unknown);
 
 const { t: $t } = useI18n();
 
@@ -104,7 +104,7 @@ const signup = async () => {
     );
     await collectionStore.loadUser();
   } catch (e) {
-    error = e?.response?.data || "Error";
+    error = (e as AxiosError)?.response?.data || "Error";
   }
 };
 

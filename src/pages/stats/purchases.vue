@@ -51,23 +51,27 @@ alias: [/achats]
     />
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import {
   BarController,
   BarElement,
   CategoryScale,
   Chart,
+  ChartData,
+  ChartOptions,
   Legend,
   LinearScale,
   Title,
   Tooltip,
 } from "chart.js";
+import dayjs from "dayjs";
 import { onMounted, watch } from "vue";
 import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { issue, purchase } from "~prisma_clients/client_dm";
 
 Chart.register(
   Legend,
@@ -87,7 +91,7 @@ const { t: $t } = useI18n(),
   },
   purchases = $computed(() => collection().purchases),
   publicationNames = $computed(() => coa().publicationNames),
-  changeDimension = (dimension, value) => {
+  changeDimension = (dimension: string, value: number) => {
     if (dimension === "width") width = `${value}px`;
     else height = `${value}px`;
   },
@@ -102,26 +106,27 @@ const { t: $t } = useI18n(),
   ),
   collectionWithDates = $computed(
     () =>
-      purchasesById &&
-      collection().collection?.map((issue) => ({
-        ...issue,
-        date: getIssueMonth(issue),
-      }))
+      (purchasesById &&
+        collection().collection?.map((issue) => ({
+          ...issue,
+          date: getIssueMonth(issue),
+        }))) ||
+      null
   ),
-  labels = $computed(
+  labels: string[] = $computed(
     () =>
-      collectionWithDates &&
-      [...new Set(collectionWithDates.map(({ date }) => date))].sort(
-        compareDates
-      )
+      (collectionWithDates &&
+        [...new Set(collectionWithDates.map(({ date }) => date))]
+          .filter((date) => date)
+          .sort(compareDates)) ||
+      []
   ),
   ready = $computed(() => labels && hasPublicationNames),
   fetchPublicationNames = coa().fetchPublicationNames,
   loadPurchases = collection().loadPurchases,
-  compareDates = (a, b) =>
-    Math.sign(
-      new Date(a === "?" ? "0001-01-01" : a) -
-        new Date(b === "?" ? "0001-01-01" : b)
+  compareDates = (a: string, b: string) =>
+    dayjs(a === "?" ? "0001-01-01" : a).diff(
+      dayjs(b === "?" ? "0001-01-01" : b)
     ),
   randomColor = () =>
     `rgb(${[
@@ -129,23 +134,24 @@ const { t: $t } = useI18n(),
       Math.floor(Math.random() * 255),
       Math.floor(Math.random() * 255),
     ].join(",")})`,
-  getIssueMonth = (issue) =>
+  getIssueMonth = (issue: issue): string =>
     getMonthFromDate(
       issue.purchaseId
-        ? (purchasesById[issue.purchaseId] || { date: "?" }).date
-        : issue.creationDate && new Date(issue.creationDate)
-        ? getMonthFromDate(issue.creationDate)
-        : "?"
+        ? dayjs(
+            (purchasesById![issue.purchaseId] || { date: "?" }).date
+          ).toString()
+        : issue.creationDate?.toString() || "?"
     ),
-  getMonthFromDate = (date) => date.match(/^\?|([^-]+-[^-]+)/)[0];
+  getMonthFromDate = (date: string) =>
+    date.match(/^\?|([^-]+-[^-]+)/)?.[0] || "?";
 
-let hasPublicationNames = $ref(false),
-  purchasesById = $ref(null),
-  chartData = $ref(null),
-  options = $ref({}),
-  width = $ref(null),
-  height = $ref(null),
-  purchaseTypeCurrent = $ref("new");
+let hasPublicationNames = $ref(false as boolean),
+  purchasesById = $ref(null as { [purchaseId: number]: purchase } | null),
+  chartData = $ref(null as ChartData | null),
+  options = $ref({} as ChartOptions),
+  width = $ref(null as string | null),
+  height = $ref(null as string | null),
+  purchaseTypeCurrent = $ref("new" as string);
 
 watch(
   () => publicationCodesWithOther,
@@ -166,12 +172,12 @@ watch(
   () => purchases,
   (newValue) => {
     if (newValue) {
-      purchasesById = purchases.reduce(
+      purchasesById = newValue.reduce(
         (acc, purchase) => ({
           ...acc,
           [purchase.id]: purchase,
         }),
-        {}
+        {} as { [purchaseId: number]: purchase }
       );
     }
   },
@@ -181,8 +187,8 @@ watch(
 watch(
   () => ready && purchaseTypeCurrent,
   (newValue) => {
-    if (newValue) {
-      const dateAssoc = labels.reduce(
+    if (newValue && collectionWithDates) {
+      const dateAssoc = labels!.reduce(
         (dates, date) => ({
           ...dates,
           [date]: 0,
@@ -190,7 +196,10 @@ watch(
         {}
       );
 
-      let accDate = labels.reduce((acc, value) => ({ ...acc, [value]: 0 }), {});
+      let accDate: { [label: string]: number } = labels.reduce(
+        (acc, value) => ({ ...acc, [value]: 0 }),
+        {}
+      );
       const values = collectionWithDates
         .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
         .reduce((acc, { date, publicationCode }) => {
@@ -203,7 +212,7 @@ watch(
           acc[publicationCode][date]++;
           accDate[date]++;
           return acc;
-        }, {});
+        }, {} as { [publicationCode: string]: { [date: string]: number } });
 
       const maxPerDate = Object.keys(accDate).reduce(
         (acc, date) => Math.max(acc, accDate[date]),
@@ -250,9 +259,9 @@ watch(
           duration: 0,
         },
         hover: {
-          animationDuration: 0,
+          // animationDuration: 0,
         },
-        responsiveAnimationDuration: 0,
+        // responsiveAnimationDuration: 0,
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -266,9 +275,9 @@ watch(
             stacked: true,
           },
         },
-        legend: {
-          display: false,
-        },
+        // legend: {
+        //   display: false,
+        // },
         plugins: {
           title: {
             display: true,
@@ -286,8 +295,8 @@ watch(
                     } ${tooltipItem.label}`
                   : $t("Numéros sans dates d'achat")) + "\n",
               title: ([tooltipItem]) =>
-                chartData.datasets[tooltipItem.datasetIndex].label,
-              label: (tooltipItem) => tooltipItem.raw,
+                chartData!.datasets[tooltipItem.datasetIndex].label,
+              label: (tooltipItem) => tooltipItem.raw as string,
               footer: ([tooltipItem]) =>
                 [
                   $t("Tous magazines"),

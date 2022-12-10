@@ -17,7 +17,7 @@ meta:
           {{ $t("Total") }}
         </td>
       </tr>
-      <template v-for="(_, publicationCode) in publicationNames">
+      <template v-for="publicationCode of Object.keys(publicationNames)">
         <tr v-for="line in lines" :key="`${publicationCode}-line${line}`">
           <td v-if="line === 1" :rowspan="lines + 1" class="libelle_ligne">
             <img
@@ -63,7 +63,9 @@ meta:
               </td>
             </tr>
             <tr
-              v-for="(_, i) in Math.floor(letterToNumber(maxLetter) / 6) + 1"
+              v-for="i of Object.keys(
+                Math.floor(letterToNumber(maxLetter) / 6) + 1
+              )"
               :key="i"
             >
               <td
@@ -110,7 +112,7 @@ meta:
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -135,9 +137,9 @@ const maxLetter = $computed(() =>
     : numberToLetter(
         [
           ...new Set(
-            JSON.stringify(issuesPerCell)
-              .match(/"[a-zA-Z]+"/g)
-              .map((letter) => letter.replace(/"/g, ""))
+            (JSON.stringify(issuesPerCell).match(/"[a-zA-Z]+"/g) || []).map(
+              (letter) => letter.replace(/"/g, "")
+            )
           ),
         ]
           .map(letterToNumber)
@@ -156,15 +158,15 @@ const fetchCountryNames = coa().fetchCountryNames;
 const fetchPublicationNames = coa().fetchPublicationNames;
 const loadCollection = collectionStore().loadCollection;
 const loadPurchases = collectionStore().loadPurchases;
-const numberToLetter = (number) =>
+const numberToLetter = (number: number) =>
   String.fromCharCode(
-    (number < 26 ? "a".charCodeAt() : "A".charCodeAt() - 26) + number
+    (number < 26 ? "a".charCodeAt(0) : "A".charCodeAt(0) - 26) + number
   );
-const letterToNumber = (letter) =>
+const letterToNumber = (letter: string) =>
   letter >= "a"
-    ? letter.charCodeAt() - "a".charCodeAt()
-    : 26 + letter.charCodeAt() - "A".charCodeAt();
-const groupsInRange = (range) => {
+    ? letter.charCodeAt(0) - "a".charCodeAt(0)
+    : 26 + letter.charCodeAt(0) - "A".charCodeAt(0);
+const groupsInRange = (range: number) => {
   const groups = [];
   for (let group = 6 * range; group < 6 * (range + 1); group++)
     groups.push(group);
@@ -172,25 +174,32 @@ const groupsInRange = (range) => {
   return groups;
 };
 
-let issuesPerCell = $ref(null);
+let issuesPerCell = $ref(
+  null as {
+    [publicationcode: string]: { [mod: string | number]: string[] };
+  } | null
+);
 
 watch(
   () => collection,
   (newCollectionValue) => {
+    if (!newCollectionValue) {
+      return;
+    }
     const addIssueToCell = (
-      acc,
-      publicationCode,
-      issueNumber,
-      isDoubleIssueStart,
-      isDoubleIssueEnd
+      acc: { [publicationcode: string]: { [mod: string | number]: string[] } },
+      publicationCode: string,
+      issueNumber: string,
+      isDoubleIssueStart = false,
+      isDoubleIssueEnd = false
     ) => {
       let mod, number;
-      if (Number.isNaN(issueNumber % 100)) {
+      if (Number.isNaN(issueNumber)) {
         mod = "non-numeric";
         number = issueNumber;
       } else {
-        mod = issueNumber % 100;
-        number = (issueNumber - mod) / 100;
+        mod = parseInt(issueNumber) % 100;
+        number = (parseInt(issueNumber) - mod) / 100;
       }
       if (!acc[publicationCode]) {
         acc[publicationCode] = {

@@ -3,7 +3,7 @@
   <pie :chart-data="chartData" :chart-options="options" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   ArcElement,
   Chart,
@@ -21,14 +21,15 @@ Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 let conditions;
 
 conditions = condition().conditions;
-const numberPerCondition = $computed(() =>
-  collectionStore().collection.reduce(
-    (acc, { condition }) => ({
-      ...acc,
-      [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
-    }),
-    {}
-  )
+const numberPerCondition = $computed(
+  () =>
+    collectionStore().collection?.reduce(
+      (acc, { condition }) => ({
+        ...acc,
+        [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
+      }),
+      {} as { [condition: string]: number }
+    ) || {}
 );
 const conditionsWithoutMissing = conditions.filter(
   ({ value }) => value !== "missing"
@@ -56,7 +57,7 @@ const options = $computed(() => ({
   plugins: {
     tooltip: {
       callbacks: {
-        label: (tooltipItem) => {
+        label: (tooltipItem: { dataset: { data: [] }; parsed: number }) => {
           const { dataset, parsed: currentValue } = tooltipItem;
           const total = dataset.data.reduce((acc, value) => acc + value, 0);
           const percentage = parseFloat(
@@ -64,7 +65,8 @@ const options = $computed(() => ({
           );
           return `${currentValue} (${percentage}%)`;
         },
-        title: ([tooltipItem]) => chartData.labels[tooltipItem.dataIndex],
+        title: ([tooltipItem]: [tooltipItem: { dataIndex: number }]) =>
+          chartData.labels[tooltipItem.dataIndex],
       },
     },
   },

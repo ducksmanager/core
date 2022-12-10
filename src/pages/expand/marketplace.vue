@@ -171,7 +171,7 @@ alias: [/agrandir/marketplace]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Accordion from "~/components/Accordion.vue";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
@@ -180,10 +180,10 @@ import { users } from "~/stores/users";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
-let showModal = $ref(false);
-let modalContactId = $ref(null);
-let modalContactMethod = $ref(null);
-let modalIssueIds = $ref(null);
+let showModal = $ref(false as boolean);
+let modalContactId = $ref(null as number | null);
+let modalContactMethod = $ref(null as string | null);
+let modalIssueIds = $ref(null as number[] | null);
 
 const user = $computed(() => collection().user);
 const contactMethods = $computed(() => marketplace().contactMethods);
@@ -205,22 +205,26 @@ const publicationNames = $computed(() => coa().publicationNames);
 
 const stats = $computed(() => users().stats);
 
-let hasPublicationNames = $ref(false);
-let userIdFilter = $ref(null);
+let hasPublicationNames = $ref(false as boolean);
+let userIdFilter = $ref(null as number | null);
 
-const deleteRequestToSeller = async (issueId) => {
-  await marketplace().deleteRequestToSeller(parseInt(issueId));
+const deleteRequestToSeller = async (issueId: number) => {
+  await marketplace().deleteRequestToSeller(issueId);
   await marketplace().loadIssueRequestsAsBuyer(true);
 };
 
-const launchModal = (e) => {
+const launchModal = (e: {
+  sellerId: number;
+  contactMethod: string;
+  selectedIssueIds: number[];
+}) => {
   showModal = true;
   modalContactId = e.sellerId;
   modalContactMethod = e.contactMethod;
   modalIssueIds = e.selectedIssueIds;
 };
 
-const requestIssues = async ({ issueIds }) => {
+const requestIssues = async ({ issueIds }: { issueIds: number[] }) => {
   await marketplace().requestIssues(issueIds);
   await marketplace().loadIssueRequestsAsBuyer(true);
 };
@@ -230,7 +234,7 @@ onMounted(async () => {
   await marketplace().loadIssueRequestsAsBuyer();
 
   await users().fetchStats(marketplace().sellerUserIds);
-  await coa().fetchPublicationNames(Object.keys(issuesOnSaleByOthers));
+  await coa().fetchPublicationNames(Object.keys(issuesOnSaleByOthers || {}));
   hasPublicationNames = true;
 });
 </script>

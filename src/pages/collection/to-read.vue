@@ -16,15 +16,15 @@ alias: [/collection/a-lire]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
-let hasPublicationNames = $ref(false);
-let publicationCodes = $ref(null);
+let hasPublicationNames = $ref(false as boolean);
+let publicationCodes = $ref(null as string[] | null);
 const issuesInToReadStack = $computed(() => collection().issuesInToReadStack);
 
 watch(

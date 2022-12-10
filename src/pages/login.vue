@@ -52,7 +52,7 @@ alias: [/connexion]
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios";
 import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
@@ -63,13 +63,13 @@ const collectionStore = collection();
 
 let router = useRouter();
 let route = useRoute();
-defineProps({
-  error: { type: String, default: null },
-});
+const { error = null } = defineProps<{
+  error?: string;
+}>();
 
-let csrfToken = $ref(null);
-let username = $ref("");
-let password = $ref("");
+let csrfToken = $ref(null as string | null);
+let username = $ref("" as string);
+let password = $ref("" as string);
 
 onMounted(async () => {
   csrfToken = (await axios.get("/csrf")).data?.csrfToken;

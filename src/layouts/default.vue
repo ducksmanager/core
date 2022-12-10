@@ -34,7 +34,7 @@ const firstPathPart = $computed(
 
 const slots = useSlots();
 useHead({
-  title: slots.title || "DucksManager",
+  title: slots.title?.toString() || "DucksManager",
 });
 
 if (!Cookies.get("token")) {

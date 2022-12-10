@@ -51,7 +51,7 @@ const bookcaseContributorsSorted = $computed(
   () =>
     !loading &&
     [...bookcaseContributors!].sort(({ name: name1 }, { name: name2 }) =>
-      Math.sign(name1.toLowerCase() - name2.toLowerCase())
+      name1.toLowerCase().localeCompare(name2.toLowerCase())
     )
 );
 

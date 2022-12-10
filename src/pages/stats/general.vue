@@ -151,7 +151,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios";
 import { BAlert, BPagination, BTable } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
@@ -188,8 +188,8 @@ const quotationFields = [
   },
 ];
 
-let rarityValue = $ref(null);
-let hasPublicationNames = $ref(false);
+let rarityValue = $ref(null as number | null);
+let hasPublicationNames = $ref(false as boolean);
 
 watch(
   () => collection.totalPerPublication,
@@ -216,10 +216,12 @@ onMounted(async () => {
   await users().fetchCount();
   const { userScores } = (
     await axios.get("/global-stats/user/collection/rarity")
-  ).data;
+  ).data as {
+    userScores: { userId: number; averageRarity: number }[];
+  };
   rarityValue =
     userScores.length -
-    userScores.findIndex(({ userId }) => userId === collection.user.id);
+    userScores.findIndex(({ userId }) => userId === collection.user?.id);
 });
 </script>
 

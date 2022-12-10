@@ -120,6 +120,8 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
+const { t: $tc } = useI18n();
+
 const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
 const issueIds = $computed(() =>

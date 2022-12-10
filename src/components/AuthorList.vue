@@ -109,16 +109,16 @@ import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
-import { inducks_person } from "~db_types/client_coa";
+import { authorUser } from "~prisma_clients/client_dm";
 
 const { watchedAuthors } = defineProps<{
-  watchedAuthors: { personcode: string }[];
+  watchedAuthors: authorUser[];
 }>();
 
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
 const search = $ref("");
-let searchResults = $ref(null);
+let searchResults = $ref(null as { [personcode: string]: string } | null);
 
 const personNames = $computed(() => coa().personNames);
 
@@ -147,15 +147,15 @@ const isAuthorWatched = (personcode: string) =>
   watchedAuthors.some(
     ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
   );
-const createRating = async (author: inducks_person) => {
-  await axios.put("/collection/authors/watched", author);
+const createRating = async (data: { personcode: string }) => {
+  await axios.put("/collection/authors/watched", data);
   await loadWatchedAuthors(true);
 };
-const updateRating = async (author: inducks_person) => {
-  await axios.post("/collection/authors/watched", author);
+const updateRating = async (data: { personcode: string; notation: number }) => {
+  await axios.post("/collection/authors/watched", data);
 };
-const deleteAuthor = async (author: inducks_person) => {
-  await axios.delete("/collection/authors/watched", { data: author });
+const deleteAuthor = async (data: { personcode: string }) => {
+  await axios.delete("/collection/authors/watched", { data });
   await loadWatchedAuthors(true);
 };
 const runSearch = async (value: string) => {

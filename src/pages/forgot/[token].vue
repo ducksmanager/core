@@ -20,8 +20,8 @@
   </div>
 </template>
 
-<script setup>
-import axios from "axios";
+<script setup lang="ts">
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
@@ -30,11 +30,11 @@ import { collection } from "~/stores/collection";
 const router = useRouter();
 const collectionStore = collection();
 
-let initError = $ref(null);
-let error = $ref(null);
+let initError = $ref(null as AxiosError | null);
+let error = $ref(null as unknown | null);
 const token = useRoute().params.token;
-const password = $ref("");
-const password2 = $ref("");
+const password = $ref("" as string);
+const password2 = $ref("" as string);
 
 const { t: $t } = useI18n();
 const changePassword = async () => {
@@ -49,8 +49,8 @@ const changePassword = async () => {
         })
       ).data.token
     );
-  } catch (e) {
-    error = e?.response?.data || "Error";
+  } catch (e: unknown) {
+    error = (e as AxiosError)?.response?.data || "Error";
   }
 };
 
@@ -62,8 +62,8 @@ onMounted(async () => {
       password2,
     });
     await collectionStore.loadUser();
-  } catch (e) {
-    initError = e;
+  } catch (e: unknown) {
+    initError = e as AxiosError;
   }
 });
 

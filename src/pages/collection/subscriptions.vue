@@ -42,7 +42,7 @@ alias: [/collection/abonnements]
       <p>
         <b-button
           @click="
-            createAssociatedPublicationSubscription(
+            createSubscription(
               subscriptions.find(
                 ({ publicationCode }) =>
                   publicationCode ===
@@ -61,7 +61,6 @@ alias: [/collection/abonnements]
     </b-alert>
     <Subscription
       v-for="subscription in subscriptions"
-      :id="subscription.id"
       :key="subscription.id"
       :is-edit="editedSubscriptionId === subscription.id"
       :publication-code="subscription.publicationCode"
@@ -96,49 +95,57 @@ alias: [/collection/abonnements]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import axios from "axios";
 import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
+import { collection, SubscriptionTransformed } from "~/stores/collection";
 
-let hasPublicationNames = $ref(false);
-let currentAssociatedPublications = $ref([]);
+type EditSubscription = {
+  publicationCode: string;
+  startDate: string | null;
+  endDate: string | null;
+};
+
+type AssociatedPublication = {
+  referencePublicationcode: string;
+  publicationcode: string;
+};
+
+let hasPublicationNames = $ref(false as boolean);
+let currentAssociatedPublications = $ref([] as AssociatedPublication[]);
 const associatedPublications = $ref([
   {
     referencePublicationcode: "fr/JM",
     publicationcode: "fr/JMS",
   },
-]);
-let editedSubscriptionId = $ref(undefined);
-let newSubscription = $ref(null);
+] as AssociatedPublication[]);
+let editedSubscriptionId = $ref(undefined as number | undefined | null);
 
 const publicationNames = $computed(() => coa().publicationNames);
 const subscriptions = $computed(() => collection().subscriptions);
 const fetchPublicationNames = coa().fetchPublicationNames;
 const loadSubscriptions = collection().loadSubscriptions;
-const createAssociatedPublicationSubscription = (
-  existingSubscription,
-  { publicationcode: associatedPublicationcode }
+
+const createSubscription = async (
+  existingSubscription: SubscriptionTransformed,
+  publicationcode: string
 ) => {
-  newSubscription = {
-    ...existingSubscription,
-    publicationCode: associatedPublicationcode,
-  };
-  createSubscription(newSubscription);
-};
-const createSubscription = async (data) => {
-  await axios.put("/collection/subscriptions", data);
+  await axios.put("/collection/subscriptions", {
+    existingSubscription,
+    publicationcode,
+  });
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;
 };
-const editSubscription = async (id, data) => {
+const editSubscription = async (id: number, data: EditSubscription) => {
   await axios.post(`/collection/subscriptions/${id}`, data);
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;
 };
-const deleteSubscription = async (id) => {
+const deleteSubscription = async (id: number) => {
   await axios.delete(`/collection/subscriptions/${id}`);
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;
@@ -164,7 +171,7 @@ watch(
       );
       await fetchPublicationNames([
         ...associatedPublications.map(({ publicationcode }) => publicationcode),
-        ...subscriptions.map(({ publicationCode }) => publicationCode),
+        ...newValue.map(({ publicationCode }) => publicationCode),
       ]);
       hasPublicationNames = true;
     }

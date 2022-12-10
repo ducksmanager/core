@@ -185,7 +185,7 @@ const closeBook = () => {
   if (currentPage === 0) {
     opened = false;
     closing = true;
-  } else {
+  } else if (book) {
     book.on("flip", () => {
       opened = false;
       closing = true;
@@ -246,7 +246,9 @@ watch(
 watch(
   () => currentPage,
   (newValue) => {
-    book.flip(newValue);
+    if (book) {
+      book.flip(newValue);
+    }
   }
 );
 

@@ -1,4 +1,4 @@
-import "./styles/main.scss";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import "v-contextmenu/dist/themes/default.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
@@ -10,7 +10,9 @@ import axios from "axios";
 import BootstrapVue3, { BToastPlugin } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 import { createPinia } from "pinia";
+// @ts-ignore
 import contextmenu from "v-contextmenu";
+// @ts-ignore
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";

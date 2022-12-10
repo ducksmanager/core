@@ -147,7 +147,10 @@
 import { BAlert, BButton } from "bootstrap-vue-3";
 import { watch } from "vue";
 
-import { bookcase as bookcaseStore } from "~/stores/bookcase";
+import {
+  bookcase as bookcaseStore,
+  BookcaseEdgeWithPopularity,
+} from "~/stores/bookcase";
 import { coa as coaStore } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
@@ -158,6 +161,15 @@ const route = useRoute();
 const collection = collectionStore();
 const coa = coaStore();
 const bookcase = bookcaseStore();
+
+let edgesUsingSprites = $ref({} as { [edgeId: number]: string });
+const currentEdgeOpened = $ref(null as BookcaseEdgeWithPopularity | null);
+let currentEdgeHighlighted = $ref(null as number | null);
+let hasPublicationNames = $ref(false as boolean);
+let hasIssueNumbers = $ref(false as boolean);
+const showShareButtons = $ref(false as boolean);
+let userPoints = $ref(null as { [contribution: string]: number } | null);
+
 const user = $computed(() => collection.user);
 const bookcaseUsername = $computed(
   () => (route.params.username as string) || user?.username || null
@@ -254,14 +266,6 @@ const highlightIssue = (issue: simple_issue) => {
         issue.issuenumber === issueInCollection.issueNumber
     )?.id || null;
 };
-
-let edgesUsingSprites = $ref({});
-const currentEdgeOpened = $ref(null);
-let currentEdgeHighlighted = $ref(null as number | null);
-let hasPublicationNames = $ref(false as boolean);
-let hasIssueNumbers = $ref(false as boolean);
-const showShareButtons = $ref(false as boolean);
-let userPoints = $ref(null);
 
 watch(
   () => bookcaseOrder,
@@ -391,6 +395,3 @@ watch(
   { immediate: true }
 );
 </script>
-
-<style lang="scss" scoped>
-</style>

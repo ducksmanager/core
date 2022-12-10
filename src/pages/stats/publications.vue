@@ -3,10 +3,12 @@
   <pie v-if="chartData" :chart-data="chartData" :chart-options="options" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   ArcElement,
   Chart,
+  ChartData,
+  ChartOptions,
   Legend,
   PieController,
   Title,
@@ -30,35 +32,39 @@ const smallCountPublications = $computed(() =>
     : Object.keys(totalPerPublication).filter(
         (publicationCode) =>
           totalPerPublication[publicationCode] /
-            collection().collection.length <
+            collection().collection!.length <
           0.01
       )
 );
-const totalPerPublicationGroupSmallCounts = $computed(
+const totalPerPublicationGroupSmallCounts: {
+  [publicationcode: string]: number;
+} = $computed(
   () =>
-    smallCountPublications &&
-    totalPerPublication && {
-      ...Object.keys(totalPerPublication)
-        .filter(
-          (publicationCode) => !smallCountPublications.includes(publicationCode)
-        )
-        .reduce(
-          (acc, publicationCode) => ({
-            ...acc,
-            [publicationCode]: totalPerPublication[publicationCode],
-          }),
-          {}
-        ),
-      ...(!smallCountPublications.length
-        ? {}
-        : {
-            [null]: smallCountPublications.reduce(
-              (acc, publicationCode) =>
-                acc + totalPerPublication[publicationCode],
-              0
-            ),
-          }),
-    }
+    (smallCountPublications &&
+      totalPerPublication && {
+        ...Object.keys(totalPerPublication)
+          .filter(
+            (publicationCode) =>
+              !smallCountPublications.includes(publicationCode)
+          )
+          .reduce(
+            (acc, publicationCode) => ({
+              ...acc,
+              [publicationCode]: totalPerPublication[publicationCode],
+            }),
+            {}
+          ),
+        ...(!smallCountPublications.length
+          ? {}
+          : {
+              [""]: smallCountPublications.reduce(
+                (acc, publicationCode) =>
+                  acc + totalPerPublication[publicationCode],
+                0
+              ),
+            }),
+      }) ||
+    {}
 );
 const labels = $computed(
   () =>
@@ -73,7 +79,7 @@ const labels = $computed(
               "Publications"
             ).toLowerCase()})`,
         ],
-        []
+        [] as { [publicationcode: string]: string[] }
       )
 );
 const values = $computed(() =>
@@ -87,7 +93,7 @@ const colors = $computed(
     Object.entries(totalPerPublicationGroupSmallCounts)
       .sort(sortByCount)
       .map(([publicationCode]) =>
-        publicationCode === "null" ? "#000" : randomColor()
+        publicationCode === "" ? "#000" : randomColor()
       )
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
@@ -97,15 +103,18 @@ const randomColor = () =>
     Math.floor(Math.random() * 255),
     Math.floor(Math.random() * 255),
   ].join(",")})`;
-const sortByCount = ([publicationCode1], [publicationCode2]) =>
+const sortByCount = (
+  [publicationCode1]: [publicationCode1: string],
+  [publicationCode2]: [publicationCode2: string]
+) =>
   Math.sign(
     totalPerPublicationGroupSmallCounts[publicationCode1] -
       totalPerPublicationGroupSmallCounts[publicationCode2]
   );
 
-let hasPublicationNames = $ref(false);
-let chartData = $ref(null);
-let options = $ref({});
+let hasPublicationNames = $ref(false as boolean);
+let chartData = $ref(null as ChartData | null);
+let options = $ref({} as ChartOptions);
 
 watch(
   () => totalPerPublicationGroupSmallCounts,
@@ -113,7 +122,7 @@ watch(
     if (newValue) {
       fetchPublicationNames(
         Object.keys(totalPerPublicationGroupSmallCounts).filter(
-          (publicationCode) => publicationCode !== "null"
+          (publicationCode) => publicationCode !== ""
         )
       );
       hasPublicationNames = true;
@@ -144,7 +153,7 @@ watch(
       plugins: {
         tooltip: {
           callbacks: {
-            label: (tooltipItem) => {
+            label: (tooltipItem: { dataset: { data: [] }; parsed: number }) => {
               const { dataset, parsed: currentValue } = tooltipItem;
               const total = dataset.data.reduce((acc, value) => acc + value, 0);
               const percentage = parseFloat(
@@ -152,7 +161,9 @@ watch(
               );
               return `${currentValue} (${percentage}%)`;
             },
-            title: ([tooltipItem]) => chartData.labels[tooltipItem.dataIndex],
+
+            title: ([tooltipItem]: [tooltipItem: { dataIndex: number }]) =>
+              chartData!.labels![tooltipItem.dataIndex],
           },
         },
       },

@@ -36,6 +36,7 @@ export const get: Handler = async (req, res) => {
             SELECT numeros.ID                                                AS id,
                    numeros.Pays                                              AS countryCode,
                    numeros.Magazine                                          AS magazineCode,
+                   CONCAT(numeros.Pays,'/',numeros.Magazine)                 AS publicationCode,
                    numeros.Numero                                            AS issueNumber,
                    IFNULL(reference.NumeroReference, numeros.Numero_nospace) AS issueNumberReference,
                    tp.ID                                                     AS edgeId,

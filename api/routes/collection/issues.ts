@@ -138,10 +138,7 @@ const addOrChangeCopies = async (
   const [country, magazine] = publicationCode.split("/");
 
   const insertOperations = [...new Set(conditions.keys())]
-    .filter(
-      (copyNumber) =>
-        !["missing", "non_possede"].includes(conditions[copyNumber])
-    )
+    .filter((copyNumber) => !["missing"].includes(conditions[copyNumber]))
     .map((copyNumber) =>
       prisma.issue.create({
         data: {
@@ -276,7 +273,7 @@ export const post = [
         (purchaseIds as number[]) ?? []
       );
     } else {
-      if (["non_possede", "missing"].includes(condition)) {
+      if (["missing"].includes(condition)) {
         await deleteIssues(userId, publicationcode, issueNumbers);
         res.statusCode = constants.HTTP_STATUS_OK;
         res.end(JSON.stringify({}));

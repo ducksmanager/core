@@ -9,7 +9,7 @@ const inAnHour = dayjs().add(1, "hour");
 
 let coaCacheExpiration = dayjs();
 if (now.get("hour") >= 4) {
-  coaCacheExpiration = coaCacheExpiration.add("day", 1);
+  coaCacheExpiration = coaCacheExpiration.add(1, "day");
 }
 coaCacheExpiration = coaCacheExpiration
   .set("hour", 4)

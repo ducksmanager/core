@@ -147,22 +147,18 @@ const textureTypes = $computed(() => ({
   bookcase: $t("Sous-texture"),
   bookshelf: $t("Sous-texture de l'étagère"),
 }));
-const loadBookcaseOptions = bookcaseStore.loadBookcaseOptions;
-const loadBookcaseOrder = bookcaseStore.loadBookcaseOrder;
-const updateBookcaseOptions = bookcaseStore.updateBookcaseOptions;
-const updateBookcaseOrder = bookcaseStore.updateBookcaseOrder;
-const fetchPublicationNames = coa().fetchPublicationNames;
+
 const loadData = async () => {
-  await loadBookcaseOptions();
-  await loadBookcaseOrder();
+  await bookcaseStore.loadBookcaseOptions();
+  await bookcaseStore.loadBookcaseOrder();
   loading = false;
 };
 const submit = async () => {
   error = false;
   loading = true;
   try {
-    await updateBookcaseOptions();
-    await updateBookcaseOrder();
+    await bookcaseStore.updateBookcaseOptions();
+    await bookcaseStore.updateBookcaseOrder();
     await loadData();
   } catch {
     error = true;
@@ -170,22 +166,23 @@ const submit = async () => {
     loading = false;
   }
 };
-const textureWithoutSuperType = (texture) => texture.replace(/^[^/]+\//, "");
+const textureWithoutSuperType = (texture: string) =>
+  texture.replace(/^[^/]+\//, "");
 
-let error = $ref(false);
-let loading = $ref(true);
-let hasPublicationNames = $ref(false);
-let bookcaseOrder = $ref(null);
+let error = $ref(false as boolean);
+let loading = $ref(true as boolean);
+let hasPublicationNames = $ref(false as boolean);
+let bookcaseOrder = $ref(null as string[] | null);
 
 watch(
   () => user,
   async (value) => {
     if (value) {
-      bookcaseStore.bookcaseUsername = user.username;
+      bookcaseStore.bookcaseUsername = value.username;
       await loadData();
       bookcaseOrder = bookcaseStore.bookcaseOrder;
-      await fetchPublicationNames(bookcaseOrder);
-      bookcaseOrder = bookcaseOrder.filter((publicationCode) =>
+      await coa().fetchPublicationNames(bookcaseOrder as string[]);
+      bookcaseOrder = (bookcaseOrder as string[]).filter((publicationCode) =>
         Object.keys(publicationNames).includes(publicationCode)
       );
       hasPublicationNames = true;

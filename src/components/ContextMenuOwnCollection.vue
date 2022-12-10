@@ -275,7 +275,9 @@
                     :class="{
                       selected: copy.isOnSale === `${stateId}-${userId}`,
                     }"
-                    @click.prevent="copy.isOnSale = `${stateId}-${userId}`"
+                    @click.prevent="
+                      copy.isOnSale = `${String(stateId)}-${userId}`
+                    "
                     >{{ buyerUserNamesById?.[userId] }}</v-contextmenu-item
                   >
                 </v-contextmenu-group>
@@ -289,7 +291,7 @@
           v-if="isSingleIssueSelected || hasNoCopies"
           class="p-0"
           role="presentation"
-          @click.prevent="editingCopies.push({ ...defaultState })"
+          @click.prevent="editingCopies.push({ ...defaultCopyState })"
         >
           {{ $t("Ajouter un exemplaire") }}
         </b-nav-item>
@@ -334,8 +336,8 @@ import { useI18n } from "vue-i18n";
 import condition from "~/composables/condition";
 import { collection, collection as collectionStore } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
-import { issue } from "~db_types/client_dm";
-import { CollectionUpdate } from "~types/CollectionUpdate";
+import { issue } from "~prisma_clients/client_dm";
+import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
 
 type issueWithPublicationCode = issue & {
   publicationCode: string;
@@ -353,16 +355,22 @@ const emit = defineEmits<{
 }>();
 const { conditions } = condition();
 
-const defaultState = {
-  condition: "possessed",
-  isOnSale: "do_not_change",
+const defaultCopyState: CopyState = {
+  condition: "indefini",
   purchaseId: "do_not_change",
+  isOnSale: "do_not_change",
   isToRead: "do_not_change",
 };
+
 const today = new Date().toISOString().slice(0, 10);
 const { t: $t } = useI18n();
-let editingCopies = $ref([] as issueWithPublicationCode[]);
-let currentCopyIndex = $ref(0);
+interface NewPurchase {
+  newPurchaseDescription?: string;
+  newPurchaseDate?: string;
+  newPurchaseContext?: string;
+}
+let editingCopies = $ref([] as (CopyState & NewPurchase)[]);
+let currentCopyIndex = $ref(0 as number);
 const purchases = $computed(() => collection().purchases);
 const conditionStates = $computed(() => ({
   ...(isSingleIssueSelected
@@ -442,10 +450,10 @@ const updateEditingCopies = () => {
     if (copies.length) {
       editingCopies = JSON.parse(JSON.stringify(copies));
     } else {
-      editingCopies = [{ ...defaultState, condition: "missing" }];
+      editingCopies = [{ ...defaultCopyState, condition: "missing" }];
     }
   } else {
-    editingCopies = [{ ...defaultState }];
+    editingCopies = [{ ...defaultCopyState }];
   }
 };
 
@@ -455,7 +463,7 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
       idx === 0
         ? [
             ...new Set(
-              receivedRequests
+              (receivedRequests || [])
                 .filter(
                   ({ issueId: receivedRequestIssueId }) =>
                     receivedRequestIssueId === parseInt(issueId)
@@ -464,7 +472,7 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
             ),
           ]
         : acc.filter((buyerId) =>
-            receivedRequests.filter(
+            (receivedRequests || []).filter(
               ({
                 issueId: receivedRequestIssueId,
                 buyerId: receivedRequestBuyerId,
@@ -473,7 +481,7 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
                 receivedRequestBuyerId === buyerId
             )
           ),
-    []
+    [] as number[]
   )
 );
 
@@ -486,11 +494,16 @@ const receivedRequests = $computed(() =>
 );
 
 const convertConditionToDbValue = (condition: string) =>
-  (conditions.find(({ value }) => value === condition) || { dbValue: null })
-    .dbValue;
+  (
+    conditions.find(({ value }) => value === condition) || {
+      dbValue: "indefini",
+    }
+  ).dbValue;
 const updateSelectedIssues = async (force = false) => {
   if (!force && String(editingCopies[0].isOnSale).indexOf("transfer-") === 0) {
-    const transferToUser = editingCopies[0].isOnSale.split("transfer-")[1];
+    const transferToUser = (editingCopies[0].isOnSale as string).split(
+      "transfer-"
+    )[1];
     const isConfirmed = confirm(
       $t(
         "Les numéros sélectionnés vont être transférés à {0} et n'apparaitront plus dans votre collection.",
@@ -501,36 +514,44 @@ const updateSelectedIssues = async (force = false) => {
       return;
     }
   }
-  let issueDetails = {
-    condition: editingCopies.map(({ condition }) =>
-      convertConditionToDbValue(condition)
+  let issueDetailsMultiple: CopyStateMultiple = {
+    condition: editingCopies.map(
+      ({ condition }) => convertConditionToDbValue(condition) || "missing"
     ),
     isToRead: editingCopies.map(({ isToRead }) => isToRead),
     isOnSale: editingCopies.map(({ isOnSale }) => isOnSale),
     purchaseId: editingCopies.map(({ purchaseId }) => purchaseId),
   };
+  let issueDetails: CopyState | null = null;
   if (!isSingleIssueSelected) {
-    issueDetails = Object.keys(issueDetails).reduce(
-      (acc, detailKey) => ({
-        ...acc,
-        [detailKey]: issueDetails[detailKey][0],
-      }),
-      {}
-    );
+    issueDetails = {
+      condition: issueDetailsMultiple.condition[0],
+      isToRead: issueDetailsMultiple.isToRead[0],
+      isOnSale: issueDetailsMultiple.isOnSale[0],
+      purchaseId: issueDetailsMultiple.purchaseId[0],
+    } as CopyState;
   }
 
   await updateIssues({
     issueNumbers: Object.values(selectedIssuesById),
-    ...issueDetails,
+    issueDetails: issueDetails || issueDetailsMultiple,
   });
 };
 
-const updateIssues = async (data: {
-  issueNumbers: string[] & CollectionUpdate;
+const updateIssues = async ({
+  issueNumbers,
+  issueDetails,
+}: {
+  issueNumbers: string[];
+  issueDetails: CopyState | CopyStateMultiple;
 }) => {
   await collectionStore().updateCollection({
-    ...data,
-    publicationcode: publicationcode,
+    publicationcode,
+    issueNumbers,
+    condition: issueDetails.condition,
+    isToRead: issueDetails.isToRead,
+    isOnSale: issueDetails.isOnSale,
+    purchaseId: issueDetails.purchaseId,
   });
 
   await marketplace().loadIssuesOnSaleByOthers(true);

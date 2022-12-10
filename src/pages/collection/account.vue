@@ -254,7 +254,7 @@ const updateAccount = async () => {
     ].filter((value) => value);
     await collection().updateMarketplaceContactMethods();
   } catch (e) {
-    error = e?.response?.data || t({ message: "Une erreur s'est produite." });
+    error = (e as ScopedError) || { message: t("Une erreur s'est produite.") };
   }
 };
 

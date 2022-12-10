@@ -18,7 +18,9 @@ const { rating } = defineProps<{
   rating: number;
   maxRating: number;
 }>();
-const emit = defineEmits<{ (e: "update:rating"): void }>();
+const emit = defineEmits<{
+  (e: "update:rating", currentRating: number): void;
+}>();
 
 const currentRating = $ref(rating);
 </script>

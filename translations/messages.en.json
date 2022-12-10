@@ -320,6 +320,7 @@
   "Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.": "If your second-hand bookshop is valid, it should be available soon on DucksManager.",
   "Si vous avez spécifié l'état de vos revues, un graphique les résumera.": "If you specified the conditions of your issues, a graph will sum them up.",
   "Si vous possédez déjà une collection Inducks, vous pouvez <b>l'importer sur DucksManager en quelques clics.</b>": "If you already have an Inducks collection, you can <b>import it into DucksManager.</b>",
+  "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact.": "If you wish to sell issues, set at least one contact method.",
   "Signalé par": "Reported by",
   "Sortie :": "Release: ",
   "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :": "Would you like this magazine to be removed from your  collection? In this case, the following issues will also be removed from your  collection :",
@@ -392,6 +393,7 @@
   "Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés.": "Your presentation sentence will be submitted for review. Sentences containing a political message or illegal content will be refused.",
   "Votre revue de bouquinerie a été approuvée !": "Your bookstore review has been approved!",
   "Votre tranche a été publiée sur DucksManager !": "Your edge has been published on DucksManager!",
+  "Vous aimez un scénariste ou un dessinateur en particulier ? DucksManager génère pour vous un histogramme résumant la proportion des histoires que vous possédez de cet auteur.": "Do you like specific writers or cartoonists? DucksManager will show you a graph summing up the proportion of stories that you own for each of your favorite authors.",
   "Vous allez retirer tous les exemplaires\ndes numéros sélectionnés": "You're about to delete all the copies\nof the selected issues from your collection",
   "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres.": "You have reached the maximum amount of watched authors. Remove existing authors from your list in order to watch other ones.",
   "Vous avez indiqué avoir un abonnement pour {0}. Généralement, cet abonnement inclut également la réception du magazine {1}. Voulez-vous ajouter un abonnement à {1} pour les mêmes dates ?": "You have selected a subscription for {0}. Usually, subscribing to this publication includes receiving publication {1} as well. Do you want to add a subscription to {1} for the same dates?",
@@ -411,6 +413,7 @@
   "Vous devez spécifier une adresse e-mail pour activer cette option": "You need to set an email address to activate this option",
   "Vous devez sélectionner une adresse dans la liste lorsque vous l'entrez dans le champ \"Adresse\"": "You need to select an address from the list when you type it in the \"Address\" field",
   "Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection.": "You haven't rated your favorite authors yet. Rate your favorite authors so that DucksManager can suggest issues to add to your collection.",
+  "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros.": "You haven't set any contact method for other users who may be interested in your issues for sole.",
   "Vous ne possédez aucun numéro ! Cliquez": "You don't possess any comic book! Click",
   "Vous possédez": "You own",
   "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié.": "You own multiple copies of some of the selected issues.\nOnly the first copy will be altered.",
@@ -504,7 +507,5 @@
   "à côté d'un magazine ou d'un numéro dans la page de gestion de la collection pour voir les numéros en vente sur cette page.": "next to a publication name or an issue number on the 'Manage my collection' page in order to see the issues for sale here.",
   "à sa collection": "to their collection",
   "• 1 nouvelle histoire de {{authorName}}": "• 1 new story from {{authorName}}",
-  "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}",
-  "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros.": "You haven't set any contact method for other users who may be interested in your issues for sole.",
-  "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact.": "If you wish to sell issues, set at least one contact method."
+  "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}"
 }

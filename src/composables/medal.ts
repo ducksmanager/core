@@ -63,6 +63,7 @@ export default function (contribution: string, userLevelPoints: number) {
 
   return {
     radius: RADIUS,
+    circumference,
     currentLevel,
     currentLevelPoints,
     currentLevelThreshold,

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { defineStore } from "pinia";
 
 import { collection } from "./collection";
@@ -7,6 +7,7 @@ interface BookcaseEdge {
   id: number;
   countryCode: string;
   magazineCode: string;
+  publicationCode: string;
   issueNumber: string;
   issueNumberReference: string;
   edgeId: number;
@@ -14,7 +15,7 @@ interface BookcaseEdge {
   sprites: string;
 }
 
-interface BookcaseEdgeWithPopularity extends BookcaseEdge {
+export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationCode: string;
   issueCode: string;
   popularity: number | null;
@@ -44,24 +45,25 @@ export const bookcase = defineStore("bookcase", {
     isSharedBookcase: ({ bookcaseUsername }): boolean =>
       collection().user?.username !== bookcaseUsername,
 
-    bookcaseWithPopularities: ({
-      bookcase,
-      isSharedBookcase,
-    }): BookcaseEdgeWithPopularity[] | null =>
-      ((isSharedBookcase ? true : collection().popularIssuesInCollection) &&
-        bookcase?.map((issue) => {
-          const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
-          const issueCode = `${publicationCode} ${issue.issueNumber}`;
-          return {
-            ...issue,
-            publicationCode,
-            issueCode,
-            popularity: isSharedBookcase
-              ? null
-              : collection().popularIssuesInCollection?.[issueCode] || 0,
-          };
-        })) ||
-      null,
+    bookcaseWithPopularities(): BookcaseEdgeWithPopularity[] | null {
+      const isSharedBookcase = this.isSharedBookcase;
+      return (
+        ((isSharedBookcase ? true : collection().popularIssuesInCollection) &&
+          this.bookcase?.map((issue) => {
+            const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
+            const issueCode = `${publicationCode} ${issue.issueNumber}`;
+            return {
+              ...issue,
+              publicationCode,
+              issueCode,
+              popularity: isSharedBookcase
+                ? null
+                : collection().popularIssuesInCollection?.[issueCode] || 0,
+            };
+          })) ||
+        null
+      );
+    },
   },
 
   actions: {
@@ -79,7 +81,7 @@ export const bookcase = defineStore("bookcase", {
             await axios.get(`/bookcase/${this.bookcaseUsername}`)
           ).data;
         } catch (e) {
-          switch (e.response.status) {
+          switch ((e as AxiosError).response?.status) {
             case 403:
               this.isPrivateBookcase = true;
               break;

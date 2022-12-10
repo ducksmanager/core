@@ -39,7 +39,6 @@ export const put: Handler = (req, res) => {
           imageIds: [],
           type: pastecResponse.type,
         });
-        return;
       }
       console.log("Cover ID search: matched cover IDs $coverIds");
       console.log(

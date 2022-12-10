@@ -3,6 +3,7 @@ import { Handler } from "express";
 
 import BookstoreSuggested from "~/emails/bookstore-suggested";
 import { bookstore, PrismaClient } from "~prisma_clients/client_dm";
+import { SimpleBookstore } from "~types/SimpleBookstore";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ const parseForm = bodyParser.json();
 
 export const get: Handler = async (req, res) =>
   res.json(
-    await prisma.bookstore.findMany({
+    (await prisma.bookstore.findMany({
       select: {
         id: true,
         name: true,
@@ -30,19 +31,19 @@ export const get: Handler = async (req, res) =>
           },
         },
       },
-    })
+    })) as SimpleBookstore[]
   );
 
 export const put = [
   parseForm,
   (async (req, res) => {
+    const { bookstore, newBookstoreComment: comment } = req.body;
     const {
       name,
       address,
       coordX: coordXParam,
       coordY: coordYParam,
-      comment,
-    } = req.body;
+    } = bookstore;
     const id = parseInt(req.body.id);
     const coordX = parseFloat(coordXParam);
     const coordY = parseFloat(coordYParam);
@@ -51,10 +52,10 @@ export const put = [
       res.end("No bookstore ID or name was provided");
       return;
     }
-    let bookstore: bookstore;
+    let dbBookstore: bookstore;
     if (id) {
       try {
-        bookstore = await prisma.bookstore.findUniqueOrThrow({
+        dbBookstore = await prisma.bookstore.findUniqueOrThrow({
           where: { id },
         });
       } catch (e) {
@@ -63,7 +64,7 @@ export const put = [
         return;
       }
     } else {
-      bookstore = await prisma.bookstore.create({
+      dbBookstore = await prisma.bookstore.create({
         data: {
           name,
           address,
@@ -81,7 +82,7 @@ export const put = [
       : null;
     await prisma.bookstoreComment.create({
       data: {
-        bookstoreId: bookstore.id,
+        bookstoreId: dbBookstore.id,
         isActive: false,
         userId: user?.id,
         comment,

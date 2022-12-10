@@ -1,12 +1,14 @@
 import { defineStore } from "pinia";
 
 import { getCurrentLocaleShortKey } from "~/composables/locales";
+import { i18n } from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
-import { inducks_issue, inducks_issuequotation } from "~db_types/client_coa";
+import {
+  inducks_issue,
+  inducks_issuequotation,
+} from "~prisma_clients/client_coa";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
-
-import { i18n } from "../i18n";
 
 const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
 const URL_PREFIX_PUBLICATIONS = "/coa/list/publications";
@@ -55,7 +57,7 @@ export const coa = defineStore("coa", {
     personNames: null as { [personcode: string]: string } | null,
     issueNumbers: {} as { [issuecode: string]: string[] },
     issuesWithTitles: {} as {
-      [issuenumber: string]: { issuenumber: string; title: string };
+      [issuenumber: string]: { issueNumber: string; title: string }[];
     },
     issueDetails: {} as { [issuecode: string]: InducksIssueDetails },
     isLoadingCountryNames: false as boolean,

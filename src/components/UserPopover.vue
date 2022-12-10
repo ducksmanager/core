@@ -57,9 +57,11 @@
 import { BButton } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
+import { SimpleUserWithQuickStats } from "~/stores/users";
+
 defineProps<{
-  points: Object;
-  stats: Object;
+  points: { [contribution: string]: number };
+  stats: SimpleUserWithQuickStats;
 }>();
 const { t: $tc } = useI18n();
 </script>

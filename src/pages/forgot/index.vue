@@ -38,14 +38,14 @@
   </div>
 </template>
 
-<script setup>
-import axios from "axios";
+<script setup lang="ts">
+import axios, { AxiosError } from "axios";
 import { useI18n } from "vue-i18n";
 
-let error = $ref(null);
+let error = $ref(null as unknown | string | null);
 
-const email = $ref("");
-let token = $ref("");
+const email = $ref("" as string);
+let token = $ref("" as string);
 const { t: $t } = useI18n();
 
 const sendPasswordToken = async () => {
@@ -56,7 +56,7 @@ const sendPasswordToken = async () => {
       })
     ).data.token;
   } catch (e) {
-    error = e?.response?.data || "Error";
+    error = (e as AxiosError)?.response?.data || "Error";
   }
 };
 </script>

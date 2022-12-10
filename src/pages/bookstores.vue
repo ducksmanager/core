@@ -143,7 +143,7 @@ alias: [/bouquineries]
 
       <div id="address" class="mb-2" />
       <b-form-textarea
-        v-model="newBookstore.comment"
+        v-model="newBookstoreComment"
         required
         cols="41"
         rows="5"
@@ -159,7 +159,7 @@ alias: [/bouquineries]
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import axios from "axios";
 import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
@@ -167,45 +167,46 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
-let bookstores = $ref([]);
-let existingBookstore = $ref(null);
+import { bookstore } from "~prisma_clients/client_dm";
+import { SimpleBookstore } from "~types/SimpleBookstore";
+
+let bookstores = $ref([] as SimpleBookstore[]);
+let existingBookstore = $ref(null as SimpleBookstore | null);
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
 
 const { t: $t } = useI18n();
-const newBookstore = {
-  name: null,
-  address: null,
-  comment: null,
-  coordX: null,
-  coordY: null,
-};
+const newBookstoreComment = $ref("" as string);
+const newBookstore = $ref({
+  name: "",
+  address: "",
+  coordX: 0,
+  coordY: 0,
+  id: null,
+} as Omit<bookstore, "id"> & { id: number | null });
 const accessToken =
   "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ";
 const mapCenter = [1.73584, 46.754917];
-const decodeText = (object, field) => {
+const decodeText = (value: string) => {
   try {
-    return decodeURIComponent(escape(object[field]));
+    return decodeURIComponent(escape(value));
   } catch (_) {
-    return object[field];
+    return value;
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await axios.get("/bookstores")).data
+  bookstores = ((await axios.get("/bookstores")).data as SimpleBookstore[])
     .map((bookstore) => {
-      ["name", "address"].forEach((field) => {
-        bookstore[field] = decodeText(bookstore, field);
-      });
+      bookstore.name = decodeText(bookstore.name);
+      bookstore.address = decodeText(bookstore.address);
       bookstore.comments.forEach((comment, commentNumber) => {
-        ["comment"].forEach((field) => {
-          bookstore.comments[commentNumber][field] = decodeText(comment, field);
-        });
+        bookstore.comments[commentNumber].comment = decodeText(comment.comment);
       });
       return bookstore;
     })
     .filter((bookstore) => !!bookstore);
 };
-const suggestComment = async (bookstore) => {
+const suggestComment = async (bookstore: bookstore) => {
   if (!bookstore.id && !bookstore.coordX) {
     window.alert(
       $t(
@@ -214,7 +215,7 @@ const suggestComment = async (bookstore) => {
     );
     return false;
   }
-  await axios.put("/bookstores", bookstore);
+  await axios.put("/bookstores", { bookstore, newBookstoreComment });
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;
@@ -222,8 +223,8 @@ const suggestComment = async (bookstore) => {
     newBookstoreSent = true;
   }
 };
-const formatDate = (date) => {
-  return date == null
+const formatDate = (date: Date | null) => {
+  return date === null
     ? $t("il y a longtemps")
     : $t("le {date}", {
         date: new Date(date).toLocaleDateString(),
@@ -240,9 +241,10 @@ onMounted(async () => {
     enableEventLogging: false,
   });
   geocoder.addTo("#address");
-  window.document.querySelector(
-    ".mapboxgl-ctrl-geocoder--input"
-  ).attributes.required = true;
+  let element = window.document.querySelector(".mapboxgl-ctrl-geocoder--input");
+  if (element as HTMLElement) {
+    element!.setAttribute("required", "true");
+  }
   geocoder.on("result", ({ result: { place_name, center } }) => {
     newBookstore.address = place_name;
     [newBookstore.coordY, newBookstore.coordX] = center;

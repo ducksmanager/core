@@ -2,7 +2,7 @@ import axios from "axios";
 import { defineStore } from "pinia";
 
 import { users } from "~/stores/users";
-import { issue, requestedIssue } from "~db_types/client_dm";
+import { issue, requestedIssue } from "~prisma_clients/client_dm";
 
 export const marketplace = defineStore("marketplace", {
   state: () => ({
@@ -25,53 +25,71 @@ export const marketplace = defineStore("marketplace", {
       issueRequestsAsBuyer?.map(({ issueId }) => issueId),
 
     sellerUserIds: ({ issuesOnSaleByOthers }) =>
-      issuesOnSaleByOthers && [
+      (issuesOnSaleByOthers && [
         ...new Set(
           Object.values(issuesOnSaleByOthers).reduce(
             (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
             [] as number[]
           )
         ),
-      ],
-    buyerUserIds: ({ issueRequestsAsSeller }) =>
-      issueRequestsAsSeller && [
-        ...new Set(issueRequestsAsSeller.map((issue) => issue.buyerId)),
-      ],
+      ]) ||
+      [],
+    buyerUserIds(): number[] {
+      const issueRequestsAsSeller = this.issueRequestsAsSeller;
+      return (
+        (issueRequestsAsSeller && [
+          ...new Set(issueRequestsAsSeller.map((issue) => issue.buyerId)),
+        ]) ||
+        []
+      );
+    },
 
-    buyerUserNamesById: ({ buyerUserIds }) =>
-      buyerUserIds?.reduce(
-        (acc, userId) => ({
-          ...acc,
-          [userId]: users().stats[userId]?.username,
-        }),
-        {}
-      ),
+    buyerUserNamesById() {
+      const buyerUserIds: number[] = this.buyerUserIds;
+      return (
+        buyerUserIds?.reduce(
+          (acc, userId) => ({
+            ...acc,
+            [userId]: users().stats[userId]?.username,
+          }),
+          {} as { [userId: number]: string }
+        ) || null
+      );
+    },
 
-    sellerUserNames: ({ sellerUserIds }) =>
-      sellerUserIds
+    sellerUserNames() {
+      const sellerUserIds: number[] = this.sellerUserIds;
+      return sellerUserIds
         ?.reduce(
           (acc, userId) => [
             ...acc,
             { value: userId, text: users().stats[userId]?.username },
           ],
-          []
+          [] as { value: number; text: string }[]
         )
-        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2));
+    },
 
-    requestIssueIdsBySellerId: ({ issueRequestsAsBuyer, issuesOnSaleById }) =>
-      issuesOnSaleById &&
-      issueRequestsAsBuyer
-        ?.filter(({ issueId }) => issuesOnSaleById[issueId])
-        .reduce(
-          (acc, { issueId }) => ({
-            ...acc,
-            [issuesOnSaleById[issueId].userId]: [
-              ...(acc[issuesOnSaleById[issueId].userId] || []),
-              issueId,
-            ],
-          }),
-          {} as { [userId: number]: number[] }
-        ),
+    requestIssueIdsBySellerId(): { [userId: number]: number[] } {
+      const issueRequestsAsBuyer = this.issueRequestsAsBuyer;
+      const issuesOnSaleById = this.issuesOnSaleById;
+      return (
+        (issuesOnSaleById &&
+          issueRequestsAsBuyer
+            ?.filter(({ issueId }) => issuesOnSaleById[issueId])
+            .reduce(
+              (acc, { issueId }) => ({
+                ...acc,
+                [issuesOnSaleById[issueId].userId]: [
+                  ...(acc[issuesOnSaleById[issueId].userId] || []),
+                  issueId,
+                ],
+              }),
+              {} as { [userId: number]: number[] }
+            )) ||
+        {}
+      );
+    },
 
     issuesOnSaleById: ({ issuesOnSaleByOthers }) =>
       Object.values(issuesOnSaleByOthers || {}).reduce(
@@ -85,10 +103,10 @@ export const marketplace = defineStore("marketplace", {
                 publicationcode: `${issue.country}/${issue.magazine}`,
               },
             }),
-            {}
+            {} as { [issueId: number]: issue }
           ),
         }),
-        {}
+        {} as { [issueId: number]: issue }
       ),
   },
 

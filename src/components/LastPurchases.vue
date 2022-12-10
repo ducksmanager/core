@@ -43,7 +43,7 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
-import { issue } from "~db_types/client_dm";
+import { issue } from "~prisma_clients/client_dm";
 
 const { t } = useI18n();
 const publicationNames = $computed(() => coa().publicationNames),

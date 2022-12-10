@@ -48,37 +48,32 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 
-const { bookcaseTextures, sortedBookcase } = defineProps<{
-  embedded: {
-    type: boolean;
-    default: false;
-  };
-  withAllCopies: {
-    type: boolean;
-    default: false;
-  };
-  bookcaseTextures: Object;
-  currentEdgeHighlighted: {
-    type: string;
-    default: null;
-  };
-  currentEdgeOpened: {
-    type: Object;
-    default: null;
-  };
-  edgesUsingSprites: {
-    type: Object;
-    default: () => {};
-  };
-  sortedBookcase: Array;
+import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
+
+const {
+  bookcaseTextures,
+  sortedBookcase,
+  embedded = false,
+  currentEdgeHighlighted = null,
+  currentEdgeOpened = null,
+  edgesUsingSprites = {},
+} = defineProps<{
+  embedded?: boolean;
+  bookcaseTextures: { bookshelf: string };
+  currentEdgeHighlighted?: string;
+  currentEdgeOpened?: BookcaseEdgeWithPopularity;
+  edgesUsingSprites?: { [edgeId: number]: string };
+  sortedBookcase: BookcaseEdgeWithPopularity[] | null;
 }>();
 
-defineEmits(["open-book"]);
+defineEmits<{
+  (e: "open-book", edgeToLoad: BookcaseEdgeWithPopularity): void;
+}>();
 let currentEdgeIndex = $ref(0);
-let edgesToLoad = $ref([]);
+let edgesToLoad = $ref([] as BookcaseEdgeWithPopularity[]);
 
 const loadNextEdge = () => {
-  const nextEdge = sortedBookcase[++currentEdgeIndex];
+  const nextEdge = sortedBookcase![++currentEdgeIndex];
   if (nextEdge) edgesToLoad.push(nextEdge);
 };
 
@@ -91,7 +86,7 @@ onMounted(() => {
     style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
     document.head.append(style);
   }
-  edgesToLoad = [sortedBookcase[0]];
+  edgesToLoad = [sortedBookcase![0]];
 });
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="publicationName" class="mt-4">
+  <div class="mt-4">
     <Publication
       size="xl"
       :publicationcode="publicationcode"
@@ -39,10 +39,7 @@
           </tr>
         </table>
       </div>
-      <div
-        class="issue-list"
-        @contextmenu.prevent="openContextMenuIfBookNotOpen"
-      >
+      <div class="issue-list">
         <b-alert
           v-if="userIssuesNotFoundForPublication.length"
           show
@@ -205,14 +202,14 @@
       {{ $t("Chargement...") }}
     </div>
   </div>
-  <div v-else-if="!publicationNameLoading && issues && !issues.length">
+  <div v-if="!publicationNameLoading && issues && !issues.length">
     <b-alert variant="danger" show>
       <div class="mb-4">
         {{ $t("Aucun numéro n'est répertorié pour") }}
         {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
         {{ country }})
       </div>
-      <div v-if="userIssuesForPublication.length">
+      <div v-if="userIssuesForPublication?.length">
         {{
           $t(
             "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :"
@@ -267,7 +264,7 @@ import { useI18n } from "vue-i18n";
 import condition from "~/composables/condition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
-import { issue } from "~db_types/client_dm";
+import { issue } from "~prisma_clients/client_dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";

@@ -15,13 +15,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   ArcElement,
   BarController,
   BarElement,
   CategoryScale,
   Chart,
+  ChartData,
+  ChartOptions,
   Legend,
   LinearScale,
   Title,
@@ -44,10 +46,13 @@ Chart.register(
   ArcElement
 );
 
-let height = $ref(400);
+let height = $ref("400px" as string);
+let chartData = $ref(null as ChartData | null),
+  unitTypeCurrent = $ref("number" as string),
+  options = $ref({} as ChartOptions);
 
 const { t: $t } = useI18n(),
-  totalPerPublicationUniqueIssueNumbers = $computed(
+  totalPerPublicationUniqueIssueNumbers: { [p: string]: number } = $computed(
     () => collectionStore().totalPerPublicationUniqueIssueNumbers
   ),
   unitTypes = {
@@ -90,10 +95,6 @@ const { t: $t } = useI18n(),
   fetchPublicationNames = coa().fetchPublicationNames,
   fetchIssueCounts = coa().fetchIssueCounts;
 
-let chartData = $ref(null),
-  unitTypeCurrent = $ref("number"),
-  options = $ref({});
-
 watch(
   () => totalPerPublicationUniqueIssueNumbers,
   async (newValue) => {
@@ -125,23 +126,21 @@ watch(
       chartData = {
         datasets: [
           {
-            data: values[0],
+            data: values![0],
             backgroundColor: "green",
             label: $t("Numéros possédés"),
-            legend: $t("Numéros possédés"),
           },
           {
-            data: values[1],
+            data: values![1],
             backgroundColor: "orange",
             label: $t("Numéros référencés non-possédés"),
-            legend: $t("Numéros référencés non-possédés"),
           },
         ],
         labels,
-        legends: [
-          $t("Numéros possédés"),
-          $t("Numéros référencés non-possédés"),
-        ],
+        // legends: [
+        //   $t("Numéros possédés"),
+        //   $t("Numéros référencés non-possédés"),
+        // ],
       };
 
       options = {
@@ -180,7 +179,7 @@ watch(
                   publicationNames[publicationcode] = "?";
                 }
                 return `${publicationNames[publicationcode] || "?"} (${
-                  countryNames[publicationcode.split("/")[0]]
+                  countryNames![publicationcode.split("/")[0]]
                 })`;
               },
               label: (tooltipItem) =>

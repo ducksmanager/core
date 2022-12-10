@@ -1,16 +1,31 @@
+import { issue_condition } from "~prisma_clients/client_dm";
+export interface CopyState {
+  condition: issue_condition | "missing";
+  isToRead: "do_not_change" | boolean;
+  isOnSale: string | boolean;
+  purchaseId: "do_not_change" | number | null;
+}
+
+export interface CopyStateMultiple {
+  condition: (issue_condition | "missing")[];
+  isToRead: ("do_not_change" | boolean)[];
+  isOnSale: (string | boolean)[];
+  purchaseId: ("do_not_change" | number | null)[];
+}
+
 export interface CollectionUpdate {
   publicationcode: string;
   issueNumbers: string[];
   condition: string | string[];
-  isOnSale:
-    | boolean
-    | "do_not_change"
-    | null
-    | (boolean | null | "do_not_change")[];
+  isOnSale: string | boolean | null | (string | boolean | null)[];
   isToRead:
-    | boolean
     | "do_not_change"
+    | boolean
     | null
-    | (boolean | null | "do_not_change")[];
-  purchaseId: number | number[] | string[] | null;
+    | ("do_not_change" | boolean | null)[];
+  purchaseId:
+    | "do_not_change"
+    | number
+    | null
+    | ("do_not_change" | number | null)[];
 }

@@ -1,15 +1,16 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 
-import { inducks_publication } from "~db_types/client_coa";
+import { inducks_publication } from "~prisma_clients/client_coa";
 import {
   authorUser,
   edge,
   issue,
   issue_condition,
   purchase,
+  subscription,
   user,
-} from "~db_types/client_dm";
+} from "~prisma_clients/client_dm";
 import { CollectionUpdate } from "~types/CollectionUpdate";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
@@ -18,9 +19,28 @@ import { StoryDetail } from "~types/StoryDetail";
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
 
+type IssueWithPublicationcode = issue & {
+  publicationCode: string;
+};
+
+export type SubscriptionTransformed = Omit<
+  subscription,
+  "country" | "magazine"
+> & {
+  publicationCode: string;
+};
+
+type SubscriptionTransformedStringDates = Omit<
+  SubscriptionTransformed,
+  "startDate" | "endDate"
+> & {
+  startDate: string;
+  endDate: string;
+};
+
 export const collection = defineStore("collection", {
   state: () => ({
-    collection: null as (issue & { publicationCode: string })[] | null,
+    collection: null as IssueWithPublicationcode[] | null,
     watchedPublicationsWithSales: null as string[] | null,
     purchases: null as (purchase & { date: string })[] | null,
     watchedAuthors: null as authorUser[] | null,
@@ -34,14 +54,7 @@ export const collection = defineStore("collection", {
       storyDetails: { [storycode: string]: StoryDetail } | undefined;
       publicationTitles: { [publicationcode: string]: inducks_publication };
     } | null,
-    subscriptions: null as
-      | {
-          id: number;
-          publicationCode: string;
-          startDate: Date;
-          endDate: Date;
-        }[]
-      | null,
+    subscriptions: null as SubscriptionTransformed[] | null,
 
     popularIssuesInCollection: null as { [issuecode: string]: number } | null,
     lastPublishedEdgesForCurrentUser: null as edge[] | null,
@@ -60,7 +73,7 @@ export const collection = defineStore("collection", {
   }),
 
   getters: {
-    total: ({ collection }) => collection?.length,
+    total: ({ collection }): number | undefined => collection?.length,
 
     issuesByIssueCode: ({ collection }) =>
       collection?.reduce((acc, issue) => {
@@ -74,18 +87,25 @@ export const collection = defineStore("collection", {
         };
       }, {} as { [issuecode: string]: issue[] }),
 
-    duplicateIssues: ({ issuesByIssueCode }) =>
-      issuesByIssueCode &&
-      Object.keys(issuesByIssueCode).reduce(
-        (acc, issuecode) =>
-          issuesByIssueCode[issuecode].length > 1
-            ? {
-                ...acc,
-                [issuecode]: issuesByIssueCode[issuecode],
-              }
-            : acc,
+    duplicateIssues(): {
+      [issuecode: string]: IssueWithPublicationcode[];
+    } {
+      const issuesByIssueCode = this.issuesByIssueCode;
+      return (
+        (issuesByIssueCode &&
+          Object.keys(issuesByIssueCode).reduce(
+            (acc, issuecode) =>
+              issuesByIssueCode[issuecode].length > 1
+                ? {
+                    ...acc,
+                    [issuecode]: issuesByIssueCode[issuecode],
+                  }
+                : acc,
+            {}
+          )) ||
         {}
-      ),
+      );
+    },
 
     issuesInToReadStack: ({ collection }) =>
       collection && collection.filter(({ isToRead }) => isToRead),
@@ -93,15 +113,19 @@ export const collection = defineStore("collection", {
     issuesInOnSaleStack: ({ collection }) =>
       collection && collection.filter(({ isOnSale }) => isOnSale),
 
-    totalUniqueIssues: ({ collection, duplicateIssues }) =>
-      duplicateIssues &&
-      (!collection?.length
-        ? 0
-        : collection?.length -
-          Object.values(duplicateIssues).reduce(
-            (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-            0
-          )),
+    totalUniqueIssues(): number {
+      return (
+        (this.duplicateIssues &&
+          (!this.collection?.length
+            ? 0
+            : this.collection?.length -
+              Object.values(this.duplicateIssues).reduce(
+                (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
+                0
+              ))) ||
+        0
+      );
+    },
 
     totalPerCountry: ({ collection }) =>
       collection?.reduce(
@@ -116,34 +140,43 @@ export const collection = defineStore("collection", {
       collection?.reduce((acc, issue) => {
         const publicationcode = `${issue.country}/${issue.magazine}`;
         return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
-      }, {} as { [publicationcode: string]: number }),
+      }, {} as { [publicationcode: string]: number }) || {},
 
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,
 
-    issueNumbersPerPublication: ({ collection }) =>
-      collection?.reduce(
-        (acc, { country, issueNumber, magazine }) => ({
-          ...acc,
-          [`${country}/${magazine}`]: [
-            ...(acc[`${country}/${magazine}`] || []),
-            issueNumber,
-          ],
-        }),
-        {} as { [publicationcode: string]: string[] }
-      ),
+    issueNumbersPerPublication(): { [publicationcode: string]: string[] } {
+      return (
+        this.collection?.reduce(
+          (acc, { country, issueNumber, magazine }) => ({
+            ...acc,
+            [`${country}/${magazine}`]: [
+              ...(acc[`${country}/${magazine}`] || []),
+              issueNumber,
+            ],
+          }),
+          {} as { [publicationcode: string]: string[] }
+        ) || {}
+      );
+    },
 
-    totalPerPublicationUniqueIssueNumbers: ({ issueNumbersPerPublication }) =>
-      issueNumbersPerPublication &&
-      Object.keys(issueNumbersPerPublication).reduce(
-        (acc, publicationCode) => ({
-          ...acc,
-          [publicationCode]: [
-            ...new Set(issueNumbersPerPublication[publicationCode]),
-          ].length,
-        }),
-        {}
-      ),
+    totalPerPublicationUniqueIssueNumbers() {
+      const issueNumbersPerPublication: {
+        [publicationcode: string]: string[];
+      } = this.issueNumbersPerPublication;
+      return (
+        issueNumbersPerPublication &&
+        Object.keys(issueNumbersPerPublication).reduce(
+          (acc, publicationCode) => ({
+            ...acc,
+            [publicationCode]: [
+              ...new Set(issueNumbersPerPublication[publicationCode]),
+            ].length,
+          }),
+          {}
+        )
+      );
+    },
 
     popularIssuesInCollectionWithoutEdge: () =>
       bookcase()
@@ -154,9 +187,7 @@ export const collection = defineStore("collection", {
           popularity2 && popularity1 ? popularity2 - popularity1 : 0
         ),
 
-    quotedIssues: ({
-      collection,
-    }):
+    quotedIssues():
       | {
           publicationCode: string;
           issueNumber: string;
@@ -164,7 +195,7 @@ export const collection = defineStore("collection", {
           estimation: number;
           estimationGivenCondition: number;
         }[]
-      | null => {
+      | null {
       const issueQuotations = coa().issueQuotations;
       if (issueQuotations === null) {
         return null;
@@ -188,7 +219,7 @@ export const collection = defineStore("collection", {
         "": 0.7,
       };
       return (
-        collection
+        this.collection
           ?.filter(({ publicationCode, issueNumber }) =>
             getEstimation(publicationCode, issueNumber)
           )
@@ -207,14 +238,18 @@ export const collection = defineStore("collection", {
       );
     },
 
-    quotationSum: ({ quotedIssues }) =>
-      quotedIssues &&
-      Math.round(
-        quotedIssues.reduce(
-          (acc, { estimationGivenCondition }) => acc + estimationGivenCondition,
-          0
+    quotationSum() {
+      return (
+        this.quotedIssues &&
+        Math.round(
+          this.quotedIssues()?.reduce(
+            (acc, { estimationGivenCondition }) =>
+              acc + estimationGivenCondition,
+            0
+          ) || 0
         )
-      ),
+      );
+    },
   },
 
   actions: {
@@ -344,13 +379,8 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingSubscriptions = true;
         this.subscriptions = (
-          (await axios.get("/collection/subscriptions")).data as {
-            id: number;
-            publicationCode: string;
-            startDate: string;
-            endDate: string;
-          }[]
-        ).map((subscription) => ({
+          await axios.get("/collection/subscriptions")
+        ).data.map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
           endDate: new Date(Date.parse(subscription.endDate)),

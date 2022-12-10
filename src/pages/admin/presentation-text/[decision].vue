@@ -2,7 +2,7 @@
 meta:
   layout: bare
 </route>
-<script setup>
+<script setup lang="ts">
 import axios from "axios";
 import { onMounted } from "vue";
 let router = useRouter();

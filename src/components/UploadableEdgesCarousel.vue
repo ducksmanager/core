@@ -31,10 +31,12 @@
 <script setup lang="ts">
 import { BCarousel, BCarouselSlide } from "bootstrap-vue-3";
 
+import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
+
 defineProps<{
-  issues: Array;
+  issues: BookcaseEdgeWithPopularity[];
   userPoints: number;
-  publicationNames: Object;
+  publicationNames: string[];
 }>();
 
 const currentSlide = $ref(0);

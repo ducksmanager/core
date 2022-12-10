@@ -2,23 +2,12 @@ import bodyParser from "body-parser";
 import { Handler } from "express";
 
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { simple_issue } from "~types/SimpleIssue";
+import { simple_story } from "~types/SimpleStory";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
-
-interface simple_issue {
-  code: string;
-  publicationcode: string;
-  issuenumber: string;
-}
-
-interface simple_story {
-  storycode: string;
-  title: string;
-  score: number;
-  issues: simple_issue[] | null;
-}
 
 const listIssuesFromStoryCode = async (storycode: string) =>
   prisma.$queryRaw<simple_issue[]>`

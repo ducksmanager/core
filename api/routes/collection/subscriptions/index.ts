@@ -53,7 +53,7 @@ export const get: Handler = async (req, res) => {
   });
   return res.json(
     subscriptions.map((subscription: subscription) => ({
-      id: subscription.id,
+      ...subscription,
       publicationCode: `${subscription.country}/${subscription.magazine}`,
       startDate: subscription.startDate.toISOString(),
       endDate: subscription.endDate.toISOString(),

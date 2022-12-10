@@ -23,13 +23,15 @@ meta:
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 
-let ownedIssueNumbers = $ref(null);
+let ownedIssueNumbers = $ref(
+  null as { [publicationcode: string]: string } | null
+);
 
 const countryNames = $computed(() => coa().countryNames);
 const publicationNames = $computed(() => coa().publicationNames);
@@ -42,10 +44,8 @@ const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
     countryNames &&
-    [...countryCodes].sort(
-      (countryCodeA, countryCodeB) =>
-        countryNames[countryCodeA] &&
-        countryNames[countryCodeA].localeCompare(countryNames[countryCodeB])
+    [...countryCodes].sort((countryCodeA, countryCodeB) =>
+      countryNames[countryCodeA]?.localeCompare(countryNames[countryCodeB])
     )
 );
 const publicationCodes = $computed(
@@ -54,10 +54,10 @@ const publicationCodes = $computed(
       ...new Set(collection.map((i) => `${i.country}/${i.magazine}`)),
     ]
 );
-const publicationCodesOfCountry = (countryCode) =>
+const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
-    .filter((publicationCode) => publicationCode.split("/")[0] === countryCode)
-    .sort((a, b) =>
+    ?.filter((publicationCode) => publicationCode.split("/")[0] === countrycode)
+    ?.sort((a, b) =>
       !publicationNames[b]
         ? 1
         : publicationNames[a] < publicationNames[b]
@@ -65,14 +65,14 @@ const publicationCodesOfCountry = (countryCode) =>
         : publicationNames[a] > publicationNames[b]
         ? 1
         : 0
-    );
+    ) || [];
 
 watch(
   () => publicationCodes,
   (newValue) => {
     if (newValue) {
-      coa().fetchPublicationNames(publicationCodes);
-      coa().fetchIssueNumbers(publicationCodes);
+      coa().fetchPublicationNames(publicationCodes!);
+      coa().fetchIssueNumbers(publicationCodes!);
     }
   },
   { immediate: true }
@@ -82,7 +82,7 @@ watch(
   () => Object.keys(issueNumbers).length && collection,
   (newValue) => {
     if (newValue) {
-      const collectionWithPublicationcodes = collection
+      const collectionWithPublicationcodes = collection!
         .map(({ country, magazine, issueNumber }) => ({
           publicationcode: `${country}/${magazine}`,
           issueNumber,
@@ -92,7 +92,7 @@ watch(
             ...acc,
             [publicationcode]: [...(acc[publicationcode] || []), issueNumber],
           }),
-          {}
+          {} as { [publicationcode: string]: string[] }
         );
       ownedIssueNumbers = Object.entries(issueNumbers).reduce(
         (acc, [publicationcode, indexedIssueNumbers]) => ({
@@ -105,7 +105,7 @@ watch(
             )
             .join(", "),
         }),
-        {}
+        {} as { [publicationcode: string]: string }
       );
     }
   },

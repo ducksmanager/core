@@ -258,7 +258,7 @@
       <b-progress v-if="importProgress" height="2rem">
         <b-progress-bar
           :value="importProgress"
-          :label="`${parseInt(importProgress)}%`"
+          :label="`${importProgress.toFixed(0)}%`"
         />
       </b-progress>
       <b-button v-else @click="importIssues">
@@ -269,7 +269,7 @@
   </template>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios";
 import {
   BAlert,
@@ -289,19 +289,20 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
+import { inducks_issue } from "~prisma_clients/client_coa";
 
-let step = $ref(1);
-const rawData = $ref("");
-const expandedPublicationAccordion = $ref(null);
-const expandedNotImportableAccordion = $ref(null);
-let hasPublicationNames = $ref(false);
-let hasIssueNumbers = $ref(false);
-const issueDefaultCondition = $ref("bon");
-let issuesToImport = $ref(null);
-let issuesNotReferenced = $ref(null);
-let issuesAlreadyInCollection = $ref(null);
-let issuesImportable = $ref(null);
-let importProgress = $ref(0);
+let step = $ref(1 as number);
+const rawData = $ref("" as string);
+const expandedPublicationAccordion = $ref(null as string | null);
+const expandedNotImportableAccordion = $ref(null as string | null);
+let hasPublicationNames = $ref(false as boolean);
+let hasIssueNumbers = $ref(false as boolean);
+const issueDefaultCondition = $ref("bon" as string);
+let issuesToImport = $ref(null as inducks_issue[] | null);
+let issuesNotReferenced = $ref(null as inducks_issue[] | null);
+let issuesAlreadyInCollection = $ref(null as inducks_issue[] | null);
+let issuesImportable = $ref(null as inducks_issue[] | null);
+let importProgress = $ref(0 as number);
 
 const { t: $t } = useI18n();
 const user = $computed(() => collectionStore().user);
@@ -324,33 +325,40 @@ const processRawData = async () => {
   const issueCodes = rawData
     .split("\n")
     .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
-    .map((row) => row.match(REGEX_VALID_ROW)[1].replace("^", "/"));
+    .map((row) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
   await fetchIssueCodesDetails(issueCodes);
 
+  if (!issueCodeDetails) {
+    return;
+  }
   const issues = issueCodes
     .filter((issueCode) => issueCodeDetails[issueCode])
-    .reduce((acc, issueCode) => [...acc, issueCodeDetails[issueCode]], []);
+    .reduce(
+      (acc, issueCode) => [...acc, issueCodeDetails[issueCode]],
+      [] as inducks_issue[]
+    );
   if (issues.length) {
     issuesToImport = issues;
     step = 2;
   }
 };
-const groupByPublicationCode = (issues) =>
+const groupByPublicationCode = (issues: inducks_issue[]) =>
   issues?.reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
-      [publicationcode]: [
+      [publicationcode!]: [
         ...new Set([
-          ...(acc[publicationcode] || []),
-          issuenumber.replace(" ", ""),
+          ...(acc[publicationcode!] || []),
+          issuenumber!.replace(" ", ""),
         ]),
       ],
     }),
-    {}
+    {} as { [publicationcode: string]: string[] }
   );
 const importIssues = async () => {
-  const importableIssuesByPublicationCode =
-    groupByPublicationCode(issuesImportable);
+  const importableIssuesByPublicationCode = groupByPublicationCode(
+    issuesImportable as inducks_issue[]
+  );
   for (const publicationCode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
       await axios.post("/collection/issues", {
@@ -375,19 +383,19 @@ watch(
       issuesNotReferenced = [];
       issuesAlreadyInCollection = [];
       issuesImportable = [];
-      issuesToImport.forEach((issue) => {
+      issuesToImport!.forEach((issue) => {
         const { publicationcode, issuenumber } = issue;
         if (
-          !issueNumbers[publicationcode].includes(
-            issuenumber.replace(/[ ]+/g, " ")
+          !issueNumbers[publicationcode!].includes(
+            issuenumber!.replace(/[ ]+/g, " ")
           )
         )
-          issuesNotReferenced.push(issue);
+          issuesNotReferenced!.push(issue);
         else if (
-          collectionStore().findInCollection(publicationcode, issuenumber)
+          collectionStore().findInCollection(publicationcode!, issuenumber!)
         )
-          issuesAlreadyInCollection.push(issue);
-        else issuesImportable.push(issue);
+          issuesAlreadyInCollection!.push(issue);
+        else issuesImportable!.push(issue);
       });
       issuesNotReferenced = [...new Set(issuesNotReferenced)];
       issuesAlreadyInCollection = [...new Set(issuesAlreadyInCollection)];
@@ -398,9 +406,12 @@ watch(
 watch(
   () => issuesToImport,
   async (newValue) => {
+    if (!newValue) {
+      return;
+    }
     const publicationCodes = newValue.reduce(
-      (acc, { publicationcode }) => [...acc, publicationcode],
-      []
+      (acc, { publicationcode }) => [...acc, publicationcode!],
+      [] as string[]
     );
     await fetchPublicationNames(publicationCodes);
     hasPublicationNames = true;
