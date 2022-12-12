@@ -113,13 +113,12 @@ const { t: $t } = useI18n(),
         }))) ||
       null
   ),
-  labels: string[] = $computed(
+  labels = $computed(
     () =>
-      (collectionWithDates &&
-        [...new Set(collectionWithDates.map(({ date }) => date))]
-          .filter((date) => date)
-          .sort(compareDates)) ||
-      []
+      collectionWithDates &&
+      [...new Set(collectionWithDates.map(({ date }) => date))]
+        .filter((date) => date)
+        .sort(compareDates)
   ),
   ready = $computed(() => labels && hasPublicationNames),
   fetchPublicationNames = coa().fetchPublicationNames,
@@ -185,9 +184,9 @@ watch(
 );
 
 watch(
-  () => ready && purchaseTypeCurrent,
+  () => ready && purchaseTypeCurrent && collectionWithDates,
   (newValue) => {
-    if (newValue && collectionWithDates) {
+    if (newValue) {
       const dateAssoc = labels!.reduce(
         (dates, date) => ({
           ...dates,
@@ -196,23 +195,23 @@ watch(
         {}
       );
 
-      let accDate: { [label: string]: number } = labels.reduce(
+      let accDate: { [label: string]: number } = labels!.reduce(
         (acc, value) => ({ ...acc, [value]: 0 }),
         {}
       );
-      const values = collectionWithDates
+      const values = collectionWithDates!
         .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
-        .reduce((acc, { date, publicationCode }) => {
-          if (!publicationCodesWithOther.includes(publicationCode)) {
-            publicationCode = "Other";
+        .reduce((acc, { date, publicationCode: publicationcode }) => {
+          if (!publicationCodesWithOther.includes(publicationcode)) {
+            publicationcode = "Other";
           }
-          if (!acc[publicationCode]) {
-            acc[publicationCode] = { ...dateAssoc };
+          if (!acc[publicationcode]) {
+            acc[publicationcode] = { ...dateAssoc };
           }
-          acc[publicationCode][date]++;
+          acc[publicationcode][date]++;
           accDate[date]++;
           return acc;
-        }, {} as { [publicationCode: string]: { [date: string]: number } });
+        }, {} as { [publicationcode: string]: { [date: string]: number } });
 
       const maxPerDate = Object.keys(accDate).reduce(
         (acc, date) => Math.max(acc, accDate[date]),
@@ -224,21 +223,22 @@ watch(
         Math.max(document.body.offsetHeight, maxPerDate / 4)
       );
 
-      changeDimension("width", 250 + 30 * labels.length);
+      changeDimension("width", 250 + 30 * labels!.length);
 
       const datasets = Object.keys(values).map((publicationCode) => {
         let data = values[publicationCode];
         if (purchaseTypeCurrent === "total") {
-          data = labels.reduce(
+          data = labels!.reduce(
             (acc, currentDate) => ({
               ...acc,
-              [currentDate]: labels
-                .filter((_, idx) => idx <= labels.indexOf(currentDate))
+              [currentDate]: labels!
+                .filter((_, idx) => idx <= labels!.indexOf(currentDate))
                 .reduce((sum, date) => sum + data[date], 0),
             }),
             {}
           );
         }
+        console.log(publicationNames[publicationCode])
         return {
           data: Object.values(data),
           label:
@@ -251,7 +251,7 @@ watch(
 
       chartData = {
         datasets,
-        labels,
+        labels: labels!,
       };
 
       options = {

@@ -192,9 +192,9 @@ watch(
 
 onMounted(async () => {
   await collectionStore().loadWatchedAuthors();
-  watchedAuthorsStoryCount = ((await axios.get(
-    "/collection/stats/watchedauthorsstorycount"
-  )) || {}) as WatchedAuthorsStoryCount;
+  watchedAuthorsStoryCount = ((
+    await axios.get("/collection/stats/watchedauthorsstorycount")
+  ).data || {}) as WatchedAuthorsStoryCount;
 });
 </script>
 

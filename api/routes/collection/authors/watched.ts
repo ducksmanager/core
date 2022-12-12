@@ -19,6 +19,11 @@ const upsertAuthorUser = async (req: Request) => {
     where: criteria,
   });
   if (existingAuthorUser) {
+    await prisma.authorUser.update({
+      data: { notation },
+      where: { id: existingAuthorUser?.id },
+    });
+  } else {
     if (
       (await prisma.authorUser.count({
         where: { userId },
@@ -26,11 +31,6 @@ const upsertAuthorUser = async (req: Request) => {
     ) {
       throw new Error("429");
     }
-    await prisma.authorUser.update({
-      data: { notation },
-      where: { id: existingAuthorUser?.id },
-    });
-  } else {
     await prisma.authorUser.create({
       data: {
         ...criteria,
@@ -56,7 +56,7 @@ export const put = [
       res.end();
     } catch (e) {
       console.log(e);
-      res.writeHead(parseInt(e as string));
+      res.writeHead(parseInt((e as Error)?.message as string) || 500);
       res.end();
     }
   }) as Handler,
@@ -70,7 +70,8 @@ export const post = [
       res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     } catch (e) {
-      res.writeHead(parseInt(e as string));
+      console.error(e);
+      res.writeHead(parseInt((e as Error)?.message as string) || 500);
       res.end();
     }
   }) as Handler,
