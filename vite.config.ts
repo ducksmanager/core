@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 
-import VueI18n from "@intlify/vite-plugin-vue-i18n";
+import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
