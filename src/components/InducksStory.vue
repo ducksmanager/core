@@ -21,7 +21,7 @@ import { useI18n } from "vue-i18n";
 
 const { t: $t } = useI18n();
 const {
-  kind,
+  kind = null,
   storycode,
   title = null,
   part = null,
@@ -30,18 +30,18 @@ const {
   dark = false,
 } = defineProps<{
   storycode: string;
-  kind: string;
+  kind?: string;
   title?: string;
   part?: number;
   comment?: string;
-  noLink?: string;
+  noLink?: boolean;
   dark?: boolean;
 }>();
 const urlEncodedStorycode = $computed(
     () => storycode && encodeURIComponent(storycode)
   ),
   storyTypeText = $computed(() => {
-    switch (kind.toUpperCase()) {
+    switch (kind?.toUpperCase()) {
       case "A":
         return $t("article");
       case "C":
