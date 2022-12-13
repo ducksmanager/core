@@ -194,7 +194,9 @@ let hasPublicationNames = $ref(false as boolean);
 watch(
   () => collection.totalPerPublication,
   async (newValue) => {
-    await coa().fetchIssueQuotations(Object.keys(newValue));
+    if (newValue) {
+      await coa().fetchIssueQuotations(Object.keys(newValue));
+    }
   }
 );
 

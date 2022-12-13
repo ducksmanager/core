@@ -238,16 +238,17 @@ export const collection = defineStore("collection", {
       );
     },
 
-    quotationSum() {
+    quotationSum(): number | null {
       return (
-        this.quotedIssues &&
-        Math.round(
-          this.quotedIssues()?.reduce(
-            (acc, { estimationGivenCondition }) =>
-              acc + estimationGivenCondition,
-            0
-          ) || 0
-        )
+        (this.quotedIssues &&
+          Math.round(
+            this.quotedIssues?.reduce(
+              (acc, { estimationGivenCondition }) =>
+                acc + estimationGivenCondition,
+              0
+            ) || 0
+          )) ||
+        null
       );
     },
   },
