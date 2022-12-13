@@ -140,7 +140,7 @@ export const collection = defineStore("collection", {
       collection?.reduce((acc, issue) => {
         const publicationcode = `${issue.country}/${issue.magazine}`;
         return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
-      }, {} as { [publicationcode: string]: number }) || {},
+      }, {} as { [publicationcode: string]: number }) || null,
 
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,
