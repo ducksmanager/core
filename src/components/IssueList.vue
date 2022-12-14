@@ -41,7 +41,7 @@
       </div>
       <div class="issue-list">
         <b-alert
-          v-if="userIssuesNotFoundForPublication.length"
+          v-if="userIssuesNotFoundForPublication?.length"
           show
           variant="warning"
         >
@@ -128,12 +128,7 @@
               <div class="issue-copies">
                 <div
                   v-for="(
-                    {
-                      conditionString: copyCondition,
-                      isToRead,
-                      purchaseId,
-                      id,
-                    },
+                    { condition: copyCondition, isToRead, purchaseId, id },
                     copyIndex
                   ) in userCopies"
                   :key="`${issueNumber}-copy-${copyIndex}`"
@@ -160,7 +155,7 @@
                   >
                     <title :id="`purchase-${purchaseId}`">
                       {{ boughtOnTextPrefix }}
-                      {{ purchases.find(({ id }) => id === purchaseId).date }}
+                      {{ purchases.find(({ id }) => id === purchaseId)!.date }}
                     </title>
                     <path
                       d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
@@ -217,15 +212,15 @@
         }}
         <ul>
           <li
-            v-for="issue in userIssuesForPublication"
-            :key="issue.issueNumber"
+            v-for="issueToDelete in userIssuesForPublication"
+            :key="issueToDelete.issueNumber"
           >
-            {{ issue.issueNumber }}
+            {{ issueToDelete.issueNumber }}
           </li>
         </ul>
         <b-button
           variant="danger"
-          @click="deletePublicationIssues(userIssuesForPublication)"
+          @click="deletePublicationIssues(userIssuesForPublication!)"
         >
           {{ $t("Supprimer") }}
         </b-button>
@@ -271,7 +266,8 @@ import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
   issueNumber: string;
-  key?: string;
+  title?: string;
+  key: string;
 };
 type issueWithPublicationCode = issue & {
   publicationCode: string;
@@ -315,7 +311,9 @@ const emit = defineEmits<{
   ): void;
 }>();
 
-let contextMenuComponent;
+let contextMenuComponent:
+  | typeof ContextMenuOnSaleByOthers
+  | typeof ContextMenuOwnCollection;
 switch (contextMenuComponentName) {
   case "context-menu-on-sale-by-others":
     contextMenuComponent = ContextMenuOnSaleByOthers;
@@ -337,7 +335,7 @@ let userIssuesForPublication = $shallowRef(
   null as issueWithPublicationCode[] | null
 );
 let userIssuesNotFoundForPublication = $shallowRef(
-  [] as issueWithPublicationCode[]
+  [] as issueWithPublicationCode[] | null
 );
 let selected = $shallowRef([] as string[]);
 const filteredUserCopies = $computed(() =>

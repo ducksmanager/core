@@ -102,7 +102,12 @@ alias: [/agrandir/marketplace]
       @launch-modal="launchModal"
     />
     <b-modal
-      v-if="issuesOnSaleById && contactMethods && stats?.[modalContactId]"
+      v-if="
+        modalContactId &&
+        issuesOnSaleById &&
+        contactMethods &&
+        stats?.[modalContactId]
+      "
       v-model="showModal"
       no-fade
       :ok-title="

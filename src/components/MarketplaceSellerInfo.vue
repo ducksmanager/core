@@ -8,9 +8,9 @@
     <template v-if="isBooked">{{ $t("Réservé pour") }}</template
     ><template v-else>{{ $t("Demandé par") }}</template
     >&nbsp;<UserPopover
-      v-if="buyerPoints?.[buyerId] && buyerStats?.[buyerId]"
-      :points="buyerPoints[buyerId]"
-      :stats="buyerStats[buyerId]"
+      v-if="buyerPoints?.[`${buyerId}`] && buyerStats?.[`${buyerId}`]"
+      :points="buyerPoints[`${buyerId}`]"
+      :stats="buyerStats[`${buyerId}`]"
     />
   </div>
 </template>

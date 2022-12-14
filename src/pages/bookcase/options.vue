@@ -3,7 +3,7 @@ alias: [/bibliotheque/options]
 </route>
 
 <template>
-  <div v-if="loading || !hasPublicationNames">
+  <div v-if="loading || !hasPublicationNames || !bookcaseOptions">
     {{ $t("Chargement...") }}
   </div>
   <div v-else class="bookcase-options">
@@ -143,10 +143,13 @@ const textures = [
 ];
 const bookcaseOptions = $computed(() => bookcaseStore.bookcaseOptions);
 const publicationNames = $computed(() => coa().publicationNames);
-const textureTypes = $computed(() => ({
-  bookcase: $t("Sous-texture"),
-  bookshelf: $t("Sous-texture de l'étagère"),
-}));
+const textureTypes = $computed(
+  () =>
+    ({
+      bookcase: $t("Sous-texture"),
+      bookshelf: $t("Sous-texture de l'étagère"),
+    } as { [type: string]: string })
+);
 
 const loadData = async () => {
   await bookcaseStore.loadBookcaseOptions();

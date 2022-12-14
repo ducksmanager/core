@@ -74,7 +74,9 @@
               emit('launch-modal', {
                 contactMethod: 'email',
                 sellerId: selectedIssuesBuyerIds[0],
-                selectedIssueIds: Object.keys(selectedIssuesById),
+                selectedIssueIds: Object.keys(selectedIssuesById).map((id) =>
+                  parseInt(id)
+                ),
               });
             "
             >{{ $t("Par email") }}</span
@@ -85,7 +87,9 @@
               emit('launch-modal', {
                 contactMethod: 'discordId',
                 sellerId: selectedIssuesBuyerIds[0],
-                selectedIssueIds: Object.keys(selectedIssuesById),
+                selectedIssueIds: Object.keys(selectedIssuesById).map((id) =>
+                  parseInt(id)
+                ),
               });
             "
             >{{ $t("Sur Discord") }}</span
@@ -119,8 +123,6 @@ const emit = defineEmits<{
   ): void;
   (e: "close"): void;
 }>();
-
-const { t: $tc } = useI18n();
 
 const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);

@@ -64,7 +64,7 @@
         <v-contextmenu-group :title="$t('Etat')">
           <v-contextmenu-item
             v-for="(stateText, stateId) in conditionStates"
-            :key="`condition-${stateId}`"
+            :key="`condition-${String(stateId)}`"
             :hide-on-click="false"
             class="clickable"
             :class="{ selected: copy.condition === stateId }"
@@ -80,7 +80,7 @@
         >
           <v-contextmenu-item
             v-for="(stateText, stateId) in toReadStates"
-            :key="`copy-${copyIndex}-to-read-state-${stateId}`"
+            :key="`copy-${copyIndex}-to-read-state-${String(stateId)}`"
             :hide-on-click="false"
             class="clickable read-state"
             :class="{
@@ -110,7 +110,7 @@
                 class="clickable purchase-state"
                 :class="{
                   selected: copy.purchaseId === stateId,
-                  'v-context__sub': stateId === 'link',
+                  'v-context__sub': String(stateId) === 'link',
                   [stateId]: true,
                 }"
                 @click="copy.purchaseId = stateId"
@@ -170,8 +170,8 @@
                       class="btn-sm"
                       @click.stop="
                         createPurchase({
-                          date: copy.newPurchaseDate,
-                          description: copy.newPurchaseDescription,
+                          date: copy.newPurchaseDate!,
+                          description: copy.newPurchaseDescription!,
                         });
                         copy.newPurchaseDescription = '';
                         copy.newPurchaseDate = today;
@@ -223,14 +223,15 @@
             >
               <v-contextmenu-item
                 v-if="
-                  ['true', 'false', 'do_not_change'].includes(stateId) ||
-                  isSaleDisabled
+                  ['true', 'false', 'do_not_change'].includes(
+                    String(stateId)
+                  ) || isSaleDisabled
                 "
                 :hide-on-click="false"
                 class="marketplace-state"
                 :class="{
                   clickable: ['true', 'false', 'do_not_change'].includes(
-                    stateId
+                    String(stateId)
                   ),
                   disabled: isSaleDisabled,
                   selected: String(copy.isOnSale) === stateId,
@@ -257,7 +258,8 @@
                 class="cursor-help"
                 :class="{
                   clickable: true,
-                  selected: String(copy.isOnSale).indexOf(stateId) === 0,
+                  selected:
+                    String(copy.isOnSale).indexOf(String(stateId)) === 0,
                 }"
                 @mouseleave.prevent="() => {}"
               >
@@ -273,7 +275,8 @@
                     :hide-on-click="false"
                     class="clickable"
                     :class="{
-                      selected: copy.isOnSale === `${stateId}-${userId}`,
+                      selected:
+                        copy.isOnSale === `${String(stateId)}-${userId}`,
                     }"
                     @click.prevent="
                       copy.isOnSale = `${String(stateId)}-${userId}`
@@ -336,7 +339,7 @@ import { useI18n } from "vue-i18n";
 import condition from "~/composables/condition";
 import { collection, collection as collectionStore } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
-import { issue } from "~prisma_clients/client_dm";
+import { issue, issue_condition } from "~prisma_clients/client_dm";
 import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
 
 type issueWithPublicationCode = issue & {
@@ -367,11 +370,12 @@ const { t: $t } = useI18n();
 interface NewPurchase {
   newPurchaseDescription?: string;
   newPurchaseDate?: string;
-  newPurchaseContext?: string;
+  newPurchaseContext?: boolean;
 }
 let editingCopies = $ref([] as (CopyState & NewPurchase)[]);
 let currentCopyIndex = $ref(0 as number);
 const purchases = $computed(() => collection().purchases);
+
 const conditionStates = $computed(() => ({
   ...(isSingleIssueSelected
     ? {}
@@ -412,8 +416,8 @@ const marketplaceStates = $computed(() => ({
   true: { text: $t("Marquer comme à vendre") },
   setAside: {
     text: $t("Réserver pour"),
-    isSaleDisabled,
-    tooltip: isSaleDisabled
+    isSaleDisabled: isSaleDisabledGlobally,
+    tooltip: isSaleDisabledGlobally
       ? $t(
           "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
         )
@@ -423,8 +427,8 @@ const marketplaceStates = $computed(() => ({
   },
   transfer: {
     text: $t("Transférer à"),
-    isSaleDisabled,
-    tooltip: isSaleDisabled
+    isSaleDisabled: isSaleDisabledGlobally,
+    tooltip: isSaleDisabledGlobally
       ? $t(
           "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
         )
@@ -434,7 +438,7 @@ const marketplaceStates = $computed(() => ({
   },
 }));
 
-const isSaleDisabled = $computed(
+const isSaleDisabledGlobally = $computed(
   () => !userIdsWhoSentRequestsForAllSelected.length
 );
 
@@ -493,12 +497,12 @@ const receivedRequests = $computed(() =>
   )
 );
 
-const convertConditionToDbValue = (condition: string) =>
+const convertConditionToDbValue = (condition: string): issue_condition | null =>
   (
     conditions.find(({ value }) => value === condition) || {
-      dbValue: "indefini",
+      dbValue: issue_condition.indefini,
     }
-  ).dbValue;
+  ).dbValue as issue_condition | null;
 const updateSelectedIssues = async (force = false) => {
   if (!force && String(editingCopies[0].isOnSale).indexOf("transfer-") === 0) {
     const transferToUser = (editingCopies[0].isOnSale as string).split(
