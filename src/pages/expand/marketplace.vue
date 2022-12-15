@@ -17,19 +17,19 @@ alias: [/agrandir/marketplace]
     }}</span>
   </b-alert>
   <b-alert
-    v-if="hasPublicationNames && sentRequestIssueIds.length"
+    v-if="hasPublicationNames && sentRequestIssueIds?.length"
     show
     variant="info"
   >
     <div>{{ $t("Demandes envoyées :") }}</div>
     <accordion
       v-for="(issueIds, userId) in requestIssueIdsBySellerId"
-      :id="`email-for-user-${userId}`"
-      :key="`email-for-user-${userId}`"
-      :accordion-group-id="`email-for-user-${userId}`"
+      :id="`email-for-user-${String(userId)}`"
+      :key="`email-for-user-${String(userId)}`"
+      :accordion-group-id="`email-for-user-${String(userId)}`"
     >
       <template #header
-        >{{ $t("Demandes à") }} {{ stats[userId].username }}
+        >{{ $t("Demandes à") }} {{ stats[Number(userId)].username }}
       </template>
       <template #content>
         <ul>
@@ -75,7 +75,7 @@ alias: [/agrandir/marketplace]
     <span v-else>
       {{ $t("Montrer les magazines en vente par") }}
       <BFormSelect v-model="userIdFilter" size="sm">
-        <b-form-select-option :key="null" :value="null">
+        <b-form-select-option key="" :value="null">
           {{ $t("Tous les utilisateurs") }}
         </b-form-select-option>
         <b-form-select-option
@@ -161,7 +161,7 @@ alias: [/agrandir/marketplace]
             :publicationname="
               publicationNames[issuesOnSaleById[issueId].publicationcode]
             "
-            :issuenumber="issuesOnSaleById[issueId].issueNumber"
+            :issuenumber="issuesOnSaleById[issueId].issuenumber"
           />
         </div>
         <p class="mt-4">

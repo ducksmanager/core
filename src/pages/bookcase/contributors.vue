@@ -49,10 +49,11 @@ const fetchBookcaseContributors = $computed(
 );
 const bookcaseContributorsSorted = $computed(
   () =>
-    !loading &&
-    [...bookcaseContributors!].sort(({ name: name1 }, { name: name2 }) =>
-      name1.toLowerCase().localeCompare(name2.toLowerCase())
-    )
+    (!loading &&
+      [...bookcaseContributors!].sort(({ name: name1 }, { name: name2 }) =>
+        name1.toLowerCase().localeCompare(name2.toLowerCase())
+      )) ||
+    []
 );
 
 onMounted(async () => {

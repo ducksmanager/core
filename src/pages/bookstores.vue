@@ -21,26 +21,26 @@ alias: [/bouquineries]
         :zoom="4"
       >
         <mapbox-marker
-          v-for="bookstore in bookstores"
-          :key="bookstore.id"
-          :lng-lat="[bookstore.coordY, bookstore.coordX]"
+          v-for="currentBookstore in bookstores"
+          :key="currentBookstore.id"
+          :lng-lat="[currentBookstore.coordY, currentBookstore.coordX]"
           anchor="bottom"
           :offset="[0, 6]"
         >
           <mapbox-popup anchor="top">
             <div>
-              <h2>{{ bookstore.name }}</h2>
+              <h2>{{ currentBookstore.name }}</h2>
               <div>
                 <p class="text-secondary">
-                  {{ bookstore.address }}
+                  {{ currentBookstore.address }}
                 </p>
                 <div
                   v-for="{
                     username,
                     creationDate,
                     comment,
-                  } in bookstore.comments"
-                  :key="`bookstore-${bookstore.id}-comment-${creationDate}`"
+                  } in currentBookstore.comments"
+                  :key="`bookstore-${currentBookstore.id}-comment-${creationDate}`"
                   class="mb-2"
                 >
                   <b v-if="username">{{ username }}</b>
@@ -64,10 +64,10 @@ alias: [/bouquineries]
                 <form
                   v-else-if="existingBookstore"
                   class="mb-2"
-                  @submit.prevent="suggestComment(bookstore)"
+                  @submit.prevent="suggestComment(currentBookstore)"
                 >
                   <b-form-textarea
-                    v-model="bookstore.comment"
+                    v-model="currentBookstore.comment"
                     required
                     cols="41"
                     rows="5"
@@ -88,7 +88,7 @@ alias: [/bouquineries]
                 <a
                   v-else
                   href="javascript:void(0)"
-                  @click="existingBookstore = bookstore"
+                  @click="existingBookstore = currentBookstore"
                   >{{ $t("Ajouter un commentaire") }}</a
                 >
               </div>

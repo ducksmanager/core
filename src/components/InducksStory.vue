@@ -70,9 +70,6 @@ const urlEncodedStorycode = $computed(
 </script>
 
 <style scoped lang="scss">
-span {
-}
-
 .badge {
   font-size: 90%;
   width: 75px;

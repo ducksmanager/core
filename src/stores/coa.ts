@@ -57,7 +57,7 @@ export const coa = defineStore("coa", {
     personNames: null as { [personcode: string]: string } | null,
     issueNumbers: {} as { [issuecode: string]: string[] },
     issuesWithTitles: {} as {
-      [issuenumber: string]: { issueNumber: string; title: string }[];
+      [issuenumber: string]: { issuenumber: string; title: string }[];
     },
     issueDetails: {} as { [issuecode: string]: InducksIssueDetails },
     isLoadingCountryNames: false as boolean,

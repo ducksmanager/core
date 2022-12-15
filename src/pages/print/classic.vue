@@ -9,7 +9,7 @@ meta:
   <div v-if="ownedIssueNumbers" class="list">
     <div v-for="country in countryCodesSortedByName" :key="country">
       <div class="country">
-        {{ countryNames[country] }}
+        {{ countryNames![country] }}
       </div>
       <div
         v-for="publicationCode in publicationCodesOfCountry(country)"
@@ -83,14 +83,14 @@ watch(
   (newValue) => {
     if (newValue) {
       const collectionWithPublicationcodes = collection!
-        .map(({ country, magazine, issueNumber }) => ({
+        .map(({ country, magazine, issuenumber }) => ({
           publicationcode: `${country}/${magazine}`,
-          issueNumber,
+          issuenumber,
         }))
         .reduce(
-          (acc, { publicationcode, issueNumber }) => ({
+          (acc, { publicationcode, issuenumber }) => ({
             ...acc,
-            [publicationcode]: [...(acc[publicationcode] || []), issueNumber],
+            [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
           }),
           {} as { [publicationcode: string]: string[] }
         );

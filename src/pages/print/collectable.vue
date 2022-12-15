@@ -30,7 +30,7 @@ meta:
           </td>
           <td v-for="subrange in numbersPerRow" :key="subrange">
             <span
-              v-for="letter in issuesPerCell[publicationCode][
+              v-for="letter in issuesPerCell![publicationCode][
                 (line - 1) * numbersPerRow + subrange
               ]"
               :key="letter"
@@ -39,7 +39,7 @@ meta:
             >
           </td>
           <td v-if="line === 1" class="total_ligne" :rowspan="lines + 1">
-            {{ totalPerPublication[publicationCode] }}
+            {{ totalPerPublication![publicationCode] }}
           </td>
         </tr>
         <tr v-for="fakeloop in 1" :key="`${publicationCode}-${fakeloop}`">
@@ -65,7 +65,7 @@ meta:
             <tr
               v-for="i of Object.keys(
                 Math.floor(letterToNumber(maxLetter) / 6) + 1
-              )"
+              ).map((number) => Number(number))"
               :key="i"
             >
               <td
@@ -97,7 +97,7 @@ meta:
                 <Publication
                   :publicationcode="publicationCode"
                   :publicationname="`${
-                    publicationCode.split('/')[1]
+                    (publicationCode as String).split('/')[1]
                   } : ${publicationName}`"
                 />
               </td>
@@ -218,7 +218,7 @@ watch(
     };
     issuesPerCell = newCollectionValue.reduce((acc, issue) => {
       const publicationCode = `${issue.country}/${issue.magazine}`;
-      const issueNumber = issue.issueNumber;
+      const issueNumber = issue.issuenumber;
       const doubleNumberMatch = issueNumber.match(doubleNumberRegex);
       if (
         doubleNumberMatch &&
@@ -237,7 +237,7 @@ watch(
 watch(
   () => totalPerPublication,
   (newValue) => {
-    fetchPublicationNames(Object.keys(newValue));
+    fetchPublicationNames(Object.keys(newValue || {}));
   }
 );
 

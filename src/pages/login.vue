@@ -36,7 +36,7 @@ alias: [/connexion]
 
         <b-button
           variant="primary"
-          size="xl"
+          size="lg"
           type="submit"
           :disabled="!csrfToken"
         >

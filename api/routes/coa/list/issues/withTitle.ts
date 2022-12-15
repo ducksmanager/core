@@ -22,7 +22,7 @@ export const get: Handler = async (req, res) => {
   });
   return res.json(
     data.map(({ issuenumber, title }) => ({
-      issueNumber: issuenumber!.replace(/ +/g, " "),
+      issuenumber: issuenumber!.replace(/ +/g, " "),
       title,
     }))
   );

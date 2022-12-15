@@ -40,7 +40,10 @@ alias: [/bibliotheque/options]
       {{ $t("Afficher les doubles de ma collection dans la bibliothèque") }}
     </b-form-checkbox>
 
-    <h5 v-if="Object.keys(bookcaseOrder).length" class="mt-4 mb-3">
+    <h5
+      v-if="bookcaseOrder && Object.keys(bookcaseOrder).length"
+      class="mt-4 mb-3"
+    >
       {{ $t("Ordre des magazines") }}
     </h5>
 

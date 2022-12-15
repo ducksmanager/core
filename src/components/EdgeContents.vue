@@ -72,7 +72,7 @@ const spriteClass = $computed(() =>
     ? `edges-${publicationCode.replace(/\//g, "-")}-${issueNumber}`
     : ""
 );
-const onImageLoad = async ({ target }: { target: HTMLImageElement }) => {
+const onImageLoad = async (event: Event) => {
   if (spritePath && !ignoreSprite) {
     if (loadedSprites[spritePath]) {
       loadEdgeFromSprite();
@@ -97,8 +97,8 @@ const onImageLoad = async ({ target }: { target: HTMLImageElement }) => {
       }
     }
   } else {
-    width = target.naturalWidth;
-    height = target.naturalHeight;
+    width = (event.target! as HTMLImageElement).naturalWidth;
+    height = (event.target! as HTMLImageElement).naturalHeight;
     imageLoaded = true;
     emit("loaded", [id]);
   }

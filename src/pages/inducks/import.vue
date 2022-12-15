@@ -125,11 +125,11 @@
           v-for="(issues, publicationCode) in groupByPublicationCode(
             issuesImportable
           )"
-          :id="publicationCode.replace('/', '-')"
-          :key="publicationCode.replace('/', '-')"
+          :id="String(publicationCode).replace('/', '-')"
+          :key="String(publicationCode).replace('/', '-')"
           :visible="expandedPublicationAccordion === publicationCode"
           accordion-group-id="import-accordion"
-          @bv::toggle::collapse="expandedPublicationAccordion = publicationCode"
+          @bv::toggle::collapse="expandedPublicationAccordion = publicationCode as string"
         >
           <template #header>
             <Publication

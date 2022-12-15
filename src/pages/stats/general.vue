@@ -55,7 +55,7 @@
             <div class="my-3">
               {{
                 $t("Votre collection contient {0} magazines cotés.", [
-                  quotedIssues.length,
+                  quotedIssues!.length,
                 ])
               }}
             </div>
@@ -85,7 +85,7 @@
             </b-table>
             <b-pagination
               v-model="currentPage"
-              :total-rows="quotedIssues.length"
+              :total-rows="quotedIssues!.length"
               :per-page="50"
             />
           </template>

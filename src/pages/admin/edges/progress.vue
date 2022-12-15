@@ -22,16 +22,20 @@ meta:
       }}
     </div>
     <div
-      v-if="publishedEdges && Object.keys(inducksIssueNumbersNoSpace).length"
+      v-if="
+        publishedEdges &&
+        inducksIssueNumbersNoSpace &&
+        Object.keys(inducksIssueNumbersNoSpace).length
+      "
     >
       <div
-        v-for="(issuenumbers, publicationCode) in publishedEdges"
-        :key="publicationCode"
+        v-for="(issuenumbers, publicationcode) in publishedEdges"
+        :key="publicationcode"
         class="publication"
       >
         <b-icon-eye-fill
-          v-if="!showEdgesForPublication.includes(publicationCode)"
-          @click="showEdgesForPublication.push(publicationCode)"
+          v-if="!showEdgesForPublication.includes(publicationcode)"
+          @click="showEdgesForPublication.push(publicationcode)"
         />
         <b-icon-eye-slash-fill
           v-else
@@ -69,7 +73,7 @@ meta:
             :key="`${publicationCode}-${inducksIssueNumber}`"
           >
             <span
-              v-if="!issuenumbers.includes(inducksIssueNumber)"
+              v-if="!issuenumbers?.includes(inducksIssueNumber)"
               class="num bordered"
               :title="inducksIssueNumber"
               >&nbsp;</span
@@ -124,13 +128,13 @@ import { onMounted } from "vue";
 import { coa } from "~/stores/coa";
 import { WantedEdge } from "~types/WantedEdge";
 
-let hasData = $ref(false);
-const show = $ref(false);
+let hasData = $ref(false as boolean);
+const show = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
 let publishedEdges = $ref(
   null as { [publicationcode: string]: string[] } | null
 );
-const showEdgesForPublication = $ref([]);
+const showEdgesForPublication = $ref([] as string[]);
 const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",
   bookshelf: "bois/KNOTTY PINE",
@@ -155,7 +159,7 @@ const inducksIssueNumbersNoSpace = $computed(() =>
         (issueNumber) => issueNumber.replace(/ /g, "")
       ),
     }),
-    {}
+    {} as { [publicationcode: string]: string[] }
   )
 );
 
@@ -178,7 +182,7 @@ onMounted(async () => {
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
     }),
-    {}
+    {} as { [publicationcode: string]: string[] }
   );
 
   await fetchPublicationNames([

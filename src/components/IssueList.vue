@@ -53,9 +53,9 @@
           <ul>
             <li
               v-for="issueNotFound in userIssuesNotFoundForPublication"
-              :key="`notfound-${issueNotFound.issueNumber}`"
+              :key="`notfound-${issueNotFound.issuenumber}`"
             >
-              {{ $t("n°") }}{{ issueNotFound.issueNumber }}
+              {{ $t("n°") }}{{ issueNotFound.issuenumber }}
               <b-button
                 size="sm"
                 @click="deletePublicationIssues([issueNotFound])"
@@ -213,9 +213,9 @@
         <ul>
           <li
             v-for="issueToDelete in userIssuesForPublication"
-            :key="issueToDelete.issueNumber"
+            :key="issueToDelete.issuenumber"
           >
-            {{ issueToDelete.issueNumber }}
+            {{ issueToDelete.issuenumber }}
           </li>
         </ul>
         <b-button
@@ -350,11 +350,11 @@ const selectedIssuesById = $computed(() =>
       ...acc,
       ...filteredUserCopies
         .filter(
-          ({ issueNumber: copyIssueNumber }) =>
+          ({ issuenumber: copyIssueNumber }) =>
             issueKey.split("-id-")[0] === copyIssueNumber
         )
         .reduce(
-          (acc2, { id, issueNumber }) => ({ ...acc2, [id]: issueNumber }),
+          (acc2, { id, issuenumber }) => ({ ...acc2, [id]: issuenumber }),
           {} as { [id: number]: string }
         ),
     }),
@@ -393,12 +393,12 @@ const filteredIssues = $computed(
 );
 const selectedIssuesCopies = $computed(() =>
   userIssuesForPublication!.filter(
-    ({ issueNumber }, idx) =>
-      selected.includes(issueNumber) &&
+    ({ issuenumber }, idx) =>
+      selected.includes(issuenumber) &&
       (selected.length === 1 ||
         userIssuesForPublication!.some(
-          ({ issueNumber: issueNumber2 }, idx2) =>
-            issueNumber2 === issueNumber && idx !== idx2
+          ({ issuenumber: issuenumber2 }, idx2) =>
+            issuenumber2 === issuenumber && idx !== idx2
         ))
   )
 );
@@ -438,7 +438,7 @@ const deletePublicationIssues = async (
   contextmenu.hide();
   await collectionStore().updateCollection({
     publicationcode,
-    issueNumbers: issuesToDelete.map(({ issueNumber }) => issueNumber),
+    issueNumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
     condition:
       conditions.find(({ value }) => value === "missing")?.dbValue ||
       "indefini",
@@ -477,31 +477,31 @@ const loadIssues = async () => {
       issues = coaIssues.map((issue) => ({
         ...issue,
         userCopies: userIssuesForPublication!.filter(
-          ({ issueNumber: userIssueNumber }) =>
-            userIssueNumber === issue.issueNumber
+          ({ issuenumber: userIssueNumber }) =>
+            userIssueNumber === issue.issuenumber
         ),
-        key: issue.issueNumber,
+        key: issue.issuenumber,
       }));
     } else {
       const userIssueNumbers = [
         ...new Set(
-          userIssuesForPublication!.map(({ issueNumber }) => issueNumber)
+          userIssuesForPublication!.map(({ issuenumber }) => issuenumber)
         ),
       ];
       issues = coaIssues
-        .filter(({ issueNumber }) => userIssueNumbers.includes(issueNumber))
-        .map(({ issueNumber }) => issueNumber)
+        .filter(({ issuenumber }) => userIssueNumbers.includes(issuenumber))
+        .map(({ issuenumber }) => issuenumber)
         .reduce(
-          (acc, issueNumber) => [
+          (acc, issuenumber) => [
             ...acc,
             ...userIssuesForPublication!
               .filter(
-                ({ issueNumber: userIssueNumber }) =>
-                  userIssueNumber === issueNumber
+                ({ issuenumber: userIssueNumber }) =>
+                  userIssueNumber === issuenumber
               )
               .map((issue) => ({
                 ...issue,
-                key: `${issue.issueNumber}-id-${issue.id}`,
+                key: `${issue.issuenumber}-id-${issue.id}`,
                 userCopies: [issue],
               })),
           ],
@@ -513,8 +513,8 @@ const loadIssues = async () => {
       const countPerIssueNumber = issues!.reduce(
         (acc, { userCopies }) => ({
           ...acc,
-          [userCopies[0].issueNumber]:
-            (acc[userCopies[0].issueNumber] || 0) + 1,
+          [userCopies[0].issuenumber]:
+            (acc[userCopies[0].issueNumissuenumberber] || 0) + 1,
         }),
         {} as { [issueNumber: string]: number }
       );
@@ -535,10 +535,10 @@ const loadIssues = async () => {
     }
 
     const coaIssueNumbers = coa().issuesWithTitles[publicationcode].map(
-      ({ issueNumber }) => issueNumber
+      ({ issuenumber }) => issuenumber
     );
     userIssuesNotFoundForPublication = userIssuesForPublication!.filter(
-      ({ issueNumber }) => !coaIssueNumbers.includes(issueNumber)
+      ({ issuenumber }) => !coaIssueNumbers.includes(issuenumber)
     );
     loading = false;
   }

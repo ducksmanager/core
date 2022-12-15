@@ -6,7 +6,7 @@
       [`issue-condition-${currentCondition.value}`]: true,
     }"
     :style="{ backgroundColor: currentCondition.color }"
-    :title="getConditionLabel(currentCondition.dbValue)"
+    :title="getConditionLabel(currentCondition.dbValue!)"
   />
 </template>
 

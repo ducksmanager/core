@@ -2,7 +2,7 @@
   <span>
     <img
       class="flag"
-      :alt="countryCode"
+      :alt="countryCode || undefined"
       :src="`/images/flags/${countryCode}.png`"
     />&nbsp;
     <slot v-if="countryName" :country-name="countryName">
@@ -12,17 +12,12 @@
 </template>
 
 <script setup lang="ts">
-const {
-  country = null,
-  countryName = null,
-  publicationCode,
-} = defineProps<{
+const { country = null, countryName = null } = defineProps<{
   country?: string;
-  publicationCode?: string;
   countryName?: string;
 }>();
 
-const countryCode = $computed(() => country || publicationCode.split("/")[0]);
+const countryCode = $computed(() => country);
 </script>
 
 <style scoped>

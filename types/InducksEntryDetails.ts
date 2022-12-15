@@ -5,4 +5,5 @@ export interface InducksEntryDetails {
   url: string;
   position: string;
   title: string;
+  part: number | null;
 }

@@ -171,7 +171,7 @@ alias: [/collection/compte]
       {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
     </b-form-checkbox>
 
-    <b-button variant="success" size="xl" type="submit">
+    <b-button variant="success" size="lg" type="submit">
       {{ $t("Valider") }}
     </b-button>
     <b-alert v-if="error === null" show variant="success">

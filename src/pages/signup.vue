@@ -58,7 +58,7 @@ alias: [/inscription]
       </b-col>
     </b-row>
 
-    <b-button variant="primary" size="xl" type="submit" :disabled="!csrfToken">
+    <b-button variant="primary" size="lg" type="submit" :disabled="!csrfToken">
       {{ $t("Inscription") }}
     </b-button>
   </form>

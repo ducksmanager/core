@@ -18,7 +18,9 @@ alias: [/agrandir/suggestions]
     <div v-if="!watchedAuthors">
       {{ $t("Chargement...") }}
     </div>
-    <div v-else-if="watchedAuthors.length && watchedAuthorsWithNotation.length">
+    <div
+      v-else-if="watchedAuthors.length && watchedAuthorsWithNotation!.length"
+    >
       {{ $t("Montrer les magazines de") }}
       <b-form-select
         v-if="countryNamesWithAllCountriesOption"
@@ -36,7 +38,7 @@ alias: [/agrandir/suggestions]
       <SuggestionList :countrycode="countryCode" :since-last-visit="false" />
     </div>
     <b-alert
-      v-else-if="!watchedAuthorsWithNotation.length"
+      v-else-if="!watchedAuthorsWithNotation!.length"
       show
       variant="warning"
     >

@@ -4,8 +4,8 @@
       :src="edgeUrl"
       @load="
         ({ target }) => {
-          edgeWidth = target.naturalWidth;
-          coverHeight = target.naturalHeight;
+          edgeWidth = (target as HTMLImageElement).naturalWidth;
+          coverHeight = (target as HTMLImageElement).naturalHeight;
         }
       "
     />
@@ -14,7 +14,7 @@
       :src="cloudinaryBaseUrl + pages[0].url"
       @load="
         ({ target }) => {
-          coverRatio = target.naturalHeight / target.naturalWidth;
+          coverRatio = (target as HTMLImageElement).naturalHeight / (target as HTMLImageElement).naturalWidth;
         }
       "
     />

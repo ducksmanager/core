@@ -57,7 +57,6 @@ import {
   BarElement,
   CategoryScale,
   Chart,
-  ChartData,
   ChartOptions,
   Legend,
   LinearScale,

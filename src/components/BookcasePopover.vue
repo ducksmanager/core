@@ -35,7 +35,7 @@ import { coa } from "~/stores/coa";
 
 defineProps<{
   id: string;
-  edges: Array;
+  edges: { publicationCode: string; issueNumber: string }[];
 }>();
 
 const bookcaseTextures = {
