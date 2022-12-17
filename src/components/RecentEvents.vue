@@ -34,10 +34,6 @@ const eventUserIds = $computed(() =>
     ?.reduce((acc, event) => [...acc, ...(event.users || [])], [] as number[])
     .filter((userId) => !!userId)
 );
-const fetchPublicationNames = coa().fetchPublicationNames;
-const fetchEvents = users().fetchEvents;
-const fetchStats = users().fetchStats;
-
 const isCollectionUpdateEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("numberOfIssues");
 
@@ -45,9 +41,9 @@ const isEdgeCreationEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("edges");
 
 const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
-  hasFreshEvents = await fetchEvents(clearCacheEntry);
+  hasFreshEvents = await users().fetchEvents(clearCacheEntry);
 
-  await fetchPublicationNames([
+  await coa().fetchPublicationNames([
     ...events
       .filter((event) => isCollectionUpdateEvent(event))
       .map((event) => (event as CollectionUpdateEvent).publicationcode || ""),
@@ -63,7 +59,7 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
       ),
   ]);
 
-  await fetchStats(eventUserIds, clearCacheEntry);
+  await users().fetchStats(eventUserIds, clearCacheEntry);
 };
 
 onMounted(async () => {
