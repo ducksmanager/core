@@ -373,7 +373,7 @@ const showFilter = $computed(
   () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly
 );
 
-const contextMenuKey = "context-menu";
+let contextMenuKey = $ref("context-menu" as string);
 const publicationNames = $computed(() => coa().publicationNames);
 const coverUrls = $computed(() => coa().coverUrls);
 const userIssues = $computed(

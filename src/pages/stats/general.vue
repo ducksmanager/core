@@ -166,7 +166,7 @@ const collection = collectionStore();
 const { getConditionLabel } = condition();
 
 const { t: $t } = useI18n();
-const currentPage = 1;
+let currentPage = $ref(1);
 const userCount = $computed(() => users().count);
 const publicationNames = $computed(() => coa().publicationNames);
 const quotedIssues = $computed(() =>
