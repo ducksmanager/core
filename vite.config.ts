@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
+      "~prisma_clients/*": `${path.resolve(__dirname, "api/dist/prisma")}/`,
     },
   },
   build: {
