@@ -68,9 +68,9 @@
             >
               <template #cell(issue)="{ item }">
                 <Issue
-                  :publicationcode="item.publicationCode"
-                  :publicationname="publicationNames[item.publicationCode]"
-                  :issuenumber="item.issueNumber"
+                  :publicationcode="item.publicationcode"
+                  :publicationname="publicationNames[item.publicationcode]"
+                  :issuenumber="item.issuenumber"
                 />
               </template>
               <template #cell(condition)="{ item }">
@@ -205,7 +205,7 @@ watch(
   async (newValue) => {
     if (newValue) {
       await coa().fetchPublicationNames(
-        newValue.map(({ publicationCode }) => publicationCode)
+        newValue.map(({ publicationcode }) => publicationcode)
       );
       hasPublicationNames = true;
     }

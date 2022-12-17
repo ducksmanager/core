@@ -10,6 +10,6 @@ export class CollectionUpdateEventRaw {
 export class CollectionUpdateEvent extends AbstractEvent {
   type = "collection_update";
   numberOfIssues: number | undefined = undefined;
-  publicationCode: string | undefined = undefined;
-  issueNumber: string | undefined = undefined;
+  publicationcode: string | undefined = undefined;
+  issuenumber: string | undefined = undefined;
 }

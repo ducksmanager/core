@@ -27,14 +27,14 @@
           {{ stats.numberOfCountries }}
           {{ $tc("pays | pays", stats.numberOfCountries) }}
         </div>
-        <div v-if="stats.allowSharing === '1'" class="bookcase-link">
+        <div v-if="stats.allowSharing" class="bookcase-link">
           <router-link
             v-slot="{ href, navigate }"
             :to="`/bookcase/show/${stats.username}`"
             custom
           >
             <b-button
-              size="xs"
+              size="sm"
               variant="outline-secondary"
               target="_blank"
               :href="href"

@@ -8,8 +8,8 @@
     }}
   </li>
   <b-alert
-    v-for="(count, issueNumber) in issuesWithMultipleCopiesSelected"
-    :key="issueNumber"
+    v-for="(count, issuenumber) in issuesWithMultipleCopiesSelected"
+    :key="issuenumber"
     class="two-lines pre-wrap text-center m-0"
     show
     variant="warning"
@@ -17,7 +17,7 @@
     {{
       $t(
         "Vous avez sélectionné {0} fois le numéro {1}.\nAssurez-vous de ne pas acheter plusieurs fois le même numéro !",
-        [count, issueNumber]
+        [count, issuenumber]
       )
     }}
   </b-alert>
@@ -143,16 +143,16 @@ const selectedIssuesBuyerIds = $computed(() => [
 const issuesWithMultipleCopiesSelected = $computed(() =>
   Object.entries(
     Object.values(selectedIssuesById).reduce(
-      (acc, issueNumber) => ({
+      (acc, issuenumber) => ({
         ...acc,
-        [issueNumber]: (acc[issueNumber] || 0) + 1,
+        [issuenumber]: (acc[issuenumber] || 0) + 1,
       }),
       {} as { [key: string]: number }
     )
   )
     .filter(([, count]) => count > 1)
     .reduce(
-      (acc, [issueNumber, copies]) => ({ ...acc, [issueNumber]: copies }),
+      (acc, [issuenumber, copies]) => ({ ...acc, [issuenumber]: copies }),
       {}
     )
 );

@@ -79,13 +79,13 @@ const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
         HAVING COUNT(Numero) > 0
     `) as CollectionUpdateEventRaw[]
   ).map((event) => {
-    const [publicationCode, issueNumber] =
+    const [publicationcode, issuenumber] =
       event.exampleIssue.split(/\/(?=[^/]+$)/);
     return {
       ...mapUsers<CollectionUpdateEvent>(event),
       numberOfIssues: event.numberOfIssues,
-      publicationCode: publicationCode || "",
-      issueNumber: issueNumber || "",
+      publicationcode: publicationcode || "",
+      issuenumber: issuenumber || "",
     } as CollectionUpdateEvent;
   });
 
@@ -95,8 +95,8 @@ const retrieveCollectionSubscriptionAdditions = async (): Promise<
   (
     (await prisma.$queryRaw`
         SELECT 'subscription_additions'                    as type,
-               CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationCode,
-               numeros.Numero                              AS issueNumber,
+               CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationcode,
+               numeros.Numero                              AS issuenumber,
                GROUP_CONCAT(numeros.ID_Utilisateur)        AS users,
                UNIX_TIMESTAMP(DateAjout)                   AS timestamp
         FROM dm.numeros
@@ -128,9 +128,9 @@ const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
     (await prisma.$queryRaw`
         select 'edge'                       as type,
                CONCAT('[', GROUP_CONCAT(json_object(
-                       'publicationCode',
+                       'publicationcode',
                        publicationcode,
-                       'issueNumber',
+                       'issuenumber',
                        issuenumber
                    )), ']')                 AS edges,
                UNIX_TIMESTAMP(creationDate) AS timestamp,

@@ -9,11 +9,11 @@
           :active="currentSlide === index"
         >
           <Issue
-            :publicationcode="popularIssueWithoutEdge.publicationCode"
+            :publicationcode="popularIssueWithoutEdge.publicationcode"
             :publicationname="
-              publicationNames[popularIssueWithoutEdge.publicationCode]
+              publicationNames[popularIssueWithoutEdge.publicationcode]
             "
-            :issuenumber="popularIssueWithoutEdge.issueNumber"
+            :issuenumber="popularIssueWithoutEdge.issuenumber"
             hide-condition
           />
           <MedalProgress
@@ -36,7 +36,9 @@ import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 defineProps<{
   issues: BookcaseEdgeWithPopularity[];
   userPoints: number;
-  publicationNames: string[];
+  publicationNames: {
+    [publicationcode: string]: string;
+  };
 }>();
 
 const currentSlide = $ref(0);

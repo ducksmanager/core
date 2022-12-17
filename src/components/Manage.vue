@@ -39,7 +39,7 @@
           countrycode="ALL"
           since-last-visit
           @has-suggestions-data="
-            (e) => {
+            (e: number) => {
               suggestionsNumber = e;
             }
           "
@@ -53,7 +53,7 @@
         </div>
       </template>
     </Accordion>
-    <LastPurchases v-if="total > 0 && hasPublicationNames" />
+    <LastPurchases v-if="total && total > 0 && hasPublicationNames" />
     <LastPublishedEdges />
     <div v-if="user?.username === 'demo'" id="demo-intro">
       <h2>{{ $t("Bienvenue dans le mode démo !") }}</h2>
@@ -120,10 +120,10 @@ const mostPossessedPublication = $computed(
   () =>
     totalPerPublication &&
     Object.keys(totalPerPublication).reduce(
-      (acc, publicationCode) =>
-        acc && totalPerPublication[acc] > totalPerPublication[publicationCode]
+      (acc, publicationcode) =>
+        acc && totalPerPublication[acc] > totalPerPublication[publicationcode]
           ? acc
-          : publicationCode,
+          : publicationcode,
       null as string | null
     )
 );

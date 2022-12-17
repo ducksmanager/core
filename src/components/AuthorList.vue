@@ -84,11 +84,11 @@
                 <option
                   v-for="(fullName, personcode) in searchResults"
                   :key="personcode"
-                  :disabled="isAuthorWatched(personcode)"
+                  :disabled="isAuthorWatched(personcode as string)"
                   @click="
-                    isAuthorWatched(personcode)
+                    isAuthorWatched(personcode as string)
                       ? () => {}
-                      : createRating({ personcode })
+                      : createRating({ personcode: personcode as string })
                   "
                 >
                   {{ fullName }}

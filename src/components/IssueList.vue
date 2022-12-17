@@ -17,7 +17,7 @@
             <td>
               <input
                 :id="`show-${conditionFilter}`"
-                v-model="filter[conditionFilter]"
+                v-model="filter[conditionFilter as 'possessed'|'missing']"
                 type="checkbox"
               />
             </td>
@@ -81,13 +81,13 @@
         <Book
           v-if="currentIssueOpened"
           :publication-code="currentIssueOpened.publicationcode"
-          :issue-number="currentIssueOpened.issueNumber"
+          :issue-number="currentIssueOpened.issuenumber"
           @close-book="currentIssueOpened = null"
         />
         <div v-contextmenu:contextmenu>
           <div
             v-for="(
-              { issueNumber, title, userCopies, key }, idx
+              { issuenumber, title, userCopies, key }, idx
             ) in filteredIssues"
             :id="key"
             :key="key"
@@ -110,12 +110,12 @@
             <span>
               <IssueDetailsPopover
                 :publication-code="publicationcode"
-                :issue-number="issueNumber"
-                @click="openBook(issueNumber)"
+                :issue-number="issuenumber"
+                @click="openBook(issuenumber)"
               />
 
               <span class="issue-text">
-                {{ issueNumberTextPrefix }}{{ issueNumber }}
+                {{ issueNumberTextPrefix }}{{ issuenumber }}
                 <span class="issue-title">{{ title }}</span>
               </span>
             </span>
@@ -123,7 +123,7 @@
               <MarketplaceBuyerInfo
                 v-if="!userCopies.length"
                 :publicationcode="publicationcode"
-                :issuenumber="issueNumber"
+                :issuenumber="issuenumber"
               />
               <div class="issue-copies">
                 <div
@@ -131,13 +131,13 @@
                     { condition: copyCondition, isToRead, purchaseId, id },
                     copyIndex
                   ) in userCopies"
-                  :key="`${issueNumber}-copy-${copyIndex}`"
+                  :key="`${issuenumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
                   <MarketplaceBuyerInfo
                     v-if="onSaleByOthers"
                     :publicationcode="publicationcode"
-                    :issuenumber="issueNumber"
+                    :issuenumber="issuenumber"
                   />
                   <MarketplaceSellerInfo :issue-id="id" />
                   <svg
@@ -169,7 +169,7 @@
                   <Condition
                     v-if="copyCondition"
                     :publicationcode="publicationcode"
-                    :issuenumber="issueNumber"
+                    :issuenumber="issuenumber"
                     :value="copyCondition"
                   />
                 </div>
@@ -177,7 +177,7 @@
               <Watch
                 v-if="!userCopies.length || onSaleByOthers"
                 :publicationcode="publicationcode"
-                :issuenumber="issueNumber"
+                :issuenumber="issuenumber"
                 :constant-width="onSaleByOthers"
               />
               <div class="issue-check">
@@ -265,12 +265,12 @@ import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
-  issueNumber: string;
+  issuenumber: string;
   title?: string;
   key: string;
 };
 type issueWithPublicationCode = issue & {
-  publicationCode: string;
+  publicationcode: string;
   conditionString: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {
@@ -365,7 +365,7 @@ let preselected = $shallowRef([] as string[]);
 let preselectedIndexStart = $ref(null as number | null);
 let preselectedIndexEnd = $ref(null as number | null);
 let currentIssueOpened = $shallowRef(
-  null as { publicationcode: string; issueNumber: string } | null
+  null as { publicationcode: string; issuenumber: string } | null
 );
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
@@ -417,7 +417,7 @@ const getPreselected = () =>
     : filteredIssues
         .map(({ key }) => key || "")
         .filter(
-          (issueNumber, index) =>
+          (issuenumber, index) =>
             preselectedIndexStart &&
             preselectedIndexEnd &&
             index >= preselectedIndexStart &&
@@ -449,9 +449,9 @@ const deletePublicationIssues = async (
   selected = [];
 };
 
-const openBook = (issueNumber: string) => {
-  currentIssueOpened = coverUrls[issueNumber]
-    ? { publicationcode: publicationcode, issueNumber }
+const openBook = (issuenumber: string) => {
+  currentIssueOpened = coverUrls[issuenumber]
+    ? { publicationcode: publicationcode, issuenumber }
     : null;
 };
 
@@ -514,12 +514,12 @@ const loadIssues = async () => {
         (acc, { userCopies }) => ({
           ...acc,
           [userCopies[0].issuenumber]:
-            (acc[userCopies[0].issueNumissuenumberber] || 0) + 1,
+            (acc[userCopies[0].issuenumber] || 0) + 1,
         }),
-        {} as { [issueNumber: string]: number }
+        {} as { [issuenumber: string]: number }
       );
       issues = issues!.filter(
-        ({ issueNumber }) => countPerIssueNumber[issueNumber] > 1
+        ({ issuenumber }) => countPerIssueNumber[issuenumber] > 1
       );
     }
 

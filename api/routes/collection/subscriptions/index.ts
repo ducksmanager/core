@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 async function upsertSubscription(req: Request) {
-  const publicationCodeParts = req.body.publicationCode.split("/");
+  const publicationCodeParts = req.body.publicationcode.split("/");
   const dates = {
     startDate: new Date(Date.parse(req.body.startDate)),
     endDate: new Date(Date.parse(req.body.endDate)),
@@ -54,7 +54,7 @@ export const get: Handler = async (req, res) => {
   return res.json(
     subscriptions.map((subscription: subscription) => ({
       ...subscription,
-      publicationCode: `${subscription.country}/${subscription.magazine}`,
+      publicationcode: `${subscription.country}/${subscription.magazine}`,
       startDate: subscription.startDate.toISOString(),
       endDate: subscription.endDate.toISOString(),
     }))

@@ -3,8 +3,8 @@
     v-if="embedded"
     :id="id"
     :src="src"
-    :publication-code="publicationCode"
-    :issue-number="issueNumber"
+    :publication-code="publicationcode"
+    :issue-number="issuenumber"
     :sprite-path="spritePath"
     :load="load"
     :invisible="invisible"
@@ -20,16 +20,16 @@
   >
     <template #title>
       <Issue
-        :publicationcode="publicationCode"
-        :issuenumber="issueNumber"
-        :publicationname="publicationNames[publicationCode]"
+        :publicationcode="publicationcode"
+        :issuenumber="issuenumber"
+        :publicationname="publicationNames[publicationcode]"
       />
     </template>
     <EdgeContents
       :id="id"
       :src="src"
-      :publication-code="publicationCode"
-      :issue-number="issueNumber"
+      :publication-code="publicationcode"
+      :issue-number="issuenumber"
       :sprite-path="spritePath"
       :load="load"
       :invisible="invisible"
@@ -48,9 +48,9 @@ const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
   SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
-  issueNumber,
+  issuenumber,
   issueNumberReference = null,
-  publicationCode,
+  publicationcode,
   spritePath = null,
   popularity = null,
   invisible = false,
@@ -58,8 +58,8 @@ const {
   embedded = false,
 } = defineProps<{
   id: string;
-  publicationCode: string;
-  issueNumber: string;
+  publicationcode: string;
+  issuenumber: string;
   issueNumberReference?: string;
   creationDate?: string;
   popularity?: number;
@@ -72,13 +72,13 @@ const {
 }>();
 
 defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
-let countryCode = $computed(() => publicationCode.split("/")[0]),
-  magazineCode = $computed(() => publicationCode.split("/")[1]),
+let countryCode = $computed(() => publicationcode.split("/")[0]),
+  magazineCode = $computed(() => publicationcode.split("/")[1]),
   src = $computed(() =>
     spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
       : `${EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
-          issueNumberReference || issueNumber
+          issueNumberReference || issuenumber
         }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`
   ),
   ignoreSprite = $ref(false),

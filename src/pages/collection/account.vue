@@ -66,7 +66,7 @@ alias: [/collection/compte]
     </b-row>
     <b-row>
       <b-col id="showDiscordIfToBuyers" cols="12" md="6">
-        <accordion id="discord-id" accordion-group-id="discord-id">
+        <accordion id="discord-id" accordion-group-id="discord-id" visible>
           <template #header>{{
             $t("Comment trouver mon identifiant de profil Discord ?")
           }}</template>

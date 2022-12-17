@@ -9,7 +9,7 @@ export const get: Handler = async (req, res) => {
   const popularities = (await prisma.$queryRaw`
       select issuePopularity.pays       AS country,
              issuePopularity.magazine   AS magazine,
-             issuePopularity.numero     AS issueNumber,
+             issuePopularity.numero     AS issuenumber,
              issuePopularity.popularite AS popularity
       from numeros_popularite issuePopularity
              inner join numeros issue

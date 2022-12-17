@@ -14,11 +14,11 @@
           cols="6"
         >
           <Issue
-            v-if="publicationNames[edge.publicationCode]"
+            v-if="publicationNames[edge.publicationcode]"
             class="issue"
-            :publicationname="publicationNames[edge.publicationCode]"
-            :publicationcode="edge.publicationCode"
-            :issuenumber="edge.issueNumber"
+            :publicationname="publicationNames[edge.publicationcode]"
+            :publicationcode="edge.publicationcode"
+            :issuenumber="edge.issuenumber"
             hide-condition
             :flex="false"
           />
@@ -35,7 +35,7 @@ import { coa } from "~/stores/coa";
 
 defineProps<{
   id: string;
-  edges: { publicationCode: string; issueNumber: string }[];
+  edges: { publicationcode: string; issuenumber: string }[];
 }>();
 
 const bookcaseTextures = {

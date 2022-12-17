@@ -40,26 +40,26 @@
             </option>
             <option
               v-for="searchResult in searchResults.results"
-              :key="searchResult.storycode"
+              :key="searchResult!.storycode"
               class="d-flex align-items-center"
-              @click="selectSearchResult(searchResult)"
+              @click="selectSearchResult(searchResult!)"
             >
               <template v-if="!isSearchByCode">
                 <Condition
-                  v-if="searchResult.collectionIssue"
+                  v-if="searchResult!.collectionIssue"
                   :value="
                     conditions.find(
                       ({ dbValue }) =>
-                        dbValue === searchResult.collectionIssue.condition
+                        dbValue === searchResult!.collectionIssue.condition
                     )?.value || null
                   "
-                />&nbsp;{{ searchResult.title }}
+                />&nbsp;{{ searchResult!.title }}
               </template>
               <Issue
-                v-else-if="publicationNames[searchResult.publicationcode]"
-                :publicationcode="searchResult.publicationcode"
+                v-else-if="publicationNames[searchResult!.publicationcode]"
+                :publicationcode="searchResult!.publicationcode"
                 :publicationname="
-                  publicationNames[searchResult.publicationcode]
+                  publicationNames[searchResult!.publicationcode]
                 "
                 :issuenumber="searchResult.issuenumber"
                 :clickable="withStoryLink"
@@ -170,8 +170,8 @@ const runSearch = async (value: string) => {
         ...story,
         collectionIssue: collectionStore().collection!.find(
           ({
-            publicationCode: collectionPublicationCode,
-            issueNumber: collectionIssueNumber,
+            publicationcode: collectionPublicationCode,
+            issuenumber: collectionIssueNumber,
           }) =>
             story
               .issues!.map(

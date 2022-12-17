@@ -46,16 +46,16 @@
 //       where: { userId },
 //     })
 //   )
-//     .map(({ country, magazine, issueNumber }) => ({
+//     .map(({ country, magazine, issuenumber }) => ({
 //       publicationcode: `${country}/${magazine}`,
-//       issueNumber,
+//       issuenumber,
 //     }))
 //     .reduce(
 //       (acc, value) => ({
 //         ...acc,
 //         [`${value.publicationcode}`]: [
 //           ...(acc[`${value.publicationcode}`] || []),
-//           value.issueNumber,
+//           value.issuenumber,
 //         ],
 //       }),
 //       {}

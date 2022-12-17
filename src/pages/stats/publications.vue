@@ -30,8 +30,8 @@ const smallCountPublications = $computed(() =>
   !totalPerPublication
     ? null
     : Object.keys(totalPerPublication).filter(
-        (publicationCode) =>
-          totalPerPublication[publicationCode] /
+        (publicationcode) =>
+          totalPerPublication[publicationcode] /
             collection().collection!.length <
           0.01
       )
@@ -44,13 +44,13 @@ const totalPerPublicationGroupSmallCounts: {
       totalPerPublication && {
         ...Object.keys(totalPerPublication)
           .filter(
-            (publicationCode) =>
-              !smallCountPublications.includes(publicationCode)
+            (publicationcode) =>
+              !smallCountPublications.includes(publicationcode)
           )
           .reduce(
-            (acc, publicationCode) => ({
+            (acc, publicationcode) => ({
               ...acc,
-              [publicationCode]: totalPerPublication[publicationCode],
+              [publicationcode]: totalPerPublication[publicationcode],
             }),
             {}
           ),
@@ -58,8 +58,8 @@ const totalPerPublicationGroupSmallCounts: {
           ? {}
           : {
               [""]: smallCountPublications.reduce(
-                (acc, publicationCode) =>
-                  acc + totalPerPublication[publicationCode],
+                (acc, publicationcode) =>
+                  acc + totalPerPublication[publicationcode],
                 0
               ),
             }),
@@ -72,9 +72,9 @@ const labels = $computed(
     Object.entries(totalPerPublicationGroupSmallCounts)
       .sort(sortByCount)
       .reduce(
-        (acc, [publicationCode]) => [
+        (acc, [publicationcode]) => [
           ...acc,
-          publicationNames[publicationCode] ||
+          publicationNames[publicationcode] ||
             `${$t("Autres")} (${smallCountPublications.length} ${$t(
               "Publications"
             ).toLowerCase()})`,
@@ -92,8 +92,8 @@ const colors = $computed(
     totalPerPublicationGroupSmallCounts &&
     Object.entries(totalPerPublicationGroupSmallCounts)
       .sort(sortByCount)
-      .map(([publicationCode]) =>
-        publicationCode === "" ? "#000" : randomColor()
+      .map(([publicationcode]) =>
+        publicationcode === "" ? "#000" : randomColor()
       )
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
@@ -122,7 +122,7 @@ watch(
     if (newValue) {
       fetchPublicationNames(
         Object.keys(totalPerPublicationGroupSmallCounts).filter(
-          (publicationCode) => publicationCode !== ""
+          (publicationcode) => publicationcode !== ""
         )
       );
       hasPublicationNames = true;

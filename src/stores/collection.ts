@@ -20,14 +20,14 @@ import { bookcase } from "./bookcase";
 import { coa } from "./coa";
 
 type IssueWithPublicationcode = issue & {
-  publicationCode: string;
+  publicationcode: string;
 };
 
 export type SubscriptionTransformed = Omit<
   subscription,
   "country" | "magazine"
 > & {
-  publicationCode: string;
+  publicationcode: string;
 };
 
 type SubscriptionTransformedStringDates = Omit<
@@ -36,6 +36,10 @@ type SubscriptionTransformedStringDates = Omit<
 > & {
   startDate: string;
   endDate: string;
+};
+
+type IssueSuggestionWithStringDate = Omit<IssueSuggestion, "oldestdate"> & {
+  oldestdate: string;
 };
 
 export const collection = defineStore("collection", {
@@ -47,7 +51,7 @@ export const collection = defineStore("collection", {
     marketplaceContactMethods: null as string[] | null,
 
     suggestions: null as {
-      issues: { [issuecode: string]: IssueSuggestion };
+      issues: { [issuecode: string]: IssueSuggestionWithStringDate };
       minScore: number;
       maxScore: number;
       authors: { [personcode: string]: string };
@@ -77,7 +81,7 @@ export const collection = defineStore("collection", {
 
     issuesByIssueCode: ({ collection }) =>
       collection?.reduce((acc, issue) => {
-        const issuecode = `${issue.publicationCode} ${issue.issueNumber}`;
+        const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
         if (!acc[issuecode]) {
           acc[issuecode] = [];
         }
@@ -148,11 +152,11 @@ export const collection = defineStore("collection", {
     issueNumbersPerPublication(): { [publicationcode: string]: string[] } {
       return (
         this.collection?.reduce(
-          (acc, { country, issueNumber, magazine }) => ({
+          (acc, { country, issuenumber, magazine }) => ({
             ...acc,
             [`${country}/${magazine}`]: [
               ...(acc[`${country}/${magazine}`] || []),
-              issueNumber,
+              issuenumber,
             ],
           }),
           {} as { [publicationcode: string]: string[] }
@@ -167,10 +171,10 @@ export const collection = defineStore("collection", {
       return (
         issueNumbersPerPublication &&
         Object.keys(issueNumbersPerPublication).reduce(
-          (acc, publicationCode) => ({
+          (acc, publicationcode) => ({
             ...acc,
-            [publicationCode]: [
-              ...new Set(issueNumbersPerPublication[publicationCode]),
+            [publicationcode]: [
+              ...new Set(issueNumbersPerPublication[publicationcode]),
             ].length,
           }),
           {}
@@ -189,8 +193,8 @@ export const collection = defineStore("collection", {
 
     quotedIssues():
       | {
-          publicationCode: string;
-          issueNumber: string;
+          publicationcode: string;
+          issuenumber: string;
           condition: issue_condition;
           estimation: number;
           estimationGivenCondition: number;
@@ -200,9 +204,9 @@ export const collection = defineStore("collection", {
       if (issueQuotations === null) {
         return null;
       }
-      const getEstimation = (publicationCode: string, issueNumber: string) => {
+      const getEstimation = (publicationcode: string, issuenumber: string) => {
         const estimationData =
-          issueQuotations[`${publicationCode} ${issueNumber}`];
+          issueQuotations[`${publicationcode} ${issuenumber}`];
         return (
           (estimationData &&
             (estimationData.max
@@ -220,14 +224,14 @@ export const collection = defineStore("collection", {
       };
       return (
         this.collection
-          ?.filter(({ publicationCode, issueNumber }) =>
-            getEstimation(publicationCode, issueNumber)
+          ?.filter(({ publicationcode, issuenumber }) =>
+            getEstimation(publicationcode, issuenumber)
           )
-          .map(({ publicationCode, issueNumber, condition }) => {
-            const estimation = getEstimation(publicationCode, issueNumber);
+          .map(({ publicationcode, issuenumber, condition }) => {
+            const estimation = getEstimation(publicationcode, issuenumber);
             return {
-              publicationCode,
-              issueNumber,
+              publicationcode,
+              issuenumber,
               condition,
               estimation,
               estimationGivenCondition: parseFloat(
@@ -272,11 +276,11 @@ export const collection = defineStore("collection", {
       await this.loadPurchases(true);
     },
 
-    findInCollection(publicationCode: string, issueNumber: string) {
+    findInCollection(publicationcode: string, issuenumber: string) {
       return this.collection?.find(
-        ({ country, magazine, issueNumber: collectionIssueNumber }) =>
-          publicationCode === `${country}/${magazine}` &&
-          collectionIssueNumber === issueNumber
+        ({ country, magazine, issuenumber: collectionIssueNumber }) =>
+          publicationcode === `${country}/${magazine}` &&
+          collectionIssueNumber === issuenumber
       );
     },
     async loadPreviousVisit() {
@@ -289,7 +293,7 @@ export const collection = defineStore("collection", {
           (await axios.get("/collection/issues")).data as issue[]
         ).map((issue) => ({
           ...issue,
-          publicationCode: `${issue.country}/${issue.magazine}`,
+          publicationcode: `${issue.country}/${issue.magazine}`,
         }));
         this.isLoadingCollection = false;
       }
@@ -396,7 +400,7 @@ export const collection = defineStore("collection", {
         ).reduce(
           (acc, issue) => ({
             ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]:
+            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
               issue.popularity,
           }),
           {}

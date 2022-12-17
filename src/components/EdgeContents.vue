@@ -45,15 +45,15 @@ import { bookcase } from "~/stores/bookcase";
 
 const {
   id,
-  issueNumber = null,
-  publicationCode,
+  issuenumber = null,
+  publicationcode,
   spritePath = null,
   invisible = false,
   highlighted = false,
 } = defineProps<{
   id: string;
-  publicationCode: string;
-  issueNumber?: string;
+  publicationcode: string;
+  issuenumber?: string;
   src: string;
   spritePath?: string;
   load: boolean;
@@ -69,7 +69,7 @@ const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const loadedSprites = $computed(() => bookcase().loadedSprites);
 const spriteClass = $computed(() =>
   id && spritePath
-    ? `edges-${publicationCode.replace(/\//g, "-")}-${issueNumber}`
+    ? `edges-${publicationcode.replace(/\//g, "-")}-${issuenumber}`
     : ""
 );
 const onImageLoad = async (event: Event) => {
@@ -139,7 +139,7 @@ watch(
   (value) => {
     if (value) {
       console.error(
-        `Could not load sprite for edge ${publicationCode} ${issueNumber}: ${spritePath}`
+        `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`
       );
       emit("ignore-sprite");
     }

@@ -38,13 +38,11 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchEvents = users().fetchEvents;
 const fetchStats = users().fetchStats;
 
-const isCollectionUpdateEvent = (
-  event: AbstractEvent
-): event is CollectionUpdateEvent => true;
+const isCollectionUpdateEvent = (event: AbstractEvent) =>
+  event.hasOwnProperty("numberOfIssues");
 
-const isEdgeCreationEvent = (
-  event: AbstractEvent
-): event is EdgeCreationEvent => true;
+const isEdgeCreationEvent = (event: AbstractEvent) =>
+  event.hasOwnProperty("edges");
 
 const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
   hasFreshEvents = await fetchEvents(clearCacheEntry);
@@ -52,14 +50,14 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
   await fetchPublicationNames([
     ...events
       .filter((event) => isCollectionUpdateEvent(event))
-      .map((event) => (event as CollectionUpdateEvent).publicationCode || ""),
+      .map((event) => (event as CollectionUpdateEvent).publicationcode || ""),
     ...events
       .filter((event) => isEdgeCreationEvent(event))
       .map((event) => event as EdgeCreationEvent)
       .reduce(
         (acc, { edges }) => [
           ...acc,
-          ...edges.map(({ publicationCode }) => publicationCode),
+          ...edges.map(({ publicationcode }) => publicationcode),
         ],
         [] as string[]
       ),

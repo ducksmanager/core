@@ -26,6 +26,7 @@ alias: [/agrandir/marketplace]
       v-for="(issueIds, userId) in requestIssueIdsBySellerId"
       :id="`email-for-user-${String(userId)}`"
       :key="`email-for-user-${String(userId)}`"
+      visible
       :accordion-group-id="`email-for-user-${String(userId)}`"
     >
       <template #header
@@ -36,7 +37,7 @@ alias: [/agrandir/marketplace]
           <li v-for="issueId of issueIds" :key="issueId">
             <Issue
               :publicationcode="issuesOnSaleById[issueId].publicationcode"
-              :issuenumber="issuesOnSaleById[issueId].issueNumber"
+              :issuenumber="issuesOnSaleById[issueId].issuenumber"
               :publicationname="
                 publicationNames[issuesOnSaleById[issueId].publicationcode]
               "

@@ -37,7 +37,7 @@ watch(
           Object.values(duplicateIssues).reduce(
             (acc, issues) => [
               ...acc,
-              ...issues.map(({ publicationCode }) => publicationCode),
+              ...issues.map(({ publicationcode }) => publicationcode),
             ],
             [] as string[]
           )

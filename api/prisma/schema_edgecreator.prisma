@@ -61,13 +61,13 @@ model edgeModel {
   id            Int     @id @default(autoincrement()) @map("ID")
   country       String  @db.VarChar(3)                @map("Pays")
   magazine      String  @db.VarChar(6)                @map("Magazine")
-  issueNumber   String  @db.VarChar(10)               @map("Numero")
+  issuenumber   String  @db.VarChar(10)               @map("Numero")
   username      String? @db.VarChar(25)
   mainPhotoName String? @db.VarChar(60)               @map("NomPhotoPrincipale")
   photographs   String? @db.Text                      @map("photographes")
   creators      String? @db.Text                      @map("createurs")
   isActive      Boolean                               @map("Active")
 
-  @@unique([country, magazine, issueNumber, username], map: "tranches_en_cours_modeles__numero")
+  @@unique([country, magazine, issuenumber, username], map: "tranches_en_cours_modeles__numero")
   @@map("tranches_en_cours_modeles")
 }

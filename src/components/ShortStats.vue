@@ -1,21 +1,23 @@
 <template>
-  <div v-if="total > 0" id="short-stats">
-    <div>
-      {{ $t("Vous possédez") }} <b>{{ total }}</b>
-      {{ t("numéro | numéros", total) }}, {{ $t("dont") }}
-      {{ totalUniqueIssues }}
-      {{ t("numéro unique | numéros uniques", totalUniqueIssues) }}.
+  <template v-if="total && totalPerPublication && totalPerCountry">
+    <div v-if="total > 0" id="short-stats">
+      <div>
+        {{ $t("Vous possédez") }} <b>{{ total }}</b>
+        {{ t("numéro | numéros", total) }}, {{ $t("dont") }}
+        {{ totalUniqueIssues }}
+        {{ t("numéro unique | numéros uniques", totalUniqueIssues) }}.
+      </div>
+      <div>
+        {{ $t("Votre collection est composée de") }}
+        <b>{{ Object.keys(totalPerPublication).length }}</b>
+        {{ $t("magazines différents issus de") }}
+        <b>{{ Object.keys(totalPerCountry).length }}</b>
+        {{ t("pays | pays", Object.keys(totalPerCountry).length) }}.
+      </div>
+      <slot name="non-empty-collection" />
     </div>
-    <div>
-      {{ $t("Votre collection est composée de") }}
-      <b>{{ Object.keys(totalPerPublication).length }}</b>
-      {{ $t("magazines différents issus de") }}
-      <b>{{ Object.keys(totalPerCountry).length }}</b>
-      {{ t("pays | pays", Object.keys(totalPerCountry).length) }}.
-    </div>
-    <slot name="non-empty-collection" />
-  </div>
-  <slot v-else name="empty-collection" />
+    <slot v-else name="empty-collection"
+  /></template>
 </template>
 
 <script setup lang="ts">

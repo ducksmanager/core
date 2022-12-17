@@ -35,10 +35,10 @@
     </template>
     <template v-if="event.type === 'collection_update'"
       >&nbsp;{{ $t("a ajouté") }}&nbsp;<Issue
-        v-if="publicationNames[event.publicationCode]"
-        :publicationname="publicationNames[event.publicationCode]"
-        :publicationcode="event.publicationCode"
-        :issuenumber="event.issueNumber"
+        v-if="publicationNames[event.publicationcode]"
+        :publicationname="publicationNames[event.publicationcode]"
+        :publicationcode="event.publicationcode"
+        :issuenumber="event.issuenumber"
         hide-condition
         :flex="false"
       />
@@ -70,10 +70,10 @@
       >
         <span class="fw-bold" style="cursor: help">
           <Issue
-            v-if="publicationNames[event.edges[0].publicationCode]"
-            :publicationname="publicationNames[event.edges[0].publicationCode]"
-            :publicationcode="event.edges[0].publicationCode"
-            :issuenumber="event.edges[0].issueNumber"
+            v-if="publicationNames[event.edges[0].publicationcode]"
+            :publicationname="publicationNames[event.edges[0].publicationcode]"
+            :publicationcode="event.edges[0].publicationcode"
+            :issuenumber="event.edges[0].issuenumber"
             hide-condition
             :flex="true"
           />&nbsp;<OtherIssues
@@ -103,10 +103,10 @@
       <template v-if="event.users.length > 1"> {{ $t("ont reçu") }} </template>
       <template v-else> {{ $t("a reçu") }} </template>
       <Issue
-        v-if="publicationNames[event.publicationCode]"
-        :publicationname="publicationNames[event.publicationCode]"
-        :publicationcode="event.publicationCode"
-        :issuenumber="event.issueNumber"
+        v-if="publicationNames[event.publicationcode]"
+        :publicationname="publicationNames[event.publicationcode]"
+        :publicationcode="event.publicationcode"
+        :issuenumber="event.issuenumber"
         hide-condition
         :flex="false"
       />

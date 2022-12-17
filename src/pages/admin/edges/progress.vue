@@ -16,7 +16,11 @@ meta:
         >
       </div>
       &nbsp;
-      <img :src="`/images/flags/${mostWantedIssue.country}.png`" />
+      <img
+        :src="`/images/flags/${
+          mostWantedIssue.publicationcode.split('/')[0]
+        }.png`"
+      />
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{
         mostWantedIssue.issuenumber
       }}
@@ -34,75 +38,75 @@ meta:
         class="publication"
       >
         <b-icon-eye-fill
-          v-if="!showEdgesForPublication.includes(publicationcode)"
-          @click="showEdgesForPublication.push(publicationcode)"
+          v-if="!showEdgesForPublication.includes(publicationcode as string)"
+          @click="showEdgesForPublication.push(publicationcode as string)"
         />
         <b-icon-eye-slash-fill
           v-else
           @click="
             showEdgesForPublication.splice(
-              showEdgesForPublication.indexOf(publicationCode),
+              showEdgesForPublication.indexOf(publicationcode as string),
               1
             )
           "
         />
         <Publication
-          :publicationcode="publicationCode"
-          :publicationname="publicationNames[publicationCode]"
+          :publicationcode="publicationcode"
+          :publicationname="publicationNames[publicationcode]"
         />
-        <div v-if="inducksIssueNumbersNoSpace[publicationCode]">
+        <div v-if="inducksIssueNumbersNoSpace[publicationcode]">
           <Bookcase
-            v-if="showEdgesForPublication.includes(publicationCode)"
+            v-if="showEdgesForPublication.includes(publicationcode as string)"
             :bookcase-textures="bookcaseTextures"
             :sorted-bookcase="
-              inducksIssueNumbersNoSpace[publicationCode].map(
-                (issueNumber) => ({
-                  id: `${publicationCode.replace('/', '-')} ${issueNumber}`,
-                  edgeId: issuenumbers.includes(issueNumber) ? 1 : null,
-                  publicationCode,
-                  issueNumber,
+              inducksIssueNumbersNoSpace[publicationcode]!.map(
+                (issuenumber: string) => ({
+                  id: `${(publicationcode as string).replace('/', '-')} ${issuenumber}`,
+                  edgeId: issuenumbers!.includes(issuenumber) ? 1 : null,
+                  publicationcode,
+                  issuenumber,
                 })
               )
             "
           />
           <span
             v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[
-              publicationCode
+              publicationcode
             ]"
             v-else
-            :key="`${publicationCode}-${inducksIssueNumber}`"
+            :key="`${publicationcode as string}-${inducksIssueNumber}`"
           >
             <span
               v-if="!issuenumbers?.includes(inducksIssueNumber)"
               class="num bordered"
-              :title="inducksIssueNumber"
+              :title="(inducksIssueNumber as string)"
               >&nbsp;</span
             >
             <span
               v-else-if="!show"
               class="num bordered available"
               :title="inducksIssueNumber"
-              @click="open(publicationCode, inducksIssueNumber)"
+              @click="open(publicationcode as string, inducksIssueNumber as string)"
               >&nbsp;</span
             >
             <img
               v-else
-              :src="getEdgeUrl(publicationCode, inducksIssueNumber)"
+              :src="getEdgeUrl(publicationcode as string, inducksIssueNumber as string)"
             />
           </span>
         </div>
         <div v-else>
           Certaines tranches de cette publication sont prêtes mais la
           publication n'existe plus sur Inducks :
-          {{ issuenumbers.join(", ") }}
+          {{ issuenumbers!.join(", ") }}
         </div>
       </div>
       <br /><br />
       <b
         >{{
           Object.keys(publishedEdges).reduce(
-            (acc, publicationCode) =>
-              acc + publishedEdges[publicationCode].length,
+            (acc, publicationcode) =>
+              acc + publishedEdges![publicationcode].length,
             0
           )
         }}
@@ -143,20 +147,20 @@ const bookcaseTextures = $ref({
 const publicationNames = $computed(() => coa().publicationNames);
 const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchIssueNumbers = coa().fetchIssueNumbers;
-const getEdgeUrl = (publicationCode: string, issueNumber: string) => {
-  const [country, magazine] = publicationCode.split("/");
-  return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issueNumber}.png`;
+const getEdgeUrl = (publicationcode: string, issuenumber: string) => {
+  const [country, magazine] = publicationcode.split("/");
+  return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issuenumber}.png`;
 };
-const open = (publicationCode: string, issueNumber: string) => {
-  window.open(getEdgeUrl(publicationCode, issueNumber), "_blank");
+const open = (publicationcode: string, issuenumber: string) => {
+  window.open(getEdgeUrl(publicationcode, issuenumber), "_blank");
 };
 const issueNumbers = $computed(() => coa().issueNumbers);
 const inducksIssueNumbersNoSpace = $computed(() =>
   Object.keys(issueNumbers).reduce(
-    (acc, publicationCode) => ({
+    (acc, publicationcode) => ({
       ...acc,
-      [publicationCode]: Object.values(issueNumbers[publicationCode]).map(
-        (issueNumber) => issueNumber.replace(/ /g, "")
+      [publicationcode]: Object.values(issueNumbers[publicationcode]).map(
+        (issuenumber) => issuenumber.replace(/ /g, "")
       ),
     }),
     {} as { [publicationcode: string]: string[] }

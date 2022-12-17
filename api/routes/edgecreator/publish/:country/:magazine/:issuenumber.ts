@@ -148,7 +148,7 @@ export const put = [
       return;
     }
 
-    const issueNumber = req.params.issuenumber;
+    const issuenumber = req.params.issuenumber;
     const { designers, photographers } = req.body;
     const modelContributors = [
       ...Object.values(await getUserIdsByUsername(designers)).map((userId) => ({
@@ -165,15 +165,15 @@ export const put = [
     const { edgeId, contributors } = await publishEdgeOnDm(
       modelContributors,
       publicationcode,
-      issueNumber
+      issuenumber
     );
 
     return res.json({
       publicationcode,
-      issueNumber,
+      issuenumber,
       edgeId,
       contributors,
-      url: `${process.env.EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issueNumber}.png`,
+      url: `${process.env.EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issuenumber}.png`,
     });
   }) as Handler,
 ];

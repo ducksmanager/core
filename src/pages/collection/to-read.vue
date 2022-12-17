@@ -33,7 +33,7 @@ watch(
     if (issuesInToReadStack) {
       publicationCodes = [
         ...new Set(
-          issuesInToReadStack.map(({ publicationCode }) => publicationCode)
+          issuesInToReadStack.map(({ publicationcode }) => publicationcode)
         ),
       ];
 

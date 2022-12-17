@@ -36,7 +36,7 @@ const sentRequests = $computed(() =>
 
 const issuesOnSaleByOthers = $computed(() =>
   (marketplace().issuesOnSaleByOthers?.[props.publicationcode] || []).filter(
-    ({ issueNumber }) => issueNumber === props.issuenumber
+    ({ issuenumber }) => issuenumber === props.issuenumber
   )
 );
 </script>

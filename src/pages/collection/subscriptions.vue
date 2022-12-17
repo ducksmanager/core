@@ -43,12 +43,12 @@ alias: [/collection/abonnements]
         <b-button
           @click="
             createSubscription(
-              subscriptions.find(
-                ({ publicationCode }) =>
-                  publicationCode ===
+              subscriptions!.find(
+                ({ publicationcode }) =>
+                  publicationcode ===
                   currentAssociatedPublication.referencePublicationcode
-              ),
-              currentAssociatedPublication
+              )|| null,
+              currentAssociatedPublication.publicationcode
             )
           "
         >
@@ -63,7 +63,7 @@ alias: [/collection/abonnements]
       v-for="subscription in subscriptions"
       :key="subscription.id"
       :is-edit="editedSubscriptionId === subscription.id"
-      :publication-code="subscription.publicationCode"
+      :publicationcode="subscription.publicationcode"
       :start-date="subscription.startDate"
       :end-date="subscription.endDate"
       @start-edit="editedSubscriptionId = subscription.id"
@@ -87,7 +87,7 @@ alias: [/collection/abonnements]
       :is-edit="editedSubscriptionId === null"
       @start-edit="editedSubscriptionId = null"
       @cancel-edit="editedSubscriptionId = undefined"
-      @edit="createSubscription($event)"
+      @edit="createSubscription(null, $event.publicationcode)"
     />
   </div>
   <div v-else>
@@ -104,7 +104,7 @@ import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
 
 type EditSubscription = {
-  publicationCode: string;
+  publicationcode: string;
   startDate: string | null;
   endDate: string | null;
 };
@@ -130,7 +130,7 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const loadSubscriptions = collection().loadSubscriptions;
 
 const createSubscription = async (
-  existingSubscription: SubscriptionTransformed,
+  existingSubscription: SubscriptionTransformed | null,
   publicationcode: string
 ) => {
   await axios.put("/collection/subscriptions", {
@@ -161,17 +161,17 @@ watch(
           publicationcode: associatedPublicationcode,
         }) =>
           newValue.find(
-            ({ publicationCode }) =>
-              referencePublicationcode === publicationCode
+            ({ publicationcode }) =>
+              referencePublicationcode === publicationcode
           ) &&
           !newValue.find(
-            ({ publicationCode }) =>
-              associatedPublicationcode === publicationCode
+            ({ publicationcode }) =>
+              associatedPublicationcode === publicationcode
           )
       );
       await fetchPublicationNames([
         ...associatedPublications.map(({ publicationcode }) => publicationcode),
-        ...newValue.map(({ publicationCode }) => publicationCode),
+        ...newValue.map(({ publicationcode }) => publicationcode),
       ]);
       hasPublicationNames = true;
     }

@@ -30,13 +30,13 @@
             <a :href="inducksLink" target="_blank" class="inducks-link"
               ><img
                 src="/images/coafoot.png"
-                :title="`Voir ${publicationNames[publicationCode]} ${issueNumber} sur Inducks`"
+                :title="`Voir ${publicationNames[publicationcode]} ${issuenumber} sur Inducks`"
                 alt="Inducks"
             /></a>
             <Issue
-              :publicationcode="publicationCode"
-              :publicationname="publicationNames[publicationCode]"
-              :issuenumber="issueNumber"
+              :publicationcode="publicationcode"
+              :publicationname="publicationNames[publicationcode]"
+              :issuenumber="issuenumber"
             />
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
@@ -110,9 +110,9 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 
-const { issueNumber, publicationCode } = defineProps<{
-  publicationCode: string;
-  issueNumber: string;
+const { issuenumber, publicationcode } = defineProps<{
+  publicationcode: string;
+  issuenumber: string;
 }>();
 const emit = defineEmits<{ (e: "close-book"): void }>();
 
@@ -136,16 +136,16 @@ const issueDetails = $computed(() => coa().issueDetails);
 const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
 const edgeUrl = $computed(
   () =>
-    `${EDGES_BASE_URL}${publicationCode.replace(
+    `${EDGES_BASE_URL}${publicationcode.replace(
       "/",
       "/gen/"
-    )}.${issueNumber}.png`
+    )}.${issuenumber}.png`
 );
 const coverWidth = $computed(
   () => coverRatio && (coverHeight || 0) / coverRatio
 );
 const currentIssueDetails = $computed(
-  () => issueDetails?.[`${publicationCode} ${issueNumber}`]
+  () => issueDetails?.[`${publicationcode} ${issuenumber}`]
 );
 const pages = $computed(() => currentIssueDetails?.entries);
 let pagesWithUrl = $computed(() => pages?.filter(({ url }) => !!url));
@@ -158,15 +158,15 @@ const releaseDate = $computed(() => {
 const isReadyToOpen = $computed(() => coverWidth && edgeWidth && pages && true);
 const showTableOfContents = $computed(() => currentPage > 0 || opened);
 const inducksLink = $computed(() => {
-  const [country, magazine] = publicationCode.split("/");
-  return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issueNumber}`;
+  const [country, magazine] = publicationcode.split("/");
+  return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issuenumber}`;
 });
 const { t: $t } = useI18n();
 
 const loadBookPages = async () => {
   await coa().fetchIssueUrls({
-    publicationCode,
-    issueNumber,
+    publicationcode,
+    issuenumber,
   });
 };
 
@@ -253,7 +253,7 @@ watch(
 );
 
 watch(
-  () => publicationCode,
+  () => publicationcode,
   async () => {
     await loadBookPages();
   },
@@ -261,7 +261,7 @@ watch(
 );
 
 watch(
-  () => issueNumber,
+  () => issuenumber,
   async () => {
     await loadBookPages();
   }

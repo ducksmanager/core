@@ -16,11 +16,11 @@ export const get: Handler = async (req, res) => {
       select: {
         country: true,
         magazine: true,
-        issueNumber: true,
+        issuenumber: true,
       },
     })
   ).map(
-    (issue) => `${issue.country}/${issue.magazine} ${issue.issueNumber}`
+    (issue) => `${issue.country}/${issue.magazine} ${issue.issuenumber}`
   ) as string[];
   return res.json(
     await prisma.edge.findMany({

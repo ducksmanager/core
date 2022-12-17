@@ -165,7 +165,7 @@ const publicationCodesWithOther = $computed(
     );
     return collectionWithDates
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
-      .reduce((acc, { date, publicationCode: publicationcode }) => {
+      .reduce((acc, { date, publicationcode: publicationcode }) => {
         if (!publicationCodesWithOther!.includes(publicationcode)) {
           publicationcode = "Other";
         }
@@ -201,8 +201,8 @@ const publicationCodesWithOther = $computed(
   datasets = $computed(() =>
     !(ready && purchaseTypeCurrent && collectionWithDates && values)
       ? null
-      : Object.keys(values).map((publicationCode) => {
-          let data = values[publicationCode];
+      : Object.keys(values).map((publicationcode) => {
+          let data = values[publicationcode];
           if (purchaseTypeCurrent === "total") {
             data = labels!.reduce(
               (acc, currentDate) => ({
@@ -217,9 +217,9 @@ const publicationCodesWithOther = $computed(
           return {
             data: Object.values(data),
             label:
-              publicationCode === "Other"
+              publicationcode === "Other"
                 ? $t("Autres")
-                : publicationNames[publicationCode] || publicationCode,
+                : publicationNames[publicationcode] || publicationcode,
             backgroundColor: randomColor(),
           };
         })

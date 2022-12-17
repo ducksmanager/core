@@ -86,8 +86,8 @@ export const coa = defineStore("coa", {
         {}
       );
     },
-    setCoverUrl(issueNumber: string, url: string) {
-      this.coverUrls[issueNumber] = url;
+    setCoverUrl(issuenumber: string, url: string) {
+      this.coverUrls[issuenumber] = url;
     },
     addIssueNumbers(issueNumbers: { [publicationcode: string]: string[] }) {
       this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };
@@ -124,8 +124,8 @@ export const coa = defineStore("coa", {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
-            (publicationCode) =>
-              !Object.keys(this.publicationNames).includes(publicationCode)
+            (publicationcode) =>
+              !Object.keys(this.publicationNames).includes(publicationcode)
           )
         ),
       ];
@@ -154,8 +154,8 @@ export const coa = defineStore("coa", {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
-            (publicationCode) =>
-              !Object.keys(this.issueQuotations || {}).includes(publicationCode)
+            (publicationcode) =>
+              !Object.keys(this.issueQuotations || {}).includes(publicationcode)
           )
         ),
       ];
@@ -249,8 +249,8 @@ export const coa = defineStore("coa", {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
-            (publicationCode) =>
-              !Object.keys(this.issueNumbers || {}).includes(publicationCode)
+            (publicationcode) =>
+              !Object.keys(this.issueNumbers || {}).includes(publicationcode)
           )
         ),
       ];
@@ -313,17 +313,17 @@ export const coa = defineStore("coa", {
     },
 
     async fetchIssueUrls({
-      publicationCode,
-      issueNumber,
+      publicationcode,
+      issuenumber,
     }: {
-      publicationCode: string;
-      issueNumber: string;
+      publicationcode: string;
+      issuenumber: string;
     }) {
-      const issueCode = `${publicationCode} ${issueNumber}`;
+      const issueCode = `${publicationcode} ${issuenumber}`;
       if (!this.issueDetails[issueCode]) {
         const issueDetails = (
           await coaApi.get(
-            `${URL_PREFIX_URLS}?publicationcode=${publicationCode}&issuenumber=${issueNumber}`
+            `${URL_PREFIX_URLS}?publicationcode=${publicationcode}&issuenumber=${issuenumber}`
           )
         ).data;
 

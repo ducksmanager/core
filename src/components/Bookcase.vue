@@ -10,8 +10,8 @@
       v-for="(edge, edgeId) in edgesToLoad"
       :id="`edge-${edgeId}`"
       :key="`edge-${edgeId}`"
-      :publication-code="edge.publicationCode"
-      :issue-number="edge.issueNumber"
+      :publication-code="edge.publicationcode"
+      :issue-number="edge.issuenumber"
       existing
       load
       embedded
@@ -31,8 +31,8 @@
       :key="`edge-${edgeId}`"
       :invisible="currentEdgeOpened === edge"
       :highlighted="currentEdgeHighlighted === edge.id"
-      :publication-code="edge.publicationCode"
-      :issue-number="edge.issueNumber"
+      :publication-code="edge.publicationcode"
+      :issue-number="edge.issuenumber"
       :issue-number-reference="edge.issueNumberReference"
       :creation-date="edge.creationDate"
       :popularity="edge.popularity"

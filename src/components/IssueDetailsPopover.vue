@@ -1,15 +1,15 @@
 <template>
   <Popover
-    v-if="publicationNames[publicationCode]"
+    v-if="publicationNames[publicationcode]"
     placement="right"
     @open:popper="loadIssueUrls"
   >
     <b-icon-eye-fill
-      :id="`issue-details-${issueNumber}`"
+      :id="`issue-details-${issuenumber}`"
       class="mx-2"
       :class="{
         [`can-show-book-${
-          !coverUrls[issueNumber] ? coverUrls[issueNumber] : true
+          !coverUrls[issuenumber] ? coverUrls[issuenumber] : true
         }`]: true,
       }"
       :alt="$t('Voir')"
@@ -17,9 +17,9 @@
     />
     <template #header>
       <Issue
-        :publicationcode="publicationCode"
-        :issuenumber="issueNumber"
-        :publicationname="publicationNames[publicationCode]"
+        :publicationcode="publicationcode"
+        :issuenumber="issuenumber"
+        :publicationname="publicationNames[publicationcode]"
         hide-condition
         :flex="false"
         no-wrap
@@ -31,7 +31,7 @@
       </div>
       <template v-else-if="coverUrl">
         <img
-          :alt="issueNumber"
+          :alt="issuenumber"
           :src="coverUrl"
           class="cover"
           @error="coverUrl = null"
@@ -54,9 +54,9 @@ import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 
-const { issueNumber, publicationCode } = defineProps<{
-  publicationCode: string;
-  issueNumber: string;
+const { issuenumber, publicationcode } = defineProps<{
+  publicationcode: string;
+  issuenumber: string;
 }>();
 defineEmits<{ (e: "click"): void }>();
 
@@ -67,14 +67,14 @@ const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
 const publicationNames = $computed(() => coa().publicationNames);
 const issueDetails = $computed(() => coa().issueDetails);
-const issueCode = $computed(() => `${publicationCode} ${issueNumber}`);
+const issueCode = $computed(() => `${publicationcode} ${issuenumber}`);
 const coverUrls = $computed(() => coa().coverUrls);
 
 const loadIssueUrls = async () => {
   isCoverLoading = true;
   await coa().fetchIssueUrls({
-    publicationCode,
-    issueNumber,
+    publicationcode,
+    issuenumber,
   });
   isCoverLoading = false;
 
@@ -88,7 +88,7 @@ watch(
   () => coverUrl,
   (value) => {
     if (value) {
-      coa().setCoverUrl(issueNumber, value);
+      coa().setCoverUrl(issuenumber, value);
     }
   }
 );

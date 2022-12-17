@@ -35,14 +35,14 @@ export const conditionToEnum = (condition: string | null): issue_condition => {
 
 const addOrChangeIssues = async (
   userId: number,
-  publicationCode: string,
+  publicationcode: string,
   issueNumbers: string[],
   condition: string | null,
   isOnSale: boolean | null,
   isToRead: boolean | null,
   purchaseId: number | null
 ): Promise<{ [operationType: string]: number }> => {
-  const [country, magazine] = publicationCode.split("/");
+  const [country, magazine] = publicationcode.split("/");
 
   const conditionNewIssues =
     condition === null ? issue_condition.indefini : conditionToEnum(condition);
@@ -54,7 +54,7 @@ const addOrChangeIssues = async (
     where: {
       country,
       magazine,
-      issueNumber: {
+      issuenumber: {
         in: issueNumbers,
       },
       userId,
@@ -79,17 +79,17 @@ const addOrChangeIssues = async (
 
   const insertOperations = issueNumbers
     .filter(
-      (issueNumber) =>
+      (issuenumber) =>
         !existingIssues
-          .map(({ issueNumber: existingIssueNumber }) => existingIssueNumber)
-          .includes(issueNumber)
+          .map(({ issuenumber: existingIssueNumber }) => existingIssueNumber)
+          .includes(issuenumber)
     )
-    .map((issueNumber) =>
+    .map((issuenumber) =>
       prisma.issue.create({
         data: {
           country,
           magazine,
-          issueNumber,
+          issuenumber,
           condition: conditionNewIssues,
           isOnSale: isOnSaleNewIssues,
           isToRead: isToReadNewIssues,
@@ -109,15 +109,15 @@ const addOrChangeIssues = async (
 
 const deleteIssues = async (
   userId: number,
-  publicationCode: string,
+  publicationcode: string,
   issueNumbers: string[]
 ) => {
-  const [country, magazine] = publicationCode.split("/");
+  const [country, magazine] = publicationcode.split("/");
   await prisma.issue.deleteMany({
     where: {
       country,
       magazine,
-      issueNumber: {
+      issuenumber: {
         in: issueNumbers,
       },
       userId,
@@ -127,15 +127,15 @@ const deleteIssues = async (
 
 const addOrChangeCopies = async (
   userId: number,
-  publicationCode: string,
-  issueNumber: string,
+  publicationcode: string,
+  issuenumber: string,
   conditions: string[],
   areOnSale: boolean[],
   areToRead: boolean[] | string[],
   purchaseIds: number[]
 ): Promise<{ [operationType: string]: number }> => {
-  await deleteIssues(userId, publicationCode, [issueNumber]);
-  const [country, magazine] = publicationCode.split("/");
+  await deleteIssues(userId, publicationcode, [issuenumber]);
+  const [country, magazine] = publicationcode.split("/");
 
   const insertOperations = [...new Set(conditions.keys())]
     .filter((copyNumber) => !["missing"].includes(conditions[copyNumber]))
@@ -144,7 +144,7 @@ const addOrChangeCopies = async (
         data: {
           country,
           magazine,
-          issueNumber,
+          issuenumber,
           condition: conditionToEnum(conditions[copyNumber]),
           isOnSale: areOnSale[copyNumber] || false,
           isToRead:
@@ -249,7 +249,7 @@ export const post = [
             userId,
             country,
             magazine,
-            issueNumber: { in: issueNumbers },
+            issuenumber: { in: issueNumbers },
           },
         })
       ).map(({ id }) => id);

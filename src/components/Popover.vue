@@ -31,11 +31,8 @@
 <script setup lang="ts">
 import Popper from "@bperel/vue3-popper-teleport";
 
-defineProps<{
-  placement: {
-    type: string;
-    default: "top";
-  };
+const { placement = "top" } = defineProps<{
+  placement?: string;
 }>();
 
 defineEmits<{ (e: "@open:popper"): void }>();

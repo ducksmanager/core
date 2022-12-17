@@ -7,18 +7,18 @@
           <PublicationSelect
             no-button
             :initial-country-code="
-              editSubscription.publicationCode
-                ? editSubscription.publicationCode.split('/')[0]
+              editSubscription.publicationcode
+                ? editSubscription.publicationcode.split('/')[0]
                 : null
             "
-            :initial-publication-code="editSubscription.publicationCode"
-            @input="editSubscription.publicationCode = $event"
+            :initial-publication-code="editSubscription.publicationcode"
+            @input="editSubscription.publicationcode = $event"
           />
         </template>
         <Publication
-          v-else-if="publicationNames[publicationCode]"
-          :publicationname="publicationNames[publicationCode]"
-          :publicationcode="publicationCode"
+          v-else-if="publicationNames[publicationcode]"
+          :publicationname="publicationNames[publicationcode]"
+          :publicationcode="publicationcode"
         />
       </b-col>
       <b-col sm="3" md="2">
@@ -77,19 +77,19 @@ import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
 import { coa } from "~/stores/coa";
 
 const {
-  publicationCode = null,
+  publicationcode = null,
   startDate = null,
   isEdit = null,
   endDate = null,
 } = defineProps<{
   isEdit?: boolean;
-  publicationCode?: string;
+  publicationcode?: string;
   startDate?: Date;
   endDate?: Date;
 }>();
 
 type EditSubscription = {
-  publicationCode: string;
+  publicationcode: string;
   startDate: string | null;
   endDate: string | null;
 };
@@ -101,7 +101,7 @@ defineEmits<{
   (e: "cancel-edit"): void;
 }>();
 const editSubscription = $ref({
-  publicationCode,
+  publicationcode,
   startDate: startDate?.toISOString().split("T")[0],
   endDate: endDate?.toISOString().split("T")[0],
 } as EditSubscription);

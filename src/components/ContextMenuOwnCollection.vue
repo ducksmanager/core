@@ -343,7 +343,7 @@ import { issue, issue_condition } from "~prisma_clients/client_dm";
 import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
 
 type issueWithPublicationCode = issue & {
-  publicationCode: string;
+  publicationcode: string;
   conditionString: string;
 };
 

@@ -10,7 +10,7 @@ alias: [/bouquineries]
       )
     }}
     <br /><br />
-    <div v-if="!bookstores.length">
+    <div v-if="!bookstores">
       {{ $t("Chargement...") }}
     </div>
     <div v-else id="map">
@@ -36,18 +36,18 @@ alias: [/bouquineries]
                 </p>
                 <div
                   v-for="{
-                    username,
+                    userId,
                     creationDate,
                     comment,
                   } in currentBookstore.comments"
                   :key="`bookstore-${currentBookstore.id}-comment-${creationDate}`"
                   class="mb-2"
                 >
-                  <b v-if="username">{{ username }}</b>
-                  <span v-else>{{ $t("un visiteur anonyme") }}</span>
-                  &nbsp;<i class="float-right">{{
-                    formatDate(creationDate)
-                  }}</i>
+                  <b v-if="userId && userStats[userId]">{{
+                    userStats[userId].username
+                  }}</b>
+                  <span v-else>{{ $t("un visiteur anonyme") }}</span
+                  >&nbsp;<i>{{ formatDate(creationDate) }}</i>
                   <blockquote class="px-3 clearfix">
                     {{ comment }}
                   </blockquote>
@@ -167,10 +167,11 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
+import { users } from "~/stores/users";
 import { bookstore } from "~prisma_clients/client_dm";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
-let bookstores = $ref([] as SimpleBookstore[]);
+let bookstores = $ref(null as SimpleBookstore[] | null);
 let existingBookstore = $ref(null as SimpleBookstore | null);
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
@@ -187,6 +188,23 @@ const newBookstore = $ref({
 const accessToken =
   "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ";
 const mapCenter = [1.73584, 46.754917];
+
+const userStats = $computed(() => users().stats);
+const bookstoreCommentsUserIds = $computed(
+  () =>
+    bookstores?.reduce(
+      (acc, bookstore: SimpleBookstore) => [
+        ...new Set([
+          ...acc,
+          ...(bookstore.comments
+            .map(({ userId }) => userId)
+            .filter((userId) => userId !== null) as number[]),
+        ]),
+      ],
+      [] as number[]
+    ) || null
+);
+
 const decodeText = (value: string) => {
   try {
     return decodeURIComponent(escape(value));
@@ -233,6 +251,7 @@ const formatDate = (date: Date | null) => {
 
 onMounted(async () => {
   await fetchBookstores();
+  users().fetchStats(bookstoreCommentsUserIds!);
   const geocoder = new MapboxGeocoder({
     accessToken,
     placeholder: $t("Adresse"),

@@ -11,10 +11,10 @@ const MAX_SPRITE_SIZE = 100;
 const getSpriteName = (publicationcode: string, suffix: string) =>
   `edges-${publicationcode.replace("/", "-")}-${suffix}`;
 
-const getSpriteRange = (issueNumber: string, rangeWidth: number) => {
-  const issueNumberAsNumber = isNaN(parseInt(issueNumber))
+const getSpriteRange = (issuenumber: string, rangeWidth: number) => {
+  const issueNumberAsNumber = isNaN(parseInt(issuenumber))
     ? 0
-    : parseInt(issueNumber);
+    : parseInt(issuenumber);
   return [
     issueNumberAsNumber - ((issueNumberAsNumber - 1) % rangeWidth),
     issueNumberAsNumber -

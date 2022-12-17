@@ -10,7 +10,7 @@
     <template #content>
       <Accordion
         v-for="(
-          { purchase, issues }, purchaseIndex
+          { purchase: collectionPurchase, issues }, purchaseIndex
         ) in collectionPerPurchaseDate"
         :id="`purchase-accordion-${purchaseIndex}`"
         :key="`purchase-accordion-${purchaseIndex}`"
@@ -18,18 +18,18 @@
         :visible="false"
       >
         <template #header>
-          <b>{{ purchase.date }}</b
-          >&nbsp;<i v-if="purchase.description"
-            >{{ purchase.description }}&nbsp;</i
+          <b>{{ collectionPurchase.date }}</b
+          >&nbsp;<i v-if="collectionPurchase.description"
+            >{{ collectionPurchase.description }}&nbsp;</i
           >{{ issues.length }} {{ t("numéro | numéros", issues.length) }}
         </template>
         <template #content>
           <Issue
-            v-for="({ publicationCode, issueNumber }, issueIndex) in issues"
-            :key="`purchase-${purchaseIndex}-issue-${issueIndex}`"
-            :publicationcode="publicationCode"
-            :publicationname="publicationNames[publicationCode]"
-            :issuenumber="issueNumber"
+            v-for="{ publicationcode, issuenumber } in issues"
+            :key="`purchase-${purchaseIndex}-issue-${publicationcode}-${issuenumber}`"
+            :publicationcode="publicationcode"
+            :publicationname="publicationNames[publicationcode]"
+            :issuenumber="issuenumber"
             :no-wrap="false"
           />
         </template>
@@ -43,7 +43,7 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
-import { issue } from "~prisma_clients/client_dm";
+import { issue, purchase } from "~prisma_clients/client_dm";
 
 const { t } = useI18n();
 const publicationNames = $computed(() => coa().publicationNames),
@@ -58,6 +58,7 @@ const publicationNames = $computed(() => coa().publicationNames),
             date: (
               (issue.creationDate || "0001-01-01T00:00:00") as string
             ).split("T")[0],
+            description: "",
           };
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>
@@ -69,7 +70,7 @@ const publicationNames = $computed(() => coa().publicationNames),
           }
           acc[purchaseIndex].issues.push(issue);
           return acc;
-        }, [] as { purchase: { date: Date | string }; issues: issue[] }[])
+        }, [] as { purchase: (purchase & { date: string }) | { date: string; description: string }; issues: issue[] }[])
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
           purchase1.date < purchase2.date ? 1 : -1
         )

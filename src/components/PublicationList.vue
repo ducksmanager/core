@@ -37,16 +37,16 @@
           </a>
           <ul class="dropdown-menu">
             <li
-              v-for="publicationCode in getSortedPublications(country)"
-              :key="publicationCode"
+              v-for="publicationcode in getSortedPublications(country)"
+              :key="publicationcode"
             >
               <router-link
                 class="dropdown-item"
-                :to="`/collection/show/${publicationCode}`"
+                :to="`/collection/show/${publicationcode}`"
               >
                 {{
-                  publicationNames[publicationCode] ||
-                  publicationCode.split("/")[1]
+                  publicationNames[publicationcode] ||
+                  publicationcode.split("/")[1]
                 }}
               </router-link>
             </li>
@@ -97,7 +97,7 @@ const publicationsPerCountry = $computed(
       (acc, country) => ({
         ...acc,
         [country]: Object.keys(totalPerPublication).filter(
-          (publicationCode) => publicationCode.split("/")[0] === country
+          (publicationcode) => publicationcode.split("/")[0] === country
         ),
       }),
       {} as { [key: string]: string[] }

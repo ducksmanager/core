@@ -31,7 +31,10 @@
       </b-alert>
       <div
         v-if="
-          allowSharing && user.username !== 'demo' && sortedBookcase?.length
+          allowSharing &&
+          user &&
+          user.username !== 'demo' &&
+          sortedBookcase?.length
         "
         class="mb-4"
       >
@@ -60,7 +63,7 @@
         </b-button>
       </div>
       <b-alert
-        v-else-if="allowSharing === false && user.username !== 'demo'"
+        v-else-if="allowSharing === false && user && user.username !== 'demo'"
         show
         variant="warning"
         ><i18n-t
@@ -122,19 +125,19 @@
       </div>
       <Book
         v-if="currentEdgeOpened"
-        :publication-code="currentEdgeOpened.publicationCode"
-        :issue-number="currentEdgeOpened.issueNumber"
+        :publication-code="currentEdgeOpened.publicationcode"
+        :issue-number="currentEdgeOpened.issuenumber"
         @close-book="currentEdgeOpened = null"
       />
       <Bookcase
-        v-if="sortedBookcase?.length"
+        v-if="bookcaseOptions && sortedBookcase?.length"
         :bookcase-textures="bookcaseOptions.textures"
         :with-all-copies="bookcaseOptions.showAllCopies"
         :current-edge-highlighted="currentEdgeHighlighted"
         :current-edge-opened="currentEdgeOpened"
         :edges-using-sprites="edgesUsingSprites"
         :sorted-bookcase="sortedBookcase"
-        @open-book="(edge) => (currentEdgeOpened = edge)"
+        @open-book="(edge: BookcaseEdgeWithPopularity) => (currentEdgeOpened = edge)"
       />
       <b-alert v-else show variant="warning">
         {{ $t("Cette bibliothèque est vide.") }}
@@ -226,12 +229,12 @@ const sortedBookcase = $computed(
         {
           countryCode: countryCode1,
           magazineCode: magazineCode1,
-          issueNumber: issueNumber1,
+          issuenumber: issueNumber1,
         },
         {
           countryCode: countryCode2,
           magazineCode: magazineCode2,
-          issueNumber: issueNumber2,
+          issuenumber: issueNumber2,
         }
       ) => {
         const publicationCode1 = `${countryCode1}/${magazineCode1}`;
@@ -262,8 +265,8 @@ const highlightIssue = (issue: simple_issue) => {
   currentEdgeHighlighted =
     bookcase.bookcase?.find(
       (issueInCollection) =>
-        issue.publicationcode === issueInCollection.publicationCode &&
-        issue.issuenumber === issueInCollection.issueNumber
+        issue.publicationcode === issueInCollection.publicationcode &&
+        issue.issuenumber === issueInCollection.issuenumber
     )?.id || null;
 };
 
@@ -275,31 +278,31 @@ watch(
       hasPublicationNames = true;
 
       const nonObviousPublicationIssueNumbers = newValue.filter(
-        (publicationCode) =>
+        (publicationcode) =>
           bookcase.bookcase?.filter(
             ({
               countryCode: issueCountryCode,
               magazineCode: issueMagazineCode,
-              issueNumber,
+              issuenumber,
             }) =>
-              `${issueCountryCode}/${issueMagazineCode}` === publicationCode &&
-              !/^[0-9]$/.test(issueNumber)
+              `${issueCountryCode}/${issueMagazineCode}` === publicationcode &&
+              !/^[0-9]$/.test(issuenumber)
           ).length || 0
       );
       coa.addIssueNumbers(
         newValue
           .filter(
-            (publicationCode) =>
-              !nonObviousPublicationIssueNumbers.includes(publicationCode)
+            (publicationcode) =>
+              !nonObviousPublicationIssueNumbers.includes(publicationcode)
           )
           .reduce(
-            (acc, publicationCode) => ({
+            (acc, publicationcode) => ({
               ...acc,
               ...{
-                [publicationCode]:
+                [publicationcode]:
                   bookcase.bookcase?.filter(
-                    ({ publicationCode: issuePublicationCode }) =>
-                      issuePublicationCode === publicationCode
+                    ({ publicationcode: issuePublicationCode }) =>
+                      issuePublicationCode === publicationcode
                   ) || [],
               },
             }),

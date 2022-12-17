@@ -64,7 +64,7 @@ watch(
     if (issuesInOnSaleStack) {
       publicationCodes = [
         ...new Set(
-          issuesInOnSaleStack.map(({ publicationCode }) => publicationCode)
+          issuesInOnSaleStack.map(({ publicationcode }) => publicationcode)
         ),
       ];
 

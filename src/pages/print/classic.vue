@@ -12,11 +12,11 @@ meta:
         {{ countryNames![country] }}
       </div>
       <div
-        v-for="publicationCode in publicationCodesOfCountry(country)"
-        :key="publicationCode"
+        v-for="publicationcode in publicationCodesOfCountry(country)"
+        :key="publicationcode"
       >
-        <u>{{ publicationNames[publicationCode] || publicationCode }}</u>
-        {{ ownedIssueNumbers[publicationCode] }}
+        <u>{{ publicationNames[publicationcode] || publicationcode }}</u>
+        {{ ownedIssueNumbers[publicationcode] }}
         <br />
       </div>
     </div>
@@ -56,7 +56,7 @@ const publicationCodes = $computed(
 );
 const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
-    ?.filter((publicationCode) => publicationCode.split("/")[0] === countrycode)
+    ?.filter((publicationcode) => publicationcode.split("/")[0] === countrycode)
     ?.sort((a, b) =>
       !publicationNames[b]
         ? 1
@@ -85,7 +85,7 @@ watch(
       const collectionWithPublicationcodes = collection!
         .map(({ country, magazine, issuenumber }) => ({
           publicationcode: `${country}/${magazine}`,
-          issuenumber,
+          issuenumber: issuenumber,
         }))
         .reduce(
           (acc, { publicationcode, issuenumber }) => ({

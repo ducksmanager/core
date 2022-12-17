@@ -35,7 +35,7 @@ alias: [/agrandir/suggestions]
           {{ text }}
         </b-form-select-option>
       </b-form-select>
-      <SuggestionList :countrycode="countryCode" :since-last-visit="false" />
+      <suggestion-list :countrycode="countryCode" :since-last-visit="false" />
     </div>
     <b-alert
       v-else-if="!watchedAuthorsWithNotation!.length"
@@ -72,6 +72,7 @@ import { BAlert, BFormSelect } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import SuggestionList from "~/components/SuggestionList.vue";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 
@@ -100,7 +101,8 @@ watch(
   () => watchedAuthors,
   async (newValue) => {
     if (newValue?.length) await coa().fetchCountryNames();
-  }
+  },
+  { immediate: true }
 );
 
 onMounted(async () => {

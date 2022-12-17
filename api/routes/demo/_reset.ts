@@ -49,10 +49,10 @@ export const resetDemo = async () => {
   await resetBookcaseOptions(demoUser);
 
   interface CsvIssue {
-    publicationCode: string;
+    publicationcode: string;
     condition: string;
     purchaseId: string;
-    issueNumber: string;
+    issuenumber: string;
   }
 
   const csvIssues: CsvIssue[] = parse(
@@ -60,14 +60,14 @@ export const resetDemo = async () => {
     { columns: true }
   );
   await prisma.$transaction(
-    csvIssues.map(({ publicationCode, condition, purchaseId, issueNumber }) => {
-      const [country, magazine] = publicationCode.split("/");
+    csvIssues.map(({ publicationcode, condition, purchaseId, issuenumber }) => {
+      const [country, magazine] = publicationcode.split("/");
       return prisma.issue.create({
         data: {
           userId: demoUser.id,
           country,
           magazine,
-          issueNumber,
+          issuenumber,
           condition: conditionToEnum(condition),
           purchaseId: parseInt(purchaseId),
           isOnSale: false,

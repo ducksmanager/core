@@ -7,8 +7,8 @@ interface BookcaseEdge {
   id: number;
   countryCode: string;
   magazineCode: string;
-  publicationCode: string;
-  issueNumber: string;
+  publicationcode: string;
+  issuenumber: string;
   issueNumberReference: string;
   edgeId: number;
   creationDate: Date;
@@ -16,7 +16,7 @@ interface BookcaseEdge {
 }
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
-  publicationCode: string;
+  publicationcode: string;
   issueCode: string;
   popularity: number | null;
 }
@@ -50,11 +50,11 @@ export const bookcase = defineStore("bookcase", {
       return (
         ((isSharedBookcase ? true : collection().popularIssuesInCollection) &&
           this.bookcase?.map((issue) => {
-            const publicationCode = `${issue.countryCode}/${issue.magazineCode}`;
-            const issueCode = `${publicationCode} ${issue.issueNumber}`;
+            const publicationcode = `${issue.countryCode}/${issue.magazineCode}`;
+            const issueCode = `${publicationcode} ${issue.issuenumber}`;
             return {
               ...issue,
-              publicationCode,
+              publicationcode,
               issueCode,
               popularity: isSharedBookcase
                 ? null

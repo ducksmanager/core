@@ -122,19 +122,19 @@
       </div>
       <div v-if="hasPublicationNames" role="tablist">
         <Accordion
-          v-for="(issues, publicationCode) in groupByPublicationCode(
+          v-for="(issues, publicationcode) in groupByPublicationCode(
             issuesImportable
           )"
-          :id="String(publicationCode).replace('/', '-')"
-          :key="String(publicationCode).replace('/', '-')"
-          :visible="expandedPublicationAccordion === publicationCode"
+          :id="String(publicationcode).replace('/', '-')"
+          :key="String(publicationcode).replace('/', '-')"
+          :visible="expandedPublicationAccordion === publicationcode"
           accordion-group-id="import-accordion"
-          @bv::toggle::collapse="expandedPublicationAccordion = publicationCode as string"
+          @bv::toggle::collapse="expandedPublicationAccordion = publicationcode as string"
         >
           <template #header>
             <Publication
-              :publicationcode="publicationCode"
-              :publicationname="publicationNames[publicationCode]"
+              :publicationcode="publicationcode"
+              :publicationname="publicationNames[publicationcode]"
             />
             x {{ issues.length }}
           </template>
@@ -175,18 +175,18 @@
           <template #content>
             <div
               v-for="(
-                publicationIssueNumbers, publicationCode
+                publicationIssueNumbers, publicationcode
               ) in groupByPublicationCode(issuesAlreadyInCollection)"
-              :key="publicationCode"
+              :key="publicationcode"
             >
               <div
-                v-for="issueNumber in publicationIssueNumbers"
-                :key="`${publicationCode}-${issueNumber}`"
+                v-for="issuenumber in publicationIssueNumbers"
+                :key="`${publicationcode}-${issuenumber}`"
               >
                 <Issue
-                  :publicationcode="publicationCode"
-                  :publicationname="publicationNames[publicationCode]"
-                  :issuenumber="issueNumber"
+                  :publicationcode="publicationcode"
+                  :publicationname="publicationNames[publicationcode]"
+                  :issuenumber="issuenumber"
                 />
               </div>
             </div>
@@ -214,16 +214,16 @@
           <template #content>
             <div
               v-for="(
-                publicationIssueNumbers, publicationCode
+                publicationIssueNumbers, publicationcode
               ) in groupByPublicationCode(issuesNotReferenced)"
-              :key="publicationCode"
+              :key="publicationcode"
             >
               <Issue
-                v-for="issueNumber in publicationIssueNumbers"
-                :key="`${publicationCode}-${issueNumber}`"
-                :publicationcode="publicationCode"
-                :publicationname="publicationCode"
-                :issuenumber="issueNumber"
+                v-for="issuenumber in publicationIssueNumbers"
+                :key="`${publicationcode}-${issuenumber}`"
+                :publicationcode="publicationcode"
+                :publicationname="publicationcode"
+                :issuenumber="issuenumber"
               />
             </div>
           </template>
@@ -359,11 +359,11 @@ const importIssues = async () => {
   const importableIssuesByPublicationCode = groupByPublicationCode(
     issuesImportable as inducks_issue[]
   );
-  for (const publicationCode in importableIssuesByPublicationCode) {
-    if (importableIssuesByPublicationCode.hasOwnProperty(publicationCode)) {
+  for (const publicationcode in importableIssuesByPublicationCode) {
+    if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await axios.post("/collection/issues", {
-        publicationCode,
-        issueNumbers: importableIssuesByPublicationCode[publicationCode],
+        publicationcode,
+        issueNumbers: importableIssuesByPublicationCode[publicationcode],
         condition: issueDefaultCondition,
         isOnSale: "do_not_change",
         purchaseId: "do_not_change",

@@ -55,13 +55,13 @@ alias: [/bibliotheque/options]
       @update:list="bookcaseStore.bookcaseOrder = bookcaseOrder"
     >
       <slick-item
-        v-for="(publicationCode, index) in bookcaseOrder"
-        :key="publicationCode"
+        v-for="(publicationcode, index) in bookcaseOrder"
+        :key="publicationcode"
         :index="index"
       >
         <Publication
-          :publicationcode="publicationCode"
-          :publicationname="publicationNames[publicationCode]"
+          :publicationcode="publicationcode"
+          :publicationname="publicationNames[publicationcode]"
         />
       </slick-item>
     </slick-list>
@@ -188,8 +188,8 @@ watch(
       await loadData();
       bookcaseOrder = bookcaseStore.bookcaseOrder;
       await coa().fetchPublicationNames(bookcaseOrder as string[]);
-      bookcaseOrder = (bookcaseOrder as string[]).filter((publicationCode) =>
-        Object.keys(publicationNames).includes(publicationCode)
+      bookcaseOrder = (bookcaseOrder as string[]).filter((publicationcode) =>
+        Object.keys(publicationNames).includes(publicationcode)
       );
       hasPublicationNames = true;
     }

@@ -8,7 +8,7 @@
     <b-form-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
-      name="publicationCode"
+      name="publicationcode"
       required
       :options="publicationNamesForCurrentCountry"
       @input="$emit('input', currentPublicationCode)"
@@ -70,12 +70,12 @@ const publicationNamesFullCountries = $computed(
 const publicationNamesForCurrentCountry = $computed(() =>
   publicationNamesFullCountries.includes(currentCountryCode || "")
     ? Object.keys(publicationNames)
-        .filter((publicationCode) =>
-          new RegExp(`^${currentCountryCode}/`).test(publicationCode)
+        .filter((publicationcode) =>
+          new RegExp(`^${currentCountryCode}/`).test(publicationcode)
         )
-        .map((publicationCode) => ({
-          text: publicationNames[publicationCode],
-          value: publicationCode,
+        .map((publicationcode) => ({
+          text: publicationNames[publicationcode],
+          value: publicationcode,
         }))
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2))
     : []

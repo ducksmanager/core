@@ -17,20 +17,20 @@ meta:
           {{ $t("Total") }}
         </td>
       </tr>
-      <template v-for="publicationCode of Object.keys(publicationNames)">
-        <tr v-for="line in lines" :key="`${publicationCode}-line${line}`">
+      <template v-for="publicationcode of Object.keys(publicationNames)">
+        <tr v-for="line in lines" :key="`${publicationcode}-line${line}`">
           <td v-if="line === 1" :rowspan="lines + 1" class="libelle_ligne">
             <img
-              :alt="publicationCode.split('/')[0]"
-              :src="`/images/flags/${publicationCode.split('/')[0]}.png`"
+              :alt="publicationcode.split('/')[0]"
+              :src="`/images/flags/${publicationcode.split('/')[0]}.png`"
             />
             <br />
-            {{ publicationCode.split("/")[1] }}
+            {{ publicationcode.split("/")[1] }}
             <br />
           </td>
           <td v-for="subrange in numbersPerRow" :key="subrange">
             <span
-              v-for="letter in issuesPerCell![publicationCode][
+              v-for="letter in issuesPerCell![publicationcode][
                 (line - 1) * numbersPerRow + subrange
               ]"
               :key="letter"
@@ -39,16 +39,16 @@ meta:
             >
           </td>
           <td v-if="line === 1" class="total_ligne" :rowspan="lines + 1">
-            {{ totalPerPublication![publicationCode] }}
+            {{ totalPerPublication![publicationcode] }}
           </td>
         </tr>
-        <tr v-for="fakeloop in 1" :key="`${publicationCode}-${fakeloop}`">
+        <tr v-for="fakeloop in 1" :key="`${publicationcode}-${fakeloop}`">
           <td
-            v-if="issuesPerCell[publicationCode]['non-numeric'].length"
+            v-if="issuesPerCell![publicationcode]['non-numeric'].length"
             :colspan="numbersPerRow"
           >
             Autres :
-            {{ issuesPerCell[publicationCode]["non-numeric"].join(", ") }}
+            {{ issuesPerCell![publicationcode]["non-numeric"].join(", ") }}
           </td>
         </tr>
       </template>
@@ -64,7 +64,7 @@ meta:
             </tr>
             <tr
               v-for="i of Object.keys(
-                Math.floor(letterToNumber(maxLetter) / 6) + 1
+                Math.floor(letterToNumber(maxLetter as string) / 6) + 1
               ).map((number) => Number(number))"
               :key="i"
             >
@@ -90,14 +90,14 @@ meta:
               </td>
             </tr>
             <tr
-              v-for="(publicationName, publicationCode) in publicationNames"
-              :key="publicationCode"
+              v-for="(publicationName, publicationcode) in publicationNames"
+              :key="publicationcode"
             >
               <td>
                 <Publication
-                  :publicationcode="publicationCode"
+                  :publicationcode="publicationcode"
                   :publicationname="`${
-                    (publicationCode as String).split('/')[1]
+                    (publicationcode as String).split('/')[1]
                   } : ${publicationName}`"
                 />
               </td>
@@ -188,27 +188,27 @@ watch(
     }
     const addIssueToCell = (
       acc: { [publicationcode: string]: { [mod: string | number]: string[] } },
-      publicationCode: string,
-      issueNumber: string,
+      publicationcode: string,
+      issuenumber: string,
       isDoubleIssueStart = false,
       isDoubleIssueEnd = false
     ) => {
       let mod, number;
-      if (Number.isNaN(issueNumber)) {
+      if (Number.isNaN(issuenumber)) {
         mod = "non-numeric";
-        number = issueNumber;
+        number = issuenumber;
       } else {
-        mod = parseInt(issueNumber) % 100;
-        number = (parseInt(issueNumber) - mod) / 100;
+        mod = parseInt(issuenumber) % 100;
+        number = (parseInt(issuenumber) - mod) / 100;
       }
-      if (!acc[publicationCode]) {
-        acc[publicationCode] = {
+      if (!acc[publicationcode]) {
+        acc[publicationcode] = {
           "non-numeric": [],
         };
       }
-      if (!acc[publicationCode][mod]) acc[publicationCode][mod] = [];
+      if (!acc[publicationcode][mod]) acc[publicationcode][mod] = [];
 
-      acc[publicationCode][mod].push(
+      acc[publicationcode][mod].push(
         [
           isDoubleIssueEnd ? "<" : "",
           typeof number === "string" ? number : numberToLetter(number),
@@ -217,18 +217,18 @@ watch(
       );
     };
     issuesPerCell = newCollectionValue.reduce((acc, issue) => {
-      const publicationCode = `${issue.country}/${issue.magazine}`;
-      const issueNumber = issue.issuenumber;
-      const doubleNumberMatch = issueNumber.match(doubleNumberRegex);
+      const publicationcode = `${issue.country}/${issue.magazine}`;
+      const issuenumber = issue.issuenumber;
+      const doubleNumberMatch = issuenumber.match(doubleNumberRegex);
       if (
         doubleNumberMatch &&
         parseInt(doubleNumberMatch[2]) === parseInt(doubleNumberMatch[1]) + 1
       ) {
         const [, part1, issue1, issue2] = doubleNumberMatch;
-        addIssueToCell(acc, publicationCode, `${part1}${issue1}`, true);
-        addIssueToCell(acc, publicationCode, `${part1}${issue2}`, false, true);
+        addIssueToCell(acc, publicationcode, `${part1}${issue1}`, true);
+        addIssueToCell(acc, publicationcode, `${part1}${issue2}`, false, true);
       } else {
-        addIssueToCell(acc, publicationCode, issueNumber);
+        addIssueToCell(acc, publicationcode, issuenumber);
       }
       return acc;
     }, {});

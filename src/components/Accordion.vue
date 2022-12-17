@@ -37,6 +37,10 @@ defineProps<{
 <style scoped lang="scss">
 :deep(.card-header) {
   cursor: pointer;
+
+  .collapsed {
+    display: flex;
+  }
 }
 :deep(a) {
   color: grey;

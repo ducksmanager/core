@@ -3,7 +3,7 @@ alias: [/auteurs]
 </route>
 
 <template>
-  <div v-if="watchedAuthors">
+  <div v-if="watchedAuthors && chartData">
     <BAlert v-if="!watchedAuthors.length" show variant="warning">
       {{
         $t(

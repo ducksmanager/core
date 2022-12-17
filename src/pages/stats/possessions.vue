@@ -75,9 +75,9 @@ const { t: $t } = useI18n(),
     }
     let possessedIssues = Object.values(totalPerPublicationUniqueIssueNumbers);
     let missingIssues = Object.keys(totalPerPublicationUniqueIssueNumbers).map(
-      (publicationCode) =>
-        issueCounts[publicationCode] -
-        totalPerPublicationUniqueIssueNumbers[publicationCode]
+      (publicationcode) =>
+        issueCounts[publicationcode] -
+        totalPerPublicationUniqueIssueNumbers[publicationcode]
     );
     if (unitTypeCurrent === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>
