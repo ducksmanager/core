@@ -3,8 +3,8 @@
     v-if="embedded"
     :id="id"
     :src="src"
-    :publication-code="publicationcode"
-    :issue-number="issuenumber"
+    :publicationcode="publicationcode"
+    :issuenumber="issuenumber"
     :sprite-path="spritePath"
     :load="load"
     :invisible="invisible"
@@ -28,8 +28,8 @@
     <EdgeContents
       :id="id"
       :src="src"
-      :publication-code="publicationcode"
-      :issue-number="issuenumber"
+      :publicationcode="publicationcode"
+      :issuenumber="issuenumber"
       :sprite-path="spritePath"
       :load="load"
       :invisible="invisible"
@@ -49,7 +49,7 @@ const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
 const {
   creationDate = null,
   issuenumber,
-  issueNumberReference = null,
+  issuenumberReference = null,
   publicationcode,
   spritePath = null,
   popularity = null,
@@ -60,7 +60,7 @@ const {
   id: string;
   publicationcode: string;
   issuenumber: string;
-  issueNumberReference?: string;
+  issuenumberReference?: string;
   creationDate?: string;
   popularity?: number;
   spritePath?: string;
@@ -78,7 +78,7 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
     spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
       : `${EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
-          issueNumberReference || issuenumber
+          issuenumberReference || issuenumber
         }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`
   ),
   ignoreSprite = $ref(false),

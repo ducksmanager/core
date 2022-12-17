@@ -125,8 +125,8 @@
       </div>
       <Book
         v-if="currentEdgeOpened"
-        :publication-code="currentEdgeOpened.publicationcode"
-        :issue-number="currentEdgeOpened.issuenumber"
+        :publicationcode="currentEdgeOpened.publicationcode"
+        :issuenumber="currentEdgeOpened.issuenumber"
         @close-book="currentEdgeOpened = null"
       />
       <Bookcase

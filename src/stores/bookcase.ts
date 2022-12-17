@@ -9,7 +9,7 @@ interface BookcaseEdge {
   magazineCode: string;
   publicationcode: string;
   issuenumber: string;
-  issueNumberReference: string;
+  issuenumberReference: string;
   edgeId: number;
   creationDate: Date;
   sprites: string;

@@ -38,7 +38,7 @@ export const get: Handler = async (req, res) => {
                    numeros.Magazine                                          AS magazineCode,
                    CONCAT(numeros.Pays,'/',numeros.Magazine)                 AS publicationcode,
                    numeros.Numero                                            AS issuenumber,
-                   IFNULL(reference.NumeroReference, numeros.Numero_nospace) AS issueNumberReference,
+                   IFNULL(reference.NumeroReference, numeros.Numero_nospace) AS issuenumberReference,
                    tp.ID                                                     AS edgeId,
                    tp.DateAjout                                              AS creationDate,
                    IF(tp.ID IS NULL, '', GROUP_CONCAT(

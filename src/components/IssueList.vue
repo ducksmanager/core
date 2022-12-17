@@ -80,8 +80,8 @@
         </b-alert>
         <Book
           v-if="currentIssueOpened"
-          :publication-code="currentIssueOpened.publicationcode"
-          :issue-number="currentIssueOpened.issuenumber"
+          :publicationcode="currentIssueOpened.publicationcode"
+          :issuenumber="currentIssueOpened.issuenumber"
           @close-book="currentIssueOpened = null"
         />
         <div v-contextmenu:contextmenu>
@@ -109,8 +109,8 @@
           >
             <span>
               <IssueDetailsPopover
-                :publication-code="publicationcode"
-                :issue-number="issuenumber"
+                :publicationcode="publicationcode"
+                :issuenumber="issuenumber"
                 @click="openBook(issuenumber)"
               />
 

@@ -7,21 +7,21 @@
     />
     <b-form-select
       v-show="currentCountryCode"
-      v-model="currentPublicationCode"
+      v-model="currentPublicationcode"
       name="publicationcode"
       required
       :options="publicationNamesForCurrentCountry"
-      @input="$emit('input', currentPublicationCode)"
+      @input="$emit('input', currentPublicationcode)"
     />
     <router-link
       v-if="!noButton"
       v-slot="{ href, navigate }"
-      :to="`/collection/show/${currentPublicationCode}`"
+      :to="`/collection/show/${currentPublicationcode}`"
       custom
     >
       <b-button
         :href="href"
-        :disabled="!currentPublicationCode"
+        :disabled="!currentPublicationcode"
         variant="secondary"
         @click="navigate"
       >
@@ -38,18 +38,18 @@ import { onMounted, watch } from "vue";
 import { coa } from "~/stores/coa";
 
 const {
-  initialCountryCode = null,
-  initialPublicationCode = null,
+  initialCountrycode = null,
+  initialPublicationcode = null,
   noButton = false,
 } = defineProps<{
   noButton?: boolean;
-  initialCountryCode?: string;
-  initialPublicationCode?: string;
+  initialCountrycode?: string;
+  initialPublicationcode?: string;
 }>();
 defineEmits<{ (e: "input", publicationcode: string): void }>();
 
-const currentCountryCode = $ref(initialCountryCode);
-let currentPublicationCode = $ref(initialPublicationCode);
+const currentCountryCode = $ref(initialCountrycode);
+let currentPublicationcode = $ref(initialPublicationcode);
 const coaStore = coa();
 const countryNames = $computed(
   () =>
@@ -86,7 +86,7 @@ watch(
   (newValue) => {
     if (newValue) {
       coaStore.fetchPublicationNamesFromCountry(newValue);
-      currentPublicationCode = null;
+      currentPublicationcode = null;
     }
   },
   {

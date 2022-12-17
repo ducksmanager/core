@@ -6,12 +6,12 @@
         <template v-if="isEdit">
           <PublicationSelect
             no-button
-            :initial-country-code="
+            :initial-countrycode="
               editSubscription.publicationcode
                 ? editSubscription.publicationcode.split('/')[0]
                 : null
             "
-            :initial-publication-code="editSubscription.publicationcode"
+            :initial-publicationcode="editSubscription.publicationcode"
             @input="editSubscription.publicationcode = $event"
           />
         </template>

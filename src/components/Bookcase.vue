@@ -10,8 +10,8 @@
       v-for="(edge, edgeId) in edgesToLoad"
       :id="`edge-${edgeId}`"
       :key="`edge-${edgeId}`"
-      :publication-code="edge.publicationcode"
-      :issue-number="edge.issuenumber"
+      :publicationcode="edge.publicationcode"
+      :issuenumber="edge.issuenumber"
       existing
       load
       embedded
@@ -31,9 +31,9 @@
       :key="`edge-${edgeId}`"
       :invisible="currentEdgeOpened === edge"
       :highlighted="currentEdgeHighlighted === edge.id"
-      :publication-code="edge.publicationcode"
-      :issue-number="edge.issuenumber"
-      :issue-number-reference="edge.issueNumberReference"
+      :publicationcode="edge.publicationcode"
+      :issuenumber="edge.issuenumber"
+      :issuenumber-reference="edge.issuenumberReference"
       :creation-date="edge.creationDate"
       :popularity="edge.popularity"
       :existing="!!edge.edgeId"
@@ -59,8 +59,8 @@ const {
   edgesUsingSprites = {},
 } = defineProps<{
   embedded?: boolean;
-  bookcaseTextures: { bookshelf: string };
-  currentEdgeHighlighted?: string;
+  bookcaseTextures: { bookshelf: string; bookcase: string };
+  currentEdgeHighlighted?: number;
   currentEdgeOpened?: BookcaseEdgeWithPopularity;
   edgesUsingSprites?: { [edgeId: number]: string };
   sortedBookcase: BookcaseEdgeWithPopularity[] | null;
