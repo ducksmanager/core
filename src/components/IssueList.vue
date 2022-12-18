@@ -131,10 +131,13 @@
               />
               <div class="issue-copies">
                 <div
-                  v-for="(
-                    { condition: copyCondition, isToRead, purchaseId, id },
-                    copyIndex
-                  ) in userCopies"
+                  v-for="{
+                    condition: copyCondition,
+                    isToRead,
+                    purchaseId,
+                    id,
+                    copyIndex,
+                  } in userCopies"
                   :key="`${issuenumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
@@ -277,7 +280,7 @@ type simpleIssue = {
   key: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {
-  userCopies: issue[];
+  userCopies: (issue & { copyIndex: number })[];
 };
 
 const {
@@ -445,8 +448,9 @@ const deletePublicationIssues = async (
     publicationcode,
     issueNumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
     condition:
-      conditions.find(({ value }) => value === "missing")?.dbValue ||
-      "indefini",
+      conditions
+        .find(({ value }) => value === "missing")
+        ?.dbValue?.toString() || "indefini",
     isToRead: false,
     isOnSale: false,
     purchaseId: null,
@@ -469,7 +473,9 @@ const loadIssues = async () => {
       .map((issue) => ({
         ...issue,
         conditionString: (
-          conditions.find(({ dbValue }) => dbValue === issue.condition) || {
+          conditions.find(
+            ({ dbValue }) => dbValue?.toString() === issue.condition
+          ) || {
             value: "possessed",
           }
         ).value,
@@ -481,10 +487,15 @@ const loadIssues = async () => {
     if (groupUserCopies) {
       issues = coaIssues.map((issue) => ({
         ...issue,
-        userCopies: userIssuesForPublication!.filter(
-          ({ issuenumber: userIssueNumber }) =>
-            userIssueNumber === issue.issuenumber
-        ),
+        userCopies: userIssuesForPublication!
+          .filter(
+            ({ issuenumber: userIssueNumber }) =>
+              userIssueNumber === issue.issuenumber
+          )
+          .map((issue, copyIndex) => ({
+            ...issue,
+            copyIndex,
+          })),
         key: issue.issuenumber,
       }));
     } else {
@@ -507,7 +518,7 @@ const loadIssues = async () => {
               .map((issue) => ({
                 ...issue,
                 key: `${issue.issuenumber}-id-${issue.id}`,
-                userCopies: [issue],
+                userCopies: [{ ...issue, copyIndex: 0 }],
               })),
           ],
           [] as issueWithPublicationCodeAndCopies[]

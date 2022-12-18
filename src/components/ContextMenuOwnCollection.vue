@@ -68,7 +68,7 @@
             :hide-on-click="false"
             class="clickable"
             :class="{ selected: copy.condition === value }"
-            @click="copy.condition = value as 'do_not_change' | issue_condition | 'missing'"
+            @click="copy.condition = value as string"
           >
             <template
               v-if="isSingleIssueSelected && value === 'do_not_change'"
@@ -354,7 +354,6 @@ import {
   IssueWithPublicationcode,
 } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
-import { issue_condition } from "~prisma_clients/client_dm";
 import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
 
 const { copies, publicationcode, selectedIssuesById } = defineProps<{
@@ -366,7 +365,7 @@ const { copies, publicationcode, selectedIssuesById } = defineProps<{
 const emit = defineEmits<{
   (e: "clear-selection"): void;
 }>();
-const { conditions } = condition();
+const { conditions, issue_condition } = condition();
 
 const defaultCopyState: CopyState = {
   condition: "indefini",
@@ -495,12 +494,12 @@ const receivedRequests = $computed(() =>
   )
 );
 
-const convertConditionToDbValue = (condition: string): issue_condition | null =>
+const convertConditionToDbValue = (condition: string): string | null =>
   (
     conditions.find(({ value }) => value === condition) || {
       dbValue: issue_condition.indefini,
     }
-  ).dbValue as issue_condition | null;
+  ).dbValue?.toString() || null;
 const updateSelectedIssues = async (force = false) => {
   if (!force && String(editingCopies[0].isOnSale).indexOf("transfer-") === 0) {
     const transferToUser = (editingCopies[0].isOnSale as string).split(

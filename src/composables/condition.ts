@@ -1,19 +1,17 @@
 import { useI18n } from "vue-i18n";
 
-const issue_condition = {
-  mauvais: "mauvais",
-  moyen: "moyen",
-  bon: "bon",
-  indefini: "indefini",
-};
-
-type issue_condition = typeof issue_condition[keyof typeof issue_condition];
+enum issue_condition {
+  mauvais,
+  moyen,
+  bon,
+  indefini,
+}
 
 export default function () {
   const { t: $t } = useI18n();
   type Condition = {
     value: string;
-    dbValue: issue_condition | null;
+    dbValue: typeof issue_condition[keyof typeof issue_condition] | null;
     color: string;
     text: string;
     label: string;
@@ -30,7 +28,7 @@ export default function () {
     },
     {
       value: "possessed",
-      dbValue: "indefini",
+      dbValue: issue_condition.indefini,
       color: "#808080",
       text: $t("Indéfini"),
       label: $t("En état indéfini"),
@@ -38,7 +36,7 @@ export default function () {
     },
     {
       value: "bad",
-      dbValue: "mauvais",
+      dbValue: issue_condition.mauvais,
       color: "red",
       text: $t("Mauvais"),
       label: $t("En mauvais état"),
@@ -46,7 +44,7 @@ export default function () {
     },
     {
       value: "notsogood",
-      dbValue: "moyen",
+      dbValue: issue_condition.moyen,
       color: "orange",
       text: $t("Moyen"),
       label: $t("En moyen état"),
@@ -54,7 +52,7 @@ export default function () {
     },
     {
       value: "good",
-      dbValue: "bon",
+      dbValue: issue_condition.bon,
       color: "#2CA77B",
       text: $t("Bon"),
       label: $t("En bon état"),
@@ -62,10 +60,12 @@ export default function () {
     },
   ];
   return {
+    issue_condition,
     conditions,
     getConditionLabel: (givenDbValue: string) =>
       conditions.find(
-        ({ dbValue }) => givenDbValue.toUpperCase() === dbValue?.toUpperCase()
+        ({ dbValue }) =>
+          givenDbValue.toUpperCase() === dbValue?.toString().toUpperCase()
       )?.label || conditions.find(({ dbValue }) => dbValue === null)!.label,
   };
 }
