@@ -1,7 +1,6 @@
 import bodyParser from "body-parser";
 import { Handler } from "express";
 
-import BookstoreSuggested from "~/emails/bookstore-suggested";
 import { bookstore, PrismaClient } from "~prisma_clients/client_dm";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 

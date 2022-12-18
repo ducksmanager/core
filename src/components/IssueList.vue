@@ -86,9 +86,13 @@
         />
         <div v-contextmenu:contextmenu>
           <div
-            v-for="(
-              { issuenumber, title, userCopies, key }, idx
-            ) in filteredIssues"
+            v-for="{
+              issuenumber,
+              title,
+              userCopies,
+              key,
+              idx,
+            } in filteredIssues"
             :id="key"
             :key="key"
             class="issue"
@@ -384,11 +388,13 @@ const publicationName = $computed(() => publicationNames[publicationcode]);
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const filteredIssues = $computed(
   () =>
-    issues?.filter(
-      ({ userCopies }) =>
-        (filter.possessed && userCopies!.length) ||
-        (filter.missing && !userCopies!.length)
-    ) || []
+    issues
+      ?.filter(
+        ({ userCopies }) =>
+          (filter.possessed && userCopies!.length) ||
+          (filter.missing && !userCopies!.length)
+      )
+      ?.map((issue, idx) => ({ ...issue, idx })) || []
 );
 const selectedIssuesCopies = $computed(() =>
   userIssuesForPublication!.filter(
