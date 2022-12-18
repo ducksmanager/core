@@ -37,16 +37,17 @@ export const get: Handler = async (req, res) =>
 export const put = [
   parseForm,
   (async (req, res) => {
-    const { bookstore, newBookstoreComment: comment } = req.body;
+    const { bookstore }: { bookstore: SimpleBookstore } = req.body;
     const {
       name,
       address,
       coordX: coordXParam,
       coordY: coordYParam,
+      comments,
     } = bookstore;
     const id = parseInt(req.body.id);
-    const coordX = parseFloat(coordXParam);
-    const coordY = parseFloat(coordYParam);
+    const coordX = coordXParam;
+    const coordY = coordYParam;
     if (!id && !name) {
       res.writeHead(400);
       res.end("No bookstore ID or name was provided");
@@ -80,15 +81,15 @@ export const put = [
           },
         })
       : null;
-    await prisma.bookstoreComment.create({
+    const createdComment = await prisma.bookstoreComment.create({
       data: {
         bookstoreId: dbBookstore.id,
         isActive: false,
         userId: user?.id,
-        comment,
+        comment: comments[comments.length - 1].comment,
       },
     });
 
-    new BookstoreSuggested({ user });
+    return res.json(createdComment);
   }) as Handler,
 ];

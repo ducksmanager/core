@@ -75,11 +75,11 @@ const labels = $computed(
         (acc, [publicationcode]) => [
           ...acc,
           publicationNames[publicationcode] ||
-            `${$t("Autres")} (${smallCountPublications.length} ${$t(
+            `${$t("Autres")} (${smallCountPublications!.length} ${$t(
               "Publications"
             ).toLowerCase()})`,
         ],
-        [] as { [publicationcode: string]: string[] }
+        [] as string[]
       )
 );
 const values = $computed(() =>
@@ -104,8 +104,8 @@ const randomColor = () =>
     Math.floor(Math.random() * 255),
   ].join(",")})`;
 const sortByCount = (
-  [publicationCode1]: [publicationCode1: string],
-  [publicationCode2]: [publicationCode2: string]
+  [publicationCode1]: [publicationCode1: string, _idx: number],
+  [publicationCode2]: [publicationCode2: string, _idx2: number]
 ) =>
   Math.sign(
     totalPerPublicationGroupSmallCounts[publicationCode1] -
@@ -153,17 +153,18 @@ watch(
       plugins: {
         tooltip: {
           callbacks: {
-            label: (tooltipItem: { dataset: { data: [] }; parsed: number }) => {
-              const { dataset, parsed: currentValue } = tooltipItem;
-              const total = dataset.data.reduce((acc, value) => acc + value, 0);
-              const percentage = parseFloat(
-                ((currentValue / total) * 100).toFixed(1)
-              );
+            label: ({ dataset: { data }, parsed: currentValue }) => {
+              const total = data
+                .map((value) => value as number)
+                .reduce((acc, value) => acc + value, 0);
+              const percentage = total
+                ? parseFloat(((currentValue / total) * 100).toFixed(1))
+                : 0;
               return `${currentValue} (${percentage}%)`;
             },
 
-            title: ([tooltipItem]: [tooltipItem: { dataIndex: number }]) =>
-              chartData!.labels![tooltipItem.dataIndex],
+            title: (tooltipItems) =>
+              chartData!.labels![tooltipItems[0].dataIndex] as string,
           },
         },
       },

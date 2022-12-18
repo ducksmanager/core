@@ -252,13 +252,16 @@
 
 <script setup lang="ts">
 import { BIconBookmarkCheck } from "bootstrap-icons-vue";
-import { BAlert } from "bootstrap-vue-3";
+import { BAlert, BButton } from "bootstrap-vue-3";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/condition";
 import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
+import {
+  collection as collectionStore,
+  IssueWithPublicationcode,
+} from "~/stores/collection";
 import { issue } from "~prisma_clients/client_dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
@@ -268,10 +271,6 @@ type simpleIssue = {
   issuenumber: string;
   title?: string;
   key: string;
-};
-type issueWithPublicationCode = issue & {
-  publicationcode: string;
-  conditionString: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {
   userCopies: issue[];
@@ -291,7 +290,7 @@ const {
   duplicatesOnly?: boolean;
   readStackOnly?: boolean;
   onSaleStackOnly?: boolean;
-  customIssues?: issueWithPublicationCode[];
+  customIssues?: IssueWithPublicationcode[];
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: string;
@@ -332,10 +331,10 @@ const filter = $ref({
 const contextmenu = $ref(null as any | null);
 let issues = $shallowRef(null as issueWithPublicationCodeAndCopies[] | null);
 let userIssuesForPublication = $shallowRef(
-  null as issueWithPublicationCode[] | null
+  null as IssueWithPublicationcode[] | null
 );
 let userIssuesNotFoundForPublication = $shallowRef(
-  [] as issueWithPublicationCode[] | null
+  [] as IssueWithPublicationcode[] | null
 );
 let selected = $shallowRef([] as string[]);
 const filteredUserCopies = $computed(() =>
@@ -433,7 +432,7 @@ const updateSelected = () => {
   preselected = [];
 };
 const deletePublicationIssues = async (
-  issuesToDelete: issueWithPublicationCode[]
+  issuesToDelete: IssueWithPublicationcode[]
 ) => {
   contextmenu.hide();
   await collectionStore().updateCollection({

@@ -19,7 +19,7 @@ import { StoryDetail } from "~types/StoryDetail";
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
 
-type IssueWithPublicationcode = issue & {
+export type IssueWithPublicationcode = issue & {
   publicationcode: string;
 };
 

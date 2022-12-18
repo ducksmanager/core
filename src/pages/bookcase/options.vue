@@ -9,15 +9,17 @@ alias: [/bibliotheque/options]
   <div v-else class="bookcase-options">
     <div v-for="(textureText, textureType) in textureTypes" :key="textureType">
       <h5>{{ textureText }}</h5>
-      <b-dropdown v-model="bookcaseOptions.textures[textureType]">
+      <b-dropdown
+        v-model="bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']"
+      >
         <template #button-content>
           <div
             class="selected"
             :style="{
-              backgroundImage: `url('/images/textures/${bookcaseOptions.textures[textureType]}.jpg'`,
+              backgroundImage: `url('/images/textures/${bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']}.jpg'`,
             }"
           >
-            {{ textureWithoutSuperType(bookcaseOptions.textures[textureType]) }}
+            {{ textureWithoutSuperType(bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']) }}
           </div>
         </template>
         <b-dropdown-item
@@ -26,7 +28,7 @@ alias: [/bibliotheque/options]
           :style="{
             backgroundImage: `url('/images/textures/${texture}.jpg'`,
           }"
-          @click="bookcaseOptions.textures[textureType] = texture"
+          @click="bookcaseOptions!.textures[textureType as 'bookshelf'|'bookcase'] = texture"
         >
           {{ textureWithoutSuperType(texture) }}
         </b-dropdown-item>
@@ -151,7 +153,7 @@ const textureTypes = $computed(
     ({
       bookcase: $t("Sous-texture"),
       bookshelf: $t("Sous-texture de l'étagère"),
-    } as { [type: string]: string })
+    } as { bookcase: string; bookshelf: string })
 );
 
 const loadData = async () => {

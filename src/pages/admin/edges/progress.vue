@@ -59,10 +59,10 @@ meta:
             v-if="showEdgesForPublication.includes(publicationcode as string)"
             :bookcase-textures="bookcaseTextures"
             :sorted-bookcase="
-              inducksIssueNumbersNoSpace[publicationcode]!.map(
+              (inducksIssueNumbersNoSpace[publicationcode] as string[]).map(
                 (issuenumber: string) => ({
                   id: `${(publicationcode as string).replace('/', '-')} ${issuenumber}`,
-                  edgeId: issuenumbers!.includes(issuenumber) ? 1 : null,
+                  edgeId: (issuenumbers as string[])!.includes(issuenumber as string) ? 1 : null,
                   publicationcode,
                   issuenumber,
                 })
@@ -77,7 +77,7 @@ meta:
             :key="`${publicationcode as string}-${inducksIssueNumber}`"
           >
             <span
-              v-if="!issuenumbers?.includes(inducksIssueNumber)"
+              v-if="!(issuenumbers as string[])?.includes(inducksIssueNumber as string)"
               class="num bordered"
               :title="(inducksIssueNumber as string)"
               >&nbsp;</span
@@ -85,7 +85,7 @@ meta:
             <span
               v-else-if="!show"
               class="num bordered available"
-              :title="inducksIssueNumber"
+              :title="(inducksIssueNumber as string)"
               @click="open(publicationcode as string, inducksIssueNumber as string)"
               >&nbsp;</span
             >
@@ -98,7 +98,7 @@ meta:
         <div v-else>
           Certaines tranches de cette publication sont prêtes mais la
           publication n'existe plus sur Inducks :
-          {{ issuenumbers!.join(", ") }}
+          {{ (issuenumbers as string[])!.join(", ") }}
         </div>
       </div>
       <br /><br />

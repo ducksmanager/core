@@ -17,6 +17,7 @@ export default function () {
     color: string;
     text: string;
     label: string;
+    labelContextMenu: string;
   };
   const conditions: Condition[] = [
     {
@@ -25,6 +26,7 @@ export default function () {
       color: "black",
       text: $t("Non possédé"),
       label: $t("Non possédé"),
+      labelContextMenu: $t("Marquer comme non possédé"),
     },
     {
       value: "possessed",
@@ -32,6 +34,7 @@ export default function () {
       color: "#808080",
       text: $t("Indéfini"),
       label: $t("En état indéfini"),
+      labelContextMenu: $t("Marquer comme possédé(s)"),
     },
     {
       value: "bad",
@@ -39,6 +42,7 @@ export default function () {
       color: "red",
       text: $t("Mauvais"),
       label: $t("En mauvais état"),
+      labelContextMenu: $t("Marquer comme en mauvais état"),
     },
     {
       value: "notsogood",
@@ -46,6 +50,7 @@ export default function () {
       color: "orange",
       text: $t("Moyen"),
       label: $t("En moyen état"),
+      labelContextMenu: $t("Marquer comme en état moyen"),
     },
     {
       value: "good",
@@ -53,6 +58,7 @@ export default function () {
       color: "#2CA77B",
       text: $t("Bon"),
       label: $t("En bon état"),
+      labelContextMenu: $t("Marquer comme en bon état"),
     },
   ];
   return {

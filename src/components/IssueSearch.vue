@@ -8,7 +8,7 @@
         <ul class="navbar-nav">
           <b-dropdown
             class="dropdown search-type"
-            :text="searchContexts[searchContext]"
+            :text="searchContexts[searchContext as 'story' | 'storycode']"
           >
             <b-dropdown-item
               v-for="(
@@ -16,7 +16,7 @@
               ) in searchContextsWithoutCurrent"
               :key="alternativeSearchContext"
               @click="
-                searchContext = alternativeSearchContext;
+                searchContext = alternativeSearchContext as 'story' | 'storycode';
                 search = '';
               "
             >
@@ -38,13 +38,13 @@
             <option v-if="!searchResults.results.length">
               {{ $t("Aucun résultat.") }}
             </option>
-            <option
-              v-for="searchResult in searchResults.results"
-              :key="searchResult!.storycode"
-              class="d-flex align-items-center"
-              @click="selectSearchResult(searchResult!)"
-            >
-              <template v-if="!isSearchByCode">
+            <template v-if="!isSearchByCode">
+              <option
+                v-for="searchResult in (searchResults.results as typeof issueResults.results)"
+                :key="searchResult!.storycode"
+                class="d-flex align-items-center"
+                @click="selectSearchResult(searchResult!)"
+              >
                 <Condition
                   v-if="searchResult!.collectionIssue"
                   :value="
@@ -54,17 +54,25 @@
                     )?.value || null
                   "
                 />&nbsp;{{ searchResult!.title }}
-              </template>
-              <Issue
-                v-else-if="publicationNames[searchResult!.publicationcode]"
-                :publicationcode="searchResult!.publicationcode"
-                :publicationname="
-                  publicationNames[searchResult!.publicationcode]
-                "
-                :issuenumber="searchResult.issuenumber"
-                :clickable="withStoryLink"
-              />
-            </option>
+              </option>
+            </template>
+            <template v-else>
+              <option
+                v-for="searchResult in (searchResults.results as typeof storyResults.results)"
+                :key="searchResult!.storycode"
+                class="d-flex align-items-center"
+                @click="selectSearchResult(searchResult!)"
+              >
+                <Issue
+                  v-if="publicationNames[searchResult.publicationcode]"
+                  :publicationcode="searchResult.publicationcode"
+                  :publicationname="
+                    publicationNames[searchResult.publicationcode]
+                  "
+                  :issuenumber="searchResult.issuenumber"
+                  :clickable="withStoryLink"
+                /></option
+            ></template>
           </datalist>
         </ul>
       </div>
@@ -80,7 +88,10 @@ import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/condition";
 import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
+import {
+  collection as collectionStore,
+  IssueWithPublicationcode,
+} from "~/stores/collection";
 import { simple_issue } from "~types/SimpleIssue";
 import { simple_story } from "~types/SimpleStory";
 
@@ -102,7 +113,14 @@ const { conditions } = condition();
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
 let search = $ref("" as string);
-let storyResults = $ref({} as { results: simple_story[]; hasMore: boolean });
+let storyResults = $ref(
+  {} as {
+    results: (simple_story & {
+      collectionIssue: IssueWithPublicationcode | null;
+    })[];
+    hasMore: boolean;
+  }
+);
 let issueResults = $ref({} as { results: simple_issue[] });
 let searchContext = $ref("story" as "story" | "storycode");
 
@@ -117,17 +135,19 @@ const isInCollection = (issue: simple_issue) =>
 const searchContexts = {
   story: $t("titre d'histoire"),
   storycode: $t("code histoire"),
-} as { [contextKey: string]: string };
-const searchContextsWithoutCurrent = $computed(() =>
-  Object.keys(searchContexts)
-    .filter((currentSearchContext) => currentSearchContext !== searchContext)
-    .reduce(
-      (acc, currentSearchContext) => ({
-        ...acc,
-        [currentSearchContext]: searchContexts[currentSearchContext],
-      }),
-      {}
-    )
+} as { story: string; storycode: string };
+const searchContextsWithoutCurrent = $computed(
+  (): { [searchContext: string]: { [key: string]: string } } =>
+    Object.keys(searchContexts)
+      .filter((currentSearchContext) => currentSearchContext !== searchContext)
+      .reduce(
+        (acc, currentSearchContext) => ({
+          ...acc,
+          [currentSearchContext]:
+            searchContexts[currentSearchContext as "story" | "storycode"],
+        }),
+        {}
+      )
 );
 const isSearchByCode = $computed(() => searchContext === "storycode");
 const searchResults = $computed(() =>
@@ -168,18 +188,21 @@ const runSearch = async (value: string) => {
       ).data as { results: simple_story[]; hasMore: boolean };
       storyResults.results = data.results.map((story) => ({
         ...story,
-        collectionIssue: collectionStore().collection!.find(
-          ({
-            publicationcode: collectionPublicationCode,
-            issuenumber: collectionIssueNumber,
-          }) =>
-            story
-              .issues!.map(
-                ({ publicationcode, issuenumber }) =>
-                  `${publicationcode}-${issuenumber}`
-              )
-              .includes(`${collectionPublicationCode}-${collectionIssueNumber}`)
-        ),
+        collectionIssue:
+          collectionStore().collection!.find(
+            ({
+              publicationcode: collectionPublicationCode,
+              issuenumber: collectionIssueNumber,
+            }) =>
+              story
+                .issues!.map(
+                  ({ publicationcode, issuenumber }) =>
+                    `${publicationcode}-${issuenumber}`
+                )
+                .includes(
+                  `${collectionPublicationCode}-${collectionIssueNumber}`
+                )
+          ) || null,
       }));
     }
   } finally {

@@ -39,7 +39,9 @@ alias: [/bouquineries]
                     userId,
                     creationDate,
                     comment,
-                  } in currentBookstore.comments"
+                  } in currentBookstore.comments.filter(
+                    ({ creationDate }) => creationDate
+                  )"
                   :key="`bookstore-${currentBookstore.id}-comment-${creationDate}`"
                   class="mb-2"
                 >
@@ -67,7 +69,11 @@ alias: [/bouquineries]
                   @submit.prevent="suggestComment(currentBookstore)"
                 >
                   <b-form-textarea
-                    v-model="currentBookstore.comment"
+                    v-model="
+                      currentBookstore.comments[
+                        currentBookstore.comments.length - 1
+                      ].comment
+                    "
                     required
                     cols="41"
                     rows="5"
@@ -85,12 +91,12 @@ alias: [/bouquineries]
                     {{ $t("Annuler") }}
                   </b-button>
                 </form>
-                <a
+                <b-button
                   v-else
-                  href="javascript:void(0)"
-                  @click="existingBookstore = currentBookstore"
-                  >{{ $t("Ajouter un commentaire") }}</a
+                  @click="initCommentOnExistingBookstore(currentBookstore)"
                 >
+                  {{ $t("Ajouter un commentaire") }}
+                </b-button>
               </div>
             </div>
           </mapbox-popup>
@@ -143,7 +149,7 @@ alias: [/bouquineries]
 
       <div id="address" class="mb-2" />
       <b-form-textarea
-        v-model="newBookstoreComment"
+        v-model="newBookstore.comments[0].comment"
         required
         cols="41"
         rows="5"
@@ -168,7 +174,6 @@ import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { users } from "~/stores/users";
-import { bookstore } from "~prisma_clients/client_dm";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
@@ -177,14 +182,14 @@ let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
 
 const { t: $t } = useI18n();
-const newBookstoreComment = $ref("" as string);
 const newBookstore = $ref({
+  id: null,
   name: "",
   address: "",
   coordX: 0,
   coordY: 0,
-  id: null,
-} as Omit<bookstore, "id"> & { id: number | null });
+  comments: [{ comment: "" }],
+} as SimpleBookstore);
 const accessToken =
   "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ";
 const mapCenter = [1.73584, 46.754917];
@@ -224,7 +229,7 @@ const fetchBookstores = async () => {
     })
     .filter((bookstore) => !!bookstore);
 };
-const suggestComment = async (bookstore: bookstore) => {
+const suggestComment = async (bookstore: SimpleBookstore) => {
   if (!bookstore.id && !bookstore.coordX) {
     window.alert(
       $t(
@@ -233,7 +238,7 @@ const suggestComment = async (bookstore: bookstore) => {
     );
     return false;
   }
-  await axios.put("/bookstores", { bookstore, newBookstoreComment });
+  await axios.put("/bookstores", { bookstore });
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;
@@ -247,6 +252,17 @@ const formatDate = (date: Date | null) => {
     : $t("le {date}", {
         date: new Date(date).toLocaleDateString(),
       });
+};
+
+const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
+  existingBookstore = bookstore;
+  if (!existingBookstore!.comments.some(({ comment }) => !comment)) {
+    existingBookstore!.comments.push({
+      comment: "",
+      creationDate: null,
+      userId: null,
+    });
+  }
 };
 
 onMounted(async () => {

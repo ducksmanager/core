@@ -94,7 +94,7 @@ alias: [/agrandir/marketplace]
       :publicationcode="publicationcode"
       :custom-issues="
         userIdFilter
-          ? issues.filter(({ userId }) => userId === userIdFilter)
+          ? (issues as issue[]).filter(({ userId }) => userId === userIdFilter)
           : issues
       "
       on-sale-by-others
@@ -119,7 +119,7 @@ alias: [/agrandir/marketplace]
         )
       "
       :cancel-title="$t('Annuler')"
-      @ok="requestIssues({ issueIds: modalIssueIds })"
+      @ok="requestIssues({ issueIds: modalIssueIds! })"
       ><template #title
         >{{ $t("Contacter") }} {{ stats[modalContactId].username }}</template
       >
@@ -168,7 +168,7 @@ alias: [/agrandir/marketplace]
         <p class="mt-4">
           {{ $t("Merci d'avance pour votre réponse !") }}
         </p>
-        <p>{{ user.username }}</p>
+        <p>{{ user!.username }}</p>
       </blockquote>
     </b-modal>
   </div>
@@ -183,6 +183,7 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
+import { issue } from "~prisma_clients/client_dm";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
@@ -195,7 +196,9 @@ const user = $computed(() => collection().user);
 const contactMethods = $computed(() => marketplace().contactMethods);
 
 const issuesOnSaleByOthers = $computed(
-  () => marketplace().issuesOnSaleByOthers
+  (): {
+    [publicationcode: string]: issue[];
+  } | null => marketplace().issuesOnSaleByOthers
 );
 const sentRequestIssueIds = $computed(() => marketplace().sentRequestIssueIds);
 const requestIssueIdsBySellerId = $computed(
@@ -212,7 +215,7 @@ const publicationNames = $computed(() => coa().publicationNames);
 const stats = $computed(() => users().stats);
 
 let hasPublicationNames = $ref(false as boolean);
-let userIdFilter = $ref(null as number | null);
+let userIdFilter = $ref(undefined as number | undefined);
 
 const deleteRequestToSeller = async (issueId: number) => {
   await marketplace().deleteRequestToSeller(issueId);

@@ -96,7 +96,7 @@ const publicationsPerCountry = $computed(
     Object.keys(totalPerCountry).reduce(
       (acc, country) => ({
         ...acc,
-        [country]: Object.keys(totalPerPublication).filter(
+        [country]: Object.keys(totalPerPublication!).filter(
           (publicationcode) => publicationcode.split("/")[0] === country
         ),
       }),

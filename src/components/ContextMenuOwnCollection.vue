@@ -46,7 +46,7 @@
       v-model.number="currentCopyIndex"
       nav-class="copies-tabs"
       @changed="
-        (newTabs) => {
+        (newTabs: any) => {
           currentCopyIndex = newTabs.length - 1;
         }
       "
@@ -63,14 +63,17 @@
         </template>
         <v-contextmenu-group :title="$t('Etat')">
           <v-contextmenu-item
-            v-for="(stateText, stateId) in conditionStates"
-            :key="`condition-${String(stateId)}`"
+            v-for="{ labelContextMenu, value } in conditionStates"
+            :key="`condition-${value}`"
             :hide-on-click="false"
             class="clickable"
-            :class="{ selected: copy.condition === stateId }"
-            @click="copy.condition = stateId"
+            :class="{ selected: copy.condition === value }"
+            @click="copy.condition = value as 'do_not_change' | issue_condition | 'missing'"
           >
-            <Condition :value="stateId" />&nbsp;{{ stateText }}
+            <template
+              v-if="isSingleIssueSelected && value === 'do_not_change'"
+            />
+            <Condition v-else :value="value" />&nbsp;{{ labelContextMenu }}
           </v-contextmenu-item>
           <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
         </v-contextmenu-group>
@@ -89,7 +92,9 @@
             }"
             @click="
               copy.isToRead =
-                stateId === 'do_not_change' ? null : stateId === 'true'
+                stateId === 'do_not_change'
+                  ? 'do_not_change'
+                  : stateId === 'true'
             "
           >
             <b-icon-bookmark-check v-if="stateId === 'true'" />
@@ -104,8 +109,11 @@
               v-for="(stateText, stateId) in purchaseStates"
               :key="`copy-${copyIndex}-purchase-state-${stateId}`"
             >
+              <template
+                v-if="isSingleIssueSelected && stateId === 'do_not_change'"
+              />
               <v-contextmenu-item
-                v-if="stateId !== 'link'"
+                v-else-if="stateId !== 'link'"
                 :hide-on-click="false"
                 class="clickable purchase-state"
                 :class="{
@@ -113,7 +121,7 @@
                   'v-context__sub': String(stateId) === 'link',
                   [stateId]: true,
                 }"
-                @click="copy.purchaseId = stateId"
+                @click="copy.purchaseId = stateId === 'unlink' ? -1 : (stateId as 'do_not_change'|number|null)"
               >
                 <b-icon-calendar-x v-if="stateId === 'unlink'" />
                 {{ stateText }}
@@ -216,16 +224,19 @@
           </v-contextmenu-group>
           <v-contextmenu-group :title="$t('Marketplace')">
             <template
-              v-for="(
-                { text: stateText, tooltip, isSaleDisabled }, stateId
-              ) in marketplaceStates"
+              v-for="[stateId, { text: stateText, tooltip }] in Object.entries(
+                marketplaceStates
+              )"
               :key="`copy-${copyIndex}-marketplace-state-${stateId}`"
             >
+              <template
+                v-if="isSingleIssueSelected && stateId === 'do_not_change'"
+              />
               <v-contextmenu-item
-                v-if="
+                v-else-if="
                   ['true', 'false', 'do_not_change'].includes(
                     String(stateId)
-                  ) || isSaleDisabled
+                  ) || isSaleDisabledGlobally
                 "
                 :hide-on-click="false"
                 class="marketplace-state"
@@ -233,15 +244,15 @@
                   clickable: ['true', 'false', 'do_not_change'].includes(
                     String(stateId)
                   ),
-                  disabled: isSaleDisabled,
+                  disabled: isSaleDisabledGlobally,
                   selected: String(copy.isOnSale) === stateId,
                   [stateId]: true,
                 }"
                 @click="
-                  copy.isOnSale = isSaleDisabled
+                  copy.isOnSale = isSaleDisabledGlobally
                     ? copy.isOnSale
                     : stateId === 'do_not_change'
-                    ? null
+                    ? 'do_not_change'
                     : stateId === 'true'
                 "
               >
@@ -337,20 +348,19 @@ import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/condition";
-import { collection, collection as collectionStore } from "~/stores/collection";
+import {
+  collection,
+  collection as collectionStore,
+  IssueWithPublicationcode,
+} from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
-import { issue, issue_condition } from "~prisma_clients/client_dm";
+import { issue_condition } from "~prisma_clients/client_dm";
 import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
-
-type issueWithPublicationCode = issue & {
-  publicationcode: string;
-  conditionString: string;
-};
 
 const { copies, publicationcode, selectedIssuesById } = defineProps<{
   selectedIssues: string[];
   selectedIssuesById: { [key: number]: string };
-  copies: issueWithPublicationCode[];
+  copies: IssueWithPublicationcode[];
   publicationcode: string;
 }>();
 const emit = defineEmits<{
@@ -377,66 +387,54 @@ let currentCopyIndex = $ref(0 as number);
 const purchases = $computed(() => collection().purchases);
 
 const conditionStates = $computed(() => ({
-  ...(isSingleIssueSelected
-    ? {}
-    : {
-        do_not_change: $t("Conserver l'état actuel"),
-      }),
-  missing: $t("Marquer comme non-possédé(s)"),
-  possessed: $t("Marquer comme possédé(s)"),
-  bad: $t("Marquer comme en mauvais état"),
-  notsogood: $t("Marquer comme en état moyen"),
-  good: $t("Marquer comme en bon état"),
+  value: "do_not_change",
+  labelContextMenu: $t("Conserver l'état actuel"),
+  ...conditions,
 }));
 const purchaseStates = $computed(() => ({
-  ...(isSingleIssueSelected
-    ? {}
-    : {
-        do_not_change: $t("Conserver la date d'achat"),
-      }),
+  do_not_change: $t("Conserver la date d'achat"),
   link: $t("Associer avec une date d'achat"),
   unlink: $t("Ne pas associer avec une date d'achat"),
 }));
 const toReadStates = $computed(() => ({
-  ...(isSingleIssueSelected
-    ? {}
-    : {
-        do_not_change: $t("Conserver la pile de lecture"),
-      }),
+  do_not_change: $t("Conserver la pile de lecture"),
   true: $t("Inclus dans la pile de lecture"),
   false: $t("Exclus de la pile de lecture"),
 }));
-const marketplaceStates = $computed(() => ({
-  ...(isSingleIssueSelected
-    ? {}
-    : {
-        do_not_change: { text: $t("Ne rien changer") },
-      }),
-  false: { text: $t("Ne pas marquer comme à vendre") },
-  true: { text: $t("Marquer comme à vendre") },
-  setAside: {
-    text: $t("Réserver pour"),
-    isSaleDisabled: isSaleDisabledGlobally,
-    tooltip: isSaleDisabledGlobally
-      ? $t(
-          "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
-        )
-      : $t(
-          "Réservez des numéros à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ces numéros."
-        ),
-  },
-  transfer: {
-    text: $t("Transférer à"),
-    isSaleDisabled: isSaleDisabledGlobally,
-    tooltip: isSaleDisabledGlobally
-      ? $t(
-          "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
-        )
-      : $t(
-          "Transférez des numéros à un utilisateur avec qui vous avez négocié une vente ou un échange"
-        ),
-  },
-}));
+const marketplaceStates = $computed(
+  () =>
+    ({
+      do_not_change: { text: $t("Ne rien changer") },
+      false: { text: $t("Ne pas marquer comme à vendre") },
+      true: { text: $t("Marquer comme à vendre") },
+      setAside: {
+        text: $t("Réserver pour"),
+        tooltip: isSaleDisabledGlobally
+          ? $t(
+              "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
+            )
+          : $t(
+              "Réservez des numéros à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ces numéros."
+            ),
+      },
+      transfer: {
+        text: $t("Transférer à"),
+        tooltip: isSaleDisabledGlobally
+          ? $t(
+              "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
+            )
+          : $t(
+              "Transférez des numéros à un utilisateur avec qui vous avez négocié une vente ou un échange"
+            ),
+      },
+    } as {
+      do_not_change: { text: string; tooltip: undefined };
+      false: { text: string; tooltip: undefined };
+      true: { text: string; tooltip: undefined };
+      setAside: { text: string; tooltip: string };
+      transfer: { text: string; tooltip: string };
+    })
+);
 
 const isSaleDisabledGlobally = $computed(
   () => !userIdsWhoSentRequestsForAllSelected.length
