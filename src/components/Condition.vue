@@ -1,33 +1,36 @@
 <template>
   <span
-    v-if="currentCondition"
     class="issue-condition"
     :class="{
-      [`issue-condition-${currentCondition.value}`]: true,
+      [`issue-condition-${currentCondition!.value}`]: true,
     }"
-    :style="{ backgroundColor: currentCondition.color }"
-    :title="getConditionLabel(currentCondition.dbValue!.toString())"
+    :style="{ backgroundColor: currentCondition!.color }"
+    :title="currentCondition!.label"
   />
 </template>
 
 <script setup lang="ts">
 import condition from "~/composables/condition";
 import { collection } from "~/stores/collection";
+import { issue_condition } from "~prisma_clients/client_dm";
 const {
   issuenumber = null,
   publicationcode = null,
-  value = null,
+  value = undefined,
 } = defineProps<{
   publicationcode?: string;
   issuenumber?: string;
-  value?: string;
+  value?: issue_condition;
 }>();
 
-const { conditions, getConditionLabel } = condition();
+const { conditions } = condition();
 const currentCondition = $computed(() => {
-  if (value) {
-    return conditions.find(
-      ({ value: conditionValue }) => value === conditionValue
+  if (value !== undefined) {
+    return (
+      conditions.find(
+        ({ value: conditionValue }) =>
+          (value?.toString() || null) === conditionValue
+      ) || conditions.find(({ value }) => value === null)!
     );
   } else if (publicationcode && issuenumber) {
     const issueInCollection = collection().findInCollection(
@@ -35,12 +38,14 @@ const currentCondition = $computed(() => {
       issuenumber
     );
     return (
-      issueInCollection &&
-      conditions.find(
-        ({ dbValue }) => dbValue?.toString() === issueInCollection.condition
-      )
+      (issueInCollection &&
+        conditions.find(
+          ({ dbValue }) => dbValue === issueInCollection.condition
+        )) ||
+      conditions.find(({ value }) => value === null)!
     );
   }
+  return conditions.find(({ value }) => value === null);
 });
 </script>
 
@@ -48,23 +53,23 @@ const currentCondition = $computed(() => {
 .issue-condition {
   border-radius: 50%;
 
-  &.issue-condition-missing {
+  &.issue-condition-null {
     border: 8px solid black;
   }
 
-  &.issue-condition-bad {
+  &.issue-condition-mauvais {
     border: 8px solid red;
   }
 
-  &.issue-condition-notsogood {
+  &.issue-condition-moyen {
     border: 8px solid orange;
   }
 
-  &.issue-condition-good {
+  &.issue-condition-bon {
     border: 8px solid #2ca77b;
   }
 
-  &.issue-condition-possessed {
+  &.issue-condition-indefini {
     border: 8px solid #808080;
   }
 }

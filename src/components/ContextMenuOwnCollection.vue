@@ -68,7 +68,7 @@
             :hide-on-click="false"
             class="clickable"
             :class="{ selected: copy.condition === value }"
-            @click="copy.condition = value as string"
+            @click="copy.condition = value!.toString()"
           >
             <template
               v-if="isSingleIssueSelected && value === 'do_not_change'"
@@ -354,6 +354,7 @@ import {
   IssueWithPublicationcode,
 } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
+import { issue_condition } from "~prisma_clients/client_dm";
 import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
 
 const { copies, publicationcode, selectedIssuesById } = defineProps<{
@@ -365,7 +366,7 @@ const { copies, publicationcode, selectedIssuesById } = defineProps<{
 const emit = defineEmits<{
   (e: "clear-selection"): void;
 }>();
-const { conditions, issue_condition } = condition();
+const { conditions } = condition();
 
 const defaultCopyState: CopyState = {
   condition: "indefini",
@@ -385,11 +386,18 @@ let editingCopies = $ref([] as (CopyState & NewPurchase)[]);
 let currentCopyIndex = $ref(0 as number);
 const purchases = $computed(() => collection().purchases);
 
-const conditionStates = $computed(() => ({
-  value: "do_not_change",
-  labelContextMenu: $t("Conserver l'état actuel"),
-  ...conditions,
-}));
+const conditionStates = $computed(
+  (): {
+    value: issue_condition | "do_not_change" | null;
+    labelContextMenu: string;
+  }[] => [
+    {
+      value: "do_not_change",
+      labelContextMenu: $t("Conserver l'état actuel"),
+    },
+    ...conditions,
+  ]
+);
 const purchaseStates = $computed(() => ({
   do_not_change: $t("Conserver la date d'achat"),
   link: $t("Associer avec une date d'achat"),
@@ -494,12 +502,6 @@ const receivedRequests = $computed(() =>
   )
 );
 
-const convertConditionToDbValue = (condition: string): string | null =>
-  (
-    conditions.find(({ value }) => value === condition) || {
-      dbValue: issue_condition.indefini,
-    }
-  ).dbValue?.toString() || null;
 const updateSelectedIssues = async (force = false) => {
   if (!force && String(editingCopies[0].isOnSale).indexOf("transfer-") === 0) {
     const transferToUser = (editingCopies[0].isOnSale as string).split(
@@ -516,9 +518,7 @@ const updateSelectedIssues = async (force = false) => {
     }
   }
   let issueDetailsMultiple: CopyStateMultiple = {
-    condition: editingCopies.map(
-      ({ condition }) => convertConditionToDbValue(condition) || "missing"
-    ),
+    condition: editingCopies.map(({ condition }) => condition),
     isToRead: editingCopies.map(({ isToRead }) => isToRead),
     isOnSale: editingCopies.map(({ isOnSale }) => isOnSale),
     purchaseId: editingCopies.map(({ purchaseId }) => purchaseId),

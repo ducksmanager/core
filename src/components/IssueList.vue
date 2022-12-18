@@ -1,6 +1,7 @@
 <template>
   <div class="mt-4">
     <Publication
+      v-if="publicationName"
       size="xl"
       :publicationcode="publicationcode"
       :publicationname="publicationName"
@@ -425,7 +426,7 @@ const getPreselected = () =>
     : filteredIssues
         .map(({ key }) => key || "")
         .filter(
-          (issuenumber, index) =>
+          (_, index) =>
             preselectedIndexStart &&
             preselectedIndexEnd &&
             index >= preselectedIndexStart &&
@@ -448,9 +449,7 @@ const deletePublicationIssues = async (
     publicationcode,
     issueNumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
     condition:
-      conditions
-        .find(({ value }) => value === "missing")
-        ?.dbValue?.toString() || "indefini",
+      conditions.find(({ value }) => value === null)?.dbValue || "indefini",
     isToRead: false,
     isOnSale: false,
     purchaseId: null,
@@ -473,9 +472,7 @@ const loadIssues = async () => {
       .map((issue) => ({
         ...issue,
         conditionString: (
-          conditions.find(
-            ({ dbValue }) => dbValue?.toString() === issue.condition
-          ) || {
+          conditions.find(({ dbValue }) => dbValue === issue.condition) || {
             value: "possessed",
           }
         ).value,
