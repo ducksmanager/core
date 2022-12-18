@@ -3,6 +3,7 @@
     v-if="collectionPerPurchaseDate"
     id="last-purchases"
     accordion-group-id="last-purchases"
+    visible
   >
     <template #header>
       {{ $t("Derniers achats") }}

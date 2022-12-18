@@ -100,11 +100,8 @@ import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-defineProps<{
-  publicationcode: {
-    type: string;
-    default: null;
-  };
+const { publicationcode = null } = defineProps<{
+  publicationcode?: string;
 }>();
 
 const suggestionsNumber = $ref(0 as number);

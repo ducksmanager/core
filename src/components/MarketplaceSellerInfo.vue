@@ -1,6 +1,6 @@
 <template>
   <div
-    v-for="{ buyerId, isBooked } in receivedRequests || []"
+    v-for="{ buyerId, isBooked } in receivedRequests"
     :key="buyerId"
     class="d-inline-block me-2"
     :class="{ setAside: isBooked }"
@@ -29,18 +29,20 @@ const receivedRequests = $computed(() =>
   )
 );
 
-const buyerPoints = $computed(() =>
-  receivedRequests?.reduce(
-    (acc, { buyerId }) => ({ ...acc, [buyerId]: users().points[buyerId] }),
-    {}
-  )
+const buyerPoints = $computed(
+  (): { [buyerId: number]: { [contribution: string]: number } } =>
+    receivedRequests?.reduce(
+      (acc, { buyerId }) => ({ ...acc, [buyerId]: users().points[buyerId] }),
+      {}
+    ) || {}
 );
 
-const buyerStats = $computed(() =>
-  receivedRequests?.reduce(
-    (acc, { buyerId }) => ({ ...acc, [buyerId]: users().stats[buyerId] }),
-    {}
-  )
+const buyerStats = $computed(
+  (): { [buyerId: number]: { [contribution: string]: number } } =>
+    receivedRequests?.reduce(
+      (acc, { buyerId }) => ({ ...acc, [buyerId]: users().stats[buyerId] }),
+      {}
+    ) || {}
 );
 </script>
 

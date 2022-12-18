@@ -4,6 +4,7 @@
       <li v-for="storyCode in storiesOfAuthor" :key="`${author}-${storyCode}`">
         <b-badge>{{ authors[author] }}</b-badge>
         <InducksStory
+          v-if="storyDetails"
           :storycode="storyCode"
           :title="storyDetails[storyCode].title"
           :comment="storyDetails[storyCode].storycomment"

@@ -24,7 +24,7 @@ export default function () {
       color: "black",
       text: $t("Non possédé"),
       label: $t("Non possédé"),
-      labelContextMenu: $t("Marquer comme non possédé"),
+      labelContextMenu: $t("Marquer comme non possédé(s)"),
     },
     {
       value: "possessed",

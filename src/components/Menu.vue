@@ -8,14 +8,12 @@
         v-for="item in items"
         :key="JSON.stringify(item)"
         no-body
-        :disabled="item.disabled"
         @click.stop="router.push(`${rootPath}${item.path}`)"
       >
         <template #title>
-          <router-link v-if="!item.disabled" :to="`${rootPath}${item.path}`">{{
+          <router-link :to="`${rootPath}${item.path}`">{{
             item.text
           }}</router-link>
-          <template v-else>{{ item.text }}</template>
         </template>
       </b-tab>
     </b-tabs>

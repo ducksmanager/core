@@ -95,15 +95,9 @@ import {
 import { simple_issue } from "~types/SimpleIssue";
 import { simple_story } from "~types/SimpleStory";
 
-defineProps<{
-  withTitle: {
-    type: boolean;
-    default: true;
-  };
-  withStoryLink: {
-    type: boolean;
-    default: true;
-  };
+const { withTitle = true, withStoryLink = true } = defineProps<{
+  withTitle?: boolean;
+  withStoryLink?: boolean;
 }>();
 const emit = defineEmits<{
   (e: "issue-selected", story: simple_issue): void;

@@ -36,7 +36,7 @@ const conditionsWithoutMissing = conditions.filter(
 );
 const values = $computed(() =>
   Object.values(conditionsWithoutMissing).map(
-    ({ dbValue }) => numberPerCondition[dbValue]
+    ({ dbValue }) => numberPerCondition[dbValue!.toString()]
   )
 );
 const colors = Object.values(

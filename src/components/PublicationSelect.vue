@@ -38,8 +38,8 @@ import { onMounted, watch } from "vue";
 import { coa } from "~/stores/coa";
 
 const {
-  initialCountrycode = null,
-  initialPublicationcode = null,
+  initialCountrycode = undefined,
+  initialPublicationcode = undefined,
   noButton = false,
 } = defineProps<{
   noButton?: boolean;
@@ -53,15 +53,16 @@ let currentPublicationcode = $ref(initialPublicationcode);
 const coaStore = coa();
 const countryNames = $computed(
   () =>
-    coaStore.countryNames &&
-    Object.entries(coaStore.countryNames)
-      .map(([countrycode, countryName]) => ({
-        text: countryName,
-        value: countrycode,
-      }))
-      .sort(({ text: text1 }, { text: text2 }) =>
-        (text1 || "").localeCompare(text2)
-      )
+    (coaStore.countryNames &&
+      Object.entries(coaStore.countryNames)
+        .map(([countrycode, countryName]) => ({
+          text: countryName,
+          value: countrycode,
+        }))
+        .sort(({ text: text1 }, { text: text2 }) =>
+          (text1 || "").localeCompare(text2)
+        )) ||
+    undefined
 );
 const publicationNames = $computed(() => coaStore.publicationNames);
 const publicationNamesFullCountries = $computed(
@@ -86,7 +87,7 @@ watch(
   (newValue) => {
     if (newValue) {
       coaStore.fetchPublicationNamesFromCountry(newValue);
-      currentPublicationcode = null;
+      currentPublicationcode = undefined;
     }
   },
   {

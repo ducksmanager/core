@@ -14,7 +14,7 @@ onMounted(async () => {
 });
 watch(
   () => collection().user,
-  (newValue: never) => {
+  (newValue) => {
     if (newValue === null) {
       router.push("/login");
     }

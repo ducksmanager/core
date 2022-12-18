@@ -5,7 +5,7 @@ alias: [/inscription]
   <h2>{{ $t("Inscription") }}</h2>
   <form method="post" @submit.prevent="signup">
     <b-alert v-if="error" show variant="danger">
-      {{ $t(error) }}
+      {{ $t(error as string) }}
     </b-alert>
     <input type="hidden" name="_csrf_token" :value="csrfToken" />
     <b-row>

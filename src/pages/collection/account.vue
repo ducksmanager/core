@@ -4,7 +4,7 @@ alias: [/collection/compte]
 
 <template>
   <form
-    v-if="user && marketplaceContactMethods"
+    v-if="collection.userForAccountForm && marketplaceContactMethods"
     @submit.prevent="updateAccount"
   >
     <b-row>
@@ -31,7 +31,12 @@ alias: [/collection/compte]
     <h5>{{ $t("Adresse e-mail") }}</h5>
     <b-row>
       <b-col id="email" cols="12" md="6">
-        <b-form-input id="email" v-model="user.email" required autofocus />
+        <b-form-input
+          id="email"
+          v-model="collection.userForAccountForm.email"
+          required
+          autofocus
+        />
       </b-col>
     </b-row>
     <b-row>
@@ -40,14 +45,14 @@ alias: [/collection/compte]
           v-model="hasEmailContactMethod"
           required
           autofocus
-          :disabled="!user.email"
+          :disabled="!collection.userForAccountForm.email"
         >
           {{
             $t(
               "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre"
             )
           }}
-          <template v-if="!user.email"
+          <template v-if="!collection.userForAccountForm.email"
             >({{
               $t(
                 "Vous devez spécifier une adresse e-mail pour activer cette option"
@@ -61,12 +66,19 @@ alias: [/collection/compte]
     <h5>{{ $t("Identifiant de profil Discord") }}</h5>
     <b-row id="discordId">
       <b-col cols="12" md="6">
-        <b-form-input v-model="user.discordId" type="number" />
+        <b-form-input
+          v-model="collection.userForAccountForm.discordId"
+          type="text"
+        />
       </b-col>
     </b-row>
     <b-row>
       <b-col id="showDiscordIfToBuyers" cols="12" md="6">
-        <accordion id="discord-id" accordion-group-id="discord-id" visible>
+        <accordion
+          id="discord-id"
+          accordion-group-id="discord-id"
+          :visible="false"
+        >
           <template #header>{{
             $t("Comment trouver mon identifiant de profil Discord ?")
           }}</template>
@@ -78,24 +90,21 @@ alias: [/collection/compte]
                 )
               }}
             </div>
-            <img
-              :src="`/images/discord-id/${locale.value}.png`"
-              class="w-100"
-            />
+            <img :src="`/images/discord-id/${locale}.png`" class="w-100" />
           </template>
         </accordion>
         <b-form-checkbox
           v-model="hasDiscordContactMethod"
           required
           autofocus
-          :disabled="!user.discordId"
+          :disabled="!collection.userForAccountForm.discordId"
         >
           {{
             $t(
               "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre"
             )
           }}
-          <template v-if="!user.discordId"
+          <template v-if="!collection.userForAccountForm.discordId"
             >({{
               $t(
                 "Vous devez spécifier un identifiant de profil Discord pour activer cette option"
@@ -128,7 +137,7 @@ alias: [/collection/compte]
           </template>
         </b-alert>
         <b-form-input
-          v-model="user.presentationText"
+          v-model="collection.userForAccountForm.presentationText"
           class="mt-0"
           maxlength="100"
           :placeholder="
@@ -163,11 +172,13 @@ alias: [/collection/compte]
     ></b-row>
 
     <h5>{{ $t("Options") }}</h5>
-    <b-form-checkbox v-model="user.allowSharing">
+    <b-form-checkbox v-model="collection.userForAccountForm.allowSharing">
       {{ $t("Activer le partage de ma collection") }}
     </b-form-checkbox>
 
-    <b-form-checkbox v-model="user.showPresentationVideo">
+    <b-form-checkbox
+      v-model="collection.userForAccountForm.showPresentationVideo"
+    >
       {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
     </b-form-checkbox>
 
@@ -201,17 +212,18 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Accordion from "~/components/Accordion.vue";
-import { collection } from "~/stores/collection";
+import { collection as collectionStore } from "~/stores/collection";
 import { ScopedError } from "~types/ScopedError";
 
-const user = $computed(() => collection().user);
+const collection = collectionStore();
+
 let marketplaceContactMethods = $computed(
-  () => collection().marketplaceContactMethods
+  () => collection.marketplaceContactMethods
 );
 
 const i18n = useI18n();
 
-const locale = $computed(() => i18n.locale);
+const locale = $computed(() => getCurrentLocaleShortKey(i18n.locale.value));
 
 let hasRequestedPresentationSentenceUpdate = $ref(false as boolean);
 const oldPassword = $ref("" as string);
@@ -238,7 +250,7 @@ const updateAccount = async () => {
     error = undefined;
     const response = (
       await axios.post("/collection/user", {
-        ...user,
+        ...collection.userForAccountForm,
         oldPassword,
         password,
         password2,
@@ -248,11 +260,11 @@ const updateAccount = async () => {
       response.hasRequestedPresentationSentenceUpdate;
     error = null;
 
-    collection().marketplaceContactMethods = [
+    collection.marketplaceContactMethods = [
       hasEmailContactMethod ? "email" : "",
       hasDiscordContactMethod ? "discord" : "",
     ].filter((value) => value);
-    await collection().updateMarketplaceContactMethods();
+    await collection.updateMarketplaceContactMethods();
   } catch (e) {
     error = (e as ScopedError) || { message: t("Une erreur s'est produite.") };
   }
@@ -272,7 +284,7 @@ const deleteAccount = async () => {
 };
 
 onMounted(async () => {
-  await collection().loadMarketplaceContactMethods();
+  await collection.loadMarketplaceContactMethods();
 });
 
 watch(

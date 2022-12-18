@@ -6,7 +6,7 @@
       [`issue-condition-${currentCondition.value}`]: true,
     }"
     :style="{ backgroundColor: currentCondition.color }"
-    :title="getConditionLabel(currentCondition.dbValue!)"
+    :title="getConditionLabel(currentCondition.dbValue!.toString())"
   />
 </template>
 
@@ -36,7 +36,9 @@ const currentCondition = $computed(() => {
     );
     return (
       issueInCollection &&
-      conditions.find(({ dbValue }) => dbValue === issueInCollection.condition)
+      conditions.find(
+        ({ dbValue }) => dbValue?.toString() === issueInCollection.condition
+      )
     );
   }
 });

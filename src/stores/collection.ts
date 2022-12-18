@@ -42,6 +42,16 @@ type IssueSuggestionWithStringDate = Omit<IssueSuggestion, "oldestdate"> & {
   oldestdate: string;
 };
 
+type UserForAccountForm = Omit<user, "discordId" | "presentationText"> & {
+  discordId: number | undefined;
+  presentationText: string | undefined;
+};
+
+type LastPublishedEdge = edge & {
+  issuecode: string;
+  timestamp: number;
+};
+
 export const collection = defineStore("collection", {
   state: () => ({
     collection: null as IssueWithPublicationcode[] | null,
@@ -61,7 +71,7 @@ export const collection = defineStore("collection", {
     subscriptions: null as SubscriptionTransformed[] | null,
 
     popularIssuesInCollection: null as { [issuecode: string]: number } | null,
-    lastPublishedEdgesForCurrentUser: null as edge[] | null,
+    lastPublishedEdgesForCurrentUser: null as LastPublishedEdge[] | null,
 
     isLoadingUser: false as boolean,
     isLoadingCollection: false as boolean,
@@ -254,6 +264,18 @@ export const collection = defineStore("collection", {
           )) ||
         null
       );
+    },
+
+    userForAccountForm(): UserForAccountForm | undefined | null {
+      const discordId = this.user?.discordId || undefined;
+      const presentationText = this.user?.presentationText || undefined;
+      return this.user
+        ? {
+            ...this.user,
+            discordId,
+            presentationText,
+          }
+        : this.user;
     },
   },
 

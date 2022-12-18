@@ -65,10 +65,11 @@ const publishedEdgesSincePreviousVisit = $computed(
       ({ creationDate }) => previousVisit && creationDate >= previousVisit
     ) || []
 );
-const hasPublicationNames = () =>
+const hasPublicationNames = $computed(() =>
   publishedEdgesSincePreviousVisit?.every(
     ({ publicationcode }) => publicationNames[publicationcode]
-  );
+  )
+);
 
 onMounted(async () => {
   await collectionStore().loadLastPublishedEdgesForCurrentUser();
