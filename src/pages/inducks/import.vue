@@ -1,3 +1,7 @@
+<route lang="yaml">
+meta:
+  public: true
+</route>
 <template>
   <div v-if="!user" id="wrapper" class="container-fluid py-5">
     <p class="col-md-8 fs-4" />

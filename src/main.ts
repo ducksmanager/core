@@ -29,6 +29,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
+router.beforeResolve(async (to) => {
+  if (!to.meta.public && !Cookies.get("token") && to.name !== "login") {
+    return { name: "login" };
+  }
+});
 
 const store = createPinia();
 

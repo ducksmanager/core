@@ -1,6 +1,7 @@
 <route lang="yaml">
 meta:
   layout: bare
+  public: true
 </route>
 <template>
   <div>

@@ -1,3 +1,8 @@
+<route lang="yaml">
+meta:
+  public: true
+</route>
+
 <template><div></div></template>
 
 <script setup lang="ts">

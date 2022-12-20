@@ -12,14 +12,6 @@ const router = useRouter();
 onMounted(async () => {
   await collection().loadUser();
 });
-watch(
-  () => collection().user,
-  (newValue) => {
-    if (newValue === null) {
-      router.push("/login");
-    }
-  }
-);
 </script>
 
 <style lang="scss">

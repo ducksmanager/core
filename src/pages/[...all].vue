@@ -2,6 +2,8 @@
 alias:
   - logout
   - deconnexion
+meta:
+  public: true
 </route>
 
 <template>

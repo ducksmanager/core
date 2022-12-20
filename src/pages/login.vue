@@ -1,5 +1,7 @@
 <route lang="yaml">
 alias: [/connexion]
+meta:
+  public: true
 </route>
 
 <template>

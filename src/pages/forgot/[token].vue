@@ -1,3 +1,7 @@
+<route lang="yaml">
+meta:
+  public: true
+</route>
 <template>
   <div>
     <h2>{{ $t("Nouveau mot de passe") }}</h2>

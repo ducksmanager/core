@@ -1,5 +1,7 @@
 <route lang="yaml">
 alias: [/inscription]
+meta:
+  public: true
 </route>
 <template>
   <h2>{{ $t("Inscription") }}</h2>

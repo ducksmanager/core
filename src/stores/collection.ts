@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
 import { inducks_publication } from "~prisma_clients/client_coa";
@@ -445,8 +446,11 @@ export const collection = defineStore("collection", {
       if (!this.isLoadingUser && (afterUpdate || !this.user)) {
         this.isLoadingUser = true;
         try {
-          this.user = (await axios.get(`/collection/user`)).data;
+          if (Cookies.get("token")) {
+            this.user = (await axios.get(`/collection/user`)).data;
+          }
         } catch (e) {
+          Cookies.remove("token");
           this.user = null;
         } finally {
           this.isLoadingUser = false;
