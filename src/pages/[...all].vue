@@ -1,7 +1,4 @@
 <route lang="yaml">
-alias:
-  - logout
-  - deconnexion
 meta:
   public: true
 </route>
@@ -204,18 +201,12 @@ meta:
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
 import { BButton, BCol, BRow } from "bootstrap-vue-3";
-import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
 
-const route = useRoute();
 const { t: $t } = useI18n();
 
-if (["/logout", "/deconnexion"].includes(route.path)) {
-  Cookies.remove("token");
-  collection().user = null;
-}
 const user = $computed(() => collection().user);
 
 useHead({

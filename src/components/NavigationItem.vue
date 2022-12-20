@@ -1,28 +1,20 @@
 <template>
   <li class="non-empty" :class="{ 'no-icon': !icon, active }">
-    <router-link :to="path">
-      <i :class="{ [icon]: true }" />
-      <slot />
-    </router-link>
+    <slot />
   </li>
 </template>
 
 <script setup lang="ts">
-const { path, icon = null } = defineProps<{
-  path: string;
+import { RouteRecordNormalized } from "vue-router";
+
+const { route = null, icon = null } = defineProps<{
+  route?: RouteRecordNormalized;
   icon?: string;
 }>();
-const active = $computed(
-  () =>
-    !path
-      .split("/")
-      .find(
-        (pathPart) => !window.location.pathname.split("/").includes(pathPart)
-      ) &&
-    !/(bibliotheque\/afficher)|(bookcase\/show\/).+$/.test(
-      window.location.pathname
-    )
-);
+
+const currentPath = $computed(() => useRoute().path);
+
+const active = $computed(() => currentPath === route?.path);
 </script>
 
 <style scoped lang="scss">

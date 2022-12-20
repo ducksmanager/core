@@ -1,65 +1,97 @@
 <template>
   <ul id="menu-content" class="menu-content collapse show">
-    <NavigationItemGroup path="collection" icon="glyphicon-home">
+    <NavigationItemGroup
+      :paths="[
+        /^\/collection/,
+        /^\/bookcase-show/,
+        /^\/stats/,
+        /^\/expand/,
+        /^\/print/,
+      ]"
+      icon="glyphicon-home"
+    >
       <template #text>
         <b-icon-house-fill />
         {{ $t("Collection") }}
       </template>
       <template v-if="username !== undefined" #items>
         <template v-if="username">
-          <NavigationItem path="/bookcase/show">
-            <b-icon-book-half />
-            {{ $t("Ma bibliothèque") }}
+          <NavigationItem>
+            <router-link to="/bookcase/show">
+              <b-icon-book-half />
+              {{ $t("Ma bibliothèque") }}
+            </router-link>
           </NavigationItem>
-          <NavigationItem path="/collection/show">
-            <b-icon-list />
-            {{ $t("Gérer ma collection") }}
+          <NavigationItem>
+            <router-link to="/collection/show">
+              <b-icon-list /> {{ $t("Gérer ma collection") }}</router-link
+            >
           </NavigationItem>
-          <NavigationItem path="/stats/general">
-            <b-icon-graph-up />
-            {{ $t("Statistiques de ma collection") }}
+          <NavigationItem>
+            <router-link to="/stats/general">
+              <b-icon-graph-up />
+              {{ $t("Statistiques de ma collection") }}</router-link
+            >
           </NavigationItem>
-          <NavigationItem path="/expand/suggestions">
-            <b-icon-capslock-fill />
-            {{ $t("Agrandir ma collection") }}
+          <NavigationItem>
+            <router-link to="/expand/suggestions">
+              <b-icon-capslock-fill />
+              {{ $t("Agrandir ma collection") }}</router-link
+            >
           </NavigationItem>
-          <NavigationItem path="/inducks/import">
-            <div
-              class="b-custom"
-              :style="{
-                backgroundImage: `url(/images/icons/inducks.png)`,
-              }"
-            />
-            {{ $t("Collection Inducks") }}
+          <NavigationItem>
+            <router-link to="/expand/suggestions">
+              <div
+                class="b-custom"
+                :style="{
+                  backgroundImage: `url(/images/icons/inducks.png)`,
+                }"
+              />
+              {{ $t("Collection Inducks") }}
+            </router-link>
           </NavigationItem>
-          <NavigationItem path="/print">
-            <b-icon-printer-fill />
-            {{ $t("Imprimer ma collection") }}
+          <NavigationItem>
+            <router-link to="/print">
+              <b-icon-printer-fill />
+              {{ $t("Imprimer ma collection") }}</router-link
+            >
           </NavigationItem>
-          <NavigationItem path="/logout">
-            <b-icon-x-square-fill />
-            {{ $t("Déconnexion") }}
+          <NavigationItem>
+            <span @click="logout">
+              <b-icon-x-square-fill />
+              {{ $t("Déconnexion") }}</span
+            >
           </NavigationItem>
         </template>
         <template v-else>
-          <NavigationItem path="/signup" icon="glyphicon glyphicon-certificate">
-            {{ $t("Inscription") }}
+          <NavigationItem>
+            <router-link to="/signup">
+              <i class="glyphicon glyphicon-certificate" />
+              {{ $t("Inscription") }}</router-link
+            >
           </NavigationItem>
-          <NavigationItem path="/login" icon="glyphicon glyphicon-folder-open">
-            {{ $t("Connexion") }}
+          <NavigationItem>
+            <router-link to="/login">
+              <i class="glyphicon glyphicon-folder-open" />
+              {{ $t("Connexion") }}
+            </router-link>
           </NavigationItem>
         </template>
       </template>
     </NavigationItemGroup>
     <li class="empty" />
-    <NavigationItem path="/bookstores">
-      {{ $t("Trouver des bouquineries") }}
+    <NavigationItem
+      ><router-link to="/bookstores">
+        {{ $t("Trouver des bouquineries") }}</router-link
+      >
     </NavigationItem>
-    <NavigationItem v-if="!username" path="/inducks/import">
-      {{ $t("Vous possédez une collection Inducks ?") }}
+    <NavigationItem v-if="!username"
+      ><router-link to="/inducks/import">
+        {{ $t("Vous possédez une collection Inducks ?") }}</router-link
+      >
     </NavigationItem>
-    <NavigationItem v-if="!username" path="/demo">
-      {{ $t("Une petite démo ?") }}
+    <NavigationItem v-if="!username"
+      ><router-link to="/demo"> {{ $t("Une petite démo ?") }}</router-link>
     </NavigationItem>
   </ul>
 </template>
@@ -74,10 +106,22 @@ import {
   BIconPrinterFill,
   BIconXSquareFill,
 } from "bootstrap-icons-vue";
+import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
 
 const username = $computed(() => collection().user?.username || null);
+
+const router = useRouter();
+const routes = router.getRoutes();
+
+const getRoute = (name: string) =>
+  routes.find(({ name: routeName }) => name === routeName);
+
+const logout = () => {
+  Cookies.remove("token");
+  collection().user = null;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -109,7 +153,7 @@ li {
     border: none;
     line-height: 28px;
     border-bottom: 1px solid #23282e;
-    padding-left: 10px;
+    padding-left: 20px;
     margin-left: 0;
 
     &:hover {

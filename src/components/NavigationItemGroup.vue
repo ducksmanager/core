@@ -1,30 +1,23 @@
 <template>
-  <li
-    data-toggle="collapse"
-    :data-target="`#${path}`"
-    :class="{ collapsed: true, active }"
-  >
-    <a href="#"
+  <li :class="{ active }">
+    <a href="javascript:void(0)"
       ><i :class="{ [icon]: true }" />
       <slot name="text" />
       <span class="arrow"
     /></a>
-    <ul :id="path" class="sub-menu collapse in show">
+    <ul class="sub-menu collapse in show">
       <slot name="items" />
     </ul>
   </li>
 </template>
 
 <script setup lang="ts">
-const { path } = defineProps<{
-  path: string;
+const { paths } = defineProps<{
+  paths: RegExp[];
   icon: string;
 }>();
+
 const active = $computed(() =>
-  window.location.pathname.split("/").includes(path)
+  paths.some((path) => path.test(useRoute().path))
 );
 </script>
-
-<style lang="scss" scoped>
-
-</style>
