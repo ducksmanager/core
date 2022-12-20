@@ -58,7 +58,7 @@ specifiers:
   vue-chartjs: ^4.1.2
   vue-i18n: ^9.2.2
   vue-i18n-extract: ^2.0.7
-  vue-mapbox-ts: ^0.8.1
+  vue-mapbox-ts: ^0.9.7
   vue-router: ^4.1.6
   vue-slicksort: ^2.0.3
   vue-tsc: ^1.0.16
@@ -91,7 +91,7 @@ dependencies:
   vue-chartjs: 4.1.2_chart.js@4.1.1+vue@3.2.45
   vue-i18n: 9.2.2_vue@3.2.45
   vue-i18n-extract: 2.0.7
-  vue-mapbox-ts: 0.8.1_vue@3.2.45
+  vue-mapbox-ts: 0.9.7_vue@3.2.45
   vue-router: 4.1.6_vue@3.2.45
   vue-slicksort: 2.0.3_vue@3.2.45
 
@@ -2310,13 +2310,6 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
-
-  /crypto-random-string/3.3.1:
-    resolution: {integrity: sha512-5j88ECEn6h17UePrLi6pn1JcLtAiANa3KExyr9y9Z5vo2mv56Gh3I4Aja/B9P9uyMwyxNHAHWv+nE72f30T5Dg==}
-    engines: {node: '>=8'}
-    dependencies:
-      type-fest: 0.8.1
-    dev: false
 
   /csscolorparser/1.0.3:
     resolution: {integrity: sha512-umPSgYwZkdFoUrH5hIq5kf0wPSXiro51nPw0j2K/c83KflkPSTBGMz6NJvMB+07VlL0y7VPo6QJcDjcgKTTm3w==}
@@ -5993,8 +5986,8 @@ packages:
       '@vue/devtools-api': 6.4.5
       vue: 3.2.45
 
-  /vue-mapbox-ts/0.8.1_vue@3.2.45:
-    resolution: {integrity: sha512-fAEB98TBbDr/AxpVPVzO8tH4vz/0WtAIKUhq4GxgLpBhv4/vUbr6xXkmXrhrsaPQ5vIZmmGHDoOownnv9fynbA==}
+  /vue-mapbox-ts/0.9.7_vue@3.2.45:
+    resolution: {integrity: sha512-mHcV8TfqTvcXAv6po2vABnQdZdk1UdAqtu0pJhNZ5m8N/ttpXDVlvKXRyBqTYb3/h+wBVolpCkoXU7RPhjtwkQ==}
     peerDependencies:
       vue: '>= 3.2 < 3.3'
     dependencies:
@@ -6005,7 +5998,6 @@ packages:
       '@types/mapbox-gl': 2.7.10
       '@types/mapbox__mapbox-gl-geocoder': 4.7.3
       '@types/mocha': 5.2.7
-      crypto-random-string: 3.3.1
       fast-deep-equal: 3.1.3
       mapbox-gl: 2.11.1
       my-deferred: 1.2.0

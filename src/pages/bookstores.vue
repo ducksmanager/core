@@ -290,7 +290,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-@import "https://api.mapbox.com/mapbox-gl-js/v2.4.0/mapbox-gl.css";
 #map {
   height: 500px;
 
