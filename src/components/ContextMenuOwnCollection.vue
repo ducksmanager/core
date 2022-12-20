@@ -70,9 +70,7 @@
             :class="{ selected: copy.condition === value }"
             @click="copy.condition = value!.toString()"
           >
-            <template
-              v-if="isSingleIssueSelected && value === 'do_not_change'"
-            />
+            <template v-if="value === 'do_not_change'" />
             <Condition v-else :value="value" />&nbsp;{{ labelContextMenu }}
           </v-contextmenu-item>
           <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
@@ -224,32 +222,28 @@
           </v-contextmenu-group>
           <v-contextmenu-group :title="$t('Marketplace')">
             <template
-              v-for="[stateId, { text: stateText, tooltip }] in Object.entries(
-                marketplaceStates
-              )"
+              v-for="[
+                stateId,
+                { text: stateText, tooltip, disabled },
+              ] in Object.entries(marketplaceStates)"
               :key="`copy-${copyIndex}-marketplace-state-${stateId}`"
             >
-              <template
-                v-if="isSingleIssueSelected && stateId === 'do_not_change'"
-              />
               <v-contextmenu-item
-                v-else-if="
+                v-if="
                   ['true', 'false', 'do_not_change'].includes(
                     String(stateId)
-                  ) || isSaleDisabledGlobally
+                  ) || disabled
                 "
                 :hide-on-click="false"
                 class="marketplace-state"
                 :class="{
-                  clickable: ['true', 'false', 'do_not_change'].includes(
-                    String(stateId)
-                  ),
-                  disabled: isSaleDisabledGlobally,
+                  clickable: !disabled,
+                  disabled,
                   selected: String(copy.isOnSale) === stateId,
                   [stateId]: true,
                 }"
                 @click="
-                  copy.isOnSale = isSaleDisabledGlobally
+                  copy.isOnSale = disabled
                     ? copy.isOnSale
                     : stateId === 'do_not_change'
                     ? 'do_not_change'
@@ -411,11 +405,12 @@ const toReadStates = $computed(() => ({
 const marketplaceStates = $computed(
   () =>
     ({
-      do_not_change: { text: $t("Ne rien changer") },
-      false: { text: $t("Ne pas marquer comme à vendre") },
-      true: { text: $t("Marquer comme à vendre") },
+      do_not_change: { text: $t("Ne rien changer"), disabled: false },
+      false: { text: $t("Ne pas marquer comme à vendre"), disabled: false },
+      true: { text: $t("Marquer comme à vendre"), disabled: false },
       setAside: {
         text: $t("Réserver pour"),
+        disabled: isSaleDisabledGlobally,
         tooltip: isSaleDisabledGlobally
           ? $t(
               "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
@@ -426,20 +421,29 @@ const marketplaceStates = $computed(
       },
       transfer: {
         text: $t("Transférer à"),
+        disabled: isSaleDisabledGlobally,
         tooltip: isSaleDisabledGlobally
           ? $t(
-              "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
+              "Aucun utilisateur n'a envoyé de demande pour acheter ce numéro pour le moment | Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
             )
           : $t(
-              "Transférez des numéros à un utilisateur avec qui vous avez négocié une vente ou un échange"
+              "Transférez ce numéro à un utilisateur avec qui vous avez négocié une vente ou un échange | Transférez ces numéros à un utilisateur avec qui vous avez négocié une vente ou un échange"
             ),
       },
     } as {
-      do_not_change: { text: string; tooltip: undefined };
-      false: { text: string; tooltip: undefined };
-      true: { text: string; tooltip: undefined };
-      setAside: { text: string; tooltip: string };
-      transfer: { text: string; tooltip: string };
+      do_not_change: { text: string; tooltip: undefined; disabled: false };
+      false: { text: string; tooltip: undefined; disabled: false };
+      true: { text: string; tooltip: undefined; disabled: false };
+      setAside: {
+        text: string;
+        tooltip: string;
+        disabled: boolean;
+      };
+      transfer: {
+        text: string;
+        tooltip: string;
+        disabled: boolean;
+      };
     })
 );
 

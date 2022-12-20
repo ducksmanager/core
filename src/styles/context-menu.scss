@@ -24,6 +24,11 @@
         border: initial;
         color: inherit;
         cursor: not-allowed;
+
+        &:hover {
+          background: initial !important;
+          color: initial !important;
+        }
       }
     }
 
