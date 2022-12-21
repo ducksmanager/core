@@ -112,12 +112,6 @@ import { collection } from "~/stores/collection";
 
 const username = $computed(() => collection().user?.username || null);
 
-const router = useRouter();
-const routes = router.getRoutes();
-
-const getRoute = (name: string) =>
-  routes.find(({ name: routeName }) => name === routeName);
-
 const logout = () => {
   Cookies.remove("token");
   collection().user = null;

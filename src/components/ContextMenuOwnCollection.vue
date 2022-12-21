@@ -351,12 +351,13 @@ import { marketplace } from "~/stores/marketplace";
 import { issue_condition } from "~prisma_clients/client_dm";
 import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
 
-const { copies, publicationcode, selectedIssuesById } = defineProps<{
-  selectedIssues: string[];
-  selectedIssuesById: { [key: number]: string };
-  copies: IssueWithPublicationcode[];
-  publicationcode: string;
-}>();
+const { copies, publicationcode, selectedIssues, selectedIssuesById } =
+  defineProps<{
+    selectedIssues: string[];
+    selectedIssuesById: { [key: number]: string };
+    copies: IssueWithPublicationcode[];
+    publicationcode: string;
+  }>();
 const emit = defineEmits<{
   (e: "clear-selection"): void;
 }>();
@@ -413,10 +414,10 @@ const marketplaceStates = $computed(
         disabled: isSaleDisabledGlobally,
         tooltip: isSaleDisabledGlobally
           ? $t(
-              "Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
+              "Aucun utilisateur n'a envoyé de demande pour acheter ce numéro pour le moment | Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
             )
           : $t(
-              "Réservez des numéros à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ces numéros."
+              "Réservez ce numéro à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ce numéros. | Réservez ces numéros à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ces numéros."
             ),
       },
       transfer: {
@@ -538,7 +539,7 @@ const updateSelectedIssues = async (force = false) => {
   }
 
   await updateIssues({
-    issueNumbers: Object.values(selectedIssuesById),
+    issueNumbers: selectedIssues,
     issueDetails: issueDetails || issueDetailsMultiple,
   });
 };

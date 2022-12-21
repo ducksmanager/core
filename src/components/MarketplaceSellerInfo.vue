@@ -1,31 +1,34 @@
 <template>
-  <div
-    v-for="{ buyerId, isBooked } in receivedRequests"
-    :key="buyerId"
-    class="d-inline-block me-2"
-    :class="{ setAside: isBooked }"
-  >
-    <template v-if="isBooked">{{ $t("Réservé pour") }}</template
-    ><template v-else>{{ $t("Demandé par") }}</template
-    >&nbsp;<UserPopover
-      v-if="buyerPoints?.[`${buyerId}`] && buyerStats?.[`${buyerId}`]"
-      :points="buyerPoints[`${buyerId}`]"
-      :stats="buyerStats[`${buyerId}`]"
-    />
-  </div>
+  <div v-if="isOnSale" class="d-inline-block me-2">{{ $t("A vendre") }}</div>
+  <template v-else>
+    <div
+      v-for="{ buyerId, isBooked } in receivedRequests"
+      :key="buyerId"
+      class="d-inline-block me-2"
+      :class="{ setAside: isBooked }"
+    >
+      <template v-if="isBooked">{{ $t("Réservé pour") }}</template
+      ><template v-else>{{ $t("Demandé par") }}</template
+      >&nbsp;<UserPopover
+        v-if="buyerPoints?.[`${buyerId}`] && buyerStats?.[`${buyerId}`]"
+        :points="buyerPoints[`${buyerId}`]"
+        :stats="buyerStats[`${buyerId}`]"
+      /></div
+  ></template>
 </template>
 
 <script setup lang="ts">
+import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const props = defineProps<{
+const { issueId } = defineProps<{
   issueId: number;
 }>();
 
 const receivedRequests = $computed(() =>
   marketplace().issueRequestsAsSeller?.filter(
-    ({ issueId }) => issueId === props.issueId
+    ({ issueId }) => issueId === issueId
   )
 );
 
@@ -43,6 +46,10 @@ const buyerStats = $computed(
       (acc, { buyerId }) => ({ ...acc, [buyerId]: users().stats[buyerId] }),
       {}
     ) || {}
+);
+
+const isOnSale = $computed(() =>
+  collection().issuesInOnSaleStack?.find(({ id }) => id === issueId)
 );
 </script>
 

@@ -222,8 +222,6 @@ watch(
         width: coverWidth,
         height: coverHeight,
 
-        size: SizeType.FIXED,
-
         maxShadowOpacity: 0.5,
         showCover: true,
         usePortrait: false,
