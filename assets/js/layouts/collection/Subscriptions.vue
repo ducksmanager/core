@@ -126,7 +126,7 @@ const publicationNames = $computed(() => coa().publicationNames),
     createSubscription(newSubscription);
   },
   createSubscription = async (data) => {
-    await axios.put(`/api/collection/subscriptions`, data);
+    await axios.post(`/api/collection/subscriptions`, data);
     await loadSubscriptions(true);
     editedSubscriptionId = undefined;
   },
