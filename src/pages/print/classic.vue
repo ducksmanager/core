@@ -58,13 +58,7 @@ const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
     ?.filter((publicationcode) => publicationcode.split("/")[0] === countrycode)
     ?.sort((a, b) =>
-      !publicationNames[b]
-        ? 1
-        : publicationNames[a] < publicationNames[b]
-        ? -1
-        : publicationNames[a] > publicationNames[b]
-        ? 1
-        : 0
+      (publicationNames[a] || "").localeCompare(publicationNames[b] || "")
     ) || [];
 
 watch(

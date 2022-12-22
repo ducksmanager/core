@@ -24,6 +24,7 @@ Sentry.init({
 });
 
 const app = express();
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 app.set("json replacer", (key: string, value: any) =>
   typeof value === "bigint" ? Number(value) : value
@@ -33,6 +34,7 @@ app.use(
     user: ["id", "username"],
   }) as express.RequestHandler
 );
+
 app.use(
   cors({
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204

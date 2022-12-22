@@ -1,10 +1,7 @@
 import { Handler } from "express";
 
 import { getPublicationTitlesFromCodes } from "~/routes/coa/list/publications";
-import {
-  inducks_publication,
-  PrismaClient as PrismaClientCoa,
-} from "~prisma_clients/client_coa";
+import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
 import {
   PrismaClient as PrismaClientDm,
   userOptionType,
@@ -86,7 +83,7 @@ interface Suggestion
 interface SuggestionList {
   storyDetails?: { [storycode: string]: StoryDetail };
   suggestionsPerUser: { [userId: number]: IssueSuggestionList };
-  publicationTitles: { [publicationcode: string]: inducks_publication };
+  publicationTitles: { [publicationcode: string]: string | null };
   authors: { [personcode: string]: string };
 }
 
