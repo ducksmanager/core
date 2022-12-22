@@ -1,10 +1,12 @@
 import { Handler } from "express";
 
+import { TypedResponse } from "~/TypedResponse";
 import { PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+export type getType = { [publicationcode: string]: string[] };
+export const get: Handler = async (req, res: TypedResponse<getType>) => {
   const { storycode } = req.query;
   if (storycode) {
     return res.json(

@@ -107,7 +107,7 @@ const fetchCountryNames = coa().fetchCountryNames;
 const fetchPublicationNames = coa().fetchPublicationNames;
 const getSortedPublications = (country: string) =>
   publicationsPerCountry?.[country]?.sort((a, b) =>
-    publicationNames[a]?.localeCompare(publicationNames[b])
+    (publicationNames[a] || "").localeCompare(publicationNames[b] || "")
   ) || [];
 
 watch(
