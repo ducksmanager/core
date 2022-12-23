@@ -427,8 +427,8 @@ const getPreselected = () =>
         .map(({ key }) => key || "")
         .filter(
           (_, index) =>
-            preselectedIndexStart &&
-            preselectedIndexEnd &&
+            preselectedIndexStart !== null &&
+            preselectedIndexEnd !== null &&
             index >= preselectedIndexStart &&
             index <= preselectedIndexEnd
         );
