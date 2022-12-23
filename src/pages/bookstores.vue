@@ -267,9 +267,18 @@ const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
   }
 };
 
+watch(
+  () => bookstoreCommentsUserIds,
+  async (value) => {
+    if (value) {
+      await users().fetchStats(value);
+    }
+  },
+  { immediate: true }
+);
+
 onMounted(async () => {
   await fetchBookstores();
-  users().fetchStats(bookstoreCommentsUserIds!);
   const geocoder = new MapboxGeocoder({
     accessToken,
     placeholder: $t("Adresse"),
