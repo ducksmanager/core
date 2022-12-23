@@ -36,6 +36,7 @@ alias: [/agrandir/marketplace]
         <ul>
           <li v-for="issueId of issueIds" :key="issueId">
             <Issue
+              hide-condition
               :publicationcode="issuesOnSaleById[issueId].publicationcode"
               :issuenumber="issuesOnSaleById[issueId].issuenumber"
               :publicationname="
@@ -94,7 +95,7 @@ alias: [/agrandir/marketplace]
       :publicationcode="publicationcode"
       :custom-issues="
         userIdFilter
-          ? (issues as issue[]).filter(({ userId }) => userId === userIdFilter)
+          ? issues!.filter(({ userId }) => (userId as number) === userIdFilter)
           : issues
       "
       on-sale-by-others
@@ -158,6 +159,7 @@ alias: [/agrandir/marketplace]
         </p>
         <div v-for="issueId of modalIssueIds" :key="issueId">
           <issue
+            hide-condition
             :publicationcode="issuesOnSaleById[issueId].publicationcode"
             :publicationname="
               publicationNames[issuesOnSaleById[issueId].publicationcode]
@@ -183,7 +185,6 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
-import { issue } from "~prisma_clients/client_dm";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
@@ -196,9 +197,7 @@ const user = $computed(() => collection().user);
 const contactMethods = $computed(() => marketplace().contactMethods);
 
 const issuesOnSaleByOthers = $computed(
-  (): {
-    [publicationcode: string]: issue[];
-  } | null => marketplace().issuesOnSaleByOthers
+  () => marketplace().issuesOnSaleByOthers
 );
 const sentRequestIssueIds = $computed(() => marketplace().sentRequestIssueIds);
 const requestIssueIdsBySellerId = $computed(

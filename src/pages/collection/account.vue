@@ -262,7 +262,7 @@ const updateAccount = async () => {
 
     collection.marketplaceContactMethods = [
       hasEmailContactMethod ? "email" : "",
-      hasDiscordContactMethod ? "discord" : "",
+      hasDiscordContactMethod ? "discordId" : "",
     ].filter((value) => value);
     await collection.updateMarketplaceContactMethods();
   } catch (e) {
@@ -292,7 +292,7 @@ watch(
   (newValue: string[] | null) => {
     if (newValue) {
       hasEmailContactMethod = newValue.includes("email");
-      hasDiscordContactMethod = newValue.includes("discord");
+      hasDiscordContactMethod = newValue.includes("discordId");
     }
   },
   { immediate: true }
