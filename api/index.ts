@@ -4,8 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-
-import app from "~/router";
+import { router } from "express-file-routing";
 
 import {
   authenticateToken,
@@ -24,6 +23,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
+const app = express();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 app.set("json replacer", (key: string, value: any) =>
   typeof value === "bigint" ? Number(value) : value
@@ -54,6 +54,8 @@ app.all(/^\/edgecreator\/(.+)/, [
 
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all("/global-stats/user/collection/rarity", authenticateToken);
+
+app.use("/", router());
 
 app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
