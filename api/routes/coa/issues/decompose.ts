@@ -1,17 +1,15 @@
 import bodyParser from "body-parser";
 import { Handler } from "express";
 
-import { TypedResponse } from "~/TypedResponse";
-import { inducks_issue, PrismaClient } from "~prisma_clients/client_coa";
+import { PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type postType = { [issuecode: string]: inducks_issue };
 export const post = [
   parseForm,
-  (async (req, res: TypedResponse<postType>) =>
+  (async (req, res) =>
     res.json(
       (
         await prisma.inducks_issue.findMany({

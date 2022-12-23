@@ -1,7 +1,6 @@
 import { Handler } from "express";
 
-import { TypedResponse } from "~/TypedResponse";
-import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
@@ -24,8 +23,7 @@ export const getAuthorFullNames = async (
     {}
   );
 
-export type getType = Prisma.PromiseReturnType<typeof getAuthorFullNames>;
-export const get: Handler = async (req, res: TypedResponse<getType>) => {
+export const get: Handler = async (req, res) => {
   const authorPersoncodes = [...new Set(req.params.authors.split(","))];
 
   const authors = await getAuthorFullNames(authorPersoncodes);

@@ -3,33 +3,21 @@ import { defineStore } from "pinia";
 import { getCurrentLocaleShortKey } from "~/composables/locales";
 import { i18n } from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
-import { inducks_issue } from "~prisma_clients/client_coa";
+import {
+  inducks_issue,
+  inducks_issuequotation,
+} from "~prisma_clients/client_coa";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 
 const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
-import type { getType as URL_PREFIX_COUNTRIES_TYPE } from "~routes/coa/list/countries/:locale";
-
 const URL_PREFIX_PUBLICATIONS = "/coa/list/publications";
-import type { getType as URL_PREFIX_PUBLICATIONS_TYPE } from "~routes/coa/list/publications";
-
 const URL_PREFIX_ISSUES = "/coa/list/issues";
-import type { getType as URL_PREFIX_ISSUES_TYPE } from "~routes/coa/list/issues";
-
 const URL_PREFIX_AUTHORS = "/coa/authorsfullnames/";
-import type { getType as URL_PREFIX_AUTHORS_TYPE } from "~routes/coa/authorsfullnames/:authors";
-
 const URL_PREFIX_URLS = "/coa/list/issues/details";
-import type { getType as URL_PREFIX_URLS_TYPE } from "~routes/coa/list/issues/details";
-
 const URL_PREFIX_PUBLICATION_QUOTATIONS = "/coa/quotations/publications";
-import type { getType as URL_PREFIX_PUBLICATION_QUOTATIONS_TYPE } from "~routes/coa/quotations/publications";
-
 const URL_ISSUE_COUNTS = "/coa/list/issues/count";
-import type { getType as URL_ISSUE_COUNTS_TYPE } from "~routes/coa/list/issues/count";
-
 const URL_ISSUE_DECOMPOSE = "/coa/issues/decompose";
-import type { postType as URL_ISSUE_DECOMPOSE_TYPE } from "~routes/coa/issues/decompose";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -64,7 +52,7 @@ export const coa = defineStore("coa", {
   state: () => ({
     coverUrls: {} as { [issuenumber: string]: string },
     countryNames: null as { [countrycode: string]: string } | null,
-    publicationNames: {} as { [publicationcode: string]: string | null },
+    publicationNames: {} as { [publicationcode: string]: string },
     publicationNamesFullCountries: [] as string[],
     personNames: null as { [personcode: string]: string } | null,
     issueNumbers: {} as { [issuecode: string]: string[] },
@@ -82,7 +70,7 @@ export const coa = defineStore("coa", {
 
   actions: {
     addPublicationNames(publicationNames: {
-      [publicationcode: string]: string | null;
+      [publicationcode: string]: string;
     }) {
       this.publicationNames = {
         ...this.publicationNames,
@@ -122,7 +110,7 @@ export const coa = defineStore("coa", {
       if (!this.isLoadingCountryNames && !this.countryNames) {
         this.isLoadingCountryNames = true;
         this.countryNames = (
-          await coaApi.get<URL_PREFIX_COUNTRIES_TYPE>(
+          await coaApi.get(
             URL_PREFIX_COUNTRIES.replace(
               "LOCALE",
               getCurrentLocaleShortKey(i18n.global.locale)
@@ -144,22 +132,21 @@ export const coa = defineStore("coa", {
       return (
         newPublicationCodes.length &&
         this.addPublicationNames(
-          await this.getChunkedRequests<URL_PREFIX_PUBLICATIONS_TYPE>({
+          await this.getChunkedRequests({
             url: URL_PREFIX_PUBLICATIONS,
             valuesToChunk: newPublicationCodes,
             chunkSize: 20,
             chunkOnQueryParam: true,
             parameterName: "publicationCodes",
-          }).then((data) => {
-            console.log(data);
-            return data.reduce(
-              (acc, data2) => ({
+          }).then((data) =>
+            data.reduce(
+              (acc, { data }: { data: { [_: string]: string } }) => ({
                 ...acc,
-                ...data2,
+                ...data,
               }),
               {}
-            );
-          })
+            )
+          )
         )
       );
     },
@@ -175,17 +162,15 @@ export const coa = defineStore("coa", {
       return (
         newPublicationCodes.length &&
         this.addIssueQuotations(
-          (await this.getChunkedRequests<URL_PREFIX_PUBLICATION_QUOTATIONS_TYPE>(
-            {
-              url: URL_PREFIX_PUBLICATION_QUOTATIONS,
-              valuesToChunk: newPublicationCodes,
-              chunkSize: 50,
-              chunkOnQueryParam: true,
-              parameterName: "publicationCodes",
-            }
-          ).then((data) =>
+          (await this.getChunkedRequests({
+            url: URL_PREFIX_PUBLICATION_QUOTATIONS,
+            valuesToChunk: newPublicationCodes,
+            chunkSize: 50,
+            chunkOnQueryParam: true,
+            parameterName: "publicationCodes",
+          }).then((data) =>
             data.reduce(
-              (acc, data) => ({
+              (acc, { data }: { data: inducks_issuequotation[] }) => ({
                 ...acc,
                 ...data.reduce(
                   (issueAcc, issue) => ({
@@ -210,10 +195,8 @@ export const coa = defineStore("coa", {
       if (this.publicationNamesFullCountries.includes(countryCode)) return;
 
       return coaApi
-        .get<URL_PREFIX_COUNTRIES_TYPE>(
-          `${URL_PREFIX_PUBLICATIONS}/${countryCode}`
-        )
-        .then(({ data }) => {
+        .get(`${URL_PREFIX_PUBLICATIONS}/${countryCode}`)
+        .then(({ data }: { data: { [_: string]: string } }) => {
           this.addPublicationNames({
             ...(this.publicationNames || {}),
             ...data,
@@ -237,13 +220,13 @@ export const coa = defineStore("coa", {
         newPersonNames.length &&
         this.setPersonNames({
           ...(this.personNames || {}),
-          ...(await this.getChunkedRequests<URL_PREFIX_AUTHORS_TYPE>({
+          ...(await this.getChunkedRequests({
             url: URL_PREFIX_AUTHORS,
             valuesToChunk: newPersonNames,
             chunkSize: 10,
           }).then((data) =>
             data.reduce(
-              (acc, data) => ({
+              (acc, { data }: { data: { [_: string]: string } }) => ({
                 ...acc,
                 ...data,
               }),
@@ -274,7 +257,7 @@ export const coa = defineStore("coa", {
       return (
         newPublicationCodes.length &&
         this.addIssueNumbers(
-          await this.getChunkedRequests<URL_PREFIX_ISSUES_TYPE>({
+          await this.getChunkedRequests({
             url: URL_PREFIX_ISSUES,
             valuesToChunk: newPublicationCodes,
             chunkSize: 50,
@@ -282,7 +265,7 @@ export const coa = defineStore("coa", {
             parameterName: "publicationCodes",
           }).then((data) =>
             data.reduce(
-              (acc, data) => ({
+              (acc, { data }: { data: { [_: string]: string[] } }) => ({
                 ...acc,
                 ...data,
               }),
@@ -305,7 +288,7 @@ export const coa = defineStore("coa", {
       return (
         newIssueCodes.length &&
         this.addIssueCodeDetails(
-          await this.getChunkedRequests<URL_ISSUE_DECOMPOSE_TYPE>({
+          await this.getChunkedRequests({
             url: URL_ISSUE_DECOMPOSE,
             valuesToChunk: newIssueCodes,
             chunkSize: 50,
@@ -313,7 +296,7 @@ export const coa = defineStore("coa", {
             parameterName: "issueCodes",
           }).then((data) =>
             data.reduce(
-              (acc, data) => ({
+              (acc, { data }: { data: { [_: string]: string } }) => ({
                 ...acc,
                 ...data,
               }),
@@ -326,9 +309,7 @@ export const coa = defineStore("coa", {
 
     async fetchIssueCounts() {
       if (!this.issueCounts)
-        this.issueCounts = (
-          await coaApi.get<URL_ISSUE_COUNTS_TYPE>(URL_ISSUE_COUNTS)
-        ).data;
+        this.issueCounts = (await coaApi.get(URL_ISSUE_COUNTS)).data;
     },
 
     async fetchIssueUrls({
@@ -341,7 +322,7 @@ export const coa = defineStore("coa", {
       const issueCode = `${publicationcode} ${issuenumber}`;
       if (!this.issueDetails[issueCode]) {
         const issueDetails = (
-          await coaApi.get<URL_PREFIX_URLS_TYPE>(
+          await coaApi.get(
             `${URL_PREFIX_URLS}?publicationcode=${publicationcode}&issuenumber=${issuenumber}`
           )
         ).data;
@@ -353,7 +334,7 @@ export const coa = defineStore("coa", {
       }
     },
 
-    async getChunkedRequests<ResponseType>({
+    async getChunkedRequests({
       url,
       valuesToChunk,
       chunkSize,
@@ -367,30 +348,32 @@ export const coa = defineStore("coa", {
       chunkOnQueryParam?: boolean;
       method?: string;
       parameterName?: string;
-    }): Promise<ResponseType[]> {
-      let acc: ResponseType[] = [];
-      const slices = Array.from(
-        { length: Math.ceil(valuesToChunk.length / chunkSize) },
-        (v, i) => valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+    }) {
+      return await Promise.all(
+        await Array.from(
+          { length: Math.ceil(valuesToChunk.length / chunkSize) },
+          (v, i) =>
+            valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+        ).reduce(
+          async (acc, codeChunk) =>
+            (
+              await acc
+            ).concat(
+              await (method === "get"
+                ? coaApi.get(
+                    `${url}${
+                      chunkOnQueryParam ? `?${parameterName}=` : ""
+                    }${codeChunk.join(",")}`
+                  )
+                : coaApi.request({
+                    method,
+                    url,
+                    data: { [parameterName]: codeChunk.join(",") },
+                  }))
+            ),
+          Promise.resolve([])
+        )
       );
-      for (const slice of slices) {
-        acc = acc.concat(
-          (
-            await (method === "get"
-              ? coaApi.get<ResponseType>(
-                  `${url}${
-                    chunkOnQueryParam ? `?${parameterName}=` : ""
-                  }${slice.join(",")}`
-                )
-              : coaApi.request<ResponseType>({
-                  method,
-                  url,
-                  data: { [parameterName]: slice.join(",") },
-                }))
-          ).data
-        );
-      }
-      return acc;
     },
   },
 });

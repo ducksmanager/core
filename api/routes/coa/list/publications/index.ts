@@ -1,7 +1,6 @@
 import { Handler } from "express";
 
-import { TypedResponse } from "~/TypedResponse";
-import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
@@ -9,10 +8,7 @@ export const getPublicationTitlesFromCodes = async (
   publicationCodes: string[]
 ) => await getPublicationTitles({ in: publicationCodes });
 
-export type getType = Prisma.PromiseReturnType<
-  typeof getAllPublicationTitles | typeof getPublicationTitlesFromCodes
->;
-export const get: Handler = async (req, res: TypedResponse<getType>) => {
+export const get: Handler = async (req, res) => {
   const publicationCodes =
     (req.query as { [key: string]: string }).publicationCodes?.split(",") || "";
   if (publicationCodes.length > 20) {
@@ -28,7 +24,7 @@ export const get: Handler = async (req, res: TypedResponse<getType>) => {
 const getAllPublicationTitles = async () => await getPublicationTitles({});
 export const getPublicationTitles = async (filter: {
   [operator: string]: string | string[];
-}): Promise<{ [publicationcode: string]: string | null }> =>
+}) =>
   (
     await prisma.inducks_publication.findMany({
       where: {

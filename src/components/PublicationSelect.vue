@@ -78,9 +78,7 @@ const publicationNamesForCurrentCountry = $computed(() =>
           text: publicationNames[publicationcode],
           value: publicationcode,
         }))
-        .sort(({ text: text1 }, { text: text2 }) =>
-          (text1 || "").localeCompare(text2 || "")
-        )
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2))
     : []
 );
 

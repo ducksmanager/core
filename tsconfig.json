@@ -22,8 +22,7 @@
     "paths": {
       "~/*": ["src/*"],
       "~types/*": ["types/*"],
-      "~prisma_clients/*": ["api/dist/prisma/*"],
-      "~routes/*": ["api/routes/*"]
+      "~prisma_clients/*": ["api/dist/prisma/*"]
     }
   },
   "include": [

@@ -1,12 +1,10 @@
 import { Handler } from "express";
 
-import { TypedResponse } from "~/TypedResponse";
 import { PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
-export type getType = { [publicationcode: string]: number };
-export const get: Handler = async (req, res: TypedResponse<getType>) =>
+export const get: Handler = async (req, res) =>
   res.json(
     (
       await prisma.inducks_issue.groupBy({
