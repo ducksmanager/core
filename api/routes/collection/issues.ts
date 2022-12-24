@@ -6,6 +6,7 @@ import { resetDemo } from "~/routes/demo/_reset";
 import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
 import { CollectionUpdate } from "~types/CollectionUpdate";
 import { User } from "~types/SessionUser";
+import { TransactionResults } from "~types/TransactionResults";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -41,7 +42,7 @@ const addOrChangeIssues = async (
   isOnSale: boolean | null,
   isToRead: boolean | null,
   purchaseId: number | null
-): Promise<{ [operationType: string]: number }> => {
+): Promise<TransactionResults> => {
   const [country, magazine] = publicationcode.split("/");
 
   const conditionNewIssues =
@@ -133,7 +134,7 @@ const addOrChangeCopies = async (
   areOnSale: boolean[],
   areToRead: boolean[] | string[],
   purchaseIds: number[]
-): Promise<{ [operationType: string]: number }> => {
+): Promise<TransactionResults> => {
   await deleteIssues(userId, publicationcode, [issuenumber]);
   const [country, magazine] = publicationcode.split("/");
 

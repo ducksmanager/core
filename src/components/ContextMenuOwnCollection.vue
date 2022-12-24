@@ -67,8 +67,8 @@
             :key="`condition-${value}`"
             :hide-on-click="false"
             class="clickable"
-            :class="{ selected: copy.condition === value }"
-            @click="copy.condition = value!.toString()"
+            :class="{ selected: copy.condition === (value || 'missing') }"
+            @click="copy.condition = value?.toString() || 'missing'"
           >
             <template v-if="value === 'do_not_change'" />
             <Condition v-else :value="value" />&nbsp;{{ labelContextMenu }}
@@ -452,14 +452,14 @@ const isSaleDisabledGlobally = $computed(
   () => !userIdsWhoSentRequestsForAllSelected.length
 );
 
-let isSingleIssueSelected = $computed(
-  () => [...new Set(Object.values(selectedIssuesById))].length === 1
-);
+let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
 const hasNoCopies = $computed(() => !editingCopies.length);
 const hasMaxCopies = $computed(() => editingCopies.length >= 3);
 const formatDate = (value: string) =>
   /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 const updateEditingCopies = () => {
+  console.log(isSingleIssueSelected);
+  console.log(copies.length);
   if (isSingleIssueSelected) {
     if (copies.length) {
       editingCopies = JSON.parse(JSON.stringify(copies));
@@ -573,6 +573,12 @@ const deletePurchase = async (id: number) => {
 
 watch(
   () => selectedIssuesById,
+  () => updateEditingCopies(),
+  { immediate: true }
+);
+
+watch(
+  () => selectedIssues,
   () => updateEditingCopies(),
   { immediate: true }
 );
