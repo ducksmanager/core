@@ -50,6 +50,8 @@ RUN pnpm install --production
 COPY --from=api-build /home/api/dist /app/
 RUN rm -rf api/dist/prisma && mv prisma api/dist/
 
+COPY ./api/routes/demo/*.csv /app/api/routes/demo
+
 EXPOSE 3000
 
 WORKDIR /app/api
