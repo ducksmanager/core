@@ -276,8 +276,7 @@ export const post = [
     } else {
       if (["missing"].includes(condition)) {
         await deleteIssues(userId, publicationcode, issueNumbers);
-        res.statusCode = constants.HTTP_STATUS_OK;
-        res.end(JSON.stringify({}));
+        return res.json({});
       }
       output = addOrChangeIssues(
         userId,

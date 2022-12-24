@@ -4,11 +4,8 @@ import { issue, PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
-  const issuesForSale = await getIssuesForSale(req.user.id);
-  res.writeHead(200, { "Content-Type": "application/text" });
-  res.end(JSON.stringify(issuesForSale));
-};
+export const get: Handler = async (req, res) =>
+  res.json(await getIssuesForSale(req.user.id));
 
 export const getIssuesForSale: (
   buyerId: number
