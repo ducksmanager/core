@@ -7,18 +7,18 @@ const prisma = new PrismaClient();
 export const get: Handler = async (req, res) => {
   const { storycode } = req.query;
   if (storycode) {
-    return res.json(
-      await prisma.$queryRaw`
-              SELECT issuecode as code,
-                     publicationcode,
-                     issuenumber
-              FROM inducks_issue issue
-                       INNER JOIN inducks_entry entry using (issuecode)
-                       INNER JOIN inducks_storyversion sv using (storyversioncode)
-              WHERE sv.storycode = ${storycode}
-              GROUP BY publicationcode, issuenumber
-              ORDER BY publicationcode`
-    );
+    return res.json({
+      results: await prisma.$queryRaw`
+            SELECT issuecode as code,
+                   publicationcode,
+                   issuenumber
+            FROM inducks_issue issue
+                     INNER JOIN inducks_entry entry using (issuecode)
+                     INNER JOIN inducks_storyversion sv using (storyversioncode)
+            WHERE sv.storycode = ${storycode}
+            GROUP BY publicationcode, issuenumber
+            ORDER BY publicationcode`,
+    });
   }
   const publicationCodes =
     (req.query as { [key: string]: string }).publicationCodes?.split(",") || [];
@@ -38,8 +38,8 @@ export const get: Handler = async (req, res) => {
       },
     },
   });
-  return res.json(
-    data.reduce(
+  return res.json({
+    results: data.reduce(
       (acc, { publicationcode, issuenumber }) => ({
         ...acc,
         [publicationcode!]: [
@@ -48,6 +48,6 @@ export const get: Handler = async (req, res) => {
         ],
       }),
       {} as { [publicationcode: string]: string[] }
-    )
-  );
+    ),
+  });
 };

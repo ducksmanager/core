@@ -1,5 +1,6 @@
 <template>
   <span
+    v-if="currentCondition"
     class="issue-condition"
     :class="{
       [`issue-condition-${currentCondition!.value}`]: true,
@@ -7,6 +8,7 @@
     :style="{ backgroundColor: currentCondition!.color }"
     :title="currentCondition!.label"
   />
+  <span v-else class="issue-condition" />
 </template>
 
 <script setup lang="ts">
@@ -42,7 +44,7 @@ const currentCondition = $computed(() => {
         conditions.find(
           ({ dbValue }) => dbValue === issueInCollection.condition
         )) ||
-      conditions.find(({ value }) => value === null)!
+      undefined
     );
   }
   return conditions.find(({ value }) => value === null);
@@ -51,6 +53,7 @@ const currentCondition = $computed(() => {
 
 <style scoped lang="scss">
 .issue-condition {
+  border: 8px solid transparent;
   border-radius: 50%;
 
   &.issue-condition-null {
