@@ -206,13 +206,15 @@ export const post = [
   parseForm,
   (async (req, res) => {
     const { body, user }: { body: CollectionUpdate; user: User } = req;
-    const { publicationcode, issueNumbers, purchaseId } = body;
+    const { publicationcode, issueIdsByIssuenumber, purchaseId } = body;
 
-    const [country, magazine] = publicationcode.split("/");
     let { isOnSale, condition, isToRead } = body;
     const userId = user.id;
 
-    if (typeof condition !== "string" && issueNumbers.length > 1) {
+    if (
+      typeof condition !== "string" &&
+      Object.keys(issueIdsByIssuenumber).length > 1
+    ) {
       res.statusCode = constants.HTTP_STATUS_BAD_REQUEST;
       console.error("Can't update copies of multiple issues at once");
       res.end();
@@ -242,18 +244,11 @@ export const post = [
       isOnSale = (isOnSale as boolean[])[0];
     }
 
-    let issueIds: number[];
     if (typeof isOnSale !== "string") {
-      issueIds = (
-        await prisma.issue.findMany({
-          where: {
-            userId,
-            country,
-            magazine,
-            issuenumber: { in: issueNumbers },
-          },
-        })
-      ).map(({ id }) => id);
+      const issueIds = Object.values(issueIdsByIssuenumber).reduce(
+        (acc, issueIds) => [...acc, ...issueIds],
+        []
+      );
       await prisma.requestedIssue.updateMany({
         data: {
           isBooked: false,
@@ -267,13 +262,14 @@ export const post = [
       output = addOrChangeCopies(
         userId,
         publicationcode,
-        issueNumbers[0],
+        Object.keys(issueIdsByIssuenumber)[0],
         condition ?? [],
         (isOnSale as boolean[]) ?? [],
         (isToRead as boolean[]) ?? [],
         (purchaseIds as number[]) ?? []
       );
     } else {
+      const issueNumbers = Object.keys(issueIdsByIssuenumber);
       if (["missing"].includes(condition)) {
         await deleteIssues(userId, publicationcode, issueNumbers);
         return res.json({});

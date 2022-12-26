@@ -18,7 +18,7 @@
     }}
   </b-alert>
   <b-alert
-    v-if="copies.length && !isSingleIssueSelected"
+    v-if="issueIds.length && !isSingleIssueSelected"
     class="text-center m-0"
     show
     variant="warning"
@@ -351,13 +351,12 @@ import { marketplace } from "~/stores/marketplace";
 import { issue_condition } from "~prisma_clients/client_dm";
 import { CopyState, CopyStateMultiple } from "~types/CollectionUpdate";
 
-const { copies, publicationcode, selectedIssues, selectedIssuesById } =
-  defineProps<{
-    selectedIssues: string[];
-    selectedIssuesById: { [key: number]: string };
-    copies: IssueWithPublicationcode[];
-    publicationcode: string;
-  }>();
+const { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{
+  selectedIssueIdsByIssuenumber: {
+    [issuenumber: string]: IssueWithPublicationcode[];
+  };
+  publicationcode: string;
+}>();
 const emit = defineEmits<{
   (e: "clear-selection"): void;
 }>();
@@ -379,6 +378,10 @@ interface NewPurchase {
 }
 let editingCopies = $ref([] as (CopyState & NewPurchase)[]);
 let currentCopyIndex = $ref(0 as number);
+
+const selectedIssues = $computed(() =>
+  Object.keys(selectedIssueIdsByIssuenumber)
+);
 const purchases = $computed(() => collection().purchases);
 
 const conditionStates = $computed(
@@ -458,11 +461,16 @@ const hasMaxCopies = $computed(() => editingCopies.length >= 3);
 const formatDate = (value: string) =>
   /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 const updateEditingCopies = () => {
-  console.log(isSingleIssueSelected);
-  console.log(copies.length);
   if (isSingleIssueSelected) {
-    if (copies.length) {
-      editingCopies = JSON.parse(JSON.stringify(copies));
+    if (issueIds.length) {
+      editingCopies = JSON.parse(
+        JSON.stringify(
+          Object.values(selectedIssueIdsByIssuenumber).reduce((acc, issues) => [
+            ...acc,
+            ...issues,
+          ])
+        )
+      );
     } else {
       editingCopies = [{ ...defaultCopyState, condition: "missing" }];
     }
@@ -471,8 +479,25 @@ const updateEditingCopies = () => {
   }
 };
 
+const issueIdsByIssuenumber = $computed(() =>
+  Object.entries(selectedIssueIdsByIssuenumber).reduce(
+    (acc, [issuenumber, issues]) => ({
+      ...acc,
+      [issuenumber]: issues.map(({ id }) => id),
+    }),
+    {} as { [issuenumber: string]: number[] }
+  )
+);
+
+const issueIds = $computed(() =>
+  Object.values(selectedIssueIdsByIssuenumber).reduce(
+    (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
+    [] as number[]
+  )
+);
+
 const userIdsWhoSentRequestsForAllSelected = $computed(() =>
-  Object.keys(selectedIssuesById).reduce(
+  issueIds.reduce(
     (acc, issueId, idx) =>
       idx === 0
         ? [
@@ -480,7 +505,7 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
               (receivedRequests || [])
                 .filter(
                   ({ issueId: receivedRequestIssueId }) =>
-                    receivedRequestIssueId === parseInt(issueId)
+                    receivedRequestIssueId === issueId
                 )
                 .map(({ buyerId }) => buyerId)
             ),
@@ -491,7 +516,7 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
                 issueId: receivedRequestIssueId,
                 buyerId: receivedRequestBuyerId,
               }) =>
-                receivedRequestIssueId === parseInt(issueId) &&
+                receivedRequestIssueId === issueId &&
                 receivedRequestBuyerId === buyerId
             )
           ),
@@ -502,8 +527,8 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
 const buyerUserNamesById = $computed(() => marketplace().buyerUserNamesById);
 
 const receivedRequests = $computed(() =>
-  marketplace().issueRequestsAsSeller?.filter(
-    ({ issueId }) => issueId === copies?.[0]?.id
+  marketplace().issueRequestsAsSeller?.filter(({ issueId }) =>
+    issueIds.includes(issueId)
   )
 );
 
@@ -539,21 +564,18 @@ const updateSelectedIssues = async (force = false) => {
   }
 
   await updateIssues({
-    issueNumbers: selectedIssues,
     issueDetails: issueDetails || issueDetailsMultiple,
   });
 };
 
 const updateIssues = async ({
-  issueNumbers,
   issueDetails,
 }: {
-  issueNumbers: string[];
   issueDetails: CopyState | CopyStateMultiple;
 }) => {
   await collectionStore().updateCollection({
     publicationcode,
-    issueNumbers,
+    issueIdsByIssuenumber,
     condition: issueDetails.condition,
     isToRead: issueDetails.isToRead,
     isOnSale: issueDetails.isOnSale,
@@ -572,18 +594,7 @@ const deletePurchase = async (id: number) => {
 };
 
 watch(
-  () => selectedIssuesById,
-  () => updateEditingCopies(),
-  { immediate: true }
-);
-
-watch(
-  () => selectedIssues,
-  () => updateEditingCopies(),
-  { immediate: true }
-);
-watch(
-  () => copies,
+  () => selectedIssueIdsByIssuenumber,
   () => updateEditingCopies(),
   { immediate: true }
 );

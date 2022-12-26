@@ -1,6 +1,6 @@
 <template>
   <template v-if="isOnSale">
-    <template v-if="receivedRequests.length">
+    <template v-if="receivedRequests?.length">
       <div
         v-for="{ buyerId, isBooked } in receivedRequests"
         :key="buyerId"

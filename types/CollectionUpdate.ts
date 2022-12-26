@@ -14,7 +14,7 @@ export interface CopyStateMultiple {
 
 export interface CollectionUpdate {
   publicationcode: string;
-  issueNumbers: string[];
+  issueIdsByIssuenumber: { [issuenumber: string]: number[] };
   condition: string | string[];
   isOnSale: string | boolean | null | (string | boolean | null)[];
   isToRead:

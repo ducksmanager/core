@@ -242,9 +242,8 @@
       ref="contextMenu"
       :key="contextMenuKey"
       :publicationcode="publicationcode"
-      :selected-issues-by-id="selectedIssuesById"
+      :selected-issue-ids-by-issuenumber="copiesBySelectedIssuenumber"
       :selected-issues="selected"
-      :copies="selectedIssuesCopies"
       @clear-selection="
         contextmenu.hide();
         selected = [];
@@ -253,7 +252,9 @@
         contextMenuKey = `context-menu-${Math.random()}`;
         contextmenu.hide();
       "
-      @launch-modal="emit('launch-modal', $event)"
+      @launch-modal="
+        emit('launch-modal', { ...$event, selectedIssueIds: issueIds })
+      "
     />
   </v-contextmenu>
 </template>
@@ -281,7 +282,7 @@ type simpleIssue = {
   key: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {
-  userCopies: (issue & { copyIndex: number })[];
+  userCopies: (issue & { copyIndex: number; publicationcode: string })[];
 };
 
 const {
@@ -348,25 +349,26 @@ let selected = $shallowRef([] as string[]);
 const filteredUserCopies = $computed(() =>
   filteredIssues.reduce(
     (acc, { userCopies }) => [...acc, ...userCopies],
-    [] as issue[]
+    [] as IssueWithPublicationcode[]
   )
 );
-const selectedIssuesById = $computed(() =>
-  selected.reduce(
-    (acc, issueKey) => ({
+const copiesBySelectedIssuenumber = $computed(() =>
+  selected.reduce((acc, issueKey) => {
+    const [issuenumber, maybeIssueId] = issueKey.split("-id-");
+    const issueId = (maybeIssueId && parseInt(maybeIssueId)) || undefined;
+    return {
       ...acc,
-      ...filteredUserCopies
-        .filter(
-          ({ issuenumber: copyIssueNumber }) =>
-            issueKey.split("-id-")[0] === copyIssueNumber
-        )
-        .reduce(
-          (acc2, { id, issuenumber }) => ({ ...acc2, [id]: issuenumber }),
-          {} as { [id: number]: string }
+      [issuenumber]: [
+        ...(acc[issuenumber] || []),
+        ...filteredUserCopies.filter(
+          ({ id: copyId, issuenumber: copyIssueNumber }) =>
+            issueId !== undefined
+              ? issueId === copyId
+              : issuenumber === copyIssueNumber
         ),
-    }),
-    {}
-  )
+      ],
+    };
+  }, {} as { [issuenumber: string]: IssueWithPublicationcode[] })
 );
 let preselected = $shallowRef([] as string[]);
 let preselectedIndexStart = $ref(null as number | null);
@@ -378,6 +380,15 @@ const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const showFilter = $computed(
   () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly
+);
+
+const issueIds = $computed(() =>
+  Object.values(
+    copiesBySelectedIssuenumber as { [issuenumber: string]: { id: number }[] }
+  ).reduce(
+    (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
+    [] as number[]
+  )
 );
 
 let contextMenuKey = $ref("context-menu" as string);
@@ -399,17 +410,6 @@ const filteredIssues = $computed(
           (filter.missing && !userCopies!.length)
       )
       ?.map((issue, idx) => ({ ...issue, idx })) || []
-);
-const selectedIssuesCopies = $computed(() =>
-  userIssuesForPublication!.filter(
-    ({ issuenumber }, idx) =>
-      selected.includes(issuenumber) &&
-      (selected.length === 1 ||
-        userIssuesForPublication!.some(
-          ({ issuenumber: issuenumber2 }, idx2) =>
-            issuenumber2 === issuenumber && idx !== idx2
-        ))
-  )
 );
 const ownedIssuesCount = $computed(
   () =>
@@ -447,7 +447,10 @@ const deletePublicationIssues = async (
   contextmenu.hide();
   await collectionStore().updateCollection({
     publicationcode,
-    issueNumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
+    issueIdsByIssuenumber: issuesToDelete.reduce(
+      (acc, { issuenumber }) => ({ ...acc, [issuenumber]: [] }),
+      {}
+    ),
     condition:
       conditions.find(({ value }) => value === null)?.dbValue || "indefini",
     isToRead: false,
@@ -491,6 +494,7 @@ const loadIssues = async () => {
           )
           .map((issue, copyIndex) => ({
             ...issue,
+            publicationcode: `${issue.country}/${issue.magazine}`,
             copyIndex,
           })),
         key: issue.issuenumber,
@@ -514,6 +518,7 @@ const loadIssues = async () => {
               )
               .map((issue) => ({
                 ...issue,
+                publicationcode: `${issue.country}/${issue.magazine}`,
                 key: `${issue.issuenumber}-id-${issue.id}`,
                 userCopies: [{ ...issue, copyIndex: 0 }],
               })),

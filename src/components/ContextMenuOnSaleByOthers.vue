@@ -74,9 +74,6 @@
               emit('launch-modal', {
                 contactMethod: 'email',
                 sellerId: selectedIssuesBuyerIds[0],
-                selectedIssueIds: Object.keys(selectedIssuesById).map((id) =>
-                  parseInt(id)
-                ),
               });
             "
             >{{ $t("Par email") }}</span
@@ -87,9 +84,6 @@
               emit('launch-modal', {
                 contactMethod: 'discordId',
                 sellerId: selectedIssuesBuyerIds[0],
-                selectedIssueIds: Object.keys(selectedIssuesById).map((id) =>
-                  parseInt(id)
-                ),
               });
             "
             >{{ $t("Sur Discord") }}</span
@@ -105,12 +99,14 @@ import { BAlert } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { IssueWithPublicationcode } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const { selectedIssuesById } = defineProps<{
-  selectedIssues: string[];
-  selectedIssuesById: { [key: number]: string };
+const { selectedIssueIdsByIssuenumber } = defineProps<{
+  selectedIssueIdsByIssuenumber: {
+    [issuenumber: string]: IssueWithPublicationcode[];
+  };
 }>();
 const emit = defineEmits<{
   (
@@ -124,10 +120,16 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
+const selectedIssues = $computed(() =>
+  Object.keys(selectedIssueIdsByIssuenumber)
+);
 const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
 const issueIds = $computed(() =>
-  Object.keys(selectedIssuesById).map((id) => parseInt(id))
+  Object.values(selectedIssueIdsByIssuenumber).reduce(
+    (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
+    [] as number[]
+  )
 );
 const stats = $computed(() => users().stats);
 
@@ -141,18 +143,13 @@ const selectedIssuesBuyerIds = $computed(() => [
 ]);
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
-  Object.entries(
-    Object.values(selectedIssuesById).reduce(
-      (acc, issuenumber) => ({
-        ...acc,
-        [issuenumber]: (acc[issuenumber] || 0) + 1,
-      }),
-      {} as { [key: string]: number }
-    )
-  )
-    .filter(([, count]) => count > 1)
+  Object.entries(selectedIssueIdsByIssuenumber)
+    .filter(([, copies]) => copies.length > 1)
     .reduce(
-      (acc, [issuenumber, copies]) => ({ ...acc, [issuenumber]: copies }),
+      (acc, [issuenumber, copies]) => ({
+        ...acc,
+        [issuenumber]: copies.length,
+      }),
       {}
     )
 );
