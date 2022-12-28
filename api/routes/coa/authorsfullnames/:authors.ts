@@ -24,10 +24,7 @@ export const getAuthorFullNames = async (
   );
 
 export type getType = Prisma.PromiseReturnType<typeof getAuthorFullNames>;
-export const get: Handler = async (req, res: Response<getType>) => {
-  const authorPersoncodes = [...new Set(req.params.authors.split(","))];
-
-  const authors = await getAuthorFullNames(authorPersoncodes);
-
-  return res.json(authors);
-};
+export const get: Handler = async (req, res: Response<getType>) =>
+  res.json(
+    await getAuthorFullNames([...new Set(req.params.authors.split(","))])
+  );

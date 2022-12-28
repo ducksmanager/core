@@ -15,11 +15,23 @@ export const getUser = async (req: Request) =>
   await prisma.user.findUnique({
     where: { id: req.user.id },
   });
-export const get: Handler = async (req, res) => {
-  return res.json(exclude<user, "password">(await getUser(req), "password"));
+
+export type getType = Omit<user, "password">;
+
+export const get: Handler = async (req, res: Response<getType>) => {
+  const userWithoutPassword = exclude<user, "password">(
+    await getUser(req),
+    "password"
+  );
+  if (!userWithoutPassword) {
+    res.writeHead(404, { "Content-Type": "application/text" });
+    return res.end();
+  }
+  return res.json(userWithoutPassword);
 };
 
-export const del: Handler = async (req, res) => {
+export type delType = void;
+export const del: Handler = async (req, res: Response<delType>) => {
   const { id: userId } = req.user;
   await prisma.issue.deleteMany({
     where: { userId },
@@ -41,9 +53,12 @@ export const del: Handler = async (req, res) => {
   res.end();
 };
 
+export type postType = {
+  hasRequestedPresentationSentenceUpdate: boolean;
+} | void;
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
     let validators = [
@@ -91,6 +106,8 @@ export const post = [
         hasRequestedPresentationSentenceUpdate,
       });
     }
+    res.statusCode = 400;
+    return res.end();
   }) as Handler,
 ];
 
@@ -112,9 +129,10 @@ const validate = async (
   return true;
 };
 
+export type putType = { token: string } | null;
 export const put = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<putType>) => {
     const isValid = await validate(req.body, res, [
       validateUsername,
       validateUsernameCreation,
@@ -150,6 +168,8 @@ export const put = [
 
       return res.json({ token });
     }
+    res.statusCode = 400;
+    return res.end();
   }) as Handler,
 ];
 

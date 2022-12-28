@@ -22,6 +22,10 @@ import type { getType as URL_PREFIX_AUTHORS_TYPE } from "~routes/coa/authorsfull
 const URL_PREFIX_URLS = "/coa/list/issues/details";
 import type { getType as URL_PREFIX_URLS_TYPE } from "~routes/coa/list/issues/details";
 
+const URL_PREFIX_ISSUES_WITH_TITLES =
+  "/coa/list/issues/withTitle?publicationcode=";
+import type { getType as URL_PREFIX_ISSUES_WITH_TITLES_TYPE } from "~routes/coa/list/issues/withTitle";
+
 const URL_PREFIX_PUBLICATION_QUOTATIONS = "/coa/quotations/publications";
 import type { getType as URL_PREFIX_PUBLICATION_QUOTATIONS_TYPE } from "~routes/coa/quotations/publications";
 
@@ -256,8 +260,8 @@ export const coa = defineStore("coa", {
 
     async fetchIssueNumbersWithTitles(publicationcode: string) {
       this.issuesWithTitles[publicationcode] = (
-        await coaApi.get(
-          `/coa/list/issues/withTitle?publicationcode=${publicationcode}`
+        await coaApi.get<URL_PREFIX_ISSUES_WITH_TITLES_TYPE>(
+          `${URL_PREFIX_ISSUES_WITH_TITLES}${publicationcode}`
         )
       ).data;
     },

@@ -1,10 +1,12 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { issue, PrismaClient } from "~prisma_clients/client_dm";
+import { issue, Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) =>
+export type getType = PromiseReturnType<typeof getIssuesForSale>;
+export const get: Handler = async (req, res: Response<getType>) =>
   res.json(await getIssuesForSale(req.user.id));
 
 export const getIssuesForSale: (

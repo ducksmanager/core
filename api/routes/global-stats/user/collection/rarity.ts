@@ -1,10 +1,14 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+export type getType = {
+  userScores: { userId: number; averageRarity: number }[];
+  myScore: number;
+};
+export const get: Handler = async (req, res: Response<getType>) => {
   const userCount = await prisma.user.count();
   const userScores = (await prisma.$queryRaw`
       SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity

@@ -1,5 +1,5 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { edge, PrismaClient } from "~prisma_clients/client_dm";
 
@@ -131,7 +131,8 @@ const generateSprites = async () => {
   await prisma.$transaction(insertOperations);
 };
 
-export const put: Handler = async (req) => {
+export type putType = void;
+export const put: Handler = async (req, res: Response<putType>) => {
   req.setTimeout(300_000);
 
   try {
@@ -181,6 +182,7 @@ export const put: Handler = async (req) => {
         }
       );
     }
+    return res.end();
   } catch (e) {
     console.error(e);
   }

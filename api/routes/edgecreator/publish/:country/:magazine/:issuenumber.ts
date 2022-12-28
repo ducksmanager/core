@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import {
   bookstoreComment,
@@ -138,9 +138,16 @@ const publishEdgeOnDm = async (
   };
 };
 
+export type putType = {
+  publicationcode: string;
+  issuenumber: string;
+  edgeId: number;
+  contributors: number[];
+  url: string;
+};
 export const put = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<putType>) => {
     const publicationcode = `${req.params.country}/${req.params.magazine}`;
     if (!isValidPublicationcode(publicationcode)) {
       res.writeHead(400);

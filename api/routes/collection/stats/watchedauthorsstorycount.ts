@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~/dist/prisma/client_dm_stats";
 import { getAuthorFullNames } from "~/routes/coa/authorsfullnames/:authors";
@@ -45,7 +45,15 @@ const getMissingStoryCountPerAuthor = async (
     {}
   );
 
-export const get: Handler = async (req, res) => {
+type authorsDetails = {
+  [personcode: string]: {
+    missingstorycount: number;
+    storycount: number;
+    fullname: string;
+  };
+};
+export type getType = authorsDetails;
+export const get: Handler = async (req, res: Response<authorsDetails>) => {
   const userId = req.user.id;
   const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
     userId

@@ -1,12 +1,15 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { PrismaClient, purchase } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export const get: Handler = async (req, res) =>
+export type getType = (Omit<purchase, "date"> & {
+  date: string;
+})[];
+export const get: Handler = async (req, res: Response<getType>) =>
   res.json(
     (
       await prisma.purchase.findMany({
@@ -23,9 +26,10 @@ export const get: Handler = async (req, res) =>
     }))
   );
 
+export type putType = void;
 export const put = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<putType>) => {
     const { date, description } = req.body;
 
     const criteria = {

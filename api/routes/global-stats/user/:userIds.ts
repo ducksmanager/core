@@ -1,23 +1,27 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { getMedalPoints } from "~/routes/collection/points";
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+export type getType = {
+  points: PromiseReturnType<typeof getMedalPoints>;
+  stats: PromiseReturnType<typeof getUsersQuickStats>;
+};
+export const get: Handler = async (req, res: Response<getType>) => {
   const userIds = req.params.userIds
     .split(",")
     .map((userId) => parseInt(userId))
     .filter((userId) => !isNaN(userId));
-  let data = {};
   if (userIds.length) {
-    data = {
+    return res.json({
       points: await getMedalPoints(userIds),
       stats: await getUsersQuickStats(userIds),
-    };
+    });
   }
-  return res.json(data);
+  return res.end();
 };
 
 const simpleUserValidator = Prisma.validator<Prisma.userArgs>()({

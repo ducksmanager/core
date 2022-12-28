@@ -1,10 +1,11 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~/dist/prisma/client_dm";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) =>
+export type getType = { userId: number | ""; name: string; text: string }[];
+export const get: Handler = async (req, res: Response<getType>) =>
   res.json(
     await prisma.$queryRaw`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text

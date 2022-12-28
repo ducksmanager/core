@@ -1,9 +1,13 @@
 import csrf from "csurf";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 const csrfProtection = csrf({ cookie: true });
 
+export type getType = {
+  csrfToken: string;
+};
 export const get = [
   csrfProtection,
-  (async (req, res) => res.json({ csrfToken: req.csrfToken() })) as Handler,
+  (async (req, res: Response<getType>) =>
+    res.json({ csrfToken: req.csrfToken() })) as Handler,
 ];

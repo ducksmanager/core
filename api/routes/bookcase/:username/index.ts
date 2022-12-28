@@ -1,6 +1,7 @@
 import { Handler, Request, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { BookcaseEdge } from "~types/BookcaseEdge";
 
 const prisma = new PrismaClient();
 
@@ -24,7 +25,8 @@ export const checkValidBookcaseUser = async (req: Request, res: Response) => {
   return null;
 };
 
-export const get: Handler = async (req, res) => {
+export type getType = BookcaseEdge[] | null;
+export const get: Handler = async (req, res: Response<getType>) => {
   const user = await checkValidBookcaseUser(req, res);
   if (user !== null) {
     const groupBy = user.showDuplicatesInBookcase
@@ -61,7 +63,9 @@ export const get: Handler = async (req, res) => {
                                ON sprites.ID_Tranche = tp.ID
             WHERE ID_Utilisateur = ${user.id}
             GROUP BY ${groupBy}
-        `)) as { [field: string]: number | Date | string }[]
+        `)) as BookcaseEdge[]
     );
   }
+  res.statusCode = 404;
+  res.end();
 };

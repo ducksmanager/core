@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 
@@ -8,9 +8,10 @@ import { getUserPurchase } from "../issues";
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
+export type delType = void;
 export const del = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<delType>) => {
     const criteria = {
       userId: req.user.id,
       id: parseInt(req.params.id),

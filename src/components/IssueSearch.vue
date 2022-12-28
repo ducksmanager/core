@@ -92,6 +92,7 @@ import {
   collection as collectionStore,
   IssueWithPublicationcode,
 } from "~/stores/collection";
+import type { postType as SEARCH_STORIES_FROM_ISSUE } from "~routes/coa/stories/search/withIssues";
 import { simple_issue } from "~types/SimpleIssue";
 import { simple_story } from "~types/SimpleStory";
 
@@ -176,9 +177,12 @@ const runSearch = async (value: string) => {
       );
     } else {
       const data = (
-        await axios.post("/coa/stories/search/withIssues", {
-          keywords: value,
-        })
+        await axios.post<SEARCH_STORIES_FROM_ISSUE>(
+          "/coa/stories/search/withIssues",
+          {
+            keywords: value,
+          }
+        )
       ).data as { results: simple_story[]; hasMore: boolean };
       storyResults.results = data.results.map((story) => ({
         ...story,

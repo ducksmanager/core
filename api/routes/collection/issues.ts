@@ -1,12 +1,18 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 import { constants } from "http2";
 
 import { resetDemo } from "~/routes/demo/_reset";
-import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
+import {
+  issue,
+  issue_condition,
+  Prisma,
+  PrismaClient,
+} from "~prisma_clients/client_dm";
 import { CollectionUpdate } from "~types/CollectionUpdate";
 import { User } from "~types/SessionUser";
 import { TransactionResults } from "~types/TransactionResults";
+import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -189,7 +195,8 @@ const checkPurchaseIdsBelongToUser = async (
   return checkedPromiseIds;
 };
 
-export const get: Handler = async (req, res) => {
+export type getType = issue[];
+export const get: Handler = async (req, res: Response<getType>) => {
   if (req.user.username === "demo") {
     await resetDemo();
   }
@@ -202,9 +209,12 @@ export const get: Handler = async (req, res) => {
   );
 };
 
+export type postType = PromiseReturnType<
+  typeof addOrChangeCopies | typeof addOrChangeIssues
+>;
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     const { body, user }: { body: CollectionUpdate; user: User } = req;
     const { publicationcode, issueIdsByIssuenumber, purchaseId } = body;
 
@@ -259,7 +269,7 @@ export const post = [
       });
     }
     if (typeof condition !== "string") {
-      output = addOrChangeCopies(
+      output = await addOrChangeCopies(
         userId,
         publicationcode,
         Object.keys(issueIdsByIssuenumber)[0],
@@ -274,7 +284,7 @@ export const post = [
         await deleteIssues(userId, publicationcode, issueNumbers);
         return res.json({});
       }
-      output = addOrChangeIssues(
+      output = await addOrChangeIssues(
         userId,
         publicationcode,
         issueNumbers,

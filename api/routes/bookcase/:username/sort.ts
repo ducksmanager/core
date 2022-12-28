@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 
@@ -14,7 +14,8 @@ const getLastPublicationPosition = async (userId: number) =>
     })
   )._max.order || -1;
 
-export const get: Handler = async (req, res) => {
+export type getType = string[];
+export const get: Handler = async (req, res: Response<getType>) => {
   const user = await checkValidBookcaseUser(req, res);
   if (user === null) {
     return;

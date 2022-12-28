@@ -1,8 +1,9 @@
 import axios from "axios";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 import * as fs from "fs";
 
-export const get: Handler = async (req, res) => {
+export type getType = string;
+export const get: Handler = async (req, res: Response<getType>) => {
   const response = (
     await axios.post(
       process.env.PASTEC_HOSTS + "/searcher",

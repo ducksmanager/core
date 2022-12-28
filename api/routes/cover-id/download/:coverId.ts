@@ -1,11 +1,12 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 import https from "https";
 
 import { PrismaClient } from "~prisma_clients/client_cover_info";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+export type getType = void;
+export const get: Handler = async (req, res: Response<getType>) => {
   const id = parseInt(req.params.coverId);
   const cover = await prisma.cover.findUniqueOrThrow({
     where: {

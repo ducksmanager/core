@@ -110,6 +110,7 @@ import { watch } from "vue";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { authorUser } from "~prisma_clients/client_dm";
+import type { getType as AUTHOR_SEARCH_TYPE } from "~routes/coa/authorsfullnames/search/:partialAuthorName";
 
 const { watchedAuthors } = defineProps<{
   watchedAuthors: authorUser[];
@@ -118,7 +119,7 @@ const { watchedAuthors } = defineProps<{
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
 const search = $ref("");
-let searchResults = $ref(null as { [personcode: string]: string } | null);
+let searchResults = $ref(null as AUTHOR_SEARCH_TYPE | null);
 
 const personNames = $computed(() => coa().personNames);
 
@@ -162,8 +163,11 @@ const runSearch = async (value: string) => {
   if (!isSearching) {
     try {
       isSearching = true;
-      searchResults = (await axios.get(`/coa/authorsfullnames/search/${value}`))
-        .data;
+      searchResults = (
+        await axios.get<AUTHOR_SEARCH_TYPE>(
+          `/coa/authorsfullnames/search/${value}`
+        )
+      ).data;
     } finally {
       isSearching = false;
       // The input value has changed since the beginning of the search, searching again

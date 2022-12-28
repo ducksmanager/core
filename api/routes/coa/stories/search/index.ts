@@ -1,9 +1,10 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
 import { simple_issue } from "~types/SimpleIssue";
 import { simple_story } from "~types/SimpleStory";
+import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
@@ -57,9 +58,13 @@ export const getStoriesByKeywords = async (
   };
 };
 
+export type postType = {
+  results: PromiseReturnType<typeof getStoriesByKeywords>;
+};
+
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     if (!req.body.keywords) {
       res.writeHead(400);
       res.end();

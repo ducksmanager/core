@@ -1,9 +1,12 @@
 import { Handler } from "express";
 
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
+export type getType = Prisma.PromiseReturnType<
+  typeof prisma.inducks_issue.findMany
+>;
 export const get: Handler = async (req, res) =>
   res.json(
     await prisma.inducks_issue.findMany({

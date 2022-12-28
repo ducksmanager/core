@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler, Request } from "express";
+import { Handler, Request, Response } from "express";
 
 import { PrismaClient, subscription } from "~prisma_clients/client_dm";
 
@@ -43,7 +43,12 @@ async function upsertSubscription(req: Request) {
   });
 }
 
-export const get: Handler = async (req, res) => {
+export type getType = (Omit<subscription, "startDate" | "endDate"> & {
+  publicationcode: string;
+  startDate: string;
+  endDate: string;
+})[];
+export const get: Handler = async (req, res: Response<getType>) => {
   const subscriptions = await prisma.subscription.findMany({
     where: {
       users: {

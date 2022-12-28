@@ -1,11 +1,13 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 
 import { getUser } from "./user";
 
 const prisma = new PrismaClient();
-export const post: Handler = async (req, res) => {
+
+export type postType = { previousVisit: Date } | void;
+export const post: Handler = async (req, res: Response<postType>) => {
   const user = await getUser(req);
   if (!user) {
     res.writeHead(500);

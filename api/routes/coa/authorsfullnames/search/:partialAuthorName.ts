@@ -1,10 +1,11 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { inducks_person, PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+export type getType = { [personcode: string]: inducks_person[] };
+export const get: Handler = async (req, res: Response<getType>) => {
   const partialAuthorName = req.params.partialAuthorName;
 
   const authors = await prisma.inducks_person.findMany({

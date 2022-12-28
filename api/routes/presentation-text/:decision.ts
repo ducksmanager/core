@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import PresentationSentenceApproved from "~/emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "~/emails/presentation-sentence-refused";
@@ -9,9 +9,10 @@ const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
+export type postType = void;
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     const { sentence, userId } = req.body;
     const { decision } = req.params;
     if (!["approve", "refuse"].includes(decision as string)) {

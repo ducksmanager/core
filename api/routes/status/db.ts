@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
 import { PrismaClient as PrismaClientCoverInfo } from "~prisma_clients/client_cover_info";
@@ -12,7 +12,8 @@ const prismaDm = new PrismaClientDm();
 const prismaDmStats = new PrismaClientDmStats();
 const prismaEdgecreator = new PrismaClientEdgecreator();
 
-export const get: Handler = async (req, res) => {
+export type getType = string;
+export const get: Handler = async (req, res: Response<getType>) => {
   res.setHeader("Content-Type", "application/text");
   const checks = [
     { db: "dm", check: async () => prismaDm.user.count() },

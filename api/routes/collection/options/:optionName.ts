@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient, userOptionType } from "~prisma_clients/client_dm";
 
@@ -19,7 +19,8 @@ export const optionNameToEnum = (
   }
 };
 
-export const get: Handler = async (req, res) => {
+export type getType = string[];
+export const get: Handler = async (req, res: Response<getType>) => {
   const optionName = optionNameToEnum(req.params.optionName);
   if (!optionName) {
     res.writeHead(400);
@@ -38,9 +39,10 @@ export const get: Handler = async (req, res) => {
   }
 };
 
+export type postType = void;
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     const optionName = optionNameToEnum(req.params.optionName);
     if (!optionName) {
       res.writeHead(400);

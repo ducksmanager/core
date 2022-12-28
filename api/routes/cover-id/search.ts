@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 import * as fs from "fs";
 import https from "https";
 
@@ -13,7 +13,14 @@ interface SimilarImagesResult {
   type: string;
 }
 
-export const put: Handler = (req, res) => {
+type searchResults = {
+  issues: string[];
+  imageIds: number[];
+  type?: string;
+};
+
+export type putType = searchResults;
+export const put: Handler = (req, res: Response<putType>) => {
   req.busboy?.on("file", async (name: string, file: File) => {
     if (name !== "wtd_jpg") {
       res.writeHead(400);

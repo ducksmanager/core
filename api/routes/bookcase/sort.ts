@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 
@@ -7,10 +7,12 @@ import { authenticateToken } from "../login";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
+
+export type postType = { max: number } | void;
 export const post = [
   authenticateToken,
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     const sorts = req.body.sorts;
     if (sorts.length) {
       const userId = req.user.id;
@@ -31,5 +33,7 @@ export const post = [
 
       return res.json({ max: order - 1 });
     }
+    res.statusCode = 400;
+    res.end();
   }) as Handler,
 ];

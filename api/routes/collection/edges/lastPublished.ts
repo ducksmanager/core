@@ -1,9 +1,11 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { edge, PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
-export const get: Handler = async (req, res) => {
+
+export type getType = edge[];
+export const get: Handler = async (req, res: Response<getType>) => {
   const userId = req.user.id;
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);

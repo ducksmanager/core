@@ -1,11 +1,15 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient, userOptionType } from "~/dist/prisma/client_dm";
 
 import { getIssuesForSale } from "../index";
 
 const prisma = new PrismaClient();
-export const get: Handler = async (req, res) => {
+
+export type getType = {
+  [contactMethod: string]: string | number;
+};
+export const get: Handler = async (req, res: Response<getType>) => {
   const sellerId = parseInt(req.params.sellerId);
   const issuesForSale = await getIssuesForSale(req.user.id);
   if (

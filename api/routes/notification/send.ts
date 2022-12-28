@@ -1,6 +1,6 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { i18n } from "~/emails";
 import {
@@ -66,7 +66,8 @@ const sendSuggestedIssueNotification = async (
   });
 };
 
-export const post: Handler = async (req, res) => {
+export type postType = string;
+export const post: Handler = async (req, res: Response<postType>) => {
   const suggestionsSince = dayjs().add(-7, "days");
   let notificationsSent = 0;
 

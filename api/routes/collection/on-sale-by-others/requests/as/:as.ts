@@ -1,9 +1,10 @@
 import { Handler } from "express";
 
-import { PrismaClient } from "~/dist/prisma/client_dm";
+import { PrismaClient, requestedIssue } from "~/dist/prisma/client_dm";
 
 const prisma = new PrismaClient();
 
+export type getType = requestedIssue[];
 export const get: Handler = async (req, res) => {
   const as = req.params.as;
   if (!["buyer", "seller"].includes(as)) {

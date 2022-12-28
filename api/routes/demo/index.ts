@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~/dist/prisma/client_dm";
 import { loginAs } from "~/routes/auth/util";
@@ -6,7 +6,8 @@ import { getHashedPassword } from "~/routes/login";
 
 const prisma = new PrismaClient();
 
-export const post: Handler = async (req, res) => {
+export type postType = { token: string };
+export const post: Handler = async (req, res: Response<postType>) => {
   const demoUser = await prisma.user.findFirst({ where: { username: "demo" } });
   if (!demoUser) {
     res.writeHead(500);

@@ -1,7 +1,8 @@
 import PushNotifications from "@pusher/push-notifications-server";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-export const get: Handler = (req, res) => {
+export type getType = { token: string };
+export const get: Handler = (req, res: Response<getType>) => {
   if (req.query.user_id !== req.user.username) {
     res.writeHead(401, { "Content-Type": "application/text" });
     res.end();

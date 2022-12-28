@@ -1,12 +1,16 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
-export const get: Handler = async (req, res) => {
+export type getType = PromiseReturnType<
+  typeof prisma.inducks_issuequotation.findMany
+>;
+export const get: Handler = async (req, res: Response<getType>) => {
   const { issueCodes } = req.query;
   if (!issueCodes) {
     res.writeHead(400);

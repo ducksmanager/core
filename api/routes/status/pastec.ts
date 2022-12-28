@@ -1,7 +1,8 @@
 import axios from "axios";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-export const get: Handler = async (req, res) => {
+export type getType = string | number;
+export const get: Handler = async (req, res: Response<getType>) => {
   const response = (await axios.get(process.env.PASTEC_HOSTS + "/imageIds"))
     .data;
   if (response) {

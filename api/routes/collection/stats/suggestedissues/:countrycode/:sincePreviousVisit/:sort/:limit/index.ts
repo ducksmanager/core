@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { getPublicationTitlesFromCodes } from "~/routes/coa/list/publications";
 import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
@@ -23,7 +23,21 @@ export enum COUNTRY_CODE_OPTION {
   countries_to_notify = "countries_to_notify",
 }
 
-export const get: Handler = async (req, res) => {
+interface SuggestionList {
+  storyDetails?: { [storycode: string]: StoryDetail };
+  suggestionsPerUser: { [userId: number]: IssueSuggestionList };
+  publicationTitles: { [publicationcode: string]: string | null };
+  authors: { [personcode: string]: string };
+}
+
+type SuggestionsWithDetails = Omit<SuggestionList, "suggestionsPerUser"> & {
+  minScore: number;
+  maxScore: number;
+};
+
+export type getType = SuggestionsWithDetails;
+// export type getType =
+export const get: Handler = async (req, res: Response<getType>) => {
   const { countrycode, sincePreviousVisit, sort, limit } = req.params;
   const since =
     sincePreviousVisit === "since_previous_visit"
@@ -44,12 +58,13 @@ export const get: Handler = async (req, res) => {
   const suggestionsForUser =
     suggestionsPerUser[req.user.id] || new IssueSuggestionList();
 
-  return res.json({
+  const suggestionsWithDetails: SuggestionsWithDetails = {
     ...suggestionsForUser,
     authors,
     storyDetails,
     publicationTitles,
-  });
+  };
+  return res.json(suggestionsWithDetails);
 };
 
 const suggestedPublications =
@@ -79,13 +94,6 @@ interface Suggestion
     PrismaDmStats.utilisateurs_publications_suggereesGetPayload<
       typeof suggestedPublications
     > {}
-
-interface SuggestionList {
-  storyDetails?: { [storycode: string]: StoryDetail };
-  suggestionsPerUser: { [userId: number]: IssueSuggestionList };
-  publicationTitles: { [publicationcode: string]: string | null };
-  authors: { [personcode: string]: string };
-}
 
 const getStoryDetails = async (
   storyCodes: string[],

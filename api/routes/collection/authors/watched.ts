@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
-import { Handler, Request } from "express";
+import { Handler, Request, Response } from "express";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { authorUser, PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -40,7 +40,9 @@ const upsertAuthorUser = async (req: Request) => {
   }
 };
 
-export const get: Handler = async (req, res) => {
+export type getType = authorUser[];
+
+export const get: Handler = async (req, res: Response<getType>) => {
   const authorsUsers = await prisma.authorUser.findMany({
     where: { userId: req.user.id },
   });
@@ -77,9 +79,10 @@ export const post = [
   }) as Handler,
 ];
 
+export type delType = authorUser[];
 export const del = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<delType>) => {
     const { personcode } = req.body;
     if (!personcode) {
       res.writeHead(400);

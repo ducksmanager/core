@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import {
   Prisma as PrismaCoa,
@@ -40,19 +40,21 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
   );
 };
 
-export const get: Handler = async (req, res) => {
-  const issueCodes = req.params.issueCodes?.split(",") || [];
+interface SimpleIssueWithPublication {
+  countrycode: string;
+  publicationcode: string;
+  title: string;
+  issuenumber: string;
+  issuecode: string;
+  coverId: number | null;
+  coverUrl: string | null;
+  popularity: number | null;
+}
 
-  interface SimpleIssueWithPublication {
-    countrycode: string;
-    publicationcode: string;
-    title: string;
-    issuenumber: string;
-    issuecode: string;
-    coverId: number | null;
-    coverUrl: string | null;
-    popularity: number | null;
-  }
+export type getType = { [issuecode: string]: SimpleIssueWithPublication };
+
+export const get: Handler = async (req, res: Response<getType>) => {
+  const issueCodes = req.params.issueCodes?.split(",") || [];
 
   const covers: { [issuecode: string]: cover } = (
     await prismaCoverInfo.cover.findMany({

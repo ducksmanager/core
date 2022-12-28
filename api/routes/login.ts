@@ -85,9 +85,10 @@ export const injectTokenIfValid = (
 export const getHashedPassword = (password: string) =>
   crypto.createHash("sha1").update(password).digest("hex");
 
+export type postType = { token: string } | void;
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     const { username, password } = req.body;
     const hashedPassword = getHashedPassword(password);
     const user = await prisma.user.findFirst({

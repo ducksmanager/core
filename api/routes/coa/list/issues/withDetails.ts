@@ -1,10 +1,20 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+type issueDetails = {
+  publicationcode: string;
+  issuenumber: string;
+  title: string;
+  coverUrl: string;
+};
+
+export const get: Handler = async (
+  req,
+  res: Response<{ [issuenumber: string]: issueDetails[] }>
+) => {
   const publicationCodes =
     (req.query as { [key: string]: string }).publicationCodes?.split(",") || [];
   if (publicationCodes.length > 10) {
@@ -27,12 +37,7 @@ export const get: Handler = async (req, res) => {
       FROM inducks_issue
       WHERE inducks_issue.publicationcode IN(${Prisma.join(
         publicationCodes
-      )})`) as {
-        publicationcode: string;
-        issuenumber: string;
-        title: string;
-        coverUrl: string;
-      }[]
+      )})`) as issueDetails[]
     ).reduce(
       (acc, row) => ({
         ...row,
