@@ -24,7 +24,7 @@
 		"@vueuse/core": "^9.9.0",
 		"@vueuse/head": "^1.0.22",
 		"axios": "^1.2.1",
-		"axios-cache-interceptor": "^0.10.7",
+		"axios-cache-interceptor": "^1.0.0",
 		"bootstrap": "^5.2.3",
 		"bootstrap-icons-vue": "^1.8.1",
 		"bootstrap-vue-3": "^0.4.15",

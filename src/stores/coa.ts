@@ -7,9 +7,9 @@ import {
   inducks_issue,
   inducks_issuequotation,
 } from "~prisma_clients/client_coa";
+import type { getType as URL_PREFIX_COUNTRIES_TYPE } from "~routes/coa/list/countries/:locale";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
-
 const URL_PREFIX_COUNTRIES = "/coa/list/countries/LOCALE";
 const URL_PREFIX_PUBLICATIONS = "/coa/list/publications";
 const URL_PREFIX_ISSUES = "/coa/list/issues";
@@ -110,7 +110,7 @@ export const coa = defineStore("coa", {
       if (!this.isLoadingCountryNames && !this.countryNames) {
         this.isLoadingCountryNames = true;
         this.countryNames = (
-          await coaApi.get(
+          await coaApi.get<URL_PREFIX_COUNTRIES_TYPE>(
             URL_PREFIX_COUNTRIES.replace(
               "LOCALE",
               getCurrentLocaleShortKey(i18n.global.locale)
