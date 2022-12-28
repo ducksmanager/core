@@ -1,10 +1,11 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
-export const get: Handler = async (req, res) => {
+export type getType = { [publicationcode: string]: string[] };
+export const get: Handler = async (req, res: Response<getType>) => {
   const { storycode } = req.query;
   if (storycode) {
     return res.json({
@@ -38,8 +39,8 @@ export const get: Handler = async (req, res) => {
       },
     },
   });
-  return res.json({
-    results: data.reduce(
+  return res.json(
+    data.reduce(
       (acc, { publicationcode, issuenumber }) => ({
         ...acc,
         [publicationcode!]: [
@@ -48,6 +49,6 @@ export const get: Handler = async (req, res) => {
         ],
       }),
       {} as { [publicationcode: string]: string[] }
-    ),
-  });
+    )
+  );
 };

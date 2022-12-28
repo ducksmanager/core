@@ -114,7 +114,6 @@ const emit = defineEmits<{
     options: {
       contactMethod: string;
       sellerId: number;
-      selectedIssueIds: number[];
     }
   ): void;
   (e: "close"): void;

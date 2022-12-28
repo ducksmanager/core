@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 
 import { PrismaClient } from "~/dist/prisma/client_dm";
 import ResetPassword from "~/emails/reset-password";
-import { isValidEmail } from "~/routes/auth/util";
+
+import { isValidEmail } from "./util";
 
 const prisma = new PrismaClient();
 

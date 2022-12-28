@@ -1,5 +1,4 @@
-import { Handler } from "express";
-import { Request, Response } from "express";
+import { Handler, Request, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 

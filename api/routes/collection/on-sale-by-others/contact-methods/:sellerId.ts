@@ -1,7 +1,8 @@
 import { Handler } from "express";
 
 import { PrismaClient, userOptionType } from "~/dist/prisma/client_dm";
-import { getIssuesForSale } from "~/routes/collection/on-sale-by-others";
+
+import { getIssuesForSale } from "../index";
 
 const prisma = new PrismaClient();
 export const get: Handler = async (req, res) => {

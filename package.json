@@ -4,16 +4,16 @@
 	"scripts": {
 		"build": "vite build",
 		"dev": "concurrently -n front,back \"pnpm run start:front\" \"pnpm run start:back\"",
-		"start:front": "concurrently -n vite,vue-tsc \"vite --port 8001\" \"vue-tsc --noEmit --watch\"",
-		"start:back": "cd api && pnpm run dev",
-		"story:dev": "histoire dev",
 		"lint": "eslint --fix --cache .",
-		"typecheck": "vue-tsc --noEmit",
+		"prepare": "husky install",
 		"preview": "vite preview",
 		"publish": "cp package.json package-real.json && mv package-publish.json package.json && pnpm publish --no-git-checks; mv package.json package-publish.json && mv package-real.json package.json",
+		"start:back": "cd api && pnpm run dev",
+		"start:front": "concurrently -n vite,vue-tsc \"vite --port 8001\" \"vue-tsc --noEmit --watch\"",
+		"story:dev": "histoire dev",
 		"test": "vitest",
-		"up": "taze major -I",
-		"prepare": "husky install"
+		"typecheck": "vue-tsc --noEmit",
+		"up": "taze major -I"
 	},
 	"dependencies": {
 		"@bperel/vue3-popper-teleport": "^1.4.3",

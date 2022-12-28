@@ -4,7 +4,8 @@ import { Handler } from "express";
 import jwt from "jsonwebtoken";
 
 import { PrismaClient } from "~/dist/prisma/client_dm";
-import { loginAs } from "~/routes/auth/util";
+
+import { loginAs } from "./util";
 
 const prisma = new PrismaClient();
 

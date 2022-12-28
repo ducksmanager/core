@@ -1,12 +1,16 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { PrismaClient } from "~prisma_clients/client_coa";
+import {
+  inducks_issuequotation,
+  PrismaClient,
+} from "~prisma_clients/client_coa";
 
 const prisma = new PrismaClient();
 
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 
-export const get: Handler = async (req, res) => {
+export type getType = inducks_issuequotation[];
+export const get: Handler = async (req, res: Response<getType>) => {
   const { publicationCodes } = req.query;
   if (!publicationCodes) {
     res.writeHead(400);

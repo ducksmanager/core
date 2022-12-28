@@ -29,7 +29,6 @@ specifiers:
   ejs: ^3.1.8
   express: ^4.18.2
   express-file-routing: ^2.0.5
-  express-serve-static-core: ^0.1.1
   i18n: ^0.15.1
   jsonwebtoken: ^9.0.0
   mariadb: ^3.0.2
@@ -78,7 +77,6 @@ devDependencies:
   '@types/jsonwebtoken': 9.0.0
   '@types/node': 16.18.10
   '@types/nodemailer': 6.4.7
-  express-serve-static-core: 0.1.1
   prisma: 4.8.0
   tsc-alias: 1.8.2
   tsconfig-paths: 4.1.1
@@ -958,10 +956,6 @@ packages:
     dependencies:
       express: 4.18.2
     dev: false
-
-  /express-serve-static-core/0.1.1:
-    resolution: {integrity: sha512-phQFPo1vVwBLOjDq+EspUY6PpWZIs/s62Lvu6QuReViQ9j9ANBnMqPBRwdxs3zxNmpMJ9KBKrmMqCjMwHnGRyQ==}
-    dev: true
 
   /express/4.18.2:
     resolution: {integrity: sha512-5/PsL6iGPdfQ/lKM1UuielYgv3BUoJfz1aUwU9vHZ+J7gyvwdQXFEBIEIaxeGf0GIcreATNyBExtalisDbuMqQ==}

@@ -1,13 +1,18 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { getPublicationTitles } from "~/routes/coa/list/publications/index";
+import { Prisma } from "~/dist/prisma/client_coa";
+
+import { getPublicationTitles } from "./index";
 
 const parseForm = bodyParser.json();
 
+export type getType = Prisma.PromiseReturnType<
+  typeof getPublicationTitlesFromCountry
+>;
 export const get = [
   parseForm,
-  (async (req, res) =>
+  (async (req, res: Response<getType>) =>
     res.json(
       await getPublicationTitlesFromCountry(req.params.countrycode)
     )) as Handler,

@@ -18,7 +18,8 @@
     "paths": {
       "~/*": ["*"],
       "~types/*": ["../types/*"],
-      "~prisma_clients/*": ["dist/prisma/*"]
+      "~prisma_clients/*": ["dist/prisma/*"],
+      "~routes/*": ["routes/*"]
     }
   },
   "exclude": ["node_modules"],
