@@ -102,6 +102,7 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
+import routes from "~types/routes";
 
 type EditSubscription = {
   publicationcode: string;
@@ -133,20 +134,27 @@ const createSubscription = async (
   existingSubscription: SubscriptionTransformed | null,
   publicationcode: string
 ) => {
-  await axios.put("/collection/subscriptions", {
-    existingSubscription,
-    publicationcode,
+  await routes["PUT /collection/subscriptions"](axios, {
+    data: {
+      existingSubscription,
+      publicationcode,
+    },
   });
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;
 };
 const editSubscription = async (id: number, data: EditSubscription) => {
-  await axios.post(`/collection/subscriptions/${id}`, data);
+  await routes["POST /collection/subscriptions/:id"](axios, {
+    urlParams: { id: String(id) },
+    data,
+  });
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;
 };
 const deleteSubscription = async (id: number) => {
-  await axios.delete(`/collection/subscriptions/${id}`);
+  await routes["DELETE /collection/subscriptions/:id"](axios, {
+    urlParams: { id },
+  });
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;
 };

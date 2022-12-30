@@ -31,12 +31,12 @@ interface SuggestionList {
 }
 
 type SuggestionsWithDetails = Omit<SuggestionList, "suggestionsPerUser"> & {
+  issues: { [issuecode: string]: IssueSuggestion };
   minScore: number;
   maxScore: number;
 };
 
 export type getType = SuggestionsWithDetails;
-// export type getType =
 export const get: Handler = async (req, res: Response<getType>) => {
   const { countrycode, sincePreviousVisit, sort, limit } = req.params;
   const since =
@@ -59,7 +59,9 @@ export const get: Handler = async (req, res: Response<getType>) => {
     suggestionsPerUser[req.user.id] || new IssueSuggestionList();
 
   const suggestionsWithDetails: SuggestionsWithDetails = {
-    ...suggestionsForUser,
+    issues: suggestionsForUser.issues,
+    minScore: suggestionsForUser.minScore,
+    maxScore: suggestionsForUser.maxScore,
     authors,
     storyDetails,
     publicationTitles,
@@ -230,7 +232,12 @@ export const getSuggestions = async (
       let issue = suggestionsPerUser[userId].issues[issuecode];
       if (!issue) {
         issue = {
-          ...suggestedStory,
+          issuenumber: suggestedStory.issuenumber,
+          personcode: suggestedStory.personcode,
+          score: suggestedStory.score,
+          publicationcode: suggestedStory.publicationcode,
+          oldestdate:
+            suggestedStory.oldestdate?.toISOString().split("T")[0] || "",
           issuecode,
           stories: {},
         } as IssueSuggestion;

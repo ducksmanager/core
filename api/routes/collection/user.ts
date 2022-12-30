@@ -30,8 +30,8 @@ export const get: Handler = async (req, res: Response<getType>) => {
   return res.json(userWithoutPassword);
 };
 
-export type delType = void;
-export const del: Handler = async (req, res: Response<delType>) => {
+export type deleteType = void;
+export const del: Handler = async (req, res: Response<deleteType>) => {
   const { id: userId } = req.user;
   await prisma.issue.deleteMany({
     where: { userId },
@@ -55,7 +55,7 @@ export const del: Handler = async (req, res: Response<delType>) => {
 
 export type postType = {
   hasRequestedPresentationSentenceUpdate: boolean;
-} | void;
+};
 export const post = [
   parseForm,
   (async (req, res: Response<postType>) => {
@@ -129,7 +129,7 @@ const validate = async (
   return true;
 };
 
-export type putType = { token: string } | null;
+export type putType = { token: string };
 export const put = [
   parseForm,
   (async (req, res: Response<putType>) => {

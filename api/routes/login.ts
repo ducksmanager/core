@@ -85,7 +85,7 @@ export const injectTokenIfValid = (
 export const getHashedPassword = (password: string) =>
   crypto.createHash("sha1").update(password).digest("hex");
 
-export type postType = { token: string } | void;
+export type postType = { token: string };
 export const post = [
   parseForm,
   (async (req, res: Response<postType>) => {

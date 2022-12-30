@@ -1,5 +1,5 @@
-import { user } from "~/dist/prisma/client_dm";
 import { Email, i18n } from "~/emails";
+import { user } from "~prisma_clients/client_dm";
 
 export default class extends Email {
   data: { user: user; publicationName: string; issuenumber: string };

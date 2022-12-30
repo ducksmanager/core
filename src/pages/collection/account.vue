@@ -213,6 +213,7 @@ import { useI18n } from "vue-i18n";
 
 import Accordion from "~/components/Accordion.vue";
 import { collection as collectionStore } from "~/stores/collection";
+import routes from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
 
 const collection = collectionStore();
@@ -240,7 +241,7 @@ const router = useRouter();
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await axios.delete("/collection/empty");
+    await routes["POST /collection/empty"](axios);
     await router.push("/collection/show");
   }
 };
@@ -249,11 +250,13 @@ const updateAccount = async () => {
   try {
     error = undefined;
     const response = (
-      await axios.post("/collection/user", {
-        ...collection.userForAccountForm,
-        oldPassword,
-        password,
-        password2,
+      await routes["POST /collection/user"](axios, {
+        data: {
+          ...collection.userForAccountForm,
+          oldPassword,
+          password,
+          password2,
+        },
       })
     ).data;
     hasRequestedPresentationSentenceUpdate =
@@ -278,7 +281,7 @@ const deleteAccount = async () => {
       )
     )
   ) {
-    await axios.delete("/collection/user");
+    await routes["DELETE /collection/user"](axios);
     await router.push("/logout");
   }
 };

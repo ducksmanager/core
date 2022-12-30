@@ -2,8 +2,8 @@ import { parse } from "csv-parse/sync";
 import * as fs from "fs";
 import path from "path";
 
-import { PrismaClient, user } from "~/dist/prisma/client_dm";
 import { conditionToEnum } from "~/routes/collection/issues";
+import { PrismaClient, user } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 

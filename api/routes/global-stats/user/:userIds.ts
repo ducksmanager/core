@@ -33,13 +33,14 @@ const simpleUserValidator = Prisma.validator<Prisma.userArgs>()({
   },
 });
 
-type SimpleUserWithQuickStats = Prisma.userGetPayload<
-  typeof simpleUserValidator
-> & {
-  numberOfCountries: number;
-  numberOfPublications: number;
-  numberOfIssues: number;
-};
+type SimpleUserWithQuickStats = Omit<
+  Prisma.userGetPayload<typeof simpleUserValidator> & {
+    numberOfCountries: number;
+    numberOfPublications: number;
+    numberOfIssues: number;
+  },
+  "id"
+> & { userId: number };
 
 const getUsersQuickStats = async (userIds: number[]) =>
   (await prisma.$queryRaw`

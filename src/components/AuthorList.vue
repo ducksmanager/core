@@ -111,6 +111,7 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { authorUser } from "~prisma_clients/client_dm";
 import type { getType as AUTHOR_SEARCH_TYPE } from "~routes/coa/authorsfullnames/search/:partialAuthorName";
+import routes from "~types/routes";
 
 const { watchedAuthors } = defineProps<{
   watchedAuthors: authorUser[];
@@ -149,14 +150,14 @@ const isAuthorWatched = (personcode: string) =>
     ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
   );
 const createRating = async (data: { personcode: string }) => {
-  await axios.put("/collection/authors/watched", data);
+  await routes["PUT /collection/authors/watched"](axios, { data });
   await loadWatchedAuthors(true);
 };
 const updateRating = async (data: { personcode: string; notation: number }) => {
-  await axios.post("/collection/authors/watched", data);
+  await routes["POST /collection/authors/watched"](axios, { data });
 };
 const deleteAuthor = async (data: { personcode: string }) => {
-  await axios.delete("/collection/authors/watched", { data });
+  await routes["DELETE /collection/authors/watched"](axios, { data });
   await loadWatchedAuthors(true);
 };
 const runSearch = async (value: string) => {
@@ -164,8 +165,13 @@ const runSearch = async (value: string) => {
     try {
       isSearching = true;
       searchResults = (
-        await axios.get<AUTHOR_SEARCH_TYPE>(
-          `/coa/authorsfullnames/search/${value}`
+        await routes["GET /coa/authorsfullnames/search/:partialAuthorName"](
+          axios,
+          {
+            urlParams: {
+              partialAuthorName: value,
+            },
+          }
         )
       ).data;
     } finally {

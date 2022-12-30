@@ -161,6 +161,7 @@ import condition from "~/composables/condition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
+import routes from "~types/routes";
 
 const collection = collectionStore();
 const { getConditionLabel } = condition();
@@ -217,7 +218,7 @@ onMounted(async () => {
   await collection.loadCollection();
   await users().fetchCount();
   const { userScores } = (
-    await axios.get("/global-stats/user/collection/rarity")
+    await routes["GET /global-stats/user/collection/rarity"](axios)
   ).data as {
     userScores: { userId: number; averageRarity: number }[];
   };

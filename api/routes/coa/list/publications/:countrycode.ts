@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import { Handler, Response } from "express";
 
-import { Prisma } from "~/dist/prisma/client_coa";
+import { Prisma } from "~prisma_clients/client_coa";
 
 import { getPublicationTitles } from "./index";
 

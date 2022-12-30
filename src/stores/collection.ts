@@ -2,7 +2,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
-import { inducks_publication } from "~prisma_clients/client_coa";
 import {
   authorUser,
   edge,
@@ -15,6 +14,7 @@ import {
 import { CollectionUpdate } from "~types/CollectionUpdate";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
+import routes from "~types/routes";
 import { StoryDetail } from "~types/StoryDetail";
 
 import { bookcase } from "./bookcase";
@@ -43,7 +43,10 @@ type IssueSuggestionWithStringDate = Omit<IssueSuggestion, "oldestdate"> & {
   oldestdate: string;
 };
 
-type UserForAccountForm = Omit<user, "discordId" | "presentationText"> & {
+type UserForAccountForm = Omit<
+  Omit<user, "password">,
+  "discordId" | "presentationText"
+> & {
   discordId: number | undefined;
   presentationText: string | undefined;
 };
@@ -57,7 +60,11 @@ export const collection = defineStore("collection", {
   state: () => ({
     collection: null as IssueWithPublicationcode[] | null,
     watchedPublicationsWithSales: null as string[] | null,
-    purchases: null as (purchase & { date: string })[] | null,
+    purchases: null as
+      | (Omit<purchase, "date"> & {
+          date: string;
+        })[]
+      | null,
     watchedAuthors: null as authorUser[] | null,
     marketplaceContactMethods: null as string[] | null,
 
@@ -66,8 +73,8 @@ export const collection = defineStore("collection", {
       minScore: number;
       maxScore: number;
       authors: { [personcode: string]: string };
-      storyDetails: { [storycode: string]: StoryDetail } | undefined;
-      publicationTitles: { [publicationcode: string]: inducks_publication };
+      storyDetails?: { [storycode: string]: StoryDetail } | undefined;
+      publicationTitles: { [publicationcode: string]: string | null };
     } | null,
     subscriptions: null as SubscriptionTransformed[] | null,
 
@@ -83,7 +90,7 @@ export const collection = defineStore("collection", {
     isLoadingSuggestions: false as boolean,
     isLoadingSubscriptions: false as boolean,
 
-    user: undefined as user | undefined | null,
+    user: undefined as Omit<user, "password"> | undefined | null,
     previousVisit: null as Date | null,
   }),
 
@@ -282,20 +289,24 @@ export const collection = defineStore("collection", {
 
   actions: {
     async updateCollection(data: CollectionUpdate) {
-      await axios.post("/collection/issues", data);
+      await routes["POST /collection/issues"](axios, { data });
       await this.loadCollection(true);
     },
 
     async createPurchase(date: string, description: string) {
-      await axios.put("/collection/purchases", {
-        date,
-        description,
+      await routes["PUT /collection/purchases"](axios, {
+        data: {
+          date,
+          description,
+        },
       });
       await this.loadPurchases(true);
     },
 
     async deletePurchase(id: number) {
-      await axios.delete(`/collection/purchases/${id}`);
+      await routes["DELETE /collection/purchases/:id"](axios, {
+        urlParams: { id: String(id) },
+      });
       await this.loadPurchases(true);
     },
 
@@ -307,13 +318,15 @@ export const collection = defineStore("collection", {
       );
     },
     async loadPreviousVisit() {
-      this.previousVisit = (await axios.post("/collection/lastvisit")).data;
+      this.previousVisit = (
+        await routes["POST /collection/lastvisit"](axios)
+      ).data?.previousVisit;
     },
     async loadCollection(afterUpdate = false) {
       if (afterUpdate || (!this.isLoadingCollection && !this.collection)) {
         this.isLoadingCollection = true;
         this.collection = (
-          (await axios.get("/collection/issues")).data as issue[]
+          (await routes["GET /collection/issues"](axios)).data as issue[]
         ).map((issue) => ({
           ...issue,
           publicationcode: `${issue.country}/${issue.magazine}`,
@@ -324,7 +337,9 @@ export const collection = defineStore("collection", {
     async loadPurchases(afterUpdate = false) {
       if (afterUpdate || (!this.isLoadingPurchases && !this.purchases)) {
         this.isLoadingPurchases = true;
-        this.purchases = (await axios.get("/collection/purchases")).data;
+        this.purchases = (
+          await routes["GET /collection/purchases"](axios)
+        ).data;
         this.isLoadingPurchases = false;
       }
     },
@@ -335,7 +350,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingWatchedAuthors = true;
         this.watchedAuthors = (
-          await axios.get("/collection/authors/watched")
+          await routes["GET /collection/authors/watched"](axios)
         ).data;
         this.isLoadingWatchedAuthors = false;
       }
@@ -348,7 +363,11 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingWatchedPublicationsWithSales = true;
         this.watchedPublicationsWithSales = (
-          await axios.get("/collection/options/sales_notification_publications")
+          await routes["GET /collection/options/:optionName"](axios, {
+            urlParams: {
+              optionName: "sales_notification_publications",
+            },
+          })
         ).data;
         this.isLoadingWatchedPublicationsWithSales = false;
       }
@@ -361,19 +380,33 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingMarketplaceContactMethods = true;
         this.marketplaceContactMethods = (
-          await axios.get("/collection/options/marketplace_contact_methods")
+          await routes["GET /collection/options/:optionName"](axios, {
+            urlParams: {
+              optionName: "marketplace_contact_methods",
+            },
+          })
         ).data;
         this.isLoadingMarketplaceContactMethods = false;
       }
     },
     async updateMarketplaceContactMethods() {
-      await axios.post("/collection/options/marketplace_contact_methods", {
-        values: this.marketplaceContactMethods,
+      await routes["POST /collection/options/:optionName"](axios, {
+        urlParams: {
+          optionName: "marketplace_contact_methods",
+        },
+        data: {
+          values: this.marketplaceContactMethods,
+        },
       });
     },
     async updateWatchedPublicationsWithSales() {
-      await axios.post("/collection/options/sales_notification_publications", {
-        values: this.watchedPublicationsWithSales,
+      await routes["POST /collection/options/:optionName"](axios, {
+        urlParams: {
+          optionName: "sales_notification_publications",
+        },
+        data: {
+          values: this.watchedPublicationsWithSales,
+        },
       });
     },
     async loadSuggestions({
@@ -388,14 +421,16 @@ export const collection = defineStore("collection", {
       if (!this.isLoadingSuggestions) {
         this.isLoadingSuggestions = true;
         this.suggestions = (
-          await axios.get(
-            `/collection/stats/suggestedissues/${[
-              countryCode || "ALL",
-              sinceLastVisit ? "since_previous_visit" : "_",
+          await routes[
+            "GET /collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit"
+          ](axios, {
+            urlParams: {
+              countrycode: countryCode || "ALL",
+              sincePreviousVisit: sinceLastVisit ? "since_previous_visit" : "_",
               sort,
-              sinceLastVisit ? 100 : 20,
-            ].join("/")}`
-          )
+              limit: sinceLastVisit ? "100" : "20",
+            },
+          })
         ).data;
         this.isLoadingSuggestions = false;
       }
@@ -407,7 +442,7 @@ export const collection = defineStore("collection", {
       ) {
         this.isLoadingSubscriptions = true;
         this.subscriptions = (
-          await axios.get("/collection/subscriptions")
+          await routes["GET /collection/subscriptions"](axios)
         ).data.map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
@@ -419,7 +454,8 @@ export const collection = defineStore("collection", {
     async loadPopularIssuesInCollection() {
       if (!this.popularIssuesInCollection) {
         this.popularIssuesInCollection = (
-          (await axios.get("/collection/popular")).data as PopularIssue[]
+          (await routes["GET /collection/popular"](axios))
+            .data as PopularIssue[]
         ).reduce(
           (acc, issue) => ({
             ...acc,
@@ -433,7 +469,8 @@ export const collection = defineStore("collection", {
     async loadLastPublishedEdgesForCurrentUser() {
       if (!this.lastPublishedEdgesForCurrentUser) {
         this.lastPublishedEdgesForCurrentUser = (
-          (await axios.get("/collection/edges/lastPublished")).data as edge[]
+          (await routes["GET /collection/edges/lastPublished"](axios))
+            .data as edge[]
         ).map((edge) => ({
           ...edge,
           issuecode: `${edge.publicationcode} ${edge.issuenumber}`,
@@ -447,7 +484,7 @@ export const collection = defineStore("collection", {
         this.isLoadingUser = true;
         try {
           if (Cookies.get("token")) {
-            this.user = (await axios.get(`/collection/user`)).data;
+            this.user = (await routes["GET /collection/user"](axios)).data;
           }
         } catch (e) {
           Cookies.remove("token");

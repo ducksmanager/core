@@ -66,9 +66,10 @@ export const get: Handler = async (req, res: Response<getType>) => {
   );
 };
 
+export type putType = string;
 export const put = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<putType>) => {
     await upsertSubscription(req);
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();

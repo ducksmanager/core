@@ -10,7 +10,9 @@ meta:
 <script setup lang="ts">
 import axios from "axios";
 
+import routes from "~types/routes";
+
 const generateSprites = async () => {
-  await axios.put("/edgecreator/edgesprites");
+  await routes["PUT /edgecreator/edgesprites"](axios);
 };
 </script>

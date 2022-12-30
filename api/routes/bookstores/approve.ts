@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
 import {
   bookstoreComment,
@@ -9,7 +9,8 @@ import {
 
 const prisma = new PrismaClient();
 
-export const post: Handler = async (req, res) => {
+export type postType = void;
+export const post: Handler = async (req, res: Response<postType>) => {
   let bookstoreComment;
   try {
     bookstoreComment = await prisma.bookstoreComment.findUniqueOrThrow({

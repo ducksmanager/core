@@ -54,6 +54,24 @@ axios.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+axios.interceptors.request.use((config) => {
+  if (config.url) {
+    const currentUrl = new URL(config.url, config.baseURL);
+    currentUrl.pathname = Object.entries(config.urlParams || {}).reduce(
+      (pathname, [k, v]) =>
+        pathname.replace(`:${k}`, encodeURIComponent(v as string)),
+      currentUrl.pathname
+    );
+    return {
+      ...config,
+      baseURL: `${currentUrl.protocol}//${currentUrl.host}`,
+      url: currentUrl.pathname,
+    };
+  }
+  return config;
+});
+
 axios.interceptors.response.use(
   (response) => {
     useOngoingRequests.numberOfOngoingAjaxCalls!--;

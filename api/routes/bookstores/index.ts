@@ -1,41 +1,48 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 
-import { bookstore, PrismaClient } from "~prisma_clients/client_dm";
+import {
+  bookstore,
+  bookstoreComment,
+  PrismaClient,
+} from "~prisma_clients/client_dm";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export const get: Handler = async (req, res) =>
-  res.json(
-    (await prisma.bookstore.findMany({
-      select: {
-        id: true,
-        name: true,
-        address: true,
-        coordX: true,
-        coordY: true,
-        comments: {
-          where: {
-            isActive: true,
-          },
-        },
-      },
-      where: {
-        comments: {
-          some: {
-            isActive: true,
-          },
-        },
-      },
-    })) as SimpleBookstore[]
-  );
+export type getType = SimpleBookstore[];
+export const get: Handler = async (req, res: Response<getType>) =>
+  res.json(await getActiveBookstores());
 
+const getActiveBookstores = async () =>
+  await prisma.bookstore.findMany({
+    select: {
+      id: true,
+      name: true,
+      address: true,
+      coordX: true,
+      coordY: true,
+      comments: {
+        where: {
+          isActive: true,
+        },
+      },
+    },
+    where: {
+      comments: {
+        some: {
+          isActive: true,
+        },
+      },
+    },
+  });
+
+export type putType = bookstoreComment;
 export const put = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<putType>) => {
     const { bookstore }: { bookstore: SimpleBookstore } = req.body;
     const {
       name,

@@ -8,10 +8,10 @@ import { getUserPurchase } from "../issues";
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export type delType = void;
+export type deleteType = void;
 export const del = [
   parseForm,
-  (async (req, res: Response<delType>) => {
+  (async (req, res: Response<deleteType>) => {
     const criteria = {
       userId: req.user.id,
       id: parseInt(req.params.id),

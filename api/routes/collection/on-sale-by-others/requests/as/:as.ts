@@ -1,6 +1,6 @@
 import { Handler } from "express";
 
-import { PrismaClient, requestedIssue } from "~/dist/prisma/client_dm";
+import { PrismaClient, requestedIssue } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 

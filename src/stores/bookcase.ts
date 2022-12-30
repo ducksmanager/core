@@ -1,12 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { defineStore } from "pinia";
 
-import { getType as BOOKCASE_GET_TYPE } from "~routes/bookcase/:username";
-import { getType as BOOKCASE_GET_OPTIONS_TYPE } from "~routes/bookcase/:username/options";
-import { getType as BOOKCASE_GET_SORT_TYPE } from "~routes/bookcase/:username/sort";
-import { postType as BOOKCASE_POST_OPTIONS_TYPE } from "~routes/bookcase/options";
-import { postType as BOOKCASE_POST_SORT_TYPE } from "~routes/bookcase/sort";
 import { BookcaseEdge } from "~types/BookcaseEdge";
+import routes from "~types/routes";
 
 import { collection } from "./collection";
 
@@ -73,9 +69,9 @@ export const bookcase = defineStore("bookcase", {
       if (!this.bookcase) {
         try {
           this.bookcase = (
-            await axios.get<BOOKCASE_GET_TYPE>(
-              `/bookcase/${this.bookcaseUsername}`
-            )
+            await routes["GET /bookcase/:username"](axios, {
+              urlParams: { username: this.bookcaseUsername! },
+            })
           ).data;
         } catch (e) {
           switch ((e as AxiosError).response?.status) {
@@ -92,31 +88,30 @@ export const bookcase = defineStore("bookcase", {
     async loadBookcaseOptions() {
       if (!this.bookcaseOptions) {
         this.bookcaseOptions = (
-          await axios.get<BOOKCASE_GET_OPTIONS_TYPE>(
-            `/bookcase/${this.bookcaseUsername}/options`
-          )
+          await routes["GET /bookcase/:username/options"](axios, {
+            urlParams: { username: this.bookcaseUsername! },
+          })
         ).data;
       }
     },
     async updateBookcaseOptions() {
-      await axios.post<BOOKCASE_POST_OPTIONS_TYPE>(
-        `/bookcase/options`,
-        this.bookcaseOptions
-      );
+      await routes["POST /bookcase/options"](axios, {
+        data: this.bookcaseOptions,
+      });
     },
 
     async loadBookcaseOrder() {
       if (!this.bookcaseOrder) {
         this.bookcaseOrder = (
-          await axios.get<BOOKCASE_GET_SORT_TYPE>(
-            `/bookcase/${this.bookcaseUsername}/sort`
-          )
+          await routes["GET /bookcase/:username/sort"](axios, {
+            urlParams: { username: this.bookcaseUsername! },
+          })
         ).data;
       }
     },
     async updateBookcaseOrder() {
-      await axios.post<BOOKCASE_POST_SORT_TYPE>(`/bookcase/sort`, {
-        sorts: this.bookcaseOrder,
+      await routes["POST /bookcase/sort"](axios, {
+        data: { sorts: this.bookcaseOrder },
       });
     },
   },

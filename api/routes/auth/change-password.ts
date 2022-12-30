@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
 import crypto from "crypto";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { PrismaClient } from "~/dist/prisma/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
 
 import { loginAs } from "./util";
 
@@ -11,9 +11,10 @@ const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
+export type postType = { token: string } | void;
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     const { password, password2, token } = req.body;
     jwt.verify(
       (token as string) || "",
@@ -52,5 +53,7 @@ export const post = [
         }
       }
     );
+    res.statusCode = 400;
+    res.end();
   }) as Handler,
 ];

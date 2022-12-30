@@ -8,22 +8,13 @@ import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSub
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-
-export type SimpleUserWithQuickStats = {
-  userId: number;
-  username: string;
-  presentationText: string;
-  allowSharing: boolean;
-  numberOfCountries: number;
-  numberOfPublications: number;
-  numberOfIssues: number;
-};
+import routes from "~types/routes";
 
 export const users = defineStore("users", {
   state: () => ({
     count: null as number | null,
-    stats: {} as { [userId: number]: SimpleUserWithQuickStats },
-    points: {} as { [userId: number]: { [contribution: string]: number } },
+    stats: {},
+    points: {},
     events: [] as AbstractEvent[],
     bookcaseContributors: null as
       | { userId: number; name: string; text: string }[]
@@ -33,7 +24,9 @@ export const users = defineStore("users", {
   actions: {
     async fetchCount() {
       if (!this.count)
-        this.count = (await userApi.get("/global-stats/user/count")).data.count;
+        this.count = (
+          await routes["GET /global-stats/user/count"](axios)
+        ).data.count;
     },
     async fetchStats(userIds: number[], clearCacheEntry = true) {
       const points = this.points;
@@ -45,16 +38,14 @@ export const users = defineStore("users", {
       );
       if (!missingUserIds.length) return;
 
-      const url = `/global-stats/user/${missingUserIds
-        .sort((a, b) => Math.sign(a - b))
-        .join(",")}`;
-
       const data = (
-        await userApi.get(url, clearCacheEntry ? {} : { cache: false })
-      ).data as {
-        stats: SimpleUserWithQuickStats[];
-        points: { [userId: number]: { [contribution: string]: number } };
-      };
+        await routes["GET /global-stats/user/:userIds"](userApi, {
+          ...(clearCacheEntry ? {} : { cache: false }),
+          urlParams: {
+            userIds: missingUserIds.sort((a, b) => Math.sign(a - b)).join(","),
+          },
+        })
+      ).data;
       this.points = {
         ...this.points,
         ...data.points,
@@ -62,10 +53,7 @@ export const users = defineStore("users", {
       this.stats = {
         ...this.stats,
         ...data.stats.reduce(
-          (
-            acc: { [userId: number]: SimpleUserWithQuickStats },
-            data: SimpleUserWithQuickStats
-          ) => ({
+          (acc, data) => ({
             ...acc,
             [data.userId]: data,
           }),
@@ -77,7 +65,7 @@ export const users = defineStore("users", {
     async fetchBookcaseContributors() {
       if (!this.bookcaseContributors) {
         this.bookcaseContributors = (
-          await axios.get("/global-stats/bookcase/contributors")
+          await routes["GET /global-stats/bookcase/contributors"](axios)
         ).data as { userId: number; name: string; text: string }[];
       }
     },

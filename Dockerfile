@@ -28,6 +28,7 @@ RUN pnpm run prisma:generate
 COPY types /home/types
 COPY translations /home/translations
 COPY api .
+RUN pnpm run generate-route-types
 RUN pnpm run build
 
 

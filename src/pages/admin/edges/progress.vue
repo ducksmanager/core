@@ -130,6 +130,7 @@ import { BIconEyeFill, BIconEyeSlashFill } from "bootstrap-icons-vue";
 import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";
+import routes from "~types/routes";
 import { WantedEdge } from "~types/WantedEdge";
 
 let hasData = $ref(false as boolean);
@@ -169,7 +170,7 @@ const inducksIssueNumbersNoSpace = $computed(() =>
 
 onMounted(async () => {
   mostWanted = (
-    (await axios.get("/edges/wanted/data")).data as WantedEdge[]
+    (await routes["GET /edges/wanted/data"](axios)).data as WantedEdge[]
   ).map((mostWantedIssue) => ({
     ...mostWantedIssue,
     country: mostWantedIssue.publicationcode.split("/")[0],
@@ -177,7 +178,7 @@ onMounted(async () => {
   }));
 
   publishedEdges = (
-    (await axios.get("/edges/published/data")).data as {
+    (await routes["GET /edges/published/data"](axios)).data as {
       publicationcode: string;
       issuenumber: string;
     }[]

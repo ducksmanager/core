@@ -74,6 +74,7 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
+import routes from "~types/routes";
 
 const collectionStore = collection();
 const router = useRouter();
@@ -88,7 +89,7 @@ let username = $ref("" as string),
 const { t: $t } = useI18n();
 
 onMounted(async () => {
-  csrfToken = (await axios.get("/csrf")).data?.csrfToken;
+  csrfToken = (await routes["GET /csrf"](axios)).data?.csrfToken;
 });
 
 const signup = async () => {
@@ -96,11 +97,13 @@ const signup = async () => {
     Cookies.set(
       "token",
       (
-        await axios.put("/collection/user", {
-          username,
-          password,
-          password2,
-          email,
+        await routes["PUT /collection/user"](axios, {
+          data: {
+            username,
+            password,
+            password2,
+            email,
+          },
         })
       ).data.token
     );

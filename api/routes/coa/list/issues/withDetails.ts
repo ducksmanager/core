@@ -11,10 +11,8 @@ type issueDetails = {
   coverUrl: string;
 };
 
-export const get: Handler = async (
-  req,
-  res: Response<{ [issuenumber: string]: issueDetails[] }>
-) => {
+export type getType = { [issuenumber: string]: issueDetails[] };
+export const get: Handler = async (req, res: Response<getType>) => {
   const publicationCodes =
     (req.query as { [key: string]: string }).publicationCodes?.split(",") || [];
   if (publicationCodes.length > 10) {

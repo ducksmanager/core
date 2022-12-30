@@ -1,6 +1,6 @@
 import { Handler, Response } from "express";
 
-import { PrismaClient, userOptionType } from "~/dist/prisma/client_dm";
+import { PrismaClient, userOptionType } from "~prisma_clients/client_dm";
 
 import { getIssuesForSale } from "../index";
 

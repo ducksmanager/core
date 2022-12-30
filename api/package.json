@@ -7,6 +7,7 @@
     "start": "ts-node -r tsconfig-paths/register index.ts",
     "test": "which ts-node",
     "dev": "nodemon",
+    "generate-route-types": "ts-node -r tsconfig-paths/register generate-route-types.ts",
     "prisma:pull": "ls prisma/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",
     "prisma:generate": "ls prisma/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done"
   },

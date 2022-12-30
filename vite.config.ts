@@ -44,6 +44,7 @@ export default defineConfig({
       imports: ["vue", "vue/macros", "vue-router", "@vueuse/core"],
       dts: true,
       dirs: ["./src/composables"],
+      include: [path.resolve(__dirname, "..", "types/routes.ts")],
       vueTemplate: true,
     }),
 

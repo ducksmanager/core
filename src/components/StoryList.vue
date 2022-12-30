@@ -19,10 +19,10 @@ import { BBadge } from "bootstrap-vue-3";
 
 import { StoryDetail } from "~types/StoryDetail";
 
-defineProps<{
+const { storyDetails = {} } = defineProps<{
   stories: { [storycode: string]: string[] };
   authors: { [personcode: string]: string };
-  storyDetails: { [storycode: string]: StoryDetail } | undefined;
+  storyDetails?: { [storycode: string]: StoryDetail };
 }>();
 </script>
 

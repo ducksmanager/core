@@ -18,10 +18,10 @@ export const post = [
   }) as Handler,
 ];
 
-export type delType = void;
+export type deleteType = void;
 export const del = [
   parseForm,
-  (async (req, res: Response<delType>) => {
+  (async (req, res: Response<deleteType>) => {
     await prisma.subscription.deleteMany({
       where: {
         id: parseInt(req.params.id) || -1,

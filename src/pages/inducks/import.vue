@@ -294,6 +294,7 @@ import { useI18n } from "vue-i18n";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { inducks_issue } from "~prisma_clients/client_coa";
+import routes from "~types/routes";
 
 let step = $ref(1 as number);
 const rawData = $ref("" as string);
@@ -365,12 +366,14 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await axios.post("/collection/issues", {
-        publicationcode,
-        issueNumbers: importableIssuesByPublicationCode[publicationcode],
-        condition: issueDefaultCondition,
-        isOnSale: "do_not_change",
-        purchaseId: "do_not_change",
+      await routes["POST /collection/issues"](axios, {
+        data: {
+          publicationcode,
+          issueNumbers: importableIssuesByPublicationCode[publicationcode],
+          condition: issueDefaultCondition,
+          isOnSale: "do_not_change",
+          purchaseId: "do_not_change",
+        },
       });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;

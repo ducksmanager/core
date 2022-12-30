@@ -4,5 +4,5 @@ export interface IssueSuggestion {
   stories: { [storycode: string]: string[] };
   publicationcode: string;
   issuenumber: string;
-  oldestdate: Date;
+  oldestdate: string;
 }

@@ -27,17 +27,19 @@ import { BButton, BTable } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 
 import { bookstoreComment } from "~prisma_clients/client_dm";
+import routes from "~types/routes";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await axios.post("/bookstores/approve", { id });
-  bookstores = (await axios.get("/bookstores")).data;
+  await routes["POST /bookstores/approve"](axios, { data: { id } });
+  bookstores = (await routes["GET /bookstores"](axios)).data;
 };
 
 onMounted(async () => {
-  bookstores = (await axios.get("/bookstores")).data as SimpleBookstore[];
+  bookstores = (await routes["GET /bookstores"](axios))
+    .data as SimpleBookstore[];
 });
 </script>
 

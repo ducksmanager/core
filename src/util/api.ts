@@ -2,6 +2,12 @@ import axios from "axios";
 import { buildWebStorage, setupCache } from "axios-cache-interceptor";
 import dayjs from "dayjs";
 
+declare module "axios" {
+  interface AxiosRequestConfig {
+    urlParams?: Record<string, string>;
+  }
+}
+
 const customStorage = buildWebStorage(sessionStorage);
 
 const now = dayjs();

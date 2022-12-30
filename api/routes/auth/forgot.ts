@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
-import { Handler } from "express";
+import { Handler, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { PrismaClient } from "~/dist/prisma/client_dm";
 import ResetPassword from "~/emails/reset-password";
+import { PrismaClient } from "~prisma_clients/client_dm";
 
 import { isValidEmail } from "./util";
 
@@ -16,7 +16,8 @@ const generateToken = (payload: string) =>
     expiresIn: "60m",
   });
 
-export const get = (async (req, res) => {
+export type getType = void;
+export const get = (async (req, res: Response<getType>) => {
   const { token } = req.query;
   jwt.verify(
     (token as string) || "",
@@ -32,9 +33,10 @@ export const get = (async (req, res) => {
   );
 }) as Handler;
 
+export type postType = { token: string };
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     const { email } = req.body;
     if (!isValidEmail(email)) {
       res.writeHead(400, { "Content-Type": "application/text" });
@@ -53,10 +55,13 @@ export const post = [
         });
 
         await new ResetPassword({ user, token }).send();
+        return res.json({ token });
       } else {
         console.log(
           `A visitor requested to reset a password for an invalid e-mail: ${email}`
         );
+        res.writeHead(400, { "Content-Type": "application/text" });
+        res.end("Invalid email");
       }
     }
   }) as Handler,

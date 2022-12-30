@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import { Handler, Response } from "express";
 
-import { PrismaClient } from "~/dist/prisma/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
 
@@ -57,10 +57,10 @@ export const put = [
   }) as Handler,
 ];
 
-export type delType = void;
+export type deleteType = void;
 export const del = [
   parseForm,
-  (async (req, res: Response<delType>) => {
+  (async (req, res: Response<deleteType>) => {
     const { issueId } = req.body;
 
     await prisma.requestedIssue.deleteMany({

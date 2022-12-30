@@ -41,7 +41,6 @@ const upsertAuthorUser = async (req: Request) => {
 };
 
 export type getType = authorUser[];
-
 export const get: Handler = async (req, res: Response<getType>) => {
   const authorsUsers = await prisma.authorUser.findMany({
     where: { userId: req.user.id },
@@ -49,9 +48,10 @@ export const get: Handler = async (req, res: Response<getType>) => {
   return res.json(authorsUsers);
 };
 
+export type putType = string;
 export const put = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<putType>) => {
     try {
       await upsertAuthorUser(req);
       res.writeHead(200, { "Content-Type": "application/text" });
@@ -64,9 +64,10 @@ export const put = [
   }) as Handler,
 ];
 
+export type postType = string;
 export const post = [
   parseForm,
-  (async (req, res) => {
+  (async (req, res: Response<postType>) => {
     try {
       await upsertAuthorUser(req);
       res.writeHead(200, { "Content-Type": "application/text" });
@@ -79,10 +80,10 @@ export const post = [
   }) as Handler,
 ];
 
-export type delType = authorUser[];
+export type deleteType = authorUser[];
 export const del = [
   parseForm,
-  (async (req, res: Response<delType>) => {
+  (async (req, res: Response<deleteType>) => {
     const { personcode } = req.body;
     if (!personcode) {
       res.writeHead(400);

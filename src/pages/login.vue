@@ -60,6 +60,7 @@ import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
+import routes from "~types/routes";
 
 const collectionStore = collection();
 
@@ -74,7 +75,7 @@ let username = $ref("" as string);
 let password = $ref("" as string);
 
 onMounted(async () => {
-  csrfToken = (await axios.get("/csrf")).data?.csrfToken;
+  csrfToken = (await routes["GET /csrf"](axios)).data?.csrfToken;
 });
 
 const login = async () => {
@@ -82,9 +83,11 @@ const login = async () => {
     Cookies.set(
       "token",
       (
-        await axios.post("/login", {
-          username,
-          password,
+        await routes["POST /login"](axios, {
+          data: {
+            username,
+            password,
+          },
         })
       ).data.token
     );
