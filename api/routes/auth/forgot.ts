@@ -2,7 +2,7 @@ import bodyParser from "body-parser";
 import { Handler, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import ResetPassword from "~/emails/reset-password";
+import ResetPassword from "~emails/reset-password";
 import { PrismaClient } from "~prisma_clients/client_dm";
 
 import { isValidEmail } from "./util";

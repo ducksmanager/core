@@ -56,15 +56,15 @@ type LastPublishedEdge = edge & {
   timestamp: number;
 };
 
+export type purchaseWithStringDate = Omit<purchase, "date"> & {
+  date: string;
+};
+
 export const collection = defineStore("collection", {
   state: () => ({
     collection: null as IssueWithPublicationcode[] | null,
     watchedPublicationsWithSales: null as string[] | null,
-    purchases: null as
-      | (Omit<purchase, "date"> & {
-          date: string;
-        })[]
-      | null,
+    purchases: null as purchaseWithStringDate[] | null,
     watchedAuthors: null as authorUser[] | null,
     marketplaceContactMethods: null as string[] | null,
 

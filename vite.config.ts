@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
+      "~types/": `${path.resolve(__dirname, "types")}/`,
       "~prisma_clients/*": `${path.resolve(__dirname, "api/dist/prisma")}/`,
     },
   },
@@ -43,8 +44,7 @@ export default defineConfig({
     AutoImport({
       imports: ["vue", "vue/macros", "vue-router", "@vueuse/core"],
       dts: true,
-      dirs: ["./src/composables"],
-      include: [path.resolve(__dirname, "..", "types/routes.ts")],
+      dirs: ["./src/composables", "./types"],
       vueTemplate: true,
     }),
 

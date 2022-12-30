@@ -1,4 +1,4 @@
-import { Email } from "~/emails";
+import { Email } from "~emails/email";
 import { user } from "~prisma_clients/client_dm";
 
 export default class extends Email {

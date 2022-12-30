@@ -29,11 +29,7 @@
             role="button"
             data-bs-toggle="dropdown"
           >
-            <Country :country="country" :country-name="countryNames[country]">
-              <template #default="props">
-                {{ props.countryName }}
-              </template>
-            </Country>
+            <Country :country="country" :country-name="countryNames[country]" />
           </a>
           <ul class="dropdown-menu">
             <li
@@ -85,8 +81,10 @@ const sortedCountries = $computed(
   () =>
     totalPerCountry &&
     countryNames &&
-    Object.keys(totalPerCountry).sort((countryCode1, countryCode2) =>
-      countryNames[countryCode1].localeCompare(countryNames[countryCode2])
+    Object.keys(totalPerCountry).sort(
+      (countryCode1, countryCode2) =>
+        countryNames[countryCode1]?.localeCompare(countryNames[countryCode2]) ||
+        0
     )
 );
 const publicationsPerCountry = $computed(

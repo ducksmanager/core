@@ -1,8 +1,8 @@
 import { Handler, Response } from "express";
 
-import { loginAs } from "~/routes/auth/util";
-import { getHashedPassword } from "~/routes/login";
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { loginAs } from "~routes/auth/util";
+import { getHashedPassword } from "~routes/login";
 
 const prisma = new PrismaClient();
 

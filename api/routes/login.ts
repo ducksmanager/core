@@ -3,8 +3,8 @@ import crypto from "crypto";
 import { Handler, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { loginAs } from "~/routes/auth/util";
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { loginAs } from "~routes/auth/util";
 import { User } from "~types/SessionUser";
 
 const prisma = new PrismaClient();

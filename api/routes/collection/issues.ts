@@ -2,13 +2,13 @@ import bodyParser from "body-parser";
 import { Handler, Response } from "express";
 import { constants } from "http2";
 
-import { resetDemo } from "~/routes/demo/_reset";
 import {
   issue,
   issue_condition,
   Prisma,
   PrismaClient,
 } from "~prisma_clients/client_dm";
+import { resetDemo } from "~routes/demo/_reset";
 import { CollectionUpdate } from "~types/CollectionUpdate";
 import { User } from "~types/SessionUser";
 import { TransactionResults } from "~types/TransactionResults";

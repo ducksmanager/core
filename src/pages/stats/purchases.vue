@@ -69,8 +69,8 @@ import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { issue, purchase } from "~prisma_clients/client_dm";
+import { collection, purchaseWithStringDate } from "~/stores/collection";
+import { issue } from "~prisma_clients/client_dm";
 
 Chart.register(
   Legend,
@@ -115,7 +115,9 @@ const { t: $t } = useI18n(),
   };
 
 let hasPublicationNames = $ref(false as boolean),
-  purchasesById = $ref(null as { [purchaseId: number]: purchase } | null),
+  purchasesById = $ref(
+    null as { [purchaseId: number]: purchaseWithStringDate } | null
+  ),
   options = $ref({} as ChartOptions),
   width = $ref(null as string | null),
   height = $ref(null as string | null),
@@ -278,7 +280,7 @@ watch(
           ...acc,
           [purchase.id]: purchase,
         }),
-        {} as { [purchaseId: number]: purchase }
+        {} as { [purchaseId: number]: purchaseWithStringDate }
       );
     }
   },

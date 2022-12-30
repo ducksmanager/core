@@ -153,7 +153,7 @@ const editSubscription = async (id: number, data: EditSubscription) => {
 };
 const deleteSubscription = async (id: number) => {
   await routes["DELETE /collection/subscriptions/:id"](axios, {
-    urlParams: { id },
+    urlParams: { id: String(id) },
   });
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;

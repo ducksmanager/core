@@ -19,7 +19,7 @@ export const post: Handler = async (req, res: Response<postType>) => {
     user.previousAccess = null;
     user.lastAccess = new Date();
   } else {
-    console.log(`"Updating last access for user ${req.user.id}`);
+    console.log(`Updating last access for user ${req.user.id}`);
     user.previousAccess = user.lastAccess;
     user.lastAccess = new Date();
   }

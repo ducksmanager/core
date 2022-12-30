@@ -1,7 +1,7 @@
 import { Handler, Response } from "express";
 
-import { getAuthorFullNames } from "~/routes/coa/authorsfullnames/:authors";
 import { PrismaClient } from "~prisma_clients/client_dm_stats";
+import { getAuthorFullNames } from "~routes/coa/authorsfullnames/:authors";
 
 const prisma = new PrismaClient();
 

@@ -278,7 +278,7 @@ import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
   issuenumber: string;
-  title?: string;
+  title?: string | null;
   key: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {

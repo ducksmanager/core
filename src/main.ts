@@ -21,6 +21,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
 import { i18n } from "./i18n.js";
 import { ongoingRequests } from "./stores/ongoing-requests";
+import { addUrlParamsRequestInterceptor } from "./util/url-params-request-interceptor";
 
 const head = createHead();
 
@@ -39,7 +40,16 @@ const store = createPinia();
 
 const useOngoingRequests = ongoingRequests(store);
 
+declare module "axios" {
+  interface AxiosRequestConfig {
+    urlParams?: Record<string, string>;
+  }
+}
+
 axios.defaults.baseURL = import.meta.env.VITE_GATEWAY_URL;
+
+addUrlParamsRequestInterceptor(axios);
+
 axios.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
@@ -54,23 +64,6 @@ axios.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-axios.interceptors.request.use((config) => {
-  if (config.url) {
-    const currentUrl = new URL(config.url, config.baseURL);
-    currentUrl.pathname = Object.entries(config.urlParams || {}).reduce(
-      (pathname, [k, v]) =>
-        pathname.replace(`:${k}`, encodeURIComponent(v as string)),
-      currentUrl.pathname
-    );
-    return {
-      ...config,
-      baseURL: `${currentUrl.protocol}//${currentUrl.host}`,
-      url: currentUrl.pathname,
-    };
-  }
-  return config;
-});
 
 axios.interceptors.response.use(
   (response) => {

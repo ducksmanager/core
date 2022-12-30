@@ -1,6 +1,5 @@
 import { Handler, Response } from "express";
 
-import { getPublicationTitlesFromCodes } from "~/routes/coa/list/publications";
 import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
 import {
   PrismaClient as PrismaClientDm,
@@ -10,6 +9,7 @@ import {
   Prisma as PrismaDmStats,
   PrismaClient as PrismaClientDmStats,
 } from "~prisma_clients/client_dm_stats";
+import { getPublicationTitlesFromCodes } from "~routes/coa/list/publications";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { IssueSuggestionList } from "~types/IssueSuggestionList";
 import { StoryDetail } from "~types/StoryDetail";

@@ -2,15 +2,15 @@ import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 import { Handler, Response } from "express";
 
-import { i18n } from "~/emails";
-import {
-  COUNTRY_CODE_OPTION,
-  getSuggestions,
-} from "~/routes/collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit";
+import { i18n } from "~emails/email";
 import {
   PrismaClient as PrismaClientDm,
   user,
 } from "~prisma_clients/client_dm";
+import {
+  COUNTRY_CODE_OPTION,
+  getSuggestions,
+} from "~routes/collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit";
 
 const pusher = new PushNotifications({
   instanceId: process.env.PUSHER_INSTANCE_ID!,

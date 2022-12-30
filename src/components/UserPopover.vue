@@ -57,7 +57,7 @@
 import { BButton } from "bootstrap-vue-3";
 import { useI18n } from "vue-i18n";
 
-import { SimpleUserWithQuickStats } from "~/stores/users";
+import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 defineProps<{
   points: { [contribution: string]: number };

@@ -18,6 +18,7 @@
     "paths": {
       "~/*": ["*"],
       "~types/*": ["../types/*"],
+      "~emails/*": ["emails/*"],
       "~prisma_clients/*": ["dist/prisma/*"],
       "~routes/*": ["routes/*"]
     }

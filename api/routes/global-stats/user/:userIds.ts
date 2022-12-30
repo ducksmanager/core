@@ -1,8 +1,9 @@
 import { Handler, Response } from "express";
 
-import { getMedalPoints } from "~/routes/collection/points";
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import { getMedalPoints } from "~routes/collection/points";
 import PromiseReturnType = Prisma.PromiseReturnType;
+import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 const prisma = new PrismaClient();
 
@@ -23,24 +24,6 @@ export const get: Handler = async (req, res: Response<getType>) => {
   }
   return res.end();
 };
-
-const simpleUserValidator = Prisma.validator<Prisma.userArgs>()({
-  select: {
-    id: true,
-    username: true,
-    presentationText: true,
-    allowSharing: true,
-  },
-});
-
-type SimpleUserWithQuickStats = Omit<
-  Prisma.userGetPayload<typeof simpleUserValidator> & {
-    numberOfCountries: number;
-    numberOfPublications: number;
-    numberOfIssues: number;
-  },
-  "id"
-> & { userId: number };
 
 const getUsersQuickStats = async (userIds: number[]) =>
   (await prisma.$queryRaw`

@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 import { Handler, Response } from "express";
 
-import PresentationSentenceApproved from "~/emails/presentation-sentence-approved";
-import PresentationSentenceRefused from "~/emails/presentation-sentence-refused";
+import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
+import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
 import { PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();

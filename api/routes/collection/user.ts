@@ -2,9 +2,9 @@ import bodyParser from "body-parser";
 import crypto from "crypto";
 import { Handler, Request, Response } from "express";
 
-import PresentationSentenceRequested from "~/emails/presentation-sentence-requested";
-import { generateAccessToken, isValidEmail } from "~/routes/auth/util";
+import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { generateAccessToken, isValidEmail } from "~routes/auth/util";
 import { exclude } from "~types/exclude";
 import { ScopedError } from "~types/ScopedError";
 

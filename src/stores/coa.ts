@@ -127,16 +127,15 @@ export const coa = defineStore("coa", {
             chunkSize: 20,
             chunkOnQueryParam: true,
             parameterName: "publicationCodes",
-          }).then((data) => {
-            console.log(data);
-            return data.reduce(
+          }).then((data) =>
+            data.reduce(
               (acc, data2) => ({
                 ...acc,
                 ...data2,
               }),
               {}
-            );
-          })
+            )
+          )
         )
       );
     },

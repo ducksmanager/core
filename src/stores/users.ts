@@ -9,12 +9,13 @@ import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
 import routes from "~types/routes";
+import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 export const users = defineStore("users", {
   state: () => ({
     count: null as number | null,
-    stats: {},
-    points: {},
+    stats: {} as { [userId: number]: SimpleUserWithQuickStats },
+    points: {} as { [userId: number]: { [contribution: string]: number } },
     events: [] as AbstractEvent[],
     bookcaseContributors: null as
       | { userId: number; name: string; text: string }[]
@@ -39,7 +40,7 @@ export const users = defineStore("users", {
       if (!missingUserIds.length) return;
 
       const data = (
-        await routes["GET /global-stats/user/:userIds"](userApi, {
+        await routes["GET /global-stats/user/:userIds"](axios, {
           ...(clearCacheEntry ? {} : { cache: false }),
           urlParams: {
             userIds: missingUserIds.sort((a, b) => Math.sign(a - b)).join(","),

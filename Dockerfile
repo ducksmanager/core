@@ -1,16 +1,3 @@
-FROM node:16 AS app-build
-MAINTAINER Bruno Perel
-
-RUN npm i -g pnpm
-
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm i
-
-COPY . .
-COPY .env.prod.local ./.env
-RUN pnpm run build
-
 FROM node:16 as api-build
 MAINTAINER Bruno Perel
 
@@ -28,9 +15,24 @@ RUN pnpm run prisma:generate
 COPY types /home/types
 COPY translations /home/translations
 COPY api .
+RUN cat .env
 RUN pnpm run generate-route-types
 RUN pnpm run build
 
+FROM node:16 AS app-build
+MAINTAINER Bruno Perel
+
+RUN npm i -g pnpm
+
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm i
+
+COPY . .
+COPY .env.prod.local ./.env
+COPY --from=api-build /home/api api
+COPY --from=api-build /home/types/routes.ts types/routes.ts
+RUN pnpm run build
 
 FROM nginx AS app
 MAINTAINER Bruno Perel
