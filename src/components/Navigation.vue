@@ -188,8 +188,8 @@ li {
     }
   }
 
-  &.no-icon a i {
-    padding-left: 5px;
+  &.no-icon {
+    padding-left: 10px;
   }
 
   &.non-empty:hover {
