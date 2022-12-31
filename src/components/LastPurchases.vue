@@ -1,6 +1,6 @@
 <template>
   <Accordion
-    v-if="collectionPerPurchaseDate"
+    v-if="collectionPerPurchaseDate && hasPublicationNames"
     id="last-purchases"
     accordion-group-id="last-purchases"
     visible
@@ -10,22 +10,24 @@
     </template>
     <template #content>
       <Accordion
-        v-for="(purchaseAndIssues, purchaseIndex) in collectionPerPurchaseDate"
+        v-for="(
+          { purchase, issues }, purchaseIndex
+        ) in collectionPerPurchaseDate"
         :id="`purchase-accordion-${purchaseIndex}`"
         :key="`purchase-accordion-${purchaseIndex}`"
         :accordion-group-id="`purchase-accordion-${purchaseIndex}`"
         :visible="false"
       >
         <template #header>
-          <b>{{ purchaseAndIssues.purchase.date }}</b
-          >&nbsp;<i v-if="purchaseAndIssues.purchase.description"
-            >{{ purchaseAndIssues.purchase.description }}&nbsp;</i
-          >{{ purchaseAndIssues.issues.length }}
-          {{ t("numéro | numéros", purchaseAndIssues.issues.length) }}
+          <b>{{ purchase.date }}</b
+          >&nbsp;<i v-if="purchase.description"
+            >{{ purchase.description }}&nbsp;</i
+          >{{ issues.length }}
+          {{ t("numéro | numéros", issues.length) }}
         </template>
         <template #content>
           <Issue
-            v-for="{ publicationcode, issuenumber } in purchaseAndIssues.issues"
+            v-for="{ publicationcode, issuenumber } in issues"
             :key="`purchase-${purchaseIndex}-issue-${publicationcode}-${issuenumber}`"
             :publicationcode="publicationcode"
             :publicationname="publicationNames[publicationcode]"
@@ -48,7 +50,8 @@ import {
 } from "~/stores/collection";
 
 const { t } = useI18n();
-const publicationNames = $computed(() => coa().publicationNames),
+const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
+  publicationNames = $computed(() => coa().publicationNames),
   collectionPerPurchaseDate = $computed(() => {
     const purchases = collectionStore().purchases;
     return (

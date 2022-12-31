@@ -124,13 +124,12 @@ const mostPossessedPublication = $computed(
       null as string | null
     )
 );
-const fetchPublicationNames = coa().fetchPublicationNames;
 
 watch(
   () => totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await fetchPublicationNames(Object.keys(newValue));
+      await coa().fetchPublicationNames(Object.keys(newValue));
       hasPublicationNames = true;
     }
   },
