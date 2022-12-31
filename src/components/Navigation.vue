@@ -57,10 +57,10 @@
             >
           </NavigationItem>
           <NavigationItem>
-            <span @click="logout">
+            <div @click="logout">
               <b-icon-x-square-fill />
-              {{ $t("Déconnexion") }}</span
-            >
+              {{ $t("Déconnexion") }}
+            </div>
           </NavigationItem>
         </template>
         <template v-else>
