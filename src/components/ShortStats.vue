@@ -1,5 +1,11 @@
 <template>
-  <template v-if="total && totalPerPublication && totalPerCountry">
+  <template
+    v-if="
+      total !== undefined &&
+      totalPerPublication !== undefined &&
+      totalPerCountry !== undefined
+    "
+  >
     <div v-if="total > 0" id="short-stats">
       <div>
         {{ $t("Vous possédez") }} <b>{{ total }}</b>
