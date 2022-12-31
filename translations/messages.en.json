@@ -516,7 +516,8 @@
   "{{issueTitle}} est sorti !": "{{issueTitle}} is out!",
   "{{publicationName}} {{issuenumber}} a été ajouté à votre collection !": "{{publicationName}} {{issuenumber}} has been added to your collection!",
   "à": "at",
-  "à côté d'un magazine ou d'un numéro dans la page de gestion de la collection pour voir les numéros en vente sur cette page.": "next to a publication name or an issue number on the 'Manage my collection' page in order to see the issues for sale here.",
+  "à côté d'un magazine ou d'un numéro dans {manage_link} pour voir les numéros en vente sur cette page.": "next to a publication name or an issue number on {manage_link} in order to see the issues for sale here.",
+  "la page de gestion de la collection": "the 'Manage my collection' page",
   "à sa collection": "to their collection",
   "• 1 nouvelle histoire de {{authorName}}": "• 1 new story from {{authorName}}",
   "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}": "• {{newStoriesNumber}} new stories from {{authorName}}"

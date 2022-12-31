@@ -68,11 +68,16 @@ alias: [/agrandir/marketplace]
         $t(
           "Aucun numéro que vous ne possédez pas n'est en vente parmi les magazines que vous avez surveillés. Cliquez sur"
         )
-      }}<Watch />{{
-        $t(
-          "à côté d'un magazine ou d'un numéro dans la page de gestion de la collection pour voir les numéros en vente sur cette page."
-        )
-      }}
+      }}<Watch /><i18n-t
+        tag="span"
+        keypath="à côté d'un magazine ou d'un numéro dans {manage_link} pour voir les numéros en vente sur cette page."
+        ><template #manage_link
+          ><router-link to="/collection/show">{{
+            $t("la page de gestion de la collection")
+          }}</router-link></template
+        >
+        ></i18n-t
+      >
     </b-alert>
     <span v-else>
       {{ $t("Montrer les magazines en vente par") }}
