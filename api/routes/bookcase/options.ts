@@ -2,8 +2,7 @@ import bodyParser from "body-parser";
 import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
-
-import { authenticateToken } from "../login";
+import { authenticateToken } from "~routes/_auth";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();

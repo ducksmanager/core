@@ -84,10 +84,8 @@ const login = async () => {
       "token",
       (
         await routes["POST /login"](axios, {
-          data: {
-            username,
-            password,
-          },
+          username,
+          password,
         })
       ).data.token
     );

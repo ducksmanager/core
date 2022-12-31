@@ -58,9 +58,7 @@ const sendPasswordToken = async () => {
   try {
     token = (
       await routes["POST /auth/forgot"](axios, {
-        data: {
-          email,
-        },
+        email,
       })
     ).data.token;
   } catch (e) {

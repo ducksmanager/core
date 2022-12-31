@@ -48,11 +48,9 @@ const changePassword = async () => {
       "token",
       (
         await routes["POST /auth/change-password"](axios, {
-          data: {
-            token,
-            password,
-            password2,
-          },
+          token,
+          password,
+          password2,
         })
       ).data.token
     );
@@ -64,11 +62,9 @@ const changePassword = async () => {
 onMounted(async () => {
   try {
     await routes["POST /auth/change-password"](axios, {
-      data: {
-        token,
-        password,
-        password2,
-      },
+      token,
+      password,
+      password2,
     });
     await collectionStore.loadUser();
   } catch (e: unknown) {

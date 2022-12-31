@@ -251,12 +251,10 @@ const updateAccount = async () => {
     error = undefined;
     const response = (
       await routes["POST /collection/user"](axios, {
-        data: {
-          ...collection.userForAccountForm,
-          oldPassword,
-          password,
-          password2,
-        },
+        ...collection.userForAccountForm,
+        oldPassword,
+        password,
+        password2,
       })
     ).data;
     hasRequestedPresentationSentenceUpdate =

@@ -6,9 +6,7 @@ meta:
 <template>
   <h2>{{ $t("Inscription") }}</h2>
   <form method="post" @submit.prevent="signup">
-    <b-alert v-if="error" show variant="danger">
-      {{ $t(error as string) }}
-    </b-alert>
+    <scoped-error-teleport v-if="error" :error="error" />
     <input type="hidden" name="_csrf_token" :value="csrfToken" />
     <b-row>
       <b-col lg="4">
@@ -73,8 +71,10 @@ import Cookies from "js-cookie";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
+import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection } from "~/stores/collection";
 import routes from "~types/routes";
+import { ScopedError } from "~types/ScopedError";
 
 const collectionStore = collection();
 const router = useRouter();
@@ -84,7 +84,7 @@ let username = $ref("" as string),
   email = $ref("" as string),
   password = $ref("" as string),
   password2 = $ref("" as string),
-  error = $ref("" as string | unknown);
+  error = $ref(undefined as ScopedError | null | undefined);
 
 const { t: $t } = useI18n();
 
@@ -98,18 +98,18 @@ const signup = async () => {
       "token",
       (
         await routes["PUT /collection/user"](axios, {
-          data: {
-            username,
-            password,
-            password2,
-            email,
-          },
+          username,
+          password,
+          password2,
+          email,
         })
       ).data.token
     );
     await collectionStore.loadUser();
   } catch (e) {
-    error = (e as AxiosError)?.response?.data || "Error";
+    error = ((e as AxiosError)?.response?.data as ScopedError) || {
+      message: $t("Une erreur s'est produite."),
+    };
   }
 };
 

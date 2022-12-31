@@ -33,7 +33,7 @@ import { SimpleBookstore } from "~types/SimpleBookstore";
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await routes["POST /bookstores/approve"](axios, { data: { id } });
+  await routes["POST /bookstores/approve"](axios, { id });
   bookstores = (await routes["GET /bookstores"](axios)).data;
 };
 

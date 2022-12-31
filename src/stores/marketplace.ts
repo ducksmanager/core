@@ -113,9 +113,10 @@ export const marketplace = defineStore("marketplace", {
 
   actions: {
     async requestIssues(issueIds: number[]) {
-      await routes["PUT /collection/on-sale-by-others/requests"](axios, {
-        data: issueIds,
-      });
+      await routes["PUT /collection/on-sale-by-others/requests"](
+        axios,
+        issueIds
+      );
       await this.loadIssueRequestsAsBuyer();
     },
 

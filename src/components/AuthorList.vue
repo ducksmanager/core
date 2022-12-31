@@ -150,11 +150,11 @@ const isAuthorWatched = (personcode: string) =>
     ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
   );
 const createRating = async (data: { personcode: string }) => {
-  await routes["PUT /collection/authors/watched"](axios, { data });
+  await routes["PUT /collection/authors/watched"](axios, data);
   await loadWatchedAuthors(true);
 };
 const updateRating = async (data: { personcode: string; notation: number }) => {
-  await routes["POST /collection/authors/watched"](axios, { data });
+  await routes["POST /collection/authors/watched"](axios, data);
 };
 const deleteAuthor = async (data: { personcode: string }) => {
   await routes["DELETE /collection/authors/watched"](axios, { data });

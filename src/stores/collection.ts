@@ -289,16 +289,14 @@ export const collection = defineStore("collection", {
 
   actions: {
     async updateCollection(data: CollectionUpdate) {
-      await routes["POST /collection/issues"](axios, { data });
+      await routes["POST /collection/issues"](axios, data);
       await this.loadCollection(true);
     },
 
     async createPurchase(date: string, description: string) {
       await routes["PUT /collection/purchases"](axios, {
-        data: {
-          date,
-          description,
-        },
+        date,
+        description,
       });
       await this.loadPurchases(true);
     },
@@ -390,24 +388,30 @@ export const collection = defineStore("collection", {
       }
     },
     async updateMarketplaceContactMethods() {
-      await routes["POST /collection/options/:optionName"](axios, {
-        urlParams: {
-          optionName: "marketplace_contact_methods",
-        },
-        data: {
+      await routes["POST /collection/options/:optionName"](
+        axios,
+        {
           values: this.marketplaceContactMethods,
         },
-      });
+        {
+          urlParams: {
+            optionName: "marketplace_contact_methods",
+          },
+        }
+      );
     },
     async updateWatchedPublicationsWithSales() {
-      await routes["POST /collection/options/:optionName"](axios, {
-        urlParams: {
-          optionName: "sales_notification_publications",
-        },
-        data: {
+      await routes["POST /collection/options/:optionName"](
+        axios,
+        {
           values: this.watchedPublicationsWithSales,
         },
-      });
+        {
+          urlParams: {
+            optionName: "sales_notification_publications",
+          },
+        }
+      );
     },
     async loadSuggestions({
       countryCode,

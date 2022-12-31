@@ -135,18 +135,15 @@ const createSubscription = async (
   publicationcode: string
 ) => {
   await routes["PUT /collection/subscriptions"](axios, {
-    data: {
-      existingSubscription,
-      publicationcode,
-    },
+    existingSubscription,
+    publicationcode,
   });
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;
 };
 const editSubscription = async (id: number, data: EditSubscription) => {
-  await routes["POST /collection/subscriptions/:id"](axios, {
+  await routes["POST /collection/subscriptions/:id"](axios, data, {
     urlParams: { id: String(id) },
-    data,
   });
   await loadSubscriptions(true);
   editedSubscriptionId = undefined;

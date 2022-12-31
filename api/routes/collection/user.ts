@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
-import crypto from "crypto";
 import { Handler, Request, Response } from "express";
 
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { getHashedPassword } from "~routes/_auth";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";
 import { exclude } from "~types/exclude";
 import { ScopedError } from "~types/ScopedError";
@@ -177,7 +177,7 @@ const validateUsername = ({ username }: { [_: string]: unknown }) => {
   const USERNAME_REGEX = /^[-_A-Za-z0-9]{3,15}$/;
   if (!USERNAME_REGEX.test(username as string)) {
     throw {
-      message: "Invalid username",
+      message: "Nom d'utilisateur invalide",
       selector: "#username",
     } as ScopedError;
   }
@@ -190,7 +190,7 @@ const validateUsernameCreation = async ({
 }) => {
   if (await prisma.user.count({ where: { username: username as string } })) {
     throw {
-      message: "This username is already taken",
+      message: "Ce nom d'utilisateur est déjà pris",
       selector: "#username",
     } as ScopedError;
   }
@@ -199,7 +199,7 @@ const validateUsernameCreation = async ({
 const validateEmailCreation = async ({ email }: { [_: string]: unknown }) => {
   if (await prisma.user.count({ where: { email: email as string } })) {
     throw {
-      message: "This email is already used in another account",
+      message: "Cet e-mail est déjà utilisé par un autre compte",
       selector: "#email",
     } as ScopedError;
   }
@@ -231,7 +231,7 @@ const validateEmailUpdate = async ({
     }))
   ) {
     throw {
-      message: "This email is already used in another account",
+      message: "Cet e-mail est déjà utilisé par un autre compte",
       selector: "#email",
     } as ScopedError;
   }
@@ -240,7 +240,7 @@ const validateEmailUpdate = async ({
 const validateEmail = ({ email }: { [_: string]: unknown }) => {
   if (!isValidEmail(email as string)) {
     throw {
-      message: "Invalid email",
+      message: "Adresse e-mail invalide",
       selector: "#email",
     } as ScopedError;
   }
@@ -254,12 +254,12 @@ const validatePasswords = ({
 }) => {
   if ((password as string).length < 6) {
     throw {
-      message: "Your password should be at least 6 characters long",
+      message: "Le mot de passe doit comporter au moins 6 caractères",
       selector: "#password",
     } as ScopedError;
   } else if (password !== password2) {
     throw {
-      message: "The two passwords should be identical",
+      message: "Le mot de passe et sa confirmation doivent être identiques",
       selector: "#password",
     } as ScopedError;
   }
@@ -275,7 +275,7 @@ const validatePasswordUpdate = ({
     throw {
       selector: "#password",
       message:
-        "Both the old and the new password need to be filled if you want to change your password. If you don't want to change your password, leave both old and new passwords empty.",
+        "L'ancien et le nouveau mot de passe doivent être remplis si vous souhaitez changer de mot de passe. Si vous ne souhaitez pas changer de mot de passe, laissez les champs correspondant à l'ancien et au nouveau mots de passe vides.",
     };
   }
 };
@@ -306,12 +306,9 @@ const validatePresentationText = ({
 }) => {
   if (!presentationText || String(presentationText).length > 100) {
     throw {
-      message: "The presentation text should be between 1 and 100 characters",
+      message:
+        "Le texte de présentation doit comporter entre 1 et 100 caractères",
       selector: "#presentationText",
     } as ScopedError;
   }
 };
-
-function getHashedPassword(password: string) {
-  return crypto.createHash("sha1").update(password).digest("hex");
-}

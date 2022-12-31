@@ -29,6 +29,7 @@ app._router.stack.forEach(
 
 const imports: string[] = [
   'import { AxiosInstance, AxiosRequestConfig } from "axios";',
+  'import { AxiosCacheInstance } from "axios-cache-interceptor";',
 ];
 
 const routeList = {} as { [routePathWithMethod: string]: string };
@@ -45,9 +46,9 @@ routes.forEach((route) => {
 
         const returnTypeName = `${method.toUpperCase()}${routePath}`;
 
-        routeList[
-          routePathWithMethod
-        ] = `(axios: AxiosInstance, config?: AxiosRequestConfig) => axios.${method}<${returnTypeName}>('${route.path}', config),`;
+        routeList[routePathWithMethod] = ["get", "delete"].includes(method)
+          ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig) => axios.${method}<${returnTypeName}>('${route.path}', config),`
+          : `(axios: AxiosInstance | AxiosCacheInstance, data?: unknown, config?: AxiosRequestConfig) => axios.${method}<${returnTypeName}>('${route.path}', data, config),`;
 
         return `${method}Type as ${returnTypeName}`;
       })

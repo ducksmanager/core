@@ -11,7 +11,7 @@ import {
   checkUserIsAdmin,
   checkUserIsEdgeCreatorEditor,
   injectTokenIfValid,
-} from "./routes/login";
+} from "~routes/_auth";
 
 dotenv.config({
   path: "../.env",

@@ -367,13 +367,11 @@ const importIssues = async () => {
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await routes["POST /collection/issues"](axios, {
-        data: {
-          publicationcode,
-          issueNumbers: importableIssuesByPublicationCode[publicationcode],
-          condition: issueDefaultCondition,
-          isOnSale: "do_not_change",
-          purchaseId: "do_not_change",
-        },
+        publicationcode,
+        issueNumbers: importableIssuesByPublicationCode[publicationcode],
+        condition: issueDefaultCondition,
+        isOnSale: "do_not_change",
+        purchaseId: "do_not_change",
       });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;
