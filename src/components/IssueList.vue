@@ -271,7 +271,7 @@ import {
   collection as collectionStore,
   IssueWithPublicationcode,
 } from "~/stores/collection";
-import { issue } from "~prisma_clients/client_dm";
+import { issue as dm_issue } from "~prisma_clients/client_dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
@@ -282,7 +282,7 @@ type simpleIssue = {
   key: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {
-  userCopies: (issue & { copyIndex: number; publicationcode: string })[];
+  userCopies: (dm_issue & { copyIndex: number; publicationcode: string })[];
 };
 
 const {

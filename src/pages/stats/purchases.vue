@@ -70,7 +70,7 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection, purchaseWithStringDate } from "~/stores/collection";
-import { issue } from "~prisma_clients/client_dm";
+import { issue as dm_issue } from "~prisma_clients/client_dm";
 
 Chart.register(
   Legend,
@@ -96,9 +96,9 @@ const { t: $t } = useI18n(),
       Math.floor(Math.random() * 255),
       Math.floor(Math.random() * 255),
     ].join(",")})`,
-  getIssueMonth = (issue: issue): string =>
+  getIssueMonth = (issue: dm_issue): string =>
     getIssueDate(issue).isValid() ? getIssueDate(issue).format("YYYY-MM") : "?",
-  getIssueDate = (issue: issue) =>
+  getIssueDate = (issue: dm_issue) =>
     dayjs(
       (issue.purchaseId && purchasesById![issue.purchaseId]?.date) ||
         issue.creationDate

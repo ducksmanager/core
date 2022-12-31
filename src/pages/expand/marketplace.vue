@@ -95,7 +95,7 @@ alias: [/agrandir/marketplace]
       :publicationcode="publicationcode"
       :custom-issues="
         userIdFilter
-          ? (issues as issue[])!.filter(({ userId }) => userId=== userIdFilter)
+          ? (issues as dm_issue[])!.filter(({ userId }) => userId=== userIdFilter)
           : issues
       "
       on-sale-by-others
@@ -185,7 +185,7 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
-import { issue } from "~prisma_clients/client_dm";
+import { issue as dm_issue } from "~prisma_clients/client_dm";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
