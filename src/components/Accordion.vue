@@ -27,9 +27,9 @@
 <script setup lang="ts">
 import { BCard, BCardBody, BCardText, BCollapse } from "bootstrap-vue-3";
 
-defineProps<{
+const { visible = false } = defineProps<{
   accordionGroupId: string;
-  visible: boolean;
+  visible?: boolean;
   id: string;
 }>();
 </script>

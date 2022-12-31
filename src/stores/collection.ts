@@ -261,17 +261,15 @@ export const collection = defineStore("collection", {
     },
 
     quotationSum(): number | null {
-      return (
-        (this.quotedIssues &&
-          Math.round(
+      return this.quotedIssues
+        ? Math.round(
             this.quotedIssues?.reduce(
               (acc, { estimationGivenCondition }) =>
                 acc + estimationGivenCondition,
               0
             ) || 0
-          )) ||
-        null
-      );
+          )
+        : null;
     },
 
     userForAccountForm(): UserForAccountForm | undefined | null {
