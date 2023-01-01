@@ -16,7 +16,11 @@ meta:
           {{ $t("Connexion") }}
         </h1>
         <b-alert v-if="error" show variant="danger">
-          {{ error }}
+          {{
+            $t(
+              "Les identifiants que vous avez entré sont invalides, veuillez réessayer."
+            )
+          }}
         </b-alert>
         <b-form-input
           id="username"
@@ -66,12 +70,10 @@ const collectionStore = collection();
 
 let router = useRouter();
 let route = useRoute();
-const { error = null } = defineProps<{
-  error?: string;
-}>();
 
 let csrfToken = $ref(null as string | null);
 let username = $ref("" as string);
+let error = $ref(null as string | null);
 let password = $ref("" as string);
 
 onMounted(async () => {
@@ -91,7 +93,7 @@ const login = async () => {
     );
     await collectionStore.loadUser();
   } catch (e) {
-    console.error(e);
+    error = e as string;
   }
 };
 
