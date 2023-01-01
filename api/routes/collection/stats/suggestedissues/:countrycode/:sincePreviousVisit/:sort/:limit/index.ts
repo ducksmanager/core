@@ -237,7 +237,9 @@ export const getSuggestions = async (
           score: suggestedStory.score,
           publicationcode: suggestedStory.publicationcode,
           oldestdate:
-            suggestedStory.oldestdate?.toISOString().split("T")[0] || "",
+            (typeof suggestedStory.oldestdate === "string"
+              ? suggestedStory.oldestdate
+              : suggestedStory.oldestdate?.toISOString().split("T")[0]) || "",
           issuecode,
           stories: {},
         } as IssueSuggestion;
