@@ -2,17 +2,16 @@ import bodyParser from "body-parser";
 import { Handler, Request, Response } from "express";
 
 import { PrismaClient, subscription } from "~prisma_clients/client_dm";
+import { EditSubscription } from "~types/EditSubscription";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 async function upsertSubscription(req: Request) {
-  const publicationCodeParts = req.body.publicationcode.split("/");
-  const dates = {
-    startDate: new Date(Date.parse(req.body.startDate)),
-    endDate: new Date(Date.parse(req.body.endDate)),
-  };
-  const id = parseInt(req.params.id);
+  const subscription = req.body.subscription as EditSubscription;
+  const publicationCodeParts = subscription.publicationcode!.split("/");
+
+  const id = parseInt(req.params.id) || 0;
   const userId = req.user.id;
   if (
     id &&
@@ -28,14 +27,18 @@ async function upsertSubscription(req: Request) {
     return null;
   }
   await prisma.subscription.upsert({
-    update: dates,
+    update: {
+      startDate: subscription.startDate!,
+      endDate: subscription.endDate!,
+    },
     create: {
       country: publicationCodeParts[0],
       magazine: publicationCodeParts[1],
       users: {
         connect: { id: userId },
       },
-      ...dates,
+      startDate: subscription.startDate!,
+      endDate: subscription.endDate!,
     },
     where: {
       id,

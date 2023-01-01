@@ -11,11 +11,8 @@ const parseForm = bodyParser.json();
 export type postType = void;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>, next) => {
-    await put[0](req, res, next);
-    res.writeHead(200, { "Content-Type": "application/text" });
-    res.end();
-  }) as Handler,
+  (async (req, res: Response<postType>, next) =>
+    await put[1](req, res, next)) as Handler,
 ];
 
 export type deleteType = void;

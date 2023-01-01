@@ -16,35 +16,35 @@
           />
         </template>
         <Publication
-          v-else-if="publicationNames[publicationcode]"
-          :publicationname="publicationNames[publicationcode]"
-          :publicationcode="publicationcode"
+          v-else-if="publicationNames[editSubscription.publicationcode]"
+          :publicationname="publicationNames[editSubscription.publicationcode]"
+          :publicationcode="editSubscription.publicationcode"
         />
       </b-col>
       <b-col sm="3" md="2">
         {{ $t("du") }}
         <input
           v-if="isEdit"
-          v-model="editSubscription.startDate"
+          v-model="startDateAsString"
           name="startDate"
           required
           class="form-control"
           type="date"
         />
         <template v-else>
-          {{ editSubscription.startDate }}
+          {{ startDateAsString }}
         </template>
         {{ $t("au") }}
         <input
           v-if="isEdit"
-          v-model="editSubscription.endDate"
+          v-model="endDateAsString"
           name="startDate"
           required
           class="form-control"
           type="date"
         />
         <template v-else>
-          {{ editSubscription.endDate }}
+          {{ endDateAsString }}
         </template>
       </b-col>
       <b-col sm="3" md="1" class="text-center m-2">
@@ -76,23 +76,48 @@ import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
 
 import { coa } from "~/stores/coa";
 
-const {
-  publicationcode = null,
-  startDate = null,
-  isEdit = null,
-  endDate = null,
-} = defineProps<{
+const { isEdit, subscription } = defineProps<{
   isEdit?: boolean;
-  publicationcode?: string;
-  startDate?: Date;
-  endDate?: Date;
+  subscription: EditSubscription;
 }>();
 
 type EditSubscription = {
-  publicationcode: string;
-  startDate: string | null;
-  endDate: string | null;
+  id: number | null;
+  publicationcode: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
 };
+
+const editSubscription = $ref(subscription);
+
+const startDateAsString = $ref(
+  editSubscription.startDate
+    ? editSubscription.startDate.toISOString().split("T")[0]
+    : ""
+);
+const endDateAsString = $ref(
+  editSubscription.endDate
+    ? editSubscription.endDate.toISOString().split("T")[0]
+    : ""
+);
+
+watch(
+  () => startDateAsString,
+  (newValue) => {
+    if (newValue) {
+      editSubscription.startDate = new Date(Date.parse(newValue));
+    }
+  }
+);
+
+watch(
+  () => endDateAsString,
+  (newValue) => {
+    if (newValue) {
+      editSubscription.endDate = new Date(Date.parse(newValue));
+    }
+  }
+);
 
 defineEmits<{
   (e: "delete"): void;
@@ -100,11 +125,7 @@ defineEmits<{
   (e: "start-edit"): void;
   (e: "cancel-edit"): void;
 }>();
-const editSubscription = $ref({
-  publicationcode,
-  startDate: startDate?.toISOString().split("T")[0],
-  endDate: endDate?.toISOString().split("T")[0],
-} as EditSubscription);
+
 const publicationNames = $computed(() => coa().publicationNames);
 </script>
 

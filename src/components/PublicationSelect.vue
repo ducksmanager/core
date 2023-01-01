@@ -86,10 +86,12 @@ const publicationNamesForCurrentCountry = $computed(() =>
 
 watch(
   () => currentCountryCode,
-  (newValue) => {
+  (newValue, oldValue) => {
     if (newValue) {
       coaStore.fetchPublicationNamesFromCountry(newValue);
-      currentPublicationcode = undefined;
+      if (oldValue) {
+        currentPublicationcode = undefined;
+      }
     }
   },
   {

@@ -40,18 +40,7 @@ alias: [/collection/abonnements]
         )
       }}
       <p>
-        <b-button
-          @click="
-            createSubscription(
-              subscriptions!.find(
-                ({ publicationcode }) =>
-                  publicationcode ===
-                  currentAssociatedPublication.referencePublicationcode
-              )|| null,
-              currentAssociatedPublication.publicationcode
-            )
-          "
-        >
+        <b-button @click="createSubscriptionLike(currentAssociatedPublication)">
           {{ $t("Oui") }}
         </b-button>
         <b-button @click="currentAssociatedPublications.splice(idx, 1)">
@@ -62,32 +51,27 @@ alias: [/collection/abonnements]
     <Subscription
       v-for="subscription in subscriptions"
       :key="subscription.id"
-      :is-edit="editedSubscriptionId === subscription.id"
-      :publicationcode="subscription.publicationcode"
-      :start-date="subscription.startDate"
-      :end-date="subscription.endDate"
-      @start-edit="editedSubscriptionId = subscription.id"
-      @cancel-edit="editedSubscriptionId = undefined"
-      @edit="editSubscription(subscription.id, $event)"
+      :is-edit="currentSubscription?.id === subscription.id"
+      :subscription="subscription"
+      @start-edit="currentSubscription = subscription"
+      @cancel-edit="currentSubscription = null"
+      @edit="editSubscription($event)"
       @delete="deleteSubscription(subscription.id)"
     />
-    <b-row v-if="editedSubscriptionId !== null" class="mt-3 align-items-center">
+    <b-row v-if="currentSubscription === null" class="mt-3 align-items-center">
       <b-col>
-        <b-button
-          class="mt-4"
-          :disabled="editedSubscriptionId !== undefined"
-          @click="editedSubscriptionId = null"
-        >
+        <b-button class="mt-4" @click="currentSubscription = newSubscription">
           {{ $t("Ajouter un abonnement") }}
         </b-button>
       </b-col>
     </b-row>
     <Subscription
-      v-if="editedSubscriptionId === null"
-      :is-edit="editedSubscriptionId === null"
-      @start-edit="editedSubscriptionId = null"
-      @cancel-edit="editedSubscriptionId = undefined"
-      @edit="createSubscription(null, $event.publicationcode)"
+      v-if="currentSubscription && currentSubscription.id === null"
+      :subscription="currentSubscription!"
+      is-edit
+      @start-edit="currentSubscription = newSubscription"
+      @cancel-edit="currentSubscription = null"
+      @edit="createSubscription($event)"
     />
   </div>
   <div v-else>
@@ -102,18 +86,22 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
+import { EditSubscription } from "~types/EditSubscription";
 import routes from "~types/routes";
-
-type EditSubscription = {
-  publicationcode: string;
-  startDate: string | null;
-  endDate: string | null;
-};
 
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;
 };
+
+const newSubscription = $ref({
+  id: null,
+  publicationcode: null,
+  startDate: null,
+  endDate: null,
+} as EditSubscription);
+
+let currentSubscription = $ref(null as EditSubscription | null);
 
 let hasPublicationNames = $ref(false as boolean);
 let currentAssociatedPublications = $ref([] as AssociatedPublication[]);
@@ -123,37 +111,49 @@ const associatedPublications = $ref([
     publicationcode: "fr/JMS",
   },
 ] as AssociatedPublication[]);
-let editedSubscriptionId = $ref(undefined as number | undefined | null);
 
 const publicationNames = $computed(() => coa().publicationNames);
 const subscriptions = $computed(() => collection().subscriptions);
 const fetchPublicationNames = coa().fetchPublicationNames;
 const loadSubscriptions = collection().loadSubscriptions;
 
-const createSubscription = async (
-  existingSubscription: SubscriptionTransformed | null,
-  publicationcode: string
-) => {
+const createSubscription = async (subscription: SubscriptionTransformed) => {
   await routes["PUT /collection/subscriptions"](axios, {
-    existingSubscription,
-    publicationcode,
+    subscription,
   });
   await loadSubscriptions(true);
-  editedSubscriptionId = undefined;
+  currentSubscription = null;
 };
-const editSubscription = async (id: number, data: EditSubscription) => {
-  await routes["POST /collection/subscriptions/:id"](axios, data, {
-    urlParams: { id: String(id) },
+
+const createSubscriptionLike = async (
+  associatedPublication: AssociatedPublication
+) => {
+  await createSubscription({
+    ...subscriptions!.find(
+      ({ publicationcode }) =>
+        publicationcode === associatedPublication.referencePublicationcode
+    )!,
+    publicationcode: associatedPublication.publicationcode,
   });
+};
+
+const editSubscription = async (subscription: EditSubscription) => {
+  await routes["POST /collection/subscriptions/:id"](
+    axios,
+    { subscription },
+    {
+      urlParams: { id: String(subscription.id) },
+    }
+  );
   await loadSubscriptions(true);
-  editedSubscriptionId = undefined;
+  currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
   await routes["DELETE /collection/subscriptions/:id"](axios, {
     urlParams: { id: String(id) },
   });
   await loadSubscriptions(true);
-  editedSubscriptionId = undefined;
+  currentSubscription = null;
 };
 
 watch(
