@@ -96,11 +96,20 @@ export const post = [
         where: { id: req.user.id },
       });
       if (updatedUser.presentationText !== input.presentationText) {
-        hasRequestedPresentationSentenceUpdate = true;
-        await new PresentationSentenceRequested({
-          user: updatedUser,
-          presentationText: input.presentationText,
-        }).send();
+        if (!input.presentationText) {
+          await prisma.user.update({
+            data: {
+              presentationText: null,
+            },
+            where: { id: req.user.id },
+          });
+        } else {
+          hasRequestedPresentationSentenceUpdate = true;
+          await new PresentationSentenceRequested({
+            user: updatedUser,
+            presentationText: input.presentationText,
+          }).send();
+        }
       }
       return res.json({
         hasRequestedPresentationSentenceUpdate,
@@ -304,7 +313,7 @@ const validatePresentationText = ({
 }: {
   [_: string]: unknown | null;
 }) => {
-  if (!presentationText || String(presentationText).length > 100) {
+  if (String(presentationText).length > 100) {
     throw {
       message:
         "Le texte de présentation doit comporter entre 1 et 100 caractères",

@@ -22,11 +22,7 @@ alias: [/collection/compte]
         >
       </b-col>
     </b-row>
-    <Teleport :disabled="!error?.selector" :to="error?.selector">
-      <b-alert v-if="error?.message" show variant="danger">
-        {{ $t(error?.message) }}
-      </b-alert>
-    </Teleport>
+    <scoped-error-teleport v-if="error" :error="error" />
 
     <h5>{{ $t("Adresse e-mail") }}</h5>
     <b-row>
@@ -64,9 +60,10 @@ alias: [/collection/compte]
     </b-row>
 
     <h5>{{ $t("Identifiant de profil Discord") }}</h5>
-    <b-row id="discordId">
+    <b-row>
       <b-col cols="12" md="6">
         <b-form-input
+          id="discordId"
           v-model="collection.userForAccountForm.discordId"
           type="text"
         />
@@ -118,7 +115,7 @@ alias: [/collection/compte]
     <h5>
       {{ $t("Texte de présentation") }}
     </h5>
-    <b-row id="presentationText">
+    <b-row>
       <b-col cols="12" md="6">
         <b-alert variant="info" show class="mb-0">
           <template v-if="hasRequestedPresentationSentenceUpdate">
@@ -137,6 +134,7 @@ alias: [/collection/compte]
           </template>
         </b-alert>
         <b-form-input
+          id="presentationText"
           v-model="collection.userForAccountForm.presentationText"
           class="mt-0"
           maxlength="100"
@@ -146,25 +144,28 @@ alias: [/collection/compte]
         /> </b-col
     ></b-row>
     <h5>{{ $t("Changement de mot de passe") }}</h5>
-    <b-row id="oldPassword">
+    <b-row>
       <b-col cols="12" md="6">
         <b-form-input
+          id="oldPassword"
           v-model="oldPassword"
           type="password"
           :placeholder="$t('Mot de passe actuel')"
         /> </b-col
     ></b-row>
-    <b-row id="password">
+    <b-row>
       <b-col cols="12" md="6">
         <b-form-input
+          id="password"
           v-model="password"
           type="password"
           :placeholder="$t('Nouveau mot de passe')"
         /> </b-col
     ></b-row>
-    <b-row id="password2">
+    <b-row>
       <b-col cols="12" md="6">
         <b-form-input
+          id="password2"
           v-model="password2"
           type="password"
           :placeholder="$t('Nouveau mot de passe (confirmation)')"
@@ -206,12 +207,13 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BAlert, BButton, BFormCheckbox, BFormInput } from "bootstrap-vue-3";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Accordion from "~/components/Accordion.vue";
+import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection as collectionStore } from "~/stores/collection";
 import routes from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
@@ -267,7 +269,9 @@ const updateAccount = async () => {
     ].filter((value) => value);
     await collection.updateMarketplaceContactMethods();
   } catch (e) {
-    error = (e as ScopedError) || { message: t("Une erreur s'est produite.") };
+    error = ((e as AxiosError)?.response?.data as ScopedError) || {
+      message: $t("Une erreur s'est produite."),
+    };
   }
 };
 
