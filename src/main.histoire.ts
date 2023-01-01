@@ -13,7 +13,7 @@ import { createPinia } from "pinia";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
 
-import { i18n } from "./i18n.js";
+import i18n from "./i18n.js";
 
 export const setupVue3 = defineSetupVue3(({ app }) => {
   const head = createHead();

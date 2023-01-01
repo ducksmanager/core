@@ -15,6 +15,7 @@
 import { useI18n } from "vue-i18n";
 
 import { availableLocales } from "~/composables/locales";
+import { coa } from "~/stores/coa";
 
 const { fixed = false } = defineProps<{
   fixed?: boolean;
@@ -22,9 +23,10 @@ const { fixed = false } = defineProps<{
 
 const i18n = useI18n();
 const locales = $computed(() => availableLocales);
-const reloadWithLocale = ({ key }: { key: string }) => {
+const reloadWithLocale = async ({ key }: { key: string }) => {
   localStorage.setItem("locale", key);
   i18n.locale.value = key;
+  await coa().fetchCountryNames(true);
 };
 </script>
 

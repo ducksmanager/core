@@ -2,7 +2,7 @@ import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { defineStore } from "pinia";
 
 import { getCurrentLocaleShortKey } from "~/composables/locales";
-import { i18n } from "~/i18n";
+import i18n from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
 import { inducks_issue } from "~prisma_clients/client_coa";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
@@ -96,13 +96,16 @@ export const coa = defineStore("coa", {
       };
     },
 
-    async fetchCountryNames() {
-      if (!this.isLoadingCountryNames && !this.countryNames) {
+    async fetchCountryNames(afterUpdate = false) {
+      if ((!this.isLoadingCountryNames && !this.countryNames) || afterUpdate) {
         this.isLoadingCountryNames = true;
+        const locale = getCurrentLocaleShortKey(
+          (i18n.global.locale as unknown as { value: string }).value
+        );
         this.countryNames = (
           await routes["GET /coa/list/countries/:locale"](coaApi, {
             urlParams: {
-              locale: getCurrentLocaleShortKey(i18n.global.locale),
+              locale,
             },
           })
         ).data;

@@ -23,7 +23,10 @@ const commonCacheOptions = {
   etag: false,
   modifiedSince: false,
   interpretHeader: false,
-  generateKey: (options: any) => `${options.url}?${options.params}`,
+  generateKey: (options: any) =>
+    `${options.url}${
+      options.params ? `?${new URLSearchParams(options.params).toString()}` : ""
+    }`,
   storage: customStorage,
 };
 

@@ -13,7 +13,7 @@ if (!locale || !Object.keys(messages).includes(locale)) {
   locale = fallbackLocale;
   localStorage.setItem("locale", fallbackLocale);
 }
-export const i18n = createI18n({
+const instance = createI18n({
   locale,
   fallbackLocale,
   formatFallbackMessages: true,
@@ -21,3 +21,7 @@ export const i18n = createI18n({
   messages,
   globalInjection: true,
 });
+
+export default instance;
+
+export const i18n = instance.global;
