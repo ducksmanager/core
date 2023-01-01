@@ -3,11 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-
 import { collection } from "~/stores/collection";
-
-const router = useRouter();
 
 onMounted(async () => {
   await collection().loadUser();

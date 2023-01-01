@@ -1,15 +1,16 @@
 import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_coa";
+import { simple_issue } from "~types/SimpleIssue";
 
 const prisma = new PrismaClient();
 
-export type getType = { [publicationcode: string]: string[] };
+export type getType = simple_issue[];
 export const get: Handler = async (req, res: Response<getType>) => {
   const { storycode } = req.query;
   if (storycode) {
-    return res.json({
-      results: await prisma.$queryRaw`
+    return res.json(
+      (await prisma.$queryRaw`
             SELECT issuecode as code,
                    publicationcode,
                    issuenumber
@@ -18,8 +19,8 @@ export const get: Handler = async (req, res: Response<getType>) => {
                      INNER JOIN inducks_storyversion sv using (storyversioncode)
             WHERE sv.storycode = ${storycode}
             GROUP BY publicationcode, issuenumber
-            ORDER BY publicationcode`,
-    });
+            ORDER BY publicationcode`) as simple_issue[]
+    );
   }
   const publicationCodes =
     (req.query as { [key: string]: string }).publicationCodes?.split(",") || [];
@@ -40,15 +41,10 @@ export const get: Handler = async (req, res: Response<getType>) => {
     },
   });
   return res.json(
-    data.reduce(
-      (acc, { publicationcode, issuenumber }) => ({
-        ...acc,
-        [publicationcode!]: [
-          ...(acc[publicationcode!] || []),
-          issuenumber!.replace(/ +/g, " "),
-        ],
-      }),
-      {} as { [publicationcode: string]: string[] }
-    )
+    data.map(({ publicationcode, issuenumber }) => ({
+      code: "",
+      publicationcode: publicationcode!,
+      issuenumber: issuenumber!.replace(/ +/g, " "),
+    }))
   );
 };

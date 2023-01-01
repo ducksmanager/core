@@ -6,7 +6,7 @@
       totalPerCountry !== undefined
     "
   >
-    <div v-if="total > 0" id="short-stats">
+    <div v-if="total > 0 && totalPerPublication" id="short-stats">
       <div>
         {{ $t("Vous possédez") }} <b>{{ total }}</b>
         {{ t("numéro | numéros", total) }}, {{ $t("dont") }}

@@ -16,7 +16,10 @@
           />
         </template>
         <Publication
-          v-else-if="publicationNames[editSubscription.publicationcode]"
+          v-else-if="
+            editSubscription.publicationcode &&
+            publicationNames[editSubscription.publicationcode]
+          "
           :publicationname="publicationNames[editSubscription.publicationcode]"
           :publicationcode="editSubscription.publicationcode"
         />

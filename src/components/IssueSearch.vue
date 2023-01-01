@@ -163,9 +163,9 @@ const runSearch = async (value: string) => {
         await routes["GET /coa/list/issues"](axios, {
           params: { storycode: value.replace(/^code=/, "") },
         })
-      ).data as { results: simple_issue[] };
+      ).data;
       issueResults = {
-        results: data.results.sort((issue1, issue2) =>
+        results: data.sort((issue1, issue2) =>
           Math.sign(
             (isInCollection(issue2) ? 1 : 0) - (isInCollection(issue1) ? 1 : 0)
           )

@@ -247,26 +247,27 @@ export const coa = defineStore("coa", {
           )
         ),
       ];
-      return (
-        newPublicationCodes.length &&
-        this.addIssueNumbers(
-          await this.getChunkedRequests({
-            call: routes["GET /coa/list/issues"],
-            valuesToChunk: newPublicationCodes,
-            chunkSize: 50,
-            chunkOnQueryParam: true,
-            parameterName: "publicationCodes",
-          }).then((data) =>
-            data.reduce(
-              (acc, data) => ({
-                ...acc,
-                ...data,
-              }),
-              {}
-            )
-          )
-        )
-      );
+      if (newPublicationCodes.length) {
+        const data = await this.getChunkedRequests({
+          call: routes["GET /coa/list/issues"],
+          valuesToChunk: newPublicationCodes,
+          chunkSize: 50,
+          chunkOnQueryParam: true,
+          parameterName: "publicationCodes",
+        });
+
+        const issueNumbers = {} as typeof this.issueNumbers;
+
+        for (const resultChuck of data) {
+          for (const issue of resultChuck) {
+            if (!issueNumbers[issue.publicationcode]) {
+              issueNumbers[issue.publicationcode] = [];
+            }
+            issueNumbers[issue.publicationcode].push(issue.issuenumber);
+          }
+        }
+        this.addIssueNumbers(issueNumbers);
+      }
     },
 
     async fetchIssueCodesDetails(issueCodes: string[]) {

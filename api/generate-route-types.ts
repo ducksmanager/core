@@ -28,7 +28,7 @@ app._router.stack.forEach(
 );
 
 const imports: string[] = [
-  'import { AxiosInstance, AxiosRequestConfig } from "axios";',
+  'import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";',
   'import { AxiosCacheInstance } from "axios-cache-interceptor";',
 ];
 
@@ -47,8 +47,8 @@ routes.forEach((route) => {
         const returnTypeName = `${method.toUpperCase()}${routePath}`;
 
         routeList[routePathWithMethod] = ["get", "delete"].includes(method)
-          ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig) => axios.${method}<${returnTypeName}>('${route.path}', config),`
-          : `(axios: AxiosInstance | AxiosCacheInstance, data?: unknown, config?: AxiosRequestConfig) => axios.${method}<${returnTypeName}>('${route.path}', data, config),`;
+          ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config),`
+          : `(axios: AxiosInstance | AxiosCacheInstance, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', data, config),`;
 
         return `${method}Type as ${returnTypeName}`;
       })
