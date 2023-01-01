@@ -161,9 +161,9 @@ const runSearch = async (value: string) => {
   try {
     if (isSearchByCode) {
       const data = (
-        await axios.get(
-          `/coa/list/issues?storycode=${value.replace(/^code=/, "")}`
-        )
+        await routes["GET /coa/list/issues"](axios, {
+          params: { storycode: value.replace(/^code=/, "") },
+        })
       ).data as { results: simple_issue[] };
       issueResults = {
         results: data.results.sort((issue1, issue2) =>
@@ -177,12 +177,9 @@ const runSearch = async (value: string) => {
       );
     } else {
       const data = (
-        await axios.post<SEARCH_STORIES_FROM_ISSUE>(
-          "/coa/stories/search/withIssues",
-          {
-            keywords: value,
-          }
-        )
+        await routes["POST /coa/stories/search/withIssues"](axios, {
+          keywords: value,
+        })
       ).data as { results: simple_story[]; hasMore: boolean };
       storyResults.results = data.results.map((story) => ({
         ...story,

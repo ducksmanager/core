@@ -38,8 +38,7 @@ const validateBookstoreComment = async ({ id }: bookstoreComment) => {
 };
 
 onMounted(async () => {
-  bookstores = (await routes["GET /bookstores"](axios))
-    .data as SimpleBookstore[];
+  bookstores = (await routes["GET /bookstores"](axios)).data;
 });
 </script>
 

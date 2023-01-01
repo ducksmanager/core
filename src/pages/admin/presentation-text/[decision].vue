@@ -9,9 +9,13 @@ let router = useRouter();
 
 onMounted(async () => {
   let currentRoute = router.currentRoute.value;
-  await axios.post(
-    "/presentation-text/" + currentRoute.params.decision,
-    currentRoute.query
+  await routes["POST /presentation-text/:decision"](
+    axios,
+    {},
+    {
+      params: currentRoute.query,
+      urlParams: { decision: currentRoute.params.decision as string },
+    }
   );
 });
 </script>
