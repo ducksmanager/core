@@ -6,14 +6,16 @@ import {
   bookstoreComment,
   PrismaClient,
 } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type getType = SimpleBookstore[];
-export const get: Handler = async (req, res: Response<getType>) =>
+export type getCall = Call<SimpleBookstore[]>;
+export const get = async (...[, res]: ExpressCall<getCall>) =>
   res.json(await getActiveBookstores());
 
 const getActiveBookstores = async () =>

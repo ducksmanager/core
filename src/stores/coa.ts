@@ -5,6 +5,7 @@ import { getCurrentLocaleShortKey } from "~/composables/locales";
 import i18n from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
 import { inducks_issue } from "~prisma_clients/client_coa";
+import { AxiosTypedRequestConfig, Call } from "~types/Call";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 import routes from "~types/routes";
@@ -336,10 +337,7 @@ export const coa = defineStore("coa", {
       chunkOnQueryParam = false,
       parameterName = "null",
     }: {
-      call: (
-        axios: AxiosInstance,
-        config?: AxiosRequestConfig
-      ) => Promise<AxiosResponse<Type>>;
+      call: Call;
       valuesToChunk: string[];
       chunkSize: number;
       chunkOnQueryParam?: boolean;

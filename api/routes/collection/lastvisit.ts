@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 export type postType = { previousVisit: Date | null };
 export const post: Handler = async (req, res: Response<postType>) => {
-  const user = await getUser(req);
+  const user = await getUser(req.user.id);
   if (!user) {
     res.writeHead(500);
     res.end("This user does not exist");

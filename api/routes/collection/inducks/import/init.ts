@@ -9,7 +9,7 @@
 // const prismaCoa = new PrismaClientCoa();
 // const prismaDm = new PrismaClientDm();
 //
-// export const get: Handler = async (req, res) => {
+// export const get = async (...[req, res]: ExpressCall<getCall>) => {
 //   const { rawData } = req.body;
 //   if (rawData.indexOf("country^entrycode^collectiontype^comment") === -1) {
 //     res.writeHead(204);

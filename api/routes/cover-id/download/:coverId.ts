@@ -1,12 +1,13 @@
-import { Handler, Response } from "express";
 import https from "https";
 
 import { PrismaClient } from "~prisma_clients/client_cover_info";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type getType = void;
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<undefined, { coverId: string }>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const id = parseInt(req.params.coverId);
   const cover = await prisma.cover.findUniqueOrThrow({
     where: {

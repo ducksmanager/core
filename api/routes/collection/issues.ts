@@ -13,6 +13,8 @@ import { CollectionUpdate } from "~types/CollectionUpdate";
 import { User } from "~types/SessionUser";
 import { TransactionResults } from "~types/TransactionResults";
 import PromiseReturnType = Prisma.PromiseReturnType;
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -195,8 +197,8 @@ const checkPurchaseIdsBelongToUser = async (
   return checkedPromiseIds;
 };
 
-export type getType = issue[];
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<issue[]>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   if (req.user.username === "demo") {
     await resetDemo();
   }

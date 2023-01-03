@@ -1,6 +1,6 @@
-import { Handler } from "express";
-
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
@@ -36,19 +36,24 @@ const getEntries = async (
       ORDER BY position
   `;
 
-export type getType = {
-  releaseDate: string;
-  entries: Prisma.PromiseReturnType<typeof getEntries>;
-};
-export const get: Handler = async (req, res) => {
+export type getCall = Call<
+  {
+    releaseDate: string;
+    entries: Prisma.PromiseReturnType<typeof getEntries>;
+  },
+  undefined,
+  undefined,
+  { publicationcode: string; issuenumber: string }
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const { publicationcode, issuenumber } = req.query;
 
   const releaseDate = (
     (await prisma.$queryRaw`
       SELECT issue.oldestdate
       FROM inducks_issue issue
-      WHERE issue.publicationcode = ${publicationcode}
-        AND REPLACE(issue.issuenumber, ' ', '') = ${issuenumber}`) as {
+      WHERE issue.publicationcode = ${req.query.publicationcode}
+        AND REPLACE(issue.issuenumber, ' ', '') = ${req.query.issuenumber}`) as {
       oldestdate: string;
     }[]
   )[0]?.oldestdate;

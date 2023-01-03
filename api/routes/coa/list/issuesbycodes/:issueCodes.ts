@@ -1,5 +1,3 @@
-import { Handler, Response } from "express";
-
 import {
   Prisma as PrismaCoa,
   PrismaClient as PrismaClientCoa,
@@ -12,6 +10,8 @@ import {
   Prisma,
   PrismaClient as PrismaClientDm,
 } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaCoverInfo = new PrismaClientCoverInfo();
@@ -51,9 +51,12 @@ interface SimpleIssueWithPublication {
   popularity: number | null;
 }
 
-export type getType = { [issuecode: string]: SimpleIssueWithPublication };
+export type getCall = Call<
+  { [issuecode: string]: SimpleIssueWithPublication },
+  { issueCodes: string }
+>;
 
-export const get: Handler = async (req, res: Response<getType>) => {
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const issueCodes = req.params.issueCodes?.split(",") || [];
 
   const covers: { [issuecode: string]: cover } = (

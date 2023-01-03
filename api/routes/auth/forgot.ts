@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 
 import ResetPassword from "~emails/reset-password";
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 import { isValidEmail } from "./util";
 
@@ -16,11 +18,10 @@ const generateToken = (payload: string) =>
     expiresIn: "60m",
   });
 
-export type getType = void;
-export const get = (async (req, res: Response<getType>) => {
-  const { token } = req.query;
+export type getCall = Call<undefined, undefined, undefined, { token: string }>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   jwt.verify(
-    (token as string) || "",
+    req.query.token,
     process.env.TOKEN_SECRET as string,
     (err: unknown) => {
       if (err) {
@@ -31,7 +32,7 @@ export const get = (async (req, res: Response<getType>) => {
       res.end();
     }
   );
-}) as Handler;
+};
 
 export type postType = { token: string };
 export const post = [

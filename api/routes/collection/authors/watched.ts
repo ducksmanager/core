@@ -2,6 +2,8 @@ import bodyParser from "body-parser";
 import { Handler, Request, Response } from "express";
 
 import { authorUser, PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -40,8 +42,8 @@ const upsertAuthorUser = async (req: Request) => {
   }
 };
 
-export type getType = authorUser[];
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<authorUser[]>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const authorsUsers = await prisma.authorUser.findMany({
     where: { userId: req.user.id },
   });

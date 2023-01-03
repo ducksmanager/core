@@ -1,14 +1,19 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient } from "~prisma_clients/client_coa";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type getType = {
-  issuenumber: string;
-  title: string | null;
-}[];
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<
+  {
+    issuenumber: string;
+    title: string | null;
+  }[],
+  undefined,
+  undefined,
+  { publicationcode: string }
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const { publicationcode } = req.query as { [key: string]: string };
   if (!publicationcode) {
     res.writeHead(400, { "Content-Type": "application/json" });

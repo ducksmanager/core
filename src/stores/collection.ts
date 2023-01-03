@@ -287,14 +287,16 @@ export const collection = defineStore("collection", {
 
   actions: {
     async updateCollection(data: CollectionUpdate) {
-      await routes["POST /collection/issues"](axios, data);
+      await routes["POST /collection/issues"](axios, { data });
       await this.loadCollection(true);
     },
 
     async createPurchase(date: string, description: string) {
       await routes["PUT /collection/purchases"](axios, {
-        date,
-        description,
+        data: {
+          date,
+          description,
+        },
       });
       await this.loadPurchases(true);
     },
@@ -386,30 +388,20 @@ export const collection = defineStore("collection", {
       }
     },
     async updateMarketplaceContactMethods() {
-      await routes["POST /collection/options/:optionName"](
-        axios,
-        {
-          values: this.marketplaceContactMethods,
+      await routes["POST /collection/options/:optionName"](axios, {
+        data: { values: this.marketplaceContactMethods },
+        urlParams: {
+          optionName: "marketplace_contact_methods",
         },
-        {
-          urlParams: {
-            optionName: "marketplace_contact_methods",
-          },
-        }
-      );
+      });
     },
     async updateWatchedPublicationsWithSales() {
-      await routes["POST /collection/options/:optionName"](
-        axios,
-        {
-          values: this.watchedPublicationsWithSales,
+      await routes["POST /collection/options/:optionName"](axios, {
+        data: { values: this.watchedPublicationsWithSales },
+        urlParams: {
+          optionName: "sales_notification_publications",
         },
-        {
-          urlParams: {
-            optionName: "sales_notification_publications",
-          },
-        }
-      );
+      });
     },
     async loadSuggestions({
       countryCode,

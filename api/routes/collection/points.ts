@@ -1,6 +1,6 @@
-import { Handler, Response } from "express";
-
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
@@ -40,7 +40,6 @@ export const getMedalPoints = async (userIds: number[]) => {
   );
 };
 
-export type getType = PromiseReturnType<typeof getMedalPoints>;
-export const get: Handler = async (req, res: Response<getType>) => {
-  return res.json(await getMedalPoints([req.user.id]));
-};
+export type getCall = Call<PromiseReturnType<typeof getMedalPoints>>;
+export const get = async (...[req, res]: ExpressCall<getCall>) =>
+  res.json(await getMedalPoints([req.user.id]));

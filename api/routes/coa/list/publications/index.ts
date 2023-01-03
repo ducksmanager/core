@@ -1,6 +1,6 @@
-import { Handler, Response } from "express";
-
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
@@ -8,12 +8,16 @@ export const getPublicationTitlesFromCodes = async (
   publicationCodes: string[]
 ) => await getPublicationTitles({ in: publicationCodes });
 
-export type getType = Prisma.PromiseReturnType<
-  typeof getAllPublicationTitles | typeof getPublicationTitlesFromCodes
+export type getCall = Call<
+  Prisma.PromiseReturnType<
+    typeof getAllPublicationTitles | typeof getPublicationTitlesFromCodes
+  >,
+  undefined,
+  undefined,
+  { publicationCodes: string }
 >;
-export const get: Handler = async (req, res: Response<getType>) => {
-  const publicationCodes =
-    (req.query as { [key: string]: string }).publicationCodes?.split(",") || "";
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
+  const publicationCodes = req.query.publicationCodes?.split(",") || "";
   if (publicationCodes.length > 20) {
     res.writeHead(400);
     return res.end();

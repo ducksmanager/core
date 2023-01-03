@@ -1,26 +1,27 @@
 import bodyParser from "body-parser";
-import { Handler, Request, Response } from "express";
+import { Handler, Response } from "express";
 
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { PrismaClient, user } from "~prisma_clients/client_dm";
 import { getHashedPassword } from "~routes/_auth";
+import { ExpressCall } from "~routes/_express-call";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";
+import { Call } from "~types/Call";
 import { exclude } from "~types/exclude";
 import { ScopedError } from "~types/ScopedError";
 
 const parseForm = bodyParser.json();
 const prisma = new PrismaClient();
 
-export const getUser = async (req: Request) =>
+export const getUser = async (id: number) =>
   await prisma.user.findUnique({
-    where: { id: req.user.id },
+    where: { id },
   });
 
-export type getType = Omit<user, "password">;
-
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<Omit<user, "password">>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const userWithoutPassword = exclude<user, "password">(
-    await getUser(req),
+    await getUser(req.user.id),
     "password"
   );
   if (!userWithoutPassword) {

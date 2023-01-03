@@ -1,5 +1,3 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
 import {
   PrismaClient as PrismaClientDm,
@@ -9,7 +7,9 @@ import {
   Prisma as PrismaDmStats,
   PrismaClient as PrismaClientDmStats,
 } from "~prisma_clients/client_dm_stats";
+import { ExpressCall } from "~routes/_express-call";
 import { getPublicationTitlesFromCodes } from "~routes/coa/list/publications";
+import { Call } from "~types/Call";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { IssueSuggestionList } from "~types/IssueSuggestionList";
 import { StoryDetail } from "~types/StoryDetail";
@@ -36,8 +36,16 @@ type SuggestionsWithDetails = Omit<SuggestionList, "suggestionsPerUser"> & {
   maxScore: number;
 };
 
-export type getType = SuggestionsWithDetails;
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<
+  SuggestionsWithDetails,
+  {
+    countrycode: string;
+    sincePreviousVisit: string;
+    sort: string;
+    limit: string;
+  }
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const { countrycode, sincePreviousVisit, sort, limit } = req.params;
   const since =
     sincePreviousVisit === "since_previous_visit"

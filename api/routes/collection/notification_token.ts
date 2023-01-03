@@ -1,8 +1,15 @@
 import PushNotifications from "@pusher/push-notifications-server";
-import { Handler, Response } from "express";
 
-export type getType = { token: string };
-export const get: Handler = (req, res: Response<getType>) => {
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
+
+export type getCall = Call<
+  { token: string },
+  undefined,
+  undefined,
+  { user_id: string }
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   if (req.query.user_id !== req.user.username) {
     res.writeHead(401, { "Content-Type": "application/text" });
     res.end();

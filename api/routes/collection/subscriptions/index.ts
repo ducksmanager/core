@@ -2,6 +2,8 @@ import bodyParser from "body-parser";
 import { Handler, Request, Response } from "express";
 
 import { PrismaClient, subscription } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import { EditSubscription } from "~types/EditSubscription";
 
 const prisma = new PrismaClient();
@@ -46,12 +48,14 @@ async function upsertSubscription(req: Request) {
   });
 }
 
-export type getType = (Omit<subscription, "startDate" | "endDate"> & {
-  publicationcode: string;
-  startDate: string;
-  endDate: string;
-})[];
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<
+  (Omit<subscription, "startDate" | "endDate"> & {
+    publicationcode: string;
+    startDate: string;
+    endDate: string;
+  })[]
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const subscriptions = await prisma.subscription.findMany({
     where: {
       users: {

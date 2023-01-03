@@ -1,39 +1,42 @@
-import { Handler, Request, Response } from "express";
-
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
 import { BookcaseEdge } from "~types/BookcaseEdge";
+import { Call } from "~types/Call";
+import { User } from "~types/SessionUser";
 
 const prisma = new PrismaClient();
 
-export const checkValidBookcaseUser = async (req: Request, res: Response) => {
-  const username = req.params.username;
-  const user = await prisma.user.findFirst({
+export const checkValidBookcaseUser = async (
+  user: User,
+  username: string
+): Promise<user> => {
+  const dbUser = await prisma.user.findFirstOrThrow({
     where: { username },
   });
-  if (!user) {
-    res.writeHead(404);
-    res.end();
-  } else if (!req.user) {
-    res.writeHead(401);
-    res.end();
-  } else if (user.id !== req.user.id && !user.allowSharing) {
-    res.writeHead(403);
-    res.end();
+  if (user.id !== dbUser.id && !dbUser.allowSharing) {
+    throw new Error("403");
+  } else if (!user) {
+    throw new Error("401");
   } else {
-    return user;
+    return dbUser;
   }
-  return null;
 };
 
-export type getType = BookcaseEdge[] | null;
-export const get: Handler = async (req, res: Response<getType>) => {
-  const user = await checkValidBookcaseUser(req, res);
-  if (user !== null) {
-    const groupBy = user.showDuplicatesInBookcase
-      ? "numeros.ID"
-      : "numeros.issuecode";
-    return res.json(
-      (await prisma.$queryRawUnsafe(`
+export type getCall = Call<BookcaseEdge[], { username: string }>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
+  let user: user;
+  try {
+    user = await checkValidBookcaseUser(req.user, req.params.username);
+  } catch (e) {
+    res.statusCode = parseInt(e as string) || 404;
+    res.end();
+    return;
+  }
+  const groupBy = user.showDuplicatesInBookcase
+    ? "numeros.ID"
+    : "numeros.issuecode";
+  return res.json(
+    (await prisma.$queryRawUnsafe(`
             SELECT numeros.ID                                                AS id,
                    numeros.Pays                                              AS countryCode,
                    numeros.Magazine                                          AS magazineCode,
@@ -64,8 +67,5 @@ export const get: Handler = async (req, res: Response<getType>) => {
             WHERE ID_Utilisateur = ${user.id}
             GROUP BY ${groupBy}
         `)) as BookcaseEdge[]
-    );
-  }
-  res.statusCode = 404;
-  res.end();
+  );
 };

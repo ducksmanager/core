@@ -30,6 +30,7 @@ app._router.stack.forEach(
 const imports: string[] = [
   'import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";',
   'import { AxiosCacheInstance } from "axios-cache-interceptor";',
+  'import {AxiosTypedRequestBody, AxiosTypedRequestConfig, AxiosTypedResponse} from "~types/Call";',
 ];
 
 const routeList = {} as { [routePathWithMethod: string]: string };
@@ -46,11 +47,16 @@ routes.forEach((route) => {
 
         const returnTypeName = `${method.toUpperCase()}${routePath}`;
 
-        routeList[routePathWithMethod] = ["get", "delete"].includes(method)
-          ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config),`
-          : `(axios: AxiosInstance | AxiosCacheInstance, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', data, config),`;
+        routeList[routePathWithMethod] =
+          method === "get"
+            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosTypedRequestConfig<${returnTypeName}>): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', config),`
+            : method === "delete"
+            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config),`
+            : `(axios: AxiosInstance | AxiosCacheInstance, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', data, config),`;
 
-        return `${method}Type as ${returnTypeName}`;
+        return `${
+          method === "get" ? `${method}Call` : `${method}Type`
+        } as ${returnTypeName}`;
       })
       .join(",")} } from "~routes${route.path}";`
   );
