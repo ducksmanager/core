@@ -1,11 +1,10 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { defineStore } from "pinia";
 
 import { getCurrentLocaleShortKey } from "~/composables/locales";
 import i18n from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
 import { inducks_issue } from "~prisma_clients/client_coa";
-import { AxiosTypedRequestConfig, Call } from "~types/Call";
+import { AxiosTypedResponse, Call } from "~types/Call";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 import routes from "~types/routes";
@@ -126,11 +125,12 @@ export const coa = defineStore("coa", {
         newPublicationCodes.length &&
         this.addPublicationNames(
           await this.getChunkedRequests({
-            call: routes["GET /coa/list/publications"],
+            callFn: (chunk) =>
+              routes["GET /coa/list/publications"](coaApi, {
+                params: { publicationCodes: chunk },
+              }),
             valuesToChunk: newPublicationCodes,
             chunkSize: 20,
-            chunkOnQueryParam: true,
-            parameterName: "publicationCodes",
           }).then((data) =>
             data.reduce(
               (acc, data2) => ({
@@ -156,11 +156,12 @@ export const coa = defineStore("coa", {
         newPublicationCodes.length &&
         this.addIssueQuotations(
           (await this.getChunkedRequests({
-            call: routes["GET /coa/quotations/publications"],
+            callFn: (chunk) =>
+              routes["GET /coa/quotations/publications"](coaApi, {
+                params: { publicationCodes: chunk },
+              }),
             valuesToChunk: newPublicationCodes,
             chunkSize: 50,
-            chunkOnQueryParam: true,
-            parameterName: "publicationCodes",
           }).then((data) =>
             data.reduce(
               (acc, data) => ({
@@ -214,10 +215,12 @@ export const coa = defineStore("coa", {
         this.setPersonNames({
           ...(this.personNames || {}),
           ...(await this.getChunkedRequests({
-            call: routes["GET /coa/authorsfullnames/:authors"],
+            callFn: (chunk) =>
+              routes["GET /coa/authorsfullnames/:authors"](coaApi, {
+                urlParams: { authors: chunk },
+              }),
             valuesToChunk: newPersonNames,
             chunkSize: 10,
-            parameterName: "authors",
           }).then((data) =>
             data.reduce(
               (acc, data) => ({
@@ -250,17 +253,18 @@ export const coa = defineStore("coa", {
       ];
       if (newPublicationCodes.length) {
         const data = await this.getChunkedRequests({
-          call: routes["GET /coa/list/issues"],
+          callFn: (chunk) =>
+            routes["GET /coa/list/issues"](coaApi, {
+              params: { storycode: chunk },
+            }),
           valuesToChunk: newPublicationCodes,
           chunkSize: 50,
-          chunkOnQueryParam: true,
-          parameterName: "publicationCodes",
         });
 
         const issueNumbers = {} as typeof this.issueNumbers;
 
-        for (const resultChuck of data) {
-          for (const issue of resultChuck) {
+        for (const resultChunk of data) {
+          for (const issue of resultChunk) {
             if (!issueNumbers[issue.publicationcode]) {
               issueNumbers[issue.publicationcode] = [];
             }
@@ -284,10 +288,12 @@ export const coa = defineStore("coa", {
         newIssueCodes.length &&
         this.addIssueCodeDetails(
           await this.getChunkedRequests({
-            call: routes["POST /coa/issues/decompose"],
+            callFn: (chunk) =>
+              routes["POST /coa/issues/decompose"](coaApi, {
+                issueCodes: chunk,
+              }),
             valuesToChunk: newIssueCodes,
             chunkSize: 50,
-            parameterName: "issueCodes",
           }).then((data) =>
             data.reduce(
               (acc, data) => ({
@@ -330,35 +336,26 @@ export const coa = defineStore("coa", {
       }
     },
 
-    async getChunkedRequests<Type extends object>({
-      call,
+    async getChunkedRequests<
+      Type extends Call<unknown, unknown, unknown, unknown>
+    >({
+      callFn,
       valuesToChunk,
       chunkSize,
-      chunkOnQueryParam = false,
-      parameterName = "null",
     }: {
-      call: Call;
+      callFn: (chunk: string) => AxiosTypedResponse<Type>;
       valuesToChunk: string[];
       chunkSize: number;
       chunkOnQueryParam?: boolean;
       parameterName?: string;
-    }): Promise<Type[]> {
-      let acc: Type[] = [];
+    }): Promise<Type["resBody"][]> {
+      let acc: Type["resBody"][] = [];
       const slices = Array.from(
         { length: Math.ceil(valuesToChunk.length / chunkSize) },
         (v, i) => valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
       );
       for (const slice of slices) {
-        acc = acc.concat(
-          (
-            await call(coaApi, {
-              data: { [parameterName]: slice.join(",") },
-              [chunkOnQueryParam ? "params" : "urlParams"]: {
-                [parameterName]: slice.join(","),
-              },
-            })
-          ).data
-        );
+        acc = acc.concat((await callFn(slice.join(","))).data || []);
       }
       return acc;
     },

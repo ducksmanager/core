@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 
 export type Call<
-  ResBody = undefined,
+  ResBody,
   P = undefined,
   ReqBody = undefined,
   ReqQuery = undefined
@@ -13,12 +13,7 @@ export type Call<
 };
 
 export type AxiosTypedRequestConfig<
-  T extends Call<
-    object | undefined,
-    object | undefined,
-    object | undefined,
-    object | undefined
-  >
+  T extends Call<unknown, unknown, unknown, unknown>
 > = {
   urlParams?: T["params"];
   params?: T["reqQuery"];
@@ -26,19 +21,9 @@ export type AxiosTypedRequestConfig<
 };
 
 export type AxiosTypedResponse<
-  T extends Call<
-    object | undefined,
-    object | undefined,
-    object | undefined,
-    object | undefined
-  >
+  T extends Call<unknown, unknown, unknown, unknown>
 > = Promise<AxiosResponse<T["resBody"]>>;
 
 export type AxiosTypedRequestBody<
-  T extends Call<
-    object | undefined,
-    object | undefined,
-    object | undefined,
-    object | undefined
-  >
+  T extends Call<unknown, unknown, unknown, unknown>
 > = T["reqBody"];
