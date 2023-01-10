@@ -2,18 +2,18 @@ import bodyParser from "body-parser";
 import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type putType = void;
+export type putCall = Call<undefined, undefined, { issueIds: number[] }>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
-    const issueIds = (req.body.issueIds || []).map((issueId: never) =>
-      parseInt(issueId)
-    );
+  async (...[req, res]: ExpressCall<putCall>) => {
+    const issueIds = req.body.issueIds || [];
     if (issueIds.find((issueId: number) => isNaN(issueId))) {
       res.writeHead(400);
       res.end(`Invalid issue ID list, NaN`);
@@ -39,22 +39,22 @@ export const put = [
         },
         where: {
           buyerId: req.user.id,
-          issueId: { in: issueIds.map((issueId: string) => parseInt(issueId)) },
+          issueId: { in: issueIds },
         },
       })
     ).map(({ issueId }) => issueId);
     const newlyRequestedIssueIds = issueIds.filter(
-      (issueId: string) => !alreadyRequestedIssueIds.includes(parseInt(issueId))
+      (issueId: number) => !alreadyRequestedIssueIds.includes(issueId)
     );
     await prisma.requestedIssue.createMany({
-      data: newlyRequestedIssueIds.map((issueId: string) => ({
+      data: newlyRequestedIssueIds.map((issueId: number) => ({
         buyerId: req.user.id,
-        issueId: parseInt(issueId),
+        issueId,
       })),
     });
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
-  }) as Handler,
+  },
 ];
 
 export type deleteType = void;

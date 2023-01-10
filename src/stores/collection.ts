@@ -16,6 +16,7 @@ import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
 import routes from "~types/routes";
 import { StoryDetail } from "~types/StoryDetail";
+import { UserForAccountForm } from "~types/UserForAccountForm";
 
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
@@ -41,14 +42,6 @@ type SubscriptionTransformedStringDates = Omit<
 
 type IssueSuggestionWithStringDate = Omit<IssueSuggestion, "oldestdate"> & {
   oldestdate: string;
-};
-
-type UserForAccountForm = Omit<
-  Omit<user, "password">,
-  "discordId" | "presentationText"
-> & {
-  discordId: number | undefined;
-  presentationText: string | undefined;
 };
 
 type LastPublishedEdge = edge & {
@@ -272,31 +265,31 @@ export const collection = defineStore("collection", {
         : null;
     },
 
-    userForAccountForm(): UserForAccountForm | undefined | null {
-      const discordId = this.user?.discordId || undefined;
-      const presentationText = this.user?.presentationText || undefined;
-      return this.user
-        ? {
-            ...this.user,
-            discordId,
-            presentationText,
-          }
-        : this.user;
+    userForAccountForm(): UserForAccountForm | null {
+      if (!this.user) {
+        return null;
+      }
+      const discordId = this.user.discordId || undefined;
+      const presentationText = this.user.presentationText || "";
+      return {
+        ...this.user,
+        discordId,
+        presentationText,
+        email: this.user.email!,
+      };
     },
   },
 
   actions: {
     async updateCollection(data: CollectionUpdate) {
-      await routes["POST /collection/issues"](axios, { data });
+      await routes["POST /collection/issues"](axios, data);
       await this.loadCollection(true);
     },
 
     async createPurchase(date: string, description: string) {
       await routes["PUT /collection/purchases"](axios, {
-        data: {
-          date,
-          description,
-        },
+        date,
+        description,
       });
       await this.loadPurchases(true);
     },
@@ -388,20 +381,30 @@ export const collection = defineStore("collection", {
       }
     },
     async updateMarketplaceContactMethods() {
-      await routes["POST /collection/options/:optionName"](axios, {
-        data: { values: this.marketplaceContactMethods },
-        urlParams: {
-          optionName: "marketplace_contact_methods",
+      await routes["POST /collection/options/:optionName"](
+        axios,
+        {
+          values: this.marketplaceContactMethods as string[],
         },
-      });
+        {
+          urlParams: {
+            optionName: "marketplace_contact_methods",
+          },
+        }
+      );
     },
     async updateWatchedPublicationsWithSales() {
-      await routes["POST /collection/options/:optionName"](axios, {
-        data: { values: this.watchedPublicationsWithSales },
-        urlParams: {
-          optionName: "sales_notification_publications",
+      await routes["POST /collection/options/:optionName"](
+        axios,
+        {
+          values: this.watchedPublicationsWithSales as string[],
         },
-      });
+        {
+          urlParams: {
+            optionName: "sales_notification_publications",
+          },
+        }
+      );
     },
     async loadSuggestions({
       countryCode,

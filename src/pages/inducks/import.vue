@@ -368,9 +368,12 @@ const importIssues = async () => {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await routes["POST /collection/issues"](axios, {
         publicationcode,
-        issueNumbers: importableIssuesByPublicationCode[publicationcode],
+        issueIdsByIssuenumber: importableIssuesByPublicationCode[
+          publicationcode
+        ].reduce((acc, issuenumber) => ({ ...acc, [issuenumber]: 0 }), {}),
         condition: issueDefaultCondition,
         isOnSale: "do_not_change",
+        isToRead: "do_not_change",
         purchaseId: "do_not_change",
       });
       importProgress +=

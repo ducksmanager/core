@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import { PrismaClient, userOptionType } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
@@ -41,10 +40,14 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   }
 };
 
-export type postType = void;
+export type postCall = Call<
+  undefined,
+  { optionName: string },
+  { values: string[] }
+>;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     const optionName = optionNameToEnum(req.params.optionName);
     if (!optionName) {
       res.writeHead(400);
@@ -74,5 +77,5 @@ export const post = [
       res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     }
-  }) as Handler,
+  },
 ];

@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Request, Response } from "express";
 
 import { PrismaClient, subscription } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
@@ -9,12 +8,14 @@ import { EditSubscription } from "~types/EditSubscription";
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-async function upsertSubscription(req: Request) {
-  const subscription = req.body.subscription as EditSubscription;
+export async function upsertSubscription(
+  idString: string,
+  subscription: EditSubscription,
+  userId: number
+) {
   const publicationCodeParts = subscription.publicationcode!.split("/");
 
-  const id = parseInt(req.params.id) || 0;
-  const userId = req.user.id;
+  const id = parseInt(idString) || 0;
   if (
     id &&
     !(await prisma.subscription.count({
@@ -73,12 +74,16 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   );
 };
 
-export type putType = string;
+export type putCall = Call<
+  undefined,
+  { id: string },
+  { subscription: EditSubscription }
+>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
-    await upsertSubscription(req);
+  async (...[req, res]: ExpressCall<putCall>) => {
+    await upsertSubscription(req.params.id, req.body.subscription, req.user.id);
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
-  }) as Handler,
+  },
 ];

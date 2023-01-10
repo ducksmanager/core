@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import { PrismaClient, purchase } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
@@ -31,10 +30,14 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   );
 };
 
-export type putType = void;
+export type putCall = Call<
+  undefined,
+  undefined,
+  { date: string; description: string }
+>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
+  async (...[req, res]: ExpressCall<putCall>) => {
     const { date, description } = req.body;
 
     const criteria = {
@@ -58,5 +61,5 @@ export const put = [
 
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
-  }) as Handler,
+  },
 ];

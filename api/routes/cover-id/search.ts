@@ -1,8 +1,9 @@
-import { Handler, Response } from "express";
 import * as fs from "fs";
 import https from "https";
 
 import { PrismaClient } from "~prisma_clients/client_cover_info";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
@@ -19,8 +20,8 @@ type searchResults = {
   type?: string;
 };
 
-export type putType = searchResults;
-export const put: Handler = (req, res: Response<putType>) => {
+export type putCall = Call<searchResults>;
+export const put = (...[req, res]: ExpressCall<putCall>) => {
   req.busboy?.on("file", async (name: string, file: File) => {
     if (name !== "wtd_jpg") {
       res.writeHead(400);

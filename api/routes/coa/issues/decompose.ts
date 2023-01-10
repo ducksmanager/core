@@ -1,16 +1,21 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import { inducks_issue, PrismaClient } from "~prisma_clients/client_coa";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type postType = { [issuecode: string]: inducks_issue };
+export type postCall = Call<
+  { [issuecode: string]: inducks_issue },
+  undefined,
+  { issueCodes: string }
+>;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) =>
+  async (...[req, res]: ExpressCall<postCall>) =>
     res.json(
       (
         await prisma.inducks_issue.findMany({
@@ -27,5 +32,5 @@ export const post = [
         }),
         {}
       )
-    )) as Handler,
+    ),
 ];

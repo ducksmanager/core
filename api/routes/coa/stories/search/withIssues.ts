@@ -1,16 +1,22 @@
 import { PromiseReturnType } from "@prisma/client/scripts/default-index";
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
+
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 import { getStoriesByKeywords } from "./index";
 
 const parseForm = bodyParser.json();
 
-export type postType = PromiseReturnType<typeof getStoriesByKeywords>;
+export type postCall = Call<
+  PromiseReturnType<typeof getStoriesByKeywords>,
+  undefined,
+  { keywords: string }
+>;
 
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     if (!req.body.keywords) {
       res.writeHead(400, { "Content-Type": "application/text" });
       res.end();
@@ -19,5 +25,5 @@ export const post = [
         await getStoriesByKeywords(req.body.keywords.split(","), true)
       );
     }
-  }) as Handler,
+  },
 ];

@@ -1,17 +1,22 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { authenticateToken } from "~routes/_auth";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export type postType = string;
+export type postCall = Call<
+  { status: string },
+  undefined,
+  { textures: { bookcase: string; bookshelf: string }; showAllCopies: boolean }
+>;
 export const post = [
   authenticateToken,
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     const { textures, showAllCopies } = req.body;
     const [, bookcaseTexture] = textures.bookcase.split("/");
     const [, bookshelfTexture] = textures.bookshelf.split("/");
@@ -30,6 +35,6 @@ export const post = [
     });
 
     res.writeHead(200, { "Content-Type": "application/text" });
-    return res.end("OK");
-  }) as Handler,
+    return res.json({ status: "OK" });
+  },
 ];

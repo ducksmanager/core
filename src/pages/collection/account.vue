@@ -253,7 +253,7 @@ const updateAccount = async () => {
     error = undefined;
     const response = (
       await routes["POST /collection/user"](axios, {
-        ...collection.userForAccountForm,
+        ...collection.userForAccountForm!,
         oldPassword,
         password,
         password2,

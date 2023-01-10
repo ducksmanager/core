@@ -9,6 +9,7 @@ import { generateAccessToken, isValidEmail } from "~routes/auth/util";
 import { Call } from "~types/Call";
 import { exclude } from "~types/exclude";
 import { ScopedError } from "~types/ScopedError";
+import { UserForAccountForm } from "~types/UserForAccountForm";
 
 const parseForm = bodyParser.json();
 const prisma = new PrismaClient();
@@ -54,12 +55,16 @@ export const del: Handler = async (req, res: Response<deleteType>) => {
   res.end();
 };
 
-export type postType = {
-  hasRequestedPresentationSentenceUpdate: boolean;
-};
+export type postCall = Call<
+  {
+    hasRequestedPresentationSentenceUpdate: boolean;
+  },
+  undefined,
+  UserForAccountForm
+>;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
     let validators = [
@@ -68,7 +73,7 @@ export const post = [
       validatePresentationText,
     ];
     input.userId = req.user.id;
-    if (req.body.password) {
+    if (input.password) {
       validators = [
         ...validators,
         validatePasswords,
@@ -77,7 +82,7 @@ export const post = [
       ];
     }
     if (await validate(input, res, validators)) {
-      if (req.body.password) {
+      if (input.password) {
         await prisma.user.update({
           data: {
             password: getHashedPassword(input.password),
@@ -89,7 +94,7 @@ export const post = [
       }
       const updatedUser = await prisma.user.update({
         data: {
-          discordId: parseInt(input.discordId) || null,
+          discordId: input.discordId || undefined,
           email: input.email,
           allowSharing: input.allowSharing,
           showPresentationVideo: input.showPresentationVideo,
@@ -118,7 +123,7 @@ export const post = [
     }
     res.statusCode = 400;
     return res.end();
-  }) as Handler,
+  },
 ];
 
 const validate = async (
@@ -139,10 +144,14 @@ const validate = async (
   return true;
 };
 
-export type putType = { token: string };
+export type putCall = Call<
+  { token: string },
+  undefined,
+  { username: string; password: string; email: string; [key: string]: unknown }
+>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
+  async (...[req, res]: ExpressCall<putCall>) => {
     const isValid = await validate(req.body, res, [
       validateUsername,
       validateUsernameCreation,
@@ -180,7 +189,7 @@ export const put = [
     }
     res.statusCode = 400;
     return res.end();
-  }) as Handler,
+  },
 ];
 
 const validateUsername = ({ username }: { [_: string]: unknown }) => {

@@ -1,18 +1,23 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type postType = void;
+export type postCall = Call<
+  undefined,
+  { decision: string },
+  { sentence: string; userId: number }
+>;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     const { sentence, userId } = req.body;
     const { decision } = req.params;
     if (!["approve", "refuse"].includes(decision as string)) {
@@ -28,7 +33,7 @@ export const post = [
             presentationText: sentence as string,
           },
           where: {
-            id: parseInt(userId),
+            id: userId,
           },
         });
         await new PresentationSentenceApproved({ user }).send();
@@ -36,12 +41,12 @@ export const post = [
       case "refuse":
         await new PresentationSentenceRefused({
           user: await prisma.user.findUniqueOrThrow({
-            where: { id: parseInt(userId) },
+            where: { id: userId },
           }),
         }).send();
     }
 
     res.writeHead(200);
     res.end();
-  }) as Handler,
+  },
 ];

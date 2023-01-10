@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import {
   bookstoreComment,
@@ -8,6 +7,8 @@ import {
   user,
   userContribution,
 } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -138,16 +139,20 @@ const publishEdgeOnDm = async (
   };
 };
 
-export type putType = {
-  publicationcode: string;
-  issuenumber: string;
-  edgeId: number;
-  contributors: number[];
-  url: string;
-};
+export type putCall = Call<
+  {
+    publicationcode: string;
+    issuenumber: string;
+    edgeId: number;
+    contributors: number[];
+    url: string;
+  },
+  { country: string; magazine: string; issuenumber: string },
+  { designers: string[]; photographers: string[] }
+>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
+  async (...[req, res]: ExpressCall<putCall>) => {
     const publicationcode = `${req.params.country}/${req.params.magazine}`;
     if (!isValidPublicationcode(publicationcode)) {
       res.writeHead(400);
@@ -182,5 +187,5 @@ export const put = [
       contributors,
       url: `${process.env.EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issuenumber}.png`,
     });
-  }) as Handler,
+  },
 ];

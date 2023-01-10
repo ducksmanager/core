@@ -29,7 +29,7 @@ app._router.stack.forEach(
 
 const imports: string[] = [
   'import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";',
-  'import { AxiosCacheInstance } from "axios-cache-interceptor";',
+  'import { AxiosCacheInstance, CacheRequestConfig } from "axios-cache-interceptor";',
   'import {AxiosTypedRequestBody, AxiosTypedRequestConfig, AxiosTypedResponse} from "~types/Call";',
 ];
 
@@ -52,10 +52,10 @@ routes.forEach((route) => {
             ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosTypedRequestConfig<${returnTypeName}>): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', config),`
             : method === "delete"
             ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config),`
-            : `(axios: AxiosInstance | AxiosCacheInstance, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', data, config),`;
+            : `(axios: AxiosInstance | AxiosCacheInstance, data?: AxiosTypedRequestBody<${returnTypeName}>, config?: AxiosRequestConfig | CacheRequestConfig): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', data, config),`;
 
         return `${
-          method === "get" ? `${method}Call` : `${method}Type`
+          method === "delete" ? `${method}Type` : `${method}Call`
         } as ${returnTypeName}`;
       })
       .join(",")} } from "~routes${route.path}";`

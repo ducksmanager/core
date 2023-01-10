@@ -119,7 +119,11 @@ const loadSubscriptions = collection().loadSubscriptions;
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
   await routes["PUT /collection/subscriptions"](axios, {
-    subscription,
+    subscription: {
+      ...subscription,
+      startDate: subscription.startDate.toISOString().split("Z")[0],
+      endDate: subscription.endDate.toISOString().split("Z")[0],
+    },
   });
   await loadSubscriptions(true);
   currentSubscription = null;

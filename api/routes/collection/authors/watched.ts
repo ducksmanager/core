@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler, Request, Response } from "express";
+import { Handler, Response } from "express";
 
 import { authorUser, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
@@ -10,9 +10,11 @@ const parseForm = bodyParser.json();
 
 const maxWatchedAuthors = 5;
 
-const upsertAuthorUser = async (req: Request) => {
-  const { personcode, notation } = req.body;
-  const userId = req.user.id;
+const upsertAuthorUser = async (
+  personcode: string,
+  userId: number,
+  notation?: number
+) => {
   const criteria = {
     personcode,
     userId,
@@ -50,12 +52,12 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   return res.json(authorsUsers);
 };
 
-export type putType = string;
+export type putCall = Call<undefined, undefined, { personcode: string }>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
+  async (...[req, res]: ExpressCall<putCall>) => {
     try {
-      await upsertAuthorUser(req);
+      await upsertAuthorUser(req.body.personcode, req.user.id);
       res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     } catch (e) {
@@ -63,15 +65,23 @@ export const put = [
       res.writeHead(parseInt((e as Error)?.message as string) || 500);
       res.end();
     }
-  }) as Handler,
+  },
 ];
 
-export type postType = string;
+export type postCall = Call<
+  undefined,
+  undefined,
+  { personcode: string; notation: number }
+>;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     try {
-      await upsertAuthorUser(req);
+      await upsertAuthorUser(
+        req.body.personcode,
+        req.user.id,
+        req.body.notation
+      );
       res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     } catch (e) {
@@ -79,7 +89,7 @@ export const post = [
       res.writeHead(parseInt((e as Error)?.message as string) || 500);
       res.end();
     }
-  }) as Handler,
+  },
 ];
 
 export type deleteType = authorUser[];

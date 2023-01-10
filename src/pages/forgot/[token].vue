@@ -37,7 +37,7 @@ const collectionStore = collection();
 
 let initError = $ref(null as AxiosError | null);
 let error = $ref(null as unknown | null);
-const token = useRoute().params.token;
+const token = useRoute().params.token as string;
 const password = $ref("" as string);
 const password2 = $ref("" as string);
 

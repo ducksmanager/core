@@ -95,9 +95,7 @@ export const bookcase = defineStore("bookcase", {
       }
     },
     async updateBookcaseOptions() {
-      await routes["POST /bookcase/options"](axios, {
-        data: this.bookcaseOptions,
-      });
+      await routes["POST /bookcase/options"](axios, this.bookcaseOptions!);
     },
 
     async loadBookcaseOrder() {
@@ -111,7 +109,7 @@ export const bookcase = defineStore("bookcase", {
     },
     async updateBookcaseOrder() {
       await routes["POST /bookcase/sort"](axios, {
-        data: { sorts: this.bookcaseOrder },
+        sorts: this.bookcaseOrder as string[],
       });
     },
   },

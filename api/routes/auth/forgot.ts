@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import ResetPassword from "~emails/reset-password";
@@ -34,10 +33,10 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   );
 };
 
-export type postType = { token: string };
+export type postCall = Call<{ token: string }, undefined, { email: string }>;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     const { email } = req.body;
     if (!isValidEmail(email)) {
       res.writeHead(400, { "Content-Type": "application/text" });
@@ -65,5 +64,5 @@ export const post = [
         res.end("Invalid email");
       }
     }
-  }) as Handler,
+  },
 ];

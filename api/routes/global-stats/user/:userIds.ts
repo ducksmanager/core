@@ -1,11 +1,9 @@
-import { Handler, Response } from "express";
-
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
-import { getMedalPoints } from "~routes/collection/points";
-import PromiseReturnType = Prisma.PromiseReturnType;
 import { ExpressCall } from "~routes/_express-call";
+import { getMedalPoints } from "~routes/collection/points";
 import { Call } from "~types/Call";
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
+import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 

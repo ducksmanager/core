@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 import { constants } from "http2";
 
 import {
@@ -8,13 +7,13 @@ import {
   Prisma,
   PrismaClient,
 } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
 import { resetDemo } from "~routes/demo/_reset";
+import { Call } from "~types/Call";
 import { CollectionUpdate } from "~types/CollectionUpdate";
 import { User } from "~types/SessionUser";
 import { TransactionResults } from "~types/TransactionResults";
 import PromiseReturnType = Prisma.PromiseReturnType;
-import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -211,12 +210,14 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   );
 };
 
-export type postType = PromiseReturnType<
-  typeof addOrChangeCopies | typeof addOrChangeIssues
+export type postCall = Call<
+  PromiseReturnType<typeof addOrChangeCopies | typeof addOrChangeIssues>,
+  undefined,
+  CollectionUpdate
 >;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     const { body, user }: { body: CollectionUpdate; user: User } = req;
     const { publicationcode, issueIdsByIssuenumber, purchaseId } = body;
 
@@ -297,5 +298,5 @@ export const post = [
       );
     }
     return res.json(output);
-  }) as Handler,
+  },
 ];

@@ -1,16 +1,17 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
-import { Handler, Response } from "express";
 
 import { i18n } from "~emails/email";
 import {
   PrismaClient as PrismaClientDm,
   user,
 } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
 import {
   COUNTRY_CODE_OPTION,
   getSuggestions,
 } from "~routes/collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit";
+import { Call } from "~types/Call";
 
 const pusher = new PushNotifications({
   instanceId: process.env.PUSHER_INSTANCE_ID!,
@@ -66,8 +67,8 @@ const sendSuggestedIssueNotification = async (
   });
 };
 
-export type postType = string;
-export const post: Handler = async (req, res: Response<postType>) => {
+export type postCall = Call<undefined>;
+export const post = async (...[, res]: ExpressCall<postCall>) => {
   const suggestionsSince = dayjs().add(-7, "days");
   let notificationsSent = 0;
 

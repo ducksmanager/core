@@ -6,7 +6,7 @@ import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@vueuse/head";
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import BootstrapVue3, { BToastPlugin } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 import { createPinia } from "pinia";
@@ -54,7 +54,8 @@ axios.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
     if (config.headers && token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers = { ...config.headers } as AxiosHeaders;
+      config.headers.set("Authorization", `Bearer ${token}`);
     }
     if (useOngoingRequests.numberOfOngoingAjaxCalls === null)
       useOngoingRequests.numberOfOngoingAjaxCalls = 1;
