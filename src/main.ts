@@ -54,8 +54,7 @@ axios.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
     if (config.headers && token) {
-      config.headers = { ...config.headers } as AxiosHeaders;
-      config.headers.set("Authorization", `Bearer ${token}`);
+      config.headers.Authorization = `Bearer ${token}`;
     }
     if (useOngoingRequests.numberOfOngoingAjaxCalls === null)
       useOngoingRequests.numberOfOngoingAjaxCalls = 1;

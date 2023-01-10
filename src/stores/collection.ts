@@ -484,6 +484,7 @@ export const collection = defineStore("collection", {
             this.user = (await routes["GET /collection/user"](axios)).data;
           }
         } catch (e) {
+          console.error(e);
           Cookies.remove("token");
           this.user = null;
         } finally {
