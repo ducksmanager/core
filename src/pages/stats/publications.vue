@@ -113,8 +113,8 @@ const sortByCount = (
   );
 
 let hasPublicationNames = $ref(false as boolean);
-let chartData = $ref(null as ChartData | null);
-let options = $ref({} as ChartOptions);
+let chartData = $ref(null as ChartData<"pie"> | null);
+let options = $ref({} as ChartOptions<"pie">);
 
 watch(
   () => totalPerPublicationGroupSmallCounts,

@@ -47,9 +47,9 @@ Chart.register(
 );
 
 let height = $ref("400px" as string);
-let chartData = $ref(null as ChartData | null),
+let chartData = $ref(null as ChartData<"bar", number[]> | null),
   unitTypeCurrent = $ref("number" as string),
-  options = $ref({} as ChartOptions);
+  options = $ref({} as ChartOptions<"bar">);
 
 const { t: $t } = useI18n(),
   totalPerPublicationUniqueIssueNumbers: { [p: string]: number } = $computed(
@@ -65,7 +65,7 @@ const { t: $t } = useI18n(),
   labels = $computed(
     () =>
       totalPerPublicationUniqueIssueNumbers &&
-      Object.keys(totalPerPublicationUniqueIssueNumbers)
+      (Object.keys(totalPerPublicationUniqueIssueNumbers) as string[])
   ),
   values = $computed(() => {
     if (
@@ -125,16 +125,16 @@ watch(
     if (newValue) {
       chartData = {
         datasets: [
-          {
-            data: values![0],
-            backgroundColor: "green",
-            label: $t("Numéros possédés"),
-          },
-          {
-            data: values![1],
-            backgroundColor: "orange",
-            label: $t("Numéros référencés non-possédés"),
-          },
+          // {
+          //   data: values![0],
+          //   backgroundColor: "green",
+          //   label: $t("Numéros possédés"),
+          // },
+          // {
+          //   data: values![1],
+          //   backgroundColor: "orange",
+          //   label: $t("Numéros référencés non-possédés"),
+          // },
         ],
         labels,
         // legends: [

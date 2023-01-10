@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
@@ -25,13 +24,13 @@ export const post = [
   },
 ];
 
-export type deleteType = void;
+export type deleteCall = Call<undefined, { id: number }>;
 export const del = [
   parseForm,
-  (async (req, res: Response<deleteType>) => {
+  async (...[req, res]: ExpressCall<deleteCall>) => {
     await prisma.subscription.deleteMany({
       where: {
-        id: parseInt(req.params.id) || -1,
+        id: req.params.id || -1,
         users: {
           id: req.user.id,
         },
@@ -39,5 +38,5 @@ export const del = [
     });
     res.writeHead(204);
     res.end();
-  }) as Handler,
+  },
 ];

@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
+import { Response } from "express";
 
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { PrismaClient, user } from "~prisma_clients/client_dm";
@@ -32,8 +32,8 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   return res.json(userWithoutPassword);
 };
 
-export type deleteType = void;
-export const del: Handler = async (req, res: Response<deleteType>) => {
+export type deleteCall = Call<undefined>;
+export const del = async (...[req, res]: ExpressCall<deleteCall>) => {
   const { id: userId } = req.user;
   await prisma.issue.deleteMany({
     where: { userId },

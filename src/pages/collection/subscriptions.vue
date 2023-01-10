@@ -53,7 +53,9 @@ alias: [/collection/abonnements]
       :key="subscription.id"
       :is-edit="currentSubscription?.id === subscription.id"
       :subscription="subscription"
-      @start-edit="currentSubscription = subscription"
+      @start-edit="
+        currentSubscription = toSubscriptionWithStringDates(subscription)
+      "
       @cancel-edit="currentSubscription = null"
       @edit="editSubscription($event)"
       @delete="deleteSubscription(subscription.id)"
@@ -159,6 +161,14 @@ const deleteSubscription = async (id: number) => {
   await loadSubscriptions(true);
   currentSubscription = null;
 };
+
+const toSubscriptionWithStringDates = (
+  subscription: SubscriptionTransformed
+): EditSubscription => ({
+  ...subscription,
+  startDate: subscription.startDate.toISOString().split("Z")[0],
+  endDate: subscription.endDate.toISOString().split("Z")[0],
+});
 
 watch(
   () => subscriptions,

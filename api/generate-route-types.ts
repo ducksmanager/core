@@ -54,9 +54,7 @@ routes.forEach((route) => {
             ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config),`
             : `(axios: AxiosInstance | AxiosCacheInstance, data?: AxiosTypedRequestBody<${returnTypeName}>, config?: AxiosRequestConfig | CacheRequestConfig): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', data, config),`;
 
-        return `${
-          method === "delete" ? `${method}Type` : `${method}Call`
-        } as ${returnTypeName}`;
+        return `${method}Call as ${returnTypeName}`;
       })
       .join(",")} } from "~routes${route.path}";`
   );

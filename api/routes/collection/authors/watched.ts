@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import { authorUser, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
@@ -92,10 +91,10 @@ export const post = [
   },
 ];
 
-export type deleteType = authorUser[];
+export type deleteCall = Call<undefined, undefined, authorUser>;
 export const del = [
   parseForm,
-  (async (req, res: Response<deleteType>) => {
+  async (...[req, res]: ExpressCall<deleteCall>) => {
     const { personcode } = req.body;
     if (!personcode) {
       res.writeHead(400);
@@ -110,5 +109,5 @@ export const del = [
     });
     res.writeHead(204);
     res.end();
-  }) as Handler,
+  },
 ];

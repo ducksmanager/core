@@ -118,7 +118,7 @@ let hasPublicationNames = $ref(false as boolean),
   purchasesById = $ref(
     null as { [purchaseId: number]: purchaseWithStringDate } | null
   ),
-  options = $ref({} as ChartOptions),
+  options = $ref({} as ChartOptions<"bar">),
   width = $ref(null as string | null),
   height = $ref(null as string | null),
   purchaseTypeCurrent = $ref("new" as string);
