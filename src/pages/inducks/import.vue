@@ -72,7 +72,7 @@ meta:
       >
     </p>
   </div>
-  <form v-else-if="step === 1" id="inducks-import" method="post" action="">
+  <form v-else-if="step === 1" id="inducks-import" @submit="initImport">
     <b-alert show variant="info">
       <div>
         {{
@@ -360,6 +360,12 @@ const groupByPublicationCode = (issues: inducks_issue[]) =>
     }),
     {} as { [publicationcode: string]: string[] }
   );
+
+const initImport = async () => {
+  await routes["POST /collection/inducks/import/init"](axios, {
+    rawData,
+  });
+};
 const importIssues = async () => {
   const importableIssuesByPublicationCode = groupByPublicationCode(
     issuesImportable as inducks_issue[]
