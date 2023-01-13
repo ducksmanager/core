@@ -295,27 +295,29 @@ watch(
         animation: {
           duration: 0,
         },
-        hover: {
-          // animationDuration: 0,
-        },
-        // responsiveAnimationDuration: 0,
         responsive: true,
         maintainAspectRatio: false,
         scales: {
           x: {
             stacked: true,
             ticks: {
-              autoSkip: false,
+              color: "white",
             },
           },
           y: {
             stacked: true,
+            ticks: {
+              color: "white",
+            },
           },
         },
-        // legend: {
-        //   display: false,
-        // },
         plugins: {
+          legend: {
+            display: true,
+            labels: {
+              color: "white",
+            },
+          },
           title: {
             display: true,
             text: $t("Achats"),

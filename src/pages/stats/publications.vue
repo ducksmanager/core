@@ -118,9 +118,9 @@ let options = $ref({} as ChartOptions<"pie">);
 
 watch(
   () => totalPerPublicationGroupSmallCounts,
-  (newValue) => {
-    if (newValue) {
-      fetchPublicationNames(
+  async (newValue) => {
+    if (Object.keys(newValue).length) {
+      await fetchPublicationNames(
         Object.keys(totalPerPublicationGroupSmallCounts).filter(
           (publicationcode) => publicationcode !== ""
         )
@@ -151,6 +151,12 @@ watch(
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: "white",
+          },
+        },
         tooltip: {
           callbacks: {
             label: ({ dataset: { data }, parsed: currentValue }) => {

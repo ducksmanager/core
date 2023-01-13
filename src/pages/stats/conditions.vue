@@ -58,6 +58,12 @@ const options = $computed(
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: "white",
+        },
+      },
       tooltip: {
         callbacks: {
           label: (tooltipItem: TooltipItem<"pie">) => {
