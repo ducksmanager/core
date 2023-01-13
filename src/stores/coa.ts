@@ -131,15 +131,7 @@ export const coa = defineStore("coa", {
               }),
             valuesToChunk: newPublicationCodes,
             chunkSize: 20,
-          }).then((data) =>
-            data.reduce(
-              (acc, data2) => ({
-                ...acc,
-                ...data2,
-              }),
-              {}
-            )
-          )
+          })
         )
       );
     },
@@ -155,7 +147,7 @@ export const coa = defineStore("coa", {
       return (
         newPublicationCodes.length &&
         this.addIssueQuotations(
-          (await this.getChunkedRequests({
+          await this.getChunkedRequests({
             callFn: (chunk) =>
               routes["GET /coa/quotations/publications"](coaApi, {
                 params: { publicationCodes: chunk },
@@ -164,24 +156,16 @@ export const coa = defineStore("coa", {
             chunkSize: 50,
           }).then((data) =>
             data.reduce(
-              (acc, data) => ({
-                ...acc,
-                ...data.reduce(
-                  (issueAcc, issue) => ({
-                    ...issueAcc,
-                    [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                      min: issue.estimationmin,
-                      max: issue.estimationmax,
-                    },
-                  }),
-                  {} as { [issuecode: string]: InducksIssueQuotationSimple }
-                ),
+              (issueAcc, issue) => ({
+                ...issueAcc,
+                [`${issue.publicationcode} ${issue.issuenumber}`]: {
+                  min: issue.estimationmin,
+                  max: issue.estimationmax,
+                },
               }),
-              []
+              {} as { [issuecode: string]: InducksIssueQuotationSimple }
             )
-          )) as {
-            [issuecode: string]: InducksIssueQuotationSimple;
-          }
+          )
         )
       );
     },
@@ -221,15 +205,7 @@ export const coa = defineStore("coa", {
               }),
             valuesToChunk: newPersonNames,
             chunkSize: 10,
-          }).then((data) =>
-            data.reduce(
-              (acc, data) => ({
-                ...acc,
-                ...data,
-              }),
-              {}
-            )
-          )),
+          })),
         })
       );
     },
@@ -261,17 +237,18 @@ export const coa = defineStore("coa", {
           chunkSize: 50,
         });
 
-        const issueNumbers = {} as typeof this.issueNumbers;
-
-        for (const resultChunk of data) {
-          for (const issue of resultChunk) {
-            if (!issueNumbers[issue.publicationcode]) {
-              issueNumbers[issue.publicationcode] = [];
-            }
-            issueNumbers[issue.publicationcode].push(issue.issuenumber);
-          }
-        }
-        this.addIssueNumbers(issueNumbers);
+        this.addIssueNumbers(
+          data.reduce(
+            (acc, issue) => ({
+              ...acc,
+              [issue.publicationcode]: [
+                ...(acc[issue.publicationcode] || []),
+                issue.issuenumber,
+              ],
+            }),
+            {} as typeof this.issueNumbers
+          )
+        );
       }
     },
 
@@ -294,15 +271,7 @@ export const coa = defineStore("coa", {
               }),
             valuesToChunk: newIssueCodes,
             chunkSize: 50,
-          }).then((data) =>
-            data.reduce(
-              (acc, data) => ({
-                ...acc,
-                ...data,
-              }),
-              {}
-            )
-          )
+          })
         )
       );
     },
@@ -348,14 +317,24 @@ export const coa = defineStore("coa", {
       chunkSize: number;
       chunkOnQueryParam?: boolean;
       parameterName?: string;
-    }): Promise<Type["resBody"][]> {
-      let acc: Type["resBody"][] = [];
+    }): Promise<Type["resBody"]> {
       const slices = Array.from(
         { length: Math.ceil(valuesToChunk.length / chunkSize) },
-        (v, i) => valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+        (_, i) => valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
       );
-      for (const slice of slices) {
-        acc = acc.concat((await callFn(slice.join(","))).data || []);
+      let acc: Type["resBody"] = (await callFn(slices[0].join(","))).data;
+      for (const slice of slices.slice(1)) {
+        acc = Array.isArray(acc)
+          ? [
+              ...(acc as never[]),
+              ...((await callFn(slice.join(","))).data as never[]),
+            ]
+          : {
+              ...(acc as { [key: string]: never }),
+              ...((await callFn(slice.join(","))).data as {
+                [key: string]: never;
+              }),
+            };
       }
       return acc;
     },
