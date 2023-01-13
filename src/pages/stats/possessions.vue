@@ -47,13 +47,14 @@ Chart.register(
 );
 
 let height = $ref("400px" as string);
+let hasCoaData = $ref(false);
 let chartData = $ref(null as ChartData<"bar", number[]> | null),
   unitTypeCurrent = $ref("number" as string),
   options = $ref({} as ChartOptions<"bar">);
 
 const { t: $t } = useI18n(),
-  totalPerPublicationUniqueIssueNumbers: { [p: string]: number } = $computed(
-    () => collectionStore().totalPerPublicationUniqueIssueNumbers
+  totalPerPublicationUniqueIssueNumbersSorted = $computed(
+    () => collectionStore().totalPerPublicationUniqueIssueNumbersSorted
   ),
   unitTypes = {
     number: $t("Afficher en valeurs réelles"),
@@ -64,20 +65,27 @@ const { t: $t } = useI18n(),
   publicationNames = $computed(() => coa().publicationNames),
   labels = $computed(
     () =>
-      totalPerPublicationUniqueIssueNumbers &&
-      (Object.keys(totalPerPublicationUniqueIssueNumbers) as string[])
+      hasCoaData &&
+      totalPerPublicationUniqueIssueNumbersSorted?.map(
+        ([publicationcode]) => publicationNames[publicationcode]
+      )
   ),
   values = $computed(() => {
     if (
-      !(totalPerPublicationUniqueIssueNumbers && issueCounts && countryNames)
+      !(
+        totalPerPublicationUniqueIssueNumbersSorted &&
+        issueCounts &&
+        hasCoaData
+      )
     ) {
       return null;
     }
-    let possessedIssues = Object.values(totalPerPublicationUniqueIssueNumbers);
-    let missingIssues = Object.keys(totalPerPublicationUniqueIssueNumbers).map(
-      (publicationcode) =>
-        issueCounts[publicationcode] -
-        totalPerPublicationUniqueIssueNumbers[publicationcode]
+    let possessedIssues = totalPerPublicationUniqueIssueNumbersSorted.map(
+      ([, userIssueCount]) => userIssueCount
+    );
+    let missingIssues = totalPerPublicationUniqueIssueNumbersSorted.map(
+      ([publicationcode, userIssueCount]) =>
+        issueCounts[publicationcode] - userIssueCount
     );
     if (unitTypeCurrent === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>
@@ -96,14 +104,17 @@ const { t: $t } = useI18n(),
   fetchIssueCounts = coa().fetchIssueCounts;
 
 watch(
-  () => totalPerPublicationUniqueIssueNumbers,
+  () => totalPerPublicationUniqueIssueNumbersSorted,
   async (newValue) => {
-    if (!newValue) {
+    if (!newValue?.length) {
       return;
     }
     await fetchCountryNames();
-    await fetchPublicationNames(Object.keys(newValue));
+    await fetchPublicationNames(
+      newValue.map(([publicationcode]) => publicationcode)
+    );
     await fetchIssueCounts();
+    hasCoaData = true;
   },
   { immediate: true }
 );
@@ -125,22 +136,18 @@ watch(
     if (newValue) {
       chartData = {
         datasets: [
-          // {
-          //   data: values![0],
-          //   backgroundColor: "green",
-          //   label: $t("Numéros possédés"),
-          // },
-          // {
-          //   data: values![1],
-          //   backgroundColor: "orange",
-          //   label: $t("Numéros référencés non-possédés"),
-          // },
+          {
+            data: values![0],
+            backgroundColor: "green",
+            label: $t("Numéros possédés"),
+          },
+          {
+            data: values![1],
+            backgroundColor: "orange",
+            label: $t("Numéros référencés non-possédés"),
+          },
         ],
         labels,
-        // legends: [
-        //   $t("Numéros possédés"),
-        //   $t("Numéros référencés non-possédés"),
-        // ],
       };
 
       options = {
@@ -153,18 +160,29 @@ watch(
             stacked: true,
             ticks: {
               stepSize: 1,
+              color: "white",
               callback: (value) =>
                 unitTypeCurrent === "percentage" ? `${value}%` : value,
             },
           },
           y: {
             stacked: true,
+            ticks: {
+              color: "white",
+            },
           },
         },
         plugins: {
+          legend: {
+            display: true,
+            labels: {
+              color: "white",
+            },
+          },
           title: {
             display: true,
             text: $t("Possession des numéros"),
+            color: "white",
           },
           tooltip: {
             enabled: true,
@@ -173,15 +191,7 @@ watch(
             axis: "y",
             intersect: false,
             callbacks: {
-              title: ([tooltipItem]) => {
-                const publicationcode = tooltipItem.label;
-                if (!publicationNames[publicationcode]) {
-                  publicationNames[publicationcode] = "?";
-                }
-                return `${publicationNames[publicationcode] || "?"} (${
-                  countryNames![publicationcode.split("/")[0]]
-                })`;
-              },
+              title: ([tooltipItem]) => tooltipItem.label,
               label: (tooltipItem) =>
                 `${tooltipItem.dataset.label}: ${tooltipItem.raw}${
                   unitTypeCurrent === "percentage" ? "%" : ""

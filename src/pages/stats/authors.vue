@@ -153,7 +153,6 @@ watch(
           },
         ],
         labels: labels!,
-        // legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
       };
       options = {
         responsive: true,

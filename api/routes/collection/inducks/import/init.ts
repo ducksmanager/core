@@ -1,4 +1,4 @@
-import { inducks_issue } from "~/dist/prisma/client_coa";
+import { inducks_issue } from "~prisma_clients/client_coa";
 import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
 import { PrismaClient as PrismaClientDm } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";

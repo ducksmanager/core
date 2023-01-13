@@ -175,7 +175,9 @@ export const collection = defineStore("collection", {
       );
     },
 
-    totalPerPublicationUniqueIssueNumbers() {
+    totalPerPublicationUniqueIssueNumbers(): {
+      [publicationcode: string]: number;
+    } {
       const issueNumbersPerPublication: {
         [publicationcode: string]: string[];
       } = this.issueNumbersPerPublication;
@@ -189,6 +191,21 @@ export const collection = defineStore("collection", {
             ].length,
           }),
           {}
+        )
+      );
+    },
+
+    totalPerPublicationUniqueIssueNumbersSorted(): [string, number][] {
+      const totalPerPublicationUniqueIssueNumbers =
+        this.totalPerPublicationUniqueIssueNumbers;
+      return (
+        totalPerPublicationUniqueIssueNumbers &&
+        Object.entries(totalPerPublicationUniqueIssueNumbers).sort(
+          ([publicationcode1], [publicationcode2]) =>
+            Math.sign(
+              totalPerPublicationUniqueIssueNumbers[publicationcode2]! -
+                totalPerPublicationUniqueIssueNumbers[publicationcode1]!
+            )
         )
       );
     },
