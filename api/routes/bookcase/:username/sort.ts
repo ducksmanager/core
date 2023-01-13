@@ -28,21 +28,24 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
         where: { userId },
       })
     ).map(({ publicationcode }) => publicationcode);
-    const userPublicationcodes = await prisma.issue.findMany({
-      select: {
-        country: true,
-        magazine: true,
-      },
-      distinct: ["country", "magazine"],
-      where: { userId },
-      orderBy: [{ country: "asc" }, { magazine: "asc" }],
-    });
-    const missingPublicationCodesInOrder = userPublicationcodes
-      .map(({ country, magazine }) => `${country}/${magazine}`)
-      .filter(
-        (publicationcode) =>
-          !userSortedPublicationcodes.includes(publicationcode)
-      );
+    const userPublicationcodes = (
+      await prisma.issue.findMany({
+        select: {
+          country: true,
+          magazine: true,
+        },
+        distinct: ["country", "magazine"],
+        where: { userId },
+        orderBy: [{ country: "asc" }, { magazine: "asc" }],
+      })
+    ).map(({ country, magazine }) => `${country}/${magazine}`);
+
+    const missingPublicationCodesInOrder = userPublicationcodes.filter(
+      (publicationcode) => !userSortedPublicationcodes.includes(publicationcode)
+    );
+    const obsoletePublicationCodesInOrder = userSortedPublicationcodes.filter(
+      (publicationcode) => !userPublicationcodes.includes(publicationcode)
+    );
 
     const insertOperations = missingPublicationCodesInOrder.map(
       (publicationcode) =>
@@ -55,6 +58,14 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
         })
     );
     await prisma.$transaction(insertOperations);
+
+    const deleteOperations = obsoletePublicationCodesInOrder.map(
+      (publicationcode) =>
+        prisma.bookcasePublicationOrder.delete({
+          where: { userId_publicationcode: { publicationcode, userId } },
+        })
+    );
+    await prisma.$transaction(deleteOperations);
 
     return res.json(
       (

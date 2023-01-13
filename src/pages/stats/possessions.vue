@@ -60,7 +60,6 @@ const { t: $t } = useI18n(),
     number: $t("Afficher en valeurs réelles"),
     percentage: $t("Afficher en pourcentages"),
   },
-  countryNames = $computed(() => coa().countryNames),
   issueCounts = $computed(() => coa().issueCounts),
   publicationNames = $computed(() => coa().publicationNames),
   labels = $computed(
@@ -98,10 +97,7 @@ const { t: $t } = useI18n(),
       );
     }
     return [possessedIssues, missingIssues];
-  }),
-  fetchCountryNames = coa().fetchCountryNames,
-  fetchPublicationNames = coa().fetchPublicationNames,
-  fetchIssueCounts = coa().fetchIssueCounts;
+  });
 
 watch(
   () => totalPerPublicationUniqueIssueNumbersSorted,
@@ -109,11 +105,10 @@ watch(
     if (!newValue?.length) {
       return;
     }
-    await fetchCountryNames();
-    await fetchPublicationNames(
+    await coa().fetchPublicationNames(
       newValue.map(([publicationcode]) => publicationcode)
     );
-    await fetchIssueCounts();
+    await coa().fetchIssueCounts();
     hasCoaData = true;
   },
   { immediate: true }
