@@ -94,7 +94,7 @@
         <UploadableEdgesCarousel
           v-if="mostPopularIssuesInCollectionWithoutEdge?.length && userPoints"
           :issues="mostPopularIssuesInCollectionWithoutEdge"
-          :user-points="userPoints.Photographe"
+          :user-points="userPoints.edge_photographer"
           :publication-names="publicationNames"
         >
           <template #header>
@@ -391,6 +391,7 @@ watch(
       if (user && !isSharedBookcase) {
         await collection.loadPopularIssuesInCollection();
         await collection.loadLastPublishedEdgesForCurrentUser();
+        console.log(users().points[user.id]);
         userPoints = users().points[user.id];
       }
     }

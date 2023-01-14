@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import { BProgress, BProgressBar } from "bootstrap-vue-3";
 
-const { contribution = "Photographe", userLevelPoints } = defineProps<{
+const { contribution = "edge_photographer", userLevelPoints } = defineProps<{
   contribution?: string;
   userLevelPoints: number;
   extraPoints: number;

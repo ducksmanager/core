@@ -19,7 +19,7 @@
             {{ $t("Vous pouvez photographier cette tranche ?") }}<br />
             <div class="medal-progress-wrapper">
               <MedalProgress
-                contribution="Photographe"
+                contribution="edge_photographer"
                 :user-level-points="points"
                 :extra-points="extraPoints"
               />
@@ -55,7 +55,7 @@ const { extraPoints = null } = defineProps<{
   extraPoints?: number;
 }>();
 
-const contribution = "Photographe";
+const contribution = "edge_photographer";
 const isSharedBookcase = bookcase().isSharedBookcase;
 const user = $computed(() => collection().user);
 const points = $computed(() => user && users().points?.[user.id][contribution]);

@@ -17,7 +17,7 @@
             hide-condition
           />
           <MedalProgress
-            contribution="Photographe"
+            contribution="edge_photographer"
             :user-level-points="userPoints"
             :extra-points="popularIssueWithoutEdge.popularity"
           />
