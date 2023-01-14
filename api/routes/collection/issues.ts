@@ -257,7 +257,7 @@ export const post = [
       isOnSale = (isOnSale as boolean[])[0];
     }
 
-    if (typeof isOnSale !== "string") {
+    if (typeof isOnSale !== "string" && isOnSale !== null) {
       const issueIds = Object.values(issueIdsByIssuenumber).reduce(
         (acc, issueIds) => [...acc, ...issueIds],
         []

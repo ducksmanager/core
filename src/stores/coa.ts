@@ -230,8 +230,8 @@ export const coa = defineStore("coa", {
       if (newPublicationCodes.length) {
         const data = await this.getChunkedRequests({
           callFn: (chunk) =>
-            routes["GET /coa/list/issues"](coaApi, {
-              params: { storycode: chunk },
+            routes["GET /coa/list/issues/by-publication-codes"](coaApi, {
+              params: { publicationCodes: chunk },
             }),
           valuesToChunk: newPublicationCodes,
           chunkSize: 50,
