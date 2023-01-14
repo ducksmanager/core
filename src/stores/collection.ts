@@ -157,6 +157,14 @@ export const collection = defineStore("collection", {
         return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
       }, {} as { [publicationcode: string]: number }) || null,
 
+    purchasesById: ({
+      purchases,
+    }): { [id: number]: purchaseWithStringDate } | undefined =>
+      purchases?.reduce(
+        (acc, purchase) => ({ ...acc, [purchase.id]: purchase }),
+        {}
+      ),
+
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,
 
