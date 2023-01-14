@@ -30,7 +30,7 @@ app._router.stack.forEach(
 const imports: string[] = [
   'import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";',
   'import { AxiosCacheInstance, CacheRequestConfig } from "axios-cache-interceptor";',
-  'import {AxiosTypedRequestBody, AxiosTypedRequestConfig, AxiosTypedResponse} from "~types/Call";',
+  'import { AxiosTypedRequestBody, AxiosTypedRequestConfig, AxiosTypedResponse } from "~types/AxiosCall";',
 ];
 
 const routeList = {} as { [routePathWithMethod: string]: string };
