@@ -19,7 +19,11 @@ alias: [/impression]
         <span v-if="type.exclusive" class="exclusive">{{
           $t("Exclusif DucksManager")
         }}</span>
-        <span v-html="type.description" />
+        <i18n-t tag="span" :keypath="type.description">
+          <template #list_name
+            ><b>{{ type.title }}</b></template
+          >
+        </i18n-t>
         <ul class="details">
           <li v-for="detail in type.details" :key="detail" class="detail">
             {{ detail }}
@@ -54,9 +58,9 @@ const types = [
   {
     link: "classic",
     name: $t("la liste classique"),
-    description: $t(
-      "Une <b>liste classique</b>, répertoriant pour chaque magazine les numéros que vous possédez."
-    ),
+    title: $t("liste classique"),
+    description:
+      "Une {list_name}, répertoriant pour chaque magazine les numéros que vous possédez.",
     details: [
       $t("Ce type de liste est plus adapté pour les petites collections."),
       $t(
@@ -67,10 +71,10 @@ const types = [
   {
     link: "collectable",
     name: $t("CollecTable"),
+    title: $t("liste CollecTable"),
     exclusive: true,
-    description: $t(
-      "Une <b>liste CollecTable</b>, plus synthétique mais demandant un peu d'entraînement !"
-    ),
+    description:
+      "Une {list_name}, plus synthétique mais demandant un peu d'entraînement !",
     details: [$t("Adaptée pour les grandes collections.")],
   },
 ];

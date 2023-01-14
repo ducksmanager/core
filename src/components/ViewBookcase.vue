@@ -69,7 +69,7 @@
         ><i18n-t
           keypath="Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page {link_to_my_account}."
           ><template #link_to_my_account>
-            `<router-link to="/collection/account">{{
+            <router-link to="/collection/account">{{
               $t("Mon compte")
             }}</router-link>
           </template>
