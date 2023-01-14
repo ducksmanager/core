@@ -1,12 +1,12 @@
-import { Handler, Response } from "express";
-
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
-export type postType = PromiseReturnType<typeof prisma.issue.deleteMany>;
-export const post: Handler = async (req, res: Response<postType>) => {
+export type postCall = Call<PromiseReturnType<typeof prisma.issue.deleteMany>>;
+export const post = async (...[req, res]: ExpressCall<postCall>) => {
   const { id: userId } = req.user;
   await prisma.issue.deleteMany({
     where: { userId },

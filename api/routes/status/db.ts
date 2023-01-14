@@ -1,10 +1,10 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
 import { PrismaClient as PrismaClientCoverInfo } from "~prisma_clients/client_cover_info";
 import { PrismaClient as PrismaClientDm } from "~prisma_clients/client_dm";
 import { PrismaClient as PrismaClientDmStats } from "~prisma_clients/client_dm_stats";
 import { PrismaClient as PrismaClientEdgecreator } from "~prisma_clients/client_edgecreator";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaCoverInfo = new PrismaClientCoverInfo();
@@ -12,9 +12,8 @@ const prismaDm = new PrismaClientDm();
 const prismaDmStats = new PrismaClientDmStats();
 const prismaEdgecreator = new PrismaClientEdgecreator();
 
-export type getType = string;
-export const get: Handler = async (req, res: Response<getType>) => {
-  res.setHeader("Content-Type", "application/text");
+export type getCall = Call<{ status: string }>;
+export const get = async (...[, res]: ExpressCall<getCall>) => {
   const checks = [
     { db: "dm", check: async () => prismaDm.user.count() },
     { db: "coverInfo", check: async () => prismaCoverInfo.cover.count() },
@@ -32,8 +31,9 @@ export const get: Handler = async (req, res: Response<getType>) => {
     const result = await check();
     if (result === 0) {
       res.writeHead(500);
-      res.end("The DB check has failed for DB " + db);
-      return;
+      return res.json({
+        status: `The DB check has failed for DB ${db}`,
+      });
     }
   }
 
@@ -58,9 +58,9 @@ export const get: Handler = async (req, res: Response<getType>) => {
   );
   if (emptyCoaTables.length) {
     res.writeHead(500);
-    res.end("Some COA tables are empty: " + emptyCoaTables.join(","));
+    return res.json({
+      status: "Some COA tables are empty: " + emptyCoaTables.join(","),
+    });
   }
-
-  res.writeHead(200, { "Content-Type": "application/text" });
-  res.end("All databases OK");
+  return res.json({ status: "ok" });
 };

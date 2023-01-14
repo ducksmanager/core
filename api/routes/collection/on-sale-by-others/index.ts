@@ -1,12 +1,12 @@
-import { Handler, Response } from "express";
-
 import { issue, Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
-export type getType = PromiseReturnType<typeof getIssuesForSale>;
-export const get: Handler = async (req, res: Response<getType>) =>
+export type getCall = Call<PromiseReturnType<typeof getIssuesForSale>>;
+export const get = async (...[req, res]: ExpressCall<getCall>) =>
   res.json(await getIssuesForSale(req.user.id));
 
 export const getIssuesForSale: (

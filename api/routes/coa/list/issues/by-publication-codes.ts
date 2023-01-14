@@ -1,38 +1,39 @@
 import { PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
+import { simple_issue } from "~types/SimpleIssue";
 
 const prisma = new PrismaClient();
 
 export type getCall = Call<
-  {
-    issuenumber: string;
-    title: string | null;
-  }[],
+  simple_issue[],
   undefined,
   undefined,
-  { publicationcode: string }
+  { publicationCodes: string }
 >;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
-  const { publicationcode } = req.query as { [key: string]: string };
-  if (!publicationcode) {
-    res.writeHead(400, { "Content-Type": "application/json" });
+  const publicationCodes = req.query.publicationCodes?.split(",") || [];
+  if (publicationCodes.length > 50) {
+    res.writeHead(400);
     res.end();
     return;
   }
   const data = await prisma.inducks_issue.findMany({
     select: {
+      publicationcode: true,
       issuenumber: true,
-      title: true,
     },
     where: {
-      publicationcode,
+      publicationcode: {
+        in: publicationCodes,
+      },
     },
   });
   return res.json(
-    data.map(({ issuenumber, title }) => ({
+    data.map(({ publicationcode, issuenumber }) => ({
+      code: "",
+      publicationcode: publicationcode!,
       issuenumber: issuenumber!.replace(/ +/g, " "),
-      title,
     }))
   );
 };

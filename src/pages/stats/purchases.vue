@@ -118,7 +118,7 @@ let hasPublicationNames = $ref(false as boolean),
   purchasesById = $ref(
     null as { [purchaseId: number]: purchaseWithStringDate } | null
   ),
-  options = $ref({} as ChartOptions),
+  options = $ref({} as ChartOptions<"bar">),
   width = $ref(null as string | null),
   height = $ref(null as string | null),
   purchaseTypeCurrent = $ref("new" as string);
@@ -295,27 +295,29 @@ watch(
         animation: {
           duration: 0,
         },
-        hover: {
-          // animationDuration: 0,
-        },
-        // responsiveAnimationDuration: 0,
         responsive: true,
         maintainAspectRatio: false,
         scales: {
           x: {
             stacked: true,
             ticks: {
-              autoSkip: false,
+              color: "white",
             },
           },
           y: {
             stacked: true,
+            ticks: {
+              color: "white",
+            },
           },
         },
-        // legend: {
-        //   display: false,
-        // },
         plugins: {
+          legend: {
+            display: true,
+            labels: {
+              color: "white",
+            },
+          },
           title: {
             display: true,
             text: $t("Achats"),

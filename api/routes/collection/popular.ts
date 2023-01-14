@@ -1,6 +1,6 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import { PopularIssue } from "~types/PopularIssue";
 
 const prisma = new PrismaClient();
@@ -12,8 +12,8 @@ type simplePopularity = {
   popularity: number;
 };
 
-export type getType = simplePopularity[];
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<simplePopularity[]>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const popularities = (await prisma.$queryRaw`
       select issuePopularity.pays       AS country,
              issuePopularity.magazine   AS magazine,

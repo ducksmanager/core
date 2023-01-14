@@ -1,12 +1,12 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import { WantedEdge } from "~types/WantedEdge";
 
 const prisma = new PrismaClient();
 
-export type getType = WantedEdge[];
-export const get: Handler = async (req, res: Response<getType>) =>
+export type getCall = Call<WantedEdge[]>;
+export const get = async (...[, res]: ExpressCall<getCall>) =>
   res.json(
     (await prisma.$queryRaw`
       SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber

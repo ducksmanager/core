@@ -109,8 +109,8 @@ import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { inducks_person } from "~prisma_clients/client_coa";
 import { authorUser } from "~prisma_clients/client_dm";
-import type { getType as AUTHOR_SEARCH_TYPE } from "~routes/coa/authorsfullnames/search/:partialAuthorName";
 import routes from "~types/routes";
 
 const { watchedAuthors } = defineProps<{
@@ -120,7 +120,9 @@ const { watchedAuthors } = defineProps<{
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
 const search = $ref("");
-let searchResults = $ref(null as AUTHOR_SEARCH_TYPE | null);
+let searchResults = $ref(
+  null as { [personcode: string]: inducks_person[] } | null
+);
 
 const personNames = $computed(() => coa().personNames);
 

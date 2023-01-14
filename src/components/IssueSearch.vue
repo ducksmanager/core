@@ -160,7 +160,7 @@ const runSearch = async (value: string) => {
   try {
     if (isSearchByCode) {
       const data = (
-        await routes["GET /coa/list/issues"](axios, {
+        await routes["GET /coa/list/issues/by-storycode"](axios, {
           params: { storycode: value.replace(/^code=/, "") },
         })
       ).data;

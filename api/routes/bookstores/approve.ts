@@ -1,21 +1,21 @@
-import { Handler, Response } from "express";
-
 import {
   bookstoreComment,
   PrismaClient,
   user,
   userContributionType,
 } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type postType = void;
-export const post: Handler = async (req, res: Response<postType>) => {
+export type postCall = Call<undefined, undefined, { id: number }>;
+export const post = async (...[req, res]: ExpressCall<postCall>) => {
   let bookstoreComment;
   try {
     bookstoreComment = await prisma.bookstoreComment.findUniqueOrThrow({
       where: {
-        id: parseInt(req.body.id),
+        id: req.body.id,
       },
     });
   } catch (e) {

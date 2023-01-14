@@ -1,16 +1,19 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import { PrismaClient, purchase } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export type getType = (Omit<purchase, "date"> & {
-  date: string;
-})[];
-export const get: Handler = async (req, res: Response<getType>) =>
-  res.json(
+export type getCall = Call<
+  (Omit<purchase, "date"> & {
+    date: string;
+  })[]
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
+  return res.json(
     (
       await prisma.purchase.findMany({
         where: {
@@ -25,11 +28,16 @@ export const get: Handler = async (req, res: Response<getType>) =>
       date: purchase.date.toISOString().split("T")[0],
     }))
   );
+};
 
-export type putType = void;
+export type putCall = Call<
+  undefined,
+  undefined,
+  { date: string; description: string }
+>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
+  async (...[req, res]: ExpressCall<putCall>) => {
     const { date, description } = req.body;
 
     const criteria = {
@@ -53,5 +61,5 @@ export const put = [
 
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
-  }) as Handler,
+  },
 ];

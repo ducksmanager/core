@@ -1,9 +1,11 @@
 import axios from "axios";
-import { Handler, Response } from "express";
 import * as fs from "fs";
 
-export type getType = string;
-export const get: Handler = async (req, res: Response<getType>) => {
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
+
+export type getCall = Call<{ status: string | number }>;
+export const get = async (...[, res]: ExpressCall<getCall>) => {
   const response = (
     await axios.post(
       process.env.PASTEC_HOSTS + "/searcher",
@@ -13,21 +15,19 @@ export const get: Handler = async (req, res: Response<getType>) => {
     )
   ).data;
   if (response) {
-    const imageIds = JSON.parse(response)?.imageIds;
+    const imageIds: number[] = JSON.parse(response)?.imageIds;
     if (imageIds) {
       if (imageIds.length) {
-        res.writeHead(200, { "Content-Type": "application/text" });
-        res.end(imageIds.length);
+        return res.json({ status: imageIds.length });
       } else {
-        res.writeHead(200, { "Content-Type": "application/text" });
-        res.end("Pastec search returned no image");
+        return res.json({ status: "Pastec search returned no image" });
       }
     } else {
-      res.writeHead(500, { "Content-Type": "application/text" });
-      res.end("Pastec /searcher response is invalid");
+      res.writeHead(500);
+      res.json({ status: "Pastec /searcher response is invalid" });
     }
   } else {
-    res.writeHead(500, { "Content-Type": "application/text" });
-    res.end("Pastec is unreachable");
+    res.writeHead(500);
+    res.json({ status: "Pastec is unreachable" });
   }
 };

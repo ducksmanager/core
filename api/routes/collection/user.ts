@@ -1,26 +1,28 @@
 import bodyParser from "body-parser";
-import { Handler, Request, Response } from "express";
+import { Response } from "express";
 
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { PrismaClient, user } from "~prisma_clients/client_dm";
 import { getHashedPassword } from "~routes/_auth";
+import { ExpressCall } from "~routes/_express-call";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";
+import { Call } from "~types/Call";
 import { exclude } from "~types/exclude";
 import { ScopedError } from "~types/ScopedError";
+import { UserForAccountForm } from "~types/UserForAccountForm";
 
 const parseForm = bodyParser.json();
 const prisma = new PrismaClient();
 
-export const getUser = async (req: Request) =>
+export const getUser = async (id: number) =>
   await prisma.user.findUnique({
-    where: { id: req.user.id },
+    where: { id },
   });
 
-export type getType = Omit<user, "password">;
-
-export const get: Handler = async (req, res: Response<getType>) => {
+export type getCall = Call<Omit<user, "password">>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const userWithoutPassword = exclude<user, "password">(
-    await getUser(req),
+    await getUser(req.user.id),
     "password"
   );
   if (!userWithoutPassword) {
@@ -30,8 +32,8 @@ export const get: Handler = async (req, res: Response<getType>) => {
   return res.json(userWithoutPassword);
 };
 
-export type deleteType = void;
-export const del: Handler = async (req, res: Response<deleteType>) => {
+export type deleteCall = Call<undefined>;
+export const del = async (...[req, res]: ExpressCall<deleteCall>) => {
   const { id: userId } = req.user;
   await prisma.issue.deleteMany({
     where: { userId },
@@ -53,12 +55,16 @@ export const del: Handler = async (req, res: Response<deleteType>) => {
   res.end();
 };
 
-export type postType = {
-  hasRequestedPresentationSentenceUpdate: boolean;
-};
+export type postCall = Call<
+  {
+    hasRequestedPresentationSentenceUpdate: boolean;
+  },
+  undefined,
+  UserForAccountForm
+>;
 export const post = [
   parseForm,
-  (async (req, res: Response<postType>) => {
+  async (...[req, res]: ExpressCall<postCall>) => {
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
     let validators = [
@@ -67,7 +73,7 @@ export const post = [
       validatePresentationText,
     ];
     input.userId = req.user.id;
-    if (req.body.password) {
+    if (input.password) {
       validators = [
         ...validators,
         validatePasswords,
@@ -76,7 +82,7 @@ export const post = [
       ];
     }
     if (await validate(input, res, validators)) {
-      if (req.body.password) {
+      if (input.password) {
         await prisma.user.update({
           data: {
             password: getHashedPassword(input.password),
@@ -88,7 +94,7 @@ export const post = [
       }
       const updatedUser = await prisma.user.update({
         data: {
-          discordId: parseInt(input.discordId) || null,
+          discordId: input.discordId || undefined,
           email: input.email,
           allowSharing: input.allowSharing,
           showPresentationVideo: input.showPresentationVideo,
@@ -117,7 +123,7 @@ export const post = [
     }
     res.statusCode = 400;
     return res.end();
-  }) as Handler,
+  },
 ];
 
 const validate = async (
@@ -138,10 +144,14 @@ const validate = async (
   return true;
 };
 
-export type putType = { token: string };
+export type putCall = Call<
+  { token: string },
+  undefined,
+  { username: string; password: string; email: string; [key: string]: unknown }
+>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
+  async (...[req, res]: ExpressCall<putCall>) => {
     const isValid = await validate(req.body, res, [
       validateUsername,
       validateUsernameCreation,
@@ -179,7 +189,7 @@ export const put = [
     }
     res.statusCode = 400;
     return res.end();
-  }) as Handler,
+  },
 ];
 
 const validateUsername = ({ username }: { [_: string]: unknown }) => {

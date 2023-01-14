@@ -27,7 +27,7 @@ import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 
 let isLoaded = $ref(false as boolean);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-let hasFreshEvents = $ref(false as boolean);
+// let hasFreshEvents = $ref(false as boolean);
 const events = $computed(() => users().events);
 const eventUserIds = $computed(() =>
   events
@@ -41,7 +41,7 @@ const isEdgeCreationEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("edges");
 
 const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
-  hasFreshEvents = await users().fetchEvents(clearCacheEntry);
+  // hasFreshEvents = await users().fetchEvents(clearCacheEntry);
 
   await coa().fetchPublicationNames([
     ...events
@@ -66,7 +66,7 @@ onMounted(async () => {
   await fetchEventsAndAssociatedData(false);
   setTimeout(async () => {
     await fetchEventsAndAssociatedData(true);
-    hasFreshEvents = true;
+    // hasFreshEvents = true;
   }, 1000);
   isLoaded = true;
 });

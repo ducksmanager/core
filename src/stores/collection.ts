@@ -16,6 +16,7 @@ import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
 import routes from "~types/routes";
 import { StoryDetail } from "~types/StoryDetail";
+import { UserForAccountForm } from "~types/UserForAccountForm";
 
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
@@ -41,14 +42,6 @@ type SubscriptionTransformedStringDates = Omit<
 
 type IssueSuggestionWithStringDate = Omit<IssueSuggestion, "oldestdate"> & {
   oldestdate: string;
-};
-
-type UserForAccountForm = Omit<
-  Omit<user, "password">,
-  "discordId" | "presentationText"
-> & {
-  discordId: number | undefined;
-  presentationText: string | undefined;
 };
 
 type LastPublishedEdge = edge & {
@@ -164,6 +157,14 @@ export const collection = defineStore("collection", {
         return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
       }, {} as { [publicationcode: string]: number }) || null,
 
+    purchasesById: ({
+      purchases,
+    }): { [id: number]: purchaseWithStringDate } | undefined =>
+      purchases?.reduce(
+        (acc, purchase) => ({ ...acc, [purchase.id]: purchase }),
+        {}
+      ),
+
     hasSuggestions: ({ suggestions }) =>
       suggestions?.issues && Object.keys(suggestions.issues).length,
 
@@ -182,7 +183,9 @@ export const collection = defineStore("collection", {
       );
     },
 
-    totalPerPublicationUniqueIssueNumbers() {
+    totalPerPublicationUniqueIssueNumbers(): {
+      [publicationcode: string]: number;
+    } {
       const issueNumbersPerPublication: {
         [publicationcode: string]: string[];
       } = this.issueNumbersPerPublication;
@@ -196,6 +199,21 @@ export const collection = defineStore("collection", {
             ].length,
           }),
           {}
+        )
+      );
+    },
+
+    totalPerPublicationUniqueIssueNumbersSorted(): [string, number][] {
+      const totalPerPublicationUniqueIssueNumbers =
+        this.totalPerPublicationUniqueIssueNumbers;
+      return (
+        totalPerPublicationUniqueIssueNumbers &&
+        Object.entries(totalPerPublicationUniqueIssueNumbers).sort(
+          ([publicationcode1], [publicationcode2]) =>
+            Math.sign(
+              totalPerPublicationUniqueIssueNumbers[publicationcode2]! -
+                totalPerPublicationUniqueIssueNumbers[publicationcode1]!
+            )
         )
       );
     },
@@ -272,16 +290,18 @@ export const collection = defineStore("collection", {
         : null;
     },
 
-    userForAccountForm(): UserForAccountForm | undefined | null {
-      const discordId = this.user?.discordId || undefined;
-      const presentationText = this.user?.presentationText || undefined;
-      return this.user
-        ? {
-            ...this.user,
-            discordId,
-            presentationText,
-          }
-        : this.user;
+    userForAccountForm(): UserForAccountForm | null {
+      if (!this.user) {
+        return null;
+      }
+      const discordId = this.user.discordId || undefined;
+      const presentationText = this.user.presentationText || "";
+      return {
+        ...this.user,
+        discordId,
+        presentationText,
+        email: this.user.email!,
+      };
     },
   },
 
@@ -389,7 +409,7 @@ export const collection = defineStore("collection", {
       await routes["POST /collection/options/:optionName"](
         axios,
         {
-          values: this.marketplaceContactMethods,
+          values: this.marketplaceContactMethods as string[],
         },
         {
           urlParams: {
@@ -402,7 +422,7 @@ export const collection = defineStore("collection", {
       await routes["POST /collection/options/:optionName"](
         axios,
         {
-          values: this.watchedPublicationsWithSales,
+          values: this.watchedPublicationsWithSales as string[],
         },
         {
           urlParams: {
@@ -489,6 +509,7 @@ export const collection = defineStore("collection", {
             this.user = (await routes["GET /collection/user"](axios)).data;
           }
         } catch (e) {
+          console.error(e);
           Cookies.remove("token");
           this.user = null;
         } finally {

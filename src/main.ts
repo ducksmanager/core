@@ -6,7 +6,7 @@ import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@vueuse/head";
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import BootstrapVue3, { BToastPlugin } from "bootstrap-vue-3";
 import Cookies from "js-cookie";
 import { createPinia } from "pinia";

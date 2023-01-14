@@ -40,7 +40,7 @@
             >
           </NavigationItem>
           <NavigationItem>
-            <router-link to="/expand/suggestions">
+            <router-link to="/inducks/import">
               <div
                 class="b-custom"
                 :style="{

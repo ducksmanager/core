@@ -72,7 +72,7 @@ meta:
       >
     </p>
   </div>
-  <form v-else-if="step === 1" id="inducks-import" method="post" action="">
+  <form v-else-if="step === 1" id="inducks-import">
     <b-alert show variant="info">
       <div>
         {{
@@ -90,13 +90,15 @@ meta:
             )
           }}
         </li>
-        <li
-          v-html="
-            $t(
-              `Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : <pre>country^entrycode^collectiontype^comment</pre>`
-            )
-          "
-        />
+        <i18n-t
+          tag="li"
+          keypath="Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : {inducks_header}"
+        >
+          <template #inducks_header>
+            <pre>country^entrycode^collectiontype^comment</pre>
+          </template></i18n-t
+        >
+
         <li>{{ $t("Sélectionnez toute la liste, puis copiez-la.") }}</li>
         <li>{{ $t("Collez ce texte dans la partie droite de la page.") }}</li>
         <li>
@@ -360,6 +362,7 @@ const groupByPublicationCode = (issues: inducks_issue[]) =>
     }),
     {} as { [publicationcode: string]: string[] }
   );
+
 const importIssues = async () => {
   const importableIssuesByPublicationCode = groupByPublicationCode(
     issuesImportable as inducks_issue[]
@@ -368,9 +371,12 @@ const importIssues = async () => {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await routes["POST /collection/issues"](axios, {
         publicationcode,
-        issueNumbers: importableIssuesByPublicationCode[publicationcode],
+        issueIdsByIssuenumber: importableIssuesByPublicationCode[
+          publicationcode
+        ].reduce((acc, issuenumber) => ({ ...acc, [issuenumber]: 0 }), {}),
         condition: issueDefaultCondition,
         isOnSale: "do_not_change",
+        isToRead: "do_not_change",
         purchaseId: "do_not_change",
       });
       importProgress +=

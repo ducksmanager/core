@@ -7,10 +7,12 @@
 import {
   ArcElement,
   Chart,
+  ChartOptions,
   Legend,
   PieController,
   Title,
   Tooltip,
+  TooltipItem,
 } from "chart.js";
 import { Pie } from "vue-chartjs";
 
@@ -51,26 +53,32 @@ const chartData = $computed(() => ({
     },
   ],
 }));
-const options = $computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: (tooltipItem: { dataset: { data: [] }; parsed: number }) => {
-          const { dataset, parsed: currentValue } = tooltipItem;
-          const total = dataset.data.reduce((acc, value) => acc + value, 0);
-          const percentage = parseFloat(
-            ((currentValue / total) * 100).toFixed(1)
-          );
-          return `${currentValue} (${percentage}%)`;
+const options = $computed(
+  (): ChartOptions<"pie"> => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: "white",
         },
-        title: ([tooltipItem]: [tooltipItem: { dataIndex: number }]) =>
-          chartData.labels[tooltipItem.dataIndex],
+      },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem: TooltipItem<"pie">) => {
+            const { dataset, parsed: currentValue } = tooltipItem;
+            const total = dataset.data.reduce((acc, value) => acc + value, 0);
+            const percentage = parseFloat(
+              ((currentValue / total) * 100).toFixed(1)
+            );
+            return `${currentValue} (${percentage}%)`;
+          },
+        },
       },
     },
-  },
-}));
+  })
+);
 
 onMounted(async () => {
   await collectionStore().loadCollection();

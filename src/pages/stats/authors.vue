@@ -97,8 +97,8 @@ let watchedAuthorsStoryCount = $ref(null as WatchedAuthorsStoryCount | null);
 let unitTypeCurrent = $ref("number");
 let width = $ref(null as string | null),
   height = $ref(null as string | null),
-  chartData = $ref(null as ChartData | null),
-  options = $ref({} as ChartOptions | null);
+  chartData = $ref(null as ChartData<"bar", number[]> | null),
+  options = $ref({} as ChartOptions<"bar">);
 
 const labels = $computed(
   () =>
@@ -153,7 +153,6 @@ watch(
           },
         ],
         labels: labels!,
-        // legends: [$t("Histoires possédées"), $t("Histoires non possédées")],
       };
       options = {
         responsive: true,

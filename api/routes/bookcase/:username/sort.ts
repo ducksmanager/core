@@ -1,6 +1,6 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 import { checkValidBookcaseUser } from "./index";
 
@@ -14,9 +14,9 @@ const getLastPublicationPosition = async (userId: number) =>
     })
   )._max.order || -1;
 
-export type getType = string[];
-export const get: Handler = async (req, res: Response<getType>) => {
-  const user = await checkValidBookcaseUser(req, res);
+export type getCall = Call<string[], { username: string }>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
+  const user = await checkValidBookcaseUser(req.user, req.params.username);
   if (user === null) {
     return;
   } else {
@@ -28,21 +28,24 @@ export const get: Handler = async (req, res: Response<getType>) => {
         where: { userId },
       })
     ).map(({ publicationcode }) => publicationcode);
-    const userPublicationcodes = await prisma.issue.findMany({
-      select: {
-        country: true,
-        magazine: true,
-      },
-      distinct: ["country", "magazine"],
-      where: { userId },
-      orderBy: [{ country: "asc" }, { magazine: "asc" }],
-    });
-    const missingPublicationCodesInOrder = userPublicationcodes
-      .map(({ country, magazine }) => `${country}/${magazine}`)
-      .filter(
-        (publicationcode) =>
-          !userSortedPublicationcodes.includes(publicationcode)
-      );
+    const userPublicationcodes = (
+      await prisma.issue.findMany({
+        select: {
+          country: true,
+          magazine: true,
+        },
+        distinct: ["country", "magazine"],
+        where: { userId },
+        orderBy: [{ country: "asc" }, { magazine: "asc" }],
+      })
+    ).map(({ country, magazine }) => `${country}/${magazine}`);
+
+    const missingPublicationCodesInOrder = userPublicationcodes.filter(
+      (publicationcode) => !userSortedPublicationcodes.includes(publicationcode)
+    );
+    const obsoletePublicationCodesInOrder = userSortedPublicationcodes.filter(
+      (publicationcode) => !userPublicationcodes.includes(publicationcode)
+    );
 
     const insertOperations = missingPublicationCodesInOrder.map(
       (publicationcode) =>
@@ -55,6 +58,14 @@ export const get: Handler = async (req, res: Response<getType>) => {
         })
     );
     await prisma.$transaction(insertOperations);
+
+    const deleteOperations = obsoletePublicationCodesInOrder.map(
+      (publicationcode) =>
+        prisma.bookcasePublicationOrder.delete({
+          where: { userId_publicationcode: { publicationcode, userId } },
+        })
+    );
+    await prisma.$transaction(deleteOperations);
 
     return res.json(
       (

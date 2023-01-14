@@ -1,19 +1,20 @@
 import bodyParser from "body-parser";
-import { Handler, Response } from "express";
 
 import {
   bookstore,
   bookstoreComment,
   PrismaClient,
 } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type getType = SimpleBookstore[];
-export const get: Handler = async (req, res: Response<getType>) =>
+export type getCall = Call<SimpleBookstore[]>;
+export const get = async (...[, res]: ExpressCall<getCall>) =>
   res.json(await getActiveBookstores());
 
 const getActiveBookstores = async () =>
@@ -39,11 +40,15 @@ const getActiveBookstores = async () =>
     },
   });
 
-export type putType = bookstoreComment;
+export type putCall = Call<
+  bookstoreComment,
+  undefined,
+  { id?: string; bookstore: SimpleBookstore }
+>;
 export const put = [
   parseForm,
-  (async (req, res: Response<putType>) => {
-    const { bookstore }: { bookstore: SimpleBookstore } = req.body;
+  async (...[req, res]: ExpressCall<putCall>) => {
+    const { bookstore } = req.body;
     const {
       name,
       address,
@@ -51,7 +56,7 @@ export const put = [
       coordY: coordYParam,
       comments,
     } = bookstore;
-    const id = parseInt(req.body.id);
+    const id = req.body.id;
     const coordX = coordXParam;
     const coordY = coordYParam;
     if (!id && !name) {
@@ -63,7 +68,7 @@ export const put = [
     if (id) {
       try {
         dbBookstore = await prisma.bookstore.findUniqueOrThrow({
-          where: { id },
+          where: { id: parseInt(id) },
         });
       } catch (e) {
         res.writeHead(400);
@@ -97,5 +102,5 @@ export const put = [
     });
 
     return res.json(createdComment);
-  }) as Handler,
+  },
 ];

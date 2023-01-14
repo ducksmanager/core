@@ -1,16 +1,20 @@
-import { Handler, Response } from "express";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 import { checkValidBookcaseUser } from "./index";
 
-export type getType = {
-  textures: {
-    bookcase: string;
-    bookshelf: string;
-  };
-  showAllCopies: boolean;
-};
-export const get: Handler = async (req, res: Response<getType>) => {
-  const user = await checkValidBookcaseUser(req, res);
+export type getCall = Call<
+  {
+    textures: {
+      bookcase: string;
+      bookshelf: string;
+    };
+    showAllCopies: boolean;
+  },
+  { username: string }
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
+  const user = await checkValidBookcaseUser(req.user, req.params.username);
   if (user !== null) {
     return res.json({
       textures: {

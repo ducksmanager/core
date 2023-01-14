@@ -39,6 +39,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+
 app.use(busboy({ immediate: true }));
 
 app.all(/^.+$/, injectTokenIfValid);

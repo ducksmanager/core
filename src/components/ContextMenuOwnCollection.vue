@@ -18,7 +18,7 @@
     }}
   </b-alert>
   <b-alert
-    v-if="issueIds.length && !isSingleIssueSelected"
+    v-if="hasMultipleCopiesAndMultipleIssues"
     class="text-center m-0"
     show
     variant="warning"
@@ -458,6 +458,13 @@ const isSaleDisabledGlobally = $computed(
 let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
 const hasNoCopies = $computed(() => !editingCopies.length);
 const hasMaxCopies = $computed(() => editingCopies.length >= 3);
+const hasMultipleCopiesAndMultipleIssues = $computed(
+  () =>
+    Object.values(selectedIssueIdsByIssuenumber).length > 1 &&
+    Object.values(selectedIssueIdsByIssuenumber).some(
+      (issues) => issues.length > 1
+    )
+);
 const formatDate = (value: string) =>
   /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 const updateEditingCopies = () => {

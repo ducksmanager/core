@@ -113,10 +113,9 @@ export const marketplace = defineStore("marketplace", {
 
   actions: {
     async requestIssues(issueIds: number[]) {
-      await routes["PUT /collection/on-sale-by-others/requests"](
-        axios,
-        issueIds
-      );
+      await routes["PUT /collection/on-sale-by-others/requests"](axios, {
+        issueIds,
+      });
       await this.loadIssueRequestsAsBuyer();
     },
 
@@ -124,7 +123,7 @@ export const marketplace = defineStore("marketplace", {
       this.contactMethods[userId] = (
         await routes[
           "GET /collection/on-sale-by-others/contact-methods/:sellerId"
-        ](axios, { urlParams: { userId: String(userId) } })
+        ](axios, { urlParams: { sellerId: String(userId) } })
       ).data;
     },
 

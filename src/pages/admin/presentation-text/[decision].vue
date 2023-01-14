@@ -11,9 +11,8 @@ onMounted(async () => {
   let currentRoute = router.currentRoute.value;
   await routes["POST /presentation-text/:decision"](
     axios,
-    {},
+    currentRoute.query as unknown as { sentence: string; userId: number },
     {
-      params: currentRoute.query,
       urlParams: { decision: currentRoute.params.decision as string },
     }
   );

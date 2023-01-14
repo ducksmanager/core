@@ -53,21 +53,26 @@ const { t } = useI18n();
 const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
   publicationNames = $computed(() => coa().publicationNames),
   collectionPerPurchaseDate = $computed(() => {
-    const purchases = collectionStore().purchases;
+    const purchasesById = collectionStore().purchasesById;
     return (
-      purchases &&
+      purchasesById &&
       collectionStore()
         .collection?.reduce((acc, issue) => {
-          const purchase = (issue.purchaseId > 0 &&
-            purchases.find(({ id }) => id === issue.purchaseId)) || {
-            date: (
-              (issue.creationDate || "0001-01-01T00:00:00") as string
-            ).split("T")[0],
-            description: "",
-          };
+          const existingPurchase = purchasesById[issue.purchaseId];
+          const purchase = existingPurchase
+            ? {
+                date: existingPurchase.date,
+                description: existingPurchase.description,
+              }
+            : {
+                date: (
+                  (issue.creationDate || "0001-01-01T00:00:00") as string
+                ).split("T")[0],
+                description: "",
+              };
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>
-              currentPurchase.date === purchase.date
+              (currentPurchase.date as string) === (purchase.date as string)
           );
           if (purchaseIndex === -1) {
             acc.push({ purchase, issues: [] });

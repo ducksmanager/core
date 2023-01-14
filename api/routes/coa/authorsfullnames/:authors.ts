@@ -1,6 +1,6 @@
-import { Handler, Response } from "express";
-
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
@@ -23,8 +23,11 @@ export const getAuthorFullNames = async (
     {}
   );
 
-export type getType = Prisma.PromiseReturnType<typeof getAuthorFullNames>;
-export const get: Handler = async (req, res: Response<getType>) =>
+export type getCall = Call<
+  Prisma.PromiseReturnType<typeof getAuthorFullNames>,
+  { authors: string }
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) =>
   res.json(
     await getAuthorFullNames([...new Set(req.params.authors.split(","))])
   );

@@ -1,14 +1,14 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient } from "~prisma_clients/client_dm";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 import { getUser } from "./user";
 
 const prisma = new PrismaClient();
 
-export type postType = { previousVisit: Date | null };
-export const post: Handler = async (req, res: Response<postType>) => {
-  const user = await getUser(req);
+export type postCall = Call<{ previousVisit: Date | null }>;
+export const post = async (...[req, res]: ExpressCall<postCall>) => {
+  const user = await getUser(req.user.id);
   if (!user) {
     res.writeHead(500);
     res.end("This user does not exist");

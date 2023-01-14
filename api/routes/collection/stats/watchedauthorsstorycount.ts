@@ -1,7 +1,7 @@
-import { Handler, Response } from "express";
-
 import { PrismaClient } from "~prisma_clients/client_dm_stats";
+import { ExpressCall } from "~routes/_express-call";
 import { getAuthorFullNames } from "~routes/coa/authorsfullnames/:authors";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
@@ -52,8 +52,8 @@ type authorsDetails = {
     fullname: string;
   };
 };
-export type getType = authorsDetails;
-export const get: Handler = async (req, res: Response<authorsDetails>) => {
+export type getCall = Call<authorsDetails>;
+export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const userId = req.user.id;
   const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
     userId

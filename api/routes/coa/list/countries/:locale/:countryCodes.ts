@@ -1,16 +1,19 @@
-import { Handler, Response } from "express";
-
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { ExpressCall } from "~routes/_express-call";
+import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type getType = Prisma.PromiseReturnType<typeof getCountryNames>;
-export const get: Handler = async (req, res: Response<getType>) => {
-  const { locale } = req.params;
-  const { countryIds } = req.query as { [key: string]: string };
-
-  return res.json(await getCountryNames(locale, countryIds.split(",")));
-};
+export type getCall = Call<
+  Prisma.PromiseReturnType<typeof getCountryNames>,
+  { locale: string },
+  undefined,
+  { countryIds: string }
+>;
+export const get = async (...[req, res]: ExpressCall<getCall>) =>
+  res.json(
+    await getCountryNames(req.params.locale, req.query.countryIds.split(","))
+  );
 
 export const getCountryNames = async (
   locale: string,
