@@ -149,6 +149,7 @@
 <script setup lang="ts">
 import { BAlert, BButton } from "bootstrap-vue-3";
 import { watch } from "vue";
+import { RouterLink } from "vue-router";
 
 import {
   bookcase as bookcaseStore,
@@ -157,6 +158,7 @@ import {
 import { coa as coaStore } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
+import { BookcaseEdgeSprite } from "~types/BookcaseEdge";
 import { simple_issue } from "~types/SimpleIssue";
 
 const route = useRoute();
@@ -316,12 +318,6 @@ watch(
   { immediate: true }
 );
 
-type Sprite = {
-  name: string;
-  version: string;
-  size: number;
-};
-
 watch(
   () => bookcase.bookcase,
   async (newValue) => {
@@ -332,14 +328,14 @@ watch(
       const usableSpritesBySpriteId = newValue
         .filter(({ sprites }) => sprites)
         .reduce((acc, { edgeId, sprites }) => {
-          JSON.parse(`[${sprites}]`).forEach((sprite: Sprite) => {
+          sprites.forEach((sprite: BookcaseEdgeSprite) => {
             const { name: spriteId } = sprite;
             if (!acc[spriteId]) acc[spriteId] = { edges: [], ...sprite };
 
             acc[spriteId].edges.push(edgeId);
           });
           return acc;
-        }, {} as { [spriteId: string]: Sprite & { edges: number[] } });
+        }, {} as { [spriteId: string]: BookcaseEdgeSprite & { edges: number[] } });
 
       const usableSprites = Object.values(usableSpritesBySpriteId).map(
         (usableSprite) => ({

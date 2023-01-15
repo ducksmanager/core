@@ -1,3 +1,9 @@
+export interface BookcaseEdgeSprite {
+  name: string;
+  version: string;
+  size: number;
+}
+
 export interface BookcaseEdge {
   id: number;
   countryCode: string;
@@ -7,5 +13,5 @@ export interface BookcaseEdge {
   issuenumberReference: string;
   edgeId: number;
   creationDate: Date;
-  sprites?: string;
+  sprites: BookcaseEdgeSprite[];
 }

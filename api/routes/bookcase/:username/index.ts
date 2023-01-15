@@ -1,10 +1,22 @@
 import { PrismaClient, user } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { BookcaseEdge } from "~types/BookcaseEdge";
+import { BookcaseEdge, BookcaseEdgeSprite } from "~types/BookcaseEdge";
 import { Call } from "~types/Call";
 import { User } from "~types/SessionUser";
 
 const prisma = new PrismaClient();
+
+type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
+  sprites?: string;
+};
+
+const mapEdges = (bookcaseEdge: BookcaseEdgeRaw): BookcaseEdge => ({
+  ...bookcaseEdge,
+  sprites:
+    (bookcaseEdge.sprites?.indexOf("{") === 0 &&
+      (JSON.parse(`[${bookcaseEdge.sprites}]`) as BookcaseEdgeSprite[])) ||
+    [],
+});
 
 export const checkValidBookcaseUser = async (
   user: User | null,
@@ -34,7 +46,8 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
     ? "numeros.ID"
     : "numeros.issuecode";
   return res.json(
-    (await prisma.$queryRawUnsafe(`
+    (
+      (await prisma.$queryRawUnsafe(`
             SELECT numeros.ID                                                AS id,
                    numeros.Pays                                              AS countryCode,
                    numeros.Magazine                                          AS magazineCode,
@@ -64,6 +77,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
                                ON sprites.ID_Tranche = tp.ID
             WHERE ID_Utilisateur = ${user.id}
             GROUP BY ${groupBy}
-        `)) as BookcaseEdge[]
+        `)) as BookcaseEdgeRaw[]
+    ).map(mapEdges)
   );
 };
