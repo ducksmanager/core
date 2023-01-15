@@ -18,7 +18,11 @@ export type postCall = Call<
 export const post = [
   parseForm,
   async (...[req, res]: ExpressCall<postCall>) => {
-    await upsertSubscription(req.params.id, req.body.subscription, req.user.id);
+    await upsertSubscription(
+      req.params.id,
+      req.body.subscription,
+      req.user!.id
+    );
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
   },
@@ -32,7 +36,7 @@ export const del = [
       where: {
         id: req.params.id || -1,
         users: {
-          id: req.user.id,
+          id: req.user!.id,
         },
       },
     });

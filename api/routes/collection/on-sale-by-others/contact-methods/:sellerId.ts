@@ -14,7 +14,7 @@ export type getCall = Call<
 >;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const sellerId = parseInt(req.params.sellerId);
-  const issuesForSale = await getIssuesForSale(req.user.id);
+  const issuesForSale = await getIssuesForSale(req.user!.id);
   if (
     !Object.values(issuesForSale).some((publicationSales) =>
       publicationSales.some((issue) => issue.userId === sellerId)

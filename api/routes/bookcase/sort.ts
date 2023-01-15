@@ -19,7 +19,7 @@ export const post = [
   async (...[req, res]: ExpressCall<postCall>) => {
     const sorts = req.body.sorts;
     if (sorts.length) {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       await prisma.bookcasePublicationOrder.deleteMany({
         where: { userId: userId },
       });

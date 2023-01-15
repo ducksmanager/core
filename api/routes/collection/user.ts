@@ -22,7 +22,7 @@ export const getUser = async (id: number) =>
 export type getCall = Call<Omit<user, "password">>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const userWithoutPassword = exclude<user, "password">(
-    await getUser(req.user.id),
+    await getUser(req.user!.id),
     "password"
   );
   if (!userWithoutPassword) {
@@ -34,7 +34,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
 
 export type deleteCall = Call<undefined>;
 export const del = async (...[req, res]: ExpressCall<deleteCall>) => {
-  const { id: userId } = req.user;
+  const userId = req.user!.id;
   await prisma.issue.deleteMany({
     where: { userId },
   });
@@ -72,7 +72,7 @@ export const post = [
       validateEmailUpdate,
       validatePresentationText,
     ];
-    input.userId = req.user.id;
+    input.userId = req.user!.id;
     if (input.password) {
       validators = [
         ...validators,
@@ -88,7 +88,7 @@ export const post = [
             password: getHashedPassword(input.password),
           },
           where: {
-            id: req.user.id,
+            id: req.user!.id,
           },
         });
       }
@@ -99,7 +99,7 @@ export const post = [
           allowSharing: input.allowSharing,
           showPresentationVideo: input.showPresentationVideo,
         },
-        where: { id: req.user.id },
+        where: { id: req.user!.id },
       });
       if (updatedUser.presentationText !== input.presentationText) {
         if (!input.presentationText) {
@@ -107,7 +107,7 @@ export const post = [
             data: {
               presentationText: null,
             },
-            where: { id: req.user.id },
+            where: { id: req.user!.id },
           });
         } else {
           hasRequestedPresentationSentenceUpdate = true;

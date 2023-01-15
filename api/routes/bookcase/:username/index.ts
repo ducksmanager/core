@@ -7,19 +7,17 @@ import { User } from "~types/SessionUser";
 const prisma = new PrismaClient();
 
 export const checkValidBookcaseUser = async (
-  user: User,
+  user: User | null,
   username: string
 ): Promise<user> => {
   const dbUser = await prisma.user.findFirstOrThrow({
     where: { username },
   });
-  if (user.id !== dbUser.id && !dbUser.allowSharing) {
-    throw new Error("403");
+  if (user?.id === dbUser.id || dbUser.allowSharing) {
+    return dbUser;
   } else if (!user) {
     throw new Error("401");
-  } else {
-    return dbUser;
-  }
+  } else throw new Error("403");
 };
 
 export type getCall = Call<BookcaseEdge[], { username: string }>;

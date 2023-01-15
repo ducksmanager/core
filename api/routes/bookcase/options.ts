@@ -22,7 +22,7 @@ export const post = [
     const [, bookshelfTexture] = textures.bookshelf.split("/");
     const user = await prisma.user.findUniqueOrThrow({
       where: {
-        id: req.user.id,
+        id: req.user!.id,
       },
     });
 

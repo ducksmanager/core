@@ -14,7 +14,7 @@ export const del = [
   parseForm,
   async (...[req, res]: ExpressCall<deleteCall>) => {
     const criteria = {
-      userId: req.user.id,
+      userId: req.user!.id,
       id: req.params.id,
     };
     const purchase = await getUserPurchase(criteria.userId, criteria.id);

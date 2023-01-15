@@ -54,9 +54,8 @@ type authorsDetails = {
 };
 export type getCall = Call<authorsDetails>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
-  const userId = req.user.id;
   const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
-    userId
+    req.user!.id
   );
   const personcodes = Object.keys(missingStoryCountPerAuthor);
 

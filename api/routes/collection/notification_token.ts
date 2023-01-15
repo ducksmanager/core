@@ -10,7 +10,7 @@ export type getCall = Call<
   { user_id: string }
 >;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
-  if (req.query.user_id !== req.user.username) {
+  if (req.query.user_id !== req.user!.username) {
     res.writeHead(401, { "Content-Type": "application/text" });
     res.end();
   } else {
@@ -19,7 +19,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
         new PushNotifications({
           instanceId: process.env.PUSHER_INSTANCE_ID || "",
           secretKey: process.env.PUSHER_SECRET_KEY || "",
-        }).generateToken(req.user.username)
+        }).generateToken(req.user!.username)
       );
     } catch (e) {
       console.error(e);

@@ -11,7 +11,6 @@ import { ExpressCall } from "~routes/_express-call";
 import { resetDemo } from "~routes/demo/_reset";
 import { Call } from "~types/Call";
 import { CollectionUpdate } from "~types/CollectionUpdate";
-import { User } from "~types/SessionUser";
 import { TransactionResults } from "~types/TransactionResults";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
@@ -198,13 +197,13 @@ const checkPurchaseIdsBelongToUser = async (
 
 export type getCall = Call<issue[]>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
-  if (req.user.username === "demo") {
+  if (req.user!.username === "demo") {
     await resetDemo();
   }
   return res.json(
     await prisma.issue.findMany({
       where: {
-        userId: req.user.id,
+        userId: req.user!.id,
       },
     })
   );
@@ -218,7 +217,8 @@ export type postCall = Call<
 export const post = [
   parseForm,
   async (...[req, res]: ExpressCall<postCall>) => {
-    const { body, user }: { body: CollectionUpdate; user: User } = req;
+    const user = req.user!;
+    const { body }: { body: CollectionUpdate } = req;
     const { publicationcode, issueIdsByIssuenumber, purchaseId } = body;
 
     let { isOnSale, condition, isToRead } = body;

@@ -31,7 +31,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
       (
         await prisma.userOption.findMany({
           where: {
-            userId: req.user.id,
+            userId: req.user!.id,
             optionName,
           },
         })
@@ -54,7 +54,7 @@ export const post = [
       res.end();
     } else {
       const values = req.body.values;
-      const userId = req.user.id;
+      const userId = req.user!.id;
       await prisma.userOption.deleteMany({
         where: {
           userId,

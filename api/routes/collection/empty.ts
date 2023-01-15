@@ -7,9 +7,8 @@ const prisma = new PrismaClient();
 
 export type postCall = Call<PromiseReturnType<typeof prisma.issue.deleteMany>>;
 export const post = async (...[req, res]: ExpressCall<postCall>) => {
-  const { id: userId } = req.user;
   await prisma.issue.deleteMany({
-    where: { userId },
+    where: { userId: req.user!.id },
   });
   res.writeHead(200, { "Content-Type": "application/text" });
   res.end();

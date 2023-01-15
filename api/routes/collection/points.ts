@@ -42,4 +42,4 @@ export const getMedalPoints = async (userIds: number[]) => {
 
 export type getCall = Call<PromiseReturnType<typeof getMedalPoints>>;
 export const get = async (...[req, res]: ExpressCall<getCall>) =>
-  res.json(await getMedalPoints([req.user.id]));
+  res.json(await getMedalPoints([req.user!.id]));

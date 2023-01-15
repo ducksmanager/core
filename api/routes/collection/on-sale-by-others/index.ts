@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 export type getCall = Call<PromiseReturnType<typeof getIssuesForSale>>;
 export const get = async (...[req, res]: ExpressCall<getCall>) =>
-  res.json(await getIssuesForSale(req.user.id));
+  res.json(await getIssuesForSale(req.user!.id));
 
 export const getIssuesForSale: (
   buyerId: number

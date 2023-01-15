@@ -17,7 +17,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
-            WHERE issue.ID_Utilisateur = ${req.user.id}
+            WHERE issue.ID_Utilisateur = ${req.user!.id}
         `) as { id: number }[];
         return res.json(
           await prisma.requestedIssue.findMany({
@@ -30,7 +30,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
         return res.json(
           await prisma.requestedIssue.findMany({
             where: {
-              buyerId: req.user.id,
+              buyerId: req.user!.id,
             },
           })
         );

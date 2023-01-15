@@ -22,7 +22,8 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   `) as { userId: number; averageRarity: number }[];
 
   const myScore =
-    userScores.find(({ userId }) => userId === req.user.id)?.averageRarity || 0;
+    userScores.find(({ userId }) => userId === req.user!.id)?.averageRarity ||
+    0;
 
   return res.json({
     userScores,

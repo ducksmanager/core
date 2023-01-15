@@ -23,7 +23,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
              inner join numeros issue
                         on issuePopularity.pays = issue.pays AND issuePopularity.magazine = issue.magazine AND
                            issuePopularity.numero = issue.numero
-      where ID_Utilisateur = ${req.user.id}
+      where ID_Utilisateur = ${req.user!.id}
       order by popularity DESC`) as PopularIssue[];
   return res.json(popularities);
 };

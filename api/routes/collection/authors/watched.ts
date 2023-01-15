@@ -46,7 +46,7 @@ const upsertAuthorUser = async (
 export type getCall = Call<authorUser[]>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const authorsUsers = await prisma.authorUser.findMany({
-    where: { userId: req.user.id },
+    where: { userId: req.user!.id },
   });
   return res.json(authorsUsers);
 };
@@ -56,7 +56,7 @@ export const put = [
   parseForm,
   async (...[req, res]: ExpressCall<putCall>) => {
     try {
-      await upsertAuthorUser(req.body.personcode, req.user.id);
+      await upsertAuthorUser(req.body.personcode, req.user!.id);
       res.writeHead(200, { "Content-Type": "application/text" });
       res.end();
     } catch (e) {
@@ -78,7 +78,7 @@ export const post = [
     try {
       await upsertAuthorUser(
         req.body.personcode,
-        req.user.id,
+        req.user!.id,
         req.body.notation
       );
       res.writeHead(200, { "Content-Type": "application/text" });
@@ -104,7 +104,7 @@ export const del = [
     await prisma.authorUser.deleteMany({
       where: {
         personcode,
-        userId: req.user.id,
+        userId: req.user!.id,
       },
     });
     res.writeHead(204);

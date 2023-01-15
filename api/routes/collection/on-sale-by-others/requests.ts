@@ -37,7 +37,7 @@ export const put = [
           issueId: true,
         },
         where: {
-          buyerId: req.user.id,
+          buyerId: req.user!.id,
           issueId: { in: issueIds },
         },
       })
@@ -47,7 +47,7 @@ export const put = [
     );
     await prisma.requestedIssue.createMany({
       data: newlyRequestedIssueIds.map((issueId: number) => ({
-        buyerId: req.user.id,
+        buyerId: req.user!.id,
         issueId,
       })),
     });
@@ -64,7 +64,7 @@ export const del = [
 
     await prisma.requestedIssue.deleteMany({
       where: {
-        buyerId: req.user.id,
+        buyerId: req.user!.id,
         issueId,
       },
     });

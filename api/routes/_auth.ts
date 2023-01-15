@@ -37,7 +37,10 @@ export const checkUserIsEdgeCreatorEditor = (
   res: Response,
   next: CallableFunction
 ) => {
-  if (!["Edition", "Admin"].includes(req.user?.privileges?.["EdgeCreator"])) {
+  if (
+    !req.user ||
+    !["Edition", "Admin"].includes(req.user.privileges?.["EdgeCreator"])
+  ) {
     return res.sendStatus(403);
   }
   next();
@@ -48,7 +51,7 @@ export const checkUserIsAdmin = (
   res: Response,
   next: CallableFunction
 ) => {
-  if (!["Admin"].includes(req.user?.privileges?.["DucksManager"])) {
+  if (!req.user || !["Admin"].includes(req.user.privileges?.["DucksManager"])) {
     return res.sendStatus(403);
   }
   next();
@@ -56,7 +59,7 @@ export const checkUserIsAdmin = (
 
 export const injectTokenIfValid = (
   req: Request,
-  res: Response,
+  _: Response,
   next: CallableFunction
 ) => {
   const authHeader = req.headers["authorization"];

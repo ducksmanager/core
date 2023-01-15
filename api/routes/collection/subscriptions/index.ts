@@ -60,7 +60,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const subscriptions = await prisma.subscription.findMany({
     where: {
       users: {
-        id: req.user.id,
+        id: req.user!.id,
       },
     },
   });
@@ -82,7 +82,11 @@ export type putCall = Call<
 export const put = [
   parseForm,
   async (...[req, res]: ExpressCall<putCall>) => {
-    await upsertSubscription(req.params.id, req.body.subscription, req.user.id);
+    await upsertSubscription(
+      req.params.id,
+      req.body.subscription,
+      req.user!.id
+    );
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
   },

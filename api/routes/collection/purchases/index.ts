@@ -17,7 +17,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
     (
       await prisma.purchase.findMany({
         where: {
-          userId: req.user.id,
+          userId: req.user!.id,
         },
         orderBy: {
           date: "desc",
@@ -41,7 +41,7 @@ export const put = [
     const { date, description } = req.body;
 
     const criteria = {
-      userId: req.user.id,
+      userId: req.user!.id,
       date: new Date(date),
       description,
     };

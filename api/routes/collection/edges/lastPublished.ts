@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export type getCall = Call<edge[]>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
-  const userId = req.user.id;
+  const userId = req.user!.id;
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 

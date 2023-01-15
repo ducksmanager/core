@@ -34,7 +34,7 @@ export const post = async (...[req, res]: ExpressCall<postCall>) => {
   });
   const user = await prisma.user.findUniqueOrThrow({
     where: {
-      id: req.user.id,
+      id: req.user!.id,
     },
   });
   await persistContribution(user, 1, bookstoreComment);

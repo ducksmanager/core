@@ -49,7 +49,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const { countrycode, sincePreviousVisit, sort, limit } = req.params;
   const since =
     sincePreviousVisit === "since_previous_visit"
-      ? (await prismaDm.user.findUnique({ where: { id: req.user.id } }))!
+      ? (await prismaDm.user.findUnique({ where: { id: req.user!.id } }))!
           .previousAccess
       : null;
 
@@ -58,13 +58,13 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
       since,
       countrycode,
       sort,
-      req.user.id,
+      req.user!.id,
       parseInt(limit),
       true
     );
 
   const suggestionsForUser =
-    suggestionsPerUser[req.user.id] || new IssueSuggestionList();
+    suggestionsPerUser[req.user!.id] || new IssueSuggestionList();
 
   const suggestionsWithDetails: SuggestionsWithDetails = {
     issues: suggestionsForUser.issues,
