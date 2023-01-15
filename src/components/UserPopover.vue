@@ -40,10 +40,7 @@
               :href="href"
               @click="navigate"
             >
-              <img
-                style="height: 16px"
-                src="/images/icons/bookcase.png"
-              />&nbsp;
+              <img src="/images/icons/bookcase.png" />&nbsp;
               {{ $t("Voir la bibliothèque") }}
             </b-button>
           </router-link>
@@ -78,11 +75,11 @@ const { t: $tc } = useI18n();
   white-space: nowrap;
 
   img {
-    height: 32px;
+    height: 16px;
   }
 
-  a:hover {
-    border: none;
+  a {
+    border-width: 1px;
   }
 }
 </style>
