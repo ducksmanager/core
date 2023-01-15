@@ -41,7 +41,7 @@ const isEdgeCreationEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("edges");
 
 const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
-  // hasFreshEvents = await users().fetchEvents(clearCacheEntry);
+  await users().fetchEvents(clearCacheEntry);
 
   await coa().fetchPublicationNames([
     ...events
