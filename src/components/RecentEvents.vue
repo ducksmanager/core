@@ -31,7 +31,10 @@ let isLoaded = $ref(false as boolean);
 const events = $computed(() => users().events);
 const eventUserIds = $computed(() =>
   events
-    ?.reduce((acc, event) => [...acc, ...(event.users || [])], [] as number[])
+    ?.reduce(
+      (acc, event) => [...acc, ...(event.users || [])],
+      [] as (number | null)[]
+    )
     .filter((userId) => !!userId)
 );
 const isCollectionUpdateEvent = (event: AbstractEvent) =>
@@ -59,7 +62,10 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
       ),
   ]);
 
-  await users().fetchStats(eventUserIds, clearCacheEntry);
+  await users().fetchStats(
+    eventUserIds.filter((userId) => userId !== null) as number[],
+    clearCacheEntry
+  );
 };
 
 onMounted(async () => {

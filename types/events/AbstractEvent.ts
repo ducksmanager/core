@@ -1,6 +1,6 @@
 export abstract class AbstractEvent {
   abstract type: string;
-  users: number[] = [];
+  users: (number | null)[] = [];
   timestamp = 0;
 }
 

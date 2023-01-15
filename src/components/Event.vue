@@ -1,6 +1,6 @@
 <template>
   <div class="event" :class="{ [`event_${event.type}`]: true }">
-    <span v-for="(userId, index) in event.users" :key="userId">
+    <span v-for="(userId, index) in event.users" :key="userId || 0">
       <template v-if="event.users.length > 1">
         <template v-if="index === event.users.length - 1">
           {{ ` ${$t("et")} ` }}
