@@ -62,7 +62,6 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
       ),
   ]);
 
-  console.log(eventUserIds);
   await users().fetchStats(
     eventUserIds.filter((userId) => userId !== null) as number[],
     clearCacheEntry

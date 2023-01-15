@@ -195,7 +195,8 @@ watch(
       );
       hasPublicationNames = true;
     }
-  }
+  },
+  { immediate: true }
 );
 </script>
 

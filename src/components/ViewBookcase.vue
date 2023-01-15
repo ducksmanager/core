@@ -391,7 +391,6 @@ watch(
       if (user && !isSharedBookcase) {
         await collection.loadPopularIssuesInCollection();
         await collection.loadLastPublishedEdgesForCurrentUser();
-        console.log(users().points[user.id]);
         userPoints = users().points[user.id];
       }
     }

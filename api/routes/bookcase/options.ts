@@ -34,7 +34,6 @@ export const post = [
       where: { id: user.id },
     });
 
-    res.writeHead(200, { "Content-Type": "application/text" });
     return res.json({ status: "OK" });
   },
 ];
