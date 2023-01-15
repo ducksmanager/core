@@ -65,7 +65,7 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
 onMounted(async () => {
   await fetchEventsAndAssociatedData(false);
   setTimeout(async () => {
-    await fetchEventsAndAssociatedData(true);
+    // await fetchEventsAndAssociatedData(true);
     // hasFreshEvents = true;
   }, 1000);
   isLoaded = true;

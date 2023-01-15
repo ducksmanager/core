@@ -10,6 +10,6 @@ export interface CollectionSubscriptionAdditionEventRaw {
 
 export class CollectionSubscriptionAdditionEvent extends AbstractEvent {
   type = "subscription_additions";
-  publicationcode: string | undefined = undefined;
-  issuenumber: string | undefined = undefined;
+  publicationcode!: string;
+  issuenumber!: string;
 }

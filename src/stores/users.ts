@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { cachedUserApi as userApi } from "~/util/api";
 import { getCall } from "~routes/global-stats/user/:userIds";
 import { AbstractEvent } from "~types/events/AbstractEvent";
-import { BookstoreCreationEvent } from "~types/events/BookstoreCreationEvent";
+import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
 import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSubscriptionAdditionEvent";
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
@@ -79,7 +79,7 @@ export const users = defineStore("users", {
       );
       this.events = (
         data as (
-          | BookstoreCreationEvent
+          | BookstoreCommentEvent
           | CollectionSubscriptionAdditionEvent
           | CollectionUpdateEvent
           | EdgeCreationEvent

@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
 import { AbstractEvent, AbstractEventRaw } from "~types/events/AbstractEvent";
-import { BookstoreCreationEvent } from "~types/events/BookstoreCreationEvent";
+import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
 import {
   CollectionSubscriptionAdditionEvent,
   CollectionSubscriptionAdditionEventRaw,
@@ -15,6 +15,7 @@ import {
   EdgeCreationEvent,
   EdgeCreationEventRaw,
 } from "~types/events/EdgeCreationEvent";
+import { MedalEvent } from "~types/events/MedalEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
@@ -109,9 +110,7 @@ const retrieveCollectionSubscriptionAdditions = async (): Promise<
     `) as CollectionSubscriptionAdditionEventRaw[]
   ).map(mapUsers<CollectionSubscriptionAdditionEvent>);
 
-const retrieveBookstoreCreations = async (): Promise<
-  BookstoreCreationEvent[]
-> =>
+const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
   (
     (await prisma.$queryRaw`
         SELECT 'bookstore_comment'                                 as type,
@@ -124,7 +123,7 @@ const retrieveBookstoreCreations = async (): Promise<
         WHERE bouquineries_commentaires.Actif = 1
           AND bouquineries_commentaires.DateAjout > date_add(now(), interval -1 month)
     `) as AbstractEventRaw[]
-  ).map(mapUsers<BookstoreCreationEvent>);
+  ).map(mapUsers<BookstoreCommentEvent>);
 
 const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
   (
@@ -156,27 +155,27 @@ const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
     edges: JSON.parse(event.edges),
   }));
 
-const retrieveNewMedals = async () =>
-  (await prisma.$queryRawUnsafe(
-    Object.entries(MEDAL_LEVELS)
-      .map(([medalType, niveaux]) =>
-        Object.values(niveaux)
-          .map(
-            (niveau: number) => `
+const retrieveNewMedals = async (): Promise<MedalEvent[]> =>
+  (
+    (await prisma.$queryRawUnsafe(
+      Object.entries(MEDAL_LEVELS)
+        .map(([medalType, levels]) =>
+          Object.values(levels)
+            .map(
+              (level: number) => `
               select 'medal'                   as type,
                      ID_User                   AS userId,
                      contribution,
-                     ${niveau}                 as niveau,
+                     ${level}                 as level,
                      UNIX_TIMESTAMP(date) - 60 AS timestamp
               from dm.users_contributions
               where contribution = '${medalType.toLowerCase()}'
-                and points_total >= ${niveau}
-                and points_total - points_new < ${niveau}
+                and points_total >= ${level}
+                and points_total - points_new < ${level}
                 and date > DATE_ADD(NOW(), INTERVAL -1 MONTH)`
-          )
-          .join(" UNION ")
-      )
-      .join(" UNION ")
-  )) as {
-    [key: string]: string | number;
-  }[];
+            )
+            .join(" UNION ")
+        )
+        .join(" UNION ")
+    )) as AbstractEventRaw[]
+  ).map(mapUsers<MedalEvent>);
