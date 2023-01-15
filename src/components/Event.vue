@@ -7,7 +7,7 @@
         </template>
         <template v-else-if="index > 0">, </template>
       </template>
-      <span v-else-if="userId === null" class="text-capitalize">
+      <span v-if="userId === null" class="text-capitalize">
         {{ $t("un visiteur anonyme") }}
       </span>
       <UserPopover
@@ -37,8 +37,8 @@
         >
       </template>
     </i18n-t>
-    <template v-else-if="bookstoreCommentEvent">
-      {{ $t("a visité la bouquinerie") }}
+    <template v-else-if="bookstoreCommentEvent"
+      >&nbsp;{{ $t("a visité la bouquinerie") }}
       <i
         ><router-link to="/bookstores">{{
           bookstoreCommentEvent.name
@@ -60,11 +60,11 @@
       {{ $t("à sa collection") }}
     </template>
     <template v-else-if="edgeEvent">
-      <template v-if="event.users.length > 1">
-        {{ $t("ont créé la tranche") }}
+      <template v-if="event.users.length > 1"
+        >&nbsp;{{ $t("ont créé la tranche") }}
       </template>
-      <template v-else> {{ $t("a créé la tranche") }} </template>
-      <BookcasePopover
+      <template v-else>&nbsp;{{ $t("a créé la tranche") }} </template>
+      &nbsp;<BookcasePopover
         :id="`event-edges-${event.timestamp}`"
         :edges="edgeEvent.edges"
       >

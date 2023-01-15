@@ -44,7 +44,7 @@ const mapUsers = <T extends AbstractEvent>(event: AbstractEventRaw): T =>
   ({
     ...event,
     users:
-      event.users?.split(",")?.map(parseInt) ||
+      event.users?.split(",")?.map((userId) => parseInt(userId)) ||
       (event.userId && [event.userId]) ||
       [],
   } as T);
