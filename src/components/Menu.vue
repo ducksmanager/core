@@ -34,12 +34,17 @@ const {
 }>();
 const router = useRouter();
 const routeName = useRoute().name;
-const activeTabIndex = $computed(() =>
-  items.findIndex(
+let activeTabIndex = $ref(-1 as number);
+
+const updateActiveTabIndex = () => {
+  activeTabIndex = items.findIndex(
     ({ path }) =>
       routeName === (rootPath + path).replace(/\//g, "-").replace(/^-/, "")
-  )
-);
+  );
+};
+
+watch(() => items, updateActiveTabIndex, { immediate: true });
+watch(() => rootPath, updateActiveTabIndex);
 </script>
 
 <style scoped lang="scss">
