@@ -11,31 +11,31 @@
       icon="glyphicon-home"
     >
       <template #text>
-        <b-icon-house-fill />
+        <i-bi-house-fill />
         {{ $t("Collection") }}
       </template>
       <template v-if="username !== undefined" #items>
         <template v-if="username">
           <NavigationItem>
             <router-link to="/bookcase/show">
-              <b-icon-book-half />
+              <i-bi-book-half />
               {{ $t("Ma bibliothèque") }}
             </router-link>
           </NavigationItem>
           <NavigationItem>
             <router-link to="/collection/show">
-              <b-icon-list /> {{ $t("Gérer ma collection") }}</router-link
+              <i-bi-list /> {{ $t("Gérer ma collection") }}</router-link
             >
           </NavigationItem>
           <NavigationItem>
             <router-link to="/stats/general">
-              <b-icon-graph-up />
+              <i-bi-graph-up />
               {{ $t("Statistiques de ma collection") }}</router-link
             >
           </NavigationItem>
           <NavigationItem>
             <router-link to="/expand/suggestions">
-              <b-icon-capslock-fill />
+              <i-bi-capslock-fill />
               {{ $t("Agrandir ma collection") }}</router-link
             >
           </NavigationItem>
@@ -52,13 +52,13 @@
           </NavigationItem>
           <NavigationItem>
             <router-link to="/print">
-              <b-icon-printer-fill />
+              <i-bi-printer-fill />
               {{ $t("Imprimer ma collection") }}</router-link
             >
           </NavigationItem>
           <NavigationItem>
             <div @click="logout">
-              <b-icon-x-square-fill />
+              <i-bi-x-square-fill />
               {{ $t("Déconnexion") }}
             </div>
           </NavigationItem>
@@ -97,15 +97,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  BIconBookHalf,
-  BIconCapslockFill,
-  BIconGraphUp,
-  BIconHouseFill,
-  BIconList,
-  BIconPrinterFill,
-  BIconXSquareFill,
-} from "bootstrap-icons-vue";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";

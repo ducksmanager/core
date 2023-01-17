@@ -1,21 +1,22 @@
 <template>
   <LinkToCollectionIfNoIssue />
-  <BButtonGroup>
-    <BButton
+  <b-button-group>
+    <b-button
       v-for="(text, unitType) in unitTypes"
       :key="unitType"
       :pressed="unitTypeCurrent === unitType"
       @click="unitTypeCurrent = unitType"
     >
       {{ text }}
-    </BButton>
-  </BButtonGroup>
+    </b-button>
+  </b-button-group>
   <div class="wrapper">
     <bar v-if="chartData" :chart-data="chartData" :chart-options="options" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { BButton, BButtonGroup } from "bootstrap-vue-next";
 import {
   ArcElement,
   BarController,

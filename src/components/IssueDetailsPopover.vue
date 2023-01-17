@@ -4,7 +4,7 @@
     placement="right"
     @open:popper="loadIssueUrls"
   >
-    <b-icon-eye-fill
+    <i-bi-eye-fill
       :id="`issue-details-${issuenumber}`"
       class="mx-2"
       :class="{
@@ -49,7 +49,6 @@
 </template>
 
 <script setup lang="ts">
-import { BIconEyeFill } from "bootstrap-icons-vue";
 import { watch } from "vue";
 
 import { coa } from "~/stores/coa";

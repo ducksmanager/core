@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { BAlert } from "bootstrap-vue-3";
+import { BAlert } from "bootstrap-vue-next";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 

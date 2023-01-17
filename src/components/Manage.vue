@@ -4,7 +4,7 @@
       hasPublicationNames && issuesInOnSaleStack && marketplaceContactMethods
     "
   >
-    <BAlert
+    <b-alert
       variant="warning"
       :show="issuesInOnSaleStack.length && !marketplaceContactMethods.length"
       >{{
@@ -15,7 +15,7 @@
         $t(
           "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
         )
-      }}</router-link></BAlert
+      }}</router-link></b-alert
     >
     <Accordion
       v-if="suggestionsNumber"
@@ -93,6 +93,7 @@
 </template>
 
 <script setup lang="ts">
+import { BAlert } from "bootstrap-vue-next";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";

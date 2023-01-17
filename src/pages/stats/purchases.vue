@@ -4,7 +4,7 @@ alias: [/achats]
 
 <template>
   <LinkToCollectionIfNoIssue />
-  <BAlert variant="info" show>
+  <b-alert variant="info" show>
     <div>
       {{
         $t(
@@ -31,17 +31,17 @@ alias: [/achats]
         }}</router-link></template
       ></i18n-t
     >
-  </BAlert>
-  <BButtonGroup>
-    <BButton
+  </b-alert>
+  <b-button-group>
+    <b-button
       v-for="(text, purchaseType) in purchaseTypes"
       :key="purchaseType"
       :pressed="purchaseTypeCurrent === purchaseType"
       @click="purchaseTypeCurrent = purchaseType"
     >
       {{ text }}
-    </BButton>
-  </BButtonGroup>
+    </b-button>
+  </b-button-group>
   <div class="wrapper">
     <bar
       v-if="chartData"
@@ -52,6 +52,7 @@ alias: [/achats]
   </div>
 </template>
 <script setup lang="ts">
+import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-next";
 import {
   BarController,
   BarElement,

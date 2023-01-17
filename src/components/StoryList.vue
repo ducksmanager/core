@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { BBadge } from "bootstrap-vue-3";
+import { BBadge } from "bootstrap-vue-next";
 
 import { StoryDetail } from "~types/StoryDetail";
 

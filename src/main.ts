@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import "v-contextmenu/dist/themes/default.css";
 import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
+import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
 import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@vueuse/head";
 import axios from "axios";
-import BootstrapVue3, { BToastPlugin } from "bootstrap-vue-3";
+import { BToastPlugin } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 import { createPinia } from "pinia";
 // @ts-ignore
@@ -79,7 +79,6 @@ axios.interceptors.response.use(
 const app = createApp(App);
 app.use(i18n);
 app.use(store);
-app.use(BootstrapVue3);
 app.use(BToastPlugin);
 app.use(contextmenu);
 app.use(head);

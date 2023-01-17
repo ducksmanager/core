@@ -30,6 +30,7 @@
 
 <script setup lang="ts">
 import Popper from "@bperel/vue3-popper-teleport";
+import { BCard, BCardHeader } from "bootstrap-vue-next";
 
 const { placement = "top" } = defineProps<{
   placement?: string;

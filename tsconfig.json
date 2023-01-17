@@ -17,7 +17,8 @@
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
-      "vue/ref-macros"
+      "vue/ref-macros",
+      "unplugin-icons/types/vue",
     ],
     "paths": {
       "~/*": ["src/*"],
@@ -28,6 +29,7 @@
     }
   },
   "include": [
+"    components.d.ts",
     "histoire.d.ts",
     "src/**/*.ts",
     "src/**/*.vue",

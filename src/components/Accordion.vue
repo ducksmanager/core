@@ -25,7 +25,13 @@
   </b-card>
 </template>
 <script setup lang="ts">
-import { BCard, BCardBody, BCardText, BCollapse } from "bootstrap-vue-3";
+import {
+  BCard,
+  BCardBody,
+  BCardText,
+  BCollapse,
+  vBToggle,
+} from "bootstrap-vue-next";
 
 const { visible = false } = defineProps<{
   accordionGroupId: string;

@@ -66,7 +66,7 @@ meta:
 
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
-import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-3";
+import { BButton, BCol, BFormInput, BRow } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";

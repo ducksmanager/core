@@ -4,35 +4,35 @@ alias: [/auteurs]
 
 <template>
   <div v-if="watchedAuthors && chartData">
-    <BAlert v-if="!watchedAuthors.length" show variant="warning">
+    <b-alert v-if="!watchedAuthors.length" show variant="warning">
       {{
         $t(
           "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez."
         )
       }}
-    </BAlert>
+    </b-alert>
     <div v-else>
       <template v-if="!watchedAuthorsStoryCount">
         {{ $t("Chargement...") }}
       </template>
-      <BAlert v-else-if="!Object.keys(watchedAuthorsStoryCount).length" show>
+      <b-alert v-else-if="!Object.keys(watchedAuthorsStoryCount).length" show>
         {{
           $t(
             "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !"
           )
         }}
-      </BAlert>
+      </b-alert>
       <div v-else>
-        <BButtonGroup>
-          <BButton
+        <b-button-group>
+          <b-button
             v-for="(text, unitType) in unitTypes"
             :key="unitType"
             :pressed="unitTypeCurrent === unitType"
             @click="unitTypeCurrent = unitType"
           >
             {{ text }}
-          </BButton>
-        </BButtonGroup>
+          </b-button>
+        </b-button-group>
         <bar
           :chart-data="chartData"
           :chart-options="options"
@@ -48,6 +48,7 @@ alias: [/auteurs]
 
 <script setup lang="ts">
 import axios from "axios";
+import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-next";
 import {
   BarController,
   BarElement,

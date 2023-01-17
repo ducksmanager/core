@@ -37,11 +37,11 @@ meta:
         :key="publicationcode"
         class="publication"
       >
-        <b-icon-eye-fill
+        <i-bi-eye-fill
           v-if="!showEdgesForPublication.includes(publicationcode as string)"
           @click="showEdgesForPublication.push(publicationcode as string)"
         />
-        <b-icon-eye-slash-fill
+        <i-bi-eye-slash-fill
           v-else
           @click="
             showEdgesForPublication.splice(
@@ -126,7 +126,6 @@ meta:
 
 <script setup lang="ts">
 import axios from "axios";
-import { BIconEyeFill, BIconEyeSlashFill } from "bootstrap-icons-vue";
 import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";

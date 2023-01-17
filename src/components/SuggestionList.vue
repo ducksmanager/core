@@ -41,7 +41,7 @@
           :title="`${$t('Score')} : ${score}`"
         >
           <div class="d-flex justify-content-center importance-bills">
-            <b-icon-cash
+            <i-bi-cash
               v-for="i in 4 - getImportance(score)"
               :key="i"
               class="me-1"
@@ -77,8 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { BIconCash } from "bootstrap-icons-vue";
-import { BButton, BButtonGroup } from "bootstrap-vue-3";
+import { BButton, BButtonGroup } from "bootstrap-vue-next";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 

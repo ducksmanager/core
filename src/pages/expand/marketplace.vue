@@ -81,7 +81,7 @@ alias: [/agrandir/marketplace]
     </b-alert>
     <span v-else>
       {{ $t("Montrer les magazines en vente par") }}
-      <BFormSelect v-model="userIdFilter" size="sm">
+      <b-form-select v-model="userIdFilter" size="sm">
         <b-form-select-option key="" :value="null">
           {{ $t("Tous les utilisateurs") }}
         </b-form-select-option>
@@ -92,7 +92,7 @@ alias: [/agrandir/marketplace]
         >
           {{ text }}
         </b-form-select-option>
-      </BFormSelect>
+      </b-form-select>
     </span>
     <IssueList
       v-for="(issues, publicationcode) in issuesOnSaleByOthers"
@@ -185,6 +185,14 @@ alias: [/agrandir/marketplace]
 </template>
 
 <script setup lang="ts">
+import {
+  BAlert,
+  BButton,
+  BFormSelect,
+  BFormSelectOption,
+  BModal,
+} from "bootstrap-vue-next";
+
 import Accordion from "~/components/Accordion.vue";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";

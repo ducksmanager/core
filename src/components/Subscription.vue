@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { BButton, BCol, BForm, BRow } from "bootstrap-vue-3";
+import { BButton, BCol, BForm, BRow } from "bootstrap-vue-next";
 
 import { coa } from "~/stores/coa";
 

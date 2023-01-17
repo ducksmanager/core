@@ -18,7 +18,7 @@
         !isPublicationWatchedButNotIssueNumber && toggleWatchedPublication()
       "
     >
-      <b-icon-eyeglasses
+      <i-bi-eyeglasses
         :variant="isWatched ? 'light' : 'secondary'"
         class="mx-1"
       />
@@ -30,8 +30,7 @@
   >
 </template>
 <script setup lang="ts">
-import { BIconEyeglasses } from "bootstrap-icons-vue";
-import { BButton } from "bootstrap-vue-3";
+import { BButton } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";

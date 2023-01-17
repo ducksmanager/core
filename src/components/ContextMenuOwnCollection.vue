@@ -57,7 +57,7 @@
       >
         <template #title>
           {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
-          <b-icon-trash
+          <i-bi-trash
             @click.stop.prevent="editingCopies.splice(copyIndex, 1)"
           />
         </template>
@@ -95,8 +95,8 @@
                   : stateId === 'true'
             "
           >
-            <b-icon-bookmark-check v-if="stateId === 'true'" />
-            <b-icon-bookmark-x v-if="stateId === 'false'" />
+            <i-bi-bookmark-check v-if="stateId === 'true'" />
+            <i-bi-bookmark-x v-if="stateId === 'false'" />
             {{ stateText }}
           </v-contextmenu-item>
           <v-contextmenu-divider v-show="copy.condition !== 'missing'" />
@@ -121,7 +121,7 @@
                 }"
                 @click="copy.purchaseId = stateId === 'unlink' ? -1 : (stateId as 'do_not_change'|number|null)"
               >
-                <b-icon-calendar-x v-if="stateId === 'unlink'" />
+                <i-bi-calendar-x v-if="stateId === 'unlink'" />
                 {{ stateText }}
               </v-contextmenu-item>
               <v-contextmenu-submenu
@@ -130,7 +130,7 @@
                 @mouseleave.prevent="() => {}"
               >
                 <template #title>
-                  <b-icon-calendar v-if="stateId === 'link'" />
+                  <i-bi-calendar v-if="stateId === 'link'" />
                   {{ stateText }}
                 </template>
                 <v-contextmenu-group :title="$t('Date d\'achat')">
@@ -184,14 +184,14 @@
                         copy.newPurchaseContext = false;
                       "
                     >
-                      <b-icon-check icon="check" />
+                      <i-bi-check icon="check" />
                     </b-button>
                     <b-button
                       variant="warning"
                       class="btn-sm"
                       @click.stop="copy.newPurchaseContext = false"
                     >
-                      <b-icon-x icon="x" />
+                      <i-bi-x icon="x" />
                     </b-button>
                   </v-contextmenu-item>
                   <v-contextmenu-item
@@ -213,7 +213,7 @@
                       :title="$t('Supprimer')"
                       @click="deletePurchase(purchaseId)"
                     >
-                      <b-icon-trash />
+                      <i-bi-trash />
                     </b-button>
                   </v-contextmenu-item>
                 </v-contextmenu-group>
@@ -250,10 +250,10 @@
                     : stateId === 'true'
                 "
               >
-                <b-icon-cart v-if="stateId === 'true'" />
-                <b-icon-cart-x v-if="stateId === 'false'" />
-                <b-icon-lock v-if="stateId === 'setAside'" />
-                <b-icon-arrow-bar-right v-if="stateId === 'transfer'" />
+                <i-bi-cart v-if="stateId === 'true'" />
+                <i-bi-cart-x v-if="stateId === 'false'" />
+                <i-bi-lock v-if="stateId === 'setAside'" />
+                <i-bi-arrow-bar-right v-if="stateId === 'transfer'" />
 
                 <span :title="tooltip">{{ stateText }}</span>
               </v-contextmenu-item>
@@ -269,8 +269,8 @@
                 @mouseleave.prevent="() => {}"
               >
                 <template #title>
-                  <b-icon-lock v-if="stateId === 'setAside'" />
-                  <b-icon-arrow-bar-right v-if="stateId === 'transfer'" />
+                  <i-bi-lock v-if="stateId === 'setAside'" />
+                  <i-bi-arrow-bar-right v-if="stateId === 'transfer'" />
                   <div :title="tooltip">{{ stateText }}</div>
                 </template>
                 <v-contextmenu-group :title="stateText">
@@ -325,19 +325,13 @@
 
 <script setup lang="ts">
 import {
-  BIconArrowBarRight,
-  BIconBookmarkCheck,
-  BIconBookmarkX,
-  BIconCalendar,
-  BIconCalendarX,
-  BIconCart,
-  BIconCartX,
-  BIconCheck,
-  BIconLock,
-  BIconTrash,
-  BIconX,
-} from "bootstrap-icons-vue";
-import { BAlert, BNavItem, BTab, BTabs } from "bootstrap-vue-3";
+  BAlert,
+  BButton,
+  BFormInput,
+  BNavItem,
+  BTab,
+  BTabs,
+} from "bootstrap-vue-next";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 

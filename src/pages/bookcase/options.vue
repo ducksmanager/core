@@ -88,7 +88,7 @@ import {
   BDropdown,
   BDropdownItem,
   BFormCheckbox,
-} from "bootstrap-vue-3";
+} from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 import { SlickItem, SlickList } from "vue-slicksort";
 

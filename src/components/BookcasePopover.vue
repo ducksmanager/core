@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { BCol, BRow } from "bootstrap-vue-3";
+import { BCol, BRow } from "bootstrap-vue-next";
 
 import { coa } from "~/stores/coa";
 

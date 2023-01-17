@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { BButton } from "bootstrap-vue-3";
+import { BButton } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";

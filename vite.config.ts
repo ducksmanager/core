@@ -4,6 +4,9 @@ import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
+import IconsResolve from "unplugin-icons/resolver";
+import Icons from "unplugin-icons/vite";
+import { BootstrapVue3Resolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Pages from "vite-plugin-pages";
@@ -48,8 +51,14 @@ export default defineConfig({
       vueTemplate: true,
     }),
 
+    Icons({
+      compiler: "vue3",
+      autoInstall: true,
+    }),
+
     // https://github.com/antfu/vite-plugin-components
     Components({
+      resolvers: [/*BootstrapVue3Resolver(), */ IconsResolve()],
       dirs: ["src/components", "src/components/menus", "src/layouts"],
       dts: true,
     }),
@@ -65,3 +74,8 @@ export default defineConfig({
     },
   },
 });
+function BootstrapVueNextResolver():
+  | import("unplugin-vue-components/types").ComponentResolver
+  | import("unplugin-vue-components/types").ComponentResolver[] {
+  throw new Error("Function not implemented.");
+}

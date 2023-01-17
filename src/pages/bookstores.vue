@@ -170,7 +170,7 @@ meta:
 <script setup lang="ts">
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import axios from "axios";
-import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-3";
+import { BAlert, BButton, BFormInput, BFormTextarea } from "bootstrap-vue-next";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";

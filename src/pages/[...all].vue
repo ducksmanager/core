@@ -200,7 +200,7 @@ meta:
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
-import { BButton, BCol, BRow } from "bootstrap-vue-3";
+import { BButton, BCol, BRow } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";

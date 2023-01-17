@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { BCarousel, BCarouselSlide } from "bootstrap-vue-3";
+import { BCarousel, BCarouselSlide } from "bootstrap-vue-next";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 

@@ -6,14 +6,13 @@
       @mouseover="currentRating = index"
       @click="emit('update:rating', currentRating)"
     >
-      <b-icon-star-fill v-if="index <= currentRating" />
-      <b-icon-star v-else />
+      <i-bi-star-fill v-if="index <= currentRating" />
+      <i-bi-star v-else />
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { BIconStar, BIconStarFill } from "bootstrap-icons-vue";
 const { rating } = defineProps<{
   rating: number;
   maxRating: number;

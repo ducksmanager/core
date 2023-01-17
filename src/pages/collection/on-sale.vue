@@ -19,7 +19,7 @@ alias: [/collection/a-lire]
       issuesInOnSaleStack && marketplaceContactMethods && hasPublicationNames
     "
   >
-    <BAlert
+    <b-alert
       variant="warning"
       :show="issuesInOnSaleStack.length && !marketplaceContactMethods.length"
       >{{
@@ -30,7 +30,7 @@ alias: [/collection/a-lire]
         $t(
           "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
         )
-      }}</router-link></BAlert
+      }}</router-link></b-alert
     >
     <IssueList
       v-for="publicationcode in publicationCodes"
@@ -45,6 +45,7 @@ alias: [/collection/a-lire]
 </template>
 
 <script setup lang="ts">
+import { BAlert } from "bootstrap-vue-next";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";

@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { BAlert, BButton } from "bootstrap-vue-3";
+import { BAlert, BButton } from "bootstrap-vue-next";
 import { watch } from "vue";
 import { RouterLink } from "vue-router";
 
