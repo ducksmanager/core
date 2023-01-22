@@ -8,7 +8,7 @@
     }}
   </li>
   <b-alert
-    v-if="editingCopies && !editingCopies.copies.length"
+    v-if="initialCopies && !initialCopies.copies.length"
     class="text-center m-0"
     show
     variant="danger"
@@ -30,7 +30,7 @@
     }}
   </b-alert>
   <b-alert
-    v-if="editingIssues && !selectedIssues.length"
+    v-if="initialIssues && !selectedIssues.length"
     class="text-center m-0"
     show
     variant="warning"
@@ -51,29 +51,24 @@
         }
       "
     >
-      <template v-if="editingCopies">
+      <template v-if="initialCopies">
         <b-tab
-          v-for="(copy, copyIndex) in editingCopies.copies"
+          v-for="(copy, copyIndex) in initialCopies.copies"
           :key="`copy-${copyIndex}`"
         >
           <template #title>
             {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
             <i-bi-trash
-              @click.stop.prevent="editingCopies!.copies.splice(copyIndex, 1)"
+              @click.stop.prevent="initialCopies!.copies.splice(copyIndex, 1)"
             /> </template
           ><IssueCopyEdit
             :copy="{ ...copy, copyIndex }"
-            @update="
-              editingCopies!.copies[copyIndex] = $event.newCopy
-            " /></b-tab
+            @update="editedCopies!.copies[copyIndex] = $event" /></b-tab
       ></template>
 
       <b-tab v-else key="copy-0">
         <template #title> {{ $t("Exemplaire") }} 0</template>
-        <IssueCopyEdit
-          :copy="editingIssues"
-          @update="editingIssues = $event.newCopy"
-        />
+        <IssueCopyEdit :copy="initialIssues" @update="editedIssues = $event" />
       </b-tab>
       <template v-if="!hasMaxCopies" #tabs-end>
         <b-nav-item
@@ -81,12 +76,12 @@
           class="p-0"
           role="presentation"
           @click.prevent="
-            editingCopies!.copies.push({
+            initialCopies!.copies.push({
               id: null,
               country: publicationcode.split('/')[0],
               magazine: publicationcode.split('/')[1],
               publicationcode,
-              issuenumber: editingCopies!.issuenumber,
+              issuenumber: initialCopies!.issuenumber,
               isSubscription: false,
               userId: user!.id,
               creationDate: new Date(),
@@ -126,7 +121,11 @@ import {
   IssueWithPublicationcodeOptionalId,
 } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
-import { SaleState } from "~types/CollectionUpdate";
+import {
+  CollectionUpdateMultipleIssues,
+  CollectionUpdateSingleIssue,
+  SaleState,
+} from "~types/CollectionUpdate";
 
 const user = $computed(() => collectionStore().user);
 let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{
@@ -137,6 +136,14 @@ let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{
 }>();
 const emit = defineEmits<{
   (e: "clear-selection"): void;
+  (
+    e: "launch-modal",
+    options: {
+      contactMethod: string;
+      sellerId: number;
+    }
+  ): void;
+  (e: "close"): void;
 }>();
 const { t: $t } = useI18n();
 
@@ -154,29 +161,11 @@ const defaultIssueState = {
   purchaseId: undefined,
 };
 
-let editingCopies = $computed(() => {
-  if (!isSingleIssueSelected) {
-    return null;
-  } else {
-    return {
-      publicationcode,
-      issuenumber: selectedIssues[0],
-      copies: selectedIssueIdsByIssuenumber[selectedIssues[0]],
-    };
-  }
-});
+let initialIssues = $ref(null as CollectionUpdateMultipleIssues | null);
+let editedIssues = $ref(null as CollectionUpdateMultipleIssues | null);
 
-let editingIssues = $computed(() => {
-  if (isSingleIssueSelected) {
-    return null;
-  } else {
-    return {
-      publicationcode,
-      issuenumbers: selectedIssues,
-      ...defaultIssueState,
-    };
-  }
-});
+let initialCopies = $ref(null as CollectionUpdateSingleIssue | null);
+let editedCopies = $ref(null as CollectionUpdateSingleIssue | null);
 
 let currentCopyIndex = $ref(0 as number);
 
@@ -187,11 +176,11 @@ const selectedIssues = $computed(() =>
 let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
 const hasNoCopies = $computed(
   () =>
-    (editingCopies && editingCopies.issuenumber === null) ||
-    (editingIssues && !editingIssues.issuenumbers.length)
+    (initialCopies && initialCopies.issuenumber === null) ||
+    (initialIssues && !initialIssues.issuenumbers.length)
 );
 const hasMaxCopies = $computed(
-  () => editingCopies && editingCopies.copies.length >= 3
+  () => initialCopies && initialCopies.copies.length >= 3
 );
 const hasMultipleCopiesAndMultipleIssues = $computed(
   () =>
@@ -204,9 +193,9 @@ const updateSelectedIssues = async () => {
   const isIssueTransfer = (isOnSale: SaleState | undefined) =>
     typeof isOnSale === "object" && "transferTo" in isOnSale;
 
-  const hasIssuesToTransfer = editingIssues
-    ? isIssueTransfer(editingIssues.isOnSale)
-    : editingCopies!.copies.some(({ isOnSale }) => isIssueTransfer(isOnSale));
+  const hasIssuesToTransfer = initialIssues
+    ? isIssueTransfer(initialIssues.isOnSale)
+    : initialCopies!.copies.some(({ isOnSale }) => isIssueTransfer(isOnSale));
   if (hasIssuesToTransfer) {
     const isConfirmed = confirm(
       $t(
@@ -222,10 +211,10 @@ const updateSelectedIssues = async () => {
 };
 
 const updateIssues = async () => {
-  if (editingIssues) {
-    await collectionStore().updateCollectionMultipleIssues(editingIssues);
-  } else if (editingCopies) {
-    await collectionStore().updateCollectionSingleIssue(editingCopies);
+  if (initialIssues) {
+    await collectionStore().updateCollectionMultipleIssues(initialIssues);
+  } else if (initialCopies) {
+    await collectionStore().updateCollectionSingleIssue(initialCopies);
   }
   await marketplace().loadIssuesOnSaleByOthers(true);
   await marketplace().loadIssueRequestsAsSeller(true);
@@ -233,12 +222,34 @@ const updateIssues = async () => {
 };
 
 watch(
-  () => editingCopies && editingCopies.copies.length,
+  () => initialCopies && initialCopies.copies.length,
   (newValue) => {
     if (newValue !== null) {
       currentCopyIndex = newValue - 1;
     }
   }
+);
+
+watch(
+  () => selectedIssues,
+  (newValue) => {
+    if (isSingleIssueSelected) {
+      editedIssues = initialIssues = null;
+      editedCopies = initialCopies = {
+        publicationcode,
+        issuenumber: newValue[0],
+        copies: selectedIssueIdsByIssuenumber[newValue[0]],
+      };
+    } else {
+      editedCopies = initialCopies = null;
+      editedIssues = initialIssues = {
+        publicationcode,
+        issuenumbers: selectedIssues,
+        ...defaultIssueState,
+      };
+    }
+  },
+  { immediate: true }
 );
 </script>
 

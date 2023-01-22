@@ -5,16 +5,16 @@
       :key="`condition-${value}`"
       :hide-on-click="false"
       class="clickable"
-      :class="{ selected: condition === (value || 'missing') }"
-      @click="condition = value || 'missing'"
+      :class="{ selected: newCopyState.condition === (value || 'missing') }"
+      @click="newCopyState.condition = value || 'missing'"
     >
       <template v-if="value === undefined" />
       <Condition v-else :value="value" />&nbsp;{{ labelContextMenu }}
     </v-contextmenu-item>
-    <v-contextmenu-divider v-show="condition !== 'missing'" />
+    <v-contextmenu-divider v-show="newCopyState.condition !== 'missing'" />
   </v-contextmenu-group>
   <v-contextmenu-group
-    v-show="condition !== 'missing'"
+    v-show="newCopyState.condition !== 'missing'"
     :title="$t('Pile de lecture')"
   >
     <v-contextmenu-item
@@ -22,17 +22,20 @@
       :key="`copy-to-read-state-${String(stateId)}`"
       :hide-on-click="false"
       :class="`clickable read-state ${stateId} ${
-        isToRead === stateId ? 'selected' : ''
+        newCopyState.isToRead === stateId ? 'selected' : ''
       }`"
-      @click="isToRead = stateId === undefined ? undefined : stateId === true"
+      @click="
+        newCopyState.isToRead =
+          stateId === undefined ? undefined : stateId === true
+      "
     >
       <i-bi-bookmark-check v-if="stateId === true" />
       <i-bi-bookmark-x v-if="stateId === false" />
       {{ stateText }}
     </v-contextmenu-item>
-    <v-contextmenu-divider v-show="condition !== 'missing'" />
+    <v-contextmenu-divider v-show="newCopyState.condition !== 'missing'" />
   </v-contextmenu-group>
-  <template v-if="condition !== 'missing'">
+  <template v-if="newCopyState.condition !== 'missing'">
     <v-contextmenu-group :title="$t('Date d\'achat')">
       <template
         v-for="{ label: stateText, value: stateId } in purchaseStates"
@@ -44,12 +47,12 @@
           :hide-on-click="false"
           class="clickable purchase-state"
           :class="{
-            selected: purchaseId === stateId,
+            selected: newCopyState.purchaseId === stateId,
             'v-context__sub': String(stateId) === 'link',
             [`state-${stateId}`]: true,
           }"
           @click="
-            purchaseId =
+            newCopyState.purchaseId =
               stateId === null ? -1 : (stateId as undefined | number | null)
           "
         >
@@ -130,9 +133,9 @@
               :hide-on-click="false"
               class="clickable purchase-date"
               :class="{
-                selected: purchaseId === id,
+                selected: newCopyState.purchaseId === id,
               }"
-              @click.stop="purchaseId = id"
+              @click.stop="newCopyState.purchaseId = id"
             >
               <small class="date">{{ date }}</small>
               <div class="mx-2">
@@ -158,7 +161,9 @@
           tooltip,
           disabled,
         } in marketplaceStates"
-        :key="`copy-${copyState.copyIndex}-marketplace-state-${stateId}`"
+        :key="`copy-${copyState.copyIndex}-marketplace-state-${
+          JSON.stringify(stateId) || stateId
+        }`"
       >
         <v-contextmenu-item
           v-if="
@@ -169,12 +174,12 @@
           :class="{
             clickable: !disabled,
             disabled,
-            selected: isOnSale === stateId,
+            selected: newCopyState.isOnSale === stateId,
             [`state-${stateId}`]: true,
           }"
           @click="
-            isOnSale = disabled
-              ? isOnSale
+            newCopyState.isOnSale = disabled
+              ? newCopyState.isOnSale
               : stateId === undefined
               ? undefined
               : stateId === true
@@ -183,10 +188,16 @@
           <i-bi-cart v-if="stateId === true" />
           <i-bi-cart-x v-if="stateId === false" />
           <i-bi-lock
-            v-if="typeof isOnSale === 'object' && 'setAsideFor' in isOnSale"
+            v-if="
+              typeof newCopyState.isOnSale === 'object' &&
+              'setAsideFor' in newCopyState.isOnSale
+            "
           />
           <i-bi-arrow-bar-right
-            v-if="typeof isOnSale === 'object' && 'transferTo' in isOnSale"
+            v-if="
+              typeof newCopyState.isOnSale === 'object' &&
+              'transferTo' in newCopyState.isOnSale
+            "
           />
 
           <span :title="tooltip">{{ stateText }}</span>
@@ -197,16 +208,23 @@
           class="cursor-help"
           :class="{
             clickable: true,
-            selected: String(isOnSale).indexOf(String(stateId)) === 0,
+            selected:
+              String(newCopyState.isOnSale).indexOf(String(stateId)) === 0,
           }"
           @mouseleave.prevent="() => {}"
         >
           <template #title>
             <i-bi-lock
-              v-if="typeof isOnSale === 'object' && 'setAsideFor' in isOnSale"
+              v-if="
+                typeof newCopyState.isOnSale === 'object' &&
+                'setAsideFor' in newCopyState.isOnSale
+              "
             />
             <i-bi-arrow-bar-right
-              v-if="typeof isOnSale === 'object' && 'transferTo' in isOnSale"
+              v-if="
+                typeof newCopyState.isOnSale === 'object' &&
+                'transferTo' in newCopyState.isOnSale
+              "
             />
             <div :title="tooltip">{{ stateText }}</div>
           </template>
@@ -218,14 +236,14 @@
               class="clickable"
               :class="{
                 selected:
-                  typeof isOnSale === 'object' &&
-                  (('transferTo' in isOnSale &&
-                    isOnSale.transferTo === userId) ||
-                    ('setAsideFor' in isOnSale &&
-                      isOnSale.setAsideFor === userId)),
+                  typeof newCopyState.isOnSale === 'object' &&
+                  (('transferTo' in newCopyState.isOnSale &&
+                    newCopyState.isOnSale.transferTo === userId) ||
+                    ('setAsideFor' in newCopyState.isOnSale &&
+                      newCopyState.isOnSale.setAsideFor === userId)),
               }"
               @click.prevent="
-                isOnSale =
+                newCopyState.isOnSale =
                   typeof stateId === 'object' && 'transferTo' in stateId
                     ? { transferTo: userId }
                     : { setAsideFor: userId }
@@ -259,6 +277,10 @@ const { copy: copyState } = defineProps<{
   copy: SingleCopy | CollectionUpdateMultipleIssues;
 }>();
 
+let newCopyState = $ref(
+  copyState as SingleCopy | CollectionUpdateMultipleIssues
+);
+
 const emit = defineEmits<{
   (e: "update", updatedCopy: SingleCopy | CollectionUpdateMultipleIssues): void;
 }>();
@@ -278,10 +300,6 @@ const newPurchaseDefault: NewPurchase = {
 };
 
 let newPurchase = $ref(newPurchaseDefault);
-let condition = $ref(copyState.condition);
-let purchaseId = $ref(copyState.purchaseId);
-let isOnSale = $ref(copyState.isOnSale);
-let isToRead = $ref(copyState.isToRead);
 
 const { t: $t } = useI18n();
 const isSaleDisabledGlobally = $computed(
@@ -425,8 +443,16 @@ const deletePurchase = async (id: number) => {
 
 watch(
   () => copyState,
+  (copyState) => {
+    newCopyState = copyState;
+  },
+  { immediate: true }
+);
+watch(
+  () => newCopyState,
   (newCopyState) => {
     emit("update", newCopyState);
-  }
+  },
+  { deep: true }
 );
 </script>
