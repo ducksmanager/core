@@ -1,30 +1,33 @@
-export interface CopyState {
+export type SaleState =
+  | boolean
+  | { transferTo: number }
+  | { setAsideFor: number };
+
+export type SingleCopyState = {
   condition: string;
-  isToRead: "do_not_change" | boolean;
-  isOnSale: "do_not_change" | string | boolean;
-  purchaseId: "do_not_change" | number | null;
-}
+  isToRead: boolean;
+  isOnSale: SaleState;
+  purchaseId: number | null;
+};
 
-export interface CopyStateMultiple {
-  condition: string[];
-  isToRead: ("do_not_change" | boolean)[];
-  isOnSale: (string | boolean)[];
-  purchaseId: ("do_not_change" | number | null)[];
-}
+export type CopyStateWithUndefined = {
+  condition: string | undefined;
+  isToRead: boolean | undefined;
+  isOnSale: SaleState | undefined;
+  purchaseId: number | null | undefined;
+};
 
-export interface CollectionUpdate {
+export type CollectionUpdateSingleIssue = {
   publicationcode: string;
-  issueIdsByIssuenumber: { [issuenumber: string]: number[] };
-  condition: string | string[];
-  isOnSale: string | boolean | null | (string | boolean | null)[];
-  isToRead:
-    | "do_not_change"
-    | boolean
-    | null
-    | ("do_not_change" | boolean | null)[];
-  purchaseId:
-    | "do_not_change"
-    | number
-    | null
-    | ("do_not_change" | number | null)[];
-}
+  issuenumber: string;
+  copies: SingleCopyState[];
+};
+
+export type CollectionUpdateMultipleIssues = {
+  publicationcode: string;
+  issuenumbers: string[];
+  condition: undefined | string;
+  isToRead: undefined | boolean;
+  isOnSale: undefined | SaleState;
+  purchaseId: undefined | number | null;
+};

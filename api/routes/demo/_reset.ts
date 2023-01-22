@@ -3,7 +3,8 @@ import * as fs from "fs";
 import path from "path";
 
 import { PrismaClient, user } from "~prisma_clients/client_dm";
-import { conditionToEnum } from "~routes/collection/issues";
+
+import { conditionToEnum } from "../collection/issues/_common";
 
 const prisma = new PrismaClient();
 
