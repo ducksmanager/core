@@ -107,6 +107,7 @@ const { selectedIssueIdsByIssuenumber } = defineProps<{
   selectedIssueIdsByIssuenumber: {
     [issuenumber: string]: IssueWithPublicationcode[];
   };
+  publicationcode: string;
 }>();
 const emit = defineEmits<{
   (

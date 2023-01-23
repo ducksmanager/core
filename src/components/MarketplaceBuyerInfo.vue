@@ -20,7 +20,7 @@
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const props = defineProps<{
+const { publicationcode, issuenumber } = defineProps<{
   publicationcode: string;
   issuenumber: string;
 }>();
@@ -35,8 +35,8 @@ const sentRequests = $computed(() =>
 );
 
 const issuesOnSaleByOthers = $computed(() =>
-  (marketplace().issuesOnSaleByOthers?.[props.publicationcode] || []).filter(
-    ({ issuenumber }) => issuenumber === props.issuenumber
+  (marketplace().issuesOnSaleByOthers?.[publicationcode] || []).filter(
+    ({ issuenumber: onSaleIssuenumber }) => onSaleIssuenumber === issuenumber
   )
 );
 </script>
