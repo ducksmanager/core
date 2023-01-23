@@ -11,7 +11,7 @@ export type SingleCopyState = {
 };
 
 export type CopyStateWithUndefined = {
-  condition: string | undefined;
+  condition: string | null | undefined;
   isToRead: boolean | undefined;
   isOnSale: SaleState | undefined;
   purchaseId: number | null | undefined;
@@ -26,8 +26,4 @@ export type CollectionUpdateSingleIssue = {
 export type CollectionUpdateMultipleIssues = {
   publicationcode: string;
   issuenumbers: string[];
-  condition: undefined | string;
-  isToRead: undefined | boolean;
-  isOnSale: undefined | SaleState;
-  purchaseId: undefined | number | null;
-};
+} & CopyStateWithUndefined;

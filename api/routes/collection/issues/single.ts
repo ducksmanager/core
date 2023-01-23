@@ -20,7 +20,7 @@ const addOrChangeCopies = async (
   userId: number,
   publicationcode: string,
   issuenumber: string,
-  conditions: string[],
+  conditions: (string | null)[],
   areOnSale: (boolean | undefined)[],
   areToRead: (boolean | undefined)[],
   purchaseIds: (number | null)[]
@@ -29,14 +29,14 @@ const addOrChangeCopies = async (
   const [country, magazine] = publicationcode.split("/");
 
   const insertOperations = [...new Set(conditions.keys())]
-    .filter((copyNumber) => !["missing"].includes(conditions[copyNumber]))
+    .filter((copyNumber) => conditions[copyNumber] !== null)
     .map((copyNumber) =>
       prisma.issue.create({
         data: {
           country,
           magazine,
           issuenumber,
-          condition: conditionToEnum(conditions[copyNumber]),
+          condition: conditionToEnum(conditions[copyNumber]!),
           isOnSale:
             areOnSale[copyNumber] !== undefined
               ? (areOnSale[copyNumber] as boolean)

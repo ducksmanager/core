@@ -137,7 +137,7 @@ export const post = [
       });
     }
 
-    if (condition === "missing") {
+    if (condition === null) {
       await deleteIssues(userId, publicationcode, issuenumbers);
       return res.json({});
     }

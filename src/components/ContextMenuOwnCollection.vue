@@ -244,7 +244,7 @@ watch(
       editedCopies = initialCopies = null;
       editedIssues = initialIssues = {
         publicationcode,
-        issuenumbers: selectedIssues,
+        issuenumbers: newValue,
         ...defaultIssueState,
       };
     }

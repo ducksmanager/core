@@ -5,16 +5,16 @@
       :key="`condition-${value}`"
       :hide-on-click="false"
       class="clickable"
-      :class="{ selected: newCopyState.condition === (value || 'missing') }"
-      @click="newCopyState.condition = value || 'missing'"
+      :class="{ selected: newCopyState.condition === value }"
+      @click="newCopyState.condition = value"
     >
       <template v-if="value === undefined" />
       <Condition v-else :value="value" />&nbsp;{{ labelContextMenu }}
     </v-contextmenu-item>
-    <v-contextmenu-divider v-show="newCopyState.condition !== 'missing'" />
+    <v-contextmenu-divider v-show="newCopyState.condition !== null" />
   </v-contextmenu-group>
   <v-contextmenu-group
-    v-show="newCopyState.condition !== 'missing'"
+    v-show="newCopyState.condition !== null"
     :title="$t('Pile de lecture')"
   >
     <v-contextmenu-item
@@ -33,9 +33,9 @@
       <i-bi-bookmark-x v-if="stateId === false" />
       {{ stateText }}
     </v-contextmenu-item>
-    <v-contextmenu-divider v-show="newCopyState.condition !== 'missing'" />
+    <v-contextmenu-divider v-show="newCopyState.condition !== null" />
   </v-contextmenu-group>
-  <template v-if="newCopyState.condition !== 'missing'">
+  <template v-if="newCopyState.condition !== null">
     <v-contextmenu-group :title="$t('Date d\'achat')">
       <template
         v-for="{ label: stateText, value: stateId } in purchaseStates"
@@ -426,7 +426,7 @@ const issueIds = $computed((): (number | null)[] =>
             .find(
               (_, copyIndex) =>
                 copyIndex === (copyState as SingleCopy).copyIndex
-            )!.id || null,
+            )?.id || null,
         ]
       : collectionForCurrentPublication
           ?.filter(({ issuenumber }) => issuenumbers.includes(issuenumber))
