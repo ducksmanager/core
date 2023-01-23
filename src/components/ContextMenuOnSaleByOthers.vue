@@ -126,7 +126,7 @@ const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
 const issueIds = $computed(() =>
   Object.values(selectedIssueIdsByIssuenumber).reduce(
-    (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
+    (acc, issues) => [...acc, ...issues.map(({ id }) => id!)],
     [] as number[]
   )
 );

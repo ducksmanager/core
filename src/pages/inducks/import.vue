@@ -135,7 +135,9 @@ meta:
           :key="String(publicationcode).replace('/', '-')"
           :visible="expandedPublicationAccordion === publicationcode"
           accordion-group-id="import-accordion"
-          @bv::toggle::collapse="expandedPublicationAccordion = publicationcode as string"
+          @bv::toggle::collapse="
+            expandedPublicationAccordion = publicationcode as string
+          "
         >
           <template #header>
             <Publication
@@ -369,15 +371,13 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await routes["POST /collection/issues"](axios, {
+      await routes["POST /collection/issues/multiple"](axios, {
         publicationcode,
-        issueIdsByIssuenumber: importableIssuesByPublicationCode[
-          publicationcode
-        ].reduce((acc, issuenumber) => ({ ...acc, [issuenumber]: 0 }), {}),
+        issuenumbers: importableIssuesByPublicationCode[publicationcode],
         condition: issueDefaultCondition,
-        isOnSale: "do_not_change",
-        isToRead: "do_not_change",
-        purchaseId: "do_not_change",
+        isOnSale: undefined,
+        isToRead: undefined,
+        purchaseId: undefined,
       });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;

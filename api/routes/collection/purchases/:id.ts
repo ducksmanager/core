@@ -4,7 +4,7 @@ import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
 
-import { getUserPurchase } from "../issues";
+import { getUserPurchase } from "../issues/_common";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();

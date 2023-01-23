@@ -11,7 +11,10 @@ import {
   subscription,
   user,
 } from "~prisma_clients/client_dm";
-import { CollectionUpdate } from "~types/CollectionUpdate";
+import {
+  CollectionUpdateMultipleIssues,
+  CollectionUpdateSingleIssue,
+} from "~types/CollectionUpdate";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
 import routes from "~types/routes";
@@ -23,6 +26,13 @@ import { coa } from "./coa";
 
 export type IssueWithPublicationcode = issue & {
   publicationcode: string;
+};
+
+export type IssueWithPublicationcodeOptionalId = Omit<
+  IssueWithPublicationcode,
+  "id"
+> & {
+  id: number | null;
 };
 
 export type SubscriptionTransformed = Omit<
@@ -93,14 +103,11 @@ export const collection = defineStore("collection", {
     issuesByIssueCode: ({ collection }) =>
       collection?.reduce((acc, issue) => {
         const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-        if (!acc[issuecode]) {
-          acc[issuecode] = [];
-        }
         return {
           ...acc,
-          [issuecode]: [...acc[issuecode], issue],
+          [issuecode]: [...(acc[issuecode] || []), issue],
         };
-      }, {} as { [issuecode: string]: issue[] }),
+      }, {} as { [issuecode: string]: IssueWithPublicationcode[] }),
 
     duplicateIssues(): {
       [issuecode: string]: IssueWithPublicationcode[];
@@ -306,8 +313,12 @@ export const collection = defineStore("collection", {
   },
 
   actions: {
-    async updateCollection(data: CollectionUpdate) {
-      await routes["POST /collection/issues"](axios, data);
+    async updateCollectionSingleIssue(data: CollectionUpdateSingleIssue) {
+      await routes["POST /collection/issues/single"](axios, data);
+      await this.loadCollection(true);
+    },
+    async updateCollectionMultipleIssues(data: CollectionUpdateMultipleIssues) {
+      await routes["POST /collection/issues/multiple"](axios, data);
       await this.loadCollection(true);
     },
 

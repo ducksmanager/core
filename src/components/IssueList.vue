@@ -240,7 +240,6 @@
       :key="contextMenuKey"
       :publicationcode="publicationcode"
       :selected-issue-ids-by-issuenumber="copiesBySelectedIssuenumber"
-      :selected-issues="selected"
       @clear-selection="
         contextmenu.hide();
         selected = [];
@@ -351,14 +350,14 @@ const filteredUserCopies = $computed(() =>
 const copiesBySelectedIssuenumber = $computed(() =>
   selected.reduce((acc, issueKey) => {
     const [issuenumber, maybeIssueId] = issueKey.split("-id-");
-    const issueId = (maybeIssueId && parseInt(maybeIssueId)) || undefined;
+    const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
     return {
       ...acc,
       [issuenumber]: [
         ...(acc[issuenumber] || []),
         ...filteredUserCopies.filter(
           ({ id: copyId, issuenumber: copyIssueNumber }) =>
-            issueId !== undefined
+            issueId !== null
               ? issueId === copyId
               : issuenumber === copyIssueNumber
         ),
@@ -441,12 +440,9 @@ const deletePublicationIssues = async (
   issuesToDelete: IssueWithPublicationcode[]
 ) => {
   contextmenu.hide();
-  await collectionStore().updateCollection({
+  await collectionStore().updateCollectionMultipleIssues({
     publicationcode,
-    issueIdsByIssuenumber: issuesToDelete.reduce(
-      (acc, { issuenumber }) => ({ ...acc, [issuenumber]: [] }),
-      {}
-    ),
+    issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
     condition:
       conditions.find(({ value }) => value === null)?.dbValue || "indefini",
     isToRead: false,

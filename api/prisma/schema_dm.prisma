@@ -119,22 +119,21 @@ model issue {
   issuenumber    String          @map("Numero") @db.VarChar(12)
   // issueNumberNoSpace String?         @map("Numero_nospace") @db.VarChar(12) @ignored
   condition      issue_condition @default(indefini) @map("Etat")
-  purchaseId     Int             @default(-1) @map("ID_Acquisition")
+  purchaseId     Int?            @default(-1) @map("ID_Acquisition")
   isOnSale       Boolean         @map("AV")
   isToRead       Boolean         @default(false) @map("A_Lire") @db.TinyInt
-  isSubscription Int             @default(0) @map("Abonnement") @db.TinyInt
+  isSubscription Boolean         @default(false) @map("Abonnement") @db.TinyInt
   userId         Int             @map("ID_Utilisateur")
   creationDate   DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
   // issuecode          String?         @db.VarChar(25)
+  // @@index([issuecode, userId], map: "numeros_issuecode_ID_Utilisateur_index")
+  // @@index([issuecode], map: "numeros_issuecode_index")
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
   // @@index([country, magazine, issueNumberNoSpace, userId], map: "Numero_nospace_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
   @@index([creationDate, country, magazine, issuenumber], map: "Pays_Magazine_Numero_DateAjout")
   @@index([userId], map: "Utilisateur")
-  // @@index([issuecode, userId], map: "numeros_issuecode_ID_Utilisateur_index")
-  // @@index([issuecode], map: "numeros_issuecode_index")
-
   @@map("numeros")
 }
 
@@ -326,10 +325,10 @@ model userSuggestionNotification {
 }
 
 model requestedIssue {
-   id                Int     @id @default(autoincrement()) @map("ID")
-   issueId           Int @map("ID_Numero")
-   buyerId           Int @map("ID_Acheteur")
-   isBooked          Boolean @default(false) @map("est_reserve")
+  id       Int     @id @default(autoincrement()) @map("ID")
+  issueId  Int     @map("ID_Numero")
+  buyerId  Int     @map("ID_Acheteur")
+  isBooked Boolean @default(false) @map("est_reserve")
 
   @@unique([issueId, buyerId], map: "numeros_demandes_ID_Numero_ID_Acheteur_uindex")
   @@index([buyerId], map: "numeros_demandes_users_ID_fk")

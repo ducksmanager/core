@@ -58,7 +58,8 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
       purchasesById &&
       collectionStore()
         .collection?.reduce((acc, issue) => {
-          const existingPurchase = purchasesById[issue.purchaseId];
+          const existingPurchase =
+            issue.purchaseId && purchasesById[issue.purchaseId];
           const purchase = existingPurchase
             ? {
                 date: existingPurchase.date,
