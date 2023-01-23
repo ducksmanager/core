@@ -3,7 +3,7 @@ alias: [/collection/a-lire]
 </route>
 
 <template>
-  <b-alert variant="info" show
+  <b-alert variant="info" :model-value="true"
     ><i18n-t
       keypath="Sur cette page les numéros que vous avez indiqué comme 'A vendre' sont listés. Rendez vous sur la page {link_to_marketplace} pour consulter la liste des numéros que les autres utilisateurs DucksManager ont mis en vente."
       ><template #link_to_marketplace
@@ -21,7 +21,9 @@ alias: [/collection/a-lire]
   >
     <b-alert
       variant="warning"
-      :show="issuesInOnSaleStack.length && !marketplaceContactMethods.length"
+      :model-value="
+        issuesInOnSaleStack.length && !marketplaceContactMethods.length
+      "
       >{{
         $t(
           "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
@@ -87,5 +89,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

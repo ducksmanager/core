@@ -4,7 +4,11 @@ alias: [/auteurs]
 
 <template>
   <div v-if="watchedAuthors && chartData">
-    <b-alert v-if="!watchedAuthors.length" show variant="warning">
+    <b-alert
+      v-if="!watchedAuthors.length"
+      :model-value="true"
+      variant="warning"
+    >
       {{
         $t(
           "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez."
@@ -15,7 +19,10 @@ alias: [/auteurs]
       <template v-if="!watchedAuthorsStoryCount">
         {{ $t("Chargement...") }}
       </template>
-      <b-alert v-else-if="!Object.keys(watchedAuthorsStoryCount).length" show>
+      <b-alert
+        v-else-if="!Object.keys(watchedAuthorsStoryCount).length"
+        :model-value="true"
+      >
         {{
           $t(
             "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !"

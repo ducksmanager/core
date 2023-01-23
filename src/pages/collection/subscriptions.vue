@@ -4,7 +4,7 @@ alias: [/collection/abonnements]
 
 <template>
   <div v-if="subscriptions && hasPublicationNames">
-    <b-alert variant="info" show>
+    <b-alert variant="info" :model-value="true">
       {{
         $t(
           "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie."
@@ -24,7 +24,7 @@ alias: [/collection/abonnements]
         currentAssociatedPublication, idx
       ) in currentAssociatedPublications"
       :key="`associated-pub-${JSON.stringify(currentAssociatedPublication)}`"
-      show
+      :model-value="true"
       variant="info"
     >
       {{
@@ -203,5 +203,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

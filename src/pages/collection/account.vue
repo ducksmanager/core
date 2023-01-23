@@ -9,7 +9,9 @@ alias: [/collection/compte]
   >
     <b-row>
       <b-col id="email" cols="12" md="6">
-        <b-alert variant="warning" :show="!marketplaceContactMethods.length"
+        <b-alert
+          variant="warning"
+          :model-value="!marketplaceContactMethods.length"
           >{{
             $t(
               "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
@@ -117,7 +119,7 @@ alias: [/collection/compte]
     </h5>
     <b-row>
       <b-col cols="12" md="6">
-        <b-alert variant="info" show class="mb-0">
+        <b-alert variant="info" :model-value="true" class="mb-0">
           <template v-if="hasRequestedPresentationSentenceUpdate">
             {{
               $t(
@@ -186,7 +188,7 @@ alias: [/collection/compte]
     <b-button variant="success" size="lg" type="submit">
       {{ $t("Valider") }}
     </b-button>
-    <b-alert v-if="error === null" show variant="success">
+    <b-alert v-if="error === null" :model-value="true" variant="success">
       {{ $t("OK") }} !
     </b-alert>
 

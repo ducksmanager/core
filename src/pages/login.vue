@@ -15,7 +15,7 @@ meta:
         <h1 class="h3 mb-3 fw-normal">
           {{ $t("Connexion") }}
         </h1>
-        <b-alert v-if="error" show variant="danger">
+        <b-alert v-if="error" :model-value="true" variant="danger">
           {{
             $t(
               "Les identifiants que vous avez entré sont invalides, veuillez réessayer."
@@ -112,6 +112,4 @@ watch(
 );
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

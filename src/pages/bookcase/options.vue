@@ -19,7 +19,13 @@ alias: [/bibliotheque/options]
               backgroundImage: `url('/images/textures/${bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']}.jpg'`,
             }"
           >
-            {{ textureWithoutSuperType(bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']) }}
+            {{
+              textureWithoutSuperType(
+                bookcaseOptions.textures[
+                  textureType as "bookshelf" | "bookcase"
+                ]
+              )
+            }}
           </div>
         </template>
         <b-dropdown-item
@@ -28,7 +34,10 @@ alias: [/bibliotheque/options]
           :style="{
             backgroundImage: `url('/images/textures/${texture}.jpg'`,
           }"
-          @click="bookcaseOptions!.textures[textureType as 'bookshelf'|'bookcase'] = texture"
+          @click="
+            bookcaseOptions!.textures[textureType as 'bookshelf' | 'bookcase'] =
+              texture
+          "
         >
           {{ textureWithoutSuperType(texture) }}
         </b-dropdown-item>
@@ -67,7 +76,7 @@ alias: [/bibliotheque/options]
         />
       </slick-item>
     </slick-list>
-    <b-alert variant="danger" :show="error">
+    <b-alert variant="danger" :model-value="error">
       {{ $t("Une erreur s'est produite.") }}
     </b-alert>
     <b-button

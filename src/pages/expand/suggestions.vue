@@ -4,7 +4,7 @@ alias: [/agrandir/suggestions]
 
 <template>
   <div v-if="collection">
-    <b-alert variant="info" show>
+    <b-alert variant="info" :model-value="true">
       {{ $t("DucksManager se base sur les") }}
       <router-link to="/stats/authors">{{
         $t("notes que vous attribuez à vos auteurs préférés")
@@ -39,7 +39,7 @@ alias: [/agrandir/suggestions]
     </div>
     <b-alert
       v-else-if="!watchedAuthorsWithNotation!.length"
-      show
+      :model-value="true"
       variant="warning"
     >
       {{
@@ -48,7 +48,7 @@ alias: [/agrandir/suggestions]
         )
       }}
     </b-alert>
-    <b-alert v-else show variant="warning">
+    <b-alert v-else :model-value="true" variant="warning">
       {{ $t("Aucun auteur noté.") }}
       <i18n-t
         keypath="Rendez vous sur la page {link_to_author_stats} pour noter vos auteurs préférés."

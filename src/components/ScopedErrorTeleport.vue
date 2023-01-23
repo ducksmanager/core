@@ -1,6 +1,6 @@
 <template>
   <Teleport v-if="parentElement" :to="parentElement">
-    <b-alert v-if="error.message" show variant="danger">
+    <b-alert v-if="error.message" :model-value="true" variant="danger">
       {{ $t(error.message) }}
     </b-alert>
   </Teleport>
@@ -18,6 +18,4 @@ const parentElement = $computed(
 );
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

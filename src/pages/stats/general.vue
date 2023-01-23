@@ -12,7 +12,12 @@
             </template></i18n-t
           >
           <br />
-          <b-alert variant="info" show size="sm" class="d-inline-block mt-3">
+          <b-alert
+            variant="info"
+            :model-value="true"
+            size="sm"
+            class="d-inline-block mt-3"
+          >
             <small>
               {{
                 $t(
@@ -29,7 +34,7 @@
     </div>
     <h2>{{ $t("Valeur de la collection") }}</h2>
     <template v-if="quotedIssues !== null && hasPublicationNames">
-      <b-alert v-if="quotationSum === 0" show variant="info">
+      <b-alert v-if="quotationSum === 0" :model-value="true" variant="info">
         <small>{{
           $t("Votre collection ne contient pas de magazines cotés.")
         }}</small>
