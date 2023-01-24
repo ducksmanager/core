@@ -269,20 +269,26 @@ import { marketplace } from "~/stores/marketplace";
 import { issue_condition } from "~prisma_clients/client_dm";
 import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
 
-type SingleCopy = IssueWithPublicationcodeOptionalId & { copyIndex: number };
-
 const { conditions } = cond();
 
-const { copy: copyState } = defineProps<{
-  copy: SingleCopy | CollectionUpdateMultipleIssues;
+const { copy: copyState, copyIndex = null } = defineProps<{
+  copy: IssueWithPublicationcodeOptionalId | CollectionUpdateMultipleIssues;
+  copyIndex: number | null;
 }>();
 
 let newCopyState = $ref(
-  copyState as SingleCopy | CollectionUpdateMultipleIssues
+  copyState as
+    | IssueWithPublicationcodeOptionalId
+    | CollectionUpdateMultipleIssues
 );
 
 const emit = defineEmits<{
-  (e: "update", updatedCopy: SingleCopy | CollectionUpdateMultipleIssues): void;
+  (
+    e: "update",
+    updatedCopy:
+      | IssueWithPublicationcodeOptionalId
+      | CollectionUpdateMultipleIssues
+  ): void;
 }>();
 
 const today = new Date().toISOString().slice(0, 10);
@@ -423,10 +429,8 @@ const issueIds = $computed((): (number | null)[] =>
       ? [
           collectionForCurrentPublication
             ?.filter(({ issuenumber }) => issuenumber === issuenumbers[0])
-            .find(
-              (_, copyIndex) =>
-                copyIndex === (copyState as SingleCopy).copyIndex
-            )?.id || null,
+            .find((_, currentCopyIndex) => copyIndex === currentCopyIndex!)
+            ?.id || null,
         ]
       : collectionForCurrentPublication
           ?.filter(({ issuenumber }) => issuenumbers.includes(issuenumber))

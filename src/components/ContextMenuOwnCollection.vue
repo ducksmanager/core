@@ -62,7 +62,8 @@
               @click.stop.prevent="initialCopies!.copies.splice(copyIndex, 1)"
             /> </template
           ><IssueCopyEdit
-            :copy="{ ...copy, copyIndex }"
+            :copy="copy"
+            :copy-index="copyIndex"
             @update="editedCopies!.copies[copyIndex] = $event" /></b-tab
       ></template>
 
