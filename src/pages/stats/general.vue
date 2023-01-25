@@ -198,7 +198,8 @@ watch(
     if (newValue) {
       await coa().fetchIssueQuotations(Object.keys(newValue));
     }
-  }
+  },
+  { immediate: true }
 );
 
 watch(
