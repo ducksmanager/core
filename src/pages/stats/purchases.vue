@@ -4,7 +4,7 @@ alias: [/achats]
 
 <template>
   <LinkToCollectionIfNoIssue />
-  <b-alert variant="info" show>
+  <b-alert variant="info" :model-value="true">
     <div>
       {{
         $t(

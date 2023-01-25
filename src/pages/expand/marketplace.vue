@@ -3,7 +3,7 @@ alias: [/agrandir/marketplace]
 </route>
 
 <template>
-  <b-alert show variant="info"
+  <b-alert :model-value="true" variant="info"
     >{{
       $t(
         "Cette page indique les numéros que d'autres utilisateurs sur DucksManager proposent à la vente et que vous surveillez. Cliquez sur le ou les numéros qui vous intéressent,"
@@ -18,7 +18,7 @@ alias: [/agrandir/marketplace]
   </b-alert>
   <b-alert
     v-if="hasPublicationNames && sentRequestIssueIds?.length"
-    show
+    :model-value="true"
     variant="info"
   >
     <div>{{ $t("Demandes envoyées :") }}</div>
@@ -61,7 +61,7 @@ alias: [/agrandir/marketplace]
   >
     <b-alert
       v-if="!Object.keys(issuesOnSaleByOthers).length"
-      show
+      :model-value="true"
       variant="info"
     >
       {{

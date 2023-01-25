@@ -10,7 +10,7 @@
   <b-alert
     v-if="initialCopies && !initialCopies.copies.length"
     class="text-center m-0"
-    show
+    :model-value="true"
     variant="danger"
   >
     {{
@@ -20,7 +20,7 @@
   <b-alert
     v-if="hasMultipleCopiesAndMultipleIssues"
     class="text-center m-0"
-    show
+    :model-value="true"
     variant="warning"
   >
     {{
@@ -32,7 +32,7 @@
   <b-alert
     v-if="initialIssues && !selectedIssues.length"
     class="text-center m-0"
-    show
+    :model-value="true"
     variant="warning"
   >
     {{
@@ -94,6 +94,7 @@
         </b-nav-item>
         <b-nav-item
           v-else
+          disabled
           class="p-0 disabled text-secondary"
           role="presentation"
           :title="

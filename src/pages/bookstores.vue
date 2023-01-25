@@ -56,7 +56,11 @@ meta:
                     {{ comment }}
                   </blockquote>
                 </div>
-                <b-alert v-if="existingBookstoreSent" variant="success" show>
+                <b-alert
+                  v-if="existingBookstoreSent"
+                  variant="success"
+                  :model-value="true"
+                >
                   {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
                   {{
                     $t(
@@ -129,7 +133,7 @@ meta:
     }}
     <br />
     <br />
-    <b-alert v-if="newBookstoreSent" variant="success" show>
+    <b-alert v-if="newBookstoreSent" variant="success" :model-value="true">
       {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
       {{
         $t(

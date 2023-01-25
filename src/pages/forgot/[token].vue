@@ -5,9 +5,13 @@ meta:
 <template>
   <div>
     <h2>{{ $t("Nouveau mot de passe") }}</h2>
-    <b-alert v-if="initError" show variant="danger">{{ initError }}</b-alert>
+    <b-alert v-if="initError" :model-value="true" variant="danger">{{
+      initError
+    }}</b-alert>
     <form v-else method="post" @submit.prevent="changePassword">
-      <b-alert v-if="error" show variant="danger">{{ error }}</b-alert>
+      <b-alert v-if="error" :model-value="true" variant="danger">{{
+        error
+      }}</b-alert>
       <b-form-input
         id="password"
         v-model="password"
@@ -83,6 +87,4 @@ watch(
 );
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

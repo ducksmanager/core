@@ -4,14 +4,16 @@ meta:
 </route>
 <template>
   <div>
-    <b-alert v-if="token" show variant="info">{{
+    <b-alert v-if="token" :model-value="true" variant="info">{{
       $t(
         `Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient
       d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`
       )
     }}</b-alert>
     <form v-else method="post" @submit.prevent="sendPasswordToken">
-      <b-alert v-if="error" show variant="danger">{{ error }}</b-alert>
+      <b-alert v-if="error" :model-value="true" variant="danger">{{
+        error
+      }}</b-alert>
       <div>
         {{
           $t(
@@ -67,6 +69,4 @@ const sendPasswordToken = async () => {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

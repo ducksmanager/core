@@ -26,7 +26,6 @@ export const getIssuesForSale: (
         FROM users seller
         INNER JOIN users_options uo on seller.ID = uo.ID_User
         WHERE uo.Option_nom = 'marketplace_contact_methods'
-        LIMIT 1
       ) AS seller
           ON issue.ID_Utilisateur = seller.ID
       LEFT JOIN numeros_demandes requested_issue

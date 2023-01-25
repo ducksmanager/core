@@ -11,7 +11,7 @@
     v-for="(count, issuenumber) in issuesWithMultipleCopiesSelected"
     :key="issuenumber"
     class="two-lines pre-wrap text-center m-0"
-    show
+    :model-value="true"
     variant="warning"
   >
     {{
@@ -24,7 +24,7 @@
   <b-alert
     v-if="selectedIssuesBuyerIds.length === 0"
     class="text-center m-0"
-    show
+    :model-value="true"
     variant="warning"
   >
     {{
@@ -36,7 +36,7 @@
   <b-alert
     v-else-if="selectedIssuesBuyerIds.length > 1"
     class="text-center m-0"
-    show
+    :model-value="true"
     variant="warning"
   >
     {{
@@ -107,6 +107,7 @@ const { selectedIssueIdsByIssuenumber } = defineProps<{
   selectedIssueIdsByIssuenumber: {
     [issuenumber: string]: IssueWithPublicationcode[];
   };
+  publicationcode: string;
 }>();
 const emit = defineEmits<{
   (

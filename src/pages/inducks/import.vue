@@ -73,7 +73,7 @@ meta:
     </p>
   </div>
   <form v-else-if="step === 1" id="inducks-import">
-    <b-alert show variant="info">
+    <b-alert :model-value="true" variant="info">
       <div>
         {{
           $t(
@@ -121,7 +121,7 @@ meta:
     </b-row>
   </form>
   <template v-else-if="step === 2">
-    <b-alert v-if="issuesImportable" show variant="info">
+    <b-alert v-if="issuesImportable" :model-value="true" variant="info">
       <div>
         {{ issuesImportable.length }}
         {{ $t("numéros peuvent être importés.") }}
@@ -157,7 +157,7 @@ meta:
     </b-alert>
     <b-alert
       v-if="issuesNotReferenced?.length || issuesAlreadyInCollection?.length"
-      show
+      :model-value="true"
       variant="warning"
     >
       <template v-if="issuesAlreadyInCollection?.length">

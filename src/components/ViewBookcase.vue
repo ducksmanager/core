@@ -18,7 +18,7 @@
           />
         </div>
       </div>
-      <b-alert variant="info" show
+      <b-alert variant="info" :model-value="true"
         ><i18n-t
           keypath="Par défaut, les magazines sont triés par pays et par magazine. Vous pouvez changer cet ordre en déplaçant les noms de magazines dans la page {link_to_bookcase_options}."
         >
@@ -38,7 +38,7 @@
         "
         class="mb-4"
       >
-        <b-alert variant="info" show
+        <b-alert variant="info" :model-value="true"
           ><i18n-t
             keypath="Votre bibliothèque peut être visionnée par les autres visiteurs de DucksManager. Si vous ne le souhaitez pas, désactivez le partage de collection dans la page {link_to_my_account}."
           >
@@ -64,7 +64,7 @@
       </div>
       <b-alert
         v-else-if="allowSharing === false && user && user.username !== 'demo'"
-        show
+        :model-value="true"
         variant="warning"
         ><i18n-t
           keypath="Votre bibliothèque ne peut pas être visionnée par les autres visiteurs de DucksManager. Si vous souhaitez que votre bibliothèque soit accessible, activez le partage de collection dans la page {link_to_my_account}."
@@ -83,10 +83,18 @@
     <div v-if="loading">
       {{ $t("Chargement...") }}
     </div>
-    <b-alert v-else-if="isPrivateBookcase" variant="warning" show>
+    <b-alert
+      v-else-if="isPrivateBookcase"
+      variant="warning"
+      :model-value="true"
+    >
       {{ $t("La bibliothèque de cet utilisateur est privée.") }}
     </b-alert>
-    <b-alert v-else-if="isUserNotExisting" variant="warning" show>
+    <b-alert
+      v-else-if="isUserNotExisting"
+      variant="warning"
+      :model-value="true"
+    >
       {{ $t("Cet utilisateur n'existe pas.") }}
     </b-alert>
     <div v-else>
@@ -139,7 +147,7 @@
         :sorted-bookcase="sortedBookcase"
         @open-book="(edge: BookcaseEdgeWithPopularity) => (currentEdgeOpened = edge)"
       />
-      <b-alert v-else show variant="warning">
+      <b-alert v-else :model-value="true" variant="warning">
         {{ $t("Cette bibliothèque est vide.") }}
       </b-alert>
     </div>

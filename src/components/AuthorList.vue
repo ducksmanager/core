@@ -2,7 +2,7 @@
   <div>
     <b-alert
       v-if="!watchedAuthors.length"
-      show
+      :model-value="true"
       variant="warning"
       class="section"
     >
@@ -57,7 +57,11 @@
     </div>
     <div>
       <h5>{{ $t("Ajouter un auteur") }}</h5>
-      <b-alert v-if="watchedAuthors.length >= 5" variant="warning" show>
+      <b-alert
+        v-if="watchedAuthors.length >= 5"
+        variant="warning"
+        :model-value="true"
+      >
         {{
           $t(
             "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres."

@@ -6,7 +6,9 @@
   >
     <b-alert
       variant="warning"
-      :show="issuesInOnSaleStack.length && !marketplaceContactMethods.length"
+      :model-value="
+        issuesInOnSaleStack.length && !marketplaceContactMethods.length
+      "
       >{{
         $t(
           "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
@@ -69,7 +71,7 @@
     </div>
     <ShortStats>
       <template #empty-collection>
-        <b-alert show variant="info" class="mb-3">
+        <b-alert :model-value="true" variant="info" class="mb-3">
           {{ $t("Votre collection est vide.") }}
           {{
             $t(

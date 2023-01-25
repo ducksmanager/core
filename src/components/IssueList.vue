@@ -43,7 +43,7 @@
       <div class="issue-list">
         <b-alert
           v-if="userIssuesNotFoundForPublication?.length"
-          show
+          :model-value="true"
           variant="warning"
         >
           {{
@@ -66,7 +66,13 @@
             </li>
           </ul>
         </b-alert>
-        <b-alert v-if="showFilter" v-once show variant="info" class="mb-0">
+        <b-alert
+          v-if="showFilter"
+          v-once
+          :model-value="true"
+          variant="info"
+          class="mb-0"
+        >
           {{
             $t(
               "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
@@ -203,7 +209,7 @@
     </div>
   </div>
   <div v-if="!publicationNameLoading && issues && !issues.length">
-    <b-alert variant="danger" show>
+    <b-alert variant="danger" :model-value="true">
       <div class="mb-4">
         {{ $t("Aucun numéro n'est répertorié pour") }}
         {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
