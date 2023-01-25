@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h3 v-if="title">
+    <template v-if="slots.title"><slot name="title" /></template>
+    <h3 v-else-if="title">
       {{ title }}
     </h3>
     <b-tabs v-if="items.length" v-model="activeTabIndex" class="my-4">
@@ -11,12 +12,15 @@
         @click.stop="router.push(`${rootPath}${item.path}`)"
       >
         <template #title>
-          <router-link :to="`${rootPath}${item.path}`">{{
-            item.text
-          }}</router-link>
+          <router-link :to="`${rootPath}${item.path}`"
+            >{{ item.text
+            }}<template v-if="item.isNew"
+              >&nbsp;<sup>{{ $t("Nouveau !") }}</sup></template
+            >
+          </router-link>
         </template>
-      </b-tab>
-    </b-tabs>
+      </b-tab></b-tabs
+    >
   </div>
 </template>
 
@@ -30,10 +34,12 @@ const {
 } = defineProps<{
   title?: string;
   rootPath?: string;
-  items: { path: string; text: string }[];
+  items: { path: string; text: string; isNew: boolean | false }[];
 }>();
 const router = useRouter();
 const routeName = useRoute().name;
+const slots = useSlots();
+
 let activeTabIndex = $ref(-1 as number);
 
 const updateActiveTabIndex = () => {

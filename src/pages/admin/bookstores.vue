@@ -11,7 +11,6 @@ meta:
         >: {{ comment.comment }}
         <b-button
           v-if="!comment.active"
-          show
           @click="validateBookstoreComment(comment)"
         >
           {{ $t("Valider") }}

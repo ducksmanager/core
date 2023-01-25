@@ -1,48 +1,73 @@
 <template>
-  <span
-    v-for="issueOnSale of issuesOnSaleByOthers"
-    :key="issueOnSale.id"
-    class="d-inline-block me-2"
-  >
-    <template v-if="sentRequests.includes(issueOnSale.id)">{{
-      $t("Demande envoyée à")
-    }}</template
-    ><template v-else>{{ $t("En vente par") }}</template
-    >&nbsp;<UserPopover
-      v-if="points[issueOnSale.userId] && stats[issueOnSale.userId]"
-      :points="points[issueOnSale.userId]"
-      :stats="stats[issueOnSale.userId]"
-    />
-  </span>
+  <template v-if="isOnSale">
+    <template v-if="receivedRequests?.length">
+      <div
+        v-for="{ buyerId, isBooked } in receivedRequests"
+        :key="buyerId"
+        class="d-inline-block me-2"
+        :class="{ setAside: isBooked }"
+      >
+        <template v-if="isBooked">{{ $t("Réservé pour") }}</template
+        ><template v-else>{{ $t("Demandé par") }}</template
+        >&nbsp;<UserPopover
+          v-if="buyerPoints?.[`${buyerId}`] && buyerStats?.[`${buyerId}`]"
+          :points="buyerPoints[`${buyerId}`]"
+          :stats="buyerStats[`${buyerId}`]"
+        /></div
+    ></template>
+
+    <div v-else class="d-inline-block me-2">{{ $t("A vendre") }}</div>
+  </template>
 </template>
 
 <script setup lang="ts">
+import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
-const { publicationcode, issuenumber } = defineProps<{
-  publicationcode: string;
-  issuenumber: string;
+const { issueId } = defineProps<{
+  issueId: number;
 }>();
 
-const points = $computed(() => users().points);
-const stats = $computed(() => users().stats);
-
-const sentRequests = $computed(() =>
-  issuesOnSaleByOthers
-    .filter(({ id }) => marketplace().sentRequestIssueIds?.includes(id))
-    .map(({ id }) => id)
+const receivedRequests = $computed(() =>
+  marketplace().issueRequestsAsSeller?.filter(
+    ({ issueId: requestIssueId }) => requestIssueId === issueId
+  )
 );
 
-const issuesOnSaleByOthers = $computed(() =>
-  (marketplace().issuesOnSaleByOthers?.[publicationcode] || []).filter(
-    ({ issuenumber: onSaleIssuenumber }) => onSaleIssuenumber === issuenumber
-  )
+const buyerPoints = $computed(
+  (): { [buyerId: number]: { [contribution: string]: number } } =>
+    receivedRequests?.reduce(
+      (acc, { buyerId }) => ({ ...acc, [buyerId]: users().points[buyerId] }),
+      {}
+    ) || {}
+);
+
+const buyerStats = $computed(
+  (): { [buyerId: number]: { [contribution: string]: number } } =>
+    receivedRequests?.reduce(
+      (acc, { buyerId }) => ({ ...acc, [buyerId]: users().stats[buyerId] }),
+      {}
+    ) || {}
+);
+
+const isOnSale = $computed(() =>
+  collection().issuesInOnSaleStack?.find(({ id }) => id === issueId)
 );
 </script>
 
 <style scoped lang="scss">
-span {
-  color: cyan;
+div,
+* {
+  display: flex;
+  align-items: center;
+  color: yellow;
+
+  &.setAside {
+    &,
+    * {
+      color: blue;
+    }
+  }
 }
 </style>

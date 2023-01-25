@@ -5,7 +5,7 @@
     default-path="/suggestions"
     :items="[
       { path: '/suggestions', text: $t('Suggestions') },
-      { path: '/marketplace', text: $t('Marketplace') },
+      { path: '/marketplace', text: $t('Marketplace'), isNew: true },
     ]"
   />
 </template>

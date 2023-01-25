@@ -29,7 +29,7 @@
   >
     {{
       $t(
-        "Sélectionnez un ou plusieurs numéros dans la liste\npour contacter leurs vendeurs et les ajouter à votre collection."
+        "Sélectionnez un ou plusieurs numéros dans la liste\npour contacter leurs vendeurs."
       )
     }}
   </b-alert>
@@ -157,7 +157,9 @@ const issuesWithMultipleCopiesSelected = $computed(() =>
 const { t: $t } = useI18n();
 
 onMounted(async () => {
-  await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);
+  if (selectedIssuesBuyerIds.length) {
+    await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);
+  }
 });
 </script>
 

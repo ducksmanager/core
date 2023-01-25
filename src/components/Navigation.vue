@@ -36,7 +36,9 @@
           <NavigationItem>
             <router-link to="/expand/suggestions">
               <i-bi-capslock-fill />
-              {{ $t("Agrandir ma collection") }}</router-link
+              {{ $t("Agrandir ma collection") }}&nbsp;<sup>{{
+                $t("Nouveau !")
+              }}</sup></router-link
             >
           </NavigationItem>
           <NavigationItem>

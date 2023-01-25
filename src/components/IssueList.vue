@@ -131,11 +131,6 @@
               </span>
             </span>
             <div class="issue-details-wrapper">
-              <MarketplaceBuyerInfo
-                v-if="!userCopies.length"
-                :publicationcode="publicationcode"
-                :issuenumber="issuenumber"
-              />
               <div class="issue-copies">
                 <div
                   v-for="{
@@ -148,12 +143,13 @@
                   :key="`${issuenumber}-copy-${copyIndex}`"
                   class="issue-copy"
                 >
-                  <MarketplaceBuyerInfo
+                  <MarketplaceSellerInfo
                     v-if="onSaleByOthers"
                     :publicationcode="publicationcode"
                     :issuenumber="issuenumber"
+                    :copy-index="filteredIssuesCopyIndexes[idx]"
                   />
-                  <MarketplaceSellerInfo :issue-id="id" />
+                  <MarketplaceBuyerInfo :issue-id="id" />
                   <svg
                     v-if="
                       purchaseId &&
@@ -175,7 +171,10 @@
                       d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
                     />
                   </svg>
-                  <i-bi-bookmark-check v-if="isToRead" class="issue-to-read" />
+                  <i-bi-bookmark-check
+                    v-if="isToRead && !onSaleByOthers"
+                    class="issue-to-read"
+                  />
 
                   <Condition
                     v-if="copyCondition"
@@ -412,6 +411,21 @@ const filteredIssues = $computed(
       )
       ?.map((issue, idx) => ({ ...issue, idx })) || []
 );
+
+const filteredIssuesCopyIndexes = $computed(() =>
+  filteredIssues?.reduce(
+    (acc, { issuenumber }, idx) => [
+      ...acc,
+      idx === 0
+        ? 0
+        : filteredIssues[idx - 1].issuenumber === issuenumber
+        ? acc[idx - 1] + 1
+        : 0,
+    ],
+    [] as number[]
+  )
+);
+
 const ownedIssuesCount = $computed(
   () =>
     issues?.reduce(
