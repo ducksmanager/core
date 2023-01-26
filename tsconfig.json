@@ -25,6 +25,7 @@
       "~types/*": ["types/*"],
       "~emails/*": ["api/emails/*"],
       "~prisma_clients/*": ["api/dist/prisma/*"],
+      "~prisma_extended_clients/*": ["api/prisma/extended/*"],
       "~routes/*": ["api/routes/*"]
     }
   },

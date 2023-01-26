@@ -1,11 +1,11 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient, subscription } from "~prisma_clients/client_dm";
+import { subscription } from "~prisma_clients/client_dm";
+import prisma from "~prisma_extended_clients/dm.publicationcode";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
 import { EditSubscription } from "~types/EditSubscription";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 export async function upsertSubscription(
@@ -65,9 +65,8 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
     },
   });
   return res.json(
-    subscriptions.map((subscription: subscription) => ({
+    subscriptions.map((subscription) => ({
       ...subscription,
-      publicationcode: `${subscription.country}/${subscription.magazine}`,
       startDate: subscription.startDate.toISOString(),
       endDate: subscription.endDate.toISOString(),
     }))

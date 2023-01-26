@@ -1,8 +1,7 @@
-import { edge, PrismaClient } from "~prisma_clients/client_dm";
+import { edge } from "~prisma_clients/client_dm";
+import prisma from "~prisma_extended_clients/dm.publicationcode";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
-
-const prisma = new PrismaClient();
 
 export type getCall = Call<edge[]>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
@@ -16,14 +15,11 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
         userId,
       },
       select: {
-        country: true,
-        magazine: true,
+        publicationcode: true,
         issuenumber: true,
       },
     })
-  ).map(
-    (issue) => `${issue.country}/${issue.magazine} ${issue.issuenumber}`
-  ) as string[];
+  ).map((issue) => `${issue.publicationcode} ${issue.issuenumber}`) as string[];
   return res.json(
     await prisma.edge.findMany({
       where: {

@@ -13,8 +13,9 @@ type simplePopularity = {
 };
 
 export type getCall = Call<simplePopularity[]>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
-  const popularities = (await prisma.$queryRaw`
+export const get = async (...[req, res]: ExpressCall<getCall>) =>
+  res.json(
+    (await prisma.$queryRaw`
       select issuePopularity.pays       AS country,
              issuePopularity.magazine   AS magazine,
              issuePopularity.numero     AS issuenumber,
@@ -24,6 +25,5 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
                         on issuePopularity.pays = issue.pays AND issuePopularity.magazine = issue.magazine AND
                            issuePopularity.numero = issue.numero
       where ID_Utilisateur = ${req.user!.id}
-      order by popularity DESC`) as PopularIssue[];
-  return res.json(popularities);
-};
+      order by popularity DESC`) as PopularIssue[]
+  );

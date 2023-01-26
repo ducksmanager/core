@@ -1,10 +1,8 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import prisma from "~prisma_extended_clients/dm.publicationcode";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
 
 import { checkValidBookcaseUser } from "./index";
-
-const prisma = new PrismaClient();
 
 const getLastPublicationPosition = async (userId: number) =>
   (
@@ -31,14 +29,13 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
     const userPublicationcodes = (
       await prisma.issue.findMany({
         select: {
-          country: true,
-          magazine: true,
+          publicationcode: true,
         },
         distinct: ["country", "magazine"],
         where: { userId },
         orderBy: [{ country: "asc" }, { magazine: "asc" }],
       })
-    ).map(({ country, magazine }) => `${country}/${magazine}`);
+    ).map(({ publicationcode }) => publicationcode);
 
     const missingPublicationCodesInOrder = userPublicationcodes.filter(
       (publicationcode) => !userSortedPublicationcodes.includes(publicationcode)

@@ -20,6 +20,7 @@
       "~types/*": ["../types/*"],
       "~emails/*": ["emails/*"],
       "~prisma_clients/*": ["dist/prisma/*"],
+      "~prisma_extended_clients/*": ["prisma/extended/*"],
       "~routes/*": ["routes/*"]
     }
   },
