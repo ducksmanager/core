@@ -6,6 +6,6 @@ export type UserForAccountForm = {
   discordId?: number;
   email: string;
   allowSharing: boolean;
-  showPresentationVideo: boolean;
   presentationText: string;
+  okForExchanges: boolean;
 };

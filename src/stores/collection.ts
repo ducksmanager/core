@@ -317,13 +317,12 @@ export const collection = defineStore("collection", {
       if (!this.user) {
         return null;
       }
-      const discordId = this.user.discordId || undefined;
-      const presentationText = this.user.presentationText || "";
       return {
         ...this.user,
-        discordId,
-        presentationText,
+        discordId: this.user.discordId || undefined,
+        presentationText: this.user.presentationText || "",
         email: this.user.email!,
+        okForExchanges: this.user.marketplaceAcceptsExchanges || false,
       };
     },
   },
@@ -434,7 +433,7 @@ export const collection = defineStore("collection", {
       await POST__collection__options__$optionName(
         axios,
         {
-          values: this.marketplaceContactMethods as string[],
+          values: this.marketplaceContactMethods!,
         },
         {
           urlParams: {
@@ -447,7 +446,7 @@ export const collection = defineStore("collection", {
       await POST__collection__options__$optionName(
         axios,
         {
-          values: this.watchedPublicationsWithSales as string[],
+          values: this.watchedPublicationsWithSales!,
         },
         {
           urlParams: {

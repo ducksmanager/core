@@ -227,28 +227,29 @@ model edgeSpriteUrl {
 }
 
 model user {
-  id                        Int                @id @default(autoincrement()) @map("ID")
-  username                  String             @unique(map: "username") @db.VarChar(25)
-  password                  String             @db.VarChar(40)
-  allowSharing              Boolean            @default(true) @map("AccepterPartage")
-  signupDate                DateTime           @map("DateInscription") @db.Date
-  email                     String             @map("EMail") @db.VarChar(50)
-  discordId                 Int?               @map("ID_Discord")
-  showRecommendations       Boolean            @default(true) @map("RecommandationsListeMags")
-  isBetaUser                Boolean            @default(false) @map("BetaUser")
-  showPresentationVideo     Boolean            @default(true) @map("AfficherVideo")
-  showDuplicatesInBookcase  Boolean            @default(true) @map("Bibliotheque_AfficherDoubles")
-  bookcaseTexture1          String             @default("bois") @map("Bibliotheque_Texture1") @db.VarChar(20)
-  bookcaseSubTexture1       String             @default("HONDURAS MAHOGANY") @map("Bibliotheque_Sous_Texture1") @db.VarChar(50)
-  bookcaseTexture2          String             @default("bois") @map("Bibliotheque_Texture2") @db.VarChar(20)
-  bookcaseSubTexture2       String             @default("KNOTTY PINE") @map("Bibliotheque_Sous_Texture2") @db.VarChar(50)
-  presentationText          String?            @map("TextePresentation") @db.VarChar(100)
-  lastAccess                DateTime?          @map("DernierAcces") @db.DateTime(0)
-  previousAccess            DateTime?          @map("PrecedentAcces") @db.DateTime(0)
-  abonnements               subscription[]
-  bouquineries_commentaires bookstoreComment[]
-  users_contributions       userContribution[]
-  users_options             userOption[]
+  id                          Int                @id @default(autoincrement()) @map("ID")
+  username                    String             @unique(map: "username") @db.VarChar(25)
+  password                    String             @db.VarChar(40)
+  allowSharing                Boolean            @default(true) @map("AccepterPartage")
+  signupDate                  DateTime           @map("DateInscription") @db.Date
+  email                       String             @map("EMail") @db.VarChar(50)
+  discordId                   Int?               @map("ID_Discord")
+  showRecommendations         Boolean            @default(true) @map("RecommandationsListeMags")
+  isBetaUser                  Boolean            @default(false) @map("BetaUser")
+  showPresentationVideo       Boolean            @default(true) @map("AfficherVideo")
+  showDuplicatesInBookcase    Boolean            @default(true) @map("Bibliotheque_AfficherDoubles")
+  bookcaseTexture1            String             @default("bois") @map("Bibliotheque_Texture1") @db.VarChar(20)
+  bookcaseSubTexture1         String             @default("HONDURAS MAHOGANY") @map("Bibliotheque_Sous_Texture1") @db.VarChar(50)
+  bookcaseTexture2            String             @default("bois") @map("Bibliotheque_Texture2") @db.VarChar(20)
+  bookcaseSubTexture2         String             @default("KNOTTY PINE") @map("Bibliotheque_Sous_Texture2") @db.VarChar(50)
+  presentationText            String?            @map("TextePresentation") @db.VarChar(100)
+  lastAccess                  DateTime?          @map("DernierAcces") @db.DateTime(0)
+  previousAccess              DateTime?          @map("PrecedentAcces") @db.DateTime(0)
+  marketplaceAcceptsExchanges Boolean            @default(true) @map("MarketplaceAccepteEchanges")
+  abonnements                 subscription[]
+  bouquineries_commentaires   bookstoreComment[]
+  users_contributions         userContribution[]
+  users_options               userOption[]
 
   @@map("users")
 }

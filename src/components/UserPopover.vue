@@ -21,11 +21,11 @@
         <div class="clearfix" />
         <div>
           {{ stats.numberOfIssues }}
-          {{ $tc("numéro | numéros", stats.numberOfIssues) }}<br />
+          {{ $t("numéro | numéros", stats.numberOfIssues) }}<br />
           {{ stats.numberOfPublications }}
-          {{ $tc("magazine | magazines", stats.numberOfPublications) }}<br />
+          {{ $t("magazine | magazines", stats.numberOfPublications) }}<br />
           {{ stats.numberOfCountries }}
-          {{ $tc("pays | pays", stats.numberOfCountries) }}
+          {{ $t("pays | pays", stats.numberOfCountries) }}
         </div>
         <div v-if="stats.allowSharing" class="bookcase-link">
           <router-link
@@ -45,13 +45,25 @@
             </b-button>
           </router-link>
         </div>
+        <b-alert
+          :model-value="showOkForExchanges"
+          :variant="stats.okForExchanges ? 'info' : 'warning'"
+          class="mt-4"
+        >
+          <span v-if="stats.okForExchanges">{{
+            $t("Peut vendre ou échanger des numéros")
+          }}</span
+          ><span v-else>{{
+            $t("Accepte seulement de vendre des numéros")
+          }}</span>
+        </b-alert>
       </div>
     </template>
   </Popover>
 </template>
 
 <script setup lang="ts">
-import { BButton } from "bootstrap-vue-next";
+import { BAlert, BButton } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
@@ -59,8 +71,9 @@ import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 defineProps<{
   points: { [contribution: string]: number };
   stats: SimpleUserWithQuickStats;
+  showOkForExchanges?: boolean;
 }>();
-const { t: $tc } = useI18n();
+const { t: $t } = useI18n();
 </script>
 
 <style scoped lang="scss">

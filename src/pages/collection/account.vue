@@ -114,6 +114,19 @@ alias: [/collection/compte]
       </b-col>
     </b-row>
 
+    <h5>{{ $t("Marketplace") }}</h5>
+    <b-row>
+      <b-col cols="12" md="6">
+        <b-form-checkbox v-model="collection.userForAccountForm.okForExchanges">
+          {{
+            $t(
+              "Indiquer aux autres utilisateurs que je suis disposé à échanger des magazines, et pas seulement à en acheter ou en vendre."
+            )
+          }}
+        </b-form-checkbox>
+      </b-col>
+    </b-row>
+
     <h5>
       {{ $t("Texte de présentation") }}
     </h5>
@@ -177,12 +190,6 @@ alias: [/collection/compte]
     <h5>{{ $t("Options") }}</h5>
     <b-form-checkbox v-model="collection.userForAccountForm.allowSharing">
       {{ $t("Activer le partage de ma collection") }}
-    </b-form-checkbox>
-
-    <b-form-checkbox
-      v-model="collection.userForAccountForm.showPresentationVideo"
-    >
-      {{ $t("Afficher la vidéo d'explication pour la sélection des numéros") }}
     </b-form-checkbox>
 
     <b-button variant="success" size="lg" type="submit">

@@ -34,6 +34,7 @@ const getUsersQuickStats = async (userIds: number[]) =>
            u.username,
            u.TextePresentation                         as presentationText,
            u.AccepterPartage                           as allowSharing,
+           u.MarketplaceAccepteEchanges                as okForExchanges,
            count(distinct Pays)                        AS numberOfCountries,
            count(distinct concat(Pays, '/', Magazine)) as numberOfPublications,
            count(Numero)                               as numberOfIssues

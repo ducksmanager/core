@@ -7,8 +7,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ScopedError } from "~types/ScopedError";
+import { BAlert } from "bootstrap-vue-next";
 
+import { ScopedError } from "~types/ScopedError";
 const { error } = defineProps<{
   error: ScopedError;
 }>();

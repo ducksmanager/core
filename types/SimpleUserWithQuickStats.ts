@@ -13,6 +13,7 @@ export type SimpleUserWithQuickStats = Omit<
     numberOfCountries: number;
     numberOfPublications: number;
     numberOfIssues: number;
+    okForExchanges: boolean;
   },
   "id"
 > & { userId: number };

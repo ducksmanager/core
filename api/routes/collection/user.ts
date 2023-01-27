@@ -97,7 +97,7 @@ export const post = [
           discordId: input.discordId || undefined,
           email: input.email,
           allowSharing: input.allowSharing,
-          showPresentationVideo: input.showPresentationVideo,
+          marketplaceAcceptsExchanges: input.okForExchanges,
         },
         where: { id: req.user!.id },
       });

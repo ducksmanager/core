@@ -17,7 +17,11 @@ alias: [/agrandir/marketplace]
     }}</span>
   </b-alert>
   <b-alert
-    v-if="hasPublicationNames && sentRequestIssueIds?.length"
+    v-if="
+      hasPublicationNames &&
+      sentRequestIssueIds?.length &&
+      Object.keys(requestIssueIdsBySellerId).length
+    "
     :model-value="true"
     variant="info"
   >
@@ -177,6 +181,17 @@ alias: [/agrandir/marketplace]
         </p>
         <p>{{ user!.username }}</p>
       </blockquote>
+
+      <b-alert
+        :model-value="stats[modalContactId].okForExchanges"
+        variant="warning"
+        class="mt-4"
+        >{{
+          $t(
+            "Cet utilisateur ne souhaite pas échanger des numéros, seulement en vendre."
+          )
+        }}
+      </b-alert>
     </b-modal>
   </div>
   <div v-else>

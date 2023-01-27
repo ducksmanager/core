@@ -6,6 +6,7 @@
       v-if="points[issueOnSale.userId] && stats[issueOnSale.userId]"
       :points="points[issueOnSale.userId]"
       :stats="stats[issueOnSale.userId]"
+      show-ok-for-exchanges
     />
   </span>
 </template>

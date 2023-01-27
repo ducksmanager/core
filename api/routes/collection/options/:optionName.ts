@@ -20,7 +20,7 @@ export const optionNameToEnum = (
   }
 };
 
-export type getCall = Call<string[], { optionName: string }>;
+export type getCall = Call<string[], { optionName: userOptionType }>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const optionName = optionNameToEnum(req.params.optionName);
   if (!optionName) {
