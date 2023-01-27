@@ -7,7 +7,7 @@ const computePublicationcode = {
       magazine: true,
     },
     compute: ({ country, magazine }: { country: string; magazine: string }) =>
-      `${country}/(${magazine})`,
+      `${country}/${magazine}`,
   },
 };
 

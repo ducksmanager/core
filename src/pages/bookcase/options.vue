@@ -198,7 +198,7 @@ watch(
       bookcaseStore.bookcaseUsername = value.username;
       await loadData();
       bookcaseOrder = bookcaseStore.bookcaseOrder;
-      await coa().fetchPublicationNames(bookcaseOrder as string[]);
+      await coa().fetchPublicationNames(bookcaseOrder!);
       bookcaseOrder = (bookcaseOrder as string[]).filter((publicationcode) =>
         Object.keys(publicationNames).includes(publicationcode)
       );
