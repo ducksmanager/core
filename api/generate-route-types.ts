@@ -45,14 +45,14 @@ routes.forEach((route) => {
           .replaceAll(/[/-]/g, "_")
           .toUpperCase()}`;
 
-        const returnTypeName = `${method.toUpperCase()}${routePath}`;
+        const returnTypeName = `${method.toUpperCase()}_CALL${routePath}`;
 
         routeList[routePathWithMethod] =
           method === "get"
-            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosTypedRequestConfig<${returnTypeName}>): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', config),`
+            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosTypedRequestConfig<${returnTypeName}>): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', config)`
             : method === "delete"
-            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config),`
-            : `(axios: AxiosInstance | AxiosCacheInstance, data?: AxiosTypedRequestBody<${returnTypeName}>, config?: AxiosRequestConfig | CacheRequestConfig): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', data, config),`;
+            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config)`
+            : `(axios: AxiosInstance | AxiosCacheInstance, data?: AxiosTypedRequestBody<${returnTypeName}>, config?: AxiosRequestConfig | CacheRequestConfig): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', data, config)`;
 
         return `${method}Call as ${returnTypeName}`;
       })
@@ -63,10 +63,15 @@ fs.writeFileSync(
   "../types/routes.ts",
   [
     imports.join("\n"),
-    `export default {\n${Object.entries(routeList).reduce(
-      (acc, [routePathWithMethod, callback]) =>
-        acc + `["${routePathWithMethod}"]: ${callback}`,
-      ""
-    )}\n}`,
+    Object.entries(routeList)
+      .map(
+        ([routePathWithMethod, callback]) =>
+          `export const ${routePathWithMethod
+            .replaceAll(/[\/]/g, "__")
+            .replaceAll(/ /g, "")
+            .replaceAll(/:/g, "$")
+            .replaceAll(/[-]/g, "_")} = ${callback};`
+      )
+      .join("\n"),
   ].join("\n")
 );

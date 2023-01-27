@@ -180,7 +180,7 @@ import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { users } from "~/stores/users";
-import routes from "~types/routes";
+import { GET__bookstores } from "~types/routes";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
@@ -225,9 +225,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (
-    (await routes["GET /bookstores"](axios)).data as SimpleBookstore[]
-  )
+  bookstores = ((await GET__bookstores(axios)).data as SimpleBookstore[])
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);

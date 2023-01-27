@@ -224,7 +224,7 @@ import { useI18n } from "vue-i18n";
 import Accordion from "~/components/Accordion.vue";
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection as collectionStore } from "~/stores/collection";
-import routes from "~types/routes";
+import { POST__collection__empty, POST__collection__user } from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
 
 const collection = collectionStore();
@@ -252,7 +252,7 @@ const router = useRouter();
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await routes["POST /collection/empty"](axios);
+    await POST__collection__empty(axios);
     await router.push("/collection/show");
   }
 };
@@ -261,7 +261,7 @@ const updateAccount = async () => {
   try {
     error = undefined;
     const response = (
-      await routes["POST /collection/user"](axios, {
+      await POST__collection__user(axios, {
         ...collection.userForAccountForm!,
         oldPassword,
         password,

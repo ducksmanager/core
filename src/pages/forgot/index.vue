@@ -48,7 +48,7 @@ meta:
 import axios, { AxiosError } from "axios";
 import { useI18n } from "vue-i18n";
 
-import routes from "~types/routes";
+import { POST__auth__forgot } from "~types/routes";
 
 let error = $ref(null as unknown | string | null);
 
@@ -59,7 +59,7 @@ const { t: $t } = useI18n();
 const sendPasswordToken = async () => {
   try {
     token = (
-      await routes["POST /auth/forgot"](axios, {
+      await POST__auth__forgot(axios, {
         email,
       })
     ).data.token;

@@ -2,7 +2,11 @@ import axios, { AxiosError } from "axios";
 import { defineStore } from "pinia";
 
 import { BookcaseEdge } from "~types/BookcaseEdge";
-import routes from "~types/routes";
+import {
+  GET__bookcase__$username,
+  GET__bookcase__$username__options,
+  POST__bookcase__options,
+} from "~types/routes";
 
 import { collection } from "./collection";
 
@@ -69,7 +73,7 @@ export const bookcase = defineStore("bookcase", {
       if (!this.bookcase) {
         try {
           this.bookcase = (
-            await routes["GET /bookcase/:username"](axios, {
+            await GET__bookcase__$username(axios, {
               urlParams: { username: this.bookcaseUsername! },
             })
           ).data;
@@ -88,14 +92,14 @@ export const bookcase = defineStore("bookcase", {
     async loadBookcaseOptions() {
       if (!this.bookcaseOptions) {
         this.bookcaseOptions = (
-          await routes["GET /bookcase/:username/options"](axios, {
+          await GET__bookcase__$username__options(axios, {
             urlParams: { username: this.bookcaseUsername! },
           })
         ).data;
       }
     },
     async updateBookcaseOptions() {
-      await routes["POST /bookcase/options"](axios, this.bookcaseOptions!);
+      await POST__bookcase__options(axios, this.bookcaseOptions!);
     },
 
     async loadBookcaseOrder() {

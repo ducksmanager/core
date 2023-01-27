@@ -10,7 +10,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import routes from "~types/routes";
+import { POST__demo } from "~types/routes";
 
 const collectionStore = collection();
 
@@ -28,7 +28,7 @@ watch(
 
 onMounted(async () => {
   try {
-    Cookies.set("token", (await routes["POST /demo"](axios)).data.token);
+    Cookies.set("token", (await POST__demo(axios)).data.token);
     await collectionStore.loadUser();
   } catch (e) {
     console.error(e);

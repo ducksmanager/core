@@ -3,7 +3,13 @@ import { defineStore } from "pinia";
 
 import { users } from "~/stores/users";
 import { issue, requestedIssue } from "~prisma_clients/client_dm";
-import routes from "~types/routes";
+import {
+  DELETE__collection__on_sale_by_others__requests,
+  GET__collection__on_sale_by_others,
+  GET__collection__on_sale_by_others__contact_methods__$sellerId,
+  GET__collection__on_sale_by_others__requests__as__$as,
+  PUT__collection__on_sale_by_others__requests,
+} from "~types/routes";
 
 export const marketplace = defineStore("marketplace", {
   state: () => ({
@@ -113,7 +119,7 @@ export const marketplace = defineStore("marketplace", {
 
   actions: {
     async requestIssues(issueIds: number[]) {
-      await routes["PUT /collection/on-sale-by-others/requests"](axios, {
+      await PUT__collection__on_sale_by_others__requests(axios, {
         issueIds,
       });
       await this.loadIssueRequestsAsBuyer();
@@ -121,9 +127,10 @@ export const marketplace = defineStore("marketplace", {
 
     async loadContactMethods(userId: number) {
       this.contactMethods[userId] = (
-        await routes[
-          "GET /collection/on-sale-by-others/contact-methods/:sellerId"
-        ](axios, { urlParams: { sellerId: String(userId) } })
+        await GET__collection__on_sale_by_others__contact_methods__$sellerId(
+          axios,
+          { urlParams: { sellerId: String(userId) } }
+        )
       ).data;
     },
 
@@ -136,10 +143,9 @@ export const marketplace = defineStore("marketplace", {
       }
       this.isLoadingIssueRequestsAsBuyer = true;
       this.issueRequestsAsBuyer = (
-        await routes["GET /collection/on-sale-by-others/requests/as/:as"](
-          axios,
-          { urlParams: { as: "buyer" } }
-        )
+        await GET__collection__on_sale_by_others__requests__as__$as(axios, {
+          urlParams: { as: "buyer" },
+        })
       ).data;
       this.isLoadingIssueRequestsAsBuyer = false;
     },
@@ -152,10 +158,9 @@ export const marketplace = defineStore("marketplace", {
       }
       this.isLoadingIssueRequestsAsSeller = true;
       this.issueRequestsAsSeller = (
-        await routes["GET /collection/on-sale-by-others/requests/as/:as"](
-          axios,
-          { urlParams: { as: "seller" } }
-        )
+        await GET__collection__on_sale_by_others__requests__as__$as(axios, {
+          urlParams: { as: "seller" },
+        })
       ).data;
       this.isLoadingIssueRequestsAsSeller = false;
     },
@@ -168,12 +173,12 @@ export const marketplace = defineStore("marketplace", {
       }
       this.isLoadingIssuesOnSaleByOthers = true;
       this.issuesOnSaleByOthers = (
-        await routes["GET /collection/on-sale-by-others"](axios)
+        await GET__collection__on_sale_by_others(axios)
       ).data;
       this.isLoadingIssuesOnSaleByOthers = false;
     },
     async deleteRequestToSeller(issueId: number) {
-      await routes["DELETE /collection/on-sale-by-others/requests"](axios, {
+      await DELETE__collection__on_sale_by_others__requests(axios, {
         data: {
           issueId,
         },

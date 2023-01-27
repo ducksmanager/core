@@ -89,7 +89,7 @@ import { onMounted, watch } from "vue";
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
 import { EditSubscription } from "~types/EditSubscription";
-import routes from "~types/routes";
+import { PUT__collection__subscriptions } from "~types/routes";
 
 type AssociatedPublication = {
   referencePublicationcode: string;
@@ -120,7 +120,7 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const loadSubscriptions = collection().loadSubscriptions;
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await routes["PUT /collection/subscriptions"](axios, {
+  await PUT__collection__subscriptions(axios, {
     subscription: {
       ...subscription,
       startDate: subscription.startDate.toISOString().split("Z")[0],

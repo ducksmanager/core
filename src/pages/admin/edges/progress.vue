@@ -129,7 +129,10 @@ import axios from "axios";
 import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";
-import routes from "~types/routes";
+import {
+  GET__edges__published__data,
+  GET__edges__wanted__data,
+} from "~types/routes";
 import { WantedEdge } from "~types/WantedEdge";
 
 let hasData = $ref(false as boolean);
@@ -169,7 +172,7 @@ const inducksIssueNumbersNoSpace = $computed(() =>
 
 onMounted(async () => {
   mostWanted = (
-    (await routes["GET /edges/wanted/data"](axios)).data as WantedEdge[]
+    (await GET__edges__wanted__data(axios)).data as WantedEdge[]
   ).map((mostWantedIssue) => ({
     ...mostWantedIssue,
     country: mostWantedIssue.publicationcode.split("/")[0],
@@ -177,7 +180,7 @@ onMounted(async () => {
   }));
 
   publishedEdges = (
-    (await routes["GET /edges/published/data"](axios)).data as {
+    (await GET__edges__published__data(axios)).data as {
       publicationcode: string;
       issuenumber: string;
     }[]

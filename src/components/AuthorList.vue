@@ -115,7 +115,11 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { inducks_person } from "~prisma_clients/client_coa";
 import { authorUser } from "~prisma_clients/client_dm";
-import routes from "~types/routes";
+import {
+  DELETE__collection__authors__watched,
+  POST__collection__authors__watched,
+  PUT__collection__authors__watched,
+} from "~types/routes";
 
 const { watchedAuthors } = defineProps<{
   watchedAuthors: authorUser[];
@@ -156,14 +160,14 @@ const isAuthorWatched = (personcode: string) =>
     ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
   );
 const createRating = async (data: { personcode: string }) => {
-  await routes["PUT /collection/authors/watched"](axios, data);
+  await PUT__collection__authors__watched(axios, data);
   await loadWatchedAuthors(true);
 };
 const updateRating = async (data: { personcode: string; notation: number }) => {
-  await routes["POST /collection/authors/watched"](axios, data);
+  await POST__collection__authors__watched(axios, data);
 };
 const deleteAuthor = async (data: { personcode: string }) => {
-  await routes["DELETE /collection/authors/watched"](axios, { data });
+  await DELETE__collection__authors__watched(axios, { data });
   await loadWatchedAuthors(true);
 };
 const runSearch = async (value: string) => {

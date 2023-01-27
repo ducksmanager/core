@@ -9,7 +9,7 @@ import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSub
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-import routes from "~types/routes";
+import { GET__global_stats__user__$userIds } from "~types/routes";
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 export const users = defineStore("users", {
@@ -26,9 +26,7 @@ export const users = defineStore("users", {
   actions: {
     async fetchCount() {
       if (!this.count)
-        this.count = (
-          await routes["GET /global-stats/user/count"](axios)
-        ).data.count;
+        this.count = (await GET__global_stats__user__count(axios)).data.count;
     },
     async fetchStats(userIds: number[], clearCacheEntry = true) {
       const points = this.points;
@@ -41,7 +39,7 @@ export const users = defineStore("users", {
       if (!missingUserIds.length) return;
 
       const data = (
-        await routes["GET /global-stats/user/:userIds"](axios, {
+        await GET__global_stats__user__$userIds(axios, {
           ...(clearCacheEntry ? {} : { cache: false }),
           urlParams: {
             userIds: missingUserIds.sort((a, b) => Math.sign(a - b)).join(","),

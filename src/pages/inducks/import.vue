@@ -298,7 +298,7 @@ import { useI18n } from "vue-i18n";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { inducks_issue } from "~prisma_clients/client_coa";
-import routes from "~types/routes";
+import { POST__collection__issues__multiple } from "~types/routes";
 
 let step = $ref(1 as number);
 const rawData = $ref("" as string);
@@ -371,7 +371,7 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await routes["POST /collection/issues/multiple"](axios, {
+      await POST__collection__issues__multiple(axios, {
         publicationcode,
         issuenumbers: importableIssuesByPublicationCode[publicationcode],
         condition: issueDefaultCondition,

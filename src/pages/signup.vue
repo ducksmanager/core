@@ -73,7 +73,7 @@ import { useI18n } from "vue-i18n";
 
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection } from "~/stores/collection";
-import routes from "~types/routes";
+import { GET__csrf, PUT__collection__user } from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
 
 const collectionStore = collection();
@@ -89,7 +89,7 @@ let username = $ref("" as string),
 const { t: $t } = useI18n();
 
 onMounted(async () => {
-  csrfToken = (await routes["GET /csrf"](axios)).data?.csrfToken;
+  csrfToken = (await GET__csrf(axios)).data?.csrfToken;
 });
 
 const signup = async () => {
@@ -97,7 +97,7 @@ const signup = async () => {
     Cookies.set(
       "token",
       (
-        await routes["PUT /collection/user"](axios, {
+        await PUT__collection__user(axios, {
           username,
           password,
           password2,

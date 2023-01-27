@@ -64,7 +64,7 @@ import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import routes from "~types/routes";
+import { GET__csrf, POST__login } from "~types/routes";
 
 const collectionStore = collection();
 
@@ -77,7 +77,7 @@ let error = $ref(null as string | null);
 let password = $ref("" as string);
 
 onMounted(async () => {
-  csrfToken = (await routes["GET /csrf"](axios)).data?.csrfToken;
+  csrfToken = (await GET__csrf(axios)).data?.csrfToken;
 });
 
 const login = async () => {
@@ -85,7 +85,7 @@ const login = async () => {
     Cookies.set(
       "token",
       (
-        await routes["POST /login"](axios, {
+        await POST__login(axios, {
           username,
           password,
         })

@@ -26,18 +26,18 @@ import { BButton, BTable } from "bootstrap-vue-next";
 import { onMounted } from "vue";
 
 import { bookstoreComment } from "~prisma_clients/client_dm";
-import routes from "~types/routes";
+import { GET__bookstores, POST__bookstores__approve } from "~types/routes";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await routes["POST /bookstores/approve"](axios, { id });
-  bookstores = (await routes["GET /bookstores"](axios)).data;
+  await POST__bookstores__approve(axios, { id });
+  bookstores = (await GET__bookstores(axios)).data;
 };
 
 onMounted(async () => {
-  bookstores = (await routes["GET /bookstores"](axios)).data;
+  bookstores = (await GET__bookstores(axios)).data;
 });
 </script>
 
