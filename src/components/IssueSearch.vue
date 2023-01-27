@@ -92,6 +92,10 @@ import {
   collection as collectionStore,
   IssueWithPublicationcode,
 } from "~/stores/collection";
+import {
+  GET__coa__list__issues__by_storycode,
+  POST__coa__stories__search__withIssues,
+} from "~types/routes";
 import { simple_issue } from "~types/SimpleIssue";
 import { simple_story } from "~types/SimpleStory";
 
@@ -160,7 +164,7 @@ const runSearch = async (value: string) => {
   try {
     if (isSearchByCode) {
       const data = (
-        await routes["GET /coa/list/issues/by-storycode"](axios, {
+        await GET__coa__list__issues__by_storycode(axios, {
           params: { storycode: value.replace(/^code=/, "") },
         })
       ).data;
@@ -176,7 +180,7 @@ const runSearch = async (value: string) => {
       );
     } else {
       const data = (
-        await routes["POST /coa/stories/search/withIssues"](axios, {
+        await POST__coa__stories__search__withIssues(axios, {
           keywords: value,
         })
       ).data as { results: simple_story[]; hasMore: boolean };

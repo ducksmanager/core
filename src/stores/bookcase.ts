@@ -5,7 +5,9 @@ import { BookcaseEdge } from "~types/BookcaseEdge";
 import {
   GET__bookcase__$username,
   GET__bookcase__$username__options,
+  GET__bookcase__$username__sort,
   POST__bookcase__options,
+  POST__bookcase__sort,
 } from "~types/routes";
 
 import { collection } from "./collection";
@@ -105,14 +107,14 @@ export const bookcase = defineStore("bookcase", {
     async loadBookcaseOrder() {
       if (!this.bookcaseOrder) {
         this.bookcaseOrder = (
-          await routes["GET /bookcase/:username/sort"](axios, {
+          await GET__bookcase__$username__sort(axios, {
             urlParams: { username: this.bookcaseUsername! },
           })
         ).data;
       }
     },
     async updateBookcaseOrder() {
-      await routes["POST /bookcase/sort"](axios, {
+      await POST__bookcase__sort(axios, {
         sorts: this.bookcaseOrder as string[],
       });
     },

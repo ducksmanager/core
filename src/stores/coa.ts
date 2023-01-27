@@ -10,7 +10,10 @@ import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 import {
   GET__coa__authorsfullnames__$authors,
+  GET__coa__list__countries__$locale,
   GET__coa__list__issues__by_publication_codes,
+  GET__coa__list__issues__count,
+  GET__coa__list__issues__details,
   GET__coa__list__issues__withTitle,
   GET__coa__list__publications,
   GET__coa__list__publications__$countrycode,
@@ -112,7 +115,7 @@ export const coa = defineStore("coa", {
           (i18n.global.locale as unknown as { value: string }).value
         );
         this.countryNames = (
-          await routes["GET /coa/list/countries/:locale"](coaApi, {
+          await GET__coa__list__countries__$locale(coaApi, {
             urlParams: {
               locale,
             },
@@ -287,9 +290,7 @@ export const coa = defineStore("coa", {
 
     async fetchIssueCounts() {
       if (!this.issueCounts)
-        this.issueCounts = (
-          await routes["GET /coa/list/issues/count"](coaApi)
-        ).data;
+        this.issueCounts = (await GET__coa__list__issues__count(coaApi)).data;
     },
 
     async fetchIssueUrls({
@@ -302,7 +303,7 @@ export const coa = defineStore("coa", {
       const issueCode = `${publicationcode} ${issuenumber}`;
       if (!this.issueDetails[issueCode]) {
         const issueDetails = (
-          await routes["GET /coa/list/issues/details"](coaApi, {
+          await GET__coa__list__issues__details(coaApi, {
             params: { publicationcode, issuenumber },
           })
         ).data;

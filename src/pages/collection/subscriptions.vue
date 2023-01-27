@@ -89,7 +89,11 @@ import { onMounted, watch } from "vue";
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
 import { EditSubscription } from "~types/EditSubscription";
-import { PUT__collection__subscriptions } from "~types/routes";
+import {
+  DELETE__collection__subscriptions__$id,
+  POST__collection__subscriptions__$id,
+  PUT__collection__subscriptions,
+} from "~types/routes";
 
 type AssociatedPublication = {
   referencePublicationcode: string;
@@ -144,7 +148,7 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: EditSubscription) => {
-  await routes["POST /collection/subscriptions/:id"](
+  await POST__collection__subscriptions__$id(
     axios,
     { subscription },
     {
@@ -155,7 +159,7 @@ const editSubscription = async (subscription: EditSubscription) => {
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await routes["DELETE /collection/subscriptions/:id"](axios, {
+  await DELETE__collection__subscriptions__$id(axios, {
     urlParams: { id: String(id) },
   });
   await loadSubscriptions(true);

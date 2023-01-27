@@ -5,11 +5,13 @@ meta:
 <script setup lang="ts">
 import axios from "axios";
 import { onMounted } from "vue";
+
+import { POST__presentation_text__$decision } from "~types/routes";
 let router = useRouter();
 
 onMounted(async () => {
   let currentRoute = router.currentRoute.value;
-  await routes["POST /presentation-text/:decision"](
+  await POST__presentation_text__$decision(
     axios,
     currentRoute.query as unknown as { sentence: string; userId: number },
     {

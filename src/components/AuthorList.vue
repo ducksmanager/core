@@ -117,6 +117,7 @@ import { inducks_person } from "~prisma_clients/client_coa";
 import { authorUser } from "~prisma_clients/client_dm";
 import {
   DELETE__collection__authors__watched,
+  GET__coa__authorsfullnames__search__$partialAuthorName,
   POST__collection__authors__watched,
   PUT__collection__authors__watched,
 } from "~types/routes";
@@ -175,14 +176,11 @@ const runSearch = async (value: string) => {
     try {
       isSearching = true;
       searchResults = (
-        await routes["GET /coa/authorsfullnames/search/:partialAuthorName"](
-          axios,
-          {
-            urlParams: {
-              partialAuthorName: value,
-            },
-          }
-        )
+        await GET__coa__authorsfullnames__search__$partialAuthorName(axios, {
+          urlParams: {
+            partialAuthorName: value,
+          },
+        })
       ).data;
     } finally {
       isSearching = false;

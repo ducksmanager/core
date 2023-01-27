@@ -180,7 +180,7 @@ import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { users } from "~/stores/users";
-import { GET__bookstores } from "~types/routes";
+import { GET__bookstores, PUT__bookstores } from "~types/routes";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
@@ -245,7 +245,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await routes["PUT /bookstores"](axios, { bookstore });
+  await PUT__bookstores(axios, { bookstore });
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;

@@ -65,7 +65,7 @@ const changePassword = async () => {
 
 onMounted(async () => {
   try {
-    await routes["POST /auth/change-password"](axios, {
+    await POST__auth__change_password(axios, {
       token,
       password,
       password2,

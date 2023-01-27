@@ -224,7 +224,11 @@ import { useI18n } from "vue-i18n";
 import Accordion from "~/components/Accordion.vue";
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection as collectionStore } from "~/stores/collection";
-import { POST__collection__empty, POST__collection__user } from "~types/routes";
+import {
+  DELETE__collection__user,
+  POST__collection__empty,
+  POST__collection__user,
+} from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
 
 const collection = collectionStore();
@@ -292,7 +296,7 @@ const deleteAccount = async () => {
       )
     )
   ) {
-    await routes["DELETE /collection/user"](axios);
+    await DELETE__collection__user(axios);
     await router.push("/logout");
   }
 };
