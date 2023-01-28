@@ -53,6 +53,7 @@ COPY --from=api-build /home/api/dist /app/
 RUN rm -rf api/dist/prisma && mv prisma api/dist/
 
 COPY ./api/routes/demo/*.csv /app/api/routes/demo
+COPY ./api/emails /app/api/
 
 EXPOSE 3000
 

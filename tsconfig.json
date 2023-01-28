@@ -30,7 +30,7 @@
     }
   },
   "include": [
-"    components.d.ts",
+    "components.d.ts",
     "histoire.d.ts",
     "src/**/*.ts",
     "src/**/*.vue",

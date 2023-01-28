@@ -7,6 +7,6 @@
 	}
   ],
   "config": {
-	"allowedDomains": ["vite.ducksmanager.net", "api2.ducksmanager.net"]
+	"allowedDomains": ["ducksmanager.net", "api.ducksmanager.net", "vite.ducksmanager.net", "api2.ducksmanager.net"]
   }
 }
