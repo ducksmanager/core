@@ -243,7 +243,7 @@ const publicationNames = $computed(() => coa().publicationNames);
 const stats = $computed(() => users().stats);
 
 let hasPublicationNames = $ref(false as boolean);
-let userIdFilter = $ref(undefined as number | undefined);
+let userIdFilter = $ref(null as number | null);
 
 const deleteRequestToSeller = async (issueId: number) => {
   await marketplace().deleteRequestToSeller(issueId);
