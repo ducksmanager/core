@@ -4,6 +4,7 @@ export type SaleState =
   | { setAsideFor: number };
 
 export type SingleCopyState = {
+  id: number | null;
   condition: string;
   isToRead: boolean;
   isOnSale: SaleState;

@@ -14,6 +14,7 @@ import {
   checkPurchaseIdsBelongToUser,
   conditionToEnum,
   deleteIssues,
+  handleIsOnSale,
 } from "./_common";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
@@ -111,7 +112,7 @@ export const post = [
       )[0];
     }
 
-    if (isOnSale === false) {
+    if (isOnSale !== undefined) {
       const issueIds = (
         await prisma.issue.findMany({
           select: {
@@ -127,13 +128,8 @@ export const post = [
           },
         })
       ).map(({ id }) => id);
-      await prisma.requestedIssue.updateMany({
-        data: {
-          isBooked: false,
-        },
-        where: {
-          issueId: { in: issueIds },
-        },
+      issueIds.forEach(async (issueId) => {
+        await handleIsOnSale(issueId, isOnSale);
       });
     }
 

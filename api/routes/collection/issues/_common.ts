@@ -1,3 +1,4 @@
+import { SaleState } from "~/../types/CollectionUpdate";
 import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
 
 const prisma = new PrismaClient();
@@ -60,4 +61,45 @@ export const checkPurchaseIdsBelongToUser = async (
     );
   }
   return checkedPromiseIds;
+};
+
+export const handleIsOnSale = async (issueId: number, isOnSale: SaleState) => {
+  if (typeof isOnSale === "object") {
+    if ("setAsideFor" in isOnSale) {
+      const buyerId = isOnSale.setAsideFor;
+      await prisma.requestedIssue.update({
+        data: {
+          isBooked: true,
+        },
+        where: {
+          issueId_buyerId: { issueId, buyerId },
+        },
+      });
+    } else if ("transferTo" in isOnSale) {
+      const buyerId = isOnSale.transferTo;
+      await prisma.issue.update({
+        data: {
+          userId: buyerId,
+          purchaseId: null,
+          isOnSale: false,
+          isToRead: false,
+          isSubscription: false,
+          creationDate: new Date(),
+        },
+        where: {
+          id: issueId,
+        },
+      });
+    }
+  }
+  if (
+    (typeof isOnSale === "object" && "transferFor" in isOnSale) ||
+    isOnSale === false
+  ) {
+    await prisma.requestedIssue.deleteMany({
+      where: {
+        issueId,
+      },
+    });
+  }
 };

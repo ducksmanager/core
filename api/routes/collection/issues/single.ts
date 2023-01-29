@@ -6,11 +6,7 @@ import { Call } from "~types/Call";
 import { CollectionUpdateSingleIssue } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";
 
-import {
-  checkPurchaseIdsBelongToUser,
-  conditionToEnum,
-  deleteIssues,
-} from "./_common";
+import { checkPurchaseIdsBelongToUser, conditionToEnum } from "./_common";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
@@ -20,39 +16,49 @@ const addOrChangeCopies = async (
   userId: number,
   publicationcode: string,
   issuenumber: string,
+  issueIds: (number | null)[],
   conditions: (string | null)[],
   areOnSale: (boolean | undefined)[],
   areToRead: (boolean | undefined)[],
   purchaseIds: (number | null)[]
 ): Promise<TransactionResults> => {
-  await deleteIssues(userId, publicationcode, [issuenumber]);
   const [country, magazine] = publicationcode.split("/");
 
-  const insertOperations = [...new Set(conditions.keys())]
-    .filter((copyNumber) => conditions[copyNumber] !== null)
-    .map((copyNumber) =>
-      prisma.issue.create({
-        data: {
-          country,
-          magazine,
-          issuenumber,
-          condition: conditionToEnum(conditions[copyNumber]!),
-          isOnSale:
-            areOnSale[copyNumber] !== undefined
-              ? (areOnSale[copyNumber] as boolean)
-              : false,
-          isToRead:
-            areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
-          purchaseId: purchaseIds[copyNumber] || -2,
-          userId,
-          creationDate: new Date(),
-        },
-      })
-    );
-  await prisma.$transaction(insertOperations);
+  const operations = issueIds.map((issueId, copyNumber) => {
+    if (issueId && conditions[copyNumber] === null) {
+      return prisma.issue.delete({
+        where: { id: issueId },
+      });
+    }
+    const common = {
+      condition: conditionToEnum(conditions[copyNumber]!),
+      isOnSale:
+        areOnSale[copyNumber] !== undefined
+          ? (areOnSale[copyNumber] as boolean)
+          : false,
+      isToRead:
+        areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
+      purchaseId: purchaseIds[copyNumber] || -2,
+    };
+    return prisma.issue.upsert({
+      create: {
+        ...common,
+        country,
+        magazine,
+        issuenumber,
+        userId,
+        creationDate: new Date(),
+      },
+      update: common,
+      where: {
+        id: issueId || 0,
+      },
+    });
+  });
+  await prisma.$transaction(operations);
 
   return {
-    insertOperations: insertOperations.length,
+    operations: operations.length,
   };
 };
 
@@ -82,6 +88,7 @@ export const post = [
       userId,
       publicationcode,
       issuenumber,
+      copies.map(({ id }) => id),
       copies.map(({ condition }) => condition),
       copies.map(({ isOnSale }) =>
         isOnSale === undefined ? undefined : isOnSale !== false
@@ -105,6 +112,9 @@ export const post = [
     ).map(({ id }) => id);
     let idx = 0;
     for (const issueId of currentCopyIds) {
+      if (!copies[idx]) {
+        continue;
+      }
       await prisma.requestedIssue.updateMany({
         data: {
           isBooked: typeof copies[idx++].isOnSale !== "boolean",

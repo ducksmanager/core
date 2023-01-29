@@ -419,7 +419,7 @@ const formatDate = (value: string) =>
   /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 
 const issueIds = $computed((): (number | null)[] =>
-  collectionForCurrentPublication
+  issuenumbers && collectionForCurrentPublication
     ? isSingleIssueSelected
       ? [
           collectionForCurrentPublication
@@ -430,7 +430,7 @@ const issueIds = $computed((): (number | null)[] =>
       : collectionForCurrentPublication
           ?.filter(({ issuenumber }) => issuenumbers.includes(issuenumber))
           .map(({ id }) => id || null)
-    : []
+    : [] || []
 );
 
 const createPurchase = async (data: { date: string; description: string }) => {
