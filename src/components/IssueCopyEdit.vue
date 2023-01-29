@@ -189,12 +189,14 @@
           <i-bi-cart-x v-if="stateId === false" />
           <i-bi-lock
             v-if="
+              disabled &&
               typeof newCopyState.isOnSale === 'object' &&
               'setAsideFor' in newCopyState.isOnSale
             "
           />
           <i-bi-arrow-bar-right
             v-if="
+              disabled &&
               typeof newCopyState.isOnSale === 'object' &&
               'transferTo' in newCopyState.isOnSale
             "
@@ -209,23 +211,14 @@
           :class="{
             clickable: true,
             selected:
-              String(newCopyState.isOnSale).indexOf(String(stateId)) === 0,
+              typeof newCopyState.isOnSale === 'object' &&
+              Object.keys(stateId)[0] in newCopyState.isOnSale,
           }"
           @mouseleave.prevent="() => {}"
         >
           <template #title>
-            <i-bi-lock
-              v-if="
-                typeof newCopyState.isOnSale === 'object' &&
-                'setAsideFor' in newCopyState.isOnSale
-              "
-            />
-            <i-bi-arrow-bar-right
-              v-if="
-                typeof newCopyState.isOnSale === 'object' &&
-                'transferTo' in newCopyState.isOnSale
-              "
-            />
+            <i-bi-lock v-if="'setAsideFor' in stateId" />
+            <i-bi-arrow-bar-right v-if="'transferTo' in stateId" />
             <div :title="tooltip">{{ stateText }}</div>
           </template>
           <v-contextmenu-group :title="stateText">
@@ -237,9 +230,11 @@
               :class="{
                 selected:
                   typeof newCopyState.isOnSale === 'object' &&
-                  (('transferTo' in newCopyState.isOnSale &&
+                  ((Object.keys(stateId)[0] === 'transferTo' &&
+                    'transferTo' in newCopyState.isOnSale &&
                     newCopyState.isOnSale.transferTo === userId) ||
-                    ('setAsideFor' in newCopyState.isOnSale &&
+                    (Object.keys(stateId)[0] === 'setAsideFor' &&
+                      'setAsideFor' in newCopyState.isOnSale &&
                       newCopyState.isOnSale.setAsideFor === userId)),
               }"
               @click.prevent="
