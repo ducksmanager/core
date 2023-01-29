@@ -1,5 +1,11 @@
 <template>
   <span class="d-inline-block me-2">
+    <b-badge
+      v-if="isBooked"
+      variant="info"
+      class="small d-inline-flex align-items-center me-2"
+      >{{ $t("Réservé !") }}</b-badge
+    >
     <template v-if="sentRequest">{{ $t("Demande envoyée à") }}</template
     ><template v-else>{{ $t("En vente par") }}</template
     >&nbsp;<UserPopover
@@ -12,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import { BBadge } from "bootstrap-vue-next";
+
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
@@ -33,6 +41,14 @@ const issueOnSale = $computed(
     (marketplace().issuesOnSaleByOthers?.[publicationcode] || []).filter(
       ({ issuenumber: onSaleIssuenumber }) => onSaleIssuenumber === issuenumber
     )[copyIndex]
+);
+
+const isBooked = $computed(
+  () =>
+    issueOnSale &&
+    marketplace().issueRequestsAsBuyer?.find(
+      ({ issueId }) => issueId === issueOnSale.id
+    )?.isBooked
 );
 </script>
 

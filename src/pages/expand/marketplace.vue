@@ -47,10 +47,16 @@ alias: [/agrandir/marketplace]
                 publicationNames[issuesOnSaleById[issueId].publicationcode]
               "
             />
-            <b-button
-              variant="warning"
-              pill
+            <b-badge
+              variant="info"
               class="small d-inline-flex align-items-center"
+              style="height: 14px"
+              >{{ $t("Réservé !") }}</b-badge
+            >
+            <b-button
+              variant="outline-warning"
+              pill
+              class="small d-inline-flex align-items-center ms-2"
               style="height: 14px"
               @click.exact="deleteRequestToSeller(issueId)"
               >{{ $t("Annuler la demande") }}</b-button
@@ -202,6 +208,7 @@ alias: [/agrandir/marketplace]
 <script setup lang="ts">
 import {
   BAlert,
+  BBadge,
   BButton,
   BFormSelect,
   BFormSelectOption,
