@@ -4,13 +4,13 @@ import { defineStore } from "pinia";
 
 import {
   authorUser,
-  edge,
   issue,
   issue_condition,
   purchase,
   subscription,
   user,
 } from "~prisma_clients/client_dm";
+import edge from "~prisma_extended_clients/dm.extends";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -70,11 +70,6 @@ type IssueSuggestionWithStringDate = Omit<IssueSuggestion, "oldestdate"> & {
   oldestdate: string;
 };
 
-type LastPublishedEdge = edge & {
-  issuecode: string;
-  timestamp: number;
-};
-
 export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
@@ -98,7 +93,7 @@ export const collection = defineStore("collection", {
     subscriptions: null as SubscriptionTransformed[] | null,
 
     popularIssuesInCollection: null as { [issuecode: string]: number } | null,
-    lastPublishedEdgesForCurrentUser: null as LastPublishedEdge[] | null,
+    lastPublishedEdgesForCurrentUser: null as (typeof edge)[] | null,
 
     isLoadingUser: false as boolean,
     isLoadingCollection: false as boolean,
@@ -517,12 +512,8 @@ export const collection = defineStore("collection", {
     async loadLastPublishedEdgesForCurrentUser() {
       if (!this.lastPublishedEdgesForCurrentUser) {
         this.lastPublishedEdgesForCurrentUser = (
-          (await GET__collection__edges__lastPublished(axios)).data as edge[]
-        ).map((edge) => ({
-          ...edge,
-          issuecode: `${edge.publicationcode} ${edge.issuenumber}`,
-          timestamp: edge.creationDate.getTime() / 1000,
-        }));
+          await GET__collection__edges__lastPublished(axios)
+        ).data;
       }
     },
 

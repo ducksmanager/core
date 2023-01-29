@@ -1,4 +1,4 @@
-import prisma from "~prisma_extended_clients/dm.publicationcode";
+import prisma from "~prisma_extended_clients/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
 

@@ -1,21 +1,17 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { issue, subscription } from "~prisma_clients/client_dm";
 
-const computePublicationcode = {
+export const computePublicationcode = {
   publicationcode: {
     needs: {
       country: true,
       magazine: true,
     },
-    compute: ({ country, magazine }: { country: string; magazine: string }) =>
-      `${country}/${magazine}`,
+    compute: ({
+      country,
+      magazine,
+    }: {
+      country: (issue | subscription)["country"];
+      magazine: (issue | subscription)["magazine"];
+    }) => `${country}/${magazine}`,
   },
 };
-
-const prisma = new PrismaClient().$extends({
-  result: {
-    issue: computePublicationcode,
-    subscription: computePublicationcode,
-  },
-});
-
-export default prisma;

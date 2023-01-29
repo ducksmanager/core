@@ -1,9 +1,11 @@
-import { edge } from "~prisma_clients/client_dm";
-import prisma from "~prisma_extended_clients/dm.publicationcode";
+import { Prisma } from "~prisma_clients/client_dm";
+import prisma from "~prisma_extended_clients/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 import { Call } from "~types/Call";
 
-export type getCall = Call<edge[]>;
+export type getCall = Call<
+  Prisma.PromiseReturnType<typeof prisma.edge.findMany>
+>;
 export const get = async (...[req, res]: ExpressCall<getCall>) => {
   const userId = req.user!.id;
   const threeMonthsAgo = new Date();
