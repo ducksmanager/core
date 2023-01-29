@@ -48,6 +48,7 @@ alias: [/agrandir/marketplace]
               "
             />
             <b-badge
+              v-if="isRequestBooked(issueId)"
               variant="info"
               class="small d-inline-flex align-items-center"
               style="height: 14px"
@@ -272,6 +273,10 @@ const requestIssues = async ({ issueIds }: { issueIds: number[] }) => {
   await marketplace().requestIssues(issueIds);
   await marketplace().loadIssueRequestsAsBuyer(true);
 };
+
+const isRequestBooked = (thisIssueId: number) =>
+  issueRequestsAsBuyer?.find(({ issueId }) => thisIssueId === issueId)
+    ?.isBooked;
 
 onMounted(async () => {
   await marketplace().loadIssuesOnSaleByOthers();
