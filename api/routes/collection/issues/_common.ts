@@ -80,7 +80,7 @@ export const handleIsOnSale = async (issueId: number, isOnSale: SaleState) => {
       await prisma.issue.update({
         data: {
           userId: buyerId,
-          purchaseId: null,
+          purchaseId: -1,
           isOnSale: false,
           isToRead: false,
           isSubscription: false,
@@ -93,7 +93,7 @@ export const handleIsOnSale = async (issueId: number, isOnSale: SaleState) => {
     }
   }
   if (
-    (typeof isOnSale === "object" && "transferFor" in isOnSale) ||
+    (typeof isOnSale === "object" && "transferTo" in isOnSale) ||
     isOnSale === false
   ) {
     await prisma.requestedIssue.deleteMany({

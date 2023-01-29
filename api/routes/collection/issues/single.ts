@@ -6,7 +6,11 @@ import { Call } from "~types/Call";
 import { CollectionUpdateSingleIssue } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";
 
-import { checkPurchaseIdsBelongToUser, conditionToEnum } from "./_common";
+import {
+  checkPurchaseIdsBelongToUser,
+  conditionToEnum,
+  handleIsOnSale,
+} from "./_common";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
@@ -110,20 +114,12 @@ export const post = [
         },
       })
     ).map(({ id }) => id);
-    let idx = 0;
-    for (const issueId of currentCopyIds) {
-      if (!copies[idx]) {
-        continue;
+
+    currentCopyIds.forEach(async (issueId, idx) => {
+      if (copies[idx]) {
+        await handleIsOnSale(issueId, copies[idx].isOnSale);
       }
-      await prisma.requestedIssue.updateMany({
-        data: {
-          isBooked: typeof copies[idx++].isOnSale !== "boolean",
-        },
-        where: {
-          issueId,
-        },
-      });
-    }
+    });
     return res.json(output);
   },
 ];

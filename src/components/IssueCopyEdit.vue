@@ -454,4 +454,18 @@ watch(
   },
   { deep: true }
 );
+watch(
+  () => marketplace().issueRequestsAsSeller,
+  (newValue) => {
+    const buyerId = newValue?.find(
+      ({ issueId, isBooked }) =>
+        issueId === (copyState as IssueWithPublicationcodeOptionalId).id &&
+        isBooked
+    )?.buyerId;
+    if (buyerId) {
+      newCopyState.isOnSale = { setAsideFor: buyerId };
+    }
+  },
+  { immediate: true }
+);
 </script>
