@@ -44,8 +44,7 @@
 <script setup lang="ts">
 import { coa } from "~/stores/coa";
 
-const EDGES_ROOT = "https://edges.ducksmanager.net/edges/",
-  SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
+const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
   issuenumber,
@@ -77,7 +76,7 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
   src = $computed(() =>
     spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
-      : `${EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
+      : `${import.meta.env.EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
           issuenumberReference || issuenumber
         }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`
   ),

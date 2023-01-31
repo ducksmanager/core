@@ -3,7 +3,7 @@
     <img
       class="flag"
       :alt="countryCode || undefined"
-      :src="`/images/flags/${countryCode}.png`"
+      :src="getImagePath(`flags/${countryCode}.png`)"
     />&nbsp;
     <slot v-if="countryName" :country-name="countryName">
       {{ countryName }}
@@ -12,11 +12,14 @@
 </template>
 
 <script setup lang="ts">
+import { images } from "~/stores/images";
+
 const { country = null, countryName = null } = defineProps<{
   country?: string;
   countryName?: string;
 }>();
 
+const getImagePath = images().getImagePath;
 const countryCode = $computed(() => country);
 </script>
 

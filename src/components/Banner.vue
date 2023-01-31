@@ -1,19 +1,21 @@
 <template>
   <div :class="{ ...classes, small }">
     <router-link :to="user ? '/collection/show' : '/'">
-      <img src="/images/logo_small.png" alt="DucksManager" />
+      <img :src="getImagePath('logo_small.png')" alt="DucksManager" />
     </router-link>
   </div>
 </template>
 
 <script setup lang="ts">
 import { collection } from "~/stores/collection";
+import { images } from "~/stores/images";
 
 const { classes = {}, small = false } = defineProps<{
   classes?: { [key: string]: string };
   small?: boolean;
 }>();
 const user = $computed(() => collection().user);
+const getImagePath = images().getImagePath;
 </script>
 
 <style scoped lang="scss">

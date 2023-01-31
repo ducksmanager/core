@@ -10,7 +10,7 @@ export const get = async (...[, res]: ExpressCall<getCall>) => {
     await axios.post(
       process.env.PASTEC_HOSTS + "/searcher",
       fs.readFileSync(
-        `${process.env.IMAGE_REMOTE_ROOT}/au/bp/001/au_bp_001a_001.jpg`
+        `${process.env.INDUCKS_COVERS_ROOT}/au/bp/001/au_bp_001a_001.jpg`
       )
     )
   ).data;

@@ -37,9 +37,13 @@
     <img
       v-if="level <= 3"
       class="medal"
-      :src="`/images/medals/${contribution}_${level}_${
-        xSmall ? 'fond' : currentLocaleShortKey
-      }.png`"
+      :src="
+        getImagePath(
+          `medals/${contribution}_${level}_${
+            xSmall ? 'fond' : currentLocaleShortKey
+          }.png`
+        )
+      "
     />
     <b v-if="small">
       {{ medalTitle }}
@@ -53,6 +57,7 @@ import { useI18n } from "vue-i18n";
 
 import { getCurrentLocaleShortKey } from "~/composables/locales";
 import medal from "~/composables/medal";
+import { images } from "~/stores/images";
 
 const i18n = useI18n();
 const currentLocaleShortKey = getCurrentLocaleShortKey(i18n.locale.value);
@@ -71,6 +76,7 @@ const {
   contribution: string;
 }>();
 const { t: $t } = useI18n();
+const getImagePath = images().getImagePath;
 const {
   currentLevel,
   pointsDiffNextLevel,

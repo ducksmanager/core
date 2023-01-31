@@ -8,19 +8,19 @@ meta:
     <div id="dm-loves-inducks">
       <div
         id="dm-logo-small"
-        :style="{ backgroundImage: `url(/images/logo_small.png)` }"
+        :style="{ backgroundImage: `url(${getImagePath('logo_small.png')})` }"
       >
         &nbsp;
       </div>
       <div
         id="loves"
-        :style="{ backgroundImage: `url(/images/icons/heart.png)` }"
+        :style="{ backgroundImage: `url(${getImagePath('icons/heart.png')})` }"
       >
         &nbsp;
       </div>
       <div
         id="inducks-logo"
-        :style="{ backgroundImage: `url(/images/inducks_logo.png)` }"
+        :style="{ backgroundImage: `url(${getImagePath('inducks_logo.png')})` }"
       >
         &nbsp;
       </div>
@@ -297,8 +297,10 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
+import { images } from "~/stores/images";
 import { inducks_issue } from "~prisma_clients/client_coa";
 import { POST__collection__issues__multiple } from "~types/routes";
+const getImagePath = images().getImagePath;
 
 let step = $ref(1 as number);
 const rawData = $ref("" as string);

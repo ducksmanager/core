@@ -46,7 +46,7 @@
               <div
                 class="b-custom"
                 :style="{
-                  backgroundImage: `url(/images/icons/inducks.png)`,
+                  backgroundImage: `url(${getImagePath('icons/inducks.png')})`,
                 }"
               />
               {{ $t("Collection Inducks") }}
@@ -102,8 +102,10 @@
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
+import { images } from "~/stores/images";
 
 const username = $computed(() => collection().user?.username || null);
+const getImagePath = images().getImagePath;
 
 const logout = () => {
   Cookies.remove("token");

@@ -3,7 +3,7 @@
     <tr>
       <td>
         <router-link to="/collection/show"
-          ><img id="logo" alt="logo" src="/images/logo_small.png"
+          ><img id="logo" alt="logo" :src="getImagePath('logo_small.png')"
         /></router-link>
       </td>
       <td>{{ $t("Collection DucksManager de") }} {{ username }}</td>
@@ -13,8 +13,10 @@
 
 <script setup lang="ts">
 import { collection } from "~/stores/collection";
+import { images } from "~/stores/images";
 
 const username = $computed(() => collection().user?.username);
+const getImagePath = images().getImagePath;
 </script>
 
 <style lang="scss" scoped>

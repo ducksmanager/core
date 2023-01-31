@@ -89,7 +89,10 @@ alias: [/collection/compte]
                 )
               }}
             </div>
-            <img :src="`/images/discord-id/${locale}.png`" class="w-100" />
+            <img
+              :src="getImagePath(`discord-id/${locale}.png`)"
+              class="w-100"
+            />
           </template>
         </accordion>
         <b-form-checkbox
@@ -231,12 +234,14 @@ import { useI18n } from "vue-i18n";
 import Accordion from "~/components/Accordion.vue";
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection as collectionStore } from "~/stores/collection";
+import { images } from "~/stores/images";
 import {
   DELETE__collection__user,
   POST__collection__empty,
   POST__collection__user,
 } from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
+const getImagePath = images().getImagePath;
 
 const collection = collectionStore();
 

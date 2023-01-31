@@ -11,11 +11,11 @@
       </div>
       <div id="login">
         <router-link id="logo_small" :to="user ? '/collection/show' : '/'">
-          <img src="/images/logo_name.jpg" />
+          <img :src="getImagePath('logo_name.jpg')" />
         </router-link>
 
         <div v-if="user" id="login_status">
-          <img alt="O" src="/images/icons/green.png" />&nbsp;
+          <img alt="O" :src="getImagePath('icons/green.png')" />&nbsp;
           <span>{{ user.username }}</span>
         </div>
       </div>
@@ -46,8 +46,10 @@
 import Popper from "@bperel/vue3-popper-teleport";
 
 import { collection } from "~/stores/collection";
+import { images } from "~/stores/images";
 import { users } from "~/stores/users";
 
+const getImagePath = images().getImagePath;
 const points = $computed(() => users().points);
 const user = $computed(() => collection().user);
 

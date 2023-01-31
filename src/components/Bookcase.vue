@@ -3,7 +3,9 @@
     v-if="embedded"
     class="bookcase"
     :style="{
-      backgroundImage: `url('/images/textures/${bookcaseTextures.bookcase}.jpg')`,
+      backgroundImage: `url('${getImagePath(
+        `textures/${bookcaseTextures.bookcase}.jpg`
+      )})`,
     }"
   >
     <Edge
@@ -22,7 +24,9 @@
     v-else
     class="bookcase"
     :style="{
-      backgroundImage: `url('/images/textures/${bookcaseTextures.bookcase}.jpg')`,
+      backgroundImage: `url('${getImagePath(
+        `textures/${bookcaseTextures.bookcase}.jpg`
+      )})`,
     }"
   >
     <Edge
@@ -49,6 +53,7 @@
 import { onMounted } from "vue";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
+import { images } from "~/stores/images";
 
 const {
   bookcaseTextures,
@@ -69,6 +74,8 @@ const {
 defineEmits<{
   (e: "open-book", edgeToLoad: BookcaseEdgeWithPopularity): void;
 }>();
+
+const getImagePath = images().getImagePath;
 let currentEdgeIndex = $ref(0);
 let edgesToLoad = $ref([] as BookcaseEdgeWithPopularity[]);
 
@@ -80,7 +87,9 @@ const loadNextEdge = () => {
 onMounted(() => {
   if (!document.querySelector("style#bookshelves")) {
     const { bookshelf: bookshelfTexture } = bookcaseTextures;
-    const bookshelfTextureUrl = `/images/textures/${bookshelfTexture}.jpg`;
+    const bookshelfTextureUrl = getImagePath(
+      `textures/${bookshelfTexture}.jpg`
+    );
     const style = document.createElement("style");
     style.id = "bookshelves";
     style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;

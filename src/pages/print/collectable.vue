@@ -22,7 +22,7 @@ meta:
           <td v-if="line === 1" :rowspan="lines + 1" class="libelle_ligne">
             <img
               :alt="publicationcode.split('/')[0]"
-              :src="`/images/flags/${publicationcode.split('/')[0]}.png`"
+              :src="getImagePath(`flags/${publicationcode.split('/')[0]}.png`)"
             />
             <br />
             {{ publicationcode.split("/")[1] }}
@@ -118,7 +118,9 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
+import { images } from "~/stores/images";
 
+const getImagePath = images().getImagePath;
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/;
 const lines = 2;
 const numbersPerRow = 100 / lines;

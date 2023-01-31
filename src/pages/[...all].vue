@@ -9,7 +9,7 @@ meta:
       <div
         id="discord"
         class="mb-4 pt-3"
-        :style="{ backgroundImage: `url('/images/discord.png')` }"
+        :style="{ backgroundImage: `url('${getImagePath('discord.png')}` }"
       >
         {{ $t("Rejoignez la communauté sur") }}
       </div>
@@ -25,7 +25,7 @@ meta:
       </h5>
       <b-row>
         <b-col offset-md="1" lg="5">
-          <img src="/images/demos/montage_small.jpg" alt="logo" />
+          <img :src="getImagePath('demos/montage_small.jpg')" alt="logo" />
         </b-col>
         <b-col lg="5">
           <div>
@@ -80,7 +80,7 @@ meta:
           </div>
         </b-col>
         <b-col lg="5">
-          <img src="/images/demos/manage.jpg" alt="demo_gerer" />
+          <img :src="getImagePath('demos/manage.jpg')" alt="demo_gerer" />
         </b-col>
       </b-row>
       <hr />
@@ -146,7 +146,10 @@ meta:
           </div>
         </b-col>
         <b-col lg="5">
-          <img src="/images/demos/author_stats.png" alt="demo_stats_auteur" />
+          <img
+            :src="getImagePath('demos/author_stats.png')"
+            alt="demo_stats_auteur"
+          />
         </b-col>
       </b-row>
       <hr />
@@ -204,10 +207,12 @@ import { BButton, BCol, BRow } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
+import { images } from "~/stores/images";
 
 const { t: $t } = useI18n();
 
 const user = $computed(() => collection().user);
+const getImagePath = images().getImagePath;
 
 useHead({
   title: $t("Bienvenue sur DucksManager !"),

@@ -20,7 +20,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
 
   const externalRequest = https.request(
     {
-      hostname: process.env.IMAGE_REMOTE_ROOT,
+      hostname: process.env.INDUCKS_COVERS_ROOT,
       path: remotePath,
     },
     (externalRes) => {

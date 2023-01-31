@@ -16,7 +16,7 @@ alias: [/bibliotheque/options]
           <div
             class="selected"
             :style="{
-              backgroundImage: `url('/images/textures/${bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']}.jpg'`,
+              backgroundImage: `url('${getImagePath(`textures/${bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']}`)}.jpg'`,
             }"
           >
             {{
@@ -32,7 +32,9 @@ alias: [/bibliotheque/options]
           v-for="texture in textures"
           :key="texture"
           :style="{
-            backgroundImage: `url('/images/textures/${texture}.jpg'`,
+            backgroundImage: `url('${getImagePath(
+              `textures/${texture}.jpg`
+            )}')`,
           }"
           @click="
             bookcaseOptions!.textures[textureType as 'bookshelf' | 'bookcase'] =
@@ -104,8 +106,10 @@ import { SlickItem, SlickList } from "vue-slicksort";
 import { bookcase } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { images } from "~/stores/images";
 
 const user = $computed(() => collection().user);
+const getImagePath = images().getImagePath;
 const { t: $t } = useI18n();
 const bookcaseStore = bookcase();
 const textures = [

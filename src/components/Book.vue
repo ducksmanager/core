@@ -29,7 +29,7 @@
           <template #header>
             <a :href="inducksLink" target="_blank" class="inducks-link"
               ><img
-                src="/images/coafoot.png"
+                :src="getImagePath('coafoot.png')"
                 :title="`Voir ${publicationNames[publicationcode]} ${issuenumber} sur Inducks`"
                 alt="Inducks"
             /></a>
@@ -109,6 +109,7 @@ import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
+import { images } from "~/stores/images";
 
 const { issuenumber, publicationcode } = defineProps<{
   publicationcode: string;
@@ -116,10 +117,10 @@ const { issuenumber, publicationcode } = defineProps<{
 }>();
 const emit = defineEmits<{ (e: "close-book"): void }>();
 
-const EDGES_BASE_URL = "https://edges.ducksmanager.net/edges/";
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
+const getImagePath = images().getImagePath;
 
 const toast = useToast();
 let edgeWidth = $ref(null as number | null);
@@ -136,7 +137,7 @@ const issueDetails = $computed(() => coa().issueDetails);
 const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
 const edgeUrl = $computed(
   () =>
-    `${EDGES_BASE_URL}${publicationcode.replace(
+    `${import.meta.env.EDGES_BASE_URL}${publicationcode.replace(
       "/",
       "/gen/"
     )}.${issuenumber}.png`

@@ -17,9 +17,11 @@ meta:
       </div>
       &nbsp;
       <img
-        :src="`/images/flags/${
-          mostWantedIssue.publicationcode.split('/')[0]
-        }.png`"
+        :src="
+          getImagePath(
+            `flags/${mostWantedIssue.publicationcode.split('/')[0]}.png`
+          )
+        "
       />
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{
         mostWantedIssue.issuenumber
@@ -129,11 +131,13 @@ import axios from "axios";
 import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";
+import { images } from "~/stores/images";
 import {
   GET__edges__published__data,
   GET__edges__wanted__data,
 } from "~types/routes";
 import { WantedEdge } from "~types/WantedEdge";
+const getImagePath = images().getImagePath;
 
 let hasData = $ref(false as boolean);
 const show = $ref(false as boolean);
@@ -152,7 +156,9 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchIssueNumbers = coa().fetchIssueNumbers;
 const getEdgeUrl = (publicationcode: string, issuenumber: string) => {
   const [country, magazine] = publicationcode.split("/");
-  return `https://edges.ducksmanager.net/edges/${country}/gen/${magazine}.${issuenumber}.png`;
+  return `${
+    import.meta.env.EDGES_ROOT
+  }/${country}/gen/${magazine}.${issuenumber}.png`;
 };
 const open = (publicationcode: string, issuenumber: string) => {
   window.open(getEdgeUrl(publicationcode, issuenumber), "_blank");

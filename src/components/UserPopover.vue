@@ -40,7 +40,7 @@
               :href="href"
               @click="navigate"
             >
-              <img src="/images/icons/bookcase.png" />&nbsp;
+              <img :src="getImagePath('icons/bookcase.png')" />&nbsp;
               {{ $t("Voir la bibliothèque") }}
             </b-button>
           </router-link>
@@ -66,6 +66,7 @@
 import { BAlert, BButton } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
+import { images } from "~/stores/images";
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 defineProps<{
@@ -74,6 +75,7 @@ defineProps<{
   showOkForExchanges?: boolean;
 }>();
 const { t: $t } = useI18n();
+const getImagePath = images().getImagePath;
 </script>
 
 <style scoped lang="scss">

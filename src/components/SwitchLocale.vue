@@ -4,7 +4,7 @@
       v-for="locale in locales"
       :key="locale.key"
       class="flag"
-      :src="`/images/flags/xl/${locale.flagName}.png`"
+      :src="getImagePath(`flags/xl/${locale.flagName}.png`)"
       :alt="locale.name"
       @click="reloadWithLocale(locale)"
     />
@@ -16,11 +16,13 @@ import { useI18n } from "vue-i18n";
 
 import { availableLocales } from "~/composables/locales";
 import { coa } from "~/stores/coa";
+import { images } from "~/stores/images";
 
 const { fixed = false } = defineProps<{
   fixed?: boolean;
 }>();
 
+const getImagePath = images().getImagePath;
 const i18n = useI18n();
 const locales = $computed(() => availableLocales);
 const reloadWithLocale = async ({ key }: { key: string }) => {
