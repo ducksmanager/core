@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../dist/prisma/client_edgecreator"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_EDGECREATOR")
+}
+
+model optionInterval {
+  id               Int    @id @default(autoincrement()) @map("ID")
+  valueId          Int                                  @map("ID_Valeur")
+  issueNumberStart String @db.VarChar(10)               @map("Numero_debut")
+  issueNumberEnd   String @db.VarChar(10)               @map("Numero_fin")
+  username         String @db.VarChar(25)
+
+  @@index([valueId, issueNumberStart, issueNumberEnd, username], map: "index_intervalles")
+  @@map("edgecreator_intervalles")
+}
+
+model edgeModelOld {
+  id           Int     @id @default(autoincrement()) @map("ID")
+  country      String  @db.VarChar(3)                @map("Pays")
+  magazine     String  @db.VarChar(6)                @map("Magazine")
+  order        Int                                   @map("Ordre")
+  functionName String  @db.VarChar(30)               @map("Nom_fonction")
+  optionName   String? @db.VarChar(20)               @map("Option_nom")
+  @@map("edgecreator_modeles2")
+}
+
+model optionValue {
+  id       Int     @id @default(autoincrement()) @map("ID")
+  optionId Int?                                  @map("ID_Option")
+  value    String? @db.VarChar(200)              @map("Option_valeur")
+  @@map("edgecreator_valeurs")
+}
+
+model myfontsImage {
+  id              Int     @id @default(autoincrement()) @map("ID")
+  font            String? @db.VarChar(150)              @map("Font")
+  color           String? @db.VarChar(10)               @map("Color")
+  backgroundColor String? @db.VarChar(10)               @map("ColorBG")
+  width           String? @db.VarChar(7)                @map("Width")
+  text            String? @db.VarChar(150)              @map("Texte")
+  precision      String? @db.VarChar(5)                @map("Precision_")
+  @@map("images_myfonts")
+}
+
+model elementImage {
+  id        Int       @id @default(autoincrement())                               @map("ID")
+  userId    Int?                                                                  @map("ID_Utilisateur")
+  hash      String?   @unique(map: "images_tranches_Hash_uindex") @db.VarChar(40) @map("Hash")
+  createdAt DateTime? @db.DateTime(0)                                             @map("DateHeure")
+  fileName  String    @db.VarChar(255)                                            @map("NomFichier")
+  @@map("images_tranches")
+}
+
+model edgeModel {
+  id            Int     @id @default(autoincrement()) @map("ID")
+  country       String  @db.VarChar(3)                @map("Pays")
+  magazine      String  @db.VarChar(6)                @map("Magazine")
+  issuenumber   String  @db.VarChar(10)               @map("Numero")
+  username      String? @db.VarChar(25)
+  mainPhotoName String? @db.VarChar(60)               @map("NomPhotoPrincipale")
+  photographs   String? @db.Text                      @map("photographes")
+  creators      String? @db.Text                      @map("createurs")
+  isActive      Boolean                               @map("Active")
+
+  @@unique([country, magazine, issuenumber, username], map: "tranches_en_cours_modeles__numero")
+  @@map("tranches_en_cours_modeles")
+}

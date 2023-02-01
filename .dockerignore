@@ -1,7 +1,10 @@
-node_modules
-tests
+**/dist
+**/node_modules
+.git
+.idea
+Dockerfile*
+api/.env
+api/dist/prisma
+edges
 var
 vendor
-.env.test
-Dockerfile*
-phpunit.*

@@ -1,0 +1,1146 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../dist/prisma/client_coa"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_COA")
+}
+
+model datasets_entryurls {
+  id           Int    @id @default(autoincrement())
+  dataset_id   Int
+  sitecode_url String @db.VarChar(99)
+}
+
+model inducks_appearance {
+  storyversioncode  String                    @db.VarChar(19)
+  charactercode     String                    @db.VarChar(62)
+  number            Int?
+  appearancecomment String?                   @db.VarChar(209)
+  doubt             inducks_appearance_doubt?
+
+  @@id([storyversioncode, charactercode])
+  @@index([charactercode], map: "fk_inducks_appearance0")
+  @@index([appearancecomment], map: "fk_inducks_appearance1")
+}
+
+model inducks_character {
+  charactercode    String                      @id @db.VarChar(69)
+  charactername    String?                     @db.Text
+  official         inducks_character_official?
+  onetime          inducks_character_onetime?
+  heroonly         inducks_character_heroonly?
+  charactercomment String?                     @db.VarChar(671)
+
+  // @@index([charactername], map: "fulltext_inducks_character")
+}
+
+model inducks_characteralias {
+  charactercode String? @db.VarChar(31)
+  charactername String  @id @db.VarChar(58)
+
+  @@index([charactercode], map: "fk_inducks_characteralias0")
+}
+
+model inducks_characterdetail {
+  charactername String? @db.VarChar(7)
+  charactercode String  @id @db.VarChar(6)
+  number        Int?
+
+  @@index([charactername], map: "fk_inducks_characterdetail0")
+}
+
+model inducks_charactername {
+  charactercode        String                           @db.VarChar(45)
+  languagecode         String                           @db.VarChar(7)
+  charactername        String                           @db.VarChar(83)
+  preferred            inducks_charactername_preferred?
+  characternamecomment String?                          @db.VarChar(99)
+
+  @@id([charactercode, languagecode, charactername])
+  @@index([languagecode], map: "fk_inducks_charactername0")
+}
+
+model inducks_characterreference {
+  fromcharactercode   String                                          @db.VarChar(25)
+  tocharactercode     String                                          @db.VarChar(25)
+  isgroupofcharacters inducks_characterreference_isgroupofcharacters?
+
+  @@id([fromcharactercode, tocharactercode])
+  @@index([tocharactercode], map: "fk_inducks_characterreference0")
+}
+
+model inducks_characterurl {
+  charactercode String  @db.VarChar(1)
+  sitecode      String  @db.VarChar(1)
+  url           String? @db.VarChar(1)
+
+  @@id([charactercode, sitecode])
+  @@index([sitecode], map: "fk_inducks_characterurl0")
+}
+
+model inducks_country {
+  countrycode            String  @id @db.VarChar(2)
+  countryname            String? @db.VarChar(20)
+  defaultlanguage        String? @db.VarChar(7)
+  defaultmaintenanceteam String? @db.VarChar(8)
+}
+
+model inducks_countryname {
+  countrycode  String  @db.VarChar(2)
+  languagecode String  @db.VarChar(5)
+  countryname  String? @db.VarChar(56)
+
+  @@id([countrycode, languagecode])
+  @@index([languagecode], map: "fk_inducks_countryname0")
+}
+
+model inducks_currency {
+  currencycode String  @id @db.VarChar(3)
+  currencyname String? @db.VarChar(18)
+}
+
+model inducks_currencyname {
+  currencycode      String  @db.VarChar(3)
+  languagecode      String  @db.VarChar(2)
+  shortcurrencyname String? @db.VarChar(19)
+  longcurrencyname  String? @db.VarChar(20)
+
+  @@id([currencycode, languagecode])
+  @@index([languagecode], map: "fk_inducks_currencyname0")
+}
+
+model inducks_entry {
+  entrycode               String                                 @id @db.VarChar(22)
+  issuecode               String?                                @db.VarChar(17)
+  storyversioncode        String?                                @db.VarChar(20)
+  languagecode            String?                                @db.VarChar(7)
+  includedinentrycode     String?                                @db.VarChar(19)
+  position                String?                                @db.VarChar(9)
+  printedcode             String?                                @db.VarChar(88)
+  guessedcode             String?                                @db.VarChar(39)
+  title                   String?                                @db.VarChar(265)
+  reallytitle             inducks_entry_reallytitle?
+  printedhero             String?                                @db.VarChar(96)
+  changes                 String?                                @db.VarChar(628)
+  cut                     String?                                @db.VarChar(104)
+  minorchanges            String?                                @db.VarChar(558)
+  missingpanels           String?                                @db.VarChar(2)
+  mirrored                inducks_entry_mirrored?
+  sideways                inducks_entry_sideways?
+  startdate               String?                                @db.VarChar(10)
+  enddate                 String?                                @db.VarChar(10)
+  identificationuncertain inducks_entry_identificationuncertain?
+  alsoreprint             String?                                @db.VarChar(101)
+  part                    String?                                @db.VarChar(5)
+  entrycomment            String?                                @db.VarChar(1715)
+  error                   inducks_entry_error?
+
+  @@index([title], map: "entryTitleFullText")
+  @@index([issuecode], map: "fk_inducks_entry0")
+  @@index([storyversioncode], map: "fk_inducks_entry1")
+  @@index([languagecode], map: "fk_inducks_entry2")
+  @@index([includedinentrycode], map: "fk_inducks_entry3")
+  @@index([position], map: "fk_inducks_entry4")
+}
+
+model inducks_entry_nofulltext {
+  entrycode               String                                            @id @db.VarChar(22)
+  issuecode               String?                                           @db.VarChar(17)
+  storyversioncode        String?                                           @db.VarChar(19)
+  languagecode            String?                                           @db.VarChar(7)
+  includedinentrycode     String?                                           @db.VarChar(19)
+  position                String?                                           @db.VarChar(7)
+  printedcode             String?                                           @db.VarChar(88)
+  guessedcode             String?                                           @db.VarChar(39)
+  title                   String?                                           @db.VarChar(235)
+  reallytitle             inducks_entry_nofulltext_reallytitle?
+  printedhero             String?                                           @db.VarChar(96)
+  changes                 String?                                           @db.VarChar(628)
+  cut                     String?                                           @db.VarChar(100)
+  minorchanges            String?                                           @db.VarChar(558)
+  missingpanels           String?                                           @db.VarChar(23)
+  mirrored                inducks_entry_nofulltext_mirrored?
+  sideways                inducks_entry_nofulltext_sideways?
+  startdate               String?                                           @db.VarChar(10)
+  enddate                 String?                                           @db.VarChar(10)
+  identificationuncertain inducks_entry_nofulltext_identificationuncertain?
+  alsoreprint             String?                                           @db.VarChar(66)
+  part                    String?                                           @db.VarChar(5)
+  entrycomment            String?                                           @db.VarChar(3476)
+  error                   inducks_entry_nofulltext_error?
+
+  @@index([issuecode], map: "fk0")
+  @@index([storyversioncode], map: "fk1")
+  @@index([languagecode], map: "fk2")
+  @@index([includedinentrycode], map: "fk3")
+  @@index([position], map: "fk4")
+  @@index([entrycode], map: "pk0")
+}
+
+model inducks_entrycharactername {
+  entrycode     String  @db.VarChar(22)
+  charactercode String  @db.VarChar(49)
+  charactername String? @db.VarChar(131)
+
+  @@id([entrycode, charactercode])
+  @@index([charactercode], map: "fk_inducks_entrycharactername0")
+}
+
+model inducks_entryjob {
+  entrycode       String                  @db.VarChar(19)
+  personcode      String                  @db.VarChar(50)
+  transletcol     String                  @db.VarChar(1)
+  entryjobcomment String?                 @db.VarChar(51)
+  doubt           inducks_entryjob_doubt?
+
+  @@id([entrycode, personcode, transletcol])
+  @@index([personcode], map: "fk_inducks_entryjob0")
+}
+
+model inducks_entryurl {
+  entrycode  String?                  @db.VarChar(21)
+  sitecode   String?                  @db.VarChar(11)
+  pagenumber Int?
+  url        String?                  @db.VarChar(87)
+  storycode  String?                  @db.VarChar(39)
+  public     inducks_entryurl_public?
+  id         Int                      @id @default(autoincrement())
+
+  @@index([entrycode], map: "fk_inducks_entryurl0")
+  @@index([sitecode], map: "fk_inducks_entryurl1")
+  @@index([url], map: "fk_inducks_entryurl2")
+  @@index([storycode], map: "fk_inducks_entryurl3")
+}
+
+model inducks_equiv {
+  issuecode    String  @db.VarChar(31)
+  equivid      Int
+  equivcomment String? @db.VarChar(3)
+
+  @@id([issuecode, equivid])
+  @@index([equivid], map: "fk_inducks_equiv0")
+}
+
+model inducks_herocharacter {
+  storycode     String                       @db.VarChar(18)
+  charactercode String                       @db.VarChar(54)
+  number        Int?
+  doubt         inducks_herocharacter_doubt?
+
+  @@id([storycode, charactercode])
+  @@index([charactercode], map: "fk_inducks_herocharacter0")
+}
+
+model inducks_inputfile {
+  inputfilecode       Int                          @id
+  path                String?                      @db.VarChar(11)
+  filename            String?                      @db.VarChar(22)
+  layout              String?                      @db.VarChar(10)
+  locked              inducks_inputfile_locked?
+  maintenanceteamcode String?                      @db.VarChar(8)
+  countrycode         String?                      @db.VarChar(2)
+  languagecode        String?                      @db.VarChar(7)
+  producercode        String?                      @db.VarChar(15)
+  secundary           inducks_inputfile_secundary?
+}
+
+model inducks_issue {
+  issuecode           String                      @id @db.VarChar(17)
+  issuerangecode      String?                     @db.VarChar(15)
+  publicationcode     String?                     @db.VarChar(12)
+  issuenumber         String?                     @db.VarChar(12)
+  title               String?                     @db.VarChar(158)
+  size                String?                     @db.VarChar(82)
+  pages               String?                     @db.VarChar(82)
+  price               String?                     @db.VarChar(160)
+  printrun            String?                     @db.VarChar(142)
+  attached            String?                     @db.VarChar(288)
+  oldestdate          String?                     @db.VarChar(10)
+  fullyindexed        inducks_issue_fullyindexed?
+  issuecomment        String?                     @db.VarChar(1516)
+  error               inducks_issue_error?
+  filledoldestdate    String?                     @db.VarChar(10)
+  locked              inducks_issue_locked?
+  inxforbidden        inducks_issue_inxforbidden?
+  inputfilecode       Int?
+  maintenanceteamcode String?                     @db.VarChar(8)
+
+  @@index([issuerangecode], map: "fk_inducks_issue0")
+  @@index([publicationcode], map: "fk_inducks_issue1")
+}
+
+model inducks_issuecollecting {
+  collectingissuecode String @db.VarChar(17)
+  collectedissuecode  String @db.VarChar(15)
+
+  @@id([collectingissuecode, collectedissuecode])
+  @@index([collectedissuecode], map: "fk_inducks_issuecollecting0")
+}
+
+model inducks_issuedate {
+  issuecode  String                   @db.VarChar(17)
+  date       String                   @db.VarChar(10)
+  kindofdate String?                  @db.VarChar(76)
+  doubt      inducks_issuedate_doubt?
+
+  @@id([issuecode, date])
+}
+
+model inducks_issuejob {
+  issuecode       String                  @db.VarChar(17)
+  personcode      String                  @db.VarChar(49)
+  inxtransletcol  String                  @db.VarChar(1)
+  issuejobcomment String?                 @db.VarChar(32)
+  doubt           inducks_issuejob_doubt?
+
+  @@id([issuecode, personcode, inxtransletcol])
+  @@index([personcode], map: "fk_inducks_issuejob0")
+}
+
+model inducks_issueprice {
+  issuecode      String  @db.VarChar(17)
+  amount         String  @db.VarChar(86)
+  currency       String? @db.VarChar(14)
+  comment        String? @db.VarChar(64)
+  sequencenumber Int?
+
+  @@id([issuecode, amount])
+}
+
+model inducks_issuequotation {
+  ID              Int       @id @default(autoincrement())
+  publicationcode String    @db.VarChar(15)
+  issuenumber     String    @db.VarChar(12)
+  estimationmin   Float?    @db.Float
+  estimationmax   Float?    @db.Float
+  scrapedate      DateTime? @db.DateTime(0)
+  source          String    @db.VarChar(15)
+  issuecode       String?   @unique(map: "inducks_issuequotation__uindex_issuecode") @db.VarChar(28)
+
+  @@index([publicationcode], map: "inducks_issuequotation__index_publication")
+}
+
+model inducks_issuerange {
+  issuerangecode    String                             @id @db.VarChar(15)
+  publicationcode   String?                            @db.VarChar(9)
+  title             String?                            @db.VarChar(228)
+  circulation       String?                            @db.VarChar(25)
+  issuerangecomment String?                            @db.VarChar(468)
+  numbersarefake    inducks_issuerange_numbersarefake?
+  error             inducks_issuerange_error?
+
+  @@index([publicationcode], map: "fk_inducks_issuerange0")
+}
+
+model inducks_issueurl {
+  issuecode String  @db.VarChar(14)
+  sitecode  String  @db.VarChar(12)
+  url       String? @db.VarChar(12)
+
+  @@id([issuecode, sitecode])
+  @@index([sitecode], map: "fk_inducks_issueurl0")
+}
+
+model inducks_language {
+  languagecode        String  @id @db.VarChar(7)
+  defaultlanguagecode String? @db.VarChar(5)
+  languagename        String? @db.VarChar(20)
+
+  @@index([defaultlanguagecode], map: "fk_inducks_language0")
+}
+
+model inducks_languagename {
+  desclanguagecode String  @db.VarChar(5)
+  languagecode     String  @db.VarChar(7)
+  languagename     String? @db.VarChar(57)
+
+  @@id([desclanguagecode, languagecode])
+  @@index([languagecode], map: "fk_inducks_languagename0")
+}
+
+model inducks_log {
+  number              Int                 @id
+  logkey              String?             @db.VarChar(41)
+  storycode           String?             @db.VarChar(39)
+  logid               String?             @db.VarChar(4)
+  logtype             String?             @db.VarChar(1)
+  par1                String?             @db.VarChar(1847)
+  par2                String?             @db.VarChar(1846)
+  par3                String?             @db.VarChar(285)
+  marked              inducks_log_marked?
+  inputfilecode       Int?
+  maintenanceteamcode String?             @db.VarChar(13)
+}
+
+model inducks_logdata {
+  logid    String  @id @db.VarChar(4)
+  category Int?
+  logtext  String? @db.VarChar(108)
+}
+
+model inducks_logocharacter {
+  entrycode            String                               @db.VarChar(22)
+  charactercode        String                               @db.VarChar(54)
+  reallyintitle        inducks_logocharacter_reallyintitle?
+  number               Int?
+  logocharactercomment String?                              @db.VarChar(28)
+
+  @@id([entrycode, charactercode])
+  @@index([charactercode], map: "fk_inducks_logocharacter0")
+}
+
+model inducks_movie {
+  moviecode           String                @id @db.VarChar(14)
+  title               String?               @db.Text
+  moviecomment        String?               @db.Text
+  appsummary          String?               @db.Text
+  moviejobsummary     String?               @db.Text
+  locked              inducks_movie_locked?
+  inputfilecode       Int?
+  maintenanceteamcode String?               @db.VarChar(7)
+  aka                 String?               @db.VarChar(81)
+  creationdate        String?               @db.VarChar(10)
+  moviedescription    String?               @db.Text
+  distributor         String?               @db.VarChar(50)
+  genre               String?               @db.VarChar(3)
+  orderer             String?               @db.VarChar(178)
+  publicationdate     String?               @db.VarChar(10)
+  source              String?               @db.VarChar(91)
+  tim                 String?               @db.VarChar(6)
+
+  // @@index([title, moviecomment, appsummary, moviejobsummary, moviedescription], map: "fulltext_inducks_movie")
+}
+
+model inducks_moviecharacter {
+  moviecode        String                                   @db.VarChar(13)
+  charactercode    String                                   @db.VarChar(36)
+  istitlecharacter inducks_moviecharacter_istitlecharacter?
+
+  @@id([moviecode, charactercode])
+  @@index([charactercode], map: "fk_inducks_moviecharacter0")
+}
+
+model inducks_moviejob {
+  moviecode       String                     @db.VarChar(13)
+  personcode      String                     @db.VarChar(39)
+  role            String                     @db.VarChar(15)
+  moviejobcomment String?                    @db.VarChar(82)
+  indirect        inducks_moviejob_indirect?
+  doubt           inducks_moviejob_doubt?
+
+  @@id([moviecode, personcode, role])
+  @@index([personcode], map: "fk_inducks_moviejob0")
+}
+
+model inducks_moviereference {
+  storycode         String                                   @db.VarChar(17)
+  moviecode         String                                   @db.VarChar(14)
+  referencereasonid Int?
+  frommovietostory  inducks_moviereference_frommovietostory?
+
+  @@id([storycode, moviecode])
+  @@index([moviecode], map: "fk_inducks_moviereference0")
+  @@index([referencereasonid], map: "fk_inducks_moviereference1")
+}
+
+model inducks_person {
+  personcode             String                              @id @db.VarChar(79)
+  nationalitycountrycode String?                             @db.VarChar(2)
+  fullname               String?                             @db.VarChar(79)
+  official               inducks_person_official?
+  personcomment          String?                             @db.VarChar(221)
+  unknownstudiomember    inducks_person_unknownstudiomember?
+  isfake                 inducks_person_isfake?
+  numberofindexedissues  Int?
+  birthname              String?                             @db.Text
+  borndate               String?                             @db.VarChar(10)
+  bornplace              String?                             @db.VarChar(30)
+  deceaseddate           String?                             @db.VarChar(10)
+  deceasedplace          String?                             @db.VarChar(31)
+  education              String?                             @db.VarChar(189)
+  moviestext             String?                             @db.VarChar(879)
+  comicstext             String?                             @db.VarChar(927)
+  othertext              String?                             @db.VarChar(307)
+  photofilename          String?                             @db.VarChar(32)
+  photocomment           String?                             @db.VarChar(68)
+  photosource            String?                             @db.VarChar(67)
+  personrefs             String?                             @db.VarChar(179)
+
+  @@index([nationalitycountrycode], map: "fk_inducks_person0")
+}
+
+model inducks_personurl {
+  personcode String  @db.VarChar(24)
+  sitecode   String  @db.VarChar(15)
+  url        String? @db.VarChar(31)
+
+  @@id([personcode, sitecode])
+  @@index([sitecode], map: "fk_inducks_personurl0")
+}
+
+model inducks_publication {
+  publicationcode     String                              @id @db.VarChar(12)
+  countrycode         String?                             @db.VarChar(2)
+  languagecode        String?                             @db.VarChar(7)
+  title               String?                             @db.Text
+  size                String?                             @db.VarChar(82)
+  publicationcomment  String?                             @db.VarChar(1354)
+  circulation         String?                             @db.VarChar(4)
+  numbersarefake      inducks_publication_numbersarefake?
+  error               inducks_publication_error?
+  locked              inducks_publication_locked?
+  inxforbidden        inducks_publication_inxforbidden?
+  inputfilecode       Int?
+  maintenanceteamcode String?                             @db.VarChar(9)
+
+  // @@index([title], map: "fulltext_inducks_publication")
+  @@index([countrycode], map: "fk_inducks_publication0")
+  @@index([languagecode], map: "fk_inducks_publication1")
+}
+
+model inducks_publicationcategory {
+  publicationcode String  @id @db.VarChar(12)
+  category        String? @db.VarChar(61)
+}
+
+model inducks_publicationname {
+  publicationcode String  @id @db.VarChar(9)
+  publicationname String? @db.VarChar(62)
+}
+
+model inducks_publicationurl {
+  publicationcode String  @db.VarChar(10)
+  sitecode        String  @db.VarChar(16)
+  url             String? @db.VarChar(236)
+
+  @@id([publicationcode, sitecode])
+  @@index([sitecode], map: "fk_inducks_publicationurl0")
+}
+
+model inducks_publisher {
+  publisherid   String  @id @db.VarChar(94)
+  publishername String? @db.Text
+
+  // @@index([publishername], map: "fulltext_inducks_publisher")
+}
+
+model inducks_publishingjob {
+  publisherid          String  @db.VarChar(94)
+  issuecode            String  @db.VarChar(17)
+  publishingjobcomment String? @db.VarChar(67)
+
+  @@id([publisherid, issuecode])
+  @@index([issuecode], map: "fk_inducks_publishingjob0")
+}
+
+model inducks_referencereason {
+  referencereasonid   Int     @id
+  referencereasontext String? @db.VarChar(129)
+}
+
+model inducks_referencereasonname {
+  referencereasonid          Int
+  languagecode               String  @db.VarChar(2)
+  referencereasontranslation String? @db.VarChar(28)
+
+  @@id([referencereasonid, languagecode])
+  @@index([languagecode], map: "fk_inducks_referencereasonname0")
+}
+
+model inducks_site {
+  sitecode   String               @id @db.VarChar(16)
+  urlbase    String?              @db.VarChar(51)
+  images     inducks_site_images?
+  sitename   String?              @db.VarChar(85)
+  sitelogo   String?              @db.VarChar(107)
+  properties String?              @db.VarChar(1)
+}
+
+model inducks_statcharactercharacter {
+  charactercode   String  @db.VarChar(58)
+  cocharactercode String? @db.VarChar(58)
+  total           Int
+  yearrange       String? @db.VarChar(152)
+
+  @@id([charactercode, total])
+}
+
+model inducks_statcharactercountry {
+  charactercode String @db.VarChar(58)
+  countrycode   String @db.VarChar(2)
+  total         Int?
+
+  @@id([charactercode, countrycode])
+}
+
+model inducks_statcharacterstory {
+  charactercode   String  @db.VarChar(58)
+  storyheadercode String  @db.VarChar(3)
+  total           Int?
+  yearrange       String? @db.VarChar(107)
+
+  @@id([charactercode, storyheadercode])
+}
+
+model inducks_statpersoncharacter {
+  personcode    String  @db.VarChar(79)
+  charactercode String? @db.VarChar(58)
+  total         Int
+  yearrange     String? @db.VarChar(113)
+
+  @@id([personcode, total])
+}
+
+model inducks_statpersoncountry {
+  personcode  String @db.VarChar(79)
+  countrycode String @db.VarChar(2)
+  total       Int?
+
+  @@id([personcode, countrycode])
+}
+
+model inducks_statpersonperson {
+  personcode   String  @db.VarChar(79)
+  copersoncode String? @db.VarChar(79)
+  total        Int
+  yearrange    String? @db.VarChar(59)
+
+  @@id([personcode, total])
+}
+
+model inducks_statpersonstory {
+  personcode      String  @db.VarChar(79)
+  storyheadercode String  @db.VarChar(3)
+  total           Int?
+  yearrange       String? @db.VarChar(62)
+
+  @@id([personcode, storyheadercode])
+}
+
+model inducks_story {
+  storycode                String                @id @db.VarChar(19)
+  originalstoryversioncode String?               @db.VarChar(19)
+  creationdate             String?               @db.VarChar(11)
+  firstpublicationdate     String?               @db.VarChar(10)
+  endpublicationdate       String?               @db.VarChar(10)
+  title                    String?               @db.Text
+  usedifferentcode         String?               @db.VarChar(20)
+  storycomment             String?               @db.VarChar(664)
+  error                    inducks_story_error?
+  repcountrysummary        String?               @db.Text
+  storyparts               Int?
+  locked                   inducks_story_locked?
+  inputfilecode            Int?
+  issuecodeofstoryitem     String?               @db.VarChar(14)
+  maintenanceteamcode      String?               @db.VarChar(8)
+  storyheadercode          String?               @db.VarChar(3)
+
+  // @@index([title, repcountrysummary], map: "fulltext_inducks_story")
+  @@index([originalstoryversioncode], map: "fk_inducks_story0")
+  @@index([firstpublicationdate], map: "fk_inducks_story1")
+}
+
+model inducks_storycodes {
+  storycode       String  @db.VarChar(19)
+  alternativecode String  @db.VarChar(72)
+  unpackedcode    String? @db.VarChar(82)
+  codecomment     String? @db.VarChar(34)
+
+  @@id([storycode, alternativecode])
+  @@index([alternativecode], map: "fk_inducks_storycodes0")
+}
+
+model inducks_storydescription {
+  storyversioncode String  @db.VarChar(19)
+  languagecode     String  @db.VarChar(7)
+  desctext         String? @db.VarChar(2814)
+
+  @@id([storyversioncode, languagecode])
+  @@index([languagecode], map: "fk_inducks_storydescription0")
+}
+
+model inducks_storyheader {
+  storyheadercode    String  @db.VarChar(12)
+  level              String  @db.VarChar(1)
+  title              String? @db.VarChar(195)
+  storyheadercomment String? @db.VarChar(544)
+  countrycode        String? @db.VarChar(2)
+
+  @@id([storyheadercode, level])
+}
+
+model inducks_storyjob {
+  storyversioncode String                     @db.VarChar(20)
+  personcode       String                     @db.VarChar(79)
+  plotwritartink   String                     @db.VarChar(1)
+  storyjobcomment  String?                    @db.VarChar(141)
+  indirect         inducks_storyjob_indirect?
+  doubt            inducks_storyjob_doubt?
+
+  @@id([storyversioncode, personcode, plotwritartink])
+  @@index([personcode], map: "fk_inducks_storyjob0")
+}
+
+model inducks_storyreference {
+  fromstorycode     String @db.VarChar(18)
+  tostorycode       String @db.VarChar(17)
+  referencereasonid Int?
+
+  @@id([fromstorycode, tostorycode])
+  @@index([tostorycode], map: "fk_inducks_storyreference0")
+  @@index([referencereasonid], map: "fk_inducks_storyreference1")
+}
+
+model inducks_storysubseries {
+  storycode             String  @db.VarChar(18)
+  subseriescode         String  @db.VarChar(144)
+  storysubseriescomment String? @db.VarChar(29)
+
+  @@id([storycode, subseriescode])
+  @@index([subseriescode], map: "fk_inducks_storysubseries0")
+}
+
+model inducks_storyurl {
+  storycode String  @db.VarChar(13)
+  sitecode  String  @db.VarChar(15)
+  url       String? @db.VarChar(40)
+
+  @@id([storycode, sitecode])
+  @@index([sitecode], map: "fk_inducks_storyurl0")
+}
+
+model inducks_storyversion {
+  storyversioncode      String                                      @id @db.VarChar(20)
+  storycode             String?                                     @db.VarChar(19)
+  entirepages           Int?
+  brokenpagenumerator   Int?
+  brokenpagedenominator Int?
+  brokenpageunspecified inducks_storyversion_brokenpageunspecified?
+  kind                  String?                                     @db.VarChar(1)
+  rowsperpage           Int?
+  columnsperpage        Int?
+  appisxapp             inducks_storyversion_appisxapp?
+  what                  String?                                     @db.VarChar(1)
+  appsummary            String?                                     @db.Text
+  plotsummary           String?                                     @db.Text
+  writsummary           String?                                     @db.Text
+  artsummary            String?                                     @db.Text
+  inksummary            String?                                     @db.Text
+  creatorrefsummary     String?                                     @db.Text
+  keywordsummary        String?                                     @db.Text
+  estimatedpanels       Int?
+
+  // @@index([appsummary, plotsummary, writsummary, artsummary, inksummary, creatorrefsummary, keywordsummary], map: "fulltext_inducks_storyversion")
+  @@index([storycode], map: "fk_inducks_storyversion1")
+}
+
+model inducks_storyversion_nofulltext {
+  storyversioncode      String                                                 @id @db.VarChar(19)
+  storycode             String?                                                @db.VarChar(19)
+  entirepages           Int?
+  brokenpagenumerator   Int?
+  brokenpagedenominator Int?
+  brokenpageunspecified inducks_storyversion_nofulltext_brokenpageunspecified?
+  kind                  String?                                                @db.VarChar(1)
+  rowsperpage           Int?
+  columnsperpage        Int?
+  appisxapp             inducks_storyversion_nofulltext_appisxapp?
+  what                  String?                                                @db.VarChar(1)
+  appsummary            String?                                                @db.Text
+  plotsummary           String?                                                @db.Text
+  writsummary           String?                                                @db.Text
+  artsummary            String?                                                @db.Text
+  inksummary            String?                                                @db.Text
+  creatorrefsummary     String?                                                @db.Text
+  keywordsummary        String?                                                @db.Text
+  estimatedpanels       Int?
+
+  @@index([storycode], map: "fk1")
+  @@index([storyversioncode], map: "pk0")
+}
+
+model inducks_studio {
+  studiocode    String  @id @db.VarChar(23)
+  countrycode   String? @db.VarChar(2)
+  studioname    String? @db.VarChar(24)
+  city          String? @db.VarChar(12)
+  description   String? @db.VarChar(415)
+  othertext     String? @db.VarChar(94)
+  photofilename String? @db.VarChar(18)
+  photocomment  String? @db.VarChar(40)
+  photosource   String? @db.VarChar(42)
+  studiorefs    String? @db.VarChar(204)
+
+  @@index([countrycode], map: "fk_inducks_studio0")
+}
+
+model inducks_studiowork {
+  studiocode String @db.VarChar(23)
+  personcode String @db.VarChar(24)
+
+  @@id([studiocode, personcode])
+  @@index([personcode], map: "fk_inducks_studiowork0")
+}
+
+model inducks_subseries {
+  subseriescode     String                      @id @db.VarChar(95)
+  subseriesname     String?                     @db.VarChar(95)
+  official          inducks_subseries_official?
+  subseriescomment  String?                     @db.VarChar(285)
+  subseriescategory String?                     @db.VarChar(46)
+}
+
+model inducks_subseriesname {
+  subseriescode        String                           @db.VarChar(44)
+  languagecode         String                           @db.VarChar(7)
+  subseriesname        String?                          @db.VarChar(294)
+  preferred            inducks_subseriesname_preferred?
+  subseriesnamecomment String?                          @db.VarChar(28)
+
+  @@id([subseriescode, languagecode])
+  @@index([languagecode], map: "fk_inducks_subseriesname0")
+}
+
+model inducks_substory {
+  storycode                String                   @id @db.VarChar(12)
+  originalstoryversioncode String?                  @db.VarChar(12)
+  superstorycode           String?                  @db.VarChar(13)
+  part                     String?                  @db.VarChar(3)
+  firstpublicationdate     String?                  @db.VarChar(10)
+  title                    String?                  @db.VarChar(81)
+  substorycomment          String?                  @db.VarChar(607)
+  error                    inducks_substory_error?
+  locked                   inducks_substory_locked?
+  inputfilecode            Int?
+  maintenanceteamcode      String?                  @db.VarChar(8)
+
+  @@index([firstpublicationdate], map: "fk_inducks_substory0")
+}
+
+model inducks_team {
+  teamcode            String  @id @db.VarChar(13)
+  teamdescriptionname String? @db.VarChar(33)
+  teamshortname       String? @db.VarChar(7)
+}
+
+model inducks_teammember {
+  teamcode   String  @id @db.VarChar(13)
+  personcode String? @db.VarChar(3)
+}
+
+model inducks_ucrelation {
+  universecode  String @db.VarChar(28)
+  charactercode String @db.VarChar(45)
+
+  @@id([universecode, charactercode])
+  @@index([charactercode], map: "fk_inducks_ucrelation0")
+}
+
+model inducks_universe {
+  universecode    String  @id @db.VarChar(28)
+  universecomment String? @db.VarChar(1)
+}
+
+model inducks_universename {
+  universecode String  @db.VarChar(28)
+  languagecode String  @db.VarChar(5)
+  universename String? @db.VarChar(76)
+
+  @@id([universecode, languagecode])
+  @@index([languagecode], map: "fk_inducks_universename0")
+}
+
+model numeros_cpt {
+  Pays            String @db.VarChar(6)
+  Magazine        String @db.VarChar(8)
+  publicationcode String @db.VarChar(15)
+  Numero          String @db.VarChar(8)
+  Cpt             Int?
+
+  @@id([publicationcode, Numero])
+  @@index([publicationcode], map: "numeros_cpt_Pays_Magazine_uindex")
+}
+
+enum inducks_logocharacter_reallyintitle {
+  Y
+  N
+}
+
+enum inducks_site_images {
+  Y
+  N
+}
+
+enum inducks_moviecharacter_istitlecharacter {
+  Y
+  N
+}
+
+enum inducks_character_official {
+  Y
+  N
+}
+
+enum inducks_subseries_official {
+  Y
+  N
+}
+
+enum inducks_characterreference_isgroupofcharacters {
+  Y
+  N
+}
+
+enum inducks_person_official {
+  Y
+  N
+}
+
+enum inducks_subseriesname_preferred {
+  Y
+  N
+}
+
+enum inducks_herocharacter_doubt {
+  Y
+  N
+}
+
+enum inducks_issuedate_doubt {
+  Y
+  N
+}
+
+enum inducks_charactername_preferred {
+  Y
+  N
+}
+
+enum inducks_moviereference_frommovietostory {
+  Y
+  N
+}
+
+enum inducks_character_onetime {
+  Y
+  N
+}
+
+enum inducks_issuejob_doubt {
+  Y
+  N
+}
+
+enum inducks_entryjob_doubt {
+  Y
+  N
+}
+
+enum inducks_moviejob_indirect {
+  Y
+  N
+}
+
+enum inducks_appearance_doubt {
+  Y
+  N
+}
+
+enum inducks_storyjob_indirect {
+  Y
+  N
+}
+
+enum inducks_inputfile_locked {
+  Y
+  N
+}
+
+enum inducks_character_heroonly {
+  Y
+  N
+}
+
+enum inducks_person_unknownstudiomember {
+  Y
+  N
+}
+
+enum inducks_storyversion_nofulltext_brokenpageunspecified {
+  Y
+  N
+}
+
+enum inducks_entryurl_public {
+  Y
+  N
+}
+
+enum inducks_moviejob_doubt {
+  Y
+  N
+}
+
+enum inducks_storyversion_brokenpageunspecified {
+  Y
+  N
+}
+
+enum inducks_storyjob_doubt {
+  Y
+  N
+}
+
+enum inducks_movie_locked {
+  Y
+  N
+}
+
+enum inducks_issuerange_numbersarefake {
+  Y
+  N
+}
+
+enum inducks_person_isfake {
+  Y
+  N
+}
+
+enum inducks_issuerange_error {
+  Y
+  N
+}
+
+enum inducks_publication_numbersarefake {
+  Y
+  N
+}
+
+enum inducks_substory_error {
+  Y
+  N
+}
+
+enum inducks_publication_error {
+  Y
+  N
+}
+
+enum inducks_substory_locked {
+  Y
+  N
+}
+
+enum inducks_story_error {
+  Y
+  N
+}
+
+enum inducks_log_marked {
+  Y
+  N
+}
+
+enum inducks_publication_locked {
+  Y
+  N
+}
+
+enum inducks_storyversion_nofulltext_appisxapp {
+  Y
+  N
+}
+
+enum inducks_entry_nofulltext_reallytitle {
+  Y
+  N
+}
+
+enum inducks_storyversion_appisxapp {
+  Y
+  N
+}
+
+enum inducks_entry_reallytitle {
+  Y
+  N
+}
+
+enum inducks_inputfile_secundary {
+  Y
+  N
+}
+
+enum inducks_publication_inxforbidden {
+  Y
+  N
+}
+
+enum inducks_issue_fullyindexed {
+  Y
+  N
+}
+
+enum inducks_story_locked {
+  Y
+  N
+}
+
+enum inducks_issue_error {
+  Y
+  N
+}
+
+enum inducks_issue_locked {
+  Y
+  N
+}
+
+enum inducks_entry_nofulltext_mirrored {
+  Y
+  N
+}
+
+enum inducks_entry_mirrored {
+  Y
+  N
+}
+
+enum inducks_issue_inxforbidden {
+  Y
+  N
+}
+
+enum inducks_entry_nofulltext_sideways {
+  Y
+  N
+}
+
+enum inducks_entry_sideways {
+  Y
+  N
+}
+
+enum inducks_entry_nofulltext_identificationuncertain {
+  Y
+  N
+}
+
+enum inducks_entry_identificationuncertain {
+  Y
+  N
+}
+
+enum inducks_entry_nofulltext_error {
+  Y
+  N
+}
+
+enum inducks_entry_error {
+  Y
+  N
+}

@@ -5,14 +5,35 @@ module.exports = {
     "plugin:vue/vue3-recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
-    // 'plugin:vue/recommended' // Use this if you are using Vue.js 2.x.
+    "plugin:@typescript-eslint/recommended",
   ],
+  parser: "vue-eslint-parser",
+  parserOptions: { parser: "@typescript-eslint/parser" },
+  overrides: [
+    {
+      files: ["*.js", "*.ts", "*.vue"],
+    },
+  ],
+  root: true,
   rules: {
-    "vue/no-v-html": "off",
-    "vue/no-setup-props-destructure": "off",
-    "vue/multi-word-component-names": "off",
-    "simple-import-sort/imports": "error",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "simple-import-sort/exports": "error",
+    "simple-import-sort/imports": "error",
+    "vue/multi-word-component-names": "off",
+    "vue/no-setup-props-destructure": "off",
+    "vue/no-v-html": "off",
+    "vue/no-v-text-v-html-on-component": "off",
+    "vue/define-emits-declaration": "error",
+    "vue/define-props-declaration": "error",
+    "vue/component-name-in-template-casing": [
+      "error",
+      "kebab-case",
+      {
+        registeredComponentsOnly: true,
+        ignores: [],
+      },
+    ],
   },
-  plugins: ["simple-import-sort"],
+  plugins: ["simple-import-sort", "@typescript-eslint"],
+  ignorePatterns: ["**/node_modules", "**/dist", "shims.d.ts", "vendor"],
 };

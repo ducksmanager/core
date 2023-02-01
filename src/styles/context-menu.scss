@@ -1,0 +1,140 @@
+.v-contextmenu-inner {
+  &,
+  li,
+  .v-contextmenu-group__menus {
+    padding: 0 !important;
+  }
+
+  :deep(.copies-tabs) {
+    position: initial;
+    display: flex;
+    padding-bottom: 0;
+    padding-top: 0;
+  }
+
+  .nav-item:not(.disabled) .nav-link {
+    color: #212529 !important;
+    cursor: pointer;
+  }
+
+  li {
+    &.disabled {
+      a, & {
+        background: initial !important;
+        border: initial;
+        color: inherit;
+        cursor: not-allowed;
+
+        &:hover {
+          background: initial !important;
+          color: initial !important;
+        }
+      }
+    }
+
+    &.clickable {
+      &.two-lines {
+        padding: 0 5px !important;
+        height: 60px !important;
+      }
+      &:hover {
+        background-color: #4f5b69 !important;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+
+    &.header,
+    &.clone,
+    &.footer {
+      height: 30px;
+      line-height: 25px;
+      font-size: 14px;
+      background-color: #3d4b5f;
+      color: white;
+      padding: 2px;
+      font-weight: bold;
+      text-align: center;
+
+      &.clone {
+        background-color: #308290;
+        cursor: pointer;
+
+        &.disabled:hover {
+          cursor: default;
+        }
+      }
+
+      &.footer {
+        background-color: green;
+        border-top: 3px solid #e6e6e6;
+      }
+    }
+
+    &.menu-separator {
+      color: black;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 20px;
+      text-align: center;
+      border: 1px solid #e6e6e6;
+      border-top-width: 3px;
+      padding: 0.2em;
+    }
+
+    &.contact > .v-contextmenu-item {
+      padding: 0 2rem !important;
+    }
+
+    .v-contextmenu-submenu, .v-contextmenu-item {
+
+      &.selected {
+        &, > .v-contextmenu-item {
+          background-color: #a52a2a;
+          color: white !important;
+        }
+      }
+    }
+
+    .v-contextmenu-item {
+      display: flex;
+      align-items: center;
+      color: black;
+      line-height: 25px;
+      background-position: left center;
+      padding: 0 12px !important;
+
+      &.purchase-state {
+        &.link {
+          &:after {
+            position: absolute;
+            font-weight: bold;
+            right: 10px;
+            content: ">";
+          }
+        }
+      }
+
+      &.purchase-date {
+        justify-content: space-between;
+        background-repeat: no-repeat;
+        background-size: 12px;
+        background-position-x: 10px;
+        line-height: 25px;
+
+        .date {
+          width: 70px;
+        }
+      }
+
+      :deep(.issue-condition) {
+        margin-right: 8px;
+      }
+
+      > svg {
+        margin-right: 8px;
+        font-size: 16px;
+      }
+    }
+  }
+}

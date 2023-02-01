@@ -1,0 +1,83 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../dist/prisma/client_dm_stats"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_DM_STATS")
+}
+
+model authorStory {
+  id         Int    @id @default(autoincrement())  @map("ID")
+  personcode String @db.VarChar(79)
+  storycode  String @db.VarChar(19)
+
+  @@unique([personcode, storycode], map: "unique_index")
+  @@index([storycode], map: "index_storycode")
+  @@map("auteurs_histoires")
+}
+
+model authorUser {
+  id              Int    @id @default(autoincrement())  @map("ID")
+  personcode      String @db.VarChar(79)                @map("NomAuteurAbrege")
+  userId          Int                                   @map("ID_user")
+  notation        Int    @default(-1)                   @map("Notation")
+
+  @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
+  @@index([userId], map: "auteurs_pseudos_ID_user_index")
+  @@map("auteurs_pseudos")
+}
+
+model histoires_publications {
+  ID              Int       @id @default(autoincrement())
+  storycode       String    @db.VarChar(19)
+  publicationcode String    @db.VarChar(12)
+  issuenumber     String    @db.VarChar(12)
+  issuecode       String    @db.VarChar(25)
+  oldestdate      DateTime? @db.Date
+
+  @@unique([issuecode, storycode], map: "unique_index")
+  @@index([issuecode], map: "index_issue")
+  @@index([oldestdate], map: "index_oldestdate")
+  @@index([storycode], map: "index_story")
+}
+
+model missingStoryForUser {
+  id         Int    @id @default(autoincrement()) @map("ID")
+  userId     Int                                  @map("ID_User")
+  personcode String @db.VarChar(22)
+  storycode  String @db.VarChar(19)
+
+  @@unique([userId, personcode, storycode], map: "missing_issue_for_user")
+  @@map("utilisateurs_histoires_manquantes")
+}
+
+model utilisateurs_publications_manquantes {
+  ID              Int       @id @default(autoincrement())
+  ID_User         Int
+  personcode      String    @db.VarChar(79)
+  storycode       String    @db.VarChar(19)
+  publicationcode String    @db.VarChar(12)
+  issuenumber     String    @db.VarChar(12)
+  oldestdate      DateTime? @db.Date
+  Notation        Int       @db.UnsignedTinyInt
+
+  @@unique([ID_User, personcode, storycode, publicationcode, issuenumber], map: "unique_index")
+  @@index([ID_User, publicationcode, issuenumber], map: "missing_user_issue")
+  @@index([ID_User, publicationcode, issuenumber, oldestdate], map: "suggested")
+  @@index([ID_User, personcode, storycode], map: "user_stories")
+}
+
+model utilisateurs_publications_suggerees {
+  ID              Int       @id @default(autoincrement())
+  userId          Int       @map("ID_User")
+  publicationcode String    @db.VarChar(12)
+  issuenumber     String    @db.VarChar(12)
+  oldestdate      DateTime? @db.Date
+  score           Int       @map("Score")
+
+  @@unique([userId, publicationcode, issuenumber], map: "suggested_issue_for_user")
+  @@index([userId], map: "suggested_issue_user")
+}

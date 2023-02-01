@@ -1,0 +1,117 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  font: 11px verdana, arial, sans-serif;
+  line-height: 15px;
+}
+
+html {
+  background-color: rgb(61, 75, 95) !important;
+}
+
+a {
+  color: darkgrey !important;
+  text-decoration: none;
+  border-bottom: 1px solid darkgray;
+
+  &[href='#'] {
+    border-bottom: none !important;
+  }
+
+  &:hover, &:focus, &:active {
+    color: darkgrey;
+    text-decoration: none;
+    outline: 0;
+    border-bottom: 2px solid darkgray;
+  }
+
+  &.nav-link.active {
+    color: black !important;
+  }
+
+  &.btn {
+    color: white !important;
+
+    &.disabled {
+      cursor: not-allowed !important;
+    }
+  }
+}
+
+.dropdown ul li a {
+  color: black !important;
+}
+
+.alert {
+  a {
+    color: initial;
+  }
+
+  white-space: pre-wrap;
+}
+
+.cursor-help * {
+  cursor: help
+}
+
+input.form-control {
+  margin: 4px 0;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+@media (min-width: 767px) {
+  .mobile-only {
+    display: none;
+  }
+
+  body {
+    &.bare {
+      background: white;
+      margin: 2rem;
+    }
+
+    &.no-padding {
+      padding: 0;
+    }
+
+    &:not(.bare) {
+      padding: 0 0 0 320px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .popper {
+    .menu-content {
+      border: 2px solid #999;
+      margin-top: -8px;
+      height: initial !important;
+      overflow: visible;
+      color: white;
+
+      ul li {
+        padding-right: 2rem !important;
+      }
+    }
+  }
+}
+
+.popper {
+  z-index: 999 !important;
+  font-size: 1rem;
+  --popper-theme-text-color: black;
+
+  #arrow {
+    --popper-theme-background-color: white;
+  }
+
+  .btn {
+    color: #444 !important;
+  }
+}
+
+
+$navbar-height: 40px;

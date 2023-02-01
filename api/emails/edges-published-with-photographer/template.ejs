@@ -1,0 +1,20 @@
+<%= __("Bonjour {{username}},", { username: user.username}) %><br />
+
+<% if (extraEdges > 1) { %>
+    <%= __("Les {{extraEdges}} tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.", {extraEdges}) %>
+<% } else { %>
+    <%= __("La tranche dont vous nous avez envoyé la photo est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.") %>
+<% } %>
+<br />
+
+<% if (newMedalLevel) { %>
+<p style="text-align: center">
+    <img width="100" src="<%= process.env.ASSETS_MEDALS_PICTURES_ROOT %>edge_photographer_<%= newMedalLevel %>_<%= locale %>.png" />
+    <br />
+    <%= __("Vous avez remporté la médaille \"Photographe DucksManager {{medalLevel}}\" grâce à vos contributions !", {medalLevel: newMedalLevel}) %>
+</p>
+<% } %>
+<br />
+<%- __("<b>Votre contribution vous a rapporté %extraPhotographerPoints% points \"Photographe\"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !", {extraPhotographerPoints}) %>
+
+<%- include('../footer'); %>
