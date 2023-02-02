@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
+import { PublicationTitles } from "~types/PublicationTitles";
 
 const prisma = new PrismaClient();
 
@@ -8,15 +8,14 @@ export const getPublicationTitlesFromCodes = async (
   publicationCodes: string[]
 ) => await getPublicationTitles({ in: publicationCodes });
 
-export type getCall = Call<
-  Prisma.PromiseReturnType<
-    typeof getAllPublicationTitles | typeof getPublicationTitlesFromCodes
-  >,
-  undefined,
-  undefined,
-  { publicationCodes: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    PublicationTitles,
+    undefined,
+    undefined,
+    { publicationCodes: string }
+  >
+) => {
   const publicationCodes = req.query.publicationCodes?.split(",") || "";
   if (publicationCodes.length > 20) {
     res.writeHead(400);
@@ -31,7 +30,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
 const getAllPublicationTitles = async () => await getPublicationTitles({});
 export const getPublicationTitles = async (filter: {
   [operator: string]: string | string[];
-}): Promise<{ [publicationcode: string]: string | null }> =>
+}): Promise<PublicationTitles> =>
   (
     await prisma.inducks_publication.findMany({
       where: {

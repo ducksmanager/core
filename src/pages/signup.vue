@@ -98,10 +98,12 @@ const signup = async () => {
       "token",
       (
         await PUT__collection__user(axios, {
-          username,
-          password,
-          password2,
-          email,
+          data: {
+            username,
+            password,
+            password2,
+            email,
+          },
         })
       ).data.token
     );

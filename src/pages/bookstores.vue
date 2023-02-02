@@ -245,7 +245,9 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await PUT__bookstores(axios, { bookstore });
+  await PUT__bookstores(axios, {
+    data: { bookstore },
+  });
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;

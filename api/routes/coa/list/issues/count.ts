@@ -1,11 +1,11 @@
 import { PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<{ [publicationcode: string]: number }>;
-export const get = async (...[, res]: ExpressCall<getCall>) =>
+export const get = async (
+  ...[, res]: ExpressCall<{ [_publicationcode: string]: number }>
+) =>
   res.json(
     (
       await prisma.inducks_issue.groupBy({

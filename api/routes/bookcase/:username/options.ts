@@ -1,19 +1,19 @@
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 import { checkValidBookcaseUser } from "./index";
 
-export type getCall = Call<
-  {
-    textures: {
-      bookcase: string;
-      bookshelf: string;
-    };
-    showAllCopies: boolean;
-  },
-  { username: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    {
+      textures: {
+        bookcase: string;
+        bookshelf: string;
+      };
+      showAllCopies: boolean;
+    },
+    { username: string }
+  >
+) => {
   const user = await checkValidBookcaseUser(req.user, req.params.username);
   if (user !== null) {
     return res.json({

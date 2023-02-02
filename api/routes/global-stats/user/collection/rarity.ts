@@ -1,14 +1,14 @@
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<{
-  userScores: { userId: number; averageRarity: number }[];
-  myScore: number;
-}>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<{
+    userScores: { userId: number; averageRarity: number }[];
+    myScore: number;
+  }>
+) => {
   const userCount = await prisma.user.count();
   const userScores = (await prisma.$queryRaw`
       SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity

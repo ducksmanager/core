@@ -1,10 +1,11 @@
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
-import PromiseReturnType = Prisma.PromiseReturnType;
+import { MedalPoints } from "~types/MedalPoints";
 
 const prisma = new PrismaClient();
-export const getMedalPoints = async (userIds: number[]) => {
+export const getMedalPoints = async (
+  userIds: number[]
+): Promise<MedalPoints> => {
   return (
     (await prisma.$queryRaw`
         select contributionType.contribution_external_name as contribution,
@@ -40,6 +41,5 @@ export const getMedalPoints = async (userIds: number[]) => {
   );
 };
 
-export type getCall = Call<PromiseReturnType<typeof getMedalPoints>>;
-export const get = async (...[req, res]: ExpressCall<getCall>) =>
+export const get = async (...[req, res]: ExpressCall<MedalPoints>) =>
   res.json(await getMedalPoints([req.user!.id]));

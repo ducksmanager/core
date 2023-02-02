@@ -120,7 +120,7 @@ export const marketplace = defineStore("marketplace", {
   actions: {
     async requestIssues(issueIds: number[]) {
       await PUT__collection__on_sale_by_others__requests(axios, {
-        issueIds,
+        data: { issueIds },
       });
       await this.loadIssueRequestsAsBuyer();
     },

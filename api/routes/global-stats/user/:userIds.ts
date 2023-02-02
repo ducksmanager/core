@@ -1,20 +1,20 @@
 import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { getMedalPoints } from "~routes/collection/points";
-import { Call } from "~types/Call";
+import { MedalPoints } from "~types/MedalPoints";
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
-import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<
-  {
-    points: PromiseReturnType<typeof getMedalPoints>;
-    stats: PromiseReturnType<typeof getUsersQuickStats>;
-  },
-  { userIds: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    {
+      points: MedalPoints;
+      stats: SimpleUserWithQuickStats[];
+    },
+    { userIds: string }
+  >
+) => {
   const userIds = req.params.userIds
     .split(",")
     .map((userId) => parseInt(userId))

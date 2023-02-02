@@ -2,7 +2,6 @@ import bodyParser from "body-parser";
 
 import { authorUser, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -43,18 +42,18 @@ const upsertAuthorUser = async (
   }
 };
 
-export type getCall = Call<authorUser[]>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (...[req, res]: ExpressCall<authorUser[]>) => {
   const authorsUsers = await prisma.authorUser.findMany({
     where: { userId: req.user!.id },
   });
   return res.json(authorsUsers);
 };
 
-export type putCall = Call<undefined, undefined, { personcode: string }>;
 export const put = [
   parseForm,
-  async (...[req, res]: ExpressCall<putCall>) => {
+  async (
+    ...[req, res]: ExpressCall<undefined, undefined, { personcode: string }>
+  ) => {
     try {
       await upsertAuthorUser(req.body.personcode, req.user!.id);
       res.writeHead(200, { "Content-Type": "application/text" });
@@ -67,14 +66,15 @@ export const put = [
   },
 ];
 
-export type postCall = Call<
-  undefined,
-  undefined,
-  { personcode: string; notation: number }
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      undefined,
+      undefined,
+      { personcode: string; notation: number }
+    >
+  ) => {
     try {
       await upsertAuthorUser(
         req.body.personcode,
@@ -91,10 +91,11 @@ export const post = [
   },
 ];
 
-export type deleteCall = Call<undefined, undefined, authorUser>;
 export const del = [
   parseForm,
-  async (...[req, res]: ExpressCall<deleteCall>) => {
+  async (
+    ...[req, res]: ExpressCall<undefined, undefined, { personcode: string }>
+  ) => {
     const { personcode } = req.body;
     if (!personcode) {
       res.writeHead(400);

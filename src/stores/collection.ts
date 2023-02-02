@@ -324,18 +324,17 @@ export const collection = defineStore("collection", {
 
   actions: {
     async updateCollectionSingleIssue(data: CollectionUpdateSingleIssue) {
-      await POST__collection__issues__single(axios, data);
+      await POST__collection__issues__single(axios, { data });
       await this.loadCollection(true);
     },
     async updateCollectionMultipleIssues(data: CollectionUpdateMultipleIssues) {
-      await POST__collection__issues__multiple(axios, data);
+      await POST__collection__issues__multiple(axios, { data });
       await this.loadCollection(true);
     },
 
     async createPurchase(date: string, description: string) {
       await PUT__collection__purchases(axios, {
-        date,
-        description,
+        data: { date, description },
       });
       await this.loadPurchases(true);
     },
@@ -425,30 +424,22 @@ export const collection = defineStore("collection", {
       }
     },
     async updateMarketplaceContactMethods() {
-      await POST__collection__options__$optionName(
-        axios,
-        {
-          values: this.marketplaceContactMethods!,
+      await POST__collection__options__$optionName(axios, {
+        data: { values: this.marketplaceContactMethods! },
+        urlParams: {
+          optionName: "marketplace_contact_methods",
         },
-        {
-          urlParams: {
-            optionName: "marketplace_contact_methods",
-          },
-        }
-      );
+      });
     },
     async updateWatchedPublicationsWithSales() {
-      await POST__collection__options__$optionName(
-        axios,
-        {
+      await POST__collection__options__$optionName(axios, {
+        data: {
           values: this.watchedPublicationsWithSales!,
         },
-        {
-          urlParams: {
-            optionName: "sales_notification_publications",
-          },
-        }
-      );
+        urlParams: {
+          optionName: "sales_notification_publications",
+        },
+      });
     },
     async loadSuggestions({
       countryCode,

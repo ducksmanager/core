@@ -161,11 +161,11 @@ const isAuthorWatched = (personcode: string) =>
     ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
   );
 const createRating = async (data: { personcode: string }) => {
-  await PUT__collection__authors__watched(axios, data);
+  await PUT__collection__authors__watched(axios, { data });
   await loadWatchedAuthors(true);
 };
 const updateRating = async (data: { personcode: string; notation: number }) => {
-  await POST__collection__authors__watched(axios, data);
+  await POST__collection__authors__watched(axios, { data });
 };
 const deleteAuthor = async (data: { personcode: string }) => {
   await DELETE__collection__authors__watched(axios, { data });

@@ -6,15 +6,13 @@ import {
   PrismaClient,
 } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type getCall = Call<SimpleBookstore[]>;
-export const get = async (...[, res]: ExpressCall<getCall>) =>
+export const get = async (...[, res]: ExpressCall<SimpleBookstore[]>) =>
   res.json(await getActiveBookstores());
 
 const getActiveBookstores = async () =>
@@ -40,14 +38,15 @@ const getActiveBookstores = async () =>
     },
   });
 
-export type putCall = Call<
-  bookstoreComment,
-  undefined,
-  { id?: string; bookstore: SimpleBookstore }
->;
 export const put = [
   parseForm,
-  async (...[req, res]: ExpressCall<putCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      bookstoreComment,
+      undefined,
+      { id?: string; bookstore: SimpleBookstore }
+    >
+  ) => {
     const { bookstore } = req.body;
     const {
       name,

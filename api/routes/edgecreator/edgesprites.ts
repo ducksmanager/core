@@ -2,7 +2,6 @@ import { v2 as cloudinaryV2 } from "cloudinary";
 
 import { edge, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
@@ -132,8 +131,7 @@ const generateSprites = async () => {
   await prisma.$transaction(insertOperations);
 };
 
-export type putCall = Call<undefined>;
-export const put = async (...[req, res]: ExpressCall<putCall>) => {
+export const put = async (...[req, res]: ExpressCall<undefined>) => {
   req.setTimeout(300_000);
 
   try {

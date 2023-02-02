@@ -2,16 +2,16 @@ import bodyParser from "body-parser";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type putCall = Call<undefined, undefined, { issueIds: number[] }>;
 export const put = [
   parseForm,
-  async (...[req, res]: ExpressCall<putCall>) => {
+  async (
+    ...[req, res]: ExpressCall<undefined, undefined, { issueIds: number[] }>
+  ) => {
     const issueIds = req.body.issueIds || [];
     if (issueIds.find((issueId: number) => isNaN(issueId))) {
       res.writeHead(400);
@@ -56,10 +56,11 @@ export const put = [
   },
 ];
 
-export type deleteCall = Call<undefined, undefined, { issueId: number }>;
 export const del = [
   parseForm,
-  async (...[req, res]: ExpressCall<deleteCall>) => {
+  async (
+    ...[req, res]: ExpressCall<undefined, undefined, { issueId: number }>
+  ) => {
     const { issueId } = req.body;
 
     await prisma.requestedIssue.deleteMany({

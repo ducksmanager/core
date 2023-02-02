@@ -4,20 +4,20 @@ import { PrismaClient } from "~prisma_clients/client_dm";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { loginAs } from "~routes/auth/util";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type postCall = Call<
-  { token: string },
-  undefined,
-  { username: string; password: string }
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      { token: string },
+      undefined,
+      { username: string; password: string }
+    >
+  ) => {
     const { username, password } = req.body;
     const hashedPassword = getHashedPassword(password);
     const user = await prisma.user.findFirst({

@@ -2,10 +2,10 @@ import axios from "axios";
 import * as fs from "fs";
 
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
-export type getCall = Call<{ status: string | number }>;
-export const get = async (...[, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[, res]: ExpressCall<{ status: string | number }>
+) => {
   const response = (
     await axios.post(
       process.env.PASTEC_HOSTS + "/searcher",

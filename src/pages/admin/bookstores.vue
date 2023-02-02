@@ -32,7 +32,7 @@ import { SimpleBookstore } from "~types/SimpleBookstore";
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await POST__bookstores__approve(axios, { id });
+  await POST__bookstores__approve(axios, { data: { id } });
   bookstores = (await GET__bookstores(axios)).data;
 };
 

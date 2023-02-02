@@ -1,6 +1,6 @@
 import express from "express";
 import { router } from "express-file-routing";
-import * as fs from "fs";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
 
 const app = express();
 app.use("/", router());
@@ -30,47 +30,94 @@ app._router.stack.forEach(
 const imports: string[] = [
   'import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";',
   'import { AxiosCacheInstance, CacheRequestConfig } from "axios-cache-interceptor";',
-  'import { AxiosTypedRequestBody, AxiosTypedRequestConfig, AxiosTypedResponse } from "~types/AxiosCall";',
+  'import { Prisma } from "~prisma_clients/client_dm";',
+  'import { call } from "~types/Call";',
 ];
+imports.push(
+  readdirSync("../types")
+    .filter((file) => /\.ts$/.test(file) && /^[A-Z]/.test(file[0]))
+    .map(
+      (file) =>
+        `import { ${[
+          ...readFileSync(`../types/${file}`)
+            .toString()
+            .matchAll(/(?:(?<=export type )|(?<=export interface ))\w+/g)!,
+        ].join(", ")} } from "~types/${file.replace(/\.ts$/, "")}";`
+    )
+    .join("\n")
+);
+imports.push(
+  readdirSync("prisma")
+    .filter((file) => /\.prisma$/.test(file))
+    .map(
+      (file) =>
+        `import { ${[
+          ...readFileSync(`prisma/${file}`)
+            .toString()
+            .matchAll(/(?:(?<=model )|(?<=enum ))[^ ]+/g)!,
+        ].join(", ")} } from "~prisma_clients/client_${file.replaceAll(
+          /(\.prisma)|(schema_)/g,
+          ""
+        )}";`
+    )
+    .join("\n")
+);
+let types: string[] = [];
 
 const routeList = {} as { [routePathWithMethod: string]: string };
 routes.forEach((route) => {
-  imports.push(
-    `import type { ${Object.keys(route.methods)
+  types = types.concat(
+    Object.keys(route.methods)
       .filter((method) => ["get", "post", "delete", "put"].includes(method))
       .map((method) => {
         const routePathWithMethod = `${method.toUpperCase()} ${route.path}`;
+
         const routePath = `${(route.path as string)
           .replaceAll("/:", "__")
           .replaceAll(/[/-]/g, "_")
           .toUpperCase()}`;
 
-        const returnTypeName = `${method.toUpperCase()}_CALL${routePath}`;
+        const typeName = `${method.toUpperCase()}_CALL${routePath}`;
+        let routeFile;
+        const routeBasePath = `routes/${(route.path as string).replace(
+          /^\//,
+          ""
+        )}`;
+        try {
+          routeFile = readFileSync(`${routeBasePath}/index.ts`);
+        } catch (e) {
+          routeFile = readFileSync(`${routeBasePath}.ts`);
+        }
+        const callType = new RegExp(
+          `export const ${
+            method === "delete" ? "del" : method
+          } =.+?Express(Call< *.+?>)[ \\n]*\\) =>`,
+          "gms"
+        ).exec(routeFile.toString())![1];
 
-        routeList[routePathWithMethod] =
-          method === "get"
-            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosTypedRequestConfig<${returnTypeName}>): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', config)`
-            : method === "delete"
-            ? `(axios: AxiosInstance | AxiosCacheInstance, config?: AxiosRequestConfig): Promise<AxiosResponse<${returnTypeName}>> => axios.${method}<${returnTypeName}>('${route.path}', config)`
-            : `(axios: AxiosInstance | AxiosCacheInstance, data?: AxiosTypedRequestBody<${returnTypeName}>, config?: AxiosRequestConfig | CacheRequestConfig): AxiosTypedResponse<${returnTypeName}> => axios.${method}<${returnTypeName}["resBody"]>('${route.path}', data, config)`;
-
-        return `${method}Call as ${returnTypeName}`;
+        routeList[routePathWithMethod] = `
+            (
+              axios: AxiosInstance | AxiosCacheInstance,
+              config?: TypedConfig<${typeName}>
+            ) => call<${typeName}>("${method}", "${route.path}", axios, config);
+        `;
+        return `export type ${typeName} = ${callType}`;
       })
-      .join(",")} } from "~routes${route.path}";`
   );
 });
-fs.writeFileSync(
+writeFileSync(
   "../types/routes.ts",
   [
     imports.join("\n"),
+    types.join("\n"),
     Object.entries(routeList)
       .map(
         ([routePathWithMethod, callback]) =>
           `export const ${routePathWithMethod
-            .replaceAll(/[\/]/g, "__")
+            .replaceAll("/", "__")
             .replaceAll(/ /g, "")
             .replaceAll(/:/g, "$")
-            .replaceAll(/[-]/g, "_")} = ${callback};`
+            .replaceAll(/-/g, "_")} = ${callback};`
       )
       .join("\n"),
   ].join("\n")

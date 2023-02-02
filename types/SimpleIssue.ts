@@ -1,4 +1,4 @@
-export interface simple_issue {
+export interface SimpleIssue {
   code: string;
   publicationcode: string;
   issuenumber: string;

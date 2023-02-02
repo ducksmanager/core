@@ -1,7 +1,6 @@
 import { PrismaClient, user } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { BookcaseEdge, BookcaseEdgeSprite } from "~types/BookcaseEdge";
-import { Call } from "~types/Call";
 import { User } from "~types/SessionUser";
 
 const prisma = new PrismaClient();
@@ -32,8 +31,9 @@ export const checkValidBookcaseUser = async (
   } else throw new Error("403");
 };
 
-export type getCall = Call<BookcaseEdge[], { username: string }>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<BookcaseEdge[], { username: string }>
+) => {
   let user: user;
   try {
     user = await checkValidBookcaseUser(req.user, req.params.username);

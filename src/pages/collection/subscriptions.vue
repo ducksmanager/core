@@ -125,10 +125,12 @@ const loadSubscriptions = collection().loadSubscriptions;
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
   await PUT__collection__subscriptions(axios, {
-    subscription: {
-      ...subscription,
-      startDate: subscription.startDate.toISOString().split("Z")[0],
-      endDate: subscription.endDate.toISOString().split("Z")[0],
+    data: {
+      subscription: {
+        ...subscription,
+        startDate: subscription.startDate.toISOString().split("Z")[0],
+        endDate: subscription.endDate.toISOString().split("Z")[0],
+      },
     },
   });
   await loadSubscriptions(true);
@@ -148,13 +150,10 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: EditSubscription) => {
-  await POST__collection__subscriptions__$id(
-    axios,
-    { subscription },
-    {
-      urlParams: { id: String(subscription.id) },
-    }
-  );
+  await POST__collection__subscriptions__$id(axios, {
+    data: { subscription },
+    urlParams: { id: String(subscription.id) },
+  });
   await loadSubscriptions(true);
   currentSubscription = null;
 };

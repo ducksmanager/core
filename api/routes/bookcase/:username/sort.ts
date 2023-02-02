@@ -1,6 +1,5 @@
 import prisma from "~prisma_extended_clients/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 import { checkValidBookcaseUser } from "./index";
 
@@ -11,9 +10,9 @@ const getLastPublicationPosition = async (userId: number) =>
       where: { userId },
     })
   )._max.order || -1;
-
-export type getCall = Call<string[], { username: string }>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<string[], { username: string }>
+) => {
   const user = await checkValidBookcaseUser(req.user, req.params.username);
   if (user === null) {
     return;

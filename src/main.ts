@@ -42,7 +42,7 @@ const useOngoingRequests = ongoingRequests(store);
 
 declare module "axios" {
   interface AxiosRequestConfig {
-    urlParams?: Record<string, string>;
+    urlParams?: Record<string, string> | undefined;
   }
 }
 

@@ -2,7 +2,6 @@ import bodyParser from "body-parser";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 import { EditSubscription } from "~types/EditSubscription";
 
 import { upsertSubscription } from "./index";
@@ -10,14 +9,15 @@ import { upsertSubscription } from "./index";
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export type postCall = Call<
-  undefined,
-  { id: string },
-  { subscription: EditSubscription }
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      undefined,
+      { id: string },
+      { subscription: EditSubscription }
+    >
+  ) => {
     await upsertSubscription(
       req.params.id,
       req.body.subscription,
@@ -28,13 +28,12 @@ export const post = [
   },
 ];
 
-export type deleteCall = Call<undefined, { id: number }>;
 export const del = [
   parseForm,
-  async (...[req, res]: ExpressCall<deleteCall>) => {
+  async (...[req, res]: ExpressCall<undefined, { id: string }>) => {
     await prisma.subscription.deleteMany({
       where: {
-        id: req.params.id || -1,
+        id: parseInt(req.params.id) || -1,
         users: {
           id: req.user!.id,
         },

@@ -1,23 +1,13 @@
-import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
+import { SimpleEntry } from "~types/SimpleEntry";
 
 const prisma = new PrismaClient();
 
 const getEntries = async (
   publicationcode: string,
   issuenumber: string
-): Promise<
-  {
-    storycode: string;
-    kind: string;
-    entirepages: number;
-    title: string;
-    part: number;
-    url: string;
-    position: string;
-  }[]
-> =>
+): Promise<SimpleEntry[]> =>
   await prisma.$queryRaw`
       SELECT sv.storycode,
              sv.kind,
@@ -36,16 +26,17 @@ const getEntries = async (
       ORDER BY position
   `;
 
-export type getCall = Call<
-  {
-    releaseDate: string;
-    entries: Prisma.PromiseReturnType<typeof getEntries>;
-  },
-  undefined,
-  undefined,
-  { publicationcode: string; issuenumber: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    {
+      releaseDate: string;
+      entries: SimpleEntry[];
+    },
+    undefined,
+    undefined,
+    { publicationcode: string; issuenumber: string }
+  >
+) => {
   const { publicationcode, issuenumber } = req.query;
 
   const releaseDate = (

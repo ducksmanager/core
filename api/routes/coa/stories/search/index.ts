@@ -2,17 +2,16 @@ import bodyParser from "body-parser";
 
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
-import { simple_issue } from "~types/SimpleIssue";
-import { simple_story } from "~types/SimpleStory";
-import PromiseReturnType = Prisma.PromiseReturnType;
+import { SimpleIssue } from "~types/SimpleIssue";
+import { SimpleStory } from "~types/SimpleStory";
+import { StorySearchResults } from "~types/StorySearchResults";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
 const listIssuesFromStoryCode = async (storycode: string) =>
-  prisma.$queryRaw<simple_issue[]>`
+  prisma.$queryRaw<SimpleIssue[]>`
       SELECT inducks_issue.issuecode AS code, inducks_issue.publicationcode, inducks_issue.issuenumber
       FROM inducks_issue
                INNER JOIN inducks_entry ON inducks_entry.issuecode = inducks_issue.issuecode
@@ -25,10 +24,10 @@ const listIssuesFromStoryCode = async (storycode: string) =>
 export const getStoriesByKeywords = async (
   keywords: string[],
   withIssues = false
-) => {
+): Promise<StorySearchResults> => {
   const limit = 10;
 
-  let results = await prisma.$queryRaw<simple_story[]>`
+  let results = await prisma.$queryRaw<SimpleStory[]>`
       SELECT inducks_storyversion.storycode,
              inducks_entry.title                         AS title,
              MATCH (inducks_entry.title) AGAINST (${Prisma.join(keywords)}) /
@@ -59,16 +58,15 @@ export const getStoriesByKeywords = async (
   };
 };
 
-export type postCall = Call<
-  {
-    results: PromiseReturnType<typeof getStoriesByKeywords>;
-  },
-  undefined,
-  { keywords: string }
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      { results: StorySearchResults },
+      undefined,
+      { keywords: string }
+    >
+  ) => {
     if (!req.body.keywords) {
       res.writeHead(400);
       res.end();

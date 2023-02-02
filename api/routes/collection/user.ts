@@ -6,7 +6,6 @@ import { PrismaClient, user } from "~prisma_clients/client_dm";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";
-import { Call } from "~types/Call";
 import { exclude } from "~types/exclude";
 import { ScopedError } from "~types/ScopedError";
 import { UserForAccountForm } from "~types/UserForAccountForm";
@@ -19,8 +18,9 @@ export const getUser = async (id: number) =>
     where: { id },
   });
 
-export type getCall = Call<Omit<user, "password">>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<Omit<user, "password">>
+) => {
   const userWithoutPassword = exclude<user, "password">(
     await getUser(req.user!.id),
     "password"
@@ -32,8 +32,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   return res.json(userWithoutPassword);
 };
 
-export type deleteCall = Call<undefined>;
-export const del = async (...[req, res]: ExpressCall<deleteCall>) => {
+export const del = async (...[req, res]: ExpressCall<undefined>) => {
   const userId = req.user!.id;
   await prisma.issue.deleteMany({
     where: { userId },
@@ -55,16 +54,17 @@ export const del = async (...[req, res]: ExpressCall<deleteCall>) => {
   res.end();
 };
 
-export type postCall = Call<
-  {
-    hasRequestedPresentationSentenceUpdate: boolean;
-  },
-  undefined,
-  UserForAccountForm
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      {
+        hasRequestedPresentationSentenceUpdate: boolean;
+      },
+      undefined,
+      UserForAccountForm
+    >
+  ) => {
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
     let validators = [
@@ -144,14 +144,20 @@ const validate = async (
   return true;
 };
 
-export type putCall = Call<
-  { token: string },
-  undefined,
-  { username: string; password: string; email: string; [key: string]: unknown }
->;
 export const put = [
   parseForm,
-  async (...[req, res]: ExpressCall<putCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      { token: string },
+      undefined,
+      {
+        username: string;
+        password: string;
+        email: string;
+        [key: string]: unknown;
+      }
+    >
+  ) => {
     const isValid = await validate(req.body, res, [
       validateUsername,
       validateUsernameCreation,

@@ -96,15 +96,15 @@ import {
   GET__coa__list__issues__by_storycode,
   POST__coa__stories__search__withIssues,
 } from "~types/routes";
-import { simple_issue } from "~types/SimpleIssue";
-import { simple_story } from "~types/SimpleStory";
+import { SimpleIssue } from "~types/SimpleIssue";
+import { SimpleStory } from "~types/SimpleStory";
 
 const { withTitle = true, withStoryLink = true } = defineProps<{
   withTitle?: boolean;
   withStoryLink?: boolean;
 }>();
 const emit = defineEmits<{
-  (e: "issue-selected", story: simple_issue): void;
+  (e: "issue-selected", story: SimpleIssue): void;
 }>();
 const { conditions } = condition();
 
@@ -113,19 +113,19 @@ let pendingSearch = $ref(null as string | null);
 let search = $ref("" as string);
 let storyResults = $ref(
   {} as {
-    results: (simple_story & {
+    results: (SimpleStory & {
       collectionIssue: IssueWithPublicationcode | null;
     })[];
     hasMore: boolean;
   }
 );
-let issueResults = $ref({} as { results: simple_issue[] });
+let issueResults = $ref({} as { results: SimpleIssue[] });
 let searchContext = $ref("story" as "story" | "storycode");
 
 const publicationNames = $computed(() => coa().publicationNames);
 const { t: $t } = useI18n();
 const fetchPublicationNames = coa().fetchPublicationNames;
-const isInCollection = (issue: simple_issue) =>
+const isInCollection = (issue: SimpleIssue) =>
   collectionStore().findInCollection(
     issue.publicationcode,
     issue.issuenumber
@@ -151,12 +151,12 @@ const isSearchByCode = $computed(() => searchContext === "storycode");
 const searchResults = $computed(() =>
   isSearchByCode ? issueResults : storyResults
 );
-const selectSearchResult = (searchResult: simple_story | simple_issue) => {
+const selectSearchResult = (searchResult: SimpleStory | SimpleIssue) => {
   if (isSearchByCode) {
-    emit("issue-selected", searchResult as simple_issue);
+    emit("issue-selected", searchResult as SimpleIssue);
   } else {
     searchContext = "storycode";
-    search = (searchResult as simple_story).storycode;
+    search = (searchResult as SimpleStory).storycode;
   }
 };
 const runSearch = async (value: string) => {
@@ -181,9 +181,9 @@ const runSearch = async (value: string) => {
     } else {
       const data = (
         await POST__coa__stories__search__withIssues(axios, {
-          keywords: value,
+          data: { keywords: value },
         })
-      ).data as { results: simple_story[]; hasMore: boolean };
+      ).data as { results: SimpleStory[]; hasMore: boolean };
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:

@@ -86,8 +86,10 @@ const login = async () => {
       "token",
       (
         await POST__login(axios, {
-          username,
-          password,
+          data: {
+            username,
+            password,
+          },
         })
       ).data.token
     );

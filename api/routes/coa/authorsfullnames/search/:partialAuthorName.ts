@@ -1,14 +1,14 @@
 import { inducks_person, PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<
-  { [personcode: string]: inducks_person[] },
-  { partialAuthorName: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    { [_personcode: string]: inducks_person[] },
+    { partialAuthorName: string }
+  >
+) => {
   const partialAuthorName = req.params.partialAuthorName;
 
   const authors = await prisma.inducks_person.findMany({

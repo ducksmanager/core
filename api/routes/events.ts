@@ -1,6 +1,5 @@
-import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 import { AbstractEvent, AbstractEventRaw } from "~types/events/AbstractEvent";
 import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
 import {
@@ -15,17 +14,16 @@ import {
   EdgeCreationEvent,
   EdgeCreationEventRaw,
 } from "~types/events/EdgeCreationEvent";
+import { Event } from "~types/events/Event";
 import { MedalEvent } from "~types/events/MedalEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<PromiseReturnType<typeof getEvents>>;
-export const get = async (...[, res]: ExpressCall<getCall>) =>
+export const get = async (...[, res]: ExpressCall<Event[]>) =>
   res.json(await getEvents());
 
-const getEvents = async () => [
+const getEvents = async (): Promise<Event[]> => [
   ...(await retrieveSignups()),
   ...(await retrieveCollectionUpdates()),
   ...(await retrieveCollectionSubscriptionAdditions()),

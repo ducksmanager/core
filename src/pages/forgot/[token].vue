@@ -52,9 +52,11 @@ const changePassword = async () => {
       "token",
       (
         await POST__auth__change_password(axios, {
-          token,
-          password,
-          password2,
+          data: {
+            token,
+            password,
+            password2,
+          },
         })
       ).data.token
     );
@@ -66,9 +68,7 @@ const changePassword = async () => {
 onMounted(async () => {
   try {
     await POST__auth__change_password(axios, {
-      token,
-      password,
-      password2,
+      data: { token, password, password2 },
     });
     await collectionStore.loadUser();
   } catch (e: unknown) {

@@ -278,10 +278,12 @@ const updateAccount = async () => {
     error = undefined;
     const response = (
       await POST__collection__user(axios, {
-        ...collection.userForAccountForm!,
-        oldPassword,
-        password,
-        password2,
+        data: {
+          ...collection.userForAccountForm!,
+          oldPassword,
+          password,
+          password2,
+        },
       })
     ).data;
     hasRequestedPresentationSentenceUpdate =

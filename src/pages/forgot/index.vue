@@ -60,7 +60,7 @@ const sendPasswordToken = async () => {
   try {
     token = (
       await POST__auth__forgot(axios, {
-        email,
+        data: { email },
       })
     ).data.token;
   } catch (e) {

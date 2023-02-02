@@ -3,20 +3,20 @@ import bodyParser from "body-parser";
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { authenticateToken } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export type postCall = Call<
-  { max: number } | undefined,
-  undefined,
-  { sorts: string[] }
->;
 export const post = [
   authenticateToken,
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      { max: number } | undefined,
+      undefined,
+      { sorts: string[] }
+    >
+  ) => {
     const sorts = req.body.sorts;
     if (sorts.length) {
       const userId = req.user!.id;

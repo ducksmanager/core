@@ -374,12 +374,14 @@ const importIssues = async () => {
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await POST__collection__issues__multiple(axios, {
-        publicationcode,
-        issuenumbers: importableIssuesByPublicationCode[publicationcode],
-        condition: issueDefaultCondition,
-        isOnSale: undefined,
-        isToRead: undefined,
-        purchaseId: undefined,
+        data: {
+          publicationcode,
+          issuenumbers: importableIssuesByPublicationCode[publicationcode],
+          condition: issueDefaultCondition,
+          isOnSale: undefined,
+          isToRead: undefined,
+          purchaseId: undefined,
+        },
       });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;

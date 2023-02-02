@@ -11,7 +11,7 @@ import {
   PrismaClient as PrismaClientDm,
 } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
+import { SimpleIssueWithPublication } from "~types/SimpleIssueWithPublication";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaCoverInfo = new PrismaClientCoverInfo();
@@ -40,23 +40,12 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
   );
 };
 
-interface SimpleIssueWithPublication {
-  countrycode: string;
-  publicationcode: string;
-  title: string;
-  issuenumber: string;
-  issuecode: string;
-  coverId: number | null;
-  coverUrl: string | null;
-  popularity: number | null;
-}
-
-export type getCall = Call<
-  { [issuecode: string]: SimpleIssueWithPublication },
-  { issueCodes: string }
->;
-
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    { [issuecode: string]: SimpleIssueWithPublication },
+    { issueCodes: string }
+  >
+) => {
   const issueCodes = req.params.issueCodes?.split(",") || [];
 
   const covers: { [issuecode: string]: cover } = (
