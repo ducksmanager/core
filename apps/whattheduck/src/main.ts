@@ -31,6 +31,12 @@ import * as CordovaSQLiteDriver from "localforage-cordovasqlitedriver";
 import { Storage } from "@ionic/storage";
 import * as localforage from "localforage";
 
+declare module "axios" {
+  interface AxiosRequestConfig {
+    urlParams?: Record<string, string>;
+  }
+}
+
 const storage = new Storage({
   driverOrder: [CordovaSQLiteDriver._driver, localforage.INDEXEDDB],
 });
