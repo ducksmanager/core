@@ -1,10 +1,6 @@
 import bodyParser from "body-parser";
 
-import {
-  issue_condition,
-  Prisma,
-  PrismaClient,
-} from "~prisma_clients/client_dm";
+import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";
@@ -15,7 +11,6 @@ import {
   deleteIssues,
   handleIsOnSale,
 } from "./_common";
-import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();

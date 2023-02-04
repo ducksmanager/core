@@ -1,10 +1,8 @@
 import {
   inducks_issuequotation,
-  Prisma,
   PrismaClient,
 } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
