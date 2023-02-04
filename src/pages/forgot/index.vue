@@ -48,8 +48,6 @@ meta:
 import axios, { AxiosError } from "axios";
 import { useI18n } from "vue-i18n";
 
-import { POST__auth__forgot } from "~types/routes";
-
 let error = $ref(null as unknown | string | null);
 
 const email = $ref("" as string);

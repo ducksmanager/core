@@ -34,7 +34,6 @@ import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
-import { POST__auth__change_password } from "~types/routes";
 
 const router = useRouter();
 const collectionStore = collection();

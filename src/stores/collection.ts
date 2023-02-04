@@ -17,23 +17,6 @@ import {
 } from "~types/CollectionUpdate";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
-import {
-  DELETE__collection__purchases__$id,
-  GET__collection__authors__watched,
-  GET__collection__edges__lastPublished,
-  GET__collection__issues,
-  GET__collection__options__$optionName,
-  GET__collection__popular,
-  GET__collection__purchases,
-  GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit,
-  GET__collection__subscriptions,
-  GET__collection__user,
-  POST__collection__issues__multiple,
-  POST__collection__issues__single,
-  POST__collection__lastvisit,
-  POST__collection__options__$optionName,
-  PUT__collection__purchases,
-} from "~types/routes";
 import { StoryDetail } from "~types/StoryDetail";
 import { UserForAccountForm } from "~types/UserForAccountForm";
 

@@ -9,20 +9,10 @@ import { Call } from "~types/Call";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 import {
-  GET__coa__authorsfullnames__$authors,
-  GET__coa__list__countries__$locale,
-  GET__coa__list__issues__by_publication_codes,
-  GET__coa__list__issues__count,
-  GET__coa__list__issues__details,
-  GET__coa__list__issues__withTitle,
-  GET__coa__list__publications,
-  GET__coa__list__publications__$countrycode,
-  GET__coa__quotations__publications,
   GET_CALL_COA_AUTHORSFULLNAMES__AUTHORS,
   GET_CALL_COA_LIST_ISSUES_BY_PUBLICATION_CODES,
   GET_CALL_COA_LIST_PUBLICATIONS,
   GET_CALL_COA_QUOTATIONS_PUBLICATIONS,
-  POST__coa__issues__decompose,
   POST_CALL_COA_ISSUES_DECOMPOSE,
 } from "~types/routes";
 
@@ -121,6 +111,9 @@ export const coa = defineStore("coa", {
         );
         this.countryNames = (
           await GET__coa__list__countries__$locale(coaApi, {
+            params: {
+              countryCodes: null,
+            },
             urlParams: {
               locale,
             },

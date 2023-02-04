@@ -2,13 +2,6 @@ import axios, { AxiosError } from "axios";
 import { defineStore } from "pinia";
 
 import { BookcaseEdge } from "~types/BookcaseEdge";
-import {
-  GET__bookcase__$username,
-  GET__bookcase__$username__options,
-  GET__bookcase__$username__sort,
-  POST__bookcase__options,
-  POST__bookcase__sort,
-} from "~types/routes";
 
 import { collection } from "./collection";
 
@@ -101,7 +94,7 @@ export const bookcase = defineStore("bookcase", {
       }
     },
     async updateBookcaseOptions() {
-      await POST__bookcase__options(axios, this.bookcaseOptions!);
+      await POST__bookcase__options(axios, { data: this.bookcaseOptions! });
     },
 
     async loadBookcaseOrder() {
@@ -115,7 +108,9 @@ export const bookcase = defineStore("bookcase", {
     },
     async updateBookcaseOrder() {
       await POST__bookcase__sort(axios, {
-        sorts: this.bookcaseOrder as string[],
+        data: {
+          sorts: this.bookcaseOrder as string[],
+        },
       });
     },
   },

@@ -89,11 +89,6 @@ import { onMounted, watch } from "vue";
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
 import { EditSubscription } from "~types/EditSubscription";
-import {
-  DELETE__collection__subscriptions__$id,
-  POST__collection__subscriptions__$id,
-  PUT__collection__subscriptions,
-} from "~types/routes";
 
 type AssociatedPublication = {
   referencePublicationcode: string;

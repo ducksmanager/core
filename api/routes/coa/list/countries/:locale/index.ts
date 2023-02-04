@@ -8,13 +8,13 @@ export const get = async (
     { [_countrycode: string]: string },
     { locale: string },
     undefined,
-    { countryCodes: string }
+    { countryCodes: string | null }
   >
 ) =>
   res.json(
     await getCountryNames(
       req.params.locale,
-      req.query.countryCodes.split(",") || null
+      req.query.countryCodes?.split(",") || null
     )
   );
 

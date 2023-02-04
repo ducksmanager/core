@@ -8,10 +8,6 @@ import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSub
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-import {
-  GET__global_stats__bookcase__contributors,
-  GET__global_stats__user__$userIds,
-} from "~types/routes";
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 export const users = defineStore("users", {

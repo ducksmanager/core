@@ -92,10 +92,6 @@ import {
   collection as collectionStore,
   IssueWithPublicationcode,
 } from "~/stores/collection";
-import {
-  GET__coa__list__issues__by_storycode,
-  POST__coa__stories__search__withIssues,
-} from "~types/routes";
 import { SimpleIssue } from "~types/SimpleIssue";
 import { SimpleStory } from "~types/SimpleStory";
 

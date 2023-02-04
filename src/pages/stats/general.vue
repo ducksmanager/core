@@ -166,7 +166,6 @@ import condition from "~/composables/condition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
-import { GET__global_stats__user__collection__rarity } from "~types/routes";
 
 const collection = collectionStore();
 const { getConditionLabel } = condition();

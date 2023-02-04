@@ -64,7 +64,6 @@ import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import { GET__csrf, POST__login } from "~types/routes";
 
 const collectionStore = collection();
 

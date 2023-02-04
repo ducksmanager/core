@@ -10,7 +10,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import { POST__demo } from "~types/routes";
 
 const collectionStore = collection();
 
