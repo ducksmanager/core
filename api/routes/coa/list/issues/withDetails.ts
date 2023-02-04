@@ -1,23 +1,17 @@
 import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
+import { IssueCoverDetails } from "~types/IssueCoverDetails";
 
 const prisma = new PrismaClient();
 
-type issueDetails = {
-  publicationcode: string;
-  issuenumber: string;
-  title: string;
-  coverUrl: string;
-};
-
-export type getCall = Call<
-  { [issuenumber: string]: issueDetails[] },
-  undefined,
-  undefined,
-  { publicationCodes: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    { [_issuenumber: string]: IssueCoverDetails[] },
+    undefined,
+    undefined,
+    { publicationCodes: string }
+  >
+) => {
   const publicationCodes = req.query.publicationCodes?.split(",") || [];
   if (publicationCodes.length > 10) {
     res.writeHead(400, { "Content-Type": "application/json" });
@@ -39,7 +33,7 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
       FROM inducks_issue
       WHERE inducks_issue.publicationcode IN(${Prisma.join(
         publicationCodes
-      )})`) as issueDetails[]
+      )})`) as IssueCoverDetails[]
     ).reduce(
       (acc, row) => ({
         ...row,

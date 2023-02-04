@@ -8,7 +8,6 @@ import {
   userContribution,
 } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -139,20 +138,21 @@ const publishEdgeOnDm = async (
   };
 };
 
-export type putCall = Call<
-  {
-    publicationcode: string;
-    issuenumber: string;
-    edgeId: number;
-    contributors: number[];
-    url: string;
-  },
-  { country: string; magazine: string; issuenumber: string },
-  { designers: string[]; photographers: string[] }
->;
 export const put = [
   parseForm,
-  async (...[req, res]: ExpressCall<putCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      {
+        publicationcode: string;
+        issuenumber: string;
+        edgeId: number;
+        contributors: number[];
+        url: string;
+      },
+      { country: string; magazine: string; issuenumber: string },
+      { designers: string[]; photographers: string[] }
+    >
+  ) => {
     const publicationcode = `${req.params.country}/${req.params.magazine}`;
     if (!isValidPublicationcode(publicationcode)) {
       res.writeHead(400);

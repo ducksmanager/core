@@ -3,19 +3,19 @@ import {
   PrismaClient,
 } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 
-export type getCall = Call<
-  inducks_issuequotation[],
-  undefined,
-  undefined,
-  { publicationCodes: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    inducks_issuequotation[],
+    undefined,
+    undefined,
+    { publicationCodes: string }
+  >
+) => {
   const { publicationCodes } = req.query;
   if (!publicationCodes) {
     res.writeHead(400);

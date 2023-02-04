@@ -235,11 +235,6 @@ import Accordion from "~/components/Accordion.vue";
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
-import {
-  DELETE__collection__user,
-  POST__collection__empty,
-  POST__collection__user,
-} from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
 const getImagePath = images().getImagePath;
 
@@ -278,10 +273,12 @@ const updateAccount = async () => {
     error = undefined;
     const response = (
       await POST__collection__user(axios, {
-        ...collection.userForAccountForm!,
-        oldPassword,
-        password,
-        password2,
+        data: {
+          ...collection.userForAccountForm!,
+          oldPassword,
+          password,
+          password2,
+        },
       })
     ).data;
     hasRequestedPresentationSentenceUpdate =

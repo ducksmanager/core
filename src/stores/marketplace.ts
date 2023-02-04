@@ -3,13 +3,6 @@ import { defineStore } from "pinia";
 
 import { users } from "~/stores/users";
 import { issue, requestedIssue } from "~prisma_clients/client_dm";
-import {
-  DELETE__collection__on_sale_by_others__requests,
-  GET__collection__on_sale_by_others,
-  GET__collection__on_sale_by_others__contact_methods__$sellerId,
-  GET__collection__on_sale_by_others__requests__as__$as,
-  PUT__collection__on_sale_by_others__requests,
-} from "~types/routes";
 
 export const marketplace = defineStore("marketplace", {
   state: () => ({
@@ -120,7 +113,7 @@ export const marketplace = defineStore("marketplace", {
   actions: {
     async requestIssues(issueIds: number[]) {
       await PUT__collection__on_sale_by_others__requests(axios, {
-        issueIds,
+        data: { issueIds },
       });
       await this.loadIssueRequestsAsBuyer();
     },

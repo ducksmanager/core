@@ -64,7 +64,6 @@ import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import { GET__csrf, POST__login } from "~types/routes";
 
 const collectionStore = collection();
 
@@ -86,8 +85,10 @@ const login = async () => {
       "token",
       (
         await POST__login(axios, {
-          username,
-          password,
+          data: {
+            username,
+            password,
+          },
         })
       ).data.token
     );

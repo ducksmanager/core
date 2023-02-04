@@ -1,17 +1,17 @@
 import { PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
-import { simple_issue } from "~types/SimpleIssue";
+import { SimpleIssue } from "~types/SimpleIssue";
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<
-  simple_issue[],
-  undefined,
-  undefined,
-  { storycode: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) =>
+export const get = async (
+  ...[req, res]: ExpressCall<
+    SimpleIssue[],
+    undefined,
+    undefined,
+    { storycode: string }
+  >
+) =>
   res.json(
     (await prisma.$queryRaw`
             SELECT issuecode as code,
@@ -22,5 +22,5 @@ export const get = async (...[req, res]: ExpressCall<getCall>) =>
                      INNER JOIN inducks_storyversion sv using (storyversioncode)
             WHERE sv.storycode = ${req.query.storycode}
             GROUP BY publicationcode, issuenumber
-            ORDER BY publicationcode`) as simple_issue[]
+            ORDER BY publicationcode`) as SimpleIssue[]
   );

@@ -1,8 +1,7 @@
 import bodyParser from "body-parser";
 
-import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 import { CollectionUpdateSingleIssue } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";
 
@@ -11,7 +10,6 @@ import {
   conditionToEnum,
   handleIsOnSale,
 } from "./_common";
-import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
@@ -66,14 +64,15 @@ const addOrChangeCopies = async (
   };
 };
 
-export type postCall = Call<
-  PromiseReturnType<typeof addOrChangeCopies>,
-  undefined,
-  CollectionUpdateSingleIssue
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      TransactionResults,
+      undefined,
+      CollectionUpdateSingleIssue
+    >
+  ) => {
     const user = req.user!;
     const { body }: { body: CollectionUpdateSingleIssue } = req;
     const { publicationcode, issuenumber, copies } = body;
@@ -115,11 +114,12 @@ export const post = [
       })
     ).map(({ id }) => id);
 
-    currentCopyIds.forEach(async (issueId, idx) => {
+    for (const issueId of currentCopyIds) {
+      const idx = currentCopyIds.indexOf(issueId);
       if (copies[idx]) {
         await handleIsOnSale(issueId, copies[idx].isOnSale);
       }
-    });
+    }
     return res.json(output);
   },
 ];

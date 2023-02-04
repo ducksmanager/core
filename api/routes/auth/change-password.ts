@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 import { loginAs } from "./util";
 
@@ -12,14 +11,15 @@ const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type postCall = Call<
-  { token: string },
-  undefined,
-  { password: string; password2: string; token: string }
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      { token: string },
+      undefined,
+      { password: string; password2: string; token: string }
+    >
+  ) => {
     const { password, password2, token } = req.body;
     jwt.verify(
       (token as string) || "",

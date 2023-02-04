@@ -73,7 +73,6 @@ import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";
-import { GET__collection__stats__watchedauthorsstorycount } from "~types/routes";
 
 Chart.register(
   Legend,

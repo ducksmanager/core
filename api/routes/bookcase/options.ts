@@ -3,20 +3,23 @@ import bodyParser from "body-parser";
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { authenticateToken } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export type postCall = Call<
-  { status: string },
-  undefined,
-  { textures: { bookcase: string; bookshelf: string }; showAllCopies: boolean }
->;
 export const post = [
   authenticateToken,
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      { status: string },
+      undefined,
+      {
+        textures: { bookcase: string; bookshelf: string };
+        showAllCopies: boolean;
+      }
+    >
+  ) => {
     const { textures, showAllCopies } = req.body;
     const [, bookcaseTexture] = textures.bookcase.split("/");
     const [, bookshelfTexture] = textures.bookshelf.split("/");

@@ -73,7 +73,6 @@ import { useI18n } from "vue-i18n";
 
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection } from "~/stores/collection";
-import { GET__csrf, PUT__collection__user } from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
 
 const collectionStore = collection();
@@ -98,10 +97,12 @@ const signup = async () => {
       "token",
       (
         await PUT__collection__user(axios, {
-          username,
-          password,
-          password2,
-          email,
+          data: {
+            username,
+            password,
+            password2,
+            email,
+          },
         })
       ).data.token
     );

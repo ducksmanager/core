@@ -19,6 +19,7 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
+    "unused-imports/no-unused-imports": "error",
     "vue/multi-word-component-names": "off",
     "vue/no-setup-props-destructure": "off",
     "vue/no-v-html": "off",
@@ -34,6 +35,6 @@ module.exports = {
       },
     ],
   },
-  plugins: ["simple-import-sort", "@typescript-eslint"],
+  plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
   ignorePatterns: ["**/node_modules", "**/dist", "shims.d.ts", "vendor"],
 };

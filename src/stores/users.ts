@@ -2,17 +2,12 @@ import axios from "axios";
 import { defineStore } from "pinia";
 
 import { cachedUserApi as userApi } from "~/util/api";
-import { getCall } from "~routes/global-stats/user/:userIds";
 import { AbstractEvent } from "~types/events/AbstractEvent";
 import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
 import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSubscriptionAdditionEvent";
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-import {
-  GET__global_stats__bookcase__contributors,
-  GET__global_stats__user__$userIds,
-} from "~types/routes";
 import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 export const users = defineStore("users", {
@@ -48,7 +43,7 @@ export const users = defineStore("users", {
             userIds: missingUserIds.sort((a, b) => Math.sign(a - b)).join(","),
           },
         })
-      ).data as getCall["resBody"];
+      ).data;
       this.points = {
         ...this.points,
         ...data.points,

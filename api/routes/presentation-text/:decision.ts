@@ -4,20 +4,20 @@ import PresentationSentenceApproved from "~emails/presentation-sentence-approved
 import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export type postCall = Call<
-  undefined,
-  { decision: string },
-  { sentence: string; userId: number }
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      undefined,
+      { decision: string },
+      { sentence: string; userId: number }
+    >
+  ) => {
     const { sentence, userId } = req.body;
     const { decision } = req.params;
     if (!["approve", "refuse"].includes(decision as string)) {

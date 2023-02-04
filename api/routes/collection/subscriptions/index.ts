@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import { subscription } from "~prisma_clients/client_dm";
 import prisma from "~prisma_extended_clients/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 import { EditSubscription } from "~types/EditSubscription";
 
 const parseForm = bodyParser.json();
@@ -49,14 +48,15 @@ export async function upsertSubscription(
   });
 }
 
-export type getCall = Call<
-  (Omit<subscription, "startDate" | "endDate"> & {
-    publicationcode: string;
-    startDate: string;
-    endDate: string;
-  })[]
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    (Omit<subscription, "startDate" | "endDate"> & {
+      publicationcode: string;
+      startDate: string;
+      endDate: string;
+    })[]
+  >
+) => {
   const subscriptions = await prisma.subscription.findMany({
     where: {
       users: {
@@ -73,14 +73,15 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   );
 };
 
-export type putCall = Call<
-  undefined,
-  { id: string },
-  { subscription: EditSubscription }
->;
 export const put = [
   parseForm,
-  async (...[req, res]: ExpressCall<putCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      undefined,
+      { id: string },
+      { subscription: EditSubscription }
+    >
+  ) => {
     await upsertSubscription(
       req.params.id,
       req.body.subscription,

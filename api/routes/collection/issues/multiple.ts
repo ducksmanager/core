@@ -6,7 +6,6 @@ import {
   PrismaClient,
 } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";
 
@@ -90,14 +89,15 @@ const addOrChangeIssues = async (
   };
 };
 
-export type postCall = Call<
-  PromiseReturnType<typeof addOrChangeIssues>,
-  undefined,
-  CollectionUpdateMultipleIssues
->;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<
+      TransactionResults,
+      undefined,
+      CollectionUpdateMultipleIssues
+    >
+  ) => {
     const user = req.user!;
     const { body }: { body: CollectionUpdateMultipleIssues } = req;
     const { publicationcode, issuenumbers, purchaseId } = body;
@@ -128,9 +128,9 @@ export const post = [
           },
         })
       ).map(({ id }) => id);
-      issueIds.forEach(async (issueId) => {
+      for (const issueId of issueIds) {
         await handleIsOnSale(issueId, isOnSale);
-      });
+      }
     }
 
     if (condition === null) {

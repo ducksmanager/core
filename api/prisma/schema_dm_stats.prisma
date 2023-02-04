@@ -19,7 +19,7 @@ model authorStory {
   @@map("auteurs_histoires")
 }
 
-model authorUser {
+model authorUserForStats {
   id              Int    @id @default(autoincrement())  @map("ID")
   personcode      String @db.VarChar(79)                @map("NomAuteurAbrege")
   userId          Int                                   @map("ID_user")

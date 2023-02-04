@@ -4,7 +4,6 @@ import { PrismaClient as PrismaClientDm } from "~prisma_clients/client_dm";
 import { PrismaClient as PrismaClientDmStats } from "~prisma_clients/client_dm_stats";
 import { PrismaClient as PrismaClientEdgecreator } from "~prisma_clients/client_edgecreator";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaCoverInfo = new PrismaClientCoverInfo();
@@ -12,8 +11,7 @@ const prismaDm = new PrismaClientDm();
 const prismaDmStats = new PrismaClientDmStats();
 const prismaEdgecreator = new PrismaClientEdgecreator();
 
-export type getCall = Call<{ status: string }>;
-export const get = async (...[, res]: ExpressCall<getCall>) => {
+export const get = async (...[, res]: ExpressCall<{ status: string }>) => {
   const checks = [
     { db: "dm", check: async () => prismaDm.user.count() },
     { db: "coverInfo", check: async () => prismaCoverInfo.cover.count() },

@@ -167,7 +167,7 @@ import { coa as coaStore } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
 import { BookcaseEdgeSprite } from "~types/BookcaseEdge";
-import { simple_issue } from "~types/SimpleIssue";
+import { SimpleIssue } from "~types/SimpleIssue";
 
 const route = useRoute();
 
@@ -271,7 +271,7 @@ const sortedBookcase = $computed(
       }
     )
 );
-const highlightIssue = (issue: simple_issue) => {
+const highlightIssue = (issue: SimpleIssue) => {
   currentEdgeHighlighted =
     bookcase.bookcase?.find(
       (issueInCollection) =>

@@ -132,10 +132,6 @@ import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";
 import { images } from "~/stores/images";
-import {
-  GET__edges__published__data,
-  GET__edges__wanted__data,
-} from "~types/routes";
 import { WantedEdge } from "~types/WantedEdge";
 const getImagePath = images().getImagePath;
 

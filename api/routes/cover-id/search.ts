@@ -3,25 +3,14 @@ import https from "https";
 
 import { PrismaClient } from "~prisma_clients/client_cover_info";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
+import {
+  CoverSearchResults,
+  SimilarImagesResult,
+} from "~types/CoverSearchResults";
 
 const prisma = new PrismaClient();
 
-interface SimilarImagesResult {
-  imageIds: number[];
-  scores: number[];
-  tags: string[];
-  type: string;
-}
-
-type searchResults = {
-  issues: string[];
-  imageIds: number[];
-  type?: string;
-};
-
-export type putCall = Call<searchResults>;
-export const put = (...[req, res]: ExpressCall<putCall>) => {
+export const put = (...[req, res]: ExpressCall<CoverSearchResults>) => {
   req.busboy?.on("file", async (name: string, file: File) => {
     if (name !== "wtd_jpg") {
       res.writeHead(400);

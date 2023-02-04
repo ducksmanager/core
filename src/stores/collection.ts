@@ -17,23 +17,6 @@ import {
 } from "~types/CollectionUpdate";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { PopularIssue } from "~types/PopularIssue";
-import {
-  DELETE__collection__purchases__$id,
-  GET__collection__authors__watched,
-  GET__collection__edges__lastPublished,
-  GET__collection__issues,
-  GET__collection__options__$optionName,
-  GET__collection__popular,
-  GET__collection__purchases,
-  GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit,
-  GET__collection__subscriptions,
-  GET__collection__user,
-  POST__collection__issues__multiple,
-  POST__collection__issues__single,
-  POST__collection__lastvisit,
-  POST__collection__options__$optionName,
-  PUT__collection__purchases,
-} from "~types/routes";
 import { StoryDetail } from "~types/StoryDetail";
 import { UserForAccountForm } from "~types/UserForAccountForm";
 
@@ -324,18 +307,17 @@ export const collection = defineStore("collection", {
 
   actions: {
     async updateCollectionSingleIssue(data: CollectionUpdateSingleIssue) {
-      await POST__collection__issues__single(axios, data);
+      await POST__collection__issues__single(axios, { data });
       await this.loadCollection(true);
     },
     async updateCollectionMultipleIssues(data: CollectionUpdateMultipleIssues) {
-      await POST__collection__issues__multiple(axios, data);
+      await POST__collection__issues__multiple(axios, { data });
       await this.loadCollection(true);
     },
 
     async createPurchase(date: string, description: string) {
       await PUT__collection__purchases(axios, {
-        date,
-        description,
+        data: { date, description },
       });
       await this.loadPurchases(true);
     },
@@ -425,30 +407,22 @@ export const collection = defineStore("collection", {
       }
     },
     async updateMarketplaceContactMethods() {
-      await POST__collection__options__$optionName(
-        axios,
-        {
-          values: this.marketplaceContactMethods!,
+      await POST__collection__options__$optionName(axios, {
+        data: { values: this.marketplaceContactMethods! },
+        urlParams: {
+          optionName: "marketplace_contact_methods",
         },
-        {
-          urlParams: {
-            optionName: "marketplace_contact_methods",
-          },
-        }
-      );
+      });
     },
     async updateWatchedPublicationsWithSales() {
-      await POST__collection__options__$optionName(
-        axios,
-        {
+      await POST__collection__options__$optionName(axios, {
+        data: {
           values: this.watchedPublicationsWithSales!,
         },
-        {
-          urlParams: {
-            optionName: "sales_notification_publications",
-          },
-        }
-      );
+        urlParams: {
+          optionName: "sales_notification_publications",
+        },
+      });
     },
     async loadSuggestions({
       countryCode,

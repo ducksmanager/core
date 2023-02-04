@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import ResetPassword from "~emails/reset-password";
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 import { isValidEmail } from "./util";
 
@@ -17,8 +16,9 @@ const generateToken = (payload: string) =>
     expiresIn: "60m",
   });
 
-export type getCall = Call<undefined, undefined, undefined, { token: string }>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<undefined, undefined, undefined, { token: string }>
+) => {
   jwt.verify(
     req.query.token,
     process.env.TOKEN_SECRET as string,
@@ -33,10 +33,11 @@ export const get = async (...[req, res]: ExpressCall<getCall>) => {
   );
 };
 
-export type postCall = Call<{ token: string }, undefined, { email: string }>;
 export const post = [
   parseForm,
-  async (...[req, res]: ExpressCall<postCall>) => {
+  async (
+    ...[req, res]: ExpressCall<{ token: string }, undefined, { email: string }>
+  ) => {
     const { email } = req.body;
     if (!isValidEmail(email)) {
       res.writeHead(400, { "Content-Type": "application/text" });

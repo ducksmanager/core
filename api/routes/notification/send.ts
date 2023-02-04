@@ -11,7 +11,6 @@ import {
   COUNTRY_CODE_OPTION,
   getSuggestions,
 } from "~routes/collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit";
-import { Call } from "~types/Call";
 
 const pusher = new PushNotifications({
   instanceId: process.env.PUSHER_INSTANCE_ID!,
@@ -67,8 +66,7 @@ const sendSuggestedIssueNotification = async (
   });
 };
 
-export type postCall = Call<undefined>;
-export const post = async (...[, res]: ExpressCall<postCall>) => {
+export const post = async (...[, res]: ExpressCall<undefined>) => {
   const suggestionsSince = dayjs().add(-7, "days");
   let notificationsSent = 0;
 

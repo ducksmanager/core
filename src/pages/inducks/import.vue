@@ -299,7 +299,6 @@ import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
 import { inducks_issue } from "~prisma_clients/client_coa";
-import { POST__collection__issues__multiple } from "~types/routes";
 const getImagePath = images().getImagePath;
 
 let step = $ref(1 as number);
@@ -374,12 +373,14 @@ const importIssues = async () => {
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await POST__collection__issues__multiple(axios, {
-        publicationcode,
-        issuenumbers: importableIssuesByPublicationCode[publicationcode],
-        condition: issueDefaultCondition,
-        isOnSale: undefined,
-        isToRead: undefined,
-        purchaseId: undefined,
+        data: {
+          publicationcode,
+          issuenumbers: importableIssuesByPublicationCode[publicationcode],
+          condition: issueDefaultCondition,
+          isOnSale: undefined,
+          isToRead: undefined,
+          purchaseId: undefined,
+        },
       });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;

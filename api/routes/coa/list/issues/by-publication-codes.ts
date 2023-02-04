@@ -1,17 +1,17 @@
 import { PrismaClient } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
-import { simple_issue } from "~types/SimpleIssue";
+import { SimpleIssue } from "~types/SimpleIssue";
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<
-  simple_issue[],
-  undefined,
-  undefined,
-  { publicationCodes: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    SimpleIssue[],
+    undefined,
+    undefined,
+    { publicationCodes: string }
+  >
+) => {
   const publicationCodes = req.query.publicationCodes?.split(",") || [];
   if (publicationCodes.length > 50) {
     res.writeHead(400);

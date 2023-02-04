@@ -9,10 +9,11 @@ import {
 } from "~prisma_clients/client_dm_stats";
 import { ExpressCall } from "~routes/_express-call";
 import { getPublicationTitlesFromCodes } from "~routes/coa/list/publications";
-import { Call } from "~types/Call";
 import { IssueSuggestion } from "~types/IssueSuggestion";
 import { IssueSuggestionList } from "~types/IssueSuggestionList";
 import { StoryDetail } from "~types/StoryDetail";
+import { SuggestionList } from "~types/SuggestionList";
+import { SuggestionsWithDetails } from "~types/SuggestionsWithDetails";
 
 const prismaCoa = new PrismaClientCoa();
 const prismaDm = new PrismaClientDm();
@@ -23,29 +24,17 @@ export enum COUNTRY_CODE_OPTION {
   countries_to_notify = "countries_to_notify",
 }
 
-interface SuggestionList {
-  storyDetails?: { [storycode: string]: StoryDetail };
-  suggestionsPerUser: { [userId: number]: IssueSuggestionList };
-  publicationTitles: { [publicationcode: string]: string | null };
-  authors: { [personcode: string]: string };
-}
-
-type SuggestionsWithDetails = Omit<SuggestionList, "suggestionsPerUser"> & {
-  issues: { [issuecode: string]: IssueSuggestion };
-  minScore: number;
-  maxScore: number;
-};
-
-export type getCall = Call<
-  SuggestionsWithDetails,
-  {
-    countrycode: string;
-    sincePreviousVisit: string;
-    sort: string;
-    limit: string;
-  }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    SuggestionsWithDetails,
+    {
+      countrycode: string;
+      sincePreviousVisit: string;
+      sort: string;
+      limit: string;
+    }
+  >
+) => {
   const { countrycode, sincePreviousVisit, sort, limit } = req.params;
   const since =
     sincePreviousVisit === "since_previous_visit"

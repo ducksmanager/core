@@ -1,8 +1,8 @@
-import { simple_issue } from "./SimpleIssue";
+import { SimpleIssue } from "./SimpleIssue";
 
-export interface simple_story {
+export interface SimpleStory {
   storycode: string;
   title: string;
   score: number;
-  issues: simple_issue[] | null;
+  issues: SimpleIssue[] | null;
 }

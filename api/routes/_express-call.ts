@@ -1,19 +1,15 @@
 import { Busboy } from "busboy";
 import { Request, Response } from "express";
 
-import { Call } from "~types/Call";
-
 export type ExpressCall<
-  T extends Call<
-    object | undefined,
-    object | undefined,
-    object | undefined,
-    object | undefined
-  >
+  resBody,
+  params = undefined,
+  reqBody = undefined,
+  reqQuery = undefined
 > = [
-  Request<T["params"], T["resBody"], T["reqBody"], T["reqQuery"]> & {
+  Request<params, resBody, reqBody, reqQuery> & {
     busboy: Busboy;
   },
 
-  Response<T["resBody"]>
+  Response<resBody>
 ];

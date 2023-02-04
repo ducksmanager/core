@@ -1,11 +1,11 @@
 import { PrismaClient, requestedIssue } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 
 const prisma = new PrismaClient();
 
-export type getCall = Call<requestedIssue[], { as: string }>;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<requestedIssue[], { as: string }>
+) => {
   const as = req.params.as;
   if (!["buyer", "seller"].includes(as)) {
     res.writeHead(400);

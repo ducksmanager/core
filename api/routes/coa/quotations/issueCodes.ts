@@ -1,19 +1,23 @@
-import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import {
+  inducks_issuequotation,
+  Prisma,
+  PrismaClient,
+} from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { Call } from "~types/Call";
 import PromiseReturnType = Prisma.PromiseReturnType;
 
 const prisma = new PrismaClient();
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
-export type getCall = Call<
-  PromiseReturnType<typeof prisma.inducks_issuequotation.findMany>,
-  undefined,
-  undefined,
-  { issueCodes: string }
->;
-export const get = async (...[req, res]: ExpressCall<getCall>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<
+    inducks_issuequotation[],
+    undefined,
+    undefined,
+    { issueCodes: string }
+  >
+) => {
   const { issueCodes } = req.query;
   if (!issueCodes) {
     res.writeHead(400);
