@@ -33,7 +33,6 @@
   </main-layout>
 </template>
 <script setup lang="ts">
-<<<<<<< HEAD
 import MainLayout from "@/layouts/MainLayout.vue";
 import Country from "@/components/Country";
 import Publication from "@/components/Publication";
@@ -43,18 +42,6 @@ import { collection } from "@/stores/collection";
 import { app } from "@/stores/app";
 import { coa } from "@/stores/coa";
 import { IonSearchbar, IonItem } from "@ionic/vue";
-=======
-import MainLayout from "~/layouts/MainLayout.vue";
-import Country from "~/components/Country.vue";
-import Publication from "~/components/Publication.vue";
-import Issue from "~/components/Issue.vue";
-import Navigation from "~/components/Navigation.vue";
-import { computed, onMounted, ref } from "vue";
-import { collection } from "~/stores/collection";
-import { app } from "~/stores/app";
-import { coa } from "~/stores/coa";
-import { IonSearchbar, IonSegmentButton } from "@ionic/vue";
->>>>>>> a071e9b (Try things)
 
 defineEmits(["click"]);
 

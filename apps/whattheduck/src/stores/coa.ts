@@ -1,13 +1,13 @@
 import { AxiosResponse } from "axios";
 import { defineStore } from "pinia";
 
-import { getCurrentLocaleShortKey } from "~/composables/locales";
-// import i18n from "~/i18n";
-import { cachedCoaApi as coaApi } from "~/util/api";
-import { inducks_issue } from "~db/client_coa";
-import { Call } from "~dm_types/Call";
-import { InducksIssueDetails } from "~dm_types/InducksIssueDetails";
-import { InducksIssueQuotationSimple } from "~dm_types/InducksIssueQuotationSimple";
+import { getCurrentLocaleShortKey } from "@/composables/locales";
+// import i18n from "@/i18n";
+import { cachedCoaApi as coaApi } from "@/util/api";
+import { inducks_issue } from "~prisma_clients/client_coa";
+import { Call } from "~types/Call";
+import { InducksIssueDetails } from "~types/InducksIssueDetails";
+import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 import {
   GET__coa__authorsfullnames__$authors,
   GET__coa__list__countries__$locale,
@@ -24,7 +24,7 @@ import {
   GET_CALL_COA_QUOTATIONS_PUBLICATIONS,
   POST__coa__issues__decompose,
   POST_CALL_COA_ISSUES_DECOMPOSE,
-} from "~dm_types/routes";
+} from "ducksmanager/types/routes";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -61,24 +61,12 @@ export const coa = defineStore("coa", {
     countryNames: null as { [countrycode: string]: string } | null,
     publicationNames: {} as { [publicationcode: string]: string | null },
     publicationNamesFullCountries: [] as string[],
-<<<<<<< HEAD
     personNames: null as { [key: string]: string } | null,
     issueNumbers: {} as { [key: string]: string[] },
     issueDetails: {} as { [key: string]: InducksIssueDetails },
     isLoadingCountryNames: false,
     issueCounts: null,
     issueCodeDetails: null as { [key: string]: inducks_issue } | null,
-=======
-    personNames: null as { [personcode: string]: string } | null,
-    issueNumbers: {} as { [issuecode: string]: string[] },
-    issuesWithTitles: {} as {
-      [issuenumber: string]: { issuenumber: string; title: string | null }[];
-    },
-    issueDetails: {} as { [issuecode: string]: InducksIssueDetails },
-    isLoadingCountryNames: false as boolean,
-    issueCounts: null as { [publicationcode: string]: number } | null,
-    issueCodeDetails: null as { [issuecode: string]: inducks_issue } | null,
->>>>>>> a071e9b (Try things)
     issueQuotations: null as {
       [issuecode: string]: InducksIssueQuotationSimple;
     } | null,
@@ -105,11 +93,7 @@ export const coa = defineStore("coa", {
     setCoverUrl(issuenumber: string, url: string) {
       this.coverUrls[issuenumber] = url;
     },
-<<<<<<< HEAD
-    addIssueNumbers(issueNumbers: { [key: string]: string[] }) {
-=======
     addIssueNumbers(issueNumbers: { [publicationcode: string]: string[] }) {
->>>>>>> a071e9b (Try things)
       this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };
     },
     addIssueCodeDetails(issueCodeDetails: {

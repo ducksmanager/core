@@ -16,12 +16,10 @@
       "jest"
     ],
     "paths": {
-      "~/*": [
+      "@/*": [
         "src/*"
       ],
-      "~db/*": ["node_modules/ducksmanager/api/dist/prisma/*"],
-      "~dm_types/*": ["node_modules/ducksmanager/types/*"],
-      "~routes/*": ["node_modules/ducksmanager/types/routes/*"]
+      "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"]
     },
     "lib": [
       "esnext",

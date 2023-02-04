@@ -1,18 +1,18 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { IssueWithPublicationCode } from "~/types/IssueWithPublicationCode";
-import { Purchase } from "~/types/Purchase";
-import { Author } from "~/types/Author";
-import { SuggestionList } from "~/types/SuggestionList";
-import { Subscription } from "~/types/Subscription";
-import { IssuePopularity } from "~/types/IssuePopularity";
+import { IssueWithPublicationCode } from "@/types/IssueWithPublicationCode";
+import { Purchase } from "@/types/Purchase";
+import { Author } from "@/types/Author";
+import { SuggestionList } from "@/types/SuggestionList";
+import { Subscription } from "@/types/Subscription";
+import { IssuePopularity } from "@/types/IssuePopularity";
 import {
   EdgePublishedRecently,
   EdgePublishedRecentlyWithTimestamp,
-} from "~/types/EdgePublishedRecently";
-import { User } from "~/types/User";
-import { PreviousVisit } from "~/types/PreviousVisit";
-import { Issue } from "~/types/Issue";
+} from "@/types/EdgePublishedRecently";
+import { User } from "@/types/User";
+import { PreviousVisit } from "@/types/PreviousVisit";
+import { Issue } from "@/types/Issue";
 
 export const collection = defineStore("collection", {
   state: () => ({

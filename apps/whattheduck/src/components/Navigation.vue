@@ -13,9 +13,9 @@
 <script setup lang="ts">
 import { IonSegment, IonSegmentButton, IonLabel } from "@ionic/vue";
 import { onMounted, computed } from "vue";
-import { collection } from "~/stores/collection";
-import { app } from "~/stores/app";
-import { coa } from "~/stores/coa";
+import { collection } from "@/stores/collection";
+import { app } from "@/stores/app";
+import { coa } from "@/stores/coa";
 
 const collectionStore = collection();
 const appStore = app();

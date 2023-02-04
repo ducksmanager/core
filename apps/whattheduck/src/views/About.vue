@@ -4,6 +4,6 @@
   >
 </template>
 <script setup lang="ts">
-import MainLayout from "../MainLayout.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
 const title = "About";
 </script>
