@@ -1,7 +1,17 @@
-FROM node:16 as api-build
+FROM node:16 as pnpm
 MAINTAINER Bruno Perel
 
 RUN npm i -g pnpm
+
+FROM pnpm AS app-install
+MAINTAINER Bruno Perel
+
+WORKDIR /home
+COPY package.json pnpm-lock.yaml .eslintrc.js ./
+RUN pnpm i
+
+FROM app-install AS api-build
+MAINTAINER Bruno Perel
 
 WORKDIR /home/api
 
@@ -18,14 +28,10 @@ COPY api .
 RUN pnpm run generate-route-types
 RUN pnpm run build
 
-FROM node:16 AS app-build
+FROM app-install AS app-build
 MAINTAINER Bruno Perel
 
-RUN npm i -g pnpm
-
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm i
 
 COPY . .
 COPY .env.prod.local ./.env
@@ -39,10 +45,8 @@ MAINTAINER Bruno Perel
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=app-build /app/dist /usr/share/nginx/html
 
-FROM node:16 AS api
+FROM pnpm AS api
 MAINTAINER Bruno Perel
-
-RUN npm i -g pnpm
 
 WORKDIR /app
 
