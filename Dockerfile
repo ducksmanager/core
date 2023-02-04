@@ -6,14 +6,14 @@ RUN npm i -g pnpm
 FROM pnpm AS app-install
 MAINTAINER Bruno Perel
 
-WORKDIR /home
+WORKDIR /app
 COPY package.json pnpm-lock.yaml .eslintrc.js ./
 RUN pnpm i
 
 FROM app-install AS api-build
 MAINTAINER Bruno Perel
 
-WORKDIR /home/api
+WORKDIR /app/api
 
 COPY api/package.json api/pnpm-lock.yaml ./
 RUN pnpm i
@@ -22,8 +22,8 @@ COPY .env.prod.local ./.env
 COPY api/prisma ./prisma
 RUN pnpm run prisma:generate
 
-COPY types /home/types
-COPY translations /home/translations
+COPY types /app/types
+COPY translations /app/translations
 COPY api .
 RUN pnpm run generate-route-types
 RUN pnpm run build
@@ -35,8 +35,8 @@ WORKDIR /app
 
 COPY . .
 COPY .env.prod.local ./.env
-COPY --from=api-build /home/api api
-COPY --from=api-build /home/types/routes.ts types/routes.ts
+COPY --from=api-build /app/api api
+COPY --from=api-build /app/types/routes.ts types/routes.ts
 RUN pnpm run build
 
 FROM nginx AS app
@@ -50,10 +50,10 @@ MAINTAINER Bruno Perel
 
 WORKDIR /app
 
-COPY --from=api-build /home/api/package*.json /home/api/.env /app/
+COPY --from=api-build /app/api/package*.json /app/api/.env /app/
 RUN pnpm install --production
 
-COPY --from=api-build /home/api/dist /app/
+COPY --from=api-build /app/api/dist /app/
 RUN rm -rf api/dist/prisma && mv prisma api/dist/
 
 COPY ./api/routes/demo/*.csv /app/api/routes/demo
