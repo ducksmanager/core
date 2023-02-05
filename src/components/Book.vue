@@ -137,7 +137,7 @@ const issueDetails = $computed(() => coa().issueDetails);
 const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
 const edgeUrl = $computed(
   () =>
-    `${import.meta.env.EDGES_BASE_URL}${publicationcode.replace(
+    `${import.meta.env.VITE_EDGES_ROOT}${publicationcode.replace(
       "/",
       "/gen/"
     )}.${issuenumber}.png`

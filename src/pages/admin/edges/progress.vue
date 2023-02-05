@@ -153,7 +153,7 @@ const fetchIssueNumbers = coa().fetchIssueNumbers;
 const getEdgeUrl = (publicationcode: string, issuenumber: string) => {
   const [country, magazine] = publicationcode.split("/");
   return `${
-    import.meta.env.EDGES_ROOT
+    import.meta.env.VITE_EDGES_ROOT
   }/${country}/gen/${magazine}.${issuenumber}.png`;
 };
 const open = (publicationcode: string, issuenumber: string) => {

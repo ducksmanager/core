@@ -3,9 +3,7 @@
     v-if="embedded"
     class="bookcase"
     :style="{
-      backgroundImage: `url('${getImagePath(
-        `textures/${bookcaseTextures.bookcase}.jpg`
-      )})`,
+      backgroundImage: getTextureBackgroundImage(bookcaseTextures.bookcase),
     }"
   >
     <Edge
@@ -24,9 +22,7 @@
     v-else
     class="bookcase"
     :style="{
-      backgroundImage: `url('${getImagePath(
-        `textures/${bookcaseTextures.bookcase}.jpg`
-      )})`,
+      backgroundImage: getTextureBackgroundImage(bookcaseTextures.bookcase),
     }"
   >
     <Edge
@@ -78,6 +74,9 @@ defineEmits<{
 const getImagePath = images().getImagePath;
 let currentEdgeIndex = $ref(0);
 let edgesToLoad = $ref([] as BookcaseEdgeWithPopularity[]);
+
+const getTextureBackgroundImage = (textureName: string) =>
+  `url('${getImagePath(`textures/${textureName}`)}.jpg')`;
 
 const loadNextEdge = () => {
   const nextEdge = sortedBookcase![++currentEdgeIndex];

@@ -175,7 +175,7 @@ export const put = async (...[req, res]: ExpressCall<undefined>) => {
         `Uploading edge with ID ${edgeNotInCloudinary.id} and slug ${edgeNotInCloudinary.slug}...`
       );
       await cloudinaryV2.uploader.upload(
-        `${process.env.EDGES_ROOT}/${countryCode}/gen/${magazineCode}.${edgeNotInCloudinary.issuenumber}.png`,
+        `${process.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${edgeNotInCloudinary.issuenumber}.png`,
         {
           public_id: edgeNotInCloudinary.slug!,
         }

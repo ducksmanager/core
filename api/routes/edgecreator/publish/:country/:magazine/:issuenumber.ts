@@ -185,7 +185,7 @@ export const put = [
       issuenumber,
       edgeId,
       contributors,
-      url: `${process.env.EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issuenumber}.png`,
+      url: `${process.env.VITE_EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issuenumber}.png`,
     });
   },
 ];

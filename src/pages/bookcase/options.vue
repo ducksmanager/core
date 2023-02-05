@@ -16,7 +16,7 @@ alias: [/bibliotheque/options]
           <div
             class="selected"
             :style="{
-              backgroundImage: `url('${getImagePath(`textures/${bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']}`)}.jpg'`,
+              backgroundImage: `url('${getImagePath(`textures/${bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']}`)}.jpg')`,
             }"
           >
             {{
