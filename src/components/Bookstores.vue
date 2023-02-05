@@ -1,9 +1,3 @@
-<route lang="yaml">
-alias: [/bouquineries]
-meta:
-  public: true
-</route>
-
 <template>
   <div>
     {{
@@ -21,92 +15,95 @@ meta:
         map-style="mapbox://styles/mapbox/light-v10"
         :center="mapCenter"
         :zoom="4"
+        @loaded="loaded = true"
       >
-        <mapbox-marker
-          v-for="currentBookstore in bookstores"
-          :key="currentBookstore.id"
-          :lng-lat="[currentBookstore.coordY, currentBookstore.coordX]"
-          anchor="bottom"
-          :offset="[0, 6]"
-        >
-          <mapbox-popup anchor="top">
-            <div>
-              <h2>{{ currentBookstore.name }}</h2>
+        <template v-if="loaded">
+          <mapbox-marker
+            v-for="currentBookstore in bookstores"
+            :key="currentBookstore.id"
+            :lng-lat="[currentBookstore.coordY, currentBookstore.coordX]"
+            anchor="bottom"
+            :offset="[0, 6]"
+          >
+            <mapbox-popup anchor="top">
               <div>
-                <p class="text-secondary">
-                  {{ currentBookstore.address }}
-                </p>
-                <div
-                  v-for="{
-                    userId,
-                    creationDate,
-                    comment,
-                  } in currentBookstore.comments.filter(
-                    ({ creationDate }) => creationDate
-                  )"
-                  :key="`bookstore-${currentBookstore.id}-comment-${creationDate}`"
-                  class="mb-2"
-                >
-                  <b v-if="userId && userStats[userId]">{{
-                    userStats[userId].username
-                  }}</b>
-                  <span v-else>{{ $t("un visiteur anonyme") }}</span
-                  >&nbsp;<i>{{ formatDate(creationDate) }}</i>
-                  <blockquote class="px-3 clearfix">
-                    {{ comment }}
-                  </blockquote>
-                </div>
-                <b-alert
-                  v-if="existingBookstoreSent"
-                  variant="success"
-                  :model-value="true"
-                >
-                  {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
-                  {{
-                    $t(
-                      "Si votre commentaire est valide, il sera ajouté sur le site très prochainement."
-                    )
-                  }}
-                  {{ $t("Merci pour votre contribution !") }}
-                </b-alert>
-                <form
-                  v-else-if="existingBookstore"
-                  class="mb-2"
-                  @submit.prevent="suggestComment(currentBookstore)"
-                >
-                  <b-form-textarea
-                    v-model="
-                      currentBookstore.comments[
-                        currentBookstore.comments.length - 1
-                      ].comment
-                    "
-                    required
-                    cols="41"
-                    rows="5"
-                    minlength="50"
-                    maxlength="1000"
-                    type="text"
-                    :placeholder="
-                      $t('Commentaires (ambiance, exemples de prix,...)')
-                    "
-                  />
-                  <b-button type="submit">
+                <h2>{{ currentBookstore.name }}</h2>
+                <div>
+                  <p class="text-secondary">
+                    {{ currentBookstore.address }}
+                  </p>
+                  <div
+                    v-for="{
+                      userId,
+                      creationDate,
+                      comment,
+                    } in currentBookstore.comments.filter(
+                      ({ creationDate }) => creationDate
+                    )"
+                    :key="`bookstore-${currentBookstore.id}-comment-${creationDate}`"
+                    class="mb-2"
+                  >
+                    <b v-if="userId && userStats[userId]">{{
+                      userStats[userId].username
+                    }}</b>
+                    <span v-else>{{ $t("un visiteur anonyme") }}</span
+                    >&nbsp;<i>{{ formatDate(creationDate) }}</i>
+                    <blockquote class="px-3 clearfix">
+                      {{ comment }}
+                    </blockquote>
+                  </div>
+                  <b-alert
+                    v-if="existingBookstoreSent"
+                    variant="success"
+                    :model-value="true"
+                  >
+                    {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
+                    {{
+                      $t(
+                        "Si votre commentaire est valide, il sera ajouté sur le site très prochainement."
+                      )
+                    }}
+                    {{ $t("Merci pour votre contribution !") }}
+                  </b-alert>
+                  <form
+                    v-else-if="existingBookstore"
+                    class="mb-2"
+                    @submit.prevent="suggestComment(currentBookstore)"
+                  >
+                    <b-form-textarea
+                      v-model="
+                        currentBookstore.comments[
+                          currentBookstore.comments.length - 1
+                        ].comment
+                      "
+                      required
+                      cols="41"
+                      rows="5"
+                      minlength="50"
+                      maxlength="1000"
+                      type="text"
+                      :placeholder="
+                        $t('Commentaires (ambiance, exemples de prix,...)')
+                      "
+                    />
+                    <b-button type="submit">
+                      {{ $t("Ajouter un commentaire") }}
+                    </b-button>
+                    <b-button @click="existingBookstore = null">
+                      {{ $t("Annuler") }}
+                    </b-button>
+                  </form>
+                  <b-button
+                    v-else
+                    @click="initCommentOnExistingBookstore(currentBookstore)"
+                  >
                     {{ $t("Ajouter un commentaire") }}
                   </b-button>
-                  <b-button @click="existingBookstore = null">
-                    {{ $t("Annuler") }}
-                  </b-button>
-                </form>
-                <b-button
-                  v-else
-                  @click="initCommentOnExistingBookstore(currentBookstore)"
-                >
-                  {{ $t("Ajouter un commentaire") }}
-                </b-button>
+                </div>
               </div>
-            </div>
-          </mapbox-popup>
-        </mapbox-marker>
+            </mapbox-popup>
+          </mapbox-marker></template
+        >
       </mapbox-map>
     </div>
     <br />
@@ -188,6 +185,7 @@ let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
 
 const { t: $t } = useI18n();
+let loaded = $ref(false as boolean);
 const newBookstore = $ref({
   id: null,
   name: "",
