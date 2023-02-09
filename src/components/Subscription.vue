@@ -9,9 +9,11 @@
             :initial-countrycode="
               editSubscription.publicationcode
                 ? editSubscription.publicationcode.split('/')[0]
-                : null
+                : undefined
             "
-            :initial-publicationcode="editSubscription.publicationcode"
+            :initial-publicationcode="
+              editSubscription.publicationcode || undefined
+            "
             @input="editSubscription.publicationcode = $event"
           />
         </template>
@@ -20,7 +22,7 @@
             editSubscription.publicationcode &&
             publicationNames[editSubscription.publicationcode]
           "
-          :publicationname="publicationNames[editSubscription.publicationcode]"
+          :publicationname="publicationNames[editSubscription.publicationcode]!"
           :publicationcode="editSubscription.publicationcode"
         />
       </b-col>
@@ -132,6 +134,4 @@ defineEmits<{
 const publicationNames = $computed(() => coa().publicationNames);
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -53,7 +53,7 @@ meta:
           "
         />
         <Publication
-          :publicationcode="publicationcode"
+          :publicationcode="(publicationcode as string)"
           :publicationname="publicationNames[publicationcode]"
         />
         <div v-if="inducksIssueNumbersNoSpace[publicationcode]">
@@ -88,7 +88,9 @@ meta:
               v-else-if="!show"
               class="num bordered available"
               :title="(inducksIssueNumber as string)"
-              @click="open(publicationcode as string, inducksIssueNumber as string)"
+              @click="
+                open(publicationcode as string, inducksIssueNumber as string)
+              "
               >&nbsp;</span
             >
             <img

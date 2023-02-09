@@ -19,7 +19,7 @@
       <Issue
         :publicationcode="publicationcode"
         :issuenumber="issuenumber"
-        :publicationname="publicationNames[publicationcode]"
+        :publicationname="publicationNames[publicationcode]!"
         hide-condition
         :flex="false"
         no-wrap

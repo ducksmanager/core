@@ -74,7 +74,7 @@ alias: [/bibliotheque/options]
       >
         <Publication
           :publicationcode="publicationcode"
-          :publicationname="publicationNames[publicationcode]"
+          :publicationname="publicationNames[publicationcode]!"
         />
       </slick-item>
     </slick-list>

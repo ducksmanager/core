@@ -1,5 +1,9 @@
 import axios from "axios";
-import { buildWebStorage, setupCache } from "axios-cache-interceptor";
+import {
+  buildWebStorage,
+  CacheRequestConfig,
+  setupCache,
+} from "axios-cache-interceptor";
 import dayjs from "dayjs";
 
 import { addUrlParamsRequestInterceptor } from "./url-params-request-interceptor";
@@ -23,7 +27,7 @@ const commonCacheOptions = {
   etag: false,
   modifiedSince: false,
   interpretHeader: false,
-  generateKey: (options: any) =>
+  generateKey: (options: CacheRequestConfig) =>
     `${options.url}${
       options.params ? `?${new URLSearchParams(options.params).toString()}` : ""
     }`,

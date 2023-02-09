@@ -49,7 +49,7 @@
       >&nbsp;{{ $t("a ajouté") }}&nbsp;<Issue
         v-if="publicationNames[collectionUpdateEvent.publicationcode]"
         :publicationname="
-          publicationNames[collectionUpdateEvent.publicationcode]
+          publicationNames[collectionUpdateEvent.publicationcode]!
         "
         :publicationcode="collectionUpdateEvent.publicationcode"
         :issuenumber="collectionUpdateEvent.issuenumber"
@@ -72,7 +72,7 @@
           <Issue
             v-if="publicationNames[edgeEvent.edges[0].publicationcode]"
             :publicationname="
-              publicationNames[edgeEvent.edges[0].publicationcode]
+              publicationNames[edgeEvent.edges[0].publicationcode]!
             "
             :publicationcode="edgeEvent.edges[0].publicationcode"
             :issuenumber="edgeEvent.edges[0].issuenumber"
@@ -95,7 +95,7 @@
           publicationNames[collectionSubscriptionAdditionEvent.publicationcode]
         "
         :publicationname="
-          publicationNames[collectionSubscriptionAdditionEvent.publicationcode]
+          publicationNames[collectionSubscriptionAdditionEvent.publicationcode]!
         "
         :publicationcode="collectionSubscriptionAdditionEvent.publicationcode"
         :issuenumber="collectionSubscriptionAdditionEvent.issuenumber"

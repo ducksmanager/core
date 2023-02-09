@@ -73,8 +73,3 @@ export default defineConfig({
     },
   },
 });
-function BootstrapVueNextResolver():
-  | import("unplugin-vue-components/types").ComponentResolver
-  | import("unplugin-vue-components/types").ComponentResolver[] {
-  throw new Error("Function not implemented.");
-}

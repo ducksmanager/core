@@ -337,7 +337,7 @@ const filter = $ref({
   missing: true,
   possessed: true,
 } as { missing: boolean; possessed: boolean });
-const contextmenu = $ref(null as any | null);
+const contextmenu = $ref(null as unknown | null);
 let issues = $shallowRef(null as issueWithPublicationCodeAndCopies[] | null);
 let userIssuesForPublication = $shallowRef(
   null as IssueWithPublicationcode[] | null

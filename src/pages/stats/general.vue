@@ -74,7 +74,7 @@
               <template #cell(issue)="{ item }">
                 <Issue
                   :publicationcode="item.publicationcode"
-                  :publicationname="publicationNames[item.publicationcode]"
+                  :publicationname="publicationNames[item.publicationcode]!"
                   :issuenumber="item.issuenumber"
                 />
               </template>

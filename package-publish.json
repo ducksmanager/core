@@ -1,6 +1,6 @@
 {
 	"name": "ducksmanager",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"files": [
 		"api/dist/prisma/*/*.{js,json,prisma,ts}",
 		"api/prisma",

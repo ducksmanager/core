@@ -3,5 +3,10 @@ alias:
   - /collection/afficher
 </route>
 <template>
-  <Manage :publicationcode="$route.params.all || null" />
+  <Manage :publicationcode="publicationcode" />
 </template>
+
+<script lang="ts" setup>
+const route = useRoute();
+const publicationcode = $computed(() => (route.params.all as string) || null);
+</script>

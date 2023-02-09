@@ -30,7 +30,7 @@
             v-for="{ publicationcode, issuenumber } in issues"
             :key="`purchase-${purchaseIndex}-issue-${publicationcode}-${issuenumber}`"
             :publicationcode="publicationcode"
-            :publicationname="publicationNames[publicationcode]"
+            :publicationname="publicationNames[publicationcode]!"
             :issuenumber="issuenumber"
             :no-wrap="false"
           />

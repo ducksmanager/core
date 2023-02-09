@@ -35,7 +35,7 @@
       :issuenumber="edge.issuenumber"
       :issuenumber-reference="edge.issuenumberReference"
       :creation-date="edge.creationDate"
-      :popularity="edge.popularity"
+      :popularity="edge.popularity || null"
       :existing="!!edge.edgeId"
       :sprite-path="edgesUsingSprites[edge.edgeId] || null"
       load

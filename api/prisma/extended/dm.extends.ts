@@ -1,4 +1,4 @@
-import { PrismaClient } from "~/dist/prisma/client_dm";
+import { PrismaClient } from "~prisma_clients/client_dm";
 
 import { computeTimestamp } from "./dm.edge.timestamp";
 import { computePublicationcode } from "./dm.publicationcode";

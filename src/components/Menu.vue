@@ -34,7 +34,7 @@ const {
 } = defineProps<{
   title?: string;
   rootPath?: string;
-  items: { path: string; text: string; isNew: boolean | false }[];
+  items: { path: string; text: string; isNew?: boolean | false }[];
 }>();
 const router = useRouter();
 const routeName = useRoute().name;

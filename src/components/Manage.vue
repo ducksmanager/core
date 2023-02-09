@@ -89,7 +89,7 @@
     <PublicationList />
     <IssueList
       v-if="publicationcode || mostPossessedPublication"
-      :publicationcode="publicationcode || mostPossessedPublication"
+      :publicationcode="(publicationcode || mostPossessedPublication)!"
     />
   </div>
 </template>
@@ -104,7 +104,7 @@ import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 
 const { publicationcode = null } = defineProps<{
-  publicationcode?: string;
+  publicationcode: string | null;
 }>();
 
 const suggestionsNumber = $ref(0 as number);

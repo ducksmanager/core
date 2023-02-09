@@ -16,7 +16,7 @@
           <Issue
             v-if="publicationNames[edge.publicationcode]"
             class="issue"
-            :publicationname="publicationNames[edge.publicationcode]"
+            :publicationname="publicationNames[edge.publicationcode]!"
             :publicationcode="edge.publicationcode"
             :issuenumber="edge.issuenumber"
             hide-condition

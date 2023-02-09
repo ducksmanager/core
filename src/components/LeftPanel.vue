@@ -5,7 +5,7 @@
         <Medal
           v-for="(numberOfPoints, contribution) in points[user.id] || {}"
           :key="contribution"
-          :contribution="contribution"
+          :contribution="(contribution as string)"
           :user-level-points="numberOfPoints"
         />
       </div>

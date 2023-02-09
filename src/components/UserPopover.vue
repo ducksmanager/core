@@ -13,7 +13,7 @@
           <Medal
             v-for="(numberOfPoints, contribution) in points"
             :key="contribution"
-            :contribution="contribution"
+            :contribution="(contribution as string)"
             :user-level-points="numberOfPoints"
             small
           />

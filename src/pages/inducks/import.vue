@@ -141,8 +141,8 @@ meta:
         >
           <template #header>
             <Publication
-              :publicationcode="publicationcode"
-              :publicationname="publicationNames[publicationcode]"
+              :publicationcode="(publicationcode as string)"
+              :publicationname="publicationNames[publicationcode] || publicationcode as string"
             />
             x {{ issues.length }}
           </template>
@@ -192,8 +192,8 @@ meta:
                 :key="`${publicationcode}-${issuenumber}`"
               >
                 <Issue
-                  :publicationcode="publicationcode"
-                  :publicationname="publicationNames[publicationcode]"
+                  :publicationcode="(publicationcode as string)"
+                  :publicationname="publicationNames[publicationcode] || publicationcode as string"
                   :issuenumber="issuenumber"
                 />
               </div>
@@ -229,8 +229,8 @@ meta:
               <Issue
                 v-for="issuenumber in publicationIssueNumbers"
                 :key="`${publicationcode}-${issuenumber}`"
-                :publicationcode="publicationcode"
-                :publicationname="publicationcode"
+                :publicationcode="(publicationcode as string)"
+                :publicationname="(publicationcode as string)"
                 :issuenumber="issuenumber"
               />
             </div>

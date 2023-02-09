@@ -36,5 +36,12 @@ module.exports = {
     ],
   },
   plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
-  ignorePatterns: ["**/node_modules", "**/dist", "shims.d.ts", "vendor"],
+  ignorePatterns: [
+    "**/node_modules",
+    "**/dist",
+    "shims.d.ts",
+    "vendor",
+    "auto-imports.d.ts",
+    "component.d.ts",
+  ],
 };

@@ -50,7 +50,7 @@
           <div>
             <Issue
               :publicationcode="publicationcode"
-              :publicationname="suggestions!.publicationTitles[publicationcode]"
+              :publicationname="suggestions!.publicationTitles[publicationcode]!"
               :issuenumber="issuenumber"
               no-wrap
             >

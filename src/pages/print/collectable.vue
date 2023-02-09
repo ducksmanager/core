@@ -95,7 +95,7 @@ meta:
             >
               <td>
                 <Publication
-                  :publicationcode="publicationcode"
+                  :publicationcode="(publicationcode as string)"
                   :publicationname="`${
                     (publicationcode as String).split('/')[1]
                   } : ${publicationName}`"

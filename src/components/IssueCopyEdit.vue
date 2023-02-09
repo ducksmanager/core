@@ -9,7 +9,9 @@
       @click="newCopyState.condition = value"
     >
       <template v-if="value === undefined" />
-      <Condition v-else :value="value" />&nbsp;{{ labelContextMenu }}
+      <Condition v-else :value="value || undefined" />&nbsp;{{
+        labelContextMenu
+      }}
     </v-contextmenu-item>
     <v-contextmenu-divider v-show="newCopyState.condition !== null" />
   </v-contextmenu-group>

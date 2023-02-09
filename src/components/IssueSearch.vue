@@ -16,7 +16,9 @@
               ) in searchContextsWithoutCurrent"
               :key="alternativeSearchContext"
               @click="
-                searchContext = alternativeSearchContext as 'story' | 'storycode';
+                searchContext = alternativeSearchContext as
+                  | 'story'
+                  | 'storycode';
                 search = '';
               "
             >
@@ -51,7 +53,7 @@
                     conditions.find(
                       ({ dbValue }) =>
                         dbValue === searchResult!.collectionIssue.condition
-                    )?.value || null
+                    )?.value || undefined
                   "
                 />&nbsp;{{ searchResult!.title }}
               </option>

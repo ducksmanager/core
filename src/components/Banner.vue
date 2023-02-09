@@ -11,7 +11,7 @@ import { collection } from "~/stores/collection";
 import { images } from "~/stores/images";
 
 const { classes = {}, small = false } = defineProps<{
-  classes?: { [key: string]: string };
+  classes?: { [key: string]: boolean };
   small?: boolean;
 }>();
 const user = $computed(() => collection().user);

@@ -23,7 +23,7 @@
       >
         <Issue
           :publicationcode="edge.publicationcode"
-          :publicationname="publicationNames[edge.publicationcode]"
+          :publicationname="publicationNames[edge.publicationcode]!"
           :issuenumber="edge.issuenumber"
           hide-condition
         >
@@ -76,6 +76,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

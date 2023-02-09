@@ -44,7 +44,7 @@ alias: [/agrandir/marketplace]
               :publicationcode="issuesOnSaleById[issueId].publicationcode"
               :issuenumber="issuesOnSaleById[issueId].issuenumber"
               :publicationname="
-                publicationNames[issuesOnSaleById[issueId].publicationcode]
+                publicationNames[issuesOnSaleById[issueId].publicationcode]!
               "
             />
             <b-badge
@@ -108,7 +108,7 @@ alias: [/agrandir/marketplace]
     <IssueList
       v-for="(issues, publicationcode) in issuesOnSaleByOthers"
       :key="publicationcode"
-      :publicationcode="publicationcode"
+      :publicationcode="(publicationcode as string)"
       :custom-issues="
         userIdFilter
           ? (issues as dm_issue[])!.filter(({ userId }) => userId=== userIdFilter)
@@ -178,7 +178,7 @@ alias: [/agrandir/marketplace]
             hide-condition
             :publicationcode="issuesOnSaleById[issueId].publicationcode"
             :publicationname="
-              publicationNames[issuesOnSaleById[issueId].publicationcode]
+              publicationNames[issuesOnSaleById[issueId].publicationcode]!
             "
             :issuenumber="issuesOnSaleById[issueId].issuenumber"
           />

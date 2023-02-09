@@ -12,7 +12,7 @@
         >
           <Issue
             :publicationcode="edge.publicationcode"
-            :publicationname="publicationNames[edge.publicationcode]"
+            :publicationname="publicationNames[edge.publicationcode]!"
             :issuenumber="edge.issuenumber"
             hide-condition
           />

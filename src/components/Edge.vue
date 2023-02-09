@@ -22,7 +22,7 @@
       <Issue
         :publicationcode="publicationcode"
         :issuenumber="issuenumber"
-        :publicationname="publicationNames[publicationcode]"
+        :publicationname="publicationNames[publicationcode] || publicationcode"
       />
     </template>
     <EdgeContents
@@ -61,7 +61,7 @@ const {
   issuenumber: string;
   issuenumberReference?: string;
   creationDate?: string;
-  popularity?: number;
+  popularity?: number | null;
   spritePath?: string;
   existing: boolean;
   load: boolean;
@@ -84,5 +84,4 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
   publicationNames = $computed(() => coa().publicationNames);
 </script>
 
-<style>
-</style>
+<style></style>
