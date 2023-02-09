@@ -8,15 +8,15 @@
     </template>
     <template #content>
       <div>
-        {{ $t("Cliquez sur la tranche pour parcourir ce numéro") }}.
+        <div v-t="'Cliquez sur la tranche pour parcourir ce numéro'"></div>
         <div v-if="!hasEdge" class="has-no-edge">
-          {{
-            $t(
-              "Cette tranche n'est pas visible car nous n'en possédons pas de photographie..."
-            )
-          }}<br />
+          <div
+            v-t="
+              'Cette tranche n\'est pas visible car nous n\'en possédons pas de photographie...'
+            "
+          ></div>
           <div v-if="!isSharedBookcase">
-            {{ $t("Vous pouvez photographier cette tranche ?") }}<br />
+            <div v-t="'Vous pouvez photographier cette tranche ?'"></div>
             <div class="medal-progress-wrapper">
               <MedalProgress
                 contribution="edge_photographer"
@@ -24,18 +24,22 @@
                 :extra-points="extraPoints"
               />
             </div>
-            <div class="progress-info">
-              {{ $t("Envoyez-nous une photo et gagnez") }}
-              <span>{{ extraPoints }}</span> {{ $t("Points") }} !
-            </div>
+            <i18n-t
+              keypath="Envoyez-nous une photo et gagnez {points} points !"
+              tag="div"
+              class="progress-info"
+            >
+              <template #points>
+                <span>{{ extraPoints }}</span>
+              </template>
+            </i18n-t>
             <br />
             <b-button
+              v-t="'Envoyer une photo de tranche'"
               variant="info"
               href="https://edgecreator.ducksmanager.net"
               target="_blank"
-            >
-              {{ $t("Envoyer une photo de tranche") }}
-            </b-button>
+            ></b-button>
           </div>
         </div>
       </div>
