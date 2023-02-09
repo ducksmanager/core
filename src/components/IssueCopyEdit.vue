@@ -270,7 +270,7 @@ const { conditions } = cond();
 
 const { copy: copyState, copyIndex = null } = defineProps<{
   copy: IssueWithPublicationcodeOptionalId | CollectionUpdateMultipleIssues;
-  copyIndex: number | null;
+  copyIndex?: number | null;
 }>();
 
 let newCopyState = $ref(
