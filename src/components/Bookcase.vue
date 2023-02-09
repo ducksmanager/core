@@ -29,6 +29,7 @@
       v-for="(edge, edgeId) in edgesToLoad"
       :id="`edge-${edgeId}`"
       :key="`edge-${edgeId}`"
+      v-memo="[currentEdgeOpened, currentEdgeHighlighted]"
       :invisible="currentEdgeOpened === edge"
       :highlighted="currentEdgeHighlighted === edge.id"
       :publicationcode="edge.publicationcode"
