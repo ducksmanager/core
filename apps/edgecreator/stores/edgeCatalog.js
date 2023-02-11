@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { set } from 'vue'
 import { defineStore } from 'pinia'
 import { main } from '~/stores/main'
 
@@ -19,18 +19,14 @@ export const edgeCatalog = defineStore('edgeCatalog', {
       Object.keys(publishedEdges).forEach((publicationcode) => {
         const publicationEdges = publishedEdges[publicationcode]
         if (!this.publishedEdges[publicationcode]) {
-          Vue.set(this.publishedEdges, publicationcode, {})
+          set(this.publishedEdges, publicationcode, {})
         }
         Object.keys(publicationEdges).forEach((issueNumber) => {
           const edgeStatus = publicationEdges[issueNumber]
           if (!this.publishedEdges[publicationcode][issueNumber]) {
-            Vue.set(
-              this.publishedEdges[publicationcode],
-              issueNumber,
-              edgeStatus
-            )
+            set(this.publishedEdges[publicationcode], issueNumber, edgeStatus)
           } else {
-            Vue.set(this.publishedEdges[publicationcode], issueNumber, {
+            set(this.publishedEdges[publicationcode], issueNumber, {
               ...this.publishedEdges[publicationcode][issueNumber],
             })
           }
