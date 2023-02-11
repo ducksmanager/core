@@ -34,8 +34,8 @@ export default {
           publishedVersion
         )
 
-        dimensions = vm.getDimensionsFromSvg(targetIssuenumber, svgElement)
-        steps = vm.getStepsFromSvg(issuenumber, svgChildNodes)
+        dimensions = vm.getDimensionsFromSvg(svgElement)
+        steps = vm.getStepsFromSvg(svgChildNodes)
         if (!onlyLoadStepsAndDimensions) {
           vm.setPhotoUrlsFromSvg(issuenumber, svgChildNodes)
           vm.setContributorsFromSvg(issuenumber, svgChildNodes)
@@ -87,13 +87,13 @@ export default {
       }
     },
 
-    getDimensionsFromSvg(issuenumber, svgElement) {
+    getDimensionsFromSvg(svgElement) {
       return {
         width: svgElement.getAttribute('width') / 1.5,
         height: svgElement.getAttribute('height') / 1.5,
       }
     },
-    getStepsFromSvg: (issuenumber, svgChildNodes) =>
+    getStepsFromSvg: (svgChildNodes) =>
       svgChildNodes
         .filter(({ nodeName }) => nodeName === 'g')
         .map((group) => ({
