@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { set, nextTick } from 'vue'
 
 export default {
   data: () => ({
@@ -15,7 +15,7 @@ export default {
         .filter((issuenumber) => targetIssueNumbers.includes(issuenumber))
         .forEach((issuenumber) => {
           const step = vm.steps[issuenumber][targetStepNumber]
-          Vue.set(step, 'options', {
+          set(step, 'options', {
             ...(step.options || {}),
             ...optionChanges,
           })
@@ -57,17 +57,17 @@ export default {
     setSteps(issuenumber, issueSteps) {
       const vm = this
       this.checkSameComponentsAsCompletedEdge(issuenumber, issueSteps)
-      Vue.nextTick().then(() => {
-        Vue.set(vm.steps, issuenumber, issueSteps)
+      nextTick().then(() => {
+        set(vm.steps, issuenumber, issueSteps)
       })
     },
     copyDimensionsAndSteps(issuenumber, otherIssuenumber) {
-      Vue.set(
+      set(
         this.dimensions,
         issuenumber,
         JSON.parse(JSON.stringify(this.dimensions[otherIssuenumber]))
       )
-      Vue.set(
+      set(
         this.steps,
         issuenumber,
         JSON.parse(JSON.stringify(this.steps[otherIssuenumber]))
@@ -76,7 +76,7 @@ export default {
     addStep(component) {
       const vm = this
       Object.keys(vm.steps).forEach((issuenumber) => {
-        Vue.set(vm.steps[issuenumber], vm.steps[issuenumber].length, {
+        set(vm.steps[issuenumber], vm.steps[issuenumber].length, {
           component,
         })
       })

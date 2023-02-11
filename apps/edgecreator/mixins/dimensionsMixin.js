@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { set } from 'vue'
 import { mapState } from 'pinia'
 import { editingStep } from '~/stores/editingStep'
 
@@ -17,7 +17,7 @@ export default {
         ? [issuenumber]
         : this.editingIssuenumbers
       for (const issuenumber of issuenumbers) {
-        Vue.set(this.dimensions, issuenumber, {
+        set(this.dimensions, issuenumber, {
           width: parseInt(dimensions.width),
           height: parseInt(dimensions.height),
         })

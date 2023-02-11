@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { set } from 'vue'
 import { defineStore } from 'pinia'
 import { coa } from './coa'
 
@@ -47,14 +47,14 @@ export const main = defineStore('main', {
 
   actions: {
     setPhotoUrl({ issuenumber, filename }) {
-      Vue.set(this.photoUrls, issuenumber, filename)
+      set(this.photoUrls, issuenumber, filename)
     },
     addContributor({ issuenumber, contributionType, user }) {
       const contributors = this.contributors[issuenumber] || {
         designers: [],
         photographers: [],
       }
-      Vue.set(this.contributors, issuenumber, {
+      set(this.contributors, issuenumber, {
         ...contributors,
         [contributionType]: [
           ...new Set([...contributors[contributionType], user]),
@@ -68,7 +68,7 @@ export const main = defineStore('main', {
           return user === userToRemove
         })
         issueContributors[contributionType].splice(index, 1)
-        Vue.set(this.contributors, issuenumber, issueContributors)
+        set(this.contributors, issuenumber, issueContributors)
       })
     },
     addWarning(warning) {

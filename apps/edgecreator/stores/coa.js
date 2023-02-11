@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { set } from 'vue'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 import { main } from '~/stores/main'
@@ -180,7 +180,7 @@ export const coa = defineStore('coa', {
     async fetchIssueUrls({ publicationCode, issueNumber }) {
       const issueCode = `${publicationCode} ${issueNumber}`
       if (!this.issueDetails[issueCode]) {
-        Vue.set(this.issueDetails, issueCode, {
+        set(this.issueDetails, issueCode, {
           issueCode,
           issueDetails: (
             await coaApi.get(
