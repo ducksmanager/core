@@ -1,14 +1,7 @@
 module.exports = {
   root: true,
-  env: {
-    browser: true,
-    node: true,
-  },
-  parserOptions: {
-    parser: '@babel/eslint-parser',
-    requireConfigFile: false,
-  },
   extends: [
+    '@nuxtjs/eslint-config-typescript',
     '@nuxtjs',
     'plugin:prettier/recommended',
     'plugin:nuxt/recommended',
@@ -20,5 +13,6 @@ module.exports = {
     'import/named': 'off',
     'require-await': 'off',
     'vue/multi-word-component-names': 'off',
+    '@typescript-eslint/no-this-alias': 'off',
   },
 }

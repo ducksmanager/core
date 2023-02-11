@@ -21,7 +21,7 @@
                 : { width, height: parseInt($event) }
             )
           "
-        ></b-form-input>
+        />
       </b-col>
       <b-col cols="2" class="text-left">
         <label :for="dimension">mm</label>
@@ -30,25 +30,30 @@
   </b-card>
 </template>
 
-<script>
-export default {
-  name: 'Dimensions',
-  props: {
-    width: { type: Number, default: 15 },
-    height: { type: Number, default: 200 },
-  },
+<script setup lang="ts">
+import { onMounted, ref } from '@nuxtjs/composition-api'
 
-  mounted() {
-    this.$emit('change', {
-      width: this.width,
-      height: this.height,
-    })
-  },
+const props = defineProps<{
+  width?: number
+  height?: number
+}>()
 
-  methods: {
-    ucFirst: (text) => text[0].toUpperCase() + text.substring(1, text.length),
-  },
-}
+const width = ref(props.width || 15)
+const height = ref(props.height || 200)
+
+const emit = defineEmits<{
+  (e: 'change', value: { width: number; height: number }): void
+}>()
+
+onMounted(() => {
+  emit('change', {
+    width: width.value,
+    height: height.value,
+  })
+})
+
+const ucFirst = (text: string) =>
+  text[0].toUpperCase() + text.substring(1, text.length)
 </script>
 
 <style scoped></style>

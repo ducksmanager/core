@@ -1,9 +1,9 @@
-export default async () => {
-  const messages = require('@/locales/fr-FR.json')
-  return Promise.resolve(
+import messages from '@/locales/fr-FR.json'
+
+export default async () =>
+  Promise.resolve(
     Object.keys(messages).reduce(
       (acc, value) => ({ ...acc, [value]: value }),
       {}
     )
   )
-}

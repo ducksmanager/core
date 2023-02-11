@@ -1,7 +1,6 @@
 import { mapState } from 'pinia'
+import { ui as uiStore } from '../stores/ui'
 import { main } from '~/stores/main'
-
-const { ui: uiStore } = require('../stores/ui')
 
 let ui
 

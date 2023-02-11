@@ -100,7 +100,7 @@ export const main = defineStore('main', {
         }
 
         this.issuenumbers = this.publicationIssues.filter(
-          (unused, index) => index >= firstIssueIndex && index <= lastIssueIndex
+          (_, index) => index >= firstIssueIndex && index <= lastIssueIndex
         )
       }
     },
@@ -127,13 +127,13 @@ export const main = defineStore('main', {
         (issue) => issue === this.issuenumbers[this.issuenumbers.length - 1]
       )
       const issuesBefore = this.publicationIssues.filter(
-        (unused, index) =>
+        (_, index) =>
           firstIssueIndex !== -1 &&
           index >= firstIssueIndex - 10 &&
           index < firstIssueIndex
       )
       const issuesAfter = this.publicationIssues.filter(
-        (unused, index) =>
+        (_, index) =>
           lastIssueIndex !== -1 &&
           index > lastIssueIndex &&
           index <= lastIssueIndex + 10

@@ -1,4 +1,4 @@
-const DOMParser = require('xmldom').DOMParser
+import { DOMParser } from 'xmldom'
 
 export default {
   methods: {

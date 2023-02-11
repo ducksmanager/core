@@ -1,8 +1,7 @@
 import { mapState } from 'pinia'
+import interact from 'interactjs'
 import { ui } from '~/stores/ui'
 import textTemplateMixin from '@/mixins/textTemplateMixin'
-
-const interact = require('interactjs')
 
 const shownTips = []
 
