@@ -20,12 +20,15 @@ const router = useRouter();
 const items = $computed(() => [
   {
     path: "/show",
-    text: total == null ? $t("Mes numéros") : $t("Mes numéros ({0})", [total]),
+    text:
+      total === undefined
+        ? $t("Mes numéros")
+        : $t("Mes numéros ({0})", [total]),
   },
   {
     path: "/duplicates",
     text:
-      !total || totalUniqueIssues === null
+      total === undefined
         ? $t("Mes numéros en double")
         : $t("Mes numéros en double ({0})", [total - totalUniqueIssues]),
   },
