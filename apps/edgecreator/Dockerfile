@@ -10,7 +10,7 @@ RUN apt-get update \
 RUN mkdir -p /usr/src/nuxt-app
 WORKDIR /usr/src/nuxt-app
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY . ./
 COPY .env.prod ./.env
