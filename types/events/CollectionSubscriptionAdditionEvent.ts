@@ -1,4 +1,4 @@
-import { AbstractEvent } from "~types/events/AbstractEvent";
+import { AbstractEvent } from "./AbstractEvent";
 
 export interface CollectionSubscriptionAdditionEventRaw {
   type: string;

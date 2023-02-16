@@ -28,10 +28,12 @@ app._router.stack.forEach(
 );
 
 const imports: string[] = [
+  "// noinspection ES6PreferShortImport",
+  "",
   'import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";',
   'import { AxiosCacheInstance, CacheRequestConfig } from "axios-cache-interceptor";',
-  'import { Prisma } from "~prisma_clients/client_dm";',
-  'import { call } from "~types/Call";',
+  'import { Prisma } from "../api/dist/prisma/client_dm";',
+  'import { call } from "./Call";',
 ];
 imports.push(
   readdirSync("../types")
@@ -42,7 +44,7 @@ imports.push(
           ...readFileSync(`../types/${file}`)
             .toString()
             .matchAll(/(?:(?<=export type )|(?<=export interface ))\w+/g)!,
-        ].join(", ")} } from "~types/${file.replace(/\.ts$/, "")}";`
+        ].join(", ")} } from "./${file.replace(/\.ts$/, "")}";`
     )
     .join("\n")
 );
@@ -55,7 +57,7 @@ imports.push(
           ...readFileSync(`prisma/${file}`)
             .toString()
             .matchAll(/(?:(?<=model )|(?<=enum ))[^ ]+/g)!,
-        ].join(", ")} } from "~prisma_clients/client_${file.replaceAll(
+        ].join(", ")} } from "../api/dist/prisma/client_${file.replaceAll(
           /(\.prisma)|(schema_)/g,
           ""
         )}";`
