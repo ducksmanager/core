@@ -23,7 +23,7 @@ export const get = async (
                 order by optionValue.ordre
             `) as {
         issuenumber: string;
-        stepNumber: string;
+        stepNumber: number;
         functionName: string;
         options: string;
       }[]
@@ -38,6 +38,8 @@ export const get = async (
           [stepNumber]: {
             ...(acc[issuenumber]?.[stepNumber] || {
               functionName,
+              issuenumber,
+              stepNumber,
               options: {
                 ...(acc[issuenumber]?.[stepNumber]?.options || {}),
                 ...JSON.parse(options),
