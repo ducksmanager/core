@@ -1,5 +1,6 @@
-import { existsSync, readFileSync } from 'fs'
+/* eslint-disable import/no-named-as-default-member */
 import Index, { PrismaClient } from '@prisma/client'
+import jwt from 'jsonwebtoken'
 import { UserGameMedalPoints, UserMedalPoints } from '../types/playerStats'
 
 const prisma = new PrismaClient()
@@ -12,23 +13,15 @@ export const getUser = async (username: string): Promise<Index.player> =>
   }))!
 
 export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.player | null> => {
-  const { PHPSESSID: sessionId, 'duckguessr-user': duckguessrName } = cookies
+  const { token, 'duckguessr-user': duckguessrName } = cookies
   let player: Index.player | null
-  if (sessionId) {
-    const sessionFilePath = `${process.env.SESSION_PATH}/sess_${sessionId}`
-    const sessionExists = existsSync(sessionFilePath)
-    if (sessionExists) {
-      console.log('Session exists')
-      const fileContents = readFileSync(sessionFilePath).toString()
-      const match = fileContents.match(
-        /i:(\d+);s:\d+:".?App\\Security\\User.?username";s:\d+:"([^"]+)/
-      )
-      if (!match) {
-        console.log(`Invalid cookie: ${JSON.stringify(cookies)}`)
-        return null
-      }
-      const ducksmanagerId = parseInt(match[1])
-      const username = match[2]
+  if (token) {
+    console.log(process.env.TOKEN_SECRET)
+    try {
+      const { id: ducksmanagerId, username } = jwt.verify(
+        token,
+        process.env.TOKEN_SECRET as string
+      ) as jwt.JwtPayload
       player = await prisma.player.findFirst({
         where: {
           ducksmanager_id: ducksmanagerId,
@@ -46,6 +39,9 @@ export const getPlayer = async (cookies: { [key: string]: any }): Promise<Index.
         })
       }
       return player
+    } catch (error) {
+      console.error(error)
+      return null
     }
   }
   if (duckguessrName && /^user\d+$/.test(duckguessrName)) {
