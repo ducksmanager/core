@@ -133,6 +133,7 @@ const generateSprites = async () => {
 
 export const put = async (...[req, res]: ExpressCall<undefined>) => {
   req.setTimeout(300_000);
+  res.setTimeout(300_000);
 
   try {
     let nextCursor = undefined;
