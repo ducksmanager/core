@@ -27,7 +27,9 @@ watch(
 
 onMounted(async () => {
   try {
-    Cookies.set("token", (await POST__demo(axios)).data.token);
+    Cookies.set("token", (await POST__demo(axios)).data.token, {
+      domain: ".ducksmanager.net",
+    });
     await collectionStore.loadUser();
   } catch (e) {
     console.error(e);

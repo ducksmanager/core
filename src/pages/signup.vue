@@ -103,7 +103,10 @@ const signup = async () => {
             email,
           },
         })
-      ).data.token
+      ).data.token,
+      {
+        domain: ".ducksmanager.net",
+      }
     );
     await collectionStore.loadUser();
   } catch (e) {

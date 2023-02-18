@@ -89,7 +89,10 @@ const login = async () => {
             password,
           },
         })
-      ).data.token
+      ).data.token,
+      {
+        domain: ".ducksmanager.net",
+      }
     );
     await collectionStore.loadUser();
   } catch (e) {

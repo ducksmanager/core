@@ -57,7 +57,10 @@ const changePassword = async () => {
             password2,
           },
         })
-      ).data.token
+      ).data.token,
+      {
+        domain: ".ducksmanager.net",
+      }
     );
   } catch (e: unknown) {
     error = (e as AxiosError)?.response?.data || "Error";
