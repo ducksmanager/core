@@ -93,13 +93,6 @@ alias: [/bibliotheque/options]
 </template>
 
 <script setup lang="ts">
-import {
-  BAlert,
-  BButton,
-  BDropdown,
-  BDropdownItem,
-  BFormCheckbox,
-} from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 import { SlickItem, SlickList } from "vue-slicksort";
 

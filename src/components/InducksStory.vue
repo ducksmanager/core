@@ -16,7 +16,6 @@
   </span>
 </template>
 <script setup lang="ts">
-import { BBadge } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 const { t: $t } = useI18n();

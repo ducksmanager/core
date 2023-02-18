@@ -55,7 +55,6 @@ alias: [/auteurs]
 
 <script setup lang="ts">
 import axios from "axios";
-import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-next";
 import {
   BarController,
   BarElement,

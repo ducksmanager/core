@@ -254,7 +254,6 @@
   </template>
 </template>
 <script setup lang="ts">
-import { BButton, BFormInput } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import cond from "~/composables/condition";

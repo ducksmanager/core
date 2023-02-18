@@ -207,15 +207,6 @@ alias: [/agrandir/marketplace]
 </template>
 
 <script setup lang="ts">
-import {
-  BAlert,
-  BBadge,
-  BButton,
-  BFormSelect,
-  BFormSelectOption,
-  BModal,
-} from "bootstrap-vue-next";
-
 import Accordion from "~/components/Accordion.vue";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";

@@ -22,7 +22,6 @@ meta:
 
 <script setup lang="ts">
 import axios from "axios";
-import { BButton, BTable } from "bootstrap-vue-next";
 import { onMounted } from "vue";
 
 import { bookstoreComment } from "~prisma_clients/client_dm";

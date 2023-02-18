@@ -83,7 +83,6 @@ alias: [/collection/abonnements]
 
 <script setup lang="ts">
 import axios from "axios";
-import { BAlert, BButton, BCol, BRow } from "bootstrap-vue-next";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";

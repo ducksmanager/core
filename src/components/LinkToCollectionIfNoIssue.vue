@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-import { BAlert } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";

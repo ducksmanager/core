@@ -63,7 +63,6 @@
 </template>
 
 <script setup lang="ts">
-import { BAlert, BButton } from "bootstrap-vue-next";
 import { useI18n } from "vue-i18n";
 
 import { images } from "~/stores/images";

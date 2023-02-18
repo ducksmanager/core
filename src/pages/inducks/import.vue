@@ -279,19 +279,6 @@ meta:
 
 <script setup lang="ts">
 import axios from "axios";
-import {
-  BAlert,
-  BButton,
-  BCol,
-  BCollapse,
-  BFormGroup,
-  BFormSelect,
-  BFormSelectOption,
-  BFormTextarea,
-  BProgress,
-  BProgressBar,
-  BRow,
-} from "bootstrap-vue-next";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 

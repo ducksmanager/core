@@ -6,6 +6,7 @@ import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
+import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Pages from "vite-plugin-pages";
@@ -57,7 +58,7 @@ export default defineConfig({
 
     // https://github.com/antfu/vite-plugin-components
     Components({
-      resolvers: [/*BootstrapVue3Resolver(), */ IconsResolve()],
+      resolvers: [BootstrapVueNextResolver(), IconsResolve()],
       dirs: ["src/components", "src/components/menus", "src/layouts"],
       dts: true,
     }),

@@ -158,7 +158,6 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { BAlert, BPagination, BTable } from "bootstrap-vue-next";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 

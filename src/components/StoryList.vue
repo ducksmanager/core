@@ -15,8 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { BBadge } from "bootstrap-vue-next";
-
 import { StoryDetail } from "~types/StoryDetail";
 
 const { storyDetails = {} } = defineProps<{

@@ -32,7 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import { BButton, BFormSelect } from "bootstrap-vue-next";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";

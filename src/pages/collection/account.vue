@@ -220,14 +220,6 @@ alias: [/collection/compte]
 
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
-import {
-  BAlert,
-  BButton,
-  BCol,
-  BFormCheckbox,
-  BFormInput,
-  BRow,
-} from "bootstrap-vue-next";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 

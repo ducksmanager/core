@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { BButton, BButtonGroup } from "bootstrap-vue-next";
 import {
   ArcElement,
   BarController,

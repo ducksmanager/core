@@ -60,7 +60,6 @@ meta:
 
 <script setup lang="ts">
 import axios from "axios";
-import { BAlert, BButton, BCol, BFormInput, BRow } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";

@@ -52,7 +52,6 @@ alias: [/achats]
   </div>
 </template>
 <script setup lang="ts">
-import { BAlert, BButton, BButtonGroup } from "bootstrap-vue-next";
 import {
   BarController,
   BarElement,

@@ -25,8 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { BTab, BTabs } from "bootstrap-vue-next";
-
 const {
   title = null,
   items,

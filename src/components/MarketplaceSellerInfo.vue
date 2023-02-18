@@ -18,8 +18,6 @@
 </template>
 
 <script setup lang="ts">
-import { BBadge } from "bootstrap-vue-next";
-
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
 

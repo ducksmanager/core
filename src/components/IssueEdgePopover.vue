@@ -48,8 +48,6 @@
 </template>
 
 <script setup lang="ts">
-import { BButton } from "bootstrap-vue-next";
-
 import { bookcase } from "~/stores/bookcase";
 import { collection } from "~/stores/collection";
 import { users } from "~/stores/users";
