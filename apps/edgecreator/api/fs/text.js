@@ -1,6 +1,6 @@
 import axios from 'axios'
+import { v2 as cloudinary } from 'cloudinary'
 import { addAxiosInterceptor, checkUserRoles } from '../api'
-const cloudinary = require('cloudinary').v2
 
 const sessionHashes = {}
 
@@ -33,7 +33,7 @@ export default async function (req, res) {
         res.end(JSON.stringify({ width, height, url }))
       } else {
         console.log(`Found no existing text, generating text image...`)
-        generateImage(req, { ...context, font })
+        generateImage({ ...context, font })
           .then(({ width, height, secure_url: url }) => {
             console.log(`Text image generated: url=${url}`)
             res.writeHeader(200, { 'Content-Type': 'application/json' })
@@ -47,9 +47,13 @@ export default async function (req, res) {
     })
 }
 
-const generateImage = (req, parameters) =>
+const generateImage = (parameters) =>
   axios
-    .get(`${process.env.FONT_BASE_URL}${parameters.font}`)
+    .get(
+      (parameters.font.includes('/')
+        ? process.env.FONT_BASE_URL
+        : process.env.FONT_PRODUCT_BASE_URL) + parameters.font
+    )
     .then(({ data }) => {
       const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/)
       if (sessionHashMatch) {
