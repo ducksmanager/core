@@ -1,4 +1,4 @@
-import { getUrl } from '~/composables/url'
+import { getUrl } from '../composables/url'
 
 const request = require('request').defaults({ encoding: null })
 const { PrismaClient } = require('@prisma/client')
