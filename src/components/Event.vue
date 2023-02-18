@@ -77,7 +77,7 @@
             :publicationcode="edgeEvent.edges[0].publicationcode"
             :issuenumber="edgeEvent.edges[0].issuenumber"
             hide-condition
-            :flex="true"
+            :flex="false"
           />&nbsp;<OtherIssues
             :number="edgeEvent.edges.length"
             :text-single="$t('autre tranche')"
