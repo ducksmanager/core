@@ -91,7 +91,7 @@ const login = async () => {
         })
       ).data.token,
       {
-        domain: ".ducksmanager.net",
+        domain: import.meta.env.VITE_COOKIE_DOMAIN,
       }
     );
     await collectionStore.loadUser();

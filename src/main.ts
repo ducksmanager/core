@@ -21,7 +21,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
 import i18n from "./i18n.js";
 import { ongoingRequests } from "./stores/ongoing-requests";
-import { addUrlParamsRequestInterceptor } from "./util/url-params-request-interceptor";
+import { addUrlParamsRequestInterceptor } from "./util/axios-url-params";
 
 const head = createHead();
 
@@ -39,12 +39,6 @@ router.beforeResolve(async (to) => {
 const store = createPinia();
 
 const useOngoingRequests = ongoingRequests(store);
-
-declare module "axios" {
-  interface AxiosRequestConfig {
-    urlParams?: Record<string, string> | undefined;
-  }
-}
 
 axios.defaults.baseURL = import.meta.env.VITE_GATEWAY_URL;
 

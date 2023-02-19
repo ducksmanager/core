@@ -6,7 +6,7 @@ import {
 } from "axios-cache-interceptor";
 import dayjs from "dayjs";
 
-import { addUrlParamsRequestInterceptor } from "./url-params-request-interceptor";
+import { addUrlParamsRequestInterceptor } from "./axios-url-params";
 
 const customStorage = buildWebStorage(sessionStorage);
 
