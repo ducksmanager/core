@@ -87,7 +87,13 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
+import { call } from "~/util/axios";
 import { EditSubscription } from "~types/EditSubscription";
+import {
+  DELETE__collection__subscriptions__$id,
+  POST__collection__subscriptions__$id,
+  PUT__collection__subscriptions,
+} from "~types/routes";
 
 type AssociatedPublication = {
   referencePublicationcode: string;
@@ -118,8 +124,8 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const loadSubscriptions = collection().loadSubscriptions;
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await PUT__collection__subscriptions(axios, {
-    data: {
+  await call<PUT__collection__subscriptions>(axios, {
+    reqBody: {
       subscription: {
         ...subscription,
         startDate: subscription.startDate.toISOString().split("Z")[0],
@@ -144,16 +150,16 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: EditSubscription) => {
-  await POST__collection__subscriptions__$id(axios, {
-    data: { subscription },
-    urlParams: { id: String(subscription.id) },
+  await call<POST__collection__subscriptions__$id>(axios, {
+    reqBody: { subscription },
+    params: { id: String(subscription.id) },
   });
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await DELETE__collection__subscriptions__$id(axios, {
-    urlParams: { id: String(id) },
+  await call<DELETE__collection__subscriptions__$id>(axios, {
+    params: { id: String(id) },
   });
   await loadSubscriptions(true);
   currentSubscription = null;

@@ -1,11 +1,10 @@
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
+import { BookcaseContributor } from "~types/BookcaseContributor";
 
 const prisma = new PrismaClient();
 
-export const get = async (
-  ...[, res]: ExpressCall<{ userId: number | ""; name: string; text: string }[]>
-) =>
+export const get = async (...[, res]: ExpressCall<BookcaseContributor[]>) =>
   res.json(
     await prisma.$queryRaw`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text

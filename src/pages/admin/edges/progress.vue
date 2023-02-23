@@ -53,8 +53,10 @@ meta:
           "
         />
         <Publication
-          :publicationcode="(publicationcode as string)"
-          :publicationname="publicationNames[publicationcode]"
+          :publicationcode="publicationcode"
+          :publicationname="
+            publicationNames[publicationcode] || publicationcode
+          "
         />
         <div v-if="inducksIssueNumbersNoSpace[publicationcode]">
           <Bookcase
@@ -134,6 +136,11 @@ import { onMounted } from "vue";
 
 import { coa } from "~/stores/coa";
 import { images } from "~/stores/images";
+import { call } from "~/util/axios";
+import {
+  GET__edges__published__data,
+  GET__edges__wanted__data,
+} from "~types/routes";
 import { WantedEdge } from "~types/WantedEdge";
 const getImagePath = images().getImagePath;
 
@@ -175,20 +182,15 @@ const inducksIssueNumbersNoSpace = $computed(() =>
 );
 
 onMounted(async () => {
-  mostWanted = (
-    (await GET__edges__wanted__data(axios)).data as WantedEdge[]
-  ).map((mostWantedIssue) => ({
-    ...mostWantedIssue,
-    country: mostWantedIssue.publicationcode.split("/")[0],
-    magazine: mostWantedIssue.publicationcode.split("/")[1],
-  }));
+  mostWanted = (await call<GET__edges__wanted__data>(axios)).data.map(
+    (mostWantedIssue) => ({
+      ...mostWantedIssue,
+      country: mostWantedIssue.publicationcode.split("/")[0],
+      magazine: mostWantedIssue.publicationcode.split("/")[1],
+    })
+  );
 
-  publishedEdges = (
-    (await GET__edges__published__data(axios)).data as {
-      publicationcode: string;
-      issuenumber: string;
-    }[]
-  ).reduce(
+  publishedEdges = (await call<GET__edges__published__data>(axios)).data.reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],

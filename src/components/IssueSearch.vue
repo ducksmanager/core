@@ -69,7 +69,7 @@
                   v-if="publicationNames[searchResult.publicationcode]"
                   :publicationcode="searchResult.publicationcode"
                   :publicationname="
-                    publicationNames[searchResult.publicationcode]
+                    publicationNames[searchResult.publicationcode]!
                   "
                   :issuenumber="searchResult.issuenumber"
                   :clickable="withStoryLink"
@@ -93,6 +93,11 @@ import {
   collection as collectionStore,
   IssueWithPublicationcode,
 } from "~/stores/collection";
+import { call } from "~/util/axios";
+import {
+  GET__coa__list__issues__by_storycode,
+  POST__coa__stories__search__withIssues,
+} from "~types/routes";
 import { SimpleIssue } from "~types/SimpleIssue";
 import { SimpleStory } from "~types/SimpleStory";
 
@@ -161,8 +166,8 @@ const runSearch = async (value: string) => {
   try {
     if (isSearchByCode) {
       const data = (
-        await GET__coa__list__issues__by_storycode(axios, {
-          params: { storycode: value.replace(/^code=/, "") },
+        await call<GET__coa__list__issues__by_storycode>(axios, {
+          query: { storycode: value.replace(/^code=/, "") },
         })
       ).data;
       issueResults = {
@@ -177,10 +182,10 @@ const runSearch = async (value: string) => {
       );
     } else {
       const data = (
-        await POST__coa__stories__search__withIssues(axios, {
-          data: { keywords: value },
+        await call<POST__coa__stories__search__withIssues>(axios, {
+          reqBody: { keywords: value },
         })
-      ).data as { results: SimpleStory[]; hasMore: boolean };
+      ).data;
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:

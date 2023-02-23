@@ -227,6 +227,12 @@ import Accordion from "~/components/Accordion.vue";
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
+import { call } from "~/util/axios";
+import {
+  DELETE__collection__user,
+  POST__collection__empty,
+  POST__collection__user,
+} from "~types/routes";
 import { ScopedError } from "~types/ScopedError";
 const getImagePath = images().getImagePath;
 
@@ -255,7 +261,7 @@ const router = useRouter();
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await POST__collection__empty(axios);
+    await call<POST__collection__empty>(axios);
     await router.push("/collection/show");
   }
 };
@@ -264,8 +270,8 @@ const updateAccount = async () => {
   try {
     error = undefined;
     const response = (
-      await POST__collection__user(axios, {
-        data: {
+      await call<POST__collection__user>(axios, {
+        reqBody: {
           ...collection.userForAccountForm!,
           oldPassword,
           password,
@@ -297,7 +303,7 @@ const deleteAccount = async () => {
       )
     )
   ) {
-    await DELETE__collection__user(axios);
+    await call<DELETE__collection__user>(axios);
     await router.push("/logout");
   }
 };

@@ -10,6 +10,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
+import { call } from "~/util/axios";
+import { POST__demo } from "~types/routes";
 
 const collectionStore = collection();
 
@@ -27,7 +29,7 @@ watch(
 
 onMounted(async () => {
   try {
-    Cookies.set("token", (await POST__demo(axios)).data.token, {
+    Cookies.set("token", (await call<POST__demo>(axios)).data.token, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
     await collectionStore.loadUser();

@@ -24,18 +24,22 @@ meta:
 import axios from "axios";
 import { onMounted } from "vue";
 
+import { call } from "~/util/axios";
 import { bookstoreComment } from "~prisma_clients/client_dm";
+import { GET__bookstores, POST__bookstores__approve } from "~types/routes";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await POST__bookstores__approve(axios, { data: { id } });
-  bookstores = (await GET__bookstores(axios)).data;
+  await call<POST__bookstores__approve>(axios, {
+    reqBody: { id },
+  });
+  bookstores = (await call<GET__bookstores>(axios)).data;
 };
 
 onMounted(async () => {
-  bookstores = (await GET__bookstores(axios)).data;
+  bookstores = (await call<GET__bookstores>(axios)).data;
 });
 </script>
 

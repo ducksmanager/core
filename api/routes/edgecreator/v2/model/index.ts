@@ -1,17 +1,8 @@
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
+import { EdgeModel } from "~types/EdgeModel";
 
 const prisma = new PrismaClient();
-
-type EdgeModel = {
-  id: number;
-  country: string;
-  magazine: string;
-  issuenumber: string;
-  fileName: string;
-  username: string;
-  isEditor: number;
-};
 
 export const get = async (...[req, res]: ExpressCall<EdgeModel[]>) =>
   res.json(

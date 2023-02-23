@@ -98,7 +98,7 @@
       {{ $t("Cet utilisateur n'existe pas.") }}
     </b-alert>
     <div v-else>
-      <div v-if="!isSharedBookcase && hasPublicationNames">
+      <div v-if="!isSharedBookcase && publicationNames">
         <UploadableEdgesCarousel
           v-if="mostPopularIssuesInCollectionWithoutEdge?.length && userPoints"
           :issues="mostPopularIssuesInCollectionWithoutEdge"
@@ -202,9 +202,10 @@ const isUserNotExisting = $computed(() => bookcase.isUserNotExisting);
 const isSharedBookcase = $computed(() => bookcase.isSharedBookcase);
 const bookcaseUrl = $computed(
   () =>
-    !isPrivateBookcase &&
-    user &&
-    `${window.location.origin}/bookcase/show/${user.username}`
+    (!isPrivateBookcase &&
+      user &&
+      `${window.location.origin}/bookcase/show/${user.username}`) ||
+    null
 );
 const loading = $computed(
   () =>

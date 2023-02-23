@@ -34,6 +34,8 @@ import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
+import { call } from "~/util/axios";
+import { POST__auth__change_password } from "~types/routes";
 
 const router = useRouter();
 const collectionStore = collection();
@@ -50,8 +52,8 @@ const changePassword = async () => {
     Cookies.set(
       "token",
       (
-        await POST__auth__change_password(axios, {
-          data: {
+        await call<POST__auth__change_password>(axios, {
+          reqBody: {
             token,
             password,
             password2,
@@ -69,8 +71,8 @@ const changePassword = async () => {
 
 onMounted(async () => {
   try {
-    await POST__auth__change_password(axios, {
-      data: { token, password, password2 },
+    await call<POST__auth__change_password>(axios, {
+      reqBody: { token, password, password2 },
     });
     await collectionStore.loadUser();
   } catch (e: unknown) {

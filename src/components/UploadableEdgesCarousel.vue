@@ -19,7 +19,7 @@
           <MedalProgress
             contribution="edge_photographer"
             :user-level-points="userPoints"
-            :extra-points="popularIssueWithoutEdge.popularity"
+            :extra-points="popularIssueWithoutEdge.popularity || 0"
           />
           <slot name="footer" />
         </b-carousel-slide>

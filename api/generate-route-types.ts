@@ -30,10 +30,8 @@ app._router.stack.forEach(
 const imports: string[] = [
   "// noinspection ES6PreferShortImport",
   "",
-  'import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";',
-  'import { AxiosCacheInstance, CacheRequestConfig } from "axios-cache-interceptor";',
   'import { Prisma } from "../api/dist/prisma/client_dm";',
-  'import { call } from "./Call";',
+  'import { ContractWithMethodAndUrl } from "~types/Call";',
 ];
 imports.push(
   readdirSync("../types")
@@ -64,62 +62,66 @@ imports.push(
     )
     .join("\n")
 );
-let types: string[] = [];
+const types: string[] = [];
 
-const routeList = {} as { [routePathWithMethod: string]: string };
+let routeClassList = {} as { [routePathWithMethod: string]: string };
 routes.forEach((route) => {
-  types = types.concat(
-    Object.keys(route.methods)
-      .filter((method) => ["get", "post", "delete", "put"].includes(method))
-      .map((method) => {
-        const routePathWithMethod = `${method.toUpperCase()} ${route.path}`;
+  routeClassList = Object.keys(route.methods)
+    .filter((method) => ["get", "post", "delete", "put"].includes(method))
+    .reduce((acc, method) => {
+      const realMethod = method === "delete" ? "del" : method;
+      const routePathWithMethod = `${method.toUpperCase()} ${route.path}`;
 
-        const routePath = `${(route.path as string)
-          .replaceAll("/:", "__")
-          .replaceAll(/[/-]/g, "_")
-          .toUpperCase()}`;
-
-        const typeName = `${method.toUpperCase()}_CALL${routePath}`;
-        let routeFile;
-        const routeBasePath = `routes/${(route.path as string).replace(
-          /^\//,
-          ""
-        )}`;
-        try {
-          routeFile = readFileSync(`${routeBasePath}/index.ts`);
-        } catch (e) {
-          routeFile = readFileSync(`${routeBasePath}.ts`);
+      let routeFile;
+      const routeBasePath = `routes/${(route.path as string).replace(
+        /^\//,
+        ""
+      )}`;
+      try {
+        routeFile = readFileSync(`${routeBasePath}/index.ts`);
+      } catch (e) {
+        routeFile = readFileSync(`${routeBasePath}.ts`);
+      }
+      const callType = new RegExp(
+        `export const ${realMethod} =.+?ExpressCall<( *.+?)>[ \\n]*\\) =>`,
+        "gms"
+      ).exec(routeFile.toString())![1];
+      const callTypeParts = callType.replaceAll("\n", "").split(/, (?!["'])/);
+      const inferredTypeParts: string[] = [];
+      const possibleParts = ["resBody", "params", "reqBody", "query"];
+      for (let idx = 0; idx < possibleParts.length; idx++) {
+        if (callTypeParts[idx] && !/undefined/.test(callTypeParts[idx])) {
+          inferredTypeParts.push(
+            `${possibleParts[idx]}: ${callTypeParts[idx]}`
+          );
         }
-        const callType = new RegExp(
-          `export const ${
-            method === "delete" ? "del" : method
-          } =.+?Express(Call< *.+?>)[ \\n]*\\) =>`,
-          "gms"
-        ).exec(routeFile.toString())![1];
+      }
+      const inferredType = inferredTypeParts.length
+        ? `{${inferredTypeParts.join(";")}}`
+        : "Record<string, never>";
 
-        routeList[routePathWithMethod] = `
-            (
-              axios: AxiosInstance | AxiosCacheInstance,
-              config?: TypedConfig<${typeName}>
-            ) => call<${typeName}>("${method}", "${route.path}", axios, config);
-        `;
-        return `export type ${typeName} = ${callType}`;
-      })
-  );
+      acc[
+        routePathWithMethod
+      ] = ` extends ContractWithMethodAndUrl<${inferredType}> {
+            static readonly method = "${method}";
+            static readonly url = "${route.path}";
+        }`;
+      return acc;
+    }, routeClassList);
 });
 writeFileSync(
   "../types/routes.ts",
   [
     imports.join("\n"),
     types.join("\n"),
-    Object.entries(routeList)
+    Object.entries(routeClassList)
       .map(
         ([routePathWithMethod, callback]) =>
-          `export const ${routePathWithMethod
+          `export abstract class ${routePathWithMethod
             .replaceAll("/", "__")
             .replaceAll(/ /g, "")
             .replaceAll(/:/g, "$")
-            .replaceAll(/-/g, "_")} = ${callback};`
+            .replaceAll(/-/g, "_")} ${callback}`
       )
       .join("\n"),
   ].join("\n")

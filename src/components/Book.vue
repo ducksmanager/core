@@ -35,7 +35,9 @@
             /></a>
             <Issue
               :publicationcode="publicationcode"
-              :publicationname="publicationNames[publicationcode]"
+              :publicationname="
+                publicationNames[publicationcode] || publicationcode
+              "
               :issuenumber="issuenumber"
             />
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>

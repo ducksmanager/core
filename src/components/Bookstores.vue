@@ -176,6 +176,8 @@ import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { users } from "~/stores/users";
+import { call } from "~/util/axios";
+import { GET__bookstores, PUT__bookstores } from "~types/routes";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
@@ -221,7 +223,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = ((await GET__bookstores(axios)).data as SimpleBookstore[])
+  bookstores = (await call<GET__bookstores>(axios)).data
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -241,8 +243,8 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await PUT__bookstores(axios, {
-    data: { bookstore },
+  await call<PUT__bookstores>(axios, {
+    reqBody: { bookstore },
   });
   if (bookstore.id) {
     existingBookstoreSent = true;

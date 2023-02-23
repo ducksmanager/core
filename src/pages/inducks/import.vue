@@ -285,7 +285,9 @@ import { useI18n } from "vue-i18n";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
+import { call } from "~/util/axios";
 import { inducks_issue } from "~prisma_clients/client_coa";
+import { POST__collection__issues__multiple } from "~types/routes";
 const getImagePath = images().getImagePath;
 
 let step = $ref(1 as number);
@@ -359,8 +361,8 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await POST__collection__issues__multiple(axios, {
-        data: {
+      await call<POST__collection__issues__multiple>(axios, {
+        reqBody: {
           publicationcode,
           issuenumbers: importableIssuesByPublicationCode[publicationcode],
           condition: issueDefaultCondition,

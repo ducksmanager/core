@@ -2,29 +2,35 @@ import axios from "axios";
 import { defineStore } from "pinia";
 
 import { cachedUserApi as userApi } from "~/util/api";
+import { call } from "~/util/axios";
+import { BookcaseContributor } from "~types/BookcaseContributor";
 import { AbstractEvent } from "~types/events/AbstractEvent";
 import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
 import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSubscriptionAdditionEvent";
 import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
+import {
+  GET__global_stats__bookcase__contributors,
+  GET__global_stats__user__$userIds,
+  GET__global_stats__user__count,
+} from "~types/routes";
 
 export const users = defineStore("users", {
   state: () => ({
     count: null as number | null,
-    stats: {} as { [userId: number]: SimpleUserWithQuickStats },
-    points: {} as { [userId: number]: { [contribution: string]: number } },
+    stats: {} as GET__global_stats__user__$userIds["resBody"]["stats"],
+    points: {} as GET__global_stats__user__$userIds["resBody"]["points"],
     events: [] as AbstractEvent[],
-    bookcaseContributors: null as
-      | { userId: number; name: string; text: string }[]
-      | null,
+    bookcaseContributors: null as BookcaseContributor[] | null,
   }),
 
   actions: {
     async fetchCount() {
       if (!this.count)
-        this.count = (await GET__global_stats__user__count(axios)).data.count;
+        this.count = (
+          await call<GET__global_stats__user__count>(axios)
+        ).data!.count;
     },
     async fetchStats(userIds: number[], clearCacheEntry = true) {
       const points = this.points;
@@ -37,9 +43,9 @@ export const users = defineStore("users", {
       if (!missingUserIds.length) return;
 
       const data = (
-        await GET__global_stats__user__$userIds(axios, {
+        await call<GET__global_stats__user__$userIds>(axios, {
           ...(clearCacheEntry ? {} : { cache: false }),
-          urlParams: {
+          params: {
             userIds: missingUserIds.sort((a, b) => Math.sign(a - b)).join(","),
           },
         })
@@ -63,8 +69,8 @@ export const users = defineStore("users", {
     async fetchBookcaseContributors() {
       if (!this.bookcaseContributors) {
         this.bookcaseContributors = (
-          await GET__global_stats__bookcase__contributors(axios)
-        ).data as { userId: number; name: string; text: string }[];
+          await call<GET__global_stats__bookcase__contributors>(axios)
+        ).data;
       }
     },
 

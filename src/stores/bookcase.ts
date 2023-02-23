@@ -1,14 +1,22 @@
 import axios, { AxiosError } from "axios";
 import { defineStore } from "pinia";
 
+import { call } from "~/util/axios";
 import { BookcaseEdge } from "~types/BookcaseEdge";
+import {
+  GET__bookcase__$username,
+  GET__bookcase__$username__options,
+  GET__bookcase__$username__sort,
+  POST__bookcase__options,
+  POST__bookcase__sort,
+} from "~types/routes";
 
 import { collection } from "./collection";
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;
   issueCode: string;
-  popularity: number | null;
+  popularity: number;
 }
 
 export const bookcase = defineStore("bookcase", {
@@ -19,13 +27,9 @@ export const bookcase = defineStore("bookcase", {
     isUserNotExisting: false as boolean,
     bookcaseUsername: null as string | null,
     bookcase: null as BookcaseEdge[] | null,
-    bookcaseOptions: null as {
-      textures: {
-        bookcase: string;
-        bookshelf: string;
-      };
-      showAllCopies: boolean;
-    } | null,
+    bookcaseOptions: null as
+      | GET__bookcase__$username__options["resBody"]
+      | null,
     bookcaseOrder: null as string[] | null,
 
     edgeIndexToLoad: 0 as number,
@@ -47,7 +51,7 @@ export const bookcase = defineStore("bookcase", {
               publicationcode,
               issueCode,
               popularity: isSharedBookcase
-                ? null
+                ? 0
                 : collection().popularIssuesInCollection?.[issueCode] || 0,
             };
           })) ||
@@ -68,8 +72,8 @@ export const bookcase = defineStore("bookcase", {
       if (!this.bookcase) {
         try {
           this.bookcase = (
-            await GET__bookcase__$username(axios, {
-              urlParams: { username: this.bookcaseUsername! },
+            await call<GET__bookcase__$username>(axios, {
+              params: { username: this.bookcaseUsername! },
             })
           ).data;
         } catch (e) {
@@ -87,30 +91,30 @@ export const bookcase = defineStore("bookcase", {
     async loadBookcaseOptions() {
       if (!this.bookcaseOptions) {
         this.bookcaseOptions = (
-          await GET__bookcase__$username__options(axios, {
-            urlParams: { username: this.bookcaseUsername! },
+          await call<GET__bookcase__$username__options>(axios, {
+            params: { username: this.bookcaseUsername! },
           })
         ).data;
       }
     },
     async updateBookcaseOptions() {
-      await POST__bookcase__options(axios, { data: this.bookcaseOptions! });
+      await call<POST__bookcase__options>(axios, {
+        reqBody: this.bookcaseOptions!,
+      });
     },
 
     async loadBookcaseOrder() {
       if (!this.bookcaseOrder) {
         this.bookcaseOrder = (
-          await GET__bookcase__$username__sort(axios, {
-            urlParams: { username: this.bookcaseUsername! },
+          await call<GET__bookcase__$username__sort>(axios, {
+            params: { username: this.bookcaseUsername! },
           })
         ).data;
       }
     },
     async updateBookcaseOrder() {
-      await POST__bookcase__sort(axios, {
-        data: {
-          sorts: this.bookcaseOrder as string[],
-        },
+      await call<POST__bookcase__sort>(axios, {
+        reqBody: { sorts: this.bookcaseOrder as string[] },
       });
     },
   },

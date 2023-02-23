@@ -60,8 +60,8 @@ onMounted(async () => {
   await fetchBookcaseContributors();
   await fetchStats(
     bookcaseContributors!
-      .filter(({ userId }) => !!userId)
-      .map(({ userId }) => userId)
+      .filter(({ userId }) => typeof userId === "number")
+      .map(({ userId }) => userId as number)
   );
   loading = false;
 });

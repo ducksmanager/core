@@ -6,13 +6,16 @@ meta:
 import axios from "axios";
 import { onMounted } from "vue";
 
+import { call } from "~/util/axios";
+import { POST__presentation_text__$decision } from "~types/routes";
+
 let router = useRouter();
 
 onMounted(async () => {
   let currentRoute = router.currentRoute.value;
-  await POST__presentation_text__$decision(axios, {
-    urlParams: { decision: currentRoute.params.decision as string },
-    params: currentRoute.query as unknown as {
+  await call<POST__presentation_text__$decision>(axios, {
+    params: { decision: currentRoute.params.decision as string },
+    query: currentRoute.query as unknown as {
       sentence: string;
       userId: number;
     },

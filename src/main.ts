@@ -21,7 +21,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
 import i18n from "./i18n.js";
 import { ongoingRequests } from "./stores/ongoing-requests";
-import { addUrlParamsRequestInterceptor } from "./util/axios-url-params";
+import { addUrlParamsRequestInterceptor } from "./util/axios";
 
 const head = createHead();
 
