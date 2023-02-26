@@ -161,20 +161,22 @@ const isAuthorWatched = (personcode: string) =>
     ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
   );
 const createRating = async (data: { personcode: string }) => {
-  await call<PUT__collection__authors__watched>(axios, {
-    reqBody: data,
-  });
+  await call(
+    axios,
+    new PUT__collection__authors__watched({
+      reqBody: data,
+    })
+  );
   await loadWatchedAuthors(true);
 };
 const updateRating = async (data: { personcode: string; notation: number }) => {
-  await call<POST__collection__authors__watched>(axios, {
-    reqBody: data,
-  });
+  await call(axios, new POST__collection__authors__watched({ reqBody: data }));
 };
 const deleteAuthor = async (data: { personcode: string }) => {
-  await call<DELETE__collection__authors__watched>(axios, {
-    reqBody: data,
-  });
+  await call(
+    axios,
+    new DELETE__collection__authors__watched({ reqBody: data })
+  );
   await loadWatchedAuthors(true);
 };
 const runSearch = async (value: string) => {
@@ -182,13 +184,13 @@ const runSearch = async (value: string) => {
     try {
       isSearching = true;
       searchResults = (
-        await call<GET__coa__authorsfullnames__search__$partialAuthorName>(
+        await call(
           axios,
-          {
+          new GET__coa__authorsfullnames__search__$partialAuthorName({
             params: {
               partialAuthorName: value,
             },
-          }
+          })
         )
       ).data;
     } finally {

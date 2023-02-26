@@ -21,12 +21,19 @@ export type CallWithoutResBody<
 };
 
 export abstract class ContractWithMethodAndUrl<T extends Call<unknown>> {
-  protected constructor(t: T) {
-    this.call = { params: t.params, query: t.query, reqBody: t.reqBody };
+  constructor(t?: Omit<T, "resBody">) {
+    if (t) {
+      this.call = { params: t.params, query: t.query, reqBody: t.reqBody };
+    }
   }
+  public getMethod = (): string =>
+    (this.constructor as typeof ContractWithMethodAndUrl).method;
+  public getUrl = (): string =>
+    (this.constructor as typeof ContractWithMethodAndUrl).url;
+
   static readonly method: "get" | "post" | "put" | "delete";
   static readonly url: string;
-  call!: CallWithoutResBody;
+  call?: CallWithoutResBody;
 
   resBody!: T["resBody"];
 }

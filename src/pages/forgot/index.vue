@@ -59,11 +59,8 @@ const { t: $t } = useI18n();
 
 const sendPasswordToken = async () => {
   try {
-    token = (
-      await call<POST__auth__forgot>(axios, {
-        reqBody: { email },
-      })
-    ).data.token;
+    token = (await call(axios, new POST__auth__forgot({ reqBody: { email } })))
+      .data.token;
   } catch (e) {
     error = (e as AxiosError)?.response?.data || "Error";
   }

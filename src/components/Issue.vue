@@ -29,7 +29,7 @@ const {
   flex = true,
 } = defineProps<{
   publicationcode: string;
-  publicationname: string;
+  publicationname: string | null;
   issuenumber: string;
   clickable?: boolean;
   hideCondition?: boolean;

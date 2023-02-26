@@ -8,13 +8,13 @@ import { EditSubscription } from "~types/EditSubscription";
 const parseForm = bodyParser.json();
 
 export async function upsertSubscription(
-  idString: string,
+  idString: string | null,
   subscription: EditSubscription,
   userId: number
 ) {
   const publicationCodeParts = subscription.publicationcode!.split("/");
 
-  const id = parseInt(idString) || 0;
+  const id = (idString && parseInt(idString)) || 0;
   if (
     id &&
     !(await prisma.subscription.count({
@@ -78,15 +78,11 @@ export const put = [
   async (
     ...[req, res]: ExpressCall<
       undefined,
-      { id: string },
+      undefined,
       { subscription: EditSubscription }
     >
   ) => {
-    await upsertSubscription(
-      req.params.id,
-      req.body.subscription,
-      req.user!.id
-    );
+    await upsertSubscription(null, req.body.subscription, req.user!.id);
     res.writeHead(200, { "Content-Type": "application/text" });
     res.end();
   },

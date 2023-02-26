@@ -201,7 +201,7 @@ const isPrivateBookcase = $computed(() => bookcase.isPrivateBookcase);
 const isUserNotExisting = $computed(() => bookcase.isUserNotExisting);
 const isSharedBookcase = $computed(() => bookcase.isSharedBookcase);
 const bookcaseUrl = $computed(
-  () =>
+  (): string | null =>
     (!isPrivateBookcase &&
       user &&
       `${window.location.origin}/bookcase/show/${user.username}`) ||

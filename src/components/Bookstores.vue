@@ -223,7 +223,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await call<GET__bookstores>(axios)).data
+  bookstores = (await call(axios, new GET__bookstores())).data
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -243,9 +243,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await call<PUT__bookstores>(axios, {
-    reqBody: { bookstore },
-  });
+  await call(axios, new PUT__bookstores({ reqBody: { bookstore } }));
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;

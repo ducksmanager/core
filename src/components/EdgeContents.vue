@@ -55,7 +55,7 @@ const {
   publicationcode: string;
   issuenumber?: string;
   src: string;
-  spritePath?: string;
+  spritePath: string | null;
   load: boolean;
   invisible?: boolean;
   highlighted?: boolean;

@@ -261,7 +261,7 @@ const router = useRouter();
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await call<POST__collection__empty>(axios);
+    await call(axios, new POST__collection__empty());
     await router.push("/collection/show");
   }
 };
@@ -270,14 +270,17 @@ const updateAccount = async () => {
   try {
     error = undefined;
     const response = (
-      await call<POST__collection__user>(axios, {
-        reqBody: {
-          ...collection.userForAccountForm!,
-          oldPassword,
-          password,
-          password2,
-        },
-      })
+      await call(
+        axios,
+        new POST__collection__user({
+          reqBody: {
+            ...collection.userForAccountForm!,
+            oldPassword,
+            password,
+            password2,
+          },
+        })
+      )
     ).data;
     hasRequestedPresentationSentenceUpdate =
       response.hasRequestedPresentationSentenceUpdate;
@@ -303,7 +306,7 @@ const deleteAccount = async () => {
       )
     )
   ) {
-    await call<DELETE__collection__user>(axios);
+    await call(axios, new DELETE__collection__user());
     await router.push("/logout");
   }
 };

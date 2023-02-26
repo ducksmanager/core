@@ -54,14 +54,14 @@ type MyCall = Call<
 
 export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
   instance: AxiosInstance | AxiosCacheInstance,
-  call?: Contract["call"]
+  contract: Contract
 ): Promise<AxiosResponse<Contract["resBody"]>> =>
   instance.request<Contract["resBody"]>({
-    method: ContractWithMethodAndUrl.method,
-    url: ContractWithMethodAndUrl.url,
-    params: call?.params || undefined,
-    // urlParams: call?.query || undefined,
-    data: (call?.reqBody as never) || undefined,
+    method: contract.getMethod(),
+    url: contract.getUrl(),
+    params: contract.call?.params || undefined,
+    // urlParams: contract.call.query || undefined,
+    data: (contract.call?.reqBody as never) || undefined,
   });
 
 export const getChunkedRequests = async <

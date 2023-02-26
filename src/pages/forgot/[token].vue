@@ -52,13 +52,16 @@ const changePassword = async () => {
     Cookies.set(
       "token",
       (
-        await call<POST__auth__change_password>(axios, {
-          reqBody: {
-            token,
-            password,
-            password2,
-          },
-        })
+        await call(
+          axios,
+          new POST__auth__change_password({
+            reqBody: {
+              token,
+              password,
+              password2,
+            },
+          })
+        )
       ).data.token,
       {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,
@@ -71,9 +74,12 @@ const changePassword = async () => {
 
 onMounted(async () => {
   try {
-    await call<POST__auth__change_password>(axios, {
-      reqBody: { token, password, password2 },
-    });
+    await call(
+      axios,
+      new POST__auth__change_password({
+        reqBody: { token, password, password2 },
+      })
+    );
     await collectionStore.loadUser();
   } catch (e: unknown) {
     initError = e as AxiosError;

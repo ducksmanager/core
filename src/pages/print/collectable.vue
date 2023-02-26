@@ -64,7 +64,7 @@ meta:
             </tr>
             <tr
               v-for="i of Object.keys(
-                Math.floor(letterToNumber(maxLetter as string) / 6) + 1
+                Math.floor(letterToNumber(maxLetter) / 6) + 1
               ).map((number) => Number(number))"
               :key="i"
             >
@@ -95,9 +95,9 @@ meta:
             >
               <td>
                 <Publication
-                  :publicationcode="(publicationcode as string)"
+                  :publicationcode="publicationcode"
                   :publicationname="`${
-                    (publicationcode as String).split('/')[1]
+                    publicationcode.split('/')[1]
                   } : ${publicationName}`"
                 />
               </td>

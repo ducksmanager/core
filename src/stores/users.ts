@@ -27,10 +27,11 @@ export const users = defineStore("users", {
 
   actions: {
     async fetchCount() {
-      if (!this.count)
+      if (!this.count) {
         this.count = (
-          await call<GET__global_stats__user__count>(axios)
+          await call(axios, new GET__global_stats__user__count())
         ).data!.count;
+      }
     },
     async fetchStats(userIds: number[], clearCacheEntry = true) {
       const points = this.points;
@@ -43,12 +44,17 @@ export const users = defineStore("users", {
       if (!missingUserIds.length) return;
 
       const data = (
-        await call<GET__global_stats__user__$userIds>(axios, {
-          ...(clearCacheEntry ? {} : { cache: false }),
-          params: {
-            userIds: missingUserIds.sort((a, b) => Math.sign(a - b)).join(","),
-          },
-        })
+        await call(
+          axios,
+          new GET__global_stats__user__$userIds({
+            ...(clearCacheEntry ? {} : { cache: false }),
+            params: {
+              userIds: missingUserIds
+                .sort((a, b) => Math.sign(a - b))
+                .join(","),
+            },
+          })
+        )
       ).data;
       this.points = {
         ...this.points,
@@ -69,7 +75,7 @@ export const users = defineStore("users", {
     async fetchBookcaseContributors() {
       if (!this.bookcaseContributors) {
         this.bookcaseContributors = (
-          await call<GET__global_stats__bookcase__contributors>(axios)
+          await call(axios, new GET__global_stats__bookcase__contributors())
         ).data;
       }
     },

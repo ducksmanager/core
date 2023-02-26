@@ -89,7 +89,7 @@ let username = $ref("" as string),
 const { t: $t } = useI18n();
 
 onMounted(async () => {
-  csrfToken = (await call<GET__csrf>(axios)).data?.csrfToken;
+  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
 });
 
 const signup = async () => {
@@ -97,14 +97,17 @@ const signup = async () => {
     Cookies.set(
       "token",
       (
-        await call<PUT__collection__user>(axios, {
-          reqBody: {
-            username,
-            password,
-            password2,
-            email,
-          },
-        })
+        await call(
+          axios,
+          new PUT__collection__user({
+            reqBody: {
+              username,
+              password,
+              password2,
+              email,
+            },
+          })
+        )
       ).data.token,
       {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,

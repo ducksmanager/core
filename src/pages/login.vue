@@ -77,7 +77,7 @@ let error = $ref(null as string | null);
 let password = $ref("" as string);
 
 onMounted(async () => {
-  csrfToken = (await call<GET__csrf>(axios)).data?.csrfToken;
+  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
 });
 
 const login = async () => {
@@ -85,12 +85,15 @@ const login = async () => {
     Cookies.set(
       "token",
       (
-        await call<POST__login>(axios, {
-          reqBody: {
-            username,
-            password,
-          },
-        })
+        await call(
+          axios,
+          new POST__login({
+            reqBody: {
+              username,
+              password,
+            },
+          })
+        )
       ).data.token,
       {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,

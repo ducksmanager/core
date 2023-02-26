@@ -29,7 +29,7 @@ watch(
 
 onMounted(async () => {
   try {
-    Cookies.set("token", (await call<POST__demo>(axios)).data.token, {
+    Cookies.set("token", (await call(axios, new POST__demo())).data.token, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
     await collectionStore.loadUser();

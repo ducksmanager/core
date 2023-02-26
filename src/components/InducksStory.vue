@@ -31,7 +31,7 @@ const {
   storycode: string;
   kind?: string;
   title?: string;
-  part: number | null;
+  part?: number | null;
   comment?: string;
   noLink?: boolean;
   dark?: boolean;

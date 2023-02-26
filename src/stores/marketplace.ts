@@ -122,17 +122,22 @@ export const marketplace = defineStore("marketplace", {
 
   actions: {
     async requestIssues(issueIds: number[]) {
-      await call<PUT__collection__on_sale_by_others__requests>(axios, {
-        reqBody: { issueIds },
-      });
+      await call(
+        axios,
+        new PUT__collection__on_sale_by_others__requests({
+          reqBody: { issueIds },
+        })
+      );
       await this.loadIssueRequestsAsBuyer();
     },
 
     async loadContactMethods(userId: number) {
       this.contactMethods[userId] = (
-        await call<GET__collection__on_sale_by_others__contact_methods__$sellerId>(
+        await call(
           axios,
-          { params: { sellerId: String(userId) } }
+          new GET__collection__on_sale_by_others__contact_methods__$sellerId({
+            params: { sellerId: String(userId) },
+          })
         )
       ).data;
     },
@@ -146,9 +151,11 @@ export const marketplace = defineStore("marketplace", {
       }
       this.isLoadingIssueRequestsAsBuyer = true;
       this.issueRequestsAsBuyer = (
-        await call<GET__collection__on_sale_by_others__requests__as__$as>(
+        await call(
           axios,
-          { params: { as: "buyer" } }
+          new GET__collection__on_sale_by_others__requests__as__$as({
+            params: { as: "buyer" },
+          })
         )
       ).data;
       this.isLoadingIssueRequestsAsBuyer = false;
@@ -162,9 +169,11 @@ export const marketplace = defineStore("marketplace", {
       }
       this.isLoadingIssueRequestsAsSeller = true;
       this.issueRequestsAsSeller = (
-        await call<GET__collection__on_sale_by_others__requests__as__$as>(
+        await call(
           axios,
-          { params: { as: "seller" } }
+          new GET__collection__on_sale_by_others__requests__as__$as({
+            params: { as: "seller" },
+          })
         )
       ).data;
       this.isLoadingIssueRequestsAsSeller = false;
@@ -178,16 +187,17 @@ export const marketplace = defineStore("marketplace", {
       }
       this.isLoadingIssuesOnSaleByOthers = true;
       this.issuesOnSaleByOthers = (
-        await call<GET__collection__on_sale_by_others>(axios)
+        await call(axios, new GET__collection__on_sale_by_others())
       ).data;
       this.isLoadingIssuesOnSaleByOthers = false;
     },
     async deleteRequestToSeller(issueId: number) {
-      await call<DELETE__collection__on_sale_by_others__requests>(axios, {
-        reqBody: {
-          issueId,
-        },
-      });
+      await call(
+        axios,
+        new DELETE__collection__on_sale_by_others__requests({
+          reqBody: { issueId },
+        })
+      );
     },
   },
 });

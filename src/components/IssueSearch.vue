@@ -166,9 +166,12 @@ const runSearch = async (value: string) => {
   try {
     if (isSearchByCode) {
       const data = (
-        await call<GET__coa__list__issues__by_storycode>(axios, {
-          query: { storycode: value.replace(/^code=/, "") },
-        })
+        await call(
+          axios,
+          new GET__coa__list__issues__by_storycode({
+            query: { storycode: value.replace(/^code=/, "") },
+          })
+        )
       ).data;
       issueResults = {
         results: data.sort((issue1, issue2) =>
@@ -182,9 +185,12 @@ const runSearch = async (value: string) => {
       );
     } else {
       const data = (
-        await call<POST__coa__stories__search__withIssues>(axios, {
-          reqBody: { keywords: value },
-        })
+        await call(
+          axios,
+          new POST__coa__stories__search__withIssues({
+            reqBody: { keywords: value },
+          })
+        )
       ).data;
       storyResults.results = data.results.map((story) => ({
         ...story,

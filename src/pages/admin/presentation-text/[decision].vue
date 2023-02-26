@@ -13,12 +13,15 @@ let router = useRouter();
 
 onMounted(async () => {
   let currentRoute = router.currentRoute.value;
-  await call<POST__presentation_text__$decision>(axios, {
-    params: { decision: currentRoute.params.decision as string },
-    query: currentRoute.query as unknown as {
-      sentence: string;
-      userId: number;
-    },
-  });
+  await call(
+    axios,
+    new POST__presentation_text__$decision({
+      params: { decision: currentRoute.params.decision as string },
+      reqBody: currentRoute.query as unknown as {
+        sentence: string;
+        userId: number;
+      },
+    })
+  );
 });
 </script>

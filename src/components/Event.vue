@@ -144,7 +144,7 @@ const medalEvent = $computed(() =>
   event.type === "medal" ? (event as MedalEvent) : null
 );
 
-const edgeEvent = $computed(() =>
+const edgeEvent = $computed((): EdgeCreationEvent | null =>
   event.type === "edge" ? (event as EdgeCreationEvent) : null
 );
 

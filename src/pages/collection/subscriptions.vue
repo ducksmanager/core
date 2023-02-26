@@ -124,15 +124,18 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const loadSubscriptions = collection().loadSubscriptions;
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await call<PUT__collection__subscriptions>(axios, {
-    reqBody: {
-      subscription: {
-        ...subscription,
-        startDate: subscription.startDate.toISOString().split("Z")[0],
-        endDate: subscription.endDate.toISOString().split("Z")[0],
+  await call(
+    axios,
+    new PUT__collection__subscriptions({
+      reqBody: {
+        subscription: {
+          ...subscription,
+          startDate: subscription.startDate.toISOString().split("Z")[0],
+          endDate: subscription.endDate.toISOString().split("Z")[0],
+        },
       },
-    },
-  });
+    })
+  );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
@@ -150,17 +153,23 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: EditSubscription) => {
-  await call<POST__collection__subscriptions__$id>(axios, {
-    reqBody: { subscription },
-    params: { id: String(subscription.id) },
-  });
+  await call(
+    axios,
+    new POST__collection__subscriptions__$id({
+      reqBody: { subscription },
+      params: { id: String(subscription.id) },
+    })
+  );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await call<DELETE__collection__subscriptions__$id>(axios, {
-    params: { id: String(id) },
-  });
+  await call(
+    axios,
+    new DELETE__collection__subscriptions__$id({
+      params: { id: String(id) },
+    })
+  );
   await loadSubscriptions(true);
   currentSubscription = null;
 };

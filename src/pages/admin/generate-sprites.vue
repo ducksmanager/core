@@ -14,6 +14,6 @@ import { call } from "~/util/axios";
 import { PUT__edgecreator__edgesprites } from "~types/routes";
 
 const generateSprites = async () => {
-  await call<PUT__edgecreator__edgesprites>(axios);
+  await call(axios, new PUT__edgecreator__edgesprites());
 };
 </script>

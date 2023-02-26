@@ -16,7 +16,7 @@ import { collection } from "./collection";
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;
   issueCode: string;
-  popularity: number;
+  popularity?: number | undefined;
 }
 
 export const bookcase = defineStore("bookcase", {
@@ -72,9 +72,12 @@ export const bookcase = defineStore("bookcase", {
       if (!this.bookcase) {
         try {
           this.bookcase = (
-            await call<GET__bookcase__$username>(axios, {
-              params: { username: this.bookcaseUsername! },
-            })
+            await call(
+              axios,
+              new GET__bookcase__$username({
+                params: { username: this.bookcaseUsername! },
+              })
+            )
           ).data;
         } catch (e) {
           switch ((e as AxiosError).response?.status) {
@@ -91,31 +94,43 @@ export const bookcase = defineStore("bookcase", {
     async loadBookcaseOptions() {
       if (!this.bookcaseOptions) {
         this.bookcaseOptions = (
-          await call<GET__bookcase__$username__options>(axios, {
-            params: { username: this.bookcaseUsername! },
-          })
+          await call(
+            axios,
+            new GET__bookcase__$username__options({
+              params: { username: this.bookcaseUsername! },
+            })
+          )
         ).data;
       }
     },
     async updateBookcaseOptions() {
-      await call<POST__bookcase__options>(axios, {
-        reqBody: this.bookcaseOptions!,
-      });
+      await call(
+        axios,
+        new POST__bookcase__options({
+          reqBody: this.bookcaseOptions!,
+        })
+      );
     },
 
     async loadBookcaseOrder() {
       if (!this.bookcaseOrder) {
         this.bookcaseOrder = (
-          await call<GET__bookcase__$username__sort>(axios, {
-            params: { username: this.bookcaseUsername! },
-          })
+          await call(
+            axios,
+            new GET__bookcase__$username__sort({
+              params: { username: this.bookcaseUsername! },
+            })
+          )
         ).data;
       }
     },
     async updateBookcaseOrder() {
-      await call<POST__bookcase__sort>(axios, {
-        reqBody: { sorts: this.bookcaseOrder as string[] },
-      });
+      await call(
+        axios,
+        new POST__bookcase__sort({
+          reqBody: { sorts: this.bookcaseOrder as string[] },
+        })
+      );
     },
   },
 });

@@ -135,14 +135,14 @@ meta:
           :key="String(publicationcode).replace('/', '-')"
           :visible="expandedPublicationAccordion === publicationcode"
           accordion-group-id="import-accordion"
-          @bv::toggle::collapse="
-            expandedPublicationAccordion = publicationcode as string
-          "
+          @bv::toggle::collapse="expandedPublicationAccordion = publicationcode"
         >
           <template #header>
             <Publication
-              :publicationcode="(publicationcode as string)"
-              :publicationname="publicationNames[publicationcode] || publicationcode as string"
+              :publicationcode="publicationcode"
+              :publicationname="
+                publicationNames[publicationcode] || publicationcode
+              "
             />
             x {{ issues.length }}
           </template>
@@ -192,8 +192,10 @@ meta:
                 :key="`${publicationcode}-${issuenumber}`"
               >
                 <Issue
-                  :publicationcode="(publicationcode as string)"
-                  :publicationname="publicationNames[publicationcode] || publicationcode as string"
+                  :publicationcode="publicationcode"
+                  :publicationname="
+                    publicationNames[publicationcode] || publicationcode
+                  "
                   :issuenumber="issuenumber"
                 />
               </div>
@@ -229,8 +231,8 @@ meta:
               <Issue
                 v-for="issuenumber in publicationIssueNumbers"
                 :key="`${publicationcode}-${issuenumber}`"
-                :publicationcode="(publicationcode as string)"
-                :publicationname="(publicationcode as string)"
+                :publicationcode="publicationcode"
+                :publicationname="publicationcode"
                 :issuenumber="issuenumber"
               />
             </div>
@@ -341,6 +343,8 @@ const processRawData = async () => {
     step = 2;
   }
 };
+
+type Publicationcode = string;
 const groupByPublicationCode = (issues: inducks_issue[]) =>
   issues?.reduce(
     (acc, { publicationcode, issuenumber }) => ({
@@ -352,7 +356,7 @@ const groupByPublicationCode = (issues: inducks_issue[]) =>
         ]),
       ],
     }),
-    {} as { [publicationcode: string]: string[] }
+    {} as Record<Publicationcode, string[]>
   );
 
 const importIssues = async () => {
@@ -361,16 +365,19 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await call<POST__collection__issues__multiple>(axios, {
-        reqBody: {
-          publicationcode,
-          issuenumbers: importableIssuesByPublicationCode[publicationcode],
-          condition: issueDefaultCondition,
-          isOnSale: undefined,
-          isToRead: undefined,
-          purchaseId: undefined,
-        },
-      });
+      await call(
+        axios,
+        new POST__collection__issues__multiple({
+          reqBody: {
+            publicationcode,
+            issuenumbers: importableIssuesByPublicationCode[publicationcode],
+            condition: issueDefaultCondition,
+            isOnSale: undefined,
+            isToRead: undefined,
+            purchaseId: undefined,
+          },
+        })
+      );
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;
     }

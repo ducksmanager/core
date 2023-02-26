@@ -117,7 +117,7 @@ writeFileSync(
     Object.entries(routeClassList)
       .map(
         ([routePathWithMethod, callback]) =>
-          `export abstract class ${routePathWithMethod
+          `export class ${routePathWithMethod
             .replaceAll("/", "__")
             .replaceAll(/ /g, "")
             .replaceAll(/:/g, "$")

@@ -224,7 +224,7 @@ onMounted(async () => {
   await collection.loadCollection();
   await users().fetchCount();
   const { userScores } = (
-    await call<GET__global_stats__user__collection__rarity>(axios)
+    await call(axios, new GET__global_stats__user__collection__rarity())
   ).data;
   rarityValue =
     userScores.length -

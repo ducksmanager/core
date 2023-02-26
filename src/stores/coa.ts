@@ -70,9 +70,7 @@ export const coa = defineStore("coa", {
   }),
 
   actions: {
-    addPublicationNames(publicationNames: {
-      [publicationcode: string]: string | null;
-    }) {
+    addPublicationNames(publicationNames: typeof this.publicationNames) {
       this.publicationNames = {
         ...this.publicationNames,
         ...publicationNames,
@@ -114,10 +112,13 @@ export const coa = defineStore("coa", {
           (i18n.global.locale as unknown as { value: string }).value
         );
         this.countryNames = (
-          await call<GET__coa__list__countries__$locale>(coaApi, {
-            query: { countryCodes: null },
-            params: { locale },
-          })
+          await call(
+            coaApi,
+            new GET__coa__list__countries__$locale({
+              query: { countryCodes: null },
+              params: { locale },
+            })
+          )
         ).data;
         this.isLoadingCountryNames = false;
       }
@@ -136,9 +137,12 @@ export const coa = defineStore("coa", {
         this.addPublicationNames(
           await getChunkedRequests<GET__coa__list__publications>({
             callFn: (chunk) =>
-              call<GET__coa__list__publications>(coaApi, {
-                query: { publicationCodes: chunk },
-              }),
+              call(
+                coaApi,
+                new GET__coa__list__publications({
+                  query: { publicationCodes: chunk },
+                })
+              ),
             valuesToChunk: newPublicationCodes,
             chunkSize: 20,
           })
@@ -159,9 +163,12 @@ export const coa = defineStore("coa", {
         this.addIssueQuotations(
           await getChunkedRequests<GET__coa__quotations__publications>({
             callFn: (chunk) =>
-              call<GET__coa__quotations__publications>(coaApi, {
-                query: { publicationCodes: chunk },
-              }),
+              call(
+                coaApi,
+                new GET__coa__quotations__publications({
+                  query: { publicationCodes: chunk },
+                })
+              ),
             valuesToChunk: newPublicationCodes,
             chunkSize: 50,
           }).then((data) =>
@@ -182,9 +189,12 @@ export const coa = defineStore("coa", {
     async fetchPublicationNamesFromCountry(countrycode: string) {
       if (this.publicationNamesFullCountries.includes(countrycode)) return;
 
-      return call<GET__coa__list__publications__$countrycode>(coaApi, {
-        params: { countrycode },
-      }).then(({ data }) => {
+      return call(
+        coaApi,
+        new GET__coa__list__publications__$countrycode({
+          params: { countrycode },
+        })
+      ).then(({ data }) => {
         this.addPublicationNames({
           ...(this.publicationNames || {}),
           ...data,
@@ -210,9 +220,12 @@ export const coa = defineStore("coa", {
           ...(this.personNames || {}),
           ...(await getChunkedRequests<GET__coa__authorsfullnames__$authors>({
             callFn: (chunk) =>
-              call<GET__coa__authorsfullnames__$authors>(coaApi, {
-                params: { authors: chunk },
-              }),
+              call(
+                coaApi,
+                new GET__coa__authorsfullnames__$authors({
+                  params: { authors: chunk },
+                })
+              ),
             valuesToChunk: newPersonNames,
             chunkSize: 10,
           })),
@@ -222,9 +235,12 @@ export const coa = defineStore("coa", {
 
     async fetchIssueNumbersWithTitles(publicationcode: string) {
       this.issuesWithTitles[publicationcode] = (
-        await call<GET__coa__list__issues__withTitle>(coaApi, {
-          query: { publicationcode },
-        })
+        await call(
+          coaApi,
+          new GET__coa__list__issues__withTitle({
+            query: { publicationcode },
+          })
+        )
       ).data;
     },
 
@@ -242,9 +258,12 @@ export const coa = defineStore("coa", {
           await getChunkedRequests<GET__coa__list__issues__by_publication_codes>(
             {
               callFn: async (chunk) =>
-                call<GET__coa__list__issues__by_publication_codes>(coaApi, {
-                  query: { publicationCodes: chunk },
-                }),
+                call(
+                  coaApi,
+                  new GET__coa__list__issues__by_publication_codes({
+                    query: { publicationCodes: chunk },
+                  })
+                ),
               valuesToChunk: newPublicationCodes,
               chunkSize: 50,
             }
@@ -279,9 +298,12 @@ export const coa = defineStore("coa", {
         this.addIssueCodeDetails(
           await getChunkedRequests<POST__coa__issues__decompose>({
             callFn: (chunk) =>
-              call<POST__coa__issues__decompose>(coaApi, {
-                query: { issueCodes: chunk },
-              }),
+              call(
+                coaApi,
+                new POST__coa__issues__decompose({
+                  reqBody: { issueCodes: chunk },
+                })
+              ),
             valuesToChunk: newIssueCodes,
             chunkSize: 50,
           })
@@ -292,7 +314,7 @@ export const coa = defineStore("coa", {
     async fetchIssueCounts() {
       if (!this.issueCounts)
         this.issueCounts = (
-          await call<GET__coa__list__issues__count>(coaApi, {})
+          await call(coaApi, new GET__coa__list__issues__count({}))
         ).data;
     },
 
@@ -306,9 +328,12 @@ export const coa = defineStore("coa", {
       const issueCode = `${publicationcode} ${issuenumber}`;
       if (!this.issueDetails[issueCode]) {
         const issueDetails = (
-          await call<GET__coa__list__issues__details>(coaApi, {
-            query: { publicationcode, issuenumber },
-          })
+          await call(
+            coaApi,
+            new GET__coa__list__issues__details({
+              query: { publicationcode, issuenumber },
+            })
+          )
         ).data;
 
         this.issueDetails = {

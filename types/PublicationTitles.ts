@@ -1,3 +1,2 @@
-export interface PublicationTitles {
-  [publicationcode: string]: string | null;
-}
+type Publicationcode = string;
+export type PublicationTitles = Record<Publicationcode, string>;

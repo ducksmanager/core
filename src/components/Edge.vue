@@ -61,7 +61,7 @@ const {
   issuenumber: string;
   issuenumberReference?: string;
   creationDate?: string;
-  popularity?: number | null;
+  popularity: number | null;
   spritePath: string | null;
   existing: boolean;
   load: boolean;
