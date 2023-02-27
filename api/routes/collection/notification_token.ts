@@ -3,12 +3,10 @@ import PushNotifications from "@pusher/push-notifications-server";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    { token: string },
-    undefined,
-    undefined,
-    { user_id: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: { token: string };
+    query: { user_id: string };
+  }>
 ) => {
   if (req.query.user_id !== req.user!.username) {
     res.writeHead(401, { "Content-Type": "application/text" });

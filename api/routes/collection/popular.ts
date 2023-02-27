@@ -5,7 +5,9 @@ import { SimplePopularity } from "~types/SimplePopularity";
 
 const prisma = new PrismaClient();
 
-export const get = async (...[req, res]: ExpressCall<SimplePopularity[]>) =>
+export const get = async (
+  ...[req, res]: ExpressCall<{ resBody: SimplePopularity[] }>
+) =>
   res.json(
     (await prisma.$queryRaw`
       select issuePopularity.pays       AS country,

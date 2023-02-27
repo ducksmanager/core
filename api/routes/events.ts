@@ -20,7 +20,7 @@ import { SignupEvent } from "~types/events/SignupEvent";
 
 const prisma = new PrismaClient();
 
-export const get = async (...[, res]: ExpressCall<Event[]>) =>
+export const get = async (...[, res]: ExpressCall<{ resBody: Event[] }>) =>
   res.json(await getEvents());
 
 const getEvents = async (): Promise<Event[]> => [

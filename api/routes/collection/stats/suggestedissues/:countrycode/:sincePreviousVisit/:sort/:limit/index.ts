@@ -25,15 +25,15 @@ export enum COUNTRY_CODE_OPTION {
 }
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    SuggestionsWithDetails,
-    {
+  ...[req, res]: ExpressCall<{
+    resBody: SuggestionsWithDetails;
+    params: {
       countrycode: string;
       sincePreviousVisit: string;
       sort: string;
       limit: string;
-    }
-  >
+    };
+  }>
 ) => {
   const { countrycode, sincePreviousVisit, sort, limit } = req.params;
   const since =

@@ -9,7 +9,7 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const post = async (
-  ...[req, res]: ExpressCall<undefined, undefined, { id: number }>
+  ...[req, res]: ExpressCall<{ reqBody: { id: number } }>
 ) => {
   let bookstoreComment;
   try {

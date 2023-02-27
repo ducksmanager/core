@@ -4,15 +4,13 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    {
+  ...[req, res]: ExpressCall<{
+    resBody: {
       issuenumber: string;
       title: string | null;
-    }[],
-    undefined,
-    undefined,
-    { publicationcode: string }
-  >
+    }[];
+    query: { publicationcode: string };
+  }>
 ) => {
   const { publicationcode } = req.query as { [key: string]: string };
   if (!publicationcode) {

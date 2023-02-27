@@ -108,10 +108,10 @@ alias: [/agrandir/marketplace]
     <IssueList
       v-for="(issues, publicationcode) in issuesOnSaleByOthers"
       :key="publicationcode"
-      :publicationcode="(publicationcode as string)"
+      :publicationcode="publicationcode"
       :custom-issues="
         userIdFilter
-          ? (issues as dm_issue[])!.filter(({ userId }) => userId=== userIdFilter)
+          ? issues?.filter(({ userId }) => userId === userIdFilter) || []
           : issues
       "
       on-sale-by-others
@@ -212,7 +212,7 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
-import { issue as dm_issue } from "~prisma_clients/client_dm";
+import { issue } from "~prisma_clients/client_dm";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
@@ -222,20 +222,23 @@ let modalContactMethod = $ref(null as string | null);
 let modalIssueIds = $ref(null as number[] | null);
 
 const user = $computed(() => collection().user);
-const contactMethods = $computed(() => marketplace().contactMethods);
+const marketplaceStore = marketplace();
+const contactMethods = $computed(() => marketplaceStore.contactMethods);
 
 const issuesOnSaleByOthers = $computed(
-  () => marketplace().issuesOnSaleByOthers
+  (): Record<string, issue[]> | null => marketplaceStore.issuesOnSaleByOthers
 );
-const sentRequestIssueIds = $computed(() => marketplace().sentRequestIssueIds);
+const sentRequestIssueIds = $computed(
+  () => marketplaceStore.sentRequestIssueIds
+);
 const requestIssueIdsBySellerId = $computed(
-  () => marketplace().requestIssueIdsBySellerId
+  () => marketplaceStore.requestIssueIdsBySellerId
 );
-const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
+const issuesOnSaleById = $computed(() => marketplaceStore.issuesOnSaleById);
 const issueRequestsAsBuyer = $computed(
-  () => marketplace().issueRequestsAsBuyer
+  () => marketplaceStore.issueRequestsAsBuyer
 );
-const sellerUserNames = $computed(() => marketplace().sellerUserNames);
+const sellerUserNames = $computed(() => marketplaceStore.sellerUserNames);
 
 const publicationNames = $computed(() => coa().publicationNames);
 
@@ -245,8 +248,8 @@ let hasPublicationNames = $ref(false as boolean);
 let userIdFilter = $ref(undefined as number | undefined);
 
 const deleteRequestToSeller = async (issueId: number) => {
-  await marketplace().deleteRequestToSeller(issueId);
-  await marketplace().loadIssueRequestsAsBuyer(true);
+  await marketplaceStore.deleteRequestToSeller(issueId);
+  await marketplaceStore.loadIssueRequestsAsBuyer(true);
 };
 
 const launchModal = (e: {
@@ -261,8 +264,8 @@ const launchModal = (e: {
 };
 
 const requestIssues = async ({ issueIds }: { issueIds: number[] }) => {
-  await marketplace().requestIssues(issueIds);
-  await marketplace().loadIssueRequestsAsBuyer(true);
+  await marketplaceStore.requestIssues(issueIds);
+  await marketplaceStore.loadIssueRequestsAsBuyer(true);
 };
 
 const isRequestBooked = (thisIssueId: number) =>
@@ -270,10 +273,10 @@ const isRequestBooked = (thisIssueId: number) =>
     ?.isBooked;
 
 onMounted(async () => {
-  await marketplace().loadIssuesOnSaleByOthers();
-  await marketplace().loadIssueRequestsAsBuyer();
+  await marketplaceStore.loadIssuesOnSaleByOthers();
+  await marketplaceStore.loadIssueRequestsAsBuyer();
 
-  await users().fetchStats(marketplace().sellerUserIds);
+  await users().fetchStats(marketplaceStore.sellerUserIds);
   await coa().fetchPublicationNames(Object.keys(issuesOnSaleByOthers || {}));
   hasPublicationNames = true;
 });

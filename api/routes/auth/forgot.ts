@@ -17,7 +17,7 @@ const generateToken = (payload: string) =>
   });
 
 export const get = async (
-  ...[req, res]: ExpressCall<undefined, undefined, undefined, { token: string }>
+  ...[req, res]: ExpressCall<{ query: { token: string } }>
 ) => {
   jwt.verify(
     req.query.token,
@@ -36,7 +36,10 @@ export const get = async (
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<{ token: string }, undefined, { email: string }>
+    ...[req, res]: ExpressCall<{
+      resBody: { token: string };
+      reqBody: { email: string };
+    }>
   ) => {
     const { email } = req.body;
     if (!isValidEmail(email)) {

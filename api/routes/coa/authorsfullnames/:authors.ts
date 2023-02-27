@@ -23,10 +23,10 @@ export const getAuthorFullNames = async (
   );
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    { [_personcode: string]: string },
-    { authors: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: { [_personcode: string]: string };
+    params: { authors: string };
+  }>
 ) =>
   res.json(
     await getAuthorFullNames([...new Set(req.params.authors.split(","))])

@@ -86,23 +86,10 @@ routes.forEach((route) => {
         `export const ${realMethod} =.+?ExpressCall<( *.+?)>[ \\n]*\\) =>`,
         "gms"
       ).exec(routeFile.toString())![1];
-      const callTypeParts = callType.replaceAll("\n", "").split(/, (?!["'])/);
-      const inferredTypeParts: string[] = [];
-      const possibleParts = ["resBody", "params", "reqBody", "query"];
-      for (let idx = 0; idx < possibleParts.length; idx++) {
-        if (callTypeParts[idx] && !/undefined/.test(callTypeParts[idx])) {
-          inferredTypeParts.push(
-            `${possibleParts[idx]}: ${callTypeParts[idx]}`
-          );
-        }
-      }
-      const inferredType = inferredTypeParts.length
-        ? `{${inferredTypeParts.join(";")}}`
-        : "Record<string, never>";
 
       acc[
         routePathWithMethod
-      ] = ` extends ContractWithMethodAndUrl<${inferredType}> {
+      ] = ` extends ContractWithMethodAndUrl<${callType}> {
             static readonly method = "${method}";
             static readonly url = "${route.path}";
         }`;

@@ -66,7 +66,7 @@ const sendSuggestedIssueNotification = async (
   });
 };
 
-export const post = async (...[, res]: ExpressCall<undefined>) => {
+export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
   const suggestionsSince = dayjs().add(-7, "days");
   let notificationsSent = 0;
 

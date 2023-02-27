@@ -6,7 +6,7 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<undefined, { coverId: string }>
+  ...[req, res]: ExpressCall<{ params: { coverId: string } }>
 ) => {
   const id = parseInt(req.params.coverId);
   const cover = await prisma.cover.findUniqueOrThrow({

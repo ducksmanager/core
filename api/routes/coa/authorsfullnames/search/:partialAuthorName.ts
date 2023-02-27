@@ -4,10 +4,10 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    { [_personcode: string]: inducks_person[] },
-    { partialAuthorName: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: { [_personcode: string]: inducks_person[] };
+    params: { partialAuthorName: string };
+  }>
 ) => {
   const partialAuthorName = req.params.partialAuthorName;
 

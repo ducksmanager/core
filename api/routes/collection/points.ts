@@ -41,5 +41,6 @@ export const getMedalPoints = async (
   );
 };
 
-export const get = async (...[req, res]: ExpressCall<MedalPoints>) =>
-  res.json(await getMedalPoints([req.user!.id]));
+export const get = async (
+  ...[req, res]: ExpressCall<{ resBody: MedalPoints }>
+) => res.json(await getMedalPoints([req.user!.id]));

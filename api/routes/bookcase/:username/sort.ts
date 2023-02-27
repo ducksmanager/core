@@ -11,7 +11,10 @@ const getLastPublicationPosition = async (userId: number) =>
     })
   )._max.order || -1;
 export const get = async (
-  ...[req, res]: ExpressCall<string[], { username: string }>
+  ...[req, res]: ExpressCall<{
+    resBody: string[];
+    params: { username: string };
+  }>
 ) => {
   const user = await checkValidBookcaseUser(req.user, req.params.username);
   if (user === null) {

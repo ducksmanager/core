@@ -10,7 +10,10 @@ const parseForm = bodyParser.json();
 export const get = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<PublicationTitles, { countrycode: string }>
+    ...[req, res]: ExpressCall<{
+      resBody: PublicationTitles;
+      params: { countrycode: string };
+    }>
   ) => res.json(await getPublicationTitlesFromCountry(req.params.countrycode)),
 ];
 

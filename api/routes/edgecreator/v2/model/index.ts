@@ -4,7 +4,9 @@ import { EdgeModel } from "~types/EdgeModel";
 
 const prisma = new PrismaClient();
 
-export const get = async (...[req, res]: ExpressCall<EdgeModel[]>) =>
+export const get = async (
+  ...[req, res]: ExpressCall<{ resBody: EdgeModel[] }>
+) =>
   res.json(
     (await prisma.$queryRaw`
           select model.id,

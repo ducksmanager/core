@@ -7,11 +7,11 @@ const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    (Omit<purchase, "date"> & {
+  ...[req, res]: ExpressCall<{
+    resBody: (Omit<purchase, "date"> & {
       date: string;
-    })[]
-  >
+    })[];
+  }>
 ) => {
   return res.json(
     (
@@ -33,11 +33,9 @@ export const get = async (
 export const put = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      undefined,
-      undefined,
-      { date: string; description: string }
-    >
+    ...[req, res]: ExpressCall<{
+      reqBody: { date: string; description: string };
+    }>
   ) => {
     const { date, description } = req.body;
 

@@ -10,7 +10,7 @@ const parseForm = bodyParser.json();
 
 export const del = [
   parseForm,
-  async (...[req, res]: ExpressCall<undefined, { id: string }>) => {
+  async (...[req, res]: ExpressCall<{ params: { id: string } }>) => {
     const criteria = {
       userId: req.user!.id,
       id: parseInt(req.params.id),

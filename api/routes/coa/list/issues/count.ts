@@ -4,7 +4,7 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[, res]: ExpressCall<{ [_publicationcode: string]: number }>
+  ...[, res]: ExpressCall<{ resBody: Record<string, number> }>
 ) =>
   res.json(
     (

@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (
-  ...[, res]: ExpressCall<{ status: string | number }>
+  ...[, res]: ExpressCall<{ resBody: { status: string | number } }>
 ) => {
   const response = (
     await axios.post(

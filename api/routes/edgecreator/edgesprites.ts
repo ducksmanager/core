@@ -131,7 +131,9 @@ const generateSprites = async () => {
   await prisma.$transaction(insertOperations);
 };
 
-export const put = async (...[req, res]: ExpressCall<undefined>) => {
+export const put = async (
+  ...[req, res]: ExpressCall<Record<string, never>>
+) => {
   req.setTimeout(300_000);
   res.setTimeout(300_000);
 

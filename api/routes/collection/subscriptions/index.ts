@@ -49,13 +49,13 @@ export async function upsertSubscription(
 }
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    (Omit<subscription, "startDate" | "endDate"> & {
+  ...[req, res]: ExpressCall<{
+    resBody: (Omit<subscription, "startDate" | "endDate"> & {
       publicationcode: string;
       startDate: string;
       endDate: string;
-    })[]
-  >
+    })[];
+  }>
 ) => {
   const subscriptions = await prisma.subscription.findMany({
     where: {
@@ -76,11 +76,7 @@ export const get = async (
 export const put = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      undefined,
-      undefined,
-      { subscription: EditSubscription }
-    >
+    ...[req, res]: ExpressCall<{ reqBody: { subscription: EditSubscription } }>
   ) => {
     await upsertSubscription(null, req.body.subscription, req.user!.id);
     res.writeHead(200, { "Content-Type": "application/text" });

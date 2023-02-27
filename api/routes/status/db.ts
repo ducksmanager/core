@@ -11,7 +11,9 @@ const prismaDm = new PrismaClientDm();
 const prismaDmStats = new PrismaClientDmStats();
 const prismaEdgecreator = new PrismaClientEdgecreator();
 
-export const get = async (...[, res]: ExpressCall<{ status: string }>) => {
+export const get = async (
+  ...[, res]: ExpressCall<{ resBody: { status: string } }>
+) => {
   const checks = [
     { db: "dm", check: async () => prismaDm.user.count() },
     { db: "coverInfo", check: async () => prismaCoverInfo.cover.count() },

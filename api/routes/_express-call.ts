@@ -2,14 +2,16 @@ import { Busboy } from "busboy";
 import { Request, Response } from "express";
 
 export type ExpressCall<
-  resBody,
-  params = undefined,
-  reqBody = undefined,
-  reqQuery = undefined
+  T extends {
+    resBody?: object;
+    params?: object;
+    reqBody?: object;
+    query?: object;
+  }
 > = [
-  Request<params, resBody, reqBody, reqQuery> & {
+  Request<T["params"], T["resBody"], T["reqBody"], T["query"]> & {
     busboy: Busboy;
   },
 
-  Response<resBody>
+  Response<T["resBody"]>
 ];

@@ -4,7 +4,9 @@ import { BookcaseContributor } from "~types/BookcaseContributor";
 
 const prisma = new PrismaClient();
 
-export const get = async (...[, res]: ExpressCall<BookcaseContributor[]>) =>
+export const get = async (
+  ...[, res]: ExpressCall<{ resBody: BookcaseContributor[] }>
+) =>
   res.json(
     await prisma.$queryRaw`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text

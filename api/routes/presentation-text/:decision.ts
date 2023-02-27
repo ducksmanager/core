@@ -12,11 +12,10 @@ const parseForm = bodyParser.json();
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      undefined,
-      { decision: string },
-      { sentence: string; userId: number }
-    >
+    ...[req, res]: ExpressCall<{
+      params: { decision: string };
+      reqBody: { sentence: string; userId: number };
+    }>
   ) => {
     const { sentence, userId } = req.body;
     const { decision } = req.params;

@@ -6,7 +6,7 @@ import { getUser } from "./user";
 const prisma = new PrismaClient();
 
 export const post = async (
-  ...[req, res]: ExpressCall<{ previousVisit: Date | null }>
+  ...[req, res]: ExpressCall<{ resBody: { previousVisit: Date | null } }>
 ) => {
   const user = await getUser(req.user!.id);
   if (!user) {

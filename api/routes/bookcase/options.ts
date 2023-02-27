@@ -11,14 +11,13 @@ export const post = [
   authenticateToken,
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      { status: string },
-      undefined,
-      {
+    ...[req, res]: ExpressCall<{
+      resBody: { status: string };
+      reqBody: {
         textures: { bookcase: string; bookshelf: string };
         showAllCopies: boolean;
-      }
-    >
+      };
+    }>
   ) => {
     const { textures, showAllCopies } = req.body;
     const [, bookcaseTexture] = textures.bookcase.split("/");

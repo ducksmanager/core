@@ -32,7 +32,10 @@ export const checkValidBookcaseUser = async (
 };
 
 export const get = async (
-  ...[req, res]: ExpressCall<BookcaseEdge[], { username: string }>
+  ...[req, res]: ExpressCall<{
+    resBody: BookcaseEdge[];
+    params: { username: string };
+  }>
 ) => {
   let user: user;
   try {

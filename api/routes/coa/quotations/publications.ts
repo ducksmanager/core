@@ -9,12 +9,10 @@ const prisma = new PrismaClient();
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    inducks_issuequotation[],
-    undefined,
-    undefined,
-    { publicationCodes: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: inducks_issuequotation[];
+    query: { publicationCodes: string };
+  }>
 ) => {
   const { publicationCodes } = req.query;
   if (!publicationCodes) {

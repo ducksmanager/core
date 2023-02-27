@@ -10,7 +10,9 @@ import {
 
 const prisma = new PrismaClient();
 
-export const put = (...[req, res]: ExpressCall<CoverSearchResults>) => {
+export const put = (
+  ...[req, res]: ExpressCall<{ resBody: CoverSearchResults }>
+) => {
   req.busboy?.on("file", async (name: string, file: File) => {
     if (name !== "wtd_jpg") {
       res.writeHead(400);

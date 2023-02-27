@@ -9,9 +9,7 @@ const parseForm = bodyParser.json();
 
 export const put = [
   parseForm,
-  async (
-    ...[req, res]: ExpressCall<undefined, undefined, { issueIds: number[] }>
-  ) => {
+  async (...[req, res]: ExpressCall<{ reqBody: { issueIds: number[] } }>) => {
     const issueIds = req.body.issueIds || [];
     if (issueIds.find((issueId: number) => isNaN(issueId))) {
       res.writeHead(400);
@@ -58,9 +56,7 @@ export const put = [
 
 export const del = [
   parseForm,
-  async (
-    ...[req, res]: ExpressCall<undefined, undefined, { issueId: number }>
-  ) => {
+  async (...[req, res]: ExpressCall<{ reqBody: { issueId: number } }>) => {
     const { issueId } = req.body;
 
     await prisma.requestedIssue.deleteMany({

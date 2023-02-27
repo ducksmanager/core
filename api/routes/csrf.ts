@@ -6,9 +6,6 @@ const csrfProtection = csrf({ cookie: true });
 
 export const get = [
   csrfProtection,
-  async (
-    ...[req, res]: ExpressCall<{
-      csrfToken: string;
-    }>
-  ) => res.json({ csrfToken: req.csrfToken() }),
+  async (...[req, res]: ExpressCall<{ resBody: { csrfToken: string } }>) =>
+    res.json({ csrfToken: req.csrfToken() }),
 ];

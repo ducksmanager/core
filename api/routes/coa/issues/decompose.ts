@@ -10,11 +10,10 @@ const parseForm = bodyParser.json();
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      { [issuecode: string]: inducks_issue },
-      undefined,
-      { issueCodes: string }
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: Record<string, inducks_issue>;
+      reqBody: { issueCodes: string };
+    }>
   ) =>
     res.json(
       (
