@@ -212,7 +212,7 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
-import { issue } from "~prisma_clients/client_dm";
+import { issue as dm_issue } from "~prisma_clients/client_dm";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
@@ -226,7 +226,7 @@ const marketplaceStore = marketplace();
 const contactMethods = $computed(() => marketplaceStore.contactMethods);
 
 const issuesOnSaleByOthers = $computed(
-  (): Record<string, issue[]> | null => marketplaceStore.issuesOnSaleByOthers
+  (): Record<string, dm_issue[]> | null => marketplaceStore.issuesOnSaleByOthers
 );
 const sentRequestIssueIds = $computed(
   () => marketplaceStore.sentRequestIssueIds

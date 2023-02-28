@@ -16,7 +16,9 @@ export const addUrlParamsRequestInterceptor = <
     (config: InternalAxiosRequestConfig) => {
       if (config.url) {
         const currentUrl = new URL(config.url, config.baseURL);
-        currentUrl.pathname = Object.entries(config.urlParams || {}).reduce(
+        currentUrl.pathname = Object.entries(
+          config.urlParams || ({} as Record<string, string>)
+        ).reduce(
           (pathname, [k, v]) =>
             pathname.replace(`:${k}`, encodeURIComponent(v as string)),
           currentUrl.pathname
@@ -37,9 +39,7 @@ declare module "axios" {
   interface InternalAxiosRequestConfig {
     urlParams?: Record<string, string> | undefined;
   }
-}
 
-declare module "axios" {
   interface AxiosRequestConfig {
     urlParams?: Record<string, string> | undefined;
   }
@@ -59,8 +59,8 @@ export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
   instance.request<Contract["resBody"]>({
     method: contract.getMethod(),
     url: contract.getUrl(),
-    params: contract.call?.params || undefined,
-    // urlParams: contract.call.query || undefined,
+    params: contract.call?.query || undefined,
+    urlParams: (contract.call?.params as never) || undefined,
     data: (contract.call?.reqBody as never) || undefined,
   });
 
