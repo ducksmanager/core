@@ -106,7 +106,7 @@ alias: [/agrandir/marketplace]
       </b-form-select>
     </span>
     <IssueList
-      v-for="(issues, publicationcode) in issuesOnSaleByOthers"
+      v-for="[publicationcode, issues] in Object.entries(issuesOnSaleByOthers)"
       :key="publicationcode"
       :publicationcode="publicationcode"
       :custom-issues="

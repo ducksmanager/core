@@ -50,7 +50,7 @@
           </i18n-t>
         </b-alert>
         <SharePage
-          v-if="showShareButtons"
+          v-if="showShareButtons && bookcaseUrl"
           :title="`${$t('Bibliothèque DucksManager de')} ${bookcaseUsername}`"
           :url="bookcaseUrl"
         />

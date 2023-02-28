@@ -35,7 +35,9 @@ meta:
       "
     >
       <div
-        v-for="(issuenumbers, publicationcode) in publishedEdges"
+        v-for="[publicationcode, issuenumbers] in Object.entries(
+          publishedEdges
+        )"
         :key="publicationcode"
         class="publication"
       >
@@ -123,6 +125,7 @@ meta:
 import axios from "axios";
 import { onMounted } from "vue";
 
+import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
 import { images } from "~/stores/images";
 import { call } from "~/util/axios";
@@ -136,9 +139,7 @@ const getImagePath = images().getImagePath;
 let hasData = $ref(false as boolean);
 const show = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
-let publishedEdges = $ref(
-  null as { [publicationcode: string]: string[] } | null
-);
+let publishedEdges = $ref({} as Record<string, string[]>);
 const showEdgesForPublication = $ref([] as string[]);
 const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",
@@ -176,16 +177,22 @@ const sortedBookcase = computed(() =>
       ...acc,
       [publicationcode]: inducksIssueNumbersNoSpace[publicationcode].map(
         (issuenumber) => ({
-          id: `${publicationcode.replace("/", "-")} ${issuenumber}`,
+          id: 0,
+          issueCode: `${publicationcode}-${issuenumber}`,
           edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
             ? 1
-            : null,
+            : 0,
           publicationcode,
+          countryCode: publicationcode.split("/")[0],
+          magazineCode: publicationcode.split("/")[1],
           issuenumber,
+          issuenumberReference: issuenumber,
+          creationDate: new Date(),
+          sprites: [],
         })
       ),
     }),
-    {}
+    {} as Record<string, BookcaseEdgeWithPopularity[]>
   )
 );
 
@@ -205,7 +212,7 @@ onMounted(async () => {
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
     }),
-    {} as { [publicationcode: string]: string[] }
+    {} as Record<string, string[]>
   );
 
   await fetchPublicationNames([

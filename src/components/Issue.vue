@@ -12,7 +12,7 @@
       /></span>
       <Publication
         :publicationcode="publicationcode"
-        :publicationname="publicationname"
+        :publicationname="publicationname || publicationcode"
         display-class="d-inline"
       />{{ issuenumber }}
       <slot name="title-suffix" />
