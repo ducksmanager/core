@@ -31,7 +31,7 @@ const imports: string[] = [
   "// noinspection ES6PreferShortImport",
   "",
   'import { Prisma } from "../api/dist/prisma/client_dm";',
-  'import { ContractWithMethodAndUrl } from "~types/Call";',
+  'import { ContractWithMethodAndUrl } from "./Call";',
 ];
 imports.push(
   readdirSync("../types")
