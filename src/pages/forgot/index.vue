@@ -48,6 +48,9 @@ meta:
 import axios, { AxiosError } from "axios";
 import { useI18n } from "vue-i18n";
 
+import { call } from "~/util/axios";
+import { POST__auth__forgot } from "~types/routes";
+
 let error = $ref(null as unknown | string | null);
 
 const email = $ref("" as string);
@@ -56,11 +59,8 @@ const { t: $t } = useI18n();
 
 const sendPasswordToken = async () => {
   try {
-    token = (
-      await POST__auth__forgot(axios, {
-        data: { email },
-      })
-    ).data.token;
+    token = (await call(axios, new POST__auth__forgot({ reqBody: { email } })))
+      .data.token;
   } catch (e) {
     error = (e as AxiosError)?.response?.data || "Error";
   }

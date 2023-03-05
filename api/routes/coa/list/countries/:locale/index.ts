@@ -4,12 +4,11 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    { [_countrycode: string]: string },
-    { locale: string },
-    undefined,
-    { countryCodes: string | null }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: { [_countrycode: string]: string };
+    params: { locale: string };
+    query: { countryCodes: string | null };
+  }>
 ) =>
   res.json(
     await getCountryNames(

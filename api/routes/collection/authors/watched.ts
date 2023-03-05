@@ -42,7 +42,9 @@ const upsertAuthorUser = async (
   }
 };
 
-export const get = async (...[req, res]: ExpressCall<authorUser[]>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<{ resBody: authorUser[] }>
+) => {
   const authorsUsers = await prisma.authorUser.findMany({
     where: { userId: req.user!.id },
   });
@@ -51,9 +53,7 @@ export const get = async (...[req, res]: ExpressCall<authorUser[]>) => {
 
 export const put = [
   parseForm,
-  async (
-    ...[req, res]: ExpressCall<undefined, undefined, { personcode: string }>
-  ) => {
+  async (...[req, res]: ExpressCall<{ reqBody: { personcode: string } }>) => {
     try {
       await upsertAuthorUser(req.body.personcode, req.user!.id);
       res.writeHead(200, { "Content-Type": "application/text" });
@@ -69,11 +69,9 @@ export const put = [
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      undefined,
-      undefined,
-      { personcode: string; notation: number }
-    >
+    ...[req, res]: ExpressCall<{
+      reqBody: { personcode: string; notation: number };
+    }>
   ) => {
     try {
       await upsertAuthorUser(
@@ -93,9 +91,7 @@ export const post = [
 
 export const del = [
   parseForm,
-  async (
-    ...[req, res]: ExpressCall<undefined, undefined, { personcode: string }>
-  ) => {
+  async (...[req, res]: ExpressCall<{ reqBody: { personcode: string } }>) => {
     const { personcode } = req.body;
     if (!personcode) {
       res.writeHead(400);

@@ -72,6 +72,8 @@ import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";
+import { call } from "~/util/axios";
+import { GET__collection__stats__watchedauthorsstorycount } from "~types/routes";
 
 Chart.register(
   Legend,
@@ -199,7 +201,7 @@ watch(
 onMounted(async () => {
   await collectionStore().loadWatchedAuthors();
   watchedAuthorsStoryCount = ((
-    await GET__collection__stats__watchedauthorsstorycount(axios)
+    await call(axios, new GET__collection__stats__watchedauthorsstorycount())
   ).data || {}) as WatchedAuthorsStoryCount;
 });
 </script>

@@ -7,13 +7,13 @@ import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    {
+  ...[req, res]: ExpressCall<{
+    resBody: {
       points: MedalPoints;
       stats: SimpleUserWithQuickStats[];
-    },
-    { userIds: string }
-  >
+    };
+    params: { userIds: string };
+  }>
 ) => {
   const userIds = req.params.userIds
     .split(",")

@@ -12,7 +12,7 @@
       /></span>
       <Publication
         :publicationcode="publicationcode"
-        :publicationname="publicationname"
+        :publicationname="publicationname || publicationcode"
         display-class="d-inline"
       />{{ issuenumber }}
       <slot name="title-suffix" />
@@ -29,7 +29,7 @@ const {
   flex = true,
 } = defineProps<{
   publicationcode: string;
-  publicationname: string;
+  publicationname: string | null;
   issuenumber: string;
   clickable?: boolean;
   hideCondition?: boolean;

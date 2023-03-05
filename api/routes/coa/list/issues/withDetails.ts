@@ -5,12 +5,10 @@ import { IssueCoverDetails } from "~types/IssueCoverDetails";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    { [_issuenumber: string]: IssueCoverDetails[] },
-    undefined,
-    undefined,
-    { publicationCodes: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: { [_issuenumber: string]: IssueCoverDetails[] };
+    query: { publicationCodes: string };
+  }>
 ) => {
   const publicationCodes = req.query.publicationCodes?.split(",") || [];
   if (publicationCodes.length > 10) {

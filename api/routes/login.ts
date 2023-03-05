@@ -12,11 +12,10 @@ const parseForm = bodyParser.json();
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      { token: string },
-      undefined,
-      { username: string; password: string }
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: { token: string };
+      reqBody: { username: string; password: string };
+    }>
   ) => {
     const { username, password } = req.body;
     const hashedPassword = getHashedPassword(password);

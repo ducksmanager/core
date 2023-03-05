@@ -67,11 +67,10 @@ const addOrChangeCopies = async (
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      TransactionResults,
-      undefined,
-      CollectionUpdateSingleIssue
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: TransactionResults;
+      reqBody: CollectionUpdateSingleIssue;
+    }>
   ) => {
     const user = req.user!;
     const { body }: { body: CollectionUpdateSingleIssue } = req;

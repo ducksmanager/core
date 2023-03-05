@@ -3,7 +3,9 @@ import { ExpressCall } from "~routes/_express-call";
 
 const prisma = new PrismaClient();
 
-export const get = async (...[, res]: ExpressCall<inducks_issue[]>) =>
+export const get = async (
+  ...[, res]: ExpressCall<{ resBody: inducks_issue[] }>
+) =>
   res.json(
     await prisma.inducks_issue.findMany({
       where: {

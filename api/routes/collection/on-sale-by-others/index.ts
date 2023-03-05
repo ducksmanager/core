@@ -4,7 +4,7 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<{ [_publicationcode: string]: issue[] }>
+  ...[req, res]: ExpressCall<{ resBody: Record<string, issue[]> }>
 ) => res.json(await getIssuesForSale(req.user!.id));
 
 export const getIssuesForSale: (
@@ -59,6 +59,6 @@ export const getIssuesForSale: (
         issue,
       ],
     }),
-    {} as { [publicationcode: string]: issue[] }
+    {} as Record<string, issue[]>
   );
 };

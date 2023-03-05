@@ -14,11 +14,10 @@ const parseForm = bodyParser.json();
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      { token: string },
-      undefined,
-      { password: string; password2: string; token: string }
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: { token: string };
+      reqBody: { password: string; password2: string; token: string };
+    }>
   ) => {
     const { password, password2, token } = req.body;
     jwt.verify(

@@ -87,7 +87,13 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
+import { call } from "~/util/axios";
 import { EditSubscription } from "~types/EditSubscription";
+import {
+  DELETE__collection__subscriptions__$id,
+  POST__collection__subscriptions__$id,
+  PUT__collection__subscriptions,
+} from "~types/routes";
 
 type AssociatedPublication = {
   referencePublicationcode: string;
@@ -118,15 +124,18 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const loadSubscriptions = collection().loadSubscriptions;
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await PUT__collection__subscriptions(axios, {
-    data: {
-      subscription: {
-        ...subscription,
-        startDate: subscription.startDate.toISOString().split("Z")[0],
-        endDate: subscription.endDate.toISOString().split("Z")[0],
+  await call(
+    axios,
+    new PUT__collection__subscriptions({
+      reqBody: {
+        subscription: {
+          ...subscription,
+          startDate: subscription.startDate.toISOString().split("Z")[0],
+          endDate: subscription.endDate.toISOString().split("Z")[0],
+        },
       },
-    },
-  });
+    })
+  );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
@@ -144,17 +153,23 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: EditSubscription) => {
-  await POST__collection__subscriptions__$id(axios, {
-    data: { subscription },
-    urlParams: { id: String(subscription.id) },
-  });
+  await call(
+    axios,
+    new POST__collection__subscriptions__$id({
+      reqBody: { subscription },
+      params: { id: String(subscription.id) },
+    })
+  );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await DELETE__collection__subscriptions__$id(axios, {
-    urlParams: { id: String(id) },
-  });
+  await call(
+    axios,
+    new DELETE__collection__subscriptions__$id({
+      params: { id: String(id) },
+    })
+  );
   await loadSubscriptions(true);
   currentSubscription = null;
 };

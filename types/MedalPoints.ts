@@ -1,3 +1,3 @@
 export interface MedalPoints {
-  [p: number]: { [p: string]: number };
+  [userId: number]: { [p: string]: number };
 }

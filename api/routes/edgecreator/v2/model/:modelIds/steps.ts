@@ -5,7 +5,10 @@ import { ModelSteps } from "~types/ModelSteps";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<ModelSteps, { modelIds: string }>
+  ...[req, res]: ExpressCall<{
+    resBody: ModelSteps;
+    params: { modelIds: string };
+  }>
 ) =>
   res.json(
     (

@@ -4,7 +4,10 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<requestedIssue[], { as: string }>
+  ...[req, res]: ExpressCall<{
+    resBody: requestedIssue[];
+    params: { as: "buyer" | "seller" };
+  }>
 ) => {
   const as = req.params.as;
   if (!["buyer", "seller"].includes(as)) {

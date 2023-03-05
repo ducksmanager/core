@@ -5,12 +5,10 @@ import { SimpleIssue } from "~types/SimpleIssue";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    SimpleIssue[],
-    undefined,
-    undefined,
-    { publicationCodes: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: SimpleIssue[];
+    query: { publicationCodes: string };
+  }>
 ) => {
   const publicationCodes = req.query.publicationCodes?.split(",") || [];
   if (publicationCodes.length > 50) {

@@ -45,7 +45,9 @@ const getMissingStoryCountPerAuthor = async (
     {}
   );
 
-export const get = async (...[req, res]: ExpressCall<AuthorsDetails>) => {
+export const get = async (
+  ...[req, res]: ExpressCall<{ resBody: AuthorsDetails }>
+) => {
   const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
     req.user!.id
   );

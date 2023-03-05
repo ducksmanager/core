@@ -35,7 +35,9 @@
             /></a>
             <Issue
               :publicationcode="publicationcode"
-              :publicationname="publicationNames[publicationcode]"
+              :publicationname="
+                publicationNames[publicationcode] || publicationcode
+              "
               :issuenumber="issuenumber"
             />
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
@@ -103,6 +105,7 @@
 </template>
 
 <script setup lang="ts">
+import { useToast } from "bootstrap-vue-next";
 import { PageFlip } from "page-flip";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";

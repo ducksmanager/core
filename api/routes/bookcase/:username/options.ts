@@ -3,16 +3,16 @@ import { ExpressCall } from "~routes/_express-call";
 import { checkValidBookcaseUser } from "./index";
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    {
+  ...[req, res]: ExpressCall<{
+    resBody: {
       textures: {
         bookcase: string;
         bookshelf: string;
       };
       showAllCopies: boolean;
-    },
-    { username: string }
-  >
+    };
+    params: { username: string };
+  }>
 ) => {
   const user = await checkValidBookcaseUser(req.user, req.params.username);
   if (user !== null) {

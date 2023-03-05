@@ -9,12 +9,10 @@ export const getPublicationTitlesFromCodes = async (
 ) => await getPublicationTitles({ in: publicationCodes });
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    PublicationTitles,
-    undefined,
-    undefined,
-    { publicationCodes: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: PublicationTitles;
+    query: { publicationCodes: string };
+  }>
 ) => {
   const publicationCodes = req.query.publicationCodes?.split(",") || "";
   if (publicationCodes.length > 20) {

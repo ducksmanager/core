@@ -33,10 +33,9 @@ import { onMounted } from "vue";
 import { users } from "~/stores/users";
 
 const count = $computed(() => users().count);
-const fetchCount = users().fetchCount;
 
 onMounted(async () => {
-  await fetchCount();
+  await users().fetchCount();
 });
 </script>
 

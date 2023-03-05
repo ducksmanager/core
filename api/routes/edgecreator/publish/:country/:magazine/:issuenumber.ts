@@ -141,17 +141,17 @@ const publishEdgeOnDm = async (
 export const put = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      {
+    ...[req, res]: ExpressCall<{
+      resBody: {
         publicationcode: string;
         issuenumber: string;
         edgeId: number;
         contributors: number[];
         url: string;
-      },
-      { country: string; magazine: string; issuenumber: string },
-      { designers: string[]; photographers: string[] }
-    >
+      };
+      params: { country: string; magazine: string; issuenumber: string };
+      reqBody: { designers: string[]; photographers: string[] };
+    }>
   ) => {
     const publicationcode = `${req.params.country}/${req.params.magazine}`;
     if (!isValidPublicationcode(publicationcode)) {

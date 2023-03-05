@@ -63,6 +63,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
+import { call } from "~/util/axios";
+import { GET__csrf, POST__login } from "~types/routes";
 
 const collectionStore = collection();
 
@@ -75,7 +77,7 @@ let error = $ref(null as string | null);
 let password = $ref("" as string);
 
 onMounted(async () => {
-  csrfToken = (await GET__csrf(axios)).data?.csrfToken;
+  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
 });
 
 const login = async () => {
@@ -83,12 +85,15 @@ const login = async () => {
     Cookies.set(
       "token",
       (
-        await POST__login(axios, {
-          data: {
-            username,
-            password,
-          },
-        })
+        await call(
+          axios,
+          new POST__login({
+            reqBody: {
+              username,
+              password,
+            },
+          })
+        )
       ).data.token,
       {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,

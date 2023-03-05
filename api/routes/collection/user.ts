@@ -19,7 +19,7 @@ export const getUser = async (id: number) =>
   });
 
 export const get = async (
-  ...[req, res]: ExpressCall<Omit<user, "password">>
+  ...[req, res]: ExpressCall<{ resBody: Omit<user, "password"> }>
 ) => {
   const userWithoutPassword = exclude<user, "password">(
     await getUser(req.user!.id),
@@ -32,7 +32,9 @@ export const get = async (
   return res.json(userWithoutPassword);
 };
 
-export const del = async (...[req, res]: ExpressCall<undefined>) => {
+export const del = async (
+  ...[req, res]: ExpressCall<Record<string, never>>
+) => {
   const userId = req.user!.id;
   await prisma.issue.deleteMany({
     where: { userId },
@@ -57,13 +59,12 @@ export const del = async (...[req, res]: ExpressCall<undefined>) => {
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      {
+    ...[req, res]: ExpressCall<{
+      resBody: {
         hasRequestedPresentationSentenceUpdate: boolean;
-      },
-      undefined,
-      UserForAccountForm
-    >
+      };
+      reqBody: UserForAccountForm;
+    }>
   ) => {
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
@@ -127,9 +128,9 @@ export const post = [
 ];
 
 const validate = async (
-  input: { [key: string]: unknown },
+  input: Record<string, unknown>,
   res: Response,
-  validators: ((input: { [key: string]: unknown }) => void)[]
+  validators: ((input: Record<string, unknown>) => void)[]
 ): Promise<boolean> => {
   for (const validator of validators) {
     try {
@@ -147,16 +148,14 @@ const validate = async (
 export const put = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      { token: string },
-      undefined,
-      {
+    ...[req, res]: ExpressCall<{
+      resBody: { token: string };
+      reqBody: {
         username: string;
         password: string;
         email: string;
-        [key: string]: unknown;
-      }
-    >
+      } & Record<string, unknown>;
+    }>
   ) => {
     const isValid = await validate(req.body, res, [
       validateUsername,

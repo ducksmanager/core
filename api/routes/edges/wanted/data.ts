@@ -4,7 +4,7 @@ import { WantedEdge } from "~types/WantedEdge";
 
 const prisma = new PrismaClient();
 
-export const get = async (...[, res]: ExpressCall<WantedEdge[]>) =>
+export const get = async (...[, res]: ExpressCall<{ resBody: WantedEdge[] }>) =>
   res.json(
     (await prisma.$queryRaw`
       SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber

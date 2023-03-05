@@ -11,11 +11,10 @@ export const post = [
   authenticateToken,
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      { max: number } | undefined,
-      undefined,
-      { sorts: string[] }
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: { max: number } | undefined;
+      reqBody: { sorts: string[] };
+    }>
   ) => {
     const sorts = req.body.sorts;
     if (sorts.length) {

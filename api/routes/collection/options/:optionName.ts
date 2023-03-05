@@ -20,7 +20,10 @@ export const optionNameToEnum = (
 };
 
 export const get = async (
-  ...[req, res]: ExpressCall<string[], { optionName: userOptionType }>
+  ...[req, res]: ExpressCall<{
+    resBody: string[];
+    params: { optionName: userOptionType };
+  }>
 ) => {
   const optionName = optionNameToEnum(req.params.optionName);
   if (!optionName) {
@@ -43,11 +46,10 @@ export const get = async (
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      undefined,
-      { optionName: string },
-      { values: string[] }
-    >
+    ...[req, res]: ExpressCall<{
+      params: { optionName: string };
+      reqBody: { values: string[] };
+    }>
   ) => {
     const optionName = optionNameToEnum(req.params.optionName);
     if (!optionName) {

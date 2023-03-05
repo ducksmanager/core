@@ -27,15 +27,13 @@ const getEntries = async (
   `;
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    {
+  ...[req, res]: ExpressCall<{
+    resBody: {
       releaseDate: string;
       entries: SimpleEntry[];
-    },
-    undefined,
-    undefined,
-    { publicationcode: string; issuenumber: string }
-  >
+    };
+    query: { publicationcode: string; issuenumber: string };
+  }>
 ) => {
   const { publicationcode, issuenumber } = req.query;
 

@@ -1,34 +1,39 @@
-import { AxiosInstance, AxiosResponse } from "axios";
-import { AxiosCacheInstance } from "axios-cache-interceptor";
-
-export type TypedConfig<MyCall extends Call<unknown>> = {
-  urlParams?: MyCall["params"];
-  data?: MyCall["reqBody"];
-  params?: MyCall["query"];
-};
-
 export type Call<
   ResBody,
   Params = Record<string, string> | undefined,
   ReqBody = unknown,
   Query = unknown
 > = {
-  resBody: ResBody;
+  resBody?: ResBody;
   params?: Params;
-  reqBody: ReqBody;
-  query: Query;
+  reqBody?: ReqBody;
+  query?: Query;
 };
 
-export const call = <MyCall extends Call<unknown>>(
-  method: string,
-  url: string,
-  instance: AxiosInstance | AxiosCacheInstance,
-  config?: TypedConfig<MyCall>
-): Promise<AxiosResponse<MyCall["resBody"]>> =>
-  instance.request<MyCall["resBody"]>({
-    method,
-    url,
-    urlParams: config?.urlParams,
-    params: config?.params,
-    data: config?.data as never,
-  });
+export type CallWithoutResBody<
+  Params = Record<string, string> | undefined,
+  ReqBody = unknown,
+  Query = unknown
+> = {
+  params?: Params;
+  reqBody?: ReqBody;
+  query?: Query;
+};
+
+export abstract class ContractWithMethodAndUrl<T extends Call<unknown>> {
+  constructor(t?: Omit<T, "resBody">) {
+    if (t) {
+      this.call = { params: t.params, query: t.query, reqBody: t.reqBody };
+    }
+  }
+  public getMethod = (): string =>
+    (this.constructor as typeof ContractWithMethodAndUrl).method;
+  public getUrl = (): string =>
+    (this.constructor as typeof ContractWithMethodAndUrl).url;
+
+  static readonly method: "get" | "post" | "put" | "delete";
+  static readonly url: string;
+  call?: CallWithoutResBody;
+
+  resBody!: T["resBody"];
+}

@@ -41,10 +41,10 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
 };
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    { [issuecode: string]: SimpleIssueWithPublication },
-    { issueCodes: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: Record<string, SimpleIssueWithPublication>;
+    params: { issueCodes: string };
+  }>
 ) => {
   const issueCodes = req.params.issueCodes?.split(",") || [];
 

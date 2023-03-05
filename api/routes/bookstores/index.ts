@@ -12,8 +12,9 @@ const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
-export const get = async (...[, res]: ExpressCall<SimpleBookstore[]>) =>
-  res.json(await getActiveBookstores());
+export const get = async (
+  ...[, res]: ExpressCall<{ resBody: SimpleBookstore[] }>
+) => res.json(await getActiveBookstores());
 
 const getActiveBookstores = async () =>
   await prisma.bookstore.findMany({
@@ -41,11 +42,10 @@ const getActiveBookstores = async () =>
 export const put = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      bookstoreComment,
-      undefined,
-      { id?: string; bookstore: SimpleBookstore }
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: bookstoreComment;
+      reqBody: { id?: string; bookstore: SimpleBookstore };
+    }>
   ) => {
     const { bookstore } = req.body;
     const {

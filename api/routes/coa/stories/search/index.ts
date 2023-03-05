@@ -61,11 +61,10 @@ export const getStoriesByKeywords = async (
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      { results: StorySearchResults },
-      undefined,
-      { keywords: string }
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: { results: StorySearchResults };
+      reqBody: { keywords: string };
+    }>
   ) => {
     if (!req.body.keywords) {
       res.writeHead(400);

@@ -7,7 +7,7 @@ meta:
 <template>
   <div v-if="ready">
     <print-header />
-    <table class="collectable">
+    <table v-if="issuesPerCell" class="collectable">
       <tr v-for="line in lines" :key="line">
         <td />
         <td v-for="subrange in numbersPerRow" :key="subrange">
@@ -30,7 +30,7 @@ meta:
           </td>
           <td v-for="subrange in numbersPerRow" :key="subrange">
             <span
-              v-for="letter in issuesPerCell![publicationcode][
+              v-for="letter in issuesPerCell[publicationcode][
                 (line - 1) * numbersPerRow + subrange
               ]"
               :key="letter"
@@ -44,16 +44,16 @@ meta:
         </tr>
         <tr v-for="fakeloop in 1" :key="`${publicationcode}-${fakeloop}`">
           <td
-            v-if="issuesPerCell![publicationcode]['non-numeric'].length"
+            v-if="issuesPerCell[publicationcode]['non-numeric'].length"
             :colspan="numbersPerRow"
           >
             Autres :
-            {{ issuesPerCell![publicationcode]["non-numeric"].join(", ") }}
+            {{ issuesPerCell[publicationcode]["non-numeric"].join(", ") }}
           </td>
         </tr>
       </template>
     </table>
-    <table class="legends">
+    <table v-if="maxLetter" class="legends">
       <tr>
         <td class="issue-legend">
           <table>
@@ -64,7 +64,7 @@ meta:
             </tr>
             <tr
               v-for="i of Object.keys(
-                Math.floor(letterToNumber(maxLetter as string) / 6) + 1
+                Math.floor(letterToNumber(maxLetter) / 6) + 1
               ).map((number) => Number(number))"
               :key="i"
             >
@@ -90,14 +90,16 @@ meta:
               </td>
             </tr>
             <tr
-              v-for="(publicationName, publicationcode) in publicationNames"
+              v-for="[publicationcode, publicationName] in Object.entries(
+                publicationNames
+              )"
               :key="publicationcode"
             >
               <td>
                 <Publication
-                  :publicationcode="(publicationcode as string)"
+                  :publicationcode="publicationcode"
                   :publicationname="`${
-                    (publicationcode as String).split('/')[1]
+                    publicationcode.split('/')[1]
                   } : ${publicationName}`"
                 />
               </td>

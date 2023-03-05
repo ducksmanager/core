@@ -87,11 +87,10 @@ const addOrChangeIssues = async (
 export const post = [
   parseForm,
   async (
-    ...[req, res]: ExpressCall<
-      TransactionResults,
-      undefined,
-      CollectionUpdateMultipleIssues
-    >
+    ...[req, res]: ExpressCall<{
+      resBody: TransactionResults;
+      reqBody: CollectionUpdateMultipleIssues;
+    }>
   ) => {
     const user = req.user!;
     const { body }: { body: CollectionUpdateMultipleIssues } = req;

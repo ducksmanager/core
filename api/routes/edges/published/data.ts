@@ -4,7 +4,9 @@ import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[, res]: ExpressCall<Pick<edge, "publicationcode" | "issuenumber">[]>
+  ...[, res]: ExpressCall<{
+    resBody: Pick<edge, "publicationcode" | "issuenumber">[];
+  }>
 ) =>
   res.json(
     await prisma.edge.findMany({

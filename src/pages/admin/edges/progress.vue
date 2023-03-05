@@ -35,74 +35,67 @@ meta:
       "
     >
       <div
-        v-for="(issuenumbers, publicationcode) in publishedEdges"
+        v-for="[publicationcode, issuenumbers] in Object.entries(
+          publishedEdges
+        )"
         :key="publicationcode"
         class="publication"
       >
         <i-bi-eye-fill
-          v-if="!showEdgesForPublication.includes(publicationcode as string)"
-          @click="showEdgesForPublication.push(publicationcode as string)"
+          v-if="!showEdgesForPublication.includes(publicationcode)"
+          @click="showEdgesForPublication.push(publicationcode)"
         />
         <i-bi-eye-slash-fill
           v-else
           @click="
             showEdgesForPublication.splice(
-              showEdgesForPublication.indexOf(publicationcode as string),
+              showEdgesForPublication.indexOf(publicationcode),
               1
             )
           "
         />
         <Publication
-          :publicationcode="(publicationcode as string)"
-          :publicationname="publicationNames[publicationcode]"
+          :publicationcode="publicationcode"
+          :publicationname="
+            publicationNames[publicationcode] || publicationcode
+          "
         />
         <div v-if="inducksIssueNumbersNoSpace[publicationcode]">
           <Bookcase
-            v-if="showEdgesForPublication.includes(publicationcode as string)"
+            v-if="showEdgesForPublication.includes(publicationcode)"
             :bookcase-textures="bookcaseTextures"
-            :sorted-bookcase="
-              (inducksIssueNumbersNoSpace[publicationcode] as string[]).map(
-                (issuenumber: string) => ({
-                  id: `${(publicationcode as string).replace('/', '-')} ${issuenumber}`,
-                  edgeId: (issuenumbers as string[])!.includes(issuenumber as string) ? 1 : null,
-                  publicationcode,
-                  issuenumber,
-                })
-              )
-            "
+            :sorted-bookcase="sortedBookcase[publicationcode]"
           />
           <span
             v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[
               publicationcode
             ]"
             v-else
-            :key="`${publicationcode as string}-${inducksIssueNumber}`"
+            :key="`${publicationcode}-${inducksIssueNumber}`"
           >
             <span
-              v-if="!(issuenumbers as string[])?.includes(inducksIssueNumber as string)"
+              v-if="!issuenumbers?.includes(inducksIssueNumber)"
               class="num bordered"
-              :title="(inducksIssueNumber as string)"
+              :title="inducksIssueNumber"
               >&nbsp;</span
             >
             <span
               v-else-if="!show"
               class="num bordered available"
-              :title="(inducksIssueNumber as string)"
-              @click="
-                open(publicationcode as string, inducksIssueNumber as string)
-              "
+              :title="inducksIssueNumber"
+              @click="open(publicationcode, inducksIssueNumber)"
               >&nbsp;</span
             >
             <img
               v-else
-              :src="getEdgeUrl(publicationcode as string, inducksIssueNumber as string)"
+              :src="getEdgeUrl(publicationcode, inducksIssueNumber)"
             />
           </span>
         </div>
         <div v-else>
           Certaines tranches de cette publication sont prêtes mais la
           publication n'existe plus sur Inducks :
-          {{ (issuenumbers as string[])!.join(", ") }}
+          {{ issuenumbers.join(", ") }}
         </div>
       </div>
       <br /><br />
@@ -110,7 +103,7 @@ meta:
         >{{
           Object.keys(publishedEdges).reduce(
             (acc, publicationcode) =>
-              acc + publishedEdges![publicationcode].length,
+              acc + publishedEdges[publicationcode].length,
             0
           )
         }}
@@ -132,17 +125,21 @@ meta:
 import axios from "axios";
 import { onMounted } from "vue";
 
+import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
 import { images } from "~/stores/images";
+import { call } from "~/util/axios";
+import {
+  GET__edges__published__data,
+  GET__edges__wanted__data,
+} from "~types/routes";
 import { WantedEdge } from "~types/WantedEdge";
 const getImagePath = images().getImagePath;
 
 let hasData = $ref(false as boolean);
 const show = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
-let publishedEdges = $ref(
-  null as { [publicationcode: string]: string[] } | null
-);
+let publishedEdges = $ref({} as Record<string, string[]>);
 const showEdgesForPublication = $ref([] as string[]);
 const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",
@@ -152,7 +149,7 @@ const bookcaseTextures = $ref({
 const publicationNames = $computed(() => coa().publicationNames);
 const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchIssueNumbers = coa().fetchIssueNumbers;
-const getEdgeUrl = (publicationcode: string, issuenumber: string) => {
+const getEdgeUrl = (publicationcode: string, issuenumber: string): string => {
   const [country, magazine] = publicationcode.split("/");
   return `${
     import.meta.env.VITE_EDGES_ROOT
@@ -170,30 +167,52 @@ const inducksIssueNumbersNoSpace = $computed(() =>
         (issuenumber) => issuenumber.replace(/ /g, "")
       ),
     }),
-    {} as { [publicationcode: string]: string[] }
+    {} as Record<string, string[]>
+  )
+);
+
+const sortedBookcase = computed(() =>
+  Object.keys(showEdgesForPublication).reduce(
+    (acc, publicationcode) => ({
+      ...acc,
+      [publicationcode]: inducksIssueNumbersNoSpace[publicationcode].map(
+        (issuenumber) => ({
+          id: 0,
+          issueCode: `${publicationcode}-${issuenumber}`,
+          edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
+            ? 1
+            : 0,
+          publicationcode,
+          countryCode: publicationcode.split("/")[0],
+          magazineCode: publicationcode.split("/")[1],
+          issuenumber,
+          issuenumberReference: issuenumber,
+          creationDate: new Date(),
+          sprites: [],
+        })
+      ),
+    }),
+    {} as Record<string, BookcaseEdgeWithPopularity[]>
   )
 );
 
 onMounted(async () => {
-  mostWanted = (
-    (await GET__edges__wanted__data(axios)).data as WantedEdge[]
-  ).map((mostWantedIssue) => ({
-    ...mostWantedIssue,
-    country: mostWantedIssue.publicationcode.split("/")[0],
-    magazine: mostWantedIssue.publicationcode.split("/")[1],
-  }));
+  mostWanted = (await call(axios, new GET__edges__wanted__data())).data.map(
+    (mostWantedIssue) => ({
+      ...mostWantedIssue,
+      country: mostWantedIssue.publicationcode.split("/")[0],
+      magazine: mostWantedIssue.publicationcode.split("/")[1],
+    })
+  );
 
   publishedEdges = (
-    (await GET__edges__published__data(axios)).data as {
-      publicationcode: string;
-      issuenumber: string;
-    }[]
-  ).reduce(
+    await call(axios, new GET__edges__published__data())
+  ).data.reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
     }),
-    {} as { [publicationcode: string]: string[] }
+    {} as Record<string, string[]>
   );
 
   await fetchPublicationNames([

@@ -5,12 +5,10 @@ import { SimpleIssue } from "~types/SimpleIssue";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    SimpleIssue[],
-    undefined,
-    undefined,
-    { storycode: string }
-  >
+  ...[req, res]: ExpressCall<{
+    resBody: SimpleIssue[];
+    query: { storycode: string };
+  }>
 ) =>
   res.json(
     (await prisma.$queryRaw`

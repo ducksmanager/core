@@ -5,8 +5,10 @@ const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
-    userScores: { userId: number; averageRarity: number }[];
-    myScore: number;
+    resBody: {
+      userScores: { userId: number; averageRarity: number }[];
+      myScore: number;
+    };
   }>
 ) => {
   const userCount = await prisma.user.count();

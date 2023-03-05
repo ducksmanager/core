@@ -6,12 +6,12 @@ import { getIssuesForSale } from "../index";
 const prisma = new PrismaClient();
 
 export const get = async (
-  ...[req, res]: ExpressCall<
-    {
+  ...[req, res]: ExpressCall<{
+    resBody: {
       [_contactMethod: string]: string | number;
-    },
-    { sellerId: string }
-  >
+    };
+    params: { sellerId: string };
+  }>
 ) => {
   const sellerId = parseInt(req.params.sellerId);
   const issuesForSale = await getIssuesForSale(req.user!.id);

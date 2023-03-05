@@ -3,7 +3,9 @@ import { ExpressCall } from "~routes/_express-call";
 
 const prisma = new PrismaClient();
 
-export const post = async (...[req, res]: ExpressCall<undefined>) => {
+export const post = async (
+  ...[req, res]: ExpressCall<Record<string, never>>
+) => {
   await prisma.issue.deleteMany({
     where: { userId: req.user!.id },
   });
