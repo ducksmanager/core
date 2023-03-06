@@ -13,7 +13,7 @@ export const get = async (
   res.json(
     await getCountryNames(
       req.params.locale,
-      req.query.countryCodes?.split(",") || null
+      req.query.countryCodes ? req.query.countryCodes.split(",") : null
     )
   );
 
@@ -36,7 +36,7 @@ const getCountryNames = async (
                  LEFT JOIN inducks_countryname on inducks_country.countrycode = inducks_countryname.countrycode
         WHERE languagecode = '${locale}'
           AND ${
-            countryIds
+            countryIds?.length
               ? `inducks_country.countrycode IN (${Prisma.join(countryIds)})`
               : `inducks_country.countrycode != 'zz'`
           }`)
