@@ -56,6 +56,7 @@ declare global {
   const GET__csrf: typeof import('./types/routes')['GET__csrf']
   const GET__edgecreator__v2__model: typeof import('./types/routes')['GET__edgecreator__v2__model']
   const GET__edgecreator__v2__model__$modelIds__steps: typeof import('./types/routes')['GET__edgecreator__v2__model__$modelIds__steps']
+  const GET__edges__$countrycode__$magazinecode__$issuenumbers: typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']
   const GET__edges__published__data: typeof import('./types/routes')['GET__edges__published__data']
   const GET__edges__wanted__data: typeof import('./types/routes')['GET__edges__wanted__data']
   const GET__events: typeof import('./types/routes')['GET__events']
@@ -429,6 +430,7 @@ declare module 'vue' {
     readonly GET__csrf: UnwrapRef<typeof import('./types/routes')['GET__csrf']>
     readonly GET__edgecreator__v2__model: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model']>
     readonly GET__edgecreator__v2__model__$modelIds__steps: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model__$modelIds__steps']>
+    readonly GET__edges__$countrycode__$magazinecode__$issuenumbers: UnwrapRef<typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']>
     readonly GET__edges__published__data: UnwrapRef<typeof import('./types/routes')['GET__edges__published__data']>
     readonly GET__edges__wanted__data: UnwrapRef<typeof import('./types/routes')['GET__edges__wanted__data']>
     readonly GET__events: UnwrapRef<typeof import('./types/routes')['GET__events']>
