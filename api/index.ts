@@ -53,6 +53,11 @@ app.all(/^\/edgecreator\/(.+)/, [
   checkUserIsEdgeCreatorEditor,
 ]);
 
+app.all(/^\/global-stats\/user\/list$/, [
+  authenticateToken,
+  checkUserIsEdgeCreatorEditor,
+]);
+
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all("/global-stats/user/collection/rarity", authenticateToken);
 

@@ -55,6 +55,7 @@ declare global {
   const GET__cover_id__download__$coverId: typeof import('./types/routes')['GET__cover_id__download__$coverId']
   const GET__csrf: typeof import('./types/routes')['GET__csrf']
   const GET__edgecreator__v2__model: typeof import('./types/routes')['GET__edgecreator__v2__model']
+  const GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber: typeof import('./types/routes')['GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber']
   const GET__edgecreator__v2__model__$modelIds__steps: typeof import('./types/routes')['GET__edgecreator__v2__model__$modelIds__steps']
   const GET__edges__$countrycode__$magazinecode__$issuenumbers: typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']
   const GET__edges__published__data: typeof import('./types/routes')['GET__edges__published__data']
@@ -429,6 +430,7 @@ declare module 'vue' {
     readonly GET__cover_id__download__$coverId: UnwrapRef<typeof import('./types/routes')['GET__cover_id__download__$coverId']>
     readonly GET__csrf: UnwrapRef<typeof import('./types/routes')['GET__csrf']>
     readonly GET__edgecreator__v2__model: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model']>
+    readonly GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber']>
     readonly GET__edgecreator__v2__model__$modelIds__steps: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model__$modelIds__steps']>
     readonly GET__edges__$countrycode__$magazinecode__$issuenumbers: UnwrapRef<typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']>
     readonly GET__edges__published__data: UnwrapRef<typeof import('./types/routes')['GET__edges__published__data']>
