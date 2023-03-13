@@ -7,7 +7,6 @@
 .vite-ssg-temp
 .vscode
 /edges/
-/public/build/
 /vendor/
 dist
 dist-ssr
