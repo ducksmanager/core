@@ -1,33 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "lib": [
-      "ESNext",
-      "ESNext.AsyncIterable",
-      "DOM"
-    ],
-    "esModuleInterop": true,
-    "allowJs": true,
-    "sourceMap": true,
-    "strict": true,
-    "noEmit": true,
     "baseUrl": ".",
-    "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
-    },
+    "module": "ESNext",
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "ESNext"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
     "types": [
-      "@types/node",
-      "@nuxt/types"
-    ]
+      "vite/client",
+      "vite-plugin-pages/client",
+      "vue/ref-macros",
+      "unplugin-icons/types/vue",
+    ],
+
+    "paths": {
+      "~/*": ["src/*", "node_modules/ducksmanager/dist/src/*"],
+      "~types/*": ["types/*"],
+      "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"],
+    }
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "auto-imports.d.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
 }

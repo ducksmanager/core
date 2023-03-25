@@ -126,6 +126,7 @@
   "width and height": "largeur et hauteur",
   "Write {templateString} to inject in your text the current issue number": "Entrez le texte {templateString} pour injecter dans votre texte le numéro en cours",
   "Write {templateString1} to inject in your text the first digit of the current issue number, {templateString2} for the second digit, etc.": "Entrez le texte {templateString1} pour injecter dans votre texte le premier chiffre du numéro en cours, {templateString2} pour le deuxième chiffre, etc.",
+  "You are not connected.": "Vous n'êtes pas connecté.",
   "You can make your selection match the {dimension} of the edge by holding Shift while you resize it": "Vous pouvez rendre la {dimension} de votre sélection égale à celle de la tranche en maintenant la touche Majuscule appuyée pendant le redimensionnement",
   "You can make your selection snap to the top left corner of the edge by holding Shift while you drag it": "Vous pouvez déplacer votre sélection vers le coin supérieur gauche de la tranche en maintenant la touche Majuscule appuyée tout en déplaçant la sélection",
   "You can use special text parts to make your text dynamic :": "Vous pouvez écrire des chaines de caractères spéciales pour rendre votre texte dynamique :",
