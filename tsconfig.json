@@ -14,15 +14,11 @@
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "outDir": "dist",
-    "declarationDir": "dist",
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
       "vue/ref-macros",
-      "unplugin-icons/types/vue"
+      "unplugin-icons/types/vue",
     ],
     "paths": {
       "~/*": ["src/*"],

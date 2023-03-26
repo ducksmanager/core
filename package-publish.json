@@ -1,20 +1,11 @@
 {
-  "name": "ducksmanager",
-  "version": "0.0.45",
-  "type": "module",
-  "main": "./dist/ducksmanager.umd.cjs",
-  "module": "./dist/ducksmanager.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-	".": {
-	  "import": "./dist/ducksmanager.js",
-	  "require": "./dist/ducksmanager.umd.cjs"
-	}
-  },
-  "files": [
-	"api/dist/prisma/**/*.{ts,prisma}",
-	"dist",
-	"types"
-  ],
-  "dependencies": {}
+	"name": "ducksmanager",
+	"version": "0.0.27",
+	"files": [
+		"src/components",
+		"api/dist/prisma/*/*.{js,json,prisma,ts}",
+		"api/prisma",
+		"types"
+	],
+	"dependencies": {}
 }
