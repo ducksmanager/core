@@ -199,7 +199,7 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
     .filter((_, index) => index < 10)
 );
 
-onMounted(async () => {
+(async () => {
   await collectionStore.fetchUserPoints();
   await collectionStore.loadPopularIssuesInCollection();
   await collectionStore.loadBookcase();
@@ -217,7 +217,7 @@ onMounted(async () => {
     ]),
   ]);
   isUploadableEdgesCarouselReady.value = true;
-});
+})();
 
 const getPhotoUrl = (country: string, fileName: string) =>
   `/edges/${country}/photos/${fileName}`;

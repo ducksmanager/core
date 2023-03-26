@@ -3,7 +3,7 @@ import path from "path";
 
 import { ExpressCall } from "~routes/_express-call";
 
-const edgePath = `${process.env.PWD}/../${process.env.EDGES_PATH!}`;
+const edgesPath = `${process.env.PWD}/../${process.env.EDGES_PATH!}`;
 const REGEX_IS_BROWSABLE_FILE = /^[-+(). _A-Za-z\d]+$/;
 const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 export const get = async (
@@ -38,6 +38,6 @@ export const get = async (
     current: [] as string[],
     published: [] as string[],
   };
-  findInDir(edgePath);
+  findInDir(edgesPath);
   return res.json(fileList);
 };

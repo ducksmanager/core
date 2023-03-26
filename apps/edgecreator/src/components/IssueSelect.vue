@@ -206,13 +206,9 @@ watch(
   async () => await loadEdges()
 );
 
-onMounted(async () => {
-  if (props.countryCode) {
-    currentCountryCode.value = props.countryCode;
-  }
-  await coa().fetchCountryNames(locale.value);
-  // await loadCatalog(false);
-});
+if (props.countryCode) {
+  currentCountryCode.value = props.countryCode;
+}
 
 const loadEdges = async () => {
   let issueNumbersFilter = "";
@@ -255,6 +251,11 @@ const onChange = (
     issueNumber: currentIssueNumber.value!,
     issueNumberEnd: currentIssueNumberEnd.value!,
   });
+
+(async () => {
+  await coa().fetchCountryNames(locale.value);
+  // await loadCatalog(false);
+})();
 </script>
 <style scoped lang="scss">
 :deep(select + div) {

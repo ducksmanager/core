@@ -9,7 +9,7 @@ const route = useRoute();
 const user = computed(() => collection().user);
 const userPermissions = computed(() => collection().userPermissions);
 
-onMounted(async () => await collection().loadUser());
+collection().loadUser();
 
 watch(
   () => userPermissions.value,

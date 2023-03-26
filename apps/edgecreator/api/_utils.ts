@@ -4,6 +4,6 @@ export const getSvgPath = (
   magazine: string,
   issuenumber: string
 ) =>
-  `${process.env.EDGES_PATH}/${country}/gen/${
+  `${process.cwd()}/../${process.env.EDGES_PATH}/${country}/gen/${
     isExport ? "" : "_"
   }${magazine}.${issuenumber}.svg`;

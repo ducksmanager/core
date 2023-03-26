@@ -34,7 +34,7 @@ export const authenticateToken = (
 };
 
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
-  req: Request,
+  req: Pick<Request, "body" | "user">,
   res: Response,
   next: CallableFunction
 ) => {
