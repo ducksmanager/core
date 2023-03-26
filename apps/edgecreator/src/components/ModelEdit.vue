@@ -110,7 +110,7 @@
               target="_blank"
               :href="fontSearchUrl"
               class="position-absolute input-extra"
-              >Rechercher</a
+              >{{ $t("Search") }}</a
             ></form-input-row
           >
           <form-color-input-row

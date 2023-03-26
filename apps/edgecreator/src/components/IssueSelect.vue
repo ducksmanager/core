@@ -90,7 +90,7 @@ import { Crop } from "~types/Crop";
 
 const { t: $t, locale } = useI18n();
 
-const { getEdgeStatus, isCatalogLoaded } = edgeCatalog();
+const { getEdgeStatus, loadCatalog, isCatalogLoaded } = edgeCatalog();
 
 const emit = defineEmits<{
   (e: "change", value: Crop): void;
@@ -254,7 +254,7 @@ const onChange = (
 
 (async () => {
   await coa().fetchCountryNames(locale.value);
-  // await loadCatalog(false);
+  await loadCatalog(false);
 })();
 </script>
 <style scoped lang="scss">
