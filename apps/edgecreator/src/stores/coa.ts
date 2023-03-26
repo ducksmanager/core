@@ -38,7 +38,7 @@ export const coa = defineStore("coa", {
             api().dmApi,
             new GET__coa__list__countries__$locale({
               query: { countryCodes: null },
-              params: { locale },
+              params: { locale: locale.split("-")[0] },
             })
           )
         ).data;
