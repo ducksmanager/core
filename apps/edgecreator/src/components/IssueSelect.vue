@@ -84,10 +84,9 @@ import { useI18n } from "vue-i18n";
 
 import { EdgeDimensions } from "~/composables/useDimensions";
 import edgeCatalog from "~/composables/useEdgeCatalog";
+import { coa } from "~/stores/coa";
+import { edgeCatalog as edgeCatalogStore } from "~/stores/edgeCatalog";
 import { Crop } from "~types/Crop";
-
-import { coa } from "../stores/coa";
-import { edgeCatalog as edgeCatalogStore } from "../stores/edgeCatalog";
 
 const { t: $t, locale } = useI18n();
 
