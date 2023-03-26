@@ -1,3 +1,6 @@
 export interface MedalPoints {
-  [userId: number]: { [p: string]: number };
+  [userId: number]: Record<
+    "edge_photographer" | "edge_designer" | "duckhunter",
+    number
+  >;
 }

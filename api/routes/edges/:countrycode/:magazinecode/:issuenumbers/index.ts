@@ -47,6 +47,7 @@ export const get = async (
       [edge.issuenumber]: {
         ...edge,
         modelId: edgeModels[edge.issuenumber]?.id,
+        v3: edgeModels[edge.issuenumber] !== undefined,
       },
     }),
     {}

@@ -145,6 +145,7 @@ export const put = [
       resBody: {
         publicationcode: string;
         issuenumber: string;
+        isNew: boolean;
         edgeId: number;
         contributors: number[];
         url: string;
@@ -174,7 +175,7 @@ export const put = [
         })
       ),
     ];
-    const { edgeId, contributors } = await publishEdgeOnDm(
+    const { edgeId, contributors, isNew } = await publishEdgeOnDm(
       modelContributors,
       publicationcode,
       issuenumber
@@ -184,6 +185,7 @@ export const put = [
       publicationcode,
       issuenumber,
       edgeId,
+      isNew,
       contributors,
       url: `${process.env.VITE_EDGES_ROOT}/${req.params.country}/gen/${req.params.magazine}.${issuenumber}.png`,
     });

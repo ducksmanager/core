@@ -55,8 +55,8 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-import { getCurrentLocaleShortKey } from "~/composables/locales";
-import medal from "~/composables/medal";
+import { getCurrentLocaleShortKey } from "~/composables/useLocales";
+import medal from "~/composables/useMedal";
 import { images } from "~/stores/images";
 
 const i18n = useI18n();

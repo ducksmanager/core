@@ -52,11 +52,16 @@ declare global {
   const GET__collection__stats__watchedauthorsstorycount: typeof import('./types/routes')['GET__collection__stats__watchedauthorsstorycount']
   const GET__collection__subscriptions: typeof import('./types/routes')['GET__collection__subscriptions']
   const GET__collection__user: typeof import('./types/routes')['GET__collection__user']
+  const GET__collection__user_privileges: typeof import('./types/routes')['GET__collection__user_privileges']
   const GET__cover_id__download__$coverId: typeof import('./types/routes')['GET__cover_id__download__$coverId']
   const GET__csrf: typeof import('./types/routes')['GET__csrf']
-  const GET__edgecreator__v2__model: typeof import('./types/routes')['GET__edgecreator__v2__model']
-  const GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber: typeof import('./types/routes')['GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber']
-  const GET__edgecreator__v2__model__$modelIds__steps: typeof import('./types/routes')['GET__edgecreator__v2__model__$modelIds__steps']
+  const GET__edgecreator__contributors__$modelId: typeof import('./types/routes')['GET__edgecreator__contributors__$modelId']
+  const GET__edgecreator__model: typeof import('./types/routes')['GET__edgecreator__model']
+  const GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber: typeof import('./types/routes')['GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber']
+  const GET__edgecreator__model__$modelId__photo__main: typeof import('./types/routes')['GET__edgecreator__model__$modelId__photo__main']
+  const GET__edgecreator__model__$modelIds__steps: typeof import('./types/routes')['GET__edgecreator__model__$modelIds__steps']
+  const GET__edgecreator__model__editedbyother__all: typeof import('./types/routes')['GET__edgecreator__model__editedbyother__all']
+  const GET__edgecreator__model__unassigned__all: typeof import('./types/routes')['GET__edgecreator__model__unassigned__all']
   const GET__edges__$countrycode__$magazinecode__$issuenumbers: typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']
   const GET__edges__published__data: typeof import('./types/routes')['GET__edges__published__data']
   const GET__edges__wanted__data: typeof import('./types/routes')['GET__edges__wanted__data']
@@ -65,6 +70,7 @@ declare global {
   const GET__global_stats__user__$userIds: typeof import('./types/routes')['GET__global_stats__user__$userIds']
   const GET__global_stats__user__collection__rarity: typeof import('./types/routes')['GET__global_stats__user__collection__rarity']
   const GET__global_stats__user__count: typeof import('./types/routes')['GET__global_stats__user__count']
+  const GET__global_stats__user__list: typeof import('./types/routes')['GET__global_stats__user__list']
   const GET__status__db: typeof import('./types/routes')['GET__status__db']
   const GET__status__pastec: typeof import('./types/routes')['GET__status__pastec']
   const GET__status__pastecsearch: typeof import('./types/routes')['GET__status__pastecsearch']
@@ -100,13 +106,12 @@ declare global {
   const PUT__edgecreator__publish__$country__$magazine__$issuenumber: typeof import('./types/routes')['PUT__edgecreator__publish__$country__$magazine__$issuenumber']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
-  const availableLocales: typeof import('./src/composables/locales')['availableLocales']
+  const availableLocales: typeof import('./src/composables/useLocales')['availableLocales']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
   const computedInject: typeof import('@vueuse/core')['computedInject']
   const computedWithControl: typeof import('@vueuse/core')['computedWithControl']
-  const condition: typeof import('./src/composables/condition')['default']
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
   const createApp: typeof import('vue')['createApp']
@@ -126,12 +131,11 @@ declare global {
   const exclude: typeof import('./types/exclude')['exclude']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
-  const getCurrentLocaleShortKey: typeof import('./src/composables/locales')['getCurrentLocaleShortKey']
+  const getCurrentLocaleShortKey: typeof import('./src/composables/useLocales')['getCurrentLocaleShortKey']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
-  const isDark: typeof import('./src/composables/dark')['isDark']
   const isDefined: typeof import('@vueuse/core')['isDefined']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
@@ -139,7 +143,6 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const markRaw: typeof import('vue')['markRaw']
-  const medal: typeof import('./src/composables/medal')['default']
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
@@ -190,7 +193,6 @@ declare global {
   const toReactive: typeof import('@vueuse/core')['toReactive']
   const toRef: typeof import('vue')['toRef']
   const toRefs: typeof import('vue')['toRefs']
-  const toggleDark: typeof import('./src/composables/dark')['toggleDark']
   const triggerRef: typeof import('vue')['triggerRef']
   const tryOnBeforeMount: typeof import('@vueuse/core')['tryOnBeforeMount']
   const tryOnBeforeUnmount: typeof import('@vueuse/core')['tryOnBeforeUnmount']
@@ -224,6 +226,7 @@ declare global {
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
+  const useCondition: typeof import('./src/composables/useCondition')['default']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCssModule: typeof import('vue')['useCssModule']
@@ -275,6 +278,7 @@ declare global {
   const useLocalStorage: typeof import('@vueuse/core')['useLocalStorage']
   const useMagicKeys: typeof import('@vueuse/core')['useMagicKeys']
   const useManualRefHistory: typeof import('@vueuse/core')['useManualRefHistory']
+  const useMedal: typeof import('./src/composables/useMedal')['default']
   const useMediaControls: typeof import('@vueuse/core')['useMediaControls']
   const useMediaQuery: typeof import('@vueuse/core')['useMediaQuery']
   const useMemoize: typeof import('@vueuse/core')['useMemoize']
@@ -427,11 +431,16 @@ declare module 'vue' {
     readonly GET__collection__stats__watchedauthorsstorycount: UnwrapRef<typeof import('./types/routes')['GET__collection__stats__watchedauthorsstorycount']>
     readonly GET__collection__subscriptions: UnwrapRef<typeof import('./types/routes')['GET__collection__subscriptions']>
     readonly GET__collection__user: UnwrapRef<typeof import('./types/routes')['GET__collection__user']>
+    readonly GET__collection__user_privileges: UnwrapRef<typeof import('./types/routes')['GET__collection__user_privileges']>
     readonly GET__cover_id__download__$coverId: UnwrapRef<typeof import('./types/routes')['GET__cover_id__download__$coverId']>
     readonly GET__csrf: UnwrapRef<typeof import('./types/routes')['GET__csrf']>
-    readonly GET__edgecreator__v2__model: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model']>
-    readonly GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model__$countrycode__$magazinecode__$issuenumber']>
-    readonly GET__edgecreator__v2__model__$modelIds__steps: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__v2__model__$modelIds__steps']>
+    readonly GET__edgecreator__contributors__$modelId: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__contributors__$modelId']>
+    readonly GET__edgecreator__model: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model']>
+    readonly GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber']>
+    readonly GET__edgecreator__model__$modelId__photo__main: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__$modelId__photo__main']>
+    readonly GET__edgecreator__model__$modelIds__steps: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__$modelIds__steps']>
+    readonly GET__edgecreator__model__editedbyother__all: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__editedbyother__all']>
+    readonly GET__edgecreator__model__unassigned__all: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__unassigned__all']>
     readonly GET__edges__$countrycode__$magazinecode__$issuenumbers: UnwrapRef<typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']>
     readonly GET__edges__published__data: UnwrapRef<typeof import('./types/routes')['GET__edges__published__data']>
     readonly GET__edges__wanted__data: UnwrapRef<typeof import('./types/routes')['GET__edges__wanted__data']>
@@ -440,6 +449,7 @@ declare module 'vue' {
     readonly GET__global_stats__user__$userIds: UnwrapRef<typeof import('./types/routes')['GET__global_stats__user__$userIds']>
     readonly GET__global_stats__user__collection__rarity: UnwrapRef<typeof import('./types/routes')['GET__global_stats__user__collection__rarity']>
     readonly GET__global_stats__user__count: UnwrapRef<typeof import('./types/routes')['GET__global_stats__user__count']>
+    readonly GET__global_stats__user__list: UnwrapRef<typeof import('./types/routes')['GET__global_stats__user__list']>
     readonly GET__status__db: UnwrapRef<typeof import('./types/routes')['GET__status__db']>
     readonly GET__status__pastec: UnwrapRef<typeof import('./types/routes')['GET__status__pastec']>
     readonly GET__status__pastecsearch: UnwrapRef<typeof import('./types/routes')['GET__status__pastecsearch']>
@@ -475,13 +485,12 @@ declare module 'vue' {
     readonly PUT__edgecreator__publish__$country__$magazine__$issuenumber: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__publish__$country__$magazine__$issuenumber']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
-    readonly availableLocales: UnwrapRef<typeof import('./src/composables/locales')['availableLocales']>
+    readonly availableLocales: UnwrapRef<typeof import('./src/composables/useLocales')['availableLocales']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
     readonly computedInject: UnwrapRef<typeof import('@vueuse/core')['computedInject']>
     readonly computedWithControl: UnwrapRef<typeof import('@vueuse/core')['computedWithControl']>
-    readonly condition: UnwrapRef<typeof import('./src/composables/condition')['default']>
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
@@ -501,12 +510,11 @@ declare module 'vue' {
     readonly exclude: UnwrapRef<typeof import('./types/exclude')['exclude']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
-    readonly getCurrentLocaleShortKey: UnwrapRef<typeof import('./src/composables/locales')['getCurrentLocaleShortKey']>
+    readonly getCurrentLocaleShortKey: UnwrapRef<typeof import('./src/composables/useLocales')['getCurrentLocaleShortKey']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
-    readonly isDark: UnwrapRef<typeof import('./src/composables/dark')['isDark']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
@@ -514,7 +522,6 @@ declare module 'vue' {
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
-    readonly medal: UnwrapRef<typeof import('./src/composables/medal')['default']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
@@ -565,7 +572,6 @@ declare module 'vue' {
     readonly toReactive: UnwrapRef<typeof import('@vueuse/core')['toReactive']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
-    readonly toggleDark: UnwrapRef<typeof import('./src/composables/dark')['toggleDark']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly tryOnBeforeMount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeMount']>
     readonly tryOnBeforeUnmount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeUnmount']>
@@ -599,6 +605,7 @@ declare module 'vue' {
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
+    readonly useCondition: UnwrapRef<typeof import('./src/composables/useCondition')['default']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
@@ -650,6 +657,7 @@ declare module 'vue' {
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
     readonly useMagicKeys: UnwrapRef<typeof import('@vueuse/core')['useMagicKeys']>
     readonly useManualRefHistory: UnwrapRef<typeof import('@vueuse/core')['useManualRefHistory']>
+    readonly useMedal: UnwrapRef<typeof import('./src/composables/useMedal')['default']>
     readonly useMediaControls: UnwrapRef<typeof import('@vueuse/core')['useMediaControls']>
     readonly useMediaQuery: UnwrapRef<typeof import('@vueuse/core')['useMediaQuery']>
     readonly useMemoize: UnwrapRef<typeof import('@vueuse/core')['useMemoize']>

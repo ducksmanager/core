@@ -1,4 +1,4 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { PrismaClient } from "~prisma_clients/client_edgecreator";
 import { ExpressCall } from "~routes/_express-call";
 import { ModelSteps } from "~types/ModelSteps";
 
@@ -18,10 +18,11 @@ export const get = async (
                        optionValue.Nom_fonction AS functionName,
                        concat('{',
                               group_concat(concat('"', optionValue.Option_nom, '": ', '"', optionValue.Option_valeur,
-                                                  '"')), '}') AS options
+                                                  '"')),
+                              '}') AS options
                 from tranches_en_cours_valeurs optionValue
                          inner join tranches_en_cours_modeles model on optionValue.ID_Modele = model.ID
-                where model.ID IN (${req.params.modelIds.split(",")})
+                where model.ID IN (${req.params.modelIds})
                 group by model.numero, optionValue.ordre
                 order by optionValue.ordre
             `) as {

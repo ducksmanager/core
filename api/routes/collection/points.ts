@@ -3,10 +3,8 @@ import { ExpressCall } from "~routes/_express-call";
 import { MedalPoints } from "~types/MedalPoints";
 
 const prisma = new PrismaClient();
-export const getMedalPoints = async (
-  userIds: number[]
-): Promise<MedalPoints> => {
-  return (
+export const getMedalPoints = async (userIds: number[]): Promise<MedalPoints> =>
+  (
     (await prisma.$queryRaw`
         select contributionType.contribution_external_name as contribution,
                userIds.userId,
@@ -25,7 +23,7 @@ export const getMedalPoints = async (
                            ON contributionType.contribution = userContributions.contribution
                                AND userIds.userId = userContributions.userId
     `) as {
-      contribution: string;
+      contribution: "edge_photographer" | "edge_designer" | "duckhunter";
       userId: number;
       totalPoints: string;
     }[]
@@ -37,9 +35,13 @@ export const getMedalPoints = async (
         [contribution]: parseInt(totalPoints) || 0,
       },
     }),
-    {} as { [userId: number]: { [contribution: string]: number } }
+    {} as {
+      [userId: number]: Record<
+        "edge_photographer" | "edge_designer" | "duckhunter",
+        number
+      >;
+    }
   );
-};
 
 export const get = async (
   ...[req, res]: ExpressCall<{ resBody: MedalPoints }>

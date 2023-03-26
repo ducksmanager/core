@@ -256,7 +256,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-import cond from "~/composables/condition";
+import cond from "~/composables/useCondition";
 import {
   collection as collectionStore,
   IssueWithPublicationcodeOptionalId,

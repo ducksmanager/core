@@ -16,7 +16,7 @@ import {
 } from "chart.js";
 import { Pie } from "vue-chartjs";
 
-import condition from "~/composables/condition";
+import condition from "~/composables/useCondition";
 import { collection as collectionStore } from "~/stores/collection";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 

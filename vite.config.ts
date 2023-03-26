@@ -3,12 +3,14 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import path from "path";
+import typescript2 from "rollup-plugin-typescript2";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
 import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
@@ -21,13 +23,48 @@ export default defineConfig({
     },
   },
   build: {
+    cssCodeSplit: true,
+    lib: {
+      entry: `${path.resolve(__dirname, "src/components/index.ts")}`,
+      name: "ducksmanager",
+      fileName: () => `ducksmanager.js`,
+    },
     rollupOptions: {
-      external: ["~prisma_clients/client_dm"],
+      external: ["~prisma_clients/client_dm", "vue", "public"],
+      input: {
+        main: path.resolve(__dirname, "src/components/index.ts"),
+      },
+      output: {
+        assetFileNames: (assetInfo): string => {
+          if (assetInfo.name === "main.css") return "ducksmanager.css";
+          return assetInfo.name || "";
+        },
+        exports: "named",
+        globals: {
+          vue: "Vue",
+        },
+      },
     },
   },
   plugins: [
     Vue({
       reactivityTransform: true,
+    }),
+    dts({
+      insertTypesEntry: true,
+    }),
+    typescript2({
+      check: false,
+      include: ["src/components/**/*.vue"],
+      tsconfigOverride: {
+        compilerOptions: {
+          outDir: "dist",
+          sourceMap: true,
+          declaration: true,
+          declarationMap: true,
+        },
+      },
+      exclude: ["vite.config.ts"],
     }),
 
     // https://github.com/hannoeru/vite-plugin-pages

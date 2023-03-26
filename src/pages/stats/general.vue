@@ -161,7 +161,7 @@ import axios from "axios";
 import { onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import condition from "~/composables/condition";
+import condition from "~/composables/useCondition";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";

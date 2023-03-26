@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-import { availableLocales } from "~/composables/locales";
+import { availableLocales } from "~/composables/useLocales";
 import { coa } from "~/stores/coa";
 import { images } from "~/stores/images";
 
