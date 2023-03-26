@@ -35,32 +35,30 @@ const { locale, t: $t } = useI18n();
 
 const bytesUploaded = ref(0);
 
+const uppyTranslations = {
+  // "fr-FR": frTranslation,
+  // "en-US": enTranslation,
+};
+
+const uppy = Uppy({
+  debug: true,
+  // locale: uppyTranslations[i18n.locale.value],
+  allowMultipleUploads: false,
+  meta: {
+    photo: props.photo,
+    multiple: props.multiple,
+    edge: JSON.stringify(props.edge),
+    locale: locale.value === "fr" ? "fr-FR" : "en-US",
+  },
+  restrictions: {
+    maxFileSize: 3 * 1024 * 1024,
+    minNumberOfFiles: 1,
+    maxNumberOfFiles: props.photo ? 1 : 10,
+    allowedFileTypes: props.photo ? ["image/jpg", "image/jpeg"] : ["image/png"],
+  },
+});
+
 onMounted(() => {
-  const uppyTranslations = {
-    // "fr-FR": frTranslation,
-    // "en-US": enTranslation,
-  };
-
-  const uppy = Uppy({
-    debug: true,
-    // locale: uppyTranslations[i18n.locale.value],
-    allowMultipleUploads: false,
-    meta: {
-      photo: props.photo,
-      multiple: props.multiple,
-      edge: JSON.stringify(props.edge),
-      locale: locale.value === "fr" ? "fr-FR" : "en-US",
-    },
-    restrictions: {
-      maxFileSize: 3 * 1024 * 1024,
-      minNumberOfFiles: 1,
-      maxNumberOfFiles: props.photo ? 1 : 10,
-      allowedFileTypes: props.photo
-        ? ["image/jpg", "image/jpeg"]
-        : ["image/png"],
-    },
-  });
-
   uppy
     .use(Dashboard, {
       inline: true,
@@ -83,7 +81,7 @@ onMounted(() => {
   });
   uppy.on(
     "upload-success",
-    (_: never, payload: { body: { fileName: string } }) => {
+    (_: any, payload: { body: { fileName: string } }) => {
       if (props.photo && !props.multiple) {
         mainStore.photoUrls[props.edge!.issuenumber] = payload.body.fileName;
       } else {

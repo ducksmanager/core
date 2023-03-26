@@ -243,7 +243,7 @@ watch(
   }
 );
 
-onMounted(async () => {
+(async () => {
   await users().fetchAllUsers();
   let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers;
   try {
@@ -291,7 +291,7 @@ onMounted(async () => {
   } catch (e) {
     error.value = e as string;
   }
-});
+})();
 
 const overwriteModel = async ({
   publicationCode,

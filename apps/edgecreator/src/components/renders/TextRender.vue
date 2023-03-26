@@ -187,10 +187,6 @@ watch(
   }
 );
 
-onMounted(async () => {
-  await refreshPreview();
-});
-
 const refreshPreview = async () => {
   if (
     JSON.stringify(textImageOptions.value) === JSON.stringify(props.options)
@@ -267,6 +263,8 @@ const applyTextImageDimensions = () => {
   options.aspectRatio = options.height / options.width!;
   globalEvent().options = options;
 };
+
+refreshPreview();
 </script>
 
 <style scoped lang="scss">

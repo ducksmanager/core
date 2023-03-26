@@ -48,12 +48,10 @@ const emit = defineEmits<{
   (e: "change", value: { width: number; height: number }): void;
 }>();
 
-onMounted(() =>
-  emit("change", {
-    width: props.width,
-    height: props.height,
-  })
-);
+emit("change", {
+  width: props.width,
+  height: props.height,
+});
 
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);

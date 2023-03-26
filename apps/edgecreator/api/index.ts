@@ -1,10 +1,12 @@
 import * as Sentry from "@sentry/node";
+import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { router } from "express-file-routing";
 
+const parseForm = bodyParser.json();
 import {
   authenticateToken,
   checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel,
@@ -39,6 +41,7 @@ app.use(cookieParser());
 app.all(/^.+$/, injectTokenIfValid);
 app.all(/^\/fs\/save$/, [
   authenticateToken,
+  parseForm,
   checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel,
 ]);
 app.all(/^\/fs\/(text|upload|upload-base64)$/, [

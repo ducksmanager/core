@@ -319,12 +319,7 @@ const addPhoto = (src: string) => {
   mainStore.photoUrls[mainStore.issuenumbers[0]] = src;
 };
 
-onMounted(
-  async () =>
-    await coa().fetchPublicationNames([
-      `${mainStore.country}/${mainStore.magazine}`,
-    ])
-);
+coa().fetchPublicationNames([`${mainStore.country}/${mainStore.magazine}`]);
 </script>
 <style lang="scss">
 .options {
