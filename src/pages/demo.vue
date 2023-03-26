@@ -27,7 +27,7 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   try {
     Cookies.set("token", (await call(axios, new POST__demo())).data.token, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
@@ -36,5 +36,5 @@ onMounted(async () => {
   } catch (e) {
     console.error(e);
   }
-});
+})();
 </script>

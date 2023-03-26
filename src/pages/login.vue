@@ -76,10 +76,6 @@ let username = $ref("" as string);
 let error = $ref(null as string | null);
 let password = $ref("" as string);
 
-onMounted(async () => {
-  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
-});
-
 const login = async () => {
   try {
     Cookies.set(
@@ -118,6 +114,10 @@ watch(
   },
   { immediate: true }
 );
+
+(async () => {
+  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
+})();
 </script>
 
 <style scoped></style>

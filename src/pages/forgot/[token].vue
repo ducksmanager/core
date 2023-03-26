@@ -72,7 +72,7 @@ const changePassword = async () => {
   }
 };
 
-onMounted(async () => {
+(async () => {
   try {
     await call(
       axios,
@@ -84,7 +84,7 @@ onMounted(async () => {
   } catch (e: unknown) {
     initError = e as AxiosError;
   }
-});
+})();
 
 watch(
   () => collectionStore.user,

@@ -28,15 +28,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-
 import { users } from "~/stores/users";
 
 const count = $computed(() => users().count);
 
-onMounted(async () => {
-  await users().fetchCount();
-});
+users().fetchCount();
 </script>
 
 <style scoped lang="scss">

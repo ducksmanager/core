@@ -26,6 +26,7 @@ declare module '@vue/runtime-core' {
     BDropdown: typeof import('bootstrap-vue-next')['BDropdown']
     BDropdownItem: typeof import('bootstrap-vue-next')['BDropdownItem']
     BFormInput: typeof import('bootstrap-vue-next')['BFormInput']
+    BFormTextarea: typeof import('bootstrap-vue-next')['BFormTextarea']
     BNavItem: typeof import('bootstrap-vue-next')['BNavItem']
     Book: typeof import('./src/components/Book.vue')['default']
     Bookcase: typeof import('./src/components/Bookcase.vue')['default']

@@ -24,7 +24,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
@@ -106,10 +106,10 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   await coa().fetchCountryNames();
   await collectionStore().loadCollection();
-});
+})();
 </script>
 
 <style>

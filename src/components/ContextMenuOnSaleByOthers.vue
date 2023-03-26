@@ -95,7 +95,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { IssueWithPublicationcode } from "~/stores/collection";
@@ -155,11 +154,9 @@ const issuesWithMultipleCopiesSelected = $computed(() =>
 
 const { t: $t } = useI18n();
 
-onMounted(async () => {
-  if (selectedIssuesBuyerIds.length) {
-    await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);
-  }
-});
+if (selectedIssuesBuyerIds.length) {
+  await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);
+}
 </script>
 
 <style lang="scss">

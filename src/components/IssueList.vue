@@ -115,11 +115,13 @@
             "
             @mouseup.self.left="updateSelected"
             @mouseover="
-              preselectedIndexEnd = preselectedIndexStart === null ? null : idx
+              preselectedIndexEnd = preselectedIndexStart === null ? null : idx;
+              hoveredIndex = idx;
             "
           >
             <span>
               <IssueDetailsPopover
+                v-if="hoveredIndex === idx"
                 :publicationcode="publicationcode"
                 :issuenumber="issuenumber"
                 @click="openBook(issuenumber)"
@@ -261,7 +263,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
@@ -330,6 +332,7 @@ switch (contextMenuComponentName) {
     break;
 }
 
+let hoveredIndex = $ref(null as number | null);
 let loading = $ref(true as boolean);
 let publicationNameLoading = $ref(true as boolean);
 const filter = $ref({
@@ -595,7 +598,7 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   if (customIssues) {
     collectionStore().purchases = [];
   } else {
@@ -603,7 +606,7 @@ onMounted(async () => {
   }
   await fetchPublicationNames([publicationcode]);
   publicationNameLoading = false;
-});
+})();
 </script>
 
 <style scoped lang="scss">

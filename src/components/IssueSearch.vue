@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
@@ -230,10 +230,8 @@ watch(
   }
 );
 
-onMounted(async () => {
-  await collectionStore().loadCollection();
-  await coa().fetchCountryNames();
-});
+collectionStore().loadCollection();
+coa().fetchCountryNames();
 </script>
 
 <style scoped lang="scss">

@@ -18,7 +18,7 @@ alias: [/collection/doubles]
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
@@ -51,14 +51,14 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   await collection().loadCollection();
 
   await marketplace().loadIssuesOnSaleByOthers();
   await marketplace().loadIssueRequestsAsSeller();
 
   await users().fetchStats(marketplace().buyerUserIds);
-});
+})();
 </script>
 
 <style scoped>

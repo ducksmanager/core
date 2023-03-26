@@ -33,8 +33,6 @@ alias: [/bibliotheque/contributeurs]
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-
 import { users } from "~/stores/users";
 
 const usersStore = users();
@@ -56,7 +54,7 @@ const bookcaseContributorsSorted = $computed(
     []
 );
 
-onMounted(async () => {
+(async () => {
   await fetchBookcaseContributors();
   await fetchStats(
     bookcaseContributors!
@@ -64,7 +62,7 @@ onMounted(async () => {
       .map(({ userId }) => userId as number)
   );
   loading = false;
-});
+})();
 </script>
 
 <style lang="scss" scoped>

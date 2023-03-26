@@ -280,15 +280,16 @@ watch(
   { immediate: true }
 );
 
+const geocoder = new MapboxGeocoder({
+  accessToken,
+  placeholder: $t("Adresse"),
+  types: "address",
+  proximity: { latitude: 46.754917, longitude: 1.73584 },
+  enableEventLogging: false,
+});
+
 onMounted(async () => {
   await fetchBookstores();
-  const geocoder = new MapboxGeocoder({
-    accessToken,
-    placeholder: $t("Adresse"),
-    types: "address",
-    proximity: { latitude: 46.754917, longitude: 1.73584 },
-    enableEventLogging: false,
-  });
   geocoder.addTo("#address");
   let element = window.document.querySelector(".mapboxgl-ctrl-geocoder--input");
   if (element as HTMLElement) {

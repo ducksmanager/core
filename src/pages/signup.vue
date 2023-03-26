@@ -67,7 +67,6 @@ meta:
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
@@ -87,10 +86,6 @@ let username = $ref("" as string),
   error = $ref(undefined as ScopedError | null | undefined);
 
 const { t: $t } = useI18n();
-
-onMounted(async () => {
-  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
-});
 
 const signup = async () => {
   try {
@@ -130,6 +125,10 @@ watch(
   },
   { immediate: true }
 );
+
+(async () => {
+  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
+})();
 </script>
 
 <style scoped>

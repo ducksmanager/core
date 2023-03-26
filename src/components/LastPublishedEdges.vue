@@ -51,8 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 const publicationNames = $computed(() => coa().publicationNames);
@@ -71,9 +69,5 @@ const hasPublicationNames = $computed(() =>
   )
 );
 
-onMounted(async () => {
-  await collectionStore().loadLastPublishedEdgesForCurrentUser();
-});
+collectionStore().loadLastPublishedEdgesForCurrentUser();
 </script>
-
-<style scoped></style>

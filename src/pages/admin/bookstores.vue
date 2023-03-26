@@ -22,7 +22,6 @@ meta:
 
 <script setup lang="ts">
 import axios from "axios";
-import { onMounted } from "vue";
 
 import { call } from "~/util/axios";
 import { bookstoreComment } from "~prisma_clients/client_dm";
@@ -36,9 +35,9 @@ const validateBookstoreComment = async ({ id }: bookstoreComment) => {
   bookstores = (await call(axios, new GET__bookstores())).data;
 };
 
-onMounted(async () => {
+(async () => {
   bookstores = (await call(axios, new GET__bookstores())).data;
-});
+})();
 </script>
 
 <style scoped lang="scss">

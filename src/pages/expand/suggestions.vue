@@ -68,7 +68,7 @@ alias: [/agrandir/suggestions]
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import SuggestionList from "~/components/SuggestionList.vue";
@@ -104,10 +104,8 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  await collectionStore().loadCollection();
-  await collectionStore().loadWatchedAuthors();
-});
+collectionStore().loadCollection();
+collectionStore().loadWatchedAuthors();
 </script>
 
 <style scoped lang="scss">

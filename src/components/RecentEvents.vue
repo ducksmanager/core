@@ -17,8 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-
 import { coa } from "~/stores/coa";
 import { users } from "~/stores/users";
 import { AbstractEvent } from "~types/events/AbstractEvent";
@@ -68,14 +66,14 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
   );
 };
 
-onMounted(async () => {
+(async () => {
   await fetchEventsAndAssociatedData(false);
   setTimeout(async () => {
     // await fetchEventsAndAssociatedData(true);
     // hasFreshEvents = true;
   }, 1000);
   isLoaded = true;
-});
+})();
 </script>
 
 <style scoped lang="scss">

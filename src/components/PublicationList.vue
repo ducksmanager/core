@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
@@ -119,9 +119,7 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  await fetchCountryNames();
-});
+fetchCountryNames();
 </script>
 
 <style scoped lang="scss">

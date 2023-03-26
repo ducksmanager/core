@@ -5,9 +5,7 @@
 <script setup lang="ts">
 import { collection } from "~/stores/collection";
 
-onMounted(async () => {
-  await collection().loadUser();
-});
+collection().loadUser();
 </script>
 
 <style lang="scss">

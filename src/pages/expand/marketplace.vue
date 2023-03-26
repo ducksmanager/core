@@ -272,12 +272,12 @@ const isRequestBooked = (thisIssueId: number) =>
   issueRequestsAsBuyer?.find(({ issueId }) => thisIssueId === issueId)
     ?.isBooked;
 
-onMounted(async () => {
+(async () => {
   await marketplaceStore.loadIssuesOnSaleByOthers();
   await marketplaceStore.loadIssueRequestsAsBuyer();
 
   await users().fetchStats(marketplaceStore.sellerUserIds);
   await coa().fetchPublicationNames(Object.keys(issuesOnSaleByOthers || {}));
   hasPublicationNames = true;
-});
+})();
 </script>

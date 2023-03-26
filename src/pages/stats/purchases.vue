@@ -64,7 +64,7 @@ import {
   Tooltip,
 } from "chart.js";
 import dayjs from "dayjs";
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
@@ -353,9 +353,7 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  await loadPurchases();
-});
+loadPurchases();
 </script>
 
 <style scoped lang="scss">

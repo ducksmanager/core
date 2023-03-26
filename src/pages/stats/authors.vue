@@ -198,12 +198,12 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   await collectionStore().loadWatchedAuthors();
   watchedAuthorsStoryCount = ((
     await call(axios, new GET__collection__stats__watchedauthorsstorycount())
   ).data || {}) as WatchedAuthorsStoryCount;
-});
+})();
 </script>
 
 <style scoped lang="scss">

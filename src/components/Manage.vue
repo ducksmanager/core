@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
@@ -138,8 +138,9 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   await collection().loadCollection();
+  await collection().loadPurchases();
   await collection().loadMarketplaceContactMethods();
   await coa().fetchCountryNames();
 
@@ -149,7 +150,7 @@ onMounted(async () => {
 
   await users().fetchStats(marketplace().buyerUserIds);
   await users().fetchStats(marketplace().sellerUserIds);
-});
+})();
 </script>
 
 <style scoped lang="scss">

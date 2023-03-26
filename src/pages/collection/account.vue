@@ -220,7 +220,6 @@ alias: [/collection/compte]
 
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
-import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Accordion from "~/components/Accordion.vue";
@@ -311,9 +310,7 @@ const deleteAccount = async () => {
   }
 };
 
-onMounted(async () => {
-  await collection.loadMarketplaceContactMethods();
-});
+collection.loadMarketplaceContactMethods();
 
 watch(
   () => marketplaceContactMethods,

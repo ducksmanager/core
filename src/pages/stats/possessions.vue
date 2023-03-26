@@ -29,7 +29,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
@@ -200,9 +200,7 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  await collectionStore().loadCollection();
-});
+collectionStore().loadCollection();
 </script>
 
 <style scoped lang="scss">

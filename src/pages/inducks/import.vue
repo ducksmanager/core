@@ -430,9 +430,7 @@ watch(
   }
 );
 
-onMounted(async () => {
-  await collectionStore().loadCollection();
-});
+collectionStore().loadCollection();
 </script>
 
 <style scoped lang="scss">

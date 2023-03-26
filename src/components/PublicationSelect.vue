@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 
@@ -98,9 +98,7 @@ watch(
   }
 );
 
-onMounted(async () => {
-  await coaStore.fetchCountryNames();
-});
+coaStore.fetchCountryNames();
 </script>
 
 <style scoped>

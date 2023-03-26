@@ -123,7 +123,6 @@ meta:
 
 <script setup lang="ts">
 import axios from "axios";
-import { onMounted } from "vue";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
@@ -196,7 +195,7 @@ const sortedBookcase = computed(() =>
   )
 );
 
-onMounted(async () => {
+(async () => {
   mostWanted = (await call(axios, new GET__edges__wanted__data())).data.map(
     (mostWantedIssue) => ({
       ...mostWantedIssue,
@@ -222,7 +221,7 @@ onMounted(async () => {
 
   await fetchIssueNumbers(Object.keys(publishedEdges));
   hasData = true;
-});
+})();
 </script>
 
 <style scoped lang="scss">

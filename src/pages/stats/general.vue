@@ -158,7 +158,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
@@ -220,7 +220,7 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   await collection.loadCollection();
   await users().fetchCount();
   const { userScores } = (
@@ -229,7 +229,7 @@ onMounted(async () => {
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === collection.user?.id);
-});
+})();
 </script>
 
 <style scoped lang="scss">
