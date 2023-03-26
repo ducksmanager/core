@@ -29,8 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { edgeCatalog } from "../stores/edgeCatalog";
-import { coa } from "../stores/coa";
+import { coa } from "~/stores/coa";
+import { edgeCatalog } from "~/stores/edgeCatalog";
+import { GalleryItem } from "~/types/GalleryItem";
 
 const { getDimensionsFromApi, getStepsFromApi } = useModelLoad();
 
@@ -47,8 +48,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: "load-more", where: "before" | "after"): void;
 }>();
-
-const items = ref([] as any[]);
+const items = ref([] as GalleryItem[]);
 const isPopulating = ref(false as boolean);
 
 const publishedEdges = computed(() => edgeCatalog().publishedEdges);
@@ -57,21 +57,25 @@ const issueNumbers = computed(() => coa().issueNumbers);
 
 const populateItems = async (
   publicationcode: string,
-  items: { [issuenumber: string]: any }
+  itemsForPublication: {
+    [issuenumber: string]: { modelId?: number; v3: boolean };
+  }
 ) => {
   const [countryCode, magazineCode] = publicationcode.split("/");
-  const publishedIssueModels = Object.values(items)
-    .map(({ modelId }) => modelId)
-    .filter((modelId) => !!modelId);
+  const publishedIssueModels = Object.values(itemsForPublication)
+    .filter(({ modelId }) => !!modelId)
+    .map(({ modelId }) => modelId);
   await edgeCatalog().getPublishedEdgesSteps({
     publicationcode: props.publicationcode,
-    edgeModelIds: publishedIssueModels,
+    edgeModelIds: publishedIssueModels as number[],
   });
   items.value = (
     await Promise.all(
-      Object.keys(items).map(async (issuenumber) => {
-        const url = `/edges/${countryCode}/gen/${magazineCode}.${issuenumber}.png`;
-        if (items[issuenumber].v3) {
+      Object.keys(itemsForPublication).map(async (issuenumber) => {
+        const url = `${
+          import.meta.env.VITE_EDGES_URL
+        }/${countryCode}/gen/${magazineCode}.${issuenumber}.png`;
+        if (itemsForPublication[issuenumber].v3) {
           return {
             name: issuenumber,
             quality: 1,

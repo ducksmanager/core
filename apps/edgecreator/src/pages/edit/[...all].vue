@@ -1,5 +1,5 @@
 <template>
-  <b-alert v-if="error" align="center" variant="danger" show>
+  <b-alert v-if="error" align="center" variant="danger" :model-value="true">
     {{ error }}
   </b-alert>
   <b-container
@@ -38,7 +38,7 @@
               }}
             </th>
             <template
-              v-for="issuenumber in editingStepStore.issuenumbers"
+              v-for="issuenumber in mainStore.issuenumbers"
               :key="`issuenumber-${issuenumber}`"
             >
               <th
@@ -50,9 +50,7 @@
                 @click.exact="editingStepStore.replaceIssuenumber(issuenumber)"
                 @click.shift="editingStepStore.toggleIssuenumber(issuenumber)"
                 @dblclick="
-                  editingStepStore.addIssuenumbers(
-                    editingStepStore.issuenumbers
-                  )
+                  editingStepStore.addIssuenumbers(mainStore.issuenumbers)
                 "
               >
                 <div v-if="editingStepStore.issuenumbers.includes(issuenumber)">
@@ -90,12 +88,12 @@
               />
             </td>
             <template
-              v-for="issuenumber in editingStepStore.issuenumbers"
+              v-for="issuenumber in mainStore.issuenumbers"
               :key="`canvas-${issuenumber}`"
             >
               <td>
                 <edge-canvas
-                  v-if="dimensions[issuenumber]"
+                  v-if="dimensions[issuenumber] && steps[issuenumber]"
                   :issuenumber="issuenumber"
                   :dimensions="dimensions[issuenumber]"
                   :steps="steps[issuenumber]"

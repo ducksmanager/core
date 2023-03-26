@@ -45,26 +45,27 @@
           :key="item.name"
           sm="2"
           :class="{
-            'my-1': true,
+            'mt-1': true,
+            'mb-4': true,
             selected: selected.includes(item.name),
             disabled: item.disabled,
           }"
           @click="onSelect(item)"
         >
-          <a v-if="imageType === 'edges'" class="position-absolute">
+          <a v-if="imageType === 'edges'" class="position-relative">
             <i-bi-emoji-smile-fill
-              v-if="item.quality == 1"
-              variant="success"
+              v-if="item.quality === 1"
+              class="variant-success"
               :title="item.tooltip"
             />
             <i-bi-emoji-neutral-fill
               v-else-if="item.quality > 0"
-              variant="warning"
+              class="variant-warning"
               :title="item.tooltip"
             />
             <i-bi-emoji-frown-fill
               v-else
-              variant="danger"
+              class="variant-danger"
               :title="item.tooltip"
             />
           </a>
@@ -84,14 +85,15 @@
 
 <script setup lang="ts">
 import { main } from "~/stores/main";
+import { GalleryItem } from "~/types/GalleryItem";
 
 withDefaults(
   defineProps<{
     loading?: boolean;
     imageType: string;
-    selected?: any[];
+    selected?: string[];
     allowUpload?: boolean;
-    items: any[];
+    items: GalleryItem[];
   }>(),
   {
     loading: false,
@@ -100,7 +102,7 @@ withDefaults(
   }
 );
 
-const clickedImage = ref(null as any);
+const clickedImage = ref(null as GalleryItem | null);
 const showUploadModal = ref(false as boolean);
 const showChooseImageModal = ref(false as boolean);
 
@@ -108,7 +110,7 @@ const country = computed(() => main().country);
 const magazine = computed(() => main().magazine);
 const issuenumbers = computed(() => main().issuenumbers);
 
-const onSelect = (item) => {
+const onSelect = (item: GalleryItem) => {
   if (!item.disabled) {
     clickedImage.value = item;
     showChooseImageModal.value = true;
@@ -151,5 +153,17 @@ const onSelect = (item) => {
   &:hover {
     background: black;
   }
+}
+
+.variant-success {
+  color: #28a745;
+}
+
+.variant-warning {
+  color: #ffc107;
+}
+
+.variant-danger {
+  color: #dc3545;
 }
 </style>
