@@ -34,7 +34,6 @@ import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
 
-console.log("Setup start:" + new Date().getMilliseconds());
 const {
   issuenumber = null,
   publicationcode = null,
@@ -76,11 +75,9 @@ const buttonTooltipText = $computed(() =>
   )
 );
 
-console.log("Setup end:" + new Date().getMilliseconds());
 if (publicationcode) {
   collection().loadWatchedPublicationsWithSales();
 }
-console.log("end:" + new Date().getMilliseconds());
 
 const toggleArrayItem = (a: string[], v: string) => {
   const i = a.indexOf(v);
