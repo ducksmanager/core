@@ -3,7 +3,6 @@ import { decode } from "node-base64-image";
 
 import { ExpressCall } from "~routes/_express-call";
 import { getNextAvailableFile } from "~routes/_upload_utils";
-import { SimpleUser } from "~types/SimpleUser";
 const edgesPath = process.env.EDGES_PATH;
 
 export const post = async (
@@ -14,8 +13,6 @@ export const post = async (
       country: string;
       magazine: string;
       issuenumber: string;
-      contributors: { designers: SimpleUser[]; photographers: SimpleUser[] };
-      content: string;
     };
   }>
 ) => {

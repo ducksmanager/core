@@ -72,8 +72,6 @@ export class POST__fs__upload_base64 extends ContractWithMethodAndUrl<{
     country: string;
     magazine: string;
     issuenumber: string;
-    contributors: { designers: SimpleUser[]; photographers: SimpleUser[] };
-    content: string;
   };
 }> {
   static readonly method = "post";

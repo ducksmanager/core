@@ -26,7 +26,7 @@ meta:
             alt="Source Image"
             :img-style="{ maxHeight: '100vh' }"
             :auto-crop-area="1"
-            :src="uploadedImageData"
+            :src="uploadedImageData.url"
             :view-mode="1"
             :movable="false"
             :rotatable="false"
@@ -152,7 +152,7 @@ type CropWithData = Crop & {
 const currentCrop = ref(null as CropWithData | null);
 const crops = ref([] as CropWithData[]);
 const uploadedImageData = ref(null as { url: string } | null);
-const cropper = ref(null as VueCropper | null);
+const cropper = ref(null as any | null);
 
 const initialContributors = computed(() => ({
   photographers: [{ id: 0, username: useCookies().get("dm-user") }],
@@ -180,7 +180,7 @@ const addCrop = () => {
     crops.value.push({
       ...currentCrop.value!,
       data,
-      url: cropper.getCroppedCanvas().toDataURL("image/jpeg"),
+      url: cropper.value.getCroppedCanvas().toDataURL("image/jpeg"),
     });
     currentCrop.value = null;
   }
