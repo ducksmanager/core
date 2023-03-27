@@ -35,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+import medal from "~/composables/useMedal";
+
 const { contribution = "edge_photographer", userLevelPoints } = defineProps<{
   contribution?: string;
   userLevelPoints: number;
