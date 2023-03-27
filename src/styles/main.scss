@@ -83,6 +83,10 @@ input.form-control {
   }
 }
 
+canvas {
+  //max-height: 100vh !important;
+}
+
 @media (max-width: 767px) {
   .popper {
     .menu-content {

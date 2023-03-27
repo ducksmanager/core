@@ -45,8 +45,8 @@ alias: [/achats]
   <div class="wrapper">
     <bar
       v-if="chartData"
-      :chart-data="chartData"
-      :chart-options="options"
+      :data="chartData"
+      :options="options"
       :style="{ width, height }"
     />
   </div>
@@ -361,6 +361,11 @@ loadPurchases();
   background: #333;
 
   > div {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  :deep(canvas) {
     width: 100% !important;
     height: 100% !important;
   }

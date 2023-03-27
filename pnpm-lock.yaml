@@ -57,7 +57,7 @@ specifiers:
   vite-plugin-vue-layouts: ^0.8.0
   vitest: ^0.29.0
   vue: ^3.2.47
-  vue-chartjs: ^4.1.2
+  vue-chartjs: ^5.2.0
   vue-i18n: ^9.2.2
   vue-i18n-extract: ^2.0.7
   vue-mapbox-ts: ^0.9.7
@@ -90,7 +90,7 @@ dependencies:
   timeago.js: 4.0.2
   v-contextmenu: 3.0.0_vue@3.2.47
   vue: 3.2.47
-  vue-chartjs: 4.1.2_chart.js@4.2.1+vue@3.2.47
+  vue-chartjs: 5.2.0_chart.js@4.2.1+vue@3.2.47
   vue-i18n: 9.2.2_vue@3.2.47
   vue-i18n-extract: 2.0.7
   vue-mapbox-ts: 0.9.7_vue@3.2.47
@@ -6509,11 +6509,11 @@ packages:
       pbf: 3.2.1
     dev: false
 
-  /vue-chartjs/4.1.2_chart.js@4.2.1+vue@3.2.47:
-    resolution: {integrity: sha512-QSggYjeFv/L4jFSBQpX8NzrAvX0B+Ha6nDgxkTG8tEXxYOOTwKI4phRLe+B4f+REnkmg7hgPY24R0cixZJyXBg==}
+  /vue-chartjs/5.2.0_chart.js@4.2.1+vue@3.2.47:
+    resolution: {integrity: sha512-d3zpKmGZr2OWHQ1xmxBcAn5ShTG917+/UCLaSpaCDDqT0U7DBsvFzTs69ZnHCgKoXT55GZDW8YEj9Av+dlONLA==}
     peerDependencies:
-      chart.js: ^3.7.0
-      vue: ^3.0.0-0 || ^2.6.0
+      chart.js: ^4.1.1
+      vue: ^3.0.0-0 || ^2.7.0
     dependencies:
       chart.js: 4.2.1
       vue: 3.2.47

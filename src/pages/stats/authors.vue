@@ -40,12 +40,16 @@ alias: [/auteurs]
             {{ text }}
           </b-button>
         </b-button-group>
-        <bar
-          :chart-data="chartData"
-          :chart-options="options"
-          :style="{ width, height }"
-        />
-        {{ $t("Les statistiques sont mises à jour quotidiennement.") }}
+        <div class="wrapper">
+          <bar
+            :data="chartData"
+            :options="options"
+            :style="{ width, height }"
+          />
+        </div>
+        <b-alert variant="info" :model-value="true" class="mt-3">
+          {{ $t("Les statistiques sont mises à jour quotidiennement.") }}
+        </b-alert>
       </div>
       <hr />
     </div>
@@ -104,7 +108,7 @@ type WatchedAuthorsStoryCount = {
 let watchedAuthorsStoryCount = $ref(null as WatchedAuthorsStoryCount | null);
 let unitTypeCurrent = $ref("number");
 let width = $ref(null as string | null),
-  height = $ref(null as string | null),
+  height = $ref("300px" as string),
   chartData = $ref(null as ChartData<"bar", number[]> | null),
   options = $ref({} as ChartOptions<"bar">);
 
@@ -116,9 +120,8 @@ const labels = $computed(
     )
 );
 
-const changeDimension = (dimension: "width" | "height", value: number) => {
-  if (dimension === "width") width = `${value}px`;
-  else height = `${value}px`;
+const changeDimension = (dimension: "width", value: number) => {
+  width = `${value}px`;
 };
 
 watch(
@@ -209,5 +212,19 @@ watch(
 <style scoped lang="scss">
 .btn-group + div {
   background: #ddd;
+}
+.wrapper {
+  width: v-bind(width);
+  height: v-bind(height);
+
+  > div {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  :deep(canvas) {
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
 }
 </style>

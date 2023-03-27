@@ -1,6 +1,8 @@
 <template>
   <LinkToCollectionIfNoIssue />
-  <pie v-if="chartData" :chart-data="chartData" :chart-options="options" />
+  <div class="wrapper">
+    <pie v-if="chartData" :data="chartData" :options="options" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -180,6 +182,18 @@ watch(
 );
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.wrapper {
+  height: v-bind(height);
 
+  > div {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  :deep(canvas) {
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+}
 </style>

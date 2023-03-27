@@ -11,7 +11,7 @@
     </b-button>
   </b-button-group>
   <div class="wrapper">
-    <bar v-if="chartData" :chart-data="chartData" :chart-options="options" />
+    <bar v-if="chartData" :data="chartData" :options="options" />
   </div>
 </template>
 
