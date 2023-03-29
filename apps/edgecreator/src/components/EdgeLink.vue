@@ -5,6 +5,7 @@
       :publicationname="publicationNames[publicationcode]"
       :issuenumber="issuenumber"
       hide-condition
+      no-wrap
     />
     <div>
       <b-badge v-if="published">modification</b-badge>

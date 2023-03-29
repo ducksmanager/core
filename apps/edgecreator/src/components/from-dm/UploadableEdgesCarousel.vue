@@ -2,13 +2,14 @@
   <div>
     <slot name="header" />
     <div>
-      <b-carousel v-model="currentSlide" controls>
+      <b-carousel v-model="currentSlide" controls indicators>
         <b-carousel-slide
           v-for="(popularIssueWithoutEdge, index) in issues"
           :key="popularIssueWithoutEdge.issueCode"
           :active="currentSlide === index"
         >
           <Issue
+            no-wrap
             :publicationcode="popularIssueWithoutEdge.publicationcode"
             :publicationname="
               publicationNames[popularIssueWithoutEdge.publicationcode]
@@ -16,7 +17,7 @@
             :issuenumber="popularIssueWithoutEdge.issuenumber"
             hide-condition
           />
-          <MedalProgress
+          <medal-progress
             contribution="edge_photographer"
             :user-level-points="userPoints"
             :extra-points="popularIssueWithoutEdge.popularity || 0"
@@ -39,7 +40,7 @@ defineProps<{
   };
 }>();
 
-const currentSlide = $ref(0);
+const currentSlide = ref(0);
 </script>
 
 <style scoped lang="scss">
@@ -55,6 +56,11 @@ const currentSlide = $ref(0);
     > div {
       background: initial !important;
     }
+  }
+
+  .carousel-indicators {
+    position: absolute;
+    top: 0;
   }
 
   .carousel-caption {
