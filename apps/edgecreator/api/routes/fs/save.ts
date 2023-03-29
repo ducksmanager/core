@@ -1,5 +1,5 @@
 import axios from "axios";
-// import { PUT__edgecreator__publish__$country__$magazine__$issuenumber } from "ducksmanager/types/routes";
+// import { PUT__edgecreator__publish__$country__$magazine__$issuenumber } from "~dm_types/routes";
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";

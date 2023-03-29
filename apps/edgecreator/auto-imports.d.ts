@@ -11,107 +11,15 @@ declare global {
   const $ref: typeof import('vue/macros')['$ref']
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
-  const DELETE__collection__authors__watched: typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__authors__watched']
-  const DELETE__collection__on_sale_by_others__requests: typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__on_sale_by_others__requests']
-  const DELETE__collection__purchases__$id: typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__purchases__$id']
-  const DELETE__collection__subscriptions__$id: typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__subscriptions__$id']
-  const DELETE__collection__user: typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__user']
   const EffectScope: typeof import('vue')['EffectScope']
-  const GET__auth__forgot: typeof import('./node_modules/ducksmanager/types/routes')['GET__auth__forgot']
-  const GET__bookcase__$username: typeof import('./node_modules/ducksmanager/types/routes')['GET__bookcase__$username']
-  const GET__bookcase__$username__options: typeof import('./node_modules/ducksmanager/types/routes')['GET__bookcase__$username__options']
-  const GET__bookcase__$username__sort: typeof import('./node_modules/ducksmanager/types/routes')['GET__bookcase__$username__sort']
-  const GET__bookstores: typeof import('./node_modules/ducksmanager/types/routes')['GET__bookstores']
-  const GET__coa__authorsfullnames__$authors: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__authorsfullnames__$authors']
-  const GET__coa__authorsfullnames__search__$partialAuthorName: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__authorsfullnames__search__$partialAuthorName']
-  const GET__coa__list__countries__$locale: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__countries__$locale']
-  const GET__coa__list__issues__by_publication_codes: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__by_publication_codes']
-  const GET__coa__list__issues__by_storycode: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__by_storycode']
-  const GET__coa__list__issues__count: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__count']
-  const GET__coa__list__issues__details: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__details']
-  const GET__coa__list__issues__recent: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__recent']
-  const GET__coa__list__issues__withDetails: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__withDetails']
-  const GET__coa__list__issues__withTitle: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__withTitle']
-  const GET__coa__list__issuesbycodes__$issueCodes: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issuesbycodes__$issueCodes']
-  const GET__coa__list__publications: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__publications']
-  const GET__coa__list__publications__$countrycode: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__publications__$countrycode']
-  const GET__coa__quotations__issueCodes: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__quotations__issueCodes']
-  const GET__coa__quotations__publications: typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__quotations__publications']
-  const GET__collection__authors__watched: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__authors__watched']
-  const GET__collection__edges__lastPublished: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__edges__lastPublished']
-  const GET__collection__issues: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__issues']
-  const GET__collection__notification_token: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__notification_token']
-  const GET__collection__on_sale_by_others: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__on_sale_by_others']
-  const GET__collection__on_sale_by_others__contact_methods__$sellerId: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__on_sale_by_others__contact_methods__$sellerId']
-  const GET__collection__on_sale_by_others__requests__as__$as: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__on_sale_by_others__requests__as__$as']
-  const GET__collection__options__$optionName: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__options__$optionName']
-  const GET__collection__points: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__points']
-  const GET__collection__popular: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__popular']
-  const GET__collection__purchases: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__purchases']
-  const GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit']
-  const GET__collection__stats__watchedauthorsstorycount: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__stats__watchedauthorsstorycount']
-  const GET__collection__subscriptions: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__subscriptions']
-  const GET__collection__user: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__user']
-  const GET__collection__user_privileges: typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__user_privileges']
-  const GET__cover_id__download__$coverId: typeof import('./node_modules/ducksmanager/types/routes')['GET__cover_id__download__$coverId']
-  const GET__csrf: typeof import('./node_modules/ducksmanager/types/routes')['GET__csrf']
-  const GET__edgecreator__contributors__$modelId: typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__contributors__$modelId']
-  const GET__edgecreator__model: typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model']
-  const GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber: typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber']
-  const GET__edgecreator__model__$modelId__photo__main: typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__$modelId__photo__main']
-  const GET__edgecreator__model__$modelIds__steps: typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__$modelIds__steps']
-  const GET__edgecreator__model__editedbyother__all: typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__editedbyother__all']
-  const GET__edgecreator__model__unassigned__all: typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__unassigned__all']
-  const GET__edges__$countrycode__$magazinecode__$issuenumbers: typeof import('./node_modules/ducksmanager/types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']
-  const GET__edges__published__data: typeof import('./node_modules/ducksmanager/types/routes')['GET__edges__published__data']
-  const GET__edges__wanted__data: typeof import('./node_modules/ducksmanager/types/routes')['GET__edges__wanted__data']
-  const GET__events: typeof import('./node_modules/ducksmanager/types/routes')['GET__events']
   const GET__fs__base64: typeof import('./types/routes')['GET__fs__base64']
   const GET__fs__browseEdges: typeof import('./types/routes')['GET__fs__browseEdges']
   const GET__fs__browse__$imageType__$country__$magazine: typeof import('./types/routes')['GET__fs__browse__$imageType__$country__$magazine']
   const GET__fs__generateDefaultEdge: typeof import('./types/routes')['GET__fs__generateDefaultEdge']
   const GET__fs__text: typeof import('./types/routes')['GET__fs__text']
-  const GET__global_stats__bookcase__contributors: typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__bookcase__contributors']
-  const GET__global_stats__user__$userIds: typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__$userIds']
-  const GET__global_stats__user__collection__rarity: typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__collection__rarity']
-  const GET__global_stats__user__count: typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__count']
-  const GET__global_stats__user__list: typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__list']
-  const GET__status__db: typeof import('./node_modules/ducksmanager/types/routes')['GET__status__db']
-  const GET__status__pastec: typeof import('./node_modules/ducksmanager/types/routes')['GET__status__pastec']
-  const GET__status__pastecsearch: typeof import('./node_modules/ducksmanager/types/routes')['GET__status__pastecsearch']
-  const IssueSuggestionList: typeof import('./node_modules/ducksmanager/types/IssueSuggestionList')['IssueSuggestionList']
-  const POST__auth__change_password: typeof import('./node_modules/ducksmanager/types/routes')['POST__auth__change_password']
-  const POST__auth__forgot: typeof import('./node_modules/ducksmanager/types/routes')['POST__auth__forgot']
-  const POST__bookcase__options: typeof import('./node_modules/ducksmanager/types/routes')['POST__bookcase__options']
-  const POST__bookcase__sort: typeof import('./node_modules/ducksmanager/types/routes')['POST__bookcase__sort']
-  const POST__bookstores__approve: typeof import('./node_modules/ducksmanager/types/routes')['POST__bookstores__approve']
-  const POST__coa__issues__decompose: typeof import('./node_modules/ducksmanager/types/routes')['POST__coa__issues__decompose']
-  const POST__coa__stories__search: typeof import('./node_modules/ducksmanager/types/routes')['POST__coa__stories__search']
-  const POST__coa__stories__search__withIssues: typeof import('./node_modules/ducksmanager/types/routes')['POST__coa__stories__search__withIssues']
-  const POST__collection__authors__watched: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__authors__watched']
-  const POST__collection__empty: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__empty']
-  const POST__collection__issues__multiple: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__issues__multiple']
-  const POST__collection__issues__single: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__issues__single']
-  const POST__collection__lastvisit: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__lastvisit']
-  const POST__collection__options__$optionName: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__options__$optionName']
-  const POST__collection__subscriptions__$id: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__subscriptions__$id']
-  const POST__collection__user: typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__user']
-  const POST__demo: typeof import('./node_modules/ducksmanager/types/routes')['POST__demo']
   const POST__fs__save: typeof import('./types/routes')['POST__fs__save']
   const POST__fs__upload: typeof import('./types/routes')['POST__fs__upload']
   const POST__fs__upload_base64: typeof import('./types/routes')['POST__fs__upload_base64']
-  const POST__login: typeof import('./node_modules/ducksmanager/types/routes')['POST__login']
-  const POST__notification__send: typeof import('./node_modules/ducksmanager/types/routes')['POST__notification__send']
-  const POST__presentation_text__$decision: typeof import('./node_modules/ducksmanager/types/routes')['POST__presentation_text__$decision']
-  const PUT__bookstores: typeof import('./node_modules/ducksmanager/types/routes')['PUT__bookstores']
-  const PUT__collection__authors__watched: typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__authors__watched']
-  const PUT__collection__on_sale_by_others__requests: typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__on_sale_by_others__requests']
-  const PUT__collection__purchases: typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__purchases']
-  const PUT__collection__subscriptions: typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__subscriptions']
-  const PUT__collection__user: typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__user']
-  const PUT__cover_id__search: typeof import('./node_modules/ducksmanager/types/routes')['PUT__cover_id__search']
-  const PUT__edgecreator__edgesprites: typeof import('./node_modules/ducksmanager/types/routes')['PUT__edgecreator__edgesprites']
-  const PUT__edgecreator__publish__$country__$magazine__$issuenumber: typeof import('./node_modules/ducksmanager/types/routes')['PUT__edgecreator__publish__$country__$magazine__$issuenumber']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const availableLocales: typeof import('./src/composables/useLocales')['availableLocales']
@@ -137,7 +45,6 @@ declare global {
   const defineComponent: typeof import('vue')['defineComponent']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
-  const exclude: typeof import('./node_modules/ducksmanager/types/exclude')['exclude']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentLocaleShortKey: typeof import('./src/composables/useLocales')['getCurrentLocaleShortKey']
@@ -409,107 +316,15 @@ declare module 'vue' {
     readonly $ref: UnwrapRef<typeof import('vue/macros')['$ref']>
     readonly $shallowRef: UnwrapRef<typeof import('vue/macros')['$shallowRef']>
     readonly $toRef: UnwrapRef<typeof import('vue/macros')['$toRef']>
-    readonly DELETE__collection__authors__watched: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__authors__watched']>
-    readonly DELETE__collection__on_sale_by_others__requests: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__on_sale_by_others__requests']>
-    readonly DELETE__collection__purchases__$id: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__purchases__$id']>
-    readonly DELETE__collection__subscriptions__$id: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__subscriptions__$id']>
-    readonly DELETE__collection__user: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['DELETE__collection__user']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
-    readonly GET__auth__forgot: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__auth__forgot']>
-    readonly GET__bookcase__$username: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__bookcase__$username']>
-    readonly GET__bookcase__$username__options: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__bookcase__$username__options']>
-    readonly GET__bookcase__$username__sort: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__bookcase__$username__sort']>
-    readonly GET__bookstores: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__bookstores']>
-    readonly GET__coa__authorsfullnames__$authors: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__authorsfullnames__$authors']>
-    readonly GET__coa__authorsfullnames__search__$partialAuthorName: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__authorsfullnames__search__$partialAuthorName']>
-    readonly GET__coa__list__countries__$locale: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__countries__$locale']>
-    readonly GET__coa__list__issues__by_publication_codes: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__by_publication_codes']>
-    readonly GET__coa__list__issues__by_storycode: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__by_storycode']>
-    readonly GET__coa__list__issues__count: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__count']>
-    readonly GET__coa__list__issues__details: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__details']>
-    readonly GET__coa__list__issues__recent: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__recent']>
-    readonly GET__coa__list__issues__withDetails: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__withDetails']>
-    readonly GET__coa__list__issues__withTitle: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issues__withTitle']>
-    readonly GET__coa__list__issuesbycodes__$issueCodes: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__issuesbycodes__$issueCodes']>
-    readonly GET__coa__list__publications: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__publications']>
-    readonly GET__coa__list__publications__$countrycode: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__list__publications__$countrycode']>
-    readonly GET__coa__quotations__issueCodes: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__quotations__issueCodes']>
-    readonly GET__coa__quotations__publications: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__coa__quotations__publications']>
-    readonly GET__collection__authors__watched: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__authors__watched']>
-    readonly GET__collection__edges__lastPublished: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__edges__lastPublished']>
-    readonly GET__collection__issues: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__issues']>
-    readonly GET__collection__notification_token: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__notification_token']>
-    readonly GET__collection__on_sale_by_others: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__on_sale_by_others']>
-    readonly GET__collection__on_sale_by_others__contact_methods__$sellerId: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__on_sale_by_others__contact_methods__$sellerId']>
-    readonly GET__collection__on_sale_by_others__requests__as__$as: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__on_sale_by_others__requests__as__$as']>
-    readonly GET__collection__options__$optionName: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__options__$optionName']>
-    readonly GET__collection__points: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__points']>
-    readonly GET__collection__popular: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__popular']>
-    readonly GET__collection__purchases: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__purchases']>
-    readonly GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit']>
-    readonly GET__collection__stats__watchedauthorsstorycount: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__stats__watchedauthorsstorycount']>
-    readonly GET__collection__subscriptions: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__subscriptions']>
-    readonly GET__collection__user: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__user']>
-    readonly GET__collection__user_privileges: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__collection__user_privileges']>
-    readonly GET__cover_id__download__$coverId: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__cover_id__download__$coverId']>
-    readonly GET__csrf: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__csrf']>
-    readonly GET__edgecreator__contributors__$modelId: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__contributors__$modelId']>
-    readonly GET__edgecreator__model: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model']>
-    readonly GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber']>
-    readonly GET__edgecreator__model__$modelId__photo__main: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__$modelId__photo__main']>
-    readonly GET__edgecreator__model__$modelIds__steps: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__$modelIds__steps']>
-    readonly GET__edgecreator__model__editedbyother__all: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__editedbyother__all']>
-    readonly GET__edgecreator__model__unassigned__all: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edgecreator__model__unassigned__all']>
-    readonly GET__edges__$countrycode__$magazinecode__$issuenumbers: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']>
-    readonly GET__edges__published__data: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edges__published__data']>
-    readonly GET__edges__wanted__data: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__edges__wanted__data']>
-    readonly GET__events: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__events']>
     readonly GET__fs__base64: UnwrapRef<typeof import('./types/routes')['GET__fs__base64']>
     readonly GET__fs__browseEdges: UnwrapRef<typeof import('./types/routes')['GET__fs__browseEdges']>
     readonly GET__fs__browse__$imageType__$country__$magazine: UnwrapRef<typeof import('./types/routes')['GET__fs__browse__$imageType__$country__$magazine']>
     readonly GET__fs__generateDefaultEdge: UnwrapRef<typeof import('./types/routes')['GET__fs__generateDefaultEdge']>
     readonly GET__fs__text: UnwrapRef<typeof import('./types/routes')['GET__fs__text']>
-    readonly GET__global_stats__bookcase__contributors: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__bookcase__contributors']>
-    readonly GET__global_stats__user__$userIds: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__$userIds']>
-    readonly GET__global_stats__user__collection__rarity: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__collection__rarity']>
-    readonly GET__global_stats__user__count: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__count']>
-    readonly GET__global_stats__user__list: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__global_stats__user__list']>
-    readonly GET__status__db: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__status__db']>
-    readonly GET__status__pastec: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__status__pastec']>
-    readonly GET__status__pastecsearch: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['GET__status__pastecsearch']>
-    readonly IssueSuggestionList: UnwrapRef<typeof import('./node_modules/ducksmanager/types/IssueSuggestionList')['IssueSuggestionList']>
-    readonly POST__auth__change_password: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__auth__change_password']>
-    readonly POST__auth__forgot: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__auth__forgot']>
-    readonly POST__bookcase__options: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__bookcase__options']>
-    readonly POST__bookcase__sort: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__bookcase__sort']>
-    readonly POST__bookstores__approve: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__bookstores__approve']>
-    readonly POST__coa__issues__decompose: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__coa__issues__decompose']>
-    readonly POST__coa__stories__search: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__coa__stories__search']>
-    readonly POST__coa__stories__search__withIssues: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__coa__stories__search__withIssues']>
-    readonly POST__collection__authors__watched: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__authors__watched']>
-    readonly POST__collection__empty: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__empty']>
-    readonly POST__collection__issues__multiple: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__issues__multiple']>
-    readonly POST__collection__issues__single: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__issues__single']>
-    readonly POST__collection__lastvisit: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__lastvisit']>
-    readonly POST__collection__options__$optionName: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__options__$optionName']>
-    readonly POST__collection__subscriptions__$id: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__subscriptions__$id']>
-    readonly POST__collection__user: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__collection__user']>
-    readonly POST__demo: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__demo']>
     readonly POST__fs__save: UnwrapRef<typeof import('./types/routes')['POST__fs__save']>
     readonly POST__fs__upload: UnwrapRef<typeof import('./types/routes')['POST__fs__upload']>
     readonly POST__fs__upload_base64: UnwrapRef<typeof import('./types/routes')['POST__fs__upload_base64']>
-    readonly POST__login: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__login']>
-    readonly POST__notification__send: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__notification__send']>
-    readonly POST__presentation_text__$decision: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['POST__presentation_text__$decision']>
-    readonly PUT__bookstores: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__bookstores']>
-    readonly PUT__collection__authors__watched: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__authors__watched']>
-    readonly PUT__collection__on_sale_by_others__requests: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__on_sale_by_others__requests']>
-    readonly PUT__collection__purchases: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__purchases']>
-    readonly PUT__collection__subscriptions: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__subscriptions']>
-    readonly PUT__collection__user: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__collection__user']>
-    readonly PUT__cover_id__search: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__cover_id__search']>
-    readonly PUT__edgecreator__edgesprites: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__edgecreator__edgesprites']>
-    readonly PUT__edgecreator__publish__$country__$magazine__$issuenumber: UnwrapRef<typeof import('./node_modules/ducksmanager/types/routes')['PUT__edgecreator__publish__$country__$magazine__$issuenumber']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly availableLocales: UnwrapRef<typeof import('./src/composables/useLocales')['availableLocales']>
@@ -535,7 +350,6 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly exclude: UnwrapRef<typeof import('./node_modules/ducksmanager/types/exclude')['exclude']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentLocaleShortKey: UnwrapRef<typeof import('./src/composables/useLocales')['getCurrentLocaleShortKey']>

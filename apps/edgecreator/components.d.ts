@@ -63,6 +63,7 @@ declare module '@vue/runtime-core' {
     BRow: typeof import('bootstrap-vue-next')['BRow']
     BTab: typeof import('bootstrap-vue-next')['BTab']
     BTabs: typeof import('bootstrap-vue-next')['BTabs']
+    Condition: typeof import('./src/components/from-dm/Condition.vue')['default']
     ConfirmEditMultipleValues: typeof import('./src/components/ConfirmEditMultipleValues.vue')['default']
     Default: typeof import('./src/layouts/default.vue')['default']
     Dimensions: typeof import('./src/components/Dimensions.vue')['default']
@@ -95,7 +96,7 @@ declare module '@vue/runtime-core' {
     IBiX: typeof import('~icons/bi/x')['default']
     IBiXSquareFill: typeof import('~icons/bi/x-square-fill')['default']
     ImageRender: typeof import('./src/components/renders/ImageRender.vue')['default']
-    Issue: typeof import('ducksmanager')['Issue']
+    Issue: typeof import('./src/components/from-dm/Issue.vue')['default']
     IssueSelect: typeof import('./src/components/IssueSelect.vue')['default']
     MedalProgress: typeof import('ducksmanager')['MedalProgress']
     ModelEdit: typeof import('./src/components/ModelEdit.vue')['default']
@@ -103,6 +104,7 @@ declare module '@vue/runtime-core' {
     PolygonRender: typeof import('./src/components/renders/PolygonRender.vue')['default']
     Popover: typeof import('./src/components/Popover.vue')['default']
     PositionHelper: typeof import('./src/components/PositionHelper.vue')['default']
+    Publication: typeof import('./src/components/from-dm/Publication.vue')['default']
     PublicationVueD: typeof import('./node_modules/ducksmanager/dist/src/components/Publication.vue.d')['default']
     PublishedEdge: typeof import('./src/components/PublishedEdge.vue')['default']
     RectangleRender: typeof import('./src/components/renders/RectangleRender.vue')['default']
@@ -114,6 +116,7 @@ declare module '@vue/runtime-core' {
     TextRender: typeof import('./src/components/renders/TextRender.vue')['default']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
     Upload: typeof import('./src/components/Upload.vue')['default']
+    UploadableEdgesCarousel: typeof import('./src/components/from-dm/UploadableEdgesCarousel.vue')['default']
   }
   export interface ComponentCustomProperties {
     vBTooltip: typeof import('bootstrap-vue-next')['vBTooltip']

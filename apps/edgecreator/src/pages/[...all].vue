@@ -199,26 +199,6 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
     .filter((_, index) => index < 10)
 );
 
-(async () => {
-  await collectionStore.fetchUserPoints();
-  await collectionStore.loadPopularIssuesInCollection();
-  await collectionStore.loadBookcase();
-  await loadMostWantedEdges();
-  await loadCatalog(true);
-  await coa().fetchPublicationNames([
-    ...new Set([
-      ...collectionStore.bookcase!.map(
-        ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`
-      ),
-      ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
-      ...Object.values(edgeCatalogStore().currentEdges).map(
-        ({ country, magazine }) => `${country}/${magazine}`
-      ),
-    ]),
-  ]);
-  isUploadableEdgesCarouselReady.value = true;
-})();
-
 const getPhotoUrl = (country: string, fileName: string) =>
   `/edges/${country}/photos/${fileName}`;
 
@@ -251,6 +231,26 @@ const loadMostWantedEdges = async () => {
       })
     );
 };
+
+(async () => {
+  await collectionStore.fetchUserPoints();
+  await collectionStore.loadPopularIssuesInCollection();
+  await collectionStore.loadBookcase();
+  await loadMostWantedEdges();
+  await loadCatalog(true);
+  await coa().fetchPublicationNames([
+    ...new Set([
+      ...collectionStore.bookcase!.map(
+        ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`
+      ),
+      ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
+      ...Object.values(edgeCatalogStore().currentEdges).map(
+        ({ country, magazine }) => `${country}/${magazine}`
+      ),
+    ]),
+  ]);
+  isUploadableEdgesCarouselReady.value = true;
+})();
 </script>
 <style scoped lang="scss">
 :deep(.carousel) {

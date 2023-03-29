@@ -27,6 +27,10 @@ export default defineConfig({
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
       "~types/": `${path.resolve(__dirname, "types")}/`,
+      "~dm_types/": `${path.resolve(
+        __dirname,
+        "node_modules/ducksmanager/types"
+      )}/`,
     },
   },
 
@@ -50,7 +54,7 @@ export default defineConfig({
     AutoImport({
       imports: ["vue", "vue/macros", "vue-router", "@vueuse/core"],
       dts: true,
-      dirs: ["./src/composables", "./types", "node_modules/ducksmanager/types"],
+      dirs: ["./src/composables", "./types"],
       vueTemplate: true,
       resolvers: [RenderComponentResolver],
     }),

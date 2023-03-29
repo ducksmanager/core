@@ -1,6 +1,12 @@
 import { defineStore } from "pinia";
 
 import { call, getChunkedRequests } from "~/util/axios";
+import {
+  GET__coa__list__countries__$locale,
+  GET__coa__list__issues__by_publication_codes,
+  GET__coa__list__publications,
+  GET__coa__list__publications__$countrycode,
+} from "~dm_types/routes";
 
 import { api } from "./api";
 
