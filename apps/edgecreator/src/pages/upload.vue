@@ -70,6 +70,7 @@ meta:
           >
             <template #header>
               <issue
+                no-wrap
                 :publicationcode="crop.publicationCode"
                 :publicationname="
                   coaStore.publicationNames[crop.publicationCode]

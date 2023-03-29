@@ -113,6 +113,7 @@
           :publicationname="publicationName"
           :issuenumber="mainStore.issuenumbers[0]"
           hide-condition
+          no-wrap
         >
           <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="mainStore.isRange"
@@ -130,7 +131,7 @@
         </issue>
 
         <template v-if="isEditingMultiple">
-          <popover
+          &nbsp;<popover
             id="multiple-issues-hints-popover"
             target="multiple-issues-hints"
             triggers="hover"
@@ -142,7 +143,7 @@
             />
             <template #header>{{ $t("Multiple-edge modification") }}</template>
             <template #content
-              ><ul class="ps-2">
+              ><ul class="py-2 text-start">
                 <li>
                   {{
                     $t(

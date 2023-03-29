@@ -17,7 +17,7 @@ meta:
       <b-container v-if="isUploadableEdgesCarouselReady" align="center">
         <b-alert variant="info" :model-value="true">
           <template v-if="mostPopularIssuesInCollectionWithoutEdge?.length">
-            <uploadable-edges-carousel-vue-d
+            <uploadable-edges-carousel
               :user-points="collectionStore.userPhotographerPoints"
               :issues="mostPopularIssuesInCollectionWithoutEdge"
               :publication-names="publicationNames"
@@ -30,7 +30,7 @@ meta:
                   )
                 }}
               </template>
-            </uploadable-edges-carousel-vue-d>
+            </uploadable-edges-carousel>
             <div>
               <div class="position-absolute px-2 separation-text">
                 {{ $t("or") }}
@@ -38,7 +38,7 @@ meta:
               <hr />
             </div>
           </template>
-          <uploadable-edges-carousel-vue-d
+          <uploadable-edges-carousel
             v-if="mostWantedEdges"
             :user-points="collectionStore.userPhotographerPoints"
             :issues="mostWantedEdges"
@@ -52,7 +52,7 @@ meta:
                 )
               }}
             </template>
-          </uploadable-edges-carousel-vue-d>
+          </uploadable-edges-carousel>
           <b-button to="/upload" class="mt-1">{{
             $t("Send edge photos")
           }}</b-button>
@@ -92,7 +92,7 @@ meta:
                   >Tout éditer ({{ edges.length }})</b-button
                 ></b-link
               >
-              <publication-vue-d
+              <publication
                 :publicationname="publicationNames[publicationcode]"
                 :publicationcode="publicationcode"
               />
@@ -171,6 +171,7 @@ import { coa } from "~/stores/coa";
 import { BookcaseEdgeWithPopularity, collection } from "~/stores/collection";
 import { edgeCatalog as edgeCatalogStore } from "~/stores/edgeCatalog";
 import { call } from "~/util/axios";
+import { GET__edges__wanted__data } from "~dm_types/routes";
 
 const { getEdgeUrl } = useSvgUtils();
 const { hasRole } = usePermissions();
