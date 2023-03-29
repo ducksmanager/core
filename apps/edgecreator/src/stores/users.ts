@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
 import { call } from "~/util/axios";
+import { GET__global_stats__user__list } from "~dm_types/routes";
 import { SimpleUser } from "~types/SimpleUser";
 
 export const users = defineStore("users", {

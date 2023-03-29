@@ -1,10 +1,20 @@
 import { useCookies } from "@vueuse/integrations/useCookies";
-import { BookcaseEdge } from "ducksmanager/types/BookcaseEdge";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
 import { call } from "~/util/axios";
+import { BookcaseEdge } from "~dm_types/BookcaseEdge";
+import {
+  GET__bookcase__$username,
+  GET__collection__popular,
+  GET__collection__user,
+  GET__collection__user_privileges,
+  GET__global_stats__user__$userIds,
+} from "~dm_types/routes";
 import { user, userPermission } from "~prisma_clients/client_dm";
+import { edgeContributor } from "~prisma_clients/client_edgecreator";
+const a: edgeContributor | null = null;
+console.log(a);
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;

@@ -24,6 +24,7 @@
     "paths": {
       "~/*": ["src/*", "node_modules/ducksmanager/dist/src/*"],
       "~types/*": ["types/*"],
+      "~dm_types/*": ["node_modules/ducksmanager/types/*"],
       "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"],
     }
   },
