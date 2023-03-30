@@ -80,23 +80,25 @@ meta:
             :key="`${status}-${publicationcode}`"
           >
             <b-row>
-              <b-link
-                class="mx-3"
-                :to="`edit/${publicationcode} ${edges
-                  .map((edge) => edge.issuenumber)
-                  .join(',')}`"
-                ><b-button
-                  v-if="canEditEdge(status)"
-                  size="sm"
-                  variant="outline-secondary"
-                  >Tout éditer ({{ edges.length }})</b-button
-                ></b-link
-              >
-              <publication
-                :publicationname="publicationNames[publicationcode]"
-                :publicationcode="publicationcode"
-              />
-              {{ publicationNames[publicationcode] }}
+              <b-col>
+                <publication
+                  :publicationname="publicationNames[publicationcode]"
+                  :publicationcode="publicationcode"
+                  display-class="d-inline-block"
+                />
+                <b-link
+                  class="mx-3"
+                  :to="`edit/${publicationcode} ${edges
+                    .map((edge) => edge.issuenumber)
+                    .join(',')}`"
+                  ><b-button
+                    v-if="canEditEdge(status)"
+                    size="sm"
+                    variant="outline-secondary"
+                    >Tout éditer ({{ edges.length }})</b-button
+                  ></b-link
+                >
+              </b-col>
             </b-row>
             <b-row>
               <b-col
@@ -201,7 +203,7 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
 );
 
 const getPhotoUrl = (country: string, fileName: string) =>
-  `/edges/${country}/photos/${fileName}`;
+  `${import.meta.env.VITE_EDGES_URL_PUBLIC}/${country}/photos/${fileName}`;
 
 const loadMostWantedEdges = async () => {
   mostWantedEdges.value = (

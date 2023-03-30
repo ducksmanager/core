@@ -1,4 +1,6 @@
+import { api } from "~/stores/api";
 import { LegacyComponent } from "~/types/LegacyComponent";
+import { call } from "~/util/axios";
 
 import { EdgeDimensions } from "./useDimensions";
 
@@ -127,11 +129,16 @@ export default () => {
           )}`;
 
           const image = calculateBase64
-            ? useFetch<{
-                dimensions: EdgeDimensions;
-                url?: string;
-                base64?: string;
-              }>(`/fs/base64?${elementPath}`).data.value
+            ? (
+                await call(
+                  api().edgeCreatorApi,
+                  new GET__fs__base64({
+                    query: {
+                      targetUrl: elementPath,
+                    },
+                  })
+                )
+              ).data
             : { dimensions: await getImageSize(`/edges/${elementPath}`) };
 
           const embeddedImageHeight =
