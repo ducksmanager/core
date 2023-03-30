@@ -14,6 +14,8 @@ declare module '@vue/runtime-core' {
     BBadge: typeof import('bootstrap-vue-next')['BBadge']
     BBtn: typeof import('bootstrap-vue-next')['BBtn']
     BButton: typeof import('bootstrap-vue-next')['BButton']
+    BButtonGroup: typeof import('bootstrap-vue-next')['BButtonGroup']
+    BButtonToolbar: typeof import('bootstrap-vue-next')['BButtonToolbar']
     BCard: typeof import('bootstrap-vue-next')['BCard']
     BCardGroup: typeof import('bootstrap-vue-next')['BCardGroup']
     BCardHeader: typeof import('bootstrap-vue-next')['BCardHeader']

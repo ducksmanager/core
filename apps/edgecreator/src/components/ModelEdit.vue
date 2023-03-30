@@ -8,7 +8,7 @@
       nav-wrapper-class="col-auto h-100 m-0 p-0"
       nav-class="m-0 p-0"
       vertical
-      content-class="col"
+      content-class="col h-100"
     >
       <b-tab
         v-for="(step, stepNumber) in optionsPerName"
