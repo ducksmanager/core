@@ -95,7 +95,7 @@ meta:
                     v-if="canEditEdge(status)"
                     size="sm"
                     variant="outline-secondary"
-                    >Tout éditer ({{ edges.length }})</b-button
+                    >{{ $t("Edit all") }} ({{ edges.length }})</b-button
                   ></b-link
                 >
               </b-col>

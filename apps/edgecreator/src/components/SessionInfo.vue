@@ -3,13 +3,17 @@
     <div class="text-end fw-bold">
       {{ username }}
     </div>
-    <template v-for="({ code, name }, idx) in locales">
-      <template v-if="idx > 0"> |</template>
-      <span v-if="$i18n.locale === code" :key="code">{{ name }}</span>
-      <a v-else :key="`switch-to-${code}`" @click="reloadWithLocale(code)">{{
-        name
-      }}</a>
-    </template>
+    <b-button-toolbar
+      ><b-button-group>
+        <b-button
+          v-for="{ key, name } in locales"
+          :key="key"
+          :disabled="locale === key"
+          @click="reloadWithLocale(key)"
+          >{{ name }}
+        </b-button></b-button-group
+      ></b-button-toolbar
+    >
   </div>
 </template>
 <script setup lang="ts">
@@ -24,7 +28,7 @@ const locales = computed(() => availableLocales);
 
 const collectionStore = collection();
 const username = computed(() => collectionStore.user!.username);
-const reloadWithLocale = async ({ key }: { key: string }) => {
+const reloadWithLocale = async (key: string) => {
   locale.value = key;
   await coa().fetchCountryNames(locale.value);
 };
