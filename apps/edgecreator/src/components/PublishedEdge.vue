@@ -26,7 +26,9 @@ defineEmits<{
 const naturalHeight = ref(0 as number);
 const zoom = computed(() => ui().zoom);
 const getEdgeUrl = () =>
-  `/edges/${main().country}/gen/${main().magazine}.${props.issuenumber}.png`;
+  `${import.meta.env.VITE_EDGES_URL_PUBLIC}/${main().country}/gen/${
+    main().magazine
+  }.${props.issuenumber}.png`;
 </script>
 
 <style scoped></style>

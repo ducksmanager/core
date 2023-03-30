@@ -166,6 +166,7 @@ export default () => {
 
     const edges = (await call(api().edgeCreatorApi, new GET__fs__browseEdges()))
       .data;
+    debugger;
     for (const edgeStatus in edges) {
       for (const fileName of edges[edgeStatus as "current" | "published"]) {
         const [, country, magazine, issuenumber] = fileName.match(

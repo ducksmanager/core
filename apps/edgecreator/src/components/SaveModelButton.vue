@@ -3,7 +3,7 @@
     v-if="progress || result === 'success'"
     disabled
     pill
-    :variant="`outline-${variant}`"
+    :variant="outlineVariant"
     size="sm"
   >
     <b-progress
@@ -137,8 +137,12 @@ const label = computed(() =>
   $t(props.withExport ? "Export" : props.withSubmit ? "Submit" : "Save")
 );
 
-const variant = computed(() =>
+const variant = computed((): "success" | "primary" =>
   props.withExport || props.withSubmit ? "success" : "primary"
+);
+
+const outlineVariant = computed(
+  (): "outline-success" | "outline-primary" => `outline-${variant.value}`
 );
 
 const isOkDisabled = computed(() =>
@@ -254,7 +258,7 @@ const addContributorAllIssues = (
   );
 const hasAtLeastOneUser = (contributionType: ContributionType) =>
   Object.values(mainStore.contributors).every(
-    (contributionsForIssue) => contributionsForIssue[contributionType].length
+    (contributionsForIssue) => contributionsForIssue[contributionType]?.length
   );
 const onClick = () => {
   if (props.withExport || props.withSubmit) {

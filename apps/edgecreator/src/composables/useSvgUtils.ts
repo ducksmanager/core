@@ -1,3 +1,4 @@
+import axios from "axios";
 import { DOMParser } from "xmldom";
 
 export default () => {
@@ -23,7 +24,7 @@ export default () => {
       "svg?" + new Date().toISOString(),
       publishedVersion
     );
-    const svgString = useFetch<string>(edgeUrl).data.value;
+    const svgString = (await axios.get(edgeUrl)).data as string;
     if (!svgString) {
       throw new Error(`No SVG found : ${edgeUrl}`);
     }
