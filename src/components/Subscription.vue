@@ -132,4 +132,4 @@ defineEmits<{
 const publicationNames = $computed(() => coa().publicationNames);
 </script>
 
-<style scoped></style>
+

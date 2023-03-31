@@ -148,4 +148,4 @@ const customIssues: IssueWithPublicationcode[] = [
 ];
 </script>
 
-<style scoped></style>
+

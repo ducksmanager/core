@@ -106,7 +106,7 @@ watch(
   async (newValue) => {
     if (newValue) {
       if (route.query.redirect) {
-        window.location.href = route.query.redirect + "";
+        window.location.href = route.query.redirect as string;
       } else {
         await router.push("/collection");
       }
@@ -120,4 +120,4 @@ watch(
 })();
 </script>
 
-<style scoped></style>
+
