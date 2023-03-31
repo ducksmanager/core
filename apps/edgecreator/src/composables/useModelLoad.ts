@@ -23,7 +23,7 @@ const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 const { getOptionsFromDb } = useLegacyDb();
 
 const { setDimensions } = useDimensions();
-const { steps, setSteps } = useStepList();
+const { setSteps } = useStepList();
 
 export default () => {
   const getDimensionsFromSvg = (svgElement: SVGElement) => ({
