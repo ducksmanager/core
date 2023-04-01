@@ -2,7 +2,6 @@ import { useCookies } from "@vueuse/integrations/useCookies";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { call } from "~/util/axios";
 import { BookcaseEdge } from "~dm_types/BookcaseEdge";
 import {
   GET__bookcase__$username,
@@ -13,6 +12,8 @@ import {
 } from "~dm_types/routes";
 import { user, userPermission } from "~prisma_clients/client_dm";
 import { edgeContributor } from "~prisma_clients/client_edgecreator";
+
+import { call } from "../../axios";
 const a: edgeContributor | null = null;
 console.log(a);
 

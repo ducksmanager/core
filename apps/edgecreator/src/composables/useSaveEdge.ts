@@ -1,7 +1,8 @@
 import { api } from "~/stores/api";
-import { call } from "~/util/axios";
 import { POST__fs__save } from "~types/routes";
 import { SimpleUser } from "~types/SimpleUser";
+
+import { call } from "../../axios";
 
 export default () => {
   const removeVueMarkup = (element: HTMLElement) => {

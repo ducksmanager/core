@@ -28,7 +28,7 @@ specifiers:
   bootstrap-vue-next: ^0.7.3
   concurrently: ^7.6.0
   cropperjs: ^1.5.13
-  ducksmanager: ^0.0.45
+  ducksmanager: ^0.0.46
   eslint: ^8.37.0
   eslint-config-prettier: ^8.8.0
   eslint-plugin-prettier: ^4.2.1
@@ -77,7 +77,7 @@ dependencies:
   bootstrap: 5.2.3_@popperjs+core@2.11.7
   bootstrap-vue-next: 0.7.3_an2io2zvca7qt2v2rr62z72uaa
   cropperjs: 1.5.13
-  ducksmanager: 0.0.45
+  ducksmanager: 0.0.46
   interactjs: 1.10.17
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
   sass: 1.60.0
@@ -1938,8 +1938,8 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /ducksmanager/0.0.45:
-    resolution: {integrity: sha512-8U1NJxGW4b5sNQBpC7wzBWW9Robmg+rndT8ACOlgQATgdKU0ChPOFEHDOCSguNpUFdYQjg9dspXRQRct2Nm7rg==}
+  /ducksmanager/0.0.46:
+    resolution: {integrity: sha512-5TmxiIRITCHk47z7OjBu/Eb7ArZJZgY2Ha++eyJQ61fRfN9oB6VEPhInJalRl7OOjcWL9/gkbrBJpkNBZshcQw==}
     dev: false
 
   /electron-to-chromium/1.4.347:

@@ -18,6 +18,7 @@
     "paths": {
       "~/*": ["*"],
       "~types/*": ["../types/*"],
+      "~dm_types/*": ["node_modules/ducksmanager/types/*"],
       "~routes/*": ["routes/*"]
     }
   },

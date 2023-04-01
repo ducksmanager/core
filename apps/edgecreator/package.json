@@ -31,7 +31,7 @@
     "bootstrap": "^5.2.3",
     "bootstrap-vue-next": "^0.7.3",
     "cropperjs": "^1.5.13",
-    "ducksmanager": "^0.0.45",
+    "ducksmanager": "^0.0.46",
     "interactjs": "^1.10.17",
     "pinia": "^2.0.33",
     "sass": "^1.60.0",

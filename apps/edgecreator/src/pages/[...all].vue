@@ -172,8 +172,9 @@ import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
 import { BookcaseEdgeWithPopularity, collection } from "~/stores/collection";
 import { edgeCatalog as edgeCatalogStore } from "~/stores/edgeCatalog";
-import { call } from "~/util/axios";
 import { GET__edges__wanted__data } from "~dm_types/routes";
+
+import { call } from "../../axios";
 
 const { getEdgeUrl } = useSvgUtils();
 const { hasRole } = usePermissions();

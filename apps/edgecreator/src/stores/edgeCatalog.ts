@@ -2,12 +2,13 @@ import { defineStore } from "pinia";
 
 import { EdgeWithVersionAndStatus } from "~/composables/useEdgeCatalog";
 import { api } from "~/stores/api";
-import { call, getChunkedRequests } from "~/util/axios";
 import { ModelSteps } from "~dm_types/ModelSteps";
 import {
   GET__edgecreator__model__$modelIds__steps,
   GET__edges__$countrycode__$magazinecode__$issuenumbers,
 } from "~dm_types/routes";
+
+import { call, getChunkedRequests } from "../../axios";
 export const edgeCatalog = defineStore("edgeCatalog", {
   state: () => ({
     currentEdges: {} as {

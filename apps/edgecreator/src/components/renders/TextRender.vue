@@ -25,8 +25,9 @@ import useTextTemplate from "~/composables/useTextTemplate";
 import { api } from "~/stores/api";
 import { globalEvent } from "~/stores/globalEvent";
 import { ui } from "~/stores/ui";
-import { call } from "~/util/axios";
 import { GET__fs__text } from "~types/routes";
+
+import { call } from "../../../axios";
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();

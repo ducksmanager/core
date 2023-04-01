@@ -2,12 +2,12 @@ import { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { call } from "~/util/axios";
 import { EdgeWithModelId } from "~dm_types/EdgeWithModelId";
 import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~dm_types/routes";
 import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
 import { SimpleUser } from "~types/SimpleUser";
 
+import { call } from "../../axios";
 import { coa } from "./coa";
 
 const numericSortCollator = new Intl.Collator(undefined, {

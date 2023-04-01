@@ -1,10 +1,13 @@
-import axios from "axios";
 import { decode } from "node-base64-image";
 
+import { PUT__edgecreator__multiple_edge_photo__v2 } from "~dm_types/routes";
 import { ExpressCall } from "~routes/_express-call";
 import { getNextAvailableFile } from "~routes/_upload_utils";
+
+import { call, createAxios } from "../../../axios";
 const edgesPath = process.env.EDGES_PATH;
 
+const dmApi = createAxios(process.env.VITE_DM_API_URL!);
 export const post = async (
   ...[req, res]: ExpressCall<{
     resBody: { fileName: string };
@@ -31,13 +34,15 @@ export const post = async (
 
   try {
     const publicationcode = `${country}/${magazine}`;
-    await axios.put(
-      `${process.env.BACKEND_URL}/edgecreator/multiple_edge_photo/v2`,
-      {
-        publicationcode,
-        issuenumber,
-      },
-      { headers: req.headers }
+
+    await call(
+      dmApi,
+      new PUT__edgecreator__multiple_edge_photo__v2({
+        reqBody: {
+          publicationcode,
+          issuenumber,
+        },
+      })
     );
   } catch (e) {
     res.writeHead(500);
