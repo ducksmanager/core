@@ -4,13 +4,13 @@ import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { users } from "~/stores/users";
 import { LegacyComponent } from "~/types/LegacyComponent";
-import { call } from "~/util/axios";
 import {
   GET__edgecreator__contributors__$modelId,
   GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber,
   GET__edgecreator__model__$modelId__photo__main,
 } from "~dm_types/routes";
 
+import { call } from "../../axios";
 import type { EdgeDimensions } from "./useDimensions";
 
 const mainStore = main();

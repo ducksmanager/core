@@ -134,9 +134,10 @@ import { useI18n } from "vue-i18n";
 import useSaveEdge from "~/composables/useSaveEdge";
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
-import { call } from "~/util/axios";
 import { Crop } from "~types/Crop";
 import { POST__fs__upload_base64 } from "~types/routes";
+
+import { call } from "../../axios";
 
 const i18n = useI18n();
 const coaStore = coa();

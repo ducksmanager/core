@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 
-import { call, getChunkedRequests } from "~/util/axios";
 import {
   GET__coa__list__countries__$locale,
   GET__coa__list__issues__by_publication_codes,
@@ -8,6 +7,7 @@ import {
   GET__coa__list__publications__$countrycode,
 } from "~dm_types/routes";
 
+import { call, getChunkedRequests } from "../../axios";
 import { api } from "./api";
 
 export const coa = defineStore("coa", {

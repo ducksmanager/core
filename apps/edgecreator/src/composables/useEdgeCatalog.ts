@@ -4,7 +4,6 @@ import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { users } from "~/stores/users";
-import { call } from "~/util/axios";
 import { EdgeModel } from "~dm_types/EdgeModel";
 import {
   GET__edgecreator__model,
@@ -12,6 +11,8 @@ import {
   GET__edgecreator__model__unassigned__all,
 } from "~dm_types/routes";
 import { GET__fs__browseEdges } from "~types/routes";
+
+import { call } from "../../axios";
 
 const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 

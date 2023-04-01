@@ -1,4 +1,3 @@
-import axios from "axios";
 import crypto from "crypto";
 import fs from "fs";
 import multer from "multer";
@@ -7,6 +6,15 @@ import { dirname } from "path";
 import { getUserCredentials } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { getNextAvailableFile } from "~routes/_upload_utils";
+
+import { call, createAxios } from "../../../axios";
+const dmApi = createAxios(process.env.VITE_DM_API_URL!);
+import {
+  GET__edgecreator__elements__images__$filename,
+  GET__edgecreator__multiple_edge_photo__check_today_limit,
+  GET__edgecreator__multiple_edge_photo__hash__$hash,
+  PUT__edgecreator__multiple_edge_photo,
+} from "ducksmanager/types/routes";
 
 const edgesPath = process.env.EDGES_PATH;
 
@@ -71,7 +79,7 @@ export const post = [
           temporaryPath
         );
         saveFile(temporaryPath, targetFilename);
-        await storePhotoHash(targetFilename, hash, userCredentials);
+        await storePhotoHash(targetFilename, hash);
         targetFilesnames.push(
           targetFilename.replace(
             process.env.EDGES_PATH!,
@@ -147,24 +155,23 @@ const validateUpload = async (
   }
   const { hash } = readContentsAndCalculateHash(filePath);
   if (isEdgePhoto) {
-    if (await hasReachedDailyUploadLimit(userCredentials)) {
+    if (await hasReachedDailyUploadLimit()) {
       throw new Error(
         JSON.stringify({
           error: "You have reached your daily upload limit",
         })
       );
     }
-    if (await hasAlreadySentPhoto(hash, userCredentials)) {
+    if (await hasAlreadySentPhoto(hash)) {
       throw new Error(
         JSON.stringify({ error: "You have already sent this photo" })
       );
     }
   } else {
     // await readFile(filestream);
-    const otherElementUses = await isFileExistingAndUsedInOtherModels(
+    const otherElementUses = await getFilenameUsagesInOtherModels(
       filename,
-      edge,
-      userCredentials
+      edge
     );
     if (fs.existsSync(filename) && otherElementUses.length) {
       throw new Error(
@@ -181,27 +188,25 @@ const validateUpload = async (
   return { hash };
 };
 
-const hasReachedDailyUploadLimit = async (
-  userCredentials: Record<string, string>
-) => {
-  const uploadedPhotos = await axios.get(
-    `${process.env.BACKEND_URL}/edgecreator/multiple_edge_photo/today`,
-    { headers: userCredentials }
-  );
-  return uploadedPhotos.data.length > 10;
-};
+const hasReachedDailyUploadLimit = async () =>
+  (
+    await call(
+      dmApi,
+      new GET__edgecreator__multiple_edge_photo__check_today_limit()
+    )
+  ).data.uploadedFilesToday.length > 10;
 
-const hasAlreadySentPhoto = async (
-  hash: string,
-  userCredentials: Record<string, string>
-) => {
-  const existingPhoto = await axios.get(
-    `${process.env.BACKEND_URL}/edgecreator/multiple_edge_photo/hash/${hash}`,
-    { headers: userCredentials }
-  );
-
-  return !!existingPhoto.data;
-};
+const hasAlreadySentPhoto = async (hash: string) =>
+  (
+    await call(
+      dmApi,
+      new GET__edgecreator__multiple_edge_photo__hash__$hash({
+        params: {
+          hash,
+        },
+      })
+    )
+  ).data !== undefined;
 
 const readContentsAndCalculateHash = (
   fileName: string
@@ -213,36 +218,39 @@ const readContentsAndCalculateHash = (
   return { contents: fileBuffer, hash: hashSum.digest("hex") };
 };
 
-const isFileExistingAndUsedInOtherModels = async (
+const getFilenameUsagesInOtherModels = async (
   filename: string,
-  currentModel: { country: string; magazine: string; issuenumber: string },
-  userCredentials: Record<string, string>
-): Promise<unknown[]> =>
+  currentModel: { country: string; magazine: string; issuenumber: string }
+) =>
   (
-    await axios.get(
-      `${process.env.BACKEND_URL}/edgecreator/elements/images/${filename}`,
-      { headers: userCredentials }
+    await call(
+      dmApi,
+      new GET__edgecreator__elements__images__$filename({
+        params: {
+          filename,
+        },
+      })
     )
   ).data.filter(
-    (otherUse: { pays: string; magazine: string; numero: string }) =>
-      currentModel.country !== otherUse.pays ||
+    (otherUse) =>
+      currentModel.country !== otherUse.country ||
       currentModel.magazine !== otherUse.magazine ||
-      currentModel.issuenumber !== otherUse.numero
-  ).length;
+      currentModel.issuenumber !== otherUse.issuenumberStart
+  );
 
 const saveFile = (temporaryPath: string, finalPath: string) => {
   fs.mkdirSync(dirname(finalPath), { recursive: true });
   fs.renameSync(temporaryPath, finalPath);
 };
 
-const storePhotoHash = async (
-  filename: string,
-  hash: string,
-  userCredentials: Record<string, string>
-) => {
-  await axios.put(
-    `${process.env.BACKEND_URL}/edgecreator/multiple_edge_photo`,
-    { filename, hash },
-    { headers: userCredentials }
+const storePhotoHash = async (filename: string, hash: string) => {
+  await call(
+    dmApi,
+    new PUT__edgecreator__multiple_edge_photo({
+      reqBody: {
+        hash,
+        filename,
+      },
+    })
   );
 };

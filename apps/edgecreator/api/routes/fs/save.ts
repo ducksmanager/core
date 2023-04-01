@@ -1,18 +1,20 @@
-import axios from "axios";
-// import { PUT__edgecreator__publish__$country__$magazine__$issuenumber } from "~dm_types/routes";
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
 
 import { getSvgPath } from "~/_utils";
+import {
+  PUT__edgecreator__publish__$country__$magazine__$issuenumber,
+  PUT__edgecreator__submit,
+} from "~dm_types/routes";
 import { ExpressCall } from "~routes/_express-call";
 import { ExportPaths } from "~types/ExportPaths";
 import { SimpleUser } from "~types/SimpleUser";
 
-import { createAxios } from "../../../src/util/axios";
+import { call, createAxios } from "../../../axios";
 
 const dmApi = createAxios(process.env.VITE_DM_API_URL!);
-const edgesPath = `${process.env.PWD}/../${process.env.EDGES_PATH!}`;
+// const edgesPath = `${process.env.PWD}/../${process.env.EDGES_PATH!}`;
 
 export const post = async (
   ...[req, res]: ExpressCall<{
@@ -58,20 +60,20 @@ export const post = async (
     const { designers, photographers } = contributors;
 
     try {
-      // const { isNew } = (
-      //   await call(
-      //     dmApi,
-      //     new PUT__edgecreator__publish__$country__$magazine__$issuenumber({
-      //       params: { country, magazine, issuenumber },
-      //       reqBody: {
-      //         designers: (designers || []).map(({ username }) => username),
-      //         photographers: (photographers || []).map(
-      //           ({ username }) => username
-      //         ),
-      //       },
-      //     })
-      //   )
-      // ).data;
+      const { isNew } = (
+        await call(
+          dmApi,
+          new PUT__edgecreator__publish__$country__$magazine__$issuenumber({
+            params: { country, magazine, issuenumber },
+            reqBody: {
+              designers: (designers || []).map(({ username }) => username),
+              photographers: (photographers || []).map(
+                ({ username }) => username
+              ),
+            },
+          })
+        )
+      ).data;
       try {
         fs.unlinkSync(getSvgPath(false, country, magazine, issuenumber));
       } catch (error) {
@@ -91,13 +93,14 @@ export const post = async (
   } else {
     if (runSubmit) {
       try {
-        await axios.put(
-          `${process.env.BACKEND_URL}/edgecreator/submit`,
-          {
-            publicationcode,
-            issuenumber,
-          },
-          { headers: req.headers }
+        await call(
+          dmApi,
+          new PUT__edgecreator__submit({
+            reqBody: {
+              publicationcode,
+              issuenumber,
+            },
+          })
         );
       } catch (error) {
         res.writeHead(500);
