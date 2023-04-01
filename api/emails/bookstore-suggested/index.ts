@@ -17,5 +17,4 @@ export default class extends Email {
   getFrom = () => this.data.user?.email || "anonymous@duckmanager.net";
   getFromName = () => this.data.user?.username || "Anonymous";
   getSubject = () => "Bookstore suggestion";
-  getTextBody = () => "";
 }

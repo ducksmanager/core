@@ -18,5 +18,4 @@ export default class extends Email {
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
   getSubject = () => i18n.__("Presentation sentence update request");
-  getTextBody = () => "";
 }

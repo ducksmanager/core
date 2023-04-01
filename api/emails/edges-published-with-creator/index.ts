@@ -34,5 +34,4 @@ export default class extends Email {
       : i18n.__(
           "La tranche que vous avez aidé à créer a été publiée sur DucksManager !"
         );
-  getTextBody = () => "";
 }

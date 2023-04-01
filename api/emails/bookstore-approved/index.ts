@@ -23,5 +23,4 @@ export default class extends Email {
   getTo = () => this.data.user.email;
   getToName = () => this.data.user.username;
   getSubject = () => i18n.__("Votre revue de bouquinerie a été approuvée !");
-  getTextBody = () => "";
 }

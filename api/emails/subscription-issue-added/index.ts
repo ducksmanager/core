@@ -26,5 +26,4 @@ export default class extends Email {
         issuenumber: this.data.issuenumber,
       }
     );
-  getTextBody = () => "";
 }

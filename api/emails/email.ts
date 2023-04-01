@@ -100,5 +100,5 @@ export abstract class Email {
   abstract getTo(): string;
   abstract getToName(): string;
   abstract getSubject(): string;
-  abstract getTextBody(): string;
+  getTextBody = (): string => "";
 }

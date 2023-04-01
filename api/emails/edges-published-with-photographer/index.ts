@@ -30,5 +30,4 @@ export default class extends Email {
     this.data.extraEdges > 1
       ? i18n.__("Vos tranches ont été publiées sur DucksManager !")
       : i18n.__("Votre tranche a été publiée sur DucksManager !");
-  getTextBody = () => "";
 }

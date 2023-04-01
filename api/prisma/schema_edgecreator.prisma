@@ -36,6 +36,7 @@ model optionValue {
   optionId Int?    @map("ID_Option")
   value    String? @map("Option_valeur") @db.VarChar(200)
 
+  @@index([optionId], map: "edgecreator_valeurs_edgecreator_modeles2_ID_fk")
   @@map("edgecreator_valeurs")
 }
 
@@ -92,12 +93,12 @@ model edgeContributor {
 }
 
 model edgePhoto {
-  id            Int          @id @default(autoincrement()) @map("ID")
-  modelId       Int          @map("ID_Modele")
-  photoId       Int          @map("ID_Image")
-  isMainPhoto   Boolean      @map("EstPhotoPrincipale")
-  elementImage  elementImage @relation(fields: [photoId], references: [id], onUpdate: Restrict, map: "tranches_en_cours_modeles_images___fk_image")
-  model         edgeModel    @relation(fields: [modelId], references: [id], onUpdate: Restrict, map: "tranches_en_cours_modeles_images___modele")
+  id           Int          @id @default(autoincrement()) @map("ID")
+  modelId      Int          @map("ID_Modele")
+  photoId      Int          @map("ID_Image")
+  isMainPhoto  Boolean      @map("EstPhotoPrincipale")
+  elementImage elementImage @relation(fields: [photoId], references: [id], onUpdate: Restrict, map: "tranches_en_cours_modeles_images___fk_image")
+  model        edgeModel    @relation(fields: [modelId], references: [id], onUpdate: Restrict, map: "tranches_en_cours_modeles_images___modele")
 
   @@index([photoId], map: "tranches_en_cours_modeles_images___fk_image")
   @@index([modelId], map: "tranches_en_cours_modeles_images___modele")

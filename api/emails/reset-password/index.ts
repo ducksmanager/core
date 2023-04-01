@@ -16,5 +16,4 @@ export default class extends Email {
   getToName = () => this.data.user.username;
   getSubject = () =>
     i18n.__("Vous avez oublié votre mot de passe sur DucksManager ?");
-  getTextBody = () => "";
 }
