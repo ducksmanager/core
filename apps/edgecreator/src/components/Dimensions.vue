@@ -7,7 +7,7 @@
       <b-col cols="5">
         <b-form-input
           :id="dimension"
-          v-model="values[dimension]"
+          v-model="values[dimension as 'width'|'height']"
           size="sm"
           autocomplete="off"
           type="number"

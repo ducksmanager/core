@@ -15,13 +15,14 @@ export default () => {
     country: string,
     magazine: string,
     issuenumber: string,
+    mtime: string,
     publishedVersion = false
   ) => {
     const edgeUrl = getEdgeUrl(
       country,
       magazine,
       issuenumber,
-      "svg?" + new Date().toISOString(),
+      `svg?${mtime}`,
       publishedVersion
     );
     const svgString = (await axios.get(edgeUrl)).data as string;

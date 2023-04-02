@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
     y: 5,
     width: 15,
     height: 15,
-    src: null,
+    src: "",
   }),
 });
 

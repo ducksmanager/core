@@ -300,9 +300,7 @@ const collapseClone = ref(false as boolean);
 
 const hasPhotoUrl = computed(() => Object.keys(mainStore.photoUrls).length);
 const publicationName = computed(
-  () =>
-    coa().publicationNames &&
-    coa().publicationNames[`${mainStore.country}/${mainStore.magazine}`]
+  () => coa().publicationNames?.[`${mainStore.country}/${mainStore.magazine}`]
 );
 const uniqueDimensions = computed(() =>
   [

@@ -49,7 +49,6 @@ app.all(/^\/fs\/(text|upload|upload-base64)$/, [
   checkUserIsAdminOrEditor,
 ]);
 
-console.log(process.cwd());
 app.use("/", router({ directory: `${process.cwd()}/routes` }));
 
 app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);

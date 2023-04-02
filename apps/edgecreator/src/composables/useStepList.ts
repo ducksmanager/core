@@ -1,17 +1,10 @@
 import { editingStep } from "~/stores/editingStep";
 import { globalEvent } from "~/stores/globalEvent";
+import { Step } from "~/types/Step";
+import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
 
 const { dimensions } = useDimensions();
-const steps = ref(
-  {} as {
-    [issuenumber: string]: {
-      component: string;
-      options?: {
-        [optionName: string]: string;
-      };
-    }[];
-  }
-);
+const steps = ref({} as StepsPerIssuenumber);
 export default () => {
   watch(
     () => globalEvent().options,
@@ -34,13 +27,13 @@ export default () => {
 
   const checkSameComponentsAsCompletedEdge = (
     issuenumber: string,
-    issueSteps: { component: string }[]
+    issueSteps: Step[]
   ) => {
     const completedIssuenumber = Object.keys(steps.value).find(
       (issueNumber) => steps.value[issueNumber].length
     )!;
     const completedIssueSteps = steps.value[completedIssuenumber];
-    const getComponents = (steps: { component: string }[]) =>
+    const getComponents = (steps: Step[]) =>
       steps?.map(({ component }) => component).join("+");
     const previousIssueComponents = getComponents(completedIssueSteps);
     const currentIssueComponents = getComponents(issueSteps);
@@ -67,10 +60,7 @@ export default () => {
     }
   };
 
-  const setSteps = (
-    issuenumber: string,
-    issueSteps: { component: string }[]
-  ) => {
+  const setSteps = (issuenumber: string, issueSteps: Step[]) => {
     checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
     nextTick().then(() => {
       steps.value[issuenumber] = issueSteps;

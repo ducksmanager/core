@@ -22,12 +22,12 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
   const width = computed(() => dimensions.value[props.issuenumber].width);
   const height = computed(() => dimensions.value[props.issuenumber].height);
   const attributes = computed(() =>
-    Object.keys(props.options)
+    Object.keys(props.options!)
       .filter((optionKey) => attributeKeys.includes(optionKey))
       .reduce(
         (acc, optionKey) => ({
           ...acc,
-          [optionKey]: props.options[optionKey],
+          [optionKey]: props.options![optionKey],
         }),
         {}
       )
@@ -108,8 +108,8 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
               };
             } else {
               globalEvent().options = {
-                x: props.options.x + dx / uiStore.zoom / 3,
-                y: props.options.y + dy / uiStore.zoom / 3,
+                x: (props.options!.x as number) + dx / uiStore.zoom / 3,
+                y: (props.options!.y as number) + dy / uiStore.zoom / 3,
               };
             }
           }

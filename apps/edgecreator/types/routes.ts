@@ -17,8 +17,8 @@ export class GET__fs__base64 extends ContractWithMethodAndUrl<{
 }
 export class GET__fs__browseEdges extends ContractWithMethodAndUrl<{
   resBody: {
-    current: string[];
-    published: string[];
+    current: { filename: string; mtime: string }[];
+    published: { filename: string; mtime: string }[];
   };
 }> {
   static readonly method = "get";

@@ -167,10 +167,11 @@ export default () => {
 
     const edges = (await call(api().edgeCreatorApi, new GET__fs__browseEdges()))
       .data;
-    debugger;
     for (const edgeStatus in edges) {
-      for (const fileName of edges[edgeStatus as "current" | "published"]) {
-        const [, country, magazine, issuenumber] = fileName.match(
+      for (const { filename, mtime } of edges[
+        edgeStatus as "current" | "published"
+      ]) {
+        const [, country, magazine, issuenumber] = filename.match(
           /([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/
         )!;
         // if ([country, magazine, issuenumber].includes(undefined)) {
@@ -193,6 +194,7 @@ export default () => {
               country,
               magazine,
               issuenumber,
+              mtime,
               edgeStatus === "published"
             );
             const designers = getSvgMetadata(

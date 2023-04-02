@@ -122,14 +122,18 @@ const replaceEditingIssuenumberIfNotAlreadyEditing = (issuenumber: string) => {
   }
 };
 const renderComponents = {
-  ArcCircle: defineAsyncComponent(() => import("~renders/ArcCircleRender.vue")),
-  Fill: defineAsyncComponent(() => import("~renders/FillRender.vue")),
-  Gradient: defineAsyncComponent(() => import("~renders/GradientRender.vue")),
-  Image: defineAsyncComponent(() => import("~renders/ImageRender.vue")),
-  Polygon: defineAsyncComponent(() => import("~renders/PolygonRender.vue")),
-  Rectangle: defineAsyncComponent(() => import("~renders/RectangleRender.vue")),
-  Staple: defineAsyncComponent(() => import("~renders/StapleRender.vue")),
-  Text: defineAsyncComponent(() => import("~renders/TextRender.vue")),
+  ArcCircle: defineAsyncComponent(
+    () => import("./renders/ArcCircleRender.vue")
+  ),
+  Fill: defineAsyncComponent(() => import("./renders/FillRender.vue")),
+  Gradient: defineAsyncComponent(() => import("./renders/GradientRender.vue")),
+  Image: defineAsyncComponent(() => import("./renders/ImageRender.vue")),
+  Polygon: defineAsyncComponent(() => import("./renders/PolygonRender.vue")),
+  Rectangle: defineAsyncComponent(
+    () => import("./renders/RectangleRender.vue")
+  ),
+  Staple: defineAsyncComponent(() => import("./renders/StapleRender.vue")),
+  Text: defineAsyncComponent(() => import("./renders/TextRender.vue")),
 };
 </script>
 
