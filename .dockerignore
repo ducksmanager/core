@@ -6,5 +6,3 @@ Dockerfile*
 api/.env
 api/dist/prisma
 edges
-var
-vendor

@@ -56,12 +56,15 @@ declare global {
   const GET__cover_id__download__$coverId: typeof import('./types/routes')['GET__cover_id__download__$coverId']
   const GET__csrf: typeof import('./types/routes')['GET__csrf']
   const GET__edgecreator__contributors__$modelId: typeof import('./types/routes')['GET__edgecreator__contributors__$modelId']
+  const GET__edgecreator__elements__images__$filename: typeof import('./types/routes')['GET__edgecreator__elements__images__$filename']
   const GET__edgecreator__model: typeof import('./types/routes')['GET__edgecreator__model']
   const GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber: typeof import('./types/routes')['GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber']
   const GET__edgecreator__model__$modelId__photo__main: typeof import('./types/routes')['GET__edgecreator__model__$modelId__photo__main']
   const GET__edgecreator__model__$modelIds__steps: typeof import('./types/routes')['GET__edgecreator__model__$modelIds__steps']
   const GET__edgecreator__model__editedbyother__all: typeof import('./types/routes')['GET__edgecreator__model__editedbyother__all']
   const GET__edgecreator__model__unassigned__all: typeof import('./types/routes')['GET__edgecreator__model__unassigned__all']
+  const GET__edgecreator__multiple_edge_photo__check_today_limit: typeof import('./types/routes')['GET__edgecreator__multiple_edge_photo__check_today_limit']
+  const GET__edgecreator__multiple_edge_photo__hash__$hash: typeof import('./types/routes')['GET__edgecreator__multiple_edge_photo__hash__$hash']
   const GET__edges__$countrycode__$magazinecode__$issuenumbers: typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']
   const GET__edges__published__data: typeof import('./types/routes')['GET__edges__published__data']
   const GET__edges__wanted__data: typeof import('./types/routes')['GET__edges__wanted__data']
@@ -103,7 +106,10 @@ declare global {
   const PUT__collection__user: typeof import('./types/routes')['PUT__collection__user']
   const PUT__cover_id__search: typeof import('./types/routes')['PUT__cover_id__search']
   const PUT__edgecreator__edgesprites: typeof import('./types/routes')['PUT__edgecreator__edgesprites']
+  const PUT__edgecreator__multiple_edge_photo: typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo']
+  const PUT__edgecreator__multiple_edge_photo__v2: typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo__v2']
   const PUT__edgecreator__publish__$country__$magazine__$issuenumber: typeof import('./types/routes')['PUT__edgecreator__publish__$country__$magazine__$issuenumber']
+  const PUT__edgecreator__submit: typeof import('./types/routes')['PUT__edgecreator__submit']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const availableLocales: typeof import('./src/composables/useLocales')['availableLocales']
@@ -435,12 +441,15 @@ declare module 'vue' {
     readonly GET__cover_id__download__$coverId: UnwrapRef<typeof import('./types/routes')['GET__cover_id__download__$coverId']>
     readonly GET__csrf: UnwrapRef<typeof import('./types/routes')['GET__csrf']>
     readonly GET__edgecreator__contributors__$modelId: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__contributors__$modelId']>
+    readonly GET__edgecreator__elements__images__$filename: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__elements__images__$filename']>
     readonly GET__edgecreator__model: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model']>
     readonly GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber']>
     readonly GET__edgecreator__model__$modelId__photo__main: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__$modelId__photo__main']>
     readonly GET__edgecreator__model__$modelIds__steps: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__$modelIds__steps']>
     readonly GET__edgecreator__model__editedbyother__all: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__editedbyother__all']>
     readonly GET__edgecreator__model__unassigned__all: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__model__unassigned__all']>
+    readonly GET__edgecreator__multiple_edge_photo__check_today_limit: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__multiple_edge_photo__check_today_limit']>
+    readonly GET__edgecreator__multiple_edge_photo__hash__$hash: UnwrapRef<typeof import('./types/routes')['GET__edgecreator__multiple_edge_photo__hash__$hash']>
     readonly GET__edges__$countrycode__$magazinecode__$issuenumbers: UnwrapRef<typeof import('./types/routes')['GET__edges__$countrycode__$magazinecode__$issuenumbers']>
     readonly GET__edges__published__data: UnwrapRef<typeof import('./types/routes')['GET__edges__published__data']>
     readonly GET__edges__wanted__data: UnwrapRef<typeof import('./types/routes')['GET__edges__wanted__data']>
@@ -482,7 +491,10 @@ declare module 'vue' {
     readonly PUT__collection__user: UnwrapRef<typeof import('./types/routes')['PUT__collection__user']>
     readonly PUT__cover_id__search: UnwrapRef<typeof import('./types/routes')['PUT__cover_id__search']>
     readonly PUT__edgecreator__edgesprites: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__edgesprites']>
+    readonly PUT__edgecreator__multiple_edge_photo: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo']>
+    readonly PUT__edgecreator__multiple_edge_photo__v2: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo__v2']>
     readonly PUT__edgecreator__publish__$country__$magazine__$issuenumber: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__publish__$country__$magazine__$issuenumber']>
+    readonly PUT__edgecreator__submit: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__submit']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly availableLocales: UnwrapRef<typeof import('./src/composables/useLocales')['availableLocales']>
