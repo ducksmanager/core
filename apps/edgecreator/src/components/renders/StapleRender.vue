@@ -50,33 +50,43 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-onMounted(() => {
-  const onmove = ({
-    currentTarget,
-    dy,
-  }: {
-    currentTarget: SVGElement | HTMLElement;
-    dx: number;
-    dy: number;
-  }) => {
-    const stapleHeight =
-      typeof props.options.height === "string"
-        ? parseInt(props.options.height)
-        : props.options.height;
-    const isStaple2 = rect2.value === currentTarget;
-    const yDistanceFromCenter = Math.min(
-      Math.max(
-        stapleHeight,
-        (props.options.yDistanceFromCenter || 0) +
-          ((isStaple2 ? 1 : -1) * dy) / ui().zoom
-      ),
-      height.value / 2 - stapleHeight * 2
-    );
-    globalEvent().options = {
-      yDistanceFromCenter,
-    };
-  };
+const { dimensions } = useDimensions();
 
+const onmove = ({
+  currentTarget,
+  dy,
+}: {
+  currentTarget: SVGElement | HTMLElement;
+  dx: number;
+  dy: number;
+}) => {
+  const stapleHeight =
+    typeof props.options.height === "string"
+      ? parseInt(props.options.height)
+      : props.options.height;
+  const isStaple2 = rect2.value === currentTarget;
+  const yDistanceFromCenter = Math.min(
+    Math.max(
+      stapleHeight,
+      (props.options.yDistanceFromCenter || 0) +
+        ((isStaple2 ? 1 : -1) * dy) / ui().zoom
+    ),
+    height.value / 2 - stapleHeight * 2
+  );
+  globalEvent().options = {
+    yDistanceFromCenter,
+  };
+};
+
+// if (typeof props.options.height === "string") {
+//   globalEvent().options = {
+//     height: parseInt(
+//       resolveHeightTemplate(props.options.height, dimensions.value.height)
+//     ),
+//   };
+// }
+
+onMounted(() => {
   // if (props.options.yDistanceFromCenter === undefined) {
   //   globalEvent().options = {
   //     yDistanceFromCenter:
@@ -84,13 +94,6 @@ onMounted(() => {
   //       height.value / 2,
   //   };
   // }
-  if (typeof props.options.height === "string") {
-    globalEvent().options = {
-      height: parseInt(
-        resolveHeightTemplate(props.options.height, height.value)
-      ),
-    };
-  }
   enableDragResize(rect1.value!, {
     onmove,
     onresizemove: () => {

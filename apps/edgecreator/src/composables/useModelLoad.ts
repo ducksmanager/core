@@ -10,7 +10,7 @@ import {
   GET__edgecreator__model__$modelId__photo__main,
 } from "~dm_types/routes";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 import type { EdgeDimensions } from "./useDimensions";
 
 const mainStore = main();

@@ -7,7 +7,7 @@ import {
   GET__coa__list__publications__$countrycode,
 } from "~dm_types/routes";
 
-import { call, getChunkedRequests } from "../../axios";
+import { call, getChunkedRequests } from "../../axios-helper";
 import { api } from "./api";
 
 export const coa = defineStore("coa", {

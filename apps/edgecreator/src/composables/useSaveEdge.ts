@@ -2,7 +2,7 @@ import { api } from "~/stores/api";
 import { POST__fs__save } from "~types/routes";
 import { SimpleUser } from "~types/SimpleUser";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 
 export default () => {
   const removeVueMarkup = (element: HTMLElement) => {

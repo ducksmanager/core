@@ -4,7 +4,7 @@ import { api } from "~/stores/api";
 import { GET__global_stats__user__list } from "~dm_types/routes";
 import { SimpleUser } from "~types/SimpleUser";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 
 export const users = defineStore("users", {
   state: () => ({

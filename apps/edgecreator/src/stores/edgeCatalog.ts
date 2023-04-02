@@ -8,7 +8,7 @@ import {
   GET__edges__$countrycode__$magazinecode__$issuenumbers,
 } from "~dm_types/routes";
 
-import { call, getChunkedRequests } from "../../axios";
+import { call, getChunkedRequests } from "../../axios-helper";
 export const edgeCatalog = defineStore("edgeCatalog", {
   state: () => ({
     currentEdges: {} as {

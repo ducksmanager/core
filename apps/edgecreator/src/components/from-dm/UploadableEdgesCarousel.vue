@@ -30,8 +30,12 @@
 </template>
 
 <script setup lang="ts">
-import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-
+import { BookcaseEdge } from "~dm_types/BookcaseEdge";
+interface BookcaseEdgeWithPopularity extends BookcaseEdge {
+  publicationcode: string;
+  issueCode: string;
+  popularity?: number | undefined;
+}
 defineProps<{
   issues: BookcaseEdgeWithPopularity[];
   userPoints: number;

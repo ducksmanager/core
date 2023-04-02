@@ -1,12 +1,14 @@
-export const base64 = () => {
-  const image = ref(
-    null as {
-      base64: string | null;
-      width: number | null;
-      height: number | null;
-    } | null
-  );
-  const loadImage = (src: string, callback: (img: Image) => void) => {
+export type ImageMetadata = {
+  base64: string | undefined;
+  width: number | null;
+  height: number | null;
+};
+export default () => {
+  const image = ref(null as ImageMetadata | null);
+  const loadImage = (
+    src: string,
+    callback: (img: HTMLImageElement) => void
+  ) => {
     const img = new Image();
     img.crossOrigin = "Anonymous";
     img.onload = () => {
@@ -24,7 +26,7 @@ export const base64 = () => {
     };
     img.onerror = (e) => {
       console.error(`Base64 image could not be retrieved : ${src} : ${e}`);
-      image.value = { base64: null, width: null, height: null };
+      image.value = { base64: undefined, width: null, height: null };
     };
     img.src = src;
   };
