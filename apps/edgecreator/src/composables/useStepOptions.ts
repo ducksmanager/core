@@ -102,15 +102,15 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
             const { dx, dy, shiftKey } = e;
             showMoveResizeToast("move");
             if (shiftKey) {
-              globalEvent().options = {
+              globalEvent().setOptionValues({
                 x: 0,
                 y: 0,
-              };
+              });
             } else {
-              globalEvent().options = {
+              globalEvent().setOptionValues({
                 x: (props.options!.x as number) + dx / uiStore.zoom / 3,
                 y: (props.options!.y as number) + dy / uiStore.zoom / 3,
-              };
+              });
             }
           }
         },
@@ -136,19 +136,15 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
               rect.width = width.value;
             }
           }
-          globalEvent().options = rect;
+          globalEvent().setOptionValues(rect);
         }
       })
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
 
-  // onMounted(() => {
-  //   globalEvent().options = {
-  //     ...props.options,
-  //     issuenumbers: [props.issuenumber],
-  //     stepNumber: props.stepNumber,
-  //   };
-  // });
+  onMounted(() => {
+    globalEvent().setOptionValues(props.options);
+  });
 
   return {
     zoom,

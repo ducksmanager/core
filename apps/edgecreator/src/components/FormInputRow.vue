@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { globalEvent } from "~/stores/globalEvent";
+import { OptionValue } from "~/types/OptionValue";
 
 const props = withDefaults(
   defineProps<{
@@ -56,7 +57,9 @@ const props = withDefaults(
     optionName: string;
     type: "color" | "text" | "range" | "select";
     disabled?: boolean;
-    options: any;
+    options: {
+      [optionName: string]: OptionValue[];
+    };
     min?: number;
     max?: number;
     step?: number;
@@ -97,9 +100,9 @@ const onChangeValue = (event: Event) => {
   if (props.optionName === "rotation") {
     intValue = parseInt(value);
   }
-  globalEvent().options = {
+  globalEvent().setOptionValues({
     [props.optionName]: intValue !== null ? intValue : value,
-  };
+  });
 };
 </script>
 

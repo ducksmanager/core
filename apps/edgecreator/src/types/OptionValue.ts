@@ -1,1 +1,1 @@
-export type OptionValue = string | number | boolean | undefined;
+export type OptionValue = string | number | boolean | null;

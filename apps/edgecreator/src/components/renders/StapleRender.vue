@@ -73,26 +73,26 @@ const onmove = ({
     ),
     height.value / 2 - stapleHeight * 2
   );
-  globalEvent().options = {
+  globalEvent().setOptionValues({
     yDistanceFromCenter,
-  };
+  });
 };
 
 // if (typeof props.options.height === "string") {
-//   globalEvent().options = {
+//   globalEvent().setOptionValues({
 //     height: parseInt(
 //       resolveHeightTemplate(props.options.height, dimensions.value.height)
 //     ),
-//   };
+//   });
 // }
 
 onMounted(() => {
   // if (props.options.yDistanceFromCenter === undefined) {
-  //   globalEvent().options = {
+  //   globalEvent().setOptionValues({
   //     yDistanceFromCenter:
   //       parseInt(resolveHeightTemplate(props.options.y2, height.value)) -
   //       height.value / 2,
-  //   };
+  //   });
   // }
   enableDragResize(rect1.value!, {
     onmove,

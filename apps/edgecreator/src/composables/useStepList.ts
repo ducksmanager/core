@@ -1,29 +1,27 @@
-import { editingStep } from "~/stores/editingStep";
-import { globalEvent } from "~/stores/globalEvent";
 import { Step } from "~/types/Step";
 import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
 
 const { dimensions } = useDimensions();
 const steps = ref({} as StepsPerIssuenumber);
 export default () => {
-  watch(
-    () => globalEvent().options,
-    (changes) => {
-      const { issuenumbers, stepNumber, ...optionChanges } = { ...changes };
-      const targetIssueNumbers = issuenumbers || editingStep().issuenumbers;
-      const targetStepNumber =
-        stepNumber !== undefined ? stepNumber : editingStep().stepNumber;
-      for (const issuenumber of Object.keys(steps.value).filter((issuenumber) =>
-        targetIssueNumbers.includes(issuenumber)
-      )) {
-        const step = steps.value[issuenumber][targetStepNumber];
-        step.options = {
-          ...(step.options || {}),
-          ...optionChanges,
-        };
-      }
-    }
-  );
+  // watch(
+  //   () => globalEvent().options,
+  //   (changes) => {
+  //     const { issuenumbers, stepNumber, ...optionChanges } = { ...changes };
+  //     const targetIssueNumbers = issuenumbers || editingStep().issuenumbers;
+  //     const targetStepNumber =
+  //       stepNumber !== undefined ? stepNumber : editingStep().stepNumber;
+  //     for (const issuenumber of Object.keys(steps.value).filter((issuenumber) =>
+  //       targetIssueNumbers.includes(issuenumber)
+  //     )) {
+  //       const step = steps.value[issuenumber][targetStepNumber];
+  //       step.options = {
+  //         ...(step.options || {}),
+  //         ...optionChanges,
+  //       };
+  //     }
+  //   }
+  // );
 
   const checkSameComponentsAsCompletedEdge = (
     issuenumber: string,

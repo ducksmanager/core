@@ -40,14 +40,20 @@
               v-if="step.options.visible?.[0] === false"
               :title="$t('Click to show')"
               @click.stop="
-                globalEventStore.options = { stepNumber, visible: true }
+                globalEventStore.setOptionValues(
+                  { visible: true },
+                  { stepNumber }
+                )
               "
             />
             <i-bi-eye-fill
               v-else
               :title="$t('Click to hide')"
               @click.stop="
-                globalEventStore.options = { stepNumber, visible: false }
+                globalEventStore.setOptionValues(
+                  { visible: false },
+                  { stepNumber }
+                )
               "
             />
             <i-bi-front
@@ -184,7 +190,7 @@
               :items="mainStore.publicationElementsForGallery"
               image-type="elements"
               :selected="step.options.src"
-              @change="globalEventStore.options = { src: $event }"
+              @change="globalEventStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
         </b-card-text>
@@ -353,15 +359,17 @@ const resetPositionAndSize = (step: {
   options: { [key: string]: OptionValue[] };
 }) => {
   for (const issuenumber of Object.keys(props.steps)) {
-    globalEventStore.options = {
-      x: 0,
-      y: 0,
-      width: props.dimensions[issuenumber].width,
-      height:
-        props.dimensions[issuenumber].width *
-        (step.options.aspectRatio[0] as number),
-      issuenumbers: [issuenumber],
-    };
+    globalEventStore.setOptionValues(
+      {
+        x: 0,
+        y: 0,
+        width: props.dimensions[issuenumber].width,
+        height:
+          props.dimensions[issuenumber].width *
+          (step.options.aspectRatio[0] as number),
+      },
+      { issuenumbers: [issuenumber] }
+    );
   }
 };
 
@@ -372,13 +380,15 @@ const splitImageAcrossEdges = () => {
     0
   );
   for (const issuenumber of Object.keys(props.steps)) {
-    globalEventStore.options = {
-      x: leftOffset,
-      y: 0,
-      width: widthSum,
-      height: props.dimensions[issuenumber].height,
-      issuenumbers: [issuenumber],
-    };
+    globalEventStore.setOptionValues(
+      {
+        x: leftOffset,
+        y: 0,
+        width: widthSum,
+        height: props.dimensions[issuenumber].height,
+      },
+      { issuenumbers: [issuenumber] }
+    );
     leftOffset -= props.dimensions[issuenumber].width;
   }
 };

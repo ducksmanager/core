@@ -85,14 +85,19 @@
 import { editingStep } from "~/stores/editingStep";
 import { hoveredStep } from "~/stores/hoveredStep";
 import { ui } from "~/stores/ui";
+import { Step } from "~/types/Step";
+import { SimpleUser } from "~types/SimpleUser";
 
 const props = withDefaults(
   defineProps<{
     issuenumber: string;
     dimensions: { width: number; height: number };
-    steps: any[];
+    steps: Step[];
     photoUrl?: string | null;
-    contributors: any;
+    contributors: {
+      designers: SimpleUser[];
+      photographers: SimpleUser[];
+    };
   }>(),
   { photoUrl: null }
 );

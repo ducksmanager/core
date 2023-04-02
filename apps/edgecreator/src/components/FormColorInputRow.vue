@@ -92,10 +92,13 @@ import Popover from "~/components/Popover.vue";
 import { globalEvent } from "~/stores/globalEvent";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
+import { OptionValue } from "~/types/OptionValue";
 
 const props = withDefaults(
   defineProps<{
-    options: any;
+    options: {
+      [optionName: string]: OptionValue[];
+    };
     optionName: string;
     otherColors: {
       differentIssuenumber: {
@@ -116,7 +119,7 @@ const props = withDefaults(
 
 const originalColor = ref(null as string | null);
 
-const inputValues = computed(() => props.options[props.optionName]);
+const inputValues = computed(() => props.options![props.optionName]);
 const isTransparent = computed(() => inputValues.value[0] === "transparent");
 const photoUrls = computed(() => main().photoUrls);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
@@ -131,22 +134,22 @@ watch(
       if (newColor === "transparent") {
         newColor = "#000000";
       }
-      originalColor.value = newColor;
+      originalColor.value = newColor as string;
     }
   },
   { immediate: true }
 );
 
 const onTransparentCheckboxChange = (event: Event) => {
-  globalEvent().options = {
+  globalEvent().setOptionValues({
     [props.optionName]: (event.currentTarget as HTMLInputElement).checked
       ? "transparent"
       : originalColor.value,
-  };
+  });
 };
 
 const onColorChange = (value: string) => {
-  globalEvent().options = { [props.optionName]: value };
+  globalEvent().setOptionValues({ [props.optionName]: value });
 };
 </script>
 <style lang="scss" scoped>
