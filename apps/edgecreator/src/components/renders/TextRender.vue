@@ -143,7 +143,7 @@ watch(
                 options.x =
                   props.options.x - (options.width - props.options.width!) / 2;
               }
-              globalEvent().options = options;
+              globalEvent().setOptionValues(options);
             },
           });
           applyTextImageDimensions();
@@ -238,8 +238,6 @@ const applyTextImageDimensions = () => {
   const naturalAspectRatio = textImage.value!.height! / textImage.value!.width!;
   const options = {
     ...props.options,
-    stepNumber: props.stepNumber,
-    issuenumbers: [props.issuenumber],
   };
   if (options.height === null) {
     // By default, with a 270° rotation,
@@ -263,7 +261,7 @@ const applyTextImageDimensions = () => {
     options.widthCompression = undefined;
   }
   options.aspectRatio = options.height / options.width!;
-  globalEvent().options = options;
+  globalEvent().setOptionValues(options);
 };
 
 refreshPreview();

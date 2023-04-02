@@ -129,7 +129,7 @@ const props = withDefaults(
 const showModal = ref(false as boolean);
 const progress = ref(0 as number);
 const issueIndexToSave = ref(null as number | null);
-const result = ref(null as any);
+const result = ref(null as string | null);
 const designersTypeahead = ref<HTMLInputElement>();
 const photographersTypeahead = ref<HTMLInputElement>();
 

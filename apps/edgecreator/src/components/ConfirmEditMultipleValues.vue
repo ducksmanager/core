@@ -14,8 +14,10 @@
   <div v-else class="edit-wrapper"><slot /></div>
 </template>
 <script setup lang="ts">
+import { OptionValue } from "~/types/OptionValue";
+
 defineProps<{
-  values: any[];
+  values: OptionValue[];
 }>();
 
 const edit = ref(false as boolean);

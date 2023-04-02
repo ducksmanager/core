@@ -49,16 +49,16 @@ const { attributes, enableDragResize } = useStepOptions(props, [
 onMounted(() => {
   enableDragResize(ellipse.value!, {
     onmove: ({ dx, dy }) => {
-      globalEvent().options = {
+      globalEvent().setOptionValues({
         cx: props.options.cx + dx / uiStore.zoom,
         cy: props.options.cy + dy / uiStore.zoom,
-      };
+      });
     },
     onresizemove: ({ rect }) => {
-      globalEvent().options = {
+      globalEvent().setOptionValues({
         rx: rect.width / 2 / uiStore.zoom,
         ry: rect.height / 2 / uiStore.zoom,
-      };
+      });
     },
   });
 });

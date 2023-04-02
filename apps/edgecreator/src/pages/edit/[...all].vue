@@ -154,6 +154,7 @@ import { globalEvent } from "~/stores/globalEvent";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
+import { OptionValue } from "~/types/OptionValue";
 import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
 
 const route = useRoute();
@@ -213,7 +214,7 @@ const stepColors = computed(() =>
             )
             .reduce(
               (acc, optionName) => [...acc, step.options![optionName]],
-              [] as any[]
+              [] as OptionValue[]
             )
         ),
       ]),
@@ -333,9 +334,9 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   canvas.height = imgElement.height;
   context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
   const color = context.getImageData(offsetX, offsetY, 1, 1).data;
-  globalEvent().options = {
+  globalEvent().setOptionValues({
     [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
-  };
+  });
 };
 
 const isPending = (issuenumber: string) =>

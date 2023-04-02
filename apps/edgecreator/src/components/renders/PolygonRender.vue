@@ -50,12 +50,11 @@ const points = computed((): [number, number][] =>
 onMounted(() => {
   enableDragResize(polygon.value!, {
     onmove: ({ dy, dx }): void => {
-      globalEvent().options = {
-        points: points.value.map(([x, y]) => [
-          x + dx / ui().zoom,
-          y + dy / ui().zoom,
-        ]),
-      };
+      globalEvent().setOptionValues({
+        points: pointsAsString(
+          points.value.map(([x, y]) => [x + dx / ui().zoom, y + dy / ui().zoom])
+        ),
+      });
     },
     onresizemove: ({ rect: { width, height } }): void => {
       const heightMaxGrowth = height / ui().zoom;
@@ -67,12 +66,14 @@ onMounted(() => {
       const maxY = Math.max(...points.value.map(([, y]) => y));
       const currentWidth = maxX - minX;
       const currentHeight = maxY - minY;
-      globalEvent().options = {
-        points: points.value.map(([x, y]) => [
-          x + widthMaxGrowth * ((x - minX) / currentWidth),
-          y + heightMaxGrowth * ((y - minY) / currentHeight),
-        ]),
-      };
+      globalEvent().setOptionValues({
+        points: pointsAsString(
+          points.value.map(([x, y]) => [
+            x + widthMaxGrowth * ((x - minX) / currentWidth),
+            y + heightMaxGrowth * ((y - minY) / currentHeight),
+          ])
+        ),
+      });
     },
   });
 });
