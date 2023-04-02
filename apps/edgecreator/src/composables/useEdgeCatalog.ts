@@ -12,7 +12,7 @@ import {
 } from "~dm_types/routes";
 import { GET__fs__browseEdges } from "~types/routes";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 
 const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 

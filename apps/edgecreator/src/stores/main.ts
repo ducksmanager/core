@@ -7,7 +7,7 @@ import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~dm_type
 import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
 import { SimpleUser } from "~types/SimpleUser";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 import { coa } from "./coa";
 
 const numericSortCollator = new Intl.Collator(undefined, {

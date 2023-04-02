@@ -24,9 +24,7 @@
         :id="`${optionName}-transparent`"
         :checked="isTransparent"
         type="checkbox"
-        @change="
-        change($event.currentTarget!.checked ? 'transparent' : originalColor)
-      "
+        @change="onTransparentCheckboxChange"
     /></template>
 
     <template v-if="!isTransparent" #suffix>
@@ -69,7 +67,7 @@
                   :key="color"
                   class="frequent-color"
                   :style="{ background: color }"
-                  @click="change(color)"
+                  @click="onColorChange(color)"
                   >&nbsp;</span
                 >
               </li>
@@ -139,7 +137,15 @@ watch(
   { immediate: true }
 );
 
-const change = (value: any) => {
+const onTransparentCheckboxChange = (event: Event) => {
+  globalEvent().options = {
+    [props.optionName]: (event.currentTarget as HTMLInputElement).checked
+      ? "transparent"
+      : originalColor.value,
+  };
+};
+
+const onColorChange = (value: string) => {
   globalEvent().options = { [props.optionName]: value };
 };
 </script>

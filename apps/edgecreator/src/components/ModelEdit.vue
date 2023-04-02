@@ -258,7 +258,7 @@ import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
 
-type Step = string | number;
+type Step = string | number | boolean;
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
@@ -350,13 +350,15 @@ const otherColors = computed(() =>
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);
 
-const resetPositionAndSize = (step: { options: { [key: string]: Step } }) => {
+const resetPositionAndSize = (step: { options: { [key: string]: Step[] } }) => {
   for (const issuenumber of Object.keys(props.steps)) {
     globalEventStore.options = {
       x: 0,
       y: 0,
       width: props.dimensions[issuenumber].width,
-      height: props.dimensions[issuenumber].width * step.options.aspectRatio,
+      height:
+        props.dimensions[issuenumber].width *
+        (step.options.aspectRatio[0] as number),
       issuenumbers: [issuenumber],
     };
   }

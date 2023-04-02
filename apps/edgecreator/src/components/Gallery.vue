@@ -9,7 +9,7 @@
       :title="clickedImage.name"
       scrollable
       :ok-title="$t('Choose')"
-      @ok="$emit('change', clickedImage.name)"
+      @ok="clickedImage && $emit('change', clickedImage.name)"
     >
       <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import { createAxios } from "../../axios";
+import { createAxios } from "../../axios-helper";
 
 export const api = defineStore("api", {
   state: () => ({

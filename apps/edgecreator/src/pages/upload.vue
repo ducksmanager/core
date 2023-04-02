@@ -137,7 +137,7 @@ import { coa } from "~/stores/coa";
 import { Crop } from "~types/Crop";
 import { POST__fs__upload_base64 } from "~types/routes";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 
 const i18n = useI18n();
 const coaStore = coa();
@@ -243,10 +243,10 @@ const read = (files: FileList) =>
       reject(new Error(i18n.t("Please choose a JPG or JPEG file").toString()));
     }
   });
-const change = (e: { target: { files: FileList; value: string } }) =>
-  read(e.target.files)
+const change = (e: { target: { files: FileList; value: string } | null }) =>
+  read(e.target!.files)
     .then((data) => {
-      e.target.value = "";
+      e.target!.value = "";
       update(data as { url: string });
     })
     .catch((e) => {

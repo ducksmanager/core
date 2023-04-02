@@ -13,7 +13,7 @@ import {
 import { user, userPermission } from "~prisma_clients/client_dm";
 import { edgeContributor } from "~prisma_clients/client_edgecreator";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 const a: edgeContributor | null = null;
 console.log(a);
 

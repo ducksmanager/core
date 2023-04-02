@@ -2,9 +2,10 @@
 <template>
   <svg>
     <image
+      v-if="image"
       ref="image"
       v-bind="options"
-      :xlink:href="image.base64"
+      :xlink:href="base64"
       preserveAspectRatio="none"
     >
       <metadata>{{ options }}</metadata>
@@ -13,12 +14,14 @@
 </template>
 
 <script setup lang="ts">
+import useBase64Legacy from "~/composables/useBase64Legacy";
 import useTextTemplate from "~/composables/useTextTemplate";
 import { main } from "~/stores/main";
 
 const { resolveIssueNumberTemplate } = useTextTemplate();
 
-const image = ref(null);
+const image = ref(null as SVGImageElement | null);
+const { image: base64, loadImage } = useBase64Legacy();
 
 interface Props {
   issuenumber: string;
@@ -40,7 +43,6 @@ const props = withDefaults(defineProps<Props>(), {
     src: null,
   }),
 });
-const { loadImage } = base64();
 
 const effectiveSource = computed(() =>
   resolveIssueNumberTemplate(props.options.src!, props.issuenumber)

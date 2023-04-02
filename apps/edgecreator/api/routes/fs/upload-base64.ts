@@ -4,7 +4,7 @@ import { PUT__edgecreator__multiple_edge_photo__v2 } from "~dm_types/routes";
 import { ExpressCall } from "~routes/_express-call";
 import { getNextAvailableFile } from "~routes/_upload_utils";
 
-import { call, createAxios } from "../../../axios";
+import { call, createAxios } from "../../../axios-helper";
 const edgesPath = process.env.EDGES_PATH;
 
 const dmApi = createAxios(process.env.VITE_DM_API_URL!);

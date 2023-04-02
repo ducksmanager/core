@@ -11,7 +11,7 @@ import { ExpressCall } from "~routes/_express-call";
 import { ExportPaths } from "~types/ExportPaths";
 import { SimpleUser } from "~types/SimpleUser";
 
-import { call, createAxios } from "../../../axios";
+import { call, createAxios } from "../../../axios-helper";
 
 const dmApi = createAxios(process.env.VITE_DM_API_URL!);
 // const edgesPath = `${process.env.PWD}/../${process.env.EDGES_PATH!}`;

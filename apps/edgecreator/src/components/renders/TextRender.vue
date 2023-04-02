@@ -1,6 +1,6 @@
 <!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
-  <svg v-if="options.x !== undefined">
+  <svg v-if="options.x !== undefined && options.height !== null">
     <image
       v-if="image"
       ref="imageRef"
@@ -27,7 +27,7 @@ import { globalEvent } from "~/stores/globalEvent";
 import { ui } from "~/stores/ui";
 import { GET__fs__text } from "~types/routes";
 
-import { call } from "../../../axios";
+import { call } from "../../../axios-helper";
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();

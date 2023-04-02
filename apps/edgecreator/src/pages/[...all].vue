@@ -174,7 +174,7 @@ import { BookcaseEdgeWithPopularity, collection } from "~/stores/collection";
 import { edgeCatalog as edgeCatalogStore } from "~/stores/edgeCatalog";
 import { GET__edges__wanted__data } from "~dm_types/routes";
 
-import { call } from "../../axios";
+import { call } from "../../axios-helper";
 
 const { getEdgeUrl } = useSvgUtils();
 const { hasRole } = usePermissions();
