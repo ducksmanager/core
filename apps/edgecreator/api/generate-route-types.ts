@@ -3,7 +3,7 @@ import { router } from "express-file-routing";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
 
 const app = express();
-app.use("/", router());
+app.use("/", router({ directory: `${process.cwd()}/routes` }));
 
 type Route = { path: string | RegExp; methods: { [method: string]: boolean } };
 const routes: Route[] = [];

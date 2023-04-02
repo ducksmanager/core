@@ -1,5 +1,6 @@
 import { api } from "~/stores/api";
 import { LegacyComponent } from "~/types/LegacyComponent";
+import { StepOptions } from "~/types/StepOptions";
 
 import { call } from "../../axios-helper";
 import { EdgeDimensions } from "./useDimensions";
@@ -28,12 +29,9 @@ export default () => {
       };
       img.onerror = reject;
     });
-  const validateOptions = (
-    optionNames: string[],
-    options: { [optionName: string]: any }
-  ) => {
+  const validateOptions = (optionNames: string[], options: StepOptions) => {
     for (const requiredOption of optionNames) {
-      if (options[requiredOption] === undefined) {
+      if (options![requiredOption] === undefined) {
         throw new Error("Required option not found: " + requiredOption);
       }
     }
@@ -172,7 +170,7 @@ export default () => {
         const x = dbOptions.X.split(",");
         const y = dbOptions.Y.split(",");
         return {
-          points: x.map((x, i) => [x, y[i]]),
+          points: x.map((x, i) => [x, y[i]].join(",")).join(";"),
           fill: rgbToHex(dbOptions.Couleur),
         };
       }

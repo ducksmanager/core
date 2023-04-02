@@ -264,6 +264,7 @@ watch(
   await mainStore.loadPublicationIssues();
 
   try {
+    debugger;
     mainStore.setIssuenumbers({
       min: issuenumberMin,
       max: issuenumberMax,

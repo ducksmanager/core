@@ -256,9 +256,8 @@ import { globalEvent } from "~/stores/globalEvent";
 import { hoveredStep } from "~/stores/hoveredStep";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
+import { OptionValue } from "~/types/OptionValue";
 import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
-
-type Step = string | number | boolean;
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
@@ -297,7 +296,7 @@ const optionsPerName = computed(() =>
           ),
         ],
       }),
-      {} as Record<string, Step[]>
+      {} as Record<string, OptionValue[]>
     ),
   }))
 );
@@ -350,7 +349,9 @@ const otherColors = computed(() =>
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);
 
-const resetPositionAndSize = (step: { options: { [key: string]: Step[] } }) => {
+const resetPositionAndSize = (step: {
+  options: { [key: string]: OptionValue[] };
+}) => {
   for (const issuenumber of Object.keys(props.steps)) {
     globalEventStore.options = {
       x: 0,

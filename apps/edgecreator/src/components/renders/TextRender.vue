@@ -21,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import useBase64Legacy from "~/composables/useBase64Legacy";
 import useTextTemplate from "~/composables/useTextTemplate";
 import { api } from "~/stores/api";
 import { globalEvent } from "~/stores/globalEvent";
@@ -96,7 +97,7 @@ const { width, attributes, enableDragResize } = useStepOptions(props, [
   "width",
   "height",
 ]);
-const { image, loadImage } = base64();
+const { image, loadImage } = useBase64Legacy();
 
 watch(
   () => textImage.value,

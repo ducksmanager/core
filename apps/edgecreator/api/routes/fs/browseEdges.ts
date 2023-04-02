@@ -9,8 +9,8 @@ const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 export const get = async (
   ...[, res]: ExpressCall<{
     resBody: {
-      current: string[];
-      published: string[];
+      current: { filename: string; mtime: string }[];
+      published: { filename: string; mtime: string }[];
     };
   }>
 ) => {
@@ -26,7 +26,10 @@ export const get = async (
           findInDir(filePath);
         } else if (REGEX_IS_SVG_FILE.test(file)) {
           const edgeStatus = file.indexOf("_") === 0 ? "current" : "published";
-          fileList[edgeStatus].push(filePath.replace(/.+\/edges\//, ""));
+          fileList[edgeStatus].push({
+            filename: filePath.replace(/.+\/edges\//, ""),
+            mtime: fs.statSync(filePath).mtime.toISOString(),
+          });
         }
       }
     } catch (e) {
@@ -35,8 +38,8 @@ export const get = async (
   };
 
   const fileList = {
-    current: [] as string[],
-    published: [] as string[],
+    current: [] as { filename: string; mtime: string }[],
+    published: [] as { filename: string; mtime: string }[],
   };
   findInDir(edgesPath);
   return res.json(fileList);

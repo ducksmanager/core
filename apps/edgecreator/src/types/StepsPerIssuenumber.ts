@@ -1,10 +1,5 @@
+import { Step } from "~/types/Step";
+
 export type StepsPerIssuenumber = {
-  [issuenumber: string]: {
-    component: string;
-    options?:
-      | {
-          [optionName: string]: string;
-        }
-      | undefined;
-  }[];
+  [issuenumber: string]: Step[];
 };

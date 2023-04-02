@@ -4,6 +4,8 @@ import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { users } from "~/stores/users";
 import { LegacyComponent } from "~/types/LegacyComponent";
+import { Step } from "~/types/Step";
+import { StepOptions } from "~/types/StepOptions";
 import {
   GET__edgecreator__contributors__$modelId,
   GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber,
@@ -34,7 +36,7 @@ export default () => {
     svgChildNodes
       .filter(({ nodeName }) => nodeName === "g")
       .map((group) => ({
-        component: group.getAttribute("class"),
+        component: group.getAttribute("class")!,
         options: JSON.parse(
           (group.getElementsByTagName("metadata")[0] || { textContent: "{}" })
             .textContent!
@@ -76,7 +78,7 @@ export default () => {
         issuenumber: string;
         stepNumber: number;
         functionName: string;
-        options: { [optionName: string]: string };
+        options: StepOptions;
       };
     },
     defaultDimensions: EdgeDimensions | null = { width: 15, height: 200 }
@@ -86,8 +88,8 @@ export default () => {
     );
     if (dimensions) {
       return {
-        width: parseInt(dimensions.options.Dimension_x),
-        height: parseInt(dimensions.options.Dimension_y),
+        width: parseInt(dimensions.options!.Dimension_x as string),
+        height: parseInt(dimensions.options!.Dimension_y as string),
       };
     }
     return defaultDimensions;
@@ -99,7 +101,7 @@ export default () => {
       [optionName: string]: {
         stepNumber: number;
         functionName: string;
-        options: { [optionName: string]: any };
+        options: StepOptions;
       };
     },
     dimensions: { width: number; height: number },
@@ -154,7 +156,7 @@ export default () => {
             }
           )
       )
-    ).filter((step) => !!step);
+    ).filter((step) => step !== null) as Step[];
   const setContributorsFromApi = async (
     issuenumber: string,
     edgeId: number
@@ -186,7 +188,7 @@ export default () => {
     targetIssuenumber: string
   ) => {
     const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber;
-    let loadedSteps: any;
+    let loadedSteps: Step[] | null = null;
     let dimensions: { width: number; height: number };
 
     const loadSvg = async (publishedVersion: boolean) => {
@@ -194,6 +196,7 @@ export default () => {
         countrycode,
         magazinecode,
         issuenumber,
+        new Date().toISOString(),
         publishedVersion
       );
 
@@ -234,14 +237,16 @@ export default () => {
           const apiSteps =
             edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
           dimensions = getDimensionsFromApi(apiSteps)!;
-          loadedSteps = await getStepsFromApi(
-            publicationcode,
-            issuenumber,
-            apiSteps,
-            dimensions,
-            true,
-            (error: string) => mainStore.addWarning(error)
-          );
+          loadedSteps = (
+            await getStepsFromApi(
+              publicationcode,
+              issuenumber,
+              apiSteps,
+              dimensions,
+              true,
+              (error: string) => mainStore.addWarning(error)
+            )
+          ).filter((step) => step !== null);
 
           if (!onlyLoadStepsAndDimensions) {
             await setPhotoUrlsFromApi(issuenumber, edge.id);
@@ -254,7 +259,7 @@ export default () => {
     }
     if (loadedSteps) {
       setDimensions(dimensions!, targetIssuenumber);
-      setSteps(targetIssuenumber, loadedSteps!);
+      setSteps(targetIssuenumber, loadedSteps);
     } else {
       throw new Error("No model found for issue " + issuenumber);
     }
