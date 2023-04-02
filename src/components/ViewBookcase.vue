@@ -358,7 +358,7 @@ watch(
         .reduce((acc, { name, version, edges, size }) => {
           edges.forEach((edgeId) => {
             acc[edgeId] = `v${version}/${name}`;
-            if (size <= 50) {
+            if (size <= 20) {
               acc[edgeId] = `f_auto/${acc[edgeId]}`;
             }
           });
