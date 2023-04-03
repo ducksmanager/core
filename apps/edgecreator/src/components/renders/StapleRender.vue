@@ -74,7 +74,9 @@ const onmove = ({
     height.value / 2 - stapleHeight * 2
   );
   globalEvent().setOptionValues({
-    yDistanceFromCenter,
+    options: {
+      yDistanceFromCenter,
+    },
   });
 };
 

@@ -107,56 +107,50 @@ export default () => {
     dimensions: { width: number; height: number },
     calculateBase64: boolean,
     onError: (error: string, stepNumber: number) => void
-  ) =>
-    (
-      await Promise.all(
-        Object.values(apiSteps)
-          .filter(
-            ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1
-          )
-          .map(
-            async ({
-              stepNumber: originalStepNumber,
-              functionName: originalComponentName,
+  ): Promise<Step[]> => {
+    const steps = [];
+    for (const {
+      stepNumber: originalStepNumber,
+      functionName: originalComponentName,
+      options: originalOptions,
+    } of Object.values(apiSteps).filter(
+      ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1
+    )) {
+      const { component } = rendersStore.supportedRenders.find(
+        (component) => component.originalName === originalComponentName
+      ) || { component: null };
+      if (component) {
+        try {
+          const options = await getOptionsFromDb(
+            publicationcode,
+            issuenumber,
+            originalStepNumber,
+            {
+              component,
               options: originalOptions,
-            }) => {
-              const { component } = rendersStore.supportedRenders.find(
-                (component) => component.originalName === originalComponentName
-              ) || { component: null };
-              if (component) {
-                try {
-                  return {
-                    component,
-                    options: await getOptionsFromDb(
-                      publicationcode,
-                      issuenumber,
-                      originalStepNumber,
-                      {
-                        component,
-                        options: originalOptions,
-                      } as LegacyComponent,
-                      dimensions,
-                      calculateBase64
-                    ),
-                  };
-                } catch (e) {
-                  onError(
-                    `Invalid step ${originalStepNumber} (${component}) : ${e}, step will be ignored.`,
-                    originalStepNumber
-                  );
-                  return null;
-                }
-              } else {
-                onError(
-                  `Unrecognized step name : ${originalComponentName}, step will be ignored.`,
-                  originalStepNumber
-                );
-                return null;
-              }
-            }
-          )
-      )
-    ).filter((step) => step !== null) as Step[];
+            } as LegacyComponent,
+            dimensions,
+            calculateBase64
+          );
+          steps.push({
+            component,
+            options,
+          });
+        } catch (e) {
+          onError(
+            `Invalid step ${originalStepNumber} (${component}) : ${e}, step will be ignored.`,
+            originalStepNumber
+          );
+        }
+      } else {
+        onError(
+          `Unrecognized step name : ${originalComponentName}, step will be ignored.`,
+          originalStepNumber
+        );
+      }
+    }
+    return steps;
+  };
   const setContributorsFromApi = async (
     issuenumber: string,
     edgeId: number
@@ -237,16 +231,14 @@ export default () => {
           const apiSteps =
             edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
           dimensions = getDimensionsFromApi(apiSteps)!;
-          loadedSteps = (
-            await getStepsFromApi(
-              publicationcode,
-              issuenumber,
-              apiSteps,
-              dimensions,
-              true,
-              (error: string) => mainStore.addWarning(error)
-            )
-          ).filter((step) => step !== null);
+          loadedSteps = await getStepsFromApi(
+            publicationcode,
+            issuenumber,
+            apiSteps,
+            dimensions,
+            true,
+            (error: string) => mainStore.addWarning(error)
+          );
 
           if (!onlyLoadStepsAndDimensions) {
             await setPhotoUrlsFromApi(issuenumber, edge.id);

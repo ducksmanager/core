@@ -1,8 +1,9 @@
+import { globalEvent } from "~/stores/globalEvent";
 import { Step } from "~/types/Step";
-import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
 
 const { dimensions } = useDimensions();
-const steps = ref({} as StepsPerIssuenumber);
+const globalEventStore = globalEvent();
+const steps = computed(() => globalEventStore.options);
 export default () => {
   // watch(
   //   () => globalEvent().options,
@@ -27,13 +28,28 @@ export default () => {
     issuenumber: string,
     issueSteps: Step[]
   ) => {
-    const completedIssuenumber = Object.keys(steps.value).find(
-      (issueNumber) => steps.value[issueNumber].length
-    )!;
-    const completedIssueSteps = steps.value[completedIssuenumber];
+    let completedIssuenumber: string | null = null;
+    for (const stepNumber of Object.keys(steps.value)) {
+      const stepOptions = steps.value[parseInt(stepNumber)].options;
+      for (const issuenumber of Object.keys(stepOptions || {})) {
+        if (Object.values(stepOptions![issuenumber]).length) {
+          completedIssuenumber = issuenumber;
+          break;
+        }
+      }
+    }
+    if (completedIssuenumber === null) {
+      return;
+    }
+    const completedIssueSteps = Object.values(steps.value).map((step) => ({
+      component: step.component,
+      options: step.options![completedIssuenumber as string],
+    }));
     const getComponents = (steps: Step[]) =>
       steps?.map(({ component }) => component).join("+");
-    const previousIssueComponents = getComponents(completedIssueSteps);
+    const previousIssueComponents = getComponents(
+      Object.values(completedIssueSteps)
+    );
     const currentIssueComponents = getComponents(issueSteps);
     if (
       completedIssuenumber !== issuenumber &&
@@ -61,7 +77,10 @@ export default () => {
   const setSteps = (issuenumber: string, issueSteps: Step[]) => {
     checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
     nextTick().then(() => {
-      steps.value[issuenumber] = issueSteps;
+      issueSteps.forEach((value, stepNumber) => {
+        steps.value[stepNumber].options![issuenumber] =
+          issueSteps[stepNumber].options!;
+      });
     });
   };
 
@@ -73,49 +92,44 @@ export default () => {
       JSON.stringify(dimensions.value[otherIssuenumber])
     );
 
-    steps.value[issuenumber] = JSON.parse(
-      JSON.stringify(steps.value[otherIssuenumber])
-    );
+    for (const stepNumber of Object.keys(steps.value)) {
+      steps.value[parseInt(stepNumber)].options![issuenumber] = JSON.parse(
+        JSON.stringify(
+          steps.value[parseInt(stepNumber)].options![otherIssuenumber]
+        )
+      );
+    }
   };
 
   const addStep = (component: string) => {
-    for (const issuenumber of Object.keys(steps.value)) {
-      steps.value[issuenumber].push({
-        component,
-      });
-    }
+    steps.value[Object.keys(steps.value).length] = {
+      component,
+    };
   };
 
   const removeStep = (stepNumber: number) => {
-    for (const issuenumber of Object.keys(steps.value)) {
-      steps.value[issuenumber].splice(stepNumber, 1);
-    }
+    delete steps.value[stepNumber];
   };
 
   const duplicateStep = (stepNumber: number) => {
-    for (const issuenumber of Object.keys(steps.value)) {
-      const existingStep = steps.value[issuenumber][stepNumber];
-      steps.value[issuenumber].splice(stepNumber, 0, {
-        component: existingStep.component,
-        options: { ...existingStep.options },
-      });
-    }
+    const newStepNumber = parseInt(
+      Object.keys(steps.value)[Object.keys(steps.value).length - 1] + 1
+    );
+    const existingStep = steps.value[stepNumber];
+    steps.value[newStepNumber] = {
+      component: existingStep.component,
+      options: { ...existingStep.options },
+    };
   };
 
-  const swapSteps = (stepNumbers: number[]) => {
-    for (const issuenumber of Object.keys(steps.value)) {
-      const issueSteps = steps.value[issuenumber];
-      const stepsToSwap = [
-        issueSteps[stepNumbers[0]],
-        issueSteps[stepNumbers[1]],
-      ];
-      steps.value[issuenumber].splice(
-        stepNumbers[0],
-        2,
-        stepsToSwap[1],
-        stepsToSwap[0]
-      );
-    }
+  const swapSteps = (stepNumbers: [number, number]) => {
+    const issueSteps = steps.value;
+    const stepsToSwap = [
+      issueSteps[stepNumbers[0]],
+      issueSteps[stepNumbers[1]],
+    ];
+    steps.value[stepNumbers[0]] = stepsToSwap[1];
+    steps.value[stepNumbers[1]] = stepsToSwap[0];
   };
 
   return {

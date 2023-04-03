@@ -65,9 +65,15 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  enableDragResize(image.value!);
-});
+watch(
+  () => image.value,
+  (value) => {
+    if (value) {
+      enableDragResize(value);
+    }
+  },
+  { immediate: true }
+);
 
 const { enableDragResize } = useStepOptions(props, [
   "x",

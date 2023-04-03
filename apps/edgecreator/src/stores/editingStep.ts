@@ -1,10 +1,21 @@
 import { defineStore } from "pinia";
 
+import { globalEvent, Options } from "~/stores/globalEvent";
+
 export const editingStep = defineStore("editingStep", {
   state: () => ({
     issuenumbers: [] as string[],
     stepNumber: 0 as number,
   }),
+
+  getters: {
+    editingOptions(): Options {
+      return globalEvent().getFilteredOptions({
+        stepNumbers: [this.stepNumber],
+        issuenumbers: this.issuenumbers,
+      });
+    },
+  },
 
   actions: {
     addIssuenumber(issuenumber: string) {

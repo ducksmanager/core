@@ -103,13 +103,17 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
             showMoveResizeToast("move");
             if (shiftKey) {
               globalEvent().setOptionValues({
-                x: 0,
-                y: 0,
+                options: {
+                  x: 0,
+                  y: 0,
+                },
               });
             } else {
               globalEvent().setOptionValues({
-                x: (props.options!.x as number) + dx / uiStore.zoom / 3,
-                y: (props.options!.y as number) + dy / uiStore.zoom / 3,
+                options: {
+                  x: (props.options!.x as number) + dx / uiStore.zoom / 3,
+                  y: (props.options!.y as number) + dy / uiStore.zoom / 3,
+                },
               });
             }
           }
@@ -142,9 +146,14 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
 
-  onMounted(() => {
-    globalEvent().setOptionValues(props.options);
-  });
+  debugger;
+  globalEvent().setOptionValues(
+    { component: props.component, options: props.options },
+    {
+      issuenumbers: [props.issuenumber],
+      stepNumber: props.stepNumber,
+    }
+  );
 
   return {
     zoom,
