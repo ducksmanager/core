@@ -41,7 +41,7 @@
               :title="$t('Click to show')"
               @click.stop="
                 globalEventStore.setOptionValues(
-                  { visible: true },
+                  { options: { visible: true } },
                   { stepNumber }
                 )
               "
@@ -51,7 +51,7 @@
               :title="$t('Click to hide')"
               @click.stop="
                 globalEventStore.setOptionValues(
-                  { visible: false },
+                  { options: { visible: false } },
                   { stepNumber }
                 )
               "
@@ -190,7 +190,9 @@
               :items="mainStore.publicationElementsForGallery"
               image-type="elements"
               :selected="step.options.src"
-              @change="globalEventStore.setOptionValues({ src: $event })"
+              @change="
+                globalEventStore.setOptionValues({ options: { src: $event } })
+              "
             />
           </form-input-row>
         </b-card-text>
@@ -263,7 +265,6 @@ import { hoveredStep } from "~/stores/hoveredStep";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { OptionValue } from "~/types/OptionValue";
-import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
@@ -273,9 +274,9 @@ const globalEventStore = globalEvent();
 
 const props = defineProps<{
   dimensions: { [issuenumber: string]: { width: number; height: number } };
-  steps: StepsPerIssuenumber;
-  allStepColors: { [issuenumber: string]: string[] };
 }>();
+
+const steps = computed(() => editingStepStore.editingOptions);
 
 const emit = defineEmits<{
   (event: "swap-steps", steps: [number, number]): void;
@@ -283,11 +284,11 @@ const emit = defineEmits<{
   (event: "remove-step", stepNumber: number): void;
   (event: "add-step", component: string): void;
 }>();
-const issueNumbers = computed(() => Object.keys(props.steps));
+const issueNumbers = computed(() => mainStore.issuenumbers);
 
 const fontSearchUrl = computed(() => import.meta.env.VITE_FONT_SEARCH_URL);
 const optionsPerName = computed(() =>
-  props.steps[issueNumbers.value[0]].map((step, stepNumber) => ({
+  Object.entries(steps.value).map(([stepNumber, step]) => ({
     ...step,
     stepNumber,
     options: Object.keys(step.options || {}).reduce(
@@ -297,7 +298,9 @@ const optionsPerName = computed(() =>
           ...new Set(
             issueNumbers.value.map(
               (issuenumber) =>
-                props.steps[issuenumber][stepNumber].options![optionName]
+                steps.value[parseInt(stepNumber)].options![issuenumber][
+                  optionName
+                ]
             )
           ),
         ],
@@ -307,10 +310,8 @@ const optionsPerName = computed(() =>
   }))
 );
 
-const currentIssueNumbers = computed(() => Object.keys(props.steps));
-const allIssueNumbers = computed(() => Object.keys(props.allStepColors));
 const emptyColorList = computed(() =>
-  Object.keys(props.allStepColors[Object.keys(props.steps)[0]]).reduce(
+  Object.keys(globalEventStore.stepColors).reduce(
     (acc, stepNumber) => ({ ...acc, [stepNumber]: [] }),
     {}
   )
@@ -327,26 +328,27 @@ const otherColors = computed(() =>
         sameIssuenumber: { ...emptyColorList.value },
         differentIssuenumber: {},
       };
-      if (allIssueNumbers.value.length > 1) {
+      if (issueNumbers.value.length > 1) {
         otherColors.differentIssuenumber = { ...emptyColorList.value };
       }
-      for (const issuenumber of allIssueNumbers.value) {
-        const issueColors = props.allStepColors[issuenumber];
-        issueColors.forEach((stepColors, stepNumber) => {
-          const isCurrentIssueNumber =
-            currentIssueNumbers.value.includes(issuenumber);
-          if (!(isCurrentIssueNumber && currentStepNumber === stepNumber)) {
-            const otherColorGroupKey = isCurrentIssueNumber
-              ? "sameIssuenumber"
-              : "differentIssuenumber";
-            otherColors[otherColorGroupKey]![stepNumber] = [
-              ...new Set([
-                ...otherColors[otherColorGroupKey]![stepNumber],
-                ...stepColors,
-              ]),
-            ];
+      for (const issuenumber of issueNumbers.value) {
+        (globalEventStore.stepColors[issuenumber] || []).forEach(
+          (stepColors, stepNumber) => {
+            const isCurrentIssueNumber =
+              editingStepStore.issuenumbers.includes(issuenumber);
+            if (!(isCurrentIssueNumber && currentStepNumber === stepNumber)) {
+              const otherColorGroupKey = isCurrentIssueNumber
+                ? "sameIssuenumber"
+                : "differentIssuenumber";
+              otherColors[otherColorGroupKey]![stepNumber] = [
+                ...new Set([
+                  ...otherColors[otherColorGroupKey]![stepNumber],
+                  ...stepColors,
+                ]),
+              ];
+            }
           }
-        });
+        );
       }
       return otherColors;
     })
@@ -358,15 +360,17 @@ const ucFirst = (text: string) =>
 const resetPositionAndSize = (step: {
   options: { [key: string]: OptionValue[] };
 }) => {
-  for (const issuenumber of Object.keys(props.steps)) {
+  for (const issuenumber of Object.keys(steps.value)) {
     globalEventStore.setOptionValues(
       {
-        x: 0,
-        y: 0,
-        width: props.dimensions[issuenumber].width,
-        height:
-          props.dimensions[issuenumber].width *
-          (step.options.aspectRatio[0] as number),
+        options: {
+          x: 0,
+          y: 0,
+          width: props.dimensions[issuenumber].width,
+          height:
+            props.dimensions[issuenumber].width *
+            (step.options.aspectRatio[0] as number),
+        },
       },
       { issuenumbers: [issuenumber] }
     );
@@ -375,17 +379,19 @@ const resetPositionAndSize = (step: {
 
 const splitImageAcrossEdges = () => {
   let leftOffset = 0;
-  const widthSum = Object.keys(props.steps).reduce(
+  const widthSum = Object.keys(steps.value).reduce(
     (acc, issuenumber) => acc + props.dimensions[issuenumber].width,
     0
   );
-  for (const issuenumber of Object.keys(props.steps)) {
+  for (const issuenumber of Object.keys(steps.value)) {
     globalEventStore.setOptionValues(
       {
-        x: leftOffset,
-        y: 0,
-        width: widthSum,
-        height: props.dimensions[issuenumber].height,
+        options: {
+          x: leftOffset,
+          y: 0,
+          width: widthSum,
+          height: props.dimensions[issuenumber].height,
+        },
       },
       { issuenumbers: [issuenumber] }
     );

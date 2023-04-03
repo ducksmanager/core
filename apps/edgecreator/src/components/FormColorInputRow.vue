@@ -119,7 +119,7 @@ const props = withDefaults(
 
 const originalColor = ref(null as string | null);
 
-const inputValues = computed(() => props.options![props.optionName]);
+const inputValues = computed(() => props.options![props.optionName] || []);
 const isTransparent = computed(() => inputValues.value[0] === "transparent");
 const photoUrls = computed(() => main().photoUrls);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
@@ -142,14 +142,16 @@ watch(
 
 const onTransparentCheckboxChange = (event: Event) => {
   globalEvent().setOptionValues({
-    [props.optionName]: (event.currentTarget as HTMLInputElement).checked
-      ? "transparent"
-      : originalColor.value,
+    options: {
+      [props.optionName]: (event.currentTarget as HTMLInputElement).checked
+        ? "transparent"
+        : originalColor.value,
+    },
   });
 };
 
 const onColorChange = (value: string) => {
-  globalEvent().setOptionValues({ [props.optionName]: value });
+  globalEvent().setOptionValues({ options: { [props.optionName]: value } });
 };
 </script>
 <style lang="scss" scoped>

@@ -11,11 +11,8 @@ import {
   GET__global_stats__user__$userIds,
 } from "~dm_types/routes";
 import { user, userPermission } from "~prisma_clients/client_dm";
-import { edgeContributor } from "~prisma_clients/client_edgecreator";
 
 import { call } from "../../axios-helper";
-const a: edgeContributor | null = null;
-console.log(a);
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;

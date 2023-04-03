@@ -50,14 +50,18 @@ onMounted(() => {
   enableDragResize(ellipse.value!, {
     onmove: ({ dx, dy }) => {
       globalEvent().setOptionValues({
-        cx: props.options.cx + dx / uiStore.zoom,
-        cy: props.options.cy + dy / uiStore.zoom,
+        options: {
+          cx: props.options.cx + dx / uiStore.zoom,
+          cy: props.options.cy + dy / uiStore.zoom,
+        },
       });
     },
     onresizemove: ({ rect }) => {
       globalEvent().setOptionValues({
-        rx: rect.width / 2 / uiStore.zoom,
-        ry: rect.height / 2 / uiStore.zoom,
+        options: {
+          rx: rect.width / 2 / uiStore.zoom,
+          ry: rect.height / 2 / uiStore.zoom,
+        },
       });
     },
   });

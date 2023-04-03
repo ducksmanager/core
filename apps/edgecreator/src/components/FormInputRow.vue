@@ -78,13 +78,13 @@ const props = withDefaults(
   }
 );
 
-const inputValues = computed(() => props.options[props.optionName]);
+const inputValues = computed(() => props.options[props.optionName] || []);
 const values = computed(() =>
   props.optionName === "xlink:href"
     ? (inputValues.value as string[]).map(
         (value) => value!.match(/\/([^/]+)$/)![1]
       )
-    : inputValues.value
+    : (inputValues.value as (string | number | undefined)[])
 );
 const isTextImageOption = computed(
   () =>
@@ -101,7 +101,9 @@ const onChangeValue = (event: Event) => {
     intValue = parseInt(value);
   }
   globalEvent().setOptionValues({
-    [props.optionName]: intValue !== null ? intValue : value,
+    options: {
+      [props.optionName]: intValue !== null ? intValue : value,
+    },
   });
 };
 </script>

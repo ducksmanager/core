@@ -244,7 +244,8 @@ const onChange = (
   data: { width: number; height: number } | Record<string, never>
 ) =>
   emit("change", {
-    ...data,
+    width: data.width,
+    height: data.height,
     editMode: editMode.value,
     countryCode: currentCountryCode.value!,
     publicationCode: currentPublicationCode.value!,

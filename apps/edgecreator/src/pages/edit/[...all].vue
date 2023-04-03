@@ -3,7 +3,7 @@
     {{ error }}
   </b-alert>
   <b-container
-    v-else-if="Object.keys(steps).length && Object.keys(dimensions).length"
+    v-else-if="steps && Object.keys(dimensions).length"
     id="wrapper"
     fluid
   >
@@ -93,10 +93,9 @@
             >
               <td>
                 <edge-canvas
-                  v-if="dimensions[issuenumber] && steps[issuenumber]"
+                  v-if="dimensions[issuenumber]"
                   :issuenumber="issuenumber"
                   :dimensions="dimensions[issuenumber]"
-                  :steps="steps[issuenumber]"
                   :photo-url="mainStore.photoUrls[issuenumber]"
                   :contributors="mainStore.contributors[issuenumber] || {}"
                 />
@@ -135,8 +134,6 @@
       <b-col sm="10" md="8" lg="6">
         <model-edit
           :dimensions="editingDimensions"
-          :steps="editingSteps"
-          :all-step-colors="stepColors"
           @add-step="addStep($event)"
           @remove-step="removeStep($event)"
           @duplicate-step="duplicateStep($event)"
@@ -154,8 +151,6 @@ import { globalEvent } from "~/stores/globalEvent";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
-import { OptionValue } from "~/types/OptionValue";
-import { StepsPerIssuenumber } from "~/types/StepsPerIssuenumber";
 
 const route = useRoute();
 const uiStore = ui();
@@ -182,42 +177,6 @@ const editingDimensions = computed(() =>
     (acc, issuenumber) => ({
       ...acc,
       [issuenumber]: dimensions.value[issuenumber],
-    }),
-    {}
-  )
-);
-
-const editingSteps = computed(() =>
-  editingStep().issuenumbers.reduce(
-    (acc, issuenumber) => ({
-      ...acc,
-      [issuenumber]: steps.value[issuenumber],
-    }),
-    {} as StepsPerIssuenumber
-  )
-);
-const isColorOption = (optionName: string) =>
-  optionName.toLowerCase().includes("color") ||
-  ["fill", "stroke"].includes(optionName);
-
-const stepColors = computed(() =>
-  Object.keys(steps.value).reduce(
-    (acc, issuenumber) => ({
-      ...acc,
-      [issuenumber]: steps.value[issuenumber].map((step) => [
-        ...new Set(
-          Object.keys(step.options || {})
-            .filter(
-              (optionName) =>
-                isColorOption(optionName) &&
-                step.options![optionName] !== "transparent"
-            )
-            .reduce(
-              (acc, optionName) => [...acc, step.options![optionName]],
-              [] as OptionValue[]
-            )
-        ),
-      ]),
     }),
     {}
   )
@@ -265,7 +224,6 @@ watch(
   await mainStore.loadPublicationIssues();
 
   try {
-    debugger;
     mainStore.setIssuenumbers({
       min: issuenumberMin,
       max: issuenumberMax,
@@ -335,7 +293,9 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
   const color = context.getImageData(offsetX, offsetY, 1, 1).data;
   globalEvent().setOptionValues({
-    [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
+    options: {
+      [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
+    },
   });
 };
 
