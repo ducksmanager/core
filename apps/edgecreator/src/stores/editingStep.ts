@@ -1,46 +1,48 @@
 import { defineStore } from "pinia";
 
-import { globalEvent, Options } from "~/stores/globalEvent";
+import { globalEvent } from "~/stores/globalEvent";
 
-export const editingStep = defineStore("editingStep", {
-  state: () => ({
-    issuenumbers: [] as string[],
-    stepNumber: 0 as number,
-  }),
-
-  getters: {
-    editingOptions(): Options {
-      return globalEvent().getFilteredOptions({
-        stepNumbers: [this.stepNumber],
-        issuenumbers: this.issuenumbers,
-      });
-    },
-  },
-
-  actions: {
-    addIssuenumber(issuenumber: string) {
-      this.issuenumbers = [
-        ...new Set(this.issuenumbers.concat(issuenumber)),
+export const editingStep = defineStore("editingStep", () => {
+  const issuenumbers = ref([] as string[]),
+    stepNumber = ref(0 as number),
+    editingOptions = computed(() =>
+      globalEvent().getFilteredOptions({
+        stepNumbers: [stepNumber.value],
+        issuenumbers: issuenumbers.value,
+      })
+    ),
+    addIssuenumber = (issuenumber: string) => {
+      issuenumbers.value = [
+        ...new Set(issuenumbers.value.concat(issuenumber)),
       ].sort();
     },
-    addIssuenumbers(issuenumbers: string[]) {
-      this.issuenumbers = [
-        ...new Set([...this.issuenumbers, ...issuenumbers]),
+    addIssuenumbers = (newIssuenumbers: string[]) => {
+      issuenumbers.value = [
+        ...new Set([...issuenumbers.value, ...newIssuenumbers]),
       ].sort();
     },
-    replaceIssuenumber(issuenumber: string) {
-      this.issuenumbers = [issuenumber];
+    replaceIssuenumber = (issuenumber: string) => {
+      issuenumbers.value = [issuenumber];
     },
-    toggleIssuenumber(issuenumber: string) {
-      if (this.issuenumbers.includes(issuenumber)) {
-        if (this.issuenumbers.length > 1) {
-          this.issuenumbers.splice(this.issuenumbers.indexOf(issuenumber), 1);
+    toggleIssuenumber = (issuenumber: string) => {
+      if (issuenumbers.value.includes(issuenumber)) {
+        if (issuenumbers.value.length > 1) {
+          issuenumbers.value.splice(issuenumbers.value.indexOf(issuenumber), 1);
         }
       } else {
-        this.issuenumbers = [
-          ...new Set(this.issuenumbers.concat(issuenumber)),
+        issuenumbers.value = [
+          ...new Set(issuenumbers.value.concat(issuenumber)),
         ].sort();
       }
-    },
-  },
+    };
+
+  return {
+    issuenumbers,
+    stepNumber,
+    editingOptions,
+    addIssuenumber,
+    addIssuenumbers,
+    replaceIssuenumber,
+    toggleIssuenumber,
+  };
 });

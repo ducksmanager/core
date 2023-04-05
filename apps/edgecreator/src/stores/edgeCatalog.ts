@@ -9,23 +9,25 @@ import {
 } from "~dm_types/routes";
 
 import { call, getChunkedRequests } from "../../axios-helper";
-export const edgeCatalog = defineStore("edgeCatalog", {
-  state: () => ({
-    currentEdges: {} as {
-      [issuecode: string]: EdgeWithVersionAndStatus;
-    },
-    publishedEdges: {} as {
-      [publicationcode: string]: {
-        [issuenumber: string]: { issuenumber: string; v3: boolean };
-      };
-    },
-    publishedEdgesSteps: {} as {
-      [publicationcode: string]: ModelSteps;
-    },
-  }),
-
-  actions: {
-    async fetchPublishedEdges(publicationcode: string) {
+export const edgeCatalog = defineStore("edgeCatalog", () => {
+  const currentEdges = ref(
+      {} as {
+        [issuecode: string]: EdgeWithVersionAndStatus;
+      }
+    ),
+    publishedEdges = ref(
+      {} as {
+        [publicationcode: string]: {
+          [issuenumber: string]: { issuenumber: string; v3: boolean };
+        };
+      }
+    ),
+    publishedEdgesSteps = ref(
+      {} as {
+        [publicationcode: string]: ModelSteps;
+      }
+    ),
+    fetchPublishedEdges = async (publicationcode: string) => {
       const [countrycode, magazinecode] = publicationcode.split("/");
       const publishedEdges = (
         await call(
@@ -35,65 +37,68 @@ export const edgeCatalog = defineStore("edgeCatalog", {
           })
         )
       ).data;
-      this.addPublishedEdges({
+      addPublishedEdges({
         [publicationcode]: publishedEdges,
       });
     },
-    addCurrentEdges(edges: { [issuecode: string]: EdgeWithVersionAndStatus }) {
-      this.currentEdges = { ...this.currentEdges, ...edges };
+    addCurrentEdges = (edges: {
+      [issuecode: string]: EdgeWithVersionAndStatus;
+    }) => {
+      currentEdges.value = { ...currentEdges.value, ...edges };
     },
-    addPublishedEdges(publishedEdges: {
+    addPublishedEdges = (newPublishedEdges: {
       [publicationcode: string]: {
         [issuenumber: string]: { issuenumber: string; v3: boolean };
       };
-    }) {
+    }) => {
       for (const publicationcode of Object.keys(publishedEdges)) {
-        const publicationEdges = publishedEdges[publicationcode];
-        if (!this.publishedEdges[publicationcode]) {
-          this.publishedEdges[publicationcode] = {};
+        const publicationEdgesForPublication =
+          newPublishedEdges[publicationcode];
+        if (!publishedEdges.value[publicationcode]) {
+          publishedEdges.value[publicationcode] = {};
         }
-        for (const issueNumber of Object.keys(publicationEdges)) {
-          const edgeStatus = publicationEdges[issueNumber];
-          if (!this.publishedEdges[publicationcode][issueNumber]) {
-            this.publishedEdges[publicationcode][issueNumber] = edgeStatus;
+        for (const issueNumber of Object.keys(publicationEdgesForPublication)) {
+          const edgeStatus = publicationEdgesForPublication[issueNumber];
+          if (!publishedEdges.value[publicationcode][issueNumber]) {
+            publishedEdges.value[publicationcode][issueNumber] = edgeStatus;
           } else {
-            this.publishedEdges[publicationcode][issueNumber] = {
-              ...this.publishedEdges[publicationcode][issueNumber],
+            publishedEdges.value[publicationcode][issueNumber] = {
+              ...publishedEdges.value[publicationcode][issueNumber],
             };
           }
         }
       }
     },
-    addPublishedEdgesSteps({
+    addPublishedEdgesSteps = ({
       publicationcode,
-      publishedEdgesSteps,
+      newPublishedEdgesSteps,
     }: {
       publicationcode: string;
-      publishedEdgesSteps: ModelSteps;
-    }) {
-      if (!this.publishedEdgesSteps[publicationcode]) {
-        this.publishedEdgesSteps[publicationcode] = {};
+      newPublishedEdgesSteps: ModelSteps;
+    }) => {
+      if (!publishedEdgesSteps.value[publicationcode]) {
+        publishedEdgesSteps.value[publicationcode] = {};
       }
-      this.publishedEdgesSteps[publicationcode] = {
-        ...this.publishedEdgesSteps[publicationcode],
-        ...publishedEdgesSteps,
+      publishedEdgesSteps.value[publicationcode] = {
+        ...publishedEdgesSteps.value[publicationcode],
+        ...newPublishedEdgesSteps,
       };
     },
-    async getPublishedEdgesSteps({
+    getPublishedEdgesSteps = async ({
       publicationcode,
       edgeModelIds,
     }: {
       publicationcode: string;
       edgeModelIds: number[];
-    }) {
+    }) => {
       const newModelIds = edgeModelIds;
       if (!newModelIds.length) {
         return;
       }
 
-      this.addPublishedEdgesSteps({
+      addPublishedEdgesSteps({
         publicationcode,
-        publishedEdgesSteps:
+        newPublishedEdgesSteps:
           await getChunkedRequests<GET__edgecreator__model__$modelIds__steps>({
             callFn: (chunk) =>
               call(
@@ -106,6 +111,16 @@ export const edgeCatalog = defineStore("edgeCatalog", {
             chunkSize: 10,
           }),
       });
-    },
-  },
+    };
+
+  return {
+    currentEdges,
+    publishedEdges,
+    publishedEdgesSteps,
+    fetchPublishedEdges,
+    addCurrentEdges,
+    addPublishedEdges,
+    addPublishedEdgesSteps,
+    getPublishedEdgesSteps,
+  };
 });

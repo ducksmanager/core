@@ -10,36 +10,33 @@ import {
 import { call, getChunkedRequests } from "../../axios-helper";
 import { api } from "./api";
 
-export const coa = defineStore("coa", {
-  state: () => ({
-    countryNames: null as { [countrycode: string]: string } | null,
-    publicationNames: {} as { [publicationcode: string]: string | null },
-    publicationNamesFullCountries: [] as string[],
-    personNames: null as { [personcode: string]: string } | null,
-    issueNumbers: {} as { [publicationcode: string]: string[] },
-    issueDetails: {} as { [issuecode: string]: any },
-    isLoadingCountryNames: false as boolean,
-    issueCounts: null,
-  }),
-
-  actions: {
-    addPublicationNames(publicationNames: {
+export const coa = defineStore("coa", () => {
+  const countryNames = ref(null as { [countrycode: string]: string } | null),
+    publicationNames = ref({} as { [publicationcode: string]: string | null }),
+    publicationNamesFullCountries = ref([] as string[]),
+    personNames = ref(null as { [personcode: string]: string } | null),
+    issueNumbers = ref({} as { [publicationcode: string]: string[] }),
+    issueDetails = ref({} as { [issuecode: string]: any }),
+    isLoadingCountryNames = ref(false as boolean),
+    issueCounts = ref(null),
+    addPublicationNames = (newPublicationNames: {
       [publicationcode: string]: string | null;
-    }) {
-      this.publicationNames = {
-        ...this.publicationNames,
-        ...publicationNames,
+    }) => {
+      publicationNames.value = {
+        ...publicationNames.value,
+        ...newPublicationNames,
       };
     },
-    addIssueNumbers(issueNumbers: { [publicationcode: string]: string[] }) {
-      this.issueNumbers = { ...this.issueNumbers, ...issueNumbers };
+    addIssueNumbers = (newIssueNumbers: {
+      [publicationcode: string]: string[];
+    }) => {
+      issueNumbers.value = { ...issueNumbers.value, ...newIssueNumbers };
     },
+    fetchCountryNames = async (locale: string) => {
+      if (!isLoadingCountryNames.value && !countryNames.value) {
+        isLoadingCountryNames.value = true;
 
-    async fetchCountryNames(locale: string) {
-      if (!this.isLoadingCountryNames && !this.countryNames) {
-        this.isLoadingCountryNames = true;
-
-        this.countryNames = (
+        countryNames.value = (
           await call(
             api().dmApi,
             new GET__coa__list__countries__$locale({
@@ -50,18 +47,18 @@ export const coa = defineStore("coa", {
         ).data;
       }
     },
-    async fetchPublicationNames(publicationCodes: string[]) {
+    fetchPublicationNames = async (publicationCodes: string[]) => {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(this.publicationNames).includes(publicationcode)
+              !Object.keys(publicationNames.value).includes(publicationcode)
           )
         ),
       ];
       return (
         newPublicationCodes.length &&
-        this.addPublicationNames(
+        addPublicationNames(
           await getChunkedRequests<GET__coa__list__publications>({
             callFn: async (chunk: string) =>
               call(
@@ -78,8 +75,8 @@ export const coa = defineStore("coa", {
         )
       );
     },
-    async fetchPublicationNamesFromCountry(countryCode: string) {
-      if (this.publicationNamesFullCountries.includes(countryCode)) {
+    fetchPublicationNamesFromCountry = async (countryCode: string) => {
+      if (publicationNamesFullCountries.value.includes(countryCode)) {
         return;
       }
       const data = (
@@ -92,22 +89,21 @@ export const coa = defineStore("coa", {
           })
         )
       ).data;
-      this.addPublicationNames({
-        ...(this.publicationNames || {}),
+      addPublicationNames({
+        ...(publicationNames.value || {}),
         ...data,
       });
-      this.publicationNamesFullCountries = [
-        ...this.publicationNamesFullCountries,
+      publicationNamesFullCountries.value = [
+        ...publicationNamesFullCountries.value,
         countryCode,
       ];
     },
-
-    fetchIssueNumbers: async function (publicationCodes: string[]) {
+    fetchIssueNumbers = async (publicationCodes: string[]) => {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(this.issueNumbers || {}).includes(publicationcode)
+              !Object.keys(issueNumbers.value || {}).includes(publicationcode)
           )
         ),
       ];
@@ -127,7 +123,7 @@ export const coa = defineStore("coa", {
             }
           );
 
-        this.addIssueNumbers(
+        addIssueNumbers(
           data.reduce(
             (acc, issue) => ({
               ...acc,
@@ -136,10 +132,25 @@ export const coa = defineStore("coa", {
                 issue.issuenumber,
               ],
             }),
-            {} as typeof this.issueNumbers
+            {} as typeof issueNumbers.value
           )
         );
       }
-    },
-  },
+    };
+  return {
+    countryNames,
+    publicationNames,
+    publicationNamesFullCountries,
+    personNames,
+    issueNumbers,
+    issueDetails,
+    isLoadingCountryNames,
+    issueCounts,
+    addPublicationNames,
+    addIssueNumbers,
+    fetchCountryNames,
+    fetchPublicationNames,
+    fetchPublicationNamesFromCountry,
+    fetchIssueNumbers,
+  };
 });

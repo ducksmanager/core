@@ -20,65 +20,53 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   popularity: number | null;
 }
 
-export const collection = defineStore("collection", {
-  state: () => ({
-    user: undefined as Omit<user, "password"> | undefined | null,
-    userPermissions: null as userPermission[] | null,
-    userPhotographerPoints: null as number | null,
-    bookcase: null as BookcaseEdge[] | null,
-    popularIssuesInCollection: null as Record<string, number> | null,
-  }),
-
-  getters: {
-    isSharedBookcase: () => false,
-
-    bookcaseWithPopularities(): BookcaseEdgeWithPopularity[] | null {
-      const isSharedBookcase = this.isSharedBookcase;
-      const popularIssuesInCollection = this.popularIssuesInCollection;
-      return (
+export const collection = defineStore("collection", () => {
+  const user = ref(undefined as Omit<user, "password"> | undefined | null),
+    userPermissions = ref(null as userPermission[] | null),
+    userPhotographerPoints = ref(null as number | null),
+    bookcase = ref(null as BookcaseEdge[] | null),
+    popularIssuesInCollection = ref(null as Record<string, number> | null),
+    isSharedBookcase = ref(false as boolean),
+    bookcaseWithPopularities = computed(
+      (): BookcaseEdgeWithPopularity[] | null =>
         ((isSharedBookcase ? true : popularIssuesInCollection) &&
-          this.bookcase?.map((issue) => {
+          bookcase.value?.map((issue) => {
             const publicationcode = `${issue.countryCode}/${issue.magazineCode}`;
             const issueCode = `${publicationcode} ${issue.issuenumber}`;
             return {
               ...issue,
               publicationcode,
               issueCode,
-              popularity: isSharedBookcase
+              popularity: isSharedBookcase.value
                 ? null
-                : popularIssuesInCollection?.[issueCode] || 0,
+                : popularIssuesInCollection.value?.[issueCode] || 0,
             };
           })) ||
         null
-      );
-    },
-
-    popularIssuesInCollectionWithoutEdge: ():
-      | BookcaseEdgeWithPopularity[]
-      | undefined =>
-      collection()
-        .bookcaseWithPopularities?.filter(
-          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
-        )
-        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 && popularity1 ? popularity2 - popularity1 : 0
-        ),
-  },
-
-  actions: {
-    async loadBookcase() {
-      this.bookcase = (
+    ),
+    popularIssuesInCollectionWithoutEdge = computed(
+      (): BookcaseEdgeWithPopularity[] | undefined =>
+        bookcaseWithPopularities.value
+          ?.filter(
+            ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
+          )
+          .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+            popularity2 && popularity1 ? popularity2 - popularity1 : 0
+          )
+    ),
+    loadBookcase = async () => {
+      bookcase.value = (
         await call(
           api().dmApi,
           new GET__bookcase__$username({
-            params: { username: this.user!.username },
+            params: { username: user.value!.username },
           })
         )
       ).data;
     },
-    async loadPopularIssuesInCollection() {
-      if (!this.popularIssuesInCollection) {
-        this.popularIssuesInCollection = (
+    loadPopularIssuesInCollection = async () => {
+      if (!popularIssuesInCollection.value) {
+        popularIssuesInCollection.value = (
           await call(api().dmApi, new GET__collection__popular())
         ).data.reduce(
           (acc, { country, issuenumber, magazine, popularity }) => ({
@@ -89,9 +77,8 @@ export const collection = defineStore("collection", {
         );
       }
     },
-
-    async fetchUserPoints() {
-      const userId = this.user!.id;
+    fetchUserPoints = async () => {
+      const userId = user.value!.id;
       const userData = (
         await call(
           api().dmApi,
@@ -100,25 +87,38 @@ export const collection = defineStore("collection", {
           })
         )
       ).data;
-      this.userPhotographerPoints = userData.points[userId].edge_photographer;
+      userPhotographerPoints.value = userData.points[userId].edge_photographer;
     },
-
-    async loadUser() {
+    loadUser = async () => {
       const cookies = useCookies();
       try {
         if (cookies.get("token")) {
-          this.user = (
+          user.value = (
             await call(api().dmApi, new GET__collection__user())
           ).data;
-          this.userPermissions = (
+          userPermissions.value = (
             await call(api().dmApi, new GET__collection__user_privileges())
           ).data;
         }
       } catch (e) {
         console.error(e);
         // cookies.remove("token");
-        this.user = null;
+        user.value = null;
       }
-    },
-  },
+    };
+
+  return {
+    user,
+    userPermissions,
+    userPhotographerPoints,
+    bookcase,
+    popularIssuesInCollection,
+    isSharedBookcase,
+    bookcaseWithPopularities,
+    popularIssuesInCollectionWithoutEdge,
+    loadBookcase,
+    loadPopularIssuesInCollection,
+    fetchUserPoints,
+    loadUser,
+  };
 });
