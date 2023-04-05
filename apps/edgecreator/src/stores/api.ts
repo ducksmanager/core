@@ -2,9 +2,7 @@ import { defineStore } from "pinia";
 
 import { createAxios } from "../../axios-helper";
 
-export const api = defineStore("api", {
-  state: () => ({
-    dmApi: createAxios(import.meta.env.VITE_DM_API_URL),
-    edgeCreatorApi: createAxios(import.meta.env.VITE_EDGECREATOR_API_URL),
-  }),
-});
+export const api = defineStore("api", () => ({
+  dmApi: createAxios(import.meta.env.VITE_DM_API_URL),
+  edgeCreatorApi: createAxios(import.meta.env.VITE_EDGECREATOR_API_URL),
+}));

@@ -14,55 +14,35 @@ const numericSortCollator = new Intl.Collator(undefined, {
   numeric: true,
   sensitivity: "base",
 });
-export const main = defineStore("main", {
-  state: () => ({
-    country: null as string | null,
-    magazine: null as string | null,
-    issuenumbers: [] as string[],
-    isRange: false as boolean,
-    photoUrls: {} as { [issuenumber: string]: string },
-    contributors: {} as {
-      [issuenumber: string]: {
-        designers: SimpleUser[];
-        photographers: SimpleUser[];
-      };
-    },
-
-    edgesBefore: [] as EdgeWithModelId[],
-    edgesAfter: [] as EdgeWithModelId[],
-
-    publicationElements: [] as string[],
-    publicationPhotos: [] as string[],
-
-    warnings: [] as string[],
-  }),
-
-  getters: {
-    publicationcode(): string {
-      return `${this.country}/${this.magazine}`;
-    },
-
-    publicationIssues(): string[] {
-      return coa().issueNumbers[this.publicationcode] || [];
-    },
-
-    publicationElementsForGallery: ({ country, publicationElements }) =>
-      publicationElements &&
-      publicationElements.map((elementFileName) => ({
-        name: elementFileName,
-        url: `/edges/${country}/elements/${elementFileName}`,
-      })),
-
-    publicationPhotosForGallery: ({ country, publicationPhotos }) =>
-      publicationPhotos &&
-      publicationPhotos.map((elementFileName) => ({
+export const main = defineStore("main", () => {
+  const country = ref(null as string | null),
+    magazine = ref(null as string | null),
+    issuenumbers = ref([] as string[]),
+    isRange = ref(false as boolean),
+    photoUrls = ref({} as { [issuenumber: string]: string }),
+    contributors = ref(
+      {} as {
+        [issuenumber: string]: {
+          designers: SimpleUser[];
+          photographers: SimpleUser[];
+        };
+      }
+    ),
+    edgesBefore = ref([] as EdgeWithModelId[]),
+    edgesAfter = ref([] as EdgeWithModelId[]),
+    publicationElements = ref([] as string[]),
+    publicationPhotos = ref([] as string[]),
+    warnings = ref([] as string[]),
+    publicationcode = computed(() => `${country.value}/${magazine.value}`),
+    publicationIssues = computed(
+      () => coa().issueNumbers[publicationcode.value] || []
+    ),
+    publicationPhotosForGallery = () =>
+      publicationPhotos.value?.map((elementFileName) => ({
         name: elementFileName,
         url: `/edges/${country}/photos/${elementFileName}`,
       })),
-  },
-
-  actions: {
-    addContributor({
+    addContributor = ({
       issuenumber,
       contributionType,
       user,
@@ -70,42 +50,41 @@ export const main = defineStore("main", {
       issuenumber: string;
       contributionType: "photographers" | "designers";
       user: SimpleUser;
-    }) {
-      const contributors = this.contributors[issuenumber] || {
+    }) => {
+      const existingContributors = contributors.value[issuenumber] || {
         designers: [],
         photographers: [],
       };
-      this.contributors[issuenumber] = {
-        ...contributors,
-        [contributionType]: [
-          ...new Set([...contributors[contributionType], user]),
+      contributors.value[issuenumber] = {
+        ...contributors.value[issuenumber],
+        [contributionType as "photographers" | "designers"]: [
+          ...new Set([...existingContributors[contributionType], user]),
         ],
       };
     },
-    removeContributor({
+    removeContributor = ({
       contributionType,
       userToRemove,
     }: {
       contributionType: "photographers" | "designers";
       userToRemove: SimpleUser;
-    }) {
-      Object.keys(this.contributors).forEach((issuenumber) => {
-        const issueContributors = this.contributors[issuenumber];
+    }) => {
+      Object.keys(contributors.value).forEach((issuenumber) => {
+        const issueContributors = contributors.value[issuenumber];
         const index = issueContributors[contributionType].findIndex(
           (user) => user === userToRemove
         );
         issueContributors[contributionType].splice(index, 1);
-        this.contributors[issuenumber] = issueContributors;
+        contributors.value[issuenumber] = issueContributors;
       });
     },
-    addWarning(warning: string) {
-      this.warnings = [...this.warnings, warning];
+    addWarning = (warning: string) => {
+      warnings.value = [...warnings.value, warning];
     },
-    removeWarning(idx: number) {
-      this.warnings.splice(idx, 1);
+    removeWarning = (idx: number) => {
+      warnings.value.splice(idx, 1);
     },
-
-    setIssuenumbers({
+    setIssuenumbers = ({
       min,
       max,
       others,
@@ -113,34 +92,34 @@ export const main = defineStore("main", {
       min: string;
       max?: string;
       others?: string;
-    }) {
-      const firstIssueIndex = this.publicationIssues.findIndex(
+    }) => {
+      const firstIssueIndex = publicationIssues.value.findIndex(
         (issue) => issue === min
       );
       if (firstIssueIndex === -1) {
         throw new Error(`Issue ${min} doesn't exist`);
       }
       if (max === undefined) {
-        this.issuenumbers = [min, ...(others ? others.split(",") : [])];
+        issuenumbers.value = [min, ...(others ? others.split(",") : [])];
       } else {
-        this.isRange = true;
-        let lastIssueIndex = this.publicationIssues.findIndex(
+        isRange.value = true;
+        let lastIssueIndex = publicationIssues.value.findIndex(
           (issue) => issue === max
         );
         if (lastIssueIndex === -1) {
-          lastIssueIndex = this.publicationIssues.length - 1;
+          lastIssueIndex = publicationIssues.value.length - 1;
           console.warn(
-            `Issue ${max} doesn't exist, falling back to ${this.publicationIssues[lastIssueIndex]}`
+            `Issue ${max} doesn't exist, falling back to ${publicationIssues.value[lastIssueIndex]}`
           );
         }
 
-        this.issuenumbers = this.publicationIssues.filter(
+        issuenumbers.value = publicationIssues.value.filter(
           (_, index) => index >= firstIssueIndex && index <= lastIssueIndex
         );
       }
     },
-    async loadItems({ itemType }: { itemType: "elements" | "photos" }) {
-      const [country, magazine] = this.publicationcode.split("/");
+    loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
+      const [country, magazine] = publicationcode.value.split("/");
       const items = (
         await call(
           api().edgeCreatorApi,
@@ -150,28 +129,27 @@ export const main = defineStore("main", {
         )
       ).data.sort(numericSortCollator.compare);
       if (itemType === "elements") {
-        this.publicationElements = items;
+        publicationElements.value = items;
       } else {
-        this.publicationPhotos = items;
+        publicationPhotos.value = items;
       }
     },
-    async loadPublicationIssues() {
-      return coa().fetchIssueNumbers([this.publicationcode]);
-    },
-    async loadSurroundingEdges() {
-      const firstIssueIndex = this.publicationIssues.findIndex(
-        (issue) => issue === this.issuenumbers[0]
+    loadPublicationIssues = async () =>
+      coa().fetchIssueNumbers([publicationcode.value]),
+    loadSurroundingEdges = async () => {
+      const firstIssueIndex = publicationIssues.value.findIndex(
+        (issue) => issue === issuenumbers.value[0]
       );
-      const lastIssueIndex = this.publicationIssues.findIndex(
-        (issue) => issue === this.issuenumbers[this.issuenumbers.length - 1]
+      const lastIssueIndex = publicationIssues.value.findIndex(
+        (issue) => issue === issuenumbers.value[issuenumbers.value.length - 1]
       );
-      const issuesBefore = this.publicationIssues.filter(
+      const issuesBefore = publicationIssues.value.filter(
         (_, index) =>
           firstIssueIndex !== -1 &&
           index >= firstIssueIndex - 10 &&
           index < firstIssueIndex
       );
-      const issuesAfter = this.publicationIssues.filter(
+      const issuesAfter = publicationIssues.value.filter(
         (_, index) =>
           lastIssueIndex !== -1 &&
           index > lastIssueIndex &&
@@ -187,8 +165,8 @@ export const main = defineStore("main", {
               api().dmApi,
               new GET__edges__$countrycode__$magazinecode__$issuenumbers({
                 params: {
-                  countrycode: this.publicationcode.split("/")[0],
-                  magazinecode: this.publicationcode.split("/")[1],
+                  countrycode: publicationcode.value.split("/")[0],
+                  magazinecode: publicationcode.value.split("/")[1],
                   issuenumbers: edges.join(","),
                 },
               })
@@ -203,15 +181,14 @@ export const main = defineStore("main", {
         );
 
       if (issuesBefore.length) {
-        this.edgesBefore = await getEdgePublicationStates(issuesBefore);
+        edgesBefore.value = await getEdgePublicationStates(issuesBefore);
       }
 
       if (issuesAfter.length) {
-        this.edgesAfter = await getEdgePublicationStates(issuesAfter);
+        edgesAfter.value = await getEdgePublicationStates(issuesAfter);
       }
     },
-
-    getChunkedRequests: async ({
+    getChunkedRequests = async ({
       api,
       url,
       parametersToChunk,
@@ -236,6 +213,30 @@ export const main = defineStore("main", {
             ).concat(await api.get(`${url}${codeChunk.join(",")}${suffix}`)),
           Promise.resolve([])
         )
-      ),
-  },
+      );
+  return {
+    country,
+    magazine,
+    issuenumbers,
+    isRange,
+    photoUrls,
+    contributors,
+    edgesBefore,
+    edgesAfter,
+    publicationElements,
+    publicationPhotos,
+    warnings,
+    publicationcode,
+    publicationIssues,
+    publicationPhotosForGallery,
+    addContributor,
+    removeContributor,
+    addWarning,
+    removeWarning,
+    setIssuenumbers,
+    loadItems,
+    loadPublicationIssues,
+    loadSurroundingEdges,
+    getChunkedRequests,
+  };
 });

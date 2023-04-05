@@ -1,12 +1,8 @@
 import { defineStore } from "pinia";
 
-export const images = defineStore("images", {
-  state: () => ({
-    root: "/images/",
-  }),
-  actions: {
-    getImagePath(filePath: string) {
-      return `${this.root}${filePath}`;
-    },
-  },
+export const images = defineStore("images", () => {
+  const root = "/images/",
+    getImagePath = (filePath: string) => `${root}/${filePath}`;
+
+  return { root, getImagePath };
 });

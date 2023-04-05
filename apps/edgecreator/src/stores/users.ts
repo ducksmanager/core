@@ -6,18 +6,17 @@ import { SimpleUser } from "~types/SimpleUser";
 
 import { call } from "../../axios-helper";
 
-export const users = defineStore("users", {
-  state: () => ({
-    allUsers: null as SimpleUser[] | null,
-  }),
-
-  actions: {
-    async fetchAllUsers() {
-      if (!this.allUsers) {
-        this.allUsers = (
+export const users = defineStore("users", () => {
+  const allUsers = ref(null as SimpleUser[] | null),
+    fetchAllUsers = async () => {
+      if (!allUsers.value) {
+        allUsers.value = (
           await call(api().dmApi, new GET__global_stats__user__list())
         ).data;
       }
-    },
-  },
+    };
+  return {
+    allUsers,
+    fetchAllUsers,
+  };
 });
