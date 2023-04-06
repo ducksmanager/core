@@ -18,7 +18,7 @@
       @change="$emit('change', null)"
     />
     <template v-if="currentCountryCode && currentPublicationCode">
-      <template v-if="edgeGallery">
+      <template v-if="withEdgeGallery">
         <edge-gallery
           v-if="isCatalogLoaded"
           :publicationcode="currentPublicationCode"
@@ -28,7 +28,7 @@
           @load-more="
             surroundingIssuesToLoad = {
               ...surroundingIssuesToLoad,
-              [$event]: surroundingIssuesToLoad[$event] + 10,
+              [$event]: surroundingIssuesToLoad[$event as string] + 10,
             }
           "
           @change="
@@ -82,10 +82,10 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-import { EdgeDimensions } from "~/composables/useDimensions";
 import edgeCatalog from "~/composables/useEdgeCatalog";
 import { coa } from "~/stores/coa";
 import { edgeCatalog as edgeCatalogStore } from "~/stores/edgeCatalog";
+import { EdgeDimensions } from "~/types/EdgeDimensions";
 import { Crop } from "~types/Crop";
 
 const { t: $t, locale } = useI18n();
@@ -104,7 +104,7 @@ const props = withDefaults(
     dimensions?: EdgeDimensions | null;
     disableOngoingOrPublished: boolean;
     disableNotOngoingNorPublished: boolean;
-    edgeGallery?: boolean;
+    withEdgeGallery?: boolean;
     baseIssueNumbers?: string[];
   }>(),
   {
@@ -123,7 +123,10 @@ const currentIssueNumber = ref(undefined as string | undefined);
 const currentIssueNumberEnd = ref(undefined as string | undefined);
 const editMode = ref("single" as "single" | "range");
 const hasMoreIssuesToLoad = ref({ before: false, after: false });
-const surroundingIssuesToLoad = ref({ before: 10, after: 10 });
+const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
+  string,
+  number
+>);
 
 const countries = computed(
   () =>
@@ -212,7 +215,7 @@ if (props.countryCode) {
 
 const loadEdges = async () => {
   let issueNumbersFilter = "";
-  if (props.edgeGallery) {
+  if (props.withEdgeGallery) {
     const minBaseIssueNumberIndex = publicationIssues.value.indexOf(
       props.baseIssueNumbers[0]
     );

@@ -1,9 +1,9 @@
 import { api } from "~/stores/api";
+import { EdgeDimensions } from "~/types/EdgeDimensions";
 import { LegacyComponent } from "~/types/LegacyComponent";
 import { StepOptions } from "~/types/StepOptions";
 
 import { call } from "../../axios-helper";
-import { EdgeDimensions } from "./useDimensions";
 
 const { resolveIssueNumberTemplate } = useTextTemplate();
 

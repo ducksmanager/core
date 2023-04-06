@@ -1,51 +1,36 @@
-import { globalEvent } from "~/stores/globalEvent";
-import { Step } from "~/types/Step";
+import { useI18n } from "vue-i18n";
 
-const { dimensions } = useDimensions();
+import { globalEvent, StepOption } from "~/stores/globalEvent";
+
 const globalEventStore = globalEvent();
 const steps = computed(() => globalEventStore.options);
 export default () => {
-  // watch(
-  //   () => globalEvent().options,
-  //   (changes) => {
-  //     const { issuenumbers, stepNumber, ...optionChanges } = { ...changes };
-  //     const targetIssueNumbers = issuenumbers || editingStep().issuenumbers;
-  //     const targetStepNumber =
-  //       stepNumber !== undefined ? stepNumber : editingStep().stepNumber;
-  //     for (const issuenumber of Object.keys(steps.value).filter((issuenumber) =>
-  //       targetIssueNumbers.includes(issuenumber)
-  //     )) {
-  //       const step = steps.value[issuenumber][targetStepNumber];
-  //       step.options = {
-  //         ...(step.options || {}),
-  //         ...optionChanges,
-  //       };
-  //     }
-  //   }
-  // );
-
   const checkSameComponentsAsCompletedEdge = (
     issuenumber: string,
-    issueSteps: Step[]
+    issueSteps: StepOption[]
   ) => {
     let completedIssuenumber: string | null = null;
-    for (const stepNumber of Object.keys(steps.value)) {
-      const stepOptions = steps.value[parseInt(stepNumber)].options;
-      for (const issuenumber of Object.keys(stepOptions || {})) {
-        if (Object.values(stepOptions![issuenumber]).length) {
-          completedIssuenumber = issuenumber;
-          break;
-        }
+    for (
+      let stepNumber = 0;
+      stepNumber <= globalEventStore.maxStepNumber;
+      stepNumber++
+    ) {
+      const stepOptions = globalEventStore.getFilteredOptions({
+        stepNumbers: [stepNumber],
+        issuenumbers: [issuenumber],
+      });
+      if (stepOptions.length) {
+        completedIssuenumber = issuenumber;
       }
     }
     if (completedIssuenumber === null) {
       return;
     }
-    const completedIssueSteps = Object.values(steps.value).map((step) => ({
-      component: step.component,
-      options: step.options![completedIssuenumber as string],
-    }));
-    const getComponents = (steps: Step[]) =>
+    const completedIssueSteps = globalEventStore.getFilteredOptions({
+      issuenumbers: [issuenumber],
+    });
+
+    const getComponents = (steps: StepOption[]) =>
       steps?.map(({ component }) => component).join("+");
     const previousIssueComponents = getComponents(
       Object.values(completedIssueSteps)
@@ -57,30 +42,34 @@ export default () => {
       previousIssueComponents !== currentIssueComponents
     ) {
       throw new Error(
-        // i18n
-        //   .t(
-        `Issue numbers {completedIssuenumber} and {issuenumber} ` +
-          `don't have the same components` +
-          `: {completedIssueSteps} vs {currentIssueComponents}`
-        //   {
-        //     completedIssuenumber,
-        //     issuenumber,
-        //     previousIssueComponents,
-        //     currentIssueComponents,
-        //   }
-        // )
-        // .toString()
+        useI18n()
+          .t(
+            `Issue numbers {completedIssuenumber} and {issuenumber} ` +
+              `don't have the same components` +
+              `: {completedIssueSteps} vs {currentIssueComponents}`,
+            {
+              completedIssuenumber,
+              issuenumber,
+              previousIssueComponents,
+              currentIssueComponents,
+            }
+          )
+          .toString()
       );
     }
   };
 
-  const setSteps = (issuenumber: string, issueSteps: Step[]) => {
+  const setSteps = (issuenumber: string, issueSteps: StepOption[]) => {
     checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
     nextTick().then(() => {
-      issueSteps.forEach((value, stepNumber) => {
-        steps.value[stepNumber].options![issuenumber] =
-          issueSteps[stepNumber].options!;
-      });
+      globalEventStore.setOptionValues(
+        {
+          options: issueSteps,
+        },
+        {
+          issuenumbers: [issuenumber],
+        }
+      );
     });
   };
 
@@ -88,38 +77,68 @@ export default () => {
     issuenumber: string,
     otherIssuenumber: string
   ) => {
-    dimensions.value[issuenumber] = JSON.parse(
-      JSON.stringify(dimensions.value[otherIssuenumber])
+    globalEventStore.setDimensions(
+      globalEventStore.getFilteredDimensions({
+        issuenumbers: [otherIssuenumber],
+      })[0],
+      {
+        issuenumbers: [issuenumber],
+      }
     );
 
-    for (const stepNumber of Object.keys(steps.value)) {
-      steps.value[parseInt(stepNumber)].options![issuenumber] = JSON.parse(
-        JSON.stringify(
-          steps.value[parseInt(stepNumber)].options![otherIssuenumber]
-        )
-      );
+    const steps = globalEventStore.getFilteredOptions({
+      issuenumbers: [issuenumber],
+    });
+
+    for (
+      let stepNumber = 0;
+      stepNumber <= globalEventStore.maxStepNumber;
+      stepNumber++
+    ) {
+      globalEventStore.setOptionValues({
+        component: globalEventStore.options.find(
+          ({ stepNumber: optionStepNumber }) => optionStepNumber === stepNumber
+        )!.component,
+        options: steps
+          .filter(
+            ({ stepNumber: optionStepNumber }) =>
+              optionStepNumber === stepNumber
+          )
+          .map((step) => ({ ...step, issuenumber: otherIssuenumber })),
+      });
     }
   };
 
   const addStep = (component: string) => {
-    steps.value[Object.keys(steps.value).length] = {
-      component,
-    };
+    globalEventStore.setOptionValues(
+      {
+        component,
+        options: [],
+      },
+      {
+        stepNumber: globalEventStore.maxStepNumber + 1,
+      }
+    );
   };
 
   const removeStep = (stepNumber: number) => {
-    delete steps.value[stepNumber];
+    globalEventStore.removeOptionValues({
+      stepNumber,
+    });
   };
 
   const duplicateStep = (stepNumber: number) => {
-    const newStepNumber = parseInt(
-      Object.keys(steps.value)[Object.keys(steps.value).length - 1] + 1
-    );
-    const existingStep = steps.value[stepNumber];
-    steps.value[newStepNumber] = {
-      component: existingStep.component,
-      options: { ...existingStep.options },
-    };
+    const existingStepOptions = globalEventStore.getFilteredOptions({
+      stepNumbers: [stepNumber],
+    });
+
+    globalEventStore.setOptionValues({
+      component: existingStepOptions[0].component,
+      options: existingStepOptions.map((option) => ({
+        ...option,
+        stepNumber: globalEventStore.maxStepNumber + 1,
+      })),
+    });
   };
 
   const swapSteps = (stepNumbers: [number, number]) => {

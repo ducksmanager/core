@@ -11,8 +11,9 @@
       content-class="col h-100"
     >
       <b-tab
-        v-for="(step, stepNumber) in optionsPerName"
+        v-for="(step, stepNumber) in optionsPerStepNumber"
         :key="stepNumber"
+        :component="step.component"
         title-link-class="d-flex justify-content-between w-100"
       >
         <template #title>
@@ -37,7 +38,10 @@
               @click.stop="emit('swap-steps', [stepNumber - 1, stepNumber])"
             />
             <i-bi-eye-slash-fill
-              v-if="step.options.visible?.[0] === false"
+              v-if="
+                step.options.find(({ optionName }) => optionName === 'visible')
+                  ?.optionValue === false
+              "
               :title="$t('Click to show')"
               @click.stop="
                 globalEventStore.setOptionValues(
@@ -66,8 +70,7 @@
             />
             <i-bi-arrow-down-square-fill
               :class="{
-                invisible:
-                  stepNumber === steps[Object.keys(steps)[0]].length - 1,
+                invisible: stepNumber === globalEventStore.maxStepNumber,
               }"
               @click.stop="emit('swap-steps', [stepNumber, stepNumber + 1])"
             />
@@ -135,7 +138,7 @@
             option-name="rotation"
             :label="
               $t('Rotation : {rotation}°', {
-                rotation: step.options.rotation,
+                rotation: step.options.find(({optionName}) => optionName === 'rotation')!.optionValue,
               }).toString()
             "
             type="range"
@@ -148,7 +151,7 @@
             size="sm"
             variant="outline-warning"
             class="d-block mt-3"
-            @click="resetPositionAndSize(step)"
+            @click="resetPositionAndSize(step.options)"
             >{{ $t("Reset position and size") }}
           </b-button>
         </b-card-text>
@@ -168,7 +171,7 @@
             @click="splitImageAcrossEdges()"
             >{{
               $t(
-                Object.keys(steps).length === 1
+                editingStepStore.issuenumbers.length === 1
                   ? "Fill the edge with this image"
                   : "Split this image to fit all selected edges"
               )
@@ -189,7 +192,7 @@
             <gallery
               :items="mainStore.publicationElementsForGallery"
               image-type="elements"
-              :selected="step.options.src"
+              :selected="step.options.find(({optionName}) => optionName === 'src')!.optionValue"
               @change="
                 globalEventStore.setOptionValues({ options: { src: $event } })
               "
@@ -260,23 +263,16 @@
 import { Translation as I18n } from "vue-i18n";
 
 import { editingStep } from "~/stores/editingStep";
-import { globalEvent } from "~/stores/globalEvent";
+import { globalEvent, StepOption } from "~/stores/globalEvent";
 import { hoveredStep } from "~/stores/hoveredStep";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
-import { OptionValue } from "~/types/OptionValue";
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
 const mainStore = main();
 const rendersStore = renders();
 const globalEventStore = globalEvent();
-
-const props = defineProps<{
-  dimensions: { [issuenumber: string]: { width: number; height: number } };
-}>();
-
-const steps = computed(() => editingStepStore.editingOptions);
 
 const emit = defineEmits<{
   (event: "swap-steps", steps: [number, number]): void;
@@ -287,115 +283,97 @@ const emit = defineEmits<{
 const issueNumbers = computed(() => mainStore.issuenumbers);
 
 const fontSearchUrl = computed(() => import.meta.env.VITE_FONT_SEARCH_URL);
-const optionsPerName = computed(() =>
-  Object.entries(steps.value).map(([stepNumber, step]) => ({
-    ...step,
-    stepNumber,
-    options: Object.keys(step.options || {}).reduce(
-      (acc, optionName) => ({
+const optionsPerStepNumber = computed(() =>
+  globalEventStore
+    .getFilteredOptions({
+      issuenumbers: editingStepStore.issuenumbers,
+    })
+    .reduce(
+      (acc, { stepNumber, ...rest }) => ({
         ...acc,
-        [optionName]: [
-          ...new Set(
-            issueNumbers.value.map(
-              (issuenumber) =>
-                steps.value[parseInt(stepNumber)].options![issuenumber][
-                  optionName
-                ]
-            )
-          ),
-        ],
+        [stepNumber]: {
+          component: rest.component!,
+          options: [
+            ...(acc[stepNumber]!.options || []),
+            { stepNumber, ...rest },
+          ],
+        },
       }),
-      {} as Record<string, OptionValue[]>
-    ),
-  }))
-);
-
-const emptyColorList = computed(() =>
-  Object.keys(globalEventStore.stepColors).reduce(
-    (acc, stepNumber) => ({ ...acc, [stepNumber]: [] }),
-    {}
-  )
+      {} as Record<number, { component: string; options: StepOption[] }>
+    )
 );
 
 const otherColors = computed(() =>
-  Object.keys(optionsPerName.value)
+  Object.keys(optionsPerStepNumber.value)
     .map((currentStepNumber) => parseInt(currentStepNumber))
-    .map((currentStepNumber) => {
-      const otherColors: {
-        differentIssuenumber: { [stepNumber: string]: string[] };
-        sameIssuenumber: { [stepNumber: string]: string[] };
-      } = {
-        sameIssuenumber: { ...emptyColorList.value },
-        differentIssuenumber: {},
-      };
-      if (issueNumbers.value.length > 1) {
-        otherColors.differentIssuenumber = { ...emptyColorList.value };
-      }
-      for (const issuenumber of issueNumbers.value) {
-        (globalEventStore.stepColors[issuenumber] || []).forEach(
-          (stepColors, stepNumber) => {
-            const isCurrentIssueNumber =
-              editingStepStore.issuenumbers.includes(issuenumber);
-            if (!(isCurrentIssueNumber && currentStepNumber === stepNumber)) {
-              const otherColorGroupKey = isCurrentIssueNumber
-                ? "sameIssuenumber"
-                : "differentIssuenumber";
-              otherColors[otherColorGroupKey]![stepNumber] = [
-                ...new Set([
-                  ...otherColors[otherColorGroupKey]![stepNumber],
-                  ...stepColors,
-                ]),
-              ];
-            }
-          }
-        );
-      }
-      return otherColors;
-    })
+    .map((currentStepNumber) => ({
+      sameIssuenumber: globalEventStore.stepColors.filter(
+        ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
+          issueNumbers.value.includes(thisIssuenumber) &&
+          thisStepNumber !== currentStepNumber
+      ),
+      differentIssuenumber: globalEventStore.stepColors.filter(
+        ({ issuenumber: thisIssuenumber }) =>
+          !issueNumbers.value.includes(thisIssuenumber)
+      ),
+    }))
 );
 
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);
 
-const resetPositionAndSize = (step: {
-  options: { [key: string]: OptionValue[] };
-}) => {
-  for (const issuenumber of Object.keys(steps.value)) {
+const resetPositionAndSize = (stepOptions: StepOption[]) => {
+  const stepNumber = stepOptions[0].stepNumber;
+  for (const issuenumber of editingStepStore.issuenumbers) {
+    let issueDimensions = globalEventStore.getFilteredDimensions({
+      issuenumbers: [issuenumber],
+    })[0]!;
     globalEventStore.setOptionValues(
       {
         options: {
           x: 0,
           y: 0,
-          width: props.dimensions[issuenumber].width,
+          width: issueDimensions.width,
           height:
-            props.dimensions[issuenumber].width *
-            (step.options.aspectRatio[0] as number),
+            issueDimensions.width *
+            (stepOptions.find(({ optionName }) => optionName === "aspectRatio")!
+              .optionValue as number),
         },
       },
-      { issuenumbers: [issuenumber] }
+      {
+        issuenumbers: [issuenumber],
+        stepNumber,
+      }
     );
   }
 };
 
 const splitImageAcrossEdges = () => {
   let leftOffset = 0;
-  const widthSum = Object.keys(steps.value).reduce(
-    (acc, issuenumber) => acc + props.dimensions[issuenumber].width,
+  const widthSum = editingStepStore.issuenumbers.reduce(
+    (acc, issuenumber) =>
+      acc +
+      globalEventStore.getFilteredDimensions({
+        issuenumbers: [issuenumber],
+      })[0]!.width,
     0
   );
-  for (const issuenumber of Object.keys(steps.value)) {
+  for (const issuenumber of editingStepStore.issuenumbers) {
+    const issueDimensions = globalEventStore.getFilteredDimensions({
+      issuenumbers: [issuenumber],
+    })[0]!;
     globalEventStore.setOptionValues(
       {
         options: {
           x: leftOffset,
           y: 0,
           width: widthSum,
-          height: props.dimensions[issuenumber].height,
+          height: issueDimensions.height,
         },
       },
       { issuenumbers: [issuenumber] }
     );
-    leftOffset -= props.dimensions[issuenumber].width;
+    leftOffset -= issueDimensions.width;
   }
 };
 </script>

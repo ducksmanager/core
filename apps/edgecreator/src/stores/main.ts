@@ -37,11 +37,18 @@ export const main = defineStore("main", () => {
     publicationIssues = computed(
       () => coa().issueNumbers[publicationcode.value] || []
     ),
-    publicationPhotosForGallery = () =>
+    publicationElementsForGallery = computed(() =>
+      publicationElements.value?.map((elementFileName) => ({
+        name: elementFileName,
+        url: `/edges/${country}/elements/${elementFileName}`,
+      }))
+    ),
+    publicationPhotosForGallery = computed(() =>
       publicationPhotos.value?.map((elementFileName) => ({
         name: elementFileName,
         url: `/edges/${country}/photos/${elementFileName}`,
-      })),
+      }))
+    ),
     addContributor = ({
       issuenumber,
       contributionType,
@@ -228,6 +235,7 @@ export const main = defineStore("main", () => {
     warnings,
     publicationcode,
     publicationIssues,
+    publicationElementsForGallery,
     publicationPhotosForGallery,
     addContributor,
     removeContributor,

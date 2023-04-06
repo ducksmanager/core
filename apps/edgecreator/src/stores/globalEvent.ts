@@ -1,126 +1,163 @@
 import { defineStore } from "pinia";
 
 import { editingStep } from "~/stores/editingStep";
+import { main } from "~/stores/main";
 import { OptionValue } from "~/types/OptionValue";
-import { StepOptions } from "~/types/StepOptions";
 
-export type Options = Record<
-  number /* stepNumber */,
-  {
-    component: string;
-    options?: {
-      [optionName: string]: Record<string /* issuenumber */, OptionValue>;
-    };
-  }
->;
+export type StepOption = {
+  stepNumber: number;
+  issuenumber: string;
+  component?: string;
+  optionName: string;
+  optionValue: OptionValue;
+};
+export type Options = StepOption[];
+
+export type OptionNameAndValue = {
+  optionName: string;
+  optionValue: OptionValue;
+};
+export type OptionsArray = OptionNameAndValue[];
+
+export type Dimensions = {
+  issuenumber: string;
+  width: number;
+  height: number;
+};
+
+export type DimensionsArray = Dimensions[];
+
+export const optionObjectToArray = (
+  optionObject: Record<string, OptionValue>
+): OptionsArray =>
+  Object.entries(optionObject).reduce(
+    (acc, [optionName, optionValue]) => [...acc, { optionName, optionValue }],
+    [] as OptionsArray
+  );
 
 const isColorOption = (optionName: string) =>
   optionName.toLowerCase().includes("color") ||
   ["fill", "stroke"].includes(optionName);
 
-export const globalEvent = defineStore("globalEvent", {
-  state: () => ({
-    options: {} as Options,
-  }),
-  getters: {
-    stepColors() {
-      const options = this.options;
-      const colorsByIssuenumber: Record<string, string[]> = {};
-      for (const { options: stepOptions } of Object.values(options)) {
-        for (const [optionName, optionValues] of Object.entries(
-          stepOptions || {}
-        )) {
-          if (isColorOption(optionName)) {
-            for (const [issuenumber, optionValue] of Object.entries(
-              optionValues
-            )) {
-              if (optionValue !== "transparent") {
-                if (!colorsByIssuenumber[issuenumber]) {
-                  colorsByIssuenumber[issuenumber] = [];
-                }
-                colorsByIssuenumber[issuenumber].push(optionValue as string);
-              }
-            }
-          }
-        }
-      }
-      return colorsByIssuenumber;
-    },
-  },
-  actions: {
-    getFilteredOptions({
+export const globalEvent = defineStore("globalEvent", () => {
+  const options = ref({} as Options),
+    dimensions = ref({} as DimensionsArray),
+    stepColors = computed(() =>
+      options.value.filter(
+        ({ optionName, optionValue }) =>
+          isColorOption(optionName) && optionValue !== "transparent"
+      )
+    ),
+    maxStepNumber = computed(() =>
+      options.value.reduce(
+        (max, { stepNumber }) => Math.max(max, stepNumber),
+        0
+      )
+    ),
+    getFilteredOptions = ({
       stepNumbers,
       issuenumbers,
     }: {
       stepNumbers?: number[];
       issuenumbers?: string[];
-    }): typeof this.options {
-      return Object.entries(this.options)
-        .filter(
-          ([stepNumber]) =>
-            !stepNumbers || stepNumbers.includes(parseInt(stepNumber))
-        )
-        .reduce(
-          (acc, [stepNumber, { component, options: stepOptions }]) => ({
-            ...acc,
-            [stepNumber]: {
-              component,
-              options: Object.entries(stepOptions || {})
-                .filter(
-                  ([issuenumber]) =>
-                    !issuenumbers || issuenumbers.includes(issuenumber)
-                )
-                .reduce(
-                  (acc2, issueOptionsForStep, issuenumber) => ({
-                    ...acc2,
-                    [issuenumber]: issueOptionsForStep,
-                  }),
-                  {}
-                ),
-            },
-          }),
-          {}
-        );
-    },
-    setOptionValues(
+    }) =>
+      options.value.filter(
+        ({ stepNumber, issuenumber }) =>
+          (!stepNumbers || stepNumbers.includes(stepNumber)) &&
+          (!issuenumbers || issuenumbers.includes(issuenumber))
+      ),
+    getFilteredDimensions = ({ issuenumbers }: { issuenumbers?: string[] }) =>
+      dimensions.value.filter(
+        ({ issuenumber }) => !issuenumbers || issuenumbers.includes(issuenumber)
+      ),
+    removeOptionValues = ({
+      stepNumber: defaultStepNumber,
+      issuenumbers: defaultIssuenumbers,
+    }: {
+      stepNumber?: number;
+      issuenumbers?: string[];
+    }) =>
+      options.value.filter(
+        ({ stepNumber, issuenumber }) =>
+          !(
+            (!defaultStepNumber || defaultStepNumber === stepNumber) &&
+            (!defaultIssuenumbers || defaultIssuenumbers.includes(issuenumber))
+          )
+      ),
+    setOptionValues = (
       {
         component,
-        options,
+        options: newOptions,
       }: {
         component?: string;
-        options: StepOptions;
+        options: OptionsArray | Record<string, OptionValue>;
       },
       overrides: {
         issuenumbers?: string[];
         stepNumber?: number;
       } = { issuenumbers: undefined, stepNumber: undefined }
-    ) {
-      const stepNumber =
+    ) => {
+      const optionsAsArray = newOptions.hasOwnProperty("length")
+        ? (newOptions as OptionsArray)
+        : optionObjectToArray(newOptions as Record<string, OptionValue>);
+      const defaultStepNumber =
         overrides.stepNumber === undefined
           ? editingStep().stepNumber
           : overrides.stepNumber;
-      if (!this.options[stepNumber]) {
-        if (!component) {
-          console.error("component should be set for new steps");
-          return;
-        }
-        this.options[stepNumber] = {
-          component,
-        };
-      }
-      if (!this.options[stepNumber].options) {
-        this.options[stepNumber].options = {};
-      }
-      for (const [optionName, optionValue] of Object.entries(options!)) {
-        if (!this.options[stepNumber].options![optionName]) {
-          this.options[stepNumber].options![optionName] = {};
-        }
-        for (const editingIssuenumber of overrides.issuenumbers ||
-          editingStep().issuenumbers) {
-          this.options[stepNumber].options![optionName][editingIssuenumber] =
-            optionValue;
-        }
-      }
+      const defaultIssuenumbers =
+        overrides.issuenumbers === undefined
+          ? editingStep().issuenumbers
+          : overrides.issuenumbers;
+
+      options.value = [
+        ...removeOptionValues({
+          stepNumber: defaultStepNumber,
+          issuenumbers: defaultIssuenumbers,
+        }),
+        ...defaultIssuenumbers.reduce(
+          (acc, issuenumber) => [
+            ...acc,
+            ...optionsAsArray.map(({ optionName, optionValue }) => ({
+              stepNumber: defaultStepNumber,
+              issuenumber,
+              component,
+              optionName,
+              optionValue,
+            })),
+          ],
+          [] as StepOption[]
+        ),
+      ];
     },
-  },
+    setDimensions = (
+      newDimensions: { width: number; height: number },
+      overrides: {
+        issuenumbers?: string[];
+      }
+    ) => {
+      dimensions.value = {
+        ...dimensions.value.filter(
+          ({ issuenumber }) =>
+            overrides.issuenumbers &&
+            !overrides.issuenumbers.includes(issuenumber)
+        ),
+        ...(overrides.issuenumbers || main().issuenumbers).map(
+          (issuenumber) => ({
+            issuenumber,
+            ...newDimensions,
+          })
+        ),
+      };
+    };
+  return {
+    options,
+    dimensions,
+    stepColors,
+    maxStepNumber,
+    getFilteredOptions,
+    getFilteredDimensions,
+    setOptionValues,
+    removeOptionValues,
+    setDimensions,
+  };
 });

@@ -39,9 +39,9 @@
         </b-button>
         <template #content>
           <div
-            v-for="[colorLocation, otherColorsForLocation] of Object.entries(
-              otherColors
-            )"
+            v-for="(
+              otherColorsForLocation, colorLocation
+            ) in otherColorsByLocationAndStepNumber"
             :key="colorLocation"
           >
             <h6 v-if="colorLocation === 'sameIssuenumber'">
@@ -64,10 +64,10 @@
                 >
                 <span
                   v-for="color in otherColorsForLocation[stepNumber]"
-                  :key="color"
+                  :key="color as string"
                   class="frequent-color"
-                  :style="{ background: color }"
-                  @click="onColorChange(color)"
+                  :style="{ background: color as string}"
+                  @click="onColorChange(color as string)"
                   >&nbsp;</span
                 >
               </li>
@@ -89,7 +89,7 @@
 </template>
 <script setup lang="ts">
 import Popover from "~/components/Popover.vue";
-import { globalEvent } from "~/stores/globalEvent";
+import { globalEvent, Options } from "~/stores/globalEvent";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import { OptionValue } from "~/types/OptionValue";
@@ -101,12 +101,8 @@ const props = withDefaults(
     };
     optionName: string;
     otherColors: {
-      differentIssuenumber: {
-        [stepNumber: string]: string[];
-      };
-      sameIssuenumber: {
-        [stepNumber: string]: string[];
-      };
+      differentIssuenumber: Options;
+      sameIssuenumber: Options;
     };
     label?: string | null;
     canBeTransparent?: false | null;
@@ -126,6 +122,24 @@ const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 const colorPickerOption = computed(() => ui().colorPickerOption);
 const showEdgePhotos = computed(() => ui().showEdgePhotos);
 
+const getOptionsByStepNumber = (options: Options) =>
+  options.reduce(
+    (acc, option) => ({
+      ...acc,
+      [option.stepNumber]: [
+        ...(acc[option.stepNumber] || []),
+        option.optionValue,
+      ],
+    }),
+    {} as Record<number, OptionValue[]>
+  );
+
+const otherColorsByLocationAndStepNumber = computed(() => ({
+  differentIssuenumber: getOptionsByStepNumber(
+    props.otherColors.differentIssuenumber
+  ),
+  sameIssuenumber: getOptionsByStepNumber(props.otherColors.sameIssuenumber),
+}));
 watch(
   () => inputValues.value,
   (newValue) => {

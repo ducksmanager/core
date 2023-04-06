@@ -1,10 +1,16 @@
 import { api } from "~/stores/api";
 import { edgeCatalog } from "~/stores/edgeCatalog";
+import {
+  globalEvent,
+  optionObjectToArray,
+  Options,
+  StepOption,
+} from "~/stores/globalEvent";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { users } from "~/stores/users";
+import { EdgeDimensions } from "~/types/EdgeDimensions";
 import { LegacyComponent } from "~/types/LegacyComponent";
-import { Step } from "~/types/Step";
 import { StepOptions } from "~/types/StepOptions";
 import {
   GET__edgecreator__contributors__$modelId,
@@ -13,7 +19,6 @@ import {
 } from "~dm_types/routes";
 
 import { call } from "../../axios-helper";
-import type { EdgeDimensions } from "./useDimensions";
 
 const mainStore = main();
 const rendersStore = renders();
@@ -24,7 +29,6 @@ const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 
 const { getOptionsFromDb } = useLegacyDb();
 
-const { setDimensions } = useDimensions();
 const { setSteps } = useStepList();
 
 export default () => {
@@ -32,15 +36,22 @@ export default () => {
     width: parseInt(svgElement.getAttribute("width")!) / 1.5,
     height: parseInt(svgElement.getAttribute("height")!) / 1.5,
   });
-  const getStepsFromSvg = (svgChildNodes: SVGElement[]) =>
+  const getStepsFromSvg = (
+    issuenumber: string,
+    svgChildNodes: SVGElement[]
+  ): Options =>
     svgChildNodes
       .filter(({ nodeName }) => nodeName === "g")
-      .map((group) => ({
+      .map((group, stepNumber) => ({
         component: group.getAttribute("class")!,
-        options: JSON.parse(
-          (group.getElementsByTagName("metadata")[0] || { textContent: "{}" })
-            .textContent!
-        ),
+        stepNumber,
+        issuenumber,
+        ...optionObjectToArray(
+          JSON.parse(
+            (group.getElementsByTagName("metadata")[0] || { textContent: "{}" })
+              .textContent!
+          )
+        )[0],
       }));
 
   const setPhotoUrlsFromSvg = (
@@ -107,8 +118,9 @@ export default () => {
     dimensions: { width: number; height: number },
     calculateBase64: boolean,
     onError: (error: string, stepNumber: number) => void
-  ): Promise<Step[]> => {
-    const steps = [];
+  ): Promise<Options> => {
+    const steps: Options = [];
+    const stepNumber = 0;
     for (const {
       stepNumber: originalStepNumber,
       functionName: originalComponentName,
@@ -134,7 +146,9 @@ export default () => {
           );
           steps.push({
             component,
-            options,
+            issuenumber,
+            stepNumber,
+            ...optionObjectToArray(options)[0],
           });
         } catch (e) {
           onError(
@@ -182,7 +196,7 @@ export default () => {
     targetIssuenumber: string
   ) => {
     const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber;
-    let loadedSteps: Step[] | null = null;
+    let loadedSteps: StepOption[] | null = null;
     let dimensions: { width: number; height: number };
 
     const loadSvg = async (publishedVersion: boolean) => {
@@ -195,7 +209,7 @@ export default () => {
       );
 
       dimensions = getDimensionsFromSvg(svgElement);
-      loadedSteps = getStepsFromSvg(svgChildNodes);
+      loadedSteps = getStepsFromSvg(issuenumber, svgChildNodes);
       if (!onlyLoadStepsAndDimensions) {
         setPhotoUrlsFromSvg(issuenumber, svgChildNodes);
         setContributorsFromSvg(issuenumber, svgChildNodes);
@@ -250,7 +264,9 @@ export default () => {
       }
     }
     if (loadedSteps) {
-      setDimensions(dimensions!, targetIssuenumber);
+      globalEvent().setDimensions(dimensions!, {
+        issuenumbers: [targetIssuenumber],
+      });
       setSteps(targetIssuenumber, loadedSteps);
     } else {
       throw new Error("No model found for issue " + issuenumber);

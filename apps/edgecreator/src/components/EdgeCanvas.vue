@@ -83,15 +83,16 @@
 </template>
 <script setup lang="ts">
 import { editingStep } from "~/stores/editingStep";
-import { globalEvent } from "~/stores/globalEvent";
 import { hoveredStep } from "~/stores/hoveredStep";
 import { ui } from "~/stores/ui";
+import { Step } from "~/types/Step";
 import { SimpleUser } from "~types/SimpleUser";
 
 const props = withDefaults(
   defineProps<{
     issuenumber: string;
     dimensions: { width: number; height: number };
+    steps: Record<number, Step>;
     photoUrl?: string | null;
     contributors: {
       designers: SimpleUser[];
@@ -100,8 +101,6 @@ const props = withDefaults(
   }>(),
   { photoUrl: null }
 );
-
-const steps = computed(() => globalEvent().options);
 
 const borderWidth = ref(1 as number);
 
@@ -127,7 +126,7 @@ const replaceEditingIssuenumberIfNotAlreadyEditing = (issuenumber: string) => {
     editingStepStore.replaceIssuenumber(issuenumber);
   }
 };
-const renderComponents = {
+const renderComponents: Record<string, unknown> = {
   ArcCircle: defineAsyncComponent(
     () => import("./renders/ArcCircleRender.vue")
   ),
