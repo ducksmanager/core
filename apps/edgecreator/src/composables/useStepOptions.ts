@@ -6,6 +6,7 @@ import { globalEvent } from "~/stores/globalEvent";
 import { ui } from "~/stores/ui";
 import { BaseProps } from "~/types/StepOptionBaseProps";
 const uiStore = ui();
+const globalEventStore = globalEvent();
 
 // type Interactive = {
 //   onmove: (params: { dx: number; dy: number }) => void;
@@ -13,14 +14,23 @@ const uiStore = ui();
 // };
 
 const shownTips: string[] = [];
-const { dimensions } = useDimensions();
 
 export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
   const toast = useToast();
   const { t } = useI18n();
   const zoom = computed(() => uiStore.zoom);
-  const width = computed(() => dimensions.value[props.issuenumber].width);
-  const height = computed(() => dimensions.value[props.issuenumber].height);
+  const width = computed(
+    () =>
+      globalEventStore.getFilteredDimensions({
+        issuenumbers: [props.issuenumber],
+      })[0]!.width
+  );
+  const height = computed(
+    () =>
+      globalEventStore.getFilteredDimensions({
+        issuenumbers: [props.issuenumber],
+      })[0]!.height
+  );
   const attributes = computed(() =>
     Object.keys(props.options!)
       .filter((optionKey) => attributeKeys.includes(optionKey))
@@ -145,10 +155,8 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
       })
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
-
-  debugger;
   globalEvent().setOptionValues(
-    { component: props.component, options: props.options },
+    { options: props.options! },
     {
       issuenumbers: [props.issuenumber],
       stepNumber: props.stepNumber,

@@ -9,7 +9,7 @@
       :xlink:href="image.base64"
       :transform="
         !options.width
-          ? null
+          ? undefined
           : `rotate(${options.rotation}, ${options.x + options.width / 2}, ${
               options.y + options.height / 2
             })`

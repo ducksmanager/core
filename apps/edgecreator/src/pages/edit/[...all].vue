@@ -93,9 +93,10 @@
             >
               <td>
                 <edge-canvas
-                  v-if="dimensions[issuenumber]"
+                  v-if="dimensionsPerIssuenumber[issuenumber]"
+                  :steps="stepsPerIssuenumber[issuenumber]"
                   :issuenumber="issuenumber"
-                  :dimensions="dimensions[issuenumber]"
+                  :dimensions="dimensionsPerIssuenumber[issuenumber]"
                   :photo-url="mainStore.photoUrls[issuenumber]"
                   :contributors="mainStore.contributors[issuenumber] || {}"
                 />
@@ -111,7 +112,8 @@
                   :class="{ picker: !!uiStore.colorPickerOption }"
                   :style="{
                     height: `${
-                      uiStore.zoom * dimensions[issuenumber].height
+                      uiStore.zoom *
+                      dimensionsPerIssuenumber[issuenumber].height
                     }px`,
                   }"
                   crossorigin=""
@@ -133,7 +135,6 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <model-edit
-          :dimensions="editingDimensions"
           @add-step="addStep($event)"
           @remove-step="removeStep($event)"
           @duplicate-step="duplicateStep($event)"
@@ -147,7 +148,7 @@
 import useSurroundingEdge from "~/composables/useSurroundingEdge";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { editingStep } from "~/stores/editingStep";
-import { globalEvent } from "~/stores/globalEvent";
+import { Dimensions, globalEvent, Options } from "~/stores/globalEvent";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
@@ -170,18 +171,33 @@ const { loadModel } = useModelLoad();
 
 const error = ref(null as string | null);
 
-const { dimensions, setDimensions } = useDimensions();
+const dimensions = computed(() => globalEvent().dimensions);
 
-const editingDimensions = computed(() =>
-  editingStep().issuenumbers.reduce(
+const editingDimensions = computed(() => editingStep().dimensions);
+
+const dimensionsPerIssuenumber = computed(() =>
+  mainStore.issuenumbers?.reduce(
     (acc, issuenumber) => ({
       ...acc,
-      [issuenumber]: dimensions.value[issuenumber],
+      [issuenumber]: globalEvent().getFilteredDimensions({
+        issuenumbers: [issuenumber],
+      })[0],
     }),
-    {}
+    {} as Record<string, Dimensions>
   )
 );
 
+const stepsPerIssuenumber = computed(() =>
+  mainStore.issuenumbers?.reduce(
+    (acc, issuenumber) => ({
+      ...acc,
+      [issuenumber]: globalEvent().getFilteredOptions({
+        issuenumbers: [issuenumber],
+      }),
+    }),
+    {} as Record<string, Options>
+  )
+);
 watch(
   () => editingStep().issuenumbers,
   async (newValue) => {
@@ -241,7 +257,10 @@ watch(
         if (mainStore.issuenumbers[idx - 1]) {
           copyDimensionsAndSteps(issuenumber, mainStore.issuenumbers[idx - 1]);
         } else {
-          setDimensions({ width: 15, height: 200 }, issuenumber);
+          globalEvent().setDimensions(
+            { width: 15, height: 200 },
+            { issuenumbers: [issuenumber] }
+          );
           setSteps(issuenumber, []);
         }
       }
@@ -274,9 +293,10 @@ const overwriteDimensions = ({
   width: number;
   height: number;
 }) => {
-  for (const targetIssuenumber of editingStep().issuenumbers) {
-    setDimensions({ width, height }, targetIssuenumber);
-  }
+  globalEvent().setDimensions(
+    { width, height },
+    { issuenumbers: editingStep().issuenumbers }
+  );
 };
 
 const getImageUrl = (fileType: string, fileName: string) =>

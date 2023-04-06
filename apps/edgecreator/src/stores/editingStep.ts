@@ -11,10 +11,13 @@ export const editingStep = defineStore("editingStep", () => {
         issuenumbers: issuenumbers.value,
       })
     ),
+    dimensions = computed(() =>
+      globalEvent().getFilteredDimensions({
+        issuenumbers: issuenumbers.value,
+      })
+    ),
     addIssuenumber = (issuenumber: string) => {
-      issuenumbers.value = [
-        ...new Set(issuenumbers.value.concat(issuenumber)),
-      ].sort();
+      issuenumbers.value = issuenumbers.value.concat(issuenumber).sort();
     },
     addIssuenumbers = (newIssuenumbers: string[]) => {
       issuenumbers.value = [
@@ -37,6 +40,7 @@ export const editingStep = defineStore("editingStep", () => {
     };
 
   return {
+    dimensions,
     issuenumbers,
     stepNumber,
     editingOptions,

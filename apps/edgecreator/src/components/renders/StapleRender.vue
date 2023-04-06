@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-const { dimensions } = useDimensions();
+const dimensions = computed(() => globalEvent().dimensions[props.issuenumber]);
 
 const onmove = ({
   currentTarget,
