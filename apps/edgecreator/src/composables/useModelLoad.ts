@@ -1,13 +1,8 @@
 import { api } from "~/stores/api";
 import { edgeCatalog } from "~/stores/edgeCatalog";
-import {
-  globalEvent,
-  optionObjectToArray,
-  Options,
-  StepOption,
-} from "~/stores/globalEvent";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
+import { optionObjectToArray, Options, step, StepOption } from "~/stores/step";
 import { users } from "~/stores/users";
 import { EdgeDimensions } from "~/types/EdgeDimensions";
 import { LegacyComponent } from "~/types/LegacyComponent";
@@ -261,7 +256,7 @@ export default () => {
       }
     }
     if (loadedSteps) {
-      globalEvent().setDimensions(dimensions!, {
+      step().setDimensions(dimensions!, {
         issuenumbers: [targetIssuenumber],
       });
       setSteps(targetIssuenumber, loadedSteps);

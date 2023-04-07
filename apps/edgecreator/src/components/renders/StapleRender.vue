@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import useTextTemplate from "~/composables/useTextTemplate";
-import { globalEvent } from "~/stores/globalEvent";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 const { resolveHeightTemplate } = useTextTemplate();
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const dimensions = computed(
   () =>
-    globalEvent().getFilteredDimensions({
+    step().getFilteredDimensions({
       issuenumbers: [props.issuenumber],
     })[0]
 );
@@ -78,13 +78,13 @@ const onmove = ({
     ),
     height.value / 2 - stapleHeight * 2
   );
-  globalEvent().setOptionValues({
+  step().setOptionValues({
     yDistanceFromCenter,
   });
 };
 
 // if (typeof props.options.height === "string") {
-//   globalEvent().setOptionValues({
+//   step().setOptionValues({
 //     height: parseInt(
 //       resolveHeightTemplate(props.options.height, dimensions.value.height)
 //     ),
@@ -93,7 +93,7 @@ const onmove = ({
 
 onMounted(() => {
   // if (props.options.yDistanceFromCenter === undefined) {
-  //   globalEvent().setOptionValues({
+  //   step().setOptionValues({
   //     yDistanceFromCenter:
   //       parseInt(resolveHeightTemplate(props.options.y2, height.value)) -
   //       height.value / 2,

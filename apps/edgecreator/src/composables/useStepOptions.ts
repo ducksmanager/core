@@ -2,11 +2,11 @@ import { useToast } from "bootstrap-vue-next";
 import interact from "interactjs";
 import { useI18n } from "vue-i18n";
 
-import { globalEvent } from "~/stores/globalEvent";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { BaseProps } from "~/types/StepOptionBaseProps";
 const uiStore = ui();
-const globalEventStore = globalEvent();
+const stepStore = step();
 
 // type Interactive = {
 //   onmove: (params: { dx: number; dy: number }) => void;
@@ -25,13 +25,13 @@ export const useStepOptions = (
   const zoom = computed(() => uiStore.zoom);
   const width = computed(
     () =>
-      globalEventStore.getFilteredDimensions({
+      stepStore.getFilteredDimensions({
         issuenumbers: [props.issuenumber],
       })[0]!.width
   );
   const height = computed(
     () =>
-      globalEventStore.getFilteredDimensions({
+      stepStore.getFilteredDimensions({
         issuenumbers: [props.issuenumber],
       })[0]!.height
   );
@@ -116,12 +116,12 @@ export const useStepOptions = (
             const { dx, dy, shiftKey } = e;
             showMoveResizeToast("move");
             if (shiftKey) {
-              globalEvent().setOptionValues({
+              step().setOptionValues({
                 x: 0,
                 y: 0,
               });
             } else {
-              globalEvent().setOptionValues({
+              step().setOptionValues({
                 x: (props.options!.x as number) + dx / uiStore.zoom / 3,
                 y: (props.options!.y as number) + dy / uiStore.zoom / 3,
               });
@@ -150,12 +150,12 @@ export const useStepOptions = (
               rect.width = width.value;
             }
           }
-          globalEvent().setOptionValues(rect);
+          step().setOptionValues(rect);
         }
       })
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
-  globalEvent().setOptionValues(
+  step().setOptionValues(
     [
       {
         optionName: "component",

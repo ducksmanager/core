@@ -24,7 +24,7 @@
 import useBase64Legacy from "~/composables/useBase64Legacy";
 import useTextTemplate from "~/composables/useTextTemplate";
 import { api } from "~/stores/api";
-import { globalEvent } from "~/stores/globalEvent";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { GET__fs__text } from "~types/routes";
 
@@ -143,7 +143,7 @@ watch(
                 options.x =
                   props.options.x - (options.width - props.options.width!) / 2;
               }
-              globalEvent().setOptionValues(options);
+              step().setOptionValues(options);
             },
           });
           applyTextImageDimensions();
@@ -261,7 +261,7 @@ const applyTextImageDimensions = () => {
     options.widthCompression = undefined;
   }
   options.aspectRatio = options.height / options.width!;
-  globalEvent().setOptionValues(options);
+  step().setOptionValues(options);
 };
 
 refreshPreview();

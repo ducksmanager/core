@@ -153,8 +153,8 @@
 import useSurroundingEdge from "~/composables/useSurroundingEdge";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { editingStep } from "~/stores/editingStep";
-import { Dimensions, globalEvent, Options } from "~/stores/globalEvent";
 import { main } from "~/stores/main";
+import { Dimensions, Options, step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
 
@@ -176,7 +176,7 @@ const { loadModel } = useModelLoad();
 
 const error = ref(null as string | null);
 
-const dimensions = computed(() => globalEvent().dimensions);
+const dimensions = computed(() => step().dimensions);
 
 const editingDimensions = computed(() => editingStep().dimensions);
 
@@ -184,7 +184,7 @@ const dimensionsPerIssuenumber = computed(() =>
   mainStore.issuenumbers?.reduce(
     (acc, issuenumber) => ({
       ...acc,
-      [issuenumber]: globalEvent().getFilteredDimensions({
+      [issuenumber]: step().getFilteredDimensions({
         issuenumbers: [issuenumber],
       })[0],
     }),
@@ -196,7 +196,7 @@ const stepsPerIssuenumber = computed(() =>
   mainStore.issuenumbers?.reduce(
     (acc, issuenumber) => ({
       ...acc,
-      [issuenumber]: globalEvent().getFilteredOptions({
+      [issuenumber]: step().getFilteredOptions({
         issuenumbers: [issuenumber],
       }),
     }),
@@ -262,7 +262,7 @@ watch(
         if (mainStore.issuenumbers[idx - 1]) {
           copyDimensionsAndSteps(issuenumber, mainStore.issuenumbers[idx - 1]);
         } else {
-          globalEvent().setDimensions(
+          step().setDimensions(
             { width: 15, height: 200 },
             { issuenumbers: [issuenumber] }
           );
@@ -298,7 +298,7 @@ const overwriteDimensions = ({
   width: number;
   height: number;
 }) => {
-  globalEvent().setDimensions(
+  step().setDimensions(
     { width, height },
     { issuenumbers: editingStep().issuenumbers }
   );
@@ -317,7 +317,7 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   canvas.height = imgElement.height;
   context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
   const color = context.getImageData(offsetX, offsetY, 1, 1).data;
-  globalEvent().setOptionValues({
+  step().setOptionValues({
     [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
   });
 };

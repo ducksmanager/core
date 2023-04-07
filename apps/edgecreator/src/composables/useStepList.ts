@@ -1,9 +1,9 @@
 import { useI18n } from "vue-i18n";
 
-import { globalEvent, StepOption } from "~/stores/globalEvent";
+import { step, StepOption } from "~/stores/step";
 
-const globalEventStore = globalEvent();
-const steps = computed(() => globalEventStore.options);
+const stepStore = step();
+const steps = computed(() => stepStore.options);
 export default () => {
   const checkSameComponentsAsCompletedEdge = (
     issuenumber: string,
@@ -12,10 +12,10 @@ export default () => {
     let completedIssuenumber: string | null = null;
     for (
       let stepNumber = 0;
-      stepNumber <= globalEventStore.maxStepNumber;
+      stepNumber <= stepStore.maxStepNumber;
       stepNumber++
     ) {
-      const stepOptions = globalEventStore.getFilteredOptions({
+      const stepOptions = stepStore.getFilteredOptions({
         stepNumbers: [stepNumber],
         issuenumbers: [issuenumber],
       });
@@ -26,7 +26,7 @@ export default () => {
     if (completedIssuenumber === null) {
       return;
     }
-    const completedIssueSteps = globalEventStore.getFilteredOptions({
+    const completedIssueSteps = stepStore.getFilteredOptions({
       issuenumbers: [issuenumber],
     });
 
@@ -65,7 +65,7 @@ export default () => {
   const setSteps = (issuenumber: string, issueSteps: StepOption[]) => {
     checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
     nextTick().then(() => {
-      globalEventStore.setOptionValues(issueSteps, {
+      stepStore.setOptionValues(issueSteps, {
         issuenumbers: [issuenumber],
       });
     });
@@ -75,8 +75,8 @@ export default () => {
     issuenumber: string,
     otherIssuenumber: string
   ) => {
-    globalEventStore.setDimensions(
-      globalEventStore.getFilteredDimensions({
+    stepStore.setDimensions(
+      stepStore.getFilteredDimensions({
         issuenumbers: [otherIssuenumber],
       })[0],
       {
@@ -84,16 +84,16 @@ export default () => {
       }
     );
 
-    const steps = globalEventStore.getFilteredOptions({
+    const steps = stepStore.getFilteredOptions({
       issuenumbers: [issuenumber],
     });
 
     for (
       let stepNumber = 0;
-      stepNumber <= globalEventStore.maxStepNumber;
+      stepNumber <= stepStore.maxStepNumber;
       stepNumber++
     ) {
-      globalEventStore.setOptionValues(
+      stepStore.setOptionValues(
         steps
           .filter(
             ({ stepNumber: optionStepNumber }) =>
@@ -105,7 +105,7 @@ export default () => {
   };
 
   const addStep = (component: string) => {
-    globalEventStore.setOptionValues(
+    stepStore.setOptionValues(
       [
         {
           optionName: "component",
@@ -113,26 +113,26 @@ export default () => {
         },
       ],
       {
-        stepNumber: (globalEventStore.maxStepNumber || -1) + 1,
+        stepNumber: (stepStore.maxStepNumber || -1) + 1,
       }
     );
   };
 
   const removeStep = (stepNumber: number) => {
-    globalEventStore.removeOptionValues({
+    stepStore.removeOptionValues({
       stepNumber,
     });
   };
 
   const duplicateStep = (stepNumber: number) => {
-    const existingStepOptions = globalEventStore.getFilteredOptions({
+    const existingStepOptions = stepStore.getFilteredOptions({
       stepNumbers: [stepNumber],
     });
 
-    globalEventStore.setOptionValues(
+    stepStore.setOptionValues(
       existingStepOptions.map((option) => ({
         ...option,
-        stepNumber: globalEventStore.maxStepNumber + 1,
+        stepNumber: stepStore.maxStepNumber + 1,
       }))
     );
   };

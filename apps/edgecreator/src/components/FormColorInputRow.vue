@@ -89,8 +89,8 @@
 </template>
 <script setup lang="ts">
 import Popover from "~/components/Popover.vue";
-import { globalEvent, Options } from "~/stores/globalEvent";
 import { main } from "~/stores/main";
+import { Options, step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { OptionValue } from "~/types/OptionValue";
 
@@ -155,7 +155,7 @@ watch(
 );
 
 const onTransparentCheckboxChange = (event: Event) => {
-  globalEvent().setOptionValues({
+  step().setOptionValues({
     [props.optionName]: (event.currentTarget as HTMLInputElement).checked
       ? "transparent"
       : originalColor.value,
@@ -163,7 +163,7 @@ const onTransparentCheckboxChange = (event: Event) => {
 };
 
 const onColorChange = (value: string) => {
-  globalEvent().setOptionValues({ [props.optionName]: value });
+  step().setOptionValues({ [props.optionName]: value });
 };
 </script>
 <style lang="scss" scoped>
