@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useI18n } from "vue-i18n";
 
 import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
@@ -38,7 +39,7 @@ const isColorOption = (optionName: string) =>
 export const step = defineStore("step", () => {
   const options = ref([] as Options),
     dimensions = ref([] as DimensionsArray),
-    stepColors = computed(() =>
+    colors = computed(() =>
       options.value.filter(
         ({ optionName, optionValue }) =>
           isColorOption(optionName) && optionValue !== "transparent"
@@ -137,16 +138,157 @@ export const step = defineStore("step", () => {
           })
         ),
       ];
+    },
+    setSteps = (issuenumber: string, issueSteps: StepOption[]) => {
+      checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
+      nextTick().then(() => {
+        setOptionValues(issueSteps, {
+          issuenumbers: [issuenumber],
+        });
+      });
+    },
+    checkSameComponentsAsCompletedEdge = (
+      issuenumber: string,
+      issueSteps: StepOption[]
+    ) => {
+      let completedIssuenumber: string | null = null;
+      for (
+        let stepNumber = 0;
+        stepNumber <= maxStepNumber.value;
+        stepNumber++
+      ) {
+        const stepOptions = getFilteredOptions({
+          stepNumbers: [stepNumber],
+          issuenumbers: [issuenumber],
+        });
+        if (stepOptions.length) {
+          completedIssuenumber = issuenumber;
+        }
+      }
+      if (completedIssuenumber === null) {
+        return;
+      }
+      const completedIssueSteps = getFilteredOptions({
+        issuenumbers: [issuenumber],
+      });
+
+      const getComponents = (steps: StepOption[]) =>
+        steps
+          ?.filter(({ optionName }) => optionName === "component")
+          .map(({ optionValue }) => optionValue)
+          .join("+");
+      const previousIssueComponents = getComponents(
+        Object.values(completedIssueSteps)
+      );
+      const currentIssueComponents = getComponents(issueSteps);
+      if (
+        completedIssuenumber !== issuenumber &&
+        completedIssueSteps &&
+        previousIssueComponents !== currentIssueComponents
+      ) {
+        throw new Error(
+          useI18n()
+            .t(
+              `Issue numbers {completedIssuenumber} and {issuenumber} ` +
+                `don't have the same components` +
+                `: {completedIssueSteps} vs {currentIssueComponents}`,
+              {
+                completedIssuenumber,
+                issuenumber,
+                previousIssueComponents,
+                currentIssueComponents,
+              }
+            )
+            .toString()
+        );
+      }
+    },
+    copyDimensionsAndSteps = (
+      issuenumber: string,
+      otherIssuenumber: string
+    ) => {
+      setDimensions(
+        getFilteredDimensions({
+          issuenumbers: [otherIssuenumber],
+        })[0],
+        {
+          issuenumbers: [issuenumber],
+        }
+      );
+
+      const steps = getFilteredOptions({
+        issuenumbers: [issuenumber],
+      });
+
+      for (
+        let stepNumber = 0;
+        stepNumber <= maxStepNumber.value;
+        stepNumber++
+      ) {
+        setOptionValues(
+          steps
+            .filter(
+              ({ stepNumber: optionStepNumber }) =>
+                optionStepNumber === stepNumber
+            )
+            .map((step) => ({ ...step, issuenumber: otherIssuenumber }))
+        );
+      }
+    },
+    addStep = (component: string) => {
+      setOptionValues(
+        [
+          {
+            optionName: "component",
+            optionValue: component,
+          },
+        ],
+        {
+          stepNumber: (maxStepNumber.value || -1) + 1,
+        }
+      );
+    },
+    removeStep = (stepNumber: number) => {
+      removeOptionValues({
+        stepNumber,
+      });
+    },
+    duplicateStep = (stepNumber: number) => {
+      const existingStepOptions = getFilteredOptions({
+        stepNumbers: [stepNumber],
+      });
+
+      setOptionValues(
+        existingStepOptions.map((option) => ({
+          ...option,
+          stepNumber: maxStepNumber.value + 1,
+        }))
+      );
+    },
+    swapSteps = (stepNumbers: [number, number]) => {
+      const stepsToSwap = [
+        options.value[stepNumbers[0]],
+        options.value[stepNumbers[1]],
+      ];
+      options.value[stepNumbers[0]] = stepsToSwap[1];
+      options.value[stepNumbers[1]] = stepsToSwap[0];
     };
   return {
     options,
     dimensions,
-    stepColors,
+    colors,
     maxStepNumber,
     getFilteredOptions,
     getFilteredDimensions,
     setOptionValues,
     removeOptionValues,
     setDimensions,
+    setSteps,
+    checkSameComponentsAsCompletedEdge,
+    copyDimensionsAndSteps,
+    addStep,
+    removeStep,
+    duplicateStep,
+    swapSteps,
   };
 });

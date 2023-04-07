@@ -304,12 +304,12 @@ const otherColors = computed(() =>
   Object.keys(optionsPerStepNumber.value)
     .map((currentStepNumber) => parseInt(currentStepNumber))
     .map((currentStepNumber) => ({
-      sameIssuenumber: stepStore.stepColors.filter(
+      sameIssuenumber: stepStore.colors.filter(
         ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
           issueNumbers.value.includes(thisIssuenumber) &&
           thisStepNumber !== currentStepNumber
       ),
-      differentIssuenumber: stepStore.stepColors.filter(
+      differentIssuenumber: stepStore.colors.filter(
         ({ issuenumber: thisIssuenumber }) =>
           !issueNumbers.value.includes(thisIssuenumber)
       ),

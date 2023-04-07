@@ -16,6 +16,7 @@ import {
 import { call } from "../../axios-helper";
 
 const mainStore = main();
+const stepStore = step();
 const rendersStore = renders();
 const userStore = users();
 const edgeCatalogStore = edgeCatalog();
@@ -23,8 +24,6 @@ const edgeCatalogStore = edgeCatalog();
 const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 
 const { getOptionsFromDb } = useLegacyDb();
-
-const { setSteps } = useStepList();
 
 export default () => {
   const getDimensionsFromSvg = (svgElement: SVGElement) => ({
@@ -256,10 +255,10 @@ export default () => {
       }
     }
     if (loadedSteps) {
-      step().setDimensions(dimensions!, {
+      stepStore.setDimensions(dimensions!, {
         issuenumbers: [targetIssuenumber],
       });
-      setSteps(targetIssuenumber, loadedSteps);
+      stepStore.setSteps(targetIssuenumber, loadedSteps);
     } else {
       throw new Error("No model found for issue " + issuenumber);
     }
