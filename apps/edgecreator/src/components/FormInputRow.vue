@@ -68,7 +68,7 @@ const props = withDefaults(
     disabled: undefined,
     min: undefined,
     max: undefined,
-    step: undefined,
+    rangeStep: undefined,
     range: undefined,
     listId: undefined,
     selectOptions: undefined,
