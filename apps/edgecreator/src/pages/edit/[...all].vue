@@ -3,7 +3,7 @@
     {{ error }}
   </b-alert>
   <b-container
-    v-else-if="steps && Object.keys(dimensions).length"
+    v-else-if="stepStore.options && Object.keys(dimensions).length"
     id="wrapper"
     fluid
   >
@@ -140,10 +140,10 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <model-edit
-          @add-step="addStep($event)"
-          @remove-step="removeStep($event)"
-          @duplicate-step="duplicateStep($event)"
-          @swap-steps="swapSteps($event)"
+          @add-step="stepStore.addStep($event)"
+          @remove-step="stepStore.removeStep($event)"
+          @duplicate-step="stepStore.duplicateStep($event)"
+          @swap-steps="stepStore.swapSteps($event)"
         />
       </b-col>
     </b-row>
@@ -161,22 +161,15 @@ import { users } from "~/stores/users";
 const route = useRoute();
 const uiStore = ui();
 const mainStore = main();
+const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
-const {
-  addStep,
-  removeStep,
-  duplicateStep,
-  swapSteps,
-  steps,
-  copyDimensionsAndSteps,
-  setSteps,
-} = useStepList();
+
 const { loadModel } = useModelLoad();
 
 const error = ref(null as string | null);
 
-const dimensions = computed(() => step().dimensions);
+const dimensions = computed(() => stepStore.dimensions);
 
 const editingDimensions = computed(() => editingStep().dimensions);
 
@@ -184,7 +177,7 @@ const dimensionsPerIssuenumber = computed(() =>
   mainStore.issuenumbers?.reduce(
     (acc, issuenumber) => ({
       ...acc,
-      [issuenumber]: step().getFilteredDimensions({
+      [issuenumber]: stepStore.getFilteredDimensions({
         issuenumbers: [issuenumber],
       })[0],
     }),
@@ -196,7 +189,7 @@ const stepsPerIssuenumber = computed(() =>
   mainStore.issuenumbers?.reduce(
     (acc, issuenumber) => ({
       ...acc,
-      [issuenumber]: step().getFilteredOptions({
+      [issuenumber]: stepStore.getFilteredOptions({
         issuenumbers: [issuenumber],
       }),
     }),
@@ -260,13 +253,16 @@ watch(
         await loadModel(country, magazine, issuenumber, issuenumber);
       } catch {
         if (mainStore.issuenumbers[idx - 1]) {
-          copyDimensionsAndSteps(issuenumber, mainStore.issuenumbers[idx - 1]);
+          stepStore.copyDimensionsAndSteps(
+            issuenumber,
+            mainStore.issuenumbers[idx - 1]
+          );
         } else {
-          step().setDimensions(
+          stepStore.setDimensions(
             { width: 15, height: 200 },
             { issuenumbers: [issuenumber] }
           );
-          setSteps(issuenumber, []);
+          stepStore.setSteps(issuenumber, []);
         }
       }
     }
@@ -298,7 +294,7 @@ const overwriteDimensions = ({
   width: number;
   height: number;
 }) => {
-  step().setDimensions(
+  stepStore.setDimensions(
     { width, height },
     { issuenumbers: editingStep().issuenumbers }
   );
@@ -317,7 +313,7 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   canvas.height = imgElement.height;
   context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
   const color = context.getImageData(offsetX, offsetY, 1, 1).data;
-  step().setOptionValues({
+  stepStore.setOptionValues({
     [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
   });
 };
