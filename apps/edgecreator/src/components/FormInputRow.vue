@@ -48,8 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { globalEvent } from "~/stores/globalEvent";
-import { OptionValue } from "~/types/OptionValue";
+import { globalEvent, StepOption } from "~/stores/globalEvent";
 
 const props = withDefaults(
   defineProps<{
@@ -57,9 +56,7 @@ const props = withDefaults(
     optionName: string;
     type: "color" | "text" | "range" | "select";
     disabled?: boolean;
-    options: {
-      [optionName: string]: OptionValue[];
-    };
+    options: StepOption[];
     min?: number;
     max?: number;
     step?: number;
@@ -78,7 +75,11 @@ const props = withDefaults(
   }
 );
 
-const inputValues = computed(() => props.options[props.optionName] || []);
+const inputValues = computed(() =>
+  props.options
+    .filter(({ optionName }) => optionName === props.optionName)
+    .map(({ optionValue }) => optionValue)
+);
 const values = computed(() =>
   props.optionName === "xlink:href"
     ? (inputValues.value as string[]).map(
@@ -88,12 +89,17 @@ const values = computed(() =>
 );
 const isTextImageOption = computed(
   () =>
-    !!props.options.text &&
+    !!props.options.some(
+      ({ optionName, optionValue }) =>
+        optionName === "component" && optionValue === "Text"
+    ) &&
     ["fgColor", "bgColor", "internalWidth", "text", "font"].includes(
       props.optionName
     )
 );
-const isImageSrcOption = computed(() => !!props.options.src);
+const isImageSrcOption = computed(() =>
+  props.options.some(({ optionName }) => optionName === "src")
+);
 const onChangeValue = (event: Event) => {
   const value = (event.target as HTMLInputElement).value;
   let intValue: number | null = null;
@@ -101,9 +107,7 @@ const onChangeValue = (event: Event) => {
     intValue = parseInt(value);
   }
   globalEvent().setOptionValues({
-    options: {
-      [props.optionName]: intValue !== null ? intValue : value,
-    },
+    [props.optionName]: intValue !== null ? intValue : value,
   });
 };
 </script>

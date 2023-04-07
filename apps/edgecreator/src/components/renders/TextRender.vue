@@ -91,7 +91,7 @@ const effectiveText = computed(() =>
   )
 );
 
-const { width, attributes, enableDragResize } = useStepOptions(props, [
+const { width, attributes, enableDragResize } = useStepOptions(props, "Text", [
   "x",
   "y",
   "width",
@@ -143,7 +143,7 @@ watch(
                 options.x =
                   props.options.x - (options.width - props.options.width!) / 2;
               }
-              globalEvent().setOptionValues({ options });
+              globalEvent().setOptionValues(options);
             },
           });
           applyTextImageDimensions();
@@ -261,7 +261,7 @@ const applyTextImageDimensions = () => {
     options.widthCompression = undefined;
   }
   options.aspectRatio = options.height / options.width!;
-  globalEvent().setOptionValues({ options });
+  globalEvent().setOptionValues(options);
 };
 
 refreshPreview();

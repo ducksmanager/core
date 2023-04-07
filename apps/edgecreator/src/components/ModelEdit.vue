@@ -11,9 +11,8 @@
       content-class="col h-100"
     >
       <b-tab
-        v-for="(step, stepNumber) in optionsPerStepNumber"
+        v-for="(stepOptions, stepNumber) in optionsPerStepNumber"
         :key="stepNumber"
-        :component="step.component"
         title-link-class="d-flex justify-content-between w-100"
       >
         <template #title>
@@ -27,7 +26,7 @@
             {{
               $t(
                 rendersStore.supportedRenders.find(
-                  (render) => render.component === step.component
+                  (render) => render.component === components[stepNumber]
                 )?.labelL10nKey || ""
               )
             }}
@@ -39,13 +38,13 @@
             />
             <i-bi-eye-slash-fill
               v-if="
-                step.options.find(({ optionName }) => optionName === 'visible')
+                stepOptions.find(({ optionName }) => optionName === 'visible')
                   ?.optionValue === false
               "
               :title="$t('Click to show')"
               @click.stop="
                 globalEventStore.setOptionValues(
-                  { options: { visible: true } },
+                  { visible: true },
                   { stepNumber }
                 )
               "
@@ -55,7 +54,7 @@
               :title="$t('Click to hide')"
               @click.stop="
                 globalEventStore.setOptionValues(
-                  { options: { visible: false } },
+                  { visible: false },
                   { stepNumber }
                 )
               "
@@ -76,27 +75,27 @@
             />
           </div>
         </template>
-        <b-card-text v-if="step.component === 'Text'">
+        <b-card-text v-if="components[stepNumber] === 'Text'">
           <form-input-row
             option-name="text"
             :label="$t('Text').toString()"
             type="text"
-            :options="step.options"
+            :options="stepOptions"
           >
             <template #alert
               >{{
                 $t("You can use special text parts to make your text dynamic :")
               }}
               <ul>
-                <i18n
+                <i18n-t
                   tag="li"
                   keypath="Write {templateString} to inject in your text the current issue number"
                 >
                   <template #templateString>
                     <pre class="d-inline-block">[Numero]</pre>
                   </template>
-                </i18n>
-                <i18n
+                </i18n-t>
+                <i18n-t
                   tag="li"
                   keypath="Write {templateString1} to inject in your text the first digit of the current issue number, {templateString2} for the second digit, etc."
                 >
@@ -106,7 +105,7 @@
                   <template #templateString2>
                     <pre class="d-inline-block">[Numero[1]]</pre>
                   </template>
-                </i18n>
+                </i18n-t>
               </ul>
             </template>
           </form-input-row>
@@ -114,7 +113,7 @@
             option-name="font"
             :label="$t('Font').toString()"
             type="text"
-            :options="step.options"
+            :options="stepOptions"
             ><a
               target="_blank"
               :href="fontSearchUrl"
@@ -123,13 +122,13 @@
             ></form-input-row
           >
           <form-color-input-row
-            :options="step.options"
+            :options="stepOptions"
             :other-colors="otherColors[stepNumber]"
             option-name="bgColor"
             :label="$t('Background color').toString()"
           />
           <form-color-input-row
-            :options="step.options"
+            :options="stepOptions"
             :other-colors="otherColors[stepNumber]"
             option-name="fgColor"
             :label="$t('Foreground color').toString()"
@@ -138,32 +137,32 @@
             option-name="rotation"
             :label="
               $t('Rotation : {rotation}°', {
-                rotation: step.options.find(({optionName}) => optionName === 'rotation')!.optionValue,
+                rotation: stepOptions.find(({optionName}) => optionName === 'rotation')!.optionValue,
               }).toString()
             "
             type="range"
             :min="0"
             :max="270"
             :step="90"
-            :options="step.options"
+            :options="stepOptions"
           />
           <b-button
             size="sm"
             variant="outline-warning"
             class="d-block mt-3"
-            @click="resetPositionAndSize(step.options)"
+            @click="resetPositionAndSize(stepOptions)"
             >{{ $t("Reset position and size") }}
           </b-button>
         </b-card-text>
-        <b-card-text v-if="step.component === 'Fill'">
+        <b-card-text v-if="components[stepNumber] === 'Fill'">
           <form-color-input-row
             :other-colors="otherColors[stepNumber]"
-            :options="step.options"
+            :options="stepOptions"
             option-name="fill"
             :label="$t('Fill color').toString()"
           />
         </b-card-text>
-        <b-card-text v-if="step.component === 'Image'">
+        <b-card-text v-if="components[stepNumber] === 'Image'">
           <b-button
             size="sm"
             variant="outline-warning"
@@ -183,7 +182,7 @@
             :label="$t('Image').toString()"
             type="text"
             list-id="src-list"
-            :options="step.options"
+            :options="stepOptions"
           >
             <b-form-select
               id="src-list"
@@ -192,30 +191,30 @@
             <gallery
               :items="mainStore.publicationElementsForGallery"
               image-type="elements"
-              :selected="step.options.find(({optionName}) => optionName === 'src')!.optionValue"
-              @change="
-                globalEventStore.setOptionValues({ options: { src: $event } })
-              "
+              :selected="stepOptions.find(({optionName}) => optionName === 'src')!.optionValue"
+              @change="globalEventStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
         </b-card-text>
-        <b-card-text v-if="['Rectangle', 'ArcCircle'].includes(step.component)">
+        <b-card-text
+          v-if="['Rectangle', 'ArcCircle'].includes(components[stepNumber])"
+        >
           <form-color-input-row
             v-for="optionName in ['fill', 'stroke']"
             :key="optionName"
             :other-colors="otherColors[stepNumber]"
-            :options="step.options"
+            :options="stepOptions"
             :option-name="optionName"
             :label="$t(ucFirst(optionName + ' color')).toString()"
             can-be-transparent
           />
         </b-card-text>
-        <b-card-text v-if="step.component === 'Gradient'">
+        <b-card-text v-if="components[stepNumber] === 'Gradient'">
           <form-color-input-row
             v-for="optionName in ['colorStart', 'colorEnd']"
             :key="optionName"
             :other-colors="otherColors[stepNumber]"
-            :options="step.options"
+            :options="stepOptions"
             :option-name="optionName"
             :label="
               $t(
@@ -226,18 +225,18 @@
 
           <form-input-row
             type="select"
-            :options="step.options"
+            :options="stepOptions"
             option-name="direction"
             :label="$t('Direction').toString()"
             :select-options="[$t('Vertical'), $t('Horizontal')]"
           />
         </b-card-text>
-        <b-card-text v-if="step.component === 'Staple'">
+        <b-card-text v-if="components[stepNumber] === 'Staple'">
           {{ $t("Move and resize the staples directly on the edge.") }}
         </b-card-text>
-        <b-card-text v-if="step.component === 'Polygon'">
+        <b-card-text v-if="components[stepNumber] === 'Polygon'">
           <form-color-input-row
-            :options="step.options"
+            :options="stepOptions"
             :other-colors="otherColors[stepNumber]"
             option-name="fill"
             :label="$t('Fill color').toString()"
@@ -260,8 +259,6 @@
   </b-card>
 </template>
 <script setup lang="ts">
-import { Translation as I18n } from "vue-i18n";
-
 import { editingStep } from "~/stores/editingStep";
 import { globalEvent, StepOption } from "~/stores/globalEvent";
 import { hoveredStep } from "~/stores/hoveredStep";
@@ -291,16 +288,22 @@ const optionsPerStepNumber = computed(() =>
     .reduce(
       (acc, { stepNumber, ...rest }) => ({
         ...acc,
-        [stepNumber]: {
-          component: rest.component!,
-          options: [
-            ...(acc[stepNumber]!.options || []),
-            { stepNumber, ...rest },
-          ],
-        },
+        [stepNumber]: [...(acc[stepNumber] || []), { stepNumber, ...rest }],
       }),
-      {} as Record<number, { component: string; options: StepOption[] }>
+      {} as Record<number, StepOption[]>
     )
+);
+
+const components = computed(() =>
+  Object.entries(optionsPerStepNumber.value).reduce(
+    (acc, [stepNumber, options]) => ({
+      ...acc,
+      [stepNumber]: options.find(
+        ({ optionName }) => optionName === "component"
+      )!.optionValue,
+    }),
+    {} as Record<number, string>
+  )
 );
 
 const otherColors = computed(() =>
@@ -330,15 +333,13 @@ const resetPositionAndSize = (stepOptions: StepOption[]) => {
     })[0]!;
     globalEventStore.setOptionValues(
       {
-        options: {
-          x: 0,
-          y: 0,
-          width: issueDimensions.width,
-          height:
-            issueDimensions.width *
-            (stepOptions.find(({ optionName }) => optionName === "aspectRatio")!
-              .optionValue as number),
-        },
+        x: 0,
+        y: 0,
+        width: issueDimensions.width,
+        height:
+          issueDimensions.width *
+          (stepOptions.find(({ optionName }) => optionName === "aspectRatio")!
+            .optionValue as number),
       },
       {
         issuenumbers: [issuenumber],
@@ -364,12 +365,10 @@ const splitImageAcrossEdges = () => {
     })[0]!;
     globalEventStore.setOptionValues(
       {
-        options: {
-          x: leftOffset,
-          y: 0,
-          width: widthSum,
-          height: issueDimensions.height,
-        },
+        x: leftOffset,
+        y: 0,
+        width: widthSum,
+        height: issueDimensions.height,
       },
       { issuenumbers: [issuenumber] }
     );

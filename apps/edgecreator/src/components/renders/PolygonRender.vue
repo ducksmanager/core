@@ -51,14 +51,9 @@ onMounted(() => {
   enableDragResize(polygon.value!, {
     onmove: ({ dy, dx }): void => {
       globalEvent().setOptionValues({
-        options: {
-          points: pointsAsString(
-            points.value.map(([x, y]) => [
-              x + dx / ui().zoom,
-              y + dy / ui().zoom,
-            ])
-          ),
-        },
+        points: pointsAsString(
+          points.value.map(([x, y]) => [x + dx / ui().zoom, y + dy / ui().zoom])
+        ),
       });
     },
     onresizemove: ({ rect: { width, height } }): void => {
@@ -72,18 +67,16 @@ onMounted(() => {
       const currentWidth = maxX - minX;
       const currentHeight = maxY - minY;
       globalEvent().setOptionValues({
-        options: {
-          points: pointsAsString(
-            points.value.map(([x, y]) => [
-              x + widthMaxGrowth * ((x - minX) / currentWidth),
-              y + heightMaxGrowth * ((y - minY) / currentHeight),
-            ])
-          ),
-        },
+        points: pointsAsString(
+          points.value.map(([x, y]) => [
+            x + widthMaxGrowth * ((x - minX) / currentWidth),
+            y + heightMaxGrowth * ((y - minY) / currentHeight),
+          ])
+        ),
       });
     },
   });
 });
 
-const { enableDragResize } = useStepOptions(props, []);
+const { enableDragResize } = useStepOptions(props, "Polygon", []);
 </script>

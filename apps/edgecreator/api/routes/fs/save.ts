@@ -9,7 +9,7 @@ import {
 } from "~dm_types/routes";
 import { ExpressCall } from "~routes/_express-call";
 import { ExportPaths } from "~types/ExportPaths";
-import { SimpleUser } from "~types/SimpleUser";
+import { ModelContributor } from "~types/ModelContributor";
 
 import { call, createAxios } from "../../../axios-helper";
 
@@ -25,7 +25,7 @@ export const post = async (
       country: string;
       magazine: string;
       issuenumber: string;
-      contributors: { designers: SimpleUser[]; photographers: SimpleUser[] };
+      contributors: ModelContributor[];
       content: string;
     };
   }>
@@ -57,7 +57,13 @@ export const post = async (
 
     paths = { ...paths, pngPath };
 
-    const { designers, photographers } = contributors;
+    const designers = contributors
+      .filter(({ contributionType }) => contributionType === "createur")
+      .map(({ user }) => user.username);
+
+    const photographers = contributors
+      .filter(({ contributionType }) => contributionType === "photographe")
+      .map(({ user }) => user.username);
 
     try {
       const { isNew } = (
@@ -66,10 +72,8 @@ export const post = async (
           new PUT__edgecreator__publish__$country__$magazine__$issuenumber({
             params: { country, magazine, issuenumber },
             reqBody: {
-              designers: (designers || []).map(({ username }) => username),
-              photographers: (photographers || []).map(
-                ({ username }) => username
-              ),
+              designers,
+              photographers,
             },
           })
         )

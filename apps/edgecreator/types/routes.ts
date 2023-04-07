@@ -2,7 +2,7 @@
 
 import { ContractWithMethodAndUrl } from "./Call";
 import { ExportPaths } from "./ExportPaths";
-import { SimpleUser } from "./SimpleUser";
+import { ModelContributor } from "./ModelContributor";
 
 export class GET__fs__base64 extends ContractWithMethodAndUrl<{
   resBody: {
@@ -41,7 +41,7 @@ export class POST__fs__save extends ContractWithMethodAndUrl<{
     country: string;
     magazine: string;
     issuenumber: string;
-    contributors: { designers: SimpleUser[]; photographers: SimpleUser[] };
+    contributors: ModelContributor[];
     content: string;
   };
 }> {

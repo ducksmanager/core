@@ -74,9 +74,8 @@ export default () => {
       )) {
         mainStore.addContributor({
           issuenumber,
-          contributionType: `${contributionType}s` as
-            | "photographers"
-            | "designers",
+          contributionType:
+            contributionType === "designer" ? "createur" : "photographe",
           user: userStore.allUsers!.find((user) => user.username === username)!,
         });
       }
@@ -145,7 +144,6 @@ export default () => {
             calculateBase64
           );
           steps.push({
-            component,
             issuenumber,
             stepNumber,
             ...optionObjectToArray(options)[0],
@@ -182,8 +180,7 @@ export default () => {
     for (const { contribution, userId } of contributors) {
       mainStore.addContributor({
         issuenumber,
-        contributionType:
-          contribution === "photographe" ? "photographers" : "designers",
+        contributionType: contribution,
         user: userStore.allUsers!.find((user) => user.id === userId)!,
       });
     }

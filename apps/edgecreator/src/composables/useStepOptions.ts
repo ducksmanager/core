@@ -15,7 +15,11 @@ const globalEventStore = globalEvent();
 
 const shownTips: string[] = [];
 
-export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
+export const useStepOptions = (
+  props: BaseProps,
+  component: string,
+  attributeKeys: string[]
+) => {
   const toast = useToast();
   const { t } = useI18n();
   const zoom = computed(() => uiStore.zoom);
@@ -113,17 +117,13 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
             showMoveResizeToast("move");
             if (shiftKey) {
               globalEvent().setOptionValues({
-                options: {
-                  x: 0,
-                  y: 0,
-                },
+                x: 0,
+                y: 0,
               });
             } else {
               globalEvent().setOptionValues({
-                options: {
-                  x: (props.options!.x as number) + dx / uiStore.zoom / 3,
-                  y: (props.options!.y as number) + dy / uiStore.zoom / 3,
-                },
+                x: (props.options!.x as number) + dx / uiStore.zoom / 3,
+                y: (props.options!.y as number) + dy / uiStore.zoom / 3,
               });
             }
           }
@@ -156,7 +156,16 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
   globalEvent().setOptionValues(
-    { options: props.options! },
+    [
+      {
+        optionName: "component",
+        optionValue: component,
+      },
+      ...Object.entries(props.options!).map(([optionName, optionValue]) => ({
+        optionName,
+        optionValue,
+      })),
+    ],
     {
       issuenumbers: [props.issuenumber],
       stepNumber: props.stepNumber,

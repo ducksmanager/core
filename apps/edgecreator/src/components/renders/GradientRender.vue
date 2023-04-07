@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const gradientId = computed(() => btoa(JSON.stringify(props.options)));
 
-const { enableDragResize, attributes } = useStepOptions(props, [
+const { enableDragResize, attributes } = useStepOptions(props, "Gradient", [
   "x",
   "y",
   "width",

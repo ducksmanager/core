@@ -98,7 +98,12 @@
                   :issuenumber="issuenumber"
                   :dimensions="dimensionsPerIssuenumber[issuenumber]"
                   :photo-url="mainStore.photoUrls[issuenumber]"
-                  :contributors="mainStore.contributors[issuenumber] || {}"
+                  :contributors="
+                    mainStore.contributors.filter(
+                      ({ issuenumber: thisIssuenumber }) =>
+                        thisIssuenumber === issuenumber
+                    )
+                  "
                 />
               </td>
               <td
@@ -313,9 +318,7 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
   const color = context.getImageData(offsetX, offsetY, 1, 1).data;
   globalEvent().setOptionValues({
-    options: {
-      [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
-    },
+    [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
   });
 };
 

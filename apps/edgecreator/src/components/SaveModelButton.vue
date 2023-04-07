@@ -56,21 +56,21 @@
         >
           <h2>{{ $t(ucFirst(contributionType)) }}</h2>
           <b-alert
-            v-if="!hasAtLeastOneUser(contributionType as ContributionType)"
+            v-if="!hasAtLeastOneUser(contributionType as userContributionType)"
             :model-value="true"
             variant="warning"
             >{{ $t("You should select at least one user") }}</b-alert
           ><vue3-simple-typeahead
             :ref="`${contributionType}Typeahead`"
-            :items="getUsersWithoutContributors(contributionType as ContributionType)"
+            :items="getUsersWithoutContributors(contributionType as userContributionType)"
             :item-projection="({ username }: SimpleUser) => username"
             :placeholder="$t('Enter a user name').toString()"
             :min-input-length="0"
-            @select-item="(username: string) => onUserSelect(username, contributionType as ContributionType)"
+            @select-item="(username: string) => onUserSelect(username, contributionType as userContributionType)"
           />
           <ul>
             <li
-              v-for="contributor in getContributors(contributionType as ContributionType)"
+              v-for="contributor in getContributors(contributionType as userContributionType)"
               :key="contributor.username"
             >
               {{ contributor.username }}
@@ -83,7 +83,7 @@
                 "
                 @click="
                   mainStore.removeContributor({
-                    contributionType: contributionType as ContributionType,
+                    contributionType: contributionType as userContributionType,
                     userToRemove: contributor,
                   })
                 "
@@ -96,6 +96,7 @@
   </b-button>
 </template>
 <script setup lang="ts">
+import { userContributionType } from "ducksmanager/api/dist/prisma/client_dm";
 import { nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -112,8 +113,6 @@ const { t: $t } = useI18n();
 const userStore = users();
 const collectionStore = collection();
 const mainStore = main();
-
-type ContributionType = "photographers" | "designers";
 
 const props = withDefaults(
   defineProps<{
@@ -148,7 +147,7 @@ const outlineVariant = computed(
 const isOkDisabled = computed(() =>
   Object.keys(["photographers", "designers"]).some(
     (contributionType) =>
-      !hasAtLeastOneUser(contributionType as ContributionType)
+      !hasAtLeastOneUser(contributionType as userContributionType)
   )
 );
 
@@ -181,7 +180,9 @@ watch(
         mainStore.country!,
         mainStore.magazine!,
         currentIssueNumber,
-        mainStore.contributors[currentIssueNumber],
+        mainStore.contributors.filter(
+          ({ issuenumber }) => issuenumber === currentIssueNumber
+        ),
         props.withExport,
         props.withSubmit
       ).then((response) => {
@@ -207,47 +208,49 @@ watch(
         userStore.allUsers!.find(
           (thisUser) => thisUser.username === collectionStore.user!.username
         )!,
-        "designers"
+        "createur"
       );
     }
   }
 );
 
-const onUserSelect = (username: string, contributionType: ContributionType) => {
+const onUserSelect = (
+  username: string,
+  contributionType: userContributionType
+) => {
   addContributorAllIssues(
     userStore.allUsers!.find((thisUser) => thisUser.username === username)!,
     contributionType
   );
   switch (contributionType) {
-    case "photographers":
+    case "photographe":
       photographersTypeahead.value!.value = "";
-    case "designers":
+    case "createur":
       designersTypeahead.value!.value = "";
   }
 };
 
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);
-const getContributors = (contributionType: ContributionType) =>
+const getContributors = (contributionType: userContributionType) =>
   userStore.allUsers!.filter((user) => isContributor(user, contributionType));
 
-const getUsersWithoutContributors = (contributionType: ContributionType) =>
+const getUsersWithoutContributors = (contributionType: userContributionType) =>
   userStore.allUsers!.filter(
     (contributor) => !isContributor(contributor, contributionType)
   );
 
-const isContributor = (user: SimpleUser, contributionType: ContributionType) =>
-  Object.keys(mainStore.contributors).reduce(
-    (acc, issueNumber) =>
-      acc ||
-      mainStore.contributors[issueNumber][contributionType]
-        .map(({ username }) => username)
-        .includes(user.username),
-    false
+const isContributor = (
+  user: SimpleUser,
+  contributionType: userContributionType
+) =>
+  mainStore.contributors.some(
+    ({ user: thisUser, contributionType: thisContributionType }) =>
+      thisUser.id === user.id && thisContributionType === contributionType
   );
 const addContributorAllIssues = (
   user: SimpleUser,
-  contributionType: ContributionType
+  contributionType: userContributionType
 ) =>
   mainStore.issuenumbers.forEach((issuenumber) =>
     mainStore.addContributor({
@@ -256,10 +259,18 @@ const addContributorAllIssues = (
       user,
     })
   );
-const hasAtLeastOneUser = (contributionType: ContributionType) =>
-  Object.values(mainStore.contributors).every(
-    (contributionsForIssue) => contributionsForIssue[contributionType]?.length
-  );
+const hasAtLeastOneUser = (contributionType: userContributionType) =>
+  [
+    ...new Set(
+      mainStore.contributors
+        .filter(
+          ({ contributionType: thisContributionType }) =>
+            contributionType === thisContributionType
+        )
+        .map(({ issuenumber }) => issuenumber)
+    ),
+  ].length === mainStore.issuenumbers.length;
+
 const onClick = () => {
   if (props.withExport || props.withSubmit) {
     showModal.value = !showModal.value;
