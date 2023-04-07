@@ -29,7 +29,7 @@
           :type="type"
           :min="min"
           :max="max"
-          :step="step"
+          :step="rangeStep"
           :range="range"
           :disabled="disabled"
           :list="listId"
@@ -59,7 +59,7 @@ const props = withDefaults(
     options: StepOption[];
     min?: number;
     max?: number;
-    step?: number;
+    rangeStep?: number;
     range?: number;
     listId?: string;
     selectOptions?: string[];
