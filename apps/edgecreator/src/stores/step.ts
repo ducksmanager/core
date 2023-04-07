@@ -100,24 +100,30 @@ export const step = defineStore("step", () => {
         overrides.issuenumbers === undefined
           ? editingStep().issuenumbers
           : overrides.issuenumbers;
+      console.log(newOptions);
+      console.log(overrides);
       options.value = [
-        ...removeOptionValues({
-          stepNumber: defaultStepNumber,
-          issuenumbers: defaultIssuenumbers,
-        }),
-        ...defaultIssuenumbers.reduce(
-          (acc, issuenumber) => [
-            ...acc,
-            ...optionsAsArray.map(({ optionName, optionValue }) => ({
+        ...new Set(
+          [
+            ...removeOptionValues({
               stepNumber: defaultStepNumber,
-              issuenumber,
-              optionName,
-              optionValue,
-            })),
-          ],
-          [] as StepOption[]
+              issuenumbers: defaultIssuenumbers,
+            }),
+            ...defaultIssuenumbers.reduce(
+              (acc, issuenumber) => [
+                ...acc,
+                ...optionsAsArray.map(({ optionName, optionValue }) => ({
+                  stepNumber: defaultStepNumber,
+                  issuenumber,
+                  optionName,
+                  optionValue,
+                })),
+              ],
+              [] as StepOption[]
+            ),
+          ].map((option) => JSON.stringify(option))
         ),
-      ];
+      ].map((option) => JSON.parse(option));
     },
     setDimensions = (
       newDimensions: { width: number; height: number },
@@ -244,7 +250,7 @@ export const step = defineStore("step", () => {
           },
         ],
         {
-          stepNumber: (maxStepNumber.value || -1) + 1,
+          stepNumber: maxStepNumber.value + 1,
         }
       );
     },

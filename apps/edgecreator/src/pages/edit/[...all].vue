@@ -140,10 +140,10 @@
       </b-col>
       <b-col sm="10" md="8" lg="6">
         <model-edit
-          @add-step="stepStore.addStep($event)"
-          @remove-step="stepStore.removeStep($event)"
-          @duplicate-step="stepStore.duplicateStep($event)"
-          @swap-steps="stepStore.swapSteps($event)"
+          @add-step="stepStore.addStep"
+          @remove-step="stepStore.removeStep"
+          @duplicate-step="stepStore.duplicateStep"
+          @swap-steps="stepStore.swapSteps"
         />
       </b-col>
     </b-row>
@@ -171,7 +171,7 @@ const error = ref(null as string | null);
 
 const dimensions = computed(() => stepStore.dimensions);
 
-const editingDimensions = computed(() => editingStep().dimensions);
+const editingDimensions = computed(() => editingStepStore.dimensions);
 
 const dimensionsPerIssuenumber = computed(() =>
   mainStore.issuenumbers?.reduce(
@@ -197,13 +197,21 @@ const stepsPerIssuenumber = computed(() =>
   )
 );
 watch(
-  () => editingStep().issuenumbers,
+  () => editingStepStore.issuenumbers,
   async (newValue) => {
     if (newValue) {
       await mainStore.loadItems({ itemType: "elements" });
       await mainStore.loadItems({ itemType: "photos" });
       await mainStore.loadSurroundingEdges();
     }
+  }
+);
+
+watch(
+  () => stepStore.options,
+  async (newValue, oldValue) => {
+    console.log("oldValue", JSON.stringify(oldValue));
+    console.log("newValue", JSON.stringify(newValue));
   }
 );
 watch(
@@ -233,7 +241,7 @@ watch(
   }
   mainStore.country = country;
   mainStore.magazine = magazine;
-  editingStep().addIssuenumber(issuenumberMin);
+  editingStepStore.addIssuenumber(issuenumberMin);
 
   await mainStore.loadPublicationIssues();
 
@@ -279,7 +287,7 @@ const overwriteModel = async ({
   issueNumber: string;
 }) => {
   const [country, magazine] = publicationCode.split("/");
-  for (const targetIssuenumber of editingStep().issuenumbers) {
+  for (const targetIssuenumber of editingStepStore.issuenumbers) {
     try {
       await loadModel(country, magazine, issueNumber, targetIssuenumber);
     } catch (e) {
@@ -296,7 +304,7 @@ const overwriteDimensions = ({
 }) => {
   stepStore.setDimensions(
     { width, height },
-    { issuenumbers: editingStep().issuenumbers }
+    { issuenumbers: editingStepStore.issuenumbers }
   );
 };
 

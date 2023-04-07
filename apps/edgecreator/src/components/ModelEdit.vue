@@ -137,7 +137,7 @@
             type="range"
             :min="0"
             :max="270"
-            :step="90"
+            :range-step="90"
             :options="stepOptions"
           />
           <b-button

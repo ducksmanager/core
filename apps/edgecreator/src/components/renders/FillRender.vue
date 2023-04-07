@@ -25,6 +25,5 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-console.log(props.options);
 const { attributes, width, height } = useStepOptions(props, "Fill", ["fill"]);
 </script>
