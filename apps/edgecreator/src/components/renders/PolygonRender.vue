@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { globalEvent } from "~/stores/globalEvent";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 const polygon = ref(null);
@@ -50,7 +50,7 @@ const points = computed((): [number, number][] =>
 onMounted(() => {
   enableDragResize(polygon.value!, {
     onmove: ({ dy, dx }): void => {
-      globalEvent().setOptionValues({
+      step().setOptionValues({
         points: pointsAsString(
           points.value.map(([x, y]) => [x + dx / ui().zoom, y + dy / ui().zoom])
         ),
@@ -66,7 +66,7 @@ onMounted(() => {
       const maxY = Math.max(...points.value.map(([, y]) => y));
       const currentWidth = maxX - minX;
       const currentHeight = maxY - minY;
-      globalEvent().setOptionValues({
+      step().setOptionValues({
         points: pointsAsString(
           points.value.map(([x, y]) => [
             x + widthMaxGrowth * ((x - minX) / currentWidth),

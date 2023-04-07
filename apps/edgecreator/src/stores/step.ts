@@ -35,7 +35,7 @@ const isColorOption = (optionName: string) =>
   optionName.toLowerCase().includes("color") ||
   ["fill", "stroke"].includes(optionName);
 
-export const globalEvent = defineStore("globalEvent", () => {
+export const step = defineStore("step", () => {
   const options = ref([] as Options),
     dimensions = ref([] as DimensionsArray),
     stepColors = computed(() =>

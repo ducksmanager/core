@@ -1,18 +1,18 @@
 import { defineStore } from "pinia";
 
-import { globalEvent } from "~/stores/globalEvent";
+import { step } from "~/stores/step";
 
 export const editingStep = defineStore("editingStep", () => {
   const issuenumbers = ref([] as string[]),
     stepNumber = ref(0 as number),
     editingOptions = computed(() =>
-      globalEvent().getFilteredOptions({
+      step().getFilteredOptions({
         stepNumbers: [stepNumber.value],
         issuenumbers: issuenumbers.value,
       })
     ),
     dimensions = computed(() =>
-      globalEvent().getFilteredDimensions({
+      step().getFilteredDimensions({
         issuenumbers: issuenumbers.value,
       })
     ),

@@ -83,8 +83,8 @@
 </template>
 <script setup lang="ts">
 import { editingStep } from "~/stores/editingStep";
-import { StepOption } from "~/stores/globalEvent";
 import { hoveredStep } from "~/stores/hoveredStep";
+import { StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import { SimpleUser } from "~types/SimpleUser";

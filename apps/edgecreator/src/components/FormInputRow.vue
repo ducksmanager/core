@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { globalEvent, StepOption } from "~/stores/globalEvent";
+import { step, StepOption } from "~/stores/step";
 
 const props = withDefaults(
   defineProps<{
@@ -106,7 +106,7 @@ const onChangeValue = (event: Event) => {
   if (props.optionName === "rotation") {
     intValue = parseInt(value);
   }
-  globalEvent().setOptionValues({
+  step().setOptionValues({
     [props.optionName]: intValue !== null ? intValue : value,
   });
 };

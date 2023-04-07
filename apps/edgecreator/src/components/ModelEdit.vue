@@ -43,20 +43,14 @@
               "
               :title="$t('Click to show')"
               @click.stop="
-                globalEventStore.setOptionValues(
-                  { visible: true },
-                  { stepNumber }
-                )
+                stepStore.setOptionValues({ visible: true }, { stepNumber })
               "
             />
             <i-bi-eye-fill
               v-else
               :title="$t('Click to hide')"
               @click.stop="
-                globalEventStore.setOptionValues(
-                  { visible: false },
-                  { stepNumber }
-                )
+                stepStore.setOptionValues({ visible: false }, { stepNumber })
               "
             />
             <i-bi-front
@@ -69,7 +63,7 @@
             />
             <i-bi-arrow-down-square-fill
               :class="{
-                invisible: stepNumber === globalEventStore.maxStepNumber,
+                invisible: stepNumber === stepStore.maxStepNumber,
               }"
               @click.stop="emit('swap-steps', [stepNumber, stepNumber + 1])"
             />
@@ -192,7 +186,7 @@
               :items="mainStore.publicationElementsForGallery"
               image-type="elements"
               :selected="stepOptions.find(({optionName}) => optionName === 'src')!.optionValue"
-              @change="globalEventStore.setOptionValues({ src: $event })"
+              @change="stepStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
         </b-card-text>
@@ -260,16 +254,16 @@
 </template>
 <script setup lang="ts">
 import { editingStep } from "~/stores/editingStep";
-import { globalEvent, StepOption } from "~/stores/globalEvent";
 import { hoveredStep } from "~/stores/hoveredStep";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
+import { step, StepOption } from "~/stores/step";
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
 const mainStore = main();
 const rendersStore = renders();
-const globalEventStore = globalEvent();
+const stepStore = step();
 
 const emit = defineEmits<{
   (event: "swap-steps", steps: [number, number]): void;
@@ -281,7 +275,7 @@ const issueNumbers = computed(() => mainStore.issuenumbers);
 
 const fontSearchUrl = computed(() => import.meta.env.VITE_FONT_SEARCH_URL);
 const optionsPerStepNumber = computed(() =>
-  globalEventStore
+  stepStore
     .getFilteredOptions({
       issuenumbers: editingStepStore.issuenumbers,
     })
@@ -310,12 +304,12 @@ const otherColors = computed(() =>
   Object.keys(optionsPerStepNumber.value)
     .map((currentStepNumber) => parseInt(currentStepNumber))
     .map((currentStepNumber) => ({
-      sameIssuenumber: globalEventStore.stepColors.filter(
+      sameIssuenumber: stepStore.stepColors.filter(
         ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
           issueNumbers.value.includes(thisIssuenumber) &&
           thisStepNumber !== currentStepNumber
       ),
-      differentIssuenumber: globalEventStore.stepColors.filter(
+      differentIssuenumber: stepStore.stepColors.filter(
         ({ issuenumber: thisIssuenumber }) =>
           !issueNumbers.value.includes(thisIssuenumber)
       ),
@@ -328,10 +322,10 @@ const ucFirst = (text: string) =>
 const resetPositionAndSize = (stepOptions: StepOption[]) => {
   const stepNumber = stepOptions[0].stepNumber;
   for (const issuenumber of editingStepStore.issuenumbers) {
-    let issueDimensions = globalEventStore.getFilteredDimensions({
+    let issueDimensions = stepStore.getFilteredDimensions({
       issuenumbers: [issuenumber],
     })[0]!;
-    globalEventStore.setOptionValues(
+    stepStore.setOptionValues(
       {
         x: 0,
         y: 0,
@@ -354,16 +348,16 @@ const splitImageAcrossEdges = () => {
   const widthSum = editingStepStore.issuenumbers.reduce(
     (acc, issuenumber) =>
       acc +
-      globalEventStore.getFilteredDimensions({
+      stepStore.getFilteredDimensions({
         issuenumbers: [issuenumber],
       })[0]!.width,
     0
   );
   for (const issuenumber of editingStepStore.issuenumbers) {
-    const issueDimensions = globalEventStore.getFilteredDimensions({
+    const issueDimensions = stepStore.getFilteredDimensions({
       issuenumbers: [issuenumber],
     })[0]!;
-    globalEventStore.setOptionValues(
+    stepStore.setOptionValues(
       {
         x: leftOffset,
         y: 0,

@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { globalEvent } from "~/stores/globalEvent";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 const uiStore = ui();
@@ -49,13 +49,13 @@ const { attributes, enableDragResize } = useStepOptions(props, "ArcCircle", [
 onMounted(() => {
   enableDragResize(ellipse.value!, {
     onmove: ({ dx, dy }) => {
-      globalEvent().setOptionValues({
+      step().setOptionValues({
         cx: props.options.cx + dx / uiStore.zoom,
         cy: props.options.cy + dy / uiStore.zoom,
       });
     },
     onresizemove: ({ rect }) => {
-      globalEvent().setOptionValues({
+      step().setOptionValues({
         rx: rect.width / 2 / uiStore.zoom,
         ry: rect.height / 2 / uiStore.zoom,
       });
