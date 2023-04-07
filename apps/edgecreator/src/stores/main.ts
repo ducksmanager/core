@@ -1,9 +1,11 @@
 import { AxiosInstance } from "axios";
+import { userContributionType } from "ducksmanager/api/dist/prisma/client_dm";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
 import { EdgeWithModelId } from "~dm_types/EdgeWithModelId";
 import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~dm_types/routes";
+import { ModelContributor } from "~types/ModelContributor";
 import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
 import { SimpleUser } from "~types/SimpleUser";
 
@@ -20,14 +22,7 @@ export const main = defineStore("main", () => {
     issuenumbers = ref([] as string[]),
     isRange = ref(false as boolean),
     photoUrls = ref({} as { [issuenumber: string]: string }),
-    contributors = ref(
-      {} as {
-        [issuenumber: string]: {
-          designers: SimpleUser[];
-          photographers: SimpleUser[];
-        };
-      }
-    ),
+    contributors = ref([] as ModelContributor[]),
     edgesBefore = ref([] as EdgeWithModelId[]),
     edgesAfter = ref([] as EdgeWithModelId[]),
     publicationElements = ref([] as string[]),
@@ -55,35 +50,28 @@ export const main = defineStore("main", () => {
       user,
     }: {
       issuenumber: string;
-      contributionType: "photographers" | "designers";
+      contributionType: userContributionType;
       user: SimpleUser;
     }) => {
-      const existingContributors = contributors.value[issuenumber] || {
-        designers: [],
-        photographers: [],
-      };
-      contributors.value[issuenumber] = {
-        ...contributors.value[issuenumber],
-        [contributionType as "photographers" | "designers"]: [
-          ...new Set([...existingContributors[contributionType], user]),
-        ],
-      };
+      removeContributor({ contributionType, userToRemove: user });
+      contributors.value.push({
+        issuenumber,
+        contributionType,
+        user,
+      });
     },
     removeContributor = ({
       contributionType,
       userToRemove,
     }: {
-      contributionType: "photographers" | "designers";
+      contributionType: userContributionType;
       userToRemove: SimpleUser;
     }) => {
-      Object.keys(contributors.value).forEach((issuenumber) => {
-        const issueContributors = contributors.value[issuenumber];
-        const index = issueContributors[contributionType].findIndex(
-          (user) => user === userToRemove
-        );
-        issueContributors[contributionType].splice(index, 1);
-        contributors.value[issuenumber] = issueContributors;
-      });
+      contributors.value = contributors.value.filter(
+        ({ contributionType: thisContributionType, user: thisUser }) =>
+          thisContributionType !== contributionType &&
+          thisUser.id !== userToRemove.id
+      );
     },
     addWarning = (warning: string) => {
       warnings.value = [...warnings.value, warning];

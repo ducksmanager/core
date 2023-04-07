@@ -1,6 +1,3 @@
-import { StepOptions } from "~/types/StepOptions";
+import { OptionNameAndValue } from "./OptionNameAndValue";
 
-export type Step = {
-  component: string;
-  options?: StepOptions;
-};
+export type Step = OptionNameAndValue[];

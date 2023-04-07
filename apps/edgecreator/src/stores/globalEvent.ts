@@ -2,21 +2,17 @@ import { defineStore } from "pinia";
 
 import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
+import { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import { OptionValue } from "~/types/OptionValue";
 
 export type StepOption = {
   stepNumber: number;
   issuenumber: string;
-  component?: string;
   optionName: string;
   optionValue: OptionValue;
 };
 export type Options = StepOption[];
 
-export type OptionNameAndValue = {
-  optionName: string;
-  optionValue: OptionValue;
-};
 export type OptionsArray = OptionNameAndValue[];
 
 export type Dimensions = {
@@ -40,8 +36,8 @@ const isColorOption = (optionName: string) =>
   ["fill", "stroke"].includes(optionName);
 
 export const globalEvent = defineStore("globalEvent", () => {
-  const options = ref({} as Options),
-    dimensions = ref({} as DimensionsArray),
+  const options = ref([] as Options),
+    dimensions = ref([] as DimensionsArray),
     stepColors = computed(() =>
       options.value.filter(
         ({ optionName, optionValue }) =>
@@ -51,7 +47,7 @@ export const globalEvent = defineStore("globalEvent", () => {
     maxStepNumber = computed(() =>
       options.value.reduce(
         (max, { stepNumber }) => Math.max(max, stepNumber),
-        0
+        -1
       )
     ),
     getFilteredOptions = ({
@@ -78,20 +74,15 @@ export const globalEvent = defineStore("globalEvent", () => {
       issuenumbers?: string[];
     }) =>
       options.value.filter(
-        ({ stepNumber, issuenumber }) =>
+        ({ stepNumber, issuenumber, optionName }) =>
+          optionName === "component" ||
           !(
             (!defaultStepNumber || defaultStepNumber === stepNumber) &&
             (!defaultIssuenumbers || defaultIssuenumbers.includes(issuenumber))
           )
       ),
     setOptionValues = (
-      {
-        component,
-        options: newOptions,
-      }: {
-        component?: string;
-        options: OptionsArray | Record<string, OptionValue>;
-      },
+      newOptions: OptionsArray | Record<string, OptionValue>,
       overrides: {
         issuenumbers?: string[];
         stepNumber?: number;
@@ -108,7 +99,6 @@ export const globalEvent = defineStore("globalEvent", () => {
         overrides.issuenumbers === undefined
           ? editingStep().issuenumbers
           : overrides.issuenumbers;
-
       options.value = [
         ...removeOptionValues({
           stepNumber: defaultStepNumber,
@@ -120,7 +110,6 @@ export const globalEvent = defineStore("globalEvent", () => {
             ...optionsAsArray.map(({ optionName, optionValue }) => ({
               stepNumber: defaultStepNumber,
               issuenumber,
-              component,
               optionName,
               optionValue,
             })),
@@ -135,7 +124,7 @@ export const globalEvent = defineStore("globalEvent", () => {
         issuenumbers?: string[];
       }
     ) => {
-      dimensions.value = {
+      dimensions.value = [
         ...dimensions.value.filter(
           ({ issuenumber }) =>
             overrides.issuenumbers &&
@@ -147,7 +136,7 @@ export const globalEvent = defineStore("globalEvent", () => {
             ...newDimensions,
           })
         ),
-      };
+      ];
     };
   return {
     options,

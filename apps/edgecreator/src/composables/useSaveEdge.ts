@@ -1,6 +1,6 @@
 import { api } from "~/stores/api";
+import { ModelContributor } from "~types/ModelContributor";
 import { POST__fs__save } from "~types/routes";
-import { SimpleUser } from "~types/SimpleUser";
 
 import { call } from "../../axios-helper";
 
@@ -20,7 +20,7 @@ export default () => {
     country: string,
     magazine: string,
     issuenumber: string,
-    contributors: { designers: SimpleUser[]; photographers: SimpleUser[] },
+    contributors: ModelContributor[],
     withExport = false,
     withSubmit = false
   ) => {

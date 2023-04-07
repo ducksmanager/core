@@ -134,6 +134,7 @@ import useSaveEdge from "~/composables/useSaveEdge";
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
 import { Crop } from "~types/Crop";
+import { ModelContributor } from "~types/ModelContributor";
 import { POST__fs__upload_base64 } from "~types/routes";
 
 import { call } from "../../axios-helper";
@@ -155,10 +156,14 @@ const crops = ref([] as CropWithData[]);
 const uploadedImageData = ref(null as { url: string } | null);
 const cropper = ref(null as any | null);
 
-const initialContributors = computed(() => ({
-  photographers: [{ id: 0, username: useCookies().get("dm-user") }],
-  designers: [],
-}));
+const initialContributors = computed(
+  (): Omit<ModelContributor, "issuenumber">[] => [
+    {
+      contributionType: "photographe",
+      user: { id: 0, username: useCookies().get("dm-user") },
+    },
+  ]
+);
 
 const addCrop = () => {
   const data = cropper.value!.getData();
@@ -207,7 +212,10 @@ const uploadAll = async () => {
         country,
         magazine,
         crop.issueNumber,
-        initialContributors.value
+        initialContributors.value.map((contribution) => ({
+          ...contribution,
+          issuenumber: crop.issueNumber,
+        }))
       );
       const isSuccess = response?.paths?.svgPath;
       crop.sent = !!isSuccess;

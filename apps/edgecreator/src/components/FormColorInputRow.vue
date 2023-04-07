@@ -156,16 +156,14 @@ watch(
 
 const onTransparentCheckboxChange = (event: Event) => {
   globalEvent().setOptionValues({
-    options: {
-      [props.optionName]: (event.currentTarget as HTMLInputElement).checked
-        ? "transparent"
-        : originalColor.value,
-    },
+    [props.optionName]: (event.currentTarget as HTMLInputElement).checked
+      ? "transparent"
+      : originalColor.value,
   });
 };
 
 const onColorChange = (value: string) => {
-  globalEvent().setOptionValues({ options: { [props.optionName]: value } });
+  globalEvent().setOptionValues({ [props.optionName]: value });
 };
 </script>
 <style lang="scss" scoped>

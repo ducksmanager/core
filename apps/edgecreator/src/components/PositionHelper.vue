@@ -10,5 +10,3 @@ import { ui } from "../stores/ui";
 
 const positionInCanvas = computed(() => ui().positionInCanvas);
 </script>
-
-<style scoped></style>

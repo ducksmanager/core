@@ -60,6 +60,7 @@ export default () => {
         const filled = dbOptions.Rempli === "Oui";
 
         return {
+          component: targetComponent,
           cx: dbOptions.Pos_x_centre,
           cy: dbOptions.Pos_y_centre,
           rx: dbOptions.Largeur / 2,
@@ -81,6 +82,7 @@ export default () => {
           );
         }
         return {
+          component: targetComponent,
           fill: rgbToHex(dbOptions.Couleur),
         };
       }
@@ -98,6 +100,7 @@ export default () => {
           dbOptions
         );
         return {
+          component: targetComponent,
           x: dbOptions.Pos_x_debut,
           y: dbOptions.Pos_y_debut,
           width: dbOptions.Pos_x_fin - dbOptions.Pos_x_debut,
@@ -144,6 +147,7 @@ export default () => {
             (image!.dimensions.height / image!.dimensions.width);
           const fromBottom = dbOptions.Position === "bas";
           return {
+            component: targetComponent,
             src: dbOptions.Source,
             x: dbOptions.Decalage_x || 0,
             y: fromBottom
@@ -170,6 +174,7 @@ export default () => {
         const x = dbOptions.X.split(",");
         const y = dbOptions.Y.split(",");
         return {
+          component: targetComponent,
           points: x.map((x, i) => [x, y[i]].join(",")).join(";"),
           fill: rgbToHex(dbOptions.Couleur),
         };
@@ -188,6 +193,7 @@ export default () => {
         );
         const filled = dbOptions.Rempli === "Oui";
         return {
+          component: targetComponent,
           x: dbOptions.Pos_x_debut,
           y: dbOptions.Pos_y_debut,
           width: dbOptions.Pos_x_fin - dbOptions.Pos_x_debut,
@@ -199,6 +205,7 @@ export default () => {
       case "Staple": {
         validateOptions(["Y1", "Y2", "Taille_agrafe"], dbOptions);
         return {
+          component: targetComponent,
           y1: dbOptions.Y1,
           y2: dbOptions.Y2,
           height: dbOptions.Taille_agrafe,
@@ -225,6 +232,7 @@ export default () => {
           legacyRotation += 360;
         }
         return {
+          component: targetComponent,
           x: parseFloat(dbOptions.Pos_x),
           y: parseFloat(dbOptions.Pos_y),
           fgColor: rgbToHex(dbOptions.Couleur_texte),

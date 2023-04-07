@@ -31,7 +31,10 @@ export default () => {
     });
 
     const getComponents = (steps: StepOption[]) =>
-      steps?.map(({ component }) => component).join("+");
+      steps
+        ?.filter(({ optionName }) => optionName === "component")
+        .map(({ optionValue }) => optionValue)
+        .join("+");
     const previousIssueComponents = getComponents(
       Object.values(completedIssueSteps)
     );
@@ -62,14 +65,9 @@ export default () => {
   const setSteps = (issuenumber: string, issueSteps: StepOption[]) => {
     checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
     nextTick().then(() => {
-      globalEventStore.setOptionValues(
-        {
-          options: issueSteps,
-        },
-        {
-          issuenumbers: [issuenumber],
-        }
-      );
+      globalEventStore.setOptionValues(issueSteps, {
+        issuenumbers: [issuenumber],
+      });
     });
   };
 
@@ -95,28 +93,27 @@ export default () => {
       stepNumber <= globalEventStore.maxStepNumber;
       stepNumber++
     ) {
-      globalEventStore.setOptionValues({
-        component: globalEventStore.options.find(
-          ({ stepNumber: optionStepNumber }) => optionStepNumber === stepNumber
-        )!.component,
-        options: steps
+      globalEventStore.setOptionValues(
+        steps
           .filter(
             ({ stepNumber: optionStepNumber }) =>
               optionStepNumber === stepNumber
           )
-          .map((step) => ({ ...step, issuenumber: otherIssuenumber })),
-      });
+          .map((step) => ({ ...step, issuenumber: otherIssuenumber }))
+      );
     }
   };
 
   const addStep = (component: string) => {
     globalEventStore.setOptionValues(
+      [
+        {
+          optionName: "component",
+          optionValue: component,
+        },
+      ],
       {
-        component,
-        options: [],
-      },
-      {
-        stepNumber: globalEventStore.maxStepNumber + 1,
+        stepNumber: (globalEventStore.maxStepNumber || -1) + 1,
       }
     );
   };
@@ -132,13 +129,12 @@ export default () => {
       stepNumbers: [stepNumber],
     });
 
-    globalEventStore.setOptionValues({
-      component: existingStepOptions[0].component,
-      options: existingStepOptions.map((option) => ({
+    globalEventStore.setOptionValues(
+      existingStepOptions.map((option) => ({
         ...option,
         stepNumber: globalEventStore.maxStepNumber + 1,
-      })),
-    });
+      }))
+    );
   };
 
   const swapSteps = (stepNumbers: [number, number]) => {

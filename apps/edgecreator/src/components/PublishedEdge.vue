@@ -30,5 +30,3 @@ const getEdgeUrl = () =>
     main().magazine
   }.${props.issuenumber}.png`;
 </script>
-
-<style scoped></style>

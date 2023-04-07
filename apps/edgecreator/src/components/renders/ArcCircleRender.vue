@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const ellipse = ref(null as HTMLElement | null);
 
-const { attributes, enableDragResize } = useStepOptions(props, [
+const { attributes, enableDragResize } = useStepOptions(props, "ArcCircle", [
   "cx",
   "cy",
   "rx",
@@ -50,18 +50,14 @@ onMounted(() => {
   enableDragResize(ellipse.value!, {
     onmove: ({ dx, dy }) => {
       globalEvent().setOptionValues({
-        options: {
-          cx: props.options.cx + dx / uiStore.zoom,
-          cy: props.options.cy + dy / uiStore.zoom,
-        },
+        cx: props.options.cx + dx / uiStore.zoom,
+        cy: props.options.cy + dy / uiStore.zoom,
       });
     },
     onresizemove: ({ rect }) => {
       globalEvent().setOptionValues({
-        options: {
-          rx: rect.width / 2 / uiStore.zoom,
-          ry: rect.height / 2 / uiStore.zoom,
-        },
+        rx: rect.width / 2 / uiStore.zoom,
+        ry: rect.height / 2 / uiStore.zoom,
       });
     },
   });

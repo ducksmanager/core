@@ -8,7 +8,7 @@
         width: 0.5,
         stroke: 'black',
         x: dimensions.width / 2 - 0.25,
-        y: dimensions.height / 2 - options.yDistanceFromCenter - options.height,
+        y: dimensions.height / 2 - options.yDistanceFromCenter! - options.height,
       }"
     >
     </rect>
@@ -19,7 +19,7 @@
         width: 0.5,
         stroke: 'black',
         x: dimensions.width / 2 - 0.25,
-        y: dimensions.height / 2 + options.yDistanceFromCenter,
+        y: dimensions.height / 2 + options.yDistanceFromCenter!,
       }"
     >
     </rect>
@@ -40,7 +40,7 @@ interface Props {
   stepNumber: number;
   options: {
     yDistanceFromCenter?: number | undefined;
-    height: number | string;
+    height: number;
   };
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -50,7 +50,12 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-const dimensions = computed(() => globalEvent().dimensions[props.issuenumber]);
+const dimensions = computed(
+  () =>
+    globalEvent().getFilteredDimensions({
+      issuenumbers: [props.issuenumber],
+    })[0]
+);
 
 const onmove = ({
   currentTarget,
@@ -74,9 +79,7 @@ const onmove = ({
     height.value / 2 - stapleHeight * 2
   );
   globalEvent().setOptionValues({
-    options: {
-      yDistanceFromCenter,
-    },
+    yDistanceFromCenter,
   });
 };
 
@@ -110,7 +113,9 @@ onMounted(() => {
   });
 });
 
-const { enableDragResize, height, attributes } = useStepOptions(props, [
-  "height",
-]);
+const { enableDragResize, height, attributes } = useStepOptions(
+  props,
+  "Staple",
+  ["height"]
+);
 </script>

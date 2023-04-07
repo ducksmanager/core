@@ -36,10 +36,10 @@
       {{ designer.username }}
     </metadata>
     <g
-      v-for="(step, stepNumber) in steps"
+      v-for="(stepComponent, stepNumber) in stepComponents"
       :key="stepNumber"
       :class="{
-        [step.component]: true,
+        [stepComponent]: true,
         hovered:
           hoveredStepStore.stepNumber === stepNumber &&
           editingStepStore.issuenumbers.includes(issuenumber),
@@ -62,11 +62,11 @@
       "
     >
       <component
-        :is="renderComponents[step.component]"
-        v-show="step.options && step.options.visible !== false"
+        :is="renderComponents[stepComponent]"
+        v-show="isVisibleStep(stepNumber)"
         :issuenumber="issuenumber"
         :step-number="stepNumber"
-        :options="step.options"
+        :options="toKeyValue(getStepOptions(stepNumber, false))"
       ></component>
     </g>
     <rect
@@ -83,16 +83,17 @@
 </template>
 <script setup lang="ts">
 import { editingStep } from "~/stores/editingStep";
+import { StepOption } from "~/stores/globalEvent";
 import { hoveredStep } from "~/stores/hoveredStep";
 import { ui } from "~/stores/ui";
-import { Step } from "~/types/Step";
+import { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import { SimpleUser } from "~types/SimpleUser";
 
 const props = withDefaults(
   defineProps<{
     issuenumber: string;
     dimensions: { width: number; height: number };
-    steps: Record<number, Step>;
+    steps: StepOption[];
     photoUrl?: string | null;
     contributors: {
       designers: SimpleUser[];
@@ -102,6 +103,35 @@ const props = withDefaults(
   { photoUrl: null }
 );
 
+const stepComponents = computed(() =>
+  props.steps
+    .filter(({ optionName }) => optionName === "component")
+    .map(({ optionValue }) => optionValue as string)
+);
+
+const isVisibleStep = (stepNumber: number) =>
+  !getStepOptions(stepNumber).some(
+    ({ optionName, optionValue }) =>
+      optionName === "visible" && optionValue === false
+  );
+
+const getStepOptions = (stepNumber: number, withComponentOption = true) =>
+  props.steps.filter(
+    ({ stepNumber: thisStepNumber, optionName }) =>
+      stepNumber === thisStepNumber &&
+      (withComponentOption || optionName !== "component")
+  );
+
+const toKeyValue = (arr: OptionNameAndValue[]) => {
+  const val = arr.reduce(
+    (acc, { optionName, optionValue }) => ({
+      ...acc,
+      [optionName]: optionValue,
+    }),
+    {}
+  );
+  return Object.keys(val).length ? val : undefined;
+};
 const borderWidth = ref(1 as number);
 
 const canvas = ref(null as HTMLElement | null);
