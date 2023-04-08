@@ -70,17 +70,17 @@ export const step = defineStore("step", () => {
     removeOptionValues = ({
       stepNumber: defaultStepNumber,
       issuenumbers: defaultIssuenumbers,
+      optionNames,
     }: {
       stepNumber?: number;
       issuenumbers?: string[];
+      optionNames?: string[];
     }) =>
       options.value.filter(
         ({ stepNumber, issuenumber, optionName }) =>
-          optionName === "component" ||
-          !(
-            (!defaultStepNumber || defaultStepNumber === stepNumber) &&
-            (!defaultIssuenumbers || defaultIssuenumbers.includes(issuenumber))
-          )
+          defaultStepNumber !== stepNumber ||
+          !defaultIssuenumbers?.includes(issuenumber) ||
+          !optionNames?.includes(optionName)
       ),
     setOptionValues = (
       newOptions: OptionsArray | Record<string, OptionValue>,
@@ -100,14 +100,13 @@ export const step = defineStore("step", () => {
         overrides.issuenumbers === undefined
           ? editingStep().issuenumbers
           : overrides.issuenumbers;
-      console.log(newOptions);
-      console.log(overrides);
       options.value = [
         ...new Set(
           [
             ...removeOptionValues({
               stepNumber: defaultStepNumber,
               issuenumbers: defaultIssuenumbers,
+              optionNames: optionsAsArray.map(({ optionName }) => optionName),
             }),
             ...defaultIssuenumbers.reduce(
               (acc, issuenumber) => [
