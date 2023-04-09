@@ -215,7 +215,7 @@ export const step = defineStore("step", () => {
       setDimensions(
         getFilteredDimensions({
           issuenumbers: [otherIssuenumber],
-        })[0],
+        }).map((dimension) => ({ ...dimension, issuenumber }))[0],
         {
           issuenumbers: [issuenumber],
         }
@@ -249,6 +249,7 @@ export const step = defineStore("step", () => {
           },
         ],
         {
+          issuenumbers: main().issuenumbers,
           stepNumber: maxStepNumber.value + 1,
         }
       );

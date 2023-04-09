@@ -116,14 +116,14 @@ export const useStepOptions = (
             const { dx, dy, shiftKey } = e;
             showMoveResizeToast("move");
             if (shiftKey) {
-              step().setOptionValues({
+              stepStore.setOptionValues({
                 x: 0,
                 y: 0,
               });
             } else {
-              step().setOptionValues({
-                x: (props.options!.x as number) + dx / uiStore.zoom / 3,
-                y: (props.options!.y as number) + dy / uiStore.zoom / 3,
+              stepStore.setOptionValues({
+                x: (props.options!.x as number) + dx / uiStore.zoom,
+                y: (props.options!.y as number) + dy / uiStore.zoom,
               });
             }
           }
@@ -150,12 +150,12 @@ export const useStepOptions = (
               rect.width = width.value;
             }
           }
-          step().setOptionValues(rect);
+          stepStore.setOptionValues(rect);
         }
       })
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
-  step().setOptionValues(
+  stepStore.setOptionValues(
     [
       {
         optionName: "component",

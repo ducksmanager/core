@@ -9,7 +9,7 @@
       :title="clickedImage.name"
       scrollable
       :ok-title="$t('Choose')"
-      @ok="clickedImage && $emit('change', clickedImage.name)"
+      @ok="clickedImage && emit('change', clickedImage.name)"
     >
       <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>
@@ -101,6 +101,10 @@ withDefaults(
     allowUpload: true,
   }
 );
+
+const emit = defineEmits<{
+  (e: "change", value: string): void;
+}>();
 
 const clickedImage = ref(null as GalleryItem | null);
 const showUploadModal = ref(false as boolean);

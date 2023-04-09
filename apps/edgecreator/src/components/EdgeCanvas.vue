@@ -36,8 +36,9 @@
       {{ designer.username }}
     </metadata>
     <g
-      v-for="(stepComponent, stepNumber) in stepComponents"
+      v-for="(stepComponent, stepNumber) in stepComponentNames"
       :key="stepNumber"
+      :is-visible="JSON.stringify(getStepOptions(stepNumber, true))"
       :class="{
         [stepComponent]: true,
         hovered:
@@ -63,7 +64,7 @@
     >
       <component
         :is="renderComponents[stepComponent]"
-        v-show="isVisibleStep(stepNumber)"
+        v-show="visibleSteps[stepNumber]"
         :issuenumber="issuenumber"
         :step-number="stepNumber"
         :options="toKeyValue(getStepOptions(stepNumber, false))"
@@ -104,16 +105,25 @@ const props = withDefaults(
 );
 
 const stepComponents = computed(() =>
-  props.steps
-    .filter(({ optionName }) => optionName === "component")
-    .map(({ optionValue }) => optionValue as string)
+  props.steps.filter(({ optionName }) => optionName === "component")
 );
 
-const isVisibleStep = (stepNumber: number) =>
-  !getStepOptions(stepNumber).some(
-    ({ optionName, optionValue }) =>
-      optionName === "visible" && optionValue === false
-  );
+const stepComponentNames = computed(() =>
+  stepComponents.value.map(({ optionValue }) => optionValue as string)
+);
+
+const visibleSteps = computed(() =>
+  stepComponents.value.reduce(
+    (acc, { stepNumber }) => ({
+      ...acc,
+      [stepNumber]: !getStepOptions(stepNumber).some(
+        ({ optionName, optionValue }) =>
+          optionName === "visible" && optionValue === false
+      ),
+    }),
+    {} as Record<number, boolean>
+  )
+);
 
 const getStepOptions = (stepNumber: number, withComponentOption = true) =>
   props.steps.filter(

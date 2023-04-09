@@ -16,14 +16,14 @@
         <b-form-select
           v-if="type === 'select'"
           :id="optionName"
-          v-model="values[0]"
+          v-model="inputValue"
           :options="selectOptions"
           @input="onChangeValue"
         />
         <b-form-input
           v-else
           :id="optionName"
-          v-model="values[0]"
+          v-model="inputValue"
           size="sm"
           autocomplete="off"
           :type="type"
@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { step, StepOption } from "~/stores/step";
+import { OptionValue } from "~/types/OptionValue";
 
 const props = withDefaults(
   defineProps<{
@@ -74,22 +75,27 @@ const props = withDefaults(
     selectOptions: undefined,
   }
 );
+type PossibleInputValueType = string | number;
+
+const inputValue = ref(null as PossibleInputValueType | null);
 
 const inputValues = computed(() =>
   props.options
     .filter(({ optionName }) => optionName === props.optionName)
-    .map(({ optionValue }) => optionValue)
+    .map(({ optionValue }) => optionValue as PossibleInputValueType)
 );
-const values = computed(() =>
-  props.optionName === "xlink:href"
-    ? (inputValues.value as string[]).map(
-        (value) => value!.match(/\/([^/]+)$/)![1]
-      )
-    : (inputValues.value as (string | number | undefined)[])
-);
+let values = computed(() => [
+  ...new Set(
+    props.optionName === "xlink:href"
+      ? (inputValues.value as string[]).map(
+          (value) => value!.match(/\/([^/]+)$/)![1]
+        )
+      : (inputValues.value as PossibleInputValueType[])
+  ),
+]);
 const isTextImageOption = computed(
   () =>
-    !!props.options.some(
+    props.options.some(
       ({ optionName, optionValue }) =>
         optionName === "component" && optionValue === "Text"
     ) &&
@@ -100,14 +106,35 @@ const isTextImageOption = computed(
 const isImageSrcOption = computed(() =>
   props.options.some(({ optionName }) => optionName === "src")
 );
-const onChangeValue = (event: Event) => {
-  const value = (event.target as HTMLInputElement).value;
+
+watch(
+  () => inputValues.value,
+  (inputValues) => {
+    inputValue.value = inputValues[0] || null;
+  }
+);
+
+watch(
+  () => inputValue.value,
+  (newValue: PossibleInputValueType | null) => {
+    let intValue: number | null = null;
+    if (props.optionName === "rotation") {
+      intValue = parseInt(newValue as string);
+    }
+    step().setOptionValues({
+      [props.optionName]: intValue !== null ? intValue : newValue,
+    });
+  }
+);
+
+const onChangeValue = (optionValue: OptionValue) => {
+  debugger;
   let intValue: number | null = null;
   if (props.optionName === "rotation") {
-    intValue = parseInt(value);
+    intValue = parseInt(optionValue as string);
   }
   step().setOptionValues({
-    [props.optionName]: intValue !== null ? intValue : value,
+    [props.optionName]: intValue !== null ? intValue : optionValue,
   });
 };
 </script>

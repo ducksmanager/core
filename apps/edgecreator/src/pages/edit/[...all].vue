@@ -208,13 +208,6 @@ watch(
 );
 
 watch(
-  () => stepStore.options,
-  async (newValue, oldValue) => {
-    console.log("oldValue", JSON.stringify(oldValue));
-    console.log("newValue", JSON.stringify(newValue));
-  }
-);
-watch(
   () => error.value,
   (newValue) => {
     if (newValue) {
@@ -252,19 +245,17 @@ watch(
       others: issuenumberOthers,
     });
 
-    for (let idx = 0; idx < mainStore.issuenumbers.length; idx++) {
+    for (const issuenumber of mainStore.issuenumbers) {
+      const idx = mainStore.issuenumbers.indexOf(issuenumber);
       if (!Object.prototype.hasOwnProperty.call(mainStore.issuenumbers, idx)) {
         continue;
       }
-      const issuenumber = mainStore.issuenumbers[idx];
       try {
         await loadModel(country, magazine, issuenumber, issuenumber);
       } catch {
-        if (mainStore.issuenumbers[idx - 1]) {
-          stepStore.copyDimensionsAndSteps(
-            issuenumber,
-            mainStore.issuenumbers[idx - 1]
-          );
+        let previousIssuenumber = mainStore.issuenumbers[idx - 1];
+        if (previousIssuenumber) {
+          stepStore.copyDimensionsAndSteps(issuenumber, previousIssuenumber);
         } else {
           stepStore.setDimensions(
             { width: 15, height: 200 },
