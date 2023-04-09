@@ -15,7 +15,7 @@
       :selected="selected == null ? [] : [selected]"
       :items="items"
       :allow-upload="false"
-      @change="$emit('change', $event)"
+      @change="emit('change', $event)"
     />
     <b-button
       v-if="!isPopulating && hasMoreAfter"
@@ -47,6 +47,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: "load-more", where: "before" | "after"): void;
+  (e: "change", value: string): void;
 }>();
 const items = ref([] as GalleryItem[]);
 const isPopulating = ref(false as boolean);

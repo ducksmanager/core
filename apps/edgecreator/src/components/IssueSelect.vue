@@ -155,7 +155,7 @@ const publications = computed(
 );
 
 const publicationIssues = computed(
-  () => coa().issueNumbers && coa().issueNumbers[currentPublicationCode.value!]
+  () => coa().issueNumbers?.[currentPublicationCode.value!]
 );
 
 const issues = computed(

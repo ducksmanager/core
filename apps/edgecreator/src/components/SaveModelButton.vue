@@ -186,7 +186,7 @@ watch(
         props.withExport,
         props.withSubmit
       ).then((response) => {
-        const isSuccess = response.paths && response.paths.svgPath;
+        const isSuccess = response.paths?.svgPath;
         if (isSuccess) {
           progress.value += 100 / mainStore.issuenumbers.length;
           issueIndexToSave.value!++;

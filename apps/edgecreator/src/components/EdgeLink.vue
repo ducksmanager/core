@@ -27,8 +27,8 @@ import { coa } from "~/stores/coa";
 defineProps<{
   publicationcode: string;
   issuenumber: string;
-  designers: any[];
-  photographers: any[];
+  designers: string[];
+  photographers: string[];
   published: boolean;
 }>();
 

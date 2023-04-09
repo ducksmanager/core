@@ -11,24 +11,23 @@
     }"
     :options="options"
     :disabled="isTransparent"
-    ><template #prefix
-      ><label
+    ><template #prefix>
+      <b-button
         v-if="canBeTransparent"
-        class="transparent"
-        :for="`${optionName}-transparent`"
+        :variant="isTransparent ? 'secondary' : 'outline-light'"
+        :pressed="isTransparent"
+        class="transparent p-1"
+        @click="isTransparent = !isTransparent"
         ><img
           :id="`${optionName}-transparent`"
           alt="transp"
-          src="/transparent.png" /></label
-      ><input
-        :id="`${optionName}-transparent`"
-        :checked="isTransparent"
-        type="checkbox"
-        @change="onTransparentCheckboxChange"
-    /></template>
+          src="/transparent.png"
+        />&nbsp;Transparent</b-button
+      ></template
+    >
 
     <template v-if="!isTransparent" #suffix>
-      <popover>
+      <popover container="body">
         <b-button
           :id="`${optionName}-popover-colors`"
           class="no-pointer"
@@ -64,10 +63,10 @@
                 >
                 <span
                   v-for="color in otherColorsForLocation[stepNumber]"
-                  :key="color as string"
+                  :key="color"
                   class="frequent-color"
-                  :style="{ background: color as string}"
-                  @click="onColorChange(color as string)"
+                  :style="{ background: color }"
+                  @click="onColorChange(color)"
                   >&nbsp;</span
                 >
               </li>
@@ -90,15 +89,12 @@
 <script setup lang="ts">
 import Popover from "~/components/Popover.vue";
 import { main } from "~/stores/main";
-import { Options, step } from "~/stores/step";
+import { Options, step, StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import { OptionValue } from "~/types/OptionValue";
 
 const props = withDefaults(
   defineProps<{
-    options: {
-      [optionName: string]: OptionValue[];
-    };
+    options: StepOption[];
     optionName: string;
     otherColors: {
       differentIssuenumber: Options;
@@ -115,30 +111,46 @@ const props = withDefaults(
 
 const originalColor = ref(null as string | null);
 
-const inputValues = computed(() => props.options![props.optionName] || []);
-const isTransparent = computed(() => inputValues.value[0] === "transparent");
+const stepStore = step();
+
+const colorOption = computed(() =>
+  props.options.filter(({ optionName }) => optionName === props.optionName)
+);
+const inputValues = computed(() =>
+  colorOption.value.map(({ optionValue }) => optionValue)
+);
+const isTransparent = ref(false as boolean);
 const photoUrls = computed(() => main().photoUrls);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 const colorPickerOption = computed(() => ui().colorPickerOption);
 const showEdgePhotos = computed(() => ui().showEdgePhotos);
 
-const getOptionsByStepNumber = (options: Options) =>
+watch(
+  () => inputValues.value,
+  (inputValues) => {
+    isTransparent.value = inputValues[0] === "transparent";
+  }
+);
+
+const getOptionStringValuesByStepNumber = (options: Options) =>
   options.reduce(
     (acc, option) => ({
       ...acc,
       [option.stepNumber]: [
         ...(acc[option.stepNumber] || []),
-        option.optionValue,
+        option.optionValue as string,
       ],
     }),
-    {} as Record<number, OptionValue[]>
+    {} as Record<number, string[]>
   );
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
-  differentIssuenumber: getOptionsByStepNumber(
+  differentIssuenumber: getOptionStringValuesByStepNumber(
     props.otherColors.differentIssuenumber
   ),
-  sameIssuenumber: getOptionsByStepNumber(props.otherColors.sameIssuenumber),
+  sameIssuenumber: getOptionStringValuesByStepNumber(
+    props.otherColors.sameIssuenumber
+  ),
 }));
 watch(
   () => inputValues.value,
@@ -154,16 +166,20 @@ watch(
   { immediate: true }
 );
 
-const onTransparentCheckboxChange = (event: Event) => {
-  step().setOptionValues({
-    [props.optionName]: (event.currentTarget as HTMLInputElement).checked
-      ? "transparent"
-      : originalColor.value,
-  });
-};
+watch(
+  () => isTransparent.value,
+  (newValue) => {
+    stepStore.setOptionValues([
+      {
+        ...colorOption.value[0],
+        optionValue: newValue ? "transparent" : originalColor.value,
+      },
+    ]);
+  }
+);
 
 const onColorChange = (value: string) => {
-  step().setOptionValues({ [props.optionName]: value });
+  stepStore.setOptionValues({ [props.optionName]: value });
 };
 </script>
 <style lang="scss" scoped>
@@ -178,11 +194,13 @@ ul {
   background: none !important;
 }
 
-input[type="checkbox"][id$="-transparent"] {
-  display: none;
-}
-
-label.transparent {
+.transparent {
+  :deep(div) {
+    color: black !important;
+  }
+  * {
+    cursor: pointer;
+  }
   img {
     top: 0;
   }
