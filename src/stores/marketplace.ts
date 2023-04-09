@@ -12,64 +12,56 @@ import {
   PUT__collection__on_sale_by_others__requests,
 } from "~types/routes";
 
-export const marketplace = defineStore("marketplace", {
-  state: () => ({
-    issuesOnSaleByOthers: null as
-      | GET__collection__on_sale_by_others["resBody"]
-      | null,
-    issueRequestsAsBuyer: null as requestedIssue[] | null,
-    issueRequestsAsSeller: null as requestedIssue[] | null,
-    isLoadingIssueRequestsAsBuyer: false as boolean,
-    isLoadingIssueRequestsAsSeller: false as boolean,
-    isLoadingIssuesOnSaleByOthers: false as boolean,
-
-    contactMethods: {} as {
-      [
-        userId: number
-      ]: GET__collection__on_sale_by_others__contact_methods__$sellerId["resBody"];
-    },
-  }),
-
-  getters: {
-    sentRequestIssueIds: ({ issueRequestsAsBuyer }) =>
-      issueRequestsAsBuyer?.map(({ issueId }) => issueId),
-
-    sellerUserIds: ({ issuesOnSaleByOthers }) =>
-      (issuesOnSaleByOthers && [
-        ...new Set(
-          Object.values(issuesOnSaleByOthers).reduce(
-            (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
-            [] as number[]
-          )
-        ),
-      ]) ||
-      [],
-    buyerUserIds(): number[] {
-      const issueRequestsAsSeller = this.issueRequestsAsSeller;
-      return (
-        (issueRequestsAsSeller && [
-          ...new Set(issueRequestsAsSeller.map((issue) => issue.buyerId)),
+export const marketplace = defineStore("marketplace", () => {
+  const issuesOnSaleByOthers = ref(
+      null as GET__collection__on_sale_by_others["resBody"] | null
+    ),
+    issueRequestsAsBuyer = ref(null as requestedIssue[] | null),
+    issueRequestsAsSeller = ref(null as requestedIssue[] | null),
+    isLoadingIssueRequestsAsBuyer = ref(false as boolean),
+    isLoadingIssueRequestsAsSeller = ref(false as boolean),
+    isLoadingIssuesOnSaleByOthers = ref(false as boolean),
+    contactMethods = ref(
+      {} as {
+        [
+          userId: number
+        ]: GET__collection__on_sale_by_others__contact_methods__$sellerId["resBody"];
+      }
+    ),
+    sentRequestIssueIds = computed(() =>
+      issueRequestsAsBuyer.value?.map(({ issueId }) => issueId)
+    ),
+    sellerUserIds = computed(
+      () =>
+        (issuesOnSaleByOthers.value && [
+          ...new Set(
+            Object.values(issuesOnSaleByOthers.value).reduce(
+              (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
+              [] as number[]
+            )
+          ),
         ]) ||
         []
-      );
-    },
-
-    buyerUserNamesById() {
-      const buyerUserIds: number[] = this.buyerUserIds;
-      return (
-        buyerUserIds?.reduce(
+    ),
+    buyerUserIds = computed(
+      () =>
+        (issueRequestsAsSeller.value && [
+          ...new Set(issueRequestsAsSeller.value.map((issue) => issue.buyerId)),
+        ]) ||
+        []
+    ),
+    buyerUserNamesById = computed(
+      () =>
+        buyerUserIds.value?.reduce(
           (acc, userId) => ({
             ...acc,
             [userId]: users().stats[userId]?.username,
           }),
           {} as { [userId: number]: string }
         ) || null
-      );
-    },
-
-    sellerUserNames() {
-      const sellerUserIds: number[] = this.sellerUserIds;
-      return sellerUserIds
+    ),
+    sellerUserNames = computed(() =>
+      sellerUserIds.value
         ?.reduce(
           (acc, userId) => [
             ...acc,
@@ -77,32 +69,27 @@ export const marketplace = defineStore("marketplace", {
           ],
           [] as { value: number; text: string }[]
         )
-        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2));
-    },
-
-    requestIssueIdsBySellerId(): { [userId: number]: number[] } {
-      const issueRequestsAsBuyer = this.issueRequestsAsBuyer;
-      const issuesOnSaleById = this.issuesOnSaleById;
-      return (
-        (issuesOnSaleById &&
-          issueRequestsAsBuyer
-            ?.filter(({ issueId }) => issuesOnSaleById[issueId])
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2))
+    ),
+    requestIssueIdsBySellerId = computed(
+      () =>
+        (issuesOnSaleById.value &&
+          issueRequestsAsBuyer.value
+            ?.filter(({ issueId }) => issuesOnSaleById.value[issueId])
             .reduce(
               (acc, { issueId }) => ({
                 ...acc,
-                [issuesOnSaleById[issueId].userId]: [
-                  ...(acc[issuesOnSaleById[issueId].userId] || []),
+                [issuesOnSaleById.value[issueId].userId]: [
+                  ...(acc[issuesOnSaleById.value[issueId].userId] || []),
                   issueId,
                 ],
               }),
               {} as { [userId: number]: number[] }
             )) ||
         {}
-      );
-    },
-
-    issuesOnSaleById: ({ issuesOnSaleByOthers }) =>
-      Object.values(issuesOnSaleByOthers || {}).reduce(
+    ),
+    issuesOnSaleById = computed(() =>
+      Object.values(issuesOnSaleByOthers.value || {}).reduce(
         (acc, issues) => ({
           ...acc,
           ...issues.reduce(
@@ -117,22 +104,19 @@ export const marketplace = defineStore("marketplace", {
           ),
         }),
         {} as { [issueId: number]: issue & { publicationcode: string } }
-      ),
-  },
-
-  actions: {
-    async requestIssues(issueIds: number[]) {
+      )
+    ),
+    requestIssues = async (issueIds: number[]) => {
       await call(
         axios,
         new PUT__collection__on_sale_by_others__requests({
           reqBody: { issueIds },
         })
       );
-      await this.loadIssueRequestsAsBuyer();
+      await loadIssueRequestsAsBuyer();
     },
-
-    async loadContactMethods(userId: number) {
-      this.contactMethods[userId] = (
+    loadContactMethods = async (userId: number) => {
+      contactMethods.value[userId] = (
         await call(
           axios,
           new GET__collection__on_sale_by_others__contact_methods__$sellerId({
@@ -141,16 +125,15 @@ export const marketplace = defineStore("marketplace", {
         )
       ).data;
     },
-
-    async loadIssueRequestsAsBuyer(afterUpdate = false) {
+    loadIssueRequestsAsBuyer = async (afterUpdate = false) => {
       if (
         !afterUpdate &&
-        (this.issueRequestsAsBuyer || this.isLoadingIssueRequestsAsBuyer)
+        (issueRequestsAsBuyer.value || isLoadingIssueRequestsAsBuyer.value)
       ) {
         return;
       }
-      this.isLoadingIssueRequestsAsBuyer = true;
-      this.issueRequestsAsBuyer = (
+      isLoadingIssueRequestsAsBuyer.value = true;
+      issueRequestsAsBuyer.value = (
         await call(
           axios,
           new GET__collection__on_sale_by_others__requests__as__$as({
@@ -158,17 +141,17 @@ export const marketplace = defineStore("marketplace", {
           })
         )
       ).data;
-      this.isLoadingIssueRequestsAsBuyer = false;
+      isLoadingIssueRequestsAsBuyer.value = false;
     },
-    async loadIssueRequestsAsSeller(afterUpdate = false) {
+    loadIssueRequestsAsSeller = async (afterUpdate = false) => {
       if (
         !afterUpdate &&
-        (this.issueRequestsAsSeller || this.isLoadingIssueRequestsAsSeller)
+        (issueRequestsAsSeller.value || isLoadingIssueRequestsAsSeller.value)
       ) {
         return;
       }
-      this.isLoadingIssueRequestsAsSeller = true;
-      this.issueRequestsAsSeller = (
+      isLoadingIssueRequestsAsSeller.value = true;
+      issueRequestsAsSeller.value = (
         await call(
           axios,
           new GET__collection__on_sale_by_others__requests__as__$as({
@@ -176,28 +159,50 @@ export const marketplace = defineStore("marketplace", {
           })
         )
       ).data;
-      this.isLoadingIssueRequestsAsSeller = false;
+      isLoadingIssueRequestsAsSeller.value = false;
     },
-    async loadIssuesOnSaleByOthers(afterUpdate = false) {
+    loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
       if (
         !afterUpdate &&
-        (this.issuesOnSaleByOthers || this.isLoadingIssuesOnSaleByOthers)
+        (issuesOnSaleByOthers.value || isLoadingIssuesOnSaleByOthers.value)
       ) {
         return;
       }
-      this.isLoadingIssuesOnSaleByOthers = true;
-      this.issuesOnSaleByOthers = (
+      isLoadingIssuesOnSaleByOthers.value = true;
+      issuesOnSaleByOthers.value = (
         await call(axios, new GET__collection__on_sale_by_others())
       ).data;
-      this.isLoadingIssuesOnSaleByOthers = false;
+      isLoadingIssuesOnSaleByOthers.value = false;
     },
-    async deleteRequestToSeller(issueId: number) {
+    deleteRequestToSeller = async (issueId: number) => {
       await call(
         axios,
         new DELETE__collection__on_sale_by_others__requests({
           reqBody: { issueId },
         })
       );
-    },
-  },
+    };
+
+  return {
+    issuesOnSaleByOthers,
+    issueRequestsAsBuyer,
+    issueRequestsAsSeller,
+    isLoadingIssueRequestsAsBuyer,
+    isLoadingIssueRequestsAsSeller,
+    isLoadingIssuesOnSaleByOthers,
+    contactMethods,
+    sentRequestIssueIds,
+    sellerUserIds,
+    buyerUserIds,
+    buyerUserNamesById,
+    sellerUserNames,
+    requestIssueIdsBySellerId,
+    issuesOnSaleById,
+    requestIssues,
+    loadContactMethods,
+    loadIssueRequestsAsBuyer,
+    loadIssueRequestsAsSeller,
+    loadIssuesOnSaleByOthers,
+    deleteRequestToSeller,
+  };
 });

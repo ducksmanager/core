@@ -1,7 +1,5 @@
 import { defineStore } from "pinia";
 
-export const ongoingRequests = defineStore("ongoing-requests", {
-  state: () => ({
-    numberOfOngoingAjaxCalls: null as number | null,
-  }),
-});
+export const ongoingRequests = defineStore("ongoing-requests", () => ({
+  numberOfOngoingAjaxCalls: null as number | null,
+}));

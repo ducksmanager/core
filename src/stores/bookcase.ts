@@ -19,118 +19,131 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   popularity?: number | undefined;
 }
 
-export const bookcase = defineStore("bookcase", {
-  state: () => ({
-    loadedSprites: {} as { [key: string]: string },
-
-    isPrivateBookcase: false as boolean,
-    isUserNotExisting: false as boolean,
-    bookcaseUsername: null as string | null,
-    bookcase: null as BookcaseEdge[] | null,
-    bookcaseOptions: null as
-      | GET__bookcase__$username__options["resBody"]
-      | null,
-    bookcaseOrder: null as string[] | null,
-
-    edgeIndexToLoad: 0 as number,
-  }),
-
-  getters: {
-    isSharedBookcase: ({ bookcaseUsername }): boolean =>
-      collection().user?.username !== bookcaseUsername,
-
-    bookcaseWithPopularities(): BookcaseEdgeWithPopularity[] | null {
-      const isSharedBookcase = this.isSharedBookcase;
-      return (
-        ((isSharedBookcase ? true : collection().popularIssuesInCollection) &&
-          this.bookcase?.map((issue) => {
+export const bookcase = defineStore("bookcase", () => {
+  const loadedSprites = ref({} as { [key: string]: string }),
+    isPrivateBookcase = ref(false as boolean),
+    isUserNotExisting = ref(false as boolean),
+    bookcaseUsername = ref(null as string | null),
+    bookcase = ref(null as BookcaseEdge[] | null),
+    bookcaseOptions = ref(
+      null as GET__bookcase__$username__options["resBody"] | null
+    ),
+    bookcaseOrder = ref(null as string[] | null),
+    edgeIndexToLoad = ref(0 as number),
+    isSharedBookcase = computed(
+      (): boolean => collection().user?.username !== bookcaseUsername.value
+    ),
+    bookcaseWithPopularities = computed(
+      (): BookcaseEdgeWithPopularity[] | null =>
+        ((isSharedBookcase.value
+          ? true
+          : collection().popularIssuesInCollection) &&
+          bookcase.value?.map((issue) => {
             const publicationcode = `${issue.countryCode}/${issue.magazineCode}`;
             const issueCode = `${publicationcode} ${issue.issuenumber}`;
             return {
               ...issue,
               publicationcode,
               issueCode,
-              popularity: isSharedBookcase
+              popularity: isSharedBookcase.value
                 ? 0
                 : collection().popularIssuesInCollection?.[issueCode] || 0,
             };
           })) ||
         null
-      );
-    },
-  },
-
-  actions: {
-    addLoadedSprite({ spritePath, css }: { spritePath: string; css: string }) {
-      this.loadedSprites = {
-        ...this.loadedSprites,
+    ),
+    addLoadedSprite = ({
+      spritePath,
+      css,
+    }: {
+      spritePath: string;
+      css: string;
+    }) => {
+      loadedSprites.value = {
+        ...loadedSprites.value,
         [spritePath]: css,
       };
     },
-
-    async loadBookcase() {
-      if (!this.bookcase) {
+    loadBookcase = async () => {
+      if (!bookcase.value) {
         try {
-          this.bookcase = (
+          bookcase.value = (
             await call(
               axios,
               new GET__bookcase__$username({
-                params: { username: this.bookcaseUsername! },
+                params: { username: bookcaseUsername.value! },
               })
             )
           ).data;
         } catch (e) {
           switch ((e as AxiosError).response?.status) {
             case 403:
-              this.isPrivateBookcase = true;
+              isPrivateBookcase.value = true;
               break;
             case 404:
-              this.isUserNotExisting = true;
+              isUserNotExisting.value = true;
               break;
           }
         }
       }
     },
-    async loadBookcaseOptions() {
-      if (!this.bookcaseOptions) {
-        this.bookcaseOptions = (
+    loadBookcaseOptions = async () => {
+      if (!bookcaseOptions.value) {
+        bookcaseOptions.value = (
           await call(
             axios,
             new GET__bookcase__$username__options({
-              params: { username: this.bookcaseUsername! },
+              params: { username: bookcaseUsername.value! },
             })
           )
         ).data;
       }
     },
-    async updateBookcaseOptions() {
+    updateBookcaseOptions = async () => {
       await call(
         axios,
         new POST__bookcase__options({
-          reqBody: this.bookcaseOptions!,
+          reqBody: bookcaseOptions.value!,
         })
       );
     },
-
-    async loadBookcaseOrder() {
-      if (!this.bookcaseOrder) {
-        this.bookcaseOrder = (
+    loadBookcaseOrder = async () => {
+      if (!bookcaseOrder.value) {
+        bookcaseOrder.value = (
           await call(
             axios,
             new GET__bookcase__$username__sort({
-              params: { username: this.bookcaseUsername! },
+              params: { username: bookcaseUsername.value! },
             })
           )
         ).data;
       }
     },
-    async updateBookcaseOrder() {
+    updateBookcaseOrder = async () => {
       await call(
         axios,
         new POST__bookcase__sort({
-          reqBody: { sorts: this.bookcaseOrder as string[] },
+          reqBody: { sorts: bookcaseOrder.value as string[] },
         })
       );
-    },
-  },
+    };
+
+  return {
+    loadedSprites,
+    isPrivateBookcase,
+    isUserNotExisting,
+    bookcaseUsername,
+    bookcase,
+    bookcaseOptions,
+    bookcaseOrder,
+    edgeIndexToLoad,
+    isSharedBookcase,
+    bookcaseWithPopularities,
+    addLoadedSprite,
+    loadBookcase,
+    loadBookcaseOptions,
+    updateBookcaseOptions,
+    loadBookcaseOrder,
+    updateBookcaseOrder,
+  };
 });

@@ -359,6 +359,7 @@ loadPurchases();
 <style scoped lang="scss">
 .wrapper {
   background: #333;
+  height: v-bind(height);
 
   > div {
     width: 100% !important;

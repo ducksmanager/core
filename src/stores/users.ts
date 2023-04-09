@@ -16,28 +16,23 @@ import {
   GET__global_stats__user__count,
 } from "~types/routes";
 
-export const users = defineStore("users", {
-  state: () => ({
-    count: null as number | null,
-    stats: {} as GET__global_stats__user__$userIds["resBody"]["stats"],
-    points: {} as GET__global_stats__user__$userIds["resBody"]["points"],
-    events: [] as AbstractEvent[],
-    bookcaseContributors: null as BookcaseContributor[] | null,
-  }),
-
-  actions: {
-    async fetchCount() {
-      if (!this.count) {
-        this.count = (
+export const users = defineStore("users", () => {
+  const count = ref(null as number | null),
+    stats = ref({} as GET__global_stats__user__$userIds["resBody"]["stats"]),
+    points = ref({} as GET__global_stats__user__$userIds["resBody"]["points"]),
+    events = ref([] as AbstractEvent[]),
+    bookcaseContributors = ref(null as BookcaseContributor[] | null),
+    fetchCount = async () => {
+      if (count.value === null) {
+        count.value = (
           await call(axios, new GET__global_stats__user__count())
         ).data!.count;
       }
     },
-    async fetchStats(userIds: number[], clearCacheEntry = true) {
-      const points = this.points;
+    fetchStats = async (userIds: number[], clearCacheEntry = true) => {
       const missingUserIds = [...new Set(userIds)].filter(
         (userId) =>
-          !Object.keys(points)
+          !Object.keys(points.value)
             .map((userIdHavingPoints) => parseInt(userIdHavingPoints))
             .includes(userId)
       );
@@ -56,12 +51,12 @@ export const users = defineStore("users", {
           })
         )
       ).data;
-      this.points = {
-        ...this.points,
+      points.value = {
+        ...points.value,
         ...data.points,
       };
-      this.stats = {
-        ...this.stats,
+      stats.value = {
+        ...stats.value,
         ...data.stats.reduce(
           (acc, data) => ({
             ...acc,
@@ -71,21 +66,19 @@ export const users = defineStore("users", {
         ),
       };
     },
-
-    async fetchBookcaseContributors() {
-      if (!this.bookcaseContributors) {
-        this.bookcaseContributors = (
+    fetchBookcaseContributors = async () => {
+      if (!bookcaseContributors.value) {
+        bookcaseContributors.value = (
           await call(axios, new GET__global_stats__bookcase__contributors())
         ).data;
       }
     },
-
-    async fetchEvents(clearCacheEntry = true) {
+    fetchEvents = async (clearCacheEntry = true) => {
       const { data, cached } = await userApi.get(
         "/events",
         clearCacheEntry ? {} : { cache: false }
       );
-      this.events = (
+      events.value = (
         data as (
           | BookstoreCommentEvent
           | CollectionSubscriptionAdditionEvent
@@ -100,6 +93,17 @@ export const users = defineStore("users", {
         .filter((_, index) => index < 50);
 
       return !cached;
-    },
-  },
+    };
+
+  return {
+    count,
+    stats,
+    points,
+    events,
+    bookcaseContributors,
+    fetchCount,
+    fetchStats,
+    fetchBookcaseContributors,
+    fetchEvents,
+  };
 });
