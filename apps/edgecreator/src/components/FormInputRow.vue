@@ -111,7 +111,8 @@ watch(
   () => inputValues.value,
   (inputValues) => {
     inputValue.value = inputValues[0] || undefined;
-  }
+  },
+  { immediate: true }
 );
 
 watch(
