@@ -89,6 +89,8 @@ export const step = defineStore("step", () => {
         stepNumber?: number;
       } = { issuenumbers: undefined, stepNumber: undefined }
     ) => {
+      console.trace(newOptions);
+      console.log(overrides);
       const optionsAsArray = newOptions.hasOwnProperty("length")
         ? (newOptions as OptionsArray)
         : optionObjectToArray(newOptions as Record<string, OptionValue>);

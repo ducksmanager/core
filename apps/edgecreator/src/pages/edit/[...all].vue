@@ -261,7 +261,8 @@ watch(
             { width: 15, height: 200 },
             { issuenumbers: [issuenumber] }
           );
-          stepStore.setSteps(issuenumber, []);
+
+          stepStore.setOptionValues([]);
         }
       }
     }
