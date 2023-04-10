@@ -153,23 +153,31 @@ export default () => {
       ) || { component: null };
       if (component) {
         try {
-          const options = optionObjectToArray(
-            await getOptionsFromDb(
-              publicationcode,
-              issuenumber,
-              originalStepNumber,
+          stepStore.setOptionValues(
+            [
               {
-                component,
-                options: originalOptions,
-              } as LegacyComponent,
-              dimensions,
-              calculateBase64
-            )
+                optionName: "component",
+                optionValue: component,
+              },
+              ...optionObjectToArray(
+                await getOptionsFromDb(
+                  publicationcode,
+                  issuenumber,
+                  originalStepNumber,
+                  {
+                    component,
+                    options: originalOptions,
+                  } as LegacyComponent,
+                  dimensions,
+                  calculateBase64
+                )
+              ),
+            ],
+            {
+              issuenumbers: [issuenumber],
+              stepNumber: stepNumber++,
+            }
           );
-          stepStore.setOptionValues(options, {
-            issuenumbers: [issuenumber],
-            stepNumber: stepNumber++,
-          });
         } catch (e) {
           onError(
             `Invalid step ${originalStepNumber} (${component}) : ${e}, step will be ignored.`,
@@ -215,8 +223,6 @@ export default () => {
     targetIssuenumber: string
   ) => {
     const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber;
-    let loadedSteps: OptionNameAndValue[][];
-    let dimensions: { width: number; height: number };
 
     const loadSvg = async (publishedVersion: boolean) => {
       const { svgElement, svgChildNodes } = await loadSvgFromString(
@@ -282,19 +288,10 @@ export default () => {
         }
       }
     }
-    if (loadedSteps!) {
-      stepStore.setDimensions(dimensions!, {
-        issuenumbers: [targetIssuenumber],
-      });
-      for (let stepNumber = 0; stepNumber < loadedSteps.length; stepNumber++) {
-        stepStore.setOptionValues(loadedSteps[stepNumber], {
-          stepNumber,
-          issuenumbers: [issuenumber],
-        });
-      }
-    } else {
-      throw new Error("No model found for issue " + issuenumber);
+    if (!stepStore.options.length) {
+      throw new Error(`No model found for issue ${issuenumber}`);
     }
+    console.log("Loading done");
   };
 
   const setPhotoUrlsFromApi = async (issuenumber: string, edgeId: number) => {
