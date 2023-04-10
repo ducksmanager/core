@@ -64,6 +64,7 @@
     >
       <component
         :is="renderComponents[stepComponent]"
+        v-if="stepComponent !== 'Text'"
         v-show="visibleSteps[stepNumber]"
         :issuenumber="issuenumber"
         :step-number="stepNumber"

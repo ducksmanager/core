@@ -77,7 +77,7 @@ const props = withDefaults(
 );
 type PossibleInputValueType = string | number;
 
-const inputValue = ref(null as PossibleInputValueType | null);
+const inputValue = ref(undefined as PossibleInputValueType | undefined);
 
 const inputValues = computed(() =>
   props.options
@@ -110,13 +110,13 @@ const isImageSrcOption = computed(() =>
 watch(
   () => inputValues.value,
   (inputValues) => {
-    inputValue.value = inputValues[0] || null;
+    inputValue.value = inputValues[0] || undefined;
   }
 );
 
 watch(
   () => inputValue.value,
-  (newValue: PossibleInputValueType | null) => {
+  (newValue: PossibleInputValueType | undefined) => {
     let intValue: number | null = null;
     if (props.optionName === "rotation") {
       intValue = parseInt(newValue as string);

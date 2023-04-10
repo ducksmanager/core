@@ -185,7 +185,11 @@
             <gallery
               :items="mainStore.publicationElementsForGallery"
               image-type="elements"
-              :selected="stepOptions.find(({optionName}) => optionName === 'src')!.optionValue"
+              :selected="
+                stepOptions
+                  .filter(({ optionName }) => optionName === 'src')
+                  .map(({ optionValue }) => optionValue)
+              "
               @change="stepStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
@@ -274,18 +278,19 @@ const emit = defineEmits<{
 const issueNumbers = computed(() => mainStore.issuenumbers);
 
 const fontSearchUrl = computed(() => import.meta.env.VITE_FONT_SEARCH_URL);
-const optionsPerStepNumber = computed(() =>
-  stepStore
-    .getFilteredOptions({
-      issuenumbers: editingStepStore.issuenumbers,
-    })
-    .reduce(
-      (acc, { stepNumber, ...rest }) => ({
-        ...acc,
-        [stepNumber]: [...(acc[stepNumber] || []), { stepNumber, ...rest }],
-      }),
-      {} as Record<number, StepOption[]>
-    )
+const optionsPerStepNumber = computed(
+  (): Record<number, StepOption[]> =>
+    stepStore
+      .getFilteredOptions({
+        issuenumbers: editingStepStore.issuenumbers,
+      })
+      .reduce(
+        (acc, { stepNumber, ...rest }) => ({
+          ...acc,
+          [stepNumber]: [...(acc[stepNumber] || []), { stepNumber, ...rest }],
+        }),
+        {} as Record<number, StepOption[]>
+      )
 );
 
 const components = computed(() =>

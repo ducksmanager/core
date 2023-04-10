@@ -2,10 +2,11 @@ import { api } from "~/stores/api";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
-import { optionObjectToArray, Options, step, StepOption } from "~/stores/step";
+import { optionObjectToArray, step } from "~/stores/step";
 import { users } from "~/stores/users";
 import { EdgeDimensions } from "~/types/EdgeDimensions";
 import { LegacyComponent } from "~/types/LegacyComponent";
+import { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import { StepOptions } from "~/types/StepOptions";
 import {
   GET__edgecreator__contributors__$modelId,
@@ -26,27 +27,48 @@ const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 const { getOptionsFromDb } = useLegacyDb();
 
 export default () => {
-  const getDimensionsFromSvg = (svgElement: SVGElement) => ({
-    width: parseInt(svgElement.getAttribute("width")!) / 1.5,
-    height: parseInt(svgElement.getAttribute("height")!) / 1.5,
-  });
-  const getStepsFromSvg = (
+  const loadDimensionsFromSvg = (
+    issuenumber: string,
+    svgElement: SVGElement
+  ) => {
+    stepStore.setDimensions(
+      {
+        width: parseInt(svgElement.getAttribute("width")!) / 1.5,
+        height: parseInt(svgElement.getAttribute("height")!) / 1.5,
+      },
+      { issuenumbers: [issuenumber] }
+    );
+  };
+  const loadStepsFromSvg = (
     issuenumber: string,
     svgChildNodes: SVGElement[]
-  ): Options =>
+  ) => {
     svgChildNodes
       .filter(({ nodeName }) => nodeName === "g")
-      .map((group, stepNumber) => ({
-        component: group.getAttribute("class")!,
-        stepNumber,
-        issuenumber,
-        ...optionObjectToArray(
-          JSON.parse(
-            (group.getElementsByTagName("metadata")[0] || { textContent: "{}" })
-              .textContent!
-          )
-        )[0],
-      }));
+      .forEach((group, stepNumber) => {
+        stepStore.setOptionValues(
+          [
+            {
+              optionName: "component",
+              optionValue: group.getAttribute("class")!,
+            },
+            ...optionObjectToArray(
+              JSON.parse(
+                (
+                  group.getElementsByTagName("metadata")[0] || {
+                    textContent: "{}",
+                  }
+                ).textContent!
+              )
+            ),
+          ],
+          {
+            stepNumber,
+            issuenumbers: [issuenumber],
+          }
+        );
+      });
+  };
 
   const setPhotoUrlsFromSvg = (
     issuenumber: string,
@@ -76,7 +98,8 @@ export default () => {
     }
   };
 
-  const getDimensionsFromApi = (
+  const loadDimensionsFromApi = (
+    issuenumber: string,
     stepData: {
       [stepNumber: string]: {
         issuenumber: string;
@@ -84,21 +107,25 @@ export default () => {
         functionName: string;
         options: StepOptions;
       };
-    },
-    defaultDimensions: EdgeDimensions | null = { width: 15, height: 200 }
-  ): { width: number; height: number } | null => {
-    const dimensions = Object.values(stepData).find(
-      ({ stepNumber: originalStepNumber }) => originalStepNumber === -1
-    );
-    if (dimensions) {
-      return {
-        width: parseInt(dimensions.options!.Dimension_x as string),
-        height: parseInt(dimensions.options!.Dimension_y as string),
-      };
     }
-    return defaultDimensions;
+  ) => {
+    const defaultDimensions: EdgeDimensions = { width: 15, height: 200 };
+    const dimensions = Object.values(stepData).find(
+      ({ stepNumber: originalStepNumber, issuenumber: currentIssuenumber }) =>
+        issuenumber === currentIssuenumber && originalStepNumber === -1
+    )?.options;
+
+    const dimensionsToLoad = {
+      width: dimensions
+        ? parseInt(dimensions!.Dimension_x as string)
+        : defaultDimensions.width,
+      height: dimensions
+        ? parseInt(dimensions!.Dimension_y as string)
+        : defaultDimensions.height,
+    };
+    stepStore.setDimensions(dimensionsToLoad, { issuenumbers: [issuenumber] });
   };
-  const getStepsFromApi = async (
+  const loadStepsFromApi = async (
     publicationcode: string,
     issuenumber: string,
     apiSteps: {
@@ -111,9 +138,9 @@ export default () => {
     dimensions: { width: number; height: number },
     calculateBase64: boolean,
     onError: (error: string, stepNumber: number) => void
-  ): Promise<Options> => {
-    const steps: Options = [];
-    const stepNumber = 0;
+  ): Promise<OptionNameAndValue[][]> => {
+    const steps: OptionNameAndValue[][] = [];
+    let stepNumber = 0;
     for (const {
       stepNumber: originalStepNumber,
       functionName: originalComponentName,
@@ -126,21 +153,22 @@ export default () => {
       ) || { component: null };
       if (component) {
         try {
-          const options = await getOptionsFromDb(
-            publicationcode,
-            issuenumber,
-            originalStepNumber,
-            {
-              component,
-              options: originalOptions,
-            } as LegacyComponent,
-            dimensions,
-            calculateBase64
+          const options = optionObjectToArray(
+            await getOptionsFromDb(
+              publicationcode,
+              issuenumber,
+              originalStepNumber,
+              {
+                component,
+                options: originalOptions,
+              } as LegacyComponent,
+              dimensions,
+              calculateBase64
+            )
           );
-          steps.push({
-            issuenumber,
-            stepNumber,
-            ...optionObjectToArray(options)[0],
+          stepStore.setOptionValues(options, {
+            issuenumbers: [issuenumber],
+            stepNumber: stepNumber++,
           });
         } catch (e) {
           onError(
@@ -187,7 +215,7 @@ export default () => {
     targetIssuenumber: string
   ) => {
     const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber;
-    let loadedSteps: StepOption[] | null = null;
+    let loadedSteps: OptionNameAndValue[][];
     let dimensions: { width: number; height: number };
 
     const loadSvg = async (publishedVersion: boolean) => {
@@ -199,8 +227,8 @@ export default () => {
         publishedVersion
       );
 
-      dimensions = getDimensionsFromSvg(svgElement);
-      loadedSteps = getStepsFromSvg(issuenumber, svgChildNodes);
+      loadDimensionsFromSvg(issuenumber, svgElement);
+      loadStepsFromSvg(issuenumber, svgChildNodes);
       if (!onlyLoadStepsAndDimensions) {
         setPhotoUrlsFromSvg(issuenumber, svgChildNodes);
         setContributorsFromSvg(issuenumber, svgChildNodes);
@@ -235,8 +263,8 @@ export default () => {
           });
           const apiSteps =
             edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
-          dimensions = getDimensionsFromApi(apiSteps)!;
-          loadedSteps = await getStepsFromApi(
+          const dimensions = loadDimensionsFromApi(issuenumber, apiSteps)!;
+          await loadStepsFromApi(
             publicationcode,
             issuenumber,
             apiSteps,
@@ -254,11 +282,16 @@ export default () => {
         }
       }
     }
-    if (loadedSteps) {
+    if (loadedSteps!) {
       stepStore.setDimensions(dimensions!, {
         issuenumbers: [targetIssuenumber],
       });
-      stepStore.setSteps(targetIssuenumber, loadedSteps);
+      for (let stepNumber = 0; stepNumber < loadedSteps.length; stepNumber++) {
+        stepStore.setOptionValues(loadedSteps[stepNumber], {
+          stepNumber,
+          issuenumbers: [issuenumber],
+        });
+      }
     } else {
       throw new Error("No model found for issue " + issuenumber);
     }
@@ -281,12 +314,12 @@ export default () => {
   };
 
   return {
-    getDimensionsFromSvg,
-    getStepsFromSvg,
+    getDimensionsFromSvg: loadDimensionsFromSvg,
+    getStepsFromSvg: loadStepsFromSvg,
     setPhotoUrlsFromSvg,
     setContributorsFromSvg,
-    getDimensionsFromApi,
-    getStepsFromApi,
+    getDimensionsFromApi: loadDimensionsFromApi,
+    getStepsFromApi: loadStepsFromApi,
     setContributorsFromApi,
     loadModel,
     setPhotoUrlsFromApi,
