@@ -113,15 +113,12 @@ const stepComponentNames = computed(() =>
 );
 
 const visibleSteps = computed(() =>
-  stepComponents.value.reduce(
-    (acc, { stepNumber }) => ({
-      ...acc,
-      [stepNumber]: !getStepOptions(stepNumber).some(
+  stepComponents.value.map(
+    ({ stepNumber }) =>
+      !getStepOptions(stepNumber).some(
         ({ optionName, optionValue }) =>
           optionName === "visible" && optionValue === false
-      ),
-    }),
-    {} as Record<number, boolean>
+      )
   )
 );
 

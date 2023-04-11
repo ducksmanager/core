@@ -43,14 +43,20 @@
               "
               :title="$t('Click to show')"
               @click.stop="
-                stepStore.setOptionValues({ visible: true }, { stepNumber })
+                stepStore.setOptionValues(
+                  { visible: true },
+                  { stepNumber, issuenumbers: editingStepStore.issuenumbers }
+                )
               "
             />
             <i-bi-eye-fill
               v-else
               :title="$t('Click to hide')"
               @click.stop="
-                stepStore.setOptionValues({ visible: false }, { stepNumber })
+                stepStore.setOptionValues(
+                  { visible: false },
+                  { stepNumber, issuenumbers: editingStepStore.issuenumbers }
+                )
               "
             />
             <i-bi-front
@@ -278,8 +284,8 @@ const emit = defineEmits<{
 const issueNumbers = computed(() => mainStore.issuenumbers);
 
 const fontSearchUrl = computed(() => import.meta.env.VITE_FONT_SEARCH_URL);
-const optionsPerStepNumber = computed(
-  (): Record<number, StepOption[]> =>
+const optionsPerStepNumber = computed((): StepOption[][] =>
+  Object.values(
     stepStore
       .getFilteredOptions({
         issuenumbers: editingStepStore.issuenumbers,
@@ -291,6 +297,7 @@ const optionsPerStepNumber = computed(
         }),
         {} as Record<number, StepOption[]>
       )
+  )
 );
 
 const components = computed(() =>
