@@ -153,26 +153,22 @@ export default () => {
       ) || { component: null };
       if (component) {
         try {
+          console.log(component);
+          console.log(originalOptions);
           stepStore.setOptionValues(
-            [
-              {
-                optionName: "component",
-                optionValue: component,
-              },
-              ...optionObjectToArray(
-                await getOptionsFromDb(
-                  publicationcode,
-                  issuenumber,
-                  originalStepNumber,
-                  {
-                    component,
-                    options: originalOptions,
-                  } as LegacyComponent,
-                  dimensions,
-                  calculateBase64
-                )
-              ),
-            ],
+            optionObjectToArray(
+              await getOptionsFromDb(
+                publicationcode,
+                issuenumber,
+                stepNumber,
+                {
+                  component,
+                  options: originalOptions,
+                } as LegacyComponent,
+                dimensions,
+                calculateBase64
+              )
+            ),
             {
               issuenumbers: [issuenumber],
               stepNumber: stepNumber++,

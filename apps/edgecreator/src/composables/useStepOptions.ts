@@ -155,22 +155,7 @@ export const useStepOptions = (
       })
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
-  stepStore.setOptionValues(
-    [
-      {
-        optionName: "component",
-        optionValue: component,
-      },
-      ...Object.entries(props.options!).map(([optionName, optionValue]) => ({
-        optionName,
-        optionValue,
-      })),
-    ],
-    {
-      issuenumbers: [props.issuenumber],
-      stepNumber: props.stepNumber,
-    }
-  );
+  console.log(component);
 
   return {
     zoom,
