@@ -1,8 +1,8 @@
-export type ImageMetadata = {
+export interface ImageMetadata {
   base64: string | undefined;
   width: number | null;
   height: number | null;
-};
+}
 export default () => {
   const image = ref(null as ImageMetadata | null);
   const loadImage = (

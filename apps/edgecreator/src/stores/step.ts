@@ -6,30 +6,30 @@ import { main } from "~/stores/main";
 import { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import { OptionValue } from "~/types/OptionValue";
 
-export type StepOption = {
+export interface StepOption {
   stepNumber: number;
   issuenumber: string;
   optionName: string;
   optionValue: OptionValue;
-};
+}
 export type Options = StepOption[];
 
 export type OptionsArray = OptionNameAndValue[];
 
-export type Dimensions = {
+export interface Dimensions {
   issuenumber: string;
   width: number;
   height: number;
-};
+}
 
 export type DimensionsArray = Dimensions[];
 
 export const optionObjectToArray = (
   optionObject: Record<string, OptionValue>
 ): OptionsArray =>
-  Object.entries(optionObject).reduce(
+  Object.entries(optionObject).reduce<OptionsArray>(
     (acc, [optionName, optionValue]) => [...acc, { optionName, optionValue }],
-    [] as OptionsArray
+    []
   );
 
 const isColorOption = (optionName: string) =>
@@ -49,6 +49,15 @@ export const step = defineStore("step", () => {
       options.value.reduce(
         (max, { stepNumber }) => Math.max(max, stepNumber),
         -1
+      )
+    ),
+    optionsPerStepNumber = computed(() =>
+      options.value.reduce<Record<string, Options>>(
+        (acc, { stepNumber, ...rest }) => ({
+          ...acc,
+          [stepNumber]: [...(acc[stepNumber] || []), { ...rest }],
+        }),
+        {}
       )
     ),
     getFilteredOptions = ({
@@ -90,7 +99,6 @@ export const step = defineStore("step", () => {
       } = { issuenumbers: undefined, stepNumber: undefined }
     ) => {
       console.trace(newOptions);
-      console.log(overrides);
       const optionsAsArray = newOptions.hasOwnProperty("length")
         ? (newOptions as OptionsArray)
         : optionObjectToArray(newOptions as Record<string, OptionValue>);
@@ -102,6 +110,8 @@ export const step = defineStore("step", () => {
         overrides.issuenumbers === undefined
           ? editingStep().issuenumbers
           : overrides.issuenumbers;
+      console.log(defaultStepNumber);
+      console.log(defaultIssuenumbers);
       options.value = [
         ...new Set(
           [
@@ -110,7 +120,7 @@ export const step = defineStore("step", () => {
               issuenumbers: defaultIssuenumbers,
               optionNames: optionsAsArray.map(({ optionName }) => optionName),
             }),
-            ...defaultIssuenumbers.reduce(
+            ...defaultIssuenumbers.reduce<StepOption[]>(
               (acc, issuenumber) => [
                 ...acc,
                 ...optionsAsArray.map(({ optionName, optionValue }) => ({
@@ -120,7 +130,7 @@ export const step = defineStore("step", () => {
                   optionValue,
                 })),
               ],
-              [] as StepOption[]
+              []
             ),
           ].map((option) => JSON.stringify(option))
         ),
@@ -148,11 +158,11 @@ export const step = defineStore("step", () => {
     },
     setSteps = (issuenumber: string, issueSteps: StepOption[]) => {
       checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
-      nextTick().then(() => {
-        setOptionValues(issueSteps, {
-          issuenumbers: [issuenumber],
-        });
+      // nextTick().then(() => {
+      setOptionValues(issueSteps, {
+        issuenumbers: [issuenumber],
       });
+      // });
     },
     checkSameComponentsAsCompletedEdge = (
       issuenumber: string,
@@ -181,7 +191,7 @@ export const step = defineStore("step", () => {
 
       const getComponents = (steps: StepOption[]) =>
         steps
-          ?.filter(({ optionName }) => optionName === "component")
+          .filter(({ optionName }) => optionName === "component")
           .map(({ optionValue }) => optionValue)
           .join("+");
       const previousIssueComponents = getComponents(
@@ -190,7 +200,6 @@ export const step = defineStore("step", () => {
       const currentIssueComponents = getComponents(issueSteps);
       if (
         completedIssuenumber !== issuenumber &&
-        completedIssueSteps &&
         previousIssueComponents !== currentIssueComponents
       ) {
         throw new Error(
@@ -265,6 +274,7 @@ export const step = defineStore("step", () => {
       const existingStepOptions = getFilteredOptions({
         stepNumbers: [stepNumber],
       });
+      debugger;
 
       setOptionValues(
         existingStepOptions.map((option) => ({
@@ -285,6 +295,7 @@ export const step = defineStore("step", () => {
     options,
     dimensions,
     colors,
+    optionsPerStepNumber,
     maxStepNumber,
     getFilteredOptions,
     getFilteredDimensions,

@@ -18,9 +18,7 @@
 <script setup lang="ts">
 import { OptionValue } from "~/types/OptionValue";
 
-const emit = defineEmits<{
-  (e: "change", value: OptionValue): void;
-}>();
+const emit = defineEmits<(e: "change", value: OptionValue) => void>();
 
 const props = defineProps<{
   values: OptionValue[];

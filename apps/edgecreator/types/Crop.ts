@@ -1,4 +1,4 @@
-export type Crop = {
+export interface Crop {
   width: number;
   height: number;
   editMode: "single" | "range";
@@ -6,4 +6,4 @@ export type Crop = {
   publicationCode: string;
   issueNumber: string;
   issueNumberEnd: string;
-};
+}

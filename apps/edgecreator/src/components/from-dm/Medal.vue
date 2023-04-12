@@ -85,11 +85,7 @@ const {
 } = medal(contribution, userLevelPoints);
 
 const medalColors = ["bronze", "argent", "or"];
-const level = computed(() =>
-  nextLevel && currentLevel.value !== null
-    ? currentLevel.value + 1
-    : currentLevel.value
-);
+const level = computed(() => nextLevel && currentLevel.value + 1);
 const medalTitle = computed(() => {
   switch (contribution) {
     case "edge_photographer":

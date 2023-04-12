@@ -19,4 +19,4 @@ export const availableLocales: {
 ];
 
 export const getCurrentLocaleShortKey = (locale: string): string =>
-  availableLocales.find(({ key }) => key === locale)?.shortKey || "en";
+  availableLocales.find(({ key }) => key === locale)?.shortKey ?? "en";

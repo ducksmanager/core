@@ -50,7 +50,7 @@ const effectiveSource = computed(() =>
 
 watch(
   () => props.options.src,
-  async () => {
+  () => {
     if (effectiveSource.value) {
       loadImage(
         `${import.meta.env.VITE_EDGES_URL_PUBLIC}/${main().country}/elements/${

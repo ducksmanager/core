@@ -19,6 +19,7 @@
   </b-modal>
 </template>
 <script setup lang="ts">
+import { assert } from "@vueuse/core";
 import { onMounted } from "vue";
 
 const router = useRouter();
@@ -50,6 +51,7 @@ const toDashboard = () => {
 };
 
 const startEditing = () => {
+  assert(issueSpecification.value !== null);
   router.push(
     `/edit/${issueData.value!.publicationCode} ${issueSpecification.value}`
   );

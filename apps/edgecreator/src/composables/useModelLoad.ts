@@ -7,6 +7,7 @@ import { users } from "~/stores/users";
 import { EdgeDimensions } from "~/types/EdgeDimensions";
 import { LegacyComponent } from "~/types/LegacyComponent";
 import { OptionNameAndValue } from "~/types/OptionNameAndValue";
+import { OptionValue } from "~/types/OptionValue";
 import { StepOptions } from "~/types/StepOptions";
 import {
   GET__edgecreator__contributors__$modelId,
@@ -54,12 +55,8 @@ export default () => {
             },
             ...optionObjectToArray(
               JSON.parse(
-                (
-                  group.getElementsByTagName("metadata")[0] || {
-                    textContent: "{}",
-                  }
-                ).textContent!
-              )
+                group.getElementsByTagName("metadata")[0].textContent!
+              ) as Record<string, OptionValue>
             ),
           ],
           {
@@ -100,14 +97,15 @@ export default () => {
 
   const loadDimensionsFromApi = (
     issuenumber: string,
-    stepData: {
-      [stepNumber: string]: {
+    stepData: Record<
+      string,
+      {
         issuenumber: string;
         stepNumber: number;
         functionName: string;
         options: StepOptions;
-      };
-    }
+      }
+    >
   ) => {
     const defaultDimensions: EdgeDimensions = { width: 15, height: 200 };
     const dimensions = Object.values(stepData).find(
@@ -117,10 +115,10 @@ export default () => {
 
     const dimensionsToLoad = {
       width: dimensions
-        ? parseInt(dimensions!.Dimension_x as string)
+        ? parseInt(dimensions.Dimension_x as string)
         : defaultDimensions.width,
       height: dimensions
-        ? parseInt(dimensions!.Dimension_y as string)
+        ? parseInt(dimensions.Dimension_y as string)
         : defaultDimensions.height,
     };
     stepStore.setDimensions(dimensionsToLoad, { issuenumbers: [issuenumber] });
@@ -128,13 +126,14 @@ export default () => {
   const loadStepsFromApi = async (
     publicationcode: string,
     issuenumber: string,
-    apiSteps: {
-      [optionName: string]: {
+    apiSteps: Record<
+      string,
+      {
         stepNumber: number;
         functionName: string;
         options: StepOptions;
-      };
-    },
+      }
+    >,
     dimensions: { width: number; height: number },
     calculateBase64: boolean,
     onError: (error: string, stepNumber: number) => void
@@ -150,7 +149,7 @@ export default () => {
     )) {
       const { component } = rendersStore.supportedRenders.find(
         (component) => component.originalName === originalComponentName
-      ) || { component: null };
+      ) ?? { component: null };
       if (component) {
         try {
           console.log(component);

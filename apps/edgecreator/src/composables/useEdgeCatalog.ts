@@ -18,13 +18,13 @@ const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 
 const edgeCatalogStore = edgeCatalog();
 
-type Edge = {
+interface Edge {
   country: string;
   magazine: string;
   issuenumber: string;
   designers: string[];
   photographers: string[];
-};
+}
 
 export type EdgeWithVersionAndStatus = Edge & {
   status: string | null;
@@ -58,20 +58,16 @@ export default () => {
   ];
 
   const edgesByStatus = computed(() => {
-    const edgesByStatus: {
-      [status: string]: {
-        [publicationcode: string]: EdgeWithVersionAndStatus[];
-      };
-    } = Object.values(edgeCategories).reduce(
+    const edgesByStatus: Record<
+      string,
+      Record<string, EdgeWithVersionAndStatus[]>
+    > = Object.values(edgeCategories).reduce(
       (acc, { status }) => ({
         ...acc,
         [status]: {},
       }),
       {}
     );
-    if (!edgeCatalogStore.currentEdges) {
-      return edgesByStatus;
-    }
     return Object.values(edgeCatalogStore.currentEdges).reduce(
       (acc: typeof edgesByStatus, edge) => {
         const publicationcode = `${edge.country}/${edge.magazine}`;
@@ -91,7 +87,7 @@ export default () => {
   ) => {
     const issuecode = `${country}/${magazine} ${issuenumber}`;
     const getContributorsOfType = (contributionType: string) =>
-      (contributors || [])
+      (contributors ?? [])
         .filter(({ contribution }) => contribution === contributionType)
         .map(
           ({ userId }) =>

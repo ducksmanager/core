@@ -144,7 +144,7 @@ export default () => {
 
           const embeddedImageHeight =
             edgeDimensions.width *
-            (image!.dimensions.height / image!.dimensions.width);
+            (image.dimensions.height / image.dimensions.width);
           const fromBottom = dbOptions.Position === "bas";
           return {
             component: targetComponent,
@@ -191,13 +191,17 @@ export default () => {
           ],
           dbOptions
         );
+        const xStart = parseFloat(dbOptions.Pos_x_debut);
+        const yStart = parseFloat(dbOptions.Pos_y_debut);
+        const xEnd = parseFloat(dbOptions.Pos_x_fin);
+        const yEnd = parseFloat(dbOptions.Pos_y_fin);
         const filled = dbOptions.Rempli === "Oui";
         return {
           component: targetComponent,
-          x: dbOptions.Pos_x_debut,
-          y: dbOptions.Pos_y_debut,
-          width: dbOptions.Pos_x_fin - dbOptions.Pos_x_debut,
-          height: dbOptions.Pos_y_fin - dbOptions.Pos_y_debut,
+          x: xStart,
+          y: yStart,
+          width: xEnd - xStart,
+          height: yEnd - yStart,
           fill: filled ? rgbToHex(dbOptions.Couleur) : "transparent",
           stroke: filled ? "transparent" : rgbToHex(dbOptions.Couleur),
         };

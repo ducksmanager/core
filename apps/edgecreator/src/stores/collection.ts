@@ -78,7 +78,7 @@ export const collection = defineStore("collection", () => {
       }
     },
     fetchUserPoints = async () => {
-      const userId = user.value!.id;
+      const userId: number = user.value!.id;
       const userData = (
         await call(
           api().dmApi,

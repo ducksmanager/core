@@ -9,14 +9,14 @@ enum issue_condition {
 
 export default function () {
   const { t: $t } = useI18n();
-  type Condition = {
+  interface Condition {
     value: issue_condition | null;
     dbValue: string | null;
     color: string;
     text: string;
     label: string;
     labelContextMenu: string;
-  };
+  }
   const conditions: Condition[] = [
     {
       value: null,
@@ -65,6 +65,6 @@ export default function () {
     getConditionLabel: (givenDbValue: string) =>
       conditions.find(
         ({ dbValue }) => givenDbValue.toUpperCase() === dbValue?.toUpperCase()
-      )?.label || conditions.find(({ dbValue }) => dbValue === null)!.label,
+      )?.label ?? conditions.find(({ dbValue }) => dbValue === null)!.label,
   };
 }

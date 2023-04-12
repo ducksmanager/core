@@ -25,7 +25,7 @@ export const get = async (
         if (!file.includes(".")) {
           findInDir(filePath);
         } else if (REGEX_IS_SVG_FILE.test(file)) {
-          const edgeStatus = file.indexOf("_") === 0 ? "current" : "published";
+          const edgeStatus = file.startsWith("_") ? "current" : "published";
           fileList[edgeStatus].push({
             filename: filePath.replace(/.+\/edges\//, ""),
             mtime: fs.statSync(filePath).mtime.toISOString(),

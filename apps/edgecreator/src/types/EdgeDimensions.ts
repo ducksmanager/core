@@ -1,1 +1,4 @@
-export type EdgeDimensions = { width: number; height: number };
+export interface EdgeDimensions {
+  width: number;
+  height: number;
+}

@@ -1,12 +1,8 @@
 import { OptionValue } from "~/types/OptionValue";
 
-export type BaseProps = {
+export interface BaseProps {
   issuenumber: string;
   stepNumber: number;
 
-  options:
-    | {
-        [optionName: string]: OptionValue | null;
-      }
-    | undefined;
-};
+  options: Record<string, OptionValue | null> | undefined;
+}

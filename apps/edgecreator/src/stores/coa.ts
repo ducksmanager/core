@@ -11,24 +11,22 @@ import { call, getChunkedRequests } from "../../axios-helper";
 import { api } from "./api";
 
 export const coa = defineStore("coa", () => {
-  const countryNames = ref(null as { [countrycode: string]: string } | null),
-    publicationNames = ref({} as { [publicationcode: string]: string | null }),
+  const countryNames = ref(null as Record<string, string> | null),
+    publicationNames = ref({} as Record<string, string | null>),
     publicationNamesFullCountries = ref([] as string[]),
-    personNames = ref(null as { [personcode: string]: string } | null),
-    issueNumbers = ref({} as { [publicationcode: string]: string[] }),
+    personNames = ref(null as Record<string, string> | null),
+    issueNumbers = ref({} as Record<string, string[]>),
     isLoadingCountryNames = ref(false as boolean),
     issueCounts = ref(null),
-    addPublicationNames = (newPublicationNames: {
-      [publicationcode: string]: string | null;
-    }) => {
+    addPublicationNames = (
+      newPublicationNames: Record<string, string | null>
+    ) => {
       publicationNames.value = {
         ...publicationNames.value,
         ...newPublicationNames,
       };
     },
-    addIssueNumbers = (newIssueNumbers: {
-      [publicationcode: string]: string[];
-    }) => {
+    addIssueNumbers = (newIssueNumbers: Record<string, string[]>) => {
       issueNumbers.value = { ...issueNumbers.value, ...newIssueNumbers };
     },
     fetchCountryNames = async (locale: string) => {
@@ -123,7 +121,7 @@ export const coa = defineStore("coa", () => {
           );
 
         addIssueNumbers(
-          data.reduce(
+          data.reduce<typeof issueNumbers.value>(
             (acc, issue) => ({
               ...acc,
               [issue.publicationcode]: [
@@ -131,7 +129,7 @@ export const coa = defineStore("coa", () => {
                 issue.issuenumber,
               ],
             }),
-            {} as typeof issueNumbers.value
+            {}
           )
         );
       }

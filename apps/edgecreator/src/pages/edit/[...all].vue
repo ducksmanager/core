@@ -174,36 +174,34 @@ const dimensions = computed(() => stepStore.dimensions);
 const editingDimensions = computed(() => editingStepStore.dimensions);
 
 const dimensionsPerIssuenumber = computed(() =>
-  mainStore.issuenumbers?.reduce(
+  mainStore.issuenumbers.reduce<Record<string, Dimensions>>(
     (acc, issuenumber) => ({
       ...acc,
       [issuenumber]: stepStore.getFilteredDimensions({
         issuenumbers: [issuenumber],
       })[0],
     }),
-    {} as Record<string, Dimensions>
+    {}
   )
 );
 
 const stepsPerIssuenumber = computed(() =>
-  mainStore.issuenumbers?.reduce(
+  mainStore.issuenumbers.reduce<Record<string, Options>>(
     (acc, issuenumber) => ({
       ...acc,
       [issuenumber]: stepStore.getFilteredOptions({
         issuenumbers: [issuenumber],
       }),
     }),
-    {} as Record<string, Options>
+    {}
   )
 );
 watch(
   () => editingStepStore.issuenumbers,
-  async (newValue) => {
-    if (newValue) {
-      await mainStore.loadItems({ itemType: "elements" });
-      await mainStore.loadItems({ itemType: "photos" });
-      await mainStore.loadSurroundingEdges();
-    }
+  async () => {
+    await mainStore.loadItems({ itemType: "elements" });
+    await mainStore.loadItems({ itemType: "photos" });
+    await mainStore.loadSurroundingEdges();
   }
 );
 
@@ -323,9 +321,8 @@ const isPending = (issuenumber: string) =>
     `${mainStore.country}/${mainStore.magazine} ${issuenumber}`
   ];
 const isPublished = (issuenumber: string) =>
-  !!(edgeCatalog().publishedEdges[
-    `${mainStore.country}/${mainStore.magazine}`
-  ] || {})[issuenumber];
+  (edgeCatalog().publishedEdges[`${mainStore.country}/${mainStore.magazine}`] ||
+    {})[issuenumber];
 
 const rgbToHex = (r: number, g: number, b: number) =>
   `#${((r << 16) | (g << 8) | b).toString(16)}`;

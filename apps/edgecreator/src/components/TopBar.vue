@@ -273,13 +273,13 @@ const mainStore = main();
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { hasRole } = usePermissions();
 
-type ModelToClone = {
+interface ModelToClone {
   editMode: string;
   countryCode: string;
   publicationCode: string;
   issueNumber: string;
   issueNumberEnd: string;
-};
+}
 
 const emit = defineEmits<{
   (e: "overwrite-model", value: ModelToClone | null): void;
@@ -300,7 +300,7 @@ const collapseClone = ref(false as boolean);
 
 const hasPhotoUrl = computed(() => Object.keys(mainStore.photoUrls).length);
 const publicationName = computed(
-  () => coa().publicationNames?.[`${mainStore.country}/${mainStore.magazine}`]
+  () => coa().publicationNames[`${mainStore.country}/${mainStore.magazine}`]
 );
 const uniqueDimensions = computed(() =>
   [

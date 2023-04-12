@@ -1,6 +1,6 @@
 import { computed } from "vue";
 
-const MEDAL_LEVELS: { [contribution: string]: { [level: number]: number } } = {
+const MEDAL_LEVELS: Record<string, Record<number, number>> = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },
   edge_designer: { 1: 20, 2: 70, 3: 150 },
   duckhunter: { 1: 1, 2: 3, 3: 15 },
@@ -15,11 +15,11 @@ export default function (contribution: string, userLevelPoints: number) {
       const maxThresholdReached =
         Object.values(level)
           .filter((minimumPoints) => userLevelPoints >= minimumPoints)
-          .pop() || 0;
+          .pop() ?? 0;
       return (
         Object.keys(level)
           .map((key) => parseInt(key))
-          .find((key) => level[key] === maxThresholdReached) || 0
+          .find((key) => level[key] === maxThresholdReached) ?? 0
       );
     }),
     currentLevelPoints = computed(

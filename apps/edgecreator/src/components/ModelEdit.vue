@@ -290,25 +290,25 @@ const optionsPerStepNumber = computed((): StepOption[][] =>
       .getFilteredOptions({
         issuenumbers: editingStepStore.issuenumbers,
       })
-      .reduce(
+      .reduce<Record<number, StepOption[]>>(
         (acc, { stepNumber, ...rest }) => ({
           ...acc,
           [stepNumber]: [...(acc[stepNumber] || []), { stepNumber, ...rest }],
         }),
-        {} as Record<number, StepOption[]>
+        {}
       )
   )
 );
 
 const components = computed(() =>
-  Object.entries(optionsPerStepNumber.value).reduce(
+  Object.entries(optionsPerStepNumber.value).reduce<Record<number, string>>(
     (acc, [stepNumber, options]) => ({
       ...acc,
       [stepNumber]: options.find(
         ({ optionName }) => optionName === "component"
       )!.optionValue,
     }),
-    {} as Record<number, string>
+    {}
   )
 );
 
@@ -381,6 +381,16 @@ const splitImageAcrossEdges = () => {
     leftOffset -= issueDimensions.width;
   }
 };
+
+onUpdated(() => {
+  console.log("!");
+  debugger;
+});
+
+onRenderTriggered(() => {
+  console.log("!");
+  debugger;
+});
 </script>
 <style lang="scss">
 #edit-card {

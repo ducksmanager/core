@@ -31,9 +31,9 @@ export const get = async (
   cloudinary.search
     .expression(
       `tags=${font} AND ${Object.keys(context)
-        .reduce(
+        .reduce<string[]>(
           (acc, key) => [...acc, `context.${key}="${String(context[key])}"`],
-          [] as string[]
+          []
         )
         .join(" AND ")}`
     )
