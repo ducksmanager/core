@@ -92,9 +92,7 @@ const { t: $t, locale } = useI18n();
 
 const { getEdgeStatus, loadCatalog, isCatalogLoaded } = edgeCatalog();
 
-const emit = defineEmits<{
-  (e: "change", value: Crop): void;
-}>();
+const emit = defineEmits<(e: "change", value: Crop) => void>();
 
 const props = withDefaults(
   defineProps<{
@@ -141,9 +139,8 @@ const publications = computed(
   () =>
     coa().publicationNames &&
     Object.keys(coa().publicationNames)
-      .filter(
-        (publicationCode) =>
-          publicationCode.indexOf(`${currentCountryCode.value}/`) === 0
+      .filter((publicationCode) =>
+        publicationCode.startsWith(`${currentCountryCode.value}/`)
       )
       .map((publicationCode) => ({
         text: coa().publicationNames[publicationCode],
@@ -155,7 +152,7 @@ const publications = computed(
 );
 
 const publicationIssues = computed(
-  () => coa().issueNumbers?.[currentPublicationCode.value!]
+  () => coa().issueNumbers[currentPublicationCode.value!]
 );
 
 const issues = computed(

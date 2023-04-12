@@ -21,7 +21,7 @@ export const main = defineStore("main", () => {
     magazine = ref(null as string | null),
     issuenumbers = ref([] as string[]),
     isRange = ref(false as boolean),
-    photoUrls = ref({} as { [issuenumber: string]: string }),
+    photoUrls = ref({} as Record<string, string>),
     contributors = ref([] as ModelContributor[]),
     edgesBefore = ref([] as EdgeWithModelId[]),
     edgesAfter = ref([] as EdgeWithModelId[]),
@@ -33,13 +33,13 @@ export const main = defineStore("main", () => {
       () => coa().issueNumbers[publicationcode.value] || []
     ),
     publicationElementsForGallery = computed(() =>
-      publicationElements.value?.map((elementFileName) => ({
+      publicationElements.value.map((elementFileName) => ({
         name: elementFileName,
         url: `/edges/${country}/elements/${elementFileName}`,
       }))
     ),
     publicationPhotosForGallery = computed(() =>
-      publicationPhotos.value?.map((elementFileName) => ({
+      publicationPhotos.value.map((elementFileName) => ({
         name: elementFileName,
         url: `/edges/${country}/photos/${elementFileName}`,
       }))
@@ -151,30 +151,6 @@ export const main = defineStore("main", () => {
           index <= lastIssueIndex + 10
       );
 
-      const getEdgePublicationStates = async (
-        edges: string[]
-      ): Promise<EdgeWithModelId[]> =>
-        Object.values(
-          (
-            await call(
-              api().dmApi,
-              new GET__edges__$countrycode__$magazinecode__$issuenumbers({
-                params: {
-                  countrycode: publicationcode.value.split("/")[0],
-                  magazinecode: publicationcode.value.split("/")[1],
-                  issuenumbers: edges.join(","),
-                },
-              })
-            )
-          ).data
-        ).sort(
-          (
-            { issuenumber: issuenumber1 }: { issuenumber: string },
-            { issuenumber: issuenumber2 }: { issuenumber: string }
-          ) =>
-            Math.sign(edges.indexOf(issuenumber1) - edges.indexOf(issuenumber2))
-        );
-
       if (issuesBefore.length) {
         edgesBefore.value = await getEdgePublicationStates(issuesBefore);
       }
@@ -183,6 +159,27 @@ export const main = defineStore("main", () => {
         edgesAfter.value = await getEdgePublicationStates(issuesAfter);
       }
     },
+    getEdgePublicationStates = async (edges: string[]) =>
+      Object.values(
+        (
+          await call(
+            api().dmApi,
+            new GET__edges__$countrycode__$magazinecode__$issuenumbers({
+              params: {
+                countrycode: publicationcode.value.split("/")[0],
+                magazinecode: publicationcode.value.split("/")[1],
+                issuenumbers: edges.join(","),
+              },
+            })
+          )
+        ).data
+      ).sort(
+        (
+          { issuenumber: issuenumber1 }: { issuenumber: string },
+          { issuenumber: issuenumber2 }: { issuenumber: string }
+        ) =>
+          Math.sign(edges.indexOf(issuenumber1) - edges.indexOf(issuenumber2))
+      ),
     getChunkedRequests = async ({
       api,
       url,

@@ -1,6 +1,6 @@
 import { OptionValue } from "./OptionValue";
 
-export type OptionNameAndValue = {
+export interface OptionNameAndValue {
   optionName: string;
   optionValue: OptionValue;
-};
+}

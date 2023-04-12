@@ -29,6 +29,7 @@
     }
   },
   "include": [
+    "types/*.ts",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",

@@ -217,7 +217,7 @@ const uploadAll = async () => {
           issuenumber: crop.issueNumber,
         }))
       );
-      const isSuccess = response?.paths?.svgPath;
+      const isSuccess = response.paths.svgPath;
       crop.sent = !!isSuccess;
     });
   }
@@ -230,22 +230,18 @@ const read = (files: FileList) =>
     type: string;
     url: string;
   } | void>((resolve, reject) => {
-    if (!files || files.length === 0) {
+    if (!files.length) {
       resolve();
       return;
     }
     const file = files[0];
     if (file.type === "image/jpeg") {
-      if (URL) {
-        resolve({
-          loaded: true,
-          name: file.name,
-          type: file.type,
-          url: URL.createObjectURL(file),
-        });
-      } else {
-        reject(new Error(i18n.t("Your browser is not supported ").toString()));
-      }
+      resolve({
+        loaded: true,
+        name: file.name,
+        type: file.type,
+        url: URL.createObjectURL(file),
+      });
     } else {
       reject(new Error(i18n.t("Please choose a JPG or JPEG file").toString()));
     }

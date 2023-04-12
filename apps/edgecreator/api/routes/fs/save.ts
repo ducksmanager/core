@@ -81,7 +81,7 @@ export const post = async (
       try {
         fs.unlinkSync(getSvgPath(false, country, magazine, issuenumber));
       } catch (error) {
-        if ((error as unknown as { code?: string }).code === "ENOENT") {
+        if ((error as { code?: string }).code === "ENOENT") {
           console.log("No temporary SVG file to delete was found");
         } else {
           res.writeHead(500);

@@ -1,24 +1,24 @@
-export type Call<
+export interface Call<
   ResBody,
   Params = Record<string, string> | undefined,
   ReqBody = unknown,
   Query = unknown
-> = {
+> {
   resBody?: ResBody;
   params?: Params;
   reqBody?: ReqBody;
   query?: Query;
-};
+}
 
-export type CallWithoutResBody<
+export interface CallWithoutResBody<
   Params = Record<string, string> | undefined,
   ReqBody = unknown,
   Query = unknown
-> = {
+> {
   params?: Params;
   reqBody?: ReqBody;
   query?: Query;
-};
+}
 
 export abstract class ContractWithMethodAndUrl<T extends Call<unknown>> {
   constructor(t?: Omit<T, "resBody">) {

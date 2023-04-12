@@ -6,7 +6,7 @@ import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional defaul
 import { createHead } from "@vueuse/head";
 import { BCarousel, BToastPlugin } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
-// @ts-ignore
+// @ts-expect-error
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";

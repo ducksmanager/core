@@ -10,23 +10,11 @@ import {
 
 import { call, getChunkedRequests } from "../../axios-helper";
 export const edgeCatalog = defineStore("edgeCatalog", () => {
-  const currentEdges = ref(
-      {} as {
-        [issuecode: string]: EdgeWithVersionAndStatus;
-      }
-    ),
+  const currentEdges = ref({} as Record<string, EdgeWithVersionAndStatus>),
     publishedEdges = ref(
-      {} as {
-        [publicationcode: string]: {
-          [issuenumber: string]: { issuenumber: string; v3: boolean };
-        };
-      }
+      {} as Record<string, Record<string, { issuenumber: string; v3: boolean }>>
     ),
-    publishedEdgesSteps = ref(
-      {} as {
-        [publicationcode: string]: ModelSteps;
-      }
-    ),
+    publishedEdgesSteps = ref({} as Record<string, ModelSteps>),
     fetchPublishedEdges = async (publicationcode: string) => {
       const [countrycode, magazinecode] = publicationcode.split("/");
       const publishedEdges = (
@@ -41,16 +29,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         [publicationcode]: publishedEdges,
       });
     },
-    addCurrentEdges = (edges: {
-      [issuecode: string]: EdgeWithVersionAndStatus;
-    }) => {
+    addCurrentEdges = (edges: Record<string, EdgeWithVersionAndStatus>) => {
       currentEdges.value = { ...currentEdges.value, ...edges };
     },
-    addPublishedEdges = (newPublishedEdges: {
-      [publicationcode: string]: {
-        [issuenumber: string]: { issuenumber: string; v3: boolean };
-      };
-    }) => {
+    addPublishedEdges = (
+      newPublishedEdges: Record<
+        string,
+        Record<string, { issuenumber: string; v3: boolean }>
+      >
+    ) => {
       for (const publicationcode of Object.keys(publishedEdges)) {
         const publicationEdgesForPublication =
           newPublishedEdges[publicationcode];

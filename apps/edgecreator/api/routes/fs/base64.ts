@@ -14,10 +14,9 @@ export const get = async (
   }>
 ) => {
   const targetUrl = req.query.targetUrl;
-  const url =
-    targetUrl.indexOf("https://res.cloudinary.com") === 0
-      ? targetUrl
-      : `${process.env.VITE_EDGES_URL}/${targetUrl}`;
+  const url = targetUrl.startsWith("https://res.cloudinary.com")
+    ? targetUrl
+    : `${process.env.VITE_EDGES_URL!}/${targetUrl}`;
 
   const response = await axios.get(url);
   if (response.status === 200) {

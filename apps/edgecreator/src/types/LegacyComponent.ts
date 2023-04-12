@@ -49,10 +49,10 @@ export type LegacyComponent =
       component: "Rectangle";
       options: {
         Rempli: string;
-        Pos_x_debut: number;
-        Pos_y_debut: number;
-        Pos_x_fin: number;
-        Pos_y_fin: number;
+        Pos_x_debut: string;
+        Pos_y_debut: string;
+        Pos_x_fin: string;
+        Pos_y_fin: string;
         Couleur: string;
       };
     }

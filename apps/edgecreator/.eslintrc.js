@@ -6,13 +6,19 @@ module.exports = {
     "plugin:prettier-vue/recommended",
     "prettier",
     "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/strict"
   ],
   parser: "vue-eslint-parser",
-  parserOptions: { parser: "@typescript-eslint/parser" },
+  parserOptions: {
+    parser: "@typescript-eslint/parser",
+    project: true,
+    extraFileExtensions: [".vue"]
+  },
   overrides: [
     {
-      files: ["*.js", "*.ts", "*.vue"],
-    },
+      files: ["*.js", "*.ts", "*.vue"]
+    }
   ],
   root: true,
   rules: {
@@ -31,9 +37,9 @@ module.exports = {
       "kebab-case",
       {
         registeredComponentsOnly: true,
-        ignores: [],
-      },
-    ],
+        ignores: []
+      }
+    ]
   },
   plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
   ignorePatterns: [
@@ -43,5 +49,6 @@ module.exports = {
     "vendor",
     "auto-imports.d.ts",
     "component.d.ts",
-  ],
+    "vite.config.ts"
+  ]
 };

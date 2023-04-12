@@ -39,9 +39,7 @@ interface BookcaseEdgeWithPopularity extends BookcaseEdge {
 defineProps<{
   issues: BookcaseEdgeWithPopularity[];
   userPoints: number;
-  publicationNames: {
-    [publicationcode: string]: string;
-  };
+  publicationNames: Record<string, string>;
 }>();
 
 const currentSlide = ref(0);

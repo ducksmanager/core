@@ -44,9 +44,10 @@ const props = withDefaults(
 
 const values = ref(props);
 
-const emit = defineEmits<{
-  (e: "change", value: { width: number; height: number }): void;
-}>();
+const emit =
+  defineEmits<
+    (e: "change", value: { width: number; height: number }) => void
+  >();
 
 emit("change", {
   width: props.width,

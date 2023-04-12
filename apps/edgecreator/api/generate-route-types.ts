@@ -5,7 +5,10 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 const app = express();
 app.use("/", router({ directory: `${process.cwd()}/routes` }));
 
-type Route = { path: string | RegExp; methods: { [method: string]: boolean } };
+interface Route {
+  path: string | RegExp;
+  methods: Record<string, boolean>;
+}
 const routes: Route[] = [];
 app._router.stack.forEach(
   (middleware: {
@@ -34,7 +37,7 @@ const imports: string[] = [
 ];
 imports.push(
   readdirSync("../types")
-    .filter((file) => /\.ts$/.test(file) && /^[A-Z]/.test(file[0]))
+    .filter((file) => file.endsWith(".ts") && /^[A-Z]/.test(file[0]))
     .map(
       (file) =>
         `import { ${[
@@ -47,7 +50,7 @@ imports.push(
 );
 const types: string[] = [];
 
-let routeClassList = {} as { [routePathWithMethod: string]: string };
+let routeClassList = {} as Record<string, string>;
 routes.forEach((route) => {
   routeClassList = Object.keys(route.methods)
     .filter((method) => ["get", "post", "delete", "put"].includes(method))

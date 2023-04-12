@@ -102,9 +102,7 @@ withDefaults(
   }
 );
 
-const emit = defineEmits<{
-  (e: "change", value: string): void;
-}>();
+const emit = defineEmits<(e: "change", value: string) => void>();
 
 const clickedImage = ref(null as GalleryItem | null);
 const showUploadModal = ref(false as boolean);

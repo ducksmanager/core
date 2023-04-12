@@ -101,7 +101,7 @@ const { image, loadImage } = useBase64Legacy();
 
 watch(
   () => textImage.value,
-  async (newValue) => {
+  (newValue) => {
     if (newValue) {
       loadImage(textImage.value!.url, (img) => {
         enableDragResize(img, {});
@@ -143,7 +143,10 @@ watch(
                 options.x =
                   props.options.x - (options.width - props.options.width!) / 2;
               }
-              step().setOptionValues(options);
+              step().setOptionValues(options, {
+                stepNumber: props.stepNumber,
+                issuenumbers: [props.issuenumber],
+              });
             },
           });
           applyTextImageDimensions();
@@ -261,7 +264,10 @@ const applyTextImageDimensions = () => {
     options.widthCompression = undefined;
   }
   options.aspectRatio = options.height / options.width!;
-  step().setOptionValues(options);
+  step().setOptionValues(options, {
+    stepNumber: props.stepNumber,
+    issuenumbers: [props.issuenumber],
+  });
 };
 
 refreshPreview();

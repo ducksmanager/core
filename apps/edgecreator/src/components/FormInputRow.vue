@@ -88,9 +88,9 @@ let values = computed(() => [
   ...new Set(
     props.optionName === "xlink:href"
       ? (inputValues.value as string[]).map(
-          (value) => value!.match(/\/([^/]+)$/)![1]
+          (value) => value.match(/\/([^/]+)$/)![1]
         )
-      : (inputValues.value as PossibleInputValueType[])
+      : inputValues.value
   ),
 ]);
 const isTextImageOption = computed(

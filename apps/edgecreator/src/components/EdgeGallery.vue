@@ -58,9 +58,7 @@ const issueNumbers = computed(() => coa().issueNumbers);
 
 const populateItems = async (
   publicationcode: string,
-  itemsForPublication: {
-    [issuenumber: string]: { modelId?: number; v3: boolean };
-  }
+  itemsForPublication: Record<string, { modelId?: number; v3: boolean }>
 ) => {
   const [countryCode, magazineCode] = publicationcode.split("/");
   const publishedIssueModels = Object.values(itemsForPublication)
@@ -88,12 +86,12 @@ const populateItems = async (
         let quality;
         let tooltip;
         const allSteps =
-          publishedEdgesSteps.value[props.publicationcode]?.[issuenumber];
+          publishedEdgesSteps.value[props.publicationcode][issuenumber];
         if (!allSteps) {
           quality = 0;
           tooltip = "No steps or dimensions found";
         } else {
-          const issueStepWarnings: { [stepNumber: number]: string[] } = {};
+          const issueStepWarnings: Record<number, string[]> = {};
           const dimensions = getDimensionsFromApi(allSteps, null);
           if (!dimensions) {
             issueStepWarnings[-1] = ["No dimensions"];
@@ -102,7 +100,7 @@ const populateItems = async (
             props.publicationcode,
             issuenumber,
             allSteps,
-            dimensions!,
+            dimensions,
             false,
             (error: string, stepNumber: number) => {
               if (!issueStepWarnings[stepNumber]) {

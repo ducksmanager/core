@@ -21,7 +21,7 @@ export const addUrlParamsRequestInterceptor = <
           config.urlParams || ({} as Record<string, string>)
         ).reduce(
           (pathname, [k, v]) =>
-            pathname.replace(`:${k}`, encodeURIComponent(v as string)),
+            pathname.replace(`:${k}`, encodeURIComponent(v)),
           currentUrl.pathname
         );
         return {
@@ -46,12 +46,7 @@ declare module "axios" {
   }
 }
 
-type MyCall = Call<
-  unknown,
-  Record<string, string> | undefined,
-  unknown | undefined,
-  unknown | undefined
->;
+type MyCall = Call<unknown>;
 
 export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
   instance: AxiosInstance | AxiosCacheInstance,
@@ -90,10 +85,8 @@ export const getChunkedRequests = async <
           ...((await callFn(slice.join(","))).data as never[]),
         ]
       : {
-          ...(acc as { [key: string]: never }),
-          ...((await callFn(slice.join(","))).data as {
-            [key: string]: never;
-          }),
+          ...(acc as Record<string, never>),
+          ...((await callFn(slice.join(","))).data as Record<string, never>),
         };
   }
   return acc;

@@ -34,7 +34,7 @@ const { placement = "top" } = defineProps<{
   placement?: string;
 }>();
 
-defineEmits<{ (e: "@open:popper"): void }>();
+defineEmits<(e: "@open:popper") => void>();
 
 const closeDelay = 2000;
 const closePopupSoon = () => {

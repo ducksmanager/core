@@ -15,14 +15,14 @@ export const authenticateToken = (
   res: Response,
   next: CallableFunction
 ) => {
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")?.[1];
 
   if (token == null) return res.sendStatus(401);
 
   jwt.verify(
     token,
-    process.env.TOKEN_SECRET as string,
+    process.env.TOKEN_SECRET!,
     (err: unknown, user: unknown) => {
       if (err) {
         return res.sendStatus(401);
@@ -44,8 +44,8 @@ export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
   const user = req.user;
   if (
     !(
-      user?.privileges?.["EdgeCreator"] === "Admin" ||
-      ((user?.privileges?.["EdgeCreator"] === "Edition" ||
+      user?.privileges.EdgeCreator === "Admin" ||
+      ((user?.privileges.EdgeCreator === "Edition" ||
         !fileAlreadyExists) /* Initial photo upload (viewer role is enough for that) */ &&
         !runExport)
     )
@@ -61,9 +61,7 @@ export const checkUserIsAdminOrEditor = (
   next: CallableFunction
 ) => {
   const user = req.user;
-  if (
-    !(user && ["Admin", "Edition"].includes(user?.privileges?.["EdgeCreator"]))
-  ) {
+  if (!(user && ["Admin", "Edition"].includes(user.privileges.EdgeCreator))) {
     return res.sendStatus(403);
   }
   next();
@@ -74,7 +72,7 @@ export const injectTokenIfValid = (
   _: Response,
   next: CallableFunction
 ) => {
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1];
 
   if (token == null) {
@@ -82,7 +80,7 @@ export const injectTokenIfValid = (
   } else {
     jwt.verify(
       token,
-      process.env.TOKEN_SECRET as string,
+      process.env.TOKEN_SECRET!,
       (err: unknown, user: unknown) => {
         if (user) {
           req.user = user as User;

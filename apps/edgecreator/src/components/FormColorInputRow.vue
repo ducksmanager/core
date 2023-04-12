@@ -129,11 +129,12 @@ watch(
   () => inputValues.value,
   (inputValues) => {
     isTransparent.value = inputValues[0] === "transparent";
-  }
+  },
+  { immediate: true }
 );
 
 const getOptionStringValuesByStepNumber = (options: Options) =>
-  options.reduce(
+  options.reduce<Record<number, string[]>>(
     (acc, option) => ({
       ...acc,
       [option.stepNumber]: [
@@ -141,7 +142,7 @@ const getOptionStringValuesByStepNumber = (options: Options) =>
         option.optionValue as string,
       ],
     }),
-    {} as Record<number, string[]>
+    {}
   );
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
