@@ -175,7 +175,7 @@ watch(
     }
 
     ui().zoom = 1.5;
-    nextTick(() =>
+    nextTick(() => {
       saveEdgeSvg(
         mainStore.country!,
         mainStore.magazine!,
@@ -195,8 +195,8 @@ watch(
           result.value = "error";
           issueIndexToSave.value = null;
         }
-      })
-    );
+      });
+    });
   }
 );
 

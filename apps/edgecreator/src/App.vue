@@ -21,7 +21,7 @@ watch(
           role === "EdgeCreator" && ["Editor", "Admin"].includes(privilege)
       )
     ) {
-      location.replace(`${import.meta.env.VITE_DM_API_URL}/login`);
+      location.replace(`${import.meta.env.VITE_DM_API_URL as string}/login`);
     }
   }
 );

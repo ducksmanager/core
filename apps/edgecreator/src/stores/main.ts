@@ -28,21 +28,30 @@ export const main = defineStore("main", () => {
     publicationElements = ref([] as string[]),
     publicationPhotos = ref([] as string[]),
     warnings = ref([] as string[]),
-    publicationcode = computed(() => `${country.value}/${magazine.value}`),
+    publicationcode = computed(
+      () =>
+        country.value && magazine.value && `${country.value}/${magazine.value}`
+    ),
     publicationIssues = computed(
-      () => coa().issueNumbers[publicationcode.value] || []
+      () =>
+        (publicationcode.value && coa().issueNumbers[publicationcode.value]) ||
+        []
     ),
-    publicationElementsForGallery = computed(() =>
-      publicationElements.value.map((elementFileName) => ({
-        name: elementFileName,
-        url: `/edges/${country}/elements/${elementFileName}`,
-      }))
+    publicationElementsForGallery = computed(
+      () =>
+        country.value &&
+        publicationElements.value.map((elementFileName) => ({
+          name: elementFileName,
+          url: `/edges/${country.value!}/elements/${elementFileName}`,
+        }))
     ),
-    publicationPhotosForGallery = computed(() =>
-      publicationPhotos.value.map((elementFileName) => ({
-        name: elementFileName,
-        url: `/edges/${country}/photos/${elementFileName}`,
-      }))
+    publicationPhotosForGallery = computed(
+      () =>
+        country.value &&
+        publicationPhotos.value.map((elementFileName) => ({
+          name: elementFileName,
+          url: `/edges/${country.value!}/photos/${elementFileName}`,
+        }))
     ),
     addContributor = ({
       issuenumber,
@@ -114,7 +123,7 @@ export const main = defineStore("main", () => {
       }
     },
     loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
-      const [country, magazine] = publicationcode.value.split("/");
+      const [country, magazine] = publicationcode.value!.split("/");
       const items = (
         await call(
           api().edgeCreatorApi,
@@ -122,7 +131,7 @@ export const main = defineStore("main", () => {
             params: { imageType: itemType, country, magazine },
           })
         )
-      ).data.sort(numericSortCollator.compare);
+      ).data.sort((a, b) => numericSortCollator.compare(a, b));
       if (itemType === "elements") {
         publicationElements.value = items;
       } else {
@@ -130,7 +139,7 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      coa().fetchIssueNumbers([publicationcode.value]),
+      coa().fetchIssueNumbers([publicationcode.value!]),
     loadSurroundingEdges = async () => {
       const firstIssueIndex = publicationIssues.value.findIndex(
         (issue) => issue === issuenumbers.value[0]

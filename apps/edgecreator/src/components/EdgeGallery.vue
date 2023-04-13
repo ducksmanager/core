@@ -31,9 +31,10 @@
 <script setup lang="ts">
 import { coa } from "~/stores/coa";
 import { edgeCatalog } from "~/stores/edgeCatalog";
+import { step } from "~/stores/step";
 import { GalleryItem } from "~/types/GalleryItem";
 
-const { getDimensionsFromApi, getStepsFromApi } = useModelLoad();
+const { loadDimensionsFromApi, loadStepsFromApi } = useModelLoad();
 
 const props = withDefaults(
   defineProps<{
@@ -72,7 +73,7 @@ const populateItems = async (
     await Promise.all(
       Object.keys(itemsForPublication).map(async (issuenumber) => {
         const url = `${
-          import.meta.env.VITE_EDGES_URL
+          import.meta.env.VITE_EDGES_URL as string
         }/${countryCode}/gen/${magazineCode}.${issuenumber}.png`;
         if (itemsForPublication[issuenumber].v3) {
           return {
@@ -92,11 +93,15 @@ const populateItems = async (
           tooltip = "No steps or dimensions found";
         } else {
           const issueStepWarnings: Record<number, string[]> = {};
-          const dimensions = getDimensionsFromApi(allSteps, null);
-          if (!dimensions) {
+          loadDimensionsFromApi(allSteps, null);
+
+          const dimensions = step().getFilteredDimensions({
+            issuenumbers: [issuenumber],
+          });
+          if (!dimensions.length) {
             issueStepWarnings[-1] = ["No dimensions"];
           }
-          const issueSteps = await getStepsFromApi(
+          await loadStepsFromApi(
             props.publicationcode,
             issuenumber,
             allSteps,
@@ -111,6 +116,9 @@ const populateItems = async (
               );
             }
           );
+          const issueSteps = step().getFilteredOptions({
+            issuenumbers: [issuenumber],
+          });
           if (!issueSteps.length) {
             issueStepWarnings[0] = ["No steps"];
             quality = 0;

@@ -251,7 +251,7 @@ watch(
       try {
         await loadModel(country, magazine, issuenumber, issuenumber);
       } catch {
-        let previousIssuenumber = mainStore.issuenumbers[idx - 1];
+        const previousIssuenumber = mainStore.issuenumbers[idx - 1];
         if (previousIssuenumber) {
           stepStore.copyDimensionsAndSteps(issuenumber, previousIssuenumber);
         } else {
@@ -299,7 +299,7 @@ const overwriteDimensions = ({
 };
 
 const getImageUrl = (fileType: string, fileName: string) =>
-  `${import.meta.env.VITE_EDGES_URL_PUBLIC}/${mainStore.country}/${
+  `${import.meta.env.VITE_EDGES_URL_PUBLIC as string}/${mainStore.country!}/${
     fileType === "elements" ? fileType : "photos"
   }/${fileName}`;
 
@@ -318,11 +318,12 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
 
 const isPending = (issuenumber: string) =>
   !!edgeCatalog().currentEdges[
-    `${mainStore.country}/${mainStore.magazine} ${issuenumber}`
+    `${mainStore.country!}/${mainStore.magazine!} ${issuenumber}`
   ];
 const isPublished = (issuenumber: string) =>
-  (edgeCatalog().publishedEdges[`${mainStore.country}/${mainStore.magazine}`] ||
-    {})[issuenumber];
+  (edgeCatalog().publishedEdges[
+    `${mainStore.country!}/${mainStore.magazine!}`
+  ] || {})[issuenumber];
 
 const rgbToHex = (r: number, g: number, b: number) =>
   `#${((r << 16) | (g << 8) | b).toString(16)}`;

@@ -84,7 +84,7 @@ const inputValues = computed(() =>
     .filter(({ optionName }) => optionName === props.optionName)
     .map(({ optionValue }) => optionValue as PossibleInputValueType)
 );
-let values = computed(() => [
+const values = computed(() => [
   ...new Set(
     props.optionName === "xlink:href"
       ? (inputValues.value as string[]).map(

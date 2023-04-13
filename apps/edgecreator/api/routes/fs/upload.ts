@@ -16,7 +16,7 @@ import {
   PUT__edgecreator__multiple_edge_photo,
 } from "ducksmanager/types/routes";
 
-const edgesPath = process.env.EDGES_PATH;
+const edgesPath: string = process.env.EDGES_PATH!;
 
 const upload = multer({
   dest: "/tmp/",

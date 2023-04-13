@@ -2,7 +2,7 @@ import fs from "fs";
 
 import { ExpressCall } from "~routes/_express-call";
 
-export const get = async (
+export const get = (
   ...[req, res]: ExpressCall<{
     params: {
       imageType: "elements" | "photos";
@@ -24,7 +24,7 @@ export const get = async (
   try {
     return res.json(
       fs
-        .readdirSync(`${process.env.EDGES_PATH}/${country}/${imageType}`)
+        .readdirSync(`${process.env.EDGES_PATH!}/${country}/${imageType}`)
         .filter((item) =>
           new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
         )

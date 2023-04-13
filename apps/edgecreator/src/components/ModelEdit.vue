@@ -277,13 +277,14 @@ const stepStore = step();
 
 const emit = defineEmits<{
   (event: "swap-steps", steps: [number, number]): void;
-  (event: "duplicate-step", stepNumber: number): void;
-  (event: "remove-step", stepNumber: number): void;
+  (event: "duplicate-step" | "remove-step", stepNumber: number): void;
   (event: "add-step", component: string): void;
 }>();
 const issueNumbers = computed(() => mainStore.issuenumbers);
 
-const fontSearchUrl = computed(() => import.meta.env.VITE_FONT_SEARCH_URL);
+const fontSearchUrl = computed(
+  () => import.meta.env.VITE_FONT_SEARCH_URL as string
+);
 const optionsPerStepNumber = computed((): StepOption[][] =>
   Object.values(
     stepStore
@@ -334,7 +335,7 @@ const ucFirst = (text: string) =>
 const resetPositionAndSize = (stepOptions: StepOption[]) => {
   const stepNumber = stepOptions[0].stepNumber;
   for (const issuenumber of editingStepStore.issuenumbers) {
-    let issueDimensions = stepStore.getFilteredDimensions({
+    const issueDimensions = stepStore.getFilteredDimensions({
       issuenumbers: [issuenumber],
     })[0]!;
     stepStore.setOptionValues(

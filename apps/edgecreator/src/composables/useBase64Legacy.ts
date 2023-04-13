@@ -25,7 +25,11 @@ export default () => {
       callback(img);
     };
     img.onerror = (e) => {
-      console.error(`Base64 image could not be retrieved : ${src} : ${e}`);
+      console.error(
+        `Base64 image could not be retrieved : ${src} : ${JSON.stringify({
+          e,
+        })}`
+      );
       image.value = { base64: undefined, width: null, height: null };
     };
     img.src = src;

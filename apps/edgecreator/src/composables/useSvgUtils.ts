@@ -42,7 +42,7 @@ export default () => {
     extension: string,
     publishedVersion: boolean
   ) =>
-    `${import.meta.env.VITE_EDGES_URL}/${country}/gen/${
+    `${import.meta.env.VITE_EDGES_URL as string}/${country}/gen/${
       publishedVersion ? "" : "_"
     }${magazine}.${issuenumber}.${extension}`;
 

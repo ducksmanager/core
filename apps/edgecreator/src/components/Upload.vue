@@ -72,7 +72,10 @@ onMounted(() => {
     .use(XhrUpload, {
       endpoint: "/fs/upload",
       getResponseError: (responseText: string) => {
-        const { error, placeholders } = JSON.parse(responseText);
+        const { error, placeholders } = JSON.parse(responseText) as {
+          error: string;
+          placeholders: Record<string, string>;
+        };
         return new Error($t(error, placeholders).toString());
       },
     });
@@ -85,7 +88,9 @@ onMounted(() => {
       if (props.photo && !props.multiple) {
         mainStore.photoUrls[props.edge!.issuenumber] = payload.body.fileName;
       } else {
-        mainStore.loadItems({ itemType: props.photo ? "photos" : "elements" });
+        mainStore.loadItems({
+          itemType: props.photo ? "photos" : "elements",
+        });
       }
     }
   );

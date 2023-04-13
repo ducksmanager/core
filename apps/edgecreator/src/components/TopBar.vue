@@ -265,8 +265,6 @@ import { coa } from "~/stores/coa";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 
-import MultipleTargetOptions from "./MultipleTargetOptions.vue";
-
 const uiStore = ui();
 const mainStore = main();
 
@@ -300,14 +298,14 @@ const collapseClone = ref(false as boolean);
 
 const hasPhotoUrl = computed(() => Object.keys(mainStore.photoUrls).length);
 const publicationName = computed(
-  () => coa().publicationNames[`${mainStore.country}/${mainStore.magazine}`]
+  () => coa().publicationNames[`${mainStore.country!}/${mainStore.magazine!}`]
 );
 const uniqueDimensions = computed(() =>
   [
     ...new Set(
       Object.values(props.dimensions).map((item) => JSON.stringify(item))
     ),
-  ].map((item) => JSON.parse(item))
+  ].map((item) => JSON.parse(item) as { width: number; height: number }[])
 );
 
 const isEditingMultiple = computed(
@@ -318,7 +316,7 @@ const addPhoto = (src: string) => {
   mainStore.photoUrls[mainStore.issuenumbers[0]] = src;
 };
 
-coa().fetchPublicationNames([`${mainStore.country}/${mainStore.magazine}`]);
+coa().fetchPublicationNames([`${mainStore.country!}/${mainStore.magazine!}`]);
 </script>
 <style lang="scss">
 .options {

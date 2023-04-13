@@ -73,7 +73,7 @@ const onmove = ({
   const yDistanceFromCenter = Math.min(
     Math.max(
       stapleHeight,
-      (props.options.yDistanceFromCenter || 0) +
+      (props.options.yDistanceFromCenter ?? 0) +
         ((isStaple2 ? 1 : -1) * dy) / ui().zoom
     ),
     height.value / 2 - stapleHeight * 2

@@ -29,7 +29,7 @@ export const collection = defineStore("collection", () => {
     isSharedBookcase = ref(false as boolean),
     bookcaseWithPopularities = computed(
       (): BookcaseEdgeWithPopularity[] | null =>
-        ((isSharedBookcase ? true : popularIssuesInCollection) &&
+        ((isSharedBookcase.value ? true : popularIssuesInCollection.value) &&
           bookcase.value?.map((issue) => {
             const publicationcode = `${issue.countryCode}/${issue.magazineCode}`;
             const issueCode = `${publicationcode} ${issue.issuenumber}`;
@@ -39,7 +39,7 @@ export const collection = defineStore("collection", () => {
               issueCode,
               popularity: isSharedBookcase.value
                 ? null
-                : popularIssuesInCollection.value?.[issueCode] || 0,
+                : popularIssuesInCollection.value?.[issueCode] ?? 0,
             };
           })) ||
         null
@@ -59,7 +59,7 @@ export const collection = defineStore("collection", () => {
         await call(
           api().dmApi,
           new GET__bookcase__$username({
-            params: { username: user.value!.username },
+            params: { username: user.value!.username as string },
           })
         )
       ).data;
@@ -78,7 +78,7 @@ export const collection = defineStore("collection", () => {
       }
     },
     fetchUserPoints = async () => {
-      const userId: number = user.value!.id;
+      const userId = user.value!.id as number;
       const userData = (
         await call(
           api().dmApi,

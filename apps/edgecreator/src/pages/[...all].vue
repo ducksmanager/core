@@ -198,13 +198,15 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
       (
         { popularity: popularity1 }: { popularity: number | null },
         { popularity: popularity2 }: { popularity: number | null }
-      ) => (popularity2 || 0) - (popularity1 || 0)
+      ) => (popularity2 ?? 0) - (popularity1 ?? 0)
     )
     .filter((_, index) => index < 10)
 );
 
 const getPhotoUrl = (country: string, fileName: string) =>
-  `${import.meta.env.VITE_EDGES_URL_PUBLIC}/${country}/photos/${fileName}`;
+  `${
+    import.meta.env.VITE_EDGES_URL_PUBLIC as string
+  }/${country}/photos/${fileName}`;
 
 const loadMostWantedEdges = async () => {
   mostWantedEdges.value = (

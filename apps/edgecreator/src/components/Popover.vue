@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import Popper from "@bperel/vue3-popper-teleport";
 const { placement = "top" } = defineProps<{
   placement?: string;
 }>();
@@ -43,7 +42,7 @@ const closePopupSoon = () => {
   }, closeDelay);
 };
 const isOverPopup = ref(false);
-let isOverPopupText = ref(false);
+const isOverPopupText = ref(false);
 
 const onOpen = () => {
   for (const element of document.getElementsByClassName("popper"))
