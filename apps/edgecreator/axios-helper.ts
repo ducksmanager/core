@@ -18,7 +18,7 @@ export const addUrlParamsRequestInterceptor = <
       if (config.url) {
         const currentUrl = new URL(config.url, config.baseURL);
         currentUrl.pathname = Object.entries(
-          config.urlParams || ({} as Record<string, string>)
+          config.urlParams ?? ({} as Record<string, string>)
         ).reduce(
           (pathname, [k, v]) =>
             pathname.replace(`:${k}`, encodeURIComponent(v)),
@@ -56,7 +56,7 @@ export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
     method: contract.getMethod(),
     url: contract.getUrl(),
     params: contract.call?.query || undefined,
-    urlParams: (contract.call?.params as never) || undefined,
+    urlParams: contract.call?.params ?? undefined,
     data: (contract.call?.reqBody as never) || undefined,
   });
 
@@ -97,8 +97,8 @@ export const createAxios = (baseURL: string) => {
 
   newInstance.interceptors.request.use(
     (config) => {
-      const token = useCookies().get("token");
-      if (config.headers && token) {
+      const token: string = useCookies().get("token");
+      if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;

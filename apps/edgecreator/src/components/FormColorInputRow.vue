@@ -87,7 +87,6 @@
   </form-input-row>
 </template>
 <script setup lang="ts">
-import Popover from "~/components/Popover.vue";
 import { main } from "~/stores/main";
 import { Options, step, StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
@@ -156,13 +155,11 @@ const otherColorsByLocationAndStepNumber = computed(() => ({
 watch(
   () => inputValues.value,
   (newValue) => {
-    if (newValue) {
-      let newColor = inputValues.value[0];
-      if (newColor === "transparent") {
-        newColor = "#000000";
-      }
-      originalColor.value = newColor as string;
+    let newColor = newValue[0];
+    if (newColor === "transparent") {
+      newColor = "#000000";
     }
+    originalColor.value = newColor as string;
   },
   { immediate: true }
 );

@@ -28,7 +28,7 @@ export const get = async (
     width,
     text,
   };
-  cloudinary.search
+  await cloudinary.search
     .expression(
       `tags=${font} AND ${Object.keys(context)
         .reduce<string[]>(
@@ -67,9 +67,9 @@ const generateImage = (parameters: {
 }) =>
   axios
     .get(
-      (parameters.font.includes("/")
-        ? process.env.FONT_BASE_URL
-        : process.env.FONT_PRODUCT_BASE_URL) + parameters.font
+      parameters.font.includes("/")
+        ? process.env.FONT_BASE_URL!
+        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`
     )
     .then(({ data }) => {
       const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
@@ -77,13 +77,15 @@ const generateImage = (parameters: {
         sessionHashes[parameters.font] = sessionHashMatch[0];
       } else {
         throw new Error(
-          `No session ID found in URL ${process.env.FONT_BASE_URL}${parameters.font}`
+          `No session ID found in URL ${process.env.FONT_BASE_URL!}${
+            parameters.font
+          }`
         );
       }
     })
     .then(() =>
       cloudinary.uploader.upload(
-        `${process.env.FONT_IMAGE_GEN_URL}?${new URLSearchParams({
+        `${process.env.FONT_IMAGE_GEN_URL!}?${new URLSearchParams({
           id: sessionHashes[parameters.font],
           rbe: "fixed",
           rt: parameters.text,
@@ -101,7 +103,7 @@ const generateImage = (parameters: {
             console.error(error);
           }
           const { width, height, secure_url: url } = result!;
-          return new Promise((resolve) => resolve({ width, height, url }));
+          return { width, height, url };
         }
       )
     );

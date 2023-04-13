@@ -16,13 +16,13 @@ app._router.stack.forEach(
     name: string;
     handle: { stack: [{ route: Route }] };
   }) => {
-    if (middleware.route && typeof middleware.route.path === "string") {
+    if (typeof middleware.route.path === "string") {
       // routes registered directly on the app
       routes.push(middleware.route);
     } else if (middleware.name === "router") {
       // router middleware
       middleware.handle.stack.forEach((handler) => {
-        if (handler.route && typeof handler.route.path === "string") {
+        if (typeof handler.route.path === "string") {
           routes.push(handler.route);
         }
       });
@@ -56,7 +56,9 @@ routes.forEach((route) => {
     .filter((method) => ["get", "post", "delete", "put"].includes(method))
     .reduce((acc, method) => {
       const realMethod = method === "delete" ? "del" : method;
-      const routePathWithMethod = `${method.toUpperCase()} ${route.path}`;
+      const routePathWithMethod = `${method.toUpperCase()} ${
+        route.path as string
+      }`;
 
       let routeFile;
       const routeBasePath = `routes/${(route.path as string).replace(
@@ -77,7 +79,7 @@ routes.forEach((route) => {
         routePathWithMethod
       ] = ` extends ContractWithMethodAndUrl<${callType}> {
             static readonly method = "${method}";
-            static readonly url = "${route.path}";
+            static readonly url = "${route.path as string}";
         }`;
       return acc;
     }, routeClassList);

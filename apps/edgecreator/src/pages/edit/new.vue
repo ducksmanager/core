@@ -46,14 +46,14 @@ const issueSpecification = computed(() =>
     : issueData.value.issueNumber
 );
 
-const toDashboard = () => {
-  router.push(`/`);
+const toDashboard = async () => {
+  await router.push(`/`);
 };
 
-const startEditing = () => {
+const startEditing = async () => {
   assert(issueSpecification.value !== null);
-  router.push(
-    `/edit/${issueData.value!.publicationCode} ${issueSpecification.value}`
+  await router.push(
+    `/edit/${issueData.value!.publicationCode} ${issueSpecification.value!}`
   );
 };
 

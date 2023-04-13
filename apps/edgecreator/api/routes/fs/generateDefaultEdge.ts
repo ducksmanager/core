@@ -14,7 +14,7 @@ const corsHeaders = {
     "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With," +
     "If-Modified-Since,Cache-Control,Content-Type,x-dm-user,x-dm-pass",
 };
-export const get = async (
+export const get = (
   ...[req, res]: ExpressCall<{
     resBody: {
       current: string[];
@@ -48,14 +48,14 @@ export const get = async (
   sharp(content).toBuffer((error, buffer) => {
     if (error) {
       res.writeHead(500, corsHeaders);
-      return res.end("Error : " + error);
+      return res.end(`Error : ${JSON.stringify({ error })}`);
     }
     res.writeHead(200, { ...corsHeaders, "Content-Type": "image/png" });
     return res.end(buffer);
   });
 };
 
-export const options = async (
+export const options = (
   ...[, res]: ExpressCall<{
     resBody: {
       current: string[];

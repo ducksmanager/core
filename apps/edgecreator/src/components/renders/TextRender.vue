@@ -163,32 +163,32 @@ watch(
 
 watch(
   () => props.options.fgColor,
-  () => {
-    refreshPreview();
+  async () => {
+    await refreshPreview();
   }
 );
 watch(
   () => props.options.bgColor,
-  () => {
-    refreshPreview();
+  async () => {
+    await refreshPreview();
   }
 );
 watch(
   () => props.options.internalWidth,
-  () => {
-    refreshPreview();
+  async () => {
+    await refreshPreview();
   }
 );
 watch(
   () => props.options.text,
-  () => {
-    refreshPreview();
+  async () => {
+    await refreshPreview();
   }
 );
 watch(
   () => props.options.font,
-  () => {
-    refreshPreview();
+  async () => {
+    await refreshPreview();
   }
 );
 
@@ -270,7 +270,9 @@ const applyTextImageDimensions = () => {
   });
 };
 
-refreshPreview();
+(async () => {
+  refreshPreview();
+})();
 </script>
 
 <style scoped lang="scss">

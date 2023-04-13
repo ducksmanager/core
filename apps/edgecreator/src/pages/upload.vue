@@ -127,12 +127,10 @@ import "cropperjs/dist/cropper.css";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useToast } from "bootstrap-vue-next";
 import { nextTick } from "vue";
-import VueCropper from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
 
 import useSaveEdge from "~/composables/useSaveEdge";
 import { api } from "~/stores/api";
-import { coa } from "~/stores/coa";
 import { Crop } from "~types/Crop";
 import { ModelContributor } from "~types/ModelContributor";
 import { POST__fs__upload_base64 } from "~types/routes";
@@ -140,7 +138,6 @@ import { POST__fs__upload_base64 } from "~types/routes";
 import { call } from "../../axios-helper";
 
 const i18n = useI18n();
-const coaStore = coa();
 
 const { saveEdgeSvg } = useSaveEdge();
 
@@ -207,7 +204,7 @@ const uploadAll = async () => {
         })
       )
     ).data.fileName;
-    nextTick().then(async () => {
+    await nextTick().then(async () => {
       const response = await saveEdgeSvg(
         country,
         magazine,

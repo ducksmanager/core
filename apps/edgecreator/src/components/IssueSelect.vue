@@ -129,9 +129,9 @@ const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
 const countries = computed(
   () =>
     (coa().countryNames &&
-      Object.keys(coa().countryNames!).map((countryName) => ({
+      Object.keys(coa().countryNames).map((countryName) => ({
         value: countryName,
-        text: coa().countryNames![countryName],
+        text: coa().countryNames[countryName],
       }))) ||
     []
 );
@@ -140,14 +140,14 @@ const publications = computed(
     coa().publicationNames &&
     Object.keys(coa().publicationNames)
       .filter((publicationCode) =>
-        publicationCode.startsWith(`${currentCountryCode.value}/`)
+        publicationCode.startsWith(`${currentCountryCode.value!}/`)
       )
       .map((publicationCode) => ({
         text: coa().publicationNames[publicationCode],
         value: publicationCode,
       }))
       .sort(({ text: text1 }, { text: text2 }) =>
-        text1! < text2! ? -1 : text2! < text1! ? 1 : 0
+        text1 < text2 ? -1 : text2 < text1 ? 1 : 0
       )
 );
 
@@ -167,7 +167,7 @@ const issues = computed(
       });
       return {
         value: issuenumber,
-        text: `${issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
+        text: `${issuenumber}${status === "none" ? "" : ` (${$t(status)})`}`,
         disabled:
           (props.disableOngoingOrPublished && status !== "none") ||
           (props.disableNotOngoingNorPublished && status === "none"),

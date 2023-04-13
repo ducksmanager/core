@@ -91,7 +91,8 @@ export default () => {
         .filter(({ contribution }) => contribution === contributionType)
         .map(
           ({ userId }) =>
-            users().allUsers!.find(({ id }) => id === userId)!.username
+            users().allUsers!.find(({ id }) => id === userId)!
+              .username as string
         );
     const photo = photos?.find(({ isMainPhoto }) => isMainPhoto);
     return {
@@ -112,7 +113,10 @@ export default () => {
     v3: true,
     status: edgeCategories.reduce(
       (acc: string | null, { status, svgCheckFn }) =>
-        acc || (svgCheckFn(edge, collection().user!.username!) ? status : null),
+        acc ??
+        (svgCheckFn(edge, collection().user!.username as string)
+          ? status
+          : null),
       null
     ),
   });

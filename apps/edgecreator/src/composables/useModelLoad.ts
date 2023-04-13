@@ -257,29 +257,25 @@ export default () => {
             )
           )
         ).data;
-        if (edge) {
-          await edgeCatalogStore.getPublishedEdgesSteps({
-            publicationcode,
-            edgeModelIds: [edge.id],
-          });
-          const apiSteps =
-            edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
-          const dimensions = loadDimensionsFromApi(issuenumber, apiSteps)!;
-          await loadStepsFromApi(
-            publicationcode,
-            issuenumber,
-            apiSteps,
-            dimensions,
-            true,
-            (error: string) => mainStore.addWarning(error)
-          );
+        await edgeCatalogStore.getPublishedEdgesSteps({
+          publicationcode,
+          edgeModelIds: [edge.id],
+        });
+        const apiSteps =
+          edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
+        const dimensions = loadDimensionsFromApi(issuenumber, apiSteps)!;
+        await loadStepsFromApi(
+          publicationcode,
+          issuenumber,
+          apiSteps,
+          dimensions,
+          true,
+          (error: string) => mainStore.addWarning(error)
+        );
 
-          if (!onlyLoadStepsAndDimensions) {
-            await setPhotoUrlsFromApi(issuenumber, edge.id);
-            await setContributorsFromApi(issuenumber, edge.id);
-          }
-        } else {
-          await loadSvg(true);
+        if (!onlyLoadStepsAndDimensions) {
+          await setPhotoUrlsFromApi(issuenumber, edge.id);
+          await setContributorsFromApi(issuenumber, edge.id);
         }
       }
     }
@@ -300,18 +296,16 @@ export default () => {
         })
       )
     ).data;
-    if (photo) {
-      mainStore.photoUrls[issuenumber] = photo.fileName;
-    }
+    mainStore.photoUrls[issuenumber] = photo.fileName;
   };
 
   return {
-    getDimensionsFromSvg: loadDimensionsFromSvg,
-    getStepsFromSvg: loadStepsFromSvg,
+    loadDimensionsFromSvg,
+    loadStepsFromSvg,
     setPhotoUrlsFromSvg,
     setContributorsFromSvg,
-    getDimensionsFromApi: loadDimensionsFromApi,
-    getStepsFromApi: loadStepsFromApi,
+    loadDimensionsFromApi,
+    loadStepsFromApi,
     setContributorsFromApi,
     loadModel,
     setPhotoUrlsFromApi,

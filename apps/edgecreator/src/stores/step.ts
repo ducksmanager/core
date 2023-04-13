@@ -134,7 +134,7 @@ export const step = defineStore("step", () => {
             ),
           ].map((option) => JSON.stringify(option))
         ),
-      ].map((option) => JSON.parse(option));
+      ].map((option) => JSON.parse(option) as StepOption);
     },
     setDimensions = (
       newDimensions: { width: number; height: number },
@@ -148,7 +148,7 @@ export const step = defineStore("step", () => {
             overrides.issuenumbers &&
             !overrides.issuenumbers.includes(issuenumber)
         ),
-        ...(overrides.issuenumbers || main().issuenumbers).map(
+        ...(overrides.issuenumbers ?? main().issuenumbers).map(
           (issuenumber) => ({
             issuenumber,
             ...newDimensions,

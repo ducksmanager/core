@@ -4,10 +4,9 @@ module.exports = {
     // 'eslint:recommended',
     "plugin:vue/vue3-recommended",
     "plugin:prettier-vue/recommended",
-    "prettier",
-    "plugin:@typescript-eslint/recommended",
+    "@vue/typescript/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:@typescript-eslint/strict"
+    "@vue/eslint-config-prettier"
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
@@ -22,6 +21,7 @@ module.exports = {
   ],
   root: true,
   rules: {
+    "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
@@ -41,14 +41,18 @@ module.exports = {
       }
     ]
   },
-  plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
+  plugins: [
+    "simple-import-sort",
+    "prettier",
+    "@typescript-eslint",
+    "unused-imports"
+  ],
   ignorePatterns: [
     "**/node_modules",
     "**/dist",
-    "shims.d.ts",
+    "*.d.ts",
     "vendor",
-    "auto-imports.d.ts",
-    "component.d.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    ".eslintrc.js"
   ]
 };
