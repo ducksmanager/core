@@ -259,9 +259,9 @@
   </b-container>
 </template>
 <script setup lang="ts">
-import usePermissions from "~/composables/usePermissions";
 import surroundingEdge from "~/composables/useSurroundingEdge";
 import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 
@@ -269,7 +269,7 @@ const uiStore = ui();
 const mainStore = main();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
-const { hasRole } = usePermissions();
+const { hasRole } = collection();
 
 interface ModelToClone {
   editMode: string;
@@ -305,7 +305,7 @@ const uniqueDimensions = computed(() =>
     ...new Set(
       Object.values(props.dimensions).map((item) => JSON.stringify(item))
     ),
-  ].map((item) => JSON.parse(item) as { width: number; height: number }[])
+  ].map((item) => JSON.parse(item) as { width: number; height: number })
 );
 
 const isEditingMultiple = computed(

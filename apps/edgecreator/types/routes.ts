@@ -49,11 +49,13 @@ export class POST__fs__save extends ContractWithMethodAndUrl<{
   static readonly url = "/fs/save";
 }
 export class GET__fs__text extends ContractWithMethodAndUrl<{
-  resBody: {
-    width: number;
-    height: number;
-    url: string;
-  };
+  resBody:
+    | {
+        width: number;
+        height: number;
+        url: string;
+      }
+    | { error: string };
   query: {
     color: string;
     colorBackground: string;

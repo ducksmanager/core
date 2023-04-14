@@ -1,4 +1,3 @@
-import usePermissions from "~/composables/usePermissions";
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
@@ -122,7 +121,7 @@ export default () => {
   });
 
   const canEditEdge = (status: string) =>
-    usePermissions().hasRole("Admin") || status !== "ongoing by another user";
+    collection().hasRole("Admin") || status !== "ongoing by another user";
 
   const getEdgeStatus = ({
     country,

@@ -175,8 +175,8 @@ export const main = defineStore("main", () => {
             api().dmApi,
             new GET__edges__$countrycode__$magazinecode__$issuenumbers({
               params: {
-                countrycode: publicationcode.value.split("/")[0],
-                magazinecode: publicationcode.value.split("/")[1],
+                countrycode: publicationcode.value!.split("/")[0],
+                magazinecode: publicationcode.value!.split("/")[1],
                 issuenumbers: edges.join(","),
               },
             })

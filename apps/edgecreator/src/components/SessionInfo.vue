@@ -27,7 +27,7 @@ const { locale } = useI18n();
 const locales = computed(() => availableLocales);
 
 const collectionStore = collection();
-const username = computed(() => collectionStore.user.username as string);
+const username = computed(() => collectionStore.user?.username as string);
 const reloadWithLocale = async (key: string) => {
   locale.value = key;
   await coa().fetchCountryNames(locale.value);

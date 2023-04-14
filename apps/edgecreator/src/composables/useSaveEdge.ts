@@ -6,8 +6,12 @@ import { call } from "../../axios-helper";
 
 export default () => {
   const removeVueMarkup = (element: HTMLElement) => {
-    Object.values(element.attributes)
-      .filter((attribute) => attribute.name.startsWith("data-v-"))
+    Object.values(element.attributes || [])
+      .filter(
+        (attribute) =>
+          attribute.name.startsWith("data-v-") ||
+          attribute.name === "is-visible"
+      )
       .forEach(({ name: attributeName }) =>
         element.removeAttribute(attributeName)
       );
