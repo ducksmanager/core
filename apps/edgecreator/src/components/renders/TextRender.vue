@@ -143,10 +143,7 @@ watch(
                 options.x =
                   props.options.x - (options.width - props.options.width!) / 2;
               }
-              step().setOptionValues(options, {
-                stepNumber: props.stepNumber,
-                issuenumbers: [props.issuenumber],
-              });
+              step().setOptionValues(options);
             },
           });
           applyTextImageDimensions();
@@ -192,7 +189,7 @@ watch(
   }
 );
 
-type TypedErrorResponse<T extends any> = {
+type TypedErrorResponse<T> = {
   response: { data: T };
 };
 
@@ -227,7 +224,7 @@ const refreshPreview = async () => {
   } catch (e) {
     window.alert(
       (
-        e as unknown as TypedErrorResponse<
+        e as TypedErrorResponse<
           GET__fs__text["resBody"]
         > as TypedErrorResponse<{ error: string }>
       ).response.data.error

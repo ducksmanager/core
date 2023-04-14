@@ -18,7 +18,6 @@
           :id="optionName"
           v-model="inputValue"
           :options="selectOptions"
-          @input="onChangeValue"
         />
         <b-form-input
           v-else
@@ -33,12 +32,7 @@
           :range="range"
           :disabled="disabled"
           :list="listId"
-          @change="
-            isTextImageOption || isImageSrcOption ? onChangeValue : () => {}
-          "
-          @input="
-            !(isTextImageOption || isImageSrcOption) ? onChangeValue : () => {}
-          "
+          @blur="onBlur"
         ></b-form-input>
         <slot />
         <slot name="suffix" />
@@ -77,6 +71,10 @@ const props = withDefaults(
 );
 type PossibleInputValueType = string | number;
 
+const shouldWaitForBlurToUpdate = computed(() =>
+  ["text", "font"].includes(props.optionName)
+);
+
 const inputValue = ref(undefined as PossibleInputValueType | undefined);
 
 const inputValues = computed(() =>
@@ -93,19 +91,12 @@ const values = computed(() => [
       : inputValues.value
   ),
 ]);
-const isTextImageOption = computed(
-  () =>
-    props.options.some(
-      ({ optionName, optionValue }) =>
-        optionName === "component" && optionValue === "Text"
-    ) &&
-    ["fgColor", "bgColor", "internalWidth", "text", "font"].includes(
-      props.optionName
-    )
-);
-const isImageSrcOption = computed(() =>
-  props.options.some(({ optionName }) => optionName === "src")
-);
+
+const onBlur = () => {
+  if (shouldWaitForBlurToUpdate.value) {
+    onChangeValue(inputValue.value);
+  }
+};
 
 watch(
   () => inputValues.value,
@@ -118,18 +109,13 @@ watch(
 watch(
   () => inputValue.value,
   (newValue: PossibleInputValueType | undefined) => {
-    let intValue: number | null = null;
-    if (props.optionName === "rotation") {
-      intValue = parseInt(newValue as string);
+    if (!shouldWaitForBlurToUpdate.value) {
+      onChangeValue(newValue);
     }
-    step().setOptionValues({
-      [props.optionName]: intValue !== null ? intValue : newValue,
-    });
   }
 );
 
 const onChangeValue = (optionValue: OptionValue) => {
-  debugger;
   let intValue: number | null = null;
   if (props.optionName === "rotation") {
     intValue = parseInt(optionValue as string);
