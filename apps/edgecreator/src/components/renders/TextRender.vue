@@ -192,6 +192,10 @@ watch(
   }
 );
 
+type TypedErrorResponse<T extends any> = {
+  response: { data: T };
+};
+
 const refreshPreview = async () => {
   if (
     JSON.stringify(textImageOptions.value) === JSON.stringify(props.options)
@@ -201,7 +205,7 @@ const refreshPreview = async () => {
   textImageOptions.value = { ...props.options };
   const { fgColor, bgColor, internalWidth, font } = props.options;
   try {
-    textImage.value = (
+    const textData = (
       await call(
         api().edgeCreatorApi,
         new GET__fs__text({
@@ -215,8 +219,19 @@ const refreshPreview = async () => {
         })
       )
     ).data;
+    if ("width" in textData) {
+      textImage.value = textData;
+    } else {
+      window.alert(textData.error);
+    }
   } catch (e) {
-    console.error(`Text image could not be retrieved`);
+    window.alert(
+      (
+        e as unknown as TypedErrorResponse<
+          GET__fs__text["resBody"]
+        > as TypedErrorResponse<{ error: string }>
+      ).response.data.error
+    );
   }
 };
 const waitUntil = (

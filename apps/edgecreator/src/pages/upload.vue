@@ -136,10 +136,12 @@ import { ModelContributor } from "~types/ModelContributor";
 import { POST__fs__upload_base64 } from "~types/routes";
 
 import { call } from "../../axios-helper";
+import { coa } from "~/stores/coa";
 
 const i18n = useI18n();
 
 const { saveEdgeSvg } = useSaveEdge();
+const coaStore = coa();
 
 type CropWithData = Crop & {
   data: string;

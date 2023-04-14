@@ -117,7 +117,7 @@
             ><a
               target="_blank"
               :href="fontSearchUrl"
-              class="position-absolute input-extra"
+              class="float-end input-extra"
               >{{ $t("Search") }}</a
             ></form-input-row
           >
@@ -440,7 +440,7 @@ onRenderTriggered(() => {
 }
 
 .input-extra {
-  top: 3px;
-  right: 2rem;
+  margin-top: -30px;
+  margin-right: 10px;
 }
 </style>

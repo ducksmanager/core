@@ -128,7 +128,7 @@ meta:
                                 'svg',
                                 false
                               )
-                            : getPhotoUrl(edge.country, edge.photo)
+                            : undefined
                         "
                       /><edge-link
                         :publicationcode="`${edge.country}/${edge.magazine}`"
@@ -167,7 +167,6 @@ meta:
 </template>
 <script setup lang="ts">
 import useEdgeCatalog from "~/composables/useEdgeCatalog";
-import usePermissions from "~/composables/usePermissions";
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
 import { BookcaseEdgeWithPopularity, collection } from "~/stores/collection";
@@ -177,7 +176,7 @@ import { GET__edges__wanted__data } from "~dm_types/routes";
 import { call } from "../../axios-helper";
 
 const { getEdgeUrl } = useSvgUtils();
-const { hasRole } = usePermissions();
+const { hasRole } = collection();
 const publicationNames = computed(() => coa().publicationNames);
 
 const {
@@ -202,11 +201,6 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
     )
     .filter((_, index) => index < 10)
 );
-
-const getPhotoUrl = (country: string, fileName: string) =>
-  `${
-    import.meta.env.VITE_EDGES_URL_PUBLIC as string
-  }/${country}/photos/${fileName}`;
 
 const loadMostWantedEdges = async () => {
   mostWantedEdges.value = (

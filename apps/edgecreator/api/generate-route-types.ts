@@ -16,13 +16,13 @@ app._router.stack.forEach(
     name: string;
     handle: { stack: [{ route: Route }] };
   }) => {
-    if (typeof middleware.route.path === "string") {
+    if (typeof middleware.route?.path === "string") {
       // routes registered directly on the app
       routes.push(middleware.route);
     } else if (middleware.name === "router") {
       // router middleware
       middleware.handle.stack.forEach((handler) => {
-        if (typeof handler.route.path === "string") {
+        if (typeof handler.route?.path === "string") {
           routes.push(handler.route);
         }
       });

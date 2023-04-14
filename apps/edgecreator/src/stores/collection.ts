@@ -54,6 +54,11 @@ export const collection = defineStore("collection", () => {
             popularity2 && popularity1 ? popularity2 - popularity1 : 0
           )
     ),
+    hasRole = (thisPrivilege: string) =>
+      userPermissions.value!.some(
+        ({ privilege, role }) =>
+          role === "EdgeCreator" && privilege === thisPrivilege
+      ),
     loadBookcase = async () => {
       bookcase.value = (
         await call(
@@ -110,6 +115,7 @@ export const collection = defineStore("collection", () => {
   return {
     user,
     userPermissions,
+    hasRole,
     userPhotographerPoints,
     bookcase,
     popularIssuesInCollection,

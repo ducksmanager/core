@@ -93,7 +93,7 @@ const populateItems = async (
           tooltip = "No steps or dimensions found";
         } else {
           const issueStepWarnings: Record<number, string[]> = {};
-          loadDimensionsFromApi(allSteps, null);
+          loadDimensionsFromApi(issuenumber, allSteps);
 
           const dimensions = step().getFilteredDimensions({
             issuenumbers: [issuenumber],
@@ -105,7 +105,7 @@ const populateItems = async (
             props.publicationcode,
             issuenumber,
             allSteps,
-            dimensions,
+            dimensions[0],
             false,
             (error: string, stepNumber: number) => {
               if (!issueStepWarnings[stepNumber]) {

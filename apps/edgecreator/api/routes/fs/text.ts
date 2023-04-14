@@ -7,11 +7,13 @@ const sessionHashes: Record<string, string> = {};
 
 export const get = async (
   ...[req, res]: ExpressCall<{
-    resBody: {
-      width: number;
-      height: number;
-      url: string;
-    };
+    resBody:
+      | {
+          width: number;
+          height: number;
+          url: string;
+        }
+      | { error: string };
     query: {
       color: string;
       colorBackground: string;
@@ -50,9 +52,8 @@ export const get = async (
             console.log(`Text image generated: url=${url}`);
             return res.json({ width, height, url });
           })
-          .catch((response) => {
-            res.writeHead(response.status);
-            res.end();
+          .catch((response: Error) => {
+            res.status(500).send({ error: response.message });
           });
       }
     });
