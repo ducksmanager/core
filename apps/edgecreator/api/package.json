@@ -10,10 +10,10 @@
     "generate-route-types": "tsx generate-route-types.ts && cd .. && node_modules/.bin/eslint --fix types/routes.ts"
   },
   "dependencies": {
-    "@sentry/node": "^7.47.0",
+    "@sentry/node": "^7.48.0",
     "axios": "^1.3.5",
     "body-parser": "^1.20.2",
-    "cloudinary": "^1.35.0",
+    "cloudinary": "^1.36.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -24,7 +24,7 @@
     "image-size": "^1.0.2",
     "jsonwebtoken": "^9.0.0",
     "multer": "1.4.5-lts.1",
-    "node-base64-image": "^2.0.4",
+    "node-base64-image": "^2.0.5",
     "nodemon": "^2.0.22",
     "sharp": "^0.31.3"
   },
