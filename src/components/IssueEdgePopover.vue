@@ -19,6 +19,7 @@
             <div v-t="'Vous pouvez photographier cette tranche ?'"></div>
             <div class="medal-progress-wrapper">
               <MedalProgress
+                v-if="points !== null && extraPoints !== null"
                 contribution="edge_photographer"
                 :user-level-points="points"
                 :extra-points="extraPoints"

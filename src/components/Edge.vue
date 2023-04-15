@@ -6,7 +6,6 @@
     :publicationcode="publicationcode"
     :issuenumber="issuenumber"
     :sprite-path="spritePath"
-    :load="load"
     :invisible="invisible"
     :highlighted="highlighted"
     @loaded="$emit('loaded')"
@@ -31,7 +30,6 @@
       :publicationcode="publicationcode"
       :issuenumber="issuenumber"
       :sprite-path="spritePath"
-      :load="load"
       :invisible="invisible"
       :highlighted="highlighted"
       @loaded="$emit('loaded')"
@@ -64,7 +62,6 @@ const {
   popularity: number | null;
   spritePath: string | null;
   existing: boolean;
-  load: boolean;
   invisible?: boolean;
   highlighted?: boolean;
   embedded?: boolean;
@@ -83,5 +80,3 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
   ignoreSprite = $ref(false),
   publicationNames = $computed(() => coa().publicationNames);
 </script>
-
-<style></style>

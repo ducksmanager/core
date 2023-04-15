@@ -8,7 +8,7 @@
       [spriteClass]: true,
     }"
     :style="
-      load && imageLoaded
+      imageLoaded
         ? {
             backgroundImage: `url(${src})`,
             backgroundSize: `${width}px ${height}px`,
@@ -28,7 +28,7 @@
       }"
     />
     <img
-      v-if="load && !imageLoaded"
+      v-if="!imageLoaded"
       class="temp-image"
       :src="src"
       @load="onImageLoad"
@@ -56,7 +56,6 @@ const {
   issuenumber?: string;
   src: string;
   spritePath: string | null;
-  load: boolean;
   invisible?: boolean;
   highlighted?: boolean;
 }>();
@@ -79,10 +78,11 @@ const onImageLoad = async (event: Event) => {
     } else {
       try {
         const css = (
-          await axios.get(
-            `${SPRITES_ROOT}${spritePath.replace("f_auto/", "")}.css`
-          )
-        ).data;
+          (await axios.get(`${SPRITES_ROOT}${spritePath}.css`)).data as string
+        ).replaceAll(
+          new RegExp("url\\('[^']+", "g"),
+          `url('${SPRITES_ROOT}${spritePath}.png`
+        );
         const style = document.createElement("style");
         style.textContent = css;
         document.head.append(style);
@@ -123,8 +123,11 @@ const loadEdgeFromSprite = () => {
   }, 5);
 };
 const onImageError = () => {
-  if (spritePath && !ignoreSprite) ignoreSprite = true;
-  else emit("loaded", [id]);
+  if (spritePath && !ignoreSprite) {
+    ignoreSprite = true;
+  } else {
+    emit("loaded", [id]);
+  }
 };
 
 let edge = $ref(null as Element | null);
