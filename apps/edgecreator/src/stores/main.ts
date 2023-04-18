@@ -42,7 +42,9 @@ export const main = defineStore("main", () => {
         country.value &&
         publicationElements.value.map((elementFileName) => ({
           name: elementFileName,
-          url: `/edges/${country.value!}/elements/${elementFileName}`,
+          url: `${
+            import.meta.env.VITE_EDGES_URL as string
+          }/${country.value!}/elements/${elementFileName}`,
         }))
     ),
     publicationPhotosForGallery = computed(
@@ -50,7 +52,9 @@ export const main = defineStore("main", () => {
         country.value &&
         publicationPhotos.value.map((elementFileName) => ({
           name: elementFileName,
-          url: `/edges/${country.value!}/photos/${elementFileName}`,
+          url: `${
+            import.meta.env.VITE_EDGES_URL as string
+          }/${country.value!}/photos/${elementFileName}`,
         }))
     ),
     addContributor = ({
@@ -123,12 +127,15 @@ export const main = defineStore("main", () => {
       }
     },
     loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
-      const [country, magazine] = publicationcode.value!.split("/");
       const items = (
         await call(
           api().edgeCreatorApi,
           new GET__fs__browse__$imageType__$country__$magazine({
-            params: { imageType: itemType, country, magazine },
+            params: {
+              imageType: itemType,
+              country: country.value!,
+              magazine: magazine.value!,
+            },
           })
         )
       ).data.sort((a, b) => numericSortCollator.compare(a, b));
