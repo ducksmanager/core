@@ -17,16 +17,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     publishedEdgesSteps = ref({} as Record<string, ModelSteps>),
     fetchPublishedEdges = async (publicationcode: string) => {
       const [countrycode, magazinecode] = publicationcode.split("/");
-      const publishedEdges = (
-        await call(
-          api().dmApi,
-          new GET__edges__$countrycode__$magazinecode__$issuenumbers({
-            params: { countrycode, magazinecode, issuenumbers: "_" },
-          })
-        )
-      ).data;
       addPublishedEdges({
-        [publicationcode]: publishedEdges,
+        [publicationcode]: (
+          await call(
+            api().dmApi,
+            new GET__edges__$countrycode__$magazinecode__$issuenumbers({
+              params: { countrycode, magazinecode, issuenumbers: "_" },
+            })
+          )
+        ).data,
       });
     },
     addCurrentEdges = (edges: Record<string, EdgeWithVersionAndStatus>) => {
@@ -38,7 +37,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         Record<string, { issuenumber: string; v3: boolean }>
       >
     ) => {
-      for (const publicationcode of Object.keys(publishedEdges)) {
+      for (const publicationcode of Object.keys(publishedEdges.value)) {
         const publicationEdgesForPublication =
           newPublishedEdges[publicationcode];
         if (!publishedEdges.value[publicationcode]) {

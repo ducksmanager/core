@@ -10,7 +10,7 @@ import {
   GET__collection__user_privileges,
   GET__global_stats__user__$userIds,
 } from "~dm_types/routes";
-import { user, userPermission } from "~prisma_clients/client_dm";
+import { user as userModel, userPermission } from "~prisma_clients/client_dm";
 
 import { call } from "../../axios-helper";
 
@@ -21,7 +21,7 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
 }
 
 export const collection = defineStore("collection", () => {
-  const user = ref(undefined as Omit<user, "password"> | undefined | null),
+  const user = ref(undefined as Omit<userModel, "password"> | undefined | null),
     userPermissions = ref(null as userPermission[] | null),
     userPhotographerPoints = ref(null as number | null),
     bookcase = ref(null as BookcaseEdge[] | null),

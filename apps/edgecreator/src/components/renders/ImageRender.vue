@@ -2,10 +2,10 @@
 <template>
   <svg>
     <image
-      v-if="image"
+      v-if="imageDetails"
       ref="image"
       v-bind="options"
-      :xlink:href="base64"
+      :xlink:href="imageDetails.base64"
       preserveAspectRatio="none"
     >
       <metadata>{{ options }}</metadata>
@@ -21,7 +21,7 @@ import { main } from "~/stores/main";
 const { resolveIssueNumberTemplate } = useTextTemplate();
 
 const image = ref(null as SVGImageElement | null);
-const { image: base64, loadImage } = useBase64Legacy();
+const { image: imageDetails, loadImage } = useBase64Legacy();
 
 interface Props {
   issuenumber: string;

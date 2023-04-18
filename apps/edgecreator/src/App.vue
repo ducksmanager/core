@@ -14,14 +14,21 @@ collection().loadUser();
 watch(
   () => userPermissions.value,
   (permissions) => {
-    if (
-      !route.meta.public &&
-      !permissions?.find(
-        ({ privilege, role }) =>
-          role === "EdgeCreator" && ["Editor", "Admin"].includes(privilege)
-      )
-    ) {
-      location.replace(`${import.meta.env.VITE_DM_API_URL as string}/login`);
+    if (!route.meta.public && user.value) {
+      if (
+        !permissions?.some(
+          ({ privilege, role }) =>
+            role === "EdgeCreator" && ["Edition", "Admin"].includes(privilege)
+        )
+      ) {
+        location.replace("/");
+      }
+    } else {
+      location.replace(
+        `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
+          window.location.href
+        }`
+      );
     }
   }
 );
