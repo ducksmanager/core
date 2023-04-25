@@ -205,15 +205,6 @@ watch(
   }
 );
 
-watch(
-  () => error.value,
-  (newValue) => {
-    if (newValue) {
-      console.trace(newValue);
-    }
-  }
-);
-
 (async () => {
   await users().fetchAllUsers();
   let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers;

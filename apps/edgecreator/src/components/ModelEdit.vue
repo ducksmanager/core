@@ -11,7 +11,8 @@
       content-class="col h-100"
     >
       <b-tab
-        v-for="(stepOptions, stepNumber) in optionsPerStepNumber"
+        v-for="stepNumber of stepNumbers"
+        :id="`content-${stepNumber}`"
         :key="stepNumber"
         title-link-class="d-flex justify-content-between w-100"
       >
@@ -37,10 +38,7 @@
               @click.stop="emit('swap-steps', [stepNumber - 1, stepNumber])"
             />
             <i-bi-eye-slash-fill
-              v-if="
-                stepOptions.find(({ optionName }) => optionName === 'visible')
-                  ?.optionValue === false
-              "
+              v-if="inputValues[stepNumber].visible?.[0] === false"
               :title="$t('Click to show')"
               @click.stop="
                 stepStore.setOptionValues(
@@ -80,7 +78,7 @@
             option-name="text"
             :label="$t('Text').toString()"
             type="text"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber].text"
           >
             <template #alert
               >{{
@@ -113,7 +111,7 @@
             option-name="font"
             :label="$t('Font').toString()"
             type="text"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber].font"
             ><a
               target="_blank"
               :href="fontSearchUrl"
@@ -122,13 +120,13 @@
             ></form-input-row
           >
           <form-color-input-row
-            :options="stepOptions"
             :other-colors="otherColors[stepNumber]"
             option-name="bgColor"
+            :input-values="inputValues[stepNumber].bgColor"
             :label="$t('Background color').toString()"
           />
           <form-color-input-row
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber].fgColor"
             :other-colors="otherColors[stepNumber]"
             option-name="fgColor"
             :label="$t('Foreground color').toString()"
@@ -137,27 +135,27 @@
             option-name="rotation"
             :label="
               $t('Rotation : {rotation}°', {
-                rotation: stepOptions.find(({optionName}) => optionName === 'rotation')!.optionValue,
+                rotation: inputValues[stepNumber].rotation[0],
               }).toString()
             "
             type="range"
             :min="0"
             :max="270"
             :range-step="90"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber].rotation"
           />
           <b-button
             size="sm"
             variant="outline-warning"
             class="d-block mt-3"
-            @click="resetPositionAndSize(stepOptions)"
+            @click="resetPositionAndSize(stepNumber)"
             >{{ $t("Reset position and size") }}
           </b-button>
         </b-card-text>
         <b-card-text v-if="components[stepNumber] === 'Fill'">
           <form-color-input-row
             :other-colors="otherColors[stepNumber]"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber]['fill']"
             option-name="fill"
             :label="$t('Fill color').toString()"
           />
@@ -182,7 +180,7 @@
             :label="$t('Image').toString()"
             type="text"
             list-id="src-list"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber].src"
           >
             <b-form-select
               id="src-list"
@@ -191,11 +189,7 @@
             <gallery
               :items="mainStore.publicationElementsForGallery"
               image-type="elements"
-              :selected="
-                stepOptions
-                  .filter(({ optionName }) => optionName === 'src')
-                  .map(({ optionValue }) => optionValue)
-              "
+              :selected="inputValues[stepNumber].src"
               @change="stepStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
@@ -207,7 +201,7 @@
             v-for="optionName in ['fill', 'stroke']"
             :key="optionName"
             :other-colors="otherColors[stepNumber]"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber][optionName]"
             :option-name="optionName"
             :label="$t(ucFirst(optionName + ' color')).toString()"
             can-be-transparent
@@ -218,7 +212,7 @@
             v-for="optionName in ['colorStart', 'colorEnd']"
             :key="optionName"
             :other-colors="otherColors[stepNumber]"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber][optionName]"
             :option-name="optionName"
             :label="
               $t(
@@ -229,7 +223,7 @@
 
           <form-input-row
             type="select"
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber].direction"
             option-name="direction"
             :label="$t('Direction').toString()"
             :select-options="[$t('Vertical'), $t('Horizontal')]"
@@ -240,7 +234,7 @@
         </b-card-text>
         <b-card-text v-if="components[stepNumber] === 'Polygon'">
           <form-color-input-row
-            :options="stepOptions"
+            :input-values="inputValues[stepNumber].fill"
             :other-colors="otherColors[stepNumber]"
             option-name="fill"
             :label="$t('Fill color').toString()"
@@ -267,7 +261,7 @@ import { editingStep } from "~/stores/editingStep";
 import { hoveredStep } from "~/stores/hoveredStep";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
-import { step, StepOption } from "~/stores/step";
+import { step } from "~/stores/step";
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
@@ -282,58 +276,67 @@ const emit = defineEmits<{
 }>();
 const issueNumbers = computed(() => mainStore.issuenumbers);
 
+const inputValues = computed(
+  (): Record<number, Record<string, PossibleInputValueType[]>> =>
+    stepStore.options
+      .filter(({ issuenumber }) =>
+        editingStepStore.issuenumbers.includes(issuenumber)
+      )
+      .reduce<Record<number, Record<string, PossibleInputValueType[]>>>(
+        (acc, { stepNumber, optionName, optionValue }) => {
+          const optionValues =
+            acc[stepNumber]?.[optionName] === undefined
+              ? []
+              : acc[stepNumber][optionName];
+          return {
+            ...acc,
+            [stepNumber]: {
+              ...(acc[stepNumber] || {}),
+              [optionName]: [
+                ...optionValues,
+                optionValue as PossibleInputValueType,
+              ],
+            },
+          };
+        },
+        {}
+      )
+);
+
+const stepNumbers = computed(() =>
+  Object.keys(inputValues.value).map((stepNumber) => parseInt(stepNumber))
+);
+
 const fontSearchUrl = computed(
   () => import.meta.env.VITE_FONT_SEARCH_URL as string
 );
-const optionsPerStepNumber = computed((): StepOption[][] =>
-  Object.values(
-    stepStore
-      .getFilteredOptions({
-        issuenumbers: editingStepStore.issuenumbers,
-      })
-      .reduce<Record<number, StepOption[]>>(
-        (acc, { stepNumber, ...rest }) => ({
-          ...acc,
-          [stepNumber]: [...(acc[stepNumber] || []), { stepNumber, ...rest }],
-        }),
-        {}
-      )
-  )
-);
+
+type PossibleInputValueType = string | number | boolean;
 
 const components = computed(() =>
-  Object.entries(optionsPerStepNumber.value).reduce<Record<number, string>>(
-    (acc, [stepNumber, options]) => ({
-      ...acc,
-      [stepNumber]: options.find(
-        ({ optionName }) => optionName === "component"
-      )!.optionValue,
-    }),
-    {}
+  Object.values(inputValues.value).map(
+    (stepOptions) => stepOptions.component[0] as string
   )
 );
 
 const otherColors = computed(() =>
-  Object.keys(optionsPerStepNumber.value)
-    .map((currentStepNumber) => parseInt(currentStepNumber))
-    .map((currentStepNumber) => ({
-      sameIssuenumber: stepStore.colors.filter(
-        ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
-          issueNumbers.value.includes(thisIssuenumber) &&
-          thisStepNumber !== currentStepNumber
-      ),
-      differentIssuenumber: stepStore.colors.filter(
-        ({ issuenumber: thisIssuenumber }) =>
-          !issueNumbers.value.includes(thisIssuenumber)
-      ),
-    }))
+  stepNumbers.value.map((currentStepNumber) => ({
+    sameIssuenumber: stepStore.colors.filter(
+      ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
+        issueNumbers.value.includes(thisIssuenumber) &&
+        thisStepNumber !== currentStepNumber
+    ),
+    differentIssuenumber: stepStore.colors.filter(
+      ({ issuenumber: thisIssuenumber }) =>
+        !issueNumbers.value.includes(thisIssuenumber)
+    ),
+  }))
 );
 
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);
 
-const resetPositionAndSize = (stepOptions: StepOption[]) => {
-  const stepNumber = stepOptions[0].stepNumber;
+const resetPositionAndSize = (stepNumber: number) => {
   for (const issuenumber of editingStepStore.issuenumbers) {
     const issueDimensions = stepStore.getFilteredDimensions({
       issuenumbers: [issuenumber],
@@ -345,8 +348,7 @@ const resetPositionAndSize = (stepOptions: StepOption[]) => {
         width: issueDimensions.width,
         height:
           issueDimensions.width *
-          (stepOptions.find(({ optionName }) => optionName === "aspectRatio")!
-            .optionValue as number),
+          (inputValues.value[stepNumber].aspectRatio[0] as number),
       },
       {
         issuenumbers: [issuenumber],
@@ -382,16 +384,6 @@ const splitImageAcrossEdges = () => {
     leftOffset -= issueDimensions.width;
   }
 };
-
-onUpdated(() => {
-  console.log("!");
-  debugger;
-});
-
-onRenderTriggered(() => {
-  console.log("!");
-  debugger;
-});
 </script>
 <style lang="scss">
 #edit-card {
