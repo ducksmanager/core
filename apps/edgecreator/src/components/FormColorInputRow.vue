@@ -9,7 +9,7 @@
       'can-be-transparent': canBeTransparent,
       'transparent-selected': isTransparent,
     }"
-    :options="options"
+    :input-values="inputValues"
     :disabled="isTransparent"
     ><template #prefix>
       <b-button
@@ -88,12 +88,13 @@
 </template>
 <script setup lang="ts">
 import { main } from "~/stores/main";
-import { Options, step, StepOption } from "~/stores/step";
+import { Options, step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
+type PossibleInputValueType = string | number;
 const props = withDefaults(
   defineProps<{
-    options: StepOption[];
+    inputValues: PossibleInputValueType[];
     optionName: string;
     otherColors: {
       differentIssuenumber: Options;
@@ -112,12 +113,6 @@ const originalColor = ref(null as string | null);
 
 const stepStore = step();
 
-const colorOption = computed(() =>
-  props.options.filter(({ optionName }) => optionName === props.optionName)
-);
-const inputValues = computed(() =>
-  colorOption.value.map(({ optionValue }) => optionValue)
-);
 const isTransparent = ref(false as boolean);
 const photoUrls = computed(() => main().photoUrls);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
@@ -125,7 +120,7 @@ const colorPickerOption = computed(() => ui().colorPickerOption);
 const showEdgePhotos = computed(() => ui().showEdgePhotos);
 
 watch(
-  () => inputValues.value,
+  () => props.inputValues,
   (inputValues) => {
     isTransparent.value = inputValues[0] === "transparent";
   },
@@ -153,7 +148,7 @@ const otherColorsByLocationAndStepNumber = computed(() => ({
   ),
 }));
 watch(
-  () => inputValues.value,
+  () => props.inputValues,
   (newValue) => {
     let newColor = newValue[0];
     if (newColor === "transparent") {
@@ -169,7 +164,7 @@ watch(
   (newValue) => {
     stepStore.setOptionValues([
       {
-        ...colorOption.value[0],
+        optionName: props.optionName,
         optionValue: newValue ? "transparent" : originalColor.value,
       },
     ]);

@@ -42,16 +42,17 @@
 </template>
 
 <script setup lang="ts">
-import { step, StepOption } from "~/stores/step";
+import { step } from "~/stores/step";
 import { OptionValue } from "~/types/OptionValue";
 
+type PossibleInputValueType = string | number;
 const props = withDefaults(
   defineProps<{
     label: string;
     optionName: string;
     type: "color" | "text" | "range" | "select";
     disabled?: boolean;
-    options: StepOption[];
+    inputValues: PossibleInputValueType[];
     min?: number;
     max?: number;
     rangeStep?: number;
@@ -69,7 +70,6 @@ const props = withDefaults(
     selectOptions: undefined,
   }
 );
-type PossibleInputValueType = string | number;
 
 const shouldWaitForBlurToUpdate = computed(() =>
   ["text", "font"].includes(props.optionName)
@@ -77,18 +77,13 @@ const shouldWaitForBlurToUpdate = computed(() =>
 
 const inputValue = ref(undefined as PossibleInputValueType | undefined);
 
-const inputValues = computed(() =>
-  props.options
-    .filter(({ optionName }) => optionName === props.optionName)
-    .map(({ optionValue }) => optionValue as PossibleInputValueType)
-);
 const values = computed(() => [
   ...new Set(
     props.optionName === "xlink:href"
-      ? (inputValues.value as string[]).map(
+      ? (props.inputValues as string[]).map(
           (value) => value.match(/\/([^/]+)$/)![1]
         )
-      : inputValues.value
+      : props.inputValues
   ),
 ]);
 
@@ -99,11 +94,13 @@ const onBlur = () => {
 };
 
 watch(
-  () => inputValues.value,
-  (inputValues) => {
+  () => props.inputValues,
+  (inputValues, oldInputValues) => {
     inputValue.value = inputValues[0] || undefined;
   },
-  { immediate: true }
+  {
+    immediate: true,
+  }
 );
 
 watch(

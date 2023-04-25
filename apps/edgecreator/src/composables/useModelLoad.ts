@@ -152,8 +152,6 @@ export default () => {
       ) ?? { component: null };
       if (component) {
         try {
-          console.log(component);
-          console.log(originalOptions);
           stepStore.setOptionValues(
             optionObjectToArray(
               await getOptionsFromDb(

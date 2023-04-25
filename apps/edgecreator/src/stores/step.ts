@@ -66,12 +66,13 @@ export const step = defineStore("step", () => {
     }: {
       stepNumbers?: number[];
       issuenumbers?: string[];
-    }) =>
-      options.value.filter(
+    }) => {
+      return options.value.filter(
         ({ stepNumber, issuenumber }) =>
           (!stepNumbers || stepNumbers.includes(stepNumber)) &&
           (!issuenumbers || issuenumbers.includes(issuenumber))
-      ),
+      );
+    },
     getFilteredDimensions = ({ issuenumbers }: { issuenumbers?: string[] }) =>
       dimensions.value.filter(
         ({ issuenumber }) => !issuenumbers || issuenumbers.includes(issuenumber)
@@ -98,10 +99,10 @@ export const step = defineStore("step", () => {
         stepNumber?: number;
       } = { issuenumbers: undefined, stepNumber: undefined }
     ) => {
-      console.trace(newOptions);
       const optionsAsArray = newOptions.hasOwnProperty("length")
         ? (newOptions as OptionsArray)
         : optionObjectToArray(newOptions as Record<string, OptionValue>);
+      const newOptionsKeys = optionsAsArray.map(({ optionName }) => optionName);
       const defaultStepNumber =
         overrides.stepNumber === undefined
           ? editingStep().stepNumber
@@ -110,31 +111,74 @@ export const step = defineStore("step", () => {
         overrides.issuenumbers === undefined
           ? editingStep().issuenumbers
           : overrides.issuenumbers;
-      console.log(defaultStepNumber);
-      console.log(defaultIssuenumbers);
-      options.value = [
-        ...new Set(
-          [
-            ...removeOptionValues({
+
+      const processedOptions: {
+        stepNumber: number;
+        issuenumber: string;
+        optionName: string;
+      }[] = [];
+      options.value.forEach(({ stepNumber, issuenumber, optionName }, idx) => {
+        if (
+          stepNumber === defaultStepNumber &&
+          defaultIssuenumbers.includes(issuenumber)
+        ) {
+          optionsAsArray.forEach(
+            ({
+              optionName: optionNameToUpdate,
+              optionValue: optionValueToUpdate,
+            }) => {
+              if (optionName === optionNameToUpdate) {
+                options.value[idx].optionValue = optionValueToUpdate;
+                processedOptions.push({ stepNumber, issuenumber, optionName });
+              }
+            }
+          );
+        }
+      });
+      for (const issuenumberToProcess of defaultIssuenumbers) {
+        for (const optionNameToProcess of newOptionsKeys) {
+          if (
+            !processedOptions.some(
+              ({ stepNumber, issuenumber, optionName }) =>
+                stepNumber === defaultStepNumber &&
+                issuenumber === issuenumberToProcess &&
+                optionName === optionNameToProcess
+            )
+          ) {
+            options.value.push({
               stepNumber: defaultStepNumber,
-              issuenumbers: defaultIssuenumbers,
-              optionNames: optionsAsArray.map(({ optionName }) => optionName),
-            }),
-            ...defaultIssuenumbers.reduce<StepOption[]>(
-              (acc, issuenumber) => [
-                ...acc,
-                ...optionsAsArray.map(({ optionName, optionValue }) => ({
-                  stepNumber: defaultStepNumber,
-                  issuenumber,
-                  optionName,
-                  optionValue,
-                })),
-              ],
-              []
-            ),
-          ].map((option) => JSON.stringify(option))
-        ),
-      ].map((option) => JSON.parse(option) as StepOption);
+              issuenumber: issuenumberToProcess,
+              optionName: optionNameToProcess,
+              optionValue: optionsAsArray.find(
+                ({ optionName }) => optionName === optionNameToProcess
+              )!.optionValue,
+            });
+          }
+        }
+      }
+      // options.value = [
+      //   ...new Set(
+      //     [
+      //       ...removeOptionValues({
+      //         stepNumber: defaultStepNumber,
+      //         issuenumbers: defaultIssuenumbers,
+      //         optionNames: optionsAsArray.map(({ optionName }) => optionName),
+      //       }),
+      //       ...defaultIssuenumbers.reduce<StepOption[]>(
+      //         (acc, issuenumber) => [
+      //           ...acc,
+      //           ...optionsAsArray.map(({ optionName, optionValue }) => ({
+      //             stepNumber: defaultStepNumber,
+      //             issuenumber,
+      //             optionName,
+      //             optionValue,
+      //           })),
+      //         ],
+      //         []
+      //       ),
+      //     ].map((option) => JSON.stringify(option))
+      //   ),
+      // ].map((option) => JSON.parse(option) as StepOption);
     },
     setDimensions = (
       newDimensions: { width: number; height: number },

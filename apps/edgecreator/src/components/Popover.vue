@@ -1,36 +1,32 @@
 <template>
-  <popper
+  <b-popover
     ref="popper"
+    container="body"
     :placement="placement"
     arrow
     manual
-    :show="isOverPopup || isOverPopupText"
+    :model-value="isOverPopup || isOverPopupText"
     @open:popper="
       onOpen();
       $emit('@open:popper');
     "
-  >
-    <span @mouseover="isOverPopupText = true" @mouseout.prevent="closePopupSoon"
-      ><slot
-    /></span>
-    <template #content>
-      <b-card
-        body-class="p-0"
-        @mouseenter="isOverPopup = true"
-        @mouseleave="isOverPopup = false"
-      >
-        <b-card-header v-if="$slots.header">
-          <slot name="header" />
-        </b-card-header>
-        <slot name="content" />
-      </b-card>
+    ><template #target>
+      <span
+        @mouseover="isOverPopupText = true"
+        @mouseout.prevent="closePopupSoon"
+        ><slot
+      /></span>
     </template>
-  </popper>
+    <slot name="header" />
+    <slot name="content" />
+  </b-popover>
 </template>
 
 <script setup lang="ts">
+import Placement from "bootstrap-vue-next/dist/src/types/BPopoverPlacement";
+
 const { placement = "top" } = defineProps<{
-  placement?: string;
+  placement?: Placement;
 }>();
 
 defineEmits<(e: "@open:popper") => void>();

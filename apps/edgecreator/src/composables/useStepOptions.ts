@@ -155,7 +155,6 @@ export const useStepOptions = (
       })
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
-  console.log(component);
 
   return {
     zoom,
