@@ -176,25 +176,25 @@ export const main = defineStore("main", () => {
       }
     },
     getEdgePublicationStates = async (edges: string[]) =>
-      Object.values(
-        (
-          await call(
-            api().dmApi,
-            new GET__edges__$countrycode__$magazinecode__$issuenumbers({
-              params: {
-                countrycode: publicationcode.value!.split("/")[0],
-                magazinecode: publicationcode.value!.split("/")[1],
-                issuenumbers: edges.join(","),
-              },
-            })
+      [
+        ...new Set(
+          Object.values<EdgeWithModelId[]>(
+            (
+              await call(
+                api().dmApi,
+                new GET__edges__$countrycode__$magazinecode__$issuenumbers({
+                  params: {
+                    countrycode: publicationcode.value!.split("/")[0],
+                    magazinecode: publicationcode.value!.split("/")[1],
+                    issuenumbers: edges.join(","),
+                  },
+                })
+              )
+            ).data
           )
-        ).data
-      ).sort(
-        (
-          { issuenumber: issuenumber1 }: { issuenumber: string },
-          { issuenumber: issuenumber2 }: { issuenumber: string }
-        ) =>
-          Math.sign(edges.indexOf(issuenumber1) - edges.indexOf(issuenumber2))
+        ),
+      ].sort((a, b) =>
+        Math.sign(edges.indexOf(a.issuenumber) - edges.indexOf(b.issuenumber))
       ),
     getChunkedRequests = async ({
       api,

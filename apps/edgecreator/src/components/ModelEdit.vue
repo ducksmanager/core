@@ -43,7 +43,7 @@
               @click.stop="
                 stepStore.setOptionValues(
                   { visible: true },
-                  { stepNumber, issuenumbers: editingStepStore.issuenumbers }
+                  { stepNumber, issuenumbers: mainStore.issuenumbers }
                 )
               "
             />
@@ -53,7 +53,7 @@
               @click.stop="
                 stepStore.setOptionValues(
                   { visible: false },
-                  { stepNumber, issuenumbers: editingStepStore.issuenumbers }
+                  { stepNumber, issuenumbers: mainStore.issuenumbers }
                 )
               "
             />
@@ -80,44 +80,48 @@
             type="text"
             :input-values="inputValues[stepNumber].text"
           >
-            <template #alert
-              >{{
-                $t("You can use special text parts to make your text dynamic :")
-              }}
-              <ul>
-                <i18n-t
-                  tag="li"
-                  keypath="Write {templateString} to inject in your text the current issue number"
+            <popover triggers="hover" placement="left">
+              <i-bi-info-circle-fill variant="secondary" />
+              <template #content
+                ><b-alert variant="info" :model-value="true"
+                  >{{
+                    $t(
+                      "You can use special text parts to make your text dynamic :"
+                    )
+                  }}
+                  <ul>
+                    <i18n-t
+                      tag="li"
+                      keypath="Write {templateString} to inject in your text the current issue number"
+                    >
+                      <template #templateString>
+                        <pre class="d-inline-block">[Numero]</pre>
+                      </template>
+                    </i18n-t>
+                    <i18n-t
+                      tag="li"
+                      keypath="Write {templateString1} to inject in your text the first digit of the current issue number, {templateString2} for the second digit, etc."
+                    >
+                      <template #templateString1>
+                        <pre class="d-inline-block">[Numero[0]]</pre>
+                      </template>
+                      <template #templateString2>
+                        <pre class="d-inline-block">[Numero[1]]</pre>
+                      </template>
+                    </i18n-t>
+                  </ul></b-alert
                 >
-                  <template #templateString>
-                    <pre class="d-inline-block">[Numero]</pre>
-                  </template>
-                </i18n-t>
-                <i18n-t
-                  tag="li"
-                  keypath="Write {templateString1} to inject in your text the first digit of the current issue number, {templateString2} for the second digit, etc."
-                >
-                  <template #templateString1>
-                    <pre class="d-inline-block">[Numero[0]]</pre>
-                  </template>
-                  <template #templateString2>
-                    <pre class="d-inline-block">[Numero[1]]</pre>
-                  </template>
-                </i18n-t>
-              </ul>
-            </template>
+              </template>
+            </popover>
           </form-input-row>
           <form-input-row
             option-name="font"
             :label="$t('Font').toString()"
             type="text"
             :input-values="inputValues[stepNumber].font"
-            ><a
-              target="_blank"
-              :href="fontSearchUrl"
-              class="float-end input-extra"
-              >{{ $t("Search") }}</a
-            ></form-input-row
+            ><a target="_blank" :href="fontSearchUrl">{{
+              $t("Search")
+            }}</a></form-input-row
           >
           <form-color-input-row
             :other-colors="otherColors[stepNumber]"
@@ -429,10 +433,5 @@ const splitImageAcrossEdges = () => {
 .tab-pane.card-body {
   overflow-y: auto;
   height: 100%;
-}
-
-.input-extra {
-  margin-top: -30px;
-  margin-right: 10px;
 }
 </style>

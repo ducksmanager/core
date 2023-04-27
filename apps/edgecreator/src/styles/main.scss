@@ -39,6 +39,12 @@ a {
   }
 }
 
+pre {
+  overflow: hidden;
+  margin: 0;
+  line-height: normal;
+}
+
 [variant="primary"] {
   color: #3b8070 !important;
 }
@@ -93,15 +99,18 @@ a {
 
 @keyframes glow-filter {
   0% {
-    filter: drop-shadow(-0.75px 0px 6px rgba(0, 0, 0, 0.5));
-    outline-color: rgba(0, 0, 0, 0.5);
+    outline-color: rgb(255, 255, 255);
+  }
+  25% {
+    outline-color: rgb(128, 128, 128);
   }
   50% {
-    filter: drop-shadow(-0.75px 0px 6px rgba(128, 128, 128, 0.5));
-    outline-color: rgba(128, 128, 128, 0.5);
+    outline-color: rgb(0, 0, 0);
+  }
+  75% {
+    outline-color: rgb(128, 128, 128);
   }
   100% {
-    filter: drop-shadow(-0.75px 0px 6px rgba(0, 0, 0, 0.5));
-    outline-color: rgba(0, 0, 0, 0.5);
+    outline-color: rgb(255, 255, 255);
   }
 }

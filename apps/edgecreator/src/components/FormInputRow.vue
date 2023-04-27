@@ -1,18 +1,11 @@
 <template>
-  <b-row class="mb-2">
-    <b-col sm="3">
+  <b-row class="mb-3">
+    <b-col sm="3" class="d-flex align-items-center">
       <label :for="optionName">{{ label }}</label>
     </b-col>
-    <b-col sm="9" class="d-flex">
+    <b-col sm="6" class="d-flex align-items-center">
       <slot name="prefix" />
       <confirm-edit-multiple-values :values="values" @change="onChangeValue">
-        <b-alert
-          v-if="$slots.alert || $slots.alert"
-          variant="info"
-          :model-value="true"
-        >
-          <slot name="alert" />
-        </b-alert>
         <b-form-select
           v-if="type === 'select'"
           :id="optionName"
@@ -34,9 +27,13 @@
           :list="listId"
           @blur="onBlur"
         ></b-form-input>
-        <slot />
-        <slot name="suffix" />
       </confirm-edit-multiple-values>
+    </b-col>
+    <b-col
+      sm="3"
+      class="d-flex flex-column align-items-center justify-content-center"
+    >
+      <slot />
     </b-col>
   </b-row>
 </template>
@@ -75,7 +72,9 @@ const shouldWaitForBlurToUpdate = computed(() =>
   ["text", "font"].includes(props.optionName)
 );
 
-const inputValue = ref(undefined as PossibleInputValueType | undefined);
+const inputValue = ref(
+  props.inputValues[0] as PossibleInputValueType | undefined
+);
 
 const values = computed(() => [
   ...new Set(
@@ -95,7 +94,7 @@ const onBlur = () => {
 
 watch(
   () => props.inputValues,
-  (inputValues, oldInputValues) => {
+  (inputValues) => {
     inputValue.value = inputValues[0] || undefined;
   },
   {
@@ -106,7 +105,11 @@ watch(
 watch(
   () => inputValue.value,
   (newValue: PossibleInputValueType | undefined) => {
-    if (!shouldWaitForBlurToUpdate.value) {
+    if (
+      !shouldWaitForBlurToUpdate.value &&
+      [...new Set(props.inputValues)].length <= 1 &&
+      newValue !== undefined
+    ) {
       onChangeValue(newValue);
     }
   }
@@ -114,6 +117,7 @@ watch(
 
 const onChangeValue = (optionValue: OptionValue) => {
   let intValue: number | null = null;
+  debugger;
   if (props.optionName === "rotation") {
     intValue = parseInt(optionValue as string);
   }
@@ -128,10 +132,6 @@ const onChangeValue = (optionValue: OptionValue) => {
   ul {
     padding-left: 1rem;
     margin-bottom: 0;
-  }
-
-  pre {
-    margin-bottom: -5px;
   }
 }
 :deep(.edit-wrapper) {

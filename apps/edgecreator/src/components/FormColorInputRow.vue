@@ -24,9 +24,7 @@
           src="/transparent.png"
         />&nbsp;Transparent</b-button
       ></template
-    >
-
-    <template v-if="!isTransparent" #suffix>
+    ><template v-if="!isTransparent">
       <popover container="body">
         <b-button
           :id="`${optionName}-popover-colors`"
@@ -43,37 +41,40 @@
             ) in otherColorsByLocationAndStepNumber"
             :key="colorLocation"
           >
-            <h6 v-if="colorLocation === 'sameIssuenumber'">
-              {{ $t("Colors used in other steps") }}
-            </h6>
-            <h6 v-if="colorLocation === 'differentIssuenumber'">
-              {{ $t("Colors used in other edges") }}
-            </h6>
-            <ul>
-              <li
-                v-for="(_, stepNumber) in otherColorsForLocation"
-                :key="`${colorLocation}-${stepNumber}`"
-              >
-                <span
-                  :class="{
-                    'text-secondary':
-                      !otherColorsForLocation[stepNumber].length,
-                  }"
-                  >{{ $t("Step") }} {{ stepNumber }}</span
+            <template v-if="otherColorsForLocation">
+              <h6 v-if="colorLocation === 'sameIssuenumber'">
+                {{ $t("Colors used in other steps") }}
+              </h6>
+              <h6 v-if="colorLocation === 'differentIssuenumber'">
+                {{ $t("Colors used in other edges") }}
+              </h6>
+              <ul>
+                <li
+                  v-for="(_, stepNumber) in otherColorsForLocation"
+                  :key="`${colorLocation}-${stepNumber}`"
                 >
-                <span
-                  v-for="color in otherColorsForLocation[stepNumber]"
-                  :key="color"
-                  class="frequent-color"
-                  :style="{ background: color }"
-                  @click="onColorChange(color)"
-                  >&nbsp;</span
-                >
-              </li>
-            </ul>
+                  <span
+                    :class="{
+                      'text-secondary':
+                        !otherColorsForLocation[stepNumber].length,
+                    }"
+                    >{{ $t("Step") }} {{ stepNumber }}</span
+                  >
+                  <span
+                    v-for="color in otherColorsForLocation[stepNumber]"
+                    :key="color"
+                    class="frequent-color"
+                    :style="{ background: color }"
+                    @click="onColorChange(color)"
+                    >&nbsp;</span
+                  >
+                </li>
+              </ul></template
+            >
           </div></template
         ></popover
-      >&nbsp;<b-button
+      ><b-button
+        class="mt-0"
         pill
         size="sm"
         :disabled="!hasPhotoUrl || showEdgePhotos === undefined"
@@ -112,6 +113,7 @@ const props = withDefaults(
 const originalColor = ref(null as string | null);
 
 const stepStore = step();
+const mainStore = main();
 
 const isTransparent = ref(false as boolean);
 const photoUrls = computed(() => main().photoUrls);
@@ -140,9 +142,12 @@ const getOptionStringValuesByStepNumber = (options: Options) =>
   );
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
-  differentIssuenumber: getOptionStringValuesByStepNumber(
-    props.otherColors.differentIssuenumber
-  ),
+  differentIssuenumber:
+    mainStore.issuenumbers.length === 1
+      ? null
+      : getOptionStringValuesByStepNumber(
+          props.otherColors.differentIssuenumber
+        ),
   sameIssuenumber: getOptionStringValuesByStepNumber(
     props.otherColors.sameIssuenumber
   ),
