@@ -280,7 +280,6 @@ export default () => {
     if (!stepStore.options.length) {
       throw new Error(`No model found for issue ${issuenumber}`);
     }
-    console.log("Loading done");
   };
 
   const setPhotoUrlsFromApi = async (issuenumber: string, edgeId: number) => {

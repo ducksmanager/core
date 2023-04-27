@@ -1,18 +1,23 @@
 <template>
-  <div class="edit-wrapper">
-    <template v-if="isMultiple">
-      {{ $t("Multiple values.") }}
-      <b-button
-        size="sm"
-        pill
-        @click="
-          edit = true;
-          emit('change', values[0]);
-        "
-        >{{ $t("Edit") }}</b-button
-      >
-    </template>
-    <slot v-else />
+  <div class="w-100">
+    <slot name="before" />
+    <div
+      class="d-flex flex-row justify-space-around align-items-center edit-wrapper"
+    >
+      <template v-if="isMultiple">
+        {{ $t("Multiple values.") }}
+        <b-button
+          size="sm"
+          pill
+          @click="
+            edit = true;
+            emit('change', values[0]);
+          "
+          >{{ $t("Edit") }}</b-button
+        >
+      </template>
+      <slot v-else />
+    </div>
   </div>
 </template>
 <script setup lang="ts">

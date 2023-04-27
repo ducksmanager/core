@@ -156,29 +156,6 @@ export const step = defineStore("step", () => {
           }
         }
       }
-      // options.value = [
-      //   ...new Set(
-      //     [
-      //       ...removeOptionValues({
-      //         stepNumber: defaultStepNumber,
-      //         issuenumbers: defaultIssuenumbers,
-      //         optionNames: optionsAsArray.map(({ optionName }) => optionName),
-      //       }),
-      //       ...defaultIssuenumbers.reduce<StepOption[]>(
-      //         (acc, issuenumber) => [
-      //           ...acc,
-      //           ...optionsAsArray.map(({ optionName, optionValue }) => ({
-      //             stepNumber: defaultStepNumber,
-      //             issuenumber,
-      //             optionName,
-      //             optionValue,
-      //           })),
-      //         ],
-      //         []
-      //       ),
-      //     ].map((option) => JSON.stringify(option))
-      //   ),
-      // ].map((option) => JSON.parse(option) as StepOption);
     },
     setDimensions = (
       newDimensions: { width: number; height: number },
@@ -309,16 +286,24 @@ export const step = defineStore("step", () => {
         }
       );
     },
-    removeStep = (stepNumber: number) => {
-      removeOptionValues({
-        stepNumber,
-      });
+    removeStep = (stepNumberToRemove: number) => {
+      options.value = options.value.filter(
+        ({ stepNumber }) => stepNumberToRemove !== stepNumber
+      );
+      for (
+        let optionIndex = 0;
+        optionIndex < options.value.length;
+        optionIndex++
+      ) {
+        if (options.value[optionIndex].stepNumber > stepNumberToRemove) {
+          options.value[optionIndex].stepNumber--;
+        }
+      }
     },
     duplicateStep = (stepNumber: number) => {
       const existingStepOptions = getFilteredOptions({
         stepNumbers: [stepNumber],
       });
-      debugger;
 
       setOptionValues(
         existingStepOptions.map((option) => ({
@@ -328,12 +313,21 @@ export const step = defineStore("step", () => {
       );
     },
     swapSteps = (stepNumbers: [number, number]) => {
-      const stepsToSwap = [
-        options.value[stepNumbers[0]],
-        options.value[stepNumbers[1]],
-      ];
-      options.value[stepNumbers[0]] = stepsToSwap[1];
-      options.value[stepNumbers[1]] = stepsToSwap[0];
+      for (
+        let optionIndex = 0;
+        optionIndex < options.value.length;
+        optionIndex++
+      ) {
+        const stepNumber = options.value[optionIndex].stepNumber;
+        if (stepNumbers.includes(stepNumber)) {
+          options.value[optionIndex].stepNumber =
+            stepNumbers[1 - stepNumbers.indexOf(stepNumber)];
+        }
+      }
+      options.value.sort(
+        ({ stepNumber: stepNumber1 }, { stepNumber: stepNumber2 }) =>
+          Math.sign(stepNumber1 - stepNumber2)
+      );
     };
   return {
     options,

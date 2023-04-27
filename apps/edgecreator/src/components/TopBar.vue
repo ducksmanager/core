@@ -133,15 +133,13 @@
         <template v-if="isEditingMultiple">
           &nbsp;<popover
             id="multiple-issues-hints-popover"
-            target="multiple-issues-hints"
             triggers="hover"
             placement="bottom"
           >
-            <i-bi-info-circle-fill
-              id="multiple-issues-hints"
-              variant="secondary"
-            />
-            <template #header>{{ $t("Multiple-edge modification") }}</template>
+            <i-bi-info-circle-fill variant="secondary" />
+            <template #header
+              ><b>{{ $t("Multiple-edge modification") }}</b></template
+            >
             <template #content
               ><ul class="py-2 text-start">
                 <li>
