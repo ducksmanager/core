@@ -168,27 +168,31 @@ meta:
   </div>
 </template>
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
+
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
 import { BookcaseEdgeWithPopularity, collection } from "~/stores/collection";
-import { edgeCatalog } from "~/stores/edgeCatalog";
+import {
+  edgeCatalog,
+  edgeCategories,
+  EdgeWithVersionAndStatus,
+} from "~/stores/edgeCatalog";
 import { GET__edges__wanted__data } from "~dm_types/routes";
 
 import { call } from "../../axios-helper";
 
 const { getEdgeUrl } = useSvgUtils();
-const { hasRole } = collection();
-const publicationNames = computed(() => coa().publicationNames);
 
-const {
-  edgesByStatus,
-  currentEdges,
-  canEditEdge,
-  loadCatalog,
-  edgeCategories,
-  isCatalogLoaded,
-} = edgeCatalog();
 const collectionStore = collection();
+const { hasRole } = collectionStore;
+
+const edgeCatalogStore = edgeCatalog();
+const { loadCatalog, canEditEdge } = edgeCatalogStore;
+const { edgesByStatus, currentEdges, isCatalogLoaded } =
+  storeToRefs(edgeCatalogStore);
+
+const publicationNames = computed(() => coa().publicationNames);
 
 const isUploadableEdgesCarouselReady = ref(false as boolean);
 const mostWantedEdges = ref(null as BookcaseEdgeWithPopularity[] | null);
@@ -247,7 +251,8 @@ const loadMostWantedEdges = async () => {
       ),
       ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
       ...Object.values(currentEdges).map(
-        ({ country, magazine }) => `${country}/${magazine}`
+        ({ country, magazine }: EdgeWithVersionAndStatus) =>
+          `${country}/${magazine}`
       ),
     ]),
   ]);

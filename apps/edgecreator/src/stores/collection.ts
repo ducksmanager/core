@@ -104,6 +104,8 @@ export const collection = defineStore("collection", () => {
           userPermissions.value = (
             await call(api().dmApi, new GET__collection__user_privileges())
           ).data;
+        } else {
+          user.value = null;
         }
       } catch (e) {
         console.error(e);

@@ -11,27 +11,28 @@ const userPermissions = computed(() => collection().userPermissions);
 
 collection().loadUser();
 
-watch(
-  () => userPermissions.value,
-  (permissions) => {
-    if (!route.meta.public && user.value) {
+watchEffect(() => {
+  if (user.value !== null) {
+    if (!route.meta.public) {
       if (
-        !permissions?.some(
+        user.value &&
+        !userPermissions.value?.some(
           ({ privilege, role }) =>
-            role === "EdgeCreator" && ["Edition", "Admin"].includes(privilege)
+            role === "EdgeCreator" &&
+            ["Edition", "Admin"].includes(privilege as string)
         )
       ) {
         location.replace("/");
       }
-    } else {
-      location.replace(
-        `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
-          window.location.href
-        }`
-      );
     }
+  } else {
+    location.replace(
+      `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
+        window.location.href
+      }`
+    );
   }
-);
+});
 </script>
 
 <style lang="scss">
