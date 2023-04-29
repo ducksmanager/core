@@ -1,6 +1,6 @@
 <!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
-  <svg v-if="options.x !== undefined && options.height !== null">
+  <svg v-if="options.height !== null">
     <image
       v-if="image"
       ref="imageRef"

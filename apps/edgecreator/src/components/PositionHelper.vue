@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { ui } from "../stores/ui";
+import { ui } from "~/stores/ui";
 
 const positionInCanvas = computed(() => ui().positionInCanvas);
 </script>

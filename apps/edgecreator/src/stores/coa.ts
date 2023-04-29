@@ -17,7 +17,6 @@ export const coa = defineStore("coa", () => {
     personNames = ref(null as Record<string, string> | null),
     issueNumbers = ref({} as Record<string, string[]>),
     isLoadingCountryNames = ref(false as boolean),
-    issueCounts = ref(null),
     addPublicationNames = (
       newPublicationNames: Record<string, string | null>
     ) => {
@@ -141,7 +140,6 @@ export const coa = defineStore("coa", () => {
     personNames,
     issueNumbers,
     isLoadingCountryNames,
-    issueCounts,
     addPublicationNames,
     addIssueNumbers,
     fetchCountryNames,

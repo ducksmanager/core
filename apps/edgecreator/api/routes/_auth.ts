@@ -34,7 +34,15 @@ export const authenticateToken = (
 };
 
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
-  req: Pick<Request, "body" | "user">,
+  req: {
+    user: User;
+    body: {
+      runExport: boolean;
+      country: string;
+      magazine: string;
+      issuenumber: string;
+    };
+  },
   res: Response,
   next: CallableFunction
 ) => {
@@ -85,7 +93,7 @@ export const injectTokenIfValid = (
         if (user) {
           req.user = user as User;
         } else {
-          console.log(`Invalid token: ${err}`);
+          console.log(`Invalid token: ${err as string}`);
         }
         next();
       }

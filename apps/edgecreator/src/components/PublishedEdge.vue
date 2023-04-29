@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { main } from "../stores/main";
-import { ui } from "../stores/ui";
+import { main } from "~/stores/main";
+import { ui } from "~/stores/ui";
 
 const props = defineProps<{
   issuenumber: string;

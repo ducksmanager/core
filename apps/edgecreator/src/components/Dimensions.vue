@@ -17,8 +17,8 @@
             $emit(
               'change',
               dimension === 'width'
-                ? { width: parseInt($event), height }
-                : { width, height: parseInt($event) }
+                ? { width: parseInt($event)!, height: height! }
+                : { width: width!, height: parseInt($event)! }
             )
           "
         />
@@ -42,7 +42,12 @@ const props = withDefaults(
   }
 );
 
-const values = ref(props);
+const values = ref(
+  props as {
+    width?: number;
+    height?: number;
+  }
+);
 
 const emit =
   defineEmits<

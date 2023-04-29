@@ -335,10 +335,6 @@ const rgbToHex = (r: number, g: number, b: number) =>
   cursor: crosshair;
 }
 
-.clickable {
-  cursor: pointer;
-}
-
 table.edges {
   margin-left: auto !important; /* https://stackoverflow.com/a/37515194/2847079 */
   tr {

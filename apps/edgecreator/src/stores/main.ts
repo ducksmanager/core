@@ -147,6 +147,27 @@ export const main = defineStore("main", () => {
     },
     loadPublicationIssues = async () =>
       coa().fetchIssueNumbers([publicationcode.value!]),
+    getEdgePublicationStates = async (edges: string[]) =>
+      [
+        ...new Set(
+          Object.values<EdgeWithModelId[]>(
+            (
+              await call(
+                api().dmApi,
+                new GET__edges__$countrycode__$magazinecode__$issuenumbers({
+                  params: {
+                    countrycode: publicationcode.value!.split("/")[0],
+                    magazinecode: publicationcode.value!.split("/")[1],
+                    issuenumbers: edges.join(","),
+                  },
+                })
+              )
+            ).data
+          )
+        ),
+      ].sort((a, b) =>
+        Math.sign(edges.indexOf(a.issuenumber) - edges.indexOf(b.issuenumber))
+      ),
     loadSurroundingEdges = async () => {
       const firstIssueIndex = publicationIssues.value.findIndex(
         (issue) => issue === issuenumbers.value[0]
@@ -175,27 +196,6 @@ export const main = defineStore("main", () => {
         edgesAfter.value = await getEdgePublicationStates(issuesAfter);
       }
     },
-    getEdgePublicationStates = async (edges: string[]) =>
-      [
-        ...new Set(
-          Object.values<EdgeWithModelId[]>(
-            (
-              await call(
-                api().dmApi,
-                new GET__edges__$countrycode__$magazinecode__$issuenumbers({
-                  params: {
-                    countrycode: publicationcode.value!.split("/")[0],
-                    magazinecode: publicationcode.value!.split("/")[1],
-                    issuenumbers: edges.join(","),
-                  },
-                })
-              )
-            ).data
-          )
-        ),
-      ].sort((a, b) =>
-        Math.sign(edges.indexOf(a.issuenumber) - edges.indexOf(b.issuenumber))
-      ),
     getChunkedRequests = async ({
       api,
       url,

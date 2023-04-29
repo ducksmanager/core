@@ -37,8 +37,8 @@ const closePopupSoon = () => {
     isOverPopupText.value = false;
   }, closeDelay);
 };
-const isOverPopup = ref(false);
-const isOverPopupText = ref(false);
+const isOverPopup = ref(false as boolean);
+const isOverPopupText = ref(false as boolean);
 
 const onOpen = () => {
   for (const element of document.getElementsByClassName("popper"))

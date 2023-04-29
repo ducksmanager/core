@@ -95,27 +95,24 @@ const populateItems = async (
           const issueStepWarnings: Record<number, string[]> = {};
           loadDimensionsFromApi(issuenumber, allSteps);
 
-          const dimensions = step().getFilteredDimensions({
-            issuenumbers: [issuenumber],
-          });
-          if (!dimensions.length) {
-            issueStepWarnings[-1] = ["No dimensions"];
-          }
-          await loadStepsFromApi(
-            props.publicationcode,
-            issuenumber,
-            allSteps,
-            dimensions[0],
-            false,
-            (error: string, stepNumber: number) => {
-              if (!issueStepWarnings[stepNumber]) {
-                issueStepWarnings[stepNumber] = [];
+          try {
+            await loadStepsFromApi(
+              props.publicationcode,
+              issuenumber,
+              allSteps,
+              false,
+              (error: string, stepNumber: number) => {
+                if (!issueStepWarnings[stepNumber]) {
+                  issueStepWarnings[stepNumber] = [];
+                }
+                issueStepWarnings[stepNumber].push(
+                  `Step ${stepNumber}: ${error}`
+                );
               }
-              issueStepWarnings[stepNumber].push(
-                `Step ${stepNumber}: ${error}`
-              );
-            }
-          );
+            );
+          } catch (e) {
+            issueStepWarnings[-1] = [e as string];
+          }
           const issueSteps = step().getFilteredOptions({
             issuenumbers: [issuenumber],
           });
@@ -148,6 +145,7 @@ const populateItems = async (
 };
 
 const onPublicationOrEdgeChange = async () => {
+  debugger;
   if (publishedEdges.value[props.publicationcode]) {
     if (!isPopulating.value) {
       isPopulating.value = true;

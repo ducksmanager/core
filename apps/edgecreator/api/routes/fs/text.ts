@@ -40,22 +40,31 @@ export const get = async (
         .join(" AND ")}`
     )
     .execute()
-    .then(({ resources }) => {
-      if (resources.length) {
-        console.log(`Found an existing text`);
-        const { width, height, secure_url: url } = resources[0];
-        return res.json({ width, height, url });
-      } else {
-        console.log(`Found no existing text, generating text image...`);
-        generateImage(req.query)
-          .then(({ width, height, secure_url: url }) => {
-            console.log(`Text image generated: url=${url}`);
-            return res.json({ width, height, url });
-          })
-          .catch((response: Error) => {
-            res.status(500).send({ error: response.message });
-          });
+    .then(
+      ({
+        resources,
+      }: {
+        resources: { width: number; height: number; secure_url: string }[];
+      }) => {
+        if (resources.length) {
+          console.log(`Found an existing text`);
+          const { width, height, secure_url: url } = resources[0];
+          return res.json({ width, height, url });
+        } else {
+          console.log(`Found no existing text, generating text image...`);
+          generateImage(req.query)
+            .then(({ width, height, secure_url: url }) => {
+              console.log(`Text image generated: url=${url}`);
+              return res.json({ width, height, url });
+            })
+            .catch((response: Error) => {
+              res.status(500).send({ error: response.message });
+            });
+        }
       }
+    )
+    .catch((e) => {
+      console.error(e);
     });
 };
 
@@ -72,7 +81,7 @@ const generateImage = (parameters: {
         ? process.env.FONT_BASE_URL!
         : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`
     )
-    .then(({ data }) => {
+    .then(({ data }: { data: string }) => {
       const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
       if (sessionHashMatch) {
         sessionHashes[parameters.font] = sessionHashMatch[0];

@@ -134,10 +134,15 @@ export default () => {
         options: StepOptions;
       }
     >,
-    dimensions: { width: number; height: number },
     calculateBase64: boolean,
     onError: (error: string, stepNumber: number) => void
   ): Promise<OptionNameAndValue[][]> => {
+    const dimensions = stepStore.getFilteredDimensions({
+      issuenumbers: [issuenumber],
+    });
+    if (!dimensions.length) {
+      throw new Error("No dimensions");
+    }
     const steps: OptionNameAndValue[][] = [];
     let stepNumber = 0;
     for (const {
@@ -162,7 +167,7 @@ export default () => {
                   component,
                   options: originalOptions,
                 } as LegacyComponent,
-                dimensions,
+                dimensions[0],
                 calculateBase64
               )
             ),
@@ -173,7 +178,9 @@ export default () => {
           );
         } catch (e) {
           onError(
-            `Invalid step ${originalStepNumber} (${component}) : ${e}, step will be ignored.`,
+            `Invalid step ${originalStepNumber} (${component}) : ${
+              e as string
+            }, step will be ignored.`,
             originalStepNumber
           );
         }
@@ -261,12 +268,11 @@ export default () => {
         });
         const apiSteps =
           edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
-        const dimensions = loadDimensionsFromApi(issuenumber, apiSteps)!;
+        loadDimensionsFromApi(issuenumber, apiSteps);
         await loadStepsFromApi(
           publicationcode,
           issuenumber,
           apiSteps,
-          dimensions,
           true,
           (error: string) => mainStore.addWarning(error)
         );
