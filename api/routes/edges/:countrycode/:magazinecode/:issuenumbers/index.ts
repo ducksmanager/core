@@ -19,17 +19,18 @@ export const get = async (
     };
   }>
 ) => {
+  const issuenumber =
+    (req.params.issuenumbers || "_") !== "_"
+      ? {
+          in: req.params.issuenumbers!.split(","),
+        }
+      : undefined;
   const edgeModels: Record<string, edgeModel> = (
     await prismaEdgecreator.edgeModel.findMany({
       where: {
         country: req.params.countrycode,
         magazine: req.params.magazinecode,
-        issuenumber:
-          (req.params.issuenumbers || "_") !== "_"
-            ? {
-                in: req.params.issuenumbers!.split("/"),
-              }
-            : undefined,
+        issuenumber,
       },
     })
   ).reduce((acc, model) => ({ ...acc, [model.issuenumber]: model }), {});
@@ -39,6 +40,7 @@ export const get = async (
       select: { id: true, publicationcode: true, issuenumber: true },
       where: {
         publicationcode: `${req.params.countrycode}/${req.params.magazinecode}`,
+        issuenumber,
       },
     })
   ).reduce(
