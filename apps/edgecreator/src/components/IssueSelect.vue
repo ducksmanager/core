@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div v-if="countryNames">
     <b-form-select
       v-model="currentCountryCode"
-      :options="countries"
+      :options="countryNames"
       @change="emit('change', null)"
     >
       <template #first>
@@ -118,15 +118,7 @@ const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
   number
 >);
 
-const countries = computed(
-  () =>
-    (coaStore.countryNames &&
-      Object.keys(coaStore.countryNames).map((countryName) => ({
-        value: countryName,
-        text: coaStore.countryNames![countryName],
-      }))) ||
-    []
-);
+const countryNames = computed(() => coaStore.countryNames);
 const publications = computed(
   () =>
     coaStore.publicationNames &&

@@ -209,7 +209,6 @@ watch(
   () => showModal.value,
   (newValue) => {
     if (newValue && props.withSubmit) {
-      debugger;
       addContributorAllIssues(
         userStore.allUsers!.find(
           (thisUser) => thisUser.username === collectionStore.user!.username

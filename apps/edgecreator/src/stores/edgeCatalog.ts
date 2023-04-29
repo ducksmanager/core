@@ -32,29 +32,30 @@ export type EdgeWithVersionAndStatus = Edge & {
   published?: string | null;
 };
 
+export const edgeCategories = [
+  {
+    status: "ongoing",
+    l10n: "Ongoing edges",
+    apiCall: GET__edgecreator__model,
+    svgCheckFn: (edge: Edge, currentUser: string) =>
+      edge.designers.includes(currentUser),
+  },
+  {
+    status: "ongoing by another user",
+    l10n: "Ongoing edges handled by other users",
+    apiCall: GET__edgecreator__model__editedbyother__all,
+    svgCheckFn: (edge: Edge) => edge.designers.length,
+  },
+  {
+    status: "pending",
+    l10n: "Pending edges",
+    apiCall: GET__edgecreator__model__unassigned__all,
+    svgCheckFn: () => true,
+  },
+];
+
 export const edgeCatalog = defineStore("edgeCatalog", () => {
-  const edgeCategories = [
-      {
-        status: "ongoing",
-        l10n: "Ongoing edges",
-        apiCall: GET__edgecreator__model,
-        svgCheckFn: (edge: Edge, currentUser: string) =>
-          edge.designers.includes(currentUser),
-      },
-      {
-        status: "ongoing by another user",
-        l10n: "Ongoing edges handled by other users",
-        apiCall: GET__edgecreator__model__editedbyother__all,
-        svgCheckFn: (edge: Edge) => edge.designers.length,
-      },
-      {
-        status: "pending",
-        l10n: "Pending edges",
-        apiCall: GET__edgecreator__model__unassigned__all,
-        svgCheckFn: () => true,
-      },
-    ],
-    isCatalogLoaded = ref(false as boolean),
+  const isCatalogLoaded = ref(false as boolean),
     currentEdges = ref({} as Record<string, EdgeWithVersionAndStatus>),
     publishedEdges = ref(
       {} as Record<string, Record<string, { issuenumber: string; v3: boolean }>>
@@ -84,8 +85,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       );
     }),
     fetchPublishedEdges = async (publicationcode: string) => {
-      debugger;
-      console.log("fetchPublishedEdges");
       const [countrycode, magazinecode] = publicationcode.split("/");
       addPublishedEdges({
         [publicationcode]: (
@@ -251,7 +250,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       const edges = (
         await call(api().edgeCreatorApi, new GET__fs__browseEdges())
       ).data;
-      debugger;
       for (const edgeStatus in edges) {
         for (const { filename, mtime } of edges[
           edgeStatus as "current" | "published"

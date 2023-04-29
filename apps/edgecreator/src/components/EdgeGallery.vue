@@ -145,7 +145,6 @@ const populateItems = async (
 };
 
 const onPublicationOrEdgeChange = async () => {
-  debugger;
   if (publishedEdges.value[props.publicationcode]) {
     if (!isPopulating.value) {
       isPopulating.value = true;

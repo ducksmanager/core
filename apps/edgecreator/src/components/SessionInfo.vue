@@ -38,5 +38,6 @@ const reloadWithLocale = async (key: string) => {
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 10;
 }
 </style>

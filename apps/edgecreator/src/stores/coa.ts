@@ -11,7 +11,7 @@ import { call, getChunkedRequests } from "../../axios-helper";
 import { api } from "./api";
 
 export const coa = defineStore("coa", () => {
-  const countryNames = ref(null as Record<string, string> | null),
+  const countryNames = ref(null as { value: string; text: string }[] | null),
     publicationNames = ref({} as Record<string, string | null>),
     publicationNamesFullCountries = ref([] as string[]),
     personNames = ref(null as Record<string, string> | null),
@@ -32,15 +32,22 @@ export const coa = defineStore("coa", () => {
       if (!isLoadingCountryNames.value && !countryNames.value) {
         isLoadingCountryNames.value = true;
 
-        countryNames.value = (
-          await call(
-            api().dmApi,
-            new GET__coa__list__countries__$locale({
-              query: { countryCodes: null },
-              params: { locale: locale.split("-")[0] },
-            })
+        countryNames.value = Object.entries(
+          (
+            await call(
+              api().dmApi,
+              new GET__coa__list__countries__$locale({
+                query: { countryCodes: null },
+                params: { locale: locale.split("-")[0] },
+              })
+            )
+          ).data
+        )
+          .reduce(
+            (acc, [value, text]) => [...acc, { value, text }],
+            [] as { value: string; text: string }[]
           )
-        ).data;
+          .sort(({ text: text1 }, { text: text2 }) => (text1 < text2 ? -1 : 1));
       }
     },
     fetchPublicationNames = async (publicationCodes: string[]) => {
