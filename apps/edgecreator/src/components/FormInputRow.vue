@@ -19,12 +19,12 @@
           size="sm"
           autocomplete="off"
           :type="type"
-          :min="min"
-          :max="max"
-          :step="rangeStep"
+          :min="String(min)"
+          :max="String(max)"
+          :step="String(rangeStep)"
           :range="range"
-          :disabled="disabled"
-          :list="listId"
+          :disabled="disabled || false"
+          :list="String(listId)"
           @blur="onBlur"
         ></b-form-input>
       </confirm-edit-multiple-values>
@@ -117,7 +117,6 @@ watch(
 
 const onChangeValue = (optionValue: OptionValue) => {
   let intValue: number | null = null;
-  debugger;
   if (props.optionName === "rotation") {
     intValue = parseInt(optionValue as string);
   }

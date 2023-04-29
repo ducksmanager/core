@@ -24,7 +24,7 @@ import { onMounted } from "vue";
 
 const router = useRouter();
 
-const showUploadModal = ref(false);
+const showUploadModal = ref(false as boolean);
 
 const issueData = ref(
   null as {

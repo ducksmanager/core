@@ -18,17 +18,17 @@ export const get = async (
     ? targetUrl
     : `${process.env.VITE_EDGES_URL!}/${targetUrl}`;
 
-  const response = await axios.get(url);
+  const response = await axios.get<string>(url);
   if (response.status === 200) {
     try {
       const buffer = Buffer.from(response.data);
       const dimensions = sizeOf(buffer) as { width: number; height: number };
       const base64 = `data:${
-        response.headers["content-type"]
+        response.headers["Content-Type"]
       };base64,${buffer.toString()}`;
       return res.json({ dimensions, base64, url });
     } catch (e) {
-      console.error(targetUrl + " : " + e);
+      console.error(`${targetUrl} : ${e as string}`);
       res.writeHead(404);
       return res.end();
     }

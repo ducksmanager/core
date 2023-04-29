@@ -1,18 +1,15 @@
 <template>
   <b-button
     v-if="progress || result === 'success'"
+    class="save-progress"
+    :style="{
+      background: `linear-gradient(90deg, #0d6efd ${progress}%, transparent 0)`,
+    }"
     disabled
     pill
     :variant="outlineVariant"
     size="sm"
   >
-    <b-progress
-      v-if="progress"
-      animated
-      :value="progress"
-      :max="100"
-      :variant="variant"
-    />
     <i-bi-check v-if="result === 'success'" />
   </b-button>
   <b-button
@@ -51,22 +48,21 @@
           )
         }}</b-alert>
         <div
-          v-for="contributionType of ['photographers', 'designers']"
+          v-for="contributionType of ['photographes', 'createurs']"
           :key="contributionType"
         >
-          <h2>{{ $t(ucFirst(contributionType)) }}</h2>
+          <h2>{{ $t(ucFirst(userContributionEnL10n[contributionType])) }}</h2>
           <b-alert
-            v-if="!hasAtLeastOneUser(contributionType as userContributionType)"
-            :model-value="true"
+            :model-value="!hasAtLeastOneUser(contributionType as userContributionType)"
             variant="warning"
             >{{ $t("You should select at least one user") }}</b-alert
           ><vue3-simple-typeahead
-            :ref="`${contributionType}Typeahead`"
+            :ref="`${userContributionEnL10n[contributionType]}Typeahead`"
             :items="getUsersWithoutContributors(contributionType as userContributionType)"
             :item-projection="({ username }: SimpleUser) => username"
             :placeholder="$t('Enter a user name').toString()"
             :min-input-length="0"
-            @select-item="(username: string) => onUserSelect(username, contributionType as userContributionType)"
+            @select-item="(user: SimpleUser) => onUserSelect(user.username, contributionType as userContributionType, )"
           />
           <ul>
             <li
@@ -81,6 +77,7 @@
                     contributionType === 'designers'
                   )
                 "
+                class="clickable"
                 @click="
                   mainStore.removeContributor({
                     contributionType: contributionType as userContributionType,
@@ -99,6 +96,7 @@
 import { userContributionType } from "ducksmanager/api/dist/prisma/client_dm";
 import { nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import Vue3SimpleTypeahead from "vue3-simple-typeahead";
 
 import saveEdge from "~/composables/useSaveEdge";
 import { collection } from "~/stores/collection";
@@ -106,6 +104,11 @@ import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
 import { SimpleUser } from "~types/SimpleUser";
+
+const userContributionEnL10n: Record<string, string> = {
+  photographes: "photographers",
+  createurs: "designers",
+};
 
 const { saveEdgeSvg } = saveEdge();
 
@@ -129,8 +132,10 @@ const showModal = ref(false as boolean);
 const progress = ref(0 as number);
 const issueIndexToSave = ref(null as number | null);
 const result = ref(null as string | null);
-const designersTypeahead = ref<HTMLInputElement>();
-const photographersTypeahead = ref<HTMLInputElement>();
+const designersTypeahead = ref();
+const photographersTypeahead = ref();
+
+const progressLeft = computed(() => 100 - progress.value);
 
 const label = computed(() =>
   $t(props.withExport ? "Export" : props.withSubmit ? "Submit" : "Save")
@@ -204,6 +209,7 @@ watch(
   () => showModal.value,
   (newValue) => {
     if (newValue && props.withSubmit) {
+      debugger;
       addContributorAllIssues(
         userStore.allUsers!.find(
           (thisUser) => thisUser.username === collectionStore.user!.username
@@ -224,9 +230,10 @@ const onUserSelect = (
   );
   switch (contributionType) {
     case "photographe":
-      photographersTypeahead.value!.value = "";
+      photographersTypeahead.value.clearValue();
+      break;
     case "createur":
-      designersTypeahead.value!.value = "";
+      designersTypeahead.value.clearValue();
   }
 };
 
@@ -287,5 +294,10 @@ const onClick = () => {
 
 .bi-x-square-fill {
   cursor: pointer;
+}
+
+.save-progress {
+  width: 32px;
+  height: 32px;
 }
 </style>

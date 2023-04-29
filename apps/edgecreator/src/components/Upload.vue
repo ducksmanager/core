@@ -13,7 +13,7 @@ import { useI18n } from "vue-i18n";
 
 // import frTranslation from "@uppy/locales/lib/fr_FR";
 // import enTranslation from "@uppy/locales/lib/en_US";
-import { main } from "../stores/main";
+import { main } from "~/stores/main";
 
 const props = withDefaults(
   defineProps<{
@@ -82,18 +82,15 @@ onMounted(() => {
   uppy.on("upload-progress", (data: { bytesUploaded: number }) => {
     bytesUploaded.value = data.bytesUploaded;
   });
-  uppy.on(
-    "upload-success",
-    (_: any, payload: { body: { fileName: string } }) => {
-      if (props.photo && !props.multiple) {
-        mainStore.photoUrls[props.edge!.issuenumber] = payload.body.fileName;
-      } else {
-        mainStore.loadItems({
-          itemType: props.photo ? "photos" : "elements",
-        });
-      }
+  uppy.on("upload-success", (_, payload: { body: { fileName: string } }) => {
+    if (props.photo && !props.multiple) {
+      mainStore.photoUrls[props.edge!.issuenumber] = payload.body.fileName;
+    } else {
+      mainStore.loadItems({
+        itemType: props.photo ? "photos" : "elements",
+      });
     }
-  );
+  });
 });
 </script>
 

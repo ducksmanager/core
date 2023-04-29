@@ -65,10 +65,7 @@ const onmove = ({
   dx: number;
   dy: number;
 }) => {
-  const stapleHeight =
-    typeof props.options.height === "string"
-      ? parseInt(props.options.height)
-      : props.options.height;
+  const stapleHeight = props.options.height;
   const isStaple2 = rect2.value === currentTarget;
   const yDistanceFromCenter = Math.min(
     Math.max(
@@ -82,14 +79,6 @@ const onmove = ({
     yDistanceFromCenter,
   });
 };
-
-// if (typeof props.options.height === "string") {
-//   step().setOptionValues({
-//     height: parseInt(
-//       resolveHeightTemplate(props.options.height, dimensions.value.height)
-//     ),
-//   });
-// }
 
 onMounted(() => {
   // if (props.options.yDistanceFromCenter === undefined) {

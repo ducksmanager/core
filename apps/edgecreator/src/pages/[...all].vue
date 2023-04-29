@@ -76,7 +76,9 @@ meta:
 
         <b-container v-if="Object.keys(edgesByStatus[status]).length">
           <template
-            v-for="(edges, publicationcode) in edgesByStatus[status]"
+            v-for="[publicationcode, edges] in Object.entries(
+              edgesByStatus[status]
+            )"
             :key="`${status}-${publicationcode}`"
           >
             <b-row>
@@ -166,11 +168,10 @@ meta:
   </div>
 </template>
 <script setup lang="ts">
-import useEdgeCatalog from "~/composables/useEdgeCatalog";
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
 import { BookcaseEdgeWithPopularity, collection } from "~/stores/collection";
-import { edgeCatalog as edgeCatalogStore } from "~/stores/edgeCatalog";
+import { edgeCatalog } from "~/stores/edgeCatalog";
 import { GET__edges__wanted__data } from "~dm_types/routes";
 
 import { call } from "../../axios-helper";
@@ -181,11 +182,12 @@ const publicationNames = computed(() => coa().publicationNames);
 
 const {
   edgesByStatus,
+  currentEdges,
   canEditEdge,
   loadCatalog,
   edgeCategories,
   isCatalogLoaded,
-} = useEdgeCatalog();
+} = edgeCatalog();
 const collectionStore = collection();
 
 const isUploadableEdgesCarouselReady = ref(false as boolean);
@@ -244,7 +246,7 @@ const loadMostWantedEdges = async () => {
         ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`
       ),
       ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
-      ...Object.values(edgeCatalogStore().currentEdges).map(
+      ...Object.values(currentEdges).map(
         ({ country, magazine }) => `${country}/${magazine}`
       ),
     ]),

@@ -240,13 +240,13 @@
               :publication-code="`${mainStore.country}/${mainStore.magazine}`"
               :base-issue-numbers="mainStore.issuenumbers"
               :disable-ongoing-or-published="false"
-              edge-gallery
+              with-edge-gallery
               disable-not-ongoing-nor-published
-              @change="modelToClone = $event"
+              @change="modelToBeCloned = $event"
             />
             <b-button
-              :disabled="!modelToClone"
-              @click="emit('overwrite-model', modelToClone)"
+              :disabled="!modelToBeCloned"
+              @click="emit('overwrite-model', modelToBeCloned)"
               >{{ $t("Clone") }}
             </b-button>
           </b-collapse>
@@ -290,7 +290,7 @@ const props = defineProps<{
 }>();
 
 const showPhotoModal = ref(false as boolean);
-const modelToClone = ref(null as ModelToClone | null);
+const modelToBeCloned = ref(null as ModelToClone | null);
 const collapseDimensions = ref(false as boolean);
 const collapseClone = ref(false as boolean);
 

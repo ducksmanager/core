@@ -22,18 +22,18 @@
       {{ photoUrl }}
     </metadata>
     <metadata
-      v-for="photographer in contributors.photographers"
-      :key="`photographer-${photographer.username}`"
+      v-for="photographer in photographers"
+      :key="`photographer-${photographer.user.username}`"
       type="contributor-photographer"
     >
-      {{ photographer.username }}
+      {{ photographer.user.username }}
     </metadata>
     <metadata
-      v-for="designer in contributors.designers"
-      :key="`designer-${designer.username}`"
+      v-for="designer in designers"
+      :key="`designer-${designer.user.username}`"
       type="contributor-designer"
     >
-      {{ designer.username }}
+      {{ designer.user.username }}
     </metadata>
     <g
       v-for="(stepComponent, stepNumber) in stepComponentNames"
@@ -88,7 +88,7 @@ import { hoveredStep } from "~/stores/hoveredStep";
 import { StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { OptionNameAndValue } from "~/types/OptionNameAndValue";
-import { SimpleUser } from "~types/SimpleUser";
+import { ModelContributor } from "~types/ModelContributor";
 
 const props = withDefaults(
   defineProps<{
@@ -96,12 +96,20 @@ const props = withDefaults(
     dimensions: { width: number; height: number };
     steps: StepOption[];
     photoUrl?: string | null;
-    contributors: {
-      designers: SimpleUser[];
-      photographers: SimpleUser[];
-    };
+    contributors: Omit<ModelContributor, "issuenumber">[];
   }>(),
   { photoUrl: null }
+);
+
+const photographers = computed(() =>
+  props.contributors.filter(
+    (contributor) => contributor.contributionType === "photographe"
+  )
+);
+const designers = computed(() =>
+  props.contributors.filter(
+    (contributor) => contributor.contributionType === "createur"
+  )
 );
 
 const stepComponents = computed(() =>

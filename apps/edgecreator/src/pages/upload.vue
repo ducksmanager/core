@@ -52,7 +52,15 @@ meta:
           disable-ongoing-or-published
           :disable-not-ongoing-nor-published="false"
           @change="currentCrop = $event && $event.width ? $event : null"
-        />
+        >
+          <template #dimensions>
+            <dimensions
+              :width="currentCrop ? currentCrop.width : 15"
+              :height="currentCrop ? currentCrop.height : 200"
+              @change="
+                currentCrop = $event && $event.width ? $event : null
+              " /></template
+        ></issue-select>
         <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">{{
           $t("Add")
         }}</b-button>
@@ -84,6 +92,7 @@ meta:
               :height="crop.height * 1.5"
             />
             <edge-canvas
+              :steps="[]"
               :issuenumber="crop.issueNumber"
               :dimensions="{ width: crop.width, height: crop.height }"
               :photo-url="crop.filename"
@@ -127,16 +136,17 @@ import "cropperjs/dist/cropper.css";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useToast } from "bootstrap-vue-next";
 import { nextTick } from "vue";
+import { CropperData } from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
 
 import useSaveEdge from "~/composables/useSaveEdge";
 import { api } from "~/stores/api";
+import { coa } from "~/stores/coa";
 import { Crop } from "~types/Crop";
 import { ModelContributor } from "~types/ModelContributor";
 import { POST__fs__upload_base64 } from "~types/routes";
 
 import { call } from "../../axios-helper";
-import { coa } from "~/stores/coa";
 
 const i18n = useI18n();
 
@@ -144,7 +154,7 @@ const { saveEdgeSvg } = useSaveEdge();
 const coaStore = coa();
 
 type CropWithData = Crop & {
-  data: string;
+  data: CropperData;
   filename?: string;
   url: string;
   sent: boolean;
@@ -165,7 +175,7 @@ const initialContributors = computed(
 );
 
 const addCrop = () => {
-  const data = cropper.value!.getData();
+  const data = cropper.value!.getData() as CropperData;
   if (data.height < data.width) {
     useToast()!.show(
       {
@@ -185,7 +195,9 @@ const addCrop = () => {
     crops.value.push({
       ...currentCrop.value!,
       data,
-      url: cropper.value.getCroppedCanvas().toDataURL("image/jpeg"),
+      url: (cropper.value.getCroppedCanvas() as HTMLCanvasElement).toDataURL(
+        "image/jpeg"
+      ),
     });
     currentCrop.value = null;
   }

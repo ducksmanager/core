@@ -3,7 +3,7 @@
     <b-form-select
       v-model="currentCountryCode"
       :options="countries"
-      @change="$emit('change', null)"
+      @change="emit('change', null)"
     >
       <template #first>
         <b-form-select-option :value="undefined" disabled>{{
@@ -15,12 +15,12 @@
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
       :options="publications"
-      @change="$emit('change', null)"
+      @change="emit('change', null)"
     />
     <template v-if="currentCountryCode && currentPublicationCode">
       <template v-if="withEdgeGallery">
         <edge-gallery
-          v-if="isCatalogLoaded"
+          v-if="edgeCatalogStore.isCatalogLoaded"
           :publicationcode="currentPublicationCode"
           :selected="currentIssueNumber"
           :has-more-before="hasMoreIssuesToLoad.before"
@@ -71,35 +71,28 @@
         </template>
       </template>
     </template>
-    <dimensions
-      v-if="dimensions && currentIssueNumber !== null"
-      :width="dimensions.width"
-      :height="dimensions.height"
-      @change="onChange($event)"
-    />
+    <slot v-if="$slots.dimensions && currentIssueNumber !== null" />
   </div>
 </template>
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-import edgeCatalog from "~/composables/useEdgeCatalog";
 import { coa } from "~/stores/coa";
-import { edgeCatalog as edgeCatalogStore } from "~/stores/edgeCatalog";
-import { EdgeDimensions } from "~/types/EdgeDimensions";
+import { edgeCatalog } from "~/stores/edgeCatalog";
 import { Crop } from "~types/Crop";
 
 const { t: $t, locale } = useI18n();
 
-const { getEdgeStatus, loadCatalog, isCatalogLoaded } = edgeCatalog();
+const edgeCatalogStore = edgeCatalog();
+const coaStore = coa();
 
-const emit = defineEmits<(e: "change", value: Crop) => void>();
+const emit = defineEmits<(e: "change", value: Crop | null) => void>();
 
 const props = withDefaults(
   defineProps<{
     countryCode?: string | null;
     publicationCode?: string | null;
     canBeMultiple?: boolean;
-    dimensions?: EdgeDimensions | null;
     disableOngoingOrPublished: boolean;
     disableNotOngoingNorPublished: boolean;
     withEdgeGallery?: boolean;
@@ -109,7 +102,6 @@ const props = withDefaults(
     countryCode: null,
     publicationCode: null,
     canBeMultiple: false,
-    dimensions: null,
     edgeGallery: false,
     baseIssueNumbers: () => [],
   }
@@ -128,22 +120,22 @@ const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
 
 const countries = computed(
   () =>
-    (coa().countryNames &&
-      Object.keys(coa().countryNames!).map((countryName) => ({
+    (coaStore.countryNames &&
+      Object.keys(coaStore.countryNames).map((countryName) => ({
         value: countryName,
-        text: coa().countryNames![countryName],
+        text: coaStore.countryNames![countryName],
       }))) ||
     []
 );
 const publications = computed(
   () =>
-    coa().publicationNames &&
-    Object.keys(coa().publicationNames)
+    coaStore.publicationNames &&
+    Object.keys(coaStore.publicationNames)
       .filter((publicationCode) =>
         publicationCode.startsWith(`${currentCountryCode.value!}/`)
       )
       .map((publicationCode) => ({
-        text: coa().publicationNames[publicationCode],
+        text: coaStore.publicationNames[publicationCode],
         value: publicationCode,
       }))
       .filter(({ text }) => text !== null)
@@ -153,15 +145,15 @@ const publications = computed(
 );
 
 const publicationIssues = computed(
-  () => coa().issueNumbers[currentPublicationCode.value!]
+  () => coaStore.issueNumbers[currentPublicationCode.value!]
 );
 
 const issues = computed(
   () =>
     publicationIssues.value &&
-    edgeCatalogStore().publishedEdges[currentPublicationCode.value!] &&
-    coa().issueNumbers[currentPublicationCode.value!].map((issuenumber) => {
-      const status = getEdgeStatus({
+    edgeCatalogStore.publishedEdges[currentPublicationCode.value!] &&
+    coaStore.issueNumbers[currentPublicationCode.value!].map((issuenumber) => {
+      const status = edgeCatalogStore.getEdgeStatus({
         country: currentCountryCode.value!,
         magazine: currentPublicationCode.value!.split("/")[1],
         issuenumber,
@@ -183,7 +175,7 @@ watch(
       currentPublicationCode.value = props.publicationCode!;
       currentIssueNumber.value = undefined;
 
-      await coa().fetchPublicationNamesFromCountry(newValue);
+      await coaStore.fetchPublicationNamesFromCountry(newValue);
     }
   },
   {
@@ -196,7 +188,7 @@ watch(
   async (newValue) => {
     if (newValue) {
       currentIssueNumber.value = undefined;
-      await coa().fetchIssueNumbers([newValue]);
+      await coaStore.fetchIssueNumbers([newValue]);
       await loadEdges();
     }
   }
@@ -238,7 +230,7 @@ const loadEdges = async () => {
     };
   }
 
-  await edgeCatalogStore().fetchPublishedEdges(currentPublicationCode.value!);
+  await edgeCatalogStore.fetchPublishedEdges(currentPublicationCode.value!);
 };
 
 const onChange = (
@@ -255,8 +247,8 @@ const onChange = (
   });
 
 (async () => {
-  await coa().fetchCountryNames(locale.value);
-  await loadCatalog(false);
+  await coaStore.fetchCountryNames(locale.value);
+  await edgeCatalogStore.loadCatalog(false);
 })();
 </script>
 <style scoped lang="scss">
