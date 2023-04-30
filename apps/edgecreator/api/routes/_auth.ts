@@ -34,19 +34,16 @@ export const authenticateToken = (
 };
 
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
-  req: {
-    user: User;
-    body: {
-      runExport: boolean;
-      country: string;
-      magazine: string;
-      issuenumber: string;
-    };
-  },
+  req: Request,
   res: Response,
   next: CallableFunction
 ) => {
-  const { runExport, country, magazine, issuenumber } = req.body;
+  const { runExport, country, magazine, issuenumber } = req.body as {
+    runExport: boolean;
+    country: string;
+    magazine: string;
+    issuenumber: string;
+  };
   const svgPath = getSvgPath(runExport, country, magazine, issuenumber);
   const fileAlreadyExists = fs.existsSync(svgPath);
   const user = req.user;

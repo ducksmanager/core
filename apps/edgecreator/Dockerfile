@@ -21,6 +21,7 @@ RUN pnpm i
 COPY .env.prod ./.env
 
 COPY types /app/types
+COPY tsconfig.json /app/tsconfig.json
 COPY api .
 RUN pnpm run generate-route-types
 RUN pnpm run build
