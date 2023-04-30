@@ -1,0 +1,12 @@
+{
+  "slug": "edgecreator",
+  "publicKeys": [
+	{
+	  "publicKey": "a225a6550b8c4c07914327618685a61c",
+	  "isEnabled": true
+	}
+  ],
+  "config": {
+	"allowedDomains": ["edgecreator.ducksmanager.net", "edgecreator2.ducksmanager.net"]
+  }
+}

@@ -22,7 +22,7 @@ services:
   sentry-relay:
     image: getsentry/relay
     restart: always
-    container_name: sentry2
+    container_name: sentry3
     volumes:
       - ./config/sentry-relay:/work/.relay
     networks:
