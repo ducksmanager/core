@@ -1,0 +1,37 @@
+version: '2.4'
+services:
+  app:
+    container_name: edgecreator-app
+    image: ghcr.io/bperel/edgecreator-app
+    depends_on:
+      - api
+    restart: always
+    networks:
+      - public-network
+      - ec2-network
+
+  api:
+    container_name: edgecreator-api
+    image: ghcr.io/bperel/edgecreator-api
+    restart: always
+    networks:
+      - public-network
+      - ec2-network
+      - dm-server_db-network
+
+  sentry-relay:
+    image: getsentry/relay
+    restart: always
+    container_name: sentry2
+    volumes:
+      - ./config/sentry-relay:/work/.relay
+    networks:
+      - public-network
+
+
+networks:
+  ec2-network:
+  public-network:
+    external: true
+  dm-server_db-network:
+    external: true
