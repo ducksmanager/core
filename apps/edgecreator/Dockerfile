@@ -18,7 +18,7 @@ WORKDIR /app/api
 COPY api/package.json api/pnpm-lock.yaml ./
 RUN pnpm i
 
-COPY .env.prod.local ./.env
+COPY .env.prod ./.env
 
 COPY types /app/types
 COPY api .
@@ -31,7 +31,7 @@ MAINTAINER Bruno Perel
 WORKDIR /app
 
 COPY . .
-COPY .env.prod.local ./.env
+COPY .env.prod ./.env
 COPY --from=api-build /app/api api
 COPY --from=api-build /app/types/routes.ts types/routes.ts
 RUN pnpm run build
