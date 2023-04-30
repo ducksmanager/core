@@ -28,12 +28,14 @@ const pointsAsString = (points: [number, number][]) =>
 
 const props = withDefaults(defineProps<Props>(), {
   options: () => ({
-    points: pointsAsString([
+    points: [
       [1, 5],
       [4, 25],
       [7, 14],
       [14, 12],
-    ]),
+    ]
+      .map((point) => point.join(","))
+      .join(";"),
     fill: "#000000",
   }),
 });
