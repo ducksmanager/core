@@ -56,8 +56,8 @@ RUN pnpm install --production
 COPY --from=api-build /app/api/dist /app/
 RUN rm -rf api/dist/prisma && mv prisma api/dist/
 
-COPY ./api/routes/demo/*.csv /app/api/routes/demo
-COPY ./api/emails /app/api/emails
+COPY ./api/routes/demo/*.csv /app/api/routes/demo/
+COPY ./api/emails /app/api/emails/
 
 EXPOSE 3000
 

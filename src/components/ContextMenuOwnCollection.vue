@@ -68,7 +68,7 @@
       ></template>
 
       <b-tab v-else key="copy-0">
-        <template #title> {{ $t("Exemplaire") }} 0</template>
+        <template #title> {{ $t("Exemplaire") }} 1</template>
         <IssueCopyEdit :copy="initialIssues" @update="editedIssues = $event" />
       </b-tab>
       <template v-if="!hasMaxCopies" #tabs-end>

@@ -257,15 +257,14 @@ const sortedBookcase = $computed(
           bookcaseOrder.indexOf(publicationCode1) -
             bookcaseOrder.indexOf(publicationCode2)
         );
+        if (publicationCode1 === "fr/ALPM" && publicationCode2 === "fr/ALPM") {
+          debugger;
+        }
         return (
           publicationOrderSign ||
           Math.sign(
-            issueNumbers[publicationCode1].indexOf(
-              issueNumber1.replace(/ /g, "")
-            ) -
-              issueNumbers[publicationCode1].indexOf(
-                issueNumber2.replace(/ /g, "")
-              )
+            issueNumbers[publicationCode1].indexOf(issueNumber1) -
+              issueNumbers[publicationCode1].indexOf(issueNumber2)
           )
         );
       }
@@ -289,16 +288,17 @@ watch(
 
       const nonObviousPublicationIssueNumbers = newValue.filter(
         (publicationcode) =>
-          bookcase.bookcase?.filter(
+          bookcase.bookcase?.some(
             ({
               countryCode: issueCountryCode,
               magazineCode: issueMagazineCode,
               issuenumber,
             }) =>
               `${issueCountryCode}/${issueMagazineCode}` === publicationcode &&
-              !/^[0-9]$/.test(issuenumber)
-          ).length || 0
+              !/^[0-9]+$/.test(issuenumber)
+          )
       );
+      console.log(nonObviousPublicationIssueNumbers);
       coa.addIssueNumbers(
         newValue
           .filter(
