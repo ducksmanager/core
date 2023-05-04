@@ -64,8 +64,8 @@ const {
 } = defineProps<{
   embedded?: boolean;
   bookcaseTextures: { bookshelf: string; bookcase: string };
-  currentEdgeHighlighted: number | null;
-  currentEdgeOpened: BookcaseEdgeWithPopularity | null;
+  currentEdgeHighlighted?: number | null;
+  currentEdgeOpened?: BookcaseEdgeWithPopularity | null;
   edgesUsingSprites?: { [edgeId: number]: string };
   sortedBookcase: BookcaseEdgeWithPopularity[] | null;
 }>();

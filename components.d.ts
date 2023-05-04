@@ -64,6 +64,7 @@ declare module '@vue/runtime-core' {
     IBiCheck: typeof import('~icons/bi/check')['default']
     IBiEyeFill: typeof import('~icons/bi/eye-fill')['default']
     IBiEyeglasses: typeof import('~icons/bi/eyeglasses')['default']
+    IBiEyeSlashFill: typeof import('~icons/bi/eye-slash-fill')['default']
     IBiGraphUp: typeof import('~icons/bi/graph-up')['default']
     IBiHouseFill: typeof import('~icons/bi/house-fill')['default']
     IBiList: typeof import('~icons/bi/list')['default']

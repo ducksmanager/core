@@ -30,6 +30,7 @@ meta:
     <div
       v-if="
         publishedEdges &&
+        issuesByIssueCode &&
         inducksIssueNumbersNoSpace &&
         Object.keys(inducksIssueNumbersNoSpace).length
       "
@@ -39,6 +40,10 @@ meta:
           publishedEdges
         )"
         :key="publicationcode"
+        v-memo="[
+          publicationcode,
+          showEdgesForPublication.includes(publicationcode),
+        ]"
         class="publication"
       >
         <i-bi-eye-fill
@@ -74,22 +79,12 @@ meta:
             :key="`${publicationcode}-${inducksIssueNumber}`"
           >
             <span
-              v-if="!issuenumbers?.includes(inducksIssueNumber)"
               class="num bordered"
-              :title="inducksIssueNumber"
-              >&nbsp;</span
-            >
-            <span
-              v-else-if="!show"
-              class="num bordered available"
+              :class="{ available: issuenumbers?.includes(inducksIssueNumber), owned: issuesByIssueCode[`${publicationcode} ${inducksIssueNumber}`]!! }"
               :title="inducksIssueNumber"
               @click="open(publicationcode, inducksIssueNumber)"
               >&nbsp;</span
             >
-            <img
-              v-else
-              :src="getEdgeUrl(publicationcode, inducksIssueNumber)"
-            />
           </span>
         </div>
         <div v-else>
@@ -126,6 +121,7 @@ import axios from "axios";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
 import { images } from "~/stores/images";
 import { call } from "~/util/axios";
 import {
@@ -136,7 +132,6 @@ import { WantedEdge } from "~types/WantedEdge";
 const getImagePath = images().getImagePath;
 
 let hasData = $ref(false as boolean);
-const show = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
 let publishedEdges = $ref({} as Record<string, string[]>);
 const showEdgesForPublication = $ref([] as string[]);
@@ -146,6 +141,7 @@ const bookcaseTextures = $ref({
 });
 
 const publicationNames = $computed(() => coa().publicationNames);
+const issuesByIssueCode = $computed(() => collection().issuesByIssueCode);
 const fetchPublicationNames = coa().fetchPublicationNames;
 const fetchIssueNumbers = coa().fetchIssueNumbers;
 const getEdgeUrl = (publicationcode: string, issuenumber: string): string => {
@@ -155,7 +151,9 @@ const getEdgeUrl = (publicationcode: string, issuenumber: string): string => {
   }/${country}/gen/${magazine}.${issuenumber}.png`;
 };
 const open = (publicationcode: string, issuenumber: string) => {
-  window.open(getEdgeUrl(publicationcode, issuenumber), "_blank");
+  if (publishedEdges[publicationcode].includes(issuenumber)) {
+    window.open(getEdgeUrl(publicationcode, issuenumber), "_blank");
+  }
 };
 const issueNumbers = $computed(() => coa().issueNumbers);
 const inducksIssueNumbersNoSpace = $computed(() =>
@@ -171,11 +169,11 @@ const inducksIssueNumbersNoSpace = $computed(() =>
 );
 
 const sortedBookcase = computed(() =>
-  Object.keys(showEdgesForPublication).reduce(
-    (acc, publicationcode) => ({
+  Object.values(showEdgesForPublication).reduce((acc, publicationcode) => {
+    return {
       ...acc,
-      [publicationcode]: inducksIssueNumbersNoSpace[publicationcode].map(
-        (issuenumber) => ({
+      [publicationcode]:
+        inducksIssueNumbersNoSpace[publicationcode]?.map((issuenumber) => ({
           id: 0,
           issueCode: `${publicationcode}-${issuenumber}`,
           edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
@@ -188,11 +186,9 @@ const sortedBookcase = computed(() =>
           issuenumberReference: issuenumber,
           creationDate: new Date(),
           sprites: [],
-        })
-      ),
-    }),
-    {} as Record<string, BookcaseEdgeWithPopularity[]>
-  )
+        })) || [],
+    };
+  }, {} as Record<string, BookcaseEdgeWithPopularity[]>)
 );
 
 (async () => {
@@ -220,6 +216,7 @@ const sortedBookcase = computed(() =>
   ]);
 
   await fetchIssueNumbers(Object.keys(publishedEdges));
+  await collection().loadCollection();
   hasData = true;
 })();
 </script>
@@ -237,9 +234,14 @@ const sortedBookcase = computed(() =>
   width: 4px;
   cursor: default;
   background-color: red;
+  opacity: 0.5;
 
   &.available {
     cursor: pointer;
+  }
+
+  &.owned {
+    opacity: 1;
   }
 }
 
