@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { AbstractEvent, AbstractEventRaw } from "~types/events/AbstractEvent";
@@ -36,6 +38,12 @@ const MEDAL_LEVELS = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },
   edge_designer: { 1: 20, 2: 70, 3: 150 },
   duckhunter: { 1: 1, 2: 3, 3: 5 },
+};
+
+const MEDALS_L10N_FR: Record<string, string> = {
+  edge_photographer: "photographe",
+  edge_designer: "createur",
+  duckhunter: "duckhunter",
 };
 
 const mapUsers = <T extends AbstractEvent>(event: AbstractEventRaw): T =>
@@ -154,27 +162,40 @@ const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
     edges: JSON.parse(event.edges),
   }));
 
-const retrieveNewMedals = async (): Promise<MedalEvent[]> =>
+const retrieveNewMedals = async () =>
   (
-    (await prisma.$queryRawUnsafe(
-      Object.entries(MEDAL_LEVELS)
-        .map(([medalType, levels]) =>
-          Object.values(levels)
-            .map(
-              (level: number) => `
-              select 'medal'                   as type,
-                     ID_User                   AS userId,
-                     contribution,
-                     ${level}                 as level,
-                     UNIX_TIMESTAMP(date) - 60 AS timestamp
-              from dm.users_contributions
-              where contribution = '${medalType.toLowerCase()}'
-                and points_total >= ${level}
-                and points_total - points_new < ${level}
-                and date > DATE_ADD(NOW(), INTERVAL -1 MONTH)`
-            )
-            .join(" UNION ")
-        )
-        .join(" UNION ")
-    )) as AbstractEventRaw[]
+    (
+      await prisma.userContribution.findMany({
+        select: {
+          totalPoints: true,
+          newPoints: true,
+          userId: true,
+          contribution: true,
+          date: true,
+        },
+        where: {
+          date: {
+            gt: dayjs().subtract(1, "month").toDate(),
+          },
+        },
+      })
+    )
+      .map(({ contribution, newPoints, totalPoints, userId, date }) => ({
+        contribution: Object.keys(MEDALS_L10N_FR).find(
+          (medalType) => MEDALS_L10N_FR[medalType] === contribution
+        ),
+        userId,
+        timestamp: dayjs(date).subtract(2, "hour").unix(),
+        type: "medal",
+        level:
+          Object.entries(
+            Object.entries(MEDAL_LEVELS).find(
+              ([medalType]) => contribution === MEDALS_L10N_FR[medalType]
+            )![1]
+          ).find(
+            ([, points]) =>
+              totalPoints >= points && totalPoints - newPoints < points
+          )?.[0] || null,
+      }))
+      .filter(({ level }) => level !== null) as AbstractEventRaw[]
   ).map(mapUsers<MedalEvent>);
