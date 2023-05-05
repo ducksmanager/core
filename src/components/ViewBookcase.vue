@@ -257,14 +257,11 @@ const sortedBookcase = $computed(
           bookcaseOrder.indexOf(publicationCode1) -
             bookcaseOrder.indexOf(publicationCode2)
         );
-        if (publicationCode1 === "fr/ALPM" && publicationCode2 === "fr/ALPM") {
-          debugger;
-        }
         return (
           publicationOrderSign ||
           Math.sign(
             issueNumbers[publicationCode1].indexOf(issueNumber1) -
-              issueNumbers[publicationCode1].indexOf(issueNumber2)
+              issueNumbers[publicationCode2].indexOf(issueNumber2)
           )
         );
       }
@@ -310,10 +307,15 @@ watch(
               ...acc,
               ...{
                 [publicationcode]:
-                  bookcase.bookcase?.filter(
-                    ({ publicationcode: issuePublicationCode }) =>
-                      issuePublicationCode === publicationcode
-                  ) || [],
+                  bookcase.bookcase
+                    ?.filter(
+                      ({ publicationcode: issuePublicationCode }) =>
+                        issuePublicationCode === publicationcode
+                    )
+                    .map(({ issuenumber }) => issuenumber)
+                    .sort((issuenumber, issuenumber2) =>
+                      Math.sign(parseInt(issuenumber) - parseInt(issuenumber2))
+                    ) || [],
               },
             }),
             {}
