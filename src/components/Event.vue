@@ -21,22 +21,23 @@
       >&nbsp;{{
         $t("a commencé sa collection sur DucksManager. Bienvenue !")
       }} </template
-    ><i18n-t
-      v-else-if="medalEvent"
-      tag="span"
-      keypath="a obtenu la médaille {medal_and_level}"
-    >
-      <template #medal_and_level
-        ><b>
-          {{
-            $t("{medal} niveau {level}", {
-              medal: getMedalTitle(medalEvent.contribution),
-              level: medalEvent.level,
-            })
-          }}</b
-        >
-      </template>
-    </i18n-t>
+    ><template v-else-if="medalEvent"
+      >&nbsp;<i18n-t
+        tag="span"
+        keypath="a obtenu la médaille {medal_and_level}"
+      >
+        <template #medal_and_level
+          ><b>
+            {{
+              $t("{medal} niveau {level}", {
+                medal: getMedalTitle(medalEvent.contribution),
+                level: medalEvent.level,
+              })
+            }}</b
+          >
+        </template>
+      </i18n-t>
+    </template>
     <template v-else-if="bookstoreCommentEvent"
       >&nbsp;{{ $t("a visité la bouquinerie") }}
       <i
