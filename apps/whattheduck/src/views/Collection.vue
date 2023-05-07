@@ -1,55 +1,80 @@
 <template>
-  <main-layout :title="title">
-    <ion-searchbar
-      v-if="showFilter"
-      v-model="filterText"
-      placeholder="Filter"
-    ></ion-searchbar>
-    <div v-if="hasList">
-      <template v-if="itemType === 'Country'">
-        <ion-item
-          button
-          :key="key"
-          v-for="{ text, key } in filteredItems"
-          @click="appStore.currentNavigationItem = key"
-        >
-          <Country :value="text" /></ion-item
-      ></template>
-      <template v-if="itemType === 'Publication'">
-        <ion-item
-          button
-          :key="key"
-          v-for="{ text, key } in filteredItems"
-          @click="appStore.currentNavigationItem = key"
-          ><Publication :value="text"
-        /></ion-item>
-      </template>
-      <template v-if="itemType === 'Issue'">
-        <ion-item button :key="key" v-for="{ key } in filteredItems"
-          ><Issue :value="key" /></ion-item
-      ></template>
-    </div>
-    <div v-else>Loading...</div>
-  </main-layout>
-</template>
-<script setup lang="ts">
-import MainLayout from "@/layouts/MainLayout.vue";
-import Country from "@/components/Country";
-import Publication from "@/components/Publication";
-import Issue from "@/components/Issue";
-import { computed, onMounted, ref, watch } from "vue";
-import { collection } from "@/stores/collection";
-import { app } from "@/stores/app";
-import { coa } from "@/stores/coa";
-import { IonSearchbar, IonItem } from "@ionic/vue";
+  <ion-page>
+    <ion-header :translucent="true">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button color="primary"></ion-menu-button>
+        </ion-buttons>
+        <ion-title>My collection ({{ numberOfIssues }} issues) </ion-title>
+      </ion-toolbar>
+      <Navigation />
+      <ion-searchbar
+        v-if="showFilter"
+        v-model="filterText"
+        placeholder="Filter"
+      ></ion-searchbar>
+    </ion-header>
 
-defineEmits(["click"]);
+    <ion-content :fullscreen="true">
+      <div id="container">
+        <div v-if="hasList">
+          <template v-if="itemType === 'Country'">
+            <ion-item
+              button
+              :key="key"
+              v-for="{ text, key } in filteredItems"
+              @click="appStore.currentNavigationItem = key"
+            >
+              <Country :value="text" /></ion-item
+          ></template>
+          <template v-if="itemType === 'Publication'">
+            <ion-item
+              button
+              :key="key"
+              v-for="{ text, key } in filteredItems"
+              @click="appStore.currentNavigationItem = key"
+              ><Publication :value="text"
+            /></ion-item>
+          </template>
+          <template v-if="itemType === 'Issue'">
+            <ion-item button :key="key" v-for="{ key } in filteredItems"
+              ><Issue :value="key" /></ion-item
+          ></template>
+        </div>
+        <div v-else>Loading...</div>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
+
+<script setup lang="ts">
+import { coa } from "~/stores/coa";
+import {
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonMenuButton,
+  IonPage,
+  IonSearchbar,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/vue";
+import Country from "~/components/Country.vue";
+import Navigation from "~/components/Navigation.vue";
+import Publication from "~/components/Publication.vue";
+import Issue from "~/components/Issue.vue";
+import { computed, ref, watch } from "vue";
+import { collection } from "~/stores/collection";
+import { app } from "~/stores/app";
 
 const collectionStore = collection();
 const coaStore = coa();
 const appStore = app();
 const filterText = ref("" as string);
 const hasCoaData = ref(false);
+
+const numberOfIssues = computed(() => collectionStore.collection?.length);
 
 const hasList = computed((): boolean => {
   if (!hasCoaData.value) {
@@ -70,7 +95,6 @@ const hasList = computed((): boolean => {
         !!coaStore.issueNumbers[appStore.currentNavigationItem || ""]
       );
   }
-  return false;
 });
 
 const items = computed((): { key: string; text: string }[] => {
@@ -94,14 +118,13 @@ const items = computed((): { key: string; text: string }[] => {
     case "Issue":
       return (collectionStore.collection || [])
         .filter(
-          (issue) => issue.publicationCode === appStore.currentNavigationItem
+          (issue) => issue.publicationcode === appStore.currentNavigationItem
         )
-        .map(({ issueNumber }) => ({
-          key: issueNumber,
-          text: issueNumber,
+        .map(({ issuenumber }) => ({
+          key: issuenumber,
+          text: issuenumber,
         }));
   }
-  return [];
 });
 
 const itemType = computed(() => {
@@ -164,10 +187,37 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  // await collectionStore.loadCollection();
-  // await coaStore.fetchPublicationNames(
-  //   Object.keys(collectionStore.totalPerPublication)
-  // );
-});
+watch(
+  () => collectionStore.totalPerPublication,
+  async (newValue) => {
+    if (newValue) {
+      await coa().fetchPublicationNames(Object.keys(newValue));
+    }
+  },
+  { immediate: true }
+);
+
+(async () => {
+  await collection().loadCollection();
+  await collection().loadPurchases();
+  await coa().fetchCountryNames();
+})();
 </script>
+
+<style scoped>
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+  color: #8c8c8c;
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+</style>

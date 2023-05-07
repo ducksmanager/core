@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">What The Duck</string>
-    <string name="title_activity_main">What The Duck</string>
-    <string name="package_name">io.ionic.starter</string>
-    <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="app_name">whattheduck-ionic-vite</string>
+    <string name="title_activity_main">whattheduck-ionic-vite</string>
+    <string name="package_name">whattheduck.ionic.vite</string>
+    <string name="custom_url_scheme">whattheduck.ionic.vite</string>
 </resources>

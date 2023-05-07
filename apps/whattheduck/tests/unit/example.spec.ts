@@ -1,8 +1,9 @@
 import { mount } from "@vue/test-utils";
-import FolderPage from "@/views/Collection.vue";
+import FolderPage from "~/views/FolderPage.vue";
+import { describe, expect, test } from "vitest";
 
-describe("Collection.vue", () => {
-  it("renders folder view", () => {
+describe("FolderPage.vue", () => {
+  test("renders folder view", () => {
     const mockRoute = {
       params: {
         id: "Outbox",

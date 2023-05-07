@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package whattheduck.ionic.vite;
 
 import com.getcapacitor.BridgeActivity;
 

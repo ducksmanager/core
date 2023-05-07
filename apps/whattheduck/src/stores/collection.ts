@@ -1,249 +1,566 @@
+import { Preferences } from "@capacitor/preferences";
 import axios from "axios";
 import { defineStore } from "pinia";
-import { IssueWithPublicationCode } from "@/types/IssueWithPublicationCode";
-import { Purchase } from "@/types/Purchase";
-import { Author } from "@/types/Author";
-import { SuggestionList } from "@/types/SuggestionList";
-import { Subscription } from "@/types/Subscription";
-import { IssuePopularity } from "@/types/IssuePopularity";
+
+import { call } from "~/axios-helper";
 import {
-  EdgePublishedRecently,
-  EdgePublishedRecentlyWithTimestamp,
-} from "@/types/EdgePublishedRecently";
-import { User } from "@/types/User";
-import { PreviousVisit } from "@/types/PreviousVisit";
-import { Issue } from "@/types/Issue";
+  authorUser,
+  issue,
+  purchase,
+  subscription,
+  user,
+} from "~prisma_clients/client_dm";
+import {
+  CollectionUpdateMultipleIssues,
+  CollectionUpdateSingleIssue,
+} from "~dm_types/CollectionUpdate";
+import {
+  DELETE__collection__purchases__$id,
+  GET__collection__authors__watched,
+  GET__collection__edges__lastPublished,
+  GET__collection__issues,
+  GET__collection__options__$optionName,
+  GET__collection__popular,
+  GET__collection__purchases,
+  GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit,
+  GET__collection__subscriptions,
+  GET__collection__user,
+  POST__collection__issues__multiple,
+  POST__collection__issues__single,
+  POST__collection__lastvisit,
+  POST__collection__options__$optionName,
+  PUT__collection__purchases,
+} from "~dm_types/routes";
 
-export const collection = defineStore("collection", {
-  state: () => ({
-    collection: null as IssueWithPublicationCode[] | null,
-    purchases: null as Purchase[] | null,
-    watchedAuthors: null as Author[] | null,
-    suggestions: null as SuggestionList | null,
-    subscriptions: null as Subscription[] | null,
+import { bookcase } from "./bookcase";
+import { coa } from "./coa";
+import { computed, ref } from "vue";
 
-    popularIssuesInCollection: null as { [key: string]: number } | null,
-    lastPublishedEdgesForCurrentUser: null as
-      | EdgePublishedRecentlyWithTimestamp[]
-      | null,
+export type IssueWithPublicationcode = issue & {
+  publicationcode: string;
+};
 
-    isLoadingCollection: false,
-    isLoadingPurchases: false,
-    isLoadingWatchedAuthors: false,
-    isLoadingSuggestions: false,
-    isLoadingSubscriptions: false,
+export type IssueWithPublicationcodeOptionalId = Omit<
+  IssueWithPublicationcode,
+  "id"
+> & {
+  id: number | null;
+};
 
-    user: null as User | null,
-    previousVisit: null as PreviousVisit | null,
-  }),
+export type SubscriptionTransformed = Omit<
+  subscription,
+  "country" | "magazine"
+> & {
+  publicationcode: string;
+};
 
-  getters: {
-    ownedCountries: ({ collection }) =>
-      [...new Set((collection || []).map(({ country }) => country))].sort(),
-    ownedPublications: ({ collection }) =>
+type SubscriptionTransformedStringDates = Omit<
+  SubscriptionTransformed,
+  "startDate" | "endDate"
+> & {
+  startDate: string;
+  endDate: string;
+};
+
+export type purchaseWithStringDate = Omit<purchase, "date"> & {
+  date: string;
+};
+
+export const collection = defineStore("collection", () => {
+  const collection = ref(null as IssueWithPublicationcode[] | null),
+    watchedPublicationsWithSales = ref(null as string[] | null),
+    purchases = ref(null as purchaseWithStringDate[] | null),
+    watchedAuthors = ref(null as authorUser[] | null),
+    marketplaceContactMethods = ref(null as string[] | null),
+    suggestions = ref(
+      null as
+        | GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit["resBody"]
+        | null
+    ),
+    subscriptions = ref(null as SubscriptionTransformed[] | null),
+    popularIssuesInCollection = ref(
+      null as { [issuecode: string]: number } | null
+    ),
+    lastPublishedEdgesForCurrentUser = ref(
+      null as GET__collection__edges__lastPublished["resBody"] | null
+    ),
+    isLoadingUser = ref(false as boolean),
+    isLoadingCollection = ref(false as boolean),
+    isLoadingWatchedPublicationsWithSales = ref(false as boolean),
+    isLoadingMarketplaceContactMethods = ref(false as boolean),
+    isLoadingPurchases = ref(false as boolean),
+    isLoadingWatchedAuthors = ref(false as boolean),
+    isLoadingSuggestions = ref(false as boolean),
+    isLoadingSubscriptions = ref(false as boolean),
+    user = ref(undefined as Omit<user, "password"> | undefined | null),
+    previousVisit = ref(null as Date | null),
+    total = computed(() => collection.value?.length),
+    ownedCountries = computed(() =>
+      [
+        ...new Set((collection.value || []).map(({ country }) => country)),
+      ].sort()
+    ),
+    ownedPublications = computed(() =>
       [
         ...new Set(
-          (collection || []).map(({ publicationCode }) => publicationCode)
+          (collection.value || []).map(({ publicationcode }) => publicationcode)
         ),
-      ].sort(),
-    total: ({ collection }) => collection?.length,
-
-    duplicateIssues: ({
-      collection,
-    }): { [key: string]: IssueWithPublicationCode[] } | null => {
-      if (collection) {
-        const issuesByIssueCode = collection.reduce((acc, issue) => {
-          const issuecode = `${issue.publicationCode} ${issue.issueNumber}`;
-          if (!acc[issuecode]) {
-            acc[issuecode] = [];
-          }
-          return {
-            ...acc,
-            [issuecode]: [...acc[issuecode], issue],
-          };
-        }, {} as { [key: string]: IssueWithPublicationCode[] });
-        return Object.keys(issuesByIssueCode).reduce((acc, issuecode) => {
-          const issues = issuesByIssueCode[issuecode];
-          return issues.length > 1 ? { ...acc, [issuecode]: issues } : acc;
-        }, {});
-      }
-      return null;
-    },
-
-    issuesInToReadStack: ({ collection }) =>
-      collection && collection.filter(({ isToRead }) => isToRead),
-
-    // totalUniqueIssues: ({ collection, duplicateIssues }): { [key: string]: number}|null =>
-    //   duplicateIssues &&
-    //   (collection?.length || 0) -
-    //     Object.values(duplicateIssues).reduce(
-    //       (acc: number, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-    //       0
-    //     ),
-
-    totalPerCountry: ({ collection }) =>
-      collection?.reduce(
+      ].sort()
+    ),
+    issuesByIssueCode = computed(() =>
+      collection.value?.reduce((acc, issue) => {
+        const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
+        return {
+          ...acc,
+          [issuecode]: [...(acc[issuecode] || []), issue],
+        };
+      }, {} as { [issuecode: string]: IssueWithPublicationcode[] })
+    ),
+    duplicateIssues = computed(
+      (): {
+        [issuecode: string]: IssueWithPublicationcode[];
+      } =>
+        (issuesByIssueCode.value &&
+          Object.keys(issuesByIssueCode.value).reduce(
+            (acc, issuecode) =>
+              issuesByIssueCode.value![issuecode].length > 1
+                ? {
+                    ...acc,
+                    [issuecode]: issuesByIssueCode.value![issuecode],
+                  }
+                : acc,
+            {}
+          )) ||
+        {}
+    ),
+    issuesInToReadStack = computed(() =>
+      collection.value?.filter(({ isToRead }) => isToRead)
+    ),
+    issuesInOnSaleStack = computed(() =>
+      collection.value?.filter(({ isOnSale }) => isOnSale)
+    ),
+    totalUniqueIssues = computed(
+      () =>
+        (duplicateIssues.value &&
+          (!collection.value?.length
+            ? 0
+            : collection.value?.length -
+              Object.values(duplicateIssues.value).reduce(
+                (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
+                0
+              ))) ||
+        0
+    ),
+    totalPerCountry = computed(() =>
+      collection.value?.reduce(
         (acc, issue) => ({
           ...acc,
           [issue.country]: (acc[issue.country] || 0) + 1,
         }),
-        {} as { [key: string]: number }
-      ),
-
-    totalPerPublication: ({ collection }): { [key: string]: number } =>
-      collection?.reduce((acc, issue) => {
-        const publicationCode = `${issue.country}/${issue.magazine}`;
-        return { ...acc, [publicationCode]: (acc[publicationCode] || 0) + 1 };
-      }, {} as { [key: string]: number }) || {},
-
-    hasSuggestions: ({ suggestions }) =>
-      suggestions?.issues && Object.keys(suggestions.issues).length,
-
-    issueNumbersPerPublication: ({
-      collection,
-    }): { [key: string]: string[] } | undefined =>
-      collection?.reduce(
-        (acc, { country, issueNumber, magazine }) => ({
-          ...acc,
-          [`${country}/${magazine}`]: [
-            ...(acc[`${country}/${magazine}`] || []),
-            issueNumber,
-          ],
-        }),
-        {} as { [key: string]: string[] }
-      ),
-
-    // totalPerPublicationUniqueIssueNumbers: ({ issueNumbersPerPublication }) =>
-    //   issueNumbersPerPublication &&
-    //   Object.keys(issueNumbersPerPublication).reduce(
-    //     (acc, publicationCode) => ({
-    //       ...acc,
-    //       [publicationCode]: [
-    //         ...new Set(issueNumbersPerPublication[publicationCode]),
-    //       ].length,
-    //     }),
-    //     {}
-    //   )
-  },
-
-  actions: {
-    setPreviousVisit(previousVisit: PreviousVisit | null) {
-      this.previousVisit = previousVisit;
-    },
-    async loadCollection(afterUpdate = false) {
-      if (afterUpdate || (!this.isLoadingCollection && !this.collection)) {
-        this.isLoadingCollection = true;
-        this.collection = (await axios.get("/collection/issues")).data.map(
-          (issue: Issue) => ({
-            ...issue,
-            publicationCode: `${issue.country}/${issue.magazine}`,
-          })
+        {} as { [countrycode: string]: number }
+      )
+    ),
+    totalPerPublication = computed(
+      () =>
+        collection.value?.reduce((acc, issue) => {
+          const publicationcode = `${issue.country}/${issue.magazine}`;
+          return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
+        }, {} as { [publicationcode: string]: number }) || null
+    ),
+    purchasesById = computed(() =>
+      purchases.value?.reduce(
+        (acc, purchase) => ({ ...acc, [purchase.id]: purchase }),
+        {}
+      )
+    ),
+    hasSuggestions = computed(() => suggestions.value?.issues?.length),
+    issueNumbersPerPublication = computed(
+      () =>
+        collection.value?.reduce(
+          (acc, { country, issuenumber, magazine }) => ({
+            ...acc,
+            [`${country}/${magazine}`]: [
+              ...(acc[`${country}/${magazine}`] || []),
+              issuenumber,
+            ],
+          }),
+          {} as { [publicationcode: string]: string[] }
+        ) || {}
+    ),
+    totalPerPublicationUniqueIssueNumbers = computed(
+      (): {
+        [publicationcode: string]: number;
+      } =>
+        issueNumbersPerPublication.value &&
+        Object.keys(issueNumbersPerPublication.value).reduce(
+          (acc, publicationcode) => ({
+            ...acc,
+            [publicationcode]: [
+              ...new Set(issueNumbersPerPublication.value[publicationcode]),
+            ].length,
+          }),
+          {}
+        )
+    ),
+    totalPerPublicationUniqueIssueNumbersSorted = computed(
+      () =>
+        totalPerPublicationUniqueIssueNumbers.value &&
+        Object.entries(totalPerPublicationUniqueIssueNumbers.value).sort(
+          ([publicationcode1], [publicationcode2]) =>
+            Math.sign(
+              totalPerPublicationUniqueIssueNumbers.value[publicationcode2]! -
+                totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!
+            )
+        )
+    ),
+    popularIssuesInCollectionWithoutEdge = computed(() =>
+      bookcase()
+        .bookcaseWithPopularities?.filter(
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
+        )
+        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0
+        )
+    ),
+    quotedIssues = computed(() => {
+      const issueQuotations = coa().issueQuotations;
+      if (issueQuotations === null) {
+        return null;
+      }
+      const getEstimation = (publicationcode: string, issuenumber: string) => {
+        const estimationData =
+          issueQuotations[`${publicationcode} ${issuenumber}`];
+        return (
+          (estimationData &&
+            (estimationData.max
+              ? ((estimationData.min || 0) + estimationData.max) / 2
+              : estimationData.min)) ||
+          0
         );
-        this.isLoadingCollection = false;
+      };
+      const CONDITION_TO_ESTIMATION_PCT: Record<string, number> = {
+        bon: 1,
+        moyen: 0.7,
+        mauvais: 0.3,
+        indefini: 0.7,
+        "": 0.7,
+      };
+      return (
+        collection.value
+          ?.filter(({ publicationcode, issuenumber }) =>
+            getEstimation(publicationcode, issuenumber)
+          )
+          .map(({ publicationcode, issuenumber, condition }) => {
+            const estimation = getEstimation(publicationcode, issuenumber);
+            return {
+              publicationcode,
+              issuenumber,
+              condition,
+              estimation,
+              estimationGivenCondition: parseFloat(
+                (CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(1)
+              ),
+            };
+          }) || null
+      );
+    }),
+    quotationSum = computed(() =>
+      quotedIssues.value
+        ? Math.round(
+            quotedIssues.value?.reduce(
+              (acc, { estimationGivenCondition }) =>
+                acc + estimationGivenCondition,
+              0
+            ) || 0
+          )
+        : null
+    ),
+    userForAccountForm = computed(() => {
+      if (!user.value) {
+        return null;
+      }
+      return {
+        ...user.value,
+        discordId: user.value.discordId || undefined,
+        presentationText: user.value.presentationText || "",
+        email: user.value.email!,
+        okForExchanges: user.value.marketplaceAcceptsExchanges || false,
+      };
+    }),
+    updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
+      await call(
+        axios,
+        new POST__collection__issues__single({
+          reqBody: data,
+        })
+      );
+      await loadCollection(true);
+    },
+    updateCollectionMultipleIssues = async (
+      data: CollectionUpdateMultipleIssues
+    ) => {
+      await call(
+        axios,
+        new POST__collection__issues__multiple({
+          reqBody: data,
+        })
+      );
+      await loadCollection(true);
+    },
+    createPurchase = async (date: string, description: string) => {
+      await call(
+        axios,
+        new PUT__collection__purchases({
+          reqBody: { date, description },
+        })
+      );
+      await loadPurchases(true);
+    },
+    deletePurchase = async (id: number) => {
+      await call(
+        axios,
+        new DELETE__collection__purchases__$id({
+          params: { id: String(id) },
+        })
+      );
+      await loadPurchases(true);
+    },
+    findInCollection = (publicationcode: string, issuenumber: string) =>
+      collection.value?.find(
+        ({ country, magazine, issuenumber: collectionIssueNumber }) =>
+          publicationcode === `${country}/${magazine}` &&
+          collectionIssueNumber === issuenumber
+      ),
+    loadPreviousVisit = async () => {
+      previousVisit.value = (
+        await call(axios, new POST__collection__lastvisit())
+      ).data?.previousVisit;
+    },
+    loadCollection = async (afterUpdate = false) => {
+      if (afterUpdate || (!isLoadingCollection.value && !collection.value)) {
+        isLoadingCollection.value = true;
+        collection.value = (
+          await call(axios, new GET__collection__issues())
+        ).data.map((issue) => ({
+          ...issue,
+          publicationcode: `${issue.country}/${issue.magazine}`,
+        }));
+        isLoadingCollection.value = false;
       }
     },
-    async loadPurchases(afterUpdate = false) {
-      if (afterUpdate || (!this.isLoadingPurchases && !this.purchases)) {
-        this.isLoadingPurchases = true;
-        this.purchases = (await axios.get("/collection/purchases")).data;
-        this.isLoadingPurchases = false;
+    loadPurchases = async (afterUpdate = false) => {
+      if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
+        isLoadingPurchases.value = true;
+        purchases.value = (
+          await call(axios, new GET__collection__purchases())
+        ).data;
+        isLoadingPurchases.value = false;
       }
     },
-    async loadWatchedAuthors(afterUpdate = false) {
+    loadWatchedAuthors = async (afterUpdate = false) => {
       if (
         afterUpdate ||
-        (!this.isLoadingWatchedAuthors && !this.watchedAuthors)
+        (!isLoadingWatchedAuthors.value && !watchedAuthors.value)
       ) {
-        this.isLoadingWatchedAuthors = true;
-        this.watchedAuthors = (
-          await axios.get("/collection/authors/watched")
+        isLoadingWatchedAuthors.value = true;
+        watchedAuthors.value = (
+          await call(axios, new GET__collection__authors__watched())
         ).data;
-        this.isLoadingWatchedAuthors = false;
+        isLoadingWatchedAuthors.value = false;
       }
     },
-    async loadSuggestions({
+    loadWatchedPublicationsWithSales = async (afterUpdate = false) => {
+      if (
+        afterUpdate ||
+        (!isLoadingWatchedPublicationsWithSales.value &&
+          !watchedPublicationsWithSales.value)
+      ) {
+        isLoadingWatchedPublicationsWithSales.value = true;
+        watchedPublicationsWithSales.value = (
+          await call(
+            axios,
+            new GET__collection__options__$optionName({
+              params: {
+                optionName: "sales_notification_publications",
+              },
+            })
+          )
+        ).data;
+        isLoadingWatchedPublicationsWithSales.value = false;
+      }
+    },
+    loadMarketplaceContactMethods = async (afterUpdate = false) => {
+      if (
+        afterUpdate ||
+        (!isLoadingMarketplaceContactMethods.value &&
+          !marketplaceContactMethods.value)
+      ) {
+        isLoadingMarketplaceContactMethods.value = true;
+        marketplaceContactMethods.value = (
+          await call(
+            axios,
+            new GET__collection__options__$optionName({
+              params: { optionName: "marketplace_contact_methods" },
+            })
+          )
+        ).data;
+        isLoadingMarketplaceContactMethods.value = false;
+      }
+    },
+    updateMarketplaceContactMethods = async () =>
+      await call(
+        axios,
+        new POST__collection__options__$optionName({
+          reqBody: { values: marketplaceContactMethods.value! },
+          params: {
+            optionName: "marketplace_contact_methods",
+          },
+        })
+      ),
+    updateWatchedPublicationsWithSales = async () =>
+      await call(
+        axios,
+        new POST__collection__options__$optionName({
+          reqBody: {
+            values: watchedPublicationsWithSales.value!,
+          },
+          params: {
+            optionName: "sales_notification_publications",
+          },
+        })
+      ),
+    loadSuggestions = async ({
       countryCode,
       sort,
       sinceLastVisit,
     }: {
-      countryCode: string | null;
-      sort: string | null;
+      countryCode: string;
+      sort: string;
       sinceLastVisit: boolean;
-    }) {
-      if (!this.isLoadingSuggestions) {
-        this.isLoadingSuggestions = true;
-        this.suggestions = (
-          await axios.get(
-            `/collection/stats/suggestedissues/${[
-              countryCode || "ALL",
-              sinceLastVisit ? "since_previous_visit" : "_",
-              sort,
-              sinceLastVisit ? 100 : 20,
-            ].join("/")}`
+    }) => {
+      if (!isLoadingSuggestions.value) {
+        isLoadingSuggestions.value = true;
+        suggestions.value = (
+          await call(
+            axios,
+            new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit(
+              {
+                params: {
+                  countrycode: countryCode || "ALL",
+                  sincePreviousVisit: sinceLastVisit
+                    ? "since_previous_visit"
+                    : "_",
+                  sort,
+                  limit: sinceLastVisit ? "100" : "20",
+                },
+              }
+            )
           )
         ).data;
-        this.isLoadingSuggestions = false;
+        isLoadingSuggestions.value = false;
       }
     },
-    async loadSubscriptions(afterUpdate = false) {
+    loadSubscriptions = async (afterUpdate = false) => {
       if (
         afterUpdate ||
-        (!this.isLoadingSubscriptions && !this.subscriptions)
+        (!isLoadingSubscriptions.value && !subscriptions.value)
       ) {
-        this.isLoadingSubscriptions = true;
-        this.subscriptions = (
-          await axios.get("/collection/subscriptions")
-        ).data;
-        this.isLoadingSubscriptions = false;
+        isLoadingSubscriptions.value = true;
+        subscriptions.value = (
+          await call(axios, new GET__collection__subscriptions())
+        ).data.map((subscription: SubscriptionTransformedStringDates) => ({
+          ...subscription,
+          startDate: new Date(Date.parse(subscription.startDate)),
+          endDate: new Date(Date.parse(subscription.endDate)),
+        }));
+        isLoadingSubscriptions.value = false;
       }
     },
-    async loadPopularIssuesInCollection() {
-      if (!this.popularIssuesInCollection) {
-        this.popularIssuesInCollection = (
-          (await axios.get("/collection/popular")).data as IssuePopularity[]
-        ).reduce(
+    loadPopularIssuesInCollection = async () => {
+      if (!popularIssuesInCollection.value) {
+        popularIssuesInCollection.value = (
+          await call(axios, new GET__collection__popular())
+        ).data.reduce(
           (acc, issue) => ({
             ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issueNumber}`]:
+            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
               issue.popularity,
           }),
           {}
         );
       }
     },
-    async loadLastPublishedEdgesForCurrentUser() {
-      if (!this.lastPublishedEdgesForCurrentUser) {
-        this.lastPublishedEdgesForCurrentUser = (
-          await axios.get("/collection/edges/lastPublished")
-        ).data.map((edge: EdgePublishedRecently) => ({
-          ...edge,
-          timestamp: Date.parse(edge.creationDate) / 1000,
-        }));
+    loadLastPublishedEdgesForCurrentUser = async () => {
+      if (!lastPublishedEdgesForCurrentUser.value) {
+        lastPublishedEdgesForCurrentUser.value = (
+          await call(axios, new GET__collection__edges__lastPublished())
+        ).data;
       }
     },
-
-    async loadUser(afterUpdate = false) {
-      if (afterUpdate || !this.user) {
-        this.user = Object.entries(
-          (await axios.get(`/collection/user`)).data
-        ).reduce((acc, [key, value]) => {
-          switch (key) {
-            case "accepterpartage":
-              acc.isShareEnabled = value as boolean;
-              break;
-            case "affichervideo":
-              acc.isVideoShown = value as boolean;
-              break;
-            case "email":
-              acc.email = value as string;
-              break;
-            case "presentationSentence":
-              acc.presentationSentence = value as string;
-              break;
+    loadUser = async (afterUpdate = false) => {
+      if (!isLoadingUser.value && (afterUpdate || !user.value)) {
+        isLoadingUser.value = true;
+        try {
+          if ((await Preferences.get({ key: "token" })).value) {
+            user.value = (await call(axios, new GET__collection__user())).data;
           }
-          return acc;
-        }, {} as User);
+        } catch (e) {
+          console.error(e);
+          Preferences.remove({ key: "token" });
+          user.value = null;
+        } finally {
+          isLoadingUser.value = false;
+        }
       }
-    },
-  },
+    };
+  return {
+    collection,
+    watchedPublicationsWithSales,
+    purchases,
+    watchedAuthors,
+    marketplaceContactMethods,
+    suggestions,
+    subscriptions,
+    popularIssuesInCollection,
+    lastPublishedEdgesForCurrentUser,
+    user,
+    previousVisit,
+    total,
+    issuesByIssueCode,
+    duplicateIssues,
+    issuesInToReadStack,
+    issuesInOnSaleStack,
+    totalUniqueIssues,
+    totalPerCountry,
+    totalPerPublication,
+    purchasesById,
+    hasSuggestions,
+    issueNumbersPerPublication,
+    totalPerPublicationUniqueIssueNumbers,
+    totalPerPublicationUniqueIssueNumbersSorted,
+    popularIssuesInCollectionWithoutEdge,
+    quotedIssues,
+    quotationSum,
+    userForAccountForm,
+    updateCollectionSingleIssue,
+    updateCollectionMultipleIssues,
+    createPurchase,
+    deletePurchase,
+    findInCollection,
+    loadPreviousVisit,
+    loadCollection,
+    loadPurchases,
+    loadWatchedAuthors,
+    loadWatchedPublicationsWithSales,
+    loadMarketplaceContactMethods,
+    updateMarketplaceContactMethods,
+    updateWatchedPublicationsWithSales,
+    loadSuggestions,
+    loadSubscriptions,
+    loadPopularIssuesInCollection,
+    loadLastPublishedEdgesForCurrentUser,
+    loadUser,
+    ownedCountries,
+    ownedPublications,
+  };
 });

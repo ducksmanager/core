@@ -23,36 +23,10 @@ import "@ionic/vue/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 import { createPinia } from "pinia";
-import axios from "axios";
 
-const pinia = createPinia();
+const store = createPinia();
+const app = createApp(App).use(IonicVue).use(router).use(store);
 
-import * as CordovaSQLiteDriver from "localforage-cordovasqlitedriver";
-import { Storage } from "@ionic/storage";
-import * as localforage from "localforage";
-
-/*declare module "axios" {
-  interface AxiosRequestConfig {
-    urlParams?: Record<string, string>;
-  }
-}*/
-
-const storage = new Storage({
-  driverOrder: [CordovaSQLiteDriver._driver, localforage.INDEXEDDB],
-});
-
-storage.defineDriver(CordovaSQLiteDriver).then(async () => {
-  await storage.create();
-  await storage.set("token", process.env.VUE_APP_TOKEN);
-
-  /*axios.defaults.baseURL = process.env.VUE_APP_API_BASE_URL;
-  axios.defaults.headers.common["Authorization"] = `Basic ${await storage.get(
-    "token"
-  )}`;*/
-
-  const app = createApp(App).use(IonicVue).use(router).use(pinia);
-
-  router.isReady().then(() => {
-    app.mount("#app");
-  });
+router.isReady().then(() => {
+  app.mount("#app");
 });

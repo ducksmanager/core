@@ -1,8 +1,12 @@
 import axios from "axios";
-import { buildWebStorage, setupCache } from "axios-cache-interceptor";
+import {
+  buildWebStorage,
+  CacheRequestConfig,
+  setupCache,
+} from "axios-cache-interceptor";
 import dayjs from "dayjs";
 
-import { addUrlParamsRequestInterceptor } from "./url-params-request-interceptor";
+import { addUrlParamsRequestInterceptor } from "~/axios-helper";
 
 const customStorage = buildWebStorage(sessionStorage);
 
@@ -23,7 +27,7 @@ const commonCacheOptions = {
   etag: false,
   modifiedSince: false,
   interpretHeader: false,
-  generateKey: (options: any) =>
+  generateKey: (options: CacheRequestConfig) =>
     `${options.url}${
       options.params ? `?${new URLSearchParams(options.params).toString()}` : ""
     }`,
@@ -33,7 +37,7 @@ const commonCacheOptions = {
 const cachedUserApi = addUrlParamsRequestInterceptor(
   setupCache(
     axios.create({
-      baseURL: process.env.VUE_APP_API_BASE_URL,
+      baseURL: import.meta.env.VITE_DM_API_URL,
     }),
     {
       ...commonCacheOptions,
@@ -45,7 +49,7 @@ const cachedUserApi = addUrlParamsRequestInterceptor(
 const cachedCoaApi = addUrlParamsRequestInterceptor(
   setupCache(
     axios.create({
-      baseURL: process.env.VUE_APP_API_BASE_URL,
+      baseURL: import.meta.env.VITE_DM_API_URL,
     }),
     {
       ...commonCacheOptions,
