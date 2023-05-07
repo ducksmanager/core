@@ -3,7 +3,7 @@ import { RouteRecordRaw } from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/Collection",
+    path: "/",
     component: () => import("../views/Collection.vue"),
   },
 ];

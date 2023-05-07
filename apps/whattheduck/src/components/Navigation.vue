@@ -2,7 +2,9 @@
   <ion-segment
     v-if="parts"
     :value="appStore.currentNavigationItem"
-    @ionChange="appStore.currentNavigationItem = $event.detail.value || null"
+    @ionChange="
+      appStore.currentNavigationItem = $event.detail.value || undefined
+    "
   >
     <ion-segment-button :key="key" v-for="{ key, text } in parts" :value="key">
       <ion-label>{{ text }}</ion-label>
@@ -24,11 +26,11 @@ const coaStore = coa();
 // eslint-disable-next-line no-undef
 const parts = computed(() => {
   if (!coaStore.countryNames) {
-    return null;
+    return [];
   }
-  const parts: { key: string | null; text: string }[] | null = [
+  const parts: { key: string | undefined; text: string }[] | undefined = [
     {
-      key: null,
+      key: undefined,
       text: "All countries",
     },
   ];

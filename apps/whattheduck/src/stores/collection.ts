@@ -470,6 +470,7 @@ export const collection = defineStore("collection", () => {
           await call(axios, new GET__collection__subscriptions())
         ).data.map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
+          publicationcode: "",
           startDate: new Date(Date.parse(subscription.startDate)),
           endDate: new Date(Date.parse(subscription.endDate)),
         }));

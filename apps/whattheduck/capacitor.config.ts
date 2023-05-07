@@ -5,6 +5,9 @@ const config: CapacitorConfig = {
   appName: "What The Duck",
   webDir: "dist",
   bundledWebRuntime: false,
+  server: {
+    url: "http://localhost:8100",
+  },
 };
 
 export default config;
