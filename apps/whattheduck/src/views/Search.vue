@@ -14,11 +14,21 @@
         <ion-item>Type the title of a story.</ion-item>
         <ion-searchbar placeholder="Story title" v-model="storyTitle"></ion-searchbar>
 
-        <ion-list>
-          <ion-item v-for="{ title } of storyResults">
-            <ion-label>{{ title }}</ion-label>
+        <ion-list v-if="storyResults?.results && !selectedStory">
+          <ion-item
+            v-for="story of storyResults?.results"
+            @click="
+              selectedStory = story;
+              storyTitle = '';
+            "
+          >
+            <ion-label>{{ story.title }}</ion-label>
           </ion-item>
         </ion-list>
+        <div v-if="selectedStory">
+          {{ selectedStory.title }} a été publié dans les magazines suivants:
+          <div v-for="issue of selectedStory.issues">{{ issue.publicationcode }} {{ issue.issuenumber }}</div>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -40,19 +50,27 @@ import {
 } from '@ionic/vue';
 import axios from 'axios';
 import { POST__coa__stories__search__withIssues } from 'ducksmanager/types/routes';
+import { SimpleStory } from 'ducksmanager/types/SimpleStory';
 import { call } from '~/axios-helper';
 import { ref, watch } from 'vue';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
 const collectionStore = collection();
+const coaStore = coa();
 
 const storyTitle = ref('' as string);
 const storyResults = ref(null as { results: any[] } | null);
 
+const selectedStory = ref(null as SimpleStory | null);
+
 watch(
   () => storyTitle.value,
   async (newValue) => {
+    if (!newValue) {
+      return;
+    }
+    selectedStory.value = null;
     const data = (
       await call(
         axios,
@@ -75,6 +93,15 @@ watch(
     };
   }
 );
+
+(async () => {
+  await collectionStore.loadCollection();
+  await coaStore.fetchCountryNames();
+})();
 </script>
 
-<style scoped></style>
+<style scoped>
+ion-item {
+  cursor: pointer;
+}
+</style>

@@ -25,7 +25,6 @@
               <template v-else-if="itemType === 'Publication'"
                 >{{ totalPerPublication[key] }} / {{ issueCounts![key] }}</template
               >
-              <template v-else-if="itemType === 'Issue'">a</template>
             </template>
             ></Row
           >
@@ -54,6 +53,7 @@ import Navigation from '~/components/Navigation.vue';
 import Row from '~/components/Row.vue';
 import Publication from '~/components/Publication.vue';
 import Issue from '~/components/Issue.vue';
+import EditIssuesButton from '~/components/EditIssuesButton.vue';
 import { computed, ref, watch } from 'vue';
 import { collection } from '~/stores/collection';
 import { app } from '~/stores/app';
@@ -66,8 +66,6 @@ const hasCoaData = ref(false);
 
 const issueCounts = computed(() => coaStore.issueCounts);
 const totalPerPublication = computed(() => collectionStore.totalPerPublication);
-
-const numberOfIssues = computed(() => collectionStore.collection?.length);
 
 const hasList = computed((): boolean => {
   if (!hasCoaData.value) {
