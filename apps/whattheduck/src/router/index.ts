@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory } from "@ionic/vue-router";
-import { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from '@ionic/vue-router';
+import type { RouteRecordRaw } from 'vue-router';
 
-const routes: Array<RouteRecordRaw> = [
+const routes: RouteRecordRaw[] = [
   {
-    path: "/",
-    component: () => import("../views/Collection.vue"),
+    path: '/',
+    component: () => import('../views/Collection.vue'),
   },
 ];
 

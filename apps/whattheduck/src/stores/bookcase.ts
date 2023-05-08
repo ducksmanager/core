@@ -1,8 +1,12 @@
-import axios, { AxiosError } from "axios";
+import type { AxiosError } from "axios";
+import axios from "axios";
 import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+
+import { collection } from "./collection";
 
 import { call } from "~/axios-helper";
-import { BookcaseEdge } from "~dm_types/BookcaseEdge";
+import type { BookcaseEdge } from "~dm_types/BookcaseEdge";
 import {
   GET__bookcase__$username,
   GET__bookcase__$username__options,
@@ -11,8 +15,6 @@ import {
   POST__bookcase__sort,
 } from "~dm_types/routes";
 
-import { collection } from "./collection";
-import { computed, ref } from "vue";
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;

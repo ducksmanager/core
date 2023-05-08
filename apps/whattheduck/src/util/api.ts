@@ -1,7 +1,8 @@
 import axios from "axios";
+import type {
+  CacheRequestConfig} from "axios-cache-interceptor";
 import {
   buildWebStorage,
-  CacheRequestConfig,
   setupCache,
 } from "axios-cache-interceptor";
 import dayjs from "dayjs";

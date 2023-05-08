@@ -5,14 +5,10 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary"></ion-menu-button>
         </ion-buttons>
-        <ion-title>My collection ({{ numberOfIssues }} issues) </ion-title>
+        <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
       <Navigation />
-      <ion-searchbar
-        v-if="showFilter"
-        v-model="filterText"
-        placeholder="Filter"
-      ></ion-searchbar>
+      <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter"></ion-searchbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
@@ -37,18 +33,18 @@
             /></ion-item>
           </template>
           <template v-if="itemType === 'Issue'">
-            <ion-item button :key="key" v-for="{ key } in filteredItems"
-              ><Issue :value="key" /></ion-item
+            <ion-item button :key="key" v-for="{ key } in filteredItems"><Issue :value="key" /></ion-item
           ></template>
         </div>
         <div v-else>Loading...</div>
       </div>
+      <EditIssuesButton />
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
+import { coa } from '~/stores/coa';
 import {
   IonButtons,
   IonContent,
@@ -59,19 +55,20 @@ import {
   IonSearchbar,
   IonTitle,
   IonToolbar,
-} from "@ionic/vue";
-import Country from "~/components/Country.vue";
-import Navigation from "~/components/Navigation.vue";
-import Publication from "~/components/Publication.vue";
-import Issue from "~/components/Issue.vue";
-import { computed, ref, watch } from "vue";
-import { collection } from "~/stores/collection";
-import { app } from "~/stores/app";
+} from '@ionic/vue';
+import Country from '~/components/Country.vue';
+import Navigation from '~/components/Navigation.vue';
+import Publication from '~/components/Publication.vue';
+import EditIssuesButton from '~/components/EditIssuesButton.vue';
+import Issue from '~/components/Issue.vue';
+import { computed, ref, watch } from 'vue';
+import { collection } from '~/stores/collection';
+import { app } from '~/stores/app';
 
 const collectionStore = collection();
 const coaStore = coa();
 const appStore = app();
-const filterText = ref("" as string);
+const filterText = ref('' as string);
 const hasCoaData = ref(false);
 
 const numberOfIssues = computed(() => collectionStore.collection?.length);
@@ -81,45 +78,37 @@ const hasList = computed((): boolean => {
     return false;
   }
   switch (itemType.value) {
-    case "Country":
+    case 'Country':
       return !!collectionStore.ownedCountries;
-    case "Publication":
+    case 'Publication':
       return !!collectionStore.ownedPublications /* &&
         collectionStore.ownedPublications.filter((publicationCode) =>
           Object.keys(coaStore.publicationNames).includes(publicationCode)
         ).length === collectionStore.ownedPublications.length
       )*/;
-    case "Issue":
-      return (
-        !!collectionStore.collection &&
-        !!coaStore.issueNumbers[appStore.currentNavigationItem || ""]
-      );
+    case 'Issue':
+      return !!collectionStore.collection && !!coaStore.issueNumbers[appStore.currentNavigationItem || ''];
   }
 });
 
 const items = computed((): { key: string; text: string }[] => {
   switch (itemType.value) {
-    case "Country":
+    case 'Country':
       return collectionStore.ownedCountries.map((countryCode) => ({
         key: countryCode,
         text: coaStore.countryNames?.[countryCode] || countryCode,
       }));
-    case "Publication":
+    case 'Publication':
       return collectionStore.ownedPublications
-        .filter(
-          (publication) =>
-            publication.indexOf(`${appStore.currentNavigationItem}/`) === 0
-        )
+        .filter((publication) => publication.indexOf(`${appStore.currentNavigationItem}/`) === 0)
         .map((publicationCode) => ({
           key: publicationCode,
           text: coaStore.publicationNames?.[publicationCode] || publicationCode,
         }));
 
-    case "Issue":
+    case 'Issue':
       return (collectionStore.collection || [])
-        .filter(
-          (issue) => issue.publicationcode === appStore.currentNavigationItem
-        )
+        .filter((issue) => issue.publicationcode === appStore.currentNavigationItem)
         .map(({ issuenumber }) => ({
           key: issuenumber,
           text: issuenumber,
@@ -128,58 +117,50 @@ const items = computed((): { key: string; text: string }[] => {
 });
 
 const itemType = computed(() => {
-  switch (appStore.currentNavigationItem?.indexOf("/")) {
+  switch (appStore.currentNavigationItem?.indexOf('/')) {
     case undefined:
-      return "Country";
+      return 'Country';
     case -1:
-      return "Publication";
+      return 'Publication';
     default:
-      return "Issue";
+      return 'Issue';
   }
 });
 
 const sortedItems = computed(() => {
-  if (itemType.value === "Issue") {
+  if (itemType.value === 'Issue') {
     const keys = items.value.map(({ key }) => key);
-    return coaStore.issueNumbers[appStore.currentNavigationItem || ""]
+    return coaStore.issueNumbers[appStore.currentNavigationItem || '']
       .filter((issueNumber) => keys.includes(issueNumber))
       .map((issueNumber) => ({ key: issueNumber, text: issueNumber }));
   } else {
     return [...items.value].sort(({ text: text1 }, { text: text2 }) =>
-      text1.toLowerCase() < text2.toLowerCase() ? -1 : 1
+      text1.toLowerCase().localeCompare(text2.toLowerCase())
     );
   }
 });
 
 const filteredItems = computed(() => {
-  return sortedItems.value.filter(
-    ({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1
-  );
+  return sortedItems.value.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1);
 });
 const showFilter = computed(() => true);
 
 const title = computed(() =>
-  typeof collectionStore.total === "number"
-    ? `My collection (${collectionStore.total} issues)`
-    : "My collection"
+  typeof collectionStore.total === 'number' ? `My collection (${collectionStore.total} issues)` : 'My collection'
 );
 
 watch(
   () => itemType.value,
   async (newValue) => {
     switch (newValue) {
-      case "Country":
+      case 'Country':
         await coaStore.fetchCountryNames();
         break;
-      case "Publication":
-        await coaStore.fetchPublicationNames([
-          appStore.currentNavigationItem || "",
-        ]);
+      case 'Publication':
+        await coaStore.fetchPublicationNames([appStore.currentNavigationItem || '']);
         break;
-      case "Issue":
-        await coaStore.fetchIssueNumbers([
-          appStore.currentNavigationItem || "",
-        ]);
+      case 'Issue':
+        await coaStore.fetchIssueNumbers([appStore.currentNavigationItem || '']);
         break;
     }
     hasCoaData.value = true;
@@ -219,5 +200,9 @@ watch(
 
 #container a {
   text-decoration: none;
+}
+
+ion-searchbar {
+  padding: 0;
 }
 </style>

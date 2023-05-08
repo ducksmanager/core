@@ -1,16 +1,13 @@
 import { Preferences } from "@capacitor/preferences";
 import axios from "axios";
 import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+
+import { bookcase } from "./bookcase";
+import { coa } from "./coa";
 
 import { call } from "~/axios-helper";
-import {
-  authorUser,
-  issue,
-  purchase,
-  subscription,
-  user,
-} from "~prisma_clients/client_dm";
-import {
+import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm_types/CollectionUpdate";
@@ -31,10 +28,15 @@ import {
   POST__collection__options__$optionName,
   PUT__collection__purchases,
 } from "~dm_types/routes";
+import type {
+  authorUser,
+  issue,
+  purchase,
+  subscription,
+  user,
+} from "~prisma_clients/client_dm";
 
-import { bookcase } from "./bookcase";
-import { coa } from "./coa";
-import { computed, ref } from "vue";
+
 
 export type IssueWithPublicationcode = issue & {
   publicationcode: string;
