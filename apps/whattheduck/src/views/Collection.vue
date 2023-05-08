@@ -18,28 +18,28 @@
     <ion-content :fullscreen="true">
       <div id="container">
         <div v-if="hasList">
-          <template v-if="itemType === 'Country'">
-            <ion-item
-              button
-              :key="key"
-              v-for="{ text, key } in filteredItems"
-              @click="appStore.currentNavigationItem = key"
-            >
-              <Country :value="text" /></ion-item
-          ></template>
-          <template v-if="itemType === 'Publication'">
-            <ion-item
-              button
-              :key="key"
-              v-for="{ text, key } in filteredItems"
-              @click="appStore.currentNavigationItem = key"
-              ><Publication :value="text"
-            /></ion-item>
-          </template>
-          <template v-if="itemType === 'Issue'">
-            <ion-item button :key="key" v-for="{ key } in filteredItems"
-              ><Issue :value="key" /></ion-item
-          ></template>
+          <Row
+            v-for="{ text, key } in filteredItems"
+            @click="appStore.currentNavigationItem = key"
+          >
+            <template #label>
+              <Country v-if="itemType === 'Country'" :value="text" />
+              <Publication
+                v-else-if="itemType === 'Publication'"
+                :value="text"
+              />
+              <Issue v-else-if="itemType === 'Issue'" :value="key" />
+            </template>
+            <template #stats>
+              <template v-if="itemType === 'Country'">a</template>
+              <template v-else-if="itemType === 'Publication'"
+                >{{ totalPerPublication[key] }} /
+                {{ issueCounts![key] }}</template
+              >
+              <template v-else-if="itemType === 'Issue'">a</template>
+            </template>
+            ></Row
+          >
         </div>
         <div v-else>Loading...</div>
       </div>
@@ -53,7 +53,6 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonItem,
   IonMenuButton,
   IonPage,
   IonSearchbar,
@@ -62,6 +61,7 @@ import {
 } from "@ionic/vue";
 import Country from "~/components/Country.vue";
 import Navigation from "~/components/Navigation.vue";
+import Row from "~/components/Row.vue";
 import Publication from "~/components/Publication.vue";
 import Issue from "~/components/Issue.vue";
 import { computed, ref, watch } from "vue";
@@ -73,6 +73,9 @@ const coaStore = coa();
 const appStore = app();
 const filterText = ref("" as string);
 const hasCoaData = ref(false);
+
+const issueCounts = computed(() => coaStore.issueCounts);
+const totalPerPublication = computed(() => collectionStore.totalPerPublication);
 
 const numberOfIssues = computed(() => collectionStore.collection?.length);
 
@@ -167,11 +170,13 @@ const title = computed(() =>
 watch(
   () => itemType.value,
   async (newValue) => {
+    hasCoaData.value = false;
     switch (newValue) {
       case "Country":
         await coaStore.fetchCountryNames();
         break;
       case "Publication":
+        await coaStore.fetchIssueCounts();
         await coaStore.fetchPublicationNames([
           appStore.currentNavigationItem || "",
         ]);

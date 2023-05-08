@@ -2,9 +2,7 @@
   <ion-segment
     v-if="parts"
     :value="appStore.currentNavigationItem"
-    @ionChange="
-      appStore.currentNavigationItem = $event.detail.value || undefined
-    "
+    @ionChange="onChange"
   >
     <ion-segment-button :key="key" v-for="{ key, text } in parts" :value="key">
       <ion-label>{{ text }}</ion-label>
@@ -28,9 +26,9 @@ const parts = computed(() => {
   if (!coaStore.countryNames) {
     return [];
   }
-  const parts: { key: string | undefined; text: string }[] | undefined = [
+  const parts: { key: string; text: string }[] | undefined = [
     {
-      key: undefined,
+      key: "",
       text: "All countries",
     },
   ];
@@ -50,9 +48,13 @@ const parts = computed(() => {
   return parts;
 });
 
-onMounted(async () => {
+const onChange = ($event) => {
+  appStore.currentNavigationItem = $event.detail.value || undefined;
+};
+
+(async () => {
   await collectionStore.loadCollection();
-});
+})();
 </script>
 
 <style lang="scss" scoped>
