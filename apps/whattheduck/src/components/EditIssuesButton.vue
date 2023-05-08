@@ -20,7 +20,7 @@
         <ion-label>By issue selection</ion-label>
         <ion-fab-button size="small"> <ion-icon :ios="listOutline" :md="listSharp"></ion-icon></ion-fab-button>
       </ion-row>
-      <ion-row class="ion-align-items-center">
+      <ion-row class="ion-align-items-center" router-link="/search">
         <ion-label>By story title</ion-label>
         <ion-fab-button size="small"> <ion-icon :ios="searchOutline" :md="searchSharp"></ion-icon></ion-fab-button>
       </ion-row>

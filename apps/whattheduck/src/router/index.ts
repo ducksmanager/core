@@ -3,8 +3,12 @@ import type { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '/collection',
     component: () => import('../views/Collection.vue'),
+  },
+  {
+    path: '/search',
+    component: () => import('../views/Search.vue'),
   },
 ];
 
