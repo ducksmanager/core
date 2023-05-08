@@ -1,50 +1,46 @@
 <template>
   <div
-    v-if="embedded"
+    v-if="sortedBookcase"
     class="bookcase"
     :style="{
       backgroundImage: getTextureBackgroundImage(bookcaseTextures.bookcase),
     }"
   >
-    <Edge
-      v-for="(edge, edgeId) in edgesToLoad"
-      :id="`edge-${edgeId}`"
-      :key="`edge-${edgeId}`"
-      :publicationcode="edge.publicationcode"
-      :issuenumber="edge.issuenumber"
-      existing
-      embedded
-      @loaded="onEdgeLoaded(edgeId)"
-    />
-  </div>
-  <div
-    v-else
-    class="bookcase"
-    :style="{
-      backgroundImage: getTextureBackgroundImage(bookcaseTextures.bookcase),
-    }"
-  >
-    <Edge
-      v-for="(edge, edgeIndex) in edgesToLoad"
-      :id="`edge-${edgeIndex}`"
-      :key="`edge-${edgeIndex}`"
-      :invisible="
-        currentEdgeOpened === edge ||
-        (edgeIndex > currentBatchFirstEdgeIndex &&
-          edgeIndex < currentBatchFirstEdgeIndex + batchSize &&
-          edgeIndex > lastEdgeIndexContinuouslyLoaded)
-      "
-      :highlighted="currentEdgeHighlighted === edge.id"
-      :publicationcode="edge.publicationcode"
-      :issuenumber="edge.issuenumber"
-      :issuenumber-reference="edge.issuenumberReference"
-      :creation-date="edge.creationDate?.toString()"
-      :popularity="edge.popularity || null"
-      :existing="!!edge.edgeId"
-      :sprite-path="edgesUsingSprites[edge.edgeId] || null"
-      @loaded="onEdgeLoaded(edgeIndex)"
-      @open-book="$emit('open-book', edge)"
-    />
+    <template v-if="embedded">
+      <Edge
+        v-for="edgeIndex of edgeIndexesToLoad"
+        :id="`edge-${edgeIndex}${embedded}`"
+        :key="`edge-${edgeIndex}`"
+        :publicationcode="sortedBookcase[edgeIndex].publicationcode"
+        :issuenumber="sortedBookcase[edgeIndex].issuenumber"
+        existing
+        embedded
+        @loaded="onEdgeLoaded(edgeIndex)"
+      />
+    </template>
+    <template v-else>
+      <Edge
+        v-for="edgeIndex of edgeIndexesToLoad"
+        :id="`edge-${edgeIndex}`"
+        :key="`edge-${edgeIndex}`"
+        :invisible="
+          currentEdgeOpened === sortedBookcase[edgeIndex] ||
+          edgeIndex > lastEdgeIndexContinuouslyLoaded
+        "
+        :highlighted="currentEdgeHighlighted === sortedBookcase[edgeIndex].id"
+        :publicationcode="sortedBookcase[edgeIndex].publicationcode"
+        :issuenumber="sortedBookcase[edgeIndex].issuenumber"
+        :issuenumber-reference="sortedBookcase[edgeIndex].issuenumberReference"
+        :creation-date="sortedBookcase[edgeIndex].creationDate?.toString()"
+        :popularity="sortedBookcase[edgeIndex].popularity || null"
+        :existing="!!sortedBookcase[edgeIndex].edgeId"
+        :sprite-path="
+          edgesUsingSprites[sortedBookcase[edgeIndex].edgeId] || null
+        "
+        @loaded="onEdgeLoaded(edgeIndex)"
+        @open-book="$emit('open-book', sortedBookcase[edgeIndex])"
+      />
+    </template>
   </div>
 </template>
 
@@ -72,18 +68,10 @@ const {
 
 const MAX_BATCH_SIZE = 50;
 
-const batchSize = $computed(() =>
-  Math.min(
-    MAX_BATCH_SIZE,
-    (sortedBookcase?.length || 0) - currentBatchFirstEdgeIndex
-  )
-);
-
-let currentBatchFirstEdgeIndex = $ref(0);
-let loadedBatchImages = $ref(new Set<number>() as Set<number>);
+let loadedImages = $ref(new Set<number>() as Set<number>);
 
 const lastEdgeIndexContinuouslyLoaded = $computed(() => {
-  const allLoadedImages = Array.from(loadedBatchImages).sort((a, b) =>
+  const allLoadedImages = Array.from(loadedImages).sort((a, b) =>
     Math.sign(a - b)
   );
   let stop = false;
@@ -107,29 +95,29 @@ defineEmits<{
 }>();
 
 const getImagePath = images().getImagePath;
-let edgesToLoad = $ref([] as BookcaseEdgeWithPopularity[]);
+let edgeIndexesToLoad = $ref([] as number[]);
 
 const getTextureBackgroundImage = (textureName: string) =>
   `url('${getImagePath(`textures/${textureName}`)}.jpg')`;
 
-const loadNextEdgeBatch = () => {
-  loadedBatchImages.clear();
-  edgesToLoad =
-    sortedBookcase?.slice(0, currentBatchFirstEdgeIndex + batchSize) || [];
-};
-
 const onEdgeLoaded = (edgeIndex: number) => {
-  loadedBatchImages.add(edgeIndex);
+  loadedImages.add(edgeIndex);
+  const nextEdgeIndexToLoad = sortedBookcase?.findIndex(
+    (_, idx) => !edgeIndexesToLoad.includes(idx)
+  );
+  if (nextEdgeIndexToLoad !== undefined && nextEdgeIndexToLoad > -1) {
+    edgeIndexesToLoad.push(nextEdgeIndexToLoad);
+  }
 };
 
 watch(
-  () => loadedBatchImages.size === batchSize,
-  (isReadyForNextBatch) => {
-    if (isReadyForNextBatch) {
-      currentBatchFirstEdgeIndex += batchSize;
-      if (currentBatchFirstEdgeIndex < (sortedBookcase?.length || 0)) {
-        loadNextEdgeBatch();
-      }
+  () => sortedBookcase,
+  (newValue) => {
+    if (newValue && !edgeIndexesToLoad.length) {
+      const firstBatchSize = Math.min(MAX_BATCH_SIZE, newValue.length || 0);
+      edgeIndexesToLoad = newValue
+        ?.slice(0, firstBatchSize)
+        .map((_, idx) => idx);
     }
   },
   { immediate: true }
@@ -146,7 +134,6 @@ onMounted(() => {
     style.textContent = `.edge:not(.visible-book)::after { background: url("${bookshelfTextureUrl}");}`;
     document.head.append(style);
   }
-  loadNextEdgeBatch();
 });
 </script>
 

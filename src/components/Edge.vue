@@ -59,8 +59,8 @@ const {
   issuenumber: string;
   issuenumberReference?: string;
   creationDate?: string;
-  popularity: number | null;
-  spritePath: string | null;
+  popularity?: number | null;
+  spritePath?: string | null;
   existing: boolean;
   invisible?: boolean;
   highlighted?: boolean;
