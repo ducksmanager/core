@@ -9,8 +9,6 @@
   </ion-item>
 </template>
 
-<script setup type="ts">
-import {
-  IonLabel, IonItem,
-} from "@ionic/vue";
+<script setup lang="ts">
+import { IonLabel, IonItem } from '@ionic/vue';
 </script>
