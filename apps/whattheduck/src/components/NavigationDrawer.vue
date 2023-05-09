@@ -3,22 +3,24 @@
     <ion-content>
       <ion-list id="header">
         <ion-list-header>What The Duck</ion-list-header>
-        <ion-note>Logged in as xxx</ion-note>
+        <template v-if="user">
+          <ion-note>Logged in as {{ user.username }}</ion-note>
 
-        <ion-row> Medals </ion-row>
-        <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appPages" :key="i">
-          <ion-item
-            @click="selectedIndex = i"
-            router-direction="root"
-            :router-link="p.url"
-            lines="none"
-            :detail="false"
-            :class="{ selected: selectedIndex === i }"
-          >
-            <ion-icon aria-hidden="true" slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
-            <ion-label>{{ p.title }}</ion-label>
-          </ion-item>
-        </ion-menu-toggle>
+          <ion-row> Medals </ion-row>
+          <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appPages" :key="i">
+            <ion-item
+              @click="selectedIndex = i"
+              router-direction="root"
+              :router-link="p.url"
+              lines="none"
+              :detail="false"
+              :class="{ selected: selectedIndex === i }"
+            >
+              <ion-icon aria-hidden="true" slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
+              <ion-label>{{ p.title }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle></template
+        >
       </ion-list>
       <ion-list id="footer">
         <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appFooterPages" :key="i">
@@ -50,8 +52,11 @@ import {
   IonRow,
 } from '@ionic/vue';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
+import { collection } from '~/stores/collection';
+
+const collectionStore = collection();
 
 const selectedIndex = ref(0);
 const appPages = [
@@ -83,6 +88,8 @@ const appFooterPages = [
     url: '/Logout',
   },
 ];
+
+const user = computed(() => collectionStore.user);
 </script>
 <style scoped lang="scss">
 ion-menu {

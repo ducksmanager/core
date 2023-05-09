@@ -14,19 +14,15 @@
     <ion-content :fullscreen="true">
       <div id="container">
         <div v-if="hasList">
-          <Row v-for="{ text, key } in filteredItems" @click="appStore.currentNavigationItem = key">
+          <Row
+            v-for="{ text, key } in filteredItems"
+            @click="appStore.currentNavigationItem = key"
+            :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key] }"
+          >
             <template #label>
               <Country v-if="itemType === 'Country'" :value="text" />
               <Publication v-else-if="itemType === 'Publication'" :value="text" />
               <Issue v-else-if="itemType === 'Issue'" :value="key" />
-            </template>
-            <template #stats>
-              <template v-if="itemType === 'Country'"
-                >{{ totalPerCountry[key] }} / {{ issueCountsPerCountry![key] }}</template
-              >
-              <template v-else-if="itemType === 'Publication'"
-                >{{ totalPerPublication[key] }} / {{ issueCounts![key] }}</template
-              >
             </template>
             ></Row
           >
@@ -46,6 +42,7 @@ import {
   IonHeader,
   IonMenuButton,
   IonPage,
+  IonProgressBar,
   IonSearchbar,
   IonTitle,
   IonToolbar,
@@ -137,6 +134,27 @@ const sortedItems = computed(() => {
     );
   }
 });
+
+const statNumerators = computed(() => {
+  switch (itemType.value) {
+    case 'Country':
+      return totalPerCountry.value;
+    case 'Publication':
+      return totalPerPublication.value;
+  }
+  return null;
+});
+const statDenominators = computed(() => {
+  switch (itemType.value) {
+    case 'Country':
+      return issueCountsPerCountry.value;
+    case 'Publication':
+      return issueCounts.value;
+  }
+  return null;
+});
+
+const fillPercentage = computed(() => 10);
 
 const filteredItems = computed(() => {
   return sortedItems.value.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1);
