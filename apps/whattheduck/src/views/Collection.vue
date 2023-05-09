@@ -15,13 +15,19 @@
       <div id="container">
         <div v-if="hasList">
           <Row
-            v-for="{ text, key } in filteredItems"
+            v-for="{ key, ...item } in filteredItems"
             @click="appStore.currentNavigationItem = key"
             :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key] }"
           >
+            <template #prefix>
+              <Condition
+                v-if="itemType === 'Issue'"
+                :value="conditionL10n[(item as IssueWithPublicationcode).condition]"
+              />
+            </template>
             <template #label>
-              <Country v-if="itemType === 'Country'" :value="text" />
-              <Publication v-else-if="itemType === 'Publication'" :value="text" />
+              <Country v-if="itemType === 'Country'" :value="item.text" />
+              <Publication v-else-if="itemType === 'Publication'" :value="item.text" />
               <Issue v-else-if="itemType === 'Issue'" :value="key" />
             </template>
             ></Row
@@ -42,21 +48,27 @@ import {
   IonHeader,
   IonMenuButton,
   IonPage,
-  IonProgressBar,
   IonSearchbar,
   IonTitle,
   IonToolbar,
 } from '@ionic/vue';
 import Country from '~/components/Country.vue';
+import Condition from '~/components/Condition.vue';
 import Navigation from '~/components/Navigation.vue';
 import Row from '~/components/Row.vue';
 import Publication from '~/components/Publication.vue';
 import Issue from '~/components/Issue.vue';
 import EditIssuesButton from '~/components/EditIssuesButton.vue';
 import { computed, ref, watch } from 'vue';
-import { collection } from '~/stores/collection';
+import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { app } from '~/stores/app';
 
+const conditionL10n: Record<string, string> = {
+  bon: 'good',
+  moyen: 'notsogood',
+  mauvais: 'bad',
+  indefini: 'unknown',
+};
 const collectionStore = collection();
 const coaStore = coa();
 const appStore = app();
@@ -104,9 +116,10 @@ const items = computed((): { key: string; text: string }[] => {
     case 'Issue':
       return (collectionStore.collection || [])
         .filter((issue) => issue.publicationcode === appStore.currentNavigationItem)
-        .map(({ issuenumber }) => ({
+        .map(({ issuenumber, ...issue }) => ({
           key: issuenumber,
           text: issuenumber,
+          ...issue,
         }));
   }
 });
@@ -126,8 +139,12 @@ const sortedItems = computed(() => {
   if (itemType.value === 'Issue') {
     const keys = items.value.map(({ key }) => key);
     return coaStore.issueNumbers[appStore.currentNavigationItem || '']
-      .filter((issueNumber) => keys.includes(issueNumber))
-      .map((issueNumber) => ({ key: issueNumber, text: issueNumber }));
+      .filter((issuenumber) => keys.includes(issuenumber))
+      .map((issuenumber) => ({
+        key: issuenumber,
+        text: issuenumber,
+        ...items.value.find(({ key }) => key === issuenumber),
+      }));
   } else {
     return [...items.value].sort(({ text: text1 }, { text: text2 }) =>
       text1.toLowerCase().localeCompare(text2.toLowerCase())
@@ -153,8 +170,6 @@ const statDenominators = computed(() => {
   }
   return null;
 });
-
-const fillPercentage = computed(() => 10);
 
 const filteredItems = computed(() => {
   return sortedItems.value.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1);

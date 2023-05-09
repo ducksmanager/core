@@ -1,7 +1,8 @@
 <template>
   <ion-item button>
-    <ion-progress-bar v-if="stat !== undefined" :value="fillPercentage"></ion-progress-bar>
-    <ion-label>
+    <ion-progress-bar v-if="stat" :value="fillPercentage"></ion-progress-bar>
+    <ion-label
+      ><slot name="prefix" />
       <slot name="label" />
     </ion-label>
     <ion-label slot="end" v-if="stat"> {{ stat.numerator }} / {{ stat.denominator }} </ion-label>
