@@ -21,7 +21,9 @@
               <Issue v-else-if="itemType === 'Issue'" :value="key" />
             </template>
             <template #stats>
-              <template v-if="itemType === 'Country'">a</template>
+              <template v-if="itemType === 'Country'"
+                >{{ totalPerCountry[key] }} / {{ issueCountsPerCountry![key] }}</template
+              >
               <template v-else-if="itemType === 'Publication'"
                 >{{ totalPerPublication[key] }} / {{ issueCounts![key] }}</template
               >
@@ -64,8 +66,10 @@ const appStore = app();
 const filterText = ref('' as string);
 const hasCoaData = ref(false);
 
+const issueCountsPerCountry = computed(() => coaStore.issueCountsPerCountry);
 const issueCounts = computed(() => coaStore.issueCounts);
 const totalPerPublication = computed(() => collectionStore.totalPerPublication);
+const totalPerCountry = computed(() => collectionStore.totalPerCountry);
 
 const hasList = computed((): boolean => {
   if (!hasCoaData.value) {
@@ -147,12 +151,12 @@ watch(
   () => itemType.value,
   async (newValue) => {
     hasCoaData.value = false;
+    await coaStore.fetchIssueCounts();
     switch (newValue) {
       case 'Country':
         await coaStore.fetchCountryNames();
         break;
       case 'Publication':
-        await coaStore.fetchIssueCounts();
         await coaStore.fetchPublicationNames([appStore.currentNavigationItem || '']);
         break;
       case 'Issue':

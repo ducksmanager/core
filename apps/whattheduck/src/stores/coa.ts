@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { call, getChunkedRequests } from '~/axios-helper';
 import { getCurrentLocaleShortKey } from '~/composables/useLocales';
@@ -70,6 +70,17 @@ export const coa = defineStore('coa', () => {
       null as {
         [issuecode: string]: InducksIssueQuotationSimple;
       } | null
+    ),
+    issueCountsPerCountry = computed(
+      () =>
+        issueCounts.value &&
+        Object.entries(issueCounts.value).reduce<Record<string, number>>((acc, [publicationcode, count]) => {
+          const [countrycode] = publicationcode.split('/');
+          return {
+            ...acc,
+            [countrycode]: (acc[countrycode] || 0) + count,
+          };
+        }, {})
     ),
     addPublicationNames = (newPublicationNames: typeof publicationNames.value) => {
       publicationNames.value = {
@@ -312,6 +323,7 @@ export const coa = defineStore('coa', () => {
     issueDetails,
     isLoadingCountryNames,
     issueCounts,
+    issueCountsPerCountry,
     issueCodeDetails,
     issueQuotations,
     addPublicationNames,

@@ -12,7 +12,7 @@ axios.interceptors.request.use(
     await Preferences.set({
       key: 'token',
       value:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTk5LCJ1c2VybmFtZSI6ImRlbW8iLCJoYXNoZWRQYXNzd29yZCI6IjlhMWEzNGIxZWRiMTA4MGFlZmNhNzJiNWJiNGNkYzRkNDEzNTNlYzUiLCJwcml2aWxlZ2VzIjp7IkVkZ2VDcmVhdG9yIjoiRWRpdGlvbiJ9LCJpYXQiOjE2ODM1NzU4NjQsImV4cCI6MTY4NDc4NTQ2NH0.7Y9lbJeG-aTY7ojnUtcykQx3NuuAo5xT4YWRainEP7Y',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTE3LCJ1c2VybmFtZSI6ImJydW5vcGVyZWwiLCJoYXNoZWRQYXNzd29yZCI6IjA1MTMzMmE3YzFlYmRhMTRmOGU1MzQwYzUxY2I1ZTVmMDVlNjhlYWEiLCJwcml2aWxlZ2VzIjp7IkR1Y2tndWVzc3IiOiJBZG1pbiIsIkR1Y2tzTWFuYWdlciI6IkFkbWluIiwiRWRnZUNyZWF0b3IiOiJBZG1pbiJ9LCJpYXQiOjE2ODM0NTYwNTQsImV4cCI6MTY4NDY2NTY1NH0.dTS-oG95uvnfHkarQKtV3A9ac025DCV6bPVEsrks2PI',
     });
     const token: string = (await Preferences.get({ key: 'token' })).value!;
     if (token) {
