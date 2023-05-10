@@ -151,7 +151,7 @@ const sortedItems = computed(() => {
       .map((issuenumber) => ({
         key: `${appStore.currentNavigationItem} ${issuenumber}`,
         text: issuenumber,
-        ...items.value.find(({ key }) => key === issuenumber),
+        ...items.value.find(({ key }) => key === `${appStore.currentNavigationItem} ${issuenumber}`),
       }));
   } else {
     return [...items.value].sort(({ text: text1 }, { text: text2 }) =>
@@ -179,9 +179,9 @@ const statDenominators = computed(() => {
   return null;
 });
 
-const filteredItems = computed(() => {
-  return sortedItems.value.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1);
-});
+const filteredItems = computed(() =>
+  sortedItems.value.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1)
+);
 const showFilter = computed(() => true);
 
 const title = computed(() =>
@@ -225,11 +225,7 @@ watch(
   () => appStore.currentNavigationItem,
   async (newValue) => {
     if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
-      router.replace('/edit/' + newValue);
-      const modal = await modalController.create({
-        component: OwnedIssueCopies,
-      });
-      modal.present();
+      router.replace('/edit-issues');
     }
   }
 );

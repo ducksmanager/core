@@ -26,7 +26,7 @@
   "condition_none": "Etat non spécifié",
   "condition_notsogood": "Etat moyen",
   "confirmation_message__collection_updated": "Votre collection a été mise à jour",
-  "copy_title": "Exemplaire %d",
+  "copy_title": "Exemplaire {index}",
   "countries": "pays",
   "countries_singular": "pays",
   "country": "Pays",

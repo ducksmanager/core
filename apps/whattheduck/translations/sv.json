@@ -26,7 +26,7 @@
   "condition_none": "Ospecificerat skick",
   "condition_notsogood": "Genomsnittligt skick",
   "confirmation_message__collection_updated": "Din samling har uppdaterats",
-  "copy_title": "Kopia %d",
+  "copy_title": "Kopia {index}",
   "countries": "länder",
   "countries_singular": "land",
   "country": "Land",

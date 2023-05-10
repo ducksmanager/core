@@ -25,7 +25,7 @@
   "condition_none": "Unspecified condition",
   "condition_notsogood": "Not-so-good condition",
   "confirmation_message__collection_updated": "Your collection has been updated",
-  "copy_title": "Copy %d",
+  "copy_title": "Copy {index}",
   "countries": "countries",
   "countries_singular": "country",
   "country": "Country",

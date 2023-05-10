@@ -11,12 +11,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/Search.vue'),
   },
   {
-    path: '/edit/:issuecode+',
+    path: '/edit-issues',
     component: () => import('../views/OwnedIssueCopies.vue'),
 
     children: [
       {
-        path: 'copy0',
+        path: 'copy/:copyindex',
         component: () => import('../components/OwnedIssueCopy.vue'),
       },
     ],
