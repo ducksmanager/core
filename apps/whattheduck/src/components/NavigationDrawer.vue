@@ -2,11 +2,10 @@
   <ion-menu content-id="main-content" type="overlay">
     <ion-content>
       <ion-list id="header">
-        <ion-list-header>What The Duck</ion-list-header>
+        <ion-list-header>{{ t('app_name') }}</ion-list-header>
         <template v-if="user">
-          <ion-note>Logged in as {{ user.username }}</ion-note>
-
           <ion-row> Medals </ion-row>
+          <ion-note>{{ user.username }}</ion-note>
           <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appPages" :key="i">
             <ion-item
               @click="selectedIndex = i"
@@ -55,19 +54,21 @@ import {
 import { computed, ref } from 'vue';
 import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
 import { collection } from '~/stores/collection';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const collectionStore = collection();
 
 const selectedIndex = ref(0);
 const appPages = [
   {
-    title: 'Search a story',
+    title: t('search'),
     url: '/search',
     iosIcon: searchOutline,
     mdIcon: searchSharp,
   },
   {
-    title: 'My collection',
+    title: t('my_collection'),
     url: '/collection',
     iosIcon: listOutline,
     mdIcon: listSharp,
@@ -80,11 +81,11 @@ if (path !== undefined) {
 }
 const appFooterPages = [
   {
-    title: 'Report a problem',
+    title: t('report'),
     url: '/Report',
   },
   {
-    title: 'Logout',
+    title: t('logout'),
     url: '/Logout',
   },
 ];

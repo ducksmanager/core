@@ -65,6 +65,9 @@ import EditIssuesDialog from '~/components/EditIssuesDialog.vue';
 import { computed, ref, watch } from 'vue';
 import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { app } from '~/stores/app';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const conditionL10n: Record<string, string> = {
   bon: 'good',
@@ -180,7 +183,9 @@ const filteredItems = computed(() => {
 const showFilter = computed(() => true);
 
 const title = computed(() =>
-  typeof collectionStore.total === 'number' ? `My collection (${collectionStore.total} issues)` : 'My collection'
+  typeof collectionStore.total === 'number'
+    ? t('my_collection_with_issue_count', { issueCount: collectionStore.total })
+    : t('my_collection')
 );
 
 watch(

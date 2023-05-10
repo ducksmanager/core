@@ -1,9 +1,5 @@
 <template>
-  <ion-segment
-    v-if="parts"
-    :value="appStore.currentNavigationItem"
-    @ionChange="onChange"
-  >
+  <ion-segment v-if="parts" :value="appStore.currentNavigationItem" @ionChange="onChange">
     <ion-segment-button :key="key" v-for="{ key, text } in parts" :value="key">
       <ion-label>{{ text }}</ion-label>
     </ion-segment-button>
@@ -11,15 +7,18 @@
 </template>
 
 <script setup lang="ts">
-import { IonSegment, IonSegmentButton, IonLabel } from "@ionic/vue";
-import { onMounted, computed } from "vue";
-import { collection } from "../stores/collection";
-import { app } from "../stores/app.js";
-import { coa } from "../stores/coa.js";
+import { IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
+import { computed } from 'vue';
+import { collection } from '../stores/collection';
+import { app } from '../stores/app.js';
+import { coa } from '../stores/coa.js';
+import { useI18n } from 'vue-i18n';
 
 const collectionStore = collection();
 const appStore = app();
 const coaStore = coa();
+
+const { t } = useI18n();
 
 // eslint-disable-next-line no-undef
 const parts = computed(() => {
@@ -28,12 +27,12 @@ const parts = computed(() => {
   }
   const parts: { key: string; text: string }[] | undefined = [
     {
-      key: "",
-      text: "All countries",
+      key: '',
+      text: t('all_countries'),
     },
   ];
   if (appStore.currentNavigationItem) {
-    const publicationParts = appStore.currentNavigationItem.split("/");
+    const publicationParts = appStore.currentNavigationItem.split('/');
     parts.push({
       key: publicationParts[0],
       text: coaStore.countryNames?.[publicationParts[0]] || publicationParts[0],

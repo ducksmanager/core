@@ -11,8 +11,8 @@
 
     <ion-content :fullscreen="true">
       <div id="container">
-        <ion-item>Type the title of a story.</ion-item>
-        <ion-searchbar placeholder="Story title" v-model="storyTitle"></ion-searchbar>
+        <ion-searchbar :placeholder="t('search_hint')" v-model="storyTitle"></ion-searchbar>
+        <ion-text>{{ t('search_intro') }}</ion-text>
 
         <ion-list v-if="storyResults?.results && !selectedStory">
           <ion-item
@@ -26,7 +26,7 @@
           </ion-item>
         </ion-list>
         <div v-if="selectedStory">
-          {{ selectedStory.title }} a été publié dans les magazines suivants:
+          {{ selectedStory.title }} {{ t('story_was_published_in') }}:
           <div v-for="issue of selectedStory.issues">{{ issue.publicationcode }} {{ issue.issuenumber }}</div>
         </div>
       </div>
@@ -44,6 +44,7 @@ import {
   IonLabel,
   IonMenuButton,
   IonPage,
+  IonText,
   IonSearchbar,
   IonTitle,
   IonToolbar,
@@ -55,6 +56,9 @@ import { call } from '~/axios-helper';
 import { ref, watch } from 'vue';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const collectionStore = collection();
 const coaStore = coa();
