@@ -11,8 +11,8 @@
 
     <ion-content :fullscreen="true">
       <div id="container">
-        <ion-searchbar :placeholder="t('search_hint')" v-model="storyTitle"></ion-searchbar>
         <ion-text>{{ t('search_intro') }}</ion-text>
+        <ion-searchbar :placeholder="t('search_hint')" v-model="storyTitle"></ion-searchbar>
 
         <ion-list v-if="storyResults?.results && !selectedStory">
           <ion-item
@@ -26,7 +26,7 @@
           </ion-item>
         </ion-list>
         <div v-if="selectedStory">
-          {{ selectedStory.title }} {{ t('story_was_published_in') }}:
+          {{ selectedStory.title }} {{ t('story_was_published_in') }}
           <div v-for="issue of selectedStory.issues">{{ issue.publicationcode }} {{ issue.issuenumber }}</div>
         </div>
       </div>

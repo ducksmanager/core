@@ -47,8 +47,8 @@ const parts = computed(() => {
   return parts;
 });
 
-const onChange = ($event) => {
-  appStore.currentNavigationItem = $event.detail.value || undefined;
+const onChange = (event: any) => {
+  appStore.currentNavigationItem = event.detail.value || undefined;
 };
 
 (async () => {

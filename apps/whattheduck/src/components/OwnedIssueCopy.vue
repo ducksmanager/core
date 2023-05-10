@@ -1,0 +1,1 @@
+<template>Tab content</template>

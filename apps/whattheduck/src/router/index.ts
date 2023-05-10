@@ -10,6 +10,17 @@ const routes: RouteRecordRaw[] = [
     path: '/search',
     component: () => import('../views/Search.vue'),
   },
+  {
+    path: '/edit/:issuecode+',
+    component: () => import('../views/OwnedIssueCopies.vue'),
+
+    children: [
+      {
+        path: 'copy0',
+        component: () => import('../components/OwnedIssueCopy.vue'),
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

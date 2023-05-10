@@ -57,17 +57,19 @@ import Country from '~/components/Country.vue';
 import Condition from '~/components/Condition.vue';
 import Navigation from '~/components/Navigation.vue';
 import Row from '~/components/Row.vue';
+import OwnedIssueCopies from '~/views/OwnedIssueCopies.vue';
 import Publication from '~/components/Publication.vue';
 import Issue from '~/components/Issue.vue';
 import EditIssuesButton from '~/components/EditIssuesButton.vue';
-import EditIssuesDialog from '~/components/EditIssuesDialog.vue';
 
 import { computed, ref, watch } from 'vue';
 import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { app } from '~/stores/app';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
+const router = useRouter();
 
 const conditionL10n: Record<string, string> = {
   bon: 'good',
@@ -223,8 +225,9 @@ watch(
   () => appStore.currentNavigationItem,
   async (newValue) => {
     if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
+      router.replace('/edit/' + newValue);
       const modal = await modalController.create({
-        component: EditIssuesDialog,
+        component: OwnedIssueCopies,
       });
       modal.present();
     }

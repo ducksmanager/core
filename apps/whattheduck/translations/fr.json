@@ -1,5 +1,4 @@
 {
-  "insert_issue__title": "Numéro %1$s",
   "issues_to_read": "%d numéro à lire",
   "filter_to_read": "Mes livres à lire",
   "new_stories": "%d nouvelle histoire",
@@ -187,5 +186,6 @@
   "you_dont_own_any_quoted_issue": "Vous ne possédez pas de numéro côté.",
   "youtube": "",
   "zoom": "Zoom",
-  "my_collection_with_issue_count": "Ma collection ({issueCount} numéros)"
+  "my_collection_with_issue_count": "Ma collection ({issueCount} numéros)",
+  "issuenumbers_to_update": "Numéro {issuenumber}"
 }

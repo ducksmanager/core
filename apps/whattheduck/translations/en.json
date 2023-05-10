@@ -1,5 +1,4 @@
 {
-  "insert_issue__title": "Issue %1$s",
   "issues_to_read": "%d issue to read",
   "filter_to_read": "My to-read list",
   "new_stories": "%d new story",
@@ -186,5 +185,6 @@
   "you_dont_own_any_quoted_issue": "You don't own any quoted issue.",
   "youtube": "YouTube",
   "zoom": "Zoom",
-  "my_collection_with_issue_count": "My collection ({issueCount} issues)"
+  "my_collection_with_issue_count": "My collection ({issueCount} issues)",
+  "issuenumbers_to_update": "Issue {issuenumber}"
 }
