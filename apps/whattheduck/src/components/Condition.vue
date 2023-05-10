@@ -5,7 +5,7 @@
 import { computed } from 'vue';
 
 const props = defineProps<{
-  value: string;
+  value?: string | undefined;
 }>();
 
 const backgroundColor = computed(() => {

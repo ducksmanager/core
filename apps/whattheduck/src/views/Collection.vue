@@ -15,7 +15,7 @@
       <div id="container">
         <div v-if="hasList">
           <Row
-            v-for="{ key, ...item } in filteredItems"
+            v-for="{ key, text, ...item } in filteredItems"
             @click="appStore.currentNavigationItem = key"
             :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key] }"
           >
@@ -26,9 +26,9 @@
               />
             </template>
             <template #label>
-              <Country v-if="itemType === 'Country'" :value="item.text" />
-              <Publication v-else-if="itemType === 'Publication'" :value="item.text" />
-              <Issue v-else-if="itemType === 'Issue'" :value="key" />
+              <Country v-if="itemType === 'Country'" :value="text" />
+              <Publication v-else-if="itemType === 'Publication'" :value="text" />
+              <Issue v-else-if="itemType === 'Issue'" :value="text" />
             </template>
             ></Row
           >
@@ -50,6 +50,7 @@ import {
   IonPage,
   IonSearchbar,
   IonTitle,
+  modalController,
   IonToolbar,
 } from '@ionic/vue';
 import Country from '~/components/Country.vue';
@@ -59,6 +60,8 @@ import Row from '~/components/Row.vue';
 import Publication from '~/components/Publication.vue';
 import Issue from '~/components/Issue.vue';
 import EditIssuesButton from '~/components/EditIssuesButton.vue';
+import EditIssuesDialog from '~/components/EditIssuesDialog.vue';
+
 import { computed, ref, watch } from 'vue';
 import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { app } from '~/stores/app';
@@ -117,7 +120,7 @@ const items = computed((): { key: string; text: string }[] => {
       return (collectionStore.collection || [])
         .filter((issue) => issue.publicationcode === appStore.currentNavigationItem)
         .map(({ issuenumber, ...issue }) => ({
-          key: issuenumber,
+          key: `${issue.publicationcode} ${issuenumber}`,
           text: issuenumber,
           ...issue,
         }));
@@ -139,9 +142,9 @@ const sortedItems = computed(() => {
   if (itemType.value === 'Issue') {
     const keys = items.value.map(({ key }) => key);
     return coaStore.issueNumbers[appStore.currentNavigationItem || '']
-      .filter((issuenumber) => keys.includes(issuenumber))
+      .filter((issuenumber) => keys.includes(`${appStore.currentNavigationItem} ${issuenumber}`))
       .map((issuenumber) => ({
-        key: issuenumber,
+        key: `${appStore.currentNavigationItem} ${issuenumber}`,
         text: issuenumber,
         ...items.value.find(({ key }) => key === issuenumber),
       }));
@@ -209,6 +212,18 @@ watch(
     }
   },
   { immediate: true }
+);
+
+watch(
+  () => appStore.currentNavigationItem,
+  async (newValue) => {
+    if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
+      const modal = await modalController.create({
+        component: EditIssuesDialog,
+      });
+      modal.present();
+    }
+  }
 );
 
 (async () => {
