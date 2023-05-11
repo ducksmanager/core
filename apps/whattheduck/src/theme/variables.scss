@@ -1,6 +1,13 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
 
+$dmConditions: (
+  'bad': red,
+  'notsogood': orange,
+  'good': rgb(44, 167, 123),
+  'unknown': rgb(128, 128, 128),
+);
+
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
@@ -75,24 +82,21 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 
-  --dm-condition-bad: red;
-  --dm-condition-notsogood: orange;
-  --dm-condition-good: rgb(44, 167, 123);
-  --dm-condition-unknown: rgb(128, 128, 128);
+  @each $condition, $color in $dmConditions {
+    --dm-condition-#{$condition}: #{$color};
+  }
 }
 
 ion-radio {
   background: initial !important;
 }
 
-$conditionColors: 'unknown', 'bad', 'notsogood', 'good';
-
 .dm-condition-background {
-  @each $conditionColor in $conditionColors {
-    &.#{$conditionColor} {
+  @each $condition, $conditionColor in $dmConditions {
+    &.#{$condition} {
       &,
       &::part(mark) {
-        background-color: var(--dm-condition-#{$conditionColor});
+        background-color: var(--dm-condition-#{$condition});
       }
     }
   }
