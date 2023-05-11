@@ -1,13 +1,13 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-title>{{ t('issuenumbers_to_update', { issuecode }) }}</ion-title></ion-header
+      <ion-title>{{ t('issuenumbers_to_update', { issuenumber: issuecode }) }}</ion-title></ion-header
     >
     <ion-content>
       <ion-tabs>
         <ion-router-outlet></ion-router-outlet>
         <ion-tab-bar slot="top">
-          <ion-tab-button v-for="(, idx) of copies" :tab="`copy-${idx}`" :href="`/edit-issues/copy/${idx}`">
+          <ion-tab-button v-for="(_, idx) of copies" :tab="`copy-${idx}`" :href="`/edit-issues/copy/${idx}`">
             <ion-label>{{ t('copy_title', { index: idx + 1 }) }}</ion-label> </ion-tab-button
           ><ion-tab-button :tab="`copy-new`" :href="`/edit-issues/copy/new`" v-if="copies.length <= 2">
             <ion-label>{{ t('add_copy') }}</ion-label>

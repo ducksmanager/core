@@ -20,10 +20,7 @@
             :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key] }"
           >
             <template #prefix>
-              <Condition
-                v-if="itemType === 'Issue'"
-                :value="conditionL10n[(item as IssueWithPublicationcode).condition]"
-              />
+              <Condition v-if="itemType === 'Issue'" :value="getConditionKey(item)" />
             </template>
             <template #label>
               <Country v-if="itemType === 'Country'" :value="text" />
@@ -50,14 +47,12 @@ import {
   IonPage,
   IonSearchbar,
   IonTitle,
-  modalController,
   IonToolbar,
 } from '@ionic/vue';
 import Country from '~/components/Country.vue';
 import Condition from '~/components/Condition.vue';
 import Navigation from '~/components/Navigation.vue';
 import Row from '~/components/Row.vue';
-import OwnedIssueCopies from '~/views/OwnedIssueCopies.vue';
 import Publication from '~/components/Publication.vue';
 import Issue from '~/components/Issue.vue';
 import EditIssuesButton from '~/components/EditIssuesButton.vue';
@@ -67,21 +62,19 @@ import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { app } from '~/stores/app';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import { condition } from '~/stores/condition';
 
 const { t } = useI18n();
 const router = useRouter();
 
-const conditionL10n: Record<string, string> = {
-  bon: 'good',
-  moyen: 'notsogood',
-  mauvais: 'bad',
-  indefini: 'unknown',
-};
 const collectionStore = collection();
 const coaStore = coa();
 const appStore = app();
+const conditionStore = condition();
 const filterText = ref('' as string);
 const hasCoaData = ref(false);
+
+const conditionL10n = computed(() => conditionStore.conditionL10n);
 
 const issueCountsPerCountry = computed(() => coaStore.issueCountsPerCountry);
 const issueCounts = computed(() => coaStore.issueCounts);
@@ -189,6 +182,9 @@ const title = computed(() =>
     ? t('my_collection_with_issue_count', { issueCount: collectionStore.total })
     : t('my_collection')
 );
+
+const getConditionKey = (item: IssueWithPublicationcode) =>
+  conditionL10n.value.find(({ fr }) => fr === item.condition)?.en || 'none';
 
 watch(
   () => itemType.value,

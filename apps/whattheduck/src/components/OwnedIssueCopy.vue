@@ -3,25 +3,26 @@
     <ion-item
       ><ion-label>Condition</ion-label>
 
-      <ion-radio-group value="custom-checked">
-        <ion-radio class="dm-condition-background missing" value="missing" aria-label="Missing issue"></ion-radio>
-        <ion-radio class="dm-condition-background unknown" value="unknown" aria-label="Unknown condition"></ion-radio>
-        <ion-radio class="dm-condition-background bad" value="bad" aria-label="Bad condition"></ion-radio>
+      <ion-radio-group value="custom-checked" slot="end">
         <ion-radio
-          class="dm-condition-background notsogood"
-          value="notsogood"
-          aria-label="Not-so-good condition"
-        ></ion-radio>
-        <ion-radio
-          class="dm-condition-background good"
-          value="good"
-          aria-label="Good condition"
-        ></ion-radio> </ion-radio-group
+          v-for="condition of conditions"
+          :class="`dm-condition-background ${condition}`"
+          :value="condition"
+          :aria-label="t(`condition_${condition}`)"
+        ></ion-radio></ion-radio-group
     ></ion-item>
   </ion-page>
 </template>
 <script setup lang="ts">
 import { IonPage, IonLabel, IonRadioGroup, IonRadio, IonItem } from '@ionic/vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { condition } from '~/stores/condition';
+
+const { t } = useI18n();
+
+const conditionStore = condition();
+const conditions = computed(() => ['missing', ...Object.values(conditionStore.conditionL10n.map(({ en }) => en))]);
 </script>
 
 <style scoped lang="scss">
@@ -38,5 +39,9 @@ ion-radio {
     width: 100%;
     height: 100%;
   }
+}
+
+ion-radio-group {
+  display: flex;
 }
 </style>
