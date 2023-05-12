@@ -1,5 +1,10 @@
 <template>
-  <List :items="sortedItems" :stat-numerators="totalPerCountry" :stat-denominators="issueCountsPerCountry">
+  <List
+    :items="sortedItems"
+    :stat-numerators="totalPerCountry"
+    :stat-denominators="issueCountsPerCountry"
+    :get-target-url-fn="getTargetUrlFn"
+  >
     <template #row-label="{ text }">
       <Country :value="text" />
     </template>
@@ -34,6 +39,7 @@ const sortedItems = computed(() =>
   [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase()))
 );
 
+const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key}`;
 (async () => {
   await collection().loadCollection();
   await coa().fetchCountryNames();

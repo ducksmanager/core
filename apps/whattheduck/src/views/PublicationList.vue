@@ -1,5 +1,10 @@
 <template>
-  <List :items="sortedItems" :stat-numerators="totalPerCountry" :stat-denominators="issueCounts">
+  <List
+    :items="sortedItems"
+    :stat-numerators="totalPerCountry"
+    :stat-denominators="issueCounts"
+    :get-target-url-fn="getTargetUrlFn"
+  >
     <template #row-label="{ text }">
       <Publication :value="text" />
     </template>
@@ -22,6 +27,7 @@ const issueCounts = computed(() => coaStore.issueCounts!);
 
 const route = useRoute();
 
+const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key}`;
 const items = computed((): { key: string; text: string }[] =>
   collectionStore.ownedPublications
     .filter((publication) => publication.indexOf(`${route.params.countrycode}/`) === 0)

@@ -1,5 +1,5 @@
 <template>
-  <List v-if="hasCoaData" :items="sortedItems">
+  <List v-if="hasCoaData" :items="sortedItems" :get-target-url-fn="getTargetUrlFn">
     <template #prefix="{ item }">
       <Condition :value="getConditionKey(item)" />
     </template>
@@ -27,6 +27,8 @@ const conditionStore = condition();
 const conditionL10n = computed(() => conditionStore.conditionL10n);
 
 const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);
+
+const getTargetUrlFn = (routePath: string, key: string) => `/collection/${key.replace(routePath, '')}`;
 
 const getConditionKey = (item: IssueWithPublicationcode) =>
   conditionL10n.value.find(({ fr }) => fr === item.condition)?.en || 'none';

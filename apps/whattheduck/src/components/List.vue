@@ -16,7 +16,7 @@
         <div v-if="hasList">
           <Row
             v-for="{ key, text } in filteredItems"
-            @click="router.replace(route.path + '/' + key)"
+            @click="router.replace(getTargetUrlFn(route.path, key))"
             :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key] }"
           >
             <template #prefix>
@@ -56,10 +56,10 @@ import { collection } from '~/stores/collection';
 import { app } from '~/stores/app';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { condition } from '~/stores/condition';
 
 const props = defineProps<{
   items: { key: string; text: string }[];
+  getTargetUrlFn: (routePath: string, key: string) => string;
   statNumerators?: Record<string, number>;
   statDenominators?: Record<string, number>;
 }>();
