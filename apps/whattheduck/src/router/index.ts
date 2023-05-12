@@ -3,8 +3,16 @@ import type { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/collection/:countrycode/:magazinecode',
+    component: () => import('../views/IssueList.vue'),
+  },
+  {
+    path: '/collection/:countrycode',
+    component: () => import('../views/PublicationList.vue'),
+  },
+  {
     path: '/collection',
-    component: () => import('../views/Collection.vue'),
+    component: () => import('../views/CountryList.vue'),
   },
   {
     path: '/search',

@@ -1,9 +1,9 @@
 <template>
   <ion-page>
     <ion-item
-      ><ion-label>Condition</ion-label>
+      ><ion-label>{{ t('condition') }}</ion-label>
 
-      <ion-radio-group value="custom-checked" slot="end">
+      <ion-radio-group slot="end" :model-value="selectedCondition">
         <ion-radio
           v-for="condition of conditions"
           :class="`dm-condition-background ${condition}`"
@@ -15,7 +15,7 @@
 </template>
 <script setup lang="ts">
 import { IonPage, IonLabel, IonRadioGroup, IonRadio, IonItem } from '@ionic/vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { condition } from '~/stores/condition';
 
@@ -23,6 +23,8 @@ const { t } = useI18n();
 
 const conditionStore = condition();
 const conditions = computed(() => ['missing', ...Object.values(conditionStore.conditionL10n.map(({ en }) => en))]);
+
+const selectedCondition = ref('good');
 </script>
 
 <style scoped lang="scss">
