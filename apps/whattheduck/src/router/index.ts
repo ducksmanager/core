@@ -1,32 +1,45 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
+import OwnedIssueCopy from '../components/OwnedIssueCopy.vue';
+import OwnedIssueCopies from '../views/OwnedIssueCopies.vue';
+
+import CountryList from '~/views/CountryList.vue';
+import Default from '~/views/Default.vue';
+import IssueList from '~/views/IssueList.vue';
+import PublicationList from '~/views/PublicationList.vue';
+import Search from '~/views/Search.vue';
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/collection/:countrycode/:magazinecode/:issuenumber',
-    component: () => import('../views/OwnedIssueCopies.vue'),
+    component: () => OwnedIssueCopies,
     children: [
       {
         path: 'copy/:copyIndex',
-        component: () => import('../components/OwnedIssueCopy.vue'),
+        component: OwnedIssueCopy,
       },
     ],
   },
   {
-    path: '/collection/:countrycode/:magazinecode',
-    component: () => import('../views/IssueList.vue'),
+    path: '/:type(collection|coa)/:countrycode/:magazinecode',
+    component: IssueList,
   },
   {
-    path: '/collection/:countrycode',
-    component: () => import('../views/PublicationList.vue'),
+    path: '/:type(collection|coa)/:countrycode',
+    component: PublicationList,
   },
   {
-    path: '/collection',
-    component: () => import('../views/CountryList.vue'),
+    path: '/:type(collection|coa)',
+    component: CountryList,
   },
   {
     path: '/search',
-    component: () => import('../views/Search.vue'),
+    component: Search,
+  },
+  {
+    path: '/',
+    component: Default,
   },
 ];
 

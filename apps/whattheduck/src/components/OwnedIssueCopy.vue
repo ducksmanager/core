@@ -27,7 +27,9 @@
             <ion-list>
               <ion-item>
                 <ion-radio :value="null" :aria-label="t('no_purchase_date')"></ion-radio>
-                <div><ion-label>fghfhf</ion-label></div></ion-item
+                <div>
+                  <ion-label>{{ t('no_purchase_date') }}</ion-label>
+                </div></ion-item
               >
               <ion-item v-for="purchase of purchases">
                 <ion-radio :value="purchase.id" :aria-label="purchase.description"></ion-radio>
@@ -66,7 +68,10 @@ const issuecode = computed(() => `${publicationcode.value} ${route.params.issuen
 const copyIndex = computed(() => route.params.copyIndex as string);
 const issue = computed(
   (): IssueWithPublicationcode =>
-    collectionStore.issuesByIssueCode?.[issuecode.value!]?.[copyIndex.value!] || ({} as IssueWithPublicationcode)
+    collectionStore.issuesByIssueCode?.[issuecode.value!]?.[copyIndex.value!] ||
+    ({
+      purchaseId: null,
+    } as IssueWithPublicationcode)
 );
 
 const selectedCondition = ref(null as string | null);

@@ -16,8 +16,8 @@
         <div v-if="hasList">
           <Row
             v-for="{ key, text, ...item } in filteredItems"
-            @click="router.replace(getTargetUrlFn(route.path, key))"
-            :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key] }"
+            @click="onRowClick(key)"
+            :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key]! }"
           >
             <template #prefix>
               <slot name="row-prefix" v-bind="{ item }"></slot>
@@ -73,6 +73,15 @@ const coaStore = coa();
 const appStore = app();
 const filterText = ref('' as string);
 const hasCoaData = ref(false);
+
+const isCoaList = computed(() => route.params.type === 'coa');
+
+const onRowClick = (key: string) => {
+  if (isCoaList.value) {
+  } else {
+    router.replace(props.getTargetUrlFn(route.path, key));
+  }
+};
 
 const hasList = computed((): boolean => {
   if (!hasCoaData.value) {

@@ -1,6 +1,7 @@
 <template>
   <List v-if="hasCoaData" :items="sortedItems" :get-target-url-fn="getTargetUrlFn">
     <template #row-prefix="{ item }">
+      <ion-checkbox v-if="isCoaList"></ion-checkbox>
       <Condition :value="getConditionKey(item)" />
     </template>
     <template #row-label="{ text }">
@@ -10,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import { IonCheckbox } from '@ionic/vue';
 import Issue from '~/components/Issue.vue';
 import Condition from '~/components/Condition.vue';
 import List from '~/components/List.vue';
@@ -28,6 +30,7 @@ const coaStore = coa();
 const conditionStore = condition();
 const appStore = app();
 
+const isCoaList = computed(() => route.params.type === 'coa');
 const conditionL10n = computed(() => conditionStore.conditionL10n);
 
 const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);

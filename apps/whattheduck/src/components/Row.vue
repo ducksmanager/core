@@ -1,6 +1,7 @@
 <template>
   <ion-item button>
     <ion-progress-bar v-if="stat" :value="fillPercentage"></ion-progress-bar>
+    <slot name="checkbox" />
     <ion-label
       ><slot name="prefix" />
       <slot name="label" />
@@ -24,9 +25,11 @@ const fillPercentage = computed(() =>
 );
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 ion-label {
   z-index: 1;
+  display: flex !important;
+  align-items: center !important;
 }
 ion-progress-bar {
   position: absolute;
