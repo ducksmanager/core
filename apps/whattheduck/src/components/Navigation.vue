@@ -9,12 +9,13 @@
 <script setup lang="ts">
 import { IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
 import { computed } from 'vue';
-import { collection } from '../stores/collection';
 import { app } from '../stores/app.js';
 import { coa } from '../stores/coa.js';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
-const collectionStore = collection();
+const router = useRouter();
+
 const appStore = app();
 const coaStore = coa();
 
@@ -48,11 +49,11 @@ const parts = computed(() => {
 });
 
 const onChange = (event: any) => {
-  appStore.currentNavigationItem = event.detail.value || undefined;
+  router.replace(event.detail.value ? `/collection/${event.detail.value}` : '/collection');
 };
 
 (async () => {
-  await collectionStore.loadCollection();
+  await coaStore.fetchCountryNames();
 })();
 </script>
 

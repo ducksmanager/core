@@ -1,6 +1,6 @@
 <template>
   <List v-if="hasCoaData" :items="sortedItems" :get-target-url-fn="getTargetUrlFn">
-    <template #prefix="{ item }">
+    <template #row-prefix="{ item }">
       <Condition :value="getConditionKey(item)" />
     </template>
     <template #row-label="{ text }">
@@ -18,22 +18,35 @@ import { computed } from 'vue';
 import { condition } from '~/stores/condition';
 import { coa } from '~/stores/coa';
 import { useRoute } from 'vue-router';
+import { watch } from 'vue';
+import { app } from '~/stores/app';
 
 const route = useRoute();
 
 const collectionStore = collection();
 const coaStore = coa();
 const conditionStore = condition();
+const appStore = app();
+
 const conditionL10n = computed(() => conditionStore.conditionL10n);
 
 const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);
 
-const getTargetUrlFn = (routePath: string, key: string) => `/collection/${key.replace(routePath, '')}`;
+const getTargetUrlFn = (routePath: string, key: string) =>
+  `/collection/${key.replace(routePath, '').replace(' ', '/')}`;
 
 const getConditionKey = (item: IssueWithPublicationcode) =>
   conditionL10n.value.find(({ fr }) => fr === item.condition)?.en || 'none';
 
 const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
+
+watch(
+  () => publicationcode.value,
+  async (newValue) => {
+    appStore.currentNavigationItem = newValue as string;
+  },
+  { immediate: true }
+);
 
 const items = computed(() =>
   (collectionStore.collection || [])
@@ -56,8 +69,6 @@ const sortedItems = computed(() => {
     }));
 });
 
-(async () => {
-  await collection().loadCollection();
-  await coaStore.fetchIssueNumbers([publicationcode.value]);
-})();
+collection().loadCollection();
+coaStore.fetchIssueNumbers([publicationcode.value]);
 </script>

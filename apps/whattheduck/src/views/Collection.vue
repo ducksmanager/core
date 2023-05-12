@@ -226,11 +226,9 @@ watch(
   }
 );
 
-(async () => {
-  await collection().loadCollection();
-  await collection().loadPurchases();
-  await coa().fetchCountryNames();
-})();
+collection().loadCollection();
+collection().loadPurchases();
+coa().fetchCountryNames();
 </script>
 
 <style scoped>

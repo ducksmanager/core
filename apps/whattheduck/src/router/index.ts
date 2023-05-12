@@ -3,7 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/collection/:issuecode(.+%20[A-Z0-9]+)',
+    path: '/collection/:countrycode/:magazinecode/:issuenumber',
     component: () => import('../views/OwnedIssueCopies.vue'),
     children: [
       {
@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/collection/:countrycode/:magazinecode([\\A-Z0-9]+)',
+    path: '/collection/:countrycode/:magazinecode',
     component: () => import('../views/IssueList.vue'),
   },
   {

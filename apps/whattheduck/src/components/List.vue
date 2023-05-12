@@ -15,12 +15,12 @@
       <div id="container">
         <div v-if="hasList">
           <Row
-            v-for="{ key, text } in filteredItems"
+            v-for="{ key, text, ...item } in filteredItems"
             @click="router.replace(getTargetUrlFn(route.path, key))"
             :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key] }"
           >
             <template #prefix>
-              <slot name="row-prefix" v-bind="{ text }"></slot>
+              <slot name="row-prefix" v-bind="{ item }"></slot>
             </template>
             <template #label>
               <slot name="row-label" v-bind="{ text }"></slot>

@@ -98,10 +98,8 @@ watch(
   }
 );
 
-(async () => {
-  await collectionStore.loadCollection();
-  await coaStore.fetchCountryNames();
-})();
+collectionStore.loadCollection();
+coaStore.fetchCountryNames();
 </script>
 
 <style scoped>

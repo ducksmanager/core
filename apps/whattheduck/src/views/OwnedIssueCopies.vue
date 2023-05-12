@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-title>{{ t('issuenumbers_to_update', { issuenumber: issuecode }) }}</ion-title></ion-header
+      <ion-title>{{ t('issuenumbers_to_update', { issuenumber }) }}</ion-title></ion-header
     >
     <ion-content>
       <ion-tabs>
@@ -41,10 +41,12 @@ const collectionStore = collection();
 const route = useRoute();
 
 const { t } = useI18n();
-const issuecode = computed(() => route.params.issuecode as string);
-const copies = computed(() => collectionStore.issuesByIssueCode?.[issuecode.value!] || []);
+const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
+const issuenumber = computed(() => route.params.issuenumber as string);
+const issuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
 const issuePath = computed(() => route.path.replace(/\/copy\/.*/, ''));
 
+const copies = computed(() => collectionStore.issuesByIssueCode?.[issuecode.value!] || []);
 (async () => {
   await collection().loadCollection();
 })();
