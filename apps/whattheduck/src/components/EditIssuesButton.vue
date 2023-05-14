@@ -8,7 +8,7 @@
         <ion-label>{{ t('by_cover_file') }}</ion-label>
         <ion-fab-button size="small"> <ion-icon :ios="imageOutline" :md="imageSharp"></ion-icon></ion-fab-button>
       </ion-row>
-      <ion-row class="ion-align-items-center">
+      <ion-row class="ion-align-items-center" router-link="/add-from-camera">
         <ion-label>{{ t('by_cover_photo') }}</ion-label>
         <ion-fab-button size="small"> <ion-icon :ios="cameraOutline" :md="cameraSharp"></ion-icon></ion-fab-button>
       </ion-row>

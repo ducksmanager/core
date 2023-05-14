@@ -3,6 +3,10 @@ PODS:
     - CapacitorCordova
   - CapacitorApp (5.0.2):
     - Capacitor
+  - CapacitorCamera (5.0.2):
+    - Capacitor
+  - CapacitorCommunityCameraPreview (2.0.0):
+    - Capacitor
   - CapacitorCordova (5.0.3)
   - CapacitorHaptics (5.0.2):
     - Capacitor
@@ -18,6 +22,8 @@ PODS:
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
+  - "CapacitorCommunityCameraPreview (from `../../node_modules/@capacitor-community/camera-preview`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
@@ -30,6 +36,10 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
     :path: "../../node_modules/@capacitor/app"
+  CapacitorCamera:
+    :path: "../../node_modules/@capacitor/camera"
+  CapacitorCommunityCameraPreview:
+    :path: "../../node_modules/@capacitor-community/camera-preview"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorHaptics:
@@ -46,13 +56,15 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Capacitor: 304a960e431f9e6f78556554ca71c41c1b2b9680
   CapacitorApp: 28fef1fd75b2b3686e875216806fb8416d421097
+  CapacitorCamera: 15face5f9e030e480929a2c989deaaf3eb0d3947
+  CapacitorCommunityCameraPreview: 47070b2c66a79a424afe7c73bd951dfabfbc0f76
   CapacitorCordova: def732a63679698df6fb392bbe6d269a0b61e937
   CapacitorHaptics: 864585542a435bd41eaabf7f30d9ff5ec03024d3
   CapacitorKeyboard: e628d4e66d621c69e449945ebabded17c5b9c2e8
   CapacitorPreferences: 0ad8838944f900284900d9647d9b0145c89ca27d
   CapacitorStatusBar: 48f2899f6846cc7d8431b251ebfc58e1c10e3d58
-  CordovaPlugins: 614e9c6f4dcbaa25859601de2f728a6ba65a3415
+  CordovaPlugins: 678e3cb9f66bd4028ce4062aec47e1d86c212c50
 
-PODFILE CHECKSUM: dbd180b92fa345008b0d52c69ed9a4a956fd60fd
+PODFILE CHECKSUM: fefe9aa72004d61aa9daa0f5d8ebe9589ee9bdd3
 
 COCOAPODS: 1.12.1

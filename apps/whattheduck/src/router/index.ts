@@ -4,6 +4,7 @@ import type { RouteRecordRaw } from 'vue-router';
 import OwnedIssueCopy from '../components/OwnedIssueCopy.vue';
 import OwnedIssueCopies from '../views/OwnedIssueCopies.vue';
 
+import AddFromCamera from '~/views/AddFromCamera.vue';
 import CountryList from '~/views/CountryList.vue';
 import Default from '~/views/Default.vue';
 import IssueList from '~/views/IssueList.vue';
@@ -36,6 +37,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/search',
     component: Search,
+  },
+  {
+    path: '/add-from-camera',
+    component: AddFromCamera,
   },
   {
     path: '/',
