@@ -10,20 +10,30 @@ import {
 
 const prisma = new PrismaClient();
 
+const streamToString = (stream: any): Promise<string> => {
+  const chunks: Uint8Array[] = [];
+  return new Promise((resolve, reject) => {
+    stream.on('data', (chunk: string) => chunks.push(Buffer.from(chunk)));
+    stream.on('error', (err: string) => reject(err));
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+  })
+}
+
 export const put = (
   ...[req, res]: ExpressCall<{ resBody: CoverSearchResults }>
 ) => {
-  req.busboy?.on("file", async (name: string, file: File) => {
+  req.busboy?.on("file", async (name: string, file) => {
     if (name !== "wtd_jpg") {
       res.writeHead(400);
       res.end();
     } else {
       console.log("Cover ID search: upload file validation done");
       const targetFileName = `${String(Math.random()).replace(/^0./, "")}.jpg`;
-      fs.writeFileSync(targetFileName, await file.text());
+      fs.writeFileSync(targetFileName, await streamToString(file));
       console.log("Cover ID search: upload file moving done");
 
-      const pastecResponse: SimilarImagesResult | null = getSimilarImages(file);
+      const fileObject = fs.readFileSync(targetFileName);
+      const pastecResponse: SimilarImagesResult | null = getSimilarImages(fileObject);
       fs.unlinkSync(targetFileName);
       console.log("Cover ID search: processing done");
 
@@ -86,7 +96,7 @@ const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
     },
   });
 
-const getSimilarImages = (file: File): SimilarImagesResult | null => {
+const getSimilarImages = (file: Buffer): SimilarImagesResult | null => {
   const pastecRequest = https.request(
     {
       hostname: process.env.PASTEC_HOSTS!.split(",")[0],
