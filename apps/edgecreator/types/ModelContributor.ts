@@ -1,4 +1,4 @@
-import { userContributionType } from "ducksmanager/api/dist/prisma/client_dm";
+import { userContributionType } from "~prisma_clients/client_dm";
 
 import { SimpleUser } from "~types/SimpleUser";
 

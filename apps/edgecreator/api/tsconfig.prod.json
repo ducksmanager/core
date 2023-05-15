@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "target": "es2018",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "paths": {
+      "~/*": [
+        "*"
+      ],
+      "~types/*": [
+        "../types/*"
+      ],
+      "~dm_types/*": [
+        "./dm_types/*"
+      ],
+      "~prisma/*": [
+        "./dm_types/*"
+      ],
+      "~prisma_clients/*": [
+        "./prisma_clients/*"
+      ],
+      "~routes/*": [
+        "./routes/*"
+      ]
+    }
+  },
+  "include": [
+    "*.ts",
+    "routes/**/*.ts",
+    "dm_types/**/*.ts",
+    "prisma_clients/*"
+  ]
+}

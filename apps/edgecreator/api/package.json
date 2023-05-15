@@ -1,13 +1,13 @@
 {
   "name": "dm-api",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rm -rf dist/api dist/types && tsc && tsc-alias",
     "start": "tsx index.ts",
     "dev": "nodemon",
-    "generate-route-types": "tsx generate-route-types.ts && cd .. && node_modules/.bin/eslint --fix types/routes.ts"
+    "generate-route-types": "tsx generate-route-types.ts",
+    "generate-route-types:clean": "tsx generate-route-types.ts && cd .. && node_modules/.bin/eslint --fix types/routes.ts"
   },
   "dependencies": {
     "@sentry/node": "^7.50.0",
@@ -26,7 +26,9 @@
     "multer": "1.4.5-lts.1",
     "node-base64-image": "^2.0.5",
     "nodemon": "^2.0.22",
-    "sharp": "^0.32.1"
+    "sharp": "^0.32.1",
+    "universal-cookie": "^4.0.4",
+    "@vueuse/integrations": "^10.1.2"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",
