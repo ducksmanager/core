@@ -1,4 +1,4 @@
-import { EdgeModel } from "ducksmanager/types/EdgeModel";
+import { EdgeModel } from "~dm_types/EdgeModel";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";

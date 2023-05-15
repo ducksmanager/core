@@ -1,17 +1,14 @@
 FROM node:16 as pnpm
-MAINTAINER Bruno Perel
 
 RUN npm i -g pnpm
 
 FROM pnpm AS app-install
-MAINTAINER Bruno Perel
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml .eslintrc.js ./
 RUN pnpm i
 
 FROM app-install AS api-build
-MAINTAINER Bruno Perel
 
 WORKDIR /app/api
 
@@ -21,13 +18,15 @@ RUN pnpm i
 COPY .env.prod ./.env
 
 COPY types /app/types
-COPY tsconfig.json /app/tsconfig.json
 COPY api .
+RUN mv tsconfig.prod.json tsconfig.json
+RUN mkdir dm_types && cp -r node_modules/ducksmanager/types/* dm_types/
+RUN mkdir prisma_clients && cp -r node_modules/ducksmanager/api/dist/prisma/* prisma_clients/
+RUN sed -i 's#../api/dist/prisma#~prisma_clients#g' dm_types/*.ts
 RUN pnpm run generate-route-types
 RUN pnpm run build
 
 FROM app-install AS app-build
-MAINTAINER Bruno Perel
 
 WORKDIR /app
 
@@ -38,12 +37,12 @@ COPY --from=api-build /app/types/routes.ts types/routes.ts
 RUN pnpm run build
 
 FROM nginx AS app
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="admin@ducksmanager.net"
 
 COPY --from=app-build /app/dist /usr/share/nginx/html
 
 FROM pnpm AS api
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="admin@ducksmanager.net"
 
 WORKDIR /app
 
