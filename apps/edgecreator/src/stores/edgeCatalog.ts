@@ -1,7 +1,7 @@
-import { EdgeModel } from "~dm_types/EdgeModel";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
+import { EdgeModel } from "~dm_types/EdgeModel";
 import { ModelSteps } from "~dm_types/ModelSteps";
 import {
   GET__edgecreator__model,
@@ -262,7 +262,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           //   continue;
           // }
           const publicationcode = `${country}/${magazine}`;
-          const issuecode = `${publicationcode} ${issuenumber}`;
           try {
             if (edgeStatus === "published") {
               if (!publishedSvgEdges[publicationcode]) {
@@ -273,30 +272,34 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
                 v3: true,
               };
             } else if (withDetails) {
-              const { svgChildNodes } = await loadSvgFromString(
+              loadSvgFromString(
                 country,
                 magazine,
                 issuenumber,
                 mtime,
                 edgeStatus === "published"
-              );
-              const designers = getSvgMetadata(
-                svgChildNodes,
-                "contributor-designer"
-              );
-              const photographers = getSvgMetadata(
-                svgChildNodes,
-                "contributor-photographer"
-              );
+              ).then(({ country, magazine, issuenumber, svgChildNodes }) => {
+                const designers = getSvgMetadata(
+                  svgChildNodes,
+                  "contributor-designer"
+                );
+                const photographers = getSvgMetadata(
+                  svgChildNodes,
+                  "contributor-photographer"
+                );
 
-              newCurrentEdges[issuecode] = getEdgeFromSvg({
-                country,
-                magazine,
-                issuenumber,
-                designers,
-                photographers,
+                const publicationcode = `${country}/${magazine}`;
+                const issuecode = `${publicationcode} ${issuenumber}`;
+                newCurrentEdges[issuecode] = getEdgeFromSvg({
+                  country,
+                  magazine,
+                  issuenumber,
+                  designers,
+                  photographers,
+                });
               });
             } else {
+              const issuecode = `${publicationcode} ${issuenumber}`;
               newCurrentEdges[issuecode] = getEdgeFromSvg({
                 country,
                 magazine,
