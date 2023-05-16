@@ -33,7 +33,7 @@ export default () => {
     const svgElement = doc.getElementsByTagName("svg")[0];
     const svgChildNodes = Object.values(svgElement.childNodes) as SVGElement[];
 
-    return { svgElement, svgChildNodes };
+    return { svgElement, svgChildNodes, country, magazine, issuenumber };
   };
   const getEdgeUrl = (
     country: string,
