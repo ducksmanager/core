@@ -7,6 +7,6 @@
 	}
   ],
   "config": {
-	"allowedDomains": ["edgecreator.ducksmanager.net", "edgecreator2.ducksmanager.net"]
+	"allowedDomains": ["edgecreator.ducksmanager.net", "edgecreator2.ducksmanager.net", "edgecreator-api.ducksmanager.net"]
   }
 }

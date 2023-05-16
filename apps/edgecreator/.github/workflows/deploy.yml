@@ -69,6 +69,17 @@ jobs:
           source: docker-compose.yml
           target: /home/bperel/workspace/EdgeCreator2/docker-compose.yml
 
+      - name: Upload Sentry config
+        uses: nicklasfrahm/scp-action@v1.0.1
+        with:
+          direction: upload
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: config
+          target: /home/bperel/workspace/EdgeCreator2/config
+
       - name: Recreate container
         uses: appleboy/ssh-action@v0.1.7
         env:
