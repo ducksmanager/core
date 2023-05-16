@@ -290,7 +290,7 @@ const overwriteDimensions = ({
 };
 
 const getImageUrl = (fileType: string, fileName: string) =>
-  `${import.meta.env.VITE_EDGES_URL_PUBLIC as string}/${mainStore.country!}/${
+  `${import.meta.env.VITE_EDGES_URL as string}/${mainStore.country!}/${
     fileType === "elements" ? fileType : "photos"
   }/${fileName}`;
 

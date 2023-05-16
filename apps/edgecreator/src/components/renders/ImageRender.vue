@@ -53,7 +53,7 @@ watch(
   () => {
     if (effectiveSource.value) {
       loadImage(
-        `${import.meta.env.VITE_EDGES_URL_PUBLIC as string}/${main()
+        `${import.meta.env.VITE_EDGES_URL as string}/${main()
           .country!}/elements/${effectiveSource.value}`,
         (img) => {
           enableDragResize(img, {});

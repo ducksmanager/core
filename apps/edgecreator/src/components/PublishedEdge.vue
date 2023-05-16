@@ -23,6 +23,6 @@ defineEmits<(event: "load" | "error") => void>();
 const naturalHeight = ref(0 as number);
 const zoom = computed(() => ui().zoom);
 const getEdgeUrl = () =>
-  `${import.meta.env.VITE_EDGES_URL_PUBLIC as string}/${main()
+  `${import.meta.env.VITE_EDGES_URL as string}/${main()
     .country!}/gen/${main().magazine!}.${props.issuenumber}.png`;
 </script>
