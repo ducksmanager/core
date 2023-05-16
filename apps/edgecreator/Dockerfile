@@ -39,6 +39,7 @@ RUN pnpm run build
 FROM nginx AS app
 LABEL org.opencontainers.image.authors="admin@ducksmanager.net"
 
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=app-build /app/dist /usr/share/nginx/html
 
 FROM pnpm AS api
