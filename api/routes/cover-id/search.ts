@@ -1,6 +1,5 @@
+import axios from "axios";
 import bodyParser from "body-parser";
-import * as fs from "fs";
-import https from "https";
 
 import { PrismaClient } from "~prisma_clients/client_cover_info";
 import { ExpressCall } from "~routes/_express-call";
@@ -21,16 +20,10 @@ export const put = [
     }>
   ) => {
     console.log("Cover ID search: upload file validation done");
-    const targetFileName = `${String(Math.random()).replace(/^0./, "")}.jpg`;
-    fs.writeFileSync(targetFileName, req.body.base64, {
-      encoding: "base64",
-    });
-    console.log("Cover ID search: upload file moving done");
 
-    const fileObject = fs.readFileSync(targetFileName);
-    const pastecResponse: SimilarImagesResult | null =
-      getSimilarImages(fileObject);
-    fs.unlinkSync(targetFileName);
+    const pastecResponse: SimilarImagesResult | null = await getSimilarImages(
+      Buffer.from(req.body.base64, "base64").toString("utf8")
+    );
     console.log("Cover ID search: processing done");
 
     if (!pastecResponse) {
@@ -38,7 +31,8 @@ export const put = [
       res.end("Pastec returned NULL");
       return;
     }
-    if (!pastecResponse.imageIds.length) {
+    if (!pastecResponse?.imageIds?.length) {
+      console.log(`Pastec returned ${JSON.stringify(pastecResponse)}`);
       return res.json({
         issues: [],
         imageIds: [],
@@ -91,26 +85,23 @@ const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
     },
   });
 
-const getSimilarImages = (file: Buffer): SimilarImagesResult | null => {
-  const pastecRequest = https.request(
-    {
-      hostname: process.env.PASTEC_HOSTS!.split(",")[0],
-      port: process.env.PASTEC_PORT,
-      path: "index/searcher",
-      method: "POST",
-    },
-    (res) => {
-      res.on("data", (data) => {
-        console.log(`Received response from Pastec: ${data}`);
-      });
-      res.on("error", (error) => {
-        console.error(`Error from Pastec: ${error}`);
-      });
-    }
-  );
-  pastecRequest.write(file);
-  pastecRequest.end();
-
-  // TODO
-  return null;
+const getSimilarImages = async (
+  cover: string
+): Promise<SimilarImagesResult | null> => {
+  try {
+    return (
+      await axios.post(
+        `http://${process.env.PASTEC_HOSTS!}:${
+          process.env.PASTEC_PORT
+        }/index/searcher`,
+        cover,
+        {
+          headers: { "Content-Type": "application/octet-stream" },
+        }
+      )
+    ).data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 };
