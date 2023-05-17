@@ -9,7 +9,6 @@
 
 <script setup lang="ts">
 import { IonPage, IonIcon, IonButton } from '@ionic/vue';
-import * as fs from 'fs';
 import { call } from '~/axios-helper';
 import { onMounted } from 'vue';
 import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera-preview';
@@ -37,18 +36,10 @@ onMounted(async () => {
 });
 
 const takePhoto = async () => {
-  const result = await CameraPreview.capture({
+  const { value: base64 } = await CameraPreview.capture({
     quality: 80,
   });
-  const base64 = result.value;
-  console.log(base64);
-
-  const form = new FormData();
-  form.append('wtd_jpg', dataURIToBlob(base64), 'wtd_jpg');
-  const config = {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  };
-  const searchResults = await axios.put((import.meta.env.VITE_DM_API_URL as string) + '/cover-id/search', form, config);
+  const searchResults = await call(axios, new PUT__cover_id__search({ reqBody: { base64 } }));
   console.log(searchResults.data);
 };
 </script>
