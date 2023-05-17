@@ -13,11 +13,11 @@ const prisma = new PrismaClient();
 const streamToString = (stream: any): Promise<string> => {
   const chunks: Uint8Array[] = [];
   return new Promise((resolve, reject) => {
-    stream.on('data', (chunk: string) => chunks.push(Buffer.from(chunk)));
-    stream.on('error', (err: string) => reject(err));
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-  })
-}
+    stream.on("data", (chunk: string) => chunks.push(Buffer.from(chunk)));
+    stream.on("error", (err: string) => reject(err));
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+  });
+};
 
 export const put = (
   ...[req, res]: ExpressCall<{ resBody: CoverSearchResults }>
@@ -33,7 +33,8 @@ export const put = (
       console.log("Cover ID search: upload file moving done");
 
       const fileObject = fs.readFileSync(targetFileName);
-      const pastecResponse: SimilarImagesResult | null = getSimilarImages(fileObject);
+      const pastecResponse: SimilarImagesResult | null =
+        getSimilarImages(fileObject);
       fs.unlinkSync(targetFileName);
       console.log("Cover ID search: processing done");
 
@@ -107,6 +108,9 @@ const getSimilarImages = (file: Buffer): SimilarImagesResult | null => {
     (res) => {
       res.on("data", (data) => {
         console.log(`Received response from Pastec: ${data}`);
+      });
+      res.on("error", (error) => {
+        console.error(`Error from Pastec: ${error}`);
       });
     }
   );
