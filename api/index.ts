@@ -61,6 +61,8 @@ app.all(/^\/global-stats\/user\/list$/, [
 app.all(/^\/collection\/(.+)/, authenticateToken);
 app.all("/global-stats/user/collection/rarity", authenticateToken);
 
+app.use(express.json({ limit: "5mb" }));
+
 app.use("/", router());
 
 app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);

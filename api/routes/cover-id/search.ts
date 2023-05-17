@@ -1,3 +1,4 @@
+import bodyParser from "body-parser";
 import * as fs from "fs";
 import https from "https";
 
@@ -9,79 +10,72 @@ import {
 } from "~types/CoverSearchResults";
 
 const prisma = new PrismaClient();
+const parseForm = bodyParser.json();
 
-const streamToString = (stream: any): Promise<string> => {
-  const chunks: Uint8Array[] = [];
-  return new Promise((resolve, reject) => {
-    stream.on("data", (chunk: string) => chunks.push(Buffer.from(chunk)));
-    stream.on("error", (err: string) => reject(err));
-    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-  });
-};
+export const put = [
+  parseForm,
+  async (
+    ...[req, res]: ExpressCall<{
+      reqBody: { base64: string };
+      resBody: CoverSearchResults;
+    }>
+  ) => {
+    console.log("Cover ID search: upload file validation done");
+    const targetFileName = `${String(Math.random()).replace(/^0./, "")}.jpg`;
+    fs.writeFileSync(targetFileName, req.body.base64, {
+      encoding: "base64",
+    });
+    console.log("Cover ID search: upload file moving done");
 
-export const put = (
-  ...[req, res]: ExpressCall<{ resBody: CoverSearchResults }>
-) => {
-  req.busboy?.on("file", async (name: string, file) => {
-    if (name !== "wtd_jpg") {
-      res.writeHead(400);
-      res.end();
-    } else {
-      console.log("Cover ID search: upload file validation done");
-      const targetFileName = `${String(Math.random()).replace(/^0./, "")}.jpg`;
-      fs.writeFileSync(targetFileName, await streamToString(file));
-      console.log("Cover ID search: upload file moving done");
+    const fileObject = fs.readFileSync(targetFileName);
+    const pastecResponse: SimilarImagesResult | null =
+      getSimilarImages(fileObject);
+    fs.unlinkSync(targetFileName);
+    console.log("Cover ID search: processing done");
 
-      const fileObject = fs.readFileSync(targetFileName);
-      const pastecResponse: SimilarImagesResult | null =
-        getSimilarImages(fileObject);
-      fs.unlinkSync(targetFileName);
-      console.log("Cover ID search: processing done");
-
-      if (!pastecResponse) {
-        res.writeHead(500, { "Content-Type": "application/text" });
-        res.end("Pastec returned NULL");
-        return;
-      }
-      if (!pastecResponse.imageIds.length) {
-        return res.json({
-          issues: [],
-          imageIds: [],
-          type: pastecResponse.type,
-        });
-      }
-      console.log("Cover ID search: matched cover IDs $coverIds");
-      console.log(
-        `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`
-      );
-
-      const coverInfos = (
-        await getIssuesCodesFromCoverIds(pastecResponse.imageIds)
-      ).sort((cover1, cover2) =>
-        Math.sign(
-          pastecResponse.imageIds.indexOf(cover1.id) -
-            pastecResponse.imageIds.indexOf(cover2.id)
-        )
-      );
-      const foundIssueCodes = [
-        ...new Set(coverInfos.map(({ issuecode }) => issuecode)),
-      ];
-      console.log(
-        `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`
-      );
-
-      const issues = getIssuesFromIssueCodes(foundIssueCodes);
-      console.log(`Cover ID search: matched ${coverInfos.length} issues`);
-
-      // TODO sort
-
+    if (!pastecResponse) {
+      res.writeHead(500, { "Content-Type": "application/text" });
+      res.end("Pastec returned NULL");
+      return;
+    }
+    if (!pastecResponse.imageIds.length) {
       return res.json({
-        issues: Object.values(issues),
-        imageIds: pastecResponse.imageIds,
+        issues: [],
+        imageIds: [],
+        type: pastecResponse.type,
       });
     }
-  });
-};
+    console.log("Cover ID search: matched cover IDs $coverIds");
+    console.log(
+      `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`
+    );
+
+    const coverInfos = (
+      await getIssuesCodesFromCoverIds(pastecResponse.imageIds)
+    ).sort((cover1, cover2) =>
+      Math.sign(
+        pastecResponse.imageIds.indexOf(cover1.id) -
+          pastecResponse.imageIds.indexOf(cover2.id)
+      )
+    );
+    const foundIssueCodes = [
+      ...new Set(coverInfos.map(({ issuecode }) => issuecode)),
+    ];
+    console.log(
+      `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`
+    );
+
+    const issues = getIssuesFromIssueCodes(foundIssueCodes);
+    console.log(`Cover ID search: matched ${coverInfos.length} issues`);
+
+    // TODO sort
+
+    return res.json({
+      issues: Object.values(issues),
+      imageIds: pastecResponse.imageIds,
+    });
+  },
+];
 
 const getIssuesFromIssueCodes = (foundIssueCodes: string[]) => {
   // TODO
