@@ -19,6 +19,7 @@
   "dependencies": {
     "@awesome-cordova-plugins/sqlite": "^6.3.0",
     "@capacitor-community/camera-preview": "^4.0.0",
+    "@capacitor-community/sqlite": "^5.0.0-beta.2",
     "@capacitor/android": "^5.0.0",
     "@capacitor/app": "^5.0.0",
     "@capacitor/camera": "^5.0.2",
@@ -40,6 +41,7 @@
     "cordova-sqlite-storage": "^6.1.0",
     "ducksmanager": "^0.0.48",
     "ionicons": "^7.0.0",
+    "jeep-sqlite": "^2.3.4",
     "localforage-cordovasqlitedriver": "^1.8.0",
     "pinia": "^2.0.34",
     "sass": "^1.61.0",
