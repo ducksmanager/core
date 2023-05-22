@@ -9,12 +9,7 @@ axios.defaults.baseURL = import.meta.env.VITE_DM_API_URL;
 
 axios.interceptors.request.use(
   async (config) => {
-    await Preferences.set({
-      key: 'token',
-      value:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTk5LCJ1c2VybmFtZSI6ImRlbW8iLCJoYXNoZWRQYXNzd29yZCI6IjlhMWEzNGIxZWRiMTA4MGFlZmNhNzJiNWJiNGNkYzRkNDEzNTNlYzUiLCJwcml2aWxlZ2VzIjp7IkVkZ2VDcmVhdG9yIjoiRWRpdGlvbiJ9LCJpYXQiOjE2ODM3MjU2NTYsImV4cCI6MTY4NDkzNTI1Nn0.fnXhrL5nGhK5h1zG8onERqJvUcbpFTrbWk8JQaqOz_A',
-    });
-    const token: string = (await Preferences.get({ key: 'token' })).value!;
+    const token: string | null = (await Preferences.get({ key: 'token' }))?.value;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -8,6 +8,7 @@ import AddFromCamera from '~/views/AddFromCamera.vue';
 import CountryList from '~/views/CountryList.vue';
 import Default from '~/views/Default.vue';
 import IssueList from '~/views/IssueList.vue';
+import Login from '~/views/Login.vue';
 import PublicationList from '~/views/PublicationList.vue';
 import Search from '~/views/Search.vue';
 
@@ -41,6 +42,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/add-from-camera',
     component: AddFromCamera,
+  },
+  {
+    path: '/login',
+    component: Login,
   },
   {
     path: '/',
