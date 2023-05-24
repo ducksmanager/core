@@ -38,7 +38,7 @@ alias: [/agrandir/marketplace]
       </template>
       <template #content>
         <ul>
-          <li v-for="issueId of issueIds" :key="issueId">
+          <li v-for="issueId of (issueIds as number[])" :key="issueId">
             <Issue
               hide-condition
               :publicationcode="issuesOnSaleById[issueId].publicationcode"

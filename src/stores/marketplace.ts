@@ -100,10 +100,10 @@ export const marketplace = defineStore("marketplace", () => {
                 publicationcode: `${issue.country}/${issue.magazine}`,
               },
             }),
-            {} as { [issueId: number]: issue & { publicationcode: string } }
+            {} as Record<number, issue & { publicationcode: string }>
           ),
         }),
-        {} as { [issueId: number]: issue & { publicationcode: string } }
+        {} as Record<number, issue & { publicationcode: string }>
       )
     ),
     requestIssues = async (issueIds: number[]) => {
