@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { IonicVue } from '@ionic/vue';
@@ -10,6 +11,8 @@ import { useI18n } from 'vue-i18n';
 import App from './App.vue';
 import i18n from './i18n';
 import router from './router';
+
+import db from '~/persistence/data-sources/db';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -29,59 +32,41 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.scss';
-//import { applyPolyfills, defineCustomElements } from 'jeep-sqlite/loader';
 
 customElements.define('jeep-sqlite', JeepSqlite);
-console.log(`after customElements.define`);
 
 const initSqlite = async () => {
   const platform = Capacitor.getPlatform();
   const sqlite = new SQLiteConnection(CapacitorSQLite);
   try {
-    console.log(`platform: ${platform}`);
-
     if (platform === 'web') {
-      // Create the 'jeep-sqlite' Stencil component
       const jeepSqliteEl = document.createElement('jeep-sqlite');
       document.body.appendChild(jeepSqliteEl);
       await customElements.whenDefined('jeep-sqlite');
-      console.log(`after customElements.whenDefined`);
-
-      // Initialize the Web store
       await sqlite.initWebStore();
-      console.log(`after initWebStore`);
     }
-    // here you can initialize some database schema if required
-
-    // example: database creation with standard SQLite statements
-    await sqlite.getFromLocalDiskToStore();
     const ret = await sqlite.checkConnectionsConsistency();
-    const isConn = (await sqlite.isConnection('db_vite', false)).result;
-    let db = null;
+    const isConn = (await sqlite.isConnection('wtd', false)).result;
+    let connection: SQLiteDBConnection | null = null;
     if (ret.result && isConn) {
-      db = await sqlite.retrieveConnection('db_vite', false);
+      connection = await sqlite.retrieveConnection('wtd', false);
     } else {
-      db = await sqlite.createConnection('db_vite', false, 'no-encryption', 1, false);
+      connection = await sqlite.createConnection('wtd', false, 'no-encryption', 1, false);
     }
-    await db.open();
-    console.log(`db: db_vite opened`);
-    const query = `
-        CREATE TABLE IF NOT EXISTS test (
-        id INTEGER PRIMARY KEY NOT NULL,
-        name TEXT NOT NULL
-        );
-        `;
-    const res = await db.execute(query);
-    console.log(`res: ${JSON.stringify(res)}`);
-    if (res.changes?.changes && res.changes.changes < 0) {
-      throw new Error(`Error: execute failed`);
-    }
-    const insertQuery = `INSERT INTO test (name) VALUES ('test')`;
-    await db.execute(insertQuery);
+    await connection.open();
 
-    const resSelect = await db.query('SELECT * FROM test');
-    console.log(`res: ${JSON.stringify(resSelect)}`);
-    await sqlite.closeConnection('db_vite', false);
+    if (platform === 'web') {
+      setInterval(async () => {
+        await sqlite.saveToStore('wtd');
+      }, 5000);
+    }
+
+    await sqlite.closeConnection('wtd', false);
+
+    if (!db.isInitialized) {
+      await db.initialize();
+    }
+    app.provide('dbInstance', db);
   } catch (err) {
     console.log(`Error: ${err}`);
     throw new Error(`Error: ${err}`);

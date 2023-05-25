@@ -1,21 +1,37 @@
-import { Preferences } from '@capacitor/preferences';
 import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import type { AxiosCacheInstance } from 'axios-cache-interceptor';
+import { useRouter } from 'vue-router';
 
+import { User } from './persistence/models/dm/User';
+
+import { app } from '~/stores/app';
 import type { Call, ContractWithMethodAndUrl } from '~types/Call';
 
 axios.defaults.baseURL = import.meta.env.VITE_DM_API_URL;
 
 axios.interceptors.request.use(
   async (config) => {
-    const token: string | null = (await Preferences.get({ key: 'token' }))?.value;
+    const users = await app().dbInstance!.getRepository(User).find();
+    const token = users?.[0]?.token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response.status === 401) {
+      await app().dbInstance!.getRepository(User).delete(1);
+
+      const router = useRouter();
+      router.push('/login');
+    }
+  }
 );
 
 export const addUrlParamsRequestInterceptor = <Type extends AxiosInstance | AxiosCacheInstance>(
@@ -49,7 +65,7 @@ declare module 'axios' {
   }
 }
 
-type MyCall = Call<unknown>;
+type MyCall = Call<unknown, Record<string, string> | undefined, unknown | undefined, unknown | undefined>;
 
 export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
   instance: AxiosInstance | AxiosCacheInstance,

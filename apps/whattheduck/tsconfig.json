@@ -9,26 +9,22 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "importHelpers": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "paths": {
       "~/*": ["./src/*"],
-      "~types/*": [
-        "./types/*"
-      ],
-      "~dm_types/*": [
-        "./node_modules/ducksmanager/types/*"
-      ],
-      "~prisma_clients/*": [
-        "./node_modules/ducksmanager/api/dist/prisma/*"
-      ]
+      "~types/*": ["./types/*"],
+      "~dm_types/*": ["./node_modules/ducksmanager/types/*"],
+      "~prisma_clients/*": ["./node_modules/ducksmanager/api/dist/prisma/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "types": [
-    "vite/client",
-    "vue/ref-macros"
-  ]
+  "types": ["vite/client", "vue/ref-macros"]
 }

@@ -226,9 +226,15 @@ watch(
   }
 );
 
-collection().loadCollection();
-collection().loadPurchases();
-coa().fetchCountryNames();
+(async () => {
+  try {
+    await collection().loadCollection();
+    await collection().loadPurchases();
+    await coa().fetchCountryNames();
+  } catch (e) {
+    router.push('/login');
+  }
+})();
 </script>
 
 <style scoped>

@@ -12,7 +12,5 @@ import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
 import NavigationDrawer from '~/components/NavigationDrawer.vue';
 import { collection } from './stores/collection';
 
-const collectionStore = collection();
-
-collectionStore.loadUser();
+collection().loadUser();
 </script>

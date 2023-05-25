@@ -40,9 +40,6 @@
 </template>
 
 <script lang="ts" setup>
-import axios from 'axios';
-import { Preferences } from '@capacitor/preferences';
-
 import { IonItem, IonButton, IonContent, IonHeader, IonPage, IonInput, IonTitle } from '@ionic/vue';
 import { POST__login } from '~dm_types/routes';
 import { ref, watch } from 'vue';
@@ -50,6 +47,12 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { call } from '~/axios-helper';
 import { useRouter } from 'vue-router';
+import { app } from '~/stores/app';
+import { api } from '~/stores/api';
+import { User } from '~/persistence/models/dm/User';
+
+const appStore = app();
+const apiStore = api();
 
 const { t } = useI18n();
 
@@ -70,16 +73,12 @@ const submitLogin = async () => {
     invalidInputs.value = [];
     token.value = (
       await call(
-        axios,
+        apiStore.dmApi,
         new POST__login({
           reqBody: { username: username.value, password: password.value },
         })
       )
-    ).data.token;
-    await Preferences.set({
-      key: 'token',
-      value: token.value,
-    });
+    ).data?.token;
   } catch (_e) {
     invalidInputs.value = ['password'];
     validInputs.value = [];
@@ -88,8 +87,9 @@ const submitLogin = async () => {
 
 watch(
   () => token.value,
-  () => {
+  async () => {
     if (token.value) {
+      await appStore.dbInstance!.getRepository(User).save({ username: username.value, token: token.value });
       router.replace({ path: '/collection' });
     }
   },
