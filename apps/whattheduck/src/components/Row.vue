@@ -1,12 +1,12 @@
 <template>
   <ion-item button>
-    <ion-progress-bar v-if="stat" :value="fillPercentage"></ion-progress-bar>
+    <ion-progress-bar v-if="fillPercentage" :value="fillPercentage"></ion-progress-bar>
     <slot name="checkbox" />
     <ion-label
       ><slot name="prefix" />
       <slot name="label" />
     </ion-label>
-    <ion-label slot="end" v-if="stat"> {{ stat.numerator }} / {{ stat.denominator }} </ion-label>
+    <ion-label slot="end" v-if="ownership"> {{ ownership[0] }} / {{ ownership[1] }} </ion-label>
   </ion-item>
 </template>
 
@@ -14,14 +14,11 @@
 import { IonLabel, IonItem, IonProgressBar } from '@ionic/vue';
 import { computed } from 'vue';
 const props = defineProps<{
-  stat?: {
-    numerator: number;
-    denominator: number;
-  };
+  ownership?: [number, number];
 }>();
 
 const fillPercentage = computed(() =>
-  props.stat ? Math.max(0.1 / 100, props.stat.numerator / (props.stat.denominator || 1)) : undefined
+  props.ownership ? Math.max(0.1 / 100, props.ownership[0] / (props.ownership[1] || 1)) : undefined
 );
 </script>
 

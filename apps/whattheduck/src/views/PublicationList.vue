@@ -1,5 +1,6 @@
 <template>
   <List
+    v-if="collectionStore.totalPerPublication && coaStore.issueCounts"
     :items="sortedItems"
     :stat-numerators="totalPerPublication"
     :stat-denominators="issueCounts"
@@ -27,7 +28,7 @@ const appStore = app();
 const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<string, number>) =>
   Object.entries(issueCountPerPublicationcode)
     .filter(([publicationcode]) => publicationcode.startsWith(`${route.params.countrycode}/`))
-    .reduce((acc, [publicationcode, total]) => ({ ...acc, [publicationcode.split('/')[1]]: total }), {});
+    .reduce((acc, [publicationcode, total]) => ({ ...acc, [publicationcode]: total }), {});
 
 const totalPerPublication = computed(() => getIssueCountPerMagazinecode(collectionStore.totalPerPublication));
 const issueCounts = computed(() => getIssueCountPerMagazinecode(coaStore.issueCounts || {}));
@@ -42,12 +43,12 @@ watch(
   { immediate: true }
 );
 
-const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key}`;
+const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key.split('/')[1]}`;
 const items = computed((): { key: string; text: string }[] =>
   collectionStore.ownedPublications
     .filter((publication) => publication.indexOf(`${route.params.countrycode}/`) === 0)
     .map((publicationCode) => ({
-      key: publicationCode.split('/')[1],
+      key: publicationCode,
       text: coaStore.publicationNames?.[publicationCode] || publicationCode,
     }))
 );
@@ -56,6 +57,7 @@ const sortedItems = computed(() =>
   [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase()))
 );
 
-collection().loadCollection();
-coa().fetchPublicationNamesFromCountry(route.params.countrycode as string);
+collectionStore.loadCollection();
+coaStore.fetchPublicationNamesFromCountry(route.params.countrycode as string);
+coaStore.fetchIssueCounts();
 </script>

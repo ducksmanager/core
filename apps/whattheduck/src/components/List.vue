@@ -14,11 +14,7 @@
     <ion-content :fullscreen="true">
       <div id="container">
         <div v-if="hasList">
-          <Row
-            v-for="{ key, text, ...item } in filteredItems"
-            @click="onRowClick(key)"
-            :stat="statNumerators && { numerator: statNumerators?.[key], denominator: statDenominators?.[key]! }"
-          >
+          <Row v-for="{ key, text, ...item } in filteredItems" @click="onRowClick(key)" :ownership="ownership?.[key]">
             <template #prefix>
               <slot name="row-prefix" v-bind="{ item }"></slot>
             </template>
@@ -121,6 +117,23 @@ const title = computed(() =>
   typeof collectionStore.total === 'number'
     ? t('my_collection_with_issue_count', { issueCount: collectionStore.total })
     : t('my_collection')
+);
+
+const ownershipAllItems = computed(() => {
+  switch (itemType.value) {
+    case 'Country':
+      return [collectionStore.totalPerCountry, coaStore.issueCountsPerCountry!];
+    case 'Publication':
+      return [collectionStore.totalPerPublication, coaStore.issueCounts!];
+  }
+});
+
+const ownership = computed(
+  () =>
+    ownershipAllItems.value &&
+    Object.entries(ownershipAllItems.value[0])
+      .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1][key] as number }))
+      .reduce<Record<string, [number, number]>>((acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }), {})
 );
 
 watch(

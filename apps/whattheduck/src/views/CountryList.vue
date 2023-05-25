@@ -40,8 +40,7 @@ const sortedItems = computed(() =>
 );
 
 const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key}`;
-(async () => {
-  await collection().loadCollection();
-  await coa().fetchCountryNames();
-})();
+
+collection().loadCollection();
+coa().fetchCountryNames();
 </script>
