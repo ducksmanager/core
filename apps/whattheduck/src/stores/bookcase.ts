@@ -1,20 +1,19 @@
-import type { AxiosError } from "axios";
-import axios from "axios";
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import type { AxiosError } from 'axios';
+import axios from 'axios';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-import { collection } from "./collection";
+import { collection } from './collection';
 
-import { call } from "~/axios-helper";
-import type { BookcaseEdge } from "~dm_types/BookcaseEdge";
+import { call } from '~/axios-helper';
+import type { BookcaseEdge } from '~dm_types/BookcaseEdge';
 import {
   GET__bookcase__$username,
   GET__bookcase__$username__options,
   GET__bookcase__$username__sort,
   POST__bookcase__options,
   POST__bookcase__sort,
-} from "~dm_types/routes";
-
+} from '~dm_types/routes';
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;
@@ -22,25 +21,19 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   popularity?: number | undefined;
 }
 
-export const bookcase = defineStore("bookcase", () => {
+export const bookcase = defineStore('bookcase', () => {
   const loadedSprites = ref({} as { [key: string]: string }),
     isPrivateBookcase = ref(false as boolean),
     isUserNotExisting = ref(false as boolean),
     bookcaseUsername = ref(null as string | null),
     bookcase = ref(null as BookcaseEdge[] | null),
-    bookcaseOptions = ref(
-      null as GET__bookcase__$username__options["resBody"] | null
-    ),
+    bookcaseOptions = ref(null as GET__bookcase__$username__options['resBody'] | null),
     bookcaseOrder = ref(null as string[] | null),
     edgeIndexToLoad = ref(0 as number),
-    isSharedBookcase = computed(
-      (): boolean => collection().user?.username !== bookcaseUsername.value
-    ),
+    isSharedBookcase = computed((): boolean => collection().user?.username !== bookcaseUsername.value),
     bookcaseWithPopularities = computed(
       (): BookcaseEdgeWithPopularity[] | null =>
-        ((isSharedBookcase.value
-          ? true
-          : collection().popularIssuesInCollection) &&
+        ((isSharedBookcase.value ? true : collection().popularIssuesInCollection) &&
           bookcase.value?.map((issue) => {
             const publicationcode = `${issue.countryCode}/${issue.magazineCode}`;
             const issueCode = `${publicationcode} ${issue.issuenumber}`;
@@ -48,20 +41,12 @@ export const bookcase = defineStore("bookcase", () => {
               ...issue,
               publicationcode,
               issueCode,
-              popularity: isSharedBookcase.value
-                ? 0
-                : collection().popularIssuesInCollection?.[issueCode] || 0,
+              popularity: isSharedBookcase.value ? 0 : collection().popularIssuesInCollection?.[issueCode] || 0,
             };
           })) ||
         null
     ),
-    addLoadedSprite = ({
-      spritePath,
-      css,
-    }: {
-      spritePath: string;
-      css: string;
-    }) => {
+    addLoadedSprite = ({ spritePath, css }: { spritePath: string; css: string }) => {
       loadedSprites.value = {
         ...loadedSprites.value,
         [spritePath]: css,

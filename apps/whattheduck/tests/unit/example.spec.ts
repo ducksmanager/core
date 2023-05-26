@@ -1,13 +1,13 @@
-import { mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { mount } from '@vue/test-utils';
+import { describe, expect, test } from 'vitest';
 
-import FolderPage from "~/views/FolderPage.vue";
+import FolderPage from '~/views/FolderPage.vue';
 
-describe("FolderPage.vue", () => {
-  test("renders folder view", () => {
+describe('FolderPage.vue', () => {
+  test('renders folder view', () => {
     const mockRoute = {
       params: {
-        id: "Outbox",
+        id: 'Outbox',
       },
     };
     const wrapper = mount(FolderPage, {
@@ -17,6 +17,6 @@ describe("FolderPage.vue", () => {
         },
       },
     });
-    expect(wrapper.text()).toMatch("Explore UI Components");
+    expect(wrapper.text()).toMatch('Explore UI Components');
   });
 });

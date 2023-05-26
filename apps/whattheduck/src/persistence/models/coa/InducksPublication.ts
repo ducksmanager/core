@@ -1,4 +1,4 @@
-import type { inducks_person, inducks_publication } from 'ducksmanager/api/dist/prisma/client_coa';
+import type { inducks_publication } from 'ducksmanager/api/dist/prisma/client_coa';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity('inducks_publication')
