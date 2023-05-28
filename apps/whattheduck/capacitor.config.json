@@ -4,6 +4,10 @@
   },
   "plugins": {
 
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  },
     "CapacitorSQLite": {
       "iosDatabaseLocation": "Library/CapacitorDatabase",
       "iosIsEncryption": false,

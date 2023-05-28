@@ -14,6 +14,7 @@ import { IssuePopularity } from '../models/dm/IssuePopularity';
 import { NotificationCountry } from '../models/dm/NotificationCountry';
 import { Purchase } from '../models/dm/Purchase';
 import { User } from '../models/dm/User';
+import { Sync } from '../models/internal/Sync';
 
 export default new DataSource({
   name: 'wtdConnection',
@@ -33,6 +34,7 @@ export default new DataSource({
     NotificationCountry,
     Purchase,
     User,
+    Sync,
   ],
   migrations: [],
   logging: ['error', 'query', 'schema'],

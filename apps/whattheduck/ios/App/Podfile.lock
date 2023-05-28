@@ -1,5 +1,5 @@
 PODS:
-  - Capacitor (5.0.3):
+  - Capacitor (5.0.4):
     - CapacitorCordova
   - CapacitorApp (5.0.2):
     - Capacitor
@@ -7,20 +7,22 @@ PODS:
     - Capacitor
   - CapacitorCommunityCameraPreview (2.0.0):
     - Capacitor
-  - CapacitorCommunitySqlite (5.0.0-beta.2):
+  - CapacitorCommunitySqlite (5.0.0):
     - Capacitor
     - SQLCipher
     - ZIPFoundation
-  - CapacitorCordova (5.0.3)
+  - CapacitorCordova (5.0.4)
   - CapacitorHaptics (5.0.2):
     - Capacitor
   - CapacitorKeyboard (5.0.2):
     - Capacitor
   - CapacitorPreferences (5.0.2):
     - Capacitor
+  - CapacitorSplashScreen (5.0.2):
+    - Capacitor
   - CapacitorStatusBar (5.0.2):
     - Capacitor
-  - CordovaPlugins (5.0.3):
+  - CordovaPlugins (5.0.4):
     - CapacitorCordova
   - SQLCipher (4.5.4):
     - SQLCipher/standard (= 4.5.4)
@@ -39,6 +41,7 @@ DEPENDENCIES:
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
 
@@ -66,26 +69,29 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/keyboard"
   CapacitorPreferences:
     :path: "../../node_modules/@capacitor/preferences"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
-  Capacitor: 304a960e431f9e6f78556554ca71c41c1b2b9680
+  Capacitor: d3d4463573438b9fa65326d1f3549da6f4c21634
   CapacitorApp: 28fef1fd75b2b3686e875216806fb8416d421097
   CapacitorCamera: 15face5f9e030e480929a2c989deaaf3eb0d3947
   CapacitorCommunityCameraPreview: 47070b2c66a79a424afe7c73bd951dfabfbc0f76
-  CapacitorCommunitySqlite: 37b8581231e1fce8c7b842dff2902dad12c8f780
-  CapacitorCordova: def732a63679698df6fb392bbe6d269a0b61e937
+  CapacitorCommunitySqlite: 8a2b259fe9fdd509e93be6036e1f349493b81aa8
+  CapacitorCordova: b1fe6bf1f36974a8e4a9044b342d22d49c0996d6
   CapacitorHaptics: 864585542a435bd41eaabf7f30d9ff5ec03024d3
   CapacitorKeyboard: e628d4e66d621c69e449945ebabded17c5b9c2e8
   CapacitorPreferences: 0ad8838944f900284900d9647d9b0145c89ca27d
+  CapacitorSplashScreen: bd2a056394ba0b8807e7bb3e746424f67c426e03
   CapacitorStatusBar: 48f2899f6846cc7d8431b251ebfc58e1c10e3d58
-  CordovaPlugins: 678e3cb9f66bd4028ce4062aec47e1d86c212c50
+  CordovaPlugins: 605a1c28be4987f836de1ae8a0404a48c91c98c1
   SQLCipher: 905b145f65f349f26da9e60a19901ad24adcd381
   ZIPFoundation: d170fa8e270b2a32bef9dcdcabff5b8f1a5deced
 
-PODFILE CHECKSUM: 83bb2144acad2f96d0bbc62e5c7f4f87eb175e5b
+PODFILE CHECKSUM: 8c00b8ed30eb377153ec97a573d88cdcd53a0b2a
 
 COCOAPODS: 1.12.1

@@ -29,7 +29,7 @@ axios.interceptors.response.use(
       await app().dbInstance!.getRepository(User).delete(1);
 
       const router = useRouter();
-      router.push('/login');
+      router.push('/');
     }
   }
 );

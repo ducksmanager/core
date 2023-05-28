@@ -2,7 +2,7 @@
   <List v-if="hasCoaData" :items="sortedItems" :get-target-url-fn="getTargetUrlFn">
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaList"></ion-checkbox>
-      <Condition :value="getConditionKey(item)" />
+      <Condition :value="getConditionKey(item)" :owns-next="item.ownsNext" />
     </template>
     <template #row-label="{ text }">
       <Issue :value="text" />
@@ -29,6 +29,11 @@ const collectionStore = collection();
 const coaStore = coa();
 const conditionStore = condition();
 const appStore = app();
+
+defineSlots<{
+  rowPrefix: { item: IssueWithPublicationcode };
+  rowLabel: { text: string };
+}>();
 
 const isCoaList = computed(() => route.params.type === 'coa');
 const conditionL10n = computed(() => conditionStore.conditionL10n);
