@@ -68,13 +68,22 @@ const items = computed(() =>
 
 const sortedItems = computed(() => {
   const keys = items.value.map(({ key }) => key);
-  return coaStore.issueNumbers[publicationcode.value || '']
-    .filter((issuenumber) => keys.includes(`${publicationcode.value} ${issuenumber}`))
-    .map((issuenumber) => ({
-      key: `${publicationcode.value} ${issuenumber}`,
-      text: issuenumber,
-      ...items.value.find(({ key }) => key === `${publicationcode.value} ${issuenumber}`),
-    }));
+  const publicationItems = coaStore.issueNumbers[publicationcode.value || ''];
+  const filteredItems: { issuenumber: string; ownsNext: boolean }[] = [];
+  publicationItems.forEach((issuenumber, idx) => {
+    if (keys.includes(`${publicationcode.value} ${issuenumber}`)) {
+      filteredItems.push({
+        issuenumber,
+        ownsNext: keys.includes(`${publicationcode.value} ${publicationItems[idx + 1]}`),
+      });
+    }
+  });
+  return filteredItems.map(({ issuenumber, ownsNext }) => ({
+    key: `${publicationcode.value} ${issuenumber}`,
+    text: issuenumber,
+    ownsNext,
+    ...items.value.find(({ key }) => key === `${publicationcode.value} ${issuenumber}`),
+  }));
 });
 
 collection().loadCollection();
