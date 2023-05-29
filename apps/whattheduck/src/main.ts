@@ -32,6 +32,7 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.scss';
+import './theme/global.scss';
 
 customElements.define('jeep-sqlite', JeepSqlite);
 

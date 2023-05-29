@@ -49,6 +49,7 @@
   "error_height_restrictions": "La largeur de votre sélection doit être comprise entre 100 et 350 millimètres",
   "error_invalid_number_format": "Veuillez entrer des nombres valides dans les champs \"largeur\" et \"hauteur\" !",
   "error_sending_edge": "Une erreur est survenue pendant l'envoi de la tranche",
+  "error_the_two_passwords_must_be_identical": "Les deux mots de passe doivent être identiques",
   "error_width_is_bigger_than_height": "La largeur de votre sélection doit être plus petite que sa hauteur",
   "error_width_restrictions": "La largeur de votre sélection doit être comprise entre 5 et 50 millimètres",
   "facebook": "",

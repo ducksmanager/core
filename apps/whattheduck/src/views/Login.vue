@@ -29,7 +29,7 @@
             'ion-invalid': invalidInputs.includes('password'),
             'ion-touched': touchedInputs.includes('password'),
           }"
-          :error-text="t('error__cannot_login')"
+          :error-text="errorTexts.password || t('error__cannot_login')"
           :aria-label="t('password')"
           :placeholder="t('password')"
           @ionBlur="touchedInputs.push('password')"
@@ -81,6 +81,7 @@ import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequot
 
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
 import { InducksIssueQuotationSimple } from 'ducksmanager/types/InducksIssueQuotationSimple';
+import useFormErrorHandling from '~/composables/useFormErrorHandling';
 
 const isOfflineMode = ref(false);
 
@@ -95,10 +96,6 @@ const { t } = useI18n();
 
 const router = useRouter();
 
-const validInputs = ref([] as string[]);
-const invalidInputs = ref([] as string[]);
-const touchedInputs = ref([] as string[]);
-
 const username = ref('' as string);
 const password = ref('' as string);
 
@@ -107,6 +104,11 @@ const showForm = ref(false);
 const showPassword = ref(false);
 
 const token = ref(null as string | null);
+
+const { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearErrors } = useFormErrorHandling([
+  'username',
+  'password',
+]);
 
 const forgotPassword = () => {
   router.replace({ path: '/forgot' });
@@ -117,8 +119,7 @@ const signup = () => {
 
 const submitLogin = async () => {
   try {
-    validInputs.value = ['password'];
-    invalidInputs.value = [];
+    clearErrors();
     token.value = (
       await call(
         apiStore.dmApi,
@@ -127,9 +128,8 @@ const submitLogin = async () => {
         })
       )
     ).data?.token;
-  } catch (_e) {
-    invalidInputs.value = ['password'];
-    validInputs.value = [];
+  } catch (e) {
+    showError(e as AxiosError);
   }
 };
 

@@ -6,10 +6,13 @@ import OwnedIssueCopies from '../views/OwnedIssueCopies.vue';
 
 import AddFromCamera from '~/views/AddFromCamera.vue';
 import CountryList from '~/views/CountryList.vue';
+import Forgot from '~/views/Forgot.vue';
 import IssueList from '~/views/IssueList.vue';
 import Login from '~/views/Login.vue';
 import PublicationList from '~/views/PublicationList.vue';
+import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
+import Signup from '~/views/Signup.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -41,6 +44,18 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/add-from-camera',
     component: AddFromCamera,
+  },
+  {
+    path: '/report',
+    component: Report,
+  },
+  {
+    path: '/signup',
+    component: Signup,
+  },
+  {
+    path: '/forgot',
+    component: Forgot,
   },
   {
     path: '/',

@@ -48,6 +48,7 @@
   "error_height_restrictions": "The height of the edge must be between 100 and 350 millimeters",
   "error_invalid_number_format": "Please enter valid numbers in the width and height fields!",
   "error_sending_edge": "An error occurred when sending the edge",
+  "error_the_two_passwords_must_be_identical": "The two passwords must be identical",
   "error_width_is_bigger_than_height": "The width of your selection must be smaller than its height",
   "error_width_restrictions": "The width of the edge must be between 5 and 50 millimeters",
   "facebook": "Facebook",
