@@ -18,10 +18,6 @@ import List from '~/components/List.vue';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
-defineProps<{
-  filteredItems: { text: string }[];
-}>();
-
 const collectionStore = collection();
 const coaStore = coa();
 

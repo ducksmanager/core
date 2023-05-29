@@ -1,10 +1,9 @@
 <template>
-  <span :class="`dm-condition-background ${value} ${ownsNext ? 'owns-next' : ''}`"></span>
+  <span :class="`dm-condition-background ${value}`"></span>
 </template>
 <script setup lang="ts">
 defineProps<{
-  value?: string | undefined;
-  ownsNext: boolean;
+  value?: string;
 }>();
 </script>
 <style lang="scss">

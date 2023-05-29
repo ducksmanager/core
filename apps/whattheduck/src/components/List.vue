@@ -14,7 +14,12 @@
     <ion-content :fullscreen="true">
       <div id="container">
         <div v-if="hasList">
-          <Row v-for="{ key, text, ...item } in filteredItems" @click="onRowClick(key)" :ownership="ownership?.[key]">
+          <Row
+            v-for="{ key, text, ownsNext, ...item } in filteredItems"
+            @click="onRowClick(key)"
+            :ownership="ownership?.[key]"
+            :is-next-owned="ownsNext"
+          >
             <template #prefix>
               <slot name="row-prefix" v-bind="{ item }"></slot>
             </template>
@@ -54,7 +59,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps<{
-  items: { key: string; text: string }[];
+  items: { key: string; text: string; ownsNext?: boolean }[];
   getTargetUrlFn: (routePath: string, key: string) => string;
   statNumerators?: Record<string, number>;
   statDenominators?: Record<string, number>;

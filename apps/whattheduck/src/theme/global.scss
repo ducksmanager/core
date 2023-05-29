@@ -28,19 +28,3 @@ ion-radio {
     }
   }
 }
-
-ion-item {
-  .dm-condition-background.owns-next {
-    &::after {
-      content: 'I';
-      opacity: 0.5;
-      margin-left: 5px;
-      bottom: 0;
-      position: absolute;
-    }
-  }
-
-  + ion-item {
-    // TODO
-  }
-}

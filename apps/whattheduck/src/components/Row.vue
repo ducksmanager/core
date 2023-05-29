@@ -1,5 +1,5 @@
 <template>
-  <ion-item button>
+  <ion-item button :class="{ 'is-next-owned': isNextOwned }">
     <ion-progress-bar v-if="fillPercentage" :value="fillPercentage"></ion-progress-bar>
     <slot name="checkbox" />
     <ion-label
@@ -15,6 +15,7 @@ import { IonLabel, IonItem, IonProgressBar } from '@ionic/vue';
 import { computed } from 'vue';
 const props = defineProps<{
   ownership?: [number, number];
+  isNextOwned?: boolean;
 }>();
 
 const fillPercentage = computed(() =>
@@ -23,6 +24,29 @@ const fillPercentage = computed(() =>
 </script>
 
 <style lang="scss" scoped>
+ion-item {
+  &.is-next-owned {
+    &:deep(.dm-condition-background)::after,
+    + ion-item:deep(.dm-condition-background)::before {
+      position: absolute;
+      width: 14px;
+      font-size: 24px;
+      content: 'I';
+      opacity: 0.25;
+      margin-left: 4px;
+    }
+    :deep(.dm-condition-background)::after {
+      bottom: -8px;
+    }
+
+    + ion-item {
+      :deep(.dm-condition-background)::before {
+        top: -8px;
+      }
+    }
+  }
+}
+
 ion-label {
   z-index: 1;
   display: flex !important;

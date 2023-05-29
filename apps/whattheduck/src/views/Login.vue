@@ -60,7 +60,7 @@
 
 <script lang="ts" setup>
 import { SplashScreen } from '@capacitor/splash-screen';
-import { IonItem, IonButton, IonContent, IonHeader, IonPage, IonInput, IonTitle, IonIcon } from '@ionic/vue';
+import { IonItem, IonButton, IonContent, IonHeader, IonPage, IonInput, IonTitle, IonIcon, IonLabel } from '@ionic/vue';
 import { POST__login } from '~dm_types/routes';
 import { ref, watch } from 'vue';
 

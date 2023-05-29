@@ -2,7 +2,7 @@
   <List v-if="hasCoaData" :items="sortedItems" :get-target-url-fn="getTargetUrlFn">
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaList"></ion-checkbox>
-      <Condition :value="getConditionKey(item)" :owns-next="item.ownsNext" />
+      <Condition :value="getConditionKey(item)" />
     </template>
     <template #row-label="{ text }">
       <Issue :value="text" />
