@@ -160,7 +160,9 @@ export const collection = defineStore("collection", () => {
         {}
       )
     ),
-    hasSuggestions = computed(() => suggestions.value?.issues?.length),
+    hasSuggestions = computed(
+      () => Object.keys(suggestions.value?.issues)?.length
+    ),
     issueNumbersPerPublication = computed(
       () =>
         collection.value?.reduce(
