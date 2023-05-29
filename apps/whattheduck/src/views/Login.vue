@@ -206,11 +206,11 @@ const fetchCollection = async () => {
   }
 };
 
-await SplashScreen.show({
-  autoHide: false,
-});
-
 (async () => {
+  await SplashScreen.show({
+    autoHide: false,
+  });
+
   const user = await appInstance.getRepository(User).find();
   if (user.length) {
     await fetchCollection();

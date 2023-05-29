@@ -3,10 +3,9 @@ import type { ScopedError } from 'ducksmanager/types/ScopedError';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
-
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default (fields: string[]) => {
+  const { t } = useI18n();
   const errorTexts = ref({} as Record<string, string>);
   const validInputs = computed(() => fields.filter((field) => !invalidInputs.value.includes(field)));
   const invalidInputs = computed(() => Object.keys(errorTexts.value));
