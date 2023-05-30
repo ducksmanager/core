@@ -31,10 +31,6 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-defineProps<{
-  filteredItems: { text: string }[];
-}>();
-
 const validInputs = ref([] as string[]);
 const invalidInputs = ref([] as string[]);
 const touchedInputs = ref([] as string[]);

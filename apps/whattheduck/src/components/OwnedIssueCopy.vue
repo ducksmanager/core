@@ -46,7 +46,6 @@
   </ion-page>
 </template>
 <script setup lang="ts">
-import { IonPage, IonLabel, IonRadioGroup, IonRadio, IonItem, IonCheckbox, IonList } from '@ionic/vue';
 import { watch } from 'vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';

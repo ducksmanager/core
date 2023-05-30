@@ -34,9 +34,6 @@ import { call } from '~/axios-helper';
 import axios from 'axios';
 
 const { t } = useI18n();
-defineProps<{
-  filteredItems: { text: string }[];
-}>();
 
 const validInputs = ref([] as string[]);
 const invalidInputs = ref([] as string[]);

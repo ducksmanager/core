@@ -29,8 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { IonFab, IonFabList, IonFabButton, IonIcon, IonLabel, IonRow } from '@ionic/vue';
-
 import {
   pencilOutline,
   searchOutline,

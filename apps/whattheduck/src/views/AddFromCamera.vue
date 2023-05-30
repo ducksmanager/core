@@ -8,7 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonIcon, IonButton } from '@ionic/vue';
 import { call } from '~/axios-helper';
 import { onMounted } from 'vue';
 import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera-preview';

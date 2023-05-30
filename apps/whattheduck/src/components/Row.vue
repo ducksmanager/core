@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { IonLabel, IonItem, IonProgressBar } from '@ionic/vue';
 import { computed } from 'vue';
 const props = defineProps<{
   ownership?: [number, number];

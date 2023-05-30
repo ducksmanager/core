@@ -38,16 +38,6 @@
 
 <script setup lang="ts">
 import { coa } from '~/stores/coa';
-import {
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonMenuButton,
-  IonPage,
-  IonSearchbar,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/vue';
 import Navigation from '~/components/Navigation.vue';
 import Row from '~/components/Row.vue';
 import EditIssuesButton from '~/components/EditIssuesButton.vue';

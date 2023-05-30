@@ -8,7 +8,6 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { IonLabel } from '@ionic/vue';
 import { ScopedError } from '~dm_types/ScopedError';
 
 const { error } = defineProps<{

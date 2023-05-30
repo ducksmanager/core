@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { IonCheckbox } from '@ionic/vue';
 import Issue from '~/components/Issue.vue';
 import Condition from '~/components/Condition.vue';
 import List from '~/components/List.vue';

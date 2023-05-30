@@ -38,19 +38,6 @@
   </ion-menu>
 </template>
 <script setup lang="ts">
-import {
-  IonContent,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
-  IonMenu,
-  IonMenuToggle,
-  IonNote,
-  IonRow,
-} from '@ionic/vue';
-
 import { computed, ref } from 'vue';
 import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
 import { collection } from '~/stores/collection';

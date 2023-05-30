@@ -35,20 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonMenuButton,
-  IonPage,
-  IonText,
-  IonSearchbar,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/vue';
 import axios from 'axios';
 import { POST__coa__stories__search__withIssues } from 'ducksmanager/types/routes';
 import { SimpleStory } from 'ducksmanager/types/SimpleStory';

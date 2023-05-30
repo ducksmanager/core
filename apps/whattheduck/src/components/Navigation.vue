@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-import { IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
 import { computed } from 'vue';
 import { app } from '../stores/app.js';
 import { coa } from '../stores/coa.js';
