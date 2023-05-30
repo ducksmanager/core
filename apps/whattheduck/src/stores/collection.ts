@@ -1,12 +1,17 @@
 import { Preferences } from '@capacitor/preferences';
+import type { AxiosError } from 'axios';
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+import { app } from './app';
 import { bookcase } from './bookcase';
 import { coa } from './coa';
 
-import { call } from '~/axios-helper';
+import { call, addUrlParamsRequestInterceptor } from '~/axios-helper';
+import { Sync } from '~/persistence/models/internal/Sync';
+import { defaultApi } from '~/util/api';
 import type { CollectionUpdateMultipleIssues, CollectionUpdateSingleIssue } from '~dm_types/CollectionUpdate';
 import {
   DELETE__collection__purchases__$id,
@@ -233,7 +238,7 @@ export const collection = defineStore('collection', () => {
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
       await call(
-        axios,
+        defaultApi,
         new POST__collection__issues__single({
           reqBody: data,
         })
@@ -242,7 +247,7 @@ export const collection = defineStore('collection', () => {
     },
     updateCollectionMultipleIssues = async (data: CollectionUpdateMultipleIssues) => {
       await call(
-        axios,
+        defaultApi,
         new POST__collection__issues__multiple({
           reqBody: data,
         })
@@ -251,7 +256,7 @@ export const collection = defineStore('collection', () => {
     },
     createPurchase = async (date: string, description: string) => {
       await call(
-        axios,
+        defaultApi,
         new PUT__collection__purchases({
           reqBody: { date, description },
         })
@@ -260,7 +265,7 @@ export const collection = defineStore('collection', () => {
     },
     deletePurchase = async (id: number) => {
       await call(
-        axios,
+        defaultApi,
         new DELETE__collection__purchases__$id({
           params: { id: String(id) },
         })
@@ -273,13 +278,13 @@ export const collection = defineStore('collection', () => {
           publicationcode === `${country}/${magazine}` && collectionIssueNumber === issuenumber
       ),
     loadPreviousVisit = async () => {
-      previousVisit.value = (await call(axios, new POST__collection__lastvisit())).data?.previousVisit;
+      previousVisit.value = (await call(defaultApi, new POST__collection__lastvisit())).data?.previousVisit;
     },
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !collection.value)) {
         isLoadingCollection.value = true;
 
-        const result = await call(axios, new GET__collection__issues());
+        const result = await call(defaultApi, new GET__collection__issues());
         collection.value = result.data.map((issue) => ({
           ...issue,
           publicationcode: `${issue.country}/${issue.magazine}`,
@@ -291,14 +296,14 @@ export const collection = defineStore('collection', () => {
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
-        purchases.value = (await call(axios, new GET__collection__purchases())).data;
+        purchases.value = (await call(defaultApi, new GET__collection__purchases())).data;
         isLoadingPurchases.value = false;
       }
     },
     loadWatchedAuthors = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingWatchedAuthors.value && !watchedAuthors.value)) {
         isLoadingWatchedAuthors.value = true;
-        watchedAuthors.value = (await call(axios, new GET__collection__authors__watched())).data;
+        watchedAuthors.value = (await call(defaultApi, new GET__collection__authors__watched())).data;
         isLoadingWatchedAuthors.value = false;
       }
     },
@@ -307,7 +312,7 @@ export const collection = defineStore('collection', () => {
         isLoadingWatchedPublicationsWithSales.value = true;
         watchedPublicationsWithSales.value = (
           await call(
-            axios,
+            defaultApi,
             new GET__collection__options__$optionName({
               params: {
                 optionName: 'sales_notification_publications',
@@ -323,7 +328,7 @@ export const collection = defineStore('collection', () => {
         isLoadingMarketplaceContactMethods.value = true;
         marketplaceContactMethods.value = (
           await call(
-            axios,
+            defaultApi,
             new GET__collection__options__$optionName({
               params: { optionName: 'marketplace_contact_methods' },
             })
@@ -334,7 +339,7 @@ export const collection = defineStore('collection', () => {
     },
     updateMarketplaceContactMethods = async () =>
       await call(
-        axios,
+        defaultApi,
         new POST__collection__options__$optionName({
           reqBody: { values: marketplaceContactMethods.value! },
           params: {
@@ -344,7 +349,7 @@ export const collection = defineStore('collection', () => {
       ),
     updateWatchedPublicationsWithSales = async () =>
       await call(
-        axios,
+        defaultApi,
         new POST__collection__options__$optionName({
           reqBody: {
             values: watchedPublicationsWithSales.value!,
@@ -367,7 +372,7 @@ export const collection = defineStore('collection', () => {
         isLoadingSuggestions.value = true;
         suggestions.value = (
           await call(
-            axios,
+            defaultApi,
             new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit({
               params: {
                 countrycode: countryCode || 'ALL',
@@ -384,7 +389,7 @@ export const collection = defineStore('collection', () => {
     loadSubscriptions = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingSubscriptions.value && !subscriptions.value)) {
         isLoadingSubscriptions.value = true;
-        subscriptions.value = (await call(axios, new GET__collection__subscriptions())).data.map(
+        subscriptions.value = (await call(defaultApi, new GET__collection__subscriptions())).data.map(
           (subscription: SubscriptionTransformedStringDates) => ({
             ...subscription,
             publicationcode: '',
@@ -397,7 +402,7 @@ export const collection = defineStore('collection', () => {
     },
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
-        popularIssuesInCollection.value = (await call(axios, new GET__collection__popular())).data.reduce(
+        popularIssuesInCollection.value = (await call(defaultApi, new GET__collection__popular())).data.reduce(
           (acc, issue) => ({
             ...acc,
             [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
@@ -408,7 +413,9 @@ export const collection = defineStore('collection', () => {
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
-        lastPublishedEdgesForCurrentUser.value = (await call(axios, new GET__collection__edges__lastPublished())).data;
+        lastPublishedEdgesForCurrentUser.value = (
+          await call(defaultApi, new GET__collection__edges__lastPublished())
+        ).data;
       }
     },
     loadUser = async (afterUpdate = false) => {
@@ -416,7 +423,7 @@ export const collection = defineStore('collection', () => {
         isLoadingUser.value = true;
         try {
           if ((await Preferences.get({ key: 'token' })).value) {
-            user.value = (await call(axios, new GET__collection__user())).data;
+            user.value = (await call(defaultApi, new GET__collection__user())).data;
           }
         } catch (e) {
           console.error(e);
@@ -424,6 +431,47 @@ export const collection = defineStore('collection', () => {
           user.value = null;
         } finally {
           isLoadingUser.value = false;
+        }
+      }
+    },
+    fetchAndTrackCollection = async (redirectOnSuccess?: string | undefined) => {
+      const router = useRouter();
+      const latestSync = await app().dbInstance.getRepository(Sync).find();
+      await loadCollection();
+      try {
+        // TODO retrieve user points
+        // TODO retrieve user notification countries
+
+        if (app().isObsoleteSync(latestSync?.[0])) {
+          // TODO get app version
+          await loadSuggestions({
+            countryCode: 'ALL',
+            sinceLastVisit: false,
+            sort: 'publicationcode',
+          });
+          await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'releasedate' });
+          await coa().fetchPublicationNames(['ALL']);
+          await coa().fetchIssueCounts();
+        }
+
+        // TODO register for notifications
+
+        if (redirectOnSuccess) {
+          router.replace({ path: redirectOnSuccess });
+        }
+      } catch (e) {
+        switch ((e as AxiosError).response?.status) {
+          case 404:
+            if (latestSync) {
+              if (redirectOnSuccess) {
+                router.replace({ path: redirectOnSuccess });
+              }
+            } else {
+              app().isOfflineMode = true;
+            }
+            break;
+          case 401: // Alert input_error__invalid_credentials
+          default: // Alert error
         }
       }
     };
@@ -476,5 +524,6 @@ export const collection = defineStore('collection', () => {
     loadUser,
     ownedCountries,
     ownedPublications,
+    fetchAndTrackCollection,
   };
 });

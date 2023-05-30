@@ -85,6 +85,6 @@ const sortedItems = computed(() => {
   }));
 });
 
-collection().loadCollection();
+collectionStore.fetchAndTrackCollection();
 coaStore.fetchIssueNumbers([publicationcode.value]);
 </script>

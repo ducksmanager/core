@@ -37,5 +37,5 @@ const sortedItems = computed(() =>
 
 const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key}`;
 
-collection().loadCollection();
+collectionStore.fetchAndTrackCollection();
 </script>

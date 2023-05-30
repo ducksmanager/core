@@ -86,7 +86,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ScopedError } from '~dm_types/ScopedError';
 import { PUT__collection__user } from '~dm_types/routes';
 import { ref, watch } from 'vue';
 

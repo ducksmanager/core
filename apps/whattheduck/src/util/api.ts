@@ -49,4 +49,6 @@ const cachedCoaApi = addUrlParamsRequestInterceptor(
   )
 );
 
-export { cachedCoaApi, cachedUserApi };
+const defaultApi = addUrlParamsRequestInterceptor(axios.create({ baseURL: import.meta.env.VITE_DM_API_URL }));
+
+export { cachedCoaApi, cachedUserApi, defaultApi };

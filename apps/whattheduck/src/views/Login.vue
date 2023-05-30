@@ -85,6 +85,7 @@ import useFormErrorHandling from '~/composables/useFormErrorHandling';
 const isOfflineMode = ref(false);
 
 const appStore = app();
+const collectionStore = collection();
 
 const appInstance = appStore.dbInstance!;
 const apiStore = api();
@@ -132,9 +133,6 @@ const submitLogin = async () => {
   }
 };
 
-const isObsoleteSync = (latestSync: Sync | null) =>
-  !latestSync || new Date().getTime() - latestSync.timestamp.getTime() > 12 * 60 * 60 * 1000;
-
 watch(
   () => token.value,
   async () => {
@@ -155,55 +153,53 @@ watch(
   }
 );
 
-const fetchCollection = async () => {
-  const latestSync = await appInstance.getRepository(Sync).find();
-  try {
-    await collection().loadCollection();
-    await appInstance.getRepository(Issue).clear();
-    await appInstance.getRepository(Issue).save(collection().collection!);
+watch(
+  () => collectionStore.collection,
+  async (value) => {
+    if (value) {
+      await appInstance.getRepository(Issue).clear();
+      await appInstance.getRepository(Issue).save(value!);
+      await collectionStore.loadPurchases();
+    }
+  },
+  { immediate: true }
+);
 
-    await collection().loadPurchases();
-    await appInstance.getRepository(Purchase).clear();
-    await appInstance.getRepository(Purchase).save(collection().purchases!);
+watch(
+  () => collectionStore.purchases,
+  (newValue) => {
+    if (newValue) {
+      appInstance.getRepository(Purchase).clear();
+      appInstance.getRepository(Purchase).save(newValue!);
+    }
+  },
+  { immediate: true }
+);
 
-    await coa().fetchIssueQuotations(collection().ownedPublications);
-    appInstance.getRepository(InducksIssuequotation).clear();
-    /*const issueQuotations = Object.entries(coa().issueQuotations!).reduce((acc, [issuecode, quotation]) => {
+watch(
+  () => collectionStore.ownedPublications,
+  async (newValue) => {
+    if (newValue) {
+      await coa().fetchIssueQuotations(collectionStore.ownedPublications);
+      appInstance.getRepository(InducksIssuequotation).clear();
+      /*const issueQuotations = Object.entries(coa().issueQuotations!).reduce((acc, [issuecode, quotation]) => {
       const [publicationcode, issuenumber] = issuecode.split(/(?<=[^ ]+) /);
       return [...acc, { publicationcode, issuenumber, min: quotation.min, max: quotation.max }];
     }, [] as InducksIssuequotation[]);
     appInstance.getRepository(InducksIssuequotation).save(issueQuotations);*/
-
-    await collection().loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'publicationcode' });
-    await collection().loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'releasedate' });
-
-    // TODO retrieve user points
-    // TODO retrieve user notification countries
-
-    if (isObsoleteSync(latestSync?.[0])) {
-      // TODO get app version
-      await coa().fetchPublicationNames(['ALL']);
-      await coa().fetchIssueCounts();
     }
+  },
+  { immediate: true }
+);
 
-    // TODO register for notifications
-
-    router.replace({ path: '/collection' });
-  } catch (e) {
-    switch ((e as AxiosError).response?.status) {
-      case 404:
-        if (latestSync) {
-          router.replace({ path: '/collection' });
-        } else {
-          isOfflineMode.value = true;
-          showForm.value = true;
-        }
-        break;
-      case 401: // Alert input_error__invalid_credentials
-      default: // Alert error
+watch(
+  () => app().isOfflineMode,
+  (isOfflineMode) => {
+    if (isOfflineMode) {
+      showForm.value = true;
     }
   }
-};
+);
 
 (async () => {
   await SplashScreen.show({
@@ -212,7 +208,7 @@ const fetchCollection = async () => {
 
   const user = await appInstance.getRepository(User).find();
   if (user.length) {
-    await fetchCollection();
+    await collectionStore.fetchAndTrackCollection('/collection');
   } else {
     showForm.value = true;
   }
