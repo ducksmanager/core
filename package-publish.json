@@ -1,11 +1,11 @@
 {
-	"name": "ducksmanager",
-	"version": "0.0.48",
-	"files": [
-		"src/components",
-		"api/dist/prisma/*/*.{js,json,prisma,ts}",
-		"api/prisma",
-		"types"
-	],
-	"dependencies": {}
+  "name": "ducksmanager",
+  "version": "0.0.49",
+  "files": [
+    "src/components",
+    "api/dist/prisma/*/*.{js,json,prisma,ts}",
+    "api/prisma",
+    "types"
+  ],
+  "dependencies": {}
 }

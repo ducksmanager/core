@@ -1,3 +1,5 @@
+import bodyParser from "body-parser";
+
 import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
 import {
   PrismaClient as PrismaClientDm,
@@ -23,48 +25,44 @@ export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
   countries_to_notify = "countries_to_notify",
 }
+const parseForm = bodyParser.json();
+export const get = [
+  parseForm,
+  async (
+    ...[req, res]: ExpressCall<{
+      resBody: SuggestionsWithDetails;
+      reqBody: {
+        countrycode: string;
+        sincePreviousVisit: "since_previous_visit" | "_";
+        sort: "score" | "oldestdate";
+        limit: number | null;
+      };
+    }>
+  ) => {
+    const { countrycode, sincePreviousVisit, sort, limit } = req.body;
+    const since =
+      sincePreviousVisit === "since_previous_visit"
+        ? (await prismaDm.user.findUnique({ where: { id: req.user!.id } }))!
+            .previousAccess
+        : null;
 
-export const get = async (
-  ...[req, res]: ExpressCall<{
-    resBody: SuggestionsWithDetails;
-    params: {
-      countrycode: string;
-      sincePreviousVisit: string;
-      sort: string;
-      limit: string;
+    const { suggestionsPerUser, authors, storyDetails, publicationTitles } =
+      await getSuggestions(since, countrycode, sort, req.user!.id, limit, true);
+
+    const suggestionsForUser =
+      suggestionsPerUser[req.user!.id] || new IssueSuggestionList();
+
+    const suggestionsWithDetails: SuggestionsWithDetails = {
+      issues: suggestionsForUser.issues,
+      minScore: suggestionsForUser.minScore,
+      maxScore: suggestionsForUser.maxScore,
+      authors,
+      storyDetails,
+      publicationTitles,
     };
-  }>
-) => {
-  const { countrycode, sincePreviousVisit, sort, limit } = req.params;
-  const since =
-    sincePreviousVisit === "since_previous_visit"
-      ? (await prismaDm.user.findUnique({ where: { id: req.user!.id } }))!
-          .previousAccess
-      : null;
-
-  const { suggestionsPerUser, authors, storyDetails, publicationTitles } =
-    await getSuggestions(
-      since,
-      countrycode,
-      sort,
-      req.user!.id,
-      parseInt(limit),
-      true
-    );
-
-  const suggestionsForUser =
-    suggestionsPerUser[req.user!.id] || new IssueSuggestionList();
-
-  const suggestionsWithDetails: SuggestionsWithDetails = {
-    issues: suggestionsForUser.issues,
-    minScore: suggestionsForUser.minScore,
-    maxScore: suggestionsForUser.maxScore,
-    authors,
-    storyDetails,
-    publicationTitles,
-  };
-  return res.json(suggestionsWithDetails);
-};
+    return res.json(suggestionsWithDetails);
+  },
+];
 
 const suggestedPublications =
   PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_suggereesArgs>()(
@@ -142,7 +140,7 @@ const getStoryDetails = async (
 export const getSuggestions = async (
   since: Date | null,
   countrycode: string,
-  sort: string,
+  sort: "score" | "oldestdate",
   singleUserId: number | null,
   limit: number | null,
   withStoryDetails: boolean

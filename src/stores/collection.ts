@@ -424,7 +424,7 @@ export const collection = defineStore("collection", () => {
       sinceLastVisit,
     }: {
       countryCode: string;
-      sort: string;
+      sort: "score" | "oldestdate";
       sinceLastVisit: boolean;
     }) => {
       if (!isLoadingSuggestions.value) {
@@ -434,13 +434,13 @@ export const collection = defineStore("collection", () => {
             axios,
             new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit(
               {
-                params: {
+                reqBody: {
                   countrycode: countryCode || "ALL",
                   sincePreviousVisit: sinceLastVisit
                     ? "since_previous_visit"
                     : "_",
                   sort,
-                  limit: sinceLastVisit ? "100" : "20",
+                  limit: sinceLastVisit ? 100 : 20,
                 },
               }
             )

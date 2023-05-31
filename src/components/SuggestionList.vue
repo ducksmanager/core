@@ -98,7 +98,7 @@ const getImportance = (score: number) =>
   suggestions?.maxScore === score ? 1 : suggestions?.minScore === score ? 3 : 2;
 
 let loading = $ref(true);
-const suggestionSortCurrent = $ref("score");
+const suggestionSortCurrent = $ref("score" as "score" | "oldestdate");
 
 watch(
   () => countrycode,
