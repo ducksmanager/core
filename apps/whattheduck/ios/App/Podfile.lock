@@ -7,7 +7,7 @@ PODS:
     - Capacitor
   - CapacitorCommunityCameraPreview (2.0.0):
     - Capacitor
-  - CapacitorCommunitySqlite (5.0.0):
+  - CapacitorCommunitySqlite (5.0.1):
     - Capacitor
     - SQLCipher
     - ZIPFoundation
@@ -22,8 +22,6 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (5.0.2):
     - Capacitor
-  - CordovaPlugins (5.0.4):
-    - CapacitorCordova
   - SQLCipher (4.5.4):
     - SQLCipher/standard (= 4.5.4)
   - SQLCipher/common (4.5.4)
@@ -43,7 +41,6 @@ DEPENDENCIES:
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
   - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
-  - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
 
 SPEC REPOS:
   trunk:
@@ -73,25 +70,22 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
-  CordovaPlugins:
-    :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
   Capacitor: d3d4463573438b9fa65326d1f3549da6f4c21634
   CapacitorApp: 28fef1fd75b2b3686e875216806fb8416d421097
   CapacitorCamera: 15face5f9e030e480929a2c989deaaf3eb0d3947
   CapacitorCommunityCameraPreview: 47070b2c66a79a424afe7c73bd951dfabfbc0f76
-  CapacitorCommunitySqlite: 8a2b259fe9fdd509e93be6036e1f349493b81aa8
+  CapacitorCommunitySqlite: 9dcc41c5525adcddfb9cca730df0b02b87a31d19
   CapacitorCordova: b1fe6bf1f36974a8e4a9044b342d22d49c0996d6
   CapacitorHaptics: 864585542a435bd41eaabf7f30d9ff5ec03024d3
   CapacitorKeyboard: e628d4e66d621c69e449945ebabded17c5b9c2e8
   CapacitorPreferences: 0ad8838944f900284900d9647d9b0145c89ca27d
   CapacitorSplashScreen: bd2a056394ba0b8807e7bb3e746424f67c426e03
   CapacitorStatusBar: 48f2899f6846cc7d8431b251ebfc58e1c10e3d58
-  CordovaPlugins: 605a1c28be4987f836de1ae8a0404a48c91c98c1
   SQLCipher: 905b145f65f349f26da9e60a19901ad24adcd381
   ZIPFoundation: d170fa8e270b2a32bef9dcdcabff5b8f1a5deced
 
-PODFILE CHECKSUM: 8c00b8ed30eb377153ec97a573d88cdcd53a0b2a
+PODFILE CHECKSUM: 230663782260e2503f6dee3390542eb40047aa16
 
 COCOAPODS: 1.12.1

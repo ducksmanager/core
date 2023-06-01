@@ -10,6 +10,7 @@ import { bookcase } from './bookcase';
 import { coa } from './coa';
 
 import { call, addUrlParamsRequestInterceptor } from '~/axios-helper';
+import { User } from '~/persistence/models/dm/User';
 import { Sync } from '~/persistence/models/internal/Sync';
 import { defaultApi } from '~/util/api';
 import type { CollectionUpdateMultipleIssues, CollectionUpdateSingleIssue } from '~dm_types/CollectionUpdate';
@@ -365,7 +366,7 @@ export const collection = defineStore('collection', () => {
       sinceLastVisit,
     }: {
       countryCode: string;
-      sort: string;
+      sort: 'score' | 'oldestdate';
       sinceLastVisit: boolean;
     }) => {
       if (!isLoadingSuggestions.value) {
@@ -374,11 +375,11 @@ export const collection = defineStore('collection', () => {
           await call(
             defaultApi,
             new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit({
-              params: {
+              reqBody: {
                 countrycode: countryCode || 'ALL',
                 sincePreviousVisit: sinceLastVisit ? 'since_previous_visit' : '_',
                 sort,
-                limit: sinceLastVisit ? '100' : '20',
+                limit: sinceLastVisit ? 100 : 20,
               },
             })
           )
@@ -434,11 +435,17 @@ export const collection = defineStore('collection', () => {
         }
       }
     },
-    fetchAndTrackCollection = async (redirectOnSuccess?: string | undefined) => {
+    fetchAndTrackCollection = async ({
+      redirectOnSuccess,
+      redirectOnFailure,
+    }: {
+      redirectOnSuccess?: string | undefined;
+      redirectOnFailure?: string | undefined;
+    }) => {
       const router = useRouter();
       const latestSync = await app().dbInstance.getRepository(Sync).find();
-      await loadCollection();
       try {
+        await loadCollection();
         // TODO retrieve user points
         // TODO retrieve user notification countries
 
@@ -447,9 +454,9 @@ export const collection = defineStore('collection', () => {
           await loadSuggestions({
             countryCode: 'ALL',
             sinceLastVisit: false,
-            sort: 'publicationcode',
+            sort: 'score',
           });
-          await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'releasedate' });
+          await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
           await coa().fetchPublicationNames(['ALL']);
           await coa().fetchIssueCounts();
         }
@@ -470,7 +477,13 @@ export const collection = defineStore('collection', () => {
               app().isOfflineMode = true;
             }
             break;
-          case 401: // Alert input_error__invalid_credentials
+          case 401:
+            await app().dbInstance.getRepository(User).clear();
+            if (redirectOnFailure) {
+              router.replace({ path: redirectOnFailure });
+            } else {
+              // Alert input_error__invalid_credentials
+            }
           default: // Alert error
         }
       }

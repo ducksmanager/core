@@ -178,7 +178,7 @@
   "unknown_publication": "Unknown publication",
   "username": "Username",
   "value_estimation": "Value estimation",
-  "version": "What The Duck version %1$s",
+  "version": "What The Duck version {version}",
   "welcome_bookcase_view_portrait": "Welcome to the bookcase view! Rotate your screen to landscape for the best effect ;-)",
   "welcome_message": "Your DucksManager collection is displayed when you open What The Duck. Tap on a country to view the publications that you possess, or tap on \"+\" to add an issue to your collection.",
   "welcome_title": "Welcome on What The Duck!",

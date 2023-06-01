@@ -57,7 +57,7 @@ const sortedItems = computed(() =>
   [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase()))
 );
 
-collectionStore.fetchAndTrackCollection();
+collectionStore.fetchAndTrackCollection({ redirectOnFailure: '/' });
 coaStore.fetchPublicationNamesFromCountry(route.params.countrycode as string);
 coaStore.fetchIssueCounts();
 </script>

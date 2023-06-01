@@ -34,12 +34,12 @@
           :placeholder="t('password')"
           @ionBlur="touchedInputs.push('password')"
         >
-          <ion-icon
-            :ios="showPassword ? eyeOffOutline : eyeOutline"
-            :md="showPassword ? eyeOffSharp : eyeSharp"
-            @click="showPassword = !showPassword"
-          ></ion-icon>
         </ion-input>
+        <ion-icon
+          :ios="showPassword ? eyeOffOutline : eyeOutline"
+          :md="showPassword ? eyeOffSharp : eyeSharp"
+          @click="showPassword = !showPassword"
+        ></ion-icon>
       </ion-item>
       <ion-item>
         <ion-button @click="submitLogin">{{ t('login') }}</ion-button>
@@ -208,7 +208,7 @@ watch(
 
   const user = await appInstance.getRepository(User).find();
   if (user.length) {
-    await collectionStore.fetchAndTrackCollection('/collection');
+    await collectionStore.fetchAndTrackCollection({ redirectOnSuccess: '/collection' });
   } else {
     showForm.value = true;
   }

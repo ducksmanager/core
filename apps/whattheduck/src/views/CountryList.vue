@@ -37,5 +37,5 @@ const sortedItems = computed(() =>
 
 const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key}`;
 
-collectionStore.fetchAndTrackCollection();
+collectionStore.fetchAndTrackCollection({ redirectOnFailure: '/' });
 </script>

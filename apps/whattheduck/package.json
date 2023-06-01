@@ -17,9 +17,8 @@
     "eslint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@awesome-cordova-plugins/sqlite": "^6.3.0",
     "@capacitor-community/camera-preview": "^4.0.0",
-    "@capacitor-community/sqlite": "^5.0.0",
+    "@capacitor-community/sqlite": "5.0.1",
     "@capacitor/android": "^5.0.0",
     "@capacitor/app": "^5.0.0",
     "@capacitor/camera": "^5.0.2",
@@ -37,10 +36,7 @@
     "@vueuse/integrations": "^10.1.2",
     "axios": "^1.3.5",
     "axios-cache-interceptor": "^1.0.1",
-    "cordova-plugin-camera-preview": "^0.12.3",
-    "cordova-sqlite-ext": "^6.0.0",
-    "cordova-sqlite-storage": "^6.1.0",
-    "ducksmanager": "^0.0.48",
+    "ducksmanager": "^0.0.49",
     "ionicons": "^7.0.0",
     "jeep-sqlite": "^2.3.4",
     "localforage-cordovasqlitedriver": "^1.8.0",

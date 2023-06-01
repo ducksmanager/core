@@ -85,6 +85,6 @@ const sortedItems = computed(() => {
   }));
 });
 
-collectionStore.fetchAndTrackCollection();
+collectionStore.fetchAndTrackCollection({ redirectOnFailure: '/' });
 coaStore.fetchIssueNumbers([publicationcode.value]);
 </script>
