@@ -10,7 +10,7 @@ datasource db {
 }
 
 model authorStory {
-  id         Int    @id @default(autoincrement())  @map("ID")
+  id         Int    @id @default(autoincrement()) @map("ID")
   personcode String @db.VarChar(79)
   storycode  String @db.VarChar(19)
 
@@ -20,10 +20,10 @@ model authorStory {
 }
 
 model authorUserForStats {
-  id              Int    @id @default(autoincrement())  @map("ID")
-  personcode      String @db.VarChar(79)                @map("NomAuteurAbrege")
-  userId          Int                                   @map("ID_user")
-  notation        Int    @default(-1)                   @map("Notation")
+  id         Int    @id @default(autoincrement()) @map("ID")
+  personcode String @map("NomAuteurAbrege") @db.VarChar(79)
+  userId     Int    @map("ID_user")
+  notation   Int    @default(-1) @map("Notation")
 
   @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
   @@index([userId], map: "auteurs_pseudos_ID_user_index")
@@ -46,7 +46,7 @@ model histoires_publications {
 
 model missingStoryForUser {
   id         Int    @id @default(autoincrement()) @map("ID")
-  userId     Int                                  @map("ID_User")
+  userId     Int    @map("ID_User")
   personcode String @db.VarChar(22)
   storycode  String @db.VarChar(19)
 
@@ -70,7 +70,7 @@ model utilisateurs_publications_manquantes {
   @@index([ID_User, personcode, storycode], map: "user_stories")
 }
 
-model utilisateurs_publications_suggerees {
+model suggestedIssueForUser {
   ID              Int       @id @default(autoincrement())
   userId          Int       @map("ID_User")
   publicationcode String    @db.VarChar(12)
@@ -80,4 +80,5 @@ model utilisateurs_publications_suggerees {
 
   @@unique([userId, publicationcode, issuenumber], map: "suggested_issue_for_user")
   @@index([userId], map: "suggested_issue_user")
+  @@map("utilisateurs_publications_suggerees")
 }

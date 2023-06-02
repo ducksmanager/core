@@ -65,17 +65,15 @@ export const get = [
 ];
 
 const suggestedPublications =
-  PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_suggereesArgs>()(
-    {
-      select: {
-        userId: true,
-        score: true,
-        publicationcode: true,
-        issuenumber: true,
-        oldestdate: true,
-      },
-    }
-  );
+  PrismaDmStats.validator<PrismaDmStats.suggestedIssueForUserArgs>()({
+    select: {
+      userId: true,
+      score: true,
+      publicationcode: true,
+      issuenumber: true,
+      oldestdate: true,
+    },
+  });
 
 const missingPublications =
   PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_manquantesArgs>()(
@@ -88,7 +86,7 @@ interface Suggestion
   extends PrismaDmStats.utilisateurs_publications_manquantesGetPayload<
       typeof missingPublications
     >,
-    PrismaDmStats.utilisateurs_publications_suggereesGetPayload<
+    PrismaDmStats.suggestedIssueForUserGetPayload<
       typeof suggestedPublications
     > {}
 
@@ -167,7 +165,7 @@ export const getSuggestions = async (
              replace(suggested.oldestdate,'-00', '-01') AS oldestdate,
              missing.personcode,
              missing.storycode
-      FROM utilisateurs_publications_suggerees as suggested
+      FROM utilisateurs_publications_suggerees as suggestedIssueForUser
                INNER JOIN utilisateurs_publications_manquantes as missing
                           USING (ID_User, publicationcode, issuenumber)
       WHERE suggested.oldestdate <= '${new Date().toISOString().split("T")[0]}'
