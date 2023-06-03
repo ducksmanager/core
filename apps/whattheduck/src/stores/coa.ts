@@ -291,8 +291,10 @@ export const coa = defineStore('coa', () => {
         )
       );
     },
-    fetchIssueCounts = async () => {
-      if (!issueCounts.value) issueCounts.value = (await call(coaApi, new GET__coa__list__issues__count({}))).data;
+    fetchIssueCounts = async (afterUpdate = false) => {
+      if (!issueCounts.value || afterUpdate) {
+        issueCounts.value = (await call(coaApi, new GET__coa__list__issues__count({}))).data;
+      }
     },
     fetchIssueUrls = async ({ publicationcode, issuenumber }: { publicationcode: string; issuenumber: string }) => {
       const issueCode = `${publicationcode} ${issuenumber}`;

@@ -87,7 +87,6 @@ const isOfflineMode = ref(false);
 const appStore = app();
 const collectionStore = collection();
 
-const appInstance = appStore.dbInstance!;
 const apiStore = api();
 
 const dmUrl = import.meta.env.VITE_DM_URL as string;
@@ -137,7 +136,7 @@ watch(
   () => token.value,
   async () => {
     if (token.value) {
-      await appStore.dbInstance!.getRepository(User).save({ username: username.value, token: token.value });
+      await appStore.dbInstance.getRepository(User).save({ username: username.value, token: token.value });
       router.replace({ path: '/collection' });
     }
   },
@@ -157,20 +156,7 @@ watch(
   () => collectionStore.collection,
   async (value) => {
     if (value) {
-      await appInstance.getRepository(Issue).clear();
-      await appInstance.getRepository(Issue).save(value!);
       await collectionStore.loadPurchases();
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => collectionStore.purchases,
-  (newValue) => {
-    if (newValue) {
-      appInstance.getRepository(Purchase).clear();
-      appInstance.getRepository(Purchase).save(newValue!);
     }
   },
   { immediate: true }
@@ -181,7 +167,7 @@ watch(
   async (newValue) => {
     if (newValue) {
       await coa().fetchIssueQuotations(collectionStore.ownedPublications);
-      appInstance.getRepository(InducksIssuequotation).clear();
+      appStore.dbInstance.getRepository(InducksIssuequotation).clear();
       /*const issueQuotations = Object.entries(coa().issueQuotations!).reduce((acc, [issuecode, quotation]) => {
       const [publicationcode, issuenumber] = issuecode.split(/(?<=[^ ]+) /);
       return [...acc, { publicationcode, issuenumber, min: quotation.min, max: quotation.max }];
@@ -206,10 +192,15 @@ watch(
     autoHide: false,
   });
 
-  const user = await appInstance.getRepository(User).find();
-  if (user.length) {
-    await collectionStore.fetchAndTrackCollection({ redirectOnSuccess: '/collection' });
-  } else {
+  try {
+    await collectionStore.loadUser();
+    if (collectionStore.user) {
+      console.log(router);
+      await collectionStore.fetchAndTrackCollection().then(() => router.replace({ path: '/collection' }));
+    } else {
+      showForm.value = true;
+    }
+  } catch (e) {
     showForm.value = true;
   }
 })();

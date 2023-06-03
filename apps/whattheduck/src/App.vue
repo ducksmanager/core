@@ -9,7 +9,4 @@
 
 <script setup lang="ts">
 import NavigationDrawer from '~/components/NavigationDrawer.vue';
-import { collection } from './stores/collection';
-
-collection().loadUser();
 </script>

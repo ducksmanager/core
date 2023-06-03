@@ -1,7 +1,12 @@
 import { Preferences } from '@capacitor/preferences';
 import type { AxiosError } from 'axios';
-import axios from 'axios';
+import { AuthorsDetails } from 'ducksmanager/types/AuthorsDetails';
+import type { SuggestionList } from 'ducksmanager/types/SuggestionList';
+import { after } from 'node:test';
 import { defineStore } from 'pinia';
+import type { EntityTarget, ObjectLiteral } from 'typeorm';
+import { AfterUpdate } from 'typeorm';
+import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -9,8 +14,12 @@ import { app } from './app';
 import { bookcase } from './bookcase';
 import { coa } from './coa';
 
-import { call, addUrlParamsRequestInterceptor } from '~/axios-helper';
-import { User } from '~/persistence/models/dm/User';
+import { call } from '~/axios-helper';
+import { SuggestedIssueSimple } from '~/persistence/models/composite/SuggestedIssueSimple';
+import { AuthorUser } from '~/persistence/models/dm/AuthorUser';
+import { Issue } from '~/persistence/models/dm/Issue';
+import { IssuePopularity } from '~/persistence/models/dm/IssuePopularity';
+import { Purchase } from '~/persistence/models/dm/Purchase';
 import { Sync } from '~/persistence/models/internal/Sync';
 import { defaultApi } from '~/util/api';
 import type { CollectionUpdateMultipleIssues, CollectionUpdateSingleIssue } from '~dm_types/CollectionUpdate';
@@ -31,7 +40,7 @@ import {
   POST__collection__options__$optionName,
   PUT__collection__purchases,
 } from '~dm_types/routes';
-import type { authorUser, issue, purchase, subscription, user } from '~prisma_clients/client_dm';
+import type { issue, authorUser, purchase, subscription, user } from '~prisma_clients/client_dm';
 
 export type IssueWithPublicationcode = issue & {
   publicationcode: string;
@@ -55,29 +64,28 @@ export type purchaseWithStringDate = Omit<purchase, 'date'> & {
 };
 
 export const collection = defineStore('collection', () => {
-  const collection = ref(null as IssueWithPublicationcode[] | null),
+  const isLoading = ref({} as Record<string, boolean>),
+    collection = ref(null as Issue[] | null),
     watchedPublicationsWithSales = ref(null as string[] | null),
-    purchases = ref(null as purchaseWithStringDate[] | null),
+    purchases = ref(null as Purchase[] | null),
     watchedAuthors = ref(null as authorUser[] | null),
     marketplaceContactMethods = ref(null as string[] | null),
-    suggestions = ref(
-      null as
-        | GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit['resBody']
-        | null
-    ),
+    suggestions = ref(null as SuggestedIssueSimple[] | null),
     subscriptions = ref(null as SubscriptionTransformed[] | null),
-    popularIssuesInCollection = ref(null as { [issuecode: string]: number } | null),
+    popularIssueInCollection = ref(null as IssuePopularity[] | null),
     lastPublishedEdgesForCurrentUser = ref(null as GET__collection__edges__lastPublished['resBody'] | null),
     isLoadingUser = ref(false as boolean),
-    isLoadingCollection = ref(false as boolean),
-    isLoadingWatchedPublicationsWithSales = ref(false as boolean),
-    isLoadingMarketplaceContactMethods = ref(false as boolean),
-    isLoadingPurchases = ref(false as boolean),
-    isLoadingWatchedAuthors = ref(false as boolean),
-    isLoadingSuggestions = ref(false as boolean),
-    isLoadingSubscriptions = ref(false as boolean),
     user = ref(undefined as Omit<user, 'password'> | undefined | null),
     previousVisit = ref(null as Date | null),
+    popularIssueInCollectionByIssuecode = computed(() =>
+      popularIssueInCollection.value?.reduce(
+        (acc, issue) => ({
+          ...acc,
+          [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
+        }),
+        {}
+      )
+    ),
     total = computed(() => collection.value?.length),
     ownedCountries = computed(() => [...new Set((collection.value || []).map(({ country }) => country))].sort()),
     ownedPublications = computed(() =>
@@ -142,7 +150,7 @@ export const collection = defineStore('collection', () => {
     purchasesById = computed(() =>
       purchases.value?.reduce((acc, purchase) => ({ ...acc, [purchase.id]: purchase }), {})
     ),
-    hasSuggestions = computed(() => suggestions.value?.issues?.length),
+    hasSuggestions = computed(() => suggestions.value?.length),
     issueNumbersPerPublication = computed(
       () =>
         collection.value?.reduce(
@@ -225,18 +233,18 @@ export const collection = defineStore('collection', () => {
           )
         : null
     ),
-    userForAccountForm = computed(() => {
-      if (!user.value) {
-        return null;
-      }
-      return {
-        ...user.value,
-        discordId: user.value.discordId || undefined,
-        presentationText: user.value.presentationText || '',
-        email: user.value.email!,
-        okForExchanges: user.value.marketplaceAcceptsExchanges || false,
-      };
-    }),
+    // userForAccountForm = computed(() => {
+    //   if (!user.value) {
+    //     return null;
+    //   }
+    //   return {
+    //     ...user.value,
+    //     discordId: user.value.discordId || undefined,
+    //     presentationText: user.value.presentationText || '',
+    //     email: user.value.email!,
+    //     okForExchanges: user.value.marketplaceAcceptsExchanges || false,
+    //   };
+    // }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
       await call(
         defaultApi,
@@ -282,33 +290,45 @@ export const collection = defineStore('collection', () => {
       previousVisit.value = (await call(defaultApi, new POST__collection__lastvisit())).data?.previousVisit;
     },
     loadCollection = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingCollection.value && !collection.value)) {
-        isLoadingCollection.value = true;
-
-        const result = await call(defaultApi, new GET__collection__issues());
-        collection.value = result.data.map((issue) => ({
-          ...issue,
-          publicationcode: `${issue.country}/${issue.magazine}`,
-        }));
-
-        isLoadingCollection.value = false;
-      }
+      await load<GET__collection__issues['resBody'], Issue>(
+        'collection',
+        Issue,
+        async () => await call(defaultApi, new GET__collection__issues()),
+        (value) =>
+          value.map((issue) => ({
+            ...issue,
+            publicationcode: `${issue.country}/${issue.magazine}`,
+          })),
+        collection,
+        afterUpdate
+      );
     },
     loadPurchases = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
-        isLoadingPurchases.value = true;
-        purchases.value = (await call(defaultApi, new GET__collection__purchases())).data;
-        isLoadingPurchases.value = false;
-      }
+      await load<GET__collection__purchases['resBody'], Purchase>(
+        'purchases',
+        Purchase,
+        async () => await call(defaultApi, new GET__collection__purchases()),
+        (value) =>
+          value.map(({ id, description, date }) => ({
+            id,
+            description,
+            date: new Date(Date.parse(date)),
+          })),
+        purchases,
+        afterUpdate
+      );
     },
     loadWatchedAuthors = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingWatchedAuthors.value && !watchedAuthors.value)) {
-        isLoadingWatchedAuthors.value = true;
-        watchedAuthors.value = (await call(defaultApi, new GET__collection__authors__watched())).data;
-        isLoadingWatchedAuthors.value = false;
-      }
+      await load<GET__collection__authors__watched['resBody'], AuthorUser>(
+        'watchedAuthors',
+        AuthorUser,
+        async () => await call(defaultApi, new GET__collection__authors__watched()),
+        (value) => value,
+        watchedAuthors,
+        afterUpdate
+      );
     },
-    loadWatchedPublicationsWithSales = async (afterUpdate = false) => {
+    /*loadWatchedPublicationsWithSales = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingWatchedPublicationsWithSales.value && !watchedPublicationsWithSales.value)) {
         isLoadingWatchedPublicationsWithSales.value = true;
         watchedPublicationsWithSales.value = (
@@ -359,19 +379,49 @@ export const collection = defineStore('collection', () => {
             optionName: 'sales_notification_publications',
           },
         })
-      ),
-    loadSuggestions = async ({
-      countryCode,
-      sort,
-      sinceLastVisit,
-    }: {
-      countryCode: string;
-      sort: 'score' | 'oldestdate';
-      sinceLastVisit: boolean;
-    }) => {
-      if (!isLoadingSuggestions.value) {
-        isLoadingSuggestions.value = true;
-        suggestions.value = (
+      ),*/
+    load = async <AxiosResponseType, Entity extends ObjectLiteral>(
+      name: string,
+      model: EntityTarget<Entity>,
+      axiosCall: () => Promise<{ data: AxiosResponseType }>,
+      axiosResponseToStore: (responseData: AxiosResponseType) => Entity[],
+      ref: Ref<Entity[] | null>,
+      afterUpdate = false
+    ): Promise<void> => {
+      if (afterUpdate || (!isLoading.value[name] && !ref.value)) {
+        isLoading.value[name] = true;
+        if (app().isOfflineMode) {
+          ref.value = await app().dbInstance.getRepository(model).find();
+        } else {
+          ref.value = axiosResponseToStore((await axiosCall()).data);
+          await app().dbInstance.getRepository(model).clear();
+          const data = ref.value;
+          if (data !== null) {
+            await app().dbInstance.getRepository(model).save<Entity>(data);
+          }
+        }
+        isLoading.value[name] = false;
+      }
+    },
+    loadSuggestions = async (
+      {
+        countryCode,
+        sort,
+        sinceLastVisit,
+      }: {
+        countryCode: string;
+        sort: 'oldestdate' | 'score';
+        sinceLastVisit: boolean;
+      },
+      afterUpdate = false
+    ) => {
+      await load<
+        GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit['resBody'],
+        SuggestedIssueSimple
+      >(
+        'suggestions',
+        SuggestedIssueSimple,
+        async () =>
           await call(
             defaultApi,
             new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit({
@@ -382,35 +432,38 @@ export const collection = defineStore('collection', () => {
                 limit: sinceLastVisit ? 100 : 20,
               },
             })
-          )
-        ).data;
-        isLoadingSuggestions.value = false;
-      }
+          ),
+        (value) =>
+          Object.values(value.issues).map(({ stories, ...issue }) => ({
+            ...issue,
+            storiesList: Object.keys(stories).join(', '),
+          })),
+        suggestions,
+        afterUpdate
+      );
     },
-    loadSubscriptions = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingSubscriptions.value && !subscriptions.value)) {
-        isLoadingSubscriptions.value = true;
-        subscriptions.value = (await call(defaultApi, new GET__collection__subscriptions())).data.map(
-          (subscription: SubscriptionTransformedStringDates) => ({
-            ...subscription,
-            publicationcode: '',
-            startDate: new Date(Date.parse(subscription.startDate)),
-            endDate: new Date(Date.parse(subscription.endDate)),
-          })
-        );
-        isLoadingSubscriptions.value = false;
-      }
-    },
+    // loadSubscriptions = async (afterUpdate = false) => {
+    //   if (afterUpdate || (!isLoadingSubscriptions.value && !subscriptions.value)) {
+    //     isLoadingSubscriptions.value = true;
+    //     subscriptions.value = (await call(defaultApi, new GET__collection__subscriptions())).data.map(
+    //       (subscription: SubscriptionTransformedStringDates) => ({
+    //         ...subscription,
+    //         publicationcode: '',
+    //         startDate: new Date(Date.parse(subscription.startDate)),
+    //         endDate: new Date(Date.parse(subscription.endDate)),
+    //       })
+    //     );
+    //     isLoadingSubscriptions.value = false;
+    //   }
+    // },
     loadPopularIssuesInCollection = async () => {
-      if (!popularIssuesInCollection.value) {
-        popularIssuesInCollection.value = (await call(defaultApi, new GET__collection__popular())).data.reduce(
-          (acc, issue) => ({
-            ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
-          }),
-          {}
-        );
-      }
+      await load<GET__collection__popular['resBody'], IssuePopularity>(
+        'issuePopularities',
+        IssuePopularity,
+        async () => await call(defaultApi, new GET__collection__popular()),
+        (value) => value,
+        popularIssueInCollection
+      );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
@@ -423,57 +476,45 @@ export const collection = defineStore('collection', () => {
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
         try {
-          if ((await Preferences.get({ key: 'token' })).value) {
-            user.value = (await call(defaultApi, new GET__collection__user())).data;
-          }
+          user.value = (await call(defaultApi, new GET__collection__user())).data;
         } catch (e) {
           console.error(e);
-          Preferences.remove({ key: 'token' });
           user.value = null;
         } finally {
           isLoadingUser.value = false;
         }
       }
     },
-    fetchAndTrackCollection = async ({
-      redirectOnSuccess,
-      redirectOnFailure,
-    }: {
-      redirectOnSuccess?: string | undefined;
-      redirectOnFailure?: string | undefined;
-    }) => {
-      const router = useRouter();
-      const latestSync = await app().dbInstance.getRepository(Sync).find();
+    fetchAndTrackCollection = async () => {
+      const isObsoleteSync = await app().isObsoleteSync();
+      await loadCollection();
       try {
         await loadCollection();
         // TODO retrieve user points
         // TODO retrieve user notification countries
 
-        if (app().isObsoleteSync(latestSync?.[0])) {
+        if (isObsoleteSync) {
           // TODO get app version
-          await loadSuggestions({
-            countryCode: 'ALL',
-            sinceLastVisit: false,
-            sort: 'score',
-          });
-          await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
+          await loadSuggestions(
+            {
+              countryCode: 'ALL',
+              sinceLastVisit: false,
+              sort: 'score',
+            },
+            true
+          );
+          await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' }, true);
+          await coa().fetchCountryNames(true);
           await coa().fetchPublicationNames(['ALL']);
-          await coa().fetchIssueCounts();
+          await coa().fetchIssueCounts(true);
         }
 
         // TODO register for notifications
-
-        if (redirectOnSuccess) {
-          router.replace({ path: redirectOnSuccess });
-        }
       } catch (e) {
+        console.error(e);
         switch ((e as AxiosError).response?.status) {
           case 404:
-            if (latestSync) {
-              if (redirectOnSuccess) {
-                router.replace({ path: redirectOnSuccess });
-              }
-            } else {
+            if (isObsoleteSync) {
               app().isOfflineMode = true;
             }
             break;
@@ -496,7 +537,7 @@ export const collection = defineStore('collection', () => {
     marketplaceContactMethods,
     suggestions,
     subscriptions,
-    popularIssuesInCollection,
+    popularIssueInCollectionByIssuecode,
     lastPublishedEdgesForCurrentUser,
     user,
     previousVisit,
@@ -516,7 +557,7 @@ export const collection = defineStore('collection', () => {
     popularIssuesInCollectionWithoutEdge,
     quotedIssues,
     quotationSum,
-    userForAccountForm,
+    // userForAccountForm,
     updateCollectionSingleIssue,
     updateCollectionMultipleIssues,
     createPurchase,
@@ -526,12 +567,12 @@ export const collection = defineStore('collection', () => {
     loadCollection,
     loadPurchases,
     loadWatchedAuthors,
-    loadWatchedPublicationsWithSales,
-    loadMarketplaceContactMethods,
-    updateMarketplaceContactMethods,
-    updateWatchedPublicationsWithSales,
+    // loadWatchedPublicationsWithSales,
+    // loadMarketplaceContactMethods,
+    // updateMarketplaceContactMethods,
+    // updateWatchedPublicationsWithSales,
     loadSuggestions,
-    loadSubscriptions,
+    // loadSubscriptions,
     loadPopularIssuesInCollection,
     loadLastPublishedEdgesForCurrentUser,
     loadUser,

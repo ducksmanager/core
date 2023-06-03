@@ -1,5 +1,5 @@
 import type { issue } from 'ducksmanager/api/dist/prisma/client_dm';
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, VirtualColumn } from 'typeorm';
 
 @Entity('issue')
 export class Issue {
@@ -11,6 +11,9 @@ export class Issue {
 
   @Column('text', { nullable: false })
   magazine!: issue['magazine'];
+
+  @Column('text', { nullable: true })
+  publicationcode!: issue['publicationcode'];
 
   @Column('text', { nullable: false })
   issuenumber!: issue['issuenumber'];

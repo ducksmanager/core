@@ -3,7 +3,7 @@ import type { CacheRequestConfig } from 'axios-cache-interceptor';
 import { buildWebStorage, setupCache } from 'axios-cache-interceptor';
 import dayjs from 'dayjs';
 
-import { addUrlParamsRequestInterceptor } from '~/axios-helper';
+import { addTokenRequestInterceptor, addUrlParamsRequestInterceptor } from '~/axios-helper';
 
 const customStorage = buildWebStorage(sessionStorage);
 
@@ -49,6 +49,8 @@ const cachedCoaApi = addUrlParamsRequestInterceptor(
   )
 );
 
-const defaultApi = addUrlParamsRequestInterceptor(axios.create({ baseURL: import.meta.env.VITE_DM_API_URL }));
+const defaultApi = addTokenRequestInterceptor(
+  addUrlParamsRequestInterceptor(axios.create({ baseURL: import.meta.env.VITE_DM_API_URL }))
+);
 
 export { cachedCoaApi, cachedUserApi, defaultApi };

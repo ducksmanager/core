@@ -8,6 +8,8 @@ import { InducksIssuequotation } from '../models/coa/InducksIssuequotation';
 import { InducksPerson } from '../models/coa/InducksPerson';
 import { InducksPublication } from '../models/coa/InducksPublication';
 import { InducksStory } from '../models/coa/InducksStory';
+import { SuggestedIssueSimple } from '../models/composite/SuggestedIssueSimple';
+import { AuthorUser } from '../models/dm/AuthorUser';
 import { ContributionTotalPoints } from '../models/dm/ContributionTotalPoints';
 import { Issue } from '../models/dm/Issue';
 import { IssuePopularity } from '../models/dm/IssuePopularity';
@@ -22,6 +24,7 @@ export default new DataSource({
   driver: sqliteConnection,
   database: 'wtd',
   entities: [
+    AuthorUser,
     InducksCountryname,
     InducksIssuequotation,
     InducksIssueWithCoverUrl,
@@ -34,6 +37,7 @@ export default new DataSource({
     NotificationCountry,
     Purchase,
     User,
+    SuggestedIssueSimple,
     Sync,
   ],
   migrations: [],

@@ -10,23 +10,25 @@ import type { Call, ContractWithMethodAndUrl } from '~types/Call';
 
 axios.defaults.baseURL = import.meta.env.VITE_DM_API_URL;
 
-axios.interceptors.request.use(
-  async (config) => {
-    const users = await app().dbInstance!.getRepository(User).find();
+export const addTokenRequestInterceptor = <Type extends AxiosInstance | AxiosCacheInstance>(
+  axiosInstance: Type
+): Type => {
+  axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+    const users = await app().dbInstance.getRepository(User).find();
     const token = users?.[0]?.token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-  },
-  (error) => Promise.reject(error)
-);
+  });
+  return axiosInstance;
+};
 
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response.status === 401) {
-      await app().dbInstance!.getRepository(User).delete(1);
+      await app().dbInstance.getRepository(User).delete(1);
 
       const router = useRouter();
       router.push('/');

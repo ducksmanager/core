@@ -33,7 +33,7 @@ export const bookcase = defineStore('bookcase', () => {
     isSharedBookcase = computed((): boolean => collection().user?.username !== bookcaseUsername.value),
     bookcaseWithPopularities = computed(
       (): BookcaseEdgeWithPopularity[] | null =>
-        ((isSharedBookcase.value ? true : collection().popularIssuesInCollection) &&
+        ((isSharedBookcase.value ? true : collection().popularIssueInCollectionByIssuecode) &&
           bookcase.value?.map((issue) => {
             const publicationcode = `${issue.countryCode}/${issue.magazineCode}`;
             const issueCode = `${publicationcode} ${issue.issuenumber}`;
@@ -41,7 +41,9 @@ export const bookcase = defineStore('bookcase', () => {
               ...issue,
               publicationcode,
               issueCode,
-              popularity: isSharedBookcase.value ? 0 : collection().popularIssuesInCollection?.[issueCode] || 0,
+              popularity: isSharedBookcase.value
+                ? 0
+                : collection().popularIssueInCollectionByIssuecode?.[issueCode] || 0,
             };
           })) ||
         null

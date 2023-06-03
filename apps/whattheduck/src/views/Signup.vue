@@ -157,7 +157,7 @@ watch(
   () => token.value,
   async () => {
     if (token.value) {
-      await appStore.dbInstance!.getRepository(User).save({ username: username.value, token: token.value });
+      await appStore.dbInstance.getRepository(User).save({ username: username.value, token: token.value });
       router.replace({ path: '/collection' });
     }
   },

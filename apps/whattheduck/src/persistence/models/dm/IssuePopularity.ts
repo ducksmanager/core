@@ -1,7 +1,7 @@
 import type { issuePopularity } from 'ducksmanager/api/dist/prisma/client_dm';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 
-@Entity('issue_popularity')
+@Entity('issuePopularity')
 export class IssuePopularity {
   @PrimaryColumn('text', { nullable: false })
   country!: issuePopularity['country'];
