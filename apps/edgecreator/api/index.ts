@@ -49,10 +49,11 @@ app.all(/^\/fs\/(text|upload|upload-base64)$/, [
   checkUserIsAdminOrEditor,
 ]);
 
-app.use("/", router({ directory: `${process.cwd()}/routes` }));
-
 app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
-app.listen(port, () =>
-  console.log(`EdgeCreator API listening on port ${port}`)
-);
+(async () => {
+  app.use("/", await router({ directory: `${process.cwd()}/routes` }));
+  app.listen(port, () =>
+    console.log(`EdgeCreator API listening on port ${port}`)
+  );
+})();
