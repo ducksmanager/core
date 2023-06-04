@@ -32,10 +32,10 @@ meta:
               </template>
             </uploadable-edges-carousel>
             <div>
+              <hr />
               <div class="position-absolute px-2 separation-text">
                 {{ $t("or") }}
               </div>
-              <hr />
             </div>
           </template>
           <uploadable-edges-carousel
@@ -285,8 +285,8 @@ const loadMostWantedEdges = async () => {
 }
 
 .separation-text {
-  margin-top: -12px !important;
-  background: #d1ecf1;
+  margin-top: -30px !important;
+  background: var(--bs-info-bg-subtle);
   left: 50%;
 }
 

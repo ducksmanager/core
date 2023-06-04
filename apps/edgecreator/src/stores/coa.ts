@@ -3,8 +3,8 @@ import { defineStore } from "pinia";
 import {
   GET__coa__list__countries__$locale,
   GET__coa__list__issues__by_publication_codes,
-  GET__coa__list__publications,
   GET__coa__list__publications__$countrycode,
+  POST__coa__list__publications,
 } from "~dm_types/routes";
 
 import { call, getChunkedRequests } from "../../axios-helper";
@@ -62,19 +62,14 @@ export const coa = defineStore("coa", () => {
       return (
         newPublicationCodes.length &&
         addPublicationNames(
-          await getChunkedRequests<GET__coa__list__publications>({
-            callFn: async (chunk: string) =>
-              call(
-                api().dmApi,
-                new GET__coa__list__publications({
-                  query: {
-                    publicationCodes: chunk,
-                  },
-                })
-              ),
-            valuesToChunk: newPublicationCodes,
-            chunkSize: 20,
-          })
+          (
+            await call(
+              api().dmApi,
+              new POST__coa__list__publications({
+                reqBody: { publicationCodes: newPublicationCodes },
+              })
+            )
+          ).data
         )
       );
     },

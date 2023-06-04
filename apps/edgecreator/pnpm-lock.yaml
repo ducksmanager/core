@@ -53,8 +53,8 @@ dependencies:
     specifier: ^1.5.13
     version: 1.5.13
   ducksmanager:
-    specifier: ^0.0.50
-    version: 0.0.50
+    specifier: ^0.0.51
+    version: 0.0.51
   interactjs:
     specifier: ^1.10.17
     version: 1.10.17
@@ -1646,8 +1646,8 @@ packages:
       esutils: 2.0.3
     dev: true
 
-  /ducksmanager@0.0.50:
-    resolution: {integrity: sha512-ZAd7pehk9yZ2LVsDRvd/Cvw8FPnTPEem2gU0DqtK8tDRp+Joyo34eWsFZnY1MQ+bP/xJXvLP0qn4HQqkYPEQtA==}
+  /ducksmanager@0.0.51:
+    resolution: {integrity: sha512-0BFbwMOAQv0wEhF/ezoxdQrAh5iwAGZYwVbMlq70PsrNeuhCqnI2D9VcW1Dch1COUlA/OgtKknzRD14lJhg4Jw==}
     dev: false
 
   /emoji-regex@8.0.0:

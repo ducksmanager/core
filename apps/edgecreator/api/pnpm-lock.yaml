@@ -26,8 +26,8 @@ dependencies:
     specifier: ^16.1.3
     version: 16.1.3
   ducksmanager:
-    specifier: ^0.0.50
-    version: 0.0.50
+    specifier: ^0.0.51
+    version: 0.0.51
   express:
     specifier: ^4.18.2
     version: 4.18.2
@@ -1170,8 +1170,8 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /ducksmanager@0.0.50:
-    resolution: {integrity: sha512-ZAd7pehk9yZ2LVsDRvd/Cvw8FPnTPEem2gU0DqtK8tDRp+Joyo34eWsFZnY1MQ+bP/xJXvLP0qn4HQqkYPEQtA==}
+  /ducksmanager@0.0.51:
+    resolution: {integrity: sha512-0BFbwMOAQv0wEhF/ezoxdQrAh5iwAGZYwVbMlq70PsrNeuhCqnI2D9VcW1Dch1COUlA/OgtKknzRD14lJhg4Jw==}
     dev: false
 
   /ecdsa-sig-formatter@1.0.11:
