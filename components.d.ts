@@ -30,6 +30,7 @@ declare module '@vue/runtime-core' {
     BFormCheckbox: typeof import('bootstrap-vue-next')['BFormCheckbox']
     BFormGroup: typeof import('bootstrap-vue-next')['BFormGroup']
     BFormInput: typeof import('bootstrap-vue-next')['BFormInput']
+    BFormRow: typeof import('bootstrap-vue-next')['BFormRow']
     BFormSelect: typeof import('bootstrap-vue-next')['BFormSelect']
     BFormSelectOption: typeof import('bootstrap-vue-next')['BFormSelectOption']
     BFormTextarea: typeof import('bootstrap-vue-next')['BFormTextarea']

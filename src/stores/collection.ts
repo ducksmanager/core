@@ -161,7 +161,9 @@ export const collection = defineStore("collection", () => {
       )
     ),
     hasSuggestions = computed(
-      () => Object.keys(suggestions.value?.issues)?.length
+      () =>
+        suggestions.value?.issues &&
+        Object.keys(suggestions.value.issues).length
     ),
     issueNumbersPerPublication = computed(
       () =>
@@ -270,7 +272,9 @@ export const collection = defineStore("collection", () => {
       }
       return {
         ...user.value,
-        discordId: user.value.discordId || undefined,
+        discordId: user.value.discordId
+          ? String(user.value.discordId)
+          : undefined,
         presentationText: user.value.presentationText || "",
         email: user.value.email!,
         okForExchanges: user.value.marketplaceAcceptsExchanges || false,

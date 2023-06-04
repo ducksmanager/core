@@ -184,8 +184,6 @@ watch(
 
 <style scoped lang="scss">
 .wrapper {
-  height: v-bind(height);
-
   > div {
     max-width: 100%;
     max-height: 100%;
