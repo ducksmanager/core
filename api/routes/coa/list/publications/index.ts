@@ -20,10 +20,7 @@ export const post = [
     }>
   ) => {
     const publicationCodes = req.body.publicationCodes || [];
-    if (publicationCodes.length > 20) {
-      res.writeHead(400);
-      return res.end();
-    } else if (!publicationCodes.length) {
+    if (!publicationCodes.length) {
       return res.json(await getAllPublicationTitles());
     } else {
       return res.json(await getPublicationTitlesFromCodes(publicationCodes));

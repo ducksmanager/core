@@ -84,6 +84,7 @@ declare global {
   const POST__bookcase__sort: typeof import('./types/routes')['POST__bookcase__sort']
   const POST__bookstores__approve: typeof import('./types/routes')['POST__bookstores__approve']
   const POST__coa__issues__decompose: typeof import('./types/routes')['POST__coa__issues__decompose']
+  const POST__coa__list__publications: typeof import('./types/routes')['POST__coa__list__publications']
   const POST__coa__stories__search: typeof import('./types/routes')['POST__coa__stories__search']
   const POST__coa__stories__search__withIssues: typeof import('./types/routes')['POST__coa__stories__search__withIssues']
   const POST__collection__authors__watched: typeof import('./types/routes')['POST__collection__authors__watched']
@@ -419,7 +420,6 @@ declare module 'vue' {
     readonly GET__coa__list__issues__withDetails: UnwrapRef<typeof import('./types/routes')['GET__coa__list__issues__withDetails']>
     readonly GET__coa__list__issues__withTitle: UnwrapRef<typeof import('./types/routes')['GET__coa__list__issues__withTitle']>
     readonly GET__coa__list__issuesbycodes__$issueCodes: UnwrapRef<typeof import('./types/routes')['GET__coa__list__issuesbycodes__$issueCodes']>
-    readonly GET__coa__list__publications: UnwrapRef<typeof import('./types/routes')['GET__coa__list__publications']>
     readonly GET__coa__list__publications__$countrycode: UnwrapRef<typeof import('./types/routes')['GET__coa__list__publications__$countrycode']>
     readonly GET__coa__quotations__issueCodes: UnwrapRef<typeof import('./types/routes')['GET__coa__quotations__issueCodes']>
     readonly GET__coa__quotations__publications: UnwrapRef<typeof import('./types/routes')['GET__coa__quotations__publications']>
@@ -470,6 +470,7 @@ declare module 'vue' {
     readonly POST__bookcase__sort: UnwrapRef<typeof import('./types/routes')['POST__bookcase__sort']>
     readonly POST__bookstores__approve: UnwrapRef<typeof import('./types/routes')['POST__bookstores__approve']>
     readonly POST__coa__issues__decompose: UnwrapRef<typeof import('./types/routes')['POST__coa__issues__decompose']>
+    readonly POST__coa__list__publications: UnwrapRef<typeof import('./types/routes')['POST__coa__list__publications']>
     readonly POST__coa__stories__search: UnwrapRef<typeof import('./types/routes')['POST__coa__stories__search']>
     readonly POST__coa__stories__search__withIssues: UnwrapRef<typeof import('./types/routes')['POST__coa__stories__search__withIssues']>
     readonly POST__collection__authors__watched: UnwrapRef<typeof import('./types/routes')['POST__collection__authors__watched']>
@@ -799,7 +800,6 @@ declare module '@vue/runtime-core' {
     readonly GET__coa__list__issues__withDetails: UnwrapRef<typeof import('./types/routes')['GET__coa__list__issues__withDetails']>
     readonly GET__coa__list__issues__withTitle: UnwrapRef<typeof import('./types/routes')['GET__coa__list__issues__withTitle']>
     readonly GET__coa__list__issuesbycodes__$issueCodes: UnwrapRef<typeof import('./types/routes')['GET__coa__list__issuesbycodes__$issueCodes']>
-    readonly GET__coa__list__publications: UnwrapRef<typeof import('./types/routes')['GET__coa__list__publications']>
     readonly GET__coa__list__publications__$countrycode: UnwrapRef<typeof import('./types/routes')['GET__coa__list__publications__$countrycode']>
     readonly GET__coa__quotations__issueCodes: UnwrapRef<typeof import('./types/routes')['GET__coa__quotations__issueCodes']>
     readonly GET__coa__quotations__publications: UnwrapRef<typeof import('./types/routes')['GET__coa__quotations__publications']>
@@ -850,6 +850,7 @@ declare module '@vue/runtime-core' {
     readonly POST__bookcase__sort: UnwrapRef<typeof import('./types/routes')['POST__bookcase__sort']>
     readonly POST__bookstores__approve: UnwrapRef<typeof import('./types/routes')['POST__bookstores__approve']>
     readonly POST__coa__issues__decompose: UnwrapRef<typeof import('./types/routes')['POST__coa__issues__decompose']>
+    readonly POST__coa__list__publications: UnwrapRef<typeof import('./types/routes')['POST__coa__list__publications']>
     readonly POST__coa__stories__search: UnwrapRef<typeof import('./types/routes')['POST__coa__stories__search']>
     readonly POST__coa__stories__search__withIssues: UnwrapRef<typeof import('./types/routes')['POST__coa__stories__search__withIssues']>
     readonly POST__collection__authors__watched: UnwrapRef<typeof import('./types/routes')['POST__collection__authors__watched']>
