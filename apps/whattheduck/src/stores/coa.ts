@@ -3,7 +3,6 @@ import { computed, ref } from 'vue';
 
 import { call, getChunkedRequests } from '~/axios-helper';
 import { getCurrentLocaleShortKey } from '~/composables/useLocales';
-// import i18n from "~/i18n";
 import { cachedCoaApi as coaApi } from '~/util/api';
 import type { InducksIssueDetails } from '~dm_types/InducksIssueDetails';
 import type { InducksIssueQuotationSimple } from '~dm_types/InducksIssueQuotationSimple';
@@ -14,8 +13,7 @@ import {
   GET__coa__list__issues__count,
   GET__coa__list__issues__details,
   GET__coa__list__issues__withTitle,
-  GET__coa__list__publications,
-  GET__coa__list__publications__$countrycode,
+  POST__coa__list__publications,
   GET__coa__quotations__publications,
   POST__coa__issues__decompose,
 } from '~dm_types/routes';
@@ -53,7 +51,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 export const coa = defineStore('coa', () => {
   const coverUrls = ref({} as { [issuenumber: string]: string }),
     countryNames = ref(null as { [countrycode: string]: string } | null),
-    publicationNames = ref({} as GET__coa__list__publications['resBody']),
+    publicationNames = ref({} as POST__coa__list__publications['resBody']),
     publicationNamesFullCountries = ref([] as string[]),
     personNames = ref(null as { [personcode: string]: string } | null),
     issueNumbers = ref({} as { [issuecode: string]: string[] }),
@@ -142,17 +140,14 @@ export const coa = defineStore('coa', () => {
       return (
         actualNewPublicationCodes.length &&
         addPublicationNames(
-          await getChunkedRequests<GET__coa__list__publications>({
-            callFn: (chunk) =>
-              call(
-                coaApi,
-                new GET__coa__list__publications({
-                  query: { publicationCodes: chunk },
-                })
-              ),
-            valuesToChunk: actualNewPublicationCodes,
-            chunkSize: 20,
-          })
+          (
+            await call(
+              coaApi,
+              new POST__coa__list__publications({
+                reqBody: { publicationCodes: actualNewPublicationCodes },
+              })
+            )
+          ).data
         )
       );
     },
@@ -191,22 +186,6 @@ export const coa = defineStore('coa', () => {
           )
         )
       );
-    },
-    fetchPublicationNamesFromCountry = async (countrycode: string) => {
-      if (publicationNamesFullCountries.value.includes(countrycode)) return;
-
-      return call(
-        coaApi,
-        new GET__coa__list__publications__$countrycode({
-          params: { countrycode },
-        })
-      ).then(({ data }) => {
-        addPublicationNames({
-          ...(publicationNames.value || {}),
-          ...data,
-        });
-        publicationNamesFullCountries.value = [...publicationNamesFullCountries.value, countrycode];
-      });
     },
     fetchPersonNames = async (newPersonCodes: string[]) => {
       const actualNewPersonNames = [
@@ -277,17 +256,14 @@ export const coa = defineStore('coa', () => {
       return (
         newIssueCodes.length &&
         addIssueCodeDetails(
-          await getChunkedRequests<POST__coa__issues__decompose>({
-            callFn: (chunk) =>
-              call(
-                coaApi,
-                new POST__coa__issues__decompose({
-                  reqBody: { issueCodes: chunk },
-                })
-              ),
-            valuesToChunk: newIssueCodes,
-            chunkSize: 50,
-          })
+          (
+            await call(
+              coaApi,
+              new POST__coa__issues__decompose({
+                reqBody: { issueCodes: newIssueCodes.join(',') },
+              })
+            )
+          ).data
         )
       );
     },
@@ -337,7 +313,6 @@ export const coa = defineStore('coa', () => {
     fetchCountryNames,
     fetchPublicationNames,
     fetchIssueQuotations,
-    fetchPublicationNamesFromCountry,
     fetchPersonNames,
     fetchIssueNumbersWithTitles,
     fetchIssueNumbers,

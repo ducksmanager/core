@@ -13,11 +13,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import Country from '~/components/Country.vue';
 import List from '~/components/List.vue';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
+const router = useRouter();
 const collectionStore = collection();
 const coaStore = coa();
 
@@ -37,5 +39,7 @@ const sortedItems = computed(() =>
 
 const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key}`;
 
-collectionStore.fetchAndTrackCollection({ redirectOnFailure: '/' });
+collectionStore.fetchAndTrackCollection().catch(() => {
+  router.replace('/');
+});
 </script>

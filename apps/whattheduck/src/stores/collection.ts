@@ -20,6 +20,7 @@ import { AuthorUser } from '~/persistence/models/dm/AuthorUser';
 import { Issue } from '~/persistence/models/dm/Issue';
 import { IssuePopularity } from '~/persistence/models/dm/IssuePopularity';
 import { Purchase } from '~/persistence/models/dm/Purchase';
+import { User } from '~/persistence/models/dm/User';
 import { Sync } from '~/persistence/models/internal/Sync';
 import { defaultApi } from '~/util/api';
 import type { CollectionUpdateMultipleIssues, CollectionUpdateSingleIssue } from '~dm_types/CollectionUpdate';
@@ -487,8 +488,8 @@ export const collection = defineStore('collection', () => {
     },
     fetchAndTrackCollection = async () => {
       const isObsoleteSync = await app().isObsoleteSync();
-      await loadCollection();
       try {
+        await loadUser();
         await loadCollection();
         // TODO retrieve user points
         // TODO retrieve user notification countries
@@ -508,6 +509,7 @@ export const collection = defineStore('collection', () => {
           await coa().fetchPublicationNames(['ALL']);
           await coa().fetchIssueCounts(true);
         }
+        await coa().fetchIssueNumbers(ownedPublications.value || []);
 
         // TODO register for notifications
       } catch (e) {
@@ -520,11 +522,7 @@ export const collection = defineStore('collection', () => {
             break;
           case 401:
             await app().dbInstance.getRepository(User).clear();
-            if (redirectOnFailure) {
-              router.replace({ path: redirectOnFailure });
-            } else {
-              // Alert input_error__invalid_credentials
-            }
+            throw new Error('Unauthorized');
           default: // Alert error
         }
       }

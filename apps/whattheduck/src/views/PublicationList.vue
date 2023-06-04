@@ -20,6 +20,7 @@ import { coa } from '~/stores/coa';
 import { app } from '~/stores/app';
 import { collection } from '~/stores/collection';
 import { useRoute } from 'vue-router';
+import router from '~/router';
 
 const collectionStore = collection();
 const coaStore = coa();
@@ -30,7 +31,11 @@ const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<strin
     .filter(([publicationcode]) => publicationcode.startsWith(`${route.params.countrycode}/`))
     .reduce((acc, [publicationcode, total]) => ({ ...acc, [publicationcode]: total }), {});
 
-const totalPerPublication = computed(() => getIssueCountPerMagazinecode(collectionStore.totalPerPublication));
+const totalPerPublication = computed(
+  () =>
+    (collectionStore.totalPerPublication && getIssueCountPerMagazinecode(collectionStore.totalPerPublication)) ||
+    undefined
+);
 const issueCounts = computed(() => getIssueCountPerMagazinecode(coaStore.issueCounts || {}));
 
 const route = useRoute();
@@ -57,7 +62,7 @@ const sortedItems = computed(() =>
   [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase()))
 );
 
-collectionStore.fetchAndTrackCollection({ redirectOnFailure: '/' });
-coaStore.fetchPublicationNamesFromCountry(route.params.countrycode as string);
-coaStore.fetchIssueCounts();
+collectionStore.fetchAndTrackCollection().catch(() => {
+  router.replace('/');
+});
 </script>

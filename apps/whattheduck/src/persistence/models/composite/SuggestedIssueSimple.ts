@@ -1,20 +1,20 @@
-import type { utilisateurs_publications_suggerees } from 'ducksmanager/api/dist/prisma/client_dm_stats';
+import type { suggestedIssueForUser } from 'ducksmanager/api/dist/prisma/client_dm_stats';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('suggestedIssue')
 export class SuggestedIssueSimple {
   @PrimaryColumn('text', { nullable: false })
-  publicationcode!: utilisateurs_publications_suggerees['publicationcode'];
+  publicationcode!: suggestedIssueForUser['publicationcode'];
 
   @PrimaryColumn('text', { nullable: false })
-  issuenumber!: utilisateurs_publications_suggerees['issuenumber'];
+  issuenumber!: suggestedIssueForUser['issuenumber'];
 
   @Column('integer', { nullable: false })
-  score!: utilisateurs_publications_suggerees['score'];
+  score!: suggestedIssueForUser['score'];
 
-  @Column('string', { nullable: true })
+  @Column('text', { nullable: true })
   oldestdate!: string;
 
-  @Column('string', { nullable: false })
+  @Column('text', { nullable: false })
   storiesList!: string;
 }

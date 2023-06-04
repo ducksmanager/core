@@ -39,7 +39,7 @@
     "cordova-plugin-camera-preview": "^0.12.3",
     "cordova-sqlite-ext": "^6.0.0",
     "cordova-sqlite-storage": "^6.1.0",
-    "ducksmanager": "^0.0.50",
+    "ducksmanager": "^0.0.51",
     "ionicons": "^7.0.0",
     "jeep-sqlite": "^2.3.4",
     "localforage-cordovasqlitedriver": "^1.8.0",

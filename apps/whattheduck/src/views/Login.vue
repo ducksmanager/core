@@ -110,10 +110,10 @@ const { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearE
 ]);
 
 const forgotPassword = () => {
-  router.replace({ path: '/forgot' });
+  router.replace('/forgot');
 };
 const signup = () => {
-  router.replace({ path: '/signup' });
+  router.replace('/signup');
 };
 
 const submitLogin = async () => {
@@ -137,7 +137,7 @@ watch(
   async () => {
     if (token.value) {
       await appStore.dbInstance.getRepository(User).save({ username: username.value, token: token.value });
-      router.replace({ path: '/collection' });
+      router.replace('/collection');
     }
   },
   { immediate: true }
@@ -193,10 +193,8 @@ watch(
   });
 
   try {
-    await collectionStore.loadUser();
     if (collectionStore.user) {
-      console.log(router);
-      await collectionStore.fetchAndTrackCollection().then(() => router.replace({ path: '/collection' }));
+      await collectionStore.fetchAndTrackCollection().then(() => router.replace('/collection'));
     } else {
       showForm.value = true;
     }

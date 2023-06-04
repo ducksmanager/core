@@ -69,11 +69,11 @@ if (path !== undefined) {
 const appFooterPages = [
   {
     title: t('report'),
-    url: '/Report',
+    url: '/report',
   },
   {
     title: t('logout'),
-    url: '/Logout',
+    url: '/logout',
   },
 ];
 

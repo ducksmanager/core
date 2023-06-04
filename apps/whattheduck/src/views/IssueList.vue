@@ -18,11 +18,12 @@ import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { computed } from 'vue';
 import { condition } from '~/stores/condition';
 import { coa } from '~/stores/coa';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { watch } from 'vue';
 import { app } from '~/stores/app';
 
 const route = useRoute();
+const router = useRouter();
 
 const collectionStore = collection();
 const coaStore = coa();
@@ -85,6 +86,7 @@ const sortedItems = computed(() => {
   }));
 });
 
-collectionStore.fetchAndTrackCollection({ redirectOnFailure: '/' });
-coaStore.fetchIssueNumbers([publicationcode.value]);
+collectionStore.fetchAndTrackCollection().catch(() => {
+  router.replace('/');
+});
 </script>

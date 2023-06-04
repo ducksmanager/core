@@ -9,6 +9,7 @@ import CountryList from '~/views/CountryList.vue';
 import Forgot from '~/views/Forgot.vue';
 import IssueList from '~/views/IssueList.vue';
 import Login from '~/views/Login.vue';
+import Logout from '~/views/Logout.vue';
 import PublicationList from '~/views/PublicationList.vue';
 import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
@@ -17,7 +18,7 @@ import Signup from '~/views/Signup.vue';
 const routes: RouteRecordRaw[] = [
   {
     path: '/collection/:countrycode/:magazinecode/:issuenumber',
-    component: () => OwnedIssueCopies,
+    component: OwnedIssueCopies,
     children: [
       {
         path: 'copy/:copyIndex',
@@ -56,6 +57,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/forgot',
     component: Forgot,
+  },
+  {
+    path: '/logout',
+    component: Logout,
   },
   {
     path: '/',

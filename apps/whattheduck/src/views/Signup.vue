@@ -130,7 +130,7 @@ const showPasswordConfirmation = ref(false);
 const token = ref(null as string | null);
 
 const cancelSignup = () => {
-  router.replace({ path: '/' });
+  router.replace('/');
 };
 
 const submitSignup = async () => {
@@ -158,7 +158,7 @@ watch(
   async () => {
     if (token.value) {
       await appStore.dbInstance.getRepository(User).save({ username: username.value, token: token.value });
-      router.replace({ path: '/collection' });
+      router.replace('/collection');
     }
   },
   { immediate: true }
