@@ -1,14 +1,8 @@
-import { Preferences } from '@capacitor/preferences';
 import type { AxiosError } from 'axios';
-import { AuthorsDetails } from 'ducksmanager/types/AuthorsDetails';
-import type { SuggestionList } from 'ducksmanager/types/SuggestionList';
-import { after } from 'node:test';
 import { defineStore } from 'pinia';
 import type { EntityTarget, ObjectLiteral } from 'typeorm';
-import { AfterUpdate } from 'typeorm';
 import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { app } from './app';
 import { bookcase } from './bookcase';
@@ -21,7 +15,6 @@ import { Issue } from '~/persistence/models/dm/Issue';
 import { IssuePopularity } from '~/persistence/models/dm/IssuePopularity';
 import { Purchase } from '~/persistence/models/dm/Purchase';
 import { User } from '~/persistence/models/dm/User';
-import { Sync } from '~/persistence/models/internal/Sync';
 import { defaultApi } from '~/util/api';
 import type { CollectionUpdateMultipleIssues, CollectionUpdateSingleIssue } from '~dm_types/CollectionUpdate';
 import {
@@ -29,16 +22,13 @@ import {
   GET__collection__authors__watched,
   GET__collection__edges__lastPublished,
   GET__collection__issues,
-  GET__collection__options__$optionName,
   GET__collection__popular,
   GET__collection__purchases,
   GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit,
-  GET__collection__subscriptions,
   GET__collection__user,
   POST__collection__issues__multiple,
   POST__collection__issues__single,
   POST__collection__lastvisit,
-  POST__collection__options__$optionName,
   PUT__collection__purchases,
 } from '~dm_types/routes';
 import type { issue, authorUser, purchase, subscription, user } from '~prisma_clients/client_dm';
@@ -53,11 +43,6 @@ export type IssueWithPublicationcodeOptionalId = Omit<IssueWithPublicationcode, 
 
 export type SubscriptionTransformed = Omit<subscription, 'country' | 'magazine'> & {
   publicationcode: string;
-};
-
-type SubscriptionTransformedStringDates = Omit<SubscriptionTransformed, 'startDate' | 'endDate'> & {
-  startDate: string;
-  endDate: string;
 };
 
 export type purchaseWithStringDate = Omit<purchase, 'date'> & {
