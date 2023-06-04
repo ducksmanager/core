@@ -12,6 +12,8 @@ const userPermissions = computed(() => collection().userPermissions);
 collection().loadUser();
 
 watchEffect(() => {
+  console.log("user.value=");
+  console.log(user.value);
   if (user.value !== null) {
     if (!route.meta.public) {
       if (
