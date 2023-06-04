@@ -69,6 +69,7 @@ export const post = [
     let hasRequestedPresentationSentenceUpdate = false;
     const input = req.body;
     let validators = [
+      validateDiscordId,
       validateEmail,
       validateEmailUpdate,
       validatePresentationText,
@@ -95,7 +96,7 @@ export const post = [
       }
       const updatedUser = await prisma.user.update({
         data: {
-          discordId: input.discordId || undefined,
+          discordId: input.discordId ? parseInt(input.discordId) : undefined,
           email: input.email,
           allowSharing: input.allowSharing,
           marketplaceAcceptsExchanges: input.okForExchanges,
@@ -333,6 +334,16 @@ const validatePresentationText = ({
       message:
         "Le texte de présentation doit comporter entre 1 et 100 caractères",
       selector: "#presentationText",
+    } as ScopedError;
+  }
+};
+
+const validateDiscordId = ({ discordId }: { [_: string]: unknown | null }) => {
+  if (discordId && !/^\d+$/.test(String(discordId))) {
+    throw {
+      message:
+        "L'identifiant Discord doit être un nombre. Cliquez sur \"Comment trouver mon identifiant de profil Discord ?\" pour plus d'informations.",
+      selector: "#discordId",
     } as ScopedError;
   }
 };

@@ -3,7 +3,7 @@ export type UserForAccountForm = {
   oldPassword?: string;
   password?: string;
   password2?: string;
-  discordId?: number;
+  discordId?: string;
   email: string;
   allowSharing: boolean;
   presentationText: string;
