@@ -13,7 +13,7 @@ collection().loadUser();
 
 watchEffect(() => {
   console.log("user.value=");
-  console.log(user.value);
+  console.log(JSON.stringify(user.value));
   if (user.value !== null) {
     if (!route.meta.public) {
       if (
