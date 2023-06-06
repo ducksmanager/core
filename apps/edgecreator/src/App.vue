@@ -14,9 +14,8 @@ collection().loadUser();
 watch(
   () => user.value,
   (newValue) => {
-    console.log(`newValue=${JSON.stringify(newValue)}`);
     if (newValue !== null) {
-      if (!route.meta.public) {
+      if (route.matched.length && !route.meta.public && userPermissions.value) {
         if (
           newValue &&
           !userPermissions.value?.some(
