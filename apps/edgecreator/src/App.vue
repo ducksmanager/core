@@ -11,30 +11,33 @@ const userPermissions = computed(() => collection().userPermissions);
 
 collection().loadUser();
 
-watchEffect(() => {
-  console.log("user.value=");
-  console.log(JSON.stringify(user.value));
-  if (user.value !== null) {
-    if (!route.meta.public) {
-      if (
-        user.value &&
-        !userPermissions.value?.some(
-          ({ privilege, role }) =>
-            role === "EdgeCreator" &&
-            ["Edition", "Admin"].includes(privilege as string)
-        )
-      ) {
-        location.replace("/");
+watch(
+  () => user.value,
+  (newValue) => {
+    console.log(`newValue=${JSON.stringify(newValue)}`);
+    if (newValue !== null) {
+      if (!route.meta.public) {
+        if (
+          newValue &&
+          !userPermissions.value?.some(
+            ({ privilege, role }) =>
+              role === "EdgeCreator" &&
+              ["Edition", "Admin"].includes(privilege as string)
+          )
+        ) {
+          location.replace("/");
+        }
       }
+    } else {
+      location.replace(
+        `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
+          window.location.href
+        }`
+      );
     }
-  } else {
-    location.replace(
-      `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
-        window.location.href
-      }`
-    );
-  }
-});
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss">
