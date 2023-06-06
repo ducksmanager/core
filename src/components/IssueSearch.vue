@@ -247,12 +247,12 @@ coa().fetchCountryNames();
 
     input {
       width: auto;
+      margin: -1px 0px -1px 0px;
     }
 
-    .dropdown.search-type {
+    :deep(.dropdown.search-type) {
       position: absolute;
       width: 120px;
-      margin: 4px 0;
 
       .dropdown-menu {
         position: absolute;

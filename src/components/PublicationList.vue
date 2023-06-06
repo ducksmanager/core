@@ -5,34 +5,29 @@
     class="navbar navbar-expand-lg navbar-dark bg-dark flex-row align-items-center position-sticky"
   >
     <button
+      v-b-toggle="'nav-publications'"
       class="navbar-toggler"
       type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#nav-publications"
     >
       <span class="navbar-toggler-icon" />
     </button>
     <a class="navbar-brand" href="#">
       {{ $t("Collection") }}
     </a>
-    <div id="nav-publications" class="collapse navbar-collapse">
-      <ul class="navbar-nav">
+    <b-collapse id="nav-publications" visible>
+      <b-navbar-nav>
         <li
           v-for="country in sortedCountries"
           :key="country"
           class="nav-item dropdown"
         >
-          <a
-            id="navbarDropdown"
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
-            <Country :country="country" :country-name="countryNames[country]" />
-          </a>
-          <ul class="dropdown-menu">
-            <li
+          <b-dropdown variant="outline-light">
+            <template #button-content
+              ><Country
+                :country="country"
+                :country-name="countryNames[country]"
+            /></template>
+            <b-dropdown-item
               v-for="publicationcode in getSortedPublications(country)"
               :key="publicationcode"
             >
@@ -44,17 +39,17 @@
                   publicationNames[publicationcode] ||
                   publicationcode.split("/")[1]
                 }}
-              </router-link>
-            </li>
-          </ul>
+              </router-link></b-dropdown-item
+            ></b-dropdown
+          >
         </li>
         <li class="nav-item">
           <router-link class="nav-link" :to="'/collection/show/new'">{{
             $t("Nouveau magazine")
           }}</router-link>
         </li>
-      </ul>
-    </div>
+      </b-navbar-nav>
+    </b-collapse>
     <div class="navbar-nav">
       <form class="d-flex">
         <IssueSearch :with-title="false" />
@@ -123,6 +118,9 @@ fetchCountryNames();
 </script>
 
 <style scoped lang="scss">
+:deep(button.dropdown-toggle) {
+  border: 0;
+}
 .navbar {
   padding: 0.5rem 1rem;
 

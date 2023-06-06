@@ -35,6 +35,7 @@ declare module '@vue/runtime-core' {
     BFormSelectOption: typeof import('bootstrap-vue-next')['BFormSelectOption']
     BFormTextarea: typeof import('bootstrap-vue-next')['BFormTextarea']
     BModal: typeof import('bootstrap-vue-next')['BModal']
+    BNavbarNav: typeof import('bootstrap-vue-next')['BNavbarNav']
     BNavItem: typeof import('bootstrap-vue-next')['BNavItem']
     Book: typeof import('./src/components/Book.vue')['default']
     Bookcase: typeof import('./src/components/Bookcase.vue')['default']
@@ -128,5 +129,8 @@ declare module '@vue/runtime-core' {
     UserPopover: typeof import('./src/components/UserPopover.vue')['default']
     ViewBookcase: typeof import('./src/components/ViewBookcase.vue')['default']
     Watch: typeof import('./src/components/Watch.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vBToggle: typeof import('bootstrap-vue-next')['vBToggle']
   }
 }
