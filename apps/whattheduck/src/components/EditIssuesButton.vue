@@ -16,7 +16,7 @@
         <ion-label>{{ t('from_recent_issue') }}</ion-label>
         <ion-fab-button size="small"> <ion-icon :ios="calendarOutline" :md="calendarSharp"></ion-icon></ion-fab-button>
       </ion-row>
-      <ion-row class="ion-align-items-center">
+      <ion-row class="ion-align-items-center" @click="router.replace({ path: route.path, query: { coa: 'true' } })">
         <ion-label>{{ t('by_issue_selection') }}</ion-label>
         <ion-fab-button size="small"> <ion-icon :ios="listOutline" :md="listSharp"></ion-icon></ion-fab-button>
       </ion-row>
@@ -44,8 +44,11 @@ import {
   calendarSharp,
 } from 'ionicons/icons';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 
 const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
 </script>
 
 <style>

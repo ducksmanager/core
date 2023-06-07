@@ -46,11 +46,11 @@ import { computed, ref, watch } from 'vue';
 import { collection } from '~/stores/collection';
 import { app } from '~/stores/app';
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
+import { RouteLocation, RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
 
 const props = defineProps<{
   items: { key: string; text: string; ownsNext?: boolean }[];
-  getTargetUrlFn: (routePath: string, key: string) => string;
+  getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
   statNumerators?: Record<string, number>;
   statDenominators?: Record<string, number>;
 }>();
@@ -65,13 +65,8 @@ const appStore = app();
 const filterText = ref('' as string);
 const hasCoaData = ref(false);
 
-const isCoaList = computed(() => route.params.type === 'coa');
-
 const onRowClick = (key: string) => {
-  if (isCoaList.value) {
-  } else {
-    router.replace(props.getTargetUrlFn(route.path, key));
-  }
+  router.replace({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
 };
 
 const hasList = computed((): boolean => {

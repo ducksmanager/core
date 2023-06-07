@@ -4,7 +4,7 @@
     :items="sortedItems"
     :stat-numerators="totalPerPublication"
     :stat-denominators="issueCounts"
-    :get-target-url-fn="getTargetUrlFn"
+    :get-target-route-fn="getTargetUrlFn"
   >
     <template #row-label="{ text }">
       <Publication :value="text" />
@@ -19,7 +19,7 @@ import List from '~/components/List.vue';
 import { coa } from '~/stores/coa';
 import { app } from '~/stores/app';
 import { collection } from '~/stores/collection';
-import { useRoute } from 'vue-router';
+import { RouteLocation, RouteLocationNamedRaw, useRoute } from 'vue-router';
 import router from '~/router';
 
 const collectionStore = collection();
@@ -48,14 +48,24 @@ watch(
   { immediate: true }
 );
 
-const getTargetUrlFn = (routePath: string, key: string) => `${routePath}/${key.split('/')[1]}`;
+const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'params'> => ({
+  name: 'IssueList',
+  params: { type: route.params.type, countrycode: key.split('/')[0], magazinecode: key.split('/')[1] },
+});
+
 const items = computed((): { key: string; text: string }[] =>
-  collectionStore.ownedPublications
-    .filter((publication) => publication.indexOf(`${route.params.countrycode}/`) === 0)
-    .map((publicationCode) => ({
-      key: publicationCode,
-      text: coaStore.publicationNames?.[publicationCode] || publicationCode,
-    }))
+  coaStore.publicationNames
+    ? appStore.isCoaView
+      ? Object.entries(coaStore.publicationNames)
+          .filter(([publicationcode]) => new RegExp(`^${route.params.countrycode}/`).test(publicationcode))
+          .map(([key, text]) => ({ key, text }))
+      : collectionStore.ownedPublications
+          .filter((publication) => publication.indexOf(`${route.params.countrycode}/`) === 0)
+          .map((publicationCode) => ({
+            key: publicationCode,
+            text: coaStore.publicationNames?.[publicationCode] || publicationCode,
+          }))
+    : []
 );
 
 const sortedItems = computed(() =>

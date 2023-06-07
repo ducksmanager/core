@@ -27,10 +27,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    name: 'IssueList',
     path: '/:type(collection|coa)/:countrycode/:magazinecode',
     component: IssueList,
   },
   {
+    name: 'PublicationList',
     path: '/:type(collection|coa)/:countrycode',
     component: PublicationList,
   },
