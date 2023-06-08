@@ -5,7 +5,8 @@
     :stat-denominators="issueCountsPerCountry"
     :get-target-route-fn="getTargetUrlFn"
   >
-    <template #row-label="{ text }">
+    <template #row-label="{ key, text }">
+      <img :src="`/icons/flags_${key}.png`" :alt="key" />
       <Country :value="text" />
     </template>
   </List>
@@ -13,7 +14,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { RouteLocation, RouteLocationNamedRaw, RouteLocationRaw, useRoute, useRouter } from 'vue-router';
+import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
 import Country from '~/components/Country.vue';
 import List from '~/components/List.vue';
 import { app } from '~/stores/app';
@@ -56,3 +57,9 @@ collectionStore.fetchAndTrackCollection().catch(() => {
   router.replace('/');
 });
 </script>
+<style lang="scss">
+img {
+  width: 18px;
+  margin-right: calc(var(--padding-start) + var(--ion-safe-area-left, 0px));
+}
+</style>

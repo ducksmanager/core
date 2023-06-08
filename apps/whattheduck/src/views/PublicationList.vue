@@ -19,7 +19,7 @@ import List from '~/components/List.vue';
 import { coa } from '~/stores/coa';
 import { app } from '~/stores/app';
 import { collection } from '~/stores/collection';
-import { RouteLocation, RouteLocationNamedRaw, useRoute } from 'vue-router';
+import { RouteLocationNamedRaw, useRoute } from 'vue-router';
 import router from '~/router';
 
 const collectionStore = collection();

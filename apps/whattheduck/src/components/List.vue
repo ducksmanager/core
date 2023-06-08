@@ -24,7 +24,7 @@
               <slot name="row-prefix" v-bind="{ item }"></slot>
             </template>
             <template #label>
-              <slot name="row-label" v-bind="{ text }"></slot>
+              <slot name="row-label" v-bind="{ key, text }"></slot>
             </template>
             ></Row
           >
@@ -46,7 +46,7 @@ import { computed, ref, watch } from 'vue';
 import { collection } from '~/stores/collection';
 import { app } from '~/stores/app';
 import { useI18n } from 'vue-i18n';
-import { RouteLocation, RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
+import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
 
 const props = defineProps<{
   items: { key: string; text: string; ownsNext?: boolean }[];
