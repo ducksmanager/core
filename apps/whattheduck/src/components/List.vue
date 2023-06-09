@@ -66,7 +66,7 @@ const filterText = ref('' as string);
 const hasCoaData = ref(false);
 
 const onRowClick = (key: string) => {
-  router.replace({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
+  router.push({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
 };
 
 const hasList = computed((): boolean => {
@@ -161,7 +161,7 @@ watch(
   () => appStore.currentNavigationItem,
   async (newValue) => {
     if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
-      router.replace('/edit-issues');
+      router.push('/edit-issues');
     }
   }
 );

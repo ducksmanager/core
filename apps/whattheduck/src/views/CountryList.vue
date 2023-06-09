@@ -54,7 +54,7 @@ const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'para
 });
 
 collectionStore.fetchAndTrackCollection().catch(() => {
-  router.replace('/');
+  router.push('/');
 });
 </script>
 <style lang="scss">

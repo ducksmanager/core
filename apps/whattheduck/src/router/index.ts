@@ -17,6 +17,7 @@ import Signup from '~/views/Signup.vue';
 
 const routes: RouteRecordRaw[] = [
   {
+    name: 'OwnedIssueCopies',
     path: '/collection/:countrycode/:magazinecode/:issuenumber',
     component: OwnedIssueCopies,
     children: [

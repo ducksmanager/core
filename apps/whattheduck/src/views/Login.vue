@@ -110,10 +110,10 @@ const { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearE
 ]);
 
 const forgotPassword = () => {
-  router.replace('/forgot');
+  router.push('/forgot');
 };
 const signup = () => {
-  router.replace('/signup');
+  router.push('/signup');
 };
 
 const submitLogin = async () => {
@@ -137,7 +137,7 @@ watch(
   async () => {
     if (token.value) {
       await appStore.dbInstance.getRepository(User).save({ username: username.value, token: token.value });
-      router.replace('/collection');
+      router.push('/collection');
     }
   },
   { immediate: true }
@@ -194,7 +194,7 @@ watch(
 
   try {
     if (collectionStore.user) {
-      await collectionStore.fetchAndTrackCollection().then(() => router.replace('/collection'));
+      await collectionStore.fetchAndTrackCollection().then(() => router.push('/collection'));
     } else {
       showForm.value = true;
     }

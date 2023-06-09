@@ -17,8 +17,8 @@
     "eslint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@capacitor-community/camera-preview": "^4.0.0",
-    "@capacitor-community/sqlite": "5.0.1",
+    "@capacitor-community/camera-preview": "^5.0.0",
+    "@capacitor-community/sqlite": "^5.0.1",
     "@capacitor/android": "^5.0.0",
     "@capacitor/app": "^5.0.0",
     "@capacitor/camera": "^5.0.2",

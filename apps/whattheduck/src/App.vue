@@ -8,5 +8,19 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute } from 'vue-router';
 import NavigationDrawer from '~/components/NavigationDrawer.vue';
+import { app } from './stores/app';
+import { watch } from 'vue';
+
+const appStore = app();
+const route = useRoute();
+
+watch(
+  () => route.query?.coa,
+  (newValue) => {
+    appStore.isCoaView = newValue === 'true';
+  },
+  { immediate: true }
+);
 </script>

@@ -1,8 +1,8 @@
 <template>
-  <ion-item button :class="{ 'is-next-owned': isNextOwned }">
+  <ion-item button :class="{ 'is-next-owned': isNextOwned, 'is-owned': fillPercentage }">
     <ion-progress-bar v-if="fillPercentage" :value="fillPercentage"></ion-progress-bar>
     <slot name="checkbox" />
-    <ion-label
+    <ion-label class="text"
       ><slot name="prefix" />
       <slot name="label" />
     </ion-label>
@@ -24,6 +24,20 @@ const fillPercentage = computed(() =>
 
 <style lang="scss" scoped>
 ion-item {
+  --padding-start: 0;
+  ion-label {
+    &:first-of-type {
+      padding-left: 1rem;
+    }
+    &:last-of-type {
+      padding-right: 1rem;
+    }
+    &.is-owned {
+      &:first-of-type {
+        font-weight: bold;
+      }
+    }
+  }
   &.is-next-owned {
     &:deep(.dm-condition-background)::after,
     + ion-item:deep(.dm-condition-background)::before {

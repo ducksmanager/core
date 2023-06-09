@@ -73,6 +73,6 @@ const sortedItems = computed(() =>
 );
 
 collectionStore.fetchAndTrackCollection().catch(() => {
-  router.replace('/');
+  router.push('/');
 });
 </script>

@@ -18,7 +18,7 @@ import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { computed } from 'vue';
 import { condition } from '~/stores/condition';
 import { coa } from '~/stores/coa';
-import { useRoute, useRouter } from 'vue-router';
+import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
 import { watch } from 'vue';
 import { app } from '~/stores/app';
 
@@ -40,8 +40,11 @@ const conditionL10n = computed(() => conditionStore.conditionL10n);
 
 const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);
 
-const getTargetUrlFn = (routePath: string, key: string) =>
-  `/collection/${key.replace(routePath, '').replace(' ', '/')}`;
+const ISSUECODE_REGEX = /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/;
+const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'params'> => ({
+  name: 'OwnedIssueCopies',
+  params: { type: route.params.type, ...key.match(ISSUECODE_REGEX)!.groups },
+});
 
 const getConditionKey = (item: IssueWithPublicationcode) =>
   conditionL10n.value.find(({ fr }) => fr === item.condition)?.en || 'none';
@@ -56,37 +59,42 @@ watch(
   { immediate: true }
 );
 
-const items = computed(() =>
-  (collectionStore.collection || [])
-    .filter((issue) => issue.publicationcode === publicationcode.value)
-    .map(({ issuenumber, ...issue }) => ({
-      key: `${issue.publicationcode} ${issuenumber}`,
-      text: issuenumber,
-      ...issue,
-    }))
+const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
+const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
+const userIssues = computed(() =>
+  (collectionStore.collection || []).filter((issue) => issue.publicationcode === publicationcode.value)
 );
 
-const sortedItems = computed(() => {
-  const keys = items.value.map(({ key }) => key);
-  const publicationItems = coaStore.issueNumbers[publicationcode.value || ''];
-  const filteredItems: { issuenumber: string; ownsNext: boolean }[] = [];
-  publicationItems.forEach((issuenumber, idx) => {
-    if (keys.includes(`${publicationcode.value} ${issuenumber}`)) {
-      filteredItems.push({
-        issuenumber,
-        ownsNext: keys.includes(`${publicationcode.value} ${publicationItems[idx + 1]}`),
-      });
-    }
-  });
-  return filteredItems.map(({ issuenumber, ownsNext }) => ({
-    key: `${publicationcode.value} ${issuenumber}`,
-    text: issuenumber,
-    ownsNext,
-    ...items.value.find(({ key }) => key === `${publicationcode.value} ${issuenumber}`),
-  }));
-});
+const items = computed((): { key: string; text: string }[] =>
+  coaIssues.value
+    ? appStore.isCoaView
+      ? coaIssues.value.map(({ issuenumber }) => ({
+          key: `${publicationcode.value} ${issuenumber}`,
+          text: issuenumber,
+          ...(userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber) || {}),
+        }))
+      : (collectionStore.collection || [])
+          .filter((issue) => issue.publicationcode === publicationcode.value)
+          .map(({ issuenumber, ...issue }) => ({
+            key: `${publicationcode.value} ${issuenumber}`,
+            text: issuenumber,
+            ...issue,
+          }))
+    : []
+);
 
-collectionStore.fetchAndTrackCollection().catch(() => {
-  router.replace('/');
-});
+const sortedItems = computed(() =>
+  [...items.value].sort(({ text: text1 }, { text: text2 }) =>
+    Math.sign(coaIssuenumbers.value!.indexOf(text1) - coaIssuenumbers.value!.indexOf(text2))
+  )
+);
+
+collectionStore
+  .fetchAndTrackCollection()
+  .then(() => {
+    coaStore.fetchIssueNumbersWithTitles(publicationcode.value);
+  })
+  .catch(() => {
+    router.push('/');
+  });
 </script>
