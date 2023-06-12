@@ -60,6 +60,6 @@ collectionStore.fetchAndTrackCollection().catch(() => {
 <style lang="scss">
 img {
   width: 18px;
-  margin-right: calc(var(--padding-start) + var(--ion-safe-area-left, 0px));
+  margin-right: 1rem;
 }
 </style>

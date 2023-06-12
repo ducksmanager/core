@@ -11,7 +11,10 @@
       <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter"></ion-searchbar>
     </ion-header>
 
-    <ion-content :fullscreen="true">
+    <div id="scroll-text" :style="{ top: scrollPosition + '%' }">
+      {{ scrollPosition + '%' }}
+    </div>
+    <ion-content :fullscreen="true" ref="content">
       <div id="container">
         <div v-if="hasList">
           <Row
@@ -47,6 +50,7 @@ import { collection } from '~/stores/collection';
 import { app } from '~/stores/app';
 import { useI18n } from 'vue-i18n';
 import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
+import { IonContent } from '@ionic/vue';
 
 const props = defineProps<{
   items: { key: string; text: string; ownsNext?: boolean }[];
@@ -54,6 +58,24 @@ const props = defineProps<{
   statNumerators?: Record<string, number>;
   statDenominators?: Record<string, number>;
 }>();
+
+const content = ref<InstanceType<typeof IonContent> | null>(null);
+const scrollTop = ref<number>(0);
+const scrollPosition = ref<number>(0);
+
+watch(
+  () => content.value,
+  async (newValue) => {
+    if (newValue) {
+      const scrollElement = await newValue?.$el.getScrollElement()!;
+      setInterval(() => {
+        scrollTop.value = scrollElement.scrollTop;
+        scrollPosition.value = (100 * scrollTop.value) / (scrollElement.scrollHeight - scrollElement.clientHeight);
+      }, 100);
+    }
+  },
+  { immediate: true }
+);
 
 const { t } = useI18n();
 const router = useRouter();
@@ -186,5 +208,14 @@ watch(
 
 ion-searchbar {
   padding: 0;
+}
+
+#scroll-text {
+  position: absolute;
+  right: 20px;
+  padding: 1rem;
+  color: black;
+  background: white;
+  z-index: 1000;
 }
 </style>

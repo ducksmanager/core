@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@capacitor-community/camera-preview": "^5.0.0",
-    "@capacitor-community/sqlite": "^5.0.1",
+    "@capacitor-community/sqlite": "5.0.2",
     "@capacitor/android": "^5.0.0",
     "@capacitor/app": "^5.0.0",
     "@capacitor/camera": "^5.0.2",
@@ -38,7 +38,6 @@
     "axios-cache-interceptor": "^1.0.1",
     "cordova-plugin-camera-preview": "^0.12.3",
     "cordova-sqlite-ext": "^6.0.0",
-    "cordova-sqlite-storage": "^6.1.0",
     "ducksmanager": "^0.0.51",
     "ionicons": "^7.0.0",
     "jeep-sqlite": "^2.3.4",
