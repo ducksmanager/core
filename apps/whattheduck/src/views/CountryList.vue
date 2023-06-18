@@ -15,8 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
-import Country from '~/components/Country.vue';
-import List from '~/components/List.vue';
+
 import { app } from '~/stores/app';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';

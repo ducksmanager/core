@@ -11,9 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import Issue from '~/components/Issue.vue';
-import Condition from '~/components/Condition.vue';
-import List from '~/components/List.vue';
 import { IssueWithPublicationcode, collection } from '~/stores/collection';
 import { computed } from 'vue';
 import { condition } from '~/stores/condition';

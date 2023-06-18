@@ -41,9 +41,6 @@
 
 <script setup lang="ts">
 import { coa } from '~/stores/coa';
-import Navigation from '~/components/Navigation.vue';
-import Row from '~/components/Row.vue';
-import EditIssuesButton from '~/components/EditIssuesButton.vue';
 
 import { computed, ref, watch } from 'vue';
 import { collection } from '~/stores/collection';

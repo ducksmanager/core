@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import NavigationDrawer from '~/components/NavigationDrawer.vue';
+
 import { app } from './stores/app';
 import { watch } from 'vue';
 

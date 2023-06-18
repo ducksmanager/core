@@ -14,8 +14,7 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue';
-import Publication from '~/components/Publication.vue';
-import List from '~/components/List.vue';
+
 import { coa } from '~/stores/coa';
 import { app } from '~/stores/app';
 import { collection } from '~/stores/collection';
