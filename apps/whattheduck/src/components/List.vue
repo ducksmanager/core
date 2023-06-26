@@ -11,10 +11,7 @@
       <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter"></ion-searchbar>
     </ion-header>
 
-    <div id="scroll-text" :style="{ top: scrollPosition + '%' }">
-      {{ scrollPosition + '%' }}
-    </div>
-    <ion-content :fullscreen="true" ref="content">
+    <ion-content ref="content">
       <div id="container">
         <div v-if="hasList">
           <Row
@@ -35,6 +32,10 @@
         <div v-else>{{ t('loading_collection') }}</div>
       </div>
       <EditIssuesButton />
+
+      <div id="scroll-text" :style="{ top: scrollPosition + '%' }" v-show="scrollPosition" slot="fixed">
+        {{ itemInCenterOfViewport?.text }}
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -83,6 +84,14 @@ const coaStore = coa();
 const appStore = app();
 const filterText = ref('' as string);
 const hasCoaData = ref(false);
+
+const itemInCenterOfViewport = computed(() => {
+  if (!props.items.length || !scrollPosition.value) {
+    return undefined;
+  }
+  const itemIndex = Math.floor((scrollPosition.value * props.items.length) / 100);
+  return props.items[itemIndex];
+});
 
 const onRowClick = (key: string) => {
   router.push({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });

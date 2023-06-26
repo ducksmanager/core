@@ -58,6 +58,7 @@ const onChange = (event: any) => {
 
 <style lang="scss" scoped>
 ion-segment {
+  display: flex;
   justify-content: start;
   height: 48px;
   background-color: var(--ion-background-color);

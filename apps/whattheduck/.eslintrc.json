@@ -1,5 +1,11 @@
 {
-  "extends": ["plugin:import/typescript", "eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "extends": [
+    "plugin:import/typescript",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:vue/vue3-recommended"
+  ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["import", "@typescript-eslint"],
   "rules": {

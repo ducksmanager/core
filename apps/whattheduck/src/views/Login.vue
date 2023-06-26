@@ -193,11 +193,12 @@ watch(
   });
 
   try {
-    if (collectionStore.user) {
-      await collectionStore.fetchAndTrackCollection().then(() => router.push('/collection'));
-    } else {
-      showForm.value = true;
-    }
+    await collectionStore
+      .fetchAndTrackCollection()
+      .catch(() => {
+        showForm.value = true;
+      })
+      .then(() => router.push('/collection'));
   } catch (e) {
     showForm.value = true;
   }

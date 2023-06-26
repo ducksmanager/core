@@ -466,6 +466,7 @@ export const collection = defineStore('collection', () => {
         } catch (e) {
           console.error(e);
           user.value = null;
+          throw e;
         } finally {
           isLoadingUser.value = false;
         }
