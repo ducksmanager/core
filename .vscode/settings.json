@@ -1,20 +1,21 @@
 {
-    "editor.codeActionsOnSave": {
+  "editor.codeActionsOnSave": {
     "source.fixAll": true
-    },
-    "sqltools.connections": [
-        {
-            "mysqlOptions": {
-                "authProtocol": "default"
-            },
-            "previewLimit": 50,
-            "server": "127.0.0.1",
-            "port": 64999,
-            "driver": "MariaDB",
-            "name": "local",
-            "database": "dm",
-            "username": "root",
-            "password": "changeme"
-        }
-    ]
+  },
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "127.0.0.1",
+      "port": 64999,
+      "driver": "MariaDB",
+      "name": "local",
+      "database": "dm",
+      "username": "root",
+      "password": "changeme"
+    }
+  ],
+  "i18n-ally.localesPaths": ["translations"]
 }
