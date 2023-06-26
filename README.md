@@ -12,4 +12,43 @@ Related projects :
 * [COA updater](https://github.com/bperel/coa-updater) is a shell script launched by a daily cronjob, allowing to retrieve the structure and the contents of the Inducks database and to create a copy of this database locally.
 * [DucksManager-stats](https://github.com/bperel/DucksManager-stats) contains a list of scripts launched by a daily cronjob, allowing to calculate statistics about issues that are recommended to users on DucksManager, depending on the authors that they prefer.
 
-![DucksManager architecture](https://raw.githubusercontent.com/bperel/DucksManager-next/master/server_architecture.png)
+```mermaid
+graph TB
+    subgraph Inducks
+        ISV_files("ISV files")
+    end
+    subgraph DB
+        db_dm("DM DB")
+        db_coa("COA DB")
+        db_dm_stats("DM stats DB")
+        db_cover_id("Cover info DB")
+        db_edgecreator("EdgeCreator DB")
+    end
+    subgraph API
+        /notifications/send
+        /ducksmanager/emails/pending
+    end
+    ducksmanager.net-->API
+    subgraph "dm-server (outdated, TODO move jobs to DM)"
+        certificate-renewer
+        db-backuper
+        subgraph dm-server
+            coa-updater-->ISV_files
+            coa-updater-->db_coa
+            stats-updater-->db_coa
+            stats-updater-->db_dm
+            stats-updater-->db_dm_stats
+            cover-updater-->db_coa
+            cover-updater-->db_cover_id
+            cover-updater-->Inducks-covers
+            sprite-names-updater-->db_dm
+            duck-estimator-->db_coa
+            subscription-handler-->db_dm
+        end
+        notification-sender-->db_dm
+        notification-sender-->/notifications/send
+        pending-emails-sender-->db_dm
+        pending-emails-sender-->/ducksmanager/emails/pending
+        popularity-updater-->db_dm
+    end
+```
