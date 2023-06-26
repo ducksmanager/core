@@ -1,10 +1,9 @@
 import FeedbackSent from "~emails/feedback-sent";
+import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 import bodyParser from "body-parser";
-
-import { PrismaClient } from "~/dist/prisma/client_dm";
 
 export const post = [
   parseForm,
