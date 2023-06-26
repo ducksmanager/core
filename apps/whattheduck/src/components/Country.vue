@@ -1,11 +1,11 @@
 <template>
-  {{ value }}
+  <img :src="`/icons/flags_${countrycode}.png`" :alt="countrycode" />
+  {{ countryname }}
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  value: string;
+  countrycode: string;
+  countryname: string;
 }>();
 </script>
-
-<style scoped></style>

@@ -27,7 +27,14 @@
         </ion-list>
         <div v-if="selectedStory">
           {{ selectedStory.title }} {{ t('story_was_published_in') }}
-          <div v-for="issue of selectedStory.issues">{{ issue.publicationcode }} {{ issue.issuenumber }}</div>
+          <div v-for="issue of selectedStory.issues">
+            <Country :countrycode="issue.countrycode" :countryname="text" /><condition
+              v-if="issue.collectionIssue"
+              :value="getConditionKey(issue.collectionIssue.condition)"
+            ></condition>
+            {{ issue.publicationName }}
+            {{ issue.issuenumber }}
+          </div>
         </div>
       </div>
     </ion-content>
@@ -43,6 +50,8 @@ import { ref, watch } from 'vue';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 import { useI18n } from 'vue-i18n';
+import useCondition from '~/composables/useCondition';
+import { Issue } from '~/persistence/models/dm/Issue';
 
 const { t } = useI18n();
 
@@ -52,7 +61,18 @@ const coaStore = coa();
 const storyTitle = ref('' as string);
 const storyResults = ref(null as { results: any[] } | null);
 
-const selectedStory = ref(null as SimpleStory | null);
+const { getConditionKey } = useCondition();
+
+const selectedStory = ref(
+  null as
+    | (SimpleStory & {
+        issues: (SimpleStory['issues'][0] & {
+          publicationName: string;
+          collectionIssue: Issue | null;
+        })[];
+      })
+    | null
+);
 
 watch(
   () => storyTitle.value,
@@ -68,17 +88,32 @@ watch(
           reqBody: { keywords: newValue },
         })
       )
-    ).data;
+    ).data.results;
+
+    const publicationcodes = [
+      ...new Set(
+        data.reduce(
+          (acc, story) => [...acc, ...story.issues.map(({ publicationcode }) => publicationcode)],
+          [] as string[]
+        )
+      ),
+    ];
+    await coaStore.fetchPublicationNames(publicationcodes);
+
     storyResults.value = {
-      results: data.results.map((story) => ({
+      results: data.map((story) => ({
         ...story,
-        collectionIssue:
-          collectionStore.collection!.find(
-            ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
-              story
-                .issues!.map(({ publicationcode, issuenumber }) => `${publicationcode}-${issuenumber}`)
-                .includes(`${collectionPublicationCode}-${collectionIssueNumber}`)
-          ) || null,
+        issues: story.issues.map(({ countrycode, publicationcode, issuenumber }) => ({
+          publicationcode,
+          countrycode: publicationcode.split('/')[0],
+          publicationName: coaStore.publicationNames[publicationcode] || publicationcode,
+          issuenumber,
+          collectionIssue:
+            collectionStore.collection!.find(
+              ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
+                collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber
+            ) || null,
+        })),
       })),
     };
   }

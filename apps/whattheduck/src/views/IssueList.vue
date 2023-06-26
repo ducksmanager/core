@@ -18,6 +18,7 @@ import { coa } from '~/stores/coa';
 import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
 import { watch } from 'vue';
 import { app } from '~/stores/app';
+import useCondition from '~/composables/useCondition';
 
 const route = useRoute();
 const router = useRouter();
@@ -26,6 +27,8 @@ const collectionStore = collection();
 const coaStore = coa();
 const conditionStore = condition();
 const appStore = app();
+
+const { getConditionKey } = useCondition();
 
 defineSlots<{
   rowPrefix: { item: IssueWithPublicationcode };
@@ -42,9 +45,6 @@ const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'para
   name: 'OwnedIssueCopies',
   params: { type: route.params.type, ...key.match(ISSUECODE_REGEX)!.groups },
 });
-
-const getConditionKey = (item: IssueWithPublicationcode) =>
-  conditionL10n.value.find(({ fr }) => fr === item.condition)?.en || 'none';
 
 const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
 

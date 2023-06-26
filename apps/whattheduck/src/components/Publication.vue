@@ -7,5 +7,3 @@ defineProps<{
   value: string;
 }>();
 </script>
-
-<style scoped></style>

@@ -6,8 +6,7 @@
     :get-target-route-fn="getTargetUrlFn"
   >
     <template #row-label="{ key, text }">
-      <img :src="`/icons/flags_${key}.png`" :alt="key" />
-      <Country :value="text" />
+      <Country :countrycode="key" :countryname="text" />
     </template>
   </List>
 </template>
