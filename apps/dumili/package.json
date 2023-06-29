@@ -9,10 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.2.47"
+    "@cloudinary/url-gen": "^1.10.1",
+    "@cloudinary/vue": "^1.11.2",
+    "bootstrap": "^5.3.0",
+    "bootstrap-vue-next": "^0.9.15",
+    "vue": "^3.3.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
+    "eslint": "^8.43.0",
+    "eslint-plugin-vue": "^9.15.1",
+    "prettier": "^2.8.8",
+    "sass": "^1.63.6",
     "typescript": "^5.0.2",
     "unplugin-auto-import": "^0.16.4",
     "unplugin-vue-components": "^0.25.1",

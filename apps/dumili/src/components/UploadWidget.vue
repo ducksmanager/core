@@ -1,34 +1,41 @@
 <template>
-  <div class="uw">
-    <h3>Upload Widget Example</h3>
-    <button v-on:click="open" id="upload_widget" class="cloudinary-button">
-      Upload files
-    </button>
-  </div>
+  <div class="uw"></div>
 </template>
 
 <script setup lang="ts">
-const cloudName = "dl7hskxab"; // replace with your own cloud name
+const cloudName = "dl7hskxab";
 
 defineProps<{}>();
+const emit = defineEmits<{
+  (e: "done", info: any): void;
+  (e: "abort"): void;
+}>();
 
-const myWidget = cloudinary.createUploadWidget(
+const uploadWidget = cloudinary.createUploadWidget(
   {
-    cloudName: cloudName,
+    cloudName,
     uploadPreset: "p1urov1k",
     folder: "dumili",
-    cropping: true, //add a cropping step
-    sources: ["local", "url"], // restrict the upload sources to URL and local files
-    maxImageFileSize: 5000000, //restrict file size to less than 2MB
+    cropping: true,
+    sources: ["local", "url"],
+    maxImageFileSize: 5000000,
   },
   (error, result) => {
-    if (!error && result && result.event === "success") {
-      console.log("Done! Here is the image info: ", result.info);
+    if (error) {
+      console.error(error);
+    } else {
+      switch (result?.event) {
+        case "success":
+          console.log("Done! Here is the image info: ", result.info);
+          emit("done", result.info);
+          break;
+        case "abort":
+          emit("abort");
+          break;
+      }
     }
   }
 );
 
-const open = () => {
-  myWidget.open();
-};
+uploadWidget.open();
 </script>
