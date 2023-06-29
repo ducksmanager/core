@@ -7,6 +7,13 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BButton: typeof import('bootstrap-vue-next')['BButton']
+    BCol: typeof import('bootstrap-vue-next')['BCol']
+    BContainer: typeof import('bootstrap-vue-next')['BContainer']
+    BImg: typeof import('bootstrap-vue-next')['BImg']
+    BRow: typeof import('bootstrap-vue-next')['BRow']
+    BTab: typeof import('bootstrap-vue-next')['BTab']
+    BTabs: typeof import('bootstrap-vue-next')['BTabs']
     UploadWidget: typeof import('./src/components/UploadWidget.vue')['default']
   }
 }
