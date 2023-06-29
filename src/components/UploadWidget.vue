@@ -3,8 +3,6 @@
 </template>
 
 <script setup lang="ts">
-const cloudName = "dl7hskxab";
-
 defineProps<{}>();
 const emit = defineEmits<{
   (e: "done", info: any): void;
@@ -13,7 +11,7 @@ const emit = defineEmits<{
 
 const uploadWidget = cloudinary.createUploadWidget(
   {
-    cloudName,
+    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
     uploadPreset: "p1urov1k",
     folder: "dumili",
     cropping: true,

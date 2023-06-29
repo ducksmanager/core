@@ -20,6 +20,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
+  "paths": {
+    "~/*": ["./src/*"],
+    "~types/*": ["./types/*"],
+    "~dm_types/*": ["./node_modules/ducksmanager/types/*"],
+    "~prisma_clients/*": ["./node_modules/ducksmanager/api/dist/prisma/*"]
+  },
   "include": [
     "components.d.ts",
     "src/**/*.ts",

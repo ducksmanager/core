@@ -1,0 +1,425 @@
+<template>
+  <div class="fixed-container" @click.self="closeBook()">
+    <img
+      :src="edgeUrl"
+      @load="
+        ({ target }) => {
+          edgeWidth = (target as HTMLImageElement).naturalWidth;
+          coverHeight = (target as HTMLImageElement).naturalHeight;
+        }
+      "
+    />
+    <img
+      v-if="pages?.length"
+      :src="cloudinaryBaseUrl + pages[0].url"
+      @load="
+        ({ target }) => {
+          coverRatio = (target as HTMLImageElement).naturalHeight / (target as HTMLImageElement).naturalWidth;
+        }
+      "
+    />
+
+    <div class="container" @click.self="closeBook()">
+      <div id="book" class="flip-book" @click.self="closeBook()">
+        <b-card
+          v-if="showTableOfContents"
+          no-body
+          class="table-of-contents d-none d-md-block"
+        >
+          <template #header>
+            <Issue
+              :publicationcode="publicationcode"
+              :publicationname="
+                publicationNames[publicationcode] || publicationcode
+              "
+              :issuenumber="issuenumber"
+            />
+            <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
+            <h3>{{ "Table des matières" }}</h3>
+          </template>
+          <b-tabs v-if="pages" v-model="currentTabIndex" pills card vertical>
+            <b-tab
+              v-for="{
+                storycode,
+                kind,
+                entirepages,
+                url,
+                title,
+                position,
+                part,
+              } in pages"
+              :key="`slide-${position}`"
+              :disabled="!url"
+            >
+              <template #title>
+                <InducksStory
+                  no-link
+                  :kind="`${kind}${
+                    kind === 'n' && entirepages < 1 ? '_g' : ''
+                  }`"
+                  :title="title"
+                  :storycode="storycode"
+                  :part="part"
+                  :dark="!!url"
+                />
+              </template>
+            </b-tab>
+          </b-tabs>
+        </b-card>
+        <div
+          v-for="({ position, url }, index) in pagesWithUrl"
+          :key="`page-${position}`"
+          class="page"
+          :class="{ single: isSinglePageWithUrl }"
+        >
+          <div
+            v-if="index === 0"
+            class="edge"
+            :class="{ closed: opening || opened }"
+            :style="{
+              backgroundImage: `url(${edgeUrl})`,
+              width: `${edgeWidth}px`,
+            }"
+          />
+          <div class="page-content" :class="{ 'first-page': index === 0 }">
+            <div
+              class="page-image"
+              :class="{ opened: opening || opened }"
+              :style="{
+                backgroundImage: `url(${cloudinaryBaseUrl + url})`,
+                marginLeft: opening || opened ? '0' : `${edgeWidth}px`,
+              }"
+              @transitionend="onEndOpenCloseTransition()"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { PageFlip } from "page-flip";
+import { computed, ref, watch } from "vue";
+import { coa } from "~/stores/coa";
+
+const { issuenumber, publicationcode } = defineProps<{
+  publicationcode: string;
+  issuenumber: string;
+}>();
+const emit = defineEmits<{ (e: "close-book"): void }>();
+
+const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
+const cloudinaryBaseUrl =
+  "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
+
+let edgeWidth = ref(null as number | null);
+let coverHeight = ref(null as number | null);
+const coverRatio = ref(null as number | null);
+let opening = ref(false as boolean);
+let opened = ref(false as boolean);
+let closing = ref(false as boolean);
+let book = ref(null as PageFlip | null);
+let currentPage = ref(0 as number);
+const currentTabIndex = ref(0 as number);
+const publicationNames = computed(() => coa().publicationNames);
+const issueDetails = computed(() => coa().issueDetails);
+const isSinglePageWithUrl = computed(() => pagesWithUrl.value.length === 1);
+const edgeUrl = computed(
+  () =>
+    `${import.meta.env.VITE_EDGES_ROOT}${publicationcode.replace(
+      "/",
+      "/gen/"
+    )}.${issuenumber}.png`
+);
+const coverWidth = computed(
+  () => coverRatio.value && (coverHeight.value || 0) / coverRatio.value
+);
+const currentIssueDetails = computed(
+  () => issueDetails.value?.[`${publicationcode} ${issuenumber}`]
+);
+const pages = computed(() => currentIssueDetails.value?.entries);
+let pagesWithUrl = computed(() => pages.value?.filter(({ url }) => !!url));
+const releaseDate = computed(() => {
+  if (!currentIssueDetails.value?.releaseDate) return null;
+
+  const parsedDate =
+    currentIssueDetails.value.releaseDate.match(RELEASE_DATE_REGEX);
+  return parsedDate?.[0]?.split("-").reverse().join("/");
+});
+const isReadyToOpen = computed(
+  () => coverWidth && edgeWidth.value && pages.value && true
+);
+const showTableOfContents = computed(() => currentPage.value > 0 || opened);
+
+const loadBookPages = async () => {
+  await coa().fetchIssueUrls({
+    publicationcode,
+    issuenumber,
+  });
+};
+
+const onEndOpenCloseTransition = () => {
+  if (opening.value) {
+    opening.value = false;
+    opened.value = true;
+  }
+  if (closing) {
+    closing.value = false;
+    emit("close-book");
+  }
+};
+
+const closeBook = () => {
+  if (currentPage.value === 0) {
+    opened.value = false;
+    closing.value = true;
+  } else if (book.value) {
+    book.value.on("flip", () => {
+      opened.value = false;
+      closing.value = true;
+    });
+    book.value.flip(0);
+  }
+};
+
+watch(
+  () => currentTabIndex.value,
+  (newValue) => {
+    currentPage.value = pagesWithUrl.value.findIndex(
+      (page) => page.storycode === pages.value[newValue].storycode
+    );
+  }
+);
+
+watch(
+  () => coverWidth.value,
+  (newValue) => {
+    const availableWidthPerPage = document.body.clientWidth / 2 - 15;
+    if (newValue && newValue > availableWidthPerPage) {
+      edgeWidth.value! /= newValue / availableWidthPerPage;
+      coverHeight.value! /= newValue / availableWidthPerPage;
+    }
+  }
+);
+watch(
+  () => isReadyToOpen.value,
+  (newValue) => {
+    if (newValue && coverWidth.value && coverHeight.value) {
+      console.log("Creating book");
+      book.value = new PageFlip(
+        document.getElementById("book") as HTMLElement,
+        {
+          width: coverWidth.value,
+          height: coverHeight.value,
+
+          maxShadowOpacity: 0.5,
+          showCover: true,
+          usePortrait: false,
+          mobileScrollSupport: false,
+        }
+      );
+      book.value.loadFromHTML(document.querySelectorAll(".page"));
+
+      book.value.on("flip", ({ data }) => {
+        currentPage.value = parseInt(data.toString());
+      });
+
+      setTimeout(() => {
+        opening.value = true;
+      }, 50);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => currentPage.value,
+  (newValue) => {
+    if (book.value) {
+      book.value.flip(newValue);
+    }
+  }
+);
+
+watch(
+  () => publicationcode,
+  async () => {
+    await loadBookPages();
+  },
+  { immediate: true }
+);
+
+watch(
+  () => issuenumber,
+  async () => {
+    await loadBookPages();
+  }
+);
+</script>
+
+<style scoped lang="scss">
+.fixed-container {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+
+  img {
+    display: none;
+  }
+
+  .inducks-link {
+    position: absolute;
+    cursor: pointer !important;
+    top: 6px;
+    right: 6px;
+    border: 0;
+    width: 24px;
+
+    img {
+      display: initial;
+      width: 100%;
+    }
+  }
+
+  .table-of-contents {
+    position: absolute;
+    transform: translateX(100%);
+    top: 0;
+    right: 0;
+    width: auto;
+    max-width: 400px;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #eee;
+    color: black;
+    white-space: nowrap;
+
+    .card-header {
+      text-align: center;
+
+      :deep(a),
+      :deep(h6) {
+        color: #666;
+      }
+
+      h3 {
+        margin: 6px 6px 0 6px;
+        text-align: center;
+      }
+    }
+
+    .col-auto {
+      width: 100%;
+    }
+
+    :deep(ul) {
+      overflow-x: auto;
+    }
+
+    :deep(.tab-content) {
+      display: none;
+    }
+  }
+
+  .flip-book {
+    display: none;
+    margin: auto;
+    background-size: cover;
+  }
+
+  .edge {
+    position: absolute;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transform: rotate3d(0, 1, 0, 0deg);
+    transform-origin: right;
+    transition: all 1s linear;
+    height: 100%;
+    z-index: 0;
+
+    &.closed {
+      transform: rotate3d(0, 1, 0, -90deg) !important;
+    }
+  }
+
+  .page {
+    color: #785e3a;
+
+    overflow: hidden;
+
+    .page-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: stretch;
+      background: white;
+
+      .page-image {
+        height: 100%;
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
+
+      &.first-page {
+        background: transparent;
+
+        .page-image {
+          background-size: cover;
+          transform: rotate3d(0, 1, 0, -90deg);
+          transform-origin: left;
+          transition: all 1s linear;
+
+          &.opened {
+            transform: rotate3d(0, 1, 0, 0deg);
+          }
+        }
+      }
+    }
+
+    &.--left {
+      // for left page (property will be added automatically)
+      border-right: 0;
+
+      .page-image {
+        box-shadow: inset -7px 0 30px -7px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    &.--right {
+      // for right page (property will be added automatically)
+      border-left: 0;
+
+      .page-image {
+        box-shadow: inset 7px 0 30px -7px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    &.hard {
+      // for hard page
+      background-color: #f2e8d9;
+    }
+
+    &.page-cover {
+      background-color: #e3d0b5;
+      color: #785e3a;
+    }
+
+    &.single {
+      left: initial !important;
+      right: 0 !important;
+    }
+  }
+}
+</style>
