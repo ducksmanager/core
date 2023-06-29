@@ -1,11 +1,11 @@
 <template>
   <b-container class="position-fixed start-0 bottom-0 mw-100" style=""
     ><b-tabs align="center" v-model:modelValue="activeTab"
-      ><b-tab title="Gallery" /><b-tab title="Text editor" /><b-tab
-        title="Book" /></b-tabs
+      ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
+        title="Text editor" /></b-tabs
   ></b-container>
   <b-container fluid>
-    <template v-if="activeTab === 0">
+    <template v-if="tabNames[activeTab] === 'page-gallery'">
       <h2>DuMILi</h2>
       <h3>DucksManager Inducks Little helper</h3>
       <upload-widget
@@ -32,20 +32,89 @@
         </b-col>
       </b-row>
     </template>
-    <template v-if="activeTab === 1">
-      <textarea></textarea>
+    <Book v-if="tabNames[activeTab] === 'book'" />
+    <template v-if="tabNames[activeTab] === 'text-editor'">
+      <b-row>
+        <b-col>
+          <b-form-textarea
+            :rows="(issue?.entries?.length || 0) + 1"
+            readonly
+            :placeholder="textContentError"
+            v-model="textContent"
+        /></b-col>
+      </b-row>
     </template>
   </b-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { CloudinaryImage } from "@cloudinary/url-gen/assets/CloudinaryImage";
 
-const cloudName = "dl7hskxab";
+const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUDNAME;
 const showUploadWidget = ref(false);
 
 const activeTab = ref(0);
+const tabNames = ["page-gallery", "book", "text-editor"];
+
+type Entry = {
+  entrycode: string;
+  storycode: string;
+  pages: number | "0q" | "0+";
+  plot: string;
+  writer: string;
+  artist: string;
+  ink: string;
+  hero: string;
+  description: string;
+  extra: string;
+};
+
+type Issue = {
+  issuecode: string;
+  indexer: string;
+  issuedate: string;
+  price?: string;
+  pages: number;
+  publisher: string;
+  entries: Entry[];
+};
+
+const issue = ref(null as Issue | null);
+const textContentError = ref("" as string);
+
+const textContent = computed(() => {
+  if (!issue.value) {
+    textContentError.value = "No data";
+    return "";
+  }
+  const rows = [
+    [issue.value.issuecode],
+    ...issue.value.entries.map((entry) => [
+      entry.entrycode,
+      entry.storycode,
+      String(entry.pages),
+      entry.plot,
+      entry.writer,
+      entry.artist,
+      entry.ink,
+      entry.hero,
+      `${entry.description} ${entry.extra}`,
+    ]),
+  ];
+  const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
+    row.forEach((col, i) => {
+      acc[i] = Math.max(acc[i], col.length);
+    });
+    return acc;
+  }, [] as number[]);
+
+  return rows
+    .map((row) =>
+      row.map((col, colIndex) => col.padEnd(colsMaxLengths[colIndex], " "))
+    )
+    .join("\n");
+});
 
 const images = ref([
   new CloudinaryImage("logo", { cloudName }, { analytics: false }),
@@ -57,10 +126,14 @@ const getPageImages = () => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .col {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.form-control::placeholder {
+  color: red !important;
 }
 </style>
