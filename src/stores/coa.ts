@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import i18n from "~/i18n";
 
 import { cachedCoaApi as coaApi } from "~/util/api";
 import { call, getChunkedRequests } from "~/util/axios";

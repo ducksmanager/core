@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BBadge: typeof import('bootstrap-vue-next')['BBadge']
     BButton: typeof import('bootstrap-vue-next')['BButton']
     BCard: typeof import('bootstrap-vue-next')['BCard']
     BCol: typeof import('bootstrap-vue-next')['BCol']
@@ -17,6 +18,11 @@ declare module 'vue' {
     BRow: typeof import('bootstrap-vue-next')['BRow']
     BTab: typeof import('bootstrap-vue-next')['BTab']
     BTabs: typeof import('bootstrap-vue-next')['BTabs']
+    InducksStory: typeof import('./src/components/InducksStory.vue')['default']
+    Issue: typeof import('./src/components/Issue.vue')['default']
+    Publication: typeof import('./src/components/Publication.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     UploadWidget: typeof import('./src/components/UploadWidget.vue')['default']
   }
 }

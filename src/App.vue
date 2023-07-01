@@ -32,7 +32,11 @@
         </b-col>
       </b-row>
     </template>
-    <Book v-if="tabNames[activeTab] === 'book'" />
+    <Book
+      v-if="tabNames[activeTab] === 'book'"
+      publicationcode="fr/SPG"
+      issuenumber="1"
+    />
     <template v-if="tabNames[activeTab] === 'text-editor'">
       <b-row>
         <b-col>

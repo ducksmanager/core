@@ -1,47 +1,26 @@
-import type {
+import {
   AxiosInstance,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import axios from "axios";
-import type { AxiosCacheInstance } from "axios-cache-interceptor";
-import Cookies from "js-cookie";
+import { AxiosCacheInstance } from "axios-cache-interceptor";
 
-import type { Call, ContractWithMethodAndUrl } from "~types/Call";
-
-axios.defaults.baseURL = import.meta.env.VITE_DM_API_URL;
-
-export const addTokenRequestInterceptor = <
-  Type extends AxiosInstance | AxiosCacheInstance
->(
-  axiosInstance: Type
-): Type => {
-  axiosInstance.interceptors.request.use(
-    async (config: InternalAxiosRequestConfig) => {
-      const token = Cookies.get("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    }
-  );
-  return axiosInstance;
-};
+import { Call, ContractWithMethodAndUrl } from "~types/Call";
 
 export const addUrlParamsRequestInterceptor = <
   Type extends AxiosInstance | AxiosCacheInstance
 >(
   axiosInstance: Type
-): Type => {
+) => {
   axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       if (config.url) {
         const currentUrl = new URL(config.url, config.baseURL);
         currentUrl.pathname = Object.entries(
-          config.urlParams ?? ({} as Record<string, string>)
+          config.urlParams || ({} as Record<string, string>)
         ).reduce(
           (pathname, [k, v]) =>
-            pathname.replace(`:${k}`, encodeURIComponent(v)),
+            pathname.replace(`:${k}`, encodeURIComponent(v as string)),
           currentUrl.pathname
         );
         return {
@@ -81,7 +60,7 @@ export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
     method: contract.getMethod(),
     url: contract.getUrl(),
     params: contract.call?.query || undefined,
-    urlParams: contract.call?.params ?? undefined,
+    urlParams: (contract.call?.params as never) || undefined,
     data: (contract.call?.reqBody as never) || undefined,
   });
 
@@ -110,16 +89,11 @@ export const getChunkedRequests = async <
           ...((await callFn(slice.join(","))).data as never[]),
         ]
       : {
-          ...(acc as Record<string, never>),
-          ...((await callFn(slice.join(","))).data as Record<string, never>),
+          ...(acc as { [key: string]: never }),
+          ...((await callFn(slice.join(","))).data as {
+            [key: string]: never;
+          }),
         };
   }
   return acc;
-};
-
-export const createAxios = (baseURL: string): AxiosInstance => {
-  const newInstance = axios.create({ baseURL });
-  addUrlParamsRequestInterceptor(newInstance);
-
-  return newInstance;
 };

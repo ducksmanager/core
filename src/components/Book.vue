@@ -1,26 +1,18 @@
 <template>
-  <div class="fixed-container" @click.self="closeBook()">
-    <img
-      :src="edgeUrl"
-      @load="
-        ({ target }) => {
-          edgeWidth = (target as HTMLImageElement).naturalWidth;
-          coverHeight = (target as HTMLImageElement).naturalHeight;
-        }
-      "
-    />
+  <div class="fixed-container">
     <img
       v-if="pages?.length"
       :src="cloudinaryBaseUrl + pages[0].url"
       @load="
         ({ target }) => {
-          coverRatio = (target as HTMLImageElement).naturalHeight / (target as HTMLImageElement).naturalWidth;
+          coverHeight = (target as HTMLImageElement).height;
+          coverWidth = (target as HTMLImageElement).width;
         }
       "
     />
 
-    <div class="container" @click.self="closeBook()">
-      <div id="book" class="flip-book" @click.self="closeBook()">
+    <div class="container">
+      <div id="book" class="flip-book">
         <b-card
           v-if="showTableOfContents"
           no-body
@@ -72,24 +64,13 @@
           class="page"
           :class="{ single: isSinglePageWithUrl }"
         >
-          <div
-            v-if="index === 0"
-            class="edge"
-            :class="{ closed: opening || opened }"
-            :style="{
-              backgroundImage: `url(${edgeUrl})`,
-              width: `${edgeWidth}px`,
-            }"
-          />
           <div class="page-content" :class="{ 'first-page': index === 0 }">
             <div
               class="page-image"
-              :class="{ opened: opening || opened }"
               :style="{
                 backgroundImage: `url(${cloudinaryBaseUrl + url})`,
-                marginLeft: opening || opened ? '0' : `${edgeWidth}px`,
+                marginLeft: 0,
               }"
-              @transitionend="onEndOpenCloseTransition()"
             />
           </div>
         </div>
@@ -107,34 +88,19 @@ const { issuenumber, publicationcode } = defineProps<{
   publicationcode: string;
   issuenumber: string;
 }>();
-const emit = defineEmits<{ (e: "close-book"): void }>();
 
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
 
-let edgeWidth = ref(null as number | null);
+const coverWidth = ref(null as number | null);
 let coverHeight = ref(null as number | null);
-const coverRatio = ref(null as number | null);
-let opening = ref(false as boolean);
-let opened = ref(false as boolean);
-let closing = ref(false as boolean);
 let book = ref(null as PageFlip | null);
 let currentPage = ref(0 as number);
 const currentTabIndex = ref(0 as number);
 const publicationNames = computed(() => coa().publicationNames);
 const issueDetails = computed(() => coa().issueDetails);
 const isSinglePageWithUrl = computed(() => pagesWithUrl.value.length === 1);
-const edgeUrl = computed(
-  () =>
-    `${import.meta.env.VITE_EDGES_ROOT}${publicationcode.replace(
-      "/",
-      "/gen/"
-    )}.${issuenumber}.png`
-);
-const coverWidth = computed(
-  () => coverRatio.value && (coverHeight.value || 0) / coverRatio.value
-);
 const currentIssueDetails = computed(
   () => issueDetails.value?.[`${publicationcode} ${issuenumber}`]
 );
@@ -147,40 +113,13 @@ const releaseDate = computed(() => {
     currentIssueDetails.value.releaseDate.match(RELEASE_DATE_REGEX);
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
-const isReadyToOpen = computed(
-  () => coverWidth && edgeWidth.value && pages.value && true
-);
-const showTableOfContents = computed(() => currentPage.value > 0 || opened);
+const showTableOfContents = computed(() => true);
 
 const loadBookPages = async () => {
   await coa().fetchIssueUrls({
     publicationcode,
     issuenumber,
   });
-};
-
-const onEndOpenCloseTransition = () => {
-  if (opening.value) {
-    opening.value = false;
-    opened.value = true;
-  }
-  if (closing) {
-    closing.value = false;
-    emit("close-book");
-  }
-};
-
-const closeBook = () => {
-  if (currentPage.value === 0) {
-    opened.value = false;
-    closing.value = true;
-  } else if (book.value) {
-    book.value.on("flip", () => {
-      opened.value = false;
-      closing.value = true;
-    });
-    book.value.flip(0);
-  }
 };
 
 watch(
@@ -197,40 +136,9 @@ watch(
   (newValue) => {
     const availableWidthPerPage = document.body.clientWidth / 2 - 15;
     if (newValue && newValue > availableWidthPerPage) {
-      edgeWidth.value! /= newValue / availableWidthPerPage;
       coverHeight.value! /= newValue / availableWidthPerPage;
     }
   }
-);
-watch(
-  () => isReadyToOpen.value,
-  (newValue) => {
-    if (newValue && coverWidth.value && coverHeight.value) {
-      console.log("Creating book");
-      book.value = new PageFlip(
-        document.getElementById("book") as HTMLElement,
-        {
-          width: coverWidth.value,
-          height: coverHeight.value,
-
-          maxShadowOpacity: 0.5,
-          showCover: true,
-          usePortrait: false,
-          mobileScrollSupport: false,
-        }
-      );
-      book.value.loadFromHTML(document.querySelectorAll(".page"));
-
-      book.value.on("flip", ({ data }) => {
-        currentPage.value = parseInt(data.toString());
-      });
-
-      setTimeout(() => {
-        opening.value = true;
-      }, 50);
-    }
-  },
-  { immediate: true }
 );
 
 watch(
@@ -255,6 +163,33 @@ watch(
   async () => {
     await loadBookPages();
   }
+);
+
+watch(
+  () => coverWidth.value && coverHeight.value,
+  (hasCoverDimensions) => {
+    if (hasCoverDimensions) {
+      console.log("Creating book");
+      book.value = new PageFlip(
+        document.getElementById("book") as HTMLElement,
+        {
+          width: coverWidth.value!,
+          height: coverHeight.value!,
+
+          maxShadowOpacity: 0.5,
+          showCover: true,
+          usePortrait: false,
+          mobileScrollSupport: false,
+        }
+      );
+      book.value.loadFromHTML(document.querySelectorAll(".page"));
+
+      book.value.on("flip", ({ data }) => {
+        currentPage.value = parseInt(data.toString());
+      });
+    }
+  },
+  { immediate: true }
 );
 </script>
 
@@ -331,24 +266,8 @@ watch(
   }
 
   .flip-book {
-    display: none;
     margin: auto;
     background-size: cover;
-  }
-
-  .edge {
-    position: absolute;
-    background-size: cover;
-    background-repeat: no-repeat;
-    transform: rotate3d(0, 1, 0, 0deg);
-    transform-origin: right;
-    transition: all 1s linear;
-    height: 100%;
-    z-index: 0;
-
-    &.closed {
-      transform: rotate3d(0, 1, 0, -90deg) !important;
-    }
   }
 
   .page {
@@ -381,9 +300,7 @@ watch(
           transform-origin: left;
           transition: all 1s linear;
 
-          &.opened {
-            transform: rotate3d(0, 1, 0, 0deg);
-          }
+          transform: rotate3d(0, 1, 0, 0deg);
         }
       }
     }
