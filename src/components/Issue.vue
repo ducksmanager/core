@@ -11,17 +11,11 @@
 </template>
 
 <script setup lang="ts">
-const {
-  clickable = false,
-  noWrap = true,
-  flex = true,
-} = defineProps<{
+const { noWrap = true } = defineProps<{
   publicationcode: string;
   publicationname: string | null;
   issuenumber: string;
-  clickable?: boolean;
   noWrap?: boolean;
-  flex?: boolean;
 }>();
 </script>
 
@@ -33,14 +27,5 @@ a {
   color: darkgrey;
   pointer-events: none;
   border-bottom: none;
-
-  &.flex {
-    display: inline-flex;
-  }
-
-  &.clickable {
-    pointer-events: initial;
-    border-bottom: initial;
-  }
 }
 </style>

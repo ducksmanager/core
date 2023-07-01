@@ -1,63 +1,21 @@
 <template>
-  <div class="fixed-container">
-    <img
-      v-if="pages?.length"
-      :src="cloudinaryBaseUrl + pages[0].url"
-      @load="
-        ({ target }) => {
-          coverHeight = (target as HTMLImageElement).height;
-          coverWidth = (target as HTMLImageElement).width;
-        }
-      "
-    />
-
-    <div class="container">
+  <img
+    class="d-none"
+    v-if="pages?.length"
+    :src="cloudinaryBaseUrl + pages[0].url"
+    @load="
+      ({ target }) => {
+        coverHeight = (target as HTMLImageElement).height;
+        coverWidth = (target as HTMLImageElement).width;
+      }
+    "
+  />
+  <div
+    id="book-and-toc-container"
+    class="position-fixed vw-100 vh-100 start-0 top-0 d-flex flex-row align-items-center justify-content-space-around"
+  >
+    <div class="container w-50 h-100 m-0">
       <div id="book" class="flip-book">
-        <b-card
-          v-if="showTableOfContents"
-          no-body
-          class="table-of-contents d-none d-md-block"
-        >
-          <template #header>
-            <Issue
-              :publicationcode="publicationcode"
-              :publicationname="
-                publicationNames[publicationcode] || publicationcode
-              "
-              :issuenumber="issuenumber"
-            />
-            <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
-            <h3>{{ "Table des matières" }}</h3>
-          </template>
-          <b-tabs v-if="pages" v-model="currentTabIndex" pills card vertical>
-            <b-tab
-              v-for="{
-                storycode,
-                kind,
-                entirepages,
-                url,
-                title,
-                position,
-                part,
-              } in pages"
-              :key="`slide-${position}`"
-              :disabled="!url"
-            >
-              <template #title>
-                <InducksStory
-                  no-link
-                  :kind="`${kind}${
-                    kind === 'n' && entirepages < 1 ? '_g' : ''
-                  }`"
-                  :title="title"
-                  :storycode="storycode"
-                  :part="part"
-                  :dark="!!url"
-                />
-              </template>
-            </b-tab>
-          </b-tabs>
-        </b-card>
         <div
           v-for="({ position, url }, index) in pagesWithUrl"
           :key="`page-${position}`"
@@ -76,6 +34,49 @@
         </div>
       </div>
     </div>
+    <b-card
+      v-if="showTableOfContents"
+      no-body
+      class="table-of-contents d-none d-md-block w-50 h-100 m-0 overflow-auto"
+    >
+      <template #header>
+        <Issue
+          :publicationcode="publicationcode"
+          :publicationname="
+            publicationNames[publicationcode] || publicationcode
+          "
+          :issuenumber="issuenumber"
+        />
+        <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
+        <h3>{{ "Table des matières" }}</h3>
+      </template>
+      <b-tabs v-if="pages" v-model="currentTabIndex" pills card vertical>
+        <b-tab
+          v-for="{
+            storycode,
+            kind,
+            entirepages,
+            url,
+            title,
+            position,
+            part,
+          } in pages"
+          :key="`slide-${position}`"
+          :disabled="!url"
+        >
+          <template #title>
+            <InducksStory
+              no-link
+              :kind="`${kind}${kind === 'n' && entirepages < 1 ? '_g' : ''}`"
+              :title="title"
+              :storycode="storycode"
+              :part="part"
+              :dark="!!url"
+            />
+          </template>
+        </b-tab>
+      </b-tabs>
+    </b-card>
   </div>
 </template>
 
@@ -194,149 +195,123 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.fixed-container {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2000;
+.inducks-link {
+  position: absolute;
+  cursor: pointer !important;
+  top: 6px;
+  right: 6px;
+  border: 0;
+  width: 24px;
 
   img {
+    display: initial;
+    width: 100%;
+  }
+}
+
+.table-of-contents {
+  background-color: #eee;
+  color: black;
+  white-space: nowrap;
+
+  .card-header {
+    text-align: center;
+
+    :deep(a),
+    :deep(h6) {
+      color: #666;
+    }
+
+    h3 {
+      margin: 6px 6px 0 6px;
+      text-align: center;
+    }
+  }
+
+  .col-auto {
+    width: 100%;
+  }
+
+  :deep(ul) {
+    overflow-x: auto;
+  }
+
+  :deep(.tab-content) {
     display: none;
   }
+}
 
-  .inducks-link {
-    position: absolute;
-    cursor: pointer !important;
-    top: 6px;
-    right: 6px;
-    border: 0;
-    width: 24px;
+.flip-book {
+  margin: auto;
+  background-size: cover;
+}
 
-    img {
-      display: initial;
-      width: 100%;
-    }
-  }
+.page {
+  color: #785e3a;
 
-  .table-of-contents {
-    position: absolute;
-    transform: translateX(100%);
-    top: 0;
-    right: 0;
-    width: auto;
-    max-width: 400px;
+  overflow: hidden;
+
+  .page-content {
+    width: 100%;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    background-color: #eee;
-    color: black;
-    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    background: white;
 
-    .card-header {
-      text-align: center;
-
-      :deep(a),
-      :deep(h6) {
-        color: #666;
-      }
-
-      h3 {
-        margin: 6px 6px 0 6px;
-        text-align: center;
-      }
-    }
-
-    .col-auto {
-      width: 100%;
-    }
-
-    :deep(ul) {
-      overflow-x: auto;
-    }
-
-    :deep(.tab-content) {
-      display: none;
-    }
-  }
-
-  .flip-book {
-    margin: auto;
-    background-size: cover;
-  }
-
-  .page {
-    color: #785e3a;
-
-    overflow: hidden;
-
-    .page-content {
-      width: 100%;
+    .page-image {
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: stretch;
-      background: white;
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    &.first-page {
+      background: transparent;
 
       .page-image {
-        height: 100%;
-        background-size: contain;
-        background-position: center center;
-        background-repeat: no-repeat;
-      }
+        background-size: cover;
+        transform: rotate3d(0, 1, 0, -90deg);
+        transform-origin: left;
+        transition: all 1s linear;
 
-      &.first-page {
-        background: transparent;
-
-        .page-image {
-          background-size: cover;
-          transform: rotate3d(0, 1, 0, -90deg);
-          transform-origin: left;
-          transition: all 1s linear;
-
-          transform: rotate3d(0, 1, 0, 0deg);
-        }
+        transform: rotate3d(0, 1, 0, 0deg);
       }
     }
+  }
 
-    &.--left {
-      // for left page (property will be added automatically)
-      border-right: 0;
+  &.--left {
+    // for left page (property will be added automatically)
+    border-right: 0;
 
-      .page-image {
-        box-shadow: inset -7px 0 30px -7px rgba(0, 0, 0, 0.4);
-      }
+    .page-image {
+      box-shadow: inset -7px 0 30px -7px rgba(0, 0, 0, 0.4);
     }
+  }
 
-    &.--right {
-      // for right page (property will be added automatically)
-      border-left: 0;
+  &.--right {
+    // for right page (property will be added automatically)
+    border-left: 0;
 
-      .page-image {
-        box-shadow: inset 7px 0 30px -7px rgba(0, 0, 0, 0.4);
-      }
+    .page-image {
+      box-shadow: inset 7px 0 30px -7px rgba(0, 0, 0, 0.4);
     }
+  }
 
-    &.hard {
-      // for hard page
-      background-color: #f2e8d9;
-    }
+  &.hard {
+    // for hard page
+    background-color: #f2e8d9;
+  }
 
-    &.page-cover {
-      background-color: #e3d0b5;
-      color: #785e3a;
-    }
+  &.page-cover {
+    background-color: #e3d0b5;
+    color: #785e3a;
+  }
 
-    &.single {
-      left: initial !important;
-      right: 0 !important;
-    }
+  &.single {
+    left: initial !important;
+    right: 0 !important;
   }
 }
 </style>
