@@ -5,6 +5,7 @@ import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
+import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
 import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
 export default defineConfig({
   plugins: [
@@ -17,6 +18,8 @@ export default defineConfig({
       resolvers: [BootstrapVueNextResolver()],
       dts: true,
     }),
+
+    ReactivityTransform(),
 
     // https://github.com/intlify/bundle-tools/tree/main/packages/vite-plugin-vue-i18n
     VueI18n({

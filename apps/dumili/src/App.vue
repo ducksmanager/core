@@ -1,9 +1,4 @@
 <template>
-  <b-container class="position-fixed start-0 bottom-0 mw-100" style=""
-    ><b-tabs align="center" v-model:modelValue="activeTab"
-      ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
-        title="Text editor" /></b-tabs
-  ></b-container>
   <b-container fluid>
     <template v-if="tabNames[activeTab] === 'page-gallery'">
       <h2>DuMILi</h2>
@@ -49,6 +44,11 @@
       </b-row>
     </template>
   </b-container>
+  <b-container class="position-fixed start-0 bottom-0 mw-100" style=""
+    ><b-tabs align="center" v-model:modelValue="activeTab"
+      ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
+        title="Text editor" /></b-tabs
+  ></b-container>
 </template>
 
 <script setup lang="ts">

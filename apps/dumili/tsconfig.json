@@ -18,7 +18,9 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "types": ["@vue-macros/reactivity-transform/macros-global"]
   },
   "paths": {
     "~/*": ["./src/*"],
