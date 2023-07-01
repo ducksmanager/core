@@ -75,15 +75,15 @@ const urlEncodedStorycode = $computed(
   color: black;
 
   &.kind-c {
-    background: #ffcc33;
+    background-color: #ffcc33 !important;
   }
 
   &.kind-n {
-    background: #cbdced;
+    background-color: #cbdced !important;
   }
 
   &.kind-n_g {
-    background: #ff99ff;
+    background-color: #ff99ff !important;
   }
 }
 
