@@ -3,17 +3,27 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{}>();
+import { user } from "../stores/user";
+
+const props = defineProps<{
+  folderName: string;
+}>();
 const emit = defineEmits<{
-  (e: "done", info: any): void;
+  (e: "done"): void;
   (e: "abort"): void;
 }>();
+
+const username = computed(() => user().user!.username);
+
+const fullFolderName = computed(
+  () => `dumili/${username.value}/${props.folderName}`
+);
 
 const uploadWidget = cloudinary.createUploadWidget(
   {
     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
     uploadPreset: "p1urov1k",
-    folder: "dumili",
+    folder: fullFolderName.value,
     cropping: true,
     sources: ["local", "url"],
     maxImageFileSize: 5000000,
@@ -25,7 +35,7 @@ const uploadWidget = cloudinary.createUploadWidget(
       switch (result?.event) {
         case "success":
           console.log("Done! Here is the image info: ", result.info);
-          emit("done", result.info);
+          emit("done");
           break;
         case "abort":
           emit("abort");
