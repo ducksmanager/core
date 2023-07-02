@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { CloudinaryImage } from "@cloudinary/url-gen/assets/CloudinaryImage";
+import { defaultApi } from "./util/api";
 
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUDNAME;
 const showUploadWidget = ref(false);
@@ -128,6 +129,10 @@ const images = ref([
 const getPageImages = () => {
   showUploadWidget.value = !showUploadWidget.value;
 };
+
+defaultApi.get("http://localhost:3001/cloudinary/folder").then((res) => {
+  console.log(res.data);
+});
 </script>
 
 <style lang="scss" scoped>

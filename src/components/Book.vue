@@ -83,7 +83,7 @@
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
 import { computed, ref, watch } from "vue";
-import { coa } from "~/stores/coa";
+import { coa } from "../stores/coa";
 
 const { issuenumber, publicationcode } = defineProps<{
   publicationcode: string;
@@ -91,8 +91,9 @@ const { issuenumber, publicationcode } = defineProps<{
 }>();
 
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
-const cloudinaryBaseUrl =
-  "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
+const cloudinaryBaseUrl = `https://res.cloudinary.com/${
+  import.meta.env.VITE_CLOUDINARY_CLOUDNAME
+}/image/upload/f_auto/inducks-covers/`;
 
 const coverWidth = ref(null as number | null);
 let coverHeight = ref(null as number | null);
@@ -153,16 +154,16 @@ watch(
 
 watch(
   () => publicationcode,
-  async () => {
-    await loadBookPages();
+  () => {
+    loadBookPages();
   },
   { immediate: true }
 );
 
 watch(
   () => issuenumber,
-  async () => {
-    await loadBookPages();
+  () => {
+    loadBookPages();
   }
 );
 
