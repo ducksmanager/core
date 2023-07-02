@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "target": "es2018",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "paths": {
+      "~/*": ["*"],
+      "~types/*": ["../types/*"],
+      "~dm_types/*": ["./node_modules/ducksmanager/types/*"],
+      "~prisma_clients/*": ["./node_modules/ducksmanager/api/dist/prisma/*"],
+      "~routes/*": ["routes/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "swc": true
+  }
+}

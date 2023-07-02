@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import i18n from "~/i18n";
+import i18n from "../i18n";
 
-import { cachedCoaApi as coaApi } from "~/util/api";
-import { call, getChunkedRequests } from "~/util/axios";
-import { inducks_issue } from "~prisma_clients/client_coa";
+import { cachedCoaApi as coaApi } from "../util/api";
+import { call, getChunkedRequests } from "../axios-helper";
+import { inducks_issue } from "../../node_modules/ducksmanager/api/dist/prisma/client_coa";
 
-import type { InducksIssueDetails } from "~dm_types/InducksIssueDetails";
-import type { InducksIssueQuotationSimple } from "~dm_types/InducksIssueQuotationSimple";
+import type { InducksIssueDetails } from "../../node_modules/ducksmanager/types/InducksIssueDetails";
+import type { InducksIssueQuotationSimple } from "../../node_modules/ducksmanager/types/InducksIssueQuotationSimple";
 import {
   GET__coa__authorsfullnames__$authors,
   GET__coa__list__countries__$locale,
@@ -17,7 +17,7 @@ import {
   POST__coa__list__publications,
   GET__coa__quotations__publications,
   POST__coa__issues__decompose,
-} from "~dm_types/routes";
+} from "../../node_modules/ducksmanager/types/routes";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

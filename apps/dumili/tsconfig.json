@@ -29,6 +29,7 @@
     "~prisma_clients/*": ["./node_modules/ducksmanager/api/dist/prisma/*"]
   },
   "include": [
+    "auto-imports.d.ts",
     "components.d.ts",
     "src/**/*.ts",
     "src/**/*.d.ts",
