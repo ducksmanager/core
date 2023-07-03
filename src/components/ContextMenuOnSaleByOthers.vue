@@ -154,9 +154,11 @@ const issuesWithMultipleCopiesSelected = $computed(() =>
 
 const { t: $t } = useI18n();
 
-if (selectedIssuesBuyerIds.length) {
-  await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);
-}
+(async () => {
+  if (selectedIssuesBuyerIds.length) {
+    await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);
+  }
+})();
 </script>
 
 <style lang="scss">
