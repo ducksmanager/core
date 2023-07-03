@@ -1,6 +1,18 @@
 <template>
   <b-container fluid>
     <template v-if="tabNames[activeTab] === 'page-gallery'">
+      <b-row v-if="images" align-h="center">
+        <b-col
+          class="col"
+          v-for="image of images"
+          :key="image.url"
+          cols="12"
+          md="4"
+        >
+          <b-img :src="image.url" fluid thumbnail />
+        </b-col>
+      </b-row>
+      <b-container v-else>Loading...</b-container>
       <upload-widget
         v-if="showUploadWidget"
         @done="getPageImages()"
@@ -12,18 +24,6 @@
       >
         Upload files
       </b-button>
-
-      <b-row align-h="center">
-        <b-col
-          class="col"
-          v-for="image of images"
-          :key="image.toURL()"
-          cols="12"
-          md="4"
-        >
-          <b-img :src="image.toURL()" thumbnail fluid />
-        </b-col>
-      </b-row>
     </template>
     <Book
       v-if="tabNames[activeTab] === 'book'"
@@ -53,9 +53,9 @@
 import { ref, computed } from "vue";
 import { CloudinaryImage } from "@cloudinary/url-gen/assets/CloudinaryImage";
 import { defaultApi } from "../../util/api";
-
-const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUDNAME;
+import { AxiosResponse } from "axios";
 const showUploadWidget = ref(false);
+const route = useRoute();
 
 const activeTab = ref(0);
 const tabNames = ["page-gallery", "book", "text-editor"];
@@ -119,18 +119,19 @@ const textContent = computed(() => {
     .join("\n");
 });
 
-const images = ref([
-  new CloudinaryImage("logo", { cloudName }, { analytics: false }),
-  new CloudinaryImage("dumili/btn-agenda", { cloudName }, { analytics: false }),
-] as CloudinaryImage[]);
+const images = ref([] as { url: string }[]);
+
+defaultApi
+  .get(
+    `${import.meta.env.VITE_BACKEND_URL}/cloudinary/folder/${route.params.id}`
+  )
+  .then((res: AxiosResponse<(typeof images)["value"]>) => {
+    images.value = res.data;
+  });
 
 const getPageImages = () => {
   showUploadWidget.value = !showUploadWidget.value;
 };
-
-defaultApi.get("http://localhost:3001/cloudinary/folder").then((res) => {
-  console.log(res.data);
-});
 </script>
 
 <style lang="scss" scoped>

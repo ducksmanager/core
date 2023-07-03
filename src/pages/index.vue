@@ -3,9 +3,17 @@
     <h2>DuMILi</h2>
     <h3>DucksManager Inducks Little helper</h3>
     <template v-if="currentIndexations">
-      <b-container v-for="indexation of currentIndexations">{{
-        indexation
-      }}</b-container>
+      <b-row align-h="center">
+        <b-col
+          class="col"
+          v-for="indexation of currentIndexations"
+          :key="indexation.name"
+          cols="12"
+          md="4"
+        >
+          {{ indexation }}
+        </b-col>
+      </b-row>
       <h4 fluid v-if="!currentIndexations.length">
         Aucune indexation en cours
       </h4></template
