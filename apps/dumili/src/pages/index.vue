@@ -11,7 +11,9 @@
           cols="12"
           md="4"
         >
-          {{ indexation }}
+          <router-link :to="`/indexation/${indexation.indexation}`">
+            <b-img :src="indexation.url" fluid thumbnail />
+          </router-link>
         </b-col>
       </b-row>
       <h4 fluid v-if="!currentIndexations.length">
@@ -19,7 +21,9 @@
       </h4></template
     >
     <template v-else>Loading...</template>
-    <div><b-button @click="modal = !modal">Indexer un numéro</b-button></div>
+    <div>
+      <b-button @click="modal = !modal">Indexer un nouveau numéro</b-button>
+    </div>
     <b-modal
       v-if="stepNumber === 0"
       v-model="modal"
@@ -59,8 +63,15 @@ const showUploadWidget = ref(false as boolean);
 defaultApi
   .get(`${import.meta.env.VITE_BACKEND_URL}/cloudinary/folder`)
   .then(
-    (res: AxiosResponse<{ folders: (typeof currentIndexations)["value"] }>) => {
-      currentIndexations.value = res.data.folders;
+    (
+      res: AxiosResponse<
+        { url: string; context: { custom: { indexation: string } } }[]
+      >
+    ) => {
+      currentIndexations.value = res.data.map(({ url, context }) => ({
+        url,
+        indexation: context.custom.indexation,
+      }));
     }
   );
 
