@@ -117,13 +117,6 @@ const releaseDate = computed(() => {
 });
 const showTableOfContents = computed(() => true);
 
-const loadBookPages = async () => {
-  await coa().fetchIssueUrls({
-    publicationcode,
-    issuenumber,
-  });
-};
-
 watch(
   () => currentTabIndex.value,
   (newValue) => {
@@ -149,21 +142,6 @@ watch(
     if (book.value) {
       book.value.flip(newValue);
     }
-  }
-);
-
-watch(
-  () => publicationcode,
-  () => {
-    loadBookPages();
-  },
-  { immediate: true }
-);
-
-watch(
-  () => issuenumber,
-  () => {
-    loadBookPages();
   }
 );
 

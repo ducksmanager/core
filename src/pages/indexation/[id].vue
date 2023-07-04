@@ -15,14 +15,18 @@
       <b-container v-else>Loading...</b-container>
       <upload-widget
         v-if="showUploadWidget"
-        @done="getPageImages()"
+        :folder-name="(route.params.id as string)"
+        @done="
+          showUploadWidget = !showUploadWidget;
+          getPageImages();
+        "
         @abort="showUploadWidget = !showUploadWidget"
       />
       <b-button
         v-show="!showUploadWidget"
         @click="showUploadWidget = !showUploadWidget"
       >
-        Upload files
+        Upload page files
       </b-button>
     </template>
     <Book
@@ -34,7 +38,7 @@
       <b-row>
         <b-col>
           <b-form-textarea
-            :rows="(issue?.entries?.length || 0) + 1"
+            :rows="entries.length + 1"
             readonly
             :placeholder="textContentError"
             v-model="textContent"
@@ -51,8 +55,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { CloudinaryImage } from "@cloudinary/url-gen/assets/CloudinaryImage";
 import { defaultApi } from "../../util/api";
+import { issueDetails } from "../../stores/issue";
 import { AxiosResponse } from "axios";
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -60,31 +64,10 @@ const route = useRoute();
 const activeTab = ref(0);
 const tabNames = ["page-gallery", "book", "text-editor"];
 
-type Entry = {
-  entrycode: string;
-  storycode: string;
-  pages: number | "0q" | "0+";
-  plot: string;
-  writer: string;
-  artist: string;
-  ink: string;
-  hero: string;
-  description: string;
-  extra: string;
-};
-
-type Issue = {
-  issuecode: string;
-  indexer: string;
-  issuedate: string;
-  price?: string;
-  pages: number;
-  publisher: string;
-  entries: Entry[];
-};
-
-const issue = ref(null as Issue | null);
 const textContentError = ref("" as string);
+
+const issue = computed(() => issueDetails().issue);
+const entries = computed(() => issueDetails().entries);
 
 const textContent = computed(() => {
   if (!issue.value) {
@@ -93,45 +76,49 @@ const textContent = computed(() => {
   }
   const rows = [
     [issue.value.issuecode],
-    ...issue.value.entries.map((entry) => [
+    ...entries.value.map((entry) => [
       entry.entrycode,
-      entry.storycode,
+      entry.storyversioncode,
       String(entry.pages),
       entry.plot,
       entry.writer,
       entry.artist,
       entry.ink,
-      entry.hero,
-      `${entry.description} ${entry.extra}`,
+      entry.printedhero,
+      `${entry.entrycomment} ${entry.extra}`,
     ]),
   ];
   const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
     row.forEach((col, i) => {
-      acc[i] = Math.max(acc[i], col.length);
+      acc[i] = Math.max(acc[i], col?.length || 0);
     });
     return acc;
   }, [] as number[]);
 
   return rows
     .map((row) =>
-      row.map((col, colIndex) => col.padEnd(colsMaxLengths[colIndex], " "))
+      row.map((col, colIndex) =>
+        (col || "").padEnd(colsMaxLengths[colIndex], " ")
+      )
     )
     .join("\n");
 });
 
 const images = ref([] as { url: string }[]);
 
-defaultApi
-  .get(
-    `${import.meta.env.VITE_BACKEND_URL}/cloudinary/folder/${route.params.id}`
-  )
-  .then((res: AxiosResponse<(typeof images)["value"]>) => {
-    images.value = res.data;
-  });
-
 const getPageImages = () => {
-  showUploadWidget.value = !showUploadWidget.value;
+  defaultApi
+    .get(
+      `${import.meta.env.VITE_BACKEND_URL}/cloudinary/folder/${route.params.id}`
+    )
+    .then((res: AxiosResponse<(typeof images)["value"]>) => {
+      images.value = res.data;
+    });
 };
+
+(async () => {
+  getPageImages();
+})();
 </script>
 
 <style lang="scss" scoped>

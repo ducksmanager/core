@@ -16,7 +16,7 @@ dotenv.config({
   override: true,
 });
 
-const port = 3001;
+const port = 3002;
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,

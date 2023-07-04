@@ -26,7 +26,13 @@ const uploadWidget = cloudinary.createUploadWidget(
     folder: fullFolderName.value,
     cropping: true,
     sources: ["local", "url"],
+    multiple: true,
     maxImageFileSize: 5000000,
+    context: {
+      indexation: props.folderName,
+      project: "dumili",
+      user: username.value,
+    },
   },
   (error, result) => {
     if (error) {
