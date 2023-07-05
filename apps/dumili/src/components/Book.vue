@@ -1,8 +1,8 @@
 <template>
   <img
     class="d-none"
-    v-if="pages?.length"
-    :src="cloudinaryBaseUrl + pages[0].url"
+    v-if="entries?.length"
+    :src="entries[0].url.url"
     @load="
       ({ target }) => {
         coverHeight = (target as HTMLImageElement).height;
@@ -17,16 +17,16 @@
     <div class="container w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
-          v-for="({ position, url }, index) in pagesWithUrl"
+          v-for="({ position, url }, index) in entries"
           :key="`page-${position}`"
           class="page"
-          :class="{ single: isSinglePageWithUrl }"
+          :class="{ single: isSinglePage }"
         >
           <div class="page-content" :class="{ 'first-page': index === 0 }">
             <div
               class="page-image"
               :style="{
-                backgroundImage: `url(${cloudinaryBaseUrl + url})`,
+                backgroundImage: `url(${url.url})`,
                 marginLeft: 0,
               }"
             />
@@ -50,26 +50,26 @@
         <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
         <h3>{{ "Table des matières" }}</h3>
       </template>
-      <b-tabs v-if="pages" v-model="currentTabIndex" pills card vertical>
+      <b-tabs v-if="entries" v-model="currentTabIndex" pills card vertical>
         <b-tab
-          v-for="{
-            storycode,
-            kind,
-            entirepages,
-            url,
-            title,
-            position,
-            part,
-          } in pages"
+          v-for="{ storyversion, title, position, part, url } in entries"
           :key="`slide-${position}`"
           :disabled="!url"
         >
           <template #title>
+            <InducksStory v-if="!storyversion" />
             <InducksStory
+              v-else
               no-link
-              :kind="`${kind}${kind === 'n' && entirepages < 1 ? '_g' : ''}`"
-              :title="title"
-              :storycode="storycode"
+              :kind="`${storyversion.kind}${
+                storyversion.kind === 'n' &&
+                storyversion.entirepages &&
+                storyversion.entirepages < 1
+                  ? '_g'
+                  : ''
+              }`"
+              :title="title || storyversion.story.title!"
+              :storycode="storyversion.story.storycode"
               :part="part"
               :dark="!!url"
             />
@@ -84,6 +84,7 @@
 import { PageFlip } from "page-flip";
 import { computed, ref, watch } from "vue";
 import { coa } from "../stores/coa";
+import { issueDetails } from "../stores/issue";
 
 const { issuenumber, publicationcode } = defineProps<{
   publicationcode: string;
@@ -91,28 +92,19 @@ const { issuenumber, publicationcode } = defineProps<{
 }>();
 
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
-const cloudinaryBaseUrl = `https://res.cloudinary.com/${
-  import.meta.env.VITE_CLOUDINARY_CLOUDNAME
-}/image/upload/f_auto/inducks-covers/`;
-
 const coverWidth = ref(null as number | null);
 let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
-let currentPage = ref(0 as number);
+let currentEntry = ref(0 as number);
 const currentTabIndex = ref(0 as number);
 const publicationNames = computed(() => coa().publicationNames);
-const issueDetails = computed(() => coa().issueDetails);
-const isSinglePageWithUrl = computed(() => pagesWithUrl.value.length === 1);
-const currentIssueDetails = computed(
-  () => issueDetails.value?.[`${publicationcode} ${issuenumber}`]
-);
-const pages = computed(() => currentIssueDetails.value?.entries);
-let pagesWithUrl = computed(() => pages.value?.filter(({ url }) => !!url));
+const isSinglePage = computed(() => entries.value.length === 1);
+const entries = computed(() => issueDetails().entries);
 const releaseDate = computed(() => {
-  if (!currentIssueDetails.value?.releaseDate) return null;
+  if (!issueDetails().issue?.oldestdate) return null;
 
   const parsedDate =
-    currentIssueDetails.value.releaseDate.match(RELEASE_DATE_REGEX);
+    issueDetails().issue?.oldestdate!.match(RELEASE_DATE_REGEX);
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 const showTableOfContents = computed(() => true);
@@ -120,8 +112,8 @@ const showTableOfContents = computed(() => true);
 watch(
   () => currentTabIndex.value,
   (newValue) => {
-    currentPage.value = pagesWithUrl.value.findIndex(
-      (page) => page.storycode === pages.value[newValue].storycode
+    currentEntry.value = entries.value.findIndex(
+      ({ url }) => url.url === entries.value[newValue].url.url
     );
   }
 );
@@ -137,7 +129,7 @@ watch(
 );
 
 watch(
-  () => currentPage.value,
+  () => currentEntry.value,
   (newValue) => {
     if (book.value) {
       book.value.flip(newValue);
@@ -149,7 +141,6 @@ watch(
   () => coverWidth.value && coverHeight.value,
   (hasCoverDimensions) => {
     if (hasCoverDimensions) {
-      console.log("Creating book");
       book.value = new PageFlip(
         document.getElementById("book") as HTMLElement,
         {
@@ -165,7 +156,7 @@ watch(
       book.value.loadFromHTML(document.querySelectorAll(".page"));
 
       book.value.on("flip", ({ data }) => {
-        currentPage.value = parseInt(data.toString());
+        currentEntry.value = parseInt(data.toString());
       });
     }
   },
