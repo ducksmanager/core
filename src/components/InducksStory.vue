@@ -7,7 +7,7 @@
     }}<template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
     <small>{{ comment }}</small>
     &nbsp;<a
-      v-if="!noLink"
+      v-if="!noLink && storycode"
       target="_blank"
       :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
     >
@@ -29,10 +29,10 @@ const {
   noLink = false,
   dark = false,
 } = defineProps<{
-  storycode: string;
+  storycode?: string;
   kind?: string;
   title?: string;
-  part?: number | null;
+  part?: string | null;
   comment?: string;
   noLink?: boolean;
   dark?: boolean;

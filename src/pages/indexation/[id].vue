@@ -112,7 +112,7 @@ const getPageImages = () => {
       `${import.meta.env.VITE_BACKEND_URL}/cloudinary/folder/${route.params.id}`
     )
     .then((res: AxiosResponse<(typeof images)["value"]>) => {
-      images.value = res.data;
+      issueDetails().entries = res.data.map(({ url }) => ({ url: { url } }));
     });
 };
 
