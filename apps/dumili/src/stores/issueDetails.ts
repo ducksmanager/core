@@ -10,10 +10,12 @@ import { defineStore } from "pinia";
 
 type Story = Pick<inducks_story, "title" | "storycode">;
 
-type Storyversion = Pick<
-  inducks_storyversion,
-  "entirepages" | "kind" | "rowsperpage" | "storyversioncode" | "what"
-> & { story: Story };
+type Storyversion = Partial<
+  Pick<
+    inducks_storyversion,
+    "entirepages" | "kind" | "rowsperpage" | "storyversioncode" | "what"
+  >
+> & { story?: Story };
 
 type Storyjob = Pick<inducks_storyjob, "personcode" | "plotwritartink">;
 
@@ -37,7 +39,7 @@ type Issue = Pick<
   "issuecode" | "oldestdate" | "price" | "pages"
 >;
 
-export const issueDetails = defineStore("issue", () => ({
+export const issueDetails = defineStore("issueDetails", () => ({
   issue: ref(null as Issue | null),
   entries: ref([] as Entry[]),
 }));

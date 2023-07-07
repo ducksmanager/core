@@ -61,7 +61,7 @@ const uploadType = ref(null as "all" | "some" | null);
 const showUploadWidget = ref(false as boolean);
 
 defaultApi
-  .get(`${import.meta.env.VITE_BACKEND_URL}/cloudinary/folder`)
+  .get(`${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation`)
   .then(
     (
       res: AxiosResponse<

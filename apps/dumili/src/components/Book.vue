@@ -35,7 +35,6 @@
       </div>
     </div>
     <b-card
-      v-if="showTableOfContents"
       no-body
       class="table-of-contents d-none d-md-block w-50 h-100 m-0 overflow-auto"
     >
@@ -47,6 +46,16 @@
           "
           :issuenumber="issuenumber"
         />
+        <b-button
+          variant="success"
+          pill
+          class="ms-2 hint"
+          :disabled="isHintLoading"
+          @click="loadHint"
+          :class="{ loading: isHintLoading, loaded: isHintLoaded }"
+        >
+          <i-bi-lightbulb-fill
+        /></b-button>
         <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
         <h3>{{ "Table des matières" }}</h3>
       </template>
@@ -68,8 +77,8 @@
                   ? '_g'
                   : ''
               }`"
-              :title="title || storyversion.story.title!"
-              :storycode="storyversion.story.storycode"
+              :title="title || storyversion.story?.title || undefined"
+              :storycode="storyversion.story?.storycode"
               :part="part"
               :dark="!!url"
             />
@@ -84,12 +93,20 @@
 import { PageFlip } from "page-flip";
 import { computed, ref, watch } from "vue";
 import { coa } from "../stores/coa";
-import { issueDetails } from "../stores/issue";
+import { issueDetails } from "../stores/issueDetails";
+import { KumikoResults } from "../../types/KumikoResults";
+import { defaultApi } from "../util/api";
+import useHintMaker from "../composables/useHintMaker";
+import { AxiosResponse } from "axios";
+
+const route = useRoute();
 
 const { issuenumber, publicationcode } = defineProps<{
   publicationcode: string;
   issuenumber: string;
 }>();
+
+const hintMaker = useHintMaker();
 
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const coverWidth = ref(null as number | null);
@@ -107,7 +124,26 @@ const releaseDate = computed(() => {
     issueDetails().issue?.oldestdate!.match(RELEASE_DATE_REGEX);
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
-const showTableOfContents = computed(() => true);
+
+const isHintLoading = ref(false);
+const isHintLoaded = ref(false);
+
+const loadHint = () => {
+  isHintLoading.value = true;
+  defaultApi
+    .get(
+      `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
+        route.params.id
+      }/ai/kumiko`
+    )
+    .then((res: AxiosResponse<KumikoResults>) => {
+      hintMaker.applyHintsFromKumiko(res.data);
+      isHintLoaded.value = true;
+    })
+    .finally(() => {
+      isHintLoading.value = false;
+    });
+};
 
 watch(
   () => currentTabIndex.value,
@@ -165,6 +201,18 @@ watch(
 </script>
 
 <style scoped lang="scss">
+@keyframes pulse-primary {
+  0% {
+    color: #999;
+  }
+  50% {
+    color: yellow;
+  }
+  100% {
+    color: #999;
+  }
+}
+
 .inducks-link {
   position: absolute;
   cursor: pointer !important;
@@ -183,6 +231,23 @@ watch(
   background-color: #eee;
   color: black;
   white-space: nowrap;
+
+  .hint {
+    svg {
+      color: #999;
+    }
+    &:hover,
+    &.loaded {
+      svg {
+        color: yellow;
+      }
+    }
+    &.loading {
+      svg {
+        animation: pulse-primary 2s infinite;
+      }
+    }
+  }
 
   .card-header {
     text-align: center;
