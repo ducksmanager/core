@@ -20,7 +20,10 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "types": ["@vue-macros/reactivity-transform/macros-global"]
+    "types": [
+      "@vue-macros/reactivity-transform/macros-global",
+      "unplugin-icons/types/vue"
+    ]
   },
   "paths": {
     "~/*": ["./src/*"],
@@ -32,6 +35,7 @@
     "auto-imports.d.ts",
     "components.d.ts",
     "src/**/*.ts",
+    "types/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"

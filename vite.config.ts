@@ -1,7 +1,8 @@
 import { defineConfig } from "vite";
 import path from "path";
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
-
+import Icons from "unplugin-icons/vite";
+import IconsResolver from "unplugin-icons/resolver";
 import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
@@ -13,12 +14,15 @@ import Layouts from "vite-plugin-vue-layouts";
 export default defineConfig({
   plugins: [
     vue(),
+    Icons({
+      autoInstall: true,
+    }),
     AutoImport({
       dts: true,
       imports: ["vue", "vue-router"],
     }),
     Components({
-      resolvers: [BootstrapVueNextResolver()],
+      resolvers: [BootstrapVueNextResolver(), IconsResolver({})],
       dts: true,
     }),
 

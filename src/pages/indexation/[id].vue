@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { defaultApi } from "../../util/api";
-import { issueDetails } from "../../stores/issue";
+import { issueDetails } from "../../stores/issueDetails";
 import { AxiosResponse } from "axios";
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -109,7 +109,9 @@ const images = ref([] as { url: string }[]);
 const getPageImages = () => {
   defaultApi
     .get(
-      `${import.meta.env.VITE_BACKEND_URL}/cloudinary/folder/${route.params.id}`
+      `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
+        route.params.id
+      }`
     )
     .then((res: AxiosResponse<(typeof images)["value"]>) => {
       issueDetails().entries = res.data.map(({ url }) => ({ url: { url } }));
