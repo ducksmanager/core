@@ -22,7 +22,7 @@ export const put = [
     console.log("Cover ID search: upload file validation done");
 
     const pastecResponse: SimilarImagesResult | null = await getSimilarImages(
-      Buffer.from(req.body.base64, "base64").toString("utf8")
+      Buffer.from(req.body.base64, "base64")
     );
     console.log("Cover ID search: processing done");
 
@@ -86,22 +86,23 @@ const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
   });
 
 const getSimilarImages = async (
-  cover: string
-): Promise<SimilarImagesResult | null> => {
-  try {
-    return (
-      await axios.post(
-        `http://${process.env.PASTEC_HOSTS!}:${
-          process.env.PASTEC_PORT
-        }/index/searcher`,
-        cover,
-        {
-          headers: { "Content-Type": "application/octet-stream" },
-        }
-      )
-    ).data;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-};
+  cover: Buffer
+): Promise<SimilarImagesResult | null> =>
+  axios
+    .post(
+      `http://${process.env.PASTEC_HOSTS!}:${
+        process.env.PASTEC_PORT
+      }/index/searcher`,
+      {
+        wtd_jpg: cover,
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    )
+    .then(({ data }) => data)
+    .catch((e) => {
+      console.error(e);
+    });
