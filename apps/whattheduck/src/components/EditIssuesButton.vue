@@ -4,7 +4,7 @@
       <ion-icon :ios="pencilOutline" :md="pencilSharp"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
-      <ion-row class="ion-align-items-center">
+      <ion-row class="ion-align-items-center" @click="pickCoverFile">
         <ion-label>{{ t('by_cover_file') }}</ion-label>
         <ion-fab-button size="small"> <ion-icon :ios="imageOutline" :md="imageSharp"></ion-icon></ion-fab-button>
       </ion-row>
@@ -43,12 +43,29 @@ import {
   imageSharp,
   calendarSharp,
 } from 'ionicons/icons';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import { call } from '~/axios-helper';
+import { defaultApi } from '~/util/api';
+import { PUT__cover_id__search } from 'ducksmanager/types/routes';
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
+
+const pickCoverFile = async () => {
+  const coverFile = await FilePicker.pickImages({ readData: true });
+  if (coverFile.files.length) {
+    const response = await call(
+      defaultApi,
+      new PUT__cover_id__search({
+        reqBody: { base64: coverFile.files[0].data! },
+      })
+    );
+    console.log(response.data);
+  }
+};
 </script>
 
 <style>
