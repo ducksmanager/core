@@ -28,7 +28,7 @@
         <div v-if="selectedStory">
           {{ selectedStory.title }} {{ t('story_was_published_in') }}
           <div v-for="issue of selectedStory.issues">
-            <Country :countrycode="issue.countrycode" :countryname="text" /><condition
+            <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
               v-if="issue.collectionIssue"
               :value="getConditionKey(issue.collectionIssue.condition)"
             ></condition>
