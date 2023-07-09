@@ -1,3 +1,6 @@
+import { inducks_issue } from "~prisma_clients/client_coa";
+import { cover } from "~prisma_clients/client_cover_info";
+
 export interface SimilarImagesResult {
   image_ids: number[];
   scores: number[];
@@ -6,7 +9,6 @@ export interface SimilarImagesResult {
 }
 
 export interface CoverSearchResults {
-  issues: string[];
-  imageIds: number[];
+  covers: (cover & Pick<inducks_issue, "publicationcode" | "issuenumber">)[];
   type?: string;
 }

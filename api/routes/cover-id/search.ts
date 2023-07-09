@@ -1,14 +1,16 @@
 import axios from "axios";
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~prisma_clients/client_cover_info";
+import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
+import { PrismaClient as PrismaClientCovers } from "~prisma_clients/client_cover_info";
 import { ExpressCall } from "~routes/_express-call";
 import {
   CoverSearchResults,
   SimilarImagesResult,
 } from "~types/CoverSearchResults";
 
-const prisma = new PrismaClient();
+const prismaCovers = new PrismaClientCovers();
+const prismaCoa = new PrismaClientCoa();
 const parseForm = bodyParser.json();
 
 export const post = [
@@ -25,6 +27,7 @@ export const post = [
     const pastecResponse: SimilarImagesResult | null = await getSimilarImages(
       buffer
     );
+
     console.log("Cover ID search: processing done");
 
     if (!pastecResponse) {
@@ -35,8 +38,7 @@ export const post = [
     if (!pastecResponse?.image_ids?.length) {
       console.log(`Pastec returned ${JSON.stringify(pastecResponse)}`);
       return res.json({
-        issues: [],
-        imageIds: [],
+        covers: [],
         type: pastecResponse.type,
       });
     }
@@ -60,25 +62,36 @@ export const post = [
       `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`
     );
 
-    const issues = getIssuesFromIssueCodes(foundIssueCodes);
+    const issues = await getIssuesFromIssueCodes(foundIssueCodes);
     console.log(`Cover ID search: matched ${coverInfos.length} issues`);
 
     // TODO sort
 
     return res.json({
-      issues: Object.values(issues),
-      imageIds: pastecResponse.image_ids,
+      covers: coverInfos.map((cover) => ({
+        ...cover,
+        ...issues.find(({ issuecode }) => cover.issuecode === issuecode)!,
+      })),
     });
   },
 ];
 
-const getIssuesFromIssueCodes = (foundIssueCodes: string[]) => {
-  // TODO
-  return foundIssueCodes;
-};
+const getIssuesFromIssueCodes = async (foundIssueCodes: string[]) =>
+  await prismaCoa.inducks_issue.findMany({
+    select: {
+      issuecode: true,
+      publicationcode: true,
+      issuenumber: true,
+    },
+    where: {
+      issuecode: {
+        in: foundIssueCodes,
+      },
+    },
+  });
 
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
-  await prisma.cover.findMany({
+  await prismaCovers.cover.findMany({
     where: {
       id: {
         in: coverIds,
