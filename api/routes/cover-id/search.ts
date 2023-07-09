@@ -11,7 +11,7 @@ import {
 const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
-export const put = [
+export const post = [
   parseForm,
   async (
     ...[req, res]: ExpressCall<{
