@@ -1,5 +1,5 @@
 export interface SimilarImagesResult {
-  imageIds: number[];
+  image_ids: number[];
   scores: number[];
   tags: string[];
   type: string;

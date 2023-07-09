@@ -32,7 +32,7 @@ export const post = [
       res.end("Pastec returned NULL");
       return;
     }
-    if (!pastecResponse?.imageIds?.length) {
+    if (!pastecResponse?.image_ids?.length) {
       console.log(`Pastec returned ${JSON.stringify(pastecResponse)}`);
       return res.json({
         issues: [],
@@ -46,11 +46,11 @@ export const post = [
     );
 
     const coverInfos = (
-      await getIssuesCodesFromCoverIds(pastecResponse.imageIds)
+      await getIssuesCodesFromCoverIds(pastecResponse.image_ids)
     ).sort((cover1, cover2) =>
       Math.sign(
-        pastecResponse.imageIds.indexOf(cover1.id) -
-          pastecResponse.imageIds.indexOf(cover2.id)
+        pastecResponse.image_ids.indexOf(cover1.id) -
+          pastecResponse.image_ids.indexOf(cover2.id)
       )
     );
     const foundIssueCodes = [
@@ -67,7 +67,7 @@ export const post = [
 
     return res.json({
       issues: Object.values(issues),
-      imageIds: pastecResponse.imageIds,
+      imageIds: pastecResponse.image_ids,
     });
   },
 ];

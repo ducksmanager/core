@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   margin: 0;
   height: 100%;
   font: 11px verdana, arial, sans-serif;
@@ -14,11 +15,13 @@ a {
   text-decoration: none;
   border-bottom: 1px solid darkgray;
 
-  &[href='#'] {
+  &[href="#"] {
     border-bottom: none !important;
   }
 
-  &:hover, &:focus, &:active {
+  &:hover,
+  &:focus,
+  &:active {
     color: darkgrey;
     text-decoration: none;
     outline: 0;
@@ -51,7 +54,7 @@ a {
 }
 
 .cursor-help * {
-  cursor: help
+  cursor: help;
 }
 
 input.form-control {
@@ -83,10 +86,6 @@ input.form-control {
   }
 }
 
-canvas {
-  //max-height: 100vh !important;
-}
-
 @media (max-width: 767px) {
   .popper {
     .menu-content {
@@ -116,6 +115,5 @@ canvas {
     color: #444 !important;
   }
 }
-
 
 $navbar-height: 40px;
