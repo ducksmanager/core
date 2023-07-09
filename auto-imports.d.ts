@@ -95,6 +95,7 @@ declare global {
   const POST__collection__options__$optionName: typeof import('./types/routes')['POST__collection__options__$optionName']
   const POST__collection__subscriptions__$id: typeof import('./types/routes')['POST__collection__subscriptions__$id']
   const POST__collection__user: typeof import('./types/routes')['POST__collection__user']
+  const POST__cover_id__search: typeof import('./types/routes')['POST__cover_id__search']
   const POST__demo: typeof import('./types/routes')['POST__demo']
   const POST__feedback: typeof import('./types/routes')['POST__feedback']
   const POST__login: typeof import('./types/routes')['POST__login']
@@ -491,6 +492,7 @@ declare module 'vue' {
     readonly POST__collection__options__$optionName: UnwrapRef<typeof import('./types/routes')['POST__collection__options__$optionName']>
     readonly POST__collection__subscriptions__$id: UnwrapRef<typeof import('./types/routes')['POST__collection__subscriptions__$id']>
     readonly POST__collection__user: UnwrapRef<typeof import('./types/routes')['POST__collection__user']>
+    readonly POST__cover_id__search: UnwrapRef<typeof import('./types/routes')['POST__cover_id__search']>
     readonly POST__demo: UnwrapRef<typeof import('./types/routes')['POST__demo']>
     readonly POST__feedback: UnwrapRef<typeof import('./types/routes')['POST__feedback']>
     readonly POST__login: UnwrapRef<typeof import('./types/routes')['POST__login']>
@@ -502,7 +504,6 @@ declare module 'vue' {
     readonly PUT__collection__purchases: UnwrapRef<typeof import('./types/routes')['PUT__collection__purchases']>
     readonly PUT__collection__subscriptions: UnwrapRef<typeof import('./types/routes')['PUT__collection__subscriptions']>
     readonly PUT__collection__user: UnwrapRef<typeof import('./types/routes')['PUT__collection__user']>
-    readonly PUT__cover_id__search: UnwrapRef<typeof import('./types/routes')['PUT__cover_id__search']>
     readonly PUT__edgecreator__edgesprites: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__edgesprites']>
     readonly PUT__edgecreator__multiple_edge_photo: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo']>
     readonly PUT__edgecreator__multiple_edge_photo__v2: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo__v2']>
@@ -881,6 +882,7 @@ declare module '@vue/runtime-core' {
     readonly POST__collection__options__$optionName: UnwrapRef<typeof import('./types/routes')['POST__collection__options__$optionName']>
     readonly POST__collection__subscriptions__$id: UnwrapRef<typeof import('./types/routes')['POST__collection__subscriptions__$id']>
     readonly POST__collection__user: UnwrapRef<typeof import('./types/routes')['POST__collection__user']>
+    readonly POST__cover_id__search: UnwrapRef<typeof import('./types/routes')['POST__cover_id__search']>
     readonly POST__demo: UnwrapRef<typeof import('./types/routes')['POST__demo']>
     readonly POST__feedback: UnwrapRef<typeof import('./types/routes')['POST__feedback']>
     readonly POST__login: UnwrapRef<typeof import('./types/routes')['POST__login']>
@@ -892,7 +894,6 @@ declare module '@vue/runtime-core' {
     readonly PUT__collection__purchases: UnwrapRef<typeof import('./types/routes')['PUT__collection__purchases']>
     readonly PUT__collection__subscriptions: UnwrapRef<typeof import('./types/routes')['PUT__collection__subscriptions']>
     readonly PUT__collection__user: UnwrapRef<typeof import('./types/routes')['PUT__collection__user']>
-    readonly PUT__cover_id__search: UnwrapRef<typeof import('./types/routes')['PUT__cover_id__search']>
     readonly PUT__edgecreator__edgesprites: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__edgesprites']>
     readonly PUT__edgecreator__multiple_edge_photo: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo']>
     readonly PUT__edgecreator__multiple_edge_photo__v2: UnwrapRef<typeof import('./types/routes')['PUT__edgecreator__multiple_edge_photo__v2']>

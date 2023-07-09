@@ -21,8 +21,9 @@ export const post = [
   ) => {
     console.log("Cover ID search: upload file validation done");
 
+    const buffer = Buffer.from(req.body.base64, "base64");
     const pastecResponse: SimilarImagesResult | null = await getSimilarImages(
-      Buffer.from(req.body.base64, "base64")
+      buffer
     );
     console.log("Cover ID search: processing done");
 
@@ -93,14 +94,7 @@ const getSimilarImages = async (
       `http://${process.env.PASTEC_HOSTS!}:${
         process.env.PASTEC_PORT
       }/index/searcher`,
-      {
-        wtd_jpg: cover,
-      },
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      cover
     )
     .then(({ data }) => data)
     .catch((e) => {
