@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
+import { collection } from './collection';
+
 import { call, getChunkedRequests } from '~/axios-helper';
 import { getCurrentLocaleShortKey } from '~/composables/useLocales';
-import { cachedCoaApi as coaApi } from '~/util/api';
+import { InducksCountryname } from '~/persistence/models/coa/InducksCountryname';
+import { coaApi } from '~/util/api';
 import type { InducksIssueDetails } from '~dm_types/InducksIssueDetails';
 import type { InducksIssueQuotationSimple } from '~dm_types/InducksIssueQuotationSimple';
 import {
@@ -50,7 +53,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 
 export const coa = defineStore('coa', () => {
   const coverUrls = ref({} as { [issuenumber: string]: string }),
-    countryNames = ref(null as { [countrycode: string]: string } | null),
+    countryNames = ref(null as InducksCountryname[] | null),
     publicationNames = ref({} as POST__coa__list__publications['resBody']),
     publicationNamesFullCountries = ref([] as string[]),
     personNames = ref(null as { [personcode: string]: string } | null),
@@ -114,20 +117,22 @@ export const coa = defineStore('coa', () => {
       };
     },
     fetchCountryNames = async (afterUpdate = false) => {
-      if ((!isLoadingCountryNames.value && !countryNames.value) || afterUpdate) {
-        isLoadingCountryNames.value = true;
-        const locale = getCurrentLocaleShortKey((i18n.global.locale as unknown as { value: string }).value);
-        countryNames.value = (
+      await collection().load(
+        'countryNames',
+        InducksCountryname,
+        async () =>
           await call(
             coaApi,
             new GET__coa__list__countries__$locale({
               query: { countryCodes: null },
-              params: { locale },
+              params: { locale: getCurrentLocaleShortKey((i18n.global.locale as unknown as { value: string }).value) },
             })
-          )
-        ).data;
-        isLoadingCountryNames.value = false;
-      }
+          ),
+        (value) => Object.entries(value).map(([countrycode, countryname]) => ({ countrycode, countryname })),
+        countryNames,
+        afterUpdate,
+        true
+      );
     },
     fetchPublicationNames = async (newPublicationCodes: string[]) => {
       const actualNewPublicationCodes = [

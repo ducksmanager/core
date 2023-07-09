@@ -38,6 +38,7 @@ const routes: RouteRecordRaw[] = [
     component: PublicationList,
   },
   {
+    name: 'CountryList',
     path: '/:type(collection|coa)',
     component: CountryList,
   },

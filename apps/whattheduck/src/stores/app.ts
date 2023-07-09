@@ -11,6 +11,6 @@ export const app = defineStore('app', () => ({
   isCoaView: ref(false),
   isObsoleteSync: async () => {
     const lastSync = await app().dbInstance.getRepository(Sync).find();
-    return !lastSync.length ? false : new Date().getTime() - lastSync[0].timestamp.getTime() > 12 * 60 * 60 * 1000;
+    return !lastSync.length ? true : new Date().getTime() - lastSync[0].timestamp.getTime() > 12 * 60 * 60 * 1000;
   },
 }));

@@ -5,6 +5,7 @@
     :stat-numerators="totalPerPublication"
     :stat-denominators="issueCounts"
     :get-target-route-fn="getTargetUrlFn"
+    :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
   >
     <template #row-label="{ text }">
       <Publication :value="text" />

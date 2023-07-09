@@ -35,7 +35,9 @@ const parts = computed(() => {
     const publicationParts = appStore.currentNavigationItem.split('/');
     parts.push({
       key: publicationParts[0],
-      text: coaStore.countryNames?.[publicationParts[0]] || publicationParts[0],
+      text:
+        coaStore.countryNames?.find(({ countrycode }) => countrycode === publicationParts[0])?.countryname ||
+        publicationParts[0],
     });
     if (publicationParts.length === 2) {
       parts.push({

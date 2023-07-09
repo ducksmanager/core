@@ -4,6 +4,7 @@
     :stat-numerators="totalPerCountry"
     :stat-denominators="issueCountsPerCountry"
     :get-target-route-fn="getTargetUrlFn"
+    :ownership-text-fn="ownershipText"
   >
     <template #row-label="{ key, text }">
       <Country :countrycode="key" :countryname="text" />
@@ -28,16 +29,20 @@ const appStore = app();
 const totalPerCountry = computed(() => collectionStore.totalPerCountry);
 const issueCountsPerCountry = computed(() => coaStore.issueCountsPerCountry!);
 
+const ownershipText = (ownership: [number, number], fillPercentage: number | undefined) =>
+  `${ownership[0]} (${fillPercentage! < 0.1 ? '< 0.1' : fillPercentage!.toFixed(1)}%)`;
+
 const items = computed((): { key: string; text: string }[] =>
   coaStore.countryNames
     ? appStore.isCoaView
-      ? Object.entries(coaStore.countryNames).map(([key, text]) => ({
-          key,
-          text,
+      ? coaStore.countryNames.map(({ countrycode, countryname }) => ({
+          key: countrycode,
+          text: countryname || countrycode,
         }))
       : collectionStore.ownedCountries.map((countryCode) => ({
           key: countryCode,
-          text: coaStore.countryNames![countryCode] || countryCode,
+          text:
+            coaStore.countryNames?.find(({ countrycode }) => countrycode === countryCode)?.countryname || countryCode,
         }))
     : []
 );

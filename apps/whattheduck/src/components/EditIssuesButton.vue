@@ -48,7 +48,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { call } from '~/axios-helper';
 import { defaultApi } from '~/util/api';
-import { PUT__cover_id__search } from 'ducksmanager/types/routes';
+import { POST__cover_id__search } from 'ducksmanager/types/routes';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -59,7 +59,7 @@ const pickCoverFile = async () => {
   if (coverFile.files.length) {
     const response = await call(
       defaultApi,
-      new PUT__cover_id__search({
+      new POST__cover_id__search({
         reqBody: { base64: coverFile.files[0].data! },
       })
     );

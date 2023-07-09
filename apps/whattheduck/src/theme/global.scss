@@ -4,6 +4,14 @@ ion-radio {
   background: initial !important;
 }
 
+ion-title {
+  padding-inline: 50px;
+}
+
+ion-label {
+  overflow-x: auto !important;
+}
+
 .dm-condition-background {
   @each $condition, $conditionColor in $dmConditions {
     &.#{$condition} {

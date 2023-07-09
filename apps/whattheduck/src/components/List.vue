@@ -17,6 +17,7 @@
           <Row
             v-for="{ key, text, ownsNext, ...item } in filteredItems"
             @click="onRowClick(key)"
+            :ownership-text-fn="ownershipTextFn"
             :ownership="ownership?.[key]"
             :is-next-owned="ownsNext"
           >
@@ -55,6 +56,7 @@ const props = defineProps<{
   getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
   statNumerators?: Record<string, number>;
   statDenominators?: Record<string, number>;
+  ownershipTextFn: (ownership: [number, number], fillPercentage?: number | undefined) => string;
 }>();
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);

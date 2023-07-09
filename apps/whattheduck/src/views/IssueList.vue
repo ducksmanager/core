@@ -1,5 +1,10 @@
 <template>
-  <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn">
+  <List
+    v-if="hasCoaData"
+    :items="sortedItems"
+    :get-target-route-fn="getTargetUrlFn"
+    :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
+  >
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaList"></ion-checkbox>
       <Condition :value="getConditionKey(item)" />

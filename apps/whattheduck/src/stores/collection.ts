@@ -372,11 +372,12 @@ export const collection = defineStore('collection', () => {
       axiosCall: () => Promise<{ data: AxiosResponseType }>,
       axiosResponseToStore: (responseData: AxiosResponseType) => Entity[],
       ref: Ref<Entity[] | null>,
-      afterUpdate = false
+      afterUpdate = false,
+      noFetchIfNonObsoleteSync = false
     ): Promise<void> => {
       if (afterUpdate || (!isLoading.value[name] && !ref.value)) {
         isLoading.value[name] = true;
-        if (app().isOfflineMode) {
+        if ((noFetchIfNonObsoleteSync && !(await app().isObsoleteSync())) || app().isOfflineMode) {
           ref.value = await app().dbInstance.getRepository(model).find();
         } else {
           ref.value = axiosResponseToStore((await axiosCall()).data);
@@ -401,10 +402,7 @@ export const collection = defineStore('collection', () => {
       },
       afterUpdate = false
     ) => {
-      await load<
-        GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit['resBody'],
-        SuggestedIssueSimple
-      >(
+      await load(
         'suggestions',
         SuggestedIssueSimple,
         async () =>
@@ -425,7 +423,8 @@ export const collection = defineStore('collection', () => {
             storiesList: Object.keys(stories).join(', '),
           })),
         suggestions,
-        afterUpdate
+        afterUpdate,
+        true
       );
     },
     // loadSubscriptions = async (afterUpdate = false) => {
@@ -480,21 +479,19 @@ export const collection = defineStore('collection', () => {
         // TODO retrieve user points
         // TODO retrieve user notification countries
 
-        if (isObsoleteSync) {
-          // TODO get app version
-          await loadSuggestions(
-            {
-              countryCode: 'ALL',
-              sinceLastVisit: false,
-              sort: 'score',
-            },
-            true
-          );
-          await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' }, true);
-          await coa().fetchCountryNames(true);
-          await coa().fetchPublicationNames(['ALL']);
-          await coa().fetchIssueCounts(true);
-        }
+        // TODO get app version
+        await loadSuggestions(
+          {
+            countryCode: 'ALL',
+            sinceLastVisit: false,
+            sort: 'score',
+          },
+          true
+        );
+        await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' }, true);
+        await coa().fetchCountryNames(true);
+        await coa().fetchPublicationNames(['ALL']);
+        await coa().fetchIssueCounts(true);
         await coa().fetchIssueNumbers(ownedPublications.value || []);
 
         // TODO register for notifications
@@ -547,6 +544,7 @@ export const collection = defineStore('collection', () => {
     createPurchase,
     deletePurchase,
     findInCollection,
+    load,
     loadPreviousVisit,
     loadCollection,
     loadPurchases,

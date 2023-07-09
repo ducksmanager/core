@@ -6,7 +6,7 @@
       ><slot name="prefix" />
       <slot name="label" />
     </ion-label>
-    <ion-label slot="end" v-if="ownership"> {{ ownership[0] }} / {{ ownership[1] }} </ion-label>
+    <ion-label slot="end" v-if="ownership"> {{ ownershipTextFn(ownership, fillPercentage) }}</ion-label>
   </ion-item>
 </template>
 
@@ -14,6 +14,7 @@
 import { computed } from 'vue';
 const props = defineProps<{
   ownership?: [number, number];
+  ownershipTextFn: (ownership: [number, number], fillPercentage?: number | undefined) => string;
   isNextOwned?: boolean;
 }>();
 
@@ -29,9 +30,9 @@ ion-item {
     &:first-of-type {
       padding-left: 1rem;
     }
-    &:last-of-type {
-      padding-right: 1rem;
-    }
+    // &:last-of-type {
+    //   padding-right: 1rem;
+    // }
     &.is-owned {
       &:first-of-type {
         font-weight: bold;

@@ -14,7 +14,7 @@ import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera
 
 import { apertureOutline, apertureSharp } from 'ionicons/icons';
 import axios from 'axios';
-import { POST__collection__issues__multiple, PUT__cover_id__search } from 'ducksmanager/types/routes';
+import { POST__cover_id__search } from 'ducksmanager/types/routes';
 function dataURIToBlob(dataURI: string) {
   const byteString = atob(dataURI);
   const mimeString = 'image/jpeg';
@@ -38,7 +38,7 @@ const takePhoto = async () => {
   const { value: base64 } = await CameraPreview.capture({
     quality: 80,
   });
-  const searchResults = await call(axios, new PUT__cover_id__search({ reqBody: { base64 } }));
+  const searchResults = await call(axios, new POST__cover_id__search({ reqBody: { base64 } }));
   console.log(searchResults.data);
 };
 </script>
