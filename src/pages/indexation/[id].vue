@@ -29,11 +29,7 @@
         Upload page files
       </b-button>
     </template>
-    <Book
-      v-if="tabNames[activeTab] === 'book'"
-      publicationcode="fr/SPG"
-      issuenumber="1"
-    />
+    <Book v-if="tabNames[activeTab] === 'book'" />
     <template v-if="tabNames[activeTab] === 'text-editor'">
       <b-row>
         <b-col>
@@ -45,12 +41,12 @@
         /></b-col>
       </b-row>
     </template>
+    <b-container class="position-fixed start-0 bottom-0 mw-100 pt-2" style=""
+      ><b-tabs align="center" v-model:modelValue="activeTab"
+        ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
+          title="Text editor" /></b-tabs
+    ></b-container>
   </b-container>
-  <b-container class="position-fixed start-0 bottom-0 mw-100" style=""
-    ><b-tabs align="center" v-model:modelValue="activeTab"
-      ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
-        title="Text editor" /></b-tabs
-  ></b-container>
 </template>
 
 <script setup lang="ts">
@@ -75,17 +71,17 @@ const textContent = computed(() => {
     return "";
   }
   const rows = [
-    [issue.value.issuecode],
+    [issue.value?.issuecode],
     ...entries.value.map((entry) => [
       entry.entrycode,
-      entry.storyversioncode,
-      String(entry.pages),
-      entry.plot,
-      entry.writer,
-      entry.artist,
-      entry.ink,
+      entry.storyversion?.storyversioncode,
+      String(entry.storyversion?.entirepages),
+      ...["plot", "writer", "artist", "ink"].map(
+        (job) =>
+          entry.storyjobs?.find(({ plotwritartink }) => plotwritartink === job)
+            ?.personcode
+      ),
       entry.printedhero,
-      `${entry.entrycomment} ${entry.extra}`,
     ]),
   ];
   const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
@@ -97,9 +93,11 @@ const textContent = computed(() => {
 
   return rows
     .map((row) =>
-      row.map((col, colIndex) =>
-        (col || "").padEnd(colsMaxLengths[colIndex], " ")
-      )
+      row
+        .map((col, colIndex) =>
+          (col || "").padEnd(colsMaxLengths[colIndex], " ")
+        )
+        .join(" ")
     )
     .join("\n");
 });

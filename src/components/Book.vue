@@ -39,51 +39,40 @@
       class="table-of-contents d-none d-md-block w-50 h-100 m-0 overflow-auto"
     >
       <template #header>
+        <div>
+          <b-button
+            variant="success"
+            pill
+            class="ms-2 hint"
+            :disabled="isHintLoading"
+            @click="loadHint"
+            :class="{ loading: isHintLoading, loaded: isHintLoaded }"
+          >
+            <i-bi-lightbulb-fill
+          /></b-button>
+        </div>
         <Issue
-          :publicationcode="publicationcode"
+          v-if="issue.publicationcode && issue.issuenumber"
+          :publicationcode="issue.publicationcode"
           :publicationname="
-            publicationNames[publicationcode] || publicationcode
+            publicationNames[issue.publicationcode] || issue.publicationcode
           "
-          :issuenumber="issuenumber"
+          :issuenumber="issue.issuenumber"
         />
-        <b-button
-          variant="success"
-          pill
-          class="ms-2 hint"
-          :disabled="isHintLoading"
-          @click="loadHint"
-          :class="{ loading: isHintLoading, loaded: isHintLoaded }"
-        >
-          <i-bi-lightbulb-fill
-        /></b-button>
+        <template v-else>Numéro inconnu</template>
         <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
         <h3>{{ "Table des matières" }}</h3>
       </template>
       <b-tabs v-if="entries" v-model="currentTabIndex" pills card vertical>
         <b-tab
-          v-for="{ storyversion, title, position, part, url } in entries"
-          :key="`slide-${position}`"
-          :disabled="!url"
-        >
-          <template #title>
-            <InducksStory v-if="!storyversion" />
-            <InducksStory
-              v-else
-              no-link
-              :kind="`${storyversion.kind}${
-                storyversion.kind === 'n' &&
-                storyversion.entirepages &&
-                storyversion.entirepages < 1
-                  ? '_g'
-                  : ''
-              }`"
-              :title="title || storyversion.story?.title || undefined"
-              :storycode="storyversion.story?.storycode"
-              :part="part"
-              :dark="!!url"
-            />
-          </template>
-        </b-tab>
+          :entry="entry"
+          v-for="(entry, index) in entries"
+          :key="`slide-${entry.position}`"
+          ><template #title
+            ><InducksEntry
+              :editable="currentTabIndex === index"
+              :entry-index="index" /></template
+        ></b-tab>
       </b-tabs>
     </b-card>
   </div>
@@ -93,18 +82,11 @@
 import { PageFlip } from "page-flip";
 import { computed, ref, watch } from "vue";
 import { coa } from "../stores/coa";
-import { issueDetails } from "../stores/issueDetails";
-import { KumikoResults } from "../../types/KumikoResults";
+import { StoryversionKind, issueDetails } from "../stores/issueDetails";
 import { defaultApi } from "../util/api";
 import useHintMaker from "../composables/useHintMaker";
-import { AxiosResponse } from "axios";
 
 const route = useRoute();
-
-const { issuenumber, publicationcode } = defineProps<{
-  publicationcode: string;
-  issuenumber: string;
-}>();
 
 const hintMaker = useHintMaker();
 
@@ -116,6 +98,7 @@ let currentEntry = ref(0 as number);
 const currentTabIndex = ref(0 as number);
 const publicationNames = computed(() => coa().publicationNames);
 const isSinglePage = computed(() => entries.value.length === 1);
+const issue = computed(() => issueDetails().issue);
 const entries = computed(() => issueDetails().entries);
 const releaseDate = computed(() => {
   if (!issueDetails().issue?.oldestdate) return null;
@@ -128,21 +111,47 @@ const releaseDate = computed(() => {
 const isHintLoading = ref(false);
 const isHintLoaded = ref(false);
 
-const loadHint = () => {
+const loadHint = async () => {
   isHintLoading.value = true;
-  defaultApi
+  console.log("Kumiko...");
+  const { data } = await defaultApi
     .get(
       `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
         route.params.id
       }/ai/kumiko`
     )
-    .then((res: AxiosResponse<KumikoResults>) => {
-      hintMaker.applyHintsFromKumiko(res.data);
-      isHintLoaded.value = true;
+    .catch((e) => {
+      console.error(e);
+      return { data: { results: [] } };
     })
     .finally(() => {
-      isHintLoading.value = false;
+      console.log("Kumiko terminé");
     });
+
+  console.log("Kumiko OK");
+  hintMaker.applyHintsFromKumiko(data);
+
+  if (entries.value[0].storyversion?.kind === StoryversionKind.Cover) {
+    console.info(
+      "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
+    );
+    const { data } = await defaultApi
+      .get(
+        `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
+          route.params.id
+        }/ai/cover-search`
+      )
+      .catch((e) => {
+        console.error(e);
+        return { data: { results: [] } };
+      })
+      .finally(() => {
+        console.log("Recherche par image terminée");
+        isHintLoading.value = false;
+      });
+    hintMaker.applyHintsFromCoverSearch(data);
+  }
+  isHintLoaded.value = true;
 };
 
 watch(

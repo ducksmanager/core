@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import "./style.scss";
 import App from "./App.vue";
+import axios from "axios";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
@@ -20,5 +21,6 @@ const router = createRouter({
   routes,
 });
 
+axios.defaults.baseURL = import.meta.env.VITE_DM_API_URL;
 useColorMode().value = "dark";
 createApp(App).use(i18n).use(createPinia()).use(router).mount("#app");
