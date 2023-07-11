@@ -1,6 +1,39 @@
 version: '3.8'
 services:
   kumiko:
-    build:
-      context: .
-      dockerfile: Dockerfile.kumiko
+    image: ghcr.io/bperel/kumiko
+  app:
+    container_name: dumili-app
+    image: ghcr.io/bperel/dumili-app
+    depends_on:
+      - api
+    restart: always
+    networks:
+      - public-network
+      - dumili-network
+
+  api:
+    container_name: dumili-api
+    image: ghcr.io/bperel/dumili-api
+    restart: always
+    networks:
+      - public-network
+      - dumili-network
+      - dm2-network
+
+  sentry-relay:
+    image: getsentry/relay
+    restart: always
+    container_name: sentry-dumili
+    volumes:
+      - ./config/sentry-relay:/work/.relay
+    networks:
+      - public-network
+
+
+networks:
+  dumili-network:
+  dm2-network:
+    external: true
+  public-network:
+    external: true
