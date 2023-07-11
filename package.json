@@ -1,14 +1,6 @@
 {
   "name": "ducksmanager",
   "packageManager": "pnpm@7.4.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "src/components",
-    "api/dist/prisma/*/*.{js,json,prisma,ts}",
-    "api/prisma",
-    "types"
-  ],
   "scripts": {
     "build": "vite build",
     "dev": "concurrently -n front,back \"pnpm run start:front\" \"pnpm run start:back\"",

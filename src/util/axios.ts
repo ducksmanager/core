@@ -3,13 +3,43 @@ import {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { AxiosCacheInstance } from "axios-cache-interceptor";
 
 import { Call, ContractWithMethodAndUrl } from "~types/Call";
 
-export const addUrlParamsRequestInterceptor = <
-  Type extends AxiosInstance | AxiosCacheInstance
->(
+type MyCall = Call<
+  unknown,
+  Record<string, string> | undefined,
+  unknown | undefined,
+  unknown | undefined
+>;
+
+declare module "axios" {
+  interface InternalAxiosRequestConfig {
+    urlParams?: Record<string, string> | undefined;
+  }
+
+  interface AxiosRequestConfig {
+    urlParams?: Record<string, string> | undefined;
+  }
+}
+
+export const addTokenRequestInterceptor = <Type extends AxiosInstance>(
+  axiosInstance: Type,
+  getTokenFn: () => string
+): Type => {
+  axiosInstance.interceptors.request.use(
+    async (config: InternalAxiosRequestConfig) => {
+      const token = getTokenFn();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    }
+  );
+  return axiosInstance;
+};
+
+export const addUrlParamsRequestInterceptor = <Type extends AxiosInstance>(
   axiosInstance: Type
 ) => {
   axiosInstance.interceptors.request.use(
@@ -35,25 +65,8 @@ export const addUrlParamsRequestInterceptor = <
   return axiosInstance;
 };
 
-declare module "axios" {
-  interface InternalAxiosRequestConfig {
-    urlParams?: Record<string, string> | undefined;
-  }
-
-  interface AxiosRequestConfig {
-    urlParams?: Record<string, string> | undefined;
-  }
-}
-
-type MyCall = Call<
-  unknown,
-  Record<string, string> | undefined,
-  unknown | undefined,
-  unknown | undefined
->;
-
 export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
-  instance: AxiosInstance | AxiosCacheInstance,
+  instance: AxiosInstance,
   contract: Contract
 ): Promise<AxiosResponse<Contract["resBody"]>> =>
   instance.request<Contract["resBody"]>({

@@ -42,7 +42,9 @@ export const post = [
         type: pastecResponse.type,
       });
     }
-    console.log("Cover ID search: matched cover IDs $coverIds");
+    console.log(
+      `Cover ID search: matched cover IDs ${pastecResponse?.image_ids}`
+    );
     console.log(
       `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`
     );
@@ -93,6 +95,7 @@ const getIssuesFromIssueCodes = async (foundIssueCodes: string[]) =>
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
   await prismaCovers.cover.findMany({
     where: {
+      sitecode: "webusers",
       id: {
         in: coverIds,
       },
