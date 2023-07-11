@@ -4,7 +4,7 @@ import {
   InternalAxiosRequestConfig,
 } from "axios";
 
-import { Call, ContractWithMethodAndUrl } from "~types/Call";
+import { Call, ContractWithMethodAndUrl } from "../../types/Call"; // Don't use an alias here or it will break when using DM as a Node dependency
 
 type MyCall = Call<
   unknown,
