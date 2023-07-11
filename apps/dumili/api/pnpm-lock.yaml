@@ -27,7 +27,7 @@ dependencies:
     specifier: ^16.1.3
     version: 16.1.3
   ducksmanager:
-    specifier: ^0.0.59
+    specifier: ^0.0.60
     version: link:../../html/DucksManager
   express:
     specifier: ^4.18.2
