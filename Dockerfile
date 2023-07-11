@@ -1,17 +1,17 @@
 FROM node:16 as pnpm
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
 RUN npm i -g pnpm
 
 FROM pnpm AS app-install
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml .eslintrc.js ./
 RUN pnpm i
 
 FROM app-install AS api-build
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app/api
 
@@ -29,7 +29,7 @@ RUN pnpm run generate-route-types
 RUN pnpm run build
 
 FROM app-install AS app-build
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
@@ -40,13 +40,13 @@ COPY --from=api-build /app/types/routes.ts types/routes.ts
 RUN pnpm run build
 
 FROM nginx AS app
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=app-build /app/dist /usr/share/nginx/html
 
 FROM pnpm AS api
-MAINTAINER Bruno Perel
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
