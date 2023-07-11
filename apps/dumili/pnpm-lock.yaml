@@ -13,7 +13,7 @@ dependencies:
     version: 1.11.2
   '@vueuse/integrations':
     specifier: ^10.2.1
-    version: 10.2.1(async-validator@4.2.5)(axios@1.4.0)(universal-cookie@4.0.4)(vue@3.3.4)
+    version: 10.2.1(async-validator@4.2.5)(axios@1.4.0)(vue@3.3.4)
   async-validator:
     specifier: ^4.2.5
     version: 4.2.5
@@ -33,8 +33,8 @@ dependencies:
     specifier: ^1.11.8
     version: 1.11.8
   ducksmanager:
-    specifier: ^0.0.51
-    version: 0.0.51
+    specifier: ^0.0.59
+    version: link:../html/DucksManager
   js-cookie:
     specifier: ^3.0.5
     version: 3.0.5
@@ -44,9 +44,6 @@ dependencies:
   pinia:
     specifier: ^2.1.4
     version: 2.1.4(typescript@5.0.2)(vue@3.3.4)
-  universal-cookie:
-    specifier: ^4.0.4
-    version: 4.0.4
   vue:
     specifier: ^3.3.4
     version: 3.3.4
@@ -752,10 +749,6 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@types/cookie@0.3.3:
-    resolution: {integrity: sha512-LKVP3cgXBT9RYj+t+9FDKwS5tdI+rPBXaNSkma7hvqy35lc7mAokC2zsqWJH0LaqIt3B962nuYI77hsJoT1gow==}
-    dev: false
-
   /@types/debug@4.1.8:
     resolution: {integrity: sha512-/vPO1EPOs306Cvhwv7KfVfYvOJqA/S/AXjaHQiJboCZzcNDb+TIJFN9/2C9DZ//ijSKWioNyUxD792QmDJ+HKQ==}
     dependencies:
@@ -1138,7 +1131,7 @@ packages:
       - vue
     dev: false
 
-  /@vueuse/integrations@10.2.1(async-validator@4.2.5)(axios@1.4.0)(universal-cookie@4.0.4)(vue@3.3.4):
+  /@vueuse/integrations@10.2.1(async-validator@4.2.5)(axios@1.4.0)(vue@3.3.4):
     resolution: {integrity: sha512-FDP5lni+z9FjHE9H3xuvwSjoRV9U8jmDvJpmHPCBjUgPGYRynwb60eHWXCFJXLUtb4gSIHy0e+iaEbrKdalCkQ==}
     peerDependencies:
       async-validator: '*'
@@ -1183,7 +1176,6 @@ packages:
       '@vueuse/shared': 10.2.1(vue@3.3.4)
       async-validator: 4.2.5
       axios: 1.4.0
-      universal-cookie: 4.0.4
       vue-demi: 0.14.5(vue@3.3.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -1553,11 +1545,6 @@ packages:
       yargs: 17.7.2
     dev: true
 
-  /cookie@0.4.2:
-    resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
-    engines: {node: '>= 0.6'}
-    dev: false
-
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
@@ -1701,10 +1688,6 @@ packages:
       domelementtype: 2.3.0
       domhandler: 5.0.3
     dev: true
-
-  /ducksmanager@0.0.51:
-    resolution: {integrity: sha512-0BFbwMOAQv0wEhF/ezoxdQrAh5iwAGZYwVbMlq70PsrNeuhCqnI2D9VcW1Dch1COUlA/OgtKknzRD14lJhg4Jw==}
-    dev: false
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -3798,13 +3781,6 @@ packages:
     dependencies:
       '@types/unist': 2.0.6
     dev: true
-
-  /universal-cookie@4.0.4:
-    resolution: {integrity: sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==}
-    dependencies:
-      '@types/cookie': 0.3.3
-      cookie: 0.4.2
-    dev: false
 
   /unplugin-auto-import@0.16.4:
     resolution: {integrity: sha512-xdgBa9NAS3JG8HjkAZHSbGSMlrjKpaWKXGUzaF6RzEtr980RCl1t0Zsu0skUInNYrEQfqaHc7aGWPv41DLTK/w==}

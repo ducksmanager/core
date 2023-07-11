@@ -14,7 +14,8 @@
   -webkit-text-size-adjust: 100%;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   height: 100%;
   font: 11px verdana, arial, sans-serif;
@@ -73,8 +74,8 @@ button:focus-visible {
   text-align: center;
 
   background: inherit;
-  > * {
-    background: inherit;
+  .position-fixed {
+    background: var(--bs-body-bg);
   }
 }
 
