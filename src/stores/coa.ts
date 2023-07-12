@@ -119,9 +119,8 @@ export const coa = defineStore("coa", () => {
         afterUpdate
       ) {
         isLoadingCountryNames.value = true;
-        const locale = getCurrentLocaleShortKey(
-          (i18n.global.locale as unknown as { value: string }).value
-        );
+        const locale =
+          (i18n.global.locale as unknown as { value: string }).value || "en";
         countryNames.value = (
           await call(
             coaApi,

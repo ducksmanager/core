@@ -9,7 +9,6 @@ import AutoImport from "unplugin-auto-import/vite";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
 import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
 import Pages from "vite-plugin-pages";
-import Layouts from "vite-plugin-vue-layouts";
 
 export default defineConfig({
   plugins: [
@@ -29,7 +28,6 @@ export default defineConfig({
     ReactivityTransform(),
 
     Pages(),
-    Layouts(),
 
     // https://github.com/intlify/bundle-tools/tree/main/packages/vite-plugin-vue-i18n
     VueI18n({

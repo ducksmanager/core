@@ -25,13 +25,13 @@
     "page-flip": "^2.0.7",
     "pinia": "^2.1.4",
     "vue": "^3.3.4",
-    "vue-i18n": "^9.2.2",
+    "vue-i18n": "^9.3.0-beta.22",
     "vue-router": "^4.2.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",
     "@iconify-json/bi": "^1.1.17",
-    "@intlify/unplugin-vue-i18n": "^0.11.0",
+    "@intlify/unplugin-vue-i18n": "^0.12.2",
     "@types/js-cookie": "^3.0.3",
     "@types/page-flip": "^2.0.0",
     "@vitejs/plugin-vue": "^4.1.0",
@@ -47,7 +47,6 @@
     "unplugin-vue-components": "^0.25.1",
     "vite": "^4.3.9",
     "vite-plugin-pages": "^0.31.0",
-    "vite-plugin-vue-layouts": "^0.8.0",
     "vue-tsc": "^1.4.2"
   },
   "eslintConfig": {
