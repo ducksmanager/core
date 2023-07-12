@@ -59,6 +59,19 @@ jobs:
           cache-to: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache,mode=max
           tags: |
             ghcr.io/bperel/dumili-api:latest
+            ghcr.io/bperel/dumili-app:latest
+
+      - name: Build and push kumiko
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/x86_64
+          file: Dockerfile.kumiko
+          push: true
+          cache-from: type=registry,ref=ghcr.io/bperel/kumiko:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/kumiko:buildcache,mode=max
+          tags: |
+            ghcr.io/bperel/kumiko:latest
 
       - name: Upload docker-compose.yml file
         uses: nicklasfrahm/scp-action@v1.0.1
