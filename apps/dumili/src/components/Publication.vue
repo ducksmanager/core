@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { images } from "~/stores/images";
+import { images } from "../stores/images";
 
 const {
   publicationcode,

@@ -29,15 +29,7 @@ export default () => {
       return;
     }
     const issue = issueDetailsStore.issue;
-    const entries = issueDetailsStore.entries;
     for (const result of results.covers) {
-      entries[0] = {
-        ...entries[0],
-        storyversion: {
-          ...entries[0].storyversion,
-          storycode: result.storycode,
-        },
-      };
       issue.issuecode = result.issuecode;
       issue.publicationcode = result.publicationcode;
       issue.issuenumber = result.issuenumber;

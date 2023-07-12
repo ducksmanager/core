@@ -19,6 +19,7 @@ const fullFolderName = computed(
   () => `dumili/${username.value}/${props.folderName}`
 );
 
+declare var cloudinary: any;
 const uploadWidget = cloudinary.createUploadWidget(
   {
     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
@@ -34,7 +35,7 @@ const uploadWidget = cloudinary.createUploadWidget(
       user: username.value,
     },
   },
-  (error, result) => {
+  (error: string, result: { event: string; info: any }) => {
     if (error) {
       console.error(error);
     } else {
