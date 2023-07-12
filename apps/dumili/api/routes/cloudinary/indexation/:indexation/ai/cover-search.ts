@@ -6,8 +6,8 @@ import {
   call,
   addTokenRequestInterceptor,
   addUrlParamsRequestInterceptor,
-} from "ducksmanager/src/util/axios";
-import { POST__cover_id__search } from "ducksmanager/types/routes";
+} from "~dm_util/axios";
+import { POST__cover_id__search } from "~dm_types/routes";
 import Cookies from "js-cookie";
 
 const defaultApi = addTokenRequestInterceptor(
