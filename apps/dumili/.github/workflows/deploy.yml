@@ -32,7 +32,7 @@ jobs:
         with:
           registry: ghcr.io
           username: bperel
-          password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DUMILI }}
 
       - name: Build and push app
         uses: docker/build-push-action@v3
@@ -72,13 +72,13 @@ jobs:
       - name: Recreate container
         uses: appleboy/ssh-action@v0.1.4
         env:
-          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DUMILI }}
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 2m
-          envs: DOCKER_REGISTRY_TOKEN_DM
+          envs: DOCKER_REGISTRY_TOKEN_DUMILI
           script: |
             cd workspace/dumili
             echo `grep GITHUB_TOKEN .env.prod.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
