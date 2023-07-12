@@ -48,6 +48,7 @@ WORKDIR /app
 COPY --from=api-build /app/api/package*.json /app/api/.env /app/
 RUN pnpm install --production
 
+RUN ls -la /app/api/dist
 COPY --from=api-build /app/api/dist /app/
 
 EXPOSE 3000
