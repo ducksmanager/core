@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { user } from "../stores/user";
+import { user } from "~/stores/user";
 
 const props = defineProps<{
   folderName: string;

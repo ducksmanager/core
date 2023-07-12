@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -n front,back \"pnpm run start:front\" \"pnpm run start:back\"",
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "start:back": "cd api && pnpm run dev",
-    "start:front": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\""
+    "start:front": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.10.1",
