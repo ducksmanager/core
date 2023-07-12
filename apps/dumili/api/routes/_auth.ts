@@ -1,7 +1,19 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { User } from "~dm_types/SessionUser";
+export interface User {
+  id: number;
+  username: string;
+}
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user: User;
+    }
+  }
+}
 
 export const authenticateToken = (
   req: Request,
