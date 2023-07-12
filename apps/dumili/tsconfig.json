@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -23,11 +24,14 @@
     "types": [
       "@vue-macros/reactivity-transform/macros-global",
       "unplugin-icons/types/vue"
-    ]
-  },
-  "paths": {
-    "~/*": ["./src/*"],
-    "~types/*": ["./types/*"]
+    ],
+    "paths": {
+      "~/*": ["src/*"],
+      "~types/*": ["types/*"],
+      "~translations/*": ["translations/*"],
+      "~dm_types/*": ["node_modules/ducksmanager/types/*"],
+      "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"]
+    }
   },
   "include": [
     "auto-imports.d.ts",

@@ -1,5 +1,5 @@
-import { inducks_issue } from "ducksmanager/api/dist/prisma/client_coa";
-import { cover } from "ducksmanager/api/dist/prisma/client_cover_info";
+import { cover } from "~prisma_clients/client_cover_info";
+import { inducks_issue } from "~prisma_clients/client_coa";
 
 export interface SimilarImagesResult {
   image_ids: number[];

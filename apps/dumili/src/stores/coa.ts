@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
-import i18n from "../i18n";
+import i18n from "~/i18n";
 
-import { cachedCoaApi as coaApi } from "../util/api";
+import { cachedCoaApi as coaApi } from "~/util/api";
 import { inducks_issue } from "ducksmanager/api/dist/prisma/client_coa";
 import { call, getChunkedRequests } from "ducksmanager/src/util/axios";
 

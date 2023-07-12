@@ -81,10 +81,10 @@
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
 import { computed, ref, watch } from "vue";
-import { coa } from "../stores/coa";
-import { StoryversionKind, issueDetails } from "../stores/issueDetails";
-import { defaultApi } from "../util/api";
-import useHintMaker from "../composables/useHintMaker";
+import { coa } from "~/stores/coa";
+import { StoryversionKind, issueDetails } from "~/stores/issueDetails";
+import { defaultApi } from "~/util/api";
+import useHintMaker from "~/composables/useHintMaker";
 
 const route = useRoute();
 

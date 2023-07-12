@@ -51,8 +51,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { defaultApi } from "../../util/api";
-import { issueDetails } from "../../stores/issueDetails";
+import { defaultApi } from "~/util/api";
+import { issueDetails } from "~/stores/issueDetails";
 import { AxiosResponse } from "axios";
 const showUploadWidget = ref(false);
 const route = useRoute();

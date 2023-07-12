@@ -9,7 +9,7 @@ export const get = async (req: Request, res: Response) => {
   );
   const output = execSync(
     `docker-compose run --rm kumiko ./kumiko/kumiko -i ${indexationResources
-      .map(({ url }) => url)
+      .map(({ url }: { url: string }) => url)
       .join(" ")}`
   );
   try {
