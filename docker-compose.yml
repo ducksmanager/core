@@ -19,7 +19,7 @@ services:
     networks:
       - public-network
       - dumili-network
-      - dm2-network
+      - ducksmanager2_dm2-network
 
   sentry-relay:
     image: getsentry/relay
@@ -33,7 +33,7 @@ services:
 
 networks:
   dumili-network:
-  dm2-network:
+  ducksmanager2_dm2-network:
     external: true
   public-network:
     external: true

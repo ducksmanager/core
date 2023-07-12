@@ -59,7 +59,6 @@ jobs:
           cache-to: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache,mode=max
           tags: |
             ghcr.io/bperel/dumili-api:latest
-            ghcr.io/bperel/dumili-app:latest
 
       - name: Build and push kumiko
         uses: docker/build-push-action@v3
