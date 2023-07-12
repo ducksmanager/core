@@ -39,6 +39,7 @@ jobs:
         with:
           context: .
           platforms: linux/x86_64
+          file: Dockerfile-live
           push: true
           target: app
           cache-from: type=registry,ref=ghcr.io/bperel/dumili-app:buildcache
@@ -51,6 +52,7 @@ jobs:
         with:
           context: .
           platforms: linux/x86_64
+          file: Dockerfile-live
           push: true
           target: api
           cache-from: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache
