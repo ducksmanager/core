@@ -24,7 +24,11 @@
       "~routes/*": ["routes/*"]
     }
   },
-  "exclude": ["node_modules"],
+  "include": [
+    "index.ts",
+    "node_modules/ducksmanager/src/util/axios.ts",
+    "routes/*"
+  ],
   "ts-node": {
     "swc": true
   }
