@@ -52,5 +52,5 @@ COPY --from=api-build /app/api/dist /app/
 
 EXPOSE 3000
 
-WORKDIR /app/api
+WORKDIR /app
 CMD ["node", "index.js"]
