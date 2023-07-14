@@ -83,10 +83,12 @@ const stepNumber = ref(0);
 const uploadType = ref(null as "all" | "some" | null);
 const showUploadWidget = ref(false as boolean);
 
-const loginUrl = () =>
-  `${import.meta.env.VITE_DM_URL}/login?redirect=${
-    import.meta.env.VITE_FRONTEND_URL
-  }`;
+const loginUrl = computed(
+  () =>
+    `${import.meta.env.VITE_DM_URL}/login?redirect=${
+      import.meta.env.VITE_FRONTEND_URL
+    }`
+);
 
 const user = computed(() => userStore().user);
 
