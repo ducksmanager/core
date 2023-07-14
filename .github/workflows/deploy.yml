@@ -63,7 +63,7 @@ jobs:
       - name: Build and push kumiko
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: kumiko
           platforms: linux/x86_64
           file: kumiko/Dockerfile
           push: true

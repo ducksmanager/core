@@ -24,7 +24,6 @@ COPY types /app/types
 COPY translations /app/translations
 COPY api .
 RUN pnpm run build
-RUN ls -la /app/api
 
 FROM app-install AS app-build
 LABEL org.opencontainers.image.authors="Bruno Perel"
