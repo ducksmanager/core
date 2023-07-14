@@ -25,7 +25,6 @@ services:
       - public-network
       - dumili-network
       - ducksmanager2_dm2-network
-      - dumili-network
 
   sentry-relay:
     image: getsentry/relay
