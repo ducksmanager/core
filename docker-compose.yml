@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   kumiko:
-    container_name: dumili-api
+    container_name: kumiko
     image: ghcr.io/bperel/kumiko
     restart: always
     networks:
