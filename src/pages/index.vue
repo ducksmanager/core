@@ -1,28 +1,50 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="p-2 border-bottom">
     <h2>DuMILi</h2>
     <h3>DucksManager Inducks Little helper</h3>
-    <template v-if="currentIndexations">
-      <b-row align-h="center">
-        <b-col
-          class="col"
-          v-for="indexation of currentIndexations"
-          :key="indexation.name"
-          cols="12"
-          md="4"
-        >
-          <router-link :to="`/indexation/${indexation.indexation}`">
-            <b-img :src="indexation.url" fluid thumbnail />
-          </router-link>
-        </b-col>
-      </b-row>
-      <h4 fluid v-if="!currentIndexations.length">
-        Aucune indexation en cours
-      </h4></template
-    >
-    <template v-else>Loading...</template>
+  </b-container>
+
+  <b-container
+    fluid
+    class="d-flex flex-column flex-grow-1 justify-content-center"
+  >
+    <template v-if="user">
+      <h4 class="sticky-top">Indexations en cours</h4>
+      <template v-if="currentIndexations">
+        <b-row align-h="center">
+          <b-col
+            class="col"
+            v-for="indexation of currentIndexations"
+            :key="indexation.name"
+            cols="12"
+            md="4"
+          >
+            <router-link
+              :to="`/indexation/${indexation.indexation}`"
+              class="d-flex flex-column align-items-center"
+            >
+              <b-img :src="indexation.url" fluid thumbnail />
+              Numéro inconnu
+            </router-link>
+          </b-col>
+        </b-row>
+        <h4 fluid v-if="!currentIndexations.length">
+          Aucune indexation en cours
+        </h4></template
+      >
+      <template v-else>Loading...</template>
+    </template>
+    <template v-else>
+      <h4>
+        Vous devez être connecté pour accéder à cette page.
+        <a :href="loginUrl">Se connecter</a>
+      </h4>
+    </template>
+  </b-container>
+
+  <b-container fluid class="p-2 border-top" v-if="user">
     <div>
-      <b-button @click="modal = !modal">Indexer un nouveau numéro</b-button>
+      <b-button @click="modal = !modal">Nouvelle indexation</b-button>
     </div>
     <b-modal
       v-if="stepNumber === 0"
@@ -50,6 +72,7 @@
 import { ref } from "vue";
 import { defaultApi } from "~/util/api";
 import { AxiosResponse } from "axios";
+import { user as userStore } from "~/stores/user";
 
 const router = useRouter();
 
@@ -59,6 +82,13 @@ const cloudinaryFolderName = ref(null as string | null);
 const stepNumber = ref(0);
 const uploadType = ref(null as "all" | "some" | null);
 const showUploadWidget = ref(false as boolean);
+
+const loginUrl = () =>
+  `${import.meta.env.VITE_DM_URL}/login?redirect=${
+    import.meta.env.VITE_FRONTEND_URL
+  }`;
+
+const user = computed(() => userStore().user);
 
 defaultApi
   .get(`${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation`)

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'main'
+      - "main"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
         with:
           context: .
           platforms: linux/x86_64
-          file: Dockerfile.kumiko
+          file: kumiko/Dockerfile
           push: true
           cache-from: type=registry,ref=ghcr.io/bperel/kumiko:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/kumiko:buildcache,mode=max

@@ -1,7 +1,12 @@
 version: '3.8'
 services:
   kumiko:
+    container_name: dumili-api
     image: ghcr.io/bperel/kumiko
+    restart: always
+    networks:
+      - dumili-network
+
   app:
     container_name: dumili-app
     image: ghcr.io/bperel/dumili-app
@@ -20,6 +25,7 @@ services:
       - public-network
       - dumili-network
       - ducksmanager2_dm2-network
+      - dumili-network
 
   sentry-relay:
     image: getsentry/relay
@@ -29,7 +35,6 @@ services:
       - ./config/sentry-relay:/work/.relay
     networks:
       - public-network
-
 
 networks:
   dumili-network:
