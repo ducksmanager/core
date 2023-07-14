@@ -1,6 +1,8 @@
 version: '3.8'
 services:
   kumiko:
+    ports:
+      - "8005:8080"
     build:
-      context: .
-      dockerfile: Dockerfile.kumiko
+      context: kumiko
+      dockerfile: Dockerfile

@@ -1,18 +1,31 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="p-2 border-bottom">
+    <h2>DuMILi</h2>
+    <h3>DucksManager Inducks Little helper</h3>
+  </b-container>
+  <b-container
+    fluid
+    class="d-flex flex-grow-1 flex-column overflow-y-auto"
+    id="main"
+  >
     <template v-if="tabNames[activeTab] === 'page-gallery'">
-      <b-row v-if="images" align-h="center">
-        <b-col
-          class="col"
-          v-for="image of images"
-          :key="image.url"
-          cols="12"
-          md="4"
-        >
-          <b-img :src="image.url" fluid thumbnail />
-        </b-col>
-      </b-row>
-      <b-container v-else>Loading...</b-container>
+      <b-container
+        fluid
+        class="d-flex flex-column align-items-center justify-content-center flex-grow-1"
+      >
+        <b-row v-if="entries" align-h="center">
+          <b-col
+            class="col"
+            v-for="image of entries"
+            :key="image.url.url"
+            cols="12"
+            md="4"
+          >
+            <b-img :src="image.url.url" fluid thumbnail />
+          </b-col>
+        </b-row>
+        <b-container v-else>Loading...</b-container>
+      </b-container>
       <upload-widget
         v-if="showUploadWidget"
         :folder-name="(route.params.id as string)"
@@ -41,12 +54,12 @@
         /></b-col>
       </b-row>
     </template>
-    <b-container class="position-fixed start-0 bottom-0 mw-100 pt-2" style=""
-      ><b-tabs align="center" v-model:modelValue="activeTab"
-        ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
-          title="Text editor" /></b-tabs
-    ></b-container>
   </b-container>
+  <b-container class="start-0 bottom-0 mw-100 pt-2" style=""
+    ><b-tabs align="center" v-model:modelValue="activeTab"
+      ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
+        title="Text editor" /></b-tabs
+  ></b-container>
 </template>
 
 <script setup lang="ts">
@@ -102,8 +115,6 @@ const textContent = computed(() => {
     .join("\n");
 });
 
-const images = ref([] as { url: string }[]);
-
 const getPageImages = () => {
   defaultApi
     .get(
@@ -111,7 +122,7 @@ const getPageImages = () => {
         route.params.id
       }`
     )
-    .then((res: AxiosResponse<(typeof images)["value"]>) => {
+    .then((res: AxiosResponse<{ url: string }[]>) => {
       issueDetails().entries = res.data.map(({ url }) => ({ url: { url } }));
     });
 };
@@ -122,6 +133,9 @@ const getPageImages = () => {
 </script>
 
 <style lang="scss" scoped>
+#main {
+  max-height: calc(100vh - 108px);
+}
 .col {
   display: flex;
   align-items: center;

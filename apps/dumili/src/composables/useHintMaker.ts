@@ -24,7 +24,7 @@ export default () => {
   const applyHintsFromCoverSearch = (
     results: POST__cover_id__search["resBody"]
   ) => {
-    if (!results.covers.length) {
+    if (!results.covers?.length) {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }

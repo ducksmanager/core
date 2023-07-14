@@ -12,7 +12,7 @@
   />
   <div
     id="book-and-toc-container"
-    class="position-fixed vw-100 vh-100 start-0 top-0 d-flex flex-row align-items-center justify-content-space-around"
+    class="start-0 top-0 d-flex flex-row align-items-center justify-content-space-around"
   >
     <div class="container w-50 h-100 m-0">
       <div id="book" class="flip-book">
@@ -210,6 +210,10 @@ watch(
 </script>
 
 <style scoped lang="scss">
+#book-and-toc-container {
+  height: 100%;
+}
+
 @keyframes pulse-primary {
   0% {
     color: #999;
