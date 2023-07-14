@@ -46,13 +46,8 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
-COPY --from=api-build /app/api/package*.json /app/api/.env /app/
+COPY --from=api-build /app/api/package*.json /app/api/.env /app/api/dist /app/
 RUN pnpm install --production
 
-RUN ls -la /app/api/dist
-COPY --from=api-build /app/api/dist /app/
-
 EXPOSE 3000
-
-WORKDIR /app
 CMD ["node", "index.js"]
