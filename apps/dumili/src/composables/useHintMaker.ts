@@ -28,11 +28,10 @@ export default () => {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }
-    const issue = issueDetailsStore.issue;
     for (const result of results.covers) {
-      issue.issuecode = result.issuecode;
-      issue.publicationcode = result.publicationcode;
-      issue.issuenumber = result.issuenumber;
+      issueDetailsStore.issue.issuecode = result.issuecode;
+      issueDetailsStore.issue.publicationcode = result.publicationcode;
+      issueDetailsStore.issue.issuenumber = result.issuenumber;
     }
   };
 
