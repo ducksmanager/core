@@ -27,7 +27,7 @@
   "include": [
     "index.ts",
     "node_modules/ducksmanager/src/util/axios.ts",
-    "routes/*"
+    "routes/**/*"
   ],
   "ts-node": {
     "swc": true
