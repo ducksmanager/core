@@ -3,11 +3,9 @@ import { getIndexationResources } from "../index";
 import axios from "axios";
 
 import {
-  call,
   addTokenRequestInterceptor,
   addUrlParamsRequestInterceptor,
-} from "~dm_util/axios";
-import { POST__cover_id__search } from "~dm_types/routes";
+} from "~/util/axios";
 import Cookies from "js-cookie";
 
 const defaultApi = addTokenRequestInterceptor(
@@ -26,12 +24,9 @@ export const get = async (req: Request, res: Response) => {
   });
   return res.json(
     (
-      await call(
-        defaultApi,
-        new POST__cover_id__search({
-          reqBody: { base64: Buffer.from(image.data).toString("base64") },
-        })
-      )
+      await axios.post(defaultApi.defaults.baseURL + "/cover/:id/search", {
+        base64: Buffer.from(image.data).toString("base64"),
+      })
     ).data
   );
 };

@@ -27,14 +27,17 @@ dependencies:
     specifier: ^16.1.3
     version: 16.1.3
   ducksmanager:
-    specifier: ^0.0.60
-    version: 0.0.60
+    specifier: ^0.0.61
+    version: 0.0.61
   express:
     specifier: ^4.18.2
     version: 4.18.2
   express-file-routing:
     specifier: ^2.1.5
     version: 2.1.5(express@4.18.2)
+  js-cookie:
+    specifier: ^3.0.5
+    version: 3.0.5
   jsonwebtoken:
     specifier: ^9.0.0
     version: 9.0.0
@@ -748,8 +751,8 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /ducksmanager@0.0.60:
-    resolution: {integrity: sha512-S65Y68Kmkv8qsP0LGn8sepmVmHAdWWDjHBNeMy2G/xSFcpPZeruMvlRwhgdIu/S/ZMQDDhiZbIPNSxNLXn2v4g==}
+  /ducksmanager@0.0.61:
+    resolution: {integrity: sha512-JTLWI74kDlCxspuV/V+K3zNxrMg4rKml9a1zPOnveVuntFx6Eq3fz8SSWnCe0EeRqgmCKuCMQ/y5ARTG1yKMbA==}
     dev: false
 
   /ecdsa-sig-formatter@1.0.11:
@@ -1125,6 +1128,11 @@ packages:
     resolution: {integrity: sha512-D2S+3GLxWH+uhrNEcoh/fnmYeP8E8/zHl644d/jdA0g2uyXvy3sb0qxotE+ne0LtccHknQzWwZEzhak7oJ0COQ==}
     dev: false
     optional: true
+
+  /js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+    dev: false
 
   /json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
