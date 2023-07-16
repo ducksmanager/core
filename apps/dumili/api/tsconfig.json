@@ -18,17 +18,12 @@
     "paths": {
       "~/*": ["*"],
       "~types/*": ["../types/*"],
-      "~dm_util/*": ["node_modules/ducksmanager/src/util/*"],
       "~dm_types/*": ["node_modules/ducksmanager/types/*"],
       "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"],
       "~routes/*": ["routes/*"]
     }
   },
-  "include": [
-    "index.ts",
-    "node_modules/ducksmanager/src/util/axios.ts",
-    "routes/**/*"
-  ],
+  "include": ["index.ts", "routes/**/*.ts"],
   "ts-node": {
     "swc": true
   }
