@@ -21,7 +21,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/dumili/.env.prod.local
+          source: /home/bperel/workspace/dumili/.env.production.local
           target: api/.env.local
 
       - name: Set up Docker Buildx
@@ -95,5 +95,5 @@ jobs:
           envs: DOCKER_REGISTRY_TOKEN_DUMILI
           script: |
             cd workspace/dumili
-            echo `grep GITHUB_TOKEN .env.prod.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
+            echo `grep GITHUB_TOKEN api/.env.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
             docker compose pull && docker compose up -d --force-recreate
