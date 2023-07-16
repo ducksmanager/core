@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 
 const defaultApi = addTokenRequestInterceptor(
   addUrlParamsRequestInterceptor(
-    axios.create({ baseURL: process.env.VITE_DM_API_URL })
+    axios.create({ baseURL: process.env.DM_API_URL })
   ),
   () => Cookies.get("token") as string
 );
