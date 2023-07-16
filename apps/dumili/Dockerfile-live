@@ -29,8 +29,7 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 WORKDIR /app
 
 COPY . .
-COPY --from=api-build /app/api api
-RUN pnpm run build
+RUN NODE_ENV=production pnpm run build
 
 FROM nginx AS app
 LABEL org.opencontainers.image.authors="Bruno Perel"
