@@ -22,7 +22,7 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: /home/bperel/workspace/dumili/.env.prod.local
-          target: api/.env.prod.local
+          target: api/.env.local
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
