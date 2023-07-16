@@ -24,7 +24,7 @@ export const get = async (req: Request, res: Response) => {
   });
   return res.json(
     (
-      await axios.post(defaultApi.defaults.baseURL + "/cover/:id/search", {
+      await axios.post(`${defaultApi.defaults.baseURL}/cover-id/search`, {
         base64: Buffer.from(image.data).toString("base64"),
       })
     ).data
