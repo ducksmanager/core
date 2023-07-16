@@ -42,7 +42,7 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
-COPY --from=api-build /app/api/package*.json /app/api/.env.prod.local /app/api/dist /app/
+COPY --from=api-build /app/api/package*.json /app/api/.env.local /app/api/dist /app/
 RUN pnpm install --production
 
 EXPOSE 3000
