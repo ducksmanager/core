@@ -8,11 +8,11 @@ import { router } from "express-file-routing";
 import { authenticateToken } from "~routes/_auth";
 
 dotenv.config({
-  path: "../.env",
+  path: ".env",
 });
 
 dotenv.config({
-  path: "../.env.local",
+  path: ".env.local",
   override: true,
 });
 

@@ -18,8 +18,6 @@ WORKDIR /app/api
 COPY api/package.json api/pnpm-lock.yaml ./
 RUN pnpm i
 
-COPY .env.prod.local ./.env
-
 COPY types /app/types
 COPY translations /app/translations
 COPY api .
@@ -31,7 +29,6 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 WORKDIR /app
 
 COPY . .
-COPY .env.prod.local ./.env
 COPY --from=api-build /app/api api
 RUN pnpm run build
 
@@ -45,7 +42,7 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
-COPY --from=api-build /app/api/package*.json /app/api/.env /app/api/dist /app/
+COPY --from=api-build /app/api/package*.json /app/api/.env.prod.local /app/api/dist /app/
 RUN pnpm install --production
 
 EXPOSE 3000
