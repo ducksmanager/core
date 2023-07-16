@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { execSync } from "child_process";
 import { getIndexationResources } from "../index";
 import axios from "axios";
 
