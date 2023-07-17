@@ -24,12 +24,11 @@ services:
   sentry-relay:
     image: getsentry/relay
     restart: always
-    container_name: sentry3
+    container_name: sentry-edgecreator
     volumes:
       - ./config/sentry-relay:/work/.relay
     networks:
       - public-network
-
 
 networks:
   ec2-network:
