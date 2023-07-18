@@ -43,6 +43,7 @@ declare module 'vue' {
     IonTabButton: typeof import('@ionic/vue')['IonTabButton']
     IonTabs: typeof import('@ionic/vue')['IonTabs']
     IonText: typeof import('@ionic/vue')['IonText']
+    IonTextarea: typeof import('@ionic/vue')['IonTextarea']
     IonTitle: typeof import('@ionic/vue')['IonTitle']
     IonToolbar: typeof import('@ionic/vue')['IonToolbar']
     Issue: typeof import('./src/components/Issue.vue')['default']

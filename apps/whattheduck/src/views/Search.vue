@@ -10,31 +10,29 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <div id="container">
-        <ion-text>{{ t('search_intro') }}</ion-text>
-        <ion-searchbar :placeholder="t('search_hint')" v-model="storyTitle"></ion-searchbar>
+      <ion-text>{{ t('search_intro') }}</ion-text>
+      <ion-searchbar :placeholder="t('search_hint')" v-model="storyTitle"></ion-searchbar>
 
-        <ion-list v-if="storyResults?.results && !selectedStory">
-          <ion-item
-            v-for="story of storyResults?.results"
-            @click="
-              selectedStory = story;
-              storyTitle = '';
-            "
-          >
-            <ion-label>{{ story.title }}</ion-label>
-          </ion-item>
-        </ion-list>
-        <div v-if="selectedStory">
-          {{ selectedStory.title }} {{ t('story_was_published_in') }}
-          <div v-for="issue of selectedStory.issues">
-            <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
-              v-if="issue.collectionIssue"
-              :value="getConditionKey(issue.collectionIssue.condition)"
-            ></condition>
-            {{ issue.publicationName }}
-            {{ issue.issuenumber }}
-          </div>
+      <ion-list v-if="storyResults?.results && !selectedStory">
+        <ion-item
+          v-for="story of storyResults?.results"
+          @click="
+            selectedStory = story;
+            storyTitle = '';
+          "
+        >
+          <ion-label>{{ story.title }}</ion-label>
+        </ion-item>
+      </ion-list>
+      <div v-if="selectedStory">
+        {{ selectedStory.title }} {{ t('story_was_published_in') }}
+        <div v-for="issue of selectedStory.issues">
+          <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
+            v-if="issue.collectionIssue"
+            :value="getConditionKey(issue.collectionIssue.condition)"
+          ></condition>
+          {{ issue.publicationName }}
+          {{ issue.issuenumber }}
         </div>
       </div>
     </ion-content>

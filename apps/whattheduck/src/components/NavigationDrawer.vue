@@ -27,7 +27,7 @@
             @click="selectedIndex = i"
             router-direction="root"
             :router-link="p.url"
-            lines="full"
+            lines="none"
             :detail="false"
           >
             <ion-label>{{ p.title }}</ion-label>

@@ -4,32 +4,47 @@ ion-radio {
   background: initial !important;
 }
 
-ion-title {
-  padding-inline: 50px;
-}
-
 ion-label {
   overflow-x: auto !important;
 }
 
+ion-content {
+  --padding-top: 20px;
+  --padding-end: 20px;
+  --padding-bottom: 20px;
+  --padding-start: 20px;
+
+  &.no-padding {
+    --padding-top: 0;
+    --padding-end: 0;
+    --padding-bottom: 0;
+    --padding-start: 0;
+  }
+}
+
+ion-searchbar {
+  padding-inline-start: 0 !important;
+}
+
 .dm-condition-background {
-  @each $condition, $conditionColor in $dmConditions {
+
+  @each $condition,
+  $conditionColor in $dmConditions {
     &.#{$condition} {
+
       &,
       &::part(mark) {
         background-color: var(--dm-condition-#{$condition});
 
-        @if $condition == 'missing' {
-          background-image: linear-gradient(
-            45deg,
-            red 0%,
-            transparent 0%,
-            transparent 48%,
-            red 48%,
-            red 52%,
-            transparent 52%,
-            transparent 100%
-          );
+        @if $condition =='missing' {
+          background-image: linear-gradient(45deg,
+              red 0%,
+              transparent 0%,
+              transparent 48%,
+              red 48%,
+              red 52%,
+              transparent 52%,
+              transparent 100%);
           background-size: 50px 50px;
         }
       }

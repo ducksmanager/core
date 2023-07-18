@@ -11,27 +11,23 @@
       <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter"></ion-searchbar>
     </ion-header>
 
-    <ion-content ref="content">
-      <div id="container">
-        <div v-if="hasList">
-          <Row
-            v-for="{ key, text, ownsNext, ...item } in filteredItems"
-            @click="onRowClick(key)"
-            :ownership-text-fn="ownershipTextFn"
-            :ownership="ownership?.[key]"
-            :is-next-owned="ownsNext"
-          >
-            <template #prefix>
-              <slot name="row-prefix" v-bind="{ item }"></slot>
-            </template>
-            <template #label>
-              <slot name="row-label" v-bind="{ key, text }"></slot>
-            </template>
-            ></Row
-          >
-        </div>
-        <div v-else>{{ t('loading_collection') }}</div>
-      </div>
+    <ion-content ref="content" v-if="!filteredItems">{{ t('loading_collection') }}</ion-content>
+    <ion-content v-else ref="content" class="no-padding">
+      <Row
+        v-for="{ key, text, ownsNext, ...item } in filteredItems"
+        @click="onRowClick(key)"
+        :ownership-text-fn="ownershipTextFn"
+        :ownership="ownership?.[key]"
+        :is-next-owned="ownsNext"
+      >
+        <template #prefix>
+          <slot name="row-prefix" v-bind="{ item }"></slot>
+        </template>
+        <template #label>
+          <slot name="row-label" v-bind="{ key, text }"></slot>
+        </template>
+        ></Row
+      >
       <EditIssuesButton />
 
       <div id="scroll-text" :style="{ top: scrollPosition + '%' }" v-show="scrollPosition" slot="fixed">
@@ -198,19 +194,19 @@ watch(
 </script>
 
 <style scoped>
-#container strong {
+strong {
   font-size: 20px;
   line-height: 26px;
 }
 
-#container p {
+p {
   font-size: 16px;
   line-height: 22px;
   color: #8c8c8c;
   margin: 0;
 }
 
-#container a {
+a {
   text-decoration: none;
 }
 

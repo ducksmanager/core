@@ -1,48 +1,46 @@
 <template>
   <ion-page>
-    <div id="container">
-      <ion-item
-        ><ion-label>{{ t('condition') }}</ion-label>
+    <ion-item
+      ><ion-label>{{ t('condition') }}</ion-label>
 
-        <ion-radio-group v-if="selectedCondition" :model-value="selectedCondition">
-          <ion-radio
-            v-for="condition of conditions"
-            :class="`dm-condition-background ${condition}`"
-            :value="condition"
-            :aria-label="t(`condition_${condition}`)"
-          ></ion-radio></ion-radio-group
-      ></ion-item>
-      <ion-item>
-        <ion-label>{{ t('in_to_read_list') }}</ion-label>
-        <ion-checkbox
-          slot="end"
-          v-model="issue.inToReadList"
-          :aria-label="t('in_to_read_list')"
-        ></ion-checkbox> </ion-item
-      ><ion-item>
-        <ion-label>{{ t('purchase_date') }}</ion-label>
-        <ion-list>
-          <ion-button>{{ t('create_new_purchase_date') }}</ion-button>
-          <ion-radio-group :model-value="issue.purchaseId" :value="issue.purchaseId" class="vertical">
-            <ion-list>
-              <ion-item>
-                <ion-radio :value="null" :aria-label="t('no_purchase_date')"></ion-radio>
-                <div>
-                  <ion-label>{{ t('no_purchase_date') }}</ion-label>
-                </div></ion-item
-              >
-              <ion-item v-for="purchase of purchases">
-                <ion-radio :value="purchase.id" :aria-label="purchase.description"></ion-radio>
-                <div>
-                  <ion-label>{{ purchase.date }}</ion-label>
-                  <ion-label>{{ purchase.description }}</ion-label>
-                </div></ion-item
-              ></ion-list
-            ></ion-radio-group
-          >
-        </ion-list>
-      </ion-item>
-    </div>
+      <ion-radio-group v-if="selectedCondition" :model-value="selectedCondition">
+        <ion-radio
+          v-for="condition of conditions"
+          :class="`dm-condition-background ${condition}`"
+          :value="condition"
+          :aria-label="t(`condition_${condition}`)"
+        ></ion-radio></ion-radio-group
+    ></ion-item>
+    <ion-item>
+      <ion-label>{{ t('in_to_read_list') }}</ion-label>
+      <ion-checkbox
+        slot="end"
+        v-model="issue.inToReadList"
+        :aria-label="t('in_to_read_list')"
+      ></ion-checkbox> </ion-item
+    ><ion-item>
+      <ion-label>{{ t('purchase_date') }}</ion-label>
+      <ion-list>
+        <ion-button>{{ t('create_new_purchase_date') }}</ion-button>
+        <ion-radio-group :model-value="issue.purchaseId" :value="issue.purchaseId" class="vertical">
+          <ion-list>
+            <ion-item>
+              <ion-radio :value="null" :aria-label="t('no_purchase_date')"></ion-radio>
+              <div>
+                <ion-label>{{ t('no_purchase_date') }}</ion-label>
+              </div></ion-item
+            >
+            <ion-item v-for="purchase of purchases">
+              <ion-radio :value="purchase.id" :aria-label="purchase.description"></ion-radio>
+              <div>
+                <ion-label>{{ purchase.date }}</ion-label>
+                <ion-label>{{ purchase.description }}</ion-label>
+              </div></ion-item
+            ></ion-list
+          ></ion-radio-group
+        >
+      </ion-list>
+    </ion-item>
   </ion-page>
 </template>
 <script setup lang="ts">
