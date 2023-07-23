@@ -15,7 +15,8 @@
       >
         <b-img :src="url" fluid thumbnail />
         <div class="position-absolute bottom-0 text-center">
-          {{ text || "Titre inconnu" }}
+          <slot v-if="$slots" :issuecode="text" />
+          <template v-else>{{ text || "Titre inconnu" }}</template>
         </div>
       </b-col>
     </b-row>
@@ -24,8 +25,12 @@
 </template>
 <script lang="ts" setup>
 defineProps<{
-  images: { url: string; text?: string }[];
+  images: { url: string; text: string }[];
   selectable?: boolean;
+}>();
+
+defineSlots<{
+  default(props: { issuecode: string }): any;
 }>();
 
 const emit = defineEmits<{

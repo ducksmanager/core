@@ -64,7 +64,7 @@ const entries = computed(() => issueDetails().entries);
 const images = computed(() =>
   entries.value?.map(({ url, entrycode }) => ({
     url: url.url,
-    text: entrycode,
+    text: entrycode!,
   }))
 );
 

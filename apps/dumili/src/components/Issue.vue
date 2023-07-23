@@ -1,22 +1,28 @@
 <template>
-  <div :class="`d-${noWrap ? 'inline' : 'block'}`">
+  <div v-if="publicationcode" :class="`d-${noWrap ? 'inline' : 'block'}`">
     <Publication
       :publicationcode="publicationcode"
-      :publicationname="publicationname || publicationcode"
+      :publicationname="publicationName || publicationcode"
       display-class="d-inline"
     />{{ issuenumber }}
     <slot name="title-suffix" />
     <slot />
   </div>
+  <div v-else>Numéro inconnu</div>
 </template>
 
 <script setup lang="ts">
-const { noWrap = true } = defineProps<{
-  publicationcode: string;
-  publicationname: string | null;
-  issuenumber: string;
+import { coa } from "~/stores/coa";
+
+const props = defineProps<{
+  publicationcode: string | null;
+  issuenumber: string | null;
   noWrap?: boolean;
 }>();
+
+const publicationName = computed(() =>
+  props.publicationcode ? coa().publicationNames[props.publicationcode] : null
+);
 </script>
 
 <style scoped lang="scss">

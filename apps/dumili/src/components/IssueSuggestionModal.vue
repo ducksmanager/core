@@ -20,7 +20,11 @@
       @selected="
         (url) => (selectedExistingCoverIssuecode = coverUrlToIssuecode(url))
       "
-    />
+      v-slot="{ issuecode }"
+      ><Issue
+        :publicationcode="getPublicationcodeFromIssuecode(issuecode)"
+        :issuenumber="getIssuenumberFromIssuecode(issuecode)"
+    /></Gallery>
   </b-modal>
 </template>
 
@@ -35,15 +39,17 @@ const { hasPendingIssueSuggestions } = storeToRefs(issueDetails());
 const selectedExistingCoverIssuecode = ref(null as string | null);
 
 const issueSuggestionsWithUrls = computed(() =>
-  issueDetails().issueSuggestions.map((issueSuggestion) => ({
-    ...issueSuggestion,
-    url:
-      import.meta.env.VITE_DM_API_URL +
-      GET__cover_id__download__$coverId.url.replace(
-        ":coverId",
-        String(issueSuggestion.coverId)
-      ),
-  }))
+  issueDetails()
+    .issueSuggestions.filter(({ coverId }) => coverId)
+    .map((issueSuggestion) => ({
+      ...issueSuggestion,
+      url:
+        import.meta.env.VITE_DM_API_URL +
+        GET__cover_id__download__$coverId.url.replace(
+          ":coverId",
+          String(issueSuggestion.coverId)
+        ),
+    }))
 );
 const images = computed(() =>
   issueSuggestionsWithUrls.value.map(
@@ -58,4 +64,9 @@ const coverUrlToIssuecode = (url: string): string =>
   issueSuggestionsWithUrls.value.find(
     ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url
   )?.issuecode || "";
+
+const getPublicationcodeFromIssuecode = (issuecode: string) =>
+  issuecode.split(" ")[0];
+const getIssuenumberFromIssuecode = (issuecode: string) =>
+  issuecode.split(" ")[1];
 </script>
