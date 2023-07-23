@@ -28,5 +28,10 @@ export const get = async (
       externalRes.pipe(res);
     }
   );
+  externalRequest.on("error", function (err) {
+    console.error(err);
+    res.statusCode = 500;
+    res.end();
+  });
   externalRequest.end();
 };
