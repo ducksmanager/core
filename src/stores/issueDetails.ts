@@ -50,29 +50,35 @@ export type Entry = Partial<
   url: Entryurl;
 };
 
-type Issue = Pick<
+export type SuggestedIssue = Pick<
   inducks_issue,
   "publicationcode" | "issuenumber" | "issuecode"
-> &
-  Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>;
+> & {
+  accepted?: boolean;
+  isCustom?: boolean;
+  isAi: boolean;
+  coverId: number | null;
+} & Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>;
 
-type SuggestedIssue = Pick<
-  Issue,
-  "publicationcode" | "issuenumber" | "issuecode"
-> & { accepted?: boolean; coverId: number };
+type UnknownIssue = Partial<NonNullable<SuggestedIssue>> & {
+  accepted: boolean;
+};
 
 export const issueDetails = defineStore("issueDetails", () => {
-  const issue = ref({} as Issue),
-    entries = ref([] as Entry[]),
+  const entries = ref([] as Entry[]),
     issueSuggestions = ref([] as SuggestedIssue[]),
     pendingIssueSuggestions = computed(() =>
       issueSuggestions.value.filter(({ accepted }) => accepted === undefined)
-    );
+    ),
+    issueOptions = computed((): (UnknownIssue | SuggestedIssue)[] => [
+      ...issueSuggestions.value,
+      { accepted: true },
+    ]);
 
   return {
-    issue,
-    entries,
     issueSuggestions,
+    issueOptions,
+    issue: computed(() => issueOptions.value.find(({ accepted }) => accepted)!),
     hasPendingIssueSuggestions: computed(
       () => pendingIssueSuggestions.value.length > 0
     ),
@@ -81,13 +87,13 @@ export const issueDetails = defineStore("issueDetails", () => {
         (suggestion) => (suggestion.accepted = false)
       );
     },
-    acceptIssueSuggestion: (acceptedSuggestionIssuecode: string) => {
+    acceptIssueSuggestion: (acceptedSuggestionIssuecode?: string) => {
       issueSuggestions.value.forEach(
         (suggestion) =>
           (suggestion.accepted =
             acceptedSuggestionIssuecode === suggestion.issuecode)
       );
-      issue.value = issueSuggestions.value.find(({ accepted }) => accepted)!;
     },
+    entries,
   };
 });

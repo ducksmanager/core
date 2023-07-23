@@ -1,9 +1,11 @@
 import { POST__cover_id__search } from "ducksmanager/types/routes";
 import { KumikoResults } from "~types/KumikoResults";
 import { StoryversionKind, issueDetails } from "~/stores/issueDetails";
+import { coa } from "~/stores/coa";
 
 export default () => {
   const issueDetailsStore = issueDetails();
+  const coaStore = coa();
   const applyHintsFromKumiko = (results: KumikoResults) => {
     const entries = issueDetailsStore.entries;
     results?.forEach((result, idx) => {
@@ -21,7 +23,7 @@ export default () => {
     });
   };
 
-  const applyHintsFromCoverSearch = (
+  const applyHintsFromCoverSearch = async (
     results: POST__cover_id__search["resBody"]
   ) => {
     if (!results.covers?.length) {
@@ -34,7 +36,12 @@ export default () => {
       issuecode: cover.issuecode,
       publicationcode: cover.publicationcode,
       issuenumber: cover.issuenumber,
+      isAi: true,
     }));
+
+    await coaStore.fetchPublicationNames([
+      ...results.covers.map(({ publicationcode }) => publicationcode!),
+    ]);
   };
 
   return { applyHintsFromKumiko, applyHintsFromCoverSearch };

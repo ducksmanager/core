@@ -14,7 +14,7 @@
     id="book-and-toc-container"
     class="start-0 top-0 d-flex flex-row align-items-center justify-content-space-around"
   >
-    <div class="container w-50 h-100 m-0">
+    <b-container class="d-flex w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
           v-for="({ position, url }, index) in entries"
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </b-container>
     <b-card
       no-body
       class="table-of-contents d-none d-md-block w-50 h-100 m-0 overflow-auto"
@@ -52,15 +52,7 @@
           /></b-button>
         </div>
         <IssueSuggestionModal />
-        <Issue
-          v-if="issue.publicationcode && issue.issuenumber"
-          :publicationcode="issue.publicationcode"
-          :publicationname="
-            publicationNames[issue.publicationcode] || issue.publicationcode
-          "
-          :issuenumber="issue.issuenumber"
-        />
-        <div v-else>Numéro inconnu</div>
+        <IssueSuggestionList />
         <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
         <h3>{{ "Table des matières" }}</h3>
       </template>
@@ -82,7 +74,6 @@
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
 import { computed, ref, watch } from "vue";
-import { coa } from "~/stores/coa";
 import { StoryversionKind, issueDetails } from "~/stores/issueDetails";
 import { defaultApi } from "~/util/api";
 import useHintMaker from "~/composables/useHintMaker";
@@ -97,9 +88,7 @@ let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
 let currentEntry = ref(0 as number);
 const currentTabIndex = ref(0 as number);
-const publicationNames = computed(() => coa().publicationNames);
 const isSinglePage = computed(() => entries.value.length === 1);
-const issue = computed(() => issueDetails().issue);
 const entries = computed(() => issueDetails().entries);
 const releaseDate = computed(() => {
   if (!issueDetails().issue?.oldestdate) return null;
