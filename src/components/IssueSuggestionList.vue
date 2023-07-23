@@ -1,6 +1,7 @@
 <template>
   <b-dropdown class="my-2"
     ><b-dropdown-item
+      class="d-flex"
       @click="acceptIssueSuggestion(issueSuggestion.issuecode)"
       v-for="issueSuggestion of issueSuggestions"
     >
