@@ -52,15 +52,42 @@ export type Entry = Partial<
 
 type Issue = Pick<
   inducks_issue,
-  | "publicationcode"
-  | "issuenumber"
-  | "issuecode"
-  | "oldestdate"
-  | "price"
-  | "pages"
->;
+  "publicationcode" | "issuenumber" | "issuecode"
+> &
+  Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>;
 
-export const issueDetails = defineStore("issueDetails", () => ({
-  issue: ref({} as Issue),
-  entries: ref([] as Entry[]),
-}));
+type SuggestedIssue = Pick<
+  Issue,
+  "publicationcode" | "issuenumber" | "issuecode"
+> & { accepted?: boolean; coverId: number };
+
+export const issueDetails = defineStore("issueDetails", () => {
+  const issue = ref({} as Issue),
+    entries = ref([] as Entry[]),
+    issueSuggestions = ref([] as SuggestedIssue[]),
+    pendingIssueSuggestions = computed(() =>
+      issueSuggestions.value.filter(({ accepted }) => accepted === undefined)
+    );
+
+  return {
+    issue,
+    entries,
+    issueSuggestions,
+    hasPendingIssueSuggestions: computed(
+      () => pendingIssueSuggestions.value.length > 0
+    ),
+    rejectAllIssueSuggestions: () => {
+      issueSuggestions.value.forEach(
+        (suggestion) => (suggestion.accepted = false)
+      );
+    },
+    acceptIssueSuggestion: (acceptedSuggestionIssuecode: string) => {
+      issueSuggestions.value.forEach(
+        (suggestion) =>
+          (suggestion.accepted =
+            acceptedSuggestionIssuecode === suggestion.issuecode)
+      );
+      issue.value = issueSuggestions.value.find(({ accepted }) => accepted)!;
+    },
+  };
+});

@@ -6,7 +6,7 @@ export default () => {
   const issueDetailsStore = issueDetails();
   const applyHintsFromKumiko = (results: KumikoResults) => {
     const entries = issueDetailsStore.entries;
-    results.forEach((result, idx) => {
+    results?.forEach((result, idx) => {
       if (entries[idx]) {
         if (!entries[idx].storyversion) {
           entries[idx].storyversion = {};
@@ -28,11 +28,13 @@ export default () => {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }
-    for (const result of results.covers) {
-      issueDetailsStore.issue.issuecode = result.issuecode;
-      issueDetailsStore.issue.publicationcode = result.publicationcode;
-      issueDetailsStore.issue.issuenumber = result.issuenumber;
-    }
+    issueDetailsStore.issueSuggestions = results.covers.map((cover) => ({
+      accepted: undefined,
+      coverId: cover.id,
+      issuecode: cover.issuecode,
+      publicationcode: cover.publicationcode,
+      issuenumber: cover.issuenumber,
+    }));
   };
 
   return { applyHintsFromKumiko, applyHintsFromCoverSearch };

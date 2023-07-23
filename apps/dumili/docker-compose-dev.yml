@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   kumiko:
+    restart: always
     ports:
       - "8005:8080"
     build:

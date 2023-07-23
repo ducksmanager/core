@@ -51,6 +51,7 @@
             <i-bi-lightbulb-fill
           /></b-button>
         </div>
+        <IssueSuggestionModal />
         <Issue
           v-if="issue.publicationcode && issue.issuenumber"
           :publicationcode="issue.publicationcode"
@@ -59,7 +60,7 @@
           "
           :issuenumber="issue.issuenumber"
         />
-        <template v-else>Numéro inconnu</template>
+        <div v-else>Numéro inconnu</div>
         <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
         <h3>{{ "Table des matières" }}</h3>
       </template>

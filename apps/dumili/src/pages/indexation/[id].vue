@@ -8,24 +8,8 @@
     class="d-flex flex-grow-1 flex-column overflow-y-auto"
     id="main"
   >
-    <template v-if="tabNames[activeTab] === 'page-gallery'">
-      <b-container
-        fluid
-        class="d-flex flex-column align-items-center justify-content-center flex-grow-1"
-      >
-        <b-row v-if="entries" align-h="center">
-          <b-col
-            class="col"
-            v-for="image of entries"
-            :key="image.url.url"
-            cols="12"
-            md="4"
-          >
-            <b-img :src="image.url.url" fluid thumbnail />
-          </b-col>
-        </b-row>
-        <b-container v-else>Loading...</b-container>
-      </b-container>
+    <template v-if="tabNames[activeTab] === 'page-gallery'"
+      ><Gallery :images="images" />
       <upload-widget
         v-if="showUploadWidget"
         :folder-name="(route.params.id as string)"
@@ -77,6 +61,12 @@ const textContentError = ref("" as string);
 
 const issue = computed(() => issueDetails().issue);
 const entries = computed(() => issueDetails().entries);
+const images = computed(() =>
+  entries.value?.map(({ url, entrycode }) => ({
+    url: url.url,
+    text: entrycode,
+  }))
+);
 
 const textContent = computed(() => {
   if (!issue.value) {
