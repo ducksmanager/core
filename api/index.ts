@@ -63,10 +63,11 @@ app.all("/global-stats/user/collection/rarity", authenticateToken);
 
 app.use(express.json({ limit: "5mb" }));
 
-app.use("/", router());
+(async () => {
+  app.use("/", await router());
+  app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
-app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
-
-app.listen(port, () => {
-  console.log(`API listening on port ${port}`);
-});
+  app.listen(port, () => {
+    console.log(`API listening on port ${port}`);
+  });
+})();
