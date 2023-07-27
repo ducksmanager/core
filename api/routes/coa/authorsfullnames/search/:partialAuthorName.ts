@@ -1,7 +1,6 @@
-import { inducks_person, PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
+import { inducks_person } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -11,7 +10,7 @@ export const get = async (
 ) => {
   const partialAuthorName = req.params.partialAuthorName;
 
-  const authors = await prisma.inducks_person.findMany({
+  const authors = await prismaCoa.inducks_person.findMany({
     where: {
       fullname: {
         contains: partialAuthorName,

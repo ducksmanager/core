@@ -2,12 +2,10 @@ import bodyParser from "body-parser";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 import { loginAs } from "./util";
-
-const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
@@ -38,7 +36,7 @@ export const post = [
             .createHash("sha1")
             .update(password)
             .digest("hex");
-          await prisma.user.updateMany({
+          await prismaDm.user.updateMany({
             data: {
               password: hashedPassword,
             },
@@ -46,7 +44,7 @@ export const post = [
               email: email as string,
             },
           });
-          const user = (await prisma.user.findFirst({
+          const user = (await prismaDm.user.findFirst({
             where: {
               email: email as string,
             },

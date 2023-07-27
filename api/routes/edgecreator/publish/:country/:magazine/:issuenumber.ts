@@ -1,15 +1,14 @@
 import bodyParser from "body-parser";
 
+import { prismaDm } from "~/prisma";
 import {
   bookstoreComment,
   edge,
-  PrismaClient,
   user,
   userContribution,
 } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 const isValidPublicationcode = (publicationcode: string) =>
   /^[a-z]+\/[-A-Z0-9]+$/.test(publicationcode);
@@ -18,7 +17,7 @@ const getUserIdsByUsername = async (
   usernames: string[]
 ): Promise<{ [username: string]: number }> =>
   (
-    await prisma.user.findMany({
+    await prismaDm.user.findMany({
       select: {
         id: true,
         username: true,
@@ -44,13 +43,13 @@ const createContribution = async (
 ) => {
   const currentUserPoints =
     (
-      await prisma.userContribution.aggregate({
+      await prismaDm.userContribution.aggregate({
         _sum: { newPoints: true },
         where: { userId: user.id, contribution },
       })
     )._sum.newPoints || 0;
 
-  return prisma.userContribution.create({
+  return prismaDm.userContribution.create({
     data: {
       edgeId: edgeToPublish?.id || null,
       bookstoreCommentId: bookstoreCommentToPublish?.id || null,
@@ -71,7 +70,7 @@ const publishEdgeOnDm = async (
 ) => {
   const [country, magazine] = publicationcode.split("/");
   let contributions: userContribution[];
-  let edgeToPublish = await prisma.edge.findFirst({
+  let edgeToPublish = await prismaDm.edge.findFirst({
     where: {
       publicationcode,
       issuenumber,
@@ -79,14 +78,14 @@ const publishEdgeOnDm = async (
   });
   const isNew = !!edgeToPublish;
   if (edgeToPublish) {
-    contributions = await prisma.userContribution.findMany({
+    contributions = await prismaDm.userContribution.findMany({
       where: {
         edgeId: edgeToPublish.id,
       },
     });
   } else {
     contributions = [];
-    edgeToPublish = await prisma.edge.create({
+    edgeToPublish = await prismaDm.edge.create({
       data: {
         publicationcode,
         issuenumber,
@@ -97,7 +96,7 @@ const publishEdgeOnDm = async (
 
   const issuePopularity =
     (
-      await prisma.issuePopularity.findFirst({
+      await prismaDm.issuePopularity.findFirst({
         where: {
           country,
           magazine,
@@ -107,7 +106,7 @@ const publishEdgeOnDm = async (
     )?.popularity || 0;
 
   for (const { userId, contribution } of contributors) {
-    const user = await prisma.user.findUnique({
+    const user = await prismaDm.user.findUnique({
       where: { id: userId },
     });
     if (!user) {

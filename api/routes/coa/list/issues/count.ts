@@ -1,14 +1,12 @@
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[, res]: ExpressCall<{ resBody: Record<string, number> }>
 ) =>
   res.json(
     (
-      await prisma.inducks_issue.groupBy({
+      await prismaCoa.inducks_issue.groupBy({
         _count: {
           issuenumber: true,
         },

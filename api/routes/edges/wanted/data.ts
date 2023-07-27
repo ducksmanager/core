@@ -1,12 +1,10 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { WantedEdge } from "~types/WantedEdge";
 
-const prisma = new PrismaClient();
-
 export const get = async (...[, res]: ExpressCall<{ resBody: WantedEdge[] }>) =>
   res.json(
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
       SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber
       FROM numeros
       WHERE NOT EXISTS(

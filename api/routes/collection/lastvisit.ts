@@ -1,9 +1,7 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 import { getUser } from "./user";
-
-const prisma = new PrismaClient();
 
 export const post = async (
   ...[req, res]: ExpressCall<{ resBody: { previousVisit: Date | null } }>
@@ -23,7 +21,7 @@ export const post = async (
     user.previousAccess = user.lastAccess;
     user.lastAccess = new Date();
   }
-  prisma.user.update({
+  prismaDm.user.update({
     data: user,
     where: {
       id: req.user!.id,

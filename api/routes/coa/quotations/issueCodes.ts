@@ -1,10 +1,6 @@
-import {
-  inducks_issuequotation,
-  PrismaClient,
-} from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
+import { inducks_issuequotation } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
@@ -29,7 +25,7 @@ export const get = async (
     res.end();
   } else {
     return res.json(
-      await prisma.inducks_issuequotation.findMany({
+      await prismaCoa.inducks_issuequotation.findMany({
         where: {
           issuecode: {
             in: codes.map(([code]) => code.replaceAll(/ +/, " ")),

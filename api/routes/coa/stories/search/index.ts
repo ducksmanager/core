@@ -1,17 +1,16 @@
 import bodyParser from "body-parser";
 
-import { Prisma, PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
+import { Prisma } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
 import { SimpleIssue } from "~types/SimpleIssue";
 import { SimpleStory } from "~types/SimpleStory";
 import { StorySearchResults } from "~types/StorySearchResults";
 
-const prisma = new PrismaClient();
-
 const parseForm = bodyParser.json();
 
 const listIssuesFromStoryCode = async (storycode: string) =>
-  prisma.$queryRaw<SimpleIssue[]>`
+  prismaCoa.$queryRaw<SimpleIssue[]>`
       SELECT inducks_issue.issuecode AS code, inducks_issue.publicationcode, inducks_issue.issuenumber
       FROM inducks_issue
                INNER JOIN inducks_entry ON inducks_entry.issuecode = inducks_issue.issuecode
@@ -27,7 +26,7 @@ export const getStoriesByKeywords = async (
 ): Promise<StorySearchResults> => {
   const limit = 10;
 
-  let results = await prisma.$queryRaw<SimpleStory[]>`
+  let results = await prismaCoa.$queryRaw<SimpleStory[]>`
       SELECT inducks_storyversion.storycode,
              inducks_entry.title                         AS title,
              MATCH (inducks_entry.title) AGAINST (${Prisma.join(keywords)}) /

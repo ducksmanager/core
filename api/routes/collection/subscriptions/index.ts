@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 
 import { subscription } from "~prisma_clients/client_dm";
-import prisma from "~prisma_extended_clients/dm.extends";
+import prismaDm from "~prisma_extended_clients/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 import { EditSubscription } from "~types/EditSubscription";
 
@@ -17,7 +17,7 @@ export async function upsertSubscription(
   const id = (idString && parseInt(idString)) || 0;
   if (
     id &&
-    !(await prisma.subscription.count({
+    !(await prismaDm.subscription.count({
       where: {
         id,
         users: {
@@ -28,7 +28,7 @@ export async function upsertSubscription(
   ) {
     return null;
   }
-  await prisma.subscription.upsert({
+  await prismaDm.subscription.upsert({
     update: {
       startDate: subscription.startDate!,
       endDate: subscription.endDate!,
@@ -57,7 +57,7 @@ export const get = async (
     })[];
   }>
 ) => {
-  const subscriptions = await prisma.subscription.findMany({
+  const subscriptions = await prismaDm.subscription.findMany({
     where: {
       users: {
         id: req.user!.id,

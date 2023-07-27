@@ -1,7 +1,6 @@
-import { issue, PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { issue } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{ resBody: Record<string, issue[]> }>
@@ -12,7 +11,7 @@ export const getIssuesForSale: (
 ) => Promise<{ [publicationcode: string]: issue[] }> = async (
   buyerId: number
 ) => {
-  const forSale = await prisma.$queryRaw<
+  const forSale = await prismaDm.$queryRaw<
     {
       id: number;
     }[]
@@ -48,7 +47,7 @@ export const getIssuesForSale: (
           )`;
 
   return (
-    (await prisma.issue.findMany({
+    (await prismaDm.issue.findMany({
       where: { id: { in: forSale.map(({ id }) => id) } },
     })) as issue[]
   ).reduce(

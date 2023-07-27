@@ -1,14 +1,9 @@
 import bodyParser from "body-parser";
 
-import {
-  bookstore,
-  bookstoreComment,
-  PrismaClient,
-} from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { bookstore, bookstoreComment } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { SimpleBookstore } from "~types/SimpleBookstore";
-
-const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
@@ -17,7 +12,7 @@ export const get = async (
 ) => res.json(await getActiveBookstores());
 
 const getActiveBookstores = async () =>
-  await prisma.bookstore.findMany({
+  await prismaDm.bookstore.findMany({
     select: {
       id: true,
       name: true,
@@ -66,7 +61,7 @@ export const put = [
     let dbBookstore: bookstore;
     if (id) {
       try {
-        dbBookstore = await prisma.bookstore.findUniqueOrThrow({
+        dbBookstore = await prismaDm.bookstore.findUniqueOrThrow({
           where: { id: parseInt(id) },
         });
       } catch (e) {
@@ -75,7 +70,7 @@ export const put = [
         return;
       }
     } else {
-      dbBookstore = await prisma.bookstore.create({
+      dbBookstore = await prismaDm.bookstore.create({
         data: {
           name,
           address,
@@ -85,13 +80,13 @@ export const put = [
       });
     }
     const user = req.user
-      ? await prisma.user.findUnique({
+      ? await prismaDm.user.findUnique({
           where: {
             id: req.user.id,
           },
         })
       : null;
-    const createdComment = await prisma.bookstoreComment.create({
+    const createdComment = await prismaDm.bookstoreComment.create({
       data: {
         bookstoreId: dbBookstore.id,
         isActive: false,

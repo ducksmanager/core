@@ -2,17 +2,16 @@ import { parse } from "csv-parse/sync";
 import * as fs from "fs";
 import path from "path";
 
-import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { user } from "~prisma_clients/client_dm";
 
 import { conditionToEnum } from "../collection/issues/_common";
-
-const prisma = new PrismaClient();
 
 const getHoursFromDate = (date: Date) =>
   parseInt(date.toISOString().match(/(?<=T)[^:]+/)![0]);
 
 const resetBookcaseOptions = async (user: user) => {
-  await prisma.user.update({
+  await prismaDm.user.update({
     data: {
       bookcaseTexture1: "bois",
       bookcaseSubTexture1: "HONDURAS MAHOGANY",
@@ -25,7 +24,7 @@ const resetBookcaseOptions = async (user: user) => {
 };
 
 export const resetDemo = async () => {
-  const demo = (await prisma.demo.findUnique({ where: { id: 1 } }))!;
+  const demo = (await prismaDm.demo.findUnique({ where: { id: 1 } }))!;
   if (
     !(
       getHoursFromDate(demo.lastReset) < getHoursFromDate(new Date()) ||
@@ -36,14 +35,14 @@ export const resetDemo = async () => {
   }
 
   demo.lastReset = new Date();
-  await prisma.demo.update({
+  await prismaDm.demo.update({
     data: demo,
     where: {
       id: demo.id,
     },
   });
 
-  const demoUser = (await prisma.user.findFirst({
+  const demoUser = (await prismaDm.user.findFirst({
     where: { username: "demo" },
   }))!;
   await deleteUserData(demoUser);
@@ -60,10 +59,10 @@ export const resetDemo = async () => {
     fs.readFileSync(path.resolve(__dirname, "./demo_issues.csv")),
     { columns: true }
   );
-  await prisma.$transaction(
+  await prismaDm.$transaction(
     csvIssues.map(({ publicationcode, condition, purchaseId, issuenumber }) => {
       const [country, magazine] = publicationcode.split("/");
-      return prisma.issue.create({
+      return prismaDm.issue.create({
         data: {
           userId: demoUser.id,
           country,
@@ -86,9 +85,9 @@ export const resetDemo = async () => {
     fs.readFileSync(path.resolve(__dirname, "./demo_purchases.csv")),
     { columns: true }
   );
-  await prisma.$transaction(
+  await prismaDm.$transaction(
     csvPurchases.map(({ date, description }) =>
-      prisma.purchase.create({
+      prismaDm.purchase.create({
         data: {
           userId: demoUser.id,
           date: new Date(date),
@@ -103,13 +102,13 @@ const deleteUserData = async (
   user: user,
   issuesOnly = false
 ): Promise<void> => {
-  await prisma.issue.deleteMany({ where: { userId: user.id } });
+  await prismaDm.issue.deleteMany({ where: { userId: user.id } });
 
   if (issuesOnly) {
     return;
   }
 
-  await prisma.purchase.deleteMany({ where: { userId: user.id } });
-  await prisma.userOption.deleteMany({ where: { userId: user.id } });
-  await prisma.authorUser.deleteMany({ where: { userId: user.id } });
+  await prismaDm.purchase.deleteMany({ where: { userId: user.id } });
+  await prismaDm.userOption.deleteMany({ where: { userId: user.id } });
+  await prismaDm.authorUser.deleteMany({ where: { userId: user.id } });
 };

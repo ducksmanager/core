@@ -1,10 +1,9 @@
 import bodyParser from "body-parser";
 
+import { prismaDm } from "~/prisma";
 import FeedbackSent from "~emails/feedback-sent";
-import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 export const post = [
@@ -16,7 +15,7 @@ export const post = [
       };
     }>
   ) => {
-    const user = await prisma.user.findUniqueOrThrow({
+    const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: req.user!.id },
     });
     const email = new FeedbackSent({

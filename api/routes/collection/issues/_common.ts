@@ -1,13 +1,12 @@
 import { SaleState } from "~/../types/CollectionUpdate";
-import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
-
-const prisma = new PrismaClient();
+import { prismaDm } from "~/prisma";
+import { issue_condition } from "~prisma_clients/client_dm";
 
 export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null
     ? null
     : (
-        await prisma.purchase.findMany({
+        await prismaDm.purchase.findMany({
           where: {
             id,
             userId,
@@ -36,7 +35,7 @@ export const deleteIssues = async (
   issueNumbers: string[]
 ) => {
   const [country, magazine] = publicationcode.split("/");
-  await prisma.issue.deleteMany({
+  await prismaDm.issue.deleteMany({
     where: {
       country,
       magazine,
@@ -67,7 +66,7 @@ export const handleIsOnSale = async (issueId: number, isOnSale: SaleState) => {
   if (typeof isOnSale === "object") {
     if ("setAsideFor" in isOnSale) {
       const buyerId = isOnSale.setAsideFor;
-      await prisma.requestedIssue.update({
+      await prismaDm.requestedIssue.update({
         data: {
           isBooked: true,
         },
@@ -77,7 +76,7 @@ export const handleIsOnSale = async (issueId: number, isOnSale: SaleState) => {
       });
     } else if ("transferTo" in isOnSale) {
       const buyerId = isOnSale.transferTo;
-      await prisma.issue.update({
+      await prismaDm.issue.update({
         data: {
           userId: buyerId,
           purchaseId: -1,
@@ -96,7 +95,7 @@ export const handleIsOnSale = async (issueId: number, isOnSale: SaleState) => {
     (typeof isOnSale === "object" && "transferTo" in isOnSale) ||
     isOnSale === false
   ) {
-    await prisma.requestedIssue.deleteMany({
+    await prismaDm.requestedIssue.deleteMany({
       where: {
         issueId,
       },

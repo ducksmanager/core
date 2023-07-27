@@ -1,7 +1,6 @@
-import { Prisma, PrismaClient } from "~/dist/prisma/client_coa";
+import { Prisma } from "~/dist/prisma/client_coa";
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -22,7 +21,7 @@ const getCountryNames = async (
   countryIds: string[] | null = null
 ): Promise<{ [countrycode: string]: string }> =>
   (
-    await prisma.$queryRawUnsafe<
+    await prismaCoa.$queryRawUnsafe<
       {
         countrycode: string;
         countryname: string;

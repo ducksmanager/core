@@ -1,8 +1,6 @@
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { SimpleIssue } from "~types/SimpleIssue";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -11,7 +9,7 @@ export const get = async (
   }>
 ) =>
   res.json(
-    (await prisma.$queryRaw`
+    (await prismaCoa.$queryRaw`
             SELECT issuecode as code,
                    publicationcode,
                    issuenumber

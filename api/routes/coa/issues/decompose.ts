@@ -1,9 +1,8 @@
 import bodyParser from "body-parser";
 
-import { inducks_issue, PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
+import { inducks_issue } from "~prisma_clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
@@ -17,7 +16,7 @@ export const post = [
   ) =>
     res.json(
       (
-        await prisma.inducks_issue.findMany({
+        await prismaCoa.inducks_issue.findMany({
           where: {
             issuecode: {
               in: req.body.issueCodes.split(","),

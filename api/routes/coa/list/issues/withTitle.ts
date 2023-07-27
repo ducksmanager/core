@@ -1,7 +1,5 @@
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -18,7 +16,7 @@ export const get = async (
     res.end();
     return;
   }
-  const data = await prisma.inducks_issue.findMany({
+  const data = await prismaCoa.inducks_issue.findMany({
     select: {
       issuenumber: true,
       title: true,

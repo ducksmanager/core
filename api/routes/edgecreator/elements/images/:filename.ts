@@ -1,8 +1,6 @@
-import { PrismaClient } from "~prisma_clients/client_edgecreator";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { ImageElement } from "~types/ImageElement";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req]: ExpressCall<{
@@ -11,7 +9,7 @@ export const get = async (
   }>
 ) =>
   (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
     SELECT Pays AS country, Magazine AS magazine, Option_valeur AS optionValue, Numero_debut AS issuenumberStart, Numero_fin AS issuenumberEnd
     FROM edgecreator_valeurs valeurs
       INNER JOIN edgecreator_modeles2 modeles ON valeurs.ID_Option = modeles.ID

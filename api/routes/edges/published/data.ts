@@ -1,7 +1,6 @@
-import { edge, PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { edge } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[, res]: ExpressCall<{
@@ -9,7 +8,7 @@ export const get = async (
   }>
 ) =>
   res.json(
-    await prisma.edge.findMany({
+    await prismaDm.edge.findMany({
       select: { publicationcode: true, issuenumber: true },
     })
   );

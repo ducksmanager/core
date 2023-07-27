@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
 
-import { authorUser, PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { authorUser } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 const maxWatchedAuthors = 5;
@@ -17,23 +17,23 @@ const upsertAuthorUser = async (
     personcode,
     userId,
   };
-  const existingAuthorUser = await prisma.authorUser.findFirst({
+  const existingAuthorUser = await prismaDm.authorUser.findFirst({
     where: criteria,
   });
   if (existingAuthorUser) {
-    await prisma.authorUser.update({
+    await prismaDm.authorUser.update({
       data: { notation },
       where: { id: existingAuthorUser?.id },
     });
   } else {
     if (
-      (await prisma.authorUser.count({
+      (await prismaDm.authorUser.count({
         where: { userId },
       })) >= maxWatchedAuthors
     ) {
       throw new Error("429");
     }
-    await prisma.authorUser.create({
+    await prismaDm.authorUser.create({
       data: {
         ...criteria,
         notation: 5,
@@ -45,7 +45,7 @@ const upsertAuthorUser = async (
 export const get = async (
   ...[req, res]: ExpressCall<{ resBody: authorUser[] }>
 ) => {
-  const authorsUsers = await prisma.authorUser.findMany({
+  const authorsUsers = await prismaDm.authorUser.findMany({
     where: { userId: req.user!.id },
   });
   return res.json(authorsUsers);
@@ -98,7 +98,7 @@ export const del = [
       res.end();
       return;
     }
-    await prisma.authorUser.deleteMany({
+    await prismaDm.authorUser.deleteMany({
       where: {
         personcode,
         userId: req.user!.id,

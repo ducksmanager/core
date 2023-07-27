@@ -1,12 +1,10 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const post = async (
   ...[req, res]: ExpressCall<Record<string, never>>
 ) => {
-  await prisma.issue.deleteMany({
+  await prismaDm.issue.deleteMany({
     where: { userId: req.user!.id },
   });
   res.writeHead(200, { "Content-Type": "application/text" });

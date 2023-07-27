@@ -1,15 +1,11 @@
-import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
-import { PrismaClient as PrismaClientCoverInfo } from "~prisma_clients/client_cover_info";
-import { PrismaClient as PrismaClientDm } from "~prisma_clients/client_dm";
-import { PrismaClient as PrismaClientDmStats } from "~prisma_clients/client_dm_stats";
-import { PrismaClient as PrismaClientEdgecreator } from "~prisma_clients/client_edgecreator";
+import {
+  prismaCoa,
+  prismaCoverInfo,
+  prismaDm,
+  prismaDmStats,
+  prismaEdgeCreator,
+} from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prismaCoa = new PrismaClientCoa();
-const prismaCoverInfo = new PrismaClientCoverInfo();
-const prismaDm = new PrismaClientDm();
-const prismaDmStats = new PrismaClientDmStats();
-const prismaEdgecreator = new PrismaClientEdgecreator();
 
 export const get = async (
   ...[, res]: ExpressCall<{ resBody: { status: string } }>
@@ -23,7 +19,7 @@ export const get = async (
     },
     {
       db: "edgecreator",
-      check: async () => prismaEdgecreator.edgeModel.count(),
+      check: async () => prismaEdgeCreator.edgeModel.count(),
     },
   ];
 

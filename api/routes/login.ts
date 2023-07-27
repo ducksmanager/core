@@ -1,11 +1,9 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { loginAs } from "~routes/auth/util";
-
-const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
@@ -19,7 +17,7 @@ export const post = [
   ) => {
     const { username, password } = req.body;
     const hashedPassword = getHashedPassword(password);
-    const user = await prisma.user.findFirst({
+    const user = await prismaDm.user.findFirst({
       where: {
         username,
         password: hashedPassword,

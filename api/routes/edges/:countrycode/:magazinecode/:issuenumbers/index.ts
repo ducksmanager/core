@@ -1,13 +1,7 @@
-import { PrismaClient as PrismaDmClient } from "~prisma_clients/client_dm";
-import {
-  edgeModel,
-  PrismaClient as PrismaEdgecreatorClient,
-} from "~prisma_clients/client_edgecreator";
+import { prismaDm, prismaEdgeCreator } from "~/prisma";
+import { edgeModel } from "~prisma_clients/client_edgecreator";
 import { ExpressCall } from "~routes/_express-call";
 import { EdgeWithModelId } from "~types/EdgeWithModelId";
-
-const prismaDm = new PrismaDmClient();
-const prismaEdgecreator = new PrismaEdgecreatorClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -26,7 +20,7 @@ export const get = async (
         }
       : undefined;
   const edgeModels: Record<string, edgeModel> = (
-    await prismaEdgecreator.edgeModel.findMany({
+    await prismaEdgeCreator.edgeModel.findMany({
       where: {
         country: req.params.countrycode,
         magazine: req.params.magazinecode,

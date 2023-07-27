@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient, userOptionType } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { userOptionType } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 export const optionNameToEnum = (
@@ -32,7 +32,7 @@ export const get = async (
   } else {
     return res.json(
       (
-        await prisma.userOption.findMany({
+        await prismaDm.userOption.findMany({
           where: {
             userId: req.user!.id,
             optionName,
@@ -58,16 +58,16 @@ export const post = [
     } else {
       const values = req.body.values;
       const userId = req.user!.id;
-      await prisma.userOption.deleteMany({
+      await prismaDm.userOption.deleteMany({
         where: {
           userId,
           optionName,
         },
       });
 
-      await prisma.$transaction(
+      await prismaDm.$transaction(
         values.map((optionValue: string) =>
-          prisma.userOption.create({
+          prismaDm.userOption.create({
             data: {
               optionName,
               optionValue,

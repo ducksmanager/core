@@ -1,11 +1,9 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
+import { prismaDm } from "~/prisma";
 import { i18n } from "~emails/email";
-import {
-  PrismaClient as PrismaClientDm,
-  user,
-} from "~prisma_clients/client_dm";
+import { user } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import {
   COUNTRY_CODE_OPTION,
@@ -16,8 +14,6 @@ const pusher = new PushNotifications({
   instanceId: process.env.PUSHER_INSTANCE_ID!,
   secretKey: process.env.PUSHER_SECRET_KEY!,
 });
-
-const prisma = new PrismaClientDm();
 
 const sendSuggestedIssueNotification = async (
   issuecode: string,
@@ -56,7 +52,7 @@ const sendSuggestedIssueNotification = async (
   console.log(
     `Notification sent to user ${userToNotify.username} concerning the release of issue ${issueTitle}`
   );
-  await prisma.userSuggestionNotification.create({
+  await prismaDm.userSuggestionNotification.create({
     data: {
       issuecode,
       text: issueTitle,
@@ -80,7 +76,7 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
       false
     );
 
-  const usersById = (await prisma.user.findMany()).reduce(
+  const usersById = (await prismaDm.user.findMany()).reduce(
     (acc, user) => ({ ...acc, [user.id]: user }),
     {} as { [userId: number]: user }
   );
@@ -98,7 +94,7 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
   ];
 
   const alreadySentNotificationsPerUser = (
-    await prisma.userSuggestionNotification.findMany({
+    await prismaDm.userSuggestionNotification.findMany({
       where: {
         issuecode: {
           in: allSuggestedIssues,

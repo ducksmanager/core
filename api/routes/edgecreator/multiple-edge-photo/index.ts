@@ -1,9 +1,8 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~/dist/prisma/client_edgecreator";
+import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 export const put = [
   parseForm,
@@ -21,7 +20,7 @@ export const put = [
     res.json({
       photo: {
         id: (
-          await prisma.elementImage.create({
+          await prismaEdgeCreator.elementImage.create({
             data: { hash: req.body.hash, fileName: req.body.filename },
           })
         ).id,

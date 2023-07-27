@@ -1,13 +1,11 @@
 import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
 
+import { prismaDm } from "~/prisma";
 import ResetPassword from "~emails/reset-password";
-import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 import { isValidEmail } from "./util";
-
-const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
@@ -46,7 +44,7 @@ export const post = [
       res.writeHead(400, { "Content-Type": "application/text" });
       res.end("Invalid email");
     } else {
-      const user = await prisma.user.findFirst({
+      const user = await prismaDm.user.findFirst({
         where: { email },
       });
       if (user) {
@@ -54,7 +52,7 @@ export const post = [
           `A visitor requested to reset a password for a valid e-mail: ${email}`
         );
         const token = generateToken(email);
-        await prisma.userPasswordToken.create({
+        await prismaDm.userPasswordToken.create({
           data: { userId: user.id, token },
         });
 

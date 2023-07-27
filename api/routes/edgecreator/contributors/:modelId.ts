@@ -1,10 +1,6 @@
-import {
-  edgeContributor,
-  PrismaClient,
-} from "~/dist/prisma/client_edgecreator";
+import { edgeContributor } from "~/dist/prisma/client_edgecreator";
+import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -13,7 +9,7 @@ export const get = async (
   }>
 ) =>
   res.json(
-    await prisma.edgeContributor.findMany({
+    await prismaEdgeCreator.edgeContributor.findMany({
       where: {
         modelId: parseInt(req.params.modelId),
       },

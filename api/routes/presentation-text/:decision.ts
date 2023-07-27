@@ -1,11 +1,9 @@
 import bodyParser from "body-parser";
 
+import { prismaDm } from "~/prisma";
 import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
-import { PrismaClient } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
@@ -27,7 +25,7 @@ export const post = [
 
     switch (decision) {
       case "approve":
-        const user = await prisma.user.update({
+        const user = await prismaDm.user.update({
           data: {
             presentationText: sentence as string,
           },
@@ -39,7 +37,7 @@ export const post = [
         break;
       case "refuse":
         await new PresentationSentenceRefused({
-          user: await prisma.user.findUniqueOrThrow({
+          user: await prismaDm.user.findUniqueOrThrow({
             where: { id: userId },
           }),
         }).send();

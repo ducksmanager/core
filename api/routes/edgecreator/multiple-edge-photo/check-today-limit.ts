@@ -1,9 +1,8 @@
 import dayjs from "dayjs";
 
-import { PrismaClient } from "~/dist/prisma/client_edgecreator";
+import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 export const get = [
   async (
     ...[req, res]: ExpressCall<{
@@ -14,7 +13,7 @@ export const get = [
   ) =>
     res.json({
       uploadedFilesToday: (
-        await prisma.elementImage.findMany({
+        await prismaEdgeCreator.elementImage.findMany({
           where: {
             userId: req.user!.id,
             createdAt: {

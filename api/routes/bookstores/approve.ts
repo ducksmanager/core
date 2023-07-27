@@ -1,19 +1,17 @@
+import { prismaDm } from "~/prisma";
 import {
   bookstoreComment,
-  PrismaClient,
   user,
   userContributionType,
 } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const post = async (
   ...[req, res]: ExpressCall<{ reqBody: { id: number } }>
 ) => {
   let bookstoreComment;
   try {
-    bookstoreComment = await prisma.bookstoreComment.findUniqueOrThrow({
+    bookstoreComment = await prismaDm.bookstoreComment.findUniqueOrThrow({
       where: {
         id: req.body.id,
       },
@@ -23,7 +21,7 @@ export const post = async (
     res.end(`Invalid bookstore comment ID: ${req.body.id}`);
     return;
   }
-  await prisma.bookstoreComment.update({
+  await prismaDm.bookstoreComment.update({
     data: {
       isActive: true,
       creationDate: new Date(),
@@ -32,7 +30,7 @@ export const post = async (
       id: bookstoreComment.id,
     },
   });
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prismaDm.user.findUniqueOrThrow({
     where: {
       id: req.user!.id,
     },
@@ -46,7 +44,7 @@ const persistContribution = async (
   bookstoreComment: bookstoreComment
 ) => {
   const currentUserPoints = (
-    await prisma.userContribution.aggregate({
+    await prismaDm.userContribution.aggregate({
       _sum: {
         newPoints: true,
       },
@@ -57,7 +55,7 @@ const persistContribution = async (
     })
   )._sum.newPoints;
 
-  await prisma.userContribution.create({
+  await prismaDm.userContribution.create({
     data: {
       userId: user.id,
       contribution: userContributionType.duckhunter,

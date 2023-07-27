@@ -1,12 +1,6 @@
-import { PrismaClient as PrismaClientDm } from "~/dist/prisma/client_dm";
-import {
-  edgeModel,
-  PrismaClient as PrismaClientEdgeCreator,
-} from "~/dist/prisma/client_edgecreator";
+import { edgeModel } from "~/dist/prisma/client_edgecreator";
+import { prismaDm, prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prismaDm = new PrismaClientDm();
-const prismaEdgeCreator = new PrismaClientEdgeCreator();
 
 export const get = async (
   ...[req, res]: ExpressCall<{

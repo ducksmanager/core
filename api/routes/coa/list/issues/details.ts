@@ -1,14 +1,12 @@
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { SimpleEntry } from "~types/SimpleEntry";
-
-const prisma = new PrismaClient();
 
 const getEntries = async (
   publicationcode: string,
   issuenumber: string
 ): Promise<SimpleEntry[]> =>
-  await prisma.$queryRaw`
+  await prismaCoa.$queryRaw`
       SELECT sv.storycode,
              sv.kind,
              sv.entirepages,
@@ -38,7 +36,7 @@ export const get = async (
   const { publicationcode, issuenumber } = req.query;
 
   const releaseDate = (
-    (await prisma.$queryRaw`
+    (await prismaCoa.$queryRaw`
       SELECT issue.oldestdate
       FROM inducks_issue issue
       WHERE issue.publicationcode = ${req.query.publicationcode}

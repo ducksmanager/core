@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { CollectionUpdateSingleIssue } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";
@@ -11,7 +11,6 @@ import {
   handleIsOnSale,
 } from "./_common";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 const addOrChangeCopies = async (
@@ -28,7 +27,7 @@ const addOrChangeCopies = async (
 
   const operations = issueIds.map((issueId, copyNumber) => {
     if (issueId && conditions[copyNumber] === null) {
-      return prisma.issue.delete({
+      return prismaDm.issue.delete({
         where: { id: issueId },
       });
     }
@@ -42,7 +41,7 @@ const addOrChangeCopies = async (
         areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
       purchaseId: purchaseIds[copyNumber] || -2,
     };
-    return prisma.issue.upsert({
+    return prismaDm.issue.upsert({
       create: {
         ...common,
         country,
@@ -57,7 +56,7 @@ const addOrChangeCopies = async (
       },
     });
   });
-  await prisma.$transaction(operations);
+  await prismaDm.$transaction(operations);
 
   return {
     operations: operations.length,
@@ -100,7 +99,7 @@ export const post = [
     );
 
     const currentCopyIds = (
-      await prisma.issue.findMany({
+      await prismaDm.issue.findMany({
         select: {
           id: true,
         },

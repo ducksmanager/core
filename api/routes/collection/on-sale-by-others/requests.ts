@@ -1,9 +1,7 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 const parseForm = bodyParser.json();
 
@@ -16,7 +14,7 @@ export const put = [
       res.end(`Invalid issue ID list, NaN`);
       return;
     }
-    const issues = await prisma.issue.findMany({
+    const issues = await prismaDm.issue.findMany({
       where: {
         id: { in: issueIds },
         isOnSale: true,
@@ -30,7 +28,7 @@ export const put = [
       return;
     }
     const alreadyRequestedIssueIds = (
-      await prisma.requestedIssue.findMany({
+      await prismaDm.requestedIssue.findMany({
         select: {
           issueId: true,
         },
@@ -43,7 +41,7 @@ export const put = [
     const newlyRequestedIssueIds = issueIds.filter(
       (issueId: number) => !alreadyRequestedIssueIds.includes(issueId)
     );
-    await prisma.requestedIssue.createMany({
+    await prismaDm.requestedIssue.createMany({
       data: newlyRequestedIssueIds.map((issueId: number) => ({
         buyerId: req.user!.id,
         issueId,
@@ -59,7 +57,7 @@ export const del = [
   async (...[req, res]: ExpressCall<{ reqBody: { issueId: number } }>) => {
     const { issueId } = req.body;
 
-    await prisma.requestedIssue.deleteMany({
+    await prismaDm.requestedIssue.deleteMany({
       where: {
         buyerId: req.user!.id,
         issueId,

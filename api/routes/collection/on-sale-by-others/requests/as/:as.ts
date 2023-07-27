@@ -1,7 +1,6 @@
-import { PrismaClient, requestedIssue } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { requestedIssue } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -16,14 +15,14 @@ export const get = async (
   } else {
     switch (as) {
       case "seller":
-        const requestedIssuesOnSaleIds = (await prisma.$queryRaw`
+        const requestedIssuesOnSaleIds = (await prismaDm.$queryRaw`
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
             WHERE issue.ID_Utilisateur = ${req.user!.id}
         `) as { id: number }[];
         return res.json(
-          await prisma.requestedIssue.findMany({
+          await prismaDm.requestedIssue.findMany({
             where: {
               id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
             },
@@ -31,7 +30,7 @@ export const get = async (
         );
       case "buyer":
         return res.json(
-          await prisma.requestedIssue.findMany({
+          await prismaDm.requestedIssue.findMany({
             where: {
               buyerId: req.user!.id,
             },

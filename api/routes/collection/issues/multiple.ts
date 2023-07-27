@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 
-import { issue_condition, PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { issue_condition } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";
@@ -12,7 +13,6 @@ import {
   handleIsOnSale,
 } from "./_common";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 const addOrChangeIssues = async (
@@ -26,7 +26,7 @@ const addOrChangeIssues = async (
 ): Promise<TransactionResults> => {
   const [country, magazine] = publicationcode.split("/");
 
-  const existingIssues = await prisma.issue.findMany({
+  const existingIssues = await prismaDm.issue.findMany({
     where: {
       country,
       magazine,
@@ -38,7 +38,7 @@ const addOrChangeIssues = async (
   });
 
   const updateOperations = existingIssues.map((existingIssue) =>
-    prisma.issue.update({
+    prismaDm.issue.update({
       data: {
         ...existingIssue,
         condition: conditionToEnum(condition),
@@ -49,7 +49,7 @@ const addOrChangeIssues = async (
       where: { id: existingIssue.id },
     })
   );
-  await prisma.$transaction(updateOperations);
+  await prismaDm.$transaction(updateOperations);
 
   const insertOperations = issueNumbers
     .filter(
@@ -59,7 +59,7 @@ const addOrChangeIssues = async (
           .includes(issuenumber)
     )
     .map((issuenumber) =>
-      prisma.issue.create({
+      prismaDm.issue.create({
         data: {
           country,
           magazine,
@@ -76,7 +76,7 @@ const addOrChangeIssues = async (
         },
       })
     );
-  await prisma.$transaction(insertOperations);
+  await prismaDm.$transaction(insertOperations);
 
   return {
     updateOperations: updateOperations.length,
@@ -108,7 +108,7 @@ export const post = [
 
     if (isOnSale !== undefined) {
       const issueIds = (
-        await prisma.issue.findMany({
+        await prismaDm.issue.findMany({
           select: {
             id: true,
           },

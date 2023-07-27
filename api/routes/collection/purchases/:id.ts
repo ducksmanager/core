@@ -1,11 +1,10 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 import { getUserPurchase } from "../issues/_common";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 export const del = [
@@ -21,7 +20,7 @@ export const del = [
       res.end();
       return;
     }
-    await prisma.purchase.deleteMany({
+    await prismaDm.purchase.deleteMany({
       where: criteria,
     });
 

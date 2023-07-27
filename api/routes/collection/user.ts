@@ -1,8 +1,9 @@
 import bodyParser from "body-parser";
 import { Response } from "express";
 
+import { prismaDm } from "~/prisma";
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
-import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { user } from "~prisma_clients/client_dm";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";
@@ -11,10 +12,9 @@ import { ScopedError } from "~types/ScopedError";
 import { UserForAccountForm } from "~types/UserForAccountForm";
 
 const parseForm = bodyParser.json();
-const prisma = new PrismaClient();
 
 export const getUser = async (id: number) =>
-  await prisma.user.findUnique({
+  await prismaDm.user.findUnique({
     where: { id },
   });
 
@@ -36,19 +36,19 @@ export const del = async (
   ...[req, res]: ExpressCall<Record<string, never>>
 ) => {
   const userId = req.user!.id;
-  await prisma.issue.deleteMany({
+  await prismaDm.issue.deleteMany({
     where: { userId },
   });
-  await prisma.authorUser.deleteMany({
+  await prismaDm.authorUser.deleteMany({
     where: { userId },
   });
-  await prisma.purchase.deleteMany({
+  await prismaDm.purchase.deleteMany({
     where: { userId },
   });
-  await prisma.userOption.deleteMany({
+  await prismaDm.userOption.deleteMany({
     where: { userId },
   });
-  await prisma.user.delete({
+  await prismaDm.user.delete({
     where: { id: userId },
   });
 
@@ -85,7 +85,7 @@ export const post = [
     }
     if (await validate(input, res, validators)) {
       if (input.password) {
-        await prisma.user.update({
+        await prismaDm.user.update({
           data: {
             password: getHashedPassword(input.password),
           },
@@ -94,7 +94,7 @@ export const post = [
           },
         });
       }
-      const updatedUser = await prisma.user.update({
+      const updatedUser = await prismaDm.user.update({
         data: {
           discordId: input.discordId ? parseInt(input.discordId) : undefined,
           email: input.email,
@@ -105,7 +105,7 @@ export const post = [
       });
       if (updatedUser.presentationText !== input.presentationText) {
         if (!input.presentationText) {
-          await prisma.user.update({
+          await prismaDm.user.update({
             data: {
               presentationText: null,
             },
@@ -168,7 +168,7 @@ export const put = [
     if (isValid) {
       const { username, password, email } = req.body;
       const hashedPassword = getHashedPassword(password);
-      const user = await prisma.user.create({
+      const user = await prismaDm.user.create({
         data: {
           username,
           password: hashedPassword,
@@ -178,7 +178,7 @@ export const put = [
       });
 
       const privileges = (
-        await prisma.userPermission.findMany({
+        await prismaDm.userPermission.findMany({
           where: {
             username,
           },
@@ -213,7 +213,7 @@ const validateUsernameCreation = async ({
 }: {
   [_: string]: unknown;
 }) => {
-  if (await prisma.user.count({ where: { username: username as string } })) {
+  if (await prismaDm.user.count({ where: { username: username as string } })) {
     throw {
       message: "Ce nom d'utilisateur est déjà pris",
       selector: "#username",
@@ -222,7 +222,7 @@ const validateUsernameCreation = async ({
 };
 
 const validateEmailCreation = async ({ email }: { [_: string]: unknown }) => {
-  if (await prisma.user.count({ where: { email: email as string } })) {
+  if (await prismaDm.user.count({ where: { email: email as string } })) {
     throw {
       message: "Cet e-mail est déjà utilisé par un autre compte",
       selector: "#email",
@@ -237,7 +237,7 @@ const validateEmailUpdate = async ({
   [_: string]: unknown;
 }) => {
   const currentEmail = (
-    await prisma.user.findUniqueOrThrow({
+    await prismaDm.user.findUniqueOrThrow({
       select: {
         email: true,
       },
@@ -246,7 +246,7 @@ const validateEmailUpdate = async ({
   ).email;
   if (
     currentEmail !== currentEmail &&
-    (await prisma.user.count({
+    (await prismaDm.user.count({
       where: {
         email: email as string,
         id: {
@@ -313,7 +313,7 @@ const validateOldPassword = async ({
 }) => {
   const hashedPassword = getHashedPassword(oldPassword as string);
   if (
-    !(await prisma.user.findFirst({
+    !(await prismaDm.user.findFirst({
       where: { id: userId as number, password: hashedPassword },
     }))
   ) {

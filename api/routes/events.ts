@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { AbstractEvent, AbstractEventRaw } from "~types/events/AbstractEvent";
 import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
@@ -19,8 +19,6 @@ import {
 import { Event } from "~types/events/Event";
 import { MedalEvent } from "~types/events/MedalEvent";
 import { SignupEvent } from "~types/events/SignupEvent";
-
-const prisma = new PrismaClient();
 
 export const get = async (...[, res]: ExpressCall<{ resBody: Event[] }>) =>
   res.json(await getEvents());
@@ -57,7 +55,7 @@ const mapUsers = <T extends AbstractEvent>(event: AbstractEventRaw): T =>
 
 const retrieveSignups = async (): Promise<SignupEvent[]> =>
   (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
         SELECT 'signup' as type, users.ID as userId, UNIX_TIMESTAMP(DateInscription) AS timestamp
         FROM dm.users
         WHERE EXISTS(
@@ -70,7 +68,7 @@ const retrieveSignups = async (): Promise<SignupEvent[]> =>
 
 const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
   (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
         SELECT 'collection_update'       as type,
                users.ID                  AS userId,
                UNIX_TIMESTAMP(DateAjout) AS timestamp,
@@ -103,7 +101,7 @@ const retrieveCollectionSubscriptionAdditions = async (): Promise<
   CollectionSubscriptionAdditionEvent[]
 > =>
   (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
         SELECT 'subscription_additions'                    as type,
                CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationcode,
                numeros.Numero                              AS issuenumber,
@@ -118,7 +116,7 @@ const retrieveCollectionSubscriptionAdditions = async (): Promise<
 
 const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
   (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
         SELECT 'bookstore_comment'                                 as type,
                uc.ID_user                                          AS userId,
                bouquineries.Nom                                    AS name,
@@ -133,7 +131,7 @@ const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
 
 const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
   (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
         select 'edge'                       as type,
                CONCAT('[', GROUP_CONCAT(json_object(
                        'publicationcode',
@@ -165,7 +163,7 @@ const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
 const retrieveNewMedals = async () =>
   (
     (
-      await prisma.userContribution.findMany({
+      await prismaDm.userContribution.findMany({
         select: {
           totalPoints: true,
           newPoints: true,

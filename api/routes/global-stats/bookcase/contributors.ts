@@ -1,14 +1,12 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { BookcaseContributor } from "~types/BookcaseContributor";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[, res]: ExpressCall<{ resBody: BookcaseContributor[] }>
 ) =>
   res.json(
-    await prisma.$queryRaw`
+    await prismaDm.$queryRaw`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text
       from dm.users
              inner join dm.users_contributions c on users.ID = c.ID_user

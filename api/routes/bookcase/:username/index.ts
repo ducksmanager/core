@@ -1,9 +1,8 @@
-import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { user } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { BookcaseEdge, BookcaseEdgeSprite } from "~types/BookcaseEdge";
 import { User } from "~types/SessionUser";
-
-const prisma = new PrismaClient();
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
   sprites?: string;
@@ -21,7 +20,7 @@ export const checkValidBookcaseUser = async (
   user: User | null,
   username: string
 ): Promise<user> => {
-  const dbUser = await prisma.user.findFirstOrThrow({
+  const dbUser = await prismaDm.user.findFirstOrThrow({
     where: { username },
   });
   if (user?.id === dbUser.id || dbUser.allowSharing) {
@@ -50,7 +49,7 @@ export const get = async (
     : "numeros.issuecode";
   return res.json(
     (
-      (await prisma.$queryRawUnsafe(`
+      (await prismaDm.$queryRawUnsafe(`
             SELECT numeros.ID                                                AS id,
                    numeros.Pays                                              AS countryCode,
                    numeros.Magazine                                          AS magazineCode,

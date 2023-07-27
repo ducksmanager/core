@@ -1,16 +1,13 @@
 import axios from "axios";
 import bodyParser from "body-parser";
 
-import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
-import { PrismaClient as PrismaClientCovers } from "~prisma_clients/client_cover_info";
+import { prismaCoa, prismaCoverInfo } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import {
   CoverSearchResults,
   SimilarImagesResult,
 } from "~types/CoverSearchResults";
 
-const prismaCovers = new PrismaClientCovers();
-const prismaCoa = new PrismaClientCoa();
 const parseForm = bodyParser.json();
 
 export const post = [
@@ -93,7 +90,7 @@ const getIssuesFromIssueCodes = async (foundIssueCodes: string[]) =>
   });
 
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
-  await prismaCovers.cover.findMany({
+  await prismaCoverInfo.cover.findMany({
     where: {
       sitecode: "webusers",
       id: {

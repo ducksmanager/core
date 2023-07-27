@@ -1,7 +1,6 @@
-import { elementImage, PrismaClient } from "~/dist/prisma/client_edgecreator";
+import { elementImage } from "~/dist/prisma/client_edgecreator";
+import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -11,7 +10,7 @@ export const get = async (
 ) => {
   try {
     return res.json(
-      await prisma.elementImage.findFirstOrThrow({
+      await prismaEdgeCreator.elementImage.findFirstOrThrow({
         select: {
           id: true,
           fileName: true,

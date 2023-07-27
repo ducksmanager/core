@@ -1,13 +1,11 @@
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const getAuthorFullNames = async (
   authorPersoncodes: string[]
 ): Promise<{ [personcode: string]: string }> =>
   (
-    await prisma.inducks_person.findMany({
+    await prismaCoa.inducks_person.findMany({
       where: {
         personcode: {
           in: authorPersoncodes,

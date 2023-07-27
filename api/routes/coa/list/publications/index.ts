@@ -1,10 +1,8 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~prisma_clients/client_coa";
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { PublicationTitles } from "~types/PublicationTitles";
-
-const prisma = new PrismaClient();
 
 export const getPublicationTitlesFromCodes = async (
   publicationCodes: string[]
@@ -33,7 +31,7 @@ export const getPublicationTitles = async (filter: {
   [operator: string]: string | string[];
 }): Promise<PublicationTitles> =>
   (
-    await prisma.inducks_publication.findMany({
+    await prismaCoa.inducks_publication.findMany({
       where: {
         publicationcode: filter,
       },

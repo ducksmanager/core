@@ -1,21 +1,9 @@
-import {
-  Prisma as PrismaCoa,
-  PrismaClient as PrismaClientCoa,
-} from "~prisma_clients/client_coa";
-import {
-  cover,
-  PrismaClient as PrismaClientCoverInfo,
-} from "~prisma_clients/client_cover_info";
-import {
-  Prisma,
-  PrismaClient as PrismaClientDm,
-} from "~prisma_clients/client_dm";
+import { prismaCoa, prismaCoverInfo, prismaDm } from "~/prisma";
+import { Prisma as PrismaCoa } from "~prisma_clients/client_coa";
+import { cover } from "~prisma_clients/client_cover_info";
+import { Prisma } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { SimpleIssueWithPublication } from "~types/SimpleIssueWithPublication";
-
-const prismaCoa = new PrismaClientCoa();
-const prismaCoverInfo = new PrismaClientCoverInfo();
-const prismaDm = new PrismaClientDm();
 
 type ReturnType<FieldValue, T> = FieldValue extends string ? never : T;
 

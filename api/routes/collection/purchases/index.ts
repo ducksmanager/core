@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient, purchase } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { purchase } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 export const get = async (
@@ -15,7 +15,7 @@ export const get = async (
 ) => {
   return res.json(
     (
-      await prisma.purchase.findMany({
+      await prismaDm.purchase.findMany({
         where: {
           userId: req.user!.id,
         },
@@ -45,7 +45,7 @@ export const put = [
       description,
     };
     if (
-      (await prisma.purchase.count({
+      (await prismaDm.purchase.count({
         where: criteria,
       })) > 0
     ) {
@@ -54,7 +54,7 @@ export const put = [
       return;
     }
 
-    await prisma.purchase.create({
+    await prismaDm.purchase.create({
       data: criteria,
     });
 

@@ -1,9 +1,8 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
 
-import { edge, PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { edge } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];
 const MAX_SPRITE_SIZE = 100;
@@ -30,7 +29,7 @@ interface Tag {
 }
 
 const updateTags = async (edges: edge[]) => {
-  await prisma.edgeSprite.deleteMany({
+  await prismaDm.edgeSprite.deleteMany({
     where: {
       id: {
         in: edges.map(({ id }) => id),
@@ -53,7 +52,7 @@ const updateTags = async (edges: edge[]) => {
 
       let actualSpriteSize;
       if (spriteSize === "full") {
-        actualSpriteSize = await prisma.edge.count({
+        actualSpriteSize = await prismaDm.edge.count({
           where: { publicationcode },
         });
         if (actualSpriteSize > MAX_SPRITE_SIZE) {
@@ -64,7 +63,7 @@ const updateTags = async (edges: edge[]) => {
         }
       } else {
         actualSpriteSize =
-          (await prisma.edgeSprite.count({
+          (await prismaDm.edgeSprite.count({
             where: { spriteName },
           })) + 1;
       }
@@ -74,7 +73,7 @@ const updateTags = async (edges: edge[]) => {
       }
       tagsToAdd[spriteName].slugs.push(edge.slug!);
       insertOperations.push(
-        prisma.edgeSprite.create({
+        prismaDm.edgeSprite.create({
           data: {
             edgeId: edge.id,
             spriteName,
@@ -84,25 +83,25 @@ const updateTags = async (edges: edge[]) => {
       );
     }
   }
-  await prisma.$transaction(insertOperations);
+  await prismaDm.$transaction(insertOperations);
 
   const updateOperations = [];
   for (const [spriteName, { slugs, spriteSize }] of Object.entries(tagsToAdd)) {
     await cloudinaryV2.uploader.add_tag(spriteName, slugs);
 
     updateOperations.push(
-      prisma.edgeSprite.updateMany({
+      prismaDm.edgeSprite.updateMany({
         data: { spriteSize },
         where: { spriteName },
       })
     );
   }
-  await prisma.$transaction(updateOperations);
+  await prismaDm.$transaction(updateOperations);
 };
 
 const generateSprites = async () => {
   const spritesWithNoUrl = (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
       select distinct Sprite_name AS spriteName
       from tranches_pretes_sprites
       where Sprite_name not in (select sprite_name from tranches_pretes_sprites_urls)
@@ -117,7 +116,7 @@ const generateSprites = async () => {
         spriteName
       );
       insertOperations.push(
-        prisma.edgeSpriteUrl.create({
+        prismaDm.edgeSpriteUrl.create({
           data: {
             version: String(version),
             spriteName,
@@ -128,7 +127,7 @@ const generateSprites = async () => {
       console.error(err);
     }
   }
-  await prisma.$transaction(insertOperations);
+  await prismaDm.$transaction(insertOperations);
 };
 
 export const put = async (
@@ -162,7 +161,7 @@ export const put = async (
       }
     }
 
-    const edgesNotInCloudinary = await prisma.edge.findMany({
+    const edgesNotInCloudinary = await prismaDm.edge.findMany({
       where: {
         slug: {
           notIn: allCloudinarySlugs,
@@ -190,12 +189,12 @@ export const put = async (
   }
 
   const edgeIdsWithSprites = (
-    await prisma.edgeSprite.findMany({
+    await prismaDm.edgeSprite.findMany({
       select: { edgeId: true },
     })
   ).map(({ edgeId }) => edgeId);
 
-  const edgesWithoutSprites = await prisma.edge.findMany({
+  const edgesWithoutSprites = await prismaDm.edge.findMany({
     where: {
       id: {
         notIn: edgeIdsWithSprites,

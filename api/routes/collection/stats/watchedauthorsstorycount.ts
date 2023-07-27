@@ -1,15 +1,13 @@
-import { PrismaClient } from "~prisma_clients/client_dm_stats";
+import { prismaDmStats } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { getAuthorFullNames } from "~routes/coa/authorsfullnames/:authors";
 import { AuthorsDetails } from "~types/AuthorsDetails";
-
-const prisma = new PrismaClient();
 
 const getStoryCountPerAuthor = async (
   personcodes: string[]
 ): Promise<{ [personcode: string]: number }> =>
   (
-    await prisma.authorStory.groupBy({
+    await prismaDmStats.authorStory.groupBy({
       by: ["personcode"],
       _count: {
         storycode: true,
@@ -30,7 +28,7 @@ const getMissingStoryCountPerAuthor = async (
   userId: number
 ): Promise<{ [personcode: string]: number }> =>
   (
-    await prisma.missingStoryForUser.groupBy({
+    await prismaDmStats.missingStoryForUser.groupBy({
       by: ["personcode"],
       _count: {
         storycode: true,

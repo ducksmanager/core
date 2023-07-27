@@ -1,14 +1,8 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient as PrismaClientCoa } from "~prisma_clients/client_coa";
-import {
-  PrismaClient as PrismaClientDm,
-  userOptionType,
-} from "~prisma_clients/client_dm";
-import {
-  Prisma as PrismaDmStats,
-  PrismaClient as PrismaClientDmStats,
-} from "~prisma_clients/client_dm_stats";
+import { prismaCoa, prismaDm, prismaDmStats } from "~/prisma";
+import { userOptionType } from "~prisma_clients/client_dm";
+import { Prisma as PrismaDmStats } from "~prisma_clients/client_dm_stats";
 import { ExpressCall } from "~routes/_express-call";
 import { getPublicationTitlesFromCodes } from "~routes/coa/list/publications";
 import { IssueSuggestion } from "~types/IssueSuggestion";
@@ -16,10 +10,6 @@ import { IssueSuggestionList } from "~types/IssueSuggestionList";
 import { StoryDetail } from "~types/StoryDetail";
 import { SuggestionList } from "~types/SuggestionList";
 import { SuggestionsWithDetails } from "~types/SuggestionsWithDetails";
-
-const prismaCoa = new PrismaClientCoa();
-const prismaDm = new PrismaClientDm();
-const prismaDmStats = new PrismaClientDmStats();
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",

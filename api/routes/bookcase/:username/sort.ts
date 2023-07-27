@@ -1,11 +1,11 @@
-import prisma from "~prisma_extended_clients/dm.extends";
+import prismaDm from "~prisma_extended_clients/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 
 import { checkValidBookcaseUser } from "./index";
 
 const getLastPublicationPosition = async (userId: number) =>
   (
-    await prisma.bookcasePublicationOrder.aggregate({
+    await prismaDm.bookcasePublicationOrder.aggregate({
       _max: { order: true },
       where: { userId },
     })
@@ -23,13 +23,13 @@ export const get = async (
     const userId = user.id;
     let maxSort = await getLastPublicationPosition(userId);
     const userSortedPublicationcodes = (
-      await prisma.bookcasePublicationOrder.findMany({
+      await prismaDm.bookcasePublicationOrder.findMany({
         select: { publicationcode: true },
         where: { userId },
       })
     ).map(({ publicationcode }) => publicationcode);
     const userPublicationcodes = (
-      await prisma.issue.findMany({
+      await prismaDm.issue.findMany({
         select: {
           publicationcode: true,
         },
@@ -48,7 +48,7 @@ export const get = async (
 
     const insertOperations = missingPublicationCodesInOrder.map(
       (publicationcode) =>
-        prisma.bookcasePublicationOrder.create({
+        prismaDm.bookcasePublicationOrder.create({
           data: {
             publicationcode,
             order: ++maxSort,
@@ -56,19 +56,19 @@ export const get = async (
           },
         })
     );
-    await prisma.$transaction(insertOperations);
+    await prismaDm.$transaction(insertOperations);
 
     const deleteOperations = obsoletePublicationCodesInOrder.map(
       (publicationcode) =>
-        prisma.bookcasePublicationOrder.delete({
+        prismaDm.bookcasePublicationOrder.delete({
           where: { userId_publicationcode: { publicationcode, userId } },
         })
     );
-    await prisma.$transaction(deleteOperations);
+    await prismaDm.$transaction(deleteOperations);
 
     return res.json(
       (
-        await prisma.bookcasePublicationOrder.findMany({
+        await prismaDm.bookcasePublicationOrder.findMany({
           select: { publicationcode: true },
           where: { userId },
           orderBy: { order: "asc" },

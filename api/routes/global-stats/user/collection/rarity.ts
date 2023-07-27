@@ -1,7 +1,5 @@
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -11,8 +9,8 @@ export const get = async (
     };
   }>
 ) => {
-  const userCount = await prisma.user.count();
-  const userScores = (await prisma.$queryRaw`
+  const userCount = await prismaDm.user.count();
+  const userScores = (await prismaDm.$queryRaw`
       SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity
       FROM numeros
       LEFT JOIN

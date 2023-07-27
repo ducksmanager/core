@@ -1,12 +1,11 @@
 import jwt from "jsonwebtoken";
 
-import { PrismaClient, user } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { user } from "~prisma_clients/client_dm";
 import { User } from "~types/SessionUser";
 
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
-
-const prisma = new PrismaClient();
 
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
@@ -20,7 +19,7 @@ export const loginAs = async (user: user, hashedPassword: string) =>
     username: user.username,
     hashedPassword,
     privileges: (
-      await prisma.userPermission.findMany({
+      await prismaDm.userPermission.findMany({
         where: {
           username: user.username,
         },

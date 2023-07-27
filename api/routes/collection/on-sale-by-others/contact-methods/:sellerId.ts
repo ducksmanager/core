@@ -1,9 +1,8 @@
-import { PrismaClient, userOptionType } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { userOptionType } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 import { getIssuesForSale } from "../index";
-
-const prisma = new PrismaClient();
 
 export const get = async (
   ...[req, res]: ExpressCall<{
@@ -24,11 +23,11 @@ export const get = async (
     res.end("Invalid seller ID: " + sellerId);
     return;
   }
-  const seller = await prisma.user.findUniqueOrThrow({
+  const seller = await prismaDm.user.findUniqueOrThrow({
     select: { email: true, discordId: true },
     where: { id: sellerId },
   });
-  const sellerContactMethods = await prisma.userOption.findMany({
+  const sellerContactMethods = await prismaDm.userOption.findMany({
     where: {
       userId: sellerId,
       optionName: userOptionType.marketplace_contact_methods,

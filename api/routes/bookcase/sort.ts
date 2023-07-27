@@ -1,10 +1,9 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
 import { authenticateToken } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 
 export const post = [
@@ -19,12 +18,12 @@ export const post = [
     const sorts = req.body.sorts;
     if (sorts.length) {
       const userId = req.user!.id;
-      await prisma.bookcasePublicationOrder.deleteMany({
+      await prismaDm.bookcasePublicationOrder.deleteMany({
         where: { userId: userId },
       });
       let order = 0;
       const insertOperations = sorts.map((publicationcode: string) =>
-        prisma.bookcasePublicationOrder.create({
+        prismaDm.bookcasePublicationOrder.create({
           data: {
             publicationcode,
             order: order++,
@@ -32,7 +31,7 @@ export const post = [
           },
         })
       );
-      await prisma.$transaction(insertOperations);
+      await prismaDm.$transaction(insertOperations);
 
       return res.json({ max: order - 1 });
     }

@@ -1,10 +1,9 @@
 import bodyParser from "body-parser";
 
-import { PrismaClient } from "~/dist/prisma/client_dm";
+import { prismaDm } from "~/prisma";
 import EdgePhotoSent from "~emails/edge-photo-sent";
 import { ExpressCall } from "~routes/_express-call";
 
-const prisma = new PrismaClient();
 const parseForm = bodyParser.json();
 export const put = [
   parseForm,
@@ -19,7 +18,7 @@ export const put = [
       };
     }>
   ) => {
-    const user = await prisma.user.findUniqueOrThrow({
+    const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: req.user!.id },
     });
     const { publicationcode, issuenumber } = req.body;

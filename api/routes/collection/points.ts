@@ -1,11 +1,11 @@
-import { Prisma, PrismaClient } from "~prisma_clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { Prisma } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { MedalPoints } from "~types/MedalPoints";
 
-const prisma = new PrismaClient();
 export const getMedalPoints = async (userIds: number[]): Promise<MedalPoints> =>
   (
-    (await prisma.$queryRaw`
+    (await prismaDm.$queryRaw`
         select contributionType.contribution_external_name as contribution,
                userIds.userId,
                ifnull(userContributions.totalPoints, 0)    as totalPoints
