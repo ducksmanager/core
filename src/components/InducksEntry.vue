@@ -1,13 +1,14 @@
 <template>
   <span>
     <b-dropdown
-      :text="storyversionKindText"
       v-if="editable"
+      :text="storyversionKindText"
       class="mb-2"
       :toggle-class="{ [`kind-${kind}`]: true }"
       ><b-dropdown-item
-        :class="{ [`kind-${storyType.value}`]: true }"
         v-for="storyType of storyversionKinds"
+        :key="storyType.value"
+        :class="{ [`kind-${storyType.value}`]: true }"
         @click="
           update({
             ...entry,
@@ -35,6 +36,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+
 import { StoryversionKind } from "~/stores/issueDetails";
 import { issueDetails } from "~/stores/issueDetails";
 import { Entry } from "~/stores/issueDetails";

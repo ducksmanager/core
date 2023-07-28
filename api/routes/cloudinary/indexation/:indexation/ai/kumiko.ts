@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import { getIndexationResources } from "../index";
 import axios from "axios";
+import { Request, Response } from "express";
+
+import { getIndexationResources } from "../index";
 
 export const get = async (req: Request, res: Response) => {
   const indexationResources = await getIndexationResources(

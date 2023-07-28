@@ -1,7 +1,7 @@
 <template>
   <img
-    class="d-none"
     v-if="entries?.length"
+    class="d-none"
     :src="entries[0].url.url"
     @load="
       ({ target }) => {
@@ -45,8 +45,8 @@
             pill
             class="ms-2 hint"
             :disabled="isHintLoading"
-            @click="loadHint"
             :class="{ loading: isHintLoading, loaded: isHintLoaded }"
+            @click="loadHint"
           >
             <i-bi-lightbulb-fill
           /></b-button>
@@ -58,9 +58,9 @@
       </template>
       <b-tabs v-if="entries" v-model="currentTabIndex" pills card vertical>
         <b-tab
-          :entry="entry"
           v-for="(entry, index) in entries"
           :key="`slide-${entry.position}`"
+          :entry="entry"
           ><template #title
             ><InducksEntry
               :editable="currentTabIndex === index"
@@ -74,9 +74,10 @@
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
 import { computed, ref, watch } from "vue";
-import { StoryversionKind, issueDetails } from "~/stores/issueDetails";
-import { defaultApi } from "~/util/api";
+
 import useHintMaker from "~/composables/useHintMaker";
+import { issueDetails, StoryversionKind } from "~/stores/issueDetails";
+import { defaultApi } from "~/util/api";
 
 const route = useRoute();
 

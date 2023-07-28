@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { Request, Response } from "express";
 
+import { CloudinaryResourceContext } from "~types/CloudinaryResourceContext";
+
 export const get = async (req: Request, res: Response) =>
   res.json(
     (await cloudinary.api
@@ -10,6 +12,7 @@ export const get = async (req: Request, res: Response) =>
       .catch(async (err) => {
         console.error(err);
       }))!.resources.filter(
-      ({ context }) => (context as any).custom.user === req.user.username
+      ({ context }) =>
+        (context as CloudinaryResourceContext).custom.user === req.user.username
     )
   );

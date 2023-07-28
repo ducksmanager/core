@@ -19,6 +19,7 @@ const fullFolderName = computed(
   () => `dumili/${username.value}/${props.folderName}`
 );
 
+// eslint-disable-next-line
 declare var cloudinary: any;
 const uploadWidget = cloudinary.createUploadWidget(
   {
@@ -35,7 +36,7 @@ const uploadWidget = cloudinary.createUploadWidget(
       user: username.value,
     },
   },
-  (error: string, result: { event: string; info: any }) => {
+  (error: string, result: { event: string; info: unknown }) => {
     if (error) {
       console.error(error);
     } else {

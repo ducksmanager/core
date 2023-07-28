@@ -1,13 +1,14 @@
-import { defineConfig } from "vite";
-import path from "path";
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
-import Icons from "unplugin-icons/vite";
-import IconsResolver from "unplugin-icons/resolver";
 import vue from "@vitejs/plugin-vue";
-import Components from "unplugin-vue-components/vite";
-import AutoImport from "unplugin-auto-import/vite";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
+import path from "path";
+import AutoImport from "unplugin-auto-import/vite";
+import IconsResolver from "unplugin-icons/resolver";
+import Icons from "unplugin-icons/vite";
 import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
+import Components from "unplugin-vue-components/vite";
+import { defineConfig } from "vite";
+import eslintPlugin from "vite-plugin-eslint";
 import Pages from "vite-plugin-pages";
 
 export default defineConfig({
@@ -16,6 +17,7 @@ export default defineConfig({
     Icons({
       autoInstall: true,
     }),
+    eslintPlugin(),
     AutoImport({
       dts: true,
       imports: ["vue", "vue-router"],

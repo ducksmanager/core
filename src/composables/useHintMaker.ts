@@ -1,7 +1,8 @@
 import { POST__cover_id__search } from "ducksmanager/types/routes";
-import { KumikoResults } from "~types/KumikoResults";
-import { StoryversionKind, issueDetails } from "~/stores/issueDetails";
+
 import { coa } from "~/stores/coa";
+import { issueDetails, StoryversionKind } from "~/stores/issueDetails";
+import { KumikoResults } from "~types/KumikoResults";
 
 export default () => {
   const issueDetailsStore = issueDetails();

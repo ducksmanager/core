@@ -4,8 +4,9 @@
 
 <script setup lang="ts">
 import { AxiosResponse } from "axios";
-import { defaultApi } from "./util/api";
+
 import { user } from "./stores/user";
+import { defaultApi } from "./util/api";
 
 defaultApi
   .get(`${import.meta.env.VITE_BACKEND_URL}/me`)

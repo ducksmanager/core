@@ -5,10 +5,10 @@
   >
     <b-row v-if="images" align-h="center">
       <b-col
-        class="col position-relative d-flex justify-content-center align-items-center p-3 pb-5"
-        :class="{ selectable, selected: selectedUrl === url }"
         v-for="{ url, text } of images"
         :key="url"
+        class="col position-relative d-flex justify-content-center align-items-center p-3 pb-5"
+        :class="{ selectable, selected: selectedUrl === url }"
         cols="12"
         md="4"
         @click="selectedUrl = url"
@@ -30,7 +30,7 @@ defineProps<{
 }>();
 
 defineSlots<{
-  default(props: { issuecode: string }): any;
+  default(props: { issuecode: string }): never;
 }>();
 
 const emit = defineEmits<{

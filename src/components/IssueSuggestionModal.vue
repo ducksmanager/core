@@ -5,9 +5,9 @@
     align="center"
     centered
     :ok-disabled="selectedExistingCoverIssuecode === null"
+    cancel-title="Annuler"
     @ok.prevent="acceptIssueSuggestion(selectedExistingCoverIssuecode!)"
     @cancel.prevent="rejectAllIssueSuggestions"
-    cancel-title="Annuler"
   >
     <div class="m-3">
       Dumili a trouvé des couvertures existantes ressemblant à la vôtre.
@@ -15,12 +15,12 @@
       aucune ne ressemble,cliquez sur "Annuler".
     </div>
     <Gallery
+      v-slot="{ issuecode }"
       :images="images"
       selectable
       @selected="
         (url) => (selectedExistingCoverIssuecode = coverUrlToIssuecode(url))
       "
-      v-slot="{ issuecode }"
       ><Issue
         :publicationcode="getPublicationcodeFromIssuecode(issuecode)"
         :issuenumber="getIssuenumberFromIssuecode(issuecode)"
@@ -31,6 +31,7 @@
 <script lang="ts" setup>
 import { GET__cover_id__download__$coverId } from "ducksmanager/types/routes";
 import { storeToRefs } from "pinia";
+
 import { issueDetails } from "~/stores/issueDetails";
 
 const { rejectAllIssueSuggestions, acceptIssueSuggestion } = issueDetails();

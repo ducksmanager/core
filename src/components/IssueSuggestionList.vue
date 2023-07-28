@@ -1,16 +1,17 @@
 <template>
   <b-dropdown class="my-2"
     ><b-dropdown-item
+      v-for="issueSuggestion of issueSuggestions"
+      :key="issueSuggestion.issuecode"
       class="d-flex"
       @click="acceptIssueSuggestion(issueSuggestion.issuecode)"
-      v-for="issueSuggestion of issueSuggestions"
     >
       <Issue
         :publicationcode="issueSuggestion.publicationcode"
         :issuenumber="issueSuggestion.issuenumber" /><i-bi-lightbulb-fill
+        v-if="issueSuggestion.isAi"
         class="ms-2"
         color="yellow"
-        v-if="issueSuggestion.isAi"
     /></b-dropdown-item>
     <b-dropdown-divider v-if="issueSuggestions.length" />
     <b-dropdown-item @click="acceptIssueSuggestion(undefined)"
@@ -22,14 +23,14 @@
     >
     <template #button-content>
       <template v-if="showIssueSelect">Personnaliser...</template>
-      <div class="d-flex" v-else>
+      <div v-else class="d-flex">
         <Issue
           :publicationcode="issue.publicationcode || null"
           :issuenumber="issue.issuenumber || null"
         /><i-bi-lightbulb-fill
+          v-if="issue.isAi"
           class="ms-2"
           color="yellow"
-          v-if="issue.isAi"
         /></div
     ></template>
   </b-dropdown>
@@ -40,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { SuggestedIssue, issueDetails } from "~/stores/issueDetails";
+import { issueDetails, SuggestedIssue } from "~/stores/issueDetails";
 
 const showIssueSelect = ref(false);
 const issueDetailsStore = issueDetails();
