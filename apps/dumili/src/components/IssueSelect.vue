@@ -30,8 +30,8 @@
       </div>
     </template>
     <b-button
-      variant="success"
       v-if="currentIssueNumber !== undefined"
+      variant="success"
       :disabled="!isValid"
       @click="emit('change', issuecode)"
       >OK</b-button

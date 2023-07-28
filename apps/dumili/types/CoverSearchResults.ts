@@ -1,5 +1,5 @@
-import { cover } from "~prisma_clients/client_cover_info";
 import { inducks_issue } from "~prisma_clients/client_coa";
+import { cover } from "~prisma_clients/client_cover_info";
 
 export interface SimilarImagesResult {
   image_ids: number[];

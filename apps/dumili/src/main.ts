@@ -1,17 +1,16 @@
-import { createApp } from "vue";
 import "./style.scss";
-import App from "./App.vue";
-import axios from "axios";
-
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
-import { createRouter, createWebHistory } from "vue-router";
-import generatedRoutes from "virtual:generated-pages";
-
+import axios from "axios";
 import { useColorMode } from "bootstrap-vue-next";
-import i18n from "./i18n.js";
 import { createPinia } from "pinia";
+import generatedRoutes from "virtual:generated-pages";
+import { createApp } from "vue";
+import { createRouter, createWebHistory } from "vue-router";
+
+import App from "./App.vue";
+import i18n from "./i18n.js";
 
 const router = createRouter({
   history: createWebHistory(),

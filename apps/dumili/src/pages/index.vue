@@ -13,9 +13,9 @@
       <template v-if="currentIndexations">
         <b-row align-h="center">
           <b-col
-            class="col"
             v-for="indexation of currentIndexations"
-            :key="indexation.name"
+            :key="indexation.indexation"
+            class="col"
             cols="12"
             md="4"
           >
@@ -28,7 +28,7 @@
             </router-link>
           </b-col>
         </b-row>
-        <h4 fluid v-if="!currentIndexations.length">
+        <h4 v-if="!currentIndexations.length" fluid>
           Aucune indexation en cours
         </h4></template
       >
@@ -42,7 +42,7 @@
     </template>
   </b-container>
 
-  <b-container fluid class="p-2 border-top" v-if="user">
+  <b-container v-if="user" fluid class="p-2 border-top">
     <div>
       <b-button @click="modal = !modal">Nouvelle indexation</b-button>
     </div>
@@ -69,14 +69,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { defaultApi } from "~/util/api";
 import { AxiosResponse } from "axios";
+import { ref } from "vue";
+
 import { user as userStore } from "~/stores/user";
+import { defaultApi } from "~/util/api";
 
 const router = useRouter();
 
-const currentIndexations = ref(null as any[] | null);
+const currentIndexations = ref(
+  null as { url: string; indexation: string }[] | null
+);
 const modal = ref(false);
 const cloudinaryFolderName = ref(null as string | null);
 const stepNumber = ref(0);

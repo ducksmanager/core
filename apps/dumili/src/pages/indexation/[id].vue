@@ -4,15 +4,15 @@
     <h3>DucksManager Inducks Little helper</h3>
   </b-container>
   <b-container
+    id="main"
     fluid
     class="d-flex flex-grow-1 flex-column overflow-y-auto"
-    id="main"
   >
     <template v-if="tabNames[activeTab] === 'page-gallery'"
       ><Gallery :images="images" />
       <upload-widget
         v-if="showUploadWidget"
-        :folder-name="(route.params.id as string)"
+        :folder-name="route.params.id as string"
         @done="
           showUploadWidget = !showUploadWidget;
           getPageImages();
@@ -31,26 +31,27 @@
       <b-row>
         <b-col>
           <b-form-textarea
+            v-model="textContent"
             :rows="entries.length + 1"
             readonly
             :placeholder="textContentError"
-            v-model="textContent"
         /></b-col>
       </b-row>
     </template>
   </b-container>
   <b-container class="start-0 bottom-0 mw-100 pt-2" style=""
-    ><b-tabs align="center" v-model:modelValue="activeTab"
+    ><b-tabs v-model:modelValue="activeTab" align="center"
       ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
         title="Text editor" /></b-tabs
   ></b-container>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { defaultApi } from "~/util/api";
-import { issueDetails } from "~/stores/issueDetails";
 import { AxiosResponse } from "axios";
+import { computed, ref } from "vue";
+
+import { issueDetails } from "~/stores/issueDetails";
+import { defaultApi } from "~/util/api";
 const showUploadWidget = ref(false);
 const route = useRoute();
 
@@ -68,9 +69,17 @@ const images = computed(() =>
   }))
 );
 
+watch(
+  () => issue.value,
+  () => {
+    if (!issue.value) {
+      textContentError.value = "No data";
+    }
+  }
+);
+
 const textContent = computed(() => {
   if (!issue.value) {
-    textContentError.value = "No data";
     return "";
   }
   const rows = [

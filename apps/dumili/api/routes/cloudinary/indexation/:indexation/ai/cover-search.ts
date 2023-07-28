@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
-import { getIndexationResources } from "../index";
 import axios from "axios";
+import { Request, Response } from "express";
+import Cookies from "js-cookie";
 
 import {
   addTokenRequestInterceptor,
   addUrlParamsRequestInterceptor,
 } from "~/util/axios";
-import Cookies from "js-cookie";
+
+import { getIndexationResources } from "../index";
 
 const defaultApi = addTokenRequestInterceptor(
   addUrlParamsRequestInterceptor(
