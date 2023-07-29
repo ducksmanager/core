@@ -27,17 +27,15 @@
       </b-button>
     </template>
     <Book v-if="tabNames[activeTab] === 'book'" />
-    <template v-if="tabNames[activeTab] === 'text-editor'">
-      <b-row>
-        <b-col>
-          <b-form-textarea
-            v-model="textContent"
-            :rows="entries.length + 1"
-            readonly
-            :placeholder="textContentError"
-        /></b-col>
-      </b-row>
-    </template>
+    <b-row v-if="tabNames[activeTab] === 'text-editor'">
+      <b-col>
+        <b-form-textarea
+          v-model="textContent"
+          :rows="Object.keys(entrySuggestions).length + 1"
+          readonly
+          :placeholder="textContentError"
+      /></b-col>
+    </b-row>
   </b-container>
   <b-container class="start-0 bottom-0 mw-100 pt-2" style=""
     ><b-tabs v-model:modelValue="activeTab" align="center"
@@ -48,9 +46,10 @@
 
 <script setup lang="ts">
 import { AxiosResponse } from "axios";
+import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 
-import { issueDetails } from "~/stores/issueDetails";
+import { issueDetails, SuggestedEntry } from "~/stores/issueDetails";
 import { defaultApi } from "~/util/api";
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -60,12 +59,14 @@ const tabNames = ["page-gallery", "book", "text-editor"];
 
 const textContentError = ref("" as string);
 
+const { entrySuggestions } = storeToRefs(issueDetails());
 const issue = computed(() => issueDetails().issue);
-const entries = computed(() => issueDetails().entries);
+const acceptedEntries = computed(() => issueDetails().acceptedEntries);
 const images = computed(() =>
-  entries.value?.map(({ url, entrycode }) => ({
-    url: url.url,
-    text: entrycode!,
+  Object.keys(entrySuggestions.value).map((url) => ({
+    url: url,
+    text: entrySuggestions.value[url].find(({ isAccepted }) => isAccepted)!
+      .entrycode!,
   }))
 );
 
@@ -84,7 +85,7 @@ const textContent = computed(() => {
   }
   const rows = [
     [issue.value?.issuecode],
-    ...entries.value.map((entry) => [
+    ...Object.values(acceptedEntries.value).map((entry) => [
       entry.entrycode,
       entry.storyversion?.storyversioncode,
       String(entry.storyversion?.entirepages),
@@ -122,7 +123,13 @@ const getPageImages = () => {
       }`
     )
     .then((res: AxiosResponse<{ url: string }[]>) => {
-      issueDetails().entries = res.data.map(({ url }) => ({ url: { url } }));
+      entrySuggestions.value = res.data.reduce(
+        (acc, { url }) => ({
+          ...acc,
+          [url]: [{ type: "custom", isAccepted: true }],
+        }),
+        {} as Record<string, SuggestedEntry[]>
+      );
     });
 };
 

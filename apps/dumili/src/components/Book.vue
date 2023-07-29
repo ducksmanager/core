@@ -2,7 +2,7 @@
   <img
     v-if="entries?.length"
     class="d-none"
-    :src="entries[0].url.url"
+    :src="Object.keys(entries)[0]"
     @load="
       ({ target }) => {
         coverHeight = (target as HTMLImageElement).height;
@@ -17,8 +17,8 @@
     <b-container class="d-flex w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
-          v-for="({ position, url }, index) in entries"
-          :key="`page-${position}`"
+          v-for="(url, index) in Object.keys(entries)"
+          :key="`page-${index}`"
           class="page"
           :class="{ single: isSinglePage }"
         >
@@ -26,7 +26,7 @@
             <div
               class="page-image"
               :style="{
-                backgroundImage: `url(${url.url})`,
+                backgroundImage: `url(${url})`,
                 marginLeft: 0,
               }"
             />
@@ -58,13 +58,13 @@
       </template>
       <b-tabs v-if="entries" v-model="currentTabIndex" pills card vertical>
         <b-tab
-          v-for="(entry, index) in entries"
-          :key="`slide-${entry.position}`"
-          :entry="entry"
+          v-for="(entryurl, index) in Object.keys(entries)"
+          :key="entryurl"
+          title-link-class="w-100 d-flex align-items-left"
           ><template #title
-            ><InducksEntry
-              :editable="currentTabIndex === index"
-              :entry-index="index" /></template
+            ><Entry
+              :entryurl="entryurl"
+              :editable="currentTabIndex === index" /></template
         ></b-tab>
       </b-tabs>
     </b-card>
@@ -73,6 +73,7 @@
 
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
+import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
 import useHintMaker from "~/composables/useHintMaker";
@@ -87,10 +88,11 @@ const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const coverWidth = ref(null as number | null);
 let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
-let currentEntry = ref(0 as number);
 const currentTabIndex = ref(0 as number);
-const isSinglePage = computed(() => entries.value.length === 1);
-const entries = computed(() => issueDetails().entries);
+
+const { acceptedEntries } = storeToRefs(issueDetails());
+const isSinglePage = computed(() => Object.keys(entries.value).length === 1);
+const entries = computed(() => issueDetails().entrySuggestions);
 const releaseDate = computed(() => {
   if (!issueDetails().issue?.oldestdate) return null;
 
@@ -122,7 +124,10 @@ const loadHint = async () => {
   console.log("Kumiko OK");
   hintMaker.applyHintsFromKumiko(data);
 
-  if (entries.value[0].storyversion?.kind === StoryversionKind.Cover) {
+  if (
+    acceptedEntries.value[Object.keys(entries.value)[0]].storyversion?.kind ===
+    StoryversionKind.Cover
+  ) {
     console.info(
       "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
     );
@@ -148,9 +153,9 @@ const loadHint = async () => {
 watch(
   () => currentTabIndex.value,
   (newValue) => {
-    currentEntry.value = entries.value.findIndex(
-      ({ url }) => url.url === entries.value[newValue].url.url
-    );
+    if (book.value) {
+      book.value.flip(newValue);
+    }
   }
 );
 
@@ -160,15 +165,6 @@ watch(
     const availableWidthPerPage = document.body.clientWidth / 2 - 15;
     if (newValue && newValue > availableWidthPerPage) {
       coverHeight.value! /= newValue / availableWidthPerPage;
-    }
-  }
-);
-
-watch(
-  () => currentEntry.value,
-  (newValue) => {
-    if (book.value) {
-      book.value.flip(newValue);
     }
   }
 );
@@ -192,7 +188,7 @@ watch(
       book.value.loadFromHTML(document.querySelectorAll(".page"));
 
       book.value.on("flip", ({ data }) => {
-        currentEntry.value = parseInt(data.toString());
+        currentTabIndex.value = parseInt(data.toString());
       });
     }
   },
@@ -214,20 +210,6 @@ watch(
   }
   100% {
     color: #999;
-  }
-}
-
-.inducks-link {
-  position: absolute;
-  cursor: pointer !important;
-  top: 6px;
-  right: 6px;
-  border: 0;
-  width: 24px;
-
-  img {
-    display: initial;
-    width: 100%;
   }
 }
 

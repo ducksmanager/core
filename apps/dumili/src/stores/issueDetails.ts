@@ -1,6 +1,5 @@
 import { inducks_storyversion } from "ducksmanager/api/dist/prisma/client_coa";
 import { inducks_story } from "ducksmanager/api/dist/prisma/client_coa";
-import { inducks_entryurl } from "ducksmanager/api/dist/prisma/client_coa";
 import { inducks_storyjob } from "ducksmanager/api/dist/prisma/client_coa";
 import {
   inducks_entry,
@@ -35,11 +34,12 @@ type Storyversion = Partial<
 
 type Storyjob = Pick<inducks_storyjob, "personcode" | "plotwritartink">;
 
-type Entryurl = {
-  url: NonNullable<inducks_entryurl["url"]>;
+type Suggestion = {
+  isAccepted?: boolean;
+  type: "ongoing" | "ai" | "custom";
 };
 
-export type Entry = Partial<
+export type SuggestedEntry = Partial<
   Pick<
     inducks_entry,
     "entrycode" | "entrycomment" | "printedhero" | "title" | "part" | "position"
@@ -47,53 +47,78 @@ export type Entry = Partial<
 > & {
   storyversion?: Storyversion;
   storyjobs?: Storyjob[];
-  url: Entryurl;
-};
+} & Suggestion;
 
 export type SuggestedIssue = Pick<
   inducks_issue,
   "publicationcode" | "issuenumber" | "issuecode"
-> & {
-  accepted?: boolean;
-  isCustom?: boolean;
-  isAi: boolean;
-  coverId: number | null;
-} & Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>;
+> &
+  Suggestion & {
+    coverId: number | null;
+  } & Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>;
 
 type UnknownIssue = Partial<NonNullable<SuggestedIssue>> & {
-  accepted: boolean;
+  isAccepted: boolean;
 };
 
 export const issueDetails = defineStore("issueDetails", () => {
-  const entries = ref([] as Entry[]),
+  const entrySuggestions = ref({} as Record<string, SuggestedEntry[]>),
     issueSuggestions = ref([] as SuggestedIssue[]),
     pendingIssueSuggestions = computed(() =>
-      issueSuggestions.value.filter(({ accepted }) => accepted === undefined)
+      issueSuggestions.value.filter(
+        ({ isAccepted }) => isAccepted === undefined
+      )
     ),
     issueOptions = computed((): (UnknownIssue | SuggestedIssue)[] => [
       ...issueSuggestions.value,
-      { accepted: true },
+      { isAccepted: true },
     ]);
 
   return {
     issueSuggestions,
     issueOptions,
-    issue: computed(() => issueOptions.value.find(({ accepted }) => accepted)!),
+    issue: computed(
+      () => issueOptions.value.find(({ isAccepted }) => isAccepted)!
+    ),
     hasPendingIssueSuggestions: computed(
       () => pendingIssueSuggestions.value.length > 0
     ),
+    acceptedEntries: computed(() =>
+      Object.entries(entrySuggestions.value).reduce(
+        (acc, [entrycode, suggestions]) => ({
+          ...acc,
+          [entrycode]: suggestions.find(({ isAccepted }) => isAccepted)!,
+        }),
+        {} as Record<string, SuggestedEntry>
+      )
+    ),
     rejectAllIssueSuggestions: () => {
       issueSuggestions.value.forEach(
-        (suggestion) => (suggestion.accepted = false)
+        (suggestion) => (suggestion.isAccepted = false)
       );
     },
     acceptIssueSuggestion: (acceptedSuggestionIssuecode?: string) => {
       issueSuggestions.value.forEach(
         (suggestion) =>
-          (suggestion.accepted =
+          (suggestion.isAccepted =
             acceptedSuggestionIssuecode === suggestion.issuecode)
       );
     },
-    entries,
+    rejectAllEntrySuggestions: (entryurl: string) => {
+      entrySuggestions.value[entryurl].forEach(
+        (suggestion) => (suggestion.isAccepted = false)
+      );
+    },
+    acceptEntrySuggestion: (
+      entryurl: string,
+      acceptedSuggestionEntrycode?: string
+    ) => {
+      entrySuggestions.value[entryurl].forEach(
+        (suggestion) =>
+          (suggestion.isAccepted =
+            acceptedSuggestionEntrycode === suggestion.entrycode)
+      );
+    },
+    entrySuggestions,
   };
 });

@@ -14,7 +14,7 @@
     <b-form-select
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
-      :options="publications"
+      :options="publicationNamesForCurrentCountry"
       @change="emit('change', null)"
     />
     <template v-if="currentCountryCode && currentPublicationCode">
@@ -77,24 +77,39 @@ const issuecode = computed(() => {
   }
   return null;
 });
-const countryNames = computed(() => coaStore.countryNames);
-const publications = computed(
+const countryNames = computed(
   () =>
-    coaStore.publicationNames &&
-    Object.keys(coaStore.publicationNames)
-      .filter((publicationCode) =>
-        publicationCode.startsWith(`${currentCountryCode.value!}/`)
-      )
-      .map((publicationCode) => ({
-        text: coaStore.publicationNames[publicationCode],
-        value: publicationCode,
-      }))
-      .filter(({ text }) => text !== null)
-      .sort(({ text: text1 }, { text: text2 }) =>
-        text1! < text2! ? -1 : text2! < text1! ? 1 : 0
-      )
+    (coaStore.countryNames &&
+      Object.entries(coaStore.countryNames)
+        .map(([countrycode, countryName]) => ({
+          text: countryName,
+          value: countrycode,
+        }))
+        .sort(({ text: text1 }, { text: text2 }) =>
+          (text1 || "").localeCompare(text2)
+        )) ||
+    undefined
 );
 
+const publicationNames = $computed(() => coaStore.publicationNames);
+const publicationNamesFullCountries = $computed(
+  () => coaStore.publicationNamesFullCountries
+);
+const publicationNamesForCurrentCountry = $computed(() =>
+  publicationNamesFullCountries.includes(currentCountryCode.value || "")
+    ? Object.keys(publicationNames)
+        .filter((publicationcode) =>
+          new RegExp(`^${currentCountryCode}/`).test(publicationcode)
+        )
+        .map((publicationcode) => ({
+          text: publicationNames[publicationcode],
+          value: publicationcode,
+        }))
+        .sort(({ text: text1 }, { text: text2 }) =>
+          (text1 || "").localeCompare(text2 || "")
+        )
+    : []
+);
 const publicationIssues = computed(
   () => coaStore.issueNumbers[currentPublicationCode.value!]
 );
