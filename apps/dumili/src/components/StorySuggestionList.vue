@@ -2,24 +2,26 @@
   <b-dropdown
     ><b-dropdown-item
       v-for="entrySuggestion of entrySuggestions"
-      :key="entrySuggestion.entrycode"
+      :key="entrySuggestion.storyversion?.storycode || 'ongoing'"
       class="d-flex"
-      @click="acceptEntrySuggestion(entrySuggestion.entrycode)"
+      @click="
+        acceptEntrySuggestion(
+          entrySuggestion.storyversion?.storycode || undefined
+        )
+      "
     >
-      {{ entrySuggestion.entrycode || "Contenu inconnu" }}</b-dropdown-item
+      {{
+        entrySuggestion.storyversion?.storycode || "Contenu inconnu"
+      }}</b-dropdown-item
     >
     <b-dropdown-divider v-if="entrySuggestions.length" />
     <b-dropdown-item @click="showEntrySelect = true">{{
       $t("Personnaliser...")
     }}</b-dropdown-item>
     <template #button-content>
-      <div v-if="acceptedEntry.entrycode" class="d-flex">
-        {{ acceptedEntry.entrycode
-        }}<i-bi-lightbulb-fill
-          v-if="acceptedEntry.type === 'ai'"
-          class="ms-2"
-          color="yellow"
-        />
+      <div v-if="acceptedEntry.storyversion?.storycode" class="d-flex">
+        {{ acceptedEntry.storyversion?.storycode
+        }}<AiSuggestionIcon v-if="acceptedEntry.type === 'ai'" />
       </div>
       <template v-else-if="showEntrySelect">{{
         $t("Personnaliser...")
@@ -27,9 +29,9 @@
       ><template v-else>{{ $t("Contenu inconnu") }}</template></template
     >
   </b-dropdown>
-  <IssueSelect
+  <StorySearch
     v-if="showEntrySelect"
-    @change="(entrycode) => addCustomEntrycodeToEntrySuggestions(entrycode)"
+    @story-selected="addCustomEntrycodeToEntrySuggestions"
   />
 </template>
 
@@ -57,23 +59,34 @@ const entrySuggestions = computed(() =>
   )
 );
 
-const addCustomEntrycodeToEntrySuggestions = (entrycode: string | null) => {
-  if (entrycode) {
-    issueDetailsStore.entrySuggestions[props.entryurl] =
-      issueDetailsStore.entrySuggestions[props.entryurl].filter(
-        ({ type }) => type !== "custom"
-      );
+const addCustomEntrycodeToEntrySuggestions = ({
+  storycode,
+  title,
+}: {
+  storycode: string;
+  title: string;
+}) => {
+  if (storycode) {
     const userSuggestion: SuggestedEntry = {
-      entrycode,
+      title,
+      storyversion: {
+        storycode,
+      },
+      isAccepted: true,
       type: "custom",
     };
-    issueDetailsStore.entrySuggestions[props.entryurl].push(userSuggestion);
-    acceptEntrySuggestion(entrycode);
+    issueDetailsStore.entrySuggestions[props.entryurl] = [
+      ...issueDetailsStore.entrySuggestions[props.entryurl].filter(
+        ({ type }) => type === "ai"
+      ),
+      userSuggestion,
+    ];
+    acceptEntrySuggestion(storycode);
   }
 };
 
-const acceptEntrySuggestion = (entrycode?: string) => {
-  issueDetailsStore.acceptEntrySuggestion(props.entryurl, entrycode);
+const acceptEntrySuggestion = (storycode?: string) => {
+  issueDetailsStore.acceptEntrySuggestion(props.entryurl, storycode);
   showEntrySelect.value = false;
 };
 </script>

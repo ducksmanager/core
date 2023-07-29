@@ -1,4 +1,5 @@
 import { POST__cover_id__search } from "ducksmanager/types/routes";
+import { storeToRefs } from "pinia";
 
 import { coa } from "~/stores/coa";
 import {
@@ -10,10 +11,13 @@ import { KumikoResults } from "~types/KumikoResults";
 
 export default () => {
   const issueDetailsStore = issueDetails();
+  const { acceptedEntries } = storeToRefs(issueDetailsStore);
   const coaStore = coa();
   const applyHintsFromKumiko = (results: KumikoResults) => {
     results?.forEach((result, idx) => {
       const entryurl = Object.keys(issueDetailsStore.entrySuggestions)[idx];
+      const shouldBeAccepted =
+        acceptedEntries.value[entryurl]?.type === "ongoing";
       const newEntrySuggestion: SuggestedEntry = {
         type: "ai",
         storyversion: {
@@ -25,12 +29,11 @@ export default () => {
               : StoryversionKind.Story,
         },
       };
-      issueDetailsStore.entrySuggestions[entryurl] = [
-        ...issueDetailsStore.entrySuggestions[entryurl].filter(
-          ({ type, isAccepted }) => type !== "ai" || isAccepted
-        ),
-        newEntrySuggestion,
-      ];
+      if (shouldBeAccepted) {
+        issueDetailsStore.rejectAllEntrySuggestions(entryurl);
+        newEntrySuggestion.isAccepted = true;
+      }
+      issueDetailsStore.entrySuggestions[entryurl].push(newEntrySuggestion);
     });
   };
 

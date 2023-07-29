@@ -126,7 +126,7 @@ const getPageImages = () => {
       entrySuggestions.value = res.data.reduce(
         (acc, { url }) => ({
           ...acc,
-          [url]: [{ type: "custom", isAccepted: true }],
+          [url]: [{ type: "ongoing", isAccepted: true }],
         }),
         {} as Record<string, SuggestedEntry[]>
       );

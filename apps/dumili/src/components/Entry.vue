@@ -1,39 +1,62 @@
 <template>
-  <span>
+  <b-row class="d-flex w-100 align-items-center">
     <template v-if="editable">
-      <b-dropdown
-        :text="storyversionKindText"
-        :toggle-class="{ [`kind-${kind}`]: true }"
-        ><b-dropdown-item
-          v-for="storyversionKind of storyversionKinds"
-          :key="storyversionKind.value"
-          :class="{ [`kind-${storyversionKind.value}`]: true }"
-          @click="acceptStoryversionKindSuggestion(storyversionKind.value)"
-          >{{ storyversionKind.text }}</b-dropdown-item
-        ><template #button-content>
-          <div v-if="storyversionKindText" class="d-flex">
-            {{ storyversionKindText }}
-          </div>
-          <template v-else>Type inconnu</template></template
-        ></b-dropdown
-      ><EntrySuggestionList :entryurl="entryurl"
-    /></template>
+      <b-col>
+        <b-dropdown
+          :text="acceptedStoryversionKindText"
+          :toggle-class="{ [`kind-${kind}`]: true }"
+          ><b-dropdown-item
+            v-for="storyversionKind of storyversionKinds"
+            :key="storyversionKind.value"
+            class="d-flex justify-content-between"
+            :class="{ [`kind-${storyversionKind.value}`]: true }"
+            @click="acceptStoryversionKindSuggestion(storyversionKind.value)"
+            >{{ storyversionKind.text
+            }}<AiSuggestionIcon
+              v-if="
+                acceptedStoryversionKindText === storyversionKind.text &&
+                acceptedEntry.type === 'ai'
+              " /></b-dropdown-item
+          ><template #button-content>
+            <div v-if="acceptedStoryversionKindText" class="d-flex">
+              {{ acceptedStoryversionKindText }}
+              <AiSuggestionIcon v-if="acceptedEntry.type === 'ai'" />
+            </div>
+            <template v-else>Type inconnu</template></template
+          ></b-dropdown
+        ></b-col
+      ><b-col><StorySuggestionList :entryurl="entryurl" /></b-col>
+      <b-col>
+        <input type="text" class="w-100" :value="acceptedEntry.title" /></b-col
+    ></template>
     <template v-else>
-      <b-badge size="xl" :class="{ [`kind-${kind}`]: true }">{{
-        storyversionKindText || "Type inconnu"
-      }}</b-badge>
-      {{ title || $t("Sans titre") }}</template
+      <b-col>
+        <b-badge size="xl" :class="{ [`kind-${kind}`]: true }">{{
+          acceptedStoryversionKindText || "Type inconnu"
+        }}</b-badge></b-col
+      >
+      <b-col>
+        <template v-if="acceptedEntry.storyversion?.storycode">{{
+          acceptedEntry.storyversion?.storycode
+        }}</template
+        ><template v-else>{{ $t("Contenu inconnu") }}</template>
+      </b-col>
+      <b-col
+        >{{ title || $t("Sans titre") }}
+        <template v-if="part"> - {{ $t("partie") }} {{ part }}</template></b-col
+      ></template
     >
-    <template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
-    <small>{{ comment }}</small>
-    &nbsp;<a
-      v-if="urlEncodedStorycode"
-      target="_blank"
-      :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
+    <b-col class="text-center">
+      <small>{{ comment }}</small>
+      &nbsp;<a
+        v-if="urlEncodedStorycode"
+        target="_blank"
+        :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
+      >
+        {{ $t("Détails de l'histoire") }}
+      </a></b-col
     >
-      {{ $t("Détails de l'histoire") }}
-    </a>
-  </span>
+  </b-row>
 </template>
 <script setup lang="ts">
 import { computed } from "vue";
@@ -57,15 +80,15 @@ const acceptedEntry = computed(
 const storyversion = computed(() => acceptedEntry.value?.storyversion);
 const storycode = computed(() => storyversion.value?.storycode);
 const kind = computed(() => storyversion.value?.kind || "?");
-const part = computed(() => acceptedEntry.value.part);
-const title = computed(() => acceptedEntry.value.title || $t("Sans titre"));
+const part = computed(() => acceptedEntry.value?.part);
+const title = computed(() => acceptedEntry.value?.title || $t("Sans titre"));
 const comment = computed(() => acceptedEntry.value?.entrycomment);
 
 const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value)
 );
 
-const storyversionKindText = computed(() =>
+const acceptedStoryversionKindText = computed(() =>
   kind.value && storyversionKinds.value
     ? storyversionKinds.value.find(({ value }) => value === kind.value)?.text
     : ""
@@ -101,7 +124,6 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
     [[], []] as [SuggestedEntry[], SuggestedEntry[]]
   );
   issueDetailsStore.rejectAllEntrySuggestions(props.entryurl);
-  debugger;
   if (entrySuggestionsWithStoryversionKind.length) {
     issueDetailsStore.acceptEntrySuggestion(
       props.entryurl,
@@ -124,6 +146,10 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
 </script>
 
 <style scoped lang="scss">
+.col {
+  text-align: left;
+}
+
 :deep(.dropdown-menu) {
   background: lightgrey;
   overflow-x: visible !important;
