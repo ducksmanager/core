@@ -1,6 +1,6 @@
 <template>
   <img
-    v-if="entries?.length"
+    v-if="Object.keys(entries).length"
     class="d-none"
     :src="Object.keys(entries)[0]"
     @load="
