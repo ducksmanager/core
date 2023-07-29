@@ -1,6 +1,6 @@
 <route lang="yaml">
 alias:
-- /collection/afficher/new
+  - /collection/afficher/new
 </route>
 <template>
   {{
@@ -16,5 +16,5 @@ alias:
       )
     }}
   </div>
-  <IssueSearch />
+  <StorySearch />
 </template>

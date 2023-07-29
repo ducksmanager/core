@@ -120,6 +120,7 @@ declare module 'vue' {
     StarRating: typeof import('./src/components/StarRating.vue')['default']
     StatsMenu: typeof import('./src/components/menus/StatsMenu.vue')['default']
     StoryList: typeof import('./src/components/StoryList.vue')['default']
+    StorySearch: typeof import('./src/components/StorySearch.vue')['default']
     Subscription: typeof import('./src/components/Subscription.vue')['default']
     SuggestionList: typeof import('./src/components/SuggestionList.vue')['default']
     SwitchLocale: typeof import('./src/components/SwitchLocale.vue')['default']

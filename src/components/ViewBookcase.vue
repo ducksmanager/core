@@ -124,7 +124,7 @@
             </b-button>
           </template>
         </UploadableEdgesCarousel>
-        <IssueSearch
+        <StorySearch
           v-if="sortedBookcase?.length"
           style="float: right"
           :with-story-link="false"

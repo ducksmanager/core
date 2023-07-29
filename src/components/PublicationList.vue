@@ -52,7 +52,7 @@
     </b-collapse>
     <div class="navbar-nav">
       <form class="d-flex">
-        <IssueSearch :with-title="false" />
+        <StorySearch :with-title="false" />
       </form>
     </div>
   </nav>
