@@ -14,8 +14,11 @@
             >{{ storyversionKind.text
             }}<AiSuggestionIcon
               v-if="
-                acceptedStoryversionKindText === storyversionKind.text &&
-                acceptedEntry.type === 'ai'
+                entryStorySuggestions.some(
+                  ({ storyversion, type }) =>
+                    storyversion?.kind === storyversionKind.value &&
+                    type === 'ai'
+                )
               " /></b-dropdown-item
           ><template #button-content>
             <div v-if="acceptedStoryversionKindText" class="d-flex">
@@ -72,6 +75,10 @@ const props = defineProps<{
 }>();
 
 const issueDetailsStore = issueDetails();
+
+const entryStorySuggestions = computed(
+  () => issueDetailsStore.entrySuggestions[props.entryurl]
+);
 
 const acceptedEntry = computed(
   () => issueDetailsStore.acceptedEntries[props.entryurl]
