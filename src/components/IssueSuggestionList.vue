@@ -9,7 +9,7 @@
       <Issue
         :publicationcode="issueSuggestion.publicationcode"
         :issuenumber="issueSuggestion.issuenumber" /><i-bi-lightbulb-fill
-        v-if="issueSuggestion.isAi"
+        v-if="issueSuggestion.type === 'ai'"
         class="ms-2"
         color="yellow"
     /></b-dropdown-item>
@@ -18,17 +18,17 @@
       >Numéro inconnu</b-dropdown-item
     >
     <b-dropdown-divider />
-    <b-dropdown-item @click="showIssueSelect = true"
-      >Personnaliser...</b-dropdown-item
-    >
+    <b-dropdown-item @click="showIssueSelect = true">{{
+      $t("Personnaliser...")
+    }}</b-dropdown-item>
     <template #button-content>
-      <template v-if="showIssueSelect">Personnaliser...</template>
+      <template v-if="showIssueSelect">{{ $t("Personnaliser...") }}</template>
       <div v-else class="d-flex">
         <Issue
           :publicationcode="issue.publicationcode || null"
           :issuenumber="issue.issuenumber || null"
         /><i-bi-lightbulb-fill
-          v-if="issue.isAi"
+          v-if="issue.type === 'ai'"
           class="ms-2"
           color="yellow"
         /></div
@@ -41,8 +41,11 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from "vue-i18n";
+
 import { issueDetails, SuggestedIssue } from "~/stores/issueDetails";
 
+const { t: $t } = useI18n();
 const showIssueSelect = ref(false);
 const issueDetailsStore = issueDetails();
 
@@ -53,7 +56,7 @@ const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {
   if (issuecode) {
     issueDetailsStore.issueSuggestions =
       issueDetailsStore.issueSuggestions.filter(
-        (issueSuggestion) => !issueSuggestion.isCustom
+        ({ type }) => type !== "custom"
       );
     const [publicationcode, issuenumber] = issuecode.split(" ");
     const userSuggestion: SuggestedIssue = {
@@ -61,8 +64,7 @@ const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {
       issuenumber,
       issuecode,
       coverId: null,
-      isCustom: true,
-      isAi: false,
+      type: "custom",
     };
     issueDetailsStore.issueSuggestions.push(userSuggestion);
     acceptIssueSuggestion(issuecode);

@@ -1,26 +1,36 @@
 import { POST__cover_id__search } from "ducksmanager/types/routes";
 
 import { coa } from "~/stores/coa";
-import { issueDetails, StoryversionKind } from "~/stores/issueDetails";
+import {
+  issueDetails,
+  StoryversionKind,
+  SuggestedEntry,
+} from "~/stores/issueDetails";
 import { KumikoResults } from "~types/KumikoResults";
 
 export default () => {
   const issueDetailsStore = issueDetails();
   const coaStore = coa();
   const applyHintsFromKumiko = (results: KumikoResults) => {
-    const entries = issueDetailsStore.entries;
     results?.forEach((result, idx) => {
-      if (entries[idx]) {
-        if (!entries[idx].storyversion) {
-          entries[idx].storyversion = {};
-        }
-        result.panels.length === 1
-          ? (entries[idx].storyversion!.kind =
-              idx === 0
+      const entryurl = Object.keys(issueDetailsStore.entrySuggestions)[idx];
+      const newEntrySuggestion: SuggestedEntry = {
+        type: "ai",
+        storyversion: {
+          kind:
+            result.panels.length === 1
+              ? idx === 0
                 ? StoryversionKind.Cover
-                : StoryversionKind.Illustration)
-          : (entries[idx].storyversion!.kind = StoryversionKind.Story);
-      }
+                : StoryversionKind.Illustration
+              : StoryversionKind.Story,
+        },
+      };
+      issueDetailsStore.entrySuggestions[entryurl] = [
+        ...issueDetailsStore.entrySuggestions[entryurl].filter(
+          ({ type, isAccepted }) => type !== "ai" || isAccepted
+        ),
+        newEntrySuggestion,
+      ];
     });
   };
 
@@ -32,12 +42,12 @@ export default () => {
       return;
     }
     issueDetailsStore.issueSuggestions = results.covers.map((cover) => ({
-      accepted: undefined,
+      isAccepted: undefined,
       coverId: cover.id,
       issuecode: cover.issuecode,
       publicationcode: cover.publicationcode,
       issuenumber: cover.issuenumber,
-      isAi: true,
+      type: "ai",
     }));
 
     await coaStore.fetchPublicationNames([
