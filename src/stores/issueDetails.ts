@@ -1,5 +1,4 @@
 import { inducks_storyversion } from "ducksmanager/api/dist/prisma/client_coa";
-import { inducks_story } from "ducksmanager/api/dist/prisma/client_coa";
 import { inducks_storyjob } from "ducksmanager/api/dist/prisma/client_coa";
 import {
   inducks_entry,
@@ -23,14 +22,12 @@ export enum StoryversionKind {
   "Centerfold" = "f",
 }
 
-type Story = Pick<inducks_story, "title" | "storycode">;
-
 type Storyversion = Partial<
   Pick<
     inducks_storyversion,
     "entirepages" | "rowsperpage" | "storyversioncode" | "storycode" | "what"
   >
-> & { story?: Story; kind?: `${StoryversionKind}` };
+> & { kind?: `${StoryversionKind}` };
 
 type Storyjob = Pick<inducks_storyjob, "personcode" | "plotwritartink">;
 
@@ -111,12 +108,13 @@ export const issueDetails = defineStore("issueDetails", () => {
     },
     acceptEntrySuggestion: (
       entryurl: string,
-      acceptedSuggestionEntrycode?: string
+      acceptedSuggestionStorycode?: string
     ) => {
+      debugger;
       entrySuggestions.value[entryurl].forEach(
         (suggestion) =>
           (suggestion.isAccepted =
-            acceptedSuggestionEntrycode === suggestion.entrycode)
+            acceptedSuggestionStorycode === suggestion.storyversion?.storycode)
       );
     },
     entrySuggestions,

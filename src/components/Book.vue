@@ -36,7 +36,8 @@
     </b-container>
     <b-card
       no-body
-      class="table-of-contents d-none d-md-block w-50 h-100 m-0 overflow-auto"
+      class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
+      body-class="flex-grow-1 h-100"
     >
       <template #header>
         <div>
@@ -44,8 +45,8 @@
             variant="success"
             pill
             class="ms-2 hint"
-            :disabled="isHintLoading"
-            :class="{ loading: isHintLoading, loaded: isHintLoaded }"
+            :disabled="hintStatus === 'loading'"
+            :class="hintStatus"
             @click="loadHint"
           >
             <i-bi-lightbulb-fill
@@ -56,11 +57,20 @@
         <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
         <h3>{{ "Table des matières" }}</h3>
       </template>
-      <b-tabs v-if="entries" v-model="currentTabIndex" pills card vertical>
+      <b-tabs
+        v-if="entries"
+        v-model="currentTabIndex"
+        pills
+        card
+        vertical
+        class="flex-grow-1"
+        nav-wrapper-class="h-100 flex-grow-1"
+        nav-class="h-100"
+      >
         <b-tab
           v-for="(entryurl, index) in Object.keys(entries)"
           :key="entryurl"
-          title-link-class="w-100 d-flex align-items-left"
+          title-link-class="w-100 h-100 d-flex align-items-left"
           ><template #title
             ><Entry
               :entryurl="entryurl"
@@ -101,11 +111,10 @@ const releaseDate = computed(() => {
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 
-const isHintLoading = ref(false);
-const isHintLoaded = ref(false);
+const hintStatus = ref("idle" as "idle" | "loading" | "loaded");
 
 const loadHint = async () => {
-  isHintLoading.value = true;
+  hintStatus.value = "loading";
   console.log("Kumiko...");
   const { data } = await defaultApi
     .get(
@@ -143,11 +152,12 @@ const loadHint = async () => {
       })
       .finally(() => {
         console.log("Recherche par image terminée");
-        isHintLoading.value = false;
+        hintStatus.value = "loaded";
       });
     hintMaker.applyHintsFromCoverSearch(data);
+  } else {
+    hintStatus.value = "loaded";
   }
-  isHintLoaded.value = true;
 };
 
 watch(

@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AiSuggestionIcon: typeof import('./src/components/AiSuggestionIcon.vue')['default']
     BBadge: typeof import('bootstrap-vue-next')['BBadge']
     BButton: typeof import('bootstrap-vue-next')['BButton']
     BCard: typeof import('bootstrap-vue-next')['BCard']
@@ -38,6 +39,8 @@ declare module 'vue' {
     Publication: typeof import('./src/components/Publication.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StorySearch: typeof import('./src/components/StorySearch.vue')['default']
+    StorySuggestionList: typeof import('./src/components/StorySuggestionList.vue')['default']
     UploadWidget: typeof import('./src/components/UploadWidget.vue')['default']
   }
 }
