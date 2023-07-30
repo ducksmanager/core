@@ -129,7 +129,7 @@ const getPageImages = () => {
       entrySuggestions.value = res.data.reduce(
         (acc, { url }) => ({
           ...acc,
-          [url]: [],
+          [url.replace(/^http:/, "https:")]: [],
         }),
         {} as Record<string, EntrySuggestion[]>
       );
