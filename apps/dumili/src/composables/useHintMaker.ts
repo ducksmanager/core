@@ -3,9 +3,9 @@ import { storeToRefs } from "pinia";
 
 import { coa } from "~/stores/coa";
 import {
+  EntrySuggestion,
   issueDetails,
   StoryversionKind,
-  SuggestedEntry,
 } from "~/stores/issueDetails";
 import { KumikoResults } from "~types/KumikoResults";
 
@@ -16,9 +16,8 @@ export default () => {
   const applyHintsFromKumiko = (results: KumikoResults) => {
     results?.forEach((result, idx) => {
       const entryurl = Object.keys(issueDetailsStore.entrySuggestions)[idx];
-      const shouldBeAccepted =
-        acceptedEntries.value[entryurl]?.type === "ongoing";
-      const newEntrySuggestion: SuggestedEntry = {
+      const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
+      const newEntrySuggestion: EntrySuggestion = {
         type: "ai",
         storyversion: {
           kind:

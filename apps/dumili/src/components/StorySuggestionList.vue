@@ -1,46 +1,28 @@
 <template>
-  <b-dropdown
-    ><b-dropdown-item
-      v-for="entrySuggestion of entrySuggestions"
-      :key="entrySuggestion.storyversion?.storycode || 'ongoing'"
-      class="d-flex"
-      @click="
-        acceptEntrySuggestion(
-          entrySuggestion.storyversion?.storycode || undefined
-        )
-      "
-    >
-      {{
-        entrySuggestion.storyversion?.storycode || "Contenu inconnu"
-      }}</b-dropdown-item
-    >
-    <b-dropdown-divider v-if="entrySuggestions.length" />
-    <b-dropdown-item @click="showEntrySelect = true">{{
-      $t("Personnaliser...")
-    }}</b-dropdown-item>
-    <template #button-content>
-      <div v-if="acceptedEntry.storyversion?.storycode" class="d-flex">
-        {{ acceptedEntry.storyversion?.storycode
-        }}<AiSuggestionIcon v-if="acceptedEntry.type === 'ai'" />
-      </div>
-      <template v-else-if="showEntrySelect">{{
-        $t("Personnaliser...")
-      }}</template
-      ><template v-else>{{ $t("Contenu inconnu") }}</template></template
-    >
-  </b-dropdown>
-  <StorySearch
-    v-if="showEntrySelect"
-    @story-selected="addCustomEntrycodeToEntrySuggestions"
-  />
+  <suggestion-list
+    :suggestions="entrySuggestions"
+    :get-current="() => acceptedEntry"
+    :show-customize-form="showEntrySelect"
+    @show-customize-form="showEntrySelect = $event"
+    @select="
+      acceptEntrySuggestion(
+        ($event as EntrySuggestion | undefined)?.storyversion?.storycode ||
+          undefined
+      )
+    "
+  >
+    <template #item="suggestion: EntrySuggestion">
+      {{ suggestion.storyversion?.storycode }}
+    </template>
+    <template #unknown>Contenu inconnu</template>
+    <template #customize-form>
+      <StorySearch @story-selected="addCustomEntrycodeToEntrySuggestions" />
+    </template>
+  </suggestion-list>
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n";
-
-import { issueDetails, SuggestedEntry } from "~/stores/issueDetails";
-
-const { t: $t } = useI18n();
+import { EntrySuggestion, issueDetails } from "~/stores/issueDetails";
 
 const props = defineProps<{
   entryurl: string;
@@ -55,7 +37,7 @@ const acceptedEntry = computed(
 const entrySuggestions = computed(() =>
   issueDetailsStore.entrySuggestions[props.entryurl].filter(
     ({ storyversion }) =>
-      storyversion?.kind === acceptedEntry.value.storyversion?.kind
+      storyversion?.kind === acceptedEntry.value?.storyversion?.kind
   )
 );
 
@@ -67,13 +49,13 @@ const addCustomEntrycodeToEntrySuggestions = ({
   title: string;
 }) => {
   if (storycode) {
-    const userSuggestion: SuggestedEntry = {
+    const userSuggestion: EntrySuggestion = {
       title,
       storyversion: {
         storycode,
       },
       isAccepted: true,
-      type: "custom",
+      type: "user",
     };
     issueDetailsStore.entrySuggestions[props.entryurl] = [
       ...issueDetailsStore.entrySuggestions[props.entryurl].filter(

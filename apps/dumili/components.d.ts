@@ -41,6 +41,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     StorySearch: typeof import('./src/components/StorySearch.vue')['default']
     StorySuggestionList: typeof import('./src/components/StorySuggestionList.vue')['default']
+    SuggestionList: typeof import('./src/components/SuggestionList.vue')['default']
     UploadWidget: typeof import('./src/components/UploadWidget.vue')['default']
   }
 }

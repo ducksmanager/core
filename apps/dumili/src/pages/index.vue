@@ -100,12 +100,12 @@ defaultApi
   .then(
     (
       res: AxiosResponse<
-        { url: string; context: { custom: { indexation: string } } }[]
+        { url: string; context: { user: { indexation: string } } }[]
       >
     ) => {
       currentIndexations.value = res.data.map(({ url, context }) => ({
         url,
-        indexation: context.custom.indexation,
+        indexation: context.user.indexation,
       }));
     }
   );
