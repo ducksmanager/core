@@ -118,21 +118,19 @@ const getStoryversionKind = (storyversionKind: StoryversionKind) =>
   ];
 
 const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
-  const [
-    // entrySuggestionsWithoutStoryversionKind,
-    entrySuggestionsWithStoryversionKind,
-  ] = issueDetailsStore.entrySuggestions[props.entryurl].reduce(
-    (acc, entrySuggestion) => {
-      if (!entrySuggestion.storyversion) {
+  const [entrySuggestionsWithStoryversionKind] =
+    issueDetailsStore.entrySuggestions[props.entryurl].reduce(
+      (acc, entrySuggestion) => {
+        if (!entrySuggestion.storyversion) {
+          return acc;
+        }
+        const key =
+          entrySuggestion.storyversion?.kind === storyversionKind ? 1 : 0;
+        acc[key]?.push(entrySuggestion);
         return acc;
-      }
-      const key =
-        entrySuggestion.storyversion?.kind === storyversionKind ? 1 : 0;
-      acc[key]?.push(entrySuggestion);
-      return acc;
-    },
-    [[], []] as [EntrySuggestion[], EntrySuggestion[]]
-  );
+      },
+      [[], []] as [EntrySuggestion[], EntrySuggestion[]]
+    );
   issueDetailsStore.rejectAllEntrySuggestions(props.entryurl);
   if (entrySuggestionsWithStoryversionKind.length) {
     issueDetailsStore.acceptEntrySuggestion(
@@ -140,18 +138,6 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
       entrySuggestionsWithStoryversionKind[0].entrycode
     );
   }
-  // } else {
-  //   issueDetailsStore.entrySuggestions[props.entryurl] = [
-  //     ...entrySuggestionsWithoutStoryversionKind,
-  //     {
-  //       storyversion: {
-  //         kind: storyversionKind as StoryversionKind,
-  //         storycode: storycode.value,
-  //       },
-  //       isAccepted: true,
-  //     },
-  //   ];
-  // }
 };
 </script>
 
