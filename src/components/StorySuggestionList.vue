@@ -3,16 +3,17 @@
     :suggestions="entrySuggestions"
     :get-current="() => acceptedEntry"
     :show-customize-form="showEntrySelect"
+    allow-customize-form
     @show-customize-form="showEntrySelect = $event"
     @select="
       acceptEntrySuggestion(
-        ($event as EntrySuggestion | undefined)?.storyversion?.storycode ||
-          undefined
+        ($event as EntrySuggestion | undefined)?.data?.storyversion
+          ?.storycode || undefined
       )
     "
   >
     <template #item="suggestion: EntrySuggestion">
-      {{ suggestion.storyversion?.storycode }}
+      {{ suggestion.data.storyversion?.storycode }}
     </template>
     <template #unknown>Contenu inconnu</template>
     <template #customize-form>
@@ -22,23 +23,20 @@
 </template>
 
 <script lang="ts" setup>
-import { EntrySuggestion, issueDetails } from "~/stores/issueDetails";
+import { EntrySuggestion, suggestions } from "~/stores/suggestions";
 
 const props = defineProps<{
   entryurl: string;
 }>();
 
 const showEntrySelect = ref(false);
-const issueDetailsStore = issueDetails();
+const issueDetailsStore = suggestions();
 
 const acceptedEntry = computed(
   () => issueDetailsStore.acceptedEntries[props.entryurl]
 );
-const entrySuggestions = computed(() =>
-  issueDetailsStore.entrySuggestions[props.entryurl].filter(
-    ({ storyversion }) =>
-      storyversion?.kind === acceptedEntry.value?.storyversion?.kind
-  )
+const entrySuggestions = computed(
+  () => issueDetailsStore.entrySuggestions[props.entryurl]
 );
 
 const addCustomEntrycodeToEntrySuggestions = ({
@@ -49,14 +47,15 @@ const addCustomEntrycodeToEntrySuggestions = ({
   title: string;
 }) => {
   if (storycode) {
-    const userSuggestion: EntrySuggestion = {
-      title,
-      storyversion: {
-        storycode,
+    const userSuggestion = new EntrySuggestion(
+      {
+        title,
+        storyversion: {
+          storycode,
+        },
       },
-      isAccepted: true,
-      type: "user",
-    };
+      { type: "ai", isAccepted: true }
+    );
     issueDetailsStore.entrySuggestions[props.entryurl] = [
       ...issueDetailsStore.entrySuggestions[props.entryurl].filter(
         ({ type }) => type === "ai"
@@ -68,7 +67,10 @@ const addCustomEntrycodeToEntrySuggestions = ({
 };
 
 const acceptEntrySuggestion = (storycode?: string) => {
-  issueDetailsStore.acceptEntrySuggestion(props.entryurl, storycode);
+  issueDetailsStore.acceptSuggestion(
+    issueDetailsStore.entrySuggestions[props.entryurl],
+    (suggestion) => suggestion.data.storyversion?.storycode === storycode
+  );
   showEntrySelect.value = false;
 };
 </script>

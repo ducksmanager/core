@@ -19,9 +19,9 @@ import { defineStore } from "pinia";
 import i18n from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
 
-const addPartInfo = (issueDetails: InducksIssueDetails) => {
+const addPartInfo = (suggestions: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
-    issueDetails.entries.reduce(
+    suggestions.entries.reduce(
       (acc, { storycode }) => ({
         ...acc,
         [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
@@ -38,8 +38,8 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
       {}
     ) as { [storycode: string]: number };
   return {
-    ...issueDetails,
-    entries: issueDetails.entries.map((entry) => ({
+    ...suggestions,
+    entries: suggestions.entries.map((entry) => ({
       ...entry,
       part: storyPartCounter[entry.storycode]
         ? storyPartCounter[entry.storycode]++
@@ -60,7 +60,7 @@ export const coa = defineStore("coa", () => {
         [issuenumber: string]: GET__coa__list__issues__withTitle["resBody"];
       }
     ),
-    issueDetails = ref({} as { [issuecode: string]: InducksIssueDetails }),
+    suggestions = ref({} as { [issuecode: string]: InducksIssueDetails }),
     isLoadingCountryNames = ref(false as boolean),
     issueCounts = ref(null as { [publicationcode: string]: number } | null),
     issueCodeDetails = ref(
@@ -329,7 +329,7 @@ export const coa = defineStore("coa", () => {
       issuenumber: string;
     }) => {
       const issueCode = `${publicationcode} ${issuenumber}`;
-      if (!issueDetails.value[issueCode]) {
+      if (!suggestions.value[issueCode]) {
         const newIssueDetails = (
           await call(
             coaApi,
@@ -339,8 +339,8 @@ export const coa = defineStore("coa", () => {
           )
         ).data;
 
-        issueDetails.value = {
-          ...issueDetails.value,
+        suggestions.value = {
+          ...suggestions.value,
           [issueCode]: addPartInfo(newIssueDetails),
         };
       }
@@ -353,7 +353,7 @@ export const coa = defineStore("coa", () => {
     personNames,
     issueNumbers,
     issuesWithTitles,
-    issueDetails,
+    suggestions,
     isLoadingCountryNames,
     issueCounts,
     issueCodeDetails,

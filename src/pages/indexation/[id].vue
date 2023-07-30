@@ -26,16 +26,8 @@
         Upload page files
       </b-button>
     </template>
-    <Book v-if="tabNames[activeTab] === 'book'" />
-    <b-row v-if="tabNames[activeTab] === 'text-editor'">
-      <b-col>
-        <b-form-textarea
-          v-model="textContent"
-          :rows="Object.keys(entrySuggestions).length + 1"
-          readonly
-          :placeholder="textContentError"
-      /></b-col>
-    </b-row>
+    <Book v-else-if="tabNames[activeTab] === 'book'" />
+    <TextEditor v-else-if="tabNames[activeTab] === 'text-editor'" />
   </b-container>
   <b-container class="start-0 bottom-0 mw-100 pt-2" style=""
     ><b-tabs v-model:modelValue="activeTab" align="center"
@@ -49,7 +41,12 @@ import { AxiosResponse } from "axios";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 
-import { EntrySuggestion, issueDetails } from "~/stores/issueDetails";
+import {
+  EntrySuggestion,
+  StoryversionKind,
+  StoryversionKindSuggestion,
+  suggestions,
+} from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -57,67 +54,15 @@ const route = useRoute();
 const activeTab = ref(0);
 const tabNames = ["page-gallery", "book", "text-editor"];
 
-const textContentError = ref("" as string);
-
-const { entrySuggestions } = storeToRefs(issueDetails());
-const issue = computed(() => issueDetails().issue);
-const acceptedEntries = computed(() => issueDetails().acceptedEntries);
+const { entrySuggestions, storyversionKindSuggestions } = storeToRefs(
+  suggestions()
+);
 const images = computed(() =>
   Object.keys(entrySuggestions.value).map((url) => ({
     url: url,
     text: url,
   }))
 );
-
-watch(
-  () => issue.value,
-  () => {
-    if (!issue.value) {
-      textContentError.value = "No data";
-    }
-  }
-);
-
-const textContent = computed(() => {
-  if (!issue.value) {
-    return "";
-  }
-  const rows = [
-    [issue.value?.issuecode],
-    ...(
-      Object.values(acceptedEntries.value).filter(
-        (entry) => entry !== undefined
-      ) as EntrySuggestion[]
-    ).map((entry) => [
-      entry.entrycode,
-      entry.storyversion?.storyversioncode,
-      String(entry.storyversion?.entirepages),
-      ...["plot", "writer", "artist", "ink"].map(
-        (job) =>
-          entry.storyjobs?.find(({ plotwritartink }) => plotwritartink === job)
-            ?.personcode
-      ),
-      entry.printedhero,
-    ]),
-  ];
-  const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
-    row.forEach((col, i) => {
-      acc[i] = Math.max(acc[i], col?.length || 0);
-    });
-    return acc;
-  }, [] as number[]);
-
-  return rows
-    .map((row) =>
-      row
-        .map((col, colIndex) =>
-          (col || "").padEnd(colsMaxLengths[colIndex], " ")
-        )
-        .join(" ")
-    )
-    .join("\n");
-});
-
 const getPageImages = () => {
   defaultApi
     .get(
@@ -126,12 +71,27 @@ const getPageImages = () => {
       }`
     )
     .then((res: AxiosResponse<{ url: string }[]>) => {
-      entrySuggestions.value = res.data.reduce(
-        (acc, { url }) => ({
+      const urls = res.data.map(({ url }) => url.replace(/^http:/, "https:"));
+      entrySuggestions.value = urls.reduce(
+        (acc, url) => ({
           ...acc,
-          [url.replace(/^http:/, "https:")]: [],
+          [url]: [],
         }),
         {} as Record<string, EntrySuggestion[]>
+      );
+      storyversionKindSuggestions.value = urls.reduce(
+        (acc, url) => ({
+          ...acc,
+          [url]: Object.values(StoryversionKind).map(
+            (key) =>
+              ({
+                kind: key,
+                isAccepted: false,
+                type: "user",
+              } as StoryversionKindSuggestion)
+          ),
+        }),
+        {} as Record<string, StoryversionKindSuggestion[]>
       );
     });
 };
