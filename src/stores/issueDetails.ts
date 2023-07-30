@@ -31,7 +31,7 @@ type Storyversion = Partial<
 
 type Storyjob = Pick<inducks_storyjob, "personcode" | "plotwritartink">;
 
-type Suggestion = {
+export type Suggestion = {
   isAccepted?: boolean;
   type: "ongoing" | "ai" | "custom";
 };
