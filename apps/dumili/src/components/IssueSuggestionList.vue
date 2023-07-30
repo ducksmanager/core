@@ -1,18 +1,18 @@
 <template>
   <suggestion-list
     :suggestions="issueSuggestions"
-    :get-current="() => issue"
-    @select="acceptIssueSuggestion($event as SuggestedIssue)"
+    :get-current="() => issue as IssueSuggestion"
+    :show-customize-form="showIssueSelect"
+    @show-customize-form="showIssueSelect = $event"
+    @select="acceptIssueSuggestion($event as IssueSuggestion)"
   >
-    <template #item="{ suggestion }: { suggestion: SuggestedIssue }">
+    <template #item="suggestion: IssueSuggestion">
       <Issue
         :publicationcode="suggestion.publicationcode"
         :issuenumber="suggestion.issuenumber" /></template
-    ><template #unknown>Numéro inconnu</template
-    ><template #customize>{{ $t("Personnaliser...") }}</template>
+    ><template #unknown>Numéro inconnu</template>
     <template #customize-form>
       <IssueSelect
-        v-if="showIssueSelect"
         @change="
           (issuecode) => addCustomIssuecodeToIssueSuggestions(issuecode)
         "
@@ -21,40 +21,40 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n";
+import { issueDetails, IssueSuggestion } from "~/stores/issueDetails";
 
-import { issueDetails, SuggestedIssue } from "~/stores/issueDetails";
-
-const { t: $t } = useI18n();
 const showIssueSelect = ref(false);
 const issueDetailsStore = issueDetails();
 
 const issue = computed(() => issueDetailsStore.issue);
 const issueSuggestions = computed(
-  () => issueDetailsStore.issueSuggestions as SuggestedIssue[]
+  () =>
+    issueDetailsStore.issueSuggestions.filter(
+      (suggestion) => suggestion !== undefined
+    ) as IssueSuggestion[]
 );
 
 const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {
   if (issuecode) {
     issueDetailsStore.issueSuggestions =
-      issueDetailsStore.issueSuggestions.filter(
-        ({ type }) => type !== "custom"
-      );
+      issueDetailsStore.issueSuggestions.filter(({ type }) => type !== "user");
     const [publicationcode, issuenumber] = issuecode.split(" ");
-    const userSuggestion: SuggestedIssue = {
+    const userSuggestion: IssueSuggestion = {
       publicationcode,
       issuenumber,
       issuecode,
       coverId: null,
-      type: "custom",
+      type: "user",
     };
     issueDetailsStore.issueSuggestions.push(userSuggestion);
     acceptIssueSuggestion(userSuggestion);
   }
 };
 
-const acceptIssueSuggestion = (suggestion?: SuggestedIssue) => {
-  issueDetailsStore.acceptIssueSuggestion(suggestion?.issuecode);
+const acceptIssueSuggestion = (suggestion?: IssueSuggestion) => {
+  issueDetailsStore.acceptIssueSuggestion(
+    (suggestion as IssueSuggestion)?.issuecode || undefined
+  );
   showIssueSelect.value = false;
 };
 </script>

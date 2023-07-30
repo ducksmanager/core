@@ -124,17 +124,17 @@ const loadHint = async () => {
     )
     .catch((e) => {
       console.error(e);
-      return { data: { results: [] } };
-    })
-    .finally(() => {
-      console.log("Kumiko terminé");
+      return { data: [] };
     });
 
   console.log("Kumiko OK");
+  if (!data.length) {
+    return;
+  }
   hintMaker.applyHintsFromKumiko(data);
 
   if (
-    acceptedEntries.value[Object.keys(entries.value)[0]].storyversion?.kind ===
+    acceptedEntries.value[Object.keys(entries.value)[0]]?.storyversion?.kind ===
     StoryversionKind.Cover
   ) {
     console.info(

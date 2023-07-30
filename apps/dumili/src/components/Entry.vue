@@ -23,14 +23,17 @@
           ><template #button-content>
             <div v-if="acceptedStoryversionKindText" class="d-flex">
               {{ acceptedStoryversionKindText }}
-              <AiSuggestionIcon v-if="acceptedEntry.type === 'ai'" />
+              <AiSuggestionIcon v-if="acceptedEntry?.type === 'ai'" />
             </div>
             <template v-else>Type inconnu</template></template
           ></b-dropdown
         ></b-col
       ><b-col><StorySuggestionList :entryurl="entryurl" /></b-col>
       <b-col>
-        <input type="text" class="w-100" :value="acceptedEntry.title" /></b-col
+        <input
+          type="text"
+          class="w-100"
+          :value="acceptedEntry?.title || ''" /></b-col
     ></template>
     <template v-else>
       <b-col>
@@ -39,8 +42,8 @@
         }}</b-badge></b-col
       >
       <b-col>
-        <template v-if="acceptedEntry.storyversion?.storycode">{{
-          acceptedEntry.storyversion?.storycode
+        <template v-if="acceptedEntry?.storyversion?.storycode">{{
+          acceptedEntry?.storyversion?.storycode
         }}</template
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
@@ -65,7 +68,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { StoryversionKind, SuggestedEntry } from "~/stores/issueDetails";
+import { EntrySuggestion, StoryversionKind } from "~/stores/issueDetails";
 import { issueDetails } from "~/stores/issueDetails";
 
 const { t: $t } = useI18n();
@@ -116,7 +119,7 @@ const getStoryversionKind = (storyversionKind: StoryversionKind) =>
 
 const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
   const [
-    entrySuggestionsWithoutStoryversionKind,
+    // entrySuggestionsWithoutStoryversionKind,
     entrySuggestionsWithStoryversionKind,
   ] = issueDetailsStore.entrySuggestions[props.entryurl].reduce(
     (acc, entrySuggestion) => {
@@ -128,7 +131,7 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
       acc[key]?.push(entrySuggestion);
       return acc;
     },
-    [[], []] as [SuggestedEntry[], SuggestedEntry[]]
+    [[], []] as [EntrySuggestion[], EntrySuggestion[]]
   );
   issueDetailsStore.rejectAllEntrySuggestions(props.entryurl);
   if (entrySuggestionsWithStoryversionKind.length) {
@@ -136,19 +139,19 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
       props.entryurl,
       entrySuggestionsWithStoryversionKind[0].entrycode
     );
-  } else {
-    issueDetailsStore.entrySuggestions[props.entryurl] = [
-      ...entrySuggestionsWithoutStoryversionKind,
-      {
-        storyversion: {
-          kind: storyversionKind as StoryversionKind,
-          storycode: storycode.value,
-        },
-        type: "ongoing",
-        isAccepted: true,
-      },
-    ];
   }
+  // } else {
+  //   issueDetailsStore.entrySuggestions[props.entryurl] = [
+  //     ...entrySuggestionsWithoutStoryversionKind,
+  //     {
+  //       storyversion: {
+  //         kind: storyversionKind as StoryversionKind,
+  //         storycode: storycode.value,
+  //       },
+  //       isAccepted: true,
+  //     },
+  //   ];
+  // }
 };
 </script>
 

@@ -1,9 +1,9 @@
-import { inducks_storyversion } from "ducksmanager/api/dist/prisma/client_coa";
-import { inducks_storyjob } from "ducksmanager/api/dist/prisma/client_coa";
 import {
   inducks_entry,
-  inducks_issue,
+  inducks_storyversion,
 } from "ducksmanager/api/dist/prisma/client_coa";
+import { inducks_storyjob } from "ducksmanager/api/dist/prisma/client_coa";
+import { inducks_issue } from "ducksmanager/api/dist/prisma/client_coa";
 import { defineStore } from "pinia";
 
 export enum StoryversionKind {
@@ -31,51 +31,45 @@ type Storyversion = Partial<
 
 type Storyjob = Pick<inducks_storyjob, "personcode" | "plotwritartink">;
 
-export type Suggestion = {
+export type Suggestion<T> = T & {
+  type: "ai" | "user";
   isAccepted?: boolean;
-  type: "ongoing" | "ai" | "custom";
 };
+export type EntrySuggestion = Suggestion<
+  Partial<
+    Pick<
+      inducks_entry,
+      | "entrycode"
+      | "entrycomment"
+      | "printedhero"
+      | "title"
+      | "part"
+      | "position"
+    >
+  > & {
+    storyversion?: Storyversion;
+    storyjobs?: Storyjob[];
+  }
+>;
 
-export type SuggestedEntry = Partial<
-  Pick<
-    inducks_entry,
-    "entrycode" | "entrycomment" | "printedhero" | "title" | "part" | "position"
-  >
-> & {
-  storyversion?: Storyversion;
-  storyjobs?: Storyjob[];
-} & Suggestion;
-
-export type SuggestedIssue = Pick<
-  inducks_issue,
-  "publicationcode" | "issuenumber" | "issuecode"
-> &
-  Suggestion & {
+export type IssueSuggestion = Suggestion<
+  Pick<inducks_issue, "publicationcode" | "issuenumber" | "issuecode"> & {
     coverId: number | null;
-  } & Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>;
-
-type UnknownIssue = Partial<NonNullable<SuggestedIssue>> & {
-  isAccepted: boolean;
-};
+  } & Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>
+>;
 
 export const issueDetails = defineStore("issueDetails", () => {
-  const entrySuggestions = ref({} as Record<string, SuggestedEntry[]>),
-    issueSuggestions = ref([] as SuggestedIssue[]),
+  const entrySuggestions = ref({} as Record<string, EntrySuggestion[]>),
+    issueSuggestions = ref([] as IssueSuggestion[]),
     pendingIssueSuggestions = computed(() =>
       issueSuggestions.value.filter(
         ({ isAccepted }) => isAccepted === undefined
       )
-    ),
-    issueOptions = computed((): (UnknownIssue | SuggestedIssue)[] => [
-      ...issueSuggestions.value,
-      { isAccepted: true },
-    ]);
-
+    );
   return {
     issueSuggestions,
-    issueOptions,
     issue: computed(
-      () => issueOptions.value.find(({ isAccepted }) => isAccepted)!
+      () => issueSuggestions.value.find(({ isAccepted }) => isAccepted)!
     ),
     hasPendingIssueSuggestions: computed(
       () => pendingIssueSuggestions.value.length > 0
@@ -84,9 +78,9 @@ export const issueDetails = defineStore("issueDetails", () => {
       Object.entries(entrySuggestions.value).reduce(
         (acc, [entrycode, suggestions]) => ({
           ...acc,
-          [entrycode]: suggestions.find(({ isAccepted }) => isAccepted)!,
+          [entrycode]: suggestions.find(({ isAccepted }) => isAccepted),
         }),
-        {} as Record<string, SuggestedEntry>
+        {} as Record<string, EntrySuggestion | undefined>
       )
     ),
     rejectAllIssueSuggestions: () => {
@@ -98,7 +92,8 @@ export const issueDetails = defineStore("issueDetails", () => {
       issueSuggestions.value.forEach(
         (suggestion) =>
           (suggestion.isAccepted =
-            acceptedSuggestionIssuecode === suggestion.issuecode)
+            acceptedSuggestionIssuecode ===
+            (suggestion as IssueSuggestion).issuecode)
       );
     },
     rejectAllEntrySuggestions: (entryurl: string) => {
@@ -110,11 +105,11 @@ export const issueDetails = defineStore("issueDetails", () => {
       entryurl: string,
       acceptedSuggestionStorycode?: string
     ) => {
-      debugger;
       entrySuggestions.value[entryurl].forEach(
         (suggestion) =>
           (suggestion.isAccepted =
-            acceptedSuggestionStorycode === suggestion.storyversion?.storycode)
+            acceptedSuggestionStorycode ===
+            (suggestion as EntrySuggestion).storyversion?.storycode)
       );
     },
     entrySuggestions,
