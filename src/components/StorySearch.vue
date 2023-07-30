@@ -1,30 +1,24 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark position-sticky">
-    <b-container fluid>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-          <b-form-input
-            v-model="search"
-            list="search"
-            :placeholder="$t('Rechercher une histoire')"
-          />
-          <datalist v-if="storyResults.results && !isSearching">
-            <option v-if="!storyResults.results.length">
-              {{ $t("Aucun résultat.") }}
-            </option>
-            <option
-              v-for="searchResult in storyResults.results"
-              :key="searchResult!.storycode"
-              class="d-flex align-items-center"
-              @click="selectSearchResult(searchResult!)"
-            >
-              {{ searchResult!.title }}
-            </option>
-          </datalist>
-        </ul>
-      </div>
-    </b-container>
-  </nav>
+  <ul class="navbar-nav">
+    <b-form-input
+      v-model="search"
+      list="search"
+      :placeholder="$t('Rechercher une histoire')"
+    />
+    <datalist v-if="storyResults.results && !isSearching">
+      <option v-if="!storyResults.results.length">
+        {{ $t("Aucun résultat.") }}
+      </option>
+      <option
+        v-for="searchResult in storyResults.results"
+        :key="searchResult!.storycode"
+        class="d-flex align-items-center"
+        @click="selectSearchResult(searchResult!)"
+      >
+        {{ searchResult!.title }}
+      </option>
+    </datalist>
+  </ul>
 </template>
 
 <script setup lang="ts">
