@@ -49,7 +49,7 @@ import { AxiosResponse } from "axios";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 
-import { issueDetails, SuggestedEntry } from "~/stores/issueDetails";
+import { EntrySuggestion, issueDetails } from "~/stores/issueDetails";
 import { defaultApi } from "~/util/api";
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -65,8 +65,7 @@ const acceptedEntries = computed(() => issueDetails().acceptedEntries);
 const images = computed(() =>
   Object.keys(entrySuggestions.value).map((url) => ({
     url: url,
-    text: entrySuggestions.value[url].find(({ isAccepted }) => isAccepted)!
-      .entrycode!,
+    text: url,
   }))
 );
 
@@ -85,7 +84,11 @@ const textContent = computed(() => {
   }
   const rows = [
     [issue.value?.issuecode],
-    ...Object.values(acceptedEntries.value).map((entry) => [
+    ...(
+      Object.values(acceptedEntries.value).filter(
+        (entry) => entry !== undefined
+      ) as EntrySuggestion[]
+    ).map((entry) => [
       entry.entrycode,
       entry.storyversion?.storyversioncode,
       String(entry.storyversion?.entirepages),
@@ -126,9 +129,9 @@ const getPageImages = () => {
       entrySuggestions.value = res.data.reduce(
         (acc, { url }) => ({
           ...acc,
-          [url]: [{ type: "ongoing", isAccepted: true }],
+          [url]: [],
         }),
-        {} as Record<string, SuggestedEntry[]>
+        {} as Record<string, EntrySuggestion[]>
       );
     });
 };

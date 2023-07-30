@@ -91,18 +91,17 @@ const countryNames = computed(
     undefined
 );
 
-const publicationNames = $computed(() => coaStore.publicationNames);
-const publicationNamesFullCountries = $computed(
-  () => coaStore.publicationNamesFullCountries
-);
-const publicationNamesForCurrentCountry = $computed(() =>
-  publicationNamesFullCountries.includes(currentCountryCode.value || "")
-    ? Object.keys(publicationNames)
-        .filter((publicationcode) =>
-          new RegExp(`^${currentCountryCode}/`).test(publicationcode)
+const publicationNamesForCurrentCountry = computed(() =>
+  coaStore.publicationNamesFullCountries.includes(
+    currentCountryCode.value || ""
+  )
+    ? Object.keys(coaStore.publicationNames)
+        .filter(
+          (publicationcode) =>
+            publicationcode.indexOf(`${currentCountryCode.value}/`) === 0
         )
         .map((publicationcode) => ({
-          text: publicationNames[publicationcode],
+          text: coaStore.publicationNames[publicationcode],
           value: publicationcode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
@@ -170,7 +169,7 @@ if (props.countryCode) {
   padding: 3px;
   margin-bottom: 10px;
 }
-:deep(.custom-control-input[type="checkbox"]) {
+:deep(.user-control-input[type="checkbox"]) {
   position: static;
   width: 2rem;
 }
