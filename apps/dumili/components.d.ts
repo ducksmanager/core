@@ -42,6 +42,7 @@ declare module 'vue' {
     StorySearch: typeof import('./src/components/StorySearch.vue')['default']
     StorySuggestionList: typeof import('./src/components/StorySuggestionList.vue')['default']
     SuggestionList: typeof import('./src/components/SuggestionList.vue')['default']
+    TextEditor: typeof import('./src/components/TextEditor.vue')['default']
     UploadWidget: typeof import('./src/components/UploadWidget.vue')['default']
   }
 }

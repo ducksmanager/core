@@ -87,7 +87,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
 import useHintMaker from "~/composables/useHintMaker";
-import { issueDetails, StoryversionKind } from "~/stores/issueDetails";
+import { StoryversionKind, suggestions } from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
 
 const route = useRoute();
@@ -100,14 +100,16 @@ let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
 const currentTabIndex = ref(0 as number);
 
-const { acceptedEntries } = storeToRefs(issueDetails());
+const { acceptedStoryversionKinds: acceptedStoryKinds } = storeToRefs(
+  suggestions()
+);
 const isSinglePage = computed(() => Object.keys(entries.value).length === 1);
-const entries = computed(() => issueDetails().entrySuggestions);
+const entries = computed(() => suggestions().entrySuggestions);
 const releaseDate = computed(() => {
-  if (!issueDetails().issue?.oldestdate) return null;
+  if (!suggestions().acceptedIssue?.data.oldestdate) return null;
 
   const parsedDate =
-    issueDetails().issue?.oldestdate!.match(RELEASE_DATE_REGEX);
+    suggestions().acceptedIssue?.data.oldestdate!.match(RELEASE_DATE_REGEX);
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 
@@ -134,7 +136,7 @@ const loadHint = async () => {
   hintMaker.applyHintsFromKumiko(data);
 
   if (
-    acceptedEntries.value[Object.keys(entries.value)[0]]?.storyversion?.kind ===
+    acceptedStoryKinds.value[Object.keys(entries.value)[0]]?.kind ===
     StoryversionKind.Cover
   ) {
     console.info(

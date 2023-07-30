@@ -32,15 +32,17 @@
 import { GET__cover_id__download__$coverId } from "ducksmanager/types/routes";
 import { storeToRefs } from "pinia";
 
-import { issueDetails } from "~/stores/issueDetails";
+import { suggestions } from "~/stores/suggestions";
 
-const { rejectAllIssueSuggestions, acceptIssueSuggestion } = issueDetails();
-const { hasPendingIssueSuggestions } = storeToRefs(issueDetails());
+const { acceptSuggestion, rejectAllSuggestions } = suggestions();
+const { hasPendingIssueSuggestions, issueSuggestions } = storeToRefs(
+  suggestions()
+);
 
 const selectedExistingCoverIssuecode = ref(null as string | null);
 
 const issueSuggestionsWithUrls = computed(() =>
-  issueDetails()
+  suggestions()
     .issueSuggestions.filter(({ coverId }) => coverId)
     .map((issueSuggestion) => ({
       ...issueSuggestion,
@@ -53,21 +55,31 @@ const issueSuggestionsWithUrls = computed(() =>
     }))
 );
 const images = computed(() =>
-  issueSuggestionsWithUrls.value.map(
-    ({ url, publicationcode, issuenumber }) => ({
-      text: `${publicationcode} ${issuenumber}`,
-      url,
-    })
-  )
+  issueSuggestionsWithUrls.value.map(({ url, data }) => ({
+    text: `${data.publicationcode} ${data.issuenumber}`,
+    url,
+  }))
 );
 
 const coverUrlToIssuecode = (url: string): string =>
   issueSuggestionsWithUrls.value.find(
     ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url
-  )?.issuecode || "";
+  )?.data.issuecode || "";
 
 const getPublicationcodeFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[0];
 const getIssuenumberFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[1];
+
+const acceptIssueSuggestion = (issuecode: string) => {
+  acceptSuggestion(
+    issueSuggestions.value,
+    (suggestion) => suggestion.data.issuecode === issuecode
+  );
+  selectedExistingCoverIssuecode.value = null;
+};
+
+const rejectAllIssueSuggestions = () => {
+  rejectAllSuggestions(issueSuggestions.value);
+};
 </script>

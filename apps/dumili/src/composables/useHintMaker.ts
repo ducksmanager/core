@@ -3,36 +3,33 @@ import { storeToRefs } from "pinia";
 
 import { coa } from "~/stores/coa";
 import {
-  EntrySuggestion,
-  issueDetails,
+  IssueSuggestion,
   StoryversionKind,
-} from "~/stores/issueDetails";
+  suggestions,
+} from "~/stores/suggestions";
 import { KumikoResults } from "~types/KumikoResults";
 
 export default () => {
-  const issueDetailsStore = issueDetails();
+  const issueDetailsStore = suggestions();
   const { acceptedEntries } = storeToRefs(issueDetailsStore);
   const coaStore = coa();
   const applyHintsFromKumiko = (results: KumikoResults) => {
     results?.forEach((result, idx) => {
       const entryurl = Object.keys(issueDetailsStore.entrySuggestions)[idx];
       const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
-      const newEntrySuggestion: EntrySuggestion = {
-        type: "ai",
-        storyversion: {
-          kind:
-            result.panels.length === 1
-              ? idx === 0
-                ? StoryversionKind.Cover
-                : StoryversionKind.Illustration
-              : StoryversionKind.Story,
-        },
-      };
+
       if (shouldBeAccepted) {
-        issueDetailsStore.rejectAllEntrySuggestions(entryurl);
-        newEntrySuggestion.isAccepted = true;
+        const inferredKind =
+          result.panels.length === 1
+            ? idx === 0
+              ? StoryversionKind.Cover
+              : StoryversionKind.Illustration
+            : StoryversionKind.Story;
+        issueDetailsStore.acceptSuggestion(
+          issueDetailsStore.storyversionKindSuggestions[entryurl],
+          (suggestion) => suggestion.kind === inferredKind
+        );
       }
-      issueDetailsStore.entrySuggestions[entryurl].push(newEntrySuggestion);
     });
   };
 
@@ -43,14 +40,21 @@ export default () => {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }
-    issueDetailsStore.issueSuggestions = results.covers.map((cover) => ({
-      isAccepted: undefined,
-      coverId: cover.id,
-      issuecode: cover.issuecode,
-      publicationcode: cover.publicationcode,
-      issuenumber: cover.issuenumber,
-      type: "ai",
-    }));
+    issueDetailsStore.issueSuggestions = results.covers.map(
+      (cover) =>
+        new IssueSuggestion(
+          {
+            issuecode: cover.issuecode,
+            publicationcode: cover.publicationcode,
+            issuenumber: cover.issuenumber,
+          },
+          {
+            type: "ai",
+            isAccepted: false,
+          },
+          cover.id
+        )
+    );
 
     await coaStore.fetchPublicationNames([
       ...results.covers.map(({ publicationcode }) => publicationcode!),
