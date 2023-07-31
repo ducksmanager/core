@@ -43,14 +43,14 @@ const selectedExistingCoverIssuecode = ref(null as string | null);
 
 const issueSuggestionsWithUrls = computed(() =>
   suggestions()
-    .issueSuggestions.filter(({ coverId }) => coverId)
+    .issueSuggestions.filter(({ data }) => data.coverId)
     .map((issueSuggestion) => ({
       ...issueSuggestion,
       url:
         import.meta.env.VITE_DM_API_URL +
         GET__cover_id__download__$coverId.url.replace(
           ":coverId",
-          String(issueSuggestion.coverId)
+          String(issueSuggestion.data.coverId)
         ),
     }))
 );

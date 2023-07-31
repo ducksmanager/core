@@ -25,41 +25,43 @@
 import { IssueSuggestion, suggestions } from "~/stores/suggestions";
 
 const showIssueSelect = ref(false);
-const issueDetailsStore = suggestions();
+const suggestionsStore = suggestions();
 
-const issue = computed(() => issueDetailsStore.acceptedIssue);
+const issue = computed(() => suggestionsStore.acceptedIssue);
 const issueSuggestions = computed(
   () =>
-    issueDetailsStore.issueSuggestions.filter(
+    suggestionsStore.issueSuggestions.filter(
       (suggestion) => suggestion !== undefined
     ) as IssueSuggestion[]
 );
 
 const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {
   if (issuecode) {
-    issueDetailsStore.issueSuggestions =
-      issueDetailsStore.issueSuggestions.filter(({ type }) => type !== "user");
+    suggestionsStore.issueSuggestions =
+      suggestionsStore.issueSuggestions.filter(
+        ({ meta }) => meta.source !== "user"
+      );
     const [publicationcode, issuenumber] = issuecode.split(" ");
     const userSuggestion = new IssueSuggestion(
       {
         publicationcode,
         issuenumber,
         issuecode,
+        coverId: null,
       },
       {
-        type: "user",
+        source: "user",
         isAccepted: false,
-      },
-      null
+      }
     );
-    issueDetailsStore.issueSuggestions.push(userSuggestion);
+    suggestionsStore.issueSuggestions.push(userSuggestion);
     acceptIssueSuggestion(userSuggestion);
   }
 };
 
 const acceptIssueSuggestion = (suggestion?: IssueSuggestion) => {
-  issueDetailsStore.acceptSuggestion(
-    issueDetailsStore.issueSuggestions,
+  suggestionsStore.acceptSuggestion(
+    suggestionsStore.issueSuggestions,
     (existingSuggestion) =>
       suggestion?.data?.issuecode === existingSuggestion.data.issuecode
   );

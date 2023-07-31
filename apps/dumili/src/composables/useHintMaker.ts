@@ -10,12 +10,12 @@ import {
 import { KumikoResults } from "~types/KumikoResults";
 
 export default () => {
-  const issueDetailsStore = suggestions();
-  const { acceptedEntries } = storeToRefs(issueDetailsStore);
+  const suggestionsStore = suggestions();
+  const { acceptedEntries } = storeToRefs(suggestionsStore);
   const coaStore = coa();
   const applyHintsFromKumiko = (results: KumikoResults) => {
     results?.forEach((result, idx) => {
-      const entryurl = Object.keys(issueDetailsStore.entrySuggestions)[idx];
+      const entryurl = Object.keys(suggestionsStore.entrySuggestions)[idx];
       const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
 
       if (shouldBeAccepted) {
@@ -25,9 +25,10 @@ export default () => {
               ? StoryversionKind.Cover
               : StoryversionKind.Illustration
             : StoryversionKind.Story;
-        issueDetailsStore.acceptSuggestion(
-          issueDetailsStore.storyversionKindSuggestions[entryurl],
-          (suggestion) => suggestion.kind === inferredKind
+        suggestionsStore.acceptSuggestion(
+          suggestionsStore.storyversionKindSuggestions[entryurl],
+          (suggestion) => suggestion.kind === inferredKind,
+          "ai"
         );
       }
     });
@@ -40,19 +41,19 @@ export default () => {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }
-    issueDetailsStore.issueSuggestions = results.covers.map(
-      (cover) =>
+    suggestionsStore.issueSuggestions = results.covers.map(
+      ({ issuecode, publicationcode, issuenumber, id: coverId }) =>
         new IssueSuggestion(
           {
-            issuecode: cover.issuecode,
-            publicationcode: cover.publicationcode,
-            issuenumber: cover.issuenumber,
+            issuecode,
+            publicationcode,
+            issuenumber,
+            coverId,
           },
           {
-            type: "ai",
+            source: "ai",
             isAccepted: false,
-          },
-          cover.id
+          }
         )
     );
 
