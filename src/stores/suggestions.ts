@@ -31,15 +31,15 @@ type Storyversion = Partial<
 
 type Storyjob = Pick<inducks_storyjob, "personcode" | "plotwritartink">;
 
+type SuggestionMeta = {
+  source: "ai" | "user" | "default";
+  isAccepted: boolean;
+};
+
 export abstract class Suggestion {
-  public type: "ai" | "user" = "user";
-  public isAccepted: boolean = false;
   abstract getId(): string | undefined;
 
-  constructor(meta: { type: "ai" | "user"; isAccepted: boolean }) {
-    this.type = meta.type;
-    this.isAccepted = meta.isAccepted;
-  }
+  constructor(public meta: SuggestionMeta) {}
 }
 
 export class EntrySuggestion extends Suggestion {
@@ -62,7 +62,7 @@ export class EntrySuggestion extends Suggestion {
       storyversion?: Storyversion;
       storyjobs?: Storyjob[];
     },
-    meta: { type: "ai" | "user"; isAccepted: boolean }
+    meta: Suggestion["meta"]
   ) {
     super(meta);
   }
@@ -73,10 +73,7 @@ export class StoryversionKindSuggestion extends Suggestion {
     return this.kind || undefined;
   }
 
-  constructor(
-    meta: { type: "ai" | "user"; isAccepted: boolean },
-    public kind: StoryversionKind
-  ) {
+  constructor(public kind: StoryversionKind, meta: Suggestion["meta"]) {
     super(meta);
   }
 }
@@ -91,9 +88,10 @@ export class IssueSuggestion extends Suggestion {
       inducks_issue,
       "publicationcode" | "issuenumber" | "issuecode"
     > &
-      Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">>,
-    meta: { type: "ai" | "user"; isAccepted: boolean },
-    public coverId: number | null
+      Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">> & {
+        coverId: number | null;
+      },
+    meta: Suggestion["meta"]
   ) {
     super(meta);
   }
@@ -106,25 +104,27 @@ export const suggestions = defineStore("suggestions", () => {
     ),
     issueSuggestions = ref([] as IssueSuggestion[]),
     pendingIssueSuggestions = computed(() =>
-      issueSuggestions.value.filter(
-        ({ isAccepted }) => isAccepted === undefined
-      )
+      issueSuggestions.value.filter(({ meta }) => meta.isAccepted === undefined)
     );
 
   const acceptSuggestion = <T extends Suggestion>(
     suggestions: T[],
-    conditionFn: (suggestion: T) => boolean
+    conditionFn: (suggestion: T) => boolean,
+    type?: SuggestionMeta["source"]
   ) => {
-    suggestions.forEach(
-      (suggestion) => (suggestion.isAccepted = conditionFn(suggestion))
-    );
+    suggestions.forEach((suggestion) => {
+      suggestion.meta.isAccepted = conditionFn(suggestion);
+      if (conditionFn(suggestion) && type) {
+        suggestion.meta.source = type;
+      }
+    });
   };
 
   const getAcceptedSuggestion = <T extends Suggestion>(suggestions: T[]) =>
-    suggestions.find(({ isAccepted }) => isAccepted);
+    suggestions.find(({ meta }) => meta.isAccepted);
 
   const rejectAllSuggestions = <T extends Suggestion>(suggestions: T[]) =>
-    suggestions.forEach((suggestion) => (suggestion.isAccepted = false));
+    suggestions.forEach((suggestion) => (suggestion.meta.isAccepted = false));
 
   return {
     entrySuggestions,

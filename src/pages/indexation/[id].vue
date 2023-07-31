@@ -84,11 +84,10 @@ const getPageImages = () => {
           ...acc,
           [url]: Object.values(StoryversionKind).map(
             (key) =>
-              ({
-                kind: key,
+              new StoryversionKindSuggestion(key, {
                 isAccepted: false,
-                type: "user",
-              } as StoryversionKindSuggestion)
+                source: "default",
+              })
           ),
         }),
         {} as Record<string, StoryversionKindSuggestion[]>

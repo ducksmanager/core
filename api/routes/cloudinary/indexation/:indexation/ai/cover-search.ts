@@ -23,11 +23,16 @@ export const get = async (req: Request, res: Response) => {
   const image = await axios.get(indexationResources[0].url, {
     responseType: "arraybuffer",
   });
-  return res.json(
-    (
-      await axios.post(`${defaultApi.defaults.baseURL}/cover-id/search`, {
-        base64: Buffer.from(image.data).toString("base64"),
-      })
-    ).data
-  );
+  try {
+    return res.json(
+      (
+        await axios.post(`${defaultApi.defaults.baseURL}/cover-id/search`, {
+          base64: Buffer.from(image.data).toString("base64"),
+        })
+      ).data
+    );
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: e });
+  }
 };

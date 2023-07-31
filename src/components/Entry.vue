@@ -71,14 +71,14 @@ const props = defineProps<{
   editable: boolean;
 }>();
 
-const issueDetailsStore = suggestions();
+const suggestionsStore = suggestions();
 
 const acceptedEntry = computed(
-  () => issueDetailsStore.acceptedEntries[props.entryurl]
+  () => suggestionsStore.acceptedEntries[props.entryurl]
 );
 
 const acceptedStoryversionKind = computed(
-  () => issueDetailsStore.acceptedStoryversionKinds[props.entryurl]
+  () => suggestionsStore.acceptedStoryversionKinds[props.entryurl]
 );
 
 const storyversion = computed(() => acceptedEntry.value?.data.storyversion);
@@ -94,7 +94,7 @@ const urlEncodedStorycode = computed(
 );
 
 const storyversionKinds = computed(
-  () => issueDetailsStore.storyversionKindSuggestions[props.entryurl]
+  () => suggestionsStore.storyversionKindSuggestions[props.entryurl]
 );
 
 const getStoryversionKind = (
@@ -107,8 +107,8 @@ const getStoryversionKind = (
       ];
 
 const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
-  issueDetailsStore.acceptSuggestion(
-    issueDetailsStore.storyversionKindSuggestions[props.entryurl],
+  suggestionsStore.acceptSuggestion(
+    suggestionsStore.storyversionKindSuggestions[props.entryurl],
     (suggestion: StoryversionKindSuggestion) =>
       suggestion.kind === storyversionKind
   );

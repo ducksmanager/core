@@ -13,7 +13,7 @@
       "
     >
       <slot name="item" v-bind="suggestion as S" />
-      <AiSuggestionIcon v-if="suggestion.type === 'ai'"
+      <AiSuggestionIcon v-if="suggestion.meta.source === 'ai'"
     /></b-dropdown-item>
     <b-dropdown-divider v-if="suggestions.length" />
     <b-dropdown-item><slot name="unknown" /></b-dropdown-item>
@@ -34,7 +34,7 @@
       <div v-else class="d-flex">
         <slot v-if="!getCurrent()" name="unknown" />
         <slot v-else name="item" v-bind="(getCurrent() as S)" />
-        <AiSuggestionIcon v-if="getCurrent()?.type === 'ai'" /></div
+        <AiSuggestionIcon v-if="getCurrent()?.meta.source === 'ai'" /></div
     ></template>
   </b-dropdown>
   <slot v-if="showCustomizeForm" name="customize-form" />

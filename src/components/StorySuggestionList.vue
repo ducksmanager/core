@@ -30,13 +30,13 @@ const props = defineProps<{
 }>();
 
 const showEntrySelect = ref(false);
-const issueDetailsStore = suggestions();
+const suggestionsStore = suggestions();
 
 const acceptedEntry = computed(
-  () => issueDetailsStore.acceptedEntries[props.entryurl]
+  () => suggestionsStore.acceptedEntries[props.entryurl]
 );
 const entrySuggestions = computed(
-  () => issueDetailsStore.entrySuggestions[props.entryurl]
+  () => suggestionsStore.entrySuggestions[props.entryurl]
 );
 
 const addCustomEntrycodeToEntrySuggestions = ({
@@ -54,11 +54,11 @@ const addCustomEntrycodeToEntrySuggestions = ({
           storycode,
         },
       },
-      { type: "ai", isAccepted: true }
+      { source: "user", isAccepted: true }
     );
-    issueDetailsStore.entrySuggestions[props.entryurl] = [
-      ...issueDetailsStore.entrySuggestions[props.entryurl].filter(
-        ({ type }) => type === "ai"
+    suggestionsStore.entrySuggestions[props.entryurl] = [
+      ...suggestionsStore.entrySuggestions[props.entryurl].filter(
+        ({ meta }) => meta.source === "ai"
       ),
       userSuggestion,
     ];
@@ -67,8 +67,8 @@ const addCustomEntrycodeToEntrySuggestions = ({
 };
 
 const acceptEntrySuggestion = (storycode?: string) => {
-  issueDetailsStore.acceptSuggestion(
-    issueDetailsStore.entrySuggestions[props.entryurl],
+  suggestionsStore.acceptSuggestion(
+    suggestionsStore.entrySuggestions[props.entryurl],
     (suggestion) => suggestion.data.storyversion?.storycode === storycode
   );
   showEntrySelect.value = false;
