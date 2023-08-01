@@ -57,9 +57,9 @@ export default () => {
         )
     );
 
-    await coaStore.fetchPublicationNames([
-      ...results.covers.map(({ publicationcode }) => publicationcode!),
-    ]);
+    await coaStore.fetchPublicationNames(
+      results.covers.map(({ publicationcode }) => publicationcode!)
+    );
   };
 
   return { applyHintsFromKumiko, applyHintsFromCoverSearch };
