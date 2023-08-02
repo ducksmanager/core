@@ -50,6 +50,7 @@ import { collection } from '~/stores/collection';
 import { useI18n } from 'vue-i18n';
 import useCondition from '~/composables/useCondition';
 import { Issue } from '~/persistence/models/dm/Issue';
+import { SimpleIssue } from 'ducksmanager/types/SimpleIssue';
 
 const { t } = useI18n();
 
@@ -64,12 +65,14 @@ const { getConditionKey } = useCondition();
 const selectedStory = ref(
   null as
     | (SimpleStory & {
-        issues: (SimpleStory['issues'][0] & {
+        issues: (SimpleIssue & {
+          countrycode: string;
+          countryname: string;
           publicationName: string;
           collectionIssue: Issue | null;
         })[];
       })
-    | null
+    | null,
 );
 
 watch(
@@ -84,16 +87,16 @@ watch(
         axios,
         new POST__coa__stories__search__withIssues({
           reqBody: { keywords: newValue },
-        })
+        }),
       )
     ).data.results;
 
     const publicationcodes = [
       ...new Set(
         data.reduce(
-          (acc, story) => [...acc, ...story.issues.map(({ publicationcode }) => publicationcode)],
-          [] as string[]
-        )
+          (acc, story) => [...acc, ...(story.issues?.map(({ publicationcode }) => publicationcode) || [])],
+          [] as string[],
+        ),
       ),
     ];
     await coaStore.fetchPublicationNames(publicationcodes);
@@ -101,7 +104,7 @@ watch(
     storyResults.value = {
       results: data.map((story) => ({
         ...story,
-        issues: story.issues.map(({ countrycode, publicationcode, issuenumber }) => ({
+        issues: story.issues?.map(({ publicationcode, issuenumber }) => ({
           publicationcode,
           countrycode: publicationcode.split('/')[0],
           publicationName: coaStore.publicationNames[publicationcode] || publicationcode,
@@ -109,12 +112,12 @@ watch(
           collectionIssue:
             collectionStore.collection!.find(
               ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
-                collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber
+                collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
             ) || null,
         })),
       })),
     };
-  }
+  },
 );
 
 collectionStore.loadCollection();

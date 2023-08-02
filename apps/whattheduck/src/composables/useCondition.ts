@@ -1,4 +1,5 @@
 import { computed } from 'vue';
+import { IssueWithPublicationcode } from '~/stores/collection';
 
 import { condition } from '~/stores/condition';
 

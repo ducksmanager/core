@@ -70,7 +70,7 @@ watch(
       }, 100);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const { t } = useI18n();
@@ -125,14 +125,14 @@ const itemType = computed(() => {
 });
 
 const filteredItems = computed(() =>
-  props.items.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1)
+  props.items.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1),
 );
 const showFilter = computed(() => true);
 
 const title = computed(() =>
   typeof collectionStore.total === 'number'
     ? t('my_collection_with_issue_count', { issueCount: collectionStore.total })
-    : t('my_collection')
+    : t('my_collection'),
 );
 
 const ownershipAllItems = computed(() => {
@@ -147,9 +147,12 @@ const ownershipAllItems = computed(() => {
 const ownership = computed(
   () =>
     ownershipAllItems.value &&
-    Object.entries(ownershipAllItems.value[0])
-      .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1][key] as number }))
-      .reduce<Record<string, [number, number]>>((acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }), {})
+    Object.entries(ownershipAllItems.value![0]!)
+      .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1]![key] as number }))
+      .reduce<Record<string, [number, number]>>(
+        (acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }),
+        {},
+      ),
 );
 
 watch(
@@ -170,7 +173,7 @@ watch(
     }
     hasCoaData.value = true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -180,7 +183,7 @@ watch(
       await coa().fetchPublicationNames(Object.keys(newValue));
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -189,7 +192,7 @@ watch(
     if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
       router.push('/edit-issues');
     }
-  }
+  },
 );
 </script>
 

@@ -62,13 +62,13 @@ const conditions = computed(() => ['missing', ...Object.values(conditionStore.co
 
 const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
 const issuecode = computed(() => `${publicationcode.value} ${route.params.issuenumber}`);
-const copyIndex = computed(() => route.params.copyIndex as string);
+const copyIndex = computed(() => parseInt(route.params.copyIndex as string) as number);
 const issue = computed(
-  (): IssueWithPublicationcode =>
+  () =>
     collectionStore.issuesByIssueCode?.[issuecode.value!]?.[copyIndex.value!] ||
     ({
       purchaseId: null,
-    } as IssueWithPublicationcode)
+    } as IssueWithPublicationcode),
 );
 
 const selectedCondition = ref(null as string | null);
@@ -83,7 +83,7 @@ watch(
       ? conditionStore.conditionL10n.find(({ fr }) => fr === newCondition)?.en || 'none'
       : 'none';
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 collectionStore.loadCollection();

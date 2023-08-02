@@ -1,6 +1,5 @@
 import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
-import type { AxiosCacheInstance } from 'axios-cache-interceptor';
 import { useRouter } from 'vue-router';
 
 import { User } from './persistence/models/dm/User';
@@ -10,9 +9,7 @@ import type { Call, ContractWithMethodAndUrl } from '~types/Call';
 
 axios.defaults.baseURL = import.meta.env.VITE_DM_API_URL;
 
-export const addTokenRequestInterceptor = <Type extends AxiosInstance | AxiosCacheInstance>(
-  axiosInstance: Type
-): Type => {
+export const addTokenRequestInterceptor = (axiosInstance: AxiosInstance): AxiosInstance => {
   axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
     const users = await app().dbInstance.getRepository(User).find();
     const token = users?.[0]?.token;
@@ -33,18 +30,16 @@ axios.interceptors.response.use(
       const router = useRouter();
       router.push('/');
     }
-  }
+  },
 );
 
-export const addUrlParamsRequestInterceptor = <Type extends AxiosInstance | AxiosCacheInstance>(
-  axiosInstance: Type
-): Type => {
+export const addUrlParamsRequestInterceptor = (axiosInstance: AxiosInstance): AxiosInstance => {
   axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     if (config.url) {
       const currentUrl = new URL(config.url, config.baseURL);
       currentUrl.pathname = Object.entries(config.urlParams ?? ({} as Record<string, string>)).reduce(
         (pathname, [k, v]) => pathname.replace(`:${k}`, encodeURIComponent(v)),
-        currentUrl.pathname
+        currentUrl.pathname,
       );
       return {
         ...config,
@@ -70,8 +65,8 @@ declare module 'axios' {
 type MyCall = Call<unknown, Record<string, string> | undefined, unknown | undefined, unknown | undefined>;
 
 export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
-  instance: AxiosInstance | AxiosCacheInstance,
-  contract: Contract
+  instance: AxiosInstance,
+  contract: Contract,
 ): Promise<AxiosResponse<Contract['resBody']>> =>
   instance.request<Contract['resBody']>({
     method: contract.getMethod(),
@@ -93,7 +88,7 @@ export const getChunkedRequests = async <Contract extends ContractWithMethodAndU
   parameterName?: string;
 }): Promise<Contract['resBody']> => {
   const slices = Array.from({ length: Math.ceil(valuesToChunk.length / chunkSize) }, (_, i) =>
-    valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+    valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize),
   );
   let acc: Contract['resBody'] = (await callFn(slices[0].join(','))).data;
   for (const slice of slices.slice(1)) {

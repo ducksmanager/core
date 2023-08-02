@@ -63,28 +63,33 @@ export const collection = defineStore('collection', () => {
     isLoadingUser = ref(false as boolean),
     user = ref(undefined as Omit<user, 'password'> | undefined | null),
     previousVisit = ref(null as Date | null),
-    popularIssueInCollectionByIssuecode = computed(() =>
-      popularIssueInCollection.value?.reduce(
-        (acc, issue) => ({
-          ...acc,
-          [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
-        }),
-        {}
-      )
+    popularIssueInCollectionByIssuecode = computed(
+      () =>
+        popularIssueInCollection.value?.reduce(
+          (acc, issue) => ({
+            ...acc,
+            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
+          }),
+          {} as Record<string, number>,
+        ),
     ),
     total = computed(() => collection.value?.length),
     ownedCountries = computed(() => [...new Set((collection.value || []).map(({ country }) => country))].sort()),
     ownedPublications = computed(() =>
-      [...new Set((collection.value || []).map(({ publicationcode }) => publicationcode))].sort()
+      [...new Set((collection.value || []).map(({ publicationcode }) => publicationcode))].sort(),
     ),
-    issuesByIssueCode = computed(() =>
-      collection.value?.reduce((acc, issue) => {
-        const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-        return {
-          ...acc,
-          [issuecode]: [...(acc[issuecode] || []), issue],
-        };
-      }, {} as { [issuecode: string]: IssueWithPublicationcode[] })
+    issuesByIssueCode = computed(
+      () =>
+        collection.value?.reduce(
+          (acc, issue) => {
+            const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
+            return {
+              ...acc,
+              [issuecode]: [...(acc[issuecode] || []), issue],
+            };
+          },
+          {} as { [issuecode: string]: IssueWithPublicationcode[] },
+        ),
     ),
     duplicateIssues = computed(
       (): {
@@ -99,12 +104,12 @@ export const collection = defineStore('collection', () => {
                     [issuecode]: issuesByIssueCode.value![issuecode],
                   }
                 : acc,
-            {}
+            {},
           )) ||
-        {}
+        {},
     ),
     issuesInToReadStack = computed(() => collection.value?.filter(({ isToRead }) => isToRead)),
-    issuesInOnSaleStack = computed(() => collection.value?.filter(({ isOnSale }) => isOnSale)),
+    // issuesInOnSaleStack = computed(() => collection.value?.filter(({ isOnSale }) => isOnSale)),
     totalUniqueIssues = computed(
       () =>
         (duplicateIssues.value &&
@@ -113,28 +118,32 @@ export const collection = defineStore('collection', () => {
             : collection.value?.length -
               Object.values(duplicateIssues.value).reduce(
                 (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-                0
+                0,
               ))) ||
-        0
+        0,
     ),
-    totalPerCountry = computed(() =>
-      collection.value?.reduce(
-        (acc, issue) => ({
-          ...acc,
-          [issue.country]: (acc[issue.country] || 0) + 1,
-        }),
-        {} as { [countrycode: string]: number }
-      )
+    totalPerCountry = computed(
+      () =>
+        collection.value?.reduce(
+          (acc, issue) => ({
+            ...acc,
+            [issue.country]: (acc[issue.country] || 0) + 1,
+          }),
+          {} as { [countrycode: string]: number },
+        ),
     ),
     totalPerPublication = computed(
       () =>
-        collection.value?.reduce((acc, issue) => {
-          const publicationcode = `${issue.country}/${issue.magazine}`;
-          return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
-        }, {} as { [publicationcode: string]: number }) || null
+        collection.value?.reduce(
+          (acc, issue) => {
+            const publicationcode = `${issue.country}/${issue.magazine}`;
+            return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
+          },
+          {} as { [publicationcode: string]: number },
+        ) || null,
     ),
-    purchasesById = computed(() =>
-      purchases.value?.reduce((acc, purchase) => ({ ...acc, [purchase.id]: purchase }), {})
+    purchasesById = computed(
+      () => purchases.value?.reduce((acc, purchase) => ({ ...acc, [purchase.id]: purchase }), {}),
     ),
     hasSuggestions = computed(() => suggestions.value?.length),
     issueNumbersPerPublication = computed(
@@ -144,8 +153,8 @@ export const collection = defineStore('collection', () => {
             ...acc,
             [`${country}/${magazine}`]: [...(acc[`${country}/${magazine}`] || []), issuenumber],
           }),
-          {} as { [publicationcode: string]: string[] }
-        ) || {}
+          {} as { [publicationcode: string]: string[] },
+        ) || {},
     ),
     totalPerPublicationUniqueIssueNumbers = computed(
       (): {
@@ -157,8 +166,8 @@ export const collection = defineStore('collection', () => {
             ...acc,
             [publicationcode]: [...new Set(issueNumbersPerPublication.value[publicationcode])].length,
           }),
-          {}
-        )
+          {},
+        ),
     ),
     totalPerPublicationUniqueIssueNumbersSorted = computed(
       () =>
@@ -166,16 +175,17 @@ export const collection = defineStore('collection', () => {
         Object.entries(totalPerPublicationUniqueIssueNumbers.value).sort(([publicationcode1], [publicationcode2]) =>
           Math.sign(
             totalPerPublicationUniqueIssueNumbers.value[publicationcode2]! -
-              totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!
-          )
-        )
+              totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
+          ),
+        ),
     ),
-    popularIssuesInCollectionWithoutEdge = computed(() =>
-      bookcase()
-        .bookcaseWithPopularities?.filter(({ edgeId, popularity }) => !edgeId && popularity && popularity > 0)
-        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 && popularity1 ? popularity2 - popularity1 : 0
-        )
+    popularIssuesInCollectionWithoutEdge = computed(
+      () =>
+        bookcase()
+          .bookcaseWithPopularities?.filter(({ edgeId, popularity }) => !edgeId && popularity && popularity > 0)
+          .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+            popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+          ),
     ),
     quotedIssues = computed(() => {
       const issueQuotations = coa().issueQuotations;
@@ -215,9 +225,9 @@ export const collection = defineStore('collection', () => {
     quotationSum = computed(() =>
       quotedIssues.value
         ? Math.round(
-            quotedIssues.value?.reduce((acc, { estimationGivenCondition }) => acc + estimationGivenCondition, 0) || 0
+            quotedIssues.value?.reduce((acc, { estimationGivenCondition }) => acc + estimationGivenCondition, 0) || 0,
           )
-        : null
+        : null,
     ),
     // userForAccountForm = computed(() => {
     //   if (!user.value) {
@@ -236,7 +246,7 @@ export const collection = defineStore('collection', () => {
         defaultApi,
         new POST__collection__issues__single({
           reqBody: data,
-        })
+        }),
       );
       await loadCollection(true);
     },
@@ -245,7 +255,7 @@ export const collection = defineStore('collection', () => {
         defaultApi,
         new POST__collection__issues__multiple({
           reqBody: data,
-        })
+        }),
       );
       await loadCollection(true);
     },
@@ -254,7 +264,7 @@ export const collection = defineStore('collection', () => {
         defaultApi,
         new PUT__collection__purchases({
           reqBody: { date, description },
-        })
+        }),
       );
       await loadPurchases(true);
     },
@@ -263,14 +273,14 @@ export const collection = defineStore('collection', () => {
         defaultApi,
         new DELETE__collection__purchases__$id({
           params: { id: String(id) },
-        })
+        }),
       );
       await loadPurchases(true);
     },
     findInCollection = (publicationcode: string, issuenumber: string) =>
       collection.value?.find(
         ({ country, magazine, issuenumber: collectionIssueNumber }) =>
-          publicationcode === `${country}/${magazine}` && collectionIssueNumber === issuenumber
+          publicationcode === `${country}/${magazine}` && collectionIssueNumber === issuenumber,
       ),
     loadPreviousVisit = async () => {
       previousVisit.value = (await call(defaultApi, new POST__collection__lastvisit())).data?.previousVisit;
@@ -286,7 +296,7 @@ export const collection = defineStore('collection', () => {
             publicationcode: `${issue.country}/${issue.magazine}`,
           })),
         collection,
-        afterUpdate
+        afterUpdate,
       );
     },
     loadPurchases = async (afterUpdate = false) => {
@@ -301,7 +311,7 @@ export const collection = defineStore('collection', () => {
             date: new Date(Date.parse(date)),
           })),
         purchases,
-        afterUpdate
+        afterUpdate,
       );
     },
     loadWatchedAuthors = async (afterUpdate = false) => {
@@ -311,7 +321,7 @@ export const collection = defineStore('collection', () => {
         async () => await call(defaultApi, new GET__collection__authors__watched()),
         (value) => value,
         watchedAuthors,
-        afterUpdate
+        afterUpdate,
       );
     },
     /*loadWatchedPublicationsWithSales = async (afterUpdate = false) => {
@@ -373,7 +383,7 @@ export const collection = defineStore('collection', () => {
       axiosResponseToStore: (responseData: AxiosResponseType) => Entity[],
       ref: Ref<Entity[] | null>,
       afterUpdate = false,
-      noFetchIfNonObsoleteSync = false
+      noFetchIfNonObsoleteSync = false,
     ): Promise<void> => {
       if (afterUpdate || (!isLoading.value[name] && !ref.value)) {
         isLoading.value[name] = true;
@@ -400,7 +410,7 @@ export const collection = defineStore('collection', () => {
         sort: 'oldestdate' | 'score';
         sinceLastVisit: boolean;
       },
-      afterUpdate = false
+      afterUpdate = false,
     ) => {
       await load(
         'suggestions',
@@ -415,7 +425,7 @@ export const collection = defineStore('collection', () => {
                 sort,
                 limit: sinceLastVisit ? 100 : 20,
               },
-            })
+            }),
           ),
         (value) =>
           Object.values(value.issues).map(({ stories, ...issue }) => ({
@@ -424,7 +434,7 @@ export const collection = defineStore('collection', () => {
           })),
         suggestions,
         afterUpdate,
-        true
+        true,
       );
     },
     // loadSubscriptions = async (afterUpdate = false) => {
@@ -447,7 +457,7 @@ export const collection = defineStore('collection', () => {
         IssuePopularity,
         async () => await call(defaultApi, new GET__collection__popular()),
         (value) => value,
-        popularIssueInCollection
+        popularIssueInCollection,
       );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
@@ -486,7 +496,7 @@ export const collection = defineStore('collection', () => {
             sinceLastVisit: false,
             sort: 'score',
           },
-          true
+          true,
         );
         await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' }, true);
         await coa().fetchCountryNames(true);
@@ -526,7 +536,7 @@ export const collection = defineStore('collection', () => {
     issuesByIssueCode,
     duplicateIssues,
     issuesInToReadStack,
-    issuesInOnSaleStack,
+    // issuesInOnSaleStack,
     totalUniqueIssues,
     totalPerCountry,
     totalPerPublication,
