@@ -49,6 +49,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { call } from '~/axios-helper';
 import { defaultApi } from '~/util/api';
 import { POST__cover_id__search } from 'ducksmanager/types/routes';
+import axios from 'axios';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -57,12 +58,23 @@ const route = useRoute();
 const pickCoverFile = async () => {
   const coverFile = await FilePicker.pickImages({ readData: true });
   if (coverFile.files.length) {
-    const response = await call(
-      defaultApi,
-      new POST__cover_id__search({
-        reqBody: { base64: coverFile.files[0].data! },
-      })
-    );
+    // Create a FormData object
+    const formData = new FormData();
+    formData.append('image', coverFile.files[0].blob!);
+
+    // Make the POST request with axios
+    const response = await axios.post('http://localhost:5000/search_image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    // const response = await call(
+    //   defaultApi,
+    //   new POST__cover_id__search({
+    //     reqBody: { base64: coverFile.files[0].data! },
+    //   })
+    // );
     console.log(response.data);
   }
 };

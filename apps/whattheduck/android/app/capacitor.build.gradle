@@ -19,7 +19,7 @@ dependencies {
     implementation project(':capacitor-splash-screen')
     implementation project(':capacitor-status-bar')
     implementation project(':capawesome-capacitor-file-picker')
-    implementation "androidx.exifinterface:exifinterface:1.2.0"
+
 }
 
 
