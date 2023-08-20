@@ -27,8 +27,9 @@ export default () => {
             : StoryversionKind.Story;
         suggestionsStore.acceptSuggestion(
           suggestionsStore.storyversionKindSuggestions[entryurl],
-          (suggestion) => suggestion.kind === inferredKind,
-          "ai"
+          ({ data }) => data.kind === inferredKind,
+          "ai",
+          (suggestion) => (suggestion.data.panels = result.panels)
         );
       }
     });
@@ -62,5 +63,7 @@ export default () => {
     );
   };
 
-  return { applyHintsFromKumiko, applyHintsFromCoverSearch };
+  const applyHintsFromOcr = () => {};
+
+  return { applyHintsFromKumiko, applyHintsFromCoverSearch, applyHintsFromOcr };
 };

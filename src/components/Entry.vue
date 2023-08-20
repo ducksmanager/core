@@ -7,13 +7,27 @@
           :show-customize-form="false"
           :allow-customize-form="false"
           :get-current="() => acceptedStoryversionKind"
-          :item-class="(suggestion: StoryversionKindSuggestion) => ({ [`kind-${suggestion.kind}`]: true })"
-          @select="acceptStoryversionKindSuggestion($event?.kind as string)"
+          :item-class="(suggestion: StoryversionKindSuggestion) => ({ [`kind-${suggestion.data?.kind}`]: true })"
+          @ai-item-mouseover="
+            $emit('toggle-ai-details', {
+              toggle: true,
+              type: 'storyversionKind',
+            })
+          "
+          @ai-item-mouseout="
+            $emit('toggle-ai-details', {
+              toggle: false,
+              type: 'storyversionKind',
+            })
+          "
+          @select="
+            acceptStoryversionKindSuggestion($event?.data?.kind as string)
+          "
         >
           <template #item="suggestion: StoryversionKindSuggestion">
             {{ getStoryversionKind(suggestion) }}
           </template>
-          <template #unknown>Type inconnu</template>
+          <template #unknown>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
       ><b-col><StorySuggestionList :entryurl="entryurl" /></b-col>
       <b-col>
@@ -26,9 +40,9 @@
       <b-col>
         <b-badge
           size="xl"
-          :class="{ [`kind-${acceptedStoryversionKind?.kind}`]: true }"
+          :class="{ [`kind-${acceptedStoryversionKind?.data?.kind}`]: true }"
           >{{
-            getStoryversionKind(acceptedStoryversionKind) || "Type inconnu"
+            getStoryversionKind(acceptedStoryversionKind) || $t("Type inconnu")
           }}</b-badge
         ></b-col
       >
@@ -71,6 +85,13 @@ const props = defineProps<{
   editable: boolean;
 }>();
 
+defineEmits<{
+  (
+    e: "toggle-ai-details",
+    params: { toggle: boolean; type: "storyversionKind" }
+  ): void;
+}>();
+
 const suggestionsStore = suggestions();
 
 const acceptedEntry = computed(
@@ -101,16 +122,16 @@ const getStoryversionKind = (
   storyversionKind: StoryversionKindSuggestion | undefined
 ) =>
   !storyversionKind
-    ? "Type inconnu"
+    ? $t("Type inconnu")
     : Object.keys(StoryversionKind)[
-        Object.values(StoryversionKind).indexOf(storyversionKind.kind)
+        Object.values(StoryversionKind).indexOf(storyversionKind.data.kind)
       ];
 
 const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
   suggestionsStore.acceptSuggestion(
     suggestionsStore.storyversionKindSuggestions[props.entryurl],
     (suggestion: StoryversionKindSuggestion) =>
-      suggestion.kind === storyversionKind
+      suggestion.data.kind === storyversionKind
   );
 };
 </script>

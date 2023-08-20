@@ -9,18 +9,21 @@
       :class="itemClass ? itemClass(suggestion) : {}"
       @click="
         emit('select', suggestion);
-        emit('show-customize-form', false);
+        emit('toggle-customize-form', false);
       "
     >
       <slot name="item" v-bind="suggestion as S" />
-      <AiSuggestionIcon v-if="suggestion.meta.source === 'ai'"
+      <AiSuggestionIcon
+        v-if="suggestion.meta.source === 'ai'"
+        @mouseover="onAiItemMouseover"
+        @mouseout="onAiItemMouseout"
     /></b-dropdown-item>
     <b-dropdown-divider v-if="suggestions.length" />
     <b-dropdown-item><slot name="unknown" /></b-dropdown-item>
     <b-dropdown-divider />
     <b-dropdown-item
       v-if="allowCustomizeForm"
-      @click="emit('show-customize-form', true)"
+      @click="emit('toggle-customize-form', true)"
       ><slot v-if="$slots.customize" name="customize" /><template v-else>{{
         $t("Personnaliser...")
       }}</template></b-dropdown-item
@@ -34,7 +37,11 @@
       <div v-else class="d-flex">
         <slot v-if="!getCurrent()" name="unknown" />
         <slot v-else name="item" v-bind="(getCurrent() as S)" />
-        <AiSuggestionIcon v-if="getCurrent()?.meta.source === 'ai'" /></div
+        <AiSuggestionIcon
+          v-if="getCurrent()?.meta.source === 'ai'"
+          @mouseover="onAiItemMouseover"
+          @mouseout="onAiItemMouseout"
+        /></div
     ></template>
   </b-dropdown>
   <slot v-if="showCustomizeForm" name="customize-form" />
@@ -60,13 +67,15 @@ defineProps<{
   showCustomizeForm: boolean;
   allowCustomizeForm: boolean;
   itemClass?: (suggestion: S) => Record<string, boolean>;
+  onAiItemMouseover?: () => void;
+  onAiItemMouseout?: () => void;
 }>();
 
 const { t: $t } = useI18n();
 
 const emit = defineEmits<{
   (e: "select", suggestion?: S): void;
-  (e: "show-customize-form", show: boolean): void;
+  (e: "toggle-customize-form", toggle: boolean): void;
 }>();
 </script>
 <style lang="scss">
