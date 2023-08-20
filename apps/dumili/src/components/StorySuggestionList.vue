@@ -4,7 +4,7 @@
     :get-current="() => acceptedEntry"
     :show-customize-form="showEntrySelect"
     allow-customize-form
-    @show-customize-form="showEntrySelect = $event"
+    @toggle-customize-form="showEntrySelect = $event"
     @select="
       acceptEntrySuggestion(
         ($event as EntrySuggestion | undefined)?.data?.storyversion

@@ -6,6 +6,8 @@ import { inducks_storyjob } from "ducksmanager/api/dist/prisma/client_coa";
 import { inducks_issue } from "ducksmanager/api/dist/prisma/client_coa";
 import { defineStore } from "pinia";
 
+import { Boundaries } from "~types/KumikoResults";
+
 export enum StoryversionKind {
   "Story" = "n",
   "Newspaper strip" = "k",
@@ -70,10 +72,16 @@ export class EntrySuggestion extends Suggestion {
 
 export class StoryversionKindSuggestion extends Suggestion {
   getId() {
-    return this.kind || undefined;
+    return this.data.kind || undefined;
   }
 
-  constructor(public kind: StoryversionKind, meta: Suggestion["meta"]) {
+  constructor(
+    public data: {
+      kind: StoryversionKind;
+      panels?: Boundaries[];
+    },
+    meta: Suggestion["meta"]
+  ) {
     super(meta);
   }
 }
@@ -110,12 +118,14 @@ export const suggestions = defineStore("suggestions", () => {
   const acceptSuggestion = <T extends Suggestion>(
     suggestions: T[],
     conditionFn: (suggestion: T) => boolean,
-    type?: SuggestionMeta["source"]
+    type?: SuggestionMeta["source"],
+    addDataFn?: (suggestion: T) => void
   ) => {
     suggestions.forEach((suggestion) => {
       suggestion.meta.isAccepted = conditionFn(suggestion);
       if (conditionFn(suggestion) && type) {
         suggestion.meta.source = type;
+        addDataFn && addDataFn(suggestion);
       }
     });
   };

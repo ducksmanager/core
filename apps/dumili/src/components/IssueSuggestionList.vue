@@ -4,7 +4,7 @@
     :get-current="() => issue as IssueSuggestion"
     allow-customize-form
     :show-customize-form="showIssueSelect"
-    @show-customize-form="showIssueSelect = $event"
+    @toggle-customize-form="showIssueSelect = $event"
     @select="acceptIssueSuggestion($event as IssueSuggestion)"
   >
     <template #item="suggestion: IssueSuggestion">

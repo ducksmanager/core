@@ -2,6 +2,8 @@ version: '3.8'
 services:
   kumiko:
     restart: always
+    volumes:
+      - ./tests/results:/tests/results
     ports:
       - "8005:8080"
     build:

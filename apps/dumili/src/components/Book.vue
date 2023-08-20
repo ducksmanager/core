@@ -14,7 +14,7 @@
     id="book-and-toc-container"
     class="start-0 top-0 d-flex flex-row align-items-center justify-content-space-around"
   >
-    <b-container class="d-flex w-50 h-100 m-0">
+    <b-container class="book-container d-flex w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
           v-for="(url, index) in Object.keys(entries)"
@@ -29,7 +29,30 @@
                 backgroundImage: `url(${url})`,
                 marginLeft: 0,
               }"
-            />
+            >
+              <template
+                v-if="
+                  showAiDetails !== null &&
+                  widthDisplayRatio &&
+                  heightDisplayRatio
+                "
+              >
+                <div
+                  v-for="({ bbox: { x, y, width, height } }, idx) in ai
+                    .aiDetails.value[url][
+                    showAiDetails === 'entry' ? 'texts' : 'panels'
+                  ] || []"
+                  :key="`ocr-match-${idx}`"
+                  class="position-absolute ocr-match"
+                  :style="{
+                    left: `${x * widthDisplayRatio}px`,
+                    top: `${y * heightDisplayRatio}px`,
+                    width: `${width * widthDisplayRatio}px`,
+                    height: `${height * heightDisplayRatio}px`,
+                  }"
+                ></div>
+              </template>
+            </div>
           </div>
         </div>
       </div>
@@ -45,9 +68,9 @@
             variant="success"
             pill
             class="ms-2 hint"
-            :disabled="hintStatus === 'loading'"
-            :class="hintStatus"
-            @click="loadHint"
+            :disabled="ai.status.value === 'loading'"
+            :class="ai.status.value"
+            @click="ai.runKumiko(indexationId)"
           >
             <i-bi-lightbulb-fill
           /></b-button>
@@ -74,7 +97,10 @@
           ><template #title
             ><Entry
               :entryurl="entryurl"
-              :editable="currentTabIndex === index" /></template
+              :editable="currentTabIndex === index"
+              @toggle-ai-details="
+                showAiDetails = $event.toggle ? $event.type : null
+              " /></template
         ></b-tab>
       </b-tabs>
     </b-card>
@@ -86,23 +112,22 @@ import { PageFlip } from "page-flip";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
-import useHintMaker from "~/composables/useHintMaker";
-import { StoryversionKind, suggestions } from "~/stores/suggestions";
-import { defaultApi } from "~/util/api";
+import useAi from "~/composables/useAi";
+import { suggestions } from "~/stores/suggestions";
 
 const route = useRoute();
-
-const hintMaker = useHintMaker();
+const ai = useAi();
 
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const coverWidth = ref(null as number | null);
 let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
 const currentTabIndex = ref(0 as number);
+const showAiDetails = ref(null as "storyversionKind" | "entry" | null);
 
-const { acceptedStoryversionKinds: acceptedStoryKinds } = storeToRefs(
-  suggestions()
-);
+const { storyversionKindSuggestions } = storeToRefs(suggestions());
+
+const indexationId = computed(() => route.params.id as string);
 const isSinglePage = computed(() => Object.keys(entries.value).length === 1);
 const entries = computed(() => suggestions().entrySuggestions);
 const releaseDate = computed(() => {
@@ -113,54 +138,19 @@ const releaseDate = computed(() => {
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 
-const hintStatus = ref("idle" as "idle" | "loading" | "loaded");
+const widthDisplayRatio = computed(
+  () =>
+    book.value?.getSettings().width &&
+    coverWidth.value &&
+    book.value?.getSettings().width / coverWidth.value
+);
 
-const loadHint = async () => {
-  hintStatus.value = "loading";
-  console.log("Kumiko...");
-  const { data } = await defaultApi
-    .get(
-      `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
-        route.params.id
-      }/ai/kumiko`
-    )
-    .catch((e) => {
-      console.error(e);
-      return { data: [] };
-    });
-
-  console.log("Kumiko OK");
-  if (!data.length) {
-    return;
-  }
-  hintMaker.applyHintsFromKumiko(data);
-
-  if (
-    acceptedStoryKinds.value[Object.keys(entries.value)[0]]?.kind ===
-    StoryversionKind.Cover
-  ) {
-    console.info(
-      "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
-    );
-    const { data } = await defaultApi
-      .get(
-        `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
-          route.params.id
-        }/ai/cover-search`
-      )
-      .catch((e) => {
-        console.error(e);
-        return { data: { results: [] } };
-      })
-      .finally(() => {
-        console.log("Recherche par image terminée");
-        hintStatus.value = "loaded";
-      });
-    hintMaker.applyHintsFromCoverSearch(data);
-  } else {
-    hintStatus.value = "loaded";
-  }
-};
+const heightDisplayRatio = computed(
+  () =>
+    book.value?.getSettings().height &&
+    coverHeight.value &&
+    book.value?.getSettings().height / coverHeight.value
+);
 
 watch(
   () => currentTabIndex.value,
@@ -185,12 +175,12 @@ watch(
   () => coverWidth.value && coverHeight.value,
   (hasCoverDimensions) => {
     if (hasCoverDimensions) {
+      const bookContainer = document.querySelector(".book-container")!;
       book.value = new PageFlip(
         document.getElementById("book") as HTMLElement,
         {
-          width: coverWidth.value!,
-          height: coverHeight.value!,
-
+          width: Math.min(bookContainer.clientWidth / 2, coverWidth.value!),
+          height: Math.min(bookContainer.clientHeight, coverHeight.value!),
           maxShadowOpacity: 0.5,
           showCover: true,
           usePortrait: false,
@@ -206,6 +196,15 @@ watch(
   },
   { immediate: true }
 );
+
+watch(
+  () => storyversionKindSuggestions.value,
+  async () => {
+    await ai.runCoverSearch(indexationId.value);
+    await ai.runStorycodeOcr(indexationId.value);
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped lang="scss">
@@ -213,7 +212,7 @@ watch(
   height: 100%;
 }
 
-@keyframes pulse-primary {
+@keyframes pulse-yellow {
   0% {
     color: #999;
   }
@@ -242,7 +241,7 @@ watch(
     }
     &.loading {
       svg {
-        animation: pulse-primary 2s infinite;
+        animation: pulse-yellow 2s infinite;
       }
     }
   }
@@ -275,6 +274,7 @@ watch(
 }
 
 .flip-book {
+  max-width: 100% !important;
   margin: auto;
   background-size: cover;
 }
@@ -345,6 +345,10 @@ watch(
   &.single {
     left: initial !important;
     right: 0 !important;
+  }
+
+  .ocr-match {
+    border: 1px solid red;
   }
 }
 </style>
