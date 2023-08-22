@@ -1,10 +1,15 @@
+import axios from "axios";
 import { Request, Response } from "express";
-import Tesseract, { createWorker } from "tesseract.js";
+import sharp from "sharp";
 
-import { getIndexationResources } from "../../index";
+import { getIndexationResources } from "../..";
 import { KumikoResult, runKumiko } from "../kumiko";
 
-let tesseractWorker: Tesseract.Worker;
+type OcrResult = {
+  box: [[number, number], [number, number], [number, number], [number, number]];
+  text: string;
+  confidence: number;
+};
 
 /* Adding a bit of extra in case the storycode is just outside the panel */
 const extendBoundaries = (
@@ -17,15 +22,6 @@ const extendBoundaries = (
   height: height + extendBy,
 });
 
-createWorker({
-  logger: (m) => console.log(m),
-}).then(async (worker) => {
-  tesseractWorker = worker;
-  await tesseractWorker.loadLanguage("eng");
-  await tesseractWorker.initialize("eng");
-  console.info("Tesseract worker initialized");
-});
-
 export const get = async (req: Request, res: Response) => {
   const indexationResources = await getIndexationResources(
     req.params.indexation,
@@ -36,19 +32,22 @@ export const get = async (req: Request, res: Response) => {
     return res.status(400).send({ message: "Invalid page URL" });
   }
   const kumikoResultsForPage = (await runKumiko([pageUrl]))[0];
-  const { data } = await tesseractWorker.recognize(pageUrl, {
-    rectangle: extendBoundaries(kumikoResultsForPage.panels[0], 20),
-  });
-  return res.json(
-    data.lines?.map(({ bbox: { x0, x1, y0, y1 }, confidence, text }) => ({
-      bbox: {
-        x: x0,
-        y: y0,
-        width: x1 - x0,
-        height: y1 - y0,
-      },
-      confidence,
-      text,
-    }))
-  );
+  const firstPanel = kumikoResultsForPage.panels[0];
+
+  console.log(kumikoResultsForPage);
+
+  const input = (
+    await axios({
+      url: pageUrl,
+      responseType: "arraybuffer",
+    })
+  ).data as Buffer;
+
+  const base64 = (
+    await sharp(input).extract(extendBoundaries(firstPanel, 20)).toBuffer()
+  ).toString("base64");
+  return res.json(await runOcr(base64));
 };
+
+export const runOcr = async (base64: string): Promise<OcrResult[]> =>
+  (await axios.post(process.env.OCR_HOST, base64)).data;
