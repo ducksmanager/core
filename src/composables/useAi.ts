@@ -118,7 +118,7 @@ export default () => {
         .get(
           `${
             import.meta.env.VITE_BACKEND_URL
-          }/cloudinary/indexation/${indexationId}/ai/tesseract/${url}`
+          }/cloudinary/indexation/${indexationId}/ai/ocr/${url}`
         )
         .catch((e) => {
           console.error(e);

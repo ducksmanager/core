@@ -22,7 +22,7 @@
     "jsonwebtoken": "^9.0.0",
     "js-cookie": "^3.0.5",
     "nodemon": "^2.0.22",
-    "tesseract.js": "^4.1.1",
+    "sharp": "^0.32.5",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
