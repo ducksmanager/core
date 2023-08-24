@@ -4,7 +4,6 @@ from paddle import utils
 utils.run_check()
 from paddleocr import PaddleOCR
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import parse_qs
 import random
 import json
 import os

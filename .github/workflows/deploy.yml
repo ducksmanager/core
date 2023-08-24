@@ -75,6 +75,18 @@ jobs:
           tags: |
             ghcr.io/bperel/kumiko:latest
 
+      - name: Build and push paddleocr
+        uses: docker/build-push-action@v3
+        with:
+          context: paddleocr
+          platforms: linux/x86_64
+          file: paddleocr/Dockerfile
+          push: true
+          cache-from: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache,mode=max
+          tags: |
+            ghcr.io/paddleocr/kumiko:latest
+
       - name: Upload docker-compose.yml file
         uses: nicklasfrahm/scp-action@v1.0.1
         with:
