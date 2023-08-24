@@ -50,4 +50,4 @@ export const get = async (req: Request, res: Response) => {
 };
 
 export const runOcr = async (base64: string): Promise<OcrResult[]> =>
-  (await axios.post(process.env.OCR_HOST, base64)).data;
+  (await axios.post(process.env.OCR_HOST!, base64)).data;
