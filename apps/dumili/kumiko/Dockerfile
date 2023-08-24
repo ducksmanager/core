@@ -4,7 +4,4 @@ RUN git clone --depth 1 --single-branch https://github.com/njean42/kumiko
 RUN pip3 install requests opencv-python-headless urllib3
 COPY --chmod=777 server.py kumiko/server.py
 
-RUN mkdir -p /tests/results
-
-# EXPOSE 8080
 ENTRYPOINT ["./kumiko/server.py"]

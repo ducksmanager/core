@@ -7,6 +7,13 @@ services:
     networks:
       - dumili-network
 
+  paddleocr:
+    container_name: paddleocr
+    image: ghcr.io/bperel/paddleocr
+    restart: always
+    networks:
+      - dumili-network
+
   app:
     container_name: dumili-app
     image: ghcr.io/bperel/dumili-app

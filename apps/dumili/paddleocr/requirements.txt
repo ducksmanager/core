@@ -1,2 +1,2 @@
-paddleocr>=2.0.1
-opencv-python-headless<4.3
+paddleocr>=2.7.0.2
+paddlepaddle>=2.5.1
