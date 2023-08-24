@@ -7,7 +7,7 @@
           :show-customize-form="false"
           :allow-customize-form="false"
           :get-current="() => acceptedStoryversionKind"
-          :item-class="(suggestion: StoryversionKindSuggestion) => ({ [`kind-${suggestion.data?.kind}`]: true })"
+          :item-class="(suggestion: StoryversionKindSuggestion) => ( [`kind-${suggestion.data?.kind}`])"
           @ai-item-mouseover="
             $emit('toggle-ai-details', {
               toggle: true,

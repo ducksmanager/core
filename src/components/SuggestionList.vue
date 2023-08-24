@@ -1,12 +1,11 @@
 <template>
   <b-dropdown
     class="my-2"
-    :toggle-class="itemClass && getCurrent() ? itemClass(getCurrent()!) : {}"
+    :toggle-class="itemClass && getCurrent() ? itemClass(getCurrent()!) : []"
     ><b-dropdown-item
       v-for="(suggestion, idx) of suggestions"
       :key="`suggestion-${idx}`"
-      class="d-flex"
-      :class="itemClass ? itemClass(suggestion) : {}"
+      :link-class="['d-flex', ...((itemClass && itemClass(suggestion)) || [])]"
       @click="
         emit('select', suggestion);
         emit('toggle-customize-form', false);
@@ -66,7 +65,7 @@ defineProps<{
   getCurrent: () => S | undefined;
   showCustomizeForm: boolean;
   allowCustomizeForm: boolean;
-  itemClass?: (suggestion: S) => Record<string, boolean>;
+  itemClass?: (suggestion: S) => string[];
   onAiItemMouseover?: () => void;
   onAiItemMouseout?: () => void;
 }>();
