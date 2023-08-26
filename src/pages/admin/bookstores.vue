@@ -6,11 +6,16 @@ meta:
 <template>
   <b-table v-if="bookstores" :items="bookstores">
     <template #cell(comments)="{ value }">
-      <div v-for="comment in value" :key="`comment-${comment.id}`">
-        <u>{{ comment.username }} on {{ comment.creationDate }}</u
-        >: {{ comment.comment }}
+      <div
+        v-for="comment in value"
+        :key="`comment-${(comment as SimpleBookstore).id}`"
+      >
+        <u
+          >{{ (comment as bookstoreComment).userId }} on
+          {{ (comment as bookstoreComment).creationDate }}</u
+        >: {{ (comment as bookstoreComment).comment }}
         <b-button
-          v-if="!comment.active"
+          v-if="!(comment as bookstoreComment).isActive"
           @click="validateBookstoreComment(comment)"
         >
           {{ $t("Valider") }}

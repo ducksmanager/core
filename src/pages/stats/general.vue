@@ -73,13 +73,13 @@
             >
               <template #cell(issue)="{ item }">
                 <Issue
-                  :publicationcode="item.publicationcode"
-                  :publicationname="publicationNames[item.publicationcode]!"
-                  :issuenumber="item.issuenumber"
+                  :publicationcode="(item as QuotedIssue).publicationcode"
+                  :publicationname="publicationNames[(item as QuotedIssue).publicationcode ]!"
+                  :issuenumber="(item as QuotedIssue).issuenumber"
                 />
               </template>
               <template #cell(condition)="{ item }">
-                {{ getConditionLabel(item.condition) }}
+                {{ getConditionLabel((item as QuotedIssue).condition) }}
               </template>
               <template #cell(estimation)="{ item }">
                 {{ item.estimation }}€
@@ -163,7 +163,10 @@ import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
 import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
+import {
+  collection as collectionStore,
+  QuotedIssue,
+} from "~/stores/collection";
 import { users } from "~/stores/users";
 import { call } from "~/util/axios";
 import { GET__global_stats__user__collection__rarity } from "~types/routes";

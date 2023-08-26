@@ -207,12 +207,10 @@ alias: [/agrandir/marketplace]
 </template>
 
 <script setup lang="ts">
-import Accordion from "~/components/Accordion.vue";
 import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
+import { collection, IssueWithPublicationcode } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
-import { issue as dm_issue } from "~prisma_clients/client_dm";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
@@ -226,7 +224,8 @@ const marketplaceStore = marketplace();
 const contactMethods = $computed(() => marketplaceStore.contactMethods);
 
 const issuesOnSaleByOthers = $computed(
-  (): Record<string, dm_issue[]> | null => marketplaceStore.issuesOnSaleByOthers
+  (): Record<string, IssueWithPublicationcode[]> | null =>
+    marketplaceStore.issuesOnSaleByOthers
 );
 const sentRequestIssueIds = $computed(
   () => marketplaceStore.sentRequestIssueIds

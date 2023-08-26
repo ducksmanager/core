@@ -69,7 +69,6 @@ import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
-import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection } from "~/stores/collection";
 import { call } from "~/util/axios";
 import { GET__csrf, PUT__collection__user } from "~types/routes";
@@ -131,6 +130,4 @@ watch(
 })();
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

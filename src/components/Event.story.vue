@@ -9,7 +9,6 @@
 <script lang="ts" setup>
 import { MedalEvent } from "~types/events/MedalEvent";
 
-import Event from "./Event.vue";
 const medalEvent: MedalEvent = {
   type: "medal",
   contribution: "edge_photographer",
@@ -19,6 +18,4 @@ const medalEvent: MedalEvent = {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

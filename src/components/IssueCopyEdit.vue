@@ -119,14 +119,14 @@
                   newPurchase = newPurchaseDefault;
                 "
               >
-                <i-bi-check icon="check" />
+                <i-bi-check />
               </b-button>
               <b-button
                 variant="warning"
                 class="btn-sm"
                 @click.stop="newPurchase.context = false"
               >
-                <i-bi-x icon="x" />
+                <i-bi-x />
               </b-button>
             </v-contextmenu-item>
             <v-contextmenu-item

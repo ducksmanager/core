@@ -71,7 +71,6 @@ alias: [/agrandir/suggestions]
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import SuggestionList from "~/components/SuggestionList.vue";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 

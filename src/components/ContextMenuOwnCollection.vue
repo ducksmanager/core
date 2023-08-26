@@ -62,14 +62,20 @@
               @click.stop.prevent="initialCopies!.copies.splice(copyIndex, 1)"
             /> </template
           ><IssueCopyEdit
-            :copy="copy"
+            :copy="(copy as IssueWithPublicationcodeOptionalId)"
             :copy-index="copyIndex"
-            @update="editedCopies!.copies[copyIndex] = $event" /></b-tab
+            @update="
+              editedCopies!.copies[copyIndex] =
+                $event as IssueWithPublicationcodeOptionalId
+            " /></b-tab
       ></template>
 
       <b-tab v-else key="copy-0">
         <template #title> {{ $t("Exemplaire") }} 1</template>
-        <IssueCopyEdit :copy="initialIssues" @update="editedIssues = $event" />
+        <IssueCopyEdit
+          :copy="initialIssues!"
+          @update="editedIssues = $event as CollectionUpdateMultipleIssues"
+        />
       </b-tab>
       <template v-if="!hasMaxCopies" #tabs-end>
         <b-nav-item

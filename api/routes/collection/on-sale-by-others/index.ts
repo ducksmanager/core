@@ -1,16 +1,15 @@
 import { prismaDm } from "~/prisma";
 import { issue } from "~prisma_clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
+import { IssueWithPublicationcode } from "~types/IssueWithPublicationcode";
 
 export const get = async (
-  ...[req, res]: ExpressCall<{ resBody: Record<string, issue[]> }>
+  ...[req, res]: ExpressCall<{
+    resBody: Record<string, IssueWithPublicationcode[]>;
+  }>
 ) => res.json(await getIssuesForSale(req.user!.id));
 
-export const getIssuesForSale: (
-  buyerId: number
-) => Promise<{ [publicationcode: string]: issue[] }> = async (
-  buyerId: number
-) => {
+export const getIssuesForSale = async (buyerId: number) => {
   const forSale = await prismaDm.$queryRaw<
     {
       id: number;
@@ -50,14 +49,14 @@ export const getIssuesForSale: (
     (await prismaDm.issue.findMany({
       where: { id: { in: forSale.map(({ id }) => id) } },
     })) as issue[]
-  ).reduce(
-    (acc, issue) => ({
+  ).reduce((acc, issue) => {
+    const publicationcode = `${issue.country}/${issue.magazine}`;
+    return {
       ...acc,
-      [`${issue.country}/${issue.magazine}`]: [
-        ...(acc[`${issue.country}/${issue.magazine}`] || []),
-        issue,
+      [publicationcode]: [
+        ...(acc[publicationcode] || []),
+        { ...issue, publicationcode },
       ],
-    }),
-    {} as Record<string, issue[]>
-  );
+    };
+  }, {} as Record<string, IssueWithPublicationcode[]>);
 };

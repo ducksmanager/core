@@ -57,14 +57,25 @@ const {
   currentEdgeHighlighted = null,
   currentEdgeOpened = null,
   edgesUsingSprites = {},
-} = defineProps<{
-  embedded?: boolean;
-  bookcaseTextures: { bookshelf: string; bookcase: string };
-  currentEdgeHighlighted?: number | null;
-  currentEdgeOpened?: BookcaseEdgeWithPopularity | null;
-  edgesUsingSprites?: { [edgeId: number]: string };
-  sortedBookcase: BookcaseEdgeWithPopularity[] | null;
-}>();
+} = defineProps<
+  {
+    bookcaseTextures: { bookshelf: string; bookcase: string };
+    currentEdgeHighlighted?: number | null;
+    currentEdgeOpened?: BookcaseEdgeWithPopularity | null;
+    edgesUsingSprites?: { [edgeId: number]: string };
+  } & (
+    | {
+        embedded?: true;
+        sortedBookcase:
+          | { publicationcode: string; issuenumber: string }[]
+          | null;
+      }
+    | {
+        embedded?: false;
+        sortedBookcase: BookcaseEdgeWithPopularity[] | null;
+      }
+  )
+>();
 
 const MAX_BATCH_SIZE = 50;
 

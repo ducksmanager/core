@@ -16,8 +16,6 @@ import dayjs from "dayjs";
 
 import { IssueWithPublicationcode } from "~/stores/collection";
 
-import IssueList from "./IssueList.vue";
-
 const customIssues: IssueWithPublicationcode[] = [
   {
     id: 167808,
@@ -147,5 +145,3 @@ const customIssues: IssueWithPublicationcode[] = [
   },
 ];
 </script>
-
-

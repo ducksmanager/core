@@ -27,7 +27,7 @@
           :issuenumber="edge.issuenumber"
           hide-condition
         >
-          <Ago :timestamp="edge.timestamp" />
+          <Ago :timestamp="edge.creationDate.getTime()" />
         </Issue>
       </div>
     </template>

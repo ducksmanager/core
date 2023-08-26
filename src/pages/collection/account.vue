@@ -222,8 +222,6 @@ alias: [/collection/compte]
 import axios, { AxiosError } from "axios";
 import { useI18n } from "vue-i18n";
 
-import Accordion from "~/components/Accordion.vue";
-import ScopedErrorTeleport from "~/components/ScopedErrorTeleport.vue";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
 import { call } from "~/util/axios";

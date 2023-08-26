@@ -6,6 +6,7 @@ import { call } from "~/util/axios";
 import {
   authorUser,
   issue,
+  issue_condition,
   purchase,
   subscription,
   user,
@@ -63,6 +64,14 @@ type SubscriptionTransformedStringDates = Omit<
 
 export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
+};
+
+export type QuotedIssue = {
+  publicationcode: string;
+  issuenumber: string;
+  condition: issue_condition;
+  estimation: number;
+  estimationGivenCondition: number;
 };
 
 export const collection = defineStore("collection", () => {
@@ -213,7 +222,7 @@ export const collection = defineStore("collection", () => {
           popularity2 && popularity1 ? popularity2 - popularity1 : 0
         )
     ),
-    quotedIssues = computed(() => {
+    quotedIssues = computed((): QuotedIssue[] | null => {
       const issueQuotations = coa().issueQuotations;
       if (issueQuotations === null) {
         return null;
