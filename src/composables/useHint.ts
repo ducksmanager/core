@@ -28,7 +28,7 @@ export default () => {
         suggestionsStore.acceptSuggestion(
           suggestionsStore.storyversionKindSuggestions[entryurl],
           ({ data }) => data.kind === inferredKind,
-          "ai",
+          { source: "ai", status: "success" },
           (suggestion) => (suggestion.data.panels = result.panels)
         );
       }
@@ -54,6 +54,7 @@ export default () => {
           {
             source: "ai",
             isAccepted: false,
+            status: "success",
           }
         )
     );
@@ -63,7 +64,14 @@ export default () => {
     );
   };
 
-  const applyHintsFromOcr = () => {};
+  const applyHintsFromOcr = () => {
+    // suggestionsStore.acceptSuggestion(
+    //   suggestionsStore.entrySuggestions[entryurl],
+    //   ({ data }) => data.kind === inferredKind,
+    //   { source: "ai", status: "success" },
+    //   (suggestion) => (suggestion.data.panels = result.panels)
+    // );
+  };
 
   return { applyHintsFromKumiko, applyHintsFromCoverSearch, applyHintsFromOcr };
 };

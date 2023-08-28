@@ -32,16 +32,15 @@
             >
               <template
                 v-if="
-                  showAiDetails !== null &&
+                  showAiDetections !== undefined &&
                   widthDisplayRatio &&
                   heightDisplayRatio
                 "
               >
                 <div
-                  v-for="({ bbox: { x, y, width, height } }, idx) in ai
-                    .aiDetails.value[url][
-                    showAiDetails === 'entry' ? 'texts' : 'panels'
-                  ] || []"
+                  v-for="({ bbox: { x, y, width, height } }, idx) in aiDetails[
+                    url
+                  ][/*showAiDetails === 'entry' ? 'texts' :*/ 'panels'] || []"
                   :key="`ocr-match-${idx}`"
                   class="position-absolute ocr-match"
                   :style="{
@@ -60,7 +59,7 @@
     <b-card
       no-body
       class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
-      body-class="flex-grow-1 h-100"
+      body-class="flex-grow-1 w-100 h-100"
     >
       <template #header>
         <div>
@@ -78,8 +77,9 @@
         <IssueSuggestionModal />
         <IssueSuggestionList />
         <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
-        <h3>{{ "Table des matières" }}</h3>
-      </template>
+        <h3>{{ "Table des matières" }}</h3></template
+      >
+
       <b-tabs
         v-if="entries"
         v-model="currentTabIndex"
@@ -87,20 +87,18 @@
         card
         vertical
         class="flex-grow-1"
-        nav-wrapper-class="h-100 flex-grow-1"
-        nav-class="h-100"
+        nav-wrapper-class="w-100 h-100 flex-grow-1"
+        nav-class="w-100 h-100"
       >
         <b-tab
           v-for="(entryurl, index) in Object.keys(entries)"
           :key="entryurl"
           title-link-class="w-100 h-100 d-flex align-items-left"
+          title-item-class="w-100"
           ><template #title
             ><Entry
               :entryurl="entryurl"
-              :editable="currentTabIndex === index"
-              @toggle-ai-details="
-                showAiDetails = $event.toggle ? $event.type : null
-              " /></template
+              :editable="currentTabIndex === index" /></template
         ></b-tab>
       </b-tabs>
     </b-card>
@@ -113,19 +111,23 @@ import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
 import useAi from "~/composables/useAi";
+import { ai as aiStore } from "~/stores/ai";
 import { suggestions } from "~/stores/suggestions";
+import { user } from "~/stores/user";
 
 const route = useRoute();
 const ai = useAi();
+const aiDetails = storeToRefs(aiStore()).aiDetails;
 
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const coverWidth = ref(null as number | null);
 let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
 const currentTabIndex = ref(0 as number);
-const showAiDetails = ref(null as "storyversionKind" | "entry" | null);
 
 const { storyversionKindSuggestions } = storeToRefs(suggestions());
+
+const showAiDetections = computed(() => user().showAiDetectionsOn);
 
 const indexationId = computed(() => route.params.id as string);
 const isSinglePage = computed(() => Object.keys(entries.value).length === 1);
@@ -304,7 +306,6 @@ watch(
       background: transparent;
 
       .page-image {
-        background-size: cover;
         transform: rotate3d(0, 1, 0, -90deg);
         transform-origin: left;
         transition: all 1s linear;

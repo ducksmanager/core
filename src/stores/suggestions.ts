@@ -33,10 +33,18 @@ type Storyversion = Partial<
 
 type Storyjob = Pick<inducks_storyjob, "personcode" | "plotwritartink">;
 
-type SuggestionMeta = {
-  source: "ai" | "user" | "default";
+export type SuggestionMetaAi = {
   isAccepted: boolean;
+  source: "ai";
+  status: "success" | "failure";
 };
+
+type SuggestionMeta =
+  | {
+      source: "user" | "default";
+      isAccepted: boolean;
+    }
+  | SuggestionMetaAi;
 
 export abstract class Suggestion {
   abstract getId(): string | undefined;
@@ -117,14 +125,20 @@ export const suggestions = defineStore("suggestions", () => {
 
   const acceptSuggestion = <T extends Suggestion>(
     suggestions: T[],
-    conditionFn: (suggestion: T) => boolean,
-    type?: SuggestionMeta["source"],
+    isAcceptedconditionFn: (suggestion: T) => boolean,
+    otherMeta?: {
+      source: SuggestionMetaAi["source"];
+      status?: SuggestionMetaAi["status"];
+    },
     addDataFn?: (suggestion: T) => void
   ) => {
     suggestions.forEach((suggestion) => {
-      suggestion.meta.isAccepted = conditionFn(suggestion);
-      if (conditionFn(suggestion) && type) {
-        suggestion.meta.source = type;
+      suggestion.meta.isAccepted = isAcceptedconditionFn(suggestion);
+      if (isAcceptedconditionFn(suggestion) && otherMeta) {
+        suggestion.meta.source = otherMeta.source;
+        if (otherMeta.status) {
+          (suggestion.meta as SuggestionMetaAi).status = otherMeta.status;
+        }
         addDataFn && addDataFn(suggestion);
       }
     });
