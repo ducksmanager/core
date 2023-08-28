@@ -1,3 +1,5 @@
+import { promises as fs } from "node:fs";
+
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import vue from "@vitejs/plugin-vue";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
@@ -16,6 +18,13 @@ export default defineConfig({
     vue(),
     Icons({
       autoInstall: true,
+      customCollections: {
+        // key as the collection name
+        "extra-icons": {
+          brokenLightbulb: () =>
+            fs.readFile("./public/broken-lightbulb.svg", "utf-8"),
+        },
+      },
     }),
     eslintPlugin(),
     AutoImport({

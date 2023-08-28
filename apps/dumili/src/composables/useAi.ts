@@ -1,28 +1,16 @@
 import { storeToRefs } from "pinia";
 
+import { ai as aiStore, BoundariesWithText } from "~/stores/ai";
 import { StoryversionKind, suggestions } from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
-import { Boundaries, KumikoResults } from "~types/KumikoResults";
+import { KumikoResults } from "~types/KumikoResults";
 
 import useHintMaker from "./useHint";
-
-export type BoundariesWithText = {
-  bbox: Boundaries;
-  text: string;
-}[];
 
 export default () => {
   const status = ref("idle" as "idle" | "loading" | "loaded");
 
-  const aiDetails = ref(
-    {} as Record<
-      string /* entry URL */,
-      {
-        panels: Omit<BoundariesWithText[0], "text">[];
-        texts: BoundariesWithText;
-      }
-    >
-  );
+  const aiDetails = storeToRefs(aiStore()).aiDetails;
 
   const hint = useHintMaker();
 
@@ -140,5 +128,5 @@ export default () => {
     status.value = "loaded";
   };
 
-  return { status, aiDetails, runCoverSearch, runKumiko, runStorycodeOcr };
+  return { status, runCoverSearch, runKumiko, runStorycodeOcr };
 };

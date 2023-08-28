@@ -1,78 +1,57 @@
 <template>
-  <b-container fluid class="p-2 border-bottom">
-    <h2>DuMILi</h2>
-    <h3>DucksManager Inducks Little helper</h3>
-  </b-container>
-
-  <b-container
-    fluid
-    class="d-flex flex-column flex-grow-1 justify-content-center"
-  >
-    <template v-if="user">
-      <h4 class="sticky-top">Indexations en cours</h4>
-      <template v-if="currentIndexations">
-        <b-row align-h="center">
-          <b-col
-            v-for="indexation of currentIndexations"
-            :key="indexation.indexation"
-            class="col"
-            cols="12"
-            md="4"
-          >
-            <router-link
-              :to="`/indexation/${indexation.indexation}`"
-              class="d-flex flex-column align-items-center"
-            >
-              <b-img :src="indexation.url" fluid thumbnail />
-              Numéro inconnu
-            </router-link>
-          </b-col>
-        </b-row>
-        <h4 v-if="!currentIndexations.length" fluid>
-          Aucune indexation en cours
-        </h4></template
+  <h4 class="sticky-top">Indexations en cours</h4>
+  <template v-if="currentIndexations">
+    <b-row align-h="center">
+      <b-col
+        v-for="indexation of currentIndexations"
+        :key="indexation.indexation"
+        class="col"
+        cols="12"
+        md="4"
       >
-      <template v-else>Loading...</template>
-    </template>
-    <template v-else>
-      <h4>
-        Vous devez être connecté pour accéder à cette page.
-        <a :href="loginUrl">Se connecter</a>
-      </h4>
-    </template>
-  </b-container>
+        <router-link
+          :to="`/indexation/${indexation.indexation}`"
+          class="d-flex flex-column align-items-center"
+        >
+          <b-img :src="indexation.url" fluid thumbnail />
+          Numéro inconnu
+        </router-link>
+      </b-col>
+    </b-row>
+    <h4 v-if="!currentIndexations.length" fluid>
+      Aucune indexation en cours
+    </h4></template
+  >
+  <template v-else>Loading...</template>
 
-  <b-container v-if="user" fluid class="p-2 border-top">
-    <div>
-      <b-button @click="modal = !modal">Nouvelle indexation</b-button>
-    </div>
-    <b-modal
-      v-if="stepNumber === 0"
-      v-model="modal"
-      title="Indexation"
-      align="center"
-      centered
-      ok-title="Toutes les pages"
-      cancel-title="Seulement certaines pages"
-      @ok.prevent="uploadType = 'all'"
-      @cancel="uploadType = 'some'"
-    >
-      De quelles pages du numéro que vous souhaitez indexer possédez vous des
-      scans ?
-    </b-modal>
-    <upload-widget
-      v-if="showUploadWidget && cloudinaryFolderName"
-      :folder-name="cloudinaryFolderName"
-      @done="router.push(`/indexation/${cloudinaryFolderName}`)"
-      @abort="showUploadWidget = !showUploadWidget"
-  /></b-container>
+  <div>
+    <b-button @click="modal = !modal">Nouvelle indexation</b-button>
+  </div>
+  <b-modal
+    v-if="stepNumber === 0"
+    v-model="modal"
+    title="Indexation"
+    align="center"
+    centered
+    ok-title="Toutes les pages"
+    cancel-title="Seulement certaines pages"
+    @ok.prevent="uploadType = 'all'"
+    @cancel="uploadType = 'some'"
+  >
+    De quelles pages du numéro que vous souhaitez indexer possédez vous des
+    scans ?
+  </b-modal>
+  <upload-widget
+    v-if="showUploadWidget && cloudinaryFolderName"
+    :folder-name="cloudinaryFolderName"
+    @done="router.push(`/indexation/${cloudinaryFolderName}`)"
+    @abort="showUploadWidget = !showUploadWidget"
+  />
 </template>
 
 <script setup lang="ts">
-import { AxiosResponse } from "axios";
 import { ref } from "vue";
 
-import { user as userStore } from "~/stores/user";
 import { defaultApi } from "~/util/api";
 
 const router = useRouter();
@@ -86,30 +65,6 @@ const stepNumber = ref(0);
 const uploadType = ref(null as "all" | "some" | null);
 const showUploadWidget = ref(false as boolean);
 
-const loginUrl = computed(
-  () =>
-    `${import.meta.env.VITE_DM_URL}/login?redirect=${
-      import.meta.env.VITE_FRONTEND_URL
-    }`
-);
-
-const user = computed(() => userStore().user);
-
-defaultApi
-  .get(`${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation`)
-  .then(
-    (
-      res: AxiosResponse<
-        { url: string; context: { custom: { indexation: string } } }[]
-      >
-    ) => {
-      currentIndexations.value = res.data.map(({ url, context }) => ({
-        url,
-        indexation: context.custom.indexation,
-      }));
-    }
-  );
-
 watch(
   () => uploadType.value,
   (newUploadType) => {
@@ -122,4 +77,15 @@ watch(
     }
   }
 );
+
+(async () => {
+  currentIndexations.value = (
+    await defaultApi.get<
+      { url: string; context: { custom: { indexation: string } } }[]
+    >(`${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation`)
+  ).data.map(({ url, context }) => ({
+    url,
+    indexation: context.custom.indexation,
+  }));
+})();
 </script>

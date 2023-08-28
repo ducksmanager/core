@@ -14,8 +14,7 @@
       <slot name="item" v-bind="suggestion as S" />
       <AiSuggestionIcon
         v-if="suggestion.meta.source === 'ai'"
-        @mouseover="onAiItemMouseover"
-        @mouseout="onAiItemMouseout"
+        :status="suggestion.meta.status"
     /></b-dropdown-item>
     <b-dropdown-divider v-if="suggestions.length" />
     <b-dropdown-item><slot name="unknown" /></b-dropdown-item>
@@ -38,8 +37,7 @@
         <slot v-else name="item" v-bind="(getCurrent() as S)" />
         <AiSuggestionIcon
           v-if="getCurrent()?.meta.source === 'ai'"
-          @mouseover="onAiItemMouseover"
-          @mouseout="onAiItemMouseout"
+          :status="(getCurrent()?.meta as SuggestionMetaAi).status"
         /></div
     ></template>
   </b-dropdown>
@@ -48,7 +46,7 @@
 <script setup lang="ts" generic="S extends Suggestion">
 import { useI18n } from "vue-i18n";
 
-import type { Suggestion } from "../stores/suggestions";
+import type { Suggestion, SuggestionMetaAi } from "../stores/suggestions";
 
 const $slots = useSlots();
 
@@ -66,8 +64,6 @@ defineProps<{
   showCustomizeForm: boolean;
   allowCustomizeForm: boolean;
   itemClass?: (suggestion: S) => string[];
-  onAiItemMouseover?: () => void;
-  onAiItemMouseout?: () => void;
 }>();
 
 const { t: $t } = useI18n();

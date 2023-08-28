@@ -1,25 +1,13 @@
 <template>
   <b-row class="d-flex w-100 align-items-center">
     <template v-if="editable">
-      <b-col>
+      <b-col cols="3">
         <suggestion-list
           :suggestions="storyversionKinds"
           :show-customize-form="false"
           :allow-customize-form="false"
           :get-current="() => acceptedStoryversionKind"
           :item-class="(suggestion: StoryversionKindSuggestion) => ( [`kind-${suggestion.data?.kind}`])"
-          @ai-item-mouseover="
-            $emit('toggle-ai-details', {
-              toggle: true,
-              type: 'storyversionKind',
-            })
-          "
-          @ai-item-mouseout="
-            $emit('toggle-ai-details', {
-              toggle: false,
-              type: 'storyversionKind',
-            })
-          "
           @select="
             acceptStoryversionKindSuggestion($event?.data?.kind as string)
           "
@@ -29,15 +17,36 @@
           </template>
           <template #unknown>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
-      ><b-col><StorySuggestionList :entryurl="entryurl" /></b-col>
-      <b-col>
+      ><b-col cols="3"><StorySuggestionList :entryurl="entryurl" /></b-col>
+      <b-col cols="3">
         <input
           type="text"
           class="w-100"
           :value="acceptedEntry?.data.title || ''" /></b-col
-    ></template>
+      ><b-col cols="3">
+        <b-button
+          class="d-flex w-100 space-between"
+          :disabled="!aiDetails[entryurl]"
+          @click="
+            showAiDetections =
+              showAiDetections === undefined ? entryurl : undefined
+          "
+        >
+          <div>{{ $t("AI detections") }}</div>
+          <i-bi-chevron-down />
+        </b-button>
+      </b-col>
+      <template v-if="showAiDetections">
+        <b-col cols="3" class="text-start white-space-normal">{{
+          aiDetails[entryurl].panels
+        }}</b-col>
+        <b-col cols="3" class="text-start white-space-normal">{{
+          aiDetails[entryurl].texts
+        }}</b-col></template
+      ></template
+    >
     <template v-else>
-      <b-col>
+      <b-col cols="3">
         <b-badge
           size="xl"
           :class="{ [`kind-${acceptedStoryversionKind?.data?.kind}`]: true }"
@@ -46,38 +55,40 @@
           }}</b-badge
         ></b-col
       >
-      <b-col>
+      <b-col cols="3">
         <template v-if="acceptedEntry?.data.storyversion?.storycode">{{
           acceptedEntry?.data.storyversion?.storycode
         }}</template
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
-      <b-col
+      <b-col cols="3"
         >{{ title || $t("Sans titre") }}
         <template v-if="part"> - {{ $t("partie") }} {{ part }}</template></b-col
-      ></template
-    >
-    <b-col class="text-center">
-      <small>{{ comment }}</small>
-      &nbsp;<a
-        v-if="urlEncodedStorycode"
-        target="_blank"
-        :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
-      >
-        {{ $t("Détails de l'histoire") }}
-      </a></b-col
+      ><b-col cols="3">
+        <small>{{ comment }}</small>
+        &nbsp;<a
+          v-if="urlEncodedStorycode"
+          target="_blank"
+          :href="`https://coa.inducks.org/story.php?c=${urlEncodedStorycode}`"
+        >
+          {{ $t("Détails de l'histoire") }}
+        </a>
+      </b-col></template
     >
   </b-row>
 </template>
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { ai as aiStore } from "~/stores/ai";
 import {
   StoryversionKind,
   StoryversionKindSuggestion,
 } from "~/stores/suggestions";
 import { suggestions } from "~/stores/suggestions";
+import { user } from "~/stores/user";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
@@ -86,13 +97,13 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-  (
-    e: "toggle-ai-details",
-    params: { toggle: boolean; type: "storyversionKind" }
-  ): void;
+  (params: { toggle: boolean; type: "storyversionKind" }): void;
 }>();
 
 const suggestionsStore = suggestions();
+
+const showAiDetections = storeToRefs(user()).showAiDetectionsOn;
+const aiDetails = storeToRefs(aiStore()).aiDetails;
 
 const acceptedEntry = computed(
   () => suggestionsStore.acceptedEntries[props.entryurl]
