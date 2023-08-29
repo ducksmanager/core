@@ -1,3 +1,6 @@
+import axios from "axios";
+import { call } from "ducksmanager/src/util/axios";
+import { POST__coa__stories__search__withIssues } from "ducksmanager/types/routes";
 import { storeToRefs } from "pinia";
 
 import { ai as aiStore, BoundariesWithText } from "~/stores/ai";
@@ -88,41 +91,46 @@ export default () => {
     status.value = "loading";
 
     const storyFirstPages = Object.entries(storyversionKindSuggestions.value)
-      .map(([url, suggestionsForEntry]) =>
+      .filter(([, suggestionsForEntry]) =>
         suggestionsForEntry.some(
           ({ data, meta }) =>
             meta.isAccepted && data.kind === StoryversionKind.Story
         )
-          ? url
-          : undefined
       )
-      .filter((url) => url !== undefined)
-      .reduce(
-        (acc, url) => ({ ...acc, [url as string]: [] }),
-        {} as Record<string, BoundariesWithText>
-      );
-    for (const url of Object.keys(storyFirstPages)) {
-      const { data } = await defaultApi
-        .get(
-          `${
-            import.meta.env.VITE_BACKEND_URL
-          }/cloudinary/indexation/${indexationId}/ai/ocr/${url}`
-        )
-        .catch((e) => {
-          console.error(e);
-          return { data: [] };
-        })
-        .finally(() => {
-          console.log("Recherche par OCR terminée");
-          status.value = "loaded";
-        });
-      storyFirstPages[url] = data;
-    }
+      .map(([url]) => url);
 
-    for (const [url, ocrResult] of Object.entries(storyFirstPages)) {
-      aiDetails.value[url] = {
-        ...(aiDetails.value[url] || {}),
-        texts: ocrResult,
+    for (const url of storyFirstPages) {
+      const ocrResults = (
+        await defaultApi
+          .get<BoundariesWithText>(
+            `${
+              import.meta.env.VITE_BACKEND_URL
+            }/cloudinary/indexation/${indexationId}/ai/ocr/${url}`
+          )
+          .catch((e) => {
+            console.error(e);
+            return { data: [] };
+          })
+          .finally(() => {
+            console.log("Recherche par OCR terminée");
+            status.value = "loaded";
+          })
+      ).data;
+
+      const possibleStories = (
+        await call(
+          axios,
+          new POST__coa__stories__search__withIssues({
+            reqBody: {
+              keywords: ocrResults.map(({ text }) => text).join(","),
+            },
+          })
+        )
+      ).data;
+
+      aiDetails.value[url!].texts = {
+        ocrResults,
+        possibleStories,
       };
     }
     status.value = "loaded";

@@ -31,7 +31,9 @@ declare module 'vue' {
     BTabs: typeof import('bootstrap-vue-next')['BTabs']
     Entry: typeof import('./src/components/Entry.vue')['default']
     Gallery: typeof import('./src/components/Gallery.vue')['default']
+    IBiArrowRight: typeof import('~icons/bi/arrow-right')['default']
     IBiChevronDown: typeof import('~icons/bi/chevron-down')['default']
+    IBiInfoCircleFill: typeof import('~icons/bi/info-circle-fill')['default']
     IBiLightbulbFill: typeof import('~icons/bi/lightbulb-fill')['default']
     Issue: typeof import('./src/components/Issue.vue')['default']
     IssueSelect: typeof import('./src/components/IssueSelect.vue')['default']
@@ -45,5 +47,8 @@ declare module 'vue' {
     SuggestionList: typeof import('./src/components/SuggestionList.vue')['default']
     TextEditor: typeof import('./src/components/TextEditor.vue')['default']
     UploadWidget: typeof import('./src/components/UploadWidget.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vBTooltip: typeof import('bootstrap-vue-next')['vBTooltip']
   }
 }
