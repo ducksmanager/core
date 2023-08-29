@@ -522,6 +522,8 @@
   "un visiteur anonyme": "an anonymous visitor",
   "votre bibliothèque": "your bookcase",
   "{0} utilisateurs sont inscrits\nsur DucksManager": "{0} users have signed up\non DucksManager",
+  "{panelNumber} cases trouvées": "{panelNumber} detected panels",
+  "{textNumber} textes trouvés": "{textNumber} detected texts",
   "{count} numéro sélectionné|{count} numéros sélectionnés": "{count} selected issue|{count} selected issues",
   "{medal} niveau {level}": "{medal} level {level}",
   "{{issueTitle}} est sorti !": "{{issueTitle}} is out!",

@@ -32,19 +32,43 @@
               showAiDetections === undefined ? entryurl : undefined
           "
         >
-          <div>{{ $t("AI detections") }}</div>
+          <div>{{ $t("Détections AI") }}</div>
           <i-bi-chevron-down />
         </b-button>
       </b-col>
       <template v-if="showAiDetections">
-        <b-col cols="3" class="text-start white-space-normal">{{
-          aiDetails[entryurl].panels
-        }}</b-col>
-        <b-col cols="3" class="text-start white-space-normal">{{
-          aiDetails[entryurl].texts
-        }}</b-col></template
-      ></template
-    >
+        <b-col cols="3" class="text-start white-space-normal">
+          <div>
+            {{
+              $t("{panelNumber} cases trouvées", {
+                panelNumber: aiDetails[entryurl].panels.length,
+              })
+            }}
+            <i-bi-info-circle-fill
+              v-b-tooltip="JSON.stringify(aiDetails[entryurl].panels)"
+            />
+          </div>
+          <div>
+            <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
+            {{
+              getStoryversionKind(
+                storyversionKinds.find(({ meta }) => meta.source === "ai")
+              )
+            }}
+          </div>
+        </b-col>
+        <b-col cols="3" class="text-start white-space-normal">
+          <div>
+            {{
+              $t("{textNumber} textes trouvés", {
+                textNumber: aiDetails[entryurl].texts.ocrResults.length,
+              })
+            }}
+            <i-bi-info-circle-fill
+              v-b-tooltip="JSON.stringify(aiDetails[entryurl].texts)"
+            />
+          </div> </b-col></template
+    ></template>
     <template v-else>
       <b-col cols="3">
         <b-badge

@@ -1,3 +1,4 @@
+import { StorySearchResults } from "ducksmanager/types/StorySearchResults";
 import { defineStore } from "pinia";
 
 import { Boundaries } from "~types/KumikoResults";
@@ -13,7 +14,10 @@ export const ai = defineStore("ai", () => ({
       string /* entry URL */,
       {
         panels: Omit<BoundariesWithText[0], "text">[];
-        texts: BoundariesWithText;
+        texts: {
+          ocrResults: BoundariesWithText;
+          possibleStories: StorySearchResults;
+        };
       }
     >
   ),
