@@ -11,7 +11,7 @@
       <Issue
         :publicationcode="suggestion.data.publicationcode"
         :issuenumber="suggestion.data.issuenumber" /></template
-    ><template #unknown>Numéro inconnu</template>
+    ><template #unknown>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <IssueSelect
         @change="
@@ -22,7 +22,11 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from "vue-i18n";
+
 import { IssueSuggestion, suggestions } from "~/stores/suggestions";
+
+const { t: $t } = useI18n();
 
 const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
