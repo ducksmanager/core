@@ -10,7 +10,7 @@ dotenv.config({
   path: "../.env",
 });
 
-import en from "../../translations/messages.en.json";
+import en from "~~/translations/messages.en.json";
 const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
 export const i18n = new I18n({
   locales: ["fr", "en-US"],

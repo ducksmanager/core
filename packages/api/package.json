@@ -4,10 +4,9 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rm -rf dist/api dist/types && tsc && tsc-alias",
-    "start": "ts-node -r tsconfig-paths/register index.ts",
     "test": "which ts-node",
-    "dev": "nodemon",
-    "generate-route-types": "ts-node -r tsconfig-paths/register generate-route-types.ts && cd .. && node_modules/.bin/eslint --fix types/routes.ts",
+    "start": "nodemon",
+    "generate-route-types": "ts-node -r tsconfig-paths/register generate-route-types.ts && cd ../.. && node_modules/.bin/eslint --fix types/routes.ts",
     "prisma:pull": "ls prisma/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",
     "prisma:generate": "ls prisma/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done"
   },

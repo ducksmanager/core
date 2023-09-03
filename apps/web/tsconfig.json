@@ -18,15 +18,13 @@
       "vite/client",
       "vite-plugin-pages/client",
       "vue/ref-macros",
-      "unplugin-icons/types/vue",
+      "unplugin-icons/types/vue"
     ],
     "paths": {
       "~/*": ["src/*"],
-      "~types/*": ["types/*"],
-      "~emails/*": ["api/emails/*"],
-      "~prisma_clients/*": ["api/dist/prisma/*"],
-      "~prisma_extended_clients/*": ["api/prisma/extended/*"],
-      "~routes/*": ["api/routes/*"]
+      "~~/*": ["../../*"],
+      "~types/*": ["~~/types/*"],
+      "~prisma_clients/*": ["~~/api/dist/prisma/*"]
     }
   },
   "include": [

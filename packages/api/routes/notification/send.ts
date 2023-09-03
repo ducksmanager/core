@@ -10,17 +10,17 @@ import {
   getSuggestions,
 } from "~routes/collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit";
 
-const pusher = new PushNotifications({
-  instanceId: process.env.PUSHER_INSTANCE_ID!,
-  secretKey: process.env.PUSHER_SECRET_KEY!,
-});
-
 const sendSuggestedIssueNotification = async (
   issuecode: string,
   issueTitle: string,
   storyCountPerAuthor: { [personcode: string]: number },
   userToNotify: user
 ) => {
+  const pusher = new PushNotifications({
+    instanceId: process.env.PUSHER_INSTANCE_ID!,
+    secretKey: process.env.PUSHER_SECRET_KEY!,
+  });
+
   const notificationContent = {
     title: i18n.__("{{issueTitle}} est sorti !", {
       issueTitle,

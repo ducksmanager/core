@@ -1,6 +1,6 @@
-import { SaleState } from "~/../types/CollectionUpdate";
 import { prismaDm } from "~/prisma";
 import { issue_condition } from "~prisma_clients/client_dm";
+import { SaleState } from "~types/CollectionUpdate";
 
 export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null
