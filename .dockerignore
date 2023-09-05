@@ -4,5 +4,5 @@
 .idea
 **/Dockerfile*
 **/.env
-api/dist/prisma
+packages/api/dist/prisma
 edges
