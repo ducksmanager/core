@@ -1,5 +1,5 @@
 {
-  "name": "ducksmanager",
+  "name": "web",
   "packageManager": "pnpm@7.4.0",
   "scripts": {
     "build": "vite build",

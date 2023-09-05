@@ -17,7 +17,13 @@ export const i18n = new I18n({
 
   defaultLocale: "en-US",
   staticCatalog: {
-    en,
+    en: Object.entries(en).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: value.replaceAll("{", "{{").replaceAll("}", "}}"),
+      }),
+      {}
+    ),
     fr,
   },
 });

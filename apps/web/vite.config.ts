@@ -15,9 +15,13 @@ import Layouts from "vite-plugin-vue-layouts";
 export default defineConfig({
   resolve: {
     alias: {
+      "~~/": `${path.resolve(__dirname, "../..")}/`,
       "~/": `${path.resolve(__dirname, "src")}/`,
-      "~types/": `${path.resolve(__dirname, "types")}/`,
-      "~prisma_clients/*": `${path.resolve(__dirname, "api/dist/prisma")}/`,
+      "~types/": `${path.resolve(__dirname, "../../types")}/`,
+      "~prisma_clients/*": `${path.resolve(
+        __dirname,
+        "../../packages/api/dist/prisma"
+      )}/`,
     },
   },
   build: {

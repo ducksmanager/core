@@ -1,4 +1,5 @@
 {
+  "name": "ducksmanager",
   "dependencies": {
     "husky": "^8.0.3"
   },

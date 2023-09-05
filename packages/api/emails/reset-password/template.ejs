@@ -1,5 +1,6 @@
 <%= __("Bonjour {{username}},", { username: user.username}) %><br />
-<%- __("Un visiteur a indiqué avoir oublié le mot de passe associé à l'adresse e-mail {{email}}.<br />Si c'est vous qui en êtes à l'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :", {email: user.email}) %><br />
+<%- __("Un visiteur a indiqué avoir oublié le mot de passe associé à l'adresse e-mail {{email}}.", {email: user.email})%><br />
+<%- __("Si c'est vous qui en êtes à l'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :") %><br />
 
 <a href="<%= process.env.WEBSITE_ROOT %>/forgot/<%= token %>">
     <%= __('Mettre à jour mon mot de passe') %>
