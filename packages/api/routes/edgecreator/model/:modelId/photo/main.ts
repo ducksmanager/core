@@ -1,4 +1,4 @@
-import { elementImage } from "~/dist/prisma/client_edgecreator";
+import { elementImage } from "~prisma-clients/client_edgecreator";
 import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 

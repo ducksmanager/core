@@ -1,4 +1,4 @@
-import { edgeModel } from "~/dist/prisma/client_edgecreator";
+import { edgeModel } from "~prisma-clients/client_edgecreator";
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 

@@ -1,7 +1,7 @@
 import { prismaCoa, prismaCoverInfo, prismaDm } from "~/prisma";
-import { Prisma as PrismaCoa } from "~prisma_clients/client_coa";
-import { cover } from "~prisma_clients/client_cover_info";
-import { Prisma } from "~prisma_clients/client_dm";
+import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
+import { cover } from "~prisma-clients/client_cover_info";
+import { Prisma } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { SimpleIssueWithPublication } from "~types/SimpleIssueWithPublication";
 

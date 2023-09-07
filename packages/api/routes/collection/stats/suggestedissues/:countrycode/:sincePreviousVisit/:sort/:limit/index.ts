@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 
 import { prismaCoa, prismaDm, prismaDmStats } from "~/prisma";
-import { userOptionType } from "~prisma_clients/client_dm";
-import { Prisma as PrismaDmStats } from "~prisma_clients/client_dm_stats";
+import { userOptionType } from "~prisma-clients/client_dm";
+import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 import { ExpressCall } from "~routes/_express-call";
 import { getPublicationTitlesFromCodes } from "~routes/coa/list/publications";
 import { IssueSuggestion } from "~types/IssueSuggestion";

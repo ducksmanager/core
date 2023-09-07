@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 
 import { prismaDm } from "~/prisma";
-import { purchase } from "~prisma_clients/client_dm";
+import { purchase } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();

@@ -4,7 +4,7 @@ import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import i18n from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
 import { call, getChunkedRequests } from "~/util/axios";
-import { inducks_issue } from "~prisma_clients/client_coa";
+import { inducks_issue } from "~prisma-clients/client_coa";
 import { InducksIssueDetails } from "~types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 import {

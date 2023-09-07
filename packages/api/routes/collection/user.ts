@@ -3,7 +3,7 @@ import { Response } from "express";
 
 import { prismaDm } from "~/prisma";
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
-import { user } from "~prisma_clients/client_dm";
+import { user } from "~prisma-clients/client_dm";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";

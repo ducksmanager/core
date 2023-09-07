@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 import { prismaDm } from "~/prisma";
-import { user } from "~prisma_clients/client_dm";
+import { user } from "~prisma-clients/client_dm";
 import { User } from "~types/SessionUser";
 
 const EMAIL_REGEX =

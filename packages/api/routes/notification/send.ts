@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 import { prismaDm } from "~/prisma";
 import { i18n } from "~emails/email";
-import { user } from "~prisma_clients/client_dm";
+import { user } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import {
   COUNTRY_CODE_OPTION,

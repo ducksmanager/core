@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 
 import { prismaDm } from "~/prisma";
-import { issue_condition } from "~prisma_clients/client_dm";
+import { issue_condition } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
 import { TransactionResults } from "~types/TransactionResults";

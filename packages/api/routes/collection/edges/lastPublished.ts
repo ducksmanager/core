@@ -1,4 +1,4 @@
-import { edge } from "~prisma_clients/client_dm";
+import { edge } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma_extended_clients/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 

@@ -113,8 +113,8 @@ import { watch } from "vue";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { call } from "~/util/axios";
-import { inducks_person } from "~prisma_clients/client_coa";
-import { authorUser } from "~prisma_clients/client_dm";
+import { inducks_person } from "~prisma-clients/client_coa";
+import { authorUser } from "~prisma-clients/client_dm";
 import {
   DELETE__collection__authors__watched,
   GET__coa__authorsfullnames__search__$partialAuthorName,

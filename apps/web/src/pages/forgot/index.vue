@@ -66,5 +66,3 @@ const sendPasswordToken = async () => {
   }
 };
 </script>
-
-

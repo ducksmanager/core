@@ -34,16 +34,16 @@ const app = express();
   const imports: string[] = [
     "// noinspection ES6PreferShortImport",
     "",
-    'import { Prisma } from "../packages/api/dist/prisma/client_dm";',
+    'import { Prisma } from "~prisma-clients/client_dm";',
     'import { ContractWithMethodAndUrl } from "./Call";',
   ];
   imports.push(
-    readdirSync("../../types")
+    readdirSync("../types")
       .filter((file) => /\.ts$/.test(file) && /^[A-Z]/.test(file[0]))
       .map(
         (file) =>
           `import { ${[
-            ...readFileSync(`../../types/${file}`)
+            ...readFileSync(`../types/${file}`)
               .toString()
               .matchAll(/(?:(?<=export type )|(?<=export interface ))\w+/g)!,
           ].join(", ")} } from "./${file.replace(/\.ts$/, "")}";`
@@ -59,9 +59,7 @@ const app = express();
             ...readFileSync(`prisma/${file}`)
               .toString()
               .matchAll(/(?:(?<=model )|(?<=enum ))[^ ]+/g)!,
-          ].join(
-            ", "
-          )} } from "../packages/api/dist/prisma/client_${file.replaceAll(
+          ].join(", ")} } from "~prisma-clients/client_${file.replaceAll(
             /(\.prisma)|(schema_)/g,
             ""
           )}";`
@@ -103,7 +101,7 @@ const app = express();
       }, routeClassList);
   });
   writeFileSync(
-    "../../types/routes.ts",
+    "../types/routes.ts",
     [
       imports.join("\n"),
       types.join("\n"),

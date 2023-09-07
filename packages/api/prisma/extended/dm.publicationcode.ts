@@ -1,4 +1,4 @@
-import { issue, subscription } from "~prisma_clients/client_dm";
+import { issue, subscription } from "~prisma-clients/client_dm";
 
 export const computePublicationcode = {
   publicationcode: {

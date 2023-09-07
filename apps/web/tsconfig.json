@@ -21,10 +21,9 @@
       "unplugin-icons/types/vue"
     ],
     "paths": {
-      "~~/*": ["../../*"],
       "~/*": ["src/*"],
-      "~types/*": ["../../types/*"],
-      "~prisma_clients/*": ["./packages/api/dist/prisma/*"]
+      "~types/*": ["../../packages/types/*"],
+      "~translations/*": ["../../../translations/*"]
     }
   },
   "include": [

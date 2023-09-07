@@ -1,5 +1,5 @@
 import { prismaDm } from "~/prisma";
-import { Prisma } from "~prisma_clients/client_dm";
+import { Prisma } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { getMedalPoints } from "~routes/collection/points";
 import { MedalPoints } from "~types/MedalPoints";

@@ -288,7 +288,7 @@ import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
 import { call } from "~/util/axios";
-import { inducks_issue } from "~prisma_clients/client_coa";
+import { inducks_issue } from "~prisma-clients/client_coa";
 import { POST__collection__issues__multiple } from "~types/routes";
 const getImagePath = images().getImagePath;
 

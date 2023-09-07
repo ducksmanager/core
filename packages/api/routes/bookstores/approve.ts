@@ -3,7 +3,7 @@ import {
   bookstoreComment,
   user,
   userContributionType,
-} from "~prisma_clients/client_dm";
+} from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 export const post = async (

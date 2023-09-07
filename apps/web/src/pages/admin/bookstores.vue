@@ -29,7 +29,7 @@ meta:
 import axios from "axios";
 
 import { call } from "~/util/axios";
-import { bookstoreComment } from "~prisma_clients/client_dm";
+import { bookstoreComment } from "~prisma-clients/client_dm";
 import { GET__bookstores, POST__bookstores__approve } from "~types/routes";
 import { SimpleBookstore } from "~types/SimpleBookstore";
 

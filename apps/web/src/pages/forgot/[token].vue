@@ -96,5 +96,3 @@ watch(
   { immediate: true }
 );
 </script>
-
-

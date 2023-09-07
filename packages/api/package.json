@@ -2,15 +2,17 @@
   "name": "api",
   "version": "1.0.0",
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "rm -rf dist/api dist/types && tsc && tsc-alias",
+    "build": "pnpm run generate-route-types && rm -rf dist && tsc && tsc-alias",
     "test": "which ts-node",
     "start": "nodemon",
-    "generate-route-types": "ts-node -r tsconfig-paths/register generate-route-types.ts && node_modules/.bin/eslint -c .eslintrc.js --fix ../../types/routes.ts",
+    "generate-route-types": "ts-node -r tsconfig-paths/register generate-route-types.ts && eslint -c .eslintrc.js --fix ../types/routes.ts",
     "prisma:pull": "ls prisma/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",
-    "prisma:generate": "ls prisma/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done"
+    "prisma:generate": "ls prisma/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done && mv dist/prisma/* ../prisma-clients"
   },
   "dependencies": {
+    "~types": "workspace:*",
+    "~prisma-clients": "workspace:*",
+    "~translations": "workspace:*",
     "@prisma/client": "^5.2.0",
     "@pusher/push-notifications-server": "^1.2.6",
     "@sentry/node": "^7.60.1",
@@ -46,7 +48,7 @@
     "@types/express": "^4.17.17",
     "@types/i18n": "^0.13.6",
     "@types/jsonwebtoken": "^9.0.2",
-    "@types/node": "^16.18.39",
+    "@types/node": "^18.0.0",
     "@types/nodemailer": "^6.4.9",
     "prisma": "^5.0.0",
     "tsc-alias": "^1.8.7",

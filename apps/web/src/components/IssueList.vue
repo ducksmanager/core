@@ -272,7 +272,7 @@ import {
   collection as collectionStore,
   IssueWithPublicationcode,
 } from "~/stores/collection";
-import { issue as dm_issue } from "~prisma_clients/client_dm";
+import { issue as dm_issue } from "~prisma-clients/client_dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";

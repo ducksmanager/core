@@ -1,5 +1,5 @@
 import { prismaCoa } from "~/prisma";
-import { Prisma } from "~prisma_clients/client_coa";
+import { Prisma } from "~prisma-clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
 import { IssueCoverDetails } from "~types/IssueCoverDetails";
 

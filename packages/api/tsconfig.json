@@ -17,12 +17,10 @@
     "outDir": "./dist",
     "paths": {
       "~/*": ["*"],
-      "~~/*": ["../../*"],
-      "~types/*": ["../../types/*"],
       "~emails/*": ["emails/*"],
-      "~prisma_clients/*": ["dist/prisma/*"],
       "~prisma_extended_clients/*": ["prisma/extended/*"],
-      "~routes/*": ["routes/*"]
+      "~routes/*": ["routes/*"],
+      "~translations/*": ["../../translations/*"]
     }
   },
   "exclude": ["node_modules"],

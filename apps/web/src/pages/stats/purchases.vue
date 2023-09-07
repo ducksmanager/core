@@ -81,7 +81,7 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection, purchaseWithStringDate } from "~/stores/collection";
-import { issue as dm_issue } from "~prisma_clients/client_dm";
+import { issue as dm_issue } from "~prisma-clients/client_dm";
 
 Chart.register(
   Legend,

@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 
 import { users } from "~/stores/users";
 import { call } from "~/util/axios";
-import { issue, requestedIssue } from "~prisma_clients/client_dm";
+import { issue, requestedIssue } from "~prisma-clients/client_dm";
 import {
   DELETE__collection__on_sale_by_others__requests,
   GET__collection__on_sale_by_others,

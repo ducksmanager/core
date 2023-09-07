@@ -4,7 +4,7 @@
     "husky": "^8.0.3"
   },
   "scripts": {
-    "dev": "pnpm run --filter web start",
+    "dev": "pnpm run --filter web --filter api start",
     "publish": "pnpm --filter api run generate-route-types && pnpm --filter web publish",
     "prepare": "husky install"
   }

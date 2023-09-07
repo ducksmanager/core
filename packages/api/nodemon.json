@@ -1,6 +1,6 @@
 {
   "ignore": ["node_modules"],
-  "watch": ["."],
-  "exec": "npm start",
+  "watch": ["routes"],
+  "exec": "ts-node -r tsconfig-paths/register index.ts",
   "ext": "ts"
 }

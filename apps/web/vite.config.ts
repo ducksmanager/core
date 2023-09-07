@@ -13,20 +13,23 @@ import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
 export default defineConfig({
+  optimizeDeps: {
+    include: ["~types"],
+  },
   resolve: {
+    preserveSymlinks: true,
     alias: {
-      "~~/": `${path.resolve(__dirname, "../..")}/`,
       "~/": `${path.resolve(__dirname, "src")}/`,
-      "~types/": `${path.resolve(__dirname, "../../types")}/`,
-      "~prisma_clients/*": `${path.resolve(
-        __dirname,
-        "../../packages/api/dist/prisma"
-      )}/`,
+      "~types": path.resolve(__dirname, "../../packages/types"),
+      "~translations": path.resolve(__dirname, "../../../translations"),
     },
   },
   build: {
+    commonjsOptions: {
+      include: [/~types/, /node_modules/],
+    },
     rollupOptions: {
-      external: ["~prisma_clients/client_dm"],
+      external: ["~prisma-clients/client_dm"],
     },
   },
   plugins: [
