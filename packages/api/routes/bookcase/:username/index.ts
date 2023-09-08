@@ -1,8 +1,9 @@
-import { prismaDm } from "~/prisma";
-import { user } from "~prisma-clients/client_dm";
+import { prismaDm } from "prisma-clients";
+import { user } from "prisma-clients/client_dm";
+import { BookcaseEdge, BookcaseEdgeSprite } from "types/BookcaseEdge";
+import { User } from "types/SessionUser";
+
 import { ExpressCall } from "~routes/_express-call";
-import { BookcaseEdge, BookcaseEdgeSprite } from "~types/BookcaseEdge";
-import { User } from "~types/SessionUser";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
   sprites?: string;

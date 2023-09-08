@@ -12,5 +12,4 @@ dist
 dist-ssr
 node_modules
 types/routes.ts
-packages/prisma-clients
-!packages/prisma-clients/extended
+packages/prisma-clients/client_*

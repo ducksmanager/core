@@ -17,11 +17,12 @@
 </template>
 
 <script setup lang="ts">
+import { AbstractEvent } from "types/events/AbstractEvent";
+import { CollectionUpdateEvent } from "types/events/CollectionUpdateEvent";
+import { EdgeCreationEvent } from "types/events/EdgeCreationEvent";
+
 import { coa } from "~/stores/coa";
 import { users } from "~/stores/users";
-import { AbstractEvent } from "~types/events/AbstractEvent";
-import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
 
 let isLoaded = $ref(false as boolean);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

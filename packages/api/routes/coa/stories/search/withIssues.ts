@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
+import { StorySearchResults } from "types/StorySearchResults";
 
 import { ExpressCall } from "~routes/_express-call";
-import { StorySearchResults } from "~types/StorySearchResults";
 
 import { getStoriesByKeywords } from "./index";
 

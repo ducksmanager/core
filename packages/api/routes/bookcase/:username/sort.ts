@@ -1,4 +1,5 @@
-import prismaDm from "~prisma_extended_clients/dm.extends";
+import prismaDm from "prisma-clients/extended/dm.extends";
+
 import { ExpressCall } from "~routes/_express-call";
 
 import { checkValidBookcaseUser } from "./index";

@@ -13,9 +13,9 @@
     "up": "taze major -I"
   },
   "dependencies": {
-    "~prisma-clients": "workspace:*",
-    "~types": "workspace:*",
-    "~translations": "workspace:*",
+    "prisma-clients": "workspace:*",
+    "types": "workspace:*",
+    "api-routes": "workspace:*",
     "@bperel/vue3-popper-teleport": "^1.4.3",
     "@mapbox/mapbox-gl-geocoder": "^5.0.1",
     "@popperjs/core": "^2.11.8",

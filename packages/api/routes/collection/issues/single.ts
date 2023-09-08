@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
+import { prismaDm } from "prisma-clients";
+import { CollectionUpdateSingleIssue } from "types/CollectionUpdate";
+import { TransactionResults } from "types/TransactionResults";
 
-import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-import { CollectionUpdateSingleIssue } from "~types/CollectionUpdate";
-import { TransactionResults } from "~types/TransactionResults";
 
 import {
   checkPurchaseIdsBelongToUser,

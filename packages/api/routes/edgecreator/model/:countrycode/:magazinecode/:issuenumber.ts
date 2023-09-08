@@ -1,5 +1,6 @@
-import { edgeModel } from "~prisma-clients/client_edgecreator";
-import { prismaDm, prismaEdgeCreator } from "~/prisma";
+import { prismaDm, prismaEdgeCreator } from "prisma-clients";
+import { edgeModel } from "prisma-clients/client_edgecreator";
+
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (

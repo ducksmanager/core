@@ -170,15 +170,15 @@
 
 <script setup lang="ts">
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import { GET__bookstores, PUT__bookstores } from "api-routes";
 import axios from "axios";
+import { SimpleBookstore } from "types/SimpleBookstore";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { users } from "~/stores/users";
 import { call } from "~/util/axios";
-import { GET__bookstores, PUT__bookstores } from "~types/routes";
-import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 let existingBookstore = $ref(null as SimpleBookstore | null);

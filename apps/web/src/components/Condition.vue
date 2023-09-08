@@ -12,9 +12,10 @@
 </template>
 
 <script setup lang="ts">
+import { issue_condition } from "prisma-clients/client_dm";
+
 import condition from "~/composables/useCondition";
 import { collection } from "~/stores/collection";
-import { issue_condition } from "~prisma-clients/client_dm";
 const {
   issuenumber = null,
   publicationcode = null,

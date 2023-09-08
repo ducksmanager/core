@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
+import { prismaDm } from "prisma-clients";
 
-import { prismaDm } from "~/prisma";
 import EdgePhotoSent from "~emails/edge-photo-sent";
 import { ExpressCall } from "~routes/_express-call";
 

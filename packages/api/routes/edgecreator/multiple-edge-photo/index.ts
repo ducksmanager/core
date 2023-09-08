@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
+import { prismaEdgeCreator } from "prisma-clients";
 
-import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();

@@ -1,12 +1,3 @@
-import { defineStore } from "pinia";
-
-import { getCurrentLocaleShortKey } from "~/composables/useLocales";
-import i18n from "~/i18n";
-import { cachedCoaApi as coaApi } from "~/util/api";
-import { call, getChunkedRequests } from "~/util/axios";
-import { inducks_issue } from "~prisma-clients/client_coa";
-import { InducksIssueDetails } from "~types/InducksIssueDetails";
-import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 import {
   GET__coa__authorsfullnames__$authors,
   GET__coa__list__countries__$locale,
@@ -18,7 +9,16 @@ import {
   GET__coa__quotations__publications,
   POST__coa__issues__decompose,
   POST__coa__list__publications,
-} from "~types/routes";
+} from "api-routes";
+import { defineStore } from "pinia";
+import { inducks_issue } from "prisma-clients/client_coa";
+import { InducksIssueDetails } from "types/InducksIssueDetails";
+import { InducksIssueQuotationSimple } from "types/InducksIssueQuotationSimple";
+
+import { getCurrentLocaleShortKey } from "~/composables/useLocales";
+import i18n from "~/i18n";
+import { cachedCoaApi as coaApi } from "~/util/api";
+import { call, getChunkedRequests } from "~/util/axios";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

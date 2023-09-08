@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
+import { prismaDm } from "prisma-clients";
+import { EditSubscription } from "types/EditSubscription";
 
-import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-import { EditSubscription } from "~types/EditSubscription";
 
 import { upsertSubscription } from "./index";
 

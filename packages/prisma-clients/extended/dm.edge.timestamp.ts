@@ -1,4 +1,4 @@
-import { edge } from "~prisma-clients/client_dm";
+import { edge } from "../client_dm";
 
 export const computeTimestamp = {
   timestamp: {

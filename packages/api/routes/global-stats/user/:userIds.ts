@@ -1,9 +1,10 @@
-import { prismaDm } from "~/prisma";
-import { Prisma } from "~prisma-clients/client_dm";
+import { prismaDm } from "prisma-clients";
+import { Prisma } from "prisma-clients/client_dm";
+import { MedalPoints } from "types/MedalPoints";
+import { SimpleUserWithQuickStats } from "types/SimpleUserWithQuickStats";
+
 import { ExpressCall } from "~routes/_express-call";
 import { getMedalPoints } from "~routes/collection/points";
-import { MedalPoints } from "~types/MedalPoints";
-import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 
 export const get = async (
   ...[req, res]: ExpressCall<{

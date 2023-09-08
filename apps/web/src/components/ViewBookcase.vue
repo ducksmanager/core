@@ -155,6 +155,8 @@
 </template>
 
 <script setup lang="ts">
+import { BookcaseEdgeSprite } from "types/BookcaseEdge";
+import { SimpleIssue } from "types/SimpleIssue";
 import { watch } from "vue";
 import { RouterLink } from "vue-router";
 
@@ -165,8 +167,6 @@ import {
 import { coa as coaStore } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
-import { BookcaseEdgeSprite } from "~types/BookcaseEdge";
-import { SimpleIssue } from "~types/SimpleIssue";
 
 const route = useRoute();
 

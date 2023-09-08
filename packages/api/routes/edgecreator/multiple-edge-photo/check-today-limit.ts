@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
+import { prismaEdgeCreator } from "prisma-clients";
 
-import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = [

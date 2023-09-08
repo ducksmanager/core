@@ -1,7 +1,8 @@
-import { prismaCoa } from "~/prisma";
-import { Prisma } from "~prisma-clients/client_coa";
+import { prismaCoa } from "prisma-clients";
+import { Prisma } from "prisma-clients/client_coa";
+import { IssueCoverDetails } from "types/IssueCoverDetails";
+
 import { ExpressCall } from "~routes/_express-call";
-import { IssueCoverDetails } from "~types/IssueCoverDetails";
 
 export const get = async (
   ...[req, res]: ExpressCall<{

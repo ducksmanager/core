@@ -1,7 +1,8 @@
-import { prismaDm } from "~/prisma";
+import { prismaDm } from "prisma-clients";
+import { PopularIssue } from "types/PopularIssue";
+import { SimplePopularity } from "types/SimplePopularity";
+
 import { ExpressCall } from "~routes/_express-call";
-import { PopularIssue } from "~types/PopularIssue";
-import { SimplePopularity } from "~types/SimplePopularity";
 
 export const get = async (
   ...[req, res]: ExpressCall<{ resBody: SimplePopularity[] }>

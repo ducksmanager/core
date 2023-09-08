@@ -1,9 +1,10 @@
-import { prismaDm } from "~/prisma";
+import { prismaDm } from "prisma-clients";
 import {
   bookstoreComment,
   user,
   userContributionType,
-} from "~prisma-clients/client_dm";
+} from "prisma-clients/client_dm";
+
 import { ExpressCall } from "~routes/_express-call";
 
 export const post = async (

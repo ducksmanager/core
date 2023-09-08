@@ -22,8 +22,9 @@
     ],
     "paths": {
       "~/*": ["src/*"],
-      "~types/*": ["../../packages/types/*"],
-      "~translations/*": ["../../../translations/*"]
+      "types/*": ["../../packages/types/*"],
+      "api-routes/*": ["../../packages/api-routes/*"],
+      "~translations/*": ["../../translations/*"]
     }
   },
   "include": [

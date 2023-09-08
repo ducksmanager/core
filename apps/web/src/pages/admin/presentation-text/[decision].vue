@@ -6,7 +6,7 @@ meta:
 import axios from "axios";
 
 import { call } from "~/util/axios";
-import { POST__presentation_text__$decision } from "~types/routes";
+import { POST__presentation_text__$decision } from "api-routes";
 
 let router = useRouter();
 

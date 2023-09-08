@@ -1,3 +1,8 @@
 {
-  "name": "~prisma-clients"
+  "name": "prisma-clients",
+  "module": "index.ts",
+  "scripts": {
+    "prisma:pull": "ls schemas/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",
+    "prisma:generate": "rm -rf $PWD/client_* && ls schemas/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done && mv dist/prisma/* ."
+  }
 }

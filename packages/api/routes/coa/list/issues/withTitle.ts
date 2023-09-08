@@ -1,4 +1,5 @@
-import { prismaCoa } from "~/prisma";
+import { prismaCoa } from "prisma-clients";
+
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (

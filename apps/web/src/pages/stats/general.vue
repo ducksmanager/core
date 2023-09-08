@@ -169,7 +169,7 @@ import {
 } from "~/stores/collection";
 import { users } from "~/stores/users";
 import { call } from "~/util/axios";
-import { GET__global_stats__user__collection__rarity } from "~types/routes";
+import { GET__global_stats__user__collection__rarity } from "api-routes";
 
 const collection = collectionStore();
 const { getConditionLabel } = condition();

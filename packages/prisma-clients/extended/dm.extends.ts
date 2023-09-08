@@ -1,4 +1,4 @@
-import { prismaDm } from "../../prisma";
+import { prismaDm } from "../prisma";
 import { computeTimestamp } from "./dm.edge.timestamp";
 import { computePublicationcode } from "./dm.publicationcode";
 

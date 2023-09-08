@@ -1,6 +1,7 @@
-import { prismaDm } from "~/prisma";
+import { prismaDm } from "prisma-clients";
+import { BookcaseContributor } from "types/BookcaseContributor";
+
 import { ExpressCall } from "~routes/_express-call";
-import { BookcaseContributor } from "~types/BookcaseContributor";
 
 export const get = async (
   ...[, res]: ExpressCall<{ resBody: BookcaseContributor[] }>

@@ -1,7 +1,8 @@
-import { prismaDm } from "~/prisma";
-import { Prisma } from "~prisma-clients/client_dm";
+import { prismaDm } from "prisma-clients";
+import { Prisma } from "prisma-clients/client_dm";
+import { MedalPoints } from "types/MedalPoints";
+
 import { ExpressCall } from "~routes/_express-call";
-import { MedalPoints } from "~types/MedalPoints";
 
 export const getMedalPoints = async (userIds: number[]): Promise<MedalPoints> =>
   (

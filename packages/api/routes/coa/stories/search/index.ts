@@ -1,11 +1,11 @@
 import bodyParser from "body-parser";
+import { prismaCoa } from "prisma-clients";
+import { Prisma } from "prisma-clients/client_coa";
+import { SimpleIssue } from "types/SimpleIssue";
+import { SimpleStory } from "types/SimpleStory";
+import { StorySearchResults } from "types/StorySearchResults";
 
-import { prismaCoa } from "~/prisma";
-import { Prisma } from "~prisma-clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
-import { SimpleIssue } from "~types/SimpleIssue";
-import { SimpleStory } from "~types/SimpleStory";
-import { StorySearchResults } from "~types/StorySearchResults";
 
 const parseForm = bodyParser.json();
 
