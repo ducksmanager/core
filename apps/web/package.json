@@ -5,7 +5,6 @@
     "build": "vite build",
     "lint": "eslint --fix --cache .",
     "preview": "vite preview",
-    "publish": "cp package.json package-real.json && mv package-publish.json package.json && pnpm publish --no-git-checks; mv package.json package-publish.json && mv package-real.json package.json",
     "start": "concurrently -n vite,vue-tsc \"vite --port 8001\" \"vue-tsc --noEmit --watch\"",
     "story:dev": "histoire dev",
     "test": "vitest",

@@ -5,7 +5,6 @@
   },
   "scripts": {
     "dev": "pnpm run --filter web --filter api start",
-    "publish": "pnpm --filter api run generate-route-types && pnpm --filter web publish",
     "prepare": "husky install"
   }
 }

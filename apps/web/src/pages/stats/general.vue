@@ -157,6 +157,7 @@
 </template>
 
 <script setup lang="ts">
+import { GET__global_stats__user__collection__rarity } from "api-routes";
 import axios from "axios";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -169,7 +170,6 @@ import {
 } from "~/stores/collection";
 import { users } from "~/stores/users";
 import { call } from "~/util/axios";
-import { GET__global_stats__user__collection__rarity } from "api-routes";
 
 const collection = collectionStore();
 const { getConditionLabel } = condition();
