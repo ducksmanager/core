@@ -1,12 +1,12 @@
 import axios from "axios";
 import bodyParser from "body-parser";
-import { prismaCoa, prismaCoverInfo } from "prisma-clients";
+
+import { prismaCoa, prismaCoverInfo } from "~/prisma";
+import { ExpressCall } from "~routes/_express-call";
 import {
   CoverSearchResults,
   SimilarImagesResult,
-} from "types/CoverSearchResults";
-
-import { ExpressCall } from "~routes/_express-call";
+} from "~types/CoverSearchResults";
 
 const parseForm = bodyParser.json();
 

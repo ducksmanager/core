@@ -1,4 +1,4 @@
-import { user } from "prisma-clients/client_dm";
+import { user } from "~prisma-clients/client_dm";
 
 import { Email, i18n } from "~emails/email";
 

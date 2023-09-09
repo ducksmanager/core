@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { prismaDm } from "prisma-clients";
+import { prismaDm } from "~/prisma";
 
 import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "~emails/presentation-sentence-refused";

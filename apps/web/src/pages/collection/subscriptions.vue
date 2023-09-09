@@ -86,9 +86,9 @@ import {
   DELETE__collection__subscriptions__$id,
   POST__collection__subscriptions__$id,
   PUT__collection__subscriptions,
-} from "api-routes";
+} from "~api-routes";
 import axios from "axios";
-import { EditSubscription } from "types/EditSubscription";
+import { EditSubscription } from "~types/EditSubscription";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";

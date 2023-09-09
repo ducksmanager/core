@@ -3,7 +3,8 @@ import {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { Call, ContractWithMethodAndUrl } from "types/Call";
+
+import { Call, ContractWithMethodAndUrl } from "~types/Call";
 
 type MyCall = Call<
   unknown,

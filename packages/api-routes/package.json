@@ -1,11 +1,12 @@
 {
-  "name": "api-routes",
+  "name": "~api-routes",
   "scripts": {
+    "dev": "pnpm run build",
     "build": "ts-node -r tsconfig-paths/register generate-route-types.ts && eslint -c .eslintrc.js --fix index.ts"
   },
   "dependencies": {
-    "prisma-clients": "workspace:*",
-    "types": "workspace:*",
+    "~prisma-clients": "workspace:*",
+    "~types": "workspace:*",
     "ts-node": "^10.9.1",
     "express": "^4.18.2",
     "express-file-routing": "^3.0.2"

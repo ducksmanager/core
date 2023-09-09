@@ -219,18 +219,18 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import {
-  DELETE__collection__user,
-  POST__collection__empty,
-  POST__collection__user,
-} from "api-routes";
 import axios, { AxiosError } from "axios";
-import { ScopedError } from "types/ScopedError";
+import { ScopedError } from "~types/ScopedError";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
 import { call } from "~/util/axios";
+import {
+  DELETE__collection__user,
+  POST__collection__empty,
+  POST__collection__user,
+} from "~api-routes";
 const getImagePath = images().getImagePath;
 
 const collection = collectionStore();

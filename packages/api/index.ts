@@ -17,6 +17,10 @@ dotenv.config({
   path: "../.env",
 });
 
+dotenv.config({
+  path: "./.env",
+});
+
 const port = 3000;
 
 Sentry.init({

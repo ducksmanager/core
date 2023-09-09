@@ -4,11 +4,11 @@
   "scripts": {
     "build": "rm -rf dist && tsc && tsc-alias",
     "test": "which ts-node",
-    "start": "nodemon"
+    "dev": "nodemon"
   },
   "dependencies": {
-    "types": "workspace:*",
-    "prisma-clients": "workspace:*",
+    "~types": "workspace:*",
+    "~prisma-clients": "workspace:*",
     "@prisma/client": "^5.2.0",
     "@pusher/push-notifications-server": "^1.2.6",
     "@sentry/node": "^7.60.1",

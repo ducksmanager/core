@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { PublicationTitles } from "types/PublicationTitles";
+import { PublicationTitles } from "~types/PublicationTitles";
 
 import { ExpressCall } from "~routes/_express-call";
 

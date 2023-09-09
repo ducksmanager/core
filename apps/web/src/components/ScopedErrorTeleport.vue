@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ScopedError } from "types/ScopedError";
+import { ScopedError } from "~types/ScopedError";
 const { error } = defineProps<{
   error: ScopedError;
 }>();

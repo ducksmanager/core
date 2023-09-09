@@ -117,18 +117,18 @@ meta:
 </template>
 
 <script setup lang="ts">
-import {
-  GET__edges__published__data,
-  GET__edges__wanted__data,
-} from "api-routes";
 import axios from "axios";
-import { WantedEdge } from "types/WantedEdge";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { images } from "~/stores/images";
 import { call } from "~/util/axios";
+import {
+  GET__edges__published__data,
+  GET__edges__wanted__data,
+} from "~api-routes";
+import { WantedEdge } from "~types/WantedEdge";
 const getImagePath = images().getImagePath;
 
 let hasData = $ref(false as boolean);

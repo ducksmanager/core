@@ -107,20 +107,20 @@
 </template>
 
 <script setup lang="ts">
-import {
-  DELETE__collection__authors__watched,
-  GET__coa__authorsfullnames__search__$partialAuthorName,
-  POST__collection__authors__watched,
-  PUT__collection__authors__watched,
-} from "api-routes";
 import axios from "axios";
-import { inducks_person } from "prisma-clients/client_coa";
-import { authorUser } from "prisma-clients/client_dm";
 import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { call } from "~/util/axios";
+import {
+  DELETE__collection__authors__watched,
+  GET__coa__authorsfullnames__search__$partialAuthorName,
+  POST__collection__authors__watched,
+  PUT__collection__authors__watched,
+} from "~api-routes";
+import { inducks_person } from "~prisma-clients/client_coa";
+import { authorUser } from "~prisma-clients/client_dm";
 
 const { watchedAuthors } = defineProps<{
   watchedAuthors: authorUser[];

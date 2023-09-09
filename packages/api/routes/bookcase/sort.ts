@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { prismaDm } from "prisma-clients";
+import { prismaDm } from "~/prisma";
 
 import { authenticateToken } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";

@@ -4,7 +4,8 @@
     "husky": "^8.0.3"
   },
   "scripts": {
-    "dev": "pnpm run --filter web --filter api start",
+    "dev": "pnpm run --filter web --filter api... dev",
+    "build": "pnpm run -r build",
     "prepare": "husky install"
   }
 }

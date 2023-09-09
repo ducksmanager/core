@@ -1,3 +1,20 @@
+import axios from "axios";
+import Cookies from "js-cookie";
+import { defineStore } from "pinia";
+import {
+  authorUser,
+  issue,
+  issue_condition,
+  purchase,
+  subscription,
+  user,
+} from "~prisma-clients/client_dm";
+import {
+  CollectionUpdateMultipleIssues,
+  CollectionUpdateSingleIssue,
+} from "~types/CollectionUpdate";
+
+import { call } from "~/util/axios";
 import {
   DELETE__collection__purchases__$id,
   GET__collection__authors__watched,
@@ -14,24 +31,7 @@ import {
   POST__collection__lastvisit,
   POST__collection__options__$optionName,
   PUT__collection__purchases,
-} from "api-routes";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { defineStore } from "pinia";
-import {
-  authorUser,
-  issue,
-  issue_condition,
-  purchase,
-  subscription,
-  user,
-} from "prisma-clients/client_dm";
-import {
-  CollectionUpdateMultipleIssues,
-  CollectionUpdateSingleIssue,
-} from "types/CollectionUpdate";
-
-import { call } from "~/util/axios";
+} from "~api-routes";
 
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";

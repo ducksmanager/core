@@ -155,8 +155,8 @@
 </template>
 
 <script setup lang="ts">
-import { BookcaseEdgeSprite } from "types/BookcaseEdge";
-import { SimpleIssue } from "types/SimpleIssue";
+import { BookcaseEdgeSprite } from "~types/BookcaseEdge";
+import { SimpleIssue } from "~types/SimpleIssue";
 import { watch } from "vue";
 import { RouterLink } from "vue-router";
 

@@ -75,13 +75,13 @@ import {
   Tooltip,
 } from "chart.js";
 import dayjs from "dayjs";
-import { issue as dm_issue } from "prisma-clients/client_dm";
 import { watch } from "vue";
 import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection, purchaseWithStringDate } from "~/stores/collection";
+import { issue as dm_issue } from "~prisma-clients/client_dm";
 
 Chart.register(
   Legend,

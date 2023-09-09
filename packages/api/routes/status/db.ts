@@ -4,8 +4,7 @@ import {
   prismaDm,
   prismaDmStats,
   prismaEdgeCreator,
-} from "prisma-clients";
-
+} from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (

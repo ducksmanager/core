@@ -1,11 +1,11 @@
 import bodyParser from "body-parser";
-import { prismaDm } from "prisma-clients";
+import { prismaDm } from "~/prisma";
 import {
   bookstoreComment,
   edge,
   user,
   userContribution,
-} from "prisma-clients/client_dm";
+} from "~prisma-clients/client_dm";
 
 import { ExpressCall } from "~routes/_express-call";
 

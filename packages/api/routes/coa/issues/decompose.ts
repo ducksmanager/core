@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
-import { prismaCoa } from "prisma-clients";
-import { inducks_issue } from "prisma-clients/client_coa";
+import { inducks_issue } from "~prisma-clients/client_coa";
 
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();

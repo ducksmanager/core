@@ -1,8 +1,8 @@
-import { prismaDm } from "prisma-clients";
-import { issue } from "prisma-clients/client_dm";
-import { IssueWithPublicationcode } from "types/IssueWithPublicationcode";
+import { issue } from "~prisma-clients/client_dm";
 
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
+import { IssueWithPublicationcode } from "~types/IssueWithPublicationcode";
 
 export const get = async (
   ...[req, res]: ExpressCall<{

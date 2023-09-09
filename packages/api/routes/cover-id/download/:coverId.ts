@@ -1,5 +1,5 @@
 import https from "https";
-import { prismaCoverInfo } from "prisma-clients";
+import { prismaCoverInfo } from "~/prisma";
 
 import { ExpressCall } from "~routes/_express-call";
 

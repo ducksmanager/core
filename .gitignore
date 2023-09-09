@@ -11,5 +11,5 @@
 dist
 dist-ssr
 node_modules
-types/routes.ts
+packages/api-routes/index.ts
 packages/prisma-clients/client_*

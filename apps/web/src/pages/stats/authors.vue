@@ -58,7 +58,7 @@ alias: [/auteurs]
 </template>
 
 <script setup lang="ts">
-import { GET__collection__stats__watchedauthorsstorycount } from "api-routes";
+import { GET__collection__stats__watchedauthorsstorycount } from "~api-routes";
 import axios from "axios";
 import {
   BarController,
@@ -72,7 +72,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { PopularIssue } from "types";
+import { PopularIssue } from "~types";
 import { watch } from "vue";
 import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";

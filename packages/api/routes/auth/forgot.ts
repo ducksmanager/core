@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
-import { prismaDm } from "prisma-clients";
 
+import { prismaDm } from "~/prisma";
 import ResetPassword from "~emails/reset-password";
 import { ExpressCall } from "~routes/_express-call";
 

@@ -1,7 +1,7 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
-import { prismaDm } from "prisma-clients";
-import { user } from "prisma-clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { user } from "~prisma-clients/client_dm";
 
 import { i18n } from "~emails/email";
 import { ExpressCall } from "~routes/_express-call";

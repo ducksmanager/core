@@ -1,6 +1,5 @@
-import { edge } from "prisma-clients/client_dm";
-import prismaDm from "prisma-clients/extended/dm.extends";
-
+import { edge } from "~prisma-clients/client_dm";
+import prismaDm from "~prisma-clients/extended/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (...[req, res]: ExpressCall<{ resBody: edge[] }>) => {

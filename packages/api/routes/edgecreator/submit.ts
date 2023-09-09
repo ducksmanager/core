@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { prismaDm } from "prisma-clients";
+import { prismaDm } from "~/prisma";
 
 import EdgeModelReady from "~emails/edge-model-ready";
 import { ExpressCall } from "~routes/_express-call";

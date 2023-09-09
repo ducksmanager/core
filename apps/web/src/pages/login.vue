@@ -59,12 +59,12 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { GET__csrf, POST__login } from "api-routes";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
 import { call } from "~/util/axios";
+import { GET__csrf, POST__login } from "~api-routes";
 
 const collectionStore = collection();
 

@@ -19,7 +19,7 @@
       "~/*": ["../api/*"],
       "~emails/*": ["../api/emails/*"],
       "~routes/*": ["../api/routes/*"],
-      "~translations/*": ["../../translations/*"]
+      "~types/*": ["../../packages/types/*"]
     }
   },
   "exclude": ["node_modules"],

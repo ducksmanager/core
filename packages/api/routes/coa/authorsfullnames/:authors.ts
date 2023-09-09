@@ -1,5 +1,4 @@
-import { prismaCoa } from "prisma-clients";
-
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 export const getAuthorFullNames = async (

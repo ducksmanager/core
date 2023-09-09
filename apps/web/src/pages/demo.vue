@@ -6,12 +6,12 @@ meta:
 <template><div></div></template>
 
 <script setup lang="ts">
-import { POST__demo } from "api-routes";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
 import { call } from "~/util/axios";
+import { POST__demo } from "~api-routes";
 
 const collectionStore = collection();
 

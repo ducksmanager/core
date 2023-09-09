@@ -1,6 +1,6 @@
-import { prismaCoa } from "prisma-clients";
-import { SimpleEntry } from "types/SimpleEntry";
+import { SimpleEntry } from "~types/SimpleEntry";
 
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 const getEntries = async (

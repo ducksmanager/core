@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
-import { prismaDm } from "prisma-clients";
 
+import { prismaDm } from "~/prisma";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { loginAs } from "~routes/auth/util";

@@ -1,6 +1,6 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
-import { prismaDm } from "prisma-clients";
-import { edge } from "prisma-clients/client_dm";
+import { prismaDm } from "~/prisma";
+import { edge } from "~prisma-clients/client_dm";
 
 import { ExpressCall } from "~routes/_express-call";
 

@@ -254,8 +254,7 @@
   </template>
 </template>
 <script setup lang="ts">
-import { issue_condition } from "prisma-clients/client_dm";
-import { CollectionUpdateMultipleIssues } from "types/CollectionUpdate";
+import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
 import { useI18n } from "vue-i18n";
 
 import cond from "~/composables/useCondition";
@@ -264,6 +263,7 @@ import {
   IssueWithPublicationcodeOptionalId,
 } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
+import { issue_condition } from "~prisma-clients/client_dm";
 
 const { conditions } = cond();
 

@@ -83,13 +83,9 @@
 </template>
 
 <script setup lang="ts">
-import {
-  GET__coa__list__issues__by_storycode,
-  POST__coa__stories__search__withIssues,
-} from "api-routes";
 import axios from "axios";
-import { SimpleIssue } from "types/SimpleIssue";
-import { SimpleStory } from "types/SimpleStory";
+import { SimpleIssue } from "~types/SimpleIssue";
+import { SimpleStory } from "~types/SimpleStory";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -100,6 +96,10 @@ import {
   IssueWithPublicationcode,
 } from "~/stores/collection";
 import { call } from "~/util/axios";
+import {
+  GET__coa__list__issues__by_storycode,
+  POST__coa__stories__search__withIssues,
+} from "~api-routes";
 
 const { withTitle = true, withStoryLink = true } = defineProps<{
   withTitle?: boolean;

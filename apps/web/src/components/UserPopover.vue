@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { SimpleUserWithQuickStats } from "types/SimpleUserWithQuickStats";
+import { SimpleUserWithQuickStats } from "~types/SimpleUserWithQuickStats";
 import { useI18n } from "vue-i18n";
 
 import { images } from "~/stores/images";

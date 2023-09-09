@@ -1,8 +1,9 @@
 import { parse } from "csv-parse/sync";
 import * as fs from "fs";
 import path from "path";
-import { prismaDm } from "prisma-clients";
-import { user } from "prisma-clients/client_dm";
+import { user } from "~prisma-clients/client_dm";
+
+import { prismaDm } from "~/prisma";
 
 import { conditionToEnum } from "../collection/issues/_common";
 

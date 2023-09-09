@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../dist/prisma/client_cover_info"
+  provider      = "prisma-client-js"
+  output        = "../client_cover_info"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
@@ -11,11 +11,10 @@ datasource db {
 
 model coverImport {
   coverId     Int       @id @default(autoincrement()) @map("coverid")
-  importedAt  DateTime? @db.DateTime(0)               @map("imported")
-  importError String?   @db.VarChar(200)              @map("import_error")
+  importedAt  DateTime? @map("imported") @db.DateTime(0)
+  importError String?   @map("import_error") @db.VarChar(200)
 
   @@unique([coverId, importedAt, importError], map: "uniquefieldset_cover_imports")
-
   @@map("cover_imports")
 }
 
@@ -26,6 +25,5 @@ model cover {
   url       String @db.VarChar(98)
 
   @@unique([issuecode, url], map: "uniquefieldset_covers")
-
   @@map("covers")
 }

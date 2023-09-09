@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { GET__global_stats__user__collection__rarity } from "api-routes";
+import { GET__global_stats__user__collection__rarity } from "~api-routes";
 import axios from "axios";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";

@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { prismaDm } from "prisma-clients";
 
+import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 import { loginAs } from "./util";

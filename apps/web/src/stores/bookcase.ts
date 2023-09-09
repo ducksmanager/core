@@ -1,15 +1,15 @@
+import axios, { AxiosError } from "axios";
+import { defineStore } from "pinia";
+
+import { call } from "~/util/axios";
 import {
   GET__bookcase__$username,
   GET__bookcase__$username__options,
   GET__bookcase__$username__sort,
   POST__bookcase__options,
   POST__bookcase__sort,
-} from "api-routes";
-import axios, { AxiosError } from "axios";
-import { defineStore } from "pinia";
-import { BookcaseEdge } from "types/BookcaseEdge";
-
-import { call } from "~/util/axios";
+} from "~api-routes";
+import { BookcaseEdge } from "~types/BookcaseEdge";
 
 import { collection } from "./collection";
 

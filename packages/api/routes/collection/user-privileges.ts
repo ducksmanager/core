@@ -1,6 +1,5 @@
-import { prismaDm } from "prisma-clients";
-import { userPermission } from "prisma-clients/client_dm";
-
+import { prismaDm } from "~/prisma";
+import { userPermission } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (

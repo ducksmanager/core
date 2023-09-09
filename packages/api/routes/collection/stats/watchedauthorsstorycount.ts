@@ -1,8 +1,7 @@
-import { prismaDmStats } from "prisma-clients";
-import { AuthorsDetails } from "types/AuthorsDetails";
-
+import { prismaDmStats } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 import { getAuthorFullNames } from "~routes/coa/authorsfullnames/:authors";
+import { AuthorsDetails } from "~types/AuthorsDetails";
 
 const getStoryCountPerAuthor = async (
   personcodes: string[]

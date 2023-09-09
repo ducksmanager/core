@@ -1,6 +1,6 @@
-import { prismaCoa } from "prisma-clients";
-import { SimpleIssue } from "types/SimpleIssue";
+import { SimpleIssue } from "~types/SimpleIssue";
 
+import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (

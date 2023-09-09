@@ -45,7 +45,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { POST__auth__forgot } from "api-routes";
+import { POST__auth__forgot } from "~api-routes";
 import axios, { AxiosError } from "axios";
 import { useI18n } from "vue-i18n";
 
