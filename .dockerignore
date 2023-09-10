@@ -1,8 +1,6 @@
 **/dist
 **/node_modules
+**/Dockerfile*
 .git
 .idea
-**/Dockerfile*
-**/.env
-packages/api/dist/prisma
-edges
+packages/prisma-clients/client_*
