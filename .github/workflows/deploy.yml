@@ -13,7 +13,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@master
 
-      - name: Download .env file
+      - name: Download web .env file
         uses: nicklasfrahm/scp-action@main
         with:
           direction: download
@@ -21,8 +21,19 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager2/.env.prod.local
-          target: .env.prod.local
+          source: /home/bperel/workspace/DucksManager2/apps/web/.env.prod.local
+          target: apps/web/.env.prod.local
+
+      - name: Download api .env file
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: download
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: /home/bperel/workspace/DucksManager2/packages/api/.env.prod.local
+          target: packages/api/.env.prod.local
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
