@@ -29,10 +29,10 @@
 </template>
 
 <script lang="ts" setup>
-import { GET__cover_id__download__$coverId } from "ducksmanager/types/routes";
 import { storeToRefs } from "pinia";
 
 import { suggestions } from "~/stores/suggestions";
+import { GET__cover_id__download__$coverId } from "~api-routes";
 
 const { acceptSuggestion, rejectAllSuggestions } = suggestions();
 const { hasPendingIssueSuggestions, issueSuggestions } = storeToRefs(

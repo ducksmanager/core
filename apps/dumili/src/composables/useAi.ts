@@ -1,11 +1,11 @@
 import axios from "axios";
-import { call } from "ducksmanager/src/util/axios";
-import { POST__coa__stories__search__withIssues } from "ducksmanager/types/routes";
 import { storeToRefs } from "pinia";
+import { call } from "web/src/util/axios";
 
 import { ai as aiStore, BoundariesWithText } from "~/stores/ai";
 import { StoryversionKind, suggestions } from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
+import { POST__coa__stories__search__withIssues } from "~api-routes";
 import { KumikoResults } from "~types/KumikoResults";
 
 import useHintMaker from "./useHint";

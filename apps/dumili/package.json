@@ -3,15 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "concurrently -n front,back \"pnpm run start:front\" \"pnpm run start:back\"",
+    "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
     "build": "vite build",
     "preview": "vite preview",
-    "start:back": "cd api && pnpm run dev",
-    "start:front": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint --ext .ts,.vue --fix ."
   },
   "dependencies": {
+    "~dm-types": "workspace:~types@*",
+    "~api-routes": "workspace:*",
+    "web": "workspace:*",
     "@cloudinary/url-gen": "^1.11.2",
     "@cloudinary/vue": "^1.11.2",
     "@vueuse/integrations": "^10.4.1",
@@ -21,7 +22,6 @@
     "bootstrap": "^5.3.1",
     "bootstrap-vue-next": "^0.11.0",
     "dayjs": "^1.11.9",
-    "ducksmanager": "^0.0.61",
     "js-cookie": "^3.0.5",
     "page-flip": "^2.0.7",
     "pinia": "^2.1.6",

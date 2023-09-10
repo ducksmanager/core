@@ -2,11 +2,11 @@ import axios from "axios";
 import type { CacheRequestConfig } from "axios-cache-interceptor";
 import { buildWebStorage, setupCache } from "axios-cache-interceptor";
 import dayjs from "dayjs";
+import Cookies from "js-cookie";
 import {
   addTokenRequestInterceptor,
   addUrlParamsRequestInterceptor,
-} from "ducksmanager/src/util/axios";
-import Cookies from "js-cookie";
+} from "web/src/util/axios";
 
 const customStorage = buildWebStorage(sessionStorage);
 

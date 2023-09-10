@@ -23,11 +23,12 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { call } from "ducksmanager/src/util/axios";
-import { POST__coa__stories__search } from "ducksmanager/types/routes";
-import { SimpleStory } from "ducksmanager/types/SimpleStory";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { call } from "web/src/util/axios";
+
+import { POST__coa__stories__search } from "~api-routes";
+import { SimpleStory } from "~dm-types/SimpleStory";
 
 const emit = defineEmits<{
   (e: "story-selected", story: Pick<SimpleStory, "storycode" | "title">): void;
