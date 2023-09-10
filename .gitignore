@@ -11,4 +11,3 @@
 dist
 dist-ssr
 node_modules
-types/routes.ts

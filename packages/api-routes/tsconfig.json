@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "target": "es2018",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": ".",
+    "paths": {
+      "~/*": ["../api/*"],
+      "~emails/*": ["../api/emails/*"],
+      "~routes/*": ["../api/routes/*"],
+      "~types/*": ["../../packages/types/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

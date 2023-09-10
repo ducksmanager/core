@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'master'
+      - "master"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -34,17 +34,17 @@ jobs:
           username: bperel
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
 
-      - name: Build and push app
+      - name: Build and push web
         uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/x86_64
           push: true
-          target: app
-          cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-app:buildcache
-          cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-app:buildcache,mode=max
+          target: web
+          cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache,mode=max
           tags: |
-            ghcr.io/bperel/ducksmanager-app:latest
+            ghcr.io/bperel/ducksmanager-web:latest
 
       - name: Build and push api
         uses: docker/build-push-action@v3

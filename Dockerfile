@@ -3,61 +3,40 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 RUN npm i -g pnpm
 
-FROM pnpm AS app-install
+
+FROM pnpm AS build
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
-COPY package.json pnpm-lock.yaml .eslintrc.js ./
-RUN pnpm i
+COPY package.json pnpm-lock.yaml ./
+COPY apps/web/package.json ./apps/web/
+COPY packages/api/package.json ./packages/api/
+COPY packages/api-routes/package.json ./packages/api-routes/
+COPY packages/types/package.json ./packages/types/
+COPY packages/prisma-clients/package.json ./packages/prisma-clients/
+RUN pnpm -r i
 
-FROM app-install AS api-build
-LABEL org.opencontainers.image.authors="Bruno Perel"
+COPY . ./
+RUN mv apps/web/.env.prod.local ./apps/web/.env
+RUN mv packages/api/.env.prod.local ./packages/api/.env
+RUN pnpm -r run build
 
-WORKDIR /app/api
-
-COPY api/package.json api/pnpm-lock.yaml ./
-RUN pnpm i
-
-COPY .env.prod.local ./.env
-COPY api/prisma ./prisma
-RUN pnpm run prisma:generate
-
-COPY types /app/types
-COPY translations /app/translations
-COPY api .
-RUN pnpm run generate-route-types
-RUN pnpm run build
-
-FROM app-install AS app-build
-LABEL org.opencontainers.image.authors="Bruno Perel"
-
-WORKDIR /app
-
-COPY . .
-COPY .env.prod.local ./.env
-COPY --from=api-build /app/api api
-COPY --from=api-build /app/types/routes.ts types/routes.ts
-RUN pnpm run build
 
 FROM nginx AS app
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=app-build /app/dist /usr/share/nginx/html
+COPY apps/web/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/apps/web/dist /usr/share/nginx/html
+
 
 FROM pnpm AS api
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
-COPY --from=api-build /app/api/package*.json /app/api/.env /app/
-RUN pnpm install --production
-
-COPY --from=api-build /app/api/dist /app/
-RUN rm -rf api/dist/prisma && mv prisma api/dist/
-
-COPY ./api/routes/demo/*.csv /app/api/routes/demo/
-COPY ./api/emails /app/api/emails/
+COPY --from=build /app/packages/api/dist /app/
+COPY ./packages/api/routes/demo/*.csv /app/packages/api/routes/demo/
+COPY ./packages/api/emails /app/packages/api/emails/
 
 EXPOSE 3000
 

@@ -2,7 +2,7 @@
 **/node_modules
 .git
 .idea
-Dockerfile*
-api/.env
-api/dist/prisma
+**/Dockerfile*
+**/.env
+packages/api/dist/prisma
 edges

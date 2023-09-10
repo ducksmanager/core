@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "ESNext"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "vite/client",
+      "vite-plugin-pages/client",
+      "vue/ref-macros",
+      "unplugin-icons/types/vue"
+    ],
+    "paths": {
+      "~/*": ["src/*"],
+      "~types/*": ["../../packages/types/*"],
+      "~api-routes/*": ["../../packages/api-routes/*"],
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~translations/*": ["../../translations/*"]
+    }
+  },
+  "include": [
+    "components.d.ts",
+    "histoire.d.ts",
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "auto-imports.d.ts"
+  ],
+  "exclude": ["dist", "node_modules", "vendor"]
+}

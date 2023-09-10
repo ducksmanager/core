@@ -1,0 +1,124 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../client_edgecreator"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_EDGECREATOR")
+}
+
+model optionInterval {
+  id               Int    @id @default(autoincrement()) @map("ID")
+  valueId          Int    @map("ID_Valeur")
+  issueNumberStart String @map("Numero_debut") @db.VarChar(10)
+  issueNumberEnd   String @map("Numero_fin") @db.VarChar(10)
+  username         String @db.VarChar(25)
+
+  @@index([valueId, issueNumberStart, issueNumberEnd, username], map: "index_intervalles")
+  @@map("edgecreator_intervalles")
+}
+
+model edgeModelOld {
+  id           Int     @id @default(autoincrement()) @map("ID")
+  country      String  @map("Pays") @db.VarChar(3)
+  magazine     String  @map("Magazine") @db.VarChar(6)
+  order        Int     @map("Ordre")
+  functionName String  @map("Nom_fonction") @db.VarChar(30)
+  optionName   String? @map("Option_nom") @db.VarChar(20)
+
+  @@map("edgecreator_modeles2")
+}
+
+model optionValue {
+  id       Int     @id @default(autoincrement()) @map("ID")
+  optionId Int?    @map("ID_Option")
+  value    String? @map("Option_valeur") @db.VarChar(200)
+
+  @@index([optionId], map: "edgecreator_valeurs_edgecreator_modeles2_ID_fk")
+  @@map("edgecreator_valeurs")
+}
+
+model myfontsImage {
+  id              Int     @id @default(autoincrement()) @map("ID")
+  font            String? @map("Font") @db.VarChar(150)
+  color           String? @map("Color") @db.VarChar(10)
+  backgroundColor String? @map("ColorBG") @db.VarChar(10)
+  width           String? @map("Width") @db.VarChar(7)
+  text            String? @map("Texte") @db.VarChar(150)
+  precision       String? @map("Precision_") @db.VarChar(5)
+
+  @@map("images_myfonts")
+}
+
+model elementImage {
+  id                               Int         @id @default(autoincrement()) @map("ID")
+  userId                           Int?        @map("ID_Utilisateur")
+  hash                             String?     @unique(map: "images_tranches_Hash_uindex") @map("Hash") @db.VarChar(40)
+  createdAt                        DateTime?   @map("DateHeure") @db.DateTime(0)
+  fileName                         String      @map("NomFichier") @db.VarChar(255)
+  tranches_en_cours_modeles_images edgePhoto[]
+
+  @@map("images_tranches")
+}
+
+model edgeModel {
+  id            Int               @id @default(autoincrement()) @map("ID")
+  country       String            @map("Pays") @db.VarChar(3)
+  magazine      String            @map("Magazine") @db.VarChar(6)
+  issuenumber   String            @map("Numero") @db.VarChar(10)
+  username      String?           @db.VarChar(25)
+  mainPhotoName String?           @map("NomPhotoPrincipale") @db.VarChar(60)
+  photographs   String?           @map("photographes") @db.Text
+  creators      String?           @map("createurs") @db.Text
+  isActive      Boolean           @map("Active")
+  contributors  edgeContributor[]
+  photos        edgePhoto[]
+  values        edgeValue[]
+
+  @@unique([country, magazine, issuenumber, username], map: "tranches_en_cours_modeles__numero")
+  @@map("tranches_en_cours_modeles")
+}
+
+model edgeContributor {
+  id           Int          @id @default(autoincrement()) @map("ID")
+  modelId      Int?         @map("ID_Modele")
+  userId       Int          @map("ID_Utilisateur")
+  contribution contribution
+  model        edgeModel?   @relation(fields: [modelId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "tranches_en_cours_contributeurs_tranches_en_cours_modeles_ID_fk")
+
+  @@unique([modelId, userId, contribution], map: "tranches_en_cours_contributeurs__unique")
+  @@map("tranches_en_cours_contributeurs")
+}
+
+model edgePhoto {
+  id           Int          @id @default(autoincrement()) @map("ID")
+  modelId      Int          @map("ID_Modele")
+  photoId      Int          @map("ID_Image")
+  isMainPhoto  Boolean      @map("EstPhotoPrincipale")
+  elementImage elementImage @relation(fields: [photoId], references: [id], onUpdate: Restrict, map: "tranches_en_cours_modeles_images___fk_image")
+  model        edgeModel    @relation(fields: [modelId], references: [id], onUpdate: Restrict, map: "tranches_en_cours_modeles_images___modele")
+
+  @@index([photoId], map: "tranches_en_cours_modeles_images___fk_image")
+  @@index([modelId], map: "tranches_en_cours_modeles_images___modele")
+  @@map("tranches_en_cours_modeles_images")
+}
+
+model edgeValue {
+  id          Int        @id @default(autoincrement()) @map("ID")
+  order       Float      @map("Ordre")
+  renderName  String     @map("Nom_fonction") @db.VarChar(30)
+  optionName  String?    @map("Option_nom") @db.VarChar(30)
+  optionValue String?    @map("Option_valeur") @db.VarChar(200)
+  modelId     Int?       @map("ID_Modele")
+  model       edgeModel? @relation(fields: [modelId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_AC57D99E4A1ED576")
+
+  @@index([modelId], map: "ID_Modele")
+  @@map("tranches_en_cours_valeurs")
+}
+
+enum contribution {
+  photographe
+  createur
+}
