@@ -22,7 +22,7 @@ export default defineConfig({
         __dirname,
         "../../packages/prisma-clients"
       ),
-      "~translations": path.resolve(__dirname, "../../translations"),
+      "~translations": path.resolve(__dirname, "translations"),
     },
   },
   plugins: [
@@ -40,7 +40,7 @@ export default defineConfig({
     VueI18n({
       runtimeOnly: false,
       compositionOnly: true,
-      include: [path.resolve(__dirname, "..", "..", "translations/**")],
+      include: [path.resolve(__dirname, "translations/**")],
     }),
 
     // https://github.com/antfu/unplugin-auto-import

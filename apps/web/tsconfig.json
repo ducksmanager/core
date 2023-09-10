@@ -25,7 +25,7 @@
       "~types/*": ["../../packages/types/*"],
       "~api-routes/*": ["../../packages/api-routes/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~translations/*": ["../../translations/*"]
+      "~translations/*": ["translations/*"]
     }
   },
   "include": [

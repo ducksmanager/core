@@ -36,16 +36,16 @@ WORKDIR /app
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
-COPY translations ./translations
 COPY --from=build /app/packages/prisma-clients ./packages/prisma-clients
 COPY --from=build /app/packages/types ./packages/types
 COPY --from=build /app/packages/prisma-clients/dist/ ./packages/prisma-clients
 COPY --from=build /app/packages/types/dist/ ./packages/types
 
 WORKDIR /app/packages/api
-COPY --from=build /app/packages/api/dist/packages/api ./
+COPY --from=build /app/packages/api/dist/api ./
 
 COPY packages/api/package.json ./
+COPY packages/api/translations ./translations
 RUN pnpm install --production
 
 COPY ./packages/api/routes/demo/*.csv ./routes/demo/

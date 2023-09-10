@@ -18,9 +18,9 @@
     "paths": {
       "~/*": ["*"],
       "~emails/*": ["emails/*"],
-      "prisma-clients/*": ["../prisma-clients/*"],
+      "~prisma-clients/*": ["../prisma-clients/*"],
       "~routes/*": ["routes/*"],
-      "~translations/*": ["../../translations/*"]
+      "~translations/*": ["translations/*"]
     }
   },
   "exclude": ["node_modules"],

@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import * as ejs from "ejs";
 import { I18n } from "i18n";
 import { Transporter, TransportOptions } from "nodemailer";
@@ -6,11 +5,7 @@ import nodemailer from "nodemailer";
 import Mail, { Address } from "nodemailer/lib/mailer";
 import path from "path";
 
-dotenv.config({
-  path: "../.env",
-});
-
-import en from "~/../../translations/messages.en.json";
+import en from "~/translations/messages.en.json";
 const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
 export const i18n = new I18n({
   locales: ["fr", "en-US"],
@@ -20,7 +15,7 @@ export const i18n = new I18n({
     en: Object.entries(en).reduce(
       (acc, [key, value]) => ({
         ...acc,
-        [key]: value.replaceAll("{", "{{").replaceAll("}", "}}"),
+        [key]: value,
       }),
       {}
     ),
