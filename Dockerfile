@@ -22,7 +22,7 @@ RUN mv packages/api/.env.prod.local ./packages/api/.env
 RUN pnpm -r run build
 
 
-FROM nginx AS app
+FROM nginx AS web
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 COPY apps/web/nginx.conf /etc/nginx/nginx.conf
