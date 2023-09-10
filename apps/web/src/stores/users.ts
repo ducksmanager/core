@@ -1,12 +1,5 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { BookcaseContributor } from "~types/BookcaseContributor";
-import { AbstractEvent } from "~types/events/AbstractEvent";
-import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
-import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSubscriptionAdditionEvent";
-import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
-import { SignupEvent } from "~types/events/SignupEvent";
 
 import { cachedUserApi as userApi } from "~/util/api";
 import { call } from "~/util/axios";
@@ -15,6 +8,13 @@ import {
   GET__global_stats__user__$userIds,
   GET__global_stats__user__count,
 } from "~api-routes";
+import { BookcaseContributor } from "~types/BookcaseContributor";
+import { AbstractEvent } from "~types/events/AbstractEvent";
+import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
+import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSubscriptionAdditionEvent";
+import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
+import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
+import { SignupEvent } from "~types/events/SignupEvent";
 
 export const users = defineStore("users", () => {
   const count = ref(null as number | null),

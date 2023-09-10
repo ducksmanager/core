@@ -173,12 +173,12 @@ export class GET__collection__user_privileges  extends ContractWithMethodAndUrl<
             static readonly method = "get";
             static readonly url = "/collection/user-privileges";
         }
-export class GET__collection__user  extends ContractWithMethodAndUrl<{ resBody: Omit<user, "password"> }> {
-            static readonly method = "get";
-            static readonly url = "/collection/user";
-        }
 export class DELETE__collection__user  extends ContractWithMethodAndUrl<Record<string, never>> {
             static readonly method = "delete";
+            static readonly url = "/collection/user";
+        }
+export class GET__collection__user  extends ContractWithMethodAndUrl<{ resBody: Omit<user, "password"> }> {
+            static readonly method = "get";
             static readonly url = "/collection/user";
         }
 export class POST__collection__user  extends ContractWithMethodAndUrl<{
@@ -298,12 +298,12 @@ export class POST__coa__stories__search  extends ContractWithMethodAndUrl<{
             static readonly method = "post";
             static readonly url = "/coa/stories/search";
         }
-export class GET__collection__authors__watched  extends ContractWithMethodAndUrl<{ resBody: authorUser[] }> {
-            static readonly method = "get";
+export class DELETE__collection__authors__watched  extends ContractWithMethodAndUrl<{ reqBody: { personcode: string } }> {
+            static readonly method = "delete";
             static readonly url = "/collection/authors/watched";
         }
-export class PUT__collection__authors__watched  extends ContractWithMethodAndUrl<{ reqBody: { personcode: string } }> {
-            static readonly method = "put";
+export class GET__collection__authors__watched  extends ContractWithMethodAndUrl<{ resBody: authorUser[] }> {
+            static readonly method = "get";
             static readonly url = "/collection/authors/watched";
         }
 export class POST__collection__authors__watched  extends ContractWithMethodAndUrl<{
@@ -312,8 +312,8 @@ export class POST__collection__authors__watched  extends ContractWithMethodAndUr
             static readonly method = "post";
             static readonly url = "/collection/authors/watched";
         }
-export class DELETE__collection__authors__watched  extends ContractWithMethodAndUrl<{ reqBody: { personcode: string } }> {
-            static readonly method = "delete";
+export class PUT__collection__authors__watched  extends ContractWithMethodAndUrl<{ reqBody: { personcode: string } }> {
+            static readonly method = "put";
             static readonly url = "/collection/authors/watched";
         }
 export class GET__collection__edges__lastPublished  extends ContractWithMethodAndUrl<{ resBody: edge[] }> {
@@ -334,12 +334,12 @@ export class POST__collection__issues__single  extends ContractWithMethodAndUrl<
             static readonly method = "post";
             static readonly url = "/collection/issues/single";
         }
-export class PUT__collection__on_sale_by_others__requests  extends ContractWithMethodAndUrl<{ reqBody: { issueIds: number[] } }> {
-            static readonly method = "put";
-            static readonly url = "/collection/on-sale-by-others/requests";
-        }
 export class DELETE__collection__on_sale_by_others__requests  extends ContractWithMethodAndUrl<{ reqBody: { issueId: number } }> {
             static readonly method = "delete";
+            static readonly url = "/collection/on-sale-by-others/requests";
+        }
+export class PUT__collection__on_sale_by_others__requests  extends ContractWithMethodAndUrl<{ reqBody: { issueIds: number[] } }> {
+            static readonly method = "put";
             static readonly url = "/collection/on-sale-by-others/requests";
         }
 export class GET__collection__stats__watchedauthorsstorycount  extends ContractWithMethodAndUrl<{ resBody: AuthorsDetails }> {
@@ -496,15 +496,15 @@ export class DELETE__collection__purchases__$id  extends ContractWithMethodAndUr
             static readonly method = "delete";
             static readonly url = "/collection/purchases/:id";
         }
+export class DELETE__collection__subscriptions__$id  extends ContractWithMethodAndUrl<{ params: { id: string } }> {
+            static readonly method = "delete";
+            static readonly url = "/collection/subscriptions/:id";
+        }
 export class POST__collection__subscriptions__$id  extends ContractWithMethodAndUrl<{
       params: { id: string };
       reqBody: { subscription: EditSubscription };
     }> {
             static readonly method = "post";
-            static readonly url = "/collection/subscriptions/:id";
-        }
-export class DELETE__collection__subscriptions__$id  extends ContractWithMethodAndUrl<{ params: { id: string } }> {
-            static readonly method = "delete";
             static readonly url = "/collection/subscriptions/:id";
         }
 export class GET__cover_id__download__$coverId  extends ContractWithMethodAndUrl<{ params: { coverId: string } }> {

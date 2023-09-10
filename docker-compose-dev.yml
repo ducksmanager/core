@@ -3,16 +3,21 @@ services:
 
   db:
     container_name: db
-    image: "mariadb:10.7"
+    image: "mariadb:10.11"
     restart: always
     volumes:
       - db:/var/lib/mysql
-      - ./api/prisma/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - ./packages/prisma-clients/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
       - "64999:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: changeme
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
+    env_file:
+      - ./packages/api/.env
+    command:
+      [
+        'mysqld',
+        '--character-set-server=utf8',
+        '--collation-server=utf8_unicode_ci'
+      ]
     networks:
       - db-network
       - cover-id-network
@@ -22,11 +27,12 @@ services:
     image: bperel/coa-updater
     depends_on:
       - db
+    env_file:
+      - ./packages/api/.env
     environment:
       MYSQL_HOST: db
       MYSQL_DATABASE: coa
       MYSQL_DATABASE_NEW: coa_new
-      MYSQL_ROOT_PASSWORD: changeme
     networks:
       - db-network
 
@@ -36,9 +42,9 @@ services:
     restart: always
     command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
     networks:
-     - cover-id-network
+      - cover-id-network
     volumes:
-     - pastec_index:/pastec-index-last.dat:ro
+      - pastec_index:/pastec-index-last.dat:ro
 
   mailcatcher:
     container_name: mailcatcher
@@ -80,7 +86,7 @@ networks:
     driver: bridge
 
 volumes:
-  db:
-  # duck_estimator_cache:
+  db: # duck_estimator_cache:
+
   node_cache:
   pastec_index:

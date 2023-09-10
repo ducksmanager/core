@@ -8,14 +8,17 @@ FROM pnpm AS build
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
-COPY apps/web/package.json apps/web/pnpm-lock.yaml ./
-COPY packages/api/package.json packages/api/pnpm-lock.yaml ./packages/api/
+COPY package.json pnpm-lock.yaml ./
+COPY apps/web/package.json ./apps/web/
+COPY packages/api/package.json ./packages/api/
 COPY packages/api-routes/package.json ./packages/api-routes/
-COPY packages/prisma-clients/package.json ./packages/prisma-clients/
 COPY packages/types/package.json ./packages/types/
+COPY packages/prisma-clients/package.json ./packages/prisma-clients/
 RUN pnpm -r i
-COPY .env.prod.local ./.env
+
 COPY . ./
+RUN mv apps/web/.env.prod.local ./apps/web/.env
+RUN mv packages/api/.env.prod.local ./packages/api/.env
 RUN pnpm -r run build
 
 
@@ -30,9 +33,6 @@ FROM pnpm AS api
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
-
-# COPY --from=build /app/packages/api/package*.json /app/packages/api/.env /app/
-# RUN pnpm install --production
 
 COPY --from=build /app/packages/api/dist /app/
 COPY ./packages/api/routes/demo/*.csv /app/packages/api/routes/demo/

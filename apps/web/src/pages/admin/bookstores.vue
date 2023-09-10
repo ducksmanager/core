@@ -26,12 +26,12 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { GET__bookstores, POST__bookstores__approve } from "~api-routes";
 import axios from "axios";
-import { SimpleBookstore } from "~types/SimpleBookstore";
 
 import { call } from "~/util/axios";
+import { GET__bookstores, POST__bookstores__approve } from "~api-routes";
 import { bookstoreComment } from "~prisma-clients/client_dm";
+import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 

@@ -1,7 +1,4 @@
 import { defineStore } from "pinia";
-import { inducks_issue } from "~prisma-clients/client_coa";
-import { InducksIssueDetails } from "~types/InducksIssueDetails";
-import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import i18n from "~/i18n";
@@ -19,6 +16,9 @@ import {
   POST__coa__issues__decompose,
   POST__coa__list__publications,
 } from "~api-routes";
+import { inducks_issue } from "~prisma-clients/client_coa";
+import { InducksIssueDetails } from "~types/InducksIssueDetails";
+import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

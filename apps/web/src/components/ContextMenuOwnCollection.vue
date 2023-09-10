@@ -120,11 +120,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  CollectionUpdateMultipleIssues,
-  CollectionUpdateSingleIssue,
-  SaleState,
-} from "~types/CollectionUpdate";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -133,6 +128,11 @@ import {
   IssueWithPublicationcodeOptionalId,
 } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
+import {
+  CollectionUpdateMultipleIssues,
+  CollectionUpdateSingleIssue,
+  SaleState,
+} from "~types/CollectionUpdate";
 
 const user = $computed(() => collectionStore().user);
 let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{

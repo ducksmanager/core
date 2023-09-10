@@ -82,18 +82,18 @@ alias: [/collection/abonnements]
 </template>
 
 <script setup lang="ts">
-import {
-  DELETE__collection__subscriptions__$id,
-  POST__collection__subscriptions__$id,
-  PUT__collection__subscriptions,
-} from "~api-routes";
 import axios from "axios";
-import { EditSubscription } from "~types/EditSubscription";
 import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
 import { call } from "~/util/axios";
+import {
+  DELETE__collection__subscriptions__$id,
+  POST__collection__subscriptions__$id,
+  PUT__collection__subscriptions,
+} from "~api-routes";
+import { EditSubscription } from "~types/EditSubscription";
 
 type AssociatedPublication = {
   referencePublicationcode: string;

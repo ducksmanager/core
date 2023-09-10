@@ -67,12 +67,12 @@ meta:
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { ScopedError } from "~types/ScopedError";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
 import { call } from "~/util/axios";
 import { GET__csrf, PUT__collection__user } from "~api-routes";
+import { ScopedError } from "~types/ScopedError";
 
 const collectionStore = collection();
 const router = useRouter();

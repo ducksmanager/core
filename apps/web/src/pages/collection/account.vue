@@ -220,7 +220,6 @@ alias: [/collection/compte]
 
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
-import { ScopedError } from "~types/ScopedError";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";
@@ -231,6 +230,7 @@ import {
   POST__collection__empty,
   POST__collection__user,
 } from "~api-routes";
+import { ScopedError } from "~types/ScopedError";
 const getImagePath = images().getImagePath;
 
 const collection = collectionStore();

@@ -14,10 +14,6 @@ import {
 } from "~routes/_auth";
 
 dotenv.config({
-  path: "../.env",
-});
-
-dotenv.config({
   path: "./.env",
 });
 

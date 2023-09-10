@@ -29,13 +29,13 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { POST__auth__change_password } from "~api-routes";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
 import { call } from "~/util/axios";
+import { POST__auth__change_password } from "~api-routes";
 
 const router = useRouter();
 const collectionStore = collection();

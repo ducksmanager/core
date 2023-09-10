@@ -280,7 +280,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { POST__collection__issues__multiple } from "~api-routes";
 import axios from "axios";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -289,6 +288,7 @@ import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
 import { call } from "~/util/axios";
+import { POST__collection__issues__multiple } from "~api-routes";
 import { inducks_issue } from "~prisma-clients/client_coa";
 const getImagePath = images().getImagePath;
 
