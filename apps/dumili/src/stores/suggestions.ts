@@ -1,11 +1,11 @@
-import {
-  inducks_entry,
-  inducks_storyversion,
-} from "ducksmanager/api/dist/prisma/client_coa";
-import { inducks_storyjob } from "ducksmanager/api/dist/prisma/client_coa";
-import { inducks_issue } from "ducksmanager/api/dist/prisma/client_coa";
 import { defineStore } from "pinia";
 
+import {
+  inducks_entry,
+  inducks_issue,
+  inducks_storyjob,
+  inducks_storyversion,
+} from "~prisma-clients/client_coa";
 import { Boundaries } from "~types/KumikoResults";
 
 export enum StoryversionKind {

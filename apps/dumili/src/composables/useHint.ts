@@ -1,4 +1,3 @@
-import { POST__cover_id__search } from "ducksmanager/types/routes";
 import { storeToRefs } from "pinia";
 
 import { coa } from "~/stores/coa";
@@ -7,6 +6,7 @@ import {
   StoryversionKind,
   suggestions,
 } from "~/stores/suggestions";
+import { POST__cover_id__search } from "~api-routes";
 import { KumikoResults } from "~types/KumikoResults";
 
 export default () => {

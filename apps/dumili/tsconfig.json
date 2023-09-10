@@ -29,8 +29,10 @@
       "~/*": ["src/*"],
       "~types/*": ["types/*"],
       "~translations/*": ["translations/*"],
-      "~dm_types/*": ["node_modules/ducksmanager/types/*"],
-      "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"]
+      "~dm-types/*": ["../../packages/types/*"],
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~api-routes/*": ["../../packages/api-routes/*"],
+      "web/*": ["../web/*"]
     }
   },
   "include": [
