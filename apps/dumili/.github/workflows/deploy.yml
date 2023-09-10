@@ -1,0 +1,114 @@
+name: deploy-dumili
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    #environment: production
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Download .env file
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: download
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: /home/bperel/workspace/dumili/.env.production.local
+          target: api/.env.local
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: |
+            image=moby/buildkit:v0.12.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: ghcr.io
+          username: bperel
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DUMILI }}
+
+      - name: Build and push app
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/x86_64
+          file: Dockerfile-live
+          push: true
+          target: app
+          cache-from: type=registry,ref=ghcr.io/bperel/dumili-app:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/dumili-app:buildcache,mode=max
+          tags: |
+            ghcr.io/bperel/dumili-app:latest
+
+      - name: Build and push api
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/x86_64
+          file: Dockerfile-live
+          push: true
+          target: api
+          cache-from: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache,mode=max
+          tags: |
+            ghcr.io/bperel/dumili-api:latest
+
+      - name: Build and push kumiko
+        uses: docker/build-push-action@v3
+        with:
+          context: kumiko
+          platforms: linux/x86_64
+          file: kumiko/Dockerfile
+          push: true
+          cache-from: type=registry,ref=ghcr.io/bperel/kumiko:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/kumiko:buildcache,mode=max
+          tags: |
+            ghcr.io/bperel/kumiko:latest
+
+      - name: Build and push paddleocr
+        uses: docker/build-push-action@v3
+        with:
+          context: paddleocr
+          platforms: linux/x86_64
+          file: paddleocr/Dockerfile
+          push: true
+          cache-from: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache,mode=max
+          tags: |
+            ghcr.io/paddleocr/kumiko:latest
+
+      - name: Upload docker-compose.yml file
+        uses: nicklasfrahm/scp-action@v1.0.1
+        with:
+          direction: upload
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: docker-compose.yml
+          target: /home/bperel/workspace/dumili/docker-compose.yml
+
+      - name: Recreate container
+        uses: appleboy/ssh-action@v0.1.4
+        env:
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DUMILI }}
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 2m
+          envs: DOCKER_REGISTRY_TOKEN_DUMILI
+          script: |
+            cd workspace/dumili
+            echo `grep GITHUB_TOKEN api/.env.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
+            docker compose pull && docker compose up -d --force-recreate

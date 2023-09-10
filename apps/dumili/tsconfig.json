@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "types": [
+      "@vue-macros/reactivity-transform/macros-global",
+      "unplugin-icons/types/vue"
+    ],
+    "paths": {
+      "~/*": ["src/*"],
+      "~types/*": ["types/*"],
+      "~translations/*": ["translations/*"],
+      "~dm_types/*": ["node_modules/ducksmanager/types/*"],
+      "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"]
+    }
+  },
+  "include": [
+    "auto-imports.d.ts",
+    "components.d.ts",
+    "src/**/*.ts",
+    "types/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
