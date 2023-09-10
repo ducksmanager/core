@@ -18,7 +18,6 @@ RUN pnpm -r i
 
 COPY . ./
 RUN mv apps/web/.env.prod.local ./apps/web/.env
-RUN mv packages/api/.env.prod.local ./packages/api/.env
 RUN pnpm -r run build
 
 
@@ -51,6 +50,7 @@ RUN pnpm install --production
 
 COPY ./packages/api/routes/demo/*.csv ./routes/demo/
 COPY ./packages/api/emails ./emails/
+COPY ./packages/api/.env.prod.local ./.env
 
 EXPOSE 3000
 
