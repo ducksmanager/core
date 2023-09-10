@@ -1,7 +1,11 @@
 {
   "name": "~types",
   "module": "index.ts",
+  "scripts": {
+    "build": "rm -rf dist && ./node_modules/.pnpm/node_modules/.bin/tsc"
+  },
   "dependencies": {
-    "~prisma-clients": "workspace:*"
+    "~prisma-clients": "workspace:*",
+    "ts-node": "^10.9.1"
   }
 }

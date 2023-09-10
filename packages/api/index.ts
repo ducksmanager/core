@@ -1,3 +1,5 @@
+import "module-alias/register";
+
 import * as Sentry from "@sentry/node";
 import busboy from "connect-busboy";
 import cookieParser from "cookie-parser";

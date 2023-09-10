@@ -6,6 +6,9 @@
     "test": "which ts-node",
     "dev": "nodemon"
   },
+  "_moduleAliases": {
+    "~prisma-clients": "../prisma-clients"
+  },
   "dependencies": {
     "@prisma/client": "^5.2.0",
     "@pusher/push-notifications-server": "^1.2.6",
@@ -26,6 +29,7 @@
     "i18n": "^0.15.1",
     "jsonwebtoken": "^9.0.1",
     "mariadb": "^3.2.0",
+    "module-alias": "^2.2.3",
     "nodemailer": "^6.9.4",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",

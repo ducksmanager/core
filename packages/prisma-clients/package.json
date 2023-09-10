@@ -3,11 +3,12 @@
   "module": "index.ts",
   "scripts": {
     "prisma:pull": "ls schemas/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",
-    "dev": "pnpm run build",
-    "build": "ls schemas/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema & done"
+    "dev": "ls schemas/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema & done",
+    "build": "ls schemas/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done && rm -rf dist && ./node_modules/.pnpm/node_modules/.bin/tsc"
   },
   "dependencies": {
     "@prisma/client": "5.2.0",
-    "prisma": "^5.2.0"
+    "prisma": "^5.2.0",
+    "ts-node": "^10.9.1"
   }
 }
