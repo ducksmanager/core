@@ -40,5 +40,5 @@ COPY ./packages/api/emails /app/packages/api/emails/
 
 EXPOSE 3000
 
-WORKDIR /app/api
+WORKDIR /app/packages/api
 CMD ["node", "index.js"]
