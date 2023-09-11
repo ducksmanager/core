@@ -204,6 +204,7 @@ watch(
   async () => {
     await ai.runCoverSearch(indexationId.value);
     await ai.runStorycodeOcr(indexationId.value);
+    ai.status.value = "loaded";
   },
   { deep: true }
 );

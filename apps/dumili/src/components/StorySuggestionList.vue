@@ -13,7 +13,7 @@
     "
   >
     <template #item="suggestion: EntrySuggestion">
-      {{ suggestion.data.storyversion?.storycode }}
+      <Story :entry="suggestion.data" />
     </template>
     <template #unknown>Contenu inconnu</template>
     <template #customize-form>

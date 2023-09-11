@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 
-import { StorySearchResults } from "~dm-types/StorySearchResults";
 import { Boundaries } from "~pulumi-types/KumikoResults";
+
+import { EntrySuggestion } from "./suggestions";
 
 export type BoundariesWithText = {
   bbox: Boundaries;
@@ -16,7 +17,7 @@ export const ai = defineStore("ai", () => ({
         panels: Omit<BoundariesWithText[0], "text">[];
         texts: {
           ocrResults: BoundariesWithText;
-          possibleStories: StorySearchResults;
+          possibleStories: EntrySuggestion["data"][];
         };
       }
     >
