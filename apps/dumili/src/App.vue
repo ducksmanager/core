@@ -43,7 +43,6 @@ const loginUrl = computed(
 watch(
   () => route?.params?.id,
   (id) => {
-    console.log(useRoute());
     tabs().activeTab = id ? 0 : undefined;
   },
   { immediate: true }

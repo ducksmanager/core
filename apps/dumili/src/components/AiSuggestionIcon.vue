@@ -17,3 +17,9 @@ defineProps<{
   status: "success" | "failure";
 }>();
 </script>
+
+<style lang="scss" scoped>
+svg {
+  width: 20px;
+}
+</style>

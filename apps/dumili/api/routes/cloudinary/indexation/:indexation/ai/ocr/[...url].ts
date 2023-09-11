@@ -34,8 +34,6 @@ export const get = async (req: Request, res: Response) => {
   const kumikoResultsForPage = (await runKumiko([pageUrl]))[0];
   const firstPanel = kumikoResultsForPage.panels[0];
 
-  console.log(kumikoResultsForPage);
-
   const input = (
     await axios({
       url: pageUrl,

@@ -1,17 +1,24 @@
 <template>
   <b-dropdown
     class="my-2"
-    :toggle-class="itemClass && getCurrent() ? itemClass(getCurrent()!) : []"
+    :toggle-class="['text-wrap', ...(itemClass && getCurrent() ? itemClass(getCurrent()!) : [])]"
     ><b-dropdown-item
       v-for="(suggestion, idx) of suggestions"
       :key="`suggestion-${idx}`"
-      :link-class="['d-flex', ...((itemClass && itemClass(suggestion)) || [])]"
+      :link-class="[
+        'd-flex',
+        'justify-content-between',
+        'align-items-center',
+        ...((itemClass && itemClass(suggestion)) || []),
+      ]"
       @click="
         emit('select', suggestion);
         emit('toggle-customize-form', false);
       "
     >
-      <slot name="item" v-bind="suggestion as S" />
+      <div>
+        <slot name="item" v-bind="suggestion as S" />
+      </div>
       <AiSuggestionIcon
         v-if="suggestion.meta.source === 'ai'"
         :status="suggestion.meta.status"
@@ -32,9 +39,11 @@
           $t("Personnaliser...")
         }}</template></template
       >
-      <div v-else class="d-flex">
-        <slot v-if="!getCurrent()" name="unknown" />
-        <slot v-else name="item" v-bind="(getCurrent() as S)" />
+      <div v-else class="d-flex justify-content-between align-items-center">
+        <div>
+          <slot v-if="!getCurrent()" name="unknown" />
+          <slot v-else name="item" v-bind="(getCurrent() as S)" />
+        </div>
         <AiSuggestionIcon
           v-if="getCurrent()?.meta.source === 'ai'"
           :status="(getCurrent()?.meta as SuggestionMetaAi).status"
