@@ -25,7 +25,7 @@
           :value="acceptedEntry?.data.title || ''" /></b-col
       ><b-col cols="3">
         <b-button
-          class="d-flex w-100 space-between"
+          class="d-flex w-100 justify-content-between"
           :disabled="!aiDetails[entryurl]"
           @click="
             showAiDetections =
@@ -58,38 +58,57 @@
           </div>
         </b-col>
         <b-col cols="3" class="text-start white-space-normal">
-          <div>
+          <div v-if="aiDetails[entryurl].texts?.ocrResults?.length">
             {{
               $t("{textNumber} textes trouvés", {
                 textNumber: aiDetails[entryurl].texts.ocrResults.length,
               })
             }}
             <i-bi-info-circle-fill
+              v-if="aiDetails[entryurl].texts"
               v-b-tooltip="JSON.stringify(aiDetails[entryurl].texts.ocrResults)"
             />
-          </div>
-          <template v-if="aiDetails[entryurl].texts.ocrResults.length"
-            ><div>
+            <div v-if="aiDetails[entryurl].texts.possibleStories?.length">
+              <div>
+                {{
+                  $t("{storyNumber} histoires trouvées avec ces mots-clés", {
+                    storyNumber:
+                      aiDetails[entryurl].texts.possibleStories.length,
+                  })
+                }}
+                <i-bi-info-circle-fill
+                  v-b-tooltip="
+                    JSON.stringify(aiDetails[entryurl].texts.possibleStories)
+                  "
+                />
+              </div>
+              <div
+                v-for="possibleStory in aiDetails[entryurl].texts
+                  .possibleStories"
+                :key="possibleStory.storyversion!.storycode || 'unknown'"
+              >
+                <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
+                <Story :entry="possibleStory" />
+              </div>
+            </div>
+            <div v-else>
               {{
                 $t("{storyNumber} histoires trouvées avec ces mots-clés", {
-                  storyNumber: aiDetails[entryurl].texts.possibleStories.length,
+                  storyNumber: 0,
                 })
               }}
-              <i-bi-info-circle-fill
-                v-b-tooltip="
-                  JSON.stringify(aiDetails[entryurl].texts.possibleStories)
-                "
-              />
             </div>
-            <div
-              v-for="possibleStory in aiDetails[entryurl].texts.possibleStories"
-              :key="possibleStory.storyversion!.storycode || 'unknown'"
-            >
-              <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-              <Story
-                :entry="possibleStory"
-              /></div></template></b-col></template
-    ></template>
+          </div>
+          <div v-else>
+            {{
+              $t("{textNumber} textes trouvés", {
+                textNumber: 0,
+              })
+            }}
+          </div></b-col
+        ></template
+      ></template
+    >
     <template v-else>
       <b-col cols="3">
         <b-badge
