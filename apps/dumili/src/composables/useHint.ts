@@ -2,11 +2,13 @@ import { storeToRefs } from "pinia";
 
 import { coa } from "~/stores/coa";
 import {
+  EntrySuggestion,
   IssueSuggestion,
   StoryversionKind,
   suggestions,
 } from "~/stores/suggestions";
 import { POST__cover_id__search } from "~api-routes";
+import { StorySearchResults } from "~dm-types/StorySearchResults";
 import { KumikoResults } from "~pulumi-types/KumikoResults";
 
 export default () => {
@@ -64,14 +66,35 @@ export default () => {
     );
   };
 
-  const applyHintsFromOcr = () => {
-    // suggestionsStore.acceptSuggestion(
-    //   suggestionsStore.entrySuggestions[entryurl],
-    //   ({ data }) => data.kind === inferredKind,
-    //   { source: "ai", status: "success" },
-    //   (suggestion) => (suggestion.data.panels = result.panels)
-    // );
+  const applyHintsFromKeywordSearch = (
+    entryurl: string,
+    results: StorySearchResults["results"]
+  ) => {
+    suggestionsStore.entrySuggestions[entryurl] =
+      suggestionsStore.entrySuggestions[entryurl].filter(
+        ({ meta }) => meta.source === "ai"
+      );
+    suggestionsStore.entrySuggestions[entryurl] = results.map(
+      ({ storycode, title }) =>
+        new EntrySuggestion(
+          {
+            storyversion: {
+              storycode,
+            },
+            title,
+          },
+          {
+            source: "ai",
+            isAccepted: false,
+            status: "success",
+          }
+        )
+    );
   };
 
-  return { applyHintsFromKumiko, applyHintsFromCoverSearch, applyHintsFromOcr };
+  return {
+    applyHintsFromKumiko,
+    applyHintsFromCoverSearch,
+    applyHintsFromKeywordSearch,
+  };
 };

@@ -5,7 +5,7 @@ import { call } from "web/src/util/axios";
 import { ai as aiStore, BoundariesWithText } from "~/stores/ai";
 import { StoryversionKind, suggestions } from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
-import { POST__coa__stories__search__withIssues } from "~api-routes";
+import { POST__coa__stories__search } from "~api-routes";
 import { KumikoResults } from "~pulumi-types/KumikoResults";
 
 import useHintMaker from "./useHint";
@@ -49,8 +49,6 @@ export default () => {
           panels: panels.map((panel) => ({ bbox: panel })),
         };
       }
-
-      status.value = "loaded";
     });
   };
 
@@ -63,7 +61,6 @@ export default () => {
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
       );
 
-      status.value = "loading";
       nextTick(async () => {
         const { data } = await defaultApi
           .get(
@@ -77,10 +74,8 @@ export default () => {
           })
           .finally(() => {
             console.log("Recherche par image terminée");
-            status.value = "loaded";
           });
         hint.applyHintsFromCoverSearch(data);
-        status.value = "loaded";
       });
     } else {
       console.warn("La première page n'est pas une couverture");
@@ -88,8 +83,6 @@ export default () => {
   };
 
   const runStorycodeOcr = async (indexationId: string) => {
-    status.value = "loading";
-
     const storyFirstPages = Object.entries(storyversionKindSuggestions.value)
       .filter(([, suggestionsForEntry]) =>
         suggestionsForEntry.some(
@@ -112,28 +105,39 @@ export default () => {
             return { data: [] };
           })
           .finally(() => {
-            console.log("Recherche par OCR terminée");
-            status.value = "loaded";
+            console.log(`${url} : Recherche par OCR terminée`);
           })
       ).data;
 
-      const possibleStories = (
-        await call(
-          axios,
-          new POST__coa__stories__search__withIssues({
-            reqBody: {
-              keywords: ocrResults.map(({ text }) => text).join(","),
+      try {
+        const possibleStories = (
+          await call(
+            axios,
+            new POST__coa__stories__search({
+              reqBody: {
+                keywords: ocrResults.map(({ text }) => text).join(","),
+              },
+            })
+          )
+        ).data.results.results;
+
+        hint.applyHintsFromKeywordSearch(url, possibleStories);
+
+        aiDetails.value[url!].texts = {
+          ocrResults,
+          possibleStories: possibleStories.map(({ storycode, title }) => ({
+            storyversion: {
+              storycode,
             },
-          })
-        )
-      ).data;
-
-      aiDetails.value[url!].texts = {
-        ocrResults,
-        possibleStories,
-      };
+            title,
+          })),
+        };
+      } catch (e) {
+        console.error(e);
+      } finally {
+        console.log(`${url} : Recherche d'histoire par mots-clés terminée`);
+      }
     }
-    status.value = "loaded";
   };
 
   return { status, runCoverSearch, runKumiko, runStorycodeOcr };

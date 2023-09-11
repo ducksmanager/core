@@ -42,6 +42,7 @@ declare module 'vue' {
     Publication: typeof import('./src/components/Publication.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Story: typeof import('./src/components/Story.vue')['default']
     StorySearch: typeof import('./src/components/StorySearch.vue')['default']
     StorySuggestionList: typeof import('./src/components/StorySuggestionList.vue')['default']
     SuggestionList: typeof import('./src/components/SuggestionList.vue')['default']

@@ -19,7 +19,7 @@
         </suggestion-list> </b-col
       ><b-col cols="3"><StorySuggestionList :entryurl="entryurl" /></b-col>
       <b-col cols="3">
-        <input
+        <b-form-input
           type="text"
           class="w-100"
           :value="acceptedEntry?.data.title || ''" /></b-col
@@ -65,9 +65,30 @@
               })
             }}
             <i-bi-info-circle-fill
-              v-b-tooltip="JSON.stringify(aiDetails[entryurl].texts)"
+              v-b-tooltip="JSON.stringify(aiDetails[entryurl].texts.ocrResults)"
             />
-          </div> </b-col></template
+          </div>
+          <template v-if="aiDetails[entryurl].texts.ocrResults.length"
+            ><div>
+              {{
+                $t("{storyNumber} histoires trouvées avec ces mots-clés", {
+                  storyNumber: aiDetails[entryurl].texts.possibleStories.length,
+                })
+              }}
+              <i-bi-info-circle-fill
+                v-b-tooltip="
+                  JSON.stringify(aiDetails[entryurl].texts.possibleStories)
+                "
+              />
+            </div>
+            <div
+              v-for="possibleStory in aiDetails[entryurl].texts.possibleStories"
+              :key="possibleStory.storyversion!.storycode || 'unknown'"
+            >
+              <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
+              <Story
+                :entry="possibleStory"
+              /></div></template></b-col></template
     ></template>
     <template v-else>
       <b-col cols="3">
