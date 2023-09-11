@@ -2,11 +2,11 @@ import axios from "axios";
 import bodyParser from "body-parser";
 
 import { prismaCoa, prismaCoverInfo } from "~/prisma";
-import { ExpressCall } from "~routes/_express-call";
 import {
   CoverSearchResults,
   SimilarImagesResult,
 } from "~dm-types/CoverSearchResults";
+import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();
 

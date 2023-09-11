@@ -1,4 +1,5 @@
 import bodyParser from "body-parser";
+
 import { prismaDm } from "~/prisma";
 import {
   bookstoreComment,
@@ -6,7 +7,6 @@ import {
   user,
   userContribution,
 } from "~prisma-clients/client_dm";
-
 import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();

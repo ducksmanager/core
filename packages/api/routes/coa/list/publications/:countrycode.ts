@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
-import { PublicationTitles } from "~dm-types/PublicationTitles";
 
+import { PublicationTitles } from "~dm-types/PublicationTitles";
 import { ExpressCall } from "~routes/_express-call";
 
 import { getPublicationTitles } from "./index";

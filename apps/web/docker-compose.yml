@@ -10,16 +10,6 @@ services:
       - public-network
       - dm2-network
 
-  api:
-    container_name: ducksmanager-api
-    image: ghcr.io/bperel/ducksmanager-api
-    restart: always
-    networks:
-      - public-network
-      - dm2-network
-      - dm-server_db-network
-      - dm-server_cover-id-network
-
   sentry-relay:
     image: getsentry/relay
     restart: always
@@ -29,12 +19,7 @@ services:
     networks:
       - public-network
 
-
 networks:
   dm2-network:
   public-network:
-    external: true
-  dm-server_db-network:
-    external: true
-  dm-server_cover-id-network:
     external: true

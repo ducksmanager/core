@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 
 import { prismaDm } from "~/prisma";
-import { ExpressCall } from "~routes/_express-call";
 import { EditSubscription } from "~dm-types/EditSubscription";
+import { ExpressCall } from "~routes/_express-call";
 
 import { upsertSubscription } from "./index";
 

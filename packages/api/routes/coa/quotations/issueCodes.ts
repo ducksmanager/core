@@ -1,6 +1,5 @@
-import { inducks_issuequotation } from "~prisma-clients/client_coa";
-
 import { prismaCoa } from "~/prisma";
+import { inducks_issuequotation } from "~prisma-clients/client_coa";
 import { ExpressCall } from "~routes/_express-call";
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
