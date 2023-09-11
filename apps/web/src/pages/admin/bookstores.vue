@@ -30,8 +30,8 @@ import axios from "axios";
 
 import { call } from "~/util/axios";
 import { GET__bookstores, POST__bookstores__approve } from "~api-routes";
+import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import { bookstoreComment } from "~prisma-clients/client_dm";
-import { SimpleBookstore } from "~types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 

@@ -5,11 +5,11 @@ import { userOptionType } from "~prisma-clients/client_dm";
 import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 import { ExpressCall } from "~routes/_express-call";
 import { getPublicationTitlesFromCodes } from "~routes/coa/list/publications";
-import { IssueSuggestion } from "~types/IssueSuggestion";
-import { IssueSuggestionList } from "~types/IssueSuggestionList";
-import { StoryDetail } from "~types/StoryDetail";
-import { SuggestionList } from "~types/SuggestionList";
-import { SuggestionsWithDetails } from "~types/SuggestionsWithDetails";
+import { IssueSuggestion } from "~dm-types/IssueSuggestion";
+import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
+import { StoryDetail } from "~dm-types/StoryDetail";
+import { SuggestionList } from "~dm-types/SuggestionList";
+import { SuggestionsWithDetails } from "~dm-types/SuggestionsWithDetails";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",

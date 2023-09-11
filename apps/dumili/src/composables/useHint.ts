@@ -7,7 +7,7 @@ import {
   suggestions,
 } from "~/stores/suggestions";
 import { POST__cover_id__search } from "~api-routes";
-import { KumikoResults } from "~types/KumikoResults";
+import { KumikoResults } from "~pulumi-types/KumikoResults";
 
 export default () => {
   const suggestionsStore = suggestions();

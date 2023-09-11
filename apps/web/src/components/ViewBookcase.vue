@@ -165,8 +165,8 @@ import {
 import { coa as coaStore } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { users } from "~/stores/users";
-import { BookcaseEdgeSprite } from "~types/BookcaseEdge";
-import { SimpleIssue } from "~types/SimpleIssue";
+import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
+import { SimpleIssue } from "~dm-types/SimpleIssue";
 
 const route = useRoute();
 

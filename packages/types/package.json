@@ -1,5 +1,5 @@
 {
-  "name": "~types",
+  "name": "~dm-types",
   "module": "index.ts",
   "scripts": {
     "build": "rm -rf dist && ./node_modules/.pnpm/node_modules/.bin/tsc"

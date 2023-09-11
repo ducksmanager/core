@@ -3,7 +3,7 @@ import { bookstore, bookstoreComment } from "~prisma-clients/client_dm";
 
 import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-import { SimpleBookstore } from "~types/SimpleBookstore";
+import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 const parseForm = bodyParser.json();
 

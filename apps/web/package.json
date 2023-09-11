@@ -45,7 +45,7 @@
     "vue-slicksort": "^2.0.5",
     "~api-routes": "workspace:*",
     "~prisma-clients": "workspace:*",
-    "~types": "workspace:*"
+    "~dm-types": "workspace:*"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.41.0",

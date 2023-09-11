@@ -1,5 +1,5 @@
 import { prismaDm } from "~/prisma";
-import { BookcaseContributor } from "~types/BookcaseContributor";
+import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 
 import { ExpressCall } from "~routes/_express-call";
 

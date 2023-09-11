@@ -3,7 +3,7 @@ import { subscription } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import { ExpressCall } from "~routes/_express-call";
-import { EditSubscription } from "~types/EditSubscription";
+import { EditSubscription } from "~dm-types/EditSubscription";
 
 const parseForm = bodyParser.json();
 

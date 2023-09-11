@@ -1,4 +1,4 @@
-import { SimpleEntry } from "~types/SimpleEntry";
+import { SimpleEntry } from "~dm-types/SimpleEntry";
 
 import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";

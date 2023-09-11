@@ -16,7 +16,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
-      "~types": path.resolve(__dirname, "../../packages/types"),
+      "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~api-routes": path.resolve(__dirname, "../../packages/api-routes"),
       "~prisma-clients": path.resolve(
         __dirname,

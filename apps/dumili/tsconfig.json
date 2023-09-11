@@ -28,8 +28,8 @@
     "paths": {
       "~/*": ["src/*"],
       "~pulumi-types/*": ["types/*"],
+      "~dm-types/*": ["../../packages/types/*"],
       "~translations/*": ["translations/*"],
-      "~types/*": ["../../packages/types/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~api-routes/*": ["../../packages/api-routes/*"],
       "web/*": ["../web/*"]

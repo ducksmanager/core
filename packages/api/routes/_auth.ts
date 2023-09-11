@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { User } from "~types/SessionUser";
+import { User } from "~dm-types/SessionUser";
 
 export const authenticateToken = (
   req: Request,

@@ -1,4 +1,4 @@
-import { SimpleIssue } from "~types/SimpleIssue";
+import { SimpleIssue } from "~dm-types/SimpleIssue";
 
 import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";

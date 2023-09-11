@@ -3,7 +3,7 @@ import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import { cover } from "~prisma-clients/client_cover_info";
 import { Prisma } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { SimpleIssueWithPublication } from "~types/SimpleIssueWithPublication";
+import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 
 type ReturnType<FieldValue, T> = FieldValue extends string ? never : T;
 

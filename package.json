@@ -4,7 +4,7 @@
     "husky": "^8.0.3"
   },
   "scripts": {
-    "dev": "concurrently -n web,api \"pnpm run --filter web... dev\" \"pnpm run --filter api... dev\"",
+    "dev": "concurrently -n web,api,dumili,dumili-api \"pnpm run --filter web... dev\" \"pnpm run --filter api... dev\" \"pnpm run --filter dumili dev\" \"pnpm run --filter dumili-api dev\"",
     "build": "pnpm run -r build",
     "prepare": "husky install"
   }

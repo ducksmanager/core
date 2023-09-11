@@ -16,9 +16,9 @@ import {
   POST__coa__issues__decompose,
   POST__coa__list__publications,
 } from "~api-routes";
+import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
+import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import { inducks_issue } from "~prisma-clients/client_coa";
-import { InducksIssueDetails } from "~types/InducksIssueDetails";
-import { InducksIssueQuotationSimple } from "~types/InducksIssueQuotationSimple";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

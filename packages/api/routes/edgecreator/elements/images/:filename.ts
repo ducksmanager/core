@@ -1,6 +1,6 @@
 import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-import { ImageElement } from "~types/ImageElement";
+import { ImageElement } from "~dm-types/ImageElement";
 
 export const get = async (
   ...[req]: ExpressCall<{

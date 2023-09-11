@@ -17,8 +17,8 @@
     "outDir": "./dist",
     "paths": {
       "~/*": ["*"],
-      "~types/*": ["../types/*"],
-      "~dm-types/*": ["../../types/*"],
+      "~pulumi-types/*": ["../types/*"],
+      "~dm-types/*": ["../../../packages/types/*"],
       "~prisma-clients/*": ["../../prisma-clients/*"],
       "~routes/*": ["routes/*"]
     }

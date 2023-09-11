@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { StorySearchResults } from "~types/StorySearchResults";
+import { StorySearchResults } from "~dm-types/StorySearchResults";
 
 import { ExpressCall } from "~routes/_express-call";
 

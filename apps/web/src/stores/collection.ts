@@ -21,6 +21,10 @@ import {
   PUT__collection__purchases,
 } from "~api-routes";
 import {
+  CollectionUpdateMultipleIssues,
+  CollectionUpdateSingleIssue,
+} from "~dm-types/CollectionUpdate";
+import {
   authorUser,
   issue,
   issue_condition,
@@ -28,10 +32,6 @@ import {
   subscription,
   user,
 } from "~prisma-clients/client_dm";
-import {
-  CollectionUpdateMultipleIssues,
-  CollectionUpdateSingleIssue,
-} from "~types/CollectionUpdate";
 
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";

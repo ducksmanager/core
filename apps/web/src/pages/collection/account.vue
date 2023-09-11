@@ -230,7 +230,7 @@ import {
   POST__collection__empty,
   POST__collection__user,
 } from "~api-routes";
-import { ScopedError } from "~types/ScopedError";
+import { ScopedError } from "~dm-types/ScopedError";
 const getImagePath = images().getImagePath;
 
 const collection = collectionStore();

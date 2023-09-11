@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 import { Prisma } from "~prisma-clients/client_coa";
-import { SimpleIssue } from "~types/SimpleIssue";
-import { SimpleStory } from "~types/SimpleStory";
-import { StorySearchResults } from "~types/StorySearchResults";
+import { SimpleIssue } from "~dm-types/SimpleIssue";
+import { SimpleStory } from "~dm-types/SimpleStory";
+import { StorySearchResults } from "~dm-types/StorySearchResults";
 
 import { prismaCoa } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";

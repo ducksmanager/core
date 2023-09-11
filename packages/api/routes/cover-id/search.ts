@@ -6,7 +6,7 @@ import { ExpressCall } from "~routes/_express-call";
 import {
   CoverSearchResults,
   SimilarImagesResult,
-} from "~types/CoverSearchResults";
+} from "~dm-types/CoverSearchResults";
 
 const parseForm = bodyParser.json();
 

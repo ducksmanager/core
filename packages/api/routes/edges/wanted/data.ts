@@ -1,6 +1,6 @@
 import { prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-import { WantedEdge } from "~types/WantedEdge";
+import { WantedEdge } from "~dm-types/WantedEdge";
 
 export const get = async (...[, res]: ExpressCall<{ resBody: WantedEdge[] }>) =>
   res.json(

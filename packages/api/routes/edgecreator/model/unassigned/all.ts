@@ -1,6 +1,6 @@
 import { prismaEdgeCreator } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
-import { EdgeModel } from "~types/EdgeModel";
+import { EdgeModel } from "~dm-types/EdgeModel";
 
 export const get = async (...[, res]: ExpressCall<{ resBody: EdgeModel[] }>) =>
   res.json(

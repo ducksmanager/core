@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { Request, Response } from "express";
 
-import { CloudinaryResourceContext } from "~types/CloudinaryResourceContext";
+import { CloudinaryResourceContext } from "~pulumi-types/CloudinaryResourceContext";
 
 export const get = async (req: Request, res: Response) =>
   res.json(
