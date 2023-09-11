@@ -51,7 +51,7 @@ export default defineConfig({
     alias: {
       "~": path.resolve(__dirname, "src"),
       "~pulumi-types/": `${path.resolve(__dirname, "types")}/`,
-      "~types/": `${path.resolve(__dirname, "../../packages/types")}/`,
+      "~dm-types/": `${path.resolve(__dirname, "../../packages/types")}/`,
       "~api-routes/": `${path.resolve(
         __dirname,
         "../../packages/api-routes"

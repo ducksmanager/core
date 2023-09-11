@@ -6,7 +6,7 @@ import {
   inducks_storyjob,
   inducks_storyversion,
 } from "~prisma-clients/client_coa";
-import { Boundaries } from "~types/KumikoResults";
+import { Boundaries } from "~pulumi-types/KumikoResults";
 
 export enum StoryversionKind {
   "Story" = "n",

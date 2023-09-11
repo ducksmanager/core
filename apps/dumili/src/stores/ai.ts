@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
 import { StorySearchResults } from "~dm-types/StorySearchResults";
-import { Boundaries } from "~types/KumikoResults";
+import { Boundaries } from "~pulumi-types/KumikoResults";
 
 export type BoundariesWithText = {
   bbox: Boundaries;

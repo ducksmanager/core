@@ -37,7 +37,7 @@ const route = useRoute();
 const activeTab = storeToRefs(tabs()).activeTab;
 
 const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${route.fullPath}`
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
 );
 
 watch(

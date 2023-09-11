@@ -6,7 +6,7 @@ import { ai as aiStore, BoundariesWithText } from "~/stores/ai";
 import { StoryversionKind, suggestions } from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
 import { POST__coa__stories__search__withIssues } from "~api-routes";
-import { KumikoResults } from "~types/KumikoResults";
+import { KumikoResults } from "~pulumi-types/KumikoResults";
 
 import useHintMaker from "./useHint";
 
