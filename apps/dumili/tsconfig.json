@@ -27,9 +27,9 @@
     ],
     "paths": {
       "~/*": ["src/*"],
-      "~types/*": ["types/*"],
+      "~pulumi-types/*": ["types/*"],
       "~translations/*": ["translations/*"],
-      "~dm-types/*": ["../../packages/types/*"],
+      "~types/*": ["../../packages/types/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~api-routes/*": ["../../packages/api-routes/*"],
       "web/*": ["../web/*"]
