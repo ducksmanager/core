@@ -44,9 +44,13 @@
                 panelNumber: aiDetails[entryurl].panels.length,
               })
             }}
-            <i-bi-info-circle-fill
-              v-b-tooltip="JSON.stringify(aiDetails[entryurl].panels)"
+            <table-tooltip
+              :target="`panels-${entryurl}`"
+              :data="
+                aiDetails[entryurl].panels.map(({ bbox }) => ({ ...bbox }))
+              "
             />
+            <i-bi-info-circle-fill :id="`panels-${entryurl}`" />
           </div>
           <div>
             <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
@@ -64,10 +68,11 @@
                 textNumber: aiDetails[entryurl].texts.ocrResults.length,
               })
             }}
-            <i-bi-info-circle-fill
-              v-if="aiDetails[entryurl].texts"
-              v-b-tooltip="JSON.stringify(aiDetails[entryurl].texts.ocrResults)"
+            <table-tooltip
+              :target="`texts-${entryurl}`"
+              :data="aiDetails[entryurl].texts.ocrResults"
             />
+            <i-bi-info-circle-fill :id="`texts-${entryurl}`" />
             <div v-if="aiDetails[entryurl].texts.possibleStories?.length">
               <div>
                 {{
@@ -76,11 +81,11 @@
                       aiDetails[entryurl].texts.possibleStories.length,
                   })
                 }}
-                <i-bi-info-circle-fill
-                  v-b-tooltip="
-                    JSON.stringify(aiDetails[entryurl].texts.possibleStories)
-                  "
+                <table-tooltip
+                  :target="`stories-${entryurl}`"
+                  :data="aiDetails[entryurl].texts.possibleStories"
                 />
+                <i-bi-info-circle-fill :id="`stories-${entryurl}`" />
               </div>
               <div
                 v-for="possibleStory in aiDetails[entryurl].texts
@@ -252,5 +257,13 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
 
 .dark {
   color: black;
+}
+:deep(.tooltip.show) {
+  opacity: 1 !important;
+}
+
+:deep(.tooltip-inner) {
+  max-width: initial;
+  white-space: nowrap;
 }
 </style>
