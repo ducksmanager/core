@@ -33,8 +33,8 @@
               <template
                 v-if="
                   showAiDetections !== undefined &&
-                  widthDisplayRatio &&
-                  heightDisplayRatio
+                  xOffset !== undefined &&
+                  displayRatio
                 "
               >
                 <div
@@ -44,10 +44,10 @@
                   :key="`ocr-match-${idx}`"
                   class="position-absolute ocr-match"
                   :style="{
-                    left: `${x * widthDisplayRatio}px`,
-                    top: `${y * heightDisplayRatio}px`,
-                    width: `${width * widthDisplayRatio}px`,
-                    height: `${height * heightDisplayRatio}px`,
+                    left: `${(xOffset || 0) + x * displayRatio}px`,
+                    top: `${y * displayRatio}px`,
+                    width: `${width * displayRatio}px`,
+                    height: `${height * displayRatio}px`,
                   }"
                 ></div>
               </template>
@@ -140,14 +140,16 @@ const releaseDate = computed(() => {
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 
-const widthDisplayRatio = computed(
+const xOffset = computed(
   () =>
     book.value?.getSettings().width &&
+    displayRatio.value &&
     coverWidth.value &&
-    book.value?.getSettings().width / coverWidth.value
+    (book.value?.getSettings().width - coverWidth.value * displayRatio.value) /
+      2
 );
 
-const heightDisplayRatio = computed(
+const displayRatio = computed(
   () =>
     book.value?.getSettings().height &&
     coverHeight.value &&
