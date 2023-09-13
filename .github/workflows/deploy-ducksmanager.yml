@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - ".github/workflows/**"
       - "apps/web/**"
+      - "pnpm-lock.yaml"
     branches:
       - "master"
 jobs:
