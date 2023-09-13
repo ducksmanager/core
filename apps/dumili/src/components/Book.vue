@@ -30,27 +30,64 @@
                 marginLeft: 0,
               }"
             >
-              <template
+              <div
                 v-if="
                   showAiDetections !== undefined &&
                   xOffset !== undefined &&
-                  displayRatio
+                  displayRatio &&
+                  aiDetails[url].panels?.length
                 "
+                class="position-absolute h-100"
+                :style="{
+                  left: `${xOffset || 0}px`,
+                  width: `${displayedWidth! - (xOffset || 0)*2}px`,
+                }"
               >
                 <div
                   v-for="({ bbox: { x, y, width, height } }, idx) in aiDetails[
                     url
-                  ][/*showAiDetails === 'entry' ? 'texts' :*/ 'panels'] || []"
+                  ].panels"
                   :key="`ocr-match-${idx}`"
-                  class="position-absolute ocr-match"
+                  class="position-absolute ocr-match panel"
                   :style="{
-                    left: `${(xOffset || 0) + x * displayRatio}px`,
+                    left: `${x * displayRatio}px`,
                     top: `${y * displayRatio}px`,
                     width: `${width * displayRatio}px`,
                     height: `${height * displayRatio}px`,
                   }"
                 ></div>
-              </template>
+                <div
+                  class="position-absolute"
+                  :style="toPx(firstPanelPosition(url))"
+                >
+                  <div
+                    v-for="({ box }, idx) in aiDetails[url].texts?.ocrResults ||
+                    []"
+                    :key="`ocr-match-${idx}`"
+                    class="position-absolute ocr-match text"
+                    :style="{
+                      clipPath: `polygon(${box
+                        .map(([x, y]) =>
+                          (['width', 'height'] as const)
+                            .map(
+                              (dimension, idx) =>
+                                `${
+                                  [x, y][idx] /
+                                  (aiDetails[url].panels[0].bbox[dimension] /
+                                    100)
+                                }%`
+                            )
+                            .join(' ')
+                        )
+                        .join(',')})`,
+                    }"
+                  >
+                    {{
+                      `polygon(${box.map(([x, y]) => `${x}% ${y}%`).join(",")})`
+                    }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -140,21 +177,41 @@ const releaseDate = computed(() => {
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 
+const displayedWidth = computed(() => book.value?.getSettings().width);
+
 const xOffset = computed(
   () =>
-    book.value?.getSettings().width &&
+    displayedWidth.value &&
     displayRatio.value &&
     coverWidth.value &&
-    (book.value?.getSettings().width - coverWidth.value * displayRatio.value) /
-      2
+    (displayedWidth.value - coverWidth.value * displayRatio.value) / 2
 );
 
 const displayRatio = computed(
   () =>
-    book.value?.getSettings().height &&
+    displayedWidth.value &&
     coverHeight.value &&
-    book.value?.getSettings().height / coverHeight.value
+    displayedWidth.value / coverHeight.value
 );
+
+const firstPanelPosition = (url: string) => {
+  const { bbox } = aiDetails.value[url].panels[0];
+  return {
+    left: bbox.x * displayRatio.value!,
+    top: bbox.y * displayRatio.value!,
+    width: bbox.width * displayRatio.value!,
+    height: bbox.height * displayRatio.value!,
+  };
+};
+
+const toPx = (position: Record<string, number>) =>
+  Object.entries(position).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [key]: `${value}px`,
+    }),
+    {}
+  );
 
 watch(
   () => currentTabIndex.value,
@@ -353,6 +410,12 @@ watch(
 
   .ocr-match {
     border: 1px solid red;
+
+    &.text {
+      background: rgba(0, 0, 0, 0.4);
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>

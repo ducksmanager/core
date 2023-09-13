@@ -2,14 +2,10 @@ import axios from "axios";
 import { Request, Response } from "express";
 import sharp from "sharp";
 
+import { OcrResult } from "~pulumi-types/OcrResults";
+
 import { getIndexationResources } from "../..";
 import { KumikoResult, runKumiko } from "../kumiko";
-
-type OcrResult = {
-  box: [[number, number], [number, number], [number, number], [number, number]];
-  text: string;
-  confidence: number;
-};
 
 /* Adding a bit of extra in case the storycode is just outside the panel */
 const extendBoundaries = (
