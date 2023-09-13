@@ -10,6 +10,7 @@ declare module 'vue' {
     AiSuggestionIcon: typeof import('./src/components/AiSuggestionIcon.vue')['default']
     BAccordion: typeof import('bootstrap-vue-next')['BAccordion']
     BAccordionItem: typeof import('bootstrap-vue-next')['BAccordionItem']
+    BAlert: typeof import('bootstrap-vue-next')['BAlert']
     BBadge: typeof import('bootstrap-vue-next')['BBadge']
     BButton: typeof import('bootstrap-vue-next')['BButton']
     BCard: typeof import('bootstrap-vue-next')['BCard']
