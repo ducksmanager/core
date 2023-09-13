@@ -10,7 +10,7 @@ on:
 jobs:
   deploy-dumili:
     runs-on: ubuntu-latest
-    #environment: production
+    environment: production
     steps:
       - name: Check out repository
         uses: actions/checkout@master
