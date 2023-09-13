@@ -3,10 +3,12 @@ name: deploy-ducksmanager
 on:
   workflow_dispatch:
   push:
+    paths:
+      - "apps/web/**"
     branches:
       - "master"
 jobs:
-  deploy:
+  deploy-dm:
     runs-on: ubuntu-latest
     environment: production
     steps:

@@ -35,7 +35,7 @@ const app = express();
     "// noinspection ES6PreferShortImport",
     "",
     'import { Prisma } from "~prisma-clients/client_dm";',
-    'import { ContractWithMethodAndUrl } from "~types/Call";',
+    'import { ContractWithMethodAndUrl } from "~dm-types/Call";',
   ];
   imports.push(
     readdirSync("../types")
@@ -46,7 +46,7 @@ const app = express();
             ...readFileSync(`../types/${file}`)
               .toString()
               .matchAll(/(?:(?<=export type )|(?<=export interface ))\w+/g)!,
-          ].join(", ")} } from "~types/${file.replace(/\.ts$/, "")}";`
+          ].join(", ")} } from "~dm-types/${file.replace(/\.ts$/, "")}";`
       )
       .join("\n")
   );

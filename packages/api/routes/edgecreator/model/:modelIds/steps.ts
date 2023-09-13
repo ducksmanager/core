@@ -1,6 +1,6 @@
 import { prismaEdgeCreator } from "~/prisma";
+import { ModelSteps } from "~dm-types/ModelSteps";
 import { ExpressCall } from "~routes/_express-call";
-import { ModelSteps } from "~types/ModelSteps";
 
 export const get = async (
   ...[req, res]: ExpressCall<{

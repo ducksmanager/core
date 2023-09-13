@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "target": "esnext",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "paths": {
+      "~/*": ["*"],
+      "~pulumi-types/*": ["../types/*"],
+      "~dm-types/*": ["../../../packages/types/*"],
+      "~prisma-clients/*": ["../../prisma-clients/*"],
+      "~routes/*": ["routes/*"]
+    }
+  },
+  "include": ["index.ts", "routes/**/*.ts"],
+  "ts-node": {
+    "swc": true
+  }
+}

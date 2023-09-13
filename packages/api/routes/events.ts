@@ -1,24 +1,27 @@
 import dayjs from "dayjs";
 
 import { prismaDm } from "~/prisma";
-import { ExpressCall } from "~routes/_express-call";
-import { AbstractEvent, AbstractEventRaw } from "~types/events/AbstractEvent";
-import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
+import {
+  AbstractEvent,
+  AbstractEventRaw,
+} from "~dm-types/events/AbstractEvent";
+import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
 import {
   CollectionSubscriptionAdditionEvent,
   CollectionSubscriptionAdditionEventRaw,
-} from "~types/events/CollectionSubscriptionAdditionEvent";
+} from "~dm-types/events/CollectionSubscriptionAdditionEvent";
 import {
   CollectionUpdateEvent,
   CollectionUpdateEventRaw,
-} from "~types/events/CollectionUpdateEvent";
+} from "~dm-types/events/CollectionUpdateEvent";
 import {
   EdgeCreationEvent,
   EdgeCreationEventRaw,
-} from "~types/events/EdgeCreationEvent";
-import { Event } from "~types/events/Event";
-import { MedalEvent } from "~types/events/MedalEvent";
-import { SignupEvent } from "~types/events/SignupEvent";
+} from "~dm-types/events/EdgeCreationEvent";
+import { Event } from "~dm-types/events/Event";
+import { MedalEvent } from "~dm-types/events/MedalEvent";
+import { SignupEvent } from "~dm-types/events/SignupEvent";
+import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (...[, res]: ExpressCall<{ resBody: Event[] }>) =>
   res.json(await getEvents());

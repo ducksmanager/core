@@ -1,10 +1,9 @@
 import bodyParser from "body-parser";
-import { Prisma } from "~prisma-clients/client_coa";
-import { SimpleIssue } from "~types/SimpleIssue";
-import { SimpleStory } from "~types/SimpleStory";
-import { StorySearchResults } from "~types/StorySearchResults";
 
 import { prismaCoa } from "~/prisma";
+import { SimpleIssue } from "~dm-types/SimpleIssue";
+import { SimpleStory } from "~dm-types/SimpleStory";
+import { StorySearchResults } from "~dm-types/StorySearchResults";
 import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();
@@ -26,15 +25,16 @@ export const getStoriesByKeywords = async (
 ): Promise<StorySearchResults> => {
   const limit = 10;
 
+  const joinedKeywords = keywords.join(" ");
   let results = await prismaCoa.$queryRaw<SimpleStory[]>`
       SELECT inducks_storyversion.storycode,
              inducks_entry.title                         AS title,
-             MATCH (inducks_entry.title) AGAINST (${Prisma.join(keywords)}) /
+             MATCH (inducks_entry.title) AGAINST (${joinedKeywords}) /
              (IF(inducks_storyversion.kind = 'n', 1, 2)) AS score
       FROM inducks_entry
                INNER JOIN inducks_storyversion ON inducks_entry.storyversioncode = inducks_storyversion.storyversioncode
       WHERE inducks_storyversion.storycode <> ''
-        AND MATCH (inducks_entry.title) AGAINST (${Prisma.join(keywords)})
+        AND MATCH (inducks_entry.title) AGAINST (${joinedKeywords})
       GROUP BY inducks_storyversion.storycode
       ORDER BY score DESC, inducks_entry.title
       LIMIT ${limit + 1}

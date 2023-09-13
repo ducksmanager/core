@@ -1,15 +1,15 @@
 import bodyParser from "body-parser";
 import { Response } from "express";
-import { user } from "~prisma-clients/client_dm";
 
 import { prismaDm } from "~/prisma";
+import { exclude } from "~dm-types/exclude";
+import { ScopedError } from "~dm-types/ScopedError";
+import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
+import { user } from "~prisma-clients/client_dm";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";
-import { exclude } from "~types/exclude";
-import { ScopedError } from "~types/ScopedError";
-import { UserForAccountForm } from "~types/UserForAccountForm";
 
 const parseForm = bodyParser.json();
 

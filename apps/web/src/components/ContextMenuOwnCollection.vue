@@ -132,7 +132,7 @@ import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
   SaleState,
-} from "~types/CollectionUpdate";
+} from "~dm-types/CollectionUpdate";
 
 const user = $computed(() => collectionStore().user);
 let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{

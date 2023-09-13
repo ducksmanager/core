@@ -98,8 +98,8 @@ import {
   GET__coa__list__issues__by_storycode,
   POST__coa__stories__search__withIssues,
 } from "~api-routes";
-import { SimpleIssue } from "~types/SimpleIssue";
-import { SimpleStory } from "~types/SimpleStory";
+import { SimpleIssue } from "~dm-types/SimpleIssue";
+import { SimpleStory } from "~dm-types/SimpleStory";
 
 const { withTitle = true, withStoryLink = true } = defineProps<{
   withTitle?: boolean;

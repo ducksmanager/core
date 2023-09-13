@@ -1,10 +1,10 @@
 import bodyParser from "body-parser";
-import { issue_condition } from "~prisma-clients/client_dm";
 
 import { prismaDm } from "~/prisma";
+import { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
+import { TransactionResults } from "~dm-types/TransactionResults";
+import { issue_condition } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
-import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
-import { TransactionResults } from "~types/TransactionResults";
 
 import {
   checkPurchaseIdsBelongToUser,

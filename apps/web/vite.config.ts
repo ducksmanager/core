@@ -16,7 +16,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
-      "~types": path.resolve(__dirname, "../../packages/types"),
+      "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~api-routes": path.resolve(__dirname, "../../packages/api-routes"),
       "~prisma-clients": path.resolve(
         __dirname,
@@ -36,7 +36,7 @@ export default defineConfig({
     // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
     Layouts(),
 
-    // https://github.com/intlify/bundle-tools/tree/main/packages/vite-plugin-vue-i18n
+    // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
     VueI18n({
       runtimeOnly: false,
       compositionOnly: true,

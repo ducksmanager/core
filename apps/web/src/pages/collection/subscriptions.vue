@@ -93,7 +93,7 @@ import {
   POST__collection__subscriptions__$id,
   PUT__collection__subscriptions,
 } from "~api-routes";
-import { EditSubscription } from "~types/EditSubscription";
+import { EditSubscription } from "~dm-types/EditSubscription";
 
 type AssociatedPublication = {
   referencePublicationcode: string;

@@ -1,8 +1,7 @@
-import { user } from "~prisma-clients/client_dm";
-import { BookcaseEdge, BookcaseEdgeSprite } from "~types/BookcaseEdge";
-import { User } from "~types/SessionUser";
-
 import { prismaDm } from "~/prisma";
+import { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
+import { User } from "~dm-types/SessionUser";
+import { user } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {

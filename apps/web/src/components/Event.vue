@@ -120,12 +120,12 @@ import { RouterLink } from "vue-router";
 
 import { coa } from "~/stores/coa";
 import { users } from "~/stores/users";
-import { BookstoreCommentEvent } from "~types/events/BookstoreCommentEvent";
-import { CollectionSubscriptionAdditionEvent } from "~types/events/CollectionSubscriptionAdditionEvent";
-import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
-import { MedalEvent } from "~types/events/MedalEvent";
-import { SignupEvent } from "~types/events/SignupEvent";
+import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
+import { CollectionSubscriptionAdditionEvent } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
+import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
+import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
+import { MedalEvent } from "~dm-types/events/MedalEvent";
+import { SignupEvent } from "~dm-types/events/SignupEvent";
 
 const { event } = defineProps<{
   event:

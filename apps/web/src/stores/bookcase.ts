@@ -9,7 +9,7 @@ import {
   POST__bookcase__options,
   POST__bookcase__sort,
 } from "~api-routes";
-import { BookcaseEdge } from "~types/BookcaseEdge";
+import { BookcaseEdge } from "~dm-types/BookcaseEdge";
 
 import { collection } from "./collection";
 

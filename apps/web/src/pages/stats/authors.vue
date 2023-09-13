@@ -78,10 +78,6 @@ import { useI18n } from "vue-i18n";
 import { collection as collectionStore } from "~/stores/collection";
 import { call } from "~/util/axios";
 import { GET__collection__stats__watchedauthorsstorycount } from "~api-routes";
-import { PopularIssue } from "~types";
-
-let a: PopularIssue;
-console.log(a);
 
 Chart.register(
   Legend,

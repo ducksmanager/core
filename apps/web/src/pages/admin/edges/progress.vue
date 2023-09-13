@@ -128,7 +128,7 @@ import {
   GET__edges__published__data,
   GET__edges__wanted__data,
 } from "~api-routes";
-import { WantedEdge } from "~types/WantedEdge";
+import { WantedEdge } from "~dm-types/WantedEdge";
 const getImagePath = images().getImagePath;
 
 let hasData = $ref(false as boolean);

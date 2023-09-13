@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
-import { PublicationTitles } from "~types/PublicationTitles";
 
 import { prismaCoa } from "~/prisma";
+import { PublicationTitles } from "~dm-types/PublicationTitles";
 import { ExpressCall } from "~routes/_express-call";
 
 export const getPublicationTitlesFromCodes = async (

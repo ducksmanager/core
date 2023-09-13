@@ -19,9 +19,9 @@
 <script setup lang="ts">
 import { coa } from "~/stores/coa";
 import { users } from "~/stores/users";
-import { AbstractEvent } from "~types/events/AbstractEvent";
-import { CollectionUpdateEvent } from "~types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~types/events/EdgeCreationEvent";
+import { AbstractEvent } from "~dm-types/events/AbstractEvent";
+import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
+import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
 
 let isLoaded = $ref(false as boolean);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

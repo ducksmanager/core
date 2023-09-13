@@ -22,7 +22,7 @@
     ],
     "paths": {
       "~/*": ["src/*"],
-      "~types/*": ["../../packages/types/*"],
+      "~dm-types/*": ["../../packages/types/*"],
       "~api-routes/*": ["../../packages/api-routes/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~translations/*": ["translations/*"]

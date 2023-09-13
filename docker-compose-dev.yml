@@ -75,6 +75,16 @@ services:
   #    - node_cache:/root/.cache
   #   command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
 
+  kumiko:
+    extends:
+      file: apps/dumili/docker-compose-dev.yml
+      service: kumiko
+
+  paddleocr:
+    extends:
+      file: apps/dumili/docker-compose-dev.yml
+      service: paddleocr
+
 networks:
   front-network:
     driver: bridge

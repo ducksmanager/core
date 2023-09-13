@@ -1,6 +1,5 @@
-import { SimpleEntry } from "~types/SimpleEntry";
-
 import { prismaCoa } from "~/prisma";
+import { SimpleEntry } from "~dm-types/SimpleEntry";
 import { ExpressCall } from "~routes/_express-call";
 
 const getEntries = async (

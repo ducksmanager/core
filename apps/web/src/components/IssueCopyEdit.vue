@@ -262,8 +262,8 @@ import {
   IssueWithPublicationcodeOptionalId,
 } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
+import { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
 import { issue_condition } from "~prisma-clients/client_dm";
-import { CollectionUpdateMultipleIssues } from "~types/CollectionUpdate";
 
 const { conditions } = cond();
 
