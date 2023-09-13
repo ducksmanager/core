@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 
 import { Boundaries } from "~pulumi-types/KumikoResults";
+import { OcrResult } from "~pulumi-types/OcrResults";
 
 import { EntrySuggestion } from "./suggestions";
 
@@ -16,7 +17,7 @@ export const ai = defineStore("ai", () => ({
       {
         panels: Omit<BoundariesWithText[0], "text">[];
         texts: {
-          ocrResults: BoundariesWithText;
+          ocrResults: OcrResult[];
           possibleStories: EntrySuggestion["data"][];
         };
       }

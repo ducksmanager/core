@@ -2,11 +2,12 @@ import axios from "axios";
 import { storeToRefs } from "pinia";
 import { call } from "web/src/util/axios";
 
-import { ai as aiStore, BoundariesWithText } from "~/stores/ai";
+import { ai as aiStore } from "~/stores/ai";
 import { StoryversionKind, suggestions } from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
 import { POST__coa__stories__search } from "~api-routes";
 import { KumikoResults } from "~pulumi-types/KumikoResults";
+import { OcrResult } from "~pulumi-types/OcrResults";
 
 import useHintMaker from "./useHint";
 
@@ -95,7 +96,7 @@ export default () => {
     for (const url of storyFirstPages) {
       const ocrResults = (
         await defaultApi
-          .get<BoundariesWithText>(
+          .get<OcrResult[]>(
             `${
               import.meta.env.VITE_BACKEND_URL
             }/cloudinary/indexation/${indexationId}/ai/ocr/${url}`
