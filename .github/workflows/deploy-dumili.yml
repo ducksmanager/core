@@ -96,7 +96,7 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache,mode=max
           tags: |
-            ghcr.io/paddleocr/kumiko:latest
+            ghcr.io/bperel/paddleocr:latest
 
       - name: Upload docker-compose.yml file
         uses: nicklasfrahm/scp-action@v1.0.1
