@@ -17,6 +17,17 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@master
 
+      - name: Download web .env file
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: download
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: /home/bperel/workspace/DucksManager2/apps/web/.env.prod.local
+          target: apps/web/.env.prod.local
+
       - name: Download .env file
         uses: nicklasfrahm/scp-action@main
         with:
@@ -25,7 +36,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/dumili/.env.production.local
+          source: /home/bperel/workspace/dumili/.env.prod.local
           target: apps/dumili/api/.env.local
 
       - name: Set up Docker Buildx
@@ -97,7 +108,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: docker-compose.yml
+          source: apps/dumili/docker-compose.yml
           target: /home/bperel/workspace/dumili/docker-compose.yml
 
       - name: Recreate container
@@ -112,5 +123,5 @@ jobs:
           envs: DOCKER_REGISTRY_TOKEN_DUMILI
           script: |
             cd workspace/dumili
-            echo `grep GITHUB_TOKEN .env.production.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
+            echo `grep GITHUB_TOKEN .env.prod.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
             docker compose pull && docker compose up -d --force-recreate

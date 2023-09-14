@@ -81,7 +81,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: docker-compose.yml
+          source: apps/web/docker-compose.yml
           target: /home/bperel/workspace/DucksManager2/docker-compose.yml
 
       - name: Recreate container
