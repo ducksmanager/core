@@ -79,9 +79,8 @@ jobs:
       - name: Build and push kumiko
         uses: docker/build-push-action@v3
         with:
-          context: kumiko
+          context: apps/dumili/kumiko
           platforms: linux/x86_64
-          file: apps/dumili/kumiko/Dockerfile
           push: true
           cache-from: type=registry,ref=ghcr.io/bperel/kumiko:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/kumiko:buildcache,mode=max
@@ -91,9 +90,8 @@ jobs:
       - name: Build and push paddleocr
         uses: docker/build-push-action@v3
         with:
-          context: paddleocr
+          context: apps/dumili/paddleocr
           platforms: linux/x86_64
-          file: apps/dumili/paddleocr/Dockerfile
           push: true
           cache-from: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache,mode=max
