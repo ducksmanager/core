@@ -56,6 +56,7 @@ export default defineConfig({
         __dirname,
         "../../packages/api-routes"
       )}/`,
+      "~translations": path.resolve(__dirname, "translations"),
       "web/": `${path.resolve(__dirname, "../web")}/`,
     },
   },
