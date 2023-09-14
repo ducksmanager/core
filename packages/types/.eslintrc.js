@@ -5,14 +5,14 @@ module.exports = {
     "plugin:vue/vue3-recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
-    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   parser: "vue-eslint-parser",
   parserOptions: { parser: "@typescript-eslint/parser" },
   overrides: [
     {
-      files: ["*.js", "*.ts", "*.vue"],
-    },
+      files: ["*.ts", "*.vue"]
+    }
   ],
   root: true,
   rules: {
@@ -32,9 +32,9 @@ module.exports = {
       "kebab-case",
       {
         registeredComponentsOnly: true,
-        ignores: [],
-      },
-    ],
+        ignores: []
+      }
+    ]
   },
   plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
   ignorePatterns: [
@@ -43,6 +43,6 @@ module.exports = {
     "shims.d.ts",
     "vendor",
     "auto-imports.d.ts",
-    "component.d.ts",
-  ],
+    "component.d.ts"
+  ]
 };

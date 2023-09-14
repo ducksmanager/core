@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "scripts": {
-    "build": "rm -rf dist && ./node_modules/.pnpm/node_modules/.bin/tsc && tsc-alias",
+    "build": "rm -rf dist && ./node_modules/.bin/tsc && tsc-alias",
     "test": "which ts-node",
     "dev": "nodemon",
     "lint": "eslint --fix --cache ."

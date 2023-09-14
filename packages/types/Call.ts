@@ -2,7 +2,7 @@ export type Call<
   ResBody,
   Params = Record<string, string> | undefined,
   ReqBody = unknown,
-  Query = unknown
+  Query = unknown,
 > = {
   resBody?: ResBody;
   params?: Params;
@@ -13,7 +13,7 @@ export type Call<
 export type CallWithoutResBody<
   Params = Record<string, string> | undefined,
   ReqBody = unknown,
-  Query = unknown
+  Query = unknown,
 > = {
   params?: Params;
   reqBody?: ReqBody;

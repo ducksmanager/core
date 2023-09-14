@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/**"
+      - ".github/workflows/deploy-dumili.yml"
       - "apps/dumili/**"
       - "pnpm-lock.yaml"
     branches:
@@ -46,9 +46,8 @@ jobs:
         with:
           context: .
           platforms: linux/x86_64
-          file: apps/dumili/Dockerfile-live
           push: true
-          target: app
+          target: dumili
           cache-from: type=registry,ref=ghcr.io/bperel/dumili-app:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/dumili-app:buildcache,mode=max
           tags: |
@@ -59,9 +58,8 @@ jobs:
         with:
           context: .
           platforms: linux/x86_64
-          file: apps/dumili/Dockerfile-live
           push: true
-          target: api
+          target: dumili-api
           cache-from: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache,mode=max
           tags: |
@@ -114,5 +112,5 @@ jobs:
           envs: DOCKER_REGISTRY_TOKEN_DUMILI
           script: |
             cd workspace/dumili
-            echo `grep GITHUB_TOKEN api/.env.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
+            echo `grep GITHUB_TOKEN .env.production.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
             docker compose pull && docker compose up -d --force-recreate
