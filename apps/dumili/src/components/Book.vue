@@ -34,7 +34,7 @@
                 v-if="
                   showAiDetections !== undefined &&
                   xOffset !== undefined &&
-                  displayRatio &&
+                  displayRatioNoCropping &&
                   aiDetails[url].panels?.length
                 "
                 class="position-absolute h-100"
@@ -50,10 +50,10 @@
                   :key="`ocr-match-${idx}`"
                   class="position-absolute ocr-match panel"
                   :style="{
-                    left: `${x * displayRatio}px`,
-                    top: `${y * displayRatio}px`,
-                    width: `${width * displayRatio}px`,
-                    height: `${height * displayRatio}px`,
+                    left: `${x * displayRatioNoCropping}px`,
+                    top: `${y * displayRatioNoCropping}px`,
+                    width: `${width * displayRatioNoCropping}px`,
+                    height: `${height * displayRatioNoCropping}px`,
                   }"
                 ></div>
                 <div
@@ -178,29 +178,32 @@ const releaseDate = computed(() => {
 });
 
 const displayedWidth = computed(() => book.value?.getSettings().width);
+const displayedHeight = computed(() => book.value?.getSettings().height);
 
 const xOffset = computed(
   () =>
+    displayedHeight.value &&
+    pageRatio.value &&
     displayedWidth.value &&
-    displayRatio.value &&
-    coverWidth.value &&
-    (displayedWidth.value - coverWidth.value * displayRatio.value) / 2
+    (displayedWidth.value - displayedHeight.value * pageRatio.value) / 2
 );
 
-const displayRatio = computed(
+const pageRatio = computed(() => coverWidth.value! / coverHeight.value!);
+
+const displayRatioNoCropping = computed(
   () =>
-    displayedWidth.value &&
+    displayedHeight.value &&
     coverHeight.value &&
-    displayedWidth.value / coverHeight.value
+    displayedHeight.value / coverHeight.value
 );
 
 const firstPanelPosition = (url: string) => {
   const { bbox } = aiDetails.value[url].panels[0];
   return {
-    left: bbox.x * displayRatio.value!,
-    top: bbox.y * displayRatio.value!,
-    width: bbox.width * displayRatio.value!,
-    height: bbox.height * displayRatio.value!,
+    left: bbox.x * displayRatioNoCropping.value!,
+    top: bbox.y * displayRatioNoCropping.value!,
+    width: bbox.width * displayRatioNoCropping.value!,
+    height: bbox.height * displayRatioNoCropping.value!,
   };
 };
 
