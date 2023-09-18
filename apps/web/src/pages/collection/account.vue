@@ -224,12 +224,12 @@ import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
-import { call } from "~/util/axios";
 import {
   DELETE__collection__user,
   POST__collection__empty,
   POST__collection__user,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import { ScopedError } from "~dm-types/ScopedError";
 const getImagePath = images().getImagePath;
 

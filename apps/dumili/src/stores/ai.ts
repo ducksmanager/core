@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
-import { Boundaries } from "~pulumi-types/KumikoResults";
-import { OcrResult } from "~pulumi-types/OcrResults";
+import { Boundaries } from "~dumili-types/KumikoResults";
+import { OcrResult } from "~dumili-types/OcrResults";
 
 import { EntrySuggestion } from "./suggestions";
 

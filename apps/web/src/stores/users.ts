@@ -2,12 +2,12 @@ import axios from "axios";
 import { defineStore } from "pinia";
 
 import { cachedUserApi as userApi } from "~/util/api";
-import { call } from "~/util/axios";
 import {
   GET__global_stats__bookcase__contributors,
   GET__global_stats__user__$userIds,
   GET__global_stats__user__count,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";

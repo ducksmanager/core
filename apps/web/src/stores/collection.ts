@@ -2,7 +2,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
-import { call } from "~/util/axios";
 import {
   DELETE__collection__purchases__$id,
   GET__collection__authors__watched,
@@ -20,6 +19,7 @@ import {
   POST__collection__options__$optionName,
   PUT__collection__purchases,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,

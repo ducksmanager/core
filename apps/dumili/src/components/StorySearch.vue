@@ -25,9 +25,9 @@
 import axios from "axios";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { call } from "web/src/util/axios";
 
 import { POST__coa__stories__search } from "~api-routes";
+import { call } from "~axios-helper";
 import { SimpleStory } from "~dm-types/SimpleStory";
 
 const emit = defineEmits<{

@@ -21,18 +21,20 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    "preserveWatchOutput": true,
+
     "types": [
       "@vue-macros/reactivity-transform/macros-global",
       "unplugin-icons/types/vue"
     ],
     "paths": {
       "~/*": ["src/*"],
-      "~pulumi-types/*": ["types/*"],
+      "~dumili-types/*": ["types/*"],
       "~dm-types/*": ["../../packages/types/*"],
       "~translations/*": ["translations/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~api-routes/*": ["../../packages/api-routes/*"],
-      "web/*": ["../web/*"]
+      "~axios-helper/*": ["../../packages/axios-helper/*"],
+      "~api-routes/*": ["../../packages/api-routes/*"]
     }
   },
   "include": [

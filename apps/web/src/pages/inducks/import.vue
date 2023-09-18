@@ -287,8 +287,8 @@ import { useI18n } from "vue-i18n";
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 import { images } from "~/stores/images";
-import { call } from "~/util/axios";
 import { POST__collection__issues__multiple } from "~api-routes";
+import { call } from "~axios-helper";
 import { inducks_issue } from "~prisma-clients/client_coa";
 const getImagePath = images().getImagePath;
 

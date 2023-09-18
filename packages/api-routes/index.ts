@@ -1,9 +1,9 @@
 // noinspection ES6PreferShortImport
 
+import { ContractWithMethodAndUrl } from "~axios-helper";
 import { AuthorsDetails } from "~dm-types/AuthorsDetails";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import { ContractWithMethodAndUrl } from "~dm-types/Call";
 import { CollectionUpdateMultipleIssues,CollectionUpdateSingleIssue } from "~dm-types/CollectionUpdate";
 import { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import { EdgeModel } from "~dm-types/EdgeModel";

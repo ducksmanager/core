@@ -93,11 +93,11 @@ import {
   collection as collectionStore,
   IssueWithPublicationcode,
 } from "~/stores/collection";
-import { call } from "~/util/axios";
 import {
   GET__coa__list__issues__by_storycode,
   POST__coa__stories__search__withIssues,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
 

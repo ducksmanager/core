@@ -14,6 +14,7 @@
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
+    "preserveWatchOutput": true,
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
@@ -23,6 +24,7 @@
     "paths": {
       "~/*": ["src/*"],
       "~dm-types/*": ["../../packages/types/*"],
+      "~axios-helper/*": ["../../packages/axios-helper/*"],
       "~api-routes/*": ["../../packages/api-routes/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~translations/*": ["translations/*"]

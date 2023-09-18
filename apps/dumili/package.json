@@ -5,7 +5,7 @@
     "node": ">=16.0.0 <17.0.0"
   },
   "scripts": {
-    "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
+    "dev": "concurrently -n vite,vue-tsc,docker-compose \"vite --port 8004\" \"vue-tsc --noEmit --watch\" \"docker compose -f docker-compose-dev.yml up\"",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
@@ -27,9 +27,9 @@
     "vue": "^3.3.4",
     "vue-i18n": "^9.3.0",
     "vue-router": "^4.2.4",
-    "web": "workspace:*",
     "~api-routes": "workspace:*",
-    "~dm-types": "workspace:*"
+    "~dm-types": "workspace:*",
+    "~axios-helper": "workspace:*"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.41.0",

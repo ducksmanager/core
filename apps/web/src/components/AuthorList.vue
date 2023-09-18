@@ -112,13 +112,13 @@ import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
-import { call } from "~/util/axios";
 import {
   DELETE__collection__authors__watched,
   GET__coa__authorsfullnames__search__$partialAuthorName,
   POST__collection__authors__watched,
   PUT__collection__authors__watched,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import { inducks_person } from "~prisma-clients/client_coa";
 import { authorUser } from "~prisma-clients/client_dm";
 

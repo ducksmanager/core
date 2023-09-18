@@ -168,8 +168,8 @@ import {
   QuotedIssue,
 } from "~/stores/collection";
 import { users } from "~/stores/users";
-import { call } from "~/util/axios";
 import { GET__global_stats__user__collection__rarity } from "~api-routes";
+import { call } from "~axios-helper";
 
 const collection = collectionStore();
 const { getConditionLabel } = condition();

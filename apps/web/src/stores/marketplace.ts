@@ -2,7 +2,6 @@ import axios from "axios";
 import { defineStore } from "pinia";
 
 import { users } from "~/stores/users";
-import { call } from "~/util/axios";
 import {
   DELETE__collection__on_sale_by_others__requests,
   GET__collection__on_sale_by_others,
@@ -10,6 +9,7 @@ import {
   GET__collection__on_sale_by_others__requests__as__$as,
   PUT__collection__on_sale_by_others__requests,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import { issue, requestedIssue } from "~prisma-clients/client_dm";
 
 export const marketplace = defineStore("marketplace", () => {

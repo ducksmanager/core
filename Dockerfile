@@ -15,6 +15,7 @@ COPY apps/dumili/package.json ./apps/dumili/
 COPY apps/dumili/api/package.json ./apps/dumili/api/
 COPY packages/api/package.json ./packages/api/
 COPY packages/api-routes/package.json ./packages/api-routes/
+COPY packages/axios-helper/package.json ./packages/axios-helper/
 COPY packages/types/package.json ./packages/types/
 COPY packages/prisma-clients/package.json ./packages/prisma-clients/
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
@@ -77,8 +78,11 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 
+COPY --from=build /app/packages/axios-helper/dist ./packages/axios-helper
+COPY --from=build /app/packages/axios-helper/package.json ./packages/axios-helper/
+
 WORKDIR /app/apps/dumili/api
-COPY --from=build /app/apps/dumili/api/dist/apps/dumili/api ./
+COPY --from=build /app/apps/dumili/api/dist/api ./
 
 COPY apps/dumili/api/package.json ./
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \

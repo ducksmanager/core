@@ -14,14 +14,7 @@
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "paths": {
-      "~/*": ["../api/*"],
-      "~emails/*": ["../api/emails/*"],
-      "~routes/*": ["../api/routes/*"],
-      "~dm-types/*": ["../../packages/types/*"],
-      "~axios-helper/*": ["../../packages/axios-helper/*"]
-    }
+    "outDir": "./dist"
   },
   "include": ["./index.ts"],
   "exclude": ["node_modules"]

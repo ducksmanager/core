@@ -35,7 +35,7 @@ const app = express();
     "// noinspection ES6PreferShortImport",
     "",
     'import { Prisma } from "~prisma-clients/client_dm";',
-    'import { ContractWithMethodAndUrl } from "~dm-types/Call";',
+    'import { ContractWithMethodAndUrl } from "~axios-helper";',
   ];
   imports.push(
     readdirSync("../types")

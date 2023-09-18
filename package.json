@@ -4,7 +4,8 @@
     "husky": "^8.0.3"
   },
   "scripts": {
-    "dev": "concurrently -n web,api,dumili,dumili-api \"pnpm run --filter web... dev\" \"pnpm run --filter api... dev\" \"pnpm run --filter dumili dev\" \"pnpm run --filter dumili-api dev\"",
+    "dm": "concurrently -n web,api \"pnpm -F web... -F !~prisma-clients dev\" \"pnpm -F api... dev\"",
+    "dumili": "concurrently -n web+api,dumili,dumili-api \"pnpm dm\" \"pnpm -F dumili... -F !~prisma-clients dev\" \"pnpm -F dumili-api... dev\"",
     "build": "pnpm run -r build",
     "prepare": "husky install"
   }

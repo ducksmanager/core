@@ -10,8 +10,8 @@ meta:
 <script setup lang="ts">
 import axios from "axios";
 
-import { call } from "~/util/axios";
 import { PUT__edgecreator__edgesprites } from "~api-routes";
+import { call } from "~axios-helper";
 
 const generateSprites = async () => {
   await call(axios, new PUT__edgecreator__edgesprites());

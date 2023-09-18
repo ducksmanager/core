@@ -10,8 +10,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import { call } from "~/util/axios";
 import { POST__demo } from "~api-routes";
+import { call } from "~axios-helper";
 
 const collectionStore = collection();
 

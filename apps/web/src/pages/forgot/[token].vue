@@ -34,8 +34,8 @@ import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
-import { call } from "~/util/axios";
 import { POST__auth__change_password } from "~api-routes";
+import { call } from "~axios-helper";
 
 const router = useRouter();
 const collectionStore = collection();

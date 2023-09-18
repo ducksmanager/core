@@ -123,11 +123,11 @@ import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { images } from "~/stores/images";
-import { call } from "~/util/axios";
 import {
   GET__edges__published__data,
   GET__edges__wanted__data,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import { WantedEdge } from "~dm-types/WantedEdge";
 const getImagePath = images().getImagePath;
 

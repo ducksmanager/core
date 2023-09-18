@@ -28,8 +28,8 @@ meta:
 <script setup lang="ts">
 import axios from "axios";
 
-import { call } from "~/util/axios";
 import { GET__bookstores, POST__bookstores__approve } from "~api-routes";
+import { call } from "~axios-helper";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import { bookstoreComment } from "~prisma-clients/client_dm";
 

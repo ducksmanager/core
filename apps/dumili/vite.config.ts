@@ -26,7 +26,14 @@ export default defineConfig({
         },
       },
     }),
-    eslintPlugin(),
+    eslintPlugin({
+      exclude: [
+        `node_modules/**`,
+        `${path.resolve(__dirname, "../..")}/node_modules/**`,
+        `${path.resolve(__dirname, "../..")}/packages/**`,
+        "dist/**",
+      ],
+    }),
     AutoImport({
       dts: true,
       imports: ["vue", "vue-router"],
@@ -50,14 +57,17 @@ export default defineConfig({
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),
-      "~pulumi-types/": `${path.resolve(__dirname, "types")}/`,
+      "~dumili-types/": `${path.resolve(__dirname, "types")}/`,
       "~dm-types/": `${path.resolve(__dirname, "../../packages/types")}/`,
+      "~axios-helper/": `${path.resolve(
+        __dirname,
+        "../../packages/axios-helper"
+      )}/`,
       "~api-routes/": `${path.resolve(
         __dirname,
         "../../packages/api-routes"
       )}/`,
       "~translations": path.resolve(__dirname, "translations"),
-      "web/": `${path.resolve(__dirname, "../web")}/`,
     },
   },
 });

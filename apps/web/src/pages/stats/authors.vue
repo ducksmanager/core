@@ -76,8 +76,8 @@ import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
 import { collection as collectionStore } from "~/stores/collection";
-import { call } from "~/util/axios";
 import { GET__collection__stats__watchedauthorsstorycount } from "~api-routes";
+import { call } from "~axios-helper";
 
 Chart.register(
   Legend,

@@ -13,10 +13,12 @@ import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
 export default defineConfig({
+  clearScreen: false,
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
+      "~axios-helper": path.resolve(__dirname, "../../packages/axios-helper"),
       "~api-routes": path.resolve(__dirname, "../../packages/api-routes"),
       "~prisma-clients": path.resolve(
         __dirname,

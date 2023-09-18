@@ -1,0 +1,47 @@
+version: '2.4'
+services:
+  # pastec:
+  #   container_name: pastec
+  #   image: "bperel/pastec-ubuntu-1704-timestamps"
+  #   restart: always
+  #   command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+  #   volumes:
+  #     - pastec_index:/pastec-index-last.dat:ro
+
+  mailcatcher:
+    container_name: mailcatcher
+    image: yappabe/mailcatcher
+    restart: always
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+    networks:
+      - mail-network
+  # duck-estimator:
+  #   container_name: duck-estimator
+  #   image: "mcr.microsoft.com/playwright:focal"
+  #   depends_on:
+  #    - db
+  #   environment:
+  #    - MYSQL_COA_HOST=db
+  #    - MYSQL_COA_PORT=3306
+  #    - MYSQL_COA_DATABASE=coa
+  #    - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
+  #    - GITHUB_TOKEN=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
+  #    - GITHUB_NAME=Admin
+  #    - GITHUB_EMAIL=admin@ducksmanager.net
+  #   networks:
+  #    - db-network
+  #   volumes:
+  #    - duck_estimator_cache:/home/cache
+  #    - node_cache:/root/.cache
+  #   command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
+
+
+networks:
+  mail-network:
+    driver: bridge
+
+volumes:
+  # duck_estimator_cache:
+  node_cache: # pastec_index:

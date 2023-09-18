@@ -1,13 +1,13 @@
 import axios from "axios";
 import { storeToRefs } from "pinia";
-import { call } from "web/src/util/axios";
 
 import { ai as aiStore } from "~/stores/ai";
 import { StoryversionKind, suggestions } from "~/stores/suggestions";
 import { defaultApi } from "~/util/api";
 import { POST__coa__stories__search } from "~api-routes";
-import { KumikoResults } from "~pulumi-types/KumikoResults";
-import { OcrResult } from "~pulumi-types/OcrResults";
+import { call } from "~axios-helper";
+import { KumikoResults } from "~dumili-types/KumikoResults";
+import { OcrResult } from "~dumili-types/OcrResults";
 
 import useHintMaker from "./useHint";
 

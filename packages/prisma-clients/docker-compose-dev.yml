@@ -1,0 +1,41 @@
+version: '2.4'
+services:
+
+  db:
+    container_name: db
+    image: "mariadb:10.11"
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - "64999:3306"
+    env_file:
+      - .env
+    command:
+      [
+        'mysqld',
+        '--character-set-server=utf8',
+        '--collation-server=utf8_unicode_ci'
+      ]
+    networks:
+      - db-network
+  # coa-updater:
+  #   container_name: coa-updater
+  #   image: bperel/coa-updater
+  #   depends_on:
+  #     - db
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     MYSQL_HOST: db
+  #     MYSQL_DATABASE: coa
+  #   networks:
+  #     - db-network
+
+networks:
+  db-network:
+    driver: bridge
+
+volumes:
+  db:

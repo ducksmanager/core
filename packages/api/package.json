@@ -4,7 +4,7 @@
   "scripts": {
     "build": "rm -rf dist && ./node_modules/.bin/tsc && tsc-alias",
     "test": "which ts-node",
-    "dev": "nodemon",
+    "dev": "concurrently -n api,docker-compose \"nodemon\" \"docker compose -f docker-compose-dev.yml up\"",
     "lint": "eslint --fix --cache ."
   },
   "_moduleAliases": {
@@ -53,6 +53,7 @@
     "@types/nodemailer": "^6.4.10",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "concurrently": "^8.2.1",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier-vue": "^4.2.0",

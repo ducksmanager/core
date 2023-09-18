@@ -70,8 +70,8 @@ import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
-import { call } from "~/util/axios";
 import { GET__csrf, PUT__collection__user } from "~api-routes";
+import { call } from "~axios-helper";
 import { ScopedError } from "~dm-types/ScopedError";
 
 const collectionStore = collection();

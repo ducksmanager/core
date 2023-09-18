@@ -87,12 +87,12 @@ import { onMounted, watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection, SubscriptionTransformed } from "~/stores/collection";
-import { call } from "~/util/axios";
 import {
   DELETE__collection__subscriptions__$id,
   POST__collection__subscriptions__$id,
   PUT__collection__subscriptions,
 } from "~api-routes";
+import { call } from "~axios-helper";
 import { EditSubscription } from "~dm-types/EditSubscription";
 
 type AssociatedPublication = {
