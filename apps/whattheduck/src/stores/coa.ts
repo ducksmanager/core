@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
 import {
   GET__coa__authorsfullnames__$authors,
   GET__coa__list__countries__$locale,

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import type { DataSource } from 'typeorm';
-import { inject, ref } from 'vue';
 
 import { Sync } from '~/persistence/models/internal/Sync';
 

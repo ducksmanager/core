@@ -19,10 +19,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
-
 import { collection } from '~/stores/collection';
 
 const collectionStore = collection();

@@ -8,9 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
-import { useRoute } from 'vue-router';
-
 import { app } from './stores/app';
 
 const appStore = app();

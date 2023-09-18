@@ -6,6 +6,7 @@
       <ion-radio-group v-if="selectedCondition" :model-value="selectedCondition">
         <ion-radio
           v-for="condition of conditions"
+          :key="condition"
           :class="`dm-condition-background ${condition}`"
           :value="condition"
           :aria-label="t(`condition_${condition}`)"
@@ -41,10 +42,6 @@
   </ion-page>
 </template>
 <script setup lang="ts">
-import { watch, computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
-
 import type { IssueWithPublicationcode, purchaseWithStringDate } from '~/stores/collection';
 import { collection } from '~/stores/collection';
 import { condition } from '~/stores/condition';

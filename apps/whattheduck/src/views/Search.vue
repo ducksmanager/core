@@ -40,9 +40,6 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { POST__coa__stories__search__withIssues } from '~api-routes';
 import { call } from '~axios-helper';
 import type { SimpleIssue } from '~dm-types/SimpleIssue';

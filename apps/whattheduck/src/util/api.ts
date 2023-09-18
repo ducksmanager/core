@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { addUrlParamsRequestInterceptor } from '~axios-helper';
 
-import { addTokenRequestInterceptor, addUrlParamsRequestInterceptor } from '~/axios-helper';
+import { addTokenRequestInterceptor } from '~/axios-helper';
 
 const coaApi = addUrlParamsRequestInterceptor(
   axios.create({

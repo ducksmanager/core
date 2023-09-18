@@ -1,7 +1,6 @@
 import type { AxiosError } from 'axios';
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
 import {
   GET__bookcase__$username,
   GET__bookcase__$username__options,

@@ -7,7 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
 import type { ScopedError } from '~dm-types/ScopedError';
 
 const props = defineProps<{

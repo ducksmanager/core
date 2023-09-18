@@ -32,8 +32,6 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { POST__auth__forgot } from '~api-routes';
 import { call } from '~axios-helper';
 

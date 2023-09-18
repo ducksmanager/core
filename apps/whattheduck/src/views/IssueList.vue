@@ -16,10 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
-import type { RouteLocationNamedRaw } from 'vue-router';
-import { useRoute, useRouter } from 'vue-router';
-
 import useCondition from '~/composables/useCondition';
 import { app } from '~/stores/app';
 import { coa } from '~/stores/coa';

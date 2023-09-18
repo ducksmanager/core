@@ -90,11 +90,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { AxiosError } from 'axios';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 import { PUT__collection__user } from '~api-routes';
 import { call } from '~axios-helper';
 

@@ -13,8 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const props = defineProps<{
   ownership?: [number, number];
   ownershipTextFn: (ownership: [number, number], fillPercentage?: number | undefined) => string;

@@ -14,10 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
-import type { RouteLocationNamedRaw } from 'vue-router';
-import { useRoute } from 'vue-router';
-
 import router from '~/router';
 import { app } from '~/stores/app';
 import { coa } from '~/stores/coa';

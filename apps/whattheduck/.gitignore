@@ -32,3 +32,4 @@ npm-debug.log*
 
 *.local
 .eslintcache
+*.d.ts

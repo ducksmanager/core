@@ -5,8 +5,6 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { IonicVue } from '@ionic/vue';
 import { JeepSqlite } from 'jeep-sqlite/dist/components/jeep-sqlite';
 import { createPinia } from 'pinia';
-import { createApp } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 import App from './App.vue';
 import i18n from './i18n';

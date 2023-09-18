@@ -39,9 +39,6 @@
 </template>
 <script setup lang="ts">
 import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-
 import { collection } from '~/stores/collection';
 
 const { t } = useI18n();

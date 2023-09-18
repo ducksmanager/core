@@ -34,6 +34,8 @@ module.exports = {
 
     "vue/multi-word-component-names": "off",
 
+    'vue/no-deprecated-slot-attribute': 'off',
+
     // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/docs/rules
     "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/no-explicit-any": "off",

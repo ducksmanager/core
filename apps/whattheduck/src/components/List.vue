@@ -41,11 +41,6 @@
 
 <script setup lang="ts">
 import { IonContent } from '@ionic/vue';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { RouteLocationNamedRaw } from 'vue-router';
-import { useRoute, useRouter } from 'vue-router';
-
 import { app } from '~/stores/app';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';

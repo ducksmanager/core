@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
 
 import { createAxios } from '~/axios-helper';
 
