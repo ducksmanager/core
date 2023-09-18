@@ -17,9 +17,8 @@
     "outDir": "./dist",
     "paths": {
       "~/*": ["*"],
-      "~pulumi-types/*": ["../types/*"],
-      "~dm-types/*": ["../../../packages/types/*"],
-      "~prisma-clients/*": ["../../prisma-clients/*"],
+      "~dumili-types/*": ["../types/*"],
+      "~axios-helper/*": ["../../../packages/axios-helper/*"],
       "~routes/*": ["routes/*"]
     }
   },

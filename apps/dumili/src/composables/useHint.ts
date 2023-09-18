@@ -9,7 +9,7 @@ import {
 } from "~/stores/suggestions";
 import { POST__cover_id__search } from "~api-routes";
 import { StorySearchResults } from "~dm-types/StorySearchResults";
-import { KumikoResults } from "~pulumi-types/KumikoResults";
+import { KumikoResults } from "~dumili-types/KumikoResults";
 
 export default () => {
   const suggestionsStore = suggestions();

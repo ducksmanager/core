@@ -3,10 +3,11 @@ import type { CacheRequestConfig } from "axios-cache-interceptor";
 import { buildWebStorage, setupCache } from "axios-cache-interceptor";
 import dayjs from "dayjs";
 import Cookies from "js-cookie";
+
 import {
   addTokenRequestInterceptor,
   addUrlParamsRequestInterceptor,
-} from "web/src/util/axios";
+} from "~axios-helper";
 
 const customStorage = buildWebStorage(sessionStorage);
 

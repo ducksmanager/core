@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import {
   addTokenRequestInterceptor,
   addUrlParamsRequestInterceptor,
-} from "~/util/axios";
+} from "~axios-helper";
 
 import { getIndexationResources } from "../index";
 

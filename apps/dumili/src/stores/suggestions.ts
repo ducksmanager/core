@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 
+import { Boundaries } from "~dumili-types/KumikoResults";
 import {
   inducks_entry,
   inducks_issue,
   inducks_storyjob,
   inducks_storyversion,
 } from "~prisma-clients/client_coa";
-import { Boundaries } from "~pulumi-types/KumikoResults";
 
 export enum StoryversionKind {
   "Story" = "n",

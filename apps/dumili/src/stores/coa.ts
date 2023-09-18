@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { call, getChunkedRequests } from "web/src/util/axios";
 
 import i18n from "~/i18n";
 import { cachedCoaApi as coaApi } from "~/util/api";
@@ -15,6 +14,7 @@ import {
   POST__coa__issues__decompose,
   POST__coa__list__publications,
 } from "~api-routes";
+import { call, getChunkedRequests } from "~axios-helper";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import { inducks_issue } from "~prisma-clients/client_coa";

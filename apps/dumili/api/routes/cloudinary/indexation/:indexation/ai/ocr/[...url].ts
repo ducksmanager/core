@@ -2,7 +2,7 @@ import axios from "axios";
 import { Request, Response } from "express";
 import sharp from "sharp";
 
-import { OcrResult } from "~pulumi-types/OcrResults";
+import { OcrResult } from "~dumili-types/OcrResults";
 
 import { getIndexationResources } from "../..";
 import { KumikoResult, runKumiko } from "../kumiko";
