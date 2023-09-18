@@ -15,12 +15,13 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue';
+import type { RouteLocationNamedRaw } from 'vue-router';
+import { useRoute } from 'vue-router';
 
-import { coa } from '~/stores/coa';
-import { app } from '~/stores/app';
-import { collection } from '~/stores/collection';
-import { RouteLocationNamedRaw, useRoute } from 'vue-router';
 import router from '~/router';
+import { app } from '~/stores/app';
+import { coa } from '~/stores/coa';
+import { collection } from '~/stores/collection';
 
 const collectionStore = collection();
 const coaStore = coa();
@@ -34,7 +35,7 @@ const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<strin
 const totalPerPublication = computed(
   () =>
     (collectionStore.totalPerPublication && getIssueCountPerMagazinecode(collectionStore.totalPerPublication)) ||
-    undefined
+    undefined,
 );
 const issueCounts = computed(() => getIssueCountPerMagazinecode(coaStore.issueCounts || {}));
 
@@ -45,7 +46,7 @@ watch(
   async (newValue) => {
     appStore.currentNavigationItem = newValue as string;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'params'> => ({
@@ -65,11 +66,11 @@ const items = computed((): { key: string; text: string }[] =>
             key: publicationCode,
             text: coaStore.publicationNames?.[publicationCode] || publicationCode,
           }))
-    : []
+    : [],
 );
 
 const sortedItems = computed(() =>
-  [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase()))
+  [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase())),
 );
 
 collectionStore.fetchAndTrackCollection().catch(() => {

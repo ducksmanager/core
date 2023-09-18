@@ -1,5 +1,5 @@
-import type { authorUser } from 'ducksmanager/api/dist/prisma/client_dm';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import type { authorUser } from '~prisma-clients/client_dm';
 
 @Entity('authorUser')
 export class AuthorUser {

@@ -1,13 +1,19 @@
-import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 import { User } from './persistence/models/dm/User';
 
 import { app } from '~/stores/app';
-import type { Call, ContractWithMethodAndUrl } from '~types/Call';
 
 axios.defaults.baseURL = import.meta.env.VITE_DM_API_URL;
+
+export const createAxios = (baseURL: string): AxiosInstance => {
+  const newInstance = axios.create({ baseURL });
+  addUrlParamsRequestInterceptor(newInstance);
+
+  return newInstance;
+};
 
 export const addTokenRequestInterceptor = (axiosInstance: AxiosInstance): AxiosInstance => {
   axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
@@ -61,50 +67,3 @@ declare module 'axios' {
     urlParams?: Record<string, string> | undefined;
   }
 }
-
-type MyCall = Call<unknown, Record<string, string> | undefined, unknown | undefined, unknown | undefined>;
-
-export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
-  instance: AxiosInstance,
-  contract: Contract,
-): Promise<AxiosResponse<Contract['resBody']>> =>
-  instance.request<Contract['resBody']>({
-    method: contract.getMethod(),
-    url: contract.getUrl(),
-    params: contract.call?.query || undefined,
-    urlParams: contract.call?.params ?? undefined,
-    data: (contract.call?.reqBody as never) || undefined,
-  });
-
-export const getChunkedRequests = async <Contract extends ContractWithMethodAndUrl<MyCall>>({
-  callFn,
-  valuesToChunk,
-  chunkSize,
-}: {
-  callFn: (chunk: string) => Promise<AxiosResponse<Contract['resBody']>>;
-  valuesToChunk: string[];
-  chunkSize: number;
-  chunkOnQueryParam?: boolean;
-  parameterName?: string;
-}): Promise<Contract['resBody']> => {
-  const slices = Array.from({ length: Math.ceil(valuesToChunk.length / chunkSize) }, (_, i) =>
-    valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize),
-  );
-  let acc: Contract['resBody'] = (await callFn(slices[0].join(','))).data;
-  for (const slice of slices.slice(1)) {
-    acc = Array.isArray(acc)
-      ? [...(acc as never[]), ...((await callFn(slice.join(','))).data as never[])]
-      : {
-          ...(acc as Record<string, never>),
-          ...((await callFn(slice.join(','))).data as Record<string, never>),
-        };
-  }
-  return acc;
-};
-
-export const createAxios = (baseURL: string): AxiosInstance => {
-  const newInstance = axios.create({ baseURL });
-  addUrlParamsRequestInterceptor(newInstance);
-
-  return newInstance;
-};

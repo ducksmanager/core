@@ -2,16 +2,16 @@
   <ion-app>
     <ion-split-pane content-id="main-content">
       <NavigationDrawer />
-      <ion-router-outlet id="main-content"></ion-router-outlet>
+      <ion-router-outlet id="main-content" />
     </ion-split-pane>
   </ion-app>
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { app } from './stores/app';
-import { watch } from 'vue';
 
 const appStore = app();
 const route = useRoute();
@@ -21,6 +21,6 @@ watch(
   (newValue) => {
     appStore.isCoaView = newValue === 'true';
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

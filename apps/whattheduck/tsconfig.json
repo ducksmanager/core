@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -20,11 +21,13 @@
     "paths": {
       "~/*": ["./src/*"],
       "~types/*": ["./types/*"],
-      "~dm_types/*": ["./node_modules/ducksmanager/types/*"],
-      "~prisma_clients/*": ["./node_modules/ducksmanager/api/dist/prisma/*"]
+      "~dm-types/*": ["../../packages/types/*"],
+      "~axios-helper/*": ["../../packages/axios-helper/*"],
+      "~api-routes/*": ["../../packages/api-routes/*"],
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "components.d.ts"],
+  "exclude": ["node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "types": ["vite/client", "vue/ref-macros"]
 }

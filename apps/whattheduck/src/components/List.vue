@@ -3,34 +3,36 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-menu-button color="primary"></ion-menu-button>
+          <ion-menu-button color="primary" />
         </ion-buttons>
         <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
       <Navigation />
-      <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter"></ion-searchbar>
+      <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter" />
     </ion-header>
 
-    <ion-content ref="content" v-if="!filteredItems">{{ t('loading_collection') }}</ion-content>
+    <ion-content v-if="!filteredItems" ref="content">
+      {{ t('loading_collection') }}
+    </ion-content>
     <ion-content v-else ref="content" class="no-padding">
       <Row
         v-for="{ key, text, ownsNext, ...item } in filteredItems"
-        @click="onRowClick(key)"
         :ownership-text-fn="ownershipTextFn"
         :ownership="ownership?.[key]"
         :is-next-owned="ownsNext"
+        @click="onRowClick(key)"
       >
         <template #prefix>
-          <slot name="row-prefix" v-bind="{ item }"></slot>
+          <slot name="row-prefix" v-bind="{ item }" />
         </template>
         <template #label>
-          <slot name="row-label" v-bind="{ key, text }"></slot>
+          <slot name="row-label" v-bind="{ key, text }" />
         </template>
-        ></Row
-      >
+        >
+      </Row>
       <EditIssuesButton />
 
-      <div id="scroll-text" :style="{ top: scrollPosition + '%' }" v-show="scrollPosition" slot="fixed">
+      <div v-show="scrollPosition" id="scroll-text" slot="fixed" :style="{ top: scrollPosition + '%' }">
         {{ itemInCenterOfViewport?.text }}
       </div>
     </ion-content>
@@ -38,14 +40,15 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from '~/stores/coa';
-
-import { computed, ref, watch } from 'vue';
-import { collection } from '~/stores/collection';
-import { app } from '~/stores/app';
-import { useI18n } from 'vue-i18n';
-import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
 import { IonContent } from '@ionic/vue';
+import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { RouteLocationNamedRaw } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+
+import { app } from '~/stores/app';
+import { coa } from '~/stores/coa';
+import { collection } from '~/stores/collection';
 
 const props = defineProps<{
   items: { key: string; text: string; ownsNext?: boolean }[];
@@ -142,6 +145,7 @@ const ownershipAllItems = computed(() => {
     case 'Publication':
       return [collectionStore.totalPerPublication, coaStore.issueCounts!];
   }
+  return [];
 });
 
 const ownership = computed(

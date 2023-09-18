@@ -3,7 +3,7 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-menu-button color="primary"></ion-menu-button>
+          <ion-menu-button color="primary" />
         </ion-buttons>
         <ion-title>Find a story</ion-title>
       </ion-toolbar>
@@ -11,7 +11,7 @@
 
     <ion-content :fullscreen="true">
       <ion-text>{{ t('search_intro') }}</ion-text>
-      <ion-searchbar :placeholder="t('search_hint')" v-model="storyTitle"></ion-searchbar>
+      <ion-searchbar v-model="storyTitle" :placeholder="t('search_hint')" />
 
       <ion-list v-if="storyResults?.results && !selectedStory">
         <ion-item
@@ -30,7 +30,7 @@
           <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
             v-if="issue.collectionIssue"
             :value="getConditionKey(issue.collectionIssue.condition)"
-          ></condition>
+          />
           {{ issue.publicationName }}
           {{ issue.issuenumber }}
         </div>
@@ -41,16 +41,17 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import { POST__coa__stories__search__withIssues } from 'ducksmanager/types/routes';
-import { SimpleStory } from 'ducksmanager/types/SimpleStory';
-import { call } from '~/axios-helper';
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { POST__coa__stories__search__withIssues } from '~api-routes';
+import { call } from '~axios-helper';
+import type { SimpleIssue } from '~dm-types/SimpleIssue';
+import type { SimpleStory } from '~dm-types/SimpleStory';
+
+import useCondition from '~/composables/useCondition';
+import type { Issue } from '~/persistence/models/dm/Issue';
 import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
-import { useI18n } from 'vue-i18n';
-import useCondition from '~/composables/useCondition';
-import { Issue } from '~/persistence/models/dm/Issue';
-import { SimpleIssue } from 'ducksmanager/types/SimpleIssue';
 
 const { t } = useI18n();
 

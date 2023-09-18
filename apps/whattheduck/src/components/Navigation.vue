@@ -1,6 +1,6 @@
 <template>
   <ion-segment v-if="parts" :value="appStore.currentNavigationItem" @ionChange="onChange">
-    <ion-segment-button :key="key" v-for="{ key, text } in parts" :value="key">
+    <ion-segment-button v-for="{ key, text } in parts" :key="key" :value="key">
       <ion-label>{{ text }}</ion-label>
     </ion-segment-button>
   </ion-segment>
@@ -8,10 +8,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { app } from '../stores/app.js';
-import { coa } from '../stores/coa.js';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+
+import { app } from '../stores/app.js';
+import { coa } from '../stores/coa.js';
 
 const router = useRouter();
 

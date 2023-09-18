@@ -14,7 +14,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
+import type { RouteLocationNamedRaw } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import { app } from '~/stores/app';
 import { coa } from '~/stores/coa';
@@ -44,11 +45,11 @@ const items = computed((): { key: string; text: string }[] =>
           text:
             coaStore.countryNames?.find(({ countrycode }) => countrycode === countryCode)?.countryname || countryCode,
         }))
-    : []
+    : [],
 );
 
 const sortedItems = computed(() =>
-  [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase()))
+  [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase())),
 );
 
 const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'params'> => ({

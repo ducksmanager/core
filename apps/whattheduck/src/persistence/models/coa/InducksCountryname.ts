@@ -1,5 +1,5 @@
-import type { inducks_countryname } from 'ducksmanager/api/dist/prisma/client_coa';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
+import type { inducks_countryname } from '~prisma-clients/client_coa';
 import 'reflect-metadata';
 
 @Entity('inducks_countryname')

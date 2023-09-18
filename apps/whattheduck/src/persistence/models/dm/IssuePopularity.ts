@@ -1,5 +1,5 @@
-import type { issuePopularity } from 'ducksmanager/api/dist/prisma/client_dm';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
+import type { issuePopularity } from '~prisma-clients/client_dm';
 
 @Entity('issuePopularity')
 export class IssuePopularity {

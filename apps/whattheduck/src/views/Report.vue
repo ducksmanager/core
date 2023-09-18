@@ -3,7 +3,7 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-menu-button color="primary"></ion-menu-button>
+          <ion-menu-button color="primary" />
         </ion-buttons>
         <ion-title>{{ t('report') }}</ion-title>
       </ion-toolbar>
@@ -11,6 +11,7 @@
     <ion-content :fullscreen="true">
       <ion-text>{{ t('report_description') }}</ion-text>
       <ion-textarea
+        v-model="reportMessage"
         :rows="3"
         :class="{
           'ion-valid': validInputs.includes('reportMessage'),
@@ -18,12 +19,15 @@
           'ion-touched': touchedInputs.includes('reportMessage'),
         }"
         placeholder="Qu'est-ce qui ne va pas ?"
-        v-model="reportMessage"
         @ionBlur="touchedInputs.push('reportMessage')"
-      ></ion-textarea>
-      <ion-button :disabled="showConfirmation" @click="submitReport">{{ t('send') }}</ion-button>
-      <ion-item v-if="showConfirmation">{{ t('thanks_report') }}</ion-item></ion-content
-    >
+      />
+      <ion-button :disabled="showConfirmation" @click="submitReport">
+        {{ t('send') }}
+      </ion-button>
+      <ion-item v-if="showConfirmation">
+        {{ t('thanks_report') }}
+      </ion-item>
+    </ion-content>
   </ion-page>
 </template>
 

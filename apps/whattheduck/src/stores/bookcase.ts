@@ -2,18 +2,17 @@ import type { AxiosError } from 'axios';
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-
-import { collection } from './collection';
-
-import { call } from '~/axios-helper';
-import type { BookcaseEdge } from '~dm_types/BookcaseEdge';
 import {
   GET__bookcase__$username,
   GET__bookcase__$username__options,
   GET__bookcase__$username__sort,
   POST__bookcase__options,
   POST__bookcase__sort,
-} from '~dm_types/routes';
+} from '~api-routes';
+import { call } from '~axios-helper';
+import type { BookcaseEdge } from '~dm-types/BookcaseEdge';
+
+import { collection } from './collection';
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;
@@ -46,7 +45,7 @@ export const bookcase = defineStore('bookcase', () => {
                 : collection().popularIssueInCollectionByIssuecode?.[issueCode] || 0,
             };
           })) ||
-        null
+        null,
     ),
     addLoadedSprite = ({ spritePath, css }: { spritePath: string; css: string }) => {
       loadedSprites.value = {
@@ -62,7 +61,7 @@ export const bookcase = defineStore('bookcase', () => {
               axios,
               new GET__bookcase__$username({
                 params: { username: bookcaseUsername.value! },
-              })
+              }),
             )
           ).data;
         } catch (e) {
@@ -84,7 +83,7 @@ export const bookcase = defineStore('bookcase', () => {
             axios,
             new GET__bookcase__$username__options({
               params: { username: bookcaseUsername.value! },
-            })
+            }),
           )
         ).data;
       }
@@ -94,7 +93,7 @@ export const bookcase = defineStore('bookcase', () => {
         axios,
         new POST__bookcase__options({
           reqBody: bookcaseOptions.value!,
-        })
+        }),
       );
     },
     loadBookcaseOrder = async () => {
@@ -104,7 +103,7 @@ export const bookcase = defineStore('bookcase', () => {
             axios,
             new GET__bookcase__$username__sort({
               params: { username: bookcaseUsername.value! },
-            })
+            }),
           )
         ).data;
       }
@@ -114,7 +113,7 @@ export const bookcase = defineStore('bookcase', () => {
         axios,
         new POST__bookcase__sort({
           reqBody: { sorts: bookcaseOrder.value as string[] },
-        })
+        }),
       );
     };
 

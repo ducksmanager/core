@@ -6,7 +6,7 @@
     :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
   >
     <template #row-prefix="{ item }">
-      <ion-checkbox v-if="isCoaList"></ion-checkbox>
+      <ion-checkbox v-if="isCoaList" />
       <Condition :value="getConditionKey(item)" />
     </template>
     <template #row-label="{ text }">
@@ -16,21 +16,21 @@
 </template>
 
 <script setup lang="ts">
-import { IssueWithPublicationcode, collection } from '~/stores/collection';
-import { computed } from 'vue';
-import { condition } from '~/stores/condition';
-import { coa } from '~/stores/coa';
-import { RouteLocationNamedRaw, useRoute, useRouter } from 'vue-router';
-import { watch } from 'vue';
-import { app } from '~/stores/app';
+import { computed, watch } from 'vue';
+import type { RouteLocationNamedRaw } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+
 import useCondition from '~/composables/useCondition';
+import { app } from '~/stores/app';
+import { coa } from '~/stores/coa';
+import type { IssueWithPublicationcode } from '~/stores/collection';
+import { collection } from '~/stores/collection';
 
 const route = useRoute();
 const router = useRouter();
 
 const collectionStore = collection();
 const coaStore = coa();
-const conditionStore = condition();
 const appStore = app();
 
 const { getConditionKey } = useCondition();
@@ -41,7 +41,6 @@ defineSlots<{
 }>();
 
 const isCoaList = computed(() => route.params.type === 'coa');
-const conditionL10n = computed(() => conditionStore.conditionL10n);
 
 const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);
 
@@ -58,13 +57,13 @@ watch(
   async (newValue) => {
     appStore.currentNavigationItem = newValue as string;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
 const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
 const userIssues = computed(() =>
-  (collectionStore.collection || []).filter((issue) => issue.publicationcode === publicationcode.value)
+  (collectionStore.collection || []).filter((issue) => issue.publicationcode === publicationcode.value),
 );
 
 const items = computed((): { key: string; text: string }[] =>
@@ -82,13 +81,13 @@ const items = computed((): { key: string; text: string }[] =>
             text: issuenumber,
             ...issue,
           }))
-    : []
+    : [],
 );
 
 const sortedItems = computed(() =>
   [...items.value].sort(({ text: text1 }, { text: text2 }) =>
-    Math.sign(coaIssuenumbers.value!.indexOf(text1) - coaIssuenumbers.value!.indexOf(text2))
-  )
+    Math.sign(coaIssuenumbers.value!.indexOf(text1) - coaIssuenumbers.value!.indexOf(text2)),
+  ),
 );
 
 collectionStore

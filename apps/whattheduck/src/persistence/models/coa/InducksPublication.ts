@@ -1,5 +1,5 @@
-import type { inducks_publication } from 'ducksmanager/api/dist/prisma/client_coa';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
+import type { inducks_publication } from '~prisma-clients/client_coa';
 
 @Entity('inducks_publication')
 export class InducksPublication {

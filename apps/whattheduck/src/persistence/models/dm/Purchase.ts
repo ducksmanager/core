@@ -1,5 +1,5 @@
-import type { purchase } from 'ducksmanager/api/dist/prisma/client_dm';
 import { Entity, PrimaryColumn, Column } from 'typeorm';
+import type { purchase } from '~prisma-clients/client_dm';
 
 @Entity('purchase')
 export class Purchase {

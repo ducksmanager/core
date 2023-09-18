@@ -1,5 +1,5 @@
-import type { inducks_issuequotation } from 'ducksmanager/api/dist/prisma/client_coa';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
+import type { inducks_issuequotation } from '~prisma-clients/client_coa';
 
 @Entity('inducks_issuequotation')
 export class InducksIssuequotation {

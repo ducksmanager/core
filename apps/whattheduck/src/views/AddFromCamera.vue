@@ -1,25 +1,25 @@
 <template>
-  <ion-page
-    ><div id="cameraPreview">
-      <img id="cover-mock" v-if="isPlatform('desktop')" src="/covers/fr/mpp/fr_mpp_1415d_001.jpg" />
+  <ion-page>
+    <div id="cameraPreview">
+      <img v-if="isPlatform('desktop')" id="cover-mock" src="/covers/fr/mpp/fr_mpp_1415d_001.jpg" />
     </div>
     <div class="overlay">
-      <ion-button @click="takePhoto"> <ion-icon :ios="apertureOutline" :md="apertureSharp"></ion-icon></ion-button>
+      <ion-button @click="takePhoto">
+        <ion-icon :ios="apertureOutline" :md="apertureSharp" />
+      </ion-button>
     </div>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { call } from '~/axios-helper';
+import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
+import { CameraPreview } from '@capacitor-community/camera-preview';
 import { isPlatform } from '@ionic/vue';
-import { onMounted } from 'vue';
-import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera-preview';
-
-import { apertureOutline, apertureSharp } from 'ionicons/icons';
 import axios from 'axios';
-import { POST__cover_id__search } from 'ducksmanager/types/routes';
+import { apertureOutline, apertureSharp } from 'ionicons/icons';
+import { onMounted } from 'vue';
 
-function getDataURIFromImageElement() {
+const getDataURIFromImageElement = () => {
   const imageElement = document.getElementById('cover-mock') as HTMLImageElement;
 
   const canvas = document.createElement('canvas');
@@ -33,9 +33,9 @@ function getDataURIFromImageElement() {
   ctx!.drawImage(imageElement!, 0, 0);
 
   return canvas.toDataURL();
-}
+};
 
-function dataURIToBlob(dataURL: string) {
+const dataURIToBlob = (dataURL: string) => {
   const byteString = atob(dataURL.split(',')[1]);
 
   const mimeType = dataURL.split(',')[0].split(':')[1].split(';')[0];
@@ -48,7 +48,7 @@ function dataURIToBlob(dataURL: string) {
   }
 
   return new Blob([arrayBuffer], { type: mimeType });
-}
+};
 
 function base64ToBlob(base64String: string) {
   const dataUrlPrefixIndex = base64String.indexOf(',');
@@ -88,8 +88,8 @@ const takePhoto = async () => {
     quality: 80,
   });
   let data = new FormData();
-  const blob = dataURIToBlob(getDataURIFromImageElement()); // Mocked for web
-  // const blob = base64ToBlob(base64);
+  //const blob = dataURIToBlob(getDataURIFromImageElement()); // Mocked for web
+  const blob = base64ToBlob(base64);
 
   data.append('image', blob);
   const response = await axios.post('http://localhost:5000/search_image', data, {

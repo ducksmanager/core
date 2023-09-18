@@ -1,24 +1,24 @@
 <template>
   <ion-page v-if="showForm">
     <ion-header>
-      <ion-title>{{ t('login') }}</ion-title></ion-header
-    >
+      <ion-title>{{ t('login') }}</ion-title>
+    </ion-header>
     <ion-content>
       <ion-item v-if="isOfflineMode">
         <ion-label>{{ t('error__cannot_login') }}</ion-label>
       </ion-item>
       <ion-item>
         <ion-input
+          v-model="username"
           :class="{
             'ion-valid': validInputs.includes('username'),
             'ion-invalid': invalidInputs.includes('username'),
             'ion-touched': touchedInputs.includes('username'),
           }"
-          v-model="username"
           :aria-label="t('username')"
           :placeholder="t('username')"
           @ionBlur="touchedInputs.push('username')"
-        ></ion-input>
+        />
       </ion-item>
       <ion-item>
         <ion-input
@@ -33,22 +33,27 @@
           :aria-label="t('password')"
           :placeholder="t('password')"
           @ionBlur="touchedInputs.push('password')"
-        >
-        </ion-input>
+        />
         <ion-icon
           :ios="showPassword ? eyeOffOutline : eyeOutline"
           :md="showPassword ? eyeOffSharp : eyeSharp"
           @click="showPassword = !showPassword"
-        ></ion-icon>
+        />
       </ion-item>
       <ion-item>
-        <ion-button @click="submitLogin">{{ t('login') }}</ion-button>
+        <ion-button @click="submitLogin">
+          {{ t('login') }}
+        </ion-button>
       </ion-item>
       <ion-item>
-        <ion-button @click="signup">{{ t('signup') }}</ion-button>
+        <ion-button @click="signup">
+          {{ t('signup') }}
+        </ion-button>
       </ion-item>
       <ion-item>
-        <ion-button @click="forgotPassword">{{ t('reset_password_title') }}</ion-button>
+        <ion-button @click="forgotPassword">
+          {{ t('reset_password_title') }}
+        </ion-button>
       </ion-item>
 
       <ion-item>
@@ -60,27 +65,21 @@
 
 <script lang="ts" setup>
 import { SplashScreen } from '@capacitor/splash-screen';
-import { POST__login } from '~dm_types/routes';
-import { ref, watch } from 'vue';
-
-import { useI18n } from 'vue-i18n';
-import { call } from '~/axios-helper';
-import { useRouter } from 'vue-router';
-import { app } from '~/stores/app';
-import { api } from '~/stores/api';
-import { User } from '~/persistence/models/dm/User';
-import { Sync } from '~/persistence/models/internal/Sync';
-
-import { collection } from '~/stores/collection';
-import { AxiosError } from 'axios';
-import { Issue } from '~/persistence/models/dm/Issue';
-import { Purchase } from '~/persistence/models/dm/Purchase';
-import { coa } from '~/stores/coa';
-import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequotation';
-
+import type { AxiosError } from 'axios';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
-import { InducksIssueQuotationSimple } from 'ducksmanager/types/InducksIssueQuotationSimple';
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { POST__login } from '~api-routes';
+import { call } from '~axios-helper';
+
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
+import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequotation';
+import { User } from '~/persistence/models/dm/User';
+import { api } from '~/stores/api';
+import { app } from '~/stores/app';
+import { coa } from '~/stores/coa';
+import { collection } from '~/stores/collection';
 
 const isOfflineMode = ref(false);
 
@@ -124,7 +123,7 @@ const submitLogin = async () => {
         apiStore.dmApi,
         new POST__login({
           reqBody: { username: username.value, password: password.value },
-        })
+        }),
       )
     ).data?.token;
   } catch (e) {
@@ -140,7 +139,7 @@ watch(
       router.push('/collection');
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -149,7 +148,7 @@ watch(
     if (value) {
       await SplashScreen.hide();
     }
-  }
+  },
 );
 
 watch(
@@ -159,7 +158,7 @@ watch(
       await collectionStore.loadPurchases();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -175,7 +174,7 @@ watch(
     appInstance.getRepository(InducksIssuequotation).save(issueQuotations);*/
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -184,7 +183,7 @@ watch(
     if (isOfflineMode) {
       showForm.value = true;
     }
-  }
+  },
 );
 
 (async () => {

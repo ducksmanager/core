@@ -1,17 +1,38 @@
-{
-  "extends": [
+module.exports = {
+  env: {
+    browser: true,
+  }, extends: [
     "plugin:import/typescript",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier",
-    "plugin:vue/vue3-recommended"
+    "plugin:prettier-vue/recommended"
   ],
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["import", "@typescript-eslint"],
-  "rules": {
+  plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
+  parser: "vue-eslint-parser",
+  parserOptions: {
+    parser: "@typescript-eslint/parser",
+    project: "tsconfig.json",
+    tsconfigRootDir: __dirname,
+    extraFileExtensions: ['.vue']
+  },
+  overrides: [
+    {
+      files: ["*.js", "*.ts", "*.vue"],
+    },
+  ],
+  ignorePatterns: [
+    "**/node_modules",
+    "**/dist",
+    "/.eslintrc.js",
+  ],
+  plugins: ["import", "@typescript-eslint"],
+  rules: {
     // https://eslint.org/docs/rules/
     "no-fallthrough": "off", // https://github.com/ionic-team/eslint-config/issues/7
     "no-constant-condition": "off",
+
+    "vue/multi-word-component-names": "off",
 
     // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/docs/rules
     "@typescript-eslint/no-this-alias": "off",

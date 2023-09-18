@@ -1,32 +1,35 @@
-import type { issue } from 'ducksmanager/api/dist/prisma/client_dm';
-import { Entity, Column, PrimaryColumn, VirtualColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
+import type { issue } from '~prisma-clients/client_dm';
 
+export type IssueWithPublicationcode = issue & {
+  publicationcode: string;
+};
 @Entity('issue')
 export class Issue {
   @PrimaryColumn('integer')
-  id!: issue['id'];
+  id!: IssueWithPublicationcode['id'];
 
   @Column('text', { nullable: false })
-  country!: issue['country'];
+  country!: IssueWithPublicationcode['country'];
 
   @Column('text', { nullable: false })
-  magazine!: issue['magazine'];
+  magazine!: IssueWithPublicationcode['magazine'];
 
   @Column('text', { nullable: true })
-  publicationcode!: issue['publicationcode'];
+  publicationcode!: IssueWithPublicationcode['publicationcode'];
 
   @Column('text', { nullable: false })
-  issuenumber!: issue['issuenumber'];
+  issuenumber!: IssueWithPublicationcode['issuenumber'];
 
   @Column('text', { nullable: false })
-  condition!: issue['condition'];
+  condition!: IssueWithPublicationcode['condition'];
 
   @Column('integer', { nullable: false })
-  isToRead!: issue['isToRead'];
+  isToRead!: IssueWithPublicationcode['isToRead'];
 
   @Column('date', { nullable: true })
-  creationDate!: issue['creationDate'];
+  creationDate!: IssueWithPublicationcode['creationDate'];
 
   @Column('integer', { nullable: true })
-  purchaseId!: issue['purchaseId'];
+  purchaseId!: IssueWithPublicationcode['purchaseId'];
 }

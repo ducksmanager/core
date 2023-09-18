@@ -8,11 +8,13 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { ScopedError } from '~dm_types/ScopedError';
+import type { ScopedError } from '~dm-types/ScopedError';
 
-const { error } = defineProps<{
+const props = defineProps<{
   error: ScopedError;
 }>();
 
-const parentElement = computed(() => error.selector && document.querySelector(error.selector)?.parentElement);
+const parentElement = computed(
+  () => props.error.selector && document.querySelector(props.error.selector)?.parentElement,
+);
 </script>

@@ -6,29 +6,29 @@
         <template v-if="user">
           <ion-row> Medals </ion-row>
           <ion-note>{{ user.username }}</ion-note>
-          <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appPages" :key="i">
+          <ion-menu-toggle v-for="(p, i) in appPages" :key="i" :auto-hide="false">
             <ion-item
-              @click="selectedIndex = i"
               router-direction="root"
               :router-link="p.url"
               lines="none"
               :detail="false"
               :class="{ selected: selectedIndex === i }"
+              @click="selectedIndex = i"
             >
-              <ion-icon aria-hidden="true" slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
+              <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
               <ion-label>{{ p.title }}</ion-label>
             </ion-item>
-          </ion-menu-toggle></template
-        >
+          </ion-menu-toggle>
+        </template>
       </ion-list>
       <ion-list id="footer">
-        <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appFooterPages" :key="i">
+        <ion-menu-toggle v-for="(p, i) in appFooterPages" :key="i" :auto-hide="false">
           <ion-item
-            @click="selectedIndex = i"
             router-direction="root"
             :router-link="p.url"
             lines="none"
             :detail="false"
+            @click="selectedIndex = i"
           >
             <ion-label>{{ p.title }}</ion-label>
           </ion-item>
@@ -38,10 +38,11 @@
   </ion-menu>
 </template>
 <script setup lang="ts">
-import { computed, ref } from 'vue';
 import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
-import { collection } from '~/stores/collection';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+import { collection } from '~/stores/collection';
 
 const { t } = useI18n();
 const collectionStore = collection();

@@ -1,17 +1,20 @@
 <template>
   <ion-item button :class="{ 'is-next-owned': isNextOwned, 'is-owned': fillPercentage }">
-    <ion-progress-bar v-if="fillPercentage" :value="fillPercentage"></ion-progress-bar>
+    <ion-progress-bar v-if="fillPercentage" :value="fillPercentage" />
     <slot name="checkbox" />
-    <ion-label class="text"
-      ><slot name="prefix" />
+    <ion-label class="text">
+      <slot name="prefix" />
       <slot name="label" />
     </ion-label>
-    <ion-label slot="end" v-if="ownership"> {{ ownershipTextFn(ownership, fillPercentage) }}</ion-label>
+    <ion-label v-if="ownership" slot="end">
+      {{ ownershipTextFn(ownership, fillPercentage) }}
+    </ion-label>
   </ion-item>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+
 const props = defineProps<{
   ownership?: [number, number];
   ownershipTextFn: (ownership: [number, number], fillPercentage?: number | undefined) => string;
@@ -19,7 +22,7 @@ const props = defineProps<{
 }>();
 
 const fillPercentage = computed(() =>
-  props.ownership ? Math.max(0.1 / 100, props.ownership[0] / (props.ownership[1] || 1)) : undefined
+  props.ownership ? Math.max(0.1 / 100, props.ownership[0] / (props.ownership[1] || 1)) : undefined,
 );
 </script>
 

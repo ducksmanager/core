@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-item
-      ><ion-label>{{ t('condition') }}</ion-label>
+    <ion-item>
+      <ion-label>{{ t('condition') }}</ion-label>
 
       <ion-radio-group v-if="selectedCondition" :model-value="selectedCondition">
         <ion-radio
@@ -9,15 +9,12 @@
           :class="`dm-condition-background ${condition}`"
           :value="condition"
           :aria-label="t(`condition_${condition}`)"
-        ></ion-radio></ion-radio-group
-    ></ion-item>
+        />
+      </ion-radio-group>
+    </ion-item>
     <ion-item>
       <ion-label>{{ t('in_to_read_list') }}</ion-label>
-      <ion-checkbox
-        slot="end"
-        v-model="issue.inToReadList"
-        :aria-label="t('in_to_read_list')"
-      ></ion-checkbox> </ion-item
+      <ion-checkbox slot="end" v-model="issue.inToReadList" :aria-label="t('in_to_read_list')" /> </ion-item
     ><ion-item>
       <ion-label>{{ t('purchase_date') }}</ion-label>
       <ion-list>
@@ -25,30 +22,31 @@
         <ion-radio-group :model-value="issue.purchaseId" :value="issue.purchaseId" class="vertical">
           <ion-list>
             <ion-item>
-              <ion-radio :value="null" :aria-label="t('no_purchase_date')"></ion-radio>
+              <ion-radio :value="null" :aria-label="t('no_purchase_date')" />
               <div>
                 <ion-label>{{ t('no_purchase_date') }}</ion-label>
-              </div></ion-item
-            >
+              </div>
+            </ion-item>
             <ion-item v-for="purchase of purchases">
-              <ion-radio :value="purchase.id" :aria-label="purchase.description"></ion-radio>
+              <ion-radio :value="purchase.id" :aria-label="purchase.description" />
               <div>
                 <ion-label>{{ purchase.date }}</ion-label>
                 <ion-label>{{ purchase.description }}</ion-label>
-              </div></ion-item
-            ></ion-list
-          ></ion-radio-group
-        >
+              </div>
+            </ion-item>
+          </ion-list>
+        </ion-radio-group>
       </ion-list>
     </ion-item>
   </ion-page>
 </template>
 <script setup lang="ts">
-import { watch } from 'vue';
-import { computed, ref } from 'vue';
+import { watch, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import { IssueWithPublicationcode, collection, purchaseWithStringDate } from '~/stores/collection';
+
+import type { IssueWithPublicationcode, purchaseWithStringDate } from '~/stores/collection';
+import { collection } from '~/stores/collection';
 import { condition } from '~/stores/condition';
 
 const { t } = useI18n();

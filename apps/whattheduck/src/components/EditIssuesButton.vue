@@ -1,34 +1,46 @@
 <template>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button>
-      <ion-icon :ios="pencilOutline" :md="pencilSharp"></ion-icon>
+      <ion-icon :ios="pencilOutline" :md="pencilSharp" />
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-row class="ion-align-items-center" @click="pickCoverFile">
         <ion-label>{{ t('by_cover_file') }}</ion-label>
-        <ion-fab-button size="small"> <ion-icon :ios="imageOutline" :md="imageSharp"></ion-icon></ion-fab-button>
+        <ion-fab-button size="small">
+          <ion-icon :ios="imageOutline" :md="imageSharp" />
+        </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center" router-link="/add-from-camera">
         <ion-label>{{ t('by_cover_photo') }}</ion-label>
-        <ion-fab-button size="small"> <ion-icon :ios="cameraOutline" :md="cameraSharp"></ion-icon></ion-fab-button>
+        <ion-fab-button size="small">
+          <ion-icon :ios="cameraOutline" :md="cameraSharp" />
+        </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center">
         <ion-label>{{ t('from_recent_issue') }}</ion-label>
-        <ion-fab-button size="small"> <ion-icon :ios="calendarOutline" :md="calendarSharp"></ion-icon></ion-fab-button>
+        <ion-fab-button size="small">
+          <ion-icon :ios="calendarOutline" :md="calendarSharp" />
+        </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center" @click="router.push({ path: route.path, query: { coa: 'true' } })">
         <ion-label>{{ t('by_issue_selection') }}</ion-label>
-        <ion-fab-button size="small"> <ion-icon :ios="listOutline" :md="listSharp"></ion-icon></ion-fab-button>
+        <ion-fab-button size="small">
+          <ion-icon :ios="listOutline" :md="listSharp" />
+        </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center" router-link="/search">
         <ion-label>{{ t('by_story_title') }}</ion-label>
-        <ion-fab-button size="small"> <ion-icon :ios="searchOutline" :md="searchSharp"></ion-icon></ion-fab-button>
+        <ion-fab-button size="small">
+          <ion-icon :ios="searchOutline" :md="searchSharp" />
+        </ion-fab-button>
       </ion-row>
     </ion-fab-list>
   </ion-fab>
 </template>
 
 <script setup lang="ts">
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import axios from 'axios';
 import {
   pencilOutline,
   searchOutline,
@@ -43,13 +55,8 @@ import {
   imageSharp,
   calendarSharp,
 } from 'ionicons/icons';
-import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { call } from '~/axios-helper';
-import { defaultApi } from '~/util/api';
-import { POST__cover_id__search } from 'ducksmanager/types/routes';
-import axios from 'axios';
 
 const { t } = useI18n();
 const router = useRouter();

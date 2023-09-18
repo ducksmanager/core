@@ -1,7 +1,7 @@
 import type { AxiosError } from 'axios';
-import type { ScopedError } from 'ducksmanager/types/ScopedError';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { ScopedError } from '~dm-types/ScopedError';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default (fields: string[]) => {

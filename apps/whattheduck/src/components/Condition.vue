@@ -1,5 +1,5 @@
 <template>
-  <span :class="`dm-condition-background ${value}`"></span>
+  <span :class="`dm-condition-background ${value}`" />
 </template>
 <script setup lang="ts">
 defineProps<{

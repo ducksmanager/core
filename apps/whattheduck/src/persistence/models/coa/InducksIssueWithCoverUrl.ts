@@ -1,5 +1,5 @@
-import type { inducks_issue } from 'ducksmanager/api/dist/prisma/client_coa';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
+import type { inducks_issue } from '~prisma-clients/client_coa';
 
 @Entity('inducks_issue')
 export class InducksIssueWithCoverUrl {

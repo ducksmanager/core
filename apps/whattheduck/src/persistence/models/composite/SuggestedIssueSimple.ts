@@ -1,5 +1,5 @@
-import type { suggestedIssueForUser } from 'ducksmanager/api/dist/prisma/client_dm_stats';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import type { suggestedIssueForUser } from '~prisma-clients/client_dm_stats';
 
 @Entity('suggestedIssue')
 export class SuggestedIssueSimple {
