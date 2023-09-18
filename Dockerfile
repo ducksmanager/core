@@ -10,19 +10,19 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-COPY apps/web/package.json ./apps/web/
-COPY apps/dumili/package.json ./apps/dumili/
-COPY apps/dumili/api/package.json ./apps/dumili/api/
-COPY packages/api/package.json ./packages/api/
-COPY packages/api-routes/package.json ./packages/api-routes/
-COPY packages/axios-helper/package.json ./packages/axios-helper/
-COPY packages/types/package.json ./packages/types/
-COPY packages/prisma-clients/package.json ./packages/prisma-clients/
+COPY apps/web/package.json apps/web/pnpm-lock.yaml ./apps/web/
+COPY apps/dumili/package.json apps/dumili/pnpm-lock.yaml ./apps/dumili/
+COPY apps/dumili/api/package.json apps/dumili/api/pnpm-lock.yaml ./apps/dumili/api/
+COPY packages/api/package.json packages/api/pnpm-lock.yaml ./packages/api/
+COPY packages/api-routes/package.json packages/api-routes/pnpm-lock.yaml ./packages/api-routes/
+COPY packages/axios-helper/package.json packages/axios-helper/pnpm-lock.yaml ./packages/axios-helper/
+COPY packages/types/package.json packages/types/pnpm-lock.yaml ./packages/types/
+COPY packages/prisma-clients/package.json packages/prisma-clients/pnpm-lock.yaml ./packages/prisma-clients/
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm -r i
+RUN cd packages/axios-helper && find . -name tsc
 
 COPY . ./
-RUN mv apps/web/.env.prod.local ./apps/web/.env
 RUN pnpm -r run build
 
 FROM nginx AS web
