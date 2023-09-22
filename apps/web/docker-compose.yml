@@ -1,4 +1,4 @@
-version: '2.4'
+version: '3.8'
 services:
   app:
     container_name: ducksmanager-app
@@ -97,9 +97,16 @@ services:
     networks:
       - dm-server_db-network
     volumes:
-      - dm-server_duck_estimator_cache: /home/cache
-      - dm-server_node_cache: /root/.cache
-      - ~/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
+      - type: volume
+        source: dm-server_duck_estimator_cache
+        target: /home/cache
+      - type: volume
+        source: dm-server_node_cache
+        target: /root/.cache
+      - type: bind
+        source: ~/.ssh/id_ed25519
+        target: /root/.ssh/id_ed25519
+        read_only: true
     command: bash -c " git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator; cd duck-estimator; npm install; node duck-estimator.js --cache-dir=/home/cache; "
 
   sentry-relay:
@@ -122,3 +129,4 @@ networks:
 
 volumes:
   dm-server_duck_estimator_cache:
+  dm-server_node_cache:

@@ -96,5 +96,5 @@ jobs:
           envs: DOCKER_REGISTRY_TOKEN_DM
           script: |
             cd workspace/DucksManager2
-            echo `grep GITHUB_TOKEN .env.prod.local | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
+            echo `grep GITHUB_TOKEN .env | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
             docker compose pull && docker compose up -d --force-recreate
