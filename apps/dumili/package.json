@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "lint": "eslint --ext .ts,.vue --fix ."
+    "lint": "eslint --cache --fix ."
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.11.2",

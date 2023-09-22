@@ -18,6 +18,5 @@ export const availableLocales: {
   },
 ];
 
-export const getCurrentLocaleShortKey = (locale: string): string => {
-  return availableLocales.find(({ key }) => key === locale)?.shortKey || "en";
-};
+export const getCurrentLocaleShortKey = (locale: string): string =>
+  availableLocales.find(({ key }) => key === locale)?.shortKey || "en";
