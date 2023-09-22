@@ -17,5 +17,5 @@
       "password": "changeme"
     }
   ],
-  "i18n-ally.localesPaths": ["translations"]
+  "i18n-ally.localesPaths": ["translations"],
 }
