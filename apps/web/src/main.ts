@@ -5,7 +5,7 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
 import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
-import { createHead } from "@vueuse/head";
+import { createHead } from "@unhead/vue";
 import axios from "axios";
 import { BToastPlugin } from "bootstrap-vue-next";
 import Cookies from "js-cookie";

@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
 import { defineSetupVue3 } from "@histoire/plugin-vue";
-import { createHead } from "@vueuse/head";
+import { createHead } from "@unhead/vue";
 import axios from "axios";
 import { BToastPlugin } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
