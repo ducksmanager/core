@@ -110,6 +110,9 @@ dependencies:
   ~prisma-clients:
     specifier: workspace:*
     version: link:../../packages/prisma-clients
+  ~web:
+    specifier: workspace:*
+    version: link:../web
 
 devDependencies:
   '@capacitor/cli':

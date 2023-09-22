@@ -14,13 +14,14 @@
 </template>
 
 <script setup lang="ts">
+import { stores } from '~web';
+
 import router from '~/router';
 import { app } from '~/stores/app';
-import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
 const collectionStore = collection();
-const coaStore = coa();
+const coaStore = stores.coa();
 const appStore = app();
 
 const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<string, number>) =>

@@ -7,7 +7,7 @@
   >
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaList" />
-      <Condition :value="getConditionKey(item)" />
+      <Condition :value="getConditionKey(item.condition)" />
     </template>
     <template #row-label="{ text }">
       <Issue :value="text" />
@@ -16,9 +16,11 @@
 </template>
 
 <script setup lang="ts">
+import { stores } from '~web';
+
 import useCondition from '~/composables/useCondition';
+import { Issue } from '~/persistence/models/dm/Issue';
 import { app } from '~/stores/app';
-import { coa } from '~/stores/coa';
 import type { IssueWithPublicationcode } from '~/stores/collection';
 import { collection } from '~/stores/collection';
 
@@ -26,7 +28,7 @@ const route = useRoute();
 const router = useRouter();
 
 const collectionStore = collection();
-const coaStore = coa();
+const coaStore = stores.coa();
 const appStore = app();
 
 const { getConditionKey } = useCondition();
@@ -62,20 +64,20 @@ const userIssues = computed(() =>
   (collectionStore.collection || []).filter((issue) => issue.publicationcode === publicationcode.value),
 );
 
-const items = computed((): { key: string; text: string }[] =>
+const items = computed((): { key: string; text: string; item: Issue }[] =>
   coaIssues.value
     ? appStore.isCoaView
       ? coaIssues.value.map(({ issuenumber }) => ({
           key: `${publicationcode.value} ${issuenumber}`,
           text: issuenumber,
-          ...(userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber) || {}),
+          item: userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)!,
         }))
       : (collectionStore.collection || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
           .map(({ issuenumber, ...issue }) => ({
             key: `${publicationcode.value} ${issuenumber}`,
             text: issuenumber,
-            ...issue,
+            item: { ...issue, issuenumber }!,
           }))
     : [],
 );

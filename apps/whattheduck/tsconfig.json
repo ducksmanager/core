@@ -24,7 +24,8 @@
       "~dm-types/*": ["../../packages/types/*"],
       "~axios-helper/*": ["../../packages/axios-helper/*"],
       "~api-routes/*": ["../../packages/api-routes/*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"]
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~web/*": ["../web/*"]
     }
   },
   "exclude": ["node_modules"],

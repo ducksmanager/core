@@ -13,14 +13,15 @@
 </template>
 
 <script setup lang="ts">
+import { stores } from '~web';
+
 import { app } from '~/stores/app';
-import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
 const router = useRouter();
 const route = useRoute();
 const collectionStore = collection();
-const coaStore = coa();
+const coaStore = stores.coa();
 const appStore = app();
 
 const totalPerCountry = computed(() => collectionStore.totalPerCountry);
@@ -32,14 +33,13 @@ const ownershipText = (ownership: [number, number], fillPercentage: number | und
 const items = computed((): { key: string; text: string }[] =>
   coaStore.countryNames
     ? appStore.isCoaView
-      ? coaStore.countryNames.map(({ countrycode, countryname }) => ({
+      ? Object.entries(coaStore.countryNames).map(([countrycode, countryname]) => ({
           key: countrycode,
           text: countryname || countrycode,
         }))
       : collectionStore.ownedCountries.map((countryCode) => ({
           key: countryCode,
-          text:
-            coaStore.countryNames?.find(({ countrycode }) => countrycode === countryCode)?.countryname || countryCode,
+          text: coaStore.countryNames?.[countryCode] || countryCode,
         }))
     : [],
 );

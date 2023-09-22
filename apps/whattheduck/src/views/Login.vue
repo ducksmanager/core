@@ -68,13 +68,13 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
 import { POST__login } from '~api-routes';
 import { call } from '~axios-helper';
+import { stores } from '~web';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequotation';
 import { User } from '~/persistence/models/dm/User';
 import { api } from '~/stores/api';
 import { app } from '~/stores/app';
-import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
 const isOfflineMode = ref(false);
@@ -83,6 +83,7 @@ const appStore = app();
 const collectionStore = collection();
 
 const apiStore = api();
+const coaStore = stores.coa();
 
 const dmUrl = import.meta.env.VITE_DM_URL as string;
 
@@ -161,7 +162,7 @@ watch(
   () => collectionStore.ownedPublications,
   async (newValue) => {
     if (newValue) {
-      await coa().fetchIssueQuotations(collectionStore.ownedPublications);
+      await coaStore.fetchIssueQuotations(collectionStore.ownedPublications);
       appStore.dbInstance.getRepository(InducksIssuequotation).clear();
       /*const issueQuotations = Object.entries(coa().issueQuotations!).reduce((acc, [issuecode, quotation]) => {
       const [publicationcode, issuenumber] = issuecode.split(/(?<=[^ ]+) /);

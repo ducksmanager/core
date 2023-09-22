@@ -17,6 +17,7 @@ import { CameraPreview } from '@capacitor-community/camera-preview';
 import { isPlatform } from '@ionic/vue';
 import axios from 'axios';
 import { apertureOutline, apertureSharp } from 'ionicons/icons';
+
 const getDataURIFromImageElement = () => {
   const imageElement = document.getElementById('cover-mock') as HTMLImageElement;
 

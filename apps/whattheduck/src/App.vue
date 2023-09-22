@@ -8,10 +8,18 @@
 </template>
 
 <script setup lang="ts">
+import { coa } from '~web/src/stores/coa';
+
 import { app } from './stores/app';
+
+import { coaApi } from '~/util/api';
 
 const appStore = app();
 const route = useRoute();
+
+onBeforeMount(() => {
+  coa().setApi(coaApi);
+});
 
 watch(
   () => route.query?.coa,

@@ -44,16 +44,16 @@ import { POST__coa__stories__search__withIssues } from '~api-routes';
 import { call } from '~axios-helper';
 import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { SimpleStory } from '~dm-types/SimpleStory';
+import { stores } from '~web';
 
 import useCondition from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
-import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
 const { t } = useI18n();
 
 const collectionStore = collection();
-const coaStore = coa();
+const coaStore = stores.coa();
 
 const storyTitle = ref('' as string);
 const storyResults = ref(null as { results: any[] } | null);

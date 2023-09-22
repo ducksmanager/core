@@ -55,6 +55,7 @@ import {
   imageSharp,
   calendarSharp,
 } from 'ionicons/icons';
+
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();

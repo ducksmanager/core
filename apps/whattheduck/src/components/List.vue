@@ -16,13 +16,13 @@
     </ion-content>
     <ion-content v-else ref="content" class="no-padding">
       <Row
-        v-for="{ key, text, ownsNext, ...item } in filteredItems"
+        v-for="{ key, text, item, ownsNext } in filteredItems"
         :ownership-text-fn="ownershipTextFn"
         :ownership="ownership?.[key]"
         :is-next-owned="ownsNext"
         @click="onRowClick(key)"
       >
-        <template #prefix>
+        <template #prefix v-if="item">
           <slot name="row-prefix" v-bind="{ item }" />
         </template>
         <template #label>
@@ -39,14 +39,20 @@
   </ion-page>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="Item extends any">
 import { IonContent } from '@ionic/vue';
+import { stores } from '~web';
+
 import { app } from '~/stores/app';
-import { coa } from '~/stores/coa';
 import { collection } from '~/stores/collection';
 
+defineSlots<{
+  'row-prefix'(props: { item: Item }): any;
+  'row-label'(props: { key: string; text: string }): any;
+}>();
+
 const props = defineProps<{
-  items: { key: string; text: string; ownsNext?: boolean }[];
+  items: { key: string; text: string; item?: Item; ownsNext?: boolean }[];
   getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
   statNumerators?: Record<string, number>;
   statDenominators?: Record<string, number>;
@@ -76,7 +82,7 @@ const router = useRouter();
 const route = useRoute();
 
 const collectionStore = collection();
-const coaStore = coa();
+const coaStore = stores.coa();
 const appStore = app();
 const filterText = ref('' as string);
 const hasCoaData = ref(false);
@@ -179,7 +185,7 @@ watch(
   () => collectionStore.totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await coa().fetchPublicationNames(Object.keys(newValue));
+      await coaStore.fetchPublicationNames(Object.keys(newValue));
     }
   },
   { immediate: true },

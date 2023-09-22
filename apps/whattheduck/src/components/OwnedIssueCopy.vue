@@ -42,7 +42,8 @@
   </ion-page>
 </template>
 <script setup lang="ts">
-import type { IssueWithPublicationcode, purchaseWithStringDate } from '~/stores/collection';
+import type { Issue } from '~/persistence/models/dm/Issue';
+import type { purchaseWithStringDate } from '~/stores/collection';
 import { collection } from '~/stores/collection';
 import { condition } from '~/stores/condition';
 
@@ -63,7 +64,7 @@ const issue = computed(
     collectionStore.issuesByIssueCode?.[issuecode.value!]?.[copyIndex.value!] ||
     ({
       purchaseId: null,
-    } as IssueWithPublicationcode),
+    } as Issue),
 );
 
 const selectedCondition = ref(null as string | null);

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
+
 import OwnedIssueCopy from '../components/OwnedIssueCopy.vue';
 import OwnedIssueCopies from '../views/OwnedIssueCopies.vue';
 

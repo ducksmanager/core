@@ -47,6 +47,7 @@ export default defineConfig({
       '~axios-helper/': `${path.resolve(__dirname, '../../packages/axios-helper')}/`,
       '~api-routes/': `${path.resolve(__dirname, '../../packages/api-routes')}/`,
       '~prisma-clients/': `${path.resolve(__dirname, '../../packages/prisma-clients')}/`,
+      '~web/': `${path.resolve(__dirname, '../../apps/web')}/`,
     },
   },
   test: {

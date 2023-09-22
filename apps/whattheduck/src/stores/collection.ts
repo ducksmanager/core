@@ -17,10 +17,9 @@ import {
 import { call } from '~axios-helper';
 import type { CollectionUpdateMultipleIssues, CollectionUpdateSingleIssue } from '~dm-types/CollectionUpdate';
 import type { issue, authorUser, purchase, subscription, user } from '~prisma-clients/client_dm';
+import { stores } from '~web';
 
 import { app } from './app';
-import { bookcase } from './bookcase';
-import { coa } from './coa';
 
 import { SuggestedIssueSimple } from '~/persistence/models/composite/SuggestedIssueSimple';
 import { AuthorUser } from '~/persistence/models/dm/AuthorUser';
@@ -29,6 +28,9 @@ import { IssuePopularity } from '~/persistence/models/dm/IssuePopularity';
 import { Purchase } from '~/persistence/models/dm/Purchase';
 import { User } from '~/persistence/models/dm/User';
 import { defaultApi } from '~/util/api';
+
+const bookcaseStore = stores.bookcase();
+const coaStore = stores.coa();
 
 export type IssueWithPublicationcode = issue & {
   publicationcode: string;
@@ -60,33 +62,28 @@ export const collection = defineStore('collection', () => {
     isLoadingUser = ref(false as boolean),
     user = ref(undefined as Omit<user, 'password'> | undefined | null),
     previousVisit = ref(null as Date | null),
-    popularIssueInCollectionByIssuecode = computed(
-      () =>
-        popularIssueInCollection.value?.reduce(
-          (acc, issue) => ({
-            ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
-          }),
-          {} as Record<string, number>,
-        ),
+    popularIssueInCollectionByIssuecode = computed(() =>
+      popularIssueInCollection.value?.reduce(
+        (acc, issue) => ({
+          ...acc,
+          [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
+        }),
+        {} as Record<string, number>,
+      ),
     ),
     total = computed(() => collection.value?.length),
     ownedCountries = computed(() => [...new Set((collection.value || []).map(({ country }) => country))].sort()),
     ownedPublications = computed(() =>
       [...new Set((collection.value || []).map(({ publicationcode }) => publicationcode))].sort(),
     ),
-    issuesByIssueCode = computed(
-      () =>
-        collection.value?.reduce(
-          (acc, issue) => {
-            const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-            return {
-              ...acc,
-              [issuecode]: [...(acc[issuecode] || []), issue],
-            };
-          },
-          {} as { [issuecode: string]: IssueWithPublicationcode[] },
-        ),
+    issuesByIssueCode = computed((): Record<string, Issue[]> | undefined =>
+      collection.value?.reduce((acc, issue) => {
+        const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
+        return {
+          ...acc,
+          [issuecode]: [...(acc[issuecode] || []), issue],
+        };
+      }, {} as Record<string, Issue[]>),
     ),
     duplicateIssues = computed(
       (): {
@@ -119,28 +116,24 @@ export const collection = defineStore('collection', () => {
               ))) ||
         0,
     ),
-    totalPerCountry = computed(
-      () =>
-        collection.value?.reduce(
-          (acc, issue) => ({
-            ...acc,
-            [issue.country]: (acc[issue.country] || 0) + 1,
-          }),
-          {} as { [countrycode: string]: number },
-        ),
+    totalPerCountry = computed(() =>
+      collection.value?.reduce(
+        (acc, issue) => ({
+          ...acc,
+          [issue.country]: (acc[issue.country] || 0) + 1,
+        }),
+        {} as { [countrycode: string]: number },
+      ),
     ),
     totalPerPublication = computed(
       () =>
-        collection.value?.reduce(
-          (acc, issue) => {
-            const publicationcode = `${issue.country}/${issue.magazine}`;
-            return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
-          },
-          {} as { [publicationcode: string]: number },
-        ) || null,
+        collection.value?.reduce((acc, issue) => {
+          const publicationcode = `${issue.country}/${issue.magazine}`;
+          return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
+        }, {} as { [publicationcode: string]: number }) || null,
     ),
-    purchasesById = computed(
-      () => purchases.value?.reduce((acc, purchase) => ({ ...acc, [purchase.id]: purchase }), {}),
+    purchasesById = computed(() =>
+      purchases.value?.reduce((acc, purchase) => ({ ...acc, [purchase.id]: purchase }), {}),
     ),
     hasSuggestions = computed(() => suggestions.value?.length),
     issueNumbersPerPublication = computed(
@@ -176,16 +169,15 @@ export const collection = defineStore('collection', () => {
           ),
         ),
     ),
-    popularIssuesInCollectionWithoutEdge = computed(
-      () =>
-        bookcase()
-          .bookcaseWithPopularities?.filter(({ edgeId, popularity }) => !edgeId && popularity && popularity > 0)
-          .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-            popularity2 && popularity1 ? popularity2 - popularity1 : 0,
-          ),
+    popularIssuesInCollectionWithoutEdge = computed(() =>
+      bookcaseStore.bookcaseWithPopularities
+        ?.filter(({ edgeId, popularity }) => !edgeId && popularity && popularity > 0)
+        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+        ),
     ),
     quotedIssues = computed(() => {
-      const issueQuotations = coa().issueQuotations;
+      const issueQuotations = coaStore.issueQuotations;
       if (issueQuotations === null) {
         return null;
       }
@@ -496,10 +488,10 @@ export const collection = defineStore('collection', () => {
           true,
         );
         await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' }, true);
-        await coa().fetchCountryNames(true);
-        await coa().fetchPublicationNames(['ALL']);
-        await coa().fetchIssueCounts(true);
-        await coa().fetchIssueNumbers(ownedPublications.value || []);
+        await coaStore.fetchCountryNames(true);
+        await coaStore.fetchPublicationNames(['ALL']);
+        await coaStore.fetchIssueCounts();
+        await coaStore.fetchIssueNumbers(ownedPublications.value || []);
 
         // TODO register for notifications
       } catch (e) {

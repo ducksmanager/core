@@ -39,6 +39,7 @@
 </template>
 <script setup lang="ts">
 import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
+
 import { collection } from '~/stores/collection';
 
 const { t } = useI18n();

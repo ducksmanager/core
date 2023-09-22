@@ -12,6 +12,7 @@
     "lint": "eslint --cache --fix ."
   },
   "dependencies": {
+    "~web": "workspace:*",
     "@capacitor-community/camera-preview": "^5.0.0",
     "@capacitor-community/sqlite": "^5.0.6",
     "@capacitor/android": "^5.2.2",
