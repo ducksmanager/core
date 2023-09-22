@@ -1,8 +1,8 @@
+import { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import i18n from "~/i18n";
-import { cachedCoaApi as coaApi } from "~/util/api";
 import {
   GET__coa__authorsfullnames__$authors,
   GET__coa__list__countries__$locale,
@@ -49,6 +49,8 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
   };
 };
 
+let coaApi: AxiosInstance;
+
 export const coa = defineStore("coa", () => {
   const coverUrls = ref({} as { [issuenumber: string]: string }),
     countryNames = ref(null as { [countrycode: string]: string } | null),
@@ -71,6 +73,20 @@ export const coa = defineStore("coa", () => {
       null as {
         [issuecode: string]: InducksIssueQuotationSimple;
       } | null
+    ),
+    issueCountsPerCountry = computed(
+      () =>
+        issueCounts.value &&
+        Object.entries(issueCounts.value).reduce<Record<string, number>>(
+          (acc, [publicationcode, count]) => {
+            const [countrycode] = publicationcode.split("/");
+            return {
+              ...acc,
+              [countrycode]: (acc[countrycode] || 0) + count,
+            };
+          },
+          {}
+        )
     ),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value
@@ -348,6 +364,9 @@ export const coa = defineStore("coa", () => {
       }
     };
   return {
+    setApi: (apiInstance: AxiosInstance) => {
+      coaApi = apiInstance;
+    },
     coverUrls,
     countryNames,
     publicationNames,
@@ -358,6 +377,7 @@ export const coa = defineStore("coa", () => {
     issueDetails,
     isLoadingCountryNames,
     issueCounts,
+    issueCountsPerCountry,
     issueCodeDetails,
     issueQuotations,
     addPublicationNames,
