@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dm": "concurrently -n web,api \"pnpm -F web... -F !~prisma-clients dev\" \"pnpm -F api... dev\"",
-    "whattheduck": "concurrently -n whattheduck-ionic,api \"pnpm -F whattheduck-ionic... -F !~prisma-clients dev\" \"pnpm -F api... dev\"",
+    "whattheduck": "concurrently -n whattheduck-ionic,api \"pnpm -F whattheduck-ionic... -F !~web -F !~prisma-clients dev\" \"pnpm -F api... dev\"",
     "dumili": "concurrently -n web+api,dumili,dumili-api \"pnpm dm\" \"pnpm -F dumili... -F !~prisma-clients dev\" \"pnpm -F dumili-api... dev\"",
     "build": "pnpm run -r build",
     "prepare": "husky install"

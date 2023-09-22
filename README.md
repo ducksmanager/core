@@ -13,3 +13,16 @@ Related projects :
 * [DucksManager-stats](https://github.com/bperel/DucksManager-stats) contains a list of scripts launched by a daily cronjob, allowing to calculate statistics about issues that are recommended to users on DucksManager, depending on the authors that they prefer.
 
 ![DucksManager architecture](https://raw.githubusercontent.com/bperel/DucksManager-next/master/server_architecture.png)
+
+## Setup
+
+### Prerequisites
+
+* [Node.js](https://nodejs.org/en/) 16
+* [Docker](https://www.docker.com/)
+* Some Unix or WSL2 environment
+
+Make sure that your local repository automatically pulls submodules:
+```bash
+git config --global submodule.recurse true
+```
