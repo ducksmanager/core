@@ -1,8 +1,10 @@
 {
   "name": "ducksmanager",
   "devDependencies": {
-    "husky": "^8.0.3",
     "concurrently": "^8.2.1"
+  },
+  "dependencies": {
+    "husky": "^8.0.3"
   },
   "scripts": {
     "dm": "concurrently -n web,api \"pnpm -F ~web... -F !~prisma-clients dev\" \"pnpm -F api... dev\"",

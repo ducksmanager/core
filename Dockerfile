@@ -11,6 +11,7 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY apps/web/package.json apps/web/pnpm-lock.yaml ./apps/web/
+#COPY apps/whattheduck-ionic/package.json apps/whattheduck-ionic/pnpm-lock.yaml ./apps/whattheduck-ionic/
 COPY apps/dumili/package.json apps/dumili/pnpm-lock.yaml ./apps/dumili/
 COPY apps/dumili/api/package.json apps/dumili/api/pnpm-lock.yaml ./apps/dumili/api/
 COPY packages/api/package.json packages/api/pnpm-lock.yaml ./packages/api/
@@ -23,7 +24,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
 RUN cd packages/axios-helper && find . -name tsc
 
 COPY . ./
-RUN pnpm -r run build
+RUN pnpm -r -F !whattheduck-ionic run build
 
 FROM nginx AS web
 LABEL org.opencontainers.image.authors="Bruno Perel"
