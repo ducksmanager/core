@@ -71,7 +71,7 @@ services:
 
   sprite-names-updater:
     container_name: sprite-names-updater
-    image: bash
+    image: mariadb:10.7
     # depends_on:
     #   - db
     environment:

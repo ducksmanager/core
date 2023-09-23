@@ -65,6 +65,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 5m
           script: |
+            cd workspace/DucksManager2
             docker compose run --rm --no-deps sprite-names-updater
 
       - name: Run subscription-handler
