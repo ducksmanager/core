@@ -97,4 +97,4 @@ jobs:
           script: |
             cd workspace/DucksManager2
             echo `grep GITHUB_TOKEN .env | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
-            docker compose pull && docker compose up -d --force-recreate
+            docker compose pull && docker compose up -d --force-recreate app api sentry-relay

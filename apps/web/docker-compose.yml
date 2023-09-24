@@ -35,7 +35,6 @@ services:
 
   cover-updater:
     container_name: cover-updater
-    restart: always
     image: bperel/duck-cover-id-updater
     # depends_on:
     #   - db
