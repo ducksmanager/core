@@ -9,12 +9,14 @@ alias: [/agrandir/marketplace]
         "Cette page indique les numéros que d'autres utilisateurs sur DucksManager proposent à la vente et que vous surveillez. Cliquez sur le ou les numéros qui vous intéressent,"
       )
     }}
-    <span v-if="isTouchScreen">{{
-      $t("puis faites un appui long pour contacter le vendeur.")
-    }}</span>
-    <span v-else>{{
+    <b v-if="isTouchScreen">{{
+      $t(
+        "puis tapotez deux fois au niveau de la liste pour contacter le vendeur."
+      )
+    }}</b>
+    <b v-else>{{
       $t("puis faites un clic droit pour contacter le vendeur.")
-    }}</span>
+    }}</b>
   </b-alert>
   <b-alert
     v-if="
