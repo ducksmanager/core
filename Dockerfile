@@ -57,7 +57,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
 
 COPY ./packages/api/routes/demo/*.csv ./routes/demo/
 COPY ./packages/api/emails ./emails/
-COPY ./packages/api/.env.prod.local ./.env
+COPY ./packages/api/.env ./.env
 
 EXPOSE 3000
 
@@ -89,7 +89,7 @@ COPY apps/dumili/api/package.json ./
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm install --production
 
-COPY ./apps/dumili/api/.env.prod.local ./.env
+COPY ./apps/dumili/api/.env ./.env
 
 EXPOSE 3000
 
