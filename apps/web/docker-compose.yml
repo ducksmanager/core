@@ -1,8 +1,8 @@
 version: '3.8'
 services:
-  app:
-    container_name: ducksmanager-app
-    image: ghcr.io/bperel/ducksmanager-app
+  web:
+    container_name: ducksmanager-web
+    image: ghcr.io/bperel/ducksmanager-web
     depends_on:
       - api
     restart: always
