@@ -17,7 +17,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@master
         with:
-          submodules: true
+          submodules: recursive
 
       - name: Download web .env file
         uses: nicklasfrahm/scp-action@main
