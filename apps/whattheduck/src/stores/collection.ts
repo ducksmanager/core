@@ -29,9 +29,6 @@ import { Purchase } from '~/persistence/models/dm/Purchase';
 import { User } from '~/persistence/models/dm/User';
 import { defaultApi } from '~/util/api';
 
-const bookcaseStore = stores.bookcase();
-const coaStore = stores.coa();
-
 export type IssueWithPublicationcode = issue & {
   publicationcode: string;
 };
@@ -49,6 +46,9 @@ export type purchaseWithStringDate = Omit<purchase, 'date'> & {
 };
 
 export const collection = defineStore('collection', () => {
+  const bookcaseStore = stores.bookcase();
+  const coaStore = stores.coa();
+
   const isLoading = ref({} as Record<string, boolean>),
     collection = ref(null as Issue[] | null),
     watchedPublicationsWithSales = ref(null as string[] | null),

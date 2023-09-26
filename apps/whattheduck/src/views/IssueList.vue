@@ -10,7 +10,7 @@
       <Condition :value="getConditionKey(item.condition)" />
     </template>
     <template #row-label="{ text }">
-      <Issue :value="text" />
+      {{ text }}
     </template>
   </List>
 </template>
@@ -83,9 +83,18 @@ const items = computed((): { key: string; text: string; item: Issue }[] =>
 );
 
 const sortedItems = computed(() =>
-  [...items.value].sort(({ text: text1 }, { text: text2 }) =>
-    Math.sign(coaIssuenumbers.value!.indexOf(text1) - coaIssuenumbers.value!.indexOf(text2)),
-  ),
+  [...items.value]
+    .sort(({ text: text1 }, { text: text2 }) =>
+      Math.sign(coaIssuenumbers.value!.indexOf(text1) - coaIssuenumbers.value!.indexOf(text2)),
+    )
+    .map((item, idx, allItems) => {
+      const currentItemCoaIndex = coaIssuenumbers.value!.indexOf(item.text);
+      const nextItemCoaIndex = coaIssuenumbers.value!.indexOf(allItems[idx + 1]?.text);
+      return {
+        ...item,
+        ownsNext: nextItemCoaIndex === currentItemCoaIndex + 1,
+      };
+    }),
 );
 
 collectionStore

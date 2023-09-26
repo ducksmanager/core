@@ -44,11 +44,11 @@ ion-item {
     &:deep(.dm-condition-background)::after,
     + ion-item:deep(.dm-condition-background)::before {
       position: absolute;
-      width: 14px;
-      font-size: 24px;
-      content: 'I';
-      opacity: 0.25;
-      margin-left: 4px;
+      width: 2px;
+      margin-left: 6px;
+      height: 54%;
+      content: ' ';
+      background: linear-gradient(0deg, rgb(255, 0, 0) 0%, rgb(0, 255, 0) 100%);
     }
     :deep(.dm-condition-background)::after {
       bottom: -8px;

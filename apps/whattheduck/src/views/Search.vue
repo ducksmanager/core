@@ -49,6 +49,7 @@ import { stores } from '~web';
 import useCondition from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { collection } from '~/stores/collection';
+import { defaultApi } from '~/util/api';
 
 const { t } = useI18n();
 
@@ -82,7 +83,7 @@ watch(
     selectedStory.value = null;
     const data = (
       await call(
-        axios,
+        defaultApi,
         new POST__coa__stories__search__withIssues({
           reqBody: { keywords: newValue },
         }),

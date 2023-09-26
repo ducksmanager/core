@@ -149,15 +149,15 @@ const ownershipAllItems = computed(() => {
   return [];
 });
 
-const ownership = computed(
-  () =>
-    ownershipAllItems.value &&
-    Object.entries(ownershipAllItems.value![0]!)
-      .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1]![key] as number }))
-      .reduce<Record<string, [number, number]>>(
-        (acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }),
-        {},
-      ),
+const ownership = computed(() =>
+  !ownershipAllItems.value?.length
+    ? undefined
+    : Object.entries(ownershipAllItems.value![0]!)
+        .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1]![key] as number }))
+        .reduce<Record<string, [number, number]>>(
+          (acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }),
+          {},
+        ),
 );
 
 watch(
