@@ -37,7 +37,7 @@ const {
   dark?: boolean;
 }>();
 const urlEncodedStorycode = $computed(
-    () => storycode && encodeURIComponent(storycode)
+    () => storycode && encodeURIComponent(storycode),
   ),
   storyTypeText = $computed(() => {
     switch (kind?.toUpperCase()) {

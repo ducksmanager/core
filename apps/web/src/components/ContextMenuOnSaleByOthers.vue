@@ -3,7 +3,7 @@
     {{
       $t(
         "{count} numéro sélectionné|{count} numéros sélectionnés",
-        selectedIssues.length
+        selectedIssues.length,
       )
     }}
   </li>
@@ -17,7 +17,7 @@
     {{
       $t(
         "Vous avez sélectionné {0} fois le numéro {1}.\nAssurez-vous de ne pas acheter plusieurs fois le même numéro !",
-        [count, issuenumber]
+        [count, issuenumber],
       )
     }}
   </b-alert>
@@ -29,7 +29,7 @@
   >
     {{
       $t(
-        "Sélectionnez un ou plusieurs numéros dans la liste\npour contacter leurs vendeurs."
+        "Sélectionnez un ou plusieurs numéros dans la liste\npour contacter leurs vendeurs.",
       )
     }}
   </b-alert>
@@ -41,7 +41,7 @@
   >
     {{
       $t(
-        "Vous avez sélectionné des numéros en vente par des vendeurs différents. Sélectionnez des numéros en vente par un seul vendeur à la fois"
+        "Vous avez sélectionné des numéros en vente par des vendeurs différents. Sélectionnez des numéros en vente par un seul vendeur à la fois",
       )
     }}
   </b-alert>
@@ -62,7 +62,7 @@
       >
         <v-contextmenu-item
           v-for="contactMethod in Object.keys(
-            contactMethods[selectedIssuesBuyerIds[0]]
+            contactMethods[selectedIssuesBuyerIds[0]],
           )"
           :key="`contact-method-${contactMethod}`"
           :hide-on-click="false"
@@ -113,21 +113,21 @@ const emit = defineEmits<{
     options: {
       contactMethod: string;
       sellerId: number;
-    }
+    },
   ): void;
   (e: "close"): void;
 }>();
 
 const selectedIssues = $computed(() =>
-  Object.keys(selectedIssueIdsByIssuenumber)
+  Object.keys(selectedIssueIdsByIssuenumber),
 );
 const contactMethods = $computed(() => marketplace().contactMethods);
 const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
 const issueIds = $computed(() =>
   Object.values(selectedIssueIdsByIssuenumber).reduce(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id!)],
-    [] as number[]
-  )
+    [] as number[],
+  ),
 );
 const stats = $computed(() => users().stats);
 
@@ -135,8 +135,8 @@ const selectedIssuesBuyerIds = $computed(() => [
   ...new Set(
     issueIds.reduce(
       (acc, issueId) => [...acc, issuesOnSaleById[issueId].userId],
-      [] as number[]
-    )
+      [] as number[],
+    ),
   ),
 ]);
 
@@ -148,8 +148,8 @@ const issuesWithMultipleCopiesSelected = $computed(() =>
         ...acc,
         [issuenumber]: copies.length,
       }),
-      {}
-    )
+      {},
+    ),
 );
 
 const { t: $t } = useI18n();

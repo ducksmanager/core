@@ -47,11 +47,11 @@ const {
 const { t: $t } = useI18n();
 
 const watchedPublicationsWithSales = $computed(
-  () => collection().watchedPublicationsWithSales
+  () => collection().watchedPublicationsWithSales,
 );
 
 const key = $computed(
-  () => publicationcode + (issuenumber ? ` ${issuenumber}` : "")
+  () => publicationcode + (issuenumber ? ` ${issuenumber}` : ""),
 );
 
 const isWatched = $computed(() => watchedPublicationsWithSales?.includes(key));
@@ -59,7 +59,7 @@ const isPublicationWatchedButNotIssueNumber = $computed(
   () =>
     !isWatched &&
     publicationcode &&
-    watchedPublicationsWithSales?.includes(publicationcode)
+    watchedPublicationsWithSales?.includes(publicationcode),
 );
 const buttonTooltipText = $computed(() =>
   $t(
@@ -71,8 +71,8 @@ const buttonTooltipText = $computed(() =>
       ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
       : isPublicationWatchedButNotIssueNumber
       ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."
-      : "Cliquez ici pour voir les propositions de vente de ce numéro !"
-  )
+      : "Cliquez ici pour voir les propositions de vente de ce numéro !",
+  ),
 );
 
 if (publicationcode) {

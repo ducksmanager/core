@@ -26,12 +26,12 @@ export const bookcase = defineStore("bookcase", () => {
     bookcaseUsername = ref(null as string | null),
     bookcase = ref(null as BookcaseEdge[] | null),
     bookcaseOptions = ref(
-      null as GET__bookcase__$username__options["resBody"] | null
+      null as GET__bookcase__$username__options["resBody"] | null,
     ),
     bookcaseOrder = ref(null as string[] | null),
     edgeIndexToLoad = ref(0 as number),
     isSharedBookcase = computed(
-      (): boolean => collection().user?.username !== bookcaseUsername.value
+      (): boolean => collection().user?.username !== bookcaseUsername.value,
     ),
     bookcaseWithPopularities = computed(
       (): BookcaseEdgeWithPopularity[] | null =>
@@ -50,7 +50,7 @@ export const bookcase = defineStore("bookcase", () => {
                 : collection().popularIssuesInCollection?.[issueCode] || 0,
             };
           })) ||
-        null
+        null,
     ),
     addLoadedSprite = ({
       spritePath,
@@ -72,7 +72,7 @@ export const bookcase = defineStore("bookcase", () => {
               axios,
               new GET__bookcase__$username({
                 params: { username: bookcaseUsername.value! },
-              })
+              }),
             )
           ).data;
         } catch (e) {
@@ -94,7 +94,7 @@ export const bookcase = defineStore("bookcase", () => {
             axios,
             new GET__bookcase__$username__options({
               params: { username: bookcaseUsername.value! },
-            })
+            }),
           )
         ).data;
       }
@@ -104,7 +104,7 @@ export const bookcase = defineStore("bookcase", () => {
         axios,
         new POST__bookcase__options({
           reqBody: bookcaseOptions.value!,
-        })
+        }),
       );
     },
     loadBookcaseOrder = async () => {
@@ -114,7 +114,7 @@ export const bookcase = defineStore("bookcase", () => {
             axios,
             new GET__bookcase__$username__sort({
               params: { username: bookcaseUsername.value! },
-            })
+            }),
           )
         ).data;
       }
@@ -124,7 +124,7 @@ export const bookcase = defineStore("bookcase", () => {
         axios,
         new POST__bookcase__sort({
           reqBody: { sorts: bookcaseOrder.value as string[] },
-        })
+        }),
       );
     };
 

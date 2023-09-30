@@ -39,8 +39,8 @@ watch(
               ...acc,
               ...issues.map(({ publicationcode }) => publicationcode),
             ],
-            [] as string[]
-          )
+            [] as string[],
+          ),
         ),
       ];
 
@@ -48,7 +48,7 @@ watch(
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

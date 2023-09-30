@@ -141,14 +141,14 @@ const edgeUrl = $computed(
   () =>
     `${import.meta.env.VITE_EDGES_ROOT}${publicationcode.replace(
       "/",
-      "/gen/"
-    )}.${issuenumber}.png`
+      "/gen/",
+    )}.${issuenumber}.png`,
 );
 const coverWidth = $computed(
-  () => coverRatio && (coverHeight || 0) / coverRatio
+  () => coverRatio && (coverHeight || 0) / coverRatio,
 );
 const currentIssueDetails = $computed(
-  () => issueDetails?.[`${publicationcode} ${issuenumber}`]
+  () => issueDetails?.[`${publicationcode} ${issuenumber}`],
 );
 const pages = $computed(() => currentIssueDetails?.entries);
 let pagesWithUrl = $computed(() => pages?.filter(({ url }) => !!url));
@@ -201,9 +201,9 @@ watch(
   () => currentTabIndex,
   (newValue) => {
     currentPage = pagesWithUrl.findIndex(
-      (page) => page.storycode === pages[newValue].storycode
+      (page) => page.storycode === pages[newValue].storycode,
     );
-  }
+  },
 );
 
 watch(
@@ -214,7 +214,7 @@ watch(
       edgeWidth! /= newValue / availableWidthPerPage;
       coverHeight! /= newValue / availableWidthPerPage;
     }
-  }
+  },
 );
 watch(
   () => isReadyToOpen,
@@ -241,7 +241,7 @@ watch(
       }, 50);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -250,7 +250,7 @@ watch(
     if (book) {
       book.flip(newValue);
     }
-  }
+  },
 );
 
 watch(
@@ -258,14 +258,14 @@ watch(
   async () => {
     await loadBookPages();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
   () => issuenumber,
   async () => {
     await loadBookPages();
-  }
+  },
 );
 
 watch(
@@ -275,7 +275,7 @@ watch(
       toast!.show(
         {
           body: $t(
-            "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !"
+            "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !",
           ),
           title: $t("Pas d'informations sur le contenu du livre"),
         },
@@ -285,12 +285,12 @@ watch(
           noCloseButton: true,
           pos: "top-center",
           variant: "warning",
-        }
+        },
       );
       emit("close-book");
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

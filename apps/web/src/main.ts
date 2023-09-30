@@ -7,7 +7,6 @@ import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import axios from "axios";
-import { BToastPlugin } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 import { createPinia } from "pinia";
 // @ts-ignore
@@ -57,7 +56,7 @@ axios.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 axios.interceptors.response.use(
@@ -68,13 +67,12 @@ axios.interceptors.response.use(
   (error) => {
     useOngoingRequests.numberOfOngoingAjaxCalls!--;
     return Promise.reject(error);
-  }
+  },
 );
 
 const app = createApp(App);
 app.use(i18n);
 app.use(store);
-app.use(BToastPlugin);
 app.use(contextmenu);
 app.use(head);
 app.use(router);

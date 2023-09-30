@@ -42,8 +42,8 @@ const cachedUserApi = addUrlParamsRequestInterceptor(
     {
       ...commonCacheOptions,
       ttl: inAnHour.diff(now),
-    }
-  )
+    },
+  ),
 );
 
 const cachedCoaApi = addUrlParamsRequestInterceptor(
@@ -54,8 +54,8 @@ const cachedCoaApi = addUrlParamsRequestInterceptor(
     {
       ...commonCacheOptions,
       ttl: coaCacheExpiration.diff(now),
-    }
-  )
+    },
+  ),
 );
 
 export { cachedCoaApi, cachedUserApi };

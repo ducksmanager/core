@@ -9,12 +9,12 @@
       {{ $t("Aucun auteur noté.") }}
       {{
         $t(
-          "Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez."
+          "Ajoutez vos auteurs préférés ci-dessous et indiquez les notes que vous leur attribuez.",
         )
       }}
       {{
         $t(
-          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."
+          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.",
         )
       }}
     </b-alert>
@@ -23,7 +23,7 @@
       <p>
         {{
           $t(
-            "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous"
+            "Entrez les noms de vos auteurs favoris pour voir combien de leurs histoires vous possédez. Noter les auteurs permettra également à DucksManager de vous",
           )
         }}
         <router-link to="/expand/suggestions">{{
@@ -64,7 +64,7 @@
       >
         {{
           $t(
-            "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres."
+            "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres.",
           )
         }}
       </b-alert>
@@ -130,7 +130,7 @@ let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
 const search = $ref("");
 let searchResults = $ref(
-  null as { [personcode: string]: inducks_person[] } | null
+  null as { [personcode: string]: inducks_person[] } | null,
 );
 
 const personNames = $computed(() => coa().personNames);
@@ -142,30 +142,30 @@ watch(
       pendingSearch = newValue;
       if (!isSearching) await runSearch(newValue);
     }
-  }
+  },
 );
 watch(
   () => watchedAuthors,
   async (newValue) => {
     if (watchedAuthors?.length) {
       await coa().fetchPersonNames(
-        newValue.map(({ personcode }) => personcode)
+        newValue.map(({ personcode }) => personcode),
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 const { loadWatchedAuthors } = collection();
 const isAuthorWatched = (personcode: string) =>
   watchedAuthors.some(
-    ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
+    ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode,
   );
 const createRating = async (data: { personcode: string }) => {
   await call(
     axios,
     new PUT__collection__authors__watched({
       reqBody: data,
-    })
+    }),
   );
   await loadWatchedAuthors(true);
 };
@@ -175,7 +175,7 @@ const updateRating = async (data: { personcode: string; notation: number }) => {
 const deleteAuthor = async (data: { personcode: string }) => {
   await call(
     axios,
-    new DELETE__collection__authors__watched({ reqBody: data })
+    new DELETE__collection__authors__watched({ reqBody: data }),
   );
   await loadWatchedAuthors(true);
 };
@@ -190,7 +190,7 @@ const runSearch = async (value: string) => {
             params: {
               partialAuthorName: value,
             },
-          })
+          }),
         )
       ).data;
     } finally {

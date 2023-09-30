@@ -57,7 +57,7 @@
         <b-button v-else size="sm" @click="showShareButtons = true">
           {{
             $t(
-              "Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !"
+              "Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !",
             )
           }}
         </b-button>
@@ -109,7 +109,7 @@
             {{
               $t(
                 "Envoyez des photos de tranches de magazines et gagnez jusqu'à {0} points par tranche !",
-                [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
+                [mostPopularIssuesInCollectionWithoutEdge[0].popularity],
               )
             }}
           </template>
@@ -184,14 +184,14 @@ let userPoints = $ref(null as { [contribution: string]: number } | null);
 
 const user = $computed(() => collection.user);
 const bookcaseUsername = $computed(
-  () => (route.params.username as string) || user?.username || null
+  () => (route.params.username as string) || user?.username || null,
 );
 const allowSharing = $computed(() => collection.user?.allowSharing);
 const lastPublishedEdgesForCurrentUser = $computed(
-  () => collection.lastPublishedEdgesForCurrentUser
+  () => collection.lastPublishedEdgesForCurrentUser,
 );
 const popularIssuesInCollectionWithoutEdge = $computed(
-  () => collection.popularIssuesInCollectionWithoutEdge
+  () => collection.popularIssuesInCollectionWithoutEdge,
 );
 const publicationNames = $computed(() => coa.publicationNames);
 const issueNumbers = $computed(() => coa.issueNumbers);
@@ -205,13 +205,13 @@ const bookcaseUrl = $computed(
     (!isPrivateBookcase &&
       user &&
       `${window.location.origin}/bookcase/show/${user.username}`) ||
-    null
+    null,
 );
 const loading = $computed(
   () =>
     !isPrivateBookcase &&
     !isUserNotExisting &&
-    !(sortedBookcase && bookcaseOptions && edgesUsingSprites)
+    !(sortedBookcase && bookcaseOptions && edgesUsingSprites),
 );
 const percentVisible = $computed(() =>
   bookcase.bookcase?.length
@@ -219,15 +219,16 @@ const percentVisible = $computed(() =>
         (100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length) /
         bookcase.bookcase.length
       ).toFixed(0)
-    : null
+    : null,
 );
-const mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
-  [...(popularIssuesInCollectionWithoutEdge || [])]
-    ?.sort(
-      ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-        (popularity2 || 0) - (popularity1 || 0)
-    )
-    .filter((_, index) => index < 10)
+const mostPopularIssuesInCollectionWithoutEdge = $computed(
+  () =>
+    [...(popularIssuesInCollectionWithoutEdge || [])]
+      ?.sort(
+        ({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          (popularity2 || 0) - (popularity1 || 0),
+      )
+      .filter((_, index) => index < 10),
 );
 const sortedBookcase = $computed(
   () =>
@@ -245,7 +246,7 @@ const sortedBookcase = $computed(
           countryCode: countryCode2,
           magazineCode: magazineCode2,
           issuenumber: issueNumber2,
-        }
+        },
       ) => {
         const publicationCode1 = `${countryCode1}/${magazineCode1}`;
         if (!issueNumbers[publicationCode1]) return -1;
@@ -255,24 +256,24 @@ const sortedBookcase = $computed(
 
         const publicationOrderSign = Math.sign(
           bookcaseOrder.indexOf(publicationCode1) -
-            bookcaseOrder.indexOf(publicationCode2)
+            bookcaseOrder.indexOf(publicationCode2),
         );
         return (
           publicationOrderSign ||
           Math.sign(
             issueNumbers[publicationCode1].indexOf(issueNumber1) -
-              issueNumbers[publicationCode2].indexOf(issueNumber2)
+              issueNumbers[publicationCode2].indexOf(issueNumber2),
           )
         );
-      }
-    )
+      },
+    ),
 );
 const highlightIssue = (issue: SimpleIssue) => {
   currentEdgeHighlighted =
     bookcase.bookcase?.find(
       (issueInCollection) =>
         issue.publicationcode === issueInCollection.publicationcode &&
-        issue.issuenumber === issueInCollection.issuenumber
+        issue.issuenumber === issueInCollection.issuenumber,
     )?.id || null;
 };
 
@@ -292,15 +293,15 @@ watch(
               issuenumber,
             }) =>
               `${issueCountryCode}/${issueMagazineCode}` === publicationcode &&
-              !/^[0-9]+$/.test(issuenumber)
-          )
+              !/^[0-9]+$/.test(issuenumber),
+          ),
       );
       console.log(nonObviousPublicationIssueNumbers);
       coa.addIssueNumbers(
         newValue
           .filter(
             (publicationcode) =>
-              !nonObviousPublicationIssueNumbers.includes(publicationcode)
+              !nonObviousPublicationIssueNumbers.includes(publicationcode),
           )
           .reduce(
             (acc, publicationcode) => ({
@@ -310,22 +311,22 @@ watch(
                   bookcase.bookcase
                     ?.filter(
                       ({ publicationcode: issuePublicationCode }) =>
-                        issuePublicationCode === publicationcode
+                        issuePublicationCode === publicationcode,
                     )
                     .map(({ issuenumber }) => issuenumber)
                     .sort((issuenumber, issuenumber2) =>
-                      Math.sign(parseInt(issuenumber) - parseInt(issuenumber2))
+                      Math.sign(parseInt(issuenumber) - parseInt(issuenumber2)),
                     ) || [],
               },
             }),
-            {}
-          )
+            {},
+          ),
       );
       await coa.fetchIssueNumbers(nonObviousPublicationIssueNumbers);
       hasIssueNumbers = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -337,38 +338,46 @@ watch(
 
       const usableSpritesBySpriteId = newValue
         .filter(({ sprites }) => sprites)
-        .reduce((acc, { edgeId, sprites }) => {
-          sprites.forEach((sprite: BookcaseEdgeSprite) => {
-            const { name: spriteId } = sprite;
-            if (!acc[spriteId]) acc[spriteId] = { edges: [], ...sprite };
+        .reduce(
+          (acc, { edgeId, sprites }) => {
+            sprites.forEach((sprite: BookcaseEdgeSprite) => {
+              const { name: spriteId } = sprite;
+              if (!acc[spriteId]) acc[spriteId] = { edges: [], ...sprite };
 
-            acc[spriteId].edges.push(edgeId);
-          });
-          return acc;
-        }, {} as { [spriteId: string]: BookcaseEdgeSprite & { edges: number[] } });
+              acc[spriteId].edges.push(edgeId);
+            });
+            return acc;
+          },
+          {} as {
+            [spriteId: string]: BookcaseEdgeSprite & { edges: number[] };
+          },
+        );
 
       const usableSprites = Object.values(usableSpritesBySpriteId).map(
         (usableSprite) => ({
           ...usableSprite,
           edges: [...new Set(usableSprite.edges)],
-        })
+        }),
       );
 
       edgesUsingSprites = usableSprites
         .filter(({ edges, size }) => edges.length >= (size * 80) / 100)
         .sort(({ size: aSize }, { size: bSize }) => Math.sign(aSize - bSize))
-        .reduce((acc, { name, version, edges, size }) => {
-          edges.forEach((edgeId) => {
-            acc[edgeId] = `v${version}/${name}`;
-            if (size <= 20) {
-              acc[edgeId] = `f_auto/${acc[edgeId]}`;
-            }
-          });
-          return acc;
-        }, {} as { [edgeId: number]: string });
+        .reduce(
+          (acc, { name, version, edges, size }) => {
+            edges.forEach((edgeId) => {
+              acc[edgeId] = `v${version}/${name}`;
+              if (size <= 20) {
+                acc[edgeId] = `f_auto/${acc[edgeId]}`;
+              }
+            });
+            return acc;
+          },
+          {} as { [edgeId: number]: string },
+        );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -377,7 +386,7 @@ watch(
     if (hasNonSharedBookcase && user) {
       await users().fetchStats([user.id]);
     }
-  }
+  },
 );
 
 watch(
@@ -385,7 +394,7 @@ watch(
   (newValue) => {
     const element = document.getElementById(`edge-${newValue}`);
     if (element) element.scrollIntoView();
-  }
+  },
 );
 
 watch(
@@ -401,6 +410,6 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

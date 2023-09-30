@@ -27,13 +27,14 @@ let isLoaded = $ref(false as boolean);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // let hasFreshEvents = $ref(false as boolean);
 const events = $computed(() => users().events);
-const eventUserIds = $computed(() =>
-  events
-    ?.reduce(
-      (acc, event) => [...acc, ...(event.users || [])],
-      [] as (number | null)[]
-    )
-    .filter((userId) => !!userId)
+const eventUserIds = $computed(
+  () =>
+    events
+      ?.reduce(
+        (acc, event) => [...acc, ...(event.users || [])],
+        [] as (number | null)[],
+      )
+      .filter((userId) => !!userId),
 );
 const isCollectionUpdateEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("numberOfIssues");
@@ -56,13 +57,13 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
           ...acc,
           ...edges.map(({ publicationcode }) => publicationcode),
         ],
-        [] as string[]
+        [] as string[],
       ),
   ]);
 
   await users().fetchStats(
     eventUserIds.filter((userId) => userId !== null) as number[],
-    clearCacheEntry
+    clearCacheEntry,
   );
 };
 

@@ -100,12 +100,12 @@ const signup = async () => {
               password2,
               email,
             },
-          })
+          }),
         )
       ).data.token,
       {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      }
+      },
     );
     await collectionStore.loadUser();
   } catch (e) {
@@ -122,7 +122,7 @@ watch(
       await router.push("/collection");
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

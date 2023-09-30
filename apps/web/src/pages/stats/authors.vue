@@ -11,7 +11,7 @@ alias: [/auteurs]
     >
       {{
         $t(
-          "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez."
+          "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.",
         )
       }}
     </b-alert>
@@ -25,7 +25,7 @@ alias: [/auteurs]
       >
         {{
           $t(
-            "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !"
+            "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !",
           )
         }}
       </b-alert>
@@ -86,7 +86,7 @@ Chart.register(
   LinearScale,
   BarController,
   Tooltip,
-  Title
+  Title,
 );
 
 const { t: $t } = useI18n();
@@ -116,8 +116,8 @@ const labels = $computed(
   () =>
     watchedAuthorsStoryCount &&
     Object.values(watchedAuthorsStoryCount).map(
-      ({ fullname: fullName }) => fullName
-    )
+      ({ fullname: fullName }) => fullName,
+    ),
 );
 
 const changeDimension = (dimension: "width", value: number) => {
@@ -130,20 +130,20 @@ watch(
     if (newValue && watchedAuthorsStoryCount) {
       let ownedStories = Object.values(watchedAuthorsStoryCount).map(
         ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
-          storyCount - missingStoryCount
+          storyCount - missingStoryCount,
       );
       let missingStories = Object.values(watchedAuthorsStoryCount).map(
-        ({ missingstorycount: missingStoryCount }) => missingStoryCount
+        ({ missingstorycount: missingStoryCount }) => missingStoryCount,
       );
 
       if (unitTypeCurrent === "percentage") {
         ownedStories = ownedStories.map((possessedCount, key) =>
           Math.round(
-            possessedCount * (100 / (possessedCount + missingStories[key]))
-          )
+            possessedCount * (100 / (possessedCount + missingStories[key])),
+          ),
         );
         missingStories = ownedStories.map(
-          (possessedCount) => 100 - possessedCount
+          (possessedCount) => 100 - possessedCount,
         );
       }
 
@@ -198,7 +198,7 @@ watch(
       };
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

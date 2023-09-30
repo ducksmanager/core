@@ -75,7 +75,7 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
       ? `${SPRITES_ROOT}${spritePath}.png`
       : `${import.meta.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
           issuenumberReference || issuenumber
-        }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`
+        }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`,
   ),
   ignoreSprite = $ref(false),
   publicationNames = $computed(() => coa().publicationNames);

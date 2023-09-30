@@ -10,7 +10,7 @@ alias: [/bibliotheque/contributeurs]
     <h2>
       {{
         $t(
-          "La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de :"
+          "La bibliothèque DucksManager n'aurait pas pu voir le jour sans le soutien et l'aide de :",
         )
       }}
     </h2>
@@ -43,15 +43,15 @@ const stats = $computed(() => usersStore.stats);
 const points = $computed(() => usersStore.points);
 const fetchStats = $computed(() => usersStore.fetchStats);
 const fetchBookcaseContributors = $computed(
-  () => usersStore.fetchBookcaseContributors
+  () => usersStore.fetchBookcaseContributors,
 );
 const bookcaseContributorsSorted = $computed(
   () =>
     (!loading &&
       [...bookcaseContributors!].sort(({ name: name1 }, { name: name2 }) =>
-        name1.toLowerCase().localeCompare(name2.toLowerCase())
+        name1.toLowerCase().localeCompare(name2.toLowerCase()),
       )) ||
-    []
+    [],
 );
 
 (async () => {
@@ -59,7 +59,7 @@ const bookcaseContributorsSorted = $computed(
   await fetchStats(
     bookcaseContributors!
       .filter(({ userId }) => typeof userId === "number")
-      .map(({ userId }) => userId as number)
+      .map(({ userId }) => userId as number),
   );
   loading = false;
 })();

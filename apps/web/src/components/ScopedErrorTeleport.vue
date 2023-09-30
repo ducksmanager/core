@@ -13,6 +13,6 @@ const { error } = defineProps<{
 }>();
 
 const parentElement = $computed(
-  () => error.selector && document.querySelector(error.selector)?.parentElement
+  () => error.selector && document.querySelector(error.selector)?.parentElement,
 );
 </script>

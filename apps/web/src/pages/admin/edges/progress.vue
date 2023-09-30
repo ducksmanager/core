@@ -19,7 +19,7 @@ meta:
       <img
         :src="
           getImagePath(
-            `flags/${mostWantedIssue.publicationcode.split('/')[0]}.png`
+            `flags/${mostWantedIssue.publicationcode.split('/')[0]}.png`,
           )
         "
       />
@@ -37,7 +37,7 @@ meta:
     >
       <div
         v-for="[publicationcode, issuenumbers] in Object.entries(
-          publishedEdges
+          publishedEdges,
         )"
         :key="publicationcode"
         v-memo="[
@@ -55,7 +55,7 @@ meta:
           @click="
             showEdgesForPublication.splice(
               showEdgesForPublication.indexOf(publicationcode),
-              1
+              1,
             )
           "
         />
@@ -99,7 +99,7 @@ meta:
           Object.keys(publishedEdges).reduce(
             (acc, publicationcode) =>
               acc + publishedEdges[publicationcode].length,
-            0
+            0,
           )
         }}
         tranches prêtes.</b
@@ -161,34 +161,37 @@ const inducksIssueNumbersNoSpace = $computed(() =>
     (acc, publicationcode) => ({
       ...acc,
       [publicationcode]: Object.values(issueNumbers[publicationcode]).map(
-        (issuenumber) => issuenumber.replace(/ /g, "")
+        (issuenumber) => issuenumber.replace(/ /g, ""),
       ),
     }),
-    {} as Record<string, string[]>
-  )
+    {} as Record<string, string[]>,
+  ),
 );
 
 const sortedBookcase = computed(() =>
-  Object.values(showEdgesForPublication).reduce((acc, publicationcode) => {
-    return {
-      ...acc,
-      [publicationcode]:
-        inducksIssueNumbersNoSpace[publicationcode]?.map((issuenumber) => ({
-          id: 0,
-          issueCode: `${publicationcode}-${issuenumber}`,
-          edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
-            ? 1
-            : 0,
-          publicationcode,
-          countryCode: publicationcode.split("/")[0],
-          magazineCode: publicationcode.split("/")[1],
-          issuenumber,
-          issuenumberReference: issuenumber,
-          creationDate: new Date(),
-          sprites: [],
-        })) || [],
-    };
-  }, {} as Record<string, BookcaseEdgeWithPopularity[]>)
+  Object.values(showEdgesForPublication).reduce(
+    (acc, publicationcode) => {
+      return {
+        ...acc,
+        [publicationcode]:
+          inducksIssueNumbersNoSpace[publicationcode]?.map((issuenumber) => ({
+            id: 0,
+            issueCode: `${publicationcode}-${issuenumber}`,
+            edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
+              ? 1
+              : 0,
+            publicationcode,
+            countryCode: publicationcode.split("/")[0],
+            magazineCode: publicationcode.split("/")[1],
+            issuenumber,
+            issuenumberReference: issuenumber,
+            creationDate: new Date(),
+            sprites: [],
+          })) || [],
+      };
+    },
+    {} as Record<string, BookcaseEdgeWithPopularity[]>,
+  ),
 );
 
 (async () => {
@@ -197,7 +200,7 @@ const sortedBookcase = computed(() =>
       ...mostWantedIssue,
       country: mostWantedIssue.publicationcode.split("/")[0],
       magazine: mostWantedIssue.publicationcode.split("/")[1],
-    })
+    }),
   );
 
   publishedEdges = (
@@ -207,7 +210,7 @@ const sortedBookcase = computed(() =>
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
     }),
-    {} as Record<string, string[]>
+    {} as Record<string, string[]>,
   );
 
   await fetchPublicationNames([

@@ -78,7 +78,7 @@ const loadIssueUrls = async () => {
   isCoverLoading = false;
 
   const possibleCoverUrl = issueDetails?.[issueCode]?.entries?.find(
-    ({ position }) => !/^p/.test(position)
+    ({ position }) => !/^p/.test(position),
   )?.url;
   coverUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
 };
@@ -89,7 +89,7 @@ watch(
     if (value) {
       coa().setCoverUrl(issuenumber, value);
     }
-  }
+  },
 );
 </script>
 

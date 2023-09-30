@@ -6,7 +6,7 @@ alias: [/impression]
   <div>
     {{
       $t(
-        "DucksManager propose l'impression de votre liste sous deux formats différents :"
+        "DucksManager propose l'impression de votre liste sous deux formats différents :",
       )
     }}
     <ul>
@@ -38,7 +38,7 @@ alias: [/impression]
             >
             {{
               $t(
-                "pour visionner notre vidéo d'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !"
+                "pour visionner notre vidéo d'explication du fonctionnement de la CollecTable en 1 minute 30 chrono !",
               )
             }}
           </li>
@@ -69,7 +69,7 @@ const types = [
     details: [
       $t("Ce type de liste est plus adapté pour les petites collections."),
       $t(
-        "Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros."
+        "Facile à lire, cette liste devient vite illisible lorsqu'il s'agit d'ajouter des numéros.",
       ),
     ],
   },

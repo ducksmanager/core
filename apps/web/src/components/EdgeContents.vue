@@ -69,7 +69,7 @@ const loadedSprites = $computed(() => bookcase().loadedSprites);
 const spriteClass = $computed(() =>
   id && spritePath
     ? `edges-${publicationcode.replace(/\//g, "-")}-${issuenumber}`
-    : ""
+    : "",
 );
 const onImageLoad = async (event: Event) => {
   if (spritePath && !ignoreSprite) {
@@ -81,7 +81,7 @@ const onImageLoad = async (event: Event) => {
           (await axios.get(`${SPRITES_ROOT}${spritePath}.css`)).data as string
         ).replaceAll(
           new RegExp("url\\('[^']+", "g"),
-          `url('${SPRITES_ROOT}${spritePath}.png`
+          `url('${SPRITES_ROOT}${spritePath}.png`,
         );
         const style = document.createElement("style");
         style.textContent = css;
@@ -142,11 +142,11 @@ watch(
   (value) => {
     if (value) {
       console.error(
-        `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`
+        `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`,
       );
       emit("ignore-sprite");
     }
-  }
+  },
 );
 </script>
 

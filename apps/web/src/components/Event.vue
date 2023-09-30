@@ -138,29 +138,29 @@ const { event } = defineProps<{
 }>();
 
 const signupEvent = $computed(() =>
-  event.type === "signup" ? (event as SignupEvent) : null
+  event.type === "signup" ? (event as SignupEvent) : null,
 );
 
 const medalEvent = $computed(() =>
-  event.type === "medal" ? (event as MedalEvent) : null
+  event.type === "medal" ? (event as MedalEvent) : null,
 );
 
 const edgeEvent = $computed((): EdgeCreationEvent | null =>
-  event.type === "edge" ? (event as EdgeCreationEvent) : null
+  event.type === "edge" ? (event as EdgeCreationEvent) : null,
 );
 
 const bookstoreCommentEvent = $computed(() =>
-  event.type === "bookstore_comment" ? (event as BookstoreCommentEvent) : null
+  event.type === "bookstore_comment" ? (event as BookstoreCommentEvent) : null,
 );
 
 const collectionSubscriptionAdditionEvent = $computed(() =>
   event.type === "subscription_additions"
     ? (event as CollectionSubscriptionAdditionEvent)
-    : null
+    : null,
 );
 
 const collectionUpdateEvent = $computed(() =>
-  event.type === "collection_update" ? (event as CollectionUpdateEvent) : null
+  event.type === "collection_update" ? (event as CollectionUpdateEvent) : null,
 );
 
 const publicationNames = $computed(() => coa().publicationNames);

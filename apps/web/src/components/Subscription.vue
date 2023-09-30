@@ -96,12 +96,12 @@ const editSubscription = $ref(subscription);
 const startDateAsString = $ref(
   editSubscription.startDate
     ? editSubscription.startDate.toISOString().split("T")[0]
-    : ""
+    : "",
 );
 const endDateAsString = $ref(
   editSubscription.endDate
     ? editSubscription.endDate.toISOString().split("T")[0]
-    : ""
+    : "",
 );
 
 watch(
@@ -110,7 +110,7 @@ watch(
     if (newValue) {
       editSubscription.startDate = new Date(Date.parse(newValue));
     }
-  }
+  },
 );
 
 watch(
@@ -119,7 +119,7 @@ watch(
     if (newValue) {
       editSubscription.endDate = new Date(Date.parse(newValue));
     }
-  }
+  },
 );
 
 defineEmits<{

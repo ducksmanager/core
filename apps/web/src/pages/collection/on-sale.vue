@@ -26,11 +26,11 @@ alias: [/collection/a-lire]
       "
       >{{
         $t(
-          "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
+          "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros.",
         )
       }}<br /><router-link to="/collection/account">{{
         $t(
-          "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
+          "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact.",
         )
       }}</router-link></b-alert
     >
@@ -57,7 +57,7 @@ let hasPublicationNames = $ref(false as boolean);
 let publicationCodes = $ref(null as string[] | null);
 const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
 const marketplaceContactMethods = $computed(
-  () => collection().marketplaceContactMethods
+  () => collection().marketplaceContactMethods,
 );
 
 watch(
@@ -66,7 +66,7 @@ watch(
     if (issuesInOnSaleStack) {
       publicationCodes = [
         ...new Set(
-          issuesInOnSaleStack.map(({ publicationcode }) => publicationcode)
+          issuesInOnSaleStack.map(({ publicationcode }) => publicationcode),
         ),
       ];
 
@@ -74,7 +74,7 @@ watch(
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

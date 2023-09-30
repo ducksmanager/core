@@ -7,7 +7,7 @@ alias: [/collection/abonnements]
     <b-alert variant="info" :model-value="true">
       {{
         $t(
-          "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie."
+          "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie.",
         )
       }}
     </b-alert>
@@ -36,7 +36,7 @@ alias: [/collection/abonnements]
             ],
             publicationNames[currentAssociatedPublication.publicationcode],
             publicationNames[currentAssociatedPublication.publicationcode],
-          ]
+          ],
         )
       }}
       <p>
@@ -134,19 +134,19 @@ const createSubscription = async (subscription: SubscriptionTransformed) => {
           endDate: subscription.endDate.toISOString().split("Z")[0],
         },
       },
-    })
+    }),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 
 const createSubscriptionLike = async (
-  associatedPublication: AssociatedPublication
+  associatedPublication: AssociatedPublication,
 ) => {
   await createSubscription({
     ...subscriptions!.find(
       ({ publicationcode }) =>
-        publicationcode === associatedPublication.referencePublicationcode
+        publicationcode === associatedPublication.referencePublicationcode,
     )!,
     publicationcode: associatedPublication.publicationcode,
   });
@@ -158,7 +158,7 @@ const editSubscription = async (subscription: EditSubscription) => {
     new POST__collection__subscriptions__$id({
       reqBody: { subscription },
       params: { id: String(subscription.id) },
-    })
+    }),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
@@ -168,14 +168,14 @@ const deleteSubscription = async (id: number) => {
     axios,
     new DELETE__collection__subscriptions__$id({
       params: { id: String(id) },
-    })
+    }),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 
 const toSubscriptionWithStringDates = (
-  subscription: SubscriptionTransformed
+  subscription: SubscriptionTransformed,
 ): EditSubscription => ({
   ...subscription,
   startDate: subscription.startDate.toISOString().split("Z")[0],
@@ -193,12 +193,12 @@ watch(
         }) =>
           newValue.find(
             ({ publicationcode }) =>
-              referencePublicationcode === publicationcode
+              referencePublicationcode === publicationcode,
           ) &&
           !newValue.find(
             ({ publicationcode }) =>
-              associatedPublicationcode === publicationcode
-          )
+              associatedPublicationcode === publicationcode,
+          ),
       );
       await fetchPublicationNames([
         ...associatedPublications.map(({ publicationcode }) => publicationcode),
@@ -207,7 +207,7 @@ watch(
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {

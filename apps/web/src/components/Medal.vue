@@ -41,7 +41,7 @@
         getImagePath(
           `medals/${contribution}_${level}_${
             xSmall ? 'fond' : currentLocaleShortKey
-          }.png`
+          }.png`,
         )
       "
     />
@@ -87,7 +87,7 @@ const {
 
 const medalColors = ["bronze", "argent", "or"];
 const level = $computed(() =>
-  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel
+  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel,
 );
 const medalTitle = $computed(() => {
   switch (contribution) {

@@ -18,6 +18,6 @@ const { paths } = defineProps<{
 }>();
 
 const active = $computed(() =>
-  paths.some((path) => path.test(useRoute().path))
+  paths.some((path) => path.test(useRoute().path)),
 );
 </script>

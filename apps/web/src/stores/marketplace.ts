@@ -14,7 +14,7 @@ import { issue, requestedIssue } from "~prisma-clients/client_dm";
 
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(
-      null as GET__collection__on_sale_by_others["resBody"] | null
+      null as GET__collection__on_sale_by_others["resBody"] | null,
     ),
     issueRequestsAsBuyer = ref(null as requestedIssue[] | null),
     issueRequestsAsSeller = ref(null as requestedIssue[] | null),
@@ -26,10 +26,10 @@ export const marketplace = defineStore("marketplace", () => {
         [
           userId: number
         ]: GET__collection__on_sale_by_others__contact_methods__$sellerId["resBody"];
-      }
+      },
     ),
-    sentRequestIssueIds = computed(() =>
-      issueRequestsAsBuyer.value?.map(({ issueId }) => issueId)
+    sentRequestIssueIds = computed(
+      () => issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
     ),
     sellerUserIds = computed(
       () =>
@@ -37,18 +37,18 @@ export const marketplace = defineStore("marketplace", () => {
           ...new Set(
             Object.values(issuesOnSaleByOthers.value).reduce(
               (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
-              [] as number[]
-            )
+              [] as number[],
+            ),
           ),
         ]) ||
-        []
+        [],
     ),
     buyerUserIds = computed(
       () =>
         (issueRequestsAsSeller.value && [
           ...new Set(issueRequestsAsSeller.value.map((issue) => issue.buyerId)),
         ]) ||
-        []
+        [],
     ),
     buyerUserNamesById = computed(
       () =>
@@ -57,19 +57,22 @@ export const marketplace = defineStore("marketplace", () => {
             ...acc,
             [userId]: users().stats[userId]?.username,
           }),
-          {} as { [userId: number]: string }
-        ) || null
+          {} as { [userId: number]: string },
+        ) || null,
     ),
-    sellerUserNames = computed(() =>
-      sellerUserIds.value
-        ?.reduce(
-          (acc, userId) => [
-            ...acc,
-            { value: userId, text: users().stats[userId]?.username },
-          ],
-          [] as { value: number; text: string }[]
-        )
-        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2))
+    sellerUserNames = computed(
+      () =>
+        sellerUserIds.value
+          ?.reduce(
+            (acc, userId) => [
+              ...acc,
+              { value: userId, text: users().stats[userId]?.username },
+            ],
+            [] as { value: number; text: string }[],
+          )
+          .sort(({ text: text1 }, { text: text2 }) =>
+            text1.localeCompare(text2),
+          ),
     ),
     requestIssueIdsBySellerId = computed(
       () =>
@@ -84,9 +87,9 @@ export const marketplace = defineStore("marketplace", () => {
                   issueId,
                 ],
               }),
-              {} as { [userId: number]: number[] }
+              {} as { [userId: number]: number[] },
             )) ||
-        {}
+        {},
     ),
     issuesOnSaleById = computed(() =>
       Object.values(issuesOnSaleByOthers.value || {}).reduce(
@@ -100,18 +103,18 @@ export const marketplace = defineStore("marketplace", () => {
                 publicationcode: `${issue.country}/${issue.magazine}`,
               },
             }),
-            {} as Record<number, issue & { publicationcode: string }>
+            {} as Record<number, issue & { publicationcode: string }>,
           ),
         }),
-        {} as Record<number, issue & { publicationcode: string }>
-      )
+        {} as Record<number, issue & { publicationcode: string }>,
+      ),
     ),
     requestIssues = async (issueIds: number[]) => {
       await call(
         axios,
         new PUT__collection__on_sale_by_others__requests({
           reqBody: { issueIds },
-        })
+        }),
       );
       await loadIssueRequestsAsBuyer();
     },
@@ -121,7 +124,7 @@ export const marketplace = defineStore("marketplace", () => {
           axios,
           new GET__collection__on_sale_by_others__contact_methods__$sellerId({
             params: { sellerId: String(userId) },
-          })
+          }),
         )
       ).data;
     },
@@ -138,7 +141,7 @@ export const marketplace = defineStore("marketplace", () => {
           axios,
           new GET__collection__on_sale_by_others__requests__as__$as({
             params: { as: "buyer" },
-          })
+          }),
         )
       ).data;
       isLoadingIssueRequestsAsBuyer.value = false;
@@ -156,7 +159,7 @@ export const marketplace = defineStore("marketplace", () => {
           axios,
           new GET__collection__on_sale_by_others__requests__as__$as({
             params: { as: "seller" },
-          })
+          }),
         )
       ).data;
       isLoadingIssueRequestsAsSeller.value = false;
@@ -179,7 +182,7 @@ export const marketplace = defineStore("marketplace", () => {
         axios,
         new DELETE__collection__on_sale_by_others__requests({
           reqBody: { issueId },
-        })
+        }),
       );
     };
 

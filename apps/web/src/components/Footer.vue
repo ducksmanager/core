@@ -9,7 +9,7 @@
     <div>
       {{
         $t(
-          "Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm."
+          "Les logos de DucksManager et de WhatTheDuck ont été réalisés par enigm.",
         )
       }}
       <br /><br />
@@ -20,7 +20,7 @@
       <br />
       {{
         $t(
-          "Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company."
+          "Toutes les images de personnages et / ou produits Disney: © The  Walt Disney Company.",
         )
       }}
     </div>

@@ -61,7 +61,7 @@ watch(
       users().fetchStats([newValue.id]);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

@@ -31,18 +31,18 @@ const currentCondition = $computed(() => {
     return (
       conditions.find(
         ({ value: conditionValue }) =>
-          (value?.toString() || null) === conditionValue
+          (value?.toString() || null) === conditionValue,
       ) || conditions.find(({ value }) => value === null)!
     );
   } else if (publicationcode && issuenumber) {
     const issueInCollection = collection().findInCollection(
       publicationcode,
-      issuenumber
+      issuenumber,
     );
     return (
       (issueInCollection &&
         conditions.find(
-          ({ dbValue }) => dbValue === issueInCollection.condition
+          ({ dbValue }) => dbValue === issueInCollection.condition,
         )) ||
       undefined
     );

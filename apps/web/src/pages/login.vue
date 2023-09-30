@@ -18,7 +18,7 @@ meta:
         <b-alert v-if="error" :model-value="true" variant="danger">
           {{
             $t(
-              "Les identifiants que vous avez entré sont invalides, veuillez réessayer."
+              "Les identifiants que vous avez entré sont invalides, veuillez réessayer.",
             )
           }}
         </b-alert>
@@ -88,12 +88,12 @@ const login = async () => {
               username,
               password,
             },
-          })
+          }),
         )
       ).data.token,
       {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      }
+      },
     );
     await collectionStore.loadUser();
   } catch (e) {
@@ -112,7 +112,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

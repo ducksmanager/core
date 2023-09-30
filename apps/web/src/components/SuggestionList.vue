@@ -5,7 +5,7 @@
   <div v-else-if="!hasSuggestions">
     {{
       $t(
-        "Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné."
+        "Vous possédez toutes les publications contenant des histoires de vos auteurs favoris pour le pays sélectionné.",
       )
     }}
   </div>
@@ -114,7 +114,7 @@ watch(
     });
     loading = false;
   },
-  { immediate: true }
+  { immediate: true },
 );
 watch(
   () => suggestionSortCurrent,
@@ -129,7 +129,7 @@ watch(
       sinceLastVisit,
     });
     loading = false;
-  }
+  },
 );
 </script>
 

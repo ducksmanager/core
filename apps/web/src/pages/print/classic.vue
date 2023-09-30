@@ -30,7 +30,7 @@ import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
 
 let ownedIssueNumbers = $ref(
-  null as { [publicationcode: string]: string } | null
+  null as { [publicationcode: string]: string } | null,
 );
 
 const countryNames = $computed(() => coa().countryNames);
@@ -38,27 +38,28 @@ const publicationNames = $computed(() => coa().publicationNames);
 const issueNumbers = $computed(() => coa().issueNumbers);
 const collection = $computed(() => collectionStore().collection);
 const countryCodes = $computed(
-  () => collection && [...new Set(collection.map((i) => i.country))]
+  () => collection && [...new Set(collection.map((i) => i.country))],
 );
 const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
     countryNames &&
-    [...countryCodes].sort((countryCodeA, countryCodeB) =>
-      countryNames[countryCodeA]?.localeCompare(countryNames[countryCodeB])
-    )
+    [...countryCodes].sort(
+      (countryCodeA, countryCodeB) =>
+        countryNames[countryCodeA]?.localeCompare(countryNames[countryCodeB]),
+    ),
 );
 const publicationCodes = $computed(
   () =>
     collection && [
       ...new Set(collection.map((i) => `${i.country}/${i.magazine}`)),
-    ]
+    ],
 );
 const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
     ?.filter((publicationcode) => publicationcode.split("/")[0] === countrycode)
     ?.sort((a, b) =>
-      (publicationNames[a] || "").localeCompare(publicationNames[b] || "")
+      (publicationNames[a] || "").localeCompare(publicationNames[b] || ""),
     ) || [];
 
 watch(
@@ -69,7 +70,7 @@ watch(
       coa().fetchIssueNumbers(publicationCodes!);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -86,7 +87,7 @@ watch(
             ...acc,
             [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
           }),
-          {} as { [publicationcode: string]: string[] }
+          {} as { [publicationcode: string]: string[] },
         );
       ownedIssueNumbers = Object.entries(issueNumbers).reduce(
         (acc, [publicationcode, indexedIssueNumbers]) => ({
@@ -94,16 +95,16 @@ watch(
           [publicationcode]: indexedIssueNumbers
             .filter((indexedIssueNumber) =>
               collectionWithPublicationcodes[publicationcode].includes(
-                indexedIssueNumber
-              )
+                indexedIssueNumber,
+              ),
             )
             .join(", "),
         }),
-        {} as { [publicationcode: string]: string }
+        {} as { [publicationcode: string]: string },
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

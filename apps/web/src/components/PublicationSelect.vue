@@ -59,28 +59,28 @@ const countryNames = $computed(
           value: countrycode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
-          (text1 || "").localeCompare(text2)
+          (text1 || "").localeCompare(text2),
         )) ||
-    undefined
+    undefined,
 );
 const publicationNames = $computed(() => coaStore.publicationNames);
 const publicationNamesFullCountries = $computed(
-  () => coaStore.publicationNamesFullCountries
+  () => coaStore.publicationNamesFullCountries,
 );
 const publicationNamesForCurrentCountry = $computed(() =>
   publicationNamesFullCountries.includes(currentCountryCode || "")
     ? Object.keys(publicationNames)
         .filter((publicationcode) =>
-          new RegExp(`^${currentCountryCode}/`).test(publicationcode)
+          new RegExp(`^${currentCountryCode}/`).test(publicationcode),
         )
         .map((publicationcode) => ({
           text: publicationNames[publicationcode],
           value: publicationcode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
-          (text1 || "").localeCompare(text2 || "")
+          (text1 || "").localeCompare(text2 || ""),
         )
-    : []
+    : [],
 );
 
 watch(
@@ -95,7 +95,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 coaStore.fetchCountryNames();

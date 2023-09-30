@@ -3,7 +3,7 @@
     {{
       $t(
         "{count} numéro sélectionné|{count} numéros sélectionnés",
-        selectedIssues.length
+        selectedIssues.length,
       )
     }}
   </li>
@@ -25,7 +25,7 @@
   >
     {{
       $t(
-        "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié."
+        "Vous possédez certains numéros sélectionnés\nen plusieurs exemplaires.\nSeul le premier exemplaire sera modifié.",
       )
     }}
   </b-alert>
@@ -37,7 +37,7 @@
   >
     {{
       $t(
-        "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection."
+        "Sélectionnez un ou plusieurs numéros dans la liste\npour les ajouter, modifier ou supprimer de votre collection.",
       )
     }}
   </b-alert>
@@ -105,7 +105,7 @@
           role="presentation"
           :title="
             $t(
-              `Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`
+              `Vous pouvez seulement ajouter un exemplaire lorsqu'un seul numéro est sélectionné`,
             )
           "
         >
@@ -148,7 +148,7 @@ const emit = defineEmits<{
     options: {
       contactMethod: string;
       sellerId: number;
-    }
+    },
   ): void;
   (e: "close"): void;
 }>();
@@ -177,24 +177,24 @@ let editedCopies = $ref(null as CollectionUpdateSingleIssue | null);
 let currentCopyIndex = $ref(0 as number);
 
 const selectedIssues = $computed(() =>
-  Object.keys(selectedIssueIdsByIssuenumber)
+  Object.keys(selectedIssueIdsByIssuenumber),
 );
 
 let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
 const hasNoCopies = $computed(
   () =>
     (initialCopies && initialCopies.issuenumber === null) ||
-    (initialIssues && !initialIssues.issuenumbers.length)
+    (initialIssues && !initialIssues.issuenumbers.length),
 );
 const hasMaxCopies = $computed(
-  () => initialCopies && initialCopies.copies.length >= 3
+  () => initialCopies && initialCopies.copies.length >= 3,
 );
 const hasMultipleCopiesAndMultipleIssues = $computed(
   () =>
     Object.values(selectedIssueIdsByIssuenumber).length > 1 &&
     Object.values(selectedIssueIdsByIssuenumber).some(
-      (issues) => issues.length > 1
-    )
+      (issues) => issues.length > 1,
+    ),
 );
 const updateSelectedIssues = async () => {
   const isIssueTransfer = (isOnSale: SaleState | undefined) =>
@@ -206,8 +206,8 @@ const updateSelectedIssues = async () => {
   if (hasIssuesToTransfer) {
     const isConfirmed = confirm(
       $t(
-        "Les numéros sélectionnés vont être transférés à un ou plusieurs autres utilisateurs et n'apparaitront plus dans votre collection."
-      )
+        "Les numéros sélectionnés vont être transférés à un ou plusieurs autres utilisateurs et n'apparaitront plus dans votre collection.",
+      ),
     );
     if (!isConfirmed) {
       return;
@@ -234,7 +234,7 @@ watch(
     if (newValue !== null) {
       currentCopyIndex = newValue - 1;
     }
-  }
+  },
 );
 
 watch(
@@ -256,7 +256,7 @@ watch(
       };
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

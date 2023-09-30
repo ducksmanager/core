@@ -32,7 +32,7 @@
               searchContext === 'story'
                 ? $t('Rechercher une histoire')
                 : $t(
-                    `Rechercher les publications d'une histoire à partir d'un code histoire`
+                    `Rechercher les publications d'une histoire à partir d'un code histoire`,
                   )
             "
           />
@@ -119,7 +119,7 @@ let storyResults = $ref(
       collectionIssue: IssueWithPublicationcode | null;
     })[];
     hasMore: boolean;
-  }
+  },
 );
 let issueResults = $ref({} as { results: SimpleIssue[] });
 let searchContext = $ref("story" as "story" | "storycode");
@@ -130,7 +130,7 @@ const fetchPublicationNames = coa().fetchPublicationNames;
 const isInCollection = (issue: SimpleIssue) =>
   collectionStore().findInCollection(
     issue.publicationcode,
-    issue.issuenumber
+    issue.issuenumber,
   ) !== undefined;
 const searchContexts = {
   story: $t("titre d'histoire"),
@@ -146,12 +146,12 @@ const searchContextsWithoutCurrent = $computed(
           [currentSearchContext]:
             searchContexts[currentSearchContext as "story" | "storycode"],
         }),
-        {}
-      )
+        {},
+      ),
 );
 const isSearchByCode = $computed(() => searchContext === "storycode");
 const searchResults = $computed(() =>
-  isSearchByCode ? issueResults : storyResults
+  isSearchByCode ? issueResults : storyResults,
 );
 const selectSearchResult = (searchResult: SimpleStory | SimpleIssue) => {
   if (isSearchByCode) {
@@ -170,18 +170,18 @@ const runSearch = async (value: string) => {
           axios,
           new GET__coa__list__issues__by_storycode({
             query: { storycode: value.replace(/^code=/, "") },
-          })
+          }),
         )
       ).data;
       issueResults = {
         results: data.sort((issue1, issue2) =>
           Math.sign(
-            (isInCollection(issue2) ? 1 : 0) - (isInCollection(issue1) ? 1 : 0)
-          )
+            (isInCollection(issue2) ? 1 : 0) - (isInCollection(issue1) ? 1 : 0),
+          ),
         ),
       };
       await fetchPublicationNames(
-        issueResults.results.map(({ publicationcode }) => publicationcode)
+        issueResults.results.map(({ publicationcode }) => publicationcode),
       );
     } else {
       const data = (
@@ -189,7 +189,7 @@ const runSearch = async (value: string) => {
           axios,
           new POST__coa__stories__search__withIssues({
             reqBody: { keywords: value },
-          })
+          }),
         )
       ).data;
       storyResults.results = data.results.map((story) => ({
@@ -203,11 +203,11 @@ const runSearch = async (value: string) => {
               story
                 .issues!.map(
                   ({ publicationcode, issuenumber }) =>
-                    `${publicationcode}-${issuenumber}`
+                    `${publicationcode}-${issuenumber}`,
                 )
                 .includes(
-                  `${collectionPublicationCode}-${collectionIssueNumber}`
-                )
+                  `${collectionPublicationCode}-${collectionIssueNumber}`,
+                ),
           ) || null,
       }));
     }
@@ -227,7 +227,7 @@ watch(
       pendingSearch = newValue;
       if (!isSearching) await runSearch(newValue);
     }
-  }
+  },
 );
 
 collectionStore().loadCollection();

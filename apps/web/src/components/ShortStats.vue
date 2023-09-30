@@ -35,7 +35,7 @@ const total = $computed(() => collectionStore.total);
 const totalUniqueIssues = $computed(() => collectionStore.totalUniqueIssues);
 const totalPerCountry = $computed(() => collectionStore.totalPerCountry);
 const totalPerPublication = $computed(
-  () => collectionStore.totalPerPublication
+  () => collectionStore.totalPerPublication,
 );
 
 const { t } = useI18n();

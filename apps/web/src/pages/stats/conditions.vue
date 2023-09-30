@@ -32,19 +32,19 @@ const numberPerCondition = $computed(
         ...acc,
         [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
       }),
-      {} as { [condition: string]: number }
-    ) || {}
+      {} as { [condition: string]: number },
+    ) || {},
 );
 const conditionsWithoutMissing = conditions.filter(
-  ({ value }) => value !== null
+  ({ value }) => value !== null,
 );
 const values = $computed(() =>
   Object.values(conditionsWithoutMissing).map(
-    ({ dbValue }) => numberPerCondition[dbValue!]
-  )
+    ({ dbValue }) => numberPerCondition[dbValue!],
+  ),
 );
 const colors = Object.values(
-  conditionsWithoutMissing.map(({ color }) => color)
+  conditionsWithoutMissing.map(({ color }) => color),
 );
 const chartData = $computed(() => ({
   labels: Object.values(conditionsWithoutMissing).map(({ text }) => text),
@@ -72,14 +72,14 @@ const options = $computed(
             const { dataset, parsed: currentValue } = tooltipItem;
             const total = dataset.data.reduce((acc, value) => acc + value, 0);
             const percentage = parseFloat(
-              ((currentValue / total) * 100).toFixed(1)
+              ((currentValue / total) * 100).toFixed(1),
             );
             return `${currentValue} (${percentage}%)`;
           },
         },
       },
     },
-  })
+  }),
 );
 
 collectionStore().loadCollection();

@@ -29,30 +29,31 @@ const { issueId } = defineProps<{
   issueId: number;
 }>();
 
-const receivedRequests = $computed(() =>
-  marketplace().issueRequestsAsSeller?.filter(
-    ({ issueId: requestIssueId }) => requestIssueId === issueId
-  )
+const receivedRequests = $computed(
+  () =>
+    marketplace().issueRequestsAsSeller?.filter(
+      ({ issueId: requestIssueId }) => requestIssueId === issueId,
+    ),
 );
 
 const buyerPoints = $computed(
   (): { [buyerId: number]: { [contribution: string]: number } } =>
     receivedRequests?.reduce(
       (acc, { buyerId }) => ({ ...acc, [buyerId]: users().points[buyerId] }),
-      {}
-    ) || {}
+      {},
+    ) || {},
 );
 
 const buyerStats = $computed(
   (): { [buyerId: number]: { [contribution: string]: number } } =>
     receivedRequests?.reduce(
       (acc, { buyerId }) => ({ ...acc, [buyerId]: users().stats[buyerId] }),
-      {}
-    ) || {}
+      {},
+    ) || {},
 );
 
-const isOnSale = $computed(() =>
-  collection().issuesInOnSaleStack?.find(({ id }) => id === issueId)
+const isOnSale = $computed(
+  () => collection().issuesInOnSaleStack?.find(({ id }) => id === issueId),
 );
 </script>
 

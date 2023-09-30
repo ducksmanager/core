@@ -29,7 +29,7 @@ const firstPathPart = $computed(
     (
       router.getRoutes().find(({ path }) => path === route.path)?.aliasOf ||
       route
-    ).path.match(/\/([^/]+)/)?.[1]
+    ).path.match(/\/([^/]+)/)?.[1],
 );
 
 const slots = useSlots();

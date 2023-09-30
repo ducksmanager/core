@@ -64,7 +64,7 @@ meta:
             </tr>
             <tr
               v-for="i of Object.keys(
-                Math.floor(letterToNumber(maxLetter) / 6) + 1
+                Math.floor(letterToNumber(maxLetter) / 6) + 1,
               ).map((number) => Number(number))"
               :key="i"
             >
@@ -91,7 +91,7 @@ meta:
             </tr>
             <tr
               v-for="[publicationcode, publicationName] in Object.entries(
-                publicationNames
+                publicationNames,
               )"
               :key="publicationcode"
             >
@@ -130,10 +130,10 @@ const countryNames = $computed(() => coa().countryNames);
 const publicationNames = $computed(() => coa().publicationNames);
 const collection = $computed(() => collectionStore().collection);
 const totalPerPublication = $computed(
-  () => collectionStore().totalPerPublication
+  () => collectionStore().totalPerPublication,
 );
 const ready = $computed(
-  () => issuesPerCell && countryNames && Object.keys(publicationNames).length
+  () => issuesPerCell && countryNames && Object.keys(publicationNames).length,
 );
 const maxLetter = $computed(() =>
   !issuesPerCell
@@ -142,13 +142,13 @@ const maxLetter = $computed(() =>
         [
           ...new Set(
             (JSON.stringify(issuesPerCell).match(/"[a-zA-Z]+"/g) || []).map(
-              (letter) => letter.replace(/"/g, "")
-            )
+              (letter) => letter.replace(/"/g, ""),
+            ),
           ),
         ]
           .map(letterToNumber)
-          .sort((a, b) => b - a)[0]
-      )
+          .sort((a, b) => b - a)[0],
+      ),
 );
 const { t: $t } = useI18n();
 const issueCountTitle = $computed(() => {
@@ -164,7 +164,7 @@ const loadCollection = collectionStore().loadCollection;
 const loadPurchases = collectionStore().loadPurchases;
 const numberToLetter = (number: number) =>
   String.fromCharCode(
-    (number < 26 ? "a".charCodeAt(0) : "A".charCodeAt(0) - 26) + number
+    (number < 26 ? "a".charCodeAt(0) : "A".charCodeAt(0) - 26) + number,
   );
 const letterToNumber = (letter: string) =>
   letter >= "a"
@@ -181,7 +181,7 @@ const groupsInRange = (range: number) => {
 let issuesPerCell = $ref(
   null as {
     [publicationcode: string]: { [mod: string | number]: string[] };
-  } | null
+  } | null,
 );
 
 watch(
@@ -195,7 +195,7 @@ watch(
       publicationcode: string,
       issuenumber: string,
       isDoubleIssueStart = false,
-      isDoubleIssueEnd = false
+      isDoubleIssueEnd = false,
     ) => {
       let mod, number;
       if (Number.isNaN(issuenumber)) {
@@ -217,7 +217,7 @@ watch(
           isDoubleIssueEnd ? "<" : "",
           typeof number === "string" ? number : numberToLetter(number),
           isDoubleIssueStart ? ">" : "",
-        ].join("")
+        ].join(""),
       );
     };
     issuesPerCell = newCollectionValue.reduce((acc, issue) => {
@@ -236,13 +236,13 @@ watch(
       }
       return acc;
     }, {});
-  }
+  },
 );
 watch(
   () => totalPerPublication,
   (newValue) => {
     fetchPublicationNames(Object.keys(newValue || {}));
-  }
+  },
 );
 
 (async () => {
@@ -255,7 +255,10 @@ watch(
 <style scoped lang="scss">
 table {
   color: black;
-  font: 11px/15px verdana, arial, sans-serif;
+  font:
+    11px/15px verdana,
+    arial,
+    sans-serif;
 
   &.collectable,
   &.legends {

@@ -34,7 +34,7 @@ export const users = defineStore("users", () => {
         (userId) =>
           !Object.keys(points.value)
             .map((userIdHavingPoints) => parseInt(userIdHavingPoints))
-            .includes(userId)
+            .includes(userId),
       );
       if (!missingUserIds.length) return;
 
@@ -48,7 +48,7 @@ export const users = defineStore("users", () => {
                 .sort((a, b) => Math.sign(a - b))
                 .join(","),
             },
-          })
+          }),
         )
       ).data;
       points.value = {
@@ -62,7 +62,7 @@ export const users = defineStore("users", () => {
             ...acc,
             [data.userId]: data,
           }),
-          {}
+          {},
         ),
       };
     },
@@ -76,7 +76,7 @@ export const users = defineStore("users", () => {
     fetchEvents = async (clearCacheEntry = true) => {
       const { data, cached } = await userApi.get(
         "/events",
-        clearCacheEntry ? {} : { cache: false }
+        clearCacheEntry ? {} : { cache: false },
       );
       events.value = (
         data as (
@@ -88,7 +88,7 @@ export const users = defineStore("users", () => {
         )[]
       )
         .sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) =>
-          Math.sign(timestamp2 - timestamp1)
+          Math.sign(timestamp2 - timestamp1),
         )
         .filter((_, index) => index < 50);
 

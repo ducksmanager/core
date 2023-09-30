@@ -43,7 +43,7 @@ let activeTabIndex = $ref(-1 as number);
 const updateActiveTabIndex = () => {
   activeTabIndex = items.findIndex(
     ({ path }) =>
-      routeName === (rootPath + path).replace(/\//g, "-").replace(/^-/, "")
+      routeName === (rootPath + path).replace(/\//g, "-").replace(/^-/, ""),
   );
 };
 

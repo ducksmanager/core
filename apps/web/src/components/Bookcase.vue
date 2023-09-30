@@ -83,7 +83,7 @@ let loadedImages = $ref(new Set<number>() as Set<number>);
 
 const lastEdgeIndexContinuouslyLoaded = $computed(() => {
   const allLoadedImages = Array.from(loadedImages).sort((a, b) =>
-    Math.sign(a - b)
+    Math.sign(a - b),
   );
   let stop = false;
   return Math.max(
@@ -97,7 +97,7 @@ const lastEdgeIndexContinuouslyLoaded = $computed(() => {
         stop = true;
       }
       return isContinuouslyLoadedEdge;
-    })
+    }),
   );
 });
 
@@ -114,7 +114,7 @@ const getTextureBackgroundImage = (textureName: string) =>
 const onEdgeLoaded = (edgeIndex: number) => {
   loadedImages.add(edgeIndex);
   const nextEdgeIndexToLoad = sortedBookcase?.findIndex(
-    (_, idx) => !edgeIndexesToLoad.includes(idx)
+    (_, idx) => !edgeIndexesToLoad.includes(idx),
   );
   if (nextEdgeIndexToLoad !== undefined && nextEdgeIndexToLoad > -1) {
     edgeIndexesToLoad.push(nextEdgeIndexToLoad);
@@ -131,14 +131,14 @@ watch(
         .map((_, idx) => idx);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {
   if (!document.querySelector("style#bookshelves")) {
     const { bookshelf: bookshelfTexture } = bookcaseTextures;
     const bookshelfTextureUrl = getImagePath(
-      `textures/${bookshelfTexture}.jpg`
+      `textures/${bookshelfTexture}.jpg`,
     );
     const style = document.createElement("style");
     style.id = "bookshelves";

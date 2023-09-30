@@ -52,7 +52,7 @@
           >
             {{
               $t(
-                "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous."
+                "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous.",
               )
             }}
             <ul>
@@ -79,17 +79,17 @@
           >
             {{
               $t(
-                "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
+                "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,",
               )
             }}
             <b v-if="isTouchScreen">{{
               $t(
-                "puis tapotez deux fois au niveau de la liste pour indiquer leur état et validez."
+                "puis tapotez deux fois au niveau de la liste pour indiquer leur état et validez.",
               )
             }}</b>
             <b v-else>{{
               $t(
-                "puis faites un clic droit pour indiquer leur état et validez."
+                "puis faites un clic droit pour indiquer leur état et validez.",
               )
             }}</b>
           </b-alert>
@@ -230,7 +230,7 @@
         <div v-if="userIssuesForPublication?.length">
           {{
             $t(
-              "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :"
+              "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :",
             )
           }}
           <ul>
@@ -332,7 +332,7 @@ const emit = defineEmits<{
       contactMethod: string;
       sellerId: number;
       selectedIssueIds: number[];
-    }
+    },
   ): void;
 }>();
 
@@ -358,62 +358,65 @@ const filter = $ref({
 const contextmenuInstance = $ref(null as unknown | null);
 let issues = $shallowRef(null as issueWithPublicationCodeAndCopies[] | null);
 let userIssuesForPublication = $shallowRef(
-  null as IssueWithPublicationcode[] | null
+  null as IssueWithPublicationcode[] | null,
 );
 let userIssuesNotFoundForPublication = $shallowRef(
-  [] as IssueWithPublicationcode[] | null
+  [] as IssueWithPublicationcode[] | null,
 );
 let selected = $shallowRef([] as string[]);
 const filteredUserCopies = $computed(() =>
   filteredIssues.reduce(
     (acc, { userCopies }) => [...acc, ...userCopies],
-    [] as IssueWithPublicationcode[]
-  )
+    [] as IssueWithPublicationcode[],
+  ),
 );
 const copiesBySelectedIssuenumber = $computed(() =>
-  selected.reduce((acc, issueKey) => {
-    const [issuenumber, maybeIssueId] = issueKey.split("-id-");
-    const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
-    return {
-      ...acc,
-      [issuenumber]: [
-        ...(acc[issuenumber] || []),
-        ...filteredUserCopies.filter(
-          ({ id: copyId, issuenumber: copyIssueNumber }) =>
-            issueId !== null
-              ? issueId === copyId
-              : issuenumber === copyIssueNumber
-        ),
-      ],
-    };
-  }, {} as { [issuenumber: string]: IssueWithPublicationcode[] })
+  selected.reduce(
+    (acc, issueKey) => {
+      const [issuenumber, maybeIssueId] = issueKey.split("-id-");
+      const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
+      return {
+        ...acc,
+        [issuenumber]: [
+          ...(acc[issuenumber] || []),
+          ...filteredUserCopies.filter(
+            ({ id: copyId, issuenumber: copyIssueNumber }) =>
+              issueId !== null
+                ? issueId === copyId
+                : issuenumber === copyIssueNumber,
+          ),
+        ],
+      };
+    },
+    {} as { [issuenumber: string]: IssueWithPublicationcode[] },
+  ),
 );
 let preselected = $shallowRef([] as string[]);
 let preselectedIndexStart = $ref(null as number | null);
 let preselectedIndexEnd = $ref(null as number | null);
 let currentIssueOpened = $shallowRef(
-  null as { publicationcode: string; issuenumber: string } | null
+  null as { publicationcode: string; issuenumber: string } | null,
 );
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const showFilter = $computed(
-  () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly
+  () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly,
 );
 
 const issueIds = $computed(() =>
   Object.values(
-    copiesBySelectedIssuenumber as { [issuenumber: string]: { id: number }[] }
+    copiesBySelectedIssuenumber as { [issuenumber: string]: { id: number }[] },
   ).reduce(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
-    [] as number[]
-  )
+    [] as number[],
+  ),
 );
 
 let contextMenuKey = $ref("context-menu" as string);
 const publicationNames = $computed(() => coa().publicationNames);
 const coverUrls = $computed(() => coa().coverUrls);
 const userIssues = $computed(
-  () => customIssues || collectionStore().collection
+  () => customIssues || collectionStore().collection,
 );
 let purchases = $computed(() => collectionStore().purchases);
 const country = $computed(() => publicationcode.split("/")[0]);
@@ -425,31 +428,32 @@ const filteredIssues = $computed(
       ?.filter(
         ({ userCopies }) =>
           (filter.possessed && userCopies!.length) ||
-          (filter.missing && !userCopies!.length)
+          (filter.missing && !userCopies!.length),
       )
-      ?.map((issue, idx) => ({ ...issue, idx })) || []
+      ?.map((issue, idx) => ({ ...issue, idx })) || [],
 );
 
-const filteredIssuesCopyIndexes = $computed(() =>
-  filteredIssues?.reduce(
-    (acc, { issuenumber }, idx) => [
-      ...acc,
-      idx === 0
-        ? 0
-        : filteredIssues[idx - 1].issuenumber === issuenumber
-        ? acc[idx - 1] + 1
-        : 0,
-    ],
-    [] as number[]
-  )
+const filteredIssuesCopyIndexes = $computed(
+  () =>
+    filteredIssues?.reduce(
+      (acc, { issuenumber }, idx) => [
+        ...acc,
+        idx === 0
+          ? 0
+          : filteredIssues[idx - 1].issuenumber === issuenumber
+          ? acc[idx - 1] + 1
+          : 0,
+      ],
+      [] as number[],
+    ),
 );
 
 const ownedIssuesCount = $computed(
   () =>
     issues?.reduce(
       (acc, { userCopies }) => acc + (userCopies.length ? 1 : 0),
-      0
-    ) || 0
+      0,
+    ) || 0,
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
 const loadPurchases = collectionStore().loadPurchases;
@@ -480,7 +484,7 @@ const getPreselected = () =>
             preselectedIndexStart !== null &&
             preselectedIndexEnd !== null &&
             index >= preselectedIndexStart &&
-            index <= preselectedIndexEnd
+            index <= preselectedIndexEnd,
         );
 const updateSelected = () => {
   if (!contextmenuInstance.visible) {
@@ -488,14 +492,14 @@ const updateSelected = () => {
       .map(({ key }) => key || "")
       .filter(
         (itemKey) =>
-          selected.includes(itemKey) !== preselected.includes(itemKey)
+          selected.includes(itemKey) !== preselected.includes(itemKey),
       );
     preselectedIndexStart = preselectedIndexEnd = null;
     preselected = [];
   }
 };
 const deletePublicationIssues = async (
-  issuesToDelete: IssueWithPublicationcode[]
+  issuesToDelete: IssueWithPublicationcode[],
 ) => {
   contextmenuInstance.hide();
   await collectionStore().updateCollectionMultipleIssues({
@@ -520,7 +524,7 @@ const loadIssues = async () => {
   if (userIssues) {
     userIssuesForPublication = userIssues
       .filter(
-        ({ country, magazine }) => `${country}/${magazine}` === publicationcode
+        ({ country, magazine }) => `${country}/${magazine}` === publicationcode,
       )
       .map((issue) => ({
         ...issue,
@@ -540,7 +544,7 @@ const loadIssues = async () => {
         userCopies: userIssuesForPublication!
           .filter(
             ({ issuenumber: userIssueNumber }) =>
-              userIssueNumber === issue.issuenumber
+              userIssueNumber === issue.issuenumber,
           )
           .map((issue, copyIndex) => ({
             ...issue,
@@ -552,7 +556,7 @@ const loadIssues = async () => {
     } else {
       const userIssueNumbers = [
         ...new Set(
-          userIssuesForPublication!.map(({ issuenumber }) => issuenumber)
+          userIssuesForPublication!.map(({ issuenumber }) => issuenumber),
         ),
       ];
       issues = coaIssues
@@ -564,7 +568,7 @@ const loadIssues = async () => {
             ...userIssuesForPublication!
               .filter(
                 ({ issuenumber: userIssueNumber }) =>
-                  userIssueNumber === issuenumber
+                  userIssueNumber === issuenumber,
               )
               .map((issue) => ({
                 ...issue,
@@ -573,7 +577,7 @@ const loadIssues = async () => {
                 userCopies: [{ ...issue, copyIndex: 0 }],
               })),
           ],
-          [] as issueWithPublicationCodeAndCopies[]
+          [] as issueWithPublicationCodeAndCopies[],
         );
     }
 
@@ -584,29 +588,31 @@ const loadIssues = async () => {
           [userCopies[0].issuenumber]:
             (acc[userCopies[0].issuenumber] || 0) + 1,
         }),
-        {} as { [issuenumber: string]: number }
+        {} as { [issuenumber: string]: number },
       );
       issues = issues!.filter(
-        ({ issuenumber }) => countPerIssueNumber[issuenumber] > 1
+        ({ issuenumber }) => countPerIssueNumber[issuenumber] > 1,
       );
     }
 
     if (readStackOnly) {
       issues = issues!.filter(
-        ({ userCopies }) => userCopies.filter(({ isToRead }) => isToRead).length
+        ({ userCopies }) =>
+          userCopies.filter(({ isToRead }) => isToRead).length,
       );
     }
     if (onSaleStackOnly) {
       issues = issues!.filter(
-        ({ userCopies }) => userCopies.filter(({ isOnSale }) => isOnSale).length
+        ({ userCopies }) =>
+          userCopies.filter(({ isOnSale }) => isOnSale).length,
       );
     }
 
     const coaIssueNumbers = coa().issuesWithTitles[publicationcode].map(
-      ({ issuenumber }) => issuenumber
+      ({ issuenumber }) => issuenumber,
     );
     userIssuesNotFoundForPublication = userIssuesForPublication!.filter(
-      ({ issuenumber }) => !coaIssueNumbers.includes(issuenumber)
+      ({ issuenumber }) => !coaIssueNumbers.includes(issuenumber),
     );
     loading = false;
   }
@@ -616,14 +622,14 @@ watch(
   () => preselectedIndexEnd,
   () => {
     preselected = getPreselected();
-  }
+  },
 );
 
 watch(
   () => publicationcode,
   async () => {
     await loadIssues();
-  }
+  },
 );
 
 watch(
@@ -631,7 +637,7 @@ watch(
   async () => {
     await loadIssues();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

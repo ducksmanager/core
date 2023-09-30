@@ -20,7 +20,7 @@ let router = useRouter();
         sentence: string;
         userId: number;
       },
-    })
+    }),
   );
 })();
 </script>

@@ -33,7 +33,7 @@ alias: [/bibliotheque/options]
           :key="texture"
           :style="{
             backgroundImage: `url('${getImagePath(
-              `textures/${texture}.jpg`
+              `textures/${texture}.jpg`,
             )}')`,
           }"
           @click="
@@ -159,7 +159,7 @@ const textureTypes = $computed(
     ({
       bookcase: $t("Sous-texture"),
       bookshelf: $t("Sous-texture de l'étagère"),
-    } as { bookcase: string; bookshelf: string })
+    }) as { bookcase: string; bookshelf: string },
 );
 
 const loadData = async () => {
@@ -197,12 +197,12 @@ watch(
       bookcaseOrder = bookcaseStore.bookcaseOrder;
       await coa().fetchPublicationNames(bookcaseOrder!);
       bookcaseOrder = (bookcaseOrder as string[]).filter((publicationcode) =>
-        Object.keys(publicationNames).includes(publicationcode)
+        Object.keys(publicationNames).includes(publicationcode),
       );
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

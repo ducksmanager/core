@@ -6,12 +6,12 @@ alias: [/agrandir/marketplace]
   <b-alert :model-value="true" variant="info"
     >{{
       $t(
-        "Cette page indique les numéros que d'autres utilisateurs sur DucksManager proposent à la vente et que vous surveillez. Cliquez sur le ou les numéros qui vous intéressent,"
+        "Cette page indique les numéros que d'autres utilisateurs sur DucksManager proposent à la vente et que vous surveillez. Cliquez sur le ou les numéros qui vous intéressent,",
       )
     }}
     <b v-if="isTouchScreen">{{
       $t(
-        "puis tapotez deux fois au niveau de la liste pour contacter le vendeur."
+        "puis tapotez deux fois au niveau de la liste pour contacter le vendeur.",
       )
     }}</b>
     <b v-else>{{
@@ -79,7 +79,7 @@ alias: [/agrandir/marketplace]
     >
       {{
         $t(
-          "Aucun numéro que vous ne possédez pas n'est en vente parmi les magazines que vous avez surveillés. Cliquez sur"
+          "Aucun numéro que vous ne possédez pas n'est en vente parmi les magazines que vous avez surveillés. Cliquez sur",
         )
       }}<Watch /><i18n-t
         tag="span"
@@ -134,7 +134,7 @@ alias: [/agrandir/marketplace]
         $t(
           modalContactMethod === 'email'
             ? 'J\'ai envoyé l\'e-mail au vendeur'
-            : 'J\'ai envoyé le message au vendeur'
+            : 'J\'ai envoyé le message au vendeur',
         )
       "
       :cancel-title="$t('Annuler')"
@@ -153,7 +153,7 @@ alias: [/agrandir/marketplace]
         ><template v-if="modalContactMethod === 'discordId'"
           >{{
             $t(
-              "contactez cet utilisateur en lui envoyant un message sur Discord en cliquant sur"
+              "contactez cet utilisateur en lui envoyant un message sur Discord en cliquant sur",
             )
           }}
           <a
@@ -171,7 +171,7 @@ alias: [/agrandir/marketplace]
         <p>
           {{
             $t(
-              "Les numéros suivants que vous avez mis en vente sur DucksManager m'intéressent. Sont-ils toujours disponibles et, si oui, quel prix souhaiteriez-vous ?"
+              "Les numéros suivants que vous avez mis en vente sur DucksManager m'intéressent. Sont-ils toujours disponibles et, si oui, quel prix souhaiteriez-vous ?",
             )
           }}
         </p>
@@ -197,7 +197,7 @@ alias: [/agrandir/marketplace]
         class="mt-4"
         >{{
           $t(
-            "Cet utilisateur ne souhaite pas échanger des numéros, seulement en vendre."
+            "Cet utilisateur ne souhaite pas échanger des numéros, seulement en vendre.",
           )
         }}
       </b-alert>
@@ -227,17 +227,17 @@ const contactMethods = $computed(() => marketplaceStore.contactMethods);
 
 const issuesOnSaleByOthers = $computed(
   (): Record<string, IssueWithPublicationcode[]> | null =>
-    marketplaceStore.issuesOnSaleByOthers
+    marketplaceStore.issuesOnSaleByOthers,
 );
 const sentRequestIssueIds = $computed(
-  () => marketplaceStore.sentRequestIssueIds
+  () => marketplaceStore.sentRequestIssueIds,
 );
 const requestIssueIdsBySellerId = $computed(
-  () => marketplaceStore.requestIssueIdsBySellerId
+  () => marketplaceStore.requestIssueIdsBySellerId,
 );
 const issuesOnSaleById = $computed(() => marketplaceStore.issuesOnSaleById);
 const issueRequestsAsBuyer = $computed(
-  () => marketplaceStore.issueRequestsAsBuyer
+  () => marketplaceStore.issueRequestsAsBuyer,
 );
 const sellerUserNames = $computed(() => marketplaceStore.sellerUserNames);
 

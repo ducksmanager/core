@@ -33,7 +33,7 @@ watch(
     if (issuesInToReadStack) {
       publicationCodes = [
         ...new Set(
-          issuesInToReadStack.map(({ publicationcode }) => publicationcode)
+          issuesInToReadStack.map(({ publicationcode }) => publicationcode),
         ),
       ];
 
@@ -41,7 +41,7 @@ watch(
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

@@ -75,6 +75,6 @@ watch(
       router.push("/login");
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

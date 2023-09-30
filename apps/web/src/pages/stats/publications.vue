@@ -35,8 +35,8 @@ const smallCountPublications = $computed(() =>
         (publicationcode) =>
           totalPerPublication[publicationcode] /
             collection().collection!.length <
-          0.01
-      )
+          0.01,
+      ),
 );
 const totalPerPublicationGroupSmallCounts: {
   [publicationcode: string]: number;
@@ -47,14 +47,14 @@ const totalPerPublicationGroupSmallCounts: {
         ...Object.keys(totalPerPublication)
           .filter(
             (publicationcode) =>
-              !smallCountPublications.includes(publicationcode)
+              !smallCountPublications.includes(publicationcode),
           )
           .reduce(
             (acc, publicationcode) => ({
               ...acc,
               [publicationcode]: totalPerPublication[publicationcode],
             }),
-            {}
+            {},
           ),
         ...(!smallCountPublications.length
           ? {}
@@ -62,11 +62,11 @@ const totalPerPublicationGroupSmallCounts: {
               [""]: smallCountPublications.reduce(
                 (acc, publicationcode) =>
                   acc + totalPerPublication[publicationcode],
-                0
+                0,
               ),
             }),
       }) ||
-    {}
+    {},
 );
 const labels = $computed(
   () =>
@@ -78,16 +78,16 @@ const labels = $computed(
           ...acc,
           publicationNames[publicationcode] ||
             `${$t("Autres")} (${smallCountPublications!.length} ${$t(
-              "Publications"
+              "Publications",
             ).toLowerCase()})`,
         ],
-        [] as string[]
-      )
+        [] as string[],
+      ),
 );
 const values = $computed(() =>
   Object.values(totalPerPublicationGroupSmallCounts).sort((count1, count2) =>
-    Math.sign(count1 - count2)
-  )
+    Math.sign(count1 - count2),
+  ),
 );
 const colors = $computed(
   () =>
@@ -95,8 +95,8 @@ const colors = $computed(
     Object.entries(totalPerPublicationGroupSmallCounts)
       .sort(sortByCount)
       .map(([publicationcode]) =>
-        publicationcode === "" ? "#000" : randomColor()
-      )
+        publicationcode === "" ? "#000" : randomColor(),
+      ),
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
 const randomColor = () =>
@@ -107,11 +107,11 @@ const randomColor = () =>
   ].join(",")})`;
 const sortByCount = (
   [publicationCode1]: [publicationCode1: string, _idx: number],
-  [publicationCode2]: [publicationCode2: string, _idx2: number]
+  [publicationCode2]: [publicationCode2: string, _idx2: number],
 ) =>
   Math.sign(
     totalPerPublicationGroupSmallCounts[publicationCode1] -
-      totalPerPublicationGroupSmallCounts[publicationCode2]
+      totalPerPublicationGroupSmallCounts[publicationCode2],
   );
 
 let hasPublicationNames = $ref(false as boolean);
@@ -124,13 +124,13 @@ watch(
     if (Object.keys(newValue).length) {
       await fetchPublicationNames(
         Object.keys(totalPerPublicationGroupSmallCounts).filter(
-          (publicationcode) => publicationcode !== ""
-        )
+          (publicationcode) => publicationcode !== "",
+        ),
       );
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -178,7 +178,7 @@ watch(
       },
     };
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

@@ -11,11 +11,11 @@
       "
       >{{
         $t(
-          "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
+          "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros.",
         )
       }}<br /><router-link to="/collection/account">{{
         $t(
-          "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
+          "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact.",
         )
       }}</router-link></b-alert
     >
@@ -28,11 +28,11 @@
         {{
           suggestionsNumber === 1
             ? $t(
-                "Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !"
+                "Depuis votre dernière visite, {0} magazine avec des histoires que vous ne possédez pas de vos auteurs préférés est sorti !",
               )
             : $t(
                 "Depuis votre dernière visite, {0} magazines avec des histoires que vous ne possédez pas de vos auteurs préférés sont sortis !",
-                suggestionsNumber
+                suggestionsNumber,
               )
         }}
       </template>
@@ -63,7 +63,7 @@
         class="pre-wrap"
         v-html="
           $t(
-            'Prenez le temps de découvrir les fonctionnalités de DucksManager.\n\nVous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.\nSi vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.\nProchaine remise à zéro dans'
+            'Prenez le temps de découvrir les fonctionnalités de DucksManager.\n\nVous pouvez ajouter ou supprimer des numéros de la collection de demo, mais souvenez-vous que toutes les heures les modifications entrées par les utilisateurs seront effacées.\nSi vous souhaitez vous déconnecter afin de vous inscrire ou de vous connecter avec votre compte réel, cliquez sur le lien Déconnexion dans le menu à gauche de cette page.\nProchaine remise à zéro dans',
           )
         "
       />
@@ -75,7 +75,7 @@
           {{ $t("Votre collection est vide.") }}
           {{
             $t(
-              'Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.'
+              'Cliquez sur "Nouveau magazine" pour ajouter un numéro dans votre liste.',
             )
           }}
         </b-alert>
@@ -109,7 +109,7 @@ const { publicationcode = null } = defineProps<{
 const suggestionsNumber = $ref(0 as number);
 let hasPublicationNames = $ref(false as boolean);
 const marketplaceContactMethods = $computed(
-  () => collection().marketplaceContactMethods
+  () => collection().marketplaceContactMethods,
 );
 const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
 const user = $computed(() => collection().user);
@@ -123,8 +123,8 @@ const mostPossessedPublication = $computed(
         acc && totalPerPublication[acc] > totalPerPublication[publicationcode]
           ? acc
           : publicationcode,
-      null as string | null
-    )
+      null as string | null,
+    ),
 );
 
 watch(
@@ -135,7 +135,7 @@ watch(
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

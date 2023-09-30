@@ -22,7 +22,7 @@ export default defineConfig({
       "~api-routes": path.resolve(__dirname, "../../packages/api-routes"),
       "~prisma-clients": path.resolve(
         __dirname,
-        "../../packages/prisma-clients"
+        "../../packages/prisma-clients",
       ),
       "~translations": path.resolve(__dirname, "translations"),
     },

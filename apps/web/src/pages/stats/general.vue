@@ -21,7 +21,7 @@
             <small>
               {{
                 $t(
-                  "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection."
+                  "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.",
                 )
               }}</small
             >
@@ -109,7 +109,7 @@
           <div>
             {{
               $t(
-                "Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative."
+                "Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.",
               )
             }}
           </div>
@@ -122,13 +122,13 @@
                   `<a href='http://comicsmania.gr'>ComicsMania</a>`,
                   `<a href='https://seriesam.com'>Seriesam</a>`,
                   `<a href='https://gocollect.com'>Gocollect</a>`,
-                ]
+                ],
               )
             "
           />
           {{
             $t(
-              "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :"
+              "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :",
             )
           }}
           <ul>
@@ -143,7 +143,7 @@
                 `Une cote présente sur les sites indiqués ci-dessus n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`,
                 [
                   `<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`,
-                ]
+                ],
               )
             "
           />
@@ -178,13 +178,14 @@ const { t: $t } = useI18n();
 let currentPage = $ref(1);
 const userCount = $computed(() => users().count);
 const publicationNames = $computed(() => coa().publicationNames);
-const quotedIssues = $computed(() =>
-  collection.quotedIssues?.sort(
-    (
-      { estimationGivenCondition: estimation1 },
-      { estimationGivenCondition: estimation2 }
-    ) => Math.sign(estimation2 - estimation1)
-  )
+const quotedIssues = $computed(
+  () =>
+    collection.quotedIssues?.sort(
+      (
+        { estimationGivenCondition: estimation1 },
+        { estimationGivenCondition: estimation2 },
+      ) => Math.sign(estimation2 - estimation1),
+    ),
 );
 const quotationSum = $computed(() => collection.quotationSum);
 const quotationFields = [
@@ -207,7 +208,7 @@ watch(
       await coa().fetchIssueQuotations(Object.keys(newValue));
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -215,12 +216,12 @@ watch(
   async (newValue) => {
     if (newValue) {
       await coa().fetchPublicationNames(
-        newValue.map(({ publicationcode }) => publicationcode)
+        newValue.map(({ publicationcode }) => publicationcode),
       );
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

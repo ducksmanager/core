@@ -8,7 +8,7 @@ alias: [/achats]
     <div>
       {{
         $t(
-          "Ce graphique vous permet de retracer l'évolution de votre collection dans le temps."
+          "Ce graphique vous permet de retracer l'évolution de votre collection dans le temps.",
         )
       }}
     </div>
@@ -26,7 +26,7 @@ alias: [/achats]
     <div
       v-html="
         $t(
-          'A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?'
+          'A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?',
         )
       "
     />
@@ -90,7 +90,7 @@ Chart.register(
   LinearScale,
   BarController,
   Tooltip,
-  Title
+  Title,
 );
 
 collection().loadCollection();
@@ -99,7 +99,7 @@ const { t: $t } = useI18n(),
   loadPurchases = collection().loadPurchases,
   compareDates = (a: string, b: string) =>
     dayjs(a === "?" ? "0001-01-01" : a).diff(
-      dayjs(b === "?" ? "0001-01-01" : b)
+      dayjs(b === "?" ? "0001-01-01" : b),
     ),
   randomColor = () =>
     `rgb(${[
@@ -112,7 +112,7 @@ const { t: $t } = useI18n(),
   getIssueDate = (issue: dm_issue) =>
     dayjs(
       (issue.purchaseId && purchasesById![issue.purchaseId]?.date) ||
-        issue.creationDate
+        issue.creationDate,
     ),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),
@@ -127,7 +127,7 @@ const { t: $t } = useI18n(),
 
 let hasPublicationNames = $ref(false as boolean),
   purchasesById = $ref(
-    null as { [purchaseId: number]: purchaseWithStringDate } | null
+    null as { [purchaseId: number]: purchaseWithStringDate } | null,
   ),
   options = $ref({} as ChartOptions<"bar">),
   width = $ref(null as string | null),
@@ -141,7 +141,7 @@ const publicationCodesWithOther = $computed(
         .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
         .filter((_entry, idx) => idx < 20)
         .map(([publicationcode]) => publicationcode)
-        .concat(["Other"])
+        .concat(["Other"]),
   ),
   collectionWithDates = $computed(
     () =>
@@ -150,14 +150,14 @@ const publicationCodesWithOther = $computed(
           ...issue,
           date: getIssueMonth(issue),
         }))) ||
-      null
+      null,
   ),
   labels = $computed(
     () =>
       collectionWithDates &&
       [...new Set(collectionWithDates.map(({ date }) => date))]
         .filter((date) => date)
-        .sort(compareDates)
+        .sort(compareDates),
   ),
   ready = $computed(() => labels && hasPublicationNames),
   values = $computed(() => {
@@ -169,47 +169,53 @@ const publicationCodesWithOther = $computed(
         ...dates,
         [date]: 0,
       }),
-      {}
+      {},
     );
 
     let accDate: { [label: string]: number } = labels!.reduce(
       (acc, value) => ({ ...acc, [value]: 0 }),
-      {}
+      {},
     );
     return collectionWithDates
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
-      .reduce((acc, { date, publicationcode: publicationcode }) => {
-        if (!publicationCodesWithOther!.includes(publicationcode)) {
-          publicationcode = "Other";
-        }
-        if (!acc[publicationcode]) {
-          acc[publicationcode] = { ...dateAssoc };
-        }
-        acc[publicationcode][date]++;
-        accDate[date]++;
-        return acc;
-      }, {} as { [publicationcode: string]: { [date: string]: number } });
+      .reduce(
+        (acc, { date, publicationcode: publicationcode }) => {
+          if (!publicationCodesWithOther!.includes(publicationcode)) {
+            publicationcode = "Other";
+          }
+          if (!acc[publicationcode]) {
+            acc[publicationcode] = { ...dateAssoc };
+          }
+          acc[publicationcode][date]++;
+          accDate[date]++;
+          return acc;
+        },
+        {} as { [publicationcode: string]: { [date: string]: number } },
+      );
   }),
   countPerDate = $computed(() =>
     !values
       ? null
-      : Object.values(values).reduce((acc, datesWithCounts) => {
-          for (const [date, count] of Object.entries(datesWithCounts)) {
-            if (!acc[date]) {
-              acc[date] = 0;
+      : Object.values(values).reduce(
+          (acc, datesWithCounts) => {
+            for (const [date, count] of Object.entries(datesWithCounts)) {
+              if (!acc[date]) {
+                acc[date] = 0;
+              }
+              acc[date] += count;
             }
-            acc[date] += count;
-          }
-          return acc;
-        }, {} as { [key: string]: number })
+            return acc;
+          },
+          {} as { [key: string]: number },
+        ),
   ),
   maxPerDate = $computed(
     () =>
       countPerDate &&
       Object.keys(countPerDate).reduce(
         (acc, date) => Math.max(acc, countPerDate[date]),
-        0
-      )
+        0,
+      ),
   ),
   datasets = $computed(() =>
     !(ready && purchaseTypeCurrent && collectionWithDates && values)
@@ -224,7 +230,7 @@ const publicationCodesWithOther = $computed(
                   .filter((_, idx) => idx <= labels!.indexOf(currentDate))
                   .reduce((sum, date) => sum + data[date], 0),
               }),
-              {}
+              {},
             );
           }
           return {
@@ -235,7 +241,7 @@ const publicationCodesWithOther = $computed(
                 : publicationNames[publicationcode] || publicationcode,
             backgroundColor: randomColor(),
           };
-        })
+        }),
   ),
   chartData = $computed(() =>
     !(datasets && labels)
@@ -243,7 +249,7 @@ const publicationCodesWithOther = $computed(
       : {
           datasets: datasets!,
           labels: labels!,
-        }
+        },
   );
 
 watch(
@@ -252,10 +258,10 @@ watch(
     if (newValue) {
       changeDimension(
         "height",
-        Math.max(document.body.offsetHeight, newValue / 4)
+        Math.max(document.body.offsetHeight, newValue / 4),
       );
     }
-  }
+  },
 );
 
 watch(
@@ -264,7 +270,7 @@ watch(
     if (newValue) {
       changeDimension("width", 250 + 30 * newValue!.length);
     }
-  }
+  },
 );
 
 watch(
@@ -273,13 +279,13 @@ watch(
     if (newValue) {
       await fetchPublicationNames(
         newValue.filter(
-          (publicationcodeOrOther) => publicationcodeOrOther !== "Other"
-        )
+          (publicationcodeOrOther) => publicationcodeOrOther !== "Other",
+        ),
       );
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -291,11 +297,11 @@ watch(
           ...acc,
           [purchase.id]: purchase,
         }),
-        {} as { [purchaseId: number]: purchaseWithStringDate }
+        {} as { [purchaseId: number]: purchaseWithStringDate },
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -352,7 +358,7 @@ watch(
                   $t("Tous magazines"),
                   datasets!.reduce(
                     (acc, dataset) => acc + dataset.data[tooltipItem.dataIndex],
-                    0
+                    0,
                   ),
                 ].join("\n"),
             },
@@ -361,7 +367,7 @@ watch(
       };
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 loadPurchases();

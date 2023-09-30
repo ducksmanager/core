@@ -57,33 +57,39 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
     return (
       purchasesById &&
       collectionStore()
-        .collection?.reduce((acc, issue) => {
-          const existingPurchase =
-            issue.purchaseId && purchasesById[issue.purchaseId];
-          const purchase = existingPurchase
-            ? {
-                date: existingPurchase.date,
-                description: existingPurchase.description,
-              }
-            : {
-                date: (
-                  (issue.creationDate || "0001-01-01T00:00:00") as string
-                ).split("T")[0],
-                description: "",
-              };
-          let purchaseIndex = acc.findIndex(
-            ({ purchase: currentPurchase }) =>
-              (currentPurchase.date as string) === (purchase.date as string)
-          );
-          if (purchaseIndex === -1) {
-            acc.push({ purchase, issues: [] });
-            purchaseIndex = acc.length - 1;
-          }
-          acc[purchaseIndex].issues.push(issue);
-          return acc;
-        }, [] as { purchase: { date: string; description: string }; issues: IssueWithPublicationcode[] }[])
+        .collection?.reduce(
+          (acc, issue) => {
+            const existingPurchase =
+              issue.purchaseId && purchasesById[issue.purchaseId];
+            const purchase = existingPurchase
+              ? {
+                  date: existingPurchase.date,
+                  description: existingPurchase.description,
+                }
+              : {
+                  date: (
+                    (issue.creationDate || "0001-01-01T00:00:00") as string
+                  ).split("T")[0],
+                  description: "",
+                };
+            let purchaseIndex = acc.findIndex(
+              ({ purchase: currentPurchase }) =>
+                (currentPurchase.date as string) === (purchase.date as string),
+            );
+            if (purchaseIndex === -1) {
+              acc.push({ purchase, issues: [] });
+              purchaseIndex = acc.length - 1;
+            }
+            acc[purchaseIndex].issues.push(issue);
+            return acc;
+          },
+          [] as {
+            purchase: { date: string; description: string };
+            issues: IssueWithPublicationcode[];
+          }[],
+        )
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
-          purchase1.date < purchase2.date ? 1 : -1
+          purchase1.date < purchase2.date ? 1 : -1,
         )
         .slice(0, 5)
     );

@@ -30,23 +30,23 @@ const { publicationcode, issuenumber, copyIndex } = defineProps<{
 const points = $computed(() => users().points);
 const stats = $computed(() => users().stats);
 
-const sentRequest = $computed(() =>
-  marketplace().sentRequestIssueIds?.includes(issueOnSale?.id)
+const sentRequest = $computed(
+  () => marketplace().sentRequestIssueIds?.includes(issueOnSale?.id),
 );
 
 const issueOnSale = $computed(
   () =>
     (marketplace().issuesOnSaleByOthers?.[publicationcode] || []).filter(
-      ({ issuenumber: onSaleIssuenumber }) => onSaleIssuenumber === issuenumber
-    )[copyIndex]
+      ({ issuenumber: onSaleIssuenumber }) => onSaleIssuenumber === issuenumber,
+    )[copyIndex],
 );
 
 const isBooked = $computed(
   () =>
     issueOnSale &&
     marketplace().issueRequestsAsBuyer?.find(
-      ({ issueId }) => issueId === issueOnSale.id
-    )?.isBooked
+      ({ issueId }) => issueId === issueOnSale.id,
+    )?.isBooked,
 );
 </script>
 

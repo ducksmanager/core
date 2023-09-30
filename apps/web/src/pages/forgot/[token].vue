@@ -60,12 +60,12 @@ const changePassword = async () => {
               password,
               password2,
             },
-          })
+          }),
         )
       ).data.token,
       {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      }
+      },
     );
   } catch (e: unknown) {
     error = (e as AxiosError)?.response?.data || "Error";
@@ -78,7 +78,7 @@ const changePassword = async () => {
       axios,
       new POST__auth__change_password({
         reqBody: { token, password, password2 },
-      })
+      }),
     );
     await collectionStore.loadUser();
   } catch (e: unknown) {
@@ -93,6 +93,6 @@ watch(
       await router.push("/collection");
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

@@ -64,7 +64,7 @@ export default function () {
     conditions,
     getConditionLabel: (givenDbValue: string) =>
       conditions.find(
-        ({ dbValue }) => givenDbValue.toUpperCase() === dbValue?.toUpperCase()
+        ({ dbValue }) => givenDbValue.toUpperCase() === dbValue?.toUpperCase(),
       )?.label || conditions.find(({ dbValue }) => dbValue === null)!.label,
   };
 }

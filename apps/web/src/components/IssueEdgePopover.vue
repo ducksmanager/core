@@ -62,7 +62,7 @@ const contribution = "edge_photographer";
 const isSharedBookcase = bookcase().isSharedBookcase;
 const user = $computed(() => collection().user);
 const points = $computed(
-  () => (user && users().points?.[user.id][contribution]) || null
+  () => (user && users().points?.[user.id][contribution]) || null,
 );
 </script>
 

@@ -79,8 +79,8 @@ const sortedCountries = $computed(
     Object.keys(totalPerCountry).sort(
       (countryCode1, countryCode2) =>
         countryNames[countryCode1]?.localeCompare(countryNames[countryCode2]) ||
-        0
-    )
+        0,
+    ),
 );
 const publicationsPerCountry = $computed(
   () =>
@@ -90,17 +90,17 @@ const publicationsPerCountry = $computed(
       (acc, country) => ({
         ...acc,
         [country]: Object.keys(totalPerPublication!).filter(
-          (publicationcode) => publicationcode.split("/")[0] === country
+          (publicationcode) => publicationcode.split("/")[0] === country,
         ),
       }),
-      {} as { [key: string]: string[] }
-    )
+      {} as { [key: string]: string[] },
+    ),
 );
 const fetchCountryNames = coa().fetchCountryNames;
 const fetchPublicationNames = coa().fetchPublicationNames;
 const getSortedPublications = (country: string) =>
   publicationsPerCountry?.[country]?.sort((a, b) =>
-    (publicationNames[a] || "").localeCompare(publicationNames[b] || "")
+    (publicationNames[a] || "").localeCompare(publicationNames[b] || ""),
   ) || [];
 
 watch(
@@ -111,7 +111,7 @@ watch(
       hasPublicationNames = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 fetchCountryNames();

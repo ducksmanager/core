@@ -11,7 +11,7 @@
             publishedEdgesSincePreviousVisit.length > 1
               ? 'Depuis votre dernière visite, {0} nouvelles tranches appartenant à votre collection a été conçue pour la bibliothèque DucksManager'
               : 'Depuis votre dernière visite, {0} nouvelle tranche appartenant à votre collection a été conçue pour la bibliothèque DucksManager',
-            [publishedEdgesSincePreviousVisit.length]
+            [publishedEdgesSincePreviousVisit.length],
           )
         "
       />
@@ -60,13 +60,14 @@ const lastPublishedEdgesForCurrentUser =
 const publishedEdgesSincePreviousVisit = $computed(
   () =>
     lastPublishedEdgesForCurrentUser?.filter(
-      ({ creationDate }) => previousVisit && creationDate >= previousVisit
-    ) || []
+      ({ creationDate }) => previousVisit && creationDate >= previousVisit,
+    ) || [],
 );
-const hasPublicationNames = $computed(() =>
-  publishedEdgesSincePreviousVisit?.every(
-    ({ publicationcode }) => publicationNames[publicationcode]
-  )
+const hasPublicationNames = $computed(
+  () =>
+    publishedEdgesSincePreviousVisit?.every(
+      ({ publicationcode }) => publicationNames[publicationcode],
+    ),
 );
 
 collectionStore().loadLastPublishedEdgesForCurrentUser();
