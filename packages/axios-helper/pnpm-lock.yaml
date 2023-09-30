@@ -6,13 +6,13 @@ settings:
 
 dependencies:
   axios:
-    specifier: ^1.5.0
-    version: 1.5.0
+    specifier: ^1.5.1
+    version: 1.5.1
 
 devDependencies:
   ts-node:
     specifier: ^10.9.1
-    version: 10.9.1(@types/node@20.6.5)(typescript@5.2.2)
+    version: 10.9.1(@types/node@20.8.0)(typescript@5.2.2)
   typescript:
     specifier: ^5.2.2
     version: 5.2.2
@@ -58,8 +58,8 @@ packages:
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
     dev: true
 
-  /@types/node@20.6.5:
-    resolution: {integrity: sha512-2qGq5LAOTh9izcc0+F+dToFigBWiK1phKPt7rNhOqJSr35y8rlIBjDwGtFSgAI6MGIhjwOVNSQZVdJsZJ2uR1w==}
+  /@types/node@20.8.0:
+    resolution: {integrity: sha512-LzcWltT83s1bthcvjBmiBvGJiiUe84NWRHkw+ZV6Fr41z2FbIzvc815dk2nQ3RAKMuN2fkenM/z3Xv2QzEpYxQ==}
     dev: true
 
   /acorn-walk@8.2.0:
@@ -81,8 +81,8 @@ packages:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
     dev: false
 
-  /axios@1.5.0:
-    resolution: {integrity: sha512-D4DdjDo5CY50Qms0qGQTTw6Q44jl7zRwY7bthds06pUGfChBCTcQs+N743eFWGEd6pRTMd6A+I87aWyFV5wiZQ==}
+  /axios@1.5.1:
+    resolution: {integrity: sha512-Q28iYCWzNHjAm+yEAot5QaAMxhMghWLFVf7rRdwhUI+c2jix2DUXjAHXVi+s1ibs3mjPO/cCgbA++3BjD0vP/A==}
     dependencies:
       follow-redirects: 1.15.3
       form-data: 4.0.0
@@ -151,7 +151,7 @@ packages:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
 
-  /ts-node@10.9.1(@types/node@20.6.5)(typescript@5.2.2):
+  /ts-node@10.9.1(@types/node@20.8.0)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -170,7 +170,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.6.5
+      '@types/node': 20.8.0
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3

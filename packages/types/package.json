@@ -1,11 +1,14 @@
 {
   "name": "~dm-types",
+  "engines": {
+    "node": "^16.0.0"
+  },
   "module": "index.ts",
   "scripts": {
     "build": "rm -rf dist && ./node_modules/.pnpm/node_modules/.bin/tsc"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier-vue": "^5.0.0",
