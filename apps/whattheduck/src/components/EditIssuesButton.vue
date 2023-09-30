@@ -16,7 +16,7 @@
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
         </ion-fab-button>
       </ion-row>
-      <ion-row class="ion-align-items-center">
+      <ion-row class="ion-align-items-center" router-link="/recent">
         <ion-label>{{ t('from_recent_issue') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="calendarOutline" :md="calendarSharp" />

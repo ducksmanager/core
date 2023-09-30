@@ -5,10 +5,11 @@
     :stat-numerators="totalPerPublication"
     :stat-denominators="issueCounts"
     :get-target-route-fn="getTargetUrlFn"
+    :get-item-text-fn="getItemTextFn"
     :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
   >
-    <template #row-label="{ text }">
-      <Publication :value="text" />
+    <template #row-label="{ item }">
+      <Publication v-bind="item" />
     </template>
   </List>
 </template>
@@ -46,28 +47,38 @@ watch(
   { immediate: true },
 );
 
-const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'params'> => ({
+const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.publicationname || item.publicationcode;
+
+const getTargetUrlFn = (key: string) => ({
   name: 'IssueList',
   params: { type: route.params.type, countrycode: key.split('/')[0], magazinecode: key.split('/')[1] },
 });
 
-const items = computed((): { key: string; text: string }[] =>
+const items = computed(() =>
   coaStore.publicationNames
     ? appStore.isCoaView
       ? Object.entries(coaStore.publicationNames)
           .filter(([publicationcode]) => new RegExp(`^${route.params.countrycode}/`).test(publicationcode))
-          .map(([key, text]) => ({ key, text }))
+          .map(([publicationcode, publicationname]) => ({
+            key: publicationcode,
+            item: { publicationcode, publicationname },
+          }))
       : collectionStore.ownedPublications
           .filter((publication) => publication.indexOf(`${route.params.countrycode}/`) === 0)
-          .map((publicationCode) => ({
-            key: publicationCode,
-            text: coaStore.publicationNames?.[publicationCode] || publicationCode,
+          .map((publicationcode) => ({
+            key: publicationcode,
+            item: {
+              publicationcode,
+              publicationname: coaStore.publicationNames?.[publicationcode] || publicationcode,
+            },
           }))
     : [],
 );
 
 const sortedItems = computed(() =>
-  [...items.value].sort(({ text: text1 }, { text: text2 }) => text1.toLowerCase().localeCompare(text2.toLowerCase())),
+  [...items.value].sort(({ item: { publicationname: text1 } }, { item: { publicationname: text2 } }) =>
+    text1.toLowerCase().localeCompare(text2.toLowerCase()),
+  ),
 );
 
 collectionStore.fetchAndTrackCollection().catch(() => {

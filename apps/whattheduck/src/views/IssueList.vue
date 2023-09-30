@@ -4,13 +4,14 @@
     :items="sortedItems"
     :get-target-route-fn="getTargetUrlFn"
     :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
+    :get-item-text-fn="getItemTextFn"
   >
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaList" />
       <Condition :value="getConditionKey(item.condition)" />
     </template>
-    <template #row-label="{ text }">
-      {{ text }}
+    <template #row-label="{ item }">
+      <Issue v-bind="item" />
     </template>
   </List>
 </template>
@@ -23,6 +24,7 @@ import type { Issue } from '~/persistence/models/dm/Issue';
 import { app } from '~/stores/app';
 import type { IssueWithPublicationcode } from '~/stores/collection';
 import { collection } from '~/stores/collection';
+import { ISSUECODE_REGEX } from '~web/src/stores/coa';
 
 const route = useRoute();
 const router = useRouter();
@@ -38,14 +40,15 @@ defineSlots<{
   rowLabel: { text: string };
 }>();
 
+const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber;
+
 const isCoaList = computed(() => route.params.type === 'coa');
 
 const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);
 
-const ISSUECODE_REGEX = /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/;
-const getTargetUrlFn = (key: string): Pick<RouteLocationNamedRaw, 'name' | 'params'> => ({
+const getTargetUrlFn = (key: string) => ({
   name: 'OwnedIssueCopies',
-  params: { type: route.params.type, ...key.match(ISSUECODE_REGEX)!.groups },
+  params: key.match(ISSUECODE_REGEX)!.groups,
 });
 
 const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
@@ -64,19 +67,17 @@ const userIssues = computed(() =>
   (collectionStore.collection || []).filter((issue) => issue.publicationcode === publicationcode.value),
 );
 
-const items = computed((): { key: string; text: string; item: Issue }[] =>
+const items = computed(() =>
   coaIssues.value
     ? appStore.isCoaView
       ? coaIssues.value.map(({ issuenumber }) => ({
           key: `${publicationcode.value} ${issuenumber}`,
-          text: issuenumber,
           item: userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)!,
         }))
       : (collectionStore.collection || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
           .map(({ issuenumber, ...issue }) => ({
             key: `${publicationcode.value} ${issuenumber}`,
-            text: issuenumber,
             item: { ...issue, issuenumber }!,
           }))
     : [],
@@ -84,12 +85,12 @@ const items = computed((): { key: string; text: string; item: Issue }[] =>
 
 const sortedItems = computed(() =>
   [...items.value]
-    .sort(({ text: text1 }, { text: text2 }) =>
+    .sort(({ key: text1 }, { key: text2 }) =>
       Math.sign(coaIssuenumbers.value!.indexOf(text1) - coaIssuenumbers.value!.indexOf(text2)),
     )
     .map((item, idx, allItems) => {
-      const currentItemCoaIndex = coaIssuenumbers.value!.indexOf(item.text);
-      const nextItemCoaIndex = coaIssuenumbers.value!.indexOf(allItems[idx + 1]?.text);
+      const currentItemCoaIndex = coaIssuenumbers.value!.indexOf(item.key);
+      const nextItemCoaIndex = coaIssuenumbers.value!.indexOf(allItems[idx + 1]?.key);
       return {
         ...item,
         ownsNext: nextItemCoaIndex === currentItemCoaIndex + 1,

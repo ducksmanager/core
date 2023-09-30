@@ -16,30 +16,35 @@
     </ion-content>
     <ion-content v-else ref="content" class="no-padding">
       <Row
-        v-for="{ key, text, item, ownsNext } in filteredItems"
+        v-for="{ key, item, ownsNext } in filteredItems"
         :ownership-text-fn="ownershipTextFn"
         :ownership="ownership?.[key]"
         :is-next-owned="ownsNext"
         @click="onRowClick(key)"
       >
         <template #prefix v-if="item">
-          <slot name="row-prefix" v-bind="{ item }" />
+          <slot name="row-prefix" :item="item" />
         </template>
         <template #label>
-          <slot name="row-label" v-bind="{ key, text }" />
+          <slot name="row-label" :item="item" :key="key" />
         </template>
-        >
       </Row>
       <EditIssuesButton />
 
-      <div v-show="scrollPosition" id="scroll-text" slot="fixed" :style="{ top: scrollPosition + '%' }">
-        {{ itemInCenterOfViewport?.text }}
+      <div
+        v-show="scrollPosition"
+        v-if="itemInCenterOfViewport"
+        id="scroll-text"
+        slot="fixed"
+        :style="{ top: scrollPosition + '%' }"
+      >
+        {{ getItemTextFn(itemInCenterOfViewport) }}
       </div>
     </ion-content>
   </ion-page>
 </template>
 
-<script setup lang="ts" generic="Item extends any">
+<script setup lang="ts" generic="Item extends Required<any>">
 import { IonContent } from '@ionic/vue';
 import { stores } from '~web';
 
@@ -48,12 +53,13 @@ import { collection } from '~/stores/collection';
 
 defineSlots<{
   'row-prefix'(props: { item: Item }): any;
-  'row-label'(props: { key: string; text: string }): any;
+  'row-label'(props: { item: Item; key: string }): any;
 }>();
 
 const props = defineProps<{
-  items: { key: string; text: string; item?: Item; ownsNext?: boolean }[];
+  items: { key: string; item: Item; ownsNext?: boolean }[];
   getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
+  getItemTextFn: (item: Item) => string;
   statNumerators?: Record<string, number>;
   statDenominators?: Record<string, number>;
   ownershipTextFn: (ownership: [number, number], fillPercentage?: number | undefined) => string;
@@ -92,7 +98,7 @@ const itemInCenterOfViewport = computed(() => {
     return undefined;
   }
   const itemIndex = Math.floor((scrollPosition.value * props.items.length) / 100);
-  return props.items[itemIndex];
+  return props.items[itemIndex].item;
 });
 
 const onRowClick = (key: string) => {
@@ -129,7 +135,7 @@ const itemType = computed(() => {
 });
 
 const filteredItems = computed(() =>
-  props.items.filter(({ text }) => text.toLowerCase().indexOf(filterText.value) !== -1),
+  props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().indexOf(filterText.value) !== -1),
 );
 const showFilter = computed(() => true);
 
@@ -146,7 +152,6 @@ const ownershipAllItems = computed(() => {
     case 'Publication':
       return [collectionStore.totalPerPublication, coaStore.issueCounts!];
   }
-  return [];
 });
 
 const ownership = computed(() =>

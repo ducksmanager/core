@@ -11,8 +11,7 @@
     "ionic:serve": "vite dev --host",
     "preview": "vite preview",
     "test:e2e": "cypress run",
-    "test:unit": "vitest",
-    "lint": "eslint --cache --fix ."
+    "test:unit": "vitest"
   },
   "dependencies": {
     "@capacitor-community/camera-preview": "^5.0.0",
