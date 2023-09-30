@@ -62,28 +62,33 @@ export const collection = defineStore('collection', () => {
     isLoadingUser = ref(false as boolean),
     user = ref(undefined as Omit<user, 'password'> | undefined | null),
     previousVisit = ref(null as Date | null),
-    popularIssueInCollectionByIssuecode = computed(() =>
-      popularIssueInCollection.value?.reduce(
-        (acc, issue) => ({
-          ...acc,
-          [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
-        }),
-        {} as Record<string, number>,
-      ),
+    popularIssueInCollectionByIssuecode = computed(
+      () =>
+        popularIssueInCollection.value?.reduce(
+          (acc, issue) => ({
+            ...acc,
+            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]: issue.popularity,
+          }),
+          {} as Record<string, number>,
+        ),
     ),
     total = computed(() => collection.value?.length),
     ownedCountries = computed(() => [...new Set((collection.value || []).map(({ country }) => country))].sort()),
     ownedPublications = computed(() =>
       [...new Set((collection.value || []).map(({ publicationcode }) => publicationcode))].sort(),
     ),
-    issuesByIssueCode = computed((): Record<string, Issue[]> | undefined =>
-      collection.value?.reduce((acc, issue) => {
-        const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-        return {
-          ...acc,
-          [issuecode]: [...(acc[issuecode] || []), issue],
-        };
-      }, {} as Record<string, Issue[]>),
+    issuesByIssueCode = computed(
+      (): Record<string, Issue[]> | undefined =>
+        collection.value?.reduce(
+          (acc, issue) => {
+            const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
+            return {
+              ...acc,
+              [issuecode]: [...(acc[issuecode] || []), issue],
+            };
+          },
+          {} as Record<string, Issue[]>,
+        ),
     ),
     duplicateIssues = computed(
       (): {
@@ -116,24 +121,28 @@ export const collection = defineStore('collection', () => {
               ))) ||
         0,
     ),
-    totalPerCountry = computed(() =>
-      collection.value?.reduce(
-        (acc, issue) => ({
-          ...acc,
-          [issue.country]: (acc[issue.country] || 0) + 1,
-        }),
-        {} as { [countrycode: string]: number },
-      ),
+    totalPerCountry = computed(
+      () =>
+        collection.value?.reduce(
+          (acc, issue) => ({
+            ...acc,
+            [issue.country]: (acc[issue.country] || 0) + 1,
+          }),
+          {} as { [countrycode: string]: number },
+        ),
     ),
     totalPerPublication = computed(
       () =>
-        collection.value?.reduce((acc, issue) => {
-          const publicationcode = `${issue.country}/${issue.magazine}`;
-          return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
-        }, {} as { [publicationcode: string]: number }) || null,
+        collection.value?.reduce(
+          (acc, issue) => {
+            const publicationcode = `${issue.country}/${issue.magazine}`;
+            return { ...acc, [publicationcode]: (acc[publicationcode] || 0) + 1 };
+          },
+          {} as { [publicationcode: string]: number },
+        ) || null,
     ),
-    purchasesById = computed(() =>
-      purchases.value?.reduce((acc, purchase) => ({ ...acc, [purchase.id]: purchase }), {}),
+    purchasesById = computed(
+      () => purchases.value?.reduce((acc, purchase) => ({ ...acc, [purchase.id]: purchase }), {}),
     ),
     hasSuggestions = computed(() => suggestions.value?.length),
     issueNumbersPerPublication = computed(
@@ -169,12 +178,13 @@ export const collection = defineStore('collection', () => {
           ),
         ),
     ),
-    popularIssuesInCollectionWithoutEdge = computed(() =>
-      bookcaseStore.bookcaseWithPopularities
-        ?.filter(({ edgeId, popularity }) => !edgeId && popularity && popularity > 0)
-        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
-        ),
+    popularIssuesInCollectionWithoutEdge = computed(
+      () =>
+        bookcaseStore.bookcaseWithPopularities
+          ?.filter(({ edgeId, popularity }) => !edgeId && popularity && popularity > 0)
+          .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+            popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+          ),
     ),
     quotedIssues = computed(() => {
       const issueQuotations = coaStore.issueQuotations;

@@ -19,7 +19,7 @@
 import { stores } from '~web';
 
 import useCondition from '~/composables/useCondition';
-import { Issue } from '~/persistence/models/dm/Issue';
+import type { Issue } from '~/persistence/models/dm/Issue';
 import { app } from '~/stores/app';
 import type { IssueWithPublicationcode } from '~/stores/collection';
 import { collection } from '~/stores/collection';
