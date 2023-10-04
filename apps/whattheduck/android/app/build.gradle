@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "whattheduck.ionic.vite"
+    namespace "net.ducksmanager.whattheduck"
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "whattheduck.ionic.vite"
+        applicationId "net.ducksmanager.whattheduck"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 109
+        versionName "3.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
