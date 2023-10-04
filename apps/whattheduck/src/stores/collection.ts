@@ -41,7 +41,7 @@ export type SubscriptionTransformed = Omit<subscription, 'country' | 'magazine'>
   publicationcode: string;
 };
 
-export type purchaseWithStringDate = Omit<purchase, 'date'> & {
+export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
 };
 

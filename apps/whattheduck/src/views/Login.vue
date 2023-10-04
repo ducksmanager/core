@@ -185,7 +185,7 @@ watch(
 
 (async () => {
   await SplashScreen.show({
-    autoHide: false,
+    autoHide: true,
   });
 
   try {

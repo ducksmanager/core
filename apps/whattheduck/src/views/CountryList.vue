@@ -8,7 +8,7 @@
     :get-item-text-fn="getItemTextFn"
   >
     <template #row-label="{ item }">
-      <Country v-bind="getItemTextFn(item)" />
+      <Country v-bind="item" />
     </template>
   </List>
 </template>
@@ -17,21 +17,25 @@
 import { stores } from '~web';
 
 import { collection } from '~/stores/collection';
+import { app } from '~/stores/app';
 
 const router = useRouter();
 const route = useRoute();
 const collectionStore = collection();
 const coaStore = stores.coa();
+const appStore = app();
 
 const totalPerCountry = computed(() => collectionStore.totalPerCountry);
 const issueCountsPerCountry = computed(() => coaStore.issueCountsPerCountry!);
 
 const items = computed(() =>
   coaStore.countryNames
-    ? Object.entries(coaStore.countryNames).map(([countrycode, countryname]) => ({
-        key: countrycode,
-        item: { countrycode, countryname },
-      }))
+    ? Object.entries(coaStore.countryNames)
+        .filter(([countrycode]) => appStore.isCoaView || collectionStore.ownedCountries.includes(countrycode))
+        .map(([countrycode, countryname]) => ({
+          key: countrycode,
+          item: { countrycode, countryname },
+        }))
     : [],
 );
 

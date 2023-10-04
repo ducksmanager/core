@@ -11,6 +11,32 @@ $dmConditions: (
 
 /** Ionic CSS Variables **/
 :root {
+  --ion-background-color: #303030;
+  --ion-background-color-rgb: 48,48,48;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255,255,255;
+
+  --ion-color-step-50: #3a3a3a;
+  --ion-color-step-100: #454545;
+  --ion-color-step-150: #4f4f4f;
+  --ion-color-step-200: #595959;
+  --ion-color-step-250: #646464;
+  --ion-color-step-300: #6e6e6e;
+  --ion-color-step-350: #787878;
+  --ion-color-step-400: #838383;
+  --ion-color-step-450: #8d8d8d;
+  --ion-color-step-500: #989898;
+  --ion-color-step-550: #a2a2a2;
+  --ion-color-step-600: #acacac;
+  --ion-color-step-650: #b7b7b7;
+  --ion-color-step-700: #c1c1c1;
+  --ion-color-step-750: #cbcbcb;
+  --ion-color-step-800: #d6d6d6;
+  --ion-color-step-850: #e0e0e0;
+  --ion-color-step-900: #eaeaea;
+  --ion-color-step-950: #f5f5f5;
+
   /** primary **/
   --ion-color-primary: #84cfc6;
   --ion-color-primary-rgb: 56, 128, 255;

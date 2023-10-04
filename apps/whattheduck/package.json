@@ -5,10 +5,9 @@
     "node": "^16.0.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite dev --host",
     "build": "vue-tsc && vite build",
     "ionic:build": "npm run build",
-    "ionic:serve": "vite dev --host",
     "preview": "vite preview",
     "test:e2e": "cypress run",
     "test:unit": "vitest"

@@ -50,8 +50,4 @@ export default defineConfig({
       '~web/': `${path.resolve(__dirname, '../../apps/web')}/`,
     },
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-  },
 });

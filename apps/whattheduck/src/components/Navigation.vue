@@ -23,7 +23,7 @@ const parts = computed(() => {
   if (!coaStore.countryNames) {
     return [];
   }
-  const parts: { key: string; text: string }[] | undefined = [
+  const parts = [
     {
       key: '',
       text: t('all_countries'),

@@ -1,11 +1,16 @@
 {
   "server": {
-    "url": "http://192.168.244.174:5174"
+    "url": "http://192.168.1.209:8005"
   },
   "plugins": {
-
     "SplashScreen": {
-      "launchAutoHide": false
+      "launchShowDuration": 3000,
+      "launchAutoHide": false,
+      "androidScaleType": "CENTER_INSIDE",
+      "splashFullScreen": false,
+      "splashImmersive": false,
+      "backgroundColor": "#1C3461",
+      "androidSplashResourceName": "splash"
     }
   },
   "CapacitorSQLite": {
@@ -14,13 +19,13 @@
     "iosKeychainPrefix": "cap",
     "iosBiometric": {
       "biometricAuth": false,
-      "biometricTitle" : "Biometric login for capacitor sqlite"
+      "biometricTitle": "Biometric login for capacitor sqlite"
     },
     "androidIsEncryption": false,
     "androidBiometric": {
-      "biometricAuth" : false,
-      "biometricTitle" : "Biometric login for capacitor sqlite",
-      "biometricSubTitle" : "Log in using your biometric"
+      "biometricAuth": false,
+      "biometricTitle": "Biometric login for capacitor sqlite",
+      "biometricSubTitle": "Log in using your biometric"
     }
   }
 }

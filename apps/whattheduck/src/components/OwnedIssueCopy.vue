@@ -15,7 +15,7 @@
     </ion-item>
     <ion-item>
       <ion-label>{{ t('in_to_read_list') }}</ion-label>
-      <ion-checkbox slot="end" v-model="issue.inToReadList" :aria-label="t('in_to_read_list')" /> </ion-item
+      <ion-checkbox slot="end" v-model="issue.isToRead" :aria-label="t('in_to_read_list')" /> </ion-item
     ><ion-item>
       <ion-label>{{ t('purchase_date') }}</ion-label>
       <ion-list>
@@ -71,13 +71,22 @@ const selectedCondition = ref(null as string | null);
 const selectedPurchase = ref(null as purchaseWithStringDate | null);
 
 watch(
-  () => issue.value,
-  (newIssue) => {
-    selectedPurchase.value = newIssue?.purchase;
-    const newCondition = newIssue?.condition;
-    selectedCondition.value = newCondition
-      ? conditionStore.conditionL10n.find(({ fr }) => fr === newCondition)?.en || 'none'
-      : 'none';
+  () => issue.value && collectionStore.purchases?.length,
+  (isReady) => {
+    if (isReady) {
+      const purchase = collectionStore.purchases?.find(({ id }) => id === issue.value.purchaseId) || null;
+      if (purchase) {
+        selectedPurchase.value = {
+          date: purchase.date.toISOString(),
+          description: purchase.description,
+          id: purchase.id,
+        };
+      }
+      const newCondition = issue.value.condition;
+      selectedCondition.value = newCondition
+        ? conditionStore.conditionL10n.find(({ fr }) => fr === newCondition)?.en || 'none'
+        : 'none';
+    }
   },
   { immediate: true },
 );
