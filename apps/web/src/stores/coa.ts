@@ -52,6 +52,9 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 
 let coaApi: AxiosInstance;
 
+export const ISSUECODE_REGEX =
+  /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/;
+
 export const coa = defineStore("coa", () => {
   const coverUrls = ref({} as { [issuenumber: string]: string }),
     countryNames = ref(null as { [countrycode: string]: string } | null),
