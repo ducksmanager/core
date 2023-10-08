@@ -13,6 +13,7 @@
     "bedetheque-scraper": "^3.2.0",
     "csv-parse": "^5.0.3",
     "csv-writer": "^1.6.0",
+    "dotenv": "^16.3.1",
     "mariadb": "^3.0.0",
     "playwright-firefox": "^1.10.0",
     "yargs": "^17.5.1"
@@ -23,5 +24,9 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0"
+  },
+  "scripts": {
+    "lint": "eslint --cache --fix .",
+    "start": "node duck-estimator.js"
   }
 }

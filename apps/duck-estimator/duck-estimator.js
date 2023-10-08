@@ -1,9 +1,10 @@
+
+require('dotenv').config()
 const fs = require('fs')
 const { connect: dbConnect, disconnect: dbDisconnect, truncateQuotations, getAll } = require('./coa')
 const { getCacheDir } = require('./cache')
 const { writeCsvMapping } = require('./csv')
 const { exec } = require('child_process')
-
 const scrapes = {
   bedetheque: require('./scrapes/bedetheque'),
   comicsmania: require('./scrapes/comicsmania'),
@@ -14,14 +15,20 @@ dbConnect().then(async () => {
   await truncateQuotations()
   fs.mkdirSync(getCacheDir(), { recursive: true })
 
+  let hasFailed = false
   for (const scrapeName of Object.keys(scrapes)) {
     try {
       console.log(`Scraping ${scrapeName}, start date: ${new Date().toISOString()}`)
-      await scrapes[scrapeName].scrape()
+      scrapes[scrapeName].scrape()
       console.log(`Scrape done, end date: ${new Date().toISOString()}`)
     } catch (e) {
       console.error('Scrape failed: ' + e)
+      hasFailed = true
     }
+  }
+
+  if (hasFailed) {
+    process.exit(1)
   }
 
   await writeCsvMapping(await getAll())

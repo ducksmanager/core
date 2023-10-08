@@ -10,13 +10,16 @@ module.exports = {
   getCacheDir,
 
   syncScrapeCache: async (scrapeDirName, fileName, url, fetchFn, postGetFromCacheTransformFn, preSetInCacheTransformFn) => {
-    const cacheFileName = `${getCacheDir()}/${scrapeDirName}/${fileName}`
-    console.log(url)
+    const cacheDirName = `${getCacheDir()}/${scrapeDirName}`
+    const cacheFileName = `${cacheDirName}/${fileName}`
     let scrapeOutput
     if (fs.existsSync(cacheFileName)) {
       console.debug(' Data exists in cache')
       scrapeOutput = postGetFromCacheTransformFn(fs.readFileSync(cacheFileName))
     } else {
+      if (!fs.existsSync(cacheDirName)) {
+        fs.mkdirSync(cacheDirName, { recursive: true })
+      }
       scrapeOutput = await fetchFn(url)
       fs.writeFileSync(cacheFileName, await preSetInCacheTransformFn(scrapeOutput))
     }
