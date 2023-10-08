@@ -1,6 +1,8 @@
 [submodule "whattheduck-ionic"]
 	path = apps/whattheduck-ionic
 	url = git@github.com:bperel/whattheduck-ionic.git
+	branch=master
 [submodule "dumili"]
 	path = apps/dumili
 	url = git@github.com:bperel/dumili.git
+	branch=master
