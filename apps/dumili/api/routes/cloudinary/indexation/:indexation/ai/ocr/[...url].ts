@@ -10,7 +10,7 @@ import { KumikoResult, runKumiko } from "../kumiko";
 /* Adding a bit of extra in case the storycode is just outside the panel */
 const extendBoundaries = (
   { x, y, width, height }: KumikoResult["panels"][0],
-  extendBy: number
+  extendBy: number,
 ) => ({
   left: x,
   top: y,
@@ -21,7 +21,7 @@ const extendBoundaries = (
 export const get = async (req: Request, res: Response) => {
   const indexationResources = await getIndexationResources(
     req.params.indexation,
-    req.user.username
+    req.user.username,
   );
   const pageUrl = req.params[0];
   if (!indexationResources.some(({ secure_url }) => secure_url === pageUrl)) {

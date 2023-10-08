@@ -40,20 +40,20 @@ const activeTab = computed(() => tabs().activeTab!);
 const tabNames = ["page-gallery", "book", "text-editor"];
 
 const { entrySuggestions, storyversionKindSuggestions } = storeToRefs(
-  suggestions()
+  suggestions(),
 );
 const images = computed(() =>
   Object.keys(entrySuggestions.value).map((url) => ({
     url: url,
     text: url,
-  }))
+  })),
 );
 const getPageImages = async () => {
   const urls = (
     await defaultApi.get<{ url: string }[]>(
       `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
         route.params.id
-      }`
+      }`,
     )
   ).data.map(({ url }) => url.replace(/^http:/, "https:"));
   entrySuggestions.value = urls.reduce(
@@ -61,7 +61,7 @@ const getPageImages = async () => {
       ...acc,
       [url]: [],
     }),
-    {} as Record<string, EntrySuggestion[]>
+    {} as Record<string, EntrySuggestion[]>,
   );
   storyversionKindSuggestions.value = urls.reduce(
     (acc, url) => ({
@@ -73,11 +73,11 @@ const getPageImages = async () => {
             {
               isAccepted: false,
               source: "default",
-            }
-          )
+            },
+          ),
       ),
     }),
-    {} as Record<string, StoryversionKindSuggestion[]>
+    {} as Record<string, StoryversionKindSuggestion[]>,
   );
 };
 

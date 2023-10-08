@@ -33,10 +33,10 @@ const showEntrySelect = ref(false);
 const suggestionsStore = suggestions();
 
 const acceptedEntry = computed(
-  () => suggestionsStore.acceptedEntries[props.entryurl]
+  () => suggestionsStore.acceptedEntries[props.entryurl],
 );
 const entrySuggestions = computed(
-  () => suggestionsStore.entrySuggestions[props.entryurl]
+  () => suggestionsStore.entrySuggestions[props.entryurl],
 );
 
 const addCustomEntrycodeToEntrySuggestions = ({
@@ -54,11 +54,11 @@ const addCustomEntrycodeToEntrySuggestions = ({
           storycode,
         },
       },
-      { source: "user", isAccepted: true }
+      { source: "user", isAccepted: true },
     );
     suggestionsStore.entrySuggestions[props.entryurl] = [
       ...suggestionsStore.entrySuggestions[props.entryurl].filter(
-        ({ meta }) => meta.source === "ai"
+        ({ meta }) => meta.source === "ai",
       ),
       userSuggestion,
     ];
@@ -69,7 +69,7 @@ const addCustomEntrycodeToEntrySuggestions = ({
 const acceptEntrySuggestion = (storycode?: string) => {
   suggestionsStore.acceptSuggestion(
     suggestionsStore.entrySuggestions[props.entryurl],
-    (suggestion) => suggestion.data.storyversion?.storycode === storycode
+    (suggestion) => suggestion.data.storyversion?.storycode === storycode,
   );
   showEntrySelect.value = false;
 };

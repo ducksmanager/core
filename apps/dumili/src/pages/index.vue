@@ -57,7 +57,7 @@ import { defaultApi } from "~/util/api";
 const router = useRouter();
 
 const currentIndexations = ref(
-  null as { url: string; indexation: string }[] | null
+  null as { url: string; indexation: string }[] | null,
 );
 const modal = ref(false);
 const cloudinaryFolderName = ref(null as string | null);
@@ -75,7 +75,7 @@ watch(
         .toISOString()
         .replace(/[-:.Z]/g, "");
     }
-  }
+  },
 );
 
 (async () => {

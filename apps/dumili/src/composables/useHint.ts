@@ -31,14 +31,14 @@ export default () => {
           suggestionsStore.storyversionKindSuggestions[entryurl],
           ({ data }) => data.kind === inferredKind,
           { source: "ai", status: "success" },
-          (suggestion) => (suggestion.data.panels = result.panels)
+          (suggestion) => (suggestion.data.panels = result.panels),
         );
       }
     });
   };
 
   const applyHintsFromCoverSearch = async (
-    results: POST__cover_id__search["resBody"]
+    results: POST__cover_id__search["resBody"],
   ) => {
     if (!results.covers?.length) {
       console.error("Erreur lors de la recherche par image de la couverture");
@@ -57,22 +57,22 @@ export default () => {
             source: "ai",
             isAccepted: false,
             status: "success",
-          }
-        )
+          },
+        ),
     );
 
     await coaStore.fetchPublicationNames(
-      results.covers.map(({ publicationcode }) => publicationcode!)
+      results.covers.map(({ publicationcode }) => publicationcode!),
     );
   };
 
   const applyHintsFromKeywordSearch = (
     entryurl: string,
-    results: StorySearchResults["results"]
+    results: StorySearchResults["results"],
   ) => {
     suggestionsStore.entrySuggestions[entryurl] =
       suggestionsStore.entrySuggestions[entryurl].filter(
-        ({ meta }) => meta.source === "ai"
+        ({ meta }) => meta.source === "ai",
       );
     suggestionsStore.entrySuggestions[entryurl] = results.map(
       ({ storycode, title }) =>
@@ -87,8 +87,8 @@ export default () => {
             source: "ai",
             isAccepted: false,
             status: "success",
-          }
-        )
+          },
+        ),
     );
   };
 

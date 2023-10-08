@@ -43,8 +43,8 @@ const cachedUserApi = addUrlParamsRequestInterceptor(
     {
       ...commonCacheOptions,
       ttl: inAnHour.diff(now),
-    }
-  )
+    },
+  ),
 );
 
 const cachedCoaApi = addUrlParamsRequestInterceptor(
@@ -55,15 +55,15 @@ const cachedCoaApi = addUrlParamsRequestInterceptor(
     {
       ...commonCacheOptions,
       ttl: coaCacheExpiration.diff(now),
-    }
-  )
+    },
+  ),
 );
 
 const defaultApi = addTokenRequestInterceptor(
   addUrlParamsRequestInterceptor(
-    axios.create({ baseURL: import.meta.env.VITE_DM_API_URL })
+    axios.create({ baseURL: import.meta.env.VITE_DM_API_URL }),
   ),
-  () => Cookies.get("token") as string
+  () => Cookies.get("token") as string,
 );
 
 export { cachedCoaApi, cachedUserApi, defaultApi };

@@ -37,7 +37,7 @@ const route = useRoute();
 const activeTab = storeToRefs(tabs()).activeTab;
 
 const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
 watch(
@@ -45,7 +45,7 @@ watch(
   (id) => {
     tabs().activeTab = id ? 0 : undefined;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

@@ -13,6 +13,7 @@ export const get = async (req: Request, res: Response) =>
         console.error(err);
       }))!.resources.filter(
       ({ context }) =>
-        (context as CloudinaryResourceContext).custom.user === req.user.username
-    )
+        (context as CloudinaryResourceContext).custom.user ===
+        req.user.username,
+    ),
   );

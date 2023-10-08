@@ -21,7 +21,7 @@ const props = defineProps<{
 }>();
 
 const publicationName = computed(() =>
-  props.publicationcode ? coa().publicationNames[props.publicationcode] : null
+  props.publicationcode ? coa().publicationNames[props.publicationcode] : null,
 );
 </script>
 

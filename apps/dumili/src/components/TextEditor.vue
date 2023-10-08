@@ -33,7 +33,7 @@ const textContent = computed(() => {
     [shortIssuecode],
     ...(
       Object.values(acceptedEntries.value).filter(
-        (entry) => entry !== undefined
+        (entry) => entry !== undefined,
       ) as EntrySuggestion[]
     ).map((entry, idx) => [
       `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
@@ -42,8 +42,8 @@ const textContent = computed(() => {
       ...["plot", "writer", "artist", "ink"].map(
         (job) =>
           entry.data.storyjobs?.find(
-            ({ plotwritartink }) => plotwritartink === job
-          )?.personcode
+            ({ plotwritartink }) => plotwritartink === job,
+          )?.personcode,
       ),
       entry.data.printedhero,
       entry.data.title,
@@ -60,9 +60,9 @@ const textContent = computed(() => {
     .map((row) =>
       row
         .map((col, colIndex) =>
-          (col || "").padEnd(colsMaxLengths[colIndex], " ")
+          (col || "").padEnd(colsMaxLengths[colIndex], " "),
         )
-        .join(" ")
+        .join(" "),
     )
     .join("\n");
 });
@@ -74,7 +74,7 @@ watch(
       textContentError.value = "No data";
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 <style scoped lang="scss">

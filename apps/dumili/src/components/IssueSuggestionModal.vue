@@ -36,7 +36,7 @@ import { GET__cover_id__download__$coverId } from "~api-routes";
 
 const { acceptSuggestion, rejectAllSuggestions } = suggestions();
 const { hasPendingIssueSuggestions, issueSuggestions } = storeToRefs(
-  suggestions()
+  suggestions(),
 );
 
 const selectedExistingCoverIssuecode = ref(null as string | null);
@@ -50,20 +50,20 @@ const issueSuggestionsWithUrls = computed(() =>
         import.meta.env.VITE_DM_API_URL +
         GET__cover_id__download__$coverId.url.replace(
           ":coverId",
-          String(issueSuggestion.data.coverId)
+          String(issueSuggestion.data.coverId),
         ),
-    }))
+    })),
 );
 const images = computed(() =>
   issueSuggestionsWithUrls.value.map(({ url, data }) => ({
     text: `${data.publicationcode} ${data.issuenumber}`,
     url,
-  }))
+  })),
 );
 
 const coverUrlToIssuecode = (url: string): string =>
   issueSuggestionsWithUrls.value.find(
-    ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url
+    ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url,
   )?.data.issuecode || "";
 
 const getPublicationcodeFromIssuecode = (issuecode: string) =>
@@ -74,7 +74,7 @@ const getIssuenumberFromIssuecode = (issuecode: string) =>
 const acceptIssueSuggestion = (issuecode: string) => {
   acceptSuggestion(
     issueSuggestions.value,
-    (suggestion) => suggestion.data.issuecode === issuecode
+    (suggestion) => suggestion.data.issuecode === issuecode,
   );
   selectedExistingCoverIssuecode.value = null;
 };

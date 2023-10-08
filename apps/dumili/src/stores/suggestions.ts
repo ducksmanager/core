@@ -72,7 +72,7 @@ export class EntrySuggestion extends Suggestion {
       storyversion?: Storyversion;
       storyjobs?: Storyjob[];
     },
-    meta: Suggestion["meta"]
+    meta: Suggestion["meta"],
   ) {
     super(meta);
   }
@@ -88,7 +88,7 @@ export class StoryversionKindSuggestion extends Suggestion {
       kind: StoryversionKind;
       panels?: Boundaries[];
     },
-    meta: Suggestion["meta"]
+    meta: Suggestion["meta"],
   ) {
     super(meta);
   }
@@ -107,7 +107,7 @@ export class IssueSuggestion extends Suggestion {
       Partial<Pick<inducks_issue, "oldestdate" | "price" | "pages">> & {
         coverId: number | null;
       },
-    meta: Suggestion["meta"]
+    meta: Suggestion["meta"],
   ) {
     super(meta);
   }
@@ -116,11 +116,13 @@ export class IssueSuggestion extends Suggestion {
 export const suggestions = defineStore("suggestions", () => {
   const entrySuggestions = ref({} as Record<string, EntrySuggestion[]>),
     storyversionKindSuggestions = ref(
-      {} as Record<string, StoryversionKindSuggestion[]>
+      {} as Record<string, StoryversionKindSuggestion[]>,
     ),
     issueSuggestions = ref([] as IssueSuggestion[]),
     pendingIssueSuggestions = computed(() =>
-      issueSuggestions.value.filter(({ meta }) => meta.isAccepted === undefined)
+      issueSuggestions.value.filter(
+        ({ meta }) => meta.isAccepted === undefined,
+      ),
     );
 
   const acceptSuggestion = <T extends Suggestion>(
@@ -130,7 +132,7 @@ export const suggestions = defineStore("suggestions", () => {
       source: SuggestionMetaAi["source"];
       status?: SuggestionMetaAi["status"];
     },
-    addDataFn?: (suggestion: T) => void
+    addDataFn?: (suggestion: T) => void,
   ) => {
     suggestions.forEach((suggestion) => {
       suggestion.meta.isAccepted = isAcceptedconditionFn(suggestion);
@@ -158,10 +160,10 @@ export const suggestions = defineStore("suggestions", () => {
     acceptSuggestion,
     rejectAllSuggestions,
     hasPendingIssueSuggestions: computed(
-      () => pendingIssueSuggestions.value.length > 0
+      () => pendingIssueSuggestions.value.length > 0,
     ),
     acceptedIssue: computed(() =>
-      getAcceptedSuggestion(issueSuggestions.value)
+      getAcceptedSuggestion(issueSuggestions.value),
     ),
     acceptedEntries: computed(() =>
       Object.entries(entrySuggestions.value).reduce<
@@ -171,8 +173,8 @@ export const suggestions = defineStore("suggestions", () => {
           ...acc,
           [entrycode]: getAcceptedSuggestion(suggestions),
         }),
-        {}
-      )
+        {},
+      ),
     ),
     acceptedStoryversionKinds: computed(() =>
       Object.entries(storyversionKindSuggestions.value).reduce<
@@ -182,8 +184,8 @@ export const suggestions = defineStore("suggestions", () => {
           ...acc,
           [entrycode]: getAcceptedSuggestion(suggestions),
         }),
-        {}
-      )
+        {},
+      ),
     ),
   };
 });

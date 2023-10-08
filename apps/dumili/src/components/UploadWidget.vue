@@ -16,7 +16,7 @@ const emit = defineEmits<{
 const username = computed(() => user().user!.username);
 
 const fullFolderName = computed(
-  () => `dumili/${username.value}/${props.folderName}`
+  () => `dumili/${username.value}/${props.folderName}`,
 );
 
 // eslint-disable-next-line
@@ -50,7 +50,7 @@ const uploadWidget = cloudinary.createUploadWidget(
           break;
       }
     }
-  }
+  },
 );
 
 uploadWidget.open();
