@@ -19,7 +19,7 @@ dbConnect().then(async () => {
   for (const scrapeName of Object.keys(scrapes)) {
     try {
       console.log(`Scraping ${scrapeName}, start date: ${new Date().toISOString()}`)
-      scrapes[scrapeName].scrape()
+      await scrapes[scrapeName].scrape()
       console.log(`Scrape done, end date: ${new Date().toISOString()}`)
     } catch (e) {
       console.error('Scrape failed: ' + e)
