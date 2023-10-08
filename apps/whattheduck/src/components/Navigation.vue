@@ -46,7 +46,7 @@ const parts = computed(() => {
 });
 
 const onChange = (event: any) => {
-  router.push(event.detail.value ? `/collection/${event.detail.value}` : '/collection');
+  router.push((event.detail.value ? `/collection/${event.detail.value}` : '/collection') + window.location.search);
 };
 
 (async () => {

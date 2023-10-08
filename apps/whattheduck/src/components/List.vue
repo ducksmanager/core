@@ -66,7 +66,6 @@ const props = defineProps<{
 }>();
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);
-const scrollTop = ref<number>(0);
 const scrollPosition = ref<number>(0);
 
 watch(
@@ -75,8 +74,8 @@ watch(
     if (newValue) {
       const scrollElement = await newValue?.$el.getScrollElement()!;
       setInterval(() => {
-        scrollTop.value = scrollElement.scrollTop;
-        scrollPosition.value = (100 * scrollTop.value) / (scrollElement.scrollHeight - scrollElement.clientHeight);
+        scrollPosition.value =
+          (100 * scrollElement.scrollTop) / (scrollElement.scrollHeight - scrollElement.clientHeight);
       }, 100);
     }
   },
