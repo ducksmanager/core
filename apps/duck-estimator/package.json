@@ -1,6 +1,9 @@
 {
   "name": "duck-estimator",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
   "author": {
     "email": "brunoperel@gmail.com",
     "name": "Bruno Perel"
@@ -16,17 +19,27 @@
     "dotenv": "^16.3.1",
     "mariadb": "^3.0.0",
     "playwright-firefox": "^1.10.0",
-    "yargs": "^17.5.1"
+    "yargs": "^17.5.1",
+    "~prisma-clients": "workspace:*"
   },
   "devDependencies": {
-    "eslint": "^8.19.0",
+    "@types/node": "^16.11.7",
+    "@types/yargs": "^17.0.28",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
   },
   "scripts": {
     "lint": "eslint --cache --fix .",
-    "start": "node duck-estimator.js"
+    "start": "tsx index.ts"
   }
 }

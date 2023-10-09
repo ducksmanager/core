@@ -1,19 +1,19 @@
+import { exec } from 'child_process'
+import { mkdirSync } from 'fs'
 
-require('dotenv').config()
-const fs = require('fs')
-const { connect: dbConnect, disconnect: dbDisconnect, truncateQuotations, getAll } = require('./coa')
-const { getCacheDir } = require('./cache')
-const { writeCsvMapping } = require('./csv')
-const { exec } = require('child_process')
-const scrapes = {
-  bedetheque: require('./scrapes/bedetheque'),
-  comicsmania: require('./scrapes/comicsmania'),
-  seriesam: require('./scrapes/seriesam'),
+import { getCacheDir } from './cache'
+import { getAll,truncateQuotations } from './coa'
+import { writeCsvMapping } from './csv'
+const scrapes: Record<string, {scrape: () => Promise<unknown>}> = {
+  // bedetheque: require('./scrapes/bedetheque'),
+  // comicsmania: require('./scrapes/comicsmania'),
+  // seriesam: require('./scrapes/seriesam'),
   gocollect: require('./scrapes/gocollect')
-}
-dbConnect().then(async () => {
+};
+
+(async () => {
   await truncateQuotations()
-  fs.mkdirSync(getCacheDir(), { recursive: true })
+  mkdirSync(getCacheDir(), { recursive: true })
 
   let hasFailed = false
   for (const scrapeName of Object.keys(scrapes)) {
@@ -45,5 +45,4 @@ dbConnect().then(async () => {
     process.exit(0)
   })
 
-  await dbDisconnect()
-})
+})()
