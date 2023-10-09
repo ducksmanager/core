@@ -14,7 +14,7 @@
     "~prisma-clients": "../prisma-clients"
   },
   "dependencies": {
-    "@prisma/client": "^5.3.1",
+    "@prisma/client": "^5.4.1",
     "@pusher/push-notifications-server": "^1.2.6",
     "@sentry/node": "^7.72.0",
     "axios": "^1.5.1",
@@ -62,7 +62,7 @@
     "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
-    "prisma": "^5.3.1",
+    "prisma": "^5.4.1",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"

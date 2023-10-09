@@ -312,12 +312,12 @@ model inducks_issueprice {
 }
 
 model inducks_issuequotation {
-  ID              Int       @id @default(autoincrement())
+  id              Int       @id @default(autoincrement()) @map("ID")
   publicationcode String    @db.VarChar(15)
   issuenumber     String    @db.VarChar(12)
-  estimationmin   Float?    @db.Float
-  estimationmax   Float?    @db.Float
-  scrapedate      DateTime? @db.DateTime(0)
+  estimationMin   Float?    @map("estimationmin") @db.Float
+  estimationMax   Float?    @map("estimationmax") @db.Float
+  scrapeDate      DateTime? @map("scrapedate") @db.DateTime(0)
   source          String    @db.VarChar(15)
   issuecode       String?   @unique(map: "inducks_issuequotation__uindex_issuecode") @db.VarChar(28)
 

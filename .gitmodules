@@ -6,3 +6,7 @@
 	path = apps/dumili
 	url = git@github.com:bperel/dumili.git
 	branch=master
+[submodule "duck-estimator"]
+	path = apps/duck-estimator
+	url = git@github.com:bperel/duck-estimator.git
+	branch=master
