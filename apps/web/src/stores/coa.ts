@@ -1,8 +1,8 @@
 import { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
+import { useI18n } from "vue-i18n";
 
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
-import i18n from "~/i18n";
 import {
   GET__coa__authorsfullnames__$authors,
   GET__coa__list__countries__$locale,
@@ -139,15 +139,14 @@ export const coa = defineStore("coa", () => {
         afterUpdate
       ) {
         isLoadingCountryNames.value = true;
-        const locale = getCurrentLocaleShortKey(
-          (i18n.global.locale as unknown as { value: string }).value,
-        );
         countryNames.value = (
           await call(
             coaApi,
             new GET__coa__list__countries__$locale({
               query: { countryCodes: null },
-              params: { locale },
+              params: {
+                locale: getCurrentLocaleShortKey(useI18n().locale.value),
+              },
             }),
           )
         ).data;
@@ -206,8 +205,8 @@ export const coa = defineStore("coa", () => {
               (issueAcc, issue) => ({
                 ...issueAcc,
                 [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                  min: issue.estimationmin,
-                  max: issue.estimationmax,
+                  min: issue.estimationMin,
+                  max: issue.estimationMax,
                 },
               }),
               {} as { [issuecode: string]: InducksIssueQuotationSimple },

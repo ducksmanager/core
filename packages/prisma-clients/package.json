@@ -8,7 +8,7 @@
     "build": "pnpm run generate && ./node_modules/.pnpm/node_modules/.bin/tsc"
   },
   "dependencies": {
-    "@prisma/client": "^5.4.1",
+    "@prisma/client": "^5.4.2",
     "prisma": "^5.4.1"
   },
   "devDependencies": {

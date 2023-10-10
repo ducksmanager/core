@@ -17,10 +17,11 @@ import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 
+import App from "~/App.vue";
+import i18n from "~/i18n";
 import { addUrlParamsRequestInterceptor } from "~axios-helper";
+import en from "~translations/messages.en.json";
 
-import App from "./App.vue";
-import i18n from "./i18n";
 import { ongoingRequests } from "./stores/ongoing-requests";
 
 const head = createHead();
@@ -71,7 +72,7 @@ axios.interceptors.response.use(
 );
 
 const app = createApp(App);
-app.use(i18n);
+app.use(i18n("fr", { en }).instance);
 app.use(store);
 app.use(contextmenu);
 app.use(head);

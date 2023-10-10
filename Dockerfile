@@ -21,7 +21,6 @@ COPY packages/types/package.json packages/types/pnpm-lock.yaml ./packages/types/
 COPY packages/prisma-clients/package.json packages/prisma-clients/pnpm-lock.yaml ./packages/prisma-clients/
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm -r i
-RUN cd packages/axios-helper && find . -name tsc
 
 COPY . ./
 RUN pnpm -r -F !whattheduck-ionic run build
