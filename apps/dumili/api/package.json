@@ -6,7 +6,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "rm -rf dist/api dist/types && ./node_modules/.bin/tsc && tsc-alias",
+    "build": "rm -rf dist/{api,types} && ./node_modules/.bin/tsc && tsc-alias",
     "start": "ts-node -r tsconfig-paths/register index.ts",
     "test": "which ts-node",
     "dev": "nodemon"
