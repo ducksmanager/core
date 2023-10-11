@@ -5,11 +5,15 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('report') }}</ion-title>
+        <ion-title>{{ t('Signaler un problème') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-text>{{ t('report_description') }}</ion-text>
+      <ion-text>{{
+        t(
+          "Quelque chose ne fonctionne pas sur l'application ?\nDétaillez votre problème et nous essaierons de le résoudre dans une prochaine version :-)",
+        )
+      }}</ion-text>
       <ion-textarea
         v-model="reportMessage"
         :rows="3"
@@ -18,14 +22,14 @@
           'ion-invalid': invalidInputs.includes('reportMessage'),
           'ion-touched': touchedInputs.includes('reportMessage'),
         }"
-        placeholder="Qu'est-ce qui ne va pas ?"
+        :placeholder="t('Qu\'est-ce qui ne va pas ?')"
         @ionBlur="touchedInputs.push('reportMessage')"
       />
       <ion-button :disabled="showConfirmation" @click="submitReport">
-        {{ t('send') }}
+        {{ t('Envoyer') }}
       </ion-button>
       <ion-item v-if="showConfirmation">
-        {{ t('thanks_report') }}
+        {{ t('Merci pour votre retour !') }}
       </ion-item>
     </ion-content>
   </ion-page>

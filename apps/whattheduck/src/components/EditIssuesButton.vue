@@ -5,31 +5,31 @@
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-row class="ion-align-items-center" @click="pickCoverFile">
-        <ion-label>{{ t('by_cover_file') }}</ion-label>
+        <ion-label>{{ t('Depuis un fichier de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="imageOutline" :md="imageSharp" />
         </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center" router-link="/add-from-camera">
-        <ion-label>{{ t('by_cover_photo') }}</ion-label>
+        <ion-label>{{ t('Depuis une photo de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
         </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center" router-link="/recent">
-        <ion-label>{{ t('from_recent_issue') }}</ion-label>
+        <ion-label>{{ t('Depuis un magazine récent') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="calendarOutline" :md="calendarSharp" />
         </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center" @click="router.push({ path: route.path, query: { coa: 'true' } })">
-        <ion-label>{{ t('by_issue_selection') }}</ion-label>
+        <ion-label>{{ t('Par sélection de numéro') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="listOutline" :md="listSharp" />
         </ion-fab-button>
       </ion-row>
       <ion-row class="ion-align-items-center" router-link="/search">
-        <ion-label>{{ t('by_story_title') }}</ion-label>
+        <ion-label>{{ t("Par titre d'histoire") }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="searchOutline" :md="searchSharp" />
         </ion-fab-button>

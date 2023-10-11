@@ -2,7 +2,7 @@
   <ion-menu content-id="main-content" type="overlay">
     <ion-content>
       <ion-list id="header">
-        <ion-list-header>{{ t('app_name') }}</ion-list-header>
+        <ion-list-header>What The Duck</ion-list-header>
         <template v-if="user">
           <ion-row> Medals </ion-row>
           <ion-note>{{ user.username }}</ion-note>
@@ -48,13 +48,13 @@ const collectionStore = collection();
 const selectedIndex = ref(0);
 const appPages = [
   {
-    title: t('search'),
+    title: t('Rechercher une histoire'),
     url: '/search',
     iosIcon: searchOutline,
     mdIcon: searchSharp,
   },
   {
-    title: t('my_collection'),
+    title: t('Ma collection'),
     url: '/collection',
     iosIcon: listOutline,
     mdIcon: listSharp,
@@ -67,11 +67,11 @@ if (path !== undefined) {
 }
 const appFooterPages = [
   {
-    title: t('report'),
+    title: t('Signaler un problème'),
     url: '/report',
   },
   {
-    title: t('logout'),
+    title: t('Déconnexion'),
     url: '/logout',
   },
 ];

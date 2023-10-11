@@ -26,7 +26,7 @@ const parts = computed(() => {
   const parts = [
     {
       key: '',
-      text: t('all_countries'),
+      text: t('Tous les pays'),
     },
   ];
   if (appStore.currentNavigationItem) {

@@ -12,7 +12,7 @@
     </ion-header>
 
     <ion-content v-if="!filteredItems" ref="content">
-      {{ t('loading_collection') }}
+      {{ t('Chargement de votre collection…') }}
     </ion-content>
     <ion-content v-else ref="content" class="no-padding">
       <Row
@@ -140,8 +140,8 @@ const showFilter = computed(() => true);
 
 const title = computed(() =>
   typeof collectionStore.total === 'number'
-    ? t('my_collection_with_issue_count', { issueCount: collectionStore.total })
-    : t('my_collection'),
+    ? t('Ma collection ({issueCount} numéros)', { issueCount: collectionStore.total })
+    : t('Ma collection'),
 );
 
 const ownershipAllItems = computed(() => {

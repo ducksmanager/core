@@ -1,11 +1,15 @@
 <template>
   <ion-page v-if="showForm">
     <ion-header>
-      <ion-title>{{ t('signup') }}</ion-title>
+      <ion-title>{{ t('Inscription') }}</ion-title>
     </ion-header>
     <ion-content>
       <ion-item v-if="isOfflineMode">
-        <ion-label>{{ t('error__cannot_login') }}</ion-label>
+        <ion-label>{{
+          t(
+            'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+          )
+        }}</ion-label>
       </ion-item>
       <ion-item>
         <ion-input
@@ -15,8 +19,8 @@
             'ion-invalid': invalidInputs.includes('username'),
             'ion-touched': touchedInputs.includes('username'),
           }"
-          :aria-label="t('username')"
-          :placeholder="t('username')"
+          :aria-label="t('Nom d\'utilisateur DucksManager')"
+          :placeholder="t('Nom d\'utilisateur DucksManager')"
           @ion-blur="touchedInputs.push('username')"
         />
       </ion-item>
@@ -28,8 +32,8 @@
             'ion-invalid': invalidInputs.includes('email'),
             'ion-touched': touchedInputs.includes('email'),
           }"
-          :aria-label="t('email_address')"
-          :placeholder="t('email_address')"
+          :aria-label="t('Adresse e-mail')"
+          :placeholder="t('Adresse e-mail')"
           @ion-blur="touchedInputs.push('email')"
         />
       </ion-item>
@@ -42,9 +46,13 @@
             'ion-invalid': invalidInputs.includes('password'),
             'ion-touched': touchedInputs.includes('password'),
           }"
-          :error-text="t('error__cannot_login')"
-          :aria-label="t('password')"
-          :placeholder="t('password')"
+          :error-text="
+            t(
+              'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+            )
+          "
+          :aria-label="t('Mot de passe')"
+          :placeholder="t('Mot de passe')"
           @ion-blur="touchedInputs.push('password')"
         >
           <ion-icon
@@ -64,8 +72,8 @@
             'ion-touched': touchedInputs.includes('passwordConfirmation'),
           }"
           :error-text="errorTexts.passwordConfirmation"
-          :aria-label="t('password_confirm')"
-          :placeholder="t('password_confirm')"
+          :aria-label="t('Confirmation mot de passe')"
+          :placeholder="t('Confirmation mot de passe')"
           @ion-blur="touchedInputs.push('passwordConfirmation')"
         >
           <ion-icon
@@ -77,12 +85,12 @@
       </ion-item>
       <ion-item>
         <ion-button @click="submitSignup">
-          {{ t('signup_end') }}
+          {{ t("Terminer l'inscription") }}
         </ion-button>
       </ion-item>
       <ion-item>
         <ion-button @click="cancelSignup">
-          {{ t('cancel') }}
+          {{ t('Annuler') }}
         </ion-button>
       </ion-item>
     </ion-content>
@@ -135,7 +143,7 @@ const cancelSignup = () => {
 const submitSignup = async () => {
   try {
     if (password.value !== passwordConfirmation.value) {
-      errorTexts.value.passwordConfirmation = t('error_the_two_passwords_must_be_identical');
+      errorTexts.value.passwordConfirmation = t('Les deux mots de passe doivent être identiques');
       return;
     }
     clearErrors();

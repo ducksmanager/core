@@ -10,8 +10,12 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-text>{{ t('search_intro') }}</ion-text>
-      <ion-searchbar v-model="storyTitle" :placeholder="t('search_hint')" />
+      <ion-text>{{
+        t(
+          "Entrez le titre d'une histoire. What The Duck vous indiquera les magazines qui contiennent cette histoire et précisera les histoires et magazines correspondants que vous possédez.",
+        )
+      }}</ion-text>
+      <ion-searchbar v-model="storyTitle" :placeholder="t('Entrez le titre d\'une histoire')" />
 
       <ion-list v-if="storyResults?.results && !selectedStory">
         <ion-item
@@ -25,7 +29,7 @@
         </ion-item>
       </ion-list>
       <div v-if="selectedStory">
-        {{ selectedStory.title }} {{ t('story_was_published_in') }}
+        {{ selectedStory.title }} {{ t('a été publiée dans les numéros suivants :') }}
         <div v-for="issue of selectedStory.issues">
           <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
             v-if="issue.collectionIssue"

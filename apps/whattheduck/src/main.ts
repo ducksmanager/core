@@ -5,9 +5,12 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { IonicVue } from '@ionic/vue';
 import { JeepSqlite } from 'jeep-sqlite/dist/components/jeep-sqlite';
 import { createPinia } from 'pinia';
+import { i18n } from '~web';
+
+import en from '../translations/en.json';
+import sv from '../translations/sv.json';
 
 import App from './App.vue';
-import i18n from './i18n';
 import router from './router';
 
 import db from '~/persistence/data-sources/db';
@@ -82,7 +85,7 @@ const app = createApp(App, {
   .use(IonicVue)
   .use(router)
   .use(store)
-  .use(i18n);
+  .use(i18n('fr', { en, sv }).instance);
 
 router.isReady().then(async () => {
   await initSqlite();

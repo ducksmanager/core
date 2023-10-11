@@ -10,8 +10,8 @@ export class InducksIssuequotation {
   issuenumber!: inducks_issuequotation['issuenumber'];
 
   @Column('real', { nullable: true })
-  estimationmin!: inducks_issuequotation['estimationmin'];
+  estimationmin!: inducks_issuequotation['estimationMin'];
 
   @Column('real', { nullable: true })
-  estimationmax!: inducks_issuequotation['estimationmax'];
+  estimationmax!: inducks_issuequotation['estimationMax'];
 }

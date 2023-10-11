@@ -12,7 +12,7 @@ export default (fields: string[]) => {
 
   const showError = (e: AxiosError) => {
     const scopedError = (e.response?.data as ScopedError) || {
-      message: t('error'),
+      message: t('Erreur'),
     };
     errorTexts.value[scopedError.selector] = scopedError.message;
   };

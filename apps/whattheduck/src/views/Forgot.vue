@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-title>{{ t('reset_password_description') }}</ion-title>
+      <ion-title>{{ t('Indiquez votre addresse e-mail pour réinitialiser votre mot de passe') }}</ion-title>
     </ion-header>
     <ion-content>
       <ion-item>
@@ -14,17 +14,21 @@
             'ion-touched': touchedInputs.includes('email'),
           }"
           type="email"
-          :aria-label="t('email_address')"
-          :placeholder="t('email_address')"
+          :aria-label="t('Adresse e-mail')"
+          :placeholder="t('Adresse e-mail')"
           @ionBlur="touchedInputs.push('email')"
         />
       </ion-item>
       <ion-item>
         <ion-button :disabled="showConfirmation" @click="submitForgot">
-          {{ t('send') }}
+          {{ t('Envoyer') }}
         </ion-button> </ion-item
       ><ion-item v-if="showConfirmation">
-        {{ t('reset_password_confirmation') }}
+        {{
+          t(
+            "Si l'adresse e-mail entrée correspond à un compte DucksManager, nous venons d'y envoyer un lien permettant la réinitialisation du mot de passe. Si l'e-mail ne vous parvient pas d'ici quelques minutes, veuillez vérifier votre dossier Spam.",
+          )
+        }}
       </ion-item>
     </ion-content>
   </ion-page>
