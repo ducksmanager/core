@@ -85,14 +85,14 @@ const items = computed(() =>
 
 const sortedItems = computed(() =>
   [...items.value]
-    .sort(({ key: text1 }, { key: text2 }) =>
-      Math.sign(coaIssuenumbers.value!.indexOf(text1) - coaIssuenumbers.value!.indexOf(text2)),
+    .sort(({ item: { issuenumber: issuenumber1 } }, { item: { issuenumber: issuenumber2 } }) =>
+      Math.sign(coaIssuenumbers.value!.indexOf(issuenumber1) - coaIssuenumbers.value!.indexOf(issuenumber2)),
     )
-    .map((item, idx, allItems) => {
-      const currentItemCoaIndex = coaIssuenumbers.value!.indexOf(item.key);
-      const nextItemCoaIndex = coaIssuenumbers.value!.indexOf(allItems[idx + 1]?.key);
+    .map(({ item }, idx, allItems) => {
+      const currentItemCoaIndex = coaIssuenumbers.value!.indexOf(item.issuenumber);
+      const nextItemCoaIndex = coaIssuenumbers.value!.indexOf(allItems[idx + 1]?.item.issuenumber);
       return {
-        ...item,
+        item,
         ownsNext: nextItemCoaIndex === currentItemCoaIndex + 1,
       };
     }),

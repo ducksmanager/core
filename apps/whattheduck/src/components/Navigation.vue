@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { stores } from '~web/index';
 
-import { app } from '../stores/app.js';
+import { app } from '~/stores/app.js';
 
 const router = useRouter();
 

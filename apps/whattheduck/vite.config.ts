@@ -42,6 +42,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './src'),
+      '~translations/': `${path.resolve(__dirname, 'translations')}/`,
       '~types/': `${path.resolve(__dirname, 'types')}/`,
       '~dm-types/': `${path.resolve(__dirname, '../../packages/types')}/`,
       '~axios-helper/': `${path.resolve(__dirname, '../../packages/axios-helper')}/`,

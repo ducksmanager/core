@@ -7,13 +7,12 @@ import { JeepSqlite } from 'jeep-sqlite/dist/components/jeep-sqlite';
 import { createPinia } from 'pinia';
 import { i18n } from '~web';
 
-import en from '../translations/en.json';
-import sv from '../translations/sv.json';
-
 import App from './App.vue';
 import router from './router';
 
 import db from '~/persistence/data-sources/db';
+import en from '~translations/en.json';
+import sv from '~translations/sv.json';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';

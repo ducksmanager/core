@@ -1,22 +1,22 @@
 import { DataSource } from 'typeorm';
 import 'reflect-metadata';
 
-import sqliteConnection from '../database';
-import { InducksCountryname } from '../models/coa/InducksCountryname';
-import { InducksIssueWithCoverUrl } from '../models/coa/InducksIssueWithCoverUrl';
-import { InducksIssuequotation } from '../models/coa/InducksIssuequotation';
-import { InducksPerson } from '../models/coa/InducksPerson';
-import { InducksPublication } from '../models/coa/InducksPublication';
-import { InducksStory } from '../models/coa/InducksStory';
-import { SuggestedIssueSimple } from '../models/composite/SuggestedIssueSimple';
-import { AuthorUser } from '../models/dm/AuthorUser';
-import { ContributionTotalPoints } from '../models/dm/ContributionTotalPoints';
-import { Issue } from '../models/dm/Issue';
-import { IssuePopularity } from '../models/dm/IssuePopularity';
-import { NotificationCountry } from '../models/dm/NotificationCountry';
-import { Purchase } from '../models/dm/Purchase';
-import { User } from '../models/dm/User';
-import { Sync } from '../models/internal/Sync';
+import sqliteConnection from '~/persistence/database';
+import { InducksCountryname } from '~/persistence/models/coa/InducksCountryname';
+import { InducksIssueWithCoverUrl } from '~/persistence/models/coa/InducksIssueWithCoverUrl';
+import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequotation';
+import { InducksPerson } from '~/persistence/models/coa/InducksPerson';
+import { InducksPublication } from '~/persistence/models/coa/InducksPublication';
+import { InducksStory } from '~/persistence/models/coa/InducksStory';
+import { SuggestedIssueSimple } from '~/persistence/models/composite/SuggestedIssueSimple';
+import { AuthorUser } from '~/persistence/models/dm/AuthorUser';
+import { ContributionTotalPoints } from '~/persistence/models/dm/ContributionTotalPoints';
+import { Issue } from '~/persistence/models/dm/Issue';
+import { IssuePopularity } from '~/persistence/models/dm/IssuePopularity';
+import { NotificationCountry } from '~/persistence/models/dm/NotificationCountry';
+import { Purchase } from '~/persistence/models/dm/Purchase';
+import { User } from '~/persistence/models/dm/User';
+import { Sync } from '~/persistence/models/internal/Sync';
 
 export default new DataSource({
   name: 'wtdConnection',

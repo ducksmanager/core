@@ -1,15 +1,14 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
-import OwnedIssueCopy from '../components/OwnedIssueCopy.vue';
-import OwnedIssueCopies from '../views/OwnedIssueCopies.vue';
-
+import OwnedIssueCopy from '~/components/OwnedIssueCopy.vue';
 import AddFromCamera from '~/views/AddFromCamera.vue';
 import CountryList from '~/views/CountryList.vue';
 import Forgot from '~/views/Forgot.vue';
 import IssueList from '~/views/IssueList.vue';
 import Login from '~/views/Login.vue';
 import Logout from '~/views/Logout.vue';
+import OwnedIssueCopies from '~/views/OwnedIssueCopies.vue';
 import PublicationList from '~/views/PublicationList.vue';
 import RecentIssueList from '~/views/RecentIssueList.vue';
 import Report from '~/views/Report.vue';
