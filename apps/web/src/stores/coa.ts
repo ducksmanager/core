@@ -56,7 +56,8 @@ export const ISSUECODE_REGEX =
   /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/;
 
 export const coa = defineStore("coa", () => {
-  const coverUrls = ref({} as { [issuenumber: string]: string }),
+  const locale = useI18n().locale,
+    coverUrls = ref({} as { [issuenumber: string]: string }),
     countryNames = ref(null as { [countrycode: string]: string } | null),
     publicationNames = ref({} as POST__coa__list__publications["resBody"]),
     publicationNamesFullCountries = ref([] as string[]),
@@ -145,7 +146,7 @@ export const coa = defineStore("coa", () => {
             new GET__coa__list__countries__$locale({
               query: { countryCodes: null },
               params: {
-                locale: getCurrentLocaleShortKey(useI18n().locale.value),
+                locale: getCurrentLocaleShortKey(locale.value),
               },
             }),
           )
