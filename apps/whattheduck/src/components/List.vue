@@ -17,8 +17,7 @@
     <ion-content v-else ref="content" class="no-padding">
       <Row
         v-for="{ key, item, ownsNext } in filteredItems"
-        :ownership-text-fn="ownershipTextFn"
-        :ownership="ownership?.[key]"
+        :fill-percentage="fillPercentages?.[key].ownershipPercentage"
         :is-next-owned="ownsNext"
         @click="onRowClick(key)"
       >
@@ -26,7 +25,10 @@
           <slot name="row-prefix" :item="item" />
         </template>
         <template #label>
-          <slot name="row-label" :item="item" :key="key" />
+          <slot name="row-label" :item="item" />
+        </template>
+        <template #suffix>
+          <slot name="row-suffix" :item="item" />
         </template>
       </Row>
       <EditIssuesButton />
@@ -50,19 +52,19 @@ import { stores } from '~web';
 
 import { app } from '~/stores/app';
 import { collection } from '~/stores/collection';
+import { OwnershipWithPercentage } from '~/composables/useOwnership';
 
 defineSlots<{
   'row-prefix'(props: { item: Item }): any;
-  'row-label'(props: { item: Item; key: string }): any;
+  'row-label'(props: { item: Item }): any;
+  'row-suffix'(props: { item: Item }): any;
 }>();
 
 const props = defineProps<{
   items: { key: string; item: Item; ownsNext?: boolean }[];
   getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
   getItemTextFn: (item: Item) => string;
-  statNumerators?: Record<string, number>;
-  statDenominators?: Record<string, number>;
-  ownershipTextFn: (ownership: [number, number], fillPercentage?: number | undefined) => string;
+  fillPercentages?: Record<string, OwnershipWithPercentage>;
 }>();
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);

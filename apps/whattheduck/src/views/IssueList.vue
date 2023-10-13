@@ -1,11 +1,5 @@
 <template>
-  <List
-    v-if="hasCoaData"
-    :items="sortedItems"
-    :get-target-route-fn="getTargetUrlFn"
-    :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
-    :get-item-text-fn="getItemTextFn"
-  >
+  <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaList" />
       <Condition :value="getConditionKey(item.condition)" />
@@ -88,10 +82,11 @@ const sortedItems = computed(() =>
     .sort(({ item: { issuenumber: issuenumber1 } }, { item: { issuenumber: issuenumber2 } }) =>
       Math.sign(coaIssuenumbers.value!.indexOf(issuenumber1) - coaIssuenumbers.value!.indexOf(issuenumber2)),
     )
-    .map(({ item }, idx, allItems) => {
+    .map(({ key, item }, idx, allItems) => {
       const currentItemCoaIndex = coaIssuenumbers.value!.indexOf(item.issuenumber);
       const nextItemCoaIndex = coaIssuenumbers.value!.indexOf(allItems[idx + 1]?.item.issuenumber);
       return {
+        key,
         item,
         ownsNext: nextItemCoaIndex === currentItemCoaIndex + 1,
       };

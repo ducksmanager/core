@@ -2,14 +2,15 @@
   <List
     v-if="collectionStore.totalPerPublication && coaStore.issueCounts"
     :items="sortedItems"
-    :stat-numerators="totalPerPublication"
-    :stat-denominators="issueCounts"
+    :fill-percentages="ownershipPercentages"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
-    :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
   >
     <template #row-label="{ item }">
       <Publication v-bind="item" />
+    </template>
+    <template #row-suffix="{ item }" v-if="ownershipPercentages">
+      {{ getOwnershipText(ownershipPercentages[item.publicationcode], false) }}
     </template>
   </List>
 </template>
@@ -20,6 +21,7 @@ import { stores } from '~web';
 import router from '~/router';
 import { app } from '~/stores/app';
 import { collection } from '~/stores/collection';
+import { getOwnershipPercentages, getOwnershipText } from '~/composables/useOwnership';
 
 const collectionStore = collection();
 const coaStore = stores.coa();
@@ -36,6 +38,8 @@ const totalPerPublication = computed(
     undefined,
 );
 const issueCounts = computed(() => getIssueCountPerMagazinecode(coaStore.issueCounts || {}));
+
+const ownershipPercentages = computed(() => getOwnershipPercentages(totalPerPublication.value, issueCounts.value));
 
 const route = useRoute();
 

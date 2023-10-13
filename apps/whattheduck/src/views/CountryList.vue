@@ -1,20 +1,22 @@
 <template>
   <List
     :items="sortedItems"
-    :stat-numerators="totalPerCountry"
-    :stat-denominators="issueCountsPerCountry"
+    :fill-percentages="ownershipPercentages"
     :get-target-route-fn="getTargetUrlFn"
-    :ownership-text-fn="ownershipText"
     :get-item-text-fn="getItemTextFn"
   >
     <template #row-label="{ item }">
       <Country v-bind="item" />
+    </template>
+    <template #row-suffix="{ item }" v-if="ownershipPercentages">
+      {{ getOwnershipText(ownershipPercentages[item.countrycode]) }}
     </template>
   </List>
 </template>
 
 <script setup lang="ts">
 import { stores } from '~web';
+import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwnership';
 
 import { collection } from '~/stores/collection';
 import { app } from '~/stores/app';
@@ -28,6 +30,10 @@ const appStore = app();
 const totalPerCountry = computed(() => collectionStore.totalPerCountry);
 const issueCountsPerCountry = computed(() => coaStore.issueCountsPerCountry!);
 
+const ownershipPercentages = computed(() =>
+  getOwnershipPercentages(totalPerCountry.value, issueCountsPerCountry.value),
+);
+
 const items = computed(() =>
   coaStore.countryNames
     ? Object.entries(coaStore.countryNames)
@@ -40,9 +46,6 @@ const items = computed(() =>
 );
 
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.countryname || item.countrycode;
-
-const ownershipText = (ownership: [number, number], fillPercentage: number | undefined) =>
-  `${ownership[0]} (${fillPercentage! < 0.1 ? '< 0.1' : fillPercentage!.toFixed(1)}%)`;
 
 const sortedItems = computed(() =>
   [...items.value].sort(({ item: { countryname: text1 } }, { item: { countryname: text2 } }) =>

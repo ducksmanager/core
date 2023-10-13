@@ -6,22 +6,17 @@
       <slot name="prefix" />
       <slot name="label" />
     </ion-label>
-    <ion-label v-if="ownership" slot="end">
-      {{ ownershipTextFn(ownership, fillPercentage) }}
+    <ion-label slot="end" class="suffix">
+      <slot name="suffix" />
     </ion-label>
   </ion-item>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  ownership?: [number, number];
-  ownershipTextFn: (ownership: [number, number], fillPercentage?: number | undefined) => string;
+defineProps<{
+  fillPercentage?: number;
   isNextOwned?: boolean;
 }>();
-
-const fillPercentage = computed(() =>
-  props.ownership ? Math.max(0.1 / 100, props.ownership[0] / (props.ownership[1] || 1)) : undefined,
-);
 </script>
 
 <style lang="scss" scoped>
@@ -66,6 +61,9 @@ ion-label {
   z-index: 1;
   display: flex !important;
   align-items: center !important;
+  &.suffix {
+    color: grey;
+  }
 }
 ion-progress-bar {
   position: absolute;
