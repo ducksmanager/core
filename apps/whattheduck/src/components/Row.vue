@@ -20,6 +20,8 @@ defineProps<{
 </script>
 
 <style lang="scss" scoped>
+@import '../theme/variables.scss';
+
 ion-item {
   --padding-start: 0;
   ion-label {
@@ -41,17 +43,31 @@ ion-item {
       position: absolute;
       width: 2px;
       margin-left: 6px;
-      height: 54%;
+      height: 50%;
       content: ' ';
-      background: linear-gradient(0deg, rgb(255, 0, 0) 0%, rgb(0, 255, 0) 100%);
     }
-    :deep(.dm-condition-background)::after {
-      bottom: -8px;
+
+    :deep(.dm-condition-background) {
+      @each $condition, $conditionColor in $dmConditions {
+        &.#{$condition}::after {
+          background: $conditionColor;
+        }
+      }
+      &::after {
+        bottom: 0;
+      }
     }
 
     + ion-item {
-      :deep(.dm-condition-background)::before {
-        top: -8px;
+      :deep(.dm-condition-background) {
+        @each $condition, $conditionColor in $dmConditions {
+          &.#{$condition}::before {
+            background: $conditionColor;
+          }
+        }
+        &::before {
+          top: 0;
+        }
       }
     }
   }
