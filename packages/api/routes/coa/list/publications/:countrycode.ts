@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import { PublicationTitles } from "~dm-types/PublicationTitles";
 import { ExpressCall } from "~routes/_express-call";
 
-import { getPublicationTitles } from "./index";
+import { getPublicationTitles } from ".";
 
 const parseForm = bodyParser.json();
 

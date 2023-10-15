@@ -1,8 +1,10 @@
 import axios from "axios";
+import { buildWebStorage } from "axios-cache-interceptor";
 import { defineStore } from "pinia";
 
-import { cachedUserApi as userApi } from "~/util/api";
+import { createCachedUserApi } from "~/api";
 import {
+  GET__events,
   GET__global_stats__bookcase__contributors,
   GET__global_stats__user__$userIds,
   GET__global_stats__user__count,
@@ -10,11 +12,11 @@ import {
 import { call } from "~axios-helper";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
-import { CollectionSubscriptionAdditionEvent } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
-import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
-import { SignupEvent } from "~dm-types/events/SignupEvent";
+
+const cachedUserApi = createCachedUserApi(
+  buildWebStorage(sessionStorage),
+  import.meta.env.VITE_GATEWAY_URL,
+);
 
 export const users = defineStore("users", () => {
   const count = ref(null as number | null),
@@ -73,26 +75,12 @@ export const users = defineStore("users", () => {
         ).data;
       }
     },
-    fetchEvents = async (clearCacheEntry = true) => {
-      const { data, cached } = await userApi.get(
-        "/events",
-        clearCacheEntry ? {} : { cache: false },
-      );
-      events.value = (
-        data as (
-          | BookstoreCommentEvent
-          | CollectionSubscriptionAdditionEvent
-          | CollectionUpdateEvent
-          | EdgeCreationEvent
-          | SignupEvent
-        )[]
-      )
+    fetchEvents = async () => {
+      events.value = (await call(cachedUserApi, new GET__events())).data
         .sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) =>
           Math.sign(timestamp2 - timestamp1),
         )
         .filter((_, index) => index < 50);
-
-      return !cached;
     };
 
   return {

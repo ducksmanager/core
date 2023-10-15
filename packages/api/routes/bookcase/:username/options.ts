@@ -1,6 +1,6 @@
 import { ExpressCall } from "~routes/_express-call";
 
-import { checkValidBookcaseUser } from "./index";
+import { checkValidBookcaseUser } from ".";
 
 export const get = async (
   ...[req, res]: ExpressCall<{

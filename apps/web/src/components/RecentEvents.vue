@@ -42,8 +42,8 @@ const isCollectionUpdateEvent = (event: AbstractEvent) =>
 const isEdgeCreationEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("edges");
 
-const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
-  await users().fetchEvents(clearCacheEntry);
+const fetchEventsAndAssociatedData = async () => {
+  await users().fetchEvents();
 
   await coa().fetchPublicationNames([
     ...events
@@ -63,16 +63,11 @@ const fetchEventsAndAssociatedData = async (clearCacheEntry: boolean) => {
 
   await users().fetchStats(
     eventUserIds.filter((userId) => userId !== null) as number[],
-    clearCacheEntry,
   );
 };
 
 (async () => {
-  await fetchEventsAndAssociatedData(false);
-  setTimeout(async () => {
-    // await fetchEventsAndAssociatedData(true);
-    // hasFreshEvents = true;
-  }, 1000);
+  await fetchEventsAndAssociatedData();
   isLoaded = true;
 })();
 </script>

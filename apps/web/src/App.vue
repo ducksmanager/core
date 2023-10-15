@@ -3,15 +3,22 @@
 </template>
 
 <script setup lang="ts">
-import { collection } from "~/stores/collection";
-import { cachedCoaApi } from "~/util/api";
+import { buildWebStorage } from "axios-cache-interceptor";
 
-import { coa } from "./stores/coa";
+import { coa } from "~/stores/coa";
+import { collection } from "~/stores/collection";
+
+import { createCachedCoaApi } from "./api";
 
 collection().loadUser();
 
 onBeforeMount(() => {
-  coa().setApi(cachedCoaApi);
+  coa().setApi(
+    createCachedCoaApi(
+      buildWebStorage(sessionStorage),
+      import.meta.env.VITE_GATEWAY_URL,
+    ),
+  );
 });
 </script>
 

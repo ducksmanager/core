@@ -4,7 +4,7 @@ import { prismaDm } from "~/prisma";
 import { EditSubscription } from "~dm-types/EditSubscription";
 import { ExpressCall } from "~routes/_express-call";
 
-import { upsertSubscription } from "./index";
+import { upsertSubscription } from ".";
 
 const parseForm = bodyParser.json();
 

@@ -2,7 +2,7 @@ import { prismaDm } from "~/prisma";
 import { userOptionType } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
-import { getIssuesForSale } from "../index";
+import { getIssuesForSale } from "..";
 
 export const get = async (
   ...[req, res]: ExpressCall<{

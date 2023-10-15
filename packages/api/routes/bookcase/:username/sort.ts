@@ -1,7 +1,7 @@
 import prismaDm from "~prisma-clients/extended/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 
-import { checkValidBookcaseUser } from "./index";
+import { checkValidBookcaseUser } from ".";
 
 const getLastPublicationPosition = async (userId: number) =>
   (

@@ -9,6 +9,7 @@ import { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import { EdgeModel } from "~dm-types/EdgeModel";
 import { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
 import { EditSubscription } from "~dm-types/EditSubscription";
+import { Event } from "~dm-types/Event";
 import { ImageElement } from "~dm-types/ImageElement";
 import { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import {  } from "~dm-types/IssueSuggestionList";

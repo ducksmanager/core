@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 
 import { prismaDm } from "~/prisma";
+import { Event } from "~dm-types/Event";
 import {
   AbstractEvent,
   AbstractEventRaw,
@@ -18,7 +19,6 @@ import {
   EdgeCreationEvent,
   EdgeCreationEventRaw,
 } from "~dm-types/events/EdgeCreationEvent";
-import { Event } from "~dm-types/events/Event";
 import { MedalEvent } from "~dm-types/events/MedalEvent";
 import { SignupEvent } from "~dm-types/events/SignupEvent";
 import { ExpressCall } from "~routes/_express-call";
@@ -54,7 +54,7 @@ const mapUsers = <T extends AbstractEvent>(event: AbstractEventRaw): T =>
       event.users?.split(",")?.map((userId) => parseInt(userId)) ||
       (event.userId && [event.userId]) ||
       [],
-  } as T);
+  }) as T;
 
 const retrieveSignups = async (): Promise<SignupEvent[]> =>
   (
