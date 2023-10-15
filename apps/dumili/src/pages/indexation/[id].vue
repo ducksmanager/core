@@ -25,6 +25,7 @@
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 
+import { defaultApi } from "~/api";
 import {
   EntrySuggestion,
   StoryversionKind,
@@ -32,7 +33,6 @@ import {
   suggestions,
 } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
-import { defaultApi } from "~/util/api";
 const showUploadWidget = ref(false);
 const route = useRoute();
 

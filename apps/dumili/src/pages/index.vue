@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { defaultApi } from "~/util/api";
+import { defaultApi } from "~/api";
 
 const router = useRouter();
 

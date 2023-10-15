@@ -28,9 +28,10 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
+import { defaultApi } from "~/api";
+
 import { tabs } from "./stores/tabs";
 import { user } from "./stores/user";
-import { defaultApi } from "./util/api";
 
 const route = useRoute();
 
