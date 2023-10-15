@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import 'reflect-metadata';
 
+import { HttpCache } from '../models/internal/HttpCache';
+
 import sqliteConnection from '~/persistence/database';
 import { InducksCountryname } from '~/persistence/models/coa/InducksCountryname';
 import { InducksIssueWithCoverUrl } from '~/persistence/models/coa/InducksIssueWithCoverUrl';
@@ -39,6 +41,7 @@ export default new DataSource({
     User,
     SuggestedIssueSimple,
     Sync,
+    HttpCache,
   ],
   migrations: [],
   logging: ['error', 'query', 'schema'],

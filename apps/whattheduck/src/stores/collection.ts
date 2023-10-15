@@ -21,13 +21,13 @@ import { stores } from '~web';
 
 import { app } from './app';
 
+import { defaultApi } from '~/api';
 import { SuggestedIssueSimple } from '~/persistence/models/composite/SuggestedIssueSimple';
 import { AuthorUser } from '~/persistence/models/dm/AuthorUser';
 import { Issue } from '~/persistence/models/dm/Issue';
 import { IssuePopularity } from '~/persistence/models/dm/IssuePopularity';
 import { Purchase } from '~/persistence/models/dm/Purchase';
 import { User } from '~/persistence/models/dm/User';
-import { defaultApi } from '~/util/api';
 
 export type IssueWithPublicationcode = issue & {
   publicationcode: string;

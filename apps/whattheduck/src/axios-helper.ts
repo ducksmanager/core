@@ -1,6 +1,6 @@
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
-import { addUrlParamsRequestInterceptor } from '~axios-helper/index';
+import { addUrlParamsRequestInterceptor } from '~axios-helper';
 
 import { User } from './persistence/models/dm/User';
 

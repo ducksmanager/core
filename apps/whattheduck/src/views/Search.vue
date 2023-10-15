@@ -53,7 +53,7 @@ import { stores } from '~web';
 import useCondition from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { collection } from '~/stores/collection';
-import { defaultApi } from '~/util/api';
+import { defaultApi } from '~/api';
 
 const { t } = useI18n();
 

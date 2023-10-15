@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { stores } from '~web/index';
+import { stores } from '~web';
 
 import { app } from '~/stores/app.js';
 

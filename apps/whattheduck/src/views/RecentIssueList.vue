@@ -20,7 +20,7 @@ import { stores } from '~web';
 
 import useCondition from '~/composables/useCondition';
 import { collection } from '~/stores/collection';
-import { GET__coa__list__issues__recent } from '~api-routes/index';
+import { GET__coa__list__issues__recent } from '~api-routes';
 import { ISSUECODE_REGEX } from '~web/src/stores/coa';
 import { Issue } from '~/persistence/models/dm/Issue';
 

@@ -13,7 +13,7 @@ import { collection } from '~/stores/collection';
 
 import { app } from './stores/app';
 
-import { coaApi } from '~/util/api';
+import { coaApi } from '~/api';
 
 const appStore = app();
 const collectionStore = collection();
