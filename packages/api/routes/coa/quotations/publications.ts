@@ -1,6 +1,6 @@
-import { prismaCoa } from "~/prisma";
-import { inducks_issuequotation } from "~prisma-clients/client_coa";
-import { ExpressCall } from "~routes/_express-call";
+import { prismaCoa } from '~/prisma';
+import { inducks_issuequotation } from '~prisma-clients/client_coa';
+import { ExpressCall } from '~routes/_express-call';
 
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 
@@ -16,9 +16,7 @@ export const get = async (
     res.end();
     return;
   }
-  const codes = [
-    ...publicationCodes.toString().matchAll(PUBLICATION_CODE_REGEX),
-  ];
+  const codes = [...publicationCodes.toString().matchAll(PUBLICATION_CODE_REGEX)];
   if (!codes.length) {
     res.writeHead(400);
     res.end();
@@ -30,9 +28,9 @@ export const get = async (
       await prismaCoa.inducks_issuequotation.findMany({
         where: {
           publicationcode: { in: codes.map(([code]) => code) },
-          estimationmin: { not: { equals: null } },
+          estimationMin: { not: { equals: null } },
         },
-      })
+      }),
     );
   }
 };

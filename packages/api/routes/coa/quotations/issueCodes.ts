@@ -30,7 +30,7 @@ export const get = async (
           issuecode: {
             in: codes.map(([code]) => code.replaceAll(/ +/, " ")),
           },
-          estimationmin: { not: { equals: null } },
+          estimationMin: { not: { equals: null } },
         },
       })
     );
