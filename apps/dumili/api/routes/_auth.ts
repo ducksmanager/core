@@ -18,7 +18,7 @@ declare global {
 export const authenticateToken = (
   req: Request,
   res: Response,
-  next: CallableFunction,
+  next: CallableFunction
 ) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader?.split(" ")?.[1];
@@ -34,6 +34,6 @@ export const authenticateToken = (
       }
       req.user = user as User;
       next();
-    },
+    }
   );
 };

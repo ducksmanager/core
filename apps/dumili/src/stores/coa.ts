@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
+import { cachedCoaApi as coaApi } from "~/api";
 import i18n from "~/i18n";
-import { cachedCoaApi as coaApi } from "~/util/api";
 import {
   GET__coa__authorsfullnames__$authors,
   GET__coa__list__countries__$locale,
@@ -26,8 +26,8 @@ const addPartInfo = (suggestions: InducksIssueDetails) => {
         ...acc,
         [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
       }),
-      {} as { [storycode: string]: number },
-    ),
+      {} as { [storycode: string]: number }
+    )
   )
     .filter(([, occurrences]) => occurrences > 1)
     .reduce(
@@ -35,7 +35,7 @@ const addPartInfo = (suggestions: InducksIssueDetails) => {
         ...acc,
         [storycode]: 1,
       }),
-      {},
+      {}
     ) as { [storycode: string]: number };
   return {
     ...suggestions,
@@ -58,21 +58,21 @@ export const coa = defineStore("coa", () => {
     issuesWithTitles = ref(
       {} as {
         [issuenumber: string]: GET__coa__list__issues__withTitle["resBody"];
-      },
+      }
     ),
     suggestions = ref({} as { [issuecode: string]: InducksIssueDetails }),
     isLoadingCountryNames = ref(false as boolean),
     issueCounts = ref(null as { [publicationcode: string]: number } | null),
     issueCodeDetails = ref(
-      null as { [issuecode: string]: inducks_issue } | null,
+      null as { [issuecode: string]: inducks_issue } | null
     ),
     issueQuotations = ref(
       null as {
         [issuecode: string]: InducksIssueQuotationSimple;
-      } | null,
+      } | null
     ),
     addPublicationNames = (
-      newPublicationNames: typeof publicationNames.value,
+      newPublicationNames: typeof publicationNames.value
     ) => {
       publicationNames.value = {
         ...publicationNames.value,
@@ -85,7 +85,7 @@ export const coa = defineStore("coa", () => {
           ...acc,
           [personcode]: newPersonNames[personcode],
         }),
-        {},
+        {}
       );
     },
     setCoverUrl = (issuenumber: string, url: string) => {
@@ -126,7 +126,7 @@ export const coa = defineStore("coa", () => {
             new GET__coa__list__countries__$locale({
               query: { countryCodes: null },
               params: { locale },
-            }),
+            })
           )
         ).data;
         isLoadingCountryNames.value = false;
@@ -137,8 +137,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPublicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(publicationNames.value).includes(publicationcode),
-          ),
+              !Object.keys(publicationNames.value).includes(publicationcode)
+          )
         ),
       ];
       return (
@@ -149,9 +149,9 @@ export const coa = defineStore("coa", () => {
               coaApi,
               new POST__coa__list__publications({
                 reqBody: { publicationCodes: actualNewPublicationCodes },
-              }),
+              })
             )
-          ).data,
+          ).data
         )
       );
     },
@@ -161,9 +161,9 @@ export const coa = defineStore("coa", () => {
           newPublicationCodes.filter(
             (publicationcode) =>
               !Object.keys(issueQuotations.value || {}).includes(
-                publicationcode,
-              ),
-          ),
+                publicationcode
+              )
+          )
         ),
       ];
       return (
@@ -175,7 +175,7 @@ export const coa = defineStore("coa", () => {
                 coaApi,
                 new GET__coa__quotations__publications({
                   query: { publicationCodes: chunk },
-                }),
+                })
               ),
             valuesToChunk: newPublicationCodes,
             chunkSize: 50,
@@ -184,13 +184,13 @@ export const coa = defineStore("coa", () => {
               (issueAcc, issue) => ({
                 ...issueAcc,
                 [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                  min: issue.estimationmin,
-                  max: issue.estimationmax,
+                  min: issue.estimationMin,
+                  max: issue.estimationMax,
                 },
               }),
-              {} as { [issuecode: string]: InducksIssueQuotationSimple },
-            ),
-          ),
+              {} as { [issuecode: string]: InducksIssueQuotationSimple }
+            )
+          )
         )
       );
     },
@@ -201,7 +201,7 @@ export const coa = defineStore("coa", () => {
         coaApi,
         new GET__coa__list__publications__$countrycode({
           params: { countrycode },
-        }),
+        })
       ).then(({ data }) => {
         addPublicationNames({
           ...(publicationNames.value || {}),
@@ -218,8 +218,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPersonCodes.filter(
             (personCode) =>
-              !Object.keys(personNames.value || {}).includes(personCode),
-          ),
+              !Object.keys(personNames.value || {}).includes(personCode)
+          )
         ),
       ];
       return (
@@ -232,7 +232,7 @@ export const coa = defineStore("coa", () => {
                 coaApi,
                 new GET__coa__authorsfullnames__$authors({
                   params: { authors: chunk },
-                }),
+                })
               ),
             valuesToChunk: actualNewPersonNames,
             chunkSize: 10,
@@ -246,7 +246,7 @@ export const coa = defineStore("coa", () => {
           coaApi,
           new GET__coa__list__issues__withTitle({
             query: { publicationcode },
-          }),
+          })
         )
       ).data;
     },
@@ -255,8 +255,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(issueNumbers.value || {}).includes(publicationcode),
-          ),
+              !Object.keys(issueNumbers.value || {}).includes(publicationcode)
+          )
         ),
       ];
       if (newPublicationCodes.length) {
@@ -268,11 +268,11 @@ export const coa = defineStore("coa", () => {
                   coaApi,
                   new GET__coa__list__issues__by_publication_codes({
                     query: { publicationCodes: chunk },
-                  }),
+                  })
                 ),
               valuesToChunk: newPublicationCodes,
               chunkSize: 50,
-            },
+            }
           );
 
         addIssueNumbers(
@@ -284,8 +284,8 @@ export const coa = defineStore("coa", () => {
                 issue.issuenumber,
               ],
             }),
-            {} as typeof issueNumbers.value,
-          ),
+            {} as typeof issueNumbers.value
+          )
         );
       }
     },
@@ -294,8 +294,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           issueCodes.filter(
             (issueCode) =>
-              !Object.keys(issueCodeDetails.value || {}).includes(issueCode),
-          ),
+              !Object.keys(issueCodeDetails.value || {}).includes(issueCode)
+          )
         ),
       ];
       return (
@@ -307,11 +307,11 @@ export const coa = defineStore("coa", () => {
                 coaApi,
                 new POST__coa__issues__decompose({
                   reqBody: { issueCodes: chunk },
-                }),
+                })
               ),
             valuesToChunk: newIssueCodes,
             chunkSize: 50,
-          }),
+          })
         )
       );
     },
@@ -335,7 +335,7 @@ export const coa = defineStore("coa", () => {
             coaApi,
             new GET__coa__list__issues__details({
               query: { publicationcode, issuenumber },
-            }),
+            })
           )
         ).data;
 

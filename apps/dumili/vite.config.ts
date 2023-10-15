@@ -59,13 +59,14 @@ export default defineConfig({
       "~": path.resolve(__dirname, "src"),
       "~dumili-types/": `${path.resolve(__dirname, "types")}/`,
       "~dm-types/": `${path.resolve(__dirname, "../../packages/types")}/`,
+      "~web/": `${path.resolve(__dirname, "../web")}/`,
       "~axios-helper/": `${path.resolve(
         __dirname,
-        "../../packages/axios-helper",
+        "../../packages/axios-helper"
       )}/`,
       "~api-routes/": `${path.resolve(
         __dirname,
-        "../../packages/api-routes",
+        "../../packages/api-routes"
       )}/`,
       "~translations": path.resolve(__dirname, "translations"),
     },

@@ -31,6 +31,7 @@
       "~/*": ["src/*"],
       "~dumili-types/*": ["types/*"],
       "~dm-types/*": ["../../packages/types/*"],
+      "~web/*": ["../web/*"],
       "~translations/*": ["translations/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~axios-helper/*": ["../../packages/axios-helper/*"],

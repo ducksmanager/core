@@ -7,18 +7,18 @@ import {
   addUrlParamsRequestInterceptor,
 } from "~axios-helper";
 
-import { getIndexationResources } from "../index";
+import { getIndexationResources } from "..";
 
 const defaultApi = addTokenRequestInterceptor(
   addUrlParamsRequestInterceptor(
-    axios.create({ baseURL: process.env.DM_API_URL }),
+    axios.create({ baseURL: process.env.DM_API_URL })
   ),
-  () => Cookies.get("token") as string,
+  () => Cookies.get("token") as string
 );
 export const get = async (req: Request, res: Response) => {
   const indexationResources = await getIndexationResources(
     req.params.indexation,
-    req.user.username,
+    req.user.username
   );
   const image = await axios.get(indexationResources[0].url, {
     responseType: "arraybuffer",
@@ -29,7 +29,7 @@ export const get = async (req: Request, res: Response) => {
         await axios.post(`${defaultApi.defaults.baseURL}/cover-id/search`, {
           base64: Buffer.from(image.data).toString("base64"),
         })
-      ).data,
+      ).data
     );
   } catch (e) {
     console.error(e);

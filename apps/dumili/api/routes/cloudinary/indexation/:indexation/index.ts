@@ -5,12 +5,12 @@ import { CloudinaryResourceContext } from "~dumili-types/CloudinaryResourceConte
 
 export const get = async (req: Request, res: Response) =>
   res.json(
-    await getIndexationResources(req.params.indexation, req.user.username),
+    await getIndexationResources(req.params.indexation, req.user.username)
   );
 
 export const getIndexationResources = async (
   indexation: string,
-  username: string,
+  username: string
 ) =>
   (await cloudinary.api
     .resources_by_context("indexation", indexation, {
@@ -20,5 +20,5 @@ export const getIndexationResources = async (
       console.error(err);
     }))!.resources.filter(
     ({ context }) =>
-      (context as CloudinaryResourceContext).custom.user === username,
+      (context as CloudinaryResourceContext).custom.user === username
   );

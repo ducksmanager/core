@@ -21,6 +21,6 @@ export const ai = defineStore("ai", () => ({
           possibleStories: EntrySuggestion["data"][];
         };
       }
-    >,
+    >
   ),
 }));

@@ -26,12 +26,12 @@ const app = express();
 app.use(
   Sentry.Handlers.requestHandler({
     user: ["id", "username"],
-  }) as express.RequestHandler,
+  }) as express.RequestHandler
 );
 app.use(
   cors({
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  }),
+  })
 );
 app.use(busboy({ immediate: true }));
 

@@ -35,15 +35,15 @@ const issue = computed(() => suggestionsStore.acceptedIssue);
 const issueSuggestions = computed(
   () =>
     suggestionsStore.issueSuggestions.filter(
-      (suggestion) => suggestion !== undefined,
-    ) as IssueSuggestion[],
+      (suggestion) => suggestion !== undefined
+    ) as IssueSuggestion[]
 );
 
 const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {
   if (issuecode) {
     suggestionsStore.issueSuggestions =
       suggestionsStore.issueSuggestions.filter(
-        ({ meta }) => meta.source !== "user",
+        ({ meta }) => meta.source !== "user"
       );
     const [publicationcode, issuenumber] = issuecode.split(" ");
     const userSuggestion = new IssueSuggestion(
@@ -56,7 +56,7 @@ const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {
       {
         source: "user",
         isAccepted: false,
-      },
+      }
     );
     suggestionsStore.issueSuggestions.push(userSuggestion);
     acceptIssueSuggestion(userSuggestion);
@@ -67,7 +67,7 @@ const acceptIssueSuggestion = (suggestion?: IssueSuggestion) => {
   suggestionsStore.acceptSuggestion(
     suggestionsStore.issueSuggestions,
     (existingSuggestion) =>
-      suggestion?.data?.issuecode === existingSuggestion.data.issuecode,
+      suggestion?.data?.issuecode === existingSuggestion.data.issuecode
   );
   showIssueSelect.value = false;
 };

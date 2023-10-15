@@ -185,7 +185,7 @@ const xOffset = computed(
     displayedHeight.value &&
     pageRatio.value &&
     displayedWidth.value &&
-    (displayedWidth.value - displayedHeight.value * pageRatio.value) / 2,
+    (displayedWidth.value - displayedHeight.value * pageRatio.value) / 2
 );
 
 const pageRatio = computed(() => coverWidth.value! / coverHeight.value!);
@@ -194,7 +194,7 @@ const displayRatioNoCropping = computed(
   () =>
     displayedHeight.value &&
     coverHeight.value &&
-    displayedHeight.value / coverHeight.value,
+    displayedHeight.value / coverHeight.value
 );
 
 const firstPanelPosition = (url: string) => {
@@ -213,7 +213,7 @@ const toPx = (position: Record<string, number>) =>
       ...acc,
       [key]: `${value}px`,
     }),
-    {},
+    {}
   );
 
 watch(
@@ -222,7 +222,7 @@ watch(
     if (book.value) {
       book.value.flip(newValue);
     }
-  },
+  }
 );
 
 watch(
@@ -232,7 +232,7 @@ watch(
     if (newValue && newValue > availableWidthPerPage) {
       coverHeight.value! /= newValue / availableWidthPerPage;
     }
-  },
+  }
 );
 
 watch(
@@ -249,7 +249,7 @@ watch(
           showCover: true,
           usePortrait: false,
           mobileScrollSupport: false,
-        },
+        }
       );
       book.value.loadFromHTML(document.querySelectorAll(".page"));
 
@@ -258,7 +258,7 @@ watch(
       });
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(
@@ -268,7 +268,7 @@ watch(
     await ai.runStorycodeOcr(indexationId.value);
     ai.status.value = "loaded";
   },
-  { deep: true },
+  { deep: true }
 );
 </script>
 

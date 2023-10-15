@@ -41,7 +41,7 @@ let storyResults = ref(
   {} as {
     results: SimpleStory[];
     hasMore: boolean;
-  },
+  }
 );
 
 const { t: $t } = useI18n();
@@ -57,7 +57,7 @@ const runSearch = async (value: string) => {
         axios,
         new POST__coa__stories__search({
           reqBody: { keywords: value },
-        }),
+        })
       )
     ).data;
     storyResults.value.results = data.results.results;
@@ -77,7 +77,7 @@ watch(
       pendingSearch.value = newValue;
       if (!isSearching.value) await runSearch(newValue);
     }
-  },
+  }
 );
 </script>
 

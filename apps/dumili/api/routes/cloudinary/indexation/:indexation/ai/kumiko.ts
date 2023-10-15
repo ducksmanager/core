@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Request, Response } from "express";
 
-import { getIndexationResources } from "../index";
+import { getIndexationResources } from "..";
 
 export type KumikoResult = {
   filename: string;
@@ -18,10 +18,10 @@ type KumikoResultWithNumberPanels = Omit<KumikoResult, "panels"> & {
 export const get = async (req: Request, res: Response) => {
   const indexationResources = await getIndexationResources(
     req.params.indexation,
-    req.user.username,
+    req.user.username
   );
   const output = await runKumiko(
-    indexationResources.map(({ secure_url }) => secure_url),
+    indexationResources.map(({ secure_url }) => secure_url)
   );
   try {
     return res.json(output);
@@ -44,5 +44,5 @@ export const runKumiko = async (urls: string[]): Promise<KumikoResult[]> =>
         width,
         height,
       })),
-    }),
+    })
   );

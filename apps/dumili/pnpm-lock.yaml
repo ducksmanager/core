@@ -59,6 +59,9 @@ dependencies:
   ~dm-types:
     specifier: workspace:*
     version: link:../../packages/types
+  ~web:
+    specifier: workspace:*
+    version: link:../web
 
 devDependencies:
   '@antfu/eslint-config':

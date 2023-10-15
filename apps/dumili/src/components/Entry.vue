@@ -56,7 +56,7 @@
             <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
             {{
               getStoryversionKind(
-                storyversionKinds.find(({ meta }) => meta.source === "ai"),
+                storyversionKinds.find(({ meta }) => meta.source === "ai")
               )
             }}
           </div>
@@ -175,31 +175,31 @@ const showAiDetections = storeToRefs(user()).showAiDetectionsOn;
 const aiDetails = storeToRefs(aiStore()).aiDetails;
 
 const acceptedEntry = computed(
-  () => suggestionsStore.acceptedEntries[props.entryurl],
+  () => suggestionsStore.acceptedEntries[props.entryurl]
 );
 
 const acceptedStoryversionKind = computed(
-  () => suggestionsStore.acceptedStoryversionKinds[props.entryurl],
+  () => suggestionsStore.acceptedStoryversionKinds[props.entryurl]
 );
 
 const storyversion = computed(() => acceptedEntry.value?.data.storyversion);
 const storycode = computed(() => storyversion.value?.storycode);
 const part = computed(() => acceptedEntry.value?.data.part);
 const title = computed(
-  () => acceptedEntry.value?.data.title || $t("Sans titre"),
+  () => acceptedEntry.value?.data.title || $t("Sans titre")
 );
 const comment = computed(() => acceptedEntry.value?.data.entrycomment);
 
 const urlEncodedStorycode = computed(
-  () => storycode.value && encodeURIComponent(storycode.value),
+  () => storycode.value && encodeURIComponent(storycode.value)
 );
 
 const storyversionKinds = computed(
-  () => suggestionsStore.storyversionKindSuggestions[props.entryurl],
+  () => suggestionsStore.storyversionKindSuggestions[props.entryurl]
 );
 
 const getStoryversionKind = (
-  storyversionKind: StoryversionKindSuggestion | undefined,
+  storyversionKind: StoryversionKindSuggestion | undefined
 ) =>
   !storyversionKind
     ? $t("Type inconnu")
@@ -211,7 +211,7 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
   suggestionsStore.acceptSuggestion(
     suggestionsStore.storyversionKindSuggestions[props.entryurl],
     (suggestion: StoryversionKindSuggestion) =>
-      suggestion.data.kind === storyversionKind,
+      suggestion.data.kind === storyversionKind
   );
 };
 </script>

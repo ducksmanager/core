@@ -45,7 +45,7 @@ watch(
     if (url) {
       emit("selected", url);
     }
-  },
+  }
 );
 </script>
 <style scoped lang="scss">

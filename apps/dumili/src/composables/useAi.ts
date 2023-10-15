@@ -32,7 +32,7 @@ export default () => {
         .get(
           `${
             import.meta.env.VITE_BACKEND_URL
-          }/cloudinary/indexation/${indexationId}/ai/kumiko`,
+          }/cloudinary/indexation/${indexationId}/ai/kumiko`
         )
         .catch((e) => {
           console.error(e);
@@ -59,7 +59,7 @@ export default () => {
       StoryversionKind.Cover
     ) {
       console.info(
-        "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image...",
+        "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
       );
 
       nextTick(async () => {
@@ -67,7 +67,7 @@ export default () => {
           .get(
             `${
               import.meta.env.VITE_BACKEND_URL
-            }/cloudinary/indexation/${indexationId}/ai/cover-search`,
+            }/cloudinary/indexation/${indexationId}/ai/cover-search`
           )
           .catch((e) => {
             console.error(e);
@@ -88,8 +88,8 @@ export default () => {
       .filter(([, suggestionsForEntry]) =>
         suggestionsForEntry.some(
           ({ data, meta }) =>
-            meta.isAccepted && data.kind === StoryversionKind.Story,
-        ),
+            meta.isAccepted && data.kind === StoryversionKind.Story
+        )
       )
       .map(([url]) => url);
 
@@ -99,7 +99,7 @@ export default () => {
           .get<OcrResult[]>(
             `${
               import.meta.env.VITE_BACKEND_URL
-            }/cloudinary/indexation/${indexationId}/ai/ocr/${url}`,
+            }/cloudinary/indexation/${indexationId}/ai/ocr/${url}`
           )
           .catch((e) => {
             console.error(e);
@@ -118,7 +118,7 @@ export default () => {
               reqBody: {
                 keywords: ocrResults.map(({ text }) => text).join(","),
               },
-            }),
+            })
           )
         ).data.results.results;
 
