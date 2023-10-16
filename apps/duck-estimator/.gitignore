@@ -1,3 +1,4 @@
 .idea
 cache/*/**.html*
 node_modules
+.eslintcache
