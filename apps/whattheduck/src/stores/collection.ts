@@ -382,11 +382,11 @@ export const collection = defineStore('collection', () => {
       axiosResponseToStore: (responseData: AxiosResponseType) => Entity[],
       ref: Ref<Entity[] | null>,
       afterUpdate = false,
-      noFetchIfNonObsoleteSync = false,
+      fetchOnlyIfObsoleteSync = false,
     ): Promise<void> => {
       if (afterUpdate || (!isLoading.value[name] && !ref.value)) {
         isLoading.value[name] = true;
-        if ((noFetchIfNonObsoleteSync && !(await app().isObsoleteSync())) || app().isOfflineMode) {
+        if ((fetchOnlyIfObsoleteSync && !(await app().isObsoleteSync())) || app().isOfflineMode) {
           ref.value = await app().dbInstance.getRepository(model).find();
         } else {
           ref.value = axiosResponseToStore((await axiosCall()).data);
