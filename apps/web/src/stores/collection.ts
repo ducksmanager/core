@@ -1,4 +1,4 @@
-import axios from "axios";
+import { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
@@ -73,6 +73,8 @@ export type QuotedIssue = {
   estimation: number;
   estimationGivenCondition: number;
 };
+
+let api: AxiosInstance;
 
 export const collection = defineStore("collection", () => {
   const collection = ref(null as IssueWithPublicationcode[] | null),
@@ -306,7 +308,7 @@ export const collection = defineStore("collection", () => {
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
       await call(
-        axios,
+        api,
         new POST__collection__issues__single({
           reqBody: data,
         }),
@@ -317,7 +319,7 @@ export const collection = defineStore("collection", () => {
       data: CollectionUpdateMultipleIssues,
     ) => {
       await call(
-        axios,
+        api,
         new POST__collection__issues__multiple({
           reqBody: data,
         }),
@@ -326,7 +328,7 @@ export const collection = defineStore("collection", () => {
     },
     createPurchase = async (date: string, description: string) => {
       await call(
-        axios,
+        api,
         new PUT__collection__purchases({
           reqBody: { date, description },
         }),
@@ -335,7 +337,7 @@ export const collection = defineStore("collection", () => {
     },
     deletePurchase = async (id: number) => {
       await call(
-        axios,
+        api,
         new DELETE__collection__purchases__$id({
           params: { id: String(id) },
         }),
@@ -349,15 +351,16 @@ export const collection = defineStore("collection", () => {
           collectionIssueNumber === issuenumber,
       ),
     loadPreviousVisit = async () => {
-      previousVisit.value = (
-        await call(axios, new POST__collection__lastvisit())
-      ).data?.previousVisit;
+      previousVisit.value = (await call(api, new POST__collection__lastvisit()))
+        .data?.previousVisit;
     },
     loadCollection = async (afterUpdate = false) => {
+      console.log("loadCollection");
+
       if (afterUpdate || (!isLoadingCollection.value && !collection.value)) {
         isLoadingCollection.value = true;
         collection.value = (
-          await call(axios, new GET__collection__issues())
+          await call(api, new GET__collection__issues())
         ).data.map((issue) => ({
           ...issue,
           publicationcode: `${issue.country}/${issue.magazine}`,
@@ -369,7 +372,7 @@ export const collection = defineStore("collection", () => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
         purchases.value = (
-          await call(axios, new GET__collection__purchases())
+          await call(api, new GET__collection__purchases())
         ).data;
         isLoadingPurchases.value = false;
       }
@@ -381,7 +384,7 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingWatchedAuthors.value = true;
         watchedAuthors.value = (
-          await call(axios, new GET__collection__authors__watched())
+          await call(api, new GET__collection__authors__watched())
         ).data;
         isLoadingWatchedAuthors.value = false;
       }
@@ -395,7 +398,7 @@ export const collection = defineStore("collection", () => {
         isLoadingWatchedPublicationsWithSales.value = true;
         watchedPublicationsWithSales.value = (
           await call(
-            axios,
+            api,
             new GET__collection__options__$optionName({
               params: {
                 optionName: "sales_notification_publications",
@@ -415,7 +418,7 @@ export const collection = defineStore("collection", () => {
         isLoadingMarketplaceContactMethods.value = true;
         marketplaceContactMethods.value = (
           await call(
-            axios,
+            api,
             new GET__collection__options__$optionName({
               params: { optionName: "marketplace_contact_methods" },
             }),
@@ -426,7 +429,7 @@ export const collection = defineStore("collection", () => {
     },
     updateMarketplaceContactMethods = async () =>
       await call(
-        axios,
+        api,
         new POST__collection__options__$optionName({
           reqBody: { values: marketplaceContactMethods.value! },
           params: {
@@ -436,7 +439,7 @@ export const collection = defineStore("collection", () => {
       ),
     updateWatchedPublicationsWithSales = async () =>
       await call(
-        axios,
+        api,
         new POST__collection__options__$optionName({
           reqBody: {
             values: watchedPublicationsWithSales.value!,
@@ -459,7 +462,7 @@ export const collection = defineStore("collection", () => {
         isLoadingSuggestions.value = true;
         suggestions.value = (
           await call(
-            axios,
+            api,
             new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit(
               {
                 reqBody: {
@@ -484,7 +487,7 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingSubscriptions.value = true;
         subscriptions.value = (
-          await call(axios, new GET__collection__subscriptions())
+          await call(api, new GET__collection__subscriptions())
         ).data.map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
@@ -496,7 +499,7 @@ export const collection = defineStore("collection", () => {
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
         popularIssuesInCollection.value = (
-          await call(axios, new GET__collection__popular())
+          await call(api, new GET__collection__popular())
         ).data.reduce(
           (acc, issue) => ({
             ...acc,
@@ -510,7 +513,7 @@ export const collection = defineStore("collection", () => {
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
         lastPublishedEdgesForCurrentUser.value = (
-          await call(axios, new GET__collection__edges__lastPublished())
+          await call(api, new GET__collection__edges__lastPublished())
         ).data;
       }
     },
@@ -519,7 +522,7 @@ export const collection = defineStore("collection", () => {
         isLoadingUser.value = true;
         try {
           if (Cookies.get("token")) {
-            user.value = (await call(axios, new GET__collection__user())).data;
+            user.value = (await call(api, new GET__collection__user())).data;
           }
         } catch (e) {
           console.error(e);
@@ -531,6 +534,9 @@ export const collection = defineStore("collection", () => {
       }
     };
   return {
+    setApi: (apiInstance: AxiosInstance) => {
+      api = apiInstance;
+    },
     collection,
     watchedPublicationsWithSales,
     purchases,

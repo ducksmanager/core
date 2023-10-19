@@ -50,13 +50,12 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
   };
 };
 
-let coaApi: AxiosInstance;
-
-export const ISSUECODE_REGEX =
-  /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/;
+let api: AxiosInstance;
 
 export const coa = defineStore("coa", () => {
-  const locale = useI18n().locale,
+  const ISSUECODE_REGEX =
+      /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/,
+    locale = useI18n().locale,
     coverUrls = ref({} as { [issuenumber: string]: string }),
     countryNames = ref(null as { [countrycode: string]: string } | null),
     publicationNames = ref({} as POST__coa__list__publications["resBody"]),
@@ -142,7 +141,7 @@ export const coa = defineStore("coa", () => {
         isLoadingCountryNames.value = true;
         countryNames.value = (
           await call(
-            coaApi,
+            api,
             new GET__coa__list__countries__$locale({
               query: { countryCodes: null },
               params: {
@@ -168,7 +167,7 @@ export const coa = defineStore("coa", () => {
         addPublicationNames(
           (
             await call(
-              coaApi,
+              api,
               new POST__coa__list__publications({
                 reqBody: { publicationCodes: actualNewPublicationCodes },
               }),
@@ -194,7 +193,7 @@ export const coa = defineStore("coa", () => {
           await getChunkedRequests<GET__coa__quotations__publications>({
             callFn: (chunk) =>
               call(
-                coaApi,
+                api,
                 new GET__coa__quotations__publications({
                   query: { publicationCodes: chunk },
                 }),
@@ -220,7 +219,7 @@ export const coa = defineStore("coa", () => {
       if (publicationNamesFullCountries.value.includes(countrycode)) return;
 
       return call(
-        coaApi,
+        api,
         new GET__coa__list__publications__$countrycode({
           params: { countrycode },
         }),
@@ -251,7 +250,7 @@ export const coa = defineStore("coa", () => {
           ...(await getChunkedRequests<GET__coa__authorsfullnames__$authors>({
             callFn: (chunk) =>
               call(
-                coaApi,
+                api,
                 new GET__coa__authorsfullnames__$authors({
                   params: { authors: chunk },
                 }),
@@ -265,7 +264,7 @@ export const coa = defineStore("coa", () => {
     fetchIssueNumbersWithTitles = async (publicationcode: string) => {
       issuesWithTitles.value[publicationcode] = (
         await call(
-          coaApi,
+          api,
           new GET__coa__list__issues__withTitle({
             query: { publicationcode },
           }),
@@ -287,7 +286,7 @@ export const coa = defineStore("coa", () => {
             {
               callFn: async (chunk) =>
                 call(
-                  coaApi,
+                  api,
                   new GET__coa__list__issues__by_publication_codes({
                     query: { publicationCodes: chunk },
                   }),
@@ -326,7 +325,7 @@ export const coa = defineStore("coa", () => {
           await getChunkedRequests<POST__coa__issues__decompose>({
             callFn: (chunk) =>
               call(
-                coaApi,
+                api,
                 new POST__coa__issues__decompose({
                   reqBody: { issueCodes: chunk },
                 }),
@@ -340,11 +339,11 @@ export const coa = defineStore("coa", () => {
     fetchIssueCounts = async () => {
       if (!issueCounts.value)
         issueCounts.value = (
-          await call(coaApi, new GET__coa__list__issues__count({}))
+          await call(api, new GET__coa__list__issues__count({}))
         ).data;
     },
     fetchRecentIssues = async () =>
-      (await call(coaApi, new GET__coa__list__issues__recent())).data,
+      (await call(api, new GET__coa__list__issues__recent())).data,
     fetchIssueUrls = async ({
       publicationcode,
       issuenumber,
@@ -356,7 +355,7 @@ export const coa = defineStore("coa", () => {
       if (!issueDetails.value[issueCode]) {
         const newIssueDetails = (
           await call(
-            coaApi,
+            api,
             new GET__coa__list__issues__details({
               query: { publicationcode, issuenumber },
             }),
@@ -371,7 +370,7 @@ export const coa = defineStore("coa", () => {
     };
   return {
     setApi: (apiInstance: AxiosInstance) => {
-      coaApi = apiInstance;
+      api = apiInstance;
     },
     coverUrls,
     countryNames,
@@ -403,5 +402,7 @@ export const coa = defineStore("coa", () => {
     fetchIssueCodesDetails,
     fetchIssueCounts,
     fetchIssueUrls,
+
+    ISSUECODE_REGEX,
   };
 });
