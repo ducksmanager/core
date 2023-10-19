@@ -32,4 +32,5 @@ npm-debug.log*
 
 *.local
 .eslintcache
+.eslintrc-auto-import.json
 *.d.ts

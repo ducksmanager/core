@@ -16,14 +16,14 @@
 
 <script setup lang="ts">
 import { stores } from '~web';
-import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwnership';
 
-import { collection } from '~/stores/collection';
+import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const router = useRouter();
 const route = useRoute();
-const collectionStore = collection();
+const collectionStore = wtdcollection();
 const coaStore = stores.coa();
 const appStore = app();
 

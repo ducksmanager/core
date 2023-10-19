@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'What The Duck',
   webDir: 'dist',
   server: {
-    url: 'http://192.168.1.209:8005',
+    url: 'http://localhost:8005',
   },
 };
 

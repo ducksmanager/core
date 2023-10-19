@@ -16,18 +16,17 @@
 </template>
 
 <script setup lang="ts">
-import { stores } from '~web';
+import type { GET__coa__list__issues__recent } from '~api-routes';
+import { stores as webStores } from '~web';
 
 import useCondition from '~/composables/useCondition';
-import { collection } from '~/stores/collection';
-import { GET__coa__list__issues__recent } from '~api-routes';
-import { ISSUECODE_REGEX } from '~web/src/stores/coa';
-import { Issue } from '~/persistence/models/dm/Issue';
+import type { Issue } from '~/persistence/models/dm/Issue';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const router = useRouter();
 
-const collectionStore = collection();
-const coaStore = stores.coa();
+const collectionStore = wtdcollection();
+const coaStore = webStores.coa();
 
 const { getConditionKey } = useCondition();
 
@@ -47,7 +46,7 @@ const hasData = computed(() => !!items?.value?.length);
 
 const getTargetUrlFn = (key: string) => ({
   name: 'OwnedIssueCopies',
-  params: key.match(ISSUECODE_REGEX)!.groups,
+  params: key.match(coaStore.ISSUECODE_REGEX)!.groups,
 });
 
 const sortedItems = computed(() =>

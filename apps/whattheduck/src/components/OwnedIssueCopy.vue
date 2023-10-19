@@ -43,15 +43,15 @@
 </template>
 <script setup lang="ts">
 import type { Issue } from '~/persistence/models/dm/Issue';
-import type { purchaseWithStringDate } from '~/stores/collection';
-import { collection } from '~/stores/collection';
 import { condition } from '~/stores/condition';
+import type { purchaseWithStringDate } from '~/stores/wtdcollection';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
 const route = useRoute();
 
 const conditionStore = condition();
-const collectionStore = collection();
+const collectionStore = wtdcollection();
 
 const purchases = computed(() => collectionStore.purchases);
 const conditions = computed(() => ['missing', ...Object.values(conditionStore.conditionL10n.map(({ en }) => en))]);

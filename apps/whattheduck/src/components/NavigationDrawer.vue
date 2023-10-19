@@ -40,10 +40,10 @@
 <script setup lang="ts">
 import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
 
-import { collection } from '~/stores/collection';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
-const collectionStore = collection();
+const collectionStore = wtdcollection();
 
 const selectedIndex = ref(0);
 const appPages = [

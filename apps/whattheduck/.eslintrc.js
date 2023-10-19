@@ -6,7 +6,8 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier",
-    "plugin:prettier-vue/recommended"
+    "plugin:prettier-vue/recommended",
+    './.eslintrc-auto-import.json',
   ],
   plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
   parser: "vue-eslint-parser",
@@ -22,8 +23,11 @@ module.exports = {
     },
   ],
   ignorePatterns: [
-    "**/node_modules",
+    "**/.vscode",
+    "**/android",
     "**/dist",
+    "**/ios",
+    "**/node_modules",
     "/.eslintrc.js",
   ],
   plugins: ["import", "@typescript-eslint"],

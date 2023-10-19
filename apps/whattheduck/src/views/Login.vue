@@ -88,12 +88,12 @@ import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequot
 import { User } from '~/persistence/models/dm/User';
 import { api } from '~/stores/api';
 import { app } from '~/stores/app';
-import { collection } from '~/stores/collection';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const isOfflineMode = ref(false);
 
 const appStore = app();
-const collectionStore = collection();
+const collectionStore = wtdcollection();
 
 const apiStore = api();
 const coaStore = stores.coa();

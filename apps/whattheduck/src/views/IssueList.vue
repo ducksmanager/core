@@ -11,20 +11,19 @@
 </template>
 
 <script setup lang="ts">
-import { stores } from '~web';
+import type { IssueWithPublicationcode } from '~dm-types/IssueWithPublicationcode';
+import { stores as webStores } from '~web';
 
 import useCondition from '~/composables/useCondition';
-import type { Issue } from '~/persistence/models/dm/Issue';
+import { Issue } from '~/persistence/models/dm/Issue';
 import { app } from '~/stores/app';
-import type { IssueWithPublicationcode } from '~/stores/collection';
-import { collection } from '~/stores/collection';
-import { ISSUECODE_REGEX } from '~web/src/stores/coa';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const route = useRoute();
 const router = useRouter();
 
-const collectionStore = collection();
-const coaStore = stores.coa();
+const collectionStore = wtdcollection();
+const coaStore = webStores.coa();
 const appStore = app();
 
 const { getConditionKey } = useCondition();
@@ -42,7 +41,7 @@ const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.valu
 
 const getTargetUrlFn = (key: string) => ({
   name: 'OwnedIssueCopies',
-  params: key.match(ISSUECODE_REGEX)!.groups,
+  params: key.match(coaStore.ISSUECODE_REGEX)!.groups,
 });
 
 const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);

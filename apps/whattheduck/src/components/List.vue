@@ -50,9 +50,9 @@
 import { IonContent } from '@ionic/vue';
 import { stores } from '~web';
 
+import type { OwnershipWithPercentage } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
-import { collection } from '~/stores/collection';
-import { OwnershipWithPercentage } from '~/composables/useOwnership';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 defineSlots<{
   'row-prefix'(props: { item: Item }): any;
@@ -74,7 +74,7 @@ watch(
   () => content.value,
   async (newValue) => {
     if (newValue) {
-      const scrollElement = await newValue?.$el.getScrollElement()!;
+      const scrollElement = await newValue.$el.getScrollElement()!;
       setInterval(() => {
         scrollPosition.value =
           (100 * scrollElement.scrollTop) / (scrollElement.scrollHeight - scrollElement.clientHeight);
@@ -88,7 +88,7 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 
-const collectionStore = collection();
+const collectionStore = wtdcollection();
 const coaStore = stores.coa();
 const appStore = app();
 const filterText = ref('' as string);

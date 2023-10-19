@@ -19,9 +19,9 @@
 </template>
 
 <script lang="ts" setup>
-import { collection } from '~/stores/collection';
+import { wtdcollection } from '~/stores/wtdcollection';
 
-const collectionStore = collection();
+const collectionStore = wtdcollection();
 
 const route = useRoute();
 
@@ -33,6 +33,6 @@ const issuePath = computed(() => route.path.replace(/\/copy\/.*/, ''));
 
 const copies = computed(() => collectionStore.issuesByIssueCode?.[issuecode.value!] || []);
 (async () => {
-  await collection().loadCollection();
+  await collectionStore.loadCollection();
 })();
 </script>

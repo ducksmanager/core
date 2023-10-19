@@ -8,19 +8,21 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from '~web/src/stores/coa';
-import { collection } from '~/stores/collection';
+import { stores as webStores } from '~web';
 
 import { app } from './stores/app';
+import { wtdcollection } from './stores/wtdcollection';
 
-import { coaApi } from '~/api';
+import { coaApi, defaultApi } from '~/api';
 
 const appStore = app();
-const collectionStore = collection();
+const coaStore = webStores.coa();
+const collectionStore = wtdcollection();
 const route = useRoute();
 
 onBeforeMount(() => {
-  coa().setApi(coaApi);
+  coaStore.setApi(coaApi);
+  collectionStore.setApi(defaultApi);
 });
 
 const isConnected = computed(() => !!collectionStore.collection);

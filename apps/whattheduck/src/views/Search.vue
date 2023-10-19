@@ -50,14 +50,14 @@ import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import { stores } from '~web';
 
+import { defaultApi } from '~/api';
 import useCondition from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
-import { collection } from '~/stores/collection';
-import { defaultApi } from '~/api';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
 
-const collectionStore = collection();
+const collectionStore = wtdcollection();
 const coaStore = stores.coa();
 
 const storyTitle = ref('' as string);

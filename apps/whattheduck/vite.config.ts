@@ -19,6 +19,9 @@ export default defineConfig({
 
     AutoImport({
       dts: true,
+      eslintrc: {
+        enabled: true,
+      },
       imports: [
         // presets
         'vue',

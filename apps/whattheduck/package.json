@@ -5,6 +5,7 @@
     "node": "^16.0.0"
   },
   "scripts": {
+    "lint": "eslint --fix .",
     "dev": "vite dev --host",
     "build": "vue-tsc && vite build",
     "ionic:build": "npm run build",

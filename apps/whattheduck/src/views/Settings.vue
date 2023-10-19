@@ -22,7 +22,7 @@
       <ion-item style="border-bottom: 1px solid white">
         {{ t('Notez What The Duck sur le Play Store :-)') }}
       </ion-item>
-      <ion-item>{{ t('Me suggérer des magazines des pays suivants :') }}</ion-item>
+      <ion-item>{{ t('Me suggérer des magazines des pays suivants :') }}</ion-item>
     </ion-content>
   </ion-page>
 </template>
