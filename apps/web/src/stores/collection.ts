@@ -1,6 +1,5 @@
 import { AxiosInstance } from "axios";
 import { AxiosError } from "axios";
-import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
 import {
@@ -77,7 +76,9 @@ export type QuotedIssue = {
   estimationGivenCondition: number;
 };
 
-let api: AxiosInstance;
+let api: AxiosInstance,
+  sessionExistsFn: () => Promise<boolean>,
+  clearSessionFn: () => Promise<void>;
 
 export const collection = defineStore("collection", () => {
   const collection = ref(null as IssueWithPublicationcode[] | null),
@@ -358,8 +359,6 @@ export const collection = defineStore("collection", () => {
         .data?.previousVisit;
     },
     loadCollection = async (afterUpdate = false) => {
-      console.log("loadCollection");
-
       if (afterUpdate || (!isLoadingCollection.value && !collection.value)) {
         isLoadingCollection.value = true;
         collection.value = (
@@ -576,12 +575,12 @@ export const collection = defineStore("collection", () => {
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
         try {
-          if (Cookies.get("token")) {
+          if (await sessionExistsFn()) {
             user.value = (await call(api, new GET__collection__user())).data;
           }
         } catch (e) {
           console.error(e);
-          Cookies.remove("token");
+          await clearSessionFn();
           user.value = null;
         } finally {
           isLoadingUser.value = false;
@@ -589,8 +588,14 @@ export const collection = defineStore("collection", () => {
       }
     };
   return {
-    setApi: (apiInstance: AxiosInstance) => {
-      api = addUrlParamsRequestInterceptor(apiInstance);
+    setApi: (params: {
+      api: typeof api;
+      sessionExistsFn: typeof sessionExistsFn;
+      clearSessionFn: typeof clearSessionFn;
+    }) => {
+      api = addUrlParamsRequestInterceptor(params.api);
+      sessionExistsFn = params.sessionExistsFn;
+      clearSessionFn = params.clearSessionFn;
     },
     collection,
     watchedPublicationsWithSales,

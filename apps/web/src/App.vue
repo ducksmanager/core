@@ -14,20 +14,23 @@ import { addTokenRequestInterceptor } from "~axios-helper";
 import { createCachedCoaApi } from "./api";
 
 onBeforeMount(() => {
-  collection().setApi(
-    addTokenRequestInterceptor(
+  collection().setApi({
+    api: addTokenRequestInterceptor(
       axios.create({
         baseURL: import.meta.env.VITE_GATEWAY_URL,
       }),
       () => Promise.resolve(Cookies.get("token") || ""),
     ),
-  );
-  coa().setApi(
-    createCachedCoaApi(
+    clearSessionFn: () => Promise.resolve(Cookies.remove("token")),
+    sessionExistsFn: () =>
+      Promise.resolve(typeof Cookies.get("token") === "string"),
+  });
+  coa().setApi({
+    api: createCachedCoaApi(
       buildWebStorage(sessionStorage),
       import.meta.env.VITE_GATEWAY_URL,
     ),
-  );
+  });
   collection().loadUser();
 });
 </script>

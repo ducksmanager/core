@@ -369,8 +369,8 @@ export const coa = defineStore("coa", () => {
       }
     };
   return {
-    setApi: (apiInstance: AxiosInstance) => {
-      api = apiInstance;
+    setApi: (params: { api: typeof api }) => {
+      api = params.api;
     },
     coverUrls,
     countryNames,
