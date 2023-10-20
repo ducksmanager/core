@@ -5,19 +5,22 @@
 <script setup lang="ts">
 import axios from "axios";
 import { buildWebStorage } from "axios-cache-interceptor";
+import Cookies from "js-cookie";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { addTokenRequestInterceptor } from "~axios-helper";
 
 import { createCachedCoaApi } from "./api";
 
-collection().loadUser();
-
 onBeforeMount(() => {
   collection().setApi(
-    axios.create({
-      baseURL: import.meta.env.VITE_GATEWAY_URL,
-    }),
+    addTokenRequestInterceptor(
+      axios.create({
+        baseURL: import.meta.env.VITE_GATEWAY_URL,
+      }),
+      () => Cookies.get("token") || "",
+    ),
   );
   coa().setApi(
     createCachedCoaApi(
@@ -25,6 +28,7 @@ onBeforeMount(() => {
       import.meta.env.VITE_GATEWAY_URL,
     ),
   );
+  collection().loadUser();
 });
 </script>
 

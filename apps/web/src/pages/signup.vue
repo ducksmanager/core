@@ -70,7 +70,7 @@ import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 
 import { collection } from "~/stores/collection";
-import { GET__csrf, PUT__collection__user } from "~api-routes";
+import { GET__csrf } from "~api-routes";
 import { call } from "~axios-helper";
 import { ScopedError } from "~dm-types/ScopedError";
 
@@ -87,32 +87,23 @@ let username = $ref("" as string),
 const { t: $t } = useI18n();
 
 const signup = async () => {
-  try {
-    Cookies.set(
-      "token",
-      (
-        await call(
-          axios,
-          new PUT__collection__user({
-            reqBody: {
-              username,
-              password,
-              password2,
-              email,
-            },
-          }),
-        )
-      ).data.token,
-      {
+  await collectionStore.signup(
+    username,
+    password,
+    password2,
+    email,
+    async (newToken) => {
+      Cookies.set("token", newToken, {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      },
-    );
-    await collectionStore.loadUser();
-  } catch (e) {
-    error = ((e as AxiosError)?.response?.data as ScopedError) || {
-      message: $t("Une erreur s'est produite."),
-    };
-  }
+      });
+      await collectionStore.loadUser();
+    },
+    (e) => {
+      error = ((e as AxiosError)?.response?.data as ScopedError) || {
+        message: $t("Une erreur s'est produite."),
+      };
+    },
+  );
 };
 
 watch(

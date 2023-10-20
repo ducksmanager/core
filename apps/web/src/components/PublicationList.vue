@@ -2,55 +2,57 @@
   <nav
     v-if="countryNames && hasPublicationNames"
     id="publication-list"
-    class="navbar navbar-expand-lg navbar-dark bg-dark flex-row align-items-center position-sticky"
+    class="navbar navbar-expand-lg navbar-dark bg-dark flex-row justify-content-between position-sticky"
   >
-    <button
-      v-b-toggle="'nav-publications'"
-      class="navbar-toggler"
-      type="button"
-    >
-      <span class="navbar-toggler-icon" />
-    </button>
-    <a class="navbar-brand" href="#">
-      {{ $t("Collection") }}
-    </a>
-    <b-collapse id="nav-publications" visible>
-      <b-navbar-nav>
-        <li
-          v-for="country in sortedCountries"
-          :key="country"
-          class="nav-item dropdown"
-        >
-          <b-dropdown variant="outline-light">
-            <template #button-content
-              ><Country
-                :country="country"
-                :country-name="countryNames[country]"
-            /></template>
-            <b-dropdown-item
-              v-for="publicationcode in getSortedPublications(country)"
-              :key="publicationcode"
-            >
-              <router-link
-                class="dropdown-item"
-                :to="`/collection/show/${publicationcode}`"
-              >
-                {{
-                  publicationNames[publicationcode] ||
-                  publicationcode.split("/")[1]
-                }}
-              </router-link></b-dropdown-item
-            ></b-dropdown
+    <div class="d-flex flex-row">
+      <button
+        v-b-toggle="'nav-publications'"
+        class="navbar-toggler"
+        type="button"
+      >
+        <span class="navbar-toggler-icon" />
+      </button>
+      <a class="navbar-brand" href="#">
+        {{ $t("Collection") }}
+      </a>
+      <b-collapse id="nav-publications" visible>
+        <b-navbar-nav>
+          <li
+            v-for="country in sortedCountries"
+            :key="country"
+            class="nav-item dropdown"
           >
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" :to="'/collection/show/new'">{{
-            $t("Nouveau magazine")
-          }}</router-link>
-        </li>
-      </b-navbar-nav>
-    </b-collapse>
-    <div class="navbar-nav">
+            <b-dropdown variant="outline-light">
+              <template #button-content
+                ><Country
+                  :country="country"
+                  :country-name="countryNames[country]"
+              /></template>
+              <b-dropdown-item
+                v-for="publicationcode in getSortedPublications(country)"
+                :key="publicationcode"
+              >
+                <router-link
+                  class="dropdown-item"
+                  :to="`/collection/show/${publicationcode}`"
+                >
+                  {{
+                    publicationNames[publicationcode] ||
+                    publicationcode.split("/")[1]
+                  }}
+                </router-link></b-dropdown-item
+              ></b-dropdown
+            >
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :to="'/collection/show/new'">{{
+              $t("Nouveau magazine")
+            }}</router-link>
+          </li>
+        </b-navbar-nav>
+      </b-collapse>
+    </div>
+    <div class="navbar-nav justify-content-end">
       <form class="d-flex">
         <StorySearch :with-title="false" />
       </form>

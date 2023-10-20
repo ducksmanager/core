@@ -1,5 +1,6 @@
 *.local
 *.log
+**/auto-imports.d.ts
 .DS_Store
 .eslintcache
 .idea/

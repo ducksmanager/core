@@ -63,7 +63,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
-import { GET__csrf, POST__login } from "~api-routes";
+import { GET__csrf } from "~api-routes";
 import { call } from "~axios-helper";
 
 const collectionStore = collection();
@@ -77,28 +77,20 @@ let error = $ref(null as string | null);
 let password = $ref("" as string);
 
 const login = async () => {
-  try {
-    Cookies.set(
-      "token",
-      (
-        await call(
-          axios,
-          new POST__login({
-            reqBody: {
-              username,
-              password,
-            },
-          }),
-        )
-      ).data.token,
-      {
-        domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      },
-    );
-    await collectionStore.loadUser();
-  } catch (e) {
-    error = e as string;
-  }
+  await collectionStore.login(
+    username,
+    password,
+    async (newToken) => {
+      const domain = import.meta.env.VITE_COOKIE_DOMAIN;
+      Cookies.set("token", newToken, {
+        domain,
+      });
+      await collectionStore.loadUser();
+    },
+    (e) => {
+      error = e.message;
+    },
+  );
 };
 
 watch(

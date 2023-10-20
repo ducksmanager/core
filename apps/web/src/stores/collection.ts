@@ -1,4 +1,5 @@
 import { AxiosInstance } from "axios";
+import { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 
@@ -17,9 +18,11 @@ import {
   POST__collection__issues__single,
   POST__collection__lastvisit,
   POST__collection__options__$optionName,
+  POST__login,
   PUT__collection__purchases,
+  PUT__collection__user,
 } from "~api-routes";
-import { call } from "~axios-helper";
+import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -517,6 +520,58 @@ export const collection = defineStore("collection", () => {
         ).data;
       }
     },
+    login = async (
+      username: string,
+      password: string,
+      onSuccess: (token: string) => void,
+      onError: (e: AxiosError) => void,
+    ) => {
+      try {
+        onSuccess(
+          (
+            await call(
+              api,
+              new POST__login({
+                reqBody: {
+                  username,
+                  password,
+                },
+              }),
+            )
+          ).data.token,
+        );
+      } catch (e) {
+        onError(e as AxiosError);
+      }
+    },
+    signup = async (
+      username: string,
+      password: string,
+      password2: string,
+      email: string,
+      onSuccess: (token: string) => void,
+      onError: (e: AxiosError) => void,
+    ) => {
+      try {
+        onSuccess(
+          (
+            await call(
+              api,
+              new PUT__collection__user({
+                reqBody: {
+                  username,
+                  password,
+                  password2,
+                  email,
+                },
+              }),
+            )
+          ).data.token,
+        );
+      } catch (e) {
+        onError(e as AxiosError);
+      }
+    },
     loadUser = async (afterUpdate = false) => {
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
@@ -535,7 +590,7 @@ export const collection = defineStore("collection", () => {
     };
   return {
     setApi: (apiInstance: AxiosInstance) => {
-      api = apiInstance;
+      api = addUrlParamsRequestInterceptor(apiInstance);
     },
     collection,
     watchedPublicationsWithSales,
@@ -583,5 +638,7 @@ export const collection = defineStore("collection", () => {
     loadPopularIssuesInCollection,
     loadLastPublishedEdgesForCurrentUser,
     loadUser,
+    login,
+    signup,
   };
 });
