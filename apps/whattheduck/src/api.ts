@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { buildStorage, setupCache } from 'axios-cache-interceptor';
-import { addUrlParamsRequestInterceptor } from '~axios-helper';
+import { addUrlParamsRequestInterceptor, addTokenRequestInterceptor } from '~axios-helper';
 import { createCachedCoaApi, getCommonCacheOptions } from '~web';
 
-import { addTokenRequestInterceptor } from '~/axios-helper';
+import { User } from '~/persistence/models/dm/User';
 import { HttpCache } from '~/persistence/models/internal/HttpCache';
 import { app } from '~/stores/app';
 
@@ -35,4 +35,5 @@ export const defaultApi = addTokenRequestInterceptor(
       getCommonCacheOptions(sqliteStorage),
     ),
   ),
+  async () => (await app().dbInstance.getRepository(User).findOne())?.token || '',
 );

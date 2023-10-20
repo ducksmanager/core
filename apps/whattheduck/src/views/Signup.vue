@@ -99,19 +99,17 @@
 
 <script lang="ts" setup>
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
-import { PUT__collection__user } from '~api-routes';
-import { call } from '~axios-helper';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { User } from '~/persistence/models/dm/User';
-import { api } from '~/stores/api';
 import { app } from '~/stores/app';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const isOfflineMode = ref(false);
 
 const appStore = app();
 
-const apiStore = api();
+const collectionStore = wtdcollection();
 
 const { t } = useI18n();
 
@@ -141,23 +139,23 @@ const cancelSignup = () => {
 };
 
 const submitSignup = async () => {
-  try {
-    if (password.value !== passwordConfirmation.value) {
-      errorTexts.value.passwordConfirmation = t('Les deux mots de passe doivent être identiques');
-      return;
-    }
-    clearErrors();
-    token.value = (
-      await call(
-        apiStore.dmApi,
-        new PUT__collection__user({
-          reqBody: { username: username.value, password: password.value, email: email.value },
-        }),
-      )
-    ).data?.token;
-  } catch (e) {
-    showError(e as AxiosError);
+  if (password.value !== passwordConfirmation.value) {
+    errorTexts.value.passwordConfirmation = t('Les deux mots de passe doivent être identiques');
+    return;
   }
+  clearErrors();
+  await collectionStore.signup(
+    username.value,
+    password.value,
+    password.value,
+    email.value,
+    (newToken) => {
+      token.value = newToken;
+    },
+    (e) => {
+      showError(e);
+    },
+  );
 };
 
 watch(

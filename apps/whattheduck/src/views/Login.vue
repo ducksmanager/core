@@ -79,14 +79,11 @@
 <script lang="ts" setup>
 import { SplashScreen } from '@capacitor/splash-screen';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
-import { POST__login } from '~api-routes';
-import { call } from '~axios-helper';
 import { stores } from '~web';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequotation';
 import { User } from '~/persistence/models/dm/User';
-import { api } from '~/stores/api';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -95,7 +92,6 @@ const isOfflineMode = ref(false);
 const appStore = app();
 const collectionStore = wtdcollection();
 
-const apiStore = api();
 const coaStore = stores.coa();
 
 const dmUrl = import.meta.env.VITE_DM_URL as string;
@@ -126,19 +122,16 @@ const signup = () => {
 };
 
 const submitLogin = async () => {
-  try {
-    clearErrors();
-    token.value = (
-      await call(
-        apiStore.dmApi,
-        new POST__login({
-          reqBody: { username: username.value, password: password.value },
-        }),
-      )
-    ).data?.token;
-  } catch (e) {
-    showError(e as AxiosError);
-  }
+  await collectionStore.login(
+    username.value,
+    password.value,
+    (newToken) => {
+      token.value = newToken;
+    },
+    (e) => {
+      showError(e);
+    },
+  );
 };
 
 watch(

@@ -1,4 +1,4 @@
-import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 import { addUrlParamsRequestInterceptor } from '~axios-helper';
 
@@ -13,18 +13,6 @@ export const createAxios = (baseURL: string): AxiosInstance => {
   addUrlParamsRequestInterceptor(newInstance);
 
   return newInstance;
-};
-
-export const addTokenRequestInterceptor = (axiosInstance: AxiosInstance): AxiosInstance => {
-  axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-    const users = await app().dbInstance.getRepository(User).find();
-    const token = users?.[0]?.token;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
-  return axiosInstance;
 };
 
 axios.interceptors.response.use(

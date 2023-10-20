@@ -57,13 +57,18 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       }
     };
   return {
-    collection: webCollectionStore.collection,
+    collection: computed(() => webCollectionStore.collection),
+    purchases: computed(() => webCollectionStore.purchases),
+    user: computed(() => webCollectionStore.user),
+    issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
+    total: computed(() => webCollectionStore.total),
+    totalPerCountry: computed(() => webCollectionStore.totalPerCountry),
+    totalPerPublication: computed(() => webCollectionStore.totalPerPublication),
     setApi: webCollectionStore.setApi,
     loadCollection: webCollectionStore.loadCollection,
-    issuesByIssueCode: webCollectionStore.issuesByIssueCode,
-    total: webCollectionStore.total,
-    totalPerCountry: webCollectionStore.totalPerCountry,
-    totalPerPublication: webCollectionStore.totalPerPublication,
+    loadPurchases: webCollectionStore.loadPurchases,
+    signup: webCollectionStore.signup,
+    login: webCollectionStore.login,
     ownedCountries,
     ownedPublications,
     fetchAndTrackCollection,
