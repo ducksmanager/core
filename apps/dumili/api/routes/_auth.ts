@@ -23,14 +23,14 @@ export const authenticateToken = (
   const authHeader = req.headers["authorization"];
   const token = authHeader?.split(" ")?.[1];
 
-  if (token == null) return res.sendStatus(401);
+  if (token == null) return res.sendStatus(401).send("No token provided");
 
   jwt.verify(
     token,
     process.env.TOKEN_SECRET as string,
     (err: unknown, user: unknown) => {
       if (err) {
-        return res.sendStatus(401);
+        return res.sendStatus(401).send("Invalid token");
       }
       req.user = user as User;
       next();
