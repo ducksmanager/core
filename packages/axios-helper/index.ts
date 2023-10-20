@@ -63,11 +63,11 @@ declare module "axios" {
 
 export const addTokenRequestInterceptor = <Type extends AxiosInstance>(
   axiosInstance: Type,
-  getTokenFn: () => string
+  getTokenFn: () => Promise<string>
 ): Type => {
   axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-      const token = getTokenFn();
+      const token = await getTokenFn();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

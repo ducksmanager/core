@@ -251,13 +251,12 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     newBookstoreSent = true;
   }
 };
-const formatDate = (date: Date | null) => {
-  return date === null
+const formatDate = (date: Date | null) =>
+  date === null
     ? $t("il y a longtemps")
     : $t("le {date}", {
         date: new Date(date).toLocaleDateString(),
       });
-};
 
 const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
   existingBookstore = bookstore;

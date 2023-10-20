@@ -170,26 +170,24 @@ const inducksIssueNumbersNoSpace = $computed(() =>
 
 const sortedBookcase = computed(() =>
   Object.values(showEdgesForPublication).reduce(
-    (acc, publicationcode) => {
-      return {
-        ...acc,
-        [publicationcode]:
-          inducksIssueNumbersNoSpace[publicationcode]?.map((issuenumber) => ({
-            id: 0,
-            issueCode: `${publicationcode}-${issuenumber}`,
-            edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
-              ? 1
-              : 0,
-            publicationcode,
-            countryCode: publicationcode.split("/")[0],
-            magazineCode: publicationcode.split("/")[1],
-            issuenumber,
-            issuenumberReference: issuenumber,
-            creationDate: new Date(),
-            sprites: [],
-          })) || [],
-      };
-    },
+    (acc, publicationcode) => ({
+      ...acc,
+      [publicationcode]:
+        inducksIssueNumbersNoSpace[publicationcode]?.map((issuenumber) => ({
+          id: 0,
+          issueCode: `${publicationcode}-${issuenumber}`,
+          edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
+            ? 1
+            : 0,
+          publicationcode,
+          countryCode: publicationcode.split("/")[0],
+          magazineCode: publicationcode.split("/")[1],
+          issuenumber,
+          issuenumberReference: issuenumber,
+          creationDate: new Date(),
+          sprites: [],
+        })) || [],
+    }),
     {} as Record<string, BookcaseEdgeWithPopularity[]>,
   ),
 );

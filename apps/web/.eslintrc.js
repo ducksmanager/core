@@ -17,6 +17,7 @@ module.exports = {
   root: true,
   rules: {
     "@typescript-eslint/no-non-null-assertion": "off",
+    "arrow-body-style": ["error", "as-needed"],
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
     "unused-imports/no-unused-imports": "error",

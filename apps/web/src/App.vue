@@ -19,7 +19,7 @@ onBeforeMount(() => {
       axios.create({
         baseURL: import.meta.env.VITE_GATEWAY_URL,
       }),
-      () => Cookies.get("token") || "",
+      () => Promise.resolve(Cookies.get("token") || ""),
     ),
   );
   coa().setApi(
