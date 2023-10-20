@@ -13,7 +13,7 @@ const defaultApi = addTokenRequestInterceptor(
   addUrlParamsRequestInterceptor(
     axios.create({ baseURL: process.env.DM_API_URL })
   ),
-  () => Cookies.get("token") as string
+  () => Promise.resolve(Cookies.get("token") as string)
 );
 export const get = async (req: Request, res: Response) => {
   const indexationResources = await getIndexationResources(

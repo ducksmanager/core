@@ -19,6 +19,7 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
+    "arrow-body-style": ["error", "as-needed"],
     "unused-imports/no-unused-imports": "error",
     "vue/multi-word-component-names": "off",
     "vue/no-dupe-keys": "off",

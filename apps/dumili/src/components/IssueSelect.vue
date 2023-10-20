@@ -116,12 +116,10 @@ const publicationIssues = computed(
 const issues = computed(
   () =>
     publicationIssues.value &&
-    coaStore.issueNumbers[currentPublicationCode.value!].map((issuenumber) => {
-      return {
-        value: issuenumber,
-        text: issuenumber,
-      };
-    })
+    coaStore.issueNumbers[currentPublicationCode.value!].map((issuenumber) => ({
+      value: issuenumber,
+      text: issuenumber,
+    }))
 );
 
 const isValid = computed(

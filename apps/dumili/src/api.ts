@@ -17,7 +17,7 @@ const defaultApi = addTokenRequestInterceptor(
   addUrlParamsRequestInterceptor(
     axios.create({ baseURL: import.meta.env.VITE_DM_API_URL })
   ),
-  () => Cookies.get("token") as string
+  () => Promise.resolve(Cookies.get("token") as string)
 );
 
 export { cachedCoaApi, defaultApi };
