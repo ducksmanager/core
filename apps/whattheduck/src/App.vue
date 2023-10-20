@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { stores as webStores } from '~web';
 
+import { User } from './persistence/models/dm/User';
 import { app } from './stores/app';
 import { wtdcollection } from './stores/wtdcollection';
 
@@ -21,8 +22,15 @@ const collectionStore = wtdcollection();
 const route = useRoute();
 
 onBeforeMount(() => {
-  coaStore.setApi(coaApi);
-  collectionStore.setApi(defaultApi);
+  coaStore.setApi({ api: coaApi });
+  collectionStore.setApi({
+    api: defaultApi,
+    sessionExistsFn: () =>
+      app()
+        .dbInstance.getRepository(User)
+        .exist({ select: ['token'] }),
+    clearSessionFn: async () => Promise.resolve(),
+  });
 });
 
 const isConnected = computed(() => !!collectionStore.collection);

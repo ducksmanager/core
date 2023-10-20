@@ -35,5 +35,9 @@ export const defaultApi = addTokenRequestInterceptor(
       getCommonCacheOptions(sqliteStorage),
     ),
   ),
-  async () => (await app().dbInstance.getRepository(User).findOne())?.token || '',
+  async () =>
+    app()
+      .dbInstance.getRepository(User)
+      .find({ select: ['token'] })
+      .then(([{ token }]) => token),
 );
