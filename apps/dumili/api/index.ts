@@ -11,11 +11,6 @@ dotenv.config({
   path: ".env",
 });
 
-dotenv.config({
-  path: ".env.local",
-  override: true,
-});
-
 const port = 3002;
 
 Sentry.init({
