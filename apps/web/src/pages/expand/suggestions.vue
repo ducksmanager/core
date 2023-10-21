@@ -73,6 +73,7 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection as collectionStore } from "~/stores/collection";
+import { stats as statsStore } from "~/stores/stats";
 
 const countryCode = $ref("ALL" as string);
 const { t: $t } = useI18n();
@@ -104,7 +105,7 @@ watch(
 );
 
 collectionStore().loadCollection();
-collectionStore().loadWatchedAuthors();
+statsStore().loadRatings();
 </script>
 
 <style scoped lang="scss">

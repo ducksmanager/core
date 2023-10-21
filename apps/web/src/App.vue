@@ -9,18 +9,24 @@ import Cookies from "js-cookie";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { stats } from "~/stores/stats";
 import { addTokenRequestInterceptor } from "~axios-helper";
 
 import { createCachedCoaApi } from "./api";
 
 onBeforeMount(() => {
+  const defaultApi = addTokenRequestInterceptor(
+    axios.create({
+      baseURL: import.meta.env.VITE_GATEWAY_URL,
+    }),
+    () => Promise.resolve(Cookies.get("token") || ""),
+  );
+
+  stats().setApi({
+    api: defaultApi,
+  });
   collection().setApi({
-    api: addTokenRequestInterceptor(
-      axios.create({
-        baseURL: import.meta.env.VITE_GATEWAY_URL,
-      }),
-      () => Promise.resolve(Cookies.get("token") || ""),
-    ),
+    api: defaultApi,
     clearSessionFn: () => Promise.resolve(Cookies.remove("token")),
     sessionExistsFn: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),

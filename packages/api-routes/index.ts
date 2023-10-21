@@ -28,7 +28,7 @@ import { SuggestionsWithDetails } from "~dm-types/SuggestionsWithDetails";
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { WantedEdge } from "~dm-types/WantedEdge";
-import { inducks_issue, inducks_issuequotation, inducks_person } from "~prisma-clients/client_coa";
+import { inducks_issue, inducks_issuequotation } from "~prisma-clients/client_coa";
 import { authorUser, bookstoreComment, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "~prisma-clients/client_dm";
 import { edgeContributor, edgeModel,elementImage } from "~prisma-clients/client_edgecreator";
 
@@ -547,7 +547,7 @@ export class GET__global_stats__user__collection__rarity  extends ContractWithMe
             static readonly url = "/global-stats/user/collection/rarity";
         }
 export class GET__coa__authorsfullnames__search__$partialAuthorName  extends ContractWithMethodAndUrl<{
-    resBody: { [_personcode: string]: inducks_person[] };
+    resBody: { [_personcode: string]: string };
     params: { partialAuthorName: string };
   }> {
             static readonly method = "get";

@@ -63,7 +63,7 @@ declare module "axios" {
 
 export const addTokenRequestInterceptor = <Type extends AxiosInstance>(
   axiosInstance: Type,
-  getTokenFn: () => Promise<string>
+  getTokenFn: () => Promise<string | undefined>
 ): Type => {
   axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {

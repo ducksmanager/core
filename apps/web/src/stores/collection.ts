@@ -4,7 +4,6 @@ import { defineStore } from "pinia";
 
 import {
   DELETE__collection__purchases__$id,
-  GET__collection__authors__watched,
   GET__collection__edges__lastPublished,
   GET__collection__issues,
   GET__collection__options__$optionName,
@@ -103,7 +102,6 @@ export const collection = defineStore("collection", () => {
     isLoadingWatchedPublicationsWithSales = ref(false as boolean),
     isLoadingMarketplaceContactMethods = ref(false as boolean),
     isLoadingPurchases = ref(false as boolean),
-    isLoadingWatchedAuthors = ref(false as boolean),
     isLoadingSuggestions = ref(false as boolean),
     isLoadingSubscriptions = ref(false as boolean),
     user = ref(undefined as Omit<user, "password"> | undefined | null),
@@ -379,18 +377,6 @@ export const collection = defineStore("collection", () => {
         isLoadingPurchases.value = false;
       }
     },
-    loadWatchedAuthors = async (afterUpdate = false) => {
-      if (
-        afterUpdate ||
-        (!isLoadingWatchedAuthors.value && !watchedAuthors.value)
-      ) {
-        isLoadingWatchedAuthors.value = true;
-        watchedAuthors.value = (
-          await call(api, new GET__collection__authors__watched())
-        ).data;
-        isLoadingWatchedAuthors.value = false;
-      }
-    },
     loadWatchedPublicationsWithSales = async (afterUpdate = false) => {
       if (
         afterUpdate ||
@@ -633,7 +619,6 @@ export const collection = defineStore("collection", () => {
     loadPreviousVisit,
     loadCollection,
     loadPurchases,
-    loadWatchedAuthors,
     loadWatchedPublicationsWithSales,
     loadMarketplaceContactMethods,
     updateMarketplaceContactMethods,

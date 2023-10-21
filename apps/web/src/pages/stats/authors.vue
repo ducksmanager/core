@@ -3,12 +3,8 @@ alias: [/auteurs]
 </route>
 
 <template>
-  <div v-if="watchedAuthors && chartData">
-    <b-alert
-      v-if="!watchedAuthors.length"
-      :model-value="true"
-      variant="warning"
-    >
+  <div v-if="ratings && chartData">
+    <b-alert v-if="!ratings.length" :model-value="true" variant="warning">
       {{
         $t(
           "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.",
@@ -53,7 +49,7 @@ alias: [/auteurs]
       </div>
       <hr />
     </div>
-    <AuthorList :watched-authors="watchedAuthors" />
+    <AuthorList :ratings="ratings" />
   </div>
 </template>
 
@@ -75,7 +71,7 @@ import { watch } from "vue";
 import { Bar } from "vue-chartjs";
 import { useI18n } from "vue-i18n";
 
-import { collection as collectionStore } from "~/stores/collection";
+import { stats as statsStore } from "~/stores/stats";
 import { GET__collection__stats__watchedauthorsstorycount } from "~api-routes";
 import { call } from "~axios-helper";
 
@@ -91,7 +87,7 @@ Chart.register(
 
 const { t: $t } = useI18n();
 
-const watchedAuthors = $computed(() => collectionStore().watchedAuthors);
+const ratings = $computed(() => statsStore().ratings);
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),
   percentage: $t("Afficher en pourcentages"),
@@ -202,7 +198,7 @@ watch(
 );
 
 (async () => {
-  await collectionStore().loadWatchedAuthors();
+  await statsStore().loadRatings();
   watchedAuthorsStoryCount = ((
     await call(axios, new GET__collection__stats__watchedauthorsstorycount())
   ).data || {}) as WatchedAuthorsStoryCount;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-alert
-      v-if="!watchedAuthors.length"
+      v-if="!ratings.length"
       :model-value="true"
       variant="warning"
       class="section"
@@ -32,7 +32,7 @@
       </p>
       <div v-if="personNames">
         <b-row
-          v-for="author in watchedAuthors"
+          v-for="author in ratings"
           :key="author.personcode"
           align-v="center"
           class="mb-2"
@@ -43,12 +43,13 @@
           <b-col lg="2">
             <StarRating
               v-model:rating="author.notation"
+              :readonly="false"
               :max-rating="10"
-              @update:rating="updateRating(author)"
+              @update:rating="statsStore.updateRating(author)"
             />
           </b-col>
           <b-col lg="2">
-            <b-button size="sm" @click="deleteAuthor(author)">
+            <b-button size="sm" @click="statsStore.deleteAuthor(author)">
               {{ $t("Supprimer") }}
             </b-button>
           </b-col>
@@ -57,11 +58,7 @@
     </div>
     <div>
       <h5>{{ $t("Ajouter un auteur") }}</h5>
-      <b-alert
-        v-if="watchedAuthors.length >= 5"
-        variant="warning"
-        :model-value="true"
-      >
+      <b-alert v-if="ratings.length >= 5" variant="warning" :model-value="true">
         {{
           $t(
             "Vous avez atteint le nombre maximal d'auteurs surveillés. Supprimez des auteurs existants pour en surveiller d'autres.",
@@ -79,7 +76,9 @@
               />
               <datalist
                 v-if="
-                  searchResults && Object.keys(searchResults) && !isSearching
+                  searchResults &&
+                  Object.keys(searchResults) &&
+                  !statsStore.isSearching
                 "
               >
                 <option v-if="!Object.keys(searchResults).length">
@@ -88,11 +87,13 @@
                 <option
                   v-for="(fullName, personcode) in searchResults"
                   :key="personcode"
-                  :disabled="isAuthorWatched(personcode as string)"
+                  :class="{
+                    disabled: statsStore.isAuthorWatched(personcode as string),
+                  }"
                   @click="
-                    isAuthorWatched(personcode as string)
-                      ? () => {}
-                      : createRating({ personcode: personcode as string })
+                    statsStore.createRating({
+                      personcode: personcode as string,
+                    })
                   "
                 >
                   {{ fullName }}
@@ -107,47 +108,35 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { watch } from "vue";
-
 import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import {
-  DELETE__collection__authors__watched,
-  GET__coa__authorsfullnames__search__$partialAuthorName,
-  POST__collection__authors__watched,
-  PUT__collection__authors__watched,
-} from "~api-routes";
-import { call } from "~axios-helper";
-import { inducks_person } from "~prisma-clients/client_coa";
+import { stats } from "~/stores/stats";
 import { authorUser } from "~prisma-clients/client_dm";
 
-const { watchedAuthors } = defineProps<{
-  watchedAuthors: authorUser[];
+const statsStore = stats();
+
+const { ratings } = defineProps<{
+  ratings: authorUser[];
 }>();
 
-let isSearching = $ref(false as boolean);
-let pendingSearch = $ref(null as string | null);
 const search = $ref("");
-let searchResults = $ref(
-  null as { [personcode: string]: inducks_person[] } | null,
-);
-
+const searchResults = $computed(() => statsStore.authorSearchResults);
 const personNames = $computed(() => coa().personNames);
 
 watch(
   () => search,
   async (newValue) => {
     if (newValue !== "") {
-      pendingSearch = newValue;
-      if (!isSearching) await runSearch(newValue);
+      statsStore.pendingSearch = newValue;
+      if (!statsStore.isSearching) {
+        await statsStore.searchAuthors(newValue);
+      }
     }
   },
 );
 watch(
-  () => watchedAuthors,
+  () => ratings,
   async (newValue) => {
-    if (watchedAuthors?.length) {
+    if (ratings?.length) {
       await coa().fetchPersonNames(
         newValue.map(({ personcode }) => personcode),
       );
@@ -155,51 +144,6 @@ watch(
   },
   { immediate: true },
 );
-const { loadWatchedAuthors } = collection();
-const isAuthorWatched = (personcode: string) =>
-  watchedAuthors.some(
-    ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode,
-  );
-const createRating = async (data: { personcode: string }) => {
-  await call(
-    axios,
-    new PUT__collection__authors__watched({
-      reqBody: data,
-    }),
-  );
-  await loadWatchedAuthors(true);
-};
-const updateRating = async (data: { personcode: string; notation: number }) => {
-  await call(axios, new POST__collection__authors__watched({ reqBody: data }));
-};
-const deleteAuthor = async (data: { personcode: string }) => {
-  await call(
-    axios,
-    new DELETE__collection__authors__watched({ reqBody: data }),
-  );
-  await loadWatchedAuthors(true);
-};
-const runSearch = async (value: string) => {
-  if (!isSearching) {
-    try {
-      isSearching = true;
-      searchResults = (
-        await call(
-          axios,
-          new GET__coa__authorsfullnames__search__$partialAuthorName({
-            params: {
-              partialAuthorName: value,
-            },
-          }),
-        )
-      ).data;
-    } finally {
-      isSearching = false;
-      // The input value has changed since the beginning of the search, searching again
-      if (value !== pendingSearch) await runSearch(pendingSearch!);
-    }
-  }
-};
 </script>
 
 <style scoped lang="scss">
@@ -226,8 +170,8 @@ datalist {
     border-bottom: 1px solid #888;
     overflow-x: hidden;
 
-    &[disabled] {
-      cursor: default;
+    &.disabled {
+      color: #777;
     }
 
     a {

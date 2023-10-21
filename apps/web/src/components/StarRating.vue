@@ -1,5 +1,5 @@
 <template>
-  <div @mouseout="currentRating = rating">
+  <div :class="{ readonly }" @mouseout="currentRating = rating">
     <span
       v-for="index in maxRating"
       :key="index"
@@ -12,24 +12,36 @@
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
+  name: "StarRating",
+});
+</script>
 <script setup lang="ts">
 const { rating } = defineProps<{
   rating: number;
   maxRating: number;
+  readonly: boolean;
 }>();
 const emit = defineEmits<{
   (e: "update:rating", currentRating: number): void;
 }>();
 
-const currentRating = $ref(rating);
+const currentRating = ref(rating);
 </script>
 
 <style scoped lang="scss">
-span {
-  cursor: pointer;
+div {
+  &.readonly {
+    pointer-events: none;
+  }
+  span {
+    cursor: pointer;
 
-  svg {
-    fill: #ffc107;
+    svg {
+      fill: #ffc107;
+    }
   }
 }
 </style>
