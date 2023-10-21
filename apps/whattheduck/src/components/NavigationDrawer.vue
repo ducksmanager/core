@@ -38,7 +38,7 @@
   </ion-menu>
 </template>
 <script setup lang="ts">
-import { listOutline, listSharp, searchOutline, searchSharp } from 'ionicons/icons';
+import { listOutline, listSharp, searchOutline, searchSharp, starOutline, starSharp } from 'ionicons/icons';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -58,6 +58,12 @@ const appPages = [
     url: '/collection',
     iosIcon: listOutline,
     mdIcon: listSharp,
+  },
+  {
+    title: t('Mes auteurs favoris'),
+    url: '/authors',
+    iosIcon: starOutline,
+    mdIcon: starSharp,
   },
 ];
 

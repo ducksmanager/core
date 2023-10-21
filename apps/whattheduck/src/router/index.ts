@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 import OwnedIssueCopy from '~/components/OwnedIssueCopy.vue';
 import AddFromCamera from '~/views/AddFromCamera.vue';
+import Authors from '~/views/Authors.vue';
 import CountryList from '~/views/CountryList.vue';
 import Forgot from '~/views/Forgot.vue';
 import IssueList from '~/views/IssueList.vue';
@@ -53,6 +54,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/report',
     component: Report,
+  },
+  {
+    path: '/authors',
+    component: Authors,
   },
   {
     path: '/signup',

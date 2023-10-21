@@ -18,11 +18,13 @@ import { coaApi, defaultApi } from '~/api';
 
 const appStore = app();
 const coaStore = webStores.coa();
+const statsStore = webStores.stats();
 const collectionStore = wtdcollection();
 const route = useRoute();
 
 onBeforeMount(() => {
   coaStore.setApi({ api: coaApi });
+  statsStore.setApi({ api: defaultApi });
   collectionStore.setApi({
     api: defaultApi,
     sessionExistsFn: () =>

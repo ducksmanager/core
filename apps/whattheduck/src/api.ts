@@ -39,5 +39,6 @@ export const defaultApi = addTokenRequestInterceptor(
     app()
       .dbInstance.getRepository(User)
       .find({ select: ['token'] })
-      .then(([{ token }]) => token),
+      .then(([{ token }]) => token)
+      .catch(() => undefined),
 );

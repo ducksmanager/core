@@ -12,6 +12,7 @@ export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
 
 export const wtdcollection = defineStore('wtdcollection', () => {
   const coaStore = webStores.coa();
+  const statsStore = webStores.stats();
   const webCollectionStore = webStores.collection();
 
   const ownedCountries = computed(() =>
@@ -35,6 +36,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
           sort: 'score',
         });
         await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
+        await statsStore.loadRatings();
         await coaStore.fetchCountryNames(true);
         await coaStore.fetchPublicationNames(['ALL']);
         await coaStore.fetchIssueCounts();
