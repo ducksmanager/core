@@ -28,12 +28,12 @@ export const coaApi = createCachedCoaApi(sqliteStorage, import.meta.env.VITE_DM_
 
 export const defaultApi = addTokenRequestInterceptor(
   addUrlParamsRequestInterceptor(
-    setupCache(
-      axios.create({
-        baseURL: import.meta.env.VITE_DM_API_URL,
-      }),
-      getCommonCacheOptions(sqliteStorage),
-    ),
+    //setupCache(
+    axios.create({
+      baseURL: import.meta.env.VITE_DM_API_URL,
+    }),
+    //  getCommonCacheOptions(sqliteStorage),
+    //),
   ),
   async () =>
     app()

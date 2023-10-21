@@ -31,7 +31,9 @@
               v-model:rating="author.notation"
               :max-rating="10"
               @update:rating="statsStore.updateRating(author)"
-            />
+              ><template #filledStarIcon><ion-icon :ios="starOutline" :android="starSharp" /></template
+              ><template #emptyStarIcon><ion-icon :ios="star" :android="star" /></template
+            ></StarRating>
           </ion-col>
           <ion-col lg="2">
             <ion-button @click="statsStore.deleteAuthor(author)">
@@ -67,6 +69,8 @@ import { components } from '~web';
 import { coa } from '~web/src/stores/coa';
 import { app } from '~/stores/app';
 
+import { starOutline, starSharp, star } from 'ionicons/icons';
+
 const StarRating = components['StarRating'];
 
 const { t } = useI18n();
@@ -85,8 +89,9 @@ statsStore.loadRatings();
 watch(
   () => authorName.value,
   (newValue) => {
-    console.log('changed');
-    statsStore.searchAuthors(newValue);
+    if (newValue) {
+      statsStore.searchAuthors(newValue);
+    }
   },
 );
 
