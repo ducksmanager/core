@@ -453,13 +453,13 @@ export const collection = defineStore("collection", () => {
             api,
             new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit(
               {
-                reqBody: {
+                params: {
                   countrycode: countryCode || "ALL",
                   sincePreviousVisit: sinceLastVisit
                     ? "since_previous_visit"
                     : "_",
                   sort,
-                  limit: sinceLastVisit ? 100 : 20,
+                  limit: sinceLastVisit ? "100" : "20",
                 },
               },
             ),

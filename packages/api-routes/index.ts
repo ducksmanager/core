@@ -654,11 +654,11 @@ export class PUT__edgecreator__publish__$country__$magazine__$issuenumber  exten
         }
 export class GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit  extends ContractWithMethodAndUrl<{
       resBody: SuggestionsWithDetails;
-      reqBody: {
+      params: {
         countrycode: string;
         sincePreviousVisit: "since_previous_visit" | "_";
         sort: "score" | "oldestdate";
-        limit: number | null;
+        limit: string;
       };
     }> {
             static readonly method = "get";

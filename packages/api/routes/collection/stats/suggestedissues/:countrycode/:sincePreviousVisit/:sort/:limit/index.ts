@@ -21,15 +21,15 @@ export const get = [
   async (
     ...[req, res]: ExpressCall<{
       resBody: SuggestionsWithDetails;
-      reqBody: {
+      params: {
         countrycode: string;
         sincePreviousVisit: "since_previous_visit" | "_";
         sort: "score" | "oldestdate";
-        limit: number | null;
+        limit: string;
       };
     }>
   ) => {
-    const { countrycode, sincePreviousVisit, sort, limit } = req.body;
+    const { countrycode, sincePreviousVisit, sort, limit } = req.params;
     const since =
       sincePreviousVisit === "since_previous_visit"
         ? (await prismaDm.user.findUnique({ where: { id: req.user!.id } }))!
@@ -37,7 +37,14 @@ export const get = [
         : null;
 
     const { suggestionsPerUser, authors, storyDetails, publicationTitles } =
-      await getSuggestions(since, countrycode, sort, req.user!.id, limit, true);
+      await getSuggestions(
+        since,
+        countrycode,
+        sort,
+        req.user!.id,
+        parseInt(limit),
+        true
+      );
 
     const suggestionsForUser =
       suggestionsPerUser[req.user!.id] || new IssueSuggestionList();
@@ -155,7 +162,7 @@ export const getSuggestions = async (
              replace(suggested.oldestdate,'-00', '-01') AS oldestdate,
              missing.personcode,
              missing.storycode
-      FROM utilisateurs_publications_suggerees as suggestedIssueForUser
+      FROM utilisateurs_publications_suggerees as suggested
                INNER JOIN utilisateurs_publications_manquantes as missing
                           USING (ID_User, publicationcode, issuenumber)
       WHERE suggested.oldestdate <= '${new Date().toISOString().split("T")[0]}'
