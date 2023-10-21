@@ -6,8 +6,14 @@
       @mouseover="currentRating = index"
       @click="emit('update:rating', currentRating)"
     >
-      <i-bi-star-fill v-if="index <= currentRating" />
-      <i-bi-star v-else />
+      <template v-if="index <= currentRating"
+        ><slot v-if="$slots.emptyStarIcon" name="emptyStarIcon" />
+        <i-bi-star-fill v-else />
+      </template>
+      <template v-else
+        ><slot v-if="$slots.filledStarIcon" name="filledStarIcon"></slot
+        ><i-bi-star v-else></i-bi-star
+      ></template>
     </span>
   </div>
 </template>
@@ -26,6 +32,11 @@ const { rating } = defineProps<{
 }>();
 const emit = defineEmits<{
   (e: "update:rating", currentRating: number): void;
+}>();
+
+defineSlots<{
+  filledStarIcon: void;
+  emptyStarIcon: void;
 }>();
 
 const currentRating = ref(rating);
