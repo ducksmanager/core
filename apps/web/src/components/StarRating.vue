@@ -5,15 +5,8 @@
       :key="index"
       @mouseover="currentRating = index"
       @click="emit('update:rating', currentRating)"
-    >
-      <template v-if="index <= currentRating"
-        ><slot v-if="$slots.emptyStarIcon" name="emptyStarIcon" />
-        <i-bi-star-fill v-else />
-      </template>
-      <template v-else
-        ><slot v-if="$slots.filledStarIcon" name="filledStarIcon"></slot
-        ><i-bi-star v-else></i-bi-star
-      ></template>
+      ><slot v-if="index <= currentRating" name="emptyStarIcon" />
+      <slot v-else name="filledStarIcon"></slot>
     </span>
   </div>
 </template>

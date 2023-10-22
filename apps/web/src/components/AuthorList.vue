@@ -46,7 +46,9 @@
               :readonly="false"
               :max-rating="10"
               @update:rating="statsStore.updateRating(author)"
-            />
+              ><template #emptyStarIcon><i-bi-star /></template>
+              <template #filledStarIcon><i-bi-star-fill /></template
+            ></StarRating>
           </b-col>
           <b-col lg="2">
             <b-button size="sm" @click="statsStore.deleteAuthor(author)">
