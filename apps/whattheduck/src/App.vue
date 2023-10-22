@@ -33,9 +33,10 @@ onBeforeMount(() => {
         .exist({ select: ['token'] }),
     clearSessionFn: async () => Promise.resolve(),
   });
+  collectionStore.loadUser();
 });
 
-const isConnected = computed(() => !!collectionStore.collection);
+const isConnected = computed(() => !!collectionStore.user);
 
 watch(
   () => route.query?.coa,

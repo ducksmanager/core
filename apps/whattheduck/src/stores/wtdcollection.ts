@@ -67,6 +67,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     totalPerCountry: computed(() => webCollectionStore.totalPerCountry),
     totalPerPublication: computed(() => webCollectionStore.totalPerPublication),
     setApi: webCollectionStore.setApi,
+    loadUser: webCollectionStore.loadUser,
     loadCollection: webCollectionStore.loadCollection,
     loadPurchases: webCollectionStore.loadPurchases,
     signup: webCollectionStore.signup,
