@@ -33,7 +33,7 @@
         <div v-for="issue of selectedStory.issues">
           <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
             v-if="issue.collectionIssue"
-            :value="getConditionKey(issue.collectionIssue.condition)"
+            :value="getConditionText(issue.collectionIssue.condition)"
           />
           {{ issue.publicationName }}
           {{ issue.issuenumber }}
@@ -51,7 +51,7 @@ import type { SimpleStory } from '~dm-types/SimpleStory';
 import { stores } from '~web';
 
 import { defaultApi } from '~/api';
-import useCondition from '~/composables/useCondition';
+import { getConditionText } from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -62,8 +62,6 @@ const coaStore = stores.coa();
 
 const storyTitle = ref('' as string);
 const storyResults = ref(null as { results: any[] } | null);
-
-const { getConditionKey } = useCondition();
 
 const selectedStory = ref(
   null as

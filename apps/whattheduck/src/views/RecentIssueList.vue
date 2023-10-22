@@ -7,7 +7,7 @@
     :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
   >
     <template #row-prefix="{ item }">
-      <Condition v-if="item.owned" :value="getConditionKey(item.owned.condition)" />
+      <Condition v-if="item.owned" :value="getConditionText(item.owned.condition)" />
     </template>
     <template #row-label="{ item }">
       {{ coaStore.publicationNames[item.publicationcode!] }} {{ item.issuenumber }}
@@ -19,7 +19,7 @@
 import type { GET__coa__list__issues__recent } from '~api-routes';
 import { stores as webStores } from '~web';
 
-import useCondition from '~/composables/useCondition';
+import { getConditionText } from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -27,8 +27,6 @@ const router = useRouter();
 
 const collectionStore = wtdcollection();
 const coaStore = webStores.coa();
-
-const { getConditionKey } = useCondition();
 
 type Item = GET__coa__list__issues__recent['resBody'][0] & { owned?: Issue };
 

@@ -15,6 +15,7 @@ import RecentIssueList from '~/views/RecentIssueList.vue';
 import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
 import Signup from '~/views/Signup.vue';
+import Stats from '~/views/Stats.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -58,6 +59,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/authors',
     component: Authors,
+  },
+  {
+    path: '/stats',
+    component: Stats,
   },
   {
     path: '/signup',

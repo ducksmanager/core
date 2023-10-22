@@ -2,7 +2,7 @@
   <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaList" />
-      <Condition :value="getConditionKey(item.condition)" />
+      <Condition :value="getConditionText(item.condition)" />
     </template>
     <template #row-label="{ item }">
       <Issue v-bind="item" />
@@ -14,7 +14,7 @@
 import type { IssueWithPublicationcode } from '~dm-types/IssueWithPublicationcode';
 import { stores as webStores } from '~web';
 
-import useCondition from '~/composables/useCondition';
+import { getConditionText } from '~/composables/useCondition';
 import { Issue } from '~/persistence/models/dm/Issue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -25,8 +25,6 @@ const router = useRouter();
 const collectionStore = wtdcollection();
 const coaStore = webStores.coa();
 const appStore = app();
-
-const { getConditionKey } = useCondition();
 
 defineSlots<{
   rowPrefix: { item: IssueWithPublicationcode };
