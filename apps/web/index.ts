@@ -4,6 +4,7 @@ export {
   getCommonCacheOptions,
 } from "./src/api";
 import StarRating from "./src/components/StarRating.vue";
+import Conditions from "./src/components/stats/ConditionsComponent.vue";
 import { bookcase } from "./src/stores/bookcase";
 import { coa } from "./src/stores/coa";
 import { collection } from "./src/stores/collection";
@@ -17,6 +18,7 @@ export const stores = {
 
 export const components = {
   StarRating,
+  Conditions,
 };
 
 export { default as i18n } from "./src/i18n";
