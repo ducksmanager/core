@@ -39,7 +39,6 @@
     "@types/js-cookie": "^3.0.4",
     "@types/page-flip": "^2.0.1",
     "@vitejs/plugin-vue": "^4.4.0",
-    "@vue-macros/reactivity-transform": "^0.3.23",
     "concurrently": "^8.2.1",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^8.10.0",

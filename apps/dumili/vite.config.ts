@@ -2,7 +2,6 @@ import { promises as fs } from "node:fs";
 
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import vue from "@vitejs/plugin-vue";
-import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolver from "unplugin-icons/resolver";
@@ -42,8 +41,6 @@ export default defineConfig({
       resolvers: [BootstrapVueNextResolver(), IconsResolver({})],
       dts: true,
     }),
-
-    ReactivityTransform(),
 
     Pages(),
 
