@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" :style="style || {}">
     <pie :data="chartData" :options="options" />
   </div>
 </template>
@@ -17,16 +17,11 @@ import {
 } from "chart.js";
 import { Pie } from "vue-chartjs";
 
-const props = withDefaults(
-  defineProps<{
-    linkToCollectionIfNoIssue: boolean;
-    conditions: { dbValue: string; color: string; text: string }[];
-    numberPerCondition: Record<string, number>;
-  }>(),
-  {
-    linkToCollectionIfNoIssue: true,
-  },
-);
+const props = defineProps<{
+  conditions: { dbValue: string; color: string; text: string }[];
+  numberPerCondition: Record<string, number>;
+  style: Record<string, string>;
+}>();
 
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 const values = computed(() =>
@@ -75,10 +70,8 @@ const options = computed(
 
 <style scoped lang="scss">
 .wrapper {
-  > div {
-    max-width: 100%;
-    max-height: 100%;
-  }
+  max-width: 100%;
+  max-height: 100%;
 
   :deep(canvas) {
     max-width: 100% !important;
