@@ -71,11 +71,13 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     ownedCountries,
     ownedPublications,
     purchases: computed(() => webCollectionStore.purchases),
+    quotationSum: computed(() => webCollectionStore.quotationSum),
     setApi: webCollectionStore.setApi,
     signup: webCollectionStore.signup,
     total: computed(() => webCollectionStore.total),
     totalPerCountry: computed(() => webCollectionStore.totalPerCountry),
     totalPerPublication: computed(() => webCollectionStore.totalPerPublication),
+    totalUniqueIssues: computed(() => webCollectionStore.totalUniqueIssues),
     user: computed(() => webCollectionStore.user),
   };
 });

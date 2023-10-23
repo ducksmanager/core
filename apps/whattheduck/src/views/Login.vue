@@ -169,12 +169,6 @@ watch(
   async (newValue) => {
     if (newValue) {
       await coaStore.fetchIssueQuotations(collectionStore.ownedPublications);
-      appStore.dbInstance.getRepository(InducksIssuequotation).clear();
-      /*const issueQuotations = Object.entries(coa().issueQuotations!).reduce((acc, [issuecode, quotation]) => {
-      const [publicationcode, issuenumber] = issuecode.split(/(?<=[^ ]+) /);
-      return [...acc, { publicationcode, issuenumber, min: quotation.min, max: quotation.max }];
-    }, [] as InducksIssuequotation[]);
-    appInstance.getRepository(InducksIssuequotation).save(issueQuotations);*/
     }
   },
   { immediate: true },
