@@ -68,6 +68,9 @@ dependencies:
   chart.js:
     specifier: ^4.4.0
     version: 4.4.0
+  dayjs:
+    specifier: ^1.11.10
+    version: 1.11.10
   ionicons:
     specifier: ^7.2.1
     version: 7.2.1
@@ -2260,7 +2263,6 @@ packages:
 
   /dayjs@1.11.10:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
-    dev: true
 
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
