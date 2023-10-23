@@ -57,11 +57,15 @@ export const wtdcollection = defineStore('wtdcollection', () => {
           default: // Alert error
         }
       }
-    };
+    },
+    highestQuotedIssue = computed(
+      () => webCollectionStore.quotedIssues?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
+    );
   return {
     collection: computed(() => webCollectionStore.collection),
     fetchAndTrackCollection,
     findInCollection: webCollectionStore.findInCollection,
+    highestQuotedIssue,
     issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
     loadCollection: webCollectionStore.loadCollection,
     loadPurchases: webCollectionStore.loadPurchases,
