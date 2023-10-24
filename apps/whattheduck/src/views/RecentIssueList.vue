@@ -1,11 +1,5 @@
 <template>
-  <List
-    v-if="hasData"
-    :items="sortedItems"
-    :get-target-route-fn="getTargetUrlFn"
-    :get-item-text-fn="getItemTextFn"
-    :ownership-text-fn="(ownership) => `${ownership[0]}/${ownership[1]}`"
-  >
+  <List v-if="hasData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
     <template #row-prefix="{ item }">
       <Condition v-if="item.owned" :value="getConditionText(item.owned.condition)" />
     </template>

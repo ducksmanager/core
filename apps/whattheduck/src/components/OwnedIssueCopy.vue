@@ -77,7 +77,7 @@ watch(
       const purchase = collectionStore.purchases?.find(({ id }) => id === issue.value.purchaseId) || null;
       if (purchase) {
         selectedPurchase.value = {
-          date: purchase.date.toISOString(),
+          date: purchase.date,
           description: purchase.description,
           id: purchase.id,
         };
