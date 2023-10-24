@@ -2,10 +2,12 @@
   <ion-menu content-id="main-content" type="overlay">
     <ion-content>
       <ion-list id="header">
-        <ion-list-header>What The Duck</ion-list-header>
+        <ion-list-header><div class="ion-text-center" style="width: 100%">What The Duck</div></ion-list-header>
         <template v-if="user">
           <ion-row> Medals </ion-row>
-          <ion-note>{{ user.username }}</ion-note>
+          <ion-row
+            ><ion-note>{{ user.username }}</ion-note>
+          </ion-row>
           <ion-menu-toggle v-for="(p, i) in appPages" :key="i" :auto-hide="false">
             <ion-item
               router-direction="root"
@@ -78,7 +80,7 @@ const appPages = [
     title: t('Statistiques'),
     url: '/stats',
     iosIcon: statsChartOutline,
-    mdIcon: statsChartOutline,
+    mdIcon: statsChartSharp,
   },
 ];
 
@@ -114,15 +116,14 @@ ion-menu {
   }
 
   &.md {
+    ::part(open) {
+      color: red;
+    }
     ion-content {
       --padding-start: 8px;
       --padding-end: 8px;
       --padding-top: 20px;
       --padding-bottom: 20px;
-    }
-
-    ion-list:first-child {
-      padding: 20px 0;
     }
 
     ion-note {
@@ -135,7 +136,8 @@ ion-menu {
     }
 
     ion-list#header {
-      border-bottom: 1px solid var(--ion-color-step-150, #d7d8da);
+      display: flex;
+      flex-direction: column;
 
       ion-list-header {
         font-size: 22px;
@@ -153,6 +155,10 @@ ion-menu {
       color: #757575;
 
       min-height: 26px;
+    }
+
+    ion-list#footer {
+      border-top: 1px solid var(--ion-color-step-150, #d7d8da);
     }
 
     ion-item {
