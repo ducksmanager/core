@@ -23,5 +23,5 @@ export const getOwnershipText = (
   withPercentage: boolean = true,
 ): string =>
   withPercentage
-    ? `${ownership} (${ownershipPercentage! < 0.1 ? '< 0.1' : (100 * ownershipPercentage)!.toFixed(1)}%)`
+    ? `${ownership} (${ownershipPercentage! < 0.1 / 100 ? '< 0.1' : (100 * ownershipPercentage)!.toFixed(1)}%)`
     : `${ownership} / ${total}`;

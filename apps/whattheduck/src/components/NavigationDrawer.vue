@@ -75,7 +75,7 @@ const appPages = [
     mdIcon: starSharp,
   },
   {
-    title: t('Stats'),
+    title: t('Statistiques'),
     url: '/stats',
     iosIcon: statsChartOutline,
     mdIcon: statsChartOutline,
