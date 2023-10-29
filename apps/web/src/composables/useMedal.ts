@@ -8,7 +8,7 @@ const MEDAL_LEVELS: { [contribution: string]: { [level: number]: number } } = {
 
 const RADIUS = 42;
 
-export default function (contribution: string, userLevelPoints: number) {
+export default (contribution: string, userLevelPoints: number) => {
   const circumference = Math.PI * RADIUS * 2,
     currentLevel = computed(() => {
       const level = MEDAL_LEVELS[contribution];
@@ -72,4 +72,4 @@ export default function (contribution: string, userLevelPoints: number) {
     levelProgressPercentage,
     getLevelProgressPercentage,
   };
-}
+};

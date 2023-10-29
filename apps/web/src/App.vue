@@ -13,6 +13,7 @@ import { stats } from "~/stores/stats";
 import { addTokenRequestInterceptor } from "~axios-helper";
 
 import { createCachedCoaApi } from "./api";
+import { users } from "./stores/users";
 
 onBeforeMount(() => {
   const defaultApi = addTokenRequestInterceptor(
@@ -22,6 +23,9 @@ onBeforeMount(() => {
     () => Promise.resolve(Cookies.get("token") || ""),
   );
 
+  users().setApi({
+    api: defaultApi,
+  });
   stats().setApi({
     api: defaultApi,
   });

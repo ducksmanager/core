@@ -1,23 +1,20 @@
-import axios from "axios";
+import { AxiosInstance } from "axios";
 import { buildWebStorage } from "axios-cache-interceptor";
 import { defineStore } from "pinia";
 
-import { createCachedUserApi } from "~/api";
 import {
   GET__events,
   GET__global_stats__bookcase__contributors,
   GET__global_stats__user__$userIds,
   GET__global_stats__user__count,
 } from "~api-routes";
-import { call } from "~axios-helper";
+import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
 
-const cachedUserApi = createCachedUserApi(
-  buildWebStorage(sessionStorage),
-  import.meta.env.VITE_GATEWAY_URL,
-);
+import { createCachedUserApi } from "../api";
 
+let api: AxiosInstance;
 export const users = defineStore("users", () => {
   const count = ref(null as number | null),
     stats = ref({} as GET__global_stats__user__$userIds["resBody"]["stats"]),
@@ -27,7 +24,7 @@ export const users = defineStore("users", () => {
     fetchCount = async () => {
       if (count.value === null) {
         count.value = (
-          await call(axios, new GET__global_stats__user__count())
+          await call(api, new GET__global_stats__user__count())
         ).data!.count;
       }
     },
@@ -42,7 +39,7 @@ export const users = defineStore("users", () => {
 
       const data = (
         await call(
-          axios,
+          api,
           new GET__global_stats__user__$userIds({
             ...(clearCacheEntry ? {} : { cache: false }),
             params: {
@@ -71,12 +68,20 @@ export const users = defineStore("users", () => {
     fetchBookcaseContributors = async () => {
       if (!bookcaseContributors.value) {
         bookcaseContributors.value = (
-          await call(axios, new GET__global_stats__bookcase__contributors())
+          await call(api, new GET__global_stats__bookcase__contributors())
         ).data;
       }
     },
     fetchEvents = async () => {
-      events.value = (await call(cachedUserApi, new GET__events())).data
+      events.value = (
+        await call(
+          createCachedUserApi(
+            buildWebStorage(sessionStorage),
+            import.meta.env.VITE_GATEWAY_URL,
+          ),
+          new GET__events(),
+        )
+      ).data
         .sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) =>
           Math.sign(timestamp2 - timestamp1),
         )
@@ -84,6 +89,9 @@ export const users = defineStore("users", () => {
     };
 
   return {
+    setApi: (params: { api: typeof api }) => {
+      api = addUrlParamsRequestInterceptor(params.api);
+    },
     count,
     stats,
     points,
