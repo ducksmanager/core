@@ -4,7 +4,14 @@
       <ion-list id="header">
         <ion-list-header><div class="ion-text-center" style="width: 100%">What The Duck</div></ion-list-header>
         <template v-if="user">
-          <ion-row> Medals </ion-row>
+          <ion-row>
+            <Medal
+              v-for="(numberOfPoints, contribution) in points[user.id] || {}"
+              :key="contribution"
+              :contribution="contribution as string"
+              :user-level-points="numberOfPoints"
+            />
+          </ion-row>
           <ion-row
             ><ion-note>{{ user.username }}</ion-note>
           </ion-row>
@@ -50,11 +57,13 @@ import {
   statsChartOutline,
   statsChartSharp,
 } from 'ionicons/icons';
+import { components as webComponents, stores as webStores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
 const collectionStore = wtdcollection();
+const points = computed(() => webStores.users().points);
 
 const selectedIndex = ref(0);
 const appPages = [

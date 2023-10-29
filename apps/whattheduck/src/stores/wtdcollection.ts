@@ -14,6 +14,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const coaStore = webStores.coa();
   const statsStore = webStores.stats();
   const webCollectionStore = webStores.collection();
+  const usersStore = webStores.users();
 
   const ownedCountries = computed(() =>
       [...new Set((webCollectionStore.collection || []).map(({ country }) => country))].sort(),
@@ -24,23 +25,23 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     fetchAndTrackCollection = async () => {
       const isObsoleteSync = await app().isObsoleteSync();
       try {
-        await webCollectionStore.loadUser();
         await webCollectionStore.loadCollection();
         // TODO retrieve user points
         // TODO retrieve user notification countries
 
         // TODO get app version
-        await webCollectionStore.loadSuggestions({
-          countryCode: 'ALL',
-          sinceLastVisit: false,
-          sort: 'score',
-        });
-        await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
+        //await webCollectionStore.loadSuggestions({
+        //  countryCode: 'ALL',
+        //  sinceLastVisit: false,
+        //  sort: 'score',
+        //});
+        //await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
         await statsStore.loadRatings();
         await coaStore.fetchCountryNames(true);
         await coaStore.fetchPublicationNames(['ALL']);
         await coaStore.fetchIssueCounts();
         await coaStore.fetchIssueNumbers(ownedPublications.value || []);
+        await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
 
         // TODO register for notifications
       } catch (e) {

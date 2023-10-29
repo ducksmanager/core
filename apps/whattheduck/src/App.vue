@@ -20,11 +20,16 @@ const appStore = app();
 const coaStore = webStores.coa();
 const statsStore = webStores.stats();
 const collectionStore = wtdcollection();
+const usersStore = webStores.users();
 const route = useRoute();
 
 onBeforeMount(() => {
   coaStore.setApi({ api: coaApi });
   statsStore.setApi({ api: defaultApi });
+
+  usersStore.setApi({
+    api: defaultApi,
+  });
   collectionStore.setApi({
     api: defaultApi,
     sessionExistsFn: () =>

@@ -16,6 +16,12 @@ export const availableLocales: {
     name: 'Français',
     flagName: 'fr',
   },
+  {
+    key: 'se',
+    shortKey: 'se',
+    name: 'Svenska',
+    flagName: 'sv',
+  },
 ];
 
 export const getCurrentLocaleShortKey = (locale: string): string => {
