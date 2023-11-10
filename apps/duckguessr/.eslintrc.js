@@ -1,38 +1,50 @@
 module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    node: true,
-  },
   extends: [
-    '@nuxtjs/eslint-config-typescript',
-    'plugin:prettier/recommended',
-    'plugin:nuxt/recommended',
-    'plugin:vue/recommended',
+    // add more generic rulesets here, such as:
+    // 'eslint:recommended',
+    "plugin:vue/vue3-recommended",
+    "plugin:prettier-vue/recommended",
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
   ],
-  plugins: [],
-  // add your custom rules here
+  parser: "vue-eslint-parser",
+  parserOptions: { parser: "@typescript-eslint/parser" },
+  overrides: [
+    {
+      files: ["*.js", "*.ts", "*.vue"],
+    },
+  ],
+  root: true,
   rules: {
-    camelcase: 'off',
-    'no-console': 'off',
-    'node/no-callback-literal': 'off',
-    'import/default': 'off',
-    'import/named': 'off',
-    'vue/html-self-closing': [
-      'error',
+    "object-shorthand": ["error", "always"],
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "simple-import-sort/exports": "error",
+    "simple-import-sort/imports": "error",
+    "arrow-body-style": ["error", "as-needed"],
+    "unused-imports/no-unused-imports": "error",
+    "vue/multi-word-component-names": "off",
+    "vue/no-dupe-keys": "off",
+    "vue/no-setup-props-destructure": "off",
+    "vue/no-v-html": "off",
+    "vue/no-v-text-v-html-on-component": "off",
+    "vue/define-emits-declaration": "error",
+    "vue/define-props-declaration": "error",
+    "vue/component-name-in-template-casing": [
+      "error",
+      "kebab-case",
       {
-        html: {
-          void: 'always',
-          normal: 'always',
-          component: 'always',
-        },
-        svg: 'always',
-        math: 'always',
+        registeredComponentsOnly: true,
+        ignores: [],
       },
     ],
-    'vue/max-len': [2, { code: 110, tabWidth: 4, ignoreUrls: true, ignoreStrings: true }],
-    'vue/multi-word-component-names': 'off',
-    'vue/html-closing-bracket-newline': 'off',
-    'vue/singleline-html-element-content-newline': 'off',
   },
-}
+  plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
+  ignorePatterns: [
+    "**/node_modules",
+    "**/dist",
+    "shims.d.ts",
+    "vendor",
+    "auto-imports.d.ts",
+    "component.d.ts",
+  ],
+};

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "es2020",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "preserveWatchOutput": true,
+    "paths": {
+      "~/*": ["./"],
+      "~types/*": ["./types/"],
+      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
+    }
+  },
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "swc": true
+  }
+}

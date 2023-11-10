@@ -1,0 +1,152 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model dataset {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique(map: "dataset_name_uindex") @db.VarChar(30)
+  title           String?           @db.VarChar(100)
+  description     String?           @db.Text
+  active          Boolean           @default(false)
+  datasetEntryurl datasetEntryurl[]
+  games           game[]
+}
+
+model datasetEntryurl {
+  id              Int             @id @default(autoincrement())
+  datasetId       Int             @map("dataset_id")
+  sitecodeUrl     String          @map("sitecode_url") @db.VarChar(99)
+  dataset         dataset         @relation(fields: [datasetId], references: [id], onUpdate: Restrict, map: "dataset_entryurl__dataset_id_fk")
+  entryurlDetails entryurlDetails @relation(fields: [sitecodeUrl], references: [sitecodeUrl], onUpdate: Restrict, map: "dataset_entryurl__entryurl_details_sitecode_url_fk")
+
+  @@unique([datasetId, sitecodeUrl], map: "datasets_entryurl_validations_dataset_validation")
+  @@index([sitecodeUrl], map: "datasets_entryurl_validations_entryurl_validations_id_fk")
+  @@map("dataset_entryurl")
+}
+
+model game {
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now()) @map("created_at") @db.DateTime(0)
+  startedAt   DateTime?    @map("started_at") @db.DateTime(0)
+  finishedAt  DateTime?    @map("finished_at") @db.DateTime(0)
+  datasetId   Int          @map("dataset_id")
+  dataset     dataset      @relation(fields: [datasetId], references: [id], onUpdate: Restrict, map: "game__dataset_id_fk")
+  gamePlayers gamePlayer[]
+  rounds      round[]
+
+  @@index([datasetId], map: "game__dataset_id_fk")
+}
+
+model gamePlayer {
+  id       Int    @id @default(autoincrement())
+  gameId   Int    @map("game_id")
+  playerId Int    @map("player_id")
+  game     game   @relation(fields: [gameId], references: [id], onUpdate: Restrict, map: "game_player_game_id_fk")
+  player   player @relation(fields: [playerId], references: [id], onUpdate: Restrict, map: "game_player_player_id_fk")
+
+  @@index([gameId], map: "game_player_game_id_fk")
+  @@index([playerId], map: "game_player_player_id_fk")
+  @@map("game_player")
+}
+
+model player {
+  id             Int          @id @default(autoincrement())
+  username       String       @unique(map: "player_username_uindex") @db.VarChar(50)
+  ducksmanagerId Int?         @unique(map: "player_ducksmanager_id_uindex") @map("ducksmanager_id")
+  avatar         String       @default("HDL's father") @db.VarChar(25)
+  gamePlayers    gamePlayer[]
+  roundScores    roundScore[]
+}
+
+model round {
+  id          Int          @id @default(autoincrement())
+  gameId      Int          @map("game_id")
+  roundNumber Int?         @map("round_number") @db.UnsignedTinyInt
+  sitecodeUrl String       @map("sitecode_url") @db.VarChar(100)
+  personcode  String       @db.VarChar(79)
+  startedAt   DateTime?    @map("started_at") @db.DateTime(0)
+  finishedAt  DateTime?    @map("finished_at") @db.DateTime(0)
+  game        game         @relation(fields: [gameId], references: [id], onUpdate: Restrict, map: "round_game_id_fk")
+  roundScores roundScore[]
+
+  @@index([gameId], map: "round_game_id_fk")
+}
+
+model roundScore {
+  id                Int       @id @default(autoincrement())
+  playerId          Int       @map("player_id")
+  roundId           Int       @map("round_id")
+  gameId            Int       @map("game_id")
+  scoreTypeName     String    @map("score_type_name") @db.VarChar(20)
+  score             Int       @db.UnsignedSmallInt
+  timeSpentGuessing Float?    @map("time_spent_guessing") @db.Float
+  speedBonus        Int?      @map("speed_bonus")
+  scoreType         scoreType @relation(fields: [scoreTypeName], references: [typeName], onUpdate: Restrict, map: "round_score__score_type_type_name_fk")
+  player            player    @relation(fields: [playerId], references: [id], onUpdate: Restrict, map: "round_score_player_id_fk")
+  round             round     @relation(fields: [roundId], references: [id], onUpdate: Restrict, map: "round_score_round_id_fk")
+
+  @@index([scoreTypeName], map: "round_score__score_type_type_name_fk")
+  @@index([playerId], map: "round_score_player_id_fk")
+  @@index([roundId], map: "round_score_round_id_fk")
+  @@map("round_score")
+}
+
+model scoreType {
+  typeName    String       @id @map("type_name") @db.VarChar(20)
+  roundScores roundScore[]
+
+  @@map("score_type")
+}
+
+model entryurlDetails {
+  sitecodeUrl      String                   @id @unique(map: "entryurl_details_sitecode_url_uindex") @map("sitecode_url") @db.VarChar(99)
+  updatedAt        DateTime                 @default(now()) @map("updated_at") @db.Timestamp(0)
+  decision         entryurlDetailsDecision?
+  personcode       String?                  @db.VarChar(79)
+  datasetEntryurls datasetEntryurl[]
+
+  @@index([decision], map: "decision_index")
+  @@index([personcode], map: "entryurl_details_personcode_index")
+  @@map("entryurl_details")
+}
+
+view gameScores {
+  gameId    Int     @map("game_id")
+  playerId  Int     @map("player_id")
+  gameScore Decimal @default(0) @map("game_score") @db.Decimal(33, 0)
+
+  @@unique([gameId, playerId])
+  @@map("game_scores")
+}
+
+view userGameMedalPoints {
+  medalType String @map("medal_type")
+  playerId  Int    @map("player_id")
+  gameId    Int    @map("game_id")
+  points    Int    @map("points")
+
+  @@unique([medalType, playerId, gameId])
+  @@map("user_medals_game")
+}
+
+view userMedalPoints {
+  medalType String @map("medal_type")
+  playerId  Int    @map("player_id")
+  points    Int    @map("points")
+
+  @@unique([medalType, playerId])
+  @@map("user_medals")
+}
+
+enum entryurlDetailsDecision {
+  ok
+  shows_author
+  no_drawing
+}

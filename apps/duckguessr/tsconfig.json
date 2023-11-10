@@ -1,46 +1,51 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "baseUrl": ".",
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "lib": [
-      "ESNext",
-      "ESNext.AsyncIterable",
-      "DOM"
-    ],
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "outDir": "dist",
-    "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
-    },
-    "sourceMap": true,
+    "jsx": "preserve",
+
+    /* Linting */
     "strict": true,
-    "target": "ES2018",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "preserveWatchOutput": true,
+
     "types": [
-      "@nuxt/types",
-      "@nuxtjs/axios",
-      "@types/node",
-      "codeceptjs",
-      "unplugin-vue2-script-setup/types"
-    ]
+      "unplugin-icons/types/vue",
+      "vite/client",
+      "vite-plugin-pages/client"
+    ],
+    "paths": {
+      "~/*": ["src/*"],
+      "~dm-types/*": ["../../packages/types/*"],
+      "~duckguessr-api/*": ["api/*"],
+      "~types/*": ["api/types/*"],
+      "~locales/*": ["locales/*"],
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~web/*": ["../web/*"]
+    }
   },
-  "ts-node": {
-    "files": true
-  },
-  "exclude": [
-    "node_modules",
-    ".nuxt",
-    "dist"
+  "include": [
+    "auto-imports.d.ts",
+    "components.d.ts",
+    "src/**/*.ts",
+    "types/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
   ],
-  "vueCompilerOptions": {
-    "experimentalCompatMode": 2
-  }
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
