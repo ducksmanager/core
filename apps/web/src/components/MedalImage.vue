@@ -2,7 +2,7 @@
   <span class="wrapper" :class="{ small, 'x-small': xSmall }">
     <div class="overlay">
       <template v-if="!small && !xSmall">
-        <div class="title" :title="medalDescription" />
+        <div v-if="withDescription" class="title" :title="medalDescription" />
         <svg
           v-if="level < 3"
           width="100"
@@ -60,6 +60,21 @@ import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 const i18n = useI18n();
 const currentLocaleShortKey = getCurrentLocaleShortKey(i18n.locale.value);
 
+const props = defineProps<{
+  small?: boolean;
+  xSmall?: boolean;
+  nextLevel?: boolean;
+  userLevelPoints: number;
+  contribution: string;
+  currentLevel: number;
+  pointsDiffNextLevel: number | null;
+  levelProgressPercentage: number | null;
+  radius: number;
+  circumference: number;
+  withDescription: boolean;
+  getImagePath: (name: string) => string;
+}>();
+
 const {
   contribution,
   nextLevel = false,
@@ -71,27 +86,17 @@ const {
   levelProgressPercentage,
   radius,
   circumference,
-} = defineProps<{
-  small?: boolean;
-  xSmall?: boolean;
-  nextLevel?: boolean;
-  userLevelPoints: number;
-  contribution: string;
-  currentLevel: number;
-  pointsDiffNextLevel: number | null;
-  levelProgressPercentage: number | null;
-  radius: number;
-  circumference: number;
-  getImagePath: (name: string) => string;
-}>();
+} = toRefs(props);
 const { t } = useI18n();
 
 const medalColors = ["bronze", "argent", "or"];
 const level = computed(() =>
-  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel,
+  nextLevel && currentLevel.value !== null
+    ? currentLevel.value + 1
+    : currentLevel.value,
 );
 const medalTitle = computed(() => {
-  switch (contribution) {
+  switch (contribution.value) {
     case "edge_photographer":
       return t("Concepteur de tranches");
     case "edge_designer":
@@ -103,8 +108,8 @@ const medalTitle = computed(() => {
 });
 const medalDescription = computed(() => {
   let textTemplate;
-  if (currentLevel === 3) {
-    switch (contribution) {
+  if (currentLevel.value === 3) {
+    switch (contribution.value) {
       case "edge_photographer":
         textTemplate = "Vous avez {0} points Concepteur de tranches";
         break;
@@ -119,7 +124,7 @@ const medalDescription = computed(() => {
     }
     return t(textTemplate, [userLevelPoints]);
   } else {
-    switch (contribution) {
+    switch (contribution.value) {
       case "edge_photographer":
         textTemplate =
           "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
@@ -138,7 +143,7 @@ const medalDescription = computed(() => {
     return t(textTemplate, [
       userLevelPoints,
       pointsDiffNextLevel,
-      t(medalColors[currentLevel]),
+      t(medalColors[currentLevel.value]),
     ]);
   }
 });
