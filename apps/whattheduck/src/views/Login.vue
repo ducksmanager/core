@@ -11,68 +11,79 @@
           )
         }}</ion-label>
       </ion-item>
-      <ion-item>
-        <ion-input
-          v-model="username"
-          :class="{
-            'ion-valid': validInputs.includes('username'),
-            'ion-invalid': invalidInputs.includes('username'),
-            'ion-touched': touchedInputs.includes('username'),
-          }"
-          :aria-label="t('Nom d\'utilisateur DucksManager')"
-          :placeholder="t('Nom d\'utilisateur DucksManager')"
-          @ionBlur="touchedInputs.push('username')"
-        />
-      </ion-item>
-      <ion-item>
-        <ion-input
-          v-model="password"
-          :type="showPassword ? 'text' : 'password'"
-          :class="{
-            'ion-valid': validInputs.includes('password'),
-            'ion-invalid': invalidInputs.includes('password'),
-            'ion-touched': touchedInputs.includes('password'),
-          }"
-          :error-text="
-            errorTexts.password ||
-            t(
-              'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
-            )
-          "
-          :aria-label="t('Mot de passe')"
-          :placeholder="t('Mot de passe')"
-          @ionBlur="touchedInputs.push('password')"
-        />
-        <ion-icon
-          :ios="showPassword ? eyeOffOutline : eyeOutline"
-          :md="showPassword ? eyeOffSharp : eyeSharp"
-          @click="showPassword = !showPassword"
-        />
-      </ion-item>
-      <ion-item>
-        <ion-button @click="submitLogin">
-          {{ t('Connexion') }}
-        </ion-button>
-      </ion-item>
-      <ion-item>
-        <ion-button @click="signup">
-          {{ t('Inscription') }}
-        </ion-button>
-      </ion-item>
-      <ion-item>
-        <ion-button @click="forgotPassword">
-          {{ t('Mot de passe oublié ?') }}
-        </ion-button>
-      </ion-item>
+      <ion-row>
+        <ion-col>
+          <ion-input
+            v-model="username"
+            :class="{
+              'ion-valid': validInputs.includes('username'),
+              'ion-invalid': invalidInputs.includes('username'),
+              'ion-touched': touchedInputs.includes('username'),
+            }"
+            :aria-label="t('Nom d\'utilisateur DucksManager')"
+            :placeholder="t('Nom d\'utilisateur DucksManager')"
+            @ionBlur="touchedInputs.push('username')"
+          />
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="11">
+          <ion-input
+            v-model="password"
+            :type="showPassword ? 'text' : 'password'"
+            :class="{
+              'ion-valid': validInputs.includes('password'),
+              'ion-invalid': invalidInputs.includes('password'),
+              'ion-touched': touchedInputs.includes('password'),
+            }"
+            :error-text="
+              errorTexts.password ||
+              t(
+                'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+              )
+            "
+            :aria-label="t('Mot de passe')"
+            :placeholder="t('Mot de passe')"
+            @ionBlur="touchedInputs.push('password')"
+          />
+        </ion-col>
+        <ion-col size="1">
+          <ion-icon
+            :ios="showPassword ? eyeOffOutline : eyeOutline"
+            :md="showPassword ? eyeOffSharp : eyeSharp"
+            @click="showPassword = !showPassword"
+          /> </ion-col
+      ></ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button @click="submitLogin" expand="block">
+            {{ t('Connexion') }}
+          </ion-button>
+        </ion-col>
 
-      <ion-item>
+        <ion-col size="6">
+          <ion-button @click="signup" expand="block">
+            {{ t('Inscription') }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6" push="6" style="display: flex" class="flex ion-justify-content-end">
+          <ion-button @click="forgotPassword" size="small">
+            {{ t('Mot de passe oublié ?') }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+    <ion-footer>
+      <ion-button id="link-to-dm" expand="full" color="medium" @click.prevent="() => {}">
         <a :href="dmUrl">{{
           t(
             "What The Duck est l'application mobile de DucksManager. Cliquez ici pour accéder au site Web de DucksManager.",
           )
         }}</a>
-      </ion-item>
-    </ion-content>
+      </ion-button>
+    </ion-footer>
   </ion-page>
 </template>
 
@@ -200,3 +211,14 @@ watch(
   }
 })();
 </script>
+
+<style lang="scss" scoped>
+#link-to-dm {
+  margin: 0;
+  a {
+    text-decoration: none;
+    white-space: normal;
+    color: white;
+  }
+}
+</style>

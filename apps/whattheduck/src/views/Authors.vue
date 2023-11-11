@@ -98,7 +98,7 @@ watch(
 watch(
   () => ratings.value,
   async (newValue) => {
-    if (newValue && ratings.value?.length) {
+    if (newValue?.length) {
       await coa().fetchPersonNames(newValue.map(({ personcode }) => personcode));
     }
   },

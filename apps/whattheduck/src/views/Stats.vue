@@ -106,7 +106,7 @@ wtdCollectionStore.loadCollection().then(() => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 ion-row,
 ion-col {
   width: 100%;

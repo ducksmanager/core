@@ -2,6 +2,7 @@
   <MedalImage
     :small="small"
     :x-small="xSmall"
+    :with-description="false"
     :next-level="nextLevel"
     :user-level-points="userLevelPoints"
     :contribution="contribution"
