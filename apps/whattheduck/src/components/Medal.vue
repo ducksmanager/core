@@ -1,18 +1,19 @@
 <template>
-  <MedalImage
-    :small="small"
-    :x-small="xSmall"
-    :with-description="false"
-    :next-level="nextLevel"
-    :user-level-points="userLevelPoints"
-    :contribution="contribution"
-    :current-level="currentLevel"
-    :points-diff-next-level="pointsDiffNextLevel"
-    :level-progress-percentage="levelProgressPercentage"
-    :radius="radius"
-    :circumference="circumference"
-    :get-image-path="getImagePath"
-  />
+  <ion-col size="4">
+    <MedalImage
+      :small="small"
+      :x-small="xSmall"
+      :with-description="false"
+      :next-level="nextLevel"
+      :user-level-points="userLevelPoints"
+      :contribution="contribution"
+      :current-level="currentLevel"
+      :points-diff-next-level="pointsDiffNextLevel"
+      :level-progress-percentage="levelProgressPercentage"
+      :radius="radius"
+      :circumference="circumference"
+      :get-image-path="getImagePath"
+  /></ion-col>
 </template>
 
 <script setup lang="ts">
@@ -43,3 +44,8 @@ const { currentLevel, pointsDiffNextLevel, levelProgressPercentage, radius, circ
 
 const getImagePath = images().getImagePath;
 </script>
+<style lang="scss" scoped>
+.wrapper {
+  width: 100%;
+}
+</style>

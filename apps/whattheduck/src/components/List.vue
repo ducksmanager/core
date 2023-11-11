@@ -208,6 +208,9 @@ watch(
 </script>
 
 <style scoped>
+img {
+  width: 18px;
+}
 strong {
   font-size: 20px;
   line-height: 26px;

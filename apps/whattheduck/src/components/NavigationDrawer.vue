@@ -4,16 +4,16 @@
       <ion-list id="header">
         <ion-list-header><div class="ion-text-center" style="width: 100%">What The Duck</div></ion-list-header>
         <template v-if="user">
-          <ion-row>
+          <ion-row class="ion-justify-content-center ion-padding"
+            ><ion-note>{{ user.username }}</ion-note>
+          </ion-row>
+          <ion-row class="ion-padding-vertical">
             <Medal
               v-for="(numberOfPoints, contribution) in points[user.id] || {}"
               :key="contribution"
               :contribution="contribution as string"
               :user-level-points="numberOfPoints"
             />
-          </ion-row>
-          <ion-row
-            ><ion-note>{{ user.username }}</ion-note>
           </ion-row>
           <ion-menu-toggle v-for="(p, i) in appPages" :key="i" :auto-hide="false">
             <ion-item
