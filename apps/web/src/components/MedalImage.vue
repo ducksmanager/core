@@ -21,8 +21,7 @@
           />
           <circle
             transform="rotate(270,0,0)"
-            class="bar"
-            :class="{ [medalColors[level]]: true }"
+            :class="`bar ${medalColors[level]}`"
             cx="-50"
             cy="50"
             :r="radius"
