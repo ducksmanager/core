@@ -1,5 +1,8 @@
 {
   "name": "ducksmanager",
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
@@ -7,9 +10,10 @@
     "husky": "^8.0.3"
   },
   "scripts": {
-    "dm": "concurrently -n web,api \"pnpm -F ~web... -F !~prisma-clients dev\" \"pnpm -F api... dev\"",
-    "whattheduck": "concurrently -n whattheduck-ionic,api \"pnpm -F whattheduck-ionic... -F !~web -F !~prisma-clients dev\" \"pnpm -F api... dev\"",
-    "dumili": "concurrently -n web+api,dumili,dumili-api \"pnpm dm\" \"pnpm -F dumili... -F !~prisma-clients dev\" \"pnpm -F dumili-api... dev\"",
+    "dm": "concurrently -p \"[dm-{name}]\" --kill-others-on-fail -n web,api \"pnpm -F ~web... -F !~prisma-clients dev\" \"pnpm -F ~api... dev\"",
+    "duckguessr": "concurrently -p \"[duckguessr-{name}]\" --kill-others-on-fail -n duckguessr,~duckguessr-api \"pnpm -F ~duckguessr... -F !~prisma-clients dev\" \"pnpm -F ~duckguessr-api... dev\"",
+    "whattheduck": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n whattheduck-ionic,api \"pnpm -F ~whattheduck-ionic... -F !~web -F !~prisma-clients dev\" \"pnpm -F ~api... dev\"",
+    "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n dm,web,web-api \"pnpm dm\" \"pnpm  -F ~dumili... -F !~prisma-clients dev\" \"pnpm -F ~dumili-api... dev\"",
     "build": "pnpm run -r build",
     "prepare": "husky install"
   }

@@ -23,7 +23,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm -r i
 
 COPY . ./
-RUN pnpm -r -F !whattheduck-ionic -F !duck-estimator run build
+RUN pnpm -r -F ~web... -F ~dumili... run build
 
 FROM nginx AS web
 LABEL org.opencontainers.image.authors="Bruno Perel"
