@@ -505,8 +505,8 @@ const filteredIssuesCopyIndexes = $computed(
         idx === 0
           ? 0
           : filteredIssues[idx - 1].issuenumber === issuenumber
-          ? acc[idx - 1] + 1
-          : 0,
+            ? acc[idx - 1] + 1
+            : 0,
       ],
       [] as number[],
     ),

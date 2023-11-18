@@ -183,8 +183,8 @@
             newCopyState.isOnSale = disabled
               ? newCopyState.isOnSale
               : stateId === undefined
-              ? undefined
-              : stateId === true
+                ? undefined
+                : stateId === true
           "
         >
           <i-bi-cart v-if="stateId === true" />

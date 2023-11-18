@@ -35,9 +35,8 @@ const username = $computed(() => route.params.username as string);
 const publicationcode = $computed(() => (route.params.all as string) || null);
 
 const { loadPublicCollection } = publicCollection();
-const { mostPossessedPublication, collection } = storeToRefs(
-  publicCollection(),
-);
+const { mostPossessedPublication, collection } =
+  storeToRefs(publicCollection());
 
 watch(
   () => username,

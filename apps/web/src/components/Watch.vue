@@ -68,10 +68,10 @@ const buttonTooltipText = $computed(() =>
         ? "Cliquez ici pour ne plus voir les numéros que vous ne possédez pas de ce magazine qui sont en vente"
         : "Cliquez ici pour ne plus voir les propositions de vente de ce numéro"
       : issuenumber === null
-      ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
-      : isPublicationWatchedButNotIssueNumber
-      ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."
-      : "Cliquez ici pour voir les propositions de vente de ce numéro !",
+        ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
+        : isPublicationWatchedButNotIssueNumber
+          ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."
+          : "Cliquez ici pour voir les propositions de vente de ce numéro !",
   ),
 );
 
