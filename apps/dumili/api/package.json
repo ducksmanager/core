@@ -1,8 +1,8 @@
 {
-  "name": "dumili-api",
+  "name": "~dumili-api",
   "version": "1.0.0",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
     "clean": "rm -rf dist",
