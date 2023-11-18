@@ -17,5 +17,3 @@ const medalEvent: MedalEvent = {
   timestamp: new Date().getTime(),
 };
 </script>
-
-<style scoped></style>

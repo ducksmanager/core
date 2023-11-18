@@ -10,20 +10,28 @@ alias: [/bibliotheque/options]
     <div v-for="(textureText, textureType) in textureTypes" :key="textureType">
       <h5>{{ textureText }}</h5>
       <b-dropdown
-        v-model="bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']"
+        v-model="
+          bookcaseOptions.textures[textureType as 'bookshelf' | 'bookcase']
+        "
       >
         <template #button-content>
           <div
             class="selected"
             :style="{
-              backgroundImage: `url('${getImagePath(`textures/${bookcaseOptions.textures[textureType as 'bookshelf'|'bookcase']}`)}.jpg')`,
+              backgroundImage: `url('${getImagePath(
+                `textures/${
+                  bookcaseOptions.textures[
+                    textureType as 'bookshelf' | 'bookcase'
+                  ]
+                }`,
+              )}.jpg')`,
             }"
           >
             {{
               textureWithoutSuperType(
                 bookcaseOptions.textures[
                   textureType as "bookshelf" | "bookcase"
-                ]
+                ],
               )
             }}
           </div>

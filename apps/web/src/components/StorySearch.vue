@@ -42,7 +42,7 @@
             </option>
             <template v-if="!isSearchByCode">
               <option
-                v-for="searchResult in (searchResults.results as typeof issueResults.results)"
+                v-for="searchResult in searchResults.results as typeof issueResults.results"
                 :key="searchResult!.storycode"
                 class="d-flex align-items-center"
                 @click="selectSearchResult(searchResult!)"
@@ -52,7 +52,7 @@
                   :value="
                     conditions.find(
                       ({ dbValue }) =>
-                        dbValue === searchResult!.collectionIssue.condition
+                        dbValue === searchResult!.collectionIssue.condition,
                     )?.value || undefined
                   "
                 />&nbsp;{{ searchResult!.title }}
@@ -60,7 +60,7 @@
             </template>
             <template v-else>
               <option
-                v-for="searchResult in (searchResults.results as typeof storyResults.results)"
+                v-for="searchResult in searchResults.results as typeof storyResults.results"
                 :key="searchResult!.storycode"
                 class="d-flex align-items-center"
                 @click="selectSearchResult(searchResult!)"
@@ -89,15 +89,13 @@ import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
 import { coa } from "~/stores/coa";
-import {
-  collection as collectionStore,
-  IssueWithPublicationcode,
-} from "~/stores/collection";
+import { collection as collectionStore } from "~/stores/collection";
 import {
   GET__coa__list__issues__by_storycode,
   POST__coa__stories__search__withIssues,
 } from "~api-routes";
 import { call } from "~axios-helper";
+import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
 

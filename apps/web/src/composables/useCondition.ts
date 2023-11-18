@@ -7,7 +7,7 @@ enum issue_condition {
   indefini = "indefini",
 }
 
-export default function () {
+export default () => {
   const { t: $t } = useI18n();
   type Condition = {
     value: issue_condition | null;
@@ -67,4 +67,4 @@ export default function () {
         ({ dbValue }) => givenDbValue.toUpperCase() === dbValue?.toUpperCase(),
       )?.label || conditions.find(({ dbValue }) => dbValue === null)!.label,
   };
-}
+};

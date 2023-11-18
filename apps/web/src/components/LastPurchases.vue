@@ -44,10 +44,8 @@
 import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
-import {
-  collection as collectionStore,
-  IssueWithPublicationcode,
-} from "~/stores/collection";
+import { collection as collectionStore } from "~/stores/collection";
+import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 const { t } = useI18n();
 const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
@@ -77,7 +75,13 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
                 (currentPurchase.date as string) === (purchase.date as string),
             );
             if (purchaseIndex === -1) {
-              acc.push({ purchase, issues: [] });
+              acc.push({
+                purchase: {
+                  date: purchase.date as string,
+                  description: purchase.description,
+                },
+                issues: [],
+              });
               purchaseIndex = acc.length - 1;
             }
             acc[purchaseIndex].issues.push(issue);

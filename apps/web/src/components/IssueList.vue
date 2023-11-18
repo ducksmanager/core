@@ -8,7 +8,7 @@
         :publicationname="publicationName"
       >
         <Watch
-          v-if="showFilter"
+          v-if="!readonly && showFilter"
           class="ml-2"
           :publicationcode="publicationcode"
       /></Publication>
@@ -16,13 +16,13 @@
         <div v-if="showFilter" v-once class="issue-filter">
           <table>
             <tr
-              v-for="conditionFilter in ['possessed', 'missing']"
+              v-for="conditionFilter in ['possessed', 'missing'] as const"
               :key="conditionFilter"
             >
               <td>
                 <input
                   :id="`show-${conditionFilter}`"
-                  v-model="filter[conditionFilter as 'possessed'|'missing']"
+                  v-model="filter[conditionFilter]"
                   type="checkbox"
                 />
               </td>
@@ -45,61 +45,121 @@
           </table>
         </div>
         <div class="issue-list">
-          <b-alert
-            v-if="userIssuesNotFoundForPublication?.length"
-            :model-value="true"
-            variant="warning"
-          >
-            {{
-              $t(
-                "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous.",
-              )
-            }}
-            <ul>
-              <li
-                v-for="issueNotFound in userIssuesNotFoundForPublication"
-                :key="`notfound-${issueNotFound.issuenumber}`"
-              >
-                {{ $t("n°") }}{{ issueNotFound.issuenumber }}
-                <b-button
-                  size="sm"
-                  @click="deletePublicationIssues([issueNotFound])"
+          <template v-if="!readonly">
+            <b-alert
+              v-if="userIssuesNotFoundForPublication?.length"
+              :model-value="true"
+              variant="warning"
+            >
+              {{
+                $t(
+                  "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous.",
+                )
+              }}
+              <ul>
+                <li
+                  v-for="issueNotFound in userIssuesNotFoundForPublication"
+                  :key="`notfound-${issueNotFound.issuenumber}`"
                 >
-                  {{ $t("Supprimer") }}
-                </b-button>
-              </li>
-            </ul>
-          </b-alert>
-          <b-alert
-            v-if="showFilter"
-            v-once
-            :model-value="true"
-            variant="info"
-            class="mb-0"
+                  {{ $t("n°") }}{{ issueNotFound.issuenumber }}
+                  <b-button
+                    size="sm"
+                    @click="deletePublicationIssues([issueNotFound])"
+                  >
+                    {{ $t("Supprimer") }}
+                  </b-button>
+                </li>
+              </ul>
+            </b-alert>
+            <b-alert
+              v-if="showFilter"
+              v-once
+              :model-value="true"
+              variant="info"
+              class="mb-0"
+            >
+              {{
+                $t(
+                  "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,",
+                )
+              }}
+              <b v-if="isTouchScreen">{{
+                $t(
+                  "puis tapotez deux fois au niveau de la liste pour indiquer leur état et validez.",
+                )
+              }}</b>
+              <b v-else>{{
+                $t(
+                  "puis faites un clic droit pour indiquer leur état et validez.",
+                )
+              }}</b>
+            </b-alert></template
           >
-            {{
-              $t(
-                "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,",
-              )
-            }}
-            <b v-if="isTouchScreen">{{
-              $t(
-                "puis tapotez deux fois au niveau de la liste pour indiquer leur état et validez.",
-              )
-            }}</b>
-            <b v-else>{{
-              $t(
-                "puis faites un clic droit pour indiquer leur état et validez.",
-              )
-            }}</b>
-          </b-alert>
           <Book
             v-if="currentIssueOpened"
             :publicationcode="currentIssueOpened.publicationcode"
             :issuenumber="currentIssueOpened.issuenumber"
             @close-book="currentIssueOpened = null"
           />
-          <div v-contextmenu:contextmenuInstance>
+          <div v-if="readonly">
+            <div
+              v-for="{
+                issuenumber,
+                title,
+                userCopies,
+                key,
+                idx,
+              } in filteredIssues"
+              :id="key"
+              :key="key"
+              :class="`issue issue-${
+                userCopies.length && !onSaleByOthers ? 'possessed' : 'missing'
+              }`"
+              @mouseover="hoveredIndex = idx"
+            >
+              <span>
+                <IssueDetailsPopover
+                  v-if="hoveredIndex === idx"
+                  :publicationcode="publicationcode"
+                  :issuenumber="issuenumber"
+                  @click="openBook(issuenumber)"
+                />
+
+                <span class="issue-text">
+                  {{ issueNumberTextPrefix }}{{ issuenumber }}
+                  <span class="issue-title">{{ title }}</span>
+                </span>
+              </span>
+              <div class="issue-details-wrapper">
+                <div class="issue-copies">
+                  <div
+                    v-for="{
+                      condition: copyCondition,
+                      copyIndex,
+                    } in userCopies"
+                    :key="`${issuenumber}-copy-${copyIndex}`"
+                    class="issue-copy"
+                  >
+                    <!-- <MarketplaceSellerInfo
+                      v-if="onSaleByOthers"
+                      :publicationcode="publicationcode"
+                      :issuenumber="issuenumber"
+                      :copy-index="filteredIssuesCopyIndexes[idx]"
+                    />
+                    <MarketplaceBuyerInfo :issue-id="id" /> -->
+
+                    <Condition
+                      v-if="copyCondition"
+                      :publicationcode="publicationcode"
+                      :issuenumber="issuenumber"
+                      :value="copyCondition"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-else v-contextmenu:contextmenuInstance>
             <div
               v-for="{
                 issuenumber,
@@ -198,12 +258,12 @@
                   </div>
                 </div>
                 <Watch
-                  v-if="!userCopies.length || onSaleByOthers"
+                  v-if="!readonly && (!userCopies.length || onSaleByOthers)"
                   :publicationcode="publicationcode"
                   :issuenumber="issuenumber"
                   :constant-width="onSaleByOthers"
                 />
-                <div class="issue-check">
+                <div v-if="!readonly" class="issue-check">
                   <input
                     type="checkbox"
                     disabled
@@ -251,7 +311,7 @@
       </b-alert>
     </div>
 
-    <v-contextmenu ref="contextmenuInstance">
+    <v-contextmenu v-if="!readonly" ref="contextmenuInstance">
       <component
         :is="contextMenuComponent"
         ref="contextMenu"
@@ -280,10 +340,9 @@ import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
 import { coa } from "~/stores/coa";
-import {
-  collection as collectionStore,
-  IssueWithPublicationcode,
-} from "~/stores/collection";
+import { collection } from "~/stores/collection";
+import { publicCollection } from "~/stores/public-collection";
+import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { issue as dm_issue } from "~prisma-clients/client_dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
@@ -307,6 +366,7 @@ const {
   publicationcode,
   readStackOnly = false,
   onSaleByOthers = false,
+  readonly = false,
 } = defineProps<{
   publicationcode: string;
   duplicatesOnly?: boolean;
@@ -316,7 +376,13 @@ const {
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: string;
+  readonly?: boolean;
 }>();
+
+const collectionStore = collection();
+const store = $computed(() =>
+  readonly ? publicCollection() : collectionStore,
+);
 
 const { conditions } = condition();
 const { t: $t } = useI18n();
@@ -415,10 +481,8 @@ const issueIds = $computed(() =>
 let contextMenuKey = $ref("context-menu" as string);
 const publicationNames = $computed(() => coa().publicationNames);
 const coverUrls = $computed(() => coa().coverUrls);
-const userIssues = $computed(
-  () => customIssues || collectionStore().collection,
-);
-let purchases = $computed(() => collectionStore().purchases);
+const userIssues = $computed(() => customIssues || store.collection);
+let purchases = $computed(() => store.purchases);
 const country = $computed(() => publicationcode.split("/")[0]);
 const publicationName = $computed(() => publicationNames[publicationcode]);
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
@@ -456,22 +520,22 @@ const ownedIssuesCount = $computed(
     ) || 0,
 );
 const fetchPublicationNames = coa().fetchPublicationNames;
-const loadPurchases = collectionStore().loadPurchases;
+const loadPurchases = store.loadPurchases;
 
 const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
-  // if (isTouchScreen) {
-  clicks++;
-  if (clicks === 1) {
-    timer = setTimeout(() => {
+  if (!readonly) {
+    clicks++;
+    if (clicks === 1) {
+      timer = setTimeout(() => {
+        clicks = 0;
+        contextmenuInstance.hide(e);
+      }, doubleClickDelay);
+    } else if (clicks === 2) {
+      clearTimeout(timer!);
       clicks = 0;
-      contextmenuInstance.hide(e);
-    }, doubleClickDelay);
-  } else if (clicks === 2) {
-    clearTimeout(timer!);
-    clicks = 0;
-    contextmenuInstance.show(e);
+      contextmenuInstance.show(e);
+    }
   }
-  // }
 };
 
 const getPreselected = () =>
@@ -502,16 +566,18 @@ const deletePublicationIssues = async (
   issuesToDelete: IssueWithPublicationcode[],
 ) => {
   contextmenuInstance.hide();
-  await collectionStore().updateCollectionMultipleIssues({
-    publicationcode,
-    issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
-    condition:
-      conditions.find(({ value }) => value === null)?.dbValue || "indefini",
-    isToRead: false,
-    isOnSale: false,
-    purchaseId: null,
-  });
-  selected = [];
+  if (!readonly) {
+    await (store as typeof collectionStore).updateCollectionMultipleIssues({
+      publicationcode,
+      issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
+      condition:
+        conditions.find(({ value }) => value === null)?.dbValue || "indefini",
+      isToRead: false,
+      isOnSale: false,
+      purchaseId: null,
+    });
+    selected = [];
+  }
 };
 
 const openBook = (issuenumber: string) => {
@@ -642,7 +708,7 @@ watch(
 
 (async () => {
   if (customIssues) {
-    collectionStore().purchases = [];
+    store.purchases = [];
   } else {
     await loadPurchases();
   }

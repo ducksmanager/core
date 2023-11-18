@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { AxiosError } from "axios";
 import { defineStore } from "pinia";
 
+import useCollection from "~/composables/useCollection";
 import {
   DELETE__collection__purchases__$id,
   GET__collection__edges__lastPublished,
@@ -25,21 +26,16 @@ import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
+import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import {
   authorUser,
-  issue,
   issue_condition,
   purchase,
   subscription,
-  user,
 } from "~prisma-clients/client_dm";
 
 import { bookcase } from "./bookcase";
 import { coa } from "./coa";
-
-export type IssueWithPublicationcode = issue & {
-  publicationcode: string;
-};
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   IssueWithPublicationcode,
@@ -80,9 +76,11 @@ let api: AxiosInstance,
   clearSessionFn: () => Promise<void>;
 
 export const collection = defineStore("collection", () => {
-  const collection = ref(null as IssueWithPublicationcode[] | null),
+  const collection = ref(null as IssueWithPublicationcode[] | null);
+
+  const collectionUtils = useCollection(collection),
     watchedPublicationsWithSales = ref(null as string[] | null),
-    purchases = ref(null as purchaseWithStringDate[] | null),
+    purchases = ref(null as GET__collection__purchases["resBody"] | null),
     watchedAuthors = ref(null as authorUser[] | null),
     marketplaceContactMethods = ref(null as string[] | null),
     suggestions = ref(
@@ -104,94 +102,14 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false as boolean),
     isLoadingSuggestions = ref(false as boolean),
     isLoadingSubscriptions = ref(false as boolean),
-    user = ref(undefined as Omit<user, "password"> | undefined | null),
+    user = ref(
+      undefined as GET__collection__user["resBody"] | undefined | null,
+    ),
     previousVisit = ref(null as Date | null),
-    total = computed(() => collection.value?.length),
-    issuesByIssueCode = computed(
-      () =>
-        collection.value?.reduce(
-          (acc, issue) => {
-            const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-            return {
-              ...acc,
-              [issuecode]: [...(acc[issuecode] || []), issue],
-            };
-          },
-          {} as { [issuecode: string]: IssueWithPublicationcode[] },
-        ),
-    ),
-    duplicateIssues = computed(
-      (): {
-        [issuecode: string]: IssueWithPublicationcode[];
-      } =>
-        (issuesByIssueCode.value &&
-          Object.keys(issuesByIssueCode.value).reduce(
-            (acc, issuecode) =>
-              issuesByIssueCode.value![issuecode].length > 1
-                ? {
-                    ...acc,
-                    [issuecode]: issuesByIssueCode.value![issuecode],
-                  }
-                : acc,
-            {},
-          )) ||
-        {},
-    ),
-    issuesInToReadStack = computed(
-      () => collection.value?.filter(({ isToRead }) => isToRead),
-    ),
-    issuesInOnSaleStack = computed(
-      () => collection.value?.filter(({ isOnSale }) => isOnSale),
-    ),
-    totalUniqueIssues = computed(
-      () =>
-        (duplicateIssues.value &&
-          (!collection.value?.length
-            ? 0
-            : collection.value?.length -
-              Object.values(duplicateIssues.value).reduce(
-                (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-                0,
-              ))) ||
-        0,
-    ),
-    totalPerCountry = computed(
-      () =>
-        collection.value?.reduce(
-          (acc, issue) => ({
-            ...acc,
-            [issue.country]: (acc[issue.country] || 0) + 1,
-          }),
-          {} as { [countrycode: string]: number },
-        ),
-    ),
-    totalPerPublication = computed(
-      () =>
-        collection.value?.reduce(
-          (acc, issue) => {
-            const publicationcode = `${issue.country}/${issue.magazine}`;
-            return {
-              ...acc,
-              [publicationcode]: (acc[publicationcode] || 0) + 1,
-            };
-          },
-          {} as { [publicationcode: string]: number },
-        ) || null,
-    ),
-    numberPerCondition = computed(
-      () =>
-        collection.value?.reduce(
-          (acc, { condition }) => ({
-            ...acc,
-            [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
-          }),
-          {} as { [condition: string]: number },
-        ) || {},
-    ),
     purchasesById = computed(
-      () =>
+      (): Record<string, purchase> | undefined =>
         purchases.value?.reduce(
-          (acc, purchase) => ({ ...acc, [purchase.id]: purchase }),
+          (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
           {},
         ),
     ),
@@ -584,6 +502,7 @@ export const collection = defineStore("collection", () => {
       }
     };
   return {
+    ...collectionUtils,
     setApi: (params: {
       api: typeof api;
       sessionExistsFn: typeof sessionExistsFn;
@@ -596,13 +515,9 @@ export const collection = defineStore("collection", () => {
     collection,
     createPurchase,
     deletePurchase,
-    duplicateIssues,
     findInCollection,
     hasSuggestions,
     issueNumbersPerPublication,
-    issuesByIssueCode,
-    issuesInOnSaleStack,
-    issuesInToReadStack,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadLastPublishedEdgesForCurrentUser,
@@ -616,7 +531,6 @@ export const collection = defineStore("collection", () => {
     loadWatchedPublicationsWithSales,
     login,
     marketplaceContactMethods,
-    numberPerCondition,
     popularIssuesInCollection,
     popularIssuesInCollectionWithoutEdge,
     previousVisit,
@@ -627,12 +541,8 @@ export const collection = defineStore("collection", () => {
     signup,
     subscriptions,
     suggestions,
-    total,
-    totalPerCountry,
-    totalPerPublication,
     totalPerPublicationUniqueIssueNumbers,
     totalPerPublicationUniqueIssueNumbersSorted,
-    totalUniqueIssues,
     updateCollectionMultipleIssues,
     updateCollectionSingleIssue,
     updateMarketplaceContactMethods,

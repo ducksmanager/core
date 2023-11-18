@@ -40,7 +40,7 @@ alias: [/agrandir/marketplace]
       </template>
       <template #content>
         <ul>
-          <li v-for="issueId of (issueIds as number[])" :key="issueId">
+          <li v-for="issueId of issueIds as number[]" :key="issueId">
             <Issue
               hide-condition
               :publicationcode="issuesOnSaleById[issueId].publicationcode"
@@ -210,9 +210,10 @@ alias: [/agrandir/marketplace]
 
 <script setup lang="ts">
 import { coa } from "~/stores/coa";
-import { collection, IssueWithPublicationcode } from "~/stores/collection";
+import { collection } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
+import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 

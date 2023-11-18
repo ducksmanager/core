@@ -11,7 +11,7 @@
       name="publicationcode"
       required
       :options="publicationNamesForCurrentCountry"
-      @input="$emit('input', currentPublicationcode)"
+      @input="$emit('input', currentPublicationcode!)"
     />
     <router-link
       v-if="!noButton"
@@ -100,7 +100,3 @@ watch(
 
 coaStore.fetchCountryNames();
 </script>
-
-<style scoped>
-
-</style>

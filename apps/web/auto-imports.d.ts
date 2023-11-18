@@ -13,6 +13,7 @@ declare global {
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
   const EffectScope: typeof import('vue')['EffectScope']
+  const IssueSuggestionList: typeof import('../../packages/types/IssueSuggestionList')['IssueSuggestionList']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const availableLocales: typeof import('./src/composables/useLocales')['availableLocales']
@@ -39,6 +40,7 @@ declare global {
   const defineComponent: typeof import('vue')['defineComponent']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
+  const exclude: typeof import('../../packages/types/exclude')['exclude']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentLocaleShortKey: typeof import('./src/composables/useLocales')['getCurrentLocaleShortKey']
@@ -141,6 +143,7 @@ declare global {
   const useCached: typeof import('@vueuse/core')['useCached']
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
+  const useCollection: typeof import('./src/composables/useCollection')['default']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
   const useCondition: typeof import('./src/composables/useCondition')['default']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
@@ -439,6 +442,7 @@ declare module 'vue' {
     readonly useCached: UnwrapRef<typeof import('@vueuse/core')['useCached']>
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
+    readonly useCollection: UnwrapRef<typeof import('./src/composables/useCollection')['default']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
     readonly useCondition: UnwrapRef<typeof import('./src/composables/useCondition')['default']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
@@ -731,6 +735,7 @@ declare module '@vue/runtime-core' {
     readonly useCached: UnwrapRef<typeof import('@vueuse/core')['useCached']>
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
+    readonly useCollection: UnwrapRef<typeof import('./src/composables/useCollection')['default']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
     readonly useCondition: UnwrapRef<typeof import('./src/composables/useCondition')['default']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>

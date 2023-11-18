@@ -82,7 +82,7 @@
       </template>
       <template #non-empty-collection>
         <div class="mb-3">
-          {{ $t("Cliquez sur l'un de vos magazines pour éditer sa liste !") }}
+          {{ $t("Cliquez sur l'un des magazines pour éditer sa liste !") }}
         </div>
       </template>
     </ShortStats>
@@ -116,15 +116,7 @@ const user = $computed(() => collection().user);
 const total = $computed(() => collection().total);
 const totalPerPublication = $computed(() => collection().totalPerPublication);
 const mostPossessedPublication = $computed(
-  () =>
-    totalPerPublication &&
-    Object.keys(totalPerPublication).reduce(
-      (acc, publicationcode) =>
-        acc && totalPerPublication[acc] > totalPerPublication[publicationcode]
-          ? acc
-          : publicationcode,
-      null as string | null,
-    ),
+  () => collection().mostPossessedPublication,
 );
 
 watch(

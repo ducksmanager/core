@@ -120,5 +120,3 @@ watch(
   csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
 })();
 </script>
-
-<style scoped></style>

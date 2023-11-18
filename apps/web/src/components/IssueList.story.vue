@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
 
-import { IssueWithPublicationcode } from "~/stores/collection";
+import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 const customIssues: IssueWithPublicationcode[] = [
   {

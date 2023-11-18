@@ -13,7 +13,10 @@
         <span class="navbar-toggler-icon" />
       </button>
       <a class="navbar-brand" href="#">
-        {{ $t("Collection") }}
+        <template v-if="isPublic">{{
+          $t("Collection DucksManager de {username}", { username })
+        }}</template
+        ><template v-else>{{ $t("Collection") }}</template>
       </a>
       <b-collapse id="nav-publications" visible>
         <b-navbar-nav>
@@ -68,10 +71,23 @@ import { watch } from "vue";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { publicCollection } from "~/stores/public-collection";
+
+const { isPublic } = defineProps<{
+  isPublic?: boolean;
+}>();
+
+const route = useRoute();
+
+const username = $computed(() => route.params.username as string);
+
+const store = $computed(() =>
+  route.params.username ? publicCollection() : collection(),
+);
 
 let hasPublicationNames = $ref(false as boolean);
-const totalPerCountry = $computed(() => collection().totalPerCountry);
-const totalPerPublication = $computed(() => collection().totalPerPublication);
+const totalPerCountry = $computed(() => store.totalPerCountry);
+const totalPerPublication = $computed(() => store.totalPerPublication);
 const countryNames = $computed(() => coa().countryNames);
 const publicationNames = $computed(() => coa().publicationNames);
 const sortedCountries = $computed(

@@ -13,6 +13,7 @@ import { stats } from "~/stores/stats";
 import { addTokenRequestInterceptor } from "~axios-helper";
 
 import { createCachedCoaApi } from "./api";
+import { publicCollection } from "./stores/public-collection";
 import { users } from "./stores/users";
 
 onBeforeMount(() => {
@@ -27,6 +28,9 @@ onBeforeMount(() => {
     api: defaultApi,
   });
   stats().setApi({
+    api: defaultApi,
+  });
+  publicCollection().setApi({
     api: defaultApi,
   });
   collection().setApi({

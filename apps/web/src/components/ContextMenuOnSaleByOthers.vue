@@ -97,9 +97,9 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-import { IssueWithPublicationcode } from "~/stores/collection";
 import { marketplace } from "~/stores/marketplace";
 import { users } from "~/stores/users";
+import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 const { selectedIssueIdsByIssuenumber } = defineProps<{
   selectedIssueIdsByIssuenumber: {

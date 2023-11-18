@@ -8,14 +8,21 @@
   >
     <div v-if="total > 0 && totalPerPublication" id="short-stats">
       <div>
-        {{ $t("Vous possédez") }} <b>{{ total }}</b>
-        {{ t("numéro | numéros", total) }}, {{ $t("dont") }}
+        <template v-if="isPublic">{{
+          $t("{username} possède", { username })
+        }}</template
+        ><template v-else>>{{ $t("Vous possédez") }}</template
+        >&nbsp;<b>{{ total }}</b> {{ t("numéro | numéros", total) }},
+        {{ $t("dont") }}
         {{ totalUniqueIssues }}
         {{ t("numéro unique | numéros uniques", totalUniqueIssues) }}.
       </div>
       <div>
-        {{ $t("Votre collection est composée de") }}
-        <b>{{ Object.keys(totalPerPublication).length }}</b>
+        <template v-if="isPublic">{{
+          $t("La collection de {username} est composée de", { username })
+        }}</template
+        ><template v-else>{{ $t("Votre collection est composée de") }}</template
+        >&nbsp;<b>{{ Object.keys(totalPerPublication).length }}</b>
         {{ $t("magazines différents issus de") }}
         <b>{{ Object.keys(totalPerCountry).length }}</b>
         {{ t("pays | pays", Object.keys(totalPerCountry).length) }}.
@@ -29,14 +36,22 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
+const { isPublic } = defineProps<{
+  isPublic?: boolean;
+}>();
+
 import { collection } from "~/stores/collection";
-const collectionStore = collection();
-const total = $computed(() => collectionStore.total);
-const totalUniqueIssues = $computed(() => collectionStore.totalUniqueIssues);
-const totalPerCountry = $computed(() => collectionStore.totalPerCountry);
-const totalPerPublication = $computed(
-  () => collectionStore.totalPerPublication,
-);
+import { publicCollection } from "~/stores/public-collection";
+
+const route = useRoute();
+
+const username = $computed(() => route.params.username as string);
+
+const store = $computed(() => (isPublic ? publicCollection() : collection()));
+const total = $computed(() => store.total);
+const totalUniqueIssues = $computed(() => store.totalUniqueIssues);
+const totalPerCountry = $computed(() => store.totalPerCountry);
+const totalPerPublication = $computed(() => store.totalPerPublication);
 
 const { t } = useI18n();
 </script>

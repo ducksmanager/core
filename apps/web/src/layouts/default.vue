@@ -5,7 +5,9 @@
     <Banner :classes="{ 'd-none d-md-flex': true }" />
     <div id="logo_zone2">
       <BookcaseMenu v-if="firstPathPart === 'bookcase'" />
-      <CollectionMenu v-if="firstPathPart === 'collection'" />
+      <CollectionMenu
+        v-if="firstPathPart === 'collection' && !isPublicCollection"
+      />
       <StatsMenu v-if="firstPathPart === 'stats'" />
       <ExpandMenu v-if="firstPathPart === 'expand'" />
       <router-view />
@@ -23,6 +25,9 @@ import { collection } from "~/stores/collection";
 
 const route = useRoute();
 const router = useRouter();
+const isPublicCollection = $computed(
+  () => route.path.indexOf("/collection/user/") > -1,
+);
 
 const firstPathPart = $computed(
   () =>

@@ -1,4 +1,4 @@
-FROM node:16 as pnpm
+FROM node:18 as pnpm
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 ENV PNPM_HOME="/pnpm"

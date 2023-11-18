@@ -14,7 +14,9 @@
       :src="cloudinaryBaseUrl + pages[0].url"
       @load="
         ({ target }) => {
-          coverRatio = (target as HTMLImageElement).naturalHeight / (target as HTMLImageElement).naturalWidth;
+          coverRatio =
+            (target as HTMLImageElement).naturalHeight /
+            (target as HTMLImageElement).naturalWidth;
         }
       "
     />
@@ -272,21 +274,17 @@ watch(
   () => pagesWithUrl,
   (newValue) => {
     if (newValue && !newValue.length) {
-      toast!.show(
-        {
-          body: $t(
-            "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !",
-          ),
-          title: $t("Pas d'informations sur le contenu du livre"),
-        },
-        {
-          autoHide: true,
-          delay: 5000,
-          noCloseButton: true,
-          pos: "top-center",
-          variant: "warning",
-        },
-      );
+      toast!.show({
+        body: $t(
+          "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !",
+        ),
+        title: $t("Pas d'informations sur le contenu du livre"),
+        autoHide: true,
+        delay: 5000,
+        noCloseButton: true,
+        pos: "top-center",
+        variant: "warning",
+      });
       emit("close-book");
     }
   },

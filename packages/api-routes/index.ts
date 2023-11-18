@@ -347,6 +347,10 @@ export class GET__collection__stats__watchedauthorsstorycount  extends ContractW
             static readonly method = "get";
             static readonly url = "/collection/stats/watchedauthorsstorycount";
         }
+export class GET__collection_public__$username  extends ContractWithMethodAndUrl<{ params: { username: string }, resBody: issue[] }> {
+            static readonly method = "get";
+            static readonly url = "/collection-public/:username";
+        }
 export class GET__edgecreator__multiple_edge_photo__check_today_limit  extends ContractWithMethodAndUrl<{
       resBody: {
         uploadedFilesToday: string[];
