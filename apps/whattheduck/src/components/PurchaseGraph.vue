@@ -4,25 +4,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import {
-  BarController,
-  BarElement,
-  CategoryScale,
-  Chart,
-  ChartOptions,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-} from 'chart.js';
+import type { ChartOptions } from 'chart.js';
+import { BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import dayjs from 'dayjs';
 import { watch } from 'vue';
 import { Bar } from 'vue-chartjs';
 import { useI18n } from 'vue-i18n';
-
+import type { issue as dm_issue } from '~prisma-clients/client_dm';
 import { coa } from '~web/src/stores/coa';
-import { wtdcollection, purchaseWithStringDate } from '~/stores/wtdcollection';
-import { issue as dm_issue } from '~prisma-clients/client_dm';
+
+import type { purchaseWithStringDate } from '~/stores/wtdcollection';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const props = defineProps<{
   since: 'pastYear' | 'allTime';

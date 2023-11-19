@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import { components as webComponents } from '~web';
+
 import useMedal from '~/composables/useMedal';
 import { images } from '~/stores/images';
 

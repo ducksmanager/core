@@ -64,12 +64,12 @@
 </template>
 
 <script setup lang="ts">
-import { stats } from '~web/src/stores/stats';
+import { starOutline, starSharp, star } from 'ionicons/icons';
 import { components } from '~web';
 import { coa } from '~web/src/stores/coa';
-import { app } from '~/stores/app';
+import { stats } from '~web/src/stores/stats';
 
-import { starOutline, starSharp, star } from 'ionicons/icons';
+import { app } from '~/stores/app';
 
 const StarRating = components['StarRating'];
 

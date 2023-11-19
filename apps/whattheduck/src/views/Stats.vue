@@ -73,11 +73,11 @@
 </template>
 
 <script setup lang="ts">
-import { conditionsWithoutMissing } from '~/composables/useCondition';
-import { wtdcollection } from '~/stores/wtdcollection';
 import { components } from '~web';
 import { coa } from '~web/src/stores/coa';
-import { getConditionText } from '~/composables/useCondition';
+
+import { conditionsWithoutMissing, getConditionText } from '~/composables/useCondition';
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const ConditionsComponent = components['Conditions'];
 const { t } = useI18n();
