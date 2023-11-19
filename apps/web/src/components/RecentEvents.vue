@@ -75,7 +75,7 @@ const fetchEventsAndAssociatedData = async () => {
 <style scoped lang="scss">
 #recently {
   position: absolute;
-  top: 450px;
+  top: 550px;
   padding: 5px 5px 20px 5px;
   border-top: 1px solid #23282e;
 

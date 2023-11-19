@@ -6,7 +6,7 @@
           ><img id="logo" alt="logo" :src="getImagePath('logo_small.png')"
         /></router-link>
       </td>
-      <td>{{ $t("Collection DucksManager de {username}", { username }) }}</td>
+      <td>{{ $t("Collection de {username}", { username }) }}</td>
     </tr>
   </table>
 </template>

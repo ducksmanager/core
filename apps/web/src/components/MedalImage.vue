@@ -70,7 +70,7 @@ const props = defineProps<{
   levelProgressPercentage: number | null;
   radius: number;
   circumference: number;
-  withDescription: boolean;
+  withDescription?: boolean;
   getImagePath: (name: string) => string;
 }>();
 
@@ -140,8 +140,8 @@ const medalDescription = computed(() => {
         return "";
     }
     return t(textTemplate, [
-      userLevelPoints,
-      pointsDiffNextLevel,
+      userLevelPoints.value,
+      pointsDiffNextLevel.value,
       t(medalColors[currentLevel.value]),
     ]);
   }

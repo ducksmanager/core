@@ -2,8 +2,8 @@
   <ul id="menu-content" class="menu-content collapse show">
     <NavigationItemGroup
       :paths="[
-        /^\/collection/,
-        /^\/bookcase-show/,
+        /^\/collection(?!\/user)/,
+        /^\/bookcase(?!\/show\/.+)/,
         /^\/stats/,
         /^\/expand/,
         /^\/print/,
@@ -12,7 +12,7 @@
     >
       <template #text>
         <i-bi-house-fill />
-        {{ $t("Collection") }}
+        <span>{{ $t("Collection") }}</span>
       </template>
       <template v-if="username !== undefined" #items>
         <template v-if="username">
@@ -81,6 +81,38 @@
         </template>
       </template>
     </NavigationItemGroup>
+    <template v-if="publicCollectionUsername">
+      <li class="empty" />
+      <NavigationItemGroup
+        v-if="publicCollectionUsername"
+        :paths="[/^\/collection\/user/, /^\/bookcase\/show\/.+/]"
+        icon="glyphicon-home"
+      >
+        <template #text>
+          <i-bi-house-fill />
+          <span>
+            {{
+              $t("Collection de {username}", {
+                username: publicCollectionUsername,
+              })
+            }}
+          </span>
+        </template>
+        <template #items>
+          <NavigationItem>
+            <router-link :to="`/bookcase/show/${publicCollectionUsername}`">
+              <i-bi-book-half />
+              {{ $t("Bibliothèque") }}
+            </router-link>
+          </NavigationItem>
+          <NavigationItem>
+            <router-link :to="`/collection/user/${publicCollectionUsername}`">
+              <i-bi-list /> {{ $t("Collection") }}</router-link
+            >
+          </NavigationItem>
+        </template>
+      </NavigationItemGroup>
+    </template>
     <li class="empty" />
     <NavigationItem
       ><router-link to="/bookstores">
@@ -104,8 +136,14 @@ import Cookies from "js-cookie";
 import { collection } from "~/stores/collection";
 import { images } from "~/stores/images";
 
+const route = useRoute();
+
 const username = $computed(() => collection().user?.username || null);
 const getImagePath = images().getImagePath;
+
+const publicCollectionUsername = $computed(
+  () => route.params.username as string | undefined,
+);
 
 const logout = () => {
   Cookies.remove("token");
@@ -137,6 +175,10 @@ li {
   line-height: 25px;
   cursor: pointer;
 
+  svg {
+    margin-right: 0.5rem;
+  }
+
   .sub-menu li {
     background-color: #181c20;
     border: none;
@@ -158,6 +200,11 @@ li {
   &.active {
     border-left: 3px solid #c88964;
     background-color: #4f5b69;
+  }
+
+  &.active > a > *,
+  a.router-link-active {
+    color: #c88964 !important;
   }
 }
 

@@ -11,6 +11,7 @@
     :radius="radius"
     :circumference="circumference"
     :get-image-path="getImagePath"
+    with-description
   />
 </template>
 

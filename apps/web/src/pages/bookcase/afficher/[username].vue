@@ -4,7 +4,11 @@ meta:
 </route>
 <template>
   <h5>
-    <b>{{ $t("Bibliothèque DucksManager de") }} {{ $route.params.username }}</b>
+    <b>{{
+      $t("Bibliothèque DucksManager de {username}", {
+        username: $route.params.username,
+      })
+    }}</b>
   </h5>
   <ViewBookcase />
 </template>

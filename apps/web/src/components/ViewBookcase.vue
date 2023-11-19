@@ -51,7 +51,11 @@
         </b-alert>
         <SharePage
           v-if="showShareButtons && bookcaseUrl"
-          :title="`${$t('Bibliothèque DucksManager de')} ${bookcaseUsername}`"
+          :title="
+            $t('Bibliothèque DucksManager de {username}', {
+              username: bookcaseUsername,
+            })
+          "
           :url="bookcaseUrl"
         />
         <b-button v-else size="sm" @click="showShareButtons = true">
@@ -145,7 +149,9 @@
         :current-edge-opened="currentEdgeOpened"
         :edges-using-sprites="edgesUsingSprites"
         :sorted-bookcase="sortedBookcase"
-        @open-book="(edge: BookcaseEdgeWithPopularity) => (currentEdgeOpened = edge)"
+        @open-book="
+          (edge: BookcaseEdgeWithPopularity) => (currentEdgeOpened = edge)
+        "
       />
       <b-alert v-else :model-value="true" variant="warning">
         {{ $t("Cette bibliothèque est vide.") }}
@@ -296,7 +302,6 @@ watch(
               !/^[0-9]+$/.test(issuenumber),
           ),
       );
-      console.log(nonObviousPublicationIssueNumbers);
       coa.addIssueNumbers(
         newValue
           .filter(

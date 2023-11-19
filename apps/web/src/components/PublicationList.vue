@@ -12,11 +12,8 @@
       >
         <span class="navbar-toggler-icon" />
       </button>
-      <a class="navbar-brand" href="#">
-        <template v-if="isPublic">{{
-          $t("Collection DucksManager de {username}", { username })
-        }}</template
-        ><template v-else>{{ $t("Collection") }}</template>
+      <a class="navbar-brand" :href="publicationUrlRoot">
+        {{ title }}
       </a>
       <b-collapse id="nav-publications" visible>
         <b-navbar-nav>
@@ -37,7 +34,7 @@
               >
                 <router-link
                   class="dropdown-item"
-                  :to="`/collection/show/${publicationcode}`"
+                  :to="`${publicationUrlRoot}/${publicationcode}`"
                 >
                   {{
                     publicationNames[publicationcode] ||
@@ -47,7 +44,7 @@
               ></b-dropdown
             >
           </li>
-          <li class="nav-item">
+          <li v-if="!isPublic" class="nav-item">
             <router-link class="nav-link" :to="'/collection/show/new'">{{
               $t("Nouveau magazine")
             }}</router-link>
@@ -68,10 +65,13 @@
 
 <script setup lang="ts">
 import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
 import { publicCollection } from "~/stores/public-collection";
+
+const { t: $t } = useI18n();
 
 const { isPublic } = defineProps<{
   isPublic?: boolean;
@@ -81,8 +81,14 @@ const route = useRoute();
 
 const username = $computed(() => route.params.username as string);
 
-const store = $computed(() =>
-  route.params.username ? publicCollection() : collection(),
+const store = $computed(() => (isPublic ? publicCollection() : collection()));
+
+const title = $computed(() =>
+  isPublic ? $t("Collection de {username}", { username }) : $t("Collection"),
+);
+
+const publicationUrlRoot = $computed(() =>
+  isPublic ? `/collection/user/${username}` : "/collection/show",
 );
 
 let hasPublicationNames = $ref(false as boolean);

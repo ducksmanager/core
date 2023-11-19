@@ -20,6 +20,7 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
 }
 
 export const bookcase = defineStore("bookcase", () => {
+  const route = useRoute();
   const loadedSprites = ref({} as { [key: string]: string }),
     isPrivateBookcase = ref(false as boolean),
     isUserNotExisting = ref(false as boolean),
@@ -31,7 +32,7 @@ export const bookcase = defineStore("bookcase", () => {
     bookcaseOrder = ref(null as string[] | null),
     edgeIndexToLoad = ref(0 as number),
     isSharedBookcase = computed(
-      (): boolean => collection().user?.username !== bookcaseUsername.value,
+      (): boolean => route.params.username !== undefined,
     ),
     bookcaseWithPopularities = computed(
       (): BookcaseEdgeWithPopularity[] | null =>
