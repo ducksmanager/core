@@ -16,7 +16,7 @@
   "author": "Bruno Perel",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.5.2",
+    "@prisma/client": "^5.6.0",
     "@sentry/node": "^7.74.1",
     "body-parser": "^1.20.0",
     "cookie": "^0.5.0",
@@ -24,7 +24,7 @@
     "esm": "^3.2.25",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^5.4.2",
+    "prisma": "^5.6.0",
     "sharp": "^0.30.6",
     "socket.io": "^4.7.2",
     "typescript": "^5.2.2"

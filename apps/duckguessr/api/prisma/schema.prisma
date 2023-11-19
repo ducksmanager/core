@@ -83,7 +83,6 @@ model roundScore {
   id                Int       @id @default(autoincrement())
   playerId          Int       @map("player_id")
   roundId           Int       @map("round_id")
-  gameId            Int       @map("game_id")
   scoreTypeName     String    @map("score_type_name") @db.VarChar(20)
   score             Int       @db.UnsignedSmallInt
   timeSpentGuessing Float?    @map("time_spent_guessing") @db.Float
@@ -127,19 +126,19 @@ view gameScores {
 }
 
 view userGameMedalPoints {
-  medalType String @map("medal_type")
-  playerId  Int    @map("player_id")
-  gameId    Int    @map("game_id")
-  points    Int    @map("points")
+  medalType    String   @db.VarChar(30)
+  gameId       Int
+  playerId     Int
+  playerPoints Decimal? @db.Decimal(27, 0)
 
   @@unique([medalType, playerId, gameId])
   @@map("user_medals_game")
 }
 
 view userMedalPoints {
-  medalType String @map("medal_type")
-  playerId  Int    @map("player_id")
-  points    Int    @map("points")
+  medalType    String   @db.VarChar(30)
+  playerId     Int
+  playerPoints Decimal? @db.Decimal(27, 0)
 
   @@unique([medalType, playerId])
   @@map("user_medals")

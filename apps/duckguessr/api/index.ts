@@ -129,7 +129,6 @@ datasetsNamespace.on("connection", async (socket) => {
 
 const podiumNamespace: Namespace<ClientToServerEventsPodium> = io.of("/podium");
 podiumNamespace.on("connection", async (socket) => {
-  console.log("podium connection");
   socket.on("getPodium", async (callback) => {
     callback(
       (await prisma.$queryRaw`
