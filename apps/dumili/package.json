@@ -5,6 +5,7 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
+    "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n dm,web,web-api \"pnpm dm\" \"pnpm  -F ~dumili... -F !~prisma-clients dev\" \"pnpm -F ~dumili-api... dev\"",
     "dev": "concurrently -n vite,vue-tsc,docker-compose \"vite --port 8004\" \"vue-tsc --noEmit --watch\" \"docker compose -f docker-compose-dev.yml up\"",
     "build": "vite build",
     "preview": "vite preview",
