@@ -53,9 +53,9 @@
     >
       <template #head(playerId)="">&nbsp;</template>
       <template #head(totalScore)="">&nbsp;</template>
-      <template #head()="{ column }">
+      <template #head()="{ field }">
         <b-img
-          :src="imageUrl(columnToRound(column))"
+          :src="imageUrl(columnToRound(field))"
           style="max-height: 100px; max-width: 100%"
         />
       </template>
@@ -68,7 +68,7 @@
             class="text-nowrap"
           >
             <div>Round {{ round.roundNumber }}</div>
-            <div class="font-weight-normal">{{ round.personfullname }}</div>
+            <div class="font-weight-normal">{{ round.fullname }}</div>
           </th>
           <th>{{ t("Total score") }}</th>
         </tr>
@@ -76,8 +76,8 @@
       <template #cell(playerId)="{ value: playerId, index }">
         <b-card :style="{ width: '12rem' }">
           <player-info
-            :username="players[playerId].username"
-            :avatar="players[playerId].avatar"
+            :username="players[playerId as number].username"
+            :avatar="players[playerId as number].avatar"
             :top-player="index === 0"
             no-right-panel
           />
@@ -86,9 +86,9 @@
       <template #cell(totalScore)="{ value: totalScore }">
         <div>{{ totalScore }} points</div>
       </template>
-      <template #cell()="{ value: playerRoundScores }">
+      <template #cell()="{ value: playerRoundScores }: { value: unknown }">
         <round-score
-          v-for="score in playerRoundScores"
+          v-for="score in (playerRoundScores as roundScore[])"
           :key="`round-${score.roundId}-player-${score.playerId}`"
           class="text-center"
           :players="game.gamePlayers.map(({ player }) => player)"
@@ -106,6 +106,8 @@ import { getDuckguessrId, getShownUsername } from "~/composables/user";
 import { userStore } from "~/stores/user";
 import { GameFullNoPersoncode } from "~types/game";
 import { getUrl } from "~/composables/url";
+import { ColorVariant } from "bootstrap-vue-next";
+import { player, roundScore } from "~duckguessr-api/types/prisma-client";
 
 const { game } = toRefs(
   defineProps<{
@@ -119,7 +121,7 @@ const isAnonymous = computed(() => userStore().isAnonymous);
 const playerIds = game.value.gamePlayers.map(({ playerId }) => playerId);
 const players = game.value.gamePlayers.reduce(
   (acc, { player }) => ({ ...acc, [player.id]: player }),
-  {}
+  {} as Record<number, player>
 );
 const roundsWithPersonUrls = ref(
   game.value.rounds.map((roundScore) => ({
@@ -176,7 +178,7 @@ const playersWithScoresAndTotalScore = playerIds
   )
   .map((playerWithScores, idx) => ({
     ...playerWithScores,
-    _rowVariant: idx === 0 ? "success" : "",
+    _rowVariant: (idx === 0 ? "success" : "") as ColorVariant,
   }));
 
 const currentUserHasParticipated = computed(() =>

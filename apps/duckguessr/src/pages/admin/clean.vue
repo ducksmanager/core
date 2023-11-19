@@ -173,9 +173,13 @@ const { t } = useI18n();
 const datasetsGroupedByDecision = ref(
   {} as { [key: string]: DatasetWithDecisionCounts }
 );
-const datasets = ref([] as Array<{ text: string; value: string | null }>);
+const datasets = ref([] as { text: string; value: string | null }[]);
 const entryurlsPendingMaintenanceWithUrls = ref(
-  [] as { sitecodeUrl: string; decision: entryurlDetailsDecision }[]
+  [] as {
+    sitecodeUrl: string;
+    decision: entryurlDetailsDecision;
+    url: string;
+  }[]
 );
 const validatedAndRemainingImageCount = ref(null as any);
 const selectedDataset = ref(null as string | null);

@@ -14,8 +14,11 @@
       :style="{ backgroundImage: `url('${authorImageUrl}')` }"
     >
       <div class="author-name position-absolute">
-        <flag :country="author.personnationality" />
-        {{ author.personfullname }}
+        <flag
+          v-if="author.nationalitycountrycode"
+          :country="author.nationalitycountrycode"
+        />
+        {{ author.fullname }}
       </div>
       <div hidden>
         <b-img :src="authorImageUrl" @error="setDefaultAuthorUrl()" />

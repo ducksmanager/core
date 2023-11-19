@@ -16,8 +16,8 @@
       }"
     >
       <b-img class="d-none" :src="personUrl" @error="setDefaultAuthorUrl()" />
-      <flag :country="round.personnationality" />&nbsp;{{
-        round.personfullname
+      <flag :country="round.nationalitycountrycode!" />&nbsp;{{
+        round.fullname
       }}
     </div>
   </b-col>

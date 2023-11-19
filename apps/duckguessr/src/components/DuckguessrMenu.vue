@@ -3,8 +3,8 @@
     <div id="medals-and-login" class="py-2 d-flex flex-column">
       <div class="d-none d-lg-block">
         <component
-          :is="isAnonymous ? 'div' : 'a'"
-          :href="isAnonymous ? undefined : '/profile'"
+          :is="isAnonymous === true ? 'div' : 'a'"
+          :href="isAnonymous === true ? undefined : '/profile'"
         >
           <player-info
             v-if="user"

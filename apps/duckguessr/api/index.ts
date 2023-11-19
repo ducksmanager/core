@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { PrismaClient } from "@prisma/client";
+import { player, PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import express from "express";
 import http from "http";
@@ -46,11 +46,11 @@ const io = new Server<
 
 
 new Server<
-ClientToServerEventsMaintenance
+  ClientToServerEventsMaintenance
 >(server, {
   cors,
 }).on('connection', async (socket) => {
-  socket.on("getMaintenanceData", async (callback) => { 
+  socket.on("getMaintenanceData", async (callback) => {
     callback(await prisma.$queryRaw`
               select name, decision, count(*) as 'count'
               from dataset
@@ -89,6 +89,7 @@ ClientToServerEventsMaintenance
         )
       },
       include: {
+        dataset: true,
         entryurlDetails: true
       },
       take: 60,
@@ -119,7 +120,7 @@ ClientToServerEventsMaintenance
 
 
 new Server<
-ClientToServerEventsDatasets
+  ClientToServerEventsDatasets
 >(server, {
   cors,
 }).on('connection', async (socket) => {
@@ -137,13 +138,15 @@ ClientToServerEventsDatasets
   })
 })
 
+
 new Server<
-ClientToServerEventsPodium
+  ClientToServerEventsPodium
 >(server, {
   cors,
 }).on('connection', async (socket) => {
   socket.on('getPodium', async (callback) => {
-    callback(await prisma.$queryRaw`
+    callback(
+      (await prisma.$queryRaw`
         SELECT player.*, sum(score + speed_bonus) AS sumScore
         FROM player
         INNER JOIN round_score ON player.id = round_score.player_id
@@ -151,8 +154,7 @@ ClientToServerEventsPodium
         GROUP BY player.id
         HAVING sumScore > 0
         ORDER BY sumScore DESC
-      `
-    )
+      `) as (player & { sumScore: number })[])
   })
 })
 
@@ -191,7 +193,7 @@ io.of('/round').on('connection', async (socket) => {
       })
       return
     }
-    
+
 
     fetch(`${process.env.CLOUDINARY_URL_ROOT}${round.sitecodeUrl}`)
       .then(async (response) => `data:${response.headers.get('content-type')};base64,${convertBlobToBase64(await response.blob())}`)
@@ -238,8 +240,8 @@ io.of('/game').on('connection', async (socket) => {
     const personDetails = await prismaCoa.inducks_person.findMany({
       select: {
         personcode: true,
-        fullname: true,        nationalitycountrycode: true
-    
+        fullname: true, nationalitycountrycode: true
+
       },
       where: {
         personcode: {

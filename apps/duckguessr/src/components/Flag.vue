@@ -16,5 +16,3 @@ switch (country.value) {
 const url = computed(() => `https://flagcdn.com/w20/${fixedCountry.value}.png`);
 const isShown = ref(true);
 </script>
-
-<style scoped></style>

@@ -34,12 +34,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { UserMedalPoints } from "~types/playerStats";
+import { player } from "~duckguessr-api/types/prisma-client";
 
 const { t } = useI18n();
 const { players } = toRefs(
   defineProps<{
-    players: UserMedalPoints[];
+    players: (player & { sumScore: number })[];
   }>()
 );
 
@@ -50,7 +50,7 @@ const topPlayers = computed(() =>
 );
 
 const maxPoints = computed(() =>
-  topPlayers.value.reduce((acc, player) => Math.max(acc, player.points), 0)
+  topPlayers.value.reduce((acc, player) => Math.max(acc, player.sumScore), 0)
 );
 
 const otherPlayers = players.value.slice(3);

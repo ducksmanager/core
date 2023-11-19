@@ -1,14 +1,14 @@
-import { game, gamePlayer, player, round, roundScore } from "@prisma/client";
+import { dataset, game, gamePlayer, player } from "@prisma/client";
 
-import { Author } from "./roundWithScoresAndAuthor";
-
+import { Author, RoundWithScoresAndAuthor } from "./roundWithScoresAndAuthor";
 
 export interface GamePlayerWithFullPlayer extends gamePlayer {
   player: player;
 }
 
 export interface GameFullNoPersoncode extends game {
+  dataset: dataset;
   authors: Author[];
-  rounds: (Omit<round, "personcode"|"sitecodeUrl"> & {personcode?:string, sitecodeUrl?: string} & {roundScores: roundScore[]})[];
+  rounds: RoundWithScoresAndAuthor[];
   gamePlayers: GamePlayerWithFullPlayer[];
 }

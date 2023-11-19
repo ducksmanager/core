@@ -5,7 +5,7 @@ import { inducks_person } from "~prisma-clients/client_coa";
 export type Author = Pick<inducks_person, "personcode" | "fullname" | "nationalitycountrycode">;
 
 export interface RoundWithScoresAndAuthor extends round, Author {
-  roundScores: Array<roundScore>;
+  roundScores: roundScore[];
 }
 
 export interface OngoingRoundScore {
