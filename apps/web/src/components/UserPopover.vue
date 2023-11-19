@@ -13,7 +13,7 @@
           <Medal
             v-for="(numberOfPoints, contribution) in points"
             :key="contribution"
-            :contribution="(contribution as string)"
+            :contribution="contribution as string"
             :user-level-points="numberOfPoints"
             small
           />
@@ -28,6 +28,22 @@
           {{ $t("pays | pays", stats.numberOfCountries) }}
         </div>
         <div v-if="stats.allowSharing" class="bookcase-link">
+          <router-link
+            v-slot="{ href, navigate }"
+            :to="`/collection/user/${stats.username}`"
+            custom
+          >
+            <b-button
+              size="sm"
+              variant="outline-secondary"
+              target="_blank"
+              :href="href"
+              @click="navigate"
+            >
+              <i-bi-list />&nbsp;
+              {{ $t("Voir la collection") }}
+            </b-button>
+          </router-link>
           <router-link
             v-slot="{ href, navigate }"
             :to="`/bookcase/show/${stats.username}`"
@@ -85,6 +101,7 @@ const getImagePath = images().getImagePath;
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   margin-top: 8px;
   white-space: nowrap;
 
