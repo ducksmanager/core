@@ -1,6 +1,6 @@
 # This Dockerfile assumes that the context directory is ../..
 
-FROM node:16 AS build
+FROM node:18 AS build
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 ENV PNPM_HOME="/pnpm"
