@@ -13,7 +13,7 @@
     "~prisma-clients": "../prisma-clients"
   },
   "dependencies": {
-    "@prisma/client": "^5.4.2",
+    "@prisma/client": "^5.6.0",
     "@pusher/push-notifications-server": "^1.2.6",
     "@sentry/node": "^7.74.1",
     "axios": "^1.5.1",
