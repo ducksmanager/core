@@ -43,14 +43,13 @@ export default defineConfig({
     VueI18n({
       runtimeOnly: false,
       compositionOnly: true,
-      include: [path.resolve(__dirname, "translations/**")],
     }),
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({ 
       imports: ["vue", "vue/macros", "vue-router", "@vueuse/core", 'vue-i18n'],
       dts: true,
-      dirs: ["./src/composables", "./types"],
+      dirs: ["./src/composables"],
       vueTemplate: true,
     }),
 

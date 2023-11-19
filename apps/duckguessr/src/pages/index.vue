@@ -82,7 +82,9 @@ const youtubeVideoId = computed(() =>
   locale.value === "fr" ? "21Zfy5bOQkA" : "F0j-MMTiT3w"
 );
 
-const datasetsSocket: Socket<ClientToServerEventsDatasets> = io("/datasets");
+const datasetsSocket: Socket<ClientToServerEventsDatasets> = io(
+  import.meta.env.VITE_SOCKET_URL + "/datasets"
+);
 
 const createMatch = (datasetName: string) => {
   matchCreationSocket.value?.emit(
@@ -99,11 +101,14 @@ watch(
   () => userStore().user?.username,
   (username) => {
     if (username) {
-      matchCreationSocket.value = io(`${import.meta.env.SOCKET_URL}/match`, {
-        auth: {
-          cookie: useCookies().getAll(),
-        },
-      });
+      matchCreationSocket.value = io(
+        `${import.meta.env.VITE_SOCKET_URL}/match`,
+        {
+          auth: {
+            cookie: useCookies().getAll(),
+          },
+        }
+      );
     }
   },
   { immediate: true }

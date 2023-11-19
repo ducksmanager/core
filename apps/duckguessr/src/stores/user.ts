@@ -39,7 +39,7 @@ export const userStore = defineStore("user", () => {
       () => user.value && isAnonymousNative(user.value.username)
     ),
     login = () => {
-      loginSocket.value = io(`${import.meta.env.SOCKET_URL}/login`, {
+      loginSocket.value = io(`${import.meta.env.VITE_SOCKET_URL}/login`, {
         auth: {
           cookie: useCookies().getAll(),
         },
@@ -93,6 +93,7 @@ export const userStore = defineStore("user", () => {
   return {
     user,
     stats,
+    login,
     loginSocket,
     isAnonymous,
     gameStats,

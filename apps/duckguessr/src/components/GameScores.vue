@@ -53,12 +53,12 @@
     >
       <template #head(playerId)="">&nbsp;</template>
       <template #head(totalScore)="">&nbsp;</template>
-      <template #head()="{ field }">
-        <b-img
+      <!-- <template #head()="{ field }"> -->
+      <!-- <b-img
           :src="imageUrl(columnToRound(field))"
           style="max-height: 100px; max-width: 100%"
-        />
-      </template>
+        /> -->
+      <!-- </template> -->
       <template #thead-top>
         <tr>
           <th>{{ t("Player") }}</th>
@@ -100,12 +100,10 @@
 </template>
 
 <script lang="ts" setup>
-import { RoundWithScoresAndAuthor } from "~types/roundWithScoresAndAuthor";
 import { getDuckguessrId, getShownUsername } from "~/composables/user";
 
 import { userStore } from "~/stores/user";
 import { GameFullNoPersoncode } from "~types/game";
-import { getUrl } from "~/composables/url";
 import { ColorVariant } from "bootstrap-vue-next";
 import { player, roundScore } from "~duckguessr-api/types/prisma-client";
 
@@ -236,10 +234,6 @@ watch(
 );
 
 const { t } = useI18n();
-const imageUrl = ({ sitecodeUrl: url }: RoundWithScoresAndAuthor) =>
-  getUrl(`/${url}`);
-const columnToRound = (column: string) =>
-  game.value.rounds[parseInt(column.replace("round", "")) - 1];
 </script>
 
 <style scoped lang="scss">

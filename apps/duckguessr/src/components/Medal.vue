@@ -71,21 +71,20 @@ const medalTypes = computed(
   })
 );
 
+type Props = {
+  type: string;
+  withGameData: boolean;
+  withDetails: boolean;
+  withTitle: boolean;
+  medalLevelAndProgress: MedalLevelAndProgress;
+};
+
 const { medalLevelAndProgress, type, withGameData } = toRefs(
-  withDefaults(
-    defineProps<{
-      type: string;
-      withGameData: boolean;
-      withDetails: boolean;
-      withTitle: boolean;
-      medalLevelAndProgress: MedalLevelAndProgress;
-    }>(),
-    {
-      withGameData: false,
-      withDetails: false,
-      withTitle: true,
-    }
-  )
+  withDefaults(defineProps<Props>(), {
+    withGameData: false,
+    withDetails: false,
+    withTitle: true,
+  })
 );
 
 const levels = computed(

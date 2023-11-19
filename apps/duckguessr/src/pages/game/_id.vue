@@ -71,7 +71,7 @@ const firstRoundStartDate = ref(null as Date | null);
 
 const game = ref(null as GameFullNoPersoncode | null);
 
-const gameSocket = io(`${import.meta.env.SOCKET_URL}/game/${gameId}`, {
+const gameSocket = io(`${import.meta.env.VITE_SOCKET_URL}/game/${gameId}`, {
   auth: {
     cookie: useCookies().getAll(),
   },
@@ -169,7 +169,9 @@ const validateGuess = async () => {
 };
 
 const loadGame = async () => {
-  game.value = await io(import.meta.env.SOCKET_URL).emitWithAck("getPodium");
+  game.value = await io(import.meta.env.VITE_SOCKET_URL).emitWithAck(
+    "getPodium"
+  );
   if (game.value) {
     const now = new Date().toISOString();
     gameIsFinished.value = game.value.rounds.every(

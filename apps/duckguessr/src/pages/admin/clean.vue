@@ -188,7 +188,9 @@ const currentPage = ref(1 as number);
 const totalRows = ref(10000 as number | null);
 const rowsPerPage = 60;
 
-const socket: Socket<ClientToServerEventsMaintenance> = io("/maintenance");
+const socket: Socket<ClientToServerEventsMaintenance> = io(
+  import.meta.env.SOCKET_URL + "/maintenance"
+);
 
 const user = computed(() => userStore().user);
 const isAllowed = computed(

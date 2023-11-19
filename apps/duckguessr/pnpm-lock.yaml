@@ -76,6 +76,9 @@ dependencies:
     version: 1.8.22(typescript@5.2.2)
 
 devDependencies:
+  '@iconify-json/bi':
+    specifier: ^1.1.20
+    version: 1.1.20
   '@intlify/unplugin-vue-i18n':
     specifier: ^1.4.0
     version: 1.5.0(vue-i18n@9.7.0)
@@ -464,6 +467,12 @@ packages:
   /@humanwhocodes/object-schema@2.0.1:
     resolution: {integrity: sha512-dvuCeX5fC9dXgJn9t+X5atfmgQAzUOWqS1254Gh0m6i8wKd10ebXkfNKiRK+1GWi/yTvvLDHpoxLr0xxxeslWw==}
     dev: false
+
+  /@iconify-json/bi@1.1.20:
+    resolution: {integrity: sha512-t3f7mRaCKIOeOIZUq8tNVTkw2nrgF2bzsOhOIm9wkoZbARcWgXmCiZTcqclL3++yxcbAqZqOa+Ky7oj/y5ySew==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
 
   /@iconify/types@2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}

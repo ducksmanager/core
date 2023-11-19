@@ -2,9 +2,7 @@ import "dotenv/config";
 
 import { player, PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
-import express from "express";
-import http from "http";
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 
 import { PrismaClient as PrismaCoaClient } from "~prisma-clients/client_coa";
 
@@ -27,105 +25,96 @@ Sentry.init({
 
 const prisma = new PrismaClient();
 const prismaCoa = new PrismaCoaClient();
-const app = express();
-const server = http.createServer(app);
 
 const cors = {
-  origin: process.env.NUXT_URL,
-  methods: ["GET"],
-}
+  origin: process.env.FRONTEND_URL
+};
 
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData
->(server, {
-  cors
+>({
+  cors,
 });
 
-
-new Server<
-  ClientToServerEventsMaintenance
->(server, {
-  cors,
-}).on('connection', async (socket) => {
+const maintenanceNamespace: Namespace<ClientToServerEventsMaintenance> = io.of("/maintenance");
+maintenanceNamespace.on("connection", async (socket) => {
   socket.on("getMaintenanceData", async (callback) => {
-    callback(await prisma.$queryRaw`
+    callback(
+      await prisma.$queryRaw`
               select name, decision, count(*) as 'count'
               from dataset
               left join dataset_entryurl de on dataset.id = de.dataset_id
               left join entryurl_details using (sitecode_url)
               group by dataset_id, decision
-            `)
+            `
+    );
   });
 
-  socket.on('getMaintenanceDataForDataset', async (datasetName, decisions, offset, callback) => {
-
-    if (!decisions) {
-      throw new Error('No decisions provided')
-    }
-    const dataset = await prisma.dataset.findUnique({
-      where: {
-        name: datasetName
+  socket.on(
+    "getMaintenanceDataForDataset",
+    async (datasetName, decisions, offset, callback) => {
+      if (!decisions) {
+        throw new Error("No decisions provided");
       }
-    })
-    if (!dataset) {
-      throw new Error('No dataset exists with name ' + datasetName)
-    }
-    callback(await prisma.datasetEntryurl.findMany({
-      where: {
-        OR: decisions.map(
-          (decision) => (
-            {
+      const dataset = await prisma.dataset.findUnique({
+        where: {
+          name: datasetName,
+        },
+      });
+      if (!dataset) {
+        throw new Error("No dataset exists with name " + datasetName);
+      }
+      callback(
+        await prisma.datasetEntryurl.findMany({
+          where: {
+            OR: decisions.map((decision) => ({
               datasetId: dataset.id,
               entryurlDetails: {
                 is: {
-                  decision: decision === 'null' ? null : decision
-                }
-              }
-            }
-          )
-        )
-      },
-      include: {
-        dataset: true,
-        entryurlDetails: true
-      },
-      take: 60,
-      skip: offset,
-      orderBy: {
-        sitecodeUrl: 'asc'
-      }
-    }))
-  }
-  )
+                  decision: decision === "null" ? null : decision,
+                },
+              },
+            })),
+          },
+          include: {
+            dataset: true,
+            entryurlDetails: true,
+          },
+          take: 60,
+          skip: offset,
+          orderBy: {
+            sitecodeUrl: "asc",
+          },
+        })
+      );
+    }
+  );
 
-  socket.on('updateMaintenanceData', async (data) => {
+  socket.on("updateMaintenanceData", async (data) => {
     await prisma.$transaction(
       data.map(({ sitecodeUrl, decision }) =>
         prisma.entryurlDetails.update({
           where: {
-            sitecodeUrl
+            sitecodeUrl,
           },
           data: {
             decision,
-            updatedAt: new Date()
-          }
+            updatedAt: new Date(),
+          },
         })
       )
-    )
-  })
-})
+    );
+  });
+});
 
-
-new Server<
-  ClientToServerEventsDatasets
->(server, {
-  cors,
-}).on('connection', async (socket) => {
-  socket.on('getDatasets', async (callback) => {
-    callback(await prisma.$queryRaw`
+const datasetsNamespace: Namespace<ClientToServerEventsDatasets> = io.of("/datasets");
+datasetsNamespace.on("connection", async (socket) => {
+  socket.on("getDatasets", async (callback) => {
+    callback(
+      await prisma.$queryRaw`
       SELECT dataset.id, name, title, description, COUNT(*) AS images, COUNT(DISTINCT personcode) AS authors
       FROM dataset
       LEFT JOIN dataset_entryurl de ON dataset.id = de.dataset_id
@@ -134,41 +123,40 @@ new Server<
       AND dataset.name NOT LIKE '%-ml'
       AND decision = 'ok'
       GROUP BY dataset.name`
-    )
-  })
-})
-
-
-new Server<
-  ClientToServerEventsPodium
->(server, {
-  cors,
-}).on('connection', async (socket) => {
-  socket.on('getPodium', async (callback) => {
-    callback(
-      (await prisma.$queryRaw`
-        SELECT player.*, sum(score + speed_bonus) AS sumScore
-        FROM player
-        INNER JOIN round_score ON player.id = round_score.player_id
-        WHERE username NOT like 'bot_%' and username NOT LIKE 'user%'
-        GROUP BY player.id
-        HAVING sumScore > 0
-        ORDER BY sumScore DESC
-      `) as (player & { sumScore: number })[])
-  })
-})
-
-const convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
-  const reader = new FileReader;
-  reader.onerror = reject;
-  reader.onload = () => {
-    resolve(reader.result);
-  };
-  reader.readAsDataURL(blob);
+    );
+  });
 });
 
-io.of('/round').on('connection', async (socket) => {
-  socket.on('getGameRounds', async (gameId, callback) => {
+const podiumNamespace: Namespace<ClientToServerEventsPodium> = io.of("/podium");
+podiumNamespace.on("connection", async (socket) => {
+  console.log("podium connection");
+  socket.on("getPodium", async (callback) => {
+    callback(
+      (await prisma.$queryRaw`
+      SELECT player.*, sum(score + speed_bonus) AS sumScore
+      FROM player
+      INNER JOIN round_score ON player.id = round_score.player_id
+      WHERE username NOT like 'bot_%' and username NOT LIKE 'user%'
+      GROUP BY player.id
+      HAVING sumScore > 0
+      ORDER BY sumScore DESC
+    `) as (player & { sumScore: number })[]
+    );
+  });
+});
+
+const convertBlobToBase64 = (blob: Blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+
+io.of("/round").on("connection", async (socket) => {
+  socket.on("getGameRounds", async (gameId, callback) => {
     const round = await prisma.round.findFirst({
       include: {
         roundScores: true,
@@ -179,9 +167,9 @@ io.of('/round').on('connection', async (socket) => {
         finishedAt: null,
       },
       orderBy: {
-        roundNumber: 'asc',
+        roundNumber: "asc",
       },
-    })
+    });
 
     if (!round) {
       callback({
@@ -190,30 +178,33 @@ io.of('/round').on('connection', async (socket) => {
             gameId,
           },
         }),
-      })
-      return
+      });
+      return;
     }
 
-
     fetch(`${process.env.CLOUDINARY_URL_ROOT}${round.sitecodeUrl}`)
-      .then(async (response) => `data:${response.headers.get('content-type')};base64,${convertBlobToBase64(await response.blob())}`)
-      .then(base64 => {
+      .then(
+        async (response) =>
+          `data:${response.headers.get(
+            "content-type"
+          )};base64,${convertBlobToBase64(await response.blob())}`
+      )
+      .then((base64) => {
         callback({
           gameId,
           roundNumber: round.roundNumber,
           base64,
-        })
+        });
       })
       .catch((e) => {
-        console.error(e)
-        callback(null)
-      })
-  })
-})
+        console.error(e);
+        callback(null);
+      });
+  });
+});
 
-io.of('/game').on('connection', async (socket) => {
-  socket.on('getGame', async (id, callback) => {
-
+io.of("/game").on("connection", async (socket) => {
+  socket.on("getGame", async (id, callback) => {
     const game = await prisma.game.findFirst({
       include: {
         gamePlayers: {
@@ -231,24 +222,24 @@ io.of('/game').on('connection', async (socket) => {
       where: {
         id,
       },
-    })
+    });
     if (!game) {
-      callback(null)
-      return
+      callback(null);
+      return;
     }
 
     const personDetails = await prismaCoa.inducks_person.findMany({
       select: {
         personcode: true,
-        fullname: true, nationalitycountrycode: true
-
+        fullname: true,
+        nationalitycountrycode: true,
       },
       where: {
         personcode: {
-          in: game.rounds.map(({ personcode }) => personcode)
-        }
-      }
-    })
+          in: game.rounds.map(({ personcode }) => personcode),
+        },
+      },
+    });
 
     callback({
       ...game,
@@ -256,39 +247,38 @@ io.of('/game').on('connection', async (socket) => {
         .filter(({ roundNumber }) => roundNumber !== null)
         .map((round) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { personcode, sitecodeUrl, ...unfinishedRound } = round
+          const { personcode, sitecodeUrl, ...unfinishedRound } = round;
           return round.finishedAt && round.finishedAt.getTime() <= Date.now()
             ? round
-            : unfinishedRound
+            : unfinishedRound;
         }),
-      authors: personDetails.sort(({ personcode: personcode1 }, { personcode: personcode2 }) =>
-        personcode1 < personcode2 ? -1 : 1
+      authors: personDetails.sort(
+        ({ personcode: personcode1 }, { personcode: personcode2 }) =>
+          personcode1 < personcode2 ? -1 : 1
       ),
-    })
-  })
-})
+    });
+  });
+});
 
 createPlayerSocket(io);
 createMatchmakingSocket(io);
 
-app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
+//app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
-const port = 3001;
-app.listen(port, async () => {
-  const pendingGames = await prisma.game.findMany({
-    where: {
-      rounds: {
-        some: {
-          finishedAt: { gt: new Date() },
-        },
+const pendingGames = await prisma.game.findMany({
+  where: {
+    rounds: {
+      some: {
+        finishedAt: { gt: new Date() },
       },
     },
-  });
-  for (const pendingGame of pendingGames) {
-    console.debug(
-      `Creating socket for unfinished game with ID ${pendingGame.id}`
-    );
-    await createGameSocket(io, pendingGame.id);
-  }
-  console.log(`API listening on port ${port}`);
+  },
 });
+for (const pendingGame of pendingGames) {
+  console.debug(
+    `Creating socket for unfinished game with ID ${pendingGame.id}`
+  );
+  await createGameSocket(io, pendingGame.id);
+}
+
+io.listen(4000);

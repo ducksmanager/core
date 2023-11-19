@@ -8,7 +8,10 @@ import { ClientToServerEventsPodium } from "~duckguessr-api/types/socketEvents";
 
 const players = ref(null as player[] | null);
 
-const podiumSocket: Socket<ClientToServerEventsPodium> = io("/datasets");
+console.log(import.meta.env.VITE_SOCKET_URL);
+const podiumSocket: Socket<ClientToServerEventsPodium> = io(
+  import.meta.env.VITE_SOCKET_URL + "/podium"
+);
 
 onMounted(async () => {
   players.value = await podiumSocket.emitWithAck("getPodium");

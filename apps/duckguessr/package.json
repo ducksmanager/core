@@ -4,13 +4,14 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
-    "duckguessr": "concurrently -p \"duckguessr-{name}\" -n vite,vue-tsc,docker-compose \"vite --port 8005\" \"vue-tsc --noEmit --watch\" \"docker compose up\"",
+    "duckguessr": "concurrently -p \"duckguessr-{name}\" -n vite,vue-tsc,api \"vite --host --port 8007\" \"vue-tsc --noEmit --watch\" \"pnpm -F ~duckguessr-api dev\"",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint --cache --fix ."
   },
   "devDependencies": {
+    "@iconify-json/bi": "^1.1.20",
     "@intlify/unplugin-vue-i18n": "^1.4.0",
     "@types/js-cookie": "^3.0.5",
     "@types/node": "^20.8.10",

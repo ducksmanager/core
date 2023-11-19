@@ -45,37 +45,37 @@
             />
           </div>
           <b-navbar-nav class="justify-content-start flex-column">
-            <nuxt-link to="/" class="mx-2 align-self-start">{{
+            <router-link to="/" class="mx-2 align-self-start">{{
               $t("Home")
-            }}</nuxt-link>
-            <nuxt-link to="/podium" class="mx-2 align-self-start">
+            }}</router-link>
+            <router-link to="/podium" class="mx-2 align-self-start">
               {{ $t("Podium") }}
-            </nuxt-link>
-            <nuxt-link
+            </router-link>
+            <router-link
               v-if="!isAnonymous"
               to="/profile"
               class="mx-2 align-self-start"
             >
               {{ $t("My profile") }}
-            </nuxt-link>
+            </router-link>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
       <language-switch-dropdown />
     </div>
-    <nuxt-link to="/" class="d-none d-lg-block mx-2 align-self-start">
+    <router-link to="/" class="d-none d-lg-block mx-2 align-self-start">
       {{ $t("Home") }}
-    </nuxt-link>
-    <nuxt-link to="/podium" class="d-none d-lg-block mx-2 align-self-start">
+    </router-link>
+    <router-link to="/podium" class="d-none d-lg-block mx-2 align-self-start">
       {{ $t("Podium") }}
-    </nuxt-link>
-    <nuxt-link
+    </router-link>
+    <router-link
       v-if="!isAnonymous"
       to="/profile"
       class="d-none d-lg-block mx-2 align-self-start"
     >
       {{ $t("My profile") }}
-    </nuxt-link>
+    </router-link>
   </div>
 </template>
 <script lang="ts" setup>
