@@ -5,6 +5,7 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
+    "whattheduck": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n whattheduck-ionic,api \"pnpm -F ~whattheduck-ionic... -F !~web -F !~prisma-clients dev\" \"pnpm -F ~api... dev\"",
     "lint": "eslint --fix .",
     "dev": "vite dev --host",
     "build": "vue-tsc && vite build",
@@ -65,6 +66,7 @@
     "@vitejs/plugin-vue": "^4.4.1",
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/test-utils": "^2.4.1",
+    "concurrently": "^7.1.0",
     "cypress": "^13.5.0",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
