@@ -23,7 +23,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm -r i
 
 COPY . ./
-RUN pnpm -r -F ~web... -F ~dumili... run build
+RUN pnpm -r -F ~web... -F ~api... -F ~dumili... -F ~dumili-api  run build
 
 FROM nginx AS web
 LABEL org.opencontainers.image.authors="Bruno Perel"
