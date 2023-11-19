@@ -178,6 +178,7 @@ import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 import { users } from "~/stores/users";
 import { GET__bookstores, PUT__bookstores } from "~api-routes";
 import { call } from "~axios-helper";
+import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 let existingBookstore = $ref(null as SimpleBookstore | null);

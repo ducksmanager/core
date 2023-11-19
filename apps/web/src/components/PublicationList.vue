@@ -4,7 +4,7 @@
     id="publication-list"
     class="navbar navbar-expand-lg navbar-dark bg-dark flex-row justify-content-between position-sticky"
   >
-    <div class="d-flex flex-row">
+    <div class="d-flex flex-row align-items-center">
       <button
         v-b-toggle="'nav-publications'"
         class="navbar-toggler"
@@ -148,10 +148,6 @@ fetchCountryNames();
 
   .navbar-toggler {
     margin-right: 1rem;
-  }
-
-  .navbar-brand {
-    min-width: 120px;
   }
 
   .navbar-nav {

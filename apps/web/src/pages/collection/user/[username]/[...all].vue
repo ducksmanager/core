@@ -1,4 +1,5 @@
 <route lang="yaml">
+alias: [/collection/user/:username]
 meta:
   public: true
 </route>
