@@ -27,7 +27,8 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 WORKDIR /app
 
 COPY {package.json,pnpm-*.yaml} ./
-COPY --from=build /app/packages/axios-helper/{dist,package.json} ./packages/axios-helper
+COPY --from=build /app/packages/axios-helper/dist ./packages/axios-helper
+COPY --from=build /app/packages/axios-helper/package.json ./packages/axios-helper/
 
 WORKDIR /app/apps/dumili/api
 COPY --from=build /app/apps/dumili/api/dist/api ./
