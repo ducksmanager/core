@@ -42,20 +42,20 @@ jobs:
           target: apps/dumili/api/.env
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
         with:
           driver-opts: |
-            image=moby/buildkit:v0.12.0
+            image=moby/buildkit:v0.12.3
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: bperel
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
 
       - name: Build and push app
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: apps/dumili/Dockerfile
@@ -68,7 +68,7 @@ jobs:
             ghcr.io/bperel/dumili-app:latest
 
       - name: Build and push api
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: apps/dumili/Dockerfile
@@ -81,7 +81,7 @@ jobs:
             ghcr.io/bperel/dumili-api:latest
 
       - name: Build and push kumiko
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: apps/dumili/kumiko
           file: apps/dumili/kumiko/Dockerfile
@@ -93,7 +93,7 @@ jobs:
             ghcr.io/bperel/kumiko:latest
 
       - name: Build and push paddleocr
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: apps/dumili/paddleocr
           file: apps/dumili/paddleocr/Dockerfile
@@ -116,7 +116,7 @@ jobs:
           target: /home/bperel/workspace/dumili/docker-compose.yml
 
       - name: Recreate container
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v1.0.0
         env:
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
         with:
