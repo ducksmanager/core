@@ -34,7 +34,8 @@ COPY --from=build /app/packages/types/dist/ ./packages/types
 WORKDIR /app/packages/api
 COPY --from=build /app/packages/api/dist/api ./
 
-COPY packages/api/{package.json,translations} ./
+COPY packages/api/package.json ./
+COPY packages/api/translations ./translations
 
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm i --production
