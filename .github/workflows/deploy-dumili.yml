@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - ".github/workflows/deploy-dumili.yml"
-      - "apps/dumili/**"
+      - "apps/dumili"
       - "pnpm-lock.yaml"
     branches:
       - "master"
@@ -58,6 +58,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: apps/dumili/Dockerfile
           platforms: linux/x86_64
           push: true
           target: dumili
@@ -70,6 +71,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: apps/dumili/Dockerfile
           platforms: linux/x86_64
           push: true
           target: dumili-api
@@ -82,6 +84,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: apps/dumili/kumiko
+          file: apps/dumili/kumiko/Dockerfile
           platforms: linux/x86_64
           push: true
           cache-from: type=registry,ref=ghcr.io/bperel/kumiko:buildcache
@@ -93,6 +96,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: apps/dumili/paddleocr
+          file: apps/dumili/paddleocr/Dockerfile
           platforms: linux/x86_64
           push: true
           cache-from: type=registry,ref=ghcr.io/bperel/paddleocr:buildcache

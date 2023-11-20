@@ -55,6 +55,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: apps/web/Dockerfile
           platforms: linux/x86_64
           push: true
           target: web
@@ -67,6 +68,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: apps/web/Dockerfile
           platforms: linux/x86_64
           push: true
           target: api

@@ -1,0 +1,48 @@
+FROM node:18 as pnpm
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+FROM pnpm AS build
+
+WORKDIR /app
+COPY . ./
+RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
+    pnpm -r -F ~web... -F ~api... i
+
+RUN pnpm -r -F ~web... -F ~api... run build
+
+FROM nginx AS web
+LABEL org.opencontainers.image.authors="Bruno Perel"
+
+COPY apps/web/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/apps/web/dist /usr/share/nginx/html
+
+
+FROM pnpm AS api
+LABEL org.opencontainers.image.authors="Bruno Perel"
+
+WORKDIR /app
+
+COPY {package.json,pnpm-*.yaml}.yaml ./
+COPY --from=build /app/packages/prisma-clients ./packages/prisma-clients
+COPY --from=build /app/packages/types ./packages/types
+COPY --from=build /app/packages/prisma-clients/dist/ ./packages/prisma-clients
+COPY --from=build /app/packages/types/dist/ ./packages/types
+
+WORKDIR /app/packages/api
+COPY --from=build /app/packages/api/dist/api ./
+
+COPY packages/api/{package.json,translations} ./
+
+RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
+    pnpm i --production
+
+COPY ./packages/api/routes/demo/*.csv ./routes/demo/
+COPY ./packages/api/emails ./emails/
+COPY ./packages/api/.env ./.env
+
+EXPOSE 3000
+
+CMD ["node", "index.js"]
