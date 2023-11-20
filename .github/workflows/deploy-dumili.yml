@@ -61,7 +61,7 @@ jobs:
           file: apps/dumili/Dockerfile
           platforms: linux/x86_64
           push: true
-          target: dumili
+          target: web
           cache-from: type=registry,ref=ghcr.io/bperel/dumili-app:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/dumili-app:buildcache,mode=max
           tags: |
@@ -70,11 +70,10 @@ jobs:
       - name: Build and push api
         uses: docker/build-push-action@v5
         with:
-          context: .
           file: apps/dumili/Dockerfile
           platforms: linux/x86_64
           push: true
-          target: dumili-api
+          target: api
           cache-from: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/dumili-api:buildcache,mode=max
           tags: |

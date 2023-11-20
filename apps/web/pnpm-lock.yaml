@@ -98,6 +98,9 @@ dependencies:
   ~axios-helper:
     specifier: workspace:*
     version: link:../../packages/axios-helper
+  ~dm-types:
+    specifier: workspace:*
+    version: link:../../packages/types
 
 devDependencies:
   '@antfu/eslint-config':
