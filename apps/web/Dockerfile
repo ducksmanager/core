@@ -24,17 +24,21 @@ FROM pnpm AS api
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
-COPY --from=build /app/packages/api/dist/api ./
+
+COPY package.json ./
+COPY pnpm-*.yaml ./
+
 COPY --from=build /app/packages/prisma-clients ./packages/prisma-clients
 COPY --from=build /app/packages/types ./packages/types
 COPY --from=build /app/packages/prisma-clients/dist/ ./packages/prisma-clients
 COPY --from=build /app/packages/types/dist/ ./packages/types
+COPY --from=build /app/packages/api/dist/api ./packages/api
 
-COPY packages/api/package.json ./
-COPY packages/api/translations ./translations
+COPY packages/api/package.json ./packages/api
+COPY packages/api/translations ./packages/api/translations
 
-RUN --mount=type=cache,id=pnpm-store-web,target=/app/.pnpm-store \
-    pnpm -r -F ~api... -F !~dm-types i --production
+RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
+    pnpm i --production
 
 COPY ./packages/api/routes/demo/*.csv ./routes/demo/
 COPY ./packages/api/emails ./emails/
@@ -42,4 +46,4 @@ COPY ./packages/api/.env ./.env
 
 EXPOSE 3000
 
-CMD ["node", "index.js"]
+CMD ["node", "packages/api/index.js"]
