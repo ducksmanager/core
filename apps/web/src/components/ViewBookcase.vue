@@ -132,6 +132,7 @@
           v-if="sortedBookcase?.length"
           style="float: right"
           :with-story-link="false"
+          :is-public="isSharedBookcase"
           @issue-selected="highlightIssue"
         />
       </div>

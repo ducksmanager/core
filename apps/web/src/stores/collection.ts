@@ -274,12 +274,6 @@ export const collection = defineStore("collection", () => {
       );
       await loadPurchases(true);
     },
-    findInCollection = (publicationcode: string, issuenumber: string) =>
-      collection.value?.find(
-        ({ country, magazine, issuenumber: collectionIssueNumber }) =>
-          publicationcode === `${country}/${magazine}` &&
-          collectionIssueNumber === issuenumber,
-      ),
     loadPreviousVisit = async () => {
       previousVisit.value = (await call(api, new POST__collection__lastvisit()))
         .data?.previousVisit;
@@ -515,7 +509,6 @@ export const collection = defineStore("collection", () => {
     collection,
     createPurchase,
     deletePurchase,
-    findInCollection,
     hasSuggestions,
     issueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,

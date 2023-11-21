@@ -54,7 +54,7 @@
     </div>
     <div class="navbar-nav justify-content-end">
       <form class="d-flex">
-        <StorySearch :with-title="false" />
+        <StorySearch :with-title="false" :is-public="isPublic" />
       </form>
     </div>
   </nav>

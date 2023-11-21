@@ -96,7 +96,13 @@ export default (collection: Ref<IssueWithPublicationcode[] | null>) => {
           }),
           {} as { [condition: string]: number },
         ) || {},
-    );
+    ),
+    findInCollection = (publicationcode: string, issuenumber: string) =>
+      collection.value?.find(
+        ({ country, magazine, issuenumber: collectionIssueNumber }) =>
+          publicationcode === `${country}/${magazine}` &&
+          collectionIssueNumber === issuenumber,
+      );
 
   return {
     duplicateIssues,
@@ -109,5 +115,6 @@ export default (collection: Ref<IssueWithPublicationcode[] | null>) => {
     totalPerCountry,
     totalPerPublication,
     totalUniqueIssues,
+    findInCollection,
   };
 };
