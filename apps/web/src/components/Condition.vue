@@ -14,16 +14,21 @@
 <script setup lang="ts">
 import condition from "~/composables/useCondition";
 import { collection } from "~/stores/collection";
+import { publicCollection } from "~/stores/public-collection";
 import { issue_condition } from "~prisma-clients/client_dm";
 const {
   issuenumber = null,
   publicationcode = null,
   value = undefined,
+  isPublic = false,
 } = defineProps<{
   publicationcode?: string;
   issuenumber?: string;
   value?: issue_condition;
+  isPublic?: boolean;
 }>();
+
+const store = $computed(() => (isPublic ? publicCollection() : collection()));
 
 const { conditions } = condition();
 const currentCondition = $computed(() => {
@@ -35,7 +40,7 @@ const currentCondition = $computed(() => {
       ) || conditions.find(({ value }) => value === null)!
     );
   } else if (publicationcode && issuenumber) {
-    const issueInCollection = collection().findInCollection(
+    const issueInCollection = store.findInCollection(
       publicationcode,
       issuenumber,
     );

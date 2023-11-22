@@ -7,6 +7,7 @@
       <span v-if="!hideCondition" class="me-1 d-flex"
         ><Condition
           v-once
+          :is-public="isPublic"
           :publicationcode="publicationcode"
           :issuenumber="issuenumber"
       /></span>
@@ -27,6 +28,7 @@ const {
   hideCondition = false,
   noWrap = true,
   flex = true,
+  isPublic = false,
 } = defineProps<{
   publicationcode: string;
   publicationname: string | null;
@@ -35,6 +37,7 @@ const {
   hideCondition?: boolean;
   noWrap?: boolean;
   flex?: boolean;
+  isPublic?: boolean;
 }>();
 </script>
 

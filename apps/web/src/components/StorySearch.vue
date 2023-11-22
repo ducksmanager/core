@@ -71,6 +71,7 @@
                   :publicationname="
                     publicationNames[searchResult.publicationcode]!
                   "
+                  :is-public="isPublic"
                   :issuenumber="searchResult.issuenumber"
                   :clickable="withStoryLink"
                 /></option
