@@ -61,7 +61,10 @@ alias: [/agrandir/marketplace]
               pill
               class="small d-inline-flex align-items-center ms-2"
               style="height: 14px"
-              @click.exact="deleteRequestToSeller(issueId)"
+              @click.exact="
+                deleteRequestToSeller(issueId);
+                loadIssueRequestsAsBuyer(true);
+              "
               >{{ $t("Annuler la demande") }}</b-button
             >
           </li>
@@ -138,7 +141,10 @@ alias: [/agrandir/marketplace]
         )
       "
       :cancel-title="$t('Annuler')"
-      @ok="requestIssues({ issueIds: modalIssueIds! })"
+      @ok="
+        requestIssues(modalIssueIds!);
+        loadIssueRequestsAsBuyer(true);
+      "
       ><template #title
         >{{ $t("Contacter") }} {{ stats[modalContactId].username }}</template
       >
@@ -209,12 +215,6 @@ alias: [/agrandir/marketplace]
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
 let showModal = $ref(false as boolean);
@@ -222,37 +222,33 @@ let modalContactId = $ref(null as number | null);
 let modalContactMethod = $ref(null as string | null);
 let modalIssueIds = $ref(null as number[] | null);
 
-const user = $computed(() => collection().user);
-const marketplaceStore = marketplace();
-const contactMethods = $computed(() => marketplaceStore.contactMethods);
+const { user } = storeToRefs(collection());
 
-const issuesOnSaleByOthers = $computed(
-  (): Record<string, IssueWithPublicationcode[]> | null =>
-    marketplaceStore.issuesOnSaleByOthers,
-);
-const sentRequestIssueIds = $computed(
-  () => marketplaceStore.sentRequestIssueIds,
-);
-const requestIssueIdsBySellerId = $computed(
-  () => marketplaceStore.requestIssueIdsBySellerId,
-);
-const issuesOnSaleById = $computed(() => marketplaceStore.issuesOnSaleById);
-const issueRequestsAsBuyer = $computed(
-  () => marketplaceStore.issueRequestsAsBuyer,
-);
-const sellerUserNames = $computed(() => marketplaceStore.sellerUserNames);
+const {
+  deleteRequestToSeller,
+  loadIssueRequestsAsBuyer,
+  loadIssuesOnSaleByOthers,
+  requestIssues,
+} = marketplace();
+const {
+  contactMethods,
+  sentRequestIssueIds,
+  requestIssueIdsBySellerId,
+  issuesOnSaleById,
+  issueRequestsAsBuyer,
+  sellerUserNames,
+  issuesOnSaleByOthers,
+  sellerUserIds,
+} = storeToRefs(marketplace());
 
-const publicationNames = $computed(() => coa().publicationNames);
+const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
 
-const stats = $computed(() => users().stats);
+const { fetchStats } = users();
+const { stats } = storeToRefs(users());
 
 let hasPublicationNames = $ref(false as boolean);
 let userIdFilter = $ref(undefined as number | undefined);
-
-const deleteRequestToSeller = async (issueId: number) => {
-  await marketplaceStore.deleteRequestToSeller(issueId);
-  await marketplaceStore.loadIssueRequestsAsBuyer(true);
-};
 
 const launchModal = (e: {
   sellerId: number;
@@ -265,21 +261,16 @@ const launchModal = (e: {
   modalIssueIds = e.selectedIssueIds;
 };
 
-const requestIssues = async ({ issueIds }: { issueIds: number[] }) => {
-  await marketplaceStore.requestIssues(issueIds);
-  await marketplaceStore.loadIssueRequestsAsBuyer(true);
-};
-
 const isRequestBooked = (thisIssueId: number) =>
-  issueRequestsAsBuyer?.find(({ issueId }) => thisIssueId === issueId)
+  issueRequestsAsBuyer.value?.find(({ issueId }) => thisIssueId === issueId)
     ?.isBooked;
 
 (async () => {
-  await marketplaceStore.loadIssuesOnSaleByOthers();
-  await marketplaceStore.loadIssueRequestsAsBuyer();
+  await loadIssuesOnSaleByOthers();
+  await loadIssueRequestsAsBuyer();
 
-  await users().fetchStats(marketplaceStore.sellerUserIds);
-  await coa().fetchPublicationNames(Object.keys(issuesOnSaleByOthers || {}));
+  await fetchStats(sellerUserIds.value);
+  await fetchPublicationNames(Object.keys(issuesOnSaleByOthers || {}));
   hasPublicationNames = true;
 })();
 </script>

@@ -1,13 +1,6 @@
 import axios, { AxiosError } from "axios";
-import { defineStore } from "pinia";
 
-import {
-  GET__bookcase__$username,
-  GET__bookcase__$username__options,
-  GET__bookcase__$username__sort,
-  POST__bookcase__options,
-  POST__bookcase__sort,
-} from "~api-routes";
+import { GET__bookcase__$username__options } from "~api-routes/index";
 import { call } from "~axios-helper";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
 

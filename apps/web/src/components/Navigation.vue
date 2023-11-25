@@ -133,13 +133,12 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { collection } from "~/stores/collection";
-import { images } from "~/stores/images";
-
 const route = useRoute();
 
-const username = $computed(() => collection().user?.username || null);
-const getImagePath = images().getImagePath;
+const { user } = storeToRefs(collection());
+const { getImagePath } = images();
+
+const username = $computed(() => user.value?.username || null);
 
 const publicCollectionUsername = $computed(
   () => route.params.username as string | undefined,
@@ -147,7 +146,7 @@ const publicCollectionUsername = $computed(
 
 const logout = () => {
   Cookies.remove("token");
-  collection().user = null;
+  user.value = null;
 };
 </script>
 

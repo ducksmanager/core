@@ -80,7 +80,13 @@ meta:
           >
             <span
               class="num bordered"
-              :class="{ available: issuenumbers?.includes(inducksIssueNumber), owned: issuesByIssueCode[`${publicationcode} ${inducksIssueNumber}`]!! }"
+              :class="{
+                available: issuenumbers?.includes(inducksIssueNumber),
+                owned:
+                  issuesByIssueCode[
+                    `${publicationcode} ${inducksIssueNumber}`
+                  ]!!,
+              }"
               :title="inducksIssueNumber"
               @click="open(publicationcode, inducksIssueNumber)"
               >&nbsp;</span
@@ -120,16 +126,9 @@ meta:
 import axios from "axios";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { images } from "~/stores/images";
-import {
-  GET__edges__published__data,
-  GET__edges__wanted__data,
-} from "~api-routes";
 import { call } from "~axios-helper";
 import { WantedEdge } from "~dm-types/WantedEdge";
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
 
 let hasData = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
@@ -140,10 +139,12 @@ const bookcaseTextures = $ref({
   bookshelf: "bois/KNOTTY PINE",
 });
 
-const publicationNames = $computed(() => coa().publicationNames);
-const issuesByIssueCode = $computed(() => collection().issuesByIssueCode);
-const fetchPublicationNames = coa().fetchPublicationNames;
-const fetchIssueNumbers = coa().fetchIssueNumbers;
+const { fetchPublicationNames, fetchIssueNumbers } = coa();
+const { publicationNames, issueNumbers } = storeToRefs(coa());
+
+const { loadCollection } = collection();
+const { issuesByIssueCode } = storeToRefs(collection());
+
 const getEdgeUrl = (publicationcode: string, issuenumber: string): string => {
   const [country, magazine] = publicationcode.split("/");
   return `${
@@ -155,21 +156,22 @@ const open = (publicationcode: string, issuenumber: string) => {
     window.open(getEdgeUrl(publicationcode, issuenumber), "_blank");
   }
 };
-const issueNumbers = $computed(() => coa().issueNumbers);
 const inducksIssueNumbersNoSpace = $computed(() =>
-  Object.keys(issueNumbers).reduce(
+  Object.keys(issueNumbers).reduce<Record<string, string[]>>(
     (acc, publicationcode) => ({
       ...acc,
-      [publicationcode]: Object.values(issueNumbers[publicationcode]).map(
+      [publicationcode]: Object.values(issueNumbers.value[publicationcode]).map(
         (issuenumber) => issuenumber.replace(/ /g, ""),
       ),
     }),
-    {} as Record<string, string[]>,
+    {},
   ),
 );
 
 const sortedBookcase = computed(() =>
-  Object.values(showEdgesForPublication).reduce(
+  Object.values(showEdgesForPublication).reduce<
+    Record<string, BookcaseEdgeWithPopularity[]>
+  >(
     (acc, publicationcode) => ({
       ...acc,
       [publicationcode]:
@@ -188,7 +190,7 @@ const sortedBookcase = computed(() =>
           sprites: [],
         })) || [],
     }),
-    {} as Record<string, BookcaseEdgeWithPopularity[]>,
+    {},
   ),
 );
 
@@ -217,7 +219,7 @@ const sortedBookcase = computed(() =>
   ]);
 
   await fetchIssueNumbers(Object.keys(publishedEdges));
-  await collection().loadCollection();
+  await loadCollection();
   hasData = true;
 })();
 </script>

@@ -62,7 +62,7 @@
               @click.stop.prevent="initialCopies!.copies.splice(copyIndex, 1)"
             /> </template
           ><IssueCopyEdit
-            :copy="(copy as IssueWithPublicationcodeOptionalId)"
+            :copy="copy as IssueWithPublicationcodeOptionalId"
             :copy-index="copyIndex"
             @update="
               editedCopies!.copies[copyIndex] =
@@ -120,21 +120,21 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
 import {
-  collection as collectionStore,
+  collection,
   IssueWithPublicationcodeOptionalId,
 } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
   SaleState,
 } from "~dm-types/CollectionUpdate";
 
-const user = $computed(() => collectionStore().user);
+const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
+
+const { updateCollectionMultipleIssues, updateCollectionSingleIssue } =
+  collection();
+const { user } = storeToRefs(collection());
 let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{
   selectedIssueIdsByIssuenumber: {
     [issuenumber: string]: IssueWithPublicationcodeOptionalId[];
@@ -219,12 +219,12 @@ const updateSelectedIssues = async () => {
 
 const updateIssues = async () => {
   if (initialIssues) {
-    await collectionStore().updateCollectionMultipleIssues(initialIssues);
+    await updateCollectionMultipleIssues(initialIssues);
   } else if (initialCopies) {
-    await collectionStore().updateCollectionSingleIssue(initialCopies);
+    await updateCollectionSingleIssue(initialCopies);
   }
-  await marketplace().loadIssuesOnSaleByOthers(true);
-  await marketplace().loadIssueRequestsAsSeller(true);
+  await loadIssuesOnSaleByOthers(true);
+  await loadIssueRequestsAsSeller(true);
   emit("clear-selection");
 };
 
@@ -238,7 +238,7 @@ watch(
 );
 
 watch(
-  () => selectedIssues,
+  $$(selectedIssues),
   (newValue) => {
     if (isSingleIssueSelected) {
       editedIssues = initialIssues = null;

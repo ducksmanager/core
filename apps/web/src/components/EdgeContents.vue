@@ -39,10 +39,6 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { watch } from "vue";
-
-import { bookcase } from "~/stores/bookcase";
-
 const {
   id,
   issuenumber = null,
@@ -65,7 +61,10 @@ const emit = defineEmits<{
   (e: "ignore-sprite"): void;
 }>();
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
-const loadedSprites = $computed(() => bookcase().loadedSprites);
+
+const { addLoadedSprite } = bookcase();
+const { loadedSprites } = storeToRefs(bookcase());
+
 const spriteClass = $computed(() =>
   id && spritePath
     ? `edges-${publicationcode.replace(/\//g, "-")}-${issuenumber}`
@@ -73,7 +72,7 @@ const spriteClass = $computed(() =>
 );
 const onImageLoad = async (event: Event) => {
   if (spritePath && !ignoreSprite) {
-    if (loadedSprites[spritePath]) {
+    if (loadedSprites.value[spritePath]) {
       loadEdgeFromSprite();
     } else {
       try {
@@ -87,7 +86,7 @@ const onImageLoad = async (event: Event) => {
         style.textContent = css;
         document.head.append(style);
 
-        bookcase().addLoadedSprite({
+        addLoadedSprite({
           spritePath,
           css,
         });
@@ -104,7 +103,7 @@ const onImageLoad = async (event: Event) => {
   }
 };
 const loadEdgeFromSprite = () => {
-  if (!loadedSprites[spritePath || ""].includes(`.${spriteClass} {`)) {
+  if (!loadedSprites.value[spritePath || ""].includes(`.${spriteClass} {`)) {
     ignoreSprite = true;
     return;
   }
@@ -137,17 +136,14 @@ let ignoreSprite = $ref(false);
 let width = $ref(null as number | null);
 let height = $ref(null as number | null);
 
-watch(
-  () => ignoreSprite,
-  (value) => {
-    if (value) {
-      console.error(
-        `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`,
-      );
-      emit("ignore-sprite");
-    }
-  },
-);
+watch($$(ignoreSprite), (value) => {
+  if (value) {
+    console.error(
+      `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`,
+    );
+    emit("ignore-sprite");
+  }
+});
 </script>
 
 <style scoped lang="scss">

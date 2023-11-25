@@ -62,21 +62,22 @@ alias: [/bibliotheque/options]
     </b-form-checkbox>
 
     <h5
-      v-if="bookcaseOrder && Object.keys(bookcaseOrder).length"
+      v-if="
+        persistedBookcaseOrder && Object.keys(persistedBookcaseOrder).length
+      "
       class="mt-4 mb-3"
     >
       {{ $t("Ordre des magazines") }}
     </h5>
 
     <slick-list
-      v-if="bookcaseOrder"
-      v-model:list="bookcaseOrder"
+      v-if="persistedBookcaseOrder"
+      v-model:list="persistedBookcaseOrder"
       class="publication-order"
       helper-class="dragging"
-      @update:list="bookcaseStore.bookcaseOrder = bookcaseOrder"
     >
       <slick-item
-        v-for="(publicationcode, index) in bookcaseOrder"
+        v-for="(publicationcode, index) in persistedBookcaseOrder"
         :key="publicationcode"
         :index="index"
       >
@@ -101,18 +102,26 @@ alias: [/bibliotheque/options]
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import { SlickItem, SlickList } from "vue-slicksort";
 
-import { bookcase } from "~/stores/bookcase";
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { images } from "~/stores/images";
+const { user } = storeToRefs(collection());
 
-const user = $computed(() => collection().user);
-const getImagePath = images().getImagePath;
-const { t: $t } = useI18n();
-const bookcaseStore = bookcase();
+const { getImagePath } = images();
+const {
+  loadBookcaseOptions,
+  loadBookcaseOrder,
+  updateBookcaseOptions,
+  updateBookcaseOrder,
+} = bookcase();
+const {
+  bookcaseOptions,
+  bookcaseUsername,
+  bookcaseOrder: persistedBookcaseOrder,
+} = storeToRefs(bookcase());
+
+const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
+
 const textures = [
   "bois/ASH",
   "bois/BALTIC BIRCH",
@@ -159,9 +168,8 @@ const textures = [
   "bois/WALNUT",
   "bois/WHITE BIRCH",
   "bois/ZEBRAWOOD",
-];
-const bookcaseOptions = $computed(() => bookcaseStore.bookcaseOptions);
-const publicationNames = $computed(() => coa().publicationNames);
+] as const;
+const { t: $t } = useI18n();
 const textureTypes = $computed(
   () =>
     ({
@@ -171,16 +179,16 @@ const textureTypes = $computed(
 );
 
 const loadData = async () => {
-  await bookcaseStore.loadBookcaseOptions();
-  await bookcaseStore.loadBookcaseOrder();
+  await loadBookcaseOptions();
+  await loadBookcaseOrder();
   loading = false;
 };
 const submit = async () => {
   error = false;
   loading = true;
   try {
-    await bookcaseStore.updateBookcaseOptions();
-    await bookcaseStore.updateBookcaseOrder();
+    await updateBookcaseOptions();
+    await updateBookcaseOrder();
     await loadData();
   } catch {
     error = true;
@@ -194,18 +202,18 @@ const textureWithoutSuperType = (texture: string) =>
 let error = $ref(false as boolean);
 let loading = $ref(true as boolean);
 let hasPublicationNames = $ref(false as boolean);
-let bookcaseOrder = $ref(null as string[] | null);
+let inputBookcaseOrder = $ref(null as string[] | null);
 
 watch(
-  () => user,
+  user,
   async (value) => {
     if (value) {
-      bookcaseStore.bookcaseUsername = value.username;
+      bookcaseUsername.value = value.username;
       await loadData();
-      bookcaseOrder = bookcaseStore.bookcaseOrder;
-      await coa().fetchPublicationNames(bookcaseOrder!);
-      bookcaseOrder = (bookcaseOrder as string[]).filter((publicationcode) =>
-        Object.keys(publicationNames).includes(publicationcode),
+      inputBookcaseOrder = persistedBookcaseOrder.value as string[];
+      await fetchPublicationNames(persistedBookcaseOrder.value!);
+      inputBookcaseOrder = inputBookcaseOrder.filter((publicationcode) =>
+        Object.keys(publicationNames.value).includes(publicationcode),
       );
       hasPublicationNames = true;
     }

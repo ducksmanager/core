@@ -1,26 +1,13 @@
 import { AxiosInstance } from "axios";
 import { AxiosError } from "axios";
-import { defineStore } from "pinia";
 
 import useCollection from "~/composables/useCollection";
 import {
-  DELETE__collection__purchases__$id,
   GET__collection__edges__lastPublished,
-  GET__collection__issues,
-  GET__collection__options__$optionName,
-  GET__collection__popular,
   GET__collection__purchases,
   GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit,
-  GET__collection__subscriptions,
   GET__collection__user,
-  POST__collection__issues__multiple,
-  POST__collection__issues__single,
-  POST__collection__lastvisit,
-  POST__collection__options__$optionName,
-  POST__login,
-  PUT__collection__purchases,
-  PUT__collection__user,
-} from "~api-routes";
+} from "~api-routes/index";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 import {
   CollectionUpdateMultipleIssues,
@@ -106,6 +93,7 @@ export const collection = defineStore("collection", () => {
       undefined as GET__collection__user["resBody"] | undefined | null,
     ),
     previousVisit = ref(null as Date | null),
+    publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed(
       (): Record<string, purchase> | undefined =>
         purchases.value?.reduce(
@@ -507,6 +495,7 @@ export const collection = defineStore("collection", () => {
       clearSessionFn = params.clearSessionFn;
     },
     collection,
+    publicationUrlRoot,
     createPurchase,
     deletePurchase,
     hasSuggestions,

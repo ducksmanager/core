@@ -10,8 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import { images } from "~/stores/images";
-
 const {
   publicationcode,
   size = "md",
@@ -22,8 +20,10 @@ const {
   size?: string;
   displayClass?: string;
 }>();
+
+const { getImagePath } = images();
+
 const countrycode = $computed(() => publicationcode.split("/")[0]);
-const getImagePath = images().getImagePath;
 </script>
 
 <style scoped lang="scss">

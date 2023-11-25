@@ -1,25 +1,18 @@
 import { AxiosInstance } from "axios";
-import { defineStore } from "pinia";
-import { useI18n } from "vue-i18n";
 
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import {
   GET__coa__authorsfullnames__$authors,
-  GET__coa__list__countries__$locale,
   GET__coa__list__issues__by_publication_codes,
-  GET__coa__list__issues__count,
-  GET__coa__list__issues__details,
-  GET__coa__list__issues__recent,
   GET__coa__list__issues__withTitle,
-  GET__coa__list__publications__$countrycode,
   GET__coa__quotations__publications,
   POST__coa__issues__decompose,
   POST__coa__list__publications,
-} from "~api-routes";
+} from "~api-routes/index";
 import { call, getChunkedRequests } from "~axios-helper";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
-import { inducks_issue } from "~prisma-clients/client_coa";
+import type { inducks_issue } from "~prisma-clients/client_coa";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

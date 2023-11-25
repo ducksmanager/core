@@ -12,23 +12,21 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
 import { availableLocales } from "~/composables/useLocales";
-import { coa } from "~/stores/coa";
-import { images } from "~/stores/images";
 
 const { fixed = false } = defineProps<{
   fixed?: boolean;
 }>();
 
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
+const { fetchCountryNames } = coa();
+
 const i18n = useI18n();
 const locales = $computed(() => availableLocales);
 const reloadWithLocale = async ({ key }: { key: string }) => {
   localStorage.setItem("locale", key);
   i18n.locale.value = key;
-  await coa().fetchCountryNames(true);
+  await fetchCountryNames(true);
 };
 </script>
 

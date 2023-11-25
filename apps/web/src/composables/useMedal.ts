@@ -1,5 +1,3 @@
-import { computed } from "vue";
-
 const MEDAL_LEVELS: { [contribution: string]: { [level: number]: number } } = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },
   edge_designer: { 1: 20, 2: 70, 3: 150 },

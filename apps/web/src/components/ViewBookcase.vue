@@ -165,21 +165,37 @@
 import { watch } from "vue";
 import { RouterLink } from "vue-router";
 
-import {
-  bookcase as bookcaseStore,
-  BookcaseEdgeWithPopularity,
-} from "~/stores/bookcase";
-import { coa as coaStore } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
-import { users } from "~/stores/users";
+import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 
 const route = useRoute();
 
-const collection = collectionStore();
-const coa = coaStore();
-const bookcase = bookcaseStore();
+const { fetchStats } = users();
+const { points } = storeToRefs(users());
+
+const { loadPopularIssuesInCollection, loadLastPublishedEdgesForCurrentUser } =
+  collection();
+const {
+  user,
+  lastPublishedEdgesForCurrentUser,
+  popularIssuesInCollectionWithoutEdge,
+} = storeToRefs(collection());
+
+const { fetchPublicationNames, addIssueNumbers, fetchIssueNumbers } = coa();
+const { publicationNames, issueNumbers } = storeToRefs(coa());
+
+const { loadBookcase, loadBookcaseOptions, loadBookcaseOrder } = bookcase();
+const {
+  bookcase: thisBookcase,
+  bookcaseOptions,
+  bookcaseUsername,
+  bookcaseWithPopularities,
+  bookcaseOrder,
+  isPrivateBookcase,
+  isUserNotExisting,
+  isSharedBookcase,
+} = storeToRefs(bookcase());
 
 let edgesUsingSprites = $ref({} as { [edgeId: number]: string });
 const currentEdgeOpened = $ref(null as BookcaseEdgeWithPopularity | null);
@@ -189,29 +205,15 @@ let hasIssueNumbers = $ref(false as boolean);
 const showShareButtons = $ref(false as boolean);
 let userPoints = $ref(null as { [contribution: string]: number } | null);
 
-const user = $computed(() => collection.user);
-const bookcaseUsername = $computed(
-  () => (route.params.username as string) || user?.username || null,
+const inputBookcaseUsername = $computed(
+  () => (route.params.username as string) || user.value?.username || null,
 );
-const allowSharing = $computed(() => collection.user?.allowSharing);
-const lastPublishedEdgesForCurrentUser = $computed(
-  () => collection.lastPublishedEdgesForCurrentUser,
-);
-const popularIssuesInCollectionWithoutEdge = $computed(
-  () => collection.popularIssuesInCollectionWithoutEdge,
-);
-const publicationNames = $computed(() => coa.publicationNames);
-const issueNumbers = $computed(() => coa.issueNumbers);
-const bookcaseOptions = $computed(() => bookcase.bookcaseOptions);
-const bookcaseOrder = $computed(() => bookcase.bookcaseOrder);
-const isPrivateBookcase = $computed(() => bookcase.isPrivateBookcase);
-const isUserNotExisting = $computed(() => bookcase.isUserNotExisting);
-const isSharedBookcase = $computed(() => bookcase.isSharedBookcase);
+const allowSharing = $computed(() => user.value?.allowSharing);
 const bookcaseUrl = $computed(
   (): string | null =>
     (!isPrivateBookcase &&
-      user &&
-      `${window.location.origin}/bookcase/show/${user.username}`) ||
+      user.value &&
+      `${window.location.origin}/bookcase/show/${user.value.username}`) ||
     null,
 );
 const loading = $computed(
@@ -221,16 +223,16 @@ const loading = $computed(
     !(sortedBookcase && bookcaseOptions && edgesUsingSprites),
 );
 const percentVisible = $computed(() =>
-  bookcase.bookcase?.length
+  thisBookcase.value?.length
     ? (
-        (100 * bookcase.bookcase.filter(({ edgeId }) => edgeId).length) /
-        bookcase.bookcase.length
+        (100 * thisBookcase.value.filter(({ edgeId }) => edgeId).length) /
+        thisBookcase.value.length
       ).toFixed(0)
     : null,
 );
 const mostPopularIssuesInCollectionWithoutEdge = $computed(
   () =>
-    [...(popularIssuesInCollectionWithoutEdge || [])]
+    [...(popularIssuesInCollectionWithoutEdge.value || [])]
       ?.sort(
         ({ popularity: popularity1 }, { popularity: popularity2 }) =>
           (popularity2 || 0) - (popularity1 || 0),
@@ -239,10 +241,10 @@ const mostPopularIssuesInCollectionWithoutEdge = $computed(
 );
 const sortedBookcase = $computed(
   () =>
-    bookcase.bookcaseWithPopularities &&
-    bookcaseOrder &&
+    bookcaseWithPopularities.value &&
+    bookcaseOrder.value &&
     hasIssueNumbers &&
-    [...bookcase.bookcaseWithPopularities].sort(
+    [...bookcaseWithPopularities.value].sort(
       (
         {
           countryCode: countryCode1,
@@ -256,20 +258,20 @@ const sortedBookcase = $computed(
         },
       ) => {
         const publicationCode1 = `${countryCode1}/${magazineCode1}`;
-        if (!issueNumbers[publicationCode1]) return -1;
+        if (!issueNumbers.value[publicationCode1]) return -1;
 
         const publicationCode2 = `${countryCode2}/${magazineCode2}`;
-        if (!issueNumbers[publicationCode2]) return 1;
+        if (!issueNumbers.value[publicationCode2]) return 1;
 
         const publicationOrderSign = Math.sign(
-          bookcaseOrder.indexOf(publicationCode1) -
-            bookcaseOrder.indexOf(publicationCode2),
+          bookcaseOrder.value!.indexOf(publicationCode1) -
+            bookcaseOrder.value!.indexOf(publicationCode2),
         );
         return (
           publicationOrderSign ||
           Math.sign(
-            issueNumbers[publicationCode1].indexOf(issueNumber1) -
-              issueNumbers[publicationCode2].indexOf(issueNumber2),
+            issueNumbers.value[publicationCode1].indexOf(issueNumber1) -
+              issueNumbers.value[publicationCode2].indexOf(issueNumber2),
           )
         );
       },
@@ -277,7 +279,7 @@ const sortedBookcase = $computed(
 );
 const highlightIssue = (issue: SimpleIssue) => {
   currentEdgeHighlighted =
-    bookcase.bookcase?.find(
+    thisBookcase.value?.find(
       (issueInCollection) =>
         issue.publicationcode === issueInCollection.publicationcode &&
         issue.issuenumber === issueInCollection.issuenumber,
@@ -285,15 +287,15 @@ const highlightIssue = (issue: SimpleIssue) => {
 };
 
 watch(
-  () => bookcaseOrder,
+  bookcaseOrder,
   async (newValue) => {
     if (newValue) {
-      await coa.fetchPublicationNames(newValue);
+      await fetchPublicationNames(newValue);
       hasPublicationNames = true;
 
       const nonObviousPublicationIssueNumbers = newValue.filter(
         (publicationcode) =>
-          bookcase.bookcase?.some(
+          thisBookcase.value?.some(
             ({
               countryCode: issueCountryCode,
               magazineCode: issueMagazineCode,
@@ -303,7 +305,7 @@ watch(
               !/^[0-9]+$/.test(issuenumber),
           ),
       );
-      coa.addIssueNumbers(
+      addIssueNumbers(
         newValue
           .filter(
             (publicationcode) =>
@@ -314,7 +316,7 @@ watch(
               ...acc,
               ...{
                 [publicationcode]:
-                  bookcase.bookcase
+                  thisBookcase.value
                     ?.filter(
                       ({ publicationcode: issuePublicationCode }) =>
                         issuePublicationCode === publicationcode,
@@ -328,7 +330,7 @@ watch(
             {},
           ),
       );
-      await coa.fetchIssueNumbers(nonObviousPublicationIssueNumbers);
+      await fetchIssueNumbers(nonObviousPublicationIssueNumbers);
       hasIssueNumbers = true;
     }
   },
@@ -336,11 +338,11 @@ watch(
 );
 
 watch(
-  () => bookcase.bookcase,
+  thisBookcase,
   async (newValue) => {
     if (newValue) {
-      await bookcase.loadBookcaseOptions();
-      await bookcase.loadBookcaseOrder();
+      await loadBookcaseOptions();
+      await loadBookcaseOrder();
 
       const usableSpritesBySpriteId = newValue
         .filter(({ sprites }) => sprites)
@@ -387,32 +389,28 @@ watch(
 );
 
 watch(
-  () => bookcase.bookcase && !isSharedBookcase,
+  () => thisBookcase.value && !isSharedBookcase.value,
   async (hasNonSharedBookcase) => {
-    if (hasNonSharedBookcase && user) {
-      await users().fetchStats([user.id]);
+    if (hasNonSharedBookcase && user.value) {
+      await fetchStats([user.value.id]);
     }
   },
 );
 
-watch(
-  () => currentEdgeHighlighted,
-  (newValue) => {
-    const element = document.getElementById(`edge-${newValue}`);
-    if (element) element.scrollIntoView();
-  },
-);
+watch($$(currentEdgeHighlighted), (newValue) => {
+  document.getElementById(`edge-${newValue}`)?.scrollIntoView();
+});
 
 watch(
-  () => bookcaseUsername,
+  $$(inputBookcaseUsername),
   async (newValue) => {
     if (newValue) {
-      bookcase.bookcaseUsername = newValue;
-      await bookcase.loadBookcase();
-      if (user && !isSharedBookcase) {
-        await collection.loadPopularIssuesInCollection();
-        await collection.loadLastPublishedEdgesForCurrentUser();
-        userPoints = users().points[user.id];
+      bookcaseUsername.value = newValue;
+      await loadBookcase();
+      if (user.value && !isSharedBookcase.value) {
+        await loadPopularIssuesInCollection();
+        await loadLastPublishedEdgesForCurrentUser();
+        userPoints = points.value[user.value.id];
       }
     }
   },

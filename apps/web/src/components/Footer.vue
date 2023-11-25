@@ -28,11 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { users } from "~/stores/users";
+const { fetchCount } = users();
+const { count } = storeToRefs(users());
 
-const count = $computed(() => users().count);
-
-users().fetchCount();
+fetchCount();
 </script>
 
 <style scoped lang="scss">

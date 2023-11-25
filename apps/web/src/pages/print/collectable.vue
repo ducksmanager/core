@@ -116,22 +116,18 @@ meta:
 
 <script setup lang="ts">
 import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
-import { images } from "~/stores/images";
-
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/;
 const lines = 2;
 const numbersPerRow = 100 / lines;
-const countryNames = $computed(() => coa().countryNames);
-const publicationNames = $computed(() => coa().publicationNames);
-const collection = $computed(() => collectionStore().collection);
-const totalPerPublication = $computed(
-  () => collectionStore().totalPerPublication,
-);
+
+const { fetchCountryNames, fetchPublicationNames } = coa();
+const { countryNames, publicationNames } = storeToRefs(coa());
+
+const { loadCollection, loadPurchases } = collection();
+const { collection: thisCollection, totalPerPublication } =
+  storeToRefs(collection());
+
 const ready = $computed(
   () => issuesPerCell && countryNames && Object.keys(publicationNames).length,
 );
@@ -158,10 +154,7 @@ const issueCountTitle = $computed(() => {
     issueCountString.substring(1, issueCountString.length).toLowerCase()
   );
 });
-const fetchCountryNames = coa().fetchCountryNames;
-const fetchPublicationNames = coa().fetchPublicationNames;
-const loadCollection = collectionStore().loadCollection;
-const loadPurchases = collectionStore().loadPurchases;
+
 const numberToLetter = (number: number) =>
   String.fromCharCode(
     (number < 26 ? "a".charCodeAt(0) : "A".charCodeAt(0) - 26) + number,
@@ -184,66 +177,60 @@ let issuesPerCell = $ref(
   } | null,
 );
 
-watch(
-  () => collection,
-  (newCollectionValue) => {
-    if (!newCollectionValue) {
-      return;
+watch(thisCollection, (newCollectionValue) => {
+  if (!newCollectionValue) {
+    return;
+  }
+  const addIssueToCell = (
+    acc: { [publicationcode: string]: { [mod: string | number]: string[] } },
+    publicationcode: string,
+    issuenumber: string,
+    isDoubleIssueStart = false,
+    isDoubleIssueEnd = false,
+  ) => {
+    let mod, number;
+    if (Number.isNaN(issuenumber)) {
+      mod = "non-numeric";
+      number = issuenumber;
+    } else {
+      mod = parseInt(issuenumber) % 100;
+      number = (parseInt(issuenumber) - mod) / 100;
     }
-    const addIssueToCell = (
-      acc: { [publicationcode: string]: { [mod: string | number]: string[] } },
-      publicationcode: string,
-      issuenumber: string,
-      isDoubleIssueStart = false,
-      isDoubleIssueEnd = false,
-    ) => {
-      let mod, number;
-      if (Number.isNaN(issuenumber)) {
-        mod = "non-numeric";
-        number = issuenumber;
-      } else {
-        mod = parseInt(issuenumber) % 100;
-        number = (parseInt(issuenumber) - mod) / 100;
-      }
-      if (!acc[publicationcode]) {
-        acc[publicationcode] = {
-          "non-numeric": [],
-        };
-      }
-      if (!acc[publicationcode][mod]) acc[publicationcode][mod] = [];
+    if (!acc[publicationcode]) {
+      acc[publicationcode] = {
+        "non-numeric": [],
+      };
+    }
+    if (!acc[publicationcode][mod]) acc[publicationcode][mod] = [];
 
-      acc[publicationcode][mod].push(
-        [
-          isDoubleIssueEnd ? "<" : "",
-          typeof number === "string" ? number : numberToLetter(number),
-          isDoubleIssueStart ? ">" : "",
-        ].join(""),
-      );
-    };
-    issuesPerCell = newCollectionValue.reduce((acc, issue) => {
-      const publicationcode = `${issue.country}/${issue.magazine}`;
-      const issuenumber = issue.issuenumber;
-      const doubleNumberMatch = issuenumber.match(doubleNumberRegex);
-      if (
-        doubleNumberMatch &&
-        parseInt(doubleNumberMatch[2]) === parseInt(doubleNumberMatch[1]) + 1
-      ) {
-        const [, part1, issue1, issue2] = doubleNumberMatch;
-        addIssueToCell(acc, publicationcode, `${part1}${issue1}`, true);
-        addIssueToCell(acc, publicationcode, `${part1}${issue2}`, false, true);
-      } else {
-        addIssueToCell(acc, publicationcode, issuenumber);
-      }
-      return acc;
-    }, {});
-  },
-);
-watch(
-  () => totalPerPublication,
-  (newValue) => {
-    fetchPublicationNames(Object.keys(newValue || {}));
-  },
-);
+    acc[publicationcode][mod].push(
+      [
+        isDoubleIssueEnd ? "<" : "",
+        typeof number === "string" ? number : numberToLetter(number),
+        isDoubleIssueStart ? ">" : "",
+      ].join(""),
+    );
+  };
+  issuesPerCell = newCollectionValue.reduce((acc, issue) => {
+    const publicationcode = `${issue.country}/${issue.magazine}`;
+    const issuenumber = issue.issuenumber;
+    const doubleNumberMatch = issuenumber.match(doubleNumberRegex);
+    if (
+      doubleNumberMatch &&
+      parseInt(doubleNumberMatch[2]) === parseInt(doubleNumberMatch[1]) + 1
+    ) {
+      const [, part1, issue1, issue2] = doubleNumberMatch;
+      addIssueToCell(acc, publicationcode, `${part1}${issue1}`, true);
+      addIssueToCell(acc, publicationcode, `${part1}${issue2}`, false, true);
+    } else {
+      addIssueToCell(acc, publicationcode, issuenumber);
+    }
+    return acc;
+  }, {});
+});
+watch(totalPerPublication, (newValue) => {
+  fetchPublicationNames(Object.keys(newValue || {}));
+});
 
 (async () => {
   await loadCollection();

@@ -17,22 +17,22 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
-import { users } from "~/stores/users";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
 
+const { fetchStats, fetchEvents } = users();
+const { events } = storeToRefs(users());
+
+const { fetchPublicationNames } = coa();
+
 let isLoaded = $ref(false as boolean);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// let hasFreshEvents = $ref(false as boolean);
-const events = $computed(() => users().events);
 const eventUserIds = $computed(
   () =>
-    events
-      ?.reduce(
+    events.value
+      ?.reduce<(number | null)[]>(
         (acc, event) => [...acc, ...(event.users || [])],
-        [] as (number | null)[],
+        [],
       )
       .filter((userId) => !!userId),
 );
@@ -43,13 +43,13 @@ const isEdgeCreationEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("edges");
 
 const fetchEventsAndAssociatedData = async () => {
-  await users().fetchEvents();
+  await fetchEvents();
 
-  await coa().fetchPublicationNames([
-    ...events
+  await fetchPublicationNames([
+    ...events.value
       .filter((event) => isCollectionUpdateEvent(event))
       .map((event) => (event as CollectionUpdateEvent).publicationcode || ""),
-    ...events
+    ...events.value
       .filter((event) => isEdgeCreationEvent(event))
       .map((event) => event as EdgeCreationEvent)
       .reduce(
@@ -61,7 +61,7 @@ const fetchEventsAndAssociatedData = async () => {
       ),
   ]);
 
-  await users().fetchStats(
+  await fetchStats(
     eventUserIds.filter((userId) => userId !== null) as number[],
   );
 };

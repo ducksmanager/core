@@ -2,7 +2,7 @@
   <div>
     <b-form-select
       v-model="currentCountryCode"
-      :options="countryNames"
+      :options="countryNamesForPublication"
       required
     />
     <b-form-select
@@ -32,10 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-
-import { coa } from "~/stores/coa";
-
 const {
   initialCountrycode = undefined,
   initialPublicationcode = undefined,
@@ -49,11 +45,13 @@ defineEmits<{ (e: "input", publicationcode: string): void }>();
 
 const currentCountryCode = $ref(initialCountrycode);
 let currentPublicationcode = $ref(initialPublicationcode);
-const coaStore = coa();
-const countryNames = $computed(
+const { fetchPublicationNamesFromCountry, fetchCountryNames } = coa();
+const { countryNames, publicationNames, publicationNamesFullCountries } =
+  storeToRefs(coa());
+const countryNamesForPublication = $computed(
   () =>
-    (coaStore.countryNames &&
-      Object.entries(coaStore.countryNames)
+    (countryNames &&
+      Object.entries(countryNames)
         .map(([countrycode, countryName]) => ({
           text: countryName,
           value: countrycode,
@@ -63,18 +61,14 @@ const countryNames = $computed(
         )) ||
     undefined,
 );
-const publicationNames = $computed(() => coaStore.publicationNames);
-const publicationNamesFullCountries = $computed(
-  () => coaStore.publicationNamesFullCountries,
-);
 const publicationNamesForCurrentCountry = $computed(() =>
-  publicationNamesFullCountries.includes(currentCountryCode || "")
+  publicationNamesFullCountries.value.includes(currentCountryCode || "")
     ? Object.keys(publicationNames)
         .filter((publicationcode) =>
           new RegExp(`^${currentCountryCode}/`).test(publicationcode),
         )
         .map((publicationcode) => ({
-          text: publicationNames[publicationcode],
+          text: publicationNames.value[publicationcode],
           value: publicationcode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
@@ -84,10 +78,10 @@ const publicationNamesForCurrentCountry = $computed(() =>
 );
 
 watch(
-  () => currentCountryCode,
+  $$(currentCountryCode),
   (newValue, oldValue) => {
     if (newValue) {
-      coaStore.fetchPublicationNamesFromCountry(newValue);
+      fetchPublicationNamesFromCountry(newValue);
       if (oldValue) {
         currentPublicationcode = undefined;
       }
@@ -98,5 +92,5 @@ watch(
   },
 );
 
-coaStore.fetchCountryNames();
+fetchCountryNames();
 </script>

@@ -28,10 +28,9 @@ meta:
 <script setup lang="ts">
 import axios from "axios";
 
-import { GET__bookstores, POST__bookstores__approve } from "~api-routes";
 import { call } from "~axios-helper";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import { bookstoreComment } from "~prisma-clients/client_dm";
+import type { bookstoreComment } from "~prisma-clients/client_dm";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 

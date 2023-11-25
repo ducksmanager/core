@@ -18,25 +18,23 @@
 </template>
 
 <script setup lang="ts">
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
-
 const { publicationcode, issuenumber, copyIndex } = defineProps<{
   publicationcode: string;
   issuenumber: string;
   copyIndex: number;
 }>();
 
-const points = $computed(() => users().points);
-const stats = $computed(() => users().stats);
+const { points, stats } = storeToRefs(users());
+const { sentRequestIssueIds, issuesOnSaleByOthers, issueRequestsAsBuyer } =
+  storeToRefs(marketplace());
 
 const sentRequest = $computed(
-  () => marketplace().sentRequestIssueIds?.includes(issueOnSale?.id),
+  () => sentRequestIssueIds.value?.includes(issueOnSale?.id),
 );
 
 const issueOnSale = $computed(
   () =>
-    (marketplace().issuesOnSaleByOthers?.[publicationcode] || []).filter(
+    (issuesOnSaleByOthers.value?.[publicationcode] || []).filter(
       ({ issuenumber: onSaleIssuenumber }) => onSaleIssuenumber === issuenumber,
     )[copyIndex],
 );
@@ -44,7 +42,7 @@ const issueOnSale = $computed(
 const isBooked = $computed(
   () =>
     issueOnSale &&
-    marketplace().issueRequestsAsBuyer?.find(
+    issueRequestsAsBuyer.value?.find(
       ({ issueId }) => issueId === issueOnSale.id,
     )?.isBooked,
 );

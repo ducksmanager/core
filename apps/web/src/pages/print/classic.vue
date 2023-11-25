@@ -24,21 +24,21 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-
-import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
-
 let ownedIssueNumbers = $ref(
   null as { [publicationcode: string]: string } | null,
 );
 
-const countryNames = $computed(() => coa().countryNames);
-const publicationNames = $computed(() => coa().publicationNames);
-const issueNumbers = $computed(() => coa().issueNumbers);
-const collection = $computed(() => collectionStore().collection);
+const { fetchCountryNames, fetchPublicationNames, fetchIssueNumbers } = coa();
+const { countryNames, publicationNames, issueNumbers } = storeToRefs(coa());
+
+const { loadCollection } = collection();
+const { collection: thisCollection } = storeToRefs(collection());
+
 const countryCodes = $computed(
-  () => collection && [...new Set(collection.map((i) => i.country))],
+  () =>
+    thisCollection.value && [
+      ...new Set(thisCollection.value.map((i) => i.country)),
+    ],
 );
 const countryCodesSortedByName = $computed(
   () =>
@@ -46,28 +46,32 @@ const countryCodesSortedByName = $computed(
     countryNames &&
     [...countryCodes].sort(
       (countryCodeA, countryCodeB) =>
-        countryNames[countryCodeA]?.localeCompare(countryNames[countryCodeB]),
+        countryNames.value![countryCodeA]?.localeCompare(
+          countryNames.value![countryCodeB],
+        ),
     ),
 );
 const publicationCodes = $computed(
   () =>
-    collection && [
-      ...new Set(collection.map((i) => `${i.country}/${i.magazine}`)),
+    thisCollection.value && [
+      ...new Set(thisCollection.value.map((i) => `${i.country}/${i.magazine}`)),
     ],
 );
 const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
     ?.filter((publicationcode) => publicationcode.split("/")[0] === countrycode)
     ?.sort((a, b) =>
-      (publicationNames[a] || "").localeCompare(publicationNames[b] || ""),
+      (publicationNames.value[a] || "").localeCompare(
+        publicationNames.value[b] || "",
+      ),
     ) || [];
 
 watch(
-  () => publicationCodes,
+  $$(publicationCodes),
   (newValue) => {
     if (newValue) {
-      coa().fetchPublicationNames(publicationCodes!);
-      coa().fetchIssueNumbers(publicationCodes!);
+      fetchPublicationNames(publicationCodes!);
+      fetchIssueNumbers(publicationCodes!);
     }
   },
   { immediate: true },
@@ -77,8 +81,8 @@ watch(
   () => Object.keys(issueNumbers).length && collection,
   (newValue) => {
     if (newValue) {
-      const collectionWithPublicationcodes = collection!
-        .map(({ country, magazine, issuenumber }) => ({
+      const collectionWithPublicationcodes = thisCollection
+        .value!.map(({ country, magazine, issuenumber }) => ({
           publicationcode: `${country}/${magazine}`,
           issuenumber: issuenumber,
         }))
@@ -89,7 +93,7 @@ watch(
           }),
           {} as { [publicationcode: string]: string[] },
         );
-      ownedIssueNumbers = Object.entries(issueNumbers).reduce(
+      ownedIssueNumbers = Object.entries(issueNumbers.value).reduce(
         (acc, [publicationcode, indexedIssueNumbers]) => ({
           ...acc,
           [publicationcode]: indexedIssueNumbers
@@ -108,8 +112,8 @@ watch(
 );
 
 (async () => {
-  await coa().fetchCountryNames();
-  await collectionStore().loadCollection();
+  await fetchCountryNames();
+  await loadCollection();
 })();
 </script>
 

@@ -41,24 +41,21 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+
+const { publicationNames } = storeToRefs(coa());
+const { purchasesById, collection: thisCollection } = storeToRefs(collection());
 
 const { t } = useI18n();
 const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
-  publicationNames = $computed(() => coa().publicationNames),
-  collectionPerPurchaseDate = $computed(() => {
-    const purchasesById = collectionStore().purchasesById;
-    return (
-      purchasesById &&
-      collectionStore()
-        .collection?.reduce(
+  collectionPerPurchaseDate = $computed(
+    () =>
+      purchasesById.value &&
+      thisCollection.value
+        ?.reduce(
           (acc, issue) => {
             const existingPurchase =
-              issue.purchaseId && purchasesById[issue.purchaseId];
+              issue.purchaseId && purchasesById.value![issue.purchaseId];
             const purchase = existingPurchase
               ? {
                   date: existingPurchase.date,
@@ -95,9 +92,8 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
           purchase1.date < purchase2.date ? 1 : -1,
         )
-        .slice(0, 5)
-    );
-  });
+        .slice(0, 5),
+  );
 </script>
 
 <style scoped lang="scss">

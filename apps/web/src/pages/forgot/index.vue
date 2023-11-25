@@ -46,9 +46,7 @@ meta:
 
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
-import { useI18n } from "vue-i18n";
 
-import { POST__auth__forgot } from "~api-routes";
 import { call } from "~axios-helper";
 
 let error = $ref(null as unknown | string | null);

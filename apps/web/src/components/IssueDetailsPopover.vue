@@ -49,10 +49,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-
-import { coa } from "~/stores/coa";
-
 const { issuenumber, publicationcode } = defineProps<{
   publicationcode: string;
   issuenumber: string;
@@ -62,35 +58,32 @@ defineEmits<{ (e: "click"): void }>();
 let isCoverLoading = $ref(true as boolean);
 let coverUrl = $ref(null as string | null);
 
+const { fetchIssueUrls, setCoverUrl } = coa();
+const { publicationNames, issueDetails, coverUrls } = storeToRefs(coa());
+
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
-const publicationNames = $computed(() => coa().publicationNames);
-const issueDetails = $computed(() => coa().issueDetails);
 const issueCode = $computed(() => `${publicationcode} ${issuenumber}`);
-const coverUrls = $computed(() => coa().coverUrls);
 
 const loadIssueUrls = async () => {
   isCoverLoading = true;
-  await coa().fetchIssueUrls({
+  await fetchIssueUrls({
     publicationcode,
     issuenumber,
   });
   isCoverLoading = false;
 
-  const possibleCoverUrl = issueDetails?.[issueCode]?.entries?.find(
+  const possibleCoverUrl = issueDetails.value?.[issueCode]?.entries?.find(
     ({ position }) => !/^p/.test(position),
   )?.url;
   coverUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
 };
 
-watch(
-  () => coverUrl,
-  (value) => {
-    if (value) {
-      coa().setCoverUrl(issuenumber, value);
-    }
-  },
-);
+watch($$(coverUrl), (value) => {
+  if (value) {
+    setCoverUrl(issuenumber, value);
+  }
+});
 </script>
 
 <style scoped lang="scss">

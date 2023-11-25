@@ -8,7 +8,6 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import { defineSetupVue3 } from "@histoire/plugin-vue";
 import { createHead } from "@unhead/vue";
 import axios from "axios";
-import { createPinia } from "pinia";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
 

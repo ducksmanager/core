@@ -21,17 +21,18 @@
 </template>
 
 <script setup lang="ts">
-import { collection } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
-
 const { issueId } = defineProps<{
   issueId: number;
 }>();
 
+const { issueRequestsAsSeller } = storeToRefs(marketplace());
+
+const { points, stats } = storeToRefs(users());
+const { issuesInOnSaleStack } = storeToRefs(collection());
+
 const receivedRequests = $computed(
   () =>
-    marketplace().issueRequestsAsSeller?.filter(
+    issueRequestsAsSeller.value?.filter(
       ({ issueId: requestIssueId }) => requestIssueId === issueId,
     ),
 );
@@ -39,7 +40,7 @@ const receivedRequests = $computed(
 const buyerPoints = $computed(
   (): { [buyerId: number]: { [contribution: string]: number } } =>
     receivedRequests?.reduce(
-      (acc, { buyerId }) => ({ ...acc, [buyerId]: users().points[buyerId] }),
+      (acc, { buyerId }) => ({ ...acc, [buyerId]: points.value[buyerId] }),
       {},
     ) || {},
 );
@@ -47,13 +48,13 @@ const buyerPoints = $computed(
 const buyerStats = $computed(
   (): { [buyerId: number]: { [contribution: string]: number } } =>
     receivedRequests?.reduce(
-      (acc, { buyerId }) => ({ ...acc, [buyerId]: users().stats[buyerId] }),
+      (acc, { buyerId }) => ({ ...acc, [buyerId]: stats.value[buyerId] }),
       {},
     ) || {},
 );
 
 const isOnSale = $computed(
-  () => collection().issuesInOnSaleStack?.find(({ id }) => id === issueId),
+  () => issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
 );
 </script>
 

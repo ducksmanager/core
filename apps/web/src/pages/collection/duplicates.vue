@@ -20,21 +20,25 @@ alias: [/collection/doubles]
 <script setup lang="ts">
 import { watch } from "vue";
 
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
 let hasPublicationNames = $ref(false as boolean);
 let publicationCodes = $ref(null as string[] | null);
-const duplicateIssues = $computed(() => collection().duplicateIssues);
+
+const { loadCollection } = collection();
+const { duplicateIssues } = storeToRefs(collection());
+
+const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
+const { buyerUserIds } = storeToRefs(marketplace());
+
+const { fetchStats } = users();
+const { fetchPublicationNames } = coa();
 
 watch(
-  () => duplicateIssues,
-  async (duplicateIssues) => {
-    if (duplicateIssues) {
+  duplicateIssues,
+  async (value) => {
+    if (value) {
       publicationCodes = [
         ...new Set(
-          Object.values(duplicateIssues).reduce(
+          Object.values(value).reduce(
             (acc, issues) => [
               ...acc,
               ...issues.map(({ publicationcode }) => publicationcode),
@@ -44,7 +48,7 @@ watch(
         ),
       ];
 
-      await coa().fetchPublicationNames(publicationCodes);
+      await fetchPublicationNames(publicationCodes);
       hasPublicationNames = true;
     }
   },
@@ -52,14 +56,11 @@ watch(
 );
 
 (async () => {
-  await collection().loadCollection();
+  await loadCollection();
 
-  await marketplace().loadIssuesOnSaleByOthers();
-  await marketplace().loadIssueRequestsAsSeller();
+  await loadIssuesOnSaleByOthers();
+  await loadIssueRequestsAsSeller();
 
-  await users().fetchStats(marketplace().buyerUserIds);
+  await fetchStats(buyerUserIds.value);
 })();
 </script>
-
-<style scoped>
-</style>

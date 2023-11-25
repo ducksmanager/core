@@ -9,11 +9,16 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
+const { loadSubscriptions } = collection();
 
-import { collection } from "~/stores/collection";
-
-const user = $computed(() => collection().user);
+const {
+  subscriptions,
+  issuesInToReadStack,
+  issuesInOnSaleStack,
+  total,
+  totalUniqueIssues,
+  user,
+} = storeToRefs(collection());
 
 const { t: $t } = useI18n();
 const router = useRouter();
@@ -21,53 +26,49 @@ const items = $computed(() => [
   {
     path: "/show",
     text:
-      total === undefined
+      total.value === undefined
         ? $t("Mes numéros")
-        : $t("Mes numéros ({0})", [total]),
+        : $t("Mes numéros ({0})", [total.value]),
   },
   {
     path: "/duplicates",
     text:
-      total === undefined
+      total.value === undefined
         ? $t("Mes numéros en double")
-        : $t("Mes numéros en double ({0})", [total - totalUniqueIssues]),
+        : $t("Mes numéros en double ({0})", [
+            total.value - totalUniqueIssues.value,
+          ]),
   },
   {
     path: "/to-read",
     text:
-      issuesInToReadStack == null
+      issuesInToReadStack.value == null
         ? $t("Mes numéros à lire")
-        : $t("Mes numéros à lire ({0})", [issuesInToReadStack.length]),
+        : $t("Mes numéros à lire ({0})", [issuesInToReadStack.value.length]),
   },
   {
     path: "/on-sale",
     text:
-      issuesInOnSaleStack == null
+      issuesInOnSaleStack.value == null
         ? $t("Mes numéros à vendre")
-        : $t("Mes numéros à vendre ({0})", [issuesInOnSaleStack.length]),
+        : $t("Mes numéros à vendre ({0})", [issuesInOnSaleStack.value.length]),
   },
   {
     path: "/subscriptions",
     text:
-      subscriptions == null
+      subscriptions.value == null
         ? $t("Mes abonnements")
-        : $t("Mes abonnements ({0})", [subscriptions.length]),
+        : $t("Mes abonnements ({0})", [subscriptions.value.length]),
   },
   {
     path: "/account",
     text: $t("Mon compte"),
-    disabled: user?.username === "demo",
+    disabled: user.value?.username === "demo",
   },
 ]);
-const subscriptions = $computed(() => collection().subscriptions);
-const issuesInToReadStack = $computed(() => collection().issuesInToReadStack);
-const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
-const total = $computed(() => collection().total);
-const totalUniqueIssues = $computed(() => collection().totalUniqueIssues);
-const loadSubscriptions = collection().loadSubscriptions;
 
 watch(
-  $$(user),
+  user,
   (newValue) => {
     if (newValue) {
       loadSubscriptions();

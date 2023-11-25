@@ -45,13 +45,13 @@
               v-model:rating="author.notation"
               :readonly="false"
               :max-rating="10"
-              @update:rating="statsStore.updateRating(author)"
+              @update:rating="updateRating(author)"
               ><template #emptyStarIcon><i-bi-star /></template>
               <template #filledStarIcon><i-bi-star-fill /></template
             ></StarRating>
           </b-col>
           <b-col lg="2">
-            <b-button size="sm" @click="statsStore.deleteAuthor(author)">
+            <b-button size="sm" @click="deleteAuthor(author)">
               {{ $t("Supprimer") }}
             </b-button>
           </b-col>
@@ -78,9 +78,7 @@
               />
               <datalist
                 v-if="
-                  searchResults &&
-                  Object.keys(searchResults) &&
-                  !statsStore.isSearching
+                  searchResults && Object.keys(searchResults) && !isSearching
                 "
               >
                 <option v-if="!Object.keys(searchResults).length">
@@ -90,10 +88,10 @@
                   v-for="(fullName, personcode) in searchResults"
                   :key="personcode"
                   :class="{
-                    disabled: statsStore.isAuthorWatched(personcode as string),
+                    disabled: isAuthorWatched(personcode as string),
                   }"
                   @click="
-                    statsStore.createRating({
+                    createRating({
                       personcode: personcode as string,
                     })
                   "
@@ -110,38 +108,44 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
-import { stats } from "~/stores/stats";
-import { authorUser } from "~prisma-clients/client_dm";
+import type { authorUser } from "~prisma-clients/client_dm";
 
-const statsStore = stats();
+const {
+  searchAuthors,
+  updateRating,
+  deleteAuthor,
+  isAuthorWatched,
+  createRating,
+} = stats();
+const { fetchPersonNames } = coa();
+
+const {
+  authorSearchResults: searchResults,
+  pendingSearch,
+  isSearching,
+} = storeToRefs(stats());
+
+const { personNames } = storeToRefs(coa());
 
 const { ratings } = defineProps<{
   ratings: authorUser[];
 }>();
 
 const search = $ref("");
-const searchResults = $computed(() => statsStore.authorSearchResults);
-const personNames = $computed(() => coa().personNames);
 
-watch(
-  () => search,
-  async (newValue) => {
-    if (newValue !== "") {
-      statsStore.pendingSearch = newValue;
-      if (!statsStore.isSearching) {
-        await statsStore.searchAuthors(newValue);
-      }
+watch($$(search), async (newValue) => {
+  if (newValue !== "") {
+    pendingSearch.value = newValue;
+    if (!isSearching.value) {
+      await searchAuthors(newValue);
     }
-  },
-);
+  }
+});
 watch(
-  () => ratings,
+  $$(ratings),
   async (newValue) => {
     if (ratings?.length) {
-      await coa().fetchPersonNames(
-        newValue.map(({ personcode }) => personcode),
-      );
+      await fetchPersonNames(newValue.map(({ personcode }) => personcode));
     }
   },
   { immediate: true },

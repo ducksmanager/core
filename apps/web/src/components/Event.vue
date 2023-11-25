@@ -115,17 +115,17 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import { RouterLink } from "vue-router";
 
-import { coa } from "~/stores/coa";
-import { users } from "~/stores/users";
 import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
 import { CollectionSubscriptionAdditionEvent } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
 import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
 import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
 import { MedalEvent } from "~dm-types/events/MedalEvent";
 import { SignupEvent } from "~dm-types/events/SignupEvent";
+
+const { publicationNames } = storeToRefs(coa());
+const { stats, points } = storeToRefs(users());
 
 const { event } = defineProps<{
   event:
@@ -163,9 +163,6 @@ const collectionUpdateEvent = $computed(() =>
   event.type === "collection_update" ? (event as CollectionUpdateEvent) : null,
 );
 
-const publicationNames = $computed(() => coa().publicationNames);
-const stats = $computed(() => users().stats);
-const points = $computed(() => users().points);
 const { t: $t } = useI18n();
 const getMedalTitle = (contribution: string) => {
   switch (contribution) {

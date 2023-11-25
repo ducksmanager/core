@@ -77,8 +77,6 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
-
 const { isEdit, subscription } = defineProps<{
   isEdit?: boolean;
   subscription: EditSubscription;
@@ -104,23 +102,17 @@ const endDateAsString = $ref(
     : "",
 );
 
-watch(
-  () => startDateAsString,
-  (newValue) => {
-    if (newValue) {
-      editSubscription.startDate = new Date(Date.parse(newValue));
-    }
-  },
-);
+watch($$(startDateAsString), (newValue) => {
+  if (newValue) {
+    editSubscription.startDate = new Date(Date.parse(newValue));
+  }
+});
 
-watch(
-  () => endDateAsString,
-  (newValue) => {
-    if (newValue) {
-      editSubscription.endDate = new Date(Date.parse(newValue));
-    }
-  },
-);
+watch($$(endDateAsString), (newValue) => {
+  if (newValue) {
+    editSubscription.endDate = new Date(Date.parse(newValue));
+  }
+});
 
 defineEmits<{
   (e: "delete"): void;
@@ -129,7 +121,5 @@ defineEmits<{
   (e: "cancel-edit"): void;
 }>();
 
-const publicationNames = $computed(() => coa().publicationNames);
+const { publicationNames } = storeToRefs(coa());
 </script>
-
-

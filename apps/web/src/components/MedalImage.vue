@@ -52,8 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 
 const i18n = useI18n();

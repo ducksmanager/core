@@ -335,15 +335,9 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
 import condition from "~/composables/useCondition";
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { publicCollection } from "~/stores/public-collection";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import { issue as dm_issue } from "~prisma-clients/client_dm";
+import type { issue as dm_issue } from "~prisma-clients/client_dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
@@ -414,6 +408,9 @@ switch (contextMenuComponentName) {
     break;
 }
 
+const { fetchPublicationNames, fetchIssueNumbersWithTitles } = coa();
+const { publicationNames, coverUrls, issuesWithTitles } = storeToRefs(coa());
+
 let hoveredIndex = $ref(null as number | null);
 let loading = $ref(true as boolean);
 let publicationNameLoading = $ref(true as boolean);
@@ -479,12 +476,12 @@ const issueIds = $computed(() =>
 );
 
 let contextMenuKey = $ref("context-menu" as string);
-const publicationNames = $computed(() => coa().publicationNames);
-const coverUrls = $computed(() => coa().coverUrls);
 const userIssues = $computed(() => customIssues || store.collection);
 let purchases = $computed(() => store.purchases);
 const country = $computed(() => publicationcode.split("/")[0]);
-const publicationName = $computed(() => publicationNames[publicationcode]);
+const publicationName = $computed(
+  () => publicationNames.value[publicationcode],
+);
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const filteredIssues = $computed(
   () =>
@@ -519,7 +516,6 @@ const ownedIssuesCount = $computed(
       0,
     ) || 0,
 );
-const fetchPublicationNames = coa().fetchPublicationNames;
 const loadPurchases = store.loadPurchases;
 
 const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
@@ -581,7 +577,7 @@ const deletePublicationIssues = async (
 };
 
 const openBook = (issuenumber: string) => {
-  currentIssueOpened = coverUrls[issuenumber]
+  currentIssueOpened = coverUrls.value?.[issuenumber]
     ? { publicationcode: publicationcode, issuenumber }
     : null;
 };
@@ -601,9 +597,9 @@ const loadIssues = async () => {
         ).value,
       }));
 
-    await coa().fetchIssueNumbersWithTitles(publicationcode);
+    await fetchIssueNumbersWithTitles(publicationcode);
 
-    const coaIssues = coa().issuesWithTitles[publicationcode];
+    const coaIssues = issuesWithTitles.value[publicationcode];
     if (groupUserCopies) {
       issues = coaIssues.map((issue) => ({
         ...issue,
@@ -674,7 +670,7 @@ const loadIssues = async () => {
       );
     }
 
-    const coaIssueNumbers = coa().issuesWithTitles[publicationcode].map(
+    const coaIssueNumbers = issuesWithTitles.value[publicationcode].map(
       ({ issuenumber }) => issuenumber,
     );
     userIssuesNotFoundForPublication = userIssuesForPublication!.filter(
@@ -684,22 +680,20 @@ const loadIssues = async () => {
   }
 };
 
-watch(
-  () => preselectedIndexEnd,
-  () => {
-    preselected = getPreselected();
-  },
-);
+watch($$(preselectedIndexEnd), () => {
+  preselected = getPreselected();
+});
 
 watch(
-  () => publicationcode,
+  [$$(publicationcode), $$(userIssues)],
   async () => {
     await loadIssues();
   },
+  { immediate: true },
 );
 
 watch(
-  () => userIssues,
+  $$(userIssues),
   async () => {
     await loadIssues();
   },

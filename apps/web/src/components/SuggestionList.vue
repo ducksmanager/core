@@ -50,7 +50,9 @@
           <div>
             <Issue
               :publicationcode="publicationcode"
-              :publicationname="suggestions!.publicationTitles[publicationcode]!"
+              :publicationname="
+                suggestions!.publicationTitles[publicationcode]!
+              "
               :issuenumber="issuenumber"
               no-wrap
             >
@@ -77,31 +79,29 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
-import { collection } from "~/stores/collection";
-
 const { countrycode = null, sinceLastVisit = false } = defineProps<{
   countrycode?: string;
   sinceLastVisit?: boolean;
 }>();
 const { t: $t } = useI18n();
-const suggestions = $computed(() => collection().suggestions);
-const hasSuggestions = $computed(() => collection().hasSuggestions);
+const { loadSuggestions } = collection();
+const { suggestions, hasSuggestions } = storeToRefs(collection());
 const suggestionSorts = () => ({
   oldestdate: $t("Trier par date de parution"),
   score: $t("Trier par score"),
 });
-const loadSuggestions = collection().loadSuggestions;
 const getImportance = (score: number) =>
-  suggestions?.maxScore === score ? 1 : suggestions?.minScore === score ? 3 : 2;
+  suggestions.value?.maxScore === score
+    ? 1
+    : suggestions.value?.minScore === score
+      ? 3
+      : 2;
 
 let loading = $ref(true);
 const suggestionSortCurrent = $ref("score" as "score" | "oldestdate");
 
 watch(
-  () => countrycode,
+  $$(countrycode),
   async (newValue) => {
     if (!newValue) {
       return;
@@ -116,21 +116,18 @@ watch(
   },
   { immediate: true },
 );
-watch(
-  () => suggestionSortCurrent,
-  async (newValue) => {
-    if (!countrycode) {
-      return;
-    }
-    loading = true;
-    await loadSuggestions({
-      countryCode: countrycode,
-      sort: newValue,
-      sinceLastVisit,
-    });
-    loading = false;
-  },
-);
+watch($$(suggestionSortCurrent), async (newValue) => {
+  if (!countrycode) {
+    return;
+  }
+  loading = true;
+  await loadSuggestions({
+    countryCode: countrycode,
+    sort: newValue,
+    sinceLastVisit,
+  });
+  loading = false;
+});
 </script>
 
 <style scoped lang="scss">

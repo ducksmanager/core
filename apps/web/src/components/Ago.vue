@@ -4,10 +4,10 @@
 <script setup lang="ts">
 import { format as timeAgoFormat } from "timeago.js";
 
-const { timestamp } = defineProps<{
+const props = defineProps<{
     timestamp: number;
   }>(),
-  timeAgo = $computed(() => timeAgoFormat(timestamp * 1000));
+  timeAgo = $computed(() => timeAgoFormat(props.timestamp * 1000));
 </script>
 <style scoped lang="scss">
 .ago {

@@ -8,13 +8,11 @@ import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { createPinia } from "pinia";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
 // @ts-ignore
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
-import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";

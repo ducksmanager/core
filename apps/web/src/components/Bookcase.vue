@@ -48,7 +48,6 @@
 import { onMounted } from "vue";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-import { images } from "~/stores/images";
 
 const {
   bookcaseTextures,
@@ -105,7 +104,7 @@ defineEmits<{
   (e: "open-book", edgeToLoad: BookcaseEdgeWithPopularity): void;
 }>();
 
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
 let edgeIndexesToLoad = $ref([] as number[]);
 
 const getTextureBackgroundImage = (textureName: string) =>
@@ -122,7 +121,7 @@ const onEdgeLoaded = (edgeIndex: number) => {
 };
 
 watch(
-  () => sortedBookcase,
+  $$(sortedBookcase),
   (newValue) => {
     if (newValue && !edgeIndexesToLoad.length) {
       const firstBatchSize = Math.min(MAX_BATCH_SIZE, newValue.length || 0);

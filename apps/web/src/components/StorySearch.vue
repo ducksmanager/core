@@ -86,16 +86,8 @@
 <script setup lang="ts">
 import axios from "axios";
 import { watch } from "vue";
-import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { publicCollection } from "~/stores/public-collection";
-import {
-  GET__coa__list__issues__by_storycode,
-  POST__coa__stories__search__withIssues,
-} from "~api-routes";
 import { call } from "~axios-helper";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
@@ -115,7 +107,10 @@ const emit = defineEmits<{
 }>();
 const { conditions } = condition();
 
-const store = $computed(() => (isPublic ? publicCollection() : collection()));
+const { findInCollection } = isPublic ? publicCollection() : collection();
+const { collection: thisCollection } = storeToRefs(collection());
+const { fetchPublicationNames, fetchCountryNames } = coa();
+const { publicationNames } = storeToRefs(coa());
 
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
@@ -131,11 +126,9 @@ let storyResults = $ref(
 let issueResults = $ref({} as { results: SimpleIssue[] });
 let searchContext = $ref("story" as "story" | "storycode");
 
-const publicationNames = $computed(() => coa().publicationNames);
 const { t: $t } = useI18n();
-const fetchPublicationNames = coa().fetchPublicationNames;
 const isInCollection = ({ publicationcode, issuenumber }: SimpleIssue) =>
-  store.findInCollection(publicationcode, issuenumber) !== undefined;
+  findInCollection(publicationcode, issuenumber) !== undefined;
 
 const searchContexts = {
   story: $t("titre d'histoire"),
@@ -200,7 +193,7 @@ const runSearch = async (value: string) => {
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:
-          store.collection!.find(
+          thisCollection.value!.find(
             ({
               publicationcode: collectionPublicationCode,
               issuenumber: collectionIssueNumber,
@@ -225,17 +218,14 @@ const runSearch = async (value: string) => {
   }
 };
 
-watch(
-  () => search,
-  async (newValue) => {
-    if (newValue) {
-      pendingSearch = newValue;
-      if (!isSearching) await runSearch(newValue);
-    }
-  },
-);
+watch($$(search), async (newValue) => {
+  if (newValue) {
+    pendingSearch = newValue;
+    if (!isSearching) await runSearch(newValue);
+  }
+});
 
-coa().fetchCountryNames();
+fetchCountryNames();
 </script>
 
 <style scoped lang="scss">

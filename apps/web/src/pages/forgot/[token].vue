@@ -31,14 +31,12 @@ meta:
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { useI18n } from "vue-i18n";
 
-import { collection } from "~/stores/collection";
-import { POST__auth__change_password } from "~api-routes";
 import { call } from "~axios-helper";
 
 const router = useRouter();
-const collectionStore = collection();
+const { loadUser } = collection();
+const { user } = storeToRefs(collection());
 
 let initError = $ref(null as AxiosError | null);
 let error = $ref(null as unknown | null);
@@ -80,14 +78,14 @@ const changePassword = async () => {
         reqBody: { token, password, password2 },
       }),
     );
-    await collectionStore.loadUser();
+    await loadUser();
   } catch (e: unknown) {
     initError = e as AxiosError;
   }
 })();
 
 watch(
-  () => collectionStore.user,
+  user,
   async (newValue) => {
     if (newValue) {
       await router.push("/collection");

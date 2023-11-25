@@ -95,35 +95,42 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
-
 const { publicationcode = null } = defineProps<{
   publicationcode: string | null;
 }>();
 
 const suggestionsNumber = $ref(0 as number);
 let hasPublicationNames = $ref(false as boolean);
-const marketplaceContactMethods = $computed(
-  () => collection().marketplaceContactMethods,
-);
-const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
-const user = $computed(() => collection().user);
-const total = $computed(() => collection().total);
-const totalPerPublication = $computed(() => collection().totalPerPublication);
-const mostPossessedPublication = $computed(
-  () => collection().mostPossessedPublication,
-);
+
+const { loadCollection, loadPurchases, loadMarketplaceContactMethods } =
+  collection();
+
+const {
+  marketplaceContactMethods,
+  issuesInOnSaleStack,
+  user,
+  total,
+  totalPerPublication,
+  mostPossessedPublication,
+} = storeToRefs(collection());
+
+const { fetchStats } = users();
+
+const { fetchPublicationNames, fetchCountryNames } = coa();
+
+const {
+  loadIssuesOnSaleByOthers,
+  loadIssueRequestsAsBuyer,
+  loadIssueRequestsAsSeller,
+} = marketplace();
+
+const { buyerUserIds, sellerUserIds } = storeToRefs(marketplace());
 
 watch(
-  () => totalPerPublication,
+  totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await coa().fetchPublicationNames(Object.keys(newValue));
+      await fetchPublicationNames(Object.keys(newValue));
       hasPublicationNames = true;
     }
   },
@@ -131,17 +138,17 @@ watch(
 );
 
 (async () => {
-  await collection().loadCollection();
-  await collection().loadPurchases();
-  await collection().loadMarketplaceContactMethods();
-  await coa().fetchCountryNames();
+  await loadCollection();
+  await loadPurchases();
+  await loadMarketplaceContactMethods();
+  await fetchCountryNames();
 
-  await marketplace().loadIssuesOnSaleByOthers();
-  await marketplace().loadIssueRequestsAsBuyer();
-  await marketplace().loadIssueRequestsAsSeller();
+  await loadIssuesOnSaleByOthers();
+  await loadIssueRequestsAsBuyer();
+  await loadIssueRequestsAsSeller();
 
-  await users().fetchStats(marketplace().buyerUserIds);
-  await users().fetchStats(marketplace().sellerUserIds);
+  await fetchStats(buyerUserIds.value);
+  await fetchStats(sellerUserIds.value);
 })();
 </script>
 

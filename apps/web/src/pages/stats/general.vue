@@ -33,7 +33,7 @@
       {{ $t("Chargement...") }}
     </div>
     <h2>{{ $t("Valeur de la collection") }}</h2>
-    <template v-if="quotedIssues !== null && hasPublicationNames">
+    <template v-if="quotedIssuesForCollection !== null && hasPublicationNames">
       <b-alert v-if="quotationSum === 0" :model-value="true" variant="info">
         <small>{{
           $t("Votre collection ne contient pas de magazines cotés.")
@@ -60,13 +60,13 @@
             <div class="my-3">
               {{
                 $t("Votre collection contient {0} magazines cotés.", [
-                  quotedIssues!.length,
+                  quotedIssuesForCollection!.length,
                 ])
               }}
             </div>
             <b-table
               striped
-              :items="quotedIssues"
+              :items="quotedIssuesForCollection"
               :per-page="50"
               :current-page="currentPage"
               :fields="quotationFields"
@@ -74,7 +74,9 @@
               <template #cell(issue)="{ item }">
                 <Issue
                   :publicationcode="(item as QuotedIssue).publicationcode"
-                  :publicationname="publicationNames[(item as QuotedIssue).publicationcode ]!"
+                  :publicationname="
+                    publicationNames[(item as QuotedIssue).publicationcode]!
+                  "
                   :issuenumber="(item as QuotedIssue).issuenumber"
                 />
               </template>
@@ -90,7 +92,7 @@
             </b-table>
             <b-pagination
               v-model="currentPage"
-              :total-rows="quotedIssues!.length"
+              :total-rows="quotedIssuesForCollection!.length"
               :per-page="50"
             />
           </template>
@@ -158,36 +160,35 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
 
 import condition from "~/composables/useCondition";
-import { coa } from "~/stores/coa";
-import {
-  collection as collectionStore,
-  QuotedIssue,
-} from "~/stores/collection";
-import { users } from "~/stores/users";
-import { GET__global_stats__user__collection__rarity } from "~api-routes";
+import { QuotedIssue } from "~/stores/collection";
 import { call } from "~axios-helper";
 
-const collection = collectionStore();
 const { getConditionLabel } = condition();
 
 const { t: $t } = useI18n();
 let currentPage = $ref(1);
-const userCount = $computed(() => users().count);
-const publicationNames = $computed(() => coa().publicationNames);
-const quotedIssues = $computed(
+
+const { fetchCount } = users();
+const { count: userCount } = storeToRefs(users());
+
+const { loadCollection } = collection();
+const { totalPerPublication, quotedIssues, quotationSum, user } =
+  storeToRefs(collection());
+
+const { fetchPublicationNames, fetchIssueQuotations } = coa();
+const { publicationNames } = storeToRefs(coa());
+
+const quotedIssuesForCollection = $computed(
   () =>
-    collection.quotedIssues?.sort(
+    quotedIssues.value?.sort(
       (
         { estimationGivenCondition: estimation1 },
         { estimationGivenCondition: estimation2 },
       ) => Math.sign(estimation2 - estimation1),
     ),
 );
-const quotationSum = $computed(() => collection.quotationSum);
 const quotationFields = [
   { key: "issue", label: $t("Numéro") },
   { key: "condition", label: $t("Etat") },
@@ -202,20 +203,20 @@ let rarityValue = $ref(null as number | null);
 let hasPublicationNames = $ref(false as boolean);
 
 watch(
-  () => collection.totalPerPublication,
+  totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await coa().fetchIssueQuotations(Object.keys(newValue));
+      await fetchIssueQuotations(Object.keys(newValue));
     }
   },
   { immediate: true },
 );
 
 watch(
-  () => quotedIssues,
+  quotedIssues,
   async (newValue) => {
     if (newValue) {
-      await coa().fetchPublicationNames(
+      await fetchPublicationNames(
         newValue.map(({ publicationcode }) => publicationcode),
       );
       hasPublicationNames = true;
@@ -225,14 +226,14 @@ watch(
 );
 
 (async () => {
-  await collection.loadCollection();
-  await users().fetchCount();
+  await loadCollection();
+  await fetchCount();
   const { userScores } = (
     await call(axios, new GET__global_stats__user__collection__rarity())
   ).data;
   rarityValue =
     userScores.length -
-    userScores.findIndex(({ userId }) => userId === collection.user?.id);
+    userScores.findIndex(({ userId }) => userId === user.value?.id);
 })();
 </script>
 

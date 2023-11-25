@@ -67,14 +67,12 @@ meta:
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { useI18n } from "vue-i18n";
 
-import { collection } from "~/stores/collection";
-import { GET__csrf } from "~api-routes";
 import { call } from "~axios-helper";
 import { ScopedError } from "~dm-types/ScopedError";
 
-const collectionStore = collection();
+const { signup: userSignup, loadUser } = collection();
+const { user } = storeToRefs(collection());
 const router = useRouter();
 
 let csrfToken = $ref(null as string | null);
@@ -87,7 +85,7 @@ let username = $ref("" as string),
 const { t: $t } = useI18n();
 
 const signup = async () => {
-  await collectionStore.signup(
+  await userSignup(
     username,
     password,
     password2,
@@ -96,7 +94,7 @@ const signup = async () => {
       Cookies.set("token", newToken, {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,
       });
-      await collectionStore.loadUser();
+      await loadUser();
     },
     (e) => {
       error = ((e as AxiosError)?.response?.data as ScopedError) || {
@@ -107,7 +105,7 @@ const signup = async () => {
 };
 
 watch(
-  () => collectionStore.user,
+  user,
   async (newValue) => {
     if (newValue) {
       await router.push("/collection");

@@ -79,9 +79,6 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
-import { images } from "~/stores/images";
 import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
 
 defineProps<{
@@ -90,7 +87,7 @@ defineProps<{
   showOkForExchanges?: boolean;
 }>();
 const { t: $t } = useI18n();
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
 </script>
 
 <style scoped lang="scss">

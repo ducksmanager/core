@@ -112,10 +112,7 @@
                 variant="success"
                 class="btn-sm"
                 @click.stop="
-                  createPurchase({
-                    date: newPurchase.date!,
-                    description: newPurchase.description!,
-                  });
+                  createPurchase(newPurchase.date!, newPurchase.description!);
                   newPurchase = newPurchaseDefault;
                 "
               >
@@ -254,16 +251,13 @@
   </template>
 </template>
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
 import cond from "~/composables/useCondition";
 import {
-  collection as collectionStore,
+  collection,
   IssueWithPublicationcodeOptionalId,
 } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
 import { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
-import { issue_condition } from "~prisma-clients/client_dm";
+import type { issue_condition } from "~prisma-clients/client_dm";
 
 const { conditions } = cond();
 
@@ -287,6 +281,12 @@ const emit = defineEmits<{
   ): void;
 }>();
 
+const { issueRequestsAsSeller, buyerUserNamesById } =
+  storeToRefs(marketplace());
+
+const { createPurchase, deletePurchase } = collection();
+const { collection: currentCollection, purchases } = storeToRefs(collection());
+
 const today = new Date().toISOString().slice(0, 10);
 
 type NewPurchase = {
@@ -308,8 +308,6 @@ const isSaleDisabledGlobally = $computed(
   () => !userIdsWhoSentRequestsForAllSelected.length,
 );
 
-const purchases = $computed(() => collectionStore().purchases);
-
 const issuenumbers = $computed(() =>
   isSingleIssueSelected
     ? [(copyState as IssueWithPublicationcodeOptionalId).issuenumber]
@@ -318,7 +316,7 @@ const issuenumbers = $computed(() =>
 
 const collectionForCurrentPublication = $computed(
   () =>
-    collectionStore().collection?.filter(
+    currentCollection.value?.filter(
       ({ publicationcode: issuePublicationcode }) =>
         copyState.publicationcode === issuePublicationcode,
     ),
@@ -409,11 +407,9 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
   ),
 );
 
-const buyerUserNamesById = $computed(() => marketplace().buyerUserNamesById);
-
 const receivedRequests = $computed(
   () =>
-    marketplace().issueRequestsAsSeller?.filter(({ issueId }) =>
+    issueRequestsAsSeller.value?.filter(({ issueId }) =>
       issueIds.includes(issueId),
     ),
 );
@@ -436,13 +432,6 @@ const issueIds = $computed((): (number | null)[] =>
     : [] || [],
 );
 
-const createPurchase = async (data: { date: string; description: string }) => {
-  await collectionStore().createPurchase(data.date, data.description);
-};
-const deletePurchase = async (id: number) => {
-  await collectionStore().deletePurchase(id);
-};
-
 watch(
   () => copyState,
   (copyState) => {
@@ -451,14 +440,14 @@ watch(
   { immediate: true },
 );
 watch(
-  () => newCopyState,
+  $$(newCopyState),
   (newCopyState) => {
     emit("update", newCopyState);
   },
   { deep: true },
 );
 watch(
-  () => marketplace().issueRequestsAsSeller,
+  issueRequestsAsSeller,
   (newValue) => {
     const buyerId = newValue?.find(
       ({ issueId, isBooked }) =>

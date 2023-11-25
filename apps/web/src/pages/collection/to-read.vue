@@ -19,16 +19,21 @@ alias: [/collection/a-lire]
 <script setup lang="ts">
 import { watch } from "vue";
 
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
 let hasPublicationNames = $ref(false as boolean);
 let publicationCodes = $ref(null as string[] | null);
-const issuesInToReadStack = $computed(() => collection().issuesInToReadStack);
+
+const { loadCollection } = collection();
+const { issuesInToReadStack } = storeToRefs(collection());
+
+const { fetchPublicationNames } = coa();
+
+const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
+const { buyerUserIds } = storeToRefs(marketplace());
+
+const { fetchStats } = users();
 
 watch(
-  () => issuesInToReadStack,
+  issuesInToReadStack,
   async (issuesInToReadStack) => {
     if (issuesInToReadStack) {
       publicationCodes = [
@@ -37,7 +42,7 @@ watch(
         ),
       ];
 
-      await coa().fetchPublicationNames(publicationCodes);
+      await fetchPublicationNames(publicationCodes);
       hasPublicationNames = true;
     }
   },
@@ -45,14 +50,11 @@ watch(
 );
 
 (async () => {
-  await collection().loadCollection();
+  await loadCollection();
 
-  await marketplace().loadIssuesOnSaleByOthers();
-  await marketplace().loadIssueRequestsAsSeller();
+  await loadIssuesOnSaleByOthers();
+  await loadIssueRequestsAsSeller();
 
-  await users().fetchStats(marketplace().buyerUserIds);
+  await fetchStats(buyerUserIds.value);
 })();
 </script>
-
-<style scoped>
-</style>

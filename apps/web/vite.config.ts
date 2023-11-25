@@ -2,6 +2,7 @@
 
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
+import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
@@ -28,9 +29,8 @@ export default defineConfig({
     },
   },
   plugins: [
-    Vue({
-      reactivityTransform: true,
-    }),
+    ReactivityTransform(),
+    Vue(),
 
     // https://github.com/hannoeru/vite-plugin-pages
     Pages(),
@@ -47,9 +47,21 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: ["vue", "vue/macros", "vue-router", "@vueuse/core"],
+      imports: [
+        "vue",
+        "vue/macros",
+        "vue-router",
+        "@vueuse/core",
+        "pinia",
+        "vue-i18n",
+      ],
       dts: true,
-      dirs: ["./src/composables", "./types"],
+      dirs: [
+        "./src/composables",
+        "./src/stores",
+        "./types",
+        "../../packages/api-routes",
+      ],
       vueTemplate: true,
     }),
 

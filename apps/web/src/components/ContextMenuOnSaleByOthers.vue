@@ -95,10 +95,6 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 const { selectedIssueIdsByIssuenumber } = defineProps<{
@@ -118,23 +114,25 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
+const { stats } = storeToRefs(users());
+
+const { loadContactMethods } = marketplace();
+const { contactMethods, issuesOnSaleById } = storeToRefs(marketplace());
+
 const selectedIssues = $computed(() =>
   Object.keys(selectedIssueIdsByIssuenumber),
 );
-const contactMethods = $computed(() => marketplace().contactMethods);
-const issuesOnSaleById = $computed(() => marketplace().issuesOnSaleById);
 const issueIds = $computed(() =>
   Object.values(selectedIssueIdsByIssuenumber).reduce(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id!)],
     [] as number[],
   ),
 );
-const stats = $computed(() => users().stats);
 
 const selectedIssuesBuyerIds = $computed(() => [
   ...new Set(
     issueIds.reduce(
-      (acc, issueId) => [...acc, issuesOnSaleById[issueId].userId],
+      (acc, issueId) => [...acc, issuesOnSaleById.value[issueId].userId],
       [] as number[],
     ),
   ),
@@ -156,7 +154,7 @@ const { t: $t } = useI18n();
 
 (async () => {
   if (selectedIssuesBuyerIds.length) {
-    await marketplace().loadContactMethods(selectedIssuesBuyerIds[0]);
+    await loadContactMethods(selectedIssuesBuyerIds[0]);
   }
 })();
 </script>

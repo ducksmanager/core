@@ -1,13 +1,9 @@
 import { AxiosInstance } from "axios";
-import { defineStore } from "pinia";
 
 import {
-  DELETE__collection__authors__watched,
   GET__coa__authorsfullnames__search__$partialAuthorName,
   GET__collection__authors__watched,
-  POST__collection__authors__watched,
-  PUT__collection__authors__watched,
-} from "~api-routes";
+} from "~api-routes/index";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 
 let api: AxiosInstance;

@@ -5,11 +5,7 @@ meta:
 </route>
 
 <template>
-  <form
-    v-if="collectionStore.user === null"
-    method="post"
-    @submit.prevent="login"
-  >
+  <form v-if="user === null" method="post" @submit.prevent="login">
     <b-row>
       <b-col lg="6">
         <h1 class="h3 mb-3 fw-normal">
@@ -62,11 +58,10 @@ meta:
 import axios from "axios";
 import Cookies from "js-cookie";
 
-import { collection } from "~/stores/collection";
-import { GET__csrf } from "~api-routes";
 import { call } from "~axios-helper";
 
-const collectionStore = collection();
+const { login: userLogin, loadUser } = collection();
+const { user } = storeToRefs(collection());
 
 let router = useRouter();
 let route = useRoute();
@@ -77,7 +72,7 @@ let error = $ref(null as string | null);
 let password = $ref("" as string);
 
 const login = async () => {
-  await collectionStore.login(
+  await userLogin(
     username,
     password,
     async (newToken) => {
@@ -85,7 +80,7 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
-      await collectionStore.loadUser();
+      await loadUser();
     },
     (e) => {
       error = e.message;
@@ -94,7 +89,7 @@ const login = async () => {
 };
 
 watch(
-  () => collectionStore.user,
+  user,
   async (newValue) => {
     if (newValue) {
       if (route.query.redirect) {

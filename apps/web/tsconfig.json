@@ -19,7 +19,8 @@
       "vite/client",
       "vite-plugin-pages/client",
       "vue/ref-macros",
-      "unplugin-icons/types/vue"
+      "unplugin-icons/types/vue",
+      "@vue-macros/reactivity-transform/macros-global"
     ],
     "paths": {
       "~/*": ["src/*"],
@@ -37,5 +38,5 @@
     "src/**/*.vue",
     "auto-imports.d.ts"
   ],
-  "exclude": ["dist", "node_modules", "vendor"]
+  "exclude": ["dist", "node_modules", "vendor"],
 }

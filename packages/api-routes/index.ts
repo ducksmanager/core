@@ -8,6 +8,7 @@ import { CollectionUpdateMultipleIssues,CollectionUpdateSingleIssue } from "~dm-
 import { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import { EdgeModel } from "~dm-types/EdgeModel";
 import { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
+import { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate";
 import { EditSubscription } from "~dm-types/EditSubscription";
 import { Event } from "~dm-types/Event";
 import { ImageElement } from "~dm-types/ImageElement";
@@ -317,7 +318,7 @@ export class PUT__collection__authors__watched  extends ContractWithMethodAndUrl
             static readonly method = "put";
             static readonly url = "/collection/authors/watched";
         }
-export class GET__collection__edges__lastPublished  extends ContractWithMethodAndUrl<{ resBody: edge[] }> {
+export class GET__collection__edges__lastPublished  extends ContractWithMethodAndUrl<{ resBody: EdgeWithStringCreationDate[] }> {
             static readonly method = "get";
             static readonly url = "/collection/edges/lastPublished";
         }

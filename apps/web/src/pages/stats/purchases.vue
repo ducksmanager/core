@@ -23,13 +23,6 @@ alias: [/achats]
         >50<sup>{{ $t("ème") }}</sup></template
       >
     </i18n-t>
-    <div
-      v-html="
-        $t(
-          'A quel moment votre collection a-t-elle accueilli son 10<sup>ème</sup> numéro ? Son 50<sup>ème</sup> ?',
-        )
-      "
-    />
     <div>
       {{ $t("Quand avez-vous acheté le plus de magazines dans le passé ?") }}
     </div>
@@ -75,13 +68,9 @@ import {
   Tooltip,
 } from "chart.js";
 import dayjs from "dayjs";
-import { watch } from "vue";
 import { Bar } from "vue-chartjs";
-import { useI18n } from "vue-i18n";
 
-import { coa } from "~/stores/coa";
-import { collection, purchaseWithStringDate } from "~/stores/collection";
-import { issue as dm_issue } from "~prisma-clients/client_dm";
+import type { issue as dm_issue } from "~prisma-clients/client_dm";
 
 Chart.register(
   Legend,
@@ -93,10 +82,22 @@ Chart.register(
   Title,
 );
 
-collection().loadCollection();
+const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
+
+const { loadCollection, loadPurchases } = collection();
+const {
+  totalPerPublication,
+  collection: thisCollection,
+  purchasesById,
+} = storeToRefs(collection());
+
+loadCollection();
 const { t: $t } = useI18n(),
-  fetchPublicationNames = coa().fetchPublicationNames,
-  loadPurchases = collection().loadPurchases,
+  purchaseTypes = {
+    new: $t("Afficher les nouvelles acquisitions"),
+    total: $t("Afficher les possessions totales"),
+  },
   compareDates = (a: string, b: string) =>
     dayjs(a === "?" ? "0001-01-01" : a).diff(
       dayjs(b === "?" ? "0001-01-01" : b),
@@ -111,24 +112,15 @@ const { t: $t } = useI18n(),
     getIssueDate(issue).isValid() ? getIssueDate(issue).format("YYYY-MM") : "?",
   getIssueDate = (issue: dm_issue) =>
     dayjs(
-      (issue.purchaseId && purchasesById![issue.purchaseId]?.date) ||
+      (issue.purchaseId && purchasesById.value![issue.purchaseId]?.date) ||
         issue.creationDate,
     ),
-  purchaseTypes = {
-    new: $t("Afficher les nouvelles acquisitions"),
-    total: $t("Afficher les possessions totales"),
-  },
-  purchases = $computed(() => collection().purchases),
-  publicationNames = $computed(() => coa().publicationNames),
   changeDimension = (dimension: string, value: number) => {
     if (dimension === "width") width = `${value}px`;
     else height = `${value}px`;
   };
 
 let hasPublicationNames = $ref(false as boolean),
-  purchasesById = $ref(
-    null as { [purchaseId: number]: purchaseWithStringDate } | null,
-  ),
   options = $ref({} as ChartOptions<"bar">),
   width = $ref(null as string | null),
   height = $ref(null as string | null),
@@ -136,8 +128,8 @@ let hasPublicationNames = $ref(false as boolean),
 
 const publicationCodesWithOther = $computed(
     () =>
-      collection().totalPerPublication &&
-      Object.entries(collection().totalPerPublication || {})
+      totalPerPublication.value &&
+      Object.entries(totalPerPublication.value || {})
         .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
         .filter((_entry, idx) => idx < 20)
         .map(([publicationcode]) => publicationcode)
@@ -146,7 +138,7 @@ const publicationCodesWithOther = $computed(
   collectionWithDates = $computed(
     () =>
       (purchasesById &&
-        collection().collection?.map((issue) => ({
+        thisCollection.value?.map((issue) => ({
           ...issue,
           date: getIssueMonth(issue),
         }))) ||
@@ -238,7 +230,7 @@ const publicationCodesWithOther = $computed(
             label:
               publicationcode === "Other"
                 ? $t("Autres")
-                : publicationNames[publicationcode] || publicationcode,
+                : publicationNames.value[publicationcode] || publicationcode,
             backgroundColor: randomColor(),
           };
         }),
@@ -252,29 +244,23 @@ const publicationCodesWithOther = $computed(
         },
   );
 
-watch(
-  () => maxPerDate,
-  (newValue) => {
-    if (newValue) {
-      changeDimension(
-        "height",
-        Math.max(document.body.offsetHeight, newValue / 4),
-      );
-    }
-  },
-);
+watch($$(maxPerDate), (newValue) => {
+  if (newValue) {
+    changeDimension(
+      "height",
+      Math.max(document.body.offsetHeight, newValue / 4),
+    );
+  }
+});
+
+watch($$(labels), (newValue) => {
+  if (newValue) {
+    changeDimension("width", 250 + 30 * newValue!.length);
+  }
+});
 
 watch(
-  () => labels,
-  (newValue) => {
-    if (newValue) {
-      changeDimension("width", 250 + 30 * newValue!.length);
-    }
-  },
-);
-
-watch(
-  () => publicationCodesWithOther,
+  $$(publicationCodesWithOther),
   async (newValue) => {
     if (newValue) {
       await fetchPublicationNames(
@@ -283,22 +269,6 @@ watch(
         ),
       );
       hasPublicationNames = true;
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => purchases,
-  (newValue) => {
-    if (newValue) {
-      purchasesById = newValue.reduce(
-        (acc, purchase) => ({
-          ...acc,
-          [purchase.id]: purchase,
-        }),
-        {} as { [purchaseId: number]: purchaseWithStringDate },
-      );
     }
   },
   { immediate: true },

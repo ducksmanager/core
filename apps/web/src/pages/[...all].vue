@@ -107,7 +107,7 @@ meta:
           <div>
             {{
               $t(
-                "...Et pour que l'immersion soit complète, vous pouvez dans la plupart des cas voir la couverture et quelques extraits de chacun de vos numéros!",
+                " pour que l'immersion soit complète, vous pouvez dans la plupart des cas voir la couverture et quelques extraits de chacun de vos numéros!",
               )
             }}
           </div>
@@ -203,15 +203,10 @@ meta:
 
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
-import { useI18n } from "vue-i18n";
-
-import { collection } from "~/stores/collection";
-import { images } from "~/stores/images";
-
 const { t: $t } = useI18n();
 
-const user = $computed(() => collection().user);
-const getImagePath = images().getImagePath;
+const { user } = storeToRefs(collection());
+const { getImagePath } = images();
 
 useHead({
   title: $t("Bienvenue sur DucksManager !"),

@@ -19,9 +19,9 @@
             <div v-t="'Vous pouvez photographier cette tranche ?'"></div>
             <div class="medal-progress-wrapper">
               <MedalProgress
-                v-if="points !== null && extraPoints !== null"
+                v-if="userPoints !== null && extraPoints !== null"
                 contribution="edge_photographer"
-                :user-level-points="points"
+                :user-level-points="userPoints"
                 :extra-points="extraPoints"
               />
             </div>
@@ -49,20 +49,17 @@
 </template>
 
 <script setup lang="ts">
-import { bookcase } from "~/stores/bookcase";
-import { collection } from "~/stores/collection";
-import { users } from "~/stores/users";
-
 const { extraPoints = null } = defineProps<{
   hasEdge: boolean;
   extraPoints: number | null;
 }>();
 
 const contribution = "edge_photographer";
-const isSharedBookcase = bookcase().isSharedBookcase;
-const user = $computed(() => collection().user);
-const points = $computed(
-  () => (user && users().points?.[user.id][contribution]) || null,
+const { isSharedBookcase } = storeToRefs(bookcase());
+const { user } = storeToRefs(collection());
+const { points } = storeToRefs(users());
+const userPoints = $computed(
+  () => (user.value && points.value?.[user.value.id][contribution]) || null,
 );
 </script>
 

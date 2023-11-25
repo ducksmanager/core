@@ -29,12 +29,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { watch } from "vue";
 import { Bar } from "vue-chartjs";
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
 Chart.register(
   Legend,
   CategoryScale,
@@ -52,39 +47,41 @@ let chartData = $ref(null as ChartData<"bar", number[]> | null),
   unitTypeCurrent = $ref("number" as string),
   options = $ref({} as ChartOptions<"bar">);
 
+const { loadCollection } = collection();
+const { totalPerPublicationUniqueIssueNumbersSorted } =
+  storeToRefs(collection());
+
+const { fetchPublicationNames, fetchIssueCounts } = coa();
+const { issueCounts, publicationNames } = storeToRefs(coa());
+
 const { t: $t } = useI18n(),
-  totalPerPublicationUniqueIssueNumbersSorted = $computed(
-    () => collectionStore().totalPerPublicationUniqueIssueNumbersSorted,
-  ),
   unitTypes = {
     number: $t("Afficher en valeurs réelles"),
     percentage: $t("Afficher en pourcentages"),
   },
-  issueCounts = $computed(() => coa().issueCounts),
-  publicationNames = $computed(() => coa().publicationNames),
   labels = $computed(
     () =>
       hasCoaData &&
-      totalPerPublicationUniqueIssueNumbersSorted?.map(
-        ([publicationcode]) => publicationNames[publicationcode],
+      totalPerPublicationUniqueIssueNumbersSorted.value?.map(
+        ([publicationcode]) => publicationNames.value[publicationcode],
       ),
   ),
   values = $computed(() => {
     if (
       !(
-        totalPerPublicationUniqueIssueNumbersSorted &&
+        totalPerPublicationUniqueIssueNumbersSorted.value &&
         issueCounts &&
         hasCoaData
       )
     ) {
       return null;
     }
-    let possessedIssues = totalPerPublicationUniqueIssueNumbersSorted.map(
+    let possessedIssues = totalPerPublicationUniqueIssueNumbersSorted.value.map(
       ([, userIssueCount]) => userIssueCount,
     );
-    let missingIssues = totalPerPublicationUniqueIssueNumbersSorted.map(
+    let missingIssues = totalPerPublicationUniqueIssueNumbersSorted.value.map(
       ([publicationcode, userIssueCount]) =>
-        issueCounts[publicationcode] - userIssueCount,
+        issueCounts.value![publicationcode] - userIssueCount,
     );
     if (unitTypeCurrent === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>
@@ -100,22 +97,22 @@ const { t: $t } = useI18n(),
   });
 
 watch(
-  () => totalPerPublicationUniqueIssueNumbersSorted,
+  totalPerPublicationUniqueIssueNumbersSorted,
   async (newValue) => {
     if (!newValue?.length) {
       return;
     }
-    await coa().fetchPublicationNames(
+    await fetchPublicationNames(
       newValue.map(([publicationcode]) => publicationcode),
     );
-    await coa().fetchIssueCounts();
+    await fetchIssueCounts();
     hasCoaData = true;
   },
   { immediate: true },
 );
 
 watch(
-  () => labels,
+  $$(labels),
   async (newValue) => {
     if (!newValue) {
       return;
@@ -126,7 +123,7 @@ watch(
 );
 
 watch(
-  () => values,
+  $$(values),
   async (newValue) => {
     if (newValue) {
       chartData = {
@@ -200,7 +197,7 @@ watch(
   { immediate: true },
 );
 
-collectionStore().loadCollection();
+loadCollection();
 </script>
 
 <style scoped lang="scss">

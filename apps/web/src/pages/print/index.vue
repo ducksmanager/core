@@ -53,12 +53,8 @@ alias: [/impression]
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
-import { images } from "~/stores/images";
-
 const { t: $t } = useI18n();
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
 const types = [
   {
     link: "classic",

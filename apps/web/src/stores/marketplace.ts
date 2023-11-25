@@ -1,16 +1,11 @@
 import axios from "axios";
-import { defineStore } from "pinia";
 
-import { users } from "~/stores/users";
 import {
-  DELETE__collection__on_sale_by_others__requests,
   GET__collection__on_sale_by_others,
   GET__collection__on_sale_by_others__contact_methods__$sellerId,
-  GET__collection__on_sale_by_others__requests__as__$as,
-  PUT__collection__on_sale_by_others__requests,
-} from "~api-routes";
+} from "~api-routes/index";
 import { call } from "~axios-helper";
-import { issue, requestedIssue } from "~prisma-clients/client_dm";
+import type { issue, requestedIssue } from "~prisma-clients/client_dm";
 
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(

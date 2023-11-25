@@ -7,14 +7,17 @@ import axios from "axios";
 import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
 
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { stats } from "~/stores/stats";
 import { addTokenRequestInterceptor } from "~axios-helper";
 
 import { createCachedCoaApi } from "./api";
 import { publicCollection } from "./stores/public-collection";
 import { users } from "./stores/users";
+
+const usersStore = users();
+const statsStore = stats();
+const publicCollectionStore = publicCollection();
+const collectionStore = collection();
+const coaStore = coa();
 
 onBeforeMount(() => {
   const defaultApi = addTokenRequestInterceptor(
@@ -24,28 +27,28 @@ onBeforeMount(() => {
     () => Promise.resolve(Cookies.get("token") || ""),
   );
 
-  users().setApi({
+  usersStore.setApi({
     api: defaultApi,
   });
-  stats().setApi({
+  statsStore.setApi({
     api: defaultApi,
   });
-  publicCollection().setApi({
+  publicCollectionStore.setApi({
     api: defaultApi,
   });
-  collection().setApi({
+  collectionStore.setApi({
     api: defaultApi,
     clearSessionFn: () => Promise.resolve(Cookies.remove("token")),
     sessionExistsFn: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
   });
-  coa().setApi({
+  coaStore.setApi({
     api: createCachedCoaApi(
       buildWebStorage(sessionStorage),
       import.meta.env.VITE_GATEWAY_URL,
     ),
   });
-  collection().loadUser();
+  collectionStore.loadUser();
 });
 </script>
 

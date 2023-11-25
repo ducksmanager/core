@@ -9,16 +9,15 @@ meta:
 import axios from "axios";
 import Cookies from "js-cookie";
 
-import { collection } from "~/stores/collection";
-import { POST__demo } from "~api-routes";
 import { call } from "~axios-helper";
 
-const collectionStore = collection();
+const { loadUser } = collection();
+const { user } = storeToRefs(collection());
 
 const router = useRouter();
 
 watch(
-  () => collectionStore.user,
+  user,
   async (newValue) => {
     if (newValue) {
       await router.push("/collection");
@@ -32,7 +31,7 @@ watch(
     Cookies.set("token", (await call(axios, new POST__demo())).data.token, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
-    await collectionStore.loadUser();
+    await loadUser();
   } catch (e) {
     console.error(e);
   }

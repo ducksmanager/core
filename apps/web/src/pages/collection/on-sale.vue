@@ -49,28 +49,29 @@ alias: [/collection/a-lire]
 <script setup lang="ts">
 import { watch } from "vue";
 
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { marketplace } from "~/stores/marketplace";
-import { users } from "~/stores/users";
 let hasPublicationNames = $ref(false as boolean);
 let publicationCodes = $ref(null as string[] | null);
-const issuesInOnSaleStack = $computed(() => collection().issuesInOnSaleStack);
-const marketplaceContactMethods = $computed(
-  () => collection().marketplaceContactMethods,
-);
+
+const { loadCollection, loadMarketplaceContactMethods } = collection();
+const { issuesInOnSaleStack, marketplaceContactMethods } =
+  storeToRefs(collection());
+
+const { fetchPublicationNames } = coa();
+
+const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
+const { buyerUserIds } = storeToRefs(marketplace());
+
+const { fetchStats } = users();
 
 watch(
-  () => issuesInOnSaleStack,
-  async (issuesInOnSaleStack) => {
-    if (issuesInOnSaleStack) {
+  issuesInOnSaleStack,
+  async (value) => {
+    if (value) {
       publicationCodes = [
-        ...new Set(
-          issuesInOnSaleStack.map(({ publicationcode }) => publicationcode),
-        ),
+        ...new Set(value.map(({ publicationcode }) => publicationcode)),
       ];
 
-      await coa().fetchPublicationNames(publicationCodes);
+      await fetchPublicationNames(publicationCodes);
       hasPublicationNames = true;
     }
   },
@@ -78,14 +79,12 @@ watch(
 );
 
 (async () => {
-  await collection().loadCollection();
-  await collection().loadMarketplaceContactMethods();
+  await loadCollection();
+  await loadMarketplaceContactMethods();
 
-  await marketplace().loadIssuesOnSaleByOthers();
-  await marketplace().loadIssueRequestsAsSeller();
+  await loadIssuesOnSaleByOthers();
+  await loadIssueRequestsAsSeller();
 
-  await users().fetchStats(marketplace().buyerUserIds);
+  await fetchStats(buyerUserIds.value);
 })();
 </script>
-
-

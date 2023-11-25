@@ -4,7 +4,7 @@ meta:
   public: true
 </route>
 <template>
-  <div v-if="collection">
+  <div v-if="thisCollection">
     <ShortStats is-public>
       <template #empty-collection>
         <b-alert :model-value="true" variant="info" class="mb-3">
@@ -27,20 +27,16 @@ meta:
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
-
-import { publicCollection } from "~/stores/public-collection";
-
 const route = useRoute();
 const username = $computed(() => route.params.username as string);
 const publicationcode = $computed(() => (route.params.all as string) || null);
 
 const { loadPublicCollection } = publicCollection();
-const { mostPossessedPublication, collection } =
+const { mostPossessedPublication, collection: thisCollection } =
   storeToRefs(publicCollection());
 
 watch(
-  () => username,
+  $$(username),
   async (newUsername) => {
     if (newUsername) {
       await loadPublicCollection(username);

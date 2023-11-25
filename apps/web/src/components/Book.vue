@@ -109,12 +109,6 @@
 <script setup lang="ts">
 import { useToast } from "bootstrap-vue-next";
 import { PageFlip } from "page-flip";
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-import { images } from "~/stores/images";
-
 const { issuenumber, publicationcode } = defineProps<{
   publicationcode: string;
   issuenumber: string;
@@ -124,7 +118,9 @@ const emit = defineEmits<{ (e: "close-book"): void }>();
 const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/";
-const getImagePath = images().getImagePath;
+
+const { fetchIssueUrls } = coa();
+const { getImagePath } = images();
 
 const toast = useToast();
 let edgeWidth = $ref(null as number | null);
@@ -136,8 +132,7 @@ let closing = $ref(false as boolean);
 let book = $ref(null as PageFlip | null);
 let currentPage = $ref(0 as number);
 const currentTabIndex = $ref(0 as number);
-const publicationNames = $computed(() => coa().publicationNames);
-const issueDetails = $computed(() => coa().issueDetails);
+const { publicationNames, issueDetails } = storeToRefs(coa());
 const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
 const edgeUrl = $computed(
   () =>
@@ -150,7 +145,7 @@ const coverWidth = $computed(
   () => coverRatio && (coverHeight || 0) / coverRatio,
 );
 const currentIssueDetails = $computed(
-  () => issueDetails?.[`${publicationcode} ${issuenumber}`],
+  () => issueDetails.value?.[`${publicationcode} ${issuenumber}`],
 );
 const pages = $computed(() => currentIssueDetails?.entries);
 let pagesWithUrl = $computed(() => pages?.filter(({ url }) => !!url));
@@ -169,7 +164,7 @@ const inducksLink = $computed(() => {
 const { t: $t } = useI18n();
 
 const loadBookPages = async () => {
-  await coa().fetchIssueUrls({
+  await fetchIssueUrls({
     publicationcode,
     issuenumber,
   });
@@ -199,27 +194,21 @@ const closeBook = () => {
   }
 };
 
-watch(
-  () => currentTabIndex,
-  (newValue) => {
-    currentPage = pagesWithUrl.findIndex(
-      (page) => page.storycode === pages[newValue].storycode,
-    );
-  },
-);
+watch($$(currentTabIndex), (newValue) => {
+  currentPage = pagesWithUrl.findIndex(
+    (page) => page.storycode === pages[newValue].storycode,
+  );
+});
 
+watch($$(coverWidth), (newValue) => {
+  const availableWidthPerPage = document.body.clientWidth / 2 - 15;
+  if (newValue && newValue > availableWidthPerPage) {
+    edgeWidth! /= newValue / availableWidthPerPage;
+    coverHeight! /= newValue / availableWidthPerPage;
+  }
+});
 watch(
-  () => coverWidth,
-  (newValue) => {
-    const availableWidthPerPage = document.body.clientWidth / 2 - 15;
-    if (newValue && newValue > availableWidthPerPage) {
-      edgeWidth! /= newValue / availableWidthPerPage;
-      coverHeight! /= newValue / availableWidthPerPage;
-    }
-  },
-);
-watch(
-  () => isReadyToOpen,
+  $$(isReadyToOpen),
   (newValue) => {
     if (newValue && coverWidth && coverHeight) {
       console.log("Creating book");
@@ -246,17 +235,14 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => currentPage,
-  (newValue) => {
-    if (book) {
-      book.flip(newValue);
-    }
-  },
-);
+watch($$(currentPage), (newValue) => {
+  if (book) {
+    book.flip(newValue);
+  }
+});
 
 watch(
-  () => publicationcode,
+  [$$(publicationcode), $$(issuenumber)],
   async () => {
     await loadBookPages();
   },
@@ -264,14 +250,7 @@ watch(
 );
 
 watch(
-  () => issuenumber,
-  async () => {
-    await loadBookPages();
-  },
-);
-
-watch(
-  () => pagesWithUrl,
+  $$(pagesWithUrl),
   (newValue) => {
     if (newValue && !newValue.length) {
       toast!.show({

@@ -172,13 +172,14 @@
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import axios from "axios";
 import { onMounted } from "vue";
-import { useI18n } from "vue-i18n";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
-import { users } from "~/stores/users";
 import { GET__bookstores, PUT__bookstores } from "~api-routes";
 import { call } from "~axios-helper";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
+
+const { fetchStats } = users();
+const { stats: userStats } = storeToRefs(users());
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 let existingBookstore = $ref(null as SimpleBookstore | null);
@@ -199,7 +200,6 @@ const accessToken =
   "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ";
 const mapCenter = [1.73584, 46.754917];
 
-const userStats = $computed(() => users().stats);
 const bookstoreCommentsUserIds = $computed(
   () =>
     bookstores?.reduce(
@@ -270,10 +270,10 @@ const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
 };
 
 watch(
-  () => bookstoreCommentsUserIds,
+  $$(bookstoreCommentsUserIds),
   async (value) => {
     if (value) {
-      await users().fetchStats(value);
+      await fetchStats(value);
     }
   },
   { immediate: true },

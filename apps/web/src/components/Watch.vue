@@ -30,10 +30,6 @@
   >
 </template>
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
-import { collection } from "~/stores/collection";
-
 const {
   issuenumber = null,
   publicationcode = null,
@@ -46,20 +42,22 @@ const {
 
 const { t: $t } = useI18n();
 
-const watchedPublicationsWithSales = $computed(
-  () => collection().watchedPublicationsWithSales,
-);
+const { loadWatchedPublicationsWithSales, updateWatchedPublicationsWithSales } =
+  collection();
+const { watchedPublicationsWithSales } = storeToRefs(collection());
 
 const key = $computed(
   () => publicationcode + (issuenumber ? ` ${issuenumber}` : ""),
 );
 
-const isWatched = $computed(() => watchedPublicationsWithSales?.includes(key));
+const isWatched = $computed(
+  () => watchedPublicationsWithSales.value?.includes(key),
+);
 const isPublicationWatchedButNotIssueNumber = $computed(
   () =>
     !isWatched &&
     publicationcode &&
-    watchedPublicationsWithSales?.includes(publicationcode),
+    watchedPublicationsWithSales.value?.includes(publicationcode),
 );
 const buttonTooltipText = $computed(() =>
   $t(
@@ -76,7 +74,7 @@ const buttonTooltipText = $computed(() =>
 );
 
 if (publicationcode) {
-  collection().loadWatchedPublicationsWithSales();
+  loadWatchedPublicationsWithSales();
 }
 
 const toggleArrayItem = (a: string[], v: string) => {
@@ -86,9 +84,9 @@ const toggleArrayItem = (a: string[], v: string) => {
 };
 
 const toggleWatchedPublication = async () => {
-  if (collection().watchedPublicationsWithSales) {
-    toggleArrayItem(collection().watchedPublicationsWithSales as string[], key);
-    await collection().updateWatchedPublicationsWithSales();
+  if (watchedPublicationsWithSales.value) {
+    toggleArrayItem(watchedPublicationsWithSales.value, key);
+    await updateWatchedPublicationsWithSales();
   }
 };
 </script>

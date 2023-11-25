@@ -40,8 +40,6 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
-
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
@@ -68,6 +66,9 @@ const {
 }>();
 
 defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
+
+const { publicationNames } = storeToRefs(coa());
+
 let countryCode = $computed(() => publicationcode.split("/")[0]),
   magazineCode = $computed(() => publicationcode.split("/")[1]),
   src = $computed(() =>
@@ -77,6 +78,5 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
           issuenumberReference || issuenumber
         }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`,
   ),
-  ignoreSprite = $ref(false),
-  publicationNames = $computed(() => coa().publicationNames);
+  ignoreSprite = $ref(false);
 </script>

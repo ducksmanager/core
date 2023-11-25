@@ -33,23 +33,16 @@ alias: [/bibliotheque/contributeurs]
 </template>
 
 <script setup lang="ts">
-import { users } from "~/stores/users";
-
-const usersStore = users();
+const { fetchBookcaseContributors, fetchStats } = users();
+const { bookcaseContributors, stats, points } = storeToRefs(users());
 
 let loading = $ref(true);
-const bookcaseContributors = $computed(() => usersStore.bookcaseContributors);
-const stats = $computed(() => usersStore.stats);
-const points = $computed(() => usersStore.points);
-const fetchStats = $computed(() => usersStore.fetchStats);
-const fetchBookcaseContributors = $computed(
-  () => usersStore.fetchBookcaseContributors,
-);
 const bookcaseContributorsSorted = $computed(
   () =>
     (!loading &&
-      [...bookcaseContributors!].sort(({ name: name1 }, { name: name2 }) =>
-        name1.toLowerCase().localeCompare(name2.toLowerCase()),
+      [...bookcaseContributors.value!].sort(
+        ({ name: name1 }, { name: name2 }) =>
+          name1.toLowerCase().localeCompare(name2.toLowerCase()),
       )) ||
     [],
 );
@@ -57,8 +50,8 @@ const bookcaseContributorsSorted = $computed(
 (async () => {
   await fetchBookcaseContributors();
   await fetchStats(
-    bookcaseContributors!
-      .filter(({ userId }) => typeof userId === "number")
+    bookcaseContributors
+      .value!.filter(({ userId }) => typeof userId === "number")
       .map(({ userId }) => userId as number),
   );
   loading = false;

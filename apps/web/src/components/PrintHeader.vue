@@ -12,11 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { collection } from "~/stores/collection";
-import { images } from "~/stores/images";
+const { user } = storeToRefs(collection());
 
-const username = $computed(() => collection().user?.username);
-const getImagePath = images().getImagePath;
+const username = $computed(() => user.value?.username);
+const { getImagePath } = images();
 </script>
 
 <style lang="scss" scoped>

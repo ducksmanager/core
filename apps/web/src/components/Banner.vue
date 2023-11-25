@@ -7,15 +7,13 @@
 </template>
 
 <script setup lang="ts">
-import { collection } from "~/stores/collection";
-import { images } from "~/stores/images";
-
 const { classes = {}, small = false } = defineProps<{
   classes?: { [key: string]: boolean };
   small?: boolean;
 }>();
-const user = $computed(() => collection().user);
-const getImagePath = images().getImagePath;
+
+const { user } = storeToRefs(collection());
+const { getImagePath } = images();
 </script>
 
 <style scoped lang="scss">

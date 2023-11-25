@@ -16,8 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { images } from "~/stores/images";
-
 const {
   contribution,
   nextLevel = false,
@@ -40,5 +38,5 @@ const {
   circumference,
 } = useMedal(contribution, userLevelPoints);
 
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
 </script>

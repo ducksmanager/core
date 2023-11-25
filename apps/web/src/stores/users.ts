@@ -1,13 +1,7 @@
 import { AxiosInstance } from "axios";
 import { buildWebStorage } from "axios-cache-interceptor";
-import { defineStore } from "pinia";
 
-import {
-  GET__events,
-  GET__global_stats__bookcase__contributors,
-  GET__global_stats__user__$userIds,
-  GET__global_stats__user__count,
-} from "~api-routes";
+import { GET__global_stats__user__$userIds } from "~api-routes/index";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";

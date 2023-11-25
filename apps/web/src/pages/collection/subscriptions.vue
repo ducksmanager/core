@@ -85,13 +85,7 @@ alias: [/collection/abonnements]
 import axios from "axios";
 import { onMounted, watch } from "vue";
 
-import { coa } from "~/stores/coa";
-import { collection, SubscriptionTransformed } from "~/stores/collection";
-import {
-  DELETE__collection__subscriptions__$id,
-  POST__collection__subscriptions__$id,
-  PUT__collection__subscriptions,
-} from "~api-routes";
+import { SubscriptionTransformed } from "~/stores/collection";
 import { call } from "~axios-helper";
 import { EditSubscription } from "~dm-types/EditSubscription";
 
@@ -118,10 +112,11 @@ const associatedPublications = $ref([
   },
 ] as AssociatedPublication[]);
 
-const publicationNames = $computed(() => coa().publicationNames);
-const subscriptions = $computed(() => collection().subscriptions);
-const fetchPublicationNames = coa().fetchPublicationNames;
-const loadSubscriptions = collection().loadSubscriptions;
+const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
+
+const { loadSubscriptions } = collection();
+const { subscriptions } = storeToRefs(collection());
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
   await call(
@@ -144,7 +139,7 @@ const createSubscriptionLike = async (
   associatedPublication: AssociatedPublication,
 ) => {
   await createSubscription({
-    ...subscriptions!.find(
+    ...subscriptions.value!.find(
       ({ publicationcode }) =>
         publicationcode === associatedPublication.referencePublicationcode,
     )!,
@@ -183,7 +178,7 @@ const toSubscriptionWithStringDates = (
 });
 
 watch(
-  () => subscriptions,
+  subscriptions,
   async (newValue) => {
     if (newValue) {
       currentAssociatedPublications = associatedPublications.filter(

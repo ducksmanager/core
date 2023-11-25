@@ -16,8 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-
 defineProps<{
   url: string;
   title: string;

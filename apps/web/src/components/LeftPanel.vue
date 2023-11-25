@@ -5,7 +5,7 @@
         <Medal
           v-for="(numberOfPoints, contribution) in points[user.id] || {}"
           :key="contribution"
-          :contribution="(contribution as string)"
+          :contribution="contribution as string"
           :user-level-points="numberOfPoints"
         />
       </div>
@@ -45,20 +45,20 @@
 <script setup lang="ts">
 import Popper from "@bperel/vue3-popper-teleport";
 
-import { collection } from "~/stores/collection";
-import { images } from "~/stores/images";
-import { users } from "~/stores/users";
+const { getImagePath } = images();
+const { points } = storeToRefs(users());
 
-const getImagePath = images().getImagePath;
-const points = $computed(() => users().points);
-const user = $computed(() => collection().user);
+const { loadPreviousVisit } = collection();
+const { user } = storeToRefs(collection());
+
+const { fetchStats } = users();
 
 watch(
-  () => user,
+  user,
   (newValue) => {
     if (newValue) {
-      collection().loadPreviousVisit();
-      users().fetchStats([newValue.id]);
+      loadPreviousVisit();
+      fetchStats([newValue.id]);
     }
   },
   { immediate: true },

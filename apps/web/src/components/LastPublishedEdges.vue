@@ -27,7 +27,7 @@
           :issuenumber="edge.issuenumber"
           hide-condition
         >
-          <Ago :timestamp="edge.creationDate.getTime()" />
+          <Ago :timestamp="new Date(edge.creationDate).getTime()" />
         </Issue>
       </div>
     </template>
@@ -51,24 +51,23 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
-const publicationNames = $computed(() => coa().publicationNames);
-const previousVisit = $computed(() => collectionStore().previousVisit);
-const lastPublishedEdgesForCurrentUser =
-  collectionStore().lastPublishedEdgesForCurrentUser;
+const { loadLastPublishedEdgesForCurrentUser } = collection();
+const { previousVisit, lastPublishedEdgesForCurrentUser } =
+  storeToRefs(collection());
+const { publicationNames } = storeToRefs(coa());
 const publishedEdgesSincePreviousVisit = $computed(
   () =>
-    lastPublishedEdgesForCurrentUser?.filter(
-      ({ creationDate }) => previousVisit && creationDate >= previousVisit,
+    lastPublishedEdgesForCurrentUser.value?.filter(
+      ({ creationDate }) =>
+        previousVisit.value && creationDate >= previousVisit.value,
     ) || [],
 );
 const hasPublicationNames = $computed(
   () =>
     publishedEdgesSincePreviousVisit?.every(
-      ({ publicationcode }) => publicationNames[publicationcode],
+      ({ publicationcode }) => publicationNames.value[publicationcode],
     ),
 );
 
-collectionStore().loadLastPublishedEdgesForCurrentUser();
+loadLastPublishedEdgesForCurrentUser();
 </script>

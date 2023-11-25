@@ -65,12 +65,6 @@
 
 <script setup lang="ts">
 import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
-import { publicCollection } from "~/stores/public-collection";
-
 const { t: $t } = useI18n();
 
 const { isPublic } = defineProps<{
@@ -81,54 +75,50 @@ const route = useRoute();
 
 const username = $computed(() => route.params.username as string);
 
-const store = $computed(() => (isPublic ? publicCollection() : collection()));
+const { totalPerCountry, totalPerPublication, publicationUrlRoot } =
+  storeToRefs(isPublic ? publicCollection() : collection());
+const { fetchCountryNames, fetchPublicationNames } = coa();
+const { countryNames, publicationNames } = storeToRefs(coa());
 
 const title = $computed(() =>
   isPublic ? $t("Collection de {username}", { username }) : $t("Collection"),
 );
 
-const publicationUrlRoot = $computed(() =>
-  isPublic ? `/collection/user/${username}` : "/collection/show",
-);
-
 let hasPublicationNames = $ref(false as boolean);
-const totalPerCountry = $computed(() => store.totalPerCountry);
-const totalPerPublication = $computed(() => store.totalPerPublication);
-const countryNames = $computed(() => coa().countryNames);
-const publicationNames = $computed(() => coa().publicationNames);
 const sortedCountries = $computed(
   () =>
-    totalPerCountry &&
-    countryNames &&
-    Object.keys(totalPerCountry).sort(
+    totalPerCountry.value &&
+    countryNames.value &&
+    Object.keys(totalPerCountry.value).sort(
       (countryCode1, countryCode2) =>
-        countryNames[countryCode1]?.localeCompare(countryNames[countryCode2]) ||
-        0,
+        countryNames.value?.[countryCode1]?.localeCompare(
+          countryNames.value?.[countryCode2],
+        ) || 0,
     ),
 );
 const publicationsPerCountry = $computed(
   () =>
-    totalPerCountry &&
+    totalPerCountry.value &&
     hasPublicationNames &&
-    Object.keys(totalPerCountry).reduce(
+    Object.keys(totalPerCountry.value).reduce(
       (acc, country) => ({
         ...acc,
-        [country]: Object.keys(totalPerPublication!).filter(
+        [country]: Object.keys(totalPerPublication.value!).filter(
           (publicationcode) => publicationcode.split("/")[0] === country,
         ),
       }),
       {} as { [key: string]: string[] },
     ),
 );
-const fetchCountryNames = coa().fetchCountryNames;
-const fetchPublicationNames = coa().fetchPublicationNames;
 const getSortedPublications = (country: string) =>
   publicationsPerCountry?.[country]?.sort((a, b) =>
-    (publicationNames[a] || "").localeCompare(publicationNames[b] || ""),
+    (publicationNames.value?.[a] || "").localeCompare(
+      publicationNames.value?.[b] || "",
+    ),
   ) || [];
 
 watch(
-  () => totalPerPublication,
+  totalPerPublication,
   async (newValue) => {
     if (newValue) {
       await fetchPublicationNames(Object.keys(newValue));

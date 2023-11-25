@@ -29,8 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
-
 defineProps<{
   id: string;
   edges: { publicationcode: string; issuenumber: string }[];
@@ -41,7 +39,7 @@ const bookcaseTextures = {
   bookshelf: "bois/KNOTTY PINE",
 };
 
-const publicationNames = $computed(() => coa().publicationNames);
+const { publicationNames } = storeToRefs(coa());
 </script>
 
 <style lang="scss">

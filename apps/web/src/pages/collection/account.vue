@@ -4,7 +4,7 @@ alias: [/collection/compte]
 
 <template>
   <form
-    v-if="collection.userForAccountForm && marketplaceContactMethods"
+    v-if="userForAccountForm && marketplaceContactMethods"
     @submit.prevent="updateAccount"
   >
     <b-row>
@@ -31,7 +31,7 @@ alias: [/collection/compte]
       <b-col id="email" cols="12" md="6">
         <b-form-input
           id="email"
-          v-model="collection.userForAccountForm.email"
+          v-model="userForAccountForm.email"
           required
           autofocus
         />
@@ -43,14 +43,14 @@ alias: [/collection/compte]
           v-model="hasEmailContactMethod"
           required
           autofocus
-          :disabled="!collection.userForAccountForm.email"
+          :disabled="!userForAccountForm.email"
         >
           {{
             $t(
               "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre",
             )
           }}
-          <template v-if="!collection.userForAccountForm.email"
+          <template v-if="!userForAccountForm.email"
             >({{
               $t(
                 "Vous devez spécifier une adresse e-mail pour activer cette option",
@@ -66,7 +66,7 @@ alias: [/collection/compte]
       <b-col cols="12" md="6">
         <b-form-input
           id="discordId"
-          v-model="collection.userForAccountForm.discordId"
+          v-model="userForAccountForm.discordId"
           type="text"
         />
       </b-col>
@@ -99,14 +99,14 @@ alias: [/collection/compte]
           v-model="hasDiscordContactMethod"
           required
           autofocus
-          :disabled="!collection.userForAccountForm.discordId"
+          :disabled="!userForAccountForm.discordId"
         >
           {{
             $t(
               "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre",
             )
           }}
-          <template v-if="!collection.userForAccountForm.discordId"
+          <template v-if="!userForAccountForm.discordId"
             >({{
               $t(
                 "Vous devez spécifier un identifiant de profil Discord pour activer cette option",
@@ -120,7 +120,7 @@ alias: [/collection/compte]
     <h5>{{ $t("Marketplace") }}</h5>
     <b-row>
       <b-col cols="12" md="6">
-        <b-form-checkbox v-model="collection.userForAccountForm.okForExchanges">
+        <b-form-checkbox v-model="userForAccountForm.okForExchanges">
           {{
             $t(
               "Indiquer aux autres utilisateurs que je suis disposé à échanger des magazines, et pas seulement à en acheter ou en vendre.",
@@ -153,7 +153,7 @@ alias: [/collection/compte]
         </b-alert>
         <b-form-input
           id="presentationText"
-          v-model="collection.userForAccountForm.presentationText"
+          v-model="userForAccountForm.presentationText"
           class="mt-0"
           maxlength="100"
           :placeholder="
@@ -191,7 +191,7 @@ alias: [/collection/compte]
     ></b-row>
 
     <h5>{{ $t("Options") }}</h5>
-    <b-form-checkbox v-model="collection.userForAccountForm.allowSharing">
+    <b-form-checkbox v-model="userForAccountForm!.allowSharing">
       {{ $t("Activer le partage de ma collection") }}
     </b-form-checkbox>
 
@@ -220,24 +220,10 @@ alias: [/collection/compte]
 
 <script setup lang="ts">
 import axios, { AxiosError } from "axios";
-import { useI18n } from "vue-i18n";
 
-import { collection as collectionStore } from "~/stores/collection";
-import { images } from "~/stores/images";
-import {
-  DELETE__collection__user,
-  POST__collection__empty,
-  POST__collection__user,
-} from "~api-routes";
 import { call } from "~axios-helper";
 import { ScopedError } from "~dm-types/ScopedError";
-const getImagePath = images().getImagePath;
-
-const collection = collectionStore();
-
-let marketplaceContactMethods = $computed(
-  () => collection.marketplaceContactMethods,
-);
+const { getImagePath } = images();
 
 const i18n = useI18n();
 
@@ -256,6 +242,11 @@ const { t: $t } = useI18n();
 const t = $t;
 const router = useRouter();
 
+const { updateMarketplaceContactMethods, loadMarketplaceContactMethods } =
+  collection();
+const { userForAccountForm, marketplaceContactMethods } =
+  storeToRefs(collection());
+
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await call(axios, new POST__collection__empty());
@@ -271,7 +262,7 @@ const updateAccount = async () => {
         axios,
         new POST__collection__user({
           reqBody: {
-            ...collection.userForAccountForm!,
+            ...userForAccountForm.value!,
             oldPassword,
             password,
             password2,
@@ -283,11 +274,11 @@ const updateAccount = async () => {
       response.hasRequestedPresentationSentenceUpdate;
     error = null;
 
-    collection.marketplaceContactMethods = [
+    marketplaceContactMethods.value = [
       hasEmailContactMethod ? "email" : "",
       hasDiscordContactMethod ? "discordId" : "",
     ].filter((value) => value);
-    await collection.updateMarketplaceContactMethods();
+    await updateMarketplaceContactMethods();
   } catch (e) {
     error = ((e as AxiosError)?.response?.data as ScopedError) || {
       message: $t("Une erreur s'est produite."),
@@ -308,11 +299,11 @@ const deleteAccount = async () => {
   }
 };
 
-collection.loadMarketplaceContactMethods();
+loadMarketplaceContactMethods();
 
 watch(
-  () => marketplaceContactMethods,
-  (newValue: string[] | null) => {
+  marketplaceContactMethods,
+  (newValue) => {
     if (newValue) {
       hasEmailContactMethod = newValue.includes("email");
       hasDiscordContactMethod = newValue.includes("discordId");

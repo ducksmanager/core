@@ -16,25 +16,26 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { watch } from "vue";
 import { Pie } from "vue-chartjs";
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
-collection().loadCollection();
+const { loadCollection } = collection();
+const { totalPerPublication, collection: thisCollection } =
+  storeToRefs(collection());
+
+const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
+
+loadCollection();
 const { t: $t } = useI18n();
-const totalPerPublication = $computed(() => collection().totalPerPublication);
-const publicationNames = $computed(() => coa().publicationNames);
+
 const smallCountPublications = $computed(() =>
-  !totalPerPublication
+  !totalPerPublication.value
     ? null
-    : Object.keys(totalPerPublication).filter(
+    : Object.keys(totalPerPublication.value).filter(
         (publicationcode) =>
-          totalPerPublication[publicationcode] /
-            collection().collection!.length <
+          totalPerPublication.value![publicationcode] /
+            thisCollection.value!.length <
           0.01,
       ),
 );
@@ -52,7 +53,7 @@ const totalPerPublicationGroupSmallCounts: {
           .reduce(
             (acc, publicationcode) => ({
               ...acc,
-              [publicationcode]: totalPerPublication[publicationcode],
+              [publicationcode]: totalPerPublication.value![publicationcode],
             }),
             {},
           ),
@@ -61,7 +62,7 @@ const totalPerPublicationGroupSmallCounts: {
           : {
               [""]: smallCountPublications.reduce(
                 (acc, publicationcode) =>
-                  acc + totalPerPublication[publicationcode],
+                  acc + totalPerPublication.value![publicationcode],
                 0,
               ),
             }),
@@ -76,7 +77,7 @@ const labels = $computed(
       .reduce(
         (acc, [publicationcode]) => [
           ...acc,
-          publicationNames[publicationcode] ||
+          publicationNames.value[publicationcode] ||
             `${$t("Autres")} (${smallCountPublications!.length} ${$t(
               "Publications",
             ).toLowerCase()})`,
@@ -98,7 +99,6 @@ const colors = $computed(
         publicationcode === "" ? "#000" : randomColor(),
       ),
 );
-const fetchPublicationNames = coa().fetchPublicationNames;
 const randomColor = () =>
   `rgb(${[
     Math.floor(Math.random() * 255),
@@ -119,7 +119,7 @@ let chartData = $ref(null as ChartData<"pie"> | null);
 let options = $ref({} as ChartOptions<"pie">);
 
 watch(
-  () => totalPerPublicationGroupSmallCounts,
+  $$(totalPerPublicationGroupSmallCounts),
   async (newValue) => {
     if (Object.keys(newValue).length) {
       await fetchPublicationNames(

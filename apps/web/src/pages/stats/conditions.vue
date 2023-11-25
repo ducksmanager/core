@@ -5,11 +5,16 @@
 
 <script setup lang="ts">
 import condition from "~/composables/useCondition";
-import { collection as collectionStore } from "~/stores/collection";
 
-const conditionsWithoutMissing = condition().conditions.filter(
-  ({ dbValue }) => dbValue !== "missing",
-);
+const { loadCollection } = collection();
 
-collectionStore().loadCollection();
+const conditionsWithoutMissing = condition()
+  .conditions.filter(({ dbValue }) => dbValue !== "missing")
+  .map(({ dbValue, color, text }) => ({
+    dbValue: dbValue as string,
+    color,
+    text,
+  }));
+
+loadCollection();
 </script>

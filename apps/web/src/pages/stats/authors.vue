@@ -67,12 +67,8 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { watch } from "vue";
 import { Bar } from "vue-chartjs";
-import { useI18n } from "vue-i18n";
 
-import { stats as statsStore } from "~/stores/stats";
-import { GET__collection__stats__watchedauthorsstorycount } from "~api-routes";
 import { call } from "~axios-helper";
 
 Chart.register(
@@ -87,7 +83,9 @@ Chart.register(
 
 const { t: $t } = useI18n();
 
-const ratings = $computed(() => statsStore().ratings);
+const { loadRatings } = stats();
+const { ratings } = storeToRefs(stats());
+
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),
   percentage: $t("Afficher en pourcentages"),
@@ -116,7 +114,7 @@ const labels = $computed(
     ),
 );
 
-const changeDimension = (dimension: "width", value: number) => {
+const changeWidth = (value: number) => {
   width = `${value}px`;
 };
 
@@ -145,7 +143,7 @@ watch(
 
       const values = [ownedStories, missingStories];
 
-      changeDimension("width", 250 + 30 * labels!.length);
+      changeWidth(250 + 30 * labels!.length);
       chartData = {
         datasets: [
           {
@@ -198,7 +196,7 @@ watch(
 );
 
 (async () => {
-  await statsStore().loadRatings();
+  await loadRatings();
   watchedAuthorsStoryCount = ((
     await call(axios, new GET__collection__stats__watchedauthorsstorycount())
   ).data || {}) as WatchedAuthorsStoryCount;

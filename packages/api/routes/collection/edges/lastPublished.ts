@@ -1,8 +1,9 @@
-import { edge } from "~prisma-clients/client_dm";
+import { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 
-export const get = async (...[req, res]: ExpressCall<{ resBody: edge[] }>) => {
+
+export const get = async (...[req, res]: ExpressCall<{ resBody: EdgeWithStringCreationDate[] }>) => {
   const userId = req.user!.id;
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -19,7 +20,7 @@ export const get = async (...[req, res]: ExpressCall<{ resBody: edge[] }>) => {
     })
   ).map((issue) => `${issue.publicationcode} ${issue.issuenumber}`) as string[];
   return res.json(
-    await prismaDm.edge.findMany({
+    (await prismaDm.edge.findMany({
       where: {
         creationDate: {
           gt: threeMonthsAgo,
@@ -29,6 +30,9 @@ export const get = async (...[req, res]: ExpressCall<{ resBody: edge[] }>) => {
         },
       },
       take: 5,
-    })
+    })).map((edge) => ({
+      ...edge,
+      creationDate: edge.creationDate.toISOString(),
+    }))
   );
 };

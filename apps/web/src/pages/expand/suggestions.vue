@@ -3,7 +3,7 @@ alias: [/agrandir/suggestions]
 </route>
 
 <template>
-  <div v-if="collection">
+  <div v-if="thisCollection">
     <b-alert variant="info" :model-value="true">
       {{ $t("DucksManager se base sur les") }}
       <router-link to="/stats/authors">{{
@@ -69,17 +69,18 @@ alias: [/agrandir/suggestions]
 
 <script setup lang="ts">
 import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-import { collection as collectionStore } from "~/stores/collection";
-import { stats as statsStore } from "~/stores/stats";
-
 const countryCode = $ref("ALL" as string);
 const { t: $t } = useI18n();
-const collection = $computed(() => collectionStore().collection);
-const watchedAuthors = $computed(() => collectionStore().watchedAuthors);
-const countryNames = $computed(() => coa().countryNames);
+
+const { loadCollection } = collection();
+const { collection: thisCollection, watchedAuthors } =
+  storeToRefs(collection());
+
+const { loadRatings } = stats();
+
+const { fetchCountryNames } = coa();
+const { countryNames } = storeToRefs(coa());
+
 const countryNamesWithAllCountriesOption = $computed(
   () =>
     countryNames && [
@@ -93,19 +94,19 @@ const countryNamesWithAllCountriesOption = $computed(
     ],
 );
 const watchedAuthorsWithNotation = $computed(
-  () => watchedAuthors?.filter(({ notation }) => notation > 0),
+  () => watchedAuthors.value?.filter(({ notation }) => notation > 0),
 );
 
 watch(
-  () => watchedAuthors,
+  watchedAuthors,
   async (newValue) => {
-    if (newValue?.length) await coa().fetchCountryNames();
+    if (newValue?.length) await fetchCountryNames();
   },
   { immediate: true },
 );
 
-collectionStore().loadCollection();
-statsStore().loadRatings();
+loadCollection();
+loadRatings();
 </script>
 
 <style scoped lang="scss">

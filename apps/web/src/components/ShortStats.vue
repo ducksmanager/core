@@ -11,7 +11,7 @@
         <template v-if="isPublic">{{
           $t("{username} possède", { username })
         }}</template
-        ><template v-else>>{{ $t("Vous possédez") }}</template
+        ><template v-else>{{ $t("Vous possédez") }}</template
         >&nbsp;<b>{{ total }}</b> {{ t("numéro | numéros", total) }},
         {{ $t("dont") }}
         {{ totalUniqueIssues }}
@@ -34,24 +34,16 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
 const { isPublic } = defineProps<{
   isPublic?: boolean;
 }>();
-
-import { collection } from "~/stores/collection";
-import { publicCollection } from "~/stores/public-collection";
 
 const route = useRoute();
 
 const username = $computed(() => route.params.username as string);
 
-const store = $computed(() => (isPublic ? publicCollection() : collection()));
-const total = $computed(() => store.total);
-const totalUniqueIssues = $computed(() => store.totalUniqueIssues);
-const totalPerCountry = $computed(() => store.totalPerCountry);
-const totalPerPublication = $computed(() => store.totalPerPublication);
+const { total, totalUniqueIssues, totalPerCountry, totalPerPublication } =
+  storeToRefs(isPublic ? publicCollection() : collection());
 
 const { t } = useI18n();
 </script>

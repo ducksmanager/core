@@ -21,7 +21,7 @@ import { useHead } from "@unhead/vue";
 import Cookies from "js-cookie";
 import { useRouter } from "vue-router";
 
-import { collection } from "~/stores/collection";
+const { user } = storeToRefs(collection());
 
 const route = useRoute();
 const router = useRouter();
@@ -43,7 +43,7 @@ useHead({
 });
 
 if (!Cookies.get("token")) {
-  collection().user = null;
+  user.value = null;
 }
 </script>
 

@@ -35,7 +35,7 @@ const {
   items: { path: string; text: string; isNew?: boolean | false }[];
 }>();
 const router = useRouter();
-const routeName = useRoute().name;
+const { name: routeName } = useRoute();
 const slots = useSlots();
 
 let activeTabIndex = $ref(-1 as number);
@@ -47,8 +47,7 @@ const updateActiveTabIndex = () => {
   );
 };
 
-watch(() => items, updateActiveTabIndex, { immediate: true });
-watch(() => rootPath, updateActiveTabIndex);
+watch([$$(items), $$(rootPath)], updateActiveTabIndex, { immediate: true });
 </script>
 
 <style scoped lang="scss">

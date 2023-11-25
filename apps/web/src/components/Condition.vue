@@ -13,9 +13,7 @@
 
 <script setup lang="ts">
 import condition from "~/composables/useCondition";
-import { collection } from "~/stores/collection";
-import { publicCollection } from "~/stores/public-collection";
-import { issue_condition } from "~prisma-clients/client_dm";
+import type { issue_condition } from "~prisma-clients/client_dm";
 const {
   issuenumber = null,
   publicationcode = null,

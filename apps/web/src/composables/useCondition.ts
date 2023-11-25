@@ -1,5 +1,3 @@
-import { useI18n } from "vue-i18n";
-
 enum issue_condition {
   mauvais = "mauvais",
   moyen = "moyen",
