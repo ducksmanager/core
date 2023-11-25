@@ -1,6 +1,5 @@
 import { parse } from "csv-parse/sync";
 import * as fs from "fs";
-import path from "path";
 
 import { prismaDm } from "~/prisma";
 import { user } from "~prisma-clients/client_dm";
@@ -56,7 +55,7 @@ export const resetDemo = async () => {
   }
 
   const csvIssues: CsvIssue[] = parse(
-    fs.readFileSync(path.resolve(__dirname, "./demo_issues.csv")),
+    fs.readFileSync("/app/routes/demo/demo_issues.csv"),
     { columns: true }
   );
   await prismaDm.$transaction(
@@ -82,7 +81,7 @@ export const resetDemo = async () => {
   }
 
   const csvPurchases: CsvPurchase[] = parse(
-    fs.readFileSync(path.resolve(__dirname, "./demo_purchases.csv")),
+    fs.readFileSync("/app/routes/demo/demo_purchases.csv"),
     { columns: true }
   );
   await prismaDm.$transaction(
