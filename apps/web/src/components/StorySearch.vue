@@ -108,7 +108,7 @@ const emit = defineEmits<{
 const { conditions } = condition();
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
-const { collection: thisCollection } = storeToRefs(collection());
+const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();
 const { publicationNames } = storeToRefs(coa());
 
@@ -193,7 +193,7 @@ const runSearch = async (value: string) => {
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:
-          thisCollection.value!.find(
+          issues.value!.find(
             ({
               publicationcode: collectionPublicationCode,
               issuenumber: collectionIssueNumber,

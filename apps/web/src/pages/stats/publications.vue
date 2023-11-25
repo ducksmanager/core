@@ -20,8 +20,7 @@ import { Pie } from "vue-chartjs";
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 
 const { loadCollection } = collection();
-const { totalPerPublication, collection: thisCollection } =
-  storeToRefs(collection());
+const { totalPerPublication, issues } = storeToRefs(collection());
 
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
@@ -34,8 +33,7 @@ const smallCountPublications = $computed(() =>
     ? null
     : Object.keys(totalPerPublication.value).filter(
         (publicationcode) =>
-          totalPerPublication.value![publicationcode] /
-            thisCollection.value!.length <
+          totalPerPublication.value![publicationcode] / issues.value!.length <
           0.01,
       ),
 );

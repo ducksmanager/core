@@ -3,7 +3,7 @@ alias: [/agrandir/suggestions]
 </route>
 
 <template>
-  <div v-if="thisCollection">
+  <div v-if="issues">
     <b-alert variant="info" :model-value="true">
       {{ $t("DucksManager se base sur les") }}
       <router-link to="/stats/authors">{{
@@ -73,8 +73,7 @@ const countryCode = $ref("ALL" as string);
 const { t: $t } = useI18n();
 
 const { loadCollection } = collection();
-const { collection: thisCollection, watchedAuthors } =
-  storeToRefs(collection());
+const { issues, watchedAuthors } = storeToRefs(collection());
 
 const { loadRatings } = stats();
 

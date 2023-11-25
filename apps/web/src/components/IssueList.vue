@@ -373,10 +373,9 @@ const {
   readonly?: boolean;
 }>();
 
-const collectionStore = collection();
-const store = $computed(() =>
-  readonly ? publicCollection() : collectionStore,
-);
+const { updateCollectionMultipleIssues, loadPurchases } = collection();
+const { issues: collectionIssues, purchases: collectionPurchases } =
+  storeToRefs(readonly ? publicCollection() : collection());
 
 const { conditions } = condition();
 const { t: $t } = useI18n();
@@ -476,8 +475,8 @@ const issueIds = $computed(() =>
 );
 
 let contextMenuKey = $ref("context-menu" as string);
-const userIssues = $computed(() => customIssues || store.collection);
-let purchases = $computed(() => store.purchases);
+const userIssues = $computed(() => customIssues || collectionIssues.value);
+let purchases = $computed(() => collectionPurchases.value);
 const country = $computed(() => publicationcode.split("/")[0]);
 const publicationName = $computed(
   () => publicationNames.value[publicationcode],
@@ -516,7 +515,6 @@ const ownedIssuesCount = $computed(
       0,
     ) || 0,
 );
-const loadPurchases = store.loadPurchases;
 
 const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
   if (!readonly) {
@@ -563,7 +561,7 @@ const deletePublicationIssues = async (
 ) => {
   contextmenuInstance.hide();
   if (!readonly) {
-    await (store as typeof collectionStore).updateCollectionMultipleIssues({
+    await updateCollectionMultipleIssues({
       publicationcode,
       issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
       condition:
@@ -702,7 +700,7 @@ watch(
 
 (async () => {
   if (customIssues) {
-    store.purchases = [];
+    collectionPurchases.value = [];
   } else {
     await loadPurchases();
   }

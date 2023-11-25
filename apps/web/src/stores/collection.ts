@@ -63,9 +63,9 @@ let api: AxiosInstance,
   clearSessionFn: () => Promise<void>;
 
 export const collection = defineStore("collection", () => {
-  const collection = ref(null as IssueWithPublicationcode[] | null);
+  const issues = ref(null as IssueWithPublicationcode[] | null);
 
-  const collectionUtils = useCollection(collection),
+  const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = ref(null as string[] | null),
     purchases = ref(null as GET__collection__purchases["resBody"] | null),
     watchedAuthors = ref(null as authorUser[] | null),
@@ -108,7 +108,7 @@ export const collection = defineStore("collection", () => {
     ),
     issueNumbersPerPublication = computed(
       () =>
-        collection.value?.reduce(
+        issues.value?.reduce(
           (acc, { country, issuenumber, magazine }) => ({
             ...acc,
             [`${country}/${magazine}`]: [
@@ -179,7 +179,7 @@ export const collection = defineStore("collection", () => {
         "": 0.7,
       };
       return (
-        collection.value
+        issues.value
           ?.filter(({ publicationcode, issuenumber }) =>
             getEstimation(publicationcode, issuenumber),
           )
@@ -267,9 +267,9 @@ export const collection = defineStore("collection", () => {
         .data?.previousVisit;
     },
     loadCollection = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingCollection.value && !collection.value)) {
+      if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        collection.value = (
+        issues.value = (
           await call(api, new GET__collection__issues())
         ).data.map((issue) => ({
           ...issue,
@@ -494,7 +494,7 @@ export const collection = defineStore("collection", () => {
       sessionExistsFn = params.sessionExistsFn;
       clearSessionFn = params.clearSessionFn;
     },
-    collection,
+    issues,
     publicationUrlRoot,
     createPurchase,
     deletePurchase,

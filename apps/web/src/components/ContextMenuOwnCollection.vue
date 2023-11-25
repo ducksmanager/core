@@ -120,10 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  collection,
-  IssueWithPublicationcodeOptionalId,
-} from "~/stores/collection";
+import { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,

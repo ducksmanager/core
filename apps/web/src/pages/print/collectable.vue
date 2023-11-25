@@ -125,8 +125,7 @@ const { fetchCountryNames, fetchPublicationNames } = coa();
 const { countryNames, publicationNames } = storeToRefs(coa());
 
 const { loadCollection, loadPurchases } = collection();
-const { collection: thisCollection, totalPerPublication } =
-  storeToRefs(collection());
+const { issues, totalPerPublication } = storeToRefs(collection());
 
 const ready = $computed(
   () => issuesPerCell && countryNames && Object.keys(publicationNames).length,
@@ -177,7 +176,7 @@ let issuesPerCell = $ref(
   } | null,
 );
 
-watch(thisCollection, (newCollectionValue) => {
+watch(issues, (newCollectionValue) => {
   if (!newCollectionValue) {
     return;
   }

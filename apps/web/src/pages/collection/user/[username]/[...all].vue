@@ -4,7 +4,7 @@ meta:
   public: true
 </route>
 <template>
-  <div v-if="thisCollection">
+  <div v-if="issues">
     <ShortStats is-public>
       <template #empty-collection>
         <b-alert :model-value="true" variant="info" class="mb-3">
@@ -32,8 +32,7 @@ const username = $computed(() => route.params.username as string);
 const publicationcode = $computed(() => (route.params.all as string) || null);
 
 const { loadPublicCollection } = publicCollection();
-const { mostPossessedPublication, collection: thisCollection } =
-  storeToRefs(publicCollection());
+const { mostPossessedPublication, issues } = storeToRefs(publicCollection());
 
 watch(
   $$(username),

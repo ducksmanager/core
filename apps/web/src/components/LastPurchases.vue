@@ -44,14 +44,14 @@
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 const { publicationNames } = storeToRefs(coa());
-const { purchasesById, collection: thisCollection } = storeToRefs(collection());
+const { purchasesById, issues } = storeToRefs(collection());
 
 const { t } = useI18n();
 const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
   collectionPerPurchaseDate = $computed(
     () =>
       purchasesById.value &&
-      thisCollection.value
+      issues.value
         ?.reduce(
           (acc, issue) => {
             const existingPurchase =

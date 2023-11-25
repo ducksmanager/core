@@ -303,7 +303,7 @@ let importProgress = $ref(0 as number);
 const { t: $t } = useI18n();
 
 const { findInCollection, loadCollection } = collection();
-const { collection: thisCollection, user } = storeToRefs(collection());
+const { issues, user } = storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
   coa();
@@ -313,7 +313,7 @@ const conditions = {
   bon: $t("En bon état"),
 };
 const importDataReady = $computed(
-  () => issuesToImport && thisCollection.value && hasIssueNumbers,
+  () => issuesToImport && issues.value && hasIssueNumbers,
 );
 const router = useRouter();
 const processRawData = async () => {

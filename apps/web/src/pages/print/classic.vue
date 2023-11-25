@@ -32,13 +32,10 @@ const { fetchCountryNames, fetchPublicationNames, fetchIssueNumbers } = coa();
 const { countryNames, publicationNames, issueNumbers } = storeToRefs(coa());
 
 const { loadCollection } = collection();
-const { collection: thisCollection } = storeToRefs(collection());
+const { issues } = storeToRefs(collection());
 
 const countryCodes = $computed(
-  () =>
-    thisCollection.value && [
-      ...new Set(thisCollection.value.map((i) => i.country)),
-    ],
+  () => issues.value && [...new Set(issues.value.map((i) => i.country))],
 );
 const countryCodesSortedByName = $computed(
   () =>
@@ -53,8 +50,8 @@ const countryCodesSortedByName = $computed(
 );
 const publicationCodes = $computed(
   () =>
-    thisCollection.value && [
-      ...new Set(thisCollection.value.map((i) => `${i.country}/${i.magazine}`)),
+    issues.value && [
+      ...new Set(issues.value.map((i) => `${i.country}/${i.magazine}`)),
     ],
 );
 const publicationCodesOfCountry = (countrycode: string) =>
@@ -81,7 +78,7 @@ watch(
   () => Object.keys(issueNumbers).length && collection,
   (newValue) => {
     if (newValue) {
-      const collectionWithPublicationcodes = thisCollection
+      const collectionWithPublicationcodes = issues
         .value!.map(({ country, magazine, issuenumber }) => ({
           publicationcode: `${country}/${magazine}`,
           issuenumber: issuenumber,

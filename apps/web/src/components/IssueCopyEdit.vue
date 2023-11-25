@@ -252,10 +252,7 @@
 </template>
 <script setup lang="ts">
 import cond from "~/composables/useCondition";
-import {
-  collection,
-  IssueWithPublicationcodeOptionalId,
-} from "~/stores/collection";
+import { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
 import type { issue_condition } from "~prisma-clients/client_dm";
 
@@ -285,7 +282,7 @@ const { issueRequestsAsSeller, buyerUserNamesById } =
   storeToRefs(marketplace());
 
 const { createPurchase, deletePurchase } = collection();
-const { collection: currentCollection, purchases } = storeToRefs(collection());
+const { issues, purchases } = storeToRefs(collection());
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -316,7 +313,7 @@ const issuenumbers = $computed(() =>
 
 const collectionForCurrentPublication = $computed(
   () =>
-    currentCollection.value?.filter(
+    issues.value?.filter(
       ({ publicationcode: issuePublicationcode }) =>
         copyState.publicationcode === issuePublicationcode,
     ),

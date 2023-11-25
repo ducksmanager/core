@@ -7,17 +7,17 @@ import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 let api: AxiosInstance;
 
 export const publicCollection = defineStore("publicCollection", () => {
-  const collection = ref(null as IssueWithPublicationcode[] | null),
+  const issues = ref(null as IssueWithPublicationcode[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,
     ),
     purchases = ref([]);
 
-  const collectionUtils = useCollection(collection),
+  const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      collection.value = (
+      issues.value = (
         await call(
           api,
           new GET__collection_public__$username({
@@ -35,7 +35,7 @@ export const publicCollection = defineStore("publicCollection", () => {
       api = addUrlParamsRequestInterceptor(params.api);
     },
     publicationUrlRoot,
-    collection,
+    issues,
     purchases,
     loadPublicCollection,
     loadPurchases: () => {},

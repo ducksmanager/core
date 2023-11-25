@@ -59,7 +59,7 @@ const publishedEdgesSincePreviousVisit = $computed(
   () =>
     lastPublishedEdgesForCurrentUser.value?.filter(
       ({ creationDate }) =>
-        previousVisit.value && creationDate >= previousVisit.value,
+        previousVisit.value && new Date(creationDate) >= previousVisit.value,
     ) || [],
 );
 const hasPublicationNames = $computed(

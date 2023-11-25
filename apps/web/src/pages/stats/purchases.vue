@@ -86,11 +86,8 @@ const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
 
 const { loadCollection, loadPurchases } = collection();
-const {
-  totalPerPublication,
-  collection: thisCollection,
-  purchasesById,
-} = storeToRefs(collection());
+const { totalPerPublication, issues, purchasesById } =
+  storeToRefs(collection());
 
 loadCollection();
 const { t: $t } = useI18n(),
@@ -138,7 +135,7 @@ const publicationCodesWithOther = $computed(
   collectionWithDates = $computed(
     () =>
       (purchasesById &&
-        thisCollection.value?.map((issue) => ({
+        issues.value?.map((issue) => ({
           ...issue,
           date: getIssueMonth(issue),
         }))) ||
