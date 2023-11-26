@@ -10,8 +10,6 @@ import Cookies from "js-cookie";
 import { addTokenRequestInterceptor } from "~axios-helper";
 
 import { createCachedCoaApi } from "./api";
-import { publicCollection } from "./stores/public-collection";
-import { users } from "./stores/users";
 
 const usersStore = users();
 const statsStore = stats();

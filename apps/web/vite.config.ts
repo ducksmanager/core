@@ -56,7 +56,12 @@ export default defineConfig({
         "vue-i18n",
       ],
       dts: true,
-      dirs: ["./src/composables", "./types", "../../packages/api-routes"],
+      dirs: [
+        "./src/composables",
+        "./src/stores",
+        "./types",
+        "../../packages/api-routes",
+      ],
       vueTemplate: true,
     }),
 

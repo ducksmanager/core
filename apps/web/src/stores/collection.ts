@@ -38,7 +38,7 @@ export type SubscriptionTransformed = Omit<
   publicationcode: string;
 };
 
-type SubscriptionTransformedStringDates = Omit<
+export type SubscriptionTransformedStringDates = Omit<
   SubscriptionTransformed,
   "startDate" | "endDate"
 > & {

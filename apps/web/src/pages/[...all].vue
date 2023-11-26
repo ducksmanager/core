@@ -107,7 +107,7 @@ meta:
           <div>
             {{
               $t(
-                " pour que l'immersion soit complète, vous pouvez dans la plupart des cas voir la couverture et quelques extraits de chacun de vos numéros!",
+                "...Et pour que l'immersion soit complète, vous pouvez dans la plupart des cas voir la couverture et quelques extraits de chacun de vos numéros!",
               )
             }}
           </div>

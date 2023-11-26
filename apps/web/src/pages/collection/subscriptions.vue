@@ -53,11 +53,9 @@ alias: [/collection/abonnements]
       :key="subscription.id"
       :is-edit="currentSubscription?.id === subscription.id"
       :subscription="subscription"
-      @start-edit="
-        currentSubscription = toSubscriptionWithStringDates(subscription)
-      "
+      @start-edit="currentSubscription = subscription"
       @cancel-edit="currentSubscription = null"
-      @edit="editSubscription($event)"
+      @edit="editSubscription"
       @delete="deleteSubscription(subscription.id)"
     />
     <b-row v-if="currentSubscription === null" class="mt-3 align-items-center">
@@ -69,11 +67,11 @@ alias: [/collection/abonnements]
     </b-row>
     <Subscription
       v-if="currentSubscription && currentSubscription.id === null"
-      :subscription="currentSubscription!"
+      :subscription="currentSubscription"
       is-edit
       @start-edit="currentSubscription = newSubscription"
       @cancel-edit="currentSubscription = null"
-      @edit="createSubscription($event)"
+      @edit="createSubscription"
     />
   </div>
   <div v-else>
@@ -83,25 +81,33 @@ alias: [/collection/abonnements]
 
 <script setup lang="ts">
 import axios from "axios";
+import dayjs from "dayjs";
 import { onMounted, watch } from "vue";
 
-import { SubscriptionTransformed } from "~/stores/collection";
+import {
+  SubscriptionTransformed,
+  SubscriptionTransformedStringDates,
+} from "~/stores/collection";
 import { call } from "~axios-helper";
-import { EditSubscription } from "~dm-types/EditSubscription";
 
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;
 };
 
-const newSubscription = $ref({
-  id: null,
-  publicationcode: null,
-  startDate: null,
-  endDate: null,
-} as EditSubscription);
+const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
 
-let currentSubscription = $ref(null as EditSubscription | null);
+const { loadSubscriptions } = collection();
+const { subscriptions } = storeToRefs(collection());
+
+const newSubscription = $ref({
+  publicationcode: "fr/SPG",
+  startDate: new Date(),
+  endDate: dayjs(new Date()).add(1, "year").toDate(),
+} as SubscriptionTransformed);
+
+let currentSubscription = $ref(null as SubscriptionTransformed | null);
 
 let hasPublicationNames = $ref(false as boolean);
 let currentAssociatedPublications = $ref([] as AssociatedPublication[]);
@@ -112,22 +118,20 @@ const associatedPublications = $ref([
   },
 ] as AssociatedPublication[]);
 
-const { fetchPublicationNames } = coa();
-const { publicationNames } = storeToRefs(coa());
-
-const { loadSubscriptions } = collection();
-const { subscriptions } = storeToRefs(collection());
+const toSubscriptionWithStringDates = (
+  subscription: SubscriptionTransformed,
+): SubscriptionTransformedStringDates => ({
+  ...subscription,
+  startDate: subscription.startDate.toISOString().split("Z")[0],
+  endDate: subscription.endDate.toISOString().split("Z")[0],
+});
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
   await call(
     axios,
     new PUT__collection__subscriptions({
       reqBody: {
-        subscription: {
-          ...subscription,
-          startDate: subscription.startDate.toISOString().split("Z")[0],
-          endDate: subscription.endDate.toISOString().split("Z")[0],
-        },
+        subscription: toSubscriptionWithStringDates(subscription),
       },
     }),
   );
@@ -147,11 +151,13 @@ const createSubscriptionLike = async (
   });
 };
 
-const editSubscription = async (subscription: EditSubscription) => {
+const editSubscription = async (subscription: SubscriptionTransformed) => {
   await call(
     axios,
     new POST__collection__subscriptions__$id({
-      reqBody: { subscription },
+      reqBody: {
+        subscription: toSubscriptionWithStringDates(subscription),
+      },
       params: { id: String(subscription.id) },
     }),
   );
@@ -168,14 +174,6 @@ const deleteSubscription = async (id: number) => {
   await loadSubscriptions(true);
   currentSubscription = null;
 };
-
-const toSubscriptionWithStringDates = (
-  subscription: SubscriptionTransformed,
-): EditSubscription => ({
-  ...subscription,
-  startDate: subscription.startDate.toISOString().split("Z")[0],
-  endDate: subscription.endDate.toISOString().split("Z")[0],
-});
 
 watch(
   subscriptions,
