@@ -52,7 +52,7 @@ const compareDates = (a: string, b: string) =>
   collectionWithDates = computed(
     () =>
       (purchasesById.value &&
-        wtdCollectionStore.collection?.map((issue) => ({
+        wtdCollectionStore.issues?.map((issue) => ({
           ...issue,
           date: getIssueMonth(issue),
         }))) ||

@@ -22,7 +22,7 @@ export default defineConfig({
       eslintrc: {
         enabled: true,
       },
-      dirs: ['../../packages/api-routes'],
+      dirs: ['../../packages/api-routes', '../web/src/stores'],
       imports: [
         // presets
         'pinia',

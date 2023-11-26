@@ -55,7 +55,7 @@ watch(
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
 const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
 const userIssues = computed(() =>
-  (collectionStore.collection || []).filter((issue) => issue.publicationcode === publicationcode.value),
+  (collectionStore.issues || []).filter((issue) => issue.publicationcode === publicationcode.value),
 );
 
 const items = computed(() =>
@@ -65,7 +65,7 @@ const items = computed(() =>
           key: `${publicationcode.value} ${issuenumber}`,
           item: userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)!,
         }))
-      : (collectionStore.collection || [])
+      : (collectionStore.issues || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
           .map(({ issuenumber, ...issue }) => ({
             key: `${publicationcode.value} ${issuenumber}`,

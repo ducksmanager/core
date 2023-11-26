@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import type { IssueWithPublicationcode } from '~dm-types/IssueWithPublicationcode';
 import type { purchase } from '~prisma-clients/client_dm';
 import { stores as webStores, composables as webComposables } from '~web';
 
@@ -12,10 +11,9 @@ export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
 };
 
 export const wtdcollection = defineStore('wtdcollection', () => {
-  const issues = ref(null as IssueWithPublicationcode[] | null);
-
   const coaStore = webStores.coa();
   const webCollectionStore = webStores.collection();
+  const { issues } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
   const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
@@ -65,7 +63,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     );
   return {
-    collection: computed(() => webCollectionStore.issues),
+    issues: computed(() => webCollectionStore.issues),
     fetchAndTrackCollection,
     findInCollection: webCollectionStore.findInCollection,
     highestQuotedIssue,

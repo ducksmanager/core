@@ -45,6 +45,8 @@
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { condition } from '~/stores/condition';
 import { wtdcollection } from '~/stores/wtdcollection';
+import { IssueWithPublicationcode } from '~dm-types/IssueWithPublicationcode';
+import { purchase } from '~prisma-clients/client_dm';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -67,7 +69,7 @@ const issue = computed(
 );
 
 const selectedCondition = ref(null as string | null);
-const selectedPurchase = ref(null as typeof collectionStore.purchases | null);
+const selectedPurchase = ref(null as purchase | null);
 
 watch(
   () => issue.value && collectionStore.purchases?.length,
@@ -75,11 +77,7 @@ watch(
     if (isReady) {
       const purchase = collectionStore.purchases?.find(({ id }) => id === issue.value.purchaseId) || null;
       if (purchase) {
-        selectedPurchase.value = {
-          date: purchase.date,
-          description: purchase.description,
-          id: purchase.id,
-        };
+        selectedPurchase.value = purchase;
       }
       const newCondition = issue.value.condition;
       selectedCondition.value = newCondition

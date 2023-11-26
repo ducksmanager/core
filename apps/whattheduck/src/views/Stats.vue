@@ -8,7 +8,7 @@
         <ion-title>{{ t('Statistiques') }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" v-if="wtdCollectionStore.collection">
+    <ion-content :fullscreen="true" v-if="wtdCollectionStore.issues">
       <ion-row style="height: 25vh" class="ion-text-center">
         <ion-row class="ion-text-center" style="height: 75%">
           <ion-col size="4" class="text-big">{{ wtdCollectionStore.ownedCountries.length }}</ion-col

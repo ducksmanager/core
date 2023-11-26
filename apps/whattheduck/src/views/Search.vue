@@ -111,7 +111,7 @@ watch(
           publicationName: coaStore.publicationNames[publicationcode] || publicationcode,
           issuenumber,
           collectionIssue:
-            collectionStore.collection!.find(
+            collectionStore.issues!.find(
               ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
                 collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
             ) || null,

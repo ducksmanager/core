@@ -120,7 +120,7 @@ const hasList = computed((): boolean => {
           ).length === collectionStore.ownedPublications.length
         )*/;
     case 'Issue':
-      return !!collectionStore.collection && !!coaStore.issueNumbers[appStore.currentNavigationItem || ''];
+      return !!collectionStore.issues && !!coaStore.issueNumbers[appStore.currentNavigationItem || ''];
   }
 });
 

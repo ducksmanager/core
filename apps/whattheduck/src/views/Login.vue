@@ -167,7 +167,7 @@ watch(
 );
 
 watch(
-  () => collectionStore.collection,
+  () => collectionStore.issues,
   async (value) => {
     if (value) {
       await collectionStore.loadPurchases();
@@ -217,6 +217,7 @@ watch(
 #link-to-dm {
   margin: 0;
   a {
+    text-transform: none;
     text-decoration: none;
     white-space: normal;
     color: white;
