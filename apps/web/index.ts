@@ -3,6 +3,7 @@ export { createCachedCoaApi, getCommonCacheOptions } from "./src/api";
 import MedalImage from "./src/components/MedalImage.vue";
 import StarRating from "./src/components/StarRating.vue";
 import Conditions from "./src/components/stats/ConditionsComponent.vue";
+import useCollection from "./src/composables/useCollection";
 import useMedal from "./src/composables/useMedal";
 import { bookcase } from "./src/stores/bookcase";
 import { coa } from "./src/stores/coa";
@@ -24,6 +25,7 @@ export const components = {
 };
 
 export const composables = {
+  useCollection,
   useMedal,
 };
 

@@ -1,8 +1,9 @@
 import { AxiosInstance } from "axios";
 
-import useCollection from "~/composables/useCollection";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+
+import useCollection from "../composables/useCollection";
 
 let api: AxiosInstance;
 

@@ -1,7 +1,6 @@
 import { AxiosInstance } from "axios";
 import { AxiosError } from "axios";
 
-import useCollection from "~/composables/useCollection";
 import {
   GET__collection__edges__lastPublished,
   GET__collection__purchases,
@@ -14,15 +13,10 @@ import {
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import {
-  authorUser,
-  issue_condition,
-  purchase,
-  subscription,
-} from "~prisma-clients/client_dm";
+import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
 
+import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";
-import { coa } from "./coa";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   IssueWithPublicationcode,
@@ -50,14 +44,6 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
-export type QuotedIssue = {
-  publicationcode: string;
-  issuenumber: string;
-  condition: issue_condition;
-  estimation: number;
-  estimationGivenCondition: number;
-};
-
 let api: AxiosInstance,
   sessionExistsFn: () => Promise<boolean>,
   clearSessionFn: () => Promise<void>;
@@ -67,7 +53,7 @@ export const collection = defineStore("collection", () => {
 
   const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = ref(null as string[] | null),
-    purchases = ref(null as GET__collection__purchases["resBody"] | null),
+    purchases = ref(null as purchase[] | null),
     watchedAuthors = ref(null as authorUser[] | null),
     marketplaceContactMethods = ref(null as string[] | null),
     suggestions = ref(
@@ -155,61 +141,6 @@ export const collection = defineStore("collection", () => {
             popularity2 && popularity1 ? popularity2 - popularity1 : 0,
           ),
     ),
-    quotedIssues = computed((): QuotedIssue[] | null => {
-      const issueQuotations = coa().issueQuotations;
-      if (issueQuotations === null) {
-        return null;
-      }
-      const getEstimation = (publicationcode: string, issuenumber: string) => {
-        const estimationData =
-          issueQuotations[`${publicationcode} ${issuenumber}`];
-        return (
-          (estimationData &&
-            (estimationData.max
-              ? ((estimationData.min || 0) + estimationData.max) / 2
-              : estimationData.min)) ||
-          0
-        );
-      };
-      const CONDITION_TO_ESTIMATION_PCT = {
-        bon: 1,
-        moyen: 0.7,
-        mauvais: 0.3,
-        indefini: 0.7,
-        "": 0.7,
-      };
-      return (
-        issues.value
-          ?.filter(({ publicationcode, issuenumber }) =>
-            getEstimation(publicationcode, issuenumber),
-          )
-          .map(({ publicationcode, issuenumber, condition }) => {
-            const estimation = getEstimation(publicationcode, issuenumber);
-            return {
-              publicationcode,
-              issuenumber,
-              condition,
-              estimation,
-              estimationGivenCondition: parseFloat(
-                (CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(
-                  1,
-                ),
-              ),
-            };
-          }) || null
-      );
-    }),
-    quotationSum = computed(() =>
-      quotedIssues.value
-        ? Math.round(
-            quotedIssues.value?.reduce(
-              (acc, { estimationGivenCondition }) =>
-                acc + estimationGivenCondition,
-              0,
-            ) || 0,
-          )
-        : null,
-    ),
     userForAccountForm = computed(() => {
       if (!user.value) {
         return null;
@@ -283,7 +214,10 @@ export const collection = defineStore("collection", () => {
         isLoadingPurchases.value = true;
         purchases.value = (
           await call(api, new GET__collection__purchases())
-        ).data;
+        ).data.map((purchase) => ({
+          ...purchase,
+          date: new Date(purchase.date),
+        }));
         isLoadingPurchases.value = false;
       }
     },
@@ -518,8 +452,6 @@ export const collection = defineStore("collection", () => {
     previousVisit,
     purchases,
     purchasesById,
-    quotationSum,
-    quotedIssues,
     signup,
     subscriptions,
     suggestions,

@@ -17,7 +17,7 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-const { rating } = defineProps<{
+const props = defineProps<{
   rating: number;
   maxRating: number;
   readonly: boolean;
@@ -31,7 +31,7 @@ defineSlots<{
   emptyStarIcon: void;
 }>();
 
-const currentRating = ref(rating);
+const currentRating = ref(props.rating);
 </script>
 
 <style scoped lang="scss">
