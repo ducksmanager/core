@@ -22,8 +22,10 @@ export default defineConfig({
       eslintrc: {
         enabled: true,
       },
+      dirs: ['../../packages/api-routes'],
       imports: [
         // presets
+        'pinia',
         'vue',
         'vue-router',
         {
@@ -52,6 +54,7 @@ export default defineConfig({
       '~api-routes/': `${path.resolve(__dirname, '../../packages/api-routes')}/`,
       '~prisma-clients/': `${path.resolve(__dirname, '../../packages/prisma-clients')}/`,
       '~web/': `${path.resolve(__dirname, '../../apps/web')}/`,
+      '~/composables/useCollection': `${path.resolve(__dirname, '../../apps/web/composables/useCollection')}`,
     },
   },
 });

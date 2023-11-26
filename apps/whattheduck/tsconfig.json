@@ -26,7 +26,8 @@
       "~axios-helper/*": ["../../packages/axios-helper/*"],
       "~api-routes/*": ["../../packages/api-routes/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~web/*": ["../web/*"]
+      "~web/*": ["../web/*"],
+      "~/composables/useCollection": ["../../apps/web/composables/useCollection"],
     }
   },
   "exclude": ["node_modules"],

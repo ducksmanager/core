@@ -97,6 +97,7 @@ import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequot
 import { User } from '~/persistence/models/dm/User';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
+import { AxiosError } from 'axios';
 
 const isOfflineMode = ref(false);
 
@@ -136,10 +137,10 @@ const submitLogin = async () => {
   await collectionStore.login(
     username.value,
     password.value,
-    (newToken) => {
+    (newToken: string) => {
       token.value = newToken;
     },
-    (e) => {
+    (e: AxiosError) => {
       showError(e);
     },
   );

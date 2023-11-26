@@ -44,7 +44,6 @@
 <script setup lang="ts">
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { condition } from '~/stores/condition';
-import type { purchaseWithStringDate } from '~/stores/wtdcollection';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
@@ -68,7 +67,7 @@ const issue = computed(
 );
 
 const selectedCondition = ref(null as string | null);
-const selectedPurchase = ref(null as purchaseWithStringDate | null);
+const selectedPurchase = ref(null as typeof collectionStore.purchases | null);
 
 watch(
   () => issue.value && collectionStore.purchases?.length,

@@ -13,7 +13,6 @@ import { useI18n } from 'vue-i18n';
 import type { issue as dm_issue } from '~prisma-clients/client_dm';
 import { coa } from '~web/src/stores/coa';
 
-import type { purchaseWithStringDate } from '~/stores/wtdcollection';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const props = defineProps<{
@@ -24,12 +23,13 @@ const props = defineProps<{
 Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
 
 const hasPublicationNames = ref(false as boolean),
-  purchasesById = ref(null as { [purchaseId: number]: purchaseWithStringDate } | null),
   options = ref({} as ChartOptions<'bar'>);
 
 const wtdCollectionStore = wtdcollection(),
-  { t } = useI18n(),
-  compareDates = (a: string, b: string) =>
+  { totalPerPublication, purchases, purchasesById } = storeToRefs(wtdcollection()),
+  { t } = useI18n();
+
+const compareDates = (a: string, b: string) =>
     dayjs(a === '?' ? '0001-01-01' : a).diff(dayjs(b === '?' ? '0001-01-01' : b)),
   randomColor = () =>
     `rgb(${[Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].join(
@@ -39,12 +39,11 @@ const wtdCollectionStore = wtdcollection(),
     getIssueDate(issue).isValid() ? getIssueDate(issue).format('YYYY-MM') : '?',
   getIssueDate = (issue: dm_issue) =>
     dayjs((issue.purchaseId && purchasesById.value![issue.purchaseId]?.date) || issue.creationDate),
-  purchases = computed(() => wtdCollectionStore.purchases),
   publicationNames = computed(() => coa().publicationNames),
   publicationCodesWithOther = computed(
     () =>
-      wtdCollectionStore.totalPerPublication &&
-      Object.entries(wtdCollectionStore.totalPerPublication || {})
+      totalPerPublication &&
+      Object.entries(totalPerPublication || {})
         .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
         .filter((_entry, idx) => idx < 5)
         .map(([publicationcode]) => publicationcode)
@@ -136,22 +135,6 @@ watch(
     if (newValue) {
       await coa().fetchPublicationNames(newValue.filter((value) => value !== 'Other'));
       hasPublicationNames.value = true;
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => purchases.value,
-  (newValue) => {
-    if (newValue) {
-      purchasesById.value = newValue.reduce(
-        (acc, purchase) => ({
-          ...acc,
-          [purchase.id]: purchase,
-        }),
-        {} as { [purchaseId: number]: purchaseWithStringDate },
-      );
     }
   },
   { immediate: true },

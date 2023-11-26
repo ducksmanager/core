@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
+import type { IssueWithPublicationcode } from '~dm-types/IssueWithPublicationcode';
 import type { purchase } from '~prisma-clients/client_dm';
-import { stores as webStores } from '~web';
+import { stores as webStores, composables as webComposables } from '~web';
 
 import { app } from './app';
 
@@ -11,16 +12,17 @@ export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
 };
 
 export const wtdcollection = defineStore('wtdcollection', () => {
-  const coaStore = webStores.coa();
-  const statsStore = webStores.stats();
-  const webCollectionStore = webStores.collection();
-  const usersStore = webStores.users();
+  const issues = ref(null as IssueWithPublicationcode[] | null);
 
-  const ownedCountries = computed(() =>
-      [...new Set((webCollectionStore.collection || []).map(({ country }) => country))].sort(),
-    ),
+  const coaStore = webStores.coa();
+  const webCollectionStore = webStores.collection();
+  const statsStore = webStores.stats();
+  const usersStore = webStores.users();
+  const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
+
+  const ownedCountries = computed(() => [...new Set((issues.value || []).map(({ country }) => country))].sort()),
     ownedPublications = computed(() =>
-      [...new Set((webCollectionStore.collection || []).map(({ publicationcode }) => publicationcode))].sort(),
+      [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort(),
     ),
     fetchAndTrackCollection = async () => {
       const isObsoleteSync = await app().isObsoleteSync();
@@ -60,10 +62,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       }
     },
     highestQuotedIssue = computed(
-      () => webCollectionStore.quotedIssues?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
+      () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     );
   return {
-    collection: computed(() => webCollectionStore.collection),
+    collection: computed(() => webCollectionStore.issues),
     fetchAndTrackCollection,
     findInCollection: webCollectionStore.findInCollection,
     highestQuotedIssue,
@@ -76,7 +78,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     ownedCountries,
     ownedPublications,
     purchases: computed(() => webCollectionStore.purchases),
-    quotationSum: computed(() => webCollectionStore.quotationSum),
+    purchasesById: computed(() => webCollectionStore.purchasesById),
+    quotationSum,
     setApi: webCollectionStore.setApi,
     signup: webCollectionStore.signup,
     total: computed(() => webCollectionStore.total),

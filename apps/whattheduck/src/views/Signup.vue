@@ -98,6 +98,7 @@
 </template>
 
 <script lang="ts" setup>
+import { AxiosError } from 'axios';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
@@ -149,10 +150,10 @@ const submitSignup = async () => {
     password.value,
     password.value,
     email.value,
-    (newToken) => {
+    (newToken: string) => {
       token.value = newToken;
     },
-    (e) => {
+    (e: AxiosError) => {
       showError(e);
     },
   );
