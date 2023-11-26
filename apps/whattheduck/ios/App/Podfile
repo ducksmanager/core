@@ -12,7 +12,7 @@ def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@5.5.1_@capacitor+core@5.5.1/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@5.5.1_@capacitor+core@5.5.1/node_modules/@capacitor/ios'
   pod 'CapacitorCommunityCameraPreview', :path => '../../node_modules/.pnpm/@capacitor-community+camera-preview@5.0.0_@capacitor+core@5.5.1/node_modules/@capacitor-community/camera-preview'
-  pod 'CapacitorCommunitySqlite', :path => '../../node_modules/.pnpm/@capacitor-community+sqlite@5.4.2-1_@capacitor+core@5.5.1/node_modules/@capacitor-community/sqlite'
+  pod 'CapacitorCommunitySqlite', :path => '../../node_modules/.pnpm/@capacitor-community+sqlite@5.4.2-2_@capacitor+core@5.5.1/node_modules/@capacitor-community/sqlite'
   pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@5.0.6_@capacitor+core@5.5.1/node_modules/@capacitor/app'
   pod 'CapacitorCamera', :path => '../../node_modules/.pnpm/@capacitor+camera@5.0.7_@capacitor+core@5.5.1/node_modules/@capacitor/camera'
   pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@5.0.6_@capacitor+core@5.5.1/node_modules/@capacitor/haptics'

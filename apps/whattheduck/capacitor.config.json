@@ -1,7 +1,4 @@
 {
-  "server": {
-    "url": "http://localhost:8005"
-  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 3000,
