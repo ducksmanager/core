@@ -32,7 +32,6 @@
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
-      <language-switch-dropdown />
     </div>
     <nuxt-link to="/" class="d-none d-lg-block mx-2 align-self-start">
       {{ $t('Home') }}

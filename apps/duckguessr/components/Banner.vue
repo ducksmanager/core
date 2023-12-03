@@ -3,6 +3,7 @@
     id="logo-zone"
     class="position-absolute d-flex align-items-center flex-column align-items-center"
   >
+    <language-switch-dropdown />
     <a href="/">
       <b-img src="/logo.png" />
       <div class="small">
@@ -36,7 +37,7 @@ const { t } = useI18n()
 
   @media (min-width: 992px) {
     height: 110px;
-    width: calc(100% - 320px);
+    // width: calc(100% - 320px);
     right: 0;
   }
 }

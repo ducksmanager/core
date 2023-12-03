@@ -1,9 +1,38 @@
 <template>
   <div id="app">
     <banner />
-    <duckguessr-menu />
+    <!-- <duckguessr-menu /> -->
     <div id="main" class="d-flex justify-content-start flex-column">
       <Nuxt />
+    </div>
+    <div id="closed">
+      <div>
+        <p>{{ $t('Dear Duckguessr players,') }}</p>
+        <p>
+          {{
+            $t(
+              "In October 2023, Duckguessr was the victim of a ransomware attack. All data has been encrypted and we couldn't recover it."
+            )
+          }}
+        </p>
+        <p>
+          {{
+            $t(
+              'Most of the data related to past Duckguessr games has unfortunately lost. However, we have already started working on a more robust, more secure Duckguessr version. We will keep you informed about the progress on this new project.'
+            )
+          }}
+        </p>
+        <p>
+          {{
+            $t(
+              'Meanwhile, we would like to thank you for your support and hope to meet you again for more intense Duckguessr games!'
+            )
+          }}
+        </p>
+        <p>
+          {{ $t('The DucksManager team') }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -15,6 +44,7 @@ import { userStore } from '~/store/user'
 
 const route = useRoute()
 const i18n = useI18n()
+const { t: $t } = useI18n()
 
 onMounted(() => {
   userStore().login()
@@ -45,6 +75,7 @@ html {
 
   body {
     height: 100vh;
+    overflow-y: hidden;
     background-color: #3d4b5f !important;
 
     &.sb-main-padded {
@@ -88,7 +119,7 @@ html {
     }
 
     @media (min-width: 992px) {
-      padding: 0 0 0 320px;
+      // padding: 0 0 0 320px;
     }
   }
 }
@@ -127,5 +158,30 @@ html {
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
+}
+
+#closed {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  opacity: 0.85;
+  background: grey;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 100px);
+  z-index: 999;
+  flex-direction: column;
+
+  @media (min-width: 992px) {
+    height: calc(100vh - 110px);
+  }
+
+  div {
+    background: black;
+    padding: 25px;
+  }
 }
 </style>

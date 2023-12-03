@@ -1,8 +1,9 @@
 <template>
   <b-dropdown
     id="language-navbar"
+    no-flip
+    dropleft
     class="position-fixed"
-    menu-class="mt-4"
     variant="outline-secondary"
     boundary="viewport"
   >
@@ -45,6 +46,10 @@ const changeLocale = (newLocale: string) => {
 <style lang="scss">
 $navbar-height: 40px;
 
+#language-navbar {
+  top: 0;
+  right: 0;
+}
 #language-navbar button,
 .dropdown-menu {
   background: #3d4b5f !important;
