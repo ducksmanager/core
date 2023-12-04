@@ -6,9 +6,9 @@
       class="d-flex flex-row justify-content-center"
     >
       <player-total-score
-        v-for="(player, index) in topPlayers"
-        :key="player.username"
-        :player="player"
+        v-for="(currentPlayer, index) in topPlayers"
+        :key="currentPlayer.username"
+        :current-player="currentPlayer"
         :max-score-all-players="maxPoints"
         top-player
         vertical
@@ -22,9 +22,9 @@
     </b-row>
     <div class="d-flex flex-column align-items-center m-5">
       <player-total-score
-        v-for="(player, idx) in otherPlayers"
-        :key="player.username"
-        :player="player"
+        v-for="(currentPlayer, idx) in otherPlayers"
+        :key="currentPlayer.username"
+        :current-player="currentPlayer"
         :top-player="false"
         :vertical="false"
         :rank="idx + 3"
@@ -37,11 +37,11 @@
 import { player } from "~duckguessr-api/types/prisma-client";
 
 const { t } = useI18n();
-const { players } = toRefs(
-  defineProps<{
-    players: (player & { sumScore: number })[];
-  }>()
-);
+const props = defineProps<{
+  players: (player & { sumScore: number })[];
+}>();
+
+const { players } = toRefs(props);
 
 const topPlayers = computed(() =>
   players.value.length >= 3
@@ -50,7 +50,10 @@ const topPlayers = computed(() =>
 );
 
 const maxPoints = computed(() =>
-  topPlayers.value.reduce((acc, player) => Math.max(acc, player.sumScore), 0)
+  topPlayers.value.reduce(
+    (acc, currentPlayer) => Math.max(acc, currentPlayer.sumScore),
+    0
+  )
 );
 
 const otherPlayers = players.value.slice(3);
