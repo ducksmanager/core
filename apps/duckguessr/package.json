@@ -1,5 +1,5 @@
 {
-  "name": "~duckguessr-vue3",
+  "name": "~duckguessr",
   "engines": {
     "node": ">=18.0.0 <19.0.0"
   },

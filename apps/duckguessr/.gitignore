@@ -24,3 +24,5 @@ logs
 !.env.example
 
 /*.d.ts
+
+api/prisma/client_*
