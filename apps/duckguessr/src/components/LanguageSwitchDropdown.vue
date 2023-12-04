@@ -1,8 +1,6 @@
 <template>
   <b-dropdown
     id="language-navbar"
-    class="position-fixed"
-    menu-class="mt-4"
     variant="outline-secondary"
     boundary="viewport"
   >

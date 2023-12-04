@@ -1,7 +1,7 @@
 <template>
   <div
     id="logo-zone"
-    class="position-absolute d-flex align-items-center flex-column align-items-center"
+    class="d-flex align-items-center flex-column align-items-center"
   >
     <a href="/">
       <b-img src="/logo.png" />
@@ -34,7 +34,6 @@ const { t } = useI18n();
 
   @media (min-width: 992px) {
     height: 110px;
-    width: calc(100% - 320px);
     right: 0;
   }
 }

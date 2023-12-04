@@ -1,68 +1,5 @@
 <template>
-  <div id="menu" class="position-fixed d-flex flex-column align-items-center">
-    <div id="medals-and-login" class="py-2 d-flex flex-column">
-      <div class="d-none d-lg-block">
-        <component
-          :is="isAnonymous === true ? 'div' : 'a'"
-          :href="isAnonymous === true ? undefined : '/profile'"
-        >
-          <player-info
-            v-if="user"
-            class="mb-2"
-            :username="user.username"
-            :avatar="user.avatar"
-            no-right-panel
-          />
-        </component>
-        <medal-list
-          v-if="!isAnonymous && currentUserStats"
-          :with-details="false"
-          :cols="3"
-        />
-      </div>
-      <b-navbar
-        toggleable="lg"
-        type="dark"
-        class="d-lg-none justify-content-start pt-0"
-      >
-        <b-navbar-toggle target="nav-collapse" class="px-2" />
-
-        <b-collapse
-          id="nav-collapse"
-          is-nav
-          class="border border-secondary mt-4"
-        >
-          <div class="border-bottom">
-            <player-info
-              v-if="user"
-              :username="user.username"
-              :avatar="user.avatar"
-            />
-            <medal-list
-              v-if="!isAnonymous && currentUserStats"
-              :with-details="false"
-              :cols="3"
-            />
-          </div>
-          <b-navbar-nav class="justify-content-start flex-column">
-            <router-link to="/" class="mx-2 align-self-start">{{
-              $t("Home")
-            }}</router-link>
-            <router-link to="/podium" class="mx-2 align-self-start">
-              {{ $t("Podium") }}
-            </router-link>
-            <router-link
-              v-if="!isAnonymous"
-              to="/profile"
-              class="mx-2 align-self-start"
-            >
-              {{ $t("My profile") }}
-            </router-link>
-          </b-navbar-nav>
-        </b-collapse>
-      </b-navbar>
-      <language-switch-dropdown />
-    </div>
+  <div id="menu" class="d-flex flex-column align-items-center">
     <router-link to="/" class="d-none d-lg-block mx-2 align-self-start">
       {{ $t("Home") }}
     </router-link>
@@ -81,9 +18,7 @@
 <script lang="ts" setup>
 import { userStore } from "~/stores/user";
 
-const user = computed(() => userStore().user);
 const isAnonymous = computed(() => userStore().isAnonymous);
-const currentUserStats = computed(() => userStore().stats);
 
 watch(
   () => isAnonymous.value === false,
@@ -99,11 +34,6 @@ watch(
 $navbar-height: 40px;
 
 #menu {
-  top: 0;
-  left: 0;
-  width: 325px;
-  height: 100%;
-  border-right: 5px solid #eee;
   background-color: #3d4b5f !important;
   z-index: 2;
 
@@ -111,9 +41,6 @@ $navbar-height: 40px;
     overflow-y: hidden;
     border-right: none;
     top: 10px;
-    left: 0;
-    width: auto;
-    height: auto;
     padding: 12px;
     z-index: 1;
 
