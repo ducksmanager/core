@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY . ./
 RUN --mount=type=cache,id=pnpm-store-dumili,target=/app/.pnpm-store \
-    pnpm -r -F !~duckguessr -F !~duckguessr-vue3 i # For some reason it is not enough to only install the strictly necessary dependencies
+    pnpm -r -F !~duckguessr -F !~duckguessr i # For some reason it is not enough to only install the strictly necessary dependencies
 
 RUN pnpm -r -F ~dumili... -F ~dumili-api... run build
 
@@ -33,7 +33,7 @@ COPY --from=build /app/packages/axios-helper/dist ./packages/axios-helper
 
 COPY apps/dumili/api/package.json ./
 RUN --mount=type=cache,id=pnpm-store-dumili,target=/app/.pnpm-store \
-    pnpm -r -F !~duckguessr -F !~duckguessr-vue3 i --production
+    pnpm -r -F !~duckguessr -F !~duckguessr i --production
 
 COPY ./apps/dumili/api/.env ./.env
 
