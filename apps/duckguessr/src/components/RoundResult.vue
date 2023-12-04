@@ -35,8 +35,8 @@ const { round } = toRefs(
 
 const personUrl = ref();
 watch(
-  () => round.value.personcode,
-  (personcode) => {
+  round,
+  ({ personcode }) => {
     personUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`;
   },
   { immediate: true }

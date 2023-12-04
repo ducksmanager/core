@@ -114,9 +114,9 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+(async () => {
   datasets.value = await datasetsSocket.emitWithAck("getDatasets");
-});
+})();
 </script>
 
 <style scoped lang="scss">

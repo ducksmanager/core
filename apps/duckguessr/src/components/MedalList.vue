@@ -55,23 +55,23 @@ const DATASET_WITH_MEDALS: string[] = ["published-fr-recent", "it", "us"];
 const { t } = useI18n();
 const duckguessrId = getDuckguessrId();
 
-const { dataset, statsOverride } = toRefs(
-  withDefaults(
-    defineProps<{
-      dataset?: dataset | null;
-      withDetails: boolean;
-      statsOverride?: UserMedalPoints[] | null;
-      cols: number | null;
-      colsLg: number | null;
-    }>(),
-    {
-      dataset: null,
-      statsOverride: null,
-      cols: null,
-      colsLg: 3,
-    }
-  )
+const props = withDefaults(
+  defineProps<{
+    dataset?: dataset | null;
+    withDetails: boolean;
+    statsOverride?: UserMedalPoints[] | null;
+    cols?: number | null;
+    colsLg?: number | null;
+  }>(),
+  {
+    dataset: null,
+    statsOverride: null,
+    cols: null,
+    colsLg: 3,
+  }
 );
+
+const { dataset, statsOverride } = toRefs(props);
 
 const stats = computed(() =>
   dataset.value

@@ -1,10 +1,8 @@
 <template>
-  <div id="app">
-    <banner />
-    <duckguessr-menu />
-    <div id="main" class="d-flex justify-content-start flex-column">
-      <router-view />
-    </div>
+  <banner />
+  <duckguessr-menu />
+  <div id="main" class="d-flex justify-content-start flex-column">
+    <router-view />
   </div>
 </template>
 
@@ -50,8 +48,6 @@ html {
       padding: 0 !important;
     }
 
-    #__nuxt,
-    #__layout,
     #app,
     #root {
       height: 100% !important;

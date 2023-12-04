@@ -311,7 +311,7 @@ const loadImagesToMaintain = async (
 };
 
 watch(
-  () => decisionsWithNonValidated.value,
+  decisionsWithNonValidated,
   async (newValue) => {
     await loadImagesToMaintain(
       selectedDataset.value,
@@ -322,30 +322,24 @@ watch(
   { deep: true }
 );
 
-watch(
-  () => selectedDataset.value,
-  async (newValue) => {
-    await loadImagesToMaintain(
-      newValue,
-      decisionsWithNonValidated.value,
-      (currentPage.value - 1) * rowsPerPage
-    );
-  }
-);
+watch(selectedDataset, async (newValue) => {
+  await loadImagesToMaintain(
+    newValue,
+    decisionsWithNonValidated.value,
+    (currentPage.value - 1) * rowsPerPage
+  );
+});
+
+watch(currentPage, async (newValue) => {
+  await loadImagesToMaintain(
+    selectedDataset.value,
+    decisionsWithNonValidated.value,
+    (newValue - 1) * rowsPerPage
+  );
+});
 
 watch(
-  () => currentPage.value,
-  async (newValue) => {
-    await loadImagesToMaintain(
-      selectedDataset.value,
-      decisionsWithNonValidated.value,
-      (newValue - 1) * rowsPerPage
-    );
-  }
-);
-
-watch(
-  () => isAllowed.value,
+  isAllowed,
   async (newValue) => {
     if (newValue) {
       await loadDatasets();

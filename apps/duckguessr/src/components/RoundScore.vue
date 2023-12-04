@@ -1,7 +1,7 @@
 <template>
   <b-progress
     v-if="inGame"
-    :key="`score-${player.id}`"
+    :key="`score-${currentPlayer.id}`"
     class="position-relative d-flex flex-row align-items-center justify-content-between mb-1 small"
   >
     <b-progress-bar
@@ -15,7 +15,7 @@
       "
       max="100"
     />
-    <player-info :username="player.username" :top-player="false">
+    <player-info :username="currentPlayer.username" :top-player="false">
       <div
         v-if="score.scoreTypeName"
         class="text-center p-1 border border-dark"
@@ -38,23 +38,23 @@ import { useScoreToVariant } from "~/composables/use-score-to-variant";
 import { OngoingRoundScore } from "~types/roundWithScoresAndAuthor";
 import { player, roundScore } from "~duckguessr-api/types/prisma-client";
 
-const { score, players } = toRefs(
-  withDefaults(
-    defineProps<{
-      inGame: boolean;
-      players: player[];
-      score: roundScore | OngoingRoundScore;
-      roundDuration: number | null;
-    }>(),
-    {
-      inGame: false,
-      roundDuration: null,
-    }
-  )
+const props = withDefaults(
+  defineProps<{
+    inGame?: boolean;
+    players: player[];
+    score: roundScore | OngoingRoundScore;
+    roundDuration?: number | null;
+  }>(),
+  {
+    inGame: false,
+    roundDuration: null,
+  }
 );
 
+const { score, players } = toRefs(props);
+
 const alertVariant = computed(() => useScoreToVariant(score.value));
-const player: player = players.value.find(
+const currentPlayer: player = players.value.find(
   ({ id }) => id === score.value.playerId
 )!;
 

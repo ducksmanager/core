@@ -219,7 +219,7 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
 const hasUserStats = computed(() => userStore().stats && userStore().gameStats);
 
 watch(
-  () => userStore().loginSocket && currentUserHasParticipated.value,
+  [userStore().loginSocket, currentUserHasParticipated],
   (loggedInAndParticipated) => {
     if (loggedInAndParticipated) {
       userStore().loadStats();

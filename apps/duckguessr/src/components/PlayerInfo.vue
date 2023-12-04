@@ -49,26 +49,27 @@
 <script setup lang="ts">
 import { isBot, isPotentialBot } from "~/composables/user";
 
-type Props = {
-  username: string;
-  topPlayer: boolean;
-  avatar: string;
-  toggleable: boolean;
-  size: number;
-  noRightPanel: boolean;
-  nowrap: boolean;
-};
-
-const { username, avatar } = toRefs(
-  withDefaults(defineProps<Props>(), {
+const props = withDefaults(
+  defineProps<{
+    username: string;
+    topPlayer?: boolean;
+    avatar?: string;
+    toggleable?: boolean;
+    size?: number;
+    noRightPanel?: boolean;
+    nowrap?: boolean;
+  }>(),
+  {
     topPlayer: false,
     avatar: "HDL's father",
     toggleable: false,
     size: 4,
     noRightPanel: false,
     nowrap: true,
-  })
+  }
 );
+
+const { username, avatar } = toRefs(props);
 
 const emit = defineEmits<{
   (e: "toggle"): void;

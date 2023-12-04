@@ -174,7 +174,18 @@ io.of("/round").on("connection", async (socket) => {
       callback({
         roundScores: await prisma.roundScore.findMany({
           where: {
-            gameId,
+            roundId: {
+              in: (
+                await prisma.round.findMany({
+                  where: {
+                    gameId,
+                  },
+                  select: {
+                    id: true,
+                  },
+                })
+              ).map(({ id }) => id),
+            },
           },
         }),
       });

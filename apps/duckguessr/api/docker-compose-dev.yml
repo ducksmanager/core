@@ -16,3 +16,6 @@ services:
 
 volumes:
   db:
+networks:
+  prisma-clients_db-network:
+    external: true

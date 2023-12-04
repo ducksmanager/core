@@ -15,8 +15,8 @@
         no-right-panel
         :nowrap="false"
         :size="size"
-        :username="player.username"
-        :avatar="player.avatar"
+        :username="currentPlayer.username"
+        :avatar="currentPlayer.avatar"
         :top-player="topPlayer"
       />
     </div>
@@ -24,25 +24,25 @@
       :class="`progress bg-success d-inline-flex justify-content-center align-items-center rank-${rank}`"
       :style="{ [vertical ? 'height' : 'width']: `${barSizePct}%` }"
     >
-      {{ player.sumScore.toFixed(0) }}
+      {{ currentPlayer.sumScore.toFixed(0) }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { PlayerWithSumScore } from "~types/playerStats";
-const { player, maxScoreAllPlayers, rank } = toRefs(
-  defineProps<{
-    player: PlayerWithSumScore;
-    maxScoreAllPlayers: number;
-    vertical: boolean;
-    topPlayer: boolean;
-    rank: number;
-  }>()
-);
+const props = defineProps<{
+  currentPlayer: PlayerWithSumScore;
+  maxScoreAllPlayers: number;
+  vertical: boolean;
+  topPlayer: boolean;
+  rank: number;
+}>();
+
+const { currentPlayer, maxScoreAllPlayers, rank } = toRefs(props);
 
 const barSizePct = computed(
-  () => (100 * player.value.sumScore) / maxScoreAllPlayers.value
+  () => (100 * currentPlayer.value.sumScore) / maxScoreAllPlayers.value
 );
 
 const size = computed(() =>

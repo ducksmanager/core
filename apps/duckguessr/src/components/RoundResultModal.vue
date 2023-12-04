@@ -106,14 +106,11 @@ onMounted(() => {
 
 updateTimeBeforeNextRound();
 
-watch(
-  () => timeBeforeNextRound.value,
-  (timeBeforeNextRound: number | null) => {
-    if (timeBeforeNextRound! <= 0) {
-      emit("next-round");
-    }
+watch(timeBeforeNextRound, (value) => {
+  if (value! <= 0) {
+    emit("next-round");
   }
-);
+});
 </script>
 
 <style scoped lang="scss">

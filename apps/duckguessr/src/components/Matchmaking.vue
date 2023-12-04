@@ -72,8 +72,8 @@ watch(
             ({ players, isBotAvailable, playerStats }: MatchDetails) => {
               isBotAvailableForGame.value = isBotAvailable;
               gamePlayersStats.value = playerStats;
-              for (const player of players) {
-                addPlayer(player);
+              for (const currentPlayer of players) {
+                addPlayer(currentPlayer);
               }
             }
           );

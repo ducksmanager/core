@@ -43,8 +43,8 @@ const setDefaultAuthorUrl = () => {
 };
 
 watch(
-  () => author.value.personcode,
-  (personcode) => {
+  author,
+  ({ personcode }) => {
     authorImageUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`;
   },
   {

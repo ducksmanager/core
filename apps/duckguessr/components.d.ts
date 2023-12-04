@@ -40,6 +40,7 @@ declare module 'vue' {
     PlayerInfo: typeof import('./src/components/PlayerInfo.vue')['default']
     PlayerTotalScore: typeof import('./src/components/PlayerTotalScore.vue')['default']
     Podium: typeof import('./src/components/Podium.vue')['default']
+    PodiumComponent: typeof import('./src/components/PodiumComponent.vue')['default']
     ProgressBar: typeof import('./src/components/ProgressBar.vue')['default']
     RoundResult: typeof import('./src/components/RoundResult.vue')['default']
     RoundResultModal: typeof import('./src/components/RoundResultModal.vue')['default']
