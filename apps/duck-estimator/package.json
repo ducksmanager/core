@@ -1,6 +1,9 @@
 {
-  "name": "duck-estimator",
+  "name": "~duck-estimator",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
+  },
   "author": {
     "email": "brunoperel@gmail.com",
     "name": "Bruno Perel"
@@ -11,22 +14,35 @@
   },
   "dependencies": {
     "bedetheque-scraper": "^3.2.0",
-    "csv-parse": "^5.0.3",
+    "csv-parse": "^5.5.3",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.3.1",
-    "mariadb": "^3.0.0",
-    "playwright-firefox": "^1.10.0",
-    "yargs": "^17.5.1"
+    "mariadb": "^3.2.2",
+    "playwright-firefox": "^1.40.1",
+    "ts-node": "^10.9.2",
+    "yargs": "^17.7.2",
+    "~prisma-clients": "workspace:*"
   },
   "devDependencies": {
-    "eslint": "^8.19.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.22.1",
+    "@types/node": "^18.19.3",
+    "@types/yargs": "^17.0.32",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "^3.1.1",
+    "tsc-alias": "^1.8.8",
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "lint": "eslint --cache --fix .",
-    "start": "node duck-estimator.js"
+    "build": "rm -rf dist/{api,types} && ./node_modules/.bin/tsc && tsc-alias",
+    "start": "tsx watch index.ts"
   }
 }

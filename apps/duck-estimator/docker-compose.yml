@@ -1,0 +1,38 @@
+services:
+  duck-estimator:
+    container_name: duck-estimator
+    image: bperel/duck-estimator
+    environment:
+      MYSQL_COA_HOST: db
+      MYSQL_COA_PORT: 3306
+      MYSQL_COA_DATABASE: coa
+      MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD
+      GIT_AUTHOR_NAME: Admin
+      GIT_COMMITTER_NAME: Admin
+      GIT_AUTHOR_EMAIL: admin@ducksmanager.net
+      GIT_COMMITTER_EMAIL: admin@ducksmanager.net
+    networks:
+      - dm-server_db-network
+    volumes:
+      - type: volume
+        source: dm-server_duck_estimator_cache
+        target: /home/cache
+      - type: volume
+        source: dm-server_node_cache
+        target: /root/.cache
+      - type: bind
+        source: ~/.ssh/id_ed25519
+        target: /root/.ssh/id_ed25519
+        read_only: true
+      - type: bind
+        source: ./.env
+        target: /app/apps/duck-estimator/.env
+        read_only: true
+
+networks:
+  dm-server_db-network:
+    external: true
+
+volumes:
+  dm-server_duck_estimator_cache:
+  dm-server_node_cache:

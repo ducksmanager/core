@@ -1,0 +1,6 @@
+services:
+  duck-estimator:
+    image: bperel/duck-estimator
+    build:
+      context: ../..
+      dockerfile: apps/duck-estimator/Dockerfile
