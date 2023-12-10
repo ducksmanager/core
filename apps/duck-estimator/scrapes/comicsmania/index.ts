@@ -96,7 +96,8 @@ export async function scrape () {
           })
           console.log(`Found ${currentPublicationCode} ${issuenumber}`)
         }
-      } catch (_) {
+      } catch (e) {
+        console.error(`Error for ${currentPublication!.publicationcode} ${issuenumber}: ${e}`)
       }
     }
 
