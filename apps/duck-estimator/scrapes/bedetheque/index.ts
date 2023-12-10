@@ -28,7 +28,7 @@ export async function scrape () {
     const mappedIssuesForSeries = mappedIssues.filter(({ bedetheque_url }) => bedetheque_url === serieUrl)
     for (const { bedetheque_num, bedetheque_title, publicationcode, issuenumber } of mappedIssuesForSeries) {
       if (await isInducksIssueExisting(publicationcode, issuenumber)) {
-        const bedethequeAlbum = scrapeOutput.albums.find(({ albumNum, albumTitle }) => !(
+        const bedethequeAlbum = scrapeOutput!.albums.find(({ albumNum, albumTitle }) => !(
           (bedetheque_num !== '' && albumNum !== bedetheque_num) || (bedetheque_title !== '' && albumTitle !== bedetheque_title)))
         if (!bedethequeAlbum) {
           console.warn(` No issue found in Bedetheque series "${serieUrl}": num=${bedetheque_num}, title=${bedetheque_title}`)
