@@ -24,8 +24,14 @@ export const syncScrapeCache = async <T> (
       if (!existsSync(cacheDirName)) {
         mkdirSync(cacheDirName, { recursive: true })
       }
+      try {
       scrapeOutput = await fetchFn(url)
       writeFileSync(cacheFileName, await preSetInCacheTransformFn(scrapeOutput))
+      }
+      catch(e) {
+        console.error(`Scraping of ${url} failed: ${e}`)
+        return
+      }
     }
     return scrapeOutput
   };

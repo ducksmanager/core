@@ -1,28 +1,35 @@
 import { exec } from 'child_process'
+import dotenv from 'dotenv'
 import { mkdirSync } from 'fs'
 
 import { getCacheDir } from './cache'
 import { getAll,truncateQuotations } from './coa'
 import { writeCsvMapping } from './csv'
-const scrapes: Record<string, {scrape: () => Promise<unknown>}> = {
-  // bedetheque: require('./scrapes/bedetheque'),
-  // comicsmania: require('./scrapes/comicsmania'),
-  // seriesam: require('./scrapes/seriesam'),
-  gocollect: require('./scrapes/gocollect')
-};
+
+const scrapes: Promise<{
+  name: string;
+  scrape: () => Promise<void>;
+}[]> = Promise.all([
+  'bedetheque',
+  'comicsmania',
+  'seriesam',
+  'gocollect'
+].map(async (scrapeName) => ({name: scrapeName, scrape: (await import(`./scrapes/${scrapeName}`)).scrape})));
+
+dotenv.config({ path: '.env.local'  });
 
 (async () => {
   await truncateQuotations()
   mkdirSync(getCacheDir(), { recursive: true })
 
   let hasFailed = false
-  for (const scrapeName of Object.keys(scrapes)) {
+  for (const {name, scrape} of (await scrapes)) {
     try {
-      console.log(`Scraping ${scrapeName}, start date: ${new Date().toISOString()}`)
-      await scrapes[scrapeName].scrape()
+      console.log(`Scraping ${name}, start date: ${new Date().toISOString()}`)
+      await scrape()
       console.log(`Scrape done, end date: ${new Date().toISOString()}`)
     } catch (e) {
-      console.error('Scrape failed: ' + e)
+      console.error(`Scrape failed: ${e}`)
       hasFailed = true
     }
   }

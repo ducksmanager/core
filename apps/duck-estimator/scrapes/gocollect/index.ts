@@ -10,7 +10,7 @@ const MAPPING_FILE = 'scrapes/gocollect/coa-mapping.csv'
 const ROOT_URL = 'https://gocollect.com/app/comics/'
 
 /**
- * DM - CGC comparison:
+ * DM - CGC mapping:
  *
  * Good condition: 6+ (Fine to Mint)
  * Not-so-good condition: 3 to < 6 (Very Good to Fine-)
@@ -60,7 +60,10 @@ export async function scrape () {
           'gocollect',
           cacheFileName,
           issueLinkHref,
-          async (url) => issuePage.goto(url).then((response) => response!.body().then((body) => body.toString())),
+          async (url) => issuePage.goto(url).then((response) => response!.body().then((body) => body.toString()).catch((e) => {
+            console.error(`Error while fetching ${url}: ${e}`)
+            throw e
+          })),
           (contentsBuffer) => {
             const contents = contentsBuffer.toString()
             issuePage.setContent(contents);

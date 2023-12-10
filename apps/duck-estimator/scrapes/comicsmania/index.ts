@@ -31,7 +31,7 @@ export async function scrape () {
     let currentPublication = null
 
     await subPage.waitForLoadState('domcontentloaded')
-    const issueCells = await subPage.$$('tr td:nth-child(odd), tr th')
+    const issueCells = await subPage.locator('tr td:nth-child(odd), tr th').all()
     for (const issueCell of issueCells) {
       const tagName = await issueCell.evaluate(e => e.tagName)
       const cellText = (await issueCell.innerText()).replace(/[\n\t ]+/g, ' ').replace(/^ /, '')
@@ -74,7 +74,7 @@ export async function scrape () {
       try {
         let priceMatch = cellText.match(REGEX_PRICE)
         if (!priceMatch) {
-          const priceCell = await issueCell.waitForSelector('xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td', { timeout: 100 })
+          const priceCell = issueCell.locator('xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td')
           const priceText = await priceCell.innerText()
           priceMatch = priceText.match(REGEX_PRICE)
         }

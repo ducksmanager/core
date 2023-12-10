@@ -2,8 +2,6 @@ services:
   duck-estimator:
     container_name: duck-estimator
     image: bperel/duck-estimator
-    # depends_on:
-    #   - db
     environment:
       MYSQL_COA_HOST: db
       MYSQL_COA_PORT: 3306

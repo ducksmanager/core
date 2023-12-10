@@ -46,6 +46,7 @@ export const getInducksIssuesBetween = async (publicationcode: string, issuenumb
 
 export const getAll = async () =>
   await prismaCoa.inducks_issuequotation.findMany({
-    orderBy: { publicationcode: 'asc', issuenumber: 'asc'}
+    orderBy: [ {
+      publicationcode: 'asc'}, {issuenumber: 'asc'}]
   })
 
