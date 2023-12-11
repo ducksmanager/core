@@ -50,7 +50,6 @@ jobs:
           file: apps/duck-estimator/Dockerfile
           platforms: linux/x86_64
           push: true
-          target: web
           cache-from: type=registry,ref=ghcr.io/bperel/duck-estimator:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/duck-estimator:buildcache,mode=max
           tags: |
