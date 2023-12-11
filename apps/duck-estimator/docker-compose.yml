@@ -2,11 +2,9 @@ services:
   duck-estimator:
     container_name: duck-estimator
     image: ghcr.io/bperel/duck-estimator
+    env_file:
+      - .env.prod.local
     environment:
-      MYSQL_COA_HOST: db
-      MYSQL_COA_PORT: 3306
-      MYSQL_COA_DATABASE: coa
-      MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD
       GIT_AUTHOR_NAME: Admin
       GIT_COMMITTER_NAME: Admin
       GIT_AUTHOR_EMAIL: admin@ducksmanager.net
