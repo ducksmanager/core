@@ -1,0 +1,20 @@
+name: "Pending e-mails sender"
+
+on:
+  workflow_dispatch:
+jobs:
+  pending-emails-sender:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Reset issue popularities
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 2m
+          script: |
+            cd workspace/DucksManager2
+            docker compose exec api pnpm run reset-issue-popularities

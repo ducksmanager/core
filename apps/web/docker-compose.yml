@@ -79,6 +79,17 @@ services:
     networks:
       - dm-server_db-network
 
+  reset-issue-popularities:
+    container_name: sprite-names-updater
+    image: mariadb:10.7
+    # depends_on:
+    #   - db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: mysql -uroot -p${MYSQL_ROOT_PASSWORD} dm -e "CALL reset_issue_popularities"
+    networks:
+      - dm-server_db-network
+
   sentry-relay:
     image: getsentry/relay
     restart: always

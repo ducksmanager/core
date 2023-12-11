@@ -79,10 +79,6 @@ input.form-control {
     &.no-padding {
       padding: 0;
     }
-
-    &:not(.bare) {
-      padding: 0 0 0 320px;
-    }
   }
 }
 

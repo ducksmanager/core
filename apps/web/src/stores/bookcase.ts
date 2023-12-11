@@ -6,11 +6,11 @@ import { BookcaseEdge } from "~dm-types/BookcaseEdge";
 
 import { collection } from "./collection";
 
-export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
+export type BookcaseEdgeWithPopularity = BookcaseEdge & {
   publicationcode: string;
   issueCode: string;
   popularity?: number | undefined;
-}
+};
 
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();

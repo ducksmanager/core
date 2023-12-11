@@ -9,11 +9,7 @@ alias: [/bibliotheque/options]
   <div v-else class="bookcase-options">
     <div v-for="(textureText, textureType) in textureTypes" :key="textureType">
       <h5>{{ textureText }}</h5>
-      <b-dropdown
-        v-model="
-          bookcaseOptions.textures[textureType as 'bookshelf' | 'bookcase']
-        "
-      >
+      <b-dropdown v-model="bookcaseOptions.textures[textureType]">
         <template #button-content>
           <div
             class="selected"

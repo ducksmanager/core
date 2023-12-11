@@ -319,12 +319,12 @@
         :publicationcode="publicationcode"
         :selected-issue-ids-by-issuenumber="copiesBySelectedIssuenumber"
         @clear-selection="
-          contextmenuInstance.hide();
+          contextmenuInstance!.hide();
           selected = [];
         "
         @close="
           contextMenuKey = `context-menu-${Math.random()}`;
-          contextmenuInstance.hide();
+          contextmenuInstance!.hide();
         "
         @launch-modal="
           emit('launch-modal', { ...$event, selectedIssueIds: issueIds })
@@ -335,6 +335,8 @@
 </template>
 
 <script setup lang="ts">
+import { ContextmenuInstance } from "v-contextmenu/es/types";
+
 import condition from "~/composables/useCondition";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import type { issue as dm_issue } from "~prisma-clients/client_dm";
@@ -417,7 +419,7 @@ const filter = $ref({
   missing: true,
   possessed: true,
 } as { missing: boolean; possessed: boolean });
-const contextmenuInstance = $ref(null as unknown | null);
+const contextmenuInstance = $ref(null as ContextmenuInstance | null);
 let issues = $shallowRef(null as issueWithPublicationCodeAndCopies[] | null);
 let userIssuesForPublication = $shallowRef(
   null as IssueWithPublicationcode[] | null,
@@ -522,12 +524,12 @@ const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
     if (clicks === 1) {
       timer = setTimeout(() => {
         clicks = 0;
-        contextmenuInstance.hide(e);
+        contextmenuInstance!.hide();
       }, doubleClickDelay);
     } else if (clicks === 2) {
       clearTimeout(timer!);
       clicks = 0;
-      contextmenuInstance.show(e);
+      contextmenuInstance!.show(e);
     }
   }
 };
@@ -545,7 +547,7 @@ const getPreselected = () =>
             index <= preselectedIndexEnd,
         );
 const updateSelected = () => {
-  if (!contextmenuInstance.visible) {
+  if (!contextmenuInstance!.visible) {
     selected = issues!
       .map(({ key }) => key || "")
       .filter(
@@ -559,7 +561,7 @@ const updateSelected = () => {
 const deletePublicationIssues = async (
   issuesToDelete: IssueWithPublicationcode[],
 ) => {
-  contextmenuInstance.hide();
+  contextmenuInstance!.hide();
   if (!readonly) {
     await updateCollectionMultipleIssues({
       publicationcode,

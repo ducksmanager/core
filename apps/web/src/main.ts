@@ -8,7 +8,6 @@ import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import axios from "axios";
 import Cookies from "js-cookie";
-// @ts-ignore
 import contextmenu from "v-contextmenu";
 // @ts-ignore
 import { setupLayouts } from "virtual:generated-layouts";

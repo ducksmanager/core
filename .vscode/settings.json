@@ -1,6 +1,6 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
+    "source.fixAll": "explicit"
   },
   "sqltools.connections": [
     {
@@ -17,5 +17,8 @@
       "password": "changeme"
     }
   ],
-  "i18n-ally.localesPaths": ["translations"],
+  "i18n-ally.localesPaths": [
+    "translations"
+  ],
+  "java.configuration.updateBuildConfiguration": "interactive",
 }

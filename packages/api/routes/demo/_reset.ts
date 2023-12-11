@@ -54,8 +54,20 @@ export const resetDemo = async () => {
     issuenumber: string;
   }
 
+  const issuesCsvPossiblePaths = [
+    "/app/routes/demo/demo_issues.csv",
+    "routes/demo/demo_issues.csv",
+  ]
+
+  const purchasesCsvPossiblePaths = [
+    "/app/routes/demo/demo_issues.csv",
+    "routes/demo/demo_issues.csv",
+  ]
+
+  const getReadFirstExistingPath = (paths: string[]): string => fs.readFileSync(paths.find(path => fs.existsSync(path))!).toString()
+
   const csvIssues: CsvIssue[] = parse(
-    fs.readFileSync("/app/routes/demo/demo_issues.csv"),
+    getReadFirstExistingPath(issuesCsvPossiblePaths),
     { columns: true }
   );
   await prismaDm.$transaction(
@@ -81,7 +93,7 @@ export const resetDemo = async () => {
   }
 
   const csvPurchases: CsvPurchase[] = parse(
-    fs.readFileSync("/app/routes/demo/demo_purchases.csv"),
+    getReadFirstExistingPath(purchasesCsvPossiblePaths),
     { columns: true }
   );
   await prismaDm.$transaction(
