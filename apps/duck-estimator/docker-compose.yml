@@ -21,7 +21,7 @@ networks:
     external: true
 
 volumes:
-  cache:
+  duck-estimator_cache:
     external: true
-  node_cache:
+  duck-estimator_node_cache:
     external: true
