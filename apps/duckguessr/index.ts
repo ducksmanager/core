@@ -1,1 +1,0 @@
-export * from "./api/prisma/client_duckguessr";
