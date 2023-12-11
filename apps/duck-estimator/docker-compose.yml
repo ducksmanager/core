@@ -12,8 +12,8 @@ services:
     networks:
       - dm-server_db-network
     volumes:
-      - cache:/home/cache
-      - node_cache:/root/.cache
+      - duck-estimator_cache:/home/cache
+      - duck-estimator_node_cache:/root/.cache
       - ~/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
 
 networks:
