@@ -1,6 +1,8 @@
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { issue_condition } from "~prisma-clients/client_dm";
 
+import { coa } from "../stores/coa";
+
 export type QuotedIssue = {
   publicationcode: string;
   issuenumber: string;
