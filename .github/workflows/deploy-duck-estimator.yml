@@ -27,8 +27,8 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager2/apps/duck-estimator/.env.prod.local
-          target: apps/duck-estimator/.env.prod.local
+          source: /home/bperel/workspace/DucksManager2/apps/duck-estimator/.env.local
+          target: apps/duck-estimator/.env.local
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
