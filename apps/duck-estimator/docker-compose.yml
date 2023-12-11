@@ -2,8 +2,6 @@ services:
   duck-estimator:
     container_name: duck-estimator
     image: ghcr.io/bperel/duck-estimator
-    env_file:
-      - .env.local
     environment:
       GIT_AUTHOR_NAME: Admin
       GIT_COMMITTER_NAME: Admin
