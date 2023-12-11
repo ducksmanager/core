@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
+    "module": "ESNext",
     "target": "es2018",
     "lib": ["DOM", "ESNext"],
     "strict": true,
@@ -24,8 +24,5 @@
       "~translations/*": ["translations/*"]
     }
   },
-  "exclude": ["node_modules"],
-  "ts-node": {
-    "swc": true
-  }
+  "exclude": ["node_modules"]
 }
