@@ -10,7 +10,7 @@ import { createCachedCoaApi } from "~web";
 
 const cachedCoaApi = createCachedCoaApi(
   buildWebStorage(sessionStorage),
-  import.meta.env.VITE_GATEWAY_URL
+  import.meta.env.VITE_DM_API_URL
 );
 
 const defaultApi = addTokenRequestInterceptor(

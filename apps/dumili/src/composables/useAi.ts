@@ -110,6 +110,10 @@ export default () => {
           })
       ).data;
 
+      if (!ocrResults.length) {
+        return;
+      }
+
       try {
         const possibleStories = (
           await call(

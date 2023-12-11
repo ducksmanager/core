@@ -23,7 +23,11 @@
 
     "preserveWatchOutput": true,
 
-    "types": ["unplugin-icons/types/vue"],
+    "types": [
+      "vite/client",
+      "vite-plugin-pages/client",
+      "vue/ref-macros",
+      "unplugin-icons/types/vue"],
     "paths": {
       "~/*": ["src/*"],
       "~dumili-types/*": ["types/*"],

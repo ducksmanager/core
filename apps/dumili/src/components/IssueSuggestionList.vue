@@ -15,7 +15,7 @@
     <template #customize-form>
       <IssueSelect
         @change="
-          (issuecode) => addCustomIssuecodeToIssueSuggestions(issuecode)
+          (issuecode: string|null) => addCustomIssuecodeToIssueSuggestions(issuecode)
         "
     /></template>
   </suggestion-list>

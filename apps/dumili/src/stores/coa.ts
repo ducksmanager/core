@@ -1,6 +1,6 @@
+import { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
-import { cachedCoaApi as coaApi } from "~/api";
 import i18n from "~/i18n";
 import {
   GET__coa__authorsfullnames__$authors,
@@ -47,6 +47,8 @@ const addPartInfo = (suggestions: InducksIssueDetails) => {
     })),
   };
 };
+
+let api: AxiosInstance;
 
 export const coa = defineStore("coa", () => {
   const coverUrls = ref({} as { [issuenumber: string]: string }),
@@ -122,7 +124,7 @@ export const coa = defineStore("coa", () => {
           (i18n.global.locale as unknown as { value: string }).value || "en";
         countryNames.value = (
           await call(
-            coaApi,
+            api,
             new GET__coa__list__countries__$locale({
               query: { countryCodes: null },
               params: { locale },
@@ -146,7 +148,7 @@ export const coa = defineStore("coa", () => {
         addPublicationNames(
           (
             await call(
-              coaApi,
+              api,
               new POST__coa__list__publications({
                 reqBody: { publicationCodes: actualNewPublicationCodes },
               })
@@ -172,7 +174,7 @@ export const coa = defineStore("coa", () => {
           await getChunkedRequests<GET__coa__quotations__publications>({
             callFn: (chunk) =>
               call(
-                coaApi,
+                api,
                 new GET__coa__quotations__publications({
                   query: { publicationCodes: chunk },
                 })
@@ -198,7 +200,7 @@ export const coa = defineStore("coa", () => {
       if (publicationNamesFullCountries.value.includes(countrycode)) return;
 
       return call(
-        coaApi,
+        api,
         new GET__coa__list__publications__$countrycode({
           params: { countrycode },
         })
@@ -229,7 +231,7 @@ export const coa = defineStore("coa", () => {
           ...(await getChunkedRequests<GET__coa__authorsfullnames__$authors>({
             callFn: (chunk) =>
               call(
-                coaApi,
+                api,
                 new GET__coa__authorsfullnames__$authors({
                   params: { authors: chunk },
                 })
@@ -243,7 +245,7 @@ export const coa = defineStore("coa", () => {
     fetchIssueNumbersWithTitles = async (publicationcode: string) => {
       issuesWithTitles.value[publicationcode] = (
         await call(
-          coaApi,
+          api,
           new GET__coa__list__issues__withTitle({
             query: { publicationcode },
           })
@@ -265,7 +267,7 @@ export const coa = defineStore("coa", () => {
             {
               callFn: async (chunk) =>
                 call(
-                  coaApi,
+                  api,
                   new GET__coa__list__issues__by_publication_codes({
                     query: { publicationCodes: chunk },
                   })
@@ -304,7 +306,7 @@ export const coa = defineStore("coa", () => {
           await getChunkedRequests<POST__coa__issues__decompose>({
             callFn: (chunk) =>
               call(
-                coaApi,
+                api,
                 new POST__coa__issues__decompose({
                   reqBody: { issueCodes: chunk },
                 })
@@ -318,7 +320,7 @@ export const coa = defineStore("coa", () => {
     fetchIssueCounts = async () => {
       if (!issueCounts.value)
         issueCounts.value = (
-          await call(coaApi, new GET__coa__list__issues__count({}))
+          await call(api, new GET__coa__list__issues__count({}))
         ).data;
     },
     fetchIssueUrls = async ({
@@ -332,7 +334,7 @@ export const coa = defineStore("coa", () => {
       if (!suggestions.value[issueCode]) {
         const newIssueDetails = (
           await call(
-            coaApi,
+            api,
             new GET__coa__list__issues__details({
               query: { publicationcode, issuenumber },
             })
@@ -346,6 +348,9 @@ export const coa = defineStore("coa", () => {
       }
     };
   return {
+    setApi: (params: { api: typeof api }) => {
+      api = params.api;
+    },
     coverUrls,
     countryNames,
     publicationNames,

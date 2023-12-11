@@ -27,6 +27,13 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
 
         result = ocrFr.ocr(file_name, cls=True)
         result = result[0]
+        if result is None:
+            os.remove(file_name)
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps([]).encode())
+            return
         boxes = [line[0] for line in result]
         texts = [line[1][0] for line in result]
         scores = [line[1][1] for line in result]

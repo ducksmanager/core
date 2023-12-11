@@ -35,7 +35,9 @@ export default defineConfig({
     }),
     AutoImport({
       dts: true,
-      imports: ["vue", "vue-router"],
+      imports: ["vue", "vue-router", "vue-i18n", "pinia"],
+      vueTemplate: true,
+      dirs: ["../../packages/api-routes"],
     }),
     Components({
       resolvers: [BootstrapVueNextResolver(), IconsResolver({})],

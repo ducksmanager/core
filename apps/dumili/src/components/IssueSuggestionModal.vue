@@ -19,7 +19,7 @@
       :images="images"
       selectable
       @selected="
-        (url) => (selectedExistingCoverIssuecode = coverUrlToIssuecode(url))
+        (url: string) => (selectedExistingCoverIssuecode = coverUrlToIssuecode(url))
       "
       ><Issue
         :publicationcode="getPublicationcodeFromIssuecode(issuecode)"

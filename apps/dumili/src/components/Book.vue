@@ -99,6 +99,8 @@
       body-class="flex-grow-1 w-100 h-100"
     >
       <template #header>
+        <IssueSuggestionModal />
+        <IssueSuggestionList />
         <div>
           <b-button
             variant="success"
@@ -109,13 +111,8 @@
             @click="ai.runKumiko(indexationId)"
           >
             <i-bi-lightbulb-fill
-          /></b-button>
-        </div>
-        <IssueSuggestionModal />
-        <IssueSuggestionList />
-        <h6 v-if="releaseDate">{{ "Sortie :" }} {{ releaseDate }}</h6>
-        <h3>{{ "Table des matières" }}</h3></template
-      >
+          /></b-button></div
+      ></template>
 
       <b-tabs
         v-if="entries"
@@ -124,6 +121,7 @@
         card
         vertical
         class="flex-grow-1"
+        :class="{ disabled: !acceptedIssue?.data }"
         nav-wrapper-class="w-100 h-100 flex-grow-1"
         nav-class="w-100 h-100"
       >
@@ -156,26 +154,21 @@ const route = useRoute();
 const ai = useAi();
 const aiDetails = storeToRefs(aiStore()).aiDetails;
 
-const RELEASE_DATE_REGEX = /^\d+(?:-\d+)?(?:-Q?\d+)?$/;
 const coverWidth = ref(null as number | null);
 let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
 const currentTabIndex = ref(0 as number);
 
-const { storyversionKindSuggestions } = storeToRefs(suggestions());
+const {
+  storyversionKindSuggestions,
+  acceptedIssue,
+  entrySuggestions: entries,
+} = storeToRefs(suggestions());
 
-const showAiDetections = computed(() => user().showAiDetectionsOn);
+const { showAiDetectionsOn: showAiDetections } = user();
 
 const indexationId = computed(() => route.params.id as string);
 const isSinglePage = computed(() => Object.keys(entries.value).length === 1);
-const entries = computed(() => suggestions().entrySuggestions);
-const releaseDate = computed(() => {
-  if (!suggestions().acceptedIssue?.data.oldestdate) return null;
-
-  const parsedDate =
-    suggestions().acceptedIssue?.data.oldestdate!.match(RELEASE_DATE_REGEX);
-  return parsedDate?.[0]?.split("-").reverse().join("/");
-});
 
 const displayedWidth = computed(() => book.value?.getSettings().width);
 const displayedHeight = computed(() => book.value?.getSettings().height);

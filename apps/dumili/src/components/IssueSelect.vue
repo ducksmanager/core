@@ -7,7 +7,7 @@
     >
       <template #first>
         <b-form-select-option :value="undefined" disabled>{{
-          $t("Select a country")
+          $t("Sélectionnez un pays")
         }}</b-form-select-option>
       </template>
     </b-form-select>

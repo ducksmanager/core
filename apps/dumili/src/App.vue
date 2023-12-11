@@ -28,14 +28,15 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { defaultApi } from "~/api";
+import { cachedCoaApi, defaultApi } from "~/api";
 
+import { coa } from "./stores/coa";
 import { tabs } from "./stores/tabs";
 import { user } from "./stores/user";
 
 const route = useRoute();
 
-const activeTab = storeToRefs(tabs()).activeTab;
+const { activeTab } = storeToRefs(tabs());
 
 const loginUrl = computed(
   () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
@@ -44,12 +45,13 @@ const loginUrl = computed(
 watch(
   () => route?.params?.id,
   (id) => {
-    tabs().activeTab = id ? 0 : undefined;
+    activeTab.value = id ? 0 : undefined;
   },
   { immediate: true }
 );
 
 (async () => {
+  coa().setApi({ api: cachedCoaApi });
   user().user = {
     username: (await defaultApi.get(`${import.meta.env.VITE_BACKEND_URL}/me`))
       .data.user.username,
