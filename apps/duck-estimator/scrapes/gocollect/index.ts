@@ -48,10 +48,7 @@ export async function scrape () {
       console.info(`Scraping ${url}`)
       await page.goto(url)
       const issueElements = await page.$$('ul.grid a')
-      const issueLinks = []
-      for (const issueElement of issueElements) {
-        issueLinks.push((await issueElement.getAttribute('href'))!)
-      }
+      const issueLinks = await Promise.all(issueElements.map(issueElement => issueElement.getAttribute('href')))
 
       for (const issueLinkHref of issueLinks) {
         console.log(`Scraping ${issueLinkHref}`)
@@ -60,7 +57,7 @@ export async function scrape () {
         await syncScrapeCache(
           'gocollect',
           cacheFileName,
-          issueLinkHref,
+          issueLinkHref!,
           async (url) => issuePage.goto(url).then((response) => response!.body().then((body) => body.toString()).catch((e) => {
             console.error(`Error while fetching ${url}: ${e}`)
             throw e

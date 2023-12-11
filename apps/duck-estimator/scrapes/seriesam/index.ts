@@ -1,5 +1,6 @@
 import { firefox } from 'playwright-firefox'
 
+import { syncScrapeCache } from '~/cache'
 import { createQuotations, getInducksIssuesBetween } from '~/coa'
 import { readCsvMapping } from '~/csv'
 
@@ -25,7 +26,24 @@ export async function scrape () {
   for (const serieUrl of seriesUrls) {
     const url = ROOT_URL + serieUrl
     console.info(`Scraping ${url}...`)
-    await page.goto(url)
+
+    const cacheFileName = `${serieUrl.replace(/[/\\?%*:|"<>]/g, '-')}.html`
+    await syncScrapeCache(
+      'seriesam',
+      cacheFileName,
+      url!,
+      async (url) => page.goto(url).then((response) => response!.body().then((body) => body.toString()).catch((e) => {
+        console.error(`Error while fetching ${url}: ${e}`)
+        throw e
+      })),
+      (contentsBuffer) => {
+        const contents = contentsBuffer.toString()
+        page.setContent(contents);
+        return contents;
+      },
+      (_contents) =>  _contents
+    )
+
     const rows = await page.$$('.guidetable tr')
 
     let seriesamYear
