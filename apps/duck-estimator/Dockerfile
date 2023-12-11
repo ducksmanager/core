@@ -15,7 +15,7 @@ COPY apps/duck-estimator ./apps/duck-estimator
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm -r i
 
-RUN mv .env.local .env
+RUN cd apps/duck-estimator && mv .env.local .env
 RUN pnpm -r build
 
 ###
