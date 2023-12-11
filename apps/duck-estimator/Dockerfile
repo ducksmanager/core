@@ -11,9 +11,11 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY packages/prisma-clients ./packages/prisma-clients
 COPY apps/duck-estimator ./apps/duck-estimator
+
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm -r i
 
+RUN mv .env.local .env
 RUN pnpm -r build
 
 ###
@@ -40,7 +42,6 @@ RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm i --production
 
 COPY --from=build /app/apps/duck-estimator/dist ./
-COPY apps/duck-estimator/.env.local ./
 COPY apps/duck-estimator/scrapes ./
 
 CMD ["node", "index.js"]
