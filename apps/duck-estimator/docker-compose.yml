@@ -3,7 +3,7 @@ services:
     container_name: duck-estimator
     image: ghcr.io/bperel/duck-estimator
     env_file:
-      - .env.prod.local
+      - .env.local
     environment:
       GIT_AUTHOR_NAME: Admin
       GIT_COMMITTER_NAME: Admin
@@ -22,4 +22,6 @@ networks:
 
 volumes:
   cache:
+    external: true
   node_cache:
+    external: true
