@@ -59,8 +59,8 @@ export async function scrape () {
       if ((await seriesamYearCell.innerText()).includes('Seriesams Guide')) {
         continue
       }
-      const seriesamYearCurrent = (await (await seriesamYearCell.innerText())).trimLeft()
-      const seriesamTitle = (await (await seriesamTitleCell.innerText())).trimLeft()
+      const seriesamYearCurrent =  (await seriesamYearCell.innerText()).trimStart()
+      const seriesamTitle =  (await seriesamTitleCell.innerText()).trimStart()
       if (seriesamYearCurrent) {
         seriesamYear = seriesamYearCurrent
       }
