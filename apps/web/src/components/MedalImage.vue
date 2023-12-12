@@ -89,8 +89,8 @@ const { t } = useI18n();
 const medalColors = ["bronze", "argent", "or"];
 const level = computed(() =>
   nextLevel && currentLevel.value !== null
-    ? currentLevel.value + 1
-    : currentLevel.value,
+    ? currentLevel.value
+    : currentLevel.value - 1,
 );
 const medalTitle = computed(() => {
   switch (contribution.value) {
