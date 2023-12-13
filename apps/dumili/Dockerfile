@@ -1,4 +1,4 @@
-FROM node:18 as pnpm
+FROM node:18.18 as pnpm
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
