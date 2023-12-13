@@ -6,32 +6,38 @@ import nodemailer from "nodemailer";
 import Mail, { Address } from "nodemailer/lib/mailer";
 import path from "path";
 
-const en = JSON.parse(readFileSync('../translations/messages.en.json').toString());
-
-const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
-export const i18n = new I18n({
-  locales: ["fr", "en-US"],
-
-  defaultLocale: "en-US",
-  staticCatalog: {
-    en: Object.entries(en).reduce(
-      (acc, [key, value]) => ({
-        ...acc,
-        [key]: value,
-      }),
-      {}
-    ),
-    fr,
-  },
-});
-
 export abstract class Email {
   static transporter: Transporter;
+  static i18n: I18n
 
   abstract templatePath: string;
   data?: { [key: string]: unknown };
 
+  public static retrieveI18n = () => {
+    if (!Email.i18n) {
+    const en = JSON.parse(readFileSync('../translations/messages.en.json').toString());
+      const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
+      Email.i18n = new I18n({
+        locales: ["fr", "en-US"],
+      
+        defaultLocale: "en-US",
+        staticCatalog: {
+          en: Object.entries(en).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: value,
+            }),
+            {}
+          ),
+          fr,
+        },
+      });
+    }
+    return Email.i18n;
+  };
+
   protected constructor() {
+    Email.retrieveI18n();
     if (!Email.transporter) {
       Email.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
@@ -91,7 +97,7 @@ export abstract class Email {
   getHtmlBody = async () =>
     await ejs.renderFile(
       path.join(this.templatePath, "template.ejs"),
-      { __: i18n.__, ...this.data },
+      { __: Email.i18n.__, ...this.data },
       {}
     );
 

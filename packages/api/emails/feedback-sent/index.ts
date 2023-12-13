@@ -1,4 +1,4 @@
-import { Email, i18n } from "~emails/email";
+import { Email } from "~emails/email";
 import { user } from "~prisma-clients/client_dm";
 
 type InputData = {
@@ -21,7 +21,7 @@ export default class extends Email {
   getFrom = () => this.data.user?.email || "anonymous@duckmanager.net";
   getFromName = () => this.data.user?.username || "Anonymous";
   getSubject = () =>
-    i18n.__("User {{username}} sent a feedback", {
+    Email.i18n.__("User {{username}} sent a feedback", {
       username: this.data.user.username,
     });
 }

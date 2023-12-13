@@ -1,4 +1,4 @@
-import { Email, i18n } from "~emails/email";
+import { Email } from "~emails/email";
 import { user } from "~prisma-clients/client_dm";
 
 type InputData = {
@@ -29,7 +29,7 @@ export default class extends Email {
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
   getSubject = () =>
-    i18n.__("User {{username}} sent a photo for edge {{issuecode}}", {
+    Email.i18n.__("User {{username}} sent a photo for edge {{issuecode}}", {
       username: this.data.user.username,
       issuecode: this.data.issuecode,
     });

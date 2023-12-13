@@ -1,4 +1,4 @@
-import { Email, i18n } from "~emails/email";
+import { Email } from "~emails/email";
 import { user } from "~prisma-clients/client_dm";
 
 export default class extends Email {
@@ -15,5 +15,5 @@ export default class extends Email {
   getTo = () => this.data.user.email;
   getToName = () => this.data.user.username;
   getSubject = () =>
-    i18n.__("Vous avez oublié votre mot de passe sur DucksManager ?");
+    Email.i18n.__("Vous avez oublié votre mot de passe sur DucksManager ?");
 }

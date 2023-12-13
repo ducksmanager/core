@@ -1,4 +1,4 @@
-import { Email, i18n } from "~emails/email";
+import { Email } from "~emails/email";
 import { user } from "~prisma-clients/client_dm";
 
 export default class extends Email {
@@ -28,6 +28,6 @@ export default class extends Email {
   getToName = () => this.data.user.username;
   getSubject = () =>
     this.data.extraEdges > 1
-      ? i18n.__("Vos tranches ont été publiées sur DucksManager !")
-      : i18n.__("Votre tranche a été publiée sur DucksManager !");
+      ? Email.i18n.__("Vos tranches ont été publiées sur DucksManager !")
+      : Email.i18n.__("Votre tranche a été publiée sur DucksManager !");
 }

@@ -1,4 +1,4 @@
-import { Email, i18n } from "~emails/email";
+import { Email } from "~emails/email";
 import { user } from "~prisma-clients/client_dm";
 
 export default class extends Email {
@@ -16,5 +16,5 @@ export default class extends Email {
   getFromName = () => process.env.SMTP_FRIENDLYNAME!;
   getTo = () => this.data.user.email;
   getToName = () => this.data.user.username;
-  getSubject = () => i18n.__("Votre phrase de présentation a été acceptée !");
+  getSubject = () => Email.i18n.__("Votre phrase de présentation a été acceptée !");
 }

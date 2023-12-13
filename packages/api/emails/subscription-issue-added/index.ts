@@ -1,4 +1,4 @@
-import { Email, i18n } from "~emails/email";
+import { Email } from "~emails/email";
 import { user } from "~prisma-clients/client_dm";
 
 export default class extends Email {
@@ -19,7 +19,7 @@ export default class extends Email {
   getTo = () => this.data.user.email;
   getToName = () => this.data.user.username;
   getSubject = () =>
-    i18n.__(
+    Email.i18n.__(
       "{{publicationName}} {{issuenumber}} a été ajouté à votre collection !",
       {
         publicationName: this.data.publicationName,

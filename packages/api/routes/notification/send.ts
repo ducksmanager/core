@@ -1,8 +1,7 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
-
+import { Email } from "~/emails/email";
 import { prismaDm } from "~/prisma";
-import { i18n } from "~emails/email";
 import { user } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import {
@@ -21,13 +20,14 @@ const sendSuggestedIssueNotification = async (
     secretKey: process.env.PUSHER_SECRET_KEY!,
   });
 
+  Email.retrieveI18n()
   const notificationContent = {
-    title: i18n.__("{{issueTitle}} est sorti !", {
+    title: Email.i18n.__("{{issueTitle}} est sorti !", {
       issueTitle,
     }),
     body: Object.keys(storyCountPerAuthor)
       .map((authorName) =>
-        i18n.__(
+        Email.i18n.__(
           storyCountPerAuthor[authorName] === 1
             ? "• 1 nouvelle histoire de {{authorName}}"
             : "• {{newStoriesNumber}} nouvelles histoires de {{authorName}}",
