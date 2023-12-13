@@ -1,11 +1,13 @@
 import * as ejs from "ejs";
+import { readFileSync } from "fs";
 import { I18n } from "i18n";
 import { Transporter, TransportOptions } from "nodemailer";
 import nodemailer from "nodemailer";
 import Mail, { Address } from "nodemailer/lib/mailer";
 import path from "path";
 
-import en from "~/translations/messages.en.json";
+const en = JSON.parse(readFileSync('./translations/messages.en.json').toString());
+
 const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
 export const i18n = new I18n({
   locales: ["fr", "en-US"],

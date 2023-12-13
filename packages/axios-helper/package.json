@@ -1,5 +1,6 @@
 {
   "name": "~axios-helper",
+  "type": "module",
   "engines": {
     "node": ">=18.0.0 <19.0.0"
   },

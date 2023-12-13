@@ -46,4 +46,5 @@ COPY ./packages/api/.env ./.env
 
 EXPOSE 3000
 
+WORKDIR /app/packages/api
 CMD ["node", "--es-module-specifier-resolution=node", "packages/api/index.js"]

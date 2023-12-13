@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/deploy-ducksmanager.yml"
       - "apps/web/**"
+      - "packages/api/**"
       - "pnpm-lock.yaml"
     branches:
       - "master"
