@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 import Mail, { Address } from "nodemailer/lib/mailer";
 import path from "path";
 
-const en = JSON.parse(readFileSync('./translations/messages.en.json').toString());
+const en = JSON.parse(readFileSync('../translations/messages.en.json').toString());
 
 const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
 export const i18n = new I18n({
