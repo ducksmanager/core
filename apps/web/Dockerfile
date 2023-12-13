@@ -46,4 +46,4 @@ COPY ./packages/api/.env ./.env
 
 EXPOSE 3000
 
-CMD ["node", "packages/api/index.js"]
+CMD ["node", "--es-module-specifier-resolution=node", "packages/api/index.js"]
