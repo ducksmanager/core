@@ -54,7 +54,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 60m
           script: |
-            cd workspace/DucksManager2
+            cd workspace/DucksManager2/apps/duck-estimator
             docker compose run --rm --no-deps duck-estimator
 
       - name: Run sprite-names-updater
