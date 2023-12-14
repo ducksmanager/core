@@ -10,6 +10,15 @@
 	path = apps/duck-estimator
 	url = git@github.com:bperel/duck-estimator.git
 	branch=master
-[submodule "apps/duckguessr"]
+[submodule "duckguessr-old"]
+	path = apps/duckguessr-old
+	url = git@github.com:bperel/duckguessr.git
+	branch=master
+[submodule "duckguessr"]
 	path = apps/duckguessr
 	url = git@github.com:bperel/duckguessr.git
+	branch=nuxt3-to-vite-vue3
+[submodule "duckguessr-ml"]
+	branch=ts
+	path = packages/duckguessr-ml
+	url = git@github.com:bperel/duckguessr-ml.git

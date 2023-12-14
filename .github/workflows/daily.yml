@@ -55,7 +55,9 @@ jobs:
           command_timeout: 60m
           script: |
             cd workspace/DucksManager2/apps/duck-estimator
-            docker compose run --rm --no-deps duck-estimator
+            echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
+            docker compose pull
+            docker compose run --rm duck-estimator
 
       - name: Run sprite-names-updater
         uses: appleboy/ssh-action@v0.1.4

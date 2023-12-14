@@ -1,4 +1,6 @@
 packages:
-  - 'apps/*'
-  - 'apps/*/api'
-  - 'packages/*'
+  - "apps/*"
+  - "!apps/duckguessr-old"
+  - "apps/*/packages/*"
+  - "apps/*/api"
+  - "packages/*"
