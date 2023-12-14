@@ -15,7 +15,7 @@
   "scripts": {
     "lint": "eslint --cache --fix .",
     "build": "rm -rf dist/{api,types} && ./node_modules/.bin/tsc && tsc-alias",
-    "start": "tsx watch index.ts"
+    "start": "PWDEBUG=1 tsx watch index.ts"
   },
   "dependencies": {
     "bedetheque-scraper": "^3.2.0",

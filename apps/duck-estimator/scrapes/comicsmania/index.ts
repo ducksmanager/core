@@ -74,7 +74,7 @@ export async function scrape () {
       try {
         let priceMatch = cellText.match(REGEX_PRICE)
         if (!priceMatch) {
-          const priceCell = issueCell.locator('xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td')
+          const priceCell = issueCell.locator('xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td').first()
           const priceText = await priceCell.innerText()
           priceMatch = priceText.match(REGEX_PRICE)
         }
