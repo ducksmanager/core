@@ -396,7 +396,7 @@ export class GET__global_stats__user__list  extends ContractWithMethodAndUrl<{ r
         }
 export class POST__presentation_text__$decision  extends ContractWithMethodAndUrl<{
       params: { decision: string };
-      reqBody: { sentence: string; userId: number };
+      reqBody: { sentence: string; userId: string };
     }> {
             static readonly method = "post";
             static readonly url = "/presentation-text/:decision";
