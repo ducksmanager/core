@@ -20,30 +20,27 @@ COPY apps/web/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 
 
-FROM pnpm AS api
+FROM node:20 AS api-build
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
+RUN curl -fsSL https://bun.sh/install | bash
+RUN apt-get update && apt-get install -y jq && apt-get clean
+
 COPY package.json ./
-COPY pnpm-*.yaml ./
+COPY packages ./packages
+RUN cat package.json | jq '.workspaces = ["packages/api","packages/prisma-clients","packages/types"]' > package.json.tmp && mv package.json.tmp package.json
+RUN ~/.bun/bin/bun i
 
-COPY --from=build /app/packages/prisma-clients ./packages/prisma-clients
-COPY --from=build /app/packages/types ./packages/types
-COPY --from=build /app/packages/prisma-clients/dist/ ./packages/prisma-clients
-COPY --from=build /app/packages/types/dist/ ./packages/types
-COPY --from=build /app/packages/api/dist/api ./packages/api
+WORKDIR /app/packages/api
+RUN ~/.bun/bin/bun build index.ts --compile --outfile api
 
-COPY packages/api/package.json ./packages/api
-COPY packages/api/translations ./packages/api/translations
+FROM node:20 AS api
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
-RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
-    pnpm i --production
-
-COPY ./packages/api/routes/demo/*.csv ./routes/demo/
-COPY ./packages/api/emails ./emails/
-COPY ./packages/api/.env ./.env
-
+COPY --from=api-build /app/packages/api/api /api
 EXPOSE 3000
+RUN ls -la /api
+ENTRYPOINT /api
 
-CMD ["node", "packages/api/index.js"]

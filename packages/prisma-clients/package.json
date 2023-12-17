@@ -2,7 +2,7 @@
   "name": "~prisma-clients",
   "module": "index.ts",
   "engines": {
-    "node": ">=18.0.0 <19.0.0"
+    "node": ">=20.0.0 <21.0.0"
   },
   "scripts": {
     "prisma:pull": "ls schemas/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",

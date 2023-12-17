@@ -1,6 +1,0 @@
-packages:
-  - "apps/*"
-  - "!apps/duckguessr-old"
-  - "apps/*/packages/*"
-  - "apps/*/api"
-  - "packages/*"
