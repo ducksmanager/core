@@ -21,7 +21,6 @@ COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 
 
 FROM node:20 AS api-build
-LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
@@ -34,13 +33,13 @@ RUN cat package.json | jq '.workspaces = ["packages/api","packages/prisma-client
 RUN ~/.bun/bin/bun i
 
 WORKDIR /app/packages/api
-RUN ~/.bun/bin/bun build index.ts --compile --outfile api
+RUN ~/.bun/bin/bun build --entrypoints index.ts --target bun --outdir /out
 
-FROM node:20 AS api
+FROM oven/bun AS api
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
-COPY --from=api-build /app/packages/api/api /api
+COPY --from=api-build /out /home/bun/app
 EXPOSE 3000
-RUN ls -la /api
-ENTRYPOINT /api
+ENTRYPOINT ["bun", "run", "/home/bun/app/index.js"]
+
 
