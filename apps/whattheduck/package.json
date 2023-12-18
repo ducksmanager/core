@@ -2,7 +2,7 @@
   "name": "~whattheduck-ionic",
   "version": "0.0.1",
   "engines": {
-    "node": ">=18.0.0 <19.0.0"
+    "node": ">=20.0.0 <21.0.0"
   },
   "scripts": {
     "whattheduck": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n whattheduck-ionic,api \"pnpm -F ~whattheduck-ionic... -F !~web -F !~prisma-clients dev\" \"pnpm -F ~api... dev\"",
