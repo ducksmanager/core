@@ -161,8 +161,8 @@
 <script setup lang="ts">
 import axios from "axios";
 
+import { QuotedIssue } from "~/composables/useCollection";
 import condition from "~/composables/useCondition";
-import { QuotedIssue } from "~/stores/collection";
 import { call } from "~axios-helper";
 
 const { getConditionLabel } = condition();

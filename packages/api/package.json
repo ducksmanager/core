@@ -9,9 +9,6 @@
     "dev": "concurrently -n api,docker-compose \"nodemon\" \"docker compose -f docker-compose-dev.yml up\"",
     "lint": "eslint --fix --cache ."
   },
-  "_moduleAliases": {
-    "~prisma-clients": "../prisma-clients"
-  },
   "dependencies": {
     "@prisma/client": "^5.7.0",
     "@pusher/push-notifications-server": "^1.2.6",
@@ -34,6 +31,7 @@
     "mariadb": "^3.2.2",
     "nodemailer": "^6.9.7",
     "nodemon": "^3.0.1",
+    "socket.io": "^4.7.2",
     "ts-node": "^10.9.1",
     "~dm-types": "workspace:*",
     "~prisma-clients": "workspace:*"

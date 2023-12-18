@@ -4,7 +4,6 @@ import { AxiosError } from "axios";
 import {
   GET__collection__edges__lastPublished,
   GET__collection__purchases,
-  GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit,
   GET__collection__user,
 } from "~api-routes/index";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
@@ -17,6 +16,9 @@ import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
 
 import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";
+import { StatsServices } from "~api/services/stats/types";
+import { Socket } from "socket.io-client";
+import { EventReturnType } from "../../../../packages/api/services";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   IssueWithPublicationcode,
@@ -45,6 +47,7 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 };
 
 let api: AxiosInstance,
+  socket: Socket<StatsServices>,
   sessionExistsFn: () => Promise<boolean>,
   clearSessionFn: () => Promise<void>;
 
@@ -58,7 +61,7 @@ export const collection = defineStore("collection", () => {
     marketplaceContactMethods = ref(null as string[] | null),
     suggestions = ref(
       null as
-        | GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit["resBody"]
+        | EventReturnType<StatsServices['getSuggestionsForCountry']>
         | null,
     ),
     subscriptions = ref(null as SubscriptionTransformed[] | null),
@@ -293,22 +296,13 @@ export const collection = defineStore("collection", () => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
         suggestions.value = (
-          await call(
-            api,
-            new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit(
-              {
-                params: {
-                  countrycode: countryCode || "ALL",
-                  sincePreviousVisit: sinceLastVisit
-                    ? "since_previous_visit"
-                    : "_",
-                  sort,
-                  limit: sinceLastVisit ? "100" : "20",
-                },
-              },
-            ),
+          await socket.emitWithAck('getSuggestionsForCountry',  countryCode || "ALL", sinceLastVisit
+            ? "since_previous_visit"
+            : "_",
+            sort,
+            sinceLastVisit ? 100 : 20
           )
-        ).data;
+        );
         isLoadingSuggestions.value = false;
       }
     },
@@ -419,6 +413,11 @@ export const collection = defineStore("collection", () => {
     };
   return {
     ...collectionUtils,
+    setSocket: (params: {
+      socket: typeof socket
+    }) => {
+      socket = params.socket;
+    },
     setApi: (params: {
       api: typeof api;
       sessionExistsFn: typeof sessionExistsFn;

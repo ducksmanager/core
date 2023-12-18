@@ -17,6 +17,7 @@
     "allowSyntheticDefaultImports": true,
     "paths": {
       "~/*": ["*"],
+      "~dm-types/*": ["../dm-types/*"],
       "~emails/*": ["emails/*"],
       "~prisma-clients/*": ["../prisma-clients/*"],
       "~routes/*": ["routes/*"],
