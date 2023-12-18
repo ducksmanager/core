@@ -1,28 +1,12 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
+**/node_modules/
+.nuxt-storybook
+/.idea/
+/.nuxt/
+/test/output
+/server/datasets/*
+storybook-static
+.env.prod
+sessions
 
-# Node dependencies
-node_modules
-
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
-.env
-.env.*
-!.env.example
-
-/*.d.ts
-
-api/prisma/client_*
+!.gitkeep
+/dist/

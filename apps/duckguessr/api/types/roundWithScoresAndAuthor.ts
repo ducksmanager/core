@@ -1,4 +1,4 @@
-import { round, roundScore } from "@prisma/client";
+import { round, roundScore } from "./prisma/client_duckguessr";
 
 import { inducks_person } from "~prisma-clients/client_coa";
 

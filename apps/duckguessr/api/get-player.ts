@@ -1,5 +1,6 @@
-import { player, PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
+
+import { player, PrismaClient } from "./prisma/client_duckguessr";
 
 const prisma = new PrismaClient();
 
@@ -73,7 +74,7 @@ export const updatePlayer = async (
 export const getPlayerGameStatistics = async (
   gameId: number
 ) => await prisma.userGameMedalPoints.findMany({
-  where: { 
+  where: {
     gameId,
     medalType: {
       notIn: ['published-fr-small']

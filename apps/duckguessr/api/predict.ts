@@ -1,4 +1,4 @@
-import { dataset, round } from "@prisma/client";
+import { dataset, round } from "./prisma/client_duckguessr";
 
 interface PredictionResponse {
   url: string;
@@ -55,7 +55,7 @@ export const predict = (
       .catch((error: unknown) => {
         console.error(
           (error as { response?: { data?: string } })?.response?.data ||
-            "Bot server seems to be offline"
+          "Bot server seems to be offline"
         );
         console.log("Prediction failed, choosing a random author");
         const randomElement =

@@ -1,4 +1,4 @@
-import { roundScore } from "@prisma/client";
+import { roundScore } from "./prisma/client_duckguessr";
 
 export interface GuessRequest {
   personcode: string;

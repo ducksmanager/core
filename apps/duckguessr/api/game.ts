@@ -1,4 +1,4 @@
-import { player, PrismaClient } from "@prisma/client";
+import { player, PrismaClient } from "./prisma/client_duckguessr";
 
 const prisma = new PrismaClient();
 export const numberOfRounds = 8;

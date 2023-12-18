@@ -1,4 +1,4 @@
-import { player, PrismaClient, round, roundScore } from "@prisma/client";
+import { player, PrismaClient, round, roundScore } from "./prisma/client_duckguessr";
 
 import { GuessRequest, GuessResponse } from "./types/guess";
 const prisma = new PrismaClient();
@@ -20,7 +20,7 @@ export const getRoundWithScores = async (roundId: number) =>
 export const setRoundTimes = async (round: round) => {
   const offset = new Date(
     new Date().getTime() +
-      (round.roundNumber === 1 ? gameKickoffTime : kickoffTime)
+    (round.roundNumber === 1 ? gameKickoffTime : kickoffTime)
   ).getTime();
   return await prisma.round.update({
     where: {

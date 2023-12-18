@@ -7,7 +7,7 @@ import {
   PrismaClient,
   round,
   roundScore,
-} from "@prisma/client";
+} from "./prisma/client_duckguessr";
 
 import { DatasetWithCounts } from "./dataset";
 import { GameFullNoPersoncode } from "./game";
@@ -51,7 +51,7 @@ export interface ClientToServerEventsDatasets {
 }
 
 export interface ClientToServerEventsPodium {
-  getPodium: (callback: (players: (player & {sumScore: number})[]) => void) => void;
+  getPodium: (callback: (players: (player & { sumScore: number })[]) => void) => void;
 }
 
 export interface ClientToServerEventsMaintenance {

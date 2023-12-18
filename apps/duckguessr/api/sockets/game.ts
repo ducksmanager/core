@@ -1,10 +1,10 @@
-import { player, PrismaClient, round } from "@prisma/client";
 import { Server, Socket } from "socket.io";
 
 import { getGameWithRoundsDatasetPlayers, numberOfRounds } from "../game";
 import game from "../game";
 import { getPlayer, getPlayerStatistics, getUser } from "../get-player";
 import { predict } from "../predict";
+import { player, PrismaClient, round } from "../prisma/client_duckguessr";
 import { getRoundWithScores, setRoundTimes } from "../round";
 import { guess } from "../round";
 import { GuessResponse } from "../types/guess";
@@ -69,8 +69,7 @@ export const createGameSocket = async (
       currentGame!.gamePlayers.find(({ playerId }) => playerId === player.id)
     ) {
       console.info(
-        `Player ${player.username} is already associated with game ${
-          currentGame!.id
+        `Player ${player.username} is already associated with game ${currentGame!.id
         }`
       );
     } else {
@@ -86,8 +85,7 @@ export const createGameSocket = async (
     personcode: string | null
   ): Promise<boolean> => {
     console.log(
-      `${user.username} is guessing ${JSON.stringify(personcode)} on round ${
-        currentRound.id
+      `${user.username} is guessing ${JSON.stringify(personcode)} on round ${currentRound.id
       }`
     );
     try {

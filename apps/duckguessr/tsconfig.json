@@ -1,44 +1,46 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "ESNext",
-    "target": "es2018",
-    "lib": ["DOM", "ESNext"],
-    "strict": true,
-    "jsx": "preserve",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
     "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "dist",
-    "exclude": ["node_modules", "client_*"],
-    "types": [
-      "unplugin-icons/types/vue",
-      "vite/client",
-      "vite-plugin-pages/client"
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "ESNext",
+      "ESNext.AsyncIterable",
+      "DOM"
     ],
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "noEmit": true,
+    "outDir": "dist",
     "paths": {
-      "~/*": ["src/*"],
-      "~dm-types/*": ["../../packages/types/*"],
-      "~duckguessr-api/*": ["api/*"],
-      "~types/*": ["api/types/*"],
-      "~locales/*": ["locales/*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~web/*": ["../web/*"]
-    }
+      "~/*": [
+        "./*"
+      ],
+      "@/*": [
+        "./*"
+      ]
+    },
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2018",
+    "types": [
+      "@nuxt/types",
+      "@nuxtjs/axios",
+      "@types/node",
+      "codeceptjs",
+      "unplugin-vue2-script-setup/types"
+    ]
   },
-  "include": [
-    "auto-imports.d.ts",
-    "components.d.ts",
-    "src/**/*.ts",
-    "types/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue"
+  "ts-node": {
+    "files": true
+  },
+  "exclude": [
+    "node_modules",
+    ".nuxt",
+    "dist"
   ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "vueCompilerOptions": {
+    "experimentalCompatMode": 2
+  }
 }

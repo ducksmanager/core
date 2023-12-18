@@ -1,4 +1,4 @@
-import { dataset, game, gamePlayer, player } from "@prisma/client";
+import { dataset, game, gamePlayer, player } from "./prisma/client_duckguessr";
 
 import { Author, RoundWithScoresAndAuthor } from "./roundWithScoresAndAuthor";
 

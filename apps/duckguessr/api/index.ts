@@ -1,11 +1,11 @@
 import "dotenv/config";
 
-import { player, PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import { Namespace, Server } from "socket.io";
 
 import { PrismaClient as PrismaCoaClient } from "~prisma-clients/client_coa";
 
+import { player, PrismaClient } from "./prisma/client_duckguessr";
 import { createGameSocket } from "./sockets/game";
 import { createMatchmakingSocket } from "./sockets/game";
 import { createPlayerSocket } from "./sockets/player";
@@ -291,4 +291,6 @@ for (const pendingGame of pendingGames) {
   await createGameSocket(io, pendingGame.id);
 }
 
+
 io.listen(4000);
+console.log('hello')

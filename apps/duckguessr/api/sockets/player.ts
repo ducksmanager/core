@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { Server } from "socket.io";
 
 import {
@@ -7,6 +6,7 @@ import {
   getPlayerStatistics,
   updatePlayer,
 } from "../get-player";
+import { PrismaClient } from "../prisma/client_duckguessr";
 import {
   ClientToServerEvents,
   InterServerEvents,
