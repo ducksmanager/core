@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   CacheOptions,
   CacheRequestConfig,
-  setupCache,
+  setupCache, 
 } from "axios-cache-interceptor";
 import dayjs from "dayjs";
 
@@ -55,6 +55,28 @@ export const createCachedCoaApi = (
       },
     ),
   );
+
+// export type CachedSocket<T extends EventsMap> = {
+//   emitWithAckCached: Socket["emitWithAck"];
+// };
+
+// export const createCachedCoaSocket = (
+//   storage: CacheOptions["storage"],
+//   baseURL: string,
+// ): CachedSocket<CoaServices> => {
+//   const socket: Socket<CoaServices> = io(baseURL + "/coa");
+
+//   const emitWithAckCached = async (ev: Parameters<typeof socket['emitWithAck']>[0], ...args: Parameters<typeof socket['emitWithAck']>) => {
+//     const cachedValue = await storage!.get(JSON.stringify(args));
+//     if (cachedValue.state === "cached") {
+//       return cachedValue.data as Awaited<ReturnType<Socket["emitWithAck"]>>;
+//     }
+//     const response = await socket.emitWithAck(ev, ...args);
+//     storage?.set(JSON.stringify(args), response as NotEmptyStorageValue);
+//     return response;
+//   };
+//   return {emitWithAckCached};
+// };
 
 export const createCachedUserApi = (
   storage: CacheOptions["storage"],

@@ -7,6 +7,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { router } from "express-file-routing";
+import { Server } from "socket.io";
 
 import {
   authenticateToken,
@@ -14,6 +15,10 @@ import {
   checkUserIsEdgeCreatorEditor,
   injectTokenIfValid,
 } from "~routes/_auth";
+
+import coa from "./services/coa";
+import notifications from "./services/notifications";
+import stats from "./services/stats";
 
 dotenv.config({
   path: "./.env",
@@ -72,4 +77,17 @@ app.use(express.json({ limit: "5mb" }));
   app.listen(port, () => {
     console.log(`API listening on port ${port}`);
   });
+
+  const io = new Server<Record<string, never>>({
+    cors: {
+      origin: process.env.WEBSITE_ROOT
+    }
+  });
+  io.on("connection", () => {
+      coa(io)
+      stats(io)
+      notifications(io)
+  })
+
+  io.listen(4000);
 })();

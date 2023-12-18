@@ -4,12 +4,13 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { buildWebStorage } from "axios-cache-interceptor";
+// import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
 
 import { addTokenRequestInterceptor } from "~axios-helper";
 
-import { createCachedCoaApi } from "./api";
+// import { createCachedCoaApi } from "./api";
+import { io } from "socket.io-client";
 
 const usersStore = users();
 const statsStore = stats();
@@ -31,6 +32,9 @@ onBeforeMount(() => {
   statsStore.setApi({
     api: defaultApi,
   });
+  statsStore.setSocket({
+    socket: io(import.meta.env.VITE_SOCKET_URL+'/stats'),
+  });
   publicCollectionStore.setApi({
     api: defaultApi,
   });
@@ -40,11 +44,11 @@ onBeforeMount(() => {
     sessionExistsFn: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
   });
-  coaStore.setApi({
-    api: createCachedCoaApi(
-      buildWebStorage(sessionStorage),
-      import.meta.env.VITE_GATEWAY_URL,
-    ),
+  collectionStore.setSocket({
+    socket: io(import.meta.env.VITE_SOCKET_URL),
+  });
+  coaStore.setSocket({
+    socket: io(import.meta.env.VITE_SOCKET_URL+'/coa'),
   });
   collectionStore.loadUser();
 });

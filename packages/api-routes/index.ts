@@ -1,7 +1,6 @@
 // noinspection ES6PreferShortImport
 
 import { ContractWithMethodAndUrl } from "~axios-helper";
-import { AuthorsDetails } from "~dm-types/AuthorsDetails";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import { CollectionUpdateMultipleIssues,CollectionUpdateSingleIssue } from "~dm-types/CollectionUpdate";
@@ -12,24 +11,17 @@ import { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate
 import { EditSubscription } from "~dm-types/EditSubscription";
 import { Event } from "~dm-types/Event";
 import { ImageElement } from "~dm-types/ImageElement";
-import { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import {  } from "~dm-types/IssueSuggestionList";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { MedalPoints } from "~dm-types/MedalPoints";
 import { ModelSteps } from "~dm-types/ModelSteps";
-import { PublicationTitles } from "~dm-types/PublicationTitles";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import { SimpleEntry } from "~dm-types/SimpleEntry";
-import { SimpleIssue } from "~dm-types/SimpleIssue";
-import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import { SimplePopularity } from "~dm-types/SimplePopularity";
 import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
 import { StorySearchResults } from "~dm-types/StorySearchResults";
-import { SuggestionsWithDetails } from "~dm-types/SuggestionsWithDetails";
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { WantedEdge } from "~dm-types/WantedEdge";
-import { inducks_issue, inducks_issuequotation } from "~prisma-clients/client_coa";
 import { authorUser, bookstoreComment, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "~prisma-clients/client_dm";
 import { edgeContributor, edgeModel,elementImage } from "~prisma-clients/client_edgecreator";
 
@@ -242,10 +234,6 @@ export class PUT__edgecreator__submit  extends ContractWithMethodAndUrl<{
             static readonly method = "put";
             static readonly url = "/edgecreator/submit";
         }
-export class POST__notification__send  extends ContractWithMethodAndUrl<Record<string, never>> {
-            static readonly method = "post";
-            static readonly url = "/notification/send";
-        }
 export class GET__status__db  extends ContractWithMethodAndUrl<{ resBody: { status: string } }> {
             static readonly method = "get";
             static readonly url = "/status/db";
@@ -264,34 +252,6 @@ export class GET__bookcase__$username  extends ContractWithMethodAndUrl<{
   }> {
             static readonly method = "get";
             static readonly url = "/bookcase/:username";
-        }
-export class POST__coa__issues__decompose  extends ContractWithMethodAndUrl<{
-      resBody: Record<string, inducks_issue>;
-      reqBody: { issueCodes: string };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/coa/issues/decompose";
-        }
-export class POST__coa__list__publications  extends ContractWithMethodAndUrl<{
-      resBody: PublicationTitles;
-      reqBody: { publicationCodes: string[] };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/coa/list/publications";
-        }
-export class GET__coa__quotations__issueCodes  extends ContractWithMethodAndUrl<{
-    resBody: inducks_issuequotation[];
-    query: { issueCodes: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/quotations/issueCodes";
-        }
-export class GET__coa__quotations__publications  extends ContractWithMethodAndUrl<{
-    resBody: inducks_issuequotation[];
-    query: { publicationCodes: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/quotations/publications";
         }
 export class POST__coa__stories__search  extends ContractWithMethodAndUrl<{
       resBody: { results: StorySearchResults };
@@ -343,10 +303,6 @@ export class DELETE__collection__on_sale_by_others__requests  extends ContractWi
 export class PUT__collection__on_sale_by_others__requests  extends ContractWithMethodAndUrl<{ reqBody: { issueIds: number[] } }> {
             static readonly method = "put";
             static readonly url = "/collection/on-sale-by-others/requests";
-        }
-export class GET__collection__stats__watchedauthorsstorycount  extends ContractWithMethodAndUrl<{ resBody: AuthorsDetails }> {
-            static readonly method = "get";
-            static readonly url = "/collection/stats/watchedauthorsstorycount";
         }
 export class GET__collection_public__$username  extends ContractWithMethodAndUrl<{ params: { username: string }, resBody: issue[] }> {
             static readonly method = "get";
@@ -421,62 +377,6 @@ export class GET__bookcase__$username__sort  extends ContractWithMethodAndUrl<{
             static readonly method = "get";
             static readonly url = "/bookcase/:username/sort";
         }
-export class GET__coa__authorsfullnames__$authors  extends ContractWithMethodAndUrl<{
-    resBody: { [_personcode: string]: string };
-    params: { authors: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/authorsfullnames/:authors";
-        }
-export class GET__coa__list__issues__by_publication_codes  extends ContractWithMethodAndUrl<{
-    resBody: SimpleIssue[];
-    query: { publicationCodes: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issues/by-publication-codes";
-        }
-export class GET__coa__list__issues__by_storycode  extends ContractWithMethodAndUrl<{
-    resBody: SimpleIssue[];
-    query: { storycode: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issues/by-storycode";
-        }
-export class GET__coa__list__issues__count  extends ContractWithMethodAndUrl<{ resBody: Record<string, number> }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issues/count";
-        }
-export class GET__coa__list__issues__details  extends ContractWithMethodAndUrl<{
-    resBody: {
-      releaseDate: string;
-      entries: SimpleEntry[];
-    };
-    query: { publicationcode: string; issuenumber: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issues/details";
-        }
-export class GET__coa__list__issues__recent  extends ContractWithMethodAndUrl<{ resBody: inducks_issue[] }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issues/recent";
-        }
-export class GET__coa__list__issues__withDetails  extends ContractWithMethodAndUrl<{
-    resBody: { [_issuenumber: string]: IssueCoverDetails[] };
-    query: { publicationCodes: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issues/withDetails";
-        }
-export class GET__coa__list__issues__withTitle  extends ContractWithMethodAndUrl<{
-    resBody: {
-      issuenumber: string;
-      title: string | null;
-    }[];
-    query: { publicationcode: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issues/withTitle";
-        }
 export class POST__coa__stories__search__withIssues  extends ContractWithMethodAndUrl<{
       resBody: StorySearchResults;
       reqBody: { keywords: string };
@@ -550,35 +450,6 @@ export class GET__global_stats__user__collection__rarity  extends ContractWithMe
   }> {
             static readonly method = "get";
             static readonly url = "/global-stats/user/collection/rarity";
-        }
-export class GET__coa__authorsfullnames__search__$partialAuthorName  extends ContractWithMethodAndUrl<{
-    resBody: { [_personcode: string]: string };
-    params: { partialAuthorName: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/authorsfullnames/search/:partialAuthorName";
-        }
-export class GET__coa__list__countries__$locale  extends ContractWithMethodAndUrl<{
-    resBody: { [_countrycode: string]: string };
-    params: { locale: string };
-    query: { countryCodes: string | null };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/countries/:locale";
-        }
-export class GET__coa__list__issuesbycodes__$issueCodes  extends ContractWithMethodAndUrl<{
-    resBody: Record<string, SimpleIssueWithPublication>;
-    params: { issueCodes: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/issuesbycodes/:issueCodes";
-        }
-export class GET__coa__list__publications__$countrycode  extends ContractWithMethodAndUrl<{
-      resBody: PublicationTitles;
-      params: { countrycode: string };
-    }> {
-            static readonly method = "get";
-            static readonly url = "/coa/list/publications/:countrycode";
         }
 export class GET__collection__on_sale_by_others__contact_methods__$sellerId  extends ContractWithMethodAndUrl<{
     resBody: {
@@ -656,16 +527,4 @@ export class PUT__edgecreator__publish__$country__$magazine__$issuenumber  exten
     }> {
             static readonly method = "put";
             static readonly url = "/edgecreator/publish/:country/:magazine/:issuenumber";
-        }
-export class GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit  extends ContractWithMethodAndUrl<{
-      resBody: SuggestionsWithDetails;
-      params: {
-        countrycode: string;
-        sincePreviousVisit: "since_previous_visit" | "_";
-        sort: "score" | "oldestdate";
-        limit: string;
-      };
-    }> {
-            static readonly method = "get";
-            static readonly url = "/collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit";
         }

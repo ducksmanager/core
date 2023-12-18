@@ -1,21 +1,23 @@
 import { AxiosInstance } from "axios";
+import { Socket } from "socket.io-client";
 
-import {
-  GET__coa__authorsfullnames__search__$partialAuthorName,
-  GET__collection__authors__watched,
-} from "~api-routes/index";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
+import { CoaServices } from "~api/services/coa/types";
+import { EventReturnType } from "~api/services";
+import { StatsServices } from "~api/services/stats/types";
 
 let api: AxiosInstance;
+let socket: Socket<StatsServices>;
+
 export const stats = defineStore("stats", () => {
   const ratings = ref(
-    undefined as GET__collection__authors__watched["resBody"] | undefined,
+    undefined as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | undefined,
   );
   const isSearching = ref(false as boolean);
   const isLoadingWatchedAuthors = ref(false as boolean);
   const authorSearchResults = ref(
     undefined as
-      | GET__coa__authorsfullnames__search__$partialAuthorName["resBody"]
+      | EventReturnType<CoaServices["searchAuthor"]>
       | undefined,
   );
   const pendingSearch = ref(null as string | null);
@@ -28,9 +30,8 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = (
-        await call(api, new GET__collection__authors__watched())
-      ).data;
+      ratings.value =
+        await socket.emitWithAck('getWatchedAuthorsStats');
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -40,16 +41,7 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = (
-          await call(
-            api,
-            new GET__coa__authorsfullnames__search__$partialAuthorName({
-              params: {
-                partialAuthorName: value,
-              },
-            }),
-          )
-        ).data;
+        authorSearchResults.value = await coa().getSocket().emitWithAck('searchAuthor', value)
         console.log(authorSearchResults.value);
       } finally {
         isSearching.value = false;
@@ -86,6 +78,9 @@ export const stats = defineStore("stats", () => {
   return {
     setApi: (params: { api: typeof api }) => {
       api = addUrlParamsRequestInterceptor(params.api);
+    },
+    setSocket: (params: { socket: typeof socket }) => {
+      socket = (params.socket);
     },
     isAuthorWatched,
     isSearching,
