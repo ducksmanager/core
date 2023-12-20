@@ -17,7 +17,6 @@ import { ModelSteps } from "~dm-types/ModelSteps";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import { SimplePopularity } from "~dm-types/SimplePopularity";
 import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
-import { StorySearchResults } from "~dm-types/StorySearchResults";
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { WantedEdge } from "~dm-types/WantedEdge";
@@ -210,13 +209,6 @@ export class GET__status__pastecsearch  extends ContractWithMethodAndUrl<{ resBo
             static readonly method = "get";
             static readonly url = "/status/pastecsearch";
         }
-export class POST__coa__stories__search  extends ContractWithMethodAndUrl<{
-      resBody: { results: StorySearchResults };
-      reqBody: { keywords: string };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/coa/stories/search";
-        }
 export class DELETE__collection__authors__watched  extends ContractWithMethodAndUrl<{ reqBody: { personcode: string } }> {
             static readonly method = "delete";
             static readonly url = "/collection/authors/watched";
@@ -313,13 +305,6 @@ export class POST__presentation_text__$decision  extends ContractWithMethodAndUr
     }> {
             static readonly method = "post";
             static readonly url = "/presentation-text/:decision";
-        }
-export class POST__coa__stories__search__withIssues  extends ContractWithMethodAndUrl<{
-      resBody: StorySearchResults;
-      reqBody: { keywords: string };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/coa/stories/search/withIssues";
         }
 export class GET__collection__options__$optionName  extends ContractWithMethodAndUrl<{
     resBody: string[];

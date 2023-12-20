@@ -1,12 +1,12 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
-import { Namespace, Server } from "socket.io";
+import { Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { user } from "~prisma-clients/client_dm";
 
 import { getSuggestions } from "../stats/suggestions";
-import { Services } from "./types";
+import { Namespace } from "./types";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
@@ -14,7 +14,7 @@ export enum COUNTRY_CODE_OPTION {
 }
 
 export default (io: Server) => {
-  (io.of("/notification") as Namespace<Services>).on(
+  (io.of("/notification") as Namespace).on(
     "connection",
     (socket) => {
       socket.on("send", async (callback) => {
