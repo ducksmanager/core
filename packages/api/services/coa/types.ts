@@ -5,6 +5,7 @@ import IssueDetails from "./issue-details/types";
 import Issues from "./issues/types";
 import Publications from "./publications/types";
 import Quotations from "./quotations/types";
+import Stories from "./stories/types";
 
 export interface Services
   extends Countries,
@@ -12,7 +13,8 @@ export interface Services
     Issues,
     IssueDetails,
     Authors,
-    Quotations {}
+    Quotations,
+    Stories {}
 
 export interface Namespace extends NamespaceGeneric<Services> {}
 

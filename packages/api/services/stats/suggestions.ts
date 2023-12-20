@@ -8,9 +8,9 @@ import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 
 import { getPublicationTitles } from "../coa/publications";
 import { COUNTRY_CODE_OPTION } from "../notifications";
-import { StatsSocket } from "./types";
+import { Socket } from "./types";
 
-export default (socket: StatsSocket) => {
+export default (socket: Socket) => {
   socket.on(
     "getSuggestionsForCountry",
     async (countrycode, sincePreviousVisit, sort, limit, callback) => {

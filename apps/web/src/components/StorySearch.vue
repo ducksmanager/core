@@ -182,14 +182,9 @@ const runSearch = async (value: string) => {
         issueResults.results.map(({ publicationcode }) => publicationcode),
       );
     } else {
-      const data = (
-        await call(
-          axios,
-          new POST__coa__stories__search__withIssues({
-            reqBody: { keywords: value },
-          }),
-        )
-      ).data;
+      const data = await coa()
+        .getSocket()
+        .emitWithAck("searchStory", value.split(","), true);
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:

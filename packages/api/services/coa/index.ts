@@ -6,6 +6,7 @@ import issueDetails from "./issue-details";
 import issues from "./issues";
 import publications from "./publications";
 import quotations from "./quotations";
+import stories from "./stories";
 import { Namespace } from "./types";
 
 export default (io: Server) => {
@@ -16,5 +17,6 @@ export default (io: Server) => {
     issueDetails(socket);
     authors(socket);
     quotations(socket);
+    stories(socket);
   });
 };
