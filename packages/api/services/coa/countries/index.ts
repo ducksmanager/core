@@ -1,8 +1,8 @@
 import { prismaCoa } from "~/prisma";
-import { CoaSocket } from "~/services/coa/types";
+import { Socket } from "~/services/coa/types";
 import { Prisma } from "~prisma-clients/client_coa";
 
-export default (socket: CoaSocket) => {
+export default (socket: Socket) => {
   socket.on("getCountryList", (locale, countryCodes, callback) =>
     getCountryNames(locale, countryCodes).then(callback),
   );

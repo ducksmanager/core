@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   CacheOptions,
   CacheRequestConfig,
-  setupCache, 
+  setupCache,
 } from "axios-cache-interceptor";
 import dayjs from "dayjs";
 

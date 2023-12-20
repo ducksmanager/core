@@ -1,9 +1,9 @@
 import { prismaDmStats } from "~/prisma";
 
-import { StatsSocket } from "./types";
 import { getAuthorFullNames } from "../coa/authors";
+import { Socket } from "./types";
 
-export default (socket: StatsSocket) => {
+export default (socket: Socket) => {
   socket.on("getWatchedAuthorsStats", async (callback) => {
     const user = socket.data.user;
     const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(

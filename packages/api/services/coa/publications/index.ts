@@ -1,7 +1,7 @@
 import { prismaCoa } from "~/prisma";
-import { CoaSocket } from "~/services/coa/types";
+import { Socket } from "~/services/coa/types";
 
-export default (socket: CoaSocket) => {
+export default (socket: Socket) => {
   socket.on("getPublicationListFromCountrycode", (countrycode, callback) =>
     getPublicationTitles({ startsWith: `${countrycode}/` }).then(callback),
   );

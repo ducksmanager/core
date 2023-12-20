@@ -6,7 +6,7 @@ import { prismaDm } from "~/prisma";
 import { user } from "~prisma-clients/client_dm";
 
 import { getSuggestions } from "../stats/suggestions";
-import { NotificationServices } from "./types";
+import { Services } from "./types";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
@@ -14,7 +14,7 @@ export enum COUNTRY_CODE_OPTION {
 }
 
 export default (io: Server) => {
-  (io.of("/notification") as Namespace<NotificationServices>).on(
+  (io.of("/notification") as Namespace<Services>).on(
     "connection",
     (socket) => {
       socket.on("send", async (callback) => {

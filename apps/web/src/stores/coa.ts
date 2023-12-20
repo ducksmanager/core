@@ -1,10 +1,11 @@
+import { Socket } from "socket.io-client";
+
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
+import { Services as CoaServices } from "~api/services/coa/types";
+import { EventReturnType } from "~api/services/types";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { inducks_issue } from "~prisma-clients/client_coa";
-import { CoaServices } from "~api/services/coa/types";
-import { EventReturnType } from "~api/services";
-import { Socket } from "socket.io-client";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -42,14 +43,22 @@ export const coa = defineStore("coa", () => {
       /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/,
     locale = useI18n().locale,
     coverUrls = ref({} as { [issuenumber: string]: string }),
-    countryNames = ref(null as EventReturnType<CoaServices["getCountryList"]> | null),
-    publicationNames = ref({} as EventReturnType<CoaServices["getPublicationListFromCountrycode"]>),
+    countryNames = ref(
+      null as EventReturnType<CoaServices["getCountryList"]> | null,
+    ),
+    publicationNames = ref(
+      {} as EventReturnType<CoaServices["getPublicationListFromCountrycode"]>,
+    ),
     publicationNamesFullCountries = ref([] as string[]),
-    personNames = ref(null as EventReturnType<CoaServices["getAuthorList"]> | null),
+    personNames = ref(
+      null as EventReturnType<CoaServices["getAuthorList"]> | null,
+    ),
     issueNumbers = ref({} as { [issuecode: string]: string[] }),
     issuesWithTitles = ref(
       {} as {
-        [issuenumber: string]: EventReturnType<CoaServices["getIssuesWithTitles"]>;
+        [issuenumber: string]: EventReturnType<
+          CoaServices["getIssuesWithTitles"]
+        >;
       },
     ),
     issueDetails = ref({} as { [issuecode: string]: InducksIssueDetails }),
@@ -142,19 +151,18 @@ export const coa = defineStore("coa", () => {
         ),
       ];
       try {
-      return (
-        actualNewPublicationCodes.length &&
-        addPublicationNames(
-          await socket.emitWithAck(
-            "getPublicationListFromPublicationcodeList",
-            actualNewPublicationCodes,
-          ),
-        )
-      );
-          }
-          catch (e) {
-debugger
-          }
+        return (
+          actualNewPublicationCodes.length &&
+          addPublicationNames(
+            await socket.emitWithAck(
+              "getPublicationListFromPublicationcodeList",
+              actualNewPublicationCodes,
+            ),
+          )
+        );
+      } catch (e) {
+        debugger;
+      }
     },
     fetchIssueQuotations = async (newPublicationCodes: string[]) => {
       const actualNewPublicationCodes = [
@@ -169,18 +177,24 @@ debugger
       ];
       return (
         actualNewPublicationCodes.length &&
-        addIssueQuotations(await socket.emitWithAck('getQuotationsByPublicationCodes', actualNewPublicationCodes).then((data) =>
-            data.reduce(
-              (issueAcc, issue) => ({
-                ...issueAcc,
-                [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                  min: issue.estimationMin,
-                  max: issue.estimationMax,
-                },
-              }),
-              {} as { [issuecode: string]: InducksIssueQuotationSimple },
+        addIssueQuotations(
+          await socket
+            .emitWithAck(
+              "getQuotationsByPublicationCodes",
+              actualNewPublicationCodes,
+            )
+            .then((data) =>
+              data.reduce(
+                (issueAcc, issue) => ({
+                  ...issueAcc,
+                  [`${issue.publicationcode} ${issue.issuenumber}`]: {
+                    min: issue.estimationMin,
+                    max: issue.estimationMax,
+                  },
+                }),
+                {} as { [issuecode: string]: InducksIssueQuotationSimple },
+              ),
             ),
-          ),
         )
       );
     },
@@ -212,12 +226,15 @@ debugger
         actualNewPersonCodes.length &&
         setPersonNames({
           ...(personNames.value || {}),
-          ...(await socket.emitWithAck('getAuthorList', actualNewPersonCodes)),
+          ...(await socket.emitWithAck("getAuthorList", actualNewPersonCodes)),
         })
       );
     },
     fetchIssueNumbersWithTitles = async (publicationcode: string) => {
-      issuesWithTitles.value[publicationcode] = (await socket.emitWithAck('getIssuesWithTitles', publicationcode))
+      issuesWithTitles.value[publicationcode] = await socket.emitWithAck(
+        "getIssuesWithTitles",
+        publicationcode,
+      );
     },
     fetchIssueNumbers = async function (publicationCodes: string[]) {
       const newPublicationCodes = [
@@ -229,7 +246,10 @@ debugger
         ),
       ];
       if (newPublicationCodes.length) {
-        const data = await socket.emitWithAck('getIssuesByPublicationCodes', newPublicationCodes);
+        const data = await socket.emitWithAck(
+          "getIssuesByPublicationCodes",
+          newPublicationCodes,
+        );
 
         addIssueNumbers(
           data.reduce(
@@ -257,18 +277,17 @@ debugger
       return (
         newIssueCodes.length &&
         addIssueCodeDetails(
-          await socket.emitWithAck('decompose', newIssueCodes)
+          await socket.emitWithAck("decompose", newIssueCodes),
         )
       );
     },
     fetchIssueCounts = async () => {
       if (!issueCounts.value)
-        issueCounts.value =
-          await socket.emitWithAck('getCountByPublicationcode')
+        issueCounts.value = await socket.emitWithAck(
+          "getCountByPublicationcode",
+        );
     },
-    fetchRecentIssues = async () =>
-      await socket.emitWithAck('getRecentIssues'),
-
+    fetchRecentIssues = async () => await socket.emitWithAck("getRecentIssues"),
     fetchIssueUrls = async ({
       publicationcode,
       issuenumber,
@@ -278,7 +297,11 @@ debugger
     }) => {
       const issueCode = `${publicationcode} ${issuenumber}`;
       if (!issueDetails.value[issueCode]) {
-        const newIssueDetails = await socket.emitWithAck('getIssueDetails', publicationcode, issuenumber);
+        const newIssueDetails = await socket.emitWithAck(
+          "getIssueDetails",
+          publicationcode,
+          issuenumber,
+        );
 
         issueDetails.value = {
           ...issueDetails.value,

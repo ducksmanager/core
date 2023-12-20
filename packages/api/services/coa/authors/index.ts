@@ -1,8 +1,8 @@
 import { prismaCoa } from "~/prisma";
 
-import { CoaSocket } from "../types";
+import { Socket } from "../types";
 
-export default (socket: CoaSocket) => {
+export default (socket: Socket) => {
   socket.on("getAuthorList", async (personcodes, callback) =>
     getAuthorFullNames([...new Set(personcodes)]).then(callback),
   );
