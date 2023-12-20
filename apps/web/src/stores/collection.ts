@@ -1,6 +1,8 @@
 import { AxiosInstance } from "axios";
 import { AxiosError } from "axios";
+import { Socket } from "socket.io-client";
 
+import { Services as StatsServices } from "~api/services/stats/types";
 import {
   GET__collection__edges__lastPublished,
   GET__collection__purchases,
@@ -14,11 +16,9 @@ import {
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
 
+import { EventReturnType } from "../../../../packages/api/services/types";
 import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";
-import { StatsServices } from "~api/services/stats/types";
-import { Socket } from "socket.io-client";
-import { EventReturnType } from "../../../../packages/api/services";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   IssueWithPublicationcode,
@@ -60,9 +60,7 @@ export const collection = defineStore("collection", () => {
     watchedAuthors = ref(null as authorUser[] | null),
     marketplaceContactMethods = ref(null as string[] | null),
     suggestions = ref(
-      null as
-        | EventReturnType<StatsServices['getSuggestionsForCountry']>
-        | null,
+      null as EventReturnType<StatsServices["getSuggestionsForCountry"]> | null,
     ),
     subscriptions = ref(null as SubscriptionTransformed[] | null),
     popularIssuesInCollection = ref(
@@ -295,13 +293,12 @@ export const collection = defineStore("collection", () => {
     }) => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
-        suggestions.value = (
-          await socket.emitWithAck('getSuggestionsForCountry',  countryCode || "ALL", sinceLastVisit
-            ? "since_previous_visit"
-            : "_",
-            sort,
-            sinceLastVisit ? 100 : 20
-          )
+        suggestions.value = await socket.emitWithAck(
+          "getSuggestionsForCountry",
+          countryCode || "ALL",
+          sinceLastVisit ? "since_previous_visit" : "_",
+          sort,
+          sinceLastVisit ? 100 : 20,
         );
         isLoadingSuggestions.value = false;
       }
@@ -413,9 +410,7 @@ export const collection = defineStore("collection", () => {
     };
   return {
     ...collectionUtils,
-    setSocket: (params: {
-      socket: typeof socket
-    }) => {
+    setSocket: (params: { socket: typeof socket }) => {
       socket = params.socket;
     },
     setApi: (params: {

@@ -1,24 +1,25 @@
 import { AxiosInstance } from "axios";
 import { Socket } from "socket.io-client";
 
+import { Services as CoaServices } from "~api/services/coa/types";
+import { Services as StatsServices } from "~api/services/stats/types";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
-import { CoaServices } from "~api/services/coa/types";
-import { EventReturnType } from "~api/services";
-import { StatsServices } from "~api/services/stats/types";
+
+import { EventReturnType } from "../../../../packages/api/services/types";
 
 let api: AxiosInstance;
 let socket: Socket<StatsServices>;
 
 export const stats = defineStore("stats", () => {
   const ratings = ref(
-    undefined as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | undefined,
+    undefined as
+      | EventReturnType<StatsServices["getWatchedAuthorsStats"]>
+      | undefined,
   );
   const isSearching = ref(false as boolean);
   const isLoadingWatchedAuthors = ref(false as boolean);
   const authorSearchResults = ref(
-    undefined as
-      | EventReturnType<CoaServices["searchAuthor"]>
-      | undefined,
+    undefined as EventReturnType<CoaServices["searchAuthor"]> | undefined,
   );
   const pendingSearch = ref(null as string | null);
 
@@ -30,8 +31,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value =
-        await socket.emitWithAck('getWatchedAuthorsStats');
+      ratings.value = await socket.emitWithAck("getWatchedAuthorsStats");
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -41,7 +41,9 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = await coa().getSocket().emitWithAck('searchAuthor', value)
+        authorSearchResults.value = await coa()
+          .getSocket()
+          .emitWithAck("searchAuthor", value);
         console.log(authorSearchResults.value);
       } finally {
         isSearching.value = false;
@@ -80,7 +82,7 @@ export const stats = defineStore("stats", () => {
       api = addUrlParamsRequestInterceptor(params.api);
     },
     setSocket: (params: { socket: typeof socket }) => {
-      socket = (params.socket);
+      socket = params.socket;
     },
     isAuthorWatched,
     isSearching,

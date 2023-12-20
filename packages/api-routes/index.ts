@@ -2,7 +2,6 @@
 
 import { ContractWithMethodAndUrl } from "~axios-helper";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
-import { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import { CollectionUpdateMultipleIssues,CollectionUpdateSingleIssue } from "~dm-types/CollectionUpdate";
 import { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import { EdgeModel } from "~dm-types/EdgeModel";
@@ -62,41 +61,6 @@ export class POST__login  extends ContractWithMethodAndUrl<{
     }> {
             static readonly method = "post";
             static readonly url = "/login";
-        }
-export class POST__auth__change_password  extends ContractWithMethodAndUrl<{
-      resBody: { token: string };
-      reqBody: { password: string; password2: string; token: string };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/auth/change-password";
-        }
-export class GET__auth__forgot  extends ContractWithMethodAndUrl<{ query: { token: string } }> {
-            static readonly method = "get";
-            static readonly url = "/auth/forgot";
-        }
-export class POST__auth__forgot  extends ContractWithMethodAndUrl<{
-      resBody: { token: string };
-      reqBody: { email: string };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/auth/forgot";
-        }
-export class POST__bookcase__options  extends ContractWithMethodAndUrl<{
-      resBody: { status: string };
-      reqBody: {
-        textures: { bookcase: string; bookshelf: string };
-        showAllCopies: boolean;
-      };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/bookcase/options";
-        }
-export class POST__bookcase__sort  extends ContractWithMethodAndUrl<{
-      resBody: { max: number } | undefined;
-      reqBody: { sorts: string[] };
-    }> {
-            static readonly method = "post";
-            static readonly url = "/bookcase/sort";
         }
 export class POST__bookstores__approve  extends ContractWithMethodAndUrl<{ reqBody: { id: number } }> {
             static readonly method = "post";
@@ -246,13 +210,6 @@ export class GET__status__pastecsearch  extends ContractWithMethodAndUrl<{ resBo
             static readonly method = "get";
             static readonly url = "/status/pastecsearch";
         }
-export class GET__bookcase__$username  extends ContractWithMethodAndUrl<{
-    resBody: BookcaseEdge[];
-    params: { username: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/bookcase/:username";
-        }
 export class POST__coa__stories__search  extends ContractWithMethodAndUrl<{
       resBody: { results: StorySearchResults };
       reqBody: { keywords: string };
@@ -356,26 +313,6 @@ export class POST__presentation_text__$decision  extends ContractWithMethodAndUr
     }> {
             static readonly method = "post";
             static readonly url = "/presentation-text/:decision";
-        }
-export class GET__bookcase__$username__options  extends ContractWithMethodAndUrl<{
-    resBody: {
-      textures: {
-        bookcase: string;
-        bookshelf: string;
-      };
-      showAllCopies: boolean;
-    };
-    params: { username: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/bookcase/:username/options";
-        }
-export class GET__bookcase__$username__sort  extends ContractWithMethodAndUrl<{
-    resBody: string[];
-    params: { username: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/bookcase/:username/sort";
         }
 export class POST__coa__stories__search__withIssues  extends ContractWithMethodAndUrl<{
       resBody: StorySearchResults;

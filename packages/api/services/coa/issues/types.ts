@@ -1,5 +1,5 @@
-import { inducks_issue } from "~prisma-clients/client_coa";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
+import { inducks_issue } from "~prisma-clients/client_coa";
 
 export default interface Issues {
   decompose: (

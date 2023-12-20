@@ -6,17 +6,17 @@
 import axios from "axios";
 // import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
-
-import { addTokenRequestInterceptor } from "~axios-helper";
-
 // import { createCachedCoaApi } from "./api";
 import { io } from "socket.io-client";
+
+import { addTokenRequestInterceptor } from "~axios-helper";
 
 const usersStore = users();
 const statsStore = stats();
 const publicCollectionStore = publicCollection();
 const collectionStore = collection();
 const coaStore = coa();
+const bookcaseStore = bookcase();
 
 onBeforeMount(() => {
   const defaultApi = addTokenRequestInterceptor(
@@ -32,8 +32,11 @@ onBeforeMount(() => {
   statsStore.setApi({
     api: defaultApi,
   });
+  bookcaseStore.setSocket({
+    socket: io(import.meta.env.VITE_SOCKET_URL + "/bookcase"),
+  });
   statsStore.setSocket({
-    socket: io(import.meta.env.VITE_SOCKET_URL+'/stats'),
+    socket: io(import.meta.env.VITE_SOCKET_URL + "/stats"),
   });
   publicCollectionStore.setApi({
     api: defaultApi,
@@ -48,7 +51,7 @@ onBeforeMount(() => {
     socket: io(import.meta.env.VITE_SOCKET_URL),
   });
   coaStore.setSocket({
-    socket: io(import.meta.env.VITE_SOCKET_URL+'/coa'),
+    socket: io(import.meta.env.VITE_SOCKET_URL + "/coa"),
   });
   collectionStore.loadUser();
 });

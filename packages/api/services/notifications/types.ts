@@ -1,7 +1,7 @@
-import { Socket } from "socket.io";
+import { Socket as SocketIo} from "socket.io";
 
-export interface NotificationServices {
+export interface Services {
   send: (callback: (value: { notificationsSent: number }) => void) => void;
 }
 
-export type NotificationSocket = Socket<NotificationServices>;
+export type Socket = SocketIo<Services>;

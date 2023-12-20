@@ -5,9 +5,9 @@ import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication
 import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import { cover } from "~prisma-clients/client_cover_info";
 
-import { CoaSocket } from "../types";
+import { Socket } from "../types";
 
-export default (socket: CoaSocket) => {
+export default (socket: Socket) => {
   socket.on("getIssuesWithTitles", async (publicationcode, callback) =>
     prismaCoa.inducks_issue
       .findMany({

@@ -1,9 +1,8 @@
 import { prismaCoa } from "~/prisma";
-import { CoaSocket } from "~/services/coa/types";
-
+import { Socket } from "~/services/coa/types";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 
-export default (socket: CoaSocket) => {
+export default (socket: Socket) => {
   socket.on("decompose", (issueCodes, callback) =>
     prismaCoa.inducks_issue
       .findMany({
