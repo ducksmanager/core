@@ -7,38 +7,31 @@ alias: [/bibliotheque/options]
     {{ $t("Chargement...") }}
   </div>
   <div v-else class="bookcase-options">
-    <div v-for="(textureText, textureType) in textureTypes" :key="textureType">
-      <h5>{{ textureText }}</h5>
-      <b-dropdown
-        v-model="
-          bookcaseOptions.textures[textureType as 'bookshelf' | 'bookcase']
-        "
-      >
+    <div v-for="textureType in textureTypes" :key="textureType">
+      <h5>
+        {{
+          textureType === "bookcase"
+            ? $t("Sous-texture")
+            : $t("Sous-texture de l'étagère")
+        }}
+      </h5>
+      <b-dropdown toggle-class="ps-0 pe-1">
         <template #button-content>
-          <div
-            class="selected"
+          <span
+            class="selected ps-3 pe-2"
             :style="{
               backgroundImage: `url('${getImagePath(
-                `textures/${
-                  bookcaseOptions.textures[
-                    textureType as 'bookshelf' | 'bookcase'
-                  ]
-                }`,
+                `textures/${bookcaseOptions.textures[textureType]}`,
               )}.jpg')`,
             }"
           >
-            {{
-              textureWithoutSuperType(
-                bookcaseOptions.textures[
-                  textureType as "bookshelf" | "bookcase"
-                ],
-              )
-            }}
-          </div>
+            {{ textureWithoutSuperType(bookcaseOptions.textures[textureType]) }}
+          </span>
         </template>
         <b-dropdown-item
           v-for="texture in textures"
           :key="texture"
+          link-class="p-0"
           :style="{
             backgroundImage: `url('${getImagePath(
               `textures/${texture}.jpg`,
@@ -49,7 +42,16 @@ alias: [/bibliotheque/options]
               texture
           "
         >
-          {{ textureWithoutSuperType(texture) }}
+          <div
+            class="p-2"
+            :style="{
+              backgroundImage: `url('${getImagePath(
+                `textures/${texture}.jpg`,
+              )}')`,
+            }"
+          >
+            {{ textureWithoutSuperType(texture) }}
+          </div>
         </b-dropdown-item>
       </b-dropdown>
     </div>
@@ -170,13 +172,8 @@ const textures = [
   "bois/ZEBRAWOOD",
 ] as const;
 const { t: $t } = useI18n();
-const textureTypes = $computed(
-  () =>
-    ({
-      bookcase: $t("Sous-texture"),
-      bookshelf: $t("Sous-texture de l'étagère"),
-    }) as { bookcase: string; bookshelf: string },
-);
+
+const textureTypes = ["bookcase", "bookshelf"] as const;
 
 const loadData = async () => {
   await loadBookcaseOptions();
