@@ -2,7 +2,7 @@ import { prismaDmStats } from "~/prisma";
 
 import { getAuthorFullNames } from "../coa/authors";
 import { Socket } from "./types";
-
+ 
 export default (socket: Socket) => {
   socket.on("getWatchedAuthorsStats", async (callback) => {
     const user = socket.data.user;

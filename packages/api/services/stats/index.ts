@@ -1,6 +1,6 @@
 import {  Server } from "socket.io";
 
-import {AuthMiddleware} from "../auth/util";
+import { AuthMiddleware } from "../auth/util";
 import suggestions from "./suggestions";
 import { Namespace } from "./types";
 import watchedAuthors from "./watchedAuthors";

@@ -9,7 +9,7 @@ export const post = async (
   const user = await getUser(req.user!.id);
   if (!user) {
     res.writeHead(500);
-    res.end("This user does not exist");
+    res.end("This user does not exist"); 
     return;
   }
   if (!user.lastAccess) {
