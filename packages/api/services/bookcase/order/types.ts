@@ -1,5 +1,7 @@
-export default interface Options {
-  getBookcaseOrder: (username: string, callback: (value: {error?:string; publicationCodes: string[]}) => void) => void;
+import { Errorable } from "~/services/types";
 
-  setBookcaseOrder: (publicationCodes: string[], callback: (max: number|undefined) => void) => void;
+export default interface Options {
+  getBookcaseOrder: (username: string, callback: (value: Errorable<{ publicationCodes: string[] }>) => void) => void;
+
+  setBookcaseOrder: (publicationCodes: string[], callback: (max: number | undefined) => void) => void;
 }

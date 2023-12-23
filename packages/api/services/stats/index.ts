@@ -1,4 +1,4 @@
-import {  Server } from "socket.io";
+import { Server } from "socket.io";
 
 import { AuthMiddleware } from "../auth/util";
 import suggestions from "./suggestions";
@@ -12,4 +12,4 @@ export default (io: Server) => {
       suggestions(socket);
       watchedAuthors(socket);
     });
-};
+}; 

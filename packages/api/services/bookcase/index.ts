@@ -6,9 +6,9 @@ import { user } from "../../../prisma-clients/client_dm";
 import { BookcaseEdge, BookcaseEdgeSprite } from "../../../types/BookcaseEdge";
 import { AuthMiddleware } from "../auth/util";
 import options from "./options/index";
-import {authenticated as authenticatedOptions} from "./options/index";
+import { authenticated as authenticatedOptions } from "./options/index";
 import order from "./order/index";
-import {authenticated as authenticatedOrder} from "./order/index";
+import { authenticated as authenticatedOrder } from "./order/index";
 import { Namespace } from "./types";
 import { checkValidBookcaseUser } from "./util";
 
@@ -38,15 +38,16 @@ export default (io: Server) => {
         try {
           user = await checkValidBookcaseUser(null, username);
         } catch (e) {
-          callback({edges: [], error: e as string})
+          callback({ error: e as string })
           return;
         }
         const groupBy = user.showDuplicatesInBookcase
           ? "numeros.ID"
           : "numeros.issuecode";
-        callback({edges:
-          (
-            (await prismaDm.$queryRawUnsafe(`
+        callback({
+          edges:
+            (
+              (await prismaDm.$queryRawUnsafe(`
                   SELECT numeros.ID                                                AS id,
                          numeros.Pays                                              AS countryCode,
                          numeros.Magazine                                          AS magazineCode,
@@ -77,10 +78,11 @@ export default (io: Server) => {
                   WHERE ID_Utilisateur = ${user.id}
                   GROUP BY ${groupBy}
               `)) as BookcaseEdgeRaw[]
-          ).map(mapEdges)}
+            ).map(mapEdges)
+        }
         )
-  });
-});
+      });
+    });
 };
 
 

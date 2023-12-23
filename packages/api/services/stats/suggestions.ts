@@ -18,7 +18,7 @@ export default (socket: Socket) => {
       const since =
         sincePreviousVisit === "since_previous_visit"
           ? (await prismaDm.user.findUnique({ where: { id: user!.id } }))!
-              .previousAccess
+            .previousAccess
           : null;
 
       const { suggestionsPerUser, authors, storyDetails, publicationTitles } =
@@ -59,11 +59,11 @@ const missingPublications =
 
 interface Suggestion
   extends PrismaDmStats.utilisateurs_publications_manquantesGetPayload<
-      typeof missingPublications
-    >,
-    PrismaDmStats.suggestedIssueForUserGetPayload<
-      typeof suggestedPublications
-    > {}
+    typeof missingPublications
+  >,
+  PrismaDmStats.suggestedIssueForUserGetPayload<
+    typeof suggestedPublications
+  > { }
 
 const getStoryDetails = async (
   storyCodes: string[],
@@ -85,11 +85,11 @@ const getStoryDetails = async (
           INNER JOIN inducks_entry entry on storyversion.storyversioncode = entry.storyversioncode
           INNER JOIN inducks_issue issue on entry.issuecode = issue.issuecode
           WHERE ${storyCodes
-            .map(
-              (storyCode, idx) =>
-                `story.storycode = '${storyCode}' AND issue.publicationcode = '${associatedPublicationCodes[idx]}' AND issue.issuenumber = '${associatedIssueNumbers[idx]}'`,
-            )
-            .join(" OR ")}
+        .map(
+          (storyCode, idx) =>
+            `story.storycode = '${storyCode}' AND issue.publicationcode = '${associatedPublicationCodes[idx]}' AND issue.issuenumber = '${associatedIssueNumbers[idx]}'`,
+        )
+        .join(" OR ")}
       ORDER BY story.storycode
   `)
   ).reduce((acc, story) => ({ ...acc, [story.storycode]: story }), {}) as {
@@ -144,17 +144,15 @@ export const getSuggestions = async (
                INNER JOIN utilisateurs_publications_manquantes as missing
                           USING (ID_User, publicationcode, issuenumber)
       WHERE suggested.oldestdate <= '${new Date().toISOString().split("T")[0]}'
-        AND (${
-          since
-            ? `suggested.oldestdate > '${since.toISOString().split("T")[0]}'`
-            : "1=1"
-        })
+        AND (${since
+      ? `suggested.oldestdate > '${since.toISOString().split("T")[0]}'`
+      : "1=1"
+    })
         AND (${singleUserId ? `suggested.ID_User = ${singleUserId}` : "1=1"})
-        AND (${
-          singleCountry
-            ? `suggested.publicationcode LIKE '${singleCountry}/%'`
-            : "1=1"
-        })
+        AND (${singleCountry
+      ? `suggested.publicationcode LIKE '${singleCountry}/%'`
+      : "1=1"
+    })
       ORDER BY ID_User, ${sort} DESC, publicationcode, issuenumber
   `);
 
@@ -165,8 +163,8 @@ export const getSuggestions = async (
   const countriesToNotifyPerUser =
     countrycode === COUNTRY_CODE_OPTION.countries_to_notify
       ? await getOptionValueAllUsers(
-          userOptionType.suggestion_notification_country,
-        )
+        userOptionType.suggestion_notification_country,
+      )
       : null;
 
   const suggestionsPerUser = {} as { [userId: number]: IssueSuggestionList };
@@ -278,9 +276,9 @@ const isSuggestionInCountriesToNotify = (
     : !countriesToNotify[userId]
       ? false
       : countriesToNotify[userId].some(
-          (countryToNotify) =>
-            suggestion.publicationcode.indexOf(`${countryToNotify}/`) === 0,
-        );
+        (countryToNotify) =>
+          suggestion.publicationcode.indexOf(`${countryToNotify}/`) === 0,
+      );
 
 const getOptionValueAllUsers = async (optionName: userOptionType) =>
   (

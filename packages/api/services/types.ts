@@ -1,5 +1,5 @@
 import { EventsMap } from "@socket.io/component-emitter";
-import { Namespace, Socket  } from "socket.io";
+import { Namespace, Socket } from "socket.io";
 
 import { User } from "../../types/SessionUser";
 
@@ -19,11 +19,14 @@ export interface NamespaceGeneric<Services extends EventsMap> extends Namespace<
   Record<string, never>,
   Record<string, never>,
   { user?: User }
-> {}
-  
+> { }
+
 export type SocketGeneric<Services extends EventsMap> = Socket<Services,
   Record<string, never>,
   Record<string, never>,
   { user?: User }
 >;
-  
+
+type EitherOr<A, B> = (A | B) extends object ? (A & Partial<Record<Exclude<keyof B, keyof A>, never>>) | (B & Partial<Record<Exclude<keyof A, keyof B>, never>>) : A | B;
+
+export type Errorable<T> = EitherOr<T, { error: string }>;

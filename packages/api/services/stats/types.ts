@@ -22,6 +22,6 @@ export interface Services {
   getWatchedAuthorsStats: (callback: (value: AuthorDetails[]) => void) => void;
 }
 
-export interface Namespace extends NamespaceGeneric<Services> {}
+export interface Namespace extends NamespaceGeneric<Services> { }
 
-export type Socket = SocketGeneric<Services>;
+export type Socket = SocketGeneric<Services>; 

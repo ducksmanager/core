@@ -68,8 +68,8 @@ export default (socket: Socket) => {
                   LIMIT 1) AS coverUrl
           FROM inducks_issue
           WHERE inducks_issue.publicationcode IN(${PrismaCoa.join(
-            publicationCodes,
-          )})`) as IssueCoverDetails[]
+          publicationCodes,
+        )})`) as IssueCoverDetails[]
       ).reduce(
         (acc, row) => ({
           ...acc,

@@ -20,8 +20,8 @@ export default (io: Server) => {
         jwt.verify(
           token,
           process.env.TOKEN_SECRET as string,
-          (err: jwt.VerifyErrors) => {
-            callback(err)
+          (err) => {
+            callback({ error: err!.message || '' })
           }
         );
       });
@@ -32,11 +32,11 @@ export default (io: Server) => {
           process.env.TOKEN_SECRET as string,
           async (err: unknown, email: unknown) => {
             if (err) {
-              callback(({error: 'Invalid token'}))
+              callback(({ error: 'Invalid token' }))
             } else if (password.length < 6) {
-              callback(({error: 'Your password should be at least 6 characters long'}));
+              callback(({ error: 'Your password should be at least 6 characters long' }));
             } else if (password !== password2) {
-              callback(({error: 'The two passwords should be identical'}));
+              callback(({ error: 'The two passwords should be identical' }));
             } else {
               const hashedPassword = crypto
                 .createHash("sha1")
@@ -56,12 +56,12 @@ export default (io: Server) => {
                 },
               }))!;
               await loginAs(user, hashedPassword);
-    
+
               callback({ token });
             }
           }
         );
-        callback({error: 'Something went wrong'})
+        callback({ error: 'Something went wrong' })
       })
-  });
+    });
 };

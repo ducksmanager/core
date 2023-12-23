@@ -1,8 +1,10 @@
 
-import { prismaDm } from "~/prisma";
+import { dmExtends } from "~prisma-clients/extended";
 
 import { Socket } from "../types";
 import { checkValidBookcaseUser } from "../util";
+
+const prismaDm = dmExtends.default
 
 export default (socket: Socket) => {
   socket.on("getBookcaseOrder", async (username, callback) => {
@@ -57,13 +59,15 @@ export default (socket: Socket) => {
       await prismaDm.$transaction(deleteOperations);
 
       callback(
-        {publicationCodes:(
-          await prismaDm.bookcasePublicationOrder.findMany({
-            select: { publicationcode: true },
-            where: { userId },
-            orderBy: { order: "asc" },
-          })
-        ).map(({ publicationcode }) => publicationcode)}
+        {
+          publicationCodes: (
+            await prismaDm.bookcasePublicationOrder.findMany({
+              select: { publicationcode: true },
+              where: { userId },
+              orderBy: { order: "asc" },
+            })
+          ).map(({ publicationcode }) => publicationcode)
+        }
       );
     }
   })
@@ -93,8 +97,8 @@ export const authenticated = (socket: Socket) => {
 
 
 const getLastPublicationPosition = async (userId: number) =>
-  (await 
-     prismaDm.bookcasePublicationOrder.aggregate({
+  (await
+    prismaDm.bookcasePublicationOrder.aggregate({
       _max: { order: true },
       where: { userId },
     })
