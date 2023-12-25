@@ -128,7 +128,7 @@ export const collection = defineStore("collection", () => {
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
               totalPerPublicationUniqueIssueNumbers.value[publicationcode2]! -
-              totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
+                totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
             ),
         ),
     ),

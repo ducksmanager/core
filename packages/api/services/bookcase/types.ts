@@ -5,7 +5,7 @@ import Options from "./options/types";
 import Order from "./order/types";
 
 export interface Services extends Options, Order {
-  getBookcase: (username: string, callback: (value: Errorable<{ edges: BookcaseEdge[] }>) => void) => void;
+  getBookcase: (username: string, callback: (value: Errorable<{ edges: BookcaseEdge[] }, 'Unauthorized' | 'Forbidden' | 'Not found'>) => void) => void;
 }
 
 export class Namespace extends NamespaceGeneric<Services> {

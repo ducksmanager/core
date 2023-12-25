@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import { Socket } from "socket.io-client";
 
 import { Services as BookcaseServices } from "~api/services/bookcase/types";
@@ -14,6 +13,7 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
 }
 
 let socket: Socket<BookcaseServices>;
+
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
   const loadedSprites = ref({} as { [key: string]: string }),
@@ -62,19 +62,19 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcase.value) {
-        try {
-          bookcase.value = (
-            await socket.emitWithAck("getBookcase", bookcaseUsername.value!)
-          ).edges;
-        } catch (e) {
-          switch ((e as AxiosError).response?.status) {
-            case 403:
-              isPrivateBookcase.value = true;
-              break;
-            case 404:
-              isUserNotExisting.value = true;
-              break;
-          }
+        const response = await socket.emitWithAck(
+          "getBookcase",
+          bookcaseUsername.value!,
+        );
+        switch (response.error) {
+          case "Forbidden":
+            isPrivateBookcase.value = true;
+            return;
+          case "Not found":
+            isUserNotExisting.value = true;
+            return;
+          case undefined:
+            bookcase.value = response.edges;
         }
       }
     },

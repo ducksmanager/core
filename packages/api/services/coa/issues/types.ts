@@ -6,7 +6,7 @@ export default interface Issues {
     issueCodes: string[],
     callback: (value: Record<string, inducks_issue>) => void,
   ) => void;
-  getPublicationsByStorycode: (
+  getIssuesByStorycode: (
     storycode: string,
     callback: (value: SimpleIssue[]) => void,
   ) => void;

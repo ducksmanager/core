@@ -7,8 +7,11 @@ import { checkValidBookcaseUser } from "../util";
 export default (socket: Socket) => {
   socket.on("getBookcaseOptions", async (username, callback) => {
     const user = await checkValidBookcaseUser(null, username);
-    if (user !== null) {
-      return callback({
+    if (user.error) {
+      callback({ error: user.error })
+    }
+    else {
+      callback({
         textures: {
           bookcase: `${user.bookcaseTexture1}/${user.bookcaseSubTexture1}`,
           bookshelf: `${user.bookcaseTexture2}/${user.bookcaseSubTexture2}`,

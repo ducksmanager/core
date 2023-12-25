@@ -12,8 +12,8 @@ let socket: Socket<StatsServices>;
 export const stats = defineStore("stats", () => {
   const ratings = ref(
     undefined as
-    | EventReturnType<StatsServices["getWatchedAuthorsStats"]>
-    | undefined,
+      | EventReturnType<StatsServices["getWatchedAuthorsStats"]>
+      | undefined,
   );
   const isSearching = ref(false as boolean);
   const isLoadingWatchedAuthors = ref(false as boolean);

@@ -1,9 +1,8 @@
 import { Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
+import { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 
-import { user } from "../../../prisma-clients/client_dm";
-import { BookcaseEdge, BookcaseEdgeSprite } from "../../../types/BookcaseEdge";
 import { AuthMiddleware } from "../auth/util";
 import options from "./options/index";
 import { authenticated as authenticatedOptions } from "./options/index";
@@ -34,11 +33,9 @@ export default (io: Server) => {
       order(socket)
 
       socket.on("getBookcase", async (username, callback) => {
-        let user: user;
-        try {
-          user = await checkValidBookcaseUser(null, username);
-        } catch (e) {
-          callback({ error: e as string })
+        const user = await checkValidBookcaseUser(null, username);
+        if (user.error) {
+          callback({ error: user.error });
           return;
         }
         const groupBy = user.showDuplicatesInBookcase

@@ -52,7 +52,7 @@ export default (socket: Socket) => {
     },
   );
 
-  socket.on("getPublicationsByStorycode", async (storycode, callback) =>
+  socket.on("getIssuesByStorycode", async (storycode, callback) =>
     prismaCoa.$queryRaw`
         SELECT issuecode as code,
                publicationcode,

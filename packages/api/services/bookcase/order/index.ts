@@ -9,8 +9,8 @@ const prismaDm = dmExtends.default
 export default (socket: Socket) => {
   socket.on("getBookcaseOrder", async (username, callback) => {
     const user = await checkValidBookcaseUser(socket.data.user, username);
-    if (user === null) {
-      callback({ error: "Invalid user" });
+    if (user.error) {
+      callback({ error: user.error });
     } else {
       const userId = user.id;
       let maxSort = await getLastPublicationPosition(userId);

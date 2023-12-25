@@ -1,7 +1,7 @@
 import { EventsMap } from "@socket.io/component-emitter";
 import { Namespace, Socket } from "socket.io";
 
-import { User } from "../../types/SessionUser";
+import { User } from "~dm-types/SessionUser";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Last<T extends unknown[]> = T extends [...infer I, infer L] ? L : never;
@@ -30,4 +30,4 @@ export type SocketGeneric<Services extends EventsMap> = Socket<Services,
 
 type EitherOr<A, B> = (A | B) extends object ? (A & Partial<Record<Exclude<keyof B, keyof A>, never>>) | (B & Partial<Record<Exclude<keyof A, keyof B>, never>>) : A | B;
 
-export type Errorable<T> = EitherOr<T, { error: string }>;
+export type Errorable<T, ErrorKey extends string> = EitherOr<T, { error: ErrorKey, errorDetails?: string }>;

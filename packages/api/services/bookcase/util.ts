@@ -1,18 +1,24 @@
 import { prismaDm } from "~/prisma";
+import { User } from "~dm-types/SessionUser";
+import { user } from "~prisma-clients/client_dm";
 
-import { user } from "../../../prisma-clients/client_dm";
-import { User } from "../../../types/SessionUser";
+import { Errorable } from "../types";
 
 export const checkValidBookcaseUser = async (
-    user?: User|null,
-    username?: string
-  ): Promise<user> => {
+  user?: User | null,
+  username?: string
+): Promise<Errorable<user, 'Unauthorized' | 'Forbidden' | 'Not found'>> => {
+  try {
     const dbUser = await prismaDm.user.findFirstOrThrow({
       where: { username },
     });
     if (user?.id === dbUser.id || dbUser.allowSharing) {
       return dbUser;
     } else if (!user) {
-      throw new Error("401");
-    } else throw new Error("403");
-  };
+      return { error: "Unauthorized" };
+    } else return { error: "Forbidden" };
+  }
+  catch (error) {
+    return { error: "Not found" };
+  }
+};

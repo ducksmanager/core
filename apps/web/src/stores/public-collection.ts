@@ -34,6 +34,6 @@ export const publicCollection = defineStore("publicCollection", () => {
     issues,
     purchases,
     loadPublicCollection,
-    loadPurchases: () => { },
+    loadPurchases: () => {},
   };
 });

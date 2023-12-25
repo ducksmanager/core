@@ -59,7 +59,7 @@ export default (io: Server) => {
               where: { id },
             });
           } catch (e) {
-            callback({ error: `No bookstore exists with ID ${id}` });
+            callback({ error: 'No bookstore exists', errorDetails: `ID: ${id}` });
             return;
           }
         } else {
@@ -101,7 +101,7 @@ export default (io: Server) => {
           },
         });
       } catch (e) {
-        callback({ error: `Invalid bookstore comment ID: ${commentId}` });
+        callback({ error: 'Invalid bookstore comment ID', errorDetails: `ID: ${commentId}` });
         return;
       }
       await prismaDm.bookstoreComment.update({

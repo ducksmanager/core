@@ -9,13 +9,15 @@ import Stories from "./stories/types";
 
 export interface Services
   extends Countries,
-    Publications,
-    Issues,
-    IssueDetails,
-    Authors,
-    Quotations,
-    Stories {}
+  Publications,
+  Issues,
+  IssueDetails,
+  Authors,
+  Quotations,
+  Stories { }
 
-export interface Namespace extends NamespaceGeneric<Services> {}
+export class Namespace extends NamespaceGeneric<Services> {
+  public static endpoint = '/coa';
+}
 
 export type Socket = SocketGeneric<Services>;
