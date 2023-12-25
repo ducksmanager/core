@@ -6,7 +6,7 @@ import { bookstore, bookstoreComment, user, userContributionType } from "~prisma
 import { Namespace } from "./types";
 
 export default (io: Server) => {
-  (io.of("/bookstores") as Namespace).on("connection", (socket) => {
+  (io.of(Namespace['endpoint']) as Namespace).on("connection", (socket) => {
     socket.on("getActiveBookstores", async (callback) =>
       prismaDm.bookstore
         .findMany({

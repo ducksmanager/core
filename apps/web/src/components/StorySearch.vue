@@ -84,11 +84,9 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import { watch } from "vue";
 
 import condition from "~/composables/useCondition";
-import { call } from "~axios-helper";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
@@ -163,14 +161,9 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = (
-        await call(
-          axios,
-          new GET__coa__list__issues__by_storycode({
-            query: { storycode: value.replace(/^code=/, "") },
-          }),
-        )
-      ).data;
+      const data = await coa()
+        .getSocket()
+        .emitWithAck("getIssuesByStorycode", value.replace(/^code=/, ""));
       issueResults = {
         results: data.sort((issue1, issue2) =>
           Math.sign(

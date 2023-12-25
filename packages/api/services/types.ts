@@ -13,13 +13,14 @@ export type EventReturnType<T extends (...args: any[]) => unknown> =
   // @ts-expect-error ???
   LastParameter<LastParameter<T>>;
 
-
-export interface NamespaceGeneric<Services extends EventsMap> extends Namespace<
+export abstract class NamespaceGeneric<Services extends EventsMap> extends Namespace<
   Services,
   Record<string, never>,
   Record<string, never>,
   { user?: User }
-> { }
+> {
+  public static endpoint: string;
+}
 
 export type SocketGeneric<Services extends EventsMap> = Socket<Services,
   Record<string, never>,

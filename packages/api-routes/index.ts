@@ -14,26 +14,14 @@ import {  } from "~dm-types/IssueSuggestionList";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { MedalPoints } from "~dm-types/MedalPoints";
 import { ModelSteps } from "~dm-types/ModelSteps";
-import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import { SimplePopularity } from "~dm-types/SimplePopularity";
 import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { WantedEdge } from "~dm-types/WantedEdge";
-import { authorUser, bookstoreComment, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "~prisma-clients/client_dm";
+import { authorUser, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "~prisma-clients/client_dm";
 import { edgeContributor, edgeModel,elementImage } from "~prisma-clients/client_edgecreator";
 
-export class GET__bookstores  extends ContractWithMethodAndUrl<{ resBody: SimpleBookstore[] }> {
-            static readonly method = "get";
-            static readonly url = "/bookstores";
-        }
-export class PUT__bookstores  extends ContractWithMethodAndUrl<{
-      resBody: bookstoreComment;
-      reqBody: { id?: string; bookstore: SimpleBookstore };
-    }> {
-            static readonly method = "put";
-            static readonly url = "/bookstores";
-        }
 export class GET__csrf  extends ContractWithMethodAndUrl<{ resBody: { csrfToken: string } }> {
             static readonly method = "get";
             static readonly url = "/csrf";
@@ -60,10 +48,6 @@ export class POST__login  extends ContractWithMethodAndUrl<{
     }> {
             static readonly method = "post";
             static readonly url = "/login";
-        }
-export class POST__bookstores__approve  extends ContractWithMethodAndUrl<{ reqBody: { id: number } }> {
-            static readonly method = "post";
-            static readonly url = "/bookstores/approve";
         }
 export class POST__collection__empty  extends ContractWithMethodAndUrl<Record<string, never>> {
             static readonly method = "post";
@@ -252,10 +236,6 @@ export class DELETE__collection__on_sale_by_others__requests  extends ContractWi
 export class PUT__collection__on_sale_by_others__requests  extends ContractWithMethodAndUrl<{ reqBody: { issueIds: number[] } }> {
             static readonly method = "put";
             static readonly url = "/collection/on-sale-by-others/requests";
-        }
-export class GET__collection_public__$username  extends ContractWithMethodAndUrl<{ params: { username: string }, resBody: issue[] }> {
-            static readonly method = "get";
-            static readonly url = "/collection-public/:username";
         }
 export class GET__edgecreator__multiple_edge_photo__check_today_limit  extends ContractWithMethodAndUrl<{
       resBody: {

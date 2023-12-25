@@ -3,9 +3,8 @@ import { Socket } from "socket.io-client";
 
 import { Services as CoaServices } from "~api/services/coa/types";
 import { Services as StatsServices } from "~api/services/stats/types";
+import { EventReturnType } from "~api/services/types";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
-
-import { EventReturnType } from "../../../../packages/api/services/types";
 
 let api: AxiosInstance;
 let socket: Socket<StatsServices>;
@@ -13,8 +12,8 @@ let socket: Socket<StatsServices>;
 export const stats = defineStore("stats", () => {
   const ratings = ref(
     undefined as
-      | EventReturnType<StatsServices["getWatchedAuthorsStats"]>
-      | undefined,
+    | EventReturnType<StatsServices["getWatchedAuthorsStats"]>
+    | undefined,
   );
   const isSearching = ref(false as boolean);
   const isLoadingWatchedAuthors = ref(false as boolean);

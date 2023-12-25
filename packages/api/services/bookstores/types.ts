@@ -9,6 +9,7 @@ export interface Services {
   approveBookstoreComment: (id: number, callback: (data?: { error?: string }) => void) => void;
 }
 
-export interface Namespace extends NamespaceGeneric<Services> { }
-
+export class Namespace extends NamespaceGeneric<Services> {
+  public static endpoint = '/bookstores';
+}
 export type Socket = SocketGeneric<Services>;

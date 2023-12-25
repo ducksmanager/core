@@ -16,8 +16,11 @@ import {
   injectTokenIfValid,
 } from "~routes/_auth";
 
+import bookcase from "./services/bookcase";
+import bookstores from "./services/bookstores";
 import coa from "./services/coa";
 import notifications from "./services/notifications";
+import publicCollection from "./services/public-collection";
 import stats from "./services/stats";
 
 dotenv.config({
@@ -84,9 +87,12 @@ app.use(express.json({ limit: "5mb" }));
     }
   });
   io.on("connection", () => {
-      coa(io)
-      stats(io)
-      notifications(io)
+    bookcase(io)
+    bookstores(io)
+    coa(io)
+    notifications(io)
+    publicCollection(io)
+    stats(io)
   })
 
   io.listen(4000);

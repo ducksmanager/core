@@ -8,6 +8,8 @@ export interface Services extends Options, Order {
   getBookcase: (username: string, callback: (value: Errorable<{ edges: BookcaseEdge[] }>) => void) => void;
 }
 
-export interface Namespace extends NamespaceGeneric<Services> { }
+export class Namespace extends NamespaceGeneric<Services> {
+  public static endpoint = '/bookcase';
+}
 
 export type Socket = SocketGeneric<Services>;

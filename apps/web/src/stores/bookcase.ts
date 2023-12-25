@@ -2,9 +2,9 @@ import { AxiosError } from "axios";
 import { Socket } from "socket.io-client";
 
 import { Services as BookcaseServices } from "~api/services/bookcase/types";
+import { EventReturnType } from "~api/services/types";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
 
-import { EventReturnType } from "../../../../packages/api/services/types";
 import { collection } from "./collection";
 
 export interface BookcaseEdgeWithPopularity extends BookcaseEdge {

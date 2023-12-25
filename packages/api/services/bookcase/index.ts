@@ -22,7 +22,7 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
 };
 
 export default (io: Server) => {
-  const namespace = io.of("/bookcase") as Namespace
+  const namespace = (io.of(Namespace['endpoint']) as Namespace)
   namespace.use(AuthMiddleware).on('connection', (socket) => {
     authenticatedOptions(socket)
     authenticatedOrder(socket)

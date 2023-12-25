@@ -1,10 +1,10 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { Namespace, Server } from "socket.io";
+import { Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 
-import { Services } from "./types";
+import { Namespace } from "./types";
 import { loginAs } from "./util";
 
 export enum COUNTRY_CODE_OPTION {
@@ -13,7 +13,7 @@ export enum COUNTRY_CODE_OPTION {
 }
 
 export default (io: Server) => {
-  (io.of("/auth") as Namespace<Services>).on(
+  (io.of(Namespace['endpoint']) as Namespace).on(
     "connection",
     (socket) => {
       socket.on("forgot", async (token, callback) => {

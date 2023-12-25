@@ -3,6 +3,7 @@ import { AxiosError } from "axios";
 import { Socket } from "socket.io-client";
 
 import { Services as StatsServices } from "~api/services/stats/types";
+import { EventReturnType } from "~api/services/types";
 import {
   GET__collection__edges__lastPublished,
   GET__collection__purchases,
@@ -16,7 +17,6 @@ import {
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
 
-import { EventReturnType } from "../../../../packages/api/services/types";
 import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";
 
@@ -128,7 +128,7 @@ export const collection = defineStore("collection", () => {
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
               totalPerPublicationUniqueIssueNumbers.value[publicationcode2]! -
-                totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
+              totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
             ),
         ),
     ),
