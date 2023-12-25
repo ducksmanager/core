@@ -69,10 +69,10 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
               ({ purchase: currentPurchase }) =>
                 currentPurchase.date === purchase.date,
             );
-            if (purchaseIndex === -1) {
+            if (purchaseIndex === -1 && purchase.date) {
               acc.push({
                 purchase: {
-                  date: purchase.date as Date,
+                  date: purchase.date,
                   description: purchase.description,
                 },
                 issues: [],
