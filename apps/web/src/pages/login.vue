@@ -55,10 +55,13 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import Cookies from "js-cookie";
+import { io, Socket } from "socket.io-client";
 
-import { call } from "~axios-helper";
+import {
+  Namespace as LoginNamespace,
+  Services as LoginServices,
+} from "~api/services/login/types";
 
 const { login: userLogin, loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -70,6 +73,10 @@ let csrfToken = $ref(null as string | null);
 let username = $ref("" as string);
 let error = $ref(null as string | null);
 let password = $ref("" as string);
+
+const socket: Socket<LoginServices> = io(
+  import.meta.env.VITE_SOCKET_URL + LoginNamespace["endpoint"],
+);
 
 const login = async () => {
   await userLogin(
@@ -103,6 +110,6 @@ watch(
 );
 
 (async () => {
-  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
+  csrfToken = await socket.emitWithAck("getCsrf");
 })();
 </script>

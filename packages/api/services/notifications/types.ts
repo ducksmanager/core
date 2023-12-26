@@ -5,4 +5,6 @@ export interface Services {
 }
 
 export type Socket = SocketGeneric<Services>;
-export type Namespace = NamespaceGeneric<Services>;
+export class Namespace extends NamespaceGeneric<Services> {
+  public static endpoint = '/notifications'
+}

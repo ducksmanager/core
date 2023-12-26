@@ -128,7 +128,7 @@ meta:
       </div>
       <div v-if="hasPublicationNames" role="tablist">
         <Accordion
-          v-for="(issues, publicationcode) in groupByPublicationCode(
+          v-for="(publicationIssues, publicationcode) in groupByPublicationCode(
             issuesImportable,
           )"
           :id="String(publicationcode).replace('/', '-')"
@@ -144,10 +144,10 @@ meta:
                 publicationNames[publicationcode] || publicationcode
               "
             />
-            x {{ issues.length }}
+            x {{ publicationIssues.length }}
           </template>
           <template #content>
-            <div v-for="issue in issues" :key="issue">
+            <div v-for="issue in publicationIssues" :key="issue">
               {{ $t("Numéro") }} {{ issue }}
             </div>
           </template>

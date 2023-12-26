@@ -1,3 +1,5 @@
+import crypto from "crypto";
+import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Socket } from "socket.io";
 
@@ -28,10 +30,10 @@ export const loginAs = async (user: user, hashedPassword: string) =>
     ).groupBy("role", "privilege"),
   });
 
-export const AuthMiddleware = (socket: Socket, next: (error?: Error) => void) => {
+const AuthMiddleware = (socket: Socket, next: (error?: Error) => void, required: boolean) => {
   const token = socket.handshake.auth.token;
 
-  if (token == null) {
+  if (required && token == null) {
     next(new Error("No token provided"));
     return;
   }
@@ -40,12 +42,74 @@ export const AuthMiddleware = (socket: Socket, next: (error?: Error) => void) =>
     token,
     process.env.TOKEN_SECRET as string,
     (err: unknown, user: unknown) => {
-      if (err) {
-        next(new Error("Invalid token: " + err));
-        return;
+      if (required && err) {
+        next(new Error(`Invalid token: ${err}`));
       }
-      socket.data.user = user as User;
-      next();
+      else {
+        socket.data.user = user;
+        next();
+      }
     },
   );
 }
+
+export const RequiredAuthMiddleware = (socket: Socket, next: (error?: Error) => void) => AuthMiddleware(socket, next, true)
+
+export const OptionalAuthMiddleware = (socket: Socket, next: (error?: Error) => void) => AuthMiddleware(socket, next, false)
+
+
+export const authenticateToken = (
+  req: Request,
+  res: Response,
+  next: CallableFunction
+) => {
+  // Signup
+  if (req.method === "PUT" && req.url === "/collection/user") {
+    next();
+    return;
+  }
+  const authHeader = req.headers["authorization"];
+  const token = authHeader?.split(" ")?.[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(
+    token,
+    process.env.TOKEN_SECRET as string,
+    (err: unknown, user: unknown) => {
+      if (err) {
+        return res.sendStatus(401);
+      }
+      req.user = user as User;
+      next();
+    }
+  );
+};
+
+export const checkUserIsEdgeCreatorEditor = (
+  req: Request,
+  res: Response,
+  next: CallableFunction
+) => {
+  if (
+    !req.user ||
+    !["Edition", "Admin"].includes(req.user.privileges?.["EdgeCreator"])
+  ) {
+    return res.sendStatus(403);
+  }
+  next();
+};
+
+export const checkUserIsAdmin = (
+  req: Request,
+  res: Response,
+  next: CallableFunction
+) => {
+  if (!req.user || !["Admin"].includes(req.user.privileges?.["DucksManager"])) {
+    return res.sendStatus(403);
+  }
+  next();
+};
+
+export const getHashedPassword = (password: string) =>
+  crypto.createHash("sha1").update(password).digest("hex");

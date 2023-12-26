@@ -159,11 +159,8 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-
 import { QuotedIssue } from "~/composables/useCollection";
 import condition from "~/composables/useCondition";
-import { call } from "~axios-helper";
 
 const { getConditionLabel } = condition();
 
@@ -228,9 +225,9 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const { userScores } = (
-    await call(axios, new GET__global_stats__user__collection__rarity())
-  ).data;
+  const { userScores } = await users()
+    .getSocket()
+    .emitWithAck("getUsersCollectionRarity");
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === user.value?.id);

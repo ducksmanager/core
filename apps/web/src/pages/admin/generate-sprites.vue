@@ -8,11 +8,17 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
+import { io, Socket } from "socket.io-client";
 
-import { call } from "~axios-helper";
+import {
+  Namespace as EdgeCreatorNamespace,
+  Services as EdgeCreatorServices,
+} from "~api/services/edgecreator/types";
+let socket: Socket<EdgeCreatorServices> = io(
+  import.meta.env.VITE_SOCKET_URL + EdgeCreatorNamespace["endpoint"],
+);
 
 const generateSprites = async () => {
-  await call(axios, new PUT__edgecreator__edgesprites());
+  await socket.emitWithAck("uploadEdges");
 };
 </script>

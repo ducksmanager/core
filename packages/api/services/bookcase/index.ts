@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 import { prismaDm } from "~/prisma";
 import { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 
-import { AuthMiddleware } from "../auth/util";
+import { RequiredAuthMiddleware } from "../auth/util";
 import options from "./options/index";
 import { authenticated as authenticatedOptions } from "./options/index";
 import order from "./order/index";
@@ -22,7 +22,7 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
 
 export default (io: Server) => {
   const namespace = (io.of(Namespace['endpoint']) as Namespace)
-  namespace.use(AuthMiddleware).on('connection', (socket) => {
+  namespace.use(RequiredAuthMiddleware).on('connection', (socket) => {
     authenticatedOptions(socket)
     authenticatedOrder(socket)
   });

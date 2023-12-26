@@ -1,15 +1,10 @@
-import { AxiosInstance } from "axios";
 import { AxiosError } from "axios";
 import { Socket } from "socket.io-client";
 
+import { Services as CollectionServices } from "~api/services/collection/types";
+import { Services as LoginServices } from "~api/services/login/types";
 import { Services as StatsServices } from "~api/services/stats/types";
 import { EventReturnType } from "~api/services/types";
-import {
-  GET__collection__edges__lastPublished,
-  GET__collection__purchases,
-  GET__collection__user,
-} from "~api-routes/index";
-import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -46,8 +41,9 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
-let api: AxiosInstance,
-  socket: Socket<StatsServices>,
+let statsSocket: Socket<StatsServices>,
+  loginSocket: Socket<LoginServices>,
+  collectionSocket: Socket<CollectionServices>,
   sessionExistsFn: () => Promise<boolean>,
   clearSessionFn: () => Promise<void>;
 
@@ -67,7 +63,9 @@ export const collection = defineStore("collection", () => {
       null as { [issuecode: string]: number } | null,
     ),
     lastPublishedEdgesForCurrentUser = ref(
-      null as GET__collection__edges__lastPublished["resBody"] | null,
+      null as EventReturnType<
+        CollectionServices["getLastPublishedEdges"]
+      > | null,
     ),
     isLoadingUser = ref(false as boolean),
     isLoadingCollection = ref(false as boolean),
@@ -77,7 +75,10 @@ export const collection = defineStore("collection", () => {
     isLoadingSuggestions = ref(false as boolean),
     isLoadingSubscriptions = ref(false as boolean),
     user = ref(
-      undefined as GET__collection__user["resBody"] | undefined | null,
+      undefined as
+        | EventReturnType<CollectionServices["getUser"]>
+        | undefined
+        | null,
     ),
     previousVisit = ref(null as Date | null),
     publicationUrlRoot = computed(() => "/collection/show"),
@@ -157,56 +158,40 @@ export const collection = defineStore("collection", () => {
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      await call(
-        api,
-        new POST__collection__issues__single({
-          reqBody: data,
-        }),
-      );
+      await collectionSocket.emitWithAck("addOrChangeCopies", data);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
       data: CollectionUpdateMultipleIssues,
     ) => {
-      await call(
-        api,
-        new POST__collection__issues__multiple({
-          reqBody: data,
-        }),
-      );
+      await collectionSocket.emitWithAck("addOrChangeIssues", data);
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await call(
-        api,
-        new PUT__collection__purchases({
-          reqBody: { date, description },
-        }),
-      );
+      await collectionSocket.emitWithAck("createPurchase", date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
-      await call(
-        api,
-        new DELETE__collection__purchases__$id({
-          params: { id: String(id) },
-        }),
-      );
+      await collectionSocket.emitWithAck("deletePurchase", id);
       await loadPurchases(true);
     },
     loadPreviousVisit = async () => {
-      previousVisit.value = (await call(api, new POST__collection__lastvisit()))
-        .data?.previousVisit;
+      const result = await collectionSocket.emitWithAck("getLastVisit");
+      if (result && "error" in result) {
+        console.error(result.error);
+      } else {
+        previousVisit.value = result;
+      }
     },
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        issues.value = (
-          await call(api, new GET__collection__issues())
-        ).data.map((issue) => ({
-          ...issue,
-          publicationcode: `${issue.country}/${issue.magazine}`,
-        }));
+        issues.value = (await collectionSocket.emitWithAck("getIssues")).map(
+          (issue) => ({
+            ...issue,
+            publicationcode: `${issue.country}/${issue.magazine}`,
+          }),
+        );
         isLoadingCollection.value = false;
       }
     },
@@ -214,8 +199,8 @@ export const collection = defineStore("collection", () => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
         purchases.value = (
-          await call(api, new GET__collection__purchases())
-        ).data.map((purchase) => ({
+          await collectionSocket.emitWithAck("getPurchases")
+        ).map((purchase) => ({
           ...purchase,
           date: new Date(purchase.date),
         }));
@@ -229,16 +214,10 @@ export const collection = defineStore("collection", () => {
           !watchedPublicationsWithSales.value)
       ) {
         isLoadingWatchedPublicationsWithSales.value = true;
-        watchedPublicationsWithSales.value = (
-          await call(
-            api,
-            new GET__collection__options__$optionName({
-              params: {
-                optionName: "sales_notification_publications",
-              },
-            }),
-          )
-        ).data;
+        watchedPublicationsWithSales.value = await collectionSocket.emitWithAck(
+          "getOption",
+          "sales_notification_publications",
+        );
         isLoadingWatchedPublicationsWithSales.value = false;
       }
     },
@@ -249,38 +228,23 @@ export const collection = defineStore("collection", () => {
           !marketplaceContactMethods.value)
       ) {
         isLoadingMarketplaceContactMethods.value = true;
-        marketplaceContactMethods.value = (
-          await call(
-            api,
-            new GET__collection__options__$optionName({
-              params: { optionName: "marketplace_contact_methods" },
-            }),
-          )
-        ).data;
+        marketplaceContactMethods.value = await collectionSocket.emitWithAck(
+          "getOption",
+          "marketplace_contact_methods",
+        );
         isLoadingMarketplaceContactMethods.value = false;
       }
     },
     updateMarketplaceContactMethods = async () =>
-      await call(
-        api,
-        new POST__collection__options__$optionName({
-          reqBody: { values: marketplaceContactMethods.value! },
-          params: {
-            optionName: "marketplace_contact_methods",
-          },
-        }),
+      await collectionSocket.emitWithAck(
+        "getOption",
+        "marketplace_contact_methods",
       ),
     updateWatchedPublicationsWithSales = async () =>
-      await call(
-        api,
-        new POST__collection__options__$optionName({
-          reqBody: {
-            values: watchedPublicationsWithSales.value!,
-          },
-          params: {
-            optionName: "sales_notification_publications",
-          },
-        }),
+      await collectionSocket.emitWithAck(
+        "setOption",
+        "sales_notification_publications",
+        watchedPublicationsWithSales.value!,
       ),
     loadSuggestions = async ({
       countryCode,
@@ -293,7 +257,7 @@ export const collection = defineStore("collection", () => {
     }) => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
-        suggestions.value = await socket.emitWithAck(
+        suggestions.value = await statsSocket.emitWithAck(
           "getSuggestionsForCountry",
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
@@ -310,8 +274,8 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingSubscriptions.value = true;
         subscriptions.value = (
-          await call(api, new GET__collection__subscriptions())
-        ).data.map((subscription: SubscriptionTransformedStringDates) => ({
+          await collectionSocket.emitWithAck("getSubscriptions")
+        ).map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
           endDate: new Date(Date.parse(subscription.endDate)),
@@ -322,8 +286,8 @@ export const collection = defineStore("collection", () => {
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
         popularIssuesInCollection.value = (
-          await call(api, new GET__collection__popular())
-        ).data.reduce(
+          await collectionSocket.emitWithAck("getCollectionPopularity")
+        ).reduce(
           (acc, issue) => ({
             ...acc,
             [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
@@ -335,33 +299,24 @@ export const collection = defineStore("collection", () => {
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
-        lastPublishedEdgesForCurrentUser.value = (
-          await call(api, new GET__collection__edges__lastPublished())
-        ).data;
+        lastPublishedEdgesForCurrentUser.value =
+          await collectionSocket.emitWithAck("getLastPublishedEdges");
       }
     },
     login = async (
       username: string,
       password: string,
       onSuccess: (token: string) => void,
-      onError: (e: AxiosError) => void,
+      onError: (e: string) => void,
     ) => {
-      try {
-        onSuccess(
-          (
-            await call(
-              api,
-              new POST__login({
-                reqBody: {
-                  username,
-                  password,
-                },
-              }),
-            )
-          ).data.token,
-        );
-      } catch (e) {
-        onError(e as AxiosError);
+      const response = await loginSocket.emitWithAck("login", {
+        username,
+        password,
+      });
+      if (typeof response !== "string" && "error" in response) {
+        onError(response.error);
+      } else {
+        onSuccess(response);
       }
     },
     signup = async (
@@ -375,18 +330,13 @@ export const collection = defineStore("collection", () => {
       try {
         onSuccess(
           (
-            await call(
-              api,
-              new PUT__collection__user({
-                reqBody: {
-                  username,
-                  password,
-                  password2,
-                  email,
-                },
-              }),
-            )
-          ).data.token,
+            await collectionSocket.emitWithAck("createUser", {
+              username,
+              password,
+              password2,
+              email,
+            })
+          ).token,
         );
       } catch (e) {
         onError(e as AxiosError);
@@ -397,7 +347,7 @@ export const collection = defineStore("collection", () => {
         isLoadingUser.value = true;
         try {
           if (await sessionExistsFn()) {
-            user.value = (await call(api, new GET__collection__user())).data;
+            user.value = await collectionSocket.emitWithAck("getUser");
           }
         } catch (e) {
           console.error(e);
@@ -410,15 +360,19 @@ export const collection = defineStore("collection", () => {
     };
   return {
     ...collectionUtils,
-    setSocket: (params: { socket: typeof socket }) => {
-      socket = params.socket;
+    setSocket: (params: {
+      statsSocket: typeof statsSocket;
+      loginSocket: typeof loginSocket;
+      collectionSocket: typeof collectionSocket;
+    }) => {
+      statsSocket = params.statsSocket;
+      loginSocket = params.loginSocket;
+      collectionSocket = params.collectionSocket;
     },
     setApi: (params: {
-      api: typeof api;
       sessionExistsFn: typeof sessionExistsFn;
       clearSessionFn: typeof clearSessionFn;
     }) => {
-      api = addUrlParamsRequestInterceptor(params.api);
       sessionExistsFn = params.sessionExistsFn;
       clearSessionFn = params.clearSessionFn;
     },

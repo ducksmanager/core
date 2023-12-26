@@ -11,6 +11,9 @@ import { io } from "socket.io-client";
 
 import { Namespace as BookcaseNamespace } from "~api/services/bookcase/types";
 import { Namespace as CoaNamespace } from "~api/services/coa/types";
+import { Namespace as CollectionNamespace } from "~api/services/collection/types";
+import { Namespace as EventsNamespace } from "~api/services/events/types";
+import { Namespace as LoginNamespace } from "~api/services/login/types";
 import { Namespace as PublicCollectionNamespace } from "~api/services/public-collection/types";
 import { Namespace as StatsNamespace } from "~api/services/stats/types";
 import { addTokenRequestInterceptor } from "~axios-helper";
@@ -33,6 +36,9 @@ onBeforeMount(() => {
   usersStore.setApi({
     api: defaultApi,
   });
+  usersStore.setSocket({
+    socket: io(import.meta.env.VITE_SOCKET_URL + EventsNamespace["endpoint"]),
+  });
   statsStore.setApi({
     api: defaultApi,
   });
@@ -40,7 +46,12 @@ onBeforeMount(() => {
     socket: io(import.meta.env.VITE_SOCKET_URL + BookcaseNamespace["endpoint"]),
   });
   statsStore.setSocket({
-    socket: io(import.meta.env.VITE_SOCKET_URL + StatsNamespace["endpoint"]),
+    statsSocket: io(
+      import.meta.env.VITE_SOCKET_URL + StatsNamespace["endpoint"],
+    ),
+    collectionSocket: io(
+      import.meta.env.VITE_SOCKET_URL + CollectionNamespace["endpoint"],
+    ),
   });
   publicCollectionStore.setSocket({
     socket: io(
@@ -48,13 +59,18 @@ onBeforeMount(() => {
     ),
   });
   collectionStore.setApi({
-    api: defaultApi,
     clearSessionFn: () => Promise.resolve(Cookies.remove("token")),
     sessionExistsFn: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
   });
   collectionStore.setSocket({
-    socket: io(
+    statsSocket: io(
+      import.meta.env.VITE_SOCKET_URL + StatsNamespace["endpoint"],
+    ),
+    loginSocket: io(
+      import.meta.env.VITE_SOCKET_URL + LoginNamespace["endpoint"],
+    ),
+    collectionSocket: io(
       import.meta.env.VITE_SOCKET_URL + CollectionNamespace["endpoint"],
     ),
   });

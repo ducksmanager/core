@@ -2,12 +2,14 @@ import { AxiosInstance } from "axios";
 import { Socket } from "socket.io-client";
 
 import { Services as CoaServices } from "~api/services/coa/types";
+import { Services as CollectionServices } from "~api/services/collection/types";
 import { Services as StatsServices } from "~api/services/stats/types";
 import { EventReturnType } from "~api/services/types";
 import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 
 let api: AxiosInstance;
-let socket: Socket<StatsServices>;
+let statsSocket: Socket<StatsServices>;
+let collectionSocket: Socket<CollectionServices>;
 
 export const stats = defineStore("stats", () => {
   const ratings = ref(
@@ -30,7 +32,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = await socket.emitWithAck("getWatchedAuthorsStats");
+      ratings.value = await statsSocket.emitWithAck("getWatchedAuthorsStats");
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -80,8 +82,12 @@ export const stats = defineStore("stats", () => {
     setApi: (params: { api: typeof api }) => {
       api = addUrlParamsRequestInterceptor(params.api);
     },
-    setSocket: (params: { socket: typeof socket }) => {
-      socket = params.socket;
+    setSocket: (params: {
+      statsSocket: typeof statsSocket;
+      collectionSocket: typeof collectionSocket;
+    }) => {
+      statsSocket = params.statsSocket;
+      collectionSocket = params.collectionSocket;
     },
     isAuthorWatched,
     isSearching,
