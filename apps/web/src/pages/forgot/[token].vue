@@ -29,59 +29,45 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 
-import { call } from "~axios-helper";
+import useSocket from "~/composables/useSocket";
+import {
+  NamespaceEndpoint as AuthNamespaceEndpoint,
+  Services as AuthServices,
+} from "~services/auth/types";
+
+const socket = useSocket<AuthServices>(AuthNamespaceEndpoint);
 
 const router = useRouter();
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
 
-let initError = $ref(null as AxiosError | null);
-let error = $ref(null as unknown | null);
+let initError = $ref(null as string | null);
+let error = $ref(null as string | null);
 const token = useRoute().params.token as string;
 const password = $ref("" as string);
 const password2 = $ref("" as string);
 
 const { t: $t } = useI18n();
 const changePassword = async () => {
-  try {
-    Cookies.set(
-      "token",
-      (
-        await call(
-          axios,
-          new POST__auth__change_password({
-            reqBody: {
-              token,
-              password,
-              password2,
-            },
-          }),
-        )
-      ).data.token,
-      {
-        domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      },
-    );
-  } catch (e: unknown) {
-    error = (e as AxiosError)?.response?.data || "Error";
+  const response = await socket.emitWithAck("changePassword", {
+    token,
+    password,
+    password2,
+  });
+  if ("error" in response) {
+    error = response.error!;
+  } else {
+    Cookies.set("token", token, {
+      domain: import.meta.env.VITE_COOKIE_DOMAIN,
+    });
   }
 };
 
 (async () => {
-  try {
-    await call(
-      axios,
-      new POST__auth__change_password({
-        reqBody: { token, password, password2 },
-      }),
-    );
-    await loadUser();
-  } catch (e: unknown) {
-    initError = e as AxiosError;
-  }
+  await changePassword();
+  loadUser();
 })();
 
 watch(

@@ -1,10 +1,11 @@
+import { Socket } from "socket.io";
+
 import { prismaCoa } from "~/prisma";
 
-import { Socket } from "../types";
-
-export default (socket: Socket) => {
+import { Services } from "../types";
+export default (socket: Socket<Services>) => {
   socket.on("getAuthorList", async (personcodes, callback) =>
-    getAuthorFullNames([...new Set(personcodes)]).then(callback),
+    getAuthorFullNames([...new Set(personcodes)]).then(callback)
   );
 
   socket.on("searchAuthor", async (partialAuthorName, callback) => {
@@ -23,14 +24,14 @@ export default (socket: Socket) => {
           ...acc,
           [value.personcode]: value.fullname,
         }),
-        {},
-      ),
+        {}
+      )
     );
   });
 };
 
 export const getAuthorFullNames = async (
-  authorPersoncodes: string[],
+  authorPersoncodes: string[]
 ): Promise<{ [personcode: string]: string }> =>
   (
     await prismaCoa.inducks_person.findMany({
@@ -45,5 +46,5 @@ export const getAuthorFullNames = async (
       ...acc,
       [value.personcode]: value.fullname,
     }),
-    {},
+    {}
   );

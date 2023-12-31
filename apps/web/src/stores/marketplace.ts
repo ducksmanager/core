@@ -1,15 +1,17 @@
 import axios from "axios";
 
-import {
-  GET__collection__on_sale_by_others,
-  GET__collection__on_sale_by_others__contact_methods__$sellerId,
-} from "~api-routes/index";
 import { call } from "~axios-helper";
 import type { issue, requestedIssue } from "~prisma-clients/client_dm";
+import {
+  NamespaceEndpoint as CollectionNamespaceEndpoint,
+  Services as CollectionServices,
+} from "~services/collection/types";
+import { EventReturnType } from "~services/types";
 
+const socket = useSocket<CollectionServices>(CollectionNamespaceEndpoint);
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(
-      null as GET__collection__on_sale_by_others["resBody"] | null,
+      null as EventReturnType<CollectionServices["getIssuesForSale"]> | null,
     ),
     issueRequestsAsBuyer = ref(null as requestedIssue[] | null),
     issueRequestsAsSeller = ref(null as requestedIssue[] | null),
@@ -18,9 +20,9 @@ export const marketplace = defineStore("marketplace", () => {
     isLoadingIssuesOnSaleByOthers = ref(false as boolean),
     contactMethods = ref(
       {} as {
-        [
-          userId: number
-        ]: GET__collection__on_sale_by_others__contact_methods__$sellerId["resBody"];
+        [userId: number]: EventReturnType<
+          CollectionServices["getContactMethods"]
+        >;
       },
     ),
     sentRequestIssueIds = computed(
@@ -114,14 +116,14 @@ export const marketplace = defineStore("marketplace", () => {
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      contactMethods.value[userId] = (
-        await call(
-          axios,
-          new GET__collection__on_sale_by_others__contact_methods__$sellerId({
-            params: { sellerId: String(userId) },
-          }),
-        )
-      ).data;
+      const result = await socket.emitWithAck("getContactMethods", userId);
+      switch (result.error) {
+        case undefined:
+          contactMethods.value[userId] = result;
+          break;
+        default:
+          console.error(result.error, result.errorDetails);
+      }
     },
     loadIssueRequestsAsBuyer = async (afterUpdate = false) => {
       if (
@@ -131,14 +133,10 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsBuyer.value = true;
-      issueRequestsAsBuyer.value = (
-        await call(
-          axios,
-          new GET__collection__on_sale_by_others__requests__as__$as({
-            params: { as: "buyer" },
-          }),
-        )
-      ).data;
+      issueRequestsAsBuyer.value = await socket.emitWithAck(
+        "getRequests",
+        "buyer",
+      );
       isLoadingIssueRequestsAsBuyer.value = false;
     },
     loadIssueRequestsAsSeller = async (afterUpdate = false) => {
@@ -149,14 +147,10 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsSeller.value = true;
-      issueRequestsAsSeller.value = (
-        await call(
-          axios,
-          new GET__collection__on_sale_by_others__requests__as__$as({
-            params: { as: "seller" },
-          }),
-        )
-      ).data;
+      issueRequestsAsSeller.value = await socket.emitWithAck(
+        "getRequests",
+        "seller",
+      );
       isLoadingIssueRequestsAsSeller.value = false;
     },
     loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
@@ -167,18 +161,11 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssuesOnSaleByOthers.value = true;
-      issuesOnSaleByOthers.value = (
-        await call(axios, new GET__collection__on_sale_by_others())
-      ).data;
+      issuesOnSaleByOthers.value = await socket.emitWithAck("getIssuesForSale");
       isLoadingIssuesOnSaleByOthers.value = false;
     },
     deleteRequestToSeller = async (issueId: number) => {
-      await call(
-        axios,
-        new DELETE__collection__on_sale_by_others__requests({
-          reqBody: { issueId },
-        }),
-      );
+      await socket.emitWithAck("deleteRequests", issueId);
     };
 
   return {

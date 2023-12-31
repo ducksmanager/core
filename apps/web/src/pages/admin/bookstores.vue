@@ -26,21 +26,27 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
+import { io, Socket } from "socket.io-client";
 
-import { call } from "~axios-helper";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-clients/client_dm";
+import {
+  NamespaceEndpoint as BookstoresNamespaceEndpoint,
+  Services as BookstoresServices,
+} from "~services/bookstores/types";
+
+const socket: Socket<BookstoresServices> = io(
+  import.meta.env.VITE_SOCKET_URL + BookstoresNamespaceEndpoint,
+);
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await call(axios, new POST__bookstores__approve({ reqBody: { id } }));
-  bookstores = (await call(axios, new GET__bookstores())).data;
+  await socket.emitWithAck("approveBookstoreComment", id);
 };
 
 (async () => {
-  bookstores = (await call(axios, new GET__bookstores())).data;
+  bookstores = await socket.emitWithAck("getActiveBookstores");
 })();
 </script>
 

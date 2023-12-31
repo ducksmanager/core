@@ -1,39 +1,41 @@
+import { Socket } from "socket.io";
 
 import { EditSubscription } from "~dm-types/EditSubscription";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import { Socket } from "../types";
+import { Services } from "../types";
+export default (socket: Socket<Services>) => {
+  socket.on("getSubscriptions", async (callback) =>
+    prismaDm.subscription
+      .findMany({
+        where: {
+          users: {
+            id: socket.data.user!.id,
+          },
+        },
+      })
+      .then((data) =>
+        callback(
+          data.map((subscription) => ({
+            ...subscription,
+            startDate: subscription.startDate.toISOString(),
+            endDate: subscription.endDate.toISOString(),
+          }))
+        )
+      )
+  );
 
-export default (socket: Socket) => {
-  socket.on('getSubscriptions', async (callback) => prismaDm.subscription.findMany({
-    where: {
-      users: {
-        id: socket.data.user!.id,
-      },
-    },
-  }).then(data => callback(
-    data.map((subscription) => ({
-      ...subscription,
-      startDate: subscription.startDate.toISOString(),
-      endDate: subscription.endDate.toISOString(),
-    })))
-  ));
-
-  socket.on('createSubscription', async (subscription, callback) => {
+  socket.on("createSubscription", async (subscription, callback) => {
     await upsertSubscription(null, subscription, socket.data.user!.id);
-    callback()
+    callback();
   });
 
-  socket.on('updateSubscription', async (id, subscription, callback) => {
-    await upsertSubscription(
-      id,
-      subscription,
-      socket.data.user!.id
-    );
-    callback()
-  })
+  socket.on("updateSubscription", async (id, subscription, callback) => {
+    await upsertSubscription(id, subscription, socket.data.user!.id);
+    callback();
+  });
 
-  socket.on('deleteSubscription', async (id, callback) => {
+  socket.on("deleteSubscription", async (id, callback) => {
     await prismaDm.subscription.deleteMany({
       where: {
         id,
@@ -42,9 +44,9 @@ export default (socket: Socket) => {
         },
       },
     });
-    callback()
+    callback();
   });
-}
+};
 
 export async function upsertSubscription(
   id: number | null,

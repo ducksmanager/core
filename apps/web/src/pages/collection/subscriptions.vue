@@ -80,20 +80,27 @@ alias: [/collection/abonnements]
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import dayjs from "dayjs";
+import { io, Socket } from "socket.io-client";
 import { onMounted, watch } from "vue";
 
 import {
   SubscriptionTransformed,
   SubscriptionTransformedStringDates,
 } from "~/stores/collection";
-import { call } from "~axios-helper";
+import {
+  NamespaceEndpoint as SubscriptionNamespaceEndpoint,
+  Services as SubscriptionServices,
+} from "~services/collection/types";
 
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;
 };
+
+const socket: Socket<SubscriptionServices> = io(
+  import.meta.env.VITE_SOCKET_URL + SubscriptionNamespaceEndpoint,
+);
 
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
@@ -127,13 +134,9 @@ const toSubscriptionWithStringDates = (
 });
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await call(
-    axios,
-    new PUT__collection__subscriptions({
-      reqBody: {
-        subscription: toSubscriptionWithStringDates(subscription),
-      },
-    }),
+  await socket.emitWithAck(
+    "createSubscription",
+    toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
@@ -152,25 +155,16 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: SubscriptionTransformed) => {
-  await call(
-    axios,
-    new POST__collection__subscriptions__$id({
-      reqBody: {
-        subscription: toSubscriptionWithStringDates(subscription),
-      },
-      params: { id: String(subscription.id) },
-    }),
+  await socket.emitWithAck(
+    "updateSubscription",
+    subscription.id,
+    toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await call(
-    axios,
-    new DELETE__collection__subscriptions__$id({
-      params: { id: String(id) },
-    }),
-  );
+  await socket.emitWithAck("deleteSubscription", id);
   await loadSubscriptions(true);
   currentSubscription = null;
 };

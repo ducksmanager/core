@@ -219,10 +219,13 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import axios, { AxiosError } from "axios";
+import { io, Socket } from "socket.io-client";
 
-import { call } from "~axios-helper";
 import { ScopedError } from "~dm-types/ScopedError";
+import {
+  NamespaceEndpoint as CollectionNamespaceEndpoint,
+  Services as CollectionServices,
+} from "~services/collection/types";
 const { getImagePath } = images();
 
 const i18n = useI18n();
@@ -242,6 +245,10 @@ const { t: $t } = useI18n();
 const t = $t;
 const router = useRouter();
 
+const socket: Socket<CollectionServices> = io(
+  import.meta.env.VITE_SOCKET_URL + CollectionNamespaceEndpoint,
+);
+
 const { updateMarketplaceContactMethods, loadMarketplaceContactMethods } =
   collection();
 const { userForAccountForm, marketplaceContactMethods } =
@@ -249,27 +256,26 @@ const { userForAccountForm, marketplaceContactMethods } =
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await call(axios, new POST__collection__empty());
+    await socket.emitWithAck("emptyCollection");
     await router.push("/collection/show");
   }
 };
 
 const updateAccount = async () => {
-  try {
-    error = undefined;
-    const response = (
-      await call(
-        axios,
-        new POST__collection__user({
-          reqBody: {
-            ...userForAccountForm.value!,
-            oldPassword,
-            password,
-            password2,
-          },
-        }),
-      )
-    ).data;
+  error = undefined;
+  const response = await socket.emitWithAck("updateUser", {
+    ...userForAccountForm.value!,
+    oldPassword,
+    password,
+    password2,
+  });
+  if (response.error) {
+    if (response.selector) {
+      error = response;
+    } else {
+      console.error(response.error);
+    }
+  } else {
     hasRequestedPresentationSentenceUpdate =
       response.hasRequestedPresentationSentenceUpdate;
     error = null;
@@ -279,10 +285,6 @@ const updateAccount = async () => {
       hasDiscordContactMethod ? "discordId" : "",
     ].filter((value) => value);
     await updateMarketplaceContactMethods();
-  } catch (e) {
-    error = ((e as AxiosError)?.response?.data as ScopedError) || {
-      message: $t("Une erreur s'est produite."),
-    };
   }
 };
 
@@ -294,7 +296,7 @@ const deleteAccount = async () => {
       ),
     )
   ) {
-    await call(axios, new DELETE__collection__user());
+    await socket.emitWithAck("deleteUser");
     await router.push("/logout");
   }
 };

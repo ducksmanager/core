@@ -1,31 +1,36 @@
 import bodyParser from "body-parser";
+import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { purchase } from "~prisma-clients/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 import { getUserPurchase } from "../issues/util";
-import { Socket } from "../types";
-
+import { Services } from "../types";
 const parseForm = bodyParser.json();
 
+export default (socket: Socket<Services>) => {
+  socket.on("getPurchases", async (callback) =>
+    prismaDm.purchase
+      .findMany({
+        where: {
+          userId: socket.data.user!.id,
+        },
+        orderBy: {
+          date: "desc",
+        },
+      })
+      .then((data) =>
+        callback(
+          data.map((purchase) => ({
+            ...purchase,
+            date: purchase.date.toISOString().split("T")[0],
+          }))
+        )
+      )
+  );
 
-export default (socket: Socket) => {
-  socket.on('getPurchases', async (callback) => prismaDm.purchase.findMany({
-    where: {
-      userId: socket.data.user!.id,
-    },
-    orderBy: {
-      date: "desc",
-    },
-  }).then(data => callback(
-    data.map((purchase) => ({
-      ...purchase,
-      date: purchase.date.toISOString().split("T")[0]
-    })))
-  ));
-
-  socket.on('createPurchase', async (date, description, callback) => {
+  socket.on("createPurchase", async (date, description, callback) => {
     const criteria = {
       userId: socket.data.user!.id,
       date: new Date(date),
@@ -44,7 +49,7 @@ export default (socket: Socket) => {
     });
   });
 
-  socket.on('deletePurchase', async (purchaseId, callback) => {
+  socket.on("deletePurchase", async (purchaseId, callback) => {
     const criteria = {
       userId: socket.data.user!.id,
       id: purchaseId,
@@ -58,9 +63,9 @@ export default (socket: Socket) => {
       where: criteria,
     });
 
-    callback()
-  })
-}
+    callback();
+  });
+};
 
 export const get = async (
   ...[req, res]: ExpressCall<{

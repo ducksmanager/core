@@ -1,3 +1,5 @@
+import { Socket } from "socket.io";
+
 import { prismaCoa, prismaCoverInfo, prismaDm } from "~/prisma";
 import { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import { SimpleEntry } from "~dm-types/SimpleEntry";
@@ -5,9 +7,8 @@ import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication
 import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import { cover } from "~prisma-clients/client_cover_info";
 
-import { Socket } from "../types";
-
-export default (socket: Socket) => {
+import { Services } from "../types";
+export default (socket: Socket<Services>) => {
   socket.on("getIssuesWithTitles", async (publicationcode, callback) =>
     prismaCoa.inducks_issue
       .findMany({
@@ -24,9 +25,9 @@ export default (socket: Socket) => {
           data.map(({ issuenumber, title }) => ({
             issuenumber: issuenumber!.replace(/ +/g, " "),
             title,
-          })),
+          }))
         );
-      }),
+      })
   );
 
   socket.on(
@@ -44,15 +45,16 @@ export default (socket: Socket) => {
 
       const entries = await getEntries(
         publicationcode as string,
-        issuenumber as string,
+        issuenumber as string
       );
       callback({ releaseDate, entries });
-    },
+    }
   );
 
   socket.on("getIssueCoverDetails", async (publicationCodes, callback) => {
     if (publicationCodes.length > 10) {
-      throw new Error("400");
+      callback({ error: "Too many requests" });
+      return;
     }
     callback(
       (
@@ -68,15 +70,15 @@ export default (socket: Socket) => {
                   LIMIT 1) AS coverUrl
           FROM inducks_issue
           WHERE inducks_issue.publicationcode IN(${PrismaCoa.join(
-          publicationCodes,
-        )})`) as IssueCoverDetails[]
+            publicationCodes
+          )})`) as IssueCoverDetails[]
       ).reduce(
         (acc, row) => ({
           ...acc,
           [row.issuenumber.replace(/ +/g, " ")]: row,
         }),
-        {} as Record<string, IssueCoverDetails>,
-      ),
+        {} as Record<string, IssueCoverDetails>
+      )
     );
   });
 
@@ -119,7 +121,7 @@ export default (socket: Socket) => {
       (acc, longIssueCode) => ({
         [longIssueCode]: longIssueCode.replace(/ +/g, " "),
       }),
-      {},
+      {}
     );
 
     // const quotations = await getIssueQuotations(issueCodes);
@@ -133,7 +135,7 @@ export default (socket: Socket) => {
 
     for (const { issuecode, userCount } of popularities) {
       const longIssueCode: string = Object.entries(shortIssueCodes).find(
-        ([, shortIssueCode]) => shortIssueCode === issuecode,
+        ([, shortIssueCode]) => shortIssueCode === issuecode
       )![0];
       issues[longIssueCode].popularity = userCount;
     }
@@ -147,7 +149,7 @@ declare global {
   interface Array<T> {
     groupBy<FieldValue>(
       fieldName: string,
-      valueFieldName?: FieldValue,
+      valueFieldName?: FieldValue
     ): { [key: string]: ReturnType<FieldValue, T> };
   }
 }
@@ -160,13 +162,13 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
         ? object[valueFieldName] || undefined
         : object,
     }),
-    {},
+    {}
   );
 };
 
 const getEntries = async (
   publicationcode: string,
-  issuenumber: string,
+  issuenumber: string
 ): Promise<SimpleEntry[]> =>
   await prismaCoa.$queryRaw`
       SELECT sv.storycode,

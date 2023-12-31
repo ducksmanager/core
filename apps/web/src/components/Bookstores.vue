@@ -174,17 +174,17 @@ import { io, Socket } from "socket.io-client";
 import { onMounted } from "vue";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
-import {
-  Namespace as BookstoreNamespace,
-  Services as BookstoreServices,
-} from "~api/services/bookstores/types";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
+import {
+  NamespaceEndpoint as BookstoreNamespaceEndpoint,
+  Services as BookstoreServices,
+} from "~services/bookstores/types";
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
 
 const socket: Socket<BookstoreServices> = io(
-  import.meta.env.VITE_SOCKET_URL + BookstoreNamespace["endpoint"],
+  import.meta.env.VITE_SOCKET_URL + BookstoreNamespaceEndpoint,
 );
 
 let bookstores = $ref(null as SimpleBookstore[] | null);

@@ -1,21 +1,35 @@
+import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import { getHashedPassword } from "~/services/auth/util";
 import { exclude } from "~dm-types/exclude";
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { user } from "~prisma-clients/client_dm";
-import { generateAccessToken } from "~routes/auth/util";
+import { generateAccessToken, getHashedPassword } from "~services/auth/util";
 
-import { Socket } from "../types";
-import { getUser, validate, validateDiscordId, validateEmail, validateEmailCreation, validateEmailUpdate, validateOldPassword, validatePasswords, validatePasswordUpdate, validatePresentationText, validateUsername, validateUsernameCreation } from "./util";
+import { Services } from "../types";
+import {
+  DiscordIdValidation,
+  EmailCreationValidation,
+  EmailUpdateValidation,
+  EmailValidation,
+  getUser,
+  OldPasswordValidation,
+  PasswordsValidation,
+  PasswordUpdateValidation,
+  PresentationTextValidation,
+  UsernameCreationValidation,
+  UsernameValidation,
+  validate,
+  Validation,
+} from "./util";
 
-export default (socket: Socket) => {
+export default (socket: Socket<Services>) => {
   socket.on("getUser", async (callback) => {
     const userWithoutPassword = exclude<user, "password">(
       await getUser(socket.data.user!.id),
       "password"
     );
-    callback(userWithoutPassword || { error: 'User not found' });
+    callback(userWithoutPassword || { error: "User not found" });
   });
 
   socket.on("deleteUser", async (callback) => {
@@ -35,27 +49,30 @@ export default (socket: Socket) => {
     await prismaDm.user.delete({
       where: { id: userId },
     });
-    callback()
+    callback();
   });
 
-  socket.on('updateUser', async (input, callback) => {
+  socket.on("updateUser", async (input, callback) => {
     let hasRequestedPresentationSentenceUpdate = false;
-    let validators = [
-      validateDiscordId,
-      validateEmail,
-      validateEmailUpdate,
-      validatePresentationText,
+    let validators: Validation[] = [
+      new DiscordIdValidation(),
+      new EmailValidation(),
+      new EmailUpdateValidation(),
+      new PresentationTextValidation(),
     ];
     input.userId = socket.data.user!.id;
     if (input.password) {
       validators = [
         ...validators,
-        validatePasswords,
-        validatePasswordUpdate,
-        validateOldPassword,
+        new PasswordsValidation(),
+        new PasswordUpdateValidation(),
+        new OldPasswordValidation(),
       ];
     }
-    if (await validate(input, callback, validators)) {
+    const scopedError = await validate(input, validators);
+    if (scopedError) {
+      callback({ error: "Bad request", ...scopedError });
+    } else {
       if (input.password) {
         await prismaDm.user.update({
           data: {
@@ -95,18 +112,19 @@ export default (socket: Socket) => {
         hasRequestedPresentationSentenceUpdate,
       });
     }
-    callback({ error: 'Bad request' });
   });
 
-  socket.on('createUser', async (input, callback) => {
-    const isValid = await validate(input, callback, [
-      validateUsername,
-      validateUsernameCreation,
-      validateEmail,
-      validateEmailCreation,
-      validatePasswords,
+  socket.on("createUser", async (input, callback) => {
+    const scopedError = await validate(input, [
+      new UsernameValidation(),
+      new UsernameCreationValidation(),
+      new EmailValidation(),
+      new EmailCreationValidation(),
+      new PasswordsValidation(),
     ]);
-    if (isValid) {
+    if (scopedError) {
+      callback({ error: "Bad request", ...scopedError });
+    } else {
       const { username, password, email } = input;
       const hashedPassword = getHashedPassword(password);
       const user = await prismaDm.user.create({
@@ -134,8 +152,5 @@ export default (socket: Socket) => {
 
       callback({ token });
     }
-    else {
-      callback({ error: 'Bad request' });
-    }
-  })
-}
+  });
+};

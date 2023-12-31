@@ -90,6 +90,10 @@ import condition from "~/composables/useCondition";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
+import {
+  NamespaceEndpoint as CoaNamespaceEndpoint,
+  Services as CoaServices,
+} from "~services/coa/types";
 
 const {
   withTitle = true,
@@ -109,6 +113,7 @@ const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();
 const { publicationNames } = storeToRefs(coa());
+let coaSocket = useSocket<CoaServices>(CoaNamespaceEndpoint);
 
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
@@ -161,9 +166,10 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = await coa()
-        .getSocket()
-        .emitWithAck("getIssuesByStorycode", value.replace(/^code=/, ""));
+      const data = await coaSocket.emitWithAck(
+        "getIssuesByStorycode",
+        value.replace(/^code=/, ""),
+      );
       issueResults = {
         results: data.sort((issue1, issue2) =>
           Math.sign(
@@ -175,9 +181,11 @@ const runSearch = async (value: string) => {
         issueResults.results.map(({ publicationcode }) => publicationcode),
       );
     } else {
-      const data = await coa()
-        .getSocket()
-        .emitWithAck("searchStory", value.split(","), true);
+      const data = await coaSocket.emitWithAck(
+        "searchStory",
+        value.split(","),
+        true,
+      );
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:

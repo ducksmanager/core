@@ -1,15 +1,23 @@
-import { AxiosInstance } from "axios";
-import { Socket } from "socket.io-client";
+import { authorUser } from "~prisma-clients/client_dm";
+import {
+  NamespaceEndpoint as CoaNamespaceEndpoint,
+  Services as CoaServices,
+} from "~services/coa/types";
+import {
+  NamespaceEndpoint as CollectionNamespaceEndpoint,
+  Services as CollectionServices,
+} from "~services/collection/types";
+import {
+  NamespaceEndpoint as StatsNamespaceEndpoint,
+  Services as StatsServices,
+} from "~services/stats/types";
+import { EventReturnType } from "~services/types";
 
-import { Services as CoaServices } from "~api/services/coa/types";
-import { Services as CollectionServices } from "~api/services/collection/types";
-import { Services as StatsServices } from "~api/services/stats/types";
-import { EventReturnType } from "~api/services/types";
-import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
-
-let api: AxiosInstance;
-let statsSocket: Socket<StatsServices>;
-let collectionSocket: Socket<CollectionServices>;
+const coaSocket = useSocket<CoaServices>(CoaNamespaceEndpoint);
+const statsSocket = useSocket<StatsServices>(StatsNamespaceEndpoint);
+const collectionSocket = useSocket<CollectionServices>(
+  CollectionNamespaceEndpoint,
+);
 
 export const stats = defineStore("stats", () => {
   const ratings = ref(
@@ -42,9 +50,10 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = await coa()
-          .getSocket()
-          .emitWithAck("searchAuthor", value);
+        authorSearchResults.value = await coaSocket.emitWithAck(
+          "searchAuthor",
+          value,
+        );
         console.log(authorSearchResults.value);
       } finally {
         isSearching.value = false;
@@ -55,40 +64,19 @@ export const stats = defineStore("stats", () => {
     }
   };
 
-  const createRating = async (data: { personcode: string }) => {
-    await call(
-      api,
-      new PUT__collection__authors__watched({
-        reqBody: data,
-      }),
-    );
+  const createRating = async (personcode: string) => {
+    await collectionSocket.emitWithAck("addWatchedAuthor", personcode);
     await loadRatings(true);
   };
-  const updateRating = async (data: {
-    personcode: string;
-    notation: number;
-  }) => {
-    await call(api, new POST__collection__authors__watched({ reqBody: data }));
+  const updateRating = async (data: authorUser) => {
+    await collectionSocket.emitWithAck("updateWatchedAuthor", data);
   };
-  const deleteAuthor = async (data: { personcode: string }) => {
-    await call(
-      api,
-      new DELETE__collection__authors__watched({ reqBody: data }),
-    );
+  const deleteAuthor = async (personcode: string) => {
+    await collectionSocket.emitWithAck("deleteWatchedAuthor", personcode);
     await loadRatings(true);
   };
 
   return {
-    setApi: (params: { api: typeof api }) => {
-      api = addUrlParamsRequestInterceptor(params.api);
-    },
-    setSocket: (params: {
-      statsSocket: typeof statsSocket;
-      collectionSocket: typeof collectionSocket;
-    }) => {
-      statsSocket = params.statsSocket;
-      collectionSocket = params.collectionSocket;
-    },
     isAuthorWatched,
     isSearching,
     ratings,

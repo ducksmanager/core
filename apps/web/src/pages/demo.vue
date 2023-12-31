@@ -9,15 +9,15 @@ meta:
 import Cookies from "js-cookie";
 import { io, Socket } from "socket.io-client";
 
-import { Namespace as DemoNamespace } from "~api/services/demo/types";
-import { Services as DemoServices } from "~api/services/demo/types";
+import { NamespaceEndpoint as DemoNamespaceEndpoint } from "~services/demo/types";
+import { Services as DemoServices } from "~services/demo/types";
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
 
 const router = useRouter();
 
 const socket: Socket<DemoServices> = io(
-  import.meta.env.VITE_SOCKET_URL + DemoNamespace["endpoint"],
+  import.meta.env.VITE_SOCKET_URL + DemoNamespaceEndpoint,
 );
 
 watch(
@@ -31,7 +31,7 @@ watch(
 );
 
 async () => {
-  const result = await socket.emitWithAck("resetDemo");
+  const result = await socket.emitWithAck("loginAsDemo");
   switch (result.error) {
     case "No demo user found":
       console.error(result.error);

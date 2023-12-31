@@ -161,6 +161,10 @@
 <script setup lang="ts">
 import { QuotedIssue } from "~/composables/useCollection";
 import condition from "~/composables/useCondition";
+import {
+  NamespaceEndpoint as GlobalStatsNamespaceEndpoint,
+  Services as GlobalStatsServices,
+} from "~services/global-stats/types";
 
 const { getConditionLabel } = condition();
 
@@ -225,9 +229,9 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const { userScores } = await users()
-    .getSocket()
-    .emitWithAck("getUsersCollectionRarity");
+  const { userScores } = await useSocket<GlobalStatsServices>(
+    GlobalStatsNamespaceEndpoint,
+  ).emitWithAck("getUsersCollectionRarity");
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === user.value?.id);

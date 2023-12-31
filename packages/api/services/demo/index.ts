@@ -1,34 +1,35 @@
 import { parse } from "csv-parse/sync";
 import { readFileSync } from "fs";
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { user } from "~prisma-clients/client_dm";
 
 import { getHashedPassword, loginAs } from "../auth/util";
 import { conditionToEnum } from "../collection/issues/util";
-import { Namespace } from "./types";
-
+import { NamespaceEndpoint, Services } from "./types";
 
 export default (io: Server) => {
-  (io.of(Namespace['endpoint']) as Namespace).on("connection", (socket) => {
-    socket.on("loginAsDemo", async (callback) => {
-      const demoUser = await prismaDm.user.findFirst({
-        where: { username: "demo" },
-      });
-      if (!demoUser) {
-        callback({ error: 'No demo user found' })
-      } else {
-        const token = await loginAs(
-          demoUser,
-          getHashedPassword(demoUser!.password)
-        );
+  (io.of(NamespaceEndpoint) as Namespace<Services>).on(
+    "connection",
+    (socket) => {
+      socket.on("loginAsDemo", async (callback) => {
+        const demoUser = await prismaDm.user.findFirst({
+          where: { username: "demo" },
+        });
+        if (!demoUser) {
+          callback({ error: "No demo user found" });
+        } else {
+          const token = await loginAs(
+            demoUser,
+            getHashedPassword(demoUser!.password)
+          );
 
-        callback({ token });
-      }
+          callback({ token });
+        }
+      });
     }
-    )
-  })
+  );
 };
 
 const getHoursFromDate = (date: Date) =>

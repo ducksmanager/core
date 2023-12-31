@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 
-import { Services as PublicCollectionServices } from "~api/services/public-collection/types";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { Services as PublicCollectionServices } from "~services/public-collection/types";
 
 import useCollection from "../composables/useCollection";
 

@@ -1,4 +1,4 @@
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 
 import authors from "./authors";
 import countries from "./countries";
@@ -7,10 +7,10 @@ import issues from "./issues";
 import publications from "./publications";
 import quotations from "./quotations";
 import stories from "./stories";
-import { Namespace } from "./types";
+import { Services } from "./types";
 
 export default (io: Server) => {
-  (io.of("/coa") as Namespace).on("connection", (socket) => {
+  (io.of("/coa") as Namespace<Services>).on("connection", (socket) => {
     countries(socket);
     publications(socket);
     issues(socket);

@@ -1,12 +1,9 @@
-
-
-import { Errorable, NamespaceGeneric, SocketGeneric } from "../types";
+import { Errorable } from "../types";
 
 export interface Services {
-  loginAsDemo: (callback: (data: Errorable<{ token: string }, 'No demo user found'>) => void) => void;
+  loginAsDemo: (
+    callback: (data: Errorable<{ token: string }, "No demo user found">) => void
+  ) => void;
 }
 
-export type Socket = SocketGeneric<Services>;
-export class Namespace extends NamespaceGeneric<Services> {
-  public static endpoint = '/demo'
-}
+export const NamespaceEndpoint = "/demo";

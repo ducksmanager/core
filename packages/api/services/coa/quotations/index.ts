@@ -1,17 +1,18 @@
+import { Socket } from "socket.io";
+
 import { prismaCoa } from "~/prisma";
 
-import { Socket } from "../types";
-
+import { Services } from "../types";
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
-export default (socket: Socket) => {
+export default (socket: Socket<Services>) => {
   socket.on("getQuotationsByIssueCodes", async (issueCodes, callback) => {
     const codes = issueCodes.filter((code) => ISSUE_CODE_REGEX.test(code));
     if (!codes.length) {
-      throw new Error("400");
+      callback({ error: "Bad request" });
     } else if (codes.length > 4) {
-      throw new Error("429");
+      callback({ error: "Too many requests" });
     } else {
       callback(
         await prismaCoa.inducks_issuequotation.findMany({
@@ -21,7 +22,7 @@ export default (socket: Socket) => {
             },
             estimationMin: { not: { equals: null } },
           },
-        }),
+        })
       );
     }
   });
@@ -29,12 +30,10 @@ export default (socket: Socket) => {
     "getQuotationsByPublicationCodes",
     async (publicationCodes, callback) => {
       const codes = publicationCodes.filter((code) =>
-        PUBLICATION_CODE_REGEX.test(code),
+        PUBLICATION_CODE_REGEX.test(code)
       );
       if (!codes.length) {
-        throw new Error("400");
-      } else if (codes.length > 50) {
-        throw new Error("429");
+        callback({ error: "Bad request" });
       } else {
         callback(
           await prismaCoa.inducks_issuequotation.findMany({
@@ -42,9 +41,9 @@ export default (socket: Socket) => {
               publicationcode: { in: codes.map(([code]) => code) },
               estimationMin: { not: { equals: null } },
             },
-          }),
+          })
         );
       }
-    },
+    }
   );
 };

@@ -1,4 +1,3 @@
-import { NamespaceGeneric, SocketGeneric } from "../types";
 import Authors from "./authors/types";
 import Countries from "./countries/types";
 import IssueDetails from "./issue-details/types";
@@ -9,15 +8,11 @@ import Stories from "./stories/types";
 
 export interface Services
   extends Countries,
-  Publications,
-  Issues,
-  IssueDetails,
-  Authors,
-  Quotations,
-  Stories { }
+    Publications,
+    Issues,
+    IssueDetails,
+    Authors,
+    Quotations,
+    Stories {}
 
-export class Namespace extends NamespaceGeneric<Services> {
-  public static endpoint = '/coa';
-}
-
-export type Socket = SocketGeneric<Services>;
+export const NamespaceEndpoint = "/coa";

@@ -98,9 +98,6 @@ dependencies:
   ~api:
     specifier: workspace:*
     version: link:../../packages/api
-  ~api-routes:
-    specifier: workspace:*
-    version: link:../../packages/api-routes
   ~axios-helper:
     specifier: workspace:*
     version: link:../../packages/axios-helper

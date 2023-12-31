@@ -1,11 +1,12 @@
-import { Socket } from "socket.io-client";
-
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
-import { Services as CoaServices } from "~api/services/coa/types";
-import { EventReturnType } from "~api/services/types";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { inducks_issue } from "~prisma-clients/client_coa";
+import {
+  NamespaceEndpoint as CoaNamespaceEndpoint,
+  Services as CoaServices,
+} from "~services/coa/types";
+import { EventReturnType } from "~services/types";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -36,7 +37,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
   };
 };
 
-let socket: Socket<CoaServices>;
+const socket = useSocket<CoaServices>(CoaNamespaceEndpoint);
 
 export const coa = defineStore("coa", () => {
   const ISSUECODE_REGEX =
@@ -150,19 +151,15 @@ export const coa = defineStore("coa", () => {
           ),
         ),
       ];
-      try {
-        return (
-          actualNewPublicationCodes.length &&
-          addPublicationNames(
-            await socket.emitWithAck(
-              "getPublicationListFromPublicationcodeList",
-              actualNewPublicationCodes,
-            ),
-          )
-        );
-      } catch (e) {
-        debugger;
-      }
+      return (
+        actualNewPublicationCodes.length &&
+        addPublicationNames(
+          await socket.emitWithAck(
+            "getPublicationListFromPublicationcodeList",
+            actualNewPublicationCodes,
+          ),
+        )
+      );
     },
     fetchIssueQuotations = async (newPublicationCodes: string[]) => {
       const actualNewPublicationCodes = [
@@ -246,13 +243,13 @@ export const coa = defineStore("coa", () => {
         ),
       ];
       if (newPublicationCodes.length) {
-        const data = await socket.emitWithAck(
-          "getIssuesByPublicationCodes",
-          newPublicationCodes,
-        );
-
         addIssueNumbers(
-          data.reduce(
+          (
+            await socket.emitWithAck(
+              "getIssuesByPublicationCodes",
+              newPublicationCodes,
+            )
+          ).reduce(
             (acc, issue) => ({
               ...acc,
               [issue.publicationcode]: [
@@ -310,10 +307,6 @@ export const coa = defineStore("coa", () => {
       }
     };
   return {
-    getSocket: () => socket,
-    setSocket: (params: { socket: typeof socket }) => {
-      socket = params.socket;
-    },
     coverUrls,
     countryNames,
     publicationNames,

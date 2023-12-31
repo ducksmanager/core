@@ -1,16 +1,23 @@
-import { AxiosError } from "axios";
-import { Socket } from "socket.io-client";
-
-import { Services as CollectionServices } from "~api/services/collection/types";
-import { Services as LoginServices } from "~api/services/login/types";
-import { Services as StatsServices } from "~api/services/stats/types";
-import { EventReturnType } from "~api/services/types";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { ScopedError } from "~dm-types/ScopedError";
 import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
+import {
+  NamespaceEndpoint as CollectionNamespaceEndpoint,
+  Services as CollectionServices,
+} from "~services/collection/types";
+import {
+  NamespaceEndpoint as LoginNamespaceEndpoint,
+  Services as LoginServices,
+} from "~services/login/types";
+import {
+  NamespaceEndpoint as StatsNamespaceEndpoint,
+  Services as StatsServices,
+} from "~services/stats/types";
+import { EventReturnType } from "~services/types";
 
 import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";
@@ -41,10 +48,10 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
-let statsSocket: Socket<StatsServices>,
-  loginSocket: Socket<LoginServices>,
-  collectionSocket: Socket<CollectionServices>,
-  sessionExistsFn: () => Promise<boolean>,
+const statsSocket = useSocket<StatsServices>(StatsNamespaceEndpoint),
+  loginSocket = useSocket<LoginServices>(LoginNamespaceEndpoint),
+  collectionSocket = useSocket<CollectionServices>(CollectionNamespaceEndpoint);
+let sessionExistsFn: () => Promise<boolean>,
   clearSessionFn: () => Promise<void>;
 
 export const collection = defineStore("collection", () => {
@@ -177,10 +184,10 @@ export const collection = defineStore("collection", () => {
     },
     loadPreviousVisit = async () => {
       const result = await collectionSocket.emitWithAck("getLastVisit");
-      if (result && "error" in result) {
+      if (typeof result === "object" && result?.error) {
         console.error(result.error);
-      } else {
-        previousVisit.value = result;
+      } else if (result) {
+        previousVisit.value = new Date(result as string);
       }
     },
     loadCollection = async (afterUpdate = false) => {
@@ -314,9 +321,9 @@ export const collection = defineStore("collection", () => {
         password,
       });
       if (typeof response !== "string" && "error" in response) {
-        onError(response.error);
+        onError(response.error!);
       } else {
-        onSuccess(response);
+        onSuccess(response as string);
       }
     },
     signup = async (
@@ -325,21 +332,22 @@ export const collection = defineStore("collection", () => {
       password2: string,
       email: string,
       onSuccess: (token: string) => void,
-      onError: (e: AxiosError) => void,
+      onError: (e: ScopedError) => void,
     ) => {
-      try {
-        onSuccess(
-          (
-            await collectionSocket.emitWithAck("createUser", {
-              username,
-              password,
-              password2,
-              email,
-            })
-          ).token,
-        );
-      } catch (e) {
-        onError(e as AxiosError);
+      const response = await collectionSocket.emitWithAck("createUser", {
+        username,
+        password,
+        password2,
+        email,
+      });
+      if (response.error) {
+        if (response.selector) {
+          onError(response);
+        } else {
+          console.error(response.error, response.errorDetails);
+        }
+      } else {
+        onSuccess(response.token);
       }
     },
     loadUser = async (afterUpdate = false) => {
@@ -347,7 +355,12 @@ export const collection = defineStore("collection", () => {
         isLoadingUser.value = true;
         try {
           if (await sessionExistsFn()) {
-            user.value = await collectionSocket.emitWithAck("getUser");
+            const response = await collectionSocket.emitWithAck("getUser");
+            if ("error" in response) {
+              throw new Error(response.error);
+            } else {
+              user.value = response;
+            }
           }
         } catch (e) {
           console.error(e);
@@ -360,15 +373,6 @@ export const collection = defineStore("collection", () => {
     };
   return {
     ...collectionUtils,
-    setSocket: (params: {
-      statsSocket: typeof statsSocket;
-      loginSocket: typeof loginSocket;
-      collectionSocket: typeof collectionSocket;
-    }) => {
-      statsSocket = params.statsSocket;
-      loginSocket = params.loginSocket;
-      collectionSocket = params.collectionSocket;
-    },
     setApi: (params: {
       sessionExistsFn: typeof sessionExistsFn;
       clearSessionFn: typeof clearSessionFn;

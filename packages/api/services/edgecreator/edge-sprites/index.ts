@@ -1,15 +1,14 @@
-
 import { v2 as cloudinaryV2 } from "cloudinary";
+import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { edge } from "~prisma-clients/client_dm";
 
-import { Socket } from "../types";
-
+import { Services } from "../types";
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];
 const MAX_SPRITE_SIZE = 100;
 
-export default (socket: Socket) => {
+export default (socket: Socket<Services>) => {
   socket.on("uploadEdges", async (callback) => {
     try {
       let nextCursor = undefined;
@@ -58,7 +57,7 @@ export default (socket: Socket) => {
           }
         );
       }
-      callback()
+      callback();
     } catch (e) {
       console.error(e);
     }
@@ -98,9 +97,9 @@ const getSpriteRange = (issuenumber: string, rangeWidth: number) => {
   return [
     issueNumberAsNumber - ((issueNumberAsNumber - 1) % rangeWidth),
     issueNumberAsNumber -
-    ((issueNumberAsNumber - 1) % rangeWidth) +
-    rangeWidth -
-    1,
+      ((issueNumberAsNumber - 1) % rangeWidth) +
+      rangeWidth -
+      1,
   ].join("-");
 };
 
@@ -193,9 +192,8 @@ const generateSprites = async () => {
   const insertOperations = [];
   for (const spriteName of spritesWithNoUrl) {
     try {
-      const { version } = await cloudinaryV2.uploader.generate_sprite(
-        spriteName
-      );
+      const { version } =
+        await cloudinaryV2.uploader.generate_sprite(spriteName);
       insertOperations.push(
         prismaDm.edgeSpriteUrl.create({
           data: {

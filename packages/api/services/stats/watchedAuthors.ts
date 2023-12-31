@@ -1,13 +1,15 @@
+import { Socket } from "socket.io";
+
 import { prismaDmStats } from "~/prisma";
 
 import { getAuthorFullNames } from "../coa/authors";
-import { Socket } from "./types";
+import { Services } from "./types";
 
-export default (socket: Socket) => {
+export default (socket: Socket<Services>) => {
   socket.on("getWatchedAuthorsStats", async (callback) => {
     const user = socket.data.user;
     const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
-      user!.id,
+      user!.id
     );
     const personcodes = Object.keys(missingStoryCountPerAuthor);
 
@@ -15,22 +17,20 @@ export default (socket: Socket) => {
     const personNames = await getAuthorFullNames(personcodes);
 
     callback(
-      personcodes.map(
-        (personcode) => ({
-          personcode,
-          missingstorycount: missingStoryCountPerAuthor[personcode],
-          storycount:
-            storyCountPerAuthor[personcode] ||
-            missingStoryCountPerAuthor[personcode],
-          fullname: personNames[personcode],
-        })
-      ),
+      personcodes.map((personcode) => ({
+        personcode,
+        missingstorycount: missingStoryCountPerAuthor[personcode],
+        storycount:
+          storyCountPerAuthor[personcode] ||
+          missingStoryCountPerAuthor[personcode],
+        fullname: personNames[personcode],
+      }))
     );
   });
 };
 
 const getStoryCountPerAuthor = async (
-  personcodes: string[],
+  personcodes: string[]
 ): Promise<{ [personcode: string]: number }> =>
   (
     await prismaDmStats.authorStory.groupBy({
@@ -47,11 +47,11 @@ const getStoryCountPerAuthor = async (
       ...acc,
       [personcode]: _count.storycode,
     }),
-    {},
+    {}
   );
 
 const getMissingStoryCountPerAuthor = async (
-  userId: number,
+  userId: number
 ): Promise<{ [personcode: string]: number }> =>
   (
     await prismaDmStats.missingStoryForUser.groupBy({
@@ -66,5 +66,5 @@ const getMissingStoryCountPerAuthor = async (
       ...acc,
       [personcode]: _count.storycode,
     }),
-    {},
+    {}
   );

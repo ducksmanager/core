@@ -1,8 +1,8 @@
 import { Socket } from "socket.io-client";
 
-import { Services as BookcaseServices } from "~api/services/bookcase/types";
-import { EventReturnType } from "~api/services/types";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
+import { Services as BookcaseServices } from "~services/bookcase/types";
+import { EventReturnType } from "~services/types";
 
 import { collection } from "./collection";
 
@@ -80,10 +80,15 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        bookcaseOptions.value = await socket.emitWithAck(
+        const response = await socket.emitWithAck(
           "getBookcaseOptions",
           bookcaseUsername.value!,
         );
+        if ("error" in response) {
+          console.error(response.error);
+        } else {
+          bookcaseOptions.value = response;
+        }
       }
     },
     updateBookcaseOptions = async () => {
@@ -91,9 +96,15 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        bookcaseOrder.value = (
-          await socket.emitWithAck("getBookcaseOrder", bookcaseUsername.value!)
-        ).publicationCodes;
+        const response = await socket.emitWithAck(
+          "getBookcaseOrder",
+          bookcaseUsername.value!,
+        );
+        if ("error" in response) {
+          console.error(response.error);
+        } else {
+          bookcaseOrder.value = response.publicationCodes;
+        }
       }
     },
     updateBookcaseOrder = async () => {

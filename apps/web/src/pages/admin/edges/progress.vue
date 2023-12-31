@@ -123,12 +123,15 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-import { call } from "~axios-helper";
 import { WantedEdge } from "~dm-types/WantedEdge";
+import {
+  NamespaceEndpoint as EdgesNamespaceEndpoint,
+  Services as EdgesServices,
+} from "~services/edges/types";
 const { getImagePath } = images();
+
+const socket = useSocket<EdgesServices>(EdgesNamespaceEndpoint);
 
 let hasData = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
@@ -195,7 +198,7 @@ const sortedBookcase = computed(() =>
 );
 
 (async () => {
-  mostWanted = (await call(axios, new GET__edges__wanted__data())).data.map(
+  mostWanted = (await socket.emitWithAck("getWantedEdges")).map(
     (mostWantedIssue) => ({
       ...mostWantedIssue,
       country: mostWantedIssue.publicationcode.split("/")[0],
@@ -203,9 +206,7 @@ const sortedBookcase = computed(() =>
     }),
   );
 
-  publishedEdges = (
-    await call(axios, new GET__edges__published__data())
-  ).data.reduce(
+  publishedEdges = (await socket.emitWithAck("getPublishedEdges")).reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],

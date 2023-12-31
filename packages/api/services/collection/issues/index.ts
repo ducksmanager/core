@@ -1,12 +1,19 @@
-import { resetDemo } from "~/services/demo";
+import { Socket } from "socket.io";
+
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { issue_condition } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
+import { resetDemo } from "~services/demo";
 
-import { Socket } from "../types";
-import { checkPurchaseIdsBelongToUser, conditionToEnum, deleteIssues, handleIsOnSale } from "./util";
+import { Services } from "../types";
+import {
+  checkPurchaseIdsBelongToUser,
+  conditionToEnum,
+  deleteIssues,
+  handleIsOnSale,
+} from "./util";
 
-export default (socket: Socket) => {
+export default (socket: Socket<Services>) => {
   socket.on("getIssues", async (callback) => {
     if (socket.data.user!.username === "demo") {
       await resetDemo();
@@ -18,103 +25,119 @@ export default (socket: Socket) => {
         },
       })
     );
-  })
+  });
 
-  socket.on('addOrChangeIssues', async ({ publicationcode, issuenumbers, purchaseId, isOnSale, condition, isToRead }, callback) => {
-    const user = socket.data.user!
+  socket.on(
+    "addOrChangeIssues",
+    async (
+      {
+        publicationcode,
+        issuenumbers,
+        purchaseId,
+        isOnSale,
+        condition,
+        isToRead,
+      },
+      callback
+    ) => {
+      const user = socket.data.user!;
 
-    let checkedPurchaseId: number | null = null;
-    if (typeof purchaseId === "number") {
-      checkedPurchaseId = (
-        await checkPurchaseIdsBelongToUser([purchaseId], user.id)
-      )[0];
+      let checkedPurchaseId: number | null = null;
+      if (typeof purchaseId === "number") {
+        checkedPurchaseId = (
+          await checkPurchaseIdsBelongToUser([purchaseId], user.id)
+        )[0];
+      }
+
+      if (isOnSale !== undefined) {
+        const issueIds = (
+          await prismaDm.issue.findMany({
+            select: {
+              id: true,
+            },
+            where: {
+              userId: user.id,
+              country: publicationcode.split("/")[0],
+              magazine: publicationcode.split("/")[1],
+              issuenumber: {
+                in: issuenumbers,
+              },
+            },
+          })
+        ).map(({ id }) => id);
+        for (const issueId of issueIds) {
+          await handleIsOnSale(issueId, isOnSale);
+        }
+      }
+
+      if (condition === null) {
+        await deleteIssues(user.id, publicationcode, issuenumbers);
+        return callback({});
+      }
+      callback(
+        await addOrChangeIssues(
+          user.id,
+          publicationcode,
+          issuenumbers,
+          condition,
+          isOnSale === undefined ? undefined : isOnSale !== false,
+          isToRead,
+          checkedPurchaseId
+        )
+      );
     }
+  );
+  socket.on(
+    "addOrChangeCopies",
+    async ({ publicationcode, issuenumber, copies }, callback) => {
+      const [country, magazine] = publicationcode.split("/");
 
-    if (isOnSale !== undefined) {
-      const issueIds = (
+      const userId = socket.data.user!.id;
+
+      const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
+        copies
+          .map(({ purchaseId }) => purchaseId)
+          .filter((purchaseId) => !!purchaseId) as number[],
+        userId
+      );
+
+      const output = await addOrChangeCopies(
+        userId,
+        publicationcode,
+        issuenumber,
+        copies.map(({ id }) => id),
+        copies.map(({ condition }) => condition),
+        copies.map(({ isOnSale }) =>
+          isOnSale === undefined ? undefined : isOnSale !== false
+        ),
+        copies.map(({ isToRead }) => isToRead),
+        checkedPurchaseIds
+      );
+
+      const currentCopyIds = (
         await prismaDm.issue.findMany({
           select: {
             id: true,
           },
           where: {
-            userId: user.id,
-            country: publicationcode.split("/")[0],
-            magazine: publicationcode.split("/")[1],
-            issuenumber: {
-              in: issuenumbers,
-            },
+            country,
+            magazine,
+            issuenumber,
+            userId: userId,
           },
         })
       ).map(({ id }) => id);
-      for (const issueId of issueIds) {
-        await handleIsOnSale(issueId, isOnSale);
+
+      for (const issueId of currentCopyIds) {
+        const idx = currentCopyIds.indexOf(issueId);
+        if (copies[idx]) {
+          await handleIsOnSale(issueId, copies[idx].isOnSale);
+        }
       }
+      callback(output);
     }
-
-    if (condition === null) {
-      await deleteIssues(user.id, publicationcode, issuenumbers);
-      return callback({});
-    }
-    callback(
-      await addOrChangeIssues(
-        user.id,
-        publicationcode,
-        issuenumbers,
-        condition,
-        isOnSale === undefined ? undefined : isOnSale !== false,
-        isToRead,
-        checkedPurchaseId
-      )
-    );
-  });
-  socket.on('addOrChangeCopies', async ({ publicationcode, issuenumber, copies }, callback) => {
-    const [country, magazine] = publicationcode.split("/");
-
-    const userId = socket.data.user!.id;
-
-    const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
-      copies
-        .map(({ purchaseId }) => purchaseId)
-        .filter((purchaseId) => !!purchaseId) as number[],
-      userId
-    );
-
-    const output = await addOrChangeCopies(
-      userId,
-      publicationcode,
-      issuenumber,
-      copies.map(({ id }) => id),
-      copies.map(({ condition }) => condition),
-      copies.map(({ isOnSale }) =>
-        isOnSale === undefined ? undefined : isOnSale !== false
-      ),
-      copies.map(({ isToRead }) => isToRead),
-      checkedPurchaseIds
-    );
-
-    const currentCopyIds = (
-      await prismaDm.issue.findMany({
-        select: {
-          id: true,
-        },
-        where: {
-          country,
-          magazine,
-          issuenumber,
-          userId: userId,
-        },
-      })
-    ).map(({ id }) => id);
-
-    for (const issueId of currentCopyIds) {
-      const idx = currentCopyIds.indexOf(issueId);
-      if (copies[idx]) {
-        await handleIsOnSale(issueId, copies[idx].isOnSale);
-      }
-    }
-    callback(output);
-  })
-}
+  );
+};
 
 const addOrChangeIssues = async (
   userId: number,

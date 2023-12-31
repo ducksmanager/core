@@ -1,39 +1,39 @@
+import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 
-import { Socket } from "../types";
-
-
+import { Services } from "../types";
 const maxWatchedAuthors = 5;
 
-export default (socket: Socket) => {
-  socket.on("getWatchedAuthors", async (callback) => prismaDm.authorUser.findMany({
-    where: { userId: socket.data.user!.id },
-  }).then(callback));
+export default (socket: Socket<Services>) => {
+  socket.on("getWatchedAuthors", async (callback) =>
+    prismaDm.authorUser
+      .findMany({
+        where: { userId: socket.data.user!.id },
+      })
+      .then(callback)
+  );
 
   socket.on("addWatchedAuthor", async (personcode, callback) => {
     try {
       await upsertAuthorUser(personcode, socket.data.user!.id);
-      callback()
+      callback();
     } catch (e) {
       console.log(e);
-      callback({ error: 'Error', errorDetails: (e as Error).message })
+      callback({ error: "Error", errorDetails: (e as Error).message });
     }
   });
 
-  socket.on("updateWatchedAuthor", async (personcode, notation, callback) => {
+  socket.on("updateWatchedAuthor", async (data, callback) => {
     try {
-      await upsertAuthorUser(
-        personcode,
-        socket.data.user!.id,
-        notation
-      );
-      callback()
+      const { personcode, notation } = data;
+      await upsertAuthorUser(personcode, socket.data.user!.id, notation);
+      callback();
     } catch (e) {
       console.error(e);
-      callback({ error: 'Error', errorDetails: (e as Error).message })
+      callback({ error: "Error", errorDetails: (e as Error).message });
     }
-  })
+  });
 
   socket.on("deleteWatchedAuthor", async (personcode, callback) => {
     await prismaDm.authorUser.deleteMany({
@@ -42,7 +42,7 @@ export default (socket: Socket) => {
         userId: socket.data.user!.id,
       },
     });
-    callback()
+    callback();
   });
 };
 

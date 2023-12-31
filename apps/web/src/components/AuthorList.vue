@@ -51,7 +51,7 @@
             ></StarRating>
           </b-col>
           <b-col lg="2">
-            <b-button size="sm" @click="deleteAuthor(author)">
+            <b-button size="sm" @click="deleteAuthor(author.personcode)">
               {{ $t("Supprimer") }}
             </b-button>
           </b-col>
@@ -90,11 +90,7 @@
                   :class="{
                     disabled: isAuthorWatched(personcode as string),
                   }"
-                  @click="
-                    createRating({
-                      personcode: personcode as string,
-                    })
-                  "
+                  @click="createRating(personcode)"
                 >
                   {{ fullName }}
                 </option>

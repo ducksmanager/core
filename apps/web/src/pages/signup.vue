@@ -65,7 +65,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 
 import { call } from "~axios-helper";
@@ -97,9 +97,11 @@ const signup = async () => {
       await loadUser();
     },
     (e) => {
-      error = ((e as AxiosError)?.response?.data as ScopedError) || {
-        message: $t("Une erreur s'est produite."),
-      };
+      if (e.selector) {
+        error = e;
+      } else {
+        console.error(e);
+      }
     },
   );
 };

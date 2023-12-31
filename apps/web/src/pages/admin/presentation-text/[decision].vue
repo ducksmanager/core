@@ -7,12 +7,12 @@ import { io, Socket } from "socket.io-client";
 
 import {
   Decision,
-  Namespace as PresentationTextNamespace,
+  NamespaceEndpoint as PresentationTextNamespaceEndpoint,
   Services as PresentationTextServices,
-} from "~api/services/presentation-text/types";
+} from "~services/presentation-text/types";
 
 let socket: Socket<PresentationTextServices> = io(
-  import.meta.env.VITE_SOCKET_URL + PresentationTextNamespace["endpoint"],
+  import.meta.env.VITE_SOCKET_URL + PresentationTextNamespaceEndpoint,
 );
 
 let router = useRouter();

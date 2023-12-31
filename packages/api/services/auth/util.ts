@@ -1,11 +1,12 @@
 import crypto from "crypto";
-import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { User } from "~dm-types/SessionUser";
 import { user } from "~prisma-clients/client_dm";
+
+import { SocketWithUser } from "../types-server";
 
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
@@ -30,7 +31,11 @@ export const loginAs = async (user: user, hashedPassword: string) =>
     ).groupBy("role", "privilege"),
   });
 
-const AuthMiddleware = (socket: Socket, next: (error?: Error) => void, required: boolean) => {
+const AuthMiddleware = (
+  socket: SocketWithUser,
+  next: (error?: Error) => void,
+  required: boolean
+) => {
   const token = socket.handshake.auth.token;
 
   if (required && token == null) {
@@ -44,69 +49,48 @@ const AuthMiddleware = (socket: Socket, next: (error?: Error) => void, required:
     (err: unknown, user: unknown) => {
       if (required && err) {
         next(new Error(`Invalid token: ${err}`));
-      }
-      else {
-        socket.data.user = user;
+      } else {
+        socket.data.user = user as User;
         next();
       }
-    },
-  );
-}
-
-export const RequiredAuthMiddleware = (socket: Socket, next: (error?: Error) => void) => AuthMiddleware(socket, next, true)
-
-export const OptionalAuthMiddleware = (socket: Socket, next: (error?: Error) => void) => AuthMiddleware(socket, next, false)
-
-
-export const authenticateToken = (
-  req: Request,
-  res: Response,
-  next: CallableFunction
-) => {
-  // Signup
-  if (req.method === "PUT" && req.url === "/collection/user") {
-    next();
-    return;
-  }
-  const authHeader = req.headers["authorization"];
-  const token = authHeader?.split(" ")?.[1];
-
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(
-    token,
-    process.env.TOKEN_SECRET as string,
-    (err: unknown, user: unknown) => {
-      if (err) {
-        return res.sendStatus(401);
-      }
-      req.user = user as User;
-      next();
     }
   );
 };
 
-export const checkUserIsEdgeCreatorEditor = (
-  req: Request,
-  res: Response,
-  next: CallableFunction
+export const RequiredAuthMiddleware = (
+  socket: Socket,
+  next: (error?: Error) => void
+) => AuthMiddleware(socket, next, true);
+
+export const OptionalAuthMiddleware = (
+  socket: Socket,
+  next: (error?: Error) => void
+) => AuthMiddleware(socket, next, false);
+
+export const UserIsEdgeCreatorEditorAuthMiddleware = (
+  socket: SocketWithUser,
+  next: (error?: Error) => void
 ) => {
   if (
-    !req.user ||
-    !["Edition", "Admin"].includes(req.user.privileges?.["EdgeCreator"])
+    !socket.data.user ||
+    !["Edition", "Admin"].includes(socket.data.user.privileges?.["EdgeCreator"])
   ) {
-    return res.sendStatus(403);
+    next(new Error("Unauthorized"));
+    return;
   }
   next();
 };
 
-export const checkUserIsAdmin = (
-  req: Request,
-  res: Response,
-  next: CallableFunction
+export const UserIsAdminMiddleware = (
+  socket: SocketWithUser,
+  next: (error?: Error) => void
 ) => {
-  if (!req.user || !["Admin"].includes(req.user.privileges?.["DucksManager"])) {
-    return res.sendStatus(403);
+  if (
+    !socket.data.user ||
+    !["Admin"].includes(socket.data.user.privileges?.["DucksManager"])
+  ) {
+    next(new Error("Unauthorized"));
+    return;
   }
   next();
 };

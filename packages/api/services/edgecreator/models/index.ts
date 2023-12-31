@@ -1,59 +1,68 @@
+import { Socket } from "socket.io";
+
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
 import { EdgeModel } from "~dm-types/EdgeModel";
 import { ModelSteps } from "~dm-types/ModelSteps";
 import { ExpressCall } from "~routes/_express-call";
 
-import { Socket } from "../types";
-
-export default (socket: Socket) => {
-  socket.on("getUnassignedEdges", async (callback) => prismaEdgeCreator.edgeModel.findMany({
-    select: {
-      id: true,
-      country: true,
-      magazine: true,
-      issuenumber: true,
-      photos: {
-        include: {
-          elementImage: true,
-        },
-      },
-      contributors: true,
-    },
-    where: {
-      username: null,
-      isActive: false,
-    },
-  }).then(callback))
-
-  socket.on('getEdgesEditedByOthers', async (callback) => prismaEdgeCreator.edgeModel.findMany({
-    select: {
-      id: true,
-      country: true,
-      magazine: true,
-      issuenumber: true,
-    },
-    where: {
-      isActive: true,
-      contributors: {
-        some: {
-          userId: socket.data.user!.id,
-          contribution: "photographe",
-        },
-      },
-      OR: [
-        {
-          username: {
-            not: socket.data.user!.username,
+import { Services } from "../types";
+export default (socket: Socket<Services>) => {
+  socket.on("getUnassignedEdges", async (callback) =>
+    prismaEdgeCreator.edgeModel
+      .findMany({
+        select: {
+          id: true,
+          country: true,
+          magazine: true,
+          issuenumber: true,
+          photos: {
+            include: {
+              elementImage: true,
+            },
           },
+          contributors: true,
         },
-        {
+        where: {
           username: null,
+          isActive: false,
         },
-      ],
-    },
-  }).then(callback))
+      })
+      .then(callback)
+  );
 
-  socket.on('getModelsSteps', async (modelIds, callback) => {
+  socket.on("getEdgesEditedByOthers", async (callback) =>
+    prismaEdgeCreator.edgeModel
+      .findMany({
+        select: {
+          id: true,
+          country: true,
+          magazine: true,
+          issuenumber: true,
+        },
+        where: {
+          isActive: true,
+          contributors: {
+            some: {
+              userId: socket.data.user!.id,
+              contribution: "photographe",
+            },
+          },
+          OR: [
+            {
+              username: {
+                not: socket.data.user!.username,
+              },
+            },
+            {
+              username: null,
+            },
+          ],
+        },
+      })
+      .then(callback)
+  );
+
+  socket.on("getModelsSteps", async (modelIds, callback) => {
     callback(
       (
         (await prismaEdgeCreator.$queryRaw`
@@ -97,10 +106,11 @@ export default (socket: Socket) => {
           },
         }),
         {}
-      ))
-  })
+      )
+    );
+  });
 
-  socket.on('getModel', async (publicationcode, issuenumber, callback) => {
+  socket.on("getModel", async (publicationcode, issuenumber, callback) => {
     const [country, magazine] = publicationcode.split("/");
     const model = await prismaEdgeCreator.edgeModel.findFirst({
       where: {
@@ -117,8 +127,8 @@ export default (socket: Socket) => {
         },
       })) > 0;
     callback(model && modelIsPublished ? model : null);
-  })
-}
+  });
+};
 
 export const get = async (
   ...[req, res]: ExpressCall<{ resBody: EdgeModel[] }>

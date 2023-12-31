@@ -1,10 +1,10 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 
-import { Namespace } from "./types";
+import { NamespaceEndpoint, Services } from "./types";
 import { loginAs } from "./util";
 
 export enum COUNTRY_CODE_OPTION {
@@ -13,55 +13,57 @@ export enum COUNTRY_CODE_OPTION {
 }
 
 export default (io: Server) => {
-  (io.of(Namespace['endpoint']) as Namespace).on(
+  (io.of(NamespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
       socket.on("forgot", async (token, callback) => {
-        jwt.verify(
-          token,
-          process.env.TOKEN_SECRET as string,
-          (err) => {
-            callback({ error: err!.message || '' })
-          }
-        );
+        jwt.verify(token, process.env.TOKEN_SECRET as string, (err) => {
+          callback({ error: err!.message || "" });
+        });
       });
 
-      socket.on('changePassword', async ({ password, password2, token }, callback) => {
-        jwt.verify(
-          token,
-          process.env.TOKEN_SECRET as string,
-          async (err: unknown, email: unknown) => {
-            if (err) {
-              callback(({ error: 'Invalid token' }))
-            } else if (password.length < 6) {
-              callback(({ error: 'Your password should be at least 6 characters long' }));
-            } else if (password !== password2) {
-              callback(({ error: 'The two passwords should be identical' }));
-            } else {
-              const hashedPassword = crypto
-                .createHash("sha1")
-                .update(password)
-                .digest("hex");
-              await prismaDm.user.updateMany({
-                data: {
-                  password: hashedPassword,
-                },
-                where: {
-                  email: email as string,
-                },
-              });
-              const user = (await prismaDm.user.findFirst({
-                where: {
-                  email: email as string,
-                },
-              }))!;
-              await loginAs(user, hashedPassword);
+      socket.on(
+        "changePassword",
+        async ({ password, password2, token }, callback) => {
+          jwt.verify(
+            token,
+            process.env.TOKEN_SECRET as string,
+            async (err: unknown, email: unknown) => {
+              if (err) {
+                callback({ error: "Invalid token" });
+              } else if (password.length < 6) {
+                callback({
+                  error: "Your password should be at least 6 characters long",
+                });
+              } else if (password !== password2) {
+                callback({ error: "The two passwords should be identical" });
+              } else {
+                const hashedPassword = crypto
+                  .createHash("sha1")
+                  .update(password)
+                  .digest("hex");
+                await prismaDm.user.updateMany({
+                  data: {
+                    password: hashedPassword,
+                  },
+                  where: {
+                    email: email as string,
+                  },
+                });
+                const user = (await prismaDm.user.findFirst({
+                  where: {
+                    email: email as string,
+                  },
+                }))!;
+                await loginAs(user, hashedPassword);
 
-              callback({ token });
+                callback({ token });
+              }
             }
-          }
-        );
-        callback({ error: 'Something went wrong' })
-      })
-    });
+          );
+          callback({ error: "Something went wrong" });
+        }
+      );
+    }
+  );
 };

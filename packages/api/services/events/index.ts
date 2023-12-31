@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { Event } from "~dm-types/Event";
@@ -23,22 +23,26 @@ import {
 import { MedalEvent } from "~dm-types/events/MedalEvent";
 import { SignupEvent } from "~dm-types/events/SignupEvent";
 
-import { Namespace } from "./types";
+import { NamespaceEndpoint, Services } from "./types";
 
 export default (io: Server) => {
-  (io.of(Namespace['endpoint']) as Namespace).on("connection", (socket) => {
-    socket.on("getEvents", async (callback) => getEvents().then(callback));
-  })
-}
+  (io.of(NamespaceEndpoint) as Namespace<Services>).on(
+    "connection",
+    (socket) => {
+      socket.on("getEvents", async (callback) => getEvents().then(callback));
+    }
+  );
+};
 
-const getEvents = async (): Promise<Event[]> => [
-  ...(await retrieveSignups()),
-  ...(await retrieveCollectionUpdates()),
-  ...(await retrieveCollectionSubscriptionAdditions()),
-  ...(await retrieveBookstoreCreations()),
-  ...(await retrieveEdgeCreations()),
-  ...(await retrieveNewMedals()),
-];
+const getEvents = async (): Promise<Event[]> =>
+  Promise.all([
+    ...(await retrieveSignups()),
+    ...(await retrieveCollectionUpdates()),
+    ...(await retrieveCollectionSubscriptionAdditions()),
+    ...(await retrieveBookstoreCreations()),
+    ...(await retrieveEdgeCreations()),
+    ...(await retrieveNewMedals()),
+  ]);
 
 const MEDAL_LEVELS = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },

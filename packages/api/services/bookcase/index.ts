@@ -1,4 +1,4 @@
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
@@ -8,7 +8,7 @@ import options from "./options/index";
 import { authenticated as authenticatedOptions } from "./options/index";
 import order from "./order/index";
 import { authenticated as authenticatedOrder } from "./order/index";
-import { Namespace } from "./types";
+import { NamespaceEndpoint, Services } from "./types";
 import { checkValidBookcaseUser } from "./util";
 
 export enum COUNTRY_CODE_OPTION {
@@ -21,30 +21,27 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
 };
 
 export default (io: Server) => {
-  const namespace = (io.of(Namespace['endpoint']) as Namespace)
-  namespace.use(RequiredAuthMiddleware).on('connection', (socket) => {
-    authenticatedOptions(socket)
-    authenticatedOrder(socket)
+  const namespace = io.of(NamespaceEndpoint) as Namespace<Services>;
+  namespace.use(RequiredAuthMiddleware).on("connection", (socket) => {
+    authenticatedOptions(socket);
+    authenticatedOrder(socket);
   });
-  namespace.on(
-    "connection",
-    (socket) => {
-      options(socket)
-      order(socket)
+  namespace.on("connection", (socket) => {
+    options(socket);
+    order(socket);
 
-      socket.on("getBookcase", async (username, callback) => {
-        const user = await checkValidBookcaseUser(null, username);
-        if (user.error) {
-          callback({ error: user.error });
-          return;
-        }
-        const groupBy = user.showDuplicatesInBookcase
-          ? "numeros.ID"
-          : "numeros.issuecode";
-        callback({
-          edges:
-            (
-              (await prismaDm.$queryRawUnsafe(`
+    socket.on("getBookcase", async (username, callback) => {
+      const user = await checkValidBookcaseUser(null, username);
+      if (user.error) {
+        callback({ error: user.error });
+        return;
+      }
+      const groupBy = user.showDuplicatesInBookcase
+        ? "numeros.ID"
+        : "numeros.issuecode";
+      callback({
+        edges: (
+          (await prismaDm.$queryRawUnsafe(`
                   SELECT numeros.ID                                                AS id,
                          numeros.Pays                                              AS countryCode,
                          numeros.Magazine                                          AS magazineCode,
@@ -75,13 +72,11 @@ export default (io: Server) => {
                   WHERE ID_Utilisateur = ${user.id}
                   GROUP BY ${groupBy}
               `)) as BookcaseEdgeRaw[]
-            ).map(mapEdges)
-        }
-        )
+        ).map(mapEdges),
       });
     });
+  });
 };
-
 
 const mapEdges = (bookcaseEdge: BookcaseEdgeRaw): BookcaseEdge => ({
   ...bookcaseEdge,

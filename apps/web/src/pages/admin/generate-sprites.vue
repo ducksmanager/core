@@ -11,11 +11,11 @@ meta:
 import { io, Socket } from "socket.io-client";
 
 import {
-  Namespace as EdgeCreatorNamespace,
+  NamespaceEndpoint as EdgeCreatorNamespaceEndpoint,
   Services as EdgeCreatorServices,
-} from "~api/services/edgecreator/types";
+} from "~services/edgecreator/types";
 let socket: Socket<EdgeCreatorServices> = io(
-  import.meta.env.VITE_SOCKET_URL + EdgeCreatorNamespace["endpoint"],
+  import.meta.env.VITE_SOCKET_URL + EdgeCreatorNamespaceEndpoint,
 );
 
 const generateSprites = async () => {

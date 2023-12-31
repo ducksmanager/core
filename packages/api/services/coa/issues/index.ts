@@ -1,8 +1,10 @@
-import { prismaCoa } from "~/prisma";
-import { Socket } from "~/services/coa/types";
-import { SimpleIssue } from "~dm-types/SimpleIssue";
+import { Socket } from "socket.io";
 
-export default (socket: Socket) => {
+import { prismaCoa } from "~/prisma";
+import { SimpleIssue } from "~dm-types/SimpleIssue";
+import { Services } from "~services/coa/types";
+
+export default (socket: Socket<Services>) => {
   socket.on("decompose", (issueCodes, callback) =>
     prismaCoa.inducks_issue
       .findMany({
@@ -18,17 +20,18 @@ export default (socket: Socket) => {
             ...acc,
             [value.issuecode]: value,
           }),
-          {},
-        ),
+          {}
+        )
       )
-      .then(callback),
+      .then(callback)
   );
 
   socket.on(
     "getIssuesByPublicationCodes",
     async (publicationCodes, callback) => {
       if (publicationCodes.length > 50) {
-        throw new Error("400");
+        callback({ error: "Too many requests" });
+        return;
       }
       callback(
         (
@@ -47,9 +50,9 @@ export default (socket: Socket) => {
           code: "",
           publicationcode: publicationcode!,
           issuenumber: issuenumber!.replace(/ +/g, " "),
-        })),
+        }))
       );
-    },
+    }
   );
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>
@@ -64,7 +67,7 @@ export default (socket: Socket) => {
         GROUP BY publicationcode, issuenumber
         ORDER BY publicationcode`.then((data) => {
       callback(data as SimpleIssue[]);
-    }),
+    })
   );
 
   socket.on("getCountByPublicationcode", async (callback) =>
@@ -82,10 +85,10 @@ export default (socket: Socket) => {
               ...acc,
               [publicationcode!]: _count.issuenumber,
             }),
-            {} as { [publicationcode: string]: number },
-          ),
+            {} as { [publicationcode: string]: number }
+          )
         );
-      }),
+      })
   );
 
   socket.on("getRecentIssues", (callback) =>
@@ -99,6 +102,6 @@ export default (socket: Socket) => {
         orderBy: [{ oldestdate: "desc" }],
         take: 50,
       })
-      .then(callback),
+      .then(callback)
   );
 };

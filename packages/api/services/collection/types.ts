@@ -1,8 +1,7 @@
-
 import { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate";
 import { issuePopularity, userPermission } from "~prisma-clients/client_dm";
 
-import { Errorable, NamespaceGeneric, SocketGeneric } from "../types";
+import { Errorable } from "../types";
 import Issues from "./issues/types";
 import Marketplace from "./marketplace/types";
 import Options from "./options/types";
@@ -12,17 +11,31 @@ import User from "./user/types";
 import WatchedAuthors from "./watched-authors/types";
 
 export interface Services
-  extends WatchedAuthors, Issues, User, Marketplace, Options, Purchases, Subscriptions {
-
+  extends WatchedAuthors,
+    Issues,
+    User,
+    Marketplace,
+    Options,
+    Purchases,
+    Subscriptions,
+    WatchedAuthors {
   emptyCollection: (callback: () => void) => void;
   getUserPermissions: (callback: (data: userPermission[]) => void) => void;
-  getCollectionPopularity: (callback: (data: issuePopularity[]) => void) => void;
-  getNotificationToken: (username: string, callback: (token: Errorable<string, 'Unauthorized' | 'Error'>) => void) => void;
-  getLastVisit: (callback: (value: Errorable<Date | null, 'This user does not exist'>) => void) => void;
-  getLastPublishedEdges: (callback: (value: EdgeWithStringCreationDate[]) => void) => void;
+  getCollectionPopularity: (
+    callback: (data: issuePopularity[]) => void
+  ) => void;
+  getNotificationToken: (
+    username: string,
+    callback: (token: Errorable<string, "Unauthorized" | "Error">) => void
+  ) => void;
+  getLastVisit: (
+    callback: (
+      value: Errorable<string | null, "This user does not exist">
+    ) => void
+  ) => void;
+  getLastPublishedEdges: (
+    callback: (value: EdgeWithStringCreationDate[]) => void
+  ) => void;
 }
 
-export type Socket = SocketGeneric<Services>;
-export class Namespace extends NamespaceGeneric<Services> {
-  public static endpoint = '/collection'
-}
+export const NamespaceEndpoint = "/collection";

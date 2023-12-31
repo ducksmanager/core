@@ -1,16 +1,19 @@
-import { prismaCoa } from "~/prisma";
-import { Socket } from "~/services/coa/types";
+import { Socket } from "socket.io";
 
-export default (socket: Socket) => {
+import { prismaCoa } from "~/prisma";
+
+import { Services } from "../types";
+
+export default (socket: Socket<Services>) => {
   socket.on("getPublicationListFromCountrycode", (countrycode, callback) =>
-    getPublicationTitles({ startsWith: `${countrycode}/` }).then(callback),
+    getPublicationTitles({ startsWith: `${countrycode}/` }).then(callback)
   );
   socket.on(
     "getPublicationListFromPublicationcodeList",
     (publicationCodes, callback) =>
       getPublicationTitles(
-        publicationCodes.length ? { in: publicationCodes } : {},
-      ).then(callback),
+        publicationCodes.length ? { in: publicationCodes } : {}
+      ).then(callback)
   );
 };
 
@@ -26,6 +29,6 @@ export const getPublicationTitles = async (filter: {
     .then((results) =>
       results.reduce(
         (acc, value) => ({ ...acc, [value.publicationcode]: value.title }),
-        {},
-      ),
+        {}
+      )
     );

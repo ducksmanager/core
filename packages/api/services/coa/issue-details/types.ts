@@ -1,6 +1,7 @@
 import { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import { SimpleEntry } from "~dm-types/SimpleEntry";
 import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
+import { Errorable } from "~services/types";
 
 export default interface IssueDetails {
   getIssuesWithTitles: (
@@ -9,20 +10,22 @@ export default interface IssueDetails {
       value: {
         issuenumber: string;
         title: string | null;
-      }[],
-    ) => void,
+      }[]
+    ) => void
   ) => void;
   getIssueDetails: (
     publicationcode: string,
     issuenumber: string,
-    callback: (value: { releaseDate: string; entries: SimpleEntry[] }) => void,
+    callback: (value: { releaseDate: string; entries: SimpleEntry[] }) => void
   ) => void;
   getIssueCoverDetails: (
     publicationCodes: string[],
-    callback: (value: Record<string, IssueCoverDetails>) => void,
+    callback: (
+      value: Errorable<Record<string, IssueCoverDetails>, "Too many requests">
+    ) => void
   ) => void;
   getIssuesByCode: (
     issueCodes: string[],
-    callback: (value: Record<string, SimpleIssueWithPublication>) => void,
+    callback: (value: Record<string, SimpleIssueWithPublication>) => void
   ) => void;
 }

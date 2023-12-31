@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "rm -rf dist && ./node_modules/.bin/tsc && tsc-alias",
-    "dev": "concurrently -n api,docker-compose \"nodemon\" \"docker compose -f docker-compose-dev.yml up\"",
+    "dev": "concurrently -n api,docker-compose,db \"nodemon\" \"docker compose -f docker-compose-dev.yml up\" \"pnpm -F ~prisma-clients dev\"",
     "lint": "eslint --fix --cache ."
   },
   "dependencies": {

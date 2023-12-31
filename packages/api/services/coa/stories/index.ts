@@ -1,10 +1,11 @@
+import { Socket } from "socket.io";
+
 import { prismaCoa } from "~/prisma";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
 
-import { Socket } from "../types";
-
-export default (socket: Socket) => {
+import { Services } from "../types";
+export default (socket: Socket<Services>) => {
   socket.on("searchStory", async (keywords, withIssues, callback) => {
     const limit = 10;
 
@@ -37,9 +38,9 @@ export default (socket: Socket) => {
     callback({
       results,
       hasMore,
-    })
-  })
-}
+    });
+  });
+};
 
 const listIssuesFromStoryCode = async (storycode: string) =>
   prismaCoa.$queryRaw<SimpleIssue[]>`
