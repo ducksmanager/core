@@ -1,6 +1,3 @@
-import axios from "axios";
-
-import { call } from "~axios-helper";
 import type { issue, requestedIssue } from "~prisma-clients/client_dm";
 import {
   NamespaceEndpoint as CollectionNamespaceEndpoint,
@@ -107,12 +104,7 @@ export const marketplace = defineStore("marketplace", () => {
       ),
     ),
     requestIssues = async (issueIds: number[]) => {
-      await call(
-        axios,
-        new PUT__collection__on_sale_by_others__requests({
-          reqBody: { issueIds },
-        }),
-      );
+      await socket.emitWithAck("createRequests", issueIds);
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {

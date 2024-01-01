@@ -280,12 +280,14 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { watch } from "vue";
-
-import { call } from "~axios-helper";
 import type { inducks_issue } from "~prisma-clients/client_coa";
+import {
+  NamespaceEndpoint as CollectionNamespace,
+  Services as CollectionServices,
+} from "~services/collection/types";
 const { getImagePath } = images();
+
+const collectionSocket = useSocket<CollectionServices>(CollectionNamespace);
 
 let step = $ref(1 as number);
 const rawData = $ref("" as string);
@@ -360,19 +362,14 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await call(
-        axios,
-        new POST__collection__issues__multiple({
-          reqBody: {
-            publicationcode,
-            issuenumbers: importableIssuesByPublicationCode[publicationcode],
-            condition: issueDefaultCondition,
-            isOnSale: undefined,
-            isToRead: undefined,
-            purchaseId: undefined,
-          },
-        }),
-      );
+      await collectionSocket.emitWithAck("addOrChangeIssues", {
+        publicationcode,
+        issuenumbers: importableIssuesByPublicationCode[publicationcode],
+        condition: issueDefaultCondition,
+        isOnSale: undefined,
+        isToRead: undefined,
+        purchaseId: undefined,
+      });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;
     }

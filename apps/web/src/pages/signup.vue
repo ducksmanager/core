@@ -7,7 +7,6 @@ meta:
   <h2>{{ $t("Inscription") }}</h2>
   <form method="post" @submit.prevent="signup">
     <scoped-error-teleport v-if="error" :error="error" />
-    <input type="hidden" name="_csrf_token" :value="csrfToken" />
     <b-row>
       <b-col lg="4">
         <b-form-input
@@ -58,24 +57,21 @@ meta:
       </b-col>
     </b-row>
 
-    <b-button variant="primary" size="lg" type="submit" :disabled="!csrfToken">
+    <b-button variant="primary" size="lg" type="submit">
       {{ $t("Inscription") }}
     </b-button>
   </form>
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import Cookies from "js-cookie";
 
-import { call } from "~axios-helper";
 import { ScopedError } from "~dm-types/ScopedError";
 
 const { signup: userSignup, loadUser } = collection();
 const { user } = storeToRefs(collection());
 const router = useRouter();
 
-let csrfToken = $ref(null as string | null);
 let username = $ref("" as string),
   email = $ref("" as string),
   password = $ref("" as string),
@@ -115,8 +111,4 @@ watch(
   },
   { immediate: true },
 );
-
-(async () => {
-  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
-})();
 </script>

@@ -1,6 +1,6 @@
 export interface AuthorDetails {
   personcode: string;
-  missingstorycount: number;
-  storycount: number;
+  missingStoryCount: number;
+  storyCount: number;
   fullname: string;
 }

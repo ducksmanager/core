@@ -115,8 +115,6 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
-
 import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
 import { CollectionSubscriptionAdditionEvent } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
 import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";

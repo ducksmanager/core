@@ -2,10 +2,11 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { Namespace, Server } from "socket.io";
 
+import resetPassword from "~/emails/reset-password";
 import { prismaDm } from "~/prisma";
 
 import { NamespaceEndpoint, Services } from "./types";
-import { loginAs } from "./util";
+import { isValidEmail, loginAs } from "./util";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
@@ -20,6 +21,35 @@ export default (io: Server) => {
         jwt.verify(token, process.env.TOKEN_SECRET as string, (err) => {
           callback({ error: err!.message || "" });
         });
+      });
+
+      socket.on("requestTokenForForgotPassword", async (email, callback) => {
+        if (!isValidEmail(email)) {
+          callback({ error: "Invalid email" });
+        } else {
+          const user = await prismaDm.user.findFirst({
+            where: { email },
+          });
+          if (user) {
+            console.log(
+              `A visitor requested to reset a password for a valid e-mail: ${email}`
+            );
+            const token = jwt.sign(email, process.env.TOKEN_SECRET!, {
+              expiresIn: "60m",
+            });
+            await prismaDm.userPasswordToken.create({
+              data: { userId: user.id, token },
+            });
+
+            await new resetPassword({ user, token }).send();
+            callback({ token });
+          } else {
+            console.log(
+              `A visitor requested to reset a password for an invalid e-mail: ${email}`
+            );
+            callback({ error: "Invalid email" });
+          }
+        }
       });
 
       socket.on(

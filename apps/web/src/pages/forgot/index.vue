@@ -45,22 +45,27 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios, { AxiosError } from "axios";
+import {
+  NamespaceEndpoint as AuthNamespaceEndpoint,
+  Services as AuthServices,
+} from "~services/auth/types";
 
-import { call } from "~axios-helper";
-
-let error = $ref(null as unknown | string | null);
+const authSocket = useSocket<AuthServices>(AuthNamespaceEndpoint);
+let error = $ref<string | null>(null);
 
 const email = $ref("" as string);
 let token = $ref("" as string);
 const { t: $t } = useI18n();
 
 const sendPasswordToken = async () => {
-  try {
-    token = (await call(axios, new POST__auth__forgot({ reqBody: { email } })))
-      .data.token;
-  } catch (e) {
-    error = (e as AxiosError)?.response?.data || "Error";
+  const response = await authSocket.emitWithAck(
+    "requestTokenForForgotPassword",
+    email,
+  );
+  if (response.error) {
+    error = response.error;
+  } else {
+    token = response.token;
   }
 };
 </script>

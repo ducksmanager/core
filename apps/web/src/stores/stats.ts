@@ -7,14 +7,9 @@ import {
   NamespaceEndpoint as CollectionNamespaceEndpoint,
   Services as CollectionServices,
 } from "~services/collection/types";
-import {
-  NamespaceEndpoint as StatsNamespaceEndpoint,
-  Services as StatsServices,
-} from "~services/stats/types";
 import { EventReturnType } from "~services/types";
 
 const coaSocket = useSocket<CoaServices>(CoaNamespaceEndpoint);
-const statsSocket = useSocket<StatsServices>(StatsNamespaceEndpoint);
 const collectionSocket = useSocket<CollectionServices>(
   CollectionNamespaceEndpoint,
 );
@@ -22,7 +17,7 @@ const collectionSocket = useSocket<CollectionServices>(
 export const stats = defineStore("stats", () => {
   const ratings = ref(
     undefined as
-      | EventReturnType<StatsServices["getWatchedAuthorsStats"]>
+      | EventReturnType<CollectionServices["getWatchedAuthors"]>
       | undefined,
   );
   const isSearching = ref(false as boolean);
@@ -40,7 +35,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = await statsSocket.emitWithAck("getWatchedAuthorsStats");
+      ratings.value = await collectionSocket.emitWithAck("getWatchedAuthors");
       isLoadingWatchedAuthors.value = false;
     }
   };

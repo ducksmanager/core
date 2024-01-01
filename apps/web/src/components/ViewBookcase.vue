@@ -163,7 +163,6 @@
 
 <script setup lang="ts">
 import { watch } from "vue";
-import { RouterLink } from "vue-router";
 
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
